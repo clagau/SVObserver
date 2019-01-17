@@ -10,7 +10,7 @@
 #include "ICommand.h"
 #include "IObjectClass.h"
 #include "ITaskObject.h"
-#include "SVContainerLibrary/SelectorItem.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -32,7 +32,7 @@ namespace SvOi
 		/***********
 		This method gets the PPQ Variables selector list
 		***********/
-		virtual void GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const UINT Attribute) const = 0;
+		virtual void GetPPQSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, const UINT attribute) const = 0;
 
 		/***********
 		This method gets the Interface to the Tool Set

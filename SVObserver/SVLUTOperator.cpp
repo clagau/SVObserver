@@ -123,18 +123,18 @@ bool SVLUTOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_lutVector.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lutVector.SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_lutVector.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_lutVector.SetObjectAttributesAllowed( SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_useLUT.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_continuousRecalcLUT.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lutMode.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_upperClip.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lowerClip.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_minInput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_maxInput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_minOutput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_maxOutput.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_useLUT.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_continuousRecalcLUT.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_lutMode.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_upperClip.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_lowerClip.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_minInput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_maxInput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_minOutput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_maxOutput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 
@@ -153,7 +153,7 @@ bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	if (S_OK == m_lutMode.GetValue(lLutMode))
 	{
 		bool isVectorPrint = (4 /*Formula*/ != lLutMode);
-		m_lutVector.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, isVectorPrint ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
+		m_lutVector.SetObjectAttributesAllowed(SvPb::printable, isVectorPrint ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
 	}
 
 	return Result;

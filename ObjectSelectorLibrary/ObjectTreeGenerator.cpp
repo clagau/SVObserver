@@ -22,6 +22,7 @@
 #include "SVMFCControls/ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
 #include "ObjectFilterPpg.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -35,25 +36,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOsl
 {
-	#pragma region Constructor
-	ObjectTreeGenerator::ObjectTreeGenerator()
-		: m_TreeContainer()
-		, m_SelectedObjects()
-		, m_ModifiedObjects()
-		, m_LocationInputFilters()
-		, m_LocationOutputFilters()
-		, m_SelectorType( ObjectTreeGenerator::TypeNone )
-		, m_AttributesFilter( SvDef::SV_NO_ATTRIBUTES )
-		, m_helpID{0}
-		, m_LeafCount( 0 )
-	{
-	}
-
-	ObjectTreeGenerator::~ObjectTreeGenerator()
-	{
-	}
-	#pragma endregion Constructor
-
 	#pragma region Public Methods
 	ObjectTreeGenerator& ObjectTreeGenerator::Instance()
 	{
@@ -71,18 +53,14 @@ namespace SvOsl
 		}
 		m_TreeContainer.clear();
 		m_TreeContainer.clearBranchMap();
-		m_LocationInputFilters.clear();
-		m_LocationOutputFilters.clear();
 		m_SelectorType = ObjectTreeGenerator::TypeNone;
-		m_AttributesFilter = SvDef::SV_NO_ATTRIBUTES;
+		m_helpID = 0;
 	}
 		
-	void ObjectTreeGenerator::insertTreeObjects( const SvCl::SelectorItemVector& rSelectorItems )
+	void ObjectTreeGenerator::insertTreeObjects(const SvPb::TreeItem& rTreeItem)
 	{
-		for (auto const& rEntry : rSelectorItems)
-		{
-			insertTreeObject(rEntry);
-		}
+		insertChildren(rTreeItem);
+
 		m_TreeContainer.clearBranchMap();
 	}
 
@@ -111,12 +89,12 @@ namespace SvOsl
 		ObjectSelectorPpg selectorPage( m_TreeContainer, mainTabTitle, isSingleObject );
 		ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
 
+		selectorPage.setHelpID(m_helpID);
 		//Don't display the apply button
 		Sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 		Sheet.AddPage( &selectorPage );
 		Sheet.AddPage( &filterPage );
-		selectorPage.setHelpID( m_helpID );
 
 		delete pWait;
 		pWait = nullptr;
@@ -138,13 +116,9 @@ namespace SvOsl
 	{
 		bool Result( false );
 
-		SvDef::StringSet::const_iterator IterName( rItems.begin() );
-
-		for( ; rItems.end() != IterName;  ++IterName )
+		for(const auto& rItemName : rItems)
 		{
-			SvCl::ObjectTreeItems::iterator Iter( m_TreeContainer.begin() );
-			//Need to check if input filters are used
-			std::string Location = getFilteredLocation( m_LocationInputFilters, *IterName );
+			std::string Location = rItemName;
 			//If an array we need the extra branch
 			std::string::size_type BracketPos( std::string::npos );
 			BracketPos = Location.rfind( _T("[") );
@@ -157,7 +131,7 @@ namespace SvOsl
 					Location.insert( DotPos, Name.c_str() );
 				}
 			}
-			Iter = m_TreeContainer.findItem( Location );
+			SvCl::ObjectTreeItems::iterator Iter = m_TreeContainer.findItem( Location );
 			if( m_TreeContainer.end() != Iter )
 			{
 				Iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
@@ -168,83 +142,58 @@ namespace SvOsl
 		return Result;
 	}
 
-	void ObjectTreeGenerator::setLocationFilter( const FilterEnum& rType, const std::string& rFilter, const std::string& rReplace )
+	std::string ObjectTreeGenerator::getSingleObjectResult() const
 	{
-		switch( rType )
+		//If Single select then it is the first result
+		if (0 < m_SelectedObjects.size())
 		{
-		case FilterInput:
-			{
-				m_LocationInputFilters[ rFilter ] = rReplace;
-			}
-			break;
-
-		case FilterOutput:
-			{
-				m_LocationOutputFilters[ rFilter ] = rReplace;
-			}
-			break;
-
-		default:
-			break;
+			return m_SelectedObjects[0];
 		}
+		return std::string();
 	}
 
-	std::string ObjectTreeGenerator::convertObjectArrayName(const SvCl::SelectorItem& rItem) const
+	void ObjectTreeGenerator::setSelectorType(const SelectorTypeEnum& rSelectorType, int helpID)
 	{
-		std::string Result{ rItem.m_DisplayLocation };
-		if( Result.empty() )
+		m_SelectorType = rSelectorType;
+		m_helpID = helpID;
+		if(0 == m_helpID)
 		{
-			Result = rItem.m_Location;
+			m_helpID = (TypeSingleObject == m_SelectorType) ? IDD_OUTPUT_SELECTOR : IDD_OBJECT_SELECTOR_PPG;
+			m_helpID += SvOr::HELPFILE_DLG_IDD_OFFSET;
 		}
-
-		//If location is array then place an additional level with the array group name
-		if( rItem.m_Array )
-		{
-			std::string Name;
-			size_t Pos = 0;
-
-			Name = rItem.m_Name;
-			Name.insert( Pos, _T(".") );
-			Pos = Result.rfind(_T('.'));
-			if( std::string::npos != Pos )
-			{
-				Result.insert( Pos, Name.c_str() );
-			}
-		}
-
-		return Result;
+		//Reset the leaf count here as this method is called at the start of inserting the objects into the selector
+		m_LeafCount = 0;
 	}
-
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
-	void ObjectTreeGenerator::insertTreeObject( const SvCl::SelectorItem& rItem )
+	void ObjectTreeGenerator::insertChildren(const SvPb::TreeItem& rTreeItem)
 	{
-		SvCl::ObjectSelectorItem SelectorItem;
-		SelectorItem = rItem;
-		SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
-		SelectorItem. m_CheckedState = SvCl::ObjectSelectorItem::UncheckedEnabled;
-
-		std::string Location( rItem.m_DisplayLocation );
-		if( Location.empty() )
+		for (int i = 0; i < rTreeItem.children_size(); i++)
 		{
-			Location = rItem.m_Location;
-		}
-		if( rItem.m_Array )
-		{
-			Location = convertObjectArrayName( rItem );
-		}
-
-		if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
-		{
-			if (rItem.m_Selected)
+			const SvPb::TreeItem& rChild = rTreeItem.children(i);
+			//If no children then it is a leaf
+			if(0 == rChild.children_size())
 			{
-				SelectorItem.m_CheckedState =  SvCl::ObjectSelectorItem::CheckedEnabled;
+				insertTreeObject(rChild);
+			}
+			else
+			{
+				insertChildren(rChild);
 			}
 		}
+	}
 
-		Location = getFilteredLocation( m_LocationInputFilters, Location );
-		m_TreeContainer.insertLeaf( Location, SelectorItem );
+	void ObjectTreeGenerator::insertTreeObject(const SvPb::TreeItem& rTreeItem)
+	{
+		SvCl::ObjectSelectorItem SelectorItem{rTreeItem};
+		if(TypeMultipleObject == m_SelectorType)
+		{
+			SelectorItem.m_CheckedState = rTreeItem.selected() ? SvCl::ObjectSelectorItem::CheckedEnabled : SvCl::ObjectSelectorItem::UncheckedEnabled;
+		}
+		SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+
+		m_TreeContainer.insertLeaf(SelectorItem.m_Location, SelectorItem );
 		m_LeafCount++;
 	}
 
@@ -263,18 +212,13 @@ namespace SvOsl
 
 			if( isModified || isSelected )
 			{
-				SvCl::SelectorItem SelectedItem{ *Iter->second };
-				SelectedItem.m_Selected = isSelected;
-
-				convertLocation( SelectedItem );
-
 				if( isModified )
 				{
 					Iter->second->m_Modified = isModified;
 					Result = true;
 					if( Iter->second->isLeaf() )
 					{
-						m_ModifiedObjects.push_back( SelectedItem );
+						m_ModifiedObjects.push_back(Iter->second->m_ItemKey);
 					}
 				}
 				//Place items into the checked list when using Single or Multiple object
@@ -283,100 +227,13 @@ namespace SvOsl
 					//Only place leafs into the list
 					if( Iter->second->isLeaf() && isSelected )
 					{
-						m_SelectedObjects.push_back( SelectedItem );
+						m_SelectedObjects.push_back(Iter->second->m_ItemKey);
 					}
 				}
 			}
 		}
 
-		if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
-		{
-			setItemAttributes();
-		}
-
-
 		return Result;
-	}
-
-	void ObjectTreeGenerator::setItemAttributes()
-	{
-		//Modified objects are only leafs from the tree
-		for(auto const& rEntry : m_ModifiedObjects)
-		{
-			SVGUID ObjectID{ rEntry.m_ItemKey };
-
-			SvOi::IObjectClass* pObject( SvOi::getObject( ObjectID ) );
-
-			if ( nullptr != pObject)
-			{
-				int ObjectIndex = rEntry.m_Array ? rEntry.m_ArrayIndex : 0;
-
-				if (rEntry.m_Selected)
-				{
-					pObject->SetObjectAttributesSet( m_AttributesFilter, SvOi::SetAttributeType::AddAttribute, ObjectIndex );
-				}
-				else
-				{
-					pObject->SetObjectAttributesSet( m_AttributesFilter, SvOi::SetAttributeType::RemoveAttribute, ObjectIndex );
-				}
-			}
-		}
-	}
-
-	std::string ObjectTreeGenerator::getFilteredLocation( const SvDef::TranslateMap& rFilters, const std::string& rLocation ) const
-	{
-		std::string rFilterLocation( rLocation.c_str() );
-		bool bFound = false;
-
-		for (SvDef::TranslateMap::const_iterator Iter = rFilters.begin(); rFilters.end() != Iter && !bFound; ++Iter)
-		{
-			std::string Filter = Iter->first;
-
-			// find the filter at the first position of the string
-			size_t pos = rFilterLocation.find( Filter.c_str() );
-			if (0 == pos)
-			{
-				bFound = true;
-				//if the dot is not at the end of the filter add it
-				if( Filter.size() != Filter.rfind( _T(".") ))
-				{
-					Filter += _T(".");
-				}
-				// Do not use std::string::replace as it will replace all occurrences!
-				// Use std::string to just replace the first occurrence at the found position (position 0 in this case)
-				rFilterLocation.replace( pos, Filter.size(), Iter->second.c_str() );
-			}
-		}
-		return rFilterLocation.c_str();
-	}
-
-	void ObjectTreeGenerator::convertLocation(SvCl::SelectorItem& rSelectedItem )
-	{
-		std::string Location = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.m_Location );
-		if( rSelectedItem.m_Location != Location )
-		{
-			rSelectedItem.m_Location = Location;
-		}
-
-		std::string DisplayLocation = getFilteredLocation( m_LocationOutputFilters, rSelectedItem.m_DisplayLocation);
-		//The extra group name for arrays must be removed
-		if (rSelectedItem.m_Array)
-		{
-			std::string Name( rSelectedItem.m_Name );
-
-			std::string::size_type Pos = 0;
-			//Array name will have [ ] 
-			if( std::string::npos != (Pos = Name.rfind("[")) )
-			{
-				Name = Name.substr( 0, Pos );
-			}
-			Name += _T(".");
-			SvUl::searchAndReplace( DisplayLocation, Name.c_str(), _T("") );
-		}
-		if( rSelectedItem.m_DisplayLocation != DisplayLocation )
-		{
-			rSelectedItem.m_DisplayLocation = DisplayLocation;
-		}
 	}
 	#pragma endregion Private Methods
 

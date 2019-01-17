@@ -207,39 +207,39 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	}
 
 	// Set / Reset Printable Flags
-	enabled.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-	m_Passed.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_Failed.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_Warned.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_ExplicitFailed.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	enabled.SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_Passed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_Failed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_Warned.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExplicitFailed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_PassedCount.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_FailedCount.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_WarnedCount.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_PassedCount.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_FailedCount.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_WarnedCount.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_EnabledCount.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_ProcessedCount.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_ToolTime.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_EnabledCount.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_ProcessedCount.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_ToolTime.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_ExtentLeft.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentTop.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentRight.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentBottom.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentWidth.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentHeight.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentTop.SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentRight.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentBottom.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 
 	// Defaults for the Scale Factors should be hidden (but NOT removed at this time, so 
-	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
-	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 
 	// Auxiliary Tool Source Extent
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
-	m_drawToolFlag.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 
 	// Tool Comment attributes...
-	m_ToolComment.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_ToolComment.SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);	// We do not want this to show up in the results picker.
+	m_ToolComment.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ToolComment.SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);	// We do not want this to show up in the results picker.
 
 	m_isCreated = bOk;
 
@@ -563,19 +563,19 @@ void SVToolClass::setAuxiliaryExtents()
 	}
 	else
 	{
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	}
 
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, AllowedAttribute);
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
 
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 }
 
 bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -623,12 +623,12 @@ void SVToolClass::UpdateBottomAndRight()
 	if(GetImageExtent().hasFigure())
 	{
 		const SVExtentFigureStruct& rFigure = GetImageExtent().GetFigure();
-		if (SvDef::SV_NO_ATTRIBUTES != m_ExtentRight.ObjectAttributesAllowed())
+		if (SvPb::noAttributes != m_ExtentRight.ObjectAttributesAllowed())
 		{
 			m_ExtentRight.SetValue(static_cast<long>(rFigure.m_svBottomRight.m_x));
 		}
 
-		if (SvDef::SV_NO_ATTRIBUTES != m_ExtentBottom.ObjectAttributesAllowed())
+		if (SvPb::noAttributes != m_ExtentBottom.ObjectAttributesAllowed())
 		{
 			m_ExtentBottom.SetValue(static_cast<long>(rFigure.m_svBottomRight.m_y));
 		}
@@ -851,7 +851,7 @@ bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, const SV
 	auto* pResultObject = getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType, rEmbeddedId));
 	if (nullptr != pResultObject)
 	{
-		if (SvDef::SV_NO_ATTRIBUTES != (pResultObject->ObjectAttributesAllowed()))
+		if (SvPb::noAttributes != (pResultObject->ObjectAttributesAllowed()))
 		{
 			retList.push_back(SvOi::ParameterPairForML(pResultObject->GetCompleteName(), pResultObject->GetUniqueObjectID()));
 			return true;

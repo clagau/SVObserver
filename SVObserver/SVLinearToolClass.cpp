@@ -64,14 +64,14 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 			m_toolExtent.SetTranslation(SvDef::SVExtentTranslationProfileShift);
 		}
 	}
-	UINT Attributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_PRINTABLE;
+	UINT Attributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::printable;
 	m_svRotationAngle.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointX.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointY.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_voProfileOrientation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_voUseProfileRotation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 
-	Attributes = SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
+	Attributes = SvPb::remotelySetable | SvPb::setableOnline;
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_ExtentLeft.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
@@ -153,12 +153,12 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		{
 			SVExtentFigureStruct rFigure = GetImageExtent().GetFigure();
 
-			if( m_ExtentLeft.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
+			if( m_ExtentLeft.ObjectAttributesAllowed() != SvPb::noAttributes )
 			{
 				m_ExtentLeft.SetValue(rFigure.m_svTopLeft.m_x);
 			}
 				
-			if( m_ExtentTop.ObjectAttributesAllowed() != SvDef::SV_NO_ATTRIBUTES )
+			if( m_ExtentTop.ObjectAttributesAllowed() != SvPb::noAttributes )
 			{
 				m_ExtentTop.SetValue(rFigure.m_svTopLeft.m_y);
 			}

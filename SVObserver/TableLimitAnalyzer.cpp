@@ -52,7 +52,7 @@ bool TableLimitAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 {
 	bool l_bOk = __super::CreateObject(rCreateStructure);
 
-	m_LimitValue.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_LimitValue.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	
 	return l_bOk;
 }

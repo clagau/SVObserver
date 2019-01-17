@@ -119,11 +119,9 @@ STDMETHODIMP SVInputMatchList::Add(ISVInputMatchItem* Item)
 // Add Item
 STDMETHODIMP SVInputMatchList::AddItem(BSTR matchString, long txn_Identifier)
 {
-	HRESULT l_Status = S_OK;
-
 	CComPtr<ISVInputMatchItem> l_MatchItemPtr;
 
-	l_Status = l_MatchItemPtr.CoCreateInstance(__uuidof(SVInputMatchItem));
+	HRESULT l_Status = l_MatchItemPtr.CoCreateInstance(__uuidof(SVInputMatchItem));
 
 	if( l_Status == S_OK && l_MatchItemPtr.p != NULL )
 	{

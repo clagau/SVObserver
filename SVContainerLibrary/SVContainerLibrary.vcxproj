@@ -87,7 +87,6 @@
   <ItemGroup>
     <ClCompile Include="ObjectSelectorItem.cpp" />
     <ClCompile Include="ObjectTreeItems.cpp" />
-    <ClCompile Include="SelectorItem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -98,7 +97,6 @@
     <ClInclude Include="ObjectGraph.h" />
     <ClInclude Include="ObjectSelectorItem.h" />
     <ClInclude Include="ObjectTreeItems.h" />
-    <ClInclude Include="SelectorItem.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVBiUniqueMap.h" />
     <ClInclude Include="SVCompareKeys.h" />

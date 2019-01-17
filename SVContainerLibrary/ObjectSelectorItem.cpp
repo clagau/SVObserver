@@ -17,85 +17,28 @@
 namespace SvCl
 {
 	#pragma region Constructor
-	ObjectSelectorItem::ObjectSelectorItem()
-	{
-		Clear();
-	}
-
-	ObjectSelectorItem::~ObjectSelectorItem()
+	ObjectSelectorItem::ObjectSelectorItem(const SvPb::TreeItem& rTreeItem)
+	: m_Name {rTreeItem.name()}
+	, m_Location {rTreeItem.location()}
+	, m_CheckedState {SvCl::ObjectSelectorItem::UncheckedEnabled}
+	, m_ItemTypeName {rTreeItem.type()}
+	, m_ItemKey {rTreeItem.objectidindex()}
 	{
 	}
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void ObjectSelectorItem::Clear()
-	{
-		m_Name = _T("");
-		m_Location = _T("");
-		m_DisplayLocation = _T("");
-		m_ItemTypeName = _T("");
-		m_TreeItem = nullptr;
-		m_ItemKey = GUID_NULL;
-		m_Attribute = AttributeNone;
-		m_IconNumber = 0;
-		m_ArrayIndex = -1;
-		m_Modified = false;
-		m_CheckedState = EmptyEnabled;
-		m_OrgCheckedState = EmptyEnabled;
-	}
-
-	const ObjectSelectorItem& ObjectSelectorItem::operator=( const ObjectSelectorItem& rRhs )
-	{
-		if( this != &rRhs )
-		{
-			//SelectorItem values
-			m_Name = rRhs.m_Name;
-			m_Location = rRhs.m_Location;
-			m_DisplayLocation = rRhs.m_DisplayLocation;
-			m_ItemTypeName = rRhs.m_ItemTypeName;
-			m_ItemKey = rRhs.m_ItemKey;
-			m_Array = rRhs.m_Array;
-			m_ArrayIndex = rRhs.m_ArrayIndex;
-			//ObjectSelectorItem values
-			m_TreeItem = rRhs.m_TreeItem;
-			m_Attribute = rRhs.m_Attribute;
-			m_IconNumber = rRhs.m_IconNumber;
-			m_Modified = rRhs.m_Modified;
-			m_CheckedState = rRhs.m_CheckedState;
-			m_OrgCheckedState = rRhs.m_OrgCheckedState;
-		}
-		return *this;
-	}
-
-	const ObjectSelectorItem& ObjectSelectorItem::operator=(const SelectorItem& rRhs)
-	{
-		if (this != &rRhs)
-		{
-			m_Name = rRhs.m_Name;
-			m_Location = rRhs.m_Location;
-			m_DisplayLocation = rRhs.m_DisplayLocation;
-			m_ItemTypeName = rRhs.m_ItemTypeName;
-			m_ItemKey = rRhs.m_ItemKey;
-			m_Array = rRhs.m_Array;
-			m_ArrayIndex = rRhs.m_ArrayIndex;
-			m_Selected = rRhs.m_Selected;
-		}
-		return *this;
-	}
-
 	bool ObjectSelectorItem::operator==( const ObjectSelectorItem& rRhs ) const
 	{
 		bool Result = false;
 
 		if( (m_Name == rRhs.m_Name) &&
 			(m_Location == rRhs.m_Location) &&
-			(m_DisplayLocation == rRhs.m_DisplayLocation) &&
 			(m_ItemTypeName == rRhs.m_ItemTypeName) &&
-			(m_TreeItem == rRhs.m_TreeItem) &&
 			(m_ItemKey == rRhs.m_ItemKey) &&
+			(m_TreeItem == rRhs.m_TreeItem) &&
 			(m_Attribute == rRhs.m_Attribute) &&
 			(m_IconNumber == rRhs.m_IconNumber) &&
-			(m_ArrayIndex == rRhs.m_ArrayIndex) &&
 			(m_Modified == rRhs.m_Modified) &&
 			(m_CheckedState == rRhs.m_CheckedState) &&
 			(m_OrgCheckedState == rRhs.m_OrgCheckedState))

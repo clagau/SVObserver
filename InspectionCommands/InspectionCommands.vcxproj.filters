@@ -21,24 +21,6 @@
     <ClInclude Include="SetMaskData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GetSelectorList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GetPPQSelectorList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="AttributesAllowedFilter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="AttributesSetFilter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeSelectorFilter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MLRejectValueFilter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="InspectionCommand_protoBuf.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -48,16 +30,13 @@
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SelectorOptions.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="BuildSelectableItems.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="CommandExternalHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CommandInternalHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSelectorFilter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

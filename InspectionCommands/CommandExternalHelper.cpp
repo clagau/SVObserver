@@ -126,4 +126,19 @@ void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectT
 	SvPb::SetGuidInProtoBytes(sourceInfo.mutable_embeddedid(), destInfo.EmbeddedID);
 }
 
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, const GUID& rInspectionID, SvPb::ObjectAttributes attribute, const GUID& rInstanceID /*= GUID_NULL*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/)
+{
+	SvPb::GetObjectSelectorItemsRequest result;
+
+	for (const auto& rType : rItemTypes)
+	{
+		result.add_types(rType);
+	}
+	SvPb::SetGuidInProtoBytes(result.mutable_inspectionid(), rInspectionID);
+	SvPb::SetGuidInProtoBytes(result.mutable_instanceid(), rInstanceID);
+	result.set_attribute(attribute);
+	result.set_wholearray(wholeArray);
+	result.set_filter(filter);
+	return result;
+}
 } //namespace SvCmd

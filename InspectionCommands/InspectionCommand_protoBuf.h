@@ -140,6 +140,9 @@ public:
 			case SvPb::InspectionCmdMsgs::kGetOutputRectangleRequest:
 				hr = getOutputRectangle(m_pRequest->getoutputrectanglerequest(), *m_pResponse->mutable_getoutputrectangleresponse());
 				break;
+			case SvPb::InspectionCmdMsgs::kGetObjectSelectorItemsRequest:
+				hr = getObjectSelectorItems(m_pRequest->getobjectselectoritemsrequest(), *m_pResponse->mutable_getobjectselectoritemsresponse());
+				break;
 			default:;
 		}
 

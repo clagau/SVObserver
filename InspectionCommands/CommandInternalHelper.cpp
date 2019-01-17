@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "CommandInternalHelper.h"
+#include "ObjectSelectorFilter.h"
 #include "Definitions\ObjectDefines.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "ObjectInterfaces\ITool.h"
@@ -23,7 +24,7 @@ namespace AllowedFunctionHelper
 {
 bool hasAttributes(const SvOi::IObjectClass* pObject)
 {
-	return (0 != ((SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_ARCHIVABLE_IMAGE | SvDef::SV_TASK_OBJECT) & pObject->ObjectAttributesAllowed())) ? true : false;
+	return (0 != ((SvDef::selectableAttributes | SvPb::archivableImage | SvPb::taskObject) & pObject->ObjectAttributesAllowed())) ? true : false;
 }
 
 class IsValidObject
@@ -104,6 +105,39 @@ IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
 	return AllowedFunctionHelper::IsValidObject();
 }
 
+IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest, const std::string& rObjectName)
+{
+	switch (rRequest.filter())
+	{
+		case SvPb::SelectorFilter::rangeValue:
+		{
+			return RangeSelectorFilter(rObjectName);
+		}
+		break;
 
+		case SvPb::SelectorFilter::attributesAllowed:
+		{
+			return AttributesAllowedFilter();
+		}
+		break;
+
+		case SvPb::SelectorFilter::attributesSet:
+		{
+			return AttributesSetFilter();
+		}
+		break;
+
+		case  SvPb::SelectorFilter::monitorListRejectValue:
+		{
+			return MLRejectValueFilter();
+		}
+		break;
+
+		default:
+		break;
+	}
+
+	return nullptr;
+}
 
 } //namespace SvCmd

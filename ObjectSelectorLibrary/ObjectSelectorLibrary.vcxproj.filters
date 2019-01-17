@@ -50,9 +50,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ObjectTreeGenerator.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="ObjectSelectorPpg.inl">
       <Filter>Headerdateien</Filter>
     </None>

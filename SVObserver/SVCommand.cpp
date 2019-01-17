@@ -1295,7 +1295,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						ImageObjects.push_back(pImage);	// add data object pointer to the list
 						bImageOK = true;
 					}
-					else if (pImage->ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE)	// Published result image
+					else if (pImage->ObjectAttributesSet() & SvPb::publishResultImage)	// Published result image
 					{
 						ImageObjects.push_back(pImage);	// add data object pointer to the list
 						bImageOK = true;
@@ -2126,9 +2126,9 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					l_pImageObject = dynamic_cast<SVImageClass*>(l_pObject);
 
 					if (nullptr != l_pImageObject &&
-						(l_pImageObject->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE)
+						(l_pImageObject->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable)
 					{
-						// currently all SvDef::SV_REMOTELY_SETABLE parameters are also SvDef::SV_SETABLE_ONLINE
+						// currently all SvPb::remotelySetable parameters are also SvPb::setableOnline
 						// if this changes, this code needs updated
 						bAddRequest = true;
 					}// end if
@@ -3591,7 +3591,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 
 			if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
 			{
-				if (pObject->ObjectAttributesSet() & SvDef::SV_DD_VALUE) // if Data Definition List set.
+				if (pObject->ObjectAttributesSet() & SvPb::dataDefinitionValue) // if Data Definition List set.
 				{
 					SelectedObjects.push_back(pObject);
 				}
@@ -3628,7 +3628,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 
 			// Writable
 			l_Index[1] = 1;
-			bool l_bWritable = (SelectedObjects[i]->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
+			bool l_bWritable = (SelectedObjects[i]->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
@@ -3744,7 +3744,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 				//
 				// Check for the required Output object attributes.
 				//
-				if ((pImage->ObjectAttributesSet() & SvDef::SV_DD_IMAGE) != 0)
+				if ((pImage->ObjectAttributesSet() & SvPb::dataDefinitionImage) != 0)
 				{
 					objectList.push_back(pImage);
 				}
@@ -3778,7 +3778,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 
 			// Writable
 			l_Index[1] = 1;
-			bool l_bWritable = (objectList[i]->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
+			bool l_bWritable = (objectList[i]->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
@@ -3788,7 +3788,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			l_Index[1] = 2;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
-			Value = (objectList[i]->ObjectAttributesSet() & SvDef::SV_PUBLISH_RESULT_IMAGE) != 0;
+			Value = (objectList[i]->ObjectAttributesSet() & SvPb::publishResultImage) != 0;
 			//l_saData.PutElement( l_Index, l_vTmp );
 			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
 

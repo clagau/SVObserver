@@ -163,7 +163,7 @@ void Ranking2Filter::init()
 	m_KernelHeight.SetDefaultValue(SvDef::cStandardKernelSize);
 	m_RankingRank.SetDefaultValue(SVValueMedian);
 	
-	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable;
 	m_KernelArray.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 
 	m_KernelWidth.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);

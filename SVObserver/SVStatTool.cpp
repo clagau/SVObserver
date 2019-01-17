@@ -126,7 +126,7 @@ void SVStatisticsToolClass::init(void)
 			false, SvOi::SVResetItemTool );
 
 	// Save default attributes
-	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_DefaultAttributes = m_Value [ SV_STATS_MIN_VALUE ].ObjectAttributesAllowed();
 
 	TCHAR szFeaturesEnabled[SV_NUMBER_OF_STAT_FEATURES + 1];
@@ -135,7 +135,7 @@ void SVStatisticsToolClass::init(void)
 	for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i = (SVStatisticsFeatureEnum) (i + 1))
 	{
 		m_Value [i].SetDefaultValue(0.0, true);
-		m_Value [i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		m_Value [i].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		m_Value[i].setSaveValueFlag(false);
 
 		/*----- FEATURE LIST ---------------------------------------------------------*/
@@ -164,12 +164,12 @@ bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 {
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
-	m_OccurenceValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_VariableName.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_OccurenceValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_VariableName.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 	m_VariableGUID_OBSOLETE.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
@@ -275,7 +275,7 @@ void SVStatisticsToolClass::RestoreFeatureAttributes()
 		}
 		else
 		{
-			m_Value[iFeature].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			m_Value[iFeature].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 }
@@ -286,7 +286,7 @@ void SVStatisticsToolClass::RestoreFeatureAttributes()
 DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 {
 
-	m_Value[aIndex].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value[aIndex].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_Value[aIndex].SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
 
@@ -349,7 +349,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		}
 
 		// Make it non visible for any selection
-		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
 		// Ensure this Object's inputs get connected
 		pResult->ConnectAllInputs();
@@ -582,7 +582,7 @@ bool SVStatisticsToolClass::HasVariable() const
 	{
 		// Special Check for BlobAnalyzer/StatTool Features
 		// which don't really go away they just change attributes
-		if ( refObject.ObjectAttributesAllowed() & SvDef::SV_SELECTABLE_FOR_STATISTICS )
+		if ( refObject.ObjectAttributesAllowed() & SvPb::selectableForStatistics )
 		{
 			bRetVal = true;
 		}

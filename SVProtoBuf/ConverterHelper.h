@@ -26,10 +26,12 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
 GUID GetGuidFromProtoBytes(const std::string& strguid);
 
 HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant);
-HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant);
+/// simpleType is required for the script tester (SVRemoteControl.ocx) which can only handle VT_I4 (signed) and VT_UI4 (unsigned) for all integer types
+HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant, bool simpleType = false);
 
 // Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
 void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
 
-UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes);
+// Converts a flat vector to a recursive tree
+void convertVectorToTree(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree);
 } //namespace SvPb

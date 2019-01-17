@@ -10,7 +10,7 @@
 
 #pragma region Includes
 #include "Definitions/StringTypeDef.h"
-#include "SVContainerLibrary/SelectorItem.h"
+#include "SVProtobuf/SVRC.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -29,11 +29,11 @@ namespace SvOi
 
 	//************************************
 	/// Get the Root child selector list from a path and specified filter.
-	/// \param Inserter [out] standard to inserter the objects into the list
+	/// /param rResponse <in> response message for method
 	/// \param Path [in] Path of the root child desired. Default = "", this means all objects.
 	/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
 	//************************************
-	void getRootChildSelectorList(SvCl::SelectorItemInserter Inserter, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
+	void getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
 
 	//************************************
 	/// Add the Root child objects

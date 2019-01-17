@@ -18,7 +18,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "InspectionCommands\GetSelectorList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -222,7 +221,7 @@ namespace SvOg
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum);
 
-		return m_objectSelector.Show( rName, Title, this, GUID_NULL, SvCmd::RangeSelectorFilterType);
+		return m_objectSelector.Show( rName, Title, this, GUID_NULL, SvPb::SelectorFilter::rangeValue);
 	}
 
 	#pragma endregion Private Methods

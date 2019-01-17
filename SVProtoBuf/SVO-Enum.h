@@ -1,6 +1,6 @@
 //******************************************************************************
 /// \copyright (c) 2018 by Seidenader Maschinenbau GmbH
-/// \file SVRC-Enum.h
+/// \file SVO-Enum.h
 /// All Rights Reserved
 //******************************************************************************
 /// Include-wrapper to simplify suppressing compiler warnings.

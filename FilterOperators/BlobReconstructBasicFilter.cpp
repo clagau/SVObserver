@@ -49,7 +49,7 @@ void BlobReconstructBasicFilter::init()
 	m_isGrayOn.SetDefaultValue(BOOL(false));
 
 
-	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable;
 	m_blobColor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	m_isGrayOn.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 

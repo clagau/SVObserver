@@ -71,7 +71,7 @@ void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const s
 {
 	for(int i=0; i < rTreeItem.children_size(); i++)
 	{
-		rData += rSpacing + rTreeItem.children(i).name() + _T("\n");
+		rData += rSpacing + rTreeItem.children(i).name() + (rTreeItem.children(i).selected() ? _T("*\n") :  _T("\n"));
 		PrintTreeItems(rTreeItem.children(i), rData, rSpacing + _T("\t"));
 	}
 }
@@ -169,8 +169,9 @@ int main(int argc, char* argv[])
 				///GetObjectSelector
 				SvPb::GetObjectSelectorItemsRequest request;
 				request.set_inspectionid(_T("Inspection_1"));
-				request.set_filter(SvPb::ObjectAttributes::viewable);
+				request.set_attribute(SvPb::ObjectAttributes::viewable);
 				request.set_wholearray(true);
+				request.set_filter(SvPb::SelectorFilter::attributesAllowed);
 				request.add_types(SvPb::ObjectSelectorType::globalConstantItems);
 				request.add_types(SvPb::ObjectSelectorType::ppqItems);
 				request.add_types(SvPb::ObjectSelectorType::toolsetItems);

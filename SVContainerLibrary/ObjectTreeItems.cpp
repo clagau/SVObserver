@@ -71,7 +71,7 @@ namespace SvCl
 			if (end() != Iter)
 			{
 				rSelectorItem.m_Name = Iter->second->m_Name;
-				rSelectorItem.m_DisplayLocation = Iter->second->m_DisplayLocation;
+				rSelectorItem.m_Location = Iter->second->m_Location;
 				*Iter->second = rSelectorItem;
 			}
 		}
@@ -296,32 +296,32 @@ namespace SvCl
 		iterator Iter( end() );
 		ObjectSelectorItemPtr pSelectorItem{ new ObjectSelectorItem };
 
-		ObjectSelectorItem::CheckedStateEnum CheckedState;
+		ObjectSelectorItem::CheckedStateEnum checkedState;
 
 		if( m_SingleSelect )
 		{
-			CheckedState = ObjectSelectorItem::EmptyEnabled;
+			checkedState = ObjectSelectorItem::EmptyEnabled;
 		}
 		else
 		{
-			CheckedState = ObjectSelectorItem::UncheckedEnabled;
+			checkedState = ObjectSelectorItem::UncheckedEnabled;
 		}
-		std::string DisplayLocation(rBranchName);
-		DisplayLocation += rNodeName;
+		std::string location(rBranchName);
+		location += rNodeName;
 		pSelectorItem->m_Name =  rNodeName;
-		pSelectorItem->m_DisplayLocation = DisplayLocation;
+		pSelectorItem->m_Location = location;
 		pSelectorItem->m_Attribute = ObjectSelectorItem::Node;
-		pSelectorItem->m_CheckedState = CheckedState;
-		pSelectorItem->m_OrgCheckedState = CheckedState;
+		pSelectorItem->m_CheckedState = checkedState;
+		pSelectorItem->m_OrgCheckedState = checkedState;
 		try
 		{
 			if( end() == rParentIter )
 			{
-				Iter = insert( SVTreeElement(DisplayLocation, pSelectorItem) );
+				Iter = insert( SVTreeElement(location, pSelectorItem) );
 			}
 			else
 			{
-				Iter = rParentIter.node()->insert( SVTreeElement(DisplayLocation, pSelectorItem) );
+				Iter = rParentIter.node()->insert( SVTreeElement(location, pSelectorItem) );
 			}
 		}
 		catch( const std::exception& e )

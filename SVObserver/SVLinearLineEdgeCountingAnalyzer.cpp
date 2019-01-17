@@ -80,7 +80,7 @@ bool SVLinearEdgeCountingLineAnalyzerClass::CreateObject( const SVObjectLevelCre
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_svEdgeCount.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svEdgeCount.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

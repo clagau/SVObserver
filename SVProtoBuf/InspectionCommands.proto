@@ -4,6 +4,7 @@ package SvPb;
 import "Variant.proto";
 import "BasicStructure.proto";
 import "SVO-Enum.proto";
+import "SVRC-SVObserver.proto";
 
 //***************************************************************************
 // Help Structs
@@ -534,6 +535,8 @@ message InspectionCmdMsgs
 		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 56;
 		GetOutputRectangleRequest getOutputRectangleRequest = 57;
 		GetOutputRectangleResponse getOutputRectangleResponse = 58;
+		GetObjectSelectorItemsRequest getObjectSelectorItemsRequest = 59;
+		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 60;
 	}
 }
 

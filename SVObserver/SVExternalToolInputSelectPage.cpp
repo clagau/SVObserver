@@ -25,7 +25,7 @@
 #include "RootObject.h"
 #include "SVOGui/BoundValue.h"
 #include "TextDefinesSvO.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -259,26 +259,26 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject( std::string& rObjectName, SVRPropertyItem* pItem )
 {
-	std::string InspectionName = GetName(m_InspectionID);
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
+		m_InspectionID, SvPb::archivable, GetToolSetGUID());
+	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
-
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems}, 
-		m_InspectionID, SvDef::SV_ARCHIVABLE, GetToolSetGUID()};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
-
-	SvDef::StringSet Items;
-
-	std::string Value;
-	pItem->GetItemValue( Value );
-
-	if( !Value.empty() )
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	if (response.has_getobjectselectoritemsresponse())
 	{
-		Items.insert( Value );
-		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
+
+	std::string value;
+	pItem->GetItemValue( value );
+
+	if( !value.empty() )
+	{
+		SvDef::StringSet checkedItems;
+		checkedItems.insert( value );
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( checkedItems );
 	}
 
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
@@ -289,7 +289,8 @@ int SVExternalToolInputSelectPage::SelectObject( std::string& rObjectName, SVRPr
 
 	if( IDOK == Result )
 	{
-		rObjectName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_DisplayLocation;
+		SVObjectReference objectRef{SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
+		rObjectName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
 	}
 
 	return static_cast<int>( Result );

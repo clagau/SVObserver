@@ -28,6 +28,7 @@
 #include "Definitions/TextDefineSVDef.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -371,16 +372,10 @@ namespace SvOg
 	{
 		UpdateData( TRUE );
 
-		std::string InspectionName = m_FormulaController->GetInspectionName();
 	
-		std::string Filter = SvUl::LoadStdString( IDS_CLASSNAME_ROOTOBJECT );
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject);
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, Filter, std::string( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvDef::FqnPPQVariables, std::string( _T("") ) );
-
-		// Insert the Names of the objects selecteable for an Equation
+		// Insert the Names of the objects selectable for an Equation
 		m_FormulaController->BuildSelectableItems();
 
 		SvDef::StringSet Items;
@@ -388,14 +383,16 @@ namespace SvOg
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 
 		std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
-		Filter = SvUl::LoadStdString( IDS_FILTER );
+		std::string Filter = SvUl::LoadStdString( IDS_FILTER );
+		std::string InspectionName = m_FormulaController->GetInspectionName();
 		std::string Title = SvUl::Format( _T("%s - %s"), ToolsetOutput.c_str(), InspectionName.c_str() );
 
 		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
 		if( IDOK == Result )
 		{
-			m_ToolsetOutputVariable = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_DisplayLocation.c_str();
+			SVObjectReference ObjRef{SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
+			m_ToolsetOutputVariable = ObjRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true).c_str();
 			UpdateData( false );
 		}
 	}

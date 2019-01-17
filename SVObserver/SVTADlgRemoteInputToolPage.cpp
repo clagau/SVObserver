@@ -19,7 +19,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
@@ -101,31 +101,26 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	if( nullptr == pToolSet ) { return; }
 
-	std::string InspectionName( pToolSet->GetInspection()->GetName() );
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
+		pToolSet->GetInspection()->GetUniqueObjectID(), SvPb::archivable, pToolSet->GetUniqueObjectID());
+	SvCmd::InspectionCommandsSynchronous(pToolSet->GetInspection()->GetUniqueObjectID(), &request, &response);
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::toolsetItems},
-		pToolSet->GetInspection()->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE, pToolSet->GetUniqueObjectID()};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SVObjectReference objectRef(m_pTool->GetInputObject());
 
-	SVObjectReference ObjectRef(m_pTool->GetInputObject());
-
-	if(nullptr != ObjectRef.getObject())
+	if(nullptr != objectRef.getObject())
 	{
 		SvDef::StringSet Items;
 
-		SvCl::SelectorItem InsertItem;
-
-		InsertItem.m_Name =  ObjectRef.GetName();
-		InsertItem.m_Location = ObjectRef.GetCompleteName(true);
-
-		std::string Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
-		Items.insert( Location );
-		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
+		Items.insert(objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true));
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(Items);
 	}
 
 	std::string ToolsetOutput = SvUl::LoadStdString( IDS_SELECT_TOOLSET_OUTPUT );
@@ -136,15 +131,10 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	if( IDOK == Result )
 	{
-		const SvCl::SelectorItem& rSelectedObject = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult();
-		m_InputName = rSelectedObject.m_Location;
+		SVObjectReference ObjectRef {SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
+		m_InputName = ObjectRef.GetCompleteName(true);
 
-		SVGUID ObjectGuid(rSelectedObject.m_ItemKey);
-
-		std::string InputGuidName{ ObjectGuid.ToString() };
-		
-		InputGuidName += rSelectedObject.m_Array ? SvUl::Format(_T("[%d]"), rSelectedObject.m_ArrayIndex + 1) : std::string();
-		m_pTool->SetInputObject(InputGuidName);
+		m_pTool->SetInputObject(ObjectRef.GetGuidAndIndexOneBased());
 	}
 
 	RefreshSelectedInputName();

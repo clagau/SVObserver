@@ -87,8 +87,8 @@ bool SVLinearAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 		m_svNormalizer.SetNormalRange(m_dwMinThreshold, m_dwMaxThreshold);
 		m_svNormalizer.SetRealRange(m_dwMinThreshold, m_dwMaxThreshold);
 
-		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	return bOk;
@@ -466,7 +466,7 @@ bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::ba
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
 	//Value objects need to have the SV_VIEWABLE attribute to insert it to the monitor list
-	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() &  SvDef::SV_VIEWABLE))
+	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() &  SvPb::viewable))
 	{
 		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->GetUniqueObjectID());
 		return true;

@@ -17,7 +17,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVArchiveTool.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVIPDoc.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVInspectionProcess.h"
@@ -394,36 +394,39 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 
 void SVTADlgArchiveImagePage::ShowObjectSelector()
 {
-	std::string InspectionName( m_pTool->GetInspection()->GetName() );
 	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, SvPb::archivableImage);
+	SvCmd::InspectionCommandsSynchronous(InspectionGuid, &request, &response);
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, InspectionGuid, SvDef::SV_ARCHIVABLE_IMAGE};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	SvDef::StringSet CheckItems;
 	for (auto const& rEntry : m_List)
 	{
-		CheckItems.insert(rEntry.GetCompleteName(true));
+		CheckItems.insert(rEntry.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true));
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
+	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, m_pTool->GetInspection()->GetName());
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
+		const SvDef::StringVector& rSelectedList = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
 		//We need to check the memory requirements for the images
-		const SvCl::SelectorItemVector& rModifiedObjects = SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects();
-		for(auto const& rEntry : rModifiedObjects)
+		for(auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
 		{
-			SVGUID ImageGuid(rEntry.m_ItemKey);
-			if( !checkImageMemory( ImageGuid, rEntry.m_Selected ) )
+			SVGUID ImageGuid(rEntry);
+			bool isSelected = rSelectedList.end() != std::find(rSelectedList.begin(), rSelectedList.end(), rEntry);
+			if( !checkImageMemory( ImageGuid, isSelected))
 			{
 				//If memory check failed then the original image selection remains
 				return;
@@ -431,22 +434,10 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		}
 
 		m_List.clear();
-		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects())
+		for (auto const& rEntry : rSelectedList)
 		{
-			SVGUID ObjectGuid{ rEntry.m_ItemKey };
-
-			SVObjectClass* pObject(nullptr);
-			SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectGuid, pObject);
-
-			if (nullptr != pObject)
-			{
-				SVObjectReference ObjectRef(pObject);
-				if (rEntry.m_Array)
-				{
-					ObjectRef.SetArrayIndex(rEntry.m_ArrayIndex);
-				}
-				m_List.push_back(ObjectRef);
-			}
+			SVObjectReference ObjectRef(rEntry);
+			m_List.push_back(ObjectRef);
 		}
 
 		ReadSelectedObjects();

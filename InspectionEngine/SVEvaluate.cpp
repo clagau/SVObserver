@@ -45,7 +45,7 @@ bool SVEvaluateClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	m_isCreated = SVMathContainerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable flag
-	m_outputMathResult.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_outputMathResult.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

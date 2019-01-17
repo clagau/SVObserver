@@ -54,7 +54,7 @@ bool SVValueObjectClass<T>::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	bool l_bOk = SVObjectClass::CreateObject(rCreateStructure);
 
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
-	SetObjectAttributesAllowed(SvDef::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute);	// derived classes need to reset this
+	SetObjectAttributesAllowed(SvPb::dataDefinitionValue, SvOi::SetAttributeType::AddAttribute);	// derived classes need to reset this
 
 	return l_bOk;
 }
@@ -453,12 +453,8 @@ HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) 
 	//! If index is -1 and it is an array then get the whole array
 	if (-1 == Index && isArray())
 	{
-		std::vector<_variant_t> valueVector;
-		Result = getValues(valueVector);
-		if (S_OK == Result)
-		{
-			rValue = variantVector2SafeArray(std::move(valueVector));
-		}
+		rValue = vectorType2SafeArray();
+		Result = S_OK;
 	}
 	else
 	{
@@ -601,7 +597,7 @@ void SVValueObjectClass<T>::Initialize()
 	m_ResultSize = 1;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVValueObjectType;
 
-	SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
+	SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 }
 
 template <typename T>
@@ -774,7 +770,7 @@ T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
 template <typename T>
 std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValue) const
 {
-	std::vector<T> result;
+	ValueVector result;
 
 	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
@@ -823,18 +819,18 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 }
 
 template <typename T>
-_variant_t SVValueObjectClass<T>::variantVector2SafeArray(std::vector<_variant_t>&& valueVector) const
+_variant_t SVValueObjectClass<T>::vectorType2SafeArray() const
 {
 	_variant_t result;
 
-	const long size = static_cast<unsigned long> (valueVector.size());
+	const long size = static_cast<unsigned long> (m_ValueArray.size());
 
 	if(size > 0)
 	{
 		SAFEARRAYBOUND arrayBound;
 		arrayBound.lLbound = 0;
 		arrayBound.cElements = size;
-		VARTYPE varType = valueVector[0].vt;
+		VARTYPE varType = ValueType2Variant(m_DefaultValue).vt;
 		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
 		result.vt = varType | VT_ARRAY;
 
@@ -844,12 +840,14 @@ _variant_t SVValueObjectClass<T>::variantVector2SafeArray(std::vector<_variant_t
 			{
 				if (VT_BSTR == varType)
 				{
-					_bstr_t stringValue(valueVector[i].bstrVal);
-					::SafeArrayPutElement(result.parray, &i, stringValue.Detach());
+					_bstr_t stringValue{ValueType2Variant(m_ValueArray[i])};
+					::SafeArrayPutElement(result.parray, &i, static_cast<void*> (stringValue.Detach()));
 				}
 				else
 				{
-					::SafeArrayPutElement(result.parray, &i, &valueVector[i]);
+					//Need to make a copy because the array is const and cannot be cast to void*
+					T value = m_ValueArray[i];
+					::SafeArrayPutElement(result.parray, &i, static_cast<void*> (&value));
 				}
 			}
 		}

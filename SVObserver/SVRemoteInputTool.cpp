@@ -54,8 +54,8 @@ bool SVRemoteInputTool::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 
 	m_isCreated = l_Status;
 
-	m_MatchedValueId.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_MatchedValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_MatchedValueId.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_MatchedValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	return l_Status;
 }

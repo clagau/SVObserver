@@ -211,7 +211,7 @@ bool LoopTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_isCreated &= (nullptr != GetInspection());
 
 	// These values will not be exposed for this Tool.
-	constexpr UINT cAttribute{ SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE };
+	constexpr UINT cAttribute{ SvDef::selectableAttributes | SvPb::printable };
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 	m_Passed.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 	m_Failed.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);

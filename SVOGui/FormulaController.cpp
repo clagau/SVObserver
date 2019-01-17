@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <string>
 #include "FormulaController.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "BoundValue.h"
@@ -138,11 +138,15 @@ HRESULT FormulaController::SetEquationName(const std::string& rNewName)
 
 void FormulaController::BuildSelectableItems()
 {
-	SvCmd::SelectorOptions BuildOptions({SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems},
-										m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true);
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
+		m_InspectionID, SvPb::selectableForEquation, m_InspectionID, true);
+	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 }
 
 HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const

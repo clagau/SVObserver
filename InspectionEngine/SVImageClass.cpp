@@ -56,7 +56,7 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 
 	l_bOk &= (S_OK == UpdateFromToolInformation());
 
-	SetObjectAttributesAllowed(SvDef::SV_PUBLISH_RESULT_IMAGE | SvDef::SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute);	// add this to older configs
+	SetObjectAttributesAllowed(SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);	// add this to older configs
 
 	m_isCreated = l_bOk;
 
@@ -154,7 +154,7 @@ void SVImageClass::init()
 
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvDef::SV_ARCHIVABLE_IMAGE | SvDef::SV_PUBLISH_RESULT_IMAGE | SvDef::SV_DD_IMAGE, SvOi::SetAttributeType::OverwriteAttribute);
+	SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_ParentImageInfo.second = nullptr;
 

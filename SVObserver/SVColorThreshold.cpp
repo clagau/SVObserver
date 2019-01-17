@@ -107,7 +107,7 @@ bool SVColorThresholdClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 			m_HistogramValueArraySize = 0;
 		}
 	}
-	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::setableOnline;
 	// Set / Reset Printable Flags 
 	for (BandEnum Band : BandList)
 	{
@@ -116,10 +116,10 @@ bool SVColorThresholdClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 		m_BandThreshold[Band].m_ThresholdExclude.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	}
 
-	m_ExtentLeft.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentTop.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentWidth.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentHeight.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentTop.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 

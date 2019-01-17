@@ -17,8 +17,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVContainerLibrary/SelectorItem.h"
-#include "SVContainerLibrary/SelectorItem.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvOsl
@@ -32,27 +31,18 @@ namespace SvOsl
 		//************************************
 		enum SelectorTypeEnum
 		{
-			TypeNone				= 0x00,
-			TypeSetAttributes		= 0x01,			//! Selected items are set using the object attributes
-			TypeSingleObject		= 0x02,			//! Single selection mode can only select one item at any time
-			TypeMultipleObject		= 0x04,			//! Multiple selection mode
+			TypeNone,
+			TypeSingleObject,			//! Single selection mode can only select one item at any time
+			TypeMultipleObject,			//! Multiple selection mode
 		};
 
-		//************************************
-		//! The filter type enumerator either input or output name filter
-		//************************************
-		enum FilterEnum
-		{
-			FilterInput,
-			FilterOutput
-		};
 	#pragma endregion Declarations
 
 	public:
 	#pragma region Constructor
-		ObjectTreeGenerator();
+		ObjectTreeGenerator() = default;
 
-		virtual ~ObjectTreeGenerator();
+		virtual ~ObjectTreeGenerator() = default;
 	#pragma endregion Constructor
 
 	public:
@@ -73,7 +63,7 @@ namespace SvOsl
 		//! The method inserts tree items
 		//! \param rSelectorItems <in> const reference to a list of selector items
 		//************************************
-		void insertTreeObjects(const SvCl::SelectorItemVector& rSelectorItems);
+		void insertTreeObjects(const SvPb::TreeItem& rTreeItem);
 
 		//************************************
 		//! The method displays the object selector dialog
@@ -93,54 +83,40 @@ namespace SvOsl
 		bool setCheckItems( const SvDef::StringSet& rItems );
 
 		//************************************
-		//! The method sets the location filter
-		//! \param rType <in> reference to the filter type
-		//! \param rFilter <in> reference to the filter to set
-		//! \param rReplace <in> the reference to the replace text
-		//************************************
-		void setLocationFilter( const FilterEnum& rType, const std::string& rFilter, const std::string& rReplace );
-
-		//************************************
-		//! The method converts the location if the object is an array.
-		//! \param rItem <in>:  reference to the item to check
-		//! \return the new location with inserted name
-		//************************************
-		std::string convertObjectArrayName( const SvCl::SelectorItem& rItem ) const;
-
-		//************************************
 		//! The method gets the list of selected objects
 		//! \return the reference to the results
 		//************************************
-		inline const SvCl::SelectorItemVector& getSelectedObjects() const;
+		inline const SvDef::StringVector& getSelectedObjects() const { return m_SelectedObjects; }
 
 		//************************************
 		//! The method gets the list of modified objects
 		//! \return the reference to the modified objects
 		//************************************
-		inline const SvCl::SelectorItemVector& getModifiedObjects() const;
+		inline const SvDef::StringVector& getModifiedObjects() const { return m_ModifiedObjects; }
 
 		//************************************
 		//! The method gets the single object selection result
 		//! \return the single selected object
 		//************************************
-		inline SvCl::SelectorItem getSingleObjectResult() const;
+		std::string getSingleObjectResult() const;
 
 		//************************************
 		//! The method sets the selector type
 		//! \param rSelectorType <in> reference to the object selector type
-		//! \param Attribute <in> the attribute filter
+		//! \param helpID <in> the ID for the help file
 		//************************************
-		inline void setSelectorType( const SelectorTypeEnum& rSelectorType, int helpID = 0, UINT attributeFilter = 0);
-
-	#pragma endregion Public Methods
+		void setSelectorType( const SelectorTypeEnum& rSelectorType, int helpID = 0);
+#pragma endregion Public Methods
 
 	private:
 	#pragma region Private Methods
+		void insertChildren(const SvPb::TreeItem& rTreeItem);
+
 		//************************************
 		//! The method inserts an object into the tree list
-		//! \param rObjectRef <in> reference to the object
+		//! \param rTreeItem <in> reference to tree item to insert
 		//************************************
-		void insertTreeObject( const SvCl::SelectorItem& rItem );
+		void insertTreeObject(const SvPb::TreeItem& rTreeItem);
 
 		//************************************
 		//! The method checks if the tree has been modified
@@ -148,40 +124,16 @@ namespace SvOsl
 		//************************************
 		bool checkModifiedItems();
 
-		//************************************
-		//! The method sets the attributes of all leaf items that were modified
-		//************************************
-		void setItemAttributes();
-
-		//************************************
-		//! The method filters a location and returns the result
-		//! \param rFilters<in>, reference to the filters to be used
-		//! \param rLocation <in> reference to the location before filtering
-		//! \return filtered location
-		//************************************
-		std::string getFilteredLocation( const SvDef::TranslateMap& rFilters, const std::string& rLocation ) const;
-
-		//************************************
-		//! The method converts the location to the required format using the location filter and array index
-		//************************************
-		void convertLocation(SvCl::SelectorItem& rSelectedItem );
 	#pragma endregion Private Methods
 
 	private:
 	#pragma region Member Variables
 		SvCl::ObjectTreeItems	m_TreeContainer;	//The tree container to store all tree items
-		SvCl::SelectorItemVector m_SelectedObjects;//The selected objects
-		SvCl::SelectorItemVector m_ModifiedObjects;//The modified objects
-		SvDef::TranslateMap m_LocationInputFilters;	//The location input filters
-		SvDef::TranslateMap m_LocationOutputFilters;//The location output filters
-		SelectorTypeEnum m_SelectorType;			//The selector type
-		UINT m_AttributesFilter;					//The attributes filter
-		int m_helpID;								//The help ID for help file
-		long m_LeafCount;							//The number of leafs in the selector (only as debug information)
+		SvDef::StringVector m_SelectedObjects;		//The selected objects
+		SvDef::StringVector m_ModifiedObjects;		//The modified objects
+		SelectorTypeEnum m_SelectorType{TypeNone};	//The selector type
+		int m_helpID{0};							//The ID for the help file
+		long m_LeafCount{0L};						//The number of leafs in the selector (only as debug information)
 	#pragma endregion Member Variables
 	};
 } //namespace SvOsl
-
-#pragma region Inline
-#include "ObjectTreeGenerator.inl"
-#pragma endregion Inline

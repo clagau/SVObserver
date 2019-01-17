@@ -805,7 +805,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	pValueObject->SetName(name.c_str());
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+	pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry {new SVIOEntryHostStruct};
@@ -844,7 +844,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 	pValueObject->SetName(name.c_str());
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-	pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+	pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry {new SVIOEntryHostStruct};
@@ -3529,10 +3529,10 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rW
 {
 	const std::map<UINT, std::string> AttributeSetTypes
 	{
-		{ SvDef::SV_PUBLISHABLE, std::string(_T("Publishable Value")) },
-		{ SvDef::SV_PUBLISH_RESULT_IMAGE, std::string(_T("Publishable Image")) },
-		{ SvDef::SV_DD_VALUE, std::string(_T("Data Definition Value")) },
-		{ SvDef::SV_DD_IMAGE, std::string(_T("Data Definition Image")) }
+		{ SvPb::publishable, std::string(_T("Publishable Value")) },
+		{ SvPb::publishResultImage, std::string(_T("Publishable Image")) },
+		{ SvPb::dataDefinitionValue, std::string(_T("Data Definition Value")) },
+		{ SvPb::dataDefinitionImage, std::string(_T("Data Definition Image")) }
 	};
 
 	rWriter.StartElement(SvXml::CTAG_OBJECT_ATTRIBUTES_SET);
@@ -3630,10 +3630,10 @@ void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionP
 			SVOutputInfoListClass ToolSetOutputList;
 			pToolSet->GetOutputList(ToolSetOutputList);
 
-			ToolSetOutputList.GetSetAttributesList(SvDef::SV_PUBLISHABLE, rAttributesSetMap[SvDef::SV_PUBLISHABLE]);
-			ToolSetOutputList.GetSetAttributesList(SvDef::SV_PUBLISH_RESULT_IMAGE, rAttributesSetMap[SvDef::SV_PUBLISH_RESULT_IMAGE]);
-			ToolSetOutputList.GetSetAttributesList(SvDef::SV_DD_VALUE, rAttributesSetMap[SvDef::SV_DD_VALUE]);
-			ToolSetOutputList.GetSetAttributesList(SvDef::SV_DD_IMAGE, rAttributesSetMap[SvDef::SV_DD_IMAGE]);
+			ToolSetOutputList.GetSetAttributesList(SvPb::publishable, rAttributesSetMap[SvPb::publishable]);
+			ToolSetOutputList.GetSetAttributesList(SvPb::publishResultImage, rAttributesSetMap[SvPb::publishResultImage]);
+			ToolSetOutputList.GetSetAttributesList(SvPb::dataDefinitionValue, rAttributesSetMap[SvPb::dataDefinitionValue]);
+			ToolSetOutputList.GetSetAttributesList(SvPb::dataDefinitionImage, rAttributesSetMap[SvPb::dataDefinitionImage]);
 		}
 	}
 }
@@ -4638,11 +4638,11 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 				if (nullptr != ObjectRef.getObject())
 				{
 					///someone wants to set this variable check if this is allowed
-					bool l_AddParameter = ((ObjectRef.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE);
+					bool l_AddParameter = ((ObjectRef.ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable);
 
 					if (l_AddParameter)
 					{
-						l_AddParameter = !l_Online || ((ObjectRef.ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE) == SvDef::SV_SETABLE_ONLINE);
+						l_AddParameter = !l_Online || ((ObjectRef.ObjectAttributesAllowed() & SvPb::setableOnline) == SvPb::setableOnline);
 
 						if (!l_AddParameter)
 						{
@@ -4966,11 +4966,11 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 
 				if (nullptr != pValueObject)
 				{
-					bool Attribute = ((pValueObject->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE);
+					bool Attribute = ((pValueObject->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable);
 
 					if (Attribute)
 					{
-						Attribute = !Online || ((pValueObject->ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE) == SvDef::SV_SETABLE_ONLINE);
+						Attribute = !Online || ((pValueObject->ObjectAttributesAllowed() & SvPb::setableOnline) == SvPb::setableOnline);
 
 						if (Attribute)
 						{
@@ -5668,11 +5668,11 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 						SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), UniqueID);
 						pValue->setDescription(Description.c_str());
 						//All Global constants can be remotely settable
-						pValue->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+						pValue->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 						// If type string then remove Selectable for Equation flag.
 						if (VT_BSTR == Value.vt)
 						{
-							pValue->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute);
+							pValue->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
 						}
 					}
 				}
@@ -5689,10 +5689,10 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 
 	const std::map<std::string, UINT> AttributeSetTypes
 	{
-		{  std::string(_T("Publishable Value")), SvDef::SV_PUBLISHABLE },
-		{  std::string(_T("Publishable Image")), SvDef::SV_PUBLISH_RESULT_IMAGE },
-		{ std::string(_T("Data Definition Value")), SvDef::SV_DD_VALUE },
-		{ std::string(_T("Data Definition Image")), SvDef::SV_DD_IMAGE }
+		{  std::string(_T("Publishable Value")), SvPb::publishable },
+		{  std::string(_T("Publishable Image")), SvPb::publishResultImage },
+		{ std::string(_T("Data Definition Value")), SvPb::dataDefinitionValue },
+		{ std::string(_T("Data Definition Image")), SvPb::dataDefinitionImage }
 	};
 
 	SVTreeType::SVBranchHandle hBranch(nullptr);

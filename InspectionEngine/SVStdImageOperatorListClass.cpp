@@ -70,7 +70,7 @@ bool SVStdImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& 
 	m_isCreated &= (S_OK == m_OutputImage.InitializeImage(pInputImage)) && (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
 
 	// We do not want the ROI image showing up as an output image.
-	m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
+	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	return m_isCreated;
 }

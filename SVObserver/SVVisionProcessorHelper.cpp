@@ -175,22 +175,22 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 
 	if (0 != (rListType & SelectedValues))
 	{
-		l_ValueFilter = SvDef::SV_DD_VALUE;
+		l_ValueFilter = SvPb::dataDefinitionValue;
 	}
 
 	if (0 != (rListType & AllValues))
 	{
-		l_ValueFilter = SvDef::SV_DD_VALUE | SvDef::SV_VIEWABLE;
+		l_ValueFilter = SvPb::dataDefinitionValue | SvPb::viewable;
 	}
 
 	if (0 != (rListType & SelectedImages))
 	{
-		l_ImageFilter = SvDef::SV_DD_IMAGE;
+		l_ImageFilter = SvPb::dataDefinitionImage;
 	}
 
 	if (0 != (rListType & AllImages))
 	{
-		l_ImageFilter = SvDef::SV_DD_IMAGE | SvDef::SV_VIEWABLE;
+		l_ImageFilter = SvPb::dataDefinitionImage | SvPb::viewable;
 	}
 
 	SVInspectionProcess* pInspection = nullptr;
@@ -592,11 +592,11 @@ HRESULT SVVisionProcessorHelper::SetStandardItems(const SVNameStorageMap& rItems
 
 			if (nullptr != pValueObject)
 			{
-				bool Attribute = ((pValueObject->ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE);
+				bool Attribute = ((pValueObject->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable);
 
 				if (Attribute)
 				{
-					Attribute = !Online || ((pValueObject->ObjectAttributesAllowed() & SvDef::SV_SETABLE_ONLINE) == SvDef::SV_SETABLE_ONLINE);
+					Attribute = !Online || ((pValueObject->ObjectAttributesAllowed() & SvPb::setableOnline) == SvPb::setableOnline);
 
 					if (Attribute)
 					{
@@ -706,7 +706,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 
 	//Check using the filter if object should be included
 	bool includeValue = false;
-	if ((SvDef::SV_DD_VALUE == Filter) || (SvDef::SV_DD_IMAGE == Filter))
+	if ((SvPb::dataDefinitionValue == Filter) || (SvPb::dataDefinitionImage == Filter))
 	{
 		//This is called when selected values or images
 		includeValue = (rObject.ObjectAttributesSet() & Filter) != 0;
@@ -717,15 +717,15 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 		includeValue = (rObject.ObjectAttributesAllowed() & Filter) != 0;
 	}
 	//Is valid if it has selectable or archivable image attribute
-	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_ARCHIVABLE_IMAGE};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::archivableImage};
 	includeValue = includeValue && 0 != (rObject.ObjectAttributesAllowed() & cAttribute);
 	if (includeValue)
 	{
 		std::string Temp;
 		Temp = _T("Inspections.") + rObject.GetCompleteName();
 		rDataDef.m_Name = Temp;
-		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvDef::SV_REMOTELY_SETABLE) == SvDef::SV_REMOTELY_SETABLE;
-		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SvDef::SV_PUBLISHABLE) != 0;
+		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable;
+		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SvPb::publishable) != 0;
 		//If null we assume its an image
 		const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (&rObject);
 		if (nullptr != pValueObject)

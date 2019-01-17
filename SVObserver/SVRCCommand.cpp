@@ -26,7 +26,6 @@
 #include "SVStorageResult.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "InspectionCommands/BuildSelectableItems.h"
 #pragma endregion Includes
 
 static const TCHAR* const DefaultConfigurationName = _T("Configuration");
@@ -937,117 +936,27 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
 {
-	HRESULT Result {S_OK};
-	SvPb::GetObjectSelectorItemsResponse Response;
-
-
 	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
-	GUID instanceID = SvPb::GetGuidFromProtoBytes(rRequest.instanceid());
-	std::string inspectionName;
 
-	//If not a GUID check if it is the inspection name
+	//If not a GUID check if it is the inspection name need a copy of the request to modify it
+	SvPb::GetObjectSelectorItemsRequest modifyRequest{rRequest};
 	if(GUID_NULL == inspectionID)
 	{
-		inspectionName = rRequest.inspectionid();
+		std::string inspectionName = rRequest.inspectionid();
 		std::string ObjectName{SvDef::FqnInspections};
 		ObjectName += '.';
 		ObjectName += inspectionName;
 		SvOi::IObjectClass* pObject = SvOi::getObjectByDottedName(ObjectName);
 		inspectionID = (nullptr != pObject) ? pObject->GetUniqueObjectID() : GUID_NULL;
-	}
-	else
-	{
-		SvOi::IObjectClass* pObject = SvOi::getObject(inspectionID);
-		inspectionName = (nullptr != pObject) ? pObject->GetName() : _T("");
+		SvPb::SetGuidInProtoBytes(modifyRequest.mutable_inspectionid(), inspectionID);
 	}
 
-	SvCmd::SelectorOptions BuildOptions {{}, inspectionID, PbObjectAttributes2Attributes(rRequest.filter()), instanceID, rRequest.wholearray()};
-	for(int i=0; i < rRequest.types_size(); i++)
-	{
-		switch(rRequest.types(i))
-		{
-			case SvPb::ObjectSelectorType::globalConstantItems:
-			{
-				BuildOptions.m_ItemTypes.emplace_back(SvCmd::ObjectSelectorType::globalConstantItems);
-				break;
-			}
-			case SvPb::ObjectSelectorType::ppqItems:
-			{
-				BuildOptions.m_ItemTypes.emplace_back(SvCmd::ObjectSelectorType::ppqItems);
-				break;
-			}
-			case SvPb::ObjectSelectorType::toolsetItems:
-			{
-				BuildOptions.m_ItemTypes.emplace_back(SvCmd::ObjectSelectorType::toolsetItems);
-				break;
-			}
-			default:
-				break;
-		}
-	}
-	
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+	SvPb::InspectionCmdMsgs requestCmd, responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = modifyRequest;
+	SvCmd::InspectionCommandsSynchronous(inspectionID, &requestCmd, &responseCmd);
 
-	for(const auto& rItem : SelectorItems)
-	{
-		std::string displayLocation = rItem.m_DisplayLocation.empty() ? rItem.m_Location : rItem.m_DisplayLocation;
-		if(0 == displayLocation.find(inspectionName))
-		{
-			//Inspection name and dot must be removed
-			displayLocation = displayLocation.substr(inspectionName.size() + 1);
-		}
-		//If object is array then place an additional level with the array group name
-		if (rItem.m_Array)
-		{
-			std::string groupName = rItem.m_Name;
-			groupName.insert(0, _T("."));
-			size_t pos = displayLocation.rfind(_T('.'));
-			if (std::string::npos != pos)
-			{
-				displayLocation.insert(pos, groupName.c_str());
-			}
-		}
-		SvPb::TreeItem* pTreeItem = Response.mutable_tree();
-
-		size_t startPos{0LL};
-		size_t endPos = displayLocation.find(_T('.'), startPos);
-		std::string branchName = displayLocation.substr(startPos, endPos-startPos);
-		while(!branchName.empty())
-		{
-			bool bFound{false};
-			for(int j=0; j < pTreeItem->children_size(); j++)
-			{
-				if(pTreeItem->children(j).name() == branchName)
-				{
-					bFound = true;
-					pTreeItem = pTreeItem->mutable_children(j);
-				}
-			}
-			if(!bFound)
-			{
-				pTreeItem = pTreeItem->add_children();
-				pTreeItem->set_name(branchName);
-				//If it is the object name then add the ObjectID
-				if(endPos == std::string::npos)
-				{
-					SvPb::SetGuidInProtoBytes(pTreeItem->mutable_objectid(), rItem.m_ItemKey.ToGUID());
-				}
-			}
-			if(std::string::npos != endPos)
-			{
-				startPos = endPos + 1;
-				endPos = displayLocation.find(_T('.'), startPos);
-				branchName = displayLocation.substr(startPos, (std::string::npos == endPos) ? endPos : endPos - startPos);
-			}
-			else
-			{
-				branchName.clear();
-			}
-		}
-	}
-
-	task.finish(std::move(Response));
+	SvPb::GetObjectSelectorItemsResponse response{responseCmd.getobjectselectoritemsresponse()};
+	task.finish(std::move(response));
 }
 
 void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,

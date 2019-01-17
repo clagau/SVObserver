@@ -93,20 +93,20 @@ bool LinkedValue::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInf
 
 void LinkedValue::UpdateLinkedName()
 {
-	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 
 	if( nullptr != m_LinkedObjectRef.getObject() )
 	{
 		m_LinkedName.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType, true));
 		m_LinkedName.SetObjectAttributesAllowed( cAttribute, SvOi::SetAttributeType::AddAttribute );
-		SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+		SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	else
 	{
 		std::string Value = m_LinkedName.GetDefaultValue();
 		m_LinkedName.SetValue( Value );
 		m_LinkedName.SetObjectAttributesAllowed( cAttribute, SvOi::SetAttributeType::RemoveAttribute );
-		SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute);
+		SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	}
 }
 

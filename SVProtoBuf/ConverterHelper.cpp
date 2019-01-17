@@ -8,7 +8,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "ConverterHelper.h"
-#include "Definitions/ObjectDefines.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -56,7 +56,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 				case VT_I2:
 				case VT_I4:
 				case VT_INT:
-					pPbVariant->set_type(VT_I4);
+					pPbVariant->set_type(rVariant.vt);
 					pPbVariant->set_lval(static_cast<long> (rVariant));
 					break;
 
@@ -64,7 +64,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 				case VT_UI2:
 				case VT_UI4:
 				case VT_UINT:
-					pPbVariant->set_type(VT_UI4);
+					pPbVariant->set_type(rVariant.vt);
 					pPbVariant->set_ulval(static_cast<unsigned long> (rVariant));
 					break;
 
@@ -146,7 +146,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 	return Result;
 }
 
-HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant)
+HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant, bool simpleType /*= false*/)
 {
 	HRESULT Result {S_OK};
 
@@ -157,12 +157,36 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 			rVariant.boolVal = rPbVariant.bval();
 			break;
 
+		case VT_I1:
+			rVariant.bVal = static_cast<byte> (rPbVariant.lval());
+			break;
+
+		case VT_I2:
+			rVariant.iVal = static_cast<short> (rPbVariant.lval());
+			break;
+
 		case VT_I4:
 			rVariant.lVal = rPbVariant.lval();
 			break;
 
+		case VT_INT:
+			rVariant.intVal = static_cast<int> (rPbVariant.lval());
+			break;
+
+		case VT_UI1:
+			rVariant.cVal = static_cast<char> (rPbVariant.ulval());
+			break;
+
+		case VT_UI2:
+			rVariant.uiVal = static_cast<unsigned short> (rPbVariant.ulval());
+			break;
+
 		case VT_UI4:
 			rVariant.ulVal = rPbVariant.ulval();
+			break;
+
+		case VT_UINT:
+			rVariant.uintVal = static_cast<unsigned int> (rPbVariant.ulval());
 			break;
 
 		case VT_I8:
@@ -241,6 +265,29 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 		}
 	}
 
+	//@TODO[gra][8.20][15.01.2019]: This should be removed when the script tester can handle the variant types
+	//Simple type is required by the script tester application (SVRemoteControl.ocx)
+	if(simpleType)
+	{
+		switch (rVariant.vt)
+		{
+			case VT_I1:
+			case VT_I2:
+			case VT_INT:
+				::VariantChangeTypeEx(&rVariant, &rVariant, SvDef::LCID_USA, 0, VT_I4);
+				break;
+	
+			case VT_UI1:
+			case VT_UI2:
+			case VT_UINT:
+				::VariantChangeTypeEx(&rVariant, &rVariant, SvDef::LCID_USA, 0, VT_UI4);
+				break;
+
+			default:
+				break;
+		}
+	}
+
 	return Result;
 }
 
@@ -269,61 +316,53 @@ void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* p
 	}
 }
 
-UINT PbObjectAttributes2Attributes(const SvPb::ObjectAttributes& rAttributes)
+void convertVectorToTree(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree)
 {
-	UINT Result{SvDef::SV_NO_ATTRIBUTES};
-
-	switch(rAttributes)
+	for(const auto& rItem : rItemVector)
 	{
-		case SvPb::ObjectAttributes::noAttributes:
-			Result = SvDef::SV_NO_ATTRIBUTES;
-			break;
-		case SvPb::ObjectAttributes::viewable:
-			Result = SvDef::SV_VIEWABLE;
-			break;
-		case SvPb::ObjectAttributes::publishable:
-			Result = SvDef::SV_PUBLISHABLE;
-			break;
-		case SvPb::ObjectAttributes::archivable:
-			Result = SvDef::SV_ARCHIVABLE;
-			break;
-		case SvPb::ObjectAttributes::selectableForEquation:
-			Result = SvDef::SV_SELECTABLE_FOR_EQUATION;
-			break;
-		case SvPb::ObjectAttributes::embedable:
-			Result = SvDef::SV_EMBEDABLE;
-			break;
-		case SvPb::ObjectAttributes::selectableForStatistics:
-			Result = SvDef::SV_SELECTABLE_FOR_STATISTICS;
-			break;
-		case SvPb::ObjectAttributes::archivableImage:
-			Result = SvDef::SV_ARCHIVABLE_IMAGE;
-			break;
-		case SvPb::ObjectAttributes::printable:
-			Result = SvDef::SV_PRINTABLE;
-			break;
-		case SvPb::ObjectAttributes::remotelySetable:
-			Result = SvDef::SV_REMOTELY_SETABLE;
-			break;
-		case SvPb::ObjectAttributes::setableOnline:
-			Result = SvDef::SV_SETABLE_ONLINE;
-			break;
-		case SvPb::ObjectAttributes::extentObject:
-			Result = SvDef::SV_EXTENT_OBJECT;
-			break;
-		case SvPb::ObjectAttributes::publishResultImage:
-			Result = SvDef::SV_PUBLISH_RESULT_IMAGE;
-			break;
-		case SvPb::ObjectAttributes::dataDefinitionValue:
-			Result = SvDef::SV_DD_VALUE;
-			break;
-		case SvPb::ObjectAttributes::dataDefinitionImage:
-			Result = SvDef::SV_DD_IMAGE;
-			break;
-		default:
-			break;
-	}
-	return Result;
-}
+		std::string location = rItem.location();
+		SvPb::TreeItem* pTreeItem = pTree;
 
+		size_t startPos{0LL};
+		size_t endPos = location.find(_T('.'), startPos);
+		std::string branchName = location.substr(startPos, endPos-startPos);
+		while(!branchName.empty())
+		{
+			bool bFound{false};
+			for(int i=0; i < pTreeItem->children_size(); i++)
+			{
+				if(pTreeItem->children(i).name() == branchName)
+				{
+					bFound = true;
+					pTreeItem = pTreeItem->mutable_children(i);
+					break;
+				}
+			}
+			if(!bFound)
+			{
+				pTreeItem = pTreeItem->add_children();
+				pTreeItem->set_name(branchName);
+				//If it is the leaf then set th item
+				if(endPos == std::string::npos)
+				{
+					*pTreeItem = rItem;
+				}
+				else
+				{
+					pTreeItem->set_location(location.substr(0, endPos));
+				}
+			}
+			if(std::string::npos != endPos)
+			{
+				startPos = endPos + 1;
+				endPos = location.find(_T('.'), startPos);
+				branchName = location.substr(startPos, (std::string::npos == endPos) ? endPos : endPos - startPos);
+			}
+			else
+			{
+				branchName.clear();
+			}
+		}
+	}
+}
 } //namespace SvPB

@@ -165,7 +165,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	// Since this value object is already 
 	// exposed as an extent, we do not want 
 	// it to be embeddable.
-	const UINT cAttributes = (SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_EXTENT_OBJECT | SvDef::SV_SETABLE_ONLINE) & ~SvDef::SV_EMBEDABLE;
+	const UINT cAttributes = (SvDef::defaultValueObjectAttributes | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline) & ~SvPb::embedable;
 
 	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
@@ -176,7 +176,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	bOk &= (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
 
 	// We do not want the ROI image showing up as an output image.
-	m_LogicalROIImage.SetObjectAttributesAllowed(SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
+	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationResize);
 
@@ -189,7 +189,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	bOk &= (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true));
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute);
+	m_SourceImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
 

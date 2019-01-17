@@ -94,7 +94,7 @@ bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 	bOk &= ( S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SVImageClass>(m_InputImageAInfo)));
 
 	// Reset Printable flag
-	m_OutputImage.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_OutputImage.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

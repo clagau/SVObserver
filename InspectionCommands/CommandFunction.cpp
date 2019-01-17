@@ -10,11 +10,13 @@
 #include "StdAfx.h"
 #include "CommandFunction.h"
 #include "CommandExternalHelper.h"
+#include "ObjectInterfaces\IEnumerateValueObject.h"
 #include "ObjectInterfaces\IEquation.h"
 #include "ObjectInterfaces\IFormulaController.h"
 #include "ObjectInterfaces\ISVFilter.h"
 #include "ObjectInterfaces\IInspectionProcess.h"
 #include "ObjectInterfaces\IMask.h"
+#include "ObjectInterfaces\IRootObject.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
@@ -37,7 +39,6 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "CommandInternalHelper.h"
-#include "..\ObjectInterfaces\IEnumerateValueObject.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -964,4 +965,93 @@ HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb
 	return hr;
 }
 
+HRESULT getObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse)
+{
+	HRESULT result{S_OK};
+
+	SVGUID inspectionID {SvPb::GetGuidFromProtoBytes(rRequest.inspectionid())};
+
+	for (int i = 0; i < rRequest.types_size(); i++)
+	{
+		switch (rRequest.types(i))
+		{
+			case SvPb::ObjectSelectorType::globalConstantItems:
+			{
+				SvOi::getRootChildSelectorList(rResponse, _T(""), rRequest.attribute());
+				break;
+			}
+
+			case SvPb::ObjectSelectorType::ppqItems:
+			case SvPb::ObjectSelectorType::toolsetItems:
+			{
+				result = getSelectorList(rRequest, rResponse, rRequest.types(i));
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
+		}
+	}
+	return result;
+}
+
+HRESULT getSelectorList(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse, SvPb::ObjectSelectorType selectorType)
+{
+	HRESULT result = E_POINTER;
+
+	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
+	GUID instanceID = SvPb::GetGuidFromProtoBytes(rRequest.instanceid());
+
+	if (SvPb::ObjectSelectorType::ppqItems == selectorType)
+	{
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(inspectionID));
+		if (nullptr != pInspection)
+		{
+			pInspection->GetPPQSelectorList(rResponse, rRequest.attribute());
+			result = S_OK;
+			return result;
+		}
+	}
+
+	const GUID& rGuid = (GUID_NULL != instanceID) ? instanceID : inspectionID;
+	SvOi::IObjectClass* pObject = SvOi::getObject(rGuid);
+	if (nullptr != pObject)
+	{
+		SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
+
+		// When using the RangeSelectorFilter, the InstanceId is for the Range or Tool owning the Range
+		// which is needed to get the name for exclusion in filtering, so get the Toolset as well 
+		if (SvPb::SelectorFilter::rangeValue == rRequest.filter())
+		{
+			pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject->GetAncestorInterface(SvPb::SVToolSetObjectType));
+		}
+
+		if (nullptr == pTaskObject)
+		{
+			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
+			if (nullptr != pInspection)
+			{
+				pTaskObject = pInspection->GetToolSetInterface();
+			}
+		}
+
+		if (nullptr != pTaskObject)
+		{
+			std::string name;
+			pObject->GetCompleteNameToType(SvPb::SVToolObjectType, name);
+			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(rRequest, name);
+			if(nullptr != pFunc)
+			{
+				pTaskObject->GetSelectorList(pFunc, rResponse, rRequest.attribute(), rRequest.wholearray());
+			}
+			else
+			{
+				result = E_INVALIDARG;
+			}
+		}
+	}
+	return result;
+}
 } //namespace SvCmd

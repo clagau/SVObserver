@@ -23,7 +23,6 @@
 #include "SVToolSet.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "InspectionCommands/BuildSelectableItems.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -420,13 +419,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 	if (nullptr == pInspection) { return; }
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET, SvDef::SV_PUBLISHABLE);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, std::string(m_pTool->GetCompleteName()), std::string(_T("")));
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pCurrentAnalyzer->GetUniqueObjectID());
+	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID()};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
 	std::string Title = SvUl::Format(_T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName());
@@ -436,6 +438,14 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 
 	if (IDOK == Result)
 	{
+		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
+		{
+			SVObjectReference ObjectRef {rEntry};
+			bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
+			SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
+		}
+
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
 		PublishList.Refresh(static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()));
 

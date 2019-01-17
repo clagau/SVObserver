@@ -94,7 +94,7 @@ namespace SvOsl
 			//On initial load check if leaf value selected when in single object selection mode
 			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
 			{
-				setCurrentSelection( Iter->second->m_DisplayLocation );
+				setCurrentSelection( Iter->second->m_Location );
 				CurrentItems.insert( ParentItem );
 			}
 			++Iter;
@@ -147,7 +147,7 @@ namespace SvOsl
 
 			if( isSingleSelect() && Iter->second->isLeaf() && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState )
 			{
-				setCurrentSelection( Iter->second->m_DisplayLocation );
+				setCurrentSelection( Iter->second->m_Location );
 			}
 			++Iter;
 		}

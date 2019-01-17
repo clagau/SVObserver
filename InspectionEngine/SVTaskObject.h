@@ -23,7 +23,6 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
@@ -89,7 +88,7 @@ public:
 	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
 	bool RegisterInputObject(SvOl::SVInObjectInfoStruct* PInObjectInfo, const std::string& p_rInputName);
 
-	HRESULT GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true); /* true means AND, false means OR */
+	HRESULT GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true); /* true means AND, false means OR */
 
 	HRESULT GetNonToolsetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const;
 
@@ -116,7 +115,7 @@ public:
 	void setSkipFirstFriendFromRun() { m_bSkipFirstFriend = true; };
 
 #pragma region virtual method (ITaskObject)
-	virtual void GetSelectorList(SvOi::IsObjectInfoAllowed func, SvCl::SelectorItemInserter Inserter, UINT Attribute, bool WholeArray) const override;
+	virtual void GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;
 	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) override;
@@ -167,7 +166,7 @@ public:
 
 	void GetPrivateInputList(SvOl::SVInputInfoListClass& RInputInterface) const;
 
-	HRESULT GetImageList(SVImageClassPtrVector& p_rImageList, UINT uiAttributes = SvDef::SV_NO_ATTRIBUTES, bool bAND = true);
+	HRESULT GetImageList(SVImageClassPtrVector& p_rImageList, UINT uiAttributes = SvPb::noAttributes, bool bAND = true);
 
 	virtual HRESULT RegisterSubObject(SVObjectClass* pObject) override;
 	virtual HRESULT UnregisterSubObject(SVObjectClass* pObject) override;

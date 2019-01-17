@@ -14,7 +14,7 @@
 #include "SVDataDefinitionSheet.h"
 #include "SelectedObjectsPage.h"
 #include "SVIPDoc.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -53,13 +53,13 @@ SVDataDefinitionSheet::~SVDataDefinitionSheet()
 #pragma region Private Methods
 HRESULT SVDataDefinitionSheet::CreatePages()
 {
-	initSelectedList( &m_ValueList, SvDef::SV_DD_VALUE );
-	initSelectedList( &m_ImageList, SvDef::SV_DD_IMAGE );
+	initSelectedList( &m_ValueList, SvPb::dataDefinitionValue );
+	initSelectedList( &m_ImageList, SvPb::dataDefinitionImage );
 
-	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SvDef::SV_DD_VALUE );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SvPb::dataDefinitionValue );
 	AddPage(pValuesDlg);
 
-	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SvDef::SV_DD_IMAGE );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SvPb::dataDefinitionImage );
 	AddPage(pImagesDlg);
 
 	return S_OK;
@@ -113,20 +113,30 @@ void SVDataDefinitionSheet::OnOK()
 	EndDialog(IDOK);
 }
 
-void SVDataDefinitionSheet::initSelectedList( SvCl::SelectorItemVector* pList, UINT Attribute )
+void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT Attribute )
 {
 	if( nullptr != pList )
 	{
 		pList->clear();
-		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, m_InspectionID, Attribute};
-		SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(*pList), SvCmd::AttributesSetFilterType);
+		//This is used to retrieve the list which have the attribute set
+		SvPb::SelectorFilter filter {SvPb::SelectorFilter::attributesSet};
+
+		SvPb::InspectionCmdMsgs request, response;
+		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+			{SvPb::ObjectSelectorType::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), GUID_NULL, false, filter);
+		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+
+		if (response.has_getobjectselectoritemsresponse())
+		{
+			insertObjectsToList(response.getobjectselectoritemsresponse().tree(), pList);
+		}
 	}
 }
 
 bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 {
 	bool Result( false );
-	SvCl::SelectorItemVector* pList( nullptr);
+	SvDef::StringVector* pList( nullptr);
 
 	if( nullptr != pPage && nullptr != pPage->GetSafeHwnd() )
 	{
@@ -138,10 +148,10 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 
 		switch( pPage->getAttributeFilter() )
 		{
-		case SvDef::SV_DD_VALUE:
+		case SvPb::dataDefinitionValue:
 			pList = &m_ValueList;
 			break;
-		case SvDef::SV_DD_IMAGE:
+		case SvPb::dataDefinitionImage:
 			pList = &m_ImageList;
 			break;
 		default:
@@ -150,7 +160,7 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 
 		if( nullptr != pList )
 		{
-			const SvCl::SelectorItemVector& rCurrentList( pPage->getList() );
+			const SvDef::StringVector& rCurrentList( pPage->getList() );
 
 			if( rCurrentList != *pList )
 			{
@@ -167,31 +177,28 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 	return Result;
 }
 
-void SVDataDefinitionSheet::setAttributes( const SvCl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const
+void SVDataDefinitionSheet::setAttributes( const SvDef::StringVector& rList, UINT Attribute, bool Clear ) const
 {
 	for(auto const& rEntry : rList)
 	{
-		if (rEntry.m_Selected)
-		{
-			//The item key is the object GUID
-			SVGUID ObjectGuid{ rEntry.m_ItemKey };
-
-			SVObjectClass* pObject( nullptr );
-			SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
-
-			if ( nullptr != pObject )
-			{
-				SVObjectReference ObjectRef = pObject;
-				//If an array must set the index
-				if(rEntry.m_Array)
-				{
-					ObjectRef.SetArrayIndex(rEntry.m_ArrayIndex);
-				}
-				//Reset the attribute 
-				SvOi::SetAttributeType AddRemoveType = !Clear ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-				ObjectRef.SetObjectAttributesSet( Attribute, AddRemoveType );
-			}
-		}
+		SVObjectReference ObjectRef{rEntry};
+		//Reset the attribute 
+		SvOi::SetAttributeType AddRemoveType = !Clear ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		ObjectRef.SetObjectAttributesSet( Attribute, AddRemoveType );
 	}
 }
 
+void SVDataDefinitionSheet::insertObjectsToList(const SvPb::TreeItem& rTree, SvDef::StringVector* pList)
+{
+	for (const auto& rItem : rTree.children())
+	{
+		if(0 == rItem.children_size())
+		{
+			pList->emplace_back(rItem.objectidindex());
+		}
+		else
+		{
+			insertObjectsToList(rItem, pList);
+		}
+	}
+}

@@ -41,7 +41,7 @@
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
 #include "SVSharedMemoryLibrary\SharedMemWriter.h"
 #include "SVOGui\FormulaController.h"
-#include "SVContainerLibrary/SelectorItem.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
@@ -1048,7 +1048,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 					SVBoolValueObjectClass* pIOObject = new SVBoolValueObjectClass(this);
 					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
-					pNewObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 					break;
 				}
 				case IO_REMOTE_INPUT:
@@ -1056,7 +1056,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 					SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
 					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
-					pNewObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 					break;
 				}
 				default:
@@ -1070,7 +1070,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 			pNewObject->SetName(pObject->GetName());
 			pNewObject->SetObjectOwner(this);
-			pNewObject->SetObjectAttributesSet(pNewObject->ObjectAttributesSet() & SvDef::SV_PUBLISHABLE, SvOi::SetAttributeType::OverwriteAttribute);
+			pNewObject->SetObjectAttributesSet(pNewObject->ObjectAttributesSet() & SvPb::publishable, SvOi::SetAttributeType::OverwriteAttribute);
 			pNewObject->ResetObject();
 
 			CreateChildObject(pNewObject);
@@ -1085,7 +1085,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 		}// end if
 
 		SvOi::SetAttributeType AddRemoveType = m_PPQInputs[iList].m_IOEntryPtr->m_Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_FOR_EQUATION | SvDef::SV_VIEWABLE, AddRemoveType);
+		m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvPb::selectableForEquation | SvPb::viewable, AddRemoveType);
 
 	}// end for
 
@@ -2463,32 +2463,37 @@ HRESULT SVInspectionProcess::LastProductNotify()
 
 bool SVInspectionProcess::CheckAndResetConditionalHistory()
 {
+	//Conditional History has been deprecated, these are used to check and reset the attributes of previously saved configurations
+	constexpr UINT SV_CH_CONDITIONAL = 0x00002000;
+	constexpr UINT SV_CH_IMAGE = 0x00004000;
+	constexpr UINT SV_CH_VALUE = 0x00008000;
+
 	bool Result(false);
 
 	SVTaskObjectListClass* pToolSet = static_cast <SVTaskObjectListClass*> (m_pCurrentToolset);
 	if (nullptr != pToolSet)
 	{
 		SVObjectReferenceVector vecObjects;
-		pToolSet->GetOutputListFiltered(vecObjects, SvDef::SV_CH_CONDITIONAL | SvDef::SV_CH_VALUE, false);
+		pToolSet->GetOutputListFiltered(vecObjects, SV_CH_CONDITIONAL | SV_CH_VALUE, false);
 		if (0 < vecObjects.size())
 		{
 			SVObjectReferenceVector::iterator iter;
 			for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 			{
-				iter->SetObjectAttributesSet(SvDef::SV_CH_CONDITIONAL | SvDef::SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
+				iter->SetObjectAttributesSet(SV_CH_CONDITIONAL | SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
 		}
 
 		SVImageClassPtrVector listImages;
-		pToolSet->GetImageList(listImages, SvDef::SV_CH_IMAGE);
+		pToolSet->GetImageList(listImages, SV_CH_IMAGE);
 		int NumberOfImages = static_cast<int> (listImages.size());
 		if (0 < NumberOfImages)
 		{
 			for (int i = 0; i < NumberOfImages; i++)
 			{
 				SVObjectReference refImage(listImages[i]);
-				refImage.getObject()->SetObjectAttributesSet(SvDef::SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
+				refImage.getObject()->SetObjectAttributesSet(SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
 		}
@@ -3422,81 +3427,80 @@ SVResultListClass* SVInspectionProcess::GetResultList() const
 }
 
 #pragma region IInspectionProcess methods
-void SVInspectionProcess::GetPPQSelectorList(SvCl::SelectorItemInserter Inserter, const UINT Attribute) const
+void SVInspectionProcess::GetPPQSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, const UINT attribute) const
 {
 	SVPPQObject *pPPQ = GetPPQ();
+	SVObjectReferenceVector objectVector;
+	std::vector<SvPb::TreeItem> itemVector;
+
 	if (nullptr != pPPQ)
 	{
 		std::string PpqName(pPPQ->GetName());
 
-		SVObjectReferenceVector ObjectList;
-		SVObjectManagerClass::Instance().getTreeList(PpqName, ObjectList, Attribute);
+		SVObjectManagerClass::Instance().getTreeList(PpqName, objectVector, attribute);
 
-		std::for_each(ObjectList.begin(), ObjectList.end(), [&Inserter](const SVObjectReference& rObjectRef)->void
+		itemVector.reserve(objectVector.size());
+
+		for(auto ObjectRef : objectVector)
 		{
-			SvCl::SelectorItem InsertItem;
-
-			InsertItem.m_Name = rObjectRef.GetName().c_str();
-			InsertItem.m_ItemKey = rObjectRef.getObject()->GetUniqueObjectID();
-			if (nullptr != rObjectRef.getValueObject())
+			SvPb::TreeItem insertItem;
+			insertItem.set_name(ObjectRef.GetName());
+			if (nullptr != ObjectRef.getValueObject())
 			{
-				InsertItem.m_ItemTypeName = rObjectRef.getValueObject()->getTypeName();
+				insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
 			}
-			if (rObjectRef.isArray())
+			if (ObjectRef.isArray())
 			{
 				// add array elements
-				int iArraySize = rObjectRef.getValueObject()->getArraySize();
+				int iArraySize = ObjectRef.getValueObject()->getArraySize();
 				for (int i = 0; i < iArraySize; i++)
 				{
-					//We make a copy to be able to set the index rObjectRef is const
-					SVObjectReference ArrayObjectRef(rObjectRef);
-					ArrayObjectRef.SetArrayIndex(i);
-					InsertItem.m_Location = ArrayObjectRef.GetCompleteName(true);
-					InsertItem.m_ArrayIndex = i;
-					InsertItem.m_Array = true;
-					Inserter = InsertItem;
+					ObjectRef.SetArrayIndex(i);
+					insertItem.set_location(ObjectRef.GetCompleteName(true));
+					insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+					itemVector.emplace_back(insertItem);
 				}
 			}
 			else
 			{
-				InsertItem.m_Location = rObjectRef.GetCompleteName(true);
-				Inserter = InsertItem;
+				insertItem.set_location(ObjectRef.GetCompleteName(true));
+				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+				itemVector.emplace_back(insertItem);
 			}
-		});
+		}
 	}
 
 
+	SVObjectPtrVector PpqVariables {getPPQVariables()};
 	std::string InspectionName = GetName();
 
-	SVObjectPtrVector PpqVariables;
-	PpqVariables = getPPQVariables();
-	std::for_each(PpqVariables.begin(), PpqVariables.end(), [&Inserter, &InspectionName, &Attribute](SVObjectClass* pObject)->void
+	for (auto pObject : PpqVariables)
 	{
 		if (nullptr != pObject)
 		{
 			//Check if the attribute of the object is allowed
-			if (0 != (Attribute & pObject->ObjectAttributesAllowed()))
+			if (0 != (attribute & pObject->ObjectAttributesAllowed()))
 			{
 				SVObjectReference ObjectRef(pObject);
-				SvCl::SelectorItem InsertItem;
+				SvPb::TreeItem insertItem;
 
-				std::string Location(ObjectRef.GetCompleteName(true));
-				InsertItem.m_Name = ObjectRef.GetName();
-				InsertItem.m_Location = Location;
-				//Need to replace the inspection name with the PPQ Variables name
-				// Only DIO and Remote Input, but is all that is in this list?
-				SvUl::searchAndReplace(Location, InspectionName.c_str(), SvDef::FqnPPQVariables);
-				InsertItem.m_DisplayLocation = Location;
-				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID();
+				std::string location(ObjectRef.GetCompleteName(true));
+				insertItem.set_name(ObjectRef.GetName());
 				if (nullptr != ObjectRef.getValueObject())
 				{
-					InsertItem.m_ItemTypeName = ObjectRef.getValueObject()->getTypeName();
+					insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
 				}
-
-				Inserter = InsertItem;
+				//Need to replace the inspection name with the PPQ Variables name
+				// Only DIO and Remote Input, but is all that is in this list?
+				SvUl::searchAndReplace(location, InspectionName.c_str(), SvDef::FqnPPQVariables);
+				insertItem.set_location(location);
+				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+				itemVector.emplace_back(insertItem);
 			}
 		}
-	});
+	}
+
+	SvPb::convertVectorToTree(itemVector, rResponse.mutable_tree());
 }
 
 SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const

@@ -10,8 +10,8 @@
 #pragma region Includes
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVOResource/resource.h"
-#include "InspectionCommands/GetSelectorList.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -34,14 +34,10 @@ namespace SvOg
 		/// \param rInstanceId [in] 
 		/// \param rInstanceId [in] 
 		/// \returns bool True if selector was closed by OK-button.
-		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = GUID_NULL, SvCmd::SelectorFilterTypeEnum FilterType = SvCmd::SelectorFilterTypeEnum::AttributesAllowedFilterType);
+		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = GUID_NULL, SvPb::SelectorFilter FilterType = SvPb::SelectorFilter::attributesAllowed);
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods
-		std::string GetInspectionName() const;
-
-		std::string GetPPQName() const;
-
 		GUID GetToolSetGUID() const;
 #pragma endregion Private Methods
 

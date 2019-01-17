@@ -65,12 +65,10 @@
 #include "SVGuiExtentUpdater.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Definitions/GlobalConst.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "ToolClipboard.h"
 #include "ExtrasEngine.h"
 #include "TextDefinesSvO.h"
 #include "SVOGui/ResultTableSelectionDlg.h"
-#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -1646,15 +1644,17 @@ void SVIPDoc::OnResultsPicker()
 		if (nullptr != pInspection && nullptr != pResultList)
 		{
 			std::string InspectionName(pInspection->GetName());
+			SvPb::InspectionCmdMsgs request, response;
+			*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+				{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
+				GetInspectionID(), SvPb::viewable, GUID_NULL, true);
+			SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_RESULTS_PICKER + SvOr::HELPFILE_DLG_IDD_OFFSET);
-			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
-
-			SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::ppqItems, SvCmd::ObjectSelectorType::toolsetItems},
-				GetInspectionID(), SvDef::SV_VIEWABLE, GUID_NULL, true};
-			SvCl::SelectorItemVector SelectorItems;
-			SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+			if (response.has_getobjectselectoritemsresponse())
+			{
+				SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+			}
 
 			const SVObjectReferenceVector& rSelectedObjects(pResultList->GetSelectedObjects());
 
@@ -1667,12 +1667,13 @@ void SVIPDoc::OnResultsPicker()
 
 			if (IDOK == Result)
 			{
-				const SvCl::SelectorItemVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
+				const SvDef::StringVector& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
 				pResultList->Clear();
 
 				for (auto const& rEntry : SelectedItems)
 				{
-					pResultList->Insert(rEntry.m_Location);
+					SVObjectReference ObjRef{rEntry};
+					pResultList->Insert(ObjRef.GetCompleteName(true));
 				}
 				// Set the Document as modified
 				SetModifiedFlag();
@@ -1920,13 +1921,16 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		std::string InspectionName(pInspection->GetName());
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET, SvDef::SV_PUBLISHABLE);
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
+		SvPb::InspectionCmdMsgs request, response;
+		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+			{SvPb::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvPb::publishable);
+		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
-		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvDef::SV_PUBLISHABLE};
-		SvCl::SelectorItemVector SelectorItems;
-		SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
+		if (response.has_getobjectselectoritemsresponse())
+		{
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		}
 
 		std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
 		std::string Title = SvUl::Format(_T("%s - %s"), PublishableResults.c_str(), InspectionName.c_str());
@@ -1935,6 +1939,14 @@ void SVIPDoc::OnPublishedResultsPicker()
 
 		if (IDOK == Result)
 		{
+			for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
+			{
+				SVObjectReference ObjectRef {rEntry};
+				bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
+				SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+				ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
+			}
+
 			pInspection->GetPublishList().Refresh(GetToolSet());
 
 			// Set the Document as modified
@@ -1974,15 +1986,16 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		std::string InspectionName(pInspection->GetName());
 
-		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET, SvDef::SV_PUBLISH_RESULT_IMAGE);
+		SvPb::InspectionCmdMsgs request, response;
+		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+			{SvPb::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvPb::publishResultImage);
+		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
-		std::string RootName = SvUl::LoadStdString(IDS_CLASSNAME_ROOTOBJECT);
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, RootName, std::string(_T("")));
-
-		SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvDef::SV_PUBLISH_RESULT_IMAGE};
-		SvCl::SelectorItemVector SelectorItems;
-		SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET);
+		if (response.has_getobjectselectoritemsresponse())
+		{
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		}
 
 		std::string PublishableImages = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULT_IMAGES);
 		std::string Title = SvUl::Format(_T("%s - %s"), PublishableImages.c_str(), InspectionName.c_str());
@@ -1992,13 +2005,18 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		if (IDOK == Result)
 		{
+			for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
+			{
+				SVObjectReference ObjectRef {rEntry};
+				bool previousState = SvPb::publishResultImage == (SvPb::publishResultImage & ObjectRef.ObjectAttributesSet());
+				SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+				ObjectRef.SetObjectAttributesSet(SvPb::publishResultImage, attributeType);
+			}
 			SetModifiedFlag();
 
-			const SvCl::SelectorItemVector& rSelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects();
-
-			for (auto const& rEntry : rSelectedItems)
+			for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects())
 			{
-				SVGUID ObjectGuid {rEntry.m_ItemKey};
+				SVGUID ObjectGuid {rEntry};
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(ObjectGuid);
 				if (nullptr != pObject)
 				{
@@ -2432,6 +2450,10 @@ SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector
 		SearchName = rInspectionName + SvDef::FqnDioInput;
 		ReplaceName = SvDef::FqnPPQVariables;
 		ReplaceName += SvDef::FqnDioInput;
+		TranslateNames[SearchName] = ReplaceName;
+		ReplaceName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
+		SearchName = rInspectionName + _T(".");
+		SearchName += ReplaceName;
 		TranslateNames[SearchName] = ReplaceName;
 	}
 

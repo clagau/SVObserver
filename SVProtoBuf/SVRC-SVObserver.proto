@@ -11,6 +11,7 @@ package SvPb;
 
 import "Variant.proto";
 import "SVRC-Enum.proto";
+import "SVO-Enum.proto";
 
 ///This is the Data Definition structure returned for each item in the list
 message DataDefinition
@@ -36,9 +37,11 @@ message Value
 message TreeItem
 {
 	string name = 1;				//The name of the leaf or branch
-	bool selected = 2;				//The flag which defines if the object is selected
-	bytes objectID = 3;				//The objects UUID
-	repeated TreeItem Children = 4;	//The children of this node
+	string location = 2;			//The location which is the dotted name of leaf or branch
+	bool selected = 3;				//The flag which defines if the object is selected
+	string type = 4;				//The object type
+	string objectIDIndex = 5;		//The object ID including index for array values
+	repeated TreeItem Children = 6;	//The children of this node
 }
 
 //Retrieves the SVObserver version
@@ -294,8 +297,9 @@ message GetObjectSelectorItemsRequest
 	repeated ObjectSelectorType Types = 1;	//The list of item types required
 	string inspectionID = 2;			//The inspection GUID to query for the items or the inspection name (changed from bytes to string until inspection ID available)
 	bytes instanceID = 3;				//The object instance GUID to query if required can be GUID_NULL
-	ObjectAttributes Filter = 4;		//The object attribute to filter with
+	ObjectAttributes attribute = 4;		//The object attribute to filter the toolset items
 	bool wholeArray = 5;				//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
+	SelectorFilter filter = 6;			//The selector filter to remove certain tool set items, see enum for description
 }
 
 message GetObjectSelectorItemsResponse

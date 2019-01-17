@@ -128,9 +128,9 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 {
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::setableOnline;
 	// Set / Reset Printable Flag
-	m_Data.bvoActivated.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.bvoActivated.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.dwvoMaskType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoCurrentMaskOperator.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -160,11 +160,11 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
 
 		SvOi::SetAttributeType AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		pShapeHelper->SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType );
-		pShapeHelper->SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		pShapeHelper->SetObjectAttributesAllowed( SvPb::printable | SvPb::viewable, AddRemoveType );
+		pShapeHelper->SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.evoFillArea.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType  );
-		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_VIEWABLE, AddRemoveType  );
+		m_Data.evoFillArea.SetObjectAttributesAllowed( SvPb::printable | SvPb::viewable, AddRemoveType  );
+		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvPb::printable | SvPb::viewable, AddRemoveType  );
 	}
 	else
 	{

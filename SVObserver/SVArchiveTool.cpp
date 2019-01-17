@@ -190,11 +190,11 @@ void SVArchiveTool::initializeArchiveTool()
 	};
 	m_evoArchiveMethod.SetEnumTypes(EnumVector);
 	
-	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
-	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvDef::SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
+	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_bInitializedForRun = false;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
 	m_uiValidateCount = 0;
@@ -213,25 +213,25 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 		bOk = true;
 	}
 
-	m_stringFileArchivePath.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE & ~SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_stringFileArchivePath.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
-	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
-	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
-	m_stringImageFileRootPath.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_evoArchiveMethod.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_HeaderLabelNames.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_bvoUseHeaders.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringImageFileRootPath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_evoArchiveMethod.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_HeaderLabelNames.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_bvoUseHeaders.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
@@ -829,7 +829,7 @@ SVObjectReferenceVector SVArchiveTool::getResultArchiveList()
 		//	arrayResultsInfoObjectsToArchive.GetAt(k);
 		SVObjectReference ObjectRef = m_arrayResultsInfoObjectsToArchive.GetAt( i )->GetObjectReference();
 
-		if (ObjectRef.ObjectAttributesAllowed() & SvDef::SV_ARCHIVABLE)
+		if (ObjectRef.ObjectAttributesAllowed() & SvPb::archivable)
 		{
 			Result.push_back(ObjectRef);
 		}
@@ -899,7 +899,7 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 		SVImageClass* pImage = dynamic_cast <SVImageClass*> ( pRecordImage->GetObjectReference().getObject() );
 		if (nullptr != pImage)
 		{
-			if (SvDef::SV_ARCHIVABLE_IMAGE == (pImage->ObjectAttributesAllowed() & SvDef::SV_ARCHIVABLE_IMAGE))
+			if (SvPb::archivableImage == (pImage->ObjectAttributesAllowed() & SvPb::archivableImage))
 			{
 				Result.push_back(pImage->GetObjectInfo().GetObjectReference());
 			}

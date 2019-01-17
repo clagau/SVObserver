@@ -280,9 +280,10 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 			SVMonitorItemList remoteRejectCondList;
 
 			typedef std::insert_iterator<SVMonitorItemList> Insertor;
-			std::transform(values.begin(), values.end(), Insertor(remoteValueList, remoteValueList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
-			std::transform(images.begin(), images.end(), Insertor(remoteImageList, remoteImageList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
-			std::transform(failStatus.begin(), failStatus.end(), Insertor(remoteValueList, remoteValueList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
+			std::string (*pGetName)(const MonitoredObject&) = static_cast<std::string (*)(const MonitoredObject&)> (RemoteMonitorListHelper::GetNameFromMonitoredObject);
+			std::transform(values.begin(), values.end(), Insertor(remoteValueList, remoteValueList.begin()), pGetName);
+			std::transform(images.begin(), images.end(), Insertor(remoteImageList, remoteImageList.begin()), pGetName);
+			std::transform(failStatus.begin(), failStatus.end(), Insertor(remoteValueList, remoteValueList.begin()), pGetName);
 			for (MonitoredObjectList::const_iterator rejectCondIt = rejectCond.begin(); rejectCondIt != rejectCond.end(); ++rejectCondIt)
 			{
 				const std::string& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*rejectCondIt);

@@ -50,10 +50,10 @@ bool SVLinearImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruc
 	ResetLogicalROIImage();
 
 	l_bOk &= S_OK == UpdateLineExtentData();
-	m_svLinearData.SetObjectAttributesAllowed(SvDef::SV_VIEWABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_svLinearData.SetObjectAttributesAllowed(SvPb::viewable | SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_svMaxThreshold.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_svMinThreshold.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_svMaxThreshold.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_svMinThreshold.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
 
 	return l_bOk;

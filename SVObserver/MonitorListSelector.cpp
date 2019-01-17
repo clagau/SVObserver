@@ -8,18 +8,19 @@
 /// it uses the old interface from MonitorlistSheet which is not suited for big Monitorlist
 /// in a later version RemoteMonitorNamedList and RemoteMonitorList should be replaced by MLMoniotorListcpy
 //******************************************************************************
+
+#pragma region Includes
 #include "StdAfx.h"
 #include "MonitorListSelector.h"
 #include "SVConfigurationObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVOGui\TADialogTableParameterPage.h"
 #include "RemoteMonitorListHelper.h"
-#include "InspectionCommands\BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-
+#pragma endregion Includes
 
 
 MonitorlistSelector::MonitorlistSelector(MonitorListType eListType, bool bImage, const RemoteMonitorNamedList& rList, CWnd* pParentWnd)
@@ -82,32 +83,44 @@ int  MonitorlistSelector::DisplayDialog()
 	}
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_MONITOR_LIST_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	SvPb::InspectionCmdMsgs response;
+
 	long numInspections(0);
 	pPPQ->GetInspectionCount(numInspections);
+
 	for (int inspIndex = 0; inspIndex < numInspections; inspIndex++)
 	{
 		SVInspectionProcess* pInspection(nullptr);
 		pPPQ->GetInspection(inspIndex, pInspection);
 		if (nullptr != pInspection)
 		{
-			SvCl::SelectorItemVector SelectorItems;
 			if (m_bImage == TRUE && m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvCmd::SelectorOptions BuildOptions{{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_ARCHIVABLE_IMAGE};
-				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+				SvPb::InspectionCmdMsgs request;
+				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::archivableImage);
+				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvCmd::SelectorOptions BuildOptions{{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_VIEWABLE};
-				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
+				SvPb::InspectionCmdMsgs request;
+				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable);
+				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 			}
 			else
 			{
-				SvCmd::SelectorOptions BuildOptions{{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_VIEWABLE};
-				SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems), SvCmd::MLRejectValueFilterType);
+				SvPb::SelectorFilter filter{SvPb::SelectorFilter::monitorListRejectValue};
+				SvPb::InspectionCmdMsgs request;
+				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, GUID_NULL, false, filter);
+				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 			}
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
 		}
+	}
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(BuildCheckItems());
 	
@@ -196,26 +209,33 @@ SvDef::StringSet MonitorlistSelector::BuildCheckItems()
 	}
 	for (auto& it : *pMonitorObjectList)
 	{
-		std::string name = RemoteMonitorListHelper::GetNameFromMonitoredObject(it);
-		//Remove the base name "Inspections." which is not required for the checked items
-		name = name.substr(std::string(SvDef::FqnInspections).size()+1);
+		std::string name = RemoteMonitorListHelper::GetNameFromMonitoredObject(it, false);
 		Result.insert(name);
 	}
 	return Result;
 }
 
-MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvCl::SelectorItemVector& rList)
+MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvDef::StringVector& rList)
 {
 	MonitoredObjectList monitoredObjectList;
-	for (auto const& rEntry : rList)
+	for (const auto& rEntry : rList)
 	{
-			std::string ObjectName(SvDef::FqnInspections);
-			ObjectName += _T(".") + rEntry.m_Location;
-			const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-			if (!monitoredObj.guid.empty())
+		SVObjectReference objectRef{rEntry};
+		MonitoredObject monitoredObj;
+		monitoredObj.guid = (nullptr != objectRef.getObject()) ? objectRef.getObject()->GetUniqueObjectID() : GUID_NULL;
+		if(nullptr != objectRef.getValueObject())
+		{
+			monitoredObj.isArray = objectRef.getValueObject()->isArray();
+			monitoredObj.wholeArray = objectRef.isEntireArray();
+			if (monitoredObj.isArray)
 			{
-				monitoredObjectList.push_back(monitoredObj);
+				monitoredObj.arrayIndex = objectRef.ArrayIndex();
 			}
+		}
+		if (!monitoredObj.guid.empty())
+		{
+			monitoredObjectList.push_back(monitoredObj);
+		}
 	}
 	return monitoredObjectList;
 }

@@ -42,7 +42,7 @@ ResultViewReferences::~ResultViewReferences()
 
 bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 {
-	return (objectRef.ObjectAttributesAllowed() & SvDef::SV_VIEWABLE);
+	return (objectRef.ObjectAttributesAllowed() & SvPb::viewable);
 }
 
 bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR TagName )
@@ -340,11 +340,11 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 	// Find all outputs marked as selected for viewing
 	SVOutputInfoListClass OutputList;
 	pToolSet->GetOutputList( OutputList );
-	OutputList.GetSetAttributesList( SvDef::SV_VIEWABLE, RefVector );
+	OutputList.GetSetAttributesList( SvPb::viewable, RefVector );
 
 	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)
 	{
-		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SvDef::SV_VIEWABLE )
+		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SvPb::viewable )
 		{
 			m_ReferenceVector.push_back(*iter);
 			ResultViewItemDef item(*iter);
@@ -368,7 +368,7 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 		{
 			SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
 			SVObjectClass* pObject  = pIOEntry.m_IOEntryPtr->getObject();
-			if( nullptr != pObject && pObject->ObjectAttributesSet() & SvDef::SV_VIEWABLE )
+			if( nullptr != pObject && pObject->ObjectAttributesSet() & SvPb::viewable )
 			{
 				SVObjectReference ObjectRef(pObject);
 				ResultViewItemDef item(ObjectRef);

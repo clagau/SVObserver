@@ -111,7 +111,6 @@
   <ItemGroup>
     <None Include="ObjectSelectorPpg.inl" />
     <None Include="ObjectTreeCtrl.inl" />
-    <None Include="ObjectTreeGenerator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

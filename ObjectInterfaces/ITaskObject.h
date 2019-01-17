@@ -10,9 +10,8 @@
 //Moved to precompiled header: #include <boost\function.hpp>
 #include "IObjectClass.h"
 #include "IValueObject.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "ISVImage.h"
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtobuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/NameGuidList.h"
@@ -33,7 +32,7 @@ class SVOutputInfoListClass;
 
 namespace SvOi
 {
-	typedef boost::function<bool(const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectInfoAllowed;
+	typedef std::function<bool(const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectInfoAllowed;
 
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class ITaskObject
@@ -43,12 +42,12 @@ namespace SvOi
 
 		//************************************
 		/// Return the output list of this task object, filtered by functor.
-		/// /param func <in> functor to check the attribute
-		/// /param inserter <in> to fill the object item list
+		/// /param pFunctor <in> functor to check the attribute
+		/// /param rResponse <in> response message for method
 		/// /param Attribute <in> attribute
 		/// /param WholeArray <in> flag determines if whole arrays are used
 		//************************************
-		virtual void GetSelectorList(IsObjectInfoAllowed func, SvCl::SelectorItemInserter Inserter, UINT Attribute, bool WholeArray) const = 0;
+		virtual void GetSelectorList(IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray) const = 0;
 
 		/// Get the List of Images connected to this Task Object.
 		/// /param rList <in> The List to be populated.

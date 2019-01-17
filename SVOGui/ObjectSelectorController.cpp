@@ -9,12 +9,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectSelectorController.h"
-#include "InspectionCommands/BuildSelectableItems.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -38,27 +38,26 @@ ObjectSelectorController::~ObjectSelectorController()
 }
 #pragma endregion Constructor
 
-bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId, SvCmd::SelectorFilterTypeEnum FilterType)
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId, SvPb::SelectorFilter FilterType)
 {
 	bool result = false;
-	std::string InspectionName = GetInspectionName();
-	std::string PPQName = GetPPQName();
-
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, std::string(_T("")));
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, std::string(_T("")));
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
 
 	SVGUID InstanceGuid = m_InstanceID;
 	if (GUID_NULL == InstanceGuid)
 	{
 		InstanceGuid = GetToolSetGUID();
 	}
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::globalConstantItems, SvCmd::ObjectSelectorType::toolsetItems},
-		m_InspectionID, SvDef::SV_SELECTABLE_FOR_EQUATION, InstanceGuid};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems), FilterType);
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
+		m_InspectionID, SvPb::selectableForEquation, m_InstanceID, false, FilterType);
+	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	if (!rName.empty())
 	{
@@ -74,7 +73,9 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 
 	if (IDOK == Result)
 	{
-		rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Location.c_str();
+		SVObjectReference objectRef{SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
+
+		rName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
 		result = true;
 	}
 
@@ -82,34 +83,6 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 }
 
 #pragma endregion Private Methods
-std::string ObjectSelectorController::GetInspectionName() const
-{
-	std::string inspectionName;
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
-
-	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_InspectionID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
-	if (S_OK == hr && response.has_getobjectparametersresponse())
-	{
-		inspectionName = response.getobjectparametersresponse().name();
-	}
-	return inspectionName;
-}
-
-std::string ObjectSelectorController::GetPPQName() const
-{
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetPPQNameRequest* pPPQNameRequest = request.mutable_getppqnamerequest();
-	SvPb::SetGuidInProtoBytes(pPPQNameRequest->mutable_inspectionid(), m_InspectionID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
-	if (S_OK == hr && response.has_getppqnameresponse())
-	{
-		return response.getppqnameresponse().ppqname();
-	}
-	return {};
-}
-
 GUID ObjectSelectorController::GetToolSetGUID() const
 {
 	GUID toolsetGUID = GUID_NULL;

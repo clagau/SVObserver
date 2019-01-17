@@ -24,9 +24,6 @@
     <ClCompile Include="ObjectTreeItems.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SelectorItem.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -60,9 +57,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectGraph.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SelectorItem.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

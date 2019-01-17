@@ -138,13 +138,31 @@ std::string SVObjectReference::GetCompleteName(bool OneBased /*=false*/) const
 	return Result;
 }
 
-std::string SVObjectReference::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude, bool OneBased /*=false*/) const
+std::string SVObjectReference::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude, bool OneBased /*=false*/, bool arrayGroupName /*= false*/) const
 {
 	std::string Result;
 
 	if ( nullptr != m_pObject )
 	{
 		Result = m_pObject->GetObjectNameToObjectType(objectTypeToInclude);
+		//For object selector an extra array group name is added
+		if (arrayGroupName)
+		{
+			Result += _T(".");
+			Result += m_pObject->GetName();
+		}
+		Result += GetIndexString(OneBased);
+	}
+	return Result;
+}
+
+std::string SVObjectReference::GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeBefore, bool OneBased /*=false*/) const
+{
+	std::string Result;
+
+	if (nullptr != m_pObject)
+	{
+		Result = m_pObject->GetObjectNameBeforeObjectType(objectTypeBefore);
 		Result += GetIndexString(OneBased);
 	}
 	return Result;

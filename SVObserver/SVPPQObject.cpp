@@ -339,7 +339,7 @@ void SVPPQObject::init()
 
 	for(auto& rOutput : m_PpqOutputs)
 	{
-		rOutput.SetObjectAttributesAllowed(SvDef::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute);
+		rOutput.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 		m_childObjects.push_back(&rOutput);
 	}
 
@@ -1721,7 +1721,7 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& 
 
 		pObject->SetName(rName.c_str());
 		pObject->SetObjectOwner(this);
-		pObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		pObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		pObject->ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };

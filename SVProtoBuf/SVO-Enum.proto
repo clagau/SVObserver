@@ -286,3 +286,41 @@ enum LUTModeEnum
 	LUTFreeForm = 5;
 	LUTStretch = 6;
 }
+
+///SVObserver object attributes
+enum ObjectAttributes
+{
+	noAttributes				= 0x00000000;	//None
+	viewable					= 0x00000001;	//Object is viewable in object selector
+	publishable					= 0x00000002;	//Object value can be published
+	archivable					= 0x00000004;	//Object value is displayed in the object selector when used for archiving
+	selectableForEquation		= 0x00000008;	//Object is displayed in the object selector when used for equations
+	embedable					= 0x00000010;	//Object is an embedded value
+	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
+	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
+	printable					= 0x00000080;	//Object is printed in the configuration report
+	remotelySetable				= 0x00000100;	//Object can be set remotely
+	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online
+	extentObject				= 0x00000400;	//Object is an extent value object
+	taskObject					= 0x00000800;	//Object is a task object
+	publishResultImage			= 0x00001000;	//Object result image can be published
+	dataDefinitionValue			= 0x00010000;	//Object is selected for the data definition list
+	dataDefinitionImage			= 0x00020000;	//Object is selected for the data definition list
+};
+
+///Object selector types
+enum ObjectSelectorType
+{
+	toolsetItems = 0;				//Inspection toolset items
+	globalConstantItems = 1;		//Global constant items
+	ppqItems = 2;					//PPQ variable items
+};
+
+enum SelectorFilter
+{
+	attributesAllowed = 0;			//Object selector filter for attributes allowed
+	attributesSet = 1;				//Object selector filter for attributes set
+	rangeValue = 2;					//Object selector filter for range values
+	monitorListRejectValue = 3;		//Object selector filter for monitor list reject values
+	ppqValue = 4;					//Object selector filter for ppq value
+};

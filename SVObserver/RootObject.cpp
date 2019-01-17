@@ -22,8 +22,8 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\IRootObject.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "ExtrasEngine.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -113,16 +113,16 @@ bool RootObject::createConfigurationObject()
 	if(nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely and online but should not be selectable
-		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-		pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentResultUpdate, Update );
 	if(nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely and online but should not be selectable
-		pValueObject->SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-		pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+		pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	return true;
@@ -252,32 +252,32 @@ bool RootObject::createRootChildren()
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentModelNumber, _T("") );
 		if(nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentSerialNumber , _T("") );
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentWinKey, _T("") );
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentAutoSave, true);
 		if (nullptr != pValueObject)
 		{
 			//Need to set the attributes to settable remotely and online but should not be selectable
-			pValueObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute);
-			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		bool DiskProtectionEnabled = ExtrasEngine::Instance().ReadCurrentFbwfSettings();
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentDiskProtection, DiskProtectionEnabled);
 		if (nullptr != pValueObject)
 		{
 			//Need to set the attributes to settable remotely but should not be selectable
-			pValueObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		// Load special profile settings
 		bool StartLastConfiguration(false);
@@ -293,8 +293,8 @@ bool RootObject::createRootChildren()
 		if (nullptr != pValueObject)
 		{
 			//Need to set the attributes to settable remotely but should not be selectable
-			pValueObject->SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-			pValueObject->SetObjectAttributesAllowed(SvDef::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 
 		Result = createRootChild( SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType );
@@ -333,22 +333,26 @@ void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR P
 	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
 }
 
-void SvOi::getRootChildSelectorList(SvCl::SelectorItemInserter Inserter, LPCTSTR Path, UINT AttributesAllowedFilter)
+void SvOi::getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, LPCTSTR Path, UINT AttributesAllowedFilter)
 {
-	BasicValueObjects::ValueVector ObjectList;
+	BasicValueObjects::ValueVector objectVector;
 	
 	//To have the function available without knowing the class RootObject
-	RootObject::getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
-	for(const auto rpObject : ObjectList)
-	{
-		SvCl::SelectorItem InsertItem;
+	RootObject::getRootChildObjectList( objectVector, Path, AttributesAllowedFilter );
+	std::vector<SvPb::TreeItem> itemVector;
+	itemVector.reserve(objectVector.size());
 
-		InsertItem.m_Name = rpObject->GetName();
-		InsertItem.m_Location = rpObject->GetCompleteName();
-		InsertItem.m_ItemKey = rpObject->GetUniqueObjectID();
-		InsertItem.m_ItemTypeName = rpObject->getTypeName().c_str();
-		Inserter = InsertItem;
+	for(const auto rpObject : objectVector)
+	{
+		SvPb::TreeItem insertItem;
+		insertItem.set_name(rpObject->GetName());
+		insertItem.set_location(rpObject->GetCompleteName());
+		insertItem.set_objectidindex(rpObject->GetUniqueObjectID().ToString());
+		insertItem.set_type(rpObject->getTypeName());
+		itemVector.emplace_back(insertItem);
 	}
+
+	SvPb::convertVectorToTree(itemVector, rResponse.mutable_tree());
 }
 
 void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)

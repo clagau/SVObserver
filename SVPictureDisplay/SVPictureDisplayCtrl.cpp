@@ -468,23 +468,24 @@ HRESULT SVPictureDisplayCtrl::SelectObject(LONG p_lTab, LONG p_lHandle)
 
 LRESULT SVPictureDisplayCtrl::OnObjectSelected( WPARAM wParam, LPARAM lParam )
 {
-	long l_lTab = static_cast<long>( wParam );
-	long l_lHandle = static_cast<long>( lParam );
-	long l_lX1;
-	long l_lY1;
-	long l_lX2;
-	long l_lY2;
-	if( l_lHandle > 0 )
+	long lTab = static_cast<long>( wParam );
+	long lHandle = static_cast<long>( lParam );
+
+	if( lHandle > 0 )
 	{
-		if( S_OK == m_TabDisplay.GetObjectCoords( l_lTab, l_lHandle, l_lX1, l_lY1, l_lX2, l_lY2 ) )
+		long lX1 {0L};
+		long lY1 {0L};
+		long lX2 {0L};
+		long lY2 {0L};
+		if( S_OK == m_TabDisplay.GetObjectCoords( lTab, lHandle, lX1, lY1, lX2, lY2 ) )
 		{
-			ObjectSelected( l_lTab, l_lHandle, l_lX1, l_lY1, l_lX2, l_lY2 );
+			ObjectSelected( lTab, lHandle, lX1, lY1, lX2, lY2 );
 		}
 	}
 	else
 	{
 		//Fire Event with Handle == -1 to show deselection
-		ObjectSelected( l_lTab, -1, 0, 0, 0, 0);
+		ObjectSelected( lTab, -1, 0, 0, 0, 0);
 	}
 	return 0L;
 }

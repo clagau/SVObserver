@@ -681,7 +681,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	if( nullptr != pValueObject )
 	{
 		sLabel = pObject->GetName();
-		if ( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE )
+		if ( pObject->ObjectAttributesAllowed() & SvPb::printable )
 		{
 			bool bGotValue = false;
 
@@ -701,7 +701,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
 				PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
 			}
-		}   // end if ( pObj->uObjectAttributesAllowed & SvDef::SV_PRINTABLE )
+		}   // end if ( pObj->uObjectAttributesAllowed & SvPb::printable )
 	}  // end if( nullptr != pValueObject )
 	else
 	{
@@ -709,7 +709,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		{
 			if ( nullptr != dynamic_cast <SVShapeMaskHelperClass*> (pObject) )
 			{
-				if ( !( pObject->ObjectAttributesAllowed() & SvDef::SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
+				if ( !( pObject->ObjectAttributesAllowed() & SvPb::printable) )	// EB 20050818 - hack this instead of doing it right
 				{
 					break;
 				}

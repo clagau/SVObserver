@@ -9,8 +9,8 @@
 
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SelectedObjectsPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
@@ -18,7 +18,7 @@ class SelectedObjectsPage : public CPropertyPage, public SvOg::ISVPropertyPageDi
 	enum { IDD = IDD_SELECTED_OBJECTS_PAGE };
 #pragma region Constructor
 public:
-	SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvCl::SelectorItemVector& rList, UINT AttributeFilters, int id = IDD );
+	SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvDef::StringVector& rList, UINT AttributeFilters, int id = IDD );
 	virtual ~SelectedObjectsPage();
 #pragma endregion Constructor
 
@@ -29,7 +29,7 @@ public:
 	virtual BOOL OnSetActive() override;
 	virtual BOOL OnKillActive() override;
 
-	const SvCl::SelectorItemVector& getList() const { return m_List; };
+	const SvDef::StringVector& getList() const { return m_List; };
 	UINT getAttributeFilter() const { return m_AttributeFilter; };
 
 #pragma endregion Public Methods
@@ -54,9 +54,9 @@ private:
 
 #pragma region Member variables
 private:
-	std::string m_InspectionName;					//Inspection name for title
+	std::string m_InspectionName;				//Inspection name for title
 	SVGUID m_InspectionID;						//Unique Instance ID for the Inspection
-	SvCl::SelectorItemVector m_List;			//The selected list makes a copy of the list in the sheet
+	SvDef::StringVector m_List;					//The selected list makes a copy of the list in the sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
 	CImageList m_StateImageList;				//The state image list
 	CButton m_Select;							//The tree select button

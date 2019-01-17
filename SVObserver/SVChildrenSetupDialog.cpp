@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
 #include "InspectionEngine/SVTaskObjectList.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVOGui/SVShowDependentsDialog.h"
@@ -320,13 +320,17 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 {
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, SvDef::SV_PUBLISHABLE, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(m_pParentOwner->GetCompleteName()), std::string( _T("") ) );
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(),
+		SvPb::publishable, m_pParentObject->GetUniqueObjectID());
+	SvCmd::InspectionCommandsSynchronous(m_pDocument->GetInspectionID(), &request, &response);
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(), SvDef::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID()};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
 	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pParentOwner->GetName() );
@@ -335,6 +339,14 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 
 	if( IDOK == Result )
 	{
+		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
+		{
+			SVObjectReference ObjectRef{rEntry};
+			bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
+			SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
+		}
+		
 		// refresh the publish list
 		if( m_pDocument )
 		{

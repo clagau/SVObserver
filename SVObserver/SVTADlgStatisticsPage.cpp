@@ -22,7 +22,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource/ConstGlobalSvOr.h"
@@ -289,13 +289,16 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 	if( nullptr == pInspection ) { return; }
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET, SvDef::SV_PUBLISHABLE);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, std::string(pInspection->GetToolSet()->GetCompleteName()), std::string( _T("") ) );
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pTool->GetUniqueObjectID());
+	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID()};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
 	std::string Title = SvUl::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
@@ -305,6 +308,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 
 	if( IDOK == Result )
 	{
+		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
+		{
+			SVObjectReference ObjectRef {rEntry};
+			bool previousState = SvPb::publishable == (SvPb::publishable & ObjectRef.ObjectAttributesSet());
+			SvOi::SetAttributeType attributeType = previousState ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
+		}
+
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
 		PublishList.Refresh( static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()) );
 		if (m_pParent)
@@ -326,26 +337,22 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SVObjectClass* pInspection( m_pTool->GetInspection() );
 	if( nullptr == pInspection ) { return; }
 
-	std::string InspectionName( pInspection->GetName() );
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::selectableForStatistics, m_pToolSet->GetUniqueObjectID());
+	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject, IDD_OUTPUT_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvDef::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID()};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
-
-	SVObjectReference ObjectRef(m_pTool->GetVariableSelected());
-	if (nullptr != ObjectRef.getObject())
+	SVObjectReference objectRef(m_pTool->GetVariableSelected());
+	if (nullptr != objectRef.getObject())
 	{
 		SvDef::StringSet Items;
-		SvCl::SelectorItem InsertItem;
-		InsertItem.m_Name = ObjectRef.GetName();
-		InsertItem.m_Location = ObjectRef.GetCompleteName(true);
-
-		std::string Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName(InsertItem);
-		Items.insert(Location);
+		Items.insert(objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true));
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(Items);
 	}
 
@@ -357,12 +364,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 
 	if( IDOK == Result )
 	{
-		SVGUID ResultObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ItemKey);
-		SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(ResultObjectGuid) };
-		if (SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_Array)
-		{
-			ObjectRef.SetArrayIndex(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().m_ArrayIndex);
-		}
+		SVObjectReference ObjectRef{SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
 		m_strVariableToMonitor = ObjectRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true).c_str();
 		m_pTool->SetVariableSelected(ObjectRef.GetCompleteName(true));
 		m_strFullNameOfVariable = ObjectRef.GetCompleteName(true).c_str();

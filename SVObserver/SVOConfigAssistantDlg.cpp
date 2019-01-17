@@ -4245,10 +4245,10 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvDef::GlobalConflictPairVe
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );
 						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
-						pGlobalObject->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+						pGlobalObject->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 						if( Iter->second.m_Value.vt == VT_BSTR )
 						{
-							pGlobalObject->SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
+							pGlobalObject->SetObjectAttributesAllowed( SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute );
 						}
 					}
 				}

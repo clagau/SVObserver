@@ -20,12 +20,12 @@
 ///struct holds information for one entry in Monitorlist 
 struct MonitoredObject
 {
-	SVGUID guid;
-	bool isArray;
-	bool wholeArray;
-	long arrayIndex;
+	SVGUID guid{GUID_NULL};
+	bool isArray{false};
+	bool wholeArray{false};
+	long arrayIndex{-1};
 
-	MonitoredObject() : isArray(false), wholeArray(false), arrayIndex(-1) {}
+	MonitoredObject() = default;
 	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
 
 	bool isSimilar(const MonitoredObject& rhs) const

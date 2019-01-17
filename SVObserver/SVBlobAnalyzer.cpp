@@ -189,7 +189,7 @@ void SVBlobAnalyzerClass::init()
 		m_Value[i].SetDefaultValue(0, true);
 		m_Value[i].setSaveValueFlag(false);
 		m_Value[i].setSaveDefaultValueFlag(true);
-		m_Value[i].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		m_Value[i].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 
 		m_guidResults[i] = GUID_NULL;
 	}
@@ -329,7 +329,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 		return -SvStl::Err_16112 ; 
 	}
 
-	pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+	pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Ensure this Object's inputs get connected
 	pResult->ConnectAllInputs();
@@ -422,7 +422,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			break;
 		}
 		
-		pValue->SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Ensure this Object's inputs get connected
 		m_pResultBlob->ConnectAllInputs();
@@ -772,27 +772,27 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 		if (FeaturesEnabled[i] == '0')
 		{
-			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+			m_Value[i].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		else
 		{
-			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::AddAttribute );
+			m_Value[i].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute );
 		}
 
-		if ( SvDef::SV_NO_ATTRIBUTES != m_Value[i].ObjectAttributesAllowed() )
+		if ( SvPb::noAttributes != m_Value[i].ObjectAttributesAllowed() )
 		{
 			//! Required for older configurations
-			m_Value[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+			m_Value[i].SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
 	//! Required for older configurations
-	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_SortFeature.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_SortAscending.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_bExcludeFailed.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lvoNumberOfBlobsFound.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_SortFeature.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_SortAscending.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_bExcludeFailed.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_lvoNumberOfBlobsFound.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -820,7 +820,7 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 				}
 				else
 				{
-					m_Value[i].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+					m_Value[i].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 					FreeResult(i);
 					RemoveEmbeddedObject(&m_Value[i]);
 				}
@@ -844,7 +844,7 @@ void SVBlobAnalyzerClass::EnableFeature(int Feature)
 	);
 	if (m_embeddedList.end() == Iter)
 	{
-		m_Value[Feature].SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute);
+		m_Value[Feature].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].rEmbeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
 		AllocateResult(Feature);
 	}
@@ -1778,9 +1778,9 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( SvOl::SVInputInfoListClass* PI
 	{
 		UINT uiAttributes = m_Value[i].ObjectAttributesAllowed();
 		bool l_bOk = ( _T('1') == FeaturesEnabled[i] &&
-			( uiAttributes & SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) != SvDef::SV_NO_ATTRIBUTES ) ||
+			( uiAttributes & SvDef::defaultValueObjectAttributes) != SvPb::noAttributes ) ||
 			( _T('0') == FeaturesEnabled[i] &&
-			(uiAttributes & SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) == SvDef::SV_NO_ATTRIBUTES );
+			(uiAttributes & SvDef::defaultValueObjectAttributes) == SvPb::noAttributes );
 
 		// if this ASSERT fires, verify that the attributes are being set correctly!!!!!!! jms & eb 2006 01 20
 		ASSERT( !IsCreated() || l_bOk || (i == SvOi::SV_CENTER_X_SOURCE || i == SvOi::SV_CENTER_Y_SOURCE) );

@@ -123,13 +123,13 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	}
 
 	//set attributes for Upper and Lower Threshold values.
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLinearEdges.SetObjectAttributesAllowed( SvDef::SV_VIEWABLE | SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearEdges.SetObjectAttributesAllowed( SvPb::viewable | SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 
 	BOOL bUpper = FALSE;
@@ -139,10 +139,10 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
 
 	SVDoubleValueObjectClass* pLinearData = SvOl::getInput<SVDoubleValueObjectClass>(m_InputLinearData);
 	if (nullptr != pLinearData)
@@ -176,10 +176,10 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	m_svUpperThresholdValue.setSaveValueFlag(TRUE == bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
 
 	if( S_OK != GetPixelDepth() )
 	{

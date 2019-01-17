@@ -94,10 +94,10 @@ void SVObjectClass::init()
 
 	m_outObjectInfo.SetObject(this);
 
-	m_ObjectAttributesAllowed = SvDef::SV_NO_ATTRIBUTES; 
+	m_ObjectAttributesAllowed = SvPb::noAttributes; 
 	m_ObjectAttributesSet.resize( 1 );
-	m_ObjectAttributesSet[0]  = SvDef::SV_NO_ATTRIBUTES;
-	m_DefaultObjectAttributesSet = SvDef::SV_NO_ATTRIBUTES;
+	m_ObjectAttributesSet[0]  = SvPb::noAttributes;
+	m_DefaultObjectAttributesSet = SvPb::noAttributes;
 }
 
 /*

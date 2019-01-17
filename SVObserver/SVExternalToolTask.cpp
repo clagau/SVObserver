@@ -232,38 +232,38 @@ void SVExternalToolTask::SetAllAttributes()
 	for ( i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumInputValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_VIEWABLE | SvDef::SV_SETABLE_ONLINE, AddRemoveType );
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION , AddRemoveType );
+		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::viewable | SvPb::setableOnline, AddRemoveType );
+		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvPb::selectableForEquation , AddRemoveType );
 	}
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_aResultImages[i].SetObjectAttributesAllowed( SvDef::SV_ARCHIVABLE_IMAGE, AddRemoveType );
+		m_aResultImages[i].SetObjectAttributesAllowed( SvPb::archivableImage, AddRemoveType );
 	}
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, AddRemoveType );
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvDef::SV_SELECTABLE_FOR_EQUATION, AddRemoveType );
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvPb::viewable, AddRemoveType );
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvPb::selectableForEquation, AddRemoveType );
 	}
 
 	for ( i=0; i < static_cast<long>(m_Data.m_aDllDependencies.size()); i++)
 	{
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
 		std::string Temp;
 		m_Data.m_aDllDependencies[i].GetValue( Temp );
 		SvOi::SetAttributeType AddRemoveType = !Temp.empty() ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, AddRemoveType );
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
 	}
-	m_Data.m_voToolVersion.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_Data.m_voToolName.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_Data.m_voDllPath.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.m_voToolVersion.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_Data.m_voToolName.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_Data.m_voDllPath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 }
 
 SVExternalToolTask::~SVExternalToolTask()
@@ -1372,7 +1372,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 			throw -12347;
 		}
 		
-		constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+		constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 		pValue->SetObjectAttributesAllowed( cAttribute, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Ensure this Object's inputs get connected

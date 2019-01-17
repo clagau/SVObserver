@@ -11,19 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttributesAllowedFilter.h" />
-    <ClInclude Include="AttributesSetFilter.h" />
+    <ClInclude Include="ObjectSelectorFilter.h" />
     <ClInclude Include="CommandFunction.h" />
     <ClInclude Include="CommandExternalHelper.h" />
     <ClInclude Include="CommandInternalHelper.h" />
     <ClInclude Include="GetMaskData.h" />
-    <ClInclude Include="GetPPQSelectorList.h" />
-    <ClInclude Include="GetSelectorList.h" />
     <ClInclude Include="InspectionCommand_protoBuf.h" />
-    <ClInclude Include="MLRejectValueFilter.h" />
-    <ClInclude Include="BuildSelectableItems.h" />
-    <ClInclude Include="RangeSelectorFilter.h" />
-    <ClInclude Include="SelectorOptions.h" />
     <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

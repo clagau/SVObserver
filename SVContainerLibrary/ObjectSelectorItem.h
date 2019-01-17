@@ -15,12 +15,12 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SelectorItem.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvCl
 {
-	struct ObjectSelectorItem : public SelectorItem
+	struct ObjectSelectorItem
 	{
 	public:
 	#pragma region Declarations
@@ -53,19 +53,18 @@ namespace SvCl
 	#pragma endregion Declarations
 	public:
 	#pragma region Constructor
-		ObjectSelectorItem();
+		ObjectSelectorItem() = default;
 
-		ObjectSelectorItem( const ObjectSelectorItem& rObject ) = default;
+		explicit ObjectSelectorItem(const ObjectSelectorItem& rObject) = default;
+		explicit ObjectSelectorItem(ObjectSelectorItem&& rObject) = default;
+		explicit ObjectSelectorItem(const SvPb::TreeItem& rTreeItem);
 
-		virtual ~ObjectSelectorItem();
+		virtual ~ObjectSelectorItem() = default;
 	#pragma endregion Constructor
 
 	public:
 	#pragma region Public Methods
-		void Clear();
-
-		const ObjectSelectorItem& operator=(const ObjectSelectorItem& rRhs);
-		const ObjectSelectorItem& operator=(const SelectorItem& rRhs);
+		ObjectSelectorItem& operator=(const ObjectSelectorItem& rRhs) = default;
 		bool operator==( const ObjectSelectorItem& rRhs ) const;
 		bool operator!=( const ObjectSelectorItem& rRhs ) const;
 
@@ -84,12 +83,16 @@ namespace SvCl
 
 	#pragma region Member Variables
 	public:
-		HTREEITEM			m_TreeItem;					//the corresponding tree item handle
-		AttributeEnum		m_Attribute;				//The item attribute
-		int					m_IconNumber;				//The corresponding item image number
-		bool				m_Modified;					//Modified flag
-		CheckedStateEnum	m_CheckedState;				//The item checked state
-		CheckedStateEnum	m_OrgCheckedState;			//The item original checked state
+		std::string			m_Name;						//The name of the item
+		std::string			m_Location;					//The location of the item
+		std::string			m_ItemTypeName;				//The name of the data type of the item
+		std::string			m_ItemKey;					//The item key
+		HTREEITEM			m_TreeItem{nullptr};		//the corresponding tree item handle
+		AttributeEnum		m_Attribute{AttributeNone};	//The item attribute
+		int					m_IconNumber{0};			//The corresponding item image number
+		bool				m_Modified{false};			//Modified flag
+		CheckedStateEnum	m_CheckedState{EmptyEnabled};		//The item checked state
+		CheckedStateEnum	m_OrgCheckedState{EmptyEnabled};	//The item original checked state
 	#pragma endregion Member Variables
 	};
 

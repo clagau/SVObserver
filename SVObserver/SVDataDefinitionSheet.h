@@ -13,12 +13,16 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\SVGUID.h"
-
-#include "SVContainerLibrary/SelectorItem.h"
+#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SelectedObjectsPage;
 class SVIPDoc;
+
+namespace SvPb
+{
+class TreeItem;
+}
 
 class SVDataDefinitionSheet : public CPropertySheet
 {
@@ -42,18 +46,19 @@ private:
 	void DestroyPages();
 	void OnOK();
 
-	void initSelectedList( SvCl::SelectorItemVector* pList, UINT Attribute );
+	void initSelectedList(SvDef::StringVector* pList, UINT Attribute );
 	bool setChangedData( SelectedObjectsPage* const pPage );
-	void setAttributes( const SvCl::SelectorItemVector& rList, UINT Attribute, bool Clear ) const;
+	void setAttributes( const SvDef::StringVector& rList, UINT Attribute, bool Clear ) const;
+	void insertObjectsToList(const SvPb::TreeItem& rTree, SvDef::StringVector* pList);
 #pragma endregion Private Methods
 
 #pragma region Member variables
 private:
 	SVIPDoc* m_pDoc;
-	std::string m_InspectionName;				//Name of the Inspection
-	SVGUID m_InspectionID;					//UniqueID of the Inspection
-	SvCl::SelectorItemVector m_ValueList;	//The selected value list 
-	SvCl::SelectorItemVector m_ImageList;	//The selected image list
+	std::string m_InspectionName;		//Name of the Inspection
+	SVGUID m_InspectionID;				//UniqueID of the Inspection
+	SvDef::StringVector m_ValueList;	//The selected value list 
+	SvDef::StringVector m_ImageList;	//The selected image list
 #pragma endregion Member variables
 };
 

@@ -24,7 +24,7 @@ CComVariant  GetComVariant(const SvPb::Variant& rPbVariant)
 	CComVariant Result;
 
 	_variant_t Variant;
-	SvPb::ConvertProtobufToVariant(rPbVariant, Variant);
+	SvPb::ConvertProtobufToVariant(rPbVariant, Variant, true);
 	Result = Variant;
 
 	return Result;

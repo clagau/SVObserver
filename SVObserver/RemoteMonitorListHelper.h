@@ -23,8 +23,9 @@ public:
 	/// returns a monitorobject for the objectname 
 	static MonitoredObject GetMonitoredObjectFromName(const std::string& name);
 	/// GetTHe name of the Monitorobject
-	static std::string GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject);
-	
+	static std::string GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject) { return GetNameFromMonitoredObject(rMonitoredObject, true); }
+	static std::string GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject, bool completeName);
+
 private:	
 	
 	static void AddMonitorObject2MonitorListcpy(const MonitoredObjectList& values, SvSml::ListType::typ listtype,SvSml::MonitorListCpy& molcpy );

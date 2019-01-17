@@ -161,7 +161,7 @@ bool SVWindowToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 	
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	
 	if(bOk)
 	{

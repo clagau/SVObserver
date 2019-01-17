@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <numeric>
 #include "SVTADlgArchiveResultsPage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVArchiveTool.h"
 #include "SVIPDoc.h"
@@ -266,25 +266,27 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 
 void SVTADlgArchiveResultsPage::ShowObjectSelector()
 {
-	std::string InspectionName( m_pTool->GetInspection()->GetName() );
 	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string( _T("") ) );
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, SvPb::archivable);
+	SvCmd::InspectionCommandsSynchronous(InspectionGuid, &request, &response);
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, InspectionGuid, SvDef::SV_ARCHIVABLE};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	SvDef::StringSet CheckItems;
 	for (auto const& rEntry : m_List)
 	{
-		CheckItems.insert(rEntry.GetCompleteName(true));
+		CheckItems.insert(rEntry.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true));
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
+	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, m_pTool->GetInspection()->GetName() );
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
@@ -293,20 +295,8 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 		m_List.clear();
 		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects())
 		{
-			SVGUID ObjectGuid{ rEntry.m_ItemKey };
-
-			SVObjectClass* pObject(nullptr);
-			SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectGuid, pObject);
-
-			if (nullptr != pObject)
-			{
-				SVObjectReference ObjectRef(pObject);
-				if (rEntry.m_Array)
-				{
-					ObjectRef.SetArrayIndex(rEntry.m_ArrayIndex);
-				}
-				m_List.push_back(ObjectRef);
-			}
+			SVObjectReference ObjectRef(rEntry);
+			m_List.push_back(ObjectRef);
 		}
 		ReadSelectedObjects();
 	}

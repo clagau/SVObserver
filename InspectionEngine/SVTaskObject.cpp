@@ -22,7 +22,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "ObjectInterfaces/IRootObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
@@ -31,6 +30,7 @@
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVNameVariantList.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -62,7 +62,7 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 
 	m_bUseOverlays = true;	// most objects use overlays; must change if needed in derived classes
 
-	SetObjectAttributesAllowed(SvDef::SV_TASK_OBJECT, SvOi::SetAttributeType::AddAttribute);
+	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
@@ -350,69 +350,71 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 }
 
 #pragma region virtual method (ITaskObject)
-void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed isAllowed, SvCl::SelectorItemInserter inserter, UINT Attribute, bool WholeArray) const
+void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray) const
 {
-	if (isAllowed)
+	if (pFunctor)
 	{
 		SVOutputInfoListClass OutputList;
 		GetOutputList(OutputList);
 
+		std::vector<SvPb::TreeItem> itemVector;
+		itemVector.reserve(OutputList.GetSize());
+
 		// Filter the list
-		std::for_each(OutputList.begin(), OutputList.end(), [&inserter, &isAllowed, &Attribute, &WholeArray](SVOutputInfoListClass::value_type info)->void
+		for(const auto* pOutputInfo : OutputList)
 		{
-			SVObjectReference ObjectRef = info->GetObjectReference();
-			if (ObjectRef.isArray() || isAllowed(info->getObject(), Attribute, -1))
+			SVObjectReference ObjectRef = pOutputInfo->GetObjectReference();
+			if (ObjectRef.isArray() || pFunctor(ObjectRef.getObject(), attribute, -1))
 			{
-				SvCl::SelectorItem InsertItem;
+				SvPb::TreeItem insertItem;
 
-				InsertItem.m_Name = ObjectRef.GetName();
-				InsertItem.m_ItemKey = ObjectRef.getObject()->GetUniqueObjectID().ToString();
-
-				SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
-				if (nullptr != pValueObject)
+				if (nullptr != ObjectRef.getValueObject())
 				{
-					InsertItem.m_ItemTypeName = pValueObject->getTypeName();
+					insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
 				}
 
 				if (ObjectRef.isArray())
 				{
-					if (WholeArray && isAllowed(info->getObject(), Attribute, -1))
+					if (wholeArray && pFunctor(ObjectRef.getObject(), attribute, -1))
 					{
 						ObjectRef.SetEntireArray();
+						insertItem.set_name(ObjectRef.GetName(true));
 						UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-						InsertItem.m_Location = ObjectRef.GetCompleteName(true);
-						//! Array index -1 and array true means i is the whole array
-						InsertItem.m_ArrayIndex = -1;
-						InsertItem.m_Array = true;
-						InsertItem.m_Selected = (AttributesSet & Attribute) == Attribute;
-						inserter = InsertItem;
+						insertItem.set_location(ObjectRef.GetObjectNameToObjectType(GetObjectType(), true, true));
+						insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+						insertItem.set_selected((AttributesSet & attribute) == attribute);
+						itemVector.emplace_back(insertItem);
 					}
 
 					// add array elements
 					int iArraySize = ObjectRef.getValueObject()->getArraySize();
 					for (int i = 0; i < iArraySize; i++)
 					{
-						if (isAllowed(info->getObject(), Attribute, i))
+						if (pFunctor(ObjectRef.getObject(), attribute, i))
 						{
 							ObjectRef.SetArrayIndex(i);
+							insertItem.set_name(ObjectRef.GetName(true));
 							UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-							InsertItem.m_Location = ObjectRef.GetCompleteName(true);
-							InsertItem.m_Array = true;
-							InsertItem.m_ArrayIndex = i;
-							InsertItem.m_Selected = (AttributesSet & Attribute) == Attribute;
-							inserter = InsertItem;
+							insertItem.set_location(ObjectRef.GetObjectNameToObjectType(GetObjectType(), true, true));
+							insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+							insertItem.set_selected((AttributesSet & attribute) == attribute);
+							itemVector.emplace_back(insertItem);
 						}
 					}
 				}
 				else
 				{
+					insertItem.set_name(ObjectRef.GetName());
 					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-					InsertItem.m_Location = ObjectRef.GetCompleteName(true);
-					InsertItem.m_Selected = (AttributesSet & Attribute) == Attribute;
-					inserter = InsertItem;
+					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(GetObjectType(), true));
+					insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+					insertItem.set_selected((AttributesSet & attribute) == attribute);
+					itemVector.emplace_back(insertItem);
 				}
 			}
-		});
+		}
+
+		SvPb::convertVectorToTree(itemVector, rResponse.mutable_tree());
 	}
 	else
 	{
@@ -1173,10 +1175,10 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		}
 	}
 
-	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_isObjectValid.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
-	m_statusTag.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
-	m_statusColor.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_statusTag.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_statusColor.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = Result;
 
@@ -1770,7 +1772,7 @@ void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove)
 {
 	if (nullptr != pObjectToRemove)
 	{
-		pObjectToRemove->SetObjectAttributesAllowed(SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
+		pObjectToRemove->SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		// Reset any selection
 		pObjectToRemove->SetObjectAttributesSet(0, SvOi::SetAttributeType::OverwriteAttribute);
 
@@ -1960,7 +1962,7 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	SVObjectPtrVector::iterator iter;
 	for (iter = rListOfObjects.begin(); iter != rListOfObjects.end(); ++iter)
 	{
-		(*iter)->SetObjectAttributesAllowed(SvDef::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
+		(*iter)->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	return S_OK;
 }

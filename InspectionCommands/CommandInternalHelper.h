@@ -23,6 +23,9 @@ namespace SvCmd
 {
 
 typedef std::function<bool(const SvOi::IObjectClass*, bool& bStop)> IsAllowedFunc;
+typedef std::function<bool(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectInfoAllowed;
 
 IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest&);
+
+IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest, const std::string& rObjectName);
 } //namespace SvCmd

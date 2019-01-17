@@ -9,11 +9,12 @@
 #include "stdafx.h"
 #include "SelectedObjectsPage.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "InspectionCommands/BuildSelectableItems.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOResource\ConstGlobalSvOr.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -24,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 BEGIN_MESSAGE_MAP(SelectedObjectsPage, CPropertyPage)
-	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
+    ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
 	ON_BN_CLICKED(IDC_SELECT_BUTTON, OnSelectObjects)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
 	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
@@ -39,13 +40,12 @@ static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SelectedObjectsPage::SelectedObjectsPage(const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvCl::SelectorItemVector& rList, UINT AttributeFilters, int id)
-	: CPropertyPage(id)
-	, m_InspectionName(rInspectionName)
-	, m_InspectionID(rInspectionID)
-	, m_List(rList)
-	, m_AttributeFilter(AttributeFilters)
-	, m_helpID{0}
+SelectedObjectsPage::SelectedObjectsPage( const std::string& rInspectionName, const SVGUID& rInspectionID, LPCTSTR Caption, const SvDef::StringVector& rList, UINT AttributeFilters, int id )
+: CPropertyPage(id)
+, m_InspectionName( rInspectionName )
+, m_InspectionID ( rInspectionID )
+, m_List( rList )
+, m_AttributeFilter( AttributeFilters )
 {
 	m_strCaption = Caption;
 	m_psp.pszTitle = m_strCaption;
@@ -92,13 +92,13 @@ BOOL SelectedObjectsPage::OnInitDialog()
 
 	switch (m_AttributeFilter)
 	{
-		case SvDef::SV_DD_VALUE:
+		case SvPb::dataDefinitionValue:
 		{
 			m_helpID = ID_EDIT_DATA_DEFINITION_LISTS + SvOr::HELPFILE_ID_OFFSET;
 		}
 		break;
 
-		case SvDef::SV_DD_IMAGE:
+		case SvPb::dataDefinitionImage:
 		{
 			m_helpID = ID_EDIT_DATA_DEFINITION_LISTS + SvOr::HELPFILE_ID_OFFSET;
 		}
@@ -162,23 +162,19 @@ void SelectedObjectsPage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	std::string Prefix = m_InspectionName;
-	Prefix += _T(".Tool Set.");
-
 	int Index = 0;
 	for (auto const& rEntry : m_List)
 	{
-		std::string Name;
-		Name = rEntry.m_Location;
-		SvUl::searchAndReplace(Name, Prefix.c_str(), _T(""));
+		SVObjectReference objectRef{rEntry};
+		std::string Name = objectRef.GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType, true);
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
-								   Index,
-								   Name.c_str(),
-								   INDEXTOSTATEIMAGEMASK(1),
-								   LVIS_STATEIMAGEMASK,
-								   1,
-								   0);
+									Index,
+									Name.c_str(),
+									INDEXTOSTATEIMAGEMASK(1),
+									LVIS_STATEIMAGEMASK,
+									1,
+									0);
 		Index++;
 	}
 }
@@ -190,31 +186,36 @@ void SelectedObjectsPage::ShowObjectSelector()
 	//For values and conditions only use viewable objects
 	switch (AttributeFilters)
 	{
-		case SvDef::SV_DD_VALUE:
+	case SvPb::dataDefinitionValue:
 		{
-			AttributeFilters |= SvDef::SV_VIEWABLE;
+			AttributeFilters |= SvPb::viewable;
 		}
 		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	std::string InspectionName(m_InspectionName);
 	SVGUID InspectionGuid(m_InspectionID);
 
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, m_helpID);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter(SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, std::string(_T("")));
+	SvPb::InspectionCmdMsgs request, response;
+	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, static_cast<SvPb::ObjectAttributes> (AttributeFilters));
+	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
-	SvCmd::SelectorOptions BuildOptions {{SvCmd::ObjectSelectorType::toolsetItems}, InspectionGuid, AttributeFilters};
-	SvCl::SelectorItemVector SelectorItems;
-	SvCmd::BuildSelectableItems(BuildOptions, std::back_inserter(SelectorItems));
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(SelectorItems);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, m_helpID);
+	if (response.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+	}
 
 	SvDef::StringSet CheckItems;
 	for (auto const rEntry : m_List)
 	{
-		CheckItems.insert(rEntry.m_Location);
+		SVObjectReference objectRef {rEntry};
+		std::string Name = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
+		CheckItems.insert(Name);
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(CheckItems);
 

@@ -662,32 +662,32 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	bool bOk = SVImageAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	const UINT cAttributes = SvDef::SV_PRINTABLE | SvDef::SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable;
 	msv_dpatAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msv_dpatCertaintyThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msv_lpatAccuracy.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	msv_lpatMaxOccurances.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_bpatSearchAngleMode.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatMaxOccurances.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	msv_bpatSearchAngleMode.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 	msv_lpatSpeed.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_dpatSearchAngle.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleDeltaNeg.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleDeltaPos.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleTolerance.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleAccuracy.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_dpatAngleInterpolation.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatSearchAngle.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleDeltaNeg.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleDeltaPos.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleTolerance.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleAccuracy.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleInterpolation.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 
-	msv_dpatResultMatchScore.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_dpatResultX.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_dpatResultY.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	msv_dpatResultAngle.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultMatchScore.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultX.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultY.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultAngle.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	msv_szModelImageFile.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
-	m_bpatDontCare.SetObjectAttributesAllowed(SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
-	m_bpatDontCare.SetObjectAttributesAllowed(SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute);
+	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_bpatDontCare.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_bpatDontCare.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 	m_DontCareImageFile.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	
 	msv_dpatPreliminaryAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -699,7 +699,7 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	msv_dpatCandidateSpacingXMin.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msv_dpatCandidateSpacingYMin.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Check if Result is present
 	if (nullptr == GetResultObject())

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVContainerLibrary/SelectorItem.h"
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVArchiveTool.h"
 #include "SVGlobal.h"

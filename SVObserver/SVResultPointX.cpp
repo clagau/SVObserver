@@ -74,7 +74,7 @@ bool SVPointXResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 {
 	m_isCreated = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SVPointValueObjectClass>(m_inputObjectInfo);
 	
-	m_X.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_X.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

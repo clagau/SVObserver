@@ -49,7 +49,7 @@ bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 {
 	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SVStringValueObjectClass>(m_inputObjectInfo);
 
-	m_Value.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

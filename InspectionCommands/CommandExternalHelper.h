@@ -69,4 +69,5 @@ SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrFiel
 
 void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo);
 
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, const GUID& rInspectionID, SvPb::ObjectAttributes attribute, const GUID& rInstanceID = GUID_NULL, bool wholeArray = false, SvPb::SelectorFilter filter = SvPb::SelectorFilter::attributesAllowed);
 } //namespace SvCmd

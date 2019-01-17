@@ -30,7 +30,7 @@ SVCameraImageTemplate::SVCameraImageTemplate(LPCSTR ObjectName)
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvDef::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
+	SetObjectAttributesAllowed(SvPb::publishResultImage, SvOi::SetAttributeType::RemoveAttribute);
 }
 
 SVCameraImageTemplate::SVCameraImageTemplate(SVObjectClass* POwner, int StringResourceID)
@@ -42,7 +42,7 @@ SVCameraImageTemplate::SVCameraImageTemplate(SVObjectClass* POwner, int StringRe
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvDef::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
+	SetObjectAttributesAllowed(SvPb::publishResultImage, SvOi::SetAttributeType::RemoveAttribute);
 }
 
 SVCameraImageTemplate::~SVCameraImageTemplate()
@@ -90,8 +90,8 @@ bool SVCameraImageTemplate::CreateObject(const SVObjectLevelCreateStruct& rCreat
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed(SvDef::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
-	SetObjectAttributesAllowed(SvDef::SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute);
+	SetObjectAttributesAllowed(SvPb::publishResultImage, SvOi::SetAttributeType::RemoveAttribute);
+	SetObjectAttributesAllowed(SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = l_bOk;
 
@@ -160,7 +160,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* PDataObjec
 	{
 		hr = SVImageClass::SetObjectValue(PDataObject);
 
-		m_ObjectAttributesAllowed |= SvDef::SV_REMOTELY_SETABLE;
+		m_ObjectAttributesAllowed |= SvPb::remotelySetable;
 
 		return hr;
 	}

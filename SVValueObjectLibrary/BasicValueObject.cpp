@@ -449,7 +449,7 @@ void BasicValueObject::Create( SVObjectClass* pOwner )
 	m_Value.Clear();
 	if( !m_Node )
 	{
-		SetObjectAttributesAllowed( SvDef::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+		SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	if( nullptr != pOwner )
 	{

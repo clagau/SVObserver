@@ -26,7 +26,7 @@
 
 #pragma endregion Includes
 
-std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject)
+std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject, bool completeName /*=true*/)
 {
 	std::string Result;
 	SVObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid) );
@@ -45,15 +45,11 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 					ObjectRef.SetArrayIndex(rMonitoredObject.arrayIndex);
 				}
 			}
-			Result = ObjectRef.GetCompleteName(true);
 		}
-		else
-		{
-			Result = ObjectRef.GetCompleteName();
-		}
+		Result = completeName ? ObjectRef.GetCompleteName(true) : ObjectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
 	}
 
-	if(!Result.empty() && 0 != Result.find(SvDef::FqnInspections))
+	if(!Result.empty() && 0 != Result.find(SvDef::FqnInspections) && completeName)
 	{
 		std::string InspectionsPrefix(SvDef::FqnInspections);
 		InspectionsPrefix += _T(".");

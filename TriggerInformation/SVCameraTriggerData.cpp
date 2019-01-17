@@ -64,7 +64,7 @@ namespace SvTi
 		RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SvOi::SVResetItemNone);
 	*/
-		const UINT cAttributes = SvDef::SV_VIEWABLE | SvDef::SV_PUBLISHABLE | SvDef::SV_ARCHIVABLE;
+		const UINT cAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable;
 		m_timestamp.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 		m_lineInState.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	}

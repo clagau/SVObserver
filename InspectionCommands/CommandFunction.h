@@ -130,4 +130,8 @@ namespace SvCmd
 	HRESULT setEmbeddedValues(const SvPb::SetEmbeddedValuesRequest& rRequest, SvPb::SetEmbeddedValuesResponse& rResponse);
 
 	HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb::GetOutputRectangleResponse& rResponse);
+
+	HRESULT getObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse);
+
+	HRESULT getSelectorList(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse, SvPb::ObjectSelectorType selectorType);
 } //namespace SvCmd

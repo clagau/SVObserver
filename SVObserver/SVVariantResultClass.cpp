@@ -86,7 +86,7 @@ bool SVVariantResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 	bool bOk = SVResultClass::CreateObject(rCreateStructure);
 	bOk &= nullptr != GetInputValue();
 
-	m_Value.SetObjectAttributesAllowed( SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

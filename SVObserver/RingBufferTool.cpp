@@ -51,13 +51,13 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationNone);
 	SetToolROIExtentToFullInputImage ();
 
-	m_BufferDepth.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_BufferDepth.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	if (bOk)
 	{
 		for (int i=0; i < SvDef::cRingBufferNumberOutputImages; i++)
 		{
 			bOk &= (S_OK == m_OutputImages[i].InitializeImage( pInputImage ));
-			m_ImageIndexManager[i].SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+			m_ImageIndexManager[i].SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
@@ -65,10 +65,10 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	bOk &= (nullptr != GetInspection());
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvDef::SV_REMOTELY_SETABLE | SvDef::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::SV_SELECTABLE_ATTRIBUTES | SvDef::SV_PRINTABLE};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
@@ -276,7 +276,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	m_BufferDepth.SetDefaultValue( cDefaultRingBufferDepth, true );
 
 	RegisterEmbeddedObject( &m_FlagOfOutputImage, RingBuffer_FlagOfOutputImagesGuid, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
-	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvDef::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute);
+	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_FlagOfOutputImage.SetDefaultValue( 0, true );
 	m_FlagOfOutputImage.setSaveValueFlag(false);
 

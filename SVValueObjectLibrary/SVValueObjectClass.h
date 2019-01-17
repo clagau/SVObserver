@@ -166,9 +166,9 @@ protected:
 	/// !!can throw Exception!!
 	T convertVariantValue(const _variant_t& rValue) const;
 	/// !!can throw Exception!!
-	std::vector<T> variant2VectorType(const _variant_t& rValue) const;
+	ValueVector variant2VectorType(const _variant_t& rValue) const;
 	/// Uses move semantics
-	_variant_t variantVector2SafeArray(std::vector<_variant_t>&& valueVector) const;
+	_variant_t vectorType2SafeArray() const;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
