@@ -80,8 +80,9 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	m_notificationHandler(this)
 {
 
+	HINSTANCE hInst = (HINSTANCE)_AtlBaseModule.m_hInst;
 	std::string IniFile;
-	SvStl::CommandLineArgs::GetModulDirName(IniFile);
+	SvStl::CommandLineArgs::GetModulDirName(IniFile, hInst);
 	IniFile.append("\\SVRemoteCtrl.ini");
 	RCSettings settings;
 	RCSettingsLoader settingsLoader;

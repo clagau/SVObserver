@@ -58,11 +58,11 @@ LPCSTR CommandLineArgs::GetIniDirectory()
 		return m_iniDirectory.c_str();
 }
 
-void CommandLineArgs::GetModulDirName(std::string& rDirName)
+void CommandLineArgs::GetModulDirName(std::string& rDirName, HMODULE hModul)
 {
 	CHAR szPath[MAX_PATH];
 	rDirName.clear();
-	if (GetModuleFileName(nullptr, szPath, MAX_PATH))
+	if (GetModuleFileName(hModul, szPath, MAX_PATH))
 	{
 		std::string FileName(szPath);
 		size_t pos = FileName.find_last_of("\\");

@@ -27,7 +27,7 @@ struct LogSettings
 	/// Minimum log level that is allowed to log. All other levels will be
 	/// filtered. Allowed log levels are (from higher to lower):
 	/// fatal, error, warning, info, debug, trace
-	std::string StdoutLogLevel {"debug"};
+	std::string StdoutLogLevel {"error"};
 
 	/// Set to true if you want logs written to a file on disk.
 	/// Make sure to also configure file_log_location!

@@ -33,8 +33,10 @@ public:
 	//************************************
 	LPCSTR GetIniDirectory();
 
-	//Retrieves the ModulPath
-	static	void GetModulDirName(std::string& rDirName);
+	//!Retrieves the ModulDir
+	//!If the hModul  parameter is NULL,retrieves the dir of the executable file of the current process.
+
+	static	void GetModulDirName(std::string& rDirName, HMODULE hModul=nullptr );
 #pragma endregion Public Methods
 
 private:
