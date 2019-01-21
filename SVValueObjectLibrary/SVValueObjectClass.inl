@@ -779,6 +779,16 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 	}
 	else
 	{
+		VARTYPE varType = rValue.vt & ~VT_ARRAY;
+		//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
+		if (ValueType2Variant(m_DefaultValue).vt != varType && ValueType2Variant(m_Value).vt != varType && ValueType2Variant(m_Value).vt != VT_EMPTY)
+		{
+			//This happens if the variant to convert is of a different type then this value object!
+			assert(false);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			Exception.Throw();
+		}
 		long arraySize {0L};
 		if (1 == ::SafeArrayGetDim(rValue.parray))
 		{
@@ -800,10 +810,8 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 			//set all value to array
 			for (long i = 0; i < arraySize; i++)
 			{
-				_variant_t variantValue;
-				HRESULT tempHr = ::SafeArrayGetElement(rValue.parray, &i, variantValue.GetAddress());
-			
-				T value = convertVariantValue(variantValue);
+				T value;
+				::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&value));
 				result[i] = value;
 			}
 		}
