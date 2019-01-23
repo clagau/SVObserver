@@ -15,7 +15,8 @@ if ($LastExitCode -ne 0)
   write-eventlog -logname Application -source SVException -eventID 13  -entrytype Information -message "Could not create empty V-Drive via imdisk. $cmdout"  -Category 0
 }
 
-DisplaySwitch.exe /clone
+
+C:\Windows\System32\DisplaySwitch.exe /clone
 
 c:\SVObserver\bin\SVRemoveKeyboards.exe
 
@@ -99,6 +100,10 @@ if ($booleanVDrive -eq $false)
 }
 else
 {
+  #Create V:\Images Folder + set attribute to "compressed"
+  $cmd = New-Item -ItemType Directory -Force -Path V:\Images
+  C:\Windows\System32\compact.exe /C /S:V:\Images
+
   if ($booleanMatroxService -eq $false)
   {
     write-eventlog -logname Application -source SVException -eventID 25 -entrytype Warning -message "The Matrox service could not be started in time"  -Category 0
