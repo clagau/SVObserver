@@ -2429,9 +2429,10 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 					auto pImage = rCameraInfoPair.second.GetNextImage();
 					if (nullptr != pImage && pImage->isValid())
 					{
-						if (!pCamera->getTempImage().empty())
+						auto tmpImage = pCamera->getTempImage();
+						if (!tmpImage.empty())
 						{
-							Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pCamera->getTempImage()));
+							Copied = (S_OK == SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), tmpImage));
 						}
 						else
 						{
@@ -2826,7 +2827,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPr
 						try
 						{
 							l_pImage->setImage(Iter->second.getImage(), l_rIPInfo.m_triggerRecordWrite);
-							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pCamera && Iter->second.getImage()->isValid())
+							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && SVSVIMStateClass::CheckState(SV_STATE_READY) && nullptr != pCamera && Iter->second.getImage()->isValid())
 							{
 								pCamera->setTempImage(Iter->second.getImage()->getHandle()->GetBuffer());
 							}

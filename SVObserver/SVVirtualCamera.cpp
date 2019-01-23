@@ -725,9 +725,16 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 
 void SVVirtualCamera::setTempImage(const SVMatroxBuffer pImage)
 {
+	std::lock_guard<std::mutex> guard(m_tmpImage_mutex);
 	m_tmpImage.clear();
 	if (S_OK == SVMatroxBufferInterface::Create(m_tmpImage, pImage))
 	{
 		SVMatroxBufferInterface::CopyBuffer(m_tmpImage, pImage);
 	}
 }
+
+SVMatroxBuffer SVVirtualCamera::getTempImage()
+{ 
+	std::lock_guard<std::mutex> guard(m_tmpImage_mutex);
+	return m_tmpImage; 
+};
