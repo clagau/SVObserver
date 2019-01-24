@@ -272,9 +272,9 @@ int main(int argc, char* argv[])
 	
 	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);
 	pRpcClient->waitForConnect(boost::posix_time::seconds(6));
-
+	SvWsl::SVRCClientServiceSetting settings;
 	auto request_timeout = boost::posix_time::seconds(2);
-	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
+	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient, settings);
 
 
 	SV_LOG_GLOBAL(info) << "Enter a command(Ctrl-Z to stop): ";
@@ -308,7 +308,7 @@ int main(int argc, char* argv[])
 					pRpcClient.reset();
 					pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);
 					pRpcClient->waitForConnect(boost::posix_time::seconds(2));
-					pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
+					pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient, settings);
 				}
 			}
 			else if (words[0] == "h" || words[0] == "H")

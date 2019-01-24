@@ -14,6 +14,7 @@
 #include "SVRPCLibrary/RPCCLient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVRPCLibrary/Task.h"
+#include "SVRCClientServiceSettings.h"
 #pragma endregion Includes
 
 namespace SvWsl
@@ -21,7 +22,7 @@ namespace SvWsl
 class SVRCClientService
 {
 public:
-	SVRCClientService(SvRpc::RPCClient& rRpcClient);
+	SVRCClientService(SvRpc::RPCClient& rRpcClient, SVRCClientServiceSetting&  rSVRCSetting);
 	~SVRCClientService();
 
 	void GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task);
@@ -97,6 +98,8 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryMonitorListNamesRequest, SvPb::NamesResponse> m_QueryMonitorListNamesClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::RunOnceRequest, SvPb::StandardResponse> m_RunOnceClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::LoadConfigRequest, SvPb::StandardResponse> m_LoadConfigClient;
+	SVRCClientServiceSetting&  m_rSVRCSettings;
+
 };
 
 using SVRCClientServicePtr = std::unique_ptr<SvWsl::SVRCClientService>;

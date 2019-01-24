@@ -12,15 +12,11 @@
 #include "SVProtoBuf\SVRC.h"
 #pragma endregion Includes
 
-using time_duration = boost::posix_time::time_duration;
-const  time_duration cSixSeconds = boost::posix_time::seconds(6);
-const  time_duration cTwoMinutes = boost::posix_time::minutes(2);
-const  time_duration cFiveMinutes = boost::posix_time::minutes(5);
-
 namespace SvWsl
 {
 
-SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient) :
+SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient, SVRCClientServiceSetting&  rSVRCSetting) :
+	m_rSVRCSettings(rSVRCSetting),
 	m_GetGatewayVersionClient(rRpcClient),
 	m_GetProductClient(rRpcClient),
 	m_GetRejectClient(rRpcClient),
@@ -66,27 +62,27 @@ SVRCClientService::~SVRCClientService()
 
 void SVRCClientService::GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
-	m_GetGatewayVersionClient.request(std::move(req), task, cSixSeconds);
+	m_GetGatewayVersionClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task)
 {
-	m_GetProductClient.request(std::move(req), task, cSixSeconds);
+	m_GetProductClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetReject(SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task)
 {
-	m_GetRejectClient.request(std::move(req), task, cSixSeconds);
+	m_GetRejectClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {
-	m_GetFailStatusClient.request(std::move(req), task, cSixSeconds);
+	m_GetFailStatusClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetImageFromId(SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 {
-	m_GetImageFromIdClient.request(std::move(req), task, cSixSeconds);
+	m_GetImageFromIdClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetImageStreamFromId(SvPb::GetImageStreamFromIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer)
@@ -96,12 +92,12 @@ void SVRCClientService::GetImageStreamFromId(SvPb::GetImageStreamFromIdRequest&&
 
 void SVRCClientService::QueryListName(SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)
 {
-	m_QueryListNameClient.request(std::move(req), task, cSixSeconds);
+	m_QueryListNameClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::QueryListItem(SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task)
 {
-	m_QueryListItemClient.request(std::move(req), task, cSixSeconds);
+	m_QueryListItemClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 SvRpc::ClientStreamContext SVRCClientService::GetNotificationStream(SvPb::GetNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer)
@@ -112,126 +108,126 @@ SvRpc::ClientStreamContext SVRCClientService::GetNotificationStream(SvPb::GetNot
 
 void SVRCClientService::GetSVObserverVersion(SvPb::GetSVObserverVersionRequest&& Request, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
-	m_GetSVObserverVersionClient.request(std::move(Request), task, cSixSeconds);
+	m_GetSVObserverVersionClient.request(std::move(Request), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetDeviceMode(SvPb::GetDeviceModeRequest&& Request, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 {
-	m_GetDeviceModeClient.request(std::move(Request), task, cSixSeconds);
+	m_GetDeviceModeClient.request(std::move(Request), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::SetDeviceMode(SvPb::SetDeviceModeRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_SetDeviceModeClient.request(std::move(Request), task, cTwoMinutes);
+	m_SetDeviceModeClient.request(std::move(Request), task, m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::GetState(SvPb::GetStateRequest&& Request, SvRpc::Task<SvPb::GetStateResponse> task)
 {
-	m_GetStateClient.request(std::move(Request), task, cSixSeconds);
+	m_GetStateClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetConfig(SvPb::GetConfigRequest&& Request, SvRpc::Task<SvPb::GetConfigResponse> task)
 {
-	m_GetConfigClient.request(std::move(Request), task, cFiveMinutes);
+	m_GetConfigClient.request(std::move(Request), task,  m_rSVRCSettings.LongTimeout);
 }
 
 void SVRCClientService::PutConfig(SvPb::PutConfigRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_PutConfigClient.request(std::move(Request), task, cFiveMinutes);
+	m_PutConfigClient.request(std::move(Request), task,  m_rSVRCSettings.LongTimeout);
 }
 
 void SVRCClientService::GetOfflineCount(SvPb::GetOfflineCountRequest&& Request, SvRpc::Task<SvPb::GetOfflineCountResponse> task)
 {
-	m_GetOfflineCountClient.request(std::move(Request), task, cSixSeconds);
+	m_GetOfflineCountClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::ActivateMonitorList(SvPb::ActivateMonitorListRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_ActivateMonitorListClient.request(std::move(Request), task, cSixSeconds);
+	m_ActivateMonitorListClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetProductFilter(SvPb::GetProductFilterRequest&& Request, SvRpc::Task<SvPb::GetProductFilterResponse> task)
 {
-	m_GetProductFilterClient.request(std::move(Request), task, cSixSeconds);
+	m_GetProductFilterClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::SetProductFilter(SvPb::SetProductFilterRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_SetProductFilterClient.request(std::move(Request), task, cSixSeconds);
+	m_SetProductFilterClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetItems(SvPb::GetItemsRequest&& Request, SvRpc::Task<SvPb::GetItemsResponse> task)
 {
-	m_GetItemsClient.request(std::move(Request), task, cTwoMinutes);
+	m_GetItemsClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::SetItems(SvPb::SetItemsRequest&& Request, SvRpc::Task<SvPb::SetItemsResponse> task)
 {
-	m_SetItemsClient.request(std::move(Request), task, cTwoMinutes);
+	m_SetItemsClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::GetFile(SvPb::GetFileRequest&& Request, SvRpc::Task<SvPb::GetFileResponse> task)
 {
-	m_GetFileClient.request(std::move(Request), task, cTwoMinutes);
+	m_GetFileClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::PutFile(SvPb::PutFileRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_PutFileClient.request(std::move(Request), task, cTwoMinutes);
+	m_PutFileClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::RegisterMonitorList(SvPb::RegisterMonitorListRequest&& Request, SvRpc::Task<SvPb::RegisterMonitorListResponse> task)
 {
-	m_RegisterMontorListClient.request(std::move(Request), task, cTwoMinutes);
+	m_RegisterMontorListClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::GetInspectionNames(SvPb::GetInspectionNamesRequest&& Request, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	m_GetInspectionNamesClient.request(std::move(Request), task, cTwoMinutes);
+	m_GetInspectionNamesClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::Shutdown(SvPb::ShutdownRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_ShutdownClient.request(std::move(Request), task, cTwoMinutes);
+	m_ShutdownClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::GetMonitorListProperties(SvPb::GetMonitorListPropertiesRequest&& Request, SvRpc::Task<SvPb::GetMonitorListPropertiesResponse> task)
 {
-	m_GetMonitorListPropertiesClient.request(std::move(Request), task, cSixSeconds);
+	m_GetMonitorListPropertiesClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetMaxRejectDepth(SvPb::GetMaxRejectDepthRequest&& Request, SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
 {
-	m_GetMaxRejectDepthClient.request(std::move(Request), task, cSixSeconds);
+	m_GetMaxRejectDepthClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetConfigReport(SvPb::GetConfigReportRequest&& Request, SvRpc::Task<SvPb::GetConfigReportResponse> task)
 {
-	m_GetConfigReportClient.request(std::move(Request), task, cSixSeconds);
+	m_GetConfigReportClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetDataDefinitionList(SvPb::GetDataDefinitionListRequest&& Request, SvRpc::Task<SvPb::GetDataDefinitionListResponse> task)
 {
-	m_GetDataDefinitionListClient.request(std::move(Request), task, cTwoMinutes);
+	m_GetDataDefinitionListClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::QueryMonitorList(SvPb::QueryMonitorListRequest&& Request, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	m_QueryMonitorListClient.request(std::move(Request), task, cTwoMinutes);
+	m_QueryMonitorListClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::QueryMonitorListNames(SvPb::QueryMonitorListNamesRequest&& Request, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	m_QueryMonitorListNamesClient.request(std::move(Request), task, cTwoMinutes);
+	m_QueryMonitorListNamesClient.request(std::move(Request), task,  m_rSVRCSettings.MediumTimeout);
 }
 
 void SVRCClientService::RunOnce(SvPb::RunOnceRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_RunOnceClient.request(std::move(Request), task, cSixSeconds);
+	m_RunOnceClient.request(std::move(Request), task,  m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::LoadConfig(SvPb::LoadConfigRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	m_LoadConfigClient.request(std::move(Request), task, cFiveMinutes);
+	m_LoadConfigClient.request(std::move(Request), task,  m_rSVRCSettings.LongTimeout);
 }
 }//namespace SvWsl

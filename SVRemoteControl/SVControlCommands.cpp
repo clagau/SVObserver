@@ -84,19 +84,18 @@ SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
 	std::string IniFile;
 	SvStl::CommandLineArgs::GetModulDirName(IniFile, hInst);
 	IniFile.append("\\SVRemoteCtrl.ini");
-	RCSettings settings;
 	RCSettingsLoader settingsLoader;
-	settingsLoader.loadFromIni(IniFile.c_str(), settings);
+	settingsLoader.loadFromIni(IniFile.c_str(), m_settings);
 	try
 	{
-		SvLog::init_logging(settings.logSettings);
+		SvLog::init_logging(m_settings.logSettings);
 	}
 	catch (std::runtime_error& rRuntimeError)
 	{
 		SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
 	}
 	SV_LOG_GLOBAL(info) << "SVRemotecontrolIniPath:" << IniFile;
-	m_ClientSettings = settings.httpClientSettings;
+	
 }
 
 
@@ -128,17 +127,17 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::
 	if (0 < host.length())
 	{
 		//First try to connect to Gateway
-		m_ClientSettings.Host = host;
-		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_ClientSettings, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+		m_settings.httpClientSettings.Host = host;
+		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.httpClientSettings, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
 		if (nullptr != m_pRpcClient)
 		{
-			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
+			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient, m_settings.svrcClientSettings);
 			m_pRpcClient->waitForConnect(timeout);
 
 			if (!m_pRpcClient->isConnected())
 			{
-				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_ClientSettings, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
-				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient);
+				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.httpClientSettings , std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient, m_settings.svrcClientSettings);
 				m_pRpcClient->waitForConnect(timeout);
 			}
 

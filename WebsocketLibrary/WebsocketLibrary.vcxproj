@@ -195,6 +195,7 @@
   <ItemGroup>
     <ClInclude Include="SVRCClientService.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVRCClientServiceSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SVRCClientService.cpp" />

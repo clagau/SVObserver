@@ -21,7 +21,9 @@
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "NotificationHandler.h"
+#include "RCSettings.h"
 #pragma endregion Includes
+
 
 
 typedef boost::function< void(_variant_t&, SVNotificationTypesEnum) > NotifyFunctor;
@@ -81,7 +83,7 @@ private:
 
 	SvRpc::ClientStreamContext m_csx {nullptr};
 	NotificationHandler m_notificationHandler;
-	SvHttp::WebsocketClientSettings m_ClientSettings;
+	RCSettings m_settings;
 	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;
 	std::unique_ptr<SvWsl::SVRCClientService> m_pSvrcClientService;
 };

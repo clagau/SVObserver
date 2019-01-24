@@ -107,4 +107,21 @@ void RCSettingsLoader::loadFromIni(LPCSTR IniPath, RCSettings& settings)
 	RegGetIntIfExists(pt, settings.httpClientSettings.PingIntervalSec, "Http.PingIntervalSec");
 	RegGetIntIfExists(pt, settings.httpClientSettings.PingTimeoutCount, "Http.PingTimeoutCount");
 
+	
+	unsigned int shortTimeOut {0}, mediumTimeOut {0}, longTimeout {0};
+	RegGetIntIfExists(pt, shortTimeOut, "SVRC.ShortTimeoutSec");
+	if (shortTimeOut > 0)
+	{
+		settings.svrcClientSettings.ShortTimeout = boost::posix_time::seconds(shortTimeOut);
+	}
+	RegGetIntIfExists(pt, mediumTimeOut, "SVRC.MediumTimeoutSec");
+	if (mediumTimeOut > 0)
+	{
+		settings.svrcClientSettings.MediumTimeout = boost::posix_time::seconds(mediumTimeOut);
+	}
+	RegGetIntIfExists(pt, longTimeout, "SVRC.LongTimeoutSec");
+	if (longTimeout > 0)
+	{
+		settings.svrcClientSettings.LongTimeout = boost::posix_time::seconds(longTimeout);
+	}
 }

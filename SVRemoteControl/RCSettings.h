@@ -9,6 +9,7 @@
 
 #include "SVLogLibrary/Logging.h"
 #include "SVHttpLibrary/WebsocketClientSettings.h"
+#include "WebsocketLibrary/SVRCClientServiceSettings.h"
 
 struct RCSettings
 {
@@ -23,5 +24,6 @@ struct RCSettings
 	}
 	SvLog::LogSettings logSettings;
 	SvHttp::WebsocketClientSettings httpClientSettings;
+	SvWsl::SVRCClientServiceSetting   svrcClientSettings;
 };
 

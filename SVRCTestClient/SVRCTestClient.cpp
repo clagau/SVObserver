@@ -106,7 +106,11 @@ int main(int argc, char* argv[])
 	{
 		SV_LOG_GLOBAL(error) << e.what();
 	}
-	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient);
+	SvWsl::SVRCClientServiceSetting settings;
+
+	
+
+	auto pService = std::make_unique<SvWsl::SVRCClientService>(*pRpcClient, settings);
 
 	SV_LOG_GLOBAL(info) << "Enter a command(Ctrl-Z to stop): ";
 	std::string input;
