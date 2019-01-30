@@ -55,6 +55,11 @@ int SVTestAcquisitionClass::GetBufferFormat() const
 	return l_Format;
 }
 
+SvTrc::IImagePtr SVTestAcquisitionClass::GetNextBuffer()
+{
+	return (nullptr != m_pDisplay) ?  m_pDisplay->m_CameraImage.GetNextBuffer() :  SvTrc::IImagePtr();
+}
+
 HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick)
 {
 	HRESULT l_Status = S_OK;

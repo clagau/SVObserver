@@ -271,21 +271,16 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								pCombo->SetButtonText("ROI");
 								pCombo->CreateComboBox();
 						
-								bool bColorSystem = false; // SEJ - no color for now
-
 								SVCameraFormatsDeviceParam::OptionsType::const_iterator iterOption;
 								const SVCameraFormat* pFormat=nullptr;
 								for (iterOption = pCamFileParam->options.begin(); iterOption != pCamFileParam->options.end(); ++iterOption)
 								{
-									if ( iterOption->second.m_bColor == bColorSystem )	// if camera format matches product
+									int iPos;
+									iPos = pCombo->AddString( iterOption->second.m_strDescription.c_str() );
+									pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
+									if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
 									{
-										int iPos;
-										iPos = pCombo->AddString( iterOption->second.m_strDescription.c_str() );
-										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
-										if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
-										{
-											pFormat = &(iterOption->second);
-										}
+										pFormat = &(iterOption->second);
 									}
 								}
 

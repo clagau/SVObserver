@@ -121,7 +121,7 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	for( int i = 0; i < 4; ++i )
 	{
 		CString l_WindowText;
-		l_WindowText.Format( _T( "Camera %d" ), i );
+		l_WindowText.Format( _T( "Camera %d" ), i+1 );
 		m_Camera[ i ].SetTabText( l_WindowText );
 		m_CameraSheet.AddPage( m_Camera + i );
 	}
@@ -260,8 +260,6 @@ void CSVImageTestDlg::OnRefresh()
 void CSVImageTestDlg::OnStartAllCameras() 
 {
 	StopAllCameras();
-
-	OnRefresh();
 
 	StartAllCameras();
 }

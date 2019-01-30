@@ -11,7 +11,12 @@
 
 #include "stdafx.h"
 #include "DisplayPicture.h"
-#include "SVDisplayImageBufferClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "TriggerRecordController/Image.h"
+#include "Definitions/SVImageFormatEnum.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,8 +26,6 @@ static char THIS_FILE[] = __FILE__;
 
 CDisplayPicture::CDisplayPicture()
 {
-	m_BufferInUse = 0;
-	m_pImage = SvOi::SVImageBufferHandlePtr{ new SVDisplayImageBufferClass };
 }
 
 CDisplayPicture::~CDisplayPicture()
@@ -35,42 +38,74 @@ BEGIN_MESSAGE_MAP(CDisplayPicture, CStatic)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+SvTrc::IImagePtr CDisplayPicture::GetNextBuffer()
+{
+	return m_pImage;
+}
+
 bool CDisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat )
 {
-	SVDisplayImageBufferClass* l_pImage = dynamic_cast< SVDisplayImageBufferClass* >( m_pImage.get() );
-	bool l_Status = nullptr != l_pImage;
+	SVMatroxBufferCreateStruct create;
+	create.m_lSizeX = bufWidth;
+	create.m_lSizeY = bufHeight;
 
-	if( l_Status )
+	switch (iFormat)
 	{
-		l_Status = l_pImage->UpdateDisplayBufferInfo( bufWidth, bufHeight, iFormat );
+		case  SvDef::SVImageFormatMono8:
+		{
+			create.m_eAttribute = SVBufAttImageProcDib;
+			SetImageDepth(create, 8);
+			create.m_lSizeBand = 1;
+			break;
+		}
+
+		case SvDef::SVImageFormatRGB888:
+		case SvDef::SVImageFormatRGB8888:
+		{
+			create.m_eAttribute = SVBufAttImageProcPackedOffBoardDibPagedBgr32;
+			SetImageDepth(create, 8);
+			create.m_lSizeBand = 3;
+			break;
+		}
+
+		default:
+			break;
 	}
 
-	return l_Status;
+	SVMatroxBuffer newBuffer;
+	HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, create);
+
+	SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage{newBuffer} };
+	m_pImage = std::make_shared<SvTrc::Image>(pImagePtr, 0, SvTrc::Image::cLocalTmpImagePos, false, false);
+	return true;
 }
 
 void CDisplayPicture::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
 	
-	SVDisplayImageBufferClass* l_pImage = dynamic_cast< SVDisplayImageBufferClass* >( m_pImage.get() );
+	bool imageValid{false};
 
-	if( nullptr != l_pImage && !( l_pImage->GetBitmapInfo().empty() ) && nullptr != l_pImage->m_pucImageData )
+	if(nullptr != m_pImage.get())
 	{
-		CRect rec;	// Rect from IDC_PICT
-		GetClientRect(rec);
+		SVImageBufferHandleImage* pImage = dynamic_cast<SVImageBufferHandleImage*>(m_pImage.get()->getHandle().get());
+		if( nullptr != pImage && !( pImage->GetBitmapInfo().empty() ))
+		{
+			CRect rec;	// Rect from IDC_PICT
+			GetClientRect(rec);
 
-		StretchDIBits( dc.m_hDC,
-		               0, 0, rec.Width(), rec.Height(), 
-									 0, 0, abs( l_pImage->GetBitmapInfo().GetWidth() ), abs( l_pImage->GetBitmapInfo().GetHeight() ),
-									 l_pImage->m_pucImageData, l_pImage->GetBitmapInfo().GetBitmapInfo(),
-									 DIB_RGB_COLORS, SRCCOPY);
+			StretchDIBits( dc.m_hDC,
+						   0, 0, rec.Width(), rec.Height(), 
+										 0, 0, abs( pImage->GetBitmapInfo().GetWidth() ), abs( pImage->GetBitmapInfo().GetHeight() ),
+										 pImage->GetBufferAddress(), pImage->GetBitmapInfo().GetBitmapInfo(),
+										 DIB_RGB_COLORS, SRCCOPY);
+			imageValid = true;
+		}
 	}
-	else
+
+	if(!imageValid)
 	{
 		char *pStr = "Camera has no valid settings!";
 		dc.TextOut( 0, 0, pStr, static_cast< int >( strlen( pStr ) ) );
 	}
-
-	::InterlockedExchange( &m_BufferInUse, 0 );
-	// Do not call CStatic::OnPaint() for painting messages
 }

@@ -1108,14 +1108,21 @@ HRESULT SVTestGigeCameraProxy::GoOnline(unsigned long hDigitizer, SvTh::SVDigiti
 	// trigger first, then strobe
 	SVDeviceParamWrapper& triggerEnable = GetCameraDeviceParamNonConst( DeviceParamGigeTriggerEnable );
 	SVStringValueDeviceParam* pTriggerParam = triggerEnable.DerivedValue( pTriggerParam );
-	pTriggerParam->strValue = value.c_str();
+	if(nullptr != pTriggerParam)
+	{
+		pTriggerParam->strValue = value.c_str();
 	
-	SetDigitizerParameter(triggerEnable, hDigitizer, pDigitizer );
+		SetDigitizerParameter(triggerEnable, hDigitizer, pDigitizer );
 
-	SVDeviceParamWrapper& strobeEnable = GetCameraDeviceParamNonConst( DeviceParamGigeStrobeEnable );
-	SVStringValueDeviceParam* pStrobeParam = strobeEnable.DerivedValue( pStrobeParam );
-	pStrobeParam->strValue = value.c_str();
-	SetDigitizerParameter( strobeEnable, hDigitizer, pDigitizer );
+		SVDeviceParamWrapper& strobeEnable = GetCameraDeviceParamNonConst( DeviceParamGigeStrobeEnable );
+		SVStringValueDeviceParam* pStrobeParam = strobeEnable.DerivedValue( pStrobeParam );
+		pStrobeParam->strValue = value.c_str();
+		SetDigitizerParameter( strobeEnable, hDigitizer, pDigitizer );
+	}
+	else
+	{
+		hr = E_FAIL;
+	}
 
 	return hr;
 }
@@ -1130,13 +1137,21 @@ HRESULT SVTestGigeCameraProxy::GoOffline(unsigned long hDigitizer, SvTh::SVDigit
 	// strobe first, then trigger
 	SVDeviceParamWrapper& strobeEnable = GetCameraDeviceParamNonConst( DeviceParamGigeStrobeEnable );
 	SVStringValueDeviceParam* pStrobeParam = strobeEnable.DerivedValue( pStrobeParam );
-	pStrobeParam->strValue = value.c_str();
-	SetDigitizerParameter( strobeEnable, hDigitizer, pDigitizer );
+	if (nullptr != pStrobeParam)
+	{
+		pStrobeParam->strValue = value.c_str();
+		SetDigitizerParameter( strobeEnable, hDigitizer, pDigitizer );
 
-	SVDeviceParamWrapper& triggerEnable = GetCameraDeviceParamNonConst( DeviceParamGigeTriggerEnable );
-	SVStringValueDeviceParam* pTriggerParam = triggerEnable.DerivedValue( pTriggerParam );
-	pTriggerParam->strValue = value.c_str();
-	SetDigitizerParameter(triggerEnable, hDigitizer, pDigitizer );
+		SVDeviceParamWrapper& triggerEnable = GetCameraDeviceParamNonConst( DeviceParamGigeTriggerEnable );
+		SVStringValueDeviceParam* pTriggerParam = triggerEnable.DerivedValue( pTriggerParam );
+		pTriggerParam->strValue = value.c_str();
+		SetDigitizerParameter(triggerEnable, hDigitizer, pDigitizer );
+	}
+	else
+	{
+		hr = E_FAIL;
+	}
+
 	
 	return hr;
 }

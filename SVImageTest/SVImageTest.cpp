@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include <google\protobuf\stubs\common.h>
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -131,6 +132,9 @@ BOOL CSVImageTestApp::InitInstance()
 int CSVImageTestApp::ExitInstance() 
 {
 	UnLoadDigitizer();
+
+	//Delete all global objects allocated by libprotobuf.
+	google::protobuf::ShutdownProtobufLibrary();
 
 	// Shutdown Matrox App
 	SVMatroxApplicationInterface::Shutdown();

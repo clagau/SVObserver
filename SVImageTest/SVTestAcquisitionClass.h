@@ -36,7 +36,7 @@ public:
 	virtual unsigned long GetBufferHeight() const override;
 	virtual int GetBufferFormat() const override;
 
-	virtual SvTrc::IImagePtr GetNextBuffer() override { return nullptr; };
+	virtual SvTrc::IImagePtr GetNextBuffer() override;
 	virtual HRESULT UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick = 0) override;
 
 	virtual HRESULT ReadCameraFile( const std::string& rFilename );

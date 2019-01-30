@@ -8,11 +8,9 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 11:07:54  $
 // ******************************************************************************
+#pragma  once
+#include "TriggerRecordController/IImage.h"
 
-#ifndef DISPLAYPICTURE_H
-#define DISPLAYPICTURE_H
-
-#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 
 class CDisplayPicture : public CStatic
 {
@@ -31,10 +29,11 @@ protected:
 public:
 	CDisplayPicture();
 
+	SvTrc::IImagePtr GetNextBuffer();
+
 	bool UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat );
 
-	long m_BufferInUse;
-	SvOi::SVImageBufferHandlePtr m_pImage;
+	SvTrc::IImagePtr m_pImage;
 
 	int m_ScrollY;
 	int m_ScrollX;
@@ -42,11 +41,4 @@ public:
 
 	// Generated message map functions
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
 

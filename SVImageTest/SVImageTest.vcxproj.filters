@@ -30,9 +30,6 @@
     <ClCompile Include="SVCameraPropDlgClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDisplayImageBufferClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageTest.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -80,9 +77,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCameraPropDlgClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDisplayImageBufferClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageTest.h">

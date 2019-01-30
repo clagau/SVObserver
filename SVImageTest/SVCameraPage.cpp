@@ -265,7 +265,6 @@ void SVCameraPage::CreateCameraImage()
 		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth( triggerchannel, &bufWidth );
 		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferFormat( triggerchannel, &iFormat );
 
-		m_CameraImage.UpdateDisplayBufferInfo( bufWidth, bufHeight, iFormat );
 		m_CameraImage.Invalidate();
 	}
 }
