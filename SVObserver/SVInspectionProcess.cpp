@@ -42,6 +42,7 @@
 #include "SVSharedMemoryLibrary\SharedMemWriter.h"
 #include "SVOGui\FormulaController.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
@@ -70,7 +71,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		SVInspectionInfoStruct& rIPInfo = rProduct.m_svInspectionInfos[GetUniqueObjectID()];
 		rIPInfo.m_BeginInspection = SvTl::GetTimeStamp();
 
-		double time{0.0};
+		double time {0.0};
 		if (rProduct.oTriggerInfo.m_PreviousTrigger > 0.0)
 		{
 			time = (rProduct.oTriggerInfo.m_BeginProcess - rProduct.oTriggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
@@ -80,11 +81,11 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		time = (rIPInfo.m_BeginInspection - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
-		bool cameraFound{false};
-		if(nullptr != m_pToolSetCamera)
+		bool cameraFound {false};
+		if (nullptr != m_pToolSetCamera)
 		{
 			SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
-			if(rProduct.m_svCameraInfos.cend() != iterCamera)
+			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
 				cameraFound = true;
 				time = (iterCamera->second.m_StartFrameTimeStamp - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
@@ -94,7 +95,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			}
 		}
 		//If tool set camera not found set values to 0.0
-		if(!cameraFound)
+		if (!cameraFound)
 		{
 			time = 0.0;
 			m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToAcquisitionStart);
@@ -168,9 +169,9 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
 
-				long ppqPosition{0L};
+				long ppqPosition {0L};
 				SVPPQObject* pPpq = GetPPQ();
-				if(nullptr != pPpq)
+				if (nullptr != pPpq)
 				{
 					ppqPosition = pPpq->getPpqPosition(rProduct.ProcessCount());
 				}
@@ -286,7 +287,7 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 			}
 			else
 			{
-				//@Todo[MEC][7.50] [14.07.2017]  Implement Whole array
+				SV_LOG_GLOBAL(error) << "whole array not iplemented";
 			}
 		}
 	}
@@ -297,6 +298,7 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 
 		if (nullptr == pImage || nullptr == pImage->GetInspection() || false == element->MonEntryPtr.get())
 		{
+			SV_LOG_GLOBAL(error) << "invalid image";
 			assert(false);
 
 		}
@@ -316,6 +318,18 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 				{
 					hr = SVMatroxBufferInterface::CopyBuffer(rToBuffer, pImageBuffer->getHandle()->GetBuffer());
 				}
+				else
+				{
+					SV_LOG_GLOBAL(error) << "invalid buffer";
+				}
+				if (hr != S_OK)
+				{
+					SV_LOG_GLOBAL(error) << "CopyBuffer returns" << hr;
+				}
+			}
+			else
+			{
+				SV_LOG_GLOBAL(error) << "invalid pImageBuffer";
 			}
 		}
 	}
@@ -335,7 +349,9 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 #endif
 		::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 		SVProductInfoStruct LastProduct = LastProductGet();
-		if (GetPPQ()->HasActiveMonitorList() && SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+
+
+		if (GetPPQ()->HasActiveMonitorList() && LastProduct.bTriggered)
 		{
 			try
 			{
@@ -853,7 +869,7 @@ bool SVInspectionProcess::GoOffline()
 
 bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 {
-	bool bReady{true};
+	bool bReady {true};
 
 	if (pProduct)
 	{
@@ -939,7 +955,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 		tempProduct.resetIPInfos(GetUniqueObjectID());
 		//The triggerRecord must be free here, because the Inspection has to decide when write-mode of this is TR is finished and close the instance to open an read version.
 		l_rIPInfo.m_triggerRecordWrite = nullptr;
-		
+
 		SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (l_ImageIter != m_CameraImages.end())
@@ -1428,7 +1444,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	{
 		//Configuration has changed need to set the modified flag
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-		
+
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
@@ -1565,7 +1581,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 		}
 		else if (SVMSG_TRC_GENERAL_ERROR == rExp.getMessage().m_MessageCode && SvStl::Tid_TRC_Error_ResetBuffer_TooMany == rExp.getMessage().m_AdditionalTextId)
 		{
-			SvStl::MessageMgrStd oldException(SvStl::MsgType::Display| SvStl::MsgType::Log);
+			SvStl::MessageMgrStd oldException(SvStl::MsgType::Display | SvStl::MsgType::Log);
 			oldException.setMessage(rExp.getMessage());
 			ErrorMessages.insert(ErrorMessages.begin(), oldException.getMessageContainer());
 		}
@@ -2776,7 +2792,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	}
 
 	m_pToolSetCamera = GetFirstCamera();
-	
+
 	BuildValueObjectMap();
 
 	m_bForceOffsetUpdate = true;
