@@ -235,11 +235,11 @@ void WebsocketClient::handle_read_buffer(const boost::system::error_code& error,
 	{
 		if (m_Socket.got_binary())
 		{
-			m_pEventHandler->onBinaryMessage(m_Payload);
+			m_pEventHandler->onBinaryMessage(std::move(m_Payload));
 		}
 		else
 		{
-			m_pEventHandler->onTextMessage(m_Payload);
+			m_pEventHandler->onTextMessage(std::move(m_Payload));
 		}
 		m_Payload.clear();
 	}

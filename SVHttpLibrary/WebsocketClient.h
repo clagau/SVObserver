@@ -44,8 +44,8 @@ public:
 		friend class WebsocketClient;
 		virtual void onConnect() = 0;
 		virtual void onDisconnect() = 0;
-		virtual void onTextMessage(const std::vector<char>&) = 0;
-		virtual void onBinaryMessage(const std::vector<char>&) = 0;
+		virtual void onTextMessage(std::vector<char>&&) = 0;
+		virtual void onBinaryMessage(std::vector<char>&&) = 0;
 	};
 
 private:
