@@ -149,7 +149,8 @@ private:
 	TRControllerDataPerIP* m_pData = nullptr;
 	int m_IPDataNumber = 0; //number of IP data blocks (should be the same as number of IPs)
 	int m_nextTRID = 0; //the next ID for next created trigger record.
-	long m_resetId = 0; //time of the last reset
+	long m_resetId = 0; //id of the current resetStruct
+	long m_lastResetId = 0; //id of the last resetId
 	long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
 	SvPb::InspectionList m_inspectionList;
 

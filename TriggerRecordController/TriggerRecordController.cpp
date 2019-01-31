@@ -716,7 +716,8 @@ void TriggerRecordController::ResetInspectionData(int inspectionID)
 void TriggerRecordController::ResetTriggerRecordStructure()
 {
 	sendResetCall();
-	m_resetId = std::max(1l, m_resetId + 1);
+	m_resetId = std::max(1l, m_lastResetId + 1);
+	m_lastResetId = m_resetId;
 	while (0 < m_resetLockCounter) {}; //wait if any other method have left the access of this structure
 	for (int i = 0; i < m_IPDataNumber; i++)
 	{

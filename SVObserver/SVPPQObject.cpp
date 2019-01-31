@@ -4505,7 +4505,7 @@ bool SVPPQObject::SetupProductInfoStructs()
 		assert(pInspList->end() != pInspPB);
 		if (pInspList->end() != pInspPB)
 		{
-			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraBufferSize);
+			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraImageBufferSize);
 		}
 	}
 	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);

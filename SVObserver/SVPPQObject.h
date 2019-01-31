@@ -37,13 +37,14 @@
 
 #pragma region Declarations
 constexpr long	StandardPpqLength	= 2;
-constexpr long g_lPPQExtraBufferSize = 5;
+constexpr long g_lPPQExtraBufferSize = 50;
+constexpr long g_lPPQExtraImageBufferSize = 5;
 
 #pragma endregion Declarations
 
 constexpr long getMaxPpqLength()
 {
-	return SvTrc::TriggerRecordController::cMaxTriggerRecords - 5;// g_lPPQExtraBufferSize;
+	return SvTrc::TriggerRecordController::cMaxTriggerRecords - g_lPPQExtraImageBufferSize;
 };
 
 class SVPPQObject : 
