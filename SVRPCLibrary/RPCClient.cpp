@@ -177,17 +177,12 @@ void RPCClient::on_disconnect()
 	}
 }
 
-void RPCClient::onTextMessage(const std::vector<char>&)
+void RPCClient::onTextMessage(std::vector<char>&&)
 {
-	m_IoContex.dispatch(std::bind(&RPCClient::on_text_message, this));
+	SV_LOG_GLOBAL(error) << "Received a text message, but only binary messages expected!";
 }
 
-void RPCClient::on_text_message()
-{
-	throw std::runtime_error("only binary messages expected!");
-}
-
-void RPCClient::onBinaryMessage(const std::vector<char>& buf)
+void RPCClient::onBinaryMessage(std::vector<char>&& buf)
 {
 	auto ptr = std::make_shared<std::vector<char>>(std::move(buf));
 	m_IoContex.dispatch(std::bind(&RPCClient::on_binary_message, this, ptr));

@@ -58,7 +58,10 @@ private:
 	void http_on_error(const boost::system::error_code& error);
 	void http_do_close();
 
-	template<class Body> void http_do_write(boost::beast::http::response<Body> Response);
+	void http_do_write(boost::beast::http::response<boost::beast::http::empty_body>&& Response);
+	void http_do_write(boost::beast::http::response<boost::beast::http::string_body>&& Response);
+	void http_do_write(boost::beast::http::response<boost::beast::http::file_body>&& Response);
+	template<class Body> void http_do_write_impl(boost::beast::http::response<Body>& Response);
 	template<class Body> void http_access_log(const boost::beast::http::response<Body>& rResponse);
 
 	bool http_custom_request_handler(const Url&);
@@ -100,10 +103,12 @@ private:
 	// http
 	MediaType m_MediaType;
 	boost::beast::flat_buffer m_Buf;
-	boost::beast::http::request<boost::beast::http::string_body> m_Request;
 	std::chrono::system_clock::time_point m_ReceivedAt;
-	std::shared_ptr<void> m_pResponse;
-	
+	boost::beast::http::request<boost::beast::http::string_body> m_Request;
+	boost::beast::http::response<boost::beast::http::empty_body> m_EmptyResponse;
+	boost::beast::http::response<boost::beast::http::file_body> m_FileResponse;
+	boost::beast::http::response<boost::beast::http::string_body> m_StringResponse;
+
 	// ws
 	std::vector<char> m_WsBuf;
 	std::vector<char> m_Frames;
@@ -118,6 +123,7 @@ private:
 	std::queue<PendingFrame> m_FrameQueue;
 	bool m_IsWebsocketHandshakeDone {false};
 	bool m_IsDisconnectErrorHandled {false};
+	bool m_IsHttpErrorOccurred {false};
 };
 
 } // namespace SvHttp

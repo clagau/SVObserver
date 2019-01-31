@@ -66,13 +66,12 @@ public:
 protected:
 	void onConnect() override;
 	void onDisconnect() override;
-	void onTextMessage(const std::vector<char>&) override;
-	void onBinaryMessage(const std::vector<char>&) override;
+	void onTextMessage(std::vector<char>&&) override;
+	void onBinaryMessage(std::vector<char>&&) override;
 
 private:
 	void on_connect();
 	void on_disconnect();
-	void on_text_message();
 	void on_binary_message(std::shared_ptr<std::vector<char>>);
 
 	void request_impl(SvPenv::Envelope&& request, Task<SvPenv::Envelope>, uint64_t);

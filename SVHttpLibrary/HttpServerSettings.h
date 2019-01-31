@@ -33,16 +33,16 @@ protected:
 	/// returned, the handshake is aborted with http status code 403.
 	virtual bool onHandshake(int id, const std::string& access_token) = 0;
 
-	/// Will be called after successfull WebSocket handshake and connection
+	/// Will be called after successful WebSocket handshake and connection
 	/// is fully established. The Connection handle can be used to send
 	/// messages to the client.
 	virtual void onConnect(int id, HttpServerConnection&) = 0;
 
 	/// Will be called on incoming text message.
-	virtual void onTextMessage(int id, const std::vector<char>&) = 0;
+	virtual void onTextMessage(int id, std::vector<char>&&) = 0;
 
 	/// Will be called on incoming binary message.
-	virtual void onBinaryMessage(int id, const std::vector<char>&) = 0;
+	virtual void onBinaryMessage(int id, std::vector<char>&&) = 0;
 
 	/// Will be called when connection was closed. Can be triggered by
 	/// either server-side or client-side.

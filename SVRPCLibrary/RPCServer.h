@@ -43,8 +43,8 @@ public:
 protected:
 	virtual bool onHandshake(int id, const std::string&) override;
 	virtual void onConnect(int id, SvHttp::HttpServerConnection&) override;
-	virtual void onTextMessage(int id, const std::vector<char>&) override;
-	virtual void onBinaryMessage(int id, const std::vector<char>&) override;
+	virtual void onTextMessage(int id, std::vector<char>&&) override;
+	virtual void onBinaryMessage(int id, std::vector<char>&&) override;
 	virtual void onDisconnect(int id) override;
 
 private:

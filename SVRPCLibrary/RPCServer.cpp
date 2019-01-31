@@ -30,12 +30,12 @@ bool RPCServer::onHandshake(int id, const std::string& token)
 	return m_pRequestHandler->onHandshake(token);
 }
 
-void RPCServer::onTextMessage(int id, const std::vector<char>&)
+void RPCServer::onTextMessage(int id, std::vector<char>&&)
 {
 	throw std::runtime_error("only binary messages expected!");
 }
 
-void RPCServer::onBinaryMessage(int id, const std::vector<char>& buf)
+void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 {
 	if (buf.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
 	{

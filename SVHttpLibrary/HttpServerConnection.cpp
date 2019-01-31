@@ -206,7 +206,10 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 
 void HttpServerConnection::http_on_write(const boost::system::error_code& error, size_t bytes_read, bool close)
 {
-	m_pResponse = {}; // release memory we needed to keep during write
+	// release memory we needed to keep during write
+	m_EmptyResponse = {};
+	m_FileResponse = {};
+	m_StringResponse = {};
 
 	if (error)
 	{
@@ -234,8 +237,14 @@ void HttpServerConnection::http_on_error(const boost::system::error_code& error)
 		return;
 	}
 
-	if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset ||
+	m_IsHttpErrorOccurred = true;
+
+	if (error == boost::asio::error::eof ||
 		error == boost::asio::error::connection_aborted ||
+		error == boost::asio::error::connection_reset ||
+		error == boost::beast::http::error::end_of_stream ||
+		error.default_error_condition() == boost::system::errc::connection_aborted ||
+		error.default_error_condition() == boost::system::errc::connection_reset ||
 		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
 	{
 		if (!m_IsDisconnectErrorHandled)
@@ -262,7 +271,15 @@ void HttpServerConnection::http_do_close()
 	}
 
 	boost::system::error_code ec;
-	m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send, ec);
+	// There was an error on the connection, so no need to do a graceful shutdown
+	if (m_IsHttpErrorOccurred)
+	{
+		m_Socket.close(ec);
+	}
+	else
+	{
+		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send, ec);
+	}
 	if (ec)
 	{
 		SV_LOG_GLOBAL(warning) << "Error while closing http connection: " << ec;
@@ -270,24 +287,39 @@ void HttpServerConnection::http_do_close()
 }
 
 template<class Body>
-void HttpServerConnection::http_do_write(boost::beast::http::response<Body> Response)
+void HttpServerConnection::http_do_write_impl(boost::beast::http::response<Body>& Response)
 {
 	http_access_log(Response);
 
-	auto pResponse = std::make_shared<boost::beast::http::response<Body>>(std::move(Response));
-	m_pResponse = pResponse;
-	
 	boost::beast::http::async_write(
 		m_Socket,
-		*pResponse,
+		Response,
 		std::bind(
 		&HttpServerConnection::http_on_write,
 		shared_from_this(),
 		std::placeholders::_1,
 		std::placeholders::_2,
-		pResponse->need_eof()
+		Response.need_eof()
 	)
 	);
+}
+
+void HttpServerConnection::http_do_write(boost::beast::http::response<boost::beast::http::empty_body>&& Response)
+{
+	m_EmptyResponse = std::move(Response);
+	http_do_write_impl(m_EmptyResponse);
+}
+
+void HttpServerConnection::http_do_write(boost::beast::http::response<boost::beast::http::string_body>&& Response)
+{
+	m_StringResponse = std::move(Response);
+	http_do_write_impl(m_StringResponse);
+}
+
+void HttpServerConnection::http_do_write(boost::beast::http::response<boost::beast::http::file_body>&& Response)
+{
+	m_FileResponse = std::move(Response);
+	http_do_write_impl(m_FileResponse);
 }
 
 // Formats given time_point to required format, e.g. 27/Jul/2018:16:31:21 +0100
@@ -613,14 +645,14 @@ void HttpServerConnection::ws_on_read(const boost::system::error_code& error, si
 		{
 			if (m_rSettings.pEventHandler)
 			{
-				m_rSettings.pEventHandler->onBinaryMessage(m_ConnectionId, m_Payload);
+				m_rSettings.pEventHandler->onBinaryMessage(m_ConnectionId, std::move(m_Payload));
 			}
 		}
 		else
 		{
 			if (m_rSettings.pEventHandler)
 			{
-				m_rSettings.pEventHandler->onTextMessage(m_ConnectionId, m_Payload);
+				m_rSettings.pEventHandler->onTextMessage(m_ConnectionId, std::move(m_Payload));
 			}
 		}
 		m_Payload.clear();

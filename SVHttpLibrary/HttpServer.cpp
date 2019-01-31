@@ -116,12 +116,12 @@ void HttpServer::do_cleanup(const boost::system::error_code& error)
 	}
 
 	// delete connection added during last cleanup
-	m_ConnectionsMarkedForDeletion.clear();
+	m_ConnectionsMarkedForDeletion = {};
 
 	for (auto it = m_Connections.begin(); it != m_Connections.end();)
 	{
 		auto conn = *it;
-		if (false && !conn->isOpen())
+		if (!conn->isOpen())
 		{
 			SV_LOG_GLOBAL(debug) << "Marking connection for deletion";
 			it = m_Connections.erase(it);

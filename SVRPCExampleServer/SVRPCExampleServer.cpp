@@ -68,12 +68,24 @@ static void counter_async(const boost::system::error_code& ec,
 		SvPenv::Error error;
 		error.set_message(ec.message());
 		error.set_errorcode(SvPenv::ErrorCode::internalError);
-		observer.error(error);
+		try
+		{
+			observer.error(error);
+		}
+		catch (const ConnectionLostException&)
+		{
+		}
 		return;
 	}
 	if (ctx->isCancelled())
 	{
-		observer.finish();
+		try
+		{
+			observer.finish();
+		}
+		catch (const ConnectionLostException&)
+		{
+		}
 		return;
 	}
 
