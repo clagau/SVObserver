@@ -1,56 +1,64 @@
-﻿Notable changes from 7.56 to 8.00
+﻿Notable changes from 8.00 to 8.10
 
 Known new Bugs:
-	Matrox can not be uninstalled on X2C image
+	SVO-2074 Image Dependencies displayed for inactive images
 
-Compatible Changes:
-	SVO-781 Acquisition Tool for Color Cameras
-	SVO-142 Save result page data to csv
-	SVO-1417 Table Analyzer: Add and recalculate new columns
-	SVO-1653 Ring buffer should support color Image
-	SVO-1761 Implement a "fit to width" and "fit to height" in the image view
+Compatible Changes:  
+	SVO-1364 Group Loop Tool  
+	SVO-1583 Create SVOWebApp Webserver for GUI 2.0
+	SVO-1585 HTML Help
+	SVO-1358 "One-Click" option to publish and add a tool into the MonitorList
+	SVO-2026 Recalculate all tool if ROI changed for one tool
+	SVO-1913 Use LinkedValue in SVRangeClass
+	SVO-2028 External Tools: Changing values of input variables lead (sometimes) to AuditTrail entries
+	SVO-1798 Store and Read SVIM Serial from BIOS
+	SVO-1656 Replace JSON Communication with Protobuf
+	SVO-854 Add Load Method to SVRC
+	SVO-1758 Add SetupTestInputs to SVRC
+	SVO-351 Additional SVRC Function AutoSave, StartLastConfigurationAutomatically, FBWF
+	SVO-1547 Logger for SVObserver SVRC
 
 Incompatible Changes:
-	SVO-1587 MIL 10 Support may change results
-	SVO-1640 Set MIL to use Multiprocessor
-	SVO-1800 Disable or Remove streaming in SVObserver
-	SVO-1802 Archive Tool: Wrong result data for the first member of an array
-	SVO-1908 SVObserver crash when connected with SAMI - (Changed loading sequence can cause problems when going online)
-	SVO-1907 Unexpected Audit Trail Entries in SVO 7.56 (statistics tool, blob analyzer) - The change does not affect the inspection only the generated audit trail
+	SVO-1728 Change old Pac-File as 7 ZIP
+	SVO-1914 Update MIL 10 PP3
+	SVO-2028 External Tools: Changing values of input variables lead (sometimes) to AuditTrail entries
+	SVO-2041 Missing AuditTrail variable names in Printout Report for SAControl
+	SVO-1887 Remove SVUnlockImage,SVlockImage, SVUnlockAllImages and SVGetLockedImage from SIAC
+	SVO-910 Naming for GetProduct and GetItem is not the same in SVRC
 
 Fixed Bugs:
-	SVO-1409 Table tool / result Picker / Select toolset output dialog - inconsistent order in column name lists
-	SVO-1795 SVObserver crash if you want to delete an invalid external tool
-	SVO-1803 SVRC: GetFailStatus don't provide the latest rejected Products
-	SVO-1233 A non-existent camera file name can lead to a SVObserver crash
-	SVO-1299 Sporadic fail results from Histogram Analyzer.Second Peak
-	
-Notable SVIM Image Changes:
-	SVO-1726 New Model Nummer A0 51 22 14, Support for X2C SVIM
-	Matrox can not be uninstalled on X2C image
-	New mainboard driver on X2C image
-	Updated network card driver on X2C image
-	Updated network graphics card driver on X2C image
-	Updated BIOS settings fo X2C
-	RAID deactivated for X2C
+	SVO-2040 Configuration unreadable if used in the column names in the characters (ä, ö, ü)
+	SVO-1890 Change Camera to Trigger Correlation, Analyze the Image Workflow
+	SVO-2055 Complete set of "Trigger-/Acquisition-Time" - values only available after the third trigger
+	SVO-2074 Image Dependencies displayed for inactive images
 
-Image Name: 
-	X2B0800C
-	X2C0800A
+Notable SVIM Image Changes:
+	SVO-1639 Remove NTBackup functionality from SVObserver Utilities
+	SVO-1853 Put the crash-dump files of the SVO Gateway application into "our" Dr.Watson folder7
+	SVO-1866 PDF Reader on SVIM
+	SVO-2030 Compress V:\ drive to compress images
+	SVO-2025 Time sync, net time command twice
+	SVO-2049 Install Chrome on the image
+	SVO-1930 X2C Clone Monitor as default
+	SVO-2060 Force IP from IPConfig not always successful
+
+Base Image Name:
+	X2B0810
+	X2C0810
 
 SOFTWARE VERSIONS:
 
-SVObserver version 8.00
-SVRC Version 8.00
+SVObserver version 8.10
+SVRC Version 8.10
 SIAC Version 7.50
-SVOGateway Version 8.00
+SVOGateway Version 8.10
 
 SVLpt version 7.0.0.0 (11)
 
 MIL 10.00 R2 (build 2995) 64-bit
 [10.00.2995]
 [Full]
-[Service Packs:  M10PP2B425]
+[Service Packs:  M10PP3B601]
 Updates Installed: 
 MIL 10 Update               7     Build 81       Matrox RadientPro
 MIL 10 Update              20     Build 15       Intellicam
@@ -70,6 +78,8 @@ MIL 10 Engineering Fix    566 F   Build 01       Genicam v3_0 XML
 MIL 10 Engineering Fix    569 F   Build 05       License dongle firmware update
 
 Microsoft Internet Explorer version 8.0
+
+Chrome Version 70.0.3538.110 (Official Build) (64-bit)
 
 Microsoft PosReady 7
 
