@@ -15,7 +15,7 @@
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVMFCControls/SVUtilityArgumentDialog.h"
 #include "SVLibrary/SVOIniClass.h"
-#include "InspectionEngine/SVUtilityIniClass.h"
+#include "SVLibrary/SVUtilityIniClass.h"
 #include "SVObserver.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -73,12 +73,12 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 
 	if ( ID_EXTRAS_UTILITIES_LIMIT != uiUtilityId )
 	{
-		std::map<UINT, SVUtilityIniClass>::iterator iter;
+		std::map<UINT, SvLib::SVUtilityIniClass>::iterator iter;
 
 		iter = pApp->m_UtilityMenu.find(uiUtilityId);
 		if ( iter != pApp->m_UtilityMenu.end() )
 		{
-			SVUtilityIniClass l_Struct;
+			SvLib::SVUtilityIniClass l_Struct;
 			l_Struct = iter->second;
 
 		  if ( 0 == SvUl::CompareNoCase( SvUl::Left( l_Struct.m_PromptForArguments, 1), std::string( _T("Y") )) )
@@ -202,7 +202,7 @@ bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 
 	for ( int i = 0; (i < l_iHighestIndex) && bRet; i++ )
 	{
-		SVUtilityIniClass l_Struct;
+		SvLib::SVUtilityIniClass l_Struct;
 		std::string Text = SvUl::Format( cUtilityNr, i+1 );
 		UtilName = UtilityIni.GetValueString( Text.c_str(), cDisplayName, _T("") );
 		if ( UtilName.empty() )
@@ -280,7 +280,7 @@ void SVUtilitiesClass::CleanupIni()
 
 	while ( !bDone )
 	{
-		SVUtilityIniClass l_Struct;
+		SvLib::SVUtilityIniClass l_Struct;
 		iUtilityIndex++;
 		Stanza.Format( cUtilityNr, iUtilityIndex);
 		Value = UtilityIni.GetValueString( Stanza, cDisplayName, _T("") );
@@ -322,7 +322,7 @@ void SVUtilitiesClass::CleanupIni()
 
 	UtilityIni.SetValueInt( _T("General"), _T("HighestUtilityIndex"), l_iHighestIndex );
 
-	std::map<UINT,SVUtilityIniClass>::const_iterator Iter;
+	std::map<UINT, SvLib::SVUtilityIniClass>::const_iterator Iter;
 
 	iId = ID_EXTRAS_UTILITIES_BASE;
 
@@ -333,7 +333,7 @@ void SVUtilitiesClass::CleanupIni()
 		Iter = pApp->m_UtilityMenu.find((UINT) (iId + i-1));
 		if( pApp->m_UtilityMenu.end() != Iter )
 		{
-			const SVUtilityIniClass rUtilityStruct( Iter->second );
+			const SvLib::SVUtilityIniClass rUtilityStruct( Iter->second );
 		
 			UtilityIni.SetValueString( Stanza, cDisplayName, rUtilityStruct.m_DisplayName.c_str() );
 			UtilityIni.SetValueString( Stanza, cCommandName, rUtilityStruct.m_Command.c_str() );
@@ -351,14 +351,14 @@ void SVUtilitiesClass::UpdateIni()
 
 	int iMapSize = static_cast<int>(pApp->m_UtilityMenu.size());
 
-	std::map<UINT,SVUtilityIniClass>::const_iterator Iter( pApp->m_UtilityMenu.begin() );
+	std::map<UINT, SvLib::SVUtilityIniClass>::const_iterator Iter( pApp->m_UtilityMenu.begin() );
 
 	int iCnt = 0;
 	while ( pApp->m_UtilityMenu.end() != Iter  )
 	{
 		iCnt++;
 		std::string Text = SvUl::Format( cUtilityNr, iCnt);
-		const SVUtilityIniClass& rUtilityStruct( Iter->second );
+		const SvLib::SVUtilityIniClass& rUtilityStruct( Iter->second );
 
 		//update ini entries for each utility
 		UtilityIni.SetValueString( Text.c_str(), cDisplayName, rUtilityStruct.m_DisplayName.c_str() );

@@ -36,8 +36,6 @@ typedef long long SVMatroxInt;
 @SVObjectOperations None
 
 */
-//typedef long SVMatroxStatusCode;
-typedef HRESULT SVMatroxStatusCode;
 
 /**
 @SVObjectName Matrox Hook Function Pointer
@@ -49,33 +47,3 @@ typedef HRESULT SVMatroxStatusCode;
 */
 typedef SVMatroxIdentifier ( _stdcall *SVMatroxHookFunctionPtr )( SVMatroxIdentifier, SVMatroxIdentifier, void* );
 
-/**
-@SVObjectName Matrox double array
-
-@SVObjectOverview This is an array of doubles.
-
-@SVObjectOperations None
-
-*/
-typedef std::vector<double> SVMatroxDoubleArray;
-
-
-/**
-@SVObjectName Matrox long array
-
-@SVObjectOverview This is an array of doubles.
-
-@SVObjectOperations None
-
-*/
-typedef std::vector<long> SVMatroxLongArray;
-
-/**
-@SVObjectName Matrox long array
-
-@SVObjectOverview This is an array of doubles.
-
-@SVObjectOperations None
-
-*/
-typedef std::vector<BYTE> SVMatroxByteArray;

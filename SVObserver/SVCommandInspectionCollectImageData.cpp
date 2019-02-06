@@ -135,7 +135,7 @@ const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const
 	return m_Product;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess* pInspection, SVIPResultData& p_rResultData )
+HRESULT SVCommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData )
 {
 	HRESULT hRet = E_FAIL;
 	SVResultListClass* pResultList(nullptr);
@@ -148,7 +148,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess*
 
 	if (nullptr != pResultList)
 	{		
-		pResultList->GetResultData(p_rResultData);
+		pResultList->GetResultData(rResultData);
 		hRet = S_OK;
 	} 
 
@@ -160,7 +160,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 {
 	HRESULT l_Status = S_OK;
 
-	SVImageClass* pImage = dynamic_cast<SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID() ) );
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID() ) );
 
 	if( nullptr != pImage && nullptr != pTriggerRecord )
 	{

@@ -41,8 +41,6 @@ The Add Symbol operator notifies the application of the desired symbol and respo
 */
 class SVEquationLexClass : public yyFlexLexer
 {
-	friend class SVEquationClass;
-
 public:
 	SVEquationLexClass();
 	virtual ~SVEquationLexClass();
@@ -54,6 +52,8 @@ public:
 	virtual void LexerError( const char *msg ) override;
 
 	virtual int yylex() override;
+
+	void setEquation(SVEquationBase* pEquation){ m_pEquation = pEquation; }
 
 protected:
 	int addSymbol( const char* name );
@@ -67,7 +67,6 @@ public:
 	YYSTYPE yylval;
 
 protected:
-	SVEquationBase* pEquation;
-
+	SVEquationBase* m_pEquation;
 };
 

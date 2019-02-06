@@ -74,6 +74,9 @@
     <ClInclude Include="EventTime.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVMemoryManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVContainableCriticalSection.inl">
@@ -83,6 +86,9 @@
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVTQueueObject.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVMemoryManager.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

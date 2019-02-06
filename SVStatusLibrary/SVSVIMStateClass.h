@@ -12,6 +12,7 @@
 #pragma once
 #pragma region Includes
 //Moved to precompiled header: #include <atomic>
+//Moved to precompiled header: #include <functional>
 #include "SVProtobuf/SVRC-Enum.h"
 #pragma endregion Includes
 
@@ -46,7 +47,7 @@
 #define SV_STATE_MODIFIED		0x00000001
 #define SV_STATE_REMOTE_CMD		0x00000002
 
-typedef boost::function<HRESULT(long, long, long, LPCTSTR)> NotifyFunctor;
+typedef std::function<HRESULT(long, long, long, LPCTSTR)> NotifyFunctor;
 
 //This class manages the state variable and uses a lock to 
 //
@@ -112,7 +113,7 @@ private:
 	//This destructor does nothing.
 	virtual ~SVSVIMStateClass();
 
-	static NotifyFunctor m_Notify;	//! Notify functor when state changes
+	static NotifyFunctor m_pNotify;	//! Notify functor when state changes
 
 	//This attribute contain the SVIM state value.
 	static std::atomic_long m_SVIMState;

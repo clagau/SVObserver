@@ -15,10 +15,10 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "SVPixelAnalyzer.h"        // Required for SVPixelAnalyzerClass
-#include "InspectionEngine/SVTool.h"
+#include "AnalyzerOperators/SVPixelAnalyzer.h"        // Required for SVPixelAnalyzerClass
+#include "Tools/SVTool.h"
 #include "SVToolSet.h"              // Required for scripting
-#include "SVResult.h"
+#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "SVObserver.h"
 #pragma endregion Includes
@@ -92,7 +92,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 	}
 	else
 	{
-		m_pAnalyzer = dynamic_cast<SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
+		m_pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 		msvulMinGrayscale = 0;
 		if (nullptr != m_pAnalyzer)
 		{

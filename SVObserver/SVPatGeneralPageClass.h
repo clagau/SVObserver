@@ -14,7 +14,10 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes
 
+namespace SvAo
+{
 class SVPatternAnalyzerClass;
+}
 class SVPatAnalyzeSetupDlgSheet;
 
 class SVPatGeneralPageClass : public CPropertyPage
@@ -48,7 +51,7 @@ public:
 	int		m_nPosAccuracyIndex;
 	int		m_nSpeedIndex;
 
-	SVPatternAnalyzerClass* m_pPatAnalyzer;
+	SvAo::SVPatternAnalyzerClass* m_pPatAnalyzer;
 
 // Overrides
 	// ClassWizard generate virtual function overrides

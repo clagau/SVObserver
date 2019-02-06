@@ -13,14 +13,14 @@
 #include "stdafx.h"
 #include "SVTADlgPolarTransformPage.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "InspectionEngine/SVEvaluate.h"
+#include "Operators/SVEvaluate.h"
+#include "Operators/SVImagePolarTransform.h"
 #include "SVIPDoc.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
-#include "InspectionEngine/SVImagePolarTransform.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -271,68 +271,68 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateCenterXObjectType;
-		m_pEvaluateCenterX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterX )
 		{
 			// Get Center X Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateCenterXResultObjectGuid;
-			m_pCenterXResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateCenterX->getFirstObject(resultObjectInfo));
+			m_pCenterXResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateCenterX->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Center Y...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateCenterYObjectType;
-		m_pEvaluateCenterY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterY )
 		{
 			// Get Center Y Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateCenterYResultObjectGuid;
-			m_pCenterYResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateCenterY->getFirstObject(resultObjectInfo));
+			m_pCenterYResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateCenterY->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Start Radius...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateStartRadiusObjectType;
-		m_pEvaluateStartRadius = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartRadius )
 		{
 			// Get Start Radius Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateStartRadiusResultObjectGuid;
-			m_pStartRadiusResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateStartRadius->getFirstObject(resultObjectInfo));
+			m_pStartRadiusResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateStartRadius->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate End Radius...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateEndRadiusObjectType;
-		m_pEvaluateEndRadius = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndRadius )
 		{
 			// Get End Radius Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateEndRadiusResultObjectGuid;
-			m_pEndRadiusResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateEndRadius->getFirstObject(resultObjectInfo));
+			m_pEndRadiusResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateEndRadius->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Start Angle...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateStartAngleObjectType;
-		m_pEvaluateStartAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartAngle )
 		{
 			// Get Start Angle Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateStartAngleResultObjectGuid;
-			m_pStartAngleResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateStartAngle->getFirstObject(resultObjectInfo));
+			m_pStartAngleResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateStartAngle->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate End Angle...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateEndAngleObjectType;
-		m_pEvaluateEndAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndAngle )
 		{
 			// Get End Angle Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateEndAngleResultObjectGuid;
-			m_pEndAngleResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateEndAngle->getFirstObject(resultObjectInfo));
+			m_pEndAngleResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateEndAngle->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Use Formula...
 		SvDef::SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVOutputUseFormulaObjectGuid;
-		m_pUseFormula = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pUseFormula = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pUseFormula )
 		{
 			m_pUseFormula->GetValue( bUseFormula );
@@ -340,7 +340,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Use Angle Method ...
 		objectInfo.EmbeddedID = SVOutputAngularMethodObjectGuid;
-		m_pAngleMethod = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pAngleMethod = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pAngleMethod )
 		{
 			m_AngularMethodCombo.SetEnumTypes(m_pAngleMethod->GetEnumVector());
@@ -348,7 +348,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Interpolation Mode...
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pInterpolationMode = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
 			// Populate Interpolation Mode combo...
@@ -358,7 +358,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		objectInfo.ObjectType = SvPb::SVPolarTransformObjectType;
 		objectInfo.SubType = SvPb::SVImagePolarTransformObjectType;
 		objectInfo.EmbeddedID = GUID_NULL;
-		SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SVImagePolarTransformClass*> (m_pTool->getFirstObject(objectInfo));
+		SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*> (m_pTool->getFirstObject(objectInfo));
 		if(nullptr != pImagePolarTransform)
 		{
 			m_ImagePolarTransformID = pImagePolarTransform->GetUniqueObjectID();

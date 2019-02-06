@@ -9,6 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:17:06  $
 //******************************************************************************
 
+namespace SvVol
+{
+
 #pragma region Constructor
 template <typename T>
 SVValueObjectClass<T>::SVValueObjectClass(LPCSTR ObjectName)
@@ -863,6 +866,6 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray() const
 
 	return result;
 }
-
 #pragma endregion Protected Methods
 
+} //namespace SvVol

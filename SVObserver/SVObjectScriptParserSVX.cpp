@@ -13,11 +13,11 @@
 #include "SVObjectScriptParserSVX.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVGlobal.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVBarCodeAnalyzerClass.h"
+#include "AnalyzerOperators/SVBarCodeAnalyzerClass.h"
 #include "SVTimerLibrary/SVFunctionProfiler.h"
 #include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -542,7 +542,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 
 				bAlreadyChecked = FALSE;
 				strName.LoadString( IDS_CLASSNAME_RESULT_LONG );
-				if( rExpressionStack.GetAt( riIndex ) == strName && SV_IS_KIND_OF( rOwnerInfo.getObject(), SVBarCodeAnalyzerClass )  )
+				if( rExpressionStack.GetAt( riIndex ) == strName && SV_IS_KIND_OF( rOwnerInfo.getObject(), SvAo::SVBarCodeAnalyzerClass )  )
 				{
 					strName.LoadString( IDS_CLASSNAME_SVBARCODEANALYZERESULT );
 					strAlias = _tcsdup( strName );
@@ -1434,9 +1434,9 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 	long l_lOffset = 0;
 
-	SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>( pObject );
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>( pObject );
 
-	const SvOl::SVInObjectInfoStruct* pAuxInfo = l_psvTool->GetAuxInputImageInfo();
+	const SvOl::SVInObjectInfoStruct* pAuxInfo = pTool->GetAuxInputImageInfo();
 
 	// reattach inputs
 	for( int i = 0; l_bOk && i < l_lOperandSize; i++ )
@@ -1456,7 +1456,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 			}
 			else
 			{
-				if( nullptr != l_psvTool && i + l_lOffset < l_lInfoSize )
+				if( nullptr != pTool && i + l_lOffset < l_lInfoSize )
 				{
 					do
 					{

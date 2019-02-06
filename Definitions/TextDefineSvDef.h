@@ -35,4 +35,33 @@ const TCHAR* const cArrayTag = _T("Array_Elements");	// new style; one bucket, a
 
 const TCHAR* const cModuleReady = _T("Module Ready");
 const TCHAR* const cRaidErrorIndicator = _T("Raid Error Indicator");
+
+const TCHAR* const cLinkName = _T(" Link");
+
+const TCHAR* const Auto = _T("Auto");
+const TCHAR* const Bicubic = _T("Bicubic");
+const TCHAR* const Bilinear = _T("Bilinear");
+const TCHAR* const NearestNeighbor = _T("Nearest Neighbor");
+const TCHAR* const Enabled = _T("Enabled");
+const TCHAR* const Disabled = _T("Disabled");
+const TCHAR* const Fast = _T("Fast");
+const TCHAR* const Precise = _T("Precise");
+const TCHAR* const ResizeImage = _T("ResizeImage");
+
+const TCHAR* const cPpqFixedName = _T("PPQ_");
+const TCHAR* const cTriggerFixedName = _T("Trigger_");
+const TCHAR* const cCameraFixedName = _T("Camera_");
+const TCHAR* const cInspectionFixedName = _T("Inspection_");
+
+const TCHAR* const cInputTag_SortColumn = _T("SortColumn");
+const TCHAR* const cInputTag_ExcludeColumn = _T("ExcludeColumn");
+const TCHAR* const cInputTag_NewColumn = _T("NewColumn");
+const TCHAR* const cInputTag_LongResultValue = _T("LongResultValue");
+
+const TCHAR* const ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
+const TCHAR* const ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
+
+const TCHAR* const SizeAdjustTextNone = _T("Manual");
+const TCHAR* const SizeAdjustTextFormula = _T("Formula");
+const TCHAR* const SizeAdjustTextFullSize = _T("Auto Fit");
 } //namespace SvDef

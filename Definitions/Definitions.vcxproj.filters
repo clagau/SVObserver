@@ -69,6 +69,9 @@
     <ClInclude Include="SVExtentEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="BandEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalConstantData.inl">

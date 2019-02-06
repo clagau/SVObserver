@@ -24,7 +24,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVAdjustToolSizePositionDlg.h"
-#include "InspectionEngine/SVAnalyzer.h"
+#include "AnalyzerOperators/SVAnalyzer.h"
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
 #include "SVDrawObject.h"
@@ -34,15 +34,17 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVSetupDialogManager.h"
-#include "SVToolLoadImage.h"
+#include "Tools/SVLoadImageTool.h"
 #include "SVMainFrm.h"
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVShiftTool.h"
+#include "Tools/SVShiftTool.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/GlobalConst.h"
+#include "SVMFCControls/SVAnalyzerResultDlg.h"
+#include "SVPatResultDlgClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -239,16 +241,16 @@ HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& rToolExtents )
 	return l_hrOk;
 }
 
-void SVImageViewClass::AttachToImage( const SVGUID& p_rImageId )
+void SVImageViewClass::AttachToImage( const SVGUID& rImageId )
 {
-	if( !( p_rImageId.empty() ) )
+	if( !( rImageId.empty() ) )
 	{
-		SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( p_rImageId.ToGUID() ) );
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID()));
 
-		if( nullptr != l_pImage )
+		if( nullptr != pImage )
 		{
-			m_ImageId = l_pImage->GetUniqueObjectID();
-			m_imageName = l_pImage->GetCompleteName();
+			m_ImageId = pImage->GetUniqueObjectID();
+			m_imageName = pImage->GetCompleteName();
 
 			GetIPDoc()->RegisterImage( m_ImageId, this );
 
@@ -286,13 +288,11 @@ void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 
 	if( ! l_imageName.empty() )
 	{
-		SVImageClass* l_psvImage = nullptr;
+		SvIe::SVImageClass* pImage = GetImageByName( l_imageName.c_str() );
 
-		l_psvImage = GetImageByName( l_imageName.c_str() );
-
-		if( nullptr != l_psvImage )
+		if( nullptr != pImage )
 		{
-			l_ImageId = l_psvImage->GetUniqueObjectID();
+			l_ImageId = pImage->GetUniqueObjectID();
 			Attach = true;
 		}
 
@@ -379,14 +379,14 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 			if( nullptr != l_psvIPDoc )
 			{
-				SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
-				if( l_psvTool )
+				SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
+				if( pTool )
 				{
 					SvDef::SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 
-					SVAnalyzerClass* l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
-					if( l_psvAnalyzer )
+					SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+					if(nullptr != pAnalyzer )
 					{
 						CPoint l_point;
 						l_point.x = m_mousePoint.x;
@@ -394,9 +394,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 						TransformFromViewSpace( l_point );
 
-						if( l_psvAnalyzer->IsPtOverResult( l_point ) )
+						if( pAnalyzer->IsPtOverResult( l_point ) )
 						{
-							l_psvAnalyzer->DisplayAnalyzerResult();
+							DisplayAnalyzerResult(pAnalyzer->getAnalyzerResult(), pAnalyzer->GetObjectSubType());
 						}
 					}
 				}
@@ -414,7 +414,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			}
 
 			SVIPDoc* l_psvIPDoc = GetIPDoc();
-			SVToolClass* l_psvTool = nullptr;
+			SvTo::SVToolClass* pTool = nullptr;
 			CPoint l_mousePoint;
 
 			SVObjectInfoStruct l_svInfo;
@@ -423,12 +423,12 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			l_mousePoint = m_mousePoint;
 
 			TransformFromViewSpace( l_mousePoint );
-			SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-			SVDrawContext drawContext( nullptr, l_pImage );
+			SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID()));
+			SVDrawContext drawContext( nullptr, pImage );
 
 			if( nullptr != l_psvIPDoc )
 			{
-				l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
+				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->GetSelectedToolID()));
 			}
 
 			m_isPicked = GetObjectAtPoint( l_mousePoint );	// stores object in m_psvObject
@@ -455,7 +455,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SvPb::SVImagePolarTransformObjectType: // 1792
 						{
-							DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+							DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
 
 							SVAdjustToolSizePositionDlg dlg(DlgName.c_str(), this, m_pTaskObject );
 							dlg.DoModal();
@@ -478,9 +478,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SvPb::SVNotSetSubObjectType:
 						{
-							if( SV_IS_KIND_OF( l_psvTool, SVLoadImageToolClass ) )
+							if( SV_IS_KIND_OF( pTool, SvTo::SVLoadImageToolClass ) )
 							{
-								DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+								DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
 								SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_pTaskObject );
 								dlg.DoModal();
 							}
@@ -509,7 +509,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 				case SvPb::SVToolObjectType:
 				{
-					DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+					DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
 					SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_pTaskObject );
 					dlg.DoModal();
 					break;
@@ -622,9 +622,6 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 	RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 
-	//Get the current selected tool and check to see if it has extents.  if it does not then remove Adjust Size and Position menu option
-	SVToolClass* CurrentTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
-
 	m_mousePoint.x = p_point.x;
 	m_mousePoint.y = p_point.y;
 
@@ -658,13 +655,13 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 			else
 			{
 				BOOL l_resultFound = FALSE;
-				SVAnalyzerClass* l_psvAnalyzer = nullptr;
+				SvAo::SVAnalyzerClass* pAnalyzer = nullptr;
 				SVIPDoc *l_psvIPDoc = GetIPDoc();
 
 				if( nullptr != l_psvIPDoc )
 				{
-					SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
-					if( l_psvTool )
+					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID()));
+					if( pTool )
 					{
 						CPoint l_point;
 						l_point.x = m_mousePoint.x;
@@ -674,17 +671,17 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 						if( GetObjectAtPoint( l_point ) )
 						{
-							l_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>( m_pTaskObject );
+							pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass *>( m_pTaskObject );
 
-							if( nullptr == l_psvAnalyzer )
+							if( nullptr == pAnalyzer )
 							{
 								SvDef::SVObjectTypeInfoStruct l_svInfo;
 								l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 
-								l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
-								if( l_psvAnalyzer )
+								pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+								if( pAnalyzer )
 								{
-									l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
+									l_resultFound = pAnalyzer->IsPtOverResult( l_point );
 								}
 							}
 						}
@@ -696,7 +693,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 					l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
 				}
 
-				if( !l_psvAnalyzer || RunOrTestMode )
+				if( !pAnalyzer || RunOrTestMode )
 				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}
@@ -714,7 +711,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 void SVImageViewClass::TransformFromViewSpace( CPoint& p_point )
 {
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
+	SvIe::SVImageClass* l_pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
 	SVDrawContext l_svDrawContext( nullptr, l_pImage, m_ZoomHelper.GetZoom() );
 
 	l_svDrawContext.InverseTransform( &p_point, &p_point, 1 );
@@ -728,8 +725,8 @@ void SVImageViewClass::SelectDisplayImage()
 
 	if( nullptr != l_svDlg.m_pDoc )
 	{
-		SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-		l_svDlg.m_pCurrentImage = l_pImage;
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
+		l_svDlg.m_pCurrentImage = pImage;
 
 		if( IDOK == l_svDlg.DoModal() )
 		{
@@ -750,21 +747,21 @@ const SVGUID& SVImageViewClass::GetImageID() const
 	return m_ImageId;
 }
 
-SVImageClass* SVImageViewClass::GetImage()
+SvIe::SVImageClass* SVImageViewClass::GetImage()
 {
-	return dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
+	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
 }
 
-SVImageClass* SVImageViewClass::GetImageByName( LPCTSTR ImageName ) const
+SvIe::SVImageClass* SVImageViewClass::GetImageByName( LPCTSTR ImageName ) const
 {
-	SVImageClass* l_pImage = nullptr;
+	SvIe::SVImageClass* pImage = nullptr;
 	SVIPDoc* l_pDocument = GetIPDoc();
 
 	if( nullptr != l_pDocument )
 	{
-		l_pImage = l_pDocument->GetImageByName( ImageName );
+		pImage = l_pDocument->GetImageByName(ImageName);
 	}
-	return l_pImage;
+	return pImage;
 }
 
 HRESULT SVImageViewClass::RecreateImageSurface()
@@ -929,11 +926,11 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 
 		if( !( m_ImageId.empty() ) && nullptr != l_psvIPDoc )
 		{
-			SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID()));
 
-			if( l_psvTool )
+			if( pTool )
 			{
-				if( nullptr != l_psvTool->GetObjectAtPoint( l_point ) )
+				if( nullptr != pTool->GetObjectAtPoint( l_point ) )
 				{
 					l_psvIPDoc->OnEditTool();
 				}
@@ -959,21 +956,17 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 		
 		if( nullptr != l_psvIPDoc && !( m_ImageId.empty() ) )
 		{
-			SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
-			if( l_psvTool )
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->GetSelectedToolID()));
+			if(nullptr !=  pTool)
 			{
 				// Try to call SetupDialog for first found Analyzer...
 				SvDef::SVObjectTypeInfoStruct l_svInfo;
 				l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 
-				SVAnalyzerClass* l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
-				if( l_psvAnalyzer )
+				SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+				if(nullptr != pAnalyzer)
 				{
-				
-
-					SVSetupDialogManager::Instance().SetupDialog( l_psvAnalyzer->GetClassID(), l_psvAnalyzer->GetUniqueObjectID(), this );
-
-			
+					SVSetupDialogManager::Instance().SetupDialog( pAnalyzer->GetClassID(), pAnalyzer->GetUniqueObjectID(), this );
 
 					l_psvIPDoc->RunOnce();
 				}
@@ -1298,6 +1291,53 @@ bool SVImageViewClass::CalculateZoomFit(ZoomEnum ZoomType)
 	return Result;
 }
 
+void SVImageViewClass::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyzerResults, SvPb::SVObjectSubTypeEnum analyzerType) const
+{
+	constexpr size_t cPatternResults = 4;
+
+	if(rAnalyzerResults.size() > 0)
+	{
+		switch(analyzerType)
+		{
+			case SvPb::SVBlobAnalyzerObjectType:
+			{
+
+				SVAnalyzerResultDlg	resultDlg{rAnalyzerResults, IDD_BA_RESULT_DIALOG};
+				resultDlg.DoModal();
+				break;
+			}
+
+			case SvPb::SVOCVAnalyzerObjectType:
+			{
+				
+				SVAnalyzerResultDlg resultDlg {rAnalyzerResults, IDD_ANALYZE_RESULT};
+				resultDlg.DoModal();
+				break;
+			}
+
+			case SvPb::SVPatternAnalyzerObjectType:
+			{
+				SVPatResultDlgClass resultDlg;
+				if(rAnalyzerResults.size() >= cPatternResults)
+				{
+					if(!rAnalyzerResults[0].empty())
+					{
+						resultDlg.m_strAngle = rAnalyzerResults[0].c_str();
+					}
+					resultDlg.m_strScore = rAnalyzerResults[1].c_str();
+					resultDlg.m_strXPos = rAnalyzerResults[2].c_str();
+					resultDlg.m_strYPos = rAnalyzerResults[3].c_str();
+					resultDlg.DoModal();
+				}
+				break;
+			}
+
+			default:
+				break;
+		}
+	}
+}
+
 double SVImageViewClass::SetZoomValue(double Value, bool bSetZoomSlider )
 {
 	double Result{1.0};
@@ -1529,36 +1569,36 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 
 		hPenOld = SelectObject( PDrawContext->DC, hPen );
 
-		SVDrawObjectListClass l_DrawClass;
+		SVDrawObjectListClass drawObjectList;
 
-		l_DrawClass.AddExtentMultiLineData( p_rMultiLine, l_PenStyle );
+		drawObjectList.AddExtentMultiLineData( p_rMultiLine, l_PenStyle );
 		if( p_rMultiLine.m_ObjectID == SVUserMaskOperatorClassGuid)
 		{
-			l_DrawClass.m_bDrawFigureHatched = true;
+			drawObjectList.m_bDrawFigureHatched = true;
 		}
 
-		l_DrawClass.Draw( PDrawContext );
+		drawObjectList.Draw( PDrawContext );
 
 		SelectObject( PDrawContext->DC, hPenOld );
 		DeleteObject( hPen );
 	}
 }
 
-void SVImageViewClass::UpdateOverlays( HDC p_hDC, long p_X, long p_Y )
+void SVImageViewClass::UpdateOverlays( HDC hDC, long p_X, long p_Y )
 {
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
 
-	if( nullptr != l_pImage )
+	if( nullptr != pImage )
 	{
 		// Get drawing device context...
-		::SetBkMode( p_hDC, TRANSPARENT );
+		::SetBkMode( hDC, TRANSPARENT );
 
 		// Select Font...
-		HGDIOBJ hFontOld = ::SelectObject( p_hDC,m_ZoomHelper.GetFont() );
+		HGDIOBJ hFontOld = ::SelectObject( hDC,m_ZoomHelper.GetFont() );
 
 		// Use Drawing Context
 
-		SVDrawContext drawContext( p_hDC, l_pImage, m_ZoomHelper.GetZoom() );
+		SVDrawContext drawContext( hDC, pImage, m_ZoomHelper.GetZoom() );
 		drawContext.ViewPortOffset.x = -p_X;
 		drawContext.ViewPortOffset.y = -p_Y;
 
@@ -1569,7 +1609,7 @@ void SVImageViewClass::UpdateOverlays( HDC p_hDC, long p_X, long p_Y )
 		}
 
 		// Restore Font...
-		::SelectObject( p_hDC, hFontOld );
+		::SelectObject( hDC, hFontOld );
 	}
 }
 
@@ -1732,11 +1772,11 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 
 	m_svLocation = SvDef::SVExtentLocationPropertyUnknown;
 
-	SVToolClass* pTool = nullptr;
+	SvTo::SVToolClass* pTool = nullptr;
 
 	if( nullptr != GetIPDoc() )
 	{
-		pTool = dynamic_cast<SVToolClass*> ( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
+		pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID()));
 	}
 
 	if( nullptr != pTool && pTool->isInputImage( m_ImageId ) )
@@ -1766,9 +1806,9 @@ void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t l_svVariant;
 
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
 
-	l_svVariant = ( nullptr != l_pImage );
+	l_svVariant = ( nullptr != pImage );
 	rWriter.WriteAttribute(SvXml::CTAG_VIEW_INITIALIZED, l_svVariant);
 	l_svVariant.Clear();
 
@@ -1777,9 +1817,9 @@ void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, l_svVariant);
 	l_svVariant.Clear();
 
-	if( nullptr != l_pImage )
+	if( nullptr != pImage )
 	{
-		l_svVariant.SetString( l_pImage->GetObjectNameToObjectType(SvPb::SVInspectionObjectType).c_str() );
+		l_svVariant.SetString( pImage->GetObjectNameToObjectType(SvPb::SVInspectionObjectType).c_str() );
 		rWriter.WriteAttribute(SvXml::CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}

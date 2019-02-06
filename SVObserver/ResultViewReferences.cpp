@@ -86,7 +86,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 			{
 				if (IsViewable(objRef))
 				{
-					ResultViewItemDef itemDef(objRef);
+					SvIe::ResultViewItemDef itemDef(objRef);
 					m_ResultViewItemDefList.push_back(itemDef);
 					m_ReferenceVector.push_back(objRef);
 				}
@@ -96,7 +96,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 		{
 			SVObjectReference objRef;
 			SVGUID tableGuid(Value);
-			TableObject* table = dynamic_cast<TableObject*>(SVObjectManagerClass::Instance().GetObject(Value));
+			SvOp::TableObject* table = dynamic_cast<SvOp::TableObject*> (SVObjectManagerClass::Instance().GetObject(Value));
 			if (nullptr != table)
 			{
 				m_resultTableGuid = tableGuid;
@@ -123,7 +123,7 @@ bool ResultViewReferences::Insert( const std::string &rDottedName )
 	if ( bOK && objRef.getObject() )
 	{
 
-		ResultViewItemDef itemDef(objRef);
+		SvIe::ResultViewItemDef itemDef(objRef);
 		m_ResultViewItemDefList.push_back(itemDef);
 		m_ReferenceVector.push_back(objRef);
 	}
@@ -169,7 +169,7 @@ void ResultViewReferences::Clear()
 void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProcess)
 {
 	m_ReferenceVector.clear();
-	std::list<ResultViewItemDef>::iterator it = m_ResultViewItemDefList.begin();
+	std::list<SvIe::ResultViewItemDef>::iterator it = m_ResultViewItemDefList.begin();
 	while( it != m_ResultViewItemDefList.end() )
 	{
 		bool bInsert(false);
@@ -196,17 +196,17 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 		}
 		else
 		{
-			std::list<ResultViewItemDef>::iterator eit = it;
+			std::list<SvIe::ResultViewItemDef>::iterator eit = it;
 			it = m_ResultViewItemDefList.erase(eit);
 		}
 	}
 
-	m_resultTable = dynamic_cast<TableObject*>(SVObjectManagerClass::Instance().GetObject(m_resultTableGuid));
+	m_resultTable = dynamic_cast<SvOp::TableObject*>(SVObjectManagerClass::Instance().GetObject(m_resultTableGuid));
 
 	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
 
-void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
+void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) const
 {
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it)
@@ -214,15 +214,15 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 		if( nullptr == it->getObject() )
 			continue;
 
-		SVIPResultItemDefinition itemDef;
+		SvIe::SVIPResultItemDefinition itemDef;
 
 		if( it->isArray() && -1 != it->ArrayIndex() )
 		{
-			itemDef = SVIPResultItemDefinition( it->Guid(), it->ArrayIndex() );
+			itemDef = SvIe::SVIPResultItemDefinition( it->Guid(), it->ArrayIndex() );
 		}
 		else
 		{
-			itemDef = SVIPResultItemDefinition( it->Guid() );
+			itemDef = SvIe::SVIPResultItemDefinition( it->Guid() );
 		}
 
 		unsigned long Color = SvDef::DefaultWhiteColor;
@@ -265,22 +265,22 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 			}
 		}
 
-		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( Value, Color );
+		rResultData.m_ResultData[ itemDef ] = SvIe::SVIPResultItemData( Value, Color );
 	}
 }
 
 
-void ResultViewReferences::GetResultTableData(SVIPResultData &p_rResultData) const
+void ResultViewReferences::GetResultTableData(SvIe::SVIPResultData &p_rResultData) const
 {
 	if (nullptr != m_resultTable)
 	{
-		const std::vector<DoubleSortValuePtr>& valueList = m_resultTable->getValueList();
-		for (DoubleSortValuePtr valuePtr : valueList)
+		const std::vector<SvVol::DoubleSortValuePtr>& valueList = m_resultTable->getValueList();
+		for (SvVol::DoubleSortValuePtr valuePtr : valueList)
 		{
-			DoubleSortValueObject* valueObject = valuePtr.get();
+			SvVol::DoubleSortValueObject* valueObject = valuePtr.get();
 			if (nullptr != valueObject)
 			{
-				IPResultTableData data = IPResultTableData();
+				SvIe::IPResultTableData data = SvIe::IPResultTableData();
 				data.m_LastUpdateTimeStamp = m_LastUpdateTimeStamp;
 				data.m_columnName = valueObject->GetName();
 				valueObject->getValues(data.m_rowData);
@@ -298,15 +298,15 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rD
 		SVObjectReference ObjectRef = m_ReferenceVector.at(i);
 		if( nullptr != ObjectRef.getObject() )
 		{
-			SVIPResultItemDefinition Def;
+			SvIe::SVIPResultItemDefinition Def;
 
 			if( ObjectRef.isArray() && -1 != ObjectRef.ArrayIndex() )
 			{
-				Def = SVIPResultItemDefinition( ObjectRef.Guid(), ObjectRef.ArrayIndex() );
+				Def = SvIe::SVIPResultItemDefinition( ObjectRef.Guid(), ObjectRef.ArrayIndex() );
 			}
 			else
 			{
-				Def = SVIPResultItemDefinition( ObjectRef.Guid() );
+				Def = SvIe::SVIPResultItemDefinition( ObjectRef.Guid() );
 			}
 
 			rDefinitions.push_back( Def );
@@ -347,7 +347,7 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SvPb::viewable )
 		{
 			m_ReferenceVector.push_back(*iter);
-			ResultViewItemDef item(*iter);
+			SvIe::ResultViewItemDef item(*iter);
 			m_ResultViewItemDefList.push_back(item);
 		}
 	}
@@ -371,7 +371,7 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 			if( nullptr != pObject && pObject->ObjectAttributesSet() & SvPb::viewable )
 			{
 				SVObjectReference ObjectRef(pObject);
-				ResultViewItemDef item(ObjectRef);
+				SvIe::ResultViewItemDef item(ObjectRef);
 				m_ReferenceVector.push_back(ObjectRef);
 				m_ResultViewItemDefList.push_back(item);
 			}

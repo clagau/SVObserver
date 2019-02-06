@@ -15,9 +15,17 @@
 #include "SVMFCControls/AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
-class SVToolAdjustmentDialogSheetClass;
-class SVToolClass;
+namespace SvIe
+{
 class SVCameraImageTemplate;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
+
+
+class SVToolAdjustmentDialogSheetClass;
 
 class SVToolAdjustmentDialogAcquisitionSourcePageClass : public CPropertyPage
 {
@@ -37,8 +45,8 @@ protected:
 private:
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet{ nullptr };
-	SVToolClass* m_pTool{ nullptr };
-	SVCameraImageTemplate* m_pMainImage{ nullptr };
+	SvTo::SVToolClass* m_pTool{ nullptr };
+	SvIe::SVCameraImageTemplate* m_pMainImage{ nullptr };
 	SvMc::AvailableObjectListComboBox m_CameraListBox;
 };
 

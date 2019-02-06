@@ -15,6 +15,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVInt64ValueObjectClass : public SVValueObjectClass<__int64>
 {
 	SV_DECLARE_CLASS( SVInt64ValueObjectClass );
@@ -44,4 +47,4 @@ private:
 	void LocalInitialize();
 };
 
-
+} //namespace SvVol

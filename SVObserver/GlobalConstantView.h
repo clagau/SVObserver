@@ -93,7 +93,7 @@ private:
 	//! \param Pos <in> is the position where to insert the new item
 	//! \returns true when successfully deleted
 	//************************************
-	int insertItem( const BasicValueObjectPtr& rpObject, int Pos );
+	int insertItem( const SvVol::BasicValueObjectPtr& rpObject, int Pos );
 
 	//************************************
 	//! The method inserts a new Global Constant
@@ -131,7 +131,7 @@ private:
 	//! \param ConfirmDelete <in> true when checking to delete an item
 	//! \returns true if object can be deleted
 	//************************************
-	bool checkAllDependencies( BasicValueObject* pObject, bool ConfirmDelete ) const;
+	bool checkAllDependencies(SvVol::BasicValueObject* pObject, bool ConfirmDelete ) const;
 
 	virtual BOOL PreTranslateMessage( MSG* pMsg ) override;
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
@@ -149,7 +149,7 @@ private:
 #pragma region Member variables
 private:
 	CListCtrl& m_rCtrl;								//Reference to the list control
-	NameBasicValuePtrVector m_DataList;				//Data list for sorting
+	SvVol::NameBasicValuePtrVector m_DataList;		//Data list for sorting
 	SVIODoc* m_pDocument;							//Pointer to the corresponding IO document
 	CMenu m_ContextMenuItem;						//Menu object for context menu
  	CImageList m_ImageList;							//List of images for the list

@@ -472,8 +472,8 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData )
 		l_Status = oPPQInfo.Assign( rData.oPPQInfo );
 
 		m_lastInspectedSlot = rData.m_lastInspectedSlot;
-		SVGuidSVCameraInfoStructMap::iterator l_Iter;
-		SVGuidSVCameraInfoStructMap::const_iterator l_RightIter;
+		SvIe::SVGuidSVCameraInfoStructMap::iterator l_Iter;
+		SvIe::SVGuidSVCameraInfoStructMap::const_iterator l_RightIter;
 
 		l_Iter = m_svCameraInfos.begin();
 
@@ -555,7 +555,7 @@ void SVProductInfoStruct::InitProductInfo()
 	oPPQInfo.InitPPQInfo();
 	oTriggerInfo.Init();
 	
-	SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SvIe::SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
 
 	while( l_svCameraIter != m_svCameraInfos.end() )
 	{
@@ -594,7 +594,7 @@ void SVProductInfoStruct::Reset()
 	oPPQInfo.Reset();
 	oTriggerInfo.Reset();
 	
-	SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SvIe::SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
 
 	while( l_svCameraIter != m_svCameraInfos.end() )
 	{
@@ -628,7 +628,7 @@ void SVProductInfoStruct::ClearIndexes()
 {
 	oPPQInfo.ClearIndexes();
 
-	SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SvIe::SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
 
 	while( l_svCameraIter != m_svCameraInfos.end() )
 	{
@@ -651,7 +651,7 @@ HRESULT SVProductInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum 
 {
 	HRESULT l_Status = oPPQInfo.GetNextAvailableIndexes( p_LockType );
 
-	SVGuidSVCameraInfoStructMap::iterator CameraIter( m_svCameraInfos.begin() );
+	SvIe::SVGuidSVCameraInfoStructMap::iterator CameraIter( m_svCameraInfos.begin() );
 
 	for( ;m_svCameraInfos.end() != CameraIter; ++CameraIter )
 	{
@@ -698,7 +698,7 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 		( bDataComplete ) ? _T( "T" ) : _T( "F" ),
 		oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 
-	SVGuidSVCameraInfoStructMap::const_iterator CamIter = m_svCameraInfos.begin();
+	SvIe::SVGuidSVCameraInfoStructMap::const_iterator CamIter = m_svCameraInfos.begin();
 
 	for( ; CamIter != m_svCameraInfos.end(); ++CamIter )
 	{

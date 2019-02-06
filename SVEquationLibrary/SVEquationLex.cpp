@@ -128,7 +128,7 @@ void SVEquationLexClass::LexerError( const char* msg )
 int SVEquationLexClass::addSymbol( const char* name )
 {
 	// call the Equation Class to add this symbol
-	return pEquation->AddSymbol( name );
+	return m_pEquation->AddSymbol( name );
 }
 
 #pragma warning( pop )

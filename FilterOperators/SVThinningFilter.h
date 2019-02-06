@@ -32,7 +32,7 @@ protected:
 private:
 	void init();
 
-	SVLongValueObjectClass m_lvoItterations;
-	SVBoolValueObjectClass m_bvoGrayOn;	
+	SvVol::SVLongValueObjectClass m_lvoItterations;
+	SvVol::SVBoolValueObjectClass m_bvoGrayOn;
 };
 

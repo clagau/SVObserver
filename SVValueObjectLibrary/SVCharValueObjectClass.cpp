@@ -20,6 +20,9 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -130,4 +133,4 @@ void SVCharValueObjectClass::LocalInitialize()
 	init();
 }
 
-
+} //namespace SvVol

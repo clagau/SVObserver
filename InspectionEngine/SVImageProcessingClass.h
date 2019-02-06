@@ -16,9 +16,13 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes
 
+class SVImageInfoClass;
+
+namespace SvIe
+{
+
 class SVBarCodeBufferInfoClass;
 class SVDataBufferInfoClass;
-class SVImageInfoClass;
 
 class SVImageProcessingClass
 {
@@ -74,3 +78,4 @@ private:
 	static HRESULT CreateImageBuffer(SVMatroxBufferCreateStruct& bufferStruct, SvOi::SVImageBufferHandlePtr &rHandle);
 };
 
+} //namespace SvIe

@@ -282,28 +282,25 @@ HRESULT SVDlgImageEditor::ClearOverlayPoints()
 }
 
 
-HRESULT SVDlgImageEditor::AddOverlayPoints( SVDrawObjectListClass* pDrawObjectList, SVDlgImageOverlayOptions options )
+HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObjectListClass& rDrawObjectList, SVDlgImageOverlayOptions options )
 {
 	HRESULT hr = S_OK;
 
-	int size = pDrawObjectList->GetSize();
-	
-	for( int i = 0; i < size; i++ )
+	for( int i = 0; i < rDrawObjectList.GetSize(); i++ )
 	{
-		SVDrawObjectClass& rsvDrawObject = pDrawObjectList->GetAt(i);
-		hr = AddOverlayPoints( rsvDrawObject, options );
+		hr = AddOverlayPoints(rDrawObjectList.GetAt(i), options );
 	}
 
 	return hr;
 }
 
-HRESULT SVDlgImageEditor::AddOverlayPoints( SVDrawObjectClass& rsvDrawObject, SVDlgImageOverlayOptions options )
+HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObjectClass& rDrawObject, SVDlgImageOverlayOptions options )
 {
 	HRESULT hr = S_OK;
 
 	OverlayStruct overlay;
 	overlay.options = options;
-	overlay.svDrawObject = rsvDrawObject;
+	overlay.svDrawObject = rDrawObject;
 
 	Normalize( overlay );
 
@@ -325,11 +322,11 @@ void SVDlgImageEditor::Normalize( OverlayStruct& rOverlay )
 	size_t i;
 	for ( i=0; i < rOverlay.vecPoints.size(); ++i )
 	{
-		CPoint& pt = rOverlay.vecPoints[i];
-		rectBounds.top    = std::min(rectBounds.top,    pt.y );
-		rectBounds.bottom = std::max(rectBounds.bottom, pt.y );
-		rectBounds.left   = std::min(rectBounds.left,   pt.x );
-		rectBounds.right  = std::max(rectBounds.right,  pt.x );
+		POINT& rPoint = rOverlay.vecPoints[i];
+		rectBounds.top    = std::min(rectBounds.top,    rPoint.y );
+		rectBounds.bottom = std::max(rectBounds.bottom, rPoint.y );
+		rectBounds.left   = std::min(rectBounds.left,   rPoint.x );
+		rectBounds.right  = std::max(rectBounds.right,  rPoint.x );
 	}
 
 	if ( rOverlay.options.bScaleX )
@@ -356,21 +353,22 @@ void SVDlgImageEditor::Normalize( OverlayStruct& rOverlay )
 
 	for ( i=0; i < rOverlay.vecPoints.size(); ++i )
 	{
-		CPoint& rpt = rOverlay.vecPoints[i];
-		rpt -= offset;
-		rpt.x = (int) ((double) rpt.x * dScaleX) + 1;
+		POINT& rPoint = rOverlay.vecPoints[i];
+		rPoint.x -= offset.cx;
+		rPoint.y -= offset.cy;
+		rPoint.x = (int) ((double) rPoint.x * dScaleX) + 1;
 		if ( rOverlay.options.bNormalizeY_ROI )
 		{
-			rpt.y = (int) (pow((double) rpt.y, 0.4) * dScaleY) + 1;
+			rPoint.y = (int) (pow((double) rPoint.y, 0.4) * dScaleY) + 1;
 		}
 		else
 		{
-			rpt.y = (int) ((double) rpt.y * dScaleY) + 1;
+			rPoint.y = (int) ((double) rPoint.y * dScaleY) + 1;
 		}
 
 		if ( rOverlay.options.bFlipVertical )
 		{
-			rpt.y = m_ClientRect.Height() - rpt.y;
+			rPoint.y = m_ClientRect.Height() - rPoint.y;
 		}
 	}
 }
@@ -380,7 +378,7 @@ void SVDlgImageEditor::DrawOverlay(CPaintDC& dc)
 	for( size_t i = 0; i < m_drawList.size(); i++)
 	{
 		OverlayStruct& rOverlay = m_drawList[i];
-		std::vector<CPoint>& vecPoints = rOverlay.vecPoints;
+		std::vector<POINT>& vecPoints = rOverlay.vecPoints;
 		
 		size_t size = vecPoints.size();
 		

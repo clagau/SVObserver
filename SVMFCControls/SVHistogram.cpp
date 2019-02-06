@@ -13,7 +13,7 @@
 #pragma inline_recursion (on)
 #include "SVHistogram.h"
 #include "Definitions/Color.h"
-// SVHistogram
+//Moved to precompiled header: #include <functional>
 
 namespace SvMc
 {
@@ -41,11 +41,11 @@ namespace SvMc
 				memDC.SelectObject(temp_bmp);
 			}
 
-			void Draw(const CRect & rect, int color)
+			void Draw(const RECT& rRect, int color)
 			{
 				CBrush l_brush(RGB(color, color, color));
 				memDC.SelectObject(&l_brush);
-				memDC.FillRect(&rect, &l_brush);
+				memDC.FillRect(&rRect, &l_brush);
 			}
 		private:
 			CBitmap * temp_bmp;
@@ -271,10 +271,10 @@ namespace SvMc
 	// Paint the bitmap off screen
 	void SVHistogram::PaintBitmap()
 	{
-		GetClientRect(m_client);
+		GetClientRect(&m_client);
 		UpdateAnchors(m_client, m_func);
 		GDICanvas canvas(this, m_client, &m_bmp, m_colors ? m_backColor : SvDef::White);
-		DrawHistogram(canvas);
+		DrawHistogram(std::bind(&GDICanvas::Draw, &canvas, std::placeholders::_1, std::placeholders::_2));
 
 		SetLabelText(m_factor*100.0/scale, label::leftTop);
 		//static_cast<Label<label::leftTop> &>(*this).SetText(100.0/scale);
@@ -366,7 +366,7 @@ namespace SvMc
 	void SVHistogram::OnSize(UINT nType, int cx, int cy)
 	{
 		CStatic::OnSize(nType, cx, cy);
-		GetClientRect(m_client);
+		GetClientRect(&m_client);
 		UpdateAnchors(m_client, m_func);
 		PaintBitmap();
 	}
@@ -396,17 +396,18 @@ namespace SvMc
 
 	void SVHistogram::DrawBound(CPaintDC & dc, int pos, COLORREF color)
 	{
-		CRect l_rect = Pos2Screen(pos);
-		if (m_client.PtInRect(l_rect.CenterPoint()))
+		RECT rect = Pos2Screen(pos);
+		POINT centerPoint;
+		centerPoint.x = (rect.left + rect.right) / 2;
+		centerPoint.y = (rect.top + rect.bottom) / 2;
+		if (::PtInRect(&m_client, centerPoint))
 		{
-			CPoint l_top = l_rect.CenterPoint();
-			CPoint l_bottom = l_top;
-			l_top.y = l_rect.top;
-			l_bottom.y = l_rect.bottom - 1;
-			CPen l_pen(PS_SOLID, 1, color); //l_rect.Width()/2 + 1, color);
+			POINT topPoint{centerPoint.x, rect.top};
+			POINT bottomPoint{centerPoint.x, rect.bottom - 1};
+			CPen l_pen(PS_SOLID, 1, color);
 			CPen * tmp_pen = dc.SelectObject(&l_pen);
-			dc.MoveTo(l_top);
-			dc.LineTo(l_bottom);
+			dc.MoveTo(topPoint);
+			dc.LineTo(bottomPoint);
 			dc.SelectObject(tmp_pen);
 		}
 	}

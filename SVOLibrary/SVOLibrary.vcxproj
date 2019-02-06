@@ -100,6 +100,7 @@
     <ClInclude Include="EventTime.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVContainableCriticalSection.h" />
+    <ClInclude Include="SVMemoryManager.h" />
     <ClInclude Include="SVMultithread.h" />
     <ClInclude Include="SVOCallbackClass.h" />
     <ClInclude Include="SVODataDeviceClass.h" />
@@ -112,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVContainableCriticalSection.inl" />
+    <None Include="SVMemoryManager.inl" />
     <None Include="SVProcessFunctor.inl" />
     <None Include="SVTQueueObject.inl" />
   </ItemGroup>

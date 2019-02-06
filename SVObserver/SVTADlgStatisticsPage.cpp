@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVTADlgStatisticsPage.h"
 #include "SVToolSet.h"
-#include "SVStatTool.h"
-#include "SVResult.h"
+#include "Tools/SVStatTool.h"
+#include "Operators/SVResult.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVSetupDialogManager.h"
@@ -69,7 +69,7 @@ SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageC
 	m_strVariableToMonitor = _T("");
 	//}}AFX_DATA_INIT
 
-	if( m_pTool = dynamic_cast <SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID)) )
+	if( m_pTool = dynamic_cast <SvTo::SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID)) )
 	{
 		auto pParentObject = m_pTool->GetAncestor(SvPb::SVToolSetObjectType);
 		m_pToolSet = dynamic_cast <SVToolSetClass*> (pParentObject);
@@ -110,7 +110,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd()
 	{
 		try
 		{
-			m_pTool->EnableFeature ((SVStatisticsFeatureEnum) lAvailableIndex);
+			m_pTool->EnableFeature (static_cast<SvTo::SVStatisticsFeatureEnum> (lAvailableIndex));
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
@@ -137,7 +137,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonRemove()
 
 	if( index != LB_ERR && index >= 0 )
 	{
-        m_pTool->DisableFeature ((SVStatisticsFeatureEnum) index);
+        m_pTool->DisableFeature (static_cast<SvTo::SVStatisticsFeatureEnum> (index));
 
 		// List of not enabled.
 		initListBox( &m_lbAvailableList, _T('0') );
@@ -169,7 +169,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 
         lEmpty = TRUE;
 
-		for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i++ )
+		for (int i = SvTo::SV_STATS_MIN_VALUE; i < SvTo::SV_STATS_TOPOF_LIST; i++ )
 		{	
             if( FeatureString[i] == atcTestChar)
             {
@@ -255,28 +255,23 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnKillActive()
 //
 void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange() 
 {
-    SVResultClass* pResult;
+	// Get Selected feature
+	int item = m_lbSelectedList.GetCurSel();
+	if( item != LB_ERR )
+	{
+		DWORD_PTR index = m_lbSelectedList.GetItemData( item );
+		SvOp::SVResultClass* pResult = m_pTool->GetResult(static_cast<SvTo::SVStatisticsFeatureEnum> (index));
 
-		// Get Selected feature
-		int item = m_lbSelectedList.GetCurSel();
-		if( item != LB_ERR )
+		if (nullptr == pResult)
 		{
-			DWORD_PTR index = m_lbSelectedList.GetItemData( item );
-			pResult = m_pTool->GetResult( (SVStatisticsFeatureEnum)index );
-
-			if (nullptr == pResult)
-			{
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
-				
-
-			}
-			else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
-			{
-				
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
-			}
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
+		}
+		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
+		{
+			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
+		}
     }
 }
 
@@ -317,7 +312,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 		}
 
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
-		PublishList.Refresh( static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()) );
+		PublishList.Refresh( static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()) );
 		if (m_pParent)
 		{
 			SVIPDoc* l_pIPDoc = m_pParent->GetIPDoc();

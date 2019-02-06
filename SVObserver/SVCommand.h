@@ -486,7 +486,7 @@ public:
 
 public:
 	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SvOi::SVImageBufferHandlePtr ImageHandle, BSTR *pbstr);
-	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
+	static HRESULT SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
 
 	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );
 

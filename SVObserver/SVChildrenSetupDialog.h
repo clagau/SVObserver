@@ -14,9 +14,13 @@
 #include "InspectionEngine/SVClassInfoStruct.h"
 #pragma endregion Includes
 
-class SVIPDoc;
+namespace SvIe
+{
 class SVTaskObjectClass;
 class SVTaskObjectListClass;
+}
+
+class SVIPDoc;
 class SVObjectClass;
 
 class SVChildrenSetupDialogClass : public CDialog
@@ -57,14 +61,14 @@ protected:
 //******************************************************************************
 protected:
 	void redrawLists();
-	BOOL checkOkToDelete( SVTaskObjectClass* pTaskObject );
+	BOOL checkOkToDelete( SvIe::SVTaskObjectClass* pTaskObject );
 
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
 public:
-	SVClassInfoStructVector*	m_pAvailableChildrenList;
-	SVTaskObjectListClass*		m_pParentObject;
+	SvIe::SVClassInfoStructVector* m_pAvailableChildrenList;
+	SvIe::SVTaskObjectListClass* m_pParentObject;
 	std::string					m_Title;
 	BOOL						m_AllowMultipleChildrenInstances;
 	SVIPDoc*					m_pDocument;

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Inlcudes
-#include "SVTemplate.h"
+//Moved to precompiled header: #include <vector>
 #pragma endregion Inlcudes
 
 enum SVGraphixOverlayModeEnum
@@ -40,164 +40,48 @@ enum SVGraphixDrawObjectEnum
 class SVGraphixDrawObjectClass
 {
 public:
-	void Serialize( CArchive& RArchive )
-	{
-		if( RArchive.IsStoring() )
-		{
-			RArchive << color
-					 << penStyle
-					 << bSolidBrush;
-		}
-		else
-		{
-			RArchive >> color
-					 >> penStyle
-					 >> bSolidBrush;
+	SVGraphixDrawObjectClass() = default;
 
-			// Force object to use serialized
-			// color, penStyle and bSolidBrush
-			// instead of default settings...
-			SetDrawingColor( color );
-		}
+	virtual ~SVGraphixDrawObjectClass();
 
-		// Serialize point array...
-		pointArray.Serialize( RArchive );
-	}
+	virtual void Draw(HDC HDeviceContext){};
 
-	SVGraphixDrawObjectClass()
-	{
-		maxPointCount	= 0;
-		color			= RGB( 0, 0, 0 );
-		penStyle		= PS_SOLID;
-		bSolidBrush		= true;
-		hPen			= nullptr;
-		hBrush			= nullptr;
-		bNeedPen		= false;
-		bNeedBrush		= false;
-		objectType		= SVDrawObjectNotValid;
-	}
+	void SetPenStyle( int NewStyle );
+	void SetBrushStyle( bool bSolidBrush );
+	void SetDrawingColor( COLORREF Color );
+	
+	bool AddPoint(const POINT& rNewPoint);
+	bool ReplacePoint(POINT& rReplacePoint);
 
-	virtual ~SVGraphixDrawObjectClass()
-	{
-		if( hPen )
-			::DeleteObject( hPen );
-		hPen = nullptr;
-		
-		if( hBrush )
-			::DeleteObject( hBrush );
-		hBrush = nullptr;
-	}
+	const COLORREF& GetDrawingColor() const { return m_color; }
 
-	void SetPenStyle( int NewStyle )
-	{
-		if( hPen )
-			::DeleteObject( hPen );
-		hPen = nullptr;
+	int getPenStyle() { return m_penStyle; }
+	bool getBrushStyle() { return m_isSolidBrush; }
+	size_t GetPointCount() { return m_pointVector.size(); }
+	std::vector<POINT>& getPointVector() { return m_pointVector; }
 
-		penStyle = NewStyle;
-		if( bNeedPen )
-			hPen = ::CreatePen( penStyle, 1, color );
-	}
-
-	void SetBrushStyle( BOOL BSolid )
-	{
-		if( hBrush )
-			::DeleteObject( hBrush );
-		hBrush = nullptr;
-
-		bSolidBrush = BSolid;
-		if( bNeedBrush )
-		{
-			if( BSolid )
-				hBrush	= ::CreateSolidBrush( color );
-			else
-				hBrush	= ::CreateHatchBrush( HS_DIAGCROSS, color );
-		}
-	}
-
-	void SetDrawingColor( COLORREF Color )
-	{
-		color = Color;
-		SetPenStyle( penStyle );
-		SetBrushStyle( bSolidBrush );
-	}
-
-	const COLORREF& GetDrawingColor()
-	{
-		return color;
-	}
-
-	BOOL AddPoint( const POINT& NewPoint )
-	{
-		if( pointArray.GetSize() <= maxPointCount )
-		{
-			pointArray.Add( ( POINT ) NewPoint );
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	BOOL RemovePoint( POINT& RemovedPoint )
-	{
-		if( pointArray.GetSize() > 0 )
-		{
-			INT_PTR size = pointArray.GetUpperBound();
-			RemovedPoint = pointArray.ElementAt( size );
-			pointArray.SetSize( size );
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	BOOL ReplacePoint( POINT& ReplacePoint )
-	{
-		if( pointArray.GetSize() > 0 )
-		{
-			INT_PTR last = pointArray.GetUpperBound();
-			POINT oldPoint = pointArray.ElementAt( last );
-			pointArray.ElementAt( last ) = ReplacePoint;
-			ReplacePoint = oldPoint;
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	INT_PTR GetPointCount()
-	{
-		return pointArray.GetSize();
-	}
-
-	SVGraphixDrawObjectEnum	GetObjectType()
-	{
-		return objectType;
-	}
+	SVGraphixDrawObjectEnum	GetObjectType() { return m_objectType; }
 
 protected:
-
-	// current PEN ( and BRUSH ) color
-	COLORREF color;
-	// current PEN style PS_????
-	int		 penStyle;
-	// current BRUSH solid or hatch ( style: HS_DIAGCROSS )?
-	BOOL	 bSolidBrush;
-	HPEN	 hPen;
-	HBRUSH	 hBrush;
+	// Pen and brush color
+	COLORREF m_color {RGB(0, 0, 0)};
+	int		 m_penStyle {PS_SOLID};
+	//Is BRUSH solid or hatch, style: HS_DIAGCROSS
+	bool	 m_isSolidBrush {true};
+	HPEN	 m_hPen {nullptr};
+	HBRUSH	 m_hBrush {nullptr};
 
 	// Contents one or more points used 
 	// by this drawing object.
-	CArray< POINT, POINT& > pointArray;
+	std::vector<POINT> m_pointVector;
 
 	// Max. number of points for this object
-	int maxPointCount;
+	int m_maxPointCount {0L};
 
-	BOOL bNeedPen;
-	BOOL bNeedBrush;
+	bool m_needPen {false};
+	bool m_needBrush {false};
 
-	SVGraphixDrawObjectEnum	objectType;
-
-public:
-	virtual void Draw( HDC HDeviceContext )
-	{}
+	SVGraphixDrawObjectEnum	m_objectType {SVDrawObjectNotValid};
 };
 
 class SVGraphixPointDrawObjectClass : public SVGraphixDrawObjectClass
@@ -205,21 +89,21 @@ class SVGraphixPointDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixPointDrawObjectClass()
 	{
-		bNeedPen		= FALSE;
-		bNeedBrush		= FALSE;
-		maxPointCount   = 1;
-		objectType		= SVDrawObjectPoint;
+		m_needPen		= false;
+		m_needBrush		= false;
+		m_maxPointCount = 1;
+		m_objectType	= SVDrawObjectPoint;
 	}
 
-	virtual ~SVGraphixPointDrawObjectClass ()
-	{
-	}
+	virtual ~SVGraphixPointDrawObjectClass () = default;
 
-	virtual void Draw( HDC HDeviceContext ) override
+	virtual void Draw( HDC hDC ) override
 	{
 		// Draw...
-		for( int i = 0; i < pointArray.GetSize(); ++ i )
-			::SetPixel( HDeviceContext, pointArray[ i ].x, pointArray[ i ].y, color );
+		for(const auto& rPoint : m_pointVector)
+		{
+			::SetPixel( hDC, rPoint.x, rPoint.y, m_color );
+		}
 	}
 };
 
@@ -228,32 +112,30 @@ class SVGraphixFilledRectDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixFilledRectDrawObjectClass()
 	{
-		bNeedPen		= TRUE;
-		bNeedBrush		= TRUE;
-		maxPointCount   = 2;
+		m_needPen = true;
+		m_needBrush = true;
+		m_maxPointCount = 2;
+		m_objectType = SVDrawObjectFilledRect;
 		// Create pen...
-		SetPenStyle( penStyle );
+		SetPenStyle( m_penStyle );
 		// Create brush...
-		SetPenStyle( bSolidBrush );
-		objectType		= SVDrawObjectFilledRect;
+		SetBrushStyle( m_isSolidBrush );
 	}
 
-	virtual ~SVGraphixFilledRectDrawObjectClass()
-	{
-	}
+	virtual ~SVGraphixFilledRectDrawObjectClass() = default;
 
-	virtual void Draw( HDC HDeviceContext ) override
+	virtual void Draw( HDC hDC ) override
 	{
-		if( pointArray.GetSize() >= maxPointCount )
+		if( static_cast<long> (m_pointVector.size()) >= m_maxPointCount )
 		{
-			HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
-			HBRUSH hOldBrush = ( HBRUSH ) ::SelectObject( HDeviceContext, hBrush );
+			HPEN   hOldPen   = static_cast<HPEN> (::SelectObject( hDC, m_hPen ));
+			HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject( hDC, m_hBrush ));
 
 			// Draw...
-			::Rectangle( HDeviceContext, pointArray[ 0 ].x, pointArray[ 0 ].y, pointArray[ 1 ].x, pointArray[ 1 ].y );
+			::Rectangle( hDC, m_pointVector[0].x, m_pointVector[0].y, m_pointVector[1].x, m_pointVector[1].y );
 
-			::SelectObject( HDeviceContext, hOldPen );
-			::SelectObject( HDeviceContext, hOldBrush );
+			::SelectObject( hDC, hOldPen );
+			::SelectObject( hDC, hOldBrush );
 		}
 	}
 };
@@ -263,30 +145,28 @@ class SVGraphixRectDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixRectDrawObjectClass()
 	{
-		bNeedPen		= TRUE;
-		bNeedBrush		= FALSE;
-		maxPointCount   = 2;
+		m_needPen = true;
+		m_needBrush	= false;
+		m_maxPointCount = 2;
+		m_objectType = SVDrawObjectRect;
 		// Create pen...
-		SetPenStyle( penStyle );
-		objectType		= SVDrawObjectRect;
+		SetPenStyle( m_penStyle );
 	}
 
-	virtual ~SVGraphixRectDrawObjectClass()
-	{
-	}
+	virtual ~SVGraphixRectDrawObjectClass() = default;
 
 	virtual void Draw( HDC HDeviceContext ) override
 	{
-		if( pointArray.GetSize() >= maxPointCount )
+		if(static_cast<long> (m_pointVector.size()) >= m_maxPointCount)
 		{
-			HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
+			HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, m_hPen );
 
 			// Draw...
-			::MoveToEx( HDeviceContext, pointArray[ 0 ].x, pointArray[ 0 ].y, nullptr );
-			::LineTo( HDeviceContext, pointArray[ 1 ].x, pointArray[ 0 ].y );
-			::LineTo( HDeviceContext, pointArray[ 1 ].x, pointArray[ 1 ].y );
-			::LineTo( HDeviceContext, pointArray[ 0 ].x, pointArray[ 1 ].y );
-			::LineTo( HDeviceContext, pointArray[ 0 ].x, pointArray[ 0 ].y );
+			::MoveToEx( HDeviceContext, m_pointVector[0].x, m_pointVector[0].y, nullptr );
+			::LineTo( HDeviceContext, m_pointVector[1].x, m_pointVector[0].y );
+			::LineTo( HDeviceContext, m_pointVector[1].x, m_pointVector[1].y );
+			::LineTo( HDeviceContext, m_pointVector[0].x, m_pointVector[1].y );
+			::LineTo( HDeviceContext, m_pointVector[0].x, m_pointVector[0].y );
 
 			::SelectObject( HDeviceContext, hOldPen );
 		}
@@ -298,29 +178,27 @@ class SVGraphixFilledEllipseDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixFilledEllipseDrawObjectClass()
 	{
-		bNeedPen		= TRUE;
-		bNeedBrush		= TRUE;
-		maxPointCount   = 2;
+		m_needPen = true;
+		m_needBrush	= true;
+		m_maxPointCount = 2;
+		m_objectType = SVDrawObjectFilledEllipse;
 		// Create pen...
-		SetPenStyle( penStyle );
+		SetPenStyle( m_penStyle );
 		// Create brush...
-		SetPenStyle( bSolidBrush );
-		objectType		= SVDrawObjectFilledEllipse;
+		SetBrushStyle( m_isSolidBrush );
 	}
 
-	virtual ~SVGraphixFilledEllipseDrawObjectClass()
-	{
-	}
+	virtual ~SVGraphixFilledEllipseDrawObjectClass() = default;
 
 	virtual void Draw( HDC HDeviceContext ) override
 	{
-		if( pointArray.GetSize() >= maxPointCount )
+		if(static_cast<long> (m_pointVector.size()) >= m_maxPointCount)
 		{
-			HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
-			HBRUSH hOldBrush = ( HBRUSH ) ::SelectObject( HDeviceContext, hBrush );
+			HPEN   hOldPen   = static_cast<HPEN> (::SelectObject( HDeviceContext, m_hPen ));
+			HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject( HDeviceContext, m_hBrush ));
 
 			// Draw...
-			::Ellipse( HDeviceContext, pointArray[ 0 ].x, pointArray[ 0 ].y, pointArray[ 1 ].x, pointArray[ 1 ].y );
+			::Ellipse( HDeviceContext, m_pointVector[0].x, m_pointVector[0].y, m_pointVector[1].x, m_pointVector[1].y );
 
 			::SelectObject( HDeviceContext, hOldPen );
 			::SelectObject( HDeviceContext, hOldBrush );
@@ -333,28 +211,26 @@ class SVGraphixEllipseDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixEllipseDrawObjectClass()
 	{
-		bNeedPen		= TRUE;
-		bNeedBrush		= FALSE;
-		maxPointCount   = 2;
+		m_needPen = true;
+		m_needBrush = false;
+		m_maxPointCount = 2;
+		m_objectType = SVDrawObjectEllipse;
 		// Create pen...
-		SetPenStyle( penStyle );
-		objectType		= SVDrawObjectEllipse;
+		SetPenStyle( m_penStyle );
 	}
 
-	virtual ~SVGraphixEllipseDrawObjectClass()
-	{
-	}
+	virtual ~SVGraphixEllipseDrawObjectClass() = default;
 
-	virtual void Draw( HDC HDeviceContext ) override
+	virtual void Draw( HDC hDC ) override
 	{
-		if( pointArray.GetSize() >= maxPointCount )
+		if(static_cast<long> (m_pointVector.size()) >= m_maxPointCount)
 		{
-			HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
+			HPEN hOldPen   = static_cast<HPEN> (::SelectObject( hDC, m_hPen ));
 
 			// Draw...
-			::Arc( HDeviceContext, pointArray[ 0 ].x, pointArray[ 0 ].y, pointArray[ 1 ].x, pointArray[ 1 ].y, 0, 0, 0, 0 );
+			::Arc( hDC, m_pointVector[0].x, m_pointVector[0].y, m_pointVector[1].x, m_pointVector[1].y, 0, 0, 0, 0 );
 
-			::SelectObject( HDeviceContext, hOldPen );
+			::SelectObject( hDC, hOldPen );
 		}
 	}
 };
@@ -364,30 +240,28 @@ class SVGraphixPolygonDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixPolygonDrawObjectClass()
 	{
-		bNeedPen		= TRUE;
-		bNeedBrush		= TRUE;
-		maxPointCount   = 32767;
+		m_needPen = true;
+		m_needBrush	= true;
+		m_maxPointCount   = 32767;
+		m_objectType = SVDrawObjectPolygon;
 		// Create pen...
-		SetPenStyle( penStyle );
+		SetPenStyle( m_penStyle );
 		// Create brush...
-		SetPenStyle( bSolidBrush );
-		objectType		= SVDrawObjectPolygon;
+		SetBrushStyle( m_isSolidBrush );
 	}
 
-	virtual ~SVGraphixPolygonDrawObjectClass()
-	{
-	}
+	virtual ~SVGraphixPolygonDrawObjectClass() = default;
 
-	virtual void Draw( HDC HDeviceContext ) override
+	virtual void Draw( HDC hDC ) override
 	{
-		HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
-		HBRUSH hOldBrush = ( HBRUSH ) ::SelectObject( HDeviceContext, hBrush );
+		HPEN   hOldPen   = static_cast<HPEN> (::SelectObject( hDC, m_hPen ));
+		HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject( hDC, m_hBrush ));
 
 		// Draw...
-		::Polygon( HDeviceContext, pointArray.GetData(), static_cast< int >( pointArray.GetSize() ) );
+		::Polygon( hDC, m_pointVector.data(), static_cast< int >( m_pointVector.size() ) );
 
-		::SelectObject( HDeviceContext, hOldPen );
-		::SelectObject( HDeviceContext, hOldBrush );
+		::SelectObject( hDC, hOldPen );
+		::SelectObject( hDC, hOldBrush );
 	}
 };
 
@@ -396,26 +270,26 @@ class SVGraphixPolylineDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixPolylineDrawObjectClass()
 	{
-		bNeedPen	  = TRUE;
-		bNeedBrush	  = FALSE;
-		maxPointCount = 32767;
+		m_needPen = true;
+		m_needBrush = false;
+		m_maxPointCount = 32767;
+		m_objectType = SVDrawObjectPolyline;
 		// Create pen...
-		SetPenStyle( penStyle );
-		objectType		= SVDrawObjectPolyline;
+		SetPenStyle( m_penStyle );
 	}
 
 	virtual ~SVGraphixPolylineDrawObjectClass()
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext ) override
+	virtual void Draw( HDC hDC ) override
 	{
-		HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
+		HPEN hOldPen = static_cast<HPEN> (::SelectObject( hDC, m_hPen ));
 
 		// Draw...
-		::Polyline( HDeviceContext, pointArray.GetData(), static_cast< int >( pointArray.GetSize() ) );
+		::Polyline( hDC, m_pointVector.data(), static_cast< int >( m_pointVector.size() ) );
 
-		::SelectObject( HDeviceContext, hOldPen );
+		::SelectObject( hDC, hOldPen );
 	}
 };
 
@@ -424,28 +298,26 @@ class SVGraphixFillDrawObjectClass : public SVGraphixDrawObjectClass
 public:
 	SVGraphixFillDrawObjectClass()
 	{
-		bNeedPen	  = FALSE;
-		bNeedBrush	  = TRUE;
-		maxPointCount = 1;
+		m_needPen = false;
+		m_needBrush	= true;
+		m_maxPointCount = 1;
+		m_objectType = SVDrawObjectFill;
 		// Create brush...
-		SetPenStyle( bSolidBrush );
-		objectType		= SVDrawObjectFill;
+		SetBrushStyle( m_isSolidBrush );
 	}
 
-	virtual ~SVGraphixFillDrawObjectClass()
-	{
-	}
+	virtual ~SVGraphixFillDrawObjectClass() = default;
 
-	virtual void Draw( HDC HDeviceContext ) override
+	virtual void Draw( HDC hDC ) override
 	{
-		if( pointArray.GetSize() >= maxPointCount )
+		if(static_cast<long> (m_pointVector.size()) >= m_maxPointCount)
 		{
-			HBRUSH hOldBrush = ( HBRUSH ) ::SelectObject( HDeviceContext, hBrush );
+			HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject( hDC, m_hBrush ));
 
 			// Draw...
-			::FloodFill( HDeviceContext, pointArray[ 0 ].x, pointArray[ 0 ].y, color );
+			::FloodFill( hDC, m_pointVector[0].x, m_pointVector[0].y, m_color );
 
-			::SelectObject( HDeviceContext, hOldBrush );
+			::SelectObject( hDC, hOldBrush );
 		}
 	}
 };
@@ -463,9 +335,11 @@ class SVGraphixClass
 // Serialization Declaration(s):
 //******************************************************************************
 public:
-	void Serialize( CArchive& RArchive );
 	SVGraphixClass();
 	virtual ~SVGraphixClass();
+
+	std::string store(bool convertToHex = false);
+	void load(const std::string& rData, bool convertFromHex = false);
 
 	void FlushDrawObjects();
 
@@ -475,10 +349,7 @@ public:
     // NOTE: It always returns the red value of COLORREF backGroundColor!
     //       That means, if this class would be expanded for more than
     //       monochrome 8 Bit color usage, this function should be replaced!
-    BYTE GetBackgroundMono8Color()
-    {
-        return GetRValue( backGroundColor );
-    }
+    BYTE GetBackgroundMono8Color() { return GetRValue( m_backGroundColor ); }
 
     // SVGraphixOverlayModeEnum SVGraphixClass::GetOverlayMode();
     // Overlay Modes:
@@ -487,38 +358,15 @@ public:
     //                         clip Graphix, if necessary.
     // SVClipCenteredMode    - Center Graphix by drawing to center of destination, 
     //                         clip Graphix, if necessary.
-    SVGraphixOverlayModeEnum GetOverlayMode()
-    {
-        return overlayMode;
-    }
+    SVGraphixOverlayModeEnum GetOverlayMode() { return m_overlayMode; }
 
-    void GetGraphixRect( RECT& RRect, int ScaleX = 1, int ScaleY = 1 )
-	{
-		RRect = rect;
-		if( ScaleX )
-		{
-			RRect.left   = ( ScaleX < 0 ) ? ( rect.left   / ( -ScaleX ) ) : ( rect.left   * ScaleX );
-			RRect.right  = ( ScaleX < 0 ) ? ( rect.right  / ( -ScaleX ) ) : ( rect.right  * ScaleX );
-		}
+    void GetGraphixRect(RECT& rRect, int ScaleX = 1, int ScaleY = 1);
 
-		if( ScaleY )
-		{
-			RRect.top    = ( ScaleY < 0 ) ? ( rect.top    / ( -ScaleY ) ) : ( rect.top    * ScaleY );
-			RRect.bottom = ( ScaleY < 0 ) ? ( rect.bottom / ( -ScaleY ) ) : ( rect.bottom * ScaleY );
-		}
-    }
-
-    void SetGraphixRect( const RECT& RRect )
-    {
-        rect = RRect;
-    }
+    void SetGraphixRect( const RECT& rRect ) { m_rect = rRect; }
 
     // void SVGraphixClass::SetRasterOperationCode( DWORD DwNewROP = SRCCOPY );
     // DwNewROP: Refer to BitBlt for a list of common raster operation codes...
-    void SetRasterOperationCode( DWORD DwNewROP = SRCCOPY )
-    {
-        dwROP = DwNewROP;
-    }
+    void SetRasterOperationCode( DWORD newROP = SRCCOPY ) { m_dwROP = newROP; }
 
     // void SVGraphixClass::SetOverlayMode( SVGraphixOverlayModeEnum NewOverlayMode = SVStretchMode );
     // Overlay Modes:
@@ -529,18 +377,12 @@ public:
     //                         clip Graphix, if necessary.
     // NOTE: If Graphix size is smaller than destination size, Graphix Background color is used
     //       to fill remaining destination areas.
-    void SetOverlayMode( SVGraphixOverlayModeEnum NewOverlayMode = SVStretchMode )
-    {
-        overlayMode = NewOverlayMode;
-    }
+    void SetOverlayMode( SVGraphixOverlayModeEnum NewOverlayMode = SVStretchMode ) { m_overlayMode = NewOverlayMode; }
 
     // void SVGraphixClass::SetBackgroundMono8Color( BYTE Mono8Color = 255 );
     // Set monochrome unsigned 8 Bit background color.
     // Valid values: [0...255], [Black...Gray...White]
-    void SetBackgroundMono8Color( BYTE Mono8Color = 255 )
-    {
-        backGroundColor = RGB( Mono8Color, Mono8Color, Mono8Color );
-    };
+    void SetBackgroundMono8Color( BYTE Mono8Color = 255 ) { m_backGroundColor = RGB( Mono8Color, Mono8Color, Mono8Color ); }
 
     // void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect );
     // Draw Graphix to destination dc.
@@ -548,62 +390,25 @@ public:
     //  void SVGraphixClass::SetOverlayMode( SVGraphixOverlayModeEnum );
     //  void SVGraphixClass::SetRasterOperationCode( DWORD );
     //  void SVGraphixClass::SetBackgroundMono8Color( BYTE );
-    void Draw( HDC HDestinyDC, const RECT& RDestinyRect );
+    void Draw( HDC hDC, const RECT& rRect );
 
-	void InsertDrawObject( SVGraphixDrawObjectClass* PNewDrawObject )
-	{
-		if( PNewDrawObject )
-			drawObjectArray.Add( PNewDrawObject );
-	}
+	void InsertDrawObject( SVGraphixDrawObjectClass* pNewDrawObject );
 
 	// Check if point lies in Graphix canvas...
-	BOOL CheckPoint( const POINT& RPoint, int ScaleX = 1, int ScaleY = 1 )
-	{
-		POINT pointLT, pointRB;
-		pointLT.x = rect.left;
-		pointLT.y = rect.top;
-		pointRB.x = rect.right;
-		pointRB.y = rect.bottom;
-
-		// Regard overlay mode...
-		ScalePoint( pointLT, TRUE );
-		ScalePoint( pointRB, TRUE );
-
-		// Regard extern scale factors...
-		if( ScaleX )
-		{
-			pointLT.x = ( ScaleX < 0 ) ? ( pointLT.x / ( -ScaleX ) ) : ( pointLT.x * ScaleX );
-			pointRB.x = ( ScaleX < 0 ) ? ( pointRB.x / ( -ScaleX ) ) : ( pointRB.x * ScaleX );
-		}
-
-		if( ScaleY )
-		{
-			pointLT.y = ( ScaleY < 0 ) ? ( pointLT.y / ( -ScaleY ) ) : ( pointLT.y * ScaleY );
-			pointRB.y = ( ScaleY < 0 ) ? ( pointRB.y / ( -ScaleY ) ) : ( pointRB.y * ScaleY );
-		}
-
-		return( RPoint.x >= pointLT.x && RPoint.y >= pointLT.y  &&
-			    RPoint.x <  pointRB.x && RPoint.y <  pointRB.y );
-	}
+	bool CheckPoint( const POINT& rPoint, int ScaleX = 1, int ScaleY = 1 );
 
 	// Rescale point using current overlay mode...
 	// It uses the scale factors of the last 
 	// call to 
 	//	void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect )
-	void ScalePoint( POINT& RPoint, BOOL BDown = TRUE )
-	{
-		if( scaleX != 0.0 )
-			RPoint.x = ( BDown ) ? ( ( long ) ( ( ( double ) RPoint.x ) / scaleX ) ) : ( ( long ) ( ( ( double ) RPoint.x ) * scaleX ) );
-		if( scaleY != 0.0 )
-			RPoint.y = ( BDown ) ? ( ( long ) ( ( ( double ) RPoint.y ) / scaleY ) ) : ( ( long ) ( ( ( double ) RPoint.y ) * scaleY ) );
-	}
+	void ScalePoint( POINT& rPoint, bool bDown = true );
 
 	// SVGraphixDrawObjectClass* 
 	//		SVGraphixClass::GetDrawObject( SVGraphixDrawObjectEnum NewObject, BOOL BInsert = TRUE );
 	// Creates new draw object.
 	// If BInsert == TRUE ( Default ) the new object
 	//	will be inserted into to the drawing list.
-	SVGraphixDrawObjectClass* GetNewDrawObject( SVGraphixDrawObjectEnum NewObject, BOOL BInsert = TRUE );
+	SVGraphixDrawObjectClass* GetNewDrawObject( SVGraphixDrawObjectEnum NewObject, bool bInsert = true );
 
 	// Get serialized graphix data as a global memory handle
 	// You have to free the memory!
@@ -613,18 +418,18 @@ public:
 	// You have allocate and unlock this handle,
 	// the memory is freed by this function!
 	// If FALSE is returned, you have to free the memory!
-	BOOL SetGraphixData( HGLOBAL HGlobalMem );
+	bool SetGraphixData( HGLOBAL hGlobalMem );
 
 protected:
 
     // dwROP: Refer to BitBlt for a list of common raster operation codes...
-    DWORD   dwROP;
+    DWORD   m_dwROP;
 
     // overlayMode: 
     //  Refer to 
     //      void SVGraphixClass::SetOverlayMode( SVGraphixOverlayModeEnum );
     //  for a list...
-    SVGraphixOverlayModeEnum    overlayMode;
+    SVGraphixOverlayModeEnum    m_overlayMode;
 
     // backGroundColor:
     //  Current background color, used as Graphix background and
@@ -633,24 +438,24 @@ protected:
     //  void SVGraphixClass::SetOverlayMode( SVGraphixOverlayModeEnum );
     //  void SVGraphixClass::SetBackgroundMono8Color( BYTE );
     //  BYTE SVGraphixClass::GetBackgroundMono8Color();
-    COLORREF    backGroundColor;
+    COLORREF    m_backGroundColor;
 
     // rect:
     //  Size of current Graphix canvas.
     //  ( Could be greater, equal or smaller than destination size )
-    RECT    rect;
+    RECT    m_rect;
 
 	// will be calculated in Draw() and
 	// performs the ScalePoint() rescaling
 	// valid values: scaleX > 0
-	double  scaleX;
+	double  m_scaleX;
 	// will be calculated in Draw() and
 	// performs the ScalePoint() rescaling
 	// valid values: scaleY > 0
-	double	scaleY;
+	double	m_scaleY;
 
 	// Contains the graphix draw objects
-	CArray< SVGraphixDrawObjectClass*, SVGraphixDrawObjectClass* > drawObjectArray;
+	std::vector<SVGraphixDrawObjectClass*> m_drawObjectVector;
 };
 
 

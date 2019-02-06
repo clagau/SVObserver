@@ -34,7 +34,6 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
-#include "targetver.h"
 
 #include <algorithm>
 #include <assert.h>

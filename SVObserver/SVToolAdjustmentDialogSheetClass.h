@@ -16,7 +16,10 @@
 #pragma endregion Includes
 
 class SVIPDoc;
+namespace SvTo
+{
 class SVToolClass;
+}
 
 class SVToolAdjustmentDialogSheetClass : public CPropertySheet
 {
@@ -43,7 +46,7 @@ public:
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
 	SVIPDoc* GetIPDoc() const;
-	SVToolClass* GetTool() const;
+	SvTo::SVToolClass* GetTool() const;
 	const GUID& GetInspectionID() const;
 	const GUID& GetToolID() const;
 	

@@ -45,12 +45,12 @@ HRESULT RootChildren::GetChildObject( SVObjectClass*& rpObject, const SVObjectNa
 	return S_OK;
 }
 
-BasicValueObjectPtr RootChildren::getValueObject( LPCTSTR DottedName ) const
+SvVol::BasicValueObjectPtr RootChildren::getValueObject( LPCTSTR DottedName ) const
 {
 	return m_RootChildrenValues.getValueObject( DottedName );
 }
 
-void RootChildren::getObjectList( BasicValueObjects::ValueVector& rObjectList, LPCTSTR DottedBranch, UINT AttributesAllowedFilter ) const
+void RootChildren::getObjectList(SvVol::BasicValueObjects::ValueVector& rObjectList, LPCTSTR DottedBranch, UINT AttributesAllowedFilter ) const
 {
 	m_RootChildrenValues.getValueList( rObjectList, DottedBranch, AttributesAllowedFilter );
 }

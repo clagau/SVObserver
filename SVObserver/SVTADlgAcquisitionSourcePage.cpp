@@ -14,10 +14,10 @@
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVToolSet.h"
-#include "InspectionEngine/SVTool.h"
-#include "SVVirtualCamera.h"
-#include "SVToolAcquisition.h"
-#include "SVAcquisitionClass.h"
+#include "Tools/SVTool.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "InspectionEngine/SVVirtualCamera.h"
+#include "Tools/SVAcquisitionTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
@@ -60,12 +60,12 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 	UpdateData( FALSE );
 
-	if( m_pSheet && ( m_pTool = m_pSheet->GetTool() ) && SV_IS_KIND_OF( m_pTool, SVAcquisitionToolClass ) )
+	if( m_pSheet && ( m_pTool = m_pSheet->GetTool() ) && SV_IS_KIND_OF(m_pTool, SvTo::SVAcquisitionToolClass))
 	{
 		// Try to get main image of the current acquisition tool...
 		SvDef::SVObjectTypeInfoStruct info;
 		info.ObjectType = SvPb::SVImageObjectType;
-		m_pMainImage = dynamic_cast<SVCameraImageTemplate*>(m_pTool->getFirstObject(info));
+		m_pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (m_pTool->getFirstObject(info));
 		if( nullptr != m_pMainImage)
 		{
 			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( m_pTool->GetAncestor(SvPb::SVInspectionObjectType));
@@ -73,7 +73,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 			if( nullptr != pInspection )
 			{
 				SvUl::NameGuidList CameraGuidList;
-				SVVirtualCameraPtrSet CameraList;
+				SvIe::SVVirtualCameraPtrSet CameraList;
 
 				pInspection->GetPPQCameras( CameraList );
 

@@ -13,6 +13,9 @@
 #include "SVCameraInfoStruct.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -158,3 +161,5 @@ void SVCameraInfoStruct::ClearIndexes()
 	m_pImage = nullptr;
 }
 #pragma endregion Private Methods
+
+} //namespace SvIe

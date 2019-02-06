@@ -35,7 +35,7 @@
 #include "SVInfoStructs.h"
 #include "SVMessage/SVMessage.h"
 #include "TriggerInformation/SVTriggerObject.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQConstants.h"
@@ -343,7 +343,7 @@ void SVPPQObject::init()
 		m_childObjects.push_back(&rOutput);
 	}
 
-	BasicValueObjectPtr pPpqLength = m_PpqValues.setValueObject(SvDef::FqnPpqLength, StandardPpqLength, this);
+	SvVol::BasicValueObjectPtr pPpqLength = m_PpqValues.setValueObject(SvDef::FqnPpqLength, StandardPpqLength, this);
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 
 	m_childObjects.push_back(&m_voTriggerCount);
@@ -555,15 +555,15 @@ void SVPPQObject::DetachAll()
 {
 	DetachTrigger(m_pTrigger);
 
-	std::deque< SVVirtualCamera* > l_Cameras;
+	std::deque<SvIe::SVVirtualCamera*> cameras;
 
-	GetCameraList(l_Cameras);
+	GetCameraList(cameras);
 
-	std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+	std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-	while (l_Iter != l_Cameras.end())
+	while (l_Iter != cameras.end())
 	{
-		SVVirtualCamera* pCamera = (*l_Iter);
+		SvIe::SVVirtualCamera* pCamera = (*l_Iter);
 
 		DetachCamera(pCamera);
 
@@ -648,7 +648,7 @@ void SVPPQObject::GetPPQLength(long &lPPQLength) const
 long SVPPQObject::GetPPQLength() const
 {
 	long length = 0;
-	BasicValueObjectPtr pValue = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
+	SvVol::BasicValueObjectPtr pValue = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
 	if (nullptr != pValue)
 	{
 		pValue->getValue(length);
@@ -676,7 +676,7 @@ bool SVPPQObject::AttachTrigger(SvTi::SVTriggerObject* pTrigger)
 	return true;
 }
 
-bool SVPPQObject::AttachCamera(SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne)
+bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne)
 {
 	bool l_bOk = true;
 
@@ -730,7 +730,7 @@ bool SVPPQObject::DetachTrigger(SvTi::SVTriggerObject* pTrigger)
 	return bOk;
 }// end DetachTrigger
 
-bool SVPPQObject::DetachCamera(SVVirtualCamera* pCamera, bool bRemoveDepends/*=false*/)
+bool SVPPQObject::DetachCamera(SvIe::SVVirtualCamera* pCamera, bool bRemoveDepends/*=false*/)
 {
 	if (nullptr == pCamera) { return false; }
 
@@ -788,7 +788,7 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 	return true;
 }// end DetachInspection
 
-bool SVPPQObject::AddSharedCamera(SVVirtualCamera* pCamera)
+bool SVPPQObject::AddSharedCamera(SvIe::SVVirtualCamera* pCamera)
 {
 	bool l_Status = (nullptr != pCamera);
 
@@ -824,9 +824,9 @@ size_t SVPPQObject::GetCameraCount() const
 	return m_Cameras.size();
 }
 
-void SVPPQObject::GetCameraList(std::deque< SVVirtualCamera* >& p_rCameras) const
+void SVPPQObject::GetCameraList(std::deque<SvIe::SVVirtualCamera*>& rCameras) const
 {
-	p_rCameras.clear();
+	rCameras.clear();
 
 	SVCameraInfoMap::const_iterator l_svIter;
 
@@ -834,17 +834,17 @@ void SVPPQObject::GetCameraList(std::deque< SVVirtualCamera* >& p_rCameras) cons
 
 	while (l_svIter != m_Cameras.end())
 	{
-		p_rCameras.push_back(l_svIter->first);
+		rCameras.push_back(l_svIter->first);
 
 		++l_svIter;
 	}
 }
 
-HRESULT SVPPQObject::GetVirtualCameras(SVVirtualCameraMap& p_rCameras) const
+HRESULT SVPPQObject::GetVirtualCameras(SvIe::SVVirtualCameraMap& rCameras) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rCameras.clear();
+	rCameras.clear();
 
 	SVCameraInfoMap::const_iterator l_svIter = m_Cameras.begin();
 
@@ -852,7 +852,7 @@ HRESULT SVPPQObject::GetVirtualCameras(SVVirtualCameraMap& p_rCameras) const
 	{
 		if (nullptr != l_svIter->first)
 		{
-			p_rCameras[l_svIter->first->GetName()] = l_svIter->first;
+			rCameras[l_svIter->first->GetName()] = l_svIter->first;
 		}
 
 		++l_svIter;
@@ -875,7 +875,7 @@ bool SVPPQObject::GetInspection(long lIndex, SVInspectionProcess*& ppInspection)
 	return true;
 }// end GetInspection
 
-bool SVPPQObject::SetCameraPPQPosition(long lPosition, SVVirtualCamera* pCamera)
+bool SVPPQObject::SetCameraPPQPosition(long lPosition, SvIe::SVVirtualCamera* pCamera)
 {
 	bool l_Status = true;
 
@@ -894,7 +894,7 @@ bool SVPPQObject::SetCameraPPQPosition(long lPosition, SVVirtualCamera* pCamera)
 	return l_Status;
 }// end SetCameraPPQPosition
 
-bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SVVirtualCamera* pCamera) const
+bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SvIe::SVVirtualCamera* pCamera) const
 {
 	bool bFound;
 
@@ -922,13 +922,13 @@ bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SVVirtualCamera* pCamera
 
 void SVPPQObject::RebuildProductCameraInfoStructs()
 {
-	SVGuidSVCameraInfoStructMap l_CameraInfos;
+	SvIe::SVGuidSVCameraInfoStructMap cameraInfos;
 
-	BuildCameraInfos(l_CameraInfos);
+	BuildCameraInfos(cameraInfos);
 
 	for (int j = 0; nullptr != m_pMasterProductInfos && j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
-		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
+		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 	}// end for
 }
 
@@ -941,10 +941,10 @@ void SVPPQObject::AssignCameraToAcquisitionTrigger()
 
 		for (SVCameraInfoMap::iterator it = m_Cameras.begin(); it != m_Cameras.end(); ++it)
 		{
-			SVVirtualCamera* pCamera = it->first;
+			SvIe::SVVirtualCamera* pCamera = it->first;
 			if (nullptr != pCamera)
 			{
-				SVAcquisitionClassPtr acquisitionPtr = pCamera->GetAcquisitionDevice();
+				SvIe::SVAcquisitionClassPtr acquisitionPtr = pCamera->GetAcquisitionDevice();
 				if (nullptr != acquisitionPtr && acquisitionPtr->DigNumber() == iDigNum)
 				{
 					m_pTrigger->mpsvDevice->m_triggerchannel = acquisitionPtr->m_hDigitizer;
@@ -1709,13 +1709,13 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& 
 		if (eType == IO_REMOTE_INPUT)
 		{
 			// new variant value object for Remote Inputs.
-			SVVariantValueObjectClass* pRemoteObject = new SVVariantValueObjectClass();
+			SvVol::SVVariantValueObjectClass* pRemoteObject = new SvVol::SVVariantValueObjectClass();
 			pObject = dynamic_cast<SVObjectClass*> (pRemoteObject);
 		}
 		else
 		{
 			// new Bool Value Object for Digital Inputs.
-			SVBoolValueObjectClass* pDigitalObject = new SVBoolValueObjectClass();
+			SvVol::SVBoolValueObjectClass* pDigitalObject = new SvVol::SVBoolValueObjectClass();
 			pObject = dynamic_cast<SVObjectClass*> (pDigitalObject);
 		}
 
@@ -2199,11 +2199,11 @@ void SVPPQObject::AddDefaultOutputs()
 	m_voTriggerCount.SetDefaultValue(0L, true);
 	m_voTriggerCount.SetValue(0L);
 
-	BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
+	SvVol::BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
 	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
 	std::string PpqName = GetName();
 	long PpqID(0);
-	const size_t PpqFixedNameLength = strlen(SvO::cPpqFixedName);
+	const size_t PpqFixedNameLength = strlen(SvDef::cPpqFixedName);
 	if (PpqFixedNameLength < PpqName.size())
 	{
 		PpqID = atol(PpqName.c_str() + PpqFixedNameLength);
@@ -2805,7 +2805,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 
 	if (!bMaintainImages)
 	{
-		SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
+		SvIe::SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
 
 		for (; p_rProduct.m_svCameraInfos.end() != Iter; ++Iter)
 		{
@@ -2851,7 +2851,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 	// Release from Shared Memory
 	ReleaseSharedMemory(p_rProduct);
 
-	SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
+	SvIe::SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
 
 	for (; Iter != p_rProduct.m_svCameraInfos.end(); ++Iter)
 	{
@@ -2979,7 +2979,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 		if (nullptr != pProduct)
 		{
-			SVGuidSVCameraInfoStructMap::iterator IterCamera;
+			SvIe::SVGuidSVCameraInfoStructMap::iterator IterCamera;
 
 			IterCamera = pProduct->m_svCameraInfos.find(rElement.m_pCamera->GetUniqueObjectID());
 
@@ -3034,7 +3034,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 						if (nullptr != l_pAcqProduct)
 						{
-							SVGuidSVCameraInfoStructMap::iterator IterCamera2(l_pAcqProduct->m_svCameraInfos.find(rElement.m_pCamera->GetUniqueObjectID()));
+							SvIe::SVGuidSVCameraInfoStructMap::iterator IterCamera2(l_pAcqProduct->m_svCameraInfos.find(rElement.m_pCamera->GetUniqueObjectID()));
 
 							if (IterCamera2 != l_pAcqProduct->m_svCameraInfos.end())
 							{
@@ -3094,7 +3094,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 	return l_Status;
 }
 
-HRESULT SVPPQObject::BuildCameraInfos(SVGuidSVCameraInfoStructMap& p_rCameraInfos) const
+HRESULT SVPPQObject::BuildCameraInfos(SvIe::SVGuidSVCameraInfoStructMap& p_rCameraInfos) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -3107,7 +3107,7 @@ HRESULT SVPPQObject::BuildCameraInfos(SVGuidSVCameraInfoStructMap& p_rCameraInfo
 		if (-1 != Iter->second.m_CameraPPQIndex)
 		{
 			const SVGUID& rCameraID(Iter->first->GetUniqueObjectID());
-			p_rCameraInfos[rCameraID].setCamera(rCameraID, boost::bind(&SVVirtualCamera::ReserveNextImageHandle, Iter->first));
+			p_rCameraInfos[rCameraID].setCamera(rCameraID, boost::bind(&SvIe::SVVirtualCamera::ReserveNextImageHandle, Iter->first));
 		}
 	}
 
@@ -3120,7 +3120,7 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 
 	if (l_Status)
 	{
-		SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*>(pCaller);
+		SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*>(pCaller);
 
 		if (nullptr != pCamera)
 		{
@@ -3288,7 +3288,7 @@ void CALLBACK SVPPQObject::OutputTimerCallback(UINT uTimerID, UINT uRsvd, DWORD_
 	}
 }
 
-HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct& p_rProduct, SVVirtualCamera* pCamera)
+HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera)
 {
 	HRESULT l_Status = S_OK;
 
@@ -3298,17 +3298,17 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 		{
 			if (nullptr != pInspection && pInspection->IsCameraInInspection(pCamera->GetName()))
 			{
-				SVInspectionInfoPair l_Info(p_rProduct.ProcessCount(), p_rProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()]);
+				SVInspectionInfoPair l_Info(rProduct.ProcessCount(), rProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()]);
 
 				l_Info.second.oInspectedState = PRODUCT_NOT_INSPECTED;
 				l_Info.second.m_CanProcess = false;
 				l_Info.second.m_InProcess = true;
 				l_Info.second.m_EndInspection = SvTl::GetTimeStamp();
 
-				p_rProduct.m_ProductState += _T("|MC=");
-				p_rProduct.m_ProductState += pInspection->GetName();
-				p_rProduct.m_ProductState += _T("-");
-				p_rProduct.m_ProductState += pCamera->GetName();
+				rProduct.m_ProductState += _T("|MC=");
+				rProduct.m_ProductState += pInspection->GetName();
+				rProduct.m_ProductState += _T("-");
+				rProduct.m_ProductState += pCamera->GetName();
 
 				m_oInspectionQueue.AddTail(l_Info);
 			}
@@ -4248,7 +4248,7 @@ SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(const SVCameraQueueEleme
 {
 }
 
-SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SVVirtualCamera* pCamera, const SVODataResponseClass& rData)
+SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const SVODataResponseClass& rData)
 	: m_pCamera(pCamera)
 	, m_Data(rData)
 {
@@ -4515,8 +4515,8 @@ bool SVPPQObject::SetupProductInfoStructs()
 	}
 
 	// Set up all the ProductInfo Structs
-	SVGuidSVCameraInfoStructMap l_CameraInfos;
-	BuildCameraInfos(l_CameraInfos);
+	SvIe::SVGuidSVCameraInfoStructMap cameraInfos;
+	BuildCameraInfos(cameraInfos);
 	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
 
 	std::vector<int> inspPosVec;
@@ -4528,7 +4528,7 @@ bool SVPPQObject::SetupProductInfoStructs()
 	{
 		m_pMasterProductInfos[j].oPPQInfo.pPPQ = this;
 		m_pMasterProductInfos[j].oTriggerInfo.pTrigger = m_pTrigger;
-		m_pMasterProductInfos[j].m_svCameraInfos = l_CameraInfos;
+		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 
 		for (int i = 0; i < m_arInspections.size(); i++)

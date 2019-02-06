@@ -42,8 +42,8 @@ protected:
 private:
 	void init();
 
-	SVEnumerateValueObjectClass  m_blobColor;
-	SVBoolValueObjectClass m_isGrayOn;
+	SvVol::SVEnumerateValueObjectClass  m_blobColor;
+	SvVol::SVBoolValueObjectClass m_isGrayOn;
 
 	long m_operatorMode;
 };

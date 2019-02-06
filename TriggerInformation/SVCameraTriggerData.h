@@ -25,8 +25,8 @@ namespace SvTi
 		typedef  std::map<std::string, _variant_t> NameVariantMap;
 
 	private:
-		SVDoubleValueObjectClass m_timestamp;
-		SVBoolValueObjectClass m_lineInState;
+		SvVol::SVDoubleValueObjectClass m_timestamp;
+		SvVol::SVBoolValueObjectClass m_lineInState;
 
 	public:
 		SVCameraTriggerData();

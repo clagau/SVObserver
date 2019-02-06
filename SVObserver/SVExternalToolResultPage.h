@@ -13,11 +13,12 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-
 #pragma endregion Includes
 
-class SVExternalTool;
+namespace SvOp
+{
 class SVExternalToolTask;
+}
 
 class SVExternalToolResultPage : public CPropertyPage
 {
@@ -43,7 +44,7 @@ protected:
 	int SelectObject(int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
 
-	SVExternalToolTask*				m_pTask;
+	SvOp::SVExternalToolTask* m_pTask;
 	const SVGUID m_InspectionID;
 	const SVGUID m_TaskObjectID;
 	std::string						m_sTitle;

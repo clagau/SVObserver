@@ -12,12 +12,12 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SVShiftToolUtility.h"
-#include "SVShiftTool.h"
+#include "Tools/SVShiftTool.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
-void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
+void SVShiftToolUtility::SetToolNormalize(SvTo::SVShiftTool* pShiftTool)
 {
 	if (nullptr != pShiftTool)
 	{
@@ -47,7 +47,7 @@ void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 	}
 }
 
-void SVShiftToolUtility::SetToolSetReference(SVShiftTool *pShiftTool)
+void SVShiftToolUtility::SetToolSetReference(SvTo::SVShiftTool *pShiftTool)
 {
 	if (nullptr != pShiftTool)
 	{

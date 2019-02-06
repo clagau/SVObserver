@@ -31,26 +31,26 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "InspectionEngine/SVEquation.h"
+#include "Operators/SVEquation.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVToolSet.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
-#include "SVArchiveTool.h"
-#include "SVArchiveRecord.h"
-#include "SVArchiveRecordsArray.h"
-#include "SVStatTool.h"
+#include "Tools/SVArchiveTool.h"
+#include "Tools/SVArchiveRecord.h"
+#include "Tools/SVArchiveRecordsArray.h"
+#include "Tools/SVStatTool.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVIODoc.h"
 #include "SVIPDoc.h"
-#include "SVShapeMaskHelperClass.h"
+#include "Operators/SVShapeMaskHelperClass.h"
+#include "Operators/SVUserMaskOperatorClass.h"
 #include "SVIOController.h"
-#include "SVUserMaskOperatorClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma region Includes
 
@@ -70,17 +70,17 @@ namespace sv_xml
 		void WriteTriggers(Writer  writer) const;
 		void WriteTrigger(Writer  writer, SvTi::SVTriggerObject* pTrigger) const;
 		void WriteCameras(Writer  writer) const;
-		void WriteCamera(Writer  writer, SVVirtualCamera* pCamera) const;
-		void WriteHardwareAcq(Writer  writer, SVVirtualCamera* pCamera) const;
-		void WriteFileAcq(Writer  writer, SVVirtualCamera* pCamera) const;
+		void WriteCamera(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
+		void WriteHardwareAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
+		void WriteFileAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
 		void WritePPQs(Writer  writer) const;
 		void WritePPQCameras(Writer  writer, SVPPQObject* pPPQ) const;
 		void WritePPQInspections(Writer  writer, SVPPQObject* pPPQ) const;
 		void WriteInspections(Writer  writer) const;
 		void WriteToolSets(Writer writer) const;
 		void WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const;
-		void WriteTool(Writer writer, SVToolClass* pTool) const;
-		void WriteArchiveTool(Writer writer, SVArchiveTool* pArchiveTool) const;
+		void WriteTool(Writer writer, SvTo::SVToolClass* pTool) const;
+		void WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* pArchiveTool) const;
 		void WriteModuleIO(Writer writer) const;
 		void WriteResultIO(Writer writer) const;
 		void WriteIOSection(Writer writer) const;
@@ -88,7 +88,7 @@ namespace sv_xml
 		void WritePPQBar(Writer writer) const;
 		void WriteObject( Writer writer, SVObjectClass* pObj ) const;
 		void WriteValueObject( Writer writer, SVObjectClass* pObj ) const;
-		void WriteAllChildren( Writer writer, SVTaskObjectListClass* pObj ) const;
+		void WriteAllChildren( Writer writer, SvIe::SVTaskObjectListClass* pObj ) const;
 		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
 		void WriteFriends( Writer writer, SVObjectClass* pObj ) const;
 		void WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const;

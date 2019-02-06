@@ -81,7 +81,7 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	}
 	else
 	{
-		SVImageClass* pImageObject = dynamic_cast<SVImageClass*>(ObjectRef.getObject());
+		SvIe::SVImageClass* pImageObject = dynamic_cast<SvIe::SVImageClass*>(ObjectRef.getObject());
 		if (nullptr != pImageObject)
 		{
 			SvTrc::IImagePtr pImageBuffer = pImageObject->getLastImage(true);

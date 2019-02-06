@@ -19,8 +19,6 @@
 #include "SVImageLibrary/SVDrawContext.h"
 #pragma endregion Includes
 
-typedef std::vector<CPoint> CPointVector;
-
 enum 
 {
 	InvalidPoint = INT_MIN,
@@ -47,14 +45,12 @@ public:
 	void Transform( SVDrawContext* PDrawContext );
 
 	int AddPoint( const POINT Point );
-	int AddPoint( const CPoint& rPoint );
-	void SetPointAtGrow( int Index, const CPoint& rPoint );
 	void SetPointAtGrow( int Index, POINT Point );
 	void SetListSize( int NewSize );
  
-	CPoint GetPointAt( int Index );
+	POINT GetPointAt( int Index );
 
-	const CPointVector& GetPointArray();
+	const std::vector<POINT>& GetPointArray();
 	
 	HGDIOBJ GetDrawPen();
 
@@ -62,8 +58,8 @@ protected:
 	BOOL beginDraw( SVDrawContext* PDrawContext );
 	void endDraw( HDC DC );
 	
-	CPointVector	 m_Points;
-	CPointVector	 m_CalcPoints;
+	std::vector<POINT> m_Points;
+	std::vector<POINT> m_CalcPoints;
 
 	HGDIOBJ drawPen;	// If nullptr the current selected pen of the DC
 						// will be used!

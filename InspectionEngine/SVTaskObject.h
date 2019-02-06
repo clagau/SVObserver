@@ -29,15 +29,25 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
+namespace SvTo
+{
+class SVToolClass;
+class LoopTool;
+}
+
+class SVToolSetClass;
+
+namespace SvIe
+{
 
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
 	SV_DECLARE_CLASS(SVTaskObjectClass)
 
 	friend class SVTaskObjectListClass; // For access to Run()
-	friend class SVToolClass; // For access to Run()
+	friend class SvTo::SVToolClass; // For access to Run()
+	friend class SvTo::LoopTool; // For access to Run()
 	friend class SVToolSetClass; // For access to Run()
-	friend class LoopTool; // For access to Run()
 public:
 	SVTaskObjectClass(LPCSTR LPSZObjectName);
 	SVTaskObjectClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT);
@@ -221,9 +231,9 @@ protected:
 	SvOl::SVInputInfoListClass	m_InputObjectList;
 
 	// Embedded Object:
-	SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
-	SVDWordValueObjectClass m_statusTag;
-	SVDWordValueObjectClass m_statusColor;
+	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
+	SvVol::SVDWordValueObjectClass m_statusTag;
+	SvVol::SVDWordValueObjectClass m_statusColor;
 	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,3 +265,4 @@ private:
 	mutable long m_lLastToolInputListIndex = -1;
 };
 
+} //namespace SvIe

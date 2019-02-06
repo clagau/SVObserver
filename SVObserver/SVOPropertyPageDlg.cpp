@@ -30,8 +30,8 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVGigeCameraROIDlg.h"
-#include "SVAcquisitionClass.h"
-#include "SVDigitizerProcessingClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
 #include "SVPPQConstants.h"
@@ -93,7 +93,7 @@ public:
 		m_pFormatsParam->options[ m_strName ].m_lHeight = height; 
 	}
 
-	void Update(SVAcquisitionClassPtr pAcqDevice)
+	void Update(SvIe::SVAcquisitionClassPtr pAcqDevice)
 	{
 		if (nullptr != pAcqDevice)
 		{
@@ -1803,13 +1803,13 @@ void CSVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plRes
 	}// end if ( pNMPropTree->pItem )
 }
 
-static HRESULT ShowGigeROIDlg(ISVCameraDeviceImageFormatUpdater& rImageFormatUpdater, SVCameraFormat& p_rFormat, const SVImageInfoClass& p_rImageInfo, SVAcquisitionClassPtr p_pDevice, SVCameraFormat& rCameraDeviceFormat, SVDeviceParamCollection& rDeviceParams )
+static HRESULT ShowGigeROIDlg(ISVCameraDeviceImageFormatUpdater& rImageFormatUpdater, SVCameraFormat& p_rFormat, const SVImageInfoClass& p_rImageInfo, SvIe::SVAcquisitionClassPtr pDevice, SVCameraFormat& rCameraDeviceFormat, SVDeviceParamCollection& rDeviceParams )
 {
 	HRESULT hr = S_FALSE;
 	SVGigeCameraROIDlg dlg(rImageFormatUpdater);
 	dlg.SetFormat( &p_rFormat );
 	dlg.SetFormatImage( p_rImageInfo );
-	dlg.SetAcquisitionDevice( p_pDevice );
+	dlg.SetAcquisitionDevice( pDevice );
 
 	// check if binning is supported
 	// if so get value, min and max for vertical and horizontal
@@ -1848,7 +1848,7 @@ static void UpdateCameraGigeBinningParameters(const SVDeviceParamCollection& rDe
 	}
 }
 
-static void ApplyGigeImageFormatChange(SVAcquisitionClassPtr pAcqDevice, const SVDeviceParamCollection& rDeviceParams)
+static void ApplyGigeImageFormatChange(SvIe::SVAcquisitionClassPtr pDevice, const SVDeviceParamCollection& rDeviceParams)
 {
 	SVDeviceParamCollection l_params;
 	if (rDeviceParams.ParameterExists(DeviceParamVerticalBinning))
@@ -1864,7 +1864,7 @@ static void ApplyGigeImageFormatChange(SVAcquisitionClassPtr pAcqDevice, const S
 	SVDeviceParamWrapper wFormats = rDeviceParams.Parameter( DeviceParamCameraFormats );
 	l_params.SetParameter( wFormats );
 
-	pAcqDevice->SetDeviceParameters(l_params);
+	pDevice->SetDeviceParameters(l_params);
 }
 
 // For GigE ROI adjustments
@@ -1899,7 +1899,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	SVInspectionProcessVector aInspections;
 	SVDeviceParamCollection l_CurrentParams;
 
-	SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName.c_str() ) );
+	SvIe::SVAcquisitionClassPtr pDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName.c_str() ) );
 	
 	if( nullptr != pDevice )
 	{
@@ -1945,15 +1945,15 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 				if( nullptr != pPPQ )
 				{
-					std::deque< SVVirtualCamera* > l_Cameras;
+					std::deque<SvIe::SVVirtualCamera*> cameras;
 
-					pPPQ->GetCameraList( l_Cameras );
+					pPPQ->GetCameraList( cameras );
 
-					std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+					std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-					while( l_Iter != l_Cameras.end() )
+					while( l_Iter != cameras.end() )
 					{
-						SVVirtualCamera* pCamera = ( *l_Iter );
+						SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
 
 						if ( nullptr != pCamera && pCamera->mpsvDevice == pDevice )
 						{

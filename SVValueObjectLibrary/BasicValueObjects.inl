@@ -9,6 +9,9 @@
 //* .Check In Date   : $Date:   02 Jun 2014 08:55:52  $
 //******************************************************************************
 
+namespace SvVol
+{
+
 #pragma region Public Methods
 template <typename ELEMENT_TYPE>
 HRESULT BasicValueObjects::getValue( LPCTSTR DottedName, ELEMENT_TYPE& rValue ) const
@@ -122,3 +125,4 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 }
 #pragma endregion Private Methods
 
+} //namespace SvVol

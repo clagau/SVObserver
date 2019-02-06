@@ -27,9 +27,9 @@
 #include "SVToolSet.h"
 #include "SVPPQObject.h"
 #include "SVGlobal.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "InspectionEngine/SVConditional.h"
+#include "Operators/SVConditional.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -84,7 +84,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		bool cameraFound {false};
 		if (nullptr != m_pToolSetCamera)
 		{
-			SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
+			SvIe::SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
 			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
 				cameraFound = true;
@@ -294,7 +294,7 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 
 	for (auto & element : m_WatchListImages)
 	{
-		SVImageClass* pImage = dynamic_cast<SVImageClass*>(element->ObjRef.getObject());
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (element->ObjRef.getObject());
 
 		if (nullptr == pImage || nullptr == pImage->GetInspection() || false == element->MonEntryPtr.get())
 		{
@@ -475,7 +475,7 @@ SVInspectionProcess::~SVInspectionProcess()
 bool SVInspectionProcess::IsCameraInInspection(const std::string& rCameraName) const
 {
 	bool Result(false);
-	SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
 	while (!Result && l_Iter != m_CameraImages.end())
 	{
 		if (nullptr != (*l_Iter))
@@ -659,7 +659,7 @@ HRESULT SVInspectionProcess::GetInspectionObject(LPCTSTR Name, SVObjectReference
 	}
 	else	// if not a value object, try getting images
 	{
-		SVImageClass* pImage = nullptr;
+		SvIe::SVImageClass* pImage = nullptr;
 		hr = GetInspectionImage(Name, pImage);
 		if (S_OK == hr)
 		{
@@ -846,11 +846,11 @@ bool SVInspectionProcess::GoOffline()
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
 	//save the last image to have it in the edit-mode
-	for (SVCameraImageTemplate* pCameraImage : m_CameraImages)
+	for (SvIe::SVCameraImageTemplate* pCameraImage : m_CameraImages)
 	{
 		if (nullptr != pCameraImage)
 		{
-			SVVirtualCamera* pCamera = pCameraImage->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
 			auto pImageData = pCameraImage->getImageData();
 			if (nullptr != pCamera && nullptr != pImageData && !pImageData->empty())
 			{
@@ -889,19 +889,19 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 		}
 
 		// See if we have Camera images.
-		SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
+		SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (bReady && l_ImageIter != m_CameraImages.end())
 		{
-			SVCameraImageTemplate* l_pImage = (*l_ImageIter);
+			SvIe::SVCameraImageTemplate* l_pImage = (*l_ImageIter);
 
 			if (nullptr != l_pImage)
 			{
-				SVVirtualCamera* pCamera = l_pImage->GetCamera();
+				SvIe::SVVirtualCamera* pCamera = l_pImage->GetCamera();
 
 				if (nullptr != pCamera)
 				{
-					SVGuidSVCameraInfoStructMap::iterator l_Iter;
+					SvIe::SVGuidSVCameraInfoStructMap::iterator l_Iter;
 
 					l_Iter = pProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
 
@@ -956,15 +956,15 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 		//The triggerRecord must be free here, because the Inspection has to decide when write-mode of this is TR is finished and close the instance to open an read version.
 		l_rIPInfo.m_triggerRecordWrite = nullptr;
 
-		SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
+		SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (l_ImageIter != m_CameraImages.end())
 		{
-			SVCameraImageTemplate* l_pImage = (*l_ImageIter);
+			SvIe::SVCameraImageTemplate* l_pImage = (*l_ImageIter);
 
 			if (nullptr != l_pImage && nullptr != l_pImage->GetCamera())
 			{
-				SVGuidSVCameraInfoStructMap::iterator l_Iter;
+				SvIe::SVGuidSVCameraInfoStructMap::iterator l_Iter;
 
 				l_Iter = pProduct->m_svCameraInfos.find(l_pImage->GetCamera()->GetUniqueObjectID());
 
@@ -1061,7 +1061,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			{
 				case IO_DIGITAL_INPUT:
 				{
-					SVBoolValueObjectClass* pIOObject = new SVBoolValueObjectClass(this);
+					SvVol::SVBoolValueObjectClass* pIOObject = new SvVol::SVBoolValueObjectClass(this);
 					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
 					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -1069,7 +1069,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 				}
 				case IO_REMOTE_INPUT:
 				{
-					SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
+					SvVol::SVVariantValueObjectClass* pIOObject = new SvVol::SVVariantValueObjectClass(this);
 					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
 					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -1077,7 +1077,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 				}
 				default:
 				{
-					SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
+					SvVol::SVVariantValueObjectClass* pIOObject = new SvVol::SVVariantValueObjectClass(this);
 					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
 					break;
@@ -1184,7 +1184,12 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 	return true;
 }
 
-HRESULT SVInspectionProcess::AddInputImageRequest(SVImageClass* p_psvImage, BSTR& p_rbstrValue)
+bool SVInspectionProcess::AddInputRequestMarker()
+{
+	return AddInputRequest(nullptr, SvO::SVTOOLPARAMETERLIST_MARKER);
+}
+
+HRESULT SVInspectionProcess::AddInputImageRequest(SvIe::SVImageClass* p_psvImage, BSTR& p_rbstrValue)
 {
 	HRESULT l_Status = S_OK;
 
@@ -1198,9 +1203,9 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVImageClass* p_psvImage, BSTR
 
 			try
 			{
-				SVCameraImageTemplate* l_psvMainImage = dynamic_cast<SVCameraImageTemplate*>(p_psvImage);
+				SvIe::SVCameraImageTemplate* l_psvMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(p_psvImage);
 
-				l_Status = SVImageProcessingClass::LoadImageBuffer((void*)p_rbstrValue,
+				l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer((void*)p_rbstrValue,
 					l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr, l_ImageInfo);
 
 				l_pInRequest->m_bUsingCameraName = nullptr != l_psvMainImage;
@@ -1240,31 +1245,31 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVImageClass* p_psvImage, BSTR
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SVImageClass* p_psvImage, const std::string& p_rImageFileName)
+HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SvIe::SVImageClass* pImage, const std::string& rImageFileName)
 {
 	HRESULT l_Status = S_OK;
 
-	if (nullptr != p_psvImage)
+	if (nullptr != pImage)
 	{
-		SVImageInfoClass l_ImageInfo = p_psvImage->GetImageInfo();
+		SVImageInfoClass l_ImageInfo = pImage->GetImageInfo();
 
 		try
 		{
 			SVInputImageRequestInfoStructPtr l_pInRequest {new SVInputImageRequestInfoStruct};
 
-			SVCameraImageTemplate* l_psvMainImage = dynamic_cast<SVCameraImageTemplate*> (p_psvImage);
+			SvIe::SVCameraImageTemplate* pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pImage);
 
-			l_Status = SVImageProcessingClass::LoadImageBuffer(p_rImageFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
+			l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer(rImageFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
 
-			l_pInRequest->m_bUsingCameraName = nullptr != l_psvMainImage;
+			l_pInRequest->m_bUsingCameraName = nullptr != pMainImage;
 
 			if (l_pInRequest->m_bUsingCameraName)
 			{
-				l_pInRequest->m_ObjectName = l_psvMainImage->GetCameraName();
+				l_pInRequest->m_ObjectName = pMainImage->GetCameraName();
 			}
 			else
 			{
-				l_pInRequest->m_ObjectName = p_psvImage->GetCompleteName();
+				l_pInRequest->m_ObjectName = pImage->GetCompleteName();
 			}
 
 			//add request to inspection process
@@ -1365,7 +1370,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	// Color SVIM
 	if (IsColorCamera())
 	{
-		SVVirtualCameraMap CameraMap;
+		SvIe::SVVirtualCameraMap CameraMap;
 
 		if (nullptr != pPPQ)
 		{
@@ -1374,10 +1379,10 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 		bool bColorSourceImage = false;
 		bool bCameraSupportsColor = false;
-		SVVirtualCameraMap::iterator pos = CameraMap.begin();
+		SvIe::SVVirtualCameraMap::iterator pos = CameraMap.begin();
 		while (pos != CameraMap.end())
 		{
-			SVAcquisitionClassPtr pCamDevice = nullptr;
+			SvIe::SVAcquisitionClassPtr pCamDevice = nullptr;
 
 			if (nullptr != pos->second)
 			{
@@ -1831,7 +1836,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 				// Value objects don't accept each different type for sets
 				// so convert to the appropriate type
-				if (SVFileNameValueObjectClass* pFileNameObj = dynamic_cast<SVFileNameValueObjectClass*> (ObjectRef.getObject()))
+				if (SvVol::SVFileNameValueObjectClass* pFileNameObj = dynamic_cast<SvVol::SVFileNameValueObjectClass*> (ObjectRef.getObject()))
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
@@ -1861,8 +1866,8 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 							hrSet = pFileNameObj->SetValue(Value, ObjectRef.ArrayIndex());
 						}// end if
 					}
-				}// end if SVFileNameValueObjectClass
-				else if (SVStringValueObjectClass* pStringValueObj = dynamic_cast<SVStringValueObjectClass*> (ObjectRef.getObject()))
+				}
+				else if (SvVol::SVStringValueObjectClass* pStringValueObj = dynamic_cast<SvVol::SVStringValueObjectClass*> (ObjectRef.getObject()))
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
@@ -1882,7 +1887,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						hrSet = pStringValueObj->SetValue(Value, ObjectRef.ArrayIndex());
 					}
 				}
-				else if (SVBoolValueObjectClass* pBoolValueObj = dynamic_cast<SVBoolValueObjectClass*> (ObjectRef.getObject()))
+				else if (SvVol::SVBoolValueObjectClass* pBoolValueObj = dynamic_cast<SvVol::SVBoolValueObjectClass*> (ObjectRef.getObject()))
 				{
 					BOOL NewValue(false);
 
@@ -1908,7 +1913,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					hrSet = pBoolValueObj->SetValue(NewValue, ObjectRef.ArrayIndex());
 				}// end else if SVBoolValueObjectClass
-				else if (SVVariantValueObjectClass* pvValueObject = dynamic_cast <SVVariantValueObjectClass*> (ObjectRef.getObject()))
+				else if (SvVol::SVVariantValueObjectClass* pvValueObject = dynamic_cast <SvVol::SVVariantValueObjectClass*> (ObjectRef.getObject()))
 				{
 					// Convert to the appropriate type of value
 
@@ -1924,7 +1929,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						hrSet = pvValueObject->SetValueKeepType(Value.c_str());
 					}
 				}// end else if SVVariantValueObjectClass
-				else if (SVEnumerateValueObjectClass* pEnumerateValueObj = dynamic_cast <SVEnumerateValueObjectClass*> (ObjectRef.getObject()))
+				else if (SvVol::SVEnumerateValueObjectClass* pEnumerateValueObj = dynamic_cast <SvVol::SVEnumerateValueObjectClass*> (ObjectRef.getObject()))
 				{
 					// Convert to the appropriate type of value
 					bool l_bTempReset = false;
@@ -1955,7 +1960,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					bResetObject = l_bTempReset;
 				}// end else if SVEnumerateValueObjectClass
-				else if (SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast <SVDoubleValueObjectClass*> (ObjectRef.getObject()))
+				else if (SvVol::SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast <SvVol::SVDoubleValueObjectClass*> (ObjectRef.getObject()))
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
@@ -2007,11 +2012,11 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 				if (SvOi::SVResetItemIP != rResetItem && bResetObject && SvOi::SVResetItemNone > ObjectRef.getValueObject()->getResetItem())
 				{
-					SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>(ObjectRef.getObject()->GetAncestor(SvPb::SVToolObjectType));
+					SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (ObjectRef.getObject()->GetAncestor(SvPb::SVToolObjectType));
 
-					if (nullptr != l_psvTool)
+					if (nullptr != pTool)
 					{
-						SvOi::SVResetItemEnum eToolResetItem = toolMap[l_psvTool].SetResetData(ObjectRef.getValueObject()->getResetItem(), ObjectRef.getObject());
+						SvOi::SVResetItemEnum eToolResetItem = toolMap[pTool].SetResetData(ObjectRef.getValueObject()->getResetItem(), ObjectRef.getObject());
 
 						if (eToolResetItem < rResetItem)
 						{
@@ -2046,23 +2051,23 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 				for (l = 0; l < l_iSize; l++)
 				{
-					SVToolClass *l_psvTool = dynamic_cast<SVToolClass *>(m_pCurrentToolset->GetAt(l));
+					SvTo::SVToolClass *pTool = dynamic_cast<SvTo::SVToolClass*> (m_pCurrentToolset->GetAt(l));
 
-					if (nullptr != l_psvTool)
+					if (nullptr != pTool)
 					{
-						if (toolMap.find(l_psvTool) != toolMap.end())
+						if (toolMap.find(pTool) != toolMap.end())
 						{
-							if (toolMap[l_psvTool].m_ObjectSet.empty())
+							if (toolMap[pTool].m_ObjectSet.empty())
 							{
-								bRet &= l_psvTool->resetAllObjects();
+								bRet &= pTool->resetAllObjects();
 							}
 							else
 							{
 								SVObjectPtrSet::iterator l_oIter;
 
-								l_oIter = toolMap[l_psvTool].m_ObjectSet.begin();
+								l_oIter = toolMap[pTool].m_ObjectSet.begin();
 
-								while (l_oIter != toolMap[l_psvTool].m_ObjectSet.end())
+								while (l_oIter != toolMap[pTool].m_ObjectSet.end())
 								{
 									SVObjectClass *l_psvObject = *l_oIter;
 
@@ -2118,19 +2123,19 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 			if (m_InputImageRequests.RemoveHead(&l_pInRequest))
 			{
-				SVImageClass *pImage = nullptr;
+				SvIe::SVImageClass *pImage = nullptr;
 
 				if (l_pInRequest->m_bUsingCameraName) //not using camera name...
 				{
-					SVCameraImagePtrSet l_MainImages;
+					SvIe::SVCameraImagePtrSet l_MainImages;
 
 					GetMainImages(l_pInRequest->m_ObjectName.c_str(), l_MainImages);
 
-					SVCameraImagePtrSet::iterator l_Iter = l_MainImages.begin();
+					SvIe::SVCameraImagePtrSet::iterator l_Iter = l_MainImages.begin();
 
 					while (nullptr == pImage && l_Iter != l_MainImages.end())
 					{
-						SVCameraImageTemplate* pCameraImage = (*l_Iter);
+						SvIe::SVCameraImageTemplate* pCameraImage = (*l_Iter);
 
 						if (nullptr != pCameraImage)
 						{
@@ -2144,10 +2149,10 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 				}
 				else
 				{
-					SVObjectClass* l_psvObject = nullptr;
-					if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(l_pInRequest->m_ObjectName.c_str(), l_psvObject))
+					SVObjectClass* pObject = nullptr;
+					if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(l_pInRequest->m_ObjectName.c_str(), pObject))
 					{
-						pImage = dynamic_cast<SVImageClass*>(l_psvObject);
+						pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
 					}
 				}
 
@@ -2159,10 +2164,10 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 					l_bOk = (nullptr != inspectionIter.m_triggerRecordWrite);
 
 					SvTrc::IImagePtr pImageBuffer;
-					SVVirtualCamera* pVirtualCamera = nullptr;
-					if (SVMainImageClass* l_psvMainImage = dynamic_cast<SVMainImageClass*>(pImage))
+					SvIe::SVVirtualCamera* pVirtualCamera = nullptr;
+					if (SvIe::SVMainImageClass* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
 					{
-						SVGuidSVCameraInfoStructMap::iterator l_svIter;
+						SvIe::SVGuidSVCameraInfoStructMap::iterator l_svIter;
 
 						l_svIter = p_psvProduct->m_svCameraInfos.find(l_psvMainImage->GetCamera()->GetUniqueObjectID());
 
@@ -2226,11 +2231,11 @@ void SVInspectionProcess::ClearIndexesOfOtherInspections(SVProductInfoStruct *p_
 
 void SVInspectionProcess::DisconnectToolSetMainImage()
 {
-	SVCameraImagePtrSet::iterator l_Iter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::iterator l_Iter = m_CameraImages.begin();
 
 	while (l_Iter != m_CameraImages.end())
 	{
-		SVCameraImageTemplate* l_pCameraImage = (*l_Iter);
+		SvIe::SVCameraImageTemplate* l_pCameraImage = (*l_Iter);
 
 		if (nullptr != l_pCameraImage)
 		{
@@ -2249,11 +2254,11 @@ void SVInspectionProcess::ConnectToolSetMainImage()
 {
 	m_svReset.AddState(SvDef::SVResetAutoMoveAndResize);
 
-	SVCameraImagePtrSet::iterator l_Iter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::iterator l_Iter = m_CameraImages.begin();
 
 	while (l_Iter != m_CameraImages.end())
 	{
-		SVCameraImageTemplate* l_pCameraImage = (*l_Iter);
+		SvIe::SVCameraImageTemplate* l_pCameraImage = (*l_Iter);
 
 		if (nullptr != l_pCameraImage)
 		{
@@ -2274,7 +2279,7 @@ void SVInspectionProcess::RemoveCamera(const std::string& rCameraName)
 {
 	if (rCameraName == m_ToolSetCameraName)
 	{
-		SVVirtualCamera* pCamera = GetFirstPPQCamera();
+		SvOi::IObjectClass* pCamera = getFirstPPQCamera();
 
 		if (nullptr != pCamera)
 		{
@@ -2286,13 +2291,13 @@ void SVInspectionProcess::RemoveCamera(const std::string& rCameraName)
 		}
 	}
 
-	SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
 
 	while (l_Iter != m_CameraImages.end())
 	{
 		if (nullptr != *l_Iter)
 		{
-			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
 			if ((nullptr != pCamera) && (rCameraName == pCamera->GetName()))
 			{
@@ -2335,17 +2340,17 @@ void SVInspectionProcess::setEnableAuxiliaryExtent(bool Enabled)
 	}
 }
 
-HRESULT SVInspectionProcess::CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray)
+HRESULT SVInspectionProcess::CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
-	p_rMultiLineArray.clear();
+	rMultiLineArray.clear();
 
 	SVToolSetClass *l_pToolSet = GetToolSet();
 
 	if (nullptr != l_pToolSet)
 	{
-		l_Status = l_pToolSet->CollectOverlays(p_pImage, p_rMultiLineArray);
+		l_Status = l_pToolSet->CollectOverlays(pImage, rMultiLineArray);
 	}
 	else
 	{
@@ -2376,7 +2381,7 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	{
 		l_pInRequest->m_bUsingCameraName = true;
 		l_pInRequest->m_ObjectName = rCameraName;
-		SVImageProcessingClass::LoadImageBuffer(rFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
+		SvIe::SVImageProcessingClass::LoadImageBuffer(rFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
 
 		AddInputImageRequest(l_pInRequest);
 	}
@@ -2430,11 +2435,11 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 		SVProductInfoStruct l_Product = LastProductGet();
 		for (auto& rCameraInfoPair : p_psvProduct->m_svCameraInfos)
 		{
-			SVVirtualCamera* pCamera(dynamic_cast<SVVirtualCamera*> (SvOi::getObject(rCameraInfoPair.first)));
+			SvIe::SVVirtualCamera* pCamera(dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(rCameraInfoPair.first)));
 			if (nullptr != pCamera)
 			{
 				bool Copied(false);
-				const SVGuidSVCameraInfoStructMap::iterator LastIter(l_Product.m_svCameraInfos.find(rCameraInfoPair.first));
+				const SvIe::SVGuidSVCameraInfoStructMap::iterator LastIter(l_Product.m_svCameraInfos.find(rCameraInfoPair.first));
 
 				if (LastIter != l_Product.m_svCameraInfos.end() && nullptr != LastIter->second.getImage() && !LastIter->second.getImage()->isEmpty())
 				{
@@ -2487,7 +2492,7 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 
 	bool Result(false);
 
-	SVTaskObjectListClass* pToolSet = static_cast <SVTaskObjectListClass*> (m_pCurrentToolset);
+	SvIe::SVTaskObjectListClass* pToolSet = static_cast <SvIe::SVTaskObjectListClass*> (m_pCurrentToolset);
 	if (nullptr != pToolSet)
 	{
 		SVObjectReferenceVector vecObjects;
@@ -2502,7 +2507,7 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 			Result = true;
 		}
 
-		SVImageClassPtrVector listImages;
+		SvIe::SVImageClassPtrVector listImages;
 		pToolSet->GetImageList(listImages, SV_CH_IMAGE);
 		int NumberOfImages = static_cast<int> (listImages.size());
 		if (0 < NumberOfImages)
@@ -2521,58 +2526,40 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 
 bool SVInspectionProcess::IsColorCamera() const
 {
-	bool Result(false);
-	SVVirtualCamera* pCamera(GetFirstCamera());
+	SvIe::SVVirtualCamera* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(getFirstCamera()));
 
 	if (nullptr != pCamera)
 	{
-		Result = pCamera->IsColor();
+		return pCamera->IsColor();
 	}
 
-	return Result;
+	return false;
 }
 
-SVVirtualCamera* SVInspectionProcess::GetFirstCamera() const
+SvOi::IObjectClass* SVInspectionProcess::getFirstPPQCamera() const
 {
-	SVVirtualCamera* pCamera(nullptr);
-
-	if (!(m_ToolSetCameraName.empty()))
-	{
-		pCamera = dynamic_cast<SVVirtualCamera*>(SVObjectManagerClass::Instance().GetObjectCompleteName(m_ToolSetCameraName.c_str()));
-	}
-
-	if (nullptr == pCamera)
-	{
-		pCamera = GetFirstPPQCamera();
-	}
-
-	return pCamera;
-}
-
-SVVirtualCamera* SVInspectionProcess::GetFirstPPQCamera() const
-{
-	SVVirtualCamera* pCamera(nullptr);
+	SvOi::IObjectClass* pCamera(nullptr);
 
 	SVPPQObject* pPPQ = GetPPQ();
 
 	if (nullptr != pPPQ)
 	{
-		SVVirtualCameraMap CameraMap;
+		SvIe::SVVirtualCameraMap CameraMap;
 
 		pPPQ->GetVirtualCameras(CameraMap);
 
-		SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
+		SvIe::SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
 
 		if (l_Iter != CameraMap.end())
 		{
-			pCamera = l_Iter->second;
+			pCamera = dynamic_cast<SvOi::IObjectClass*> (l_Iter->second);
 		}
 	}
 
 	return pCamera;
 }
 
-HRESULT SVInspectionProcess::GetPPQCameras(SVVirtualCameraPtrSet& p_rCameras) const
+HRESULT SVInspectionProcess::GetPPQCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -2582,11 +2569,11 @@ HRESULT SVInspectionProcess::GetPPQCameras(SVVirtualCameraPtrSet& p_rCameras) co
 
 	if (nullptr != pPPQ)
 	{
-		SVVirtualCameraMap CameraMap;
+		SvIe::SVVirtualCameraMap CameraMap;
 
 		pPPQ->GetVirtualCameras(CameraMap);
 
-		SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
+		SvIe::SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
 
 		while (l_Iter != CameraMap.end())
 		{
@@ -2606,19 +2593,19 @@ HRESULT SVInspectionProcess::GetPPQCameras(SVVirtualCameraPtrSet& p_rCameras) co
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::GetCameras(SVVirtualCameraPtrSet& p_rCameras) const
+HRESULT SVInspectionProcess::GetCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
 {
 	HRESULT l_Status = S_OK;
 
 	p_rCameras.clear();
 
-	SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
 
 	while (l_Iter != m_CameraImages.end())
 	{
 		if (nullptr != (*l_Iter))
 		{
-			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
 			if (nullptr != pCamera)
 			{
@@ -2632,17 +2619,17 @@ HRESULT SVInspectionProcess::GetCameras(SVVirtualCameraPtrSet& p_rCameras) const
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::GetCamerasForLut(SVVirtualCameraPtrSet& p_rCameras) const
+HRESULT SVInspectionProcess::GetCamerasForLut(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
 {
 	HRESULT l_Status = S_OK;
 
 	p_rCameras.clear();
 
-	for (SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin(); l_Iter != m_CameraImages.end(); ++l_Iter)
+	for (SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin(); l_Iter != m_CameraImages.end(); ++l_Iter)
 	{
 		if (nullptr != (*l_Iter))
 		{
-			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
 			if (nullptr != pCamera)
 			{
@@ -2661,17 +2648,17 @@ HRESULT SVInspectionProcess::GetCamerasForLut(SVVirtualCameraPtrSet& p_rCameras)
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::GetCamerasForLightReference(SVVirtualCameraPtrSet& p_rCameras) const
+HRESULT SVInspectionProcess::GetCamerasForLightReference(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
 {
 	HRESULT l_Status = S_OK;
 
 	p_rCameras.clear();
 
-	for (SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin(); l_Iter != m_CameraImages.end(); ++l_Iter)
+	for (SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin(); l_Iter != m_CameraImages.end(); ++l_Iter)
 	{
 		if (nullptr != (*l_Iter))
 		{
-			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
 			if (nullptr != pCamera)
 			{
@@ -2690,37 +2677,19 @@ HRESULT SVInspectionProcess::GetCamerasForLightReference(SVVirtualCameraPtrSet& 
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::AddSharedCamera(SVVirtualCamera* pCamera)
-{
-	HRESULT l_Status = S_OK;
-
-	SVPPQObject* pPPQ = GetPPQ();
-
-	if (nullptr != pCamera && nullptr != pPPQ)
-	{
-		pPPQ->AddSharedCamera(pCamera);
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVInspectionProcess::GetMainImages(const std::string& rCameraName, SVCameraImagePtrSet& rMainImages) const
+HRESULT SVInspectionProcess::GetMainImages(const std::string& rCameraName, SvIe::SVCameraImagePtrSet& rMainImages) const
 {
 	HRESULT l_Status = S_OK;
 
 	rMainImages.clear();
 
-	SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
 
 	while (l_Iter != m_CameraImages.end())
 	{
 		if (nullptr != (*l_Iter))
 		{
-			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
 			if ((nullptr != pCamera) && (rCameraName == pCamera->GetName()))
 			{
@@ -2734,7 +2703,7 @@ HRESULT SVInspectionProcess::GetMainImages(const std::string& rCameraName, SVCam
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::RemoveImage(SVImageClass* pImage)
+HRESULT SVInspectionProcess::RemoveImage(SvIe::SVImageClass* pImage)
 {
 	HRESULT l_Status = S_OK;
 
@@ -2791,7 +2760,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 		}
 	}
 
-	m_pToolSetCamera = GetFirstCamera();
+	m_pToolSetCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(getFirstCamera()));
 
 	BuildValueObjectMap();
 
@@ -2812,19 +2781,19 @@ void SVInspectionProcess::SetInvalid()
 
 void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvProduct)
 {
-	SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
+	SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 	while (l_ImageIter != m_CameraImages.end())
 	{
-		SVCameraImageTemplate* l_pImage = (*l_ImageIter);
+		SvIe::SVCameraImageTemplate* l_pImage = (*l_ImageIter);
 
 		if (nullptr != l_pImage)
 		{
-			SVVirtualCamera* pCamera = l_pImage->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = l_pImage->GetCamera();
 
 			if (nullptr != pCamera)
 			{
-				SVGuidSVCameraInfoStructMap::const_iterator Iter;
+				SvIe::SVGuidSVCameraInfoStructMap::const_iterator Iter;
 
 				Iter = p_psvProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
 
@@ -3028,11 +2997,11 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 	else
 	{
 		//Product !bAlive
-		SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
+		SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (l_ImageIter != m_CameraImages.end())
 		{
-			SVCameraImageTemplate* l_pImage = (*l_ImageIter);
+			SvIe::SVCameraImageTemplate* l_pImage = (*l_ImageIter);
 
 			if (nullptr != l_pImage && nullptr != m_runStatus.m_triggerRecord)
 			{
@@ -3211,7 +3180,7 @@ HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
 	//! Object is an Image
 	if (SvPb::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
 	{
-		SVCameraImageTemplate* pCameraImage = dynamic_cast<SVCameraImageTemplate*> (pObject);
+		SvIe::SVCameraImageTemplate* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pObject);
 
 		if (nullptr != pCameraImage)
 		{
@@ -3238,7 +3207,7 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 	//! Object is an Image
 	if (SvPb::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
 	{
-		SVCameraImageTemplate* pCameraImage = dynamic_cast<SVCameraImageTemplate*>(pObject);
+		SvIe::SVCameraImageTemplate* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(pObject);
 
 		if (nullptr != pCameraImage)
 		{
@@ -3274,21 +3243,21 @@ LPCTSTR SVInspectionProcess::GetToolsetImage()
 	return m_ToolSetCameraName.c_str();
 }
 
-SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
+SvIe::SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
 {
-	SVCameraImageTemplate* l_pImage = nullptr;
+	SvIe::SVCameraImageTemplate* pImage = nullptr;
 
 	SVToolSetClass* l_pToolSet = GetToolSet();
 
 	if (nullptr != l_pToolSet)
 	{
-		l_pImage = dynamic_cast<SVCameraImageTemplate*>(l_pToolSet->getCurrentImage());
+		pImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(l_pToolSet->getCurrentImage());
 	}
 
-	return l_pImage;
+	return pImage;
 }
 
-HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SVImageClass*& p_rRefObject)
+HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass*& p_rRefObject)
 {
 	// Set to Defaults in case of failure
 	p_rRefObject = nullptr;
@@ -3314,7 +3283,7 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SVImageClass*& p_r
 
 	for (l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter)
 	{
-		SVImageClass* pImage = dynamic_cast<SVImageClass*>(const_cast<SVObjectClass*>(*l_Iter));
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(const_cast<SVObjectClass*>(*l_Iter));
 
 		if (pImage->GetCompleteName() == ImageName)
 		{
@@ -3581,10 +3550,42 @@ void SVInspectionProcess::BuildValueObjectMap()
 	}
 }// end BuildValueObjectMap
 
-
-bool SVInspectionProcess::AddInputRequestMarker()
+GUID SVInspectionProcess::getFirstCamera() const
 {
-	return AddInputRequest(nullptr, SvO::SVTOOLPARAMETERLIST_MARKER);
+	GUID cameraGuid(GUID_NULL);
+
+	if (!(m_ToolSetCameraName.empty()))
+	{
+		SvOi::IObjectClass* pCamera = SvOi::getObjectByDottedName(m_ToolSetCameraName.c_str());
+		cameraGuid = (nullptr != pCamera) ? pCamera->GetUniqueObjectID() : GUID_NULL;
+	}
+
+	if (GUID_NULL == cameraGuid)
+	{
+		SvOi::IObjectClass* pCamera = getFirstPPQCamera();
+		cameraGuid = (nullptr != pCamera) ? pCamera->GetUniqueObjectID() : GUID_NULL;
+	}
+
+	return cameraGuid;
+}
+
+HRESULT SVInspectionProcess::addSharedCamera(GUID cameraID)
+{
+	HRESULT result = S_OK;
+
+	SVPPQObject* pPPQ = GetPPQ();
+
+	SvIe::SVVirtualCamera* pCamera = dynamic_cast<SvIe::SVVirtualCamera*> (SvOi::getObject(cameraID));
+	if (nullptr != pCamera && nullptr != pPPQ)
+	{
+		pPPQ->AddSharedCamera(pCamera);
+	}
+	else
+	{
+		result = E_FAIL;
+	}
+
+	return result;
 }
 #pragma endregion IInspectionProcess methods
 
@@ -3669,7 +3670,7 @@ bool   SVInspectionProcess::LoopOverTools(pToolFunc pf, int& counter)
 	bool ret = false;
 	counter = 0;
 	SVToolSetClass* pToolSet(nullptr);
-	SVTaskObjectClass* pTaskObject(nullptr);
+	SvIe::SVTaskObjectClass* pTaskObject(nullptr);
 	pToolSet = GetToolSet();
 	if (pToolSet)
 	{
@@ -3703,7 +3704,7 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 	{
 		for (int i = 0; i < pToolSet->GetSize(); i++)
 		{
-			SVTaskObjectClass* pTaskObject(pToolSet->GetAt(i));
+			SvIe::SVTaskObjectClass* pTaskObject(pToolSet->GetAt(i));
 			if (nullptr != pTaskObject)
 			{
 				const SvStl::MessageContainerVector& rToolMessages(pTaskObject->getErrorMessages());
@@ -3800,7 +3801,7 @@ bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
 	// if we have an Object
 	if (nullptr != pChild)
 	{
-		SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pChild);
+		SvIe::SVTaskObjectClass* pTaskObject = dynamic_cast<SvIe::SVTaskObjectClass*>(pChild);
 
 		if (nullptr != pTaskObject)
 		{
@@ -3881,8 +3882,8 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 				}
 				else
 				{
-					SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
-					SVTaskObjectListClass* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pDuplicateObject);
+					SvIe::SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SvIe::SVTaskObjectListClass*>(pOwner);
+					SvIe::SVTaskObjectListClass* pTaskList = dynamic_cast<SvIe::SVTaskObjectListClass*>(pDuplicateObject);
 					if (nullptr != pTaskListOwner)
 					{
 						isDestroyed = pTaskList->DestroyChildObject(pTaskList);
@@ -3929,14 +3930,11 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 			}
 			else
 			{
-				SVConditionalClass* l_pConditional(nullptr);
+				SvOp::SVConditionalClass* pConditional = dynamic_cast<SvOp::SVConditionalClass*>(pObject);
 
-				l_pConditional = dynamic_cast<SVConditionalClass*>(pObject);
-
-				if (nullptr != l_pConditional)
+				if (nullptr != pConditional)
 				{
-					m_pToolSetConditional = l_pConditional;
-
+					m_pToolSetConditional = pConditional;
 					m_pToolSetConditional->SetObjectOwner(this);
 				}
 			}

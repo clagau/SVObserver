@@ -57,7 +57,7 @@ void SVIOController::LocalIntialize()
 
 	m_pModuleReady = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 	m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
-	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass;
+	SvVol::SVBoolValueObjectClass* pValueObject = new SvVol::SVBoolValueObjectClass;
 	m_pModuleReady->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 	//! For Module Ready do not set the parent owner
 	pValueObject->SetName(SvDef::cModuleReady);
@@ -66,7 +66,7 @@ void SVIOController::LocalIntialize()
 
 	m_pRaidErrorBit = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 	m_pRaidErrorBit->m_ObjectType = IO_DIGITAL_OUTPUT;
-	pValueObject = new SVBoolValueObjectClass;
+	pValueObject = new SvVol::SVBoolValueObjectClass;
 	m_pRaidErrorBit->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 	//! For Raid Error Indicator do not set the parent owner
 	pValueObject->SetName(SvDef::cRaidErrorIndicator);

@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPatGeneralPageClass.h"
-#include "SVPatternAnalyzerClass.h"
-#include "SVResult.h"
+#include "AnalyzerOperators/SVPatternAnalyzerClass.h"
+#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"

@@ -16,7 +16,10 @@
 #include "SVOGui\ImageController.h"
 #pragma endregion Includes
 
+namespace SvTo
+{
 class ResizeTool;
+}
 class SVToolAdjustmentDialogSheetClass;
 class SVRPropertyItem;
 class SVImageExtentClass;
@@ -69,7 +72,7 @@ protected:
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
 
 //	The Tool can not be destroyed while the Tool Adjustment Dialog exists.
-	ResizeTool*	m_pTool;
+	SvTo::ResizeTool*	m_pTool;
 
 	double m_HeightScaleFactor;
 	double m_WidthScaleFactor;

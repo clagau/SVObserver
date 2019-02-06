@@ -15,9 +15,11 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
-class SVToolAdjustmentDialogSheetClass;
+namespace SvTo
+{
 class SVStatisticsToolClass;
-class SVToolClass;
+}
+class SVToolAdjustmentDialogSheetClass;
 class SVToolSetClass;
 
 class SVToolAdjustmentDialogStatisticsPageClass : public CPropertyPage
@@ -63,7 +65,7 @@ public:
 
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParent;
-	SVStatisticsToolClass*  m_pTool;
+	SvTo::SVStatisticsToolClass* m_pTool;
 	SVToolSetClass*         m_pToolSet;
 	CString                 m_strFullNameOfVariable;
 };

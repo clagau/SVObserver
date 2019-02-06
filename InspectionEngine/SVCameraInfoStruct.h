@@ -19,6 +19,9 @@
 #include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 #pragma region Declarations
 typedef boost::function<SvTrc::IImagePtr ()> NextImageHandleFunctor;
 #pragma endregion Declarations
@@ -69,3 +72,5 @@ private:
 
 typedef std::vector<SVCameraInfoStruct> SVCameraInfoStructVector;
 typedef std::map<SVGUID, SVCameraInfoStruct> SVGuidSVCameraInfoStructMap;
+
+} //namespace SvIe

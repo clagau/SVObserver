@@ -15,9 +15,13 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #endif
 
 #define IMAGEBUFFER_BUFFERSIZE(a)				( * ( (long *) ( ( (BYTE*)a ) + 0 ) ) )
@@ -42,6 +46,7 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGEBUFFER_CALCBUFFERSIZE(a)			( ( (long) ( IMAGEBUFFER_LASTOVERLAYFIGURE(a) - a ) ) + 8 + IMAGEBUFFER_OVERLAYFIGUREPOINTSCOUNT(IMAGEBUFFER_LASTOVERLAYFIGURE(a) ) * sizeof( POINT ) )
 
 static const long cDefaultCalculatedSize = 8;
+#pragma endregion Declarations
 
 // Construction section
 SVImageOverlayClass::SVImageOverlayClass()
@@ -268,3 +273,4 @@ void SVImageOverlayClass::Clear()
 	}
 }
 
+} //namespace SvIe

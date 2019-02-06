@@ -16,10 +16,19 @@
 #include "SVROIFigureEditor.h"
 #pragma endregion Includes
 
-class SVTADlgColorThresholdSheet;
-class SVColorToolClass;
+namespace SvOp
+{
 class SVColorThresholdClass;
+}
+namespace SvTo
+{
+class SVColorToolClass;
+}
+namespace SvVol
+{
 class SVDoubleValueObjectClass;
+}
+class SVTADlgColorThresholdSheet;
 
 class SVTADlgColorThresholdBasePage : public CPropertyPage
 {
@@ -54,12 +63,12 @@ public:
 	SVTADlgColorThresholdSheet* m_pSheet;
 
 protected:
-	SVColorToolClass*         m_pTool;
-	SVColorThresholdClass*    m_pThreshold;
-	SVDoubleValueObjectClass* m_pExtentLeft;
-	SVDoubleValueObjectClass* m_pExtentTop;
-	SVDoubleValueObjectClass* m_pExtentWidth;
-	SVDoubleValueObjectClass* m_pExtentHeight;
+	SvTo::SVColorToolClass* m_pTool;
+	SvOp::SVColorThresholdClass* m_pThreshold;
+	SvVol::SVDoubleValueObjectClass* m_pExtentLeft;
+	SvVol::SVDoubleValueObjectClass* m_pExtentTop;
+	SvVol::SVDoubleValueObjectClass* m_pExtentWidth;
+	SvVol::SVDoubleValueObjectClass* m_pExtentHeight;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgColorThresholdBasePage)

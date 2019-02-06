@@ -69,18 +69,18 @@ int SVEquationYaccClass::yylex()
 
 double SVEquationYaccClass::GetPropertyValue(int symbolIndex )
 {
-	return pEquation->GetPropertyValue( symbolIndex );
+	return m_pEquation->GetPropertyValue( symbolIndex );
 }
 
 double SVEquationYaccClass::GetAt(int symbolIndex, int index, double dDefault /*=0.0*/)
 {
-	return pEquation->GetSubscriptedPropertyValue( symbolIndex, index-1, dDefault );	// indexes in the Equation are 1-based
+	return m_pEquation->GetSubscriptedPropertyValue( symbolIndex, index-1, dDefault );	// indexes in the Equation are 1-based
 }
 
 int SVEquationYaccClass::PushValues(int iSymbolIndex)
 {
 	std::vector<double> values;
-	HRESULT hr = pEquation->GetArrayValues(iSymbolIndex, values);
+	HRESULT hr = m_pEquation->GetArrayValues(iSymbolIndex, values);
 	int iNum =0;
 	for (size_t i=0; i < values.size(); i++)
 		iNum = AddToList(values[i]);

@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVMFCControls/SVDlgGraph.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #pragma endregion Includes
 
 class SVLutDlg : public CPropertySheet
@@ -26,7 +26,7 @@ public:
 	SVLutDlg(LPCTSTR Caption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVLutDlg();
 
-	bool Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut );
+	bool Create(SvIe::SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut );
 
 // Operator(s):
 protected:
@@ -62,7 +62,7 @@ public:
 	
 public:
 	SVLut m_Lut;
-	SVVirtualCamera* m_pCamera;   // for band information
+	SvIe::SVVirtualCamera* m_pCamera;   // for band information
 	SvCl::SVObjectLongArrayClass m_alBandData;
 
 	//{{AFX_DATA(SVLutDlgPage)

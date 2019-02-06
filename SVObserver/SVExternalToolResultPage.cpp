@@ -16,10 +16,10 @@
 #include "SVGlobal.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
-#include "SVExternalTool.h"
-#include "SVExternalToolTask.h"
+#include "Tools/SVExternalTool.h"
+#include "Operators/SVExternalToolTask.h"
 #include "SVInspectionProcess.h"
-#include "SVResult.h"
+#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #pragma endregion Includes
 
@@ -34,7 +34,7 @@ SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, const SVGUID& 
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 {
-	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
+	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 
 	m_sTitle = Title;
     m_psp.pszTitle = m_sTitle.c_str();
@@ -100,8 +100,8 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 	
 		for( int i = 0 ; i < m_pTask->m_Data.m_lNumResultValues ; i++ )
 		{
-			SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];  
-			ResultValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aResultValueDefinitions[i]; 
+			SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];
+			SvOp::ResultValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aResultValueDefinitions[i];
 
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
 			if( nullptr == pEdit )
@@ -208,7 +208,7 @@ void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* 
 int SVExternalToolResultPage::SelectObject(int iIndex)
 {
 
-	SVVariantResultClass* pResult = dynamic_cast< SVVariantResultClass*>(m_pTask->GetResultRangeObject(iIndex)) ;
+	SvOp::SVVariantResultClass* pResult = dynamic_cast<SvOp::SVVariantResultClass*> (m_pTask->GetResultRangeObject(iIndex)) ;
 
 	if( pResult )
 	{
@@ -260,7 +260,7 @@ void SVExternalToolResultPage::OnOK()
 			{
 				int iIndex = GetItemIndex(pItem);
 				ASSERT( iIndex >= 0 );
-				SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[iIndex];
+				SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[iIndex];
 
 				pItem = pItem->GetSibling();
 			}

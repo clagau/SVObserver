@@ -57,7 +57,7 @@ void SVPublishListClass::Destroy()
 	RemoveAll();
 }
 
-void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
+void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 {
 	SVOutputInfoListClass newList;
 
@@ -232,7 +232,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 	}// end for
 }// end Refresh
 
-void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
+void SVPublishListClass::Release(SvIe::SVTaskObjectClass * pRootObject)
 {
 	// We must release all the outputs that had been marked for publishing
 	// all outputs marked as selected for publishing

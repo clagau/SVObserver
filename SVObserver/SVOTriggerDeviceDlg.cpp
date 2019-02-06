@@ -133,7 +133,7 @@ void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rLis
 	
 	if (!bNonIOSVIM)
 	{
-		name = m_pParent->GetNextTriggerName(SvO::cTriggerFixedName);
+		name = m_pParent->GetNextTriggerName(SvDef::cTriggerFixedName);
 		rList.insert(std::make_pair(name, id));
 	}
 	if (m_pParent->IsValidCamera(id) && m_pParent->IsDigitalSystem())

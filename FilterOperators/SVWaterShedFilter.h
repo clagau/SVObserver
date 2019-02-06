@@ -40,8 +40,8 @@ private:
 
 private:
 	SvOl::SVInObjectInfoStruct m_MarkerImageInfo;
-	SVBoolValueObjectClass m_bvoUseMarker;
-	SVLongValueObjectClass m_lvoMinVariation;
-	SVLongValueObjectClass m_lvoControlFlag;
+	SvVol::SVBoolValueObjectClass m_bvoUseMarker;
+	SvVol::SVLongValueObjectClass m_lvoMinVariation;
+	SvVol::SVLongValueObjectClass m_lvoControlFlag;
 };
 

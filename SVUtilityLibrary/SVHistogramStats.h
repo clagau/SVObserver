@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <functional>
+#pragma endregion Includes
+
 namespace SvUl
 {
 	namespace histogram
@@ -29,7 +33,7 @@ namespace SvUl
 		template<int Scale>
 		struct Scaler;
 
-		typedef boost::function<double (double)> Func;
+		typedef std::function<double (double)> Func;
 
 		template<>
 		struct Scaler<linear>

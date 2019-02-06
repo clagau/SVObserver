@@ -15,6 +15,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVLongValueObjectClass : public SVValueObjectClass<long>
 {
 	SV_DECLARE_CLASS( SVLongValueObjectClass );
@@ -45,3 +48,4 @@ private:
 	void LocalInitialize();
 };
 
+} //namespace SvVol

@@ -106,7 +106,7 @@ bool RootObject::createConfigurationObject()
 	m_pConfigurationObject->SetObjectOwner(this);
 	SVObjectManagerClass::Instance().setRootChildID( SvDef::FqnConfiguration, m_pConfigurationObject->GetUniqueObjectID() );
 
-	BasicValueObjectPtr pValueObject( nullptr );
+	SvVol::BasicValueObjectPtr pValueObject( nullptr );
 	//Default update views is true
 	bool Update( true );
 	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentImageUpdate, Update );
@@ -136,10 +136,10 @@ void RootObject::destroyConfigurationObject()
 	}
 }
 
-/*static*/ BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCTSTR DottedName )
+/*static*/ SvVol::BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCTSTR DottedName )
 {
 	RootObject* pRoot( nullptr );
-	BasicValueObjectPtr pValue( nullptr );
+	SvVol::BasicValueObjectPtr pValue( nullptr );
 
 	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 
@@ -151,7 +151,7 @@ void RootObject::destroyConfigurationObject()
 	return pValue;
 }
 
-/*static*/ void RootObject::getRootChildObjectList( BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path, UINT AttributesAllowedFilter )
+/*static*/ void RootObject::getRootChildObjectList(SvVol::BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path, UINT AttributesAllowedFilter )
 {
 	RootObject* pRoot( nullptr );
 
@@ -165,10 +165,10 @@ void RootObject::destroyConfigurationObject()
 
 /*static*/ void RootObject::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
 {
-	BasicValueObjects::ValueVector ObjectList;
+	SvVol::BasicValueObjects::ValueVector ObjectList;
 
 	getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
-	for( BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter )
+	for(SvVol::BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter )
 	{
 		rObjectNameList.push_back( std::string((*Iter)->GetCompleteName()) );
 	}
@@ -248,7 +248,7 @@ bool RootObject::createRootChildren()
 		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsEdit, false);
 
 		//When Environment created then create the following variables to set their attributes
-		BasicValueObjectPtr pValueObject( nullptr );
+		SvVol::BasicValueObjectPtr pValueObject( nullptr );
 		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentModelNumber, _T("") );
 		if(nullptr != pValueObject)
 		{
@@ -309,7 +309,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum O
 
 	//Setting the variant to VT_EMPTY will cause the value to be a node
 	Node.Clear();
-	BasicValueObjectPtr pRootChild( nullptr);
+	SvVol::BasicValueObjectPtr pRootChild( nullptr);
 	pRootChild = m_RootChildren.setValue( ChildName, Node, this, ObjectSubType );
 	if(nullptr != pRootChild)
 	{
@@ -335,7 +335,7 @@ void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR P
 
 void SvOi::getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, LPCTSTR Path, UINT AttributesAllowedFilter)
 {
-	BasicValueObjects::ValueVector objectVector;
+	SvVol::BasicValueObjects::ValueVector objectVector;
 	
 	//To have the function available without knowing the class RootObject
 	RootObject::getRootChildObjectList( objectVector, Path, AttributesAllowedFilter );
@@ -357,7 +357,7 @@ void SvOi::getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rRespo
 
 void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)
 {
-	BasicValueObjects::ValueVector list;
+	SvVol::BasicValueObjects::ValueVector list;
 
 	RootObject::getRootChildObjectList( list, _T(""), 0 );
 	for (auto iter = list.begin(); iter != list.end(); ++iter) 

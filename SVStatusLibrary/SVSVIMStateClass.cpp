@@ -22,7 +22,7 @@ std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
 bool SVSVIMStateClass::m_AutoSaveRequired{false};
 std::atomic<__time32_t> SVSVIMStateClass::m_CurrentModifiedTime{0L};
 std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode{SvPb::DeviceModeType::unknownMode};
-NotifyFunctor SVSVIMStateClass::m_Notify;
+NotifyFunctor SVSVIMStateClass::m_pNotify{nullptr};
 
 SVSVIMStateClass::SVSVIMStateClass()
 {
@@ -112,7 +112,7 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 
 void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
 {
-	m_Notify = Notify;
+	m_pNotify = Notify;
 }
 
 void SVSVIMStateClass::CheckModeNotify()
@@ -123,9 +123,9 @@ void SVSVIMStateClass::CheckModeNotify()
 	{
 		m_CurrentMode = NewMode;
 
-		if (!m_Notify.empty())
+		if (nullptr != m_pNotify)
 		{
-			(m_Notify)(static_cast<long> (SvStl::NotificationType::mode), static_cast<long> (m_CurrentMode), 0L, nullptr);
+			(m_pNotify)(static_cast<long> (SvStl::NotificationType::mode), static_cast<long> (m_CurrentMode), 0L, nullptr);
 		}
 	}
 }
@@ -134,9 +134,9 @@ void SVSVIMStateClass::SetLastModifiedTime()
 {
 	m_CurrentModifiedTime = ::_time32(nullptr);
 
-	if (!m_Notify.empty())
+	if (nullptr != m_pNotify)
 	{
-		(m_Notify)(static_cast<long> (SvStl::NotificationType::lastModified), static_cast<long> (SVSVIMStateClass::getCurrentTime()), 0L, nullptr);
+		(m_pNotify)(static_cast<long> (SvStl::NotificationType::lastModified), static_cast<long> (SVSVIMStateClass::getCurrentTime()), 0L, nullptr);
 	}
 }
 

@@ -13,12 +13,12 @@
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVTADlgTranslationShiftPage.h"
-#include "InspectionEngine/SVEvaluate.h"
+#include "Operators/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVShiftTool.h"
+#include "Tools/SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -95,11 +95,11 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
-		pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 
 		m_pvoShiftMode = &m_pTool->m_evoShiftMode;
 		

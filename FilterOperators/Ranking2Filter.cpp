@@ -176,7 +176,7 @@ void Ranking2Filter::init()
 	RebuildKernel();
 }
 
-long Ranking2Filter::validateKernelSize(SVLongValueObjectClass& rKernelSize)
+long Ranking2Filter::validateKernelSize(SvVol::SVLongValueObjectClass& rKernelSize)
 {
 	long Size(0);
 

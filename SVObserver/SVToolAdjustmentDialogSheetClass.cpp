@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVExternalToolDlg.h"
 #include "SVOGui/SVPerspectiveWarpPage.h"
 #include "SVTADlgAcquisitionSourcePage.h"
@@ -390,7 +390,7 @@ BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 	ModifyStyle(WS_SYSMENU, 0, SWP_FRAMECHANGED);
 
 	// Send Errors to the display
-	SVToolClass* pTool = GetTool();
+	SvTo::SVToolClass* pTool = GetTool();
 
 
 	CString l_Temp = _T("Tool Adjustment: ");
@@ -454,7 +454,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 		}
 	}
 
-	SVToolClass* pTool = GetTool();
+	SvTo::SVToolClass* pTool = GetTool();
 	bool resetResult = false;
 	if (nullptr != pTool)
 	{
@@ -524,9 +524,9 @@ SVIPDoc* SVToolAdjustmentDialogSheetClass::GetIPDoc() const
 }
 
 // Temporary solution until all dialogs are converted
-SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
+SvTo::SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 {
-	SVToolClass* pTool = static_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
+	SvTo::SVToolClass* pTool = static_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 	return pTool;
 }
 

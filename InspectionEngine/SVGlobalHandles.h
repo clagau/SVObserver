@@ -17,6 +17,9 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVDataBufferHandleStruct 
 // -----------------------------------------------------------------------------
@@ -45,3 +48,5 @@ struct SVBarCodeBufferHandleStruct
 	DWORD DwSize = 0;					// Size of this structure...
 	SVMatroxIdentifier	milBarCode = M_NULL;		// MIL Buffer Handle, if available...
 };
+
+} //namespace SvIe

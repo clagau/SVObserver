@@ -13,13 +13,16 @@
 #pragma region Includes
 #include "ObjectInterfaces/IToolSet.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVMainImageClass.h"
-#include "InspectionEngine/SVTool.h"
+#include "InspectionEngine/SVMainImageClass.h"
+#include "Tools/SVTool.h"
 #include "SVResultList.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #pragma region Includes
 
+namespace SvOp
+{
 class SVConditionalClass;
+}
 
 enum ToolSetTimes
 {
@@ -33,7 +36,7 @@ enum ToolSetTimes
 
 // This class encapsules basic properties to handle and execute an Image Processing Tool Set
 
-class SVToolSetClass : public SVTaskObjectListClass, public SvOi::IToolSet 
+class SVToolSetClass : public SvIe::SVTaskObjectListClass, public SvOi::IToolSet
 {
 	SV_DECLARE_CLASS( SVToolSetClass );
 
@@ -65,13 +68,13 @@ public:
 	
 	SVResultListClass* GetResultList();
 
-	SVImageClass* getCurrentImage();////@TODO[Arvid][7.50][08.05.2017] all occurrences of this function should be replaced by getCurrentImageInterface() when possible
+	SvIe::SVImageClass* getCurrentImage();////@TODO[Arvid][7.50][08.05.2017] all occurrences of this function should be replaced by getCurrentImageInterface() when possible
 
 	SvOi::ISVImage* getCurrentImageInterface() override;
 
-	SVEnumerateValueObjectClass* GetDrawFlagObject();
+	SvVol::SVEnumerateValueObjectClass* GetDrawFlagObject();
 
-	SVConditionalClass* GetToolSetConditional() const;
+	SvOp::SVConditionalClass* GetToolSetConditional() const;
 
 	bool getEnableAuxiliaryExtents() { BOOL Enabled{false}; m_EnableAuxiliaryExtents.GetValue(Enabled); return Enabled ? true : false; }
 	void setEnableAuxiliaryExtents(bool Enabled) { m_EnableAuxiliaryExtents.SetValue(BOOL(Enabled));}
@@ -111,11 +114,11 @@ protected:
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
+	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
 
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
-	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
+	virtual void connectChildObject(SvIe::SVTaskObjectClass& rChildObject ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -131,7 +134,7 @@ private:
 
 #pragma region Member Variables
 protected:
-	SVBoolValueObjectClass m_RegressionTestMode;
+	SvVol::SVBoolValueObjectClass m_RegressionTestMode;
 
 	long m_SetNumber;
 
@@ -143,49 +146,49 @@ protected:
 	SvTl::SVTimeStamp m_TimeStampStart;
 	SvTl::SVTimeStamp m_TimeStampEnd;
 
-	SVBoolValueObjectClass m_Enabled;
-	SVBoolValueObjectClass m_ResetCounts;
-	SVLongValueObjectClass m_TriggerCount;
+	SvVol::SVBoolValueObjectClass m_Enabled;
+	SvVol::SVBoolValueObjectClass m_ResetCounts;
+	SvVol::SVLongValueObjectClass m_TriggerCount;
 
 	SVResultListClass m_ResultList;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass m_Passed;
+	SvVol::SVBoolValueObjectClass m_Passed;
 	// Warned, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass m_Warned;
+	SvVol::SVBoolValueObjectClass m_Warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass m_Failed;
+	SvVol::SVBoolValueObjectClass m_Failed;
 	// Failed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass m_ExplicitFailed;
+	SvVol::SVBoolValueObjectClass m_ExplicitFailed;
 
-	SVBoolValueObjectClass m_EnableAuxiliaryExtents;
+	SvVol::SVBoolValueObjectClass m_EnableAuxiliaryExtents;
 
-	SVLongValueObjectClass m_PassedCount;
-	SVLongValueObjectClass m_FailedCount;
-	SVLongValueObjectClass m_WarnedCount;
+	SvVol::SVLongValueObjectClass m_PassedCount;
+	SvVol::SVLongValueObjectClass m_FailedCount;
+	SvVol::SVLongValueObjectClass m_WarnedCount;
 
-	SVLongValueObjectClass m_EnabledCount;
-	SVLongValueObjectClass m_ProcessedCount;
+	SvVol::SVLongValueObjectClass m_EnabledCount;
+	SvVol::SVLongValueObjectClass m_ProcessedCount;
 
 	// Conditional input
 	SvOl::SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
-	SVEnumerateValueObjectClass	m_DrawFlag;
-	SVTimerValueObjectClass	m_ToolTime;
+	SvVol::SVEnumerateValueObjectClass m_DrawFlag;
+	SvVol::SVTimerValueObjectClass m_ToolTime;
 
 	bool m_bResetMinMaxToolsetTime;
 
-	SVTimerValueObjectClass m_MinToolsetTime;
-	SVTimerValueObjectClass m_MaxToolsetTime;
+	SvVol::SVTimerValueObjectClass m_MinToolsetTime;
+	SvVol::SVTimerValueObjectClass m_MaxToolsetTime;
 
 private:
 	// Embedded Object:
-	SVMainImageClass m_MainImageObject;	// Main toolset image
-	SVLongValueObjectClass m_PPQIndexAtCompletion; // the PPQ position at which the product was located when at completion
-	SVTimerValueObjectClass m_Times[ToolSetTimes::MaxCount]; ///The times relevant to the tool set see the enums for detailed description
-	SVDoubleValueObjectClass m_Width;	//! The toolset image width			
-	SVDoubleValueObjectClass m_Height;	//! The toolset image height
+	SvIe::SVMainImageClass m_MainImageObject;	// Main toolset image
+	SvVol::SVLongValueObjectClass m_PPQIndexAtCompletion; // the PPQ position at which the product was located when at completion
+	SvVol::SVTimerValueObjectClass m_Times[ToolSetTimes::MaxCount]; ///The times relevant to the tool set see the enums for detailed description
+	SvVol::SVDoubleValueObjectClass m_Width;	//! The toolset image width			
+	SvVol::SVDoubleValueObjectClass m_Height;	//! The toolset image height
 #pragma endregion Member Variables
 };
 

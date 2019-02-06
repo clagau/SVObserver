@@ -15,11 +15,12 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SVDrawObjectClass::SVDrawObjectClass()
 {
@@ -103,7 +104,7 @@ BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 {
 	BOOL BRetVal = FALSE;
 	HDC DC = PDrawContext->DC;
-	CPointVector l_NewPoints;
+	std::vector<POINT> l_NewPoints;
 	static int LastRowY=InvalidPoint;
 	if( beginDraw( PDrawContext ) )
 	{
@@ -174,27 +175,17 @@ BOOL SVDrawObjectClass::SetDrawPen( BOOL BUseThisPen, int PenStyle, int PenWidth
 
 int SVDrawObjectClass::AddPoint( const POINT Point )
 {
-	return AddPoint(CPoint(Point));
+	m_Points.push_back(Point);
+	return static_cast<int>(m_Points.size() - 1);
 }
 
-int SVDrawObjectClass::AddPoint( const CPoint& rPoint )
-{
-	m_Points.push_back(rPoint);
-	return static_cast< int >(m_Points.size() - 1);
-}
-
-void SVDrawObjectClass::SetPointAtGrow( int Index, const CPoint& rPoint )
+void SVDrawObjectClass::SetPointAtGrow( int Index, POINT Point )
 {
 	if (Index >= static_cast<int> (m_Points.size()))
 	{
 		m_Points.resize(Index + 1);
 	}
-	m_Points[Index] = rPoint;
-}
-
-void SVDrawObjectClass::SetPointAtGrow( int Index, POINT Point )
-{
-	SetPointAtGrow(Index, CPoint(Point));
+	m_Points[Index] = Point;
 }
 
 void SVDrawObjectClass::SetListSize( int NewSize )
@@ -202,12 +193,12 @@ void SVDrawObjectClass::SetListSize( int NewSize )
 	m_Points.resize( NewSize );
 }
 
-CPoint SVDrawObjectClass::GetPointAt( int Index )
+POINT SVDrawObjectClass::GetPointAt( int Index )
 {
-	return (Index < static_cast<int> (m_Points.size())) ? m_Points[Index] : CPoint();
+	return (Index < static_cast<int> (m_Points.size())) ? m_Points[Index] : POINT();
 }
 
-const CPointVector& SVDrawObjectClass::GetPointArray()
+const std::vector<POINT>& SVDrawObjectClass::GetPointArray()
 {
 	return m_Points;
 }

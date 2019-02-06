@@ -15,7 +15,10 @@
 #include "SVTADlgColorThresholdBasePage.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
 class SVBoolValueObjectClass;
+}
 
 class SVTADlgColorThresholdOutput : public SVTADlgColorThresholdBasePage
 {
@@ -46,5 +49,5 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	SVBoolValueObjectClass* m_pEnabled;
+	SvVol::SVBoolValueObjectClass* m_pEnabled;
 };

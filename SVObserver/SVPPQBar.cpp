@@ -388,15 +388,15 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 			
 		}// end for
 		
-		std::deque< SVVirtualCamera* > l_Cameras;
+		std::deque<SvIe::SVVirtualCamera*> cameras;
 
-		m_pPPQ->GetCameraList( l_Cameras );
+		m_pPPQ->GetCameraList( cameras );
 
-		std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+		std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-		while( l_Iter != l_Cameras.end() )
+		while( l_Iter != cameras.end() )
 		{
-			SVVirtualCamera* pCamera = ( *l_Iter );
+			SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
 
 			if( nullptr != pCamera )
 			{

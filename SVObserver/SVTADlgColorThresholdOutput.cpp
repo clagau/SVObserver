@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVColorTool.h"
-#include "SVColorThreshold.h"
+#include "Tools/SVColorTool.h"
+#include "Operators/SVColorThreshold.h"
 #include "SVTADlgColorThresholdOutput.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -72,11 +72,11 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 	objectInfo.ObjectType = SvPb::SVOperatorObjectType;
 	objectInfo.SubType = SvPb::SVColorThresholdObjectType;
 
-	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
+	m_pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 
 	if(nullptr !=  m_pThreshold)
 	{
-		SVImageClass& rImage = m_pThreshold->GetOutputImage();
+		SvIe::SVImageClass& rImage = m_pThreshold->GetOutputImage();
 
 		m_svDlgImage.UpdateImageInfo( rImage.GetInspection()->GetUniqueObjectID(), rImage.GetUniqueObjectID() );
 		m_svDlgImage.refresh();

@@ -17,7 +17,7 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVLibrary\SVOINILoader.h"
-#include "SVDigitizerProcessingClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
@@ -242,7 +242,7 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 		}
 		else
 		{
-			if (S_OK != SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_svDLLDigitizers))
+			if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_svDLLDigitizers))
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 			}
@@ -262,7 +262,7 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 
 HRESULT InitialInformationHandler::CloseAcquisitionDLL()
 {
-	SVDigitizerProcessingClass::Instance().clear();
+	SvIe::SVDigitizerProcessingClass::Instance().clear();
 
 	m_svDLLDigitizers.Close();
 
@@ -282,7 +282,7 @@ HRESULT InitialInformationHandler::LoadFileAcquisitionDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}
 
-		if (S_OK != SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_svDLLFileAcquisition))
+		if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_svDLLFileAcquisition))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}

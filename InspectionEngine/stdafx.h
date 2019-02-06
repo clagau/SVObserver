@@ -32,7 +32,6 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include "targetver.h"
 #include <algorithm>
 #include <concrt.h>
 #include <ctime>

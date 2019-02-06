@@ -45,9 +45,6 @@
     <ClCompile Include="LoadDll.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVHistogramBase.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMetrics.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -71,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="PropVariant.cpp">
       <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="SVHistogramBase.cpp">
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,9 +209,6 @@
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVSafeArray.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVHistogramBase.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

@@ -19,8 +19,10 @@
 #pragma endregion
 
 #pragma region Declarations
+namespace SvOp
+{
 class SVEvaluateClass;
-class SVEnumerateValueObjectClass;
+}
 #pragma endregion
 
 class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage
@@ -60,8 +62,8 @@ public:
 #pragma endregion Data Elements
 
 protected:
-	SVEvaluateClass* m_pEvaluateTranslationX{ nullptr };
-	SVEvaluateClass* m_pEvaluateTranslationY{ nullptr };
+	SvOp::SVEvaluateClass* m_pEvaluateTranslationX{ nullptr };
+	SvOp::SVEvaluateClass* m_pEvaluateTranslationY{ nullptr };
 
 	const SVGUID m_InspectionID;
 	const SVGUID m_TaskObjectID;

@@ -19,6 +19,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVCharValueObjectClass : public SVValueObjectClass<char>
 {
 	SV_DECLARE_CLASS( SVCharValueObjectClass );
@@ -50,3 +53,5 @@ private:
 };
 
 #pragma warning (pop)
+
+} //namespace SvVol

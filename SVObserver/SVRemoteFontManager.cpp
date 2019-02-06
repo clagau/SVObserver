@@ -612,7 +612,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber,1 );
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,  SV8BitUnsigned );
 
-	hrRet = SVImageProcessingClass::CreateImageBuffer( ImageInfo, ImageBufferHandle );
+	hrRet = SvIe::SVImageProcessingClass::CreateImageBuffer( ImageInfo, ImageBufferHandle );
 
 	if(nullptr != ImageBufferHandle)
 	{

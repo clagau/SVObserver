@@ -32,8 +32,8 @@ public:
 	double m_dEncoding;
 	void InitSelections();
 	void InitSelections (long lBarCodeType);
-	double SetErrCorrection (SVDoubleValueObjectClass &svdErrCorrection);
-	double SetEncoding (SVDoubleValueObjectClass &svdEncoding);
+	double SetErrCorrection (SvVol::SVDoubleValueObjectClass &svdErrCorrection);
+	double SetEncoding (SvVol::SVDoubleValueObjectClass &svdEncoding);
 	double GetErrorCorrection();
 	double GetEncoding ();
 	BOOL OnSetActive ();

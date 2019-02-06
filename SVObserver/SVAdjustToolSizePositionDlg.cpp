@@ -18,13 +18,13 @@
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVInspectionProcess.h"
 #include "SVGuiExtentUpdater.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "SVLinearToolClass.h"
+#include "Tools/SVLinearToolClass.h"
 #include "InspectionEngine/SVExtentPropertiesInfoStruct.h"
 #include "SVMainFrm.h"
-#include "ToolSizeAdjustTask.h"
+#include "Operators/ToolSizeAdjustTask.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
@@ -67,7 +67,7 @@ inline bool ApproxEqual(double d1, double d2)
 }
 
 #pragma region Constructor
-SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR Caption, CWnd* pParentWnd, SVTaskObjectClass* pToolTask)
+SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR Caption, CWnd* pParentWnd, SvIe::SVTaskObjectClass* pToolTask)
 	: CDialog(SVAdjustToolSizePositionDlg::IDD, pParentWnd)
 	, m_pToolTask(pToolTask)
 	, m_Title(Caption)
@@ -118,17 +118,17 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	SetWindowText(m_Title.c_str());
 
 	createIcons();
-	SVToolClass* pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (m_pToolTask);
 	bool bShow =  (nullptr != pTool) ? pTool->canResizeToParent() : false;
 
-	bool bShowEditTool =  (nullptr !=	ToolSizeAdjustTask::GetToolSizeAdjustTask(m_pToolTask));
+	bool bShowEditTool =  (nullptr != SvOp::ToolSizeAdjustTask::GetToolSizeAdjustTask(m_pToolTask));
 	GetDlgItem(IDC_BUT_EDIT_TOOL)->ShowWindow(bShowEditTool ? SW_SHOW : SW_HIDE);
 
 	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
-	SVLinearToolClass* lt = dynamic_cast<SVLinearToolClass*> (m_pToolTask);
-	if (nullptr != lt)
+	SvTo::SVLinearToolClass* pLinearTool = dynamic_cast<SvTo::SVLinearToolClass*> (m_pToolTask);
+	if (nullptr != pLinearTool)
 	{
-		bool rotation = lt->GetRotation();
+		bool rotation = pLinearTool->GetRotation();
 		if (rotation)
 		{
 			bShow = false;
@@ -357,9 +357,7 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 
 
 	bool bAllowedAction(true);
-	SVToolClass *pToolClass(nullptr);
-
-	pToolClass = dynamic_cast<SVToolClass*>(m_pToolTask);
+	SvTo::SVToolClass *pToolClass = dynamic_cast<SvTo::SVToolClass*> (m_pToolTask);
 
 
 	if (nullptr != pToolClass)
@@ -510,12 +508,12 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 			}
 
 			bool bReadonly(false);
-			SVExtentPropertyInfoStruct info;
-			SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
+			SvIe::SVExtentPropertyInfoStruct info;
+			SvTo::SVToolClass *pTool = dynamic_cast<SvTo::SVToolClass*> (m_pToolTask);
 			if (nullptr != pTool && (S_OK == pTool->GetPropertyInfo(iter->first, info)))
 			{
 
-				if (pTool->GetAutoSizeEnabled() != EnableNone)
+				if (pTool->GetAutoSizeEnabled() != SvTo::EnableNone)
 				{
 					bReadonly = info.bSetByReset;
 				}
@@ -538,7 +536,7 @@ bool SVAdjustToolSizePositionDlg::UsePropagate()
 {
 
 	SVInspectionProcess *pInspection(nullptr);
-	SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
+	SvTo::SVToolClass *pTool = dynamic_cast<SvTo::SVToolClass*> (m_pToolTask);
 	int count(0);
 	if (nullptr != pTool)
 	{
@@ -546,26 +544,25 @@ bool SVAdjustToolSizePositionDlg::UsePropagate()
 	}
 	if (nullptr != pInspection)
 	{
-		pInspection->LoopOverTools((SVInspectionProcess::pToolFunc) ToolSizeAdjustTask::UseSizeAdjust, count);
+		pInspection->LoopOverTools((SVInspectionProcess::pToolFunc) SvOp::ToolSizeAdjustTask::UseSizeAdjust, count);
 	}
 	return (count > 0);
 }
 
 bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 {
-	SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
+	SvTo::SVToolClass *pTool = dynamic_cast<SvTo::SVToolClass*> (m_pToolTask);
 	bool bAllowFullsize(true);
 	if (!pTool)
 	{
 		bAllowFullsize = false;
 	}
-	if (bAllowFullsize && pTool->GetAutoSizeEnabled() == EnableNone)
+	if (bAllowFullsize && pTool->GetAutoSizeEnabled() == SvTo::EnableNone)
 	{
 		bAllowFullsize = false;
 	}
 
-
-	SVExtentPropertyInfoStruct info;
+	SvIe::SVExtentPropertyInfoStruct info;
 	std::tr1::array<SvDef::SVExtentPropertyEnum, 4> PropArray = {SvDef::SVExtentPropertyWidth, SvDef::SVExtentPropertyHeight, SvDef::SVExtentPropertyPositionPointX, SvDef::SVExtentPropertyPositionPointY};
 	std::for_each(PropArray.begin(), PropArray.end(), [&](SvDef::SVExtentPropertyEnum p)
 	{
@@ -598,7 +595,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 
 	m_svExtents = m_pToolTask->GetImageExtent();
 	SVImageExtentClass parentExtent;
-	SVToolClass* pTool = dynamic_cast<SVToolClass*>(m_pToolTask->GetTool());
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(m_pToolTask->GetTool());
 	if (pTool && S_OK == pTool->GetParentExtent(parentExtent))
 	{
 		long parentWidth{0L};

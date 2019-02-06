@@ -11,6 +11,9 @@
 
 #pragma once
 
+namespace SvIe
+{
+
 struct SVExtentPropertyInfoStruct
 {
 	bool bFormula;
@@ -20,5 +23,4 @@ struct SVExtentPropertyInfoStruct
 	SVExtentPropertyInfoStruct() : bFormula(false), bHidden(false), bSetByReset(false) {}
 };
 
-
-
+} //namespace SvIe

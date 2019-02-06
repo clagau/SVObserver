@@ -20,6 +20,9 @@
 #include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVEnumerateValueObjectClass : public SVValueObjectClass<long>, public SvOi::IEnumerateValueObject
 {
 	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
@@ -76,3 +79,5 @@ private:
 	SvOi::NameValueVector m_enumVector;
 #pragma endregion Member Variables
 };
+
+} //namespace SvVol

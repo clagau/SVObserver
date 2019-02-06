@@ -33,8 +33,6 @@
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #pragma endregion Includes
 
-class SVToolClass;
-//class LoopTool;
 enum SVProductInspectedState
 {
 	PRODUCT_NOT_INSPECTED       = 0x8001,	// 1000 0000 0000 0001
@@ -50,13 +48,8 @@ enum SVProductInspectedState
 	PRODUCT_INSPECTION_NOT_RUN  = 0x8000	// 1000 0000 0000 0000
 };
 
-class SVInputObjectList;
-class SVOutputObjectList;
 class SVPPQObject;
-class SVImageClass;
-class SVVirtualCamera;
 class SVInspectionProcess;
-class SVObjectClass;
 
 typedef std::vector<std::pair<_variant_t, bool>> VariantBoolPairVector;
 typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
@@ -221,7 +214,7 @@ struct SVProductInfoStruct
 	SVOutputsInfoStruct oOutputsInfo;
 	SVPPQInfoStruct oPPQInfo;
 
-	SVGuidSVCameraInfoStructMap m_svCameraInfos;
+	SvIe::SVGuidSVCameraInfoStructMap m_svCameraInfos;
 	SVGUIDSVInspectionInfoStructMap	m_svInspectionInfos;
 	long m_lastInspectedSlot; // Shared Memory
 

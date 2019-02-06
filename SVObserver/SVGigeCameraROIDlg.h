@@ -19,7 +19,7 @@
 #include "CameraLibrary/SVCustomDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
@@ -36,7 +36,7 @@ public:
 	virtual void SetYOffset(long yOffset)=0;
 	virtual void SetWidth(long width)=0;
 	virtual void SetHeight(long height)=0;
-	virtual void Update(SVAcquisitionClassPtr pAcqDevice)=0;
+	virtual void Update(SvIe::SVAcquisitionClassPtr pAcqDevice)=0;
 #pragma endregion Public Methods
 };
 
@@ -52,7 +52,7 @@ public:
 public:
 	void SetFormat( SVCameraFormat* pFormat );
 	void SetFormatImage( const SVImageInfoClass& rInfo );
-	void SetAcquisitionDevice( SVAcquisitionClassPtr pDevice );
+	void SetAcquisitionDevice(SvIe::SVAcquisitionClassPtr pDevice );
 	const SVLongValueDeviceParam* GetVerticalBinningParam() const;
 	void SetVerticalBinningParam(SVLongValueDeviceParam* pParam);
 	const SVLongValueDeviceParam* GetHorizontalBinningParam() const;
@@ -147,7 +147,7 @@ private:
 	int m_iWidth;
 	//}}AFX_DATA
 
-	SVAcquisitionClassPtr m_pDevice;
+	SvIe::SVAcquisitionClassPtr m_pDevice;
 	SVCameraFormat* m_pFormat;
 	SVImageInfoClass m_ImageInfo;
 	SvOi::SVImageBufferHandlePtr m_pImageHandle;

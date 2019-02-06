@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVPerspectiveWarpPage.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
@@ -119,7 +119,7 @@ namespace SvOg
 		long lType = m_Values.Get<long>(SVWarpTypeObjectGuid);
 		if( lType != m_lLastWarpType )
 		{
-			SVToolClass* pTool = dynamic_cast<SVToolClass*> (SvOi::getObject(m_rInspectionID));
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SvOi::getObject(m_rTaskObjectID));
 			if (nullptr != pTool)
 			{
 				SVImageExtentClass imageExtents = pTool->GetImageExtent();

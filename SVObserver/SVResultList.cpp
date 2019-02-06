@@ -14,15 +14,15 @@
 #include "SVResultList.h"
 
 #include "Definitions/GlobalConst.h"
+#include "InspectionEngine/SVIPResultData.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
-#include "SVResult.h"
+#include "SVTimerLibrary/SVClock.h"
+#include "Operators/SVResult.h"
 #include "SVInspectionProcess.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVToolSet.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -56,7 +56,7 @@ void SVResultListClass::SetToolSet(SVToolSetClass* pToolSet)
 	m_pToolSet = pToolSet;
 }
 
-void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
+void SVResultListClass::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
@@ -75,7 +75,7 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 	{
-		SVResultClass* pResult = dynamic_cast< SVResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
+		SvOp::SVResultClass* pResult = dynamic_cast<SvOp::SVResultClass*> (const_cast<SVObjectClass*> (*l_Iter));
 
 		m_results.push_back( pResult );
 	}
@@ -145,12 +145,12 @@ void SVResultListClass::RebuildReferenceVector(SVInspectionProcess* pInspection 
 	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
 }
 
-void  SVResultListClass::GetResultData( SVIPResultData& p_rResultData) const
+void  SVResultListClass::GetResultData(SvIe::SVIPResultData& rResultData) const
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
-	m_ResultViewReferences.GetResultData( p_rResultData);
-	m_ResultViewReferences.GetResultTableData(p_rResultData);
+	m_ResultViewReferences.GetResultData( rResultData);
+	m_ResultViewReferences.GetResultTableData(rResultData);
 }
 
 HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions )  const

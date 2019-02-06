@@ -14,7 +14,7 @@
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
-#include "InspectionEngine/SVUtilityIniClass.h"
+#include "SVLibrary/SVUtilityIniClass.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -81,7 +81,7 @@ BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog()
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 	//load the combobox with the info in the map.
 
-	std::map<UINT, SVUtilityIniClass>::const_iterator iter( pApp->m_UtilityMenu.begin() );
+	std::map<UINT, SvLib::SVUtilityIniClass>::const_iterator iter( pApp->m_UtilityMenu.begin() );
 	while ( iter != pApp->m_UtilityMenu.end() )
 	{
 		pBox->AddString( iter->second.m_DisplayName.c_str() );
@@ -105,7 +105,7 @@ void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText()
 	{
 		pBox->GetLBText (iCurSel, m_MenuText);
 
-		std::map<UINT, SVUtilityIniClass>::const_iterator iter;
+		std::map<UINT, SvLib::SVUtilityIniClass>::const_iterator iter;
 
 		iter = pApp->m_UtilityMenu.begin();
 
@@ -113,7 +113,7 @@ void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText()
 
 		while ( (iter != pApp->m_UtilityMenu.end()) && !bDone )
 		{
-			const SVUtilityIniClass& rUtilityStruct( iter->second );
+			const SvLib::SVUtilityIniClass& rUtilityStruct( iter->second );
 			if ( rUtilityStruct.m_DisplayName == m_MenuText.GetString() )
 			{
 				m_Command = rUtilityStruct.m_Command.c_str();
@@ -190,14 +190,14 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 
 		//check to see if it is already in the map, if not add it
 		SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
-		std::map<UINT, SVUtilityIniClass>::iterator iter;
+		std::map<UINT, SvLib::SVUtilityIniClass>::iterator iter;
 
 		iter = pApp->m_UtilityMenu.begin();
 		BOOL bFound = FALSE;
 
 		while ( (iter != pApp->m_UtilityMenu.end()) && !bFound )
 		{
-			SVUtilityIniClass& rUtilityStruct( iter->second );
+			SvLib::SVUtilityIniClass& rUtilityStruct( iter->second );
 			
 			if ( rUtilityStruct.m_DisplayName == m_MenuText.GetString() )
 			{
@@ -224,8 +224,8 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 			pBox->AddString (m_MenuText);
 
 			//must be a new utility
-			std::map<UINT, SVUtilityIniClass>::reverse_iterator riter;
-			SVUtilityIniClass UtilityStruct;
+			std::map<UINT, SvLib::SVUtilityIniClass>::reverse_iterator riter;
+			SvLib::SVUtilityIniClass UtilityStruct;
 			riter = pApp->m_UtilityMenu.rbegin();
 			UINT uintVal = riter->first;
 			UtilityStruct.m_Arguments = m_Arguments;
@@ -280,8 +280,8 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 {
 	CComboBox *pBox;
 
-	SVUtilityIniClass l_Struct;
-	std::map<UINT,SVUtilityIniClass>::iterator iter;
+	SvLib::SVUtilityIniClass l_Struct;
+	std::map<UINT, SvLib::SVUtilityIniClass>::iterator iter;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
 	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 

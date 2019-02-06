@@ -11,8 +11,10 @@
 #pragma once
 
 #pragma region Includes
-
 #pragma endregion Includes
+
+namespace SvIe
+{
 
 class SVIPResultItemData
 {
@@ -35,4 +37,4 @@ protected:
 	long m_IOType;
 };
 
-
+} //namespace SvIe

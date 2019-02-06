@@ -13,12 +13,12 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/ISVFilter.h"
-#include "InspectionEngine/SVUnaryImageOperatorClass.h"
+#include "Operators/SVUnaryImageOperatorClass.h"
 
 
 #pragma endregion Includes
 
-class SVFilterClass : public SvOi::ISVFilter, public SVUnaryImageOperatorClass
+class SVFilterClass : public SvOi::ISVFilter, public SvOp::SVUnaryImageOperatorClass
 {
 	SV_DECLARE_CLASS( SVFilterClass );
 public:

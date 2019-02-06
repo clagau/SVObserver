@@ -15,6 +15,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVDoubleValueObjectClass : public SVValueObjectClass<double>
 {
 	SV_DECLARE_CLASS( SVDoubleValueObjectClass );
@@ -47,3 +50,4 @@ private:
 	void LocalInitialize();
 };
 
+} //namespace SvVol

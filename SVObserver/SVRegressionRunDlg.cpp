@@ -370,7 +370,7 @@ void CSVRegressionRunDlg::OnBtnSettings()
 
 	dlgRegFileSelect.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-	SVVirtualCameraPtrSet CameraList;
+	SvIe::SVVirtualCameraPtrSet CameraList;
 	HRESULT hrOk = m_pIPDocParent->GetCameras( CameraList );
 
 	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_listRegCameras,CameraList);

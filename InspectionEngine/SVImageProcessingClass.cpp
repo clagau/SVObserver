@@ -25,6 +25,16 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 HRESULT SVImageProcessingClass::CreateImageBuffer(const SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle, SvStl::MessageContainerVector* pErrorContainer)
 {
 	rHandle.reset();
@@ -978,3 +988,5 @@ HRESULT SVImageProcessingClass::CreateImageBuffer(SVMatroxBufferCreateStruct& bu
 
 	return Result;
 }
+
+} //namespace SvIe

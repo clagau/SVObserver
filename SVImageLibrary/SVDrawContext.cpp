@@ -23,13 +23,13 @@ static char THIS_FILE[] = __FILE__;
 ///////////////////////////////////////////////////////////
 // Constructor
 ///////////////////////////////////////////////////////////
-SVDrawContext::SVDrawContext( HDC Hdc, SVImageClass *p_psvImage )
+SVDrawContext::SVDrawContext( HDC Hdc, SvIe::SVImageClass *pImage )
 {
 	m_lIndex = 1;
 
 	DC = Hdc;
 
-	m_psvImage = p_psvImage;
+	m_pImage = pImage;
 
 	ScaleFactor = 1.0;
 
@@ -37,13 +37,13 @@ SVDrawContext::SVDrawContext( HDC Hdc, SVImageClass *p_psvImage )
 	ViewPortOffset.y = 0;
 }
 
-SVDrawContext::SVDrawContext( HDC Hdc, SVImageClass *p_psvImage, double dScale )
+SVDrawContext::SVDrawContext( HDC Hdc, SvIe::SVImageClass *pImage, double dScale )
 {
 	m_lIndex = 1;
 
 	DC = Hdc;
 
-	m_psvImage = p_psvImage;
+	m_pImage = pImage;
 
 	ScaleFactor = dScale;
 
@@ -108,7 +108,7 @@ void SVDrawContext::ViewPortNormalize( POINT& RPoint, BOOL Direction )
 }
 void SVDrawContext::Initialize()
 {
-	m_psvImage = nullptr;
+	m_pImage = nullptr;
 
 	m_lIndex = 1;
 

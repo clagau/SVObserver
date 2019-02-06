@@ -17,6 +17,9 @@
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -230,3 +233,4 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::findChildObject(const vt
 	return Iter;
 }
 
+} //namespace SvVol

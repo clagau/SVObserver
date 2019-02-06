@@ -16,7 +16,7 @@
 #include "SVExternalToolDetailsSheet.h"
 
 #include "svobserver.h"
-#include "SVExternalToolTask.h"
+#include "Operators/SVExternalToolTask.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVExternalToolInputSelectPage.h"
 #include "SVExternalToolResultPage.h"
@@ -53,7 +53,7 @@ SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( const SVGUID& rInspectio
 , m_numImages(numImages)
 {
 	m_pSVExternalToolDlgParent = pParentWnd;
-	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
+	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 

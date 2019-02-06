@@ -14,7 +14,7 @@
 #include "svobserver.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionFileSelectDlg.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -67,11 +67,11 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectSheet message handlers
 
-void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, SVVirtualCameraPtrSet CameraList )
+void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, SvIe::SVVirtualCameraPtrSet CameraList )
 {
 	m_pRegressionList = RegessionList;
 	
-	SVVirtualCameraPtrSet::iterator iter;
+	SvIe::SVVirtualCameraPtrSet::iterator iter;
 
 	std::string PrevName( _T("Blank") );
 	for ( iter = CameraList.begin(); iter != CameraList.end(); ++iter )

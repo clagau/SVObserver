@@ -18,6 +18,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVBoolValueObjectClass : public SVValueObjectClass<BOOL>
 {
 	SV_DECLARE_CLASS( SVBoolValueObjectClass );
@@ -49,3 +52,5 @@ protected:
 private:
 	void LocalInitialize();
 };
+
+} //namespace SvVol

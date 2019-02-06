@@ -18,16 +18,17 @@
 #include "SVMFCControls\SVUpDownButton.h"
 #pragma endregion Includes
 
-#pragma region Declarations
+namespace SvIe
+{
 class SVTaskObjectClass;
-#pragma endregion Declarations
+}
 
 class SVAdjustToolSizePositionDlg : public CDialog
 {
 	DECLARE_DYNCREATE(SVAdjustToolSizePositionDlg)
 #pragma region Constructor
 public:
-	SVAdjustToolSizePositionDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, SVTaskObjectClass* pToolTask = nullptr);
+	SVAdjustToolSizePositionDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, SvIe::SVTaskObjectClass* pToolTask = nullptr);
 	virtual ~SVAdjustToolSizePositionDlg();
 #pragma endregion Constructor
 
@@ -142,7 +143,7 @@ private:
 
 	SVImageExtentClass m_svExtents;
 	SVImageExtentClass m_svOriginalExtents;
-	SVTaskObjectClass* m_pToolTask;
+	SvIe::SVTaskObjectClass* m_pToolTask;
 	SVRPropTree m_Tree;
 	const static int m_iPropertyFilter = SvDef::SVExtentPropertyPositionsInput | SvDef::SVExtentPropertyDimensionsInput;
 	const static int ID_BASE = 1000;

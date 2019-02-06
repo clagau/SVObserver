@@ -11,6 +11,7 @@
 #pragma region Declarations
 //! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
 class SVGUID;
+class SVDeviceParamCollection;
 #pragma endregion Declarations
 
 namespace SvOi
@@ -46,4 +47,18 @@ namespace SvOi
 	//! \param pParentWnd [in] Pointer to the parent window
 	/// \returns result
 	HRESULT SetupDialogManager(const SVGUID& rClassId, const SVGUID& rObjectId, HWND hWnd);
+
+	//! Shows the modeless license manager dialog
+	//! \param rMessage [in] the message to display
+	//! \param rList [in] the list of object GUIDs which has no license
+	//! \param hCheckEvent [in] Handle to event which will close the dialog
+	void showLicenseManagerDialog(const std::string& rMessage, const std::set<SVGUID>& rList, HANDLE hCheckEvent);
+
+	//! Destroys the modeless license manager dialog
+	void destroyLicenseManagerDialog();
+
+	//! Gets the size of the Gige network packet size
+	long getGigePacketSize();
+
+	void modifyAcquisitionDevice(LPCTSTR acquisitionName, const SVDeviceParamCollection* pParams);
 } //namespace SvOi

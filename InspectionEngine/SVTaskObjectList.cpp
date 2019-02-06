@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:22:28  $
 //******************************************************************************
 
-// @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
-
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObjectList.h"
@@ -28,10 +26,15 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVTaskObjectListClass, SVTaskObjectListClassGuid)
 
@@ -1234,3 +1237,5 @@ bool SVTaskObjectListClass::RemoveFromTaskObjectVector(const SVGUID& rObjectID)
 }
 
 #pragma endregion Private Methods
+
+} //namespace SvIe

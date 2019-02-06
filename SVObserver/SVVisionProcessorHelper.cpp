@@ -199,7 +199,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 	{
 		// Get Data Definition list from inspection
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
-		SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SVTaskObjectListClass*> (pToolSet);
+		SvIe::SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SvIe::SVTaskObjectListClass*> (pToolSet);
 
 		if (l_ValueFilter != -1)
 		{
@@ -244,13 +244,13 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 		if (l_ImageFilter != -1)
 		{
 			//Add image definition list
-			SVImageClassPtrVector ImageList;
+			SvIe::SVImageClassPtrVector ImageList;
 			pToolSet->GetImageList(ImageList);
 
 			int nCount = static_cast<int> (ImageList.size());
 			for (int i = 0; i < nCount; i++)
 			{
-				SVImageClass* pImage = ImageList[i];
+				SvIe::SVImageClass* pImage = ImageList[i];
 
 				if (nullptr != pImage)
 				{
@@ -486,7 +486,7 @@ HRESULT SVVisionProcessorHelper::GetStandardItems(const SvDef::StringSet& rNames
 
 		if (nullptr != ObjectRef.getObject())
 		{
-			BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*>(ObjectRef.getObject());
+			SvVol::BasicValueObject* pBasicValueObject = dynamic_cast<SvVol::BasicValueObject*>(ObjectRef.getObject());
 
 			if (nullptr != pBasicValueObject)
 			{
@@ -586,7 +586,7 @@ HRESULT SVVisionProcessorHelper::SetStandardItems(const SVNameStorageMap& rItems
 		for (SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter)
 		{
 			HRESULT LoopStatus = S_OK;
-			BasicValueObject* pValueObject = nullptr;
+			SvVol::BasicValueObject* pValueObject = nullptr;
 
 			SVObjectManagerClass::Instance().GetObjectByDottedName(Iter->first, pValueObject);
 
@@ -741,7 +741,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 		if (SvPb::SVEnumValueObjectType == rObject.GetObjectSubType())
 		{
 			// Get the strings from the enumeration value object class.
-			const SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObject);
+			const SvVol::SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<const SvVol::SVEnumerateValueObjectClass*> (&rObject);
 			if (nullptr != pEnumVO)
 			{
 				for (auto const& rEntry : pEnumVO->GetEnumVector())
@@ -753,7 +753,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 		else if (SvPb::SVBoolValueObjectType == rObject.GetObjectSubType())
 		{
 			// Get the strings from the enumeration value object class.
-			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObject);
+			const SvVol::SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SvVol::SVBoolValueObjectClass*> (&rObject);
 			if (nullptr != l_pBoolVO)
 			{
 				SvDef::StringVector Types;
@@ -768,13 +768,13 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 		else
 			//This should be an image so check for its additional info
 		{
-			const SVImageClass* pImage = dynamic_cast<const SVImageClass*> (&rObject);
+			const SvIe::SVImageClass* pImage = dynamic_cast<const SvIe::SVImageClass*> (&rObject);
 			if (nullptr != pImage)
 			{
-				SVToolClass* pTool = dynamic_cast<SVToolClass*>(pImage->GetTool());
+				SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pImage->GetTool());
 				if (nullptr != pTool)
 				{
-					SVStringValueObjectClass* pSourceNames = pTool->GetInputImageNames();
+					SvVol::SVStringValueObjectClass* pSourceNames = pTool->GetInputImageNames();
 					if (nullptr != pSourceNames)
 					{
 						long l_lSize = pSourceNames->getArraySize();
@@ -1203,7 +1203,7 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists(const SvDef:
 					{
 						rMonitoredValueObjectList.push_back(rObj);
 					}
-					else if (nullptr != pMonitoredImageObjectList && SV_IS_KIND_OF(pObject, SVImageClass))
+					else if (nullptr != pMonitoredImageObjectList && SV_IS_KIND_OF(pObject, SvIe::SVImageClass))
 					{
 						pMonitoredImageObjectList->push_back(rObj);
 					}

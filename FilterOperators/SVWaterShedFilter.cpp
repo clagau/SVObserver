@@ -101,7 +101,7 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 		HRESULT l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
-			SVImageClass* pInputImage = SvOl::getInput<SVImageClass>(m_MarkerImageInfo, true);
+			SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_MarkerImageInfo, true);
 			if( pInputImage )
 			{
 				SvTrc::IImagePtr pMarkerBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
@@ -168,7 +168,7 @@ bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErr
 	{
 		if( bUseMarker )
 		{
-			if (nullptr == SvOl::getInput<SVImageClass>(m_MarkerImageInfo))
+			if (nullptr == SvOl::getInput<SvIe::SVImageClass>(m_MarkerImageInfo))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

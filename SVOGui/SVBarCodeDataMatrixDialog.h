@@ -19,10 +19,10 @@ class SVBarCodeDataMatrixDialog : public CPropertyPage
 {
 // Construction
 public:
-  int SetCellX (SVDoubleValueObjectClass &svdCellX);
-  int SetCellY (SVDoubleValueObjectClass &svdCellY);
-  int SetMinCellSize (SVDoubleValueObjectClass &svdMinCellSize);
-  int SetMaxCellSize (SVDoubleValueObjectClass &svdMaxCellSize);
+  int SetCellX (SvVol::SVDoubleValueObjectClass &svdCellX);
+  int SetCellY (SvVol::SVDoubleValueObjectClass &svdCellY);
+  int SetMinCellSize (SvVol::SVDoubleValueObjectClass &svdMinCellSize);
+  int SetMaxCellSize (SvVol::SVDoubleValueObjectClass &svdMaxCellSize);
   int GetCellX ();
   int GetCellY ();
   int GetMinCellSize ();

@@ -20,6 +20,9 @@
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -219,3 +222,5 @@ void SVStringValueObjectClass::LocalInitialize()
 
 	init();
 }
+
+} //namespace SvVol

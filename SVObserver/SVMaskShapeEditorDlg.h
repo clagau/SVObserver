@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVShapeMaskHelperClass.h"
-#include "SVMaskShape.h"
+#include "Operators/SVShapeMaskHelperClass.h"
+#include "Operators/SVMaskShape.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
@@ -23,7 +23,10 @@
 #include "SVOGui/MaskController.h"
 #pragma endregion Includes
 
+namespace SvOp
+{
 class SVUserMaskOperatorClass;
+}
 
 class SVMaskShapeEditorDlg : public CDialog
 {
@@ -54,14 +57,14 @@ public:
 	//************************************
 	void setSelectedTab(long tabNumber);
 
-	SVMaskShape* GetCurrentShape(); // holds the properties and does the rendering
+	SvOp::SVMaskShape* GetCurrentShape(); // holds the properties and does the rendering
 
 	Controller& GetValues() { return m_Values; }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	HRESULT GetCancelData(SVInputRequestStructMap& rMap);
+	HRESULT GetCancelData(SvIe::SVInputRequestStructMap& rMap);
 
 #pragma region AFX Methods
 	// ClassWizard generated virtual function overrides
@@ -115,7 +118,7 @@ private:
 
 	HRESULT SetInspectionData(bool bResetObject = false);
 	HRESULT UpdateMask(bool bResetObject = false);
-	void FillComboBox(SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo);
+	void FillComboBox(const SvVol::SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo);
 
 	//************************************
 	// Method:    setImages
@@ -130,7 +133,7 @@ private:
 	// Access:    public
 	// Parameter: SVShapeMaskHelperClass::ShapeTypeEnum shapeType: the shape type enum.
 	//************************************
-	void setShapeType(SVShapeMaskHelperClass::ShapeTypeEnum shapeType);
+	void setShapeType(SvOp::SVShapeMaskHelperClass::ShapeTypeEnum shapeType);
 
 	//************************************
 	// Method:    resetShapeOverlay
@@ -157,7 +160,7 @@ private:
 	//}}AFX_DATA
 
 	static const long m_numberOfTabs = 3;
-	typedef std::map<SVShapeMaskHelperClass::ShapeTypeEnum, SVMaskShape*> ShapeMap;
+	typedef std::map<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum, SvOp::SVMaskShape*> ShapeMap;
 
 	ShapeMap m_mapShapes;
 	std::map<GUID, int> m_mapPropertyIds;
@@ -165,10 +168,10 @@ private:
 	bool m_isInit;
 	long m_currentTabNumber; //only use until m_isInit is true
 	long m_handleToActiveObjects[m_numberOfTabs];
-	SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
+	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
 	SvOg::MaskController m_maskController;
-	SVUserMaskOperatorClass* m_pMask;
-	SVInputRequestStructMap m_cancelData;
+	SvOp::SVUserMaskOperatorClass* m_pMask;
+	SvIe::SVInputRequestStructMap m_cancelData;
 
 	const SVGUID& m_rInspectionID;
 	const SVGUID& m_rTaskObjectID;

@@ -9,6 +9,9 @@
 //* .Check In Date   : $Date:   02 Jun 2014 08:47:08  $
 //******************************************************************************
 
+namespace SvVol
+{
+
 #pragma region Public Methods
 template <typename ELEMENT_TYPE>
 HRESULT BasicValueObject::setValue(const ELEMENT_TYPE Value )
@@ -68,3 +71,4 @@ inline LPCTSTR BasicValueObject::getDescription()
 }
 #pragma endregion Public Methods
 
+} //namespace SvVol

@@ -12,10 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
-#include "SVHistogramAnalyzer.h"
+#include "AnalyzerOperators/SVHistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVResult.h"
+#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -138,8 +138,8 @@ int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	const SVMatroxLongArray & l_arr = m_pAnalyzer->GetHistogram();
-	m_histogram.SetPixelCounts(l_arr.begin(), l_arr.end());
+	const std::vector<long>& resultVector = m_pAnalyzer->GetHistogram();
+	m_histogram.SetPixelCounts(resultVector.begin(), resultVector.end());
 	m_firstSquare.SetColor(SvDef::DarkGreen);
 	m_secondSquare.SetColor(SvDef::Crimson);
 	m_valleySquare.SetColor(SvDef::Plum);

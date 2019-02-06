@@ -16,10 +16,15 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SVDataBufferInfoClass::SVDataBufferInfoClass() : 
  pOwnerTool( nullptr )
@@ -109,3 +114,4 @@ SVDataBufferHandleStruct& SVDataBufferClass::GetDataBufferHandle()
 	return m_DataInfo.HBuffer;
 }
 
+} //namespace SvIe

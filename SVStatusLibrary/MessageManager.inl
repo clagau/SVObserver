@@ -28,9 +28,9 @@ template <typename M_Container, typename M_Data>
 void MessageManager<M_Container, M_Data>::setShowDisplayFunction(ShowDisplayFunctor ShowDisplay)
 {
 	Initialize();
-	if (nullptr != m_pShowDisplay)
+	if (nullptr != m_ppShowDisplay)
 	{
-		*m_pShowDisplay = ShowDisplay;
+		*m_ppShowDisplay = ShowDisplay;
 	}
 }
 
@@ -38,9 +38,9 @@ template <typename M_Container, typename M_Data>
 void MessageManager<M_Container, M_Data>::setNotificationFunction(NotifyFunctor Notify)
 {
 	Initialize();
-	if (nullptr != m_pNotify)
+	if (nullptr != m_ppNotify)
 	{
-		*m_pNotify = Notify;
+		*m_ppNotify = Notify;
 	}
 }
 
@@ -59,7 +59,7 @@ INT_PTR MessageManager<M_Container, M_Data>::Process(UINT MsgBoxType /*= MB_OK*/
 	Log();
 
 	Result = Display(MsgBoxType);
-	if (nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && (MsgType::Display& m_Type))
+	if (nullptr != m_ppShowDisplay && nullptr != *m_ppShowDisplay && (MsgType::Display & m_Type))
 	{
 		//Message has bin displayed
 		m_MessageHandler.setMessageDisplayed();
@@ -124,10 +124,10 @@ template <typename M_Container, typename M_Data>
 void MessageManager<M_Container, M_Data>::Initialize()
 {
 	//Initialize the static members just once per instance
-	if (nullptr == m_pShowDisplay && nullptr == m_pNotify)
+	if (nullptr == m_ppShowDisplay && nullptr == m_ppNotify)
 	{
 		M_Container MessageHandler;
-		MessageHandler.setFunctorObjects(m_pShowDisplay, m_pNotify);
+		MessageHandler.setFunctorObjects(m_ppShowDisplay, m_ppNotify);
 	}
 }
 
@@ -141,14 +141,14 @@ void MessageManager<M_Container, M_Data>::Log()
 
 	bool doNotify = (MsgType::Notify & m_Type) || (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) && (MsgType::Display& m_Type));
 
-	if (nullptr != m_pNotify && !m_pNotify->empty() && doNotify)
+	if (nullptr != m_ppNotify && nullptr != *m_ppNotify && doNotify)
 	{
 		std::string Msg;
 		m_MessageHandler.Format(Msg);
 		long MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
 		long msgNotify {static_cast<long> (NotificationType::message)};
 		long logMsgBox {static_cast<long> (NotificationMsgEnum::MsgLog)};
-		(*m_pNotify)(msgNotify, logMsgBox, MsgCode, Msg.c_str());
+		(*m_ppNotify)(msgNotify, logMsgBox, MsgCode, Msg.c_str());
 	}
 }
 
@@ -158,7 +158,7 @@ INT_PTR MessageManager<M_Container, M_Data>::Display(const UINT MsgBoxType) cons
 	INT_PTR Result(IDCANCEL);
 
 	//If the message has already been displayed do not display again
-	if (nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && (MsgType::Display & m_Type)
+	if (nullptr != m_ppShowDisplay && nullptr != *m_ppShowDisplay && (MsgType::Display & m_Type)
 		&& !SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)
 		&& !m_MessageHandler.getMessage().m_Displayed)
 	{
@@ -173,20 +173,20 @@ INT_PTR MessageManager<M_Container, M_Data>::Display(const UINT MsgBoxType) cons
 		Type &= ~MB_ICONMASK;
 		Type |= m_MessageHandler.getSeverityIcon();
 
-		if (nullptr != m_pNotify && !m_pNotify->empty())
+		if (nullptr != m_ppNotify && nullptr != *m_ppNotify)
 		{
 			long msgNotify {static_cast<long> (NotificationType::message)};
 			long startMsgBox {static_cast<long> (NotificationMsgEnum::StartMsgBox)};
-			(*m_pNotify)(msgNotify, startMsgBox, MsgCode, Msg.c_str());
+			(*m_ppNotify)(msgNotify, startMsgBox, MsgCode, Msg.c_str());
 		}
-		Result = (*m_pShowDisplay)(nullptr, Msg.c_str(), MsgDetails.c_str(), Type);
+		Result = (*m_ppShowDisplay)(nullptr, Msg.c_str(), MsgDetails.c_str(), Type);
 		//Message has been displayed do not display again
 		m_MessageHandler.getMessage().m_Displayed = true;
-		if (nullptr != m_pNotify && !m_pNotify->empty())
+		if (nullptr != m_ppNotify && nullptr != *m_ppNotify)
 		{
 			long msgNotify {static_cast<long> (NotificationType::message)};
 			long endMsgBox {static_cast<long> (NotificationMsgEnum::EndMsgBox)};
-			(*m_pNotify)(msgNotify, endMsgBox, MsgCode, Msg.c_str());
+			(*m_ppNotify)(msgNotify, endMsgBox, MsgCode, Msg.c_str());
 		}
 	}
 

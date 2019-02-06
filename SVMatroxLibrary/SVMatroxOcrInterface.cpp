@@ -1757,13 +1757,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 	return l_Code;
 }
 
-/**
-@SVOperationName SetResult - SVMatroxDoubleArray&
-
-@SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
-
-*/
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues )
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, std::vector<double>& p_adValues )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS

@@ -106,7 +106,6 @@
     <ClInclude Include="SVValueObject.h" />
     <ClInclude Include="SVValueObjectClass.h" />
     <ClInclude Include="SVVariantValueObjectClass.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicValueObject.cpp" />

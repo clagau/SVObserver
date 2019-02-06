@@ -33,14 +33,17 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
-#pragma endregion Declarations
 
 SVTaskObjectClass::SVTaskObjectClass(LPCSTR ObjectName)
 	: SVObjectAppClass(ObjectName)
@@ -2152,3 +2155,4 @@ HRESULT SVTaskObjectClass::ResetObjectInputs()
 	return l_Status;
 }
 
+} //namespace SvIe

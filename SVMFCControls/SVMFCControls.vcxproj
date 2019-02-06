@@ -119,6 +119,7 @@
     <ClCompile Include="NameSelectionTreeCtrl.cpp" />
     <ClCompile Include="ObjectsListBox.cpp" />
     <ClCompile Include="ResizablePropertySheet.cpp" />
+    <ClCompile Include="SVAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVDlgBitmap.cpp" />
     <ClCompile Include="SVDlgGraph.cpp" />
     <ClCompile Include="SVEditControlWithHelp.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVAnalyzerResultDlg.h" />
     <ClInclude Include="SVDlgBitmap.H" />
     <ClInclude Include="SVDlgGraph.h" />
     <ClInclude Include="SVEditControlWithHelp.h" />

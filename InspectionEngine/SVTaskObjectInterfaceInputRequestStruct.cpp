@@ -15,6 +15,16 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct()
 {
 	m_Guid = GUID_NULL;
@@ -102,3 +112,4 @@ HRESULT SVInputRequestStructMap::Add( const SVObjectReference& rObjectRef )
 	return Result;
 }
 
+} //namespace SvIe

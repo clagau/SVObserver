@@ -17,9 +17,9 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVOGui/DisplayHelper.h"
 #include "SVOGui/ImageController.h"
-#include "InspectionEngine/SVTool.h"
-#include "InspectionEngine/SVAnalyzer.h"
-#include "SVLinearEdgeProcessingClass.h"
+#include "Tools/SVTool.h"
+#include "AnalyzerOperators/SVAnalyzer.h"
+#include "Operators/SVLinearEdgeProcessingClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -102,9 +102,9 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 {
 	SVEdgeMarkerAdjustmentPageClass::OnInitDialog();
 
-	m_pEdge = dynamic_cast<SVLinearEdgeProcessingClass*> (SvOi::getObject(m_rTaskObjectID));
-	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SVToolClass*> (m_pEdge->GetAncestorInterface(SvPb::SVToolObjectType));
-	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvPb::SVAnalyzerObjectType));
+	m_pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass*> (SvOi::getObject(m_rTaskObjectID));
+	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SvTo::SVToolClass*> (m_pEdge->GetAncestorInterface(SvPb::SVToolObjectType));
+	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SvAo::SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvPb::SVAnalyzerObjectType));
 	if (nullptr != m_pAnalyzer)
 	{
 		m_pAnalyzerValues = std::shared_ptr<Controller> {new Controller {SvOg::BoundValues {m_rInspectionID, m_pAnalyzer->GetUniqueObjectID()}}};
@@ -121,7 +121,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 		const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
 		if (nullptr != pImageInfo)
 		{
-			SVImageClass* pImage = nullptr;
+			SvIe::SVImageClass* pImage = nullptr;
 			pImageInfo->GetOwnerImage(pImage);
 			if(nullptr != pImage)
 			{

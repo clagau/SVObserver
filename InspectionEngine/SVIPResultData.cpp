@@ -12,6 +12,16 @@
 #include "stdafx.h"
 #include "SVIPResultData.h"
 
+namespace SvIe
+{
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVIPResultData::SVIPResultData()
 : m_ResultData(),
   m_ToolSetEndTime( 0.0 ),
@@ -53,4 +63,4 @@ void SVIPResultData::clear()
 	m_ToolSetTime = 0.0;
 }
 
-
+} //namespace SvIe

@@ -17,6 +17,9 @@
 #include "SVInt64ValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVTimerValueObjectClass : public SVInt64ValueObjectClass  
 {
 	SV_DECLARE_CLASS( SVTimerValueObjectClass );
@@ -35,3 +38,4 @@ private:
 	SvTl::SVTimeStamp m_Start;  // Time Stamp in Milliseconds
 };
 
+} //namespace SvVol

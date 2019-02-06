@@ -37,7 +37,7 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	SvOl::ValidateInput(m_SeedImageInfo);
 
-	if (nullptr == SvOl::getInput<SVImageClass>(m_SeedImageInfo))
+	if (nullptr == SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -52,7 +52,7 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 bool ReconstructFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	auto* pSeedImage = SvOl::getInput<SVImageClass>(m_SeedImageInfo);
+	auto* pSeedImage = SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo);
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty() && nullptr != pSeedImage )
 	{
 		SvTrc::IImagePtr pSeedImageBuffer = pSeedImage->getImageReadOnly(rRunStatus.m_triggerRecord);

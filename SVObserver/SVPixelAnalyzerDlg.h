@@ -16,7 +16,11 @@
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
+
+namespace SvAo
+{
 class SVPixelAnalyzerClass;
+}
 
 class SVPixelAnalyzerDlg : public CDialog
 {
@@ -56,7 +60,7 @@ public:
 
     void SetGrayscale(long lGrayscale);
 
-	SVPixelAnalyzerClass*   m_pAnalyzer{ nullptr };
+	SvAo::SVPixelAnalyzerClass*   m_pAnalyzer{ nullptr };
 	unsigned long           msvulMaxGrayscale{ 0L };
 	unsigned long           msvulMinGrayscale{ 0L };
 

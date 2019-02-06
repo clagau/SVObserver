@@ -13,12 +13,12 @@
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "InspectionEngine/SVAnalyzer.h"
+#include "AnalyzerOperators/SVAnalyzer.h"
 #include "SVChildrenSetupDialog.h"
 #include "SVGlobal.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
 #include "SVSetupDialogManager.h"
@@ -65,7 +65,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 			SvDef::SVObjectTypeInfoStruct info;
 			info.ObjectType = SvPb::SVAnalyzerObjectType;
 
-			m_pCurrentAnalyzer = dynamic_cast<SVAnalyzerClass *>(m_pTool->getFirstObject(info));
+			m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass *>(m_pTool->getFirstObject(info));
 		}
 	}
 }
@@ -204,7 +204,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		SVSetupDialogManager::Instance().SetupDialog(m_pCurrentAnalyzer->GetClassID(), m_pCurrentAnalyzer->GetUniqueObjectID(), this);
 
 		// Restore the pointer (in case of Cancel)
-		m_pCurrentAnalyzer = (SVAnalyzerClass*)SVObjectManagerClass::Instance().GetObject(analyzerGuid);
+		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerGuid));
 
 		if (nullptr != m_pTool)
 		{
@@ -374,7 +374,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 	if (m_pCurrentAnalyzer)
 	{
 		// Get Available Results...
-		SVClassInfoStructVector	availableResults;
+		SvIe::SVClassInfoStructVector	availableResults;
 		SvDef::SVObjectTypeInfoStruct		resultTypeInfo;
 		resultTypeInfo.ObjectType = SvPb::SVResultObjectType;
 		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the SvCmd::GetAvailableObjects
@@ -407,7 +407,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		dlg.DoModal();
 
 		// Restore the pointer (in case of Cancel)
-		m_pCurrentAnalyzer = (SVAnalyzerClass*)SVObjectManagerClass::Instance().GetObject(analyzerGuid);
+		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerGuid));
 	}
 }
 
@@ -447,7 +447,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 		}
 
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
-		PublishList.Refresh(static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()));
+		PublishList.Refresh(static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()));
 
 		SVIPDoc* pIPDoc = m_pParentDialog->GetIPDoc();
 

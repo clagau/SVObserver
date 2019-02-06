@@ -139,7 +139,7 @@ bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pO
 	bool bRetVal = false;
 	if (nullptr != pObject)
 	{
-		if (SV_IS_KIND_OF(pObject, const SVImageClass))
+		if (SV_IS_KIND_OF(pObject, const SvIe::SVImageClass))
 		{
 			bRetVal = true;
 		}

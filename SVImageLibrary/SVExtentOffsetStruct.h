@@ -15,7 +15,10 @@
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
 class SVImageClass;
+}
 
 struct SVExtentOffsetStruct
 {
@@ -65,8 +68,8 @@ struct SVExtentOffsetStruct
 		return S_OK;
 	};
 
-	SVImageClass *m_psvRootImage;
-	SVImageClass *m_psvImage;
+	SvIe::SVImageClass *m_psvRootImage;
+	SvIe::SVImageClass *m_psvImage;
 
 	std::string m_csImageName;
 

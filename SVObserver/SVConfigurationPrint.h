@@ -29,8 +29,11 @@ enum
 	SV_DEFAULT_PAGE_TEXT_FONT_HEIGHT            = 80,
 };
 
-class SVObjectClass;
+namespace SvIe
+{
 class SVTaskObjectListClass;
+}
+class SVObjectClass;
 class SVDiscreteInputsView;
 class SVDiscreteOutputsView;
 class SVDeviceParamConfigPrintHelper;
@@ -67,7 +70,7 @@ protected:
 	void OnEndPrinting();
 
 	void PrintFriends(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
-	void PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel);
+	void PrintAllChildren(CDC* pDC, SvIe::SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel);
 	void PrintChildren(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 	void PrintDetails(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 	void PrintObject(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);

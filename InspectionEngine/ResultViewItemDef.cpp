@@ -14,6 +14,16 @@
 #include "ResultViewItemDef.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 #pragma region Constructor
 ResultViewItemDef::ResultViewItemDef()
 : m_ObjectID( GUID_NULL )
@@ -71,3 +81,4 @@ bool ResultViewItemDef::hasIndex() const
 }
 #pragma endregion Public Methods
 
+} //namespace SvIe

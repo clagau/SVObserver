@@ -214,7 +214,7 @@ void Custom2Filter::init()
 	RebuildKernel();
 }
 
-long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
+long Custom2Filter::validateKernelSize(SvVol::SVLongValueObjectClass& rKernelSize )
 {
 	long Size(0);
 

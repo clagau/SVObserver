@@ -16,7 +16,7 @@
 #include "SVObserver.h"
 #include "SVIPDoc.h"
 #include "SVToolSet.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVIODoc.h"
 #include "SVMainFrm.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -30,7 +30,8 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVOGui/SVTextEditDialog.h"
-#include "SVShiftTool.h"
+#include "Tools/LoopTool.h"
+#include "Tools/SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
@@ -39,7 +40,6 @@
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVInspectionProcess.h"
-#include "LoopTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -355,15 +355,15 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	// Get the tool comment...
 	if (!SelectedGuid.empty())
 	{
-		SVToolClass* pSelectedTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(SelectedGuid));
+		SvTo::SVToolClass* pSelectedTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedGuid));
 		if (nullptr != pSelectedTool)
 		{
-			SVShiftTool* pShiftTool = dynamic_cast<SVShiftTool*>(pSelectedTool);
+			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool*> (pSelectedTool);
 			if (nullptr != pShiftTool)
 			{
 				long l_shiftMode;
 				pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
-				if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
+				if (l_shiftMode == SvTo::SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
 				{
 					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_SHIFT);
 				}
@@ -679,15 +679,15 @@ void ToolSetView::EditToolComment(SVGUID& rToolGuid)
 void ToolSetView::OnSelectToolSetReference()
 {
 	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-	SVToolClass* pTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
 
 	if (nullptr != pTool)
 	{
-		SVShiftTool* l_pShiftTool = dynamic_cast<SVShiftTool *>(pTool);
+		SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool *>(pTool);
 
-		if (nullptr != l_pShiftTool)
+		if (nullptr != pShiftTool)
 		{
-			SVShiftToolUtility::SetToolSetReference(l_pShiftTool);
+			SVShiftToolUtility::SetToolSetReference(pShiftTool);
 		}
 	}
 }
@@ -697,14 +697,14 @@ void ToolSetView::OnSelectToolNormalize()
 	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
 	if (!rGuid.empty())
 	{
-		SVToolClass* pTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
 		if (nullptr != pTool)
 		{
-			SVShiftTool* l_pShiftTool = dynamic_cast<SVShiftTool *>(pTool);
+			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool *>(pTool);
 
-			if (nullptr != l_pShiftTool)
+			if (nullptr != pShiftTool)
 			{
-				SVShiftToolUtility::SetToolNormalize(l_pShiftTool);
+				SVShiftToolUtility::SetToolNormalize(pShiftTool);
 			}
 		}
 	}
@@ -781,8 +781,8 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	ValidateLabelText(NewText);
 	if (m_LabelSaved != NewText) // In case it was renamed to the same name as before renaming
 	{
-		LoopTool* pLoopTool(nullptr);
-		SVToolClass* pTool(nullptr);
+		SvTo::LoopTool* pLoopTool(nullptr);
+		SvTo::SVToolClass* pTool(nullptr);
 		bool IsNameOk(false);
 		bool IsSubTool(false);
 		switch (NavElement->m_Type)
@@ -801,13 +801,11 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 			case NavElementType::SubTool:
 			case NavElementType::SubLoopTool:
 				IsSubTool = true;
-				pLoopTool = dynamic_cast<LoopTool*>
-					(SVObjectManagerClass::Instance().GetObject(SelectedLoopTool));
+				pLoopTool = dynamic_cast<SvTo::LoopTool*> (SVObjectManagerClass::Instance().GetObject(SelectedLoopTool));
 			case NavElementType::LoopTool:
 			case NavElementType::Tool:
-				pTool = dynamic_cast<SVToolClass*>
-					(SVObjectManagerClass::Instance().GetObject(SelectedTool));
-				if (!pTool)
+				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedTool));
+				if (nullptr == pTool)
 				{
 					return;
 				}

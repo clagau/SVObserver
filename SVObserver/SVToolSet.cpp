@@ -15,13 +15,13 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "InspectionEngine/SVAnalyzer.h"
-#include "InspectionEngine/SVConditional.h"
+#include "AnalyzerOperators/SVAnalyzer.h"
+#include "Operators/SVConditional.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVColorTool.h"
+#include "Tools/SVColorTool.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -139,8 +139,8 @@ void SVToolSetClass::init()
 	m_SetNumber = 0;
 	m_isCreated = false;
 
-	SVConditionalClass* l_pConditional = new SVConditionalClass( this );
-	AddFriend( l_pConditional->GetUniqueObjectID() );
+	SvOp::SVConditionalClass* pConditional = new SvOp::SVConditionalClass(this);
+	AddFriend( pConditional->GetUniqueObjectID() );
 
 	// Identify our input type needs
 	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVConditionalResultObjectGuid);
@@ -260,7 +260,7 @@ void SVToolSetClass::updateToolPosition()
 	for (long i(0),position(1) ; i < GetSize(); i++)
 	{
 		 //! For object values use one based index
-		SVToolClass* pTool = dynamic_cast<SVToolClass*> (GetAt(i));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetAt(i));
 		if (nullptr != pTool)
 		{
 			position = pTool->setToolPosition(position);
@@ -298,7 +298,7 @@ SVResultListClass* SVToolSetClass::GetResultList()
 // -----------------------------------------------------------------------------
 // .Description : Returns a pointer to the current SVImageClass object
 ////////////////////////////////////////////////////////////////////////////////
-SVImageClass* SVToolSetClass::getCurrentImage()
+SvIe::SVImageClass* SVToolSetClass::getCurrentImage()
 {
 	return &m_MainImageObject;
 }
@@ -312,7 +312,7 @@ bool SVToolSetClass::getConditionalResult(bool bRunMode /*= false*/) const
 {
 	BOOL Value( false );
 
-	SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo, bRunMode);
+	SvVol::SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo, bRunMode);
 	if(nullptr != pBoolObject)
 	{
 		pBoolObject->GetValue( Value );
@@ -326,21 +326,21 @@ bool SVToolSetClass::getConditionalResult(bool bRunMode /*= false*/) const
 // .Description : Returns pointer to enumeration value object which is used as 
 //				: conditional tool set draw flag.
 ////////////////////////////////////////////////////////////////////////////////
-SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
+SvVol::SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
 {
 	return &m_DrawFlag;
 }
 
-SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
+SvOp::SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 {
-	SVConditionalClass* l_pConditional( nullptr );
+	SvOp::SVConditionalClass* pConditional( nullptr );
 
-	for( size_t j = 0; nullptr == l_pConditional && j < m_friendList.size(); j++ )
+	for( size_t j = 0; nullptr == pConditional && j < m_friendList.size(); j++ )
 	{
-		l_pConditional = dynamic_cast<SVConditionalClass*> (m_friendList[j].getObject());
+		pConditional = dynamic_cast<SvOp::SVConditionalClass*> (m_friendList[j].getObject());
 	}// end for
 
-	return l_pConditional; 
+	return pConditional; 
 }
 
 HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )  const
@@ -381,7 +381,7 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 
 	for( SVTaskObjectPtrVector::const_iterator Iter( m_TaskObjectVector.begin() ); Iter != m_TaskObjectVector.end(); ++Iter )
 	{
-		SVColorToolClass* pColorTool = dynamic_cast<SVColorToolClass*>( *Iter );
+		SvTo::SVColorToolClass* pColorTool = dynamic_cast<SvTo::SVColorToolClass*>( *Iter );
 		if (nullptr != pColorTool)
 		{
 			pResult = dynamic_cast<SvOi::IObjectClass*> (pColorTool->getBand0Image());
@@ -545,11 +545,11 @@ void SVToolSetClass::SetInvalid()
 {
 	__super::SetInvalid();
 
-	SVConditionalClass* l_pConditional = GetToolSetConditional();
+	SvOp::SVConditionalClass* pConditional = GetToolSetConditional();
 
-	if( nullptr != l_pConditional )
+	if( nullptr != pConditional )
 	{
-		l_pConditional->SetInvalid();
+		pConditional->SetInvalid();
 	}
 }
 
@@ -627,7 +627,7 @@ HRESULT SVToolSetClass::ClearResetCounts()
 	return m_ResetCounts.SetValue(BOOL(false));
 }
 
-HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
+HRESULT SVToolSetClass::onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	// override TaskObjectList implementation
 	return S_FALSE;	// no overlays for toolset

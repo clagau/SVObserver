@@ -259,7 +259,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 							pRemoteInput->WriteCache( l_Value );
 
-							SVVariantValueObjectClass* pValueObject = dynamic_cast<SVVariantValueObjectClass*> ( pIOEntry->getObject() );
+							SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> ( pIOEntry->getObject() );
 							if( nullptr != pValueObject )
 							{
 								pValueObject->SetDefaultValue( l_Value, true );

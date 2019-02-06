@@ -18,7 +18,10 @@
 #pragma endregion
 
 #pragma region Declarations
+namespace SvOp
+{
 class SVEvaluateClass;
+}
 #pragma endregion;
 
 class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage
@@ -69,9 +72,9 @@ public:
 protected:
 	CFont angleFont;
 
-	SVEvaluateClass*			m_pEvaluateRotationX{ nullptr };
-	SVEvaluateClass*			m_pEvaluateRotationY{ nullptr };
-	SVEvaluateClass*			m_pEvaluateRotationAngle{ nullptr };
+	SvOp::SVEvaluateClass*	m_pEvaluateRotationX{ nullptr };
+	SvOp::SVEvaluateClass*	m_pEvaluateRotationY{ nullptr };
+	SvOp::SVEvaluateClass*	m_pEvaluateRotationAngle{ nullptr };
 
 	const SVGUID m_InspectionID;
 	const SVGUID m_TaskObjectID;

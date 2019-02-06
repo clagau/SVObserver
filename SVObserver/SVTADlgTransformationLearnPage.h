@@ -14,13 +14,22 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
+namespace SvOp
+{
+class SVImageTransformClass;
+class SVEvaluateClass;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
+namespace SvVol
+{
+class SVBoolValueObjectClass;
+class SVDoubleValueObjectClass;
+}
 
 class SVToolAdjustmentDialogSheetClass;
-class SVImageTransformClass;
-class SVToolClass;
-class SVBoolValueObjectClass;
-class SVEvaluateClass;
-class SVDoubleValueObjectClass;
 
 class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage
 {
@@ -74,34 +83,34 @@ public:
 
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SVToolClass* m_pTool;
+	SvTo::SVToolClass* m_pTool;
 
-	SVBoolValueObjectClass*		m_pPerformTranslation;
+	SvVol::SVBoolValueObjectClass* m_pPerformTranslation;
 
-	SVEvaluateClass*			m_pEvaluateTranslationX;
-	SVDoubleValueObjectClass*	m_pTranslationXResult;
+	SvOp::SVEvaluateClass* m_pEvaluateTranslationX;
+	SvVol::SVDoubleValueObjectClass*	m_pTranslationXResult;
 
-	SVEvaluateClass*			m_pEvaluateTranslationY;
-	SVDoubleValueObjectClass*	m_pTranslationYResult;
+	SvOp::SVEvaluateClass* m_pEvaluateTranslationY;
+	SvVol::SVDoubleValueObjectClass* m_pTranslationYResult;
 
-	SVBoolValueObjectClass*		m_pPerformRotation;
+	SvVol::SVBoolValueObjectClass* m_pPerformRotation;
 
-	SVEvaluateClass*			m_pEvaluateRotationX;
-	SVDoubleValueObjectClass*	m_pRotationXResult;
+	SvOp::SVEvaluateClass* m_pEvaluateRotationX;
+	SvVol::SVDoubleValueObjectClass* m_pRotationXResult;
 
-	SVEvaluateClass*			m_pEvaluateRotationY;
-	SVDoubleValueObjectClass*	m_pRotationYResult;
+	SvOp::SVEvaluateClass* m_pEvaluateRotationY;
+	SvVol::SVDoubleValueObjectClass* m_pRotationYResult;
 
-	SVEvaluateClass*			m_pEvaluateRotationAngle;
-	SVDoubleValueObjectClass*	m_pRotationAngleResult;
+	SvOp::SVEvaluateClass* m_pEvaluateRotationAngle;
+	SvVol::SVDoubleValueObjectClass* m_pRotationAngleResult;
 
-	SVImageTransformClass*	    m_pImageTransform;
+	SvOp::SVImageTransformClass* m_pImageTransform;
 
-	SVDoubleValueObjectClass*   m_pLearnedTranslationX;
-	SVDoubleValueObjectClass*   m_pLearnedTranslationY;
-	SVDoubleValueObjectClass*   m_pLearnedRotationX;
-	SVDoubleValueObjectClass*   m_pLearnedRotationY;
-	SVDoubleValueObjectClass*   m_pLearnedRotationAngle;
+	SvVol::SVDoubleValueObjectClass* m_pLearnedTranslationX;
+	SvVol::SVDoubleValueObjectClass* m_pLearnedTranslationY;
+	SvVol::SVDoubleValueObjectClass* m_pLearnedRotationX;
+	SvVol::SVDoubleValueObjectClass* m_pLearnedRotationY;
+	SvVol::SVDoubleValueObjectClass* m_pLearnedRotationAngle;
 
 	CFont angleFont;
 

@@ -24,15 +24,17 @@
 
 struct IDirectDrawSurface7;
 
-class SVToolClass;
-class SVImageViewScroll;
-class SVIPDoc;
+namespace SvIe
+{
 class SVTaskObjectClass;
-class SVDrawContext;
+}
 namespace SvOi
 {
 	class IObjectWriter;
 }
+
+class SVIPDoc;
+class SVDrawContext;
 
 class SVImageViewClass : public CView
 {
@@ -50,7 +52,7 @@ public:
 
 	const SVGUID& GetImageID() const;
 
-	SVImageClass* GetImage();
+	SvIe::SVImageClass* GetImage();
 	void GetImageRect( CRect &p_rect );
 
 	void GetParameters(SvOi::IObjectWriter& rWriter);
@@ -160,7 +162,7 @@ protected:
 	bool SetScaleIndex( unsigned long p_scaleIndex );
 	bool SetImageRect( CRect& p_rect );
 
-	SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
+	SvIe::SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
 	HRESULT ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine );
 	void DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine );
@@ -204,6 +206,8 @@ protected:
 	//************************************
 	bool CalculateZoomFit(ZoomEnum ZoomType);
 
+	void DisplayAnalyzerResult(const SvDef::StringVector& rAnalyzerResults, SvPb::SVObjectSubTypeEnum analyzerType) const;
+
 #pragma region Member variables
 private:
 	std::string m_ImageDIB;
@@ -221,7 +225,7 @@ private:
 
 	// JMS - Extent Objects
 
-	SVTaskObjectClass* m_pTaskObject;
+	SvIe::SVTaskObjectClass* m_pTaskObject;
 
 	SvDef::SVExtentLocationPropertyEnum m_svLocation;
 

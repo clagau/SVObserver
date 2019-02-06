@@ -59,17 +59,17 @@ private:
 	/// The method checks if the width or height of the kernel is valid
 	/// \param rKernelSize [in] The kernel parameter to check
 	/// \returns long A valid kernel size 
-	long validateKernelSize(SVLongValueObjectClass& rKernelSize);
+	long validateKernelSize(SvVol::SVLongValueObjectClass& rKernelSize);
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
 #pragma endregion Private Methods
 
 private:
 #pragma region Member Variables
-	SVLongValueObjectClass m_KernelArray;			//The dynamic kernel array
-	SVLongValueObjectClass m_KernelWidth;			//The kernel width
-	SVLongValueObjectClass m_KernelHeight;			//The kernel height
-	SVLongValueObjectClass m_RankingRank;
+	SvVol::SVLongValueObjectClass m_KernelArray;			//The dynamic kernel array
+	SvVol::SVLongValueObjectClass m_KernelWidth;			//The kernel width
+	SvVol::SVLongValueObjectClass m_KernelHeight;			//The kernel height
+	SvVol::SVLongValueObjectClass m_RankingRank;
 
 	SVMatroxBuffer m_milKernel;						//The Matrox buffer for the filter
 #pragma endregion Member Variables

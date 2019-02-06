@@ -68,22 +68,6 @@ enum SVGetPathInfo
 
 #pragma warning(disable:4308)
 
-// Default Data Type ...
-const DWORD SV_1BIT                     = 1;
-const DWORD SV_8BIT_INT                 = ( SV_GET_BIT_NUMBER( __int8 ) );
-const DWORD SV_BYTE                     = SV_8BIT_INT;
-const DWORD SV_SIGNED_8BIT_INT          = ( SV_GET_BIT_NUMBER( __int8 ) + static_cast< DWORD >( SVBufferSigned ) );
-const DWORD SV_CHAR                     = SV_SIGNED_8BIT_INT;
-const DWORD SV_16BIT_INT                = ( SV_GET_BIT_NUMBER( __int16 ) + SVBufferUnsigned );
-const DWORD SV_SIGNED_16BIT_INT         = ( SV_GET_BIT_NUMBER( __int16 ) + static_cast< DWORD >( SVBufferSigned ) );
-const DWORD SV_32BIT_INT                = ( SV_GET_BIT_NUMBER( __int32 ) + SVBufferUnsigned );
-const DWORD SV_DWORD                    = SV_32BIT_INT;
-const DWORD SV_SIGNED_32BIT_INT         = ( SV_GET_BIT_NUMBER( __int32 ) + static_cast< DWORD >( SVBufferSigned ) );
-const DWORD SV_LONG                     = SV_SIGNED_32BIT_INT;
-const DWORD SV_64BIT_INT                = ( SV_GET_BIT_NUMBER( __int64 ) + SVBufferUnsigned );
-const DWORD SV_SIGNED_64BIT_INT         = ( SV_GET_BIT_NUMBER( __int64 ) + static_cast< DWORD >( SVBufferSigned ) );
-const DWORD SV_FLOAT                    = ( SV_GET_BIT_NUMBER( float )  + static_cast< DWORD >( SVBufferFloat ) );
-
 ////////////////////////////////////////////////////////////////////////////
 // IO DLL Function Types
 
@@ -142,27 +126,6 @@ CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd );
 long SVCalcLinePixelNumber( long Width, long Height );
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetDataTypeMin
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-double SVGetDataTypeMin( DWORD DataType );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetDataTypeMax
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-double SVGetDataTypeMax( DWORD DataType );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetDataTypeRange
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-double SVGetDataTypeRange( DWORD DataType );
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetPathInformation
 // -----------------------------------------------------------------------------
 // .Description : Uses SVGetPathInfo enumeration...
@@ -175,20 +138,6 @@ BOOL SVGetPathInformation( std::string& rOutput, LPCTSTR TStrFileInputPath, DWOR
 // .Description : Use this function to convert an SVObserver Version to a string.
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVGetVersionString( std::string& rCurrentVersion, DWORD dwVersion );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVConvertToHexString
-// -----------------------------------------------------------------------------
-// .Description : Convert hex binary data to a hex Dump String
-////////////////////////////////////////////////////////////////////////////////
-void SVConvertToHexString( DWORD len, LPBYTE buff, std::string& rHexString );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVConvertFromHexString
-// -----------------------------------------------------------------------------
-// .Description : Convert hex Dump String to hex binary data
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const std::string& rHexString );
 
 CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& rMenuPos );
 CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues, int& rMenuPos );
@@ -211,5 +160,3 @@ bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start =0);
 
 extern TCHAR	SVRCCurrentSVCPathName[];
 
-
-#define SV_ERROR_CONDITION     0xc0000000

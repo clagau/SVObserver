@@ -878,7 +878,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 			}
 			if (l_RetCode == S_OK)
 			{
-				SVMatroxLongArray histValueArray;
+				std::vector<long> histValueArray;
 
 				__int64 numPixels = l_Width * l_Height;
 
@@ -1418,14 +1418,7 @@ HRESULT SVMatroxImageInterface::Flip( const SVMatroxBuffer& p_rDest,
 }
 
 
-/**
-@SVOperationName Image Get Result - SVMatroxDoubleArray
-
-@SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
-
-*/
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID,
-																	   SVMatroxDoubleArray& p_adArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, std::vector<double>& p_adArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1463,13 +1456,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID,
 	return l_Code;	
 }
 
-/**
-@SVOperationName Image Get Result - SVMatroxLongArray
-
-@SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
-
-*/
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID,  SVMatroxLongArray& p_alArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, std::vector<long>& p_alArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1506,13 +1493,8 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, 
 	assert( l_Code == S_OK );
 	return l_Code;	
 }
-/**
-@SVOperationName Image Get Result - SVMatroxByteArray
 
-@SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
-
-*/
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, SVMatroxByteArray& p_acArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, std::vector<BYTE>& p_acArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS

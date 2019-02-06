@@ -19,11 +19,11 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVDisplayObject.h"
 #include "SVPublishList.h"
-#include "SVVirtualCamera.h"
 #include "SVRegressionTestStruct.h"
 #include "SVIPImageDataElement.h"
 #include "SVIPProductStruct.h"
 #include "InspectionEngine/SVIPResultData.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #include "ObjectInterfaces/IFormulaController.h"
@@ -101,12 +101,12 @@ public:
 	bool GoOnline();
 	bool GoOffline();
 
-	HRESULT RemoveImage(SVImageClass* pImage);
+	HRESULT RemoveImage(SvIe::SVImageClass* pImage);
 	HRESULT RemoveImage(const SVGUID& p_rImageId);
 
 	void RefreshPublishedList();
 
-	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
+	HRESULT GetCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras) const;
 
 	HRESULT UpdateWithLastProduct();
 	bool RunOnce();
@@ -242,10 +242,10 @@ public:
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
-	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
+	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
 	SvTl::SVTimeStamp getResultDefinitionUpdatTimeStamp() const;
 	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
-	HRESULT GetResultData(SVIPResultData& p_rResultData) const;
+	HRESULT GetResultData(SvIe::SVIPResultData& p_rResultData) const;
 
 	HRESULT IsToolSetListUpdated() const;
 	ToolSetView* GetToolSetView() const;
@@ -325,11 +325,11 @@ protected:
 	HRESULT MarkImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 	HRESULT MarkImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 
-	HRESULT UpdateExtents( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
-	HRESULT UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
-	SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
+	HRESULT UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
+	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
+	SvIe::SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
-	bool checkOkToDelete( SVTaskObjectClass* pTaskObject );
+	bool checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject );
 
 	mutable SvTl::SVTimeStamp m_ToolSetListTimestamp;
 	mutable SvTl::SVTimeStamp m_PPQListTimestamp;
@@ -338,7 +338,7 @@ protected:
 	SVProductDataQueue m_NewProductData;
 	SVMasterImageRegisterMap m_RegisteredImages;
 	SVImageIdImageDataStructMap m_Images;
-	SVIPResultData m_Results;
+	SvIe::SVIPResultData m_Results;
 	long m_AllViewsUpdated;
 
 	//

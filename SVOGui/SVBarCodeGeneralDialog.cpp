@@ -144,7 +144,7 @@ long SVBarCodeGeneralDialog::GetBarCodeType()
 
 }
 
-long SVBarCodeGeneralDialog::SetBarCodeType(SVLongValueObjectClass& rBarCodeType)
+long SVBarCodeGeneralDialog::SetBarCodeType(SvVol::SVLongValueObjectClass& rBarCodeType)
 {
 	long lBarCodeType;
 
@@ -168,7 +168,7 @@ double SVBarCodeGeneralDialog::GetBarCodeStringSize()
 	return (double)atol(m_szStringSize);
 }
 
-double SVBarCodeGeneralDialog::SetBarCodeStringSize(SVDoubleValueObjectClass& rStringSize)
+double SVBarCodeGeneralDialog::SetBarCodeStringSize(SvVol::SVDoubleValueObjectClass& rStringSize)
 {
 	double dStringSize;
 
@@ -212,7 +212,7 @@ double SVBarCodeGeneralDialog::GetBarCodeSearchSpeed()
 	}
 }
 
-double SVBarCodeGeneralDialog::SetBarCodeSearchSpeed(SVDoubleValueObjectClass& rSearchSpeed)
+double SVBarCodeGeneralDialog::SetBarCodeSearchSpeed(SvVol::SVDoubleValueObjectClass& rSearchSpeed)
 {
 	double dSearchSpeed;
 
@@ -264,7 +264,7 @@ double SVBarCodeGeneralDialog::GetForegroundColor()
 	}
 }
 
-double SVBarCodeGeneralDialog::SetForegroundColor(SVDoubleValueObjectClass& rForegroundColor)
+double SVBarCodeGeneralDialog::SetForegroundColor(SvVol::SVDoubleValueObjectClass& rForegroundColor)
 {
 	double dBarCodeColor;
 
@@ -292,7 +292,7 @@ double SVBarCodeGeneralDialog::GetOrientation()
 	return (double)m_iOrientation;
 }
 
-double SVBarCodeGeneralDialog::SetOrientation(SVDoubleValueObjectClass &rOrientation)
+double SVBarCodeGeneralDialog::SetOrientation(SvVol::SVDoubleValueObjectClass &rOrientation)
 {
 	double dOrientation;
 
@@ -312,7 +312,7 @@ double SVBarCodeGeneralDialog::GetSkewNegative()
 	return (double)m_iSkewNegative;
 }
 
-double SVBarCodeGeneralDialog::SetSkewNegative(SVDoubleValueObjectClass &rSkewNegative)
+double SVBarCodeGeneralDialog::SetSkewNegative(SvVol::SVDoubleValueObjectClass &rSkewNegative)
 {
 	double dSkewNegative;
 
@@ -332,7 +332,7 @@ double SVBarCodeGeneralDialog::GetSkewPositive()
 	return (double)m_iSkewPositive;
 }
 
-double SVBarCodeGeneralDialog::SetSkewPositive(SVDoubleValueObjectClass &rSkewPositive)
+double SVBarCodeGeneralDialog::SetSkewPositive(SvVol::SVDoubleValueObjectClass &rSkewPositive)
 {
 	double dSkewPositive;
 
@@ -352,7 +352,7 @@ double SVBarCodeGeneralDialog::GetThreshold()
 	return (double)m_iThreshold;
 }
 
-double SVBarCodeGeneralDialog::SetThreshold(SVDoubleValueObjectClass &rThreshold)
+double SVBarCodeGeneralDialog::SetThreshold(SvVol::SVDoubleValueObjectClass &rThreshold)
 {
 	double dThreshold;
 
@@ -367,7 +367,7 @@ double SVBarCodeGeneralDialog::SetThreshold(SVDoubleValueObjectClass &rThreshold
 	return dThreshold;
 }
 
-bool SVBarCodeGeneralDialog::SetBarcodeStringFormat(SVEnumerateValueObjectClass& rStringFormat)
+bool SVBarCodeGeneralDialog::SetBarcodeStringFormat(SvVol::SVEnumerateValueObjectClass& rStringFormat)
 {
 	m_pStringFormat = &rStringFormat;
 	return true;
@@ -378,7 +378,7 @@ CString SVBarCodeGeneralDialog::GetBarcodeStringFormat()
 	return m_StringFormat;
 }
 
-bool SVBarCodeGeneralDialog::SetBarcodeThresholdType(SVLongValueObjectClass& rThresholdType)
+bool SVBarCodeGeneralDialog::SetBarcodeThresholdType(SvVol::SVLongValueObjectClass& rThresholdType)
 {
 	long l_lType = 0;
 	bool l_bRet = S_OK == rThresholdType.GetValue(l_lType);
@@ -394,7 +394,7 @@ int SVBarCodeGeneralDialog::GetBarcodeThresholdType()
 	return m_iThresholdRadio;
 }
 
-bool SVBarCodeGeneralDialog::SetUnEvenGrid(SVBoolValueObjectClass& rUnEvenGrid)
+bool SVBarCodeGeneralDialog::SetUnEvenGrid(SvVol::SVBoolValueObjectClass& rUnEvenGrid)
 {
 	BOOL Value;
 	bool l_bRet = S_OK == rUnEvenGrid.GetValue(Value);
@@ -719,7 +719,7 @@ BOOL SVBarCodeGeneralDialog::GetWarnedOnFail()
 	return m_bWarnOnFail;
 }
 
-long SVBarCodeGeneralDialog::SetTimeout(SVLongValueObjectClass &svlTimeout)
+long SVBarCodeGeneralDialog::SetTimeout(SvVol::SVLongValueObjectClass &svlTimeout)
 {
 	long l_lTimeout;
 

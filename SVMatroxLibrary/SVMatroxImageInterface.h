@@ -83,9 +83,9 @@ public:
 	static HRESULT Flip( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageFlipEnum p_lOperation);
 
 	// This function replaces MimGetResult
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVMatroxDoubleArray& p_adArray);
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVMatroxLongArray& p_alArray);
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVMatroxByteArray& p_acArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, std::vector<double>& p_adArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, std::vector<long>& p_alArray);
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, std::vector<BYTE>& p_acArray);
 	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, void * p_pArray);
 
 	// This function replaces MimHistogram

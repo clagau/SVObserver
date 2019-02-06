@@ -23,7 +23,10 @@
 class SVGUID;
 class SVInspectionProcess;
 class SVObjectClass;
+namespace SvTo
+{
 class SVToolClass;
+}
 namespace SvXml
 {
 	class SVObjectXMLWriter;
@@ -95,7 +98,7 @@ protected:
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	// Parameter: rTool <in> Reference to the tool to save
 	//************************************
-	void writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToolClass& rTool ) const;
+	void writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SvTo::SVToolClass& rTool ) const;
 
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string

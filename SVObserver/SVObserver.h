@@ -21,7 +21,7 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRemoteFontManager.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
-#include "InspectionEngine/SVUtilityIniClass.h"
+#include "SVLibrary/SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "Definitions/SVPPQEnums.h"
@@ -246,8 +246,6 @@ public:
 
 	HRESULT SendCameraParameters();
 
-	void SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams);
-
 	HRESULT SetModeEdit( bool p_bState );
 	void SetTestMode(bool p_bNoSecurity = false);
 	HRESULT GetTriggersAndCounts( std::string& rTriggerCounts ) const;
@@ -331,7 +329,7 @@ public:
 	// For managing remotely created/edited fonts through the SIAC
 	SVRemoteFontManager m_mgrRemoteFonts;
 
-	typedef std::map<UINT, SVUtilityIniClass> UtilityMenuMap;
+	typedef std::map<UINT, SvLib::SVUtilityIniClass> UtilityMenuMap;
 	UtilityMenuMap m_UtilityMenu;
 
 #pragma endregion Public Member variables

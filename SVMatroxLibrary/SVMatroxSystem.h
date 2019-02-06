@@ -27,7 +27,7 @@ class SVMatroxDigitizerInterface;
 
 */
 
-class SVMatroxSystem : public boost::noncopyable
+class SVMatroxSystem
 {
 	friend SVMatroxSystemInterface;
 	friend SVMatroxBufferInterface;
@@ -35,7 +35,12 @@ class SVMatroxSystem : public boost::noncopyable
 
 public:
 	SVMatroxSystem();
+	SVMatroxSystem(const SVMatroxSystem&) = delete;
+	SVMatroxSystem(SVMatroxSystem&&) = delete;
+
 	virtual ~SVMatroxSystem();
+
+	SVMatroxSystem& operator=(const SVMatroxSystem&) = delete;
 
 	bool operator<( const SVMatroxSystem& p_rSystem ) const;
 

@@ -23,6 +23,9 @@
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -582,3 +585,4 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 }
 #pragma endregion Private Methods
 
+} //namespace SvVol

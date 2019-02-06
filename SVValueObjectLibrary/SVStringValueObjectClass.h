@@ -17,6 +17,9 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVStringValueObjectClass : public SVValueObjectClass<std::string>
 {
 	SV_DECLARE_CLASS( SVStringValueObjectClass );
@@ -59,3 +62,4 @@ private:
 	void LocalInitialize();
 };
 
+} //namespace SvVol

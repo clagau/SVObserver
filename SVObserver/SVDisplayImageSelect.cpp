@@ -13,8 +13,8 @@
 #include "SVDisplayImageSelect.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
+#include "InspectionEngine/SVImageClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
@@ -63,7 +63,7 @@ void SVDisplayImageSelect::OnOK()
 	
 	if (LB_ERR != index)
 	{
-		m_pCurrentImage = (SVImageClass*) m_ImageSelectList.GetItemData( index );
+		m_pCurrentImage = reinterpret_cast<SvIe::SVImageClass*> (m_ImageSelectList.GetItemData( index ));
 	}
 	CDialog::OnOK();
 }
@@ -95,7 +95,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 
 		for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 		{
-			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
+			SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (const_cast< SVObjectClass* >( *l_Iter ));
 
 			if (nullptr != pImage && SvPb::noAttributes != pImage->ObjectAttributesAllowed())
 			{

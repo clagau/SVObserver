@@ -16,7 +16,7 @@
 #include "SVExternalToolDlg.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVExternalToolTask.h"
+#include "Operators/SVExternalToolTask.h"
 #include "SVExternalToolDetailsSheet.h"
 #include "SVOGui/SVShowDependentsDialog.h"
 #include "SVInspectionProcess.h"
@@ -86,7 +86,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 		m_TaskObjectID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
 	}
 
-	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
+	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 	ASSERT( m_pTask );
 
 	m_pCancelData = nullptr;
@@ -354,7 +354,6 @@ void SVExternalToolDlg::SetDependencies()
 	int ilbSize = m_lbDependentList.GetCount();
 	for ( i = 0 ; i < ilbSize ; i++ )
 	{
-		//SVFileNameValueObjectClass svDependent;
 		CString Temp;
 		m_lbDependentList.GetText(i, Temp);
 		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( std::string(Temp), true );
@@ -469,7 +468,7 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 	if( nullptr != m_pTask )
 	{
 		SVObjectPtrVector list;
-		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FindEnum::FIND_ALL_OBJECTS_EXP_INPUT_IMAGES);
+		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_ALL_OBJECTS_EXP_INPUT_IMAGES);
 
 		std::string DisplayText = SvUl::LoadStdString( IDS_CHANGE_DLL_EXTERNAL_TOOL );
 		std::string Name( m_pTask->GetName() );
@@ -511,7 +510,7 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 {
 	int i( 0 );
 
-	SVExternalToolTaskData* pOriginalData = static_cast<SVExternalToolTaskData*> (m_pCancelData);
+	SvOp::SVExternalToolTaskData* pOriginalData = static_cast<SvOp::SVExternalToolTaskData*> (m_pCancelData);
 	// LOAD DLL NAME
 	m_pTask->m_Data.m_voDllPath = pOriginalData->m_voDllPath;
 
@@ -560,11 +559,11 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
 {
 	SVObjectPtrVector list;
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FindEnum::FIND_IMAGES );
+	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_IMAGES );
 	m_pTask->DisconnectInputsOutputs(list);
 
 	list.clear();
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FindEnum::FIND_VALUES );
+	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_VALUES );
 	m_pTask->HideInputsOutputs(list);
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();

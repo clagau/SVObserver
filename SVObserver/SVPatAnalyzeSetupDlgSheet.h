@@ -11,8 +11,6 @@
 
 #pragma once
 
-class SVPatternAnalyzerClass;
-
 class SVPatAnalyzeSetupDlgSheet : public CPropertySheet
 {
 	DECLARE_DYNAMIC(SVPatAnalyzeSetupDlgSheet)

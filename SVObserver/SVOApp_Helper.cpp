@@ -13,6 +13,9 @@
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/ModelessMessageBox.h"
+#include "SVOGui/SVLicenseMgrModelessDlg.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVConfigurationObject.h"
 #pragma endregion Includes
 
 #pragma region implementation of methods from ISVOApp_Helper
@@ -71,5 +74,30 @@ void SvOi::CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent)
 HRESULT SvOi::SetupDialogManager(const SVGUID& rClassId, const SVGUID& rObjectId, HWND hWnd)
 {
 	return SVSetupDialogManager::Instance().SetupDialog(rClassId, rObjectId, CWnd::FromHandle(hWnd));
+}
+
+void SvOi::showLicenseManagerDialog(const std::string& rMessage, const SVGuidSet& rList, HANDLE hCheckEvent)
+{
+	SVLicenseMgrModelessDlg::Show(rMessage, rList, hCheckEvent);
+}
+
+void SvOi::destroyLicenseManagerDialog()
+{
+	SVLicenseMgrModelessDlg::Destroy();
+}
+
+long SvOi::getGigePacketSize()
+{
+	return TheSVObserverApp.getGigePacketSize();
+}
+
+void SvOi::modifyAcquisitionDevice(LPCTSTR acquisitionName, const SVDeviceParamCollection* pParams)
+{
+	SVConfigurationObject* pConfig = nullptr;
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	if (nullptr != pConfig)
+	{
+		pConfig->ModifyAcquisitionDevice(acquisitionName, pParams);
+	}
 }
 #pragma endregion implementation of methods from ISVOApp_Helper

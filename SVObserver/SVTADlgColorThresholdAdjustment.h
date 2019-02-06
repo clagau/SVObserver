@@ -12,20 +12,24 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/BandEnums.h"
+#include "SVDrawObject.h"
 #include "SVTADlgColorThresholdBasePage.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
-class SVIPDoc;
-class SVColorToolClass;
+namespace SvOp
+{
 class SVColorThresholdClass;
+}
+namespace SvVol
+{
 class SVLongValueObjectClass;
 class SVBoolValueObjectClass;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVTADlgColorThresholdAdjustment dialog
+}
 
 class SVTADlgColorThresholdAdjustment : public SVTADlgColorThresholdBasePage
 {
@@ -37,6 +41,7 @@ public:
 	virtual ~SVTADlgColorThresholdAdjustment();
 
 	void SetInspectionData();
+	void setBand(SvDef::BandEnum band){ m_band = band; }
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdAdjustment)
@@ -74,7 +79,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	void getThresholdParams();
 	void setThresholdParams();
 	void updateControls();
 	void setScrollRange( CSliderCtrl* pSliderCtrl, int min, int max );
@@ -82,24 +86,25 @@ protected:
 	void updateGraphDisplay();
 	void setInitialValues();
 	void RefreshProperties();
+	void updateHistogram();
+	void updateThresholdBars();
+
+	bool initHistogram();
 
 public:
-	int m_BandNumber;
 
 protected:
-	SVIPDoc*                m_pCurrentDocument;
-	SVColorThresholdClass*  m_pThreshold;
-	SVLongValueObjectClass* m_pUpperThreshold;
-	SVLongValueObjectClass* m_pLowerThreshold;
-	SVBoolValueObjectClass* m_pExclude;
-	SVBoolValueObjectClass* m_pEnabled;
-
+	SvOp::SVColorThresholdClass* m_pThreshold{nullptr};
 	SVValueBaseNormalizerClass m_Normalizer;
 
 private:
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
+
+	SvDef::BandEnum m_band{SvDef::Band0};
+	SvOi::SVImageBufferHandlePtr m_histogramImage;
+	SVDrawObjectClass m_graphFigure;
+	SVDrawObjectListClass m_thresholdBarFigures;
+	__int64 m_histogramResultID{0LL};
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.

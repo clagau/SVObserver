@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVColorTool.h"
-#include "SVColorThreshold.h"
+#include "Tools/SVColorTool.h"
+#include "Operators/SVColorThreshold.h"
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVInspectionProcess.h"
@@ -83,7 +83,7 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	objectInfo.SubType = SvPb::SVColorThresholdObjectType;
 
 	// Get the color threshold object
-	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
+	m_pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 
 	if( m_pThreshold )
 	{
@@ -94,19 +94,19 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		m_pExtentLeft = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentLeft = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		m_pExtentTop = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentTop = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		m_pExtentWidth = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentWidth = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		m_pExtentHeight = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentHeight = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Initialize Extent
 		double value;
@@ -122,7 +122,7 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 		m_pExtentHeight->GetValue( value );
 		m_pSheet->m_rectROI.bottom = (long)(value) + m_pSheet->m_rectROI.top;
 
-		SVImageClass* pImage = m_pTool->getOutputImage();
+		SvIe::SVImageClass* pImage = m_pTool->getOutputImage();
 
 		if( nullptr != pImage )
 		{

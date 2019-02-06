@@ -29,10 +29,15 @@
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVImageClass, SVImageClassGuid);
 
@@ -1438,3 +1443,5 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 	}
 	return retValue;
 }
+
+} //namespace SvIe

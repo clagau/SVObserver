@@ -12,6 +12,16 @@
 #include "stdafx.h"
 #include "SVIPResultItemDefinition.h"
 
+namespace SvIe
+{
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVIPResultItemDefinition::SVIPResultItemDefinition()
 : m_ObjectID(), m_IndexPresent( false ), m_Index(0)
 {
@@ -84,3 +94,4 @@ bool SVIPResultItemDefinition::GetIndexPresent() const
 	return m_Index;
 }
 
+} //namespace SvIe

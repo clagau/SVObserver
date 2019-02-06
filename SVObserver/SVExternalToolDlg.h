@@ -18,7 +18,10 @@
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
+namespace SvOp
+{
 class SVExternalToolTask;
+}
 
 class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
@@ -67,7 +70,7 @@ protected:
 
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
-	SVExternalToolTask* m_pTask;
+	SvOp::SVExternalToolTask* m_pTask;
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
 	SVCancelData* m_pCancelData;

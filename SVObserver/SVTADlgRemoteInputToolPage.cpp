@@ -14,8 +14,8 @@
 #include "SVTADlgRemoteInputToolPage.h"
 
 #include "SVInspectionProcess.h"
-#include "SVRemoteInputTool.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVRemoteInputTool.h"
+#include "Tools/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
@@ -63,7 +63,7 @@ BOOL SVTADlgRemoteInputToolPage::OnInitDialog()
 
 	if( l_Status )
 	{
-		m_pTool = dynamic_cast<SVRemoteInputTool*> (m_pParentDialog->GetTool());
+		m_pTool = dynamic_cast<SvTo::SVRemoteInputTool*> (m_pParentDialog->GetTool());
 	}
 
 	l_Status = l_Status && ( nullptr != m_pTool );

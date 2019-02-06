@@ -18,10 +18,15 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS( SVObjectAppClass, SVObjectAppClassGuid )
 
@@ -159,4 +164,4 @@ bool SVObjectAppClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 	return rChildObject.createAllObjects(createStruct);
 }
 
-
+} //namespace SvIe

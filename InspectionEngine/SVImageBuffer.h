@@ -15,6 +15,9 @@
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 struct SVOverlayFigureStruct
 {
 	SVOverlayFigureStruct()
@@ -173,3 +176,4 @@ private:
 	BYTE *m_pBuffer;
 };
 
+} //namespace SvIe

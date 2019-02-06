@@ -28,7 +28,7 @@
 #include "SVInspectionProcess.h"
 #include "SVObjectScriptParser.h"
 #include "SVToolSet.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "SVParserProgressDialog.h"
 #include "SVInspectionTreeParser.h"
@@ -232,7 +232,7 @@ HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUI
 {
 	HRESULT Result( S_OK );
 
-	SVToolClass* pTool = dynamic_cast<SVToolClass*> (SVObjectManagerClass::Instance().GetObject( rToolGuid ));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( rToolGuid ));
 
 	if( nullptr == pTool)
 	{
@@ -302,7 +302,7 @@ void ToolClipboard::writeBaseAndEnvironmentNodes(SvXml::SVObjectXMLWriter& rXmlW
 	rXmlWriter.EndElement();
 }
 
-void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToolClass& rTool ) const
+void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SvTo::SVToolClass& rTool ) const
 {
 	_variant_t Value;
 
@@ -467,7 +467,6 @@ void ToolClipboard::readFileToString( const std::string& rFileName, std::string&
 	FileStream.open( rFileName.c_str(), std::ifstream::in | std::ifstream::binary | std::ifstream::ate );
 	if( FileStream.is_open() )
 	{
-		std::string FileData;
 		size_t FileSize( 0 );
 		FileSize = static_cast<size_t> (FileStream.tellg());
 		rFileData.resize( FileSize );
@@ -576,7 +575,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 	}
 
 	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_rInspection.GetUniqueObjectID());
-	SVToolClass* pPostTool = dynamic_cast<SVToolClass*>(SVObjectManagerClass::Instance().GetObject(rPostGuid));
+	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(rPostGuid));
 	if (nullptr != pDoc)
 	{
 		//Color tool can not be inserted into a IPD without color images
@@ -605,7 +604,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject(rInputImageGuid);
 					if (nullptr != pImage)
 					{
-						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor(SvPb::SVToolObjectType));
+						SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pImage->GetAncestor(SvPb::SVToolObjectType));
 						if (nullptr != pTool && nullptr != m_rInspection.GetToolSet())
 						{
 							int toolPositionOfImage = pTool->getToolPosition();
@@ -683,7 +682,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 
 			if (nullptr != pOwner && LoopToolClassGuid == pOwner->GetClassID())
 			{
-				NewName = static_cast<const SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
+				NewName = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
 			}
 			else
 			{

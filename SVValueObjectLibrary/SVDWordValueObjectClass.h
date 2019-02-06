@@ -19,6 +19,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVDWordValueObjectClass : public SVValueObjectClass<DWORD>
 {
 	SV_DECLARE_CLASS( SVDWordValueObjectClass );
@@ -50,5 +53,7 @@ protected:
 private:
 	void LocalInitialize();
 };
+
+} //namespace SvVol
 
 #pragma warning (pop)

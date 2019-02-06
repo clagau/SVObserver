@@ -17,6 +17,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVPointValueObjectClass : public SVValueObjectClass<SVPoint<long>>
 {
 	SV_DECLARE_CLASS( SVPointValueObjectClass );
@@ -65,3 +68,4 @@ private:
 	void LocalInitialize();
 };
 
+} //namespace SvVol

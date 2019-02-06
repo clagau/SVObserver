@@ -111,7 +111,7 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 			}
 			for (int i = 0; i < m_ResultData.m_ResultTableData.size(); i++)
 			{
-				IPResultTableData data = m_ResultData.m_ResultTableData[i];
+				SvIe::IPResultTableData data = m_ResultData.m_ResultTableData[i];
 				for (int j = 0; j < data.m_rowData.size(); j++)
 				{
 					CString tmp(data.m_rowData[j]);
@@ -152,7 +152,7 @@ void ResultTableListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 }
 
-void ResultTableListCtrl::addColumnHeadings(const std::vector <IPResultTableData>& rDataVec)
+void ResultTableListCtrl::addColumnHeadings(const std::vector <SvIe::IPResultTableData>& rDataVec)
 {
 	int nColumnCount = GetHeaderCtrl()->GetItemCount();
 	int nNewCount = static_cast<int>(rDataVec.size()) + 1;
@@ -179,7 +179,7 @@ void ResultTableListCtrl::addColumnHeadings(const std::vector <IPResultTableData
 
 	// load the Column names
 	int i = 1;
-	for( IPResultTableData data : rDataVec )
+	for(SvIe::IPResultTableData data : rDataVec )
 	{
 		LVCOLUMN col;
 		col.mask = LVCF_TEXT;

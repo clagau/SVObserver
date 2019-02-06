@@ -94,7 +94,7 @@ public:
 	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, double& p_rdValue) ;
 	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, long& p_rlValue) ;
 	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, std::string& p_rStrValue) ;
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) ;
+	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, std::vector<double>& p_adValues ) ;
 
 	// This function replaces MocrRestoreFont
 	static HRESULT RestoreFont( SVMatroxOcr& p_rFontId, const std::string& p_sFileName, SVOcrOperationEnum p_eOperation);

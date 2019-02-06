@@ -16,7 +16,10 @@
 #include "SVLibrary\ISVCancel.h"
 #pragma endregion Includes
 
-class SVExternalToolTask;
+namespace SvOp
+{
+	class SVExternalToolTask;
+}
 class SVExternalToolDlg;
 class SVIPDoc;
 
@@ -62,7 +65,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	void DestroyPages();
 
-	SVExternalToolTask* m_pTask;
+	SvOp::SVExternalToolTask* m_pTask;
 	const SVGUID m_InspectionID;
 	const SVGUID m_ToolObjectID;
 	const SVGUID m_TaskObjectID;

@@ -19,12 +19,20 @@
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
-class SVToolAdjustmentDialogSheetClass;
-class SVShiftTool;
+namespace SvOp
+{
 class SVEvaluateClass;
-class SVDoubleValueObjectClass;
-class SVBoolValueObjectClass;
+}
+namespace SvTo
+{
+class SVShiftTool;
+}
+namespace SvVol
+{
 class SVEnumerateValueObjectClass;
+}
+
+class SVToolAdjustmentDialogSheetClass;
 
 enum SVShiftResultEnum
 {
@@ -69,10 +77,10 @@ protected:
 	void FillShiftProperties();
 
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SVShiftTool* m_pTool;
+	SvTo::SVShiftTool* m_pTool;
 
-	SVEvaluateClass* pEvaluateTranslationX;
-	SVEvaluateClass* pEvaluateTranslationY;
+	SvOp::SVEvaluateClass* pEvaluateTranslationX;
+	SvOp::SVEvaluateClass* pEvaluateTranslationY;
 
 
 public:
@@ -85,7 +93,7 @@ public:
 	SvMc::SVEnumerateComboClass m_ctlShiftModeCombo;
 
 public:
-	SVEnumerateValueObjectClass *m_pvoShiftMode;
+	SvVol::SVEnumerateValueObjectClass *m_pvoShiftMode;
 	afx_msg void OnCbnSelchangeComboShiftMode();
 	CButton m_btnFormulaX;
 	CButton m_btnFormulaY;

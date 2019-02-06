@@ -16,13 +16,13 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVArchiveTool.h"
+#include "Tools/SVArchiveTool.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
 #include "SVArchiveHeaderEditDlg.h"
-#include "ArchiveToolHelper.h"
+#include "Tools/ArchiveToolHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOResource/ConstGlobalSvOr.h"
@@ -64,7 +64,7 @@ SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(const SVGUID& rInspectionID
 	m_strCaption = m_psp.pszTitle;
 	if( nullptr != m_pParent )
 	{
-		m_pTool = dynamic_cast <SVArchiveTool*> (m_pParent->GetTool());
+		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTool());
 	}
 }
 
@@ -85,7 +85,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 
 	//check for valid drive for text archive
 	std::string TmpArchiveFileName = ArchiveFileName;
-	ArchiveToolHelper athArchivePathAndName;
+	SvTo::ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFileName );
 
 	if (athArchivePathAndName.isUsingKeywords())
@@ -109,7 +109,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		SVCheckPathDir( ArchiveFileName.c_str(), true );
 	}
 	std::string Drive;
-	if(!ArchiveToolHelper::ValidateDrive(ArchiveFileName.c_str(), Drive) || ArchiveFileName.empty())
+	if(!SvTo::ArchiveToolHelper::ValidateDrive(ArchiveFileName.c_str(), Drive) || ArchiveFileName.empty())
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back( Drive );
@@ -311,7 +311,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	m_ArchiveFileName.GetWindowText( Text );
 	std::string ArchiveFullName = Text;
 
-	ArchiveToolHelper athArchivePathAndName;
+	SvTo::ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFullName ); 
 
 	bool bUsingKeywords = athArchivePathAndName.isUsingKeywords();

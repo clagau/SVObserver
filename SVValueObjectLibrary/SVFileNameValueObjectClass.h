@@ -18,6 +18,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVFileNameValueObjectClass : public SVValueObjectClass<std::string>
 {
 	SV_DECLARE_CLASS( SVFileNameValueObjectClass );
@@ -66,3 +69,4 @@ private:
 	SVFileNameClass m_FileName;
 };
 
+} //namespace SvVol

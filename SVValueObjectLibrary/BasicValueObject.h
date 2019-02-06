@@ -22,6 +22,10 @@
 
 class SVDeviceParam;
 
+namespace SvVol
+{
+
+
 class BasicValueObject : public SVObjectClass, public SvOi::IValueObject
 {
 public:
@@ -193,6 +197,8 @@ private:
 typedef std::shared_ptr<BasicValueObject> BasicValueObjectPtr;
 typedef std::pair<std::string, BasicValueObjectPtr> NameBasicValuePtrPair;
 typedef std::vector<NameBasicValuePtrPair> NameBasicValuePtrVector;
+
+} //namespace SvVol
 
 #pragma region Inline
 #include "BasicValueObject.inl"

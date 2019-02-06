@@ -244,7 +244,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							if( nullptr != pPPQ )
 							{
 								pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
-								SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass;
+								SvVol::SVVariantValueObjectClass* pValueObject = new SvVol::SVVariantValueObjectClass;
 
 								if(nullptr != pIOEntry && nullptr != pValueObject )
 								{

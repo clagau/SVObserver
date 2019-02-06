@@ -8,9 +8,9 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <boost\function.hpp>
+//Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <vector>
 #include "MessageData.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/StringTypeDef.h"

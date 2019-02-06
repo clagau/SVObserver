@@ -19,6 +19,10 @@
 
 class SVObjectClass;
 
+namespace SvIe
+{
+
+
 struct SVClassInfoStruct
 {
 	SVClassInfoStruct();
@@ -39,3 +43,4 @@ struct SVClassInfoStruct
 
 typedef std::vector<SVClassInfoStruct> SVClassInfoStructVector;
 
+} //namespace SvIe

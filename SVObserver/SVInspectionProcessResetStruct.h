@@ -16,7 +16,10 @@
 #include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
+namespace SvTo
+{
 class SVToolClass;
+}
 
 struct SVInspectionProcessResetStruct
 {
@@ -32,7 +35,7 @@ struct SVInspectionProcessResetStruct
 	SVObjectPtrSet m_ObjectSet;
 };
 
-typedef std::map<SVToolClass*, SVInspectionProcessResetStruct> SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
+typedef std::map<SvTo::SVToolClass*, SVInspectionProcessResetStruct> SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
 
 #include "SVInspectionProcessResetStruct.inl"
 

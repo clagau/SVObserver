@@ -30,6 +30,9 @@
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 enum OutputFormat
 {
@@ -191,6 +194,8 @@ private:
 #pragma endregion Member Variables
 };
 
+} //namespace SvVol
+
+#pragma region Inline
 #include "SVValueObjectClass.inl"
-
-
+#pragma endregion Inline

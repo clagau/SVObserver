@@ -110,5 +110,9 @@ namespace SvDef
 	//Filter constants
 	constexpr long cStandardKernelSize = 3;
 	constexpr int cMaxKernelSize = 21;
+
+	//SV Error condition mask
+	constexpr DWORD svErrorCondition = 0xc0000000;
+
 #pragma endregion Declarations
 } //namespace SvDef

@@ -14,13 +14,13 @@
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVInspectionProcess.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
-HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, SVCommandExtentResetModeEnum resetMode )
+HRESULT SVGuiExtentUpdater::SetImageExtent(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
 
@@ -40,7 +40,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 	return status;
 }
 
-HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode)
+HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SvIe::SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode)
 {
 	CWaitCursor wait;
 	HRESULT status = SvStl::Err_10002_SetImageExtentToParent_InvalidParameter;
@@ -61,7 +61,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObjec
 }
 
 
-HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,SVCommandExtentResetModeEnum resetMode )
+HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
 	HRESULT status = SvStl::Err_10003_SetImageExtentToFit_InvalidParameter;
@@ -82,7 +82,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 }
 
 
-HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode )
+HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SvIe::SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
 	HRESULT status = SvStl::Err_10002_SetImageExtentToParent_InvalidParameter;

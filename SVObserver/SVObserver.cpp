@@ -24,6 +24,7 @@
 #include "SVLibrary\SVOINIClass.h"
 #include "SVLibrary\SVOINILoader.h"
 #include "SVTimerLibrary\SVClock.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVGUID.h"
@@ -56,7 +57,7 @@
 
 
 #include "SVXMLLibrary\LoadConfiguration.h"
-#include "SVDigitizerProcessingClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 
 #include "SVOConfigAssistantDlg.h"
 
@@ -67,25 +68,23 @@
 
 #include "SVGigeCameraManagerDlg.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVMemoryManager.h"
-#include "SVArchiveTool.h"
+#include "SVOLibrary/SVMemoryManager.h"
+#include "Tools/SVArchiveTool.h"
 #include "SVArchiveWritingDlg.h"
 #include "SVLibrary\SVWinUtility.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SoftwareTriggerDlg.h"
-
-#include "Definitions/GlobalConst.h"
 
 #include "SVIOController.h"
 
 #include "SVDirectX.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "SVDigitizerProcessingClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary\SVVersionInfo.h"
 #include "SVConfigurationTreeWriter.h"
-#include "SVOLicenseManager.h"
+#include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
@@ -106,7 +105,6 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
-#include "Definitions/GlobalConst.h"
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MLPPQInfo.h"
@@ -459,12 +457,12 @@ void SVObserverApp::OnFileOpenSVC()
 			//
 			AfxGetApp()->WriteProfileString(_T("Settings"), _T("SVCFilePath"), svFileName.GetPathName().c_str());
 
-			TheSVOLicenseManager().ClearLicenseErrors();
+			SVOLicenseManager::Instance().ClearLicenseErrors();
 			if (S_OK == OpenFile(svFileName.GetFullFileName().c_str(), true))
 			{
-				if (TheSVOLicenseManager().HasToolErrors())
+				if (SVOLicenseManager::Instance().HasToolErrors())
 				{
-					TheSVOLicenseManager().ShowLicenseManagerErrors();
+					SVOLicenseManager::Instance().ShowLicenseManagerErrors();
 				}
 				ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: reset autosave timestamp after configuration was loaded
 			}
@@ -639,13 +637,13 @@ void SVObserverApp::OnUpdateFileClose(CCmdUI* PCmdUI)
 void SVObserverApp::OnUpdateFileNew(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW) && (TheSVOLicenseManager().HasMatroxLicense()));
+		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 void SVObserverApp::OnUpdateFileOpen(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (TheSVOLicenseManager().HasMatroxLicense()));
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -656,7 +654,7 @@ void SVObserverApp::OnUpdateFileOpen(CCmdUI* PCmdUI)
 void SVObserverApp::OnUpdateFileOpenSVC(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (TheSVOLicenseManager().HasMatroxLicense()));
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 void SVObserverApp::OnUpdateFileSaveAll(CCmdUI* PCmdUI)
@@ -725,7 +723,7 @@ void SVObserverApp::OnStop()
 		return;
 	}
 
-	if (TheSVMemoryManager().ReservedBytes(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME) > 0)
+	if (TheSVMemoryManager().ReservedBytes(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME) > 0)
 	{
 		pArchiveWriteDlg = new SVArchiveWritingDlg;
 		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
@@ -1348,7 +1346,7 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 	CWinApp::OnUpdateRecentFileMenu(PCmdUI);
 
 	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS) && (TheSVOLicenseManager().HasMatroxLicense()));
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 
 	for (long l = ID_FILE_MRU_FILE1; !bEnable && l < (long)(PCmdUI->m_nID); l++)
 		PCmdUI->m_pMenu->EnableMenuItem(l, MF_BYCOMMAND | MF_GRAYED);
@@ -1857,7 +1855,7 @@ BOOL SVObserverApp::InitInstance()
 
 	SvTi::SVHardwareManifest::Instance().Startup();
 	SvTi::SVTriggerProcessingClass::Instance().Startup();
-	SVDigitizerProcessingClass::Instance().Startup();
+	SvIe::SVDigitizerProcessingClass::Instance().Startup();
 
 	InitializeSecurity();
 
@@ -1959,7 +1957,7 @@ BOOL SVObserverApp::InitInstance()
 
 
 	//check to see what licenses are available before setting up any documents
-	TheSVOLicenseManager().InitLicenseManager();
+	SVOLicenseManager::Instance().InitLicenseManager();
 
 	m_mgrRemoteFonts.Startup();
 
@@ -2036,15 +2034,15 @@ BOOL SVObserverApp::InitInstance()
 	{
 		iGoOfflineBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB);
 		iAsyncBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
-		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	else
 	{
 		iGoOfflineBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB);
 		iAsyncBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB);
-		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-		TheSVMemoryManager().CreatePool(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG
@@ -2132,13 +2130,13 @@ BOOL SVObserverApp::InitInstance()
 	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
 	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, std::move(pSettings));
 	
-	if (!TheSVOLicenseManager().HasMatroxLicense())
+	if (!SVOLicenseManager::Instance().HasMatroxLicense())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_52_NOMATROX_DONGLE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25013_NoMatroxDongle);
 	}
 
-	if (TheSVOLicenseManager().HasMatroxLicense() && !TheSVOLicenseManager().HasMatroxGigELicense() && IsMatroxGige())
+	if (SVOLicenseManager::Instance().HasMatroxLicense() && !SVOLicenseManager::Instance().HasMatroxGigELicense() && IsMatroxGige())
 	{
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_MatroxGigELicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10127);
@@ -2202,7 +2200,7 @@ int SVObserverApp::ExitInstance()
 	m_mgrRemoteFonts.Shutdown();
 
 	SvTi::SVTriggerProcessingClass::Instance().Shutdown();
-	SVDigitizerProcessingClass::Instance().Shutdown();
+	SvIe::SVDigitizerProcessingClass::Instance().Shutdown();
 	SvTi::SVHardwareManifest::Instance().Shutdown();
 
 	SVObjectManagerClass::Instance().Shutdown();
@@ -2399,7 +2397,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 	while (1)
 	{
-		TheSVOLicenseManager().ClearLicenseErrors();
+		SVOLicenseManager::Instance().ClearLicenseErrors();
 
 		bOk = SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 
@@ -2434,14 +2432,14 @@ HRESULT SVObserverApp::OpenSVXFile()
 					break;
 				}
 
-				if (hr & SV_ERROR_CONDITION)
+				if (hr & SvDef::svErrorCondition)
 				{
 					break;
 				}
 				std::string itemType;
 				int errorCode(0);
 				hr = SvXml::CheckObsoleteItems(XMLTree, configVer, itemType, errorCode);
-				if (hr & SV_ERROR_CONDITION)
+				if (hr & SvDef::svErrorCondition)
 				{
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Exception.setMessage(SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode);
@@ -2503,7 +2501,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 					}
 				}
 
-				if (hr & SV_ERROR_CONDITION)
+				if (hr & SvDef::svErrorCondition)
 				{
 					break;
 				}
@@ -2514,19 +2512,19 @@ HRESULT SVObserverApp::OpenSVXFile()
 				if (nullptr != pConfig)
 				{
 					hr = pConfig->LoadRemoteMonitorList(XMLTree);
-					if (hr & SV_ERROR_CONDITION)
+					if (hr & SvDef::svErrorCondition)
 					{
 						break;
 					}
 
 					hr = pConfig->LoadGlobalConstants(XMLTree);
-					if (hr & SV_ERROR_CONDITION)
+					if (hr & SvDef::svErrorCondition)
 					{
 						break;
 					}
 
 					hr = pConfig->LoadObjectAttributesSet(XMLTree);
-					if (hr & SV_ERROR_CONDITION)
+					if (hr & SvDef::svErrorCondition)
 					{
 						break;
 					}
@@ -2563,7 +2561,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				break;
 			} // while (1)
 
-			if (hr & SV_ERROR_CONDITION)
+			if (hr & SvDef::svErrorCondition)
 			{
 				// If there was an error during configuration loading...
 				SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
@@ -2876,7 +2874,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 		if (bClose)
 		{
-			TheSVOLicenseManager().ClearLicenseErrors();
+			SVOLicenseManager::Instance().ClearLicenseErrors();
 
 			bOk = SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING);
 
@@ -3622,7 +3620,7 @@ HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, const SVGU
 {
 	HRESULT l_Status = S_OK;
 
-	SVObjectAppClass* l_pObject = dynamic_cast<SVObjectAppClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
+	SvIe::SVObjectAppClass* l_pObject = dynamic_cast<SvIe::SVObjectAppClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
 
 	if (nullptr != l_pObject)
 	{
@@ -4080,14 +4078,14 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			}
 			cDlg.ClearImportedInspectionInfoList();
 
-			if (TheSVOLicenseManager().HasToolErrors())
+			if (SVOLicenseManager::Instance().HasToolErrors())
 			{
-				TheSVOLicenseManager().ShowLicenseManagerErrors();
+				SVOLicenseManager::Instance().ShowLicenseManagerErrors();
 			}
 			else
 			{
 				//close dialog if it is up and has no errors
-				TheSVOLicenseManager().ClearLicenseErrors();
+				SVOLicenseManager::Instance().ClearLicenseErrors();
 			}
 
 			//
@@ -4356,7 +4354,7 @@ HRESULT SVObserverApp::DisconnectCameras()
 		hr = E_FAIL;
 	}
 
-	SVDigitizerProcessingClass::Instance().DisconnectDevices();
+	SvIe::SVDigitizerProcessingClass::Instance().DisconnectDevices();
 
 	return hr;
 }
@@ -4365,7 +4363,7 @@ HRESULT SVObserverApp::ConnectCameras()
 {
 	HRESULT hr = S_OK;
 
-	SVDigitizerProcessingClass::Instance().ConnectDevices();
+	SvIe::SVDigitizerProcessingClass::Instance().ConnectDevices();
 
 	try
 	{
@@ -4387,7 +4385,7 @@ HRESULT SVObserverApp::SendCameraParameters()
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
 	SvDef::StringVector Cameras;
-	SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList(Cameras);
+	SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList(Cameras);
 	SvDef::StringVector::const_iterator Iter(Cameras.begin());
 	for (; Cameras.end() != Iter; ++Iter)
 	{
@@ -4397,7 +4395,7 @@ HRESULT SVObserverApp::SendCameraParameters()
 		SVLightReference* pDummyLight = nullptr;
 		SVLut* pDummyLut = nullptr;
 
-		SVAcquisitionClassPtr pDevice(SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(Iter->c_str()));
+		SvIe::SVAcquisitionClassPtr pDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(Iter->c_str()));
 		if (nullptr != pDevice && nullptr != pConfig &&
 			pConfig->GetAcquisitionDevice(Iter->c_str(), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams))
 		{
@@ -4414,7 +4412,12 @@ HRESULT SVObserverApp::SendCameraParameters()
 			// Send GIGE packet size if was set from hardware.ini
 			if (IsMatroxGige() && m_rInitialInfo.m_gigePacketSize != 0)
 			{
-				SetGigePacketSizeDeviceParam(pDeviceParams);
+				pDeviceParams->SetParameter(DeviceParamGigePacketSize, SVLongValueDeviceParam {m_rInitialInfo.m_gigePacketSize});
+				SVDeviceParam* pParam = pDeviceParams->GetParameter(DeviceParamGigePacketSize);
+				if (nullptr != pParam)
+				{
+					pParam->SetName(DeviceParamGigePacketSize_String);
+				}
 			}
 
 			if (pDeviceParams)
@@ -4431,27 +4434,6 @@ HRESULT SVObserverApp::SendCameraParameters()
 	}
 
 	return hr;
-}
-
-
-void SVObserverApp::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams)
-{
-	// check if Packet Size Device Param exists
-	SVDeviceParam* l_pGigePacketSize = pDeviceParams->GetParameter(DeviceParamGigePacketSize);
-	// if found - update it
-	// else - add it
-	if (nullptr != l_pGigePacketSize)
-	{
-		l_pGigePacketSize->SetValue(_variant_t(m_rInitialInfo.m_gigePacketSize));
-	}
-	else // add it
-	{
-		pDeviceParams->SetParameter(DeviceParamGigePacketSize, (const SVDeviceParam*)SVDeviceParamTempWrapper(SVDeviceParam::Create(DeviceParamGigePacketSize)));
-		SVLongValueDeviceParam* pParam = pDeviceParams->GetParameter(DeviceParamGigePacketSize).DerivedValue(pParam);
-		ASSERT(pParam);
-		pParam->lValue = m_rInitialInfo.m_gigePacketSize;
-		pParam->SetName(DeviceParamGigePacketSize_String);
-	}
 }
 
 HRESULT SVObserverApp::SetModeEdit(bool p_bState)
@@ -5273,7 +5255,7 @@ HRESULT SVObserverApp::DisconnectAllCameraBuffers()
 
 	if (S_OK == hr)
 	{
-		hr = SVDigitizerProcessingClass::Instance().DestroyBuffers();
+		hr = SvIe::SVDigitizerProcessingClass::Instance().DestroyBuffers();
 	}
 
 	return hr;
@@ -5286,16 +5268,16 @@ HRESULT SVObserverApp::ConnectCameraBuffers()
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	SvDef::StringVector Cameras;
-	SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList(Cameras);
+	SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList(Cameras);
 
 	if (nullptr != pConfig)
 	{
 		SvDef::StringVector::const_iterator Iter(Cameras.begin());
 		for (; Cameras.end() != Iter; ++Iter)
 		{
-			SVAcquisitionClassPtr pAcqDevice;
+			SvIe::SVAcquisitionClassPtr pAcqDevice;
 
-			pAcqDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(Iter->c_str());
+			pAcqDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(Iter->c_str());
 			if (nullptr != pAcqDevice)
 			{
 				// dummy vars
@@ -5528,9 +5510,9 @@ bool SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 	//if S_OK, check to see if it has any tool errors in the license manager
 	if (S_OK == hr)
 	{
-		if (TheSVOLicenseManager().HasToolErrors())
+		if (SVOLicenseManager::Instance().HasToolErrors())
 		{
-			TheSVOLicenseManager().ShowLicenseManagerErrors();
+			SVOLicenseManager::Instance().ShowLicenseManagerErrors();
 		}
 	}
 

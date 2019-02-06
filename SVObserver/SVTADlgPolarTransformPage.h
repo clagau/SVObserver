@@ -21,12 +21,21 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-class SVToolAdjustmentDialogSheetClass;
-class SVToolClass;
+namespace SvOp
+{
 class SVEvaluateClass;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
+namespace SvVol
+{
 class SVBoolValueObjectClass;
 class SVDoubleValueObjectClass;
 class SVEnumerateValueObjectClass;
+}
+class SVToolAdjustmentDialogSheetClass;
 #pragma endregion Declarations
 
 class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage
@@ -79,31 +88,31 @@ public:
 
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SVToolClass* m_pTool;
+	SvTo::SVToolClass* m_pTool;
 
 	SVGUID m_ImagePolarTransformID;
 
-	SVEvaluateClass*			m_pEvaluateCenterX;
-	SVDoubleValueObjectClass*	m_pCenterXResult;
+	SvOp::SVEvaluateClass* m_pEvaluateCenterX;
+	SvVol::SVDoubleValueObjectClass* m_pCenterXResult;
 
-	SVEvaluateClass*			m_pEvaluateCenterY;
-	SVDoubleValueObjectClass*	m_pCenterYResult;
+	SvOp::SVEvaluateClass* m_pEvaluateCenterY;
+	SvVol::SVDoubleValueObjectClass* m_pCenterYResult;
 
-	SVEvaluateClass*			m_pEvaluateStartRadius;
-	SVDoubleValueObjectClass*	m_pStartRadiusResult;
+	SvOp::SVEvaluateClass* m_pEvaluateStartRadius;
+	SvVol::SVDoubleValueObjectClass* m_pStartRadiusResult;
 
-	SVEvaluateClass*			m_pEvaluateEndRadius;
-	SVDoubleValueObjectClass*	m_pEndRadiusResult;
+	SvOp::SVEvaluateClass* m_pEvaluateEndRadius;
+	SvVol::SVDoubleValueObjectClass* m_pEndRadiusResult;
 
-	SVEvaluateClass*			m_pEvaluateStartAngle;
-	SVDoubleValueObjectClass*	m_pStartAngleResult;
+	SvOp::SVEvaluateClass* m_pEvaluateStartAngle;
+	SvVol::SVDoubleValueObjectClass* m_pStartAngleResult;
 
-	SVEvaluateClass*			m_pEvaluateEndAngle;
-	SVDoubleValueObjectClass*	m_pEndAngleResult;
+	SvOp::SVEvaluateClass* m_pEvaluateEndAngle;
+	SvVol::SVDoubleValueObjectClass* m_pEndAngleResult;
 
-	SVBoolValueObjectClass*		 m_pUseFormula;
-	SVEnumerateValueObjectClass* m_pAngleMethod;
-	SVEnumerateValueObjectClass* m_pInterpolationMode;
+	SvVol::SVBoolValueObjectClass*	m_pUseFormula;
+	SvVol::SVEnumerateValueObjectClass* m_pAngleMethod;
+	SvVol::SVEnumerateValueObjectClass* m_pInterpolationMode;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -12,8 +12,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVVirtualCamera.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVVirtualCamera.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #pragma endregion Includes
 
 class SVLightReference;
@@ -28,7 +28,7 @@ public:
 
 	virtual ~SVLightReferenceDialogPropertySheetClass();
 
-	bool CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA );
+	bool CreatePages(SvIe::SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA );
 	void DestroyAllPages();
 
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
@@ -55,19 +55,19 @@ public:
 	SVLightReferenceDialogPropertyPageClass( LPCTSTR lpszTitle = nullptr );
 	virtual ~SVLightReferenceDialogPropertyPageClass();
 
-	SVVirtualCamera*       mpCamera;  // for band information
-	SVAcquisitionClassPtr  mpDevice;  // for max and min values
-	SVLightReference*      mpLR;      // for switching bands (channels) within a property page
-	int miAttributeType;              // brightness, contrast, etc.
-	CString msAttributeName;
+	SvIe::SVVirtualCamera*       m_pCamera;  // for band information
+	SvIe::SVAcquisitionClassPtr  m_pDevice;  // for max and min values
+	SVLightReference*      m_pLR;      // for switching bands (channels) within a property page
+	int m_AttributeType;              // brightness, contrast, etc.
+	CString m_AttributeName;
 	
 	int miCurrentBand;
 
 
 	//{{AFX_DATA(SVLightReferenceDialogPropertyPageClass)
 	enum { IDD = IDD_LIGHTREFERENCE_PAGE };
-	CSliderCtrl	mValueSlider;
-	long	mlValue;
+	CSliderCtrl	m_ValueSlider;
+	long	m_Value;
 	//}}AFX_DATA
 
 	// Überschreibungen
@@ -86,14 +86,14 @@ protected:
 	void UpdateLightReference();
 	DWORD CurrentValue();
 	void SetCurrentValue(DWORD dw);
-	DWORD CurrentType() {return miAttributeType;}
-	CString CurrentName() {return msAttributeName;}
+	DWORD CurrentType() {return m_AttributeType;}
+	CString CurrentName() {return m_AttributeName;}
 
-	SVAcquisitionClass* mpAcquisition;
+	SvIe::SVAcquisitionClass* m_pAcquisition;
 
-	int miNumBands;
-	int miBandSize;
-	int miCamBand;
+	int m_NumBands;
+	int m_BandSize;
+	int m_CamBand;
 	
 
 	DECLARE_DYNCREATE(SVLightReferenceDialogPropertyPageClass)

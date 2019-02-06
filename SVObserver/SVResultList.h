@@ -22,13 +22,18 @@
 #pragma endregion Includes
 
 
-#pragma region Declarations
-class SVResultClass;
+namespace SvIe
+{
+struct SVIPResultData;
 class SVTaskObjectClass;
-class SVToolSetClass;
+}
+namespace SvOp
+{
+class SVResultClass;
+}
 
+class SVToolSetClass;
 enum SVInspectionStateEnum;
-#pragma endregion Declarations
 
 class SVResultListClass
 {
@@ -40,7 +45,7 @@ public:
 
 #pragma region Public Methods
 	void Destroy();
-	void Refresh(SVTaskObjectClass* pRootObject);
+	void Refresh(SvIe::SVTaskObjectClass* pRootObject);
 
 	void SetToolSet(SVToolSetClass* pToolSet);
 
@@ -51,7 +56,7 @@ public:
 	// Parameter:  rResultData <out>:  object containing data from the class's variables.
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
 	//************************************
-	void  GetResultData( SVIPResultData& p_rResultData) const;
+	void  GetResultData(SvIe::SVIPResultData& rResultData) const;
 
 	const SVGUID& getTableGuid() const { return m_ResultViewReferences.getTableGuid(); }
 	void setTableGuid(const SVGUID& guid) { m_ResultViewReferences.setTableGuid(guid); }
@@ -86,7 +91,7 @@ protected:
 	mutable Concurrency::critical_section m_Lock;
 	ResultViewReferences  m_ResultViewReferences;
 	SVToolSetClass* m_pToolSet;
-	std::vector<SVResultClass*> m_results;
+	std::vector<SvOp::SVResultClass*> m_results;
 #pragma endregion Member Variables
 };
 

@@ -17,8 +17,6 @@
 #include "SVDrawObject.h"
 #pragma endregion Includes
 
-class SVDrawObjectListClass;
-
 struct SVDlgImageOverlayOptions
 {
 	bool bFixed;
@@ -38,11 +36,11 @@ public:
 	struct OverlayStruct
 	{
 		SVDlgImageOverlayOptions  options;      // 
-		SVDrawObjectClass         svDrawObject; // Original Point set and Draw pen
-		std::vector<CPoint>       vecPoints;    // Normalized points
+		SVDrawObjectClass  svDrawObject; // Original Point set and Draw pen
+		std::vector<POINT>       vecPoints;    // Normalized points
 	};
 
-	typedef std::vector< OverlayStruct > SVOverlayStructVectorType;
+	typedef std::vector<OverlayStruct> SVOverlayStructVectorType;
 
 
 	SVDlgImageEditor();
@@ -52,8 +50,8 @@ public:
 	CPoint GetMouseCoordinates();	// in image coordinates, not screen
 
 	HRESULT ClearOverlayPoints();
-	HRESULT AddOverlayPoints( SVDrawObjectListClass* pDrawObjectList, SVDlgImageOverlayOptions options );
-	HRESULT AddOverlayPoints( SVDrawObjectClass& rsvDrawObject, SVDlgImageOverlayOptions options );
+	HRESULT AddOverlayPoints(const SVDrawObjectListClass& rDrawObjectList, SVDlgImageOverlayOptions options );
+	HRESULT AddOverlayPoints(const SVDrawObjectClass& rDrawObject, SVDlgImageOverlayOptions options );
 
 protected:
 	virtual void OnPaintOverlay(CPaintDC& dc) override;

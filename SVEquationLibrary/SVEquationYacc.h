@@ -25,8 +25,6 @@ class SVEquationBase;
 */
 class SVEquationYaccClass
 {
-	friend class SVEquationClass;
-
 public:
 	SVEquationYaccClass();
 	~SVEquationYaccClass();
@@ -34,6 +32,8 @@ public:
 	int yyerror(char *s);
 	int yylex();
 	int yyparse();
+
+	void setEquation(SVEquationBase* pEquation) { m_pEquation = pEquation; }
 
 public:
 	// Variables needed
@@ -59,7 +59,7 @@ public:
 	HRESULT m_StatusCode;
 
 protected:
-	SVEquationBase* pEquation;
+	SVEquationBase* m_pEquation;
 	
 	enum SVYaccLimitsEnum
 	{

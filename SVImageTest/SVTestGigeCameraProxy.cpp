@@ -1019,7 +1019,7 @@ HRESULT SVTestGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollectio
 	}
 	if ( S_OK == hr )
 	{
-		hr = SVGigeCameraProxy::SetDeviceParameters( rDeviceParams, m_pAcquisition->m_DeviceParams );
+		hr = m_pAcquisition->SetDeviceParameters(rDeviceParams);
 	}
 	if ( S_OK == hr )
 	{

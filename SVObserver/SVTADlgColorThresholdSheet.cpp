@@ -11,34 +11,34 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVColorTool.h"
+#include "Tools/SVColorTool.h"
 #include "SVTADlgColorThresholdSheet.h"
-
 #pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTADlgColorThresholdSheet
+constexpr TCHAR* thresholdHsiNames[] {_T("Hue Threshold Adjustment"), _T("Saturation Threshold Adjustment"), _T("Intensity Threshold Adjustment")};
+constexpr TCHAR* thresholdRgbNames[] {_T("Red Threshold Adjustment"), _T("Green Threshold Adjustment"), _T("Blue Threshold Adjustment")};
+#pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVTADlgColorThresholdSheet, CPropertySheet)
 
-SVTADlgColorThresholdSheet::SVTADlgColorThresholdSheet(SVColorToolClass* pPTool, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
+SVTADlgColorThresholdSheet::SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+	, m_pTool{pTool}
 {
-	m_pTool = pPTool;
-
 	AddTabs();
 }
 
-SVTADlgColorThresholdSheet::SVTADlgColorThresholdSheet(SVColorToolClass* pPTool, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
+SVTADlgColorThresholdSheet::SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	, m_pTool{pTool}
 {
-	m_pTool = pPTool;
 	m_pFigureEditor = new SVROIFigureEditor;
 	m_pFigureEditor->SetOverlayColor( RGB(255,255,255), RGB(0,0,0) );
 
@@ -74,37 +74,20 @@ void SVTADlgColorThresholdSheet::AddTabs()
 	}
 
 	mSheetROI.m_pSheet = this;
-	mSheetBand0.m_pSheet = this;
-	mSheetBand1.m_pSheet = this;
-	mSheetBand2.m_pSheet = this;
 	mSheetOutput.m_pSheet = this;
 
-	mSheetBand0.m_psp.dwFlags |= PSP_USETITLE;
-	mSheetBand1.m_psp.dwFlags |= PSP_USETITLE;
-	mSheetBand2.m_psp.dwFlags |= PSP_USETITLE;
+	AddPage( &mSheetROI );
 
-	if ( bIsHSI )
+	for (SvDef::BandEnum Band : SvDef::BandList)
 	{
-		mSheetBand0.m_psp.pszTitle = _T("Hue Threshold Adjustment");
-		mSheetBand1.m_psp.pszTitle = _T("Saturation Threshold Adjustment");
-		mSheetBand2.m_psp.pszTitle = _T("Intensity Threshold Adjustment");
-	}
-	else
-	{
-		mSheetBand0.m_psp.pszTitle = _T("Red Threshold Adjustment");
-		mSheetBand1.m_psp.pszTitle = _T("Green Threshold Adjustment");
-		mSheetBand2.m_psp.pszTitle = _T("Blue Threshold Adjustment");
+		mSheetBand[Band].m_pSheet = this;
+		mSheetBand[Band].setBand(Band);
+		mSheetBand[Band].m_psp.pszTitle = bIsHSI ? thresholdHsiNames[Band] : thresholdRgbNames[Band];
+		mSheetBand[Band].m_psp.dwFlags |= PSP_USETITLE;
+		AddPage(&mSheetBand[Band]);
 	}
 
-	mSheetBand0.m_BandNumber = 0;
-	mSheetBand1.m_BandNumber = 1;
-	mSheetBand2.m_BandNumber = 2;
-
-	AddPage( &mSheetROI );	
-	AddPage( &mSheetBand0 );	
-	AddPage( &mSheetBand1 );	
-	AddPage( &mSheetBand2 );	
-	AddPage( &mSheetOutput );	
+	AddPage( &mSheetOutput );
 }
 
 BOOL SVTADlgColorThresholdSheet::OnInitDialog() 

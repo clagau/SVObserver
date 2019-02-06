@@ -13,7 +13,7 @@
 #include "SVPPQEntryDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "SVPPQObject.h"
 
 #ifdef _DEBUG
@@ -62,17 +62,17 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	ASSERT( m_pSheet );
 
-	SVVirtualCamera *pCamera( nullptr );
+	SvIe::SVVirtualCamera *pCamera( nullptr );
 	long lPosition;
 	int index;
 
-	std::deque< SVVirtualCamera* > l_Cameras;
+	std::deque<SvIe::SVVirtualCamera*> cameras;
 
-	m_pSheet->m_pPPQ->GetCameraList( l_Cameras );
+	m_pSheet->m_pPPQ->GetCameraList(cameras);
 
-	std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+	std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-	while( l_Iter != l_Cameras.end() )
+	while( l_Iter != cameras.end() )
 	{
 		pCamera = ( *l_Iter );
 
@@ -103,9 +103,8 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 
 	UpdateData( FALSE );
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-}
+	return TRUE;
+}	              
 
 
 void SVPPQEntryDialogCameraPageClass::OnAddButton() 
@@ -116,7 +115,7 @@ void SVPPQEntryDialogCameraPageClass::OnAddButton()
 	int index = m_AvailableList.GetCurSel();
 	if( m_pSheet && index != LB_ERR )
 	{
-		SVVirtualCamera* pCamera = (SVVirtualCamera*) m_AvailableList.GetItemData( index );
+		SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (m_AvailableList.GetItemData(index));
 		m_AvailableList.DeleteString( index );
 
 		if( nullptr != pCamera )
@@ -138,7 +137,7 @@ void SVPPQEntryDialogCameraPageClass::OnRemoveButton()
 	int index = m_SelectedList.GetCurSel();
 	if( m_pSheet && index != LB_ERR )
 	{
-		SVVirtualCamera* pCamera = (SVVirtualCamera*) m_SelectedList.GetItemData( index );
+		SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (m_SelectedList.GetItemData(index));
 		m_SelectedList.DeleteString( index );
 
 		if( nullptr != pCamera )
@@ -157,7 +156,7 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 	UpdateData( TRUE );
 	ASSERT( m_pSheet );
 
-	SVVirtualCamera* pCamera( nullptr );
+	SvIe::SVVirtualCamera* pCamera( nullptr );
 	
 	m_bIsTaken = ( m_SelectedList.GetCount() > 0 );
 
@@ -165,7 +164,7 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 	int k = m_SelectedList.GetCount() - 1;
 	for( ; k >= 0; -- k )
 	{
-		pCamera = reinterpret_cast<SVVirtualCamera*> (m_SelectedList.GetItemData( k ));
+		pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (m_SelectedList.GetItemData( k ));
 		if( nullptr != pCamera )
 		{
 			m_pSheet->m_pPPQ->SetCameraPPQPosition( m_pSheet->m_lCurrentPosition, pCamera );
@@ -177,7 +176,7 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 	// And now add new items...( remainder in selected list box control )
 	for( int i = m_AvailableList.GetCount() - 1; i >= 0; -- i )
 	{
-		pCamera = (SVVirtualCamera*) m_AvailableList.GetItemData( i );
+		pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (m_AvailableList.GetItemData(i));
 		if( pCamera )
 		{
 			m_pSheet->m_pPPQ->SetCameraPPQPosition( -1, pCamera );

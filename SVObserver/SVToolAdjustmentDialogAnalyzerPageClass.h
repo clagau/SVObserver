@@ -20,8 +20,14 @@
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
 
-class SVToolClass;
+namespace SvAo
+{
 class SVAnalyzerClass;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
 class SVToolAdjustmentDialogSheetClass;
 class SVUnaryImageOperatorListClass;
 
@@ -88,8 +94,8 @@ protected:
 public:
 protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
-	SVToolClass*                    m_pTool;
-	SVAnalyzerClass*				m_pCurrentAnalyzer;
+	SvTo::SVToolClass* m_pTool;
+	SvAo::SVAnalyzerClass*	m_pCurrentAnalyzer;
 
 	/// If a analyzer additional added to the combobox, because it is normally not available but now selected, it is saved here. 
 	/// If the selection of this get lost it will deleted from the combobox

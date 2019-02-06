@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVGraphix.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -18,111 +19,193 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-//******************************************************************************
-// Serialization:
-//******************************************************************************
-void SVGraphixClass::Serialize( CArchive& RArchive )
+
+void Serialize(SVGraphixDrawObjectClass* pObject, CArchive& rArchive)
 {
-	if( RArchive.IsStoring() )
+	if(nullptr != pObject)
 	{
-		__int32 i( 0 );
-		__int32 size = static_cast<__int32>(drawObjectArray.GetSize());
-		// Clean up NULL pointer...
-		for( i = size - 1 ; i >= 0; -- i )
+		if (rArchive.IsStoring())
 		{
-			if( nullptr == drawObjectArray.GetAt( i ) )
+			rArchive << pObject->GetDrawingColor()
+				<< pObject->getPenStyle()
+				<< BOOL(pObject->getBrushStyle()); //Must be BOOL for backward compatibility
+
+			//Need to use CArray for backward compatibility
+			CArray< POINT, POINT& > pointArray;
+			for(auto& rPoint : pObject->getPointVector())
 			{
-				drawObjectArray.RemoveAt( i );
+				pointArray.Add(rPoint);
 			}
+			pointArray.Serialize(rArchive);
 		}
-
-		// Serialize draw objects...
-		size = static_cast<__int32>(drawObjectArray.GetSize());
-		RArchive << size;
-		for( i = 0; i < size; ++i )
+		else
 		{
-			RArchive << drawObjectArray.GetAt( i )->GetObjectType();
-			drawObjectArray.GetAt( i )->Serialize( RArchive );
+			COLORREF color;
+			int penStyle{0};
+			//This must be BOOL for backward compatibility reading configurations using CArchive
+			BOOL bSolidBrush{false};
+
+			rArchive >> color
+				>> penStyle
+				>> bSolidBrush;
+
+			//Need to use CArray for backward compatibility
+			CArray< POINT, POINT& > pointArray;
+			pointArray.Serialize(rArchive);
+			pObject->getPointVector().clear();
+			for(int i=0; i < pointArray.GetSize(); i++)
+			{
+				pObject->AddPoint(pointArray[i]);
+			}
+
+			// Force object to use serialized
+			// color, penStyle and bSolidBrush
+			// instead of default settings...
+			pObject->SetPenStyle(penStyle);
+			pObject->SetBrushStyle(bSolidBrush ? true : false);
+			pObject->SetDrawingColor(color);
 		}
-
-
-		// Serialize graphix data...
-		RArchive << dwROP
-			     << overlayMode
-				 << backGroundColor;
-
-		RArchive << rect.left
-				 << rect.top
-				 << rect.right
-				 << rect.bottom;
-
 	}
-	else
+}
+
+std::string SVConvertToHexString(DWORD size, char* buff)
+{
+	// put len in string first
+	std::string result = SvUl::Format(_T("0x%08x"), size);
+
+	for (DWORD i = 0; i < size; i++)
 	{
-		FlushDrawObjects();
-		
-		__int32 size = 0;
-		__int32 objectType = 0;
-		SVGraphixDrawObjectClass* pNewObject = nullptr;
-		// Serialize draw objects...
-		RArchive >> size;
-		for( __int32 i = 0; i < size; ++i )
-		{
-			RArchive >> objectType;
-			// Create and insert draw object...
-			if( pNewObject = GetNewDrawObject( ( SVGraphixDrawObjectEnum ) objectType ) )
-			{
-				pNewObject->Serialize( RArchive );
-			}
-			else
-			{
-				SVGraphixDrawObjectClass dummyObject;
-				dummyObject.Serialize( RArchive );
-			}
-		}
-
-		// Serialize graphix data...
-		int dummy;
-		RArchive >> dwROP
-			     >> dummy
-				 >> backGroundColor;
-
-		overlayMode = ( SVGraphixOverlayModeEnum ) dummy;
-
-		RArchive >> rect.left
-				 >> rect.top
-				 >> rect.right
-				 >> rect.bottom;
-
+		result += SvUl::Format(_T(",0x%02x"), buff[i]);
 	}
+
+	return result;
+}
+
+std::string SVConvertFromHexString(const std::string& rHexString)
+{
+	std::string result;
+
+	size_t rightPos = rHexString.find(',');
+	if(std::string::npos != rightPos)
+	{
+		long convertedCount{0L};
+		std::string Text = SvUl::Left(rHexString, rightPos);
+		long byteCount = strtoul(Text.c_str(), nullptr ,16);
+		result.resize(byteCount);
+		size_t leftPos = rightPos + 1;
+		rightPos = rHexString.find(',', leftPos);
+		Text = rHexString.substr(leftPos, rightPos - leftPos);
+		while(convertedCount < byteCount)
+		{
+			char byte = static_cast<char> (strtoul(Text.c_str(), nullptr, 16));
+			result[convertedCount] = byte;
+			convertedCount++;
+
+			leftPos = rightPos + 1;
+			rightPos = rHexString.find(',', leftPos);
+			Text = rHexString.substr(leftPos, rightPos - leftPos);
+		}
+	}
+
+	return result;
 }
 
 
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+SVGraphixDrawObjectClass::~SVGraphixDrawObjectClass()
+{
+	if (nullptr != m_hPen)
+	{
+		::DeleteObject(m_hPen);
+		m_hPen = nullptr;
+	}
+
+	if (nullptr != m_hBrush)
+	{
+		::DeleteObject(m_hBrush);
+		m_hBrush = nullptr;
+	}
+}
+
+void SVGraphixDrawObjectClass::SetPenStyle(int NewStyle)
+{
+	if (nullptr != m_hPen)
+	{
+		::DeleteObject(m_hPen);
+		m_hPen = nullptr;
+	}
+
+	m_penStyle = NewStyle;
+	if (m_needPen)
+	{
+		m_hPen = ::CreatePen(m_penStyle, 1, m_color);
+	}
+}
+
+void SVGraphixDrawObjectClass::SetBrushStyle(bool bSolidBrush)
+{
+	if (nullptr != m_hBrush)
+	{
+		::DeleteObject(m_hBrush);
+		m_hBrush = nullptr;
+	}
+
+	m_isSolidBrush = bSolidBrush;
+	if (m_needBrush)
+	{
+		m_hBrush = m_isSolidBrush ? ::CreateSolidBrush(m_color) : ::CreateHatchBrush(HS_DIAGCROSS, m_color);
+	}
+}
+
+void SVGraphixDrawObjectClass::SetDrawingColor(COLORREF Color)
+{
+	m_color = Color;
+	SetPenStyle(m_penStyle);
+	SetBrushStyle(m_isSolidBrush);
+}
+
+bool SVGraphixDrawObjectClass::AddPoint(const POINT& rNewPoint)
+{
+	if (m_pointVector.size() <= m_maxPointCount)
+	{
+		m_pointVector.emplace_back(rNewPoint);
+		return true;
+	}
+	return false;
+}
+
+bool SVGraphixDrawObjectClass::ReplacePoint(POINT& rReplacePoint)
+{
+	if (m_pointVector.size() > 0)
+	{
+		POINT& lastPoint = m_pointVector[m_pointVector.size() - 1];
+		m_pointVector[m_pointVector.size() - 1] = rReplacePoint;
+		rReplacePoint = lastPoint;
+		return true;
+	}
+	return false;
+}
 
 SVGraphixClass::SVGraphixClass()
 {
     // Default raster operation code: overwrite
-    dwROP = SRCCOPY;
+    m_dwROP = SRCCOPY;
 
     // Default overlay mode: stretch
-    overlayMode = SVStretchMode;
+    m_overlayMode = SVStretchMode;
 
     // Default background color: white
-    backGroundColor = RGB( 255, 255, 255 );
+    m_backGroundColor = RGB( 255, 255, 255 );
 
     // Default size of Graphix canvas: 100 x 100
-    rect.left = 0;
-    rect.top  = 0;
-    rect.right  = 50;
-    rect.bottom = 50;
+    m_rect.left = 0;
+    m_rect.top  = 0;
+    m_rect.right  = 50;
+    m_rect.bottom = 50;
 
 	// Default scale factors...
-	scaleX = 1.0;	// No scaling
-	scaleY = 1.0;	// No scaling
+	m_scaleX = 1.0;	// No scaling
+	m_scaleY = 1.0;	// No scaling
 }
 
 SVGraphixClass::~SVGraphixClass()
@@ -130,133 +213,293 @@ SVGraphixClass::~SVGraphixClass()
 	FlushDrawObjects();
 }
 
-void SVGraphixClass::FlushDrawObjects()
+std::string SVGraphixClass::store(bool convertToHex /*= false*/)
 {
-	for( INT_PTR i = drawObjectArray.GetSize() - 1; i >= 0; -- i )
-		if( drawObjectArray.GetAt( i ) )
-		{
-			delete drawObjectArray.GetAt( i );
-			drawObjectArray.SetAt( i, nullptr );
-		}
+	std::string result;
 
-	drawObjectArray.RemoveAll();
+	CMemFile storage;
+	CArchive archive(&storage, CArchive::store);
+	// Serialize draw objects...
+	__int32 size = static_cast<__int32>(m_drawObjectVector.size());
+	archive << size;
+	for (const auto pDrawObject : m_drawObjectVector)
+	{
+		archive << pDrawObject->GetObjectType();
+
+		::Serialize(pDrawObject, archive);
+	}
+
+	// Serialize graphix data...
+	archive << m_dwROP << m_overlayMode << m_backGroundColor;
+
+	archive << m_rect.left << m_rect.top << m_rect.right << m_rect.bottom;
+
+	// flush the archive
+	archive.Flush();
+
+	// get the size
+	DWORD dataSize = static_cast<unsigned long>(storage.GetLength());
+
+	// position to the beginning
+	storage.SeekToBegin();
+
+	// create a buffer
+	char* pBuff = new char[dataSize];
+
+	// get the data
+	storage.Read(pBuff, dataSize);
+
+	if(convertToHex)
+	{
+		result = ::SVConvertToHexString(dataSize, pBuff);
+	}
+	else
+	{
+		result.assign(pBuff, dataSize);
+	}
+
+
+	delete [] pBuff;
+
+	return result;
+
 }
 
+void SVGraphixClass::load(const std::string& rData, bool convertFromHex /*= false*/)
+{
+	FlushDrawObjects();
 
+	if(rData.size() > 0)
+	{
+		std::string convertedData = convertFromHex ? SVConvertFromHexString(rData) : rData;
 
-void SVGraphixClass::Draw( HDC HDestinyDC, const RECT& RDestinyRect )
+		CMemFile storage;
+		// write the data to the memory file
+		storage.Write(&convertedData[0], static_cast<UINT> (convertedData.size()));
+		storage.Flush();
+		storage.SeekToBegin();
+
+		// Create a CArchive to load from
+		CArchive archive(&storage, CArchive::load);
+
+		__int32 size = 0;
+		__int32 objectType = 0;
+		SVGraphixDrawObjectClass* pNewObject = nullptr;
+		// Serialize draw objects...
+		archive >> size;
+		for (__int32 i = 0; i < size; ++i)
+		{
+			archive >> objectType;
+			// Create and insert draw object...
+			pNewObject = GetNewDrawObject(static_cast<SVGraphixDrawObjectEnum> (objectType));
+			if (nullptr != pNewObject)
+			{
+				::Serialize(pNewObject, archive);
+			}
+			else
+			{
+				SVGraphixDrawObjectClass dummyObject;
+				::Serialize(&dummyObject, archive);
+			}
+		}
+
+		// Serialize graphix data...
+		int overlayMode;
+		archive >> m_dwROP >> overlayMode >> m_backGroundColor;
+
+		m_overlayMode = static_cast<SVGraphixOverlayModeEnum> (overlayMode);
+
+		archive >> m_rect.left >> m_rect.top >> m_rect.right >> m_rect.bottom;
+	}
+}
+
+void SVGraphixClass::FlushDrawObjects()
+{
+	for(auto pDrawObject : m_drawObjectVector)
+	{
+		delete pDrawObject;
+		pDrawObject = nullptr;
+	}
+
+	m_drawObjectVector.clear();
+}
+
+void SVGraphixClass::GetGraphixRect(RECT& rRect, int ScaleX /*= 1*/, int ScaleY /*= 1*/)
+{
+	rRect = m_rect;
+	if (ScaleX)
+	{
+		rRect.left = (ScaleX < 0) ? (m_rect.left / (-ScaleX)) : (m_rect.left   * ScaleX);
+		rRect.right = (ScaleX < 0) ? (m_rect.right / (-ScaleX)) : (m_rect.right  * ScaleX);
+	}
+
+	if (ScaleY)
+	{
+		rRect.top = (ScaleY < 0) ? (m_rect.top / (-ScaleY)) : (m_rect.top    * ScaleY);
+		rRect.bottom = (ScaleY < 0) ? (m_rect.bottom / (-ScaleY)) : (m_rect.bottom * ScaleY);
+	}
+}
+
+void SVGraphixClass::InsertDrawObject(SVGraphixDrawObjectClass* pNewDrawObject)
+{
+	if (nullptr != pNewDrawObject)
+	{
+		m_drawObjectVector.emplace_back(pNewDrawObject);
+	}
+}
+
+bool SVGraphixClass::CheckPoint(const POINT& rPoint, int ScaleX /*= 1*/, int ScaleY /*= 1*/)
+{
+	POINT pointLT, pointRB;
+	pointLT.x = m_rect.left;
+	pointLT.y = m_rect.top;
+	pointRB.x = m_rect.right;
+	pointRB.y = m_rect.bottom;
+
+	// Regard overlay mode...
+	ScalePoint(pointLT, TRUE);
+	ScalePoint(pointRB, TRUE);
+
+	// Regard extern scale factors...
+	if (ScaleX)
+	{
+		pointLT.x = (ScaleX < 0) ? (pointLT.x / (-ScaleX)) : (pointLT.x * ScaleX);
+		pointRB.x = (ScaleX < 0) ? (pointRB.x / (-ScaleX)) : (pointRB.x * ScaleX);
+	}
+
+	if (ScaleY)
+	{
+		pointLT.y = (ScaleY < 0) ? (pointLT.y / (-ScaleY)) : (pointLT.y * ScaleY);
+		pointRB.y = (ScaleY < 0) ? (pointRB.y / (-ScaleY)) : (pointRB.y * ScaleY);
+	}
+
+	return(rPoint.x >= pointLT.x && rPoint.y >= pointLT.y  && rPoint.x < pointRB.x && rPoint.y < pointRB.y);
+}
+
+void SVGraphixClass::ScalePoint(POINT& rPoint, bool bDown /*= true*/)
+{
+	if (m_scaleX != 0.0)
+	{
+		rPoint.x = (bDown) ? ((long)(((double)rPoint.x) / m_scaleX)) : ((long)(((double)rPoint.x) * m_scaleX));
+	}
+	if (m_scaleY != 0.0)
+	{
+		rPoint.y = (bDown) ? ((long)(((double)rPoint.y) / m_scaleY)) : ((long)(((double)rPoint.y) * m_scaleY));
+	}
+}
+
+void SVGraphixClass::Draw( HDC hDC, const RECT& rRect )
 {
     HDC     hMemDC              = nullptr;
     HBRUSH  hBackgroundBrush    = nullptr;
     HBRUSH  hOldBrush           = nullptr;
     HBITMAP hBM                 = nullptr;
-    HBITMAP hBMHolder           = nullptr;
     HBITMAP hOldBM              = nullptr;
 
-    while( 1 )
-    {
-        int graphixWidth  = rect.right - rect.left;
-        int graphixHeight = rect.bottom - rect.top;
-        int destWidth  = RDestinyRect.right - RDestinyRect.left;
-        int destHeight = RDestinyRect.bottom - RDestinyRect.top;
+    int graphixWidth  = m_rect.right - m_rect.left;
+    int graphixHeight = m_rect.bottom - m_rect.top;
+    int destWidth  = rRect.right - rRect.left;
+    int destHeight = rRect.bottom - rRect.top;
             
-        if( ! ( hMemDC = ::CreateCompatibleDC( HDestinyDC ) ) )
-            break;
+    hMemDC = ::CreateCompatibleDC(hDC);
 
-        if( ! ( hBackgroundBrush = ::CreateSolidBrush( backGroundColor ) ) )
-            break;
+    hBackgroundBrush = ::CreateSolidBrush( m_backGroundColor );
 
-        if( ! ( hBM = ::CreateCompatibleBitmap( HDestinyDC, graphixWidth, graphixHeight ) ) )
-            break;
+    hBM = ::CreateCompatibleBitmap( hDC, graphixWidth, graphixHeight );
 
-        // Select background brush for memDC...
-        hOldBrush = ( HBRUSH ) ::SelectObject( hMemDC, hBackgroundBrush );
-
-        // Select bitmap for memDC...
-        hOldBM = ( HBITMAP ) ::SelectObject( hMemDC, hBM );
-        
-        // Set memDC background color...
-        ::PatBlt( hMemDC, rect.left, rect.top, graphixWidth, graphixHeight, PATCOPY );
-
-        // Deselect background brush for memDC...
-        hBackgroundBrush = ( HBRUSH ) ::SelectObject( hMemDC, hOldBrush );
-
-        // Draw graphix...
-        //...
-		for( int i = 0; i < drawObjectArray.GetSize(); ++ i )
-			if( drawObjectArray[ i ] )
-				drawObjectArray[ i ]->Draw( hMemDC );
-
-
-        // Select background brush for destiny DC...
-        hOldBrush = ( HBRUSH ) ::SelectObject( HDestinyDC, hBackgroundBrush );
-
-        if( overlayMode != SVStretchMode )
-        {
-            // Set destiny DC background color...
-            ::PatBlt( HDestinyDC, RDestinyRect.left, RDestinyRect.top, destWidth, destHeight, PATCOPY );
-        }
-
-        // Set stretch mode...
-        ::SetStretchBltMode( HDestinyDC, COLORONCOLOR );
-
-        switch( overlayMode )
-        {
-            case SVStretchMode: 
-            {
-                ::StretchBlt( HDestinyDC, RDestinyRect.left, RDestinyRect.top, destWidth, destHeight, 
-				              hMemDC, rect.left, rect.top, graphixWidth, graphixHeight, dwROP );
-
-				scaleX = ( double ) graphixWidth  / ( double ) destWidth;
-				scaleY = ( double ) graphixHeight / ( double ) destHeight;
-            }
-            break;
-
-            case SVClipMode: 
-            {
-                ::BitBlt( HDestinyDC, RDestinyRect.left, RDestinyRect.top, graphixWidth, graphixHeight,
-			              hMemDC, rect.left, rect.top, dwROP );
-
-				scaleX = 1.0;
-				scaleY = 1.0;
-            }
-            break;
-
-            case SVClipCenteredMode: 
-            {
-                int destLeft = RDestinyRect.left + ( destWidth - graphixWidth ) / 2;
-                int destTop  = RDestinyRect.top + ( destHeight - graphixHeight ) / 2;
-                ::BitBlt( HDestinyDC, destLeft, destTop, graphixWidth, graphixHeight,
-			              hMemDC, rect.left, rect.top, dwROP );
-
-				scaleX = 1.0;
-				scaleY = 1.0;
-            }
-            break;
-        }
-
-        // Deselect background brush for destiny DC...
-        hBackgroundBrush = ( HBRUSH ) ::SelectObject( HDestinyDC, hOldBrush );
-
-        // Deselect bitmap for memDC...
-        hBMHolder = ( HBITMAP ) ::SelectObject( hMemDC, hOldBM );
-        break;
-    }
-
-	if ( hBM )
+	if(nullptr != hMemDC && nullptr != hBackgroundBrush && nullptr != hBM)
 	{
-        ::DeleteObject( hBM );
-	}
-    if( hBackgroundBrush )
-        ::DeleteObject( hBackgroundBrush );
+		// Select background brush for memDC...
+		hOldBrush = static_cast<HBRUSH> (::SelectObject( hMemDC, hBackgroundBrush ));
 
+		// Select bitmap for memDC...
+		hOldBM = static_cast<HBITMAP> (::SelectObject( hMemDC, hBM ));
+        
+		// Set memDC background color...
+		::PatBlt( hMemDC, m_rect.left, m_rect.top, graphixWidth, graphixHeight, PATCOPY );
+
+		// Deselect background brush for memDC...
+		::SelectObject( hMemDC, hOldBrush );
+
+		// Draw graphix...
+		//...
+		for (auto pDrawObject : m_drawObjectVector)
+		{
+			if(nullptr != pDrawObject)
+			{
+				pDrawObject->Draw(hMemDC);
+			}
+		}
+
+
+		// Select background brush for destiny DC...
+		hOldBrush = ( HBRUSH ) ::SelectObject( hDC, hBackgroundBrush );
+
+		if( m_overlayMode != SVStretchMode )
+		{
+			// Set destiny DC background color...
+			::PatBlt( hDC, rRect.left, rRect.top, destWidth, destHeight, PATCOPY );
+		}
+
+		// Set stretch mode...
+		::SetStretchBltMode( hDC, COLORONCOLOR );
+
+		switch( m_overlayMode )
+		{
+			case SVStretchMode: 
+			{
+				::StretchBlt( hDC, rRect.left, rRect.top, destWidth, destHeight, 
+								hMemDC, m_rect.left, m_rect.top, graphixWidth, graphixHeight, m_dwROP );
+
+				m_scaleX = ( double ) graphixWidth  / ( double ) destWidth;
+				m_scaleY = ( double ) graphixHeight / ( double ) destHeight;
+			}
+			break;
+
+			case SVClipMode: 
+			{
+				::BitBlt( hDC, rRect.left, rRect.top, graphixWidth, graphixHeight,
+							hMemDC, m_rect.left, m_rect.top, m_dwROP );
+
+				m_scaleX = 1.0;
+				m_scaleY = 1.0;
+			}
+			break;
+
+			case SVClipCenteredMode: 
+			{
+				int destLeft = rRect.left + ( destWidth - graphixWidth ) / 2;
+				int destTop  = rRect.top + ( destHeight - graphixHeight ) / 2;
+				::BitBlt( hDC, destLeft, destTop, graphixWidth, graphixHeight,
+							hMemDC, m_rect.left, m_rect.top, m_dwROP );
+
+				m_scaleX = 1.0;
+				m_scaleY = 1.0;
+			}
+			break;
+		}
+
+		::SelectObject( hDC, hOldBrush );
+
+		// Deselect bitmap for memDC...
+		::SelectObject( hMemDC, hOldBM );
+	}
+
+	if (nullptr != hBM)
+	{
+        ::DeleteObject(hBM);
+	}
+    if(nullptr != hBackgroundBrush)
+	{
+		::DeleteObject( hBackgroundBrush );
+	}
     if( hMemDC )
-        ::DeleteDC( hMemDC );
+	{
+		::DeleteDC( hMemDC );
+	}
 }
 
-
-
-SVGraphixDrawObjectClass* SVGraphixClass::GetNewDrawObject( SVGraphixDrawObjectEnum NewObject, BOOL BInsert )
+SVGraphixDrawObjectClass* SVGraphixClass::GetNewDrawObject( SVGraphixDrawObjectEnum NewObject, bool bInsert )
 {
 	SVGraphixDrawObjectClass* pDrawObject = nullptr;
 
@@ -296,34 +539,27 @@ SVGraphixDrawObjectClass* SVGraphixClass::GetNewDrawObject( SVGraphixDrawObjectE
 
 	}
 
-	ASSERT( pDrawObject );
+	assert(pDrawObject);
 
-	if( BInsert ) 
+	if( bInsert ) 
+	{
 		InsertDrawObject( pDrawObject );
+	}
 
 	return pDrawObject;
 }
 
-
-
 HGLOBAL SVGraphixClass::GetGraphixData() 
 {
-	CMemFile memFile;
-	memFile.SeekToBegin();
-	CArchive archive( &memFile, CArchive::store );
-	Serialize( archive );
-	archive.Close();
+	std::string data = store();
 
-	size_t memFileSize = static_cast<size_t>(memFile.GetLength());
+	size_t memFileSize = data.size();
 	HGLOBAL hMem = ::GlobalAlloc( GMEM_MOVEABLE, memFileSize );
 	BYTE* pMem = ( BYTE* ) ::GlobalLock( hMem );
-	if( hMem && pMem )
+	if( nullptr != hMem && nullptr != pMem && memFileSize > 0)
 	{
-		BYTE* pMemFile = memFile.Detach();
-		memcpy( pMem, pMemFile, memFileSize );
+		memcpy( pMem, &data[0], memFileSize );
 		::GlobalUnlock( pMem );
-		//Previous code attempted to free this memory by re-attaching to the CMemFile but it did not work. Use free.
-		free(pMemFile);
 		return hMem;
 	}
 	if(pMem) ::GlobalUnlock( pMem );
@@ -331,29 +567,23 @@ HGLOBAL SVGraphixClass::GetGraphixData()
 	return nullptr;
 }
 
-BOOL SVGraphixClass::SetGraphixData( HGLOBAL HGlobalMem ) 
+bool SVGraphixClass::SetGraphixData( HGLOBAL hGlobalMem ) 
 {
-	BOOL bRet = FALSE;
-	SIZE_T memFileSize = ::GlobalSize( HGlobalMem ); 
-	BYTE* pMemFile = ( BYTE* ) ::GlobalLock( HGlobalMem );
-	if( pMemFile && memFileSize )
+	bool result{false};
+
+	SIZE_T memFileSize = ::GlobalSize( hGlobalMem ); 
+	char* pMemData = static_cast<char*> (::GlobalLock(hGlobalMem));
+	if(nullptr != pMemData && memFileSize > 0)
 	{
-		CMemFile memFile;
-		memFile.Attach( pMemFile, static_cast<UINT>(memFileSize) );
-		memFile.SeekToBegin();
+		std::string data;
+		data.assign(pMemData, memFileSize);
+		load(data);
 
-		CArchive archive( &memFile, CArchive::load );
-		Serialize( archive );
-		archive.Close();
-
-		memFile.Detach();
-		
-		::GlobalUnlock( pMemFile );
-
-		bRet = TRUE;
+		::GlobalUnlock( pMemData );
+		result = true;
 	}
-	::GlobalFree( HGlobalMem );
+	::GlobalFree( hGlobalMem );
 
-	return bRet;
+	return result;
 }
 

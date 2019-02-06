@@ -17,10 +17,15 @@
 #include "ObjectInterfaces/ITaskObject.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVClassInfoStruct
@@ -69,3 +74,4 @@ SVObjectClass* SVClassInfoStruct::Construct()
 	return pObject;
 }
 
+} //namespace SvIe

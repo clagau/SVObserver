@@ -61,12 +61,12 @@ HRESULT SVCommandInspectionGetItems::Execute()
 				// Check if it's a ValueObject or an ImageObject
 				// as these are the only items that can be gotten from the inspection remotely, currently
 				SVObjectClass* pObject = rObjRef.getObject();
-				SVImageClass* pImage = nullptr;
+				SvIe::SVImageClass* pImage = nullptr;
 				if (nullptr != rObjRef.getValueObject())
 				{
 					TempStatus = UpdateResultsWithValueData(Iter->first, rObjRef, TriggerCount);
 				}
-				else if( nullptr != (pImage = dynamic_cast<SVImageClass*> (pObject)) )
+				else if( nullptr != (pImage = dynamic_cast<SvIe::SVImageClass*> (pObject)) )
 				{
 					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount, Product.m_svInspectionInfos[pImage->GetInspection()->GetUniqueObjectID()].m_triggerRecordComplete);
 				}
@@ -119,7 +119,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 {
 	HRESULT Status = S_OK;
 
-	SVImageClass* pImage = dynamic_cast<SVImageClass*> (rImageRef.getObject());
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (rImageRef.getObject());
 
 	if (nullptr != pImage)
 	{
@@ -134,7 +134,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 			std::string Temp = SvUl::Format(_T("%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 			std::string FileName = SvStl::GlobalPath::Inst().GetRamDrive(Temp.c_str());
 
-			GetStatus = SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , pImageBuffer->getHandle());
+			GetStatus = SvIe::SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , pImageBuffer->getHandle());
 
 			if (S_OK == GetStatus)
 			{

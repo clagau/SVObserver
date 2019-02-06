@@ -10,14 +10,16 @@
 //******************************************************************************
 
 #pragma once
-
+namespace SvTo
+{
 class SVShiftTool;
+}
 
 class SVShiftToolUtility
 {
 public:
-	static void SetToolSetReference(SVShiftTool* pShiftTool);
-	static void SetToolNormalize(SVShiftTool* pShiftTool);
+	static void SetToolSetReference(SvTo::SVShiftTool* pShiftTool);
+	static void SetToolNormalize(SvTo::SVShiftTool* pShiftTool);
 
 private:
 	SVShiftToolUtility() = delete;

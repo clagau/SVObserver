@@ -15,7 +15,11 @@
 #include "SVImagePropertiesClass.h"
 #include "SVImageExtentClass.h"
 
+namespace SvIe
+{
 class SVImageClass;
+}
+
 class SVObjectClass;
 
 class SVImageInfoClass

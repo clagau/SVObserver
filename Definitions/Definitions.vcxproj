@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BandEnums.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="GlobalConstantData.h" />

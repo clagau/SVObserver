@@ -57,6 +57,7 @@
 #include <comutil.h>			//Used by static library
 #include <direct.h>
 #include <exception>
+#include <functional>
 #include <iterator>
 #include <limits.h>
 #include <list>
@@ -68,8 +69,6 @@
 #include <tchar.h>
 #include <vector>
 
-#include <boost\assign\list_of.hpp>
-#include <boost\assign\std\map.hpp>
 #include <boost\function.hpp>
 #include <boost\tokenizer.hpp>
 #pragma endregion Precompiled Headers

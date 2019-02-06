@@ -21,6 +21,9 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
 {
@@ -159,3 +162,4 @@ protected:
 #pragma endregion Member Variables
 };
 
+} //namespace SvIe

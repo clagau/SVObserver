@@ -21,9 +21,18 @@
 
 #pragma region Declarations
 //@TODO[gra][8.00][25.01.2018]: This class should move to SVOGui
-class SVToolClass;
+namespace SvAo
+{
 class SVAnalyzerClass;
+}
+namespace SvOp
+{
 class SVLinearEdgeProcessingClass;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
 #pragma endregion Declarations
 
 class SVProfileEdgeMarkerAdjustmentPageClass : public SvOg::SVEdgeMarkerAdjustmentPageClass
@@ -119,9 +128,9 @@ private:
 	bool m_InitialShowEdgeBOverlays {false};
 
 	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
-	SVToolClass* m_pTool{ nullptr };
-	SVAnalyzerClass* m_pAnalyzer {nullptr};
-	SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
+	SvTo::SVToolClass* m_pTool{ nullptr };
+	SvAo::SVAnalyzerClass* m_pAnalyzer {nullptr};
+	SvOp::SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
 	std::shared_ptr<Controller> m_pAnalyzerValues;
 #pragma endregion Member variables
 };

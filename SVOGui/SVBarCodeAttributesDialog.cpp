@@ -221,14 +221,14 @@ double SVBarCodeAttributesDialog::GetErrorCorrection()
 	return m_dErrorCorrection;
 }
 
-double SVBarCodeAttributesDialog::SetEncoding(SVDoubleValueObjectClass &svdEncoding)
+double SVBarCodeAttributesDialog::SetEncoding(SvVol::SVDoubleValueObjectClass &svdEncoding)
 {
 	svdEncoding.GetValue(m_dEncoding);
 
 	return m_dEncoding;
 }
 
-double SVBarCodeAttributesDialog::SetErrCorrection(SVDoubleValueObjectClass &svdErrCorrection)
+double SVBarCodeAttributesDialog::SetErrCorrection(SvVol::SVDoubleValueObjectClass &svdErrCorrection)
 {
 	svdErrCorrection.GetValue(m_dErrorCorrection);
 

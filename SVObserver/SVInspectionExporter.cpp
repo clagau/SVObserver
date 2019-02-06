@@ -91,11 +91,11 @@ static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClas
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
 	if ( nullptr != pInspection && nullptr != pInspection->GetToolSet() )
 	{
-		BasicValueObjects::ValueVector GlobalConstantObjects;
+		SvVol::BasicValueObjects::ValueVector GlobalConstantObjects;
 
 		SvOl::DependencyManager::VertexSet GlobalConstantSet;
 		RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal, 0 );
-		BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
+		SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
 		for( ; GlobalConstantObjects.end() != Iter; ++Iter )
 		{
 			if (nullptr != *Iter)
@@ -119,7 +119,7 @@ static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClas
 			SVObjectClass* pObjectSupplier = SVObjectManagerClass::Instance().GetObject( PairIter->first );
 			SVObjectClass* pObjectClient = SVObjectManagerClass::Instance().GetObject( PairIter->second );
 			SVObjectClass* pOwner = (nullptr != pObjectClient) ? pObjectClient->GetAncestor(SvPb::SVInspectionObjectType) : nullptr;
-			BasicValueObject* pGlobalConstant = dynamic_cast<BasicValueObject*> (pObjectSupplier);
+			SvVol::BasicValueObject* pGlobalConstant = dynamic_cast<SvVol::BasicValueObject*> (pObjectSupplier);
 			//! Check that the client is from the same inspection
 			if( pOwner == pInspection && nullptr != pGlobalConstant )
 			{

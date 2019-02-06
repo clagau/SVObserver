@@ -20,6 +20,9 @@
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -401,5 +404,6 @@ bool LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject, S
 
 	return Result;
 }
-
 #pragma endregion Private Methods
+
+} //namespace SvVol

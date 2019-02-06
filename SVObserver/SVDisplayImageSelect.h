@@ -12,15 +12,18 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVImageClass.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+class SVImageClass;
+}
 class SVIPDoc;
 
 class SVDisplayImageSelect : public CDialog
 {
 public:
-	SVImageClass *m_pCurrentImage;
+	SvIe::SVImageClass *m_pCurrentImage;
 	SVIPDoc			 *m_pDoc;
 	SVDisplayImageSelect(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVDisplayImageSelect();

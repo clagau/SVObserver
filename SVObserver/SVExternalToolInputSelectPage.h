@@ -16,7 +16,10 @@
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
+namespace SvOp
+{
 class SVExternalToolTask;
+}
 class SVObjectClass;
 
 class SVExternalToolInputSelectPage : public CPropertyPage
@@ -71,7 +74,7 @@ private:
 	GUID GetToolSetGUID() const;
 
 private:
-	SVExternalToolTask*				m_pTask;
+	SvOp::SVExternalToolTask* m_pTask;
 	SVRPropTree	m_Tree;
 	int m_inputValueCount;
 

@@ -12,8 +12,10 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
-
 #pragma endregion Includes
+
+namespace SvIe
+{
 
 class SVIPResultItemDefinition
 {
@@ -38,3 +40,4 @@ protected:
 	int m_Index;
 };
 
+} //namespace SvIe

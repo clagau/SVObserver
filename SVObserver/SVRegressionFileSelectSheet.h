@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVRegressionTestStruct.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList,SVVirtualCameraPtrSet CameraList );
+	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, SvIe::SVVirtualCameraPtrSet CameraList );
 
 private: //methods
 	std::string MakeFileNameMask( const std::string& rFileName );

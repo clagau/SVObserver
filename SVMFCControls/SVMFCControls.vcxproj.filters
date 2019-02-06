@@ -129,6 +129,9 @@
     <ClCompile Include="SVEnumerateCombo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVAnalyzerResultDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -246,6 +249,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEnumerateCombo.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAnalyzerResultDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

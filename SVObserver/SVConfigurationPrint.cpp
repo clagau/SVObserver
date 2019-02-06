@@ -30,30 +30,30 @@
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "InspectionEngine/SVEquation.h"
+#include "Operators/SVEquation.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVObserver.h"
-#include "InspectionEngine/SVTool.h"
 #include "SVToolSet.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
-#include "SVArchiveTool.h"
-#include "SVArchiveRecord.h"
-#include "SVArchiveRecordsArray.h"
-#include "SVStatTool.h"
+#include "Tools/SVArchiveTool.h"
+#include "Tools/SVArchiveRecord.h"
+#include "Tools/SVArchiveRecordsArray.h"
+#include "Tools/SVStatTool.h"
+#include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVAcquisitionClass.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary\SVLightReference.h"
 #include "SVIODoc.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVIPDoc.h"
-#include "SVShapeMaskHelperClass.h"
+#include "Operators/SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
-#include "SVUserMaskOperatorClass.h"
-#include "SVBlobAnalyzer.h"
-#include "SVResultDouble.h"
+#include "Operators/SVUserMaskOperatorClass.h"
+#include "AnalyzerOperators/SVBlobAnalyzer.h"
+#include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVSystemLibrary\SVThreadManager.h"
@@ -191,7 +191,7 @@ static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
 	return SVToolGrouping();
 }
 
-static SVObjectClass* GetTool(const std::string& rName, const SVTaskObjectListClass& rToolSet)
+static SVObjectClass* GetTool(const std::string& rName, const SvIe::SVTaskObjectListClass& rToolSet)
 {
 	SVObjectClass* pObject(nullptr);
 	for (int i = 0; !pObject && i < rToolSet.GetSize(); i++)
@@ -685,7 +685,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		{
 			bool bGotValue = false;
 
-			if ( SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SVDWordValueObjectClass*> ( pObject ) )
+			if (SvVol::SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SvVol::SVDWordValueObjectClass*> (pObject))
 			{
 				DWORD dwValue=0;
 				bGotValue = (S_OK == pdwValueObject->GetValue( dwValue ));
@@ -707,7 +707,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	{
 		do
 		{
-			if ( nullptr != dynamic_cast <SVShapeMaskHelperClass*> (pObject) )
+			if ( nullptr != dynamic_cast <SvOp::SVShapeMaskHelperClass*> (pObject) )
 			{
 				if ( !( pObject->ObjectAttributesAllowed() & SvPb::printable) )	// EB 20050818 - hack this instead of doing it right
 				{
@@ -715,7 +715,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				}
 			}
 			
-			SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObject);
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
 			if ( nullptr != pTool )
 			{
 				// Increment even if disabled, to maintain count.  Starts with zero, so for first
@@ -746,7 +746,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			{
 				bPrintToolExtents = FALSE;
 				
-				SVImageClass*           pCurrentSourceImage = nullptr;
+				SvIe::SVImageClass*  pCurrentSourceImage = nullptr;
 				SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
 				SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
@@ -756,7 +756,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 					{
 						if( l_psvImageInfo->IsConnected() )
 						{
-							pCurrentSourceImage = dynamic_cast<SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
+							pCurrentSourceImage = dynamic_cast<SvIe::SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
 
 							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), pCurrentSourceImage->GetObjectNameToObjectType().c_str() );
 						}
@@ -768,11 +768,11 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 					}
 				}
 			} // End, if(bPrintToolExtents && ( nullptr != pTool ))
-			SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObject);
+			SvTo::SVArchiveTool* pArchiveTool = dynamic_cast <SvTo::SVArchiveTool*> (pObject);
 			if( nullptr != pArchiveTool )
 			{
 				int i, Size;
-				SVArchiveRecord* pRecord;
+				SvTo::SVArchiveRecord* pRecord;
 				
 				ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Results"));
@@ -808,7 +808,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 			}// end if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
 			
-			SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SVStatisticsToolClass*> (pObject);
+			SvTo::SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SvTo::SVStatisticsToolClass*> (pObject);
 			if( nullptr != pStatisticsTool )
 			{
 				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();
@@ -819,10 +819,10 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				}
 			}  
 			
-			SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> (pObject);
+			SvOp::SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SvOp::SVUserMaskOperatorClass*> (pObject);
 			if( nullptr != pMaskOperator )
 			{
-				SVImageClass* pImage = pMaskOperator->getMaskInputImage();
+				SvIe::SVImageClass* pImage = pMaskOperator->getMaskInputImage();
 				if (nullptr != pImage)
 				{
 					sLabel = SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING) + _T(":");
@@ -832,13 +832,13 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				}
 			}
 
-			SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*> (pObject);
+			SvOp::SVDoubleResultClass* pBlobResult = dynamic_cast<SvOp::SVDoubleResultClass*> (pObject);
 			if( nullptr != pBlobResult )
 			{
-				if (SV_IS_KIND_OF(pBlobResult->GetParent(),SVBlobAnalyzerClass))
+				if (SV_IS_KIND_OF(pBlobResult->GetParent(), SvAo::SVBlobAnalyzerClass))
 				{  
 					sLabel = SvUl::LoadStdString(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
-					const SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast<const SVDoubleValueObjectClass*> (pBlobResult->getInput());
+					const SvVol::SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast<const SvVol::SVDoubleValueObjectClass*> (pBlobResult->getInput());
 					if ( pDoubleValueObj )
 					{
 						double dVal = pDoubleValueObj->GetDefaultValue();
@@ -851,7 +851,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		} while (false);// end do
 	}// End if( nullptr != pValueObject ) else
 
-	SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObject);
+	SvOp::SVEquationClass* pEquation = dynamic_cast <SvOp::SVEquationClass*> (pObject);
 	if( nullptr != pEquation )
 	{
 		sValue = pEquation->GetEquationText();
@@ -865,13 +865,13 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
 	}
 	
-	if( SV_IS_KIND_OF(pObject, SVTaskObjectClass) )
+	if( SV_IS_KIND_OF(pObject, SvIe::SVTaskObjectClass) )
 	{
 		PrintInputOutputList(pDC, pObject, ptCurPos, nIndentLevel);
 	}
 }  // end function void SVConfigurationPrint:::PrintDetails( ... )
 
-void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel)
+void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SvIe::SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel)
 {
 	for (int nCnt = 0; nCnt < pTaskObj->GetSize(); nCnt++)
 	{
@@ -906,7 +906,7 @@ void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTa
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	if ( SVTaskObjectListClass* pTaskObj = dynamic_cast <SVTaskObjectListClass*> (pObj) )
+	if (SvIe::SVTaskObjectListClass* pTaskObj = dynamic_cast<SvIe::SVTaskObjectListClass*> (pObj) )
     {
 		if (SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>(pObj))
 		{
@@ -1034,7 +1034,7 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& 
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	SVTaskObjectClass*      pTaskObj = dynamic_cast <SVTaskObjectClass*> (pObj);
+	SvIe::SVTaskObjectClass* pTaskObj = dynamic_cast<SvIe::SVTaskObjectClass*> (pObj);
 
 	SVOutputInfoListClass l_OutputList;
 	pTaskObj->GetOutputList( l_OutputList );
@@ -1603,14 +1603,14 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 	if( nullptr != pConfig){ lSize = pConfig->GetCameraCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVVirtualCamera* pCamera = pConfig->GetCamera(l);
+		SvIe::SVVirtualCamera* pCamera = pConfig->GetCamera(l);
 		if( nullptr != pCamera )
 		{
 			SVFileNameArrayClass* pfnac = nullptr;
 			SVLightReference* plrcDummy = nullptr;
 			SVLut* plutDummy = nullptr;
 			SVDeviceParamCollection* pDeviceParams = nullptr;
-			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
+			SvIe::SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 			ASSERT( nullptr != pAcqDevice);
 			bool bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
 			ASSERT( bOk );
@@ -1895,9 +1895,9 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Camera:"));
 			
-			std::deque< SVVirtualCamera* > cameras;
+			std::deque<SvIe::SVVirtualCamera*> cameras;
 			pPPQ->GetCameraList(cameras);
-			std::sort(cameras.begin(), cameras.end(), isLessByName);
+			std::sort(cameras.begin(), cameras.end(), SvIe::isLessByName);
 			for (auto* pCamera : cameras)
 			{
 				if (nullptr != pCamera)
@@ -1968,9 +1968,9 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 		{
 			bool bPosPrint = false;
-			std::deque< SVVirtualCamera* > cameras;
+			std::deque<SvIe::SVVirtualCamera*> cameras;
 			pPPQ->GetCameraList( cameras );
-			std::sort(cameras.begin(), cameras.end(), isLessByName);
+			std::sort(cameras.begin(), cameras.end(), SvIe::isLessByName);
 			
 			for (auto* pCamera : cameras)
 			{
@@ -2442,16 +2442,16 @@ void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int
 	std::string Value;
 	int Index (0);
 
-	BasicValueObjects::ValueVector GlobalConstantObjects;
+	SvVol::BasicValueObjects::ValueVector GlobalConstantObjects;
 	RootObject::getRootChildObjectList( GlobalConstantObjects, SvDef::FqnGlobal );
 
 	Label = _T( "Global Constants" );
 	Value = SvUl::Format( _T("%d"),  GlobalConstantObjects.size() );
 	PrintValueObject(pDC, ptCurPos, Label.c_str(), Value.c_str() );
-	BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
+	SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
 	while ( GlobalConstantObjects.cend() != Iter )
 	{
-		const BasicValueObjectPtr& pGlobalConstant = *Iter;
+		const SvVol::BasicValueObjectPtr& pGlobalConstant = *Iter;
 
 		if(nullptr != pGlobalConstant)
 		{

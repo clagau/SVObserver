@@ -16,7 +16,10 @@
 #include "Definitions/Color.h"
 #pragma region Includes
 
+namespace SvAo
+{
 class SVHistogramAnalyzerClass;
+}
 
 class SVSquare: public CStatic
 {
@@ -42,7 +45,7 @@ class SVHistogramAnalyzerSetupClass : public CDialog
 {
 //	DECLARE_DYNAMIC(SVHistogramAnalyzerSetupClass)
 public:
-	SVHistogramAnalyzerClass* m_pAnalyzer;
+	SvAo::SVHistogramAnalyzerClass* m_pAnalyzer;
 
 	HRESULT SetInspectionData();
 	void Refresh();

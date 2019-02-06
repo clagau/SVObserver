@@ -10,11 +10,12 @@
 #include "SVToolAdjustmentDialogSizePage.h"
 #include "SVObserver.h"
 #include "afxdialogex.h"
-#include "ToolSizeAdjustTask.h"
+#include "Operators/ToolSizeAdjustTask.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "InspectionEngine/EQAdjustSize.h"
+#include "Operators/EQAdjustSize.h"
+#include "Tools/SVTool.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
@@ -39,7 +40,7 @@ SVToolAdjustmentDialogSizePage::SVToolAdjustmentDialogSizePage(const SVGUID& rIn
 , m_pParentDialog(Parent)
 , m_pTool(nullptr)
 {
-	for( int i =0 ; i < ToolSizeAdjustTask::TSValuesCount; i++)
+	for( int i =0 ; i < SvOp::ToolSizeAdjustTask::TSValuesCount; i++)
 	{
 		m_pEQAdjustSize[i] = nullptr;
 	}
@@ -53,20 +54,20 @@ void SVToolAdjustmentDialogSizePage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	
-	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_WIDTH, m_ComboBox[ToolSizeAdjustTask::TSWidth]);
-	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_HEIGHT, m_ComboBox[ToolSizeAdjustTask::TSHeight]);
-	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_POSITIONX, m_ComboBox[ToolSizeAdjustTask::TSPositionX]); 
-	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_POSITIONY, m_ComboBox[ToolSizeAdjustTask::TSPositionY]);
+	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_WIDTH, m_ComboBox[SvOp::ToolSizeAdjustTask::TSWidth]);
+	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_HEIGHT, m_ComboBox[SvOp::ToolSizeAdjustTask::TSHeight]);
+	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_POSITIONX, m_ComboBox[SvOp::ToolSizeAdjustTask::TSPositionX]);
+	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_POSITIONY, m_ComboBox[SvOp::ToolSizeAdjustTask::TSPositionY]);
 	
-	DDX_Control(pDX, IDC_BUTTON_TA_WIDTH_FORMULA, m_Button[ToolSizeAdjustTask::TSWidth]);
-	DDX_Control(pDX, IDC_BUTTON_TA_HEIGHT, m_Button[ToolSizeAdjustTask::TSHeight]);
-	DDX_Control(pDX, IDC_BUTTON_POSITION_FORMULA_X, m_Button[ToolSizeAdjustTask::TSPositionX]);
-	DDX_Control(pDX, IDC_BUTTON_POSITION_Y, m_Button[ToolSizeAdjustTask::TSPositionY]);
+	DDX_Control(pDX, IDC_BUTTON_TA_WIDTH_FORMULA, m_Button[SvOp::ToolSizeAdjustTask::TSWidth]);
+	DDX_Control(pDX, IDC_BUTTON_TA_HEIGHT, m_Button[SvOp::ToolSizeAdjustTask::TSHeight]);
+	DDX_Control(pDX, IDC_BUTTON_POSITION_FORMULA_X, m_Button[SvOp::ToolSizeAdjustTask::TSPositionX]);
+	DDX_Control(pDX, IDC_BUTTON_POSITION_Y, m_Button[SvOp::ToolSizeAdjustTask::TSPositionY]);
 
-	DDX_Control(pDX, IDC_WIDTH_EDIT, m_EditCtrl[ToolSizeAdjustTask::TSWidth]);
-	DDX_Control(pDX, IDC_HEIGHT_EDIT, m_EditCtrl[ToolSizeAdjustTask::TSHeight]);
-	DDX_Control(pDX, IDC_TRANSLATIONX_EDIT, m_EditCtrl[ToolSizeAdjustTask::TSPositionX]);
-	DDX_Control(pDX, IDC_TRANSLATIONY_EDIT, m_EditCtrl[ToolSizeAdjustTask::TSPositionY]);
+	DDX_Control(pDX, IDC_WIDTH_EDIT, m_EditCtrl[SvOp::ToolSizeAdjustTask::TSWidth]);
+	DDX_Control(pDX, IDC_HEIGHT_EDIT, m_EditCtrl[SvOp::ToolSizeAdjustTask::TSHeight]);
+	DDX_Control(pDX, IDC_TRANSLATIONX_EDIT, m_EditCtrl[SvOp::ToolSizeAdjustTask::TSPositionX]);
+	DDX_Control(pDX, IDC_TRANSLATIONY_EDIT, m_EditCtrl[SvOp::ToolSizeAdjustTask::TSPositionY]);
 }
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSizePage, CPropertyPage)
@@ -94,19 +95,19 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 		ToolSizeAdjustTaskInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
 		
-		m_pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(m_pTool->getFirstObject(ToolSizeAdjustTaskInfo));
+		m_pToolSizeAdjustTask = dynamic_cast<SvOp::ToolSizeAdjustTask*>(m_pTool->getFirstObject(ToolSizeAdjustTaskInfo));
 		if( m_pToolSizeAdjustTask )
 		{
-			for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType <  ToolSizeAdjustTask::TSValuesCount; ++vType)
+			for( int vType  = SvOp::ToolSizeAdjustTask::TSPositionX ; vType <  SvOp::ToolSizeAdjustTask::TSValuesCount; ++vType)
 			{
-				SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
+				SvVol::SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<SvOp::ToolSizeAdjustTask::TSValues>(vType));
 				if (pValue)
 				{
 					m_ComboBox[vType].SetEnumTypes(pValue->GetEnumVector());
 					if (false == m_pToolSizeAdjustTask->IsFullSizeAllowed())
 					{
 						///Remove Fullsize from combobox
-						int index = m_ComboBox[vType].FindString(-1, SvO::SizeAdjustTextFullSize);
+						int index = m_ComboBox[vType].FindString(-1, SvDef::SizeAdjustTextFullSize);
 						if (index >= 0)
 						{
 							m_ComboBox[vType].DeleteString(index);
@@ -121,16 +122,16 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		evaluateObjectInfo.ObjectType = SvPb::SVEquationObjectType;
 
 		evaluateObjectInfo.SubType = SvPb::EQSizePositionXType;
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionX] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEQAdjustSize[SvOp::ToolSizeAdjustTask::TSPositionX] = dynamic_cast<SvOp::EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		evaluateObjectInfo.SubType = SvPb::EQSizePositionYType;
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionY]  = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEQAdjustSize[SvOp::ToolSizeAdjustTask::TSPositionY]  = dynamic_cast<SvOp::EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		evaluateObjectInfo.SubType = SvPb::EQSizeWidthType;
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSWidth] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEQAdjustSize[SvOp::ToolSizeAdjustTask::TSWidth] = dynamic_cast<SvOp::EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		evaluateObjectInfo.SubType = SvPb::EQSizeHeightType;
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSHeight] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEQAdjustSize[SvOp::ToolSizeAdjustTask::TSHeight] = dynamic_cast<SvOp::EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		Refresh( false );
 		UpdateData( FALSE );
@@ -158,39 +159,39 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 	{
 		UpdateData(true); // get data from dialog
 		
-		EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
+		SvTo::EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
 
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller Values{ SvOg::BoundValues{ m_pToolSizeAdjustTask->GetInspection()->GetUniqueObjectID(), m_pToolSizeAdjustTask->GetUniqueObjectID() } };
 		Values.Init();
 
-		for( int vType  = ToolSizeAdjustTask::TSPositionX; vType < ToolSizeAdjustTask::TSValuesCount; ++vType)
+		for( int vType  = SvOp::ToolSizeAdjustTask::TSPositionX; vType < SvOp::ToolSizeAdjustTask::TSValuesCount; ++vType)
 		{
 			int sel = m_ComboBox[vType].GetCurSel();
 			if( sel >= 0 )
 			{
 				long Value = ( long ) m_ComboBox[vType].GetItemData( sel );
 				
-				if((vType == ToolSizeAdjustTask::TSPositionX || vType == ToolSizeAdjustTask::TSPositionY) )
+				if((vType == SvOp::ToolSizeAdjustTask::TSPositionX || vType == SvOp::ToolSizeAdjustTask::TSPositionY) )
 				{
-					if((AutoSizeEnable & EnablePosition) == 0)
+					if((AutoSizeEnable & SvTo::EnablePosition) == 0)
 					{
-						Value = ToolSizeAdjustTask::TSNone;
+						Value = SvOp::ToolSizeAdjustTask::TSNone;
 					}
 				}
-				else if((AutoSizeEnable & EnableSize) == 0)
+				else if((AutoSizeEnable & SvTo::EnableSize) == 0)
 				{
-					Value = ToolSizeAdjustTask::TSNone;
+					Value = SvOp::ToolSizeAdjustTask::TSNone;
 				}
 				
-				SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
+				SvVol::SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<SvOp::ToolSizeAdjustTask::TSValues>(vType));
 				if (nullptr != pValue)
 				{
 					Values.Set<long>(pValue->GetEmbeddedID(), Value);
 				}
-				bool bEnabled = (Value == ToolSizeAdjustTask::TSFormula);
-				EQAdjustSize* pEquation = GetEvaluateObject( (ToolSizeAdjustTask::TSValues) vType);
+				bool bEnabled = (Value == SvOp::ToolSizeAdjustTask::TSFormula);
+				SvOp::EQAdjustSize* pEquation = GetEvaluateObject( (SvOp::ToolSizeAdjustTask::TSValues) vType);
 				if (nullptr != pEquation)
 				{
 					//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
@@ -225,58 +226,58 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 			SetInspectionData();
 		}
 		
-		EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
+		SvTo::EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
 
 		///Hide not allowed Controls
 		int show = (m_pToolSizeAdjustTask->IsAdjustSizeAllowed() == false) ?  SW_HIDE :SW_SHOW;
 		
 		bool bEnable = (false == m_pToolSizeAdjustTask->IsAdjustSizeAllowed()) ?  false :true;
-		bEnable = (AutoSizeEnable & EnableSize) == EnableSize ?  bEnable : false;
-		m_ComboBox[ToolSizeAdjustTask::TSWidth].ShowWindow(show);
-		m_EditCtrl[ToolSizeAdjustTask::TSWidth].ShowWindow(show);
-		m_ComboBox[ToolSizeAdjustTask::TSHeight].ShowWindow(show);
-		m_EditCtrl[ToolSizeAdjustTask::TSHeight].ShowWindow(show);
+		bEnable = (AutoSizeEnable & SvTo::EnableSize) == SvTo::EnableSize ?  bEnable : false;
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSWidth].ShowWindow(show);
+		m_EditCtrl[SvOp::ToolSizeAdjustTask::TSWidth].ShowWindow(show);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSHeight].ShowWindow(show);
+		m_EditCtrl[SvOp::ToolSizeAdjustTask::TSHeight].ShowWindow(show);
 		
-		m_ComboBox[ToolSizeAdjustTask::TSWidth].EnableWindow(bEnable);
-		m_ComboBox[ToolSizeAdjustTask::TSHeight].EnableWindow(bEnable);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSWidth].EnableWindow(bEnable);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSHeight].EnableWindow(bEnable);
 		
 		show = (false == m_pToolSizeAdjustTask->IsAdjustPositionAllowed()) ?  SW_HIDE :SW_SHOW;
 		bEnable = (false == m_pToolSizeAdjustTask->IsAdjustPositionAllowed()) ?  false :true;
-		bEnable = (AutoSizeEnable & EnablePosition) == EnablePosition ? bEnable : false;
+		bEnable = (AutoSizeEnable & SvTo::EnablePosition) == SvTo::EnablePosition ? bEnable : false;
 
-		m_ComboBox[ToolSizeAdjustTask::TSPositionX].ShowWindow(show);
-		m_EditCtrl[ToolSizeAdjustTask::TSPositionX].ShowWindow(show);
-		m_ComboBox[ToolSizeAdjustTask::TSPositionY].ShowWindow(show);
-		m_EditCtrl[ToolSizeAdjustTask::TSPositionY].ShowWindow(show);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSPositionX].ShowWindow(show);
+		m_EditCtrl[SvOp::ToolSizeAdjustTask::TSPositionX].ShowWindow(show);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSPositionY].ShowWindow(show);
+		m_EditCtrl[SvOp::ToolSizeAdjustTask::TSPositionY].ShowWindow(show);
 
-		m_ComboBox[ToolSizeAdjustTask::TSPositionX].EnableWindow(bEnable);
-		m_ComboBox[ToolSizeAdjustTask::TSPositionY].EnableWindow(bEnable);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSPositionX].EnableWindow(bEnable);
+		m_ComboBox[SvOp::ToolSizeAdjustTask::TSPositionY].EnableWindow(bEnable);
 
 		// refresh  combo settings...
-		for( int vType = ToolSizeAdjustTask::TSPositionX; vType < ToolSizeAdjustTask::TSValuesCount; ++vType)
+		for( int vType = SvOp::ToolSizeAdjustTask::TSPositionX; vType < SvOp::ToolSizeAdjustTask::TSValuesCount; ++vType)
 		{
 			long SelMode(0), nShow(SW_HIDE);
 			CString csResult;
-			SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
+			SvVol::SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<SvOp::ToolSizeAdjustTask::TSValues>(vType));
 			if (pValue)
 			{
 				if (S_OK == pValue->GetValue( SelMode ))
 				{
-					if (ToolSizeAdjustTask::TSPositionX == vType || ToolSizeAdjustTask::TSPositionY == vType)
+					if (SvOp::ToolSizeAdjustTask::TSPositionX == vType || SvOp::ToolSizeAdjustTask::TSPositionY == vType)
 					{
-						if (0 == (AutoSizeEnable & EnablePosition))
+						if (0 == (AutoSizeEnable & SvTo::EnablePosition))
 						{
-							SelMode = ToolSizeAdjustTask::TSNone;
+							SelMode = SvOp::ToolSizeAdjustTask::TSNone;
 						}
 					}
-					else if (0 == (AutoSizeEnable & EnableSize))
+					else if (0 == (AutoSizeEnable & SvTo::EnableSize))
 					{
-						SelMode = ToolSizeAdjustTask::TSNone;
+						SelMode = SvOp::ToolSizeAdjustTask::TSNone;
 					} 
 
 					m_ComboBox[vType].SetCurSelItemData(SelMode);
 
-					if (ToolSizeAdjustTask::TSFormula == SelMode)
+					if (SvOp::ToolSizeAdjustTask::TSFormula == SelMode)
 					{
 						nShow = SW_SHOW;
 						if (nullptr != m_pEQAdjustSize[vType]  && (m_pEQAdjustSize[vType])->IsEnabled() && (m_pEQAdjustSize[vType])->HasCondition())
@@ -285,20 +286,20 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 							csResult.Format( _T("%ld") , lResult );
 						}
 					}
-					else if (ToolSizeAdjustTask::TSNone == SelMode)
+					else if (SvOp::ToolSizeAdjustTask::TSNone == SelMode)
 					{
 						long lvalue;
-						if (S_OK == m_pToolSizeAdjustTask->GetExtentValues(ToolSizeAdjustTask::TSValues(vType),lvalue))
+						if (S_OK == m_pToolSizeAdjustTask->GetExtentValues(SvOp::ToolSizeAdjustTask::TSValues(vType),lvalue))
 						{
 							csResult.Format( _T("%ld") , lvalue );
 						}
 					}
-					else if(SelMode == ToolSizeAdjustTask::TSFullSize)
+					else if(SelMode == SvOp::ToolSizeAdjustTask::TSFullSize)
 					{
 						long lvalue(0);
-						if (ToolSizeAdjustTask::TSHeight == ToolSizeAdjustTask::TSValues(vType) || ToolSizeAdjustTask::TSWidth == ToolSizeAdjustTask::TSValues(vType))
+						if (SvOp::ToolSizeAdjustTask::TSHeight == SvOp::ToolSizeAdjustTask::TSValues(vType) || SvOp::ToolSizeAdjustTask::TSWidth == SvOp::ToolSizeAdjustTask::TSValues(vType))
 						{
-							if (S_OK == m_pToolSizeAdjustTask->GetParentExtentOutputValues(ToolSizeAdjustTask::TSValues(vType), lvalue) )
+							if (S_OK == m_pToolSizeAdjustTask->GetParentExtentOutputValues(SvOp::ToolSizeAdjustTask::TSValues(vType), lvalue) )
 							{
 								csResult.Format( _T("%ld") , lvalue );
 							}
@@ -317,9 +318,9 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 	UpdateData( false ); // set data to dialog
 }
 
-void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(ToolSizeAdjustTask::TSValues mode)
+void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSValues mode)
 {
-	if (mode < 0 || mode >= ToolSizeAdjustTask::TSValuesCount)
+	if (mode < 0 || mode >= SvOp::ToolSizeAdjustTask::TSValuesCount)
 	{
 		ASSERT(false);
 		return;
@@ -339,34 +340,34 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(ToolSizeAdjustTask
 	}
 }
 
-void SVToolAdjustmentDialogSizePage::OnSelchangeCombo(ToolSizeAdjustTask::TSValues mode)
+void SVToolAdjustmentDialogSizePage::OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSValues mode)
 {
 	/// full size must be selected in both or none of the combo boxes 
 	DWORD_PTR selMode = m_ComboBox[mode].GetCurSelItemData();
-	if (ToolSizeAdjustTask::TSFullSize == selMode)
+	if (SvOp::ToolSizeAdjustTask::TSFullSize == selMode)
 	{
 		///set all other to full size 
-		for( int vType = ToolSizeAdjustTask::TSPositionX; vType < ToolSizeAdjustTask::TSValuesCount; ++vType)
+		for( int vType = SvOp::ToolSizeAdjustTask::TSPositionX; vType < SvOp::ToolSizeAdjustTask::TSValuesCount; ++vType)
 		{
 			if (vType == mode)
 			{
 				continue;	
 			}
-			m_ComboBox[vType].SetCurSelItemData(ToolSizeAdjustTask::TSFullSize);
+			m_ComboBox[vType].SetCurSelItemData(SvOp::ToolSizeAdjustTask::TSFullSize);
 		}
 	}
 	else 
 	{
 		///Then all must be not be full sized
-		for( int vType = ToolSizeAdjustTask::TSPositionX; vType < ToolSizeAdjustTask::TSValuesCount; ++vType)
+		for( int vType = SvOp::ToolSizeAdjustTask::TSPositionX; vType < SvOp::ToolSizeAdjustTask::TSValuesCount; ++vType)
 		{
 			if (vType == mode)
 			{
 				continue;	
 			}
-			if ( ToolSizeAdjustTask::TSFullSize == m_ComboBox[vType].GetCurSelItemData() )
+			if ( SvOp::ToolSizeAdjustTask::TSFullSize == m_ComboBox[vType].GetCurSelItemData() )
 			{
-				m_ComboBox[vType].SetCurSelItemData(ToolSizeAdjustTask::TSNone);
+				m_ComboBox[vType].SetCurSelItemData(SvOp::ToolSizeAdjustTask::TSNone);
 			}
 		}
 	}
@@ -375,47 +376,47 @@ void SVToolAdjustmentDialogSizePage::OnSelchangeCombo(ToolSizeAdjustTask::TSValu
 
 void SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboWidthMode()
 {
-	OnSelchangeCombo(ToolSizeAdjustTask::TSWidth);
+	OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSWidth);
 }
 
 void SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboHeightMode()
 {
-	OnSelchangeCombo(ToolSizeAdjustTask::TSHeight);
+	OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSHeight);
 }
 
 void SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboPositionX()
 {
-	OnSelchangeCombo(ToolSizeAdjustTask::TSPositionX);
+	OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSPositionX);
 }
 
 void SVToolAdjustmentDialogSizePage::OnCbnSelchangeComboPositionY()
 {
-	OnSelchangeCombo(ToolSizeAdjustTask::TSPositionY);
+	OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSPositionY);
 }
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaWidthFormula()
 {
-	return OnBnClickedButtonFormula(ToolSizeAdjustTask::TSWidth);
+	return OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSWidth);
 }
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonPositionY()
 {
-	return OnBnClickedButtonFormula(ToolSizeAdjustTask::TSPositionY);
+	return OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSPositionY);
 }
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonPositionFormulaX()
 {
-	return OnBnClickedButtonFormula(ToolSizeAdjustTask::TSPositionX);
+	return OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSPositionX);
 }
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaHeight()
 {
-	return OnBnClickedButtonFormula(ToolSizeAdjustTask::TSHeight);
+	return OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSHeight);
 }
 
-EQAdjustSize* SVToolAdjustmentDialogSizePage::GetEvaluateObject(ToolSizeAdjustTask::TSValues typ)
+SvOp::EQAdjustSize* SVToolAdjustmentDialogSizePage::GetEvaluateObject(SvOp::ToolSizeAdjustTask::TSValues typ)
 {
-	if (typ < 0 || typ >= ToolSizeAdjustTask::TSValuesCount)
+	if (typ < 0 || typ >= SvOp::ToolSizeAdjustTask::TSValuesCount)
 	{
 		ASSERT(false);
 		return nullptr;
@@ -426,15 +427,15 @@ EQAdjustSize* SVToolAdjustmentDialogSizePage::GetEvaluateObject(ToolSizeAdjustTa
 bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 {
 	/// no empty formulas 
-	for( int vType  = ToolSizeAdjustTask::TSPositionX; vType < ToolSizeAdjustTask::TSValuesCount; ++vType)
+	for( int vType  = SvOp::ToolSizeAdjustTask::TSPositionX; vType < SvOp::ToolSizeAdjustTask::TSValuesCount; ++vType)
 	{
 		int sel = m_ComboBox[vType].GetCurSel();
 		if( sel >= 0 )
 		{
 			long Value = static_cast<long>(m_ComboBox[vType].GetItemData( sel ));
-			if (ToolSizeAdjustTask::TSFormula == Value)
+			if (SvOp::ToolSizeAdjustTask::TSFormula == Value)
 			{
-				EQAdjustSize* pEQ = GetEvaluateObject( static_cast<ToolSizeAdjustTask::TSValues>(vType));
+				SvOp::EQAdjustSize* pEQ = GetEvaluateObject( static_cast<SvOp::ToolSizeAdjustTask::TSValues>(vType));
 				if (nullptr != pEQ)
 				{
 					if( pEQ->GetEquationText().empty() )

@@ -77,5 +77,9 @@ namespace SvOi
 		virtual HRESULT SubmitCommand(const ICommandPtr& rCommandPtr) = 0;
 
 		virtual void BuildValueObjectMap() = 0;
+
+		virtual GUID getFirstCamera() const = 0;
+
+		virtual HRESULT addSharedCamera(GUID cameraID) = 0;
 	};
 } //namespace SvOi

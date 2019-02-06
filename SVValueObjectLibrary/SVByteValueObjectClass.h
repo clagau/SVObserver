@@ -19,6 +19,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVByteValueObjectClass : public SVValueObjectClass<BYTE>
 {
 	// This is needed since SVByteVectorObjectClass has been changed
@@ -58,3 +61,5 @@ private:
 };
 
 #pragma warning (pop)
+
+} //namespace SvVol

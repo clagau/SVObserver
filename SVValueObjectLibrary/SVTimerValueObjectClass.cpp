@@ -15,6 +15,9 @@
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -59,3 +62,4 @@ void SVTimerValueObjectClass::LocalInitialize()
 	setOutputFormat(_T("%I64d (µs)"));
 }
 
+} //namespace SvVol

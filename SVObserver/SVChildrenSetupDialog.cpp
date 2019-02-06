@@ -111,7 +111,7 @@ void SVChildrenSetupDialogClass::redrawLists()
 		m_AvailableChildrenListCtrl.DeleteAllItems();
 		for( int i = 0; i < static_cast<int> (m_pAvailableChildrenList->size()); ++i )
 		{
-			SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at(i);
+			SvIe::SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at(i);
 
 			// Make simple name comparison...
 			LVFINDINFO findInfo;
@@ -210,9 +210,9 @@ void SVChildrenSetupDialogClass::OnAddButton()
 			{
 				// It´s a valid index ...
 
-				SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at( listIndex );
+				SvIe::SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at( listIndex );
 				// Construct Children...
-				SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >( rChildrenInfo.Construct() );
+				SvIe::SVTaskObjectClass* pObject = dynamic_cast<SvIe::SVTaskObjectClass*> (rChildrenInfo.Construct());
 				if( nullptr != pObject )
 				{
 					// Add children to parent...
@@ -257,11 +257,11 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 	if( m_pAvailableChildrenList && m_pParentObject )
 	{
 		int item = -1;
-		SVTaskObjectClass* pTaskObject;
+		SvIe::SVTaskObjectClass* pTaskObject{nullptr};
 		// Get all selected items...
 		while( ( item = m_ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
-			pTaskObject = reinterpret_cast< SVTaskObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
+			pTaskObject = reinterpret_cast<SvIe::SVTaskObjectClass*> (m_ChildrenListCtrl.GetItemData( item ));
 			//reinterpret_cast is dangerous, but a kind of or dynamic_cast afterwards do not help for more safety.
 			if (nullptr != pTaskObject)
 			{
@@ -415,7 +415,7 @@ void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR* pNMHD
 	*pResult = 0;
 }
 
-BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject )
+BOOL SVChildrenSetupDialogClass::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
 {
 	BOOL bRetVal = false;
 

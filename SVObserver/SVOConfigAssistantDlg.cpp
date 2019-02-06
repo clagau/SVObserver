@@ -29,11 +29,11 @@
 #include "SVOInspectionObj.h"
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOCameraObj.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
-#include "SVDigitizerProcessingClass.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVIPDoc.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVMessage/SVMessage.h"
@@ -467,13 +467,13 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			{
-				CreateDefaultForSVIMDigital(1, SvO::cTriggerFixedName);
+				CreateDefaultForSVIMDigital(1, SvDef::cTriggerFixedName);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			{
-				CreateDefaultForSVIMDigital(2, SvO::cTriggerFixedName);
+				CreateDefaultForSVIMDigital(2, SvDef::cTriggerFixedName);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
@@ -486,7 +486,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			{
 				m_lConfigurationType = SVIM_PRODUCT_X2_GD4A;
 
-				CreateDefaultForSVIMDigital(4, SvO::cTriggerFixedName);
+				CreateDefaultForSVIMDigital(4, SvDef::cTriggerFixedName);
 
 				std::string ProductName = GetNameFromProductID( m_lConfigurationType );
 				m_ctlAvailableSys.SelectString( -1, ProductName.c_str() );
@@ -563,7 +563,7 @@ std::string CSVOConfigAssistantDlg::GetNextCameraName()
 	while ( bFound )
 	{
 		iRet++;
-		Result = SvUl::Format( _T("%s%d"), SvO::cCameraFixedName, iRet );
+		Result = SvUl::Format( _T("%s%d"), SvDef::cCameraFixedName, iRet );
 		bFound = m_CameraList.IsCameraInList( Result.c_str() );
 	}
 	m_iNextCameraNumber = iRet;
@@ -589,7 +589,7 @@ std::string CSVOConfigAssistantDlg::GetNextInspectionName() const
 	while ( bFound )
 	{
 		iRet++;
-		Result = SvUl::Format( _T("%s%d"), SvO::cInspectionFixedName, iRet );
+		Result = SvUl::Format( _T("%s%d"), SvDef::cInspectionFixedName, iRet );
 		bFound = m_InspectList.IsInspectionInList(Result.c_str());
 	}
 	return Result;
@@ -618,7 +618,7 @@ std::string CSVOConfigAssistantDlg::GetNextPPQName() const
 	while( bFound )
 	{
 		iRet++;
-		Result = SvUl::Format( _T("%s%d"), SvO::cPpqFixedName, iRet );
+		Result = SvUl::Format( _T("%s%d"), SvDef::cPpqFixedName, iRet );
 		bFound = m_PPQList.IsPPQInList( Result.c_str() );
 	}
 	return Result;
@@ -1372,15 +1372,15 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 
 				//do same for camera's
 
-				std::deque< SVVirtualCamera* > l_Cameras;
+				std::deque<SvIe::SVVirtualCamera*> cameras;
 
-				pPPQ->GetCameraList( l_Cameras );
+				pPPQ->GetCameraList( cameras );
 
-				std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+				std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-				while( l_Iter != l_Cameras.end() )
+				while( l_Iter != cameras.end() )
 				{
-					SVVirtualCamera* pCamera = ( *l_Iter );
+					SvIe::SVVirtualCamera* pCamera{*l_Iter};
 
 					if ( nullptr != pCamera )
 					{
@@ -1441,8 +1441,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		pConfig->GetAcquisitionDeviceNextAssoc( aPos, AcquisitionName );
 		if (!IsDigitizerUsed(AcquisitionName.c_str()))
 		{
-			SVAcquisitionClassPtr psvDevice;
-			psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( AcquisitionName.c_str() );
+			SvIe::SVAcquisitionClassPtr psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( AcquisitionName.c_str() );
 			pConfig->RemoveAcquisitionDevice(AcquisitionName.c_str());
 			if( nullptr != psvDevice )
 			{
@@ -1468,12 +1467,12 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		svFiles.clear();
 		int CameraIndex(iAcq);
 		bool IsAcqDevice( false );
-		SVAcquisitionClassPtr psvDevice;
+		SvIe::SVAcquisitionClassPtr psvDevice;
 
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
 		if( nullptr != pCameraObj )
 		{
-			int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
+			int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
 			if( -1 != Digitizer )
 			{
 				pCameraObj->SetDigNumber( Digitizer );
@@ -1482,7 +1481,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			// For File Acquisition
 			if ( pCameraObj->IsFileAcquisition())
 			{
-				psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
+				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
 					SVLightReference lightRef;
@@ -1557,7 +1556,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				}
 
 				psvLight = nullptr;
-				psvDevice =  SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
+				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
 					bool bGetLightReference = false;
@@ -1688,7 +1687,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 		return bRet;
 	}
 
-	SVVirtualCamera* pCamera( nullptr );
+	SvIe::SVVirtualCamera* pCamera( nullptr );
 	long lCfgCamCnt = pConfig->GetCameraCount();
 
 	//check to see if camera still exist...
@@ -1746,7 +1745,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 
 				if ( nullptr == pCamera )
 				{
-					pCamera = new SVVirtualCamera;
+					pCamera = new SvIe::SVVirtualCamera;
 					pCamera->SetName( CameraDisplayName.c_str() );
 					bRet = nullptr != pCamera && bRet;
 					bAddCamera = TRUE;
@@ -1755,7 +1754,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 				if ( nullptr != pCamera )
 				{
 					// move from editing camera object to configuration camera object
-					int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
+					int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
 					if( -1 != Digitizer )
 					{
 						pCameraObj->SetDigNumber( Digitizer );
@@ -2237,15 +2236,15 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 						PPQCameraName = pPPQObj->GetAttachedCamera(i);
 
-						std::deque< SVVirtualCamera* > Cameras;
+						std::deque<SvIe::SVVirtualCamera*> cameras;
 
-						pPPQ->GetCameraList( Cameras );
+						pPPQ->GetCameraList( cameras );
 
-						std::deque< SVVirtualCamera* >::iterator l_Iter = Cameras.begin();
+						std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-						while( l_Iter != Cameras.end() )
+						while( l_Iter != cameras.end() )
 						{
-							SVVirtualCamera* pCamera = ( *l_Iter );
+							SvIe::SVVirtualCamera* pCamera{*l_Iter};
 
 							if ( nullptr != pCamera )
 							{
@@ -2268,7 +2267,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 						for ( l = lCfgAttachedCam -1; -1 < l; l-- )
 						{
-							SVVirtualCamera* pCamera = pConfig->GetCamera(l);
+							SvIe::SVVirtualCamera* pCamera = pConfig->GetCamera(l);
 							if ( nullptr != pCamera )
 							{
 								if ( PPQCameraName == pCamera->GetName() )
@@ -2583,7 +2582,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	int iChannel;
 	std::string CameraFileName;
 
-	SVVirtualCamera* pcfgCamera( nullptr );
+	SvIe::SVVirtualCamera* pcfgCamera( nullptr );
 	SvTi::SVTriggerObject* pcfgTrigger( nullptr );
 	SVInspectionProcess* pcfgInspection( nullptr );
 	SVPPQObject* pcfgPPQ( nullptr );
@@ -2762,13 +2761,13 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			long lppqIns;
 			pcfgPPQ->GetInspectionCount(lppqIns);
 
-			std::deque< SVVirtualCamera* > l_Cameras;
+			std::deque<SvIe::SVVirtualCamera*> cameras;
 
-			pcfgPPQ->GetCameraList( l_Cameras );
+			pcfgPPQ->GetCameraList(cameras);
 
-			std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+			std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
 
-			while( l_Iter != l_Cameras.end() )
+			while( l_Iter != cameras.end() )
 			{
 				pcfgCamera = ( *l_Iter );
 
@@ -2975,7 +2974,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 						if( nullptr != pCameraObj )
 						{
 							//The digitizer number can change after calling the camera manager so set the camera file as changed to reload
-							int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
+							int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
 							pCameraObj->SetDigNumber(Digitizer);
 							pCameraObj->SetCameraFileChanged();
 							CheckCamera( *pCameraObj );
@@ -3786,7 +3785,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 	RemoveFileAcquisitionMessages( CameraName.c_str() );
 
 	std::string DigName = BuildDigName( rCameraObj );
-	SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), rCameraObj.IsColor() );
+	SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), rCameraObj.IsColor() );
 
 	if( rCameraObj.IsFileAcquisition())
 	{
@@ -3873,7 +3872,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 	}
 	else
 	{
-		SVAcquisitionClassPtr pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
+		SvIe::SVAcquisitionClassPtr pDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 		if(nullptr != pDevice)
 		{
 			SVDeviceParamCollection DeviceParams;
@@ -4203,13 +4202,13 @@ void CSVOConfigAssistantDlg::OnBnClickedCancel()
 		for ( int i = 0; i < iSize; i++ )
 		{
 			const SVOCameraObjPtr pCameraObj = m_TmpCameraList.GetCameraObjectByPosition(i);
-			SVAcquisitionClassPtr psvDevice;
+			SvIe::SVAcquisitionClassPtr psvDevice;
 			SVFileNameArrayClass svFiles;
 			SVFileNameClass svFile;
 
 			if( nullptr != pCameraObj )
 			{
-				psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( BuildDigName( *pCameraObj ).c_str() );
+				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( BuildDigName( *pCameraObj ).c_str() );
 				if( nullptr != psvDevice )
 				{
 					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
@@ -4238,9 +4237,9 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvDef::GlobalConflictPairVe
 			{
 				if( Iter->second.m_Selected )
 				{
-					BasicValueObject* pGlobalObject(nullptr);
+					SvVol::BasicValueObject* pGlobalObject(nullptr);
 
-					pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject(  Iter->first.m_Guid ) );
+					pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject(  Iter->first.m_Guid ) );
 					if( nullptr != pGlobalObject )
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );

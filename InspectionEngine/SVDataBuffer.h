@@ -16,6 +16,9 @@
 #include "SVGlobalHandles.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 class SVDataBufferInfoClass
 {
 public:
@@ -66,3 +69,5 @@ protected:
 
 	SVDataBufferInfoClass m_DataInfo;
 };
+
+} //namespace SvIe

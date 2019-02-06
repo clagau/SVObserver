@@ -12,9 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTranslationPage.h"
-#include "InspectionEngine/SVEvaluate.h"
+#include "Operators/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "InspectionEngine/SVTransformationTool.h"
+#include "Tools/SVTransformationTool.h"
 #pragma endregion
 
 #ifdef _DEBUG
@@ -64,11 +64,11 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
-		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;

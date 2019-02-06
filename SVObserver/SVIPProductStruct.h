@@ -19,7 +19,7 @@ struct SVIPProductStruct
 {
 	unsigned long m_TriggerCount;
 	SVIPImageDataElementMap m_ImageData;
-	SVIPResultData m_ResultData;
+	SvIe::SVIPResultData m_ResultData;
 
 	SVIPProductStruct() : m_TriggerCount( 0 ), m_ImageData(), m_ResultData() {}
 

@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVTADlgRotationPage.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "InspectionEngine/SVEvaluate.h"
-#include "InspectionEngine/SVImageTransform.h"
+#include "Operators/SVEvaluate.h"
+#include "Operators/SVImageTransform.h"
 
 #pragma endregion
 
@@ -101,14 +101,14 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;

@@ -19,11 +19,19 @@
 #include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
-class SVToolAdjustmentDialogSheetClass;
-class SVToolClass;
-class SVUnaryImageOperatorListClass;
+namespace SvOp
+{
 class SVThresholdClass;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
+namespace SvVol
+{
 class SVBoolValueObjectClass;
+}
+class SVToolAdjustmentDialogSheetClass;
 
 // Threshold Dialog
 void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value );
@@ -125,12 +133,12 @@ public:
 	BOOL m_isEdit;
 
 protected:
-	SVToolClass* m_pTool;
-	SVThresholdClass* m_pCurrentThreshold;
+	SvTo::SVToolClass* m_pTool;
+	SvOp::SVThresholdClass* m_pCurrentThreshold;
 
-	SVBoolValueObjectClass* m_pUseExternATM;
-	SVBoolValueObjectClass* m_pUseExternLT;
-	SVBoolValueObjectClass* m_pUseExternUT;
+	SvVol::SVBoolValueObjectClass* m_pUseExternATM;
+	SvVol::SVBoolValueObjectClass* m_pUseExternLT;
+	SvVol::SVBoolValueObjectClass* m_pUseExternUT;
 
 private:
 	long m_lo;		// storage of slider pos, if deactivated...

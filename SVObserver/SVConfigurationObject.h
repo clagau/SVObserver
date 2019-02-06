@@ -41,6 +41,11 @@
 
 #pragma region Declarations
 //Namespace used only for forward declaration
+
+namespace SvIe
+{
+struct SVConfigurationAcquisitionDeviceInfoStruct;
+}
 namespace SvTh
 {
 class SVSoftwareTriggerClass;
@@ -60,7 +65,6 @@ class SVRemoteOutputGroup;
 class SVRemoteOutputObject;
 class SVPPQObject;
 
-struct SVConfigurationAcquisitionDeviceInfoStruct;
 typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
@@ -92,7 +96,7 @@ class SVConfigurationObject : public SVObjectClass
 	SV_DECLARE_CLASS( SVConfigurationObject );
 
 public:
-	typedef std::map<std::string, SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
+	typedef std::map<std::string, SvIe::SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
 
 	SVConfigurationObject( LPCSTR ObjectName );
 	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
@@ -229,11 +233,11 @@ public:
 	bool GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
 	bool GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const;
 
-	bool AddCamera( SVVirtualCamera* pCamera );
-	bool RemoveCamera( SVVirtualCamera* pCamera );
+	bool AddCamera(SvIe::SVVirtualCamera* pCamera );
+	bool RemoveCamera(SvIe::SVVirtualCamera* pCamera );
 	long GetCameraCount( ) const;
-	SVVirtualCamera* GetCamera( long lIndex ) const;
-	bool GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const;
+	SvIe::SVVirtualCamera* GetCamera( long lIndex ) const;
+	bool GetChildObjectByName( LPCTSTR tszName, SvIe::SVVirtualCamera** ppCamera ) const;
 
 	bool AddInspection( SVInspectionProcess* pInspection );
 	bool RemoveInspection( SVInspectionProcess* pInspection );
@@ -491,7 +495,7 @@ private:
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;
-	SVVirtualCameraPtrVector        m_arCameraArray;
+	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
 	SVIMProductEnum             m_eProductType;
 	unsigned long				m_ulVersion;

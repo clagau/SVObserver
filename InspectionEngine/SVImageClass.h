@@ -24,6 +24,10 @@
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
+
+namespace SvIe
+{
+
 #define S_NoParent                                ((HRESULT)80000L)
 
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
@@ -172,3 +176,4 @@ private:
 typedef std::set<SVImageClass*> SVImageClassPtrSet;
 typedef std::vector<SVImageClass*> SVImageClassPtrVector;
 
+} //namespace SvIe

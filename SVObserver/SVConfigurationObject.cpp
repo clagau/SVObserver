@@ -26,7 +26,6 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "TriggerInformation/SVTriggerEnums.h"
-#include "SVAcquisitionDevice.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVCommandInspectionGetItems.h"
@@ -38,12 +37,14 @@
 #include "SVMainFrm.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionDevice.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "SVToolSet.h"
 #include "Definitions/SVUserMessage.h"
 #include "TriggerHandling/SVAcquisitionInitiator.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "SVDigitizerProcessingClass.h"
 #include "SVConfigurationTreeWriter.h"
 #include "TriggerInformation/SVCameraTriggerClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
@@ -51,7 +52,6 @@
 #include "SVGlobal.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStorageResult.h"
-#include "SVVirtualCamera.h"
 #include "Definitions/GlobalConst.h"
 #include "RemoteMonitorNamedList.h"
 #include "RemoteMonitorListHelper.h"
@@ -65,7 +65,7 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "TextDefinesSvO.h"
-#include "SVColorTool.h"
+#include "Tools/SVColorTool.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVProtoBuf/ConverterHelper.h"
@@ -79,7 +79,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-typedef std::deque< SVVirtualCamera* > SVVirtualCameraPtrList;
+typedef std::deque<SvIe::SVVirtualCamera*> SVVirtualCameraPtrList;
 
 SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectGuid);
 #pragma endregion Declarations
@@ -255,14 +255,14 @@ bool SVConfigurationObject::AddAcquisitionDevice(LPCTSTR szName,
 	const SVDeviceParamCollection* pDeviceParams)
 {
 	bool bOk(false);
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice(nullptr);
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice(nullptr);
 
 	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
 	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
 
 	if (nullptr == pDevice)
 	{
-		pDevice = new SVConfigurationAcquisitionDeviceInfoStruct;
+		pDevice = new SvIe::SVConfigurationAcquisitionDeviceInfoStruct;
 	}
 
 	bOk = nullptr != pDevice;
@@ -284,7 +284,7 @@ bool SVConfigurationObject::AddAcquisitionDevice(LPCTSTR szName,
 bool SVConfigurationObject::ModifyAcquisitionDevice(LPCTSTR szName, SVLightReference& rsvLight)
 {
 	bool bOk = false;
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
 	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
@@ -301,7 +301,7 @@ bool SVConfigurationObject::ModifyAcquisitionDevice(LPCTSTR szName, SVLightRefer
 bool SVConfigurationObject::ModifyAcquisitionDevice(LPCTSTR szName, const SVLut& lut)
 {
 	bool bOk = false;
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
 	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
@@ -320,7 +320,7 @@ bool SVConfigurationObject::ModifyAcquisitionDevice(LPCTSTR szName, const SVDevi
 	bool bOk = false;
 	if (nullptr != pParams)
 	{
-		SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
+		SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 		SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
 		pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
@@ -350,7 +350,7 @@ bool SVConfigurationObject::RemoveAcquisitionDevice(LPCTSTR szName)
 {
 	bool Result = false;
 
-	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
 	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
 	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
@@ -382,7 +382,7 @@ bool SVConfigurationObject::GetAcquisitionDevice(LPCTSTR szName,
 	rpDeviceParams = nullptr;
 
 	SVAcquisitionDeviceMap::const_iterator Iter = m_AcquisitionDeviceMap.find(szName);
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
 
 	Result = nullptr != pDevice;
 	if (Result)
@@ -422,7 +422,7 @@ void SVConfigurationObject::GetAcquisitionDeviceNextAssoc(SVAcquisitionDeviceMap
 	SVLut*& rpLut,
 	SVDeviceParamCollection*& rpDeviceParams) const
 {
-	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	rpFiles = nullptr;
 	rpLight = nullptr;
@@ -542,7 +542,7 @@ bool SVConfigurationObject::GetPPQByName(LPCTSTR name, SVPPQObject** ppPPQ) cons
 	return bReturn;
 }
 
-bool SVConfigurationObject::AddCamera(SVVirtualCamera* pCamera)
+bool SVConfigurationObject::AddCamera(SvIe::SVVirtualCamera* pCamera)
 {
 	bool Result(false);
 
@@ -554,7 +554,7 @@ bool SVConfigurationObject::AddCamera(SVVirtualCamera* pCamera)
 	return Result;
 }
 
-bool SVConfigurationObject::RemoveCamera(SVVirtualCamera* pCamera)
+bool SVConfigurationObject::RemoveCamera(SvIe::SVVirtualCamera* pCamera)
 {
 	if (nullptr == pCamera) { return false; }
 
@@ -576,7 +576,7 @@ long SVConfigurationObject::GetCameraCount() const
 	return static_cast<long> (m_arCameraArray.size());
 }
 
-bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVVirtualCamera** ppCamera) const
+bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvIe::SVVirtualCamera** ppCamera) const
 {
 	bool bReturn = false;
 
@@ -588,7 +588,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVVirtualCamer
 
 	for (long l = 0; l < lCount; l++)
 	{
-		SVVirtualCamera* pCamera = GetCamera(l);
+		SvIe::SVVirtualCamera* pCamera = GetCamera(l);
 		if (nullptr != pCamera && Name == pCamera->GetCompleteName())
 		{
 			*ppCamera = pCamera;
@@ -600,18 +600,18 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVVirtualCamer
 	return bReturn;
 }
 
-SVVirtualCamera* SVConfigurationObject::GetCamera(long lIndex) const
+SvIe::SVVirtualCamera* SVConfigurationObject::GetCamera(long lIndex) const
 {
-	SVVirtualCamera* retValue = nullptr;
+	SvIe::SVVirtualCamera* pCamera = nullptr;
 
 	ASSERT(0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex)
 	{
-		retValue = m_arCameraArray[lIndex];
+		pCamera = m_arCameraArray[lIndex];
 	}
 
-	return retValue;
+	return pCamera;
 }// end GetCamera
 
 bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
@@ -801,7 +801,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1));
 
 	// Add Remote Input to the PPQ
-	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();
+	SvVol::SVVariantValueObjectClass* pValueObject = new SvVol::SVVariantValueObjectClass();
 	pValueObject->SetName(name.c_str());
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
@@ -840,7 +840,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
 
 	// Add Digital Input to the PPQ
-	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass();
+	SvVol::SVBoolValueObjectClass* pValueObject = new SvVol::SVBoolValueObjectClass();
 	pValueObject->SetName(name.c_str());
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
@@ -1476,7 +1476,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 					{
 						std::string DigitizerName;
 
-						SVAcquisitionClassPtr psvDevice;
+						SvIe::SVAcquisitionClassPtr psvDevice;
 
 						if (1 < lNumLRBands)
 						{
@@ -1489,7 +1489,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 						svDeviceParams.GetParameter(DeviceParamIPAddress, pParam);
 						if (nullptr != pParam)
 						{
-							DigitizerName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(pParam->strValue.c_str());
+							DigitizerName = SvIe::SVDigitizerProcessingClass::Instance().GetReOrderedCamera(pParam->strValue.c_str());
 						}
 						//! If no name available then generate it the way it use to be
 						if (DigitizerName.empty() && !DigName.empty())
@@ -1499,12 +1499,12 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 							{
 								CameraID -= SvDef::cMaximumCameras;
 							}
-							DigitizerName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(CameraID);
+							DigitizerName = SvIe::SVDigitizerProcessingClass::Instance().GetReOrderedCamera(CameraID);
 						}
 
 						if (!bLutDone || !bLutCreated)
 						{
-							psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigitizerName.c_str());
+							psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigitizerName.c_str());
 							bOk = nullptr != psvDevice;
 							ASSERT(bOk);
 							if (bOk)
@@ -1525,8 +1525,8 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 								lut.Transform();
 							}
 						}
-						SVDigitizerProcessingClass::Instance().SetDigitizerColor(DigitizerName.c_str(), l_BandCount > 1);
-						psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigitizerName.c_str());
+						SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor(DigitizerName.c_str(), l_BandCount > 1);
+						psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigitizerName.c_str());
 						bOk = nullptr != psvDevice;
 						if (bOk)
 						{
@@ -1642,7 +1642,7 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, 
 
 		std::string ItemName = rTree.getBranchName(hSubChild);
 
-		SVVirtualCamera *pCamera = new SVVirtualCamera;
+		SvIe::SVVirtualCamera *pCamera = new SvIe::SVVirtualCamera;
 		bOk = nullptr != pCamera;
 		if (bOk)
 		{
@@ -1759,7 +1759,7 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, 
 				}
 				else
 				{
-					RemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(pCamera->getCameraID());
+					RemappedDeviceName = SvIe::SVDigitizerProcessingClass::Instance().GetReOrderedCamera(pCamera->getCameraID());
 				}
 				bOk = pCamera->Create(RemappedDeviceName.c_str()) ? true : false;
 			}
@@ -2154,7 +2154,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 				for (long l = 0; bOk && l < lCount; l++)
 				{
-					SVVirtualCamera* pCamera = GetCamera(l);
+					SvIe::SVVirtualCamera* pCamera = GetCamera(l);
 
 					bOk = (nullptr != pCamera);
 					if (bOk)
@@ -2400,7 +2400,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 	SVObjectPtrVector::iterator Iter = ColorTools.begin();
 	for (; ColorTools.end() != Iter; ++Iter)
 	{
-		SVColorToolClass* pColorTool = dynamic_cast<SVColorToolClass*> (*Iter);
+		SvTo::SVColorToolClass* pColorTool = dynamic_cast<SvTo::SVColorToolClass*> (*Iter);
 		if (pColorTool->isConverted())
 		{
 			ConfigChanged = true;
@@ -2474,7 +2474,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			const SVDeviceParam* pParam = svDeviceParams.GetParameter(DeviceParamFileAcqImageFormat);
 			DeviceName = SvUl::Format(_T("%s.%s"), BoardName.c_str(), DigName.c_str());
 
-			SVAcquisitionClassPtr psvDevice(SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DeviceName.c_str()));
+			SvIe::SVAcquisitionClassPtr psvDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DeviceName.c_str()));
 			if (nullptr != psvDevice)
 			{
 				SVImageInfoClass svImageInfo;
@@ -2614,7 +2614,7 @@ bool SVConfigurationObject::DestroyConfiguration()
 	}
 	m_arCameraArray.clear();
 
-	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
 	for (auto& rItem : m_AcquisitionDeviceMap)
 	{
@@ -2623,11 +2623,11 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 		if (nullptr != pDevice)
 		{
-			SVAcquisitionClassPtr psvDevice;
+			SvIe::SVAcquisitionClassPtr psvDevice;
 
 			delete pDevice;
 
-			psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DeviceName.c_str());
+			psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DeviceName.c_str());
 			bOk = nullptr != psvDevice;
 			if (bOk)
 			{
@@ -2683,7 +2683,7 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
-	SVDigitizerProcessingClass::Instance().ClearDevices();
+	SvIe::SVDigitizerProcessingClass::Instance().ClearDevices();
 
 	SVThreadManager::Instance().Clear();
 
@@ -2755,11 +2755,11 @@ HRESULT SVConfigurationObject::GetChildObject(SVObjectClass*& rpObject, const SV
 			}
 			else if (rNameInfo.m_NameArray[0].substr(0, 6) == _T("Camera"))
 			{
-				SVVirtualCameraPtrVector::const_iterator l_CameraIter;
+				SvIe::SVVirtualCameraPtrVector::const_iterator l_CameraIter;
 
 				for (l_CameraIter = m_arCameraArray.begin(); nullptr == rpObject && l_CameraIter != m_arCameraArray.end(); ++l_CameraIter)
 				{
-					SVVirtualCamera* pCamera = (*l_CameraIter);
+					SvIe::SVVirtualCamera* pCamera = (*l_CameraIter);
 
 					if (nullptr != pCamera)
 					{
@@ -3119,7 +3119,7 @@ void SVConfigurationObject::SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const
 
 	for (long l = 0; l < lCount; l++)
 	{
-		SVVirtualCamera* pCamera = GetCamera(l);
+		SvIe::SVVirtualCamera* pCamera = GetCamera(l);
 
 		if (nullptr != pCamera)
 		{
@@ -3374,14 +3374,14 @@ void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter
 
 void SVConfigurationObject::SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ) const
 {
-	std::deque< SVVirtualCamera* > l_Cameras;
-	rPPQ.GetCameraList(l_Cameras);
-	if (0 < l_Cameras.size())
+	std::deque<SvIe::SVVirtualCamera*> cameras;
+	rPPQ.GetCameraList(cameras);
+	if (0 < cameras.size())
 	{
 		rWriter.StartElement(SvXml::CTAG_CAMERA);
 
-		std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
-		while (l_Iter != l_Cameras.end())
+		std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
+		while (l_Iter != cameras.end())
 		{
 			if (nullptr != (*l_Iter))
 			{
@@ -3493,9 +3493,9 @@ void SVConfigurationObject::SaveGlobalConstants(SvXml::SVObjectXMLWriter &rWrite
 {
 	rWriter.StartElement(SvXml::CTAG_GLOBAL_CONSTANTS);
 
-	BasicValueObjects::ValueVector GlobalConstantObjects;
+	SvVol::BasicValueObjects::ValueVector GlobalConstantObjects;
 	RootObject::getRootChildObjectList(GlobalConstantObjects, SvDef::FqnGlobal, 0);
-	BasicValueObjects::ValueVector::const_iterator Iter(GlobalConstantObjects.cbegin());
+	SvVol::BasicValueObjects::ValueVector::const_iterator Iter(GlobalConstantObjects.cbegin());
 	while (GlobalConstantObjects.cend() != Iter  && nullptr != *Iter)
 	{
 		std::string Name((*Iter)->GetCompleteName());
@@ -3960,17 +3960,17 @@ void SVConfigurationObject::SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* p
 
 		for (SVVirtualCameraPtrList::iterator l_Iter = l_Cameras.begin(); l_Iter != l_Cameras.end(); ++l_Iter)
 		{
-			SVVirtualCamera* pCamera = (*l_Iter);
+			SvIe::SVVirtualCamera* pCamera = (*l_Iter);
 			if (nullptr != pCamera)
 			{
 				// remove Trigger Relay, as we are using the Software Trigger
 				pCamera->UnregisterTriggerRelay();
 
-				SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
+				SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
 				if (nullptr != pAcq)
 				{
 					// need the digitizer name here ...
-					SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+					SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
 					if (pAcqDLL)
 					{
 						acqInitiator.Add(pAcqDLL, pAcq->m_hDigitizer);
@@ -4012,7 +4012,7 @@ void SVConfigurationObject::SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTrig
 			long l_Count = GetCameraCount();
 			for (long i = 0; i < l_Count; i++)
 			{
-				SVVirtualCamera* pCamera = GetCamera(i);
+				SvIe::SVVirtualCamera* pCamera = GetCamera(i);
 				if (nullptr != pCamera)
 				{
 					if (nullptr != pCamera->mpsvDevice)
@@ -4092,7 +4092,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 
 					for (SVVirtualCameraPtrList::iterator l_Iter = l_Cameras.begin(); l_Iter != l_Cameras.end(); ++l_Iter)
 					{
-						SVVirtualCamera* pCamera = (*l_Iter);
+						SvIe::SVVirtualCamera* pCamera = (*l_Iter);
 						if (nullptr != pCamera)
 						{
 							if (pCamera->IsFileAcquisition())
@@ -4701,7 +4701,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 
 							if (l_Iter->second.m_StorageType == SVVisionProcessor::SVStorageImageFileName)
 							{
-								SVImageClass* l_pImage = dynamic_cast<SVImageClass*>(ObjectRef.getObject());
+								SvIe::SVImageClass* l_pImage = dynamic_cast<SvIe::SVImageClass*>(ObjectRef.getObject());
 
 								if (nullptr != l_pImage)
 								{
@@ -4943,7 +4943,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 {
 	HRESULT Status = S_OK;
 
-	SVVirtualCameraPtrSet CamerasChanged;
+	SvIe::SVVirtualCameraPtrSet CamerasChanged;
 
 	rStatus.clear();
 
@@ -4960,7 +4960,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 
 			if (std::string(SvDef::FqnCameras) == Info.m_NameArray[0])
 			{
-				BasicValueObject* pValueObject = nullptr;
+				SvVol::BasicValueObject* pValueObject = nullptr;
 
 				SVObjectManagerClass::Instance().GetObjectByDottedName(Iter->first, pValueObject);
 
@@ -4976,7 +4976,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 						{
 							LoopStatus = pValueObject->setValue(Iter->second.m_Variant);
 
-							SVVirtualCamera* pVirtualCamera = dynamic_cast<SVVirtualCamera*> (pValueObject->GetParent());
+							SvIe::SVVirtualCamera* pVirtualCamera = dynamic_cast<SvIe::SVVirtualCamera*> (pValueObject->GetParent());
 							if (nullptr != pVirtualCamera)
 							{
 								CamerasChanged.insert(pVirtualCamera);
@@ -5015,7 +5015,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 	}
 
 	//Check which cameras device parameters have changed
-	for (SVVirtualCameraPtrSet::iterator l_Iter = CamerasChanged.begin(); l_Iter != CamerasChanged.end(); ++l_Iter)
+	for (SvIe::SVVirtualCameraPtrSet::iterator l_Iter = CamerasChanged.begin(); l_Iter != CamerasChanged.end(); ++l_Iter)
 	{
 		SVDeviceParamCollection CameraParameters;
 		HRESULT LoopStatus = (*l_Iter)->updateDeviceParameters(CameraParameters);
@@ -5119,7 +5119,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 					{
 						//add clip value to tree, with value FALSE
 						SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
-						SVBoolValueObjectClass isLUTFormulaClipped;
+						SvVol::SVBoolValueObjectClass isLUTFormulaClipped;
 						isLUTFormulaClipped.setResetOptions(false, SvOi::SVResetItemTool);
 						std::string Name = SvUl::LoadStdString(IDS_OBJECTNAME_LUT_EQUATION_CLIP);
 						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, Name.c_str());
@@ -5656,7 +5656,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 
 				if (S_OK == Result)
 				{
-					BasicValueObjectPtr pValue(nullptr);
+					SvVol::BasicValueObjectPtr pValue(nullptr);
 					pValue = RootObject::setRootChildValue(GlobalConstantName.c_str(), Value);
 					if (nullptr == pValue)
 					{

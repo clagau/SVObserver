@@ -18,7 +18,10 @@
 #include "SVROIFigureEditor.h"
 #pragma endregion Includes
 
+namespace SvTo
+{
 class SVColorToolClass;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorThresholdSheet
@@ -29,12 +32,12 @@ class SVTADlgColorThresholdSheet : public CPropertySheet
 
 // Construction
 public:
-	SVTADlgColorThresholdSheet(SVColorToolClass* aPTool, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	SVTADlgColorThresholdSheet(SVColorToolClass* aPTool, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 	virtual ~SVTADlgColorThresholdSheet();
 
-	SVColorToolClass* GetTool() { return m_pTool; }
+	SvTo::SVColorToolClass* GetTool() { return m_pTool; }
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVTADlgColorThresholdSheet)
@@ -52,12 +55,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	SVTADlgColorThresholdROI		mSheetROI;	
-	SVTADlgColorThresholdAdjustment	mSheetBand0;	
-	SVTADlgColorThresholdAdjustment	mSheetBand1;	
-	SVTADlgColorThresholdAdjustment	mSheetBand2;	
+	SVTADlgColorThresholdAdjustment	mSheetBand[SvDef::BandNumber];
 	SVTADlgColorThresholdOutput		mSheetOutput;
 
-	SVColorToolClass* m_pTool;
+	SvTo::SVColorToolClass* m_pTool;
 
 public:
 	// Shared dialog data

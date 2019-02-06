@@ -15,6 +15,9 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 struct SVTaskObjectInterfaceInputRequestStruct
 {
 	SVTaskObjectInterfaceInputRequestStruct();
@@ -36,3 +39,4 @@ struct SVInputRequestStructMap : public std::map <SVTaskObjectInterfaceInputRequ
 	HRESULT Add( const SVObjectReference& rObjectRef );
 };
 
+} //namespace SvIe

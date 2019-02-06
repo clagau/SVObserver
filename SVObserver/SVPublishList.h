@@ -15,7 +15,10 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
 class SVTaskObjectClass;
+}
 class SVInspectionProcess;
 
 class SVPublishListClass : public SVOutputInfoListClass
@@ -28,8 +31,8 @@ public:
 public:
 	void Destroy();
 
-	void Refresh(SVTaskObjectClass* pRootObject);
-	void Release(SVTaskObjectClass* pRootObject);
+	void Refresh(SvIe::SVTaskObjectClass* pRootObject);
+	void Release(SvIe::SVTaskObjectClass* pRootObject);
 	bool RemovePublishedEntry( const SVGUID& RGuid );
 
 	SVInspectionProcess* m_pInspection;

@@ -19,8 +19,8 @@
 #include "SVOPropertyPageDlg.h"
 #include "SVOCameraObj.h"
 #include "SVOInspectionObj.h"
-#include "SVDigitizerProcessingClass.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
@@ -253,7 +253,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 				m_pParent->SetModified(true);
 				m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
 				std::string DigName = m_pParent->BuildDigName( *pCameraObj );
-				SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
+				SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 			}
 			else
 			{
@@ -282,11 +282,11 @@ void CSVOCameraDlg::OnBtnPropVc()
 					if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 					{
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
-						int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
+						int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
 						pCameraObj->SetDigNumber( Digitizer );
 						std::string DigName = m_pParent->BuildDigName( *pCameraObj );
-						SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
-						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() ) );
+						SvIe::SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
+						SvIe::SVAcquisitionClassPtr psvDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigName.c_str()));
 						if (nullptr != psvDevice)
 						{
 							SVFileNameArrayClass svFiles;

@@ -41,7 +41,7 @@ public:
 private:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
-	void addColumnHeadings(const std::vector <IPResultTableData>& rDataVec);
+	void addColumnHeadings(const std::vector<SvIe::IPResultTableData>& rDataVec);
 	void setColumnWidths();
 #pragma endregion Private Methods
 
@@ -49,7 +49,7 @@ private:
 private:
 	CMenu m_ContextMenuItem;						//Menu object for context menu
 
-	SVIPResultData m_ResultData;
+	SvIe::SVIPResultData m_ResultData;
 	bool m_ColumnWidthSet = false;
 	int m_ColumnCount = 0;
 	mutable double m_UpdateTimeStamp = 0.0;

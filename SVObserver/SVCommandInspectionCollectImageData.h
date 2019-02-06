@@ -41,7 +41,7 @@ struct SVCommandInspectionCollectImageData
 	const SVIPProductStruct& GetProduct() const;
 
 protected:
-	HRESULT UpdateResults( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData );
+	HRESULT UpdateResults( SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData );
 
 	HRESULT UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
 

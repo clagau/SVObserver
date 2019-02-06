@@ -17,14 +17,15 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "InspectionEngine/ResultViewItemDef.h"
-#include "TableObject.h"
+#include "InspectionEngine/SVIPResultItemDefinition.h"
+#include "Operators/TableObject.h"
 #pragma endregion Includes
 
-#pragma region Declarations
+namespace SvIe
+{
 struct SVIPResultData;
-class SVIPResultItemDefinition;
+}
 class SVInspectionProcess;
-#pragma endregion Declarations
 
 /**
 	Class contains a list of GUIDS of and references to variables which are selected to be shown in the result view.
@@ -32,7 +33,7 @@ class SVInspectionProcess;
 class ResultViewReferences
 {
 public:
-	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
+	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 #pragma region Constructor
@@ -89,11 +90,11 @@ public:
 	// Parameter:  rResultData <out>:  object containing data from the class's variables.
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
 	//************************************
-	void GetResultData( SVIPResultData& rResultData) const; 
+	void GetResultData(SvIe::SVIPResultData& rResultData) const; 
 
 	/// Fill the table data to the result data.
 	/// \param p_rResultData [in,out]
-	void GetResultTableData(SVIPResultData &p_rResultData) const;	
+	void GetResultTableData(SvIe::SVIPResultData &rResultData) const;
 
 	//************************************
 	// Description:  Clears the lists.
@@ -158,9 +159,9 @@ protected:
 #pragma region Member Variables
 	std::string m_TagName; // Branch name in the config file
 	SVGUID m_resultTableGuid; //The Guid of the table to display in result table view (if no table should displayed it is set to GUID_NULL)
-	TableObject* m_resultTable;
+	SvOp::TableObject* m_resultTable;
 	SVObjectReferenceVector m_ReferenceVector;
-	std::list<ResultViewItemDef> m_ResultViewItemDefList;
+	std::list<SvIe::ResultViewItemDef> m_ResultViewItemDefList;
 	SvTl::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.
 #pragma endregion Member Variables
 };

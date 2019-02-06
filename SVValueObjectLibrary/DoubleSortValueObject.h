@@ -10,9 +10,11 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/circular_buffer.hpp>
 #include "SVObjectLibrary\SVObjectLibrary.h"
-
 #include "SVDoubleValueObjectClass.h"
 #pragma endregion Includes
+
+namespace SvVol
+{
 
 #pragma region Declarations
 typedef boost::circular_buffer<int> ValueObjectSortContainer;
@@ -68,3 +70,5 @@ private:
 };
 
 typedef std::shared_ptr<DoubleSortValueObject> DoubleSortValuePtr;
+
+} //namespace SvVol

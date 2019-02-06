@@ -16,7 +16,7 @@
 #include "SVTADlgTranslationResizePage.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVGuiExtentUpdater.h"
-#include "ResizeTool.h"
+#include "Tools/ResizeTool.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -114,7 +114,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	}
 	else
 	{
-		m_pTool = static_cast <ResizeTool*> (m_ParentDialog->GetTool());
+		m_pTool = static_cast <SvTo::ResizeTool*> (m_ParentDialog->GetTool());
 
 		if (nullptr == m_pTool)
 		{
@@ -318,7 +318,7 @@ HRESULT SVTADlgTranslationResizePage::AddInterpolationMode(SVRPropertyItem* pGro
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
+		SvVol::SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
 		std::string enumeratorName;
 
 		rInterpolationMode.GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName);
@@ -360,7 +360,7 @@ HRESULT SVTADlgTranslationResizePage::AddOverScan(SVRPropertyItem* pGroupItem)
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
+		SvVol::SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
 		std::string enumeratorName;
 
 		rOverscan.GetEnumeratorName(SVOverscanOptions::OverscanEnable, enumeratorName);
@@ -392,7 +392,7 @@ HRESULT SVTADlgTranslationResizePage::AddPerformance(SVRPropertyItem* pGroupItem
 
 		comboItem->CreateComboBox();
 
-		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
+		SvVol::SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
 		std::string enumeratorName;
 
 		rPerformance.GetEnumeratorName(SVPerformanceOptions::PerformanceFast, enumeratorName);
@@ -599,7 +599,7 @@ void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, lo
 void SVTADlgTranslationResizePage::UpdateOtherInfo()
 {
 	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
-	SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
+	SvVol::SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
 	long oldInterpolationValue;
 	long newInterpolationValue;
 	rInterpolationMode.GetValue(newInterpolationValue);
@@ -610,7 +610,7 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 	}
 
 	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
-	SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
+	SvVol::SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
 	long oldOverscanValue;
 	long newOverscanValue;
 	rOverscan.GetValue(newOverscanValue);
@@ -621,7 +621,7 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 	}
 
 	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
-	SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
+	SvVol::SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
 	long oldPerformanceValue;
 	long newPerformanceValue;
 	rPerformance.GetValue(newPerformanceValue);
@@ -697,20 +697,20 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
 		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
 
-		SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
+		SvVol::SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
 		long lValue{0L};
 		rInterpolationMode.GetValue(lValue);
 		oldInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (lValue);
 		lValue = rInterpolationMode.GetDefaultValue();
 		defaultInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (lValue);
 
-		SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
+		SvVol::SVEnumerateValueObjectClass& rOverscan = m_pTool->getOverscan();
 		rOverscan.GetValue(lValue);
 		oldOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (lValue);
 		lValue = rOverscan.GetDefaultValue();
 		defaultOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (lValue);
 
-		SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
+		SvVol::SVEnumerateValueObjectClass& rPerformance = m_pTool->getPerformance();
 		rPerformance.GetValue(lValue);
 		oldPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (lValue);
 		lValue = rPerformance.GetDefaultValue();

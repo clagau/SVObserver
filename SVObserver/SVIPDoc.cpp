@@ -21,7 +21,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "InspectionEngine/SVConditional.h"
+#include "Operators/SVConditional.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
 #include "SVImageViewScroll.h"
@@ -39,7 +39,7 @@
 #include "SVToolSet.h"
 #include "ToolSetView.h"
 #include "ResultTabbedView.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVOGui\SVSaveToolSetImageDialog.h"
 #include "SVOGui\SVShowDependentsDialog.h"
 #include "SVUtilities.h"
@@ -47,7 +47,7 @@
 #include "SVPPQObject.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -76,9 +76,9 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "Definitions/ObjectDefines.h"
-#include "SVColorTool.h"
+#include "Tools/SVColorTool.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "LoopTool.h"
+#include "Tools/LoopTool.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -491,8 +491,8 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 		{
 			if (nullptr != pToolSet && 0 < pToolSet->GetSize())
 			{
-				SVToolClass* pNextTool = dynamic_cast<SVToolClass*>(pToolSet->GetAt(0));
-				if (pNextTool && SV_IS_KIND_OF(pNextTool, SVColorToolClass))
+				SvTo::SVToolClass* pNextTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(0));
+				if (pNextTool && SV_IS_KIND_OF(pNextTool, SvTo::SVColorToolClass))
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10055);
@@ -815,7 +815,7 @@ void SVIPDoc::OnAllowAdjustLightReference(CCmdUI* pCmdUI)
 		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
-		SVVirtualCameraPtrSet cameraSet;
+		SvIe::SVVirtualCameraPtrSet cameraSet;
 		SVInspectionProcess* pInspection(GetInspectionProcess());
 		HRESULT hr = S_FALSE;
 		if (nullptr != pInspection) { hr = pInspection->GetCamerasForLightReference(cameraSet); }
@@ -831,7 +831,7 @@ void SVIPDoc::OnAllowAdjustLut(CCmdUI* pCmdUI)
 		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
-		SVVirtualCameraPtrSet cameraSet;
+		SvIe::SVVirtualCameraPtrSet cameraSet;
 		SVInspectionProcess* pInspection(GetInspectionProcess());
 		HRESULT hr = S_FALSE;
 		if (nullptr != pInspection) { hr = pInspection->GetCamerasForLut(cameraSet); }
@@ -864,11 +864,11 @@ void SVIPDoc::OnAdjustLightReference()
 	SVLightReferencePtrVector apLRA;
 	SVLightReferencePtrVector apLRAorig;
 
-	SVVirtualCameraPtrSet setCameras;
+	SvIe::SVVirtualCameraPtrSet setCameras;
 
 	pInspection->GetCameras(setCameras);
 
-	SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
+	SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
 
 	while (l_Iter != setCameras.end())
 	{
@@ -954,11 +954,11 @@ void SVIPDoc::OnAdjustLut()
 	SVLutDlg::SVLutMap aLut;
 	SVLutDlg::SVLutMap aLutOrig;
 
-	SVVirtualCameraPtrSet setCameras;
+	SvIe::SVVirtualCameraPtrSet setCameras;
 
 	pInspection->GetCameras(setCameras);
 
-	SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
+	SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
 
 	while (l_Iter != setCameras.end())
 	{
@@ -989,7 +989,7 @@ void SVIPDoc::OnAdjustLut()
 		else    // if cancel
 		{
 			// restore old LUT
-			for (SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter)
+			for (SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter)
 			{
 				(*l_Iter)->SetLut(aLutOrig[(*l_Iter)->GetUniqueObjectID()]);
 			}
@@ -1000,10 +1000,10 @@ void SVIPDoc::OnAdjustLut()
 
 		if (nullptr != pConfig)
 		{
-			for (SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter)
+			for (SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter)
 			{
 				SVLut lut;
-				SVAcquisitionClassPtr pDevice = (*l_Iter)->GetAcquisitionDevice();
+				SvIe::SVAcquisitionClassPtr pDevice = (*l_Iter)->GetAcquisitionDevice();
 				pDevice->GetLut(lut);
 				pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), lut);
 
@@ -1202,16 +1202,16 @@ void SVIPDoc::OnEditDelete()
 		case NavElementType::Tool:
 		{
 
-			SVTaskObjectClass* pFirstTaskObject = pToolSet->GetAt(0);
+			SvIe::SVTaskObjectClass* pFirstTaskObject = pToolSet->GetAt(0);
 			// If deleting first item in a color IPD first tool must be a color tool
 			if (nullptr != pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == pNavElement->m_Guid && pInspection->IsColorCamera())
 			{
 				if (pToolSet->GetSize() > 1)
 				{
-					SVToolClass* pNextTool = dynamic_cast<SVToolClass*> (pToolSet->GetAt(1));
+					SvTo::SVToolClass* pNextTool = dynamic_cast<SvTo::SVToolClass*> (pToolSet->GetAt(1));
 
-					if (pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SVColorToolClass) &&
-						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
+					if (pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SvTo::SVColorToolClass) &&
+						pNextTool && !SV_IS_KIND_OF(pNextTool, SvTo::SVColorToolClass))
 					{
 						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10057);
@@ -1338,7 +1338,7 @@ void SVIPDoc::OnEditPaste()
 			std::string toolName = m_toolGroupings.GetToolToInsertBefore(pNavElement->m_DisplayName);
 			for (int i = 0; i < pToolSet->GetSize(); i++)
 			{
-				const SVTaskObjectClass* pTool = pToolSet->GetAt(i);
+				const SvIe::SVTaskObjectClass* pTool = pToolSet->GetAt(i);
 				if (pTool && pTool->GetName() == toolName)
 				{
 					postToolGuid = pTool->GetUniqueObjectID();
@@ -1363,7 +1363,7 @@ void SVIPDoc::OnEditPaste()
 
 	SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(toolGuid));
 
-	SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObject);
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
 
 	if (nullptr != pTool)
 	{
@@ -1526,7 +1526,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	// Check current user access...
 	if (TheSVObserverApp.OkToEdit())
 	{
-		SVToolClass* l_pTool = dynamic_cast<SVToolClass*>(SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
+		SvTo::SVToolClass* l_pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
 		if (nullptr != l_pTool)
 		{
 			const SvDef::SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
@@ -1759,7 +1759,7 @@ void SVIPDoc::OnSaveResultsToFile()
 		{
 			std::string tmpText;
 			SVResultDefinitionDeque ResultDefinitions;
-			SVIPResultData ResultData;
+			SvIe::SVIPResultData ResultData;
 			GetResultData(ResultData);
 			GetResultDefinitions(ResultDefinitions);
 
@@ -1778,7 +1778,7 @@ void SVIPDoc::OnSaveResultsToFile()
 				std::string Value;
 				//std::string Color(_T(""));
 
-				SVIPResultItemDefinition& l_rDef = ResultDefinitions[i];
+				SvIe::SVIPResultItemDefinition& l_rDef = ResultDefinitions[i];
 
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(l_rDef.GetObjectID());
 
@@ -1804,7 +1804,7 @@ void SVIPDoc::OnSaveResultsToFile()
 
 				ItemIndex = SvUl::Format(_T("%d"), i);
 
-				SVIPResultData::SVResultDataMap::const_iterator l_Iter = ResultData.m_ResultData.find(l_rDef);
+				SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = ResultData.m_ResultData.find(l_rDef);
 
 				if (l_Iter != ResultData.m_ResultData.end())
 				{
@@ -1870,12 +1870,12 @@ void SVIPDoc::OnSaveTableResultsToFile()
 		{
 			std::string tmpText;
 			SVResultDefinitionDeque ResultDefinitions;
-			SVIPResultData ResultData;
+			SvIe::SVIPResultData ResultData;
 			GetResultData(ResultData);
 			GetResultDefinitions(ResultDefinitions);
 
 			tmpText = _T("No.;");
-			for (IPResultTableData data : ResultData.m_ResultTableData)
+			for (SvIe::IPResultTableData data : ResultData.m_ResultTableData)
 			{
 				tmpText += data.m_columnName + ";";
 			}
@@ -1890,7 +1890,7 @@ void SVIPDoc::OnSaveTableResultsToFile()
 					tmpText = SvUl::Format(_T("%d;"), i + 1);
 					for (int j = 0; j < ResultData.m_ResultTableData.size(); j++)
 					{
-						IPResultTableData data = ResultData.m_ResultTableData[j];
+						SvIe::IPResultTableData data = ResultData.m_ResultTableData[j];
 						if (data.m_rowData.size() > i)
 						{
 							tmpText += CString(data.m_rowData[i]);
@@ -2047,7 +2047,7 @@ void SVIPDoc::RebuildResultsList()
 	}
 }
 
-bool SVIPDoc::checkOkToDelete(SVTaskObjectClass* pTaskObject)
+bool SVIPDoc::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
 {
 	bool bRetVal = false;
 
@@ -2183,7 +2183,7 @@ void SVIPDoc::InitMenu()
 		SVToolSetClass* pSet = GetToolSet();
 		if (nullptr != pMenu && nullptr != pSet)
 		{
-			SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
+			SvVol::SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
 			CMenu myPopUp;
 			if (nullptr != pEnum && myPopUp.CreatePopupMenu())
 			{
@@ -2244,7 +2244,7 @@ void SVIPDoc::OnUpdateViewToolSetDrawSubMenus(CCmdUI* PCmdUI)
 
 	if (pSet && !SVSVIMStateClass::CheckState(SV_STATE_LOADING | SV_STATE_CANCELING | SV_STATE_CLOSING))
 	{
-		SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
+		SvVol::SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
 		if (pEnum)
 		{
 			// Get current value of enumeration object.
@@ -2282,7 +2282,7 @@ void SVIPDoc::OnChangeToolSetDrawFlag(UINT nId)
 			CMenu* pMenu = ::SVFindMenuByCommand(pWindow->GetMenu(), nId, TRUE, pos);
 
 			// Get Tool Set Draw Flag...
-			SVEnumerateValueObjectClass* pEnum = GetToolSet()->GetDrawFlagObject();
+			SvVol::SVEnumerateValueObjectClass* pEnum = GetToolSet()->GetDrawFlagObject();
 
 			if (pEnum && pMenu)
 			{
@@ -3005,24 +3005,24 @@ SvTl::SVTimeStamp  SVIPDoc::getResultDefinitionUpdatTimeStamp() const
 	return Result;
 }
 
-HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const
+HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& rDefinitions) const
 {
 	HRESULT hres = E_FAIL;
-	p_rDefinitions.clear();
+	rDefinitions.clear();
 	SVResultListClass* pResultList = GetResultList();
 	if (nullptr != pResultList)
 	{
 
-		hres = pResultList->GetResultDefinitions(p_rDefinitions);
+		hres = pResultList->GetResultDefinitions(rDefinitions);
 
 	}
 
 	return hres;
 }
 
-HRESULT SVIPDoc::GetResultData(SVIPResultData& p_rResultData) const
+HRESULT SVIPDoc::GetResultData(SvIe::SVIPResultData& rResultData) const
 {
-	p_rResultData = m_Results;
+	rResultData = m_Results;
 
 	return S_OK;
 }
@@ -3056,7 +3056,7 @@ void SVIPDoc::OnAddExternalTool()
 	AddTool(SVExternalToolGuid);
 }
 
-HRESULT SVIPDoc::RemoveImage(SVImageClass* pImage)
+HRESULT SVIPDoc::RemoveImage(SvIe::SVImageClass* pImage)
 {
 	GUID sourceID = pImage->GetUniqueObjectID();
 
@@ -3085,18 +3085,18 @@ HRESULT SVIPDoc::RemoveImage(const SVGUID& p_rImageId)
 void SVIPDoc::RefreshPublishedList()
 {
 	SVPublishListClass& publishList = GetInspectionProcess()->GetPublishList();
-	publishList.Refresh((SVTaskObjectClass*)GetToolSet());
+	publishList.Refresh(dynamic_cast<SvIe::SVTaskObjectClass*> (GetToolSet()));
 
 	SetModifiedFlag();
 }
 
-HRESULT SVIPDoc::GetCameras(SVVirtualCameraPtrSet& p_rCameras) const
+HRESULT SVIPDoc::GetCameras(SvIe::SVVirtualCameraPtrSet& rCameras) const
 {
 	HRESULT l_Status = S_OK;
 
 	if (nullptr != GetInspectionProcess())
 	{
-		l_Status = GetInspectionProcess()->GetCameras(p_rCameras);
+		l_Status = GetInspectionProcess()->GetCameras(rCameras);
 	}
 	else
 	{
@@ -3113,7 +3113,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	{
 		return false;
 	}
-	LoopTool* pLoopTool(nullptr);
+	SvTo::LoopTool* pLoopTool(nullptr);
 	SVGUID parentGuid = GUID_NULL;
 	if (NavElementType::SubTool == pNaviElement->m_Type || NavElementType::SubLoopTool == pNaviElement->m_Type)
 	{
@@ -3150,7 +3150,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	}
 
 	SVObjectClass* pObject2(SVObjectManagerClass::Instance().GetObject(pNaviElement->m_Guid));
-	SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObject2);
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject2);
 	if (nullptr == pTool)
 	{
 		return false;
@@ -3215,7 +3215,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 
 void SVIPDoc::OnEditAdjustToolPosition()
 {
-	SVToolClass* pTool = dynamic_cast<SVToolClass*>(SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
 
 	if (nullptr != pTool)
 	{
@@ -3271,7 +3271,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 	}
 
 	//Tool list active and valid tool
-	SVToolClass* Tool = dynamic_cast<SVToolClass*>(SVObjectManagerClass::Instance().GetObject(SelectedGuid));
+	SvTo::SVToolClass* Tool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedGuid));
 	if (Tool)
 	{
 		//check to see if the tool has extents
@@ -3976,13 +3976,13 @@ HRESULT SVIPDoc::RebuildImages()
 
 			if (l_rImage.m_ImageData.empty())
 			{
-				SVImageClass* l_pImage = dynamic_cast<SVImageClass*>(SVObjectManagerClass::Instance().GetObject(l_RegisteredIter->first.ToGUID()));
+				SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(SVObjectManagerClass::Instance().GetObject(l_RegisteredIter->first.ToGUID()));
 
-				if ((nullptr != l_pImage))
+				if ((nullptr != pImage))
 				{
 					SVBitmapInfo l_Info;
 
-					BITMAPINFOHEADER l_Header = l_pImage->GetImageInfo().GetBitmapInfoHeader();
+					BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
 
 					l_Info.Assign(l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(l_Header.biBitCount));
 
@@ -4198,13 +4198,13 @@ HRESULT SVIPDoc::GetBitmapInfo(const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmap
 {
 	HRESULT l_Status = S_OK;
 
-	SVImageClass* l_pImage = dynamic_cast<SVImageClass*>(SVObjectManagerClass::Instance().GetObject(p_rImageId.ToGUID()));
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(SVObjectManagerClass::Instance().GetObject(p_rImageId.ToGUID()));
 
-	if (nullptr != l_pImage)
+	if (nullptr != pImage)
 	{
-		SVImageInfoClass l_svImageInfo = l_pImage->GetImageInfo();
+		SVImageInfoClass l_svImageInfo = pImage->GetImageInfo();
 
-		BITMAPINFOHEADER l_Header = l_pImage->GetImageInfo().GetBitmapInfoHeader();
+		BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
 
 		p_rBitmapInfo.Assign(l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(l_Header.biBitCount));
 	}
@@ -4365,23 +4365,23 @@ HRESULT SVIPDoc::MarkImageDataDisplayed(const SVGUID& p_rImageId, SVImageViewCla
 	return l_Status;
 }
 
-HRESULT SVIPDoc::UpdateExtents(SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents)
+HRESULT SVIPDoc::UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents)
 {
-	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtent(p_pTask, p_rExtents);
+	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtent(pTask, rExtents);
 	if (S_OK == l_Status) { SetModifiedFlag(); }
 	return l_Status;
 }
 
-HRESULT SVIPDoc::UpdateExtentsToFit(SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents)
+HRESULT SVIPDoc::UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents)
 {
-	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtentToFit(p_pTask, p_rExtents);
+	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtentToFit(pTask, rExtents);
 	if (S_OK == l_Status) { SetModifiedFlag(); }
 	return l_Status;
 }
 
-SVImageClass* SVIPDoc::GetImageByName(LPCTSTR ImageName) const
+SvIe::SVImageClass* SVIPDoc::GetImageByName(LPCTSTR ImageName) const
 {
-	SVImageClass* pImage = nullptr;
+	SvIe::SVImageClass* pImage = nullptr;
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 
 	if (nullptr != pInspection)
@@ -4441,7 +4441,7 @@ int SVIPDoc::GetToolToInsertBefore(const std::string& rName, int listIndex) cons
 				// FindTool by Name in SVTaskObjectList
 				for (int i = 0; i < pToolSet->GetSize() && !bFound; i++)
 				{
-					const SVTaskObjectClass* pTool = pToolSet->GetAt(i);
+					const SvIe::SVTaskObjectClass* pTool = pToolSet->GetAt(i);
 					if (pTool && pTool->GetName() == ToolName)
 					{
 						toolListIndex = i;

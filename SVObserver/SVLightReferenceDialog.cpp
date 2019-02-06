@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVLightReferenceDialog.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -72,18 +72,18 @@ void SVLightReferenceDialogPropertySheetClass::OnClose()
 
 
 
-bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA)
+bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA)
 {
 	miNumPages=0;
 	int i;
-	SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
+	SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
 
 	for( i = 0; l_Iter != setCameras.end(); ++i, ++l_Iter )
 	{
-		SVVirtualCamera* pCamera = ( *l_Iter );
+		SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
 		//If pointer is nullptr then do next camera
 		if( nullptr == pCamera ){ continue; }
-		SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
+		SvIe::SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
 		SVLightReference* pLR = rLRA[i];
 		int iNumBands=pLR->NumBands();
 		int iBandSize = 1;
@@ -120,11 +120,11 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 					std::string DigitizerName = SvUl::Format( _T("Dig.%d"), pDevice->DigNumber() );
 					std::string TabText = pCamera->GetName() + std::string(_T(" ")) + DigitizerName + std::string(_T(" ")) + pLRBand->Attribute( iAttribute ).strName;
 					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( TabText.c_str() );
-					pPage->mpCamera = pCamera;
-					pPage->mpDevice = pDevice;
-					pPage->mpLR = pLR;
-					pPage->miAttributeType = pLRBand->Attribute(iAttribute).dwType;
-					pPage->msAttributeName = pLRBand->Attribute(iAttribute).strName.c_str();
+					pPage->m_pCamera = pCamera;
+					pPage->m_pDevice = pDevice;
+					pPage->m_pLR = pLR;
+					pPage->m_AttributeType = pLRBand->Attribute(iAttribute).dwType;
+					pPage->m_AttributeName = pLRBand->Attribute(iAttribute).strName.c_str();
 					pPage->miCurrentBand = iBand;
 					AddPage(pPage);
 					miNumPages++;
@@ -141,12 +141,6 @@ BOOL SVLightReferenceDialogPropertySheetClass::OnInitDialog()
 	
 	return bReturn;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// Behandlungsroutinen für Nachrichten SVLightReferenceDialogPropertySheetClass 
-
-/////////////////////////////////////////////////////////////////////////////
-// Eigenschaftenseite SVLightReferenceDialogPropertyPageClass 
 
 IMPLEMENT_DYNCREATE(SVLightReferenceDialogPropertyPageClass, CPropertyPage)
 
@@ -166,12 +160,12 @@ SVLightReferenceDialogPropertyPageClass::SVLightReferenceDialogPropertyPageClass
 : CPropertyPage( SVLightReferenceDialogPropertyPageClass::IDD, 0)
 {
 	//{{AFX_DATA_INIT(SVLightReferenceDialogPropertyPageClass)
-	mlValue = 0;
+	m_Value = 0;
 	//}}AFX_DATA_INIT
 
-	miAttributeType=-1;
+	m_AttributeType=-1;
 	miCurrentBand = 0;
-	mpAcquisition = nullptr;
+	m_pAcquisition = nullptr;
 	m_strCaption = lpszTitle;
 	m_psp.pszTitle = m_strCaption;
 	m_psp.dwFlags |= PSP_USETITLE;
@@ -185,8 +179,8 @@ void SVLightReferenceDialogPropertyPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVLightReferenceDialogPropertyPageClass)
-	DDX_Control(pDX, IDC_SLIDER1, mValueSlider);
-	DDX_Text(pDX, IDC_EDIT1, mlValue);
+	DDX_Control(pDX, IDC_SLIDER1, m_ValueSlider);
+	DDX_Text(pDX, IDC_EDIT1, m_Value);
 	//}}AFX_DATA_MAP
 }
 
@@ -198,7 +192,7 @@ void SVLightReferenceDialogPropertyPageClass::DoDataExchange(CDataExchange* pDX)
 
 void SVLightReferenceDialogPropertyPageClass::OnOK() 
 {
-	SetCurrentValue( (DWORD) mlValue );
+	SetCurrentValue( (DWORD) m_Value );
 	
 	CPropertyPage::OnOK();
 }
@@ -207,12 +201,12 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnSetActive()
 {
 
 	long max, min;
-	mpDevice->GetMaxLightReferenceValue( CurrentType(), max );
-	mpDevice->GetMinLightReferenceValue( CurrentType(), min );
+	m_pDevice->GetMaxLightReferenceValue( CurrentType(), max );
+	m_pDevice->GetMinLightReferenceValue( CurrentType(), min );
 
-	mValueSlider.SetRange( ( int ) min, ( int ) max, TRUE );
-	mValueSlider.SetTic( (max-min)/10 );
-	mValueSlider.SetPageSize( (max-min)/10 );
+	m_ValueSlider.SetRange( ( int ) min, ( int ) max, TRUE );
+	m_ValueSlider.SetTic( (max-min)/10 );
+	m_ValueSlider.SetPageSize( (max-min)/10 );
 
 	// Set Min and Max Text 
 	std::string Text = SvUl::Format( _T("%ld"), min );
@@ -222,10 +216,10 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnSetActive()
 
 	// Update step width...
 	unsigned long step;
-	mpDevice->GetLightReferenceValueStep( CurrentType(), step );
+	m_pDevice->GetLightReferenceValueStep( CurrentType(), step );
 
-	mlValue = CurrentValue();
-	mValueSlider.SetPos( ( int ) mlValue );
+	m_Value = CurrentValue();
+	m_ValueSlider.SetPos( ( int ) m_Value );
 
 	
 	UpdateData( FALSE ); // set data to dialog
@@ -239,7 +233,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( nullptr == mpDevice || nullptr == mpLR || -1 == miAttributeType || nullptr == mpCamera )
+	if( nullptr == m_pDevice || nullptr == m_pLR || -1 == m_AttributeType || nullptr == m_pCamera )
 	{
 		// Not supported use!!! Caller forgot to set parameters
 		ASSERT( FALSE );
@@ -250,15 +244,15 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 		return FALSE;
 	}
 
-	miNumBands=mpLR->NumBands();
-	HRESULT hr = mpCamera->GetBand(miCamBand);
-	hr = mpCamera->GetBandSize(miBandSize);
+	m_NumBands=m_pLR->NumBands();
+	HRESULT hr = m_pCamera->GetBand(m_CamBand);
+	hr = m_pCamera->GetBandSize(m_BandSize);
 
 	UpdateData( TRUE );	// set data to dialog...
 
-	mValueSlider.SetRange( 0, 255, TRUE );
-	mValueSlider.SetTic( 127 );
-	mValueSlider.SetPageSize( 1 );
+	m_ValueSlider.SetRange( 0, 255, TRUE );
+	m_ValueSlider.SetTic( 127 );
+	m_ValueSlider.SetPageSize( 1 );
 
 	CWnd* pWnd;
 
@@ -271,10 +265,10 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	{
 		if( pWnd = GetDlgItem( aChannels[i] ) )
 		{
-			BOOL bEnable =  miNumBands > 1 && (miBandSize > 1 || miCamBand == i);  // if there is only one band, don't enable any of the radio buttons
-			if ( i < mpLR->NumBands() )
+			BOOL bEnable =  m_NumBands > 1 && (m_BandSize > 1 || m_CamBand == i);  // if there is only one band, don't enable any of the radio buttons
+			if ( i < m_pLR->NumBands() )
 			{
-				if ( nullptr == mpLR->Band(i).AttributeByName(std::string(CurrentName())) )
+				if ( nullptr == m_pLR->Band(i).AttributeByName(std::string(CurrentName())) )
 				{
 					bEnable = false;
 				}
@@ -285,8 +279,8 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 
 	if( pWnd = GetDlgItem( IDC_CHANNEL3 ) )
 	{
-		BOOL bEnable = miNumBands > 1 && (miBandSize > 3 || miCamBand == 3);
-		if ( nullptr == mpLR->Band(miCamBand).AttributeByName(std::string(CurrentName())) )
+		BOOL bEnable = m_NumBands > 1 && (m_BandSize > 3 || m_CamBand == 3);
+		if ( nullptr == m_pLR->Band(m_CamBand).AttributeByName(std::string(CurrentName())) )
 		{
 			bEnable = false;
 		}
@@ -306,7 +300,7 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 
 void SVLightReferenceDialogPropertyPageClass::UpdateLightReference()
 {
-	mpCamera->SetLightReference(*mpLR);
+	m_pCamera->SetLightReference(*m_pLR);
 }
 
 
@@ -315,10 +309,10 @@ void SVLightReferenceDialogPropertyPageClass::OnHScroll(UINT nSBCode, UINT nPos,
 {
 	UpdateData( TRUE ); // get data of dialog	
 	
-	if( &mValueSlider == ( CSliderCtrl* ) pScrollBar )
+	if( &m_ValueSlider == ( CSliderCtrl* ) pScrollBar )
 	{
-		mlValue = ( DWORD ) mValueSlider.GetPos();
-		SetCurrentValue( (DWORD) mlValue );
+		m_Value = ( DWORD ) m_ValueSlider.GetPos();
+		SetCurrentValue( (DWORD) m_Value );
 	}
 
 	UpdateData( FALSE ); // set data to dialog
@@ -330,11 +324,11 @@ void SVLightReferenceDialogPropertyPageClass::OnHScroll(UINT nSBCode, UINT nPos,
 
 void SVLightReferenceDialogPropertyPageClass::OnChannel0() 
 {
-	SetCurrentValue( ( DWORD ) mlValue );
+	SetCurrentValue( ( DWORD ) m_Value );
 	miCurrentBand = 0;
 
-	mlValue = CurrentValue();
-	mValueSlider.SetPos( ( int ) mlValue );
+	m_Value = CurrentValue();
+	m_ValueSlider.SetPos( ( int ) m_Value );
 
 	CheckRadioButton( IDC_CHANNEL0, IDC_CHANNEL3, IDC_CHANNEL0 );
 	UpdateData( FALSE ); // set data to dialog
@@ -342,11 +336,11 @@ void SVLightReferenceDialogPropertyPageClass::OnChannel0()
 
 void SVLightReferenceDialogPropertyPageClass::OnChannel1() 
 {
-	SetCurrentValue( ( DWORD ) mlValue );
+	SetCurrentValue( ( DWORD ) m_Value );
 	miCurrentBand = 1;
 
-	mlValue = CurrentValue();
-	mValueSlider.SetPos( ( int ) mlValue );
+	m_Value = CurrentValue();
+	m_ValueSlider.SetPos( ( int ) m_Value );
 
 	CheckRadioButton( IDC_CHANNEL0, IDC_CHANNEL3, IDC_CHANNEL1 );
 	UpdateData( FALSE ); // set data to dialog
@@ -354,11 +348,11 @@ void SVLightReferenceDialogPropertyPageClass::OnChannel1()
 
 void SVLightReferenceDialogPropertyPageClass::OnChannel2() 
 {
-	SetCurrentValue( ( DWORD ) mlValue );
+	SetCurrentValue( ( DWORD ) m_Value );
 	miCurrentBand = 2;
 
-	mlValue = CurrentValue();
-	mValueSlider.SetPos( ( int ) mlValue );
+	m_Value = CurrentValue();
+	m_ValueSlider.SetPos( ( int ) m_Value );
 
 	CheckRadioButton( IDC_CHANNEL0, IDC_CHANNEL3, IDC_CHANNEL2 );
 	UpdateData( FALSE ); // set data to dialog
@@ -366,11 +360,11 @@ void SVLightReferenceDialogPropertyPageClass::OnChannel2()
 
 void SVLightReferenceDialogPropertyPageClass::OnChannel3() 
 {
-	SetCurrentValue( ( DWORD ) mlValue );
+	SetCurrentValue( ( DWORD ) m_Value );
 	miCurrentBand = 3;
 
-	mlValue = CurrentValue();
-	mValueSlider.SetPos( ( int ) mlValue );
+	m_Value = CurrentValue();
+	m_ValueSlider.SetPos( ( int ) m_Value );
 
 	CheckRadioButton( IDC_CHANNEL0, IDC_CHANNEL3, IDC_CHANNEL3 );
 	UpdateData( FALSE ); // set data to dialog
@@ -380,7 +374,7 @@ void SVLightReferenceDialogPropertyPageClass::OnChangeValue()
 {
 	UpdateData( TRUE ); // get data of dialog	
 	
-	mValueSlider.SetPos( ( int ) mlValue );		
+	m_ValueSlider.SetPos( ( int ) m_Value );		
 
 	UpdateData( FALSE ); // set data to dialog
 
@@ -401,19 +395,19 @@ void SVLightReferenceDialogPropertyPageClass::OnReset()
 BOOL SVLightReferenceDialogPropertyPageClass::OnKillActive() 
 {
 	UpdateData();
-	SetCurrentValue( ( DWORD ) mlValue );
+	SetCurrentValue( ( DWORD ) m_Value );
 	
 	return CPropertyPage::OnKillActive();
 }
 
 DWORD SVLightReferenceDialogPropertyPageClass::CurrentValue()
 {
-	SVLightReferenceAttributeInfo* pAttribute = mpLR->Band( miCurrentBand ).AttributeByType( CurrentType() );
+	SVLightReferenceAttributeInfo* pAttribute = m_pLR->Band( miCurrentBand ).AttributeByType( CurrentType() );
 	if ( pAttribute )
 		return pAttribute->lValue;
 	else
 	{
-		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( std::string(CurrentName()) ); 
+		pAttribute = m_pLR->Band( miCurrentBand ).AttributeByName( std::string(CurrentName()) ); 
 		if ( pAttribute )
 			return pAttribute->lValue;
 		else
@@ -426,12 +420,12 @@ DWORD SVLightReferenceDialogPropertyPageClass::CurrentValue()
 
 void SVLightReferenceDialogPropertyPageClass::SetCurrentValue(DWORD dw)
 {
-	SVLightReferenceAttributeInfo* pAttribute = mpLR->Band( miCurrentBand ).AttributeByType( CurrentType() );
+	SVLightReferenceAttributeInfo* pAttribute = m_pLR->Band( miCurrentBand ).AttributeByType( CurrentType() );
 	if ( pAttribute )
 		pAttribute->lValue = (long) dw;
 	else
 	{
-		pAttribute = mpLR->Band( miCurrentBand ).AttributeByName( std::string(CurrentName()) );
+		pAttribute = m_pLR->Band( miCurrentBand ).AttributeByName( std::string(CurrentName()) );
 		if ( pAttribute )
 			pAttribute->lValue = (long) dw;
 		else

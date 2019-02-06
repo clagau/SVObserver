@@ -123,10 +123,10 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 		m_DataList.clear();
 
-		BasicValueObjects::ValueVector GlobalObjects;
+		SvVol::BasicValueObjects::ValueVector GlobalObjects;
 
 		RootObject::getRootChildObjectList( GlobalObjects, SvDef::FqnGlobal, 0 );
-		BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
+		SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 		while(GlobalObjects.end() != Iter && nullptr != *Iter)
 		{
 			std::string Name( (*Iter)->GetCompleteName() );
@@ -138,7 +138,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		std::sort( m_DataList.begin(), m_DataList.end() );
 
 		int Pos( 0 );
-		NameBasicValuePtrVector::const_iterator IterSorted( m_DataList.cbegin() );
+		SvVol::NameBasicValuePtrVector::const_iterator IterSorted( m_DataList.cbegin() );
 		while( m_DataList.cend() != IterSorted )
 		{
 			Pos++;
@@ -186,9 +186,9 @@ bool GlobalConstantView::editItem( int Item )
 
 		if( m_rCtrl.GetItem( &lvItem ) )
 		{
-			BasicValueObject* pObject(nullptr);
+			SvVol::BasicValueObject* pObject(nullptr);
 
-			pObject = reinterpret_cast<BasicValueObject*> ( lvItem.lParam );
+			pObject = reinterpret_cast<SvVol::BasicValueObject*> ( lvItem.lParam );
 			if( nullptr != pObject )
 			{
 				pObject->getValue( GlobalData.m_Value );
@@ -237,8 +237,8 @@ bool GlobalConstantView::deleteItem( int Item )
 
 		if( m_rCtrl.GetItem( &lvItem ) )
 		{
-			BasicValueObject* pObject(nullptr);
-			pObject = reinterpret_cast<BasicValueObject*> ( lvItem.lParam );
+			SvVol::BasicValueObject* pObject(nullptr);
+			pObject = reinterpret_cast<SvVol::BasicValueObject*> ( lvItem.lParam );
 
 			if( nullptr != pObject )
 			{
@@ -260,7 +260,7 @@ bool GlobalConstantView::deleteItem( int Item )
 	return Result;
 }
 
-int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos )
+int GlobalConstantView::insertItem(const SvVol::BasicValueObjectPtr& rpObject, int Pos )
 {
 	LVITEM lvItem;
 	_variant_t Value;
@@ -316,9 +316,8 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 
 void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
 {
-	BasicValueObjectPtr pGlobalObject;
+	SvVol::BasicValueObjectPtr pGlobalObject = RootObject::setRootChildValue( rGlobalData.m_DottedName.c_str(),  rGlobalData.m_Value );
 
-	pGlobalObject = RootObject::setRootChildValue( rGlobalData.m_DottedName.c_str(),  rGlobalData.m_Value );
 	if(nullptr != pGlobalObject)
 	{
 		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
@@ -334,9 +333,8 @@ void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& 
 
 void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
 {
-	BasicValueObject* pGlobalObject(nullptr);
+	SvVol::BasicValueObject* pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_Guid ) );
 
-	pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_Guid ) );
 	if( nullptr != pGlobalObject )
 	{
 		if( rGlobalData.m_DottedName != std::string( pGlobalObject->GetCompleteName() ) )
@@ -414,7 +412,7 @@ int GlobalConstantView::getSelectedItem() const
 	return Result;
 }
 
-bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool ConfirmDelete ) const
+bool GlobalConstantView::checkAllDependencies(SvVol::BasicValueObject* pObject, bool ConfirmDelete) const
 {
 	bool Result( true );
 
@@ -631,9 +629,9 @@ void GlobalConstantView::OnShowDependencies()
 
 		if( m_rCtrl.GetItem( &lvItem ) )
 		{
-			BasicValueObject* pObject(nullptr);
+			SvVol::BasicValueObject* pObject(nullptr);
 
-			pObject = reinterpret_cast<BasicValueObject*> ( lvItem.lParam );
+			pObject = reinterpret_cast<SvVol::BasicValueObject*> ( lvItem.lParam );
 			if( nullptr != pObject )
 			{
 				checkAllDependencies( pObject, false );

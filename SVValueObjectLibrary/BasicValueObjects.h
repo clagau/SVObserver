@@ -19,9 +19,11 @@
 //Moved to precompiled header: #include <sequential_tree.h>
 #include "BasicValueObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
+
+namespace SvVol
+{
 
 class BasicValueObjects
 {
@@ -143,6 +145,8 @@ private:
 	static const DottedNameGuidMap m_StaticUniqueIDMap; //! The list of dotted names with static unique ids
 #pragma endregion Member Variables
 };
+
+} //namespace SvVol
 
 #pragma region Inline
 #include "BasicValueObjects.inl"

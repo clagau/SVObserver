@@ -179,8 +179,8 @@ private:
 	MsgType m_Type {MsgType::Data};
 	M_Container m_MessageHandler;				//! The message handler
 
-	static ShowDisplayFunctor* m_pShowDisplay;
-	static NotifyFunctor* m_pNotify;
+	static ShowDisplayFunctor* m_ppShowDisplay;
+	static NotifyFunctor* m_ppNotify;
 #pragma endregion Member variables
 };
 
@@ -193,8 +193,8 @@ private:
 typedef MessageManager<MessageContainer, MessageData> MessageMgrStd;
 
 //! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
-ShowDisplayFunctor* MessageMgrStd::m_pShowDisplay(nullptr);
-NotifyFunctor* MessageMgrStd::m_pNotify(nullptr);
+ShowDisplayFunctor* MessageMgrStd::m_ppShowDisplay{nullptr};
+NotifyFunctor* MessageMgrStd::m_ppNotify{nullptr};
 #pragma endregion Declarations
 
 } //namespace SvStl

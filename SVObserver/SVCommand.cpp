@@ -43,10 +43,10 @@
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVIOLibrary/SVInputObjectList.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVCommandInspectionCollectImageData.h"
 
-#include "SVOLicenseManager.h"
+#include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "RemoteCommand.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVStorageResult.h"
@@ -784,7 +784,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 			if (nullptr != pConfig && pConfig->GetInspectionObject(l_Name.c_str(), &pInspection) && nullptr != pInspection)
 			{
-				SVImageClass* pImage = nullptr;
+				SvIe::SVImageClass* pImage = nullptr;
 				SVObjectManagerClass::Instance().GetObjectByDottedName(l_Name, pImage);
 				if (pImage)
 				{
@@ -850,7 +850,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			bool bImageOk = false;
 			BSTR bstrImage = nullptr;
 			long lProcessCount = -1;
-			SVImageOverlayClass l_OverlayClass;
+			SvIe::SVImageOverlayClass l_OverlayClass;
 
 			SVCommandInspectionCollectImageDataPtr l_DataPtr;
 
@@ -1244,7 +1244,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		ASSERT((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
 
 		BSTR bstr = nullptr;
-		SVImageClassPtrVector ImageObjects;
+		SvIe::SVImageClassPtrVector ImageObjects;
 		SVInspectionProcessVector aInspections;
 		bool l_bItemNotFound = false;
 		bool l_bInspectionNotFound = false;
@@ -1286,11 +1286,11 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			if (nullptr != pConfig && pConfig->GetInspectionObject(strName.c_str(), &pInspection))
 			{
 				aInspections.push_back(pInspection);
-				SVImageClass* pImage = nullptr;
+				SvIe::SVImageClass* pImage = nullptr;
 				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(strName.c_str(), pImage))
 				{
 					bool bImageOK = false;
-					if (dynamic_cast<SVCameraImageTemplate*>(pImage)) // Source image
+					if (nullptr != dynamic_cast<SvIe::SVCameraImageTemplate*>(pImage)) // Source image
 					{
 						ImageObjects.push_back(pImage);	// add data object pointer to the list
 						bImageOK = true;
@@ -1376,7 +1376,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 					{
 						bool bImageOk = false;
 
-						SVImageClass* pImage = ImageObjects[l];
+						SvIe::SVImageClass* pImage = ImageObjects[l];
 						if (nullptr != pImage)
 						{
 							// put image in return array
@@ -1461,7 +1461,7 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 	HRESULT hr = S_OK;
 
 	std::string CameraName = SvUl::createStdString(_bstr_t(bstrCameraName));
-	SVVirtualCamera* pCamera(nullptr);
+	SvIe::SVVirtualCamera* pCamera(nullptr);
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1507,7 +1507,7 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	HRESULT hr = S_OK;
 
 	std::string CameraName = SvUl::createStdString(_bstr_t(bstrCameraName));
-	SVVirtualCamera* pCamera(nullptr);
+	SvIe::SVVirtualCamera* pCamera(nullptr);
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1563,7 +1563,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 		long l_lBandNumber = 1;
 		long l_lBandLink = 0;
 
-		SVImageClass* pImage(nullptr);
+		SvIe::SVImageClass* pImage(nullptr);
 
 		oChildInfo.GetOwnerImage(pImage);
 
@@ -1586,7 +1586,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 
 			oChildInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
-			HRESULT hrImage = SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
+			HRESULT hrImage = SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
@@ -1605,7 +1605,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 		{
 			bDestroyHandle = true;
 
-			HRESULT hrImage = SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
+			HRESULT hrImage = SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
@@ -1695,19 +1695,19 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 	return hr;
 }
 
-HRESULT CSVCommand::SafeImageToBSTR(SVImageClass *p_pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr)
+HRESULT CSVCommand::SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr)
 {
 	HRESULT hr = S_OK;
 
-	if (nullptr != p_pImage)
+	if (nullptr != pImage)
 	{
-		SVImageInfoClass oChildInfo = p_pImage->GetImageInfo();
+		SVImageInfoClass oChildInfo = pImage->GetImageInfo();
 
 		SvOi::SVImageBufferHandlePtr oChildHandle;
 
-		SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
+		SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
-		p_pImage->SafeImageCopyToHandle(oChildHandle, pTriggerRecord);
+		pImage->SafeImageCopyToHandle(oChildHandle, pTriggerRecord);
 
 		hr = ImageToBSTR(oChildInfo, oChildHandle, pbstr);
 	}
@@ -1828,7 +1828,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 			//If inspection  is nullptr then object is of type BasicValueObject
 			if (nullptr == pInspection)
 			{
-				BasicValueObject* pValueObject = dynamic_cast<BasicValueObject*>(ObjectRef.getObject());
+				SvVol::BasicValueObject* pValueObject = dynamic_cast<SvVol::BasicValueObject*>(ObjectRef.getObject());
 				if (nullptr != pValueObject && !ObjectRef.isEntireArray())
 				{
 					if (S_OK != pValueObject->getValue(Value))
@@ -1971,7 +1971,7 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 
 	HRESULT                  hrResult = S_OK;
 	SVInspectionProcess*     pInspection(nullptr);
-	SVCameraImageTemplate*   pMainImage(nullptr);
+	SvIe::SVCameraImageTemplate*   pMainImage(nullptr);
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST | SV_STATE_RUNNING))
 	{
@@ -2083,7 +2083,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 	HRESULT hr = S_OK;
 	HRESULT hrStatus = S_OK;
 	SVInspectionProcess* pInspection(nullptr);
-	SVImageClass* l_pImageObject(nullptr);
+	SvIe::SVImageClass* pImage(nullptr);
 	BSTR bstrName = nullptr;
 	BSTR bstrImage = nullptr;
 	std::string TmpName;
@@ -2123,10 +2123,10 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 				//got the inspection.
 				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(TmpName.c_str(), l_pObject))
 				{
-					l_pImageObject = dynamic_cast<SVImageClass*>(l_pObject);
+					pImage = dynamic_cast<SvIe::SVImageClass*>(l_pObject);
 
-					if (nullptr != l_pImageObject &&
-						(l_pImageObject->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable)
+					if (nullptr != pImage &&
+						(pImage->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable)
 					{
 						// currently all SvPb::remotelySetable parameters are also SvPb::setableOnline
 						// if this changes, this code needs updated
@@ -2163,9 +2163,9 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 				SVInputImageRequestInfoStruct *pInRequest = new SVInputImageRequestInfoStruct;
 				pInRequest->m_ObjectName = TmpName;
 
-				l_ImageInfo = l_pImageObject->GetImageInfo();
+				l_ImageInfo = pImage->GetImageInfo();
 
-				if (S_OK == SVImageProcessingClass::LoadImageBuffer((void*)bstrImage,
+				if (S_OK == SvIe::SVImageProcessingClass::LoadImageBuffer((void*)bstrImage,
 					pInRequest->m_ImageInfo,
 					pInRequest->m_ImageHandlePtr,
 					l_ImageInfo))
@@ -2420,7 +2420,7 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR(BSTR bstrImage)
 		oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3);
 	}// end if
 
-	if (S_OK != SVImageProcessingClass::CreateImageBuffer(oTempInfo, oTempHandle) || nullptr == oTempHandle)
+	if (S_OK != SvIe::SVImageProcessingClass::CreateImageBuffer(oTempInfo, oTempHandle) || nullptr == oTempHandle)
 	{
 		return l_ImageBuf;
 	}
@@ -2440,7 +2440,7 @@ STDMETHODIMP CSVCommand::SVConnectFont(long* lFontIdentifier)
 	long lIndentifier;
 	HRESULT hr = SVMSG_FAILED_TO_ADD_FONT;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.AddFont(lIndentifier))
 		{
@@ -2455,7 +2455,7 @@ STDMETHODIMP CSVCommand::SVDisconnectFont(long lFontIdentifier)
 {
 	HRESULT hr = SVMSG_FAILED_TO_REMOVE_FONT;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.RemoveFont(lFontIdentifier))
 		{
@@ -2470,7 +2470,7 @@ STDMETHODIMP CSVCommand::SVGetCellSize(long lFontIdentifier, long* plWidth, long
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2486,7 +2486,7 @@ STDMETHODIMP CSVCommand::SVSetCellSize(long lFontIdentifier, long lWidth, long l
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2502,7 +2502,7 @@ STDMETHODIMP CSVCommand::SVGetSearchSettings(long lFontIdentifier, long* plLengt
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2518,7 +2518,7 @@ STDMETHODIMP CSVCommand::SVSetSearchSettings(long lFontIdentifier, long lLength,
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2534,7 +2534,7 @@ STDMETHODIMP CSVCommand::SVGetPositionVariance(long lFontIdentifier, double* pdX
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2550,7 +2550,7 @@ STDMETHODIMP CSVCommand::SVSetPositionVariance(long lFontIdentifier, double dXDi
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2566,7 +2566,7 @@ STDMETHODIMP CSVCommand::SVGetSearchAngleSettings(long lFontIdentifier, double* 
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2582,7 +2582,7 @@ STDMETHODIMP CSVCommand::SVSetSearchAngleSettings(long lFontIdentifier, double d
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2598,7 +2598,7 @@ STDMETHODIMP CSVCommand::SVGetCharacterEnhancementSettings(long lFontIdentifier,
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2614,7 +2614,7 @@ STDMETHODIMP CSVCommand::SVSetCharacterEnhancementSettings(long lFontIdentifier,
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2631,7 +2631,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 	SVMatroxOcr lFontHandle;
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2739,7 +2739,7 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 	SVMatroxOcr lFontHandle;
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2859,7 +2859,7 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 		HRESULT MatroxCode(S_OK);
 		SVMatroxOcr lFontHandle;
 
-		if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+		if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 		{
 			if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -2911,7 +2911,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 	SVMatroxOcr lFontHandle;
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3005,7 +3005,7 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 	{
 		SVMatroxOcr lFontHandle;
 
-		if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+		if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 		{
 			if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3105,7 +3105,7 @@ STDMETHODIMP CSVCommand::SVGetConstraints(long lFontIdentifier, long* plPosition
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3121,7 +3121,7 @@ STDMETHODIMP CSVCommand::SVSetConstraints(long lFontIdentifier, long lPosition, 
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3137,7 +3137,7 @@ STDMETHODIMP CSVCommand::SVCreateNew(long lFontIdentifier, BSTR bstrImage)
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3153,7 +3153,7 @@ STDMETHODIMP CSVCommand::SVSetTrainingImage(long lFontIdentifier, BSTR bstrImage
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3169,7 +3169,7 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 	HRESULT hr = SVMSG_FONT_INVALID; // Invalid Font
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3248,7 +3248,7 @@ STDMETHODIMP CSVCommand::SVAddCharacters(long lFontIdentifier, BSTR bstrLabelLis
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3264,7 +3264,7 @@ STDMETHODIMP CSVCommand::SVDeleteCharacters(long lFontIdentifier, SAFEARRAY* psa
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3295,7 +3295,7 @@ STDMETHODIMP CSVCommand::SVThresholdImage(long lFontIdentifier, BSTR bstrImage, 
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3311,7 +3311,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterCount(long lFontIdentifier, long* plC
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3328,7 +3328,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 	SVMatroxOcr lFontHandle;
 	HRESULT l_Code;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
@@ -3374,7 +3374,7 @@ STDMETHODIMP CSVCommand::SVGetStringLength(long p_lFontIdentifier, double* p_plL
 	HRESULT l_hr = S_FALSE;
 	SVMatroxOcr l_lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, l_lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
@@ -3392,7 +3392,7 @@ STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLen
 	HRESULT l_hr = S_FALSE;
 	SVMatroxOcr l_lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, l_lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
@@ -3425,7 +3425,7 @@ STDMETHODIMP CSVCommand::SVLoadFontImage(long p_lFontIdentifier, BSTR bstrFontIm
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
@@ -3444,7 +3444,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bs
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
@@ -3481,7 +3481,7 @@ STDMETHODIMP CSVCommand::SVGetExpectedTargetCharacterSize(long p_lFontIdentifier
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
@@ -3506,7 +3506,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterSize(long p_lFontIdentifier, long *pl
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
 
-	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
 		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
@@ -3559,7 +3559,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 	{
 		// Get Data Definition list from inspection
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
-		SVTaskObjectListClass* pTaskObjectList = static_cast <SVTaskObjectListClass*> (pToolSet);
+		SvIe::SVTaskObjectListClass* pTaskObjectList = static_cast <SvIe::SVTaskObjectListClass*> (pToolSet);
 
 		SVObjectPtrVector SelectedObjects;
 
@@ -3650,7 +3650,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			if (SelectedObjects[i]->GetObjectSubType() == SvPb::SVEnumValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
-				SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<SVEnumerateValueObjectClass*>(SelectedObjects[i]);
+				SvVol::SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(SelectedObjects[i]);
 				if (nullptr != pEnumVO)
 				{
 					SAFEARRAYBOUND l_rgsabound[1];
@@ -3670,7 +3670,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			else if (SelectedObjects[i]->GetObjectSubType() == SvPb::SVBoolValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
-				SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SVBoolValueObjectClass*>(SelectedObjects[i]);
+				SvVol::SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SvVol::SVBoolValueObjectClass*>(SelectedObjects[i]);
 				if (nullptr != l_pBoolVO)
 				{
 					SvDef::StringVector ValidTypes;
@@ -3728,18 +3728,18 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 	if (SVConfigurationObject::GetInspection(W2T(bstrInspectionName), pInspection))
 	{
 		// Get Image list from the tool set.
-		SVImageClassPtrVector ImageList;
+		SvIe::SVImageClassPtrVector ImageList;
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
 		pToolSet->GetImageList(ImageList);
 
-		std::vector<SVImageClass*> objectList;
+		std::vector<SvIe::SVImageClass*> objectList;
 
 		int nCount = static_cast<int>(ImageList.size());
 		for (int i = 0; i < nCount; i++)
 		{
-			SVImageClass* pImage = ImageList[i];
+			SvIe::SVImageClass* pImage = ImageList[i];
 
-			if (pImage)
+			if (nullptr != pImage)
 			{
 				//
 				// Check for the required Output object attributes.
@@ -3793,12 +3793,12 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Fully Qualified Source Image Name
-			SVToolClass* pTool = dynamic_cast<SVToolClass*>(objectList[i]->GetTool());
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (objectList[i]->GetTool());
 			l_Index[1] = 3;
 			Value.Clear();
 			if (nullptr != pTool)
 			{
-				SVStringValueObjectClass* pSourceNames = pTool->GetInputImageNames();
+				SvVol::SVStringValueObjectClass* pSourceNames = pTool->GetInputImageNames();
 				if (nullptr != pSourceNames)
 				{
 					SAFEARRAYBOUND l_rgsabound[1];

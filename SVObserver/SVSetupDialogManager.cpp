@@ -15,41 +15,41 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "InspectionEngine/SVAnalyzer.h"
+#include "AnalyzerOperators/SVAnalyzer.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/SVLuminanceAnalyzerDlg.h"
 #include "SVOGui/SVBarCodeProperties.h"
-#include "SVBarCodeAnalyzerClass.h"
-#include "SVBarCodeResult.h"
-#include "SVBlobAnalyzer.h"
+#include "AnalyzerOperators/SVBarCodeAnalyzerClass.h"
+#include "Operators/SVBarCodeResult.h"
+#include "AnalyzerOperators/SVBlobAnalyzer.h"
 #include "SVOGui/SVBlobAnalyzerDialog.h"
-#include "SVColorThreshold.h"
-#include "SVColorTool.h"
-#include "SVHistogramAnalyzer.h"
+#include "Operators/SVColorThreshold.h"
+#include "Tools/SVColorTool.h"
+#include "AnalyzerOperators/SVHistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVLinearAnalyzerClass.h"
-#include "SVLinearEdgeProcessingClass.h"
+#include "AnalyzerOperators/SVLinearAnalyzerClass.h"
+#include "Operators/SVLinearEdgeProcessingClass.h"
 #include "SVMeasureAnalyzerAdjustmentSheet.h"
-#include "SVOCVAnalyzer.h"
-#include "SVOCVAnalyzerResult.h"
+#include "AnalyzerOperators/SVOCVAnalyzer.h"
+#include "Operators/SVOCVAnalyzerResult.h"
 #include "SVOGui/SVOCVSheet.h"
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVPatGeneralPageClass.h"
 #include "SVOGui/SVPatternAnalyzerModelPage.h"
-#include "SVPatternAnalyzerClass.h"
-#include "SVPixelAnalyzer.h"
+#include "AnalyzerOperators/SVPatternAnalyzerClass.h"
+#include "AnalyzerOperators/SVPixelAnalyzer.h"
 #include "SVPixelAnalyzerDlg.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
-#include "SVResult.h"
+#include "Operators/SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "InspectionEngine/SVTool.h"
-#include "SVOLicenseManager.h"
+#include "Tools/SVTool.h"
+#include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
-#include "SVRange.h"
+#include "Operators/SVRange.h"
 #include "SVToolSet.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -234,7 +234,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 {
 	HRESULT l_Status = S_OK;
 
-	SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
@@ -256,7 +256,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 		BOOL bUseMultiple;
 		std::string MultiFile;
 
-		SVBarCodeResultClass *pResult = dynamic_cast<SVBarCodeResultClass*>(pAnalyzer->GetResultObject());
+		SvOp::SVBarCodeResultClass *pResult = dynamic_cast<SvOp::SVBarCodeResultClass*>(pAnalyzer->GetResultObject());
 
 		dlgProp.m_dlgBarCodeGeneral.SetBarCodeSearchSpeed(pAnalyzer->msv_dSpeed);
 		dlgProp.m_dlgBarCodeGeneral.SetBarCodeType(pAnalyzer->msv_lBarCodeType);
@@ -370,7 +370,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(const SVGUID& rObje
 {
 	HRESULT l_Status = S_OK;
 
-	SVBlobAnalyzerClass* pAnalyzer = dynamic_cast<SVBlobAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVBlobAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBlobAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -420,16 +420,16 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 {
 	HRESULT l_Status = E_FAIL;
 
-	SVColorToolClass* l_pTool = dynamic_cast<SVColorToolClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
+	SvTo::SVColorToolClass* pTool = dynamic_cast<SvTo::SVColorToolClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
 
-	if (nullptr != l_pTool)
+	if (nullptr != pTool)
 	{
 		std::string Title = SvUl::LoadStdString(IDS_ADJUSTMENT_STRING);
 
 		// Get Complete Name up to the tool level...
-		Title = l_pTool->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
+		Title = pTool->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
 
-		SVObjectClass* pInspection(l_pTool->GetInspection());
+		SVObjectClass* pInspection(pTool->GetInspection());
 
 		if (nullptr != pInspection)
 		{
@@ -439,12 +439,8 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 			if (nullptr != pIPDoc)
 			{
 				// Create the Train Color Property Sheet
-				SVTADlgColorThresholdSheet dlg(l_pTool, Title.c_str());
-				SVColorThresholdClass* pThreshold = (SVColorThresholdClass *)l_pTool->GetAt(0);
-				if (pThreshold)
-				{
-					pThreshold->setShowHistogram(true);
-				}
+				SVTADlgColorThresholdSheet dlg(pTool, Title.c_str());
+				SvOp::SVColorThresholdClass* pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (pTool->GetAt(0));
 				if (ID_OK == dlg.DoModal())
 				{
 					pIPDoc->SetModifiedFlag();
@@ -453,10 +449,6 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 				else
 				{
 					l_Status = S_FALSE;
-				}
-				if (pThreshold)
-				{
-					pThreshold->setShowHistogram(false);
 				}
 				pIPDoc->UpdateAllViews(nullptr);
 			}
@@ -469,7 +461,7 @@ HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(const SVGUID& 
 {
 	HRESULT l_Status = S_OK;
 
-	SVHistogramAnalyzerClass* l_pAnalyzer = dynamic_cast<SVHistogramAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
+	SvAo::SVHistogramAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVHistogramAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
 
 	if (nullptr != l_pAnalyzer)
 	{
@@ -526,7 +518,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 {
 	HRESULT l_Status = S_OK;
 
-	SVLinearAnalyzerClass* pAnalyzer = dynamic_cast<SVLinearAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVLinearAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVLinearAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
@@ -538,8 +530,8 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
 
-		SVLinearEdgeProcessingClass *pEdgeA = pAnalyzer->GetEdgeA();
-		SVLinearEdgeProcessingClass *pEdgeB = pAnalyzer->GetEdgeB();
+		SvOp::SVLinearEdgeProcessingClass *pEdgeA = pAnalyzer->GetEdgeA();
+		SvOp::SVLinearEdgeProcessingClass *pEdgeB = pAnalyzer->GetEdgeB();
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog(Title.c_str());
 
@@ -626,7 +618,7 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(const SVGUID& 
 {
 	HRESULT l_Status = S_OK;
 
-	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	if (nullptr != pAnalyzer && SvPb::SVLuminanceAnalyzerObjectType == pAnalyzer->GetObjectSubType())
 	{
@@ -645,11 +637,11 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 {
 	HRESULT l_Status = S_OK;
 
-	SVOCVAnalyzerClass* pAnalyzer = dynamic_cast<SVOCVAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVOCVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVOCVAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	if (nullptr != pAnalyzer)
 	{
-		SVOCVAnalyzeResultClass* pOCVResult = dynamic_cast<SVOCVAnalyzeResultClass*> (pAnalyzer->GetResultObject());
+		SvOp::SVOCVAnalyzeResultClass* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResultClass*> (pAnalyzer->GetResultObject());
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection());
 
 		if (nullptr != pOCVResult && nullptr != pInspection)
@@ -665,7 +657,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 					pIPDoc->SetModifiedFlag(true);
 				}
 
-				if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
+				if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 				{
 					pOCVResult->LoadMatchString();
 
@@ -723,7 +715,7 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(const SVGUID& rObj
 {
 	HRESULT l_Status = S_FALSE;
 
-	SVPixelAnalyzerClass* pAnalyzer = dynamic_cast<SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVPixelAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -748,7 +740,7 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(const SVGUID& rObj
 HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
-	SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast<SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
@@ -886,11 +878,11 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog(const SVGUID& rObjectId, 
 {
 	HRESULT l_Status = S_OK;
 
-	SVResultClass* l_pResult = dynamic_cast<SVResultClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvOp::SVResultClass* l_pResult = dynamic_cast<SvOp::SVResultClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
 
 	if (nullptr != l_pResult)
 	{
-		SVRangeClass* pRange = l_pResult->GetResultRange();
+		SvOp::SVRangeClass* pRange = l_pResult->GetResultRange();
 		if (pRange)
 		{
 			RangeXDialogClass dlg(pRange->GetInspection()->GetUniqueObjectID(), pRange->GetParent()->GetUniqueObjectID(), pRange->GetUniqueObjectID(), pParentWnd);

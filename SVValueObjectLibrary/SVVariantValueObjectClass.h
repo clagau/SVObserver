@@ -15,6 +15,9 @@
 #include "SVValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 class SVVariantValueObjectClass : public SVValueObjectClass<_variant_t>
 {
 	SV_DECLARE_CLASS( SVVariantValueObjectClass );
@@ -65,4 +68,4 @@ private:
 	void LocalInitialize();
 };
 
-
+} //namespace SvVol

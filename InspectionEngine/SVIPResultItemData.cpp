@@ -12,6 +12,16 @@
 #include "stdafx.h"
 #include "SVIPResultItemData.h"
 
+namespace SvIe
+{
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVIPResultItemData::SVIPResultItemData()
 : m_Value(), m_Color( 0 ), m_IOTypePresent( false ), m_IOType( 0 )
 {
@@ -52,3 +62,4 @@ unsigned long SVIPResultItemData::GetIOType() const
 	return m_IOType;
 }
 
+} //namespace SvIe

@@ -14,6 +14,9 @@
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -173,3 +176,5 @@ void DoubleSortValueObject::LocalInitialize()
 	SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 }
 #pragma endregion Private Methods
+
+} //namespace SvVol

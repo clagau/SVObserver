@@ -14,10 +14,15 @@
 #include "SVBarCodeBuffer.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SVBarCodeBufferInfoClass::SVBarCodeBufferInfoClass()
 {
@@ -40,3 +45,4 @@ const SVBarCodeBufferInfoClass &SVBarCodeBufferInfoClass::operator=( const SVBar
 	return ( *this );
 }
 
+} //namespace SvIe

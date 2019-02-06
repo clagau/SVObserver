@@ -27,7 +27,7 @@
 #include "Definitions/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "TriggerInformation/SVCameraTriggerData.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
@@ -39,8 +39,10 @@
 constexpr long	StandardPpqLength	= 2;
 constexpr long g_lPPQExtraBufferSize = 50;
 constexpr long g_lPPQExtraImageBufferSize = 5;
-
 #pragma endregion Declarations
+
+class SVInputObjectList;
+class SVOutputObjectList;
 
 constexpr long getMaxPpqLength()
 {
@@ -101,19 +103,19 @@ public:
 	const std::string& GetConditionalOutputName() const;
 
 	bool AttachTrigger( SvTi::SVTriggerObject* pTrigger );
-	bool AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false );
+	bool AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false);
 	bool AttachInspection( SVInspectionProcess* pInspection );
 
 	bool DetachTrigger( SvTi::SVTriggerObject* pTrigger );
-	bool DetachCamera( SVVirtualCamera* pCamera, bool bRemoveDepends = false );
+	bool DetachCamera(SvIe::SVVirtualCamera* pCamera, bool bRemoveDepends = false);
 	bool DetachInspection( SVInspectionProcess* pInspection );
 
-	bool AddSharedCamera(  SVVirtualCamera* pCamera );
+	bool AddSharedCamera(SvIe::SVVirtualCamera* pCamera);
 	void GetInspectionCount( long &lSize ) const;
 
 	size_t GetCameraCount() const;
-	void GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
-	HRESULT GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const;
+	void GetCameraList( std::deque<SvIe::SVVirtualCamera*>& rCameras ) const;
+	HRESULT GetVirtualCameras(SvIe::SVVirtualCameraMap& rCameras ) const;
 
 	void GetTrigger( SvTi::SVTriggerObject*& ppTrigger );
 	bool GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
@@ -127,8 +129,8 @@ public:
 	bool IsObjectInPPQ( const SVObjectClass& object ) const;
 
 	// PPQ position management functions
-	bool SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera );
-	bool GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera ) const;
+	bool SetCameraPPQPosition( long lPosition, SvIe::SVVirtualCamera* pCamera );
+	bool GetCameraPPQPosition( long &lPosition, SvIe::SVVirtualCamera* pCamera ) const;
 
 	
 	/// Check and prepare if configuration can go online.
@@ -196,7 +198,7 @@ public:
 	SVInputObjectList*    m_pInputList;
 	SVOutputObjectList*   m_pOutputList;
 
-	SVLongValueObjectClass m_voTriggerCount;
+	SvVol::SVLongValueObjectClass m_voTriggerCount;
 
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
 
@@ -244,11 +246,11 @@ protected:
 	{
 		SVCameraQueueElement();
 		SVCameraQueueElement( const SVCameraQueueElement& p_rObject );
-		SVCameraQueueElement( SVVirtualCamera* p_pCamera, const SVODataResponseClass& p_rData );
+		SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const SVODataResponseClass& p_rData );
 
 		virtual ~SVCameraQueueElement();
 
-		SVVirtualCamera* m_pCamera;
+		SvIe::SVVirtualCamera* m_pCamera;
 		SVODataResponseClass m_Data;
 	};
 
@@ -288,13 +290,13 @@ protected:
 	typedef SVTQueueObject< SVProductRequestPair > SVProductRequestQueue;
 	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
-	typedef std::map< SVVirtualCamera*, SVCameraInfoElement > SVCameraInfoMap;
-	typedef std::map< SVVirtualCamera*, SVCameraQueueElement > SVPendingCameraResponseMap;
+	typedef std::map<SvIe::SVVirtualCamera*, SVCameraInfoElement> SVCameraInfoMap;
+	typedef std::map<SvIe::SVVirtualCamera*, SVCameraQueueElement> SVPendingCameraResponseMap;
 
 	static void CALLBACK OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
-	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& p_rProduct, SVVirtualCamera* p_pCamera );
+	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera );
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
@@ -391,7 +393,7 @@ protected:
 	//************************************
 	HRESULT ProcessCameraResponse( const SVCameraQueueElement& p_rElement );
 
-	HRESULT BuildCameraInfos( SVGuidSVCameraInfoStructMap& p_rCameraInfos ) const;
+	HRESULT BuildCameraInfos(SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos) const;
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
@@ -442,7 +444,7 @@ protected:
 	SVSmartIndexArrayHandlePtr m_pResultDataCircleBuffer;
 
 	// Value Objects used by the PPQ
-	SVBoolValueObjectClass  m_PpqOutputs[PpqOutputEnums::OutputNr];
+	SvVol::SVBoolValueObjectClass  m_PpqOutputs[PpqOutputEnums::OutputNr];
 
 	SvTi::SVCameraTriggerData m_CameraInputData;
 
@@ -512,7 +514,7 @@ private:
 
 	bool SetupProductInfoStructs();
 
-	BasicValueObjects	m_PpqValues;
+	SvVol::BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_oOutputMode;
 	long m_lOutputDelay;
 	long m_lResetDelay;

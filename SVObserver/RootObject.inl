@@ -23,10 +23,10 @@ static HRESULT RootObject::getRootChildValue( LPCSTR DottedName, ELEMENT_TYPE& r
 }
 
 template <typename ELEMENT_TYPE>
-static BasicValueObjectPtr RootObject::setRootChildValue( LPCSTR DottedName, const ELEMENT_TYPE& rValue )
+static SvVol::BasicValueObjectPtr RootObject::setRootChildValue( LPCSTR DottedName, const ELEMENT_TYPE& rValue )
 {
 	RootObject *pRoot( nullptr );
-	BasicValueObjectPtr pValue( nullptr );
+	SvVol::BasicValueObjectPtr pValue( nullptr );
 
 	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
 

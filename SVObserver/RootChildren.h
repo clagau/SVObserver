@@ -48,7 +48,7 @@ public:
 	//! \param DottedName <in> the dotted name of the object to get
 	//! \returns The value object as a pointer
 	//************************************
-	BasicValueObjectPtr getValueObject( LPCTSTR DottedName ) const;
+	SvVol::BasicValueObjectPtr getValueObject( LPCTSTR DottedName ) const;
 
 	//************************************
 	//! The method gets the object list
@@ -56,7 +56,7 @@ public:
 	//! \param DottedBranch <in> the dotted branch name of object to return. Default = "", means all objects.
 	//! \param AttributesAllowedFilter <in> These flags indicate which attributes must be set for the objects to be returned. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	//************************************
-	void getObjectList( BasicValueObjects::ValueVector& rObjectList, LPCTSTR DottedBranch,  UINT AttributesAllowedFilter ) const;
+	void getObjectList(SvVol::BasicValueObjects::ValueVector& rObjectList, LPCTSTR DottedBranch,  UINT AttributesAllowedFilter ) const;
 
 	//************************************
 	//! The method gets the object list
@@ -83,12 +83,12 @@ public:
 	//! \returns reference to the value object
 	//************************************
 	template <typename ELEMENT_TYPE>
-	BasicValueObjectPtr setValue(LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SvPb::SVObjectSubTypeEnum ObjectType = SvPb::SVNotSetSubObjectType);
+	SvVol::BasicValueObjectPtr setValue(LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SvPb::SVObjectSubTypeEnum ObjectType = SvPb::SVNotSetSubObjectType);
 #pragma endregion Public Methods
 
 #pragma region Member Variables
 private:
-	BasicValueObjects	m_RootChildrenValues;			//Container tree for all root children values
+	SvVol::BasicValueObjects	m_RootChildrenValues;			//Container tree for all root children values
 #pragma endregion Member Variables
 };
 

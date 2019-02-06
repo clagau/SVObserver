@@ -11,10 +11,10 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVToolSet.h"
-#include "ToolSizeAdjustTask.h"
+#include "Operators/ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -48,7 +48,7 @@ SVCommandInspectionExtentUpdater::~SVCommandInspectionExtentUpdater()
 int SVCommandInspectionExtentUpdater::ResetToolSizeAdjustTool(SVObjectClass* pObject)
 {
 
-	if( TRUE == ToolSizeAdjustTask::UseSizeAdjust(pObject))
+	if(SvOp::ToolSizeAdjustTask::UseSizeAdjust(pObject))
 	{
 		bool Result = false;
 		if (nullptr != pObject)
@@ -75,7 +75,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_InspectionId );
 	SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pObject );
 	pObject = SVObjectManagerClass::Instance().GetObject( m_ToolId );
-	SVToolClass* pTool = dynamic_cast< SVToolClass* >( pObject );
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
 
 	if( nullptr != pInspection && nullptr != pTool)
 	{

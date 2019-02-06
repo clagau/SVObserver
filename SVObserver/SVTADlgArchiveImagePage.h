@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls\SVEditNumbers.h"
-#include "SVArchiveTool.h"
+#include "Tools/SVArchiveTool.h"
 #include "SVGlobal.h"
 #pragma endregion Includes
 
@@ -67,7 +67,7 @@ private:
 	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
 	SVObjectReferenceVector m_List;				//The selected list
-	SVArchiveTool* m_pTool;						//Pointer to the Archive Tool
+	SvTo::SVArchiveTool* m_pTool;				//Pointer to the Archive Tool
 	CImageList m_StateImageList;				//The state image list
 	CButton m_Select;							//The tree select button
 	CBitmap m_TreeBitmap;						//The bitmap for the tree button
@@ -79,14 +79,14 @@ private:
 	CEdit	m_ImageFilesRoot;
 	BOOL	m_StopAtMaxImages;
 	int		m_iModeIndex;
-	SVArchiveMethodEnum m_eSelectedArchiveMethod;
+	SvTo::SVArchiveMethodEnum m_eSelectedArchiveMethod;
 	long m_ImagesToArchive;
 	__int64 m_TotalArchiveImageMemoryAvailable;
 	__int64 m_InitialArchiveImageMemoryUsageExcludingThisTool;
 	__int64 m_InitialToolImageMemoryUsage;
 	__int64 m_ToolImageMemoryUsage;
 
-	typedef std::map <SVImageClass*, long> MapSelectedImageType;
+	typedef std::map <SvIe::SVImageClass*, long> MapSelectedImageType;
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 

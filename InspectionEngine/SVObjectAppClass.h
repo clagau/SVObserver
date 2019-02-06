@@ -19,6 +19,9 @@
 #include "SVOResource/resource.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
 {
 	SV_DECLARE_CLASS( SVObjectAppClass )
@@ -64,3 +67,4 @@ private:
 	SvOi::ITool* m_pToolInterface;
 };
 
+} //namespace SvIe

@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{50475846-91CD-4E01-97CB-31932C546D3D}</ProjectGuid>
+    <Keyword>Win64Proj</Keyword>
+    <RootNamespace>Operators</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="EQAdjustSize.cpp" />
+    <ClCompile Include="EQAdjustSizeHeight.cpp" />
+    <ClCompile Include="EQAdjustSizePositionX.cpp" />
+    <ClCompile Include="EQAdjustSizePositionY.cpp" />
+    <ClCompile Include="EQAdjustSizeWidth.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVAutoThresholdEquation.cpp" />
+    <ClCompile Include="SVBarCodeResult.cpp" />
+    <ClCompile Include="SVBinaryOperatorClass.cpp" />
+    <ClCompile Include="SVColorThreshold.cpp" />
+    <ClCompile Include="SVConditional.cpp" />
+    <ClCompile Include="SVDLLToolDefinitionStructs.cpp" />
+    <ClCompile Include="SVDLLToolLoadLibraryClass.cpp" />
+    <ClCompile Include="SVDPointXResult.cpp" />
+    <ClCompile Include="SVDPointYResult.cpp" />
+    <ClCompile Include="SVEquation.cpp" />
+    <ClCompile Include="SVEvaluate.cpp" />
+    <ClCompile Include="SVEvaluateCenterXClass.cpp" />
+    <ClCompile Include="SVEvaluateCenterYClass.cpp" />
+    <ClCompile Include="SVEvaluateEndAngleClass.cpp" />
+    <ClCompile Include="SVEvaluateEndRadiusClass.cpp" />
+    <ClCompile Include="SVEvaluateRotationAngleClass.cpp" />
+    <ClCompile Include="SVEvaluateRotationXClass.cpp" />
+    <ClCompile Include="SVEvaluateRotationYClass.cpp" />
+    <ClCompile Include="SVEvaluateStartAngleClass.cpp" />
+    <ClCompile Include="SVEvaluateStartRadiusClass.cpp" />
+    <ClCompile Include="SVEvaluateTranslationXClass.cpp" />
+    <ClCompile Include="SVEvaluateTranslationYClass.cpp" />
+    <ClCompile Include="SVExternalToolTask.cpp" />
+    <ClCompile Include="SVImageArithmetic.cpp" />
+    <ClCompile Include="SVImagePolarTransform.cpp" />
+    <ClCompile Include="SVImageTransform.cpp" />
+    <ClCompile Include="SVInPlaceImageOperatorListClass.cpp" />
+    <ClCompile Include="SVLinearEdgeAProcessingClass.cpp" />
+    <ClCompile Include="SVLinearEdgeBProcessingClass.cpp" />
+    <ClCompile Include="SVLinearEdgeProcessingClass.cpp" />
+    <ClCompile Include="SVLinearImageOperatorList.cpp" />
+    <ClCompile Include="SVLowerThresholdEquation.cpp" />
+    <ClCompile Include="SVLUTEquation.cpp" />
+    <ClCompile Include="SVLUTOperator.cpp" />
+    <ClCompile Include="SVMaskShape.cpp" />
+    <ClCompile Include="SVMathContainer.cpp" />
+    <ClCompile Include="SVMathEquation.cpp" />
+    <ClCompile Include="SVOCVAnalyzerResult.cpp" />
+    <ClCompile Include="SVOCVBlobRecord.cpp" />
+    <ClCompile Include="SVOperator.cpp" />
+    <ClCompile Include="SVPolarTransform.cpp" />
+    <ClCompile Include="SVRange.cpp" />
+    <ClCompile Include="SVResult.cpp" />
+    <ClCompile Include="SVResultDouble.cpp" />
+    <ClCompile Include="SVResultLong.cpp" />
+    <ClCompile Include="SVResultPointX.cpp" />
+    <ClCompile Include="SVResultPointY.cpp" />
+    <ClCompile Include="SVResultString.cpp" />
+    <ClCompile Include="SVShapeMaskHelperClass.cpp" />
+    <ClCompile Include="SVStdImageOperatorListClass.cpp" />
+    <ClCompile Include="SVThresholdClass.cpp" />
+    <ClCompile Include="SVTransform.cpp" />
+    <ClCompile Include="SVUnaryImageOperatorClass.cpp" />
+    <ClCompile Include="SVUnaryImageOperatorList.cpp" />
+    <ClCompile Include="SVUpperThresholdEquation.cpp" />
+    <ClCompile Include="SVUserMaskOperatorClass.cpp" />
+    <ClCompile Include="SVVariantResultClass.cpp" />
+    <ClCompile Include="TableAddColumnEquation.cpp" />
+    <ClCompile Include="TableColumnEquation.cpp" />
+    <ClCompile Include="TableCopyObject.cpp" />
+    <ClCompile Include="TableFillByEquationObject.cpp" />
+    <ClCompile Include="TableObject.cpp" />
+    <ClCompile Include="ToolSizeAdjustTask.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EQAdjustSize.h" />
+    <ClInclude Include="EQAdjustSizeHeight.h" />
+    <ClInclude Include="EQAdjustSizePositionX.h" />
+    <ClInclude Include="EQAdjustSizePositionY.h" />
+    <ClInclude Include="EQAdjustSizeWidth.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVAutoThresholdEquation.h" />
+    <ClInclude Include="SVBarCodeResult.h" />
+    <ClInclude Include="SVBinaryOperatorClass.h" />
+    <ClInclude Include="SVColorThreshold.h" />
+    <ClInclude Include="SVConditional.h" />
+    <ClInclude Include="SVDLLToolDefinitionStructs.h" />
+    <ClInclude Include="SVDLLToolLoadLibraryClass.h" />
+    <ClInclude Include="SVDPointXResult.h" />
+    <ClInclude Include="SVDPointYResult.h" />
+    <ClInclude Include="SVEquation.h" />
+    <ClInclude Include="SVEvaluate.h" />
+    <ClInclude Include="SVEvaluateCenterXClass.h" />
+    <ClInclude Include="SVEvaluateCenterYClass.h" />
+    <ClInclude Include="SVEValuateEndAngleClass.h" />
+    <ClInclude Include="SVEvaluateEndRadiusClass.h" />
+    <ClInclude Include="SVEvaluateRotationAngleClass.h" />
+    <ClInclude Include="SVEvaluateRotationXClass.h" />
+    <ClInclude Include="SVEvaluateRotationYClass.h" />
+    <ClInclude Include="SVEvaluateStartAngleClass.h" />
+    <ClInclude Include="SVEvaluateStartRadiusClass.h" />
+    <ClInclude Include="SVEvaluateTranslationXClass.h" />
+    <ClInclude Include="SVEvaluateTranslationYClass.h" />
+    <ClInclude Include="SVExternalToolTask.h" />
+    <ClInclude Include="SVImageArithmetic.h" />
+    <ClInclude Include="SVImagePolarTransform.h" />
+    <ClInclude Include="SVImageTransform.h" />
+    <ClInclude Include="SVInPlaceImageOperatorListClass.h" />
+    <ClInclude Include="SVLinearEdgeAProcessingClass.h" />
+    <ClInclude Include="SVLinearEdgeBProcessingClass.h" />
+    <ClInclude Include="SVLinearEdgeProcessingClass.h" />
+    <ClInclude Include="SVLinearImageOperatorList.h" />
+    <ClInclude Include="SVLowerThresholdEquation.h" />
+    <ClInclude Include="SVLUTEquation.h" />
+    <ClInclude Include="SVLUTOperator.h" />
+    <ClInclude Include="SVMaskShape.h" />
+    <ClInclude Include="SVMathContainer.h" />
+    <ClInclude Include="SVMathEquation.h" />
+    <ClInclude Include="SVOCVAnalyzerResult.h" />
+    <ClInclude Include="SVOCVBlobRecord.h" />
+    <ClInclude Include="SVOperator.h" />
+    <ClInclude Include="SVPolarTransform.h" />
+    <ClInclude Include="SVRange.h" />
+    <ClInclude Include="SVResult.h" />
+    <ClInclude Include="SVResultDouble.h" />
+    <ClInclude Include="SVResultLong.h" />
+    <ClInclude Include="SVResultPointX.h" />
+    <ClInclude Include="SVResultPointY.h" />
+    <ClInclude Include="SVResultString.h" />
+    <ClInclude Include="SVShapeMaskHelperClass.h" />
+    <ClInclude Include="SVStdImageOperatorListClass.h" />
+    <ClInclude Include="SVThresholdClass.h" />
+    <ClInclude Include="SVTransform.h" />
+    <ClInclude Include="SVUnaryImageOperatorClass.h" />
+    <ClInclude Include="SVUnaryImageOperatorList.h" />
+    <ClInclude Include="SVUpperThresholdEquation.h" />
+    <ClInclude Include="SVUserMaskOperatorClass.h" />
+    <ClInclude Include="SVVariantResultClass.h" />
+    <ClInclude Include="TableAddColumnEquation.h" />
+    <ClInclude Include="TableColumnEquation.h" />
+    <ClInclude Include="TableCopyObject.h" />
+    <ClInclude Include="TableFillByEquationObject.h" />
+    <ClInclude Include="TableObject.h" />
+    <ClInclude Include="ToolSizeAdjustTask.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

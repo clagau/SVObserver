@@ -85,7 +85,7 @@ public:
 	//! \param DottedName <in> the dotted name of the object to get
 	//! \return pointer to the value object
 	//************************************
-	static BasicValueObjectPtr getRootChildObjectValue( LPCTSTR DottedName );
+	static SvVol::BasicValueObjectPtr getRootChildObjectValue( LPCTSTR DottedName );
 
 	//************************************
 	//! The static method gets a root child value if available
@@ -103,7 +103,7 @@ public:
 	//! \return pointer to the value object
 	//************************************
 	template <typename ELEMENT_TYPE>
-	static BasicValueObjectPtr setRootChildValue( LPCTSTR DottedName, const ELEMENT_TYPE& rValue );
+	static SvVol::BasicValueObjectPtr setRootChildValue( LPCTSTR DottedName, const ELEMENT_TYPE& rValue );
 
 	//************************************
 	/// The method fill up a list with filtered root child objects.
@@ -111,7 +111,7 @@ public:
 	/// \param Path [in] The path of the requested objects. Default = "", means all objects.
 	/// \param AttributesAllowedFilter [in] These flags indicate which attributes must be set for the objects to be added. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	//************************************
-	static void getRootChildObjectList( BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
+	static void getRootChildObjectList(SvVol::BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
 
 	//************************************
 	//! The method gets a root child object name list.

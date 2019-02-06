@@ -15,7 +15,7 @@
 #include "SVGlobal.h"
 #include "SVExternalToolInputSelectPage.h"
 #include "SVIPDoc.h"
-#include "SVExternalToolTask.h"
+#include "Operators/SVExternalToolTask.h"
 #include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
@@ -63,7 +63,7 @@ SVExternalToolInputSelectPage::SVExternalToolInputSelectPage( LPCTSTR Title, con
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
-	m_pTask = dynamic_cast<SVExternalToolTask*>(pObject);
+	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*> (pObject);
 	ASSERT(m_pTask);
     m_psp.pszTitle = Title;
     m_psp.dwFlags |= PSP_USETITLE;
@@ -133,7 +133,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 		for( int i = 0 ; i < m_inputValueCount; i++ )
 		{
-			InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
+			SvOp::InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
 
 			iID++;
 

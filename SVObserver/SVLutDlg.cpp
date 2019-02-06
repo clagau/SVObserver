@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutDlg.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
@@ -46,17 +46,17 @@ SVLutDlg::~SVLutDlg()
 	DestroyAllPages();
 }
 
-bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
+bool SVLutDlg::Create(SvIe::SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut)
 {
-	SVVirtualCameraPtrSet::iterator l_Iter;
+	SvIe::SVVirtualCameraPtrSet::iterator l_Iter;
 
 	for( l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter )
 	{
-		SVVirtualCamera* pCamera = ( *l_Iter );
+		SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
 
 		if( nullptr != pCamera )
 		{
-			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
+			SvIe::SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 
 			if(nullptr != pAcqDevice && raLut.find( pCamera->GetUniqueObjectID() ) != raLut.end() && 0 < raLut[pCamera->GetUniqueObjectID()].NumBands() )
 			{

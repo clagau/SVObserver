@@ -8,11 +8,14 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:40:58  $
 //******************************************************************************
-
 #pragma once
+
 #pragma region Includes
 #include "SVGlobalHandles.h"
 #pragma endregion Includes
+
+namespace SvIe
+{
 
 class SVBarCodeBufferInfoClass
 {
@@ -27,3 +30,4 @@ public:
 	SVBarCodeBufferHandleStruct HBuffer;
 };
 
+} //namespace SvIe

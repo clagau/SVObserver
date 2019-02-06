@@ -260,10 +260,10 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 {
 	SvDef::GlobalConstantDataSet CurrentGlobals;
 
-	BasicValueObjects::ValueVector GlobalObjects;
+	SvVol::BasicValueObjects::ValueVector GlobalObjects;
 
 	RootObject::getRootChildObjectList( GlobalObjects, SvDef::FqnGlobal, 0 );
-	BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
+	SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 	while( GlobalObjects.end() != Iter && nullptr != *Iter )
 	{
 		SvDef::GlobalConstantData GlobalData;
@@ -283,7 +283,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 	SvDef::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
 	while( GlobalDiffs.cend() != DiffIter  )
 	{
-		BasicValueObjectPtr pGlobalConstant;
+		SvVol::BasicValueObjectPtr pGlobalConstant;
 		pGlobalConstant = RootObject::getRootChildObjectValue( DiffIter->m_DottedName.c_str() );
 
 		//If the Global Constant exists then conflict otherwise we can create it

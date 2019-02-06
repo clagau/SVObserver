@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include "SVTADlgTransformationLearnPage.h"
 
-#include "InspectionEngine/SVEvaluate.h"
-#include "InspectionEngine/SVImageTransform.h"
+#include "Operators/SVEvaluate.h"
+#include "Operators/SVImageTransform.h"
 #include "SVIPDoc.h"
-#include "InspectionEngine/SVTool.h"
+#include "Tools/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
@@ -216,52 +216,52 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateTranslationXObjectType;
-		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateTranslationX )
 		{
 			// Get Evaluate Result Object for the Translation X coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateTranslationXResultObjectGuid;
-			m_pTranslationXResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateTranslationX->getFirstObject(resultObjectInfo));
+			m_pTranslationXResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateTranslationX->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Object for the Translation Y coordinate...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateTranslationY )
 		{
 			// Get Evaluate Result Object for the Translation Y coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateTranslationYResultObjectGuid;
-			m_pTranslationYResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateTranslationY->getFirstObject(resultObjectInfo));
+			m_pTranslationYResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateTranslationY->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationX )
 		{
 			// Get Evaluate Result Object for the Rotation X coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationXResultObjectGuid;
-			m_pRotationXResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationX->getFirstObject(resultObjectInfo));
+			m_pRotationXResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateRotationX->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Object for the Rotation Y coordinate...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationY )
 		{
 			// Get Evaluate Result Object for the Rotation Y coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationYResultObjectGuid;
-			m_pRotationYResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationY->getFirstObject(resultObjectInfo));
+			m_pRotationYResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateRotationY->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Object for the Rotation Angle...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationAngle )
 		{
 			// Get Evaluate Result Object for the Rotation Angle...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationAngleResultObjectGuid;
-			m_pRotationAngleResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationAngle->getFirstObject(resultObjectInfo));
+			m_pRotationAngleResult = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pEvaluateRotationAngle->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Rotation enabled...
@@ -269,18 +269,18 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		objectInfo.ObjectType = SvPb::SVValueObjectType;
 		objectInfo.SubType = SvPb::SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
-		m_pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pPerformRotation = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 
 		// get Translation Enabled
 		objectInfo.EmbeddedID = SVPerformTranslationObjectGuid;
-		m_pPerformTranslation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pPerformTranslation = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 
 		// Get SVImageTransformClass Object...
 		SvDef::SVObjectTypeInfoStruct transformObjectInfo;
 		transformObjectInfo.ObjectType = SvPb::SVTransformObjectType;
 		transformObjectInfo.SubType = SvPb::SVImageTransformObjectType;
 
-		m_pImageTransform = dynamic_cast<SVImageTransformClass*>(m_pTool->getFirstObject(transformObjectInfo));
+		m_pImageTransform = dynamic_cast<SvOp::SVImageTransformClass*>(m_pTool->getFirstObject(transformObjectInfo));
 		if( m_pImageTransform )
 		{
 			// Get learned Objects...
@@ -290,23 +290,23 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 			// Get learned Translation X Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedTranslationXObjectGuid;
-			m_pLearnedTranslationX = dynamic_cast<SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
+			m_pLearnedTranslationX = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
 
 			// Get learned Translation Y Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedTranslationYObjectGuid;
-			m_pLearnedTranslationY = dynamic_cast<SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
+			m_pLearnedTranslationY = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
 
 			// Get learned Rotation X Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedRotationXObjectGuid;
-			m_pLearnedRotationX = dynamic_cast<SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
+			m_pLearnedRotationX = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
 
 			// Get learned Translation Y Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedRotationYObjectGuid;
-			m_pLearnedRotationY = dynamic_cast<SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
+			m_pLearnedRotationY = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
 
 			// Get learned Rotation Angle Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedRotationAngleObjectGuid;
-			m_pLearnedRotationAngle = dynamic_cast<SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
+			m_pLearnedRotationAngle = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(m_pImageTransform->getFirstObject(learnedObjectInfo));
 		}
 
 

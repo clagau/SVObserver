@@ -10,18 +10,19 @@
 #include "afxwin.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "ToolSizeAdjustTask.h"
+#include "Operators/ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
-class SVEvaluate;
-class EQAdjustSizeHeight;
-class EQAdjustSizePositionX;
-class	EQAdjustSizePositionY;
-class 	EQAdjustSizeWidth;
+namespace SvOp
+{
 class EQAdjustSize;
+}
+namespace SvTo
+{
+class SVToolClass;
+}
+
 class SVToolAdjustmentDialogSheetClass;
-
-
 
 //! \brief Property Page: Position and Size for The ToolAdjustmen Dialog
 //!  has pointer to ToolSizeAdjustTask
@@ -53,8 +54,8 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void Refresh( bool bSave = true );
-	void OnSelchangeCombo(ToolSizeAdjustTask::TSValues  mode);
-	void OnBnClickedButtonFormula(ToolSizeAdjustTask::TSValues  mode);
+	void OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSValues  mode);
+	void OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSValues  mode);
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -69,15 +70,15 @@ protected:
 	//! \param typ [in]
 	//! \returns EQAdjustSize*
 	//************************************
-	EQAdjustSize* GetEvaluateObject(ToolSizeAdjustTask::TSValues typ  ) ;
+	SvOp::EQAdjustSize* GetEvaluateObject(SvOp::ToolSizeAdjustTask::TSValues typ  ) ;
 	
-	SvMc::SVEnumerateComboClass m_ComboBox[ToolSizeAdjustTask::TSValuesCount];
+	SvMc::SVEnumerateComboClass m_ComboBox[SvOp::ToolSizeAdjustTask::TSValuesCount];
 
-	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
-	SVToolClass*						 m_pTool;
-	ToolSizeAdjustTask*					m_pToolSizeAdjustTask;
-	EQAdjustSize*  m_pEQAdjustSize[ToolSizeAdjustTask::TSValuesCount]; 
-	CButton m_Button[ToolSizeAdjustTask::TSValuesCount];
-	CEdit m_EditCtrl[ToolSizeAdjustTask::TSValuesCount];
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+	SvTo::SVToolClass* m_pTool;
+	SvOp::ToolSizeAdjustTask* m_pToolSizeAdjustTask;
+	SvOp::EQAdjustSize*  m_pEQAdjustSize[SvOp::ToolSizeAdjustTask::TSValuesCount];
+	CButton m_Button[SvOp::ToolSizeAdjustTask::TSValuesCount];
+	CEdit m_EditCtrl[SvOp::ToolSizeAdjustTask::TSValuesCount];
 	
 };

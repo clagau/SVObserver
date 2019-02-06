@@ -17,6 +17,9 @@
 #include "SVIPResultItemDefinition.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+
 struct IPResultTableData
 {
 	std::string m_columnName;
@@ -44,3 +47,4 @@ struct SVIPResultData
 	double m_ToolSetTime;
 };
 
+} //namespace SvIe

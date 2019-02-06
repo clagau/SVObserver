@@ -20,6 +20,9 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -144,4 +147,4 @@ void SVDWordValueObjectClass::LocalInitialize()
 	SetOutputFormat( OutputFormat_hex );
 }
 
-
+} //namespace SvVol

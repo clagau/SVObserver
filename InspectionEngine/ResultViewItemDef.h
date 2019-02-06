@@ -16,6 +16,10 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
+
+namespace SvIe
+{
+
 /*
 	Class describes one item in the result view.
 */
@@ -81,3 +85,4 @@ protected:
 #pragma endregion Member Variables
 };
 
+} //namespace SvIe

@@ -354,7 +354,7 @@ void SVBarCodeDataMatrixDialog::OnBarCodeCellYAuto()
   UpdateData (FALSE);
 }
 
-int SVBarCodeDataMatrixDialog::SetCellX (SVDoubleValueObjectClass &svdCellX)
+int SVBarCodeDataMatrixDialog::SetCellX (SvVol::SVDoubleValueObjectClass &svdCellX)
 {
   double dCellX;
 
@@ -375,7 +375,7 @@ int SVBarCodeDataMatrixDialog::SetCellX (SVDoubleValueObjectClass &svdCellX)
   return m_iCellX;
 }
 
-int SVBarCodeDataMatrixDialog::SetCellY (SVDoubleValueObjectClass &svdCellY)
+int SVBarCodeDataMatrixDialog::SetCellY (SvVol::SVDoubleValueObjectClass &svdCellY)
 {
   double dCellY;
 
@@ -396,7 +396,7 @@ int SVBarCodeDataMatrixDialog::SetCellY (SVDoubleValueObjectClass &svdCellY)
   return m_iCellY;
 }
 
-int SVBarCodeDataMatrixDialog::SetMinCellSize (SVDoubleValueObjectClass &svdMinCellSize)
+int SVBarCodeDataMatrixDialog::SetMinCellSize (SvVol::SVDoubleValueObjectClass &svdMinCellSize)
 {
   double dMinCellSize;
 
@@ -417,7 +417,7 @@ int SVBarCodeDataMatrixDialog::SetMinCellSize (SVDoubleValueObjectClass &svdMinC
   return m_iMinCellSize;
 }
 
-int SVBarCodeDataMatrixDialog::SetMaxCellSize (SVDoubleValueObjectClass &svdMaxCellSize)
+int SVBarCodeDataMatrixDialog::SetMaxCellSize (SvVol::SVDoubleValueObjectClass &svdMaxCellSize)
 {
   double dMaxCellSize;
 

@@ -37,23 +37,28 @@
 #include "InspectionEngine/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
 #include "SVPublishList.h"
-#include "SVCameraImageTemplate.h"
-#include "SVVirtualCamera.h"
+#include "InspectionEngine/SVCameraImageTemplate.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "SVMonitorList.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
-#include "InspectionEngine/SVEquation.h"
+#include "Operators/SVEquation.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+
+namespace SvIe
+{
 class SVCameraImageTemplate;
+}
+namespace SvOp
+{
 class SVConditionalClass;
-class SVDisplayObject;
+}
 class SVPPQObject;
 class SVToolSetClass;
-class SVTaskObjectClass;
 class SVResultListClass;
 #pragma endregion Declarations
 
@@ -112,6 +117,8 @@ public:
 	virtual long GetLastIndex() const  override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
 	virtual void BuildValueObjectMap() override;
+	GUID getFirstCamera() const override;
+	HRESULT addSharedCamera(GUID cameraID) override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;
@@ -140,8 +147,8 @@ public:
 	bool AddInputRequest(SVInputRequestInfoStructPtr pInRequest);
 	bool AddInputRequestMarker();
 
-	HRESULT AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue );
-	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const std::string& p_rFileName );
+	HRESULT AddInputImageRequest(SvIe::SVImageClass* p_psvImage, BSTR& p_rbstrValue );
+	HRESULT AddInputImageFileNameRequest(SvIe::SVImageClass* p_psvImage, const std::string& p_rFileName );
 	HRESULT AddInputImageRequest( SVInputImageRequestInfoStructPtr p_InRequestPtr );
 	HRESULT AddInputImageRequestByCameraName( const std::string& rCameraName, const std::string& rFileName);
 
@@ -162,7 +169,7 @@ public:
 	virtual void setEnableAuxiliaryExtent(bool Enabled) override;
 
 	//new GetOverlay method for use with the ActiveX
-	HRESULT CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray);
+	HRESULT CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray);
 
 	SVProductInfoStruct LastProductGet() const;
 	HRESULT LastProductUpdate( SVProductInfoStruct *p_psvProduct );
@@ -194,20 +201,17 @@ public:
 	LPCTSTR GetToolsetImage();
 	void SetToolsetImage( const std::string& rToolsetImage );
 
-	SVCameraImageTemplate* GetToolSetMainImage();
+	SvIe::SVCameraImageTemplate* GetToolSetMainImage();
 
-	SVVirtualCamera* GetFirstCamera() const;
-	SVVirtualCamera* GetFirstPPQCamera() const;
-	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
-	HRESULT GetPPQCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
-	HRESULT GetCamerasForLut( SVVirtualCameraPtrSet& p_rCameras ) const;
-	HRESULT GetCamerasForLightReference( SVVirtualCameraPtrSet& p_rCameras ) const;
+	SvOi::IObjectClass* getFirstPPQCamera() const;
+	HRESULT GetCameras( SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
+	HRESULT GetPPQCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
+	HRESULT GetCamerasForLut(SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
+	HRESULT GetCamerasForLightReference(SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
 
-	HRESULT AddSharedCamera( SVVirtualCamera* pCamera );
+	HRESULT GetMainImages( const std::string& rCameraName, SvIe::SVCameraImagePtrSet& rMainImages ) const;
 
-	HRESULT GetMainImages( const std::string& rCameraName, SVCameraImagePtrSet& rMainImages ) const;
-
-	HRESULT RemoveImage(SVImageClass* pImage);
+	HRESULT RemoveImage(SvIe::SVImageClass* pImage);
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
@@ -355,7 +359,7 @@ protected:
 	HRESULT InitializeRunOnce();
 
 	HRESULT GetInspectionValueObject( LPCTSTR Name, SVObjectReference& rObjectRef );
-	HRESULT GetInspectionImage( LPCTSTR Name, SVImageClass*& p_rRefObject );
+	HRESULT GetInspectionImage( LPCTSTR Name, SvIe::SVImageClass*& p_rRefObject );
 	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& rObjectRef );
 
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
@@ -395,7 +399,7 @@ protected:
 	SVInputRequestQueue m_InputRequests;
 	SVInputImageRequestQueue m_InputImageRequests;
 
-	SVCameraImagePtrSet m_CameraImages;
+	SvIe::SVCameraImagePtrSet m_CameraImages;
 
 	// Published List
 	SVPublishListClass m_publishList;
@@ -421,7 +425,7 @@ protected:
 	std::string m_ToolSetCameraName;
 	std::string m_DeviceName;
 
-	SVVirtualCamera* m_pToolSetCamera{nullptr};
+	SvIe::SVVirtualCamera* m_pToolSetCamera{nullptr};
 
 #ifdef EnableTracking
 	SVInspectionTracking m_InspectionTracking;
@@ -445,7 +449,7 @@ private:
 	DWORD               m_dwThreadId;
 
 	// JMS - this variable is only used for configuration conversion.
-	SVConditionalClass* m_pToolSetConditional;
+	SvOp::SVConditionalClass* m_pToolSetConditional;
 	SVCommandQueue m_CommandQueue;
 	
 
@@ -456,7 +460,7 @@ private:
 	SvSml::RingBufferPointer m_SlotManager;
 
 	//For RegressionTest
-	SVEquationClass m_RegressionTestPlayEquation;
+	SvOp::SVEquationClass m_RegressionTestPlayEquation;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 };
 
@@ -468,7 +472,7 @@ namespace SVDetail
 	struct ValueObjectTraits
 	{
 		typedef T value_type;
-		typedef SVValueObjectClass<T> object_type;
+		typedef SvVol::SVValueObjectClass<T> object_type;
 		inline static bool validate(const std::string &rString) { return true; }
 	};
 
@@ -476,7 +480,7 @@ namespace SVDetail
 	struct ValueObjectTraits<CFile>
 	{
 		typedef std::string value_type;
-		typedef SVValueObjectClass<std::string> object_type;
+		typedef SvVol::SVValueObjectClass<std::string> object_type;
 		inline static bool validate(const std::string& rString)
 		{
 			CFileStatus rStatus;

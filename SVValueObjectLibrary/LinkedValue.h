@@ -14,8 +14,8 @@
 #include "SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-#pragma endregion Declarations
+namespace SvVol
+{
 
 class LinkedValue : public SVVariantValueObjectClass
 {
@@ -101,3 +101,5 @@ private:
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 #pragma endregion Member Variables
 };
+
+} //namespace SvVol

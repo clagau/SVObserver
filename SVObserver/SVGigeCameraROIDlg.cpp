@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeCameraROIDlg.h"
-#include "SVAcquisitionClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVOGui/DisplayHelper.h"
@@ -84,7 +84,7 @@ void SVGigeCameraROIDlg::SetFormatImage( const SVImageInfoClass& rInfo)
 	m_ImageInfo = rInfo;
 }
 
-void SVGigeCameraROIDlg::SetAcquisitionDevice( SVAcquisitionClassPtr pDevice )
+void SVGigeCameraROIDlg::SetAcquisitionDevice(SvIe::SVAcquisitionClassPtr pDevice )
 {
 	m_pDevice = pDevice;
 }
@@ -187,7 +187,7 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 
 	if(nullptr == m_pImageHandle)
 	{
-		SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
+		SvIe::SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 	}
 
 	// Set the Image
@@ -555,7 +555,7 @@ void SVGigeCameraROIDlg::UpdateImageDisplay()
 	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, GetScaledMaxWidth());
 	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, GetScaledMaxHeight());
 
-	SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
+	SvIe::SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 
 	OnTakePicture();
 

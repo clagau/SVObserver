@@ -21,6 +21,9 @@
 #include "Definitions/TextDefineSVDef.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -253,3 +256,4 @@ void SVFileNameValueObjectClass::LocalInitialize()
 	SVFileNameManagerClass::Instance().AddItem(&m_FileName);
 }
 
+} //namespace SvVol

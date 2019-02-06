@@ -110,7 +110,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 		std::string ItemIndex;
 		std::string Value;
 
-		SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[ i ];
+		SvIe::SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[ i ];
 
 		SVObjectClass* l_pObject = nullptr;
 		if(bRedrawDefinitions)
@@ -140,7 +140,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 
 		ItemIndex = SvUl::Format( _T( "%d" ), i );
 
-		SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find( l_rDef );
+		SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find( l_rDef );
 
 		if( l_Iter != m_ResultData.m_ResultData.end() )
 		{

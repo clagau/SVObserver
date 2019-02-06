@@ -42,7 +42,7 @@
 #include "RootObject.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
-#include "SVOLicenseManager.h"
+#include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVIPChildFrm.h" 
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -669,14 +669,14 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			bool l_bGigeError = false;
 			std::string Error;
 
-			if ( !TheSVOLicenseManager().HasMatroxLicense() )
+			if ( !SVOLicenseManager::Instance().HasMatroxLicense() )
 			{
 				l_bMatroxError = true;
 				Error += cMatroxNoLicense;
 			}
 			else
 			{
-				if ( !TheSVOLicenseManager().HasMatroxGigELicense() && TheSVObserverApp.IsMatroxGige() )
+				if ( !SVOLicenseManager::Instance().HasMatroxGigELicense() && TheSVObserverApp.IsMatroxGige() )
 				{
 					Error = cGigeNoLicense;
 				}
@@ -1362,7 +1362,7 @@ void SVMainFrame::OnUpdateExtrasStartLastConfiguration(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 				   && TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON) 
-				   && (TheSVOLicenseManager().HasMatroxLicense()));
+				   && (SVOLicenseManager::Instance().HasMatroxLicense()));
 
 	bool StartLastConfiguration(false);
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
