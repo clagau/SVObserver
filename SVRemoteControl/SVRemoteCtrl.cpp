@@ -683,7 +683,21 @@ STDMETHODIMP SVRemoteCtrl::GetDeviceFile(BSTR sourcePath, BSTR destinationPath)
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig)
+STDMETHODIMP SVRemoteCtrl::PutDeviceFile(BSTR sourcePath, BSTR destinationPath)
+{
+	SVCommandStatus CommandStatus;
+
+	HRESULT l_Status = m_dispatcher->PutFile(sourcePath, destinationPath, false, CommandStatus);
+
+	if (l_Status != S_OK)
+	{
+		SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
+	}
+
+	return l_Status;
+}
+
+STDMETHODIMP SVRemoteCtrl::PutDeviceFileSave(BSTR sourcePath, BSTR destinationPath, VARIANT_BOOL saveInConfig)
 {
 	SVCommandStatus CommandStatus;
 
@@ -711,7 +725,21 @@ STDMETHODIMP SVRemoteCtrl::SetDeviceMode(SVObserverModesEnum desiredMode)
 	return l_Status;
 }
 
-STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* pItems, VARIANT_BOOL RunOnce, ISVProductItems ** ppErrors)
+STDMETHODIMP SVRemoteCtrl::SetItems(ISVProductItems* pItems, ISVProductItems ** ppErrors)
+{
+	SVCommandStatus CommandStatus;
+
+	HRESULT l_Status = m_dispatcher->SetItems(pItems, true, ppErrors, CommandStatus);
+
+	if (!SUCCEEDED(l_Status))
+	{
+		SVERROR(CommandStatus.errorText.c_str(), IID_ISVRemoteCtrl, CommandStatus.hResult);
+	}
+
+	return l_Status;
+}
+
+STDMETHODIMP SVRemoteCtrl::SetItemsRunOnce(ISVProductItems* pItems, VARIANT_BOOL RunOnce, ISVProductItems ** ppErrors)
 {
 	SVCommandStatus CommandStatus;
 

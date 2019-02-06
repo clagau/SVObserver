@@ -365,10 +365,12 @@ interface ISVRemoteCtrl : IDispatch{
 	[id(527), helpstring("Get State")] HRESULT GetState([out,retval] LONG* state);
 	[id(528), helpstring("Put Configuration")] HRESULT PutConfig([in] BSTR filePath, [in] LONG Timeout);
 	[id(529), helpstring("Get Version")] HRESULT GetVersion([out] BSTR* svobserver_ver, [out] BSTR* svremotecontrol_ver, [out] BSTR* runrejectserver_ver);
-	[id(530), helpstring("Put Device File")] HRESULT PutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath, [in, defaultvalue(0)] VARIANT_BOOL saveInConfig);
+	[id(530), helpstring("Put Device File")] HRESULT PutDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath);
 	[id(531), helpstring("Set Device Mode")] HRESULT SetDeviceMode([in] SVObserverModesEnum desiredMode);
-	[id(532), helpstring("Set Items")] HRESULT SetItems([in] ISVProductItems* items, [in, defaultvalue(-1)] VARIANT_BOOL RunOnce,[out, retval] ISVProductItems ** faults);
+	[id(532), helpstring("Set Items")] HRESULT SetItems([in] ISVProductItems* items, [out, retval] ISVProductItems ** faults);
 	[id(533), helpstring("Get Device File")] HRESULT GetDeviceFile([in] BSTR sourcePath, [in] BSTR destinationPath);
+	[id(534), helpstring("Put Device File Save")] HRESULT PutDeviceFileSave([in] BSTR sourcePath, [in] BSTR destinationPath, [in] VARIANT_BOOL saveInConfig);
+	[id(535), helpstring("Set Items Runonce")] HRESULT SetItemsRunOnce([in] ISVProductItems* items, [in] VARIANT_BOOL RunOnce, [out, retval] ISVProductItems ** faults);
 	[id(536), helpstring("Disconnects from the server.")] HRESULT Disconnect(void);
 	[id(537), helpstring("Connects to the server at 'address', timeout in ms.")] HRESULT Connect([in] BSTR address, [in, defaultvalue(1500)] LONG Timeout);
 	[id(538), helpstring("Register product items for tracking by RunReject server.")] HRESULT RegisterMonitorList([in] BSTR listName, [in] BSTR ppqName, [in] int rejectDepth, [in] VARIANT productItemList, [in] VARIANT rejectCondList, [in] VARIANT failStatusList, [out, retval] ISVErrorObjectList ** errors);

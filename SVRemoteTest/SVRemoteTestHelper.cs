@@ -106,7 +106,7 @@ namespace SVRemoteTest
 		private void InitMethodLookupTables()
 		{
 			m_remoteMethodLookup.Add("GetItems", new SVRemoteCtrlGetItemsView());
-			m_remoteMethodLookup.Add("SetItems", new SVRemoteCtrlSetItemsView());
+			m_remoteMethodLookup.Add("SetItemsRunOnce", new SVRemoteCtrlSetItemsView());
 			m_remoteMethodLookup.Add("BeginSetItems", new SVRemoteCtrlSetItemsView());
             m_remoteMethodLookup.Add("GetDeviceConfigReport", new SVRemoteCtrlDeviceConfigReportView());
             m_remoteMethodLookup.Add("GetDataDefinitionList", new SVRemoteCtrlGetDataDefinitionView());

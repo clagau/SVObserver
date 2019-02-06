@@ -58,7 +58,7 @@ namespace SVRemoteTest
 				if (!mf.Name.StartsWith("get_") && !mf.Name.StartsWith("set_") && !mf.Name.StartsWith("add_") && !mf.Name.StartsWith("remove_"))
 				{
                     //SetItems and PutDeviceFile have optional parameters we want to only display one method
-                    if (mf.Name == "SetItems")
+                    if (mf.Name == "SetItemsRunOnce" || mf.Name == "SetItems")
                     {
                         //With SetItems we only want to add the Method with 2 Parameters
                         if (mf.GetParameters().GetLength(0) == 2)
@@ -66,7 +66,7 @@ namespace SVRemoteTest
                             m_MethodList.Add(mf);
                         }
                     }
-                   else  if (mf.Name == "PutDeviceFile" || mf.Name == "BeginPutDeviceFile")
+                   else  if (mf.Name == "PutDeviceFile" || mf.Name == "BeginPutDeviceFile" || mf.Name == "PutDeviceFileSave")
                     {
                         //With PutDeviceFile we only want to add the Method with 3 Parameters
                         if (mf.GetParameters().GetLength(0) == 3)
