@@ -57,11 +57,12 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	bool bOk = __super::CreateObject(rCreateStructure);
 
 	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
-	if (nullptr != pTool && nullptr != m_pColumnEquation)
+	auto* pColumnEquation = dynamic_cast<SvOp::TableAddColumnEquation*>(getFirstObject({SvPb::SVEquationObjectType, SvPb::TableAddColumnEquationObjectType}));
+	if (nullptr != pTool && nullptr != pColumnEquation)
 	{
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, TableAnalyzerIndexObjectGuid);
 		IObjectClass* pIndex = pTool->getFirstObject(info);
-		m_pColumnEquation->setIndexObject(dynamic_cast<SvVol::SVLongValueObjectClass*>(pIndex));
+		pColumnEquation->setIndexObject(dynamic_cast<SvVol::SVLongValueObjectClass*>(pIndex));
 
 		SvVol::DoubleSortValueObject* pNewColumn = dynamic_cast<SvVol::DoubleSortValueObject*>(m_newColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (!m_newColumnObjectInfo.IsConnected() || nullptr == pNewColumn)
@@ -74,8 +75,8 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 			m_pNewColumn = pTool->setNewColumn(pNewColumn, this);
 		}
 
-		m_pColumnEquation->setResultColumn(m_pNewColumn);
-		m_pNewColumn->SetName(m_pColumnEquation->GetName());
+		pColumnEquation->setResultColumn(m_pNewColumn);
+		m_pNewColumn->SetName(pColumnEquation->GetName());
 	}
 	else
 	{
@@ -92,7 +93,7 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	SvOl::ValidateInput(m_newColumnObjectInfo);
 
 	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
-	if (nullptr == pTool || nullptr == m_pColumnEquation || nullptr == m_pNewColumn)
+	if (nullptr == pTool || nullptr == m_pNewColumn)
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -114,8 +115,8 @@ void TableAddColumnAnalyzer::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerAddColumnType;
 
-	m_pColumnEquation = new SvOp::TableAddColumnEquation(this);
-	AddFriend(m_pColumnEquation->GetUniqueObjectID());
+	auto* pColumnEquation = new SvOp::TableAddColumnEquation(this);
+	AddFriend(pColumnEquation->GetUniqueObjectID());
 
 	// New Column Input.
 	m_newColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);
