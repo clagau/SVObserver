@@ -318,7 +318,7 @@ SVExtentPropertyVector SVImageExtentClass::GetExtentPropertyVector(SvDef::SVExte
 	SVExtentPropertyStringMap::const_iterator iter;
 	for (iter = cExtentPropertyNames.begin(); iter != cExtentPropertyNames.end(); ++iter)
 	{
-		if (iter->first == (iter->first & eWhichProperties))
+		if (iter->first == (iter->first & eWhichProperties) && isEnabled(iter->first))
 		{
 			result.emplace_back(iter->first);
 		}
@@ -326,7 +326,7 @@ SVExtentPropertyVector SVImageExtentClass::GetExtentPropertyVector(SvDef::SVExte
 	return result;
 }
 
-HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue)
+HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue, bool clearOutputData /*= true*/)
 {
 	HRESULT result {S_OK};
 
@@ -361,23 +361,26 @@ HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum ePrope
 	if (S_OK == result)
 	{
 		result = setProperty(eProperty, dValue);
-		ClearOutputData();
+		if(clearOutputData)
+		{
+			ClearOutputData();
+		}
 	}
 
 	return result;
 }
 
-HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue)
+HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue, bool clearOutputData /*= true*/)
 {
 	HRESULT result {E_INVALIDARG};
 
 	SVExtentPropertyPointMap::const_iterator iter {cExtentPropertyPointMap.find(eProperty)};
 	if (cExtentPropertyPointMap.end() != iter)
 	{
-		result = SetExtentProperty(iter->second.first, rValue.m_x);
+		result = SetExtentProperty(iter->second.first, rValue.m_x, clearOutputData);
 		if (S_OK == result)
 		{
-			result = SetExtentProperty(iter->second.second, rValue.m_y);
+			result = SetExtentProperty(iter->second.second, rValue.m_y, clearOutputData);
 		}
 	}
 	return result;
@@ -4008,7 +4011,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4018,12 +4021,12 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -4049,27 +4052,27 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			{
 				double dWidth = SVGetRadius(startPoint, endPoint);
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				result = SetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth, false);
 
 				if (S_OK == result)
 				{
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dWidth);
+					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dWidth, false);
 				}
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyHeight, 1.0);
+				result = SetExtentProperty(SvDef::SVExtentPropertyHeight, 1.0, false);
 
 				if (S_OK == result)
 				{
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, 1.0);
+					result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, 1.0, false);
 				}
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -4101,7 +4104,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			if (S_OK == result)
 			{
 				dValue = inputWidth * widthScaleFactor;
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4118,12 +4121,12 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			{
 				dValue = inputHeight * heightScaleFactor;
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -4143,7 +4146,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4153,12 +4156,12 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -4186,17 +4189,17 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dWidth);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dWidth, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dHeight);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dHeight, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -4212,7 +4215,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4222,7 +4225,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4231,7 +4234,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 				point.m_y += dValue / 2;
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, point);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, point, false);
 			}
 
 			break;
@@ -4268,7 +4271,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			if (S_OK == result)
@@ -4278,7 +4281,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 				{
 					dHeight = 1.0;
 				}
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dHeight);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dHeight, false);
 
 				if (S_OK == result)
 				{
@@ -4288,7 +4291,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 					{
 						l_dWidth = 1.0;
 					}
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_dWidth);
+					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_dWidth, false);
 				}
 			}
 
@@ -4320,11 +4323,11 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			{
 				double dMax = std::sqrt((dWidth * dWidth) + (dHeight * dHeight));
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dMax);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dMax, false);
 
 				if (S_OK == result)
 				{
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dMax);
+					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dMax, false);
 				}
 
 				if (S_OK == result)
@@ -4332,7 +4335,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 					position.m_x += (dMax - dWidth) / 2;
 					position.m_y += (dMax - dHeight) / 2;
 
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, position);
+					result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, position, false);
 				}
 			}
 
@@ -4357,7 +4360,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			if (S_OK == result)
 			{
 				double l_dRadius = (dValue / std::sin(dWarpAngle / 360.0 * M_PI)) / 2.0;
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_dRadius * M_PI * (dWarpAngle / 180.0));
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_dRadius * M_PI * (dWarpAngle / 180.0), false);
 			}
 
 			if (S_OK == result)
@@ -4366,11 +4369,11 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 			break;
 		}// end case SvDef::SVExtentTranslationCylindricalWarpH:
@@ -4394,7 +4397,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			if (S_OK == result)
 			{
 				double dRadius = (dValue / std::sin(dWarpAngle / 360.0 * M_PI)) / 2.0;
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dRadius * M_PI * (dWarpAngle / 180.0));
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dRadius * M_PI * (dWarpAngle / 180.0), false);
 			}
 
 			if (S_OK == result)
@@ -4403,11 +4406,11 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 			break;
 		}// end case SvDef::SVExtentTranslationCylindricalWarpV:
@@ -4423,7 +4426,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4433,12 +4436,12 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue);
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0});
+				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -5024,4 +5027,9 @@ HRESULT SVImageExtentClass::setProperty(SvDef::SVExtentPropertyEnum eProperty, d
 		assert(false);
 	}
 	return result;
+}
+
+bool SVImageExtentClass::isEnabled(SvDef::SVExtentPropertyEnum eProperty) const
+{
+	return ((m_properties & eProperty) == eProperty) && (eProperty != SvDef::SVExtentPropertyNone);
 }

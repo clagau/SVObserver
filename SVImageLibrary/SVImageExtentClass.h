@@ -60,8 +60,8 @@ public:
 	SVExtentPropertyStringMap GetExtentPropertyMap(SvDef::SVExtentPropertyEnum eWhichProperties) const;
 	SVExtentPropertyVector GetExtentPropertyVector(SvDef::SVExtentPropertyEnum eWhichProperties) const;
 
-	HRESULT SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue);
-	HRESULT SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue);
+	HRESULT SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue, bool clearOutputData = true);
+	HRESULT SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue, bool clearOutputData = true);
 
 	HRESULT UpdateData();
 
@@ -125,6 +125,8 @@ private:
 	HRESULT BuildFigure();
 
 	HRESULT setProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue);
+
+	bool isEnabled(SvDef::SVExtentPropertyEnum eProperty) const;
 
 	/// TranslateToLocalSpace
 	///	 Translate the point to be relative (local space).  Usually this relates 
