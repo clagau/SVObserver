@@ -77,7 +77,7 @@ public:
 	virtual bool removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
 	virtual bool removeAllImageBuffer(const GUID& ownerID) override;
 
-	virtual bool changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) override;
+	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos = -1) override;
 
 	virtual bool lockReset() override;
 	virtual void unlockReset() override { m_isResetLocked = false; };

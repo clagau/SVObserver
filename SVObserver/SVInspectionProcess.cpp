@@ -480,7 +480,7 @@ bool SVInspectionProcess::IsCameraInInspection(const std::string& rCameraName) c
 	{
 		if (nullptr != (*l_Iter))
 		{
-			Result = (rCameraName == (*l_Iter)->GetName());
+			Result = (rCameraName == (*l_Iter)->GetCameraName());
 		}
 		++l_Iter;
 	}
@@ -1454,8 +1454,6 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
-	buildValueObjectDefList();
-
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 	int iCount = static_cast<int>(m_mapValueObjects.size());
 	std::string Text = SvUl::Format(_T("%s value object count=%d\n"), GetName(), iCount);
@@ -1568,6 +1566,8 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 		}
 
 		Result = __super::resetAllObjects(&ErrorMessages) && Result;
+
+		buildValueObjectDefList();
 
 		if (shouldResetTRC)
 		{
@@ -3995,7 +3995,7 @@ void SVInspectionProcess::buildValueObjectDefList() const
 	}
 
 	std::vector<_variant_t> valueObjectList{copyValueObjectList()};
-
+	
 	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), std::move(valueObjectList), SvTrc::getInspectionPos(GetUniqueObjectID()));
 }
 

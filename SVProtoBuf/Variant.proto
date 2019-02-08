@@ -17,10 +17,10 @@ message Variant
 	oneof data
 	{
 		bool bVal = 3;
-		sint32 lVal = 4;
-		sint64 llVal = 5;
-		uint32 ulVal = 6;
-		uint64 ullVal = 7;
+		sfixed32 lVal = 4;
+		sfixed64 llVal = 5;
+		fixed32 ulVal = 6;
+		fixed64 ullVal = 7;
 		double dblVal = 8;
 		float fltVal = 9;
 		string strVal = 10;

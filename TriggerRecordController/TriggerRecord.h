@@ -77,6 +77,7 @@ public:
 	virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const override;
 
 	virtual _variant_t getDataValue(const GUID& dataId) const override;
+	virtual _variant_t getDataValue(int pos) const override;
 
 	virtual bool isValueDataValid() const override;
 	virtual bool isObjectUpToTime() const override;

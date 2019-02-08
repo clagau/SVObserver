@@ -87,11 +87,11 @@ namespace SvTrc
 		virtual bool removeAllImageBuffer(const GUID& ownerID) = 0;
 
 		/// Change of inspection data definition list
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param rDataDefList [in] Reference to the data definition list (Move semantics!)
 		/// \param rValueObjectList [in] Reference to the value object list (Move semantics!)
 		/// \param inspectionPos [in] ID of the inspection
-		/// \returns bool
-		virtual bool changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) = 0;
+		virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos = -1) = 0;
 
 		/// Locked all reset-Methods in this controller. (e.g. In Run-Mode there should no reset possible). Is not possible if reset already started.
 		/// \returns bool Return the state if reset locked. Normally it returns true, only if reset is already started the lock is not possible and it returns false.

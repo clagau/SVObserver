@@ -54,6 +54,7 @@ namespace SvTrc
 		/// \param dataId [in] GUID of the value object.
 		/// \returns _variant_t
 		virtual _variant_t getDataValue(const GUID& dataId) const = 0;
+		virtual _variant_t getDataValue(int pos) const = 0;
 
 		/// Return true if value data has been written to the trigger record
 		/// \returns bool

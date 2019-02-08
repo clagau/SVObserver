@@ -154,23 +154,27 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 
 _variant_t TriggerRecord::getDataValue(const GUID& dataId) const
 {
-	_variant_t result;
-
 	std::string guidIdBytes;
 	SvPb::SetGuidInProtoBytes(&guidIdBytes, dataId);
 	int pos = findGuidPos(m_rDataDefList.list(), guidIdBytes);
-	if(-1 < pos)
+	return getDataValue(pos);
+}
+
+_variant_t TriggerRecord::getDataValue(int pos) const
+{
+	_variant_t result;
+	if (-1 < pos)
 	{
 		std::atomic_int* pSize = reinterpret_cast<std::atomic_int*> (m_rData.getValueData());
 		int DataSize = *pSize;
-		if(DataSize > 0)
+		if (DataSize > 0)
 		{
 			SvPb::DataList valueList;
 
 			//The next position is where the value data list is streamed
 			void* pSource = reinterpret_cast<void*> (pSize + 1);
 			valueList.ParseFromArray(pSource, DataSize);
-			if(valueList.valuelist_size() > pos)
+			if (valueList.valuelist_size() > pos)
 			{
 				SvPb::ConvertProtobufToVariant(valueList.valuelist()[pos], result);
 			}

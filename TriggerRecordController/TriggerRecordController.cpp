@@ -654,19 +654,35 @@ bool TriggerRecordController::removeAllImageBuffer(const GUID& ownerID)
 	return true;
 }
 
-bool TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos)
+void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos)
 {
-	bool result{false};
-
-	if(nullptr != m_pData)
-	{
-		//Only obtain the size of the data
-		m_pData[inspectionPos].m_dataListSize = copyDataList(std::move(rValueObjectList));
-		m_pData[inspectionPos].m_DataDefList.Swap(&rDataDefList);
-		result = true;
+	ResetEnum resetEnum = calcResetEnum(inspectionPos);
+	if (ResetEnum::Invalid == resetEnum || nullptr == m_pData)
+	{   //Not possible to add and change image.
+		assert(false);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
 	}
-	
-	return result;
+
+	if (ResetEnum::NewReset == resetEnum)
+	{
+		//prefer reset
+		m_resetStarted4IP = inspectionPos;
+		m_TriggerRecordNumberResetTmp = m_pData[m_resetStarted4IP].m_TriggerRecordNumber;
+		m_imageListResetTmp = m_pData[m_resetStarted4IP].m_ImageList;
+		m_imageStructListResetTmp.Clear();
+		m_imageStructListResetTmp = ImageBufferController::getImageBufferControllerInstance().getImageStructList();
+	}
+
+	//Only obtain the size of the data
+	m_pData[m_resetStarted4IP].m_dataListSize = copyDataList(std::move(rValueObjectList));
+	m_pData[m_resetStarted4IP].m_DataDefList.Swap(&rDataDefList);
+
+	if (ResetEnum::NewReset == resetEnum)
+	{
+		ResetTriggerRecordStructure();
+	}
 }
 
 bool TriggerRecordController::lockReset()
