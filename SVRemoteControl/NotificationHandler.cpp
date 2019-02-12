@@ -18,8 +18,11 @@ std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamRespon
 
 		case SvPb::GetNotificationStreamResponse::kCurrentMode:
 		{
+			//For HMI change all Unknownmode notifications to modeChanging
+			bool isUnknownMode = SvPb::unknownMode == rResponse.currentmode();
+			int currentMode = static_cast<int> (isUnknownMode ? SvPb::modeChanging : rResponse.currentmode());
 			propTree.put("SVRC.Notification", "CurrentMode");
-			propTree.put("SVRC.DataItems.Mode", static_cast<int> (rResponse.currentmode()));
+			propTree.put("SVRC.DataItems.Mode", currentMode);
 			type = SVNotificationTypes::CurrentMode;
 			break;
 		}

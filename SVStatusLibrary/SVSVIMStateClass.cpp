@@ -74,7 +74,8 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 		SV_STATE_SAVING |
 		SV_STATE_CLOSING |
 	    SV_STATE_UNAVAILABLE |
-		SV_STATE_EDITING ) )
+		SV_STATE_EDITING |
+		SV_STATE_CANCELING ) )
 	{
 		result = SvPb::DeviceModeType::modeChanging;
 	}
@@ -98,9 +99,13 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 	{
 		result = SvPb::DeviceModeType::stopMode;
 	}
-	else if( SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE) )
+	else if (SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE))
 	{
 		result = SvPb::DeviceModeType::available;
+	}
+	else if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	{
+		result = SvPb::DeviceModeType::modeChanging;
 	}
 	else
 	{
