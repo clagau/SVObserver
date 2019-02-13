@@ -56,4 +56,6 @@
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
+
+#include <mil.h>
 #pragma endregion Precompiled Headers

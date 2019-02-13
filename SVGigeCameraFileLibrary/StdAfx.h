@@ -48,6 +48,7 @@
 #include <afx.h>
 #include <afxwin.h>
 
+#include <atomic>			//Used by status library
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library

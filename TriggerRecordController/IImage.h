@@ -6,7 +6,6 @@
 /// The interface-class for the Image-Class.
 //******************************************************************************
 #pragma once
-#include "stdafx.h"
 #include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 //Moved to precompiled header: #include <memory>
 

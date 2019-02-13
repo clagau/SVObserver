@@ -17,6 +17,7 @@
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVOLibrary/SVODataDeviceClass.h"
 #include "SVOLibrary/SVODeviceClass.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"

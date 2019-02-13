@@ -557,6 +557,10 @@ namespace SvStl
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},
 		{Tid_TRC_Error_CopyValueObjData, _T("Error copying value object data")},
+		{Tid_TRC_Error_GetTRCFailed, _T("Error getting TriggerRecordInstance. You must create it before call the get-function.")},
+		{Tid_TRC_Error_CreateSMCommonData, _T("Error creating SharedMemory for Common data in TRC.")},
+		{Tid_TRC_Error_TooManyImageBuffer, _T("Error too many image buffer for TRC requested. Max: %s.")},
+		{Tid_TRC_Error_InspectionPBTooLong, _T("Inspection protoBuf-message in TRC too long for shared memory.")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 

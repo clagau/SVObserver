@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "TriggerRecordControllerUnitTest.h"
+#include "LogClass.h"
 
 #include "TrcTester.h"
 
@@ -13,8 +14,7 @@
 
 // Das einzige Anwendungsobjekt
 CWinApp theApp;
-
-bool unitTest(const struct TrcTesterConfiguration &rConfig);
+LogClass g_logClass;
 
 int main()
 {
@@ -32,17 +32,45 @@ int main()
         }
         else
         {
-			const struct TrcTesterConfiguration config;
-			wprintf(L"Testing TRC (%d unittests, %ld iterations per step):\n", config.m_NumberOfUnittests, config.m_NoOfRepetitionsPerStep);
-			bool all_ok = true;
-			for (int i = 0; i < config.m_NumberOfUnittests; i++)
-			{
-				bool ok = unitTest(config);
-				wprintf(L"%2d of %d tests complete: %sok.\n", i + 1 , config.m_NumberOfUnittests, ok ? L"" : L"NOT ");
-				all_ok &= ok;
-			}
+			_set_error_mode(_OUT_TO_MSGBOX);
+			CString tmpString;
 
-			wprintf(L"%d tests complete: %s\n", config.m_NumberOfUnittests, all_ok ? L"ok." : L"PROBLEMS occurred.");
+			SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Local);
+			if (g_logClass.Open(_T("log.txt"), false))
+			{
+				MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
+				if (M_NULL != appId)
+				{
+					{
+						const TrcTesterConfiguration config(g_logClass);
+						TrcTester trc_ut(config, g_logClass);
+						tmpString.Format(_T("Testing TRC (%d unittests, %ld iterations per step)"), config.getNumberOfUnittests(), config.getNoOfRepetitionsPerStep());
+						g_logClass.LogText0(tmpString, LogLevel::Information_Level1);
+						bool all_ok = true;
+						for (int i = 0; i < config.getNumberOfUnittests(); i++)
+						{
+							bool ok = trc_ut.fullTest();
+							tmpString.Format(_T("%2d of %d tests complete: %sok."), i + 1, config.getNumberOfUnittests(), ok ? L"" : L"NOT ");
+							g_logClass.LogText(tmpString, LogLevel::Information_Level1, ok ? LogType::PASS : LogType::FAIL);
+							g_logClass.LogText("--------------------------------------\n", LogLevel::Information_Level1, LogType::BLANK);
+							g_logClass.Flush();
+							all_ok &= ok;
+						}
+					}
+					MappFree(appId);
+				}
+				else
+				{
+					g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Always, LogType::ABORT);
+				}
+
+				g_logClass.PrintSummary();
+				g_logClass.Close();
+			}
+			else
+			{
+				wprintf(L"Error opening log-file\n");
+			}
 		}
     }
     else
@@ -52,49 +80,3 @@ int main()
 
     return nRetCode;
 }
-
-
-bool unitTest(const struct TrcTesterConfiguration &config)
-{
-	TrcTester trc_ut(config);
-
-	if (!trc_ut.hasAppId())
-	{
-		AfxMessageBox(_T("MIL System could not be allocated. Aborting."));
-		return false;
-	}
-	
-
-	for (int i = 0; i < config.m_NoOfRepetitionsPerStep; i++)
-	{
-		bool CreateInspectionsOk = trc_ut.createInspections();
-
-		if (!CreateInspectionsOk)
-		{
-			wprintf(L"CreateInspections(%d, %d) ERROR on %d. iteration!\n", config.m_NumberOfImagesPerInspection, config.m_NumberOfInspections,i);
-			return false;
-		}
-	}
-	bool ok = true;
-
-	for (int i = 0; i < config.m_NoOfRepetitionsPerStep; i++)
-	{
-		bool inspectionBuffersOk = trc_ut.setInspectionBuffers();
-		if (!inspectionBuffersOk)
-		{
-			wprintf(L"setInspectionBuffers(%d, %d) ERROR on %d. iteration!\n", config.m_NumberOfImagesPerInspection, config.m_NumberOfInspections, i);
-			return false;
-		}
-
-		bool independentBuffersOk = trc_ut.setIndependentBuffers();
-		if (!independentBuffersOk)
-		{
-			wprintf(L"setIndependentBuffers(%d, %d) ERROR on %d. iteration!\n", config.m_NumberOfImagesPerInspection, config.m_NumberOfInspections, i);
-			return false;
-		}
-
-	}
-
-	return true;
-}
-

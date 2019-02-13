@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "ITriggerRecordControllerRW.h"
 #include "ITriggerRecordRW.h"
-#include "TriggerRecord.h"
+#include "ImageBufferController.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
@@ -27,10 +27,7 @@ class TriggerRecordController final : public ITriggerRecordControllerRW
 {
 #pragma region Constructor
 public:
-	static TriggerRecordController& getTriggerRecordControllerInstance();
-
-private:
-	TriggerRecordController();
+	TriggerRecordController(std::unique_ptr<DataControllerBase> pDataController);
 	~TriggerRecordController();
 
 	TriggerRecordController(const TriggerRecordController&) = delete;
@@ -39,12 +36,13 @@ private:
 
 #pragma region Public Methods
 public:
-	void setLastFinishedTR(int inspectionPos, int id);
+	void setLastFinishedTR(int inspectionPos, int id) { m_pDataController->setLastFinishedTR(inspectionPos, id); };
+	ImageBufferController& getImageBufferControllerInstance() { return m_imageBufferController; };
 
 #pragma region ITriggerRecordControllerR Methods
-	virtual const SvPb::InspectionList& getInspections() const override { return m_inspectionList; }
+	virtual const SvPb::InspectionList& getInspections() const override { return m_pDataController->getInspections(); }
 
-	virtual int getLastTRId(int inspectionPos) const override;
+	virtual int getLastTRId(int inspectionPos) const override { return m_pDataController->getLastTRId(inspectionPos); };
 
 	virtual const SvPb::ImageList& getImageDefList(int inspectionPos) override;
 
@@ -76,6 +74,7 @@ public:
 	virtual bool addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers) override;
 	virtual bool removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
 	virtual bool removeAllImageBuffer(const GUID& ownerID) override;
+	virtual bool removeAllImageBuffer() override;
 
 	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos = -1) override;
 
@@ -84,19 +83,13 @@ public:
 	virtual bool isResetLocked() const override { return m_isResetLocked; };
 #pragma endregion ITriggerRecordControllerRW Methods
 
-	long getResetId() { return m_resetId; };
+	long getResetId() { return m_pDataController->getResetId(); };
 
-	long& getResetLockCounterRef() { return m_resetLockCounter; };
+	long& getResetLockCounterRef() { return m_pDataController->getResetLockCounterRef(); };
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 private:
-	TriggerRecord::TriggerRecordData& getTRData(int inspectionPos, int pos) const;
-
-	/// Reset all data for one Inspection and clear data.
-	/// \param inspectionID [in]
-	void ResetInspectionData(int inspectionID);
-
 	/// Reset the trigger record structure with the tmp-member-parameter.
 	void ResetTriggerRecordStructure();
 
@@ -115,6 +108,8 @@ private:
 	ResetEnum calcResetEnum(int inspectionPos);
 
 	void sendResetCall();
+
+	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -122,38 +117,6 @@ public:
 	static const int cMaxTriggerRecords = 305;
 
 private:
-	static const int m_TriggerRecordAddOn = 2; //number of additional slots for internal use
-	
-	struct TRControllerDataPerIP
-	{
-		~TRControllerDataPerIP()
-		{
-			if(nullptr != m_pTriggerRecords)
-			{
-				::free(m_pTriggerRecords);
-			}
-		}
-
-		bool m_bInit = false;
-		int m_TriggerRecordNumber = 50 + m_TriggerRecordAddOn;  //maximal number of trigger record to use
-		int m_lastFinishedTRID{-1};
-		int m_lastStartedTRID{-1};
-		int m_triggerRecordBufferSize{0}; //This is the size of the buffer reserved for one trigger Record.
-		int m_nextPosForFreeCheck{0}; //This variable contains which position it should start searching for a free slot.
-		int m_dataListSize{0}; //data List byte size
-		SvPb::ImageList m_ImageList;
-		SvPb::DataDefinitionList m_DataDefList;
-		void* m_pTriggerRecords = nullptr;
-	};
-
-	TRControllerDataPerIP* m_pData = nullptr;
-	int m_IPDataNumber = 0; //number of IP data blocks (should be the same as number of IPs)
-	int m_nextTRID = 0; //the next ID for next created trigger record.
-	long m_resetId = 0; //id of the current resetStruct
-	long m_lastResetId = 0; //id of the last resetId
-	long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
-	SvPb::InspectionList m_inspectionList;
-
 	//This Map contains per (non image- (e.g. AcqusitionObject))object a map of required buffers.
 	//First parameter of the second map is the structID of the buffer and the second parameter is the required number.
 	std::map<GUID, std::map<int, int>> m_additionalBufferMap;
@@ -167,6 +130,14 @@ private:
 	bool m_isResetLocked = false;
 
 	mutable CRITICAL_SECTION m_hCriticalSectionCallback;
+
+	std::unique_ptr<DataControllerBase> m_pDataController;
+	ImageBufferController m_imageBufferController;
 #pragma endregion Member variables
 };
+
+
+
+TriggerRecordController& getTriggerRecordControllerInstance();
+ImageBufferController& getImageBufferControllerInstance();
 } //namespace SvTrc

@@ -18,7 +18,6 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
-#include "SVStatusLibrary\SVRegistry.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -31,107 +30,71 @@ static char THIS_FILE[] = __FILE__;
 namespace SvTrc
 {
 #pragma region Constructor
-ImageBufferController& ImageBufferController::getImageBufferControllerInstance()
+ImageBufferController::ImageBufferController(DataControllerBase& rDataController)
+	: m_rDataController(rDataController)
 {
-	static ImageBufferController controller;
-
-	return controller;
-}
-
-ImageBufferController::ImageBufferController()
-	: m_memoryHelper(m_bufferVector)
-{
-	constexpr int handleForReset = 1000;
-	SVRegistryClass reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
-	DWORD value = 0;
-	if (reg.GetRegistryValue(_T("GDIProcessHandleQuota"), &value) || 0 < value)
-	{
-		if (handleForReset < value)
-		{
-			m_maxNumberOfRequiredBuffer = static_cast<int>(value) - handleForReset;
-}
-		else
-		{
-			m_maxNumberOfRequiredBuffer = static_cast<int>(value) * 0.9;
-		}
-	}
 }
 
 ImageBufferController::~ImageBufferController()
 {
-	clearAll();
+	m_rDataController.clearAll();
 }
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ImageBufferController::clearAll()
-{
-	m_bufferVector.clear();
-	delete[] m_imageRefCountArray;
-	m_imageRefCountArray = nullptr;
-	m_imageRefCountSize = 0;
-	m_imageStructList = SvPb::ImageStructList();
-
-	m_memoryHelper.clearAll();
-}
-
 std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageStructList& rImageStructList)
 {
 	int groupPos = 0;
 	int vectorPos = 0;
 
-	assert(rImageStructList.list_size() >= m_imageStructList.list_size());
-	assert(0 == m_imageStructList.list_size() || rImageStructList.list(m_imageStructList.list_size() - 1).structid() == m_imageStructList.list(m_imageStructList.list_size() - 1).structid());
+	SvPb::ImageStructList newImageStructList = m_rDataController.getImageStructList();
 
 	int completeNumberOfRequiredBuffer = 0;
 	for (const auto& rImageStruct : rImageStructList.list())
 	{
 		completeNumberOfRequiredBuffer += rImageStruct.numberofbuffersrequired();
 	}
-	if (m_maxNumberOfRequiredBuffer < completeNumberOfRequiredBuffer)
+	if (m_rDataController.getMaxNumberOfRequiredBuffer() < completeNumberOfRequiredBuffer)
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), completeNumberOfRequiredBuffer));
-		msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
+		msgList.push_back(SvUl::Format(_T("%d"), m_rDataController.getMaxNumberOfRequiredBuffer()));
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetBuffer_TooMany, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
 
+	assert(rImageStructList.list_size() >= newImageStructList.list_size());
+	assert(0 == newImageStructList.list_size() || rImageStructList.list(newImageStructList.list_size() - 1).structid() == newImageStructList.list(newImageStructList.list_size() - 1).structid());
+	auto& rBufVec = m_rDataController.getBufferVectorRef();
+
 	//step through new imageSize list to fit buffer to the new required structure
 	for (const auto& rImageStruct : rImageStructList.list())
 	{
 		SvPb::ImageStructData* pStructData = nullptr;
-		if (m_imageStructList.list_size() > groupPos)
+		if (newImageStructList.list_size() > groupPos)
 		{
-			pStructData = m_imageStructList.mutable_list(groupPos);
+			pStructData = newImageStructList.mutable_list(groupPos);
 			if (0 == rImageStruct.numberofbuffersrequired())
 			{
 				//this size is not longer used, delete the buffers.
-				auto bufferIter = m_bufferVector.begin() + vectorPos;
-				m_bufferVector.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
+				auto bufferIter = rBufVec.begin() + vectorPos;
+				rBufVec.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
 				//memoryName temporary store, because it will be with the next erase
 				std::string memoryName = pStructData->memoryname();
-				m_imageStructList.mutable_list()->erase(m_imageStructList.list().begin() + groupPos);
+				newImageStructList.mutable_list()->erase(newImageStructList.list().begin() + groupPos);
 
-				m_memoryHelper.removeMemory(memoryName);;
+				m_rDataController.removeImageMemory(memoryName);
 				continue;
 			}
 			else
 			{	
-				if (pStructData->numberofbuffers() > rImageStruct.numberofbuffersrequired())
-				{
-					auto bufferIter = m_bufferVector.begin() + vectorPos + rImageStruct.numberofbuffersrequired();
-					m_bufferVector.erase(bufferIter, bufferIter + (pStructData->numberofbuffers()-rImageStruct.numberofbuffersrequired()));
-					pStructData->set_numberofbuffers(rImageStruct.numberofbuffersrequired());
-				}
-				//this size is used, move vectorPos to the end of this bufferSize in Vector.
-				vectorPos += pStructData->numberofbuffers();
+				vectorPos = m_rDataController.contractMilBufferinMemory(rImageStruct.numberofbuffersrequired(), *pStructData, vectorPos);
 			}
 		}
 		else
 		{	//new size, add it to the image size list
-			pStructData = m_imageStructList.add_list();
+			pStructData = newImageStructList.add_list();
 			pStructData->set_type(rImageStruct.type());
 		}
 
@@ -143,11 +106,11 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		{ //add more buffer of this size if necessary
 			try
 			{
-				vectorPos = m_memoryHelper.createMilBufferinMemory(requiredNumbers, *pStructData, vectorPos);
+				vectorPos = m_rDataController.createMilBufferinMemory(requiredNumbers, *pStructData, vectorPos);
 			}
 			catch (const SvStl::MessageContainer& rSvE)
 			{
-				clearAll();
+				m_rDataController.clearAll();
 				//This is the topmost catch for MessageContainer exceptions
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 				Exception.setMessage(rSvE.getMessage());
@@ -160,7 +123,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		//correct offset
 		if (0 < groupPos)
 		{
-			pStructData->set_offset(m_imageStructList.list(groupPos - 1).offset() + m_imageStructList.list(groupPos - 1).numberofbuffers());
+			pStructData->set_offset(newImageStructList.list(groupPos - 1).offset() + newImageStructList.list(groupPos - 1).numberofbuffers());
 		}
 		else
 		{
@@ -170,19 +133,10 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		groupPos++;
 	}
 
-	//resize the reference counter array if required and set the counter to 0
-	if (m_bufferVector.size() > m_imageRefCountSize)
-	{
-		delete[] m_imageRefCountArray;
-		m_imageRefCountSize = static_cast<int>(vectorPos);
-		m_imageRefCountArray = new long[m_imageRefCountSize];
-	}
-	memset(m_imageRefCountArray, 0, sizeof(long)*m_imageRefCountSize);
-
-	//update structId to fit to the position in m_imageStructList
+	//update structId to fit to the position in newImageStructList
 	int i = 0;
 	std::vector<std::pair<int, int>> moveVec;
-	for (auto& rImageStructData : (*m_imageStructList.mutable_list()))
+	for (auto& rImageStructData : (*newImageStructList.mutable_list()))
 	{
 		//old structId must be equal or higher (it is higher if an size-entry was deleted.)
 		int oldId = rImageStructData.structid();
@@ -196,30 +150,47 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		i++;
 	}
 
+	//resize the reference counter array if required and set the counter to 0
+	try
+	{
+		m_rDataController.setImageStructList(std::move(newImageStructList));
+	}
+	catch (const SvStl::MessageContainer& rSvE)
+	{
+		m_rDataController.clearAll();
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(rSvE.getMessage());
+		Exception.Throw();
+	}
+	m_rDataController.resetImageRefCounter();
+
 	return moveVec;
 }
 
-bool ImageBufferController::increaseRefCounter(int pos)
+bool ImageBufferController::increaseImageRefCounter(int pos)
 {
-	if (0 <= pos &&  m_imageRefCountSize > pos)
+	long* pImageCount = m_rDataController.getImageRefCountPtr(pos);
+	if (nullptr != pImageCount)
 	{
-		InterlockedIncrement(&m_imageRefCountArray[pos]);
+		InterlockedIncrement(pImageCount);
 		return true;
 	}
 	return false;
 }
 
-bool ImageBufferController::decreaseRefCounter(int pos)
+bool ImageBufferController::decreaseImageRefCounter(int pos)
 {
-	if (0 <= pos &&  m_imageRefCountSize > pos)
+	long* pImageCount = m_rDataController.getImageRefCountPtr(pos);
+	if (nullptr != pImageCount)
 	{
-		long value = InterlockedDecrement(&m_imageRefCountArray[pos]);
+		long value = InterlockedDecrement(pImageCount);
 		if (0 > value)
 		{
 			assert(false);
 			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_ImageRefCount, SvStl::SourceFileParams(StdMessageParams));
-			InterlockedExchange(&m_imageRefCountArray[pos], 0);
+			InterlockedExchange(pImageCount, 0);
 			return false;
 		}
 		return true;
@@ -231,9 +202,9 @@ bool ImageBufferController::decreaseRefCounter(int pos)
 IImagePtr ImageBufferController::getImage(int pos, long resetId, bool shouldUnlockAutomatically) const
 {
 	IImagePtr pImage;
-	if (0 <= pos &&  m_bufferVector.size() > pos)
+	if (0 <= pos &&  m_rDataController.getBufferVectorRef().size() > pos)
 	{
-		SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(m_bufferVector[pos])};
+		SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(m_rDataController.getBufferVectorRef()[pos])};
 		pImage = IImagePtr {new Image(pImagePtr, resetId, pos, true, shouldUnlockAutomatically)};
 	}
 	return pImage;
@@ -242,9 +213,9 @@ IImagePtr ImageBufferController::getImage(int pos, long resetId, bool shouldUnlo
 IImagePtr ImageBufferController::getChildImage(int parentPos, const MatroxBufferChildDataStruct& rBufferDataStruct, long resetId, bool shouldUnlockAutomatically) const
 {
 	IImagePtr pImage;
-	if (0 <= parentPos &&  m_bufferVector.size() > parentPos)
+	if (0 <= parentPos &&  m_rDataController.getBufferVectorRef().size() > parentPos)
 	{
-		SVMatroxBufferCreateChildStruct bufferStruct(m_bufferVector[parentPos]);
+		SVMatroxBufferCreateChildStruct bufferStruct(m_rDataController.getBufferVectorRef()[parentPos]);
 		bufferStruct.m_data = rBufferDataStruct;
 		pImage = getChildImage(bufferStruct, resetId, parentPos, shouldUnlockAutomatically);
 
@@ -267,13 +238,14 @@ SvTrc::IImagePtr ImageBufferController::getChildImage(const SVMatroxBufferCreate
 
 IImagePtr ImageBufferController::createNewImageHandle(const SVMatroxBufferCreateStruct& bufferStruct, long resetId) const
 {
-	auto imageSizeIter = std::find_if(m_imageStructList.list().begin(), m_imageStructList.list().end(), [bufferStruct](auto data)->bool
+	const auto& rImageStructList = m_rDataController.getImageStructList();
+	auto imageSizeIter = std::find_if(rImageStructList.list().begin(), rImageStructList.list().end(), [bufferStruct](auto data)->bool
 	{
 		SVMatroxBufferCreateStruct bufferStruct2;
 		memcpy(&bufferStruct2, data.type().c_str(), sizeof(SVMatroxBufferCreateStruct));
 		return bufferStruct == bufferStruct2;
 	});
-	if (m_imageStructList.list().end() != imageSizeIter)
+	if (rImageStructList.list().end() != imageSizeIter)
 	{
 		int imagePos = -1;
 		return createNewImageHandle(imageSizeIter->structid(), imagePos, resetId, true);
@@ -283,20 +255,20 @@ IImagePtr ImageBufferController::createNewImageHandle(const SVMatroxBufferCreate
 
 IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImagePos, long resetId, bool shouldUnlockAutomatically) const
 {
-	auto& rList = m_imageStructList.list();
+	const auto& rList = m_rDataController.getImageStructList().list();
 	if (0 <= structId &&  rList.size() > structId)
 	{
 		int offset = rList[structId].offset();
 		for (int i = 0; i < rList[structId].numberofbuffers(); i++)
 		{
 			int imagePosTmp = i + offset;
-			long value = m_imageRefCountArray[imagePosTmp];
-			if (0 == value)
+			long* pValue = m_rDataController.getImageRefCountPtr(imagePosTmp);
+			if (nullptr != pValue && 0 == *pValue)
 			{
-				if (InterlockedCompareExchange(&(m_imageRefCountArray[imagePosTmp]), value + 1, value) == value)
+				if (InterlockedCompareExchange(pValue, 1, 0) == 0)
 				{
 					rImagePos = imagePosTmp;
-					SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(m_bufferVector[rImagePos])};
+					SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(m_rDataController.getBufferVectorRef()[rImagePos])};
 					return IImagePtr {new Image(pImagePtr, resetId, rImagePos, false, shouldUnlockAutomatically)};
 				}
 			}
@@ -319,12 +291,13 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 
 void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageList, int numbers)
 {
+	SvPb::ImageStructList newImageStructList = m_rDataController.getImageStructList();
 	for (const auto& rSizeData : imageList.list())
 	{
 		int id = rSizeData.structid();
-		if (0 <= id && m_imageStructList.list_size() > id)
+		if (0 <= id && newImageStructList.list_size() > id)
 		{
-			auto* pImageStruct = m_imageStructList.mutable_list(id);
+			auto* pImageStruct = newImageStructList.mutable_list(id);
 			if (nullptr != pImageStruct)
 			{
 				assert(0 <= pImageStruct->numberofbuffersrequired() - numbers);
@@ -332,6 +305,16 @@ void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageLi
 			}
 		}
 	}
+	try
+	{
+		m_rDataController.setImageStructList(std::move(newImageStructList));
+	}
+	catch (const SvStl::MessageContainer& rSvE)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rSvE.getMessage());
+	}	
 }
 #pragma endregion Public Methods
 

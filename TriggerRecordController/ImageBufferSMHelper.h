@@ -33,7 +33,7 @@ class ImageBufferSMHelper final
 {
 #pragma region Constructor
 public:
-	ImageBufferSMHelper(std::vector<SVMatroxBuffer>&);
+	ImageBufferSMHelper(std::vector<SVMatroxBuffer>& rBufferVector, int maxNumberOfRequiredBuffer);
 	~ImageBufferSMHelper();
 
 private:
@@ -50,6 +50,7 @@ public:
 	void removeMemory(std::string memoryName);
 
 	int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos);
+	int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -67,6 +68,7 @@ private:
 private:
 	std::map<std::string, SvSml::DataStorePointer> m_sharedMemoryMap;
 	std::vector<SVMatroxBuffer>& m_rBufferVector;
+	const int m_maxNumberOfRequiredBuffer;
 #pragma endregion Member Variables
 };
 } //namespace SvTrc

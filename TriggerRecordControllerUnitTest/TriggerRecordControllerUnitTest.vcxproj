@@ -44,7 +44,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -52,7 +52,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -118,7 +118,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);D:\Source\branch_SVO1857_UnitTestForTRC\Debug\x64\bin;$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;C:\Program Files\boost_1_65_1\stage\x64\lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -155,13 +155,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(PATH_3RDPARTY)\Matrox\MIL10_64bit\Lib;C:\Program Files\boost_1_65_1\stage\x64\lib;$(PATH_3RDPARTY)\protobuf\protobuf-3.4.0\lib;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LogClass.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="TriggerRecordControllerUnitTest.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LogClass.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -1853,6 +1853,9 @@ BOOL SVObserverApp::InitInstance()
 	// Startup Matrox App
 	SVMatroxApplicationInterface::Startup();
 
+	//must be called before SVDigitizerProcessingClass-Startup
+	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Local);
+
 	SvTi::SVHardwareManifest::Instance().Startup();
 	SvTi::SVTriggerProcessingClass::Instance().Startup();
 	SvIe::SVDigitizerProcessingClass::Instance().Startup();

@@ -21,6 +21,7 @@
 #include "TriggerInformation/SVTriggerRelayClass.h"
 #include "TriggerInformation/SVFileAcquisitionInitiator.h"
 #include "SVAcquisitionClass.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVOResource/resource.h"

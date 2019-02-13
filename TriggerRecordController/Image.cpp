@@ -30,14 +30,14 @@ Image::~Image()
 		auto pLock = ResetLocker::lockReset(m_ResetId);
 		if (nullptr != pLock)
 		{
-			ImageBufferController::getImageBufferControllerInstance().decreaseRefCounter(m_bufferPos);
+			getImageBufferControllerInstance().decreaseImageRefCounter(m_bufferPos);
 		}
 	}
 }
 
 bool Image::isValid() const
 {
-	return (TriggerRecordController::getTriggerRecordControllerInstance().getResetId() == m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
+	return (getTriggerRecordControllerInstance().getResetId() == m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
 }
 
 } //namespace SvTRC

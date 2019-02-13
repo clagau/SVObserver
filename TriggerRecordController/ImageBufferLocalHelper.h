@@ -39,9 +39,8 @@ public:
 	/// Free all buffer and set this object empty.
 	void clearAll();
 
-	void removeMemory(std::string memoryName);
-
 	int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos);
+	int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

@@ -33,6 +33,9 @@
     <ClInclude Include="TrcTester.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="LogClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +45,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TrcTester.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LogClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

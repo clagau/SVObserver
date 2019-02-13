@@ -8,13 +8,18 @@
 #pragma once
 
 #pragma region Includes
-#include "ITriggerRecordR.h"
 #pragma endregion Includes
 
 namespace SvPb
 {
 	class ImageList;
 	class InspectionList;
+}
+
+namespace SvTrc
+{
+class ITriggerRecordR;
+typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 }
 
 namespace SvTrc
@@ -61,6 +66,14 @@ namespace SvTrc
 		/// \returns bool
 		virtual bool isResetStarted() const = 0;
 	};
+
+	enum class TRC_DataType
+	{
+		Local,
+		Writer,
+		Reader
+	};
+	void createTriggerRecordControllerInstance(TRC_DataType dataType);
 
 	/// Get an instance of the TR controller in read modus.
 	/// \returns ITriggerRecordControllerR&

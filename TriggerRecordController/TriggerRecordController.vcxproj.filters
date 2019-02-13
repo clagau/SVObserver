@@ -57,6 +57,21 @@
     <ClInclude Include="CopyData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="DataControllerLocal.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DataControllerBase.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DataControllerWriter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalConst.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerRecordData.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TriggerRecordController.cpp">
@@ -78,6 +93,15 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ImageBufferLocalHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DataControllerLocal.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DataControllerBase.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DataControllerWriter.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

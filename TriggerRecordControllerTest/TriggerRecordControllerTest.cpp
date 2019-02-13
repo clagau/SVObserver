@@ -89,6 +89,7 @@ namespace SvTrcT
 		// z.B. zum Namen Ihrer Firma oder Organisation.
 		SetRegistryKey(_T("Vom lokalen Anwendungs-Assistenten generierte Anwendungen"));
 
+		SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Local);
 		CTriggerRecordControllerTestDlg dlg;
 		m_pMainWnd = &dlg;
 		INT_PTR nResponse = dlg.DoModal();

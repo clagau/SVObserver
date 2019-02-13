@@ -81,6 +81,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CopyData.h" />
+    <ClInclude Include="DataControllerBase.h" />
+    <ClInclude Include="DataControllerLocal.h" />
+    <ClInclude Include="DataControllerWriter.h" />
     <ClInclude Include="IImage.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageBufferController.h" />
@@ -92,10 +95,15 @@
     <ClInclude Include="ITriggerRecordRW.h" />
     <ClInclude Include="ResetLocker.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="LocalConst.h" />
     <ClInclude Include="TriggerRecord.h" />
     <ClInclude Include="TriggerRecordController.h" />
+    <ClInclude Include="TriggerRecordData.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataControllerBase.cpp" />
+    <ClCompile Include="DataControllerLocal.cpp" />
+    <ClCompile Include="DataControllerWriter.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageBufferController.cpp" />
     <ClCompile Include="ImageBufferLocalHelper.cpp" />

@@ -22,12 +22,12 @@
 
 namespace SvTrc
 {
-TriggerRecord::TriggerRecord(int inspectionPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, const int& rDataListSize, long resetId)
+TriggerRecord::TriggerRecord(int inspectionPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId)
 : m_inspectionPos(inspectionPos)
 , m_rData(rData)
 , m_rImageList(rImageList)
 , m_rDataDefList(rDataDefList)
-, m_rDataListSize(rDataListSize)
+, m_dataListSize(dataListSize)
 , m_ResetId(resetId)
 {
 }
@@ -37,7 +37,7 @@ TriggerRecord::~TriggerRecord()
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		bool finishedTR = (cWriteBlocked == m_rData.m_referenceCount);
+		bool finishedTR = (TriggerRecordData::cWriteBlocked == m_rData.m_referenceCount);
 		long value = InterlockedDecrement(&(m_rData.m_referenceCount));
 		if (0 > value)
 		{
@@ -45,9 +45,30 @@ TriggerRecord::~TriggerRecord()
 		}
 		if (finishedTR)
 		{
-			TriggerRecordController::getTriggerRecordControllerInstance().setLastFinishedTR(m_inspectionPos, m_rData.m_trId);
+			getTriggerRecordControllerInstance().setLastFinishedTR(m_inspectionPos, m_rData.m_trId);
 		}
 	}
+}
+
+int TriggerRecord::getId() const 
+{
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		return m_rData.m_trId;
+	}
+	return -1;
+}
+
+const TriggerData& TriggerRecord::getTriggerData() const 
+{ 
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		return m_rData.m_triggerData;
+	}
+	static TriggerData emptyData;
+	return emptyData;
 }
 
 IImagePtr TriggerRecord::getImage(const GUID& imageId, bool lockImage) const
@@ -55,17 +76,21 @@ IImagePtr TriggerRecord::getImage(const GUID& imageId, bool lockImage) const
 	IImagePtr pImage;
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
-	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-	if (-1 < pos)
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
 	{
-		pImage = getImage(pos, lockImage);
-	}
-	else //check if child image
-	{
-		pos = findGuidPos(m_rImageList.childlist(), ImageIdBytes);
+		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
 		if (-1 < pos)
 		{
-			pImage = getChildImage(pos, lockImage);
+			pImage = getImage(pos, lockImage);
+		}
+		else //check if child image
+		{
+			pos = findGuidPos(m_rImageList.childlist(), ImageIdBytes);
+			if (-1 < pos)
+			{
+				pImage = getChildImage(pos, lockImage);
+			}
 		}
 	}
 	return pImage;
@@ -77,7 +102,7 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
+		auto& rImageController = getImageBufferControllerInstance();
 		const auto& rImageList = m_rImageList.list();
 		int* const pImagePos = m_rData.getImagePos();
 		if (0 <= pos && rImageList.size() > pos)
@@ -87,7 +112,7 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 				pImage = rImageController.getImage(pImagePos[pos], m_ResetId, lockImage);
 				if (lockImage)
 				{
-					rImageController.increaseRefCounter(pImagePos[pos]);
+					rImageController.increaseImageRefCounter(pImagePos[pos]);
 				}
 			}
 			else
@@ -107,7 +132,7 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 					MbufClear(pImage->getHandle()->GetBuffer().GetIdentifier(), 0);
 					if (lockImage)
 					{
-						rImageController.increaseRefCounter(pImagePos[pos]);
+						rImageController.increaseImageRefCounter(pImagePos[pos]);
 					}
 				}
 			}
@@ -122,7 +147,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock && 0 <= childPos && m_rImageList.childlist_size() > childPos)
 	{
-		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
+		auto& rImageController = getImageBufferControllerInstance();
 		const auto& rChildDef = m_rImageList.childlist(childPos);
 		int pos = findGuidPos(m_rImageList.list(), rChildDef.parentimageid());
 
@@ -134,7 +159,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 			pImage = rImageController.getChildImage(pImagePos[pos], bufferDataStruct, m_ResetId, lockImage);
 			if (lockImage)
 			{
-				rImageController.increaseRefCounter(pImagePos[pos]);
+				rImageController.increaseImageRefCounter(pImagePos[pos]);
 			}
 		}
 		else
@@ -156,8 +181,13 @@ _variant_t TriggerRecord::getDataValue(const GUID& dataId) const
 {
 	std::string guidIdBytes;
 	SvPb::SetGuidInProtoBytes(&guidIdBytes, dataId);
-	int pos = findGuidPos(m_rDataDefList.list(), guidIdBytes);
-	return getDataValue(pos);
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		int pos = findGuidPos(m_rDataDefList.list(), guidIdBytes);
+		return getDataValue(pos);
+	}
+	return {};
 }
 
 _variant_t TriggerRecord::getDataValue(int pos) const
@@ -165,18 +195,22 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 	_variant_t result;
 	if (-1 < pos)
 	{
-		std::atomic_int* pSize = reinterpret_cast<std::atomic_int*> (m_rData.getValueData());
-		int DataSize = *pSize;
-		if (DataSize > 0)
+		auto pLock = ResetLocker::lockReset(m_ResetId);
+		if (nullptr != pLock)
 		{
-			SvPb::DataList valueList;
-
-			//The next position is where the value data list is streamed
-			void* pSource = reinterpret_cast<void*> (pSize + 1);
-			valueList.ParseFromArray(pSource, DataSize);
-			if (valueList.valuelist_size() > pos)
+			std::atomic_int* pSize = reinterpret_cast<std::atomic_int*> (m_rData.getValueData());
+			int DataSize = *pSize;
+			if (DataSize > 0)
 			{
-				SvPb::ConvertProtobufToVariant(valueList.valuelist()[pos], result);
+				SvPb::DataList valueList;
+
+				//The next position is where the value data list is streamed
+				void* pSource = reinterpret_cast<void*> (pSize + 1);
+				valueList.ParseFromArray(pSource, DataSize);
+				if (valueList.valuelist_size() > pos)
+				{
+					SvPb::ConvertProtobufToVariant(valueList.valuelist()[pos], result);
+				}
 			}
 		}
 	}
@@ -186,8 +220,14 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 
 bool TriggerRecord::isValueDataValid() const
 {
-	bool* pDataValid = reinterpret_cast<bool*> (m_rData.getValueData());
-	return *pDataValid;
+	bool retValue = false;
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		bool* pDataValid = reinterpret_cast<bool*> (m_rData.getValueData());
+		retValue = *pDataValid;
+	}
+	return retValue;
 }
 
 bool TriggerRecord::isObjectUpToTime() const
@@ -196,22 +236,35 @@ bool TriggerRecord::isObjectUpToTime() const
 	return (nullptr != pLock);
 }
 
+void TriggerRecord::setTriggerData(const TriggerData& data) 
+{ 
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		m_rData.m_triggerData = data;
+	}
+}
+
 void TriggerRecord::initImages()
 {
-	auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-	const auto& rImageList = m_rImageList.list();
-	int*const pImagePos = m_rData.getImagePos();
-	for (int i = 0; i < rImageList.size(); i++)
+	auto& rImageController = getImageBufferControllerInstance();
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
 	{
-		if (-1 == pImagePos[i])
+		const auto& rImageList = m_rImageList.list();
+		int*const pImagePos = m_rData.getImagePos();
+		for (int i = 0; i < rImageList.size(); i++)
 		{
-			IImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
-			if (nullptr == pImage)
+			if (-1 == pImagePos[i])
 			{
-				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				IImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
+				if (nullptr == pImage)
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
+					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
 		}
 	}
@@ -219,9 +272,10 @@ void TriggerRecord::initImages()
 
 void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
 {
-	if (rDestTR.isObjectUpToTime())
+	auto& rImageController = getImageBufferControllerInstance();
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock && rDestTR.isObjectUpToTime())
 	{
-		auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
 		const auto& rImageList = m_rImageList.list();
 		int*const pImagePos = m_rData.getImagePos();
 		const int*const pImagePosOld = dynamic_cast<const TriggerRecord&>(rDestTR).getTRData().getImagePos();
@@ -231,8 +285,8 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
 			{
 				if (pImagePos[i] != pImagePosOld[i])
 				{
-					rImageController.decreaseRefCounter(pImagePos[i]);
-					rImageController.increaseRefCounter(pImagePosOld[i]);
+					rImageController.decreaseImageRefCounter(pImagePos[i]);
+					rImageController.increaseImageRefCounter(pImagePosOld[i]);
 					pImagePos[i] = pImagePosOld[i];
 				}
 			}
@@ -264,8 +318,12 @@ void TriggerRecord::setImage(const GUID& rImageId, const IImagePtr& pImage)
 {
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
-	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-	setImage(pos, pImage->getBufferPos());
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
+		setImage(pos, pImage->getBufferPos());
+	}
 }
 
 void TriggerRecord::setImage(int pos, const IImagePtr& pImage)
@@ -277,38 +335,53 @@ void TriggerRecord::setImage(const GUID& rImageId, int bufferPos)
 {
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
-	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-	setImage(pos, bufferPos);
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
+		setImage(pos, bufferPos);
+	}
 }
 
 void TriggerRecord::setImage(int pos, int bufferPos)
 {
-	auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-	const auto& rImageList = m_rImageList.list();
-	int*const pImagePos = m_rData.getImagePos();
-	if (0 <= pos && rImageList.size() > pos)
+	auto& rImageController = getImageBufferControllerInstance();
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
 	{
-		int typePos = rImageList[pos].structid();
-		auto& pStructList = rImageController.getImageStructList().list();
-		if (0 <= typePos && pStructList.size() > typePos)
+		const auto& rImageList = m_rImageList.list();
+		int*const pImagePos = m_rData.getImagePos();
+		if (0 <= pos && rImageList.size() > pos)
 		{
-			const auto& rSizeList = pStructList[typePos];
-			if (bufferPos >= rSizeList.offset() && bufferPos < rSizeList.offset() + rSizeList.numberofbuffers())
+			int typePos = rImageList[pos].structid();
+			auto& pStructList = rImageController.getImageStructList().list();
+			if (0 <= typePos && pStructList.size() > typePos)
 			{
-				if (pImagePos[pos] != bufferPos)
+				const auto& rSizeList = pStructList[typePos];
+				if (bufferPos >= rSizeList.offset() && bufferPos < rSizeList.offset() + rSizeList.numberofbuffers())
 				{
-					rImageController.decreaseRefCounter(pImagePos[pos]);
-					rImageController.increaseRefCounter(bufferPos);
-					pImagePos[pos] = bufferPos;
+					if (pImagePos[pos] != bufferPos)
+					{
+						rImageController.decreaseImageRefCounter(pImagePos[pos]);
+						rImageController.increaseImageRefCounter(bufferPos);
+						pImagePos[pos] = bufferPos;
+					}
+				}
+				else
+				{
+					rImageController.decreaseImageRefCounter(pImagePos[pos]);
+					pImagePos[pos] = -1;
+					assert(false);
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+					Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_TypeNotFit, SvStl::SourceFileParams(StdMessageParams));
+					Exception.Throw();
 				}
 			}
 			else
 			{
-				rImageController.decreaseRefCounter(pImagePos[pos]);
-				pImagePos[pos] = -1;
 				assert(false);
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_TypeNotFit, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidType, SvStl::SourceFileParams(StdMessageParams));
 				Exception.Throw();
 			}
 		}
@@ -316,16 +389,9 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 		{
 			assert(false);
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidType, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidPos, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
-	}
-	else
-	{
-		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SetImage_InvalidPos, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
 	}
 }
 
@@ -335,10 +401,14 @@ IImagePtr TriggerRecord::createNewImageHandle(const GUID& imageId)
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
 
-	int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-	if (-1 < pos)
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
 	{
-		pImage = createNewImageHandle(pos);
+		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
+		if (-1 < pos)
+		{
+			pImage = createNewImageHandle(pos);
+		}
 	}
 	return pImage;
 }
@@ -346,20 +416,24 @@ IImagePtr TriggerRecord::createNewImageHandle(const GUID& imageId)
 IImagePtr TriggerRecord::createNewImageHandle(int pos)
 {
 	IImagePtr pImage;
-	auto& rImageController = ImageBufferController::getImageBufferControllerInstance();
-	const auto& rImageList = m_rImageList.list();
-	int*const pImagePos = m_rData.getImagePos();
-	if (0 <= pos && rImageList.size() > pos)
+	auto& rImageController = getImageBufferControllerInstance();
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
 	{
-		rImageController.decreaseRefCounter(pImagePos[pos]);
-		pImage = rImageController.createNewImageHandle(rImageList[pos].structid(), pImagePos[pos], m_ResetId);
-		if (nullptr == pImage)
+		const auto& rImageList = m_rImageList.list();
+		int*const pImagePos = m_rData.getImagePos();
+		if (0 <= pos && rImageList.size() > pos)
 		{
-			pImagePos[pos] = -1;
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), pos));
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			rImageController.decreaseImageRefCounter(pImagePos[pos]);
+			pImage = rImageController.createNewImageHandle(rImageList[pos].structid(), pImagePos[pos], m_ResetId);
+			if (nullptr == pImage)
+			{
+				pImagePos[pos] = -1;
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%d"), pos));
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 	}
 	return pImage;
@@ -367,8 +441,12 @@ IImagePtr TriggerRecord::createNewImageHandle(int pos)
 
 void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
 {
-	void* pData = m_rData.getValueData();
-	auto copyDataThread = std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_rDataListSize, m_ResetId); });
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		void* pData = m_rData.getValueData();
+		auto copyDataThread = std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId); });
+	}
 }
 
 } //namespace SvTrc

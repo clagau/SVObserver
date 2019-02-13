@@ -8,11 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include "ImageBufferSMHelper.h"
-#include "ImageBufferLocalHelper.h"
-
 #pragma warning( disable: 4244 )	//Disable warning for prototype conversion
 #include "SVProtoBuf/TriggerRecordController.h"
+#include "DataControllerBase.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -36,10 +34,7 @@ class ImageBufferController final
 {
 #pragma region Constructor
 public:
-	static ImageBufferController& getImageBufferControllerInstance();
-
-private:
-	ImageBufferController();
+	ImageBufferController(DataControllerBase& rDataController);
 	~ImageBufferController();
 
 	ImageBufferController(const ImageBufferController&) = delete;
@@ -49,25 +44,22 @@ private:
 
 #pragma region Public Methods
 public:
-	/// Free all buffer and set this object empty.
-	void clearAll();
-
 	/// Reset the whole buffers to new structures.
 	/// \param rImageStructList [in] New image Size list, entries with no needed image will be deleted.
 	/// \returns std::vector<std::pair<int, int>> Return a vector of pairs of change structID. First is old ID, Second is new ID.
 	std::vector<std::pair<int, int>> reset(const SvPb::ImageStructList& rImageStructList);
 
-	const SvPb::ImageStructList& getImageStructList() const { return m_imageStructList; };
+	const SvPb::ImageStructList& getImageStructList() const { return m_rDataController.getImageStructList(); };
 
 	/// Increase the reference count onces.
 	/// \param pos [in] Buffer position.
 	/// \returns bool true if increase successfully. Is false if pos invalid.
-	bool increaseRefCounter(int pos);
+	bool increaseImageRefCounter(int pos);
 
 	/// Decrease the reference count onces.
 	/// \param pos [in] Buffer position.
 	/// \returns bool true if decrease successfully. Is false if pos invalid or reference count already 0.
-	bool decreaseRefCounter(int pos);
+	bool decreaseImageRefCounter(int pos);
 
 	IImagePtr getImage(int pos, long resetId, bool shouldUnlockAutomatically) const;
 
@@ -116,15 +108,7 @@ private:
 
 #pragma region Member Variables
 private:
-	int m_maxNumberOfRequiredBuffer = 9000;
-	SvPb::ImageStructList m_imageStructList;
-	long* m_imageRefCountArray = nullptr; //an array of the reference counts.
-	int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
-	std::vector<SVMatroxBuffer> m_bufferVector;
-
-	//This is the memoryHelper. To use SharedMemory use here ImageBufferSMHelper, for local memory ImageBufferLocalHelper
-	//ImageBufferSMHelper m_memoryHelper;
-	ImageBufferLocalHelper m_memoryHelper;
+	DataControllerBase& m_rDataController;
 #pragma endregion Member Variables
 };
 } //namespace SvTrc

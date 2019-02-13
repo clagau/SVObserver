@@ -35,17 +35,24 @@
 #include <atlstr.h>
 
 
+#include <array>
+#include <chrono>
 #include <comdef.h>
-#include <deque>
-#include <map>
-#include <set>
-#include <vector>
 #include <ctime>
+#include <deque>
+#include <future>
+#include <map>
+#include <mutex>
+#include <random>
+#include <set>
 #include <tchar.h>
+#include <thread>
+#include <vector>
 
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
+#include <boost/function.hpp>							//Used by status library
 
 
 // TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.

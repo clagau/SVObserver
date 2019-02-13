@@ -18,6 +18,7 @@
 #include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
 #pragma warning( disable: 4244 )	//Disable warning for conversion
 #include "SVProtoBuf/TriggerRecordController.h"
+#include "LocalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,8 +31,9 @@ static char THIS_FILE[] = __FILE__;
 namespace SvTrc
 {
 #pragma region Constructor
-ImageBufferSMHelper::ImageBufferSMHelper(std::vector<SVMatroxBuffer>& rbufferVector)
+ImageBufferSMHelper::ImageBufferSMHelper(std::vector<SVMatroxBuffer>& rbufferVector, int maxNumberOfRequiredBuffer)
 	: m_rBufferVector(rbufferVector)
+	, m_maxNumberOfRequiredBuffer(maxNumberOfRequiredBuffer)
 {
 }
 
@@ -85,19 +87,40 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
-		if (m_rBufferVector.size() <= vectorPos)
+		if (m_rBufferVector.size() < m_maxNumberOfRequiredBuffer)
 		{
-			m_rBufferVector.push_back(buffer);
+			if (m_rBufferVector.size() <= vectorPos)
+			{
+				m_rBufferVector.push_back(buffer);
+			}
+			else
+			{
+				m_rBufferVector.insert(m_rBufferVector.begin() + vectorPos, buffer);
+			}
+			vectorPos++;
 		}
 		else
 		{
-			m_rBufferVector.insert(m_rBufferVector.begin() + vectorPos, buffer);
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
 		}
-		vectorPos++;
 	}
 	rImageStruct.set_memoryname(std::move(newMemoryName));
 
 	return vectorPos;
+}
+
+int ImageBufferSMHelper::contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos)
+{
+	if (rImageStruct.numberofbuffers() > requiredNumbers)
+	{
+		createMilBufferinMemory(requiredNumbers, rImageStruct, vectorPos + rImageStruct.numberofbuffers());
+		rImageStruct.set_numberofbuffers(requiredNumbers);
+	}
+	return vectorPos + rImageStruct.numberofbuffers();
 }
 
 #pragma endregion Public Methods

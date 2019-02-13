@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017 by Seidenader Maschinenbau GmbH
-/// \file ITriggerRecordRW.h
+/// \file ITriggerRecordControllerRW.h
 /// All Rights Reserved
 //*****************************************************************************
 /// The interface-class for the TriggerRecordController in read/write-modus.
@@ -8,12 +8,26 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
-#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "ITriggerRecordControllerR.h"
-#include "ITriggerRecordRW.h"
 #pragma endregion Includes
+
+
+#pragma region Declarations
+class SVMatroxBufferCreateStruct;
+class SVMatroxBufferCreateChildStruct;
+struct MatroxBufferChildDataStruct;
+
+namespace SvTrc
+{
+class ITriggerRecordR;
+class ITriggerRecordRW;
+class IImage;
+typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
+typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
+typedef std::shared_ptr<IImage> IImagePtr;
+}
+#pragma endregion Declarations
 
 namespace SvTrc
 {
@@ -85,6 +99,10 @@ namespace SvTrc
 		/// \param ownerID [in] Guid of the owner of this buffers.
 		/// \returns bool
 		virtual bool removeAllImageBuffer(const GUID& ownerID) = 0;
+
+		/// Remove all additional image buffer of all owners (independent of inspections). The buffers numbers won't be fit immediately but with the next finishResetTriggerRecordStructure (for any inspection).  
+		/// \returns bool
+		virtual bool removeAllImageBuffer() = 0;
 
 		/// Change of inspection data definition list
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.

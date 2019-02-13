@@ -44,10 +44,6 @@ void ImageBufferLocalHelper::clearAll()
 {
 }
 
-void ImageBufferLocalHelper::removeMemory(std::string memoryName)
-{
-}
-
 int ImageBufferLocalHelper::createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos)
 {
 	SVMatroxBufferCreateStruct bufferStruct;
@@ -75,6 +71,17 @@ int ImageBufferLocalHelper::createMilBufferinMemory(int requiredNumbers, SvPb::I
 		vectorPos++;
 	}
 	return vectorPos;
+}
+
+int ImageBufferLocalHelper::contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos)
+{
+	if (rImageStruct.numberofbuffers() > requiredNumbers)
+	{
+		auto bufferIter = m_rBufferVector.begin() + vectorPos + requiredNumbers;
+		m_rBufferVector.erase(bufferIter, bufferIter + (rImageStruct.numberofbuffers() - requiredNumbers));
+		rImageStruct.set_numberofbuffers(requiredNumbers);
+	}
+	return vectorPos + rImageStruct.numberofbuffers();
 }
 
 #pragma endregion Public Methods
