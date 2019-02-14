@@ -3836,6 +3836,8 @@ SvOi::IObjectClass* SVInspectionProcess::getFirstObject(const SvDef::SVObjectTyp
 
 void SVInspectionProcess::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
+	
+	m_RegressionTestPlayEquation.OnObjectRenamed(rRenamedObject, rOldName);
 	if (GetToolSet())
 	{
 		GetToolSet()->OnObjectRenamed(rRenamedObject, rOldName);
