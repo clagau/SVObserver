@@ -1071,6 +1071,9 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 				{
 					SvVol::SVVariantValueObjectClass* pIOObject = new SvVol::SVVariantValueObjectClass(this);
 					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
+					variant_t defaultValue;
+					defaultValue.ChangeType(VT_R8);
+					pIOObject->SetDefaultValue(defaultValue, false);
 					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
 					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 					break;
@@ -3996,24 +3999,52 @@ void SVInspectionProcess::buildValueObjectDefList() const
 		}
 	}
 
-	std::vector<_variant_t> valueObjectList{copyValueObjectList()};
+	std::vector<_variant_t> valueObjectList{copyValueObjectList(true)};
 	
 	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), std::move(valueObjectList), SvTrc::getInspectionPos(GetUniqueObjectID()));
 }
 
-std::vector<_variant_t> SVInspectionProcess::copyValueObjectList() const
+std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineSize /*=false*/) const
 {
+	constexpr int cStringExtraBuffer = 15;		//For value objects which are saved as strings reserve 15 characters extra
+
 	std::vector<_variant_t> result;
 
-	result.resize(m_ValueObjectSet.size());
+	result.reserve(m_ValueObjectSet.size());
 	for (const auto* const pValueObject : m_ValueObjectSet)
 	{
-		if (nullptr != pValueObject)
+		const SvOi::IObjectClass* pObject = dynamic_cast<const SvOi::IObjectClass*> (pValueObject);
+		if (nullptr != pValueObject && nullptr != pObject && 0 != pObject->ObjectAttributesAllowed())
 		{
 			_variant_t value;
 			if(S_OK == pValueObject->getValue(value))
 			{
-				result.push_back(value);
+				if(VT_BSTR == value.vt && determineSize)
+				{
+					std::string temp = SvUl::createStdString(value);
+					temp.resize(temp.size() + cStringExtraBuffer, ' ');
+					value.SetString(temp.c_str());
+				}
+				result.emplace_back(value);
+			}
+			if (VT_EMPTY == value.vt && determineSize)
+			{
+				value = pValueObject->getDefaultValue();
+				if(VT_EMPTY != value.vt)
+				{
+					int arraySize = pValueObject->getArraySize();
+					if(arraySize > 1 && VT_BSTR != value.vt)
+					{
+						variant_t arrayValue;
+						SAFEARRAYBOUND arrayBound;
+						arrayBound.lLbound = 0;
+						arrayBound.cElements = arraySize;
+						arrayValue.parray = ::SafeArrayCreate(value.vt, 1, &arrayBound);
+						arrayValue.vt = value.vt | VT_ARRAY;
+						value = arrayValue;
+					}
+					result.emplace_back(value);
+				}
 			}
 		}
 	}

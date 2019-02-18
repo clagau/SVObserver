@@ -785,7 +785,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 	return hr;
 }
 
-HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value)
+HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& rValue)
 {
 	HRESULT hr = S_OK;
 
@@ -806,6 +806,9 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
 	pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	variant_t defaultValue;
+	defaultValue.ChangeType(rValue.vt);
+	pValueObject->SetDefaultValue(defaultValue, false);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry {new SVIOEntryHostStruct};
@@ -818,7 +821,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 	{
 		pRemoteInput->m_lIndex = index;
 		pRemoteInput->Create();
-		pRemoteInput->WriteCache(p_Value);
+		pRemoteInput->WriteCache(rValue);
 
 		pIOEntry->m_IOId = pRemoteInput->GetUniqueObjectID();
 	}

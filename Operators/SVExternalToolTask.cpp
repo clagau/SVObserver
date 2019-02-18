@@ -227,31 +227,37 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 void SVExternalToolTask::SetAllAttributes()
 {
-	long i;
-	for ( i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
+	for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
-		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumInputValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::viewable | SvPb::setableOnline, AddRemoveType );
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvPb::selectableForEquation , AddRemoveType );
+		//Use add attributes because linked value objects can change the attributes if linked type 
+		UINT attribute = (i < m_Data.m_lNumInputValues) ? SvPb::remotelySetable | SvPb::setableOnline : SvPb::noAttributes;
+		SvOi::SetAttributeType addOverwriteType = (i < m_Data.m_lNumInputValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::OverwriteAttribute;
+		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed(attribute, addOverwriteType);
+
+		attribute = (i < m_Data.m_lNumInputValues) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
+		attribute &= ~SvPb::viewable;
+		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	}
 
-	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
+	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
-		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_aResultImages[i].SetObjectAttributesAllowed( SvPb::archivableImage, AddRemoveType );
+		UINT attribute = (i < m_Data.m_lNumResultImages) ? SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage : SvPb::noAttributes;
+		m_aResultImages[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	}
 
-	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
+	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
-		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvPb::viewable, AddRemoveType );
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvPb::selectableForEquation, AddRemoveType );
+		UINT attribute = (i < m_Data.m_lNumResultValues) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
+		SVResultClass* pResultObject = GetResultRangeObject(i);
+		if (nullptr != pResultObject)
+		{
+			pResultObject->SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
+		}
+		attribute &= ~SvPb::printable;
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	}
 
-	for ( i=0; i < static_cast<long>(m_Data.m_aDllDependencies.size()); i++)
+	for (int i=0; i < static_cast<long>(m_Data.m_aDllDependencies.size()); i++)
 	{
 		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
@@ -515,9 +521,29 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				ResultValueDefinitionStruct& rDef = paResultValueDefs[i];
 				m_Data.m_aResultValueDefinitions[i] = rDef;
 
-				if(rDef.m_VT != VT_BSTR && !GetResultRangeObject(i) )	// Do not allocate result if already exists....
+				if(rDef.m_VT != VT_BSTR)	// Do not allocate result if already exists....
 				{
-					AllocateResult(i);
+					SVResultClass* pResult = GetResultRangeObject(i);
+					if(nullptr == pResult)
+					{
+						AllocateResult(i);
+						pResult = GetResultRangeObject(i);
+					}
+					if(nullptr != pResult)
+					{
+						SvDef::SVObjectTypeInfoStruct info;
+						info.ObjectType = SvPb::SVValueObjectType;
+						info.SubType = SvPb::SVVariantValueObjectType;
+						info.EmbeddedID = SVValueObjectGuid;
+						SvVol::SVVariantValueObjectClass* pValue = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pResult->getFirstObject(info));
+
+						if(nullptr != pValue)
+						{
+							_variant_t defaultValue;
+							defaultValue.ChangeType(static_cast<VARTYPE> (rDef.m_VT));
+							pValue->SetDefaultValue(defaultValue, false);
+						}
+					}
 				}
 			}
 
@@ -1427,10 +1453,6 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 	SVVariantResultClass*   pResult = nullptr;
 	SVObjectClass*          pSVObject;
 	
-	long                    lDone;
-	
-	lDone = FALSE;
-	
 	info.ObjectType = SvPb::SVResultObjectType;
 	info.SubType = SvPb::SVResultVariantObjectType;
 	
@@ -1440,7 +1462,8 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !lDone; ++l_Iter )
+	bool objectFound = false;
+	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !objectFound; ++l_Iter )
 	{
 		pResult = dynamic_cast< SVVariantResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
@@ -1452,7 +1475,7 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 		
 		if( &m_Data.m_aResultObjects[iIndex] == pSVObject )
 		{
-			lDone = TRUE;
+			objectFound = true;
 		}
 		else
 		{
@@ -1554,6 +1577,16 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
+			}
+		}
+		if(S_OK == m_dll.GetResultValues(GetUniqueObjectID(), m_Data.m_lNumResultValues, m_Data.m_lNumResultValues ? &(m_aInspectionResultValues[0]) : nullptr))
+		{
+			for (int i = 0; i < m_Data.m_lNumResultValues; i++)
+			{
+				GetResultValueObject(i)->SetValue(m_aInspectionResultValues[i]);
+
+				// Clear OleVariant that was created in Dll.
+				m_aInspectionResultValues[i].Clear();
 			}
 		}
 	}

@@ -1710,6 +1710,9 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& 
 		{
 			// new variant value object for Remote Inputs.
 			SvVol::SVVariantValueObjectClass* pRemoteObject = new SvVol::SVVariantValueObjectClass();
+			_variant_t defaultValue;
+			defaultValue.ChangeType(VT_R8);
+			pRemoteObject->SetDefaultValue(defaultValue, false);
 			pObject = dynamic_cast<SVObjectClass*> (pRemoteObject);
 		}
 		else

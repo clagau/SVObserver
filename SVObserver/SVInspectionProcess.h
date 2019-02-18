@@ -435,7 +435,7 @@ private:
 	void Init();
 
 	void buildValueObjectDefList() const;
-	std::vector<_variant_t> copyValueObjectList() const;
+	std::vector<_variant_t> copyValueObjectList(bool determineSize=false) const;
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
