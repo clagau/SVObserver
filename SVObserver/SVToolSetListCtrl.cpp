@@ -194,7 +194,7 @@ void SVToolSetListCtrl::Rebuild()
 					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvPb::SVToolObjectType)
 					{
 						//object kein tool oder nicht im toolset
-					ToDelete.push_back(GroupingIt);
+						ToDelete.push_back(GroupingIt);
 						continue;
 					}
 
@@ -721,7 +721,7 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 
 void SVToolSetListCtrl::CreateImageLists()
 {
-	m_ImageList.Create(SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1);
+	m_ImageList.Create(SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 6, 1);
 
 	CWinApp* pApp = AfxGetApp();
 	if (pApp)
@@ -733,8 +733,8 @@ void SVToolSetListCtrl::CreateImageLists()
 		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
 		m_expandStateLoopToolValid = m_expandState;
 		m_collapseStateLoopToolValid = m_collapseState;
-		m_expandStateLoopToolInvalid = m_expandState;
-		m_collapseStateLoopToolInvalid = m_collapseState;
+		m_expandStateLoopToolInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND_LOOPTOOL_INVALID));
+		m_collapseStateLoopToolInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE_LOOPTOOL_INVALID));
 	}
 	SetImageList(&m_ImageList, LVSIL_SMALL);
 }

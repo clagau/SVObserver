@@ -195,11 +195,11 @@ IDI_REMOTE_OUTPUT_ICON  ICON                    "res\\ico00002.ico"
 
 IDI_EXPAND              ICON                    "res\\ico00003.ico"
 
-IDI_EXPAND_LOOPTOOL     ICON                    "res\\ExpandLoop.ico"
+IDI_EXPAND_LOOPTOOL_INVALID     ICON                    "res\\ExpandLoop.ico"
 
 IDI_COLLAPSE            ICON                    "res\\icon2.ico"
 
-IDI_COLLAPSE_LOOPTOOL   ICON                    "res\\CollapseLoop.ico"
+IDI_COLLAPSE_LOOPTOOL_INVALID   ICON                    "res\\CollapseLoop.ico"
 
 IDI_ARROW_ROTATE        ICON                    "res\\arrow_rotate.ico"
 
