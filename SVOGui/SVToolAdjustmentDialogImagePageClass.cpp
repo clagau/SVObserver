@@ -113,9 +113,10 @@ namespace SvOg
 			if (!imageName.IsEmpty() && imageName != NoImageTag)
 			{
 				std::string svImageName(imageName);
-				m_ImageController.ConnectToImage(m_inputName, svImageName);
+				//setImage must be before ConnectToImage because ConnectToImage does a reset and then it cannot get the image.
 				IPictureDisp* pImage = m_ImageController.GetImage(svImageName);
 				m_dialogImage.setImage(pImage);
+				m_ImageController.ConnectToImage(m_inputName, svImageName);
 				refresh();
 				SvStl::MessageContainerVector errorMessages;
 				HRESULT result = m_ImageController.ResetTask(errorMessages);
