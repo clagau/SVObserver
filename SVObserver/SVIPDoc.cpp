@@ -556,6 +556,8 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 	{
 		return false;
 	}
+	pView->getListCtrl().EnsureOneIsSelected();
+	
 	int SelectedListIndex(-1);
 	auto NavElement = pView->GetSelectedNavigatorElement(&SelectedListIndex);
 	if (!NavElement)
