@@ -23,10 +23,13 @@ namespace SVRemoteTest
     {
         #region Member Variables
         private bool m_RunOnce = true;
+        private bool m_showRunOnce = false;
         private List<SVValue> m_valueItems = new List<SVValue>();
         private List<SVInputImage> m_imageItems = new List<SVInputImage>();
         private List<SVError> m_errorFaultItems = new List<SVError>();
         #endregion
+
+        public SVRemoteCtrlSetItemsView(bool showRunonce) { m_showRunOnce = showRunonce; }
 
         #region Properties
         [Category("Input Parameters")]
@@ -104,7 +107,10 @@ namespace SVRemoteTest
                 }
             }
             items.Add(productItems);
-            items.Add(m_RunOnce);
+            if (m_showRunOnce)
+            {
+                items.Add(m_RunOnce);
+            }
 		}
 
 		public void SetOutput(String name, object value)
@@ -128,51 +134,3 @@ namespace SVRemoteTest
         #endregion
     }
 }
-
-//******************************************************************************
-//* LOG HISTORY:
-//******************************************************************************
-/*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVRemoteControl\SVRemoteTest\SVRemoteCtrlSetItemsView.cs_v  $
- * 
- *    Rev 1.4   28 Jan 2015 13:37:40   sjones
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 21
- * SCR Title: Add Fail Status Streaming
- * Checked in by: sJones; Steve Jones
- * Change Description: Revsied GetPropertyValues method to check for a null image
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
- * 
- *    Rev 1.3   16 Jan 2015 10:42:44   sjones
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 21
- * SCR Title: Add Fail Status Streaming
- * Checked in by: sJones; Steve Jones
- * Change Description: Revised the Errors property to be read only
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
- * 
- *    Rev 1.2   04 Nov 2014 16:08:16   sjones
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 19
- * SCR Title: Enchance SVRC Test Application to remember method data
- * Checked in by: sJones; Steve Jones
- * Change Description: Revised Category attribute tag to Input Parameters to aid in persistence.
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
- * 
- *    Rev 1.1   14 May 2013 17:37:06   jHanebach
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 4
- * SCR Title: Changes for 2.01 version
- * Checked in by: jHanebach; Jack Hanebach
- * Change Description: 
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
- * 
- *    Rev 1.0   24 Apr 2012 15:42:38   jHanebach
- * Project: SVRemoteControl
- * Change Request (SCR) nbr: 1
- * SCR Title: Initial check-in
- * Checked in by: jHanebach; Jack Hanebach
- * Change Description: Initial check-in.
- * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-*/
-
