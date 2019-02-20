@@ -1570,7 +1570,10 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 
 		Result = __super::resetAllObjects(&ErrorMessages) && Result;
 
-		buildValueObjectDefList();
+		if(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION))
+		{
+			buildValueObjectDefList();
+		}
 
 		if (shouldResetTRC)
 		{
@@ -3986,14 +3989,15 @@ void SVInspectionProcess::buildValueObjectDefList() const
 	auto* pList = dataDefList.mutable_list();
 	for (const auto* const pValueObject : m_ValueObjectSet)
 	{
-		if (nullptr != pValueObject)
+		const SvOi::IObjectClass* pObject = dynamic_cast<const SvOi::IObjectClass*> (pValueObject);
+		if (nullptr != pValueObject && nullptr != pObject && 0 != pObject->ObjectAttributesAllowed())
 		{
 			auto* pValueObjectDef = pList->Add();
 			std::string uniqueIdBytes;
 			const SvOi::IObjectClass* const pObject = dynamic_cast<const SvOi::IObjectClass* const> (pValueObject);
 			SvPb::SetGuidInProtoBytes(&uniqueIdBytes, pObject->GetUniqueObjectID().ToGUID());
 			pValueObjectDef->set_guidid(uniqueIdBytes.c_str());
-			pValueObjectDef->set_name(pObject->GetName());
+			pValueObjectDef->set_name(pObject->GetCompleteName());
 			pValueObjectDef->set_type(pObject->GetObjectSubType());
 			pValueObjectDef->set_typestring(pValueObject->getTypeName());
 		}
