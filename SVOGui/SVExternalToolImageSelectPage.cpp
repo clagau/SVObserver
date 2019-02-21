@@ -207,7 +207,8 @@ namespace SvOg
 		int imageIndex = 0;
 		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin(); it != images.end(); ++it)
 		{
-			m_ImageDisplay.setImage(GetImage(it->second.second.ToGUID()), imageIndex++);
+			m_ImageDisplay.setImage(GetImage(it->second.second.ToGUID()), imageIndex);
+			m_ImageDisplay.SetZoom(imageIndex++, -1.0);
 		}
 		m_ImageDisplay.Refresh();
 	}
