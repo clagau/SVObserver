@@ -186,7 +186,12 @@ ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(in
 
 	if (-1 == m_resetStarted4IP)
 	{
-		return m_pDataController->createTriggerRecordObjectToWrite(inspectionPos);
+		ITriggerRecordRWPtr pTriggerRecord = m_pDataController->createTriggerRecordObjectToWrite(inspectionPos);
+		if(nullptr != pTriggerRecord)
+		{
+			pTriggerRecord->initValueData();
+		}
+		return pTriggerRecord;
 	}
 	else
 	{

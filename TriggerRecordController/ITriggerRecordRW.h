@@ -65,6 +65,9 @@ namespace SvTrc
 		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr createNewImageHandle(const GUID& imageId) = 0;
 
+		/// Initialize value data
+		virtual void initValueData() = 0;
+
 		/// Write inspection value data 
 		/// \param ValueObjectList [in] Value object list (Move semantics!)
 		virtual void writeValueData(std::vector<_variant_t>&& ValueObjectList) = 0;

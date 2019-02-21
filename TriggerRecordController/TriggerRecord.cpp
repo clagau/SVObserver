@@ -224,8 +224,9 @@ bool TriggerRecord::isValueDataValid() const
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		bool* pDataValid = reinterpret_cast<bool*> (m_rData.getValueData());
-		retValue = *pDataValid;
+		std::atomic_int* pSize = reinterpret_cast<std::atomic_int*> (m_rData.getValueData());
+		//Data is valid when the data size > 0
+		retValue = (0 < *pSize);
 	}
 	return retValue;
 }
@@ -437,6 +438,17 @@ IImagePtr TriggerRecord::createNewImageHandle(int pos)
 		}
 	}
 	return pImage;
+}
+
+void TriggerRecord::initValueData()
+{
+	auto pLock = ResetLocker::lockReset(m_ResetId);
+	if (nullptr != pLock)
+	{
+		//It is sufficient to set the data size to 0 to invalidate the complete trigger record value data
+		std::atomic_int* pSize = reinterpret_cast<std::atomic_int*> (m_rData.getValueData());
+		*pSize = 0;
+	}
 }
 
 void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)

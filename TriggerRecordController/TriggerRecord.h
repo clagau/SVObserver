@@ -58,6 +58,7 @@ public:
 	virtual IImagePtr createNewImageHandle(const GUID& imageId) override;
 	virtual IImagePtr createNewImageHandle(int pos) override;
 
+	virtual void initValueData() override;
 	virtual void writeValueData(std::vector<_variant_t>&& rValueObjectList) override;
 #pragma endregion ITriggerRecordRW Methods
 
