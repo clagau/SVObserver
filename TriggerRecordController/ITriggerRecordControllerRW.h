@@ -122,6 +122,10 @@ namespace SvTrc
 		/// \returns bool
 		virtual bool isResetLocked() const = 0;
 
+		/// Return if Reset is started.
+		/// \returns bool
+		virtual bool isResetStarted() const = 0;
+
 		static const int m_cResetStartedAddBuffer = -2;
 	};
 

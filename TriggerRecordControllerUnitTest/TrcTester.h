@@ -111,8 +111,8 @@ private:
 	bool testWithMoreThreads();
 #pragma endregion test methods
 
-	bool setInspectionBuffers();
-	bool setIndependentBuffers();
+	bool setInspectionBuffers(LPCSTR testAreaStr);
+	bool setIndependentBuffers(LPCSTR testAreaStr);
 	
 	SvTrc::ITriggerRecordControllerRW &m_TRController;
 	const TrcTesterConfiguration& m_config;

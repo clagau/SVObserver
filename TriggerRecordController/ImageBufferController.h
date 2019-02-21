@@ -19,7 +19,6 @@ struct MatroxImageProps;
 class SVMatroxBufferCreateStruct;
 class SVMatroxBufferCreateChildStruct;
 class SVMatroxBuffer;
-class ImageBufferSMHelper;
 
 namespace SvTrc
 {

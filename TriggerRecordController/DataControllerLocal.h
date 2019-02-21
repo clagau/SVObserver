@@ -35,6 +35,7 @@ public:
 	void setNextPosForFreeCheck(int id) { m_nextPosForFreeCheck = id; };
 	TriggerRecordData& getTRData(int pos) const override;
 	const SvPb::ImageList& getImageList() const override { return m_ImageList; };
+	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	SvPb::ImageList& getMutableImageList() { return m_ImageList; };
 	void setImageList(SvPb::ImageList&& imageList) { m_ImageList = imageList; };
 	void* getTriggerRecords() { return m_pTriggerRecords; };
@@ -69,7 +70,7 @@ public:
 
 	virtual long getResetId() const override { return m_resetId; };
 
-	virtual long& getResetLockCounterRef() override { return m_resetLockCounter; };
+	virtual long* getResetLockCounterRef() override { return &m_resetLockCounter; };
 
 	virtual const SvPb::InspectionList& getInspections() const override { return m_inspectionList; }
 

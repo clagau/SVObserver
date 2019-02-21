@@ -46,6 +46,7 @@ public:
 	virtual void setLastFinishedTRID(int id) = 0;
 	virtual TriggerRecordData& getTRData(int pos) const = 0;
 	virtual const SvPb::ImageList& getImageList() const = 0;
+	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
 
 private:
 };
@@ -67,43 +68,50 @@ public:
 
 	TriggerRecordData& getTRData(int inspectionPos, int pos) const;
 
-	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) = 0;
+	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) { assert(false); throw E_NOTIMPL; };
 	virtual long getResetId() const = 0;
-	virtual long& getResetLockCounterRef() = 0;
+	virtual long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
 
 	void setLastFinishedTR(int inspectionPos, int id);
 	int getLastTRId(int inspectionPos) const;
 
 	const SvPb::ImageList& getImageDefList(int inspectionPos) const;
-	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) = 0;
+	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) { assert(false); throw E_NOTIMPL; };
 
 	virtual const SvPb::ImageStructList& getImageStructList() const = 0;
 	/// Set the ImageStructList
 	/// ATTENTION: Throw exception if ImageStructList cannot set (e.g. in writer object to large for the space in sharedMemory).
 	/// \param list [in]
-	virtual void setImageStructList(SvPb::ImageStructList list) = 0;
+	virtual void setImageStructList(SvPb::ImageStructList list) { assert(false); throw E_NOTIMPL; };
 
-	virtual void resetImageRefCounter() = 0;
+	virtual void resetImageRefCounter() { assert(false); throw E_NOTIMPL; };
 
 	int getTriggerRecordNumber(int inspectionPos) const;
 
-	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) = 0;
+	const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) const;
+	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) = 0;
-	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) = 0;
+	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
-	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) = 0;
+	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) { assert(false); throw E_NOTIMPL; };
 
 	virtual long* getImageRefCountPtr(int pos) = 0;
 
-	virtual void removeImageMemory(std::string memoryName) = 0;
-	virtual int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) = 0;
-	virtual int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) = 0;
+	virtual void removeImageMemory(std::string memoryName) { assert(false); throw E_NOTIMPL; };
+	virtual int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) { assert(false); throw E_NOTIMPL; };
+	virtual int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) { assert(false); throw E_NOTIMPL; };
 
 	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector;	}
 
 	int getMaxNumberOfRequiredBuffer() { return m_maxNumberOfRequiredBuffer; };
+
+	virtual bool isWritable() const { return true; };
+	virtual bool isInit() const { return true; };
+
+	void setResetCallback(std::function<void()> reloadCallback) { m_reloadCallback = reloadCallback; };
+	void setNewTrIdCallback(std::function<void(int, int)> newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -115,6 +123,10 @@ public:
 protected:
 	std::vector<SVMatroxBuffer> m_bufferVector;
 	int m_maxNumberOfRequiredBuffer = 9000;
+	std::function<void()> m_reloadCallback;
+	std::function<void(int, int)> m_newTrIdCallback;
+	HANDLE m_hResetEvent {nullptr};
+	HANDLE m_hTridEvent {nullptr};
 #pragma endregion Member variables
 };
 } //namespace SvTrc

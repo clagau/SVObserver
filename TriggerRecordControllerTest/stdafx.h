@@ -33,7 +33,8 @@
 
 #include <afxcontrolbars.h>     // MFC-Unterstützung für Menübänder und Steuerleisten
 
-
+#include <atomic>
+#include <chrono>
 #include <comdef.h>
 #include <deque>
 #include <map>
@@ -41,6 +42,7 @@
 #include <vector>
 #include <ctime>
 
+#include <boost/function.hpp>							//Used by status library
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library

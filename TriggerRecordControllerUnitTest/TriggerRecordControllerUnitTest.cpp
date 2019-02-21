@@ -36,7 +36,8 @@ int main()
 			CString tmpString;
 
 			SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Local);
-			if (g_logClass.Open(_T("log.txt"), false))
+			//if (g_logClass.Open(_T("log.txt"), false))
+			if (g_logClass.Open())
 			{
 				MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
 				if (M_NULL != appId)

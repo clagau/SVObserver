@@ -556,11 +556,16 @@ namespace SvStl
 		{Tid_TRC_Error_ResetNotStart, _T("Reset of TriggerRecord-structure not started. Reset can not be finished.")},
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},
+		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetDataDefList.")},
 		{Tid_TRC_Error_CopyValueObjData, _T("Error copying value object data")},
 		{Tid_TRC_Error_GetTRCFailed, _T("Error getting TriggerRecordInstance. You must create it before call the get-function.")},
 		{Tid_TRC_Error_CreateSMCommonData, _T("Error creating SharedMemory for Common data in TRC.")},
 		{Tid_TRC_Error_TooManyImageBuffer, _T("Error too many image buffer for TRC requested. Max: %s.")},
 		{Tid_TRC_Error_InspectionPBTooLong, _T("Inspection protoBuf-message in TRC too long for shared memory.")},
+		{Tid_TRC_Error_NotWriteVersion, _T("This TriggerRecord-version is readonly - not possible to get a RW-interface")},
+		{Tid_TRC_Error_SMLoad, _T("Loading of the sharedMemory %s failed.")},
+		{Tid_TRC_Error_ImageProps, _T("Invalid image properties.")},
+		{Tid_TRC_Error_EventCreation, _T("Creation of the TRC-Event failed, Error %s")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 

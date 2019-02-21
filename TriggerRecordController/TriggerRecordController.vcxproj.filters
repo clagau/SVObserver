@@ -72,6 +72,12 @@
     <ClInclude Include="TriggerRecordData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="DataControllerReader.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemoryStructs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TriggerRecordController.cpp">
@@ -102,6 +108,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="DataControllerWriter.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DataControllerReader.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

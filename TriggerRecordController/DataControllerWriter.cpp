@@ -3,7 +3,7 @@
 /// \file DataControllerWriter.cpp
 /// All Rights Reserved
 //*****************************************************************************
-/// Control of the Data in local mode.
+/// Control of the Data in writer mode.
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -19,19 +19,15 @@
 
 namespace SvTrc
 {
-constexpr int cMaxInspectionPbSize = 1000;
-constexpr int cMaxImageStructPbSize = 10'000;
-
-
 std::string getNewSMIPName()
 {
 	static int smNumber = 0;
 	return SvUl::Format(_T("SVOIP%3d"), smNumber++);
 }
 
-int getNeedSMSize(TRControllerWriterDataPerIP::SMData smData)
+int getNeedSMSize(SMData smData)
 {
-	return sizeof(TRControllerBaseDataPerIP::BasicData) + sizeof(TRControllerWriterDataPerIP::SMData) + smData.m_maxImageListSize + smData.m_maxDataDefListSize + smData.m_maxTriggerRecordBufferSize;
+	return sizeof(TRControllerBaseDataPerIP::BasicData) + sizeof(SMData) + smData.m_maxImageListSize + smData.m_maxDataDefListSize + smData.m_maxTriggerRecordBufferSize;
 };
 
 #pragma region TRControllerWriterDataPerIP
@@ -144,7 +140,8 @@ void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smD
 	int oldTriggerRecodBufferSize = (nullptr != m_pSmData)?m_pSmData->m_maxTriggerRecordBufferSize:0;
 	void* pTriggerRecordOld = m_pTriggerRecords;
 	m_SMHandle = std::make_unique<SvSml::SharedDataStore>();
-	m_SMHandle->CreateDataStore(getNewSMIPName().c_str(), getNeedSMSize(smData), 1, smParam);
+	std::string newSMName = getNewSMIPName();
+	m_SMHandle->CreateDataStore(newSMName.c_str(), getNeedSMSize(smData), 1, smParam);
 	byte* pTemp = m_SMHandle->GetPtr(0, 0);
 	m_pBasicData = reinterpret_cast<BasicData*>(pTemp);
 	*m_pBasicData = basicData;
@@ -160,7 +157,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smD
 	}
 	smHandleOld.reset();
 
-	m_smDataCBFunc(m_SMHandle->GetMapFileName(), m_SMHandle->GetSlotSize());
+	m_smDataCBFunc(newSMName, m_SMHandle->GetSlotSize());
 }
 #pragma endregion TRControllerWriterDataPerIP
 
@@ -171,16 +168,44 @@ DataControllerWriter::DataControllerWriter()
 	, m_imageMemoryHelper(m_bufferVector, m_maxNumberOfRequiredBuffer)
 	, m_cFullSizeOfCommonParameterSM(sizeof(CommonDataStruct) + m_maxNumberOfRequiredBuffer * sizeof(*m_imageRefCountArray) + cMaxInspectionPbSize + cMaxImageStructPbSize)
 {
-	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
-	m_commonSHHandle.CreateDataStore(cCommonParameterSM, m_cFullSizeOfCommonParameterSM, 1, smParam);
-	byte* pTemp = m_commonSHHandle.GetPtr(0, 0);
-	if (nullptr == pTemp)
+	bool isInit = false;
+	byte* pTemp = nullptr;
+	try
+	{
+		SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
+		m_commonSHHandle.CreateDataStore(cCommonParameterSM, m_cFullSizeOfCommonParameterSM, 1, smParam);
+		pTemp = m_commonSHHandle.GetPtr(0, 0);
+		if (nullptr != pTemp)
+		{
+			isInit = true;
+		}
+	}
+	catch (const SvStl::MessageContainer&)
+	{
+		//nothing to do, try to open SM
+	}
+
+	if (!isInit)
+	{	//create failed, try to open SM.
+		SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
+		if (m_commonSHHandle.OpenDataStore(cCommonParameterSM))
+		{
+			pTemp = m_commonSHHandle.GetPtr(0, 0);
+			if (nullptr != pTemp)
+			{
+				isInit = true;
+			}
+		}
+	}
+
+	if (!isInit || nullptr == pTemp)
 	{
 		assert(false);
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateSMCommonData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
+	
 	m_pCommonData = reinterpret_cast<CommonDataStruct*>(pTemp);
 	m_imageRefCountArray = reinterpret_cast<long*>(pTemp + sizeof(CommonDataStruct));
 	m_pInspectionListInSM = pTemp + sizeof(CommonDataStruct) + m_maxNumberOfRequiredBuffer * sizeof(*m_imageRefCountArray);
@@ -405,8 +430,7 @@ ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int i
 
 std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList)
 {
-	m_pCommonData->m_resetId = std::max(1l, m_lastResetId + 1);
-	m_lastResetId = m_pCommonData->m_resetId;
+	m_pCommonData->m_resetId = 0;
 	while (0 < m_pCommonData->m_resetLockCounter) {}; //wait if any other method have left the access of this structure
 	for (int i = 0; i < m_dataVector.size(); i++)
 	{
@@ -465,6 +489,11 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 	{
 		m_dataVector[inspectionId]->setInitFlag(true);
 	}
+
+	m_pCommonData->m_resetId = std::max(1l, m_lastResetId + 1);
+	m_lastResetId = m_pCommonData->m_resetId;
+
+	SetEvent(m_hResetEvent);
 
 	return changeVect;
 }
@@ -551,10 +580,6 @@ void DataControllerWriter::setInspectionList(const SvPb::InspectionList &rInspec
 			m_dataVector.pop_back();
 		}
 	}
-
-
-	//SvPb::InspectionList inspectionList;
-	//inspectionList.ParseFromArray(m_inspectionListInSM, cMaxInspectionPbSize);
 }
 
 void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSmName, int smSize)

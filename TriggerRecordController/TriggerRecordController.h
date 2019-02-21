@@ -16,13 +16,6 @@
 
 namespace SvTrc
 {
-struct StartCallbackStruct
-{
-	StartCallbackStruct(void* pOwner, StartResetCallbackPtr pCallback) : m_pOwner(pOwner), m_pCallback(pCallback) {};
-	void* m_pOwner;
-	StartResetCallbackPtr m_pCallback;
-};
-
 class TriggerRecordController final : public ITriggerRecordControllerRW
 {
 #pragma region Constructor
@@ -36,7 +29,7 @@ public:
 
 #pragma region Public Methods
 public:
-	void setLastFinishedTR(int inspectionPos, int id) { m_pDataController->setLastFinishedTR(inspectionPos, id); };
+	void setLastFinishedTR(int inspectionPos, int id);
 	ImageBufferController& getImageBufferControllerInstance() { return m_imageBufferController; };
 
 #pragma region ITriggerRecordControllerR Methods
@@ -46,12 +39,14 @@ public:
 
 	virtual const SvPb::ImageList& getImageDefList(int inspectionPos) override;
 
+	virtual const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) override;
+
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
 
-	virtual void registerCallback(void* pOwner, StartResetCallbackPtr pCallback) override;
-	virtual void unregisterCallback(void* pOwner, StartResetCallbackPtr pCallback) override;
-
-	virtual bool isResetStarted() const override { return -1 != m_resetStarted4IP; };
+	virtual int registerResetCallback(std::function<void()> pCallback) override;
+	virtual void unregisterResetCallback(int handleId) override;
+	virtual int registerNewTrCallback(std::function<void(int, int)> pCallback) override;
+	virtual void unregisterNewTrCallback(int handleId) override;
 #pragma endregion ITriggerRecordControllerR Methods
 
 #pragma region ITriggerRecordControllerRW Methods
@@ -81,11 +76,14 @@ public:
 	virtual bool lockReset() override;
 	virtual void unlockReset() override { m_isResetLocked = false; };
 	virtual bool isResetLocked() const override { return m_isResetLocked; };
+	virtual bool isResetStarted() const override { return -1 != m_resetStarted4IP; };
 #pragma endregion ITriggerRecordControllerRW Methods
 
-	long getResetId() { return m_pDataController->getResetId(); };
+	long getResetId() const { return m_pDataController->getResetId(); };
 
-	long& getResetLockCounterRef() { return m_pDataController->getResetLockCounterRef(); };
+	long* getResetLockCounterRef() { return m_pDataController->getResetLockCounterRef(); };
+
+	bool isWritable() const { return m_pDataController->isWritable(); };
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -109,6 +107,8 @@ private:
 
 	void sendResetCall();
 
+	void sendTrIdCall(int inspectionPos, int trId);
+
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 #pragma endregion Private Methods
 
@@ -126,10 +126,11 @@ private:
 	SvPb::ImageList m_imageListResetTmp; //This imageList is only temporary during reset process. In normal run don't use this.
 	int m_TriggerRecordNumberResetTmp = 0; //This parameter is only temporary during reset process. In normal run don't use this.
 
-	std::vector<StartCallbackStruct> m_ResetCallbacks;
+	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
+	std::vector<std::pair<int, std::function<void(int, int)>>> m_newTRCallbacks;
 	bool m_isResetLocked = false;
 
-	mutable CRITICAL_SECTION m_hCriticalSectionCallback;
+	mutable std::mutex m_callbackMutex;
 
 	std::unique_ptr<DataControllerBase> m_pDataController;
 	ImageBufferController m_imageBufferController;

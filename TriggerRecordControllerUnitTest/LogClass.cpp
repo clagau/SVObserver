@@ -59,6 +59,13 @@ bool LogClass::Open(CString strFileName, bool bAppend)
 	}
 }
 
+bool LogClass::Open()
+{
+	Close();
+	m_File = stdout;
+	return nullptr != m_File;
+}
+
 bool LogClass::IsOpen()
 {
 	return m_File == nullptr ? false : true;
@@ -74,28 +81,18 @@ void LogClass::Close()
 	}
 }
 
-bool LogClass::Log(LPCTSTR strEntry, const LogLevel logLevel, const LogType logType)
+bool LogClass::Log(LPCTSTR strEntry, const LogLevel logLevel, const LogType logType, int lineNumber, LPCTSTR strTestName)
 {
-	constexpr int cStrLength = 128;
-	TCHAR szTime[cStrLength];
-	TCHAR szDate[cStrLength];
-
-	if(logLevel <= m_LogLevel)
+	if (logLevel <= m_LogLevel)
 	{
 		CountResults(logType);
-#ifdef _UNICODE
-		_wstrtime_s(szTime, cStrLength);
-		_wstrdate_s(szDate, cStrLength);
-#else
-		_strtime_s( szTime, cStrLength );
-		_strdate_s( szDate, cStrLength);
-#endif
 		CString strTmp;
 		strTmp = BuildLogString(logLevel, logType);
+		strTmp.Format(_T("%s[%s][%d] "), strTmp, strTestName, lineNumber);
 		std::lock_guard<std::mutex> guard(m_logMutex);
 		if (m_File)
 		{
-			_ftprintf(m_File, _T("%s %s %s %s\n"), strTmp.GetString(), szTime, szDate, strEntry);
+			_ftprintf(m_File, _T("%s\n"), (strTmp + strEntry).GetString());
 		}
 		else
 		{
@@ -127,11 +124,11 @@ bool LogClass::LogText(LPCTSTR strEntry, const LogLevel logLevel, const LogType 
 	return true;
 }
 
-bool LogClass::logException(LPCTSTR strEntry, const SvStl::MessageContainer& rExp, const LogLevel logLevel, const LogType logType)
+bool LogClass::logException(LPCTSTR strEntry, const SvStl::MessageContainer& rExp, int lineNumber, LPCTSTR strTestName, const LogLevel logLevel, const LogType logType)
 {
 	CString strTmp;
 	strTmp.Format("%s\n\tFollowing Exception was caught: %s\n\tFileinfo: %s (%d)", strEntry, rExp.what(), rExp.getMessage().m_SourceFile.m_FileName.c_str(), rExp.getMessage().m_SourceFile.m_Line);
-	return LogText(strTmp, logLevel, logType);
+	return Log(strTmp, logLevel, logType, lineNumber, strTestName);
 }
 
 bool LogClass::LogText0(LPCTSTR strEntry, const LogLevel logLevel)

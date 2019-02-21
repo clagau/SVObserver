@@ -47,6 +47,7 @@
 #include <memory>
 #include <map>
 #include <set>
+#include <shared_mutex>
 #include <vector>
 #include <ctime>				//Used by static library
 #include <tchar.h>

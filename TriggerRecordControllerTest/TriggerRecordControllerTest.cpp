@@ -88,9 +88,11 @@ namespace SvTrcT
 		// TODO: Ändern Sie diese Zeichenfolge entsprechend,
 		// z.B. zum Namen Ihrer Firma oder Organisation.
 		SetRegistryKey(_T("Vom lokalen Anwendungs-Assistenten generierte Anwendungen"));
+		auto bRet =  MessageBox(nullptr, _T("Should test in LocalMode (Yes), WriterMode(No) or ReaderMode (Cancel)?"), _T("Start"), MB_YESNOCANCEL);
+		bool readerMode = (IDCANCEL == bRet);
+		SvTrc::createTriggerRecordControllerInstance(readerMode ? SvTrc::TRC_DataType::Reader : (IDYES == bRet ? SvTrc::TRC_DataType::Local: SvTrc::TRC_DataType::Writer));
 
-		SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Local);
-		CTriggerRecordControllerTestDlg dlg;
+		CTriggerRecordControllerTestDlg dlg(readerMode);
 		m_pMainWnd = &dlg;
 		INT_PTR nResponse = dlg.DoModal();
 		if (nResponse == IDOK)

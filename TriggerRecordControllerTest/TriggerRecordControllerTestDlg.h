@@ -17,7 +17,8 @@ namespace SvTrcT
 	{
 		// Konstruktion
 	public:
-		CTriggerRecordControllerTestDlg(CWnd* pParent = NULL);	// Standardkonstruktor
+		CTriggerRecordControllerTestDlg(bool isReader, CWnd* pParent = NULL);	// Standardkonstruktor
+		~CTriggerRecordControllerTestDlg();
 
 	// Dialogfelddaten
 #ifdef AFX_DESIGN_TIME
@@ -46,6 +47,9 @@ namespace SvTrcT
 		void OnTrigger();
 		void OnSetImage();
 		void OnToolTypeChanged();
+		void OnResetUpdate();
+		void OnNewTrId(int ipPos, int newTr);
+		LRESULT OnGetCallback(WPARAM wParam, LPARAM lParam);
 
 		SvTrc::IImagePtr LoadMainImage(const CString& Path);
 
@@ -56,9 +60,11 @@ namespace SvTrcT
 		void resetController();
 		void updateToolList();
 		void updateImageCombo();
+		void updateValueCombo();
+		void OnResetTRCData();
 
 	private:
-		SvTrc::ITriggerRecordControllerRW& m_recordController = SvTrc::getTriggerRecordControllerRWInstance();
+		SvTrc::ITriggerRecordControllerR& m_recordController = SvTrc::getTriggerRecordControllerRInstance();
 		bool m_bResetStart = false;
 		bool m_isEdit = false;
 		int m_trNumbers = 10;
@@ -67,13 +73,18 @@ namespace SvTrcT
 		int m_trIDToDisplay = -1;
 		BOOL m_isCopyTR = true;
 		CString m_lastID = _T("-1");
+		CString m_valueText;
 		std::vector<ToolObjectPtr> m_toolList;
 		CString m_toolDescription = _T("<No description>");
 		GUID m_mainGuid = GUID_NULL;
 		SvMc::ObjectsListBox m_toolListBox;
 		CComboBox	m_ToolSelectCombo;
 		CComboBox	m_ImageCombo;
+		CComboBox	m_ValueCombo;
 		SvOg::PictureDisplay m_dialogImage;
 		const int m_inspectionPos = 0;
+		bool m_isReader = false;
+		int m_resetCallbackId = -1;
+		int m_newTrIdCallbackId = -1;
 	};
 } // namespace SvTrcT

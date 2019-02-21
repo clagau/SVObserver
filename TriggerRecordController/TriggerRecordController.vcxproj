@@ -83,7 +83,9 @@
     <ClInclude Include="CopyData.h" />
     <ClInclude Include="DataControllerBase.h" />
     <ClInclude Include="DataControllerLocal.h" />
+    <ClInclude Include="DataControllerReader.h" />
     <ClInclude Include="DataControllerWriter.h" />
+    <ClInclude Include="SharedMemoryStructs.h" />
     <ClInclude Include="IImage.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageBufferController.h" />
@@ -103,6 +105,7 @@
   <ItemGroup>
     <ClCompile Include="DataControllerBase.cpp" />
     <ClCompile Include="DataControllerLocal.cpp" />
+    <ClCompile Include="DataControllerReader.cpp" />
     <ClCompile Include="DataControllerWriter.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageBufferController.cpp" />

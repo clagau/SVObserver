@@ -520,11 +520,16 @@ enum MessageTextEnum
 	Tid_TRC_Error_ResetNotStart,
 	Tid_TRC_Error_InvalidResetState,
 	Tid_TRC_Error_GetImageDefList,
+	Tid_TRC_Error_GetDataDefList,
 	Tid_TRC_Error_CopyValueObjData,
 	Tid_TRC_Error_GetTRCFailed,
 	Tid_TRC_Error_CreateSMCommonData,
 	Tid_TRC_Error_TooManyImageBuffer,
 	Tid_TRC_Error_InspectionPBTooLong,
+	Tid_TRC_Error_NotWriteVersion,
+	Tid_TRC_Error_SMLoad,
+	Tid_TRC_Error_ImageProps,
+	Tid_TRC_Error_EventCreation,
 
 	Tid_TRC_Error_ResetInspectionFailed,
 

@@ -11,22 +11,12 @@
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVSharedMemoryLibrary/SharedDataStore.h"
 #include "ImageBufferSMHelper.h"
+#include "SharedMemoryStructs.h"
 #pragma endregion Includes
-
 
 
 namespace SvTrc
 {
-
-struct CommonDataStruct
-{
-	long m_resetId = 0; //id of the last reset
-	long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
-	int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
-	int m_inspectionListPBSize = 0;
-	int m_imageStructListPBSize = 0;
-};
-
 class TRControllerWriterDataPerIP : public TRControllerBaseDataPerIP
 {
 public:
@@ -47,18 +37,10 @@ public:
 	void setNextPosForFreeCheck(int id) { m_nextPosForFreeCheck = id; };
 	TriggerRecordData& getTRData(int pos) const override;
 	const SvPb::ImageList& getImageList() const override { return m_ImageList; };
+	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	void setImageList(SvPb::ImageList&& imageList);
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	void* createTriggerRecordsBuffer(int trBufferSize, int trNumbers);
-
-	struct SMData
-	{
-		int m_maxImageListSize = 1000;
-		int m_imageListSize = 0;
-		int m_maxDataDefListSize = 10000;
-		int m_dataDefListSize = 0;
-		int m_maxTriggerRecordBufferSize = 100'000;
-	};
 	
 private:
 	void createSMBuffer(BasicData basicData, SMData smData);
@@ -83,8 +65,6 @@ private:
 };
 
 
-constexpr LPCTSTR cCommonParameterSM = _T("SVO-CommonParameter");
-
 class DataControllerWriter : public DataControllerBase
 {
 #pragma region Constructor
@@ -104,7 +84,7 @@ public:
 
 	virtual long getResetId() const override { return m_pCommonData->m_resetId; };
 
-	virtual long& getResetLockCounterRef() override { return m_pCommonData->m_resetLockCounter; };
+	virtual long* getResetLockCounterRef() override { return &m_pCommonData->m_resetLockCounter; };
 
 	virtual const SvPb::InspectionList& getInspections() const override { return m_inspectionList; }
 
