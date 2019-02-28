@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
-#include "SVDataManagerLibrary/DataManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVTimerLibrary/SVClock.h"

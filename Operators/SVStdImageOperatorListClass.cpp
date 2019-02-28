@@ -143,7 +143,7 @@ bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Messa
 	if (bRetVal)
 	{
 		SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
-		SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		bRetVal = RunLocal(rRunStatus, pInputImageBuffer, pOutputImageBuffer);
 	}
 
@@ -194,11 +194,6 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 	bool bRetVal = true;
 	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
-		SVRunStatusClass ChildRunStatus;
-		ChildRunStatus.m_lResultDataIndex = rRunStatus.m_lResultDataIndex;
-		ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
-		ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
-
 		SvOi::SVImageBufferHandlePtr input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
 		SvOi::SVImageBufferHandlePtr output = pOutputImageBuffer->getHandle();
 
@@ -227,6 +222,9 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 
 		if (bRetVal)
 		{
+			SVRunStatusClass ChildRunStatus;
+			ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
+			ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 			// Run children...
 			for (int i = 0; i < GetSize(); i++)
 			{
@@ -290,7 +288,10 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 					rRunStatus.SetCriticalFailure();
 				}
 			}
+			rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 		} // for( int i = 0; i < GetSize(); i++ )
+
+
 
 		// 'no operator was running' check...
 		// RO_22Mar2000

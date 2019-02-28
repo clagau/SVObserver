@@ -284,7 +284,7 @@ HRESULT SVIOController::SetModuleReady( bool Value )
 
 		if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
-		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pModuleReady, 1, true, false ) )
+		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pModuleReady, true, false ) )
 		{
 			l_Status = E_FAIL;
 		}
@@ -311,7 +311,7 @@ bool SVIOController::SetRaidErrorBit( bool Value )
 
 		if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
-		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pRaidErrorBit, 1, true, false ) )
+		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pRaidErrorBit, true, false ) )
 		{
 			Result = false; // JMS ERROR - Cannot write to module ready output.
 		}

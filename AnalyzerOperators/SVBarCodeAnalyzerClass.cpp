@@ -394,7 +394,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		m_pBarCodeResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
 
 		SvIe::SVImageClass* pInputImage = getInputImage(true);
-		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			try

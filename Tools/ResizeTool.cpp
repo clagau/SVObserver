@@ -557,7 +557,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		}
 	}
 
-	SvTrc::IImagePtr pRoiImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord);
+	SvTrc::IImagePtr pRoiImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 	if (nullptr == pRoiImageBuffer || pRoiImageBuffer->isEmpty())
 	{
 		Result = false;

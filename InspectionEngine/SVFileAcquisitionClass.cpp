@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVFileAcquisitionClass.h"
 
-#include "SVDataManagerLibrary/DataManager.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "CameraLibrary/SVDeviceParams.h"

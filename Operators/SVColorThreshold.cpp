@@ -176,7 +176,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		SvIe::SVImageClass* pInputImage = GetBandInputImage(Band, true);
 		if (nullptr != pInputImage)
 		{
-			pInputImageBufferArray[Band] = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+			pInputImageBufferArray[Band] = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		}
 		Result &= (nullptr != pBandImageArray[Band]) && !pBandImageArray[Band]->isEmpty() && nullptr != pInputImageBufferArray[Band] && !pInputImageBufferArray[Band]->isEmpty();
 	}

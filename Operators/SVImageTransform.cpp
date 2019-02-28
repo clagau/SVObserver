@@ -268,7 +268,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 	if( bRetVal )
 	{
-		SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(runStatus.m_triggerRecord);
+		SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(runStatus.m_triggerRecord.get());
 		if ( nullptr == pInputImageBuffer || pInputImageBuffer->isEmpty())
 		{
 			bRetVal = false;

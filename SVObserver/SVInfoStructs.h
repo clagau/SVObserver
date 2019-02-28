@@ -20,7 +20,6 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/any.hpp>
-#include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "Definitions/GlobalConst.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
@@ -28,8 +27,9 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #include "SVIOLibrary/SVIOEntryStruct.h"
-#include "TriggerInformation/SVTriggerObject.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #pragma endregion Includes
 
@@ -95,26 +95,6 @@ struct SVOutputsInfoStruct
 };
 
 
-struct SVPPQInfoStruct 
-{
-	SVPPQInfoStruct();
-	SVPPQInfoStruct( const SVPPQInfoStruct& p_rsvObject );
-
-	virtual ~SVPPQInfoStruct();
-
-	HRESULT Assign( const SVPPQInfoStruct &p_rsvObject );
-
-	void Reset();
-	void InitPPQInfo();
-	void ClearIndexes();
-
-	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
-
-	SVPPQObject* pPPQ;
-
-	SVDataManagerHandle m_ResultDataDMIndexHandle;
-};
-
 struct SVInspectionInfoStruct 
 {
 	SVInspectionInfoStruct();
@@ -128,37 +108,36 @@ struct SVInspectionInfoStruct
 	void Reset();
 	void Init();
 	void ClearIndexes();
-
-	HRESULT GetNextAvailableIndexes( );
+	
+	bool setNextAvailableTR();
 
 	void setNextTriggerRecord();
 
 	void setTriggerRecordCompleted();
-	
-	SVInspectionProcess* pInspection;
-	SVProductInspectedState oInspectedState;
 
-	bool m_CanProcess;
-	bool m_InProcess;
-	bool m_HasBeenQueued;
+	SVInspectionProcess* pInspection {nullptr};
+	SVProductInspectedState oInspectedState {PRODUCT_NOT_INSPECTED};
+
+	bool m_CanProcess {false};
+	bool m_InProcess {false};
+	bool m_HasBeenQueued {false};
 	
-	SvTl::SVTimeStamp m_BeginInspection;
-	SvTl::SVTimeStamp m_EndInspection;
-	SvTl::SVTimeStamp m_BeginToolset;
-	SvTl::SVTimeStamp m_EndToolset;
-	SvTl::SVTimeStamp m_CallbackReceived;
+	SvTl::SVTimeStamp m_BeginInspection {0};
+	SvTl::SVTimeStamp m_EndInspection {0};
+	SvTl::SVTimeStamp m_BeginToolset {0};
+	SvTl::SVTimeStamp m_EndToolset {0};
+	SvTl::SVTimeStamp m_CallbackReceived {0};
 	
 	int m_inspectionPosInTrc = -1; //position of the inspection in triggerRecordController
 	SvTrc::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
 	SvTrc::ITriggerRecordRPtr  m_triggerRecordComplete = nullptr;
 
-	double m_ToolSetEndTime;
-	double m_ToolSetAvgTime;
-	long m_lastInspectedSlot; // Shared Memory
+	double m_ToolSetEndTime {0.0};
+	double m_ToolSetAvgTime {0.0};
+	long m_lastInspectedSlot {-1}; // Shared Memory
 };
 
 typedef std::map< SVGUID, SVInspectionInfoStruct > SVGUIDSVInspectionInfoStructMap;
-typedef std::vector<SVInspectionInfoStruct> SVStdVectorSVInspectionInfoStruct;
 
 
 struct SVProductInfoStruct 
@@ -169,20 +148,20 @@ struct SVProductInfoStruct
 
 	const SVProductInfoStruct &operator=( const SVProductInfoStruct &rRhs );
 
-	HRESULT Assign( const SVProductInfoStruct &p_rsvData );
+	/// Assigned the data from the other instance to this.
+	/// \param p_rsvData [in] Source data.
+	/// \param shouldSkipIPInfo [in] If true, the IPInfo will not be assigned and the map will be empty.
+	/// \returns HRESULT
+	HRESULT Assign( const SVProductInfoStruct &p_rsvData, bool shouldSkipIPInfo = false );
 
 	bool empty() const;
 
 	void InitProductInfo();
 	void Reset();
 
-	/// Reset inspection info, except of the inspection with the GUID.
-	/// \param rExceptIPGuid [in] The inspection with this GUID will not be reset.
-	void resetIPInfos(const GUID& rExceptIPGuid);
-
 	void ClearIndexes();
 
-	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
+	bool setNextAvailableCameraImage( );
 
 	inline long ProcessCount() const {return oTriggerInfo.lTriggerCount;}
 	inline const SvTl::SVTimeStamp& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
@@ -190,8 +169,6 @@ struct SVProductInfoStruct
 	bool IsAlive() const;
 
 	void DumpIndexInfo( std::string& p_rData );
-
-	HRESULT GetResultDataIndex( SVDataManagerHandle& p_rHandle ) const;
 
 	bool IsProductActive() const;
 	void SetProductActive();
@@ -204,15 +181,12 @@ struct SVProductInfoStruct
 	mutable std::string m_ProductState;
 	bool bTriggered;
 	bool bhasCameraImage[SvDef::cMaximumCameras];
-	bool bDelayExpired;
 	bool bDataComplete;
-	bool bStreamed;
-	HRESULT hrPPQStatus;
 
 	SvTi::SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;
 	SVOutputsInfoStruct oOutputsInfo;
-	SVPPQInfoStruct oPPQInfo;
+	SVPPQObject* m_pPPQ = nullptr;
 
 	SvIe::SVGuidSVCameraInfoStructMap m_svCameraInfos;
 	SVGUIDSVInspectionInfoStructMap	m_svInspectionInfos;
@@ -222,21 +196,11 @@ protected:
 	long m_ProductActive;
 };
 
-struct SVInspectionCompleteInfoStruct
-{
-	SVInspectionCompleteInfoStruct();
-	SVInspectionCompleteInfoStruct( const SVGUID& p_rInspectionID, const SVProductInfoStruct& p_rProductInfo );
-	SVInspectionCompleteInfoStruct( const SVInspectionCompleteInfoStruct& p_rObject );
-
-	virtual ~SVInspectionCompleteInfoStruct();
-
-	bool empty() const;
-	void clear();
-
-	SVGUID m_InspectionID;
-	SVProductInfoStruct m_ProductInfo;
-
-};
+/// This function copy a productInfo to another except from the IP-Info. It will only one IPInfo copied and the triggerRecordWriter will be moved.
+/// \param sourceProduct [in] Source data.
+/// \param rIPGuid [in] GUID of the inspection 
+/// \returns SVProductInfoStruct
+SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, const SVGUID& rIPGuid);
 
 struct SVInspectionNameUpdate
 {

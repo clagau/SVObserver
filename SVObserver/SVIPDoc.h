@@ -36,7 +36,6 @@ class SVConditionalClass;
 class SVResultListClass;
 class SVToolSetClass;
 class SVInspectionProcess;
-struct SVProductInfoStruct;
 class CSVRegressionRunDlg;
 class CSVRegressionFileSelectSheet;
 class SVImageViewClass;

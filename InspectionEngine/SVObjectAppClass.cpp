@@ -87,13 +87,6 @@ bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD con
 {
 	if( IsCreated() && nullptr != pChildObject )
 	{
-		long l_LastIndex = 0;
-
-		if( nullptr != m_pInspectionInterface )
-		{
-			l_LastIndex = m_pInspectionInterface->GetLastIndex();
-		}
-
 		bool Result = createAllObjectsFromChild( *pChildObject );
 
 		if( SvDef::SVMFResetObject == ( context & SvDef::SVMFResetObject ) )

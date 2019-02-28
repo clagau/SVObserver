@@ -89,10 +89,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 {
 	clearRunErrorMessages();
 
-	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
-	ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
-	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...
 	bool bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
@@ -108,7 +105,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 	if( bRetVal )
 	{
 		//The input image will be needed but will be overridden, because in SVImageArithmeticClass it was already called the write-method and this image will be used for both task as output.
-		SvTrc::IImagePtr pImageBuffer = getInputImage(true)->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pImageBuffer = getInputImage(true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		SvOi::SVImageBufferHandlePtr imageHandle;
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
@@ -116,6 +113,9 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 		}
 	
 		bool bFirstFlag = true;
+		SVRunStatusClass ChildRunStatus;
+		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
+		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		// Run children...
 		for( int i = 0; i < GetSize(); i++ )
 		{
@@ -175,6 +175,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 			if( ChildRunStatus.IsCriticalFailure() )
 				rRunStatus.SetCriticalFailure();
 		}
+		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 	}
 
 	if (bRetVal && !m_RunErrorMessages.empty())

@@ -47,8 +47,20 @@
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
 
-HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoStruct& rProduct)
+bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
 {
+	bool l_Status = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+
+	if (!l_Status && nullptr != pPPQ)
+	{
+		l_Status = pPPQ->IsProductAlive(triggerCount);
+	}
+
+	return l_Status;
+}
+
+HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoStruct& rProduct)
+{ //@TODO[MZA][8.20][25.02.2019] hier gebraucht: eigene IPInfo, oTriggerInfo-times, m_svCameraInfos-times, oInputsInfo, oTriggerInfo.lTriggerCount und mehr
 	HRESULT l_Status = S_OK;
 
 	rProcessed = (0 < m_qInspectionsQueue.GetCount());
@@ -81,26 +93,20 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		time = (rIPInfo.m_BeginInspection - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
-		bool cameraFound {false};
+		double triggerToAcqTime {0.0};
+		double acqTime {0.0};
 		if (nullptr != m_pToolSetCamera)
 		{
 			SvIe::SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
 			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
-				cameraFound = true;
-				time = (iterCamera->second.m_StartFrameTimeStamp - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
-				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToAcquisitionStart);
-				time = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
-				m_pCurrentToolset->setTime(time, ToolSetTimes::AcquisitionTime);
+				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 			}
 		}
 		//If tool set camera not found set values to 0.0
-		if (!cameraFound)
-		{
-			time = 0.0;
-			m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToAcquisitionStart);
-			m_pCurrentToolset->setTime(time, ToolSetTimes::AcquisitionTime);
-		}
+		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
+		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 
 		assert(m_PPQInputs.size() == rProduct.oInputsInfo.m_Inputs.size());
 		// Copy inputs to Inspection Process's Value objects
@@ -142,7 +148,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			}
 		}
 
-		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (rProduct.IsAlive());
+		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), rProduct.oTriggerInfo.lTriggerCount));
 
 		// Check if tool set is alive and enabled...
 		if (!l_Process)
@@ -156,7 +162,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			// That means: true  - The Tool Set were running.
 			//			   false - The Tool Set Condition failed and the Tool Set were
 			//					   NOT running!
-			RunInspection(rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), &rProduct);
+			RunInspection(rIPInfo, rProduct.m_svCameraInfos, rProduct.oTriggerInfo.lTriggerCount);
 
 			if (PRODUCT_INSPECTION_NOT_RUN != (rIPInfo.oInspectedState & PRODUCT_INSPECTION_NOT_RUN))
 			{
@@ -242,10 +248,9 @@ void SVInspectionProcess::BuildWatchlist()
 	}
 }
 
-bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
+bool   SVInspectionProcess::CopyToWatchlist(SvTrc::ITriggerRecordRPtr pTriggerRecord, long slotindex)
 {
 	bool isReject(false);
-	long slotindex = rLastProduct.m_lastInspectedSlot;
 	if (m_StoreIndex < 0 || slotindex < 0)
 	{
 		assert(m_StoreIndex >= 0);
@@ -307,7 +312,7 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 			int offset = element->MonEntryPtr->data.Store_Offset;
 			int Bytesyze = static_cast<int>(element->MonEntryPtr->data.ByteSize);
 			int imageIndex = element->MonEntryPtr->data.ItemId;
-			SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(rLastProduct.m_svInspectionInfos[pImage->GetInspection()->GetUniqueObjectID()].m_triggerRecordComplete);
+			SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 			if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 			{
 				HRESULT hr(S_FALSE);
@@ -338,7 +343,7 @@ bool   SVInspectionProcess::CopyToWatchlist(SVProductInfoStruct& rLastProduct)
 
 
 
-HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& rProduct)
+HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 {
 	HRESULT l_Status = S_OK;
 
@@ -359,7 +364,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 				if (LastProduct.ProcessCount() > 0 && slotindex >= 0 && m_StoreIndex >= 0)
 				{
 
-					bool isReject = CopyToWatchlist(LastProduct);
+					bool isReject = CopyToWatchlist(LastProduct.m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordComplete, slotindex);
 					if (isReject)
 					{
 						GetSlotmanager()->SetToReject(slotindex);
@@ -391,8 +396,8 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15024);
 			}
 		}
-		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), LastProduct);
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+		std::pair<SVInspectionInfoStruct, long> data {LastProduct.m_svInspectionInfos[GetUniqueObjectID()], LastProduct.ProcessCount()};
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), data);
 
 		p_rProcessed = true;
 
@@ -555,14 +560,14 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 	SVProductInfoStruct l_Product;
 
 	ProcessInspection(l_Processed, l_Product);
-	ProcessNotifyWithLastInspected(l_Processed, l_Product);
+	ProcessNotifyWithLastInspected(l_Processed);
 
 	ProcessCommandQueue(l_Processed);
 
 	if (!(l_Product.empty()) && !(m_PPQId.empty()))
 	{
-		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
-		SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, l_Data);
+		std::pair<SVInspectionInfoStruct, long> data {l_Product.m_svInspectionInfos[GetUniqueObjectID()], l_Product.ProcessCount()};
+		SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, data);
 	}
 
 	p_WaitForEvents = !l_Processed;
@@ -575,8 +580,7 @@ void SVInspectionProcess::DestroyInspection()
 	::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 	::Sleep(0);
 	m_AsyncProcedure.Destroy();
-	SVProductInfoStruct l_svProduct;
-	LastProductUpdate(&l_svProduct);
+	resetLastProcduct();
 	if (!(m_PPQId.empty()))
 	{
 		// Release all published outputs before we destroy the toolset
@@ -711,7 +715,7 @@ bool SVInspectionProcess::GoOnline()
 	m_InspectionTracking.clear();
 #endif
 
-	LastProductUpdate(nullptr);
+	resetLastProcduct();
 
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
@@ -873,8 +877,6 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 
 	if (pProduct)
 	{
-		SVInspectionInfoStruct* pIPInfo = &(pProduct->m_svInspectionInfos[GetUniqueObjectID()]);
-
 		// See if we have discrete inputs.
 		assert(m_PPQInputs.size() == pProduct->oInputsInfo.m_Inputs.size());
 		for (size_t i = 0; bReady && i < m_PPQInputs.size(); i++)
@@ -943,19 +945,10 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 	if (0 == m_qInspectionsQueue.GetCount())
 	{
 		// Find the info struct for this inspection
-		SVInspectionInfoStruct& l_rIPInfo = pProduct->m_svInspectionInfos[GetUniqueObjectID()];
+		pIPInfo->m_CanProcess = false;
+		pIPInfo->m_InProcess = true;
 
-		l_rIPInfo.m_CanProcess = false;
-		l_rIPInfo.m_InProcess = true;
-
-		SVProductInfoStruct tempProduct;
-
-		hr = tempProduct.Assign(*pProduct);
-		//This copy of the product should not have the inspection infos of the other inspection. Otherwise it will be block the write-version of this TRs.
-		tempProduct.resetIPInfos(GetUniqueObjectID());
-		//The triggerRecord must be free here, because the Inspection has to decide when write-mode of this is TR is finished and close the instance to open an read version.
-		l_rIPInfo.m_triggerRecordWrite = nullptr;
-
+		SVProductInfoStruct tempProduct = moveInspectionToNewProduct(*pProduct, GetUniqueObjectID());
 		SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (l_ImageIter != m_CameraImages.end())
@@ -1015,18 +1008,6 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 	// Make new list
 	m_PPQInputs.resize(lListSize);
-
-	long l_LastIndex = 1;
-	SVProductInfoStruct l_Product = LastProductGet();
-
-	if (!(l_Product.empty()))
-	{
-		SVDataManagerHandle l_Handle;
-
-		l_Product.GetResultDataIndex(l_Handle);
-
-		l_LastIndex = l_Handle.GetIndex();
-	}
 
 	for (int iList = 0; iList < lListSize; iList++)
 	{
@@ -1305,31 +1286,10 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 		return E_FAIL;
 	}
 
-	if (!m_InputImageRequests.Lock())
-	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17016_ErrorLockingInputImageRequests);
-		DebugBreak();
-	}
-
 	if (!m_InputImageRequests.AddTail(p_pInRequest))
 	{
-		if (!m_InputImageRequests.Unlock())
-		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17017_ErrorUnlockingInputImageRequests);
-			DebugBreak();
-		}
-
 		return E_FAIL;
 	}// end if
-
-	if (!m_InputImageRequests.Unlock())
-	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17018_ErrorUnlockingInputImageRequests);
-		DebugBreak();
-	}
 
 	return S_OK;
 }// end AddInputImageRequest
@@ -1345,7 +1305,6 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	SetDefaultInputs();
 
 	long lLength = 2;
-	long l_LastIndex = 1;
 
 	SVPPQObject* pPPQ = GetPPQ();
 
@@ -1357,16 +1316,9 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 		if (l_Product.empty())
 		{
-			ClearIndexesOfOtherInspections(&l_Product, SV_INSPECTION);
 			l_Product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 			LastProductUpdate(&l_Product);
 		}
-
-		SVDataManagerHandle l_Handle;
-
-		l_Product.GetResultDataIndex(l_Handle);
-
-		l_LastIndex = l_Handle.GetIndex();
 	}
 
 	////////////////////////
@@ -1508,17 +1460,12 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 
 	if (nullptr != pPPQ)
 	{
-		pPPQ->ReserveNextRunOnceProductInfoStruct(l_svProduct, SV_INSPECTION);
+		l_svProduct = pPPQ->getProductReadyForRunOnce(GetUniqueObjectID());
 	}
 
 	LastProductCopySourceImagesTo(&l_svProduct);
-	ClearIndexesOfOtherInspections(&l_svProduct, SV_INSPECTION);
 
-	SVDataManagerHandle	l_ResultDataDMIndexHandle;
-
-	l_svProduct.GetResultDataIndex(l_ResultDataDMIndexHandle);
-
-	RunInspection(l_ResultDataDMIndexHandle.GetIndex(), &l_svProduct);
+	RunInspection(l_svProduct.m_svInspectionInfos[GetUniqueObjectID()], l_svProduct.m_svCameraInfos, l_svProduct.oTriggerInfo.lTriggerCount);
 	l_svProduct.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 
 	LastProductUpdate(&l_svProduct);
@@ -1528,9 +1475,9 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 		// Result View, Display Image and Overlay Update
 		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
-			SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_svProduct);
+			std::pair<SVInspectionInfoStruct, long> data {l_svProduct.m_svInspectionInfos[GetUniqueObjectID()], l_svProduct.ProcessCount()};
 
-			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), data);
 		}
 	}
 }
@@ -1710,27 +1657,20 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 
 	if (nullptr != pPPQ)
 	{
-		SVProductInfoStruct l_svProduct;
-		SVDataManagerHandle	l_ResultDataDMIndexHandle;
+		SVProductInfoStruct product = pPPQ->getProductReadyForRunOnce(GetUniqueObjectID());
 
-		if (!pPPQ->ReserveNextRunOnceProductInfoStruct(l_svProduct, SV_INSPECTION))
+		if (0 >= product.m_svInspectionInfos.size())
 		{
 			l_Status = E_FAIL;
 		}
 
-		ClearIndexesOfOtherInspections(&l_svProduct, SV_INSPECTION);
-
-		HRESULT l_Temp = l_svProduct.GetResultDataIndex(l_ResultDataDMIndexHandle);
-
-		if (S_OK == l_Status) { l_Status = l_Temp; }
-
-		if (!(RunInspection(l_ResultDataDMIndexHandle.GetIndex(), &l_svProduct, false)) && S_OK == l_Status)
+		if (!(RunInspection(product.m_svInspectionInfos[GetUniqueObjectID()], product.m_svCameraInfos, product.oTriggerInfo.lTriggerCount, false)) && S_OK == l_Status)
 		{
 			l_Status = E_FAIL;
 		}
-		l_svProduct.setInspectionTriggerRecordComplete(GetUniqueObjectID());
+		product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 
-		l_Temp = LastProductUpdate(&l_svProduct);
+		HRESULT l_Temp = LastProductUpdate(&product);
 
 		if (S_OK == l_Status) { l_Status = l_Temp; }
 	}
@@ -2113,126 +2053,87 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 	return bRet;
 }
 
-bool SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvProduct)
+bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos)
 {
-	bool l_bOk = true;
+	bool bRet = true;
 
-	if (!m_InputImageRequests.IsEmpty())
+	SVInputImageRequestInfoStructPtr l_pInRequest;
+	while (m_InputImageRequests.RemoveHead(&l_pInRequest))
 	{
-		long l_lSize = 0;
+		SvIe::SVImageClass *pImage = nullptr;
 
-		m_InputImageRequests.GetSize(l_lSize);
-
-		for (long l = 0; l < l_lSize; l++)
+		if (l_pInRequest->m_bUsingCameraName) //not using camera name...
 		{
-			SVInputImageRequestInfoStructPtr l_pInRequest;
+			SvIe::SVCameraImagePtrSet l_MainImages;
 
-			if (m_InputImageRequests.RemoveHead(&l_pInRequest))
+			GetMainImages(l_pInRequest->m_ObjectName.c_str(), l_MainImages);
+
+			SvIe::SVCameraImagePtrSet::iterator l_Iter = l_MainImages.begin();
+
+			while (nullptr == pImage && l_Iter != l_MainImages.end())
 			{
-				SvIe::SVImageClass *pImage = nullptr;
+				SvIe::SVCameraImageTemplate* pCameraImage = (*l_Iter);
 
-				if (l_pInRequest->m_bUsingCameraName) //not using camera name...
+				if (nullptr != pCameraImage)
 				{
-					SvIe::SVCameraImagePtrSet l_MainImages;
-
-					GetMainImages(l_pInRequest->m_ObjectName.c_str(), l_MainImages);
-
-					SvIe::SVCameraImagePtrSet::iterator l_Iter = l_MainImages.begin();
-
-					while (nullptr == pImage && l_Iter != l_MainImages.end())
-					{
-						SvIe::SVCameraImageTemplate* pCameraImage = (*l_Iter);
-
-						if (nullptr != pCameraImage)
-						{
-							pImage = pCameraImage;
-						}
-						else
-						{
-							++l_Iter;
-						}
-					}
+					pImage = pCameraImage;
 				}
 				else
 				{
-					SVObjectClass* pObject = nullptr;
-					if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(l_pInRequest->m_ObjectName.c_str(), pObject))
-					{
-						pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
-					}
+					++l_Iter;
 				}
+			}
+		}
+		else
+		{
+			SVObjectClass* pObject = nullptr;
+			if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(l_pInRequest->m_ObjectName.c_str(), pObject))
+			{
+				pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
+			}
+		}
 
-				l_bOk = nullptr != pImage;
-
-				if (l_bOk)
+		if (nullptr != pImage)
+		{
+			SvTrc::IImagePtr pImageBuffer;
+			SvIe::SVVirtualCamera* pVirtualCamera = nullptr;
+			if (SvIe::SVMainImageClass* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
+			{
+				SvIe::SVGuidSVCameraInfoStructMap::iterator l_svIter = rCameraInfos.find(l_psvMainImage->GetCamera()->GetUniqueObjectID());
+				if (l_svIter != rCameraInfos.end())
 				{
-					auto& inspectionIter = p_psvProduct->m_svInspectionInfos[GetUniqueObjectID()];
-					l_bOk = (nullptr != inspectionIter.m_triggerRecordWrite);
-
-					SvTrc::IImagePtr pImageBuffer;
-					SvIe::SVVirtualCamera* pVirtualCamera = nullptr;
-					if (SvIe::SVMainImageClass* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
-					{
-						SvIe::SVGuidSVCameraInfoStructMap::iterator l_svIter;
-
-						l_svIter = p_psvProduct->m_svCameraInfos.find(l_psvMainImage->GetCamera()->GetUniqueObjectID());
-
-						if (l_svIter != p_psvProduct->m_svCameraInfos.end())
-						{
-							pImageBuffer = l_psvMainImage->GetTempImageBuffer();
-							l_svIter->second.setImage(pImageBuffer);
-						}
-						pVirtualCamera = l_psvMainImage->GetCamera();
-					}
-					else
-					{
-						pImageBuffer = pImage->getImageToWrite(inspectionIter.m_triggerRecordWrite);
-					}
-
-					if (l_bOk)
-					{
-						l_bOk = (nullptr != pImageBuffer && !pImageBuffer->isEmpty());
-
-						if (l_bOk)
-						{
-							if (nullptr != l_pInRequest->m_ImageHandlePtr)
-							{
-								HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
-								if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pVirtualCamera)
-								{
-									pVirtualCamera->setTempImage(l_pInRequest->m_ImageHandlePtr->GetBuffer());
-								}
-							}
-							else
-							{
-								l_bOk = false;
-							}
-						}
-					}
+					pImageBuffer = l_psvMainImage->GetTempImageBuffer();
+					l_svIter->second.setImage(pImageBuffer);
 				}
-
-				l_pInRequest->m_ImageHandlePtr.reset();
+				pVirtualCamera = l_psvMainImage->GetCamera();
 			}
 			else
 			{
-				l_bOk = false;
+				pImageBuffer = pImage->getImageToWrite(rIpInfoStruct.m_triggerRecordWrite);
 			}
-		}// end for
+
+			if (nullptr != rIpInfoStruct.m_triggerRecordWrite && nullptr != pImageBuffer && !pImageBuffer->isEmpty() && nullptr != l_pInRequest->m_ImageHandlePtr)
+			{
+				HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
+				if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pVirtualCamera)
+				{
+					pVirtualCamera->setTempImage(l_pInRequest->m_ImageHandlePtr->GetBuffer());
+				}
+			}
+			else
+			{
+				bRet = false;
+			}
+		}
+		else
+		{
+			bRet = false;
+		}
+
+		l_pInRequest->m_ImageHandlePtr.reset();
 	}
 
-	return l_bOk;
-}
-
-void SVInspectionProcess::ClearIndexesOfOtherInspections(SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType)
-{
-	SVGUIDSVInspectionInfoStructMap::iterator l_Iter = p_pProduct->m_svInspectionInfos.begin();
-
-	while (l_Iter != p_pProduct->m_svInspectionInfos.end())
-	{
-		l_Iter->second.ClearIndexes();
-
-		++l_Iter;
-	}
+	return bRet;
 }
 
 void SVInspectionProcess::DisconnectToolSetMainImage()
@@ -2395,41 +2296,26 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	return hrOk;
 }
 
-SVProductInfoStruct SVInspectionProcess::LastProductGet() const
+std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess::getLastProductData() const
 {
-	SVProductInfoStruct l_Temp;
-
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-	l_AutoLock.Assign(m_LastRunLockPtr.get());
-
-	l_Temp.Assign(m_svLastRunProduct);
-
-	if (m_LastRunProductNULL)
-	{
-		l_Temp.Reset();
-	}
-
-	return l_Temp;
-}
-
-HRESULT SVInspectionProcess::LastProductUpdate(SVProductInfoStruct *p_psvProduct)
-{
-	HRESULT l_hrOk = S_OK;
-
-	m_LastRunProductNULL = nullptr == p_psvProduct;
-
 	if (!m_LastRunProductNULL)
 	{
-		p_psvProduct->SetProductComplete();
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
 		l_AutoLock.Assign(m_LastRunLockPtr.get());
 
-		l_hrOk = m_svLastRunProduct.Assign(*p_psvProduct);
+		auto ipInfoIter = m_svLastRunProduct.m_svInspectionInfos.find(GetUniqueObjectID());
+		if (m_svLastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
+		{
+			return {m_svLastRunProduct.oTriggerInfo, ipInfoIter->second};
+		}
 	}
+	return {};
+}
 
-	return l_hrOk;
+void SVInspectionProcess::resetLastProcduct()
+{
+	m_LastRunProductNULL = true;
+	m_svLastRunProduct.Assign({});
 }
 
 HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *p_psvProduct)
@@ -2785,7 +2671,7 @@ void SVInspectionProcess::SetInvalid()
 	}
 }
 
-void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvProduct)
+void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos)
 {
 	SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
@@ -2801,9 +2687,9 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPr
 			{
 				SvIe::SVGuidSVCameraInfoStructMap::const_iterator Iter;
 
-				Iter = p_psvProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
+				Iter = rCameraInfos.find(pCamera->GetUniqueObjectID());
 
-				if (Iter != p_psvProduct->m_svCameraInfos.end())
+				if (Iter != rCameraInfos.end())
 				{
 					if (nullptr == Iter->second.getImage())
 					{
@@ -2813,11 +2699,9 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPr
 					}
 					else
 					{
-						SVInspectionInfoStruct& l_rIPInfo = p_psvProduct->m_svInspectionInfos[GetUniqueObjectID()];
-
 						try
 						{
-							l_pImage->setImage(Iter->second.getImage(), l_rIPInfo.m_triggerRecordWrite);
+							l_pImage->setImage(Iter->second.getImage(), rIpInfoStruct.m_triggerRecordWrite);
 							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && SVSVIMStateClass::CheckState(SV_STATE_READY) && nullptr != pCamera && Iter->second.getImage()->isValid())
 							{
 								pCamera->setTempImage(Iter->second.getImage()->getHandle()->GetBuffer());
@@ -2838,7 +2722,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPr
 				{
 					try
 					{
-						l_pImage->resetImage(p_psvProduct->m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordWrite);
+						l_pImage->resetImage(rIpInfoStruct.m_triggerRecordWrite);
 					}
 					catch (const SvStl::MessageContainer&)
 					{
@@ -2914,7 +2798,7 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 	return retVal;
 }
 
-bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts)
+bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts)
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 	double del = SvTl::setReferenceTime();
@@ -2929,17 +2813,12 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 	bool l_bRestMainImage = false;
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 
-	// Get the info struct for this inspection
-	SVInspectionInfoStruct& rIPInfo = pProduct->m_svInspectionInfos[GetUniqueObjectID()];
-
 	m_runStatus.ResetRunStateAndToolSetTimes();
 
-	m_runStatus.m_lResultDataIndex = lResultDataIndex;
-	m_runStatus.m_lTriggerCount = pProduct->oTriggerInfo.lTriggerCount;
+	m_runStatus.m_lTriggerCount = triggerCount;
 	m_runStatus.m_UpdateCounters = p_UpdateCounts;
-	m_runStatus.m_triggerRecord = rIPInfo.m_triggerRecordWrite;
 
-	if (pProduct->IsAlive())
+	if (isProductAlive(GetPPQ(), triggerCount))
 	{
 		// Process all input requests
 		if (!ProcessInputRequests(m_bForceOffsetUpdate))
@@ -2950,7 +2829,7 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 			m_runStatus.SetInvalid();  //sets run.status.valid = false, and since no bits are set = SV_INVALID
 		}
 
-		if (!ProcessInputImageRequests(pProduct))
+		if (!ProcessInputImageRequests(rIPInfo, rCameraInfos))
 		{
 			Exception.setMessage(SVMSG_SVO_39_IMAGE_REQUEST_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 
@@ -2958,26 +2837,25 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 			m_runStatus.SetInvalid(); //sets run.status.valid = false, and since no bits are set = SV_INVALID
 		}
 
-		if (nullptr != m_runStatus.m_triggerRecord && m_runStatus.m_triggerRecord->isObjectUpToTime())
+		if (nullptr != rIPInfo.m_triggerRecordWrite && rIPInfo.m_triggerRecordWrite->isObjectUpToTime())
 		{
-			auto pLastTriggerRecord = LastProductGet().m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordComplete;
+			auto pLastTriggerRecord = getLastProductData().second.m_triggerRecordComplete;
 			if (nullptr != pLastTriggerRecord && pLastTriggerRecord->isObjectUpToTime())
 			{
-				m_runStatus.m_triggerRecord->setImages(*pLastTriggerRecord);
+				rIPInfo.m_triggerRecordWrite->setImages(*pLastTriggerRecord);
 			}
 			else
 			{
-				m_runStatus.m_triggerRecord->initImages();
+				rIPInfo.m_triggerRecordWrite->initImages();
 			}
 		}
 		else
 		{
 			rIPInfo.setNextTriggerRecord();
-			m_runStatus.m_triggerRecord = rIPInfo.m_triggerRecordWrite;
-			assert(nullptr != m_runStatus.m_triggerRecord);
-			if (nullptr != m_runStatus.m_triggerRecord)
+			assert(nullptr != rIPInfo.m_triggerRecordWrite);
+			if (nullptr != rIPInfo.m_triggerRecordWrite)
 			{
-				m_runStatus.m_triggerRecord->initImages();
+				rIPInfo.m_triggerRecordWrite->initImages();
 				Exception.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RunInspection_ResetTR, SvStl::SourceFileParams(StdMessageParams));
 			}
 			else
@@ -2989,7 +2867,7 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 
 		try
 		{
-			UpdateMainImagesByProduct(pProduct);
+			UpdateMainImagesByProduct(rIPInfo, rCameraInfos);
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -3009,11 +2887,11 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 		{
 			SvIe::SVCameraImageTemplate* l_pImage = (*l_ImageIter);
 
-			if (nullptr != l_pImage && nullptr != m_runStatus.m_triggerRecord)
+			if (nullptr != l_pImage && nullptr != rIPInfo.m_triggerRecordWrite)
 			{
 				try
 				{
-					l_pImage->resetImage(m_runStatus.m_triggerRecord);
+					l_pImage->resetImage(rIPInfo.m_triggerRecordWrite);
 				}
 				catch (const SvStl::MessageContainer&)
 				{
@@ -3043,6 +2921,7 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 		DebugBreak();
 	}
 
+	m_runStatus.m_triggerRecord = std::move(rIPInfo.m_triggerRecordWrite);
 	if (!l_bInputRequest && !l_bImageRequest && !l_bUpdateMainImage && !l_bRestMainImage)
 	{
 		l_bOk = Run(m_runStatus);
@@ -3051,6 +2930,8 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 	{
 		copyValues2TriggerRecord(m_runStatus);
 	}
+	rIPInfo.m_triggerRecordWrite = std::move(m_runStatus.m_triggerRecord);
+	m_runStatus.m_triggerRecord = nullptr;
 
 	m_bForceOffsetUpdate = false;
 
@@ -3073,10 +2954,6 @@ bool SVInspectionProcess::RunInspection(long lResultDataIndex, SVProductInfoStru
 
 	rIPInfo.m_ToolSetAvgTime = m_runStatus.m_ToolSetAvgTime;
 	rIPInfo.m_ToolSetEndTime = m_runStatus.m_ToolSetEndTime;
-
-	SVPPQObject *pPPQ = GetPPQ();
-
-	m_runStatus.m_triggerRecord = nullptr;
 
 	return l_bOk;
 
@@ -3511,20 +3388,6 @@ HRESULT SVInspectionProcess::RunOnce()
 	return bRet ? S_OK : SvStl::cCustomHRSVO_RunOnceFailed;
 }
 
-long SVInspectionProcess::GetLastIndex() const
-{
-	long lastIndex = 0;
-	SVProductInfoStruct l_Product = LastProductGet();
-
-	if (!(l_Product.empty()))
-	{
-		SVDataManagerHandle l_Handle;
-		l_Product.GetResultDataIndex(l_Handle);
-		lastIndex = l_Handle.GetIndex();
-	}
-	return lastIndex;
-}
-
 HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
 {
 	HRESULT Result = S_OK;
@@ -3746,18 +3609,6 @@ bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD c
 {
 	if (nullptr != pChildObject)
 	{
-		long l_LastIndex = 1;
-		SVProductInfoStruct l_Product = LastProductGet();
-
-		if (!(l_Product.empty()))
-		{
-			SVDataManagerHandle l_Handle;
-
-			l_Product.GetResultDataIndex(l_Handle);
-
-			l_LastIndex = l_Handle.GetIndex();
-		}
-
 		SVObjectLevelCreateStruct createStruct;
 		createStruct.OwnerObjectInfo.SetObject(this);
 		createStruct.m_pInspection = this;
@@ -4059,4 +3910,40 @@ std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineS
 SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()
 {
 	return m_SlotManager;
+}
+
+HRESULT SVInspectionProcess::LastProductUpdate(SVProductInfoStruct *p_psvProduct)
+{
+	HRESULT l_hrOk = S_OK;
+
+	m_LastRunProductNULL = nullptr == p_psvProduct;
+
+	if (!m_LastRunProductNULL)
+	{
+		p_psvProduct->SetProductComplete();
+		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
+
+		l_AutoLock.Assign(m_LastRunLockPtr.get());
+
+		l_hrOk = m_svLastRunProduct.Assign(*p_psvProduct);
+	}
+
+	return l_hrOk;
+}
+
+SVProductInfoStruct SVInspectionProcess::LastProductGet() const
+{
+	SVProductInfoStruct l_Temp;
+
+	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
+	l_AutoLock.Assign(m_LastRunLockPtr.get());
+
+	l_Temp.Assign(m_svLastRunProduct);
+
+	if (m_LastRunProductNULL)
+	{
+		l_Temp.Reset();
+	}
+
+	return l_Temp;
 }

@@ -1011,16 +1011,16 @@ bool SVTaskObjectListClass::isInputImage(const SVGUID& rImageGuid) const
 bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
-	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
-	ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
-	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...
 	bool bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
 
 	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 	{
+		SVRunStatusClass ChildRunStatus;
+		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
+		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		// Run your children...
 		for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
 		{
@@ -1045,6 +1045,7 @@ bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageCont
 				if ( ChildRunStatus.IsCriticalFailure() ) { rRunStatus.SetCriticalFailure(); }
 			}
 		}
+		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 	}
 
 	// Get Status Color...

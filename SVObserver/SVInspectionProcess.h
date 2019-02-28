@@ -23,8 +23,6 @@
 #include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
-#include "SVDataManagerLibrary/DataManager.h"
-#include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
@@ -114,7 +112,6 @@ public:
 	virtual void GetPPQSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, const UINT attribute) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce() override;
-	virtual long GetLastIndex() const  override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
 	virtual void BuildValueObjectMap() override;
 	GUID getFirstCamera() const override;
@@ -171,8 +168,8 @@ public:
 	//new GetOverlay method for use with the ActiveX
 	HRESULT CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray);
 
-	SVProductInfoStruct LastProductGet() const;
-	HRESULT LastProductUpdate( SVProductInfoStruct *p_psvProduct );
+	std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> getLastProductData() const;
+	void resetLastProcduct();
 
 	HRESULT LastProductNotify();
 
@@ -194,8 +191,7 @@ public:
 
 	/// Update the main image of this product.
 	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-	/// \param p_psvProduct [in,out] The product
-	void UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
+	void UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos);
 	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
@@ -352,7 +348,7 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	bool RunInspection( long lResultDataIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
+	bool RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );
 
 	void DestroyInspection();
 
@@ -364,9 +360,7 @@ protected:
 
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
 	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem );
-	bool ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
-
-	void ClearIndexesOfOtherInspections( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType);
+	bool ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos);
 
 	HRESULT LastProductCopySourceImagesTo( SVProductInfoStruct *p_psvProduct );
 
@@ -382,11 +376,11 @@ protected:
 	void ThreadProcess( bool& p_WaitForEvents );
 
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& rProduct);
+	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed);
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 	
 	///True if product i a reject
-	bool   CopyToWatchlist(SVProductInfoStruct& LastProduct);
+	bool   CopyToWatchlist(SvTrc::ITriggerRecordRPtr pTriggerRecord, long slotindex);
 	
 	void  BuildWatchlist();
 	
@@ -438,6 +432,9 @@ private:
 	std::vector<_variant_t> copyValueObjectList(bool determineSize=false) const;
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
+
+	HRESULT LastProductUpdate(SVProductInfoStruct *p_psvProduct);
+	SVProductInfoStruct LastProductGet() const;
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;

@@ -227,7 +227,7 @@ HRESULT SVOutputObjectList::DetachOutput( const SVGUID& rOutputID )
 	return l_Status;
 }
 
-GuidVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool ACK, bool NAK)
+GuidVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool ACK, bool NAK)
 {
 	GuidVariantPairVector Result;
 
@@ -242,14 +242,14 @@ GuidVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStr
 
 				if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
-					OutputValue = getDigitalOutputValue(pIOEntry, lDataIndex, ACK, NAK);
+					OutputValue = getDigitalOutputValue(pIOEntry, useDefaults, ACK, NAK);
 				}// end if
 				else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
 				{
 					if( nullptr != pIOEntry->getValueObject())
 					{
 						OutputValue.first = pIOEntry->m_IOId;
-						if( lDataIndex == -1 )
+						if(useDefaults)
 						{
 							OutputValue.second = pIOEntry->getValueObject()->getDefaultValue();
 						}
@@ -322,7 +322,7 @@ bool SVOutputObjectList::WriteOutputs(const GuidVariantPairVector& rOutputValues
 	return Result;
 }
 
-bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool ACK, bool NAK )
+bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool ACK, bool NAK )
 {
 	bool Result( false );
 	_variant_t OutputValue;
@@ -335,7 +335,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 		{
 			if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 			{
-				std::pair<GUID, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, lDataIndex, ACK, NAK);
+				std::pair<GUID, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, false, ACK, NAK);
 
 				SVOutputObject* pOutput = GetOutput(ValueOutput.first);
 				if (nullptr != pOutput)
@@ -356,14 +356,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 				
 				if( nullptr != pIOEntry->getValueObject())
 				{
-					if( lDataIndex == -1 )
-					{
-						OutputValue = pIOEntry->getValueObject()->getDefaultValue();
-					}
-					else
-					{
-						pIOEntry->getValueObject()->getValue(OutputValue);
-					}
+					pIOEntry->getValueObject()->getValue(OutputValue);
 				}
 
 				Result = (S_OK == pOutput->Write( &OutputValue ));
@@ -721,7 +714,7 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 	}
 }
 
-std::pair<GUID, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, long lDataIndex, bool ACK, bool NAK )
+std::pair<GUID, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool ACK, bool NAK )
 {
 	std::pair<GUID, _variant_t> Result{GUID_NULL, _variant_t{}};
 	SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
@@ -732,7 +725,7 @@ std::pair<GUID, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVI
 		bool CombinedValue {false};
 		SvOi::IValueObject* pValueObject = pIOEntry->getValueObject();
 
-		if( 0 <= lDataIndex )
+		if( !useDefault)
 		{
 			std::string l_String = pOutput->GetName();
 			if( ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
@@ -749,7 +742,7 @@ std::pair<GUID, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVI
 			}
 		}
 
-		if( lDataIndex == -1 )
+		if(useDefault)
 		{
 			if( nullptr != pIOEntry->getValueObject())
 			{

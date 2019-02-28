@@ -68,7 +68,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -96,7 +96,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

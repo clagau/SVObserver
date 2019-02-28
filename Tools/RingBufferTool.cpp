@@ -217,7 +217,7 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		SvTrc::IImagePtr pInputImageBuffer;
 		if (nullptr != pInputImage)
 		{
-			pInputImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+			pInputImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		}
 		if (nullptr != milHandleTo.get() && !milHandleTo->empty() && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
 		{

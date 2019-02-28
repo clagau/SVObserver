@@ -262,7 +262,7 @@ bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvTrc::ITriggerRecordRP
 	for ( int i = 0; bOk && i < nCount; i++ )
 	{
 		SVArchiveRecord* pImageRecord = m_vecRecords.at(i);
-		bOk = bOk && (S_OK == pImageRecord->WriteImage(pTriggerRecord));
+		bOk = bOk && (S_OK == pImageRecord->WriteImage(pTriggerRecord.get()));
 	}// end for ( int i = 0; bOk && i < nCount; i++ )
 	
 	return bOk;

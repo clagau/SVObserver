@@ -674,7 +674,7 @@ bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle
 		{
 			HRESULT l_Code;
 
-			SvTrc::IImagePtr pImageBuffer = getImageReadOnly(pTriggerRecord);
+			SvTrc::IImagePtr pImageBuffer = getImageReadOnly(pTriggerRecord.get());
 			l_bOk = nullptr != pImageBuffer && !pImageBuffer->isEmpty();
 
 			if (l_bOk)
@@ -1104,7 +1104,7 @@ SvTrc::IImagePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
 
 	}
 	assert(nullptr != lastTriggerRecord);
-	return getImageReadOnly(lastTriggerRecord);
+	return getImageReadOnly(lastTriggerRecord.get());
 }
 
 SvTrc::IImagePtr SVImageClass::GetTempImageBuffer() const
@@ -1119,7 +1119,7 @@ SvTrc::IImagePtr SVImageClass::GetTempImageBuffer() const
 	return pImage;
 }
 
-SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordRPtr& pTriggerRecord, bool lockImage) const
+SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordR* pTriggerRecord, bool lockImage) const
 {
 	SvTrc::IImagePtr pImage = nullptr;
 	assert(nullptr != pTriggerRecord);
@@ -1134,31 +1134,6 @@ SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordRPtr&
 		{
 			pImage = pTriggerRecord->getChildImage(m_imagePosInTRC, lockImage);
 		}
-	}
-	else
-	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
-	}
-	return pImage;
-}
-
-SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) const
-{
-	SvTrc::IImagePtr pImage = nullptr;
-	assert(nullptr != pTriggerRecord);
-	if (nullptr != pTriggerRecord)
-	{
-		assert(0 <= m_imagePosInTRC);
-		if (!m_isChildImageInTRC)
-		{
-			pImage = pTriggerRecord->getImage(m_imagePosInTRC);
-		}
-		else
-		{
-			pImage = pTriggerRecord->getChildImage(m_imagePosInTRC);
-		}
-
 	}
 	else
 	{

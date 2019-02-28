@@ -134,7 +134,7 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			return false;
 		}
 
-		if (bReload || m_ReloadFileImage || nullptr == m_fileImage.getImageReadOnly(rRunStatus.m_triggerRecord))
+		if (bReload || m_ReloadFileImage || nullptr == m_fileImage.getImageReadOnly(rRunStatus.m_triggerRecord.get()))
 		{
 			if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), rRunStatus.m_triggerRecord))
 			{

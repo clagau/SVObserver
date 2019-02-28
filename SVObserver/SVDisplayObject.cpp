@@ -76,7 +76,7 @@ SVDisplayObject::~SVDisplayObject()
 	m_hDisplayThread = nullptr;
 }
 
-HRESULT SVDisplayObject::ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData )
+HRESULT SVDisplayObject::ObserverUpdate( const std::pair<SVInspectionInfoStruct, long>& p_rData )
 {
 	HRESULT l_Status = FinishInspection( p_rData );
 
@@ -429,7 +429,7 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct& p_rProduct )
+HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruct, long>& inspectionData )
 {	
 	HRESULT l_Status = S_OK;
 	bool ImageUpdate = true;
@@ -455,28 +455,23 @@ HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct&
 
 	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{
-		if( m_CriticalSectionCreated && nullptr != m_hStartEvent && !( p_rProduct.empty() ) )
+		if( m_CriticalSectionCreated && nullptr != m_hStartEvent )
 		{
-			SVGUIDSVInspectionInfoStructMap::const_iterator l_Iter = p_rProduct.m_ProductInfo.m_svInspectionInfos.find( m_InspectionID.ToGUID() );
+			bool l_State = !(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST));
 
-			if( l_Iter != p_rProduct.m_ProductInfo.m_svInspectionInfos.end() )
+			l_State = l_State || (inspectionData.first.oInspectedState == PRODUCT_INSPECTION_WARNING);
+			l_State = l_State || (inspectionData.first.oInspectedState == PRODUCT_INSPECTION_FAILED);
+			l_State = l_State || (inspectionData.first.oInspectedState == PRODUCT_INSPECTION_PASSED);
+
+			if (l_State)
 			{
-				bool l_State = !( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) );
+				::EnterCriticalSection(&(m_CriticalSection));
 
-				l_State = l_State || ( l_Iter->second.oInspectedState == PRODUCT_INSPECTION_WARNING );
-				l_State = l_State || ( l_Iter->second.oInspectedState == PRODUCT_INSPECTION_FAILED );
-				l_State = l_State || ( l_Iter->second.oInspectedState == PRODUCT_INSPECTION_PASSED );
+				m_PendingTrigger = inspectionData.second;
 
-				if( l_State )
-				{
-					::EnterCriticalSection( &( m_CriticalSection ) );
+				::SetEvent(m_hStartEvent);
 
-					m_PendingTrigger = p_rProduct.m_ProductInfo.ProcessCount();
-
-					::SetEvent( m_hStartEvent );
-
-					::LeaveCriticalSection( &( m_CriticalSection ) );
-				}
+				::LeaveCriticalSection(&(m_CriticalSection));
 			}
 		}
 		else

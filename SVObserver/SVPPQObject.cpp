@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 
 #include "SVPPQObject.h"
-#include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/GlobalConst.h"
@@ -384,40 +383,24 @@ HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectName
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ObserverUpdate(const SVInspectionCompleteInfoStruct& p_rData)
+HRESULT SVPPQObject::ObserverUpdate(const std::pair<SVInspectionInfoStruct, long>& rData)
 {
-	HRESULT l_Status = S_OK;
+	SVInspectionInfoPair infoPair(rData.second, rData.first);
+	infoPair.second.m_CallbackReceived = SvTl::GetTimeStamp();
+	infoPair.second.ClearIndexes();
+	m_oInspectionQueue.AddTail(infoPair);
 
-	SVGUIDSVInspectionInfoStructMap::const_iterator l_Iter = p_rData.m_ProductInfo.m_svInspectionInfos.find(p_rData.m_InspectionID);
+	m_AsyncProcedure.Signal(nullptr);
 
-	if (l_Iter != p_rData.m_ProductInfo.m_svInspectionInfos.end())
-	{
-		SVInspectionInfoPair infoPair(p_rData.m_ProductInfo.ProcessCount(), l_Iter->second);
-		infoPair.second.m_CallbackReceived = SvTl::GetTimeStamp();
-		infoPair.second.ClearIndexes();
-		m_oInspectionQueue.AddTail(infoPair);
-
-		m_AsyncProcedure.Signal(nullptr);
-	}
-
-	return l_Status;
+	return S_OK;
 }
 
 bool SVPPQObject::Create()
 {
-	_bstr_t bName;
-	HRESULT hr;
-	int i;
-	
 	// Return if already created
 	if (m_isCreated) { return false; }
 
-	bName = _T("PPQ Result Data");
-
-	hr = TheSVDataManager.CreateManagedIndexArray(m_pResultDataCircleBuffer, bName, GetPPQLength() + g_lPPQExtraBufferSize);
-	if (S_OK != hr) { return false; }
-
-	for (i = 0; i < static_cast<long>(m_ppPPQPositions.size()); ++i)
+	for (int i = 0; i < static_cast<long>(m_ppPPQPositions.size()); ++i)
 	{
 		RecycleProductInfo(m_ppPPQPositions.GetProductAt(i));
 
@@ -462,9 +445,6 @@ bool SVPPQObject::Create()
 
 bool SVPPQObject::Rebuild()
 {
-	_bstr_t bName;
-	HRESULT hr;
-
 	// Return if not created
 	if (!m_isCreated) { return false; }
 
@@ -476,12 +456,6 @@ bool SVPPQObject::Rebuild()
 	delete[] m_pMasterProductInfos;
 
 	m_pMasterProductInfos = nullptr;
-
-	// Create new data manager buffers of new size
-	bName = _T("PPQ Result Data");
-
-	hr = TheSVDataManager.CreateManagedIndexArray(m_pResultDataCircleBuffer, bName, GetPPQLength() + g_lPPQExtraBufferSize);
-	if (S_OK != hr) { return false; }
 
 	// Create buckets for the PPQ positions
 	m_ppPPQPositions.resize(GetPPQLength());
@@ -554,9 +528,6 @@ void SVPPQObject::Destroy()
 	m_UsedInputs.clear();
 	m_AllOutputs.clear();
 	m_UsedOutputs.clear();
-
-	// Destroy the managed index for the input circle buffer
-	m_pResultDataCircleBuffer.reset();
 
 	m_isCreated = false;
 }// end Destroy
@@ -789,9 +760,7 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 
 	pInspection->SetPPQIdentifier(GUID_NULL);
 
-	SVProductInfoStruct l_svProduct;
-
-	m_arInspections[i]->LastProductUpdate(&l_svProduct);
+	m_arInspections[i]->resetLastProcduct();
 
 	m_arInspections.erase(m_arInspections.begin() + i);
 
@@ -1009,19 +978,6 @@ void SVPPQObject::PrepareGoOnline()
 		if (m_qAvailableProductInfos.RemoveHead(&l_pProduct) && nullptr != l_pProduct)
 		{
 			HRESULT hRTemp = m_ppPPQPositions.SetProductAt(i, l_pProduct);
-
-			if (S_OK == hRTemp)
-			{
-				if (0 == i)
-				{
-					hRTemp = GetNextAvailableIndexes(l_pProduct->oPPQInfo, SV_PPQ);
-				}
-				else
-				{
-					hRTemp = TheSVDataManager.GetNextAvailableBufferIndex(m_pResultDataCircleBuffer, SV_PPQ, l_pProduct->oPPQInfo.m_ResultDataDMIndexHandle);
-				}
-			}
-
 			if (S_OK != hRTemp)
 			{
 				SvDef::StringVector msgList;
@@ -1325,8 +1281,6 @@ bool SVPPQObject::GoOffline()
 		std::string l_Name;
 
 		l_Name = SvUl::Format(_T("%s-%ld"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
-
-		DumpDMInfo(l_Name.c_str());
 
 		l_Name = SvUl::Format(_T("C:\\SVObserver\\%s-Counts-%ld.csv"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
 
@@ -1872,7 +1826,7 @@ bool SVPPQObject::AlwaysWriteOutputs() const
 	return (m_conditionalOutputName == PPQ_CONDITIONAL_OUTPUT_ALWAYS);
 }
 
-bool SVPPQObject::EvaluateConditionalOutput(long DataIndex) const
+bool SVPPQObject::EvaluateConditionalOutput() const
 {
 	bool bRetVal = AlwaysWriteOutputs();
 	if (!bRetVal)
@@ -1895,8 +1849,6 @@ bool SVPPQObject::EvaluateConditionalOutput(long DataIndex) const
 bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 {
 	bool bRet = true;
-	SVDataManagerHandle Handle;
-	long DataIndex(-1);
 
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
@@ -1910,13 +1862,11 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 	{
 		pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
 
-		DataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
-
 		if (!pProduct->bDataComplete)
 		{
 			SetProductIncomplete(*pProduct);
 			//Data index with -1 will return the default output values wich is required in this case
-			pProduct->oOutputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, -1, false, true);
+			pProduct->oOutputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
 		}
 
 #ifdef _DEBUG
@@ -1930,70 +1880,43 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 	if (!AlwaysWriteOutputs())
 	{
 		// get value that represents condition
-		bWriteOutputs = EvaluateConditionalOutput(DataIndex);
+		bWriteOutputs = EvaluateConditionalOutput();
 	}
 
-	GuidVariantPairVector OutputValues;
-	bool bNak{true};
+	GuidVariantPairVector OutputValues = pProduct->oOutputsInfo.m_Outputs;
+	pProduct->oOutputsInfo.m_OutputToggleResult = m_OutputToggle;
+	bool bNak = pProduct->oOutputsInfo.m_NakResult;
 
-	if (0 <= DataIndex)
+	if (bWriteOutputs)
 	{
-		OutputValues = pProduct->oOutputsInfo.m_Outputs;
-		pProduct->oOutputsInfo.m_OutputToggleResult = m_OutputToggle;
-		bNak = pProduct->oOutputsInfo.m_NakResult;
-	}
-	else
-	{
-		if (S_OK == TheSVDataManager.GetNextAvailableBufferIndex(m_pResultDataCircleBuffer, SV_PPQ, Handle))
+		bRet = m_pOutputList->WriteOutputs(OutputValues);
+		if (0 == m_DataValidDelay)
 		{
-			DataIndex = Handle.GetIndex();
-			ResetOutputValueObjects();
-			//Data index with -1 will return the default output values which is required in this case
-			OutputValues = m_pOutputList->getOutputValues(m_UsedOutputs, -1, false, true);
-		}
-
-		// Caution! enabling the logging here will cause thread contention because
-		// the tracking class is not lock-less. It needs more work before we can use it here.
-#ifdef EnableTracking
-		//m_PPQTracking.IncrementCount( _T( "Product Missing" ) );
-#endif
-	}
-
-	if (0 <= DataIndex)
-	{
-		if (bWriteOutputs)
-		{
-			bRet = m_pOutputList->WriteOutputs(OutputValues);
-			if (0 == m_DataValidDelay)
+			if (nullptr != m_pDataValid)
 			{
-				if (nullptr != m_pDataValid)
-				{
-					m_pOutputList->WriteOutputValue(m_pDataValid, _variant_t(pProduct->oOutputsInfo.m_DataValidResult));
-				}
-				if (nullptr != m_pOutputToggle)
-				{
-					m_pOutputList->WriteOutputValue(m_pOutputToggle, _variant_t(pProduct->oOutputsInfo.m_OutputToggleResult));
-				}
+				m_pOutputList->WriteOutputValue(m_pDataValid, _variant_t(pProduct->oOutputsInfo.m_DataValidResult));
 			}
-			else
+			if (nullptr != m_pOutputToggle)
 			{
-				// Set output data valid expire time
-				pProduct->oOutputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + pProduct->oOutputsInfo.m_DataValidDelay;
-				m_DataValidDelayQueue.AddTail(pProduct->ProcessCount());
+				m_pOutputList->WriteOutputValue(m_pOutputToggle, _variant_t(pProduct->oOutputsInfo.m_OutputToggleResult));
 			}
 		}
-		pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
-		long l_lTime = static_cast<long>(pProduct->oTriggerInfo.m_PushedOutputs - pProduct->oTriggerInfo.m_ToggleTimeStamp);
-		// Caution! enabling the logging here will cause thread contention because
-		// the tracking class is not lock-less. It needs more work before we can use it here.
+		else
+		{
+			// Set output data valid expire time
+			pProduct->oOutputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + pProduct->oOutputsInfo.m_DataValidDelay;
+			m_DataValidDelayQueue.AddTail(pProduct->ProcessCount());
+		}
+	}
+	pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
+	long l_lTime = static_cast<long>(pProduct->oTriggerInfo.m_PushedOutputs - pProduct->oTriggerInfo.m_ToggleTimeStamp);
+	// Caution! enabling the logging here will cause thread contention because
+	// the tracking class is not lock-less. It needs more work before we can use it here.
 #ifdef EnableTracking
 		//m_PPQTracking.IncrementTimeCount( _T( "Output Toggle"), l_lTime );
 #endif
-	}
-	else
-	{
-		bRet = false;
-	}
+
+
 
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
@@ -2304,15 +2227,6 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTrigger
 
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
-	HRESULT hr;
-
-	// Now we need to get the IO ready for this Product. Make sure that all locks are set
-	// and that all indexes are set correctly
-	// ************************************************************************
-	// Begin preparing the IO
-	// Get Next available indexes from THE Data Manager
-	hr = GetNextAvailableIndexes(pNewProduct->oPPQInfo, SV_PPQ);
-
 	for (auto& rInspection : pNewProduct->m_svInspectionInfos)
 	{
 		rInspection.second.setNextTriggerRecord();
@@ -2717,11 +2631,10 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 
 	BOOL bACK(false);
 	BOOL bNAK(true);
-	long DataIndex = rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 	m_PpqOutputs[PpqOutputEnums::ACK].GetValue(bACK);
 	m_PpqOutputs[PpqOutputEnums::NAK].GetValue(bNAK);
 
-	rProduct.oOutputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, DataIndex, bACK ? true : false, bNAK ? true : false);
+	rProduct.oOutputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
 	rProduct.oOutputsInfo.m_NakResult =  bNAK ? true : false;
 
 }
@@ -2888,11 +2801,7 @@ bool SVPPQObject::RecycleProductInfo(SVProductInfoStruct *pProduct)
 
 	if (nullptr != pProduct)
 	{
-		if (-1 < pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex())
-		{
-			ResetOutputValueObjects();
-		}
-
+		ResetOutputValueObjects();
 		pProduct->InitProductInfo();
 	}
 
@@ -3204,43 +3113,43 @@ bool SVPPQObject::IsProductAlive(long p_ProductCount) const
 	return l_Status;
 }
 
-HRESULT SVPPQObject::GetNextAvailableIndexes(SVPPQInfoStruct& p_rPPQInfo, SVDataManagerLockTypeEnum p_LockType) const
-{
-	HRESULT l_Status = TheSVDataManager.GetNextAvailableBufferIndex(m_pResultDataCircleBuffer, p_LockType, p_rPPQInfo.m_ResultDataDMIndexHandle);
-
-	return l_Status;
-}
-
 SVProductInfoStruct* SVPPQObject::GetProductInfoStruct(long processCount) const
 {
 	return m_ppPPQPositions.GetProductByTriggerCount(processCount);
 }
 
-bool SVPPQObject::ReserveNextRunOnceProductInfoStruct(SVProductInfoStruct& p_rsvProduct, SVDataManagerLockTypeEnum p_LockType)
+SVProductInfoStruct SVPPQObject::getProductReadyForRunOnce(const SVGUID& rIpGuid)
 {
-	p_rsvProduct.oPPQInfo.pPPQ = this;
-	p_rsvProduct.oTriggerInfo.pTrigger = m_pTrigger;
+	SVProductInfoStruct product;
+	product.m_pPPQ = this;
 
-	BuildCameraInfos(p_rsvProduct.m_svCameraInfos);
+	BuildCameraInfos(product.m_svCameraInfos);
 
-	p_rsvProduct.m_svInspectionInfos.clear();
+	bool bOk = product.setNextAvailableCameraImage();
 
-	for (auto pInspection : m_arInspections)
+	if (bOk)
 	{
-		SVInspectionInfoStruct& rInspectionStruct = p_rsvProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()];
+		auto pInspection = find_if(m_arInspections.begin(), m_arInspections.end(), [&rIpGuid](SVInspectionProcess* pIP) { return nullptr != pIP ? rIpGuid == pIP->GetUniqueObjectID() : false; });
 
-		rInspectionStruct.pInspection = pInspection;
-		rInspectionStruct.m_inspectionPosInTrc = SvTrc::getInspectionPos(pInspection->GetUniqueObjectID());
+		if (m_arInspections.end() != pInspection)
+		{
+			SVInspectionInfoStruct& rInspectionStruct = product.m_svInspectionInfos[(*pInspection)->GetUniqueObjectID()];
+			rInspectionStruct.pInspection = *pInspection;
+			rInspectionStruct.m_inspectionPosInTrc = SvTrc::getInspectionPos((*pInspection)->GetUniqueObjectID());
+			bOk = rInspectionStruct.setNextAvailableTR();
+		}
+		else
+		{
+			bOk = false;
+		}
 	}
 
-	bool l_bOk = (S_OK == p_rsvProduct.GetNextAvailableIndexes(p_LockType));
-
-	if (!l_bOk)
+	if (!bOk)
 	{
-		p_rsvProduct.Reset();
+		product.Reset();
 	}
 
-	return l_bOk;
+	return product;
 }
 
 bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
@@ -3273,14 +3182,6 @@ bool SVPPQObject::IsProductExpired(const SVProductInfoStruct* pProduct) const
 	else
 	{
 		return false;
-	}
-}
-
-void SVPPQObject::DumpDMInfo(LPCTSTR p_szName) const
-{
-	if (nullptr != m_pResultDataCircleBuffer)
-	{
-		m_pResultDataCircleBuffer->Dump(p_szName);
 	}
 }
 
@@ -3475,8 +3376,6 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 					::OutputDebugString(SvUl::Format(_T("Process Trigger TRI=%d, ProdActive=%d\n"), pProduct->ProcessCount(), pProduct->IsProductActive()).c_str());
 #endif
-
-					long lDataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
 					SvVol::BasicValueObjectPtr pPpqTriggerCount = m_PpqValues.getValueObject(SvDef::FqnPpqTriggerCount);
 					if(nullptr != pPpqTriggerCount)
@@ -4539,8 +4438,7 @@ bool SVPPQObject::SetupProductInfoStructs()
 	}
 	for (int j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
-		m_pMasterProductInfos[j].oPPQInfo.pPPQ = this;
-		m_pMasterProductInfos[j].oTriggerInfo.pTrigger = m_pTrigger;
+		m_pMasterProductInfos[j].m_pPPQ = this;
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 

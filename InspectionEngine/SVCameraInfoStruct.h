@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/function.hpp>
-#include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "TriggerRecordController/IImage.h"

@@ -199,7 +199,6 @@ namespace SvTi
 
 			l_Info.lTriggerCount = ++m_lTriggerCount;
 			l_Info.bValid = pResponse->isValid();
-			l_Info.pTrigger = this;
 
 			if ( m_pFinishProc )
 			{

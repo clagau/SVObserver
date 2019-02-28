@@ -139,12 +139,12 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 	{
 		if (UseRotation)
 		{
-			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord) : nullptr;
+			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
 			result = RunLocalRotation(rRunStatus, pInputBuffer, pOutputBuffer, rImageExtent);
 		}
 		else
 		{
-			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord);
+			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			result = RunLocal(rRunStatus, pInputImageBuffer, pOutputBuffer);
 		}
 	}
@@ -376,10 +376,7 @@ void SVLinearImageOperatorListClass::ResetLogicalROIImage()
 
 bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputBuffer, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
 {
-	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex = rRunStatus.m_lResultDataIndex;
-	ChildRunStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
-	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...
 	bool bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
@@ -406,7 +403,9 @@ bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStat
 			SVMatroxImageInterface::Rotate(pOutputBuffer->getHandle()->GetBuffer(), l_Rotate);
 		}
 
-
+		SVRunStatusClass ChildRunStatus;
+		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
+		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		// Run children...
 		for (int i = 0; i < GetSize(); i++)
 		{
@@ -437,6 +436,7 @@ bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStat
 
 			if (ChildRunStatus.IsCriticalFailure())	{rRunStatus.SetCriticalFailure();}
 		}
+		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 	}
 	return bRetVal;
 }

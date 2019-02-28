@@ -19,10 +19,8 @@ namespace SvTi
 		const SVTriggerInfoStruct& operator=( const SVTriggerInfoStruct& p_rsvObject );
 
 		void Reset();
-		void Init();
 
 		bool bValid;
-		class SVTriggerObject* pTrigger;
 		long lTriggerCount;
 		bool m_ToggleState;
 		SvTl::SVTimeStamp m_BeginProcess;

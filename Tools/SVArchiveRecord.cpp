@@ -277,7 +277,7 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 	return hr;
 }
 
-HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordRPtr pTriggerRecord)
+HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord)
 {
 	HRESULT hr = S_OK;
 	bool bOk;

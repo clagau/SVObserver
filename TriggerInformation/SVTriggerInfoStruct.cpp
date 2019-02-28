@@ -16,7 +16,6 @@ namespace SvTi
 {
 	SVTriggerInfoStruct::SVTriggerInfoStruct()
 	: bValid( false )
-	, pTrigger( nullptr )
 	, lTriggerCount( 0 )
 	, m_ToggleState( false )
 	, m_BeginProcess( 0 )
@@ -29,7 +28,6 @@ namespace SvTi
 
 	SVTriggerInfoStruct::SVTriggerInfoStruct( const SVTriggerInfoStruct& p_rsvObject )
 	: bValid( p_rsvObject.bValid )
-	, pTrigger( p_rsvObject.pTrigger )
 	, lTriggerCount( p_rsvObject.lTriggerCount )
 	, m_ToggleState( p_rsvObject.m_ToggleState )
 	, m_BeginProcess( p_rsvObject.m_BeginProcess )
@@ -43,7 +41,6 @@ namespace SvTi
 
 	SVTriggerInfoStruct::~SVTriggerInfoStruct()
 	{
-		Reset();
 	}
 
 	const SVTriggerInfoStruct& SVTriggerInfoStruct::operator=( const SVTriggerInfoStruct& p_rsvObject )
@@ -51,7 +48,6 @@ namespace SvTi
 		if( this != &p_rsvObject )
 		{
 			bValid = p_rsvObject.bValid;
-			pTrigger = p_rsvObject.pTrigger;
 			lTriggerCount	= p_rsvObject.lTriggerCount;
 			m_ToggleState = p_rsvObject.m_ToggleState;
 			m_BeginProcess = p_rsvObject.m_BeginProcess;
@@ -72,7 +68,6 @@ namespace SvTi
 	void SVTriggerInfoStruct::Reset()
 	{
 		bValid			= false;
-		pTrigger		= nullptr;
 		lTriggerCount	= 0;
 		m_ToggleState = false;
 		m_BeginProcess	= 0;
@@ -86,21 +81,4 @@ namespace SvTi
 		// *** // ***
 		m_Data = boost::any();
 	}// end Reset
-
-	void SVTriggerInfoStruct::Init()
-	{
-		bValid			= false;
-		lTriggerCount	= 0;
-		m_ToggleState = false;
-		m_BeginProcess	= 0;
-		m_ToggleTimeStamp = 0;
-		// *** // ***
-		// For Debugging Only
-		m_PushedOutputs		= 0;
-		m_PreviousTrigger	= 0;
-		m_CallbackReceived	= 0;
-		// *** // ***
-		m_Data = boost::any();
-	}// end Init
-
 } //namespace SvTi

@@ -18,7 +18,6 @@
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVDataManagerLibrary/DataManager.h"
 #include "Definitions/SVGigeEnums.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVDigitizerProcessingClass.h"

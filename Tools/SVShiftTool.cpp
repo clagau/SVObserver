@@ -306,7 +306,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		if (Result)
 		{
 			SvIe::SVImageClass* pImageInput = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput, true);
-			SvTrc::IImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord);
+			SvTrc::IImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;

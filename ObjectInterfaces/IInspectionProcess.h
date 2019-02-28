@@ -52,11 +52,6 @@ namespace SvOi
 		virtual HRESULT RunOnce() = 0;
 
 		/***********
-		This method gets the last product index
-		***********/
-		virtual long GetLastIndex() const = 0;
-
-		/***********
 		This method gets whether the inspection has a color camera
 		***********/
 		virtual bool IsColorCamera() const = 0;

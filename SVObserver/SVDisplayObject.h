@@ -21,7 +21,7 @@ class SVIPDoc;
 
 class SVDisplayObject : 
 	public SVObjectClass, 
-	public SVObserverTemplate< SVInspectionCompleteInfoStruct >,
+	public SVObserverTemplate< std::pair<SVInspectionInfoStruct, long> >,
 	public SVObserverTemplate< SVInspectionNameUpdate >,
 	public SVObserverTemplate< SVRemoveImages >,
 	public SVObserverTemplate< SVRemoveValues >,
@@ -32,7 +32,7 @@ public:
 	SVDisplayObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDISPLAYOBJECT );
 	virtual ~SVDisplayObject();
 
-	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const std::pair<SVInspectionInfoStruct, long>& p_rData ) override;
 	virtual HRESULT ObserverUpdate( const SVInspectionNameUpdate& p_rData ) override;
 	virtual HRESULT ObserverUpdate( const SVRemoveImages& p_rData ) override;
 	virtual HRESULT ObserverUpdate( const SVRemoveValues& p_rData ) override;
@@ -58,7 +58,7 @@ protected:
 	HRESULT ProcessInspectionComplete( bool& p_rProcessed );
 	HRESULT ProcessNotifyIPDoc( bool& p_rProcessed );
 
-	HRESULT FinishInspection( const SVInspectionCompleteInfoStruct& p_rProduct );
+	HRESULT FinishInspection( const std::pair<SVInspectionInfoStruct, long>& p_rProduct );
 
 	void UpdateNextDisplayEvent();
 

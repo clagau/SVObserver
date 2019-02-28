@@ -289,11 +289,11 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 			// Run equation friends...
 			SVRunStatusClass runStatus;
 
-			runStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
-			runStatus.m_triggerRecord = rRunStatus.m_triggerRecord;
+			runStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 			runStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 			runFriends( runStatus );
+			rRunStatus.m_triggerRecord = std::move(runStatus.m_triggerRecord);
 			if( ! runStatus.IsValid() )
 			{
 				l_Code = -15403;

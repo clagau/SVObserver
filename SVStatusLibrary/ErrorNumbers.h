@@ -505,9 +505,6 @@ namespace SvStl
 	static const int Err_17013_ErrorLockingInputRequests = BRW_ErrorBase + 13;
 	static const int Err_17014_ErrorUnlockingInputRequests = BRW_ErrorBase + 14;
 	static const int Err_17015_ErrorUnlockingInputRequests = BRW_ErrorBase + 15;
-	static const int Err_17016_ErrorLockingInputImageRequests = BRW_ErrorBase + 16;
-	static const int Err_17017_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 17;
-	static const int Err_17018_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 18;
 	static const int Err_17019_ErrorLockingInputRequests = BRW_ErrorBase + 19;
 	static const int Err_17020_ErrorRemovingAllInputRequests = BRW_ErrorBase + 20;
 	static const int Err_17021_ErrorUnlockingInputRequests = BRW_ErrorBase + 21;

@@ -841,7 +841,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 				SvIe::SVImageClass* pInputImage = GetInputImage(i, true);
 				if ( pInputImage )
 				{
-					SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+					SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 					if(nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 					{
 						if( m_dll.UseMil() )

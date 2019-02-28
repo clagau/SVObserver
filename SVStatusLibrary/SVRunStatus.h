@@ -67,7 +67,6 @@ public:
 	DWORD GetState() const;
 	DWORD GetStatusColor() const;
 
-	long m_lResultDataIndex {1};
 	long m_lTriggerCount {-1};	// TB
 	bool m_UpdateCounters {true};
 

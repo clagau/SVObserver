@@ -40,10 +40,10 @@ public:
 	HRESULT AttachOutput( SVOutputObject *pOutput );
 	HRESULT DetachOutput( const SVGUID& rOutputID );
 
-	GuidVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK);
+	GuidVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool p_ACK, bool p_NAK);
 	bool ResetOutputs(SVIOEntryHostStructPtrVector& rIOEntries);
 	bool WriteOutputs(const GuidVariantPairVector& rOutputValues);
-	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
+	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool p_ACK, bool p_NAK );
 	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
 	bool ResetOutput( SVIOEntryHostStructPtr pIOEntry );
 	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
@@ -58,7 +58,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 private:
-	std::pair<GUID, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
+	std::pair<GUID, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool p_ACK, bool p_NAK );
 
 	void ClearOutputList();
 

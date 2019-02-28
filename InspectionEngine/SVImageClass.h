@@ -107,8 +107,7 @@ public:
 	/// \param pTriggerRecord [in] Pointer to the TriggerRecord from where the image is set.
 	/// \param lockImage (default:false) [int] If true image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
 	/// \returns SvTrc::IImagePtr
-	SvTrc::IImagePtr getImageReadOnly(const SvTrc::ITriggerRecordRPtr& pTriggerRecord, bool lockImage = false) const;
-	SvTrc::IImagePtr getImageReadOnly(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) const;
+	SvTrc::IImagePtr getImageReadOnly(const SvTrc::ITriggerRecordR* pTriggerRecord, bool lockImage = false) const;
 	SvTrc::IImagePtr getImageToWrite(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
 
 #pragma region virtual method (ISVImage)

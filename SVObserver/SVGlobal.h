@@ -22,10 +22,7 @@
 typedef std::map<int, SvDef::StringPair > IntStrPairMap;
 
 class SVObserverApp;
-class SVDataManager;
-
 extern SVObserverApp TheSVObserverApp;
-extern SVDataManager TheSVDataManager;
 
 enum SVGetPathInfo
 {

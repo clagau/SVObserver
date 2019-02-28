@@ -51,7 +51,7 @@ public:
 	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap);
 	HRESULT QueueImage(SvTrc::IImagePtr& rImage, const std::string& rFileName );
 	HRESULT WriteImageQueue();
-	HRESULT WriteImage(const SvTrc::ITriggerRecordRPtr pTriggerRecord);
+	HRESULT WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord);
 	static HRESULT WriteImage( SVMatroxBuffer& buf, const std::string& rFileName );
 
 	void Init( SVArchiveTool* pArchiveTool );

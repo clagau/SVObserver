@@ -234,26 +234,6 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 	return bOk;
 }
 
-// Write Outputs with the supplied PPQ name.
-HRESULT SVRemoteOutputDataController::WriteOutputs( const std::string& rRemoteGroupID, SVProductInfoStruct *pProduct)
-{
-	HRESULT hr = S_FALSE;
-
-	if( nullptr != pProduct && (m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupID ) ) )
-	{
-		long l_lOutputIndex=-1;
-		l_lOutputIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
-
-		// parameters for a Remote Output Group
-		SVRemoteOutputGroup* l_RemoteGroupPar = m_RemoteGroupParameters[rRemoteGroupID];
-
-		//  Implement Write Function....
-		OutputDebugString(_T("Write Outputs Function\n"));
-	}
-	return hr;
-
-} // end WriteOutputs(...
-
 // Gets the last remote output object with in this group.
 SVRemoteOutputObject* SVRemoteOutputDataController::GetLastObject( const std::string& rRemoteGroupId )
 {

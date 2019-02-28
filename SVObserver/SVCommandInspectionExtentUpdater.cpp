@@ -79,17 +79,11 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 	if( nullptr != pInspection && nullptr != pTool)
 	{
-		SVProductInfoStruct svProduct = pInspection->LastProductGet();
-
-		SVDataManagerHandle dMIndexHandle;
-
-		svProduct.GetResultDataIndex( dMIndexHandle );
 		bool ResetModeAuto(true);
 		if(m_ResetMode == ResetMode_Inspection || m_ResetMode == ResetMode_ToolList ||  m_mode == ExtentUpdaterMode_ForwardExtent)
 		{
 			ResetModeAuto = false;
 		}
-		int index = dMIndexHandle.GetIndex();
 		switch (m_mode)
 		{
 		case ExtentUpdaterMode_SetImageExtent:

@@ -20,7 +20,6 @@
 #include "SVCommand.h"
 
 #include "SVLibrary/DirectoryUtilities.h"
-#include "SVDataManagerLibrary/DataManager.h"
 #include "SVCommandLibrary/SVFileSystemCommandFactory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxCommandFactory.h"
@@ -1115,10 +1114,6 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 			if (nullptr != ObjectRef.getObject())
 			{
-				SVDataManagerHandle	l_BucketHandle;
-
-				l_ProductInfo.GetResultDataIndex(l_BucketHandle);
-
 				if (!ObjectRef.isEntireArray())
 				{
 					HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, ObjectRef.getValidArrayIndex());
@@ -1848,7 +1843,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 				if (nullptr != ObjectRef.getObject())
 				{
-					ProcessCount = pInspection->LastProductGet().ProcessCount();
+					ProcessCount = pInspection->getLastProductData().first.lTriggerCount;
 
 					if (!ObjectRef.isEntireArray())
 					{

@@ -579,7 +579,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 		const SVImageExtentClass& rExtents = m_outputImage.GetImageExtents();
 
-		SvTrc::IImagePtr pInputImageBuffer = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, true)->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pInputImageBuffer = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		result = result && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty();
 
 		if (!result && nullptr != pErrorMessages)

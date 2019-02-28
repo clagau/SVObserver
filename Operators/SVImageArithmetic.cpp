@@ -256,8 +256,8 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			return false;
 		}
 
-		SvTrc::IImagePtr pImageBufferA = pImageA->getImageReadOnly(rRunStatus.m_triggerRecord);
-		SvTrc::IImagePtr pImageBufferB = pImageB->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pImageBufferA = pImageA->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvTrc::IImagePtr pImageBufferB = pImageB->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		SvTrc::IImagePtr pOutputImageBuffer = pOutputImage->getImageToWrite(rRunStatus.m_triggerRecord);
 
 		if ( nullptr != pImageBufferA && !pImageBufferA->isEmpty() &&

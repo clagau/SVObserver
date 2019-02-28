@@ -47,8 +47,8 @@ HRESULT SVCommandInspectionGetItems::Execute()
 
 	if (nullptr != m_Inspection)
 	{
-		SVProductInfoStruct Product = m_Inspection->LastProductGet();
-		unsigned long TriggerCount = Product.ProcessCount();
+		auto product = m_Inspection->getLastProductData();
+		unsigned long TriggerCount = product.first.lTriggerCount;
 
 		for (SVNameObjectSet::const_iterator Iter = m_ItemNames.begin(); SUCCEEDED(Status) && Iter != m_ItemNames.end(); ++Iter)
 		{
@@ -68,7 +68,7 @@ HRESULT SVCommandInspectionGetItems::Execute()
 				}
 				else if( nullptr != (pImage = dynamic_cast<SvIe::SVImageClass*> (pObject)) )
 				{
-					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount, Product.m_svInspectionInfos[pImage->GetInspection()->GetUniqueObjectID()].m_triggerRecordComplete);
+					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount, product.second.m_triggerRecordComplete);
 				}
 				else
 				{
@@ -127,7 +127,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 
 		SVStorage Storage;
 		unsigned long TriggerCount = TriggerCnt;
-		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord);
+		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 		
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{

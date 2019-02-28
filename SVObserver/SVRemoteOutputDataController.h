@@ -22,7 +22,6 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-struct SVProductInfoStruct;
 class SVConfigurationObject;
 
 class SVRemoteOutputDataController : public SVObjectClass
@@ -47,9 +46,6 @@ public:
 	BOOL SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
 
 	void Destroy();
-
-	// Writes Outputs for a RemoteOutput name.
-	HRESULT WriteOutputs( const std::string& rRemoteGroupId, SVProductInfoStruct *pProduct);
 
 	// Gets the last RemoteOutput object in the list
 	SVRemoteOutputObject* GetLastObject( const std::string& rRemoteGroupId );

@@ -51,29 +51,26 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 	if( nullptr != pInspection )
 	{
-		SVProductInfoStruct l_Product = pInspection->LastProductGet( );
-
-		SVInspectionInfoStruct& l_rIPInfo = l_Product.m_svInspectionInfos[ GetInspectionId() ];
-
+		auto product = pInspection->getLastProductData();
 		double l_TriggerDistance = 0.0f;
 		double l_ToolSetTime = 0.0f;
 
-		if( l_Product.oTriggerInfo.m_PreviousTrigger > 0 )
+		if(product.first.m_PreviousTrigger > 0 )
 		{
-			l_TriggerDistance = (double) ( l_Product.oTriggerInfo.m_BeginProcess - l_Product.oTriggerInfo.m_PreviousTrigger );
+			l_TriggerDistance = (double) (product.first.m_BeginProcess - product.first.m_PreviousTrigger );
 		}
 
-		if( ( l_rIPInfo.m_BeginToolset > 0 ) &&	( l_rIPInfo.m_EndToolset > 0 ) )
+		if( (product.second.m_BeginToolset > 0 ) &&	(product.second.m_EndToolset > 0 ) )
 		{
-			l_ToolSetTime = (double) ( l_rIPInfo.m_EndToolset - l_rIPInfo.m_BeginToolset );
+			l_ToolSetTime = (double) (product.second.m_EndToolset - product.second.m_BeginToolset );
 		}
 
-		m_Product.m_TriggerCount = l_Product.ProcessCount();
+		m_Product.m_TriggerCount = product.first.lTriggerCount;
 
 		UpdateResults( pInspection, m_Product.m_ResultData );
 
-		m_Product.m_ResultData.m_ToolSetEndTime = l_rIPInfo.m_ToolSetEndTime;
-		m_Product.m_ResultData.m_ToolSetAvgTime = l_rIPInfo.m_ToolSetAvgTime;
+		m_Product.m_ResultData.m_ToolSetEndTime = product.second.m_ToolSetEndTime;
+		m_Product.m_ResultData.m_ToolSetAvgTime = product.second.m_ToolSetAvgTime;
 		m_Product.m_ResultData.m_ToolSetTime = l_ToolSetTime;
 		m_Product.m_ResultData.m_TriggerDistance = l_TriggerDistance;
 
@@ -91,7 +88,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 				::Sleep( 0 );
 
-				if( S_OK == UpdateBuffer( l_ImageId, l_rIPInfo.m_triggerRecordComplete, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
+				if( S_OK == UpdateBuffer( l_ImageId, product.second.m_triggerRecordComplete, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
 				{
 					::Sleep( 0 );
 
@@ -164,7 +161,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 
 	if( nullptr != pImage && nullptr != pTriggerRecord )
 	{
-		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord);
+		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 
 		if(nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{

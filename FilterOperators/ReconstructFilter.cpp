@@ -55,7 +55,7 @@ bool ReconstructFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputIma
 	auto* pSeedImage = SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo);
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty() && nullptr != pSeedImage )
 	{
-		SvTrc::IImagePtr pSeedImageBuffer = pSeedImage->getImageReadOnly(rRunStatus.m_triggerRecord);
+		SvTrc::IImagePtr pSeedImageBuffer = pSeedImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		SvOi::SVImageBufferHandlePtr pSeedBuffer = (nullptr != pSeedImageBuffer) ? pSeedImageBuffer->getHandle() : nullptr;
 		if (nullptr != pSeedBuffer && !pSeedBuffer->empty())
 		{

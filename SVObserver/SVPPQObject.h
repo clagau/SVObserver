@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVContainerLibrary/SVRingBuffer.h"
-#include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -51,7 +50,7 @@ constexpr long getMaxPpqLength()
 
 class SVPPQObject : 
 	public SVObjectClass,
-	public SVObserverTemplate< SVInspectionCompleteInfoStruct >
+	public SVObserverTemplate< std::pair<SVInspectionInfoStruct, long> >
 {
 	enum PpqOutputEnums
 	{
@@ -78,7 +77,7 @@ public:
 	void SetNAKMode(SvDef::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const std::pair<SVInspectionInfoStruct, long>& p_rData ) override;
 
 	bool Create();
 	bool Rebuild();
@@ -147,7 +146,7 @@ public:
 	bool IsProductExpired( const SVProductInfoStruct* pProduct ) const;
 	HRESULT GetProduct( SVProductInfoStruct& p_rProduct, long lProcessCount ) const;
 
-	bool ReserveNextRunOnceProductInfoStruct( SVProductInfoStruct& p_rsvProduct, SVDataManagerLockTypeEnum p_LockType = SV_PPQ );
+	SVProductInfoStruct getProductReadyForRunOnce( const SVGUID& ipGuid  );
 
 	void AddInput( SVIOEntryHostStructPtr pInput );
 	bool RemoveInput( SVIOEntryHostStructPtr pInput );
@@ -190,11 +189,7 @@ public:
 	//************************************
 	bool FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
 
-	void DumpDMInfo( LPCTSTR p_szName ) const;
-
 	bool IsProductAlive( long p_ProductCount ) const;
-
-	HRESULT GetNextAvailableIndexes( SVPPQInfoStruct& p_rPPQInfo, SVDataManagerLockTypeEnum p_LockType ) const;
 
 	SVInputObjectList*    m_pInputList;
 	SVOutputObjectList*   m_pOutputList;
@@ -440,9 +435,6 @@ protected:
 	SVProductInfoStruct*  m_pMasterProductInfos;
 	SVProductPointerQueue m_qAvailableProductInfos;
 
-	// DataManager index handles
-	SVSmartIndexArrayHandlePtr m_pResultDataCircleBuffer;
-
 	// Value Objects used by the PPQ
 	SvVol::SVBoolValueObjectClass  m_PpqOutputs[PpqOutputEnums::OutputNr];
 
@@ -461,7 +453,7 @@ private:
 	void AssignCameraToAcquisitionTrigger();
 	bool ResolveConditionalOutput();
 	bool AlwaysWriteOutputs() const;
-	bool EvaluateConditionalOutput(long DataIndex) const;
+	bool EvaluateConditionalOutput() const;
 	void init();
 
 #ifdef EnableTracking
