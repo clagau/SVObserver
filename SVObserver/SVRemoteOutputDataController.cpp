@@ -26,6 +26,7 @@
 #include "SVObserver.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -442,9 +443,12 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs( const std::string& rRem
 	{
 		if( m_RemoteGroupParameters.find( rRemoteGroupID ) == m_RemoteGroupParameters.end() )
 		{
-			SVRemoteOutputObject* l_pNewOutput = nullptr;
-			
-			AddItem( rRemoteGroupID, l_pNewOutput, pPPQ->m_voTriggerCount.GetUniqueObjectID(), pPPQ->GetName() );
+			SVRemoteOutputObject* pNewOutput = nullptr;
+			SvVol::BasicValueObjectPtr pPpqTriggerCount =  pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);
+			if(nullptr != pPpqTriggerCount)
+			{
+				AddItem( rRemoteGroupID, pNewOutput, pPpqTriggerCount->GetUniqueObjectID(), pPPQ->GetName() );
+			}
 		}
 		l_hr = S_OK;
 	}

@@ -343,11 +343,21 @@ void SVPPQObject::init()
 		m_childObjects.push_back(&rOutput);
 	}
 
+	SvVol::BasicValueObjectPtr pPpqTriggerCount = m_PpqValues.setValueObject(SvDef::FqnPpqTriggerCount, 0L, this);
 	SvVol::BasicValueObjectPtr pPpqLength = m_PpqValues.setValueObject(SvDef::FqnPpqLength, StandardPpqLength, this);
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 
-	m_childObjects.push_back(&m_voTriggerCount);
-	m_childObjects.push_back(pPpqLength.get());
+	if(nullptr != pPpqTriggerCount)
+	{
+		//PPQ Trigger Count should never be used as it is not synchronous to the inspection rather use the Tool Set.Trigger Count
+		UINT attribute = SvPb::selectableForEquation | SvPb::selectableForStatistics | SvPb::archivable;
+		pPpqTriggerCount->SetObjectAttributesAllowed(attribute, SvOi::SetAttributeType::RemoveAttribute);
+		m_childObjects.push_back(pPpqTriggerCount.get());
+	}
+	if(nullptr != pPpqLength)
+	{
+		m_childObjects.push_back(pPpqLength.get());
+	}
 }
 
 HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
@@ -2193,15 +2203,6 @@ void SVPPQObject::AddDefaultOutputs()
 		}
 	}
 
-	// This value object is used as the first default PLC output.
-	m_voTriggerCount.SetName(_T("Trigger Count"));
-	m_voTriggerCount.SetObjectOwner(this);
-	m_voTriggerCount.ResetObject();
-	m_voTriggerCount.SetDefaultValue(0L, true);
-	m_voTriggerCount.SetValue(0L);
-
-	SvVol::BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
-	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
 	std::string PpqName = GetName();
 	long PpqID(0);
 	const size_t PpqFixedNameLength = strlen(SvDef::cPpqFixedName);
@@ -2211,11 +2212,18 @@ void SVPPQObject::AddDefaultOutputs()
 		//Zero based PPQ ID, note PPQ name is one based!
 		PpqID--;
 	}
+	SvVol::BasicValueObjectPtr pPpqTriggerCount = m_PpqValues.getValueObject(SvDef::FqnPpqTriggerCount);
+	SvVol::BasicValueObjectPtr pPpqLength = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
+	SVGUID PpqTriggerCountUid = PpqBaseTriggerCountUidGuid;
+	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
 	//Make sure it is above 0
 	if (0 <= PpqID && nullptr != pPpqLength)
 	{
+		PpqTriggerCountUid.ToGUID().Data1 += PpqID;
 		PpqLengthUid.ToGUID().Data1 += PpqID;
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPpqTriggerCount.get(), PpqTriggerCountUid);
 		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPpqLength.get(), PpqLengthUid);
+		pPpqTriggerCount->SetObjectOwner(this);
 		pPpqLength->SetObjectOwner(this);
 	}
 }// end AddDefaultOutputs
@@ -3470,7 +3478,11 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 
 					long lDataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
-					m_voTriggerCount.SetValue(poppedFromQueue.m_TriggerInfo.lTriggerCount);
+					SvVol::BasicValueObjectPtr pPpqTriggerCount = m_PpqValues.getValueObject(SvDef::FqnPpqTriggerCount);
+					if(nullptr != pPpqTriggerCount)
+					{
+						pPpqTriggerCount->setValue(poppedFromQueue.m_TriggerInfo.lTriggerCount);
+					}
 
 					m_oNotifyInspectionsSet.insert(pProduct->ProcessCount());
 

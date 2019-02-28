@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVRemoteOutputEditDialog, CDialog)
@@ -98,14 +99,19 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			lSize = static_cast<long>(ppIOEntries.size());
 
 			// Put the Trigger Count in the list.
-			SVObjectClass* pCurrentObject = &pPPQ->m_voTriggerCount;
-			int iIndex = m_ValueObjectNameCombo.AddString( pCurrentObject->GetCompleteName().c_str() );
-			m_TriggerCount->setObject(pCurrentObject);
-			m_TriggerCount->m_DeleteValueObject = false;
-			m_Items.SetItemData( iIndex, m_TriggerCount );
 
-			pCurrentObject = SVObjectManagerClass::Instance().GetObject( m_InputObjectGUID);
+			SvVol::BasicValueObjectPtr pPpqTriggerCount = pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);
+			if (nullptr != pPpqTriggerCount)
+			{
+				SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pPpqTriggerCount.get());
+				int iIndex = m_ValueObjectNameCombo.AddString(pObject->GetCompleteName().c_str() );
+				m_TriggerCount->setObject(pObject);
+				m_TriggerCount->m_DeleteValueObject = false;
+				m_Items.SetItemData( iIndex, m_TriggerCount );
 
+			}
+
+			SVObjectClass* pCurrentObject = SVObjectManagerClass::Instance().GetObject(m_InputObjectGUID);
 			// Init IO combo from m_ppIOEntries;
 			for( int i = 0; i < lSize; i++ )
 			{

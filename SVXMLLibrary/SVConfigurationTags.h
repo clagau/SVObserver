@@ -43,7 +43,6 @@ namespace  SvXml
 	LPCTSTR const CTAG_PPQ_MAINTAIN_SRC_IMAGE         = (_T("PPQMaintainSrcImage"));
 	LPCTSTR const CTAG_PPQ_INSPECTION_TIMEOUT         = (_T("PPQInspectionTimeout"));
 	LPCTSTR const CTAG_PPQ_OUTPUT_RESET_DELAY_TIME    = (_T("PPQOutputResetDelayTime"));
-	LPCTSTR const CTAG_PPQ_TRIGGER_COUNT_ID           = (_T("PPQTriggerCountID"));
 	LPCTSTR const CTAG_PPQ_CONDITIONAL_OUTPUT         = (_T("PPQConditonalOutput"));
 	LPCTSTR const CTAG_PPQ_OUTPUT_DELAY_TIME          = (_T("PPQOutputDelayTime"));
 	LPCTSTR const CTAG_INSPECTION_FILE_NAME           = (_T("InspectionFileName"));

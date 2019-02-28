@@ -98,6 +98,7 @@ namespace SvDef
 	const TCHAR* const FqnCameraGain = _T("Gain");
 	//! PPQ FQN names
 	const TCHAR* const FqnPpqLength = _T("Length");
+	const TCHAR* const FqnPpqTriggerCount = _T("Trigger Count");
 	//! PPQ Variables FQN names
 	const TCHAR* const FqnRemoteInput = _T(".Remote Input");
 	const TCHAR* const FqnDioInput = _T(".DIO.Input");

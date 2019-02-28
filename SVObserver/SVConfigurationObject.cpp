@@ -2091,18 +2091,6 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 			}
 		}
 
-		bool bTmp = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_TRIGGER_COUNT_ID, hSubChild, Value);
-		if (bTmp)
-		{
-			SVGUID UniqueID(Value);
-
-			SVObjectManagerClass::Instance().CloseUniqueObjectID(&pPPQ->m_voTriggerCount);
-
-			pPPQ->m_voTriggerCount.m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
-			SVObjectManagerClass::Instance().OpenUniqueObjectID(&pPPQ->m_voTriggerCount);
-		}
-
 		bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_TRIGGER, hSubChild, hDeviceChild);
 
 		if (bOk)
@@ -3361,11 +3349,6 @@ void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter
 	rPPQ.GetInspectionTimeout(lInspectionTimeout);
 	svValue = lInspectionTimeout;
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_INSPECTION_TIMEOUT, svValue);
-	svValue.Clear();
-
-	SVGUID l_PPQTriggerCountGUID = rPPQ.m_voTriggerCount.GetUniqueObjectID();
-	svValue = l_PPQTriggerCountGUID.ToVARIANT();
-	rWriter.WriteAttribute(SvXml::CTAG_PPQ_TRIGGER_COUNT_ID, svValue);
 	svValue.Clear();
 
 	// Conditional Output.

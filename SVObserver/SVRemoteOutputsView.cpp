@@ -28,6 +28,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -554,7 +555,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				std::string RemoteGroup = pRemoteOutput->GetGroupID();
 
 				bool bFirst = (pConfig->GetFirstRemoteOutputObject( RemoteGroup ) == pRemoteOutput); 
-				size_t pos = pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") );
+				size_t pos = pRemoteOutput->GetInputValueObjectName().find(SvDef::FqnPpqTriggerCount);
 				if( bFirst && pos != std::string::npos )
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
@@ -643,7 +644,8 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 			ASSERT( nullptr != pPPQ );
 			if( nullptr != pPPQ )
 			{ 
-				dlg.m_InputObjectGUID = pPPQ->m_voTriggerCount.GetUniqueObjectID();
+				SvVol::BasicValueObjectPtr pPpqTriggerCount = pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);
+				dlg.m_InputObjectGUID = (nullptr != pPpqTriggerCount) ? pPpqTriggerCount->GetUniqueObjectID() : GUID_NULL;
 				dlg.m_GroupName = RemoteGroup;
 
 				if( dlg.DoModal() == IDOK )

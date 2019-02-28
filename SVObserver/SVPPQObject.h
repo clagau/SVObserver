@@ -199,8 +199,7 @@ public:
 	SVInputObjectList*    m_pInputList;
 	SVOutputObjectList*   m_pOutputList;
 
-	SvVol::SVLongValueObjectClass m_voTriggerCount;
-
+	SvVol::BasicValueObjectPtr getPpqVaraible(LPCTSTR Name) { return m_PpqValues.getValueObject(Name); }
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
 
 	SvTi::SVCameraTriggerData& GetCameraInputData();
