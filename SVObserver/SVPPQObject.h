@@ -142,6 +142,7 @@ public:
 	void GoOnline();
 	bool GoOffline();
 	bool IsOnline() const;
+	void setOnline() { m_bOnline = true; }
 
 	bool IsProductExpired( const SVProductInfoStruct* pProduct ) const;
 	HRESULT GetProduct( SVProductInfoStruct& p_rProduct, long lProcessCount ) const;

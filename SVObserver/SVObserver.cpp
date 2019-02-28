@@ -4576,9 +4576,24 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 
 				SetAllIPDocumentsOnline();
 
-				SVSVIMStateClass::AddState(SV_STATE_TEST);
 				SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
+ 				SVSVIMStateClass::AddState(SV_STATE_TEST);
 
+				//Now that we are in the test state we allow trigger processing!
+				try
+				{
+					StartTrigger(pConfig);
+				}
+				catch(const SvStl::MessageContainer& rExp)
+				{
+					OnStop();
+
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Exception.setMessage(rExp.getMessage());
+					return;
+				}
+
+				 //Module ready should be the last set!
 				if (nullptr != pConfig) { pConfig->SetModuleReady(true); }
 
 				SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
@@ -5207,6 +5222,12 @@ void SVObserverApp::Start()
 			}
 		}
 
+		SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
+		SVSVIMStateClass::AddState(SV_STATE_RUNNING);
+		//Now that we are in the running state we allow trigger processing!
+		StartTrigger(pConfig);
+
+		//Module ready should be the last set!
 		if (pConfig->SetModuleReady(true) != S_OK)
 		{
 			RunAllIPDocuments();
@@ -5215,20 +5236,18 @@ void SVObserverApp::Start()
 			throw Exception;
 		}// end if
 
-		SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
-
 		std::string TriggerCounts;
 		GetTriggersAndCounts(TriggerCounts);
 		l_FinishLoad = SvTl::GetTimeStamp();
 		long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-
 		SvDef::StringVector msgList;
 		msgList.push_back(TriggerCounts);
 		msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
-
 		//add go-online message to the event viewer.
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvStl::Tid_GoOnlineTime, msgList, SvStl::SourceFileParams(StdMessageParams));
+
+		SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
 
 		if (SVSoftwareTriggerDlg::Instance().HasTriggers())
 		{
@@ -5238,10 +5257,6 @@ void SVObserverApp::Start()
 		{
 			DisableTriggerSettings();
 		}
-
-		SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
-		SVSVIMStateClass::AddState(SV_STATE_RUNNING);
-
 		SetThreadPriority(THREAD_PRIORITY_BELOW_NORMAL);
 	}// end if
 
@@ -5475,6 +5490,48 @@ bool SVObserverApp::DetermineConfigurationSaveName()
 		return false;
 	}
 	return true;
+}
+
+void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
+{
+	//The pointer is usually checked by the caller
+	if(nullptr != pConfig)
+	{
+		SvStl::MessageContainer Msg;
+		long ppqCount = pConfig->GetPPQCount();
+		for (long i = 0; i < ppqCount && 0 == Msg.getMessage().m_MessageCode; i++)
+		{
+			auto* pPPQ = pConfig->GetPPQ(i);
+			if (nullptr != pPPQ)
+			{
+				SvTi::SVTriggerObject* pTrigger(nullptr);
+				pPPQ->GetTrigger(pTrigger);
+				if (nullptr != pTrigger)
+				{
+					pPPQ->setOnline();
+					if (!pTrigger->Start())
+					{
+						SvDef::StringVector msgList;
+						msgList.push_back(pTrigger->GetName());
+						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams));
+					}
+				}
+			}
+		}
+		if(0 != Msg.getMessage().m_MessageCode)
+		{
+			//If an error has occurred need to clean up
+			for (long i = 0; i < ppqCount; i++)
+			{
+				auto* pPPQ = pConfig->GetPPQ(i);
+				if (nullptr != pPPQ)
+				{
+					pPPQ->GoOffline();
+				}
+			}
+			throw Msg;
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////

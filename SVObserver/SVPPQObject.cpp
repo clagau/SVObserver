@@ -1243,8 +1243,6 @@ void SVPPQObject::GoOnline()
 	// Kick the threads up a notch, for real!
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_HIGHEST);
 
-	m_bOnline = true;
-
 	// This snippet of code here apears to do nothing, but it is actually 
 	// initializing the RTTI for the output object parents.  This insures that there 
 	// is no appreciable delay in the writeOutputs function that uses dynaic_cast.

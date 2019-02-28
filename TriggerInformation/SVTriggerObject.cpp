@@ -114,11 +114,11 @@ namespace SvTi
 			m_StatusLog.clear();
 		#endif
 
-		if ( nullptr != mpsvDevice && ! mpsvDevice->IsStarted() )
+		if ( nullptr != mpsvDevice && !mpsvDevice->IsRegistered())
 		{
 		  bOk = S_OK == mpsvDevice->RegisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice );
 		}
-		return bOk && nullptr != mpsvDevice && ( S_OK == mpsvDevice->Start() );
+		return bOk;
 	}
 
 	bool SVTriggerObject::GoOffline()
@@ -127,11 +127,10 @@ namespace SvTi
 
 	  if ( nullptr != mpsvDevice )
 	  {
-		bool l_bIsStarted = mpsvDevice->IsStarted();
-  
+
 		bOk = S_OK == mpsvDevice->Stop();
 
-		if ( l_bIsStarted )
+		if ( mpsvDevice->IsRegistered() )
 		{
 		  bOk = S_OK == mpsvDevice->UnregisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice ) && bOk;
 		}
@@ -157,6 +156,11 @@ namespace SvTi
 
 	  return bOk;  
 	}// end GoOffline
+
+	bool SVTriggerObject::Start()
+	{ 
+		return (nullptr != mpsvDevice) && (S_OK == mpsvDevice->Start());
+	}
 
 	bool SVTriggerObject::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc )
 	{

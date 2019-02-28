@@ -46,6 +46,8 @@ namespace SvTi
 		bool GoOnline();
 		bool GoOffline();
 
+		bool Start();
+
 		bool RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 		bool UnregisterFinishProcess( void *pOwner );
 

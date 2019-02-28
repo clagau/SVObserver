@@ -20,18 +20,12 @@ VOID CALLBACK SVODeviceClass::APCProc( ULONG_PTR dwParam )
 This constructor initializes the attributes to the desired default values.
 */
 SVODeviceClass::SVODeviceClass()
-: mbIsCreated(false),  
-	mbIsValid(false), 
-	mbIsStarted(false),
-	mUsedQueue( 10 )
+: mUsedQueue( 10 )
 {
 }
 
 SVODeviceClass::SVODeviceClass(LPCTSTR deviceName)
 : m_DeviceName(deviceName), 
-	mbIsCreated(false),  
-	mbIsValid(false), 
-	mbIsStarted(false),
 	mUsedQueue( 10 )
 {
 }
@@ -165,6 +159,7 @@ HRESULT SVODeviceClass::RegisterCallback(SVOCallbackPtr pCallback, void *pvOwner
 
 					if ( m_CallbackList.AddTail( pData ) )
 					{
+						m_IsRegistered = true;
 						hrOk = S_OK;
 					}
 					else
@@ -230,6 +225,7 @@ HRESULT SVODeviceClass::UnregisterCallback(SVOCallbackPtr pCallback, void *pvOwn
 						{
 							if ( m_CallbackList.RemoveAt( l ) )
 							{
+								m_IsRegistered = false;
 								hrOk = S_OK;
 							}
 						}
@@ -291,6 +287,8 @@ HRESULT SVODeviceClass::UnregisterAllCallbacks()
 					hrOk = -4362;
 				}
 			}
+
+			m_IsRegistered = false;
 
 			m_CallbackList.Unlock();
 		}

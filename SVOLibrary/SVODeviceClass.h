@@ -41,6 +41,7 @@ public:
 
 	virtual bool IsValid() const;
 	virtual bool IsStarted() const;
+	virtual bool IsRegistered() const { return m_IsRegistered; }
 
 	virtual void ClearDevice();
 
@@ -99,11 +100,13 @@ private:
 	HRESULT DestroyLocal();
 
 	//This attribute holds the creation state of this object.
-	bool mbIsCreated;
+	bool mbIsCreated {false};
 	//This attribute holds the validity state of this object.
-	bool mbIsValid;
+	bool mbIsValid {false};
 	//This attribute holds the processing state of this object.
-	bool mbIsStarted;
+	bool mbIsStarted {false};
+	//This attribute holds the registered state of this object.
+	bool m_IsRegistered {false};
 
 	//This attribute holds the handle to the application thread.
 	SVAsyncProcedure< SVAPCFunctionPtr, SVProcessFunctorImpl > m_Thread;

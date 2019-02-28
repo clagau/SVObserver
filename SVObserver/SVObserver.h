@@ -318,6 +318,9 @@ private:
 
 	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
 
+	//Function can throw an exception!
+	void StartTrigger(SVConfigurationObject* pConfig);
+
 
 #pragma endregion Private Methods
 
