@@ -41,12 +41,8 @@ if ($memory -gt 12)
     echo "Could not format imdisk for V-drive"
     write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0
   }
-  # Wait 5 Seconds
-  Start-Sleep -s 20
   # On a good run through InitializeIOSubsystem takes 13 seconds on both 
   C:\SVObserver\bin\InitializeIOSubsystem.exe
-  # Wait 5 Seconds
-  Start-Sleep -s 20
 }
 else
 {
