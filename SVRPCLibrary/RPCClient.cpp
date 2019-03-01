@@ -449,7 +449,7 @@ void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 	auto client = m_WebsocketClient;
 	if (client)
 	{
-		client->sendBinaryMessage(buf);
+		client->sendBinaryMessage(std::move(buf));
 	}
 	else
 	{

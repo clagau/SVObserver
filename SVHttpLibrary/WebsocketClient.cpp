@@ -226,9 +226,12 @@ void WebsocketClient::handle_read_buffer(const boost::system::error_code& error,
 		return;
 	}
 
-	auto prev_size = m_Payload.size();
-	m_Payload.reserve(prev_size + bytes_read + 1);
-	m_Payload.insert(m_Payload.end(), m_Buf.data(), m_Buf.data() + bytes_read);
+	if(0 < bytes_read)
+	{
+		auto prev_size = m_Payload.size();
+		m_Payload.resize(prev_size + bytes_read);
+		std::move(m_Buf.begin(), m_Buf.begin() + bytes_read, m_Payload.begin() + prev_size);
+	}
 	m_Buf.clear();
 
 	if (m_Socket.is_message_done())

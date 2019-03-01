@@ -203,7 +203,7 @@ std::future<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnve
 	buf.resize(resSize);
 	rEnvelope.SerializeToArray(buf.data(), resSize);
 
-	return it->second->sendBinaryMessage(buf);
+	return it->second->sendBinaryMessage(std::move(buf));
 }
 
 } // namespace SvRpc
