@@ -60,7 +60,7 @@ bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
 }
 
 HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoStruct& rProduct)
-{ //@TODO[MZA][8.20][25.02.2019] hier gebraucht: eigene IPInfo, oTriggerInfo-times, m_svCameraInfos-times, oInputsInfo, oTriggerInfo.lTriggerCount und mehr
+{
 	HRESULT l_Status = S_OK;
 
 	rProcessed = (0 < m_qInspectionsQueue.GetCount());
