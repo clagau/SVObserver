@@ -517,7 +517,7 @@ bool BasicValueObject::RefreshOwner( RefreshObjectType Type ) const
 HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 {
 	HRESULT Status = S_OK;
-	SVSAFEARRAY SafeArray( rValue );
+	SvUl::SVSAFEARRAY SafeArray( rValue );
 
 	//BasicValueObject can only have one value
 	if ( 1 == SafeArray.size() )

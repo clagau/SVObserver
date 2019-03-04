@@ -61,9 +61,9 @@ BOOL ResultListCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, U
 	return Result;
 }
 
-void ResultListCtrl::updateList(class SVIPDoc* pDoc)
+void ResultListCtrl::updateList()
 {
-	if (nullptr == pDoc)
+	if (nullptr == m_pDoc)
 	{
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10197);
@@ -82,9 +82,9 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 	}
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
-	pDoc->GetResultData(m_ResultData);
+	m_pDoc->GetResultData(m_ResultData);
 	//If Result Definition time stamp invalid return (Initial value is 0.0)
-	if (!Update || 1.0 > pDoc->getResultDefinitionUpdatTimeStamp())
+	if (!Update || 1.0 > m_pDoc->getResultDefinitionUpdatTimeStamp())
 	{
 		return;
 	}
@@ -92,10 +92,10 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 	SetRedraw( false );
 
 	bool bRedrawDefinitions = false;
-	if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
+	if (m_UpdateTimeStamp < m_pDoc->getResultDefinitionUpdatTimeStamp())
 	{
 		DeleteAllItems();
-		pDoc->GetResultDefinitions( m_ResultDefinitions );
+		m_pDoc->GetResultDefinitions( m_ResultDefinitions );
 		///MEC_SVO_475  only necessary when Definition changed.
 		bRedrawDefinitions = true;
 	}
@@ -233,7 +233,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 		SetItemData( i, l_Color );     // toolset time
 		SetItemData( i + 1, l_Color ); // processes/sec
 
-		Temp = pDoc->GetCompleteToolSetName();
+		Temp = m_pDoc->GetCompleteToolSetName();
 		SetItemText( i, 2, Temp.c_str() );     // toolset time
 		SetItemText( i + 1, 2, Temp.c_str() ); // processes/sec
 	}

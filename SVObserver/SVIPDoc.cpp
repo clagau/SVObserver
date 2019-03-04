@@ -244,6 +244,7 @@ void SVIPDoc::UpdateAllData()
 		}
 
 		m_Results = l_ProductData.m_ResultData;
+		m_triggerRecord = l_ProductData.m_triggerRecord;
 
 		if (!(l_ProductData.m_ImageData.empty()))
 		{
@@ -1872,30 +1873,29 @@ void SVIPDoc::OnSaveTableResultsToFile()
 		{
 			std::string tmpText;
 			SVResultDefinitionDeque ResultDefinitions;
-			SvIe::SVIPResultData ResultData;
-			GetResultData(ResultData);
+			std::vector <SvIe::IPResultTableData> resultTableData = getResultTableData();
 			GetResultDefinitions(ResultDefinitions);
 
 			tmpText = _T("No.;");
-			for (SvIe::IPResultTableData data : ResultData.m_ResultTableData)
+			for (SvIe::IPResultTableData data : resultTableData)
 			{
 				tmpText += data.m_columnName + ";";
 			}
 			tmpText += "\n";
 			file.Write(tmpText.c_str(), static_cast<int> (tmpText.size()));
 
-			if (0 < ResultData.m_ResultTableData.size())
+			if (0 < resultTableData.size())
 			{
-				int rowCountNew = static_cast<int>(ResultData.m_ResultTableData[0].m_rowData.size());
+				int rowCountNew = SvUl::getArraySizeFromOneDim(resultTableData[0].m_rowData);
 				for (int i = 0; i < rowCountNew; i++)
 				{
 					tmpText = SvUl::Format(_T("%d;"), i + 1);
-					for (int j = 0; j < ResultData.m_ResultTableData.size(); j++)
+					for (int j = 0; j < resultTableData.size(); j++)
 					{
-						SvIe::IPResultTableData data = ResultData.m_ResultTableData[j];
-						if (data.m_rowData.size() > i)
+						std::vector<double> values = SvUl::getVectorFromOneDim<double>(resultTableData[j].m_rowData);
+						if (values.size() > i)
 						{
-							tmpText += CString(data.m_rowData[i]);
+							tmpText += SvUl::Format("%f", values[i]);
 						}
 						tmpText += ";";
 					}
@@ -3022,11 +3022,23 @@ HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& rDefinitions) con
 	return hres;
 }
 
-HRESULT SVIPDoc::GetResultData(SvIe::SVIPResultData& rResultData) const
+void SVIPDoc::GetResultData(SvIe::SVIPResultData& rResultData) const
 {
 	rResultData = m_Results;
+}
 
-	return S_OK;
+std::vector <SvIe::IPResultTableData> SVIPDoc::getResultTableData() const
+{
+	SVInspectionProcess* pInspection(GetInspectionProcess());
+	if (nullptr != pInspection)
+	{
+		SVResultListClass* pResultList = pInspection->GetResultList();
+		if (nullptr != pResultList)
+		{
+			return pResultList->getResultTableData(m_triggerRecord);
+		}
+	}
+	return {};
 }
 
 HRESULT SVIPDoc::IsToolSetListUpdated() const

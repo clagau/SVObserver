@@ -276,7 +276,7 @@ namespace  SvXml
 		{
 			StartElement(rName);
 			ElementAttribute("Type", "VT_ARRAY");
-			SVSAFEARRAY arrayValue = value;
+			SvUl::SVSAFEARRAY arrayValue = value;
 			for (int i=0; i < arrayValue.size(); ++i)
 			{
 				std::string attName = SvUl::Format("DataIndex_%d", i+1);

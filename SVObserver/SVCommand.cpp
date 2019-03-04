@@ -2050,7 +2050,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 		}
 
 		SVStorage	Parameter;
-		SVSAFEARRAY	Values;
+		SvUl::SVSAFEARRAY	Values;
 
 		//Values must be in array format
 		Values.Add(_variant_t(bstrValue));
@@ -2262,7 +2262,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 			}
 		}
 		SVStorage	Parameter;
-		SVSAFEARRAY	Values;
+		SvUl::SVSAFEARRAY	Values;
 
 		//Values must be in array format
 		Values.Add(_variant_t(bstrValue));

@@ -14,6 +14,8 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
 
+namespace SvUl
+{
 /**
 @SVObjectName Safe Array
 
@@ -83,5 +85,26 @@ private:
 
 };
 
-#include "SVSAFEARRAY.inl"
+long getArraySizeFromOneDim(const _variant_t& rValue);
 
+template<class T>
+std::vector<T> getVectorFromOneDim(const _variant_t& rValue)
+{
+	std::vector<T> result;
+	long arraySize = getArraySizeFromOneDim(rValue);
+	if (arraySize > 0)
+	{
+		result.resize(arraySize);
+		//set all value to array
+		for (long i = 0; i < arraySize; i++)
+		{
+			T value;
+			::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&value));
+			result[i] = value;
+		}
+	}
+	return result;
+}
+
+#include "SVSAFEARRAY.inl"
+} // namespace SvUl

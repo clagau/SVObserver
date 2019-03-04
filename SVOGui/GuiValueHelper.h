@@ -56,7 +56,7 @@ namespace SvOg
 	template <typename V>
 	_variant_t ConvertVectorToVariantSafeArray(const V& vec)
 	{
-		SVSAFEARRAY safeArray;
+		SvUl::SVSAFEARRAY safeArray;
 		_variant_t v;
 			
 		for (long i = 0; i < vec.size(); ++i)

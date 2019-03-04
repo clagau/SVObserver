@@ -1378,7 +1378,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 
 								if (SvXml::SVNavigateTree::GetItemBranch(rTree, Band.c_str(), hDataChild, hBand))
 								{
-									SVSAFEARRAY l_BandData;
+									SvUl::SVSAFEARRAY l_BandData;
 
 									if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_LUT_BAND_DATA, hBand, Value))
 									{
@@ -1396,7 +1396,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 
 									if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_LUT_TRANSFORM_PARAMETERS, hBand, Value))
 									{
-										SVSAFEARRAY l_Param(Value);
+										SvUl::SVSAFEARRAY l_Param(Value);
 
 										long lSize = static_cast<long>(l_Param.size());
 										// copy safearray to SVLutTransformParameters
@@ -3079,7 +3079,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter
 
 		SAFEARRAY* psaParam = nullptr;
 		bool bGotParam = rLut(iBand).Info().GetTransformParameters(psaParam);
-		svVariant = SVSAFEARRAY(psaParam);
+		svVariant = SvUl::SVSAFEARRAY(psaParam);
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_TRANSFORM_PARAMETERS, svVariant);
 		svVariant.Clear();
 
@@ -3092,7 +3092,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter
 
 		SAFEARRAY* psaBandData = nullptr;
 		bool bGotData = rLut(iBand).GetBandData(psaBandData);
-		svVariant = SVSAFEARRAY(psaBandData);
+		svVariant = SvUl::SVSAFEARRAY(psaBandData);
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_BAND_DATA, svVariant);
 		svVariant.Clear();
 		rWriter.EndElement(); // csBand

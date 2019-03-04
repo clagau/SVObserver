@@ -175,6 +175,11 @@ int ResultTabbedView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	m_pIPDoc = dynamic_cast<SVIPDoc*> (GetDocument());
 
+	if (nullptr == m_pIPDoc)
+	{
+		return -1;
+	}
+
 	CRect Rect;
 	GetClientRect(Rect);
 
@@ -183,6 +188,8 @@ int ResultTabbedView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	}
 
+	m_ResultList.setIPDoc(m_pIPDoc);
+	m_ResultTableList.setIPDoc(m_pIPDoc);
 	m_ResultList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, Rect, &m_TabCtrl, 1);
 	m_ResultTableList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER , Rect, &m_TabCtrl, 2);
 
@@ -221,10 +228,10 @@ void ResultTabbedView::UpdateTab(int TabIndex /*= -1*/)
 	switch (TabIndex)
 	{
 	case 0:
-		m_ResultList.updateList(m_pIPDoc);
+		m_ResultList.updateList();
 		break;
 	case 1:
-		m_ResultTableList.updateList(m_pIPDoc);
+		m_ResultTableList.updateList();
 		break;
 
 	default:

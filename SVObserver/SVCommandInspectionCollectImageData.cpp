@@ -23,13 +23,6 @@
 #pragma endregion Includes
 
 #pragma region Constructor
-SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject)
-: m_InspectionId( p_rObject.m_InspectionId )
-, m_ImageIds( p_rObject.m_ImageIds )
-, m_Product( p_rObject.m_Product )
-{
-}
-
 SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVGuidSet& p_rImageIds)
 : m_InspectionId( p_rInspectionId )
 , m_ImageIds( p_rImageIds )
@@ -69,6 +62,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 		UpdateResults( pInspection, m_Product.m_ResultData );
 
+		m_Product.m_triggerRecord = product.second.m_triggerRecordComplete;
 		m_Product.m_ResultData.m_ToolSetEndTime = product.second.m_ToolSetEndTime;
 		m_Product.m_ResultData.m_ToolSetAvgTime = product.second.m_ToolSetAvgTime;
 		m_Product.m_ResultData.m_ToolSetTime = l_ToolSetTime;
@@ -76,24 +70,17 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 		const SVGuidSet& rImageIds = GetImageIds();
 
-		for( SVGuidSet::const_iterator l_Iter = rImageIds.begin(); l_Iter != rImageIds.end(); ++l_Iter )
+		for (SVGUID imageId : rImageIds)
 		{
-			SVGUID l_ImageId = *l_Iter;
+			SVIPImageDataElement l_ImageData;
 
-			SVIPImageDataElementMap::iterator l_FindIter = m_Product.m_ImageData.find( l_ImageId );
+			::Sleep( 0 );
 
-			if( l_FindIter == m_Product.m_ImageData.end() )
+			if( S_OK == UpdateBuffer(imageId, product.second.m_triggerRecordComplete, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
 			{
-				SVIPImageDataElement l_ImageData;
-
 				::Sleep( 0 );
 
-				if( S_OK == UpdateBuffer( l_ImageId, product.second.m_triggerRecordComplete, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
-				{
-					::Sleep( 0 );
-
-					m_Product.m_ImageData[ l_ImageId ] = l_ImageData;
-				}
+				m_Product.m_ImageData[imageId] = l_ImageData;
 			}
 		}
 	}

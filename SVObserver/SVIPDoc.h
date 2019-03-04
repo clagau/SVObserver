@@ -244,7 +244,8 @@ public:
 	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
 	SvTl::SVTimeStamp getResultDefinitionUpdatTimeStamp() const;
 	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
-	HRESULT GetResultData(SvIe::SVIPResultData& p_rResultData) const;
+	void GetResultData(SvIe::SVIPResultData& p_rResultData) const;
+	std::vector <SvIe::IPResultTableData> getResultTableData() const;
 
 	HRESULT IsToolSetListUpdated() const;
 	ToolSetView* GetToolSetView() const;
@@ -256,6 +257,7 @@ public:
 	bool shouldPauseRegressionTestByCondition();
 
 	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType) const;
+	SvTrc::ITriggerRecordRPtr getLastTriggerRecord() const { return m_triggerRecord; };
 
 protected:
 	virtual BOOL SaveModified() override;
@@ -338,6 +340,7 @@ protected:
 	SVMasterImageRegisterMap m_RegisteredImages;
 	SVImageIdImageDataStructMap m_Images;
 	SvIe::SVIPResultData m_Results;
+	SvTrc::ITriggerRecordRPtr m_triggerRecord = nullptr;
 	long m_AllViewsUpdated;
 
 	//

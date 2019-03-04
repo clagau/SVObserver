@@ -52,7 +52,7 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 
 			if( 0 < l_Info.size() )
 			{
-				SVSAFEARRAY::SVBounds l_Bounds;
+				SvUl::SVSAFEARRAY::SVBounds l_Bounds;
 
 				l_Bounds.resize( 2 );
 
@@ -66,8 +66,8 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 				l_Bounds[ 1 ].cElements = 2;
 
 				long i = 0;
-				SVSAFEARRAY l_Temp( VT_VARIANT, l_Bounds );
-				SVSAFEARRAY::SVIndex l_Index( 2 );
+				SvUl::SVSAFEARRAY l_Temp( VT_VARIANT, l_Bounds );
+				SvUl::SVSAFEARRAY::SVIndex l_Index( 2 );
 				SVCommandDataHolder::SVNameDataTypeMap::const_iterator l_Iter = l_Info.begin();
 
 				while( S_OK == l_Status && i < static_cast<long>(l_Info.size()) && l_Iter != l_Info.end() )

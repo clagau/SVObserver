@@ -25,7 +25,7 @@ class SVInspectionProcess;
 struct SVCommandInspectionCollectImageData
 {
 #pragma region Constructor
-	SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject);
+	SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject) = delete;
 	SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVGuidSet& p_rImageIds);
 
 	virtual ~SVCommandInspectionCollectImageData();

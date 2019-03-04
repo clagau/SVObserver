@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "SVSafeArray.h"
 
+namespace SvUl
+{
 SVSAFEARRAY::SVSAFEARRAY()
 : m_pSafeArray( nullptr )
 {
@@ -738,3 +740,22 @@ void SVSAFEARRAY::LocalDestroy()
 	}
 }
 
+long getArraySizeFromOneDim(const _variant_t& rValue)
+{
+	long arraySize {-1};
+	if (VT_ARRAY == (rValue.vt & VT_ARRAY) && 1 == ::SafeArrayGetDim(rValue.parray))
+	{
+		long lowerBound {0L};
+		long upperBound {0L};
+
+		if (S_OK == ::SafeArrayGetLBound(rValue.parray, 1, &lowerBound))
+		{
+			if (S_OK == ::SafeArrayGetUBound(rValue.parray, 1, &upperBound))
+			{
+				arraySize = upperBound - lowerBound + 1;
+			}
+		}
+	}
+	return arraySize;
+}
+} // namespace SvUl

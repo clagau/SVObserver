@@ -613,7 +613,7 @@ HRESULT SVUserMaskOperatorClass::GetObjectValue( const std::string& rValueName, 
 	{
 		std::string data = m_graphixObject.store(true);
 
-		SVSAFEARRAY l_SafeArray;
+		SvUl::SVSAFEARRAY l_SafeArray;
 		for(const auto& rChar : data)
 		{
 			_variant_t value = rChar;

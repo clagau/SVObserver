@@ -18,6 +18,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "InspectionEngine/ResultViewItemDef.h"
 #include "InspectionEngine/SVIPResultItemDefinition.h"
+#include "InspectionEngine/SVIPResultData.h"
 #include "Operators/TableObject.h"
 #pragma endregion Includes
 
@@ -92,9 +93,7 @@ public:
 	//************************************
 	void GetResultData(SvIe::SVIPResultData& rResultData) const; 
 
-	/// Fill the table data to the result data.
-	/// \param p_rResultData [in,out]
-	void GetResultTableData(SvIe::SVIPResultData &rResultData) const;
+	std::vector <SvIe::IPResultTableData> getResultTableData(SvTrc::ITriggerRecordRPtr pTriggerRecord);
 
 	//************************************
 	// Description:  Clears the lists.

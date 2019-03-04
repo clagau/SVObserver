@@ -8,6 +8,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 namespace SvPb

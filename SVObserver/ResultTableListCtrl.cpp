@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -61,7 +62,7 @@ BOOL ResultTableListCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentW
 	return Result;
 }
 
-void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
+void ResultTableListCtrl::updateList()
 {
 	bool Update = true;
 	SVObjectClass* pObject(nullptr);
@@ -79,48 +80,56 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 		return;
 	}
 
-	if (nullptr != pDoc)
+	if (nullptr != m_pDoc)
 	{
-		pDoc->GetResultData(m_ResultData);
+		m_ResultData = m_pDoc->getResultTableData();
 		// If Result table data size is 0 then no updating required
-		if (0 == m_ResultData.m_ResultTableData.size())
+		if (0 == m_ResultData.size())
 		{
 			DeleteAllItems();
 			//Deletes all columns
-			addColumnHeadings(m_ResultData.m_ResultTableData);
+			addColumnHeadings(m_ResultData);
 			return;
 		}
 
 		SetRedraw(false);
 
-		if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
+		if (m_UpdateTimeStamp < m_pDoc->getResultDefinitionUpdatTimeStamp())
 		{
-			addColumnHeadings(m_ResultData.m_ResultTableData);
-			m_UpdateTimeStamp = m_ResultData.m_ResultTableData[0].m_LastUpdateTimeStamp;
+			addColumnHeadings(m_ResultData);
+			m_UpdateTimeStamp = m_ResultData[0].m_LastUpdateTimeStamp;
 		}
 
 		int rowCountOld = GetItemCount();
-		if (0 < m_ResultData.m_ResultTableData.size())
+		if (0 < m_ResultData.size())
 		{
-			int rowCountNew = static_cast<int>(m_ResultData.m_ResultTableData[0].m_rowData.size());
+			int rowCountNew = SvUl::getArraySizeFromOneDim(m_ResultData[0].m_rowData);
 			for (int i = rowCountOld; i < rowCountNew; i++)
 			{
 				CString tmp;
 				tmp.Format("%3d", i + 1);
 				InsertItem(i, tmp);
 			}
-			for (int i = 0; i < m_ResultData.m_ResultTableData.size(); i++)
+			for (int i = 0; i < m_ResultData.size(); i++)
 			{
-				SvIe::IPResultTableData data = m_ResultData.m_ResultTableData[i];
-				for (int j = 0; j < data.m_rowData.size(); j++)
+				std::vector<double> values = SvUl::getVectorFromOneDim<double>(m_ResultData[i].m_rowData);
+				for (int j=0; j <values.size(); j++)
 				{
-					CString tmp(data.m_rowData[j]);
+					CString tmp;
+					tmp.Format("%f", values[j]);
 					SetItemText(j, i + 1, tmp);
 				}
 			}
-			while (GetItemCount() > rowCountNew)
+			if (0 < rowCountNew)
 			{
-				DeleteItem(rowCountNew);
+				while (GetItemCount() > rowCountNew)
+				{
+					DeleteItem(rowCountNew);
+				}
+			}
+			else
+			{
+				DeleteAllItems();
 			}
 		}
 		else

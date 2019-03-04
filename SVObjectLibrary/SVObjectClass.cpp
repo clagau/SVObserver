@@ -504,7 +504,7 @@ HRESULT SVObjectClass::GetObjectValue( const std::string& rValueName, _variant_t
 
 	if( _T("AttributesSet") == rValueName )
 	{
-		SVSAFEARRAY l_SafeArray;
+		SvUl::SVSAFEARRAY l_SafeArray;
 
 		for( size_t i = 0; i < m_ObjectAttributesSet.size(); i++ )
 		{

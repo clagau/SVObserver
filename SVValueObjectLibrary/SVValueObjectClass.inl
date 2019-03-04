@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 16:17:06  $
 //******************************************************************************
+#include "SVUtilityLibrary\SVSafeArray.h"
 
 namespace SvVol
 {
@@ -792,33 +793,8 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			Exception.Throw();
 		}
-		long arraySize {0L};
-		if (1 == ::SafeArrayGetDim(rValue.parray))
-		{
-			long lowerBound {0L};
-			long upperBound {0L};
-
-			if (S_OK == ::SafeArrayGetLBound(rValue.parray, 1, &lowerBound))
-			{
-				if (S_OK == ::SafeArrayGetUBound(rValue.parray, 1, &upperBound))
-				{
-					arraySize = upperBound - lowerBound + 1;
-				}
-			}
-		}
-
-		if (arraySize > 0)
-		{
-			result.resize(arraySize);
-			//set all value to array
-			for (long i = 0; i < arraySize; i++)
-			{
-				T value;
-				::SafeArrayGetElement(rValue.parray, &i, static_cast<void*> (&value));
-				result[i] = value;
-			}
-		}
-		else
+		result = SvUl::getVectorFromOneDim<T>(rValue);
+		if (0 >= result.size())
 		{
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());

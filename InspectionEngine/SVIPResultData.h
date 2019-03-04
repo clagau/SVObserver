@@ -24,7 +24,7 @@ struct IPResultTableData
 {
 	std::string m_columnName;
 	SvTl::SVTimeStamp m_LastUpdateTimeStamp;
-	std::vector<_variant_t> m_rowData;
+	_variant_t m_rowData;
 };
 
 struct SVIPResultData
@@ -38,7 +38,6 @@ struct SVIPResultData
 	void clear();
 
 	SVResultDataMap m_ResultData;
-	std::vector <IPResultTableData> m_ResultTableData;
 
 	double m_ToolSetEndTime;
 	double m_ToolSetAvgTime;

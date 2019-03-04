@@ -1730,8 +1730,8 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 			if (VT_ARRAY == (l_pInputRequest->m_Value.vt & VT_ARRAY))
 			{
-				SVSAFEARRAY::SVBounds l_Bounds;
-				SVSAFEARRAY l_SafeArray = l_pInputRequest->m_Value;
+				SvUl::SVSAFEARRAY::SVBounds l_Bounds;
+				SvUl::SVSAFEARRAY l_SafeArray = l_pInputRequest->m_Value;
 
 				l_SafeArray.GetBounds(l_Bounds);
 

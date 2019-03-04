@@ -269,9 +269,9 @@ void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) con
 	}
 }
 
-
-void ResultViewReferences::GetResultTableData(SvIe::SVIPResultData &p_rResultData) const
+std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(SvTrc::ITriggerRecordRPtr pTriggerRecord)
 {
+	std::vector <SvIe::IPResultTableData> returnData;
 	if (nullptr != m_resultTable)
 	{
 		const std::vector<SvVol::DoubleSortValuePtr>& valueList = m_resultTable->getValueList();
@@ -283,13 +283,13 @@ void ResultViewReferences::GetResultTableData(SvIe::SVIPResultData &p_rResultDat
 				SvIe::IPResultTableData data = SvIe::IPResultTableData();
 				data.m_LastUpdateTimeStamp = m_LastUpdateTimeStamp;
 				data.m_columnName = valueObject->GetName();
-				valueObject->getValues(data.m_rowData);
-				p_rResultData.m_ResultTableData.push_back(data);
+				data.m_rowData = pTriggerRecord->getDataValue(valueObject->GetUniqueObjectID());
+				returnData.push_back(data);
 			}
 		}
 	}
+	return returnData;
 }
-
 
 HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rDefinitions ) const
 {

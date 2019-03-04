@@ -85,7 +85,7 @@ HRESULT SVRemoteInputObject::WriteCache( const _variant_t& p_rValue )
 
 	if( p_rValue.vt & VT_ARRAY )
 	{
-		SVSAFEARRAY l_SafeArray( p_rValue );
+		SvUl::SVSAFEARRAY l_SafeArray( p_rValue );
 
 		if ( 1 == l_SafeArray.size() )
 		{
