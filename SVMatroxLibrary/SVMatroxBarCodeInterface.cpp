@@ -301,13 +301,11 @@ HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxIdentifier& p_rCodeID, SVBa
 				{
 					if ( p_dValue )
 					{
-						McodeControl( p_rCodeID, M_DISTORTION, M_UNEVEN_GRID_STEP );
-						//for PP3 the new parameter is McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_DEFORMED);
+						McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_DEFORMED);
 					}
 					else
 					{
-						McodeControl( p_rCodeID, M_DISTORTION, M_DEFAULT );
-						//for PP3 the new parameter is McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_NOT_DEFORMED);
+						McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_NOT_DEFORMED);
 					}
 				}
 				else
