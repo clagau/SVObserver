@@ -565,7 +565,7 @@ void SVToolClass::setAuxiliaryExtents()
 {
 	BOOL bEnabled{false};
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	SvOi::SetAttributeType AllowedAttribute = bEnabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+	
 	if (nullptr != pInspection && pInspection->getEnableAuxiliaryExtent())
 	{
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
@@ -574,6 +574,7 @@ void SVToolClass::setAuxiliaryExtents()
 	{
 		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	}
+	SvOi::SetAttributeType AllowedAttribute = bEnabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
 	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
