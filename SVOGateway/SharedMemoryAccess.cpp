@@ -17,6 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 namespace SvOgw
 {
@@ -43,7 +44,7 @@ SharedMemoryAccess::~SharedMemoryAccess()
 void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
-	Response.set_version(SvSyl::SVVersionInfo::GetVersion());
+	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetVersion()));
 	task.finish(std::move(Response));
 }
 

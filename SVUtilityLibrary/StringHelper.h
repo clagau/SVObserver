@@ -143,8 +143,11 @@ namespace SvUl
 
 	std::string to_utf8(const _bstr_t& rUtf16);
 	std::string to_utf8(const std::wstring& rUtf16);
+	std::string to_utf8(const std::string& rAnsi);
 
 	std::wstring to_utf16(const std::string& rUtf8, int cp = CP_UTF8);
+
+	std::string to_ansi(const std::string& rUtf8);
 
 	//************************************
 	/// Places escape character before double quotes in a String

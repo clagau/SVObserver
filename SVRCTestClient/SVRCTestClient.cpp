@@ -16,7 +16,7 @@
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "WebsocketLibrary\RunRequest.inl"
 #include "SVLogLibrary/Logging.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 
 
 struct NotificationHandler
@@ -71,7 +71,7 @@ void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const s
 {
 	for(int i=0; i < rTreeItem.children_size(); i++)
 	{
-		rData += rSpacing + rTreeItem.children(i).name() + (rTreeItem.children(i).selected() ? _T("*\n") :  _T("\n"));
+		rData += rSpacing + SvUl::to_ansi(rTreeItem.children(i).name()) + (rTreeItem.children(i).selected() ? _T("*\n") :  _T("\n"));
 		PrintTreeItems(rTreeItem.children(i), rData, rSpacing + _T("\t"));
 	}
 }

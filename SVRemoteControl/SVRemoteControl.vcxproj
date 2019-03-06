@@ -349,7 +349,6 @@
     <None Include="SVRemoteControl.rc2">
       <FileType>RC</FileType>
     </None>
-    <None Include="SVStringConversions.inl" />
     <None Include="SVAutoLockAndReleaseTemplate.inl" />
     <None Include="SVEventThread.inl" />
     <None Include="SVInputBroker.rgs" />
@@ -412,7 +411,6 @@
     <ClInclude Include="SVMatchStruct.h" />
     <ClInclude Include="SVProductItems.h" />
     <ClInclude Include="SVRemoteCtrl.h" />
-    <ClInclude Include="SVStringConversions.h" />
     <ClInclude Include="SVValueObject.h" />
     <ClInclude Include="SVValueObjectList.h" />
     <ClInclude Include="SVWaitFuncs.h" />

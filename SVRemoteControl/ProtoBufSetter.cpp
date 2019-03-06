@@ -13,7 +13,7 @@
 #include "SVImageObject.h"
 #include "SVErrorObject.h"
 #include "SVValueObjectList.h"
-#include "SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 {
@@ -24,7 +24,7 @@ void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 
 	_bstr_t bName;
 	pValuePtr->get_Name(bName.GetAddress());
-	pItemValue->set_name(SVStringConversions::to_utf8(bName).c_str());
+	pItemValue->set_name(SvUl::to_utf8(bName));
 	long Status{0L};
 	pValuePtr->get_Status(&Status);
 	pItemValue->set_status(Status);
@@ -42,7 +42,7 @@ void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 		{
 			//Separate the list of strings with semicolon
 			ValueData += (0 == i) ? _T("") :  _T(";");
-			ValueData += SVStringConversions::to_utf8(_bstr_t(Value.bstrVal));
+			ValueData += SvUl::to_utf8(_bstr_t(Value.bstrVal));
 		}
 	}
 	VARTYPE Type = VT_BSTR;
@@ -59,7 +59,7 @@ void SetStringList(const CComVariant& rVariant, ::google::protobuf::RepeatedPtrF
 		if(nullptr != pStringList)
 		{
 			std::string* pName = pStringList->Add();
-			*pName = SVStringConversions::to_utf8(_bstr_t(rVariant.bstrVal, false));
+			*pName = SvUl::to_utf8(_bstr_t(rVariant.bstrVal, false));
 		}
 	}
 	else if ((VT_ARRAY | VT_BSTR) == rVariant.vt)
@@ -77,7 +77,7 @@ void SetStringList(const CComVariant& rVariant, ::google::protobuf::RepeatedPtrF
 			{
 				_bstr_t bName(pData[i], false);
 				std::string* pName = pStringList->Add();
-				*pName = SVStringConversions::to_utf8(bName);
+				*pName = SvUl::to_utf8(bName);
 				bName.Detach();
 			}
 		}
@@ -98,7 +98,7 @@ void SetImage(const ImagePtr& pImagePtr, SvPb::Value* pItemValue)
 
 	_bstr_t bName;
 	pImagePtr->get_Name(bName.GetAddress());
-	pItemValue->set_name(SVStringConversions::to_utf8(bName).c_str());
+	pItemValue->set_name(SvUl::to_utf8(bName));
 	long Status {0L};
 	pImagePtr->get_Status(&Status);
 	pItemValue->set_status(Status);

@@ -3,9 +3,8 @@
 #include "MonitorEntry.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
-
 #include "SVProtoBuf\ConverterHelper.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -260,7 +259,7 @@ namespace SvSml
 	void  MonitorEntry::BuildProtoMessage(SvPml::MesMonitorEntry& rMesMonitorEntry) const
 	{
 		SvPb::SetGuidInProtoBytes(rMesMonitorEntry.mutable_guid(), m_Guid);
-		rMesMonitorEntry.set_name(name.c_str());
+		rMesMonitorEntry.set_name(SvUl::to_utf8(name));
 		auto pEntryDataMessage = rMesMonitorEntry.mutable_entrydata();
 		data.BuildProtoMessage(*pEntryDataMessage);
 	}
@@ -269,7 +268,7 @@ namespace SvSml
 	void MonitorEntry::BuildFromProtoMessage(const SvPml::MesMonitorEntry& rMesMonitorEntry)
 	{
 		SvPb::GetGuidFromProtoBytes(rMesMonitorEntry.guid(), m_Guid);
-		name = rMesMonitorEntry.name();
+		name = SvUl::to_ansi(rMesMonitorEntry.name());
 		data.BuildFromProtoMessage(rMesMonitorEntry.entrydata());
 	}
 
@@ -278,7 +277,7 @@ namespace SvSml
 		if (IsImage())
 		{
 			auto pImageDef = resp.add_imagedeflist();
-			pImageDef->set_name(name.c_str());
+			pImageDef->set_name(SvUl::to_utf8(name));
 			pImageDef->set_width(static_cast<INT32>(data.sizeX));
 			pImageDef->set_height(static_cast<INT32>(data.sizeY));
 			pImageDef->set_storeid(data.InspectionStoreId);
@@ -287,7 +286,7 @@ namespace SvSml
 		else
 		{
 			auto pValueDef = resp.add_valuedeflist();
-			pValueDef->set_name(name.c_str());
+			pValueDef->set_name(SvUl::to_utf8(name));
 			pValueDef->set_type(data.variant_type);
 			pValueDef->set_size (static_cast<INT32>(data.ByteSize));
 			pValueDef->set_storeid (data.InspectionStoreId);

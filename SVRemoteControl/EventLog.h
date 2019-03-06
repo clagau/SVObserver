@@ -14,10 +14,8 @@
 #pragma region Includes
 #include <winnt.h>
 #include <sstream>
-#include "SVStringConversions.h"
 #include "SVCriticalSection.h"
 #include "SVAutoLockAndReleaseTemplate.h"
-#include "SVStringConversions.h"
 #include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 

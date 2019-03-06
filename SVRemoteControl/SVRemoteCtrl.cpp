@@ -24,7 +24,7 @@
 #include "SVValueObject.h"
 #include "SVValueObjectList.h"
 #include "EventLog.h"
-#include "SVStringConversions.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 #pragma endregion Includes
 
@@ -649,7 +649,7 @@ STDMETHODIMP SVRemoteCtrl::GetVersion(BSTR* svobserver_ver, BSTR* svremotecontro
 		_bstr_t l_SVRemoteControlVersion = L"";
 		_bstr_t l_RunRejectServerVersion = L"";
 
-		std::wstring ov = SVStringConversions::to_utf16(GetVersionString());
+		std::wstring ov = SvUl::to_utf16(GetVersionString());
 		l_SVRemoteControlVersion = ov.c_str();
 		(*svremotecontrol_ver) = l_SVRemoteControlVersion.Detach();
 

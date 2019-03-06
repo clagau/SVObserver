@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <fstream>
 
 #include "SVControlCommands.h"
-#include "SVStringConversions.h"
 #include "SVProductItems.h"
 #include "SVValueObject.h"
 #include "EventLog.h"
@@ -27,7 +26,7 @@
 #include "RCSettings.h"
 #include "RCSettingsLoader.h"
 #include "SVStatusLibrary/CommandLineArgs.h"
-
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -38,7 +37,7 @@ catch (std::invalid_argument & e)\
 {\
 Status = E_INVALIDARG; \
 CmdStatus.hResult = E_INVALIDARG; \
-CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
+CmdStatus.errorText = SvUl::to_utf16(e.what()); \
 SVLOG(CmdStatus.errorText.c_str()); \
 SV_LOG_GLOBAL(error) << e.what()  << std::endl; \
 }\
@@ -46,7 +45,7 @@ catch (boost::system::system_error &e)\
 {\
 Status = E_FAIL; \
 CmdStatus.hResult = E_FAIL; \
-CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
+CmdStatus.errorText = SvUl::to_utf16(e.what()); \
 SVLOG(CmdStatus.errorText.c_str()); \
 SV_LOG_GLOBAL(error) << e.what()  << std::endl; \
 }\
@@ -54,7 +53,7 @@ catch (std::exception & e)\
 {\
 Status = E_UNEXPECTED; \
 CmdStatus.hResult = E_UNEXPECTED; \
-CmdStatus.errorText = SVStringConversions::to_utf16(e.what()); \
+CmdStatus.errorText = SvUl::to_utf16(e.what()); \
 SVLOG(CmdStatus.errorText.c_str()); \
 SV_LOG_GLOBAL(error) << e.what()  << std::endl; \
 }\
@@ -202,7 +201,7 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGat
 					&SvWsl::SVRCClientService::GetSVObserverVersion,
 					std::move(SvoRequest)).get();
 
-				rSVObserverVersion = _bstr_t(Response.version().c_str());
+				rSVObserverVersion = _bstr_t(SvUl::to_ansi(Response.version()).c_str());
 			}
 			catch (std::exception&)
 			{
@@ -215,7 +214,7 @@ HRESULT SVControlCommands::GetVersion(_bstr_t& rSVObserverVersion, _bstr_t& rGat
 				SvPb::GetVersionResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 					&SvWsl::SVRCClientService::GetGatewayVersion,
 					std::move(GatewayRequest)).get();
-				rGatewayServerVersion = _bstr_t(Response.version().c_str());
+				rGatewayServerVersion = _bstr_t(SvUl::to_ansi(Response.version()).c_str());
 			}
 			catch (std::exception&)
 			{
@@ -291,7 +290,8 @@ HRESULT SVControlCommands::GetConfigReport(BSTR& rReport, SVCommandStatus& rStat
 			&SvWsl::SVRCClientService::GetConfigReport,
 			std::move(Request)).get();
 
-		rReport = _bstr_t(Response.report().c_str()).Detach();
+
+		rReport = _bstr_t(SvUl::to_ansi(Response.report()).c_str()).Detach();
 
 		Result = Response.hresult();
 		rStatus.hResult = Result;
@@ -374,7 +374,7 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 		if (ItemNames.vt == VT_BSTR)
 		{
 			std::string* pName = Request.add_itemnamelist();
-			*pName = SVStringConversions::to_utf8(_bstr_t(ItemNames.bstrVal, false));
+			*pName = SvUl::to_utf8(_bstr_t(ItemNames.bstrVal, false));
 		}
 		else if (ItemNames.vt == (VT_ARRAY | VT_BSTR))
 		{
@@ -391,7 +391,7 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 				_bstr_t bString(pData[i], false);
 
 				std::string* pName = Request.add_itemnamelist();
-				*pName = SVStringConversions::to_utf8(bString);
+				*pName = SvUl::to_utf8(bString);
 				bString.Detach();
 			}
 			::SafeArrayUnaccessData(pArray);
@@ -480,7 +480,7 @@ HRESULT SVControlCommands::RunOnce(const _bstr_t& rInspectionName, SVCommandStat
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		std::string Inspection = SVStringConversions::to_utf8(rInspectionName);
+		std::string Inspection = SvUl::to_utf8(rInspectionName);
 
 		if (!Inspection.empty())
 		{
@@ -518,11 +518,12 @@ HRESULT SVControlCommands::GetConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		std::string fPath = SVStringConversions::to_utf8(rFilePath);
+		//rFilePath is local so change it to ANSI
+		std::string fPath = SvUl::createStdString(rFilePath);
 		if (IsValidFilePath(fPath))
 		{
 			SvPb::GetConfigRequest Request;
-			Request.set_filename(fPath.c_str());
+			Request.set_filename(SvUl::to_utf8(fPath));
 			SvPb::GetConfigResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 				&SvWsl::SVRCClientService::GetConfig,
 				std::move(Request)).get();
@@ -572,7 +573,8 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		std::string fPath = SVStringConversions::to_utf8(rFilePath);
+		//FilePath is local so change it to ANSI
+		std::string fPath = SvUl::createStdString(rFilePath);
 		if (IsValidFilePath(fPath))
 		{
 			std::ifstream FileStream;
@@ -591,7 +593,7 @@ HRESULT SVControlCommands::PutConfig(const _bstr_t& rFilePath, SVCommandStatus& 
 					FileStream.close();
 
 					SvPb::PutConfigRequest PutConfigRequest;
-					PutConfigRequest.set_filename(fPath.c_str());
+					PutConfigRequest.set_filename(SvUl::to_utf8(rFilePath));
 					PutConfigRequest.set_filedata(&FileData[0], FileSize);
 					SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 						&SvWsl::SVRCClientService::PutConfig,
@@ -638,11 +640,11 @@ HRESULT SVControlCommands::LoadConfig(const _bstr_t& rFilePath, SVCommandStatus&
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		std::string fPath = SVStringConversions::to_utf8(rFilePath);
+		std::string fPath = SvUl::to_utf8(rFilePath);
 		if (!fPath.empty())
 		{
 			SvPb::LoadConfigRequest Request;
-			Request.set_filename(fPath.c_str());
+			Request.set_filename(fPath);
 			SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 				&SvWsl::SVRCClientService::LoadConfig,
 				std::move(Request)).get();
@@ -676,12 +678,13 @@ HRESULT SVControlCommands::GetFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		std::string DestinationPath = SVStringConversions::to_utf8(rDestinationPath);
+		//DestinationPath is local so change it to ANSI
+		std::string DestinationPath = SvUl::createStdString(rDestinationPath);
 		if (IsValidFilePath(DestinationPath))
 		{
 
 			SvPb::GetFileRequest Request;
-			Request.set_sourcepath(SVStringConversions::to_utf8(rSourcePath));
+			Request.set_sourcepath(SvUl::to_utf8(rSourcePath));
 			SvPb::GetFileResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 				&SvWsl::SVRCClientService::GetFile,
 				std::move(Request)).get();
@@ -732,8 +735,9 @@ HRESULT SVControlCommands::PutFile(const _bstr_t& rSourcePath, const _bstr_t& rD
 			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
 		}
 
-		std::string SourcePath = SVStringConversions::to_utf8(rSourcePath);
-		std::string DestinationPath = SVStringConversions::to_utf8(rDestinationPath);
+		//SourthPath is local so change it to ANSI
+		std::string SourcePath = SvUl::createStdString(rSourcePath);
+		std::string DestinationPath = SvUl::to_utf8(rDestinationPath);
 		if (IsValidFilePath(SourcePath))
 		{
 			std::ifstream FileStream;
@@ -801,7 +805,7 @@ HRESULT SVControlCommands::GetDataDefinitionList(const _bstr_t& rInspectionName,
 		}
 
 		SvPb::GetDataDefinitionListRequest Request;
-		Request.set_inspectionname(SVStringConversions::to_utf8(rInspectionName));
+		Request.set_inspectionname(SvUl::to_utf8(rInspectionName));
 		Request.set_type(static_cast<SvPb::DataDefinitionListType> (ListType));
 		SvPb::GetDataDefinitionListResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::GetDataDefinitionList,
@@ -833,8 +837,8 @@ HRESULT SVControlCommands::RegisterMonitorList(const _bstr_t& rListName, const _
 		}
 
 		SvPb::RegisterMonitorListRequest Request;
-		Request.set_listname(SVStringConversions::to_utf8(rListName));
-		Request.set_ppqname(SVStringConversions::to_utf8(rPpqName));
+		Request.set_listname(SvUl::to_utf8(rListName));
+		Request.set_ppqname(SvUl::to_utf8(rPpqName));
 		Request.set_rejectdepth(rejectDepth);
 		SetStringList(rProductItemList, Request.mutable_productitemlist());
 		SetStringList(rRejectCondList, Request.mutable_rejectconditionlist());
@@ -867,7 +871,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 		}
 
 		SvPb::QueryMonitorListRequest Request;
-		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		Request.set_type(Type);
 		SvPb::NamesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::QueryMonitorList,
@@ -881,7 +885,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 		}
 		else
 		{
-			rItemNames = CComVariant();
+			rItemNames = CComVariant("");
 		}
 
 		rStatus.hResult = Result;
@@ -908,7 +912,7 @@ HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCoun
 		}
 
 		SvPb::GetProductRequest Request;
-		Request.set_listname(static_cast<const char*>(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		Request.set_triggercount((-1 < TriggerCount) ? TriggerCount : -1);
 		Request.set_pevioustrigger(-1);
 
@@ -923,7 +927,7 @@ HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCoun
 		}
 		else
 		{
-			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.productitem().status()));
+			rStatus.errorText = SvUl::to_utf16(SvPb::State_Name(Response.productitem().status()));
 		}
 
 		rStatus.hResult = Result;
@@ -949,7 +953,7 @@ HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCoun
 		}
 
 		SvPb::GetRejectRequest Request;
-		Request.set_listname(static_cast<const char*>(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		Request.set_triggercount((-1 < TriggerCount) ? TriggerCount : -1);
 		Request.set_pevioustrigger(-1);
 
@@ -964,7 +968,7 @@ HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCoun
 		}
 		else
 		{
-			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.productitem().status()));
+			rStatus.errorText = SvUl::to_utf16(SvPb::State_Name(Response.productitem().status()));
 		}
 
 		rStatus.hResult = Result;
@@ -988,7 +992,7 @@ HRESULT SVControlCommands::ActivateMonitorList(const _bstr_t& rListName, bool Ac
 		}
 
 		SvPb::ActivateMonitorListRequest Request;
-		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		Request.set_activate(Active);
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::ActivateMonitorList,
@@ -1020,7 +1024,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 		}
 
 		SvPb::GetFailStatusRequest FailstatusRequest;
-		FailstatusRequest.set_listname(static_cast<const char*>(rListName));
+		FailstatusRequest.set_listname(SvUl::to_utf8(rListName));
 
 		FailstatusRequest.set_nameinresponse(true);
 		SvPb::GetFailStatusResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
@@ -1036,7 +1040,7 @@ HRESULT SVControlCommands::GetFailStatus(const _bstr_t& rListName, CComVariant& 
 		}
 		else
 		{
-			rStatus.errorText = SVStringConversions::to_utf16(SvPb::State_Name(Response.status()));
+			rStatus.errorText = SvUl::to_utf16(SvPb::State_Name(Response.status()));
 		}
 
 		rStatus.hResult = Result;
@@ -1165,14 +1169,14 @@ HRESULT SVControlCommands::GetMonitorListProperties(const _bstr_t & rListName, l
 		}
 
 		SvPb::GetMonitorListPropertiesRequest Request;
-		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		SvPb::GetMonitorListPropertiesResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::GetMonitorListProperties,
 			std::move(Request)).get();
 
 		rRejectDepth = Response.rejectdepth();
 		rIsActive = Response.active();
-		rPpqName = _bstr_t(Response.ppqname().c_str()).Detach();
+		rPpqName = _bstr_t(SvUl::to_ansi(Response.ppqname()).c_str()).Detach();
 
 		Result = Response.hresult();
 		rStatus.hResult = Result;
@@ -1219,7 +1223,7 @@ HRESULT SVControlCommands::GetProductFilter(const _bstr_t& rListName, unsigned l
 		}
 
 		SvPb::GetProductFilterRequest Request;
-		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		SvPb::GetProductFilterResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::GetProductFilter,
 			std::move(Request)).get();
@@ -1247,7 +1251,7 @@ HRESULT SVControlCommands::SetProductFilter(const _bstr_t& rListName, unsigned l
 		}
 
 		SvPb::SetProductFilterRequest Request;
-		Request.set_listname(SVStringConversions::to_utf8(rListName));
+		Request.set_listname(SvUl::to_utf8(rListName));
 		Request.set_filter(static_cast<SvPb::ProductFilterEnum> (Filter));
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::SetProductFilter,

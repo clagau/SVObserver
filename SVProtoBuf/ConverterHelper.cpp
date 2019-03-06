@@ -9,6 +9,7 @@
 #include "StdAfx.h"
 #include "ConverterHelper.h"
 #include "Definitions/GlobalConst.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -225,7 +226,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 		{
 			if (VT_BSTR == Type)
 			{
-				const std::string& rStringArray = rPbVariant.strval();
+				const std::string& rStringArray = SvUl::to_ansi(rPbVariant.strval());
 
 				std::vector<std::string> Items;
 				Items.reserve(rPbVariant.count());
@@ -310,7 +311,7 @@ void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* p
 		{
 			//Set type to VT_ARRAY so that it is clear that a comma separated list is being sent
 			pVariant->set_type(VT_BSTR | VT_ARRAY);
-			pVariant->set_strval(Text);
+			pVariant->set_strval(SvUl::to_utf8(Text));
 			pVariant->set_count(static_cast<int> (rList.size()));
 		}
 	}

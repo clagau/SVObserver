@@ -43,7 +43,7 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, 
 	SvPb::GetVersionResponse Response;
 
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	Response.set_version(SvSyl::SVVersionInfo::GetShortTitleVersion());
+	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetShortTitleVersion()));
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
 	task.finish(std::move(Response));
@@ -143,7 +143,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 	if (S_OK == Result)
 	{
-		std::string RemoteFilePath = rRequest.filename();
+		std::string RemoteFilePath = SvUl::to_ansi(rRequest.filename());
 
 		if (RemoteFilePath.empty())
 		{
@@ -218,7 +218,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 
 	if (S_OK == Result)
 	{
-		std::string RemoteFilePath = rRequest.filename();
+		std::string RemoteFilePath = SvUl::to_ansi(rRequest.filename());
 
 		if (RemoteFilePath.empty())
 		{
@@ -284,10 +284,10 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 		if (nullptr != pConfig)
 		{
-			std::string ListName = rRequest.listname();
+			std::string listName = SvUl::to_ansi(rRequest.listname());
 			bool bActivate = rRequest.activate();
 			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			Result = pConfig->ActivateRemoteMonitorList(ListName, bActivate);
+			Result = pConfig->ActivateRemoteMonitorList(listName, bActivate);
 			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 		else
@@ -316,9 +316,9 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 	if (nullptr != pConfig)
 	{
 		SvSml::SVProductFilterEnum ProductFilter;
-		std::string ListName = rRequest.listname();
+		std::string listName = SvUl::to_ansi(rRequest.listname());
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		Result = pConfig->GetRemoteMonitorListProductFilter(ListName, ProductFilter);
+		Result = pConfig->GetRemoteMonitorListProductFilter(listName, ProductFilter);
 		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
 		switch (ProductFilter)
@@ -371,9 +371,9 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 					ProductFilter = SvSml::SVProductFilterEnum::NoFilter;
 					break;
 			}
-			std::string ListName = rRequest.listname();
+			std::string listName = SvUl::to_ansi(rRequest.listname());
 			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			Result = pConfig->SetRemoteMonitorListProductFilter(ListName, ProductFilter);
+			Result = pConfig->SetRemoteMonitorListProductFilter(listName, ProductFilter);
 			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 		else
@@ -400,7 +400,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 	for (int i = 0; i < rRequest.itemnamelist_size(); i++)
 	{
-		ItemNameSet.insert(rRequest.itemnamelist(i).c_str());
+		ItemNameSet.insert(SvUl::to_ansi(rRequest.itemnamelist(i)));
 	}
 
 	if (!ItemNameSet.empty())
@@ -430,7 +430,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 						SvPb::Value* pValue = Response.add_errorlist();
 						if (nullptr != pValue)
 						{
-							pValue->set_name(rEntry.first);
+							pValue->set_name(SvUl::to_utf8(rEntry.first));
 							pValue->set_status(LoopStatus);
 							if (S_OK == Result)
 							{
@@ -463,7 +463,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 						SvPb::Value* pValue = Response.add_errorlist();
 						if (nullptr != pValue)
 						{
-							pValue->set_name(rEntry.first);
+							pValue->set_name(SvUl::to_utf8(rEntry.first));
 							pValue->set_status(LoopStatus);
 							if (S_OK == Result)
 							{
@@ -486,7 +486,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 					SvPb::Value* pValue = Response.add_errorlist();
 					if (nullptr != pValue)
 					{
-						pValue->set_name(rEntry.first);
+						pValue->set_name(SvUl::to_utf8(rEntry.first));
 						pValue->set_status(LoopStatus);
 						if (S_OK == Result)
 						{
@@ -558,7 +558,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 			SvPb::Value* pValue = Response.add_errorlist();
 			if (nullptr != pValue)
 			{
-				pValue->set_name(rEntry.first);
+				pValue->set_name(SvUl::to_utf8(rEntry.first));
 				pValue->set_status(Status);
 			}
 		}
@@ -573,7 +573,7 @@ void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb
 	HRESULT Result {S_OK};
 	SvPb::GetFileResponse Response;
 
-	std::string SourcePath = rRequest.sourcepath();
+	std::string SourcePath = SvUl::to_ansi(rRequest.sourcepath());
 
 	if (!SourcePath.empty())
 	{
@@ -604,7 +604,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 	HRESULT Result {S_OK};
 	SvPb::StandardResponse Response;
 
-	std::string destinationPath = rRequest.destinationpath();
+	std::string destinationPath = SvUl::to_ansi(rRequest.destinationpath());
 
 	if (!destinationPath.empty())
 	{
@@ -651,20 +651,20 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 	SvDef::StringSet rejectCondList;
 	SvDef::StringSet failStatusList;
 
-	std::string MonitorListName = rRequest.listname();
-	std::string PpqName = rRequest.ppqname();
+	std::string MonitorListName = SvUl::to_ansi(rRequest.listname());
+	std::string PpqName = SvUl::to_ansi(rRequest.ppqname());
 	int rejectDepth = rRequest.rejectdepth();
 	for (int i = 0; i < rRequest.productitemlist_size(); i++)
 	{
-		prodList.insert(rRequest.productitemlist(i));
+		prodList.insert(SvUl::to_ansi(rRequest.productitemlist(i)));
 	}
 	for (int i = 0; i < rRequest.rejectconditionlist_size(); i++)
 	{
-		rejectCondList.insert(rRequest.rejectconditionlist(i));
+		rejectCondList.insert(SvUl::to_ansi(rRequest.rejectconditionlist(i)));
 	}
 	for (int i = 0; i < rRequest.failstatuslist_size(); i++)
 	{
-		failStatusList.insert(rRequest.failstatuslist(i));
+		failStatusList.insert(SvUl::to_ansi(rRequest.failstatuslist(i)));
 	}
 
 	SVNameStatusMap ItemResults;
@@ -680,7 +680,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 			SvPb::Value* pValue = Response.add_errorlist();
 			if (nullptr != pValue)
 			{
-				pValue->set_name(rEntry.first);
+				pValue->set_name(SvUl::to_utf8(rEntry.first));
 				pValue->set_status(rEntry.second);
 			}
 		}
@@ -748,12 +748,12 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 
 	MonitorlistProperties  MonitorListProp;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	Result = SVVisionProcessorHelper::Instance().GetMonitorListProperties(rRequest.listname(), MonitorListProp);
+	Result = SVVisionProcessorHelper::Instance().GetMonitorListProperties(SvUl::to_ansi(rRequest.listname()), MonitorListProp);
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
 	Response.set_rejectdepth(MonitorListProp.RejectQueDepth);
 	Response.set_active(MonitorListProp.isActive);
-	Response.set_ppqname(MonitorListProp.ppqName);
+	Response.set_ppqname(SvUl::to_utf8(MonitorListProp.ppqName));
 	Response.set_hresult(Result);
 	task.finish(std::move(Response));
 }
@@ -776,6 +776,7 @@ void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest& rRequest, 
 	Result = SVVisionProcessorHelper::Instance().GetConfigurationPrintReport(Report);
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
+	//No conversion to utf8 as the report is already utf16 (XML)
 	Response.set_report(Report);
 	Response.set_hresult(Result);
 	task.finish(std::move(Response));
@@ -789,7 +790,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 
 	SVDataDefinitionStructVector DataDefinitionList;
 
-	std::string InspectionName = rRequest.inspectionname();
+	std::string InspectionName = SvUl::to_ansi(rRequest.inspectionname());
 	SVDataDefinitionListType DataDefinitionType = static_cast<SVDataDefinitionListType> (rRequest.type());
 
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -801,16 +802,16 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 		SvPb::DataDefinition* pDataDefinition = Response.add_list();
 		if (nullptr != pDataDefinition)
 		{
-			pDataDefinition->set_name(rEntry.m_Name);
+			pDataDefinition->set_name(SvUl::to_utf8(rEntry.m_Name));
 			pDataDefinition->set_writable(rEntry.m_Writable);
 			pDataDefinition->set_published(rEntry.m_Published);
-			pDataDefinition->set_type(rEntry.m_Type);
+			pDataDefinition->set_type(SvUl::to_utf8(rEntry.m_Type));
 			for (const auto& rAddInfo : rEntry.m_AdditionalInfo)
 			{
 				std::string* pAddInfo = pDataDefinition->add_additionalinfo();
 				if (nullptr != pAddInfo)
 				{
-					*pAddInfo = rAddInfo;
+					*pAddInfo = SvUl::to_utf8(rAddInfo);
 				}
 			}
 		}
@@ -828,21 +829,22 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 
 	SvDef::StringSet Items;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+	std::string listName = SvUl::to_ansi(rRequest.listname());
 	switch (rRequest.type())
 	{
 		case SvPb::ListType::productItem:
 		{
-			Result = SVVisionProcessorHelper::Instance().QueryProductList(rRequest.listname(), Items);
+			Result = SVVisionProcessorHelper::Instance().QueryProductList(listName, Items);
 			break;
 		}
 		case SvPb::ListType::rejectCondition:
 		{
-			Result = SVVisionProcessorHelper::Instance().QueryRejectCondList(rRequest.listname(), Items);
+			Result = SVVisionProcessorHelper::Instance().QueryRejectCondList(listName, Items);
 			break;
 		}
 		case SvPb::ListType::failStatus:
 		{
-			Result = SVVisionProcessorHelper::Instance().QueryFailStatusList(rRequest.listname(), Items);
+			Result = SVVisionProcessorHelper::Instance().QueryFailStatusList(listName, Items);
 			break;
 		}
 		default:
@@ -894,7 +896,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 		if(nullptr != pConfig)
 		{
 			SVInspectionProcess* pInspection{nullptr};
-			pConfig->GetInspection(rRequest.inspectionname().c_str(), pInspection);
+			pConfig->GetInspection(SvUl::to_ansi(rRequest.inspectionname()).c_str(), pInspection);
 			if(nullptr != pInspection)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -924,7 +926,7 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 {
 	HRESULT Result {S_OK};
 	SvPb::StandardResponse Response;
-	std::string ConfigFile = rRequest.filename();
+	std::string ConfigFile = SvUl::to_ansi(rRequest.filename());
 
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 	Result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
@@ -942,7 +944,7 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 	SvPb::GetObjectSelectorItemsRequest modifyRequest{rRequest};
 	if(GUID_NULL == inspectionID)
 	{
-		std::string inspectionName = rRequest.inspectionid();
+		std::string inspectionName = SvUl::to_ansi(rRequest.inspectionid());
 		std::string ObjectName{SvDef::FqnInspections};
 		ObjectName += '.';
 		ObjectName += inspectionName;
@@ -956,6 +958,7 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 	SvCmd::InspectionCommandsSynchronous(inspectionID, &requestCmd, &responseCmd);
 
 	SvPb::GetObjectSelectorItemsResponse response{responseCmd.getobjectselectoritemsresponse()};
+	ConvertTreeNames(response.mutable_tree());
 	task.finish(std::move(response));
 }
 
@@ -990,7 +993,7 @@ HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, con
 
 	if (nullptr != pValue && SVVisionProcessor::SVStorageValue == rStorage.m_Storage.m_StorageType)
 	{
-		pValue->set_name(rName);
+		pValue->set_name(SvUl::to_utf8(rName));
 		pValue->set_count(rStorage.m_TriggerCount);
 		HRESULT ItemStatus = rStorage.m_Status;
 		if (S_OK == rStorage.m_Status)
@@ -1014,7 +1017,7 @@ HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, con
 	if (nullptr != pValue && SVVisionProcessor::SVStorageImageFileName == rStorage.m_Storage.m_StorageType  && VT_BSTR == rStorage.m_Storage.m_Variant.vt)
 	{
 		HRESULT ItemStatus = rStorage.m_Status;
-		pValue->set_name(rName.c_str());
+		pValue->set_name(SvUl::to_utf8(rName));
 		pValue->set_count(rStorage.m_TriggerCount);
 
 		if (S_OK == ItemStatus)
@@ -1055,7 +1058,7 @@ HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rReque
 	{
 		const SvPb::Value& rValue = rRequest.valuelist(i);
 
-		std::string Name = rValue.name();
+		std::string name = SvUl::to_ansi(rValue.name());
 		SVStorage Storage;
 		Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
 
@@ -1063,7 +1066,7 @@ HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rReque
 
 		if (S_OK == Result)
 		{
-			rItems[Name] = Storage;
+			rItems[name] = Storage;
 		}
 	}
 
@@ -1077,13 +1080,13 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 	for (int i = 0; i < rRequest.imagelist_size(); i++)
 	{
 		const SvPb::Value& rImage = rRequest.imagelist(i);
-		std::string Name = rImage.name();
+		std::string name = SvUl::to_ansi(rImage.name());
 		std::string FilePath;
 
 		if (rImage.item().type() == (VT_ARRAY | VT_UI1))
 		{
 			const std::string& rContent = rImage.item().bytesval();
-			std::string FileName {Name};
+			std::string FileName {name};
 			FileName += _T(".bmp");
 			FilePath = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(FileName).c_str());
 			if (!FilePath.empty())
@@ -1101,9 +1104,21 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 			SVStorage Storage;
 			Storage.m_StorageType = SVVisionProcessor::SVStorageImageFileName;
 			Storage.m_Variant.SetString(FilePath.c_str());
-			rItems[Name] = Storage;
+			rItems[name] = Storage;
 		}
 	}
 
 	return Result;
+}
+
+void SVRCCommand::ConvertTreeNames(SvPb::TreeItem* pTreeItem) const
+{
+	if(nullptr != pTreeItem)
+	{
+		pTreeItem->set_name(SvUl::to_utf8(pTreeItem->name()));
+		for(int i=0; i < pTreeItem->children_size(); i++)
+		{
+			ConvertTreeNames(pTreeItem->mutable_children(i));
+		}
+	}
 }

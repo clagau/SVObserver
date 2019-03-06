@@ -285,13 +285,23 @@ namespace SvUl
 		return std::string(&buff.at(0));
 	}
 
-	std::wstring to_utf16(const std::string & utf8, int cp)
+	std::string to_utf8(const std::string& rAnsi)
 	{
-		int size = ::MultiByteToWideChar(cp, 0, utf8.c_str(), -1, nullptr, 0) + 1;
+		return SvUl::to_utf8(SvUl::to_utf16(rAnsi, CP_ACP));
+	}
+
+	std::wstring to_utf16(const std::string& rString, int cp)
+	{
+		int size = ::MultiByteToWideChar(cp, 0, rString.c_str(), -1, nullptr, 0) + 1;
 		std::vector<wchar_t> buff;
 		buff.resize(size, '\0');
-		::MultiByteToWideChar(cp, 0, utf8.c_str(), -1, &buff.at(0), size);
+		::MultiByteToWideChar(cp, 0, rString.c_str(), -1, &buff.at(0), size);
 		return std::wstring(&buff.at(0));
+	}
+
+	std::string to_ansi(const std::string& rUtf8)
+	{
+		return createStdString(to_utf16(rUtf8).c_str());
 	}
 
 	typedef std::pair<std::string, std::string> StringPair;

@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="SVRemoteControl_i.c" />
-    <ClCompile Include="ProtoBufSetter.cpp">
-      <Filter>Headerdateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFile.cpp">
       <Filter>Headerdateien</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRemoteCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtoBufSetter.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,9 +188,6 @@
     <ClInclude Include="SVValueObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVStringConversions.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVRemoteCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -285,9 +282,6 @@
       <Filter>Regsettings</Filter>
     </None>
     <None Include="SVEventThread.inl">
-      <Filter>Quelldateien</Filter>
-    </None>
-    <None Include="SVStringConversions.inl">
       <Filter>Quelldateien</Filter>
     </None>
     <None Include="SVRemoteCtrl.bmp">

@@ -14,6 +14,7 @@
 #include "Definitions\StringTypeDef.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 
 namespace SvSml
@@ -48,12 +49,12 @@ bool  ShareControl::QueryListItem(const SvPb::QueryListItemRequest& rRequest, Sv
 
 bool ShareControl::GetProduct(const SvPb::GetProductRequest& rRequest, SvPb::GetProductResponse& rResponse, SvPenv::Error& rError)
 {
-	return GetProductItem(false, rRequest.triggercount(), rRequest.pevioustrigger(), rRequest.listname(), rRequest.nameinresponse(), rResponse.mutable_productitem(), rError);
+	return GetProductItem(false, rRequest.triggercount(), rRequest.pevioustrigger(), SvUl::to_ansi(rRequest.listname()), rRequest.nameinresponse(), rResponse.mutable_productitem(), rError);
 }
 
 bool ShareControl::GetReject(const SvPb::GetRejectRequest& rRequest, SvPb::GetRejectResponse& rResponse, SvPenv::Error& rError)
 {
-	return GetProductItem(true, rRequest.triggercount(), rRequest.pevioustrigger(), rRequest.listname(), rRequest.nameinresponse(), rResponse.mutable_productitem(), rError);
+	return GetProductItem(true, rRequest.triggercount(), rRequest.pevioustrigger(), SvUl::to_ansi(rRequest.listname()), rRequest.nameinresponse(), rResponse.mutable_productitem(), rError);
 }
 
 bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, SvPb::GetFailStatusResponse& rResponse, SvPenv::Error& rError)
@@ -64,11 +65,12 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 	}
 
 	bool nameInresponse = rRequest.nameinresponse();
+	std::string listName = SvUl::to_ansi(rRequest.listname());
 
 	bool bValid(false);
-	if (!rRequest.listname().empty())
+	if (!listName.empty())
 	{
-		bValid = m_MemReader.IsActiveMonitorList(rRequest.listname());
+		bValid = m_MemReader.IsActiveMonitorList(listName);
 	}
 	if (!bValid)
 	{
@@ -81,14 +83,14 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 	std::unique_ptr<SvSml::vecpProd>  new_FailstatusPtr(new SvSml::vecpProd);
 	{
 		std::lock_guard<std::mutex> guard(m_pLastResponseData->m_ProtectLastFailstatus);
-		auto& it = m_pLastResponseData->m_LastFailstatus.find(rRequest.listname());
+		auto& it = m_pLastResponseData->m_LastFailstatus.find(listName);
 		if (it != m_pLastResponseData->m_LastFailstatus.end())
 		{
 			pLastFailstatus = it->second.get();
 		}
 
 		SvSml::SharedMemReader::retvalues ret =
-			m_MemReader.GetFailstatus(rRequest.listname().c_str(), new_FailstatusPtr.get(), pLastFailstatus);
+			m_MemReader.GetFailstatus(listName.c_str(), new_FailstatusPtr.get(), pLastFailstatus);
 		switch (ret)
 		{
 			case SvSml::SharedMemReader::success:
@@ -97,7 +99,7 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 				{
 					return false;
 				}
-				m_pLastResponseData->m_LastFailstatus[rRequest.listname().c_str()] = std::move(new_FailstatusPtr);
+				m_pLastResponseData->m_LastFailstatus[listName.c_str()] = std::move(new_FailstatusPtr);
 			}
 			break;
 			case SvSml::SharedMemReader::last:
@@ -339,7 +341,7 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 		pValue->set_type(VT_BSTR);
 		if (nameInResponse)
 		{
-			*pProductMsg->add_valuenames() = (pProduct->m_dataEntries[i]->name);
+			*pProductMsg->add_valuenames() = SvUl::to_utf8(pProduct->m_dataEntries[i]->name);
 		}
 	}
 	int slot = pProduct->m_slot;
@@ -357,7 +359,7 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 
 		if (nameInResponse)
 		{
-			*pProductMsg->add_imagenames() = pProduct->m_ImageEntries[i++]->name;
+			*pProductMsg->add_imagenames() = SvUl::to_utf8(pProduct->m_ImageEntries[i++]->name);
 		}
 	}
 	return true;

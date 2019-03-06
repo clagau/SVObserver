@@ -6,6 +6,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma warning (push ,2)
 #include "SVPRotobuf\MonitorListStore.pb.h"
 #pragma warning(pop)
@@ -166,7 +167,7 @@ namespace SvSml
 	{
 		return m_IsActive;
 	}
-	int  MonitorListCpy::InsertToMLInspectionInfoMap(MLInspectionInfoMap & inspectionInfoMap, MLPPQInfoMap& PPQInfoMap) const
+	int  MonitorListCpy::InsertToMLInspectionInfoMap(MLInspectionInfoMap& inspectionInfoMap, MLPPQInfoMap& PPQInfoMap) const
 	{
 		int res(0);
 		DWORD PPQIndex = (DWORD)PPQInfoMap.size();
@@ -237,8 +238,8 @@ namespace SvSml
 
 	bool MonitorListCpy::BuildProtoMessage(SvPml::MesMonitorListCpy& rMessage) const
 	{
-		rMessage.set_monitorlistname(m_MonitorListName.c_str());
-		rMessage.set_ppqname(m_ppqName.c_str());
+		rMessage.set_monitorlistname(SvUl::to_utf8(m_MonitorListName).c_str());
+		rMessage.set_ppqname(SvUl::to_utf8(m_ppqName).c_str());
 		rMessage.set_isactive(m_IsActive);
 		rMessage.set_productdepth(m_ProductDepth);
 		rMessage.set_rejectdepth(m_rejectDepth);
@@ -252,15 +253,15 @@ namespace SvSml
 	}
 	void MonitorListCpy::BuildFromProtoMessage(const SvPml::MesMonitorListCpy& rMessage)
 	{
-		m_MonitorListName = rMessage.monitorlistname();
-		m_ppqName = rMessage.ppqname();
+		m_MonitorListName = SvUl::to_ansi(rMessage.monitorlistname());
+		m_ppqName = SvUl::to_ansi(rMessage.ppqname());
 		m_IsActive = rMessage.isactive();
 		m_ProductDepth = rMessage.productdepth();
 		m_rejectDepth = rMessage.rejectdepth();
 		for (int m = 0; m < rMessage.monitorentries_size(); m++)
 		{
 			const SvPml::MesMonitorEntry& mEntry = rMessage.monitorentries(m);
-			std::string name = mEntry.name();
+			std::string name = SvUl::to_ansi(mEntry.name());
 			DWORD monitorlistflag = mEntry.entrydata().monitorlistflag();
 			MonitorEntryPointer pMonitorEntry = AddMultEntries(monitorlistflag, name);
 			pMonitorEntry->BuildFromProtoMessage(mEntry);

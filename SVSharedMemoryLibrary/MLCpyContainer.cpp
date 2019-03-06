@@ -10,6 +10,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/GlobalConst.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 
 namespace SvSml
@@ -249,7 +250,8 @@ namespace SvSml
 	{
 		
 		bool result {true};
-		if (0 == request.listname().size())
+		std::string listName = SvUl::to_ansi(request.listname());
+		if (0 == listName.size())
 		{
 			for (const auto& pair : m_MonitorListCpyMap)
 			{
@@ -262,7 +264,7 @@ namespace SvSml
 		else
 		{
 			MonitorListCpyMap::const_iterator it;
-			it = m_MonitorListCpyMap.find(request.listname());
+			it = m_MonitorListCpyMap.find(listName);
 			if (it != m_MonitorListCpyMap.end() && it->second->GetIsActive())
 			{
 				it->second->QueryListItem( request, resp);

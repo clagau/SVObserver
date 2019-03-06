@@ -18,6 +18,7 @@
 #include "WebsocketLibrary/RunRequest.inl"
 #include "SVValueObjectList.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 CComVariant  GetComVariant(const SvPb::Variant& rPbVariant)
 {
@@ -25,6 +26,10 @@ CComVariant  GetComVariant(const SvPb::Variant& rPbVariant)
 
 	_variant_t Variant;
 	SvPb::ConvertProtobufToVariant(rPbVariant, Variant, true);
+	if(VT_EMPTY == Variant.vt)
+	{
+		Variant.SetString("");
+	}
 	Result = Variant;
 
 	return Result;
@@ -36,7 +41,7 @@ ValuePtr GetValueObjectPtr(int Count, const std::string& rName, const SvPb::Vari
 	CComObject<SVValueObject>::CreateInstance(&pValueObject);
 	ValuePtr pvo(pValueObject);
 
-	_bstr_t bname(rName.c_str());
+	_bstr_t bname(SvUl::to_ansi(rName).c_str());
 	bool isArray = VT_ARRAY == (rValue.type() & VT_ARRAY);
 	pValueObject->put_Name(bname);
 	pValueObject->put_Status(0);
@@ -52,7 +57,7 @@ ErrorPtr GetErrorObjectPtr(LONG Status, const std::string& rName, const SvPb::Va
 	CComObject<SVErrorObject>::CreateInstance(&pErrorObject);
 	ErrorPtr pErrorObjectPtr(pErrorObject);
 
-	_bstr_t bName(rName.c_str());
+	_bstr_t bName(SvUl::to_ansi(rName).c_str());
 	pErrorObject->put_Name(bName);
 	pErrorObject->put_Status(Status);
 	return pErrorObjectPtr;
@@ -64,17 +69,17 @@ DataDefPtr GetDataDefPtr(const SvPb::DataDefinition& rDataDef)
 	CComObject<SVDataDefObject>::CreateInstance(&pDataDef);
 	DataDefPtr pDataDefPtr(pDataDef);
 
-	_bstr_t bName(rDataDef.name().c_str());
+	_bstr_t bName(SvUl::to_ansi(rDataDef.name()).c_str());
 	pDataDefPtr->put_Name(bName);
 	pDataDefPtr->put_Writable(rDataDef.writable());
 	pDataDefPtr->put_Published(rDataDef.published());
-	_bstr_t bType(rDataDef.type().c_str());
+	_bstr_t bType(SvUl::to_ansi(rDataDef.type()).c_str());
 	pDataDefPtr->put_DataType(bType);
 	for(int i=0; i < rDataDef.additionalinfo_size(); i++)
 	{
 		CComVariant Value;
 		Value.vt = VT_BSTR;
-		_bstr_t bTemp(rDataDef.additionalinfo(i).c_str());
+		_bstr_t bTemp(SvUl::to_ansi(rDataDef.additionalinfo(i)).c_str());
 		Value.bstrVal = bTemp;
 		pDataDefPtr->Add(Value);
 	}
@@ -87,7 +92,7 @@ ImagePtr GetImageObjectPtr(int trigger, const std::string& rName, const SvPb::Im
 	CComObject<SVImageObject> *pImageObject{nullptr};
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
 	ImagePtr pio(pImageObject);
-	_bstr_t bname(rName.c_str());
+	_bstr_t bname(SvUl::to_ansi(rName).c_str());
 	pImageObject->put_Name(bname);
 	pImageObject->put_TriggerCount(trigger);
 	pImageObject->SetClientService(rpSvrcClientService);
@@ -101,7 +106,7 @@ ImagePtr GetImageObjectPtr(int Trigger, const std::string& rName, const std::str
 	CComObject<SVImageObject>::CreateInstance(&pImageObject);
 	ImagePtr pImageObjectPtr(pImageObject);
 
-	_bstr_t bName(rName.c_str());
+	_bstr_t bName(SvUl::to_ansi(rName).c_str());
 	pImageObject->put_Name(bName);
 	pImageObject->put_TriggerCount(Trigger);
 	//@Todo[MEC][8.00] [10.11.2017] avoid copying ??
