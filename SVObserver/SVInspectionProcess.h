@@ -256,6 +256,8 @@ public:
 
 	bool getInitialAuxiliaryExtents() {return m_initialAuxiliaryExtents;}
 
+	void buildValueObjectDefList() const;
+
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
@@ -382,8 +384,8 @@ protected:
 	///True if product i a reject
 	bool   CopyToWatchlist(SvTrc::ITriggerRecordRPtr pTriggerRecord, long slotindex);
 	
-	void  BuildWatchlist();
-	
+	void BuildWatchlist();
+
 	SVGUID m_PPQId;
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
@@ -428,7 +430,6 @@ protected:
 private:
 	void Init();
 
-	void buildValueObjectDefList() const;
 	std::vector<_variant_t> copyValueObjectList(bool determineSize=false) const;
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;

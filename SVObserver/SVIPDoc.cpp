@@ -533,13 +533,21 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 	}
 	if (Success)
 	{
-		SVToolSetClass* pToolSet = GetToolSet();
 		RunOnce();
 		// Refresh all views...
 		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
 		SetSelectedToolID(newObjectID);
 		SetModifiedFlag();
-		pToolSet->updateToolPosition();
+		SVToolSetClass* pToolSet{GetToolSet()};
+		if(nullptr != pToolSet)
+		{
+			pToolSet->updateToolPosition();
+		}
+		SVInspectionProcess* pInspection{GetInspectionProcess()};
+		if(nullptr != pInspection)
+		{
+			pInspection->buildValueObjectDefList();
+		}
 		
 		return true;
 	}

@@ -125,7 +125,7 @@ HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/) const
+HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/,  bool useResultSize /*= true*/) const
 {
 	RefreshOwner( SVObjectClass::PreRefresh );
 

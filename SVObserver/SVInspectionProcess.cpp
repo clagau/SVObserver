@@ -3872,7 +3872,8 @@ std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineS
 		if (nullptr != pValueObject && nullptr != pObject && 0 != pObject->ObjectAttributesAllowed())
 		{
 			_variant_t value;
-			if(S_OK == pValueObject->getValue(value))
+			//when determineSize is true then the array size not the result size is returned to be able to determine the memory requirements
+			if(S_OK == pValueObject->getValue(value, -1, !determineSize))
 			{
 				if(VT_BSTR == value.vt && determineSize)
 				{

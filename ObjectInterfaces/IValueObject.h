@@ -58,8 +58,9 @@ namespace SvOi
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
+		//! \param useResultSize [in] When index -1 should use array or result size
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const = 0;
+		virtual HRESULT getValue(_variant_t& rValue, int Index = -1, bool useResultSize=true) const = 0;
 
 		//! Gets the values for Value object
 		//! \param rValue [out] The reference to _variant_t vector to store the values

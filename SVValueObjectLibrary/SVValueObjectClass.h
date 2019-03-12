@@ -86,7 +86,7 @@ public:
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
 	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
-	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, bool useResultSize = true) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
 	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
@@ -171,7 +171,7 @@ protected:
 	/// !!can throw Exception!!
 	ValueVector variant2VectorType(const _variant_t& rValue) const;
 	/// Uses move semantics
-	_variant_t vectorType2SafeArray() const;
+	_variant_t vectorType2SafeArray(long arraySize) const;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
@@ -185,6 +185,7 @@ private:
 
 	SvOi::SVResetItemEnum m_eResetItem;
 
+	//NOTE! Never access these variables directly as getResultSize and getArraySize are overloaded
 	int m_ArraySize;
 	int m_ResultSize;
 

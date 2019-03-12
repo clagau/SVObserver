@@ -77,7 +77,7 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 
 	m_ArraySize = (std::max)(iSize, 1);	// minimum one array element //parentheses around std::max avoid problems if a max macro has beed defined somewhere (e.g. in windows.h)
 
-	if (m_ArraySize <= 1)
+	if (getArraySize() <= 1)
 	{
 		if (std::string::npos != m_TypeName.find(_T(" Array")))
 		{
@@ -94,9 +94,9 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 
 	m_ResultSize = iSize;
 
-	m_ObjectAttributesSet.resize(m_ArraySize, m_DefaultObjectAttributesSet);
+	m_ObjectAttributesSet.resize(getArraySize(), m_DefaultObjectAttributesSet);
 
-	if (1 == m_ArraySize)
+	if (1 == getArraySize())
 	{
 		if (iSize == 0)
 		{
@@ -110,7 +110,7 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 		{
 			m_ValueArray.clear();	// minimum array size is 1. If iSize == 0, clear the array then resize back to 1 below with the default value.
 		}
-		m_ValueArray.resize(m_ArraySize, GetDefaultValue());
+		m_ValueArray.resize(getArraySize(), GetDefaultValue());
 	}
 
 	return hr;
@@ -136,7 +136,7 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	else if (pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue()))
 	{
 
-		if (1 == m_ArraySize)
+		if (1 == getArraySize())
 		{
 			// In configurations the value are placed in bucket 1
 			m_Value = BucketArray[1][0];
@@ -151,7 +151,7 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	else if (pDataObject->GetArrayData(SvDef::cArrayTag, ValueArray, DefaultValue()))
 	{
 		SetArraySize(static_cast<int>(ValueArray.size()));
-		if (1 == m_ArraySize)
+		if (1 == getArraySize())
 		{
 			m_Value = ValueArray[0];
 		}
@@ -185,7 +185,7 @@ __forceinline HRESULT SVValueObjectClass<T>::SetValue(const T& rValue, int Index
 
 	if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result)
 	{
-		if (1 == m_ArraySize)
+		if (1 == getArraySize())
 		{
 			m_Value = rValue;
 		}
@@ -216,7 +216,7 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index) cons
 	if (S_OK == Result)
 	{
 		m_isObjectValid = true;
-		if (1 == m_ArraySize)
+		if (1 == getArraySize())
 		{
 			rValue = m_Value;
 		}
@@ -253,7 +253,7 @@ HRESULT SVValueObjectClass<T>::SetDefaultValue(const T& rValue, bool bResetAll)
 	m_DefaultValue = rValue;
 	if (bResetAll)
 	{
-		if (1 == m_ArraySize)
+		if (1 == getArraySize())
 		{
 			m_Value = rValue;
 		}
@@ -271,13 +271,13 @@ HRESULT SVValueObjectClass<T>::SetArrayValues(typename ValueVector::const_iterat
 	HRESULT Result(E_FAIL);
 
 	int Size = static_cast<int> (std::distance(BeginIter, EndIter));
-	assert(Size <= m_ArraySize);
-	if (Size <= m_ArraySize)
+	assert(Size <= getArraySize());
+	if (Size <= getArraySize())
 	{
 		SetResultSize(Size);
 		if (Size > 0)
 		{
-			if (1 == m_ArraySize)
+			if (1 == getArraySize())
 			{
 				m_Value = *BeginIter;
 			}
@@ -305,20 +305,20 @@ template <typename T>
 HRESULT SVValueObjectClass<T>::GetArrayValues(ValueVector& rValues) const
 {
 	HRESULT Result = S_OK;
-	if (0 == m_ResultSize)
+	if (0 == getResultSize())
 	{
 		return Result;
 	}
-	assert(m_ResultSize <= m_ArraySize);
-	rValues.resize(m_ResultSize);
+	assert(getResultSize() <= getArraySize());
+	rValues.resize(getResultSize());
 
-	if (1 == m_ArraySize)
+	if (1 == getArraySize())
 	{
 		rValues[0] = m_Value;
 	}
 	else
 	{
-		std::copy(m_ValueArray.begin(), m_ValueArray.begin() + m_ResultSize, rValues.begin());
+		std::copy(m_ValueArray.begin(), m_ValueArray.begin() + getResultSize(), rValues.begin());
 	}
 	return Result;
 }
@@ -362,7 +362,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues) const
 	HRESULT Result(S_OK);
 
 	int ResultSize = getResultSize();
-	assert(ResultSize <= m_ArraySize);
+	assert(ResultSize <= getArraySize());
 	rValues.resize(ResultSize);
 	for (int i = 0; i < ResultSize && S_OK == Result; i++)
 	{
@@ -428,7 +428,7 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 		if(arraySize > 0)
 		{
 			//fit array size to safeArray-size
-			if (m_ArraySize != arraySize)
+			if (getArraySize() != arraySize)
 			{
 				result = SetArraySize((arraySize));
 			}
@@ -450,14 +450,14 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) const
+HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/, bool useResultSize /*= true*/) const
 {
 	HRESULT Result(E_FAIL);
 
 	//! If index is -1 and it is an array then get the whole array
 	if (-1 == Index && isArray())
 	{
-		rValue = vectorType2SafeArray();
+		rValue = vectorType2SafeArray(useResultSize ? getResultSize() : getArraySize());
 		Result = S_OK;
 	}
 	else
@@ -482,14 +482,14 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues) cons
 {
 	HRESULT Result = E_FAIL;
 
-	if (0 == m_ResultSize)
+	if (0 == getResultSize())
 	{
 		return S_OK;
 	}
 
-	assert(m_ResultSize <= m_ArraySize);
-	rValues.resize(m_ResultSize);
-	if (1 == m_ArraySize)
+	assert(getResultSize() <= getArraySize());
+	rValues.resize(getResultSize());
+	if (1 == getArraySize())
 	{
 		ValueType Value;
 		Result = GetValue(Value, -1);
@@ -508,7 +508,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues) cons
 			std::vector<_variant_t>::iterator ToIter(rValues.begin());
 
 			while (ToIter != rValues.end() && FromIter != ValueArray.end() &&
-				FromIter != ValueArray.begin() + m_ResultSize)
+				FromIter != ValueArray.begin() + getResultSize())
 			{
 				*ToIter = ValueType2Variant(*FromIter);
 
@@ -657,9 +657,10 @@ inline HRESULT SVValueObjectClass<T>::ValidateIndex(int ArrayIndex) const
 {
 	if (isArray())
 	{
-		if (ArrayIndex >= 0 && ArrayIndex < m_ArraySize)
+		if (ArrayIndex >= 0 && ArrayIndex < getArraySize())
 		{
-			if (1 == m_ArraySize || ArrayIndex < m_ResultSize)
+			//Use the variable not the function getResultSize in this case
+			if (1 == getArraySize() || ArrayIndex < m_ResultSize)
 			{
 				return S_OK;
 			}
@@ -704,7 +705,7 @@ typename T* SVValueObjectClass<T>::getValuePointer(int Index)
 {
 	ValueType* pResult(nullptr);
 
-	if (1 == m_ArraySize)
+	if (1 == getArraySize())
 	{
 		pResult = &m_Value;
 	}
@@ -806,24 +807,22 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 }
 
 template <typename T>
-_variant_t SVValueObjectClass<T>::vectorType2SafeArray() const
+_variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 {
 	_variant_t result;
 
-	const long size = static_cast<unsigned long> (m_ValueArray.size());
-
-	if(size > 0)
+	if(arraySize > 0 && arraySize <= static_cast<long> (getArraySize()))
 	{
 		SAFEARRAYBOUND arrayBound;
 		arrayBound.lLbound = 0;
-		arrayBound.cElements = size;
+		arrayBound.cElements = arraySize;
 		VARTYPE varType = ValueType2Variant(m_DefaultValue).vt;
 		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
 		result.vt = varType | VT_ARRAY;
 
 		if (nullptr != result.parray)
 		{
-			for (long i = 0; i < size; ++i)
+			for (long i = 0; i < arraySize; ++i)
 			{
 				if (VT_BSTR == varType)
 				{
