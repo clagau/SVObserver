@@ -541,22 +541,6 @@ bool SVProductInfoStruct::setNextAvailableCameraImage( )
 	return true;
 }
 
-bool SVProductInfoStruct::IsAlive() const
-{
-	bool l_Status = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
-
-	if( ! l_Status && nullptr != m_pPPQ)
-	{
-		l_Status = m_pPPQ->IsProductAlive( ProcessCount() );
-	}
-	else
-	{
-		l_Status = false;
-	}
-
-	return l_Status;
-}
-
 void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 {
 	rData = SvUl::Format( _T( "TriggerCount=%ld-DataComplete=%s" ),

@@ -166,8 +166,6 @@ struct SVProductInfoStruct
 	inline long ProcessCount() const {return oTriggerInfo.lTriggerCount;}
 	inline const SvTl::SVTimeStamp& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
 
-	bool IsAlive() const;
-
 	void DumpIndexInfo( std::string& p_rData );
 
 	bool IsProductActive() const;

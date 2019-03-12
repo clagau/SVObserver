@@ -143,7 +143,6 @@ public:
 	bool IsOnline() const;
 	void setOnline() { m_bOnline = true; }
 
-	bool IsProductExpired( const SVProductInfoStruct* pProduct ) const;
 	HRESULT GetProduct( SVProductInfoStruct& p_rProduct, long lProcessCount ) const;
 
 	SVProductInfoStruct getProductReadyForRunOnce( const SVGUID& ipGuid  );
@@ -160,9 +159,6 @@ public:
 
 	void AddCameraDataInputs(SVIOEntryHostStructPtrVector& list);
 	void RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list);
-	void SetDefaultConditionalOutput();
-	bool HasCameraDataInputForConditionalOutput() const;
-	bool HasDigitalInputForConditionalOutput() const;
 
 	void AddOutput( SVIOEntryHostStructPtr pOutput );
 	bool RemoveOutput( SVIOEntryHostStructPtr pOutput );

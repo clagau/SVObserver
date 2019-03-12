@@ -1278,11 +1278,7 @@ bool SVPPQObject::GoOffline()
 			l_Stream.close();
 		}
 
-		std::string l_Name;
-
-		l_Name = SvUl::Format(_T("%s-%ld"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
-
-		l_Name = SvUl::Format(_T("C:\\SVObserver\\%s-Counts-%ld.csv"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
+		std::string l_Name = SvUl::Format(_T("C:\\SVObserver\\%s-Counts-%ld.csv"), GetName(), SVObjectManagerClass::Instance().GetFileSequenceNumber());
 
 		std::fstream l_TrackingStream(l_Name.c_str(), std::ios_base::trunc | std::ios_base::out);
 
@@ -1494,9 +1490,6 @@ bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 	SVIOEntryHostStructPtrVector ppNewInputs;
 	SVIOEntryHostStructPtr pOldInput;
 	SVIOEntryHostStructPtr pNewInput;
-	size_t iNew;
-	size_t iOld;
-	size_t lNewSize;
 
 	// Make sure all the defaults are here for old configurations
 	AddDefaultInputs();
@@ -1508,13 +1501,13 @@ bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 		{
 			AddCameraDataInputs(ppNewInputs);
 		}
-		lNewSize = ppNewInputs.size();
+		size_t lNewSize = ppNewInputs.size();
 
-		for (iOld = 0; iOld < m_AllInputs.size(); iOld++)
+		for (size_t iOld = 0; iOld < m_AllInputs.size(); iOld++)
 		{
 			pOldInput = m_AllInputs[iOld];
 
-			for (iNew = 0; iNew < lNewSize; iNew++)
+			for (size_t iNew = 0; iNew < lNewSize; iNew++)
 			{
 				pNewInput = ppNewInputs[iNew];
 
@@ -1563,16 +1556,6 @@ static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const std::s
 	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
 	{
 		bRetVal = (pIoEntry->getObject()->GetName() == name);
-	}
-	return bRetVal;
-}
-
-static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const std::string& name)
-{
-	bool bRetVal = false;
-	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
-	{
-		bRetVal = (pIoEntry->getObject()->GetCompleteName() == name);
 	}
 	return bRetVal;
 }
@@ -1627,22 +1610,6 @@ void SVPPQObject::RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list)
 	{
 		list.erase(it, list.end());
 	}
-}
-
-void SVPPQObject::SetDefaultConditionalOutput()
-{
-	m_conditionalOutputName = PPQ_CONDITIONAL_OUTPUT_ALWAYS;
-	m_conditionalOutputValueID = GUID_NULL;
-}
-
-bool SVPPQObject::HasCameraDataInputForConditionalOutput() const
-{
-	return (std::string::npos != m_conditionalOutputName.find(_T("Camera")));
-}
-
-bool SVPPQObject::HasDigitalInputForConditionalOutput() const
-{
-	return (std::string::npos != m_conditionalOutputName.find(_T("DIO")));
 }
 
 // AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
@@ -1971,38 +1938,31 @@ bool SVPPQObject::ResetOutputs()
 bool SVPPQObject::RebuildOutputList()
 {
 	SVIOEntryHostStructPtrVector ppNewOutputs;
-	SVIOEntryHostStructPtr pOldOutput;
-	SVIOEntryHostStructPtr pNewOutput;
-	std::string OldName;
-	std::string NewName;
-	size_t iOld;
-	size_t iNew;
-	size_t lNewSize;
 
 	// Make sure all the defaults are here for old configurations
 	AddDefaultOutputs();
 
 	if (m_pOutputList && m_pOutputList->FillOutputs(ppNewOutputs))
 	{
-		lNewSize = ppNewOutputs.size();
+		size_t lNewSize = ppNewOutputs.size();
 
 		m_pTriggerToggle.reset();
 		m_pOutputToggle.reset();
 		m_pDataValid.reset();
 
-		for (iOld = 0; iOld < m_AllOutputs.size(); iOld++)
+		for (size_t iOld = 0; iOld < m_AllOutputs.size(); iOld++)
 		{
-			pOldOutput = m_AllOutputs[iOld];
+			SVIOEntryHostStructPtr pOldOutput = m_AllOutputs[iOld];
 			pOldOutput->m_IOId.clear();
 
-			for (iNew = 0; iNew < lNewSize; iNew++)
+			for (size_t iNew = 0; iNew < lNewSize; iNew++)
 			{
-				pNewOutput = ppNewOutputs[iNew];
+				SVIOEntryHostStructPtr pNewOutput = ppNewOutputs[iNew];
 
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pNewOutput->m_IOId);
 
-				NewName = pObject->GetCompleteName();
-				OldName = pOldOutput->getObject()->GetCompleteName();
+				std::string NewName = pObject->GetCompleteName();
+				std::string OldName = pOldOutput->getObject()->GetCompleteName();
 
 				if (pNewOutput->m_ObjectType == pOldOutput->m_ObjectType && NewName == OldName)
 				{
@@ -2259,8 +2219,6 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 
 		// See if the Inspection Processes can inspect this product
 		int iSize = static_cast<int> (m_arInspections.size());
-
-		bool l_Start = true;
 
 		for (int i = 0; i < iSize; i++)
 		{
@@ -2642,20 +2600,21 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 {
 	SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(p_PPQIndex);
-	bool bValid = (nullptr != pProduct);
-
-	if (bValid)
+	if (nullptr == pProduct)
 	{
-		SVGUIDSVInspectionInfoStructMap::iterator l_Iter = pProduct->m_svInspectionInfos.begin();
+		return false;
+	}
 
-		while (l_Iter != pProduct->m_svInspectionInfos.end())
-		{
-			bool l_Complete = (l_Iter->second.m_EndInspection > 0);
+	bool bValid = true;
+	SVGUIDSVInspectionInfoStructMap::iterator l_Iter = pProduct->m_svInspectionInfos.begin();
 
-			bValid &= l_Complete;
+	while (l_Iter != pProduct->m_svInspectionInfos.end())
+	{
+		bool l_Complete = (l_Iter->second.m_EndInspection > 0);
 
-			++l_Iter;
-		}
+		bValid &= l_Complete;
+
+		++l_Iter;
 	}
 
 	if (bValid)
@@ -2664,7 +2623,6 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 		// returns E_FAIL when there are no listeners/observers.  Not having 
 		// Remote Outputs or Fail Status is not an error in this case.
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), GetUniqueObjectID(), *pProduct);
-
 	}
 
 	if (bValid)
@@ -3171,20 +3129,6 @@ bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
 	return retValue;
 }
 
-bool SVPPQObject::IsProductExpired(const SVProductInfoStruct* pProduct) const
-{
-	if (SvDef::SVPPQExtendedTimeDelayMode == m_oOutputMode && 0 < m_lInspectionTimeoutMillisec)
-	{
-		SvTl::SVTimeStamp l_CurrentTimestamp = SvTl::GetTimeStamp();
-		SvTl::SVTimeStamp l_ProductTimestamp = pProduct->oTriggerInfo.m_BeginProcess;
-		return ((l_CurrentTimestamp - l_ProductTimestamp) > static_cast<double>(m_lOutputDelay - m_lInspectionTimeoutMillisec));
-	}
-	else
-	{
-		return false;
-	}
-}
-
 void CALLBACK SVPPQObject::OutputTimerCallback(UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2)
 {
 	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(dwUser);
@@ -3451,8 +3395,6 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 
 		if( rProcessed ) // if there is a request to notify.
 		{
-			// offset is from the beginning of the PPQ.  
-			long l_Offset = -1;
 			rProcessed = false;
 
 			SVProcessCountSet::iterator l_Iter(m_oNotifyInspectionsSet.begin());
@@ -3464,7 +3406,7 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 			{
 				long l_ProcessCount = *l_Iter;
 
-				l_Offset = m_ppPPQPositions.GetIndexByTriggerCount(l_ProcessCount);
+				long l_Offset = m_ppPPQPositions.GetIndexByTriggerCount(l_ProcessCount);
 
 				rProcessed = ( 0 <= l_Offset && l_Offset < static_cast<long> (m_ppPPQPositions.size()) );
 
@@ -3487,7 +3429,7 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 						// this means that inspection was not notified 
 						// because inputs or image were not ready.  
 						// proceed to next inspection.
-						l_Iter++;
+						++l_Iter;
 						rProcessed = false;
 						l_Status = S_OK;
 					}
@@ -3916,9 +3858,7 @@ HRESULT SVPPQObject::ProcessProductRequests( bool& rProcessed )
 			{
 				if (nullptr != l_Request.second.m_pProduct)
 				{
-					SVProductInfoStruct* pProduct = nullptr;
-
-					pProduct = GetProductInfoStruct(l_Request.first);
+					SVProductInfoStruct* pProduct = GetProductInfoStruct(l_Request.first);
 
 					if (nullptr != pProduct)
 					{
@@ -4039,9 +3979,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 				rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 				l_svValue.Clear();
 
-				SVRemoteInputObject* pRemote = nullptr;
-
-				pRemote = dynamic_cast<SVRemoteInputObject*> (m_pInputList->GetInput(pEntry->m_IOId));
+				SVRemoteInputObject* pRemote = dynamic_cast<SVRemoteInputObject*> (m_pInputList->GetInput(pEntry->m_IOId));
 
 				if (nullptr != pRemote)
 				{
@@ -4082,18 +4020,6 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 SvTi::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
 {
 	return m_CameraInputData;
-}
-
-static bool CompareInspectionName(const std::string& name, const std::string& dottedName)
-{
-	SVDottedName parsedName(dottedName.c_str());
-	if (parsedName.size())
-	{
-		std::string inspectionName = parsedName[0];
-		int cmp = inspectionName.compare(name);
-		return (cmp > 0) ? true : false;
-	}
-	return false;
 }
 
 void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
@@ -4288,29 +4214,6 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount(const std::string& p_rName, 
 	m_QueueWriteTimeCounts[p_rName].IncrementCount(p_Index, m_TimeLength);
 }
 #endif //EnableTracking
-
-static SVGUID GetInspectionGuid(const std::string& rName)
-{
-	SVGUID guid;
-	SVDottedName dottedName(rName.c_str());
-
-	if (dottedName.size())
-	{
-		guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(dottedName[0].c_str());
-	}
-	return guid;
-}
-
-static long GetProductInfoInspectionIndex(const SVGUID& rGuid, const SVProductInfoStruct& rProduct)
-{
-	long index = -1;
-	SVGUIDSVInspectionInfoStructMap::const_iterator it = rProduct.m_svInspectionInfos.find(rGuid);
-	if (it != rProduct.m_svInspectionInfos.end())
-	{
-		index = it->second.m_lastInspectedSlot;
-	}
-	return index;
-}
 
 void SVPPQObject::ResetOutputValueObjects()
 {
