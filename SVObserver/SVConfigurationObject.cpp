@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
-
+//Moved to precompiled header: #include <regex>
 #include "SVConfigurationObject.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
@@ -2384,27 +2384,38 @@ HRESULT SVConfigurationObject::ValidateOutputList()
 
 void SVConfigurationObject::UpgradeConfiguration()
 {
-	bool ConfigChanged(false);
-
-	SVObjectPtrVector ColorTools;
-	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(ColorTools), SvPb::SVToolObjectType, SvPb::SVColorToolObjectType);
-	SVObjectPtrVector::iterator Iter = ColorTools.begin();
-	for (; ColorTools.end() != Iter; ++Iter)
+	SVObjectPtrVector objectList;
+	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(objectList), SvPb::SVToolObjectType, SvPb::SVColorToolObjectType);
+	for (const auto pObject : objectList)
 	{
-		SvTo::SVColorToolClass* pColorTool = dynamic_cast<SvTo::SVColorToolClass*> (*Iter);
-		if (pColorTool->isConverted())
+		const SvTo::SVColorToolClass* pColorTool = dynamic_cast<const SvTo::SVColorToolClass*> (pObject);
+		if (nullptr != pColorTool && pColorTool->isConverted())
 		{
-			ConfigChanged = true;
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
+
+			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			break;
 		}
 	}
-	if (ConfigChanged)
+
+	objectList.clear();
+	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(objectList), SvPb::SVEquationObjectType, SvPb::SVNotSetSubObjectType);
+	for (const auto pObject : objectList)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
-	}
-	if (ConfigChanged)
-	{
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		const SvOi::IEquation* pEquation = dynamic_cast<const SvOi::IEquation*> (pObject);
+		if(nullptr != pEquation)
+		{
+			const std::string& rEquaution = pEquation->GetEquationText();
+			//Check if we are using incorrect Trigger Count variable
+			constexpr LPCTSTR cPpqTriggerCount = R"(PPQ_[1-9]\.Trigger Count)";
+			if(std::regex_search(rEquaution.cbegin(), rEquaution.cend(), std::regex(cPpqTriggerCount)))
+			{
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ErrorPpqTriggerCount, SvStl::SourceFileParams(StdMessageParams));
+				break;
+			}
+		}
 	}
 }
 

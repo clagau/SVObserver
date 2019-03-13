@@ -55,7 +55,7 @@ public:
 	virtual SvIe::SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	SvIe::SVImageClass* getOutputImage() { return &m_OutputImage; };
 
-	bool isConverted() { return m_ConvertTool; };
+	bool isConverted() const { return m_ConvertTool; }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

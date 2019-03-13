@@ -122,6 +122,7 @@ namespace Gdiplus
 #include <mutex>
 #include <numeric>
 #include <Objidl.h>
+#include <regex>
 #include <sequential_tree.h>
 #include <set>
 #include <sstream>

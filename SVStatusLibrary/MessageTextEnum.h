@@ -546,7 +546,8 @@ enum MessageTextEnum
 
 	Tid_InvalidMemoryPointer,
 	Tid_InvalidMatroxType,
-	Tid_InvalidMatroxAttribute
+	Tid_InvalidMatroxAttribute,
 
+	Tid_ErrorPpqTriggerCount
 };
 } //namespace SvStl

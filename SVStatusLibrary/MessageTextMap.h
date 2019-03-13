@@ -582,6 +582,8 @@ namespace SvStl
 
 		{Tid_InvalidMemoryPointer, _T("Invalid Memory Pointer")},
 		{Tid_InvalidMatroxType, _T("Invalid Matrox Type")},
-		{ Tid_InvalidMatroxAttribute, _T("Invalid Matrox Attribute") }
+		{Tid_InvalidMatroxAttribute, _T("Invalid Matrox Attribute")},
+		
+		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")}
 };
 } //namespace SvStl
