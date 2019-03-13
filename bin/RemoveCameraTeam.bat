@@ -10,6 +10,8 @@ goto :error
 :cmd
 eventcreate /ID 13 /L APPLICATION /T INFORMATION  /SO SVObserver.exe /D "Remove camera team %TeamIndex%"
 c:\"Program Files"\Intel\DMIX\CL\ProSetCl.exe Team_Remove %TeamIndex%
+
+call GigEBinds.bat
 goto :end
 
 :error
