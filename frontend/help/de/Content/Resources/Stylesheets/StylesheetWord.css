@@ -1,0 +1,230 @@
+/*<meta />*/
+
+body
+{
+	font-family: Arial;
+}
+
+h1
+{
+	font-weight: bold;
+	font-size: 18pt;
+	font-family: Arial;
+	background-color: #dcdcdc;
+	margin-bottom: 12px;
+	mc-auto-number-class: SeeAlsoIndex;
+	page-break-before: always;
+	mc-auto-number-format: 'GH:{n+} ';
+	margin-top: 0;
+}
+
+h2
+{
+	font-weight: bold;
+	font-size: 18pt;
+	font-family: Arial;
+	background-color: #dcdcdc;
+	margin-bottom: 12px;
+	mc-auto-number-format: 'GH:{n}.{n+} ';
+	margin-top: 24px;
+}
+
+h3
+{
+	font-weight: bold;
+	background-color: #dcdcdc;
+	font-size: 18pt;
+	font-family: Arial;
+	margin-bottom: 12px;
+	mc-auto-number-class: SeeAlsoIndex;
+	mc-auto-number-format: 'GH:{n}.{n}.{n+} ';
+	margin-top: 24px;
+}
+
+h4
+{
+	font-weight: bold;
+	font-size: 18pt;
+	font-family: Arial;
+	background-color: #dcdcdc;
+	margin-bottom: 12px;
+	margin-top: 24px;
+	mc-auto-number-format: 'GH:{n}.{n}.{n}.{n+} ';
+}
+
+h5
+{
+	font-weight: bold;
+	background-color: #dcdcdc;
+	font-size: 18pt;
+	font-family: Arial;
+	margin-bottom: 12px;
+	mc-auto-number-format: 'GH:{n}.{n}.{n}.{n}.{n+} ';
+	margin-top: 24px;
+}
+
+h6
+{
+	font-weight: bold;
+	font-size: 8.0pt;
+}
+
+p
+{
+	line-height: normal;
+	column-break-before: auto;
+	column-break-after: auto;
+	column-break-inside: auto;
+	font-size: 11pt;
+	font-family: Arial;
+	padding-left: 0px;
+	width: 1000px;
+	height: 20px;
+	margin-bottom: 6px;
+	margin-top: 3px;
+}
+
+ol,
+ul
+{
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+img
+{
+	padding-left: 0px;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: none;
+	border-bottom-style: none;
+}
+
+a.Popup
+{
+	
+}
+
+MadCap|expandingHead
+{
+	font-style: italic;
+	font-weight: normal;
+	cursor: hand;
+	text-decoration: none;
+	color: #006600;
+}
+
+MadCap|expandingBody
+{
+	color: #777777;
+	font-style: italic;
+}
+
+MadCap|dropDownHotspot
+{
+	cursor: hand;
+	text-decoration: none;
+	font-weight: bold;
+	font-style: normal;
+	font-size: 14pt;
+	font-family: Arial;
+	color: #191970;
+}
+
+MadCap|tocProxy
+{
+	font-size: 11pt;
+	font-family: Arial;
+}
+
+p.TOC2
+{
+	margin-left: 0;
+}
+
+p.TOC3
+{
+	margin-left: 0;
+}
+
+p.TOC4
+{
+	margin-left: 0;
+}
+
+p.TOC5
+{
+	margin-left: 0;
+}
+
+ul
+{
+	font-size: 11pt;
+	font-family: Arial;
+}
+
+ol
+{
+	font-size: 11pt;
+	font-family: Arial;
+}
+
+td.TableStyle_Basic_Body_0_0_RowEnd_ColSep
+{
+	font-size: 8pt;
+}
+
+td
+{
+	font-family: Arial;
+	text-align: left;
+	vertical-align: bottom;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 11pt;
+}
+
+MadCap|dropDownHead
+{
+	font-weight: bold;
+	font-style: normal;
+	font-size: 14pt;
+	font-family: Arial;
+	color: #000000;
+}
+
+MadCap|dropDown
+{
+	font-size: 12pt;
+	font-family: Arial;
+	font-weight: normal;
+	font-style: normal;
+}
+
+MadCap|dropDownBody
+{
+	font-size: 11pt;
+	font-family: Arial;
+}
+
+th
+{
+	font-weight: bold;
+	font-style: normal;
+	font-family: Arial;
+	text-align: left;
+	font-size: 11pt;
+	mc-table-style: url('../TableStyles/Basic.css');
+	padding: 10px;
+}
+
+td.TableStyle_Header_Body_0_0_RowEnd_ColEnd
+{
+	text-align: right;
+}
+
+tr.TableStyle_Footer
+{
+	
+}
+

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CatapultToc Version="1" DescendantCount="28">
+    <TocEntry Title="Information" Link="/Content/Information/General.htm" ComputedResetPageLayout="true" ComputedFirstTopic="true" DescendantCount="7">
+        <TocEntry Title="Umfang" Link="/Content/Information/Scope.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Screenshots" Link="/Content/Information/Screenshots.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Installation von Third-Party-Software" Link="/Content/Information/Third-Party_Software.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Benutzer Training" Link="/Content/Information/User_Training.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Kontakt" Link="/Content/Information/Contact.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Referenzen und Standards" Link="/Content/Information/References_and_standards.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Lizenzvereinbarung" Link="/Content/Information/Licensing.htm" ComputedFirstTopic="false" DescendantCount="0" />
+    </TocEntry>
+    <TocEntry Title="Benutzeroberfläche" Link="/Content/User_Interface/User_Interface.htm" ComputedFirstTopic="false" DescendantCount="16">
+        <TocEntry Title="Obere Leiste" Link="/Content/User_Interface/Top_Bar/Top_bar.htm" ComputedFirstTopic="false" DescendantCount="6">
+            <TocEntry Title="Datum und Zeit" Link="/Content/User_Interface/Top_Bar/Date_and_time.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="Language Settings" Link="/Content/User_Interface/Top_Bar/Language_settings.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="Meldungen" Link="/Content/User_Interface/Top_Bar/Notifications.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="Betriebsmodus" Link="/Content/User_Interface/Top_Bar/Operating_mode.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="Obere Leiste" Link="/Content/User_Interface/Top_Bar/Top_bar.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="Benutzer" Link="/Content/User_Interface/Top_Bar/User.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        </TocEntry>
+        <TocEntry Title="View Set" Link="/Content/User_Interface/View_Set/View_set.htm" ComputedFirstTopic="false" DescendantCount="7">
+            <TocEntry Title="View Typ" Link="/Content/User_Interface/View_Set/View_types/View_types.htm" ComputedFirstTopic="false" DescendantCount="4">
+                <TocEntry Title="Filmstreifen View" Link="/Content/User_Interface/View_Set/View_types/Image_strip_view.htm" ComputedFirstTopic="false" DescendantCount="0" />
+                <TocEntry Title="Bild View" Link="/Content/User_Interface/View_Set/View_types/Image_view.htm" ComputedFirstTopic="false" DescendantCount="0" />
+                <TocEntry Title="Liste View" Link="/Content/User_Interface/View_Set/View_types/List_view.htm" ComputedFirstTopic="false" DescendantCount="0" />
+                <TocEntry Title="Parameter View" Link="/Content/User_Interface/View_Set/View_types/Parameter_view.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            </TocEntry>
+            <TocEntry Title="View" Link="/Content/User_Interface/View_Set/View.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="View Set" Link="/Content/User_Interface/View_Set/View_set.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        </TocEntry>
+        <TocEntry Title="Untere Leiste" Link="/Content/User_Interface/Bottom_bar/Bottom_bar.htm" ComputedFirstTopic="false" DescendantCount="0" />
+    </TocEntry>
+    <TocEntry Title="Menü" Link="/Content/User_Interface/Menu/Menu.htm" ComputedFirstTopic="false" DescendantCount="2">
+        <TocEntry Title="View Manager" Link="/Content/User_Interface/Menu/View_manager.htm" ComputedFirstTopic="false" DescendantCount="0" />
+        <TocEntry Title="Shortcuts" Link="/Content/User_Interface/Menu/Shortcuts.htm" ComputedFirstTopic="false" DescendantCount="0" />
+    </TocEntry>
+</CatapultToc>
