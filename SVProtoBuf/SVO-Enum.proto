@@ -324,3 +324,138 @@ enum SelectorFilter
 	monitorListRejectValue = 3;		//Object selector filter for monitor list reject values
 	ppqValue = 4;					//Object selector filter for ppq value
 };
+
+enum SVExtentPropertyEnum
+{
+	SVExtentPropertyNone					= 0;
+	SVExtentPropertyPositionPointX          = 0x00000001;
+	SVExtentPropertyPositionPointY          = 0x00000002;
+	SVExtentPropertyPositionPoint           = 0x00000003;
+	SVExtentPropertyPositionPointEndOfLineX = 0x00000004;
+	SVExtentPropertyPositionPointEndOfLineY = 0x00000008;
+	SVExtentPropertyPositionPointEndOfLine  = 0x0000000C;
+	SVExtentPropertyRotationAngle           = 0x00000010;
+	SVExtentPropertyTranslationOffsetX      = 0x00000040;
+	SVExtentPropertyTranslationOffsetY      = 0x00000080;
+	SVExtentPropertyTranslationOffset       = 0x000000C0;
+	SVExtentPropertyOutputPositionPointX    = 0x00000100;
+	SVExtentPropertyOutputPositionPointY    = 0x00000200;
+	SVExtentPropertyOutputPositionPoint     = 0x00000300;
+
+	SVExtentPropertyHeightScaleFactor		= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	SVExtentPropertyWidthScaleFactor		= 0x00080000; ///< Used by Resize Tool
+
+	SVExtentPropertyStartAngle              = 0x00100000;
+	SVExtentPropertyEndAngle                = 0x00200000;
+	SVExtentPropertyInnerRadius             = 0x00400000;
+	SVExtentPropertyOuterRadius             = 0x00800000;
+	SVExtentPropertyWidth                   = 0x01000000;
+	SVExtentPropertyHeight                  = 0x02000000;
+	SVExtentPropertyOutputWidth             = 0x04000000;
+	SVExtentPropertyOutputHeight            = 0x08000000;
+
+	//SVExtentPropertyPositionsInput = SVExtentPropertyPositionPointX | SVExtentPropertyPositionPointY | SVExtentPropertyPositionPointEndOfLineX | 
+	//								SVExtentPropertyPositionPointEndOfLineY | SVExtentPropertyTranslationOffsetX | SVExtentPropertyTranslationOffsetY | SVExtentPropertyRotationAngle,
+	SVExtentPropertyPositionsInput = 0x000000DF;
+
+	//SVExtentPropertyDimensionsInput = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyStartAngle | SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius
+	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightScaleFactor | SVExtentPropertyWidthScaleFactor,
+	SVExtentPropertyDimensionsInput = 0x03FC0000;
+
+	//SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
+	SVExtentPropertyDimentionsOutput = 0x0C000000;
+
+	//SVExtentPropertyRectangle = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyDimentionsOutput,
+	SVExtentPropertyRectangle = 0x0F000000;
+
+	//SVExtentPropertyScaleFactor = SVExtentPropertyWidthScaleFactor | SVExtentPropertyHeightScaleFactor,
+	SVExtentPropertyScaleFactor = 0x000C0000;
+
+	//SVExtentPropertyPie = SVExtentPropertyStartAngle | SVExtentPropertyEndAngle	| SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius	| SVExtentPropertyDimentionsOutput,
+	SVExtentPropertyPie = 0x0CF00000;
+
+	//SVExtentPropertyPositionsAll = SVExtentPropertyPositionsInput | SVExtentPropertyPositionsOutput,
+	SVExtentPropertyPositionsAll = 0x000003DF;
+
+	//SVExtentPropertyDimensionsAll = SVExtentPropertyDimensionsInput	| SVExtentPropertyDimentionsOutput,
+	SVExtentPropertyDimensionsAll = 0x0FFC0000;
+
+	//SVExtentPropertyAll = SVExtentPropertyPositionsAll | SVExtentPropertyDimensionsAll,
+	SVExtentPropertyAll = 0x0FFC03DF;
+
+	//SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint | SVExtentPropertyPositionPointEndOfLine | SVExtentPropertyTranslationOffset | SVExtentPropertyOutputPositionPoint
+	//						| SVExtentPropertyWidth	| SVExtentPropertyHeight | SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
+	SVExtentPropertyNoDecimalPlaces = 0x0F0003CF;
+	
+	//SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle | SVExtentPropertyStartAngle	| SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius,
+	SVExtentProperty2DecimalPlaces = 0x00F00010;
+};
+
+enum EAutoSize
+{
+	EnableNone = 0x0;
+	EnableSize = 0x1;
+	EnablePosition = 0x2;
+	EnableSizeAndPosition = 0x3;
+	EnableNegativePosition = 0x4;
+	//EnableAll = EnableSizeAndPosition | EnableNegativePosition
+	EnableAll = 0x7;
+};
+
+enum SVExtentLocationPropertyEnum
+{
+	SVExtentLocationPropertyUnknown     = 0;
+	SVExtentLocationPropertyTopLeft     = 1;
+	SVExtentLocationPropertyTopRight    = 2;
+	SVExtentLocationPropertyBottomRight = 3;
+	SVExtentLocationPropertyBottomLeft  = 4;
+	SVExtentLocationPropertyLeft        = 5;
+	SVExtentLocationPropertyRight       = 6;
+	SVExtentLocationPropertyTop         = 7;
+	SVExtentLocationPropertyBottom      = 8;
+	SVExtentLocationPropertyCenter      = 9;
+	SVExtentLocationPropertyRotate      = 10;
+	SVExtentLocationPropertyDisabled	= 11;
+	SVExtentLocationPropertySize		= 12;
+};
+
+enum SVExtentTranslationEnum
+{
+	SVExtentTranslationUnknown         = 0;
+	SVExtentTranslationNone            = 10;
+	SVExtentTranslationShift           = 20; //<default e.g WindowTool Shifttool
+	SVExtentTranslationRotate          = 30;
+	SVExtentTranslationFlippedRotate   = 31;
+	SVExtentTranslationProfile         = 40; //<LinearTool with Rotation
+	SVExtentTranslationProfileShift    = 41; //<LinearTool without Rotation
+	SVExtentTranslationTransformShift  = 50;
+	SVExtentTranslationTransformRotate = 51;
+	SVExtentTranslationPolarUnwrap     = 60;
+	SVExtentTranslationLine            = 80;
+
+	/// SvDef::SVExtentTranslationResize - Does a position, height, and width, 
+	///  translation that uses the scale factor values.
+	///  Uses include the Resize Tool.
+	SVExtentTranslationResize		   = 89;
+
+	/// SVExtentDoubleHeight - Does a position, and height translation 
+	///  that uses the height scale factor value.
+	///  Uses include the Image Tool, Double Height operation.
+	SVExtentTranslationDoubleHeight    = 90;
+
+	SVExtentTranslationFlipVertical	   = 91;
+	SVExtentTranslationFlipHorizontal  = 92;
+	SVExtentTranslationFigureShift	   = 93;
+	SVExtentTranslationLinear          = 100;
+	SVExtentTranslationCylindricalWarpH			= 110;
+	SVExtentTranslationCylindricalWarpV			= 111;
+	SVExtentTranslationHorizontalPerspective	= 120;
+	SVExtentTranslationVerticalPerspective		= 121;
+};
+
+enum SVExtentDirectionsEnum
+{
+	SVExtentDirectionBoth		= 0;
+	SVExtentDirectionHorizontal	= 1;
+	SVExtentDirectionVertical	= 2;
+};

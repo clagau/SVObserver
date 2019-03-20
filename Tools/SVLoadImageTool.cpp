@@ -61,7 +61,7 @@ void SVLoadImageToolClass::init()
 	// Default taskObjectList items:
 
 	// Set Translation
-	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationFigureShift);
+	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationFigureShift);
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, false);
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -194,16 +194,14 @@ bool SVLoadImageToolClass::isInputImage(const SVGUID& rImageGuid) const
 	return Result;
 }
 
-SvIe::SVTaskObjectClass* SVLoadImageToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SVToolClass* SVLoadImageToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVTaskObjectClass *pObject {nullptr};
-
-	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		pObject = this;
+		return this;
 	}
 
-	return pObject;
+	return nullptr;
 }
 
 bool SVLoadImageToolClass::DoesObjectHaveExtents() const

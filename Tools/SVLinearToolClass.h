@@ -40,16 +40,16 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtentToParent() override;
-	virtual SvIe::SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
-	bool GetRotation();
+	bool GetRotation() const;
 
 	//************************************
 	//! return Flag with enabled Autosize
 	//! \returns  EnableSize  | EnablePosition
 	//************************************
-	virtual EAutoSize GetAutoSizeEnabled() override;
+	virtual SvPb::EAutoSize GetAutoSizeEnabled() const override;
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 

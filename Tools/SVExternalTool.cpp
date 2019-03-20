@@ -50,7 +50,7 @@ bool SVExternalTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-SvIe::SVTaskObjectClass *SVExternalTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SVToolClass* SVExternalTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
 	return nullptr;
 }

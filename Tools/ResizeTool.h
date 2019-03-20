@@ -38,7 +38,7 @@ public:
 	///  Tests to see if the passed in point (usually from a mouse location)
 	///  is contained within itself (the ROI).  If so it returns itself (this),
 	///  otherwise returns a nullptr.
-	virtual SvIe::SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	
 	/// GetInputImageNames

@@ -29,17 +29,6 @@ class SVConditionalClass;
 
 namespace SvTo
 {
-
-enum EAutoSize
-{
-	EnableNone = 0x0,
-	EnableSize = 0x1,
-	EnablePosition = 0x2,
-	EnableSizeAndPosition = 0x3,
-	EnableNegativePosition = 0x4,
-	EnableAll = EnableSizeAndPosition | EnableNegativePosition
-};
-
 class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
 {
 	SV_DECLARE_CLASS(SVToolClass);
@@ -62,14 +51,13 @@ public:
 	//! return Flag with enabled Autosize
 	//! \returns  EnableSize  | EnablePosition
 	//************************************
-	virtual EAutoSize GetAutoSizeEnabled();
+	virtual SvPb::EAutoSize GetAutoSizeEnabled() const;
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
-	void SetImageExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
+	void SetImageExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
-	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList) override;
 
 	const SvIe::SVImageClass* GetToolImage() const;
 
@@ -82,8 +70,8 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual HRESULT GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const override;
-	HRESULT SetExtentPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo);
+	virtual HRESULT GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const override;
+	HRESULT SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo);
 
 	bool getConditionalResult(bool bRunMode = false) const;
 
@@ -105,13 +93,6 @@ public:
 	virtual HRESULT UpdateImageWithExtent() override;
 	virtual HRESULT GetParentExtent(SVImageExtentClass& p_rParent) const;
 
-	//!  Return false  if the input location 
-	//! is not allowed for the tool 
-	//! \param Location [in]
-	//! \param Direction 
-	//! \returns bool
-	bool IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Location, SvDef::SVExtentDirectionsEnum Direction = SvDef::SVExtentDirectionBoth) const;
-
 	//! Calculates bottom and Right 
 	//! \returns void
 	void UpdateBottomAndRight();
@@ -127,7 +108,7 @@ public:
 
 	//! Check if tool can be resized to parent extents
 	//! \returns true if tool can resize to parent
-	bool canResizeToParent() { return m_canResizeToParent; };
+	virtual bool canResizeToParent() const override { return m_canResizeToParent; };
 
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
@@ -143,6 +124,11 @@ public:
 	SVToolExtentClass& getToolExtent() {return m_toolExtent;}
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SvIe::SVImageClass* p_svToolImage);
 
+	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) { return nullptr; };
+
+	virtual HRESULT propagateSizeAndPosition();
+	virtual bool usePropagateSizeAndPosition() const;
+
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
 	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;
@@ -150,9 +136,21 @@ public:
 	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
 	virtual void SetToolImage(const SVGUID& rObjectID) override;
 	virtual long getToolPosition() const override;
-	virtual HRESULT getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue) override;
+	virtual void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const override;
+	virtual HRESULT getParentExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const override;
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 	virtual void finishAddTool() override;
+	virtual SvPb::EAutoSize getAutoSizeEnabled() const override;
+	virtual HRESULT updateExtentFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eAction, long dx, long dy) override;
+	virtual HRESULT setExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double value) override;
+	virtual HRESULT setExtentList(const ::google::protobuf::RepeatedPtrField<::SvPb::ExtentParameter> param) override;
+	virtual HRESULT setExtentToParent() override;
+	//!  Return false  if the input location 
+	//! is not allowed for the tool 
+	//! \param Location [in]
+	//! \param Direction 
+	//! \returns bool
+	virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const override;
 #pragma endregion ITool methods
 
 protected:

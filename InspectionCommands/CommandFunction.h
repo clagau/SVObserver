@@ -131,6 +131,18 @@ namespace SvCmd
 
 	HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb::GetOutputRectangleResponse& rResponse);
 
+	HRESULT getToolSizeAdjustParameter(const SvPb::GetToolSizeAdjustParameterRequest& rRequest, SvPb::GetToolSizeAdjustParameterResponse& rResponse);
+
+	HRESULT getExtentParameter(const SvPb::GetExtentParameterRequest& rRequest, SvPb::GetExtentParameterResponse& rResponse);
+
+	HRESULT setExtentParameter(const SvPb::SetExtentParameterRequest& rRequest, SvPb::SetExtentParameterResponse& rResponse);
+	
+	HRESULT isAllowedLocation(const SvPb::IsAllowedLocationRequest& rRequest, SvPb::IsAllowedLocationResponse& rResponse);
+
+	HRESULT propagateSizeAndPosition(const SvPb::PropagateSizeAndPositionRequest& rRequest);
+
+	HRESULT usePropagateSizeAndPosition(const SvPb::UsePropagateSizeAndPositionRequest& rRequest, SvPb::UsePropagateSizeAndPositionResponse& rResponse);
+
 	HRESULT getObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse);
 
 	HRESULT getSelectorList(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse, SvPb::ObjectSelectorType selectorType);

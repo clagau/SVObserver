@@ -19,56 +19,56 @@
 
 
 //These are the property extents which have values to be saved in the map
-constexpr SvDef::SVExtentPropertyEnum cStoredExtentValues[]
+constexpr SvPb::SVExtentPropertyEnum cStoredExtentValues[]
 {
-	SvDef::SVExtentPropertyWidth,
-	SvDef::SVExtentPropertyHeight,
-	SvDef::SVExtentPropertyStartAngle,
-	SvDef::SVExtentPropertyEndAngle,
-	SvDef::SVExtentPropertyInnerRadius,
-	SvDef::SVExtentPropertyOuterRadius,
-	SvDef::SVExtentPropertyWidthScaleFactor,
-	SvDef::SVExtentPropertyHeightScaleFactor,
-	SvDef::SVExtentPropertyOutputWidth,
-	SvDef::SVExtentPropertyOutputHeight,
-	SvDef::SVExtentPropertyRotationAngle,
-	SvDef::SVExtentPropertyPositionPointX,
-	SvDef::SVExtentPropertyPositionPointY,
-	SvDef::SVExtentPropertyPositionPointEndOfLineX,
-	SvDef::SVExtentPropertyPositionPointEndOfLineY,
-	SvDef::SVExtentPropertyTranslationOffsetX,
-	SvDef::SVExtentPropertyTranslationOffsetY,
-	SvDef::SVExtentPropertyOutputPositionPointX,
-	SvDef::SVExtentPropertyOutputPositionPointY,
+	SvPb::SVExtentPropertyWidth,
+	SvPb::SVExtentPropertyHeight,
+	SvPb::SVExtentPropertyStartAngle,
+	SvPb::SVExtentPropertyEndAngle,
+	SvPb::SVExtentPropertyInnerRadius,
+	SvPb::SVExtentPropertyOuterRadius,
+	SvPb::SVExtentPropertyWidthScaleFactor,
+	SvPb::SVExtentPropertyHeightScaleFactor,
+	SvPb::SVExtentPropertyOutputWidth,
+	SvPb::SVExtentPropertyOutputHeight,
+	SvPb::SVExtentPropertyRotationAngle,
+	SvPb::SVExtentPropertyPositionPointX,
+	SvPb::SVExtentPropertyPositionPointY,
+	SvPb::SVExtentPropertyPositionPointEndOfLineX,
+	SvPb::SVExtentPropertyPositionPointEndOfLineY,
+	SvPb::SVExtentPropertyTranslationOffsetX,
+	SvPb::SVExtentPropertyTranslationOffsetY,
+	SvPb::SVExtentPropertyOutputPositionPointX,
+	SvPb::SVExtentPropertyOutputPositionPointY,
 };
 
 static const SVExtentPropertyStringMap cExtentPropertyNames =
 {
-	{SvDef::SVExtentPropertyPositionPointX, std::string("X Position")},
-	{SvDef::SVExtentPropertyPositionPointY, std::string("Y Position")},
-	{SvDef::SVExtentPropertyTranslationOffsetX, std::string("X Offset")},
-	{SvDef::SVExtentPropertyTranslationOffsetY, std::string("Y Offset")},
-	{SvDef::SVExtentPropertyTranslationOffsetY, std::string("Y Offset")},
-	{SvDef::SVExtentPropertyTranslationOffsetY, std::string("Y Offset")},
-	{SvDef::SVExtentPropertyRotationAngle, std::string("Rotation Angle")},
-	{SvDef::SVExtentPropertyOutputPositionPointX, std::string("Output X Position")},
-	{SvDef::SVExtentPropertyOutputPositionPointY, std::string("Output Y Position")},
-	{SvDef::SVExtentPropertyWidth, std::string("Width")},
-	{SvDef::SVExtentPropertyHeight, std::string("Height")},
-	{SvDef::SVExtentPropertyStartAngle, std::string("Start Angle")},
-	{SvDef::SVExtentPropertyEndAngle, std::string("End Angle")},
-	{SvDef::SVExtentPropertyInnerRadius, std::string("Inner Radius")},
-	{SvDef::SVExtentPropertyOuterRadius, std::string("Outer Radius")},
-	{SvDef::SVExtentPropertyOutputWidth, std::string("Width")},
-	{SvDef::SVExtentPropertyOutputHeight, std::string("Height")},
+	{SvPb::SVExtentPropertyPositionPointX, std::string("X Position")},
+	{SvPb::SVExtentPropertyPositionPointY, std::string("Y Position")},
+	{SvPb::SVExtentPropertyTranslationOffsetX, std::string("X Offset")},
+	{SvPb::SVExtentPropertyTranslationOffsetY, std::string("Y Offset")},
+	{SvPb::SVExtentPropertyTranslationOffsetY, std::string("Y Offset")},
+	{SvPb::SVExtentPropertyTranslationOffsetY, std::string("Y Offset")},
+	{SvPb::SVExtentPropertyRotationAngle, std::string("Rotation Angle")},
+	{SvPb::SVExtentPropertyOutputPositionPointX, std::string("Output X Position")},
+	{SvPb::SVExtentPropertyOutputPositionPointY, std::string("Output Y Position")},
+	{SvPb::SVExtentPropertyWidth, std::string("Width")},
+	{SvPb::SVExtentPropertyHeight, std::string("Height")},
+	{SvPb::SVExtentPropertyStartAngle, std::string("Start Angle")},
+	{SvPb::SVExtentPropertyEndAngle, std::string("End Angle")},
+	{SvPb::SVExtentPropertyInnerRadius, std::string("Inner Radius")},
+	{SvPb::SVExtentPropertyOuterRadius, std::string("Outer Radius")},
+	{SvPb::SVExtentPropertyOutputWidth, std::string("Width")},
+	{SvPb::SVExtentPropertyOutputHeight, std::string("Height")},
 };
 
 static const SVExtentPropertyPointMap cExtentPropertyPointMap =
 {
-	{SvDef::SVExtentPropertyPositionPoint, {SvDef::SVExtentPropertyPositionPointX, SvDef::SVExtentPropertyPositionPointY}},
-	{SvDef::SVExtentPropertyPositionPointEndOfLine, {SvDef::SVExtentPropertyPositionPointEndOfLineX, SvDef::SVExtentPropertyPositionPointEndOfLineY}},
-	{SvDef::SVExtentPropertyTranslationOffset, {SvDef::SVExtentPropertyTranslationOffsetX, SvDef::SVExtentPropertyTranslationOffsetY}},
-	{SvDef::SVExtentPropertyOutputPositionPoint, {SvDef::SVExtentPropertyOutputPositionPointX, SvDef::SVExtentPropertyOutputPositionPointY}},
+	{SvPb::SVExtentPropertyPositionPoint, {SvPb::SVExtentPropertyPositionPointX, SvPb::SVExtentPropertyPositionPointY}},
+	{SvPb::SVExtentPropertyPositionPointEndOfLine, {SvPb::SVExtentPropertyPositionPointEndOfLineX, SvPb::SVExtentPropertyPositionPointEndOfLineY}},
+	{SvPb::SVExtentPropertyTranslationOffset, {SvPb::SVExtentPropertyTranslationOffsetX, SvPb::SVExtentPropertyTranslationOffsetY}},
+	{SvPb::SVExtentPropertyOutputPositionPoint, {SvPb::SVExtentPropertyOutputPositionPointX, SvPb::SVExtentPropertyOutputPositionPointY}},
 };
 
 double Degrees2Radians(double value) { return (M_PI * value / 180.0); }
@@ -219,7 +219,7 @@ const SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass
 void SVImageExtentClass::Initialize()
 {
 
-	m_eTranslation = SvDef::SVExtentTranslationUnknown;
+	m_eTranslation = SvPb::SVExtentTranslationUnknown;
 	m_properties = 0UL;
 
 	for (auto extentProperty : cStoredExtentValues)
@@ -228,24 +228,24 @@ void SVImageExtentClass::Initialize()
 	}
 }
 
-SvDef::SVExtentTranslationEnum SVImageExtentClass::GetTranslation() const
+SvPb::SVExtentTranslationEnum SVImageExtentClass::GetTranslation() const
 {
 	return m_eTranslation;
 }
 
-void SVImageExtentClass::SetTranslation(SvDef::SVExtentTranslationEnum eTranslation)
+void SVImageExtentClass::SetTranslation(SvPb::SVExtentTranslationEnum eTranslation)
 {
 	m_eTranslation = eTranslation;
 
 	ClearOutputData();
 }
 
-void SVImageExtentClass::DisableExtentProperty(SvDef::SVExtentPropertyEnum eProperty)
+void SVImageExtentClass::DisableExtentProperty(SvPb::SVExtentPropertyEnum eProperty)
 {
 	m_properties &= static_cast<unsigned long> (~eProperty);
 }
 
-HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, long &rValue) const
+HRESULT SVImageExtentClass::GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, long &rValue) const
 {
 	double dValue {0.0};
 
@@ -259,7 +259,7 @@ HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum ePrope
 	return result;
 }
 
-HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double &rValue) const
+HRESULT SVImageExtentClass::GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double &rValue) const
 {
 	SVExtentPropertyValueMap::const_iterator iter {m_extentValues.find(eProperty)};
 	if (m_extentValues.end() != iter)
@@ -270,7 +270,7 @@ HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum ePrope
 	return E_INVALIDARG;
 }
 
-HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, POINT &rValue) const
+HRESULT SVImageExtentClass::GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, POINT &rValue) const
 {
 	SVPoint<double> point;
 
@@ -284,7 +284,7 @@ HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum ePrope
 	return result;
 }
 
-HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, SVPoint<double>& rValue) const
+HRESULT SVImageExtentClass::GetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, SVPoint<double>& rValue) const
 {
 	SVExtentPropertyPointMap::const_iterator iter {cExtentPropertyPointMap.find(eProperty)};
 	if (cExtentPropertyPointMap.end() != iter)
@@ -296,64 +296,34 @@ HRESULT SVImageExtentClass::GetExtentProperty(SvDef::SVExtentPropertyEnum ePrope
 	return E_INVALIDARG;
 }
 
-SVExtentPropertyStringMap SVImageExtentClass::GetExtentPropertyMap(SvDef::SVExtentPropertyEnum eWhichProperties) const
-{
-	SVExtentPropertyStringMap result;
-
-	SVExtentPropertyStringMap::const_iterator iter;
-	for (iter = cExtentPropertyNames.begin(); iter != cExtentPropertyNames.end(); ++iter)
-	{
-		if (iter->first == (iter->first & eWhichProperties))
-		{
-			result.insert(*iter);
-		}
-	}
-	return result;
-}
-
-SVExtentPropertyVector SVImageExtentClass::GetExtentPropertyVector(SvDef::SVExtentPropertyEnum eWhichProperties) const
-{
-	SVExtentPropertyVector result;
-
-	SVExtentPropertyStringMap::const_iterator iter;
-	for (iter = cExtentPropertyNames.begin(); iter != cExtentPropertyNames.end(); ++iter)
-	{
-		if (iter->first == (iter->first & eWhichProperties) && isEnabled(iter->first))
-		{
-			result.emplace_back(iter->first);
-		}
-	}
-	return result;
-}
-
-HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue, bool clearOutputData /*= true*/)
+HRESULT SVImageExtentClass::SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double dValue, bool clearOutputData /*= true*/)
 {
 	HRESULT result {S_OK};
 
 	// special case to handle polar unwrap
-	if (SvDef::SVExtentTranslationPolarUnwrap == m_eTranslation)
+	if (SvPb::SVExtentTranslationPolarUnwrap == m_eTranslation)
 	{
-		if (SvDef::SVExtentPropertyRotationAngle == (eProperty & SvDef::SVExtentPropertyRotationAngle))
+		if (SvPb::SVExtentPropertyRotationAngle == (eProperty & SvPb::SVExtentPropertyRotationAngle))
 		{
 			double dEndAngle = 0.0;
 			double dStartAngle = 0.0;
-			result = GetExtentProperty(SvDef::SVExtentPropertyEndAngle, dEndAngle);
+			result = GetExtentProperty(SvPb::SVExtentPropertyEndAngle, dEndAngle);
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle);
+				result = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle);
 			}
 			if (S_OK == result)
 			{
-				result = setProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle + (dValue - dEndAngle));
+				result = setProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle + (dValue - dEndAngle));
 			}
 			if (S_OK == result)
 			{
-				result = setProperty(SvDef::SVExtentPropertyEndAngle, dValue);
+				result = setProperty(SvPb::SVExtentPropertyEndAngle, dValue);
 			}
 		}
-		else if (SvDef::SVExtentPropertyEndAngle == (eProperty & SvDef::SVExtentPropertyEndAngle))
+		else if (SvPb::SVExtentPropertyEndAngle == (eProperty & SvPb::SVExtentPropertyEndAngle))
 		{
-			result = setProperty(SvDef::SVExtentPropertyRotationAngle, dValue);
+			result = setProperty(SvPb::SVExtentPropertyRotationAngle, dValue);
 		}
 
 	}
@@ -370,7 +340,7 @@ HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum ePrope
 	return result;
 }
 
-HRESULT SVImageExtentClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue, bool clearOutputData /*= true*/)
+HRESULT SVImageExtentClass::SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue, bool clearOutputData /*= true*/)
 {
 	HRESULT result {E_INVALIDARG};
 
@@ -426,37 +396,37 @@ bool SVImageExtentClass::hasFigure() const
 	return result;
 }
 
-SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(const SVPoint<double>& rPoint) const
+SvPb::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(const SVPoint<double>& rPoint) const
 {
-	SvDef::SVExtentLocationPropertyEnum l_eLocation = SvDef::SVExtentLocationPropertyUnknown;
+	SvPb::SVExtentLocationPropertyEnum l_eLocation = SvPb::SVExtentLocationPropertyUnknown;
 
 	SVPoint<double> outputPoint;
 
 	RECT l_oRect;
 	bool l_bValid = false;
 
-	if (m_eTranslation == SvDef::SVExtentTranslationPolarUnwrap)
+	if (m_eTranslation == SvPb::SVExtentTranslationPolarUnwrap)
 	{
 		double dValue;
-		GetExtentProperty(SvDef::SVExtentPropertyPositionPointX, dValue);
+		GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, dValue);
 		l_oRect.left = static_cast<long>(dValue - 2);
 		l_oRect.right = static_cast<long>(dValue + 2);
-		GetExtentProperty(SvDef::SVExtentPropertyPositionPointY, dValue);
+		GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, dValue);
 		l_oRect.top = static_cast<long>(dValue - 2);
 		l_oRect.bottom = static_cast<long>(dValue + 2);
 		if (::PtInRect(&l_oRect, static_cast<POINT> (rPoint)))
 		{
-			l_eLocation = SvDef::SVExtentLocationPropertyCenter;
+			l_eLocation = SvPb::SVExtentLocationPropertyCenter;
 		}
 	}
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			outputPoint = rPoint;
 			l_bValid = S_OK == GetRectangle(l_oRect);
@@ -475,19 +445,19 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 		RECT l_oTemp = l_oRect;
 
 		// Check special case for Polar Unwrap tool when > 360
-		if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown && m_eTranslation == SvDef::SVExtentTranslationPolarUnwrap)
+		if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown && m_eTranslation == SvPb::SVExtentTranslationPolarUnwrap)
 		{
 			double dStartAngle {0.0};
 			double dEndAngle {0.0};
 			double dOuterRadius {0.0};
 			double dInnerRadius {0.0};
 
-			if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyEndAngle, dEndAngle) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, dInnerRadius) &&
+			if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyEndAngle, dEndAngle) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dInnerRadius) &&
 				dEndAngle - dStartAngle > 360)
 			{
-				GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, dOuterRadius);
+				GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dOuterRadius);
 				double l_dCircum = 2.0 * M_PI * dOuterRadius;
 				if (l_oRect.right > l_dCircum && l_oRect.right > 4)
 				{
@@ -496,7 +466,7 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 					l_oTemp.top = (long)-dInnerRadius;
 					if (::InflateRect(&l_oTemp, 2, -2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 					{
-						l_eLocation = SvDef::SVExtentLocationPropertyRight;
+						l_eLocation = SvPb::SVExtentLocationPropertyRight;
 					}
 				}
 			}
@@ -506,7 +476,7 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 		long l_lInflateX = -2;
 		long l_lInflateY = -2;
 
-		if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -522,9 +492,9 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, l_lInflateX, l_lInflateY) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				if (m_eTranslation == SvDef::SVExtentTranslationRotate ||
-					m_eTranslation == SvDef::SVExtentTranslationFlippedRotate ||
-					m_eTranslation == SvDef::SVExtentTranslationProfile)
+				if (m_eTranslation == SvPb::SVExtentTranslationRotate ||
+					m_eTranslation == SvPb::SVExtentTranslationFlippedRotate ||
+					m_eTranslation == SvPb::SVExtentTranslationProfile)
 				{
 					l_oTemp = l_oRect;
 
@@ -567,19 +537,19 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 					if (::InflateRect(&l_oTemp, l_lInflateX, l_lInflateY) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 					{
-						l_eLocation = SvDef::SVExtentLocationPropertyRotate;
+						l_eLocation = SvPb::SVExtentLocationPropertyRotate;
 					}
 				}
 
-				if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+				if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 				{
-					l_eLocation = SvDef::SVExtentLocationPropertyCenter;
+					l_eLocation = SvPb::SVExtentLocationPropertyCenter;
 				}
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationLine &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationLine &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -596,11 +566,11 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, l_lInflateX, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyTop;
+				l_eLocation = SvPb::SVExtentLocationPropertyTop;
 			}
 		}
 
-		if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -617,12 +587,12 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, 2, l_lInflateY) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyRight;
+				l_eLocation = SvPb::SVExtentLocationPropertyRight;
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationLine &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationLine &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -639,12 +609,12 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, l_lInflateX, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyBottom;
+				l_eLocation = SvPb::SVExtentLocationPropertyBottom;
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationProfile &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationProfile &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -661,13 +631,13 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, 2, l_lInflateY) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyLeft;
+				l_eLocation = SvPb::SVExtentLocationPropertyLeft;
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationProfile &&
-			m_eTranslation != SvDef::SVExtentTranslationLine &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationProfile &&
+			m_eTranslation != SvPb::SVExtentTranslationLine &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -676,12 +646,12 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, 2, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyTopLeft;
+				l_eLocation = SvPb::SVExtentLocationPropertyTopLeft;
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationLine &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationLine &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -690,13 +660,13 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, 2, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyTopRight;
+				l_eLocation = SvPb::SVExtentLocationPropertyTopRight;
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationProfile &&
-			m_eTranslation != SvDef::SVExtentTranslationLine &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationProfile &&
+			m_eTranslation != SvPb::SVExtentTranslationLine &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -705,12 +675,12 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, 2, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyBottomLeft;
+				l_eLocation = SvPb::SVExtentLocationPropertyBottomLeft;
 			}
 		}
 
-		if (m_eTranslation != SvDef::SVExtentTranslationLine &&
-			l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+		if (m_eTranslation != SvPb::SVExtentTranslationLine &&
+			l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 		{
 			l_oTemp = l_oRect;
 
@@ -719,17 +689,17 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 			if (::InflateRect(&l_oTemp, 2, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyBottomRight;
+				l_eLocation = SvPb::SVExtentLocationPropertyBottomRight;
 			}
 		}
 
-		if (m_eTranslation == SvDef::SVExtentTranslationPolarUnwrap)
+		if (m_eTranslation == SvPb::SVExtentTranslationPolarUnwrap)
 		{
 			long l_lInnerRadius = 0;
 
-			if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, l_lInnerRadius))
+			if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, l_lInnerRadius))
 			{
-				if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+				if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 				{
 					if (0 < l_oRect.right - 4 && 0 < l_lInnerRadius - 4)
 					{
@@ -739,12 +709,12 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 						if (::InflateRect(&l_oTemp, -2, -2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 						{
-							l_eLocation = SvDef::SVExtentLocationPropertyCenter;
+							l_eLocation = SvPb::SVExtentLocationPropertyCenter;
 						}
 					}
 				}
 
-				if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+				if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 				{
 					l_oTemp = l_oRect;
 
@@ -753,12 +723,12 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 					if (::InflateRect(&l_oTemp, 2, 2) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 					{
-						l_eLocation = SvDef::SVExtentLocationPropertyCenter;
+						l_eLocation = SvPb::SVExtentLocationPropertyCenter;
 					}
 				}
 
-				if (m_eTranslation != SvDef::SVExtentTranslationProfile &&
-					l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+				if (m_eTranslation != SvPb::SVExtentTranslationProfile &&
+					l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 				{
 					l_oTemp = l_oRect;
 
@@ -768,11 +738,11 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 					if (::InflateRect(&l_oTemp, 2, 0) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 					{
-						l_eLocation = SvDef::SVExtentLocationPropertyLeft;
+						l_eLocation = SvPb::SVExtentLocationPropertyLeft;
 					}
 				}
 
-				if (l_eLocation == SvDef::SVExtentLocationPropertyUnknown)
+				if (l_eLocation == SvPb::SVExtentLocationPropertyUnknown)
 				{
 					l_oTemp = l_oRect;
 
@@ -782,67 +752,67 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 
 					if (::InflateRect(&l_oTemp, 2, 0) && ::PtInRect(&l_oTemp, static_cast<POINT> (outputPoint)))
 					{
-						l_eLocation = SvDef::SVExtentLocationPropertyRight;
+						l_eLocation = SvPb::SVExtentLocationPropertyRight;
 					}
 				}
 			}
 		}
-		if (m_eTranslation == SvDef::SVExtentTranslationPolarUnwrap)
+		if (m_eTranslation == SvPb::SVExtentTranslationPolarUnwrap)
 		{
-			if (l_eLocation == SvDef::SVExtentLocationPropertyTop ||
-				l_eLocation == SvDef::SVExtentLocationPropertyBottom)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyTop ||
+				l_eLocation == SvPb::SVExtentLocationPropertyBottom)
 			{
 				double dOuterRadius {0.0};
 				double dInnerRadius {0.0};
-				if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, dInnerRadius) &&
-					S_OK == GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, dOuterRadius))
+				if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dInnerRadius) &&
+					S_OK == GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dOuterRadius))
 				{
 					if (dOuterRadius < dInnerRadius)
 					{
-						if (l_eLocation == SvDef::SVExtentLocationPropertyTop)
+						if (l_eLocation == SvPb::SVExtentLocationPropertyTop)
 						{
-							l_eLocation = SvDef::SVExtentLocationPropertyBottom;
+							l_eLocation = SvPb::SVExtentLocationPropertyBottom;
 						}
 						else
 						{
-							l_eLocation = SvDef::SVExtentLocationPropertyTop;
+							l_eLocation = SvPb::SVExtentLocationPropertyTop;
 						}
 					}
 				}
 			}
 		}
-		if (m_eTranslation == SvDef::SVExtentTranslationVerticalPerspective)
+		if (m_eTranslation == SvPb::SVExtentTranslationVerticalPerspective)
 		{
-			if (l_eLocation == SvDef::SVExtentLocationPropertyTopRight ||
-				l_eLocation == SvDef::SVExtentLocationPropertyTopLeft)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyTopRight ||
+				l_eLocation == SvPb::SVExtentLocationPropertyTopLeft)
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyTop;
+				l_eLocation = SvPb::SVExtentLocationPropertyTop;
 			}
-			if (l_eLocation == SvDef::SVExtentLocationPropertyBottomRight ||
-				l_eLocation == SvDef::SVExtentLocationPropertyBottomLeft)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyBottomRight ||
+				l_eLocation == SvPb::SVExtentLocationPropertyBottomLeft)
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyBottom;
+				l_eLocation = SvPb::SVExtentLocationPropertyBottom;
 			}
-			if (l_eLocation == SvDef::SVExtentLocationPropertyCenter)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyCenter)
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyUnknown;
+				l_eLocation = SvPb::SVExtentLocationPropertyUnknown;
 			}
 		}
-		if (m_eTranslation == SvDef::SVExtentTranslationHorizontalPerspective)
+		if (m_eTranslation == SvPb::SVExtentTranslationHorizontalPerspective)
 		{
-			if (l_eLocation == SvDef::SVExtentLocationPropertyTopRight ||
-				l_eLocation == SvDef::SVExtentLocationPropertyBottomRight)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyTopRight ||
+				l_eLocation == SvPb::SVExtentLocationPropertyBottomRight)
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyRight;
+				l_eLocation = SvPb::SVExtentLocationPropertyRight;
 			}
-			if (l_eLocation == SvDef::SVExtentLocationPropertyTopLeft ||
-				l_eLocation == SvDef::SVExtentLocationPropertyBottomLeft)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyTopLeft ||
+				l_eLocation == SvPb::SVExtentLocationPropertyBottomLeft)
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyLeft;
+				l_eLocation = SvPb::SVExtentLocationPropertyLeft;
 			}
-			if (l_eLocation == SvDef::SVExtentLocationPropertyCenter)
+			if (l_eLocation == SvPb::SVExtentLocationPropertyCenter)
 			{
-				l_eLocation = SvDef::SVExtentLocationPropertyUnknown;
+				l_eLocation = SvPb::SVExtentLocationPropertyUnknown;
 			}
 		}
 	}
@@ -854,7 +824,7 @@ SvDef::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(co
 HRESULT SVImageExtentClass::TranslateToLocalSpace(SVPoint<double> value, SVPoint<double>& rResult)
 {
 	SVPoint<double> position;
-	HRESULT hr = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+	HRESULT hr = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 	if (S_OK == hr)
 	{
@@ -862,7 +832,7 @@ HRESULT SVImageExtentClass::TranslateToLocalSpace(SVPoint<double> value, SVPoint
 
 		// optional...
 		SVPoint<double> displacement;
-		if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement))
+		if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement))
 		{
 			rResult -= displacement;
 		}
@@ -870,23 +840,23 @@ HRESULT SVImageExtentClass::TranslateToLocalSpace(SVPoint<double> value, SVPoint
 	return hr;
 }
 
-HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStartPoint, const SVPoint<double>& rEndPoint)
+HRESULT SVImageExtentClass::Update(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStartPoint, const SVPoint<double>& rEndPoint)
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if (m_eTranslation == SvDef::SVExtentTranslationPolarUnwrap)
+	if (m_eTranslation == SvPb::SVExtentTranslationPolarUnwrap)
 	{
 		l_hrOk = UpdatePolar(eLocation, rStartPoint, rEndPoint);
 	}
-	else if (m_eTranslation == SvDef::SVExtentTranslationLine)
+	else if (m_eTranslation == SvPb::SVExtentTranslationLine)
 	{
 		l_hrOk = UpdateLine(eLocation, rStartPoint, rEndPoint);
 	}
-	else if (m_eTranslation == SvDef::SVExtentTranslationVerticalPerspective)
+	else if (m_eTranslation == SvPb::SVExtentTranslationVerticalPerspective)
 	{
 		l_hrOk = UpdateVerticalPerspective(eLocation, rStartPoint, rEndPoint);
 	}
-	else if (m_eTranslation == SvDef::SVExtentTranslationHorizontalPerspective)
+	else if (m_eTranslation == SvPb::SVExtentTranslationHorizontalPerspective)
 	{
 		l_hrOk = UpdateHorizontalPerspective(eLocation, rStartPoint, rEndPoint);
 	}
@@ -900,7 +870,7 @@ HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation
 		bool l_bValid = false;
 		switch (m_eTranslation)
 		{
-			case SvDef::SVExtentTranslationResize:
+			case SvPb::SVExtentTranslationResize:
 			{
 				//@WARNING [Jim][8 July 2015] No identification of error cases.
 				// GetExtentProperty () only l_bValid is identified, which is 
@@ -917,17 +887,17 @@ HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation
 
 				if (l_bValid)
 				{
-					if (eLocation == SvDef::SVExtentLocationPropertyBottomLeft)
+					if (eLocation == SvPb::SVExtentLocationPropertyBottomLeft)
 					{
 						outputEnd.m_y = rEndPoint.m_y;
 					}
-					else if (eLocation == SvDef::SVExtentLocationPropertyTopRight)
+					else if (eLocation == SvPb::SVExtentLocationPropertyTopRight)
 					{
 						outputEnd.m_x = rEndPoint.m_x;
 					}
-					else if (eLocation != SvDef::SVExtentLocationPropertyTop &&
-						eLocation != SvDef::SVExtentLocationPropertyLeft &&
-						eLocation != SvDef::SVExtentLocationPropertyTopLeft)
+					else if (eLocation != SvPb::SVExtentLocationPropertyTop &&
+						eLocation != SvPb::SVExtentLocationPropertyLeft &&
+						eLocation != SvPb::SVExtentLocationPropertyTopLeft)
 					{
 						outputStart = rStartPoint;
 						outputEnd = rEndPoint;
@@ -939,10 +909,10 @@ HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation
 			// a possible solution might be to use the same logic as the case above (SvDef::SVExtentTranslationResize)
 			// however for these cases the position (not on the GUI) is always fixed to 0,0, so that might not 
 			// work. 
-			case SvDef::SVExtentTranslationDoubleHeight:
-			case SvDef::SVExtentTranslationFlipHorizontal:
-			case SvDef::SVExtentTranslationFlipVertical:
-			case SvDef::SVExtentTranslationFigureShift:
+			case SvPb::SVExtentTranslationDoubleHeight:
+			case SvPb::SVExtentTranslationFlipHorizontal:
+			case SvPb::SVExtentTranslationFlipVertical:
+			case SvPb::SVExtentTranslationFigureShift:
 			{
 				outputStart = rStartPoint;
 				outputEnd = rEndPoint;
@@ -962,55 +932,55 @@ HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation
 		{
 			switch (eLocation)
 			{
-				case SvDef::SVExtentLocationPropertyTopLeft:
+				case SvPb::SVExtentLocationPropertyTopLeft:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x), static_cast<long> (outputEnd.m_y));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyTopRight:
+				case SvPb::SVExtentLocationPropertyTopRight:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x - l_oRect.right), static_cast<long> (outputEnd.m_y));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyBottomRight:
+				case SvPb::SVExtentLocationPropertyBottomRight:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x - l_oRect.right), static_cast<long> (outputEnd.m_y - l_oRect.bottom));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyBottomLeft:
+				case SvPb::SVExtentLocationPropertyBottomLeft:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x), static_cast<long> (outputEnd.m_y - l_oRect.bottom));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyLeft:
+				case SvPb::SVExtentLocationPropertyLeft:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x), static_cast<long> (outputEnd.m_y));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyRight:
+				case SvPb::SVExtentLocationPropertyRight:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x - l_oRect.right), static_cast<long> (outputEnd.m_y));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyTop:
+				case SvPb::SVExtentLocationPropertyTop:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x), static_cast<long> (outputEnd.m_y));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyBottom:
+				case SvPb::SVExtentLocationPropertyBottom:
 				{
 					l_hrOk = UpdateFromOutputSpace(eLocation, static_cast<long> (outputEnd.m_x), static_cast<long> (outputEnd.m_y - l_oRect.bottom));
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyCenter:
+				case SvPb::SVExtentLocationPropertyCenter:
 				{
 					long l_lX = static_cast<long> (rEndPoint.m_x - rStartPoint.m_x);
 					long l_lY = static_cast<long> (rEndPoint.m_y - rStartPoint.m_y);
@@ -1019,15 +989,15 @@ HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation
 
 					break;
 				}
-				case SvDef::SVExtentLocationPropertyRotate:
+				case SvPb::SVExtentLocationPropertyRotate:
 				{
 					SVPoint<double> position;
 
-					if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position))
+					if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position))
 					{
 						double l_dAngle = SVGetRotationAngle(position, rEndPoint);
 
-						if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyRotationAngle, l_dAngle))
+						if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyRotationAngle, l_dAngle))
 						{
 							l_hrOk = UpdateData();
 						}
@@ -1046,23 +1016,23 @@ HRESULT SVImageExtentClass::Update(SvDef::SVExtentLocationPropertyEnum eLocation
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropertyEnum p_eLocation, long lX, long lY)
+HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvPb::SVExtentLocationPropertyEnum p_eLocation, long lX, long lY)
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLine:
 		{
 			SVPoint<double> startPoint;
 			SVPoint<double> endPoint;
 
-			if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint))
+			if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint))
 			{
 				switch (p_eLocation)
 				{
-					case SvDef::SVExtentLocationPropertyTop:
+					case SvPb::SVExtentLocationPropertyTop:
 					{
 						startPoint.m_x += lX;
 						startPoint.m_y += lY;
@@ -1071,7 +1041,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyLeft:
+					case SvPb::SVExtentLocationPropertyLeft:
 					{
 						startPoint.m_x += lX;
 						startPoint.m_y += lY;
@@ -1080,7 +1050,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyBottom:
+					case SvPb::SVExtentLocationPropertyBottom:
 					{
 						endPoint.m_x += lX;
 						endPoint.m_y += lY;
@@ -1089,7 +1059,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyRight:
+					case SvPb::SVExtentLocationPropertyRight:
 					{
 						endPoint.m_x += lX;
 						endPoint.m_y += lY;
@@ -1098,7 +1068,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyCenter:
+					case SvPb::SVExtentLocationPropertyCenter:
 					{
 						startPoint.m_x += lX;
 						startPoint.m_y += lY;
@@ -1114,8 +1084,8 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 				if (S_OK == l_hrOk)
 				{
-					if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint) &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint))
+					if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint) &&
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint))
 					{
 						l_hrOk = UpdateData();
 					}
@@ -1128,20 +1098,20 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 			break;
 		}
-		case SvDef::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationProfile:
 		{
 			SVPoint<double> position;
 
 			double l_dWidth = 0.0;
 			double l_dHeight = 0.0;
 
-			if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyHeight, l_dHeight) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyWidth, l_dWidth))
+			if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyHeight, l_dHeight) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyWidth, l_dWidth))
 			{
 				switch (p_eLocation)
 				{
-					case SvDef::SVExtentLocationPropertyTopRight:
+					case SvPb::SVExtentLocationPropertyTopRight:
 					{
 						l_dWidth += lX;
 						l_dHeight -= lY * 2.0;
@@ -1150,7 +1120,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyBottomRight:
+					case SvPb::SVExtentLocationPropertyBottomRight:
 					{
 						l_dWidth += lX;
 						l_dHeight += lY * 2.0;
@@ -1159,7 +1129,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyRight:
+					case SvPb::SVExtentLocationPropertyRight:
 					{
 						l_dWidth += lX;
 
@@ -1167,7 +1137,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyTop:
+					case SvPb::SVExtentLocationPropertyTop:
 					{
 						l_dHeight -= lY * 2.0;
 
@@ -1175,7 +1145,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyBottom:
+					case SvPb::SVExtentLocationPropertyBottom:
 					{
 						l_dHeight += lY * 2.0;
 
@@ -1183,7 +1153,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyCenter:
+					case SvPb::SVExtentLocationPropertyCenter:
 					{
 						position.m_x += lX;
 						position.m_y += lY;
@@ -1197,9 +1167,9 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 				if (S_OK == l_hrOk)
 				{
 					if (0.0 < l_dWidth && 0.0 < l_dHeight &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyHeight, l_dHeight) &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyWidth, l_dWidth))
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyHeight, l_dHeight) &&
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyWidth, l_dWidth))
 					{
 						l_hrOk = UpdateData();
 					}
@@ -1212,28 +1182,28 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 			break;
 		}
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationFlippedRotate:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			SVPoint<double> position;
 
 			double l_dWidth = 0.0;
 			double l_dHeight = 0.0;
 
-			if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyHeight, l_dHeight) &&
-				S_OK == GetExtentProperty(SvDef::SVExtentPropertyWidth, l_dWidth))
+			if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyHeight, l_dHeight) &&
+				S_OK == GetExtentProperty(SvPb::SVExtentPropertyWidth, l_dWidth))
 			{
 				switch (p_eLocation)
 				{
-					case SvDef::SVExtentLocationPropertyTopLeft:
+					case SvPb::SVExtentLocationPropertyTopLeft:
 					{
 						position.m_x += lX;
 						position.m_y += lY;
@@ -1245,7 +1215,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyTopRight:
+					case SvPb::SVExtentLocationPropertyTopRight:
 					{
 						position.m_y += lY;
 
@@ -1256,7 +1226,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyBottomRight:
+					case SvPb::SVExtentLocationPropertyBottomRight:
 					{
 						l_dWidth += lX;
 						l_dHeight += lY;
@@ -1265,7 +1235,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyBottomLeft:
+					case SvPb::SVExtentLocationPropertyBottomLeft:
 					{
 						position.m_x += lX;
 
@@ -1276,7 +1246,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyLeft:
+					case SvPb::SVExtentLocationPropertyLeft:
 					{
 						position.m_x += lX;
 
@@ -1286,7 +1256,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyRight:
+					case SvPb::SVExtentLocationPropertyRight:
 					{
 						l_dWidth += lX;
 
@@ -1294,7 +1264,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyTop:
+					case SvPb::SVExtentLocationPropertyTop:
 					{
 						position.m_y += lY;
 
@@ -1304,7 +1274,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyBottom:
+					case SvPb::SVExtentLocationPropertyBottom:
 					{
 						l_dHeight += lY;
 
@@ -1312,7 +1282,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 						break;
 					}
-					case SvDef::SVExtentLocationPropertyCenter:
+					case SvPb::SVExtentLocationPropertyCenter:
 					{
 						position.m_x += lX;
 						position.m_y += lY;
@@ -1326,9 +1296,9 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 				if (S_OK == l_hrOk)
 				{
 					if (0.0 < l_dWidth && 0.0 < l_dHeight &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyHeight, l_dHeight) &&
-						S_OK == SetExtentProperty(SvDef::SVExtentPropertyWidth, l_dWidth))
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyHeight, l_dHeight) &&
+						S_OK == SetExtentProperty(SvPb::SVExtentPropertyWidth, l_dWidth))
 					{
 						l_hrOk = UpdateData();
 					}
@@ -1342,22 +1312,22 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 			break;
 		}
 
-		case SvDef::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationPolarUnwrap:
 		{
 			l_hrOk = UpdatePolarFromOutputSpace(p_eLocation, lX, lY);
 			break;
 		}
-		case SvDef::SVExtentTranslationVerticalPerspective:
+		case SvPb::SVExtentTranslationVerticalPerspective:
 		{
 			switch (p_eLocation)
 			{
-				case SvDef::SVExtentLocationPropertyTop:
-				case SvDef::SVExtentLocationPropertyBottom:
-				case SvDef::SVExtentLocationPropertyCenter:
+				case SvPb::SVExtentLocationPropertyTop:
+				case SvPb::SVExtentLocationPropertyBottom:
+				case SvPb::SVExtentLocationPropertyCenter:
 				{
 					SVPoint<double> position;
 
-					if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+					if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 					{
 						position.m_y += lY;
 						l_hrOk = S_OK;
@@ -1365,7 +1335,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 					if (S_OK == l_hrOk)
 					{
-						if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+						if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 						{
 							l_hrOk = UpdateData();
 						}
@@ -1380,17 +1350,17 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 			}
 			break;
 		}
-		case SvDef::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
 		{
 			switch (p_eLocation)
 			{
-				case SvDef::SVExtentLocationPropertyLeft:
-				case SvDef::SVExtentLocationPropertyCenter:
-				case SvDef::SVExtentLocationPropertyRight:
+				case SvPb::SVExtentLocationPropertyLeft:
+				case SvPb::SVExtentLocationPropertyCenter:
+				case SvPb::SVExtentLocationPropertyRight:
 				{
 					SVPoint<double> position;
 
-					if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+					if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 					{
 						position.m_x += lX;
 						l_hrOk = S_OK;
@@ -1398,7 +1368,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace(SvDef::SVExtentLocationPropert
 
 					if (S_OK == l_hrOk)
 					{
-						if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+						if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 						{
 							l_hrOk = UpdateData();
 						}
@@ -1428,23 +1398,23 @@ HRESULT SVImageExtentClass::GetRectangle(RECT &p_roRect) const
 	l_oRect.right = 0;
 	l_oRect.bottom = 0;
 
-	HRESULT result = GetExtentProperty(SvDef::SVExtentPropertyPositionPointX, l_oRect.left);
+	HRESULT result = GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, l_oRect.left);
 
 	if (S_OK == result)
 	{
-		result = GetExtentProperty(SvDef::SVExtentPropertyPositionPointY, l_oRect.top);
+		result = GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, l_oRect.top);
 	}
 
 	if (S_OK == result)
 	{
-		result = GetExtentProperty(SvDef::SVExtentPropertyWidth, l_oRect.right);
+		result = GetExtentProperty(SvPb::SVExtentPropertyWidth, l_oRect.right);
 
 		l_oRect.right += l_oRect.left;
 	}
 
 	if (S_OK == result)
 	{
-		result = GetExtentProperty(SvDef::SVExtentPropertyHeight, l_oRect.bottom);
+		result = GetExtentProperty(SvPb::SVExtentPropertyHeight, l_oRect.bottom);
 
 		l_oRect.bottom += l_oRect.top;
 	}
@@ -1466,11 +1436,11 @@ HRESULT SVImageExtentClass::GetLogicalRectangle(RECT &p_roRect) const
 	l_oRect.right = 0;
 	l_oRect.bottom = 0;
 
-	HRESULT result = GetExtentProperty(SvDef::SVExtentPropertyWidth, l_oRect.right);
+	HRESULT result = GetExtentProperty(SvPb::SVExtentPropertyWidth, l_oRect.right);
 
 	if (S_OK == result)
 	{
-		result = GetExtentProperty(SvDef::SVExtentPropertyHeight, l_oRect.bottom);
+		result = GetExtentProperty(SvPb::SVExtentPropertyHeight, l_oRect.bottom);
 	}
 
 	if (S_OK == result)
@@ -1490,11 +1460,11 @@ HRESULT SVImageExtentClass::GetOutputRectangle(RECT &p_roRect) const
 	l_oRect.right = 0;
 	l_oRect.bottom = 0;
 
-	HRESULT result = GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_oRect.right);
+	HRESULT result = GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, l_oRect.right);
 
 	if (S_OK == result)
 	{
-		result = GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, l_oRect.bottom);
+		result = GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, l_oRect.bottom);
 	}
 
 	if (S_OK == result)
@@ -1513,35 +1483,35 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			rResult = value;
 
 			break;
 		}
-		case SvDef::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationShift:
 		{
 			SVPoint<double> position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
 				SVPoint<double> displacement;
 
-				GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 
 				rResult = value - position - displacement;
 			}
 
 			break;
 		}// end multiple case:
-		case SvDef::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationProfileShift:
 		{
 			SVPoint<double> position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -1550,16 +1520,16 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			break;
 		}// end multiple case:
-		case SvDef::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformShift:
 		{
 			SVPoint<double> position;
 			SVPoint<double> displacement;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1569,25 +1539,25 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			break;
 		}
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationLinear:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1599,7 +1569,7 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			break;
 		}// end mulitple case:
-		case SvDef::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationTransformRotate:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
@@ -1607,21 +1577,21 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1633,22 +1603,22 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			break;
 		}
-		case SvDef::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLine:
 		{
 			SVPoint<double> startPoint;
 			SVPoint<double> endPoint;
 			SVPoint<double> outputRotation;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1661,24 +1631,24 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationLine:
-		case SvDef::SVExtentTranslationFlippedRotate:
+		}// end case SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationFlippedRotate:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1689,9 +1659,9 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationFlippedRotate:
+		}// end case SVExtentTranslationFlippedRotate:
 
-		case SvDef::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationPolarUnwrap:
 		{
 			SVPoint<double> centerPoint;
 
@@ -1699,21 +1669,21 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			double dOuterRadius = 0.0;
 			double dInnerRadius = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, centerPoint);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, centerPoint);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, dOuterRadius);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dOuterRadius);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, dInnerRadius);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dInnerRadius);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1737,21 +1707,21 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationPolarUnwrap:
+		}// end case SVExtentTranslationPolarUnwrap:
 
-		case SvDef::SVExtentTranslationCylindricalWarpH:
+		case SvPb::SVExtentTranslationCylindricalWarpH:
 		{
 			double dInputWidth = 0.0;
 			double dOutputWidth = 0.0;
 			double dAngle = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dInputWidth);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dInputWidth);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dOutputWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dOutputWidth);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dAngle);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -1774,21 +1744,21 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 				}
 			}
 			break;
-		}// end case SvDef::SVExtentTranslationCylindricalWarpH:
+		}// end case SVExtentTranslationCylindricalWarpH:
 
-		case SvDef::SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationCylindricalWarpV:
 		{
 			double dInputHeight = 0.0;
 			double dOutputHeight = 0.0;
 			double dAngle = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dInputHeight);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dInputHeight);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dOutputHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dOutputHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dAngle);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -1812,20 +1782,20 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			}
 			break;
-		}// end case SvDef::SVExtentTranslationCylindricalWarpV:
-		case SvDef::SVExtentTranslationVerticalPerspective:
+		}// end case SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationVerticalPerspective:
 		{
 			double dFullHeight = 0.0;
 			double dFullWidth = 0.0;
 			double dyOffset = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dFullWidth);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dFullWidth);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dFullHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dFullHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, dyOffset);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, dyOffset);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -1866,19 +1836,19 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			break;
 		}
-		case SvDef::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
 		{
 			double dFullHeight = 0.0;
 			double dFullWidth = 0.0;
 			double dxOffset = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dFullWidth);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dFullWidth);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dFullHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dFullHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, dxOffset);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, dxOffset);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -1920,8 +1890,8 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			break;
 		}
 
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
 		{
 			SVPoint<double> position;
 			double heightScaleFactor = 1.0;
@@ -1931,15 +1901,15 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			// GetExtentProperty () only returns S_FALSE, which is not 
 			// very helpful. Currently none of these cases give much help
 			// with error identification.
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1951,16 +1921,16 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			break;
 		}
 
-		case SvDef::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipVertical:
 		{
 			SVPoint<double> position;
 			double dHeight = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight);
 			}
 
 			if (S_OK == l_hrOk)
@@ -1971,16 +1941,16 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 
 			break;
 		}
-		case SvDef::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFlipHorizontal:
 		{
 			SVPoint<double> position;
 			double dWidth = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2010,7 +1980,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationNone:
 		{
 			rResult = value;
 
@@ -2019,12 +1989,12 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			break;
 		}
 
-		case SvDef::SVExtentTranslationFigureShift:
-		case SvDef::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationProfileShift:
 		{
 			SVPoint<double> position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -2033,33 +2003,33 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationShift:
 		{
 			SVPoint<double> position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
 				SVPoint<double> displacement;
 
-				GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 
 				rResult = value + position + displacement;
 			}
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformShift:
 		{
 			SVPoint<double> position;
 			SVPoint<double> displacement;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2069,25 +2039,25 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 			break;
 		}
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationLinear:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2110,7 +2080,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationTransformRotate:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
@@ -2118,21 +2088,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2158,22 +2128,22 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 			break;
 		}
-		case SvDef::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLine:
 		{
 			SVPoint<double> startPoint;
 			SVPoint<double> endPoint;
 			SVPoint<double> outputRotation;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2197,25 +2167,25 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationLine:
+		}// end case SVExtentTranslationLine:
 
-		case SvDef::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2237,9 +2207,9 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationFlippedRotate:
+		}// end case SVExtentTranslationFlippedRotate:
 
-		case SvDef::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationPolarUnwrap:
 		{
 			SVPoint<double> centerPoint;
 
@@ -2247,21 +2217,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			double dOuterRadius = 0.0;
 			double dInnerRadius = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, centerPoint);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, centerPoint);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, dOuterRadius);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dOuterRadius);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, dInnerRadius);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dInnerRadius);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2283,21 +2253,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationPolarUnwrap:
+		}// end case SVExtentTranslationPolarUnwrap:
 
-		case SvDef::SVExtentTranslationCylindricalWarpH:
+		case SvPb::SVExtentTranslationCylindricalWarpH:
 		{
 			double dInputWidth = 0.0;
 			double dWarpAngle = 0.0;
 			double dOutputWidth = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dInputWidth);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dInputWidth);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dWarpAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dWarpAngle);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dOutputWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dOutputWidth);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -2320,21 +2290,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 
 			}
 			break;
-		}// end case SvDef::SVExtentTranslationCylindricalWarpH:
+		}// end case SVExtentTranslationCylindricalWarpH:
 
-		case SvDef::SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationCylindricalWarpV:
 		{
 			double dInputHeight = 0.0;
 			double dWarpAngle = 0.0;
 			double dOutputHeight = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dInputHeight);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dInputHeight);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dWarpAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dWarpAngle);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dOutputHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dOutputHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -2355,20 +2325,20 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 				}
 			}
 			break;
-		}// end case SvDef::SVExtentTranslationCylindricalWarpV:
-		case SvDef::SVExtentTranslationVerticalPerspective:
+		}// end case SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationVerticalPerspective:
 		{
 			double dFullHeight = 0.0;
 			double dFullWidth = 0.0;
 			double dyOffset = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dFullWidth);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dFullWidth);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dFullHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dFullHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, dyOffset);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, dyOffset);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -2407,21 +2377,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 							}
 			}
 			break;
-		}// end case SvDef::SVExtentTranslationVerticalPerspective:
+		}// end case SVExtentTranslationVerticalPerspective:
 
-		case SvDef::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
 		{
 			double dFullHeight = 0.0;
 			double dFullWidth = 0.0;
 			double dxOffset = 0.0;
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dFullWidth);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dFullWidth);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dFullHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dFullHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, dxOffset);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, dxOffset);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -2460,18 +2430,18 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 							}
 			}
 			break;
-		}// end case SvDef::SVExtentTranslationHorizontalPerspective:
+		}// end case SVExtentTranslationHorizontalPerspective:
 
 		//new cases for Flip Horizontal & Vertical
-		case SvDef::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipVertical:
 		{
 			SVPoint<double> position;
 			double dFullHeight = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dFullHeight);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dFullHeight);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -2480,15 +2450,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			}
 			break;
 		}
-		case SvDef::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFlipHorizontal:
 		{
 			SVPoint<double> position;
 			double dFullWidth = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dFullWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dFullWidth);
 			}
 			if (S_OK == l_hrOk)
 			{
@@ -2497,8 +2467,8 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			}
 			break;
 		}
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
 		{
 			//@WARNING [Jim][8 July 2015] No identification of error cases.  
 			// GetExtentProperty () only returns S_FALSE, which is not 
@@ -2510,15 +2480,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			double heightScaleFactor = 1.0;
 			double widthScaleFactor = 1.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2540,7 +2510,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationNone:
 		{
 			p_rsvResult = p_svValue;
 
@@ -2548,23 +2518,23 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 
 			break;
 		}
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationFlippedRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationTransformShift:
-		case SvDef::SVExtentTranslationTransformRotate:
-		case SvDef::SVExtentTranslationPolarUnwrap:
-		case SvDef::SVExtentTranslationLine:
-		case SvDef::SVExtentTranslationLinear:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationVerticalPerspective:
-		case SvDef::SVExtentTranslationHorizontalPerspective:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationVerticalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			switch (p_svValue.m_eShape)
 			{
@@ -2672,7 +2642,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 					SVPoint<double> rotatePoint;
 					SVPoint<double> outputRotationPoint;
 
-					GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
+					GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
 
 					SVPoint<double> radiusPoint = p_svValue.m_svCenterLeft;
 
@@ -2747,7 +2717,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 					SVPoint<double> rotatePoint;
 					SVPoint<double> outputRotationPoint;
 
-					GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
+					GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
 
 					SVPoint<double> radiusPoint = p_svValue.m_svTopCenter;
 
@@ -2881,7 +2851,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationNone:
 		{
 			p_rsvResult = p_svValue;
 
@@ -2889,21 +2859,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 			break;
 		}
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationFlippedRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationTransformShift:
-		case SvDef::SVExtentTranslationTransformRotate:
-		case SvDef::SVExtentTranslationPolarUnwrap:
-		case SvDef::SVExtentTranslationLine:
-		case SvDef::SVExtentTranslationLinear:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			long l_lCount = static_cast<long> (p_svValue.m_PointVector.size());
 
@@ -2914,7 +2884,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 			{
 				double l_dAngle = 0.0;
 
-				bool l_bIsAngle = S_OK == GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, l_dAngle);
+				bool l_bIsAngle = S_OK == GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, l_dAngle);
 
 				p_rsvResult.m_bIsAngleValid = p_svValue.m_bIsAngleValid;
 				p_rsvResult.m_dAngle = p_svValue.m_dAngle;
@@ -2940,7 +2910,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 					SVPoint<double> rotatePoint;
 					SVPoint<double> outputRotationPoint;
 
-					GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
+					GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
 
 					SVPoint<double> l_svRadiusPoint = p_svValue.m_PointVector[0];
 
@@ -3022,7 +2992,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct p_s
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationNone:
 		{
 			p_rsvResult = p_svValue;
 
@@ -3030,21 +3000,21 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct p_s
 
 			break;
 		}
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationFlippedRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationTransformShift:
-		case SvDef::SVExtentTranslationTransformRotate:
-		case SvDef::SVExtentTranslationPolarUnwrap:
-		case SvDef::SVExtentTranslationLine:
-		case SvDef::SVExtentTranslationLinear:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			long l_lCount = static_cast<long> (p_svValue.m_svLineArray.size());
 
@@ -3089,34 +3059,34 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationTransformShift:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationCylindricalWarpH:
-		case SvDef::SVExtentTranslationCylindricalWarpV:
-		case SvDef::SVExtentTranslationVerticalPerspective:
-		case SvDef::SVExtentTranslationHorizontalPerspective:
-		case SvDef::SVExtentTranslationPolarUnwrap:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationCylindricalWarpH:
+		case SvPb::SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationVerticalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			l_hrOk = TranslateFromOutputSpace(rValue, rResult);
 
 			break;
 		}// end case multiple
 
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationTransformRotate:
-		case SvDef::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationLinear:
 		{
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 
 			if (S_OK == l_hrOk)
 			{
@@ -3128,16 +3098,16 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 			break;
 		}// end case multiple
 
-		case SvDef::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLine:
 		{
 			SVPoint<double> startPoint;
 			SVPoint<double> endPoint;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint);
 			}
 
 			if (S_OK == l_hrOk)
@@ -3155,11 +3125,11 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 			break;
 		}// end case SvDef::SVExtentTranslationLine:
 
-		case SvDef::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
 		{
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 
 			if (S_OK == l_hrOk)
 			{
@@ -3186,7 +3156,7 @@ HRESULT SVImageExtentClass::ValidateAgainstOutputSpace(const SVImageExtentClass 
 		{
 			SVExtentFigureStruct figure = rImageExtent.GetFigure();
 
-			if (rImageExtent.m_eTranslation == SvDef::SVExtentTranslationLine)
+			if (rImageExtent.m_eTranslation == SvPb::SVExtentTranslationLine)
 			{
 				l_oRect.bottom--;
 				l_oRect.right--;
@@ -3200,7 +3170,7 @@ HRESULT SVImageExtentClass::ValidateAgainstOutputSpace(const SVImageExtentClass 
 					result = S_FALSE;
 				}
 			}
-			else if (rImageExtent.m_eTranslation == SvDef::SVExtentTranslationProfile)
+			else if (rImageExtent.m_eTranslation == SvPb::SVExtentTranslationProfile)
 			{
 				///When the center is within the Outputrectangle the LinearTool with rotation is valid 
 				///figure.msvCenter is not calculated yet
@@ -3286,7 +3256,7 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationNone:
 		{
 			rOffsetData.m_bIsLinear &= true;
 
@@ -3295,17 +3265,17 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 			break;
 		}
 
-		case SvDef::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationShift:
 		{
 			SVPoint<double>  position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
 				SVPoint<double> displacement;
 
-				GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 
 				SVPoint<double> result = position + displacement - rOffsetData.m_svRotationPoint + rOffsetData.m_svOffset;
 
@@ -3318,11 +3288,11 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationProfileShift:
 		{
 			SVPoint<double> position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -3337,25 +3307,25 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationProfile:
-		case SvDef::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationLinear:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -3373,11 +3343,11 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformShift:
 		{
 			SVPoint<double> displacement;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 
 			if (S_OK == l_hrOk)
 			{
@@ -3392,7 +3362,7 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 			break;
 		}// end case multiple
-		case SvDef::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationTransformRotate:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
@@ -3400,21 +3370,21 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, displacement);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, displacement);
 			}
 
 			if (S_OK == l_hrOk)
@@ -3432,23 +3402,23 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 
 			break;
 		}
-		case SvDef::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
 		{
 			SVPoint<double> rotation;
 			SVPoint<double> outputRotation;
 
 			double dAngle = 0.0;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, rotation);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, rotation);
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, outputRotation);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotation);
 			}
 
 			if (S_OK == l_hrOk)
@@ -3465,22 +3435,22 @@ HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData
 			}
 
 			break;
-		}// end case SvDef::SVExtentTranslationFlippedRotate:
+		}// end case SVExtentTranslationFlippedRotate:
 		// Warp Type Tools
-		case SvDef::SVExtentTranslationVerticalPerspective:
-		case SvDef::SVExtentTranslationHorizontalPerspective:
-		case SvDef::SVExtentTranslationCylindricalWarpH:
-		case SvDef::SVExtentTranslationCylindricalWarpV:
-		case SvDef::SVExtentTranslationFigureShift:
-		case SvDef::SVExtentTranslationPolarUnwrap:
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationVerticalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationCylindricalWarpH:
+		case SvPb::SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipHorizontal:
 		{
 			SVPoint<double> position;
 
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -3527,18 +3497,37 @@ HRESULT SVImageExtentClass::SetDataFromFile(LPCTSTR pFileName)
 
 	if (Code == S_OK)
 	{
-		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
-		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
-		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0);
-		SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0);
-		SetTranslation(SvDef::SVExtentTranslationNone);
+		SetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
+		SetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
+		SetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0);
+		SetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0);
+		SetTranslation(SvPb::SVExtentTranslationNone);
 		UpdateData();
 		hrOk = S_OK;
 	}
 	return hrOk;
 }
 
-HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPropertyEnum eLocation, long p_dX, long p_dY)
+void SVImageExtentClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const
+{
+	for (auto valuePair : m_extentValues)
+	{
+		auto* value = rExtentProperties.Add();
+		if (nullptr != value)
+		{
+			value->set_type(valuePair.first);
+			value->set_value(valuePair.second);
+			auto iter = cExtentPropertyNames.find(valuePair.first);
+			if (cExtentPropertyNames.end() != iter)
+			{
+				value->set_name(iter->second);
+			}
+			value->set_filteredoutflag(!isEnabled(valuePair.first));
+		}
+	}
+}
+
+HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eLocation, long p_dX, long p_dY)
 {
 	HRESULT l_hrOk = S_FALSE;
 	SVPoint<double> position;
@@ -3548,15 +3537,15 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 	double l_dStartAngle = 0.0;
 	double l_dEndAngle = 0.0;
 
-	if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position)
-		&& S_OK == GetExtentProperty(SvDef::SVExtentPropertyStartAngle, l_dStartAngle)
-		&& S_OK == GetExtentProperty(SvDef::SVExtentPropertyEndAngle, l_dEndAngle)
-		&& S_OK == GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, l_dInnerRadius)
-		&& S_OK == GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, l_dOuterRadius))
+	if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position)
+		&& S_OK == GetExtentProperty(SvPb::SVExtentPropertyStartAngle, l_dStartAngle)
+		&& S_OK == GetExtentProperty(SvPb::SVExtentPropertyEndAngle, l_dEndAngle)
+		&& S_OK == GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, l_dInnerRadius)
+		&& S_OK == GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, l_dOuterRadius))
 	{
 		switch (eLocation)
 		{
-			case SvDef::SVExtentLocationPropertyLeft:
+			case SvPb::SVExtentLocationPropertyLeft:
 			{
 				double l_dNewAngle = l_dStartAngle + Radians2Degrees(p_dX) / l_dOuterRadius;
 
@@ -3568,7 +3557,7 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyRight:
+			case SvPb::SVExtentLocationPropertyRight:
 			{
 				double l_dNewAngle = l_dEndAngle + Radians2Degrees(p_dX) / l_dOuterRadius;
 
@@ -3580,7 +3569,7 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyTop:
+			case SvPb::SVExtentLocationPropertyTop:
 			{
 				l_dInnerRadius += p_dY;
 
@@ -3588,7 +3577,7 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyBottom:
+			case SvPb::SVExtentLocationPropertyBottom:
 			{
 				l_dOuterRadius += p_dY;
 
@@ -3596,7 +3585,7 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyCenter:
+			case SvPb::SVExtentLocationPropertyCenter:
 			{
 				position.m_x += p_dX;
 				position.m_y += p_dY;
@@ -3609,11 +3598,11 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 
 		if (S_OK == l_hrOk)
 		{
-			if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyStartAngle, l_dStartAngle) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyEndAngle, l_dEndAngle) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyInnerRadius, l_dInnerRadius) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyOuterRadius, l_dOuterRadius))
+			if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyStartAngle, l_dStartAngle) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyEndAngle, l_dEndAngle) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyInnerRadius, l_dInnerRadius) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyOuterRadius, l_dOuterRadius))
 			{
 				l_hrOk = UpdateData();
 			}
@@ -3626,22 +3615,22 @@ HRESULT SVImageExtentClass::UpdatePolarFromOutputSpace(SvDef::SVExtentLocationPr
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::UpdateLine(SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
+HRESULT SVImageExtentClass::UpdateLine(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	SVPoint<double> startPoint;
 	SVPoint<double> endPoint;
 
-	if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint) &&
-		S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint))
+	if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint) &&
+		S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint))
 	{
 		SVPoint<double> point {rEnd};
 		point -= rStart;
 
 		switch (eLocation)
 		{
-			case SvDef::SVExtentLocationPropertyLeft:
+			case SvPb::SVExtentLocationPropertyLeft:
 			{
 				startPoint += point;
 
@@ -3649,7 +3638,7 @@ HRESULT SVImageExtentClass::UpdateLine(SvDef::SVExtentLocationPropertyEnum eLoca
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyRight:
+			case SvPb::SVExtentLocationPropertyRight:
 			{
 				endPoint += point;
 
@@ -3657,7 +3646,7 @@ HRESULT SVImageExtentClass::UpdateLine(SvDef::SVExtentLocationPropertyEnum eLoca
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyCenter:
+			case SvPb::SVExtentLocationPropertyCenter:
 			{
 				startPoint += point;
 				endPoint += point;
@@ -3670,8 +3659,8 @@ HRESULT SVImageExtentClass::UpdateLine(SvDef::SVExtentLocationPropertyEnum eLoca
 
 		if (S_OK == l_hrOk)
 		{
-			if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint))
+			if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint))
 			{
 				l_hrOk = UpdateData();
 			}
@@ -3685,7 +3674,7 @@ HRESULT SVImageExtentClass::UpdateLine(SvDef::SVExtentLocationPropertyEnum eLoca
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
+HRESULT SVImageExtentClass::UpdatePolar(SvPb::SVExtentLocationPropertyEnum p_eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -3696,18 +3685,18 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 	double l_dStartAngle = 0.0;
 	double l_dEndAngle = 0.0;
 
-	if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-		S_OK == GetExtentProperty(SvDef::SVExtentPropertyStartAngle, l_dStartAngle) &&
-		S_OK == GetExtentProperty(SvDef::SVExtentPropertyEndAngle, l_dEndAngle) &&
-		S_OK == GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, l_dInnerRadius) &&
-		S_OK == GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, l_dOuterRadius))
+	if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+		S_OK == GetExtentProperty(SvPb::SVExtentPropertyStartAngle, l_dStartAngle) &&
+		S_OK == GetExtentProperty(SvPb::SVExtentPropertyEndAngle, l_dEndAngle) &&
+		S_OK == GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, l_dInnerRadius) &&
+		S_OK == GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, l_dOuterRadius))
 	{
 		double l_dNewAngle = SVGetFlippedRotationAngle(position, rEnd);
 		double l_dNewRadius = SVGetRadius(position, rEnd);
 
 		switch (p_eLocation)
 		{
-			case SvDef::SVExtentLocationPropertyTopLeft:
+			case SvPb::SVExtentLocationPropertyTopLeft:
 			{
 				long l_lMult = (long)(l_dStartAngle) / 360;
 
@@ -3741,7 +3730,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyTopRight:
+			case SvPb::SVExtentLocationPropertyTopRight:
 			{
 				long l_lMult = (long)(l_dEndAngle) / 360;
 
@@ -3780,7 +3769,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyBottomRight:
+			case SvPb::SVExtentLocationPropertyBottomRight:
 			{
 				long l_lMult = (long)(l_dEndAngle) / 360;
 
@@ -3819,7 +3808,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyBottomLeft:
+			case SvPb::SVExtentLocationPropertyBottomLeft:
 			{
 				long l_lMult = (long)(l_dStartAngle) / 360;
 
@@ -3853,7 +3842,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyLeft:
+			case SvPb::SVExtentLocationPropertyLeft:
 			{
 				long l_lMult = (long)(l_dStartAngle) / 360;
 
@@ -3884,7 +3873,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyRight:
+			case SvPb::SVExtentLocationPropertyRight:
 			{
 				long l_lMult = (long)(l_dEndAngle) / 360;
 
@@ -3920,7 +3909,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyTop:
+			case SvPb::SVExtentLocationPropertyTop:
 			{
 				l_dInnerRadius = l_dNewRadius;
 
@@ -3928,7 +3917,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyBottom:
+			case SvPb::SVExtentLocationPropertyBottom:
 			{
 				l_dOuterRadius = l_dNewRadius;
 
@@ -3936,7 +3925,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyCenter:
+			case SvPb::SVExtentLocationPropertyCenter:
 			{
 				position += rEnd - rStart;
 
@@ -3948,11 +3937,11 @@ HRESULT SVImageExtentClass::UpdatePolar(SvDef::SVExtentLocationPropertyEnum p_eL
 
 		if (S_OK == l_hrOk)
 		{
-			if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyStartAngle, l_dStartAngle) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyEndAngle, l_dEndAngle) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyInnerRadius, l_dInnerRadius) &&
-				S_OK == SetExtentProperty(SvDef::SVExtentPropertyOuterRadius, l_dOuterRadius))
+			if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyStartAngle, l_dStartAngle) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyEndAngle, l_dEndAngle) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyInnerRadius, l_dInnerRadius) &&
+				S_OK == SetExtentProperty(SvPb::SVExtentPropertyOuterRadius, l_dOuterRadius))
 			{
 				l_hrOk = UpdateData();
 			}
@@ -3970,17 +3959,17 @@ void SVImageExtentClass::ClearOutputData()
 {
 	m_figure.Initialize();
 
-	DisableExtentProperty(SvDef::SVExtentPropertyPositionsOutput);
-	DisableExtentProperty(SvDef::SVExtentPropertyDimentionsOutput);
-	if (m_eTranslation == SvDef::SVExtentTranslationLine)
+	DisableExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint);
+	DisableExtentProperty(SvPb::SVExtentPropertyDimentionsOutput);
+	if (m_eTranslation == SvPb::SVExtentTranslationLine)
 	{
-		DisableExtentProperty(SvDef::SVExtentPropertyRotationAngle);
-		DisableExtentProperty(SvDef::SVExtentPropertyWidth);
-		DisableExtentProperty(SvDef::SVExtentPropertyHeight);
+		DisableExtentProperty(SvPb::SVExtentPropertyRotationAngle);
+		DisableExtentProperty(SvPb::SVExtentPropertyWidth);
+		DisableExtentProperty(SvPb::SVExtentPropertyHeight);
 	}
 	else
 	{
-		DisableExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine);
+		DisableExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine);
 	}
 }
 
@@ -3991,95 +3980,95 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 	switch (m_eTranslation)
 	{
-		case SvDef::SVExtentTranslationUnknown:
+		case SvPb::SVExtentTranslationUnknown:
 		{
 			break;
 		}
 
-		case SvDef::SVExtentTranslationNone:
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationTransformShift:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationNone:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
 			double dValue = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
-			result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dValue);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
+			result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue);
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
 		}// end multiple case:
 
-		case SvDef::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLine:
 		{
 			SVPoint<double> startPoint;
 			SVPoint<double> endPoint;
 
 			double l_dValue = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
-			result = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint);
+			result = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint);
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyPositionPointEndOfLine, endPoint);
+				result = GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLine, endPoint);
 			}
 
 			if (S_OK == result)
 			{
 				double dWidth = SVGetRadius(startPoint, endPoint);
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth, false);
 
 				if (S_OK == result)
 				{
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dWidth, false);
+					result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dWidth, false);
 				}
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyHeight, 1.0, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyHeight, 1.0, false);
 
 				if (S_OK == result)
 				{
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, 1.0, false);
+					result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, 1.0, false);
 				}
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationLine:
 
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationResize:
 		{
 			//@WARNING [Jim][8 July 2015] No identification of error cases.  
 			// GetExtentProperty () only returns S_FALSE, which is not 
@@ -4092,140 +4081,140 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			double heightScaleFactor = 1.0;
 			double widthScaleFactor = 1.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
-			result = GetExtentProperty(SvDef::SVExtentPropertyWidth, inputWidth);
+			result = GetExtentProperty(SvPb::SVExtentPropertyWidth, inputWidth);
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
 			}
 
 			if (S_OK == result)
 			{
 				dValue = inputWidth * widthScaleFactor;
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, inputHeight);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, inputHeight);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 			}
 
 			if (S_OK == result)
 			{
 				dValue = inputHeight * heightScaleFactor;
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationDoubleHeight:
 
-		case SvDef::SVExtentTranslationFlippedRotate:
-		case SvDef::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationRotate:
 		{
 			double dValue = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationFlippedRotate: case SvDef::SVExtentTranslationRotate:
 
-		case SvDef::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationLinear:
 		{
 			double dHeight = 0.0;
 			double dWidth = 0.0;
 			double dAngle = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
-			result = GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dAngle);
+			result = GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dAngle);
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dWidth, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dWidth, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dHeight, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dHeight, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationLinear:
 
-		case SvDef::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationProfile:
 		{
 			double dValue = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
-			result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dValue);
+			result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue);
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
@@ -4234,44 +4223,44 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 				point.m_y += dValue / 2;
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, point, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, point, false);
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationProfile:
 
-		case SvDef::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationPolarUnwrap:
 		{
 			double dInnerRadius = 0.0;
 			double dOuterRadius = 0.0;
 			double dStartAngle = 0.0;
 			double dEndAngle = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyRectangle);
+			DisableExtentProperty(SvPb::SVExtentPropertyRectangle);
 
-			if (S_OK != GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle))
+			if (S_OK != GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle))
 			{
 				result = S_FALSE;
 			}
 
-			if (S_OK != GetExtentProperty(SvDef::SVExtentPropertyEndAngle, dEndAngle))
+			if (S_OK != GetExtentProperty(SvPb::SVExtentPropertyEndAngle, dEndAngle))
 			{
 				result = S_FALSE;
 			}
 
-			if (S_OK != GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, dInnerRadius))
+			if (S_OK != GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dInnerRadius))
 			{
 				result = S_FALSE;
 			}
 
-			if (S_OK != GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, dOuterRadius))
+			if (S_OK != GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dOuterRadius))
 			{
 				result = S_FALSE;
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			if (S_OK == result)
@@ -4281,7 +4270,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 				{
 					dHeight = 1.0;
 				}
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dHeight, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dHeight, false);
 
 				if (S_OK == result)
 				{
@@ -4291,43 +4280,43 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 					{
 						l_dWidth = 1.0;
 					}
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_dWidth, false);
+					result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, l_dWidth, false);
 				}
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationPolarUnwrap:
 
-		case SvDef::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationTransformRotate:
 		{
 			SVPoint<double> position;
 
 			double dHeight = 0.0;
 			double dWidth = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
-			result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight);
+			result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight);
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+				result = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			}
 
 			if (S_OK == result)
 			{
 				double dMax = std::sqrt((dWidth * dWidth) + (dHeight * dHeight));
 
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dMax, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dMax, false);
 
 				if (S_OK == result)
 				{
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dMax, false);
+					result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dMax, false);
 				}
 
 				if (S_OK == result)
@@ -4335,14 +4324,14 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 					position.m_x += (dMax - dWidth) / 2;
 					position.m_y += (dMax - dHeight) / 2;
 
-					result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, position, false);
+					result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, position, false);
 				}
 			}
 
 			break;
 		}// end case SvDef::SVExtentTranslationTransformRotate:
 
-		case SvDef::SVExtentTranslationCylindricalWarpH:
+		case SvPb::SVExtentTranslationCylindricalWarpH:
 		{
 			double dValue = 0.0;
 			double dWarpAngle = 0.0;
@@ -4351,34 +4340,34 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue);
 			}
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dWarpAngle);
+				result = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dWarpAngle);
 			}
 			if (S_OK == result)
 			{
 				double l_dRadius = (dValue / std::sin(dWarpAngle / 360.0 * M_PI)) / 2.0;
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, l_dRadius * M_PI * (dWarpAngle / 180.0), false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, l_dRadius * M_PI * (dWarpAngle / 180.0), false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue);
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 			break;
 		}// end case SvDef::SVExtentTranslationCylindricalWarpH:
 
-		case SvDef::SVExtentTranslationCylindricalWarpV:
+		case SvPb::SVExtentTranslationCylindricalWarpV:
 		{
 			double dValue = 0.0;
 			double dWarpAngle = 0.0;
@@ -4387,61 +4376,61 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dWarpAngle);
+				result = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dWarpAngle);
 			}
 			if (S_OK == result)
 			{
 				double dRadius = (dValue / std::sin(dWarpAngle / 360.0 * M_PI)) / 2.0;
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dRadius * M_PI * (dWarpAngle / 180.0), false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dRadius * M_PI * (dWarpAngle / 180.0), false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue);
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 			break;
 		}// end case SvDef::SVExtentTranslationCylindricalWarpV:
 
-		case SvDef::SVExtentTranslationVerticalPerspective:
-		case SvDef::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationVerticalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
 		{
 			double dValue = 0.0;
 
-			DisableExtentProperty(SvDef::SVExtentPropertyPie);
+			DisableExtentProperty(SvPb::SVExtentPropertyPie);
 
-			result = GetExtentProperty(SvDef::SVExtentPropertyWidth, dValue);
+			result = GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue);
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputWidth, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvDef::SVExtentPropertyHeight, dValue);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputHeight, dValue, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 
 			if (S_OK == result)
 			{
-				result = SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
+				result = SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>{0.0, 0.0}, false);
 			}
 
 			break;
@@ -4466,30 +4455,30 @@ HRESULT SVImageExtentClass::BuildFigure()
 	{
 		switch (m_eTranslation)
 		{
-			case SvDef::SVExtentTranslationUnknown:
-			case SvDef::SVExtentTranslationNone:
-			case SvDef::SVExtentTranslationTransformShift:
-			case SvDef::SVExtentTranslationTransformRotate:
-			case SvDef::SVExtentTranslationCylindricalWarpH:
-			case SvDef::SVExtentTranslationCylindricalWarpV:
+			case SvPb::SVExtentTranslationUnknown:
+			case SvPb::SVExtentTranslationNone:
+			case SvPb::SVExtentTranslationTransformShift:
+			case SvPb::SVExtentTranslationTransformRotate:
+			case SvPb::SVExtentTranslationCylindricalWarpH:
+			case SvPb::SVExtentTranslationCylindricalWarpV:
 			{
 				// No figure
 				break;
 			}
-			case SvDef::SVExtentTranslationShift:
-			case SvDef::SVExtentTranslationRotate:
-			case SvDef::SVExtentTranslationFlippedRotate:
-			case SvDef::SVExtentTranslationProfile:
-			case SvDef::SVExtentTranslationProfileShift:
+			case SvPb::SVExtentTranslationShift:
+			case SvPb::SVExtentTranslationRotate:
+			case SvPb::SVExtentTranslationFlippedRotate:
+			case SvPb::SVExtentTranslationProfile:
+			case SvPb::SVExtentTranslationProfileShift:
 			{
 				double dWidth = 0.0;
 				double dHeight = 0.0;
 
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight);
 				}
 
 				if (S_OK == l_hrOk)
@@ -4518,26 +4507,26 @@ HRESULT SVImageExtentClass::BuildFigure()
 
 				break;
 			}
-			case SvDef::SVExtentTranslationDoubleHeight:
-			case SvDef::SVExtentTranslationResize:
-			case SvDef::SVExtentTranslationFlipHorizontal:
-			case SvDef::SVExtentTranslationFlipVertical:
-			case SvDef::SVExtentTranslationFigureShift:
+			case SvPb::SVExtentTranslationDoubleHeight:
+			case SvPb::SVExtentTranslationResize:
+			case SvPb::SVExtentTranslationFlipHorizontal:
+			case SvPb::SVExtentTranslationFlipVertical:
+			case SvPb::SVExtentTranslationFigureShift:
 			{
 				double dWidth = 0.0;
 				double dHeight = 0.0;
 
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight);
 				}
 
 				SVPoint<double> startPoint;
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, startPoint);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint);
 				}
 
 				if (S_OK == l_hrOk)
@@ -4578,16 +4567,16 @@ HRESULT SVImageExtentClass::BuildFigure()
 				break;
 			}
 
-			case SvDef::SVExtentTranslationLinear:
+			case SvPb::SVExtentTranslationLinear:
 			{
 				double dWidth = 0.0;
 				double dHeight = 0.0;
 
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight);
 				}
 
 				if (S_OK == l_hrOk)
@@ -4620,11 +4609,11 @@ HRESULT SVImageExtentClass::BuildFigure()
 
 				break;
 			}
-			case SvDef::SVExtentTranslationLine:
+			case SvPb::SVExtentTranslationLine:
 			{
 				double dWidth = 0.0;
 
-				l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth);
 
 				if (S_OK == l_hrOk)
 				{
@@ -4651,7 +4640,7 @@ HRESULT SVImageExtentClass::BuildFigure()
 
 				break;
 			}
-			case SvDef::SVExtentTranslationPolarUnwrap:
+			case SvPb::SVExtentTranslationPolarUnwrap:
 			{
 				SVPoint<double> centerPoint;
 
@@ -4662,22 +4651,22 @@ HRESULT SVImageExtentClass::BuildFigure()
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, centerPoint);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, centerPoint);
 				}
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyStartAngle, dStartAngle);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dStartAngle);
 				}
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyEndAngle, dEndAngle);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyEndAngle, dEndAngle);
 				}
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyInnerRadius, dInnerRadius);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dInnerRadius);
 					if (dInnerRadius < 1)
 					{
 						dInnerRadius = 1;
@@ -4686,7 +4675,7 @@ HRESULT SVImageExtentClass::BuildFigure()
 
 				if (S_OK == l_hrOk)
 				{
-					l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyOuterRadius, dOuterRadius);
+					l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dOuterRadius);
 					if (dOuterRadius < 1)
 					{
 						dOuterRadius = 1;
@@ -4720,14 +4709,14 @@ HRESULT SVImageExtentClass::BuildFigure()
 
 				break;
 			}
-			case SvDef::SVExtentTranslationVerticalPerspective:
+			case SvPb::SVExtentTranslationVerticalPerspective:
 			{
 				double dWidth;
 				double dHeight;
 				double dYPosition;
-				if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth) &&
-					S_OK == GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight) &&
-					S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, dYPosition))
+				if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth) &&
+					S_OK == GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight) &&
+					S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, dYPosition))
 				{
 					m_figure.m_eShape = SvDef::SVExtentShapeHexagon;
 
@@ -4745,14 +4734,14 @@ HRESULT SVImageExtentClass::BuildFigure()
 				}
 				break;
 			}
-			case SvDef::SVExtentTranslationHorizontalPerspective:
+			case SvPb::SVExtentTranslationHorizontalPerspective:
 			{
 				double dWidth;
 				double dHeight;
 				double dXPosition;
-				if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyWidth, dWidth) &&
-					S_OK == GetExtentProperty(SvDef::SVExtentPropertyHeight, dHeight) &&
-					S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, dXPosition))
+				if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyWidth, dWidth) &&
+					S_OK == GetExtentProperty(SvPb::SVExtentPropertyHeight, dHeight) &&
+					S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, dXPosition))
 				{
 					m_figure.m_eShape = SvDef::SVExtentShapeHexagon;
 
@@ -4787,7 +4776,7 @@ HRESULT SVImageExtentClass::BuildFigure()
 	return l_hrOk;
 }
 
-HRESULT  SVImageExtentClass::UpdateVerticalPerspective(SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
+HRESULT  SVImageExtentClass::UpdateVerticalPerspective(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -4795,22 +4784,22 @@ HRESULT  SVImageExtentClass::UpdateVerticalPerspective(SvDef::SVExtentLocationPr
 
 	double l_dY = rStart.m_y - rEnd.m_y;
 
-	if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+	if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 	{
 		switch (eLocation)
 		{
-			case SvDef::SVExtentLocationPropertyTop:
-			case SvDef::SVExtentLocationPropertyTopRight:
-			case SvDef::SVExtentLocationPropertyTopLeft:
+			case SvPb::SVExtentLocationPropertyTop:
+			case SvPb::SVExtentLocationPropertyTopRight:
+			case SvPb::SVExtentLocationPropertyTopLeft:
 			{
 				position.m_y -= l_dY;
 				l_hrOk = S_OK;
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyBottom:
-			case SvDef::SVExtentLocationPropertyBottomRight:
-			case SvDef::SVExtentLocationPropertyBottomLeft:
+			case SvPb::SVExtentLocationPropertyBottom:
+			case SvPb::SVExtentLocationPropertyBottomRight:
+			case SvPb::SVExtentLocationPropertyBottomLeft:
 			{
 				position.m_y += l_dY;
 				l_hrOk = S_OK;
@@ -4820,7 +4809,7 @@ HRESULT  SVImageExtentClass::UpdateVerticalPerspective(SvDef::SVExtentLocationPr
 
 		if (S_OK == l_hrOk)
 		{
-			if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+			if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 			{
 				l_hrOk = UpdateData();
 			}
@@ -4833,7 +4822,7 @@ HRESULT  SVImageExtentClass::UpdateVerticalPerspective(SvDef::SVExtentLocationPr
 	return l_hrOk;
 }
 
-HRESULT  SVImageExtentClass::UpdateHorizontalPerspective(SvDef::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
+HRESULT  SVImageExtentClass::UpdateHorizontalPerspective(SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -4841,22 +4830,22 @@ HRESULT  SVImageExtentClass::UpdateHorizontalPerspective(SvDef::SVExtentLocation
 
 	double l_dX = rStart.m_x - rEnd.m_x;
 
-	if (S_OK == GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+	if (S_OK == GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 	{
 		switch (eLocation)
 		{
-			case SvDef::SVExtentLocationPropertyBottomLeft:
-			case SvDef::SVExtentLocationPropertyTopLeft:
-			case SvDef::SVExtentLocationPropertyLeft:
+			case SvPb::SVExtentLocationPropertyBottomLeft:
+			case SvPb::SVExtentLocationPropertyTopLeft:
+			case SvPb::SVExtentLocationPropertyLeft:
 			{
 				position.m_x -= l_dX;
 				l_hrOk = S_OK;
 
 				break;
 			}
-			case SvDef::SVExtentLocationPropertyRight:
-			case SvDef::SVExtentLocationPropertyBottomRight:
-			case SvDef::SVExtentLocationPropertyTopRight:
+			case SvPb::SVExtentLocationPropertyRight:
+			case SvPb::SVExtentLocationPropertyBottomRight:
+			case SvPb::SVExtentLocationPropertyTopRight:
 			{
 				position.m_x += l_dX;
 				l_hrOk = S_OK;
@@ -4866,7 +4855,7 @@ HRESULT  SVImageExtentClass::UpdateHorizontalPerspective(SvDef::SVExtentLocation
 
 		if (S_OK == l_hrOk)
 		{
-			if (S_OK == SetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position))
+			if (S_OK == SetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position))
 			{
 				l_hrOk = UpdateData();
 			}
@@ -4903,13 +4892,13 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVPoint<double>& rTitlePoint) const
 	switch (m_eTranslation)
 	{
 		// Place the Title above the top of the ROI rectangle
-		case SvDef::SVExtentTranslationResize:
+		case SvPb::SVExtentTranslationResize:
 		{
 			//@WARNING [Jim][8 July 2015] No identification of error cases.  
 			// GetExtentProperty () only returns S_FALSE, which is not 
 			// very helpful. Currently none of these cases give much help
 			// with error identification.
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -4919,12 +4908,12 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVPoint<double>& rTitlePoint) const
 			break;
 		}
 		// These cases place the Title below the top of the ROI rectangle
-		case SvDef::SVExtentTranslationDoubleHeight:
-		case SvDef::SVExtentTranslationFlipHorizontal:
-		case SvDef::SVExtentTranslationFlipVertical:
-		case SvDef::SVExtentTranslationFigureShift:
+		case SvPb::SVExtentTranslationDoubleHeight:
+		case SvPb::SVExtentTranslationFlipHorizontal:
+		case SvPb::SVExtentTranslationFlipVertical:
+		case SvPb::SVExtentTranslationFigureShift:
 		{
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -4934,9 +4923,9 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVPoint<double>& rTitlePoint) const
 			break;
 		}
 
-		case SvDef::SVExtentTranslationHorizontalPerspective:
+		case SvPb::SVExtentTranslationHorizontalPerspective:
 		{
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -4946,9 +4935,9 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVPoint<double>& rTitlePoint) const
 
 			break;
 		}
-		case SvDef::SVExtentTranslationVerticalPerspective:
+		case SvPb::SVExtentTranslationVerticalPerspective:
 		{
-			l_hrOk = GetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, position);
+			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, position);
 
 			if (S_OK == l_hrOk)
 			{
@@ -4959,16 +4948,16 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVPoint<double>& rTitlePoint) const
 			break;
 		}
 		// These cases place the Title above the top of the ROI rectangle
-		case SvDef::SVExtentTranslationShift:
-		case SvDef::SVExtentTranslationRotate:
-		case SvDef::SVExtentTranslationFlippedRotate:
-		case SvDef::SVExtentTranslationProfileShift:
-		case SvDef::SVExtentTranslationTransformShift:
-		case SvDef::SVExtentTranslationTransformRotate:
-		case SvDef::SVExtentTranslationPolarUnwrap:
-		case SvDef::SVExtentTranslationLine:
-		case SvDef::SVExtentTranslationLinear:
-		case SvDef::SVExtentTranslationProfile:
+		case SvPb::SVExtentTranslationShift:
+		case SvPb::SVExtentTranslationRotate:
+		case SvPb::SVExtentTranslationFlippedRotate:
+		case SvPb::SVExtentTranslationProfileShift:
+		case SvPb::SVExtentTranslationTransformShift:
+		case SvPb::SVExtentTranslationTransformRotate:
+		case SvPb::SVExtentTranslationPolarUnwrap:
+		case SvPb::SVExtentTranslationLine:
+		case SvPb::SVExtentTranslationLinear:
+		case SvPb::SVExtentTranslationProfile:
 		{
 			rTitlePoint.m_x = 0.0;
 			rTitlePoint.m_y = -10.0;
@@ -4988,22 +4977,22 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVPoint<double>& rTitlePoint) const
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::setProperty(SvDef::SVExtentPropertyEnum eProperty, double dValue)
+HRESULT SVImageExtentClass::setProperty(SvPb::SVExtentPropertyEnum eProperty, double dValue)
 {
 	HRESULT result {E_INVALIDARG};
 
 	switch (eProperty)
 	{
-		case SvDef::SVExtentPropertyPositionPointX:
-		case SvDef::SVExtentPropertyPositionPointY:
-		case SvDef::SVExtentPropertyPositionPointEndOfLineX:
-		case SvDef::SVExtentPropertyPositionPointEndOfLineY:
-		case SvDef::SVExtentPropertyTranslationOffsetX:
-		case SvDef::SVExtentPropertyTranslationOffsetY:
-		case SvDef::SVExtentPropertyOutputPositionPointX:
-		case SvDef::SVExtentPropertyOutputPositionPointY:
-		case SvDef::SVExtentPropertyOutputWidth:
-		case SvDef::SVExtentPropertyOutputHeight:
+		case SvPb::SVExtentPropertyPositionPointX:
+		case SvPb::SVExtentPropertyPositionPointY:
+		case SvPb::SVExtentPropertyPositionPointEndOfLineX:
+		case SvPb::SVExtentPropertyPositionPointEndOfLineY:
+		case SvPb::SVExtentPropertyTranslationOffsetX:
+		case SvPb::SVExtentPropertyTranslationOffsetY:
+		case SvPb::SVExtentPropertyOutputPositionPointX:
+		case SvPb::SVExtentPropertyOutputPositionPointY:
+		case SvPb::SVExtentPropertyOutputWidth:
+		case SvPb::SVExtentPropertyOutputHeight:
 		{
 			//Remove mantissa for the selected values
 			::modf(dValue, &dValue);
@@ -5029,7 +5018,7 @@ HRESULT SVImageExtentClass::setProperty(SvDef::SVExtentPropertyEnum eProperty, d
 	return result;
 }
 
-bool SVImageExtentClass::isEnabled(SvDef::SVExtentPropertyEnum eProperty) const
+bool SVImageExtentClass::isEnabled(SvPb::SVExtentPropertyEnum eProperty) const
 {
-	return ((m_properties & eProperty) == eProperty) && (eProperty != SvDef::SVExtentPropertyNone);
+	return ((m_properties & eProperty) == eProperty) && (eProperty != SvPb::SVExtentPropertyNone);
 }

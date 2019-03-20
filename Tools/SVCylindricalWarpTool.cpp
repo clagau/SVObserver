@@ -129,7 +129,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	RegisterEmbeddedObject( &m_svWarpAngle, SVWarpAngleObjectGuid, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool );
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyStartAngle, &m_svWarpAngle );
+	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -176,17 +176,15 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 		long l_lDiameter = 0;
 
 		// Warp Type..
-		long lWarpType = SvDef::SVExtentTranslationCylindricalWarpH;	// default
+		long lWarpType = SvPb::SVExtentTranslationCylindricalWarpH;	// default
 		m_svWarpType.GetValue( lWarpType );
-		SvDef::SVExtentTranslationEnum eTranslation = lWarpType == WarpTypeVertical ?
-		                                       SvDef::SVExtentTranslationCylindricalWarpV :
-		                                       SvDef::SVExtentTranslationCylindricalWarpH;
+		SvPb::SVExtentTranslationEnum eTranslation = lWarpType == WarpTypeVertical ? SvPb::SVExtentTranslationCylindricalWarpV : SvPb::SVExtentTranslationCylindricalWarpH;
 		imageExtents.SetTranslation( eTranslation );
 
 		// Warp Angle
 		double l_dAngle = 180;
 		l_hrOk = m_svWarpAngle.GetValue( l_dAngle );
-		if( S_OK != (l_hr = imageExtents.SetExtentProperty( SvDef::SVExtentPropertyStartAngle, l_dAngle )) )
+		if( S_OK != (l_hr = imageExtents.SetExtentProperty( SvPb::SVExtentPropertyStartAngle, l_dAngle )) )
 		{
 			l_hrOk = l_hr;
 		}
@@ -245,25 +243,23 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 	SVImageExtentClass OutputExtents = m_OutputImage.GetImageExtents();
 	
 	// Set Translation
-	long lWarpType = SvDef::SVExtentTranslationCylindricalWarpH;	// default
+	long lWarpType = SvPb::SVExtentTranslationCylindricalWarpH;	// default
 	l_hrOk = m_svWarpType.GetValue( lWarpType );
-	SvDef::SVExtentTranslationEnum eTranslation = lWarpType == WarpTypeVertical ?
-				                           SvDef::SVExtentTranslationCylindricalWarpV :
-				                           SvDef::SVExtentTranslationCylindricalWarpH;
+	SvPb::SVExtentTranslationEnum eTranslation = lWarpType == WarpTypeVertical ? SvPb::SVExtentTranslationCylindricalWarpV : SvPb::SVExtentTranslationCylindricalWarpH;
 	OutputExtents.SetTranslation( eTranslation );
 
 	// Set Warp Angle
 	double l_dStartAngle;
 	m_svWarpAngle.GetValue( l_dStartAngle );
 	ValidateAngle( l_dStartAngle );
-	l_hrOk = OutputExtents.SetExtentProperty( SvDef::SVExtentPropertyStartAngle, l_dStartAngle );
+	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyStartAngle, l_dStartAngle );
 
 	double l_dValue;
-	l_hrOk = rInputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_dValue);
+	l_hrOk = rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, l_dValue );
+	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_dValue);
 
-	l_hrOk = rInputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_dValue );
+	l_hrOk = rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dValue );
+	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
 
 	l_hrOk = OutputExtents.UpdateData();
 
@@ -359,10 +355,10 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 		long Interpolation;
 		m_svInterpolationMode.GetValue(Interpolation);
 
-		l_bOk = (S_OK == InputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, l_dInputWidth )) && l_bOk;
-		l_bOk = (S_OK == rToolExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, l_dToolWidth )) && l_bOk;
-		l_bOk = (S_OK == InputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, l_dInputHeight )) && l_bOk;
-		l_bOk = (S_OK == rToolExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_dToolHeight )) && l_bOk;
+		l_bOk = (S_OK == InputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, l_dInputWidth )) && l_bOk;
+		l_bOk = (S_OK == rToolExtents.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_dToolWidth )) && l_bOk;
+		l_bOk = (S_OK == InputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dInputHeight )) && l_bOk;
+		l_bOk = (S_OK == rToolExtents.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_dToolHeight )) && l_bOk;
 
 		if (!l_bOk)
 		{
@@ -421,8 +417,8 @@ bool SVCylindricalWarpToolClass::CreateLUT()
 	long lOutputWidth = 100;
 	long lOutputHeight = 100;
 	const SVImageExtentClass rOutputExtents = m_OutputImage.GetImageExtents();
-	rOutputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, lOutputWidth );
-	rOutputExtents.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, lOutputHeight );
+	rOutputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, lOutputWidth );
+	rOutputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, lOutputHeight );
 
 	SVMatroxBufferCreateStruct l_Create;
 	l_Create.m_eAttribute = SVBufAttLut;

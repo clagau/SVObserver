@@ -18,6 +18,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary/SetBits.h"
 #include "Operators/SVConditional.h"
+#include "Operators/ToolSizeAdjustTask.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
@@ -103,14 +104,14 @@ void SVToolClass::init()
 	RegisterEmbeddedObject(&m_ToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOL_COMMENT, false, SvOi::SVResetItemNone);
 
 	m_toolExtent.SetTool(this);
-	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationShift);
+	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationShift);
 	m_toolExtent.SetAlwaysUpdate(false);
-	m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyPositionPointX, &m_ExtentLeft);
-	m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyPositionPointY, &m_ExtentTop);
-	m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyWidth, &m_ExtentWidth);
-	m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyHeight, &m_ExtentHeight);
-	m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyWidthScaleFactor, &m_ExtentWidthScaleFactor);
-	m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyHeightScaleFactor, &m_ExtentHeightScaleFactor);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, &m_ExtentLeft);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, &m_ExtentTop);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, &m_ExtentWidth);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, &m_ExtentHeight);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthScaleFactor, &m_ExtentWidthScaleFactor);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightScaleFactor, &m_ExtentHeightScaleFactor);
 
 	//
 	// Set Embedded defaults
@@ -535,7 +536,7 @@ bool SVToolClass::getConditionalResult(bool bRunMode /*= false*/) const
 	return Value ? true : false;
 }
 
-void SVToolClass::SetImageExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject)
+void SVToolClass::SetImageExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject)
 {
 	m_toolExtent.SetExtentObject(p_eProperty, pValueObject);
 }
@@ -660,6 +661,24 @@ HRESULT SVToolClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetDa
 	return m_toolExtent.UpdateOffsetDataToImage(p_rsvOffsetData, pToolImage);
 }
 
+HRESULT SVToolClass::propagateSizeAndPosition()
+{
+	if (SvOp::ToolSizeAdjustTask::UseSizeAdjust(this))
+	{
+		return resetAllObjects();
+	}
+	return S_OK;
+}
+
+bool SVToolClass::usePropagateSizeAndPosition() const
+{
+	if (SvOp::ToolSizeAdjustTask::UseSizeAdjust(this))
+	{
+		return true;
+	}
+	return false;
+}
+
 HRESULT SVToolClass::updateImageExtent()
 {
 	return m_toolExtent.updateImageExtent();
@@ -677,9 +696,84 @@ HRESULT SVToolClass::GetParentExtent(SVImageExtentClass& p_rParent) const
 	return l_hr;
 }
 
-EAutoSize SVToolClass::GetAutoSizeEnabled()
+SvPb::EAutoSize SVToolClass::GetAutoSizeEnabled() const
 {
-	return (EnableSizeAndPosition);
+	return (SvPb::EnableSizeAndPosition);
+}
+
+HRESULT SVToolClass::updateExtentFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eAction, long dx, long dy)
+{
+	auto imageExtents = GetImageExtent();
+	imageExtents.UpdateFromOutputSpace(eAction, dx, dy);
+	HRESULT retVal = SetImageExtent(imageExtents);
+	auto* pInspection = GetInspectionInterface();
+	if (S_OK == retVal && nullptr != pInspection)
+	{
+		retVal = pInspection->resetTool(*this);
+	}
+	else
+	{
+		retVal = E_FAIL;
+	}
+
+	return retVal;
+}
+
+HRESULT SVToolClass::setExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double value)
+{
+	auto imageExtents = GetImageExtent();
+	imageExtents.SetExtentProperty(eProperty, value);
+	imageExtents.UpdateData();
+	HRESULT retVal = SetImageExtent(imageExtents);
+	auto* pInspection = GetInspectionInterface();
+	if (S_OK == retVal && nullptr != pInspection)
+	{
+		retVal = pInspection->resetTool(*this);
+	}
+	else
+	{
+		retVal = E_FAIL;
+	}
+
+	return retVal;
+}
+
+HRESULT SVToolClass::setExtentList(const ::google::protobuf::RepeatedPtrField<::SvPb::ExtentParameter> param)
+{
+	auto imageExtents = GetImageExtent();
+	for (auto data : param)
+	{
+		imageExtents.SetExtentProperty(data.type(), data.value());
+	}
+
+	HRESULT retVal = SetImageExtent(imageExtents);
+	auto* pInspection = GetInspectionInterface();
+	if (S_OK == retVal && nullptr != pInspection)
+	{
+		retVal = pInspection->resetTool(*this);
+	}
+	else
+	{
+		retVal = E_FAIL;
+	}
+
+	return retVal;
+}
+
+HRESULT SVToolClass::setExtentToParent()
+{
+	HRESULT retVal = SetImageExtentToParent();
+	auto* pInspection = GetInspectionInterface();
+	if (S_OK == retVal && nullptr != pInspection)
+	{
+		retVal = pInspection->resetTool(*this);
+	}
+	else
+	{
+		retVal = E_FAIL;
+	}
+
+	return retVal;
 }
 
 bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
@@ -696,12 +790,12 @@ void SVToolClass::removeEmbeddedExtents(bool p_DisconnectExtents)
 {
 	if (p_DisconnectExtents)
 	{
-		m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyPositionPointX, nullptr);
-		m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyPositionPointY, nullptr);
-		m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyWidth, nullptr);
-		m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyHeight, nullptr);
-		m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyWidthScaleFactor, nullptr);
-		m_toolExtent.SetExtentObject(SvDef::SVExtentPropertyHeightScaleFactor, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthScaleFactor, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightScaleFactor, nullptr);
 	}
 
 	RemoveEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
@@ -714,23 +808,30 @@ void SVToolClass::removeEmbeddedExtents(bool p_DisconnectExtents)
 	RemoveEmbeddedObject(&m_ExtentHeightScaleFactor);
 }
 
-HRESULT SVToolClass::GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList)
-{
-	HRESULT hr = S_OK;
-
-	p_rPropertyList.clear();
-	m_toolExtent.GetFilteredImageExtentPropertyList(p_rPropertyList);
-
-	// objects - on ResetObject - set toolextent flag
-	return hr;
-}
-
-HRESULT SVToolClass::GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const
+HRESULT SVToolClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const
 {
 	return m_toolExtent.GetExtentPropertyInfo(p_eProperty, p_rInfo);
 }
 
-HRESULT SVToolClass::SetExtentPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo)
+void SVToolClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const
+{
+	m_toolExtent.getExtentProperties(rExtentProperties);
+	rTranslationType = m_toolExtent.GetTranslation();
+}
+
+HRESULT SVToolClass::getParentExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const
+{
+	SVImageExtentClass parentExtent;
+	HRESULT retValue = m_toolExtent.GetParentExtent(parentExtent);
+	if (S_OK == retValue)
+	{
+		parentExtent.getExtentProperties(rExtentProperties);
+		rTranslationType = parentExtent.GetTranslation();
+	}
+	return retValue;
+}
+
+HRESULT SVToolClass::SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo)
 {
 	return m_toolExtent.SetExtentPropertyInfo(p_eProperty, p_rInfo);
 }
@@ -926,11 +1027,6 @@ long SVToolClass::getToolPosition() const
 	return Result;
 };
 
-HRESULT SVToolClass::getExtentProperty(const SvDef::SVExtentPropertyEnum& rExtentProperty, double& rValue)
-{
-	return GetImageExtent().GetExtentProperty(rExtentProperty, rValue);
-}
-
 SvOi::ParametersForML SVToolClass::getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const
 {
 	return SvOi::ParametersForML();
@@ -952,6 +1048,11 @@ void SVToolClass::finishAddTool()
 		SvStl::MessageMgrStd message(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		message.setMessage(iter->getMessage());
 	}
+}
+
+SvPb::EAutoSize SVToolClass::getAutoSizeEnabled() const
+{
+	return GetAutoSizeEnabled();
 }
 #pragma endregion ITool methods
 
@@ -993,19 +1094,19 @@ void SVToolClass::connectChildObject(SVTaskObjectClass& rChildObject)
 	rChildObject.ConnectObject(createStruct);
 }
 
-bool SVToolClass::IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Location, SvDef::SVExtentDirectionsEnum Direction) const
+bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction) const
 {
 	SvIe::SVExtentPropertyInfoStruct info;
-	m_toolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyHeight, info);
+	m_toolExtent.GetExtentPropertyInfo(SvPb::SVExtentPropertyHeight, info);
 	bool bAllowHeight = !(info.bFormula || info.bSetByReset);
 
-	m_toolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyWidth, info);
+	m_toolExtent.GetExtentPropertyInfo(SvPb::SVExtentPropertyWidth, info);
 	bool bAllowWidth = !(info.bFormula || info.bSetByReset);
 
-	m_toolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointX, info);
+	m_toolExtent.GetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointX, info);
 	bool bAllowMoveX = !(info.bFormula || info.bSetByReset);
 
-	m_toolExtent.GetExtentPropertyInfo(SvDef::SVExtentPropertyPositionPointY, info);
+	m_toolExtent.GetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointY, info);
 	bool bAllowMoveY = !(info.bFormula || info.bSetByReset);
 
 	bool ret(true);
@@ -1013,75 +1114,75 @@ bool SVToolClass::IsAllowedLocation(const SvDef::SVExtentLocationPropertyEnum Lo
 	switch (Location)
 	{
 
-		case  SvDef::SVExtentLocationPropertyTopLeft:
+		case SvPb::SVExtentLocationPropertyTopLeft:
 			if (!bAllowMoveX || !bAllowMoveY || !bAllowHeight || !bAllowWidth)
 			{
 				ret = false;
 			}
 			break;
 
-		case  SvDef::SVExtentLocationPropertyTopRight:
+		case SvPb::SVExtentLocationPropertyTopRight:
 			if (!bAllowMoveY || !bAllowHeight || !bAllowWidth)
 			{
 				ret = false;
 			}
 			break;
-		case  SvDef::SVExtentLocationPropertyBottomRight:
+		case SvPb::SVExtentLocationPropertyBottomRight:
 			if (!bAllowHeight || !bAllowWidth)
 			{
 				ret = false;
 			}
 			break;
 
-		case  SvDef::SVExtentLocationPropertyBottomLeft:
+		case SvPb::SVExtentLocationPropertyBottomLeft:
 			if (!bAllowMoveX || !bAllowHeight || !bAllowWidth)
 			{
 				ret = false;
 			}
 			break;
 
-		case  SvDef::SVExtentLocationPropertyLeft:
+		case SvPb::SVExtentLocationPropertyLeft:
 			if (!bAllowMoveX || !bAllowWidth)
 			{
 				ret = false;
 			}
 			break;
 
-		case  SvDef::SVExtentLocationPropertyRight:
+		case SvPb::SVExtentLocationPropertyRight:
 			if (!bAllowWidth)
 			{
 				ret = false;
 			}
 			break;
 
-		case  SvDef::SVExtentLocationPropertyTop:
+		case SvPb::SVExtentLocationPropertyTop:
 			if (!bAllowMoveY || !bAllowHeight)
 			{
 				ret = false;;
 			}
 			break;
 
-		case  SvDef::SVExtentLocationPropertyBottom:
+		case SvPb::SVExtentLocationPropertyBottom:
 			if (!bAllowHeight)
-			{
-				ret = false;;
-			}
-			break;
-		case	SvDef::SVExtentLocationPropertyCenter:
-
-			if (Direction == SvDef::SVExtentDirectionBoth && (!bAllowMoveX || !bAllowMoveY))
 			{
 				ret = false;
 			}
-			else if (Direction == SvDef::SVExtentDirectionHorizontal && !bAllowMoveX)
+			break;
+		case SvPb::SVExtentLocationPropertyCenter:
+
+			if (Direction == SvPb::SVExtentDirectionBoth && (!bAllowMoveX || !bAllowMoveY))
 			{
-				ret = false;;
+				ret = false;
+			}
+			else if (Direction == SvPb::SVExtentDirectionHorizontal && !bAllowMoveX)
+			{
+				ret = false;
 
 			}
-			else   if (Direction == SvDef::SVExtentDirectionVertical && !bAllowMoveY)
+			else   if (Direction == SvPb::SVExtentDirectionVertical && !bAllowMoveY)
 			{
 
-				ret = false;;
+				ret = false;
 			}
 			break;
 	}

@@ -605,9 +605,9 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 	SVMatroxOcrInterface::Get( p_FontHandle, SVCharCellSizeY, dCharBoxSizeY);
 
 
-	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
-	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, dCharBoxSizeX );
-	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, dCharBoxSizeY );
+	ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
+	ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, dCharBoxSizeX );
+	ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, dCharBoxSizeY );
 
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber,1 );
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,  SV8BitUnsigned );

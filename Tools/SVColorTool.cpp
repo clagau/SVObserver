@@ -211,16 +211,14 @@ HRESULT SVColorToolClass::SetImageExtentToFit(const SVImageExtentClass& rImageEx
 	return l_hrOk;
 }
 
-SvIe::SVTaskObjectClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SVToolClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVTaskObjectClass *pObject {nullptr};
-
-	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		pObject = this;
+		return this;
 	}
 
-	return pObject;
+	return nullptr;
 }
 #pragma endregion Public Methods
 
@@ -323,7 +321,7 @@ void SVColorToolClass::LocalInitialize()
 	ImageInfo.SetOwner(GetUniqueObjectID());
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
-	ImageInfo.SetTranslation(SvDef::SVExtentTranslationNone);
+	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
 	m_LogicalROIImage.UpdateImage(GUID_NULL, ImageInfo);
 	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
 	m_OutputImage.UpdateImage(GUID_NULL, ImageInfo);
@@ -354,7 +352,7 @@ bool SVColorToolClass::createBandChildLayer(SvDef::BandEnum Band)
 	// Setup...
 	ImageInfo.SetOwner(GetUniqueObjectID());
 	//The single bands do not need the offset position only width and size!
-	ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyEnum::SVExtentPropertyPositionPoint, {0.0, 0.0});
+	ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPoint, {0.0, 0.0});
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));

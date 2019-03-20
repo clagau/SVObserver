@@ -179,11 +179,11 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 			if (0 == ProjectAngle)
 			{
-				rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, l_dProjectHeight);
+				rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeight, l_dProjectHeight);
 			}
 			else
 			{
-				rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyWidth, l_dProjectHeight);
+				rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidth, l_dProjectHeight);
 			}
 
 			if (l_dProjectHeight == 0.0 || l_dProjectHeight == 1.0)
@@ -389,9 +389,9 @@ bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStat
 			POINT l_oOutPoint;
 			double dRotationAngle;
 
-			rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, dRotationAngle);
-			rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, l_oInPoint);
-			rImageExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, l_oOutPoint);
+			rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dRotationAngle);
+			rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, l_oInPoint);
+			rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, l_oOutPoint);
 
 			SVMatroxImageRotateStruct l_Rotate(pInputBuffer->getHandle()->GetBuffer());
 			l_Rotate.m_dAngle = dRotationAngle;

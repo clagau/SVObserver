@@ -233,13 +233,11 @@ echo %time%
     <ClCompile Include="SVTADlgArchiveImagePage.cpp" />
     <ClCompile Include="SVTADlgTranslationResizePage.cpp" />
     <ClCompile Include="SVThreadInfoDlg.cpp" />
-    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
     <ClCompile Include="SVToolGrouping.cpp" />
     <ClCompile Include="SVTriggerSelectionDlg.cpp" />
     <ClCompile Include="SVVisionProcessorHelper.cpp" />
     <ClCompile Include="SVAboutDialogClass.cpp" />
     <ClCompile Include="SVActiveXLockStruct.cpp" />
-    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp" />
     <ClCompile Include="SVArchiveWritingDlg.cpp" />
     <ClCompile Include="SVChildrenSetupDialog.cpp" />
     <ClCompile Include="SVCommand.cpp">
@@ -433,7 +431,6 @@ echo %time%
     <ClInclude Include="SVTADlgArchiveImagePage.h" />
     <ClInclude Include="SVTADlgTranslationResizePage.h" />
     <ClInclude Include="SVThreadInfoDlg.h" />
-    <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
@@ -441,7 +438,6 @@ echo %time%
     <ClInclude Include="SVVisionProcessorHelper.h" />
     <ClInclude Include="SVAboutDialogClass.h" />
     <ClInclude Include="SVActiveXLockStruct.h" />
-    <ClInclude Include="SVAdjustToolSizePositionDlg.h" />
     <ClInclude Include="SVArchiveWritingDlg.h" />
     <ClInclude Include="SVChildrenSetupDialog.h" />
     <ClInclude Include="SVCommand.h" />

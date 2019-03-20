@@ -110,6 +110,7 @@
     <ClInclude Include="NameValueVector.h" />
     <ClInclude Include="ObjectInfo.h" />
     <ClInclude Include="SVImageBufferHandleInterface.h" />
+    <ClInclude Include="IToolSizeAdjustTask.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

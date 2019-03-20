@@ -66,7 +66,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 	return result;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
+HRESULT SVToolExtentPropertiesClass::GetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
 {
 	HRESULT result{E_FAIL};
 
@@ -81,7 +81,7 @@ HRESULT SVToolExtentPropertiesClass::GetExtentObject( SvDef::SVExtentPropertyEnu
 	return result;
 }
 
-void SVToolExtentPropertiesClass::SetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
+void SVToolExtentPropertiesClass::SetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
 {
 	if ( nullptr == pValueObject )
 	{
@@ -93,7 +93,7 @@ void SVToolExtentPropertiesClass::SetExtentObject( SvDef::SVExtentPropertyEnum p
 	}
 }
 
-HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, SvIe::SVExtentPropertyInfoStruct& rInfo ) const
+HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SvPb::SVExtentPropertyEnum eProperty, SvIe::SVExtentPropertyInfoStruct& rInfo ) const
 {
 	HRESULT result{E_FAIL};
 
@@ -108,7 +108,7 @@ HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SvDef::SVExtentPropertyEnu
 	return result;
 }
 
-HRESULT SVToolExtentPropertiesClass::SetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo )
+HRESULT SVToolExtentPropertiesClass::SetPropertyInfo( SvPb::SVExtentPropertyEnum eProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo )
 {
 	HRESULT result{E_FAIL};
 

@@ -87,4 +87,6 @@
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
 #include <boost/noncopyable.hpp>
 
+#include "SVOResource\resource.h"
+
 #pragma endregion Precompiled Headers

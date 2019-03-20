@@ -273,13 +273,13 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		childImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned );
 		childImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
-		childImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, posX );
-		childImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, posY );
+		childImageInfo.SetExtentProperty( SvPb::SVExtentPropertyPositionPointX, posX );
+		childImageInfo.SetExtentProperty( SvPb::SVExtentPropertyPositionPointY, posY );
 		long tmp = 0;
 		m_lpatModelWidth.GetValue(tmp);
-		childImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, tmp );
+		childImageInfo.SetExtentProperty( SvPb::SVExtentPropertyWidth, tmp );
 		m_lpatModelHeight.GetValue(tmp);
-		childImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, tmp );
+		childImageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, tmp );
 
 		SvTrc::IImagePtr pImageBuffer = pInputImage->getLastImage(true);
 
@@ -1154,12 +1154,12 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 				{
 					SVImageExtentClass patternExtents;
 
-					patternExtents.SetTranslation( SvDef::SVExtentTranslationFlippedRotate );
-					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointX, dResultXPos );
-					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyPositionPointY, dResultYPos );
-					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyWidth, lpatModelWidth );
-					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyHeight, lpatModelHeight );
-					patternExtents.SetExtentProperty( SvDef::SVExtentPropertyRotationAngle, dResultAngle );
+					patternExtents.SetTranslation(SvPb::SVExtentTranslationFlippedRotate );
+					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyPositionPointX, dResultXPos );
+					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyPositionPointY, dResultYPos );
+					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, lpatModelWidth );
+					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, lpatModelHeight );
+					patternExtents.SetExtentProperty( SvPb::SVExtentPropertyRotationAngle, dResultAngle );
 					patternExtents.UpdateData();
 					SVExtentFigureStruct figure=patternExtents.GetFigure();
 
@@ -1515,9 +1515,9 @@ bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SvOi::SVImage
 	patBuffer.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
 	patBuffer.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
-	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
-	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyWidth, width);
-	patBuffer.SetExtentProperty(SvDef::SVExtentPropertyHeight, height);
+	patBuffer.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
+	patBuffer.SetExtentProperty(SvPb::SVExtentPropertyWidth, width);
+	patBuffer.SetExtentProperty(SvPb::SVExtentPropertyHeight, height);
 
 	return (S_OK == SvIe::SVImageProcessingClass::CreateImageBuffer(patBuffer, rBufferHandle));
 }

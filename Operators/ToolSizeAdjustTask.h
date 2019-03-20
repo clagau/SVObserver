@@ -7,7 +7,9 @@
 #pragma once
  
 #pragma region Includes
+#include "Definitions/SVExtentEnums.h"
 #include "InspectionEngine/SVTaskObject.h"
+#include "ObjectInterfaces/IToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -22,14 +24,12 @@ namespace SvOp
 //! Set the tool position and size to full Image or in accordance with a formula
 //! class is in friendlist  of corresponding tool 
 //! the friendlist of this class holds the Svevaluationobjects 
-class ToolSizeAdjustTask : public SvIe::SVTaskObjectClass
+class ToolSizeAdjustTask : public SvIe::SVTaskObjectClass, public SvOi::IToolSizeAdjustTask
 {
 	SV_DECLARE_CLASS( ToolSizeAdjustTask );
 public:
     ToolSizeAdjustTask( bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TOOLSIZEADJUSTTASK );
 	virtual ~ToolSizeAdjustTask();
-	enum TSModes {TSNone =0,TSFullSize, TSFormula, TSModeCount }; 
-	enum TSValues {TSPositionX=0, TSPositionY, TSWidth, TSHeight, TSValuesCount};
 
 public:
 	//************************************
@@ -52,14 +52,14 @@ public:
 	//! \param pObject [in]
 	//! \returns ToolSizeAdjustTask*
 	//************************************
-	static ToolSizeAdjustTask* GetToolSizeAdjustTask(SVObjectClass *pObject);
+	static ToolSizeAdjustTask* GetToolSizeAdjustTask(const SVObjectClass *pObject);
 	
 	//************************************
 	//! returns True if pObject has a ToolSizeAdjustTaskObject in the friendlist, which formula or AutoSize  
 	//! \param pObject [in]
 	//! \returns bool
 	//************************************
-	static BOOL UseSizeAdjust( SVObjectClass *pObject);
+	static bool UseSizeAdjust(const SVObjectClass *pObject);
 
 	//************************************
 	//! returns True if a formula or Autosize is used 
@@ -78,30 +78,14 @@ public:
 	//! \param value [out]
 	//! \returns HRESULT S_OK if successfully 
 	//************************************
-	HRESULT GetResultValue( TSValues val, long &value) const;
-	
-	//************************************
-	//! Get the extend Values of the tool
-	//! \param val [in] TSPositionX etc,
-	//! \param value [out]
-	//! \returns HRESULT
-	//************************************
-	HRESULT GetExtentValues( TSValues val, long &value) const;
-	
-	//************************************
-	//! Get Width and height of the parent 
-	//! \param width [out]
-	//! \param height [out]
-	//! \returns HRESULT
-	//************************************
-	HRESULT GetParentExtentOutputValues( TSValues val, long &value) const;
+	HRESULT GetResultValue(SvDef::ToolSizeAdjustEnum val, long &value) const;
 	
 	//************************************
 	//! Get the ValueObjects with the results of the Equations 
 	//! \param val [in]  TSPositionX etc,
 	//! \returns SVDoubleValueObjectClass* or nullptr 
 	//************************************
-	SvVol::SVDoubleValueObjectClass* GetDResultObjects(TSValues val) const;
+	SvVol::SVDoubleValueObjectClass* GetDResultObjects(SvDef::ToolSizeAdjustEnum val) const;
 	
 	//************************************
 	// Set the extend property of the tool to bSetByReset if ruled by formula 
@@ -115,11 +99,10 @@ public:
 	//************************************
 	virtual DWORD GetObjectColor() const override; 
 
-	bool IsFullSizeAllowed() const;
-	bool IsAdjustSizeAllowed() const;
-	bool IsAdjustPositionAllowed() const;
-
-	SvVol::SVEnumerateValueObjectClass* GetInputMode(TSValues mode);
+	virtual bool IsFullSizeAllowed() const override;
+	virtual bool IsAdjustSizeAllowed() const override;
+	virtual bool IsAdjustPositionAllowed() const override;
+	virtual SvOi::ITool* getTool() const override;
 
 protected:
 	//************************************
@@ -159,8 +142,8 @@ public:
 	const static long MinToolSize; //< Maximum allowed WindowSize 
 
 protected:
-	SvVol::SVEnumerateValueObjectClass m_InputModes[TSValuesCount]; //< the four input modes None=0,Full Size,Formula
-	SvOl::SVInObjectInfoStruct m_InObjectInfoDResult[TSValuesCount]; //<The four inputs from the Equations 
+	SvVol::SVEnumerateValueObjectClass m_InputModes[static_cast<int>(SvDef::ToolSizeAdjustEnum::TSValuesCount)]; //< the four input modes None=0,Full Size,Formula
+	SvOl::SVInObjectInfoStruct m_InObjectInfoDResult[static_cast<int>(SvDef::ToolSizeAdjustEnum::TSValuesCount)]; //<The four inputs from the Equations 
 	
 	bool m_AllowFullSize;
 	bool m_AllowAdjustSize;

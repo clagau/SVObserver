@@ -29,6 +29,9 @@ public:
 	virtual long  setToolPosition(long ToolPosition) override;
 	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages) override;
 	virtual int InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject) override;
+	virtual HRESULT propagateSizeAndPosition() override;
+	virtual bool usePropagateSizeAndPosition() const override;
+
 private:
 	void BuildEmbeddedObjectList();
 	void Initialize();

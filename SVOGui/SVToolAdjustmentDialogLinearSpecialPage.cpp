@@ -16,8 +16,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "ObjectInterfaces/ITool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -112,18 +110,21 @@ namespace SvOg
 	{
 		BOOL bUpdateRotation = TRUE;
 
-		bool bIsRotated{false};
-		
-		SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(m_TaskObjectID));
-		if(nullptr != pTool)
+		double dRotationAngle {0.0};
+		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+		auto* pRequest = requestMessage.mutable_getextentparameterrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 		{
-			//@TODO[gra][8.00][13.02.2018]: The getExtentProperty needs to be converted to an Inspection command
-			double dRotationAngle{0.0};
-			if(S_OK == pTool->getExtentProperty(SvDef::SVExtentPropertyRotationAngle, dRotationAngle))
+			auto extentParameter = responseMessage.getextentparameterresponse().parameters();
+			auto valuePair = find_if(extentParameter.begin(), extentParameter.end(), [](const auto value) { return value.type() == SvPb::SVExtentPropertyRotationAngle; });
+			if (extentParameter.end() != valuePair)
 			{
-				bIsRotated = (0.0 != dRotationAngle) ? true : false;
+				dRotationAngle = valuePair->value();
 			}
 		}
+		bool bIsRotated = (0.0 != dRotationAngle) ? true : false;
 
 		BOOL bValue = m_ctlUseRotation.GetCheck();
 

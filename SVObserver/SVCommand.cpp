@@ -2406,8 +2406,8 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR(BSTR bstrImage)
 	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 
-	oTempInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
-	oTempInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, pbmhInfo->biWidth);
+	oTempInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
+	oTempInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, pbmhInfo->biWidth);
 
 	if (pbmhInfo->biBitCount == 24)
 	{
@@ -3335,12 +3335,12 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 
 				long l_lValue = 0;
 
-				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
+				ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeX, l_lValue);
-				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, l_lValue);
+				ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, l_lValue);
 
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeY, l_lValue);
-				ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, l_lValue);
+				ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, l_lValue);
 
 				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeBand, l_lValue);
 				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lValue);

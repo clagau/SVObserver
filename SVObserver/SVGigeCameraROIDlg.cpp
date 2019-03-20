@@ -552,8 +552,8 @@ void SVGigeCameraROIDlg::ShowBinningGroup()
 
 void SVGigeCameraROIDlg::UpdateImageDisplay()
 {
-	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, GetScaledMaxWidth());
-	m_ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, GetScaledMaxHeight());
+	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, GetScaledMaxWidth());
+	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, GetScaledMaxHeight());
 
 	SvIe::SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 

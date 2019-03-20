@@ -59,11 +59,11 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	{
 		if( l_bValue )
 		{
-			m_toolExtent.SetTranslation(SvDef::SVExtentTranslationProfile);
+			m_toolExtent.SetTranslation(SvPb::SVExtentTranslationProfile);
 		}
 		else
 		{
-			m_toolExtent.SetTranslation(SvDef::SVExtentTranslationProfileShift);
+			m_toolExtent.SetTranslation(SvPb::SVExtentTranslationProfileShift);
 		}
 	}
 	UINT Attributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::printable;
@@ -100,30 +100,30 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	{
 		if( UseProfileRotation )
 		{
-			if( m_toolExtent.GetTranslation() != SvDef::SVExtentTranslationProfile )
+			if( m_toolExtent.GetTranslation() != SvPb::SVExtentTranslationProfile )
 			{
 				m_voProfileOrientation.setValue( std::string( _T("Horizontal") ) );
 
-				hrOk = m_toolExtent.SetLinearTranslation(SvDef::SVExtentTranslationProfile);
+				hrOk = m_toolExtent.SetLinearTranslation(SvPb::SVExtentTranslationProfile);
 			}
 		}
 		else
 		{
-			if( m_toolExtent.GetTranslation() != SvDef::SVExtentTranslationProfileShift )
+			if( m_toolExtent.GetTranslation() != SvPb::SVExtentTranslationProfileShift )
 			{
 				m_svRotationAngle.SetValue( 0.0 );
 
-				hrOk = m_toolExtent.SetLinearTranslation(SvDef::SVExtentTranslationProfileShift);
+				hrOk = m_toolExtent.SetLinearTranslation(SvPb::SVExtentTranslationProfileShift);
 			}
 		}
 
 		SvIe::SVExtentPropertyInfoStruct info;
 
-		if( S_OK == m_toolExtent.GetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info ) )
+		if( S_OK == m_toolExtent.GetExtentPropertyInfo( SvPb::SVExtentPropertyRotationAngle, info ) )
 		{
 			info.bHidden = ! UseProfileRotation;
 
-			if( S_OK != m_toolExtent.SetExtentPropertyInfo( SvDef::SVExtentPropertyRotationAngle, info ) )
+			if( S_OK != m_toolExtent.SetExtentPropertyInfo( SvPb::SVExtentPropertyRotationAngle, info ) )
 			{
 				hrOk = S_FALSE;
 			}
@@ -193,16 +193,14 @@ HRESULT SVLinearToolClass::SetImageExtentToParent()
 	return l_hrOk;
 }
 
-SvIe::SVTaskObjectClass* SVLinearToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SVToolClass* SVLinearToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVTaskObjectClass *pObject {nullptr};
-
-	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		pObject = this;
+		return this;
 	}
 
-	return pObject;
+	return nullptr;
 }
 
 bool SVLinearToolClass::DoesObjectHaveExtents() const
@@ -210,7 +208,7 @@ bool SVLinearToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-bool SVLinearToolClass::GetRotation()
+bool SVLinearToolClass::GetRotation() const
 {
 	BOOL bVal = false;
 	
@@ -219,15 +217,15 @@ bool SVLinearToolClass::GetRotation()
 	return (TRUE == bVal);
 }
 
-EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
+SvPb::EAutoSize SVLinearToolClass::GetAutoSizeEnabled() const
 {
 	if (GetRotation())
 	{
-		return EnableNone;
+		return SvPb::EnableNone;
 	}
 	else
 	{
-		return EnableSizeAndPosition;
+		return SvPb::EnableSizeAndPosition;
 	}
 }
 
@@ -326,10 +324,10 @@ void SVLinearToolClass::init()
 	m_voProfileOrientation.SetDefaultValue( "Horizontal", true);
 	m_voUseProfileRotation.SetDefaultValue( BOOL(true), true);
 
-	m_toolExtent.SetTranslation( SvDef::SVExtentTranslationProfile );
-	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointX, &m_svRotationPointX );
-	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyPositionPointY, &m_svRotationPointY );
-	m_toolExtent.SetExtentObject( SvDef::SVExtentPropertyRotationAngle, &m_svRotationAngle );
+	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationProfile );
+	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyPositionPointX, &m_svRotationPointX );
+	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyPositionPointY, &m_svRotationPointY );
+	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyRotationAngle, &m_svRotationAngle );
 
 	// Populate the available analyzer list
 	SvIe::SVClassInfoStruct analyzerClassInfo;

@@ -48,36 +48,36 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVNotSetSubObjectType;
 
-	RegisterEmbeddedObject( &m_InputModes[TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[TSPositionX], ToolSizeAdjustSizePositionXModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[TSPositionY], ToolSizeAdjustSizePositionYModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX], ToolSizeAdjustSizePositionXModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY], ToolSizeAdjustSizePositionYModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
 
-	SvOi::NameValueVector EnumVector{ {SvDef::SizeAdjustTextNone, TSModes::TSNone} };
+	SvOi::NameValueVector EnumVector{ {SvDef::SizeAdjustTextNone, SvDef::ToolSizeModes::TSNone} };
 	
 	if (m_AllowFullSize == true)
 	{
-		EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFullSize, TSModes::TSFullSize });
+		EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFullSize, SvDef::ToolSizeModes::TSFullSize });
 	}
-	EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFormula, TSModes::TSFormula });
+	EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFormula, SvDef::ToolSizeModes::TSFormula });
 
-	for( int vType  = TSPositionX ; vType < TSValuesCount ; ++vType)
+	for( int vType  = SvDef::ToolSizeAdjustEnum::TSPositionX ; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount ; ++vType)
 	{
 		m_InputModes[vType].SetEnumTypes(EnumVector);
-		m_InputModes[vType].SetDefaultValue( TSModes::TSNone, true );
+		m_InputModes[vType].SetDefaultValue(SvDef::ToolSizeModes::TSNone, true );
 		m_InputModes[vType].SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	//Add Evaluation Objects 
 	bool ok(false);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSWidth], EQAdjustSizeWidthGuid, _T("ToolSizeAdjustWidth"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSWidth], EQAdjustSizeWidthGuid, _T("ToolSizeAdjustWidth"));
 	assert(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSHeight], EQAdjustSizeHeightGuid , _T("ToolSizeAdjustHeight"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSHeight], EQAdjustSizeHeightGuid , _T("ToolSizeAdjustHeight"));
 	assert(ok);
 
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSPositionX], EQAdjustSizePositionXGuid, _T("ToolSizeAdjustPositionX"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionX], EQAdjustSizePositionXGuid, _T("ToolSizeAdjustPositionX"));
 	assert(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSPositionY], EQAdjustSizePositionYGuid,  _T("ToolSizeAdjustPositionY"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionY], EQAdjustSizePositionYGuid,  _T("ToolSizeAdjustPositionY"));
 	assert(ok);
 
 	addDefaultInputObjects();
@@ -125,27 +125,27 @@ bool  ToolSizeAdjustTask::Run( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 
 HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rModePosX, long &rModePosY)
 {
-	rModeWidth = rModeHeight = rModePosX = rModePosY = TSModeCount;
-	HRESULT hresult =  m_InputModes[TSWidth].GetValue( rModeWidth );
+	rModeWidth = rModeHeight = rModePosX = rModePosY = SvDef::ToolSizeModes::TSModeCount;
+	HRESULT hresult =  m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth].GetValue( rModeWidth );
 	if (S_OK == hresult)
 	{
-		hresult =  m_InputModes[TSHeight].GetValue( rModeHeight );
+		hresult =  m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight].GetValue( rModeHeight );
 	}
 	if (S_OK == hresult)
 	{
-		hresult =  m_InputModes[TSPositionX].GetValue( rModePosX );
+		hresult =  m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX].GetValue( rModePosX );
 	}
 	if (S_OK == hresult)
 	{
-		hresult =  m_InputModes[TSPositionY].GetValue( rModePosY );
+		hresult =  m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY].GetValue( rModePosY );
 	}
 
 	if (S_OK == hresult)
 	{
 
-		if(( rModeWidth == TSFullSize)  ||  (rModeHeight == TSFullSize)  ||  (rModePosX == TSFullSize)  ||  (rModePosY == TSFullSize))
+		if(( rModeWidth == SvDef::TSFullSize)  ||  (rModeHeight == SvDef::TSFullSize)  ||  (rModePosX == SvDef::TSFullSize)  ||  (rModePosY == SvDef::TSFullSize))
 		{
-			if( ( rModeWidth != TSFullSize)  ||   (rModeHeight != TSFullSize)  ||  (rModePosX != TSFullSize)  ||  (rModePosY != TSFullSize))
+			if( ( rModeWidth != SvDef::TSFullSize)  ||   (rModeHeight != SvDef::TSFullSize)  ||  (rModePosX != SvDef::TSFullSize)  ||  (rModePosY != SvDef::TSFullSize))
 			{
 				hresult = SvStl::Err_16028_InvalidMode;
 			}
@@ -157,11 +157,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	}
 	if( S_OK == hresult )
 	{
-		if( ((rModeWidth == TSFormula) ||  (rModeHeight == TSFormula) ) && false == m_AllowAdjustSize)
+		if( ((rModeWidth == SvDef::TSFormula) ||  (rModeHeight == SvDef::TSFormula) ) && false == m_AllowAdjustSize)
 		{
 			hresult = 	SvStl::Err_16035_InvalidMode;
 		}
-		if( ((rModePosX == TSFormula) ||  (rModePosY == TSFormula) ) && false== m_AllowAdjustPosition)
+		if( ((rModePosX == SvDef::TSFormula) ||  (rModePosY == SvDef::TSFormula) ) && false== m_AllowAdjustPosition)
 		{
 			hresult = 	SvStl::Err_16036_InvalidMode;
 		}
@@ -169,7 +169,7 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	return hresult;
 }
 
-HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long& rValue) const
+HRESULT ToolSizeAdjustTask::GetResultValue(SvDef::ToolSizeAdjustEnum val, long& rValue) const
 {
 	HRESULT hresult = SvStl::Err_16030_InvalidValuePointer;
 	SvVol::SVDoubleValueObjectClass* pValueObject =GetDResultObjects(val);
@@ -181,7 +181,7 @@ HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long& rValue) const
 	}
 	if (S_OK == hresult)
 	{
-		if( val == TSValues::TSHeight  || val == TSValues::TSWidth )
+		if( val == SvDef::ToolSizeAdjustEnum::TSHeight  || val == SvDef::ToolSizeAdjustEnum::TSWidth )
 		{
 			if (rValue < MinToolSize)
 			{
@@ -228,7 +228,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	}
 
 
-	SvTo::EAutoSize  	 AutoSizeEnable(SvTo::EnableNone);
+	SvPb::EAutoSize  	 AutoSizeEnable(SvPb::EnableNone);
 	SvTo::SVToolClass* pTool = GetTool();
 	if (nullptr != pTool)
 	{
@@ -244,17 +244,17 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		}
 	}
 
-	bool bAllowNegativePostion = SvTo::EnableNegativePosition == (AutoSizeEnable & SvTo::EnableNegativePosition);
+	bool bAllowNegativePostion = SvPb::EnableNegativePosition == (AutoSizeEnable & SvPb::EnableNegativePosition);
 
-	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
-	bool bDone = (SvTo::EnableNone == AutoSizeEnable);
+	long ModeWidth(SvDef::TSNone), ModeHeight(SvDef::TSNone), ModeX(SvDef::TSNone), ModeY(SvDef::TSNone);
+	bool bDone = (SvPb::EnableNone == AutoSizeEnable);
 	HRESULT hresult = S_OK;
 	if (false == bDone  && Result)
 	{
 		hresult = GetModes(ModeWidth, ModeHeight, ModeX, ModeY);
 		Result = (S_OK == hresult);
 	}
-	if( Result && (TSNone == ModeWidth) && (TSNone == ModeHeight) && (TSNone == ModeX) && (TSNone == ModeY))
+	if( Result && (SvDef::TSNone == ModeWidth) && (SvDef::TSNone == ModeHeight) && (SvDef::TSNone == ModeX) && (SvDef::TSNone == ModeY))
 	{
 		bDone = true;
 	}
@@ -272,33 +272,33 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 		if (S_OK == hresult)
 		{
-			hresult =ParentImageExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, ParentOutputWidth);
+			hresult =ParentImageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, ParentOutputWidth);
 		}
 		if (S_OK == hresult)
 		{
-			hresult =ParentImageExtent.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, ParentOutputHeight);
+			hresult =ParentImageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, ParentOutputHeight);
 		}
 		if (S_OK == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyWidth, oldWidth);
+			hresult = ImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidth, oldWidth);
 		}
 
 		if (S_OK == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, oldHeight);
+			hresult = ImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeight, oldHeight);
 		}
 		if (S_OK  == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPointX, oldPosX);
+			hresult = ImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, oldPosX);
 		}
 		if (S_OK  == hresult)
 		{
-			hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPointY, oldPosY);
+			hresult = ImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, oldPosY);
 		}
 
 		bool bSetImageExtend(false);
 		
-		if(( S_OK  == hresult) && (ModeWidth == TSFullSize) &&  (AutoSizeEnable == SvTo::EnableSizeAndPosition))
+		if(( S_OK  == hresult) && (ModeWidth == SvDef::TSFullSize) &&  (AutoSizeEnable == SvPb::EnableSizeAndPosition))
 		{
 			/////Set To Full size (Image Extent = parent Extent)
 			if( ( S_OK  == hresult) && (oldHeight != ParentOutputHeight || oldWidth != ParentOutputWidth || oldPosY != 0 || oldPosX != 0  ))
@@ -308,37 +308,37 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			bDone = true;
 		}
 
-		if ((S_OK == hresult) && (false == bDone) && (TSFormula == ModeWidth ) && (SvTo::EnableSize == (AutoSizeEnable & SvTo::EnableSize)))
+		if ((S_OK == hresult) && (false == bDone) && (SvDef::TSFormula == ModeWidth ) && (SvPb::EnableSize == (AutoSizeEnable & SvPb::EnableSize)))
 		{
 			long newWidth(0);
-			hresult = GetResultValue(TSWidth, newWidth);
+			hresult = GetResultValue(SvDef::ToolSizeAdjustEnum::TSWidth, newWidth);
 
 			if ((S_OK  == hresult) && (oldWidth != newWidth))
 			{
-					hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyWidth, newWidth);
+					hresult = ImageExtent.SetExtentProperty(SvPb::SVExtentPropertyWidth, newWidth);
 					bSetImageExtend = true;
 				}
 			}
-		if ((S_OK  == hresult) && (false == bDone) &&  (TSFormula == ModeHeight) &&  (SvTo::EnableSize == (AutoSizeEnable & SvTo::EnableSize)))
+		if ((S_OK  == hresult) && (false == bDone) &&  (SvDef::TSFormula == ModeHeight) &&  (SvPb::EnableSize == (AutoSizeEnable & SvPb::EnableSize)))
 			{
 			long   NewHeight(0);
-			hresult = GetResultValue(TSHeight, NewHeight);
+			hresult = GetResultValue(SvDef::ToolSizeAdjustEnum::TSHeight, NewHeight);
 
 			if (S_OK  == hresult)
 			{
-				hresult = ImageExtent.GetExtentProperty(SvDef::SVExtentPropertyHeight, oldHeight);
+				hresult = ImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeight, oldHeight);
 			}
 
 			if ((S_OK  == hresult) && (oldHeight != NewHeight))
 			{
-				hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyHeight, NewHeight);
+				hresult = ImageExtent.SetExtentProperty(SvPb::SVExtentPropertyHeight, NewHeight);
 				bSetImageExtend = true;
 			}
 		}
-		if ((S_OK == hresult) && (false == bDone) && (TSFormula == ModeX) && (SvTo::EnablePosition == (AutoSizeEnable & SvTo::EnablePosition)))
+		if ((S_OK == hresult) && (false == bDone) && (SvDef::TSFormula == ModeX) && (SvPb::EnablePosition == (AutoSizeEnable & SvPb::EnablePosition)))
 		{
 			long  PosX;
-			hresult =  GetResultValue(TSPositionX,PosX);
+			hresult =  GetResultValue(SvDef::ToolSizeAdjustEnum::TSPositionX,PosX);
 			
 			if (SvStl::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
 			{
@@ -347,14 +347,14 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 			if ((S_OK  == hresult) && (oldPosX != PosX))
 			{
-				hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyPositionPointX, PosX);
+				hresult = ImageExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, PosX);
 				bSetImageExtend = true;
 			}
 		}
-		if ((S_OK == hresult) && (false == bDone) && (TSFormula == ModeY) && (SvTo::EnablePosition == (AutoSizeEnable & SvTo::EnablePosition)))
+		if ((S_OK == hresult) && (false == bDone) && (SvDef::TSFormula == ModeY) && (SvPb::EnablePosition == (AutoSizeEnable & SvPb::EnablePosition)))
 		{
 			long  PosY;
-			hresult = GetResultValue(TSPositionY, PosY);
+			hresult = GetResultValue(SvDef::ToolSizeAdjustEnum::TSPositionY, PosY);
 			
 			if (SvStl::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
 			{
@@ -363,7 +363,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			
 			if ((S_OK == hresult) && (oldPosY != PosY))
 			{
-				hresult = ImageExtent.SetExtentProperty(SvDef::SVExtentPropertyPositionPointY, PosY);
+				hresult = ImageExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, PosY);
 				bSetImageExtend = true;
 			}
 		}
@@ -432,12 +432,12 @@ bool ToolSizeAdjustTask::IsAdjustPositionAllowed() const
 	return m_AllowAdjustPosition;
 }
 
-SvVol::SVEnumerateValueObjectClass* ToolSizeAdjustTask::GetInputMode(TSValues mode)
+SvOi::ITool* ToolSizeAdjustTask::getTool() const
 {
-	return &m_InputModes[mode];
+	return GetTool();
 }
 
-SvVol::SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTask::TSValues val) const
+SvVol::SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(SvDef::ToolSizeAdjustEnum val) const
 {
 	SvVol::SVDoubleValueObjectClass* pValue = nullptr;
 
@@ -446,80 +446,6 @@ SvVol::SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeA
 		pValue = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_InObjectInfoDResult[val].GetInputObjectInfo().getObject());
 	}
 	return pValue;
-}
-
-HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
-{
-	HRESULT hresult = S_OK;
-	SvTo::SVToolClass* pTool = GetTool();
-	if (nullptr == pTool)
-	{
-		assert(false);
-		return SvStl::Err_16027_InvalidOwner;
-	}
-
-	const SVImageExtentClass& rImageExtent = pTool->GetImageExtent();
-
-	if (S_OK == hresult)
-	{
-		switch(val)
-		{
-		case TSPositionX:
-			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, value );
-			break;
-		case TSPositionY:
-			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, value );
-			break;
-		case TSWidth:
-			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyWidth, value );
-			break;
-		case TSHeight:
-			hresult = rImageExtent.GetExtentProperty( SvDef::SVExtentPropertyHeight, value );
-			break;
-		default:
-			hresult = SvStl::Err_16037_InvalidSelection;
-		}
-	}
-	return hresult;
-}
-
-HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &value) const
-{
-	HRESULT hresult = S_OK;
-	SvTo::SVToolClass* pTool = GetTool();
-	if (nullptr == pTool)
-	{
-		assert(false);
-		hresult = SvStl::Err_16027_InvalidOwner;
-	}
-
-	SVImageExtentClass ParentImageExtent;
-	if (S_OK == hresult)
-	{
-		hresult = pTool->GetParentExtent(ParentImageExtent); 
-	}
-
-	if (S_OK == hresult)
-	{
-		switch (val)
-		{
-		case TSPositionX:
-			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, value );
-			break;
-		case TSPositionY:
-			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, value );
-			break;
-		case TSWidth:
-			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyOutputWidth, value );
-			break;
-		case TSHeight:
-			hresult = ParentImageExtent.GetExtentProperty( SvDef::SVExtentPropertyOutputHeight, value );
-			break;
-		default:
-			hresult = SvStl::Err_16037_InvalidSelection;
-		}
-	}
-	return hresult;
 }
 
 HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
@@ -532,7 +458,7 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 		hresult = SvStl::Err_16027_InvalidOwner;
 	}
 
-	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
+	long ModeWidth(SvDef::TSNone), ModeHeight(SvDef::TSNone), ModeX(SvDef::TSNone), ModeY(SvDef::TSNone);
 	bool bWidthSetByReset(true), bHeightSetByReset(true), bPosXSetByReset(true), bPosYSetByReset(true); 
 
 	if (S_OK == hresult)
@@ -540,19 +466,19 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 		hresult = GetModes(ModeWidth, ModeHeight, ModeX, ModeY);
 	}
 
-	if (TSNone == ModeWidth)
+	if (SvDef::TSNone == ModeWidth)
 	{	
 		bWidthSetByReset = false;
 	}
-	if (TSNone == ModeHeight)
+	if (SvDef::TSNone == ModeHeight)
 	{	
 		bHeightSetByReset = false;
 	}
-	if (TSNone == ModeX)
+	if (SvDef::TSNone == ModeX)
 	{	
 		bPosXSetByReset = false;
 	}
-	if (TSNone == ModeY)
+	if (SvDef::TSNone == ModeY)
 	{	
 		bPosYSetByReset = false;
 	}
@@ -560,48 +486,60 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 	SvIe::SVExtentPropertyInfoStruct info;
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
+		hresult = pTool->GetPropertyInfo(SvPb::SVExtentPropertyPositionPointX, info);
 		info.bSetByReset = bPosXSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointX, info );
 	}
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
-		info.bSetByReset = bPosYSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyPositionPointY, info );
+		hresult = pTool->SetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointX, info );
 	}
 
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyWidth, info );
-		info.bSetByReset = bWidthSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyWidth, info );
+		hresult = pTool->GetPropertyInfo( SvPb::SVExtentPropertyPositionPointY, info );
+		info.bSetByReset = bPosYSetByReset;
 	}
 	if (S_OK == hresult)
 	{
-		hresult = pTool->GetPropertyInfo( SvDef::SVExtentPropertyHeight, info );
+		hresult = pTool->SetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointY, info );
+	}
+
+	if (S_OK == hresult)
+	{
+		hresult = pTool->GetPropertyInfo( SvPb::SVExtentPropertyWidth, info );
+		info.bSetByReset = bWidthSetByReset;
+	}
+	if (S_OK == hresult)
+	{
+		hresult = pTool->SetExtentPropertyInfo( SvPb::SVExtentPropertyWidth, info );
+	}
+
+	if (S_OK == hresult)
+	{
+		hresult = pTool->GetPropertyInfo( SvPb::SVExtentPropertyHeight, info );
 		info.bSetByReset = bHeightSetByReset;
-		hresult = pTool->SetExtentPropertyInfo( SvDef::SVExtentPropertyHeight, info );
+	}
+	if (S_OK == hresult)
+	{
+		hresult = pTool->SetExtentPropertyInfo( SvPb::SVExtentPropertyHeight, info );
 	}
 	return hresult;
 }
 
 ToolSizeAdjustTask* ToolSizeAdjustTask::AddToFriendlist(SvTo::SVToolClass* pTool, bool AllowFullsize, bool AllowAdjustSize, bool AllowAdjustPosition)
 {
-	HRESULT hres(E_FAIL);
 	if (nullptr == pTool)
 	{
 		assert(false);
 		return nullptr;
 	}
-	ToolSizeAdjustTask *pToolSizeAdjustTask = nullptr;
+
 	//Add ToolSizeAdjustTask to friendlist
-	pToolSizeAdjustTask = new ToolSizeAdjustTask(AllowFullsize, AllowAdjustSize, AllowAdjustPosition, pTool);
+	ToolSizeAdjustTask* pToolSizeAdjustTask = new ToolSizeAdjustTask(AllowFullsize, AllowAdjustSize, AllowAdjustPosition, pTool);
 	if (nullptr != pToolSizeAdjustTask)
 	{
 		pToolSizeAdjustTask->SetObjectOwner( pTool );
 		pTool->AddFriend( pToolSizeAdjustTask->GetUniqueObjectID() );
-		hres = S_OK;
 	}
 	return pToolSizeAdjustTask;
 }
@@ -635,7 +573,7 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SvTo::SVToolClass* pTool, bool Al
 	return hres;
 }
 
-ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pObject)
+ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(const SVObjectClass *pObject)
 {
 	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
 	if (nullptr != pObject)
@@ -648,10 +586,10 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pOb
 	return pToolSizeAdjustTask;
 }
 
-BOOL ToolSizeAdjustTask::UseSizeAdjust( SVObjectClass *pObject)
+bool ToolSizeAdjustTask::UseSizeAdjust(const SVObjectClass *pObject)
 {
-	BOOL ret = false;
-	ToolSizeAdjustTask* pToolSizeAdjustTask = GetToolSizeAdjustTask(pObject);
+	bool ret = false;
+	const ToolSizeAdjustTask* pToolSizeAdjustTask = GetToolSizeAdjustTask(pObject);
 	if (pToolSizeAdjustTask)
 	{
 		ret = pToolSizeAdjustTask->UseAutoMode();
@@ -661,11 +599,11 @@ BOOL ToolSizeAdjustTask::UseSizeAdjust( SVObjectClass *pObject)
 
 bool ToolSizeAdjustTask::UseAutoMode() const
 {
-	long Mode(TSModeCount);
-	for( int vType  = TSPositionX ; vType < TSValuesCount ; ++vType)
+	long Mode(SvDef::TSModeCount);
+	for( int vType  = SvDef::ToolSizeAdjustEnum::TSPositionX ; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount ; ++vType)
 	{
-		HRESULT hresult =  m_InputModes[vType].GetValue( Mode );
-		if (TSFullSize == Mode || TSFormula == Mode)
+		m_InputModes[vType].GetValue( Mode );
+		if (SvDef::TSFullSize == Mode || SvDef::TSFormula == Mode)
 		{
 			return true;
 		}

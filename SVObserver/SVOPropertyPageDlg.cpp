@@ -107,8 +107,8 @@ public:
 			long width = m_pFormatsParam->options[ m_strName ].m_lWidth;
 			long height = m_pFormatsParam->options[ m_strName ].m_lHeight;
 
-			infoTemp.SetExtentProperty(SvDef::SVExtentPropertyWidth, width);
-			infoTemp.SetExtentProperty(SvDef::SVExtentPropertyHeight, height);
+			infoTemp.SetExtentProperty(SvPb::SVExtentPropertyWidth, width);
+			infoTemp.SetExtentProperty(SvPb::SVExtentPropertyHeight, height);
 
 			pAcqDevice->DestroyBuffers();
 			pAcqDevice->CreateBuffers( infoTemp, TheSVObserverApp.GetSourceImageDepth() );
@@ -1924,8 +1924,8 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 		pDevice->GetImageInfo( &info );
 
-		info.GetExtentProperty( SvDef::SVExtentPropertyWidth, l_lWidth );
-		info.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_lHeight );
+		info.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_lWidth );
+		info.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_lHeight );
 
 		// disconnect buffers attached to dig
 		long lInspectionCount = 0;
@@ -2009,13 +2009,13 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 			l_WidthMax = format.m_lWidthMax / horizontalBinning;
 			l_HeightMax = format.m_lHeightMax / verticalBinning;
 			
-			l_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_WidthMax);
-			l_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_HeightMax);
+			l_ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_WidthMax);
+			l_ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_HeightMax);
 		}
 		else
 		{
-			l_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_WidthMax );
-			l_ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_HeightMax );
+			l_ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_WidthMax );
+			l_ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_HeightMax );
 		}
 
 		if ( S_OK == hr )

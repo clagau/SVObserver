@@ -1080,10 +1080,10 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 	ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
-	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
-	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyWidth, l_dWidth );
-	ImageInfo.SetExtentProperty( SvDef::SVExtentPropertyHeight, l_dHeight );
-	ImageInfo.SetTranslation( SvDef::SVExtentTranslationNone );
+	ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
+	ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_dWidth );
+	ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dHeight );
+	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone );
 
 	// Try to create image object...
 	if( S_OK != m_histogramImage.UpdateImage( GUID_NULL, ImageInfo ) )

@@ -13,22 +13,20 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVWinHandle.h"
-#include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
+#include "DataController.h"
+#include "ValuesAccessor.h"
 #pragma endregion Includes
 
-namespace SvIe
+namespace SvOg
 {
-class SVTaskObjectClass;
-}
-
 class SVAdjustToolSizePositionDlg : public CDialog
 {
 	DECLARE_DYNCREATE(SVAdjustToolSizePositionDlg)
 #pragma region Constructor
 public:
-	SVAdjustToolSizePositionDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, SvIe::SVTaskObjectClass* pToolTask = nullptr);
+	SVAdjustToolSizePositionDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr);
 	virtual ~SVAdjustToolSizePositionDlg();
 #pragma endregion Constructor
 
@@ -65,7 +63,7 @@ protected:
 #pragma region Private Methods
 private:
 	HRESULT ButtonAction(SvMc::SVUpDownButton* pButton);
-	HRESULT AdjustTool( SvDef::SVExtentLocationPropertyEnum eAction, int dx, int dy );
+	HRESULT AdjustTool( SvPb::SVExtentLocationPropertyEnum eAction, int dx, int dy );
 	HRESULT AdjustToolAngle(double dDAngle);
 
 	//************************************
@@ -138,14 +136,17 @@ private:
 	SvMc::SVUpDownButton	m_btnRight;
 	SvMc::SVUpDownButton	m_btnLeft;
 	SvMc::SVUpDownButton	m_btnDown;
-	int		m_iMode;
+	int		m_iMode = -1;
 	//}}AFX_DATA
 
-	SVImageExtentClass m_svExtents;
-	SVImageExtentClass m_svOriginalExtents;
-	SvIe::SVTaskObjectClass* m_pToolTask;
+	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > m_originalExtents;
+	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > m_extents;
+	SvPb::SVExtentTranslationEnum m_translationType = SvPb::SVExtentTranslationNone;
+
+	SVGUID m_ipId;
+	SVGUID m_toolTaskId;
 	SVRPropTree m_Tree;
-	const static int m_iPropertyFilter = SvDef::SVExtentPropertyPositionsInput | SvDef::SVExtentPropertyDimensionsInput;
+	const static int m_iPropertyFilter = SvPb::SVExtentPropertyPositionsInput | SvPb::SVExtentPropertyDimensionsInput;
 	const static int ID_BASE = 1000;
 
 	SVWinHandle<HICON> m_icoArrowUp;
@@ -154,9 +155,14 @@ private:
 	SVWinHandle<HICON> m_icoArrowRight;
 	SVWinHandle<HICON> m_icoArrowClockwise;
 	SVWinHandle<HICON> m_icoArrowCounterclockwise;
-	SvMc::SVUpDownButton* m_pButton;
+	SvMc::SVUpDownButton* m_pButton = nullptr;
 	std::string m_Title;
+
+	//bool m_isFullSizeAllowed = false;
+	SvPb::EAutoSize m_autoSizeEnabled = SvPb::EAutoSize::EnableNone;
+
+	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
+	Controller m_Values;
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg
-
-
+} //namespace SvOg

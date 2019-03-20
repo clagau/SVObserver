@@ -126,14 +126,14 @@ namespace SvOg
 				WarpType eWarpType = static_cast<WarpType> (lType);
 				if (eWarpType == WarpTypeVertical)
 				{
-					imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, 10);
-					imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, 0);
+					imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, 10);
+					imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, 0);
 				}
 				else
 					if (eWarpType == WarpTypeHorizontal)
 					{
-						imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetX, 10);
-						imageExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffsetY, 0);
+						imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, 10);
+						imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, 0);
 					}
 				pTool->SetImageExtent(imageExtents);
 			}

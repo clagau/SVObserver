@@ -23,7 +23,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVAdjustToolSizePositionDlg.h"
+#include "SVOGui/SVAdjustToolSizePositionDlg.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
@@ -39,7 +39,6 @@
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "Tools/SVShiftTool.h"
-#include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/GlobalConst.h"
@@ -167,11 +166,9 @@ void SVImageViewClass::Initialize()
 
 	m_showExtremeLUT = false;
 
-	m_pTaskObject = nullptr;
+	m_svLocation = SvPb::SVExtentLocationPropertyUnknown;
 
-	m_svLocation = SvDef::SVExtentLocationPropertyUnknown;
-
-	m_svMousePickLocation = SvDef::SVExtentLocationPropertyUnknown;
+	m_svMousePickLocation = SvPb::SVExtentLocationPropertyUnknown;
 
 	m_mouseIsOverTool = FALSE;
 
@@ -229,9 +226,9 @@ HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& rToolExtents )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( nullptr != m_pTaskObject )
+	if( nullptr != m_pTool )
 	{
-		rToolExtents = m_pTaskObject->GetImageExtent();
+		rToolExtents = m_pTool->GetImageExtent();
 	}
 	else
 	{
@@ -413,24 +410,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 				break;
 			}
 
-			SVIPDoc* l_psvIPDoc = GetIPDoc();
-			SvTo::SVToolClass* pTool = nullptr;
-			CPoint l_mousePoint;
-
-			SVObjectInfoStruct l_svInfo;
-			SvDef::SVObjectTypeInfoStruct l_svTypeInfo;
-
-			l_mousePoint = m_mousePoint;
+			CPoint l_mousePoint = m_mousePoint;
 
 			TransformFromViewSpace( l_mousePoint );
-			SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID()));
-			SVDrawContext drawContext( nullptr, pImage );
-
-			if( nullptr != l_psvIPDoc )
-			{
-				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->GetSelectedToolID()));
-			}
-
 			m_isPicked = GetObjectAtPoint( l_mousePoint );	// stores object in m_psvObject
 			if( !m_isPicked )
 			{
@@ -440,90 +422,19 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 				break;
 			}
 
-			l_svInfo = m_pTaskObject->GetObjectInfo();
-			l_svTypeInfo = l_svInfo.m_ObjectTypeInfo;
 
-			//------ Warp tool hands back a SvDef::SVPolarTransformObjectType. Sub type 1792.
-			//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
-			std::string DlgName; //used for the Adjust Tool Size and Position dialog
-
-			switch( l_svTypeInfo.ObjectType )
+			if (nullptr != m_pTool)
 			{
-				case SvPb::SVPolarTransformObjectType:
-				{
-					switch( l_svTypeInfo.SubType )
-					{
-						case SvPb::SVImagePolarTransformObjectType: // 1792
-						{
-							DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
-
-							SVAdjustToolSizePositionDlg dlg(DlgName.c_str(), this, m_pTaskObject );
-							dlg.DoModal();
-							break;
-						}
-
-						default:
-						{
-							l_err = -1275;
-							break;
-						}
-					}
-
-					break;
-				}
-
-				case SvPb::SVImageObjectType:
-				{
-					switch( l_svTypeInfo.SubType )
-					{
-						case SvPb::SVNotSetSubObjectType:
-						{
-							if( SV_IS_KIND_OF( pTool, SvTo::SVLoadImageToolClass ) )
-							{
-								DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
-								SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_pTaskObject );
-								dlg.DoModal();
-							}
-							else
-							{
-								SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_pTaskObject );
-								dlg.DoModal();
-							}
-
-							break;
-						}
-						default:
-						{
-							l_err = -1265;
-							break;
-						}
-					}
-					break;
-				}
-
-				case SvPb::SVAnalyzerObjectType:
-				{
-					l_err = -1283;
-					break;
-				}
-
-				case SvPb::SVToolObjectType:
-				{
-					DlgName = SvUl::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
-					SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_pTaskObject );
-					dlg.DoModal();
-					break;
-				}
-
-				default:
-				{
-					l_err = -1276;
-					break;
-				}
+				std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), m_pTool->GetName());
+				SvOg::SVAdjustToolSizePositionDlg dlg(m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID(), DlgName.c_str(), this);
+				dlg.DoModal();
+			}
+			else
+			{
+				l_err = -1276;
 			}
 
 			m_isPicked = FALSE;
-
 			break;
 		}
 
@@ -654,7 +565,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 			}
 			else
 			{
-				BOOL l_resultFound = FALSE;
+				bool l_resultFound = false;
 				SvAo::SVAnalyzerClass* pAnalyzer = nullptr;
 				SVIPDoc *l_psvIPDoc = GetIPDoc();
 
@@ -671,18 +582,13 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 						if( GetObjectAtPoint( l_point ) )
 						{
-							pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass *>( m_pTaskObject );
+							SvDef::SVObjectTypeInfoStruct l_svInfo;
+							l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 
-							if( nullptr == pAnalyzer )
+							pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+							if (pAnalyzer)
 							{
-								SvDef::SVObjectTypeInfoStruct l_svInfo;
-								l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
-
-								pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
-								if( pAnalyzer )
-								{
-									l_resultFound = pAnalyzer->IsPtOverResult( l_point );
-								}
+								l_resultFound = pAnalyzer->IsPtOverResult(l_point);
 							}
 						}
 					}
@@ -1002,9 +908,9 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 				long l_height = 0;
 
 				if( S_OK == GetToolExtents( l_svExtents ) &&
-					S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, l_tempPoint ) &&
-					S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, l_width ) &&
-					S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_height ) )
+					S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, l_tempPoint ) &&
+					S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_width ) &&
+					S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_height ) )
 				{
 					Text = SvUl::Format( _T(" X: %d, Y: %d    cX: %d, cY: %d "), l_tempPoint.x, l_tempPoint.y, l_width, l_height );
 				}
@@ -1086,17 +992,17 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 
 				l_hCursor = GetObjectCursor( m_svMousePickLocation, l_point );
 
-				if( ( SvDef::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
+				if( (SvPb::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
 					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt( l_startPoint ) ) &&
 					S_OK == l_svTempExtents.Update( m_svMousePickLocation, l_startPoint, l_point ) )
 				{
 					bool l_bUpdate = false;
 
-					l_bUpdate = S_OK == l_pIPDoc->UpdateExtents( m_pTaskObject, l_svTempExtents );
+					l_bUpdate = S_OK == l_pIPDoc->UpdateExtents( m_pTool, l_svTempExtents );
 
 					if( l_bUpdate || l_rect.PtInRect( l_clientPoint ) )
 					{
-						l_bUpdate = l_bUpdate || S_OK == l_pIPDoc->UpdateExtentsToFit( m_pTaskObject, l_svTempExtents );
+						l_bUpdate = l_bUpdate || S_OK == l_pIPDoc->UpdateExtentsToFit( m_pTool, l_svTempExtents );
 					}
 
 					if( l_bUpdate )
@@ -1106,10 +1012,10 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 						long l_width = 0;
 						long l_height = 0;
 
-						l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointX, l_left );
-						l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPointY, l_top );
-						l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyWidth, l_width );
-						l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyHeight, l_height );
+						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPointX, l_left );
+						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPointY, l_top );
+						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_width );
+						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_height );
 
 						// Status Text: Mouse Pos and Tool Extent
 						Text = SvUl::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), l_point.x, l_point.y, l_left, l_top, l_width, l_height );
@@ -1151,7 +1057,7 @@ void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 {
 	m_isPicked = FALSE;
 
-	m_svMousePickLocation = SvDef::SVExtentLocationPropertyUnknown;
+	m_svMousePickLocation = SvPb::SVExtentLocationPropertyUnknown;
 
 	ReleaseCapture();
 
@@ -1625,7 +1531,7 @@ HICON SVImageViewClass::GetObjectCursor( POINT p_point )
 	return l_hCursor;
 }
 
-HICON SVImageViewClass::GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_svLocation, POINT p_point )
+HICON SVImageViewClass::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocation, POINT p_point )
 {
 	HICON l_hCursor = nullptr;
 
@@ -1649,19 +1555,19 @@ HICON SVImageViewClass::GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_s
 	{
 		double l_dRotationAngle = 0.0;
 		//Check that this is the Linear tool with rotation
-		if( SvDef::SVExtentTranslationProfile == l_svExtents.GetTranslation() )
+		if(SvPb::SVExtentTranslationProfile == l_svExtents.GetTranslation() )
 		{
-			if( S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyRotationAngle, l_dRotationAngle) )
+			if( S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyRotationAngle, l_dRotationAngle) )
 			{
 				l_dRotationAngle = fmod(l_dRotationAngle, 180.0);
 			}
 		}
 		//Check that this is the Polar Unwrap tool with rotation
-		else if( SvDef::SVExtentTranslationPolarUnwrap == l_svExtents.GetTranslation() )
+		else if(SvPb::SVExtentTranslationPolarUnwrap == l_svExtents.GetTranslation() )
 		{
 			SVPoint<double> center;
 			SVPoint<double> mousePosition(p_point);
-			if( S_OK == l_svExtents.GetExtentProperty( SvDef::SVExtentPropertyPositionPoint, center) )
+			if( S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, center) )
 			{
 				//Polar unwrap needs an offset of 90° for the displayed cursor to be correct
 				l_dRotationAngle = SVGetRotationAngle(center, mousePosition) + 90.0;
@@ -1694,7 +1600,7 @@ HICON SVImageViewClass::GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_s
 
 	switch( p_svLocation )
 	{
-		case SvDef::SVExtentLocationPropertyRotate:
+		case SvPb::SVExtentLocationPropertyRotate:
 		{
 			l_cursorId = 0;
 			m_hActionIcon = ::LoadImage(AfxGetResourceHandle(),
@@ -1704,35 +1610,35 @@ HICON SVImageViewClass::GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_s
 			break;
 		}
 
-		case SvDef::SVExtentLocationPropertyTopLeft:
-		case SvDef::SVExtentLocationPropertyBottomRight:
+		case SvPb::SVExtentLocationPropertyTopLeft:
+		case SvPb::SVExtentLocationPropertyBottomRight:
 		{
 			l_cursorId = l_cursorTopLeftBottomRight;
 
 			break;
 		}
-		case SvDef::SVExtentLocationPropertyTopRight:
-		case SvDef::SVExtentLocationPropertyBottomLeft:
+		case SvPb::SVExtentLocationPropertyTopRight:
+		case SvPb::SVExtentLocationPropertyBottomLeft:
 		{
 			l_cursorId = l_cursorTopRightBottomLeft;
 
 			break;
 		}
-		case SvDef::SVExtentLocationPropertyLeft:
-		case SvDef::SVExtentLocationPropertyRight:
+		case SvPb::SVExtentLocationPropertyLeft:
+		case SvPb::SVExtentLocationPropertyRight:
 		{
 			l_cursorId = l_cursorLeftRight;
 
 			break;
 		}
-		case SvDef::SVExtentLocationPropertyTop:
-		case SvDef::SVExtentLocationPropertyBottom:
+		case SvPb::SVExtentLocationPropertyTop:
+		case SvPb::SVExtentLocationPropertyBottom:
 		{
 			l_cursorId = l_cursorTopBottom;
 
 			break;
 		}
-		case SvDef::SVExtentLocationPropertyCenter:
+		case SvPb::SVExtentLocationPropertyCenter:
 		{
 			l_cursorId = l_cursorMove;
 
@@ -1743,7 +1649,7 @@ HICON SVImageViewClass::GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_s
 			break;
 		}
 	}
-	if( IDC_ARROW == l_cursorId && SvDef::SVExtentLocationPropertyDisabled != p_svLocation )
+	if( IDC_ARROW == l_cursorId && SvPb::SVExtentLocationPropertyDisabled != p_svLocation )
 	{
 		m_mouseIsOverTool = FALSE;
 	}
@@ -1768,9 +1674,9 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 {
 	BOOL l_bOk = FALSE;
 
-	m_pTaskObject = nullptr;
+	m_pTool = nullptr;
 
-	m_svLocation = SvDef::SVExtentLocationPropertyUnknown;
+	m_svLocation = SvPb::SVExtentLocationPropertyUnknown;
 
 	SvTo::SVToolClass* pTool = nullptr;
 
@@ -1783,7 +1689,7 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 	{
 		SVImageExtentClass l_svExtents;
 
-		m_pTaskObject = pTool->GetObjectAtPoint( p_point );
+		m_pTool = pTool->GetObjectAtPoint( p_point );
 
 		if( S_OK == GetToolExtents( l_svExtents ) )
 		{
@@ -1791,13 +1697,13 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 		}
 	
 		////check if move or sizing is allowed  
-		if(false == pTool->IsAllowedLocation(m_svLocation))
+		if(false == pTool->isAllowedLocation(m_svLocation))
 		{
-				m_svLocation = SvDef::SVExtentLocationPropertyDisabled;
+			m_svLocation = SvPb::SVExtentLocationPropertyDisabled;
 		}
 	}
 
-	l_bOk = nullptr != m_pTaskObject;
+	l_bOk = nullptr != m_pTool;
 
 	return l_bOk;
 }

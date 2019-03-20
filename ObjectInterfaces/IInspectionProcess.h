@@ -76,5 +76,11 @@ namespace SvOi
 		virtual GUID getFirstCamera() const = 0;
 
 		virtual HRESULT addSharedCamera(GUID cameraID) = 0;
+
+		virtual HRESULT resetTool(IObjectClass& rTool) = 0;
+
+		virtual HRESULT propagateSizeAndPosition() = 0;
+
+		virtual bool usePropagateSizeAndPosition() const = 0;
 	};
 } //namespace SvOi

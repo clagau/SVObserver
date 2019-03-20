@@ -63,20 +63,21 @@ public:
 
 	HRESULT UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExtentType );
 
-	SvDef::SVExtentTranslationEnum GetTranslation();
-	void SetTranslation( SvDef::SVExtentTranslationEnum eTranslation );
-	HRESULT SetLinearTranslation(SvDef::SVExtentTranslationEnum eTranslation);
+	SvPb::SVExtentTranslationEnum GetTranslation() const;
+	void SetTranslation( SvPb::SVExtentTranslationEnum eTranslation );
+	HRESULT SetLinearTranslation(SvPb::SVExtentTranslationEnum eTranslation);
 
-	HRESULT GetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
-	void SetExtentObject( SvDef::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
+	HRESULT GetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
+	void SetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
-	HRESULT GetExtentValue( SvDef::SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
-	HRESULT SetExtentValue( SvDef::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
+	HRESULT GetExtentValue( SvPb::SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
+	HRESULT SetExtentValue( SvPb::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
 
-	HRESULT GetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo ) const;
-	HRESULT SetExtentPropertyInfo( SvDef::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetExtentPropertyInfo( SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo ) const;
+	HRESULT SetExtentPropertyInfo( SvPb::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo );
 
-	
+	void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const;
+
 //- updateImageExtent -----------------------------------------------------------
 //- There appears to be little direct connection between the SVToolExtentClass
 //- and the SVImageExtentClass.  This function appears to attempt to translate  
@@ -85,7 +86,6 @@ public:
 	HRESULT updateImageExtent();
 
 	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent );
-	HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyVector& p_rPropertyList );
 
 	// ******* Begin Source Extent Data
 	// *
@@ -105,7 +105,7 @@ public:
 	// ******* End Source Extent Data
 
 private:
-	typedef std::set< SvDef::SVExtentTranslationEnum > SVTranslationFilterSet;
+	typedef std::set< SvPb::SVExtentTranslationEnum > SVTranslationFilterSet;
 
 	// ******* Begin Source Extent Data
 	// *
@@ -126,7 +126,7 @@ private:
 
 	SvIe::SVImageClass* m_pToolImage;
 
-	SvDef::SVExtentTranslationEnum m_eTranslation;
+	SvPb::SVExtentTranslationEnum m_eTranslation;
 	SvDef::SVExtentShapeEnum m_eShape;
 
 	SVToolExtentPropertiesClass m_Properties;

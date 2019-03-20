@@ -32,11 +32,11 @@ public:
 
 	HRESULT GetProperties( SVImageExtentClass &rExtents ) const;
 
-	HRESULT GetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
-	void SetExtentObject( SvDef::SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
+	HRESULT GetExtentObject( SvPb::SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
+	void SetExtentObject( SvPb::SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
 
-	HRESULT GetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, SvIe::SVExtentPropertyInfoStruct& rInfo ) const;
-	HRESULT SetPropertyInfo( SvDef::SVExtentPropertyEnum eProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo );
+	HRESULT GetPropertyInfo( SvPb::SVExtentPropertyEnum eProperty, SvIe::SVExtentPropertyInfoStruct& rInfo ) const;
+	HRESULT SetPropertyInfo( SvPb::SVExtentPropertyEnum eProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo );
 
 private:
 	struct SVExtentPropertyInfoStructImpl
@@ -44,7 +44,7 @@ private:
 		SvOi::IValueObject*  pValueObject;
 		SvIe::SVExtentPropertyInfoStruct info;
 	};
-	typedef std::map<SvDef::SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl> SVToolExtentPropertiesMap;
+	typedef std::map<SvPb::SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl> SVToolExtentPropertiesMap;
 
 	SVToolExtentPropertiesMap m_svProperties;
 };

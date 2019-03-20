@@ -231,16 +231,14 @@ HRESULT SVWindowToolClass::SetImageExtentToFit( const SVImageExtentClass& rImage
 	return l_hrOk;
 }
 
-SvIe::SVTaskObjectClass* SVWindowToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint )
+SVToolClass* SVWindowToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint )
 {
-	SVTaskObjectClass *pObject{nullptr};
-
-	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		pObject = this;
+		return this;
 	}
 
-	return pObject;
+	return nullptr;
 }
 
 bool SVWindowToolClass::DoesObjectHaveExtents() const

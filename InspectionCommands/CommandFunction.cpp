@@ -21,6 +21,7 @@
 #include "ObjectInterfaces\ITaskObject.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
 #include "ObjectInterfaces\ITool.h"
+#include "ObjectInterfaces\IToolSizeAdjustTask.h"
 #include "ObjectInterfaces\IObjectAppClass.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IPatternAnalyzer.h"
@@ -957,6 +958,167 @@ HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb
 		rResponse.set_top(rect.top);
 		rResponse.set_right(rect.right);
 		rResponse.set_bottom(rect.bottom);
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT getToolSizeAdjustParameter(const SvPb::GetToolSizeAdjustParameterRequest& rRequest, SvPb::GetToolSizeAdjustParameterResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+
+	auto pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid()));
+	SvOi::IToolSizeAdjustTask* pTask = dynamic_cast<SvOi::IToolSizeAdjustTask*>(pObject);
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(pObject);
+	if (nullptr != pTask && nullptr == pTool)
+	{
+		pTool = pTask->getTool();
+	}
+	if (nullptr == pTask && nullptr != pTool)
+	{
+		SvPb::InspectionCmdMsgs request, response;
+		SvPb::GetAvailableObjectsRequest getObjectsRequest;
+		SvPb::GetAvailableObjectsResponse getObjectResponse;
+
+		getObjectsRequest.set_objectid(rRequest.objectid());
+		getObjectsRequest.mutable_typeinfo()->set_objecttype(SvPb::SVToolSizeAdjustTaskType);
+		getObjectsRequest.mutable_typeinfo()->set_subtype(SvPb::SVNotSetSubObjectType);
+		hr = getAvailableObjects(getObjectsRequest, getObjectResponse);
+		if (S_OK == hr && 0 < getObjectResponse.list_size())
+		{
+			pTask = dynamic_cast<SvOi::IToolSizeAdjustTask*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(getObjectResponse.list(0).objectid())));
+		}
+	}
+
+	if (nullptr != pTask)
+	{
+		rResponse.set_isfullsizeallowed(pTask->IsFullSizeAllowed());
+		rResponse.set_isadjustsizeallowed(pTask->IsAdjustSizeAllowed());
+		rResponse.set_isadjustpositionallowed(pTask->IsAdjustPositionAllowed());
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	if(nullptr != pTool)
+	{
+		rResponse.set_enableautosize(pTool->getAutoSizeEnabled());
+		rResponse.set_canresizetoparent(pTool->canResizeToParent());
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT getExtentParameter(const SvPb::GetExtentParameterRequest& rRequest, SvPb::GetExtentParameterResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	auto* pParameter = rResponse.mutable_parameters();
+	if (nullptr != pTool && nullptr != pParameter)
+	{
+		SvPb::SVExtentTranslationEnum translationType = SvPb::SVExtentTranslationUnknown;
+		if (rRequest.shouldfromparent())
+		{
+			hr = pTool->getParentExtentProperties(*pParameter, translationType);
+		}
+		else
+		{
+			pTool->getExtentProperties(*pParameter, translationType);
+		}
+		rResponse.set_translationtype(translationType);
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT setExtentParameter(const SvPb::SetExtentParameterRequest& rRequest, SvPb::SetExtentParameterResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	auto* pParameter = rResponse.mutable_parameters();
+	if (nullptr != pTool && nullptr != pParameter)
+	{
+		switch (rRequest.message_case())
+		{
+			case SvPb::SetExtentParameterRequest::kUpdateFromOutputSpace:
+				hr = pTool->updateExtentFromOutputSpace(rRequest.updatefromoutputspace().action(), rRequest.updatefromoutputspace().dx(), rRequest.updatefromoutputspace().dy());
+				break;
+			case SvPb::SetExtentParameterRequest::kSetProperty:
+				hr = pTool->setExtentProperty(rRequest.setproperty().propertyflag(), rRequest.setproperty().value());
+				break;
+			case SvPb::SetExtentParameterRequest::kExtentList:
+				hr = pTool->setExtentList(rRequest.extentlist().extentlist());
+				break;
+			case SvPb::SetExtentParameterRequest::kSetToParent:
+				hr = pTool->setExtentToParent();
+				break;
+			default:
+				hr = E_POINTER;
+				break;
+		}
+		SvPb::SVExtentTranslationEnum translationType = SvPb::SVExtentTranslationUnknown;
+		pTool->getExtentProperties(*pParameter, translationType);
+		rResponse.set_translationtype(translationType);
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+
+	return hr;
+}
+
+HRESULT isAllowedLocation(const SvPb::IsAllowedLocationRequest& rRequest, SvPb::IsAllowedLocationResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	if (nullptr != pTool)
+	{
+		rResponse.set_isallowed(pTool->isAllowedLocation(rRequest.location(), rRequest.direction()));
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT propagateSizeAndPosition(const SvPb::PropagateSizeAndPositionRequest& rRequest)
+{
+	HRESULT hr = S_OK;
+
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	if (nullptr != pInspection)
+	{
+		pInspection->propagateSizeAndPosition();
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return hr;
+}
+
+HRESULT usePropagateSizeAndPosition(const SvPb::UsePropagateSizeAndPositionRequest& rRequest, SvPb::UsePropagateSizeAndPositionResponse& rResponse)
+{
+	HRESULT hr = S_OK;
+
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid())));
+	if (nullptr != pInspection)
+	{
+		rResponse.set_isused(pInspection->usePropagateSizeAndPosition());
 	}
 	else
 	{

@@ -87,8 +87,8 @@ const SVImageInfoClass &SVImageInfoClass::operator=(const BITMAPINFOHEADER& p_rB
 	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 
-	SetExtentProperty(SvDef::SVExtentPropertyHeight, abs(p_rBitmapHeader.biHeight));
-	SetExtentProperty(SvDef::SVExtentPropertyWidth, p_rBitmapHeader.biWidth);
+	SetExtentProperty(SvPb::SVExtentPropertyHeight, abs(p_rBitmapHeader.biHeight));
+	SetExtentProperty(SvPb::SVExtentPropertyWidth, p_rBitmapHeader.biWidth);
 
 	if (p_rBitmapHeader.biBitCount == 24)
 	{
@@ -115,39 +115,39 @@ HRESULT SVImageInfoClass::Initialize()
 		l_hrOk = S_FALSE;
 	}
 
-	m_svExtents.SetTranslation(SvDef::SVExtentTranslationShift);
+	m_svExtents.SetTranslation(SvPb::SVExtentTranslationShift);
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(10.0, 10.0)))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(10.0, 10.0)))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyWidth, 100.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyWidth, 100.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyHeight, 100.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyHeight, 100.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, 1.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, 1.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, 1.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, 1.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyRotationAngle, 0.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyRotationAngle, 0.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvDef::SVExtentPropertyTranslationOffset, SVPoint<double>(0.0, 0.0)))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffset, SVPoint<double>(0.0, 0.0)))
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -199,12 +199,12 @@ HRESULT SVImageInfoClass::SetExtents(const SVImageExtentClass& rExtents)
 	return l_hrOk;
 }
 
-SvDef::SVExtentTranslationEnum SVImageInfoClass::GetTranslation()
+SvPb::SVExtentTranslationEnum SVImageInfoClass::GetTranslation()
 {
 	return m_svExtents.GetTranslation();
 }
 
-HRESULT SVImageInfoClass::SetTranslation(SvDef::SVExtentTranslationEnum p_eTranslation)
+HRESULT SVImageInfoClass::SetTranslation(SvPb::SVExtentTranslationEnum p_eTranslation)
 {
 	m_svExtents.SetTranslation(p_eTranslation);
 	return m_svExtents.UpdateData();
@@ -225,7 +225,7 @@ HRESULT SVImageInfoClass::SetImageProperty(SvDef::SVImagePropertyEnum p_ePropert
 	return m_svProperties.SetImageProperty(p_eProperty, p_lValue);
 }
 
-HRESULT SVImageInfoClass::GetExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue) const
+HRESULT SVImageInfoClass::GetExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, long &p_rlValue) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -241,22 +241,22 @@ HRESULT SVImageInfoClass::GetExtentProperty(SvDef::SVExtentPropertyEnum p_ePrope
 	return l_hrOk;
 }
 
-HRESULT SVImageInfoClass::GetExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue) const
+HRESULT SVImageInfoClass::GetExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, double &p_rdValue) const
 {
 	return m_svExtents.GetExtentProperty(p_eProperty, p_rdValue);
 }
 
-HRESULT SVImageInfoClass::GetExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue) const
+HRESULT SVImageInfoClass::GetExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, POINT &p_roValue) const
 {
 	return m_svExtents.GetExtentProperty(p_eProperty, p_roValue);
 }
 
-HRESULT SVImageInfoClass::GetExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, SVPoint<double> &rValue) const
+HRESULT SVImageInfoClass::GetExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, SVPoint<double> &rValue) const
 {
 	return m_svExtents.GetExtentProperty(p_eProperty, rValue);
 }
 
-HRESULT SVImageInfoClass::SetExtentProperty(SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue)
+HRESULT SVImageInfoClass::SetExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, double p_dValue)
 {
 	HRESULT result = m_svExtents.SetExtentProperty(p_eProperty, p_dValue);
 
@@ -268,7 +268,7 @@ HRESULT SVImageInfoClass::SetExtentProperty(SvDef::SVExtentPropertyEnum p_ePrope
 	return result;
 }
 
-HRESULT SVImageInfoClass::SetExtentProperty(SvDef::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue)
+HRESULT SVImageInfoClass::SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue)
 {
 	HRESULT result = m_svExtents.SetExtentProperty(eProperty, rValue);
 
@@ -289,13 +289,13 @@ HRESULT SVImageInfoClass::GetImageExtentsToFit(SVImageExtentClass inExtent, SVIm
 	long Width {0}, Height {0};
 	if (S_OK != GetOutputRectangle(parentRect) ||
 		S_OK != inExtent.GetRectangle(newRect) ||
-		S_OK != inExtent.GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position)
+		S_OK != inExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position)
 		)
 	{
 		return S_FALSE;
 	}
 	if (inExtent.hasFigure() &&
-		(inExtent.GetTranslation() == SvDef::SVExtentTranslationProfile))
+		(inExtent.GetTranslation() == SvPb::SVExtentTranslationProfile))
 	{
 
 		///make sure  the center of the LinearTool with rotation is within the Outputrectangle 
@@ -359,16 +359,16 @@ HRESULT SVImageInfoClass::GetImageExtentsToFit(SVImageExtentClass inExtent, SVIm
 	if (S_OK == hrOk)
 	{
 
-		hrOk = inExtent.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, position);
+		hrOk = inExtent.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 
 		if (S_OK == hrOk && Width > 0)
 		{
-			hrOk = inExtent.SetExtentProperty(SvDef::SVExtentPropertyWidth, Width);
+			hrOk = inExtent.SetExtentProperty(SvPb::SVExtentPropertyWidth, Width);
 		}
 
 		if (S_OK == hrOk && Height > 0)
 		{
-			hrOk = inExtent.SetExtentProperty(SvDef::SVExtentPropertyHeight, Height);
+			hrOk = inExtent.SetExtentProperty(SvPb::SVExtentPropertyHeight, Height);
 		}
 
 		if (S_OK == hrOk)
@@ -488,8 +488,8 @@ BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const
 	int bands {0};
 
 	GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pixelDepth);
-	m_svExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, width);
-	m_svExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, height);
+	m_svExtents.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, width);
+	m_svExtents.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, height);
 	GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, format);
 	GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bands);
 

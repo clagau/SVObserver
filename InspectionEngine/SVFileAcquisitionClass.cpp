@@ -248,9 +248,9 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 	pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, uiBandNumber );
 	pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
-	pImageInfo->SetExtentProperty( SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
-	pImageInfo->SetExtentProperty( SvDef::SVExtentPropertyWidth, bufWidth );
-	pImageInfo->SetExtentProperty( SvDef::SVExtentPropertyHeight, bufHeight );
+	pImageInfo->SetExtentProperty( SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
+	pImageInfo->SetExtentProperty( SvPb::SVExtentPropertyWidth, bufWidth );
+	pImageInfo->SetExtentProperty( SvPb::SVExtentPropertyHeight, bufHeight );
 
 	hrOk = S_OK;
 

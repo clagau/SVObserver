@@ -60,6 +60,8 @@ SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(const SVGUID& rInspec
 	, m_ROITabHandle(0)
 	, m_OutputTabHandle(0)
 	, m_ImageController(rInspectionID, rTaskObjectID)
+	, m_inspectionID(rInspectionID)
+	, m_toolID(rTaskObjectID)
 {
 }
 
@@ -634,39 +636,38 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 
 HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData()
 {
-	if (nullptr != m_pTool)
+	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > extents;
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
+	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_inspectionID, &requestMessage, &responseMessage);
+	if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 	{
-		const SVImageExtentClass& rToolImageExtents = m_pTool->GetImageExtent();
-
-		double newHeightScaleFactor = 0.0;
-		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
-		double newWidthScaleFactor = 0.0;
-		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
-		UpdateScaleFactors(newWidthScaleFactor, newHeightScaleFactor);
-
-		long newInputROIWidth(0);
-		long newInputROIHeight(0);
-		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidth, newInputROIWidth);
-		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeight, newInputROIHeight);
-		UpdateInputImageInfo(newInputROIWidth, newInputROIHeight);
-
-		long newOutputWidth(0);
-		long newOutputHeight(0);
-		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, newOutputWidth);
-		rToolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, newOutputHeight);
-		UpdateOutputImageInfo(newOutputWidth, newOutputHeight);
-
-		UpdateOtherInfo();
-		return S_OK;
+		extents = responseMessage.getextentparameterresponse().parameters();
+	}
+	else
+	{
+		return E_POINTER;
 	}
 
-	return E_POINTER;
+	double newHeightScaleFactor = SvCmd::getValueForProperties<double>(extents, SvPb::SVExtentPropertyHeightScaleFactor);
+	double newWidthScaleFactor = SvCmd::getValueForProperties<double>(extents, SvPb::SVExtentPropertyWidthScaleFactor);
+	UpdateScaleFactors(newWidthScaleFactor, newHeightScaleFactor);
+
+	long newInputROIWidth = SvCmd::getValueForProperties<long>(extents, SvPb::SVExtentPropertyWidth);
+	long newInputROIHeight = SvCmd::getValueForProperties<long>(extents, SvPb::SVExtentPropertyHeight);
+	UpdateInputImageInfo(newInputROIWidth, newInputROIHeight);
+
+	long newOutputWidth = SvCmd::getValueForProperties<long>(extents, SvPb::SVExtentPropertyOutputWidth);
+	long newOutputHeight = SvCmd::getValueForProperties<long>(extents, SvPb::SVExtentPropertyOutputHeight);
+	UpdateOutputImageInfo(newOutputWidth, newOutputHeight);
+
+	UpdateOtherInfo();
+	return S_OK;
 }
 
 HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT	hr1 = S_OK;
-
 	bool	extentChanged = false;
 	bool	embeddedChanged = false;
 	bool	heightScaleFactorSucceeded = false;
@@ -690,12 +691,20 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	SVRPropertyItemCombo*	comboItem = nullptr;
 
 	// Retrieve current values --------------------------------------------------
-	SVImageExtentClass toolImageExtents = m_pTool->GetImageExtent();
+	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > extents;
+	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
+	HRESULT hr1 = SvCmd::InspectionCommandsSynchronous(m_inspectionID, &requestMessage, &responseMessage);
+	if (S_OK == hr1 && responseMessage.has_getextentparameterresponse())
+	{
+		extents = responseMessage.getextentparameterresponse().parameters();
+	}
 
 	if (SUCCEEDED(hr1))
 	{
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
-		toolImageExtents.GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
+		oldHeightScaleFactor = SvCmd::getValueForProperties<double>(extents, SvPb::SVExtentPropertyHeightScaleFactor);
+		oldWidthScaleFactor = SvCmd::getValueForProperties<double>(extents, SvPb::SVExtentPropertyWidthScaleFactor);
 
 		SvVol::SVEnumerateValueObjectClass& rInterpolationMode = m_pTool->getInterpolationMode();
 		long lValue{0L};
@@ -856,7 +865,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller Values {SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID() }};
+	Controller Values {SvOg::BoundValues{ m_inspectionID, m_toolID }};
 	Values.Init();
 
 	// Set new values -------------------------------------------------------
@@ -866,13 +875,13 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	// after this point.
 	if (heightScaleFactorSucceeded) // reduces flicker.
 	{
-		toolImageExtents.SetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		SvCmd::setValueForProperties<double>(extents, SvPb::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 		extentChanged = true;
 	}
 
 	if (widthScaleFactorSucceeded) // reduces flicker.
 	{
-		toolImageExtents.SetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+		SvCmd::setValueForProperties<double>(extents, SvPb::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 		extentChanged = true;
 	}
 
@@ -904,13 +913,16 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	if (extentChanged)
 	{
-		HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pTool, toolImageExtents);
+		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
+		auto* pRequest = requestMessage.mutable_setextentparameterrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
+		pRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(extents);
+		SvCmd::InspectionCommandsSynchronous(m_inspectionID, &requestMessage, &responseMessage);
 	}
 
 	if (extentChanged || embeddedChanged)
 	{
-		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
-		SvCmd::RunOnceSynchronous(InspectionID);
+		SvCmd::RunOnceSynchronous(m_inspectionID);
 		UpdateImages();
 		m_pTool->BackupInspectionParameters();
 	}
@@ -962,8 +974,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation()
 
 	if (SUCCEEDED(message.getMessage().m_MessageCode))
 	{
-		SVGUID InspectionID = m_pTool->GetInspection()->GetUniqueObjectID();
-		SvCmd::RunOnceSynchronous(InspectionID);
+		SvCmd::RunOnceSynchronous(m_inspectionID);
 	}
 
 	if (!SUCCEEDED(message.getMessage().m_MessageCode))
@@ -1000,10 +1011,13 @@ HRESULT SVTADlgTranslationResizePage::SetupResizeImageControl()
 
 void SVTADlgTranslationResizePage::UpdateImages()
 {
-	IPictureDisp* pROIImage = m_ImageController.GetImage(m_ROIImageID.ToGUID());
-	IPictureDisp* pOutputImage = m_ImageController.GetImage(m_OutputImageID.ToGUID());
-	m_DialogImage.setImage(pROIImage, m_ROITabHandle);
-	m_DialogImage.setImage(pOutputImage, m_OutputTabHandle);
+	if (GUID_NULL != m_ROIImageID && GUID_NULL != m_OutputImageID)
+	{
+		IPictureDisp* pROIImage = m_ImageController.GetImage(m_ROIImageID.ToGUID());
+		IPictureDisp* pOutputImage = m_ImageController.GetImage(m_OutputImageID.ToGUID());
+		m_DialogImage.setImage(pROIImage, m_ROITabHandle);
+		m_DialogImage.setImage(pOutputImage, m_OutputTabHandle);
+	}
 	m_DialogImage.Refresh();
 }
 
@@ -1014,7 +1028,7 @@ void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* 
 	*plResult = S_OK;  // the OS (DefWindowProc) is not required to process this 
 					   // message.
 
-	HRESULT hr = ValidateCurrentTreeData(pNMPropTree->pItem);
+	ValidateCurrentTreeData(pNMPropTree->pItem);
 }
 
 

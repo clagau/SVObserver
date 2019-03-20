@@ -30,9 +30,6 @@
     <ClCompile Include="SVActiveXLockStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVArchiveWritingDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -462,9 +459,6 @@
     <ClCompile Include="ToolSetView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgTranslationResizePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -545,9 +539,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVActiveXLockStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAdjustToolSizePositionDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVArchiveWritingDlg.h">
@@ -1016,9 +1007,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ToolSetView.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogSizePage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgTranslationResizePage.h">

@@ -197,6 +197,37 @@ int LoopTool::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject)
 	return retValue;
 }
 
+HRESULT LoopTool::propagateSizeAndPosition()
+{
+	bool result = true;
+	for (auto pObj : m_TaskObjectVector)
+	{
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj);
+		if (nullptr != pTool)
+		{
+			result = pTool->propagateSizeAndPosition() && result;
+		}
+	}
+
+	return result ? S_OK : E_FAIL;
+}
+
+bool LoopTool::usePropagateSizeAndPosition() const
+{
+	for (auto pObj : m_TaskObjectVector)
+	{
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj);
+		if (nullptr != pTool)
+		{
+			if (pTool->usePropagateSizeAndPosition())
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 long  LoopTool::setToolPosition(long ToolPosition)
 {
 	long pos(ToolPosition);

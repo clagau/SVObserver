@@ -52,7 +52,7 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent) override;
 
-	virtual SvIe::SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	SvIe::SVImageClass* getOutputImage() { return &m_OutputImage; };
 
 	bool isConverted() const { return m_ConvertTool; }

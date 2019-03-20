@@ -56,7 +56,7 @@
 #include "ObjectInterfaces/IDependencyManager.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVAdjustToolSizePositionDlg.h"
+#include "SVOGui/SVAdjustToolSizePositionDlg.h"
 #include "SVDataDefinitionSheet.h"
 #include "SVRegressionRunDlg.h"
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
@@ -3249,7 +3249,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		{
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
 			std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), pTool->GetName());
-			SVAdjustToolSizePositionDlg dlg(DlgName.c_str(), dynamic_cast<CWnd*>(this->GetMDIChild()), pTool);
+			SvOg::SVAdjustToolSizePositionDlg dlg(m_InspectionID, pTool->GetUniqueObjectID(), DlgName.c_str(), dynamic_cast<CWnd*>(this->GetMDIChild()));
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}

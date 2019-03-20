@@ -356,8 +356,8 @@ bool SVTADlgColorThresholdAdjustment::initHistogram()
 				return false;
 			}
 			
-			ImageInfo.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, {0.0, 0.0});
-			ImageInfo.SetTranslation(SvDef::SVExtentTranslationNone);
+			ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, {0.0, 0.0});
+			ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
 			if(S_OK != SvIe::SVImageProcessingClass::CreateImageBuffer(ImageInfo, m_histogramImage))
 			{
 				return false;
@@ -436,8 +436,8 @@ void SVTADlgColorThresholdAdjustment::updateThresholdBars()
 
 			long height = 0;
 
-			ImageInfo.GetExtentProperty(SvDef::SVExtentPropertyPositionPoint, point);
-			ImageInfo.GetExtentProperty(SvDef::SVExtentPropertyHeight, height);
+			ImageInfo.GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, point);
+			ImageInfo.GetExtentProperty(SvPb::SVExtentPropertyHeight, height);
 
 			// MaxThresholdBar
 			// Max left...

@@ -309,8 +309,6 @@ bool   SVInspectionProcess::CopyToWatchlist(SvTrc::ITriggerRecordRPtr pTriggerRe
 		}
 		else
 		{
-			int offset = element->MonEntryPtr->data.Store_Offset;
-			int Bytesyze = static_cast<int>(element->MonEntryPtr->data.ByteSize);
 			int imageIndex = element->MonEntryPtr->data.ItemId;
 			SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 			if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
@@ -607,13 +605,10 @@ void SVInspectionProcess::DestroyInspection()
 
 HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectReference& rObjectRef)
 {
-	HRESULT hr = S_FALSE;
-
 	SVObjectNameInfo NameInfo;
-
 	SVObjectClass* pObject(nullptr);
 
-	hr = NameInfo.ParseObjectName(Name);
+	HRESULT hr = NameInfo.ParseObjectName(Name);
 
 	if (S_OK == hr)
 	{
@@ -1304,21 +1299,11 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	SetDefaultInputs();
 
-	long lLength = 2;
-
-	SVPPQObject* pPPQ = GetPPQ();
-
-	if (nullptr != pPPQ)
+	SVProductInfoStruct l_Product = LastProductGet();
+	if (l_Product.empty())
 	{
-		pPPQ->GetPPQLength(lLength);
-
-		SVProductInfoStruct l_Product = LastProductGet();
-
-		if (l_Product.empty())
-		{
-			l_Product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
-			LastProductUpdate(&l_Product);
-		}
+		l_Product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
+		LastProductUpdate(&l_Product);
 	}
 
 	////////////////////////
@@ -1326,7 +1311,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	if (IsColorCamera())
 	{
 		SvIe::SVVirtualCameraMap CameraMap;
-
+		SVPPQObject* pPPQ = GetPPQ();
 		if (nullptr != pPPQ)
 		{
 			pPPQ->GetVirtualCameras(CameraMap);
@@ -1551,7 +1536,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	}
 
 	//log all error messages to event log
-	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++)
+	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; ++iter)
 	{
 		SvStl::MessageMgrStd message(SvStl::MsgType::Log);
 		message.setMessage(iter->getMessage());
@@ -3456,24 +3441,69 @@ HRESULT SVInspectionProcess::addSharedCamera(GUID cameraID)
 
 	return result;
 }
-#pragma endregion IInspectionProcess methods
 
-bool SVInspectionProcess::IsEnabledPPQVariable(const SVObjectClass* pObject) const
+HRESULT SVInspectionProcess::resetTool(SvOi::IObjectClass& rTool)
 {
-	for (size_t i = 0; i < m_PPQInputs.size(); i++)
+	HRESULT retVal = E_FAIL;
+	m_bForceOffsetUpdate = true;
+	/// correct tool size when it does not fit to the parent image 
+	AddResetState(SvDef::SVResetAutoMoveAndResize);
+	bool result = rTool.resetAllObjects();
+	if (result)
 	{
-		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
-		if (ioEntryPtr->m_Enabled)
+		retVal = RunOnce();
+	}
+	RemoveResetState(SvDef::SVResetAutoMoveAndResize);
+	return retVal;
+}
+
+HRESULT SVInspectionProcess::propagateSizeAndPosition()
+{
+	HRESULT retVal = S_OK;
+	bool result = false;
+	SVToolSetClass* pToolSet = GetToolSet();
+	if (pToolSet)
+	{
+		for (int index = 0; index < pToolSet->GetSize(); index++)
 		{
-			if (ioEntryPtr->getObject() == pObject)
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(index));
+			if (nullptr != pTool)
 			{
-				return true;
+				result |= (S_OK == pTool->propagateSizeAndPosition());
 			}
 		}
 	}
+	if (result)
+	{
+		retVal = RunOnce();
+	}
+	else
+	{
+		retVal = SvStl::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
+	}
+	return retVal;
+}
 
+bool SVInspectionProcess::usePropagateSizeAndPosition() const
+{
+	SVToolSetClass* pToolSet = GetToolSet();
+	if (pToolSet)
+	{
+		for (int index = 0; index < pToolSet->GetSize(); index++)
+		{
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(index));
+			if (nullptr != pTool)
+			{
+				if (pTool->usePropagateSizeAndPosition())
+				{
+					return true;
+				}
+			}
+		}
+	}
 	return false;
 }
+#pragma endregion IInspectionProcess methods
 
 bool SVInspectionProcess::IsDisabledPPQVariable(const SVObjectClass* pObject) const
 {
@@ -3530,39 +3560,6 @@ SVObjectPtrVector SVInspectionProcess::getPPQVariables() const
 DWORD SVInspectionProcess::GetObjectColor() const
 {
 	return SvDef::DefaultWhiteColor;
-}
-
-
-
-bool   SVInspectionProcess::LoopOverTools(pToolFunc pf, int& counter)
-{
-	bool ret = false;
-	counter = 0;
-	SVToolSetClass* pToolSet(nullptr);
-	SvIe::SVTaskObjectClass* pTaskObject(nullptr);
-	pToolSet = GetToolSet();
-	if (pToolSet)
-	{
-		ret = true;
-		for (int index = 0; index < pToolSet->GetSize(); index++)
-		{
-			pTaskObject = pToolSet->GetAt(index);
-			if (nullptr != pTaskObject)
-			{
-				int result = pf(pTaskObject);
-				if (result < 0)
-				{
-					return false;
-				}
-				else
-				{
-					counter += result;
-				}
-
-			}
-		}
-	}
-	return ret;
 }
 
 void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInserter) const

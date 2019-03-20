@@ -29,7 +29,7 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual SvIe::SVTaskObjectClass* GetObjectAtPoint( const SVPoint<double>& rPoint ) override;
+	virtual SVToolClass* GetObjectAtPoint( const SVPoint<double>& rPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVAdjustToolSizePositionDlg
+//* .Module Name     : SVUpDownButton
 //* .File Name       : $Workfile:   SVUpDownButton.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $

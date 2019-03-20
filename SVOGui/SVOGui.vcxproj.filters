@@ -207,6 +207,12 @@
     <ClCompile Include="Ranking2FilterDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -429,6 +435,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Ranking2FilterDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolAdjustmentDialogSizePage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAdjustToolSizePositionDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

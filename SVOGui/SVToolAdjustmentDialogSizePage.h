@@ -7,31 +7,22 @@
 
 #pragma once
 #pragma region Includes
-#include "afxwin.h"
+#include "Definitions/SVExtentEnums.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVOGui\ISVPropertyPageDialog.h"
-#include "Operators/ToolSizeAdjustTask.h"
+#include "ISVPropertyPageDialog.h"
+#include "DataController.h"
+#include "ValuesAccessor.h"
 #pragma endregion Includes
 
-namespace SvOp
+namespace SvOg
 {
-class EQAdjustSize;
-}
-namespace SvTo
-{
-class SVToolClass;
-}
-
-class SVToolAdjustmentDialogSheetClass;
-
 //! \brief Property Page: Position and Size for The ToolAdjustmen Dialog
-//!  has pointer to ToolSizeAdjustTask
-class SVToolAdjustmentDialogSizePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
+class SVToolAdjustmentDialogSizePage : public CPropertyPage, public ISVPropertyPageDialog
 {
 	DECLARE_DYNAMIC(SVToolAdjustmentDialogSizePage)
 
 public:
-	SVToolAdjustmentDialogSizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
+	SVToolAdjustmentDialogSizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 	virtual ~SVToolAdjustmentDialogSizePage();
 	HRESULT SetInspectionData();
 	virtual BOOL OnInitDialog() override;
@@ -54,8 +45,8 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void Refresh( bool bSave = true );
-	void OnSelchangeCombo(SvOp::ToolSizeAdjustTask::TSValues  mode);
-	void OnBnClickedButtonFormula(SvOp::ToolSizeAdjustTask::TSValues  mode);
+	void OnSelchangeCombo(SvDef::ToolSizeAdjustEnum  mode);
+	void OnBnClickedButtonFormula(SvDef::ToolSizeAdjustEnum  mode);
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -63,22 +54,30 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_TA_SIZE_DIALOG };
 
-protected:
-	
-	//************************************
-	//! Return pointer to the  4 SVEquationClass objects positions width and height 
-	//! \param typ [in]
-	//! \returns EQAdjustSize*
-	//************************************
-	SvOp::EQAdjustSize* GetEvaluateObject(SvOp::ToolSizeAdjustTask::TSValues typ  ) ;
-	
-	SvMc::SVEnumerateComboClass m_ComboBox[SvOp::ToolSizeAdjustTask::TSValuesCount];
 
-	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SvTo::SVToolClass* m_pTool;
-	SvOp::ToolSizeAdjustTask* m_pToolSizeAdjustTask;
-	SvOp::EQAdjustSize*  m_pEQAdjustSize[SvOp::ToolSizeAdjustTask::TSValuesCount];
-	CButton m_Button[SvOp::ToolSizeAdjustTask::TSValuesCount];
-	CEdit m_EditCtrl[SvOp::ToolSizeAdjustTask::TSValuesCount];
+private:
+	SvMc::SVEnumerateComboClass m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
+	typedef DataController<ValuesAccessor, ValuesAccessor::value_type> Controller;
+	std::unique_ptr<Controller> m_pTaskValueController;
+
+	SVGUID m_ipId;
+	SVGUID m_toolId;
+	SVGUID m_taskId;
+	struct EQAdjustStruct
+	{
+		SVGUID m_Id = GUID_NULL;
+		SvPb::SVObjectSubTypeEnum m_subType = SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType;
+		SVGUID m_inputModeEmbeddedId = GUID_NULL;
+		SvPb::SVExtentPropertyEnum m_extentProp;
+		std::string m_name;
+	};
+	EQAdjustStruct m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSValuesCount];
+	CButton m_Button[SvDef::ToolSizeAdjustEnum::TSValuesCount];
+	CEdit m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSValuesCount];
 	
+	bool m_isFullSizeAllowed = false;
+	bool m_isAdjustSizeAllowed = false;
+	bool m_isAdjustPositionAllowed = false;
+	SvPb::EAutoSize m_autoSizeEnabled = SvPb::EAutoSize::EnableNone;
 };
+} //namespace SvOg

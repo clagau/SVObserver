@@ -55,7 +55,7 @@ SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams&
 
 	m_hDigitizer = 0;
 
-	msvImageInfo.SetExtentProperty(SvDef::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
+	msvImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(0.0, 0.0));
 
 	SetDigName(p_rParams.m_DigitizerName.c_str());
 

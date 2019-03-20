@@ -187,7 +187,7 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	// We do not want the ROI image showing up as an output image.
 	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
-	m_toolExtent.SetTranslation(SvDef::SVExtentTranslationResize);
+	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationResize);
 
 	bOk &= (S_OK == m_OutputImage.InitializeImage(pInputImage));
 
@@ -237,16 +237,14 @@ HRESULT ResizeTool::SetImageExtent(const SVImageExtentClass& rImageExtent)
 	return l_hrOk;
 }
 
-SvIe::SVTaskObjectClass* ResizeTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
+SVToolClass* ResizeTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
-	SVTaskObjectClass *pObject {nullptr};
-
-	if (SvDef::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
+	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))
 	{
-		pObject = this;
+		return this;
 	}
 
-	return pObject;
+	return nullptr;
 }
 
 bool ResizeTool::DoesObjectHaveExtents() const
@@ -322,11 +320,11 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 bool ResizeTool::ValidateParameters(SvStl::MessageContainerVector *pErrorMessages)
 {
 	double newWidthScaleFactor = 0.0;
-	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
 	bool Result = ValidateScaleFactor(newWidthScaleFactor, pErrorMessages);
 
 	double newHeightScaleFactor = 0.0;
-	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
 	Result = ValidateScaleFactor(newHeightScaleFactor, pErrorMessages) && Result;
 
 	return Result;
@@ -461,8 +459,8 @@ bool ResizeTool::ValidateScaleFactor(const double value, SvStl::MessageContainer
 
 void ResizeTool::BackupInspectionParameters()
 {
-	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, m_ResizeHeightSF_Backup);
-	GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, m_ResizeWidthSF_Backup);
+	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, m_ResizeHeightSF_Backup);
+	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, m_ResizeWidthSF_Backup);
 	m_ResizeInterpolationMode.GetValue(m_ResizeInterpolationMode_Backup);
 	m_ResizeOverscan.GetValue(m_ResizeOverscan_Backup);
 	m_ResizePerformance.GetValue(m_ResizePerformance_Backup);
@@ -503,7 +501,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
 	double heightScaleFactor = 0.0;
-	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
+	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -514,7 +512,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 	}
 
 	double widthScaleFactor = 0.0;
-	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
+	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

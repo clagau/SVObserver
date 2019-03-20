@@ -24,9 +24,9 @@
 
 struct IDirectDrawSurface7;
 
-namespace SvIe
+namespace SvTo
 {
-class SVTaskObjectClass;
+class SVToolClass;
 }
 namespace SvOi
 {
@@ -173,7 +173,7 @@ protected:
 	void ReleaseImageSurface();
 
 	HICON GetObjectCursor( POINT p_point );
-	HICON GetObjectCursor( SvDef::SVExtentLocationPropertyEnum p_svLocation, POINT p_point);
+	HICON GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocation, POINT p_point);
 
 	HRESULT GetToolExtents(SVImageExtentClass& p_svToolExtents);
 
@@ -225,11 +225,11 @@ private:
 
 	// JMS - Extent Objects
 
-	SvIe::SVTaskObjectClass* m_pTaskObject;
+	SvTo::SVToolClass* m_pTool = nullptr;
 
-	SvDef::SVExtentLocationPropertyEnum m_svLocation;
+	SvPb::SVExtentLocationPropertyEnum m_svLocation;
 
-	SvDef::SVExtentLocationPropertyEnum m_svMousePickLocation;
+	SvPb::SVExtentLocationPropertyEnum m_svMousePickLocation;
 
 	// JMS - Extent Objects
 

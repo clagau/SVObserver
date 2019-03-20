@@ -50,13 +50,13 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
-	virtual SvIe::SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
+	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	//************************************
 	//! return Flag with enabled Autosize
 	//! \returns  EnableSize  | EnablePosition
 	//************************************
-	virtual EAutoSize GetAutoSizeEnabled() override;
+	virtual SvPb::EAutoSize GetAutoSizeEnabled() const override;
 
 	//These need to be public so that SVShiftToolUtility can access the values
 	SvVol::SVDoubleValueObjectClass* GetTranslationXInput(bool bRunMode = false) const;

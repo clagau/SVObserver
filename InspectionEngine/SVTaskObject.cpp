@@ -827,37 +827,6 @@ bool SVTaskObjectClass::isInputImage(const SVGUID& rImageGuid) const
 	return Result;
 }
 
-SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
-{
-	SVTaskObjectClass* pObject = nullptr;
-
-	// Notify friends...
-	for (size_t i = 0; nullptr == pObject && i < m_friendList.size(); ++i)
-	{
-		const SVObjectInfoStruct &l_rsvFriend = m_friendList[i];
-
-		pObject = dynamic_cast<SVTaskObjectClass*>(l_rsvFriend.getObject());
-
-		if (nullptr != pObject && pObject->GetParent() == this)
-		{
-			pObject = pObject->GetObjectAtPoint(rPoint);
-		}
-	}
-
-	// Notify embeddeds...
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); nullptr == pObject && m_embeddedList.end() != Iter; ++Iter)
-	{
-		pObject = dynamic_cast<SVTaskObjectClass*> (*Iter);
-
-		if (nullptr != pObject)
-		{
-			pObject = pObject->GetObjectAtPoint(rPoint);
-		}
-	}
-
-	return pObject;
-}
-
 bool SVTaskObjectClass::DoesObjectHaveExtents() const
 {
 	return false;
@@ -879,7 +848,7 @@ HRESULT SVTaskObjectClass::SetImageExtentToFit(const SVImageExtentClass& rImageE
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const
+HRESULT SVTaskObjectClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const
 {
 	return S_FALSE;
 }
@@ -1968,11 +1937,6 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 		(*iter)->SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);
 	}
 	return S_OK;
-}
-
-HRESULT SVTaskObjectClass::GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList)
-{
-	return S_FALSE;
 }
 
 HRESULT SVTaskObjectClass::GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine)

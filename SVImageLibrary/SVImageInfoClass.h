@@ -42,19 +42,19 @@ public:
 	const SVImageExtentClass& GetExtents() const;
 	HRESULT SetExtents(const SVImageExtentClass& rExtents );
 
-	SvDef::SVExtentTranslationEnum GetTranslation();
-	HRESULT SetTranslation( SvDef::SVExtentTranslationEnum p_eTranslation );
+	SvPb::SVExtentTranslationEnum GetTranslation();
+	HRESULT SetTranslation( SvPb::SVExtentTranslationEnum p_eTranslation );
 
 	HRESULT GetImageProperty( SvDef::SVImagePropertyEnum p_eDefinition, int &p_riValue ) const;
 	HRESULT GetImageProperty( SvDef::SVImagePropertyEnum p_eDefinition, long &p_rlValue ) const;
 	HRESULT SetImageProperty( SvDef::SVImagePropertyEnum p_eDefinition, long p_lValue );
 
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	HRESULT GetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, SVPoint<double> &rValue ) const;
-	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, double p_dValue );
-	HRESULT SetExtentProperty( SvDef::SVExtentPropertyEnum p_eProperty, const SVPoint<double>& rValue );
+	HRESULT GetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
+	HRESULT GetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, SVPoint<double> &rValue ) const;
+	HRESULT SetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, const SVPoint<double>& rValue );
 
 	HRESULT GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass &rOutExtent);
 

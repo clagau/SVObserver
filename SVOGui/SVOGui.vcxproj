@@ -112,6 +112,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp" />
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
     <ClCompile Include="BlobReconstructFilterDlg.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="SVTADlgColorToolPage.cpp" />
     <ClCompile Include="SVTADlgFileImageSourcePage.cpp" />
     <ClCompile Include="SVTADlgGeneralPage.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
     <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
     <ClCompile Include="SVTADlgPassFailPage.cpp" />
     <ClCompile Include="SVTADlgTransformImagePage.cpp" />
@@ -181,6 +183,7 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SVAdjustToolSizePositionDlg.h" />
     <ClInclude Include="BlobReconstructFilterDlg.h" />
     <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="GuiValueHelper.h" />
@@ -233,6 +236,7 @@
     <ClInclude Include="SVTADlgColorToolPage.h" />
     <ClInclude Include="SVTADlgFileImageSourcePage.h" />
     <ClInclude Include="SVTADlgGeneralPage.h" />
+    <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVTADlgPassFailPage.h" />
     <ClInclude Include="SVTADlgTransformImagePage.h" />

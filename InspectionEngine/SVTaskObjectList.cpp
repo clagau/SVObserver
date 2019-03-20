@@ -155,24 +155,6 @@ void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-SVTaskObjectClass* SVTaskObjectListClass::GetObjectAtPoint( const SVPoint<double>& rPoint )
-{
-	SVTaskObjectClass* pObject = SVTaskObjectClass::GetObjectAtPoint(rPoint);
-
-	// Get Object from our children
-	for (int i = 0; nullptr == pObject && i < static_cast<int> (m_TaskObjectVector.size()); i++)
-	{
-		pObject = m_TaskObjectVector[i];
-
-		if ( nullptr != pObject )
-		{
-			pObject = pObject->GetObjectAtPoint( rPoint );
-		}
-	}
-
-	return pObject;
-}
-
 bool SVTaskObjectListClass::CloseObject()
 {
 	bool Result( true );

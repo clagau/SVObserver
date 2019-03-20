@@ -775,7 +775,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 	{
 		//check if graphic vertical
 		double rotationAngle = 0;
-		m_pAnalyzer->GetImageExtent().GetExtentProperty(SvDef::SVExtentPropertyRotationAngle, rotationAngle);
+		m_pAnalyzer->GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, rotationAngle);
 		bool bVertical = (90 == rotationAngle);
 
 		//set HistogramOverlay and edges

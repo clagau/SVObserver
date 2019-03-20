@@ -58,15 +58,13 @@ public:
 
 	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 
-	virtual SVTaskObjectClass* GetObjectAtPoint(const SVPoint<double>& rPoint);
 	virtual bool DoesObjectHaveExtents() const;
 	const SVImageExtentClass& GetImageExtent() const { return m_imageExtent; }
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent);
 	virtual HRESULT SetImageExtentToParent();
 	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent);
 	virtual HRESULT updateImageExtent() {return S_OK;}
-	virtual HRESULT GetFilteredImageExtentPropertyList(SVExtentPropertyVector& p_rPropertyList);
-	virtual HRESULT GetPropertyInfo(SvDef::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const;
+	virtual HRESULT GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const;
 
 
 	void ResetPrivateInputInterface();

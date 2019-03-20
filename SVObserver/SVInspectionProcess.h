@@ -66,17 +66,11 @@ class SVInspectionProcess :
 	public SVObjectClass,
 	public SvOi::IInspectionProcess
 {
-	friend class SVCommandInspectionExtentUpdater; // For access to RunOnce()
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
 	typedef SVBiUniqueMap<std::string, SVObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
-	//************************************
-	//! FunctionPointer as Argument for LoopOverTool
-	//! negative return values indicate an error 
-	//************************************
-	typedef int  (*pToolFunc) (SVObjectClass *pObject );
 
 	SVInspectionProcess( LPCSTR ObjectName );
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
@@ -116,6 +110,9 @@ public:
 	virtual void BuildValueObjectMap() override;
 	GUID getFirstCamera() const override;
 	HRESULT addSharedCamera(GUID cameraID) override;
+	HRESULT resetTool(SvOi::IObjectClass& rTool) override;
+	virtual HRESULT propagateSizeAndPosition() override;
+	virtual bool usePropagateSizeAndPosition() const override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;
@@ -218,13 +215,6 @@ public:
 	SVObjectPtrVector getPPQVariables() const;
 	
 	//************************************
-	//! Check if the pValueObject is a active ppqVarable for the used inspection.
-	//! \param pValueObject [in]
-	//! \returns 
-	//************************************
-	bool IsEnabledPPQVariable( const SVObjectClass* pObject ) const;
-	
-	//************************************
 	//! Check if the pValueObject is an inactive ppqVarable for the used inspection.
 	//! \param pValueObject [in]
 	//! \returns 
@@ -233,14 +223,6 @@ public:
 	
 	virtual DWORD GetObjectColor() const override;
 
-	//************************************
-	//! calls pf for all object in Inspection 
-	//! \param pf [in] function pointer 
-	//! \param counter [out] sum over results from pf
-	//! \returns bool true if all call from pf are not negativ
-	//************************************
-	bool   LoopOverTools(pToolFunc pf, int& counter ); 
-	
 	//************************************
 	//! Get the tool messages
 	//! \param rInserter [out] reference to an inserter iterator

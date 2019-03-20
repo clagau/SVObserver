@@ -140,6 +140,24 @@ public:
 			case SvPb::InspectionCmdMsgs::kGetOutputRectangleRequest:
 				hr = getOutputRectangle(m_pRequest->getoutputrectanglerequest(), *m_pResponse->mutable_getoutputrectangleresponse());
 				break;
+			case SvPb::InspectionCmdMsgs::kGetToolSizeAdjustParameterRequest:
+				hr = getToolSizeAdjustParameter(m_pRequest->gettoolsizeadjustparameterrequest(), *m_pResponse->mutable_gettoolsizeadjustparameterresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kGetExtentParameterRequest:
+				hr = getExtentParameter(m_pRequest->getextentparameterrequest(), *m_pResponse->mutable_getextentparameterresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kSetExtentParameterRequest:
+				hr = setExtentParameter(m_pRequest->setextentparameterrequest(), *m_pResponse->mutable_setextentparameterresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kIsAllowedLocationRequest:
+				hr = isAllowedLocation(m_pRequest->isallowedlocationrequest(), *m_pResponse->mutable_isallowedlocationresponse());
+				break;
+			case SvPb::InspectionCmdMsgs::kPropagateSizeAndPositionRequest:
+				hr = propagateSizeAndPosition(m_pRequest->propagatesizeandpositionrequest());
+				break;
+			case SvPb::InspectionCmdMsgs::kUsePropagateSizeAndPositionRequest:
+				hr = usePropagateSizeAndPosition(m_pRequest->usepropagatesizeandpositionrequest(), *m_pResponse->mutable_usepropagatesizeandpositionresponse());
+				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectSelectorItemsRequest:
 				hr = getObjectSelectorItems(m_pRequest->getobjectselectoritemsrequest(), *m_pResponse->mutable_getobjectselectoritemsresponse());
 				break;

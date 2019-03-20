@@ -336,9 +336,9 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 				}
 
-				rInfo.SetExtentProperty(SvDef::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
-				rInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, l_lSizeX);
-				rInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, l_lSizeY);
+				rInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
+				rInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, l_lSizeX);
+				rInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, l_lSizeY);
 
 				rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandSize);
 				rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth);
@@ -451,8 +451,8 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
 	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8);
 
-	oTempInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
-	oTempInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, pbmhInfo->biWidth);
+	oTempInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
+	oTempInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, pbmhInfo->biWidth);
 
 	if (8 < pbmhInfo->biBitCount)
 	{
@@ -772,22 +772,22 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 				}
 			}
 
-			if (S_OK != rChildInfo.SetExtentProperty(SvDef::SVExtentPropertyPositionPointX, ChildRect.left))
+			if (S_OK != rChildInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, ChildRect.left))
 			{
 				Result = S_FALSE;
 			}
 
-			if (S_OK != rChildInfo.SetExtentProperty(SvDef::SVExtentPropertyPositionPointY, ChildRect.top))
+			if (S_OK != rChildInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, ChildRect.top))
 			{
 				Result = S_FALSE;
 			}
 
-			if (S_OK != rChildInfo.SetExtentProperty(SvDef::SVExtentPropertyWidth, ChildRect.right - ChildRect.left))
+			if (S_OK != rChildInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, ChildRect.right - ChildRect.left))
 			{
 				Result = S_FALSE;
 			}
 
-			if (S_OK != rChildInfo.SetExtentProperty(SvDef::SVExtentPropertyHeight, ChildRect.bottom - ChildRect.left))
+			if (S_OK != rChildInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, ChildRect.bottom - ChildRect.left))
 			{
 				Result = S_FALSE;
 			}
@@ -884,11 +884,11 @@ HRESULT SVImageProcessingClass::GetOutputImageCreateData(const SVImageInfoClass 
 	long &p_rlWidth,
 	long &p_rlHeight)
 {
-	HRESULT Result = p_rsvInfo.GetExtentProperty(SvDef::SVExtentPropertyOutputWidth, p_rlWidth);
+	HRESULT Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, p_rlWidth);
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetExtentProperty(SvDef::SVExtentPropertyOutputHeight, p_rlHeight);
+		Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, p_rlHeight);
 	}
 
 	if (S_OK == Result)
@@ -929,11 +929,11 @@ HRESULT SVImageProcessingClass::GetChildImageCreateData(const SVImageInfoClass &
 	long &p_rlWidth,
 	long &p_rlHeight)
 {
-	HRESULT Result = p_rsvInfo.GetExtentProperty(SvDef::SVExtentPropertyWidth, p_rlWidth);
+	HRESULT Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyWidth, p_rlWidth);
 
 	if (S_OK == Result)
 	{
-		Result = p_rsvInfo.GetExtentProperty(SvDef::SVExtentPropertyHeight, p_rlHeight);
+		Result = p_rsvInfo.GetExtentProperty(SvPb::SVExtentPropertyHeight, p_rlHeight);
 	}
 
 	if (S_OK == Result)

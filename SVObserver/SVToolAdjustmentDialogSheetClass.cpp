@@ -32,7 +32,7 @@
 #include "SVOGui/SVToolAdjustmentDialogCommentPage.h"
 #include "SVTADlgTranslationShiftPage.h"
 #include "SVTADlgTranslationResizePage.h"
-#include "SVToolAdjustmentDialogSizePage.h"
+#include "SVOGui/SVToolAdjustmentDialogSizePage.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -177,7 +177,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogTwoImagePageClass(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			// New image tool has also this pages...RO_22Mar2000
 			if (nullptr != pLUTOperator && nullptr != pLUTEquation)
@@ -198,7 +198,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogImagePageClass(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			AddPage(new SvOg::SVToolAdjustmentDialogFilterPageClass(m_InspectionID, m_TaskObjectID));
 			AddPage(new SVToolAdjustmentDialogThresholdPageClass(m_InspectionID, m_TaskObjectID, this));
@@ -220,7 +220,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogImagePageClass(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			AddPage(new SvOg::SVToolAdjustmentDialogFilterPageClass(m_InspectionID, m_TaskObjectID));
 			AddPage(new SVToolAdjustmentDialogThresholdPageClass(m_InspectionID, m_TaskObjectID, this));
@@ -235,7 +235,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogFileImageSourcePageClass(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			AddPage(pConditionalDlg);
 			AddPage(new SvOg::SVToolAdjustmentDialogGeneralPageClass(m_InspectionID, m_TaskObjectID));
@@ -268,7 +268,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogImagePageClass(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			AddPage(new SVTADlgTranslationShiftPageClass(m_InspectionID, m_TaskObjectID, this));
 			AddPage(pConditionalDlg);
@@ -279,7 +279,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogImagePageClass(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			AddPage(new SVTADlgTranslationResizePage(m_InspectionID, m_TaskObjectID, this));
 			AddPage(pConditionalDlg);
@@ -309,7 +309,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVTADlgColorToolPage(m_InspectionID, m_TaskObjectID));
 			if (bHasSize)
 			{
-				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
 			AddPage(pConditionalDlg);
 			AddPage(new SvOg::SVToolAdjustmentDialogGeneralPageClass(m_InspectionID, m_TaskObjectID));

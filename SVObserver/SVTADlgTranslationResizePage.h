@@ -22,7 +22,6 @@ class ResizeTool;
 }
 class SVToolAdjustmentDialogSheetClass;
 class SVRPropertyItem;
-class SVImageExtentClass;
 
 class SVTADlgTranslationResizePage : 
 	public CPropertyPage, 
@@ -89,6 +88,9 @@ protected:
 	SvOg::ImageController m_ImageController;
 	SVGUID m_ROIImageID = GUID_NULL;
 	SVGUID m_OutputImageID = GUID_NULL;
+
+	const SVGUID m_inspectionID;
+	const SVGUID m_toolID;
 
 	//{{AFX_DATA(SVTADlgTranslationResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };

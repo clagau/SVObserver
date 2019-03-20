@@ -70,4 +70,29 @@ SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrFiel
 void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo);
 
 SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, const GUID& rInspectionID, SvPb::ObjectAttributes attribute, const GUID& rInstanceID = GUID_NULL, bool wholeArray = false, SvPb::SelectorFilter filter = SvPb::SelectorFilter::attributesAllowed);
+
+template<class T>
+T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)
+{
+	T retValue = 0;
+	auto iter = find_if(extents.begin(), extents.end(), [type](auto item) { return type == item.type(); });
+	if (extents.end() != iter)
+	{
+		retValue = static_cast<T>(iter->value());
+	}
+	return retValue;
+}
+
+template<class T>
+bool setValueForProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type, T value)
+{
+	T retValue = 0;
+	auto& iter = find_if(extents.begin(), extents.end(), [type](auto item) { return type == item.type(); });
+	if (extents.end() != iter)
+	{
+		iter->set_value(value);
+		return true;
+	}
+	return false;
+}
 } //namespace SvCmd

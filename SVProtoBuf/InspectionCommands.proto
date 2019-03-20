@@ -61,6 +61,15 @@ message SetValueObjectValues
 	int32 arrayIndex = 4;
 }
 
+message ExtentParameter
+{
+	SVExtentPropertyEnum type = 1;
+	bytes name = 2;
+	double value = 3;
+	bool isSetByReset = 4;
+	bool FilteredOutFlag = 5;
+}
+
 message IsBeforeToolMethod
 { 
 	bytes toolId = 1;
@@ -70,6 +79,23 @@ message DefaultPlusHidden
 {
 }
 
+message UpdateFromOutpuSpace
+{
+	SVExtentLocationPropertyEnum action = 1;
+	int32 dx = 2;
+	int32 dy = 3;
+}
+
+message SetExtentProperty
+{
+	SVExtentPropertyEnum propertyFlag = 1;
+	double value = 2;
+}
+
+message SetExtentList
+{
+	repeated ExtentParameter extentList = 1;
+}
 //***************************************************************************
 // InspectionCommands - can be send with method InspectionCommandsSynchronous
 //***************************************************************************
@@ -473,6 +499,77 @@ message GetOutputRectangleResponse
 	int32 bottom = 4;
 }
 
+message GetToolSizeAdjustParameterRequest
+{
+	bytes objectId = 1;
+}
+
+message GetToolSizeAdjustParameterResponse
+{
+	bool isFullSizeAllowed = 1;
+	bool isAdjustSizeAllowed = 2;
+	bool isAdjustPositionAllowed = 3;
+	EAutoSize enableAutoSize = 4;
+	bool canResizeToParent = 5;
+}
+
+message GetExtentParameterRequest
+{
+	bytes objectId = 1; //Guid of the tool
+	bool shouldFromParent = 2; 
+}
+
+message GetExtentParameterResponse
+{
+	repeated ExtentParameter parameters = 1;
+	SVExtentTranslationEnum translationType = 2;
+}
+
+message SetExtentParameterRequest
+{
+	bytes objectId = 1; //Guid of the tool
+	oneof message
+	{
+		UpdateFromOutpuSpace updateFromOutputSpace = 2;
+		SetExtentProperty setProperty = 3;
+		SetExtentList extentList = 4;
+		bool setToParent = 5;
+	}
+}
+
+message SetExtentParameterResponse
+{
+	repeated ExtentParameter parameters = 1;
+	SVExtentTranslationEnum translationType = 2;
+}
+
+message IsAllowedLocationRequest
+{
+	bytes objectId = 1; //Guid of the tool
+	SVExtentLocationPropertyEnum location = 2;
+	SVExtentDirectionsEnum direction = 3;
+}
+
+message IsAllowedLocationResponse
+{
+	bool IsAllowed = 1;
+}
+
+message PropagateSizeAndPositionRequest
+{
+	bytes objectId = 1; //Guid of the inspection
+}
+
+message UsePropagateSizeAndPositionRequest
+{
+	bytes objectId = 1; //Guid of the inspection
+}
+
+message UsePropagateSizeAndPositionResponse
+{
+	bool isUsed = 1;
+}
+
 message InspectionCmdMsgs
 {
 	oneof message
@@ -537,6 +634,17 @@ message InspectionCmdMsgs
 		GetOutputRectangleResponse getOutputRectangleResponse = 58;
 		GetObjectSelectorItemsRequest getObjectSelectorItemsRequest = 59;
 		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 60;
+		GetToolSizeAdjustParameterRequest getToolSizeAdjustParameterRequest = 61;
+		GetToolSizeAdjustParameterResponse getToolSizeAdjustParameterResponse = 62;
+		GetExtentParameterRequest getExtentParameterRequest = 63;
+		GetExtentParameterResponse getExtentParameterResponse = 64;
+		SetExtentParameterRequest setExtentParameterRequest = 65;
+		SetExtentParameterResponse setExtentParameterResponse = 66;
+		IsAllowedLocationRequest isAllowedLocationRequest = 67;
+		IsAllowedLocationResponse isAllowedLocationResponse = 68;
+		PropagateSizeAndPositionRequest propagateSizeAndPositionRequest = 69;
+		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 70;
+		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 71;
 	}
 }
 
