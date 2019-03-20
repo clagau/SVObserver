@@ -2,6 +2,7 @@
 
 Known new Bugs:
 	SVO-2074 Image Dependencies displayed for inactive images
+	SVO-2130 Changed Behaviour related to the Camera Properties Settings: "Image Size Mode" : "User Editable", could lead to confusion
 
 Compatible Changes:  
 	SVO-1364 Group Loop Tool  
@@ -10,8 +11,7 @@ Compatible Changes:
 	SVO-1358 "One-Click" option to publish and add a tool into the MonitorList
 	SVO-2026 Recalculate all tool if ROI changed for one tool
 	SVO-1913 Use LinkedValue in SVRangeClass
-	SVO-2028 External Tools: Changing values of input variables lead (sometimes) to AuditTrail entries
-	SVO-1798 Store and Read SVIM Serial from BIOS
+	SVO-1798 Store and Read SVIM Serial from BIOS (X2C only)
 	SVO-1656 Replace JSON Communication with Protobuf
 	SVO-854 Add Load Method to SVRC
 	SVO-1758 Add SetupTestInputs to SVRC
