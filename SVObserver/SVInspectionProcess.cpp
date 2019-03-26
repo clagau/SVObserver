@@ -123,6 +123,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				{
 					case IO_DIGITAL_INPUT:
 					case IO_REMOTE_INPUT:
+					case IO_CAMERA_DATA_INPUT:
 					{
 						if (nullptr != rInputEntry.m_IOEntryPtr->getValueObject())
 						{

@@ -824,16 +824,18 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 		{
 			for (long i = 0; i < arraySize; ++i)
 			{
-				if (VT_BSTR == varType)
+				T value;
+				if (S_OK == GetValue(value, i))
 				{
-					_bstr_t stringValue{ValueType2Variant(m_ValueArray[i])};
-					::SafeArrayPutElement(result.parray, &i, static_cast<void*> (stringValue.Detach()));
-				}
-				else
-				{
-					//Need to make a copy because the array is const and cannot be cast to void*
-					T value = m_ValueArray[i];
-					::SafeArrayPutElement(result.parray, &i, static_cast<void*> (&value));
+					if (VT_BSTR == varType)
+					{
+						_bstr_t stringValue{ValueType2Variant(value)};
+						::SafeArrayPutElement(result.parray, &i, static_cast<void*> (stringValue.Detach()));
+					}
+					else
+					{
+						::SafeArrayPutElement(result.parray, &i, static_cast<void*> (&value));
+					}
 				}
 			}
 		}
