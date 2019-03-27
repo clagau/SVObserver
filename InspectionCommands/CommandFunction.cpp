@@ -1199,6 +1199,13 @@ HRESULT getSelectorList(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvP
 			}
 		}
 
+		//If instance ID is set to the inspection ID then we need the name including the inspection name
+		SvPb::SVObjectTypeEnum 	objectTypeToName{SvPb::SVNotSetObjectType};
+		if(rRequest.inspectionid() == rRequest.instanceid())
+		{
+			objectTypeToName = SvPb::SVInspectionObjectType;
+		}
+
 		if (nullptr != pTaskObject)
 		{
 			std::string name;
@@ -1206,7 +1213,7 @@ HRESULT getSelectorList(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvP
 			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(rRequest, name);
 			if(nullptr != pFunc)
 			{
-				pTaskObject->GetSelectorList(pFunc, rResponse, rRequest.attribute(), rRequest.wholearray());
+				pTaskObject->GetSelectorList(pFunc, rResponse, rRequest.attribute(), rRequest.wholearray(), objectTypeToName);
 			}
 			else
 			{

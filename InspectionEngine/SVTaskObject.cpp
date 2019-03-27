@@ -353,10 +353,11 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 }
 
 #pragma region virtual method (ITaskObject)
-void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray) const
+void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const
 {
 	if (pFunctor)
 	{
+		objectType = (SvPb::SVNotSetObjectType == objectType) ? GetObjectType() : objectType;
 		SVOutputInfoListClass OutputList;
 		GetOutputList(OutputList);
 
@@ -383,7 +384,7 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 						ObjectRef.SetEntireArray();
 						insertItem.set_name(ObjectRef.GetName(true));
 						UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-						insertItem.set_location(ObjectRef.GetObjectNameToObjectType(GetObjectType(), true, true));
+						insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true, true));
 						insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
 						insertItem.set_selected((AttributesSet & attribute) == attribute);
 						itemVector.emplace_back(insertItem);
@@ -398,7 +399,7 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 							ObjectRef.SetArrayIndex(i);
 							insertItem.set_name(ObjectRef.GetName(true));
 							UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-							insertItem.set_location(ObjectRef.GetObjectNameToObjectType(GetObjectType(), true, true));
+							insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true, true));
 							insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
 							insertItem.set_selected((AttributesSet & attribute) == attribute);
 							itemVector.emplace_back(insertItem);
@@ -409,7 +410,7 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 				{
 					insertItem.set_name(ObjectRef.GetName());
 					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(GetObjectType(), true));
+					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true));
 					insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
 					insertItem.set_selected((AttributesSet & attribute) == attribute);
 					itemVector.emplace_back(insertItem);

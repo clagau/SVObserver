@@ -98,14 +98,14 @@ int  MonitorlistSelector::DisplayDialog()
 			{
 				SvPb::InspectionCmdMsgs request;
 				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::archivableImage);
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::archivableImage, pInspection->GetUniqueObjectID());
 				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
 				SvPb::InspectionCmdMsgs request;
 				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable);
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, pInspection->GetUniqueObjectID());
 				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 			}
 			else
@@ -113,7 +113,7 @@ int  MonitorlistSelector::DisplayDialog()
 				SvPb::SelectorFilter filter{SvPb::SelectorFilter::monitorListRejectValue};
 				SvPb::InspectionCmdMsgs request;
 				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, GUID_NULL, false, filter);
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, pInspection->GetUniqueObjectID(), false, filter);
 				SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 			}
 		}

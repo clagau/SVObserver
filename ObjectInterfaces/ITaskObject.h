@@ -47,7 +47,7 @@ namespace SvOi
 		/// /param Attribute <in> attribute
 		/// /param WholeArray <in> flag determines if whole arrays are used
 		//************************************
-		virtual void GetSelectorList(IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray) const = 0;
+		virtual void GetSelectorList(IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const = 0;
 
 		/// Get the List of Images connected to this Task Object.
 		/// /param rList <in> The List to be populated.

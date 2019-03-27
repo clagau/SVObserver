@@ -46,7 +46,7 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 				}
 			}
 		}
-		Result = completeName ? ObjectRef.GetCompleteName(true) : ObjectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
+		Result = completeName ? ObjectRef.GetCompleteName(true) : ObjectRef.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, true);
 	}
 
 	if(!Result.empty() && 0 != Result.find(SvDef::FqnInspections) && completeName)
