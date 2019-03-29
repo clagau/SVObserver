@@ -26,6 +26,8 @@ namespace SvLib
 
 		int GetValueInt( LPCTSTR Section, LPCTSTR Key, int Default ) const;
 
+		double GetValueDouble(LPCTSTR Section, LPCTSTR Key, double Default) const;
+
 		HRESULT SetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Value ) const;
 
 		HRESULT SetValueInt( LPCTSTR Section, LPCTSTR Key, int Value ) const;

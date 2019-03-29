@@ -10,7 +10,7 @@
 
 #include "stdafx.h"
 
-#include "TriggerRecordControllerUnitTest.h"
+#include "TriggerRecordControllerModulTest.h"
 
 #include "TrcTester.h"
 #include "LogClass.h"
@@ -42,8 +42,13 @@ bool areImageEqual(MIL_ID image1, MIL_ID image2);
 int getLastTrId(int ipId, SvTrc::ITriggerRecordControllerR& rTrController);
 bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount);
 
-TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass) 
+TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile)
 {
+	m_NumberOfRuns = iniFile.GetValueInt(_T("General"), _T("NumberOfRuns"), m_NumberOfRuns);
+	m_maxTimeSetBufferPerIter = iniFile.GetValueDouble(_T("MaxTime"), _T("SetBufferPerIter"), m_maxTimeSetBufferPerIter);
+	m_maxTimeCheckBufferPerBuffer = iniFile.GetValueDouble(_T("MaxTime"), _T("CheckBufferPerBuffer"), m_maxTimeCheckBufferPerBuffer);
+	m_maxTimesetAndReadImage = iniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadImage"), m_maxTimesetAndReadImage);
+	
 	for (auto imageFileList : m_imageFileNameLists)
 	{
 		std::vector<MIL_ID> imageIds;
@@ -189,8 +194,8 @@ bool TrcTester::checkBufferMaximum()
 		auto end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_nano = end - start;
 		CString logStr;
-		logStr.Format(_T("set images good case (%f s/ %f s)"), elapsed_nano.count(), m_config.getMaxTimeCheckBufferMaximumPerBuffer()*numberOfImages);
-		bool isError = (!independentOk || m_config.getMaxTimeCheckBufferMaximumPerBuffer()*numberOfImages < elapsed_nano.count());
+		logStr.Format(_T("set images good case (%f s/ %f s)"), elapsed_nano.count(), m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
+		bool isError = (!independentOk || m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages < elapsed_nano.count());
 		m_rLogClass.Log(logStr, !isError ? LogLevel::Information_Level3 : LogLevel::Error, !isError ? LogType::PASS : LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
 		if (!independentOk)
 		{
@@ -392,7 +397,8 @@ bool TrcTester::setAndReadImage()
 		return false;
 	}
 
-	constexpr int numberOfRuns = 100;
+	//constexpr int numberOfRuns = 100;
+	const int numberOfRuns = m_config.getNoOfRepetitionsPerStep();
 	auto start = std::chrono::system_clock::now();
 	for (int i = 0; i < numberOfRuns; i++)
 	{

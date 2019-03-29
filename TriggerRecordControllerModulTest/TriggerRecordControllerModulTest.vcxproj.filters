@@ -27,21 +27,18 @@
     <ClInclude Include="Resource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerRecordControllerUnitTest.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TrcTester.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LogClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="TriggerRecordControllerModulTest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerRecordControllerUnitTest.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TrcTester.cpp">
@@ -50,9 +47,12 @@
     <ClCompile Include="LogClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TriggerRecordControllerModulTest.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TriggerRecordControllerUnitTest.rc">
+    <ResourceCompile Include="TriggerRecordControllerModulTest.rc">
       <Filter>Ressourcendateien</Filter>
     </ResourceCompile>
   </ItemGroup>

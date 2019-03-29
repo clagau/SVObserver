@@ -44,6 +44,17 @@ namespace SvLib
 		return Result;
 	}
 
+	inline double SVOINIClass::GetValueDouble(LPCTSTR Section, LPCTSTR Key, double defaultValue) const
+	{
+		std::string resultString = GetValueString(Section, Key, std::to_string(defaultValue).c_str());
+		double result = defaultValue;
+		if (!resultString.empty())
+		{
+			result = atof(resultString.c_str());
+		}
+		return result;
+	}
+
 	inline HRESULT SVOINIClass::SetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Value) const
 	{
 		HRESULT Result = S_OK;
@@ -61,7 +72,7 @@ namespace SvLib
 		HRESULT Result = S_FALSE;
 
 		TCHAR ValueText[MAX_PATH];
-		_itot( Value, ValueText, 10 );
+		_itot_s( Value, ValueText, MAX_PATH, 10 );
 
 		Result = SetValueString( Section, Key, ValueText );
 

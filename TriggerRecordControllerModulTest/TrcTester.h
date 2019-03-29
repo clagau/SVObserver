@@ -17,6 +17,7 @@
 #include "TriggerRecordController\ITriggerRecordRW.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVProtoBuf/TriggerRecordController.h"
+#include "SVLibrary/SVOINIClass.h"
 #include "LogClass.h"
 
 
@@ -24,7 +25,7 @@
 class TrcTesterConfiguration
 {
 public:
-	TrcTesterConfiguration(LogClass& rLogClass);
+	TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile);
 	~TrcTesterConfiguration();
 
 	typedef std::vector<MIL_ID> ImageList;
@@ -50,14 +51,14 @@ public:
 
 	typedef std::vector<std::vector<InspectionsDef>> TestDataList;
 
-	int getNumberOfUnittests() const { return m_NumberOfUnittests; };
+	int getNumberOfRuns() const { return m_NumberOfRuns; };
 	int getNoOfRepetitionsPerStep() const { return m_NoOfRepetitionsPerStep; };
 	int getNumberOfInspections() const { return m_NumberOfInspections; };
 	int getNumberOfImagesPerInspection() const { return m_NumberOfImagesPerInspection; };
 	int getNumberOfBuffersPerInspection() const { return m_NumberOfBuffersPerInspection; };
 	int getNumberOfIndependentBuffers() const { return m_NumberOfIndependentBuffers; };
-	double getMaxTimeSetBuffer() const { return m_maxTimeSetBuffer; };
-	double getMaxTimeCheckBufferMaximumPerBuffer() const { return m_maxTimeCheckBufferMaximumPerBuffer; };
+	double getMaxTimeSetBuffer() const { return m_NoOfRepetitionsPerStep * m_maxTimeSetBufferPerIter; };
+	double getMaxTimeCheckBufferPerBuffer() const { return m_maxTimeCheckBufferPerBuffer; };
 	double getMaxTimesetAndReadImage() const { return m_maxTimesetAndReadImage; };
 	const std::vector<ImageList>& getImageLists() const { return m_imageLists; };
 	const ParamDefList& getValueObjectSet() const { return m_valueObjectSet; };
@@ -65,7 +66,7 @@ public:
 	const TestDataList& getTestData() const { return m_testData; };
 
 private:
-	int m_NumberOfUnittests = 20;
+	int m_NumberOfRuns = 20;
 	const int m_NoOfRepetitionsPerStep = 200;
 
 	int m_NumberOfImagesPerInspection = 99;
@@ -74,9 +75,9 @@ private:
 	int m_NumberOfIndependentBuffers = 5;
 
 	//performance times
-	const double m_maxTimeSetBuffer = m_NoOfRepetitionsPerStep * 0.0018;
-	const double m_maxTimeCheckBufferMaximumPerBuffer = 0.0031;
-	const double m_maxTimesetAndReadImage = 0.00065;
+	double m_maxTimeSetBufferPerIter = 0.0018;
+	double m_maxTimeCheckBufferPerBuffer = 0.0031;
+	double m_maxTimesetAndReadImage = 0.00065;
 
 	
 

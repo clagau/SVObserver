@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TRC_UT</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>TriggerRecordControllerModulTest</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -167,7 +168,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrcTester.h" />
-    <ClInclude Include="TriggerRecordControllerUnitTest.h" />
+    <ClInclude Include="TriggerRecordControllerModulTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogClass.cpp" />
@@ -178,10 +179,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TrcTester.cpp" />
-    <ClCompile Include="TriggerRecordControllerUnitTest.cpp" />
+    <ClCompile Include="TriggerRecordControllerModulTest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TriggerRecordControllerUnitTest.rc" />
+    <ResourceCompile Include="TriggerRecordControllerModulTest.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -520,7 +520,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerRecordControllerTest
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerRecordControllerUnitTest", "TriggerRecordControllerUnitTest\TriggerRecordControllerUnitTest.vcxproj", "{9A69DE2C-345A-4708-B3D8-58171EE85A26}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerRecordControllerModulTest", "TriggerRecordControllerModulTest\TriggerRecordControllerModulTest.vcxproj", "{9A69DE2C-345A-4708-B3D8-58171EE85A26}"
 	ProjectSection(ProjectDependencies) = postProject
 		{91C2B904-B670-4ED1-A991-8418EF11E26B} = {91C2B904-B670-4ED1-A991-8418EF11E26B}
 		{ECEE7B0E-9815-4BD7-985F-20120CB65C63} = {ECEE7B0E-9815-4BD7-985F-20120CB65C63}
