@@ -141,7 +141,7 @@ void FormulaController::BuildSelectableItems()
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
-		m_InspectionID, SvPb::selectableForEquation, m_InspectionID, true);
+		m_InspectionID, SvPb::selectableForEquation, GUID_NULL, true);
 	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 	if (response.has_getobjectselectoritemsresponse())
 	{

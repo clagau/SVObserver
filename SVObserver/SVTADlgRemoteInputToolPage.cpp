@@ -97,15 +97,11 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 {
 	if( nullptr == m_pTool ) { return; }
 
-	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>( m_pTool->GetAncestor(SvPb::SVToolSetObjectType ) );
-
-	if( nullptr == pToolSet ) { return; }
-
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
-		pToolSet->GetInspection()->GetUniqueObjectID(), SvPb::archivable, pToolSet->GetUniqueObjectID());
-	SvCmd::InspectionCommandsSynchronous(pToolSet->GetInspection()->GetUniqueObjectID(), &request, &response);
+		m_pTool->GetInspection()->GetUniqueObjectID(), SvPb::archivable);
+	SvCmd::InspectionCommandsSynchronous(m_pTool->GetInspection()->GetUniqueObjectID(), &request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	if (response.has_getobjectselectoritemsresponse())

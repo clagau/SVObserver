@@ -66,7 +66,6 @@ public:
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParent;
 	SvTo::SVStatisticsToolClass* m_pTool;
-	SVToolSetClass*         m_pToolSet;
 	CString                 m_strFullNameOfVariable;
 };
 

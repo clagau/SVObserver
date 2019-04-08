@@ -71,7 +71,6 @@ protected:
 
 private:
 	std::string GetName(const SVGUID& guid) const;
-	GUID GetToolSetGUID() const;
 
 private:
 	SvOp::SVExternalToolTask* m_pTask;

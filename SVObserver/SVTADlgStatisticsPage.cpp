@@ -62,18 +62,13 @@ SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageC
 : CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
 , m_pParent(pParent)
 , m_pTool(nullptr)
-, m_pToolSet(nullptr)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogStatisticsPageClass)
 	m_strTestValue = _T( "" );
 	m_strVariableToMonitor = _T("");
 	//}}AFX_DATA_INIT
 
-	if( m_pTool = dynamic_cast <SvTo::SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID)) )
-	{
-		auto pParentObject = m_pTool->GetAncestor(SvPb::SVToolSetObjectType);
-		m_pToolSet = dynamic_cast <SVToolSetClass*> (pParentObject);
-	}
+	 m_pTool = dynamic_cast <SvTo::SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID));
 }
 
 SVToolAdjustmentDialogStatisticsPageClass::~SVToolAdjustmentDialogStatisticsPageClass()
@@ -327,14 +322,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 
 void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 {
-	if( nullptr == m_pTool || nullptr == m_pToolSet ) { return; }
+	if( nullptr == m_pTool) { return; }
 
 	SVObjectClass* pInspection( m_pTool->GetInspection() );
 	if( nullptr == pInspection ) { return; }
 
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::selectableForStatistics, m_pToolSet->GetUniqueObjectID());
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::selectableForStatistics);
 	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);

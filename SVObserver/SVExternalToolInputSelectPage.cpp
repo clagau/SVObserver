@@ -262,7 +262,7 @@ int SVExternalToolInputSelectPage::SelectObject( std::string& rObjectName, SVRPr
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
-		m_InspectionID, SvPb::archivable, GetToolSetGUID());
+		m_InspectionID, SvPb::archivable);
 	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
@@ -455,22 +455,4 @@ std::string SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
 		inspectionName = response.getobjectparametersresponse().name();
 	}
 	return inspectionName;
-}
-
-GUID SVExternalToolInputSelectPage::GetToolSetGUID() const
-{
-	GUID toolsetGUID = GUID_NULL;
-
-	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
-	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVToolSetObjectType);
-
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
-	if (S_OK == hr && responseMessage.has_getobjectidresponse())
-	{
-		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
-	}
-
-	return toolsetGUID;
 }
