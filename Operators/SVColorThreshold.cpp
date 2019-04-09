@@ -247,7 +247,6 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 	if (!Result)
 	{
 		// Signal that something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 
@@ -424,9 +423,9 @@ bool SVColorThresholdClass::ValidateLocal() const
 	{
 		Result &= m_BandThreshold[Band].m_InputImage.IsConnected();
 		Result &= nullptr != m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject();
-		Result &= Result ? m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject()->IsValid() : false;
+		Result &= Result ? m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().getObject()->IsCreated() : false;
 		Result &= m_BandThreshold[Band].m_OutputImage.IsCreated();
-		Result &= m_BandThreshold[Band].m_OutputImage.IsValid();
+		//Result &= m_BandThreshold[Band].m_OutputImage.IsCreated();
 		if (!Result)
 		{
 			break;
@@ -434,7 +433,7 @@ bool SVColorThresholdClass::ValidateLocal() const
 	}
 	if (Result)
 	{
-		Result &= m_OutputImage.IsCreated() && m_OutputImage.IsValid();
+		Result &= m_OutputImage.IsCreated();
 	}
 	return Result;
 }

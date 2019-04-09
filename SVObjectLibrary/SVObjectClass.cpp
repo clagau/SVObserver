@@ -85,8 +85,6 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 void SVObjectClass::init()
 {
 	m_isCreated	  = false;
-
-	m_isObjectValid		  = false;
 	m_embeddedID = GUID_NULL;
 
 	// Set object Info...
@@ -141,8 +139,7 @@ SVObjectClass::~SVObjectClass()
 
 bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	m_isObjectValid = m_isCreated;
-	if (!m_isObjectValid)
+	if (!m_isCreated)
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -571,12 +568,6 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 	
 	hr = bOk ? S_OK : S_FALSE;
 	return hr;
-}
-
-// Sets the valid flag to Invalid
-void SVObjectClass::SetInvalid()
-{
-	m_isObjectValid = false;
 }
 
 // Override this function to implement object behavior...

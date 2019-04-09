@@ -232,8 +232,6 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 	if (!result)
 	{
 		// Something was wrong...
-
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

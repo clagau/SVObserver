@@ -216,7 +216,6 @@ bool SVLUTEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 		 
 	if( ! bRetVal )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

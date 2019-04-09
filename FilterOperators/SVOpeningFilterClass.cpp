@@ -53,7 +53,6 @@ bool SVOpeningFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInpu
 			}
 
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -71,7 +70,6 @@ bool SVOpeningFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInpu
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

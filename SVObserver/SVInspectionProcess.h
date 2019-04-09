@@ -174,8 +174,6 @@ public:
 
 	SVResultListClass* GetResultList() const;
 
-	virtual void SetInvalid() override;
-
 	HRESULT RebuildInspection();
 	void ValidateAndInitialize( bool p_Validate );
 	void ClearResetCounts();
@@ -537,7 +535,7 @@ inline HRESULT Parse(std::vector<T> & vec, const std::string& rValues, SVDetail:
 template<typename T>
 inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObjectRef, const std::string& rValues, bool & reset)
 {
-	ASSERT(rObjectRef.getObject()->IsCreated() && rObjectRef.getObject()->IsValid() && rObjectRef.isArray() && rObjectRef.isEntireArray());
+	ASSERT(rObjectRef.getObject()->IsCreated() && rObjectRef.isArray() && rObjectRef.isEntireArray());
 	typedef typename SVDetail::ValueObjectTraits<T> Traits;
 	typedef typename SVDetail::ValueObjectTraits<T>::value_type Type;
 	typedef typename SVDetail::ValueObjectTraits<T>::object_type ObjectType;

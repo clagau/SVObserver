@@ -51,7 +51,6 @@ bool SVVertEdgeFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInp
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -61,7 +60,6 @@ bool SVVertEdgeFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInp
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

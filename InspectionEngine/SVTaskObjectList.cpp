@@ -322,22 +322,6 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 	return Result;
 }
 
-void SVTaskObjectListClass::SetInvalid()
-{
-	// Set this object and all own embedded objects to invalid
-	SVTaskObjectClass::SetInvalid();
-
-	// Set all children to invalid also
-	for (int j = 0; j < static_cast<int> (m_TaskObjectVector.size()); ++ j)
-	{
-		SVTaskObjectClass* pObject = m_TaskObjectVector[j];
-		if (pObject)
-		{
-			pObject->SetInvalid();
-		}
-	}
-}
-
 // Override this function to implement special object behavior...
 void SVTaskObjectListClass::SetDisabled()
 {
@@ -540,14 +524,13 @@ int SVTaskObjectListClass::GetSize() const
 #pragma region virtual method (ITaskObjectListClass)
 void   SVTaskObjectListClass::GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const
 {
-	
 	for (auto pTaskObj : m_TaskObjectVector)
 	{
 		if (pTaskObj)
 		{
 			auto pInfo = rResponse.add_taskobjectinfos();
 			pInfo->set_displayname(pTaskObj->GetName());
-			pInfo->set_isvalid(pTaskObj->IsValid());
+			pInfo->set_isvalid(pTaskObj->isErrorMessageEmpty());
 			pInfo->set_objectsubtype(pTaskObj->GetObjectSubType());
 			pInfo->set_objecttype(pTaskObj->GetObjectType());
 			SvPb::SetGuidInProtoBytes(pInfo->mutable_taskobjectid(), pTaskObj->GetUniqueObjectID());
@@ -1095,8 +1078,6 @@ bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErr
 			pErrorMessages->insert(pErrorMessages->end(), taskErrorMessages.begin(), taskErrorMessages.end());
 		}
 	}
-
-	m_isObjectValid.SetValue(BOOL(Result));
 
 	return Result;
 }

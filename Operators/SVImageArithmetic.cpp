@@ -199,7 +199,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -212,7 +211,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -225,7 +223,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -238,7 +235,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -251,7 +247,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}

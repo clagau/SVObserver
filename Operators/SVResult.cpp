@@ -176,7 +176,6 @@ bool SVResultClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		}
 	}
 
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }
@@ -199,7 +198,6 @@ bool SVResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 		return true;
 	}
 
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

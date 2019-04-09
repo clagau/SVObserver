@@ -89,7 +89,7 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 bool SVImageAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	SVObjectClass* pObject = m_inputImageObjectInfo.GetInputObjectInfo().getObject();
-	if( !m_inputImageObjectInfo.IsConnected() || nullptr == pObject || !pObject->IsValid() ) 
+	if( !m_inputImageObjectInfo.IsConnected() || nullptr == pObject || !pObject->IsCreated() ) 
 	{
 		if (nullptr != pErrorMessages)
 		{

@@ -51,7 +51,6 @@ bool SVLaplacianEdge2FilterClass::onRun( bool First, SvOi::SVImageBufferHandlePt
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -69,7 +68,6 @@ bool SVLaplacianEdge2FilterClass::onRun( bool First, SvOi::SVImageBufferHandlePt
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

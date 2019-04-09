@@ -337,7 +337,6 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
 	Result = Result && UpdateConnection(pErrorMessages);
-	m_isObjectValid = Result;
 	return Result;
 }
 

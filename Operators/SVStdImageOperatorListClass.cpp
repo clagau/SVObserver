@@ -150,8 +150,6 @@ bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Messa
 	if (!bRetVal)
 	{
 		// Something was wrong...
-
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

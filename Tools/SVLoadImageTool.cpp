@@ -130,7 +130,6 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
-			SetInvalid();
 			return false;
 		}
 
@@ -144,7 +143,6 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
-				SetInvalid();
 				return false;
 			}
 

@@ -54,7 +54,6 @@ bool SVSmoothFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInput
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -71,7 +70,6 @@ bool SVSmoothFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInput
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

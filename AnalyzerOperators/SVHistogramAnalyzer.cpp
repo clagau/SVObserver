@@ -655,7 +655,6 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		if(nullptr == pInputImage)
 		{
-			SetInvalid();
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -1053,7 +1052,6 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 	
 	if(!Result)	
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

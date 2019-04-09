@@ -215,7 +215,6 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index) cons
 	// is the index valid?
 	if (S_OK == Result)
 	{
-		m_isObjectValid = true;
 		if (1 == getArraySize())
 		{
 			rValue = m_Value;
@@ -230,13 +229,11 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue(T& rValue, int Index) cons
 		// not contain a value for the current run so use
 		// the default value.
 		rValue = m_DefaultValue;
-		m_isObjectValid = true;
 	}
 	else
 	{
 		// the selected index is not in the allocated array 
 		rValue = m_DefaultValue;
-		m_isObjectValid = false;
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
 	std::string DebugString = SvUl::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Index);

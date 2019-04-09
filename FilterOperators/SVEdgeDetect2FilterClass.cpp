@@ -51,7 +51,6 @@ bool SVEdgeDetect2FilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -69,7 +68,6 @@ bool SVEdgeDetect2FilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

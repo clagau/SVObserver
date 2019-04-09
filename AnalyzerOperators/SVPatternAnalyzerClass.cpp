@@ -791,7 +791,6 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	if (!Result)
 	{
 		ResetResultValues();
-		SetInvalid();
 	}
 	return Result;
 }

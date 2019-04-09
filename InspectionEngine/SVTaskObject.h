@@ -72,8 +72,6 @@ public:
 	virtual bool ConnectAllInputs() override;
 	HRESULT ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject);
 
-	virtual bool IsValid() const override;
-
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
 	void Disconnect();
@@ -83,7 +81,6 @@ public:
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects);
 
-	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
 
 	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID);
@@ -111,7 +108,6 @@ public:
 	void clearTaskMessages() { m_ResetErrorMessages.clear(); m_RunErrorMessages.clear(); };
 	void clearRunErrorMessages() { m_RunErrorMessages.clear(); };
 
-	bool IsErrorMessageEmpty() const { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
 	bool IsRunErrorMessageEmpty() { return m_RunErrorMessages.empty(); };
 
 	/// Preparing to go offline. Is used e.g. by the Archive Tool.
@@ -141,6 +137,7 @@ public:
 	virtual SvDef::StringVector getSpecialImageList() const override { return {}; };
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override { return false; };
 	virtual SVGuidVector getEmbeddedList() const override;
+	virtual bool isErrorMessageEmpty() const override { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
@@ -229,7 +226,6 @@ protected:
 	SvOl::SVInputInfoListClass	m_InputObjectList;
 
 	// Embedded Object:
-	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 	SvVol::SVDWordValueObjectClass m_statusTag;
 	SvVol::SVDWordValueObjectClass m_statusColor;
 	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.

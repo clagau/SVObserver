@@ -2017,14 +2017,14 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 					ptTemp      = ptCurPos;
                     if ( nullptr != l_pObject )
                     {
-                        if ( l_pObject->IsValid() )
+                        if ( l_pObject->IsCreated() )
                         {
 							ptCurPos.y += PrintString(pDC, ptTemp, l_pObject->GetName());
                         }//end if
                     }
                     else
                     {
-                        if ( pEntry->getObject()->IsValid() )
+                        if ( pEntry->getObject()->IsCreated() )
                         {
                             ptCurPos.y += PrintString(pDC, ptTemp, pEntry->getObject()->GetName());
                         } // end if

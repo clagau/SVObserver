@@ -114,5 +114,7 @@ namespace SvOi
 		// Get the embedded list of the task object
 		/// \returns a list of embedded GUIDs
 		virtual SVGuidVector getEmbeddedList() const = 0;
+
+		virtual bool isErrorMessageEmpty() const = 0;
 	};
 } //namespace SvOi

@@ -2647,16 +2647,6 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	return Result;
 }
 
-void SVInspectionProcess::SetInvalid()
-{
-	SVObjectClass::SetInvalid();
-
-	if (GetToolSet())
-	{
-		GetToolSet()->SetInvalid();
-	}
-}
-
 void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos)
 {
 	SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
@@ -2752,7 +2742,7 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStat
 bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 {
 	// Validate IPDoc's values...
-	bool retVal = IsValid();
+	bool retVal = IsCreated();
 
 	if (retVal)
 	{

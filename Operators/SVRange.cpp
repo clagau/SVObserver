@@ -135,12 +135,6 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	Result = Result && checkLinkedValues(RangeEnum::ERange::ER_WarnHigh, RangeEnum::ERange::ER_FailLow, pErrorMessages);
 	Result = Result && checkLinkedValues(RangeEnum::ERange::ER_WarnLow, RangeEnum::ERange::ER_FailLow, pErrorMessages);
 
-
-	if (!Result)
-	{
-		SetInvalid();
-	}
-
 	Result = SVTaskObjectClass::ResetObject(pErrorMessages) && Result;
 	return Result;
 }

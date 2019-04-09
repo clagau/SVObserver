@@ -99,7 +99,6 @@ bool SVConditionalClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	bool retVal = __super::onRun( rRunStatus, pErrorMessages );
 	if( !retVal )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 	else

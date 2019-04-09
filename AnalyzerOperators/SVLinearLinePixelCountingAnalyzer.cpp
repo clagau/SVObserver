@@ -174,7 +174,6 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus
 	if( !Result )
 	{
 		rRunStatus.SetInvalid();
-		SetInvalid();
 	}
 
 	return Result;

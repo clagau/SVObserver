@@ -170,7 +170,6 @@ bool Custom2Filter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 	if( !Result )
 	{
 		// Signal that something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 	return Result;

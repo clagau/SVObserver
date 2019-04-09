@@ -478,8 +478,6 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 		{
 			ret = result;
 		}
-		
-		m_isObjectValid.SetValue(BOOL(ret.bPassed));
 	}
 	// return true if no equation or disabled
 	if( !HasCondition() || !IsEnabled() )
@@ -644,7 +642,6 @@ bool SVEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 		}
 	}

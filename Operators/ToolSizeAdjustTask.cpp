@@ -405,15 +405,6 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		}
 	}
 
-	if (!Result)
-	{
-		SetInvalid();
-		if (GetTool())
-		{
-			GetTool()->SetInvalid();
-		}
-	}
-
 	return Result;
 }
 

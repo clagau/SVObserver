@@ -37,6 +37,8 @@ public:
 	SVToolClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
 	virtual ~SVToolClass();
 
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo) override;
@@ -186,6 +188,8 @@ protected:
 
 	SvOl::SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
 	SvOl::SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
+
+	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 
 	// Conditional tool set drawing flag.
 	SvVol::SVEnumerateValueObjectClass	m_drawToolFlag;

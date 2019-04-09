@@ -191,7 +191,6 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 	
 	if( !Result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();	
 	}
 

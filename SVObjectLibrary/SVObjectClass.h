@@ -78,14 +78,12 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
-	virtual bool IsValid() const override { return m_isObjectValid; }
 	virtual bool SetObjectOwner( SVObjectClass* pNewOwner );
 	virtual bool SetObjectOwner( const GUID& rNewOwnerGUID );
 
 	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const;
 	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
-	virtual void SetInvalid();
 	/// Set status color to disabled (in SVTaskObjectClass), but also for all children
 	virtual void SetDisabled();
 	virtual DWORD GetObjectColor() const;
@@ -239,8 +237,6 @@ protected:
 	//This attribute holds the enumerated bits of default object attributes.
 	UINT m_DefaultObjectAttributesSet;
 
-	//This attribute holds the validity state of the object.
-	mutable bool m_isObjectValid;
 	// Refer to IsCreated()
 	bool m_isCreated;
 	//If object is embedded, set this ID

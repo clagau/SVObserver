@@ -350,8 +350,6 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	{
 		runStatus.SetFailed();
 		runStatus.SetInvalid();
-
-		SetInvalid();
 	}
 
 	return bRetVal;

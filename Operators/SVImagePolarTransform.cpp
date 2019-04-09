@@ -711,7 +711,6 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 	if ( ! result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

@@ -753,7 +753,6 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetInvalid();
-		SetInvalid();
 		return false;
 	}
 	// All inputs and outputs must be validated first
@@ -1104,7 +1103,6 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	if ( ! l_bOk )
 	{
 		rRunStatus.SetInvalid();
-		SetInvalid();
 	}
 
 	return l_bOk;

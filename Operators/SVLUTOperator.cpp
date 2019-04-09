@@ -428,7 +428,6 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 		return false;
 	}
@@ -445,7 +444,6 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 		return false;
 	}
@@ -473,7 +471,6 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 		return false;
 	}
@@ -489,7 +486,6 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -508,7 +504,6 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 		return false;
 	}

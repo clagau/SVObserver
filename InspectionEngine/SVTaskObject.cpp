@@ -68,7 +68,6 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_statusTag, SVStatusObjectGuid, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_statusColor, SVColorObjectGuid, IDS_OBJECTNAME_COLOR, false, SvOi::SVResetItemNone);
 
@@ -77,8 +76,6 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	m_statusColor.setSaveValueFlag(false);
 	m_statusTag.SetDefaultValue(DWORD(0), true);
 	m_statusTag.setSaveValueFlag(false);
-	m_isObjectValid.SetDefaultValue(BOOL(false), true);
-	m_isObjectValid.setSaveValueFlag(false);
 
 	// Add out Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -128,7 +125,6 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMes
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
 	}
-	m_isObjectValid.SetValue(BOOL(Result));
 
 	return Result;
 }
@@ -1149,24 +1145,12 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	}
 
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
-	m_isObjectValid.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 	m_statusTag.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_statusColor.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = Result;
 
 	return Result;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : IsValid member function of class SVTaskObjectClass
-// -----------------------------------------------------------------------------
-// .Description : Returns the Validity state of this object
-//				: must be overridden
-////////////////////////////////////////////////////////////////////////////////
-bool SVTaskObjectClass::IsValid() const
-{
-	return IsErrorMessageEmpty();
 }
 
 void SVTaskObjectClass::addDefaultInputObjects(SvOl::SVInputInfoListClass* PInputListToFill)
@@ -1371,13 +1355,6 @@ bool SVTaskObjectClass::RegisterInputObject(SvOl::SVInObjectInfoStruct* PInObjec
 void SVTaskObjectClass::GetPrivateInputList(SvOl::SVInputInfoListClass& rInputInterface) const
 {
 	rInputInterface = m_inputInterfaceList;
-}
-
-// Set the valid flag to Invalid
-void SVTaskObjectClass::SetInvalid()
-{
-	// Set yourself to invalid...
-	m_isObjectValid.SetValue(BOOL(false));
 }
 
 // Override this function to implement object behavior...
@@ -1595,13 +1572,8 @@ bool SVTaskObjectClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContai
 
 
 	// Now Validate yourself...
-	if (bRetVal && IsErrorMessageEmpty())
+	if (!bRetVal || !isErrorMessageEmpty())
 	{
-		m_isObjectValid.SetValue(BOOL(true));
-	}
-	else
-	{
-		m_isObjectValid.SetValue(BOOL(false));
 		rRunStatus.SetInvalid();
 		bRetVal = false;
 	}

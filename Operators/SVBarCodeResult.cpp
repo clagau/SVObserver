@@ -148,7 +148,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 
 		SvVol::SVStringValueObjectClass* pValue = SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo, true);
 
-		if (nullptr != pValue && pValue->IsValid())
+		if (nullptr != pValue && pValue->IsCreated())
 		{
 			BOOL bLoad = false;
 
@@ -192,7 +192,6 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 		return true;
 	}
 	rRunStatus.SetInvalid();
-	SetInvalid();
 	return false;
 }
 

@@ -93,7 +93,6 @@ bool SVMathEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	
 	if( !retVal )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 	else

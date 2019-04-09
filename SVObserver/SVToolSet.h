@@ -49,7 +49,7 @@ public:
 	virtual ~SVToolSetClass();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual void SetInvalid() override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void Destroy();
@@ -73,8 +73,6 @@ public:
 	SvOi::ISVImage* getCurrentImageInterface() override;
 
 	SvVol::SVEnumerateValueObjectClass* GetDrawFlagObject();
-
-	SvOp::SVConditionalClass* GetToolSetConditional() const;
 
 	bool getEnableAuxiliaryExtents() { BOOL Enabled{false}; m_EnableAuxiliaryExtents.GetValue(Enabled); return Enabled ? true : false; }
 	void setEnableAuxiliaryExtents(bool Enabled) { m_EnableAuxiliaryExtents.SetValue(BOOL(Enabled));}
@@ -146,6 +144,7 @@ protected:
 	SvTl::SVTimeStamp m_TimeStampStart;
 	SvTl::SVTimeStamp m_TimeStampEnd;
 
+	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 	SvVol::SVBoolValueObjectClass m_Enabled;
 	SvVol::SVBoolValueObjectClass m_ResetCounts;
 	SvVol::SVLongValueObjectClass m_TriggerCount;

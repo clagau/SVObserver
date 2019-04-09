@@ -727,7 +727,6 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 	if( ! Result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

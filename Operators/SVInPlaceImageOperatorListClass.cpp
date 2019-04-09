@@ -186,7 +186,6 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 	if( ! bRetVal )
 	{
 		// Something was wrong...
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

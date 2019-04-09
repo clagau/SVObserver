@@ -82,7 +82,6 @@ bool SVUpperThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::
 	
 	if( !retVal )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 	else

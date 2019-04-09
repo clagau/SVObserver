@@ -688,7 +688,6 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputObjectInfo, true);
 		if(nullptr == pInputImage)
 		{
-			SetInvalid();
 			bOk = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -753,7 +752,6 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 			if( !lock.Lock( 1 ) )
 			{
 				bOk = false;
-				SetInvalid();
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_LockingFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -1241,7 +1239,6 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	if (MatroxCode & SV_ARC_ERROR)
 	{
 		assert (0);
-		SetInvalid();
 		rRunStatus.SetInvalid();
 
 		SvDef::StringVector msgList;

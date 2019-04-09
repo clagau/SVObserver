@@ -1347,7 +1347,6 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 	if (!Result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

@@ -116,7 +116,6 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 			}
 
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -137,7 +136,6 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 			}
 
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -158,7 +156,6 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 			}
 
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -176,7 +173,6 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

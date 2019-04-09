@@ -434,7 +434,6 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 	if (l_Code & SV_OC_ERROR)
 	{
 		assert (0);
-		SetInvalid();
 		rRunStatus.SetInvalid();
 
 		SvDef::StringVector msgList;

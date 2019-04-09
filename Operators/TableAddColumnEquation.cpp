@@ -105,7 +105,6 @@ bool TableAddColumnEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageC
 
 	if (!bRetVal)
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

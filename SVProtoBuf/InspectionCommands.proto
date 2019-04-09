@@ -172,7 +172,7 @@ message GetObjectParametersRequest
 
 message GetObjectParametersResponse
 {
-	bool isValid = 1; //flag if valid
+	bool isValid = 1; //flag if valid, will only set for TaskObject (not for ValueObject)
 	bytes name = 2;
 	uint32 allowedAttributes = 3;
 	SVObjectTypeInfoStruct typeInfo = 4;

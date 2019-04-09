@@ -121,7 +121,6 @@ bool Ranking2Filter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -139,7 +138,6 @@ bool Ranking2Filter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

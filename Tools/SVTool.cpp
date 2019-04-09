@@ -50,6 +50,7 @@ void SVToolClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
 
 	// Register Embedded Objects
+	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&enabled, SVToolEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone);
@@ -115,6 +116,8 @@ void SVToolClass::init()
 
 	//
 	// Set Embedded defaults
+	m_isObjectValid.SetDefaultValue(BOOL(false), true);
+	m_isObjectValid.setSaveValueFlag(false);
 	enabled.SetDefaultValue(BOOL(true), true);
 	m_Passed.SetDefaultValue(BOOL(false), true);			// Default for Passed is FALSE !!!
 	m_Passed.setSaveValueFlag(false);
@@ -217,6 +220,8 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	}
 
 	// Set / Reset Printable Flags
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	m_isObjectValid.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 	enabled.SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_Passed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_Failed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
@@ -282,6 +287,13 @@ bool SVToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInf
 	}
 
 	return Result;
+}
+
+bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
+{
+	bool result = __super::resetAllObjects(pErrorMessages);
+	m_isObjectValid.SetValue(BOOL(result));
+	return result;
 }
 
 bool SVToolClass::IsEnabled() const
@@ -475,7 +487,6 @@ bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVecto
 			else
 			{
 				rRunStatus.SetInvalid();
-				SetInvalid();
 			}
 		}
 		else
@@ -502,6 +513,17 @@ bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVecto
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
+
+	if (retVal && isErrorMessageEmpty())
+	{
+		m_isObjectValid.SetValue(BOOL(true));
+	}
+	else
+	{
+		m_isObjectValid.SetValue(BOOL(false));
+		rRunStatus.SetInvalid();
+		retVal = false;
 	}
 
 	return retVal;

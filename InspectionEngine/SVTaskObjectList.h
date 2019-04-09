@@ -69,7 +69,6 @@ public:
 	int Add( SVTaskObjectClass* pTaskObject, bool atBegin = false );
 	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
-	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
 
 	const std::string checkName( LPCTSTR ToolName ) const;

@@ -146,7 +146,6 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 				else
 				{
 					rRunStatus.SetInvalid();
-					SetInvalid();
 					break;
 				}
 				m_ToolTime.Stop();

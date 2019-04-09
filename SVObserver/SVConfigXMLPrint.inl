@@ -857,7 +857,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 
 						if (nullptr != l_pObject)
 						{
-							if (l_pObject->IsValid())
+							if (l_pObject->IsCreated())
 							{
 								writer->WriteStartElement(nullptr, SvUl::to_utf16(l_pObject->GetName(), cp_dflt).c_str(), nullptr);
 								bValid = true;
@@ -865,7 +865,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 						}
 						else
 						{
-							if (pEntry->getObject()->IsValid())
+							if (pEntry->getObject()->IsCreated())
 							{
 								writer->WriteStartElement(nullptr, SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt).c_str(), nullptr);
 								bValid = true;

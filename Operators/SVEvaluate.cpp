@@ -82,7 +82,6 @@ bool SVEvaluateClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}

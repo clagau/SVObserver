@@ -186,7 +186,6 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 
 	if (!Result)
 	{
-		SetInvalid ();
 		rRunStatus.SetInvalid ();
 	}
 	return Result;

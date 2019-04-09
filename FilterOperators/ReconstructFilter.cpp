@@ -71,7 +71,6 @@ bool ReconstructFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputIma
 					pErrorMessages->push_back(Msg);
 				}
 				// Signal that something was wrong...
-				SetInvalid();
 				rRunStatus.SetInvalid();
 				return false;
 			}
@@ -88,7 +87,6 @@ bool ReconstructFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputIma
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

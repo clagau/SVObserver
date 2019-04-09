@@ -307,7 +307,6 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 
 	if ( !Result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())

@@ -194,11 +194,15 @@ HRESULT getObjectParameters(const SvPb::GetObjectParametersRequest& rRequest, Sv
 	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(rRequest.objectid()));
 	if (pObject)
 	{
-		rResponse.set_isvalid(pObject->IsValid());
 		rResponse.set_name(pObject->GetName());
 		rResponse.set_allowedattributes(pObject->ObjectAttributesAllowed());
 		rResponse.mutable_typeinfo()->set_objecttype(pObject->GetObjectType());
 		rResponse.mutable_typeinfo()->set_subtype(pObject->GetObjectSubType());
+		SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject*>(pObject);
+		if (nullptr != pTask)
+		{
+			rResponse.set_isvalid(pTask->isErrorMessageEmpty());
+		}
 	}
 	else
 	{

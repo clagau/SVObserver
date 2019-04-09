@@ -137,7 +137,6 @@ bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 
 	if( !Result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 

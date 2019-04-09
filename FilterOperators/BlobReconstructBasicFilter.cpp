@@ -74,7 +74,6 @@ bool BlobReconstructBasicFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr 
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
-			SetInvalid();
 			rRunStatus.SetInvalid();
 			return false;
 		}
@@ -92,7 +91,6 @@ bool BlobReconstructBasicFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr 
 	}
 
 	// Signal that something was wrong...
-	SetInvalid();
 	rRunStatus.SetInvalid();
 	return false;
 }

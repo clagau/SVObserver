@@ -372,7 +372,6 @@ bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 	if ( !l_bOk )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())

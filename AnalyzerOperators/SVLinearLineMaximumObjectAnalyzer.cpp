@@ -419,7 +419,6 @@ bool SVLinearMaximumObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus
 
 	if ( !Result )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())

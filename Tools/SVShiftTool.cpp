@@ -353,8 +353,6 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		{
 			rRunStatus.SetFailed();
 			rRunStatus.SetInvalid();
-
-			SetInvalid();
 		}
 	}
 	return Result;

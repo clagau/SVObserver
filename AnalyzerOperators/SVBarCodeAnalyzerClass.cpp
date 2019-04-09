@@ -370,7 +370,6 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		SetInvalid ();
 		rRunStatus.SetInvalid ();
 		return false;
 	}
@@ -418,7 +417,6 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 							}
 						}
 					}
-					SetInvalid ();
 					rRunStatus.SetInvalid ();
 					return false;
 				}
@@ -537,7 +535,6 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 									}
 								}
 							}
-							SetInvalid ();
 							rRunStatus.SetInvalid ();
 						}
 						return Result;
@@ -553,7 +550,6 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						break;
 					}
 				}
-				SetInvalid();
 				if( bWarnOnFailedRead )
 				{
 					rRunStatus.SetWarned();
@@ -575,7 +571,6 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 			}// end catch
 		}
 	}
-	SetInvalid ();
 	rRunStatus.SetInvalid ();
 	return false;
 }

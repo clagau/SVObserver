@@ -291,7 +291,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		if(nullptr == pInputImage)
 		{
-			SetInvalid ();            
+        
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
@@ -467,7 +467,6 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 	if( LastError )  
 	{
-		SetInvalid ();
 		rRunStatus.SetInvalid();
 		return false;
 	}

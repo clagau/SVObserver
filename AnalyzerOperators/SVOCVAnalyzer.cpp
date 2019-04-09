@@ -122,7 +122,6 @@ bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			pErrorMessages->push_back(Msg);
 		}
 	}
-	SetInvalid();
 	rRunStatus.SetInvalid();
 
 	return false;

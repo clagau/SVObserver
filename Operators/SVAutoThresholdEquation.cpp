@@ -94,7 +94,6 @@ bool SVAutoThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::M
 	
 	if( !retVal )
 	{
-		SetInvalid();
 		rRunStatus.SetInvalid();
 	}
 	else

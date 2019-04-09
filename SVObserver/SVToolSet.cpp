@@ -41,6 +41,7 @@ void SVToolSetClass::init()
 	// Identify our input type needs
 
 	// Register Embedded Objects
+	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Enabled, SVToolSetEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_MainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
 
@@ -79,6 +80,8 @@ void SVToolSetClass::init()
 	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	// Set Embedded defaults
+	m_isObjectValid.SetDefaultValue(BOOL(false), true);
+	m_isObjectValid.setSaveValueFlag(false);
 	m_Enabled.SetDefaultValue(BOOL(true));
 	m_Passed.SetDefaultValue(BOOL(false));			// Default for Passed is FALSE !!!
 	m_Passed.setSaveValueFlag(false);
@@ -171,6 +174,8 @@ bool SVToolSetClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruct
 	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	m_isObjectValid.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 	m_Enabled.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	m_Passed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_Failed.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
@@ -331,18 +336,6 @@ SvVol::SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
 	return &m_DrawFlag;
 }
 
-SvOp::SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
-{
-	SvOp::SVConditionalClass* pConditional(nullptr);
-
-	for (size_t j = 0; nullptr == pConditional && j < m_friendList.size(); j++)
-	{
-		pConditional = dynamic_cast<SvOp::SVConditionalClass*> (m_friendList[j].getObject());
-	}// end for
-
-	return pConditional;
-}
-
 HRESULT SVToolSetClass::getResetCounts(bool& rResetCounts)  const
 {
 	BOOL Value(false);
@@ -480,9 +473,6 @@ bool SVToolSetClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			rRunStatus.m_triggerRecord = std::move(toolRunStatus.m_triggerRecord);
 		}
 		
-		// Set ToolSet Valid
-		m_isObjectValid.SetValue(BOOL(true));
-
 		// set our state according to the runStatus
 		// rRunStatus.SetValid();
 
@@ -536,19 +526,23 @@ bool SVToolSetClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
 	}
 
+	if (bRetVal && isErrorMessageEmpty())
+	{
+		m_isObjectValid.SetValue(BOOL(true));
+	}
+	else
+	{
+		m_isObjectValid.SetValue(BOOL(false));
+	}
+
 	return bRetVal;
 }// end Run
 
-void SVToolSetClass::SetInvalid()
+bool SVToolSetClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
 {
-	__super::SetInvalid();
-
-	SvOp::SVConditionalClass* pConditional = GetToolSetConditional();
-
-	if (nullptr != pConditional)
-	{
-		pConditional->SetInvalid();
-	}
+	bool result = __super::resetAllObjects(pErrorMessages);
+	m_isObjectValid.SetValue(BOOL(result));
+	return result;
 }
 
 bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
