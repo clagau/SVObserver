@@ -63,9 +63,6 @@
     <ClCompile Include="SVPerspectiveTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRemoteInputTool.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVShiftTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

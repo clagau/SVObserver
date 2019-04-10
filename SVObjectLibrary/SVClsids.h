@@ -1146,8 +1146,7 @@ extern /*const*/ GUID SVBCStringFormatGuid;
 extern /*const*/ GUID SVBCThresholdTypeGuid;
 
 extern /*const*/ GUID SVRemoteInputToolGuid;
-extern /*const*/ GUID SVRemoteInputToolMatchedValueIdGuid;
-extern /*const*/ GUID SVRemoteInputToolMatchedValueGuid;
+
 
 extern /*const*/ GUID SVRemoteOutputObjectGUID;
 extern /*static*/GUID SVRemoteOutputGroupGUID;
@@ -1244,7 +1243,10 @@ extern /*const*/ GUID  LinkedLoops_LinkedGuid;
 extern /*const*/ GUID  LoopBreakGuid;
 extern /*const*/ GUID LoopBreak_LinkedGuid;
 
-
+namespace Svol
+{
+bool IsIgnorableTool(GUID toolGuid);
+}
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////

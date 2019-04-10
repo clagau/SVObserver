@@ -29,6 +29,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOl.h"
+#include "SVClsids.h"
 #pragma warning (pop)
 #pragma endregion Includes
 
@@ -168,7 +169,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 	else
 	{
 		hr = S_FALSE;
-		assert(false);
+		assert(Svol::IsIgnorableTool(ownerUniqueID));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		::OutputDebugString( _T("SVObjectBuilder::CreateObject - Creation Failed") );
 #endif

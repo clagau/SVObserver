@@ -189,7 +189,6 @@ SVSetupDialogManager::SVSetupDialogManager()
 		{SVPolarTransformationToolClassGuid, &SVSetupDialogManager::SVNotImplemented},
 		{SVRangeClassGuid, &SVSetupDialogManager::SVNotImplemented},
 		{SVRankingFilterClassGuid, &SVSetupDialogManager::SVNotImplemented},
-		{SVRemoteInputToolGuid, &SVSetupDialogManager::SVNotImplemented},
 		{SVRemoteOutputDataControllerGUID, &SVSetupDialogManager::SVNotImplemented},
 		{SVRemoteOutputGroupGUID, &SVSetupDialogManager::SVNotImplemented},
 		{SVRemoteOutputObjectGUID, &SVSetupDialogManager::SVNotImplemented},

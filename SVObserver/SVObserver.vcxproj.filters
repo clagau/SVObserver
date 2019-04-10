@@ -306,9 +306,6 @@
     <ClCompile Include="SVTADlgPolarTransformPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgRemoteInputToolPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgRotationPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

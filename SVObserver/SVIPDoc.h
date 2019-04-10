@@ -206,7 +206,6 @@ public:
 	afx_msg void OnChangeToolSetDrawFlag( UINT nId );
 	afx_msg void OnUpdateViewToolSetDrawSubMenus( CCmdUI* PCmdUI );
 	afx_msg void OnPublishedResultImagesPicker();
-	afx_msg void OnAddRemoteInputTool();
 	afx_msg void OnAddRingBufferTool();
 	afx_msg void OnAddTableTool();
 	afx_msg void OnAddTableAnalyzerTool();

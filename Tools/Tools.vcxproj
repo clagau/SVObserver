@@ -105,7 +105,6 @@
     <ClCompile Include="SVMathTool.cpp" />
     <ClCompile Include="SVPerspectiveTool.cpp" />
     <ClCompile Include="SVPolarTransformationTool.cpp" />
-    <ClCompile Include="SVRemoteInputTool.cpp" />
     <ClCompile Include="SVShiftTool.cpp" />
     <ClCompile Include="SVStatTool.cpp" />
     <ClCompile Include="SVTool.cpp" />

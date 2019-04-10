@@ -345,7 +345,6 @@ echo %time%
     <ClCompile Include="SVTADlgColorThresholdROI.cpp" />
     <ClCompile Include="SVTADlgColorThresholdSheet.cpp" />
     <ClCompile Include="SVTADlgPolarTransformPage.cpp" />
-    <ClCompile Include="SVTADlgRemoteInputToolPage.cpp" />
     <ClCompile Include="SVTADlgRotationPage.cpp" />
     <ClCompile Include="SVTADlgStatisticsPage.cpp" />
     <ClCompile Include="SVTADlgThresholdPage.cpp" />

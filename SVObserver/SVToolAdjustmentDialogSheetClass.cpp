@@ -19,7 +19,6 @@
 #include "SVOGui/SVPerspectiveWarpPage.h"
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVTADlgPolarTransformPage.h"
-#include "SVTADlgRemoteInputToolPage.h"
 #include "SVTADlgRotationPage.h"
 #include "SVTADlgStatisticsPage.h"
 #include "SVTADlgThresholdPage.h"
@@ -335,10 +334,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVToolAdjustmentDialogGeneralPageClass(m_InspectionID, m_TaskObjectID));
 			break;
 
-		case SvPb::SVRemoteInputToolObjectType:
-			AddPage(new SVTADlgRemoteInputToolPage(m_InspectionID, m_TaskObjectID, this));
-			AddPage(pConditionalDlg);
-			break;
+
 
 		case SvPb::SVRingBufferToolObjectType:
 			// When the Object sub type is not set, then both mono and color images are placed into the selection list
