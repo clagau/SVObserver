@@ -136,7 +136,6 @@
     <ClInclude Include="SVMathTool.h" />
     <ClInclude Include="SVPerspectiveTool.h" />
     <ClInclude Include="SVPolarTransformationTool.h" />
-    <ClInclude Include="SVRemoteInputTool.h" />
     <ClInclude Include="SVShiftTool.h" />
     <ClInclude Include="SVStatTool.h" />
     <ClInclude Include="SVTool.h" />

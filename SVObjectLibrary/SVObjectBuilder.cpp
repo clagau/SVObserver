@@ -169,7 +169,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 	else
 	{
 		hr = S_FALSE;
-		assert(Svol::IsIgnorableTool(ownerUniqueID));
+		assert(Svol::IsIgnorableTool(classID));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		::OutputDebugString( _T("SVObjectBuilder::CreateObject - Creation Failed") );
 #endif

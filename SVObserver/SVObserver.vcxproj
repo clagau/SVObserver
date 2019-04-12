@@ -541,7 +541,6 @@ echo %time%
     <ClInclude Include="SVTADlgColorThresholdROI.h" />
     <ClInclude Include="SVTADlgColorThresholdSheet.h" />
     <ClInclude Include="SVTADlgPolarTransformPage.h" />
-    <ClInclude Include="SVTADlgRemoteInputToolPage.h" />
     <ClInclude Include="SVTADlgRotationpage.h" />
     <ClInclude Include="SVTADlgStatisticsPage.h" />
     <ClInclude Include="SVTADlgThresholdPage.h" />

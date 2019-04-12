@@ -838,9 +838,6 @@
     <ClInclude Include="SVTADlgPolarTransformPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgRemoteInputToolPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgRotationpage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

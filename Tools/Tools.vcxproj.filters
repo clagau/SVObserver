@@ -149,9 +149,6 @@
     <ClInclude Include="SVPerspectiveTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVRemoteInputTool.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVShiftTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
