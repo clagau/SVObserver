@@ -1995,7 +1995,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 	if (S_OK == hres)
 	{
 		void* pHostBuffer = nullptr;
-		std::vector<char> bufferVector;	//this vector is for the data-store for milBuffer with no BitmapInfo. It must be valid until pHostBuffer is used.
+		std::vector<char> bufferVector;	//this vector is for the data-store for milBuffer with no BitmapInfo. It must be valid as long as pHostBuffer is used.
 
 		if (isMilInfo)
 		{
@@ -2004,11 +2004,11 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 		else
 		{
 			MbufGet(milId, bufferVector);
+			assert(bufferVector.size() == fabs(rBitMapInfo.GetHeight()*rBitMapInfo.GetWidth()*(rBitMapInfo.GetBitCount()/8)));
 			if (0 < bufferVector.size())
 			{
 				pHostBuffer = bufferVector.data();
 			}
-			assert(bufferVector.size() == rBitMapInfo.GetBitmapImageSizeInBytes());
 		}
 
 		if (nullptr != pHostBuffer)
@@ -2074,7 +2074,24 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 			}
 			else
 			{
-				::memcpy(&(rTo[bitmapPos + l_InfoSize]), pHostBuffer, l_ImageSize);
+				if (isMilInfo || rBitMapInfo.GetBitmapImageStrideInBytes() == l_pBitmapInfo->bmiHeader.biWidth)
+				{
+					::memcpy(&(rTo[bitmapPos + l_InfoSize]), pHostBuffer, l_ImageSize);
+				}
+				else
+				{
+					unsigned char* l_pFrom = reinterpret_cast<unsigned char*>(pHostBuffer);
+					unsigned char* l_pTo = reinterpret_cast<unsigned char*>(&(rTo[bitmapPos + l_InfoSize]));
+					size_t toStride = rBitMapInfo.GetBitmapImageStrideInBytes();
+					size_t fromStride = l_pBitmapInfo->bmiHeader.biWidth;
+					for (size_t i = 0; i < abs(l_pBitmapInfo->bmiHeader.biHeight); ++i)
+					{
+						unsigned char* l_pToRow = l_pTo + (i * toStride);
+						unsigned char* l_pFromRow = l_pFrom + (i * fromStride);
+
+						::memcpy(l_pToRow, l_pFromRow, fromStride);
+					}
+				}
 			}
 		}
 		else
