@@ -7,6 +7,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <thread.h>
 #include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
@@ -147,10 +148,11 @@ void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smD
 	*m_pBasicData = basicData;
 	m_pSmData = reinterpret_cast<SMData*>(pTemp + sizeof(BasicData));
 	*m_pSmData = smData;
+	assert(nullptr != pTemp && nullptr != m_pSmData && nullptr != m_pBasicData);
 	m_pImageListInSM = pTemp + sizeof(BasicData) + sizeof(SMData);
 	m_pDataDefListInSM = pTemp + sizeof(BasicData) + sizeof(SMData) + smData.m_maxImageListSize;
 	m_pTriggerRecords = pTemp + sizeof(BasicData) + sizeof(SMData) + smData.m_maxImageListSize + smData.m_maxDataDefListSize;
-	int minTriggerRecordBufferSize = std::min(oldTriggerRecodBufferSize, m_pSmData->m_maxTriggerRecordBufferSize);
+	int minTriggerRecordBufferSize = std::min(oldTriggerRecodBufferSize, static_cast<int>(m_pSmData->m_maxTriggerRecordBufferSize));
 	if (0 < minTriggerRecordBufferSize && nullptr != pTriggerRecordOld && nullptr != m_pTriggerRecords)
 	{
 		memcpy(m_pTriggerRecords, pTriggerRecordOld, minTriggerRecordBufferSize);
@@ -222,8 +224,6 @@ DataControllerWriter::~DataControllerWriter()
 
 void DataControllerWriter::clearAll()
 {
-	m_pCommonData->m_resetId = 0;
-	while (0 < m_pCommonData->m_resetLockCounter) {};
 	setInspectionList({});
 
 	m_nextTRID = 0;
@@ -260,10 +260,9 @@ bool DataControllerWriter::setInspections(const SvPb::InspectionList& rInspectio
 
 	if (rInspectionList.list_size() != m_inspectionList.list_size())
 	{
-		m_pCommonData->m_resetId = 0;
+		prepareReset();
 		isReset = true;
-		while (0 < m_pCommonData->m_resetLockCounter) {};
-
+		
 		for (auto pData : m_dataVector)
 		{
 			if (nullptr != pData)
@@ -281,8 +280,7 @@ bool DataControllerWriter::setInspections(const SvPb::InspectionList& rInspectio
 			{
 				if (!isReset)
 				{
-					m_pCommonData->m_resetId = 0;
-					while (0 < m_pCommonData->m_resetLockCounter) {};
+					prepareReset();
 					isReset = true;
 				}
 				if (nullptr != m_dataVector[i])
@@ -366,16 +364,16 @@ void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList,
 	m_dataVector[inspectionPos]->setDataDefList(std::move(dataDefList));
 }
 
-ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectionPos, int trId)
+ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
-		if (0 <= trId)
+		if (validFunc)
 		{
 			for (int i = 0; i < m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber; i++)
 			{
 				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
-				if (rCurrentTR.m_trId == trId)
+				if (validFunc(rCurrentTR))
 				{
 					long refTemp = rCurrentTR.m_referenceCount;
 					while (0 <= refTemp)
@@ -430,8 +428,7 @@ ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int i
 
 std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList)
 {
-	m_pCommonData->m_resetId = 0;
-	while (0 < m_pCommonData->m_resetLockCounter) {}; //wait if any other method have left the access of this structure
+	prepareReset();
 	for (int i = 0; i < m_dataVector.size(); i++)
 	{
 		auto pIPData = m_dataVector[i];
@@ -490,53 +487,9 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 		m_dataVector[inspectionId]->setInitFlag(true);
 	}
 
-	m_pCommonData->m_resetId = std::max(1l, m_lastResetId + 1);
-	m_lastResetId = m_pCommonData->m_resetId;
-
-	SetEvent(m_hResetEvent);
+	finishedReset();
 
 	return changeVect;
-}
-
-TRControllerBaseDataPerIP* DataControllerWriter::getTRControllerData(int inspectionId)
-{
-	if (0 <= inspectionId && m_dataVector.size() > inspectionId)
-	{
-		return m_dataVector[inspectionId].get();
-	}
-	return nullptr;
-}
-
-const TRControllerBaseDataPerIP* DataControllerWriter::getTRControllerData(int inspectionId) const
-{
-	if (0 <= inspectionId && m_dataVector.size() > inspectionId)
-	{
-		return m_dataVector[inspectionId].get();
-	}
-	return nullptr;
-}
-
-long* DataControllerWriter::getImageRefCountPtr(int pos)
-{
-	if (0 <= pos &&  m_pCommonData->m_imageRefCountSize > pos)
-	{
-		return &m_imageRefCountArray[pos];
-	}
-	return nullptr;
-}
-
-void DataControllerWriter::ResetInspectionData(TRControllerWriterDataPerIP& rData)
-{
-	rData.setLastFinishedTRID(-1);
-	rData.setLastStartedTRID(-1);
-	if (rData.getBasicData().m_bInit)
-	{
-		getImageBufferControllerInstance().reduceRequiredBuffers(rData.getImageList(), rData.getBasicData().m_TriggerRecordNumber);
-		rData.createTriggerRecordsBuffer(0, 0);
-		rData.setImageList({});
-	}
-	rData.setInitFlag(false);
-	rData.setNextPosForFreeCheck(0);
 }
 
 void DataControllerWriter::setInspectionList(const SvPb::InspectionList &rInspectionList)
@@ -580,6 +533,100 @@ void DataControllerWriter::setInspectionList(const SvPb::InspectionList &rInspec
 			m_dataVector.pop_back();
 		}
 	}
+}
+
+void DataControllerWriter::prepareReset()
+{
+	::ResetEvent(m_hReadyEvent);
+	InterlockedExchange(&m_pCommonData->m_resetId, 0);
+	::SetEvent(m_hResetEvent);
+	if (m_reloadCallback)
+	{
+		m_reloadCallback();
+	}
+
+	auto start = std::chrono::system_clock::now();
+	while (0 < m_pCommonData->m_resetLockCounter) //wait if any other method have left the access of this structure
+	{
+		std::chrono::duration<double> timeInS = std::chrono::system_clock::now() - start;
+		//if a client die before decrease the resetLockCounter, a deadlock is possible
+		//to solve this counter will be reseted if after a time of wait this will not happened.
+		constexpr int maxWaitTime = 2;
+		if (timeInS.count() > maxWaitTime)
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), maxWaitTime));
+			msgList.push_back(SvUl::Format(_T("%d"), m_pCommonData->m_resetLockCounter));
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CounterTimeOut, SvStl::SourceFileParams(StdMessageParams));
+
+			InterlockedExchange(&m_pCommonData->m_resetLockCounter, 0);
+		}
+		std::this_thread::sleep_for(std::chrono::duration<int, std::nano> (1));
+	}; 
+}
+
+void DataControllerWriter::finishedReset()
+{
+	for (int i = 0; i < m_dataVector.size(); i++)
+	{
+		if (!isIPInit(i))
+		{
+			//not all init, do not set resetId to valid value
+			return;
+		}
+	}
+		
+	InterlockedExchange(&m_pCommonData->m_resetId, std::max(1l, m_lastResetId + 1));
+	m_lastResetId = m_pCommonData->m_resetId;
+	if (m_readyCallback)
+	{
+		m_readyCallback();
+	}
+
+	::ResetEvent(m_hResetEvent);
+	::SetEvent(m_hReadyEvent);
+}
+
+TRControllerBaseDataPerIP* DataControllerWriter::getTRControllerData(int inspectionId)
+{
+	if (0 <= inspectionId && m_dataVector.size() > inspectionId)
+	{
+		return m_dataVector[inspectionId].get();
+	}
+	return nullptr;
+}
+
+const TRControllerBaseDataPerIP* DataControllerWriter::getTRControllerData(int inspectionId) const
+{
+	if (0 <= inspectionId && m_dataVector.size() > inspectionId)
+	{
+		return m_dataVector[inspectionId].get();
+	}
+	return nullptr;
+}
+
+long* DataControllerWriter::getImageRefCountPtr(int pos)
+{
+	if (0 <= pos &&  m_pCommonData->m_imageRefCountSize > pos)
+	{
+		return &m_imageRefCountArray[pos];
+	}
+	return nullptr;
+}
+
+void DataControllerWriter::ResetInspectionData(TRControllerWriterDataPerIP& rData)
+{
+	rData.setLastFinishedTRID(-1);
+	rData.setLastStartedTRID(-1);
+	if (rData.getBasicData().m_bInit)
+	{
+		getImageBufferControllerInstance().reduceRequiredBuffers(rData.getImageList(), rData.getBasicData().m_TriggerRecordNumber);
+		rData.createTriggerRecordsBuffer(0, 0);
+		rData.setImageList({});
+	}
+	rData.setInitFlag(false);
+	rData.setNextPosForFreeCheck(0);
 }
 
 void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSmName, int smSize)

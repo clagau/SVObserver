@@ -146,9 +146,9 @@ ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const
 		if (InsertAllBitmapNow)
 		{
 			SvPb::GetImageFromIdRequest Request;
-			Request.mutable_id()->set_imagestore(rResp.images(i).imagestore());
+			Request.mutable_id()->set_inspectionid(rResp.images(i).inspectionid());
 			Request.mutable_id()->set_imageindex(rResp.images(i).imageindex());
-			Request.mutable_id()->set_slotindex(rResp.images(i).slotindex());
+			Request.mutable_id()->set_trid(rResp.images(i).trid());
 			SvPb::GetImageFromIdResponse Response = SvWsl::runRequest(*rpSvrcClientService, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
 
 			pProdItems->AddImage(GetImageObjectPtr(rResp.trigger(), rResp.imagenames(i), Response.imagedata().rgbdata()));

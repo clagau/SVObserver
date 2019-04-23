@@ -411,11 +411,6 @@ namespace SvSml
 		return static_cast<int>(rRejects.size());
 	}
 
-	int SMRingBuffer::GetTotalSlotCount() const
-	{
-		return m_TotalSlotCount;
-	}
-
 	int SMRingBuffer::GetRejectSlotCount() const
 	{
 		return m_RejectSlotCount;

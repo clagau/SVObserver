@@ -62,6 +62,8 @@ public:
 	virtual void writeValueData(std::vector<_variant_t>&& rValueObjectList) override;
 #pragma endregion ITriggerRecordRW Methods
 
+	void blockUpdateLastTrId() { m_blockUpdateLastId = true; };
+
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -78,6 +80,7 @@ private:
 	const int m_dataListSize;
 	const long m_ResetId{0L};
 	int m_inspectionPos{-1};
+	bool m_blockUpdateLastId = false;
 #pragma endregion Member variables
 };
 

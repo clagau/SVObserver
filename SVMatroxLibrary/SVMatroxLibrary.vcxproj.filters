@@ -114,9 +114,6 @@
     <ClCompile Include="SVMatroxLicenseInterface.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="MatroxBuffer2D.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -252,9 +249,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MatroxImageProps.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MatroxBuffer2D.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxHelper.h">

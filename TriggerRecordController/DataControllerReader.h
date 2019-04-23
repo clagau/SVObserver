@@ -69,16 +69,15 @@ public:
 public:
 	virtual long getResetId() const override;
 
-	virtual long* getResetLockCounterRef() override;
+	virtual volatile long* getResetLockCounterRef() override;
 
 	virtual const SvPb::InspectionList& getInspections() const override;
 
 	virtual const SvPb::ImageStructList& getImageStructList() const override;
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
+	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 
 	virtual bool isWritable() const override { return false; };
-	virtual bool isInit() const override { return m_isInit; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

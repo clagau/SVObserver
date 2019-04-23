@@ -73,6 +73,7 @@ namespace SvTrcT
 	CTriggerRecordControllerTestDlg::~CTriggerRecordControllerTestDlg()
 	{
 		m_recordController.unregisterResetCallback(m_resetCallbackId);
+		m_recordController.unregisterReadyCallback(m_readyCallbackId);
 		m_recordController.unregisterNewTrCallback(m_newTrIdCallbackId);
 	}
 
@@ -157,6 +158,13 @@ namespace SvTrcT
 			insp->set_numberofrecords(m_trNumbers);
 			SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspList);
 		}
+		else
+		{
+			m_resetCallbackId = m_recordController.registerResetCallback(std::bind(&CTriggerRecordControllerTestDlg::OnResetUpdate, this));
+			m_readyCallbackId = m_recordController.registerReadyCallback(std::bind(&CTriggerRecordControllerTestDlg::OnReadyUpdate, this));
+			m_newTrIdCallbackId = m_recordController.registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1, std::placeholders::_2));
+			m_isTRCValid = m_recordController.isValid();
+		}
 		resetController();
 		updateControls();
 		
@@ -169,8 +177,6 @@ namespace SvTrcT
 		else
 		{
 			m_toolDescription.Format("Last reset update: Start");
-			m_resetCallbackId = m_recordController.registerResetCallback(std::bind(&CTriggerRecordControllerTestDlg::OnResetUpdate, this));
-			m_newTrIdCallbackId = m_recordController.registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1, std::placeholders::_2));
 			UpdateData(false);
 		}
 
@@ -443,17 +449,28 @@ namespace SvTrcT
 		}
 		UpdateData(false);
 	}
-
+	enum callbackEnum
+	{
+		reset,
+		newTrcId
+	};
 	void CTriggerRecordControllerTestDlg::OnResetUpdate()
 	{
-		PostMessage(ID_GET_CALLBACK, 0, (LPARAM)0);
+		m_isTRCValid = false;
+		PostMessage(ID_GET_CALLBACK, reset, (LPARAM)0);
+	}
+
+	void CTriggerRecordControllerTestDlg::OnReadyUpdate()
+	{
+		m_isTRCValid = true;
+		PostMessage(ID_GET_CALLBACK, reset, (LPARAM)0);
 	}
 
 	void CTriggerRecordControllerTestDlg::OnNewTrId(int ipPos, int newTrId)
 	{
 		if (0 == ipPos)
 		{
-			PostMessage(ID_GET_CALLBACK, 1, (LPARAM)newTrId);
+			PostMessage(ID_GET_CALLBACK, newTrcId, (LPARAM)newTrId);
 		}
 	}
 
@@ -461,10 +478,10 @@ namespace SvTrcT
 	{
 		switch (wParam)
 		{
-			case 0:
+			case reset:
 				OnResetTRCData();
 				break;
-			case 1:
+			case newTrcId:
 				int newId = static_cast<int>(lParam);
 				m_lastID.Format("%d", newId);
 				UpdateData(false);
@@ -562,7 +579,7 @@ namespace SvTrcT
 					m_ImageCombo.AddString(text);
 				}
 			}
-			else
+			else if (m_isTRCValid)
 			{
 				int i = 0;
 				auto imageDefList = m_recordController.getImageDefList(0);
@@ -589,7 +606,7 @@ namespace SvTrcT
 		try
 		{
 			m_ValueCombo.ResetContent();
-			if (m_isReader)
+			if (m_isReader && m_isTRCValid)
 			{
 				int i = 0;
 				auto dataDefList = m_recordController.getDataDefList(0);
@@ -647,6 +664,7 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::OnResetTRCData()
 	{
+		m_isTRCValid = m_recordController.isValid();
 		updateImageCombo();
 		updateValueCombo();
 		std::time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -654,7 +672,8 @@ namespace SvTrcT
 		localtime_s(&locTime, &current_time);
 		char timeBuf[100];
 		asctime_s(timeBuf, 100, &locTime);
-		m_toolDescription.Format("Last reset update: %s", timeBuf);
+		m_toolDescription.Format("Last reset (%s): %s", m_isTRCValid?"valid":"invalid", timeBuf);
+		UpdateData(false);
 	}
 
 } // namespace SvTrcT

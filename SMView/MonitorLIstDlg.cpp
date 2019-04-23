@@ -135,11 +135,9 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 	ME_Dlg.m_Name = pMe->name.c_str();
 	ME_Dlg.m_Height = (DWORD)pMe->data.sizeY;
 	ME_Dlg.m_InspectionStoreId = pMe->data.InspectionStoreId;
-	ME_Dlg.m_ItemId = pMe->data.ItemId;
 	ME_Dlg.m_Pitch = (DWORD) pMe->data.Pitch;
 	ME_Dlg.m_Type = pMe->data.ObjectType;
 	ME_Dlg.m_Size = (DWORD) pMe->data.ByteSize;
-	ME_Dlg.m_SToreOffset = (DWORD) pMe->data.Store_Offset;
 	ME_Dlg.m_Width = (DWORD) pMe->data.sizeX;
 
 	ME_Dlg.DoModal();

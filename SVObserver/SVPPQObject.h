@@ -207,19 +207,11 @@ public:
 	///Get the SlotManager
 	SvSml::RingBufferPointer GetSlotmanager();
 
-	//************************************
-	/// Insert objects of the children which fit to the attribute filter.
-	/// \param objectList [in, out] The list where the object will be added.
-	/// \param AttributesAllowedFilter [in] The filter for the attributes.
-	//************************************
-	void fillChildObjectList(SVObjectPtrDeque& objectList, UINT AttributesAllowedFilter = 0) const;
-
-
 	virtual DWORD GetObjectColor() const override;
 
 	long getPpqPosition(long triggerCount) const {return m_ppPPQPositions.GetIndexByTriggerCount(triggerCount);}
 
-	
+	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
 
 protected:
 	struct SVTriggerQueueElement
@@ -263,6 +255,7 @@ protected:
 
 	typedef std::map<SVGUID, SVNameObjectMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
 	bool m_bActiveMonitorList;
+	long m_rejectCount = 0;
 	SvSml::RingBufferPointer m_SlotManager;
 	
 
@@ -452,6 +445,8 @@ private:
 	bool EvaluateConditionalOutput() const;
 	void init();
 
+	void OnResetTRC();
+
 #ifdef EnableTracking
 	struct SVPPQTrackingElement
 	{
@@ -502,6 +497,8 @@ private:
 
 	bool SetupProductInfoStructs();
 
+	bool setInspections2TRC();
+
 	SvVol::BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_oOutputMode;
 	long m_lOutputDelay;
@@ -521,6 +518,8 @@ private:
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
 
 	SVObjectPtrVector m_childObjects;
+	boost::circular_buffer<std::vector<SvTrc::ITriggerRecordRPtr>> m_rejectTRStore;
+	int m_TRCResetCallbackHandle = -1;
 };
 
 typedef std::vector<SVPPQObject*> SVPPQObjectPtrVector;

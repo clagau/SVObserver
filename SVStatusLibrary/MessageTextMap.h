@@ -103,9 +103,6 @@ namespace SvStl
 		{Tid_IsLessThan, _T("ERROR:\n%s\nis less than\n%s")},
 		{Tid_IsInvalidRef, _T("ERROR:\n%s: %s\nis an invalid reference.")},
 
-		{Tid_ErrorInitMonitorListInSharedMemory, _T("InitMonitorListInSharedMemory - Not enough memory")},
-		{Tid_ErrorWriteMonitorListNoSharedMemory, _T("WriteMonitorListToSharedMemory - No Shared memory")},
-		{Tid_ErrorReleaseProductNoReaderLock, _T("ReleaseProduct - No Reader Lock found")},
 		{Tid_RingBuffer_Depth_Invalid_Value, _T( "RingBuffer Depth has to be between %s and %s, current %s" )},
 		{Tid_Error_NoFontFileSpec, _T("No Font File Specified")},
 		{Tid_Error_FontFileNotExist, _T( "Font File Does Not Exist: %s" )},
@@ -564,8 +561,11 @@ namespace SvStl
 		{Tid_TRC_Error_SMLoad, _T("Loading of the sharedMemory %s failed.")},
 		{Tid_TRC_Error_ImageProps, _T("Invalid image properties.")},
 		{Tid_TRC_Error_EventCreation, _T("Creation of the TRC-Event failed, Error %s")},
+		{Tid_TRC_Error_GetValueWrongPos, _T("getDataValue failed, because the position %s is invalid")},
+		{Tid_TRC_Error_ValueNotReady, _T("getDataValue failed, because data not ready for reading")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
+		{Tid_TRC_Error_CounterTimeOut, _T("ResetCounter is not go back to zero in %s seconds. Maybe a client is die without reset the counter. The current value is %s.")},
 
 		{Tid_NAK_Error_MissingEndFrame, _T("NAK! Acquisition End Frame missing for device %s [Time %s ms]")},
 
@@ -584,6 +584,7 @@ namespace SvStl
 		{Tid_InvalidMatroxType, _T("Invalid Matrox Type")},
 		{Tid_InvalidMatroxAttribute, _T("Invalid Matrox Attribute")},
 		
-		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")}
+		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")},
+		{Tid_ProtBuf_ConvertToGUID_WrongSize, _T("Convert of ProtoBuf-Guid to Guid failed because size of the string is wrong.") },
 };
 } //namespace SvStl

@@ -45,6 +45,8 @@
 #include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
+//#define TRACE_TRC
+
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
 
 bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
@@ -216,8 +218,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 void SVInspectionProcess::BuildWatchlist()
 {
 	m_WatchListDatas.clear();
-	m_WatchListImages.clear();
-	m_StoreIndex = SvSml::SharedMemWriter::Instance().GetInspectionStoreId(GetName());
+
 	if (m_StoreIndex < 0 || GetPPQ() == 0)
 	{
 		return;
@@ -229,6 +230,8 @@ void SVInspectionProcess::BuildWatchlist()
 	{
 		return;
 	}
+
+	DWORD RejectConditionFlag = SvSml::ListFlags[SvSml::ListType::rejectCondition];
 	for (auto& it : pMonitorlist->m_EntriesMap)
 	{
 		if (it.second->data.InspectionStoreId == m_StoreIndex)
@@ -236,113 +239,53 @@ void SVInspectionProcess::BuildWatchlist()
 			SVObjectReference ObjectRef;
 			if (S_OK == GetInspectionObject(it.first.c_str(), ObjectRef))
 			{
-				if (it.second->data.ObjectType == SvPb::SVImageObjectType)
+				if (it.second->data.ObjectType != SvPb::SVImageObjectType && (it.second->data.m_MonitorListFlag & RejectConditionFlag))
 				{
-					m_WatchListImages.push_back(WatchlistelementPtr(new WatchListElement(ObjectRef, it.second)));
-				}
-				else
-				{
-					m_WatchListDatas.push_back(WatchlistelementPtr(new WatchListElement(ObjectRef, it.second)));
+					if (false == it.second->data.wholeArray)
+					{
+						m_WatchListDatas.push_back(WatchlistelementPtr(new WatchListElement(ObjectRef, it.second)));
+					}
+					else
+					{
+						SV_LOG_GLOBAL(error) << "whole array not implemented";
+					}
 				}
 			}
 		}
 	}
 }
 
-bool   SVInspectionProcess::CopyToWatchlist(SvTrc::ITriggerRecordRPtr pTriggerRecord, long slotindex)
+bool SVInspectionProcess::isReject()
 {
-	bool isReject(false);
-	if (m_StoreIndex < 0 || slotindex < 0)
-	{
-		assert(m_StoreIndex >= 0);
-		return false;
-	}
+	bool result(false);
 	for (auto & element : m_WatchListDatas)
 	{
-		const SvOi::IValueObject* pValueObject = element->ObjRef.getValueObject();
-		if (nullptr != pValueObject && element->MonEntryPtr.get())
+		if (element->MonEntryPtr.get())
 		{
-			int offset = element->MonEntryPtr->data.Store_Offset;
-			int Bytesyze = (int)element->MonEntryPtr->data.ByteSize;
-			if (false == element->MonEntryPtr->data.wholeArray)
+			int arrayindex(-1);
+			if (TRUE == element->MonEntryPtr->data.isArray)
 			{
-				int arrayindex(-1);
-				if (TRUE == element->MonEntryPtr->data.isArray)
-				{
-					arrayindex = element->MonEntryPtr->data.arrayIndex;
-				}
-				BYTE* pBuffer = SvSml::SharedMemWriter::Instance().GetDataBufferPtr(slotindex, m_StoreIndex, offset);
-				if (nullptr != pBuffer)
-				{
-					pValueObject->CopyToMemoryBlock(pBuffer, Bytesyze, arrayindex);
-				}
-				DWORD   RejectConditionFlag = SvSml::ListFlags[SvSml::ListType::rejectCondition];
-				if (element->MonEntryPtr->data.m_MonitorListFlag & RejectConditionFlag)
-				{
-					double val(0);
-					SvOi::IObjectClass* PObj = dynamic_cast<SvOi::IObjectClass*>(element->ObjRef.getValueObject());
-					if (PObj)
-					{
-						PObj->getValue(val, arrayindex);
-					}
-					if (val != 0)
-					{
-						isReject = true;
-					}
-				}
+				arrayindex = element->MonEntryPtr->data.arrayIndex;
 			}
-			else
+
+			SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(element->ObjRef.getValueObject());
+			if (pObj)
 			{
-				SV_LOG_GLOBAL(error) << "whole array not iplemented";
+				double val(0);
+				pObj->getValue(val, arrayindex);
+				if (val != 0)
+				{
+					result = true;
+				}
 			}
 		}
 	}
-
-	for (auto & element : m_WatchListImages)
-	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (element->ObjRef.getObject());
-
-		if (nullptr == pImage || nullptr == pImage->GetInspection() || false == element->MonEntryPtr.get())
-		{
-			SV_LOG_GLOBAL(error) << "invalid image";
-			assert(false);
-
-		}
-		else
-		{
-			int imageIndex = element->MonEntryPtr->data.ItemId;
-			SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
-			if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
-			{
-				HRESULT hr(S_FALSE);
-				SVMatroxBuffer& rToBuffer
-					= SvSml::SharedMemWriter::Instance().GetImageBuffer(slotindex, m_StoreIndex, imageIndex);
-				//Write Image to buffer
-				if (rToBuffer.empty() == false)
-				{
-					hr = SVMatroxBufferInterface::CopyBuffer(rToBuffer, pImageBuffer->getHandle()->GetBuffer());
-				}
-				else
-				{
-					SV_LOG_GLOBAL(error) << "invalid buffer";
-				}
-				if (hr != S_OK)
-				{
-					SV_LOG_GLOBAL(error) << "CopyBuffer returns" << hr;
-				}
-			}
-			else
-			{
-				SV_LOG_GLOBAL(error) << "invalid pImageBuffer";
-			}
-		}
-	}
-	return isReject;
+	return result;
 }
 
 
 
-HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
+HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& p_rProduct)
 {
 	HRESULT l_Status = S_OK;
 
@@ -352,22 +295,20 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 		m_InspectionTracking.EventStart(_T("Process Notify With Last Inspected"));
 #endif
 		::InterlockedExchange(&m_NotifyWithLastInspected, 0);
-		SVProductInfoStruct LastProduct = LastProductGet();
 
-
-		if (GetPPQ()->HasActiveMonitorList() && LastProduct.bTriggered)
+		if (GetPPQ()->HasActiveMonitorList() && p_rProduct.bTriggered)
 		{
 			try
 			{
-				long slotindex = LastProduct.m_lastInspectedSlot;
-				if (LastProduct.ProcessCount() > 0 && slotindex >= 0 && m_StoreIndex >= 0)
+				long slotindex = p_rProduct.m_monitorListSMSlot;
+				if (p_rProduct.ProcessCount() > 0 && slotindex >= 0)
 				{
-
-					bool isReject = CopyToWatchlist(LastProduct.m_svInspectionInfos[GetUniqueObjectID()].m_triggerRecordComplete, slotindex);
-					if (isReject)
+					bool rejectFlag = isReject();
+					if (rejectFlag)
 					{
 						GetSlotmanager()->SetToReject(slotindex);
 					}
+					p_rProduct.m_svInspectionInfos[GetUniqueObjectID()].m_bReject = rejectFlag;
 				}
 				else
 				{
@@ -395,7 +336,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15024);
 			}
 		}
-		std::pair<SVInspectionInfoStruct, long> data {LastProduct.m_svInspectionInfos[GetUniqueObjectID()], LastProduct.ProcessCount()};
+		std::pair<SVInspectionInfoStruct, long> data {p_rProduct.m_svInspectionInfos[GetUniqueObjectID()], p_rProduct.ProcessCount()};
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), data);
 
 		p_rProcessed = true;
@@ -471,7 +412,6 @@ SVInspectionProcess::~SVInspectionProcess()
 {
 	DestroyInspection();
 	m_PPQId.clear();
-	m_WatchListImages.clear();
 	m_WatchListDatas.clear();
 	m_SlotManager.reset();
 }
@@ -559,7 +499,7 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 	SVProductInfoStruct l_Product;
 
 	ProcessInspection(l_Processed, l_Product);
-	ProcessNotifyWithLastInspected(l_Processed);
+	ProcessNotifyWithLastInspected(l_Processed, l_Product);
 
 	ProcessCommandQueue(l_Processed);
 
@@ -683,6 +623,17 @@ bool SVInspectionProcess::CanGoOnline()
 	m_svReset.RemoveState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	ClearResetCounts();
+
+	m_StoreIndex = SvSml::SharedMemWriter::Instance().GetInspectionStoreId(GetName());
+
+	if (0 <= m_StoreIndex)
+	{
+		int pos = SvTrc::getInspectionPos(GetUniqueObjectID());
+		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, pos);
+		const SvPb::DataDefinitionList& rDataDefList = SvTrc::getTriggerRecordControllerRInstance().getDataDefList(pos);
+		const SvPb::ImageList& rImageDefList = SvTrc::getTriggerRecordControllerRInstance().getImageDefList(pos);
+		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, pos, rDataDefList, rImageDefList);
+	}
 
 	return l_bOk;
 }// end CanGoOnline
@@ -2732,9 +2683,22 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStat
 {
 	if(nullptr != rRunStatus.m_triggerRecord)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord; %d\n"), rRunStatus.m_triggerRecord->getId());
+		::OutputDebugString(DebugString.c_str());
+#endif
 		std::vector<_variant_t> valueList{copyValueObjectList()};
 		rRunStatus.m_triggerRecord->writeValueData(std::move(valueList));
 		return S_OK;
+	}
+	else
+	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord failed, no TR\n"), rRunStatus.m_triggerRecord->getId());
+		::OutputDebugString(DebugString.c_str());
+#endif
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return E_FAIL;
 }
@@ -2769,6 +2733,10 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 	{
 		rRunStatus.SetInvalid();
 		rRunStatus.SetInspectionStarted(false);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = _T("Inspection not valid\n");
+		::OutputDebugString(DebugString.c_str());
+#endif
 	}
 
 	return retVal;
@@ -2827,7 +2795,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 		}
 		else
 		{
-			rIPInfo.setNextTriggerRecord();
+			rIPInfo.setNextTriggerRecord(SvTrc::TriggerData{triggerCount});
 			assert(nullptr != rIPInfo.m_triggerRecordWrite);
 			if (nullptr != rIPInfo.m_triggerRecordWrite)
 			{
@@ -3812,6 +3780,11 @@ bool SVInspectionProcess::shouldPauseRegressionTestByCondition()
 	return false;
 }
 
+void SVInspectionProcess::setTriggerRecordNumbers(long newSize)
+{
+	SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(SvTrc::getInspectionPos(GetUniqueObjectID()), newSize);
+}
+
 void SVInspectionProcess::SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager)
 {
 	if (m_SlotManager.get())
@@ -3832,10 +3805,8 @@ void SVInspectionProcess::buildValueObjectDefList() const
 		if (nullptr != pValueObject && nullptr != pObject && 0 != pObject->ObjectAttributesAllowed())
 		{
 			auto* pValueObjectDef = pList->Add();
-			std::string uniqueIdBytes;
 			const SvOi::IObjectClass* const pObject = dynamic_cast<const SvOi::IObjectClass* const> (pValueObject);
-			SvPb::SetGuidInProtoBytes(&uniqueIdBytes, pObject->GetUniqueObjectID().ToGUID());
-			pValueObjectDef->set_guidid(uniqueIdBytes.c_str());
+			SvPb::SetGuidInProtoBytes(pValueObjectDef->mutable_guidid(), pObject->GetUniqueObjectID().ToGUID());
 			pValueObjectDef->set_name(pObject->GetCompleteName());
 			pValueObjectDef->set_type(pObject->GetObjectSubType());
 			pValueObjectDef->set_typestring(pValueObject->getTypeName());
@@ -3861,23 +3832,37 @@ std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineS
 		{
 			_variant_t value;
 			//when determineSize is true then the array size not the result size is returned to be able to determine the memory requirements
-			if(S_OK == pValueObject->getValue(value, -1, !determineSize))
+			if (S_OK == pValueObject->getValue(value, -1, !determineSize))
 			{
-				if(VT_BSTR == value.vt && determineSize)
+				//This sets a standard size for strings of 15 characters
+				if (VT_BSTR == value.vt && determineSize)
 				{
 					std::string temp = SvUl::createStdString(value);
 					temp.resize(temp.size() + cStringExtraBuffer, ' ');
 					value.SetString(temp.c_str());
 				}
-				result.emplace_back(value);
+				//				
+				if (VT_EMPTY != value.vt || !determineSize)
+				{
+					result.emplace_back(value);
+				}
 			}
+			else
+			{
+				value.Clear();
+				if (!determineSize)
+				{
+					result.emplace_back(value);
+				}
+			}
+
 			if (VT_EMPTY == value.vt && determineSize)
 			{
 				value = pValueObject->getDefaultValue();
-				if(VT_EMPTY != value.vt)
+				if (VT_EMPTY != value.vt)
 				{
 					int arraySize = pValueObject->getArraySize();
-					if(arraySize > 1 && VT_BSTR != value.vt)
+					if (arraySize > 1 && VT_BSTR != value.vt)
 					{
 						variant_t arrayValue;
 						SAFEARRAYBOUND arrayBound;
@@ -3887,8 +3872,8 @@ std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineS
 						arrayValue.vt = value.vt | VT_ARRAY;
 						value = arrayValue;
 					}
-					result.emplace_back(value);
 				}
+				result.emplace_back(value);
 			}
 		}
 	}

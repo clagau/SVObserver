@@ -3632,7 +3632,6 @@ HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, const SVGU
 		if (nullptr != l_pInspect)
 		{
 			l_pInspect->OnObjectRenamed(*l_pObject, p_rOldName);
-			//@TODO[MZA][7.40][07.10.2016] do we need this command? l_pInspect->BuildValueObjectMap(); 
 		}
 		else
 		{
@@ -5065,28 +5064,19 @@ void SVObserverApp::Start()
 		l_trgrDlg.ClearTriggers();
 
 
-		if (SvSml::SharedMemWriter::Instance().HasShares())
-		{
-			SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
-
-		}
+		SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
 
 		PPQMonitorList ppqMonitorList;
 		pConfig->BuildPPQMonitorList(ppqMonitorList); //create MonitorlistCopies  in SvSml::SharedMemWriter
 
 		SvSml::SharedMemWriter::Instance().CalculateStoreIds();
-		SvSml::SharedMemWriter::Instance().WriteMonitorList();
 
+		//clear the shared memory.
+		//to clear the shared memory is only real necessary when the Monitorlist has changed
+		SvSml::SharedMemWriter::Instance().CloseDataConnection();
 
-		if (SvSml::SharedMemWriter::Instance().HasShares())
-		{
-			//clear the shared memory.
-			//to clear the shared memory is only real necessary when the Monitorlist has changed
-			SvSml::SharedMemWriter::Instance().CloseDataConnection();
-		}
-		//create image and data stores create slot ringbuffer;
-		SvSml::SharedMemWriter::Instance().CreateManagmentAndStores();
-		
+		SvSml::SharedMemWriter::Instance().CreateManagment();
+
 		///In this loop the ImageStores are created 
 		for (long l = 0; S_OK == Result && l < lSize; l++)
 		{
@@ -5097,14 +5087,10 @@ void SVObserverApp::Start()
 				///Set NAK Behavior
 				pPPQ->SetNAKMode(m_rInitialInfo.m_NAKMode, m_rInitialInfo.m_NAKParameter);
 
-
 				// Do this before calling CanGoOnline 
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
-
 				pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
-
 				pPPQ->PrepareGoOnline();
-
 
 				SvTi::SVTriggerObject* pTrigger(nullptr);
 				pPPQ->GetTrigger(pTrigger);
@@ -5115,10 +5101,10 @@ void SVObserverApp::Start()
 			}
 		}// end for
 
+		SvSml::SharedMemWriter::Instance().WriteMonitorList();
 
 		if (SvSml::SharedMemWriter::Instance().GetActiveMonitorListCount() > 0)
 		{
-			SvSml::SharedMemWriter::Instance().CreateSharedMatroxBuffer();
 			SvSml::ShareEvents::GetInstance().SignaltReadyStatus();
 		}
 

@@ -293,7 +293,7 @@ public:
 	HRESULT AddDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
 	HRESULT AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry);
 
-	bool SetupRemoteMonitorList();
+	bool SetupRemoteMonitorList(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 	void ClearRemoteMonitorList();
 	RemoteMonitorListMap GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);

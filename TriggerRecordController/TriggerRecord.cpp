@@ -19,6 +19,7 @@
 #include "SVStatusLibrary\MessageTextEnum.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #pragma endregion Includes
+//#define TRACE_TRC
 
 namespace SvTrc
 {
@@ -43,7 +44,7 @@ TriggerRecord::~TriggerRecord()
 		{
 			InterlockedExchange(&(m_rData.m_referenceCount), 0);
 		}
-		if (finishedTR)
+		if (finishedTR && !m_blockUpdateLastId)
 		{
 			getTriggerRecordControllerInstance().setLastFinishedTR(m_inspectionPos, m_rData.m_trId);
 		}
@@ -187,6 +188,8 @@ _variant_t TriggerRecord::getDataValue(const GUID& dataId) const
 		int pos = findGuidPos(m_rDataDefList.list(), guidIdBytes);
 		return getDataValue(pos);
 	}
+	SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+	e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 	return {};
 }
 
@@ -211,8 +214,36 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 				{
 					SvPb::ConvertProtobufToVariant(valueList.valuelist()[pos], result);
 				}
+				else
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(SvUl::Format(_T("%d"), pos));
+					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetValueWrongPos, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
+			else
+			{
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ValueNotReady, SvStl::SourceFileParams(StdMessageParams));
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+				std::string DebugString = SvUl::Format(_T("value not ready; %d\n"), m_rData.m_trId);
+				::OutputDebugString(DebugString.c_str());
+#endif
+			}	
 		}
+		else
+		{
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
+		}
+	}
+	else
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), pos));
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetValueWrongPos, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	return result;
@@ -457,7 +488,22 @@ void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
 	if (nullptr != pLock)
 	{
 		void* pData = m_rData.getValueData();
-		auto copyDataThread = std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId); });
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = SvUl::Format(_T("writeValueData; %d\n"), getId());
+		::OutputDebugString(DebugString.c_str());
+#endif
+		copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId);
+		//@TODO[MZA][8.20][09.04.2019] check if async is useful and safety. In the first version we should use it in the same thread until we are sure that there is no other bugs left.
+		//auto copyDataThread = std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId); });
+	}
+	else
+	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = SvUl::Format(_T("writeValueData: tr not lockable\n"));
+		::OutputDebugString(DebugString.c_str());
+#endif
+		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 

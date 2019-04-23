@@ -111,7 +111,7 @@ long DataControllerReader::getResetId() const
 	return -1;
 }
 
-long* DataControllerReader::getResetLockCounterRef()
+volatile long* DataControllerReader::getResetLockCounterRef()
 { 
 	if (m_isInit)
 	{
@@ -132,17 +132,17 @@ const SvPb::ImageStructList& DataControllerReader::getImageStructList() const
 	return m_imageStructList; 
 }
 
-ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectionPos, int trId)
+ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
 	if (isUpToDate() && 0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
-		if (0 <= trId)
+		if (validFunc)
 		{
 			for (int i = 0; i < m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber; i++)
 			{
 				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
-				if (rCurrentTR.m_trId == trId)
+				if (validFunc(rCurrentTR))
 				{
 					long refTemp = rCurrentTR.m_referenceCount;
 					while (0 <= refTemp)
@@ -227,60 +227,71 @@ void DataControllerReader::initAndreloadData()
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
-	HANDLE hChange[2];
-	hChange[0] = m_stopThreads;
-	hChange[1] = m_hResetEvent;
+	HANDLE hReset[2], hReady[2];
+	hReset[0] = hReady[0] = m_stopThreads;
+	hReset[1] = m_hResetEvent;
+	hReady[1] = m_hReadyEvent;
 	while (!m_stopThread)
 	{
-		if (!isUpToDate())
+		while (!isUpToDate())
 		{
-			auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
-			if (nullptr != pLock && 0 < m_pCommonData->m_resetId)
+			m_lastResetId = -1;
+			if (m_reloadCallback)
 			{
-				try
+				m_reloadCallback();
+			}
+			WaitForMultipleObjects(2, hReady, false, INFINITE);
+			if (m_stopThread) { return; };
+
+			{	//this is needed to free the lock before go to wait
+				auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
+				if (nullptr != pLock && 0 < m_pCommonData->m_resetId)
 				{
-					m_inspectionList.ParseFromArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
-					m_imageStructList.ParseFromArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
-
-					std::unique_lock<std::shared_mutex> lock(m_dataVectorMutex);
-					m_dataVector.resize(m_inspectionList.list_size());
-					for (int i = 0; i < m_dataVector.size(); i++)
+					try
 					{
-						if (nullptr == m_dataVector[i] || m_dataVector[i]->getSMName() != m_inspectionList.list(i).nameofsm())
+						m_inspectionList.ParseFromArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
+						m_imageStructList.ParseFromArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
+
+						std::unique_lock<std::shared_mutex> lock(m_dataVectorMutex);
+						m_dataVector.resize(m_inspectionList.list_size());
+						for (int i = 0; i < m_dataVector.size(); i++)
 						{
-							m_dataVector[i] = std::make_shared<TRControllerReaderDataPerIP>();
-							m_dataVector[i]->init(m_inspectionList.list(i).nameofsm());
+							if (nullptr == m_dataVector[i] || m_dataVector[i]->getSMName() != m_inspectionList.list(i).nameofsm())
+							{
+								m_dataVector[i] = std::make_shared<TRControllerReaderDataPerIP>();
+								m_dataVector[i]->init(m_inspectionList.list(i).nameofsm());
+							}
+							else
+							{
+								m_dataVector[i]->reloadData();
+							}
 						}
-						else
+
+						m_bufferVector.clear();
+						m_sharedMemoryMap.clear();
+						for (auto imageStruct : m_imageStructList.list())
 						{
-							m_dataVector[i]->reloadData();
+							addBuffer(imageStruct);
+						}
+
+						m_lastResetId = m_pCommonData->m_resetId;
+						if (0 < m_lastResetId && m_readyCallback)
+						{
+							m_readyCallback();
 						}
 					}
-
-					m_bufferVector.clear();
-					m_sharedMemoryMap.clear();
-					for (auto imageStruct : m_imageStructList.list())
+					catch (const SvStl::MessageContainer& rSvE)
 					{
-						addBuffer(imageStruct);
+						m_lastResetId = -1;
+						//This is the topmost catch for MessageContainer exceptions
+						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+						Exception.setMessage(rSvE.getMessage());
 					}
-
-					m_lastResetId = m_pCommonData->m_resetId;
-					if (0 < m_lastResetId && m_reloadCallback)
-					{
-						m_reloadCallback();
-					}
-				}
-				catch (const SvStl::MessageContainer& rSvE)
-				{
-					m_lastResetId = -1;
-					//This is the topmost catch for MessageContainer exceptions
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(rSvE.getMessage());
 				}
 			}
 		}
 
-		WaitForMultipleObjects(2, hChange, false, INFINITE);
+		WaitForMultipleObjects(2, hReset, false, INFINITE);
 	}
 }
 

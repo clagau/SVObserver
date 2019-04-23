@@ -17,6 +17,7 @@
 #include "Definitions\StringTypeDef.h"
 #include "SVProtoBuf/envelope.h"
 #include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 
@@ -51,14 +52,13 @@ namespace SvSml
 	
 		void Insert(MonitorListCpyPointer& rMLCpyPtr);
 		
-		///Return the total size of the all images for this inspection 
-		DWORD GetInspectionImageSize(const std::string& rInspectionName   ) const;
-		
 		///searches all monitorlist for the full dotet nane and return the pointer if it is not found throw an exception 
 		MonitorEntryPointer GetMonitorEntryPointer(const std::string& rname);
 
 		///Calculates the Storindex, offset and itemindex for all images 
 		void CalculateStoreIds();
+
+		void setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const SvPb::DataDefinitionList& rDataDefList, const SvPb::ImageList& rImageDefList);
 
 		///Serialize to ProtoBufMessage
 		void BuildProtoMessage(SvPml::MesMLCpyContainer& rMesMLCpyContainer) const;
@@ -68,6 +68,9 @@ namespace SvSml
 		
 		bool  QueryListName(const SvPb::QueryListNameRequest& rReq, SvPb::QueryListNameResponse& rResp, SvPenv::Error& err) const;
 		bool  QueryListItem(const SvPb::QueryListItemRequest& rReq, SvPb::QueryListItemResponse& resp, SvPenv::Error& err) const;
+
+		bool clearInspectionIdsVector(const std::string& rPPQName);
+		bool addInspectionIdEntry(const std::string& rPPQName, int ipMLId, int ipTRCId);
 		
 
 	//private:

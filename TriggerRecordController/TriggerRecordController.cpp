@@ -27,7 +27,10 @@
 #include "ITriggerRecordControllerRW.h"
 #include "ITriggerRecordRW.h"
 #include "TriggerRecordController.h"
+#include "TriggerRecordData.h"
+#include "TriggerRecord.h"
 #pragma endregion Includes
+//#define TRACE_TRC
 
 namespace SvTrc
 {
@@ -43,6 +46,7 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 	SVMatroxResourceMonitor::SVAutoLock autoLock;
 	SVMatroxResourceMonitor::GetAutoLock(autoLock);
 	m_pDataController->setResetCallback(std::bind(&TriggerRecordController::sendResetCall, this));
+	m_pDataController->setReadyCallback(std::bind(&TriggerRecordController::sendReadyCall, this));
 	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -90,20 +94,29 @@ const SvPb::DataDefinitionList& TriggerRecordController::getDataDefList(int insp
 ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int inspectionPos, int trId)
 {
 	assert(-1 == m_resetStarted4IP);
-
-	if (-1 == m_resetStarted4IP )
+	if (-1 == m_resetStarted4IP && 0 <= trId)
 	{
-		return m_pDataController->createTriggerRecordObject(inspectionPos, trId);
+		return m_pDataController->createTriggerRecordObject(inspectionPos, [trId](SvTrc::TriggerRecordData& rData) -> bool { return rData.m_trId == trId; });
+	}
+	return nullptr;
+}
+
+ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount)
+{
+	assert(-1 == m_resetStarted4IP);
+	if (-1 == m_resetStarted4IP && 0 <= triggerCount)
+	{
+		return m_pDataController->createTriggerRecordObject(inspectionPos, [triggerCount](SvTrc::TriggerRecordData& rData) -> bool { return rData.m_triggerData.m_TriggerCount == triggerCount; });
 	}
 	return nullptr;
 }
 
 int TriggerRecordController::registerResetCallback(std::function<void()> pCallback)
 {
-	static int handleCounter = 0;
 	assert(pCallback);
 	if (nullptr != pCallback)
 	{
+		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
 		m_resetCallbacks.push_back(std::pair<int,std::function<void()>>(handle,pCallback));
@@ -121,12 +134,35 @@ void TriggerRecordController::unregisterResetCallback(int handleId)
 	}
 }
 
-int TriggerRecordController::registerNewTrCallback(std::function<void(int, int)> pCallback)
+int TriggerRecordController::registerReadyCallback(std::function<void()> pCallback)
 {
-	static int handleCounter = 0;
 	assert(pCallback);
 	if (nullptr != pCallback)
 	{
+		static int handleCounter = 0;
+		std::lock_guard<std::mutex> guard(m_callbackMutex);
+		int handle = handleCounter++;
+		m_readyCallbacks.push_back(std::pair<int, std::function<void()>>(handle, pCallback));
+		return handle;
+	}
+	return -1;
+}
+void TriggerRecordController::unregisterReadyCallback(int handleId)
+{
+	std::lock_guard<std::mutex> guard(m_callbackMutex);
+	auto Iter = find_if(m_readyCallbacks.begin(), m_readyCallbacks.end(), [handleId](const auto& rEntry)->bool { return rEntry.first == handleId; });
+	if (m_readyCallbacks.end() != Iter)
+	{
+		m_readyCallbacks.erase(Iter);
+	}
+}
+
+int TriggerRecordController::registerNewTrCallback(std::function<void(int, int)> pCallback)
+{
+	assert(pCallback);
+	if (nullptr != pCallback)
+	{
+		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
 		 m_newTRCallbacks.push_back(std::pair<int, std::function<void(int,int)>>(handle, pCallback));
@@ -147,7 +183,7 @@ void TriggerRecordController::unregisterNewTrCallback(int handleId)
 
 void TriggerRecordController::clearAll()
 {
-	sendResetCall();
+	m_pDataController->prepareReset();
 
 	m_additionalBufferMap.clear();
 	m_resetStarted4IP = -1;
@@ -157,6 +193,7 @@ void TriggerRecordController::clearAll()
 	{
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		m_resetCallbacks.clear();
+		m_readyCallbacks.clear();
 		m_newTRCallbacks.clear();
 	}
 	m_isResetLocked = false;
@@ -173,11 +210,92 @@ bool TriggerRecordController::setInspections(const SvPb::InspectionList& rInspec
 
 	bool result = m_pDataController->setInspections(rInspectionList);
 
-	if (result && 0 == m_pDataController->getResetId())
-	{
-		sendResetCall();
-	}
 	return result;
+}
+
+void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long newSize)
+{
+	if (m_isResetLocked)
+	{
+		assert(false);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	auto inspectionList = m_pDataController->getInspections();
+	if (0 > inspectionPos || inspectionList.list_size() <= inspectionPos)
+	{   //new start of reset is not allowed if reset is in progress.
+		assert(false);
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+		msgList.push_back(SvUl::Format(_T("%d"), inspectionList.list_size()));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+	if (0 >= newSize || cMaxTriggerRecords < newSize)
+	{
+		assert(false);
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), newSize));
+		msgList.push_back(SvUl::Format(_T("%d"), cMaxTriggerRecords));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	auto* pIpData = inspectionList.mutable_list(inspectionPos);
+	if (nullptr == pIpData)
+	{
+		assert(false);
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+		msgList.push_back(SvUl::Format(_T("%d"), inspectionList.list_size()));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}	
+
+	if (pIpData->numberofrecords() == newSize ) 
+	{
+		return;
+	}
+
+	m_pDataController->prepareReset();
+
+	pIpData->set_numberofrecords(newSize);
+
+	if (m_pDataController->isIPInit(inspectionPos))
+	{
+		auto imageListTmp = m_pDataController->getImageDefList(inspectionPos);
+
+		startResetTriggerRecordStructure(inspectionPos);
+
+		m_pDataController->setInspectionList(inspectionList);
+
+		m_TriggerRecordNumberResetTmp = newSize + cTriggerRecordAddOn;
+		m_imageListResetTmp = imageListTmp;
+		auto* pImageStructList = m_imageStructListResetTmp.mutable_list();
+		for (auto imageDef : m_imageListResetTmp.list())
+		{
+			auto pStructIter = std::find_if(pImageStructList->begin(), pImageStructList->end(), [&imageDef](auto data)->bool
+			{
+				return (imageDef.structid() == data.structid());
+			});
+			if (pImageStructList->end() != pStructIter)
+			{
+				auto pStructData = &(*pStructIter);
+				pStructData->set_numberofbuffersrequired(pStructData->numberofbuffersrequired() + m_TriggerRecordNumberResetTmp);
+			}
+		}
+
+		ResetTriggerRecordStructure();
+	}
+	else
+	{
+		m_pDataController->setInspectionList(inspectionList);
+	}
 }
 
 ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(int inspectionPos)
@@ -204,11 +322,37 @@ ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordOb
 	if (nullptr != pTriggerRecord)
 	{
 		int id = pTriggerRecord->getId();
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = SvUl::Format(_T("closeWriteAndOpenReadTriggerRecordObject; %d\n"), id);
+		::OutputDebugString(DebugString.c_str());
+		static int last_triggerId = id - 1;
+		if (last_triggerId + 1 != id)
+		{
+			std::string DebugString = SvUl::Format(_T("\n\nsome trigger missing\n\n"));
+			::OutputDebugString(DebugString.c_str());
+		}
+		last_triggerId = id;
+#endif
 		int inspectionPos = pTriggerRecord->getInspectionPos();
 		pTriggerRecord = nullptr;
 		return createTriggerRecordObject(inspectionPos, id);
 	}
 	return nullptr;
+}
+
+void TriggerRecordController::closeWriteObjectWithoutUpdateLastTrId(ITriggerRecordRWPtr& pTriggerRecord)
+{
+	TriggerRecord* pTR = dynamic_cast<TriggerRecord*>(pTriggerRecord.get());
+	if (nullptr != pTR)
+	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		int id = pTriggerRecord->getId();
+		std::string DebugString = SvUl::Format(_T("closeWriteObjectWithoutUpdateLastTrId; %d\n"), id);
+		::OutputDebugString(DebugString.c_str());
+#endif
+		pTR->blockUpdateLastTrId();
+	}
+	pTriggerRecord = nullptr;
 }
 
 IImagePtr TriggerRecordController::getImageBuffer(const SVMatroxBufferCreateStruct& rBufferStruct, bool createBufferExternIfNecessary) const
@@ -646,8 +790,6 @@ bool TriggerRecordController::lockReset()
 #pragma region Private Methods
 void TriggerRecordController::ResetTriggerRecordStructure()
 {
-	sendResetCall();
-
 	//update structId to fit to the position in m_imageStructList
 	try
 	{
@@ -668,7 +810,6 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
-		clearAll();
 		m_resetStarted4IP = -1;
 		//This is the topmost catch for MessageContainer exceptions
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
@@ -720,6 +861,18 @@ void TriggerRecordController::sendResetCall()
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
 	for (auto& resetCallback : m_resetCallbacks)
+	{
+		if (nullptr != resetCallback.second)
+		{
+			resetCallback.second();
+		}
+	}
+}
+
+void TriggerRecordController::sendReadyCall()
+{
+	std::lock_guard<std::mutex> guard(m_callbackMutex);
+	for (auto& resetCallback : m_readyCallbacks)
 	{
 		if (nullptr != resetCallback.second)
 		{

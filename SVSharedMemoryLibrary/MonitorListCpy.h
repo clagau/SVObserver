@@ -60,8 +60,10 @@ namespace SvSml
 		void BuildFromProtoMessage(const SvPml::MesMonitorListCpy& rMessage);
 		
 		void QueryListItem(const SvPb::QueryListItemRequest& rRequest, SvPb::QueryListItemResponse& rResponse) const;
+
+		void clearInspectionIdsVector() { m_InspectionIdsVector.clear(); };
+		void addInspectionIdEntry(int ipMLId, int ipTRCId) { m_InspectionIdsVector.emplace_back(ipMLId, ipTRCId); };
 		
-		const static DWORD ImageBufferHeaderSize; //<Constant additional size needed fore every imagebuffer
 	public:
 		MonitorEntries m_MonitorEntries[ListType::Count]; //< entrylists  for data,image,reject and failstatus 
 		MonitorEntriesMap m_EntriesMap; //< entry map  fullname and all  element from m_MonitorEntries 
@@ -71,7 +73,7 @@ namespace SvSml
 		int m_ProductDepth;
 		bool m_IsActive;
 		SVProductFilterEnum m_ProductFilter;
-	
+		std::vector<std::pair<int, int>> m_InspectionIdsVector; //first is inspection id of monitorSM and second is inspection id of trigger record controller
 
 	};
 	typedef std::unique_ptr<MonitorListCpy> MonitorListCpyPointer;          /// unique Ptr to MonitorListCpy

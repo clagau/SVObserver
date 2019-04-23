@@ -43,8 +43,19 @@ DataControllerBase::DataControllerBase()
 	sa.lpSecurityDescriptor = psd;
 	sa.bInheritHandle = FALSE;
 
-	m_hResetEvent = ::CreateEvent(&sa, false, false, GNameResetEvent);
+	m_hResetEvent = ::CreateEvent(&sa, true, false, GNameResetEvent);
 	if (nullptr == m_hResetEvent)
+	{
+		DWORD errorCode = GetLastError();
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
+		assert(false);
+	}
+
+	m_hReadyEvent = ::CreateEvent(&sa, true, false, GNameReadyEvent);
+	if (nullptr == m_hReadyEvent)
 	{
 		DWORD errorCode = GetLastError();
 		SvDef::StringVector msgList;
@@ -142,5 +153,24 @@ const SvPb::DataDefinitionList& DataControllerBase::getDataDefList(int inspectio
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
+}
+
+bool DataControllerBase::isIPInit(int inspectionPos)
+{
+	auto* pData = getTRControllerData(inspectionPos);
+	assert(nullptr != pData);
+	if (nullptr != pData)
+	{
+		return pData->getBasicData().m_bInit;
+	}
+	return false;
+}
+
+void DataControllerBase::prepareReset()
+{
+	if (m_reloadCallback)
+	{
+		m_reloadCallback();
+	}
 }
 }

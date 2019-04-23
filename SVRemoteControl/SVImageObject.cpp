@@ -381,9 +381,9 @@ HRESULT SVImageObject::FetchImage()
 		if (nullptr != m_pClientService && m_pClientService->get())
 		{
 			SvPb::GetImageFromIdRequest request;
-			request.mutable_id()->set_imagestore(m_CurrentImageId.imagestore());
+			request.mutable_id()->set_inspectionid(m_CurrentImageId.inspectionid());
 			request.mutable_id()->set_imageindex(m_CurrentImageId.imageindex());
-			request.mutable_id()->set_slotindex(m_CurrentImageId.slotindex());
+			request.mutable_id()->set_trid(m_CurrentImageId.trid());
 
 			auto resp = SvWsl::runRequest(*(m_pClientService->get()), &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 

@@ -39,15 +39,14 @@ message ImageItem
 	sint32 height = 2;				//The image height
 	sint32 width = 3;				//The image width
 	uint32 storeId = 4;				//The store ID location
-	uint32 imageId = 5;				//The image ID
 }
 
 //This structure stores the position of an image in shared memory
 message ImageId
 {
-	sint32 imageStore = 1;			//The image store value
-	sint32 imageIndex = 2;			//The image index value
-	sint32 slotIndex = 3;			//The image slot index value
+	sint32 inspectionId = 1;	//The inspection store id
+	sint32 imageIndex = 2;		//The image pos
+	sint32 trId = 3;			//The trigger record id
 }
 
 message Product

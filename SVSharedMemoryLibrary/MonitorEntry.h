@@ -12,12 +12,11 @@
 //Moved to precompiled header: #include <map>
 
 #include "SVShared.h"
-#include "MLInspectionInfo.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #include "SVprotobuf/MonitorListStore.h"
 #include "SVProtobuf/SVRC.h"
 #include "Definitions\SVObjectTypeInfoStruct.h"
-
+#include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -34,16 +33,18 @@ namespace SvSml
 		void BuildFromProtoMessage(const SvPml::MesMonitorEntryData& rProtoMessage);
 
 		DWORD InspectionStoreId{ UINT_MAX }; //<Inspection Store Index  
-		DWORD ItemId{UINT_MAX };	//<Index in the Inspection Store
+		int m_inspectionTRCPos = -1;
 		SvPb::SVObjectTypeEnum ObjectType{SvPb::SVNotSetObjectType};
 		DWORD variant_type{ VT_EMPTY };  ///vt value from variant
-		DWORD Store_Offset{ 0 };  ///offset in Inspection Store
 
 		bool isArray{ false };
 		bool wholeArray{ false };
 		long arrayIndex =-1;
 		DWORD m_MonitorListFlag{ 0 };	 // combination of SvSml::ListFlags[]
 		
+		static const int c_childFlagForTrPos = 0x400000;
+		int m_triggerRecordPos = -1;  //if image and c_childFlagForTrPos is set, it is a child image.
+				
 		long long sizeY{ 0 };		//< MbufInquire  M_SIZE_Y   
 		long long sizeX{ 0 };		//< MbufInquire  M_SIZE_Y   
 		long long PitchByte{ 0 };	//< MbufInquire  M_PITCH_BYTE   
@@ -63,16 +64,52 @@ namespace SvSml
 		
 		bool GetMatroxImageProps(MatroxImageProps &rImageProps) const;
 		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
-		bool GetValue(std::string& rString, BYTE* offset) const;
-		///Not used yet 
-		bool GetValue(_variant_t& rVal , BYTE* pOffset) const;
 		///Serialize to ProtoBufMessage
 		void BuildProtoMessage(SvPml::MesMonitorEntry &rMesMonitorEntry) const;
 		///set values from serializing 
 		void BuildFromProtoMessage(const SvPml::MesMonitorEntry &rMesMonitorEntry);
 		void AddListItem(SvPb::QueryListItemResponse& rResp) const;
 		bool IsImage() const { return (data.ObjectType == SvPb::SVImageObjectType); };
-	public:	
+
+		/// Convert value to string.
+		/// \param value [in] Variant of the value.
+		/// \param arrayIndex [in] If variant not a safeArray, this must be -1, else it define the position of the value to return.
+		/// \returns std::string
+		static std::string convertValue(variant_t value, int arrayIndex = -1);
+
+	private:
+		template<class T>
+		static std::string convertValue(bool isArray, int arrayIndex, variant_t value)
+		{
+			T tmp = 0;
+			if (!isArray)
+			{
+				tmp = static_cast<T>(value);
+			}
+			else
+			{
+				SvUl::getSingleVariantFromArrayOneDim<T>(value, arrayIndex, tmp);
+			}
+			return std::to_string(tmp);
+		}
+
+		template<class T>
+		static std::string convertValue(bool isArray, int arrayIndex, variant_t value, LPCTSTR formatString)
+		{
+			T tmp = 0;
+			if (!isArray)
+			{
+				tmp = static_cast<T>(value);
+			}
+			else
+			{
+				SvUl::getSingleVariantFromArrayOneDim<T>(value, arrayIndex, tmp);
+			}
+			return SvUl::Format(formatString, tmp);
+		}
+
+
+	public:
 		GUID m_Guid;   //Object Guid 
 		std::string name; //<Full name 
 		MonitorEntryData data;

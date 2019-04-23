@@ -151,30 +151,30 @@ void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_res
 	}
 	{
 		auto image = product.add_images();
-		image->set_slotindex(0);
+		image->set_trid(0);
 		image->set_imageindex(0);
-		image->set_imagestore(0);
+		image->set_inspectionid(0);
 		(*product.add_imagenames()) = "200x200";
 	}
 	{
 		auto image = product.add_images();
-		image->set_slotindex(1);
+		image->set_trid(1);
 		image->set_imageindex(0);
-		image->set_imagestore(0);
+		image->set_inspectionid(0);
 		(*product.add_imagenames()) = "300x300";
 	}
 	{
 		auto image = product.add_images();
-		image->set_slotindex(2);
+		image->set_trid(2);
 		image->set_imageindex(0);
-		image->set_imagestore(0);
+		image->set_inspectionid(0);
 		(*product.add_imagenames()) = "2048x2048";
 	}
 }
 
 void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::ImageId& imageId, bool rotated)
 {
-	switch (imageId.slotindex())
+	switch (imageId.trid())
 	{
 		case 0:
 			img.set_width(std::get<1>(getBitmap(200)));

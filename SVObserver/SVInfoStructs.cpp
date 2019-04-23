@@ -183,6 +183,7 @@ HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData 
 		m_triggerRecordWrite = p_rsvData.m_triggerRecordWrite;
 		m_triggerRecordComplete = p_rsvData.m_triggerRecordComplete;
 		m_inspectionPosInTrc = p_rsvData.m_inspectionPosInTrc;
+		m_bReject = p_rsvData.m_bReject;
 	}
 	
 	return l_Status;
@@ -212,6 +213,7 @@ void SVInspectionInfoStruct::Reset()
 	m_triggerRecordWrite = nullptr;
 	m_triggerRecordComplete = nullptr;
 	m_lastInspectedSlot = -1;
+	m_bReject = false;
 	ClearIndexes();
 }// end Reset
 
@@ -238,6 +240,7 @@ void SVInspectionInfoStruct::Init()
 	m_triggerRecordWrite = nullptr;
 	m_triggerRecordComplete = nullptr;
 	m_lastInspectedSlot = -1;
+	m_bReject = false;
 
 	ClearIndexes();
 }// end Init
@@ -262,9 +265,13 @@ bool SVInspectionInfoStruct::setNextAvailableTR( )
 	return true;
 }
 
-void SVInspectionInfoStruct::setNextTriggerRecord()
+void SVInspectionInfoStruct::setNextTriggerRecord(SvTrc::TriggerData triggerData)
 {
 	m_triggerRecordWrite = SvTrc::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPosInTrc);
+	if (nullptr != m_triggerRecordWrite)
+	{
+		m_triggerRecordWrite->setTriggerData(triggerData);
+	}
 	m_triggerRecordComplete = nullptr;
 }
 
@@ -276,9 +283,17 @@ void SVInspectionInfoStruct::setTriggerRecordCompleted()
 	}
 }
 
+void SVInspectionInfoStruct::setTriggerRecordIncompleted()
+{
+	if (nullptr != m_triggerRecordWrite)
+	{
+		SvTrc::getTriggerRecordControllerRWInstance().closeWriteObjectWithoutUpdateLastTrId(m_triggerRecordWrite);
+	}
+}
+
 SVProductInfoStruct::SVProductInfoStruct()
 : m_ProductActive( 0 )
-, m_lastInspectedSlot(-1)
+, m_monitorListSMSlot(-1)
 
 {
 	Reset();
@@ -295,7 +310,8 @@ SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &rRhs )
 , m_svCameraInfos( rRhs.m_svCameraInfos )
 , m_svInspectionInfos( rRhs.m_svInspectionInfos )
 , m_ProductActive( 0 )
-, m_lastInspectedSlot(rRhs.m_lastInspectedSlot)
+, m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
+, m_bReject(rRhs.m_bReject)
 {
 	for(int i=0; i < SvDef::cMaximumCameras; ++i)
 	{
@@ -335,7 +351,9 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 
 		m_svCameraInfos = rRhs.m_svCameraInfos;
 		m_svInspectionInfos = rRhs.m_svInspectionInfos;
-		m_lastInspectedSlot = rRhs.m_lastInspectedSlot;
+		m_monitorListSMSlot = rRhs.m_monitorListSMSlot;
+		m_bReject = rRhs.m_bReject;
+
 		if( rRhs.IsProductActive() )
 		{
 			SetProductActive();
@@ -361,6 +379,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 			bhasCameraImage[i] = rData.bhasCameraImage[i];
 		}
 		bDataComplete = rData.bDataComplete;
+		m_bReject = rData.m_bReject;
 
 		oTriggerInfo = rData.oTriggerInfo;
 		oInputsInfo = rData.oInputsInfo;
@@ -368,7 +387,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 
 		m_pPPQ = rData.m_pPPQ;
 
-		m_lastInspectedSlot = rData.m_lastInspectedSlot;
+		m_monitorListSMSlot = rData.m_monitorListSMSlot;
 		SvIe::SVGuidSVCameraInfoStructMap::iterator l_Iter;
 		SvIe::SVGuidSVCameraInfoStructMap::const_iterator l_RightIter;
 
@@ -446,7 +465,8 @@ void SVProductInfoStruct::InitProductInfo()
 	}
 	bTriggered			= false;
 	bDataComplete		= false;
-	m_lastInspectedSlot = -1;
+	m_bReject = false;
+	m_monitorListSMSlot = -1;
 	oInputsInfo.Init();
 	oOutputsInfo.Init();
 	oTriggerInfo.Reset();
@@ -481,7 +501,8 @@ void SVProductInfoStruct::Reset()
 	}
 	bTriggered			= false;
 	bDataComplete		= false;
-	m_lastInspectedSlot = -1;
+	m_bReject = false;
+	m_monitorListSMSlot = -1;
 	oInputsInfo.Reset();
 	oOutputsInfo.Reset();
 	m_pPPQ = nullptr;
@@ -624,7 +645,7 @@ void SVProductInfoStruct::setInspectionTriggerRecordComplete(const SVGUID& rIPGu
 	{
 		for (auto& rIPInfoPair : m_svInspectionInfos)
 		{
-			rIPInfoPair.second.setTriggerRecordCompleted();
+			rIPInfoPair.second.setTriggerRecordIncompleted();
 		}
 	}
 }

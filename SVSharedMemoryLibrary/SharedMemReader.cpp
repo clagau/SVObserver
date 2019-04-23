@@ -8,6 +8,9 @@
 #include "StdAfx.h"
 #include "SharedMemReader.h"
 #include "ShareEvents.h"
+#include "TriggerRecordController\ITriggerRecordControllerR.h"
+#include "SVMatroxLibrary\SVMatroxBuffer.h"
+//#define TRACE_TRC
 
 namespace SvSml
 {
@@ -38,8 +41,6 @@ void SharedMemReader::Reload(DWORD version)
 
 	m_DataContainer.CloseConnection();
 	m_DataContainer.OpenSlotManagment(m_MLContainer);
-	m_DataContainer.OpenStores(m_MLContainer);
-	m_DataContainer.CreateSharedMatroxBuffer(m_MLContainer);
 	m_SlotManagerIndexMap.clear();
 
 	for (const auto &it : m_MLContainer.m_MonitorListCpyMap)
@@ -83,7 +84,6 @@ int SharedMemReader::GetSlotManagerIndexForPPQName(LPCTSTR PPQname)
 
 SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, LPCTSTR Monitorlist, int trigger, MLProduct* pProduct, const MLProduct* pLastProduct)
 {
-	
 	if (nullptr == pProduct)
 	{
 		return fail;
@@ -137,26 +137,27 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	pProduct->m_slot = slot;
 	pProduct->m_SlotManagerIndex = SlotManagerIndex;
 	pProduct->m_trigger = rBp->GetTriggerNumber(slot);
+	for (auto ipPair : pML->m_InspectionIdsVector)
+	{
+		pProduct->m_triggerRecordMap[ipPair.first] = SvTrc::getTriggerRecordControllerRInstance().createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		if (nullptr == pProduct->m_triggerRecordMap[ipPair.first])
+		{
+			std::string DebugString = SvUl::Format(_T("_GetProduct: TRC is null; %d\n"), ipPair.first);
+			::OutputDebugString(DebugString.c_str());
+		}
+#endif
+	}
 	pProduct->m_status = S_OK;
 
 	ListType::typ t = par.failstatus ? ListType::failStatus : ListType::productItemsData;
 	const MonitorEntries& ProdEnties = pML->GetMonitorEntries(t);
 	for (MonitorEntryPointer mep : ProdEnties)
 	{
-		std::string value;
-		int Offset = mep->data.Store_Offset;
-		int store = mep->data.InspectionStoreId;
-		BYTE* ptr = m_DataContainer.GetDataBufferPtr(slot, store, Offset);
-		if (mep->data.wholeArray)
-		{
-			//@Todo[MEC][7.50] [14.07.2017] Implement Whole Array;
-			value = "???";
-		}
-		else
-		{
-			mep->GetValue(value, ptr);
-		}
-		pProduct->m_data.push_back(stringpointer(new  std::string(value)));
+		auto pTr = pProduct->m_triggerRecordMap[mep->data.InspectionStoreId];
+		variant_t valueV = (nullptr != pTr) ? pTr->getDataValue(mep->data.m_triggerRecordPos) : variant_t();
+		std::string value = MonitorEntry::convertValue(valueV, mep->data.arrayIndex);
+		pProduct->m_data.push_back(stringpointer(new std::string(value)));
 		pProduct->m_dataEntries.push_back(mep);
 	}
 	const MonitorEntries& ProdImageEntries = pML->GetMonitorEntries(ListType::productItemsImage);
@@ -170,6 +171,7 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	if (par.releaseTrigger)
 	{
 		rBp->ReleaseReaderSlot(slot);
+		pProduct->m_triggerRecordMap.clear();
 	}
 	return success;
 
@@ -186,10 +188,26 @@ bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber,
 	return (success == _GetProduct(par, Monitorlist, TriggerNumber, pProduct, nullptr));
 }
 
-SVMatroxBuffer& SharedMemReader::GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex)
+SVMatroxBuffer SharedMemReader::GetImageBuffer(int triggerRecordId, int inspectionId, int imageIndex)
 {
-
-	return m_DataContainer.GetImageBuffer(SlotIndex, storeIndex, ImageIndex);
+	auto pTr = SvTrc::getTriggerRecordControllerRInstance().createTriggerRecordObject(inspectionId, triggerRecordId);
+	if (nullptr != pTr)
+	{
+		SvTrc::IImagePtr pImage = nullptr;
+		if (imageIndex < MonitorEntryData::c_childFlagForTrPos)
+		{
+			pImage = pTr->getImage(imageIndex);
+		}
+		else
+		{
+			pImage = pTr->getChildImage(imageIndex&(~MonitorEntryData::c_childFlagForTrPos));
+		}
+		if (nullptr != pImage && nullptr != pImage->getHandle())
+		{
+			return pImage->getHandle()->GetBuffer();
+		}
+	}
+	return {};
 }
 
 int SharedMemReader::GetSlotManagerIndexForMonitorList(LPCTSTR Monitorlist)
@@ -237,9 +255,8 @@ SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, v
 				return last;
 			}
 		}
-
-
 	}
+
 	for (int i = max - 1; i >= 0; i--)
 	{
 		pProd productPtr = pProd(new MLProduct);

@@ -35,6 +35,8 @@ public:
 #pragma region ITriggerRecordControllerR Methods
 	virtual const SvPb::InspectionList& getInspections() const override { return m_pDataController->getInspections(); }
 
+	virtual bool isValid() const override { return 0 < getResetId(); };
+
 	virtual int getLastTRId(int inspectionPos) const override { return m_pDataController->getLastTRId(inspectionPos); };
 
 	virtual const SvPb::ImageList& getImageDefList(int inspectionPos) override;
@@ -42,9 +44,12 @@ public:
 	virtual const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) override;
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
+	virtual ITriggerRecordRPtr createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount) override;
 
 	virtual int registerResetCallback(std::function<void()> pCallback) override;
 	virtual void unregisterResetCallback(int handleId) override;
+	virtual int registerReadyCallback(std::function<void()> pCallback) override;
+	virtual void unregisterReadyCallback(int handleId) override;
 	virtual int registerNewTrCallback(std::function<void(int, int)> pCallback) override;
 	virtual void unregisterNewTrCallback(int handleId) override;
 #pragma endregion ITriggerRecordControllerR Methods
@@ -54,9 +59,13 @@ public:
 
 	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
 
+	virtual void resizeIPNumberOfRecords(int inspectionPos, long newSize) override;
+
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
 	virtual ITriggerRecordRPtr closeWriteAndOpenReadTriggerRecordObject(ITriggerRecordRWPtr& pTriggerRecord) override;
+
+	virtual void closeWriteObjectWithoutUpdateLastTrId(ITriggerRecordRWPtr& pTriggerRecord) override;
 
 	virtual IImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const override;
 
@@ -81,7 +90,7 @@ public:
 
 	long getResetId() const { return m_pDataController->getResetId(); };
 
-	long* getResetLockCounterRef() { return m_pDataController->getResetLockCounterRef(); };
+	volatile long* getResetLockCounterRef() { return m_pDataController->getResetLockCounterRef(); };
 
 	bool isWritable() const { return m_pDataController->isWritable(); };
 #pragma endregion Public Methods
@@ -106,7 +115,7 @@ private:
 	ResetEnum calcResetEnum(int inspectionPos);
 
 	void sendResetCall();
-
+	void sendReadyCall();
 	void sendTrIdCall(int inspectionPos, int trId);
 
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
@@ -127,6 +136,7 @@ private:
 	int m_TriggerRecordNumberResetTmp = 0; //This parameter is only temporary during reset process. In normal run don't use this.
 
 	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
+	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;
 	std::vector<std::pair<int, std::function<void(int, int)>>> m_newTRCallbacks;
 	bool m_isResetLocked = false;
 

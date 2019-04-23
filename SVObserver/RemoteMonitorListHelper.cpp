@@ -76,7 +76,6 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>  (ObjectRef.getObject());
 	if (pValueObject)
 	{
-		data.ByteSize = pValueObject->GetByteSize();
 		data.variant_type = pValueObject->GetType();
 	}
 	else

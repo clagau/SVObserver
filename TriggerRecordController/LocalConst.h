@@ -15,5 +15,6 @@ namespace SvTrc
 constexpr int cTriggerRecordAddOn = 2; //number of additional slots for internal use
 constexpr int cMaxTriggerRecords = 305;
 const LPCTSTR GNameResetEvent = _T("Global\\SvTrc_ResetEvent");
+const LPCTSTR GNameReadyEvent = _T("Global\\SvTrc_ReadyEvent");
 const LPCTSTR GNameTridEvent = _T("Global\\SvTrc_TridEvent");
 }

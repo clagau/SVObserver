@@ -269,10 +269,6 @@ LPCTSTR SharedDataStore::GetMapFileName() const
 {
 	return m_MapFileName.c_str();
 }
-DWORD SharedDataStore::GetSlotCount() const
-{
-	return m_slotCount;
-}
 DWORD SharedDataStore::GetSlotSize() const
 {
 	return m_slotSize;

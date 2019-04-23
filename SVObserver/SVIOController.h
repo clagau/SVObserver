@@ -72,7 +72,7 @@ public:
 	HRESULT DeleteRemoteOutputEntry( const std::string& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject );
 	HRESULT RemoteOutputValidateInputs();
 
-	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig);
+	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 	void ClearRemoteMonitorList();
 	const RemoteMonitorListMap& GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);

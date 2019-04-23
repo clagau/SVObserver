@@ -106,5 +106,16 @@ std::vector<T> getVectorFromOneDim(const _variant_t& rValue)
 	return result;
 }
 
+template<class T>
+bool getSingleVariantFromArrayOneDim(const _variant_t& rValue, long pos, T& value)
+{
+	long arraySize = getArraySizeFromOneDim(rValue);
+	if (arraySize > pos)
+	{
+		HRESULT hr = ::SafeArrayGetElement(rValue.parray, &pos, &value);
+		return (S_OK == hr);
+	}
+	return false;
+}
 #include "SVSAFEARRAY.inl"
 } // namespace SvUl

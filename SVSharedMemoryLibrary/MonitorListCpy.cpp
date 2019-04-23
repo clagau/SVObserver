@@ -12,8 +12,6 @@
 #pragma warning(pop)
 namespace SvSml
 {
-	const DWORD MonitorListCpy::ImageBufferHeaderSize = 0;
-
 	MonitorListCpy::MonitorListCpy(void)
 	{
 		m_ProductDepth = 0;
@@ -212,26 +210,7 @@ namespace SvSml
 				newEntry->PPQName = m_ppqName;
 				newEntry->PPQIndex = PPQIndex;
 			}
-			auto& newEntry = inspectionInfoMap[inspectionName];
-
-
-			switch (it->second->data.ObjectType)
-			{
-			case  SvPb::SVImageObjectType:
-				newEntry->TotalImageSize += (DWORD)it->second->data.ByteSize;
-				newEntry->TotalImageSize += ImageBufferHeaderSize;
-				newEntry->TotalImageCount++;
-				newEntry->StoreIndex = it->second->data.InspectionStoreId;
-				break;
-
-			default:
-				newEntry->TotalDataSize += (DWORD)it->second->data.ByteSize;
-				newEntry->TotalDataCount++;
-				newEntry->StoreIndex = it->second->data.InspectionStoreId;
-				break;
-
-			}
-
+			inspectionInfoMap[inspectionName]->StoreIndex = it->second->data.InspectionStoreId;
 		}
 		return res;
 	}
@@ -248,6 +227,13 @@ namespace SvSml
 		{
 			auto pMonEntryMessage = rMessage.add_monitorentries();
 			MonEntry.second->BuildProtoMessage(*pMonEntryMessage);
+		}
+
+		for (auto entry : m_InspectionIdsVector)
+		{
+			auto pIpMessage = rMessage.add_inspectionids();
+			pIpMessage->set_inspectionstoreid(entry.first);
+			pIpMessage->set_trcinspectionid(entry.second);
 		}
 		return true;
 	}
@@ -266,7 +252,11 @@ namespace SvSml
 			MonitorEntryPointer pMonitorEntry = AddMultEntries(monitorlistflag, name);
 			pMonitorEntry->BuildFromProtoMessage(mEntry);
 		}
-
+		m_InspectionIdsVector.clear();
+		for (auto entry : rMessage.inspectionids())
+		{
+			m_InspectionIdsVector.emplace_back(entry.inspectionstoreid(), entry.trcinspectionid());
+		}
 	}
 
 	void MonitorListCpy::QueryListItem(const SvPb::QueryListItemRequest& request, SvPb::QueryListItemResponse& resp) const

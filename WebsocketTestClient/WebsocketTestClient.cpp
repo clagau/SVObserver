@@ -33,8 +33,8 @@
 
 void PrintCurImage(const SvPb::ImageId& rCurrentImage)
 {
-	SV_LOG_GLOBAL(info) << "StoreIndex: " << rCurrentImage.imagestore() << " ImageIndex: " << rCurrentImage.imageindex()
-		<< " SlotIndex: " << rCurrentImage.slotindex();
+	SV_LOG_GLOBAL(info) << "InspectionId: " << rCurrentImage.inspectionid() << " ImageIndex: " << rCurrentImage.imageindex()
+		<< " TriggerRecord-Id: " << rCurrentImage.trid();
 }
 void PrintVariant(const SvPb::Variant& var)
 {
@@ -227,9 +227,9 @@ private:
 		for (auto i = 0; i < num_iterations; ++i)
 		{
 			SvPb::GetImageFromIdRequest request;
-			request.mutable_id()->set_slotindex(0); // TODO: slotindex should be product-index
+			request.mutable_id()->set_trid(0); 
 			request.mutable_id()->set_imageindex(0);
-			request.mutable_id()->set_imagestore(0); // TODO: what is this? MonitorList?
+			request.mutable_id()->set_inspectionid(0); 
 			auto response = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 		}
 	}
@@ -238,9 +238,9 @@ private:
 	{
 		SvPb::GetImageStreamFromIdRequest request;
 		request.set_count(num_iterations);
-		request.mutable_id()->set_slotindex(0); // TODO: slotindex should be product-index
+		request.mutable_id()->set_trid(0);
 		request.mutable_id()->set_imageindex(0);
-		request.mutable_id()->set_imagestore(0); // TODO: what is this? MonitorList?
+		request.mutable_id()->set_inspectionid(0);
 		double volume = 0;
 		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromId, std::move(request), volume).get();
 	}
@@ -453,9 +453,9 @@ int main(int argc, char* argv[])
 				}
 
 				SvPb::GetImageFromIdRequest request;
-				request.mutable_id()->set_imagestore(atoi(words[1].c_str()));
+				request.mutable_id()->set_inspectionid(atoi(words[1].c_str()));
 				request.mutable_id()->set_imageindex(atoi(words[2].c_str()));
-				request.mutable_id()->set_slotindex(atoi(words[3].c_str()));
+				request.mutable_id()->set_trid(atoi(words[3].c_str()));
 				auto resp = runRequest(*pService, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 
 				SV_LOG_GLOBAL(info) << "Image (Width ,Height) " << resp.imagedata().width() << "x"

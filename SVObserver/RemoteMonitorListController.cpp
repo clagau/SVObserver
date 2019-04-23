@@ -28,6 +28,7 @@
 #include "SVToolSet.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
@@ -80,7 +81,7 @@ bool RemoteMonitorListController::IsEmpty() const
 	return m_list.empty();
 }
 
-bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
+bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig, SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
 {
 	bool bRetVal = false;
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
@@ -89,8 +90,7 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 	INT_PTR rc = dlg.DoModal();
 	if (IDOK == rc)
 	{
-		bRetVal = true;
-		SetRemoteMonitorList(dlg.GetRemoteMonitorList()); // Update the list
+		 bRetVal = SetRemoteMonitorList(dlg.GetRemoteMonitorList(), pErrorMessages); // Update the list
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
@@ -101,10 +101,45 @@ const RemoteMonitorListMap& RemoteMonitorListController::GetRemoteMonitorList() 
 	return m_list;
 }
 
-void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorListMap& rList)
+bool RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorListMap& rList, SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
 {
+	bool result = true;
+	RemoteMonitorListMap oldActiveList, newActiveList;
+	GetActiveRemoteMonitorList(oldActiveList);
 	m_list = rList;
+	GetActiveRemoteMonitorList(newActiveList);
+	for (auto oldActive : oldActiveList)
+	{
+		auto ppqGuid = oldActive.second.GetPPQObjectID();
+		SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(ppqGuid));
+		auto newActiveIter = find_if(newActiveList.begin(), newActiveList.end(), [ppqGuid](auto value) { return value.second.GetPPQObjectID() == ppqGuid; });
+		if (newActiveIter != newActiveList.end())
+		{
+			if (oldActive.second.GetRejectDepthQueue() != newActiveIter->second.GetRejectDepthQueue() || nullptr != pPPQ)
+			{
+				result = pPPQ->setRejectDepth(newActiveIter->second.GetRejectDepthQueue(), pErrorMessages) && result;
+			}
+			newActiveList.erase(newActiveIter);
+		}
+		else
+		{
+			if (nullptr != pPPQ)
+			{
+				pPPQ->setRejectDepth(0);
+			}
+		}
+	}
+	for (auto newActive : newActiveList)
+	{
+		SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(newActive.second.GetPPQObjectID()));
+		if (nullptr != pPPQ)
+		{
+			result = pPPQ->setRejectDepth(newActive.second.GetRejectDepthQueue(), pErrorMessages) && result;
+		}
+	}
+
 	HideShowViewTab();
+	return result;
 }
 
 void RemoteMonitorListController::ReplaceOrAddMonitorList(const RemoteMonitorNamedList& rList)
@@ -316,12 +351,24 @@ HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorLis
 		it->second.SetProductFilter(SvSml::LastInspectedFilter);
 		if (true == bActivate)
 		{
+			long rejectDepth = it->second.GetRejectDepthQueue();
 			SVGUID PPQ_GUID = it->second.GetPPQObjectID();
 			for (RemoteMonitorListMap::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end(); it_S++)
 			{
 				if (it_S->second.GetPPQObjectID() == PPQ_GUID && it_S != it)
 				{
-					it_S->second.Activate(false);
+					if (it_S->second.IsActive())
+					{
+						if (it_S->second.GetRejectDepthQueue() != rejectDepth)
+						{
+							SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(PPQ_GUID));
+							if (nullptr != pPPQ)
+							{
+								pPPQ->setRejectDepth(rejectDepth);
+							}
+						}
+						it_S->second.Activate(false);
+					}
 				}
 			}
 		}

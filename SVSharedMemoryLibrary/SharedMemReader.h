@@ -83,7 +83,7 @@ public:
 
 	//! Get the data from the failstatuslist for triggernumber
 	bool  GetFailStatusData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct);
-	SVMatroxBuffer& GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex);
+	SVMatroxBuffer GetImageBuffer(int triggerRecordId, int inspectionId, int imageIndex);
 
 	//private:
 	MonitorListStore      m_MonitorListStore;

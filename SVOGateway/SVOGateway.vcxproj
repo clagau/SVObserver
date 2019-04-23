@@ -68,7 +68,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVAuthLibrary.lib;SVHttpLibrary.lib;SVLogLibrary.lib;SVMatroxLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;WebsocketLibrary.lib;libprotobufd.lib;Mil.lib;Rpcrt4.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVAuthLibrary.lib;SVHttpLibrary.lib;SVImageLibrary.lib;SVLogLibrary.lib;SVMatroxLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerRecordController.lib;WebsocketLibrary.lib;libprotobufd.lib;Mil.lib;Rpcrt4.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
@@ -92,7 +92,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVAuthLibrary.lib;SVHttpLibrary.lib;SVLogLibrary.lib;SVMatroxLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;WebsocketLibrary.lib;libprotobuf.lib;Mil.lib;Rpcrt4.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVAuthLibrary.lib;SVHttpLibrary.lib;SVImageLibrary.lib;SVLogLibrary.lib;SVMatroxLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerRecordController.lib;WebsocketLibrary.lib;libprotobuf.lib;Mil.lib;Rpcrt4.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..</AdditionalIncludeDirectories>

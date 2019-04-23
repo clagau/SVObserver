@@ -111,9 +111,10 @@ struct SVInspectionInfoStruct
 	
 	bool setNextAvailableTR();
 
-	void setNextTriggerRecord();
+	void setNextTriggerRecord(SvTrc::TriggerData triggerData = SvTrc::TriggerData());
 
 	void setTriggerRecordCompleted();
+	void setTriggerRecordIncompleted();
 
 	SVInspectionProcess* pInspection {nullptr};
 	SVProductInspectedState oInspectedState {PRODUCT_NOT_INSPECTED};
@@ -135,6 +136,7 @@ struct SVInspectionInfoStruct
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};
 	long m_lastInspectedSlot {-1}; // Shared Memory
+	bool m_bReject = false;
 };
 
 typedef std::map< SVGUID, SVInspectionInfoStruct > SVGUIDSVInspectionInfoStructMap;
@@ -180,6 +182,7 @@ struct SVProductInfoStruct
 	bool bTriggered;
 	bool bhasCameraImage[SvDef::cMaximumCameras];
 	bool bDataComplete;
+	bool m_bReject = false;
 
 	SvTi::SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;
@@ -188,7 +191,7 @@ struct SVProductInfoStruct
 
 	SvIe::SVGuidSVCameraInfoStructMap m_svCameraInfos;
 	SVGUIDSVInspectionInfoStructMap	m_svInspectionInfos;
-	long m_lastInspectedSlot; // Shared Memory
+	long m_monitorListSMSlot; // Shared Memory
 
 protected:
 	long m_ProductActive;

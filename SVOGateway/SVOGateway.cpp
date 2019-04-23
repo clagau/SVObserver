@@ -32,6 +32,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "TriggerRecordController/ITriggerRecordControllerR.h"
 
 static const std::string cLocalHost(_T("127.0.0.1"));
 
@@ -182,9 +183,12 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 
 int main(int argc, _TCHAR* argv[])
 {
+	//this command is to send the assert to a messagebox (otherwise the assert abort the application)
+	_set_error_mode(_OUT_TO_MSGBOX);
 	int Result {0};
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
+	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
 
 	if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
 	{

@@ -11,6 +11,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 
 
 namespace SvSml
@@ -110,20 +111,6 @@ namespace SvSml
 		m_MonitorListCpyMap[monitorlistName] = std::move(MLCpyPtr);
 	}
 
-	DWORD MLCpyContainer::GetInspectionImageSize(const std::string& inspectionName) const
-	{
-		SvSml::MLInspectionInfoMap::const_iterator it = m_InspectionInfoMap.find(inspectionName);
-		if (it != m_InspectionInfoMap.end() && it->second.get())
-		{
-			return it->second->TotalImageSize;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-
 	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const std::string& rname) 
 	{
 		MonitorListCpyMap::iterator  it;
@@ -142,21 +129,11 @@ namespace SvSml
 
 	void MLCpyContainer::CalculateStoreIds()
 	{
-		std::vector<DWORD> ImageItemoffsets;
-		std::vector<DWORD> ImageItemIndexes;
-		std::vector<DWORD> DataItemOffset;
-		std::vector<DWORD> DataItemIndex;
-
 		DWORD Storeindex(0);
 		MLInspectionInfoMap::iterator it;
 		for (Storeindex = 0, it = m_InspectionInfoMap.begin(); it != m_InspectionInfoMap.end(); ++it, ++Storeindex)
 		{
 			it->second->StoreIndex = Storeindex;
-			ImageItemoffsets.push_back(0);
-			ImageItemIndexes.push_back(0);
-			DataItemOffset.push_back(0);
-			DataItemIndex.push_back(0);
-
 		}
 		MonitorListCpyMap::iterator  MLCPyIt;
 		for (MLCPyIt = m_MonitorListCpyMap.begin(); MLCPyIt != m_MonitorListCpyMap.end(); ++MLCPyIt)
@@ -184,34 +161,57 @@ namespace SvSml
 				assert(m_InspectionInfoMap.find(inspectionName) != m_InspectionInfoMap.end());
 				assert(MEMIt->second->name == MEMIt->first);
 
-				DWORD storeId = m_InspectionInfoMap[inspectionName]->StoreIndex;
-				switch (MEMIt->second->data.ObjectType)
-				{
-				case SvPb::SVImageObjectType:
-				{
-					MEMIt->second->data.InspectionStoreId = storeId;
-					MEMIt->second->data.ItemId = ImageItemIndexes[storeId]++;
-					MEMIt->second->data.Store_Offset = ImageItemoffsets[storeId];
-					ImageItemoffsets[storeId] += MonitorListCpy::ImageBufferHeaderSize;
-					ImageItemoffsets[storeId] += (DWORD)MEMIt->second->data.ByteSize;
-				}
-				break;
-
-				default:
-				{
-					MEMIt->second->data.InspectionStoreId = storeId;
-					MEMIt->second->data.ItemId = DataItemIndex[storeId]++;
-					MEMIt->second->data.Store_Offset = DataItemOffset[storeId];
-					DataItemOffset[storeId] += (DWORD)MEMIt->second->data.ByteSize;
-
-				}
-				break;
-
-				}
-
+				MEMIt->second->data.InspectionStoreId = m_InspectionInfoMap[inspectionName]->StoreIndex;
 			}
 		}
 	}
+
+	void MLCpyContainer::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const SvPb::DataDefinitionList& rDataDefList, const SvPb::ImageList& rImageDefList)
+	{
+		MonitorListCpyMap::iterator  MLCPyIt;
+		for (auto& rMLCPy : m_MonitorListCpyMap)
+		{
+			if (nullptr == rMLCPy.second || rMLCPy.second->GetPPQname() != rPPQName)
+			{
+				continue;
+			}
+
+			for (auto& rEntry : rMLCPy.second->m_EntriesMap)
+			{
+				if (nullptr == rEntry.second || rEntry.second->data.InspectionStoreId != inspectionStoreId)
+				{
+					continue;
+				}
+				std::string idBytes;
+				SvPb::SetGuidInProtoBytes(&idBytes, rEntry.second->m_Guid);
+				rEntry.second->data.m_inspectionTRCPos = inspectionTrcPos;
+				auto iter = find_if(rDataDefList.list().begin(), rDataDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				if (rDataDefList.list().end() != iter)
+				{
+					int pos = static_cast<int>(std::distance(rDataDefList.list().begin(), iter));
+					rEntry.second->data.m_triggerRecordPos = pos;
+					continue;
+				}
+
+				auto iterImage = find_if(rImageDefList.list().begin(), rImageDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				if (rImageDefList.list().end() != iterImage)
+				{
+					int pos = static_cast<int>(std::distance(rImageDefList.list().begin(), iterImage));
+					rEntry.second->data.m_triggerRecordPos = pos;
+					continue;
+				}
+
+				auto iterChildImage = find_if(rImageDefList.childlist().begin(), rImageDefList.childlist().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				if (rImageDefList.childlist().end() != iterChildImage)
+				{
+					int pos = static_cast<int>(std::distance(rImageDefList.childlist().begin(), iterChildImage));
+					rEntry.second->data.m_triggerRecordPos = pos| MonitorEntryData::c_childFlagForTrPos;
+					continue;
+				}
+			}
+		}
+	}
+
 	void  MLCpyContainer::BuildProtoMessage(SvPml::MesMLCpyContainer& rMesMLCpyCont) const
 	{
 		for (auto &mlCp : m_MonitorListCpyMap)
@@ -280,6 +280,32 @@ namespace SvSml
 		}
 		return result;
 
+	}
+
+	bool MLCpyContainer::clearInspectionIdsVector(const std::string& rPPQName)
+	{
+		for (auto& element : m_MonitorListCpyMap)
+		{
+			if (nullptr != element.second && element.second->m_ppqName == rPPQName)
+			{
+				element.second->clearInspectionIdsVector();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool MLCpyContainer::addInspectionIdEntry(const std::string& rPPQName, int ipMLId, int ipTRCId)
+	{
+		for (auto& element : m_MonitorListCpyMap)
+		{
+			if (nullptr != element.second && element.second->m_ppqName == rPPQName)
+			{
+				element.second->addInspectionIdEntry(ipMLId, ipTRCId);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 } //namespace SvSml

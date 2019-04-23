@@ -41,8 +41,6 @@ public:
 	BYTE* GetPtr(DWORD slot, DWORD offset);
 	///Get m_MapFileName 
 	LPCTSTR GetMapFileName() const;
-	///Get Slotcount
-	DWORD GetSlotCount() const;
 	///Get Slot size 
 	DWORD GetSlotSize() const;
 

@@ -7,10 +7,8 @@ import "SVO-Enum.proto";
 message MesMonitorEntryData
 {
 	uint32 InspectionStoreId = 1;
-	uint32 ItemId = 2; //<Index in the Inspection Store
 	SvPb.SVObjectTypeEnum ObjectType = 3;
 	uint32 variant_type = 4; ///vt value from variant
-	uint32 Store_Offset = 5; ///offset in Inspection Store
 	bool isArray = 6;
 	bool wholeArray = 7;
 	int32 arrayIndex = 8;
@@ -23,6 +21,9 @@ message MesMonitorEntryData
 	int64 Attrib = 15;
 	int64 BandSize = 16;
 	int64 ByteSize = 17;
+
+	int32 inspectionTRCPos = 18; //the position of the inspection in triggerRecordController
+	int32 triggerRecordPos = 19; //the position of the value in TriggerRecord from TRC
 }
 
 ///for Serialization class MonitorEntry
@@ -31,6 +32,12 @@ message MesMonitorEntry
 	bytes GUID = 1;
 	string name = 2;
 	MesMonitorEntryData EntryData = 3;
+}
+
+message InspectionIds
+{
+	uint32 InspectionStoreId = 1; //id of the monitorlist-SM
+	uint32 trcInspectionId = 2; //id of the TRC
 }
 
 ///for Serialization class MonitorListCpy
@@ -42,6 +49,7 @@ message MesMonitorListCpy
 	int32 ProductDepth = 4;
 	bool IsActive = 5;
 	repeated MesMonitorEntry MonitorEntries = 6;
+	repeated InspectionIds inspectionIds = 7;
 }
 
 ///for Serialization all Monitorlists

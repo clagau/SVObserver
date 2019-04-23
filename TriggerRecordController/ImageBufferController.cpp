@@ -93,7 +93,13 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 			}
 		}
 		else
-		{	//new size, add it to the image size list
+		{
+			if (0 == rImageStruct.numberofbuffersrequired())
+			{
+				//new empty size, ignore it.
+				continue;
+			}
+			//new size, add it to the image size list
 			pStructData = newImageStructList.add_list();
 			pStructData->set_type(rImageStruct.type());
 		}
@@ -102,6 +108,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		pStructData->set_numberofbuffersrequired(requiredNumbers);
 		pStructData->set_structid(rImageStruct.structid());
 
+		assert(requiredNumbers > 0);
 		if (pStructData->numberofbuffers() < requiredNumbers)
 		{ //add more buffer of this size if necessary
 			try

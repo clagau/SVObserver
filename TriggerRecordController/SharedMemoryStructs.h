@@ -12,8 +12,8 @@ namespace SvTrc
 
 struct CommonDataStruct
 {
-	long m_resetId = 0; //id of the last reset
-	long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
+	volatile long m_resetId = 0; //id of the last reset
+	volatile long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
 	int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
 	int m_inspectionListPBSize = 0;
 	int m_imageStructListPBSize = 0;

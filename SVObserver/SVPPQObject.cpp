@@ -290,6 +290,7 @@ SVPPQObject::SVPPQObject(SVObjectClass* POwner, int StringResourceID)
 
 SVPPQObject::~SVPPQObject()
 {
+	SvTrc::getTriggerRecordControllerRInstance().unregisterResetCallback(m_TRCResetCallbackHandle);
 	SVObjectManagerClass::Instance().ClearShortPPQIndicator();
 
 	// Stop the multimedia timer thread for the output and reset time delays
@@ -357,6 +358,13 @@ void SVPPQObject::init()
 	{
 		m_childObjects.push_back(pPpqLength.get());
 	}
+
+	m_TRCResetCallbackHandle = SvTrc::getTriggerRecordControllerRInstance().registerResetCallback(std::bind(&SVPPQObject::OnResetTRC, this));
+}
+
+void SVPPQObject::OnResetTRC()
+{
+	m_rejectTRStore.clear(); m_rejectTRStore.set_capacity(m_rejectCount);
 }
 
 HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
@@ -936,6 +944,8 @@ void SVPPQObject::AssignCameraToAcquisitionTrigger()
 
 void SVPPQObject::PrepareGoOnline()
 {
+	SvSml::SharedMemWriter::Instance().clearInspectionIdsVector(GetName());
+
 	// Fixup Acquisition triggers (as Cameras can be in a different order than Triggers)
 	AssignCameraToAcquisitionTrigger();
 
@@ -1034,6 +1044,8 @@ void SVPPQObject::PrepareGoOnline()
 
 void SVPPQObject::GoOnline()
 {
+	m_rejectTRStore.clear();
+	m_rejectTRStore.set_capacity(m_rejectCount);
 	std::string FailureObjectName;
 
 #ifdef EnableTracking
@@ -2189,7 +2201,7 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
 	for (auto& rInspection : pNewProduct->m_svInspectionInfos)
 	{
-		rInspection.second.setNextTriggerRecord();
+		rInspection.second.setNextTriggerRecord(SvTrc::TriggerData{pNewProduct->oTriggerInfo.lTriggerCount});
 	}
 	
 	// ************************************************************************
@@ -2607,13 +2619,12 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 
 	bool bValid = true;
 	SVGUIDSVInspectionInfoStructMap::iterator l_Iter = pProduct->m_svInspectionInfos.begin();
-
+	pProduct->m_bReject = false;
 	while (l_Iter != pProduct->m_svInspectionInfos.end())
 	{
 		bool l_Complete = (l_Iter->second.m_EndInspection > 0);
-
 		bValid &= l_Complete;
-
+		pProduct->m_bReject |= l_Iter->second.m_bReject;
 		++l_Iter;
 	}
 
@@ -2639,6 +2650,17 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode))
 		{
 			NotifyProcessTimerOutputs();
+		}
+
+		if (pProduct->m_bReject && HasActiveMonitorList())
+		{	//save triggerRecord for this reject to be available in SVOAccess longer.
+			std::vector<SvTrc::ITriggerRecordRPtr> trVector;
+			for (auto ipInfo : pProduct->m_svInspectionInfos)
+			{
+				trVector.push_back(ipInfo.second.m_triggerRecordComplete);
+			}
+
+			m_rejectTRStore.push_front(trVector);
 		}
 	}
 
@@ -3341,7 +3363,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 
 							long writerslot = GetSlotmanager()->GetNextWriteSlot();
 							//TRACE("Get Writeslot %i\n", writerslot);
-							pProduct->m_lastInspectedSlot = writerslot;
+							pProduct->m_monitorListSMSlot = writerslot;
 							for (auto& mapElement : pProduct->m_svInspectionInfos)
 							{
 								mapElement.second.m_lastInspectedSlot = writerslot;
@@ -3807,9 +3829,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 
 				if (l_pPPQProduct->bDataComplete)
 				{
-
 					SetProductComplete(l_PPQIndex);
-
 
 					for (size_t i = l_PPQIndex + 1; i < m_ppPPQPositions.size(); ++i)
 					{
@@ -4025,6 +4045,10 @@ SvTi::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
 void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 {
 	m_bActiveMonitorList = rActiveList.first;
+	if (m_bActiveMonitorList)
+	{
+		setRejectDepth(rActiveList.second.rejectDepth);
+	}
 }
 
 bool SVPPQObject::HasActiveMonitorList() const
@@ -4232,11 +4256,11 @@ void SVPPQObject::ReleaseSharedMemory( SVProductInfoStruct& rProduct)
 	{
 		try
 		{
-			long shareSlotIndex = rProduct.m_lastInspectedSlot;
+			long shareSlotIndex = rProduct.m_monitorListSMSlot;
 			if (shareSlotIndex >= 0 && GetSlotmanager().get())
 			{
 				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.ProcessCount(), true);
-				rProduct.m_lastInspectedSlot = -1;
+				rProduct.m_monitorListSMSlot = -1;
 			}
 			
 		}
@@ -4264,11 +4288,11 @@ void SVPPQObject::CommitSharedMemory( SVProductInfoStruct& rProduct)
 	{
 		try
 		{
-			long shareSlotIndex = rProduct.m_lastInspectedSlot;
+			long shareSlotIndex = rProduct.m_monitorListSMSlot;
 			if (shareSlotIndex >= 0 && GetSlotmanager().get())
 			{
 				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.ProcessCount(), true);
-				rProduct.m_lastInspectedSlot = -1;
+				rProduct.m_monitorListSMSlot = -1;
 			}
 			 
 		}
@@ -4289,13 +4313,42 @@ void SVPPQObject::CommitSharedMemory( SVProductInfoStruct& rProduct)
 	}
 }
 
-
-
-
 DWORD SVPPQObject::GetObjectColor() const
 {
 	return SvDef::DefaultWhiteColor;
 }
+
+bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+{
+	assert(depth >= 0);
+	if (m_rejectCount != depth)
+	{
+		m_rejectCount = depth + 1; //add one more to reduce the possibility that the last reject will be overwritten during Gateway create the FailstatusList.
+		for (auto pInspection : m_arInspections)
+		{
+			if (nullptr != pInspection)
+			{
+				try
+				{
+					pInspection->setTriggerRecordNumbers(GetPPQLength() + g_lPPQExtraImageBufferSize + m_rejectCount);
+				}
+				catch (const SvStl::MessageContainer& rSvE)
+				{
+					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+					Msg.setMessage(rSvE.getMessage());
+					if (nullptr != pErrorMessages)
+					{
+						pErrorMessages->push_back(rSvE);
+					}
+					return false;
+				}
+			}
+		}
+		m_rejectTRStore.set_capacity(m_rejectCount);
+	}
+	return true;
+}
+
 void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 {
 	m_NAKMode = nakMode;
@@ -4304,30 +4357,7 @@ void SVPPQObject::SetNAKMode(SvDef::NakGeneration nakMode, int NAKPar)
 
 bool SVPPQObject::SetupProductInfoStructs()
 {
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	SvPb::InspectionList inspListMessage = pConfig->GetInspectionList4TRC();
-	auto* pInspList = inspListMessage.mutable_list();
-	for (auto pInspection : m_arInspections)
-	{
-		std::string tmpGuid;
-		SvPb::SetGuidInProtoBytes(&tmpGuid, pInspection->GetUniqueObjectID());
-		auto pInspPB = std::find_if(pInspList->begin(), pInspList->end(), [tmpGuid](auto data)->bool
-		{
-			return (0 == data.id().compare(tmpGuid));
-		});
-
-		assert(pInspList->end() != pInspPB);
-		if (pInspList->end() != pInspPB)
-		{
-			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraImageBufferSize);
-		}
-	}
-	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);
-	if (result)
-	{
-		pConfig->UpdateInspectionList4TRC();
-	}
+	bool result = setInspections2TRC();
 
 	// Set up all the ProductInfo Structs
 	SvIe::SVGuidSVCameraInfoStructMap cameraInfos;
@@ -4355,5 +4385,34 @@ bool SVPPQObject::SetupProductInfoStructs()
 		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
 	}// end for
 
+	return result;
+}
+
+bool SVPPQObject::setInspections2TRC()
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	SvPb::InspectionList inspListMessage = pConfig->GetInspectionList4TRC();
+	auto* pInspList = inspListMessage.mutable_list();
+	for (auto pInspection : m_arInspections)
+	{
+		std::string tmpGuid;
+		SvPb::SetGuidInProtoBytes(&tmpGuid, pInspection->GetUniqueObjectID());
+		auto pInspPB = std::find_if(pInspList->begin(), pInspList->end(), [tmpGuid](auto data)->bool
+		{
+			return (0 == data.id().compare(tmpGuid));
+		});
+
+		assert(pInspList->end() != pInspPB);
+		if (pInspList->end() != pInspPB)
+		{
+			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraImageBufferSize + m_rejectCount);
+		}
+	}
+	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);
+	if (result)
+	{
+		pConfig->UpdateInspectionList4TRC();
+	}
 	return result;
 }

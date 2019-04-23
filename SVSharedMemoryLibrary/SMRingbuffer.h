@@ -76,8 +76,6 @@ public:
 	///vector with trigger numbers return size of vector max number 
 	int GetRejects(std::vector<DWORD> &rRejects) const;
 
-	///return total number of slots 
-	int GetTotalSlotCount() const;
 	///return the number of reject slots
 	int GetRejectSlotCount() const;
 

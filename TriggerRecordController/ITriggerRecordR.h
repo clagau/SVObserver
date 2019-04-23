@@ -13,6 +13,7 @@ namespace SvTrc
 {
 	struct TriggerData
 	{
+		explicit TriggerData(int triggerCount = 0) : m_TriggerCount(triggerCount) {};
 		int m_TriggerCount {0};
 	};
 

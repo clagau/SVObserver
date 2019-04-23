@@ -15,11 +15,7 @@ namespace SvSml
 	///struct with size Information for Imagestore
 	struct MLInspectionInfo
 	{
-		MLInspectionInfo():TotalDataSize(0),TotalImageSize(0),StoreIndex(-1),TotalDataCount(0), TotalImageCount(0) {};
-		DWORD TotalImageCount; //Number of Images for this Inspection 
-		DWORD TotalDataCount ; //Number of Datas for this Inspection
-		DWORD TotalImageSize; //<size of all Images including  an const offset per image 
-		DWORD TotalDataSize; //<size of all datas 
+		MLInspectionInfo():StoreIndex(-1) {};
 		DWORD StoreIndex;
 		std::string PPQName;
 		DWORD PPQIndex;

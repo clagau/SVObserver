@@ -44,13 +44,13 @@ static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\n
 static const int SubstituteStringNr = 9;
 
 static const UINT CategoryNr = 31;
-static const UINT CategoryBase = FAC_UNUSED01;
+static const UINT CategoryBase = FAC_SVProtoBuf;
 static const TCHAR* const CategoryUnknown = _T("Unknown");
 static const TCHAR* const CategoryNone = _T("None");
 static const TCHAR* const CategorySystem = _T("System");
 static const TCHAR* const CategoryApplication = _T("Application");
 static const TCHAR* const TaskCategory[CategoryNr]= { 
-	_T("Unused01"),
+	_T("SVProtoBuf"),
 	_T("SVGateway"),  
 	_T("TriggerRecordController"), 
 	_T("SVRemoteCtrl"), 

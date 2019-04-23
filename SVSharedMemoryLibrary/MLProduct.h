@@ -8,7 +8,7 @@
 #pragma once
 #pragma region Includes
 #include "MonitorEntry.h"
-
+#include "TriggerRecordController\ITriggerRecordR.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -28,7 +28,7 @@ namespace SvSml
 		std::vector<MonitorEntryPointer> m_dataEntries;
 		std::vector<MonitorEntryPointer> m_ImageEntries;
 		std::vector<stringpointer> m_data; //< data values as string 
-		
+		std::map<int, SvTrc::ITriggerRecordRPtr> m_triggerRecordMap; //first is monitorId for inspection
 	};
 	typedef std::unique_ptr<MLProduct> pProd;
 	typedef std::vector<pProd>  vecpProd;

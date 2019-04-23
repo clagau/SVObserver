@@ -515,9 +515,9 @@ HRESULT SVIOController::RemoteOutputValidateInputs()
 	return l_Status;
 }
 
-bool SVIOController::SetupRemoteMonitorList(SVConfigurationObject* pConfig)
+bool SVIOController::SetupRemoteMonitorList(SVConfigurationObject* pConfig, SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
 {
-	return m_RemoteMonitorListController.Setup(pConfig);
+	return m_RemoteMonitorListController.Setup(pConfig, pErrorMessages);
 }
 
 void SVIOController::ClearRemoteMonitorList()

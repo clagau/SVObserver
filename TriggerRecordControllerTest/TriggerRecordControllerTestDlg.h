@@ -48,6 +48,7 @@ namespace SvTrcT
 		void OnSetImage();
 		void OnToolTypeChanged();
 		void OnResetUpdate();
+		void OnReadyUpdate();
 		void OnNewTrId(int ipPos, int newTr);
 		LRESULT OnGetCallback(WPARAM wParam, LPARAM lParam);
 
@@ -85,6 +86,8 @@ namespace SvTrcT
 		const int m_inspectionPos = 0;
 		bool m_isReader = false;
 		int m_resetCallbackId = -1;
+		int m_readyCallbackId = -1;
 		int m_newTrIdCallbackId = -1;
+		std::atomic_bool m_isTRCValid = true;
 	};
 } // namespace SvTrcT

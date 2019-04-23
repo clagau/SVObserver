@@ -92,9 +92,6 @@ enum MessageTextEnum
 	Tid_IsLessThan,
 	Tid_IsInvalidRef,
 
-	Tid_ErrorInitMonitorListInSharedMemory,
-	Tid_ErrorWriteMonitorListNoSharedMemory,
-	Tid_ErrorReleaseProductNoReaderLock,
 	Tid_RingBuffer_Depth_Invalid_Value,
 	Tid_Error_NoFontFileSpec,
 	Tid_Error_FontFileNotExist,
@@ -528,8 +525,11 @@ enum MessageTextEnum
 	Tid_TRC_Error_SMLoad,
 	Tid_TRC_Error_ImageProps,
 	Tid_TRC_Error_EventCreation,
+	Tid_TRC_Error_GetValueWrongPos,
+	Tid_TRC_Error_ValueNotReady,
 
 	Tid_TRC_Error_ResetInspectionFailed,
+	Tid_TRC_Error_CounterTimeOut,
 
 	Tid_NAK_Error_MissingEndFrame,
 
@@ -548,6 +548,8 @@ enum MessageTextEnum
 	Tid_InvalidMatroxType,
 	Tid_InvalidMatroxAttribute,
 
-	Tid_ErrorPpqTriggerCount
+	Tid_ErrorPpqTriggerCount,
+
+	Tid_ProtBuf_ConvertToGUID_WrongSize,
 };
 } //namespace SvStl

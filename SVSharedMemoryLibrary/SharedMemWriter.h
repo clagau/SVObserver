@@ -13,7 +13,6 @@
 #include "SVSharedMemorySettings.h"
 #include "SVProductFilterEnum.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include  "SVMatroxLibrary/MatroxBuffer2D.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SharedDataContainer.h"
@@ -32,39 +31,31 @@ namespace SvSml
 		static SharedMemWriter& Instance();
 		~SharedMemWriter();
 
-		int CreateManagmentAndStores();
-		
-		RingBufferPointer GetSlotManager(LPCTSTR PPQname);
+		int CreateManagment();
 
+		RingBufferPointer GetSlotManager(LPCTSTR PPQname);
 		
 		const SVSharedMemorySettings& GetSettings() const;
 	
-		BYTE*  GetDataBufferPtr(DWORD  SlotIndex,  DWORD storeIndex , DWORD storeoffset); 
-	
-		///Return the Matrox buffer inthe shared memory;
-		SVMatroxBuffer& GetImageBuffer(DWORD  SlotIndex,  DWORD storeIndex, DWORD ImageIndex);
-	
-		///Creates the Matroxbuffer  for images in the Monitorlist in the Imagestores;
-		void CreateSharedMatroxBuffer();
-
 	
 		/// Clears the PPQ part of the shared memory
 		void CloseDataConnection();
-		bool HasShares();
 		void Destroy();
 	
 		/**************function call in m_MLContainer********/
 		///Calculates the Storindex, offset and itemindex for all images 
 		DWORD GetActiveMonitorListCount() const;
 		void CalculateStoreIds();
+		void setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTRCPos, const SvPb::DataDefinitionList& rDataDefList, const SvPb::ImageList& rImageDefList);
 		void ClearMonitorListCpyVector(); //< clear m_MonitorListCpyVector
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
-		DWORD GetInspectionImageSize(const std::string& InspName );
 		DWORD GetInspectionStoreId(const std::string& InspectionName);
 		const MonitorListCpy*  GetMonitorListCpyPointer(const std::string& Monitorlistname)  const;
 		const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const std::string& PPQNAME)  const;
 		MonitorEntryPointer GetMonitorEntryPointer(const std::string& rname);
-		void WriteMonitorList()  ;
+		void WriteMonitorList();
+		bool clearInspectionIdsVector(const std::string& rPPQName);
+		bool addInspectionIdEntry(const std::string& rPPQName, int ipMLId, int ipTRCId);
 	private:
 		SharedMemWriter();
 		SharedMemWriter(const SharedMemWriter& p_rObject) =delete;

@@ -35,11 +35,11 @@ public:
 	
 	struct BasicData
 	{
-		bool m_bInit = false;
-		int m_TriggerRecordNumber = 50 + cTriggerRecordAddOn;  //maximal number of trigger record to use
-		int m_lastFinishedTRID {-1};
-		int m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
-		int m_dataListSize {0}; //data List byte size
+		volatile bool m_bInit = false;
+		volatile int m_TriggerRecordNumber = 50 + cTriggerRecordAddOn;  //maximal number of trigger record to use
+		volatile int m_lastFinishedTRID {-1};
+		volatile int m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
+		volatile int m_dataListSize {0}; //data List byte size
 	};
 
 	virtual BasicData getBasicData() const = 0;
@@ -70,7 +70,7 @@ public:
 
 	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) { assert(false); throw E_NOTIMPL; };
 	virtual long getResetId() const = 0;
-	virtual long* getResetLockCounterRef() = 0;
+	virtual volatile long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
 
 	void setLastFinishedTR(int inspectionPos, int id);
@@ -92,7 +92,7 @@ public:
 	const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) const;
 	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) = 0;
+	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
 	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) { assert(false); throw E_NOTIMPL; };
@@ -103,15 +103,26 @@ public:
 	virtual int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) { assert(false); throw E_NOTIMPL; };
 	virtual int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) { assert(false); throw E_NOTIMPL; };
 
-	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector;	}
+	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector; }
 
 	int getMaxNumberOfRequiredBuffer() { return m_maxNumberOfRequiredBuffer; };
 
 	virtual bool isWritable() const { return true; };
-	virtual bool isInit() const { return true; };
 
-	void setResetCallback(std::function<void()> reloadCallback) { m_reloadCallback = reloadCallback; };
-	void setNewTrIdCallback(std::function<void(int, int)> newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
+	void setResetCallback(std::function<void()>&& reloadCallback) { m_reloadCallback = reloadCallback; };
+	void setReadyCallback(std::function<void()>&& readyCallback) { m_readyCallback = readyCallback; };
+	void setNewTrIdCallback(std::function<void(int, int)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
+
+	/// Set the InspectionList
+	/// \param rInspectionList [in]
+	virtual void setInspectionList(const SvPb::InspectionList &rInspectionList) { assert(false); throw E_NOTIMPL; };
+
+	bool isIPInit(int inspectionPos);
+
+	/// Reset resetId to 0 and wait until all reader finished his function.
+	virtual void prepareReset();
+	/// Set resetId to a new number and send reset event.
+	virtual void finishedReset() { assert(false); throw E_NOTIMPL; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -124,8 +135,10 @@ protected:
 	std::vector<SVMatroxBuffer> m_bufferVector;
 	int m_maxNumberOfRequiredBuffer = 9000;
 	std::function<void()> m_reloadCallback;
+	std::function<void()> m_readyCallback;
 	std::function<void(int, int)> m_newTrIdCallback;
 	HANDLE m_hResetEvent {nullptr};
+	HANDLE m_hReadyEvent {nullptr};
 	HANDLE m_hTridEvent {nullptr};
 #pragma endregion Member variables
 };

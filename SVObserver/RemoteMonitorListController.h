@@ -20,15 +20,22 @@
 class SVConfigurationObject;
 class SVObjectClass;
 
+//! Declaration is in SVStatusLibrary\MessageContainer.h
+namespace SvStl
+{
+class MessageContainer;
+typedef std::vector<MessageContainer> MessageContainerVector;
+}
+
 class RemoteMonitorListController
 {
 #pragma region Public
 public:
 	void Clear();
 	bool IsEmpty() const;
-	bool Setup(SVConfigurationObject* pConfig);
+	bool Setup(SVConfigurationObject* pConfig, SvStl::MessageContainerVector *pErrorMessages = nullptr );
 	const RemoteMonitorListMap& GetRemoteMonitorList() const;
-	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);
+	bool SetRemoteMonitorList(const RemoteMonitorListMap& rList, SvStl::MessageContainerVector *pErrorMessages = nullptr );
 
 	//************************************
 	// Method:    ReplaceOrAddMonitorList
@@ -90,9 +97,6 @@ private:
 	//! \returns void
 	static void WriteMonitorListToMLContainer(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist);
 	
-	//! Initialize the monitor writer 
-	static HRESULT InitMonitorListInSharedMemory(size_t size);
-
 	RemoteMonitorListMap m_list;
 
 	PPQNameListNames GetPPQMonitorLists(SVConfigurationObject* pConfig) const;

@@ -44,12 +44,26 @@ namespace SvTrc
 		/// \returns bool True if successfully. If false, no set and reset is done.
 		virtual bool setInspections(const SvPb::InspectionList& rInspectionList) = 0;
 
+		/// Resize the number of records for this inspection. ATTENTION: All old TR-instances of all IPs have to be deleted before.
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
+		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
+		/// \param newSize [in] The new number of records.
+		virtual void resizeIPNumberOfRecords(int inspectionPos, long newSize) = 0;
+
 		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
-		/// \param inspectionPos [in] ID of the inspection.
+		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
 		/// \returns SvTrc::ITriggerRecordRWPtr
 		virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) = 0;
 
+		/// Close a triggerRecord instance (it mus be the last one) and open a reader version.
+		/// \param pTriggerRecord [in] The writer instance
+		/// \returns SvTrc::ITriggerRecordRPtr The reader instance
 		virtual ITriggerRecordRPtr closeWriteAndOpenReadTriggerRecordObject(ITriggerRecordRWPtr& pTriggerRecord) = 0;
+
+
+		/// Close the writer instance and avoid to update the last trId.
+		/// \param pTriggerRecord [in] The writer instance
+		virtual void closeWriteObjectWithoutUpdateLastTrId(ITriggerRecordRWPtr& pTriggerRecord) = 0;
 
 		/// Return a handle-instance to a new locked buffer. It will be automatically unlocked if the handle-instance will be deleted.
 		/// \param bufferStruct [in] Structure of the required buffer.
@@ -59,7 +73,7 @@ namespace SvTrc
 
 		/// Delete intern the memory and start the process to create the new memory structure. ATTENTION: All old TR-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		/// \param inspectionPos [in] ID of the inspection, if only reset of additional buffers set m_cResetStartedAddBuffer.
+		/// \param inspectionPos [in] Position (in the inspection list) of the inspection, if only reset of additional buffers set m_cResetStartedAddBuffer.
 		virtual void startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) = 0;
 
 		/// Finished the reset of the trigger record structure and create the new memory structure.
@@ -108,7 +122,7 @@ namespace SvTrc
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param rDataDefList [in] Reference to the data definition list (Move semantics!)
 		/// \param rValueObjectList [in] Reference to the value object list (Move semantics!)
-		/// \param inspectionPos [in] ID of the inspection
+		/// \param inspectionPos [in] Position (in the inspection list) of the inspection
 		virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos = -1) = 0;
 
 		/// Locked all reset-Methods in this controller. (e.g. In Run-Mode there should no reset possible). Is not possible if reset already started.

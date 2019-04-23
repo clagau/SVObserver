@@ -495,7 +495,7 @@ bool TrcTester::setAndReadValues()
 		GUID guid = GUID_NULL;
 		UuidCreateSequential(&guid);
 		SvPb::SetGuidInProtoBytes(&uniqueIdBytes, guid);
-		pValueObjectDef->set_guidid(uniqueIdBytes.c_str());
+		pValueObjectDef->set_guidid(uniqueIdBytes);
 		pValueObjectDef->set_name(valueObject.first);
 		valueList.push_back(valueObject.second);
 	}
@@ -508,11 +508,6 @@ bool TrcTester::setAndReadValues()
 		m_TRController.startResetTriggerRecordStructure(0);
 		m_TRController.changeDataDef(std::move(tmpDefList), std::move(tmpValueList), 0);
 		m_TRController.finishResetTriggerRecordStructure();
-		if (!retValue)
-		{
-			m_rLogClass.Log(_T("init Inspection"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
-			return false;
-		}
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{

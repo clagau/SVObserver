@@ -131,16 +131,16 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 		err.set_message("Shared Memory is blocked");
 		return false;
 	}
-	int storeindex = req.id().imagestore();
-	int slotindex = req.id().slotindex();
-	int Imageindex = req.id().imageindex();
+	int inspectionId = req.id().inspectionid();
+	int triggerRecordId = req.id().trid();
+	int imageindex = req.id().imageindex();
 
 	SVBitmapInfo bitmapInfo;
 	auto pData = resp.mutable_imagedata();
-	const SVMatroxBuffer& rFromId = m_MemReader.m_DataContainer.GetImageBuffer(slotindex, storeindex, Imageindex);
+	SVMatroxBuffer imageBuffer = m_MemReader.GetImageBuffer(triggerRecordId, inspectionId, imageindex);
 	//@Todo[MEC][8.00] [22.11.2017] true is for testscript for binary compare  false is faster 
 	std::string ImageBuffer;
-	SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, rFromId);
+	SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, imageBuffer);
 	pData->mutable_rgbdata()->swap(ImageBuffer);
 	pData->set_width(std::abs(bitmapInfo.GetWidth()));
 	pData->set_height(std::abs(bitmapInfo.GetHeight()));
@@ -349,13 +349,16 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 	int i(0);
 	for (auto& MeP : pProduct->m_ImageEntries)
 	{
-
 		if (!MeP.get())
 			break;
 		auto pImage = pProductMsg->add_images();
-		pImage->set_slotindex(slot);
-		pImage->set_imageindex(MeP->data.ItemId);
-		pImage->set_imagestore(MeP->data.InspectionStoreId);
+		auto mapIter = pProduct->m_triggerRecordMap.find(MeP->data.InspectionStoreId);
+		if (pProduct->m_triggerRecordMap.end() != mapIter && nullptr != mapIter->second)
+		{
+			pImage->set_trid(mapIter->second->getId());
+		}
+		pImage->set_imageindex(MeP->data.m_triggerRecordPos);
+		pImage->set_inspectionid(MeP->data.m_inspectionTRCPos);
 
 		if (nameInResponse)
 		{

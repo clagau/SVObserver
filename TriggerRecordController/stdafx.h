@@ -51,6 +51,7 @@
 #include <vector>
 #include <ctime>				//Used by static library
 #include <tchar.h>
+#include <thread>
 #include <WinBase.h>
 
 #include <boost/function.hpp>

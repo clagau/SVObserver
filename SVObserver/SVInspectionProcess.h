@@ -260,7 +260,12 @@ public:
 	/// Return true if Regression Test should go to pause because of the Play condition.
 	/// \returns bool
 	bool shouldPauseRegressionTestByCondition();
-	 
+
+
+	/// Set Numbers of TriggerRecord for this inspection. ATTENTIONS: In error case this method throw an exception.
+	/// \param newSize [in] The new size.
+	void setTriggerRecordNumbers(long newSize);
+
 protected:
 	
 	struct WatchListElement 
@@ -358,11 +363,11 @@ protected:
 	void ThreadProcess( bool& p_WaitForEvents );
 
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed);
+	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& p_rProduct);
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 	
-	///True if product i a reject
-	bool   CopyToWatchlist(SvTrc::ITriggerRecordRPtr pTriggerRecord, long slotindex);
+	///True if product is a reject
+	bool isReject();
 	
 	void BuildWatchlist();
 
@@ -430,8 +435,6 @@ private:
 	SvOp::SVConditionalClass* m_pToolSetConditional;
 	SVCommandQueue m_CommandQueue;
 	
-
-	std::vector<WatchlistelementPtr>  m_WatchListImages;
 	std::vector<WatchlistelementPtr> m_WatchListDatas;
 	
 	int m_StoreIndex; 

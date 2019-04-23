@@ -16,7 +16,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "ShareEvents.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "MLInspectionInfo.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -41,13 +40,12 @@ namespace SvSml
 		CheckDirectories();
 	}
 
-	int SharedMemWriter::CreateManagmentAndStores()
+	int SharedMemWriter::CreateManagment()
 	{
 		const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
-		SMParameterStruct Param(rSettings.GetCreateTimeout(),rSettings.GetCreateWaitTime());
+		SMParameterStruct Param(rSettings.GetCreateTimeout(), rSettings.GetCreateWaitTime());
 
-		m_DataContainer.CreateSlotManagment(m_MLContainer, Param);
-		return m_DataContainer.CreateStores(m_MLContainer, Param);
+		return m_DataContainer.CreateSlotManagment(m_MLContainer, Param);
 	}
 
 	RingBufferPointer SharedMemWriter::GetSlotManager(LPCTSTR PPQname)
@@ -113,32 +111,6 @@ namespace SvSml
 		m_DataContainer.CloseConnection();
 	}
 
-	BYTE*  SharedMemWriter::GetDataBufferPtr(DWORD  SlotIndex, DWORD storeIndex, DWORD storeoffset)
-	{
-		return m_DataContainer.GetDataBufferPtr(SlotIndex, storeIndex, storeoffset);
-	}
-	
-	///Return the MatroxSharedBuffer;
-	SVMatroxBuffer& SharedMemWriter::GetImageBuffer(DWORD  SlotIndex,  DWORD storeIndex, DWORD ImageIndex)
-	{
-		return m_DataContainer.GetImageBuffer(SlotIndex,  storeIndex, ImageIndex);
-	}
-
-	///Creates a MatroxSharedBuffer for all images in the Monitorlist;
-	void SharedMemWriter::CreateSharedMatroxBuffer()
-	{
-		m_DataContainer.CreateSharedMatroxBuffer(m_MLContainer);
-
-	}
-	bool SharedMemWriter::HasShares()
-	{
-		return true;
-	}
-
-	DWORD SharedMemWriter::GetInspectionImageSize(const std::string& inspectionName)
-	{
-		return m_MLContainer.GetInspectionImageSize(inspectionName);
-	}
 	DWORD SharedMemWriter::GetInspectionStoreId(const std::string& InspectionName)
 	{
 		return m_MLContainer.GetInspectionStoreId(InspectionName);
@@ -177,10 +149,26 @@ namespace SvSml
 		return;
 	}
 
+	bool SharedMemWriter::clearInspectionIdsVector(const std::string& rPPQName)
+	{
+		return m_MLContainer.clearInspectionIdsVector(rPPQName);
+	}
+
+	bool SharedMemWriter::addInspectionIdEntry(const std::string& rPPQName, int ipMLId, int ipTRCId)
+	{
+		return m_MLContainer.addInspectionIdEntry(rPPQName, ipMLId, ipTRCId);
+	}
+
 	void  SharedMemWriter::CalculateStoreIds()
 	{
 		return m_MLContainer.CalculateStoreIds();
 	}
+
+	void SharedMemWriter::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTRCPos, const SvPb::DataDefinitionList& rDataDefList, const SvPb::ImageList& rImageDefList)
+	{
+		m_MLContainer.setDataTrcPos(rPPQName, inspectionStoreId, inspectionTRCPos, rDataDefList, rImageDefList);
+	}
+
 	DWORD  SharedMemWriter::GetActiveMonitorListCount() const
 	{
 		return m_MLContainer.GetActiveMonitorlistCount();

@@ -84,7 +84,7 @@ public:
 
 	virtual long getResetId() const override { return m_pCommonData->m_resetId; };
 
-	virtual long* getResetLockCounterRef() override { return &m_pCommonData->m_resetLockCounter; };
+	virtual volatile long* getResetLockCounterRef() override { return &m_pCommonData->m_resetLockCounter; };
 
 	virtual const SvPb::InspectionList& getInspections() const override { return m_inspectionList; }
 
@@ -101,10 +101,20 @@ public:
 
 	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) override;
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
+	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
 	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) override;
+
+	/// Set the InspectionList
+	/// ATTENTION: Throw exception if InspectionList to large for the space in sharedMemory.
+	/// \param rInspectionList [in]
+	virtual void setInspectionList(const SvPb::InspectionList &rInspectionList) override;
+
+	/// Reset resetId to 0 and wait until all reader finished his function.
+	virtual void prepareReset() override;
+	/// Set resetId to a new number and send reset event.
+	virtual void finishedReset() override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -117,11 +127,6 @@ public:
 #pragma region Private Methods
 private:
 	void ResetInspectionData(TRControllerWriterDataPerIP& rData);
-
-	/// Set the InspectionList
-	/// ATTENTION: Throw exception if InspectionList to large for the space in sharedMemory.
-	/// \param rInspectionList [in]
-	void setInspectionList(const SvPb::InspectionList &rInspectionList);
 
 	void setInspectionSMData(int ipPos, const std::string& rSmName, int smSize);
 #pragma endregion Private Methods

@@ -10,6 +10,8 @@
 #include "ConverterHelper.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -28,6 +30,11 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
 	if (sizeof(GUID) == strguid.size())
 	{
 		rGuid = *(reinterpret_cast<const GUID*>(strguid.data()));
+	}
+	else
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 

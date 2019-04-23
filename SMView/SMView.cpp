@@ -13,6 +13,8 @@
 #include "stdafx.h"
 #include "SMView.h"
 #include "SMViewDlg.h"
+#include "SVMatroxLibrary\SVMatroxTypedefs.h"
+#include "TriggerRecordController\ITriggerRecordControllerR.h"
 #define M_MIL_USE_SAFE_TYPE 0
 #include <mil.h>
 
@@ -63,6 +65,8 @@ BOOL CSMViewApp::InitInstance()
 		AfxMessageBox(_T("Mil System could not be allocated. SMView will be closed"));
 		return FALSE;
 	}
+
+	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
 
 	CWinApp::InitInstance();
 

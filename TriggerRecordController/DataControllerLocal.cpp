@@ -60,8 +60,6 @@ DataControllerLocal::~DataControllerLocal()
 
 void DataControllerLocal::clearAll()
 {
-	m_resetId = 0;
-	while (0 < m_resetLockCounter) {};
 	m_inspectionList.clear_list();
 
 	m_nextTRID = 0;
@@ -96,10 +94,9 @@ bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspection
 
 	if (rInspectionList.list_size() != m_inspectionList.list_size())
 	{
-		m_resetId = 0;
+		prepareReset();
 		isReset = true;
-		while (0 < m_resetLockCounter) {};
-
+		
 		for (auto& rData : m_dataVector)
 		{
 			ResetInspectionData(rData);
@@ -119,8 +116,7 @@ bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspection
 			{
 				if (!isReset)
 				{
-					m_resetId = 0;
-					while (0 < m_resetLockCounter) {};
+					prepareReset();
 					isReset = true;
 				}
 				ResetInspectionData(m_dataVector[i]);
@@ -171,16 +167,16 @@ void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, 
 	m_dataVector[inspectionPos].setDataDefList(std::move(dataDefList));
 }
 
-ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int inspectionPos, int trId)
+ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos].getBasicData().m_bInit)
 	{
-		if (0 <= trId)
+		if (validFunc)
 		{
 			for (int i = 0; i < m_dataVector[inspectionPos].getBasicData().m_TriggerRecordNumber; i++)
 			{
 				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
-				if (rCurrentTR.m_trId == trId)
+				if (validFunc(rCurrentTR))
 				{
 					long refTemp = rCurrentTR.m_referenceCount;
 					while (0 <= refTemp)
@@ -232,9 +228,7 @@ ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int in
 
 std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList)
 {
-	m_resetId = std::max(1l, m_lastResetId + 1);
-	m_lastResetId = m_resetId;
-	while (0 < m_resetLockCounter) {}; //wait if any other method have left the access of this structure
+	prepareReset();
 	for (int i = 0; i < m_dataVector.size(); i++)
 	{
 		TRControllerBaseDataPerIP::BasicData& rBaseData = m_dataVector[i].getMutableBasicData();
@@ -285,7 +279,36 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 		m_dataVector[inspectionId].getMutableBasicData().m_bInit = true;
 	}
 
+	finishedReset();
+
 	return changeVect;
+}
+
+void DataControllerLocal::prepareReset()
+{
+	::ResetEvent(m_hReadyEvent);
+	m_resetId = 0;
+	::SetEvent(m_hResetEvent);
+	if (m_reloadCallback)
+	{
+		m_reloadCallback();
+	}
+	while (0 < m_resetLockCounter) 
+	{
+		std::this_thread::yield();
+	}
+}
+
+void DataControllerLocal::finishedReset()
+{
+	m_resetId = std::max(1l, m_lastResetId + 1);
+	m_lastResetId = m_resetId;
+	::ResetEvent(m_hResetEvent);
+	::SetEvent(m_hReadyEvent);
+	if (m_readyCallback)
+	{
+		m_readyCallback();
+	}
 }
 
 TRControllerBaseDataPerIP* DataControllerLocal::getTRControllerData(int inspectionId)
