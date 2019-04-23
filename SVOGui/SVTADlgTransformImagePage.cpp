@@ -30,8 +30,8 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
-	: SVToolAdjustmentDialogImagePageClass(rInspectionID, rTaskObjectID, SubType, id)
+	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(const SVGUID& rInspectionID, const SVGUID& rToolID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
+	: SVToolAdjustmentDialogImagePageClass(rInspectionID, rToolID, SubType, id)
 		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformImagePageClass)

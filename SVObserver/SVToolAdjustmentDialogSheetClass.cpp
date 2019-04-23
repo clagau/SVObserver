@@ -288,7 +288,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SvPb::SVTransformationToolObjectType:
 			if (nullptr != pImageTransform)
 			{
-				AddPage(new SvOg::SVToolAdjustmentDialogTransformImagePageClass(m_InspectionID, pImageTransform->GetUniqueObjectID()));
+				AddPage(new SvOg::SVToolAdjustmentDialogTransformImagePageClass(m_InspectionID, m_TaskObjectID, pImageTransform->GetUniqueObjectID()));
 			}
 			AddPage(new SVToolAdjustmentDialogTranslationPageClass(m_InspectionID, m_TaskObjectID));
 			AddPage(new SVToolAdjustmentDialogRotationPageClass(m_InspectionID, m_TaskObjectID));
