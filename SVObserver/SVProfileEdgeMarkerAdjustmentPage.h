@@ -124,9 +124,6 @@ private:
 	int		m_upperThresholdOption;
 	SvOg::PictureDisplay m_dialogImage;
 
-	bool m_InitialShowEdgeAOverlays {false};
-	bool m_InitialShowEdgeBOverlays {false};
-
 	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
 	SvTo::SVToolClass* m_pTool{ nullptr };
 	SvAo::SVAnalyzerClass* m_pAnalyzer {nullptr};

@@ -51,8 +51,8 @@ SVProfileEdgeMarkerAdjustmentPageClass::~SVProfileEdgeMarkerAdjustmentPageClass(
 	if (nullptr != m_pAnalyzerValues)
 	{
 		// Set the values to the original values before the page was displayed
-		m_pAnalyzerValues->Set<bool>(SVShowAllEdgeAOverlaysGuid, m_InitialShowEdgeAOverlays);
-		m_pAnalyzerValues->Set<bool>(SVShowAllEdgeBOverlaysGuid, m_InitialShowEdgeBOverlays);
+		m_pAnalyzerValues->Set<bool>(SVShowAllEdgeAOverlaysGuid, false);
+		m_pAnalyzerValues->Set<bool>(SVShowAllEdgeBOverlaysGuid, false);
 		m_pAnalyzerValues->Commit();
 	}
 }
@@ -109,8 +109,6 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	{
 		m_pAnalyzerValues = std::shared_ptr<Controller> {new Controller {SvOg::BoundValues {m_rInspectionID, m_pAnalyzer->GetUniqueObjectID()}}};
 		m_pAnalyzerValues->Init();
-		m_InitialShowEdgeAOverlays = m_pAnalyzerValues->Get<bool>(SVShowAllEdgeAOverlaysGuid);
-		m_InitialShowEdgeBOverlays = m_pAnalyzerValues->Get<bool>(SVShowAllEdgeBOverlaysGuid);
 	}
 
 	GetInspectionData();
@@ -607,6 +605,8 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 	if (nullptr != m_pAnalyzerValues)
 	{
+		//init need to be done, because the other tab (A or B) could change the values before.
+		m_pAnalyzerValues->Init();
 		if (m_bEdgeA)
 		{
 			m_pAnalyzerValues->Set<bool>(SVShowAllEdgeAOverlaysGuid, true);

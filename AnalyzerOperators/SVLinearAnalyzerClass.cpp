@@ -86,8 +86,13 @@ bool SVLinearAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 		m_svNormalizer.SetNormalRange(m_dwMinThreshold, m_dwMaxThreshold);
 		m_svNormalizer.SetRealRange(m_dwMinThreshold, m_dwMaxThreshold);
 
-		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		m_svShowAllEdgeAOverlays.setSaveDefaultValueFlag(false);
+		m_svShowAllEdgeBOverlays.setSaveDefaultValueFlag(false);
+		//Set the parameter to false, because in old configuration it is possible that by accident.
+		m_svShowAllEdgeAOverlays.SetValue(false);
+		m_svShowAllEdgeBOverlays.SetValue(false);
 	}
 
 	return bOk;
