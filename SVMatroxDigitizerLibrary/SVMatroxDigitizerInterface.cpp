@@ -17,17 +17,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-#if SV_DESIRED_MIL_VERSION == 0x0900
-const MIL_INT cFeatureControlType = M_DEFAULT;
-const MIL_INT cFeatureControlValueEnumType = M_TYPE_STRING_ENUMERATION;
-const MIL_INT cCameraVendorSizeType = M_VENDOR_SIZE;
-const MIL_INT cGCSerialNumberSizeType = M_GC_SERIAL_NUMBER_LENGTH;
-#else
 const MIL_INT cFeatureControlType = M_FEATURE_VALUE;
 const MIL_INT cFeatureControlValueEnumType = M_TYPE_STRING;
 const MIL_INT cCameraVendorSizeType = M_CAMERA_VENDOR_SIZE;
 const MIL_INT cGCSerialNumberSizeType = M_GC_SERIAL_NUMBER_SIZE;
-#endif
 #pragma endregion Declarations
 
 /**
@@ -1330,103 +1323,99 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 			switch (FeatureValue.vt)
 			{
 				case VT_I1:		// Byte
-				case VT_UI1: 
+				case VT_UI1:
+				{
+					unsigned char value;
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						unsigned char value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue = value;
-						}
+						FeatureValue = value;
 					}
-					break;
+				}
+				break;
 
 				case VT_I2:		// Short
-				case VT_UI2: 
+				case VT_UI2:
+				{
+					unsigned short value;
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						unsigned short value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue = value;
-						}
+						FeatureValue = value;
 					}
-					break;
+				}
+				break;
 
 				case VT_I4:		// long
 				case VT_UI4:
 				case VT_INT:	// INT, UINT
 				case VT_UINT:
+				{
+					long value;
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						long value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue = value;
-						}
+						FeatureValue = value;
 					}
-					break;
+				}
+				break;
 
 				case VT_I8:		// int64
 				case VT_UI8:
+				{
+					__int64 value;
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						__int64 value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue.llVal = value;
-						}
+						FeatureValue.llVal = value;
 					}
-					break;
+				}
+				break;
 
 				case VT_BSTR:	// String
+				{
+					char value[256]; // how to determine size needed ahead of time ?
+
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						char value[256]; // how to determine size needed ahead of time ?
-						
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue.bstrVal = _bstr_t(value);
-						}
+						FeatureValue.bstrVal = _bstr_t(value);
 					}
-					break;
+				}
+				break;
 
 				case VT_R4:		// Float
+				{
+					float value;
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						float value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue.fltVal = value;
-						}
+						FeatureValue.fltVal = value;
 					}
-					break;
+				}
+				break;
 
 				case VT_R8:		// Double
+				{
+					double value;
+					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
+					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					if (l_Code == S_OK)
 					{
-						double value;
-						MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
-						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-						if (l_Code == S_OK)
-						{
-							FeatureValue.dblVal = value;
-						}
+						FeatureValue.dblVal = value;
 					}
-					break;
+				}
+				break;
 
 				case VT_BOOL:	// Bool
-					{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-						bool value {false};
-#else
-						MIL_BOOL value {0L};
-#endif
+				{
+					MIL_BOOL value {0L};
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
 					if (l_Code == S_OK)
@@ -1434,7 +1423,7 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 						FeatureValue.boolVal = value ? true : false;
 					}
 				}
-					break;
+				break;
 
 				default:
 					l_Code = S_FALSE;
@@ -1475,12 +1464,11 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 	{
 		MatroxType l_matroxFeatureType = 0;
 		MIL_INT64 controlType = cFeatureControlType;
-#if SV_DESIRED_MIL_VERSION != 0x0900
 		if (SVMatroxDigitizerFeature::SVTypeCommand == FeatureType)
 		{
 			controlType = M_FEATURE_EXECUTE;
 		}
-#endif
+
 		HRESULT hr = ConvertEnumToMatroxType(SVMatroxDigitizerFeature::m_FeatureTypeEnumConvertor, FeatureType, l_matroxFeatureType);
 		if (S_OK == hr)
 		{
@@ -1562,11 +1550,7 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 
 				case VT_BOOL:	// Bool
 					{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-						bool value = (FeatureValue.boolVal) ? true : false;
-#else
 						MIL_BOOL value = (FeatureValue.boolVal) ? 1L : 0L;
-#endif
 						MdigControlFeature(DigitizerID.m_DigitizerIdentifier, controlType, featureNameStr, l_matroxFeatureType, &value);
 						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 					}
@@ -1850,39 +1834,22 @@ HRESULT SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& Digiti
 
 HRESULT SVMatroxDigitizerInterface::GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list)
 {
-	HRESULT l_Code( S_OK );
 	SVMatroxInt EventCnt = 0;
-	
-#if SV_DESIRED_MIL_VERSION == 0x0900
-	MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_ELEMENT_COUNT, MIL_TEXT("EventSelector"), M_TYPE_STRING_ENUMERATION, &EventCnt);
-#else
 	MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_FEATURE_ENUM_ENTRY_COUNT, MIL_TEXT("EventSelector"), M_DEFAULT, &EventCnt);
-#endif
-	l_Code = SVMatroxApplicationInterface::GetLastStatus();
+	HRESULT l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 	if (l_Code == S_OK && EventCnt)
 	{
 		for ( SVMatroxInt i = 0; i < EventCnt && l_Code == S_OK; i++ )
 		{
 			SVMatroxInt Len = 0;
-
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_ELEMENT + M_LENGTH + i, MIL_TEXT("EventSelector"), M_TYPE_STRING_ENUMERATION, &Len);
-#else
 			MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_FEATURE_ENUM_ENTRY_NAME + M_STRING_SIZE + i, MIL_TEXT("EventSelector"), M_DEFAULT, &Len);
-#endif
-
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			
 			if (l_Code == S_OK && Len)
 			{
 				MIL_TEXT_PTR pEventName = new MIL_TEXT_CHAR[Len];
-				
-#if SV_DESIRED_MIL_VERSION == 0x0900
-				MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_ELEMENT + i, MIL_TEXT("EventSelector"), M_TYPE_STRING_ENUMERATION, pEventName);
-#else
 				MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_FEATURE_ENUM_ENTRY_NAME + i, MIL_TEXT("EventSelector"), M_DEFAULT, pEventName);
-#endif
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				
 				if (l_Code == S_OK)

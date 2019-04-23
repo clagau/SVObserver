@@ -634,20 +634,6 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			break;
 		}
 
-#if SV_DESIRED_MIL_VERSION == 0x0900
-		MatroxCode = SVMatroxBlobInterface::Set(m_ResultBufferID, SVEBlobIdentifier, static_cast<long>(SVValueBinary));
-
-		BOOL l_bUseFillBlob;
-		m_bvoFillBlobs.GetValue(l_bUseFillBlob);
-		if (l_bUseFillBlob)
-		{
-			MatroxCode = SVMatroxBlobInterface::Set(m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable));
-		}
-		else
-		{
-			MatroxCode = SVMatroxBlobInterface::Set(m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable));
-		}
-#else
 		MatroxCode = SVMatroxBlobInterface::CreateContext(m_BlobContextID);
 
 		if (S_OK != MatroxCode || M_NULL == m_BlobContextID)
@@ -670,7 +656,6 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		{
 			MatroxCode = SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable));
 		}
-#endif
 
 		// size to fit number of blobs MIL searches for
 		m_vec2dBlobResults.resize(SvOi::SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize);
@@ -1441,32 +1426,6 @@ void SVBlobAnalyzerClass::MapQuickSort(double* aSortArray, long* alSortMap,	long
 DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 {
 	DWORD LastError(0);
-#if SV_DESIRED_MIL_VERSION == 0x0900
-	HRESULT MatroxCode = SVMatroxBlobInterface::DestroyContext(m_BlobContextID);
-
-	if (S_OK != MatroxCode)
-	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
-		MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
-		LastError = -SvStl::Err_16148;
-		return LastError;
-
-	}
-
-	MatroxCode = SVMatroxBlobInterface::CreateContext(m_BlobContextID);
-
-	if (M_NULL == m_BlobContextID)
-	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16149);
-		LastError = - SvStl::Err_16149;
-		return LastError;
-	}
-#else
-	HRESULT MatroxCode = S_OK;
-#endif
-
-
 	std::set<SVBlobSelectionEnum> featureSet;
 
 	std::string FeaturesEnabled;
@@ -1486,7 +1445,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 		}
 	}
 
-	MatroxCode = SVMatroxBlobInterface::BlobSelectFeature(m_BlobContextID, featureSet);
+	HRESULT MatroxCode = SVMatroxBlobInterface::BlobSelectFeature(m_BlobContextID, featureSet);
 	if (S_OK != MatroxCode)
 	{
 		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
@@ -1631,20 +1590,6 @@ bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	BOOL l_bIsFillBlob;
 	m_bvoFillBlobs.GetValue( l_bIsFillBlob );
 
-#if SV_DESIRED_MIL_VERSION == 0x0900
-	if ( l_bIsFillBlob )
-	{
-		SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
-	}
-	else
-	{
-		SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
-	}
-
-	long colorBlobEnum;
-	m_colorBlobEnumValue.GetValue( colorBlobEnum );
-	SVMatroxBlobInterface::SetForeground( m_ResultBufferID, SV_BLOB_BLACK == colorBlobEnum );
-#else
 	if (l_bIsFillBlob)
 	{
 		SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable));
@@ -1657,7 +1602,6 @@ bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	long colorBlobEnum;
 	m_colorBlobEnumValue.GetValue(colorBlobEnum);
 	SVMatroxBlobInterface::SetForeground(m_BlobContextID, SV_BLOB_BLACK == colorBlobEnum);
-#endif
 
 	CreateArray();
 

@@ -59,11 +59,7 @@ HRESULT SVMatroxBlobInterface::CreateContext( SVMatroxIdentifier& rContextId )
 
 		if( l_Code == S_OK )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			SVMatroxIdentifier l_NewId = MblobAllocFeatureList(M_DEFAULT_HOST, M_NULL );
-#else
 			SVMatroxIdentifier l_NewId = MblobAlloc(M_DEFAULT_HOST, M_DEFAULT, M_DEFAULT, M_NULL);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == S_OK )
 			{
@@ -168,11 +164,7 @@ HRESULT SVMatroxBlobInterface::Execute( const SVMatroxIdentifier& rResultId, con
 	{
 		if( !rIdentId.empty() && M_NULL != rBlobId && M_NULL != rResultId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MblobCalculate( rIdentId.GetIdentifier(), M_NULL, rBlobId, rResultId);
-#else
 			MblobCalculate(rBlobId, rIdentId.GetIdentifier(), M_NULL, rResultId);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -205,11 +197,7 @@ HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, S
 	{
 		if( M_NULL != rResultId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MblobGetResult(rResultId, lControlType | M_BINARY, pdResultsArray);
-#else
 			MblobGetResult(rResultId, M_DEFAULT, lControlType | M_BINARY, pdResultsArray);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -277,17 +265,6 @@ HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxIdentifier& rResultId, l
 	{
 		if( M_NULL != rResultId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			SVMatroxInt l_Number = 0;
-			long l_lValue;
-			MblobGetNumber( rResultId, &l_Number );
-			l_lValue = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_Number );
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( l_Code == S_OK )
-			{
-				rNumber = l_lValue;
-			}
-#else
 			MIL_INT lValue;
 			MblobGetResult(rResultId, M_DEFAULT, M_NUMBER + M_TYPE_MIL_INT, &lValue);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
@@ -295,7 +272,6 @@ HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxIdentifier& rResultId, l
 			{
 				rNumber = static_cast<long>(lValue);
 			}
-#endif
 		}
 		else
 		{
@@ -510,12 +486,8 @@ HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxIdentifier& rResultId, co
 		// This function replaces MblobFill
 		if( M_NULL != rResultId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MblobFill(rResultId, rImageID.GetIdentifier(), l_lMatroxType, lColor);
-#else
 			MgraColor(M_DEFAULT, lColor);
 			MblobDraw(M_DEFAULT, rResultId, rImageID.GetIdentifier(), M_DRAW_BLOBS, eCriterion, M_DEFAULT);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -588,17 +560,6 @@ HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxIdentifier& rBlo
 		// This function replaces MblobSelectFeature
 		if( M_NULL != rBlobId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			for (auto feature : featureSet)
-			{
-				MblobSelectFeature(rBlobId, feature);
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if (S_OK != l_Code)
-				{
-					break;
-				}
-			}
-#else
 			auto endIter = featureSet.end();
 			MIL_DOUBLE controlValue = (featureSet.find(SVEBlobBoxXMin) != endIter || featureSet.find(SVEBlobBoxYMin) != endIter ||
 				featureSet.find(SVEBlobBoxXMax) != endIter || featureSet.find(SVEBlobBoxYMax) != endIter ||
@@ -653,7 +614,6 @@ HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxIdentifier& rBlo
 				featureSet.find(SVEBlobAxisPrincipalAngle) != endIter || featureSet.find(SVEBlobAxisSecondaryAngle) != endIter) ? M_ENABLE : M_DISABLE;
 			MblobControl(rBlobId, M_MOMENT_SECOND_ORDER, controlValue);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-#endif
 		}
 		else
 		{
@@ -855,20 +815,12 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& rThresholdImage, 
 	// Set Control Values
 	if (l_Status == S_OK)
 	{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-		l_Status = SVMatroxBlobInterface::SetForeground(blobResultId, LightBackground );
-#else
 		l_Status = SVMatroxBlobInterface::SetForeground(blobContextId, LightBackground);
-#endif
 	}
 
 	if (l_Status == S_OK)
 	{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-		l_Status = SVMatroxBlobInterface::Set(blobResultId, SVEBlobIdentifier, 0x00001000L);
-#else
 		l_Status = SVMatroxBlobInterface::Set(blobContextId, SVEBlobIdentifier, 0x00001000L);
-#endif
 	}
 
 	if (l_Status == S_OK)
@@ -992,20 +944,12 @@ HRESULT SVMatroxBlobInterface::NumBlobs( SVMatroxBuffer& rThresholdImage, BYTE B
 	if (S_OK == l_Status)
 	{
 		bool bLightGround = ( Background == DARK );
-#if SV_DESIRED_MIL_VERSION == 0x0900
-		l_Status = SVMatroxBlobInterface::SetForeground(blobResultId, bLightGround);
-#else
 		l_Status = SVMatroxBlobInterface::SetForeground(blobContextId, bLightGround);
-#endif
 	}
 
 	if (S_OK == l_Status)
 	{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-		l_Status = SVMatroxBlobInterface::Set(blobResultId, SVEBlobIdentifier, 0x00001000L);
-#else
 		l_Status = SVMatroxBlobInterface::Set(blobContextId, SVEBlobIdentifier, 0x00001000L);
-#endif
 	}
 
 	// Set features

@@ -96,17 +96,10 @@ struct SVMatroxDigitizerHook
 								// When grabbing continuously, the M_GRAB_START event is fired only when the first frame is grabbed. 
 								// To be notified at the start of each frame, use the M_GRAB_FRAME_START event. 
 
-#if SV_DESIRED_MIL_VERSION == 0x0900
-		SVUserBitChange,		// M_USER_BIT_CHANGE
-								// Hooks the function to the event that occurs when a user-defined input signal changes in accordance with its specified interrupt mode (see M_USER_BIT_INTERRUPT_MODE in MdigControl()). 
-								// It is prudent to verify that the appropriate user-defined signal triggered the hook-handler function. 
-								// To determine which bit caused the event, call MdigGetHookInfo() from within your hook-handler function. 
-#else
 		SVIOChange,				// M_IO_CHANGE
 								// Hooks the function to the event that occurs when a user-defined input signal changes in accordance with its specified interrupt mode (see M_USER_BIT_INTERRUPT_MODE in MdigControl()). 
 								// It is prudent to verify that the appropriate user-defined signal triggered the hook-handler function. 
 								// To determine which bit caused the event, call MdigGetHookInfo() from within your hook-handler function. 
-#endif
 
 		SVGigeEvent,			// M_GC_EVENT (MIL9)
 		SVLineRisingEdgeEvent,	// M_LINE_RISING_EDGE (MIL9)

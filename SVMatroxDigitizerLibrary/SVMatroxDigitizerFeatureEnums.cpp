@@ -20,13 +20,8 @@ SVMatroxDigitizerFeature::SVFeatureTypeEnumPair SVMatroxDigitizerFeature::m_Feat
 	{SVMatroxDigitizerFeature::SVTypeInt32,					M_TYPE_MIL_INT32},
 	{SVMatroxDigitizerFeature::SVTypeDouble,				M_TYPE_DOUBLE},
 	{SVMatroxDigitizerFeature::SVTypeString,				M_TYPE_STRING},
-	#if SV_DESIRED_MIL_VERSION == 0x0900
-	{SVMatroxDigitizerFeature::SVTypeIntegerEnumeration,	M_TYPE_INTEGER_ENUMERATION},
-	{SVMatroxDigitizerFeature::SVTypeStringEnumeration,		M_TYPE_STRING_ENUMERATION},
-	#else
 	{SVMatroxDigitizerFeature::SVTypeIntegerEnumeration,	M_TYPE_MIL_INT32},
 	{SVMatroxDigitizerFeature::SVTypeStringEnumeration,		M_TYPE_STRING},
-	#endif
 	{SVMatroxDigitizerFeature::SVTypeBool,					M_TYPE_BOOLEAN}
 };
 

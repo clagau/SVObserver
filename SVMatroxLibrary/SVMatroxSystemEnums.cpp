@@ -13,11 +13,7 @@
 //Moved to precompiled header: #include <mil.h>
 #include "SVMatroxSystemEnums.h"
 
-#if SV_DESIRED_MIL_VERSION == 0x0900
-const MIL_INT cDefaultPitchByteType = M_DEFAULT_PITCH_BYTE;
-#else
 const MIL_INT cDefaultPitchByteType = M_DEFAULT_PITCH_BYTE_MULTIPLE;
-#endif
 
 // Assign mappings for Control Types
 SVMatroxSystemControl::SVMatroxSystemControlEnumPair SVMatroxSystemControl::m_convertor

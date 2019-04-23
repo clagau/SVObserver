@@ -28,11 +28,7 @@ SVMatroxDigitizerHook::SVHookTypeEnumPair SVMatroxDigitizerHook::m_HookTypeEnumC
 	{SVMatroxDigitizerHook::SVGrabFrameEnd,			M_GRAB_FRAME_END},
 	{SVMatroxDigitizerHook::SVGrabFrameStart,		M_GRAB_FRAME_START},
 	{SVMatroxDigitizerHook::SVGrabStart,			M_GRAB_START},
-#if SV_DESIRED_MIL_VERSION == 0x0900
-	{SVMatroxDigitizerHook::SVUserBitChange,		M_USER_BIT_CHANGE},
-#else
 	{SVMatroxDigitizerHook::SVIOChange,				M_IO_CHANGE},
-#endif
 	{SVMatroxDigitizerHook::SVGigeEvent,			M_GC_EVENT},
 	{SVMatroxDigitizerHook::SVLineRisingEdgeEvent,	M_LINE_RISING_EDGE},
 	{SVMatroxDigitizerHook::SVLineFallingEdgeEvent,	M_LINE_FALLING_EDGE},

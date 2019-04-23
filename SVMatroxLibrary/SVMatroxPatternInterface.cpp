@@ -228,11 +228,7 @@ long SVMatroxPatternInterface::Convert2MatroxType( SVPatternResultEnum eType )
 		}
 		case SVPatIndex:
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			l_lMatroxType = M_MODEL_INDEX;
-#else
 			l_lMatroxType = M_INDEX;
-#endif
 			break;
 		}
 		case SVPatPosX:
@@ -280,16 +276,6 @@ HRESULT SVMatroxPatternInterface::CreateContext(SVMatroxIdentifier& rModelId, SV
 
 		if( l_Code == S_OK )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MIL_ID l_NewId = MpatAllocModel(M_DEFAULT_HOST,
-				rSrcImageId.GetIdentifier(),
-				lOffX,
-				lOffY,
-				lSizeX,
-				lSizeY,
-				ConvertModelType2MatroxType(lType),
-				M_NULL);
-#else
 			MIL_ID l_NewId = MpatAlloc(M_DEFAULT_HOST, M_NORMALIZED, M_DEFAULT, M_NULL);
 			MIL_INT64 ModelType = M_REGULAR_MODEL;
 			if (lType & SVPatModelTypeCircularOverscan)
@@ -298,7 +284,6 @@ HRESULT SVMatroxPatternInterface::CreateContext(SVMatroxIdentifier& rModelId, SV
 			}
 			MpatDefine(l_NewId, M_REGULAR_MODEL, rSrcImageId.GetIdentifier(),
 				lOffX, lOffY, lSizeX, lSizeY, M_DEFAULT);
-#endif
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == S_OK )
@@ -343,11 +328,7 @@ HRESULT SVMatroxPatternInterface::CreateResult(SVMatroxIdentifier& rResultId, lo
 
 		if( l_Code == S_OK )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MIL_ID l_NewId = MpatAllocResult(M_DEFAULT_HOST, rlNbrEntries, nullptr);
-#else
 			MIL_ID l_NewId = MpatAllocResult(M_DEFAULT_HOST, M_DEFAULT, nullptr);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if( l_Code == S_OK )
@@ -410,11 +391,7 @@ HRESULT SVMatroxPatternInterface::PreProcModel(const SVMatroxIdentifier& rModelI
 	{
 		if( M_NULL != rModelId && !rImageId.empty() )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatPreprocModel( rImageId.GetIdentifier(), rModelId, M_DEFAULT);
-#else
 			MpatPreprocess(rModelId, M_DEFAULT, rImageId.GetIdentifier());
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -448,11 +425,7 @@ HRESULT SVMatroxPatternInterface::Execute(const SVMatroxIdentifier& rResultId, c
 	{
 		if (M_NULL != rResultId && !rSourceImageId.empty() && M_NULL != rModelId)
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatFindModel(rSourceImageId.GetIdentifier(), rModelId, rResultId );
-#else
 			MpatFind(rModelId, rSourceImageId.GetIdentifier(), rResultId);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -553,11 +526,7 @@ HRESULT SVMatroxPatternInterface::Set( const SVMatroxIdentifier& rModelId, const
 		{
 			if( M_NULL != rModelId )
 			{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-				MpatSetSearchParameter(rModelId, l_lMatroxType,	rdValue );
-#else
 				MpatControl(rModelId, M_DEFAULT, l_lMatroxType, rdValue);
-#endif
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -610,11 +579,7 @@ HRESULT SVMatroxPatternInterface::Set( const SVMatroxIdentifier& rModelId, const
 		{
 			if( M_NULL != rModelId )
 			{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-				MpatSetSearchParameter(rModelId, l_lMatroxType, rdValue);
-#else
 				MpatControl(rModelId, M_DEFAULT, l_lMatroxType, rdValue);
-#endif
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -707,12 +672,8 @@ HRESULT SVMatroxPatternInterface::SetCenter( const SVMatroxIdentifier& rModelId,
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetCenter(rModelId, lXOffset,	lYOffset );
-#else
 			MpatControl(rModelId, M_DEFAULT, M_REFERENCE_X, lXOffset);
 			MpatControl(rModelId, M_DEFAULT, M_REFERENCE_Y, lYOffset);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -740,13 +701,7 @@ HRESULT SVMatroxPatternInterface::SetDontCare( const SVMatroxBuffer& rDontCareIm
 	{
 		if( !rDontCareImageId.empty() && M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetDontCare( rModelId, rDontCareImageId.GetIdentifier(), 
-				0, 0,  //Offset
-				0 ); // Value
-#else
 			MpatMask(rModelId, M_DEFAULT, rDontCareImageId.GetIdentifier(), M_DONT_CARE, M_DEFAULT);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -780,11 +735,7 @@ HRESULT SVMatroxPatternInterface::SetNumber( const SVMatroxIdentifier& rModelId,
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetNumber(rModelId, lNumber);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_NUMBER, lNumber);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -819,12 +770,7 @@ HRESULT SVMatroxPatternInterface::GetNumber(const SVMatroxIdentifier& rResultId,
 		if( M_NULL != rResultId )
 		{
 			MIL_INT number = 0;
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatGetNumber( rResultId, &number );
-#else
-
 			MpatGetResult(rResultId, M_DEFAULT, M_NUMBER+ M_TYPE_MIL_INT, &number);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if (l_Code == S_OK)
 			{
@@ -862,14 +808,10 @@ HRESULT SVMatroxPatternInterface::SetPosition( const SVMatroxIdentifier& rModelI
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetPosition(rModelId, lXOffset,	lYOffset, lSizeX, lSizeY);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_SEARCH_OFFSET_X, lXOffset);
 			MpatControl(rModelId, M_DEFAULT, M_SEARCH_OFFSET_Y, lYOffset);
 			MpatControl(rModelId, M_DEFAULT, M_SEARCH_SIZE_X, lSizeX);
 			MpatControl(rModelId, M_DEFAULT, M_SEARCH_SIZE_Y, lSizeY);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -903,11 +845,7 @@ HRESULT SVMatroxPatternInterface::SetAcceptance( const SVMatroxIdentifier& rMode
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetAcceptance(rModelId, dValue);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_ACCEPTANCE, dValue);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -941,11 +879,7 @@ HRESULT SVMatroxPatternInterface::SetCertainty( const SVMatroxIdentifier& rModel
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetCertainty(rModelId, dValue);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_CERTAINTY, dValue);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -979,11 +913,7 @@ HRESULT SVMatroxPatternInterface::SetAccuracy( const SVMatroxIdentifier& rModelI
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetAccuracy(rModelId, lValue);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_ACCURACY, lValue);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1017,12 +947,7 @@ HRESULT SVMatroxPatternInterface::SetSpeed( const SVMatroxIdentifier& rModelId, 
 	{
 		if( M_NULL != rModelId )
 		{
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetSpeed(rModelId, lValue);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_SPEED, lValue);
-#endif
-			
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1057,11 +982,7 @@ HRESULT SVMatroxPatternInterface::SetAngle( const SVMatroxIdentifier& rModelId, 
 		if( M_NULL != rModelId )
 		{
 			long l_lMatroxType = Convert2MatroxType( eType );
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetAngle(rModelId, l_lMatroxType, dValue);
-#else
 			MpatControl(rModelId, M_DEFAULT, l_lMatroxType, dValue);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1096,11 +1017,7 @@ HRESULT SVMatroxPatternInterface::SetAngle( const SVMatroxIdentifier& rModelId, 
 		if( M_NULL != rModelId )
 		{
 			MIL_DOUBLE value = bEnable ? M_ENABLE : M_DISABLE;
-#if SV_DESIRED_MIL_VERSION == 0x0900
-			MpatSetAngle(rModelId, M_SEARCH_ANGLE_MODE, value);
-#else
 			MpatControl(rModelId, M_DEFAULT, M_SEARCH_ANGLE_MODE, value);
-#endif
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else

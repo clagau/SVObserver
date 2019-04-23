@@ -317,13 +317,8 @@ enum SVBlobSelectionEnum
 	SVEBlobFeretY				= M_FERET_Y,
 	SVEBlobFirstPointX			= M_FIRST_POINT_X,
 	SVEBlobFirstPointY			= M_FIRST_POINT_Y,
-#if SV_DESIRED_MIL_VERSION == 0x0900
-	SVEBlobGeneralFeret = M_GENERAL_FERET,
-	SVEBlobGeneralMoment = M_GENERAL_MOMENT,
-#else
 	SVEBlobGeneralFeret = M_FERET_GENERAL,
 	SVEBlobGeneralMoment = M_MOMENT_GENERAL,
-#endif
 	SVEBlobIntercept			= M_INTERCEPT_0,
 	SVEBlobIntercept45			= M_INTERCEPT_45,
 	SVEBlobIntercept90			= M_INTERCEPT_90,

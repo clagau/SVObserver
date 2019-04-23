@@ -388,11 +388,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(const SVGUID& rObje
 				{
 					BOOL l_bIsFillBlob;
 					pAnalyzer->m_bvoFillBlobs.GetValue(l_bIsFillBlob);
-#if SV_DESIRED_MIL_VERSION == 0x0900
-					SVMatroxBlobInterface::Set(pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob ? SVValueEnable : SVValueDisable));
-#else
 					SVMatroxBlobInterface::Set(pAnalyzer->m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(l_bIsFillBlob ? SVValueEnable : SVValueDisable));
-#endif
 					pAnalyzer->CreateArray();
 
 
