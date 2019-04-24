@@ -107,7 +107,7 @@ namespace SvOg
 				CWnd* pWnd = GetDlgItem( IDC_EDGE_SELECT_THIS_EDIT );
 				if (nullptr != pWnd)
 				{
-					pWnd->EnableWindow(false);
+					pWnd->EnableWindow(true);
 				}
 				break;
 			}
