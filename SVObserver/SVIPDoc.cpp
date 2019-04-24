@@ -3785,6 +3785,7 @@ void SVIPDoc::RegressionTestModeChanged()
 	m_bRegressionTestStopping = true;
 	m_regtestRunMode = RegModeStopExit;  //should cause dialog to go away...
 
+	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
 
 	SVToolSetClass* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)
