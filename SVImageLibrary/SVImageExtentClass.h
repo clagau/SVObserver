@@ -89,12 +89,15 @@ public:
 
 	HRESULT TranslateToOutputSpace(SVPoint<double> value, SVPoint<double> &rResult) const;
 
-	HRESULT TranslateFromOutputSpace(SVPoint<double> value, SVPoint<double> &rResult) const;
-	HRESULT TranslateFromOutputSpace( SVExtentFigureStruct p_svValue, SVExtentFigureStruct &p_rsvResult ) const;
-	HRESULT TranslateFromOutputSpace( SVExtentLineStruct p_svValue, SVExtentLineStruct &p_rsvResult ) const;
-	HRESULT TranslateFromOutputSpace( SVExtentMultiLineStruct p_svValue, SVExtentMultiLineStruct &p_rsvResult ) const;
+	///Note that the value in TranslateFromOutputSpace are not allowed to be references
+	///because if the input value and result use the same object this causes problems
+	///as the result changes the input value during the function execution!
+	HRESULT TranslateFromOutputSpace(SVPoint<double> value, SVPoint<double>& rResult) const;
+	HRESULT TranslateFromOutputSpace( SVExtentFigureStruct value, SVExtentFigureStruct& rResult ) const;
+	HRESULT TranslateFromOutputSpace( SVExtentLineStruct value, SVExtentLineStruct& rResult ) const;
+	HRESULT TranslateFromOutputSpace( SVExtentMultiLineStruct value, SVExtentMultiLineStruct& rResult ) const;
 
-	HRESULT TranslateLineFromOutputSpace(const SVPoint<double>& rRadiusPoint, const SVPoint<double>& rRotatePoint, double p_dLineAngle, const SVPoint<double>& rValue, SVPoint<double> &rResult) const;
+	HRESULT TranslateLineFromOutputSpace(const SVPoint<double>& rRadiusPoint, const SVPoint<double>& rRotatePoint, double dLineAngle, SVPoint<double> value, SVPoint<double>& rResult) const;
 
 	HRESULT ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const;
 

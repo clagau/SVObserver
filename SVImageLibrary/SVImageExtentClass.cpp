@@ -2504,7 +2504,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svValue, SVExtentFigureStruct &p_rsvResult) const
+HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct value, SVExtentFigureStruct& rResult) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -2512,7 +2512,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 	{
 		case SvPb::SVExtentTranslationNone:
 		{
-			p_rsvResult = p_svValue;
+			rResult = value;
 
 			l_hrOk = S_OK;
 
@@ -2536,48 +2536,48 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 		case SvPb::SVExtentTranslationFlipHorizontal:
 		case SvPb::SVExtentTranslationFigureShift:
 		{
-			switch (p_svValue.m_eShape)
+			switch (value.m_eShape)
 			{
 				case SvDef::SVExtentShapeArrow:
 				{
 					l_hrOk = S_OK;
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft))
+					if (S_OK != TranslateFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft, -90.0, p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft, -90.0, value.m_svTopLeft, rResult.m_svTopLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft, 0.0, p_svValue.m_svTopCenter, p_rsvResult.m_svTopCenter))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft, 0.0, value.m_svTopCenter, rResult.m_svTopCenter))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft, 0.0, p_svValue.m_svCenterRight, p_rsvResult.m_svCenterRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft, 0.0, value.m_svCenterRight, rResult.m_svCenterRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft, 0.0, p_svValue.m_svBottomCenter, p_rsvResult.m_svBottomCenter))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft, 0.0, value.m_svBottomCenter, rResult.m_svBottomCenter))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft, 90.0, p_svValue.m_svBottomLeft, p_rsvResult.m_svBottomLeft))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft, 90.0, value.m_svBottomLeft, rResult.m_svBottomLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterRight, p_rsvResult.m_svCenterRight, -135.0, p_svValue.m_svTopRight, p_rsvResult.m_svTopRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterRight, rResult.m_svCenterRight, -135.0, value.m_svTopRight, rResult.m_svTopRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svCenterRight, p_rsvResult.m_svCenterRight, 135.0, p_svValue.m_svBottomRight, p_rsvResult.m_svBottomRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svCenterRight, rResult.m_svCenterRight, 135.0, value.m_svBottomRight, rResult.m_svBottomRight))
 					{
 						l_hrOk = S_FALSE;
 					}
@@ -2588,47 +2588,47 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 				{
 					l_hrOk = S_OK;
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft))
+					if (S_OK != TranslateFromOutputSpace(value.m_svTopLeft, rResult.m_svTopLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft, 0.0, p_svValue.m_svTopCenter, p_rsvResult.m_svTopCenter))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svTopLeft, rResult.m_svTopLeft, 0.0, value.m_svTopCenter, rResult.m_svTopCenter))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft, 0.0, p_svValue.m_svTopRight, p_rsvResult.m_svTopRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svTopLeft, rResult.m_svTopLeft, 0.0, value.m_svTopRight, rResult.m_svTopRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft, 90.0, p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svTopLeft, rResult.m_svTopLeft, 90.0, value.m_svCenterLeft, rResult.m_svCenterLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft, 90.0, p_svValue.m_svBottomLeft, p_rsvResult.m_svBottomLeft))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svTopLeft, rResult.m_svTopLeft, 90.0, value.m_svBottomLeft, rResult.m_svBottomLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svTopRight, p_rsvResult.m_svTopRight, 90.0, p_svValue.m_svCenterRight, p_rsvResult.m_svCenterRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svTopRight, rResult.m_svTopRight, 90.0, value.m_svCenterRight, rResult.m_svCenterRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svTopRight, p_rsvResult.m_svTopRight, 90.0, p_svValue.m_svBottomRight, p_rsvResult.m_svBottomRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svTopRight, rResult.m_svTopRight, 90.0, value.m_svBottomRight, rResult.m_svBottomRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svBottomLeft, p_rsvResult.m_svBottomLeft, 0.0, p_svValue.m_svBottomCenter, p_rsvResult.m_svBottomCenter))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svBottomLeft, rResult.m_svBottomLeft, 0.0, value.m_svBottomCenter, rResult.m_svBottomCenter))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateLineFromOutputSpace(p_svValue.m_svBottomLeft, p_rsvResult.m_svBottomLeft, 0.0, p_svValue.m_svBottomRight, p_rsvResult.m_svBottomRight))
+					if (S_OK != TranslateLineFromOutputSpace(value.m_svBottomLeft, rResult.m_svBottomLeft, 0.0, value.m_svBottomRight, rResult.m_svBottomRight))
 					{
 						l_hrOk = S_FALSE;
 					}
@@ -2644,7 +2644,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 
 					GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
 
-					SVPoint<double> radiusPoint = p_svValue.m_svCenterLeft;
+					SVPoint<double> radiusPoint = value.m_svCenterLeft;
 
 					if (radiusPoint.m_y != outputRotationPoint.m_y)
 					{
@@ -2658,7 +2658,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 
 					double l_dNewAngle = 0.0;
 
-					if (p_svValue.m_svCenterLeft.m_y < radiusPoint.m_y)
+					if (value.m_svCenterLeft.m_y < radiusPoint.m_y)
 					{
 						l_dNewAngle = -180.0;
 					}
@@ -2667,15 +2667,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 						l_dNewAngle = 0.0;
 					}
 
-					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 0.0, p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft) != S_OK)
+					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 0.0, value.m_svCenterLeft, rResult.m_svCenterLeft) != S_OK)
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					p_rsvResult.m_svTopLeft = p_rsvResult.m_svCenterLeft;
-					p_rsvResult.m_svBottomLeft = p_rsvResult.m_svCenterLeft;
+					rResult.m_svTopLeft = rResult.m_svCenterLeft;
+					rResult.m_svBottomLeft = rResult.m_svCenterLeft;
 
-					if (p_svValue.m_svCenterRight.m_y < radiusPoint.m_y)
+					if (value.m_svCenterRight.m_y < radiusPoint.m_y)
 					{
 						l_dNewAngle = -180.0;
 					}
@@ -2684,15 +2684,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 						l_dNewAngle = 0.0;
 					}
 
-					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 0.0, p_svValue.m_svCenterRight, p_rsvResult.m_svCenterRight) != S_OK)
+					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 0.0, value.m_svCenterRight, rResult.m_svCenterRight) != S_OK)
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					p_rsvResult.m_svTopRight = p_rsvResult.m_svCenterRight;
-					p_rsvResult.m_svBottomRight = p_rsvResult.m_svCenterRight;
+					rResult.m_svTopRight = rResult.m_svCenterRight;
+					rResult.m_svBottomRight = rResult.m_svCenterRight;
 
-					if (p_svValue.m_svTopCenter.m_y < radiusPoint.m_y)
+					if (value.m_svTopCenter.m_y < radiusPoint.m_y)
 					{
 						l_dNewAngle = -180.0;
 					}
@@ -2701,12 +2701,12 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 						l_dNewAngle = 0.0;
 					}
 
-					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 0.0, p_svValue.m_svTopCenter, p_rsvResult.m_svTopCenter) != S_OK)
+					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 0.0, value.m_svTopCenter, rResult.m_svTopCenter) != S_OK)
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					p_rsvResult.m_svBottomCenter = p_rsvResult.m_svTopCenter;
+					rResult.m_svBottomCenter = rResult.m_svTopCenter;
 
 					break;
 				}
@@ -2719,7 +2719,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 
 					GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
 
-					SVPoint<double> radiusPoint = p_svValue.m_svTopCenter;
+					SVPoint<double> radiusPoint = value.m_svTopCenter;
 
 					if (radiusPoint.m_y != outputRotationPoint.m_y)
 					{
@@ -2733,7 +2733,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 
 					double l_dNewAngle = 0.0;
 
-					if (p_svValue.m_svTopCenter.m_y < radiusPoint.m_y)
+					if (value.m_svTopCenter.m_y < radiusPoint.m_y)
 					{
 						l_dNewAngle = -90.0;
 					}
@@ -2742,15 +2742,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 						l_dNewAngle = 90.0;
 					}
 
-					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, l_dNewAngle, p_svValue.m_svTopCenter, p_rsvResult.m_svTopCenter) != S_OK)
+					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, l_dNewAngle, value.m_svTopCenter, rResult.m_svTopCenter) != S_OK)
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					p_rsvResult.m_svTopLeft = p_rsvResult.m_svTopCenter;
-					p_rsvResult.m_svTopRight = p_rsvResult.m_svTopCenter;
+					rResult.m_svTopLeft = rResult.m_svTopCenter;
+					rResult.m_svTopRight = rResult.m_svTopCenter;
 
-					if (p_svValue.m_svBottomCenter.m_y < radiusPoint.m_y)
+					if (value.m_svBottomCenter.m_y < radiusPoint.m_y)
 					{
 						l_dNewAngle = -90.0;
 					}
@@ -2759,15 +2759,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 						l_dNewAngle = 90.0;
 					}
 
-					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 90.0, p_svValue.m_svBottomCenter, p_rsvResult.m_svBottomCenter) != S_OK)
+					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 90.0, value.m_svBottomCenter, rResult.m_svBottomCenter) != S_OK)
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					p_rsvResult.m_svBottomLeft = p_rsvResult.m_svBottomCenter;
-					p_rsvResult.m_svBottomRight = p_rsvResult.m_svBottomCenter;
+					rResult.m_svBottomLeft = rResult.m_svBottomCenter;
+					rResult.m_svBottomRight = rResult.m_svBottomCenter;
 
-					if (p_svValue.m_svCenterLeft.m_y < radiusPoint.m_y)
+					if (value.m_svCenterLeft.m_y < radiusPoint.m_y)
 					{
 						l_dNewAngle = -90.0;
 					}
@@ -2776,12 +2776,12 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 						l_dNewAngle = 90.0;
 					}
 
-					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 90.0, p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft) != S_OK)
+					if (TranslateLineFromOutputSpace(radiusPoint, rotatePoint, 90.0, value.m_svCenterLeft, rResult.m_svCenterLeft) != S_OK)
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					p_rsvResult.m_svCenterRight = p_rsvResult.m_svCenterLeft;
+					rResult.m_svCenterRight = rResult.m_svCenterLeft;
 
 					break;
 				}
@@ -2794,42 +2794,42 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 				{
 					l_hrOk = S_OK;
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svBottomCenter, p_rsvResult.m_svBottomCenter))
+					if (S_OK != TranslateFromOutputSpace(value.m_svBottomCenter, rResult.m_svBottomCenter))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svBottomLeft, p_rsvResult.m_svBottomLeft))
+					if (S_OK != TranslateFromOutputSpace(value.m_svBottomLeft, rResult.m_svBottomLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svBottomRight, p_rsvResult.m_svBottomRight))
+					if (S_OK != TranslateFromOutputSpace(value.m_svBottomRight, rResult.m_svBottomRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svCenterLeft, p_rsvResult.m_svCenterLeft))
+					if (S_OK != TranslateFromOutputSpace(value.m_svCenterLeft, rResult.m_svCenterLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svCenterRight, p_rsvResult.m_svCenterRight))
+					if (S_OK != TranslateFromOutputSpace(value.m_svCenterRight, rResult.m_svCenterRight))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svTopCenter, p_rsvResult.m_svTopCenter))
+					if (S_OK != TranslateFromOutputSpace(value.m_svTopCenter, rResult.m_svTopCenter))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svTopLeft, p_rsvResult.m_svTopLeft))
+					if (S_OK != TranslateFromOutputSpace(value.m_svTopLeft, rResult.m_svTopLeft))
 					{
 						l_hrOk = S_FALSE;
 					}
 
-					if (S_OK != TranslateFromOutputSpace(p_svValue.m_svTopRight, p_rsvResult.m_svTopRight))
+					if (S_OK != TranslateFromOutputSpace(value.m_svTopRight, rResult.m_svTopRight))
 					{
 						l_hrOk = S_FALSE;
 					}
@@ -2845,7 +2845,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentFigureStruct p_svVa
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValue, SVExtentLineStruct &p_rsvResult) const
+HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct value, SVExtentLineStruct& rResult) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -2853,7 +2853,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 	{
 		case SvPb::SVExtentTranslationNone:
 		{
-			p_rsvResult = p_svValue;
+			rResult = value;
 
 			l_hrOk = S_OK;
 
@@ -2875,10 +2875,10 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 		case SvPb::SVExtentTranslationFlipHorizontal:
 		case SvPb::SVExtentTranslationFigureShift:
 		{
-			long l_lCount = static_cast<long> (p_svValue.m_PointVector.size());
+			long l_lCount = static_cast<long> (value.m_PointVector.size());
 
 			l_hrOk = S_OK;
-			p_rsvResult.Initialize();
+			rResult.Initialize();
 
 			if (0 < l_lCount)
 			{
@@ -2886,18 +2886,18 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 				bool l_bIsAngle = S_OK == GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, l_dAngle);
 
-				p_rsvResult.m_bIsAngleValid = p_svValue.m_bIsAngleValid;
-				p_rsvResult.m_dAngle = p_svValue.m_dAngle;
+				rResult.m_bIsAngleValid = value.m_bIsAngleValid;
+				rResult.m_dAngle = value.m_dAngle;
 
-				if (!l_bIsAngle || l_dAngle == 0.0 || !p_svValue.m_bIsAngleValid)
+				if (!l_bIsAngle || l_dAngle == 0.0 || !value.m_bIsAngleValid)
 				{
 					for (long i = 0; S_OK == l_hrOk && i < l_lCount; i++)
 					{
-						SVPoint<double> point = p_svValue.m_PointVector[i];
+						SVPoint<double> point = value.m_PointVector[i];
 
 						if (S_OK == TranslateFromOutputSpace(point, point))
 						{
-							p_rsvResult.m_PointVector.push_back(point);
+							rResult.m_PointVector.push_back(point);
 						}
 						else
 						{
@@ -2912,15 +2912,15 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 					GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, outputRotationPoint);
 
-					SVPoint<double> l_svRadiusPoint = p_svValue.m_PointVector[0];
+					SVPoint<double> l_svRadiusPoint = value.m_PointVector[0];
 
 					long l_lStart = 0;
 
-					if (p_svValue.m_dAngle == 0.0 && l_svRadiusPoint.m_x != outputRotationPoint.m_x)
+					if (value.m_dAngle == 0.0 && l_svRadiusPoint.m_x != outputRotationPoint.m_x)
 					{
 						l_svRadiusPoint.m_x = outputRotationPoint.m_x;
 					}
-					else if (p_svValue.m_dAngle == 90.0 && l_svRadiusPoint.m_y != outputRotationPoint.m_y)
+					else if (value.m_dAngle == 90.0 && l_svRadiusPoint.m_y != outputRotationPoint.m_y)
 					{
 						l_svRadiusPoint.m_y = outputRotationPoint.m_y;
 					}
@@ -2933,7 +2933,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 					{
 						if (l_lStart == 1)
 						{
-							p_rsvResult.m_PointVector.push_back(rotatePoint);
+							rResult.m_PointVector.push_back(rotatePoint);
 						}
 					}
 					else
@@ -2943,9 +2943,9 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 					for (long i = l_lStart; S_OK == l_hrOk && i < l_lCount; i++)
 					{
-						SVPoint<double> point = p_svValue.m_PointVector[i];
+						SVPoint<double> point = value.m_PointVector[i];
 
-						double l_dNewAngle = p_svValue.m_dAngle;
+						double l_dNewAngle = value.m_dAngle;
 
 						if (l_dNewAngle == 0.0)
 						{
@@ -2964,7 +2964,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 						if (S_OK == TranslateLineFromOutputSpace(l_svRadiusPoint, rotatePoint, l_dNewAngle, point, point))
 						{
-							p_rsvResult.m_PointVector.push_back(point);
+							rResult.m_PointVector.push_back(point);
 						}
 						else
 						{
@@ -2980,13 +2980,13 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentLineStruct p_svValu
 
 	if (S_OK == l_hrOk)
 	{
-		p_rsvResult.m_dwColor = p_svValue.m_dwColor;
+		rResult.m_dwColor = value.m_dwColor;
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct p_svValue, SVExtentMultiLineStruct &p_rsvResult) const
+HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct value, SVExtentMultiLineStruct& rResult) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -2994,7 +2994,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct p_s
 	{
 		case SvPb::SVExtentTranslationNone:
 		{
-			p_rsvResult = p_svValue;
+			rResult = value;
 
 			l_hrOk = S_OK;
 
@@ -3016,19 +3016,19 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct p_s
 		case SvPb::SVExtentTranslationFlipHorizontal:
 		case SvPb::SVExtentTranslationFigureShift:
 		{
-			long l_lCount = static_cast<long> (p_svValue.m_svLineArray.size());
+			long l_lCount = static_cast<long> (value.m_svLineArray.size());
 
-			p_rsvResult.Initialize();
+			rResult.Initialize();
 
-			l_hrOk = TranslateFromOutputSpace(p_svValue.m_StringPoint, p_rsvResult.m_StringPoint);
+			l_hrOk = TranslateFromOutputSpace(value.m_StringPoint, rResult.m_StringPoint);
 
 			for (long i = 0; S_OK == l_hrOk && i < l_lCount; i++)
 			{
-				SVExtentLineStruct svLine = p_svValue.m_svLineArray[i];
+				SVExtentLineStruct svLine = value.m_svLineArray[i];
 
 				if (S_OK == TranslateFromOutputSpace(svLine, svLine))
 				{
-					p_rsvResult.m_svLineArray.push_back(svLine);
+					rResult.m_svLineArray.push_back(svLine);
 				}
 				else
 				{
@@ -3042,16 +3042,16 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVExtentMultiLineStruct p_s
 
 	if (S_OK == l_hrOk)
 	{
-		p_rsvResult.m_Color = p_svValue.m_Color;
+		rResult.m_Color = value.m_Color;
 
-		p_rsvResult.m_StringPoint = p_svValue.m_StringPoint;
-		p_rsvResult.m_csString = p_svValue.m_csString;
+		rResult.m_StringPoint = value.m_StringPoint;
+		rResult.m_csString = value.m_csString;
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& rRadiusPoint, const SVPoint<double>& rRotatePoint, double dLineAngle, const SVPoint<double>& rValue, SVPoint<double>& rResult) const
+HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& rRadiusPoint, const SVPoint<double>& rRotatePoint, double dLineAngle, SVPoint<double> value, SVPoint<double>& rResult) const
 {
 	HRESULT l_hrOk {S_OK};
 
@@ -3074,7 +3074,7 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 		case SvPb::SVExtentTranslationFlipVertical:
 		case SvPb::SVExtentTranslationFigureShift:
 		{
-			l_hrOk = TranslateFromOutputSpace(rValue, rResult);
+			l_hrOk = TranslateFromOutputSpace(value, rResult);
 
 			break;
 		}// end case multiple
@@ -3090,7 +3090,7 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 
 			if (S_OK == l_hrOk)
 			{
-				double l_dRadius = SVGetRadius(rRadiusPoint, rValue);
+				double l_dRadius = SVGetRadius(rRadiusPoint, value);
 
 				rResult = SVRotatePoint(rRotatePoint, l_dRadius, dAngle + dLineAngle);
 			}
@@ -3116,7 +3116,7 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 
 				if (S_OK == l_hrOk)
 				{
-					double l_dRadius = SVGetRadius(rRadiusPoint, rValue);
+					double l_dRadius = SVGetRadius(rRadiusPoint, value);
 
 					rResult = SVRotatePoint(rRotatePoint, l_dRadius, l_dAngle + dLineAngle);
 				}
@@ -3133,7 +3133,7 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace(const SVPoint<double>& 
 
 			if (S_OK == l_hrOk)
 			{
-				double l_dRadius = SVGetRadius(rRadiusPoint, rValue);
+				double l_dRadius = SVGetRadius(rRadiusPoint, value);
 
 				rResult = SVRotateAndFlipPoint(rRotatePoint, l_dRadius, dAngle - dLineAngle);
 			}
