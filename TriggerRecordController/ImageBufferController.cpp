@@ -53,7 +53,15 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 	for (const auto& rImageStruct : rImageStructList.list())
 	{
 		completeNumberOfRequiredBuffer += rImageStruct.numberofbuffersrequired();
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		std::string DebugString = SvUl::Format(_T("Required image %d for ImageType %d\n"), rImageStruct.numberofbuffersrequired(), rImageStruct.structid());
+		::OutputDebugString(DebugString.c_str());
+#endif
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+	std::string DebugString = SvUl::Format(_T("Complete required image %d\n\n"), completeNumberOfRequiredBuffer);
+	::OutputDebugString(DebugString.c_str());
+#endif
 	if (m_rDataController.getMaxNumberOfRequiredBuffer() < completeNumberOfRequiredBuffer)
 	{
 		SvDef::StringVector msgList;

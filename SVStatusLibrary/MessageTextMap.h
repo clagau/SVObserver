@@ -551,7 +551,7 @@ namespace SvStl
 		{Tid_TRC_Error_ResetNotStart, _T("Reset of TriggerRecord-structure not started. Reset can not be finished.")},
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},
-		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetDataDefList.")},
+		{Tid_TRC_Error_GetDataDefList, _T("Error in method GetDataDefList.")},
 		{Tid_TRC_Error_CopyValueObjData, _T("Error copying value object data")},
 		{Tid_TRC_Error_GetTRCFailed, _T("Error getting TriggerRecordInstance. You must create it before call the get-function.")},
 		{Tid_TRC_Error_CreateSMCommonData, _T("Error creating SharedMemory for Common data in TRC.")},

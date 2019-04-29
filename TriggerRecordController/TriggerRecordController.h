@@ -97,6 +97,10 @@ public:
 
 #pragma region Private Methods
 private:
+	/// Recalculate the required buffer completely. 
+	/// Normally it will only the required buffer fit depending of the changed image, but if went reset wrong, a recalculate should done, because the numbers can be wrong.
+	void recalcRequiredBuffer();
+
 	/// Reset the trigger record structure with the tmp-member-parameter.
 	void ResetTriggerRecordStructure();
 
@@ -131,6 +135,7 @@ private:
 	std::map<GUID, std::map<int, int>> m_additionalBufferMap;
 
 	int m_resetStarted4IP = -1; //Position of IP with is in reset state. If m_resetStarted4IP == -1, no reset started.
+	bool m_mustRecalcRequiredBuffers = false;
 	SvPb::ImageStructList m_imageStructListResetTmp; //This ImageStructList is only temporary during reset process. In normal run don't use this.
 	SvPb::ImageList m_imageListResetTmp; //This imageList is only temporary during reset process. In normal run don't use this.
 	int m_TriggerRecordNumberResetTmp = 0; //This parameter is only temporary during reset process. In normal run don't use this.
