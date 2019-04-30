@@ -375,11 +375,9 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 
 inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) const
 {
-	std::deque<SvIe::SVVirtualCamera*> cameras;
-	pPPQ->GetCameraList(cameras);
-	std::sort(cameras.begin(), cameras.end(), SvIe::isLessByName);
+	SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);
 
-	for (auto* pCamera : cameras)
+	for (const auto* pCamera : cameraVector)
 	{
 		if (nullptr != pCamera)
 		{
@@ -819,11 +817,9 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 			for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 			{
 				bool	bPosPrint = false;
-				std::deque<SvIe::SVVirtualCamera*> cameras;
-				pPPQ->GetCameraList(cameras);
-				std::sort(cameras.begin(), cameras.end(), SvIe::isLessByName);
+				SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);
 
-				for (auto* pCamera : cameras)
+				for (const auto* const pCamera : cameraVector)
 				{
 					if (nullptr != pCamera)
 					{

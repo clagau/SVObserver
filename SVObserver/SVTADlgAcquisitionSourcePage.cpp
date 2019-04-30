@@ -17,10 +17,10 @@
 #include "Tools/SVTool.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "Tools/SVAcquisitionTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
+#include "SVPPQObject.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -60,7 +60,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 	UpdateData( FALSE );
 
-	if( m_pSheet && ( m_pTool = m_pSheet->GetTool() ) && SV_IS_KIND_OF(m_pTool, SvTo::SVAcquisitionToolClass))
+	if( m_pSheet && ( m_pTool = m_pSheet->GetTool() ) && SvPb::SVToolAcquisitionObjectType == m_pTool->GetObjectSubType())
 	{
 		// Try to get main image of the current acquisition tool...
 		SvDef::SVObjectTypeInfoStruct info;
@@ -70,18 +70,16 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 		{
 			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( m_pTool->GetAncestor(SvPb::SVInspectionObjectType));
 
-			if( nullptr != pInspection )
+			if( nullptr != pInspection && nullptr != pInspection->GetPPQ())
 			{
 				SvUl::NameGuidList CameraGuidList;
-				SvIe::SVVirtualCameraPtrSet CameraList;
+				SvIe::SVVirtualCameraPtrVector cameraVector = pInspection->GetPPQ()->GetVirtualCameras(true);
 
-				pInspection->GetPPQCameras( CameraList );
-
-				for (auto const& pEntry : CameraList )
+				for (auto const* pCamera : cameraVector)
 				{
-					if( nullptr != pEntry && nullptr != pEntry->mpsvDevice )
+					if( nullptr != pCamera && nullptr != pCamera->mpsvDevice )
 					{
-						CameraGuidList.push_back(SvUl::NameGuidPair(pEntry->GetCompleteName(), pEntry->GetUniqueObjectID()));
+						CameraGuidList.push_back(SvUl::NameGuidPair(pCamera->GetCompleteName(), pCamera->GetUniqueObjectID()));
 					}
 				}
 

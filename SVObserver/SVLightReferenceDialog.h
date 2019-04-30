@@ -18,7 +18,7 @@
 
 class SVLightReference;
 
-typedef std::vector<SVLightReference*> SVLightReferencePtrVector;
+typedef std::vector<SVLightReference> SVLightReferenceVector;
 
 class SVLightReferenceDialogPropertySheetClass : public CPropertySheet
 {
@@ -28,16 +28,13 @@ public:
 
 	virtual ~SVLightReferenceDialogPropertySheetClass();
 
-	bool CreatePages(SvIe::SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA );
+	bool CreatePages(SvIe::SVVirtualCameraPtrVector& rCameraVector, SVLightReferenceVector& rLRA );
 	void DestroyAllPages();
 
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(SVLightReferenceDialogPropertySheetClass)
 	//}}AFX_VIRTUAL
 	virtual BOOL OnInitDialog() override;
-
-protected:
-	int miNumPages;
 
 protected:
 	DECLARE_DYNAMIC(SVLightReferenceDialogPropertySheetClass)

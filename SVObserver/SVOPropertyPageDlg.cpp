@@ -1945,22 +1945,14 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 				if( nullptr != pPPQ )
 				{
-					std::deque<SvIe::SVVirtualCamera*> cameras;
+					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-					pPPQ->GetCameraList( cameras );
-
-					std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-					while( l_Iter != cameras.end() )
+					for(const auto* pCamera : cameraVector)
 					{
-						SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
-
 						if ( nullptr != pCamera && pCamera->mpsvDevice == pDevice )
 						{
 							bFoundCamera = true;
 						}
-
-						++l_Iter;
 					}
 				}
 

@@ -544,19 +544,11 @@ void SVPPQObject::DetachAll()
 {
 	DetachTrigger(m_pTrigger);
 
-	std::deque<SvIe::SVVirtualCamera*> cameras;
+	SvIe::SVVirtualCameraPtrVector cameraVector = GetVirtualCameras();
 
-	GetCameraList(cameras);
-
-	std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-	while (l_Iter != cameras.end())
+	for (auto* pCamera : cameraVector)
 	{
-		SvIe::SVVirtualCamera* pCamera = (*l_Iter);
-
 		DetachCamera(pCamera);
-
-		++l_Iter;
 	}
 
 	int iSize = static_cast<int> (m_arInspections.size());
@@ -811,41 +803,26 @@ size_t SVPPQObject::GetCameraCount() const
 	return m_Cameras.size();
 }
 
-void SVPPQObject::GetCameraList(std::deque<SvIe::SVVirtualCamera*>& rCameras) const
+SvIe::SVVirtualCameraPtrVector SVPPQObject::GetVirtualCameras(bool sortAndMakeUnique /*= false*/) const
 {
-	rCameras.clear();
+	SvIe::SVVirtualCameraPtrVector cameraVector;
 
-	SVCameraInfoMap::const_iterator l_svIter;
-
-	l_svIter = m_Cameras.begin();
-
-	while (l_svIter != m_Cameras.end())
+	for (const auto& rCamera : m_Cameras)
 	{
-		rCameras.push_back(l_svIter->first);
-
-		++l_svIter;
-	}
-}
-
-HRESULT SVPPQObject::GetVirtualCameras(SvIe::SVVirtualCameraMap& rCameras) const
-{
-	HRESULT l_Status = S_OK;
-
-	rCameras.clear();
-
-	SVCameraInfoMap::const_iterator l_svIter = m_Cameras.begin();
-
-	while (l_svIter != m_Cameras.end())
-	{
-		if (nullptr != l_svIter->first)
+		if (nullptr != rCamera.first)
 		{
-			rCameras[l_svIter->first->GetName()] = l_svIter->first;
+			cameraVector.emplace_back(rCamera.first);
 		}
-
-		++l_svIter;
 	}
 
-	return l_Status;
+	if(sortAndMakeUnique)
+	{
+		std::sort(cameraVector.begin(), cameraVector.end(), SvIe::isLessByName);
+		//Remove duplicates
+		cameraVector.erase(std::unique(cameraVector.begin(), cameraVector.end()), cameraVector.end());
+	}
+
+	return cameraVector;
 }
 
 void SVPPQObject::GetTrigger(SvTi::SVTriggerObject*& ppTrigger)
@@ -867,7 +844,7 @@ bool SVPPQObject::SetCameraPPQPosition(long lPosition, SvIe::SVVirtualCamera* pC
 	bool l_Status = true;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pCamera);
+	assert(nullptr != pCamera);
 
 	if (m_isCreated && -1 <= lPosition && lPosition < static_cast<long>(m_ppPPQPositions.size()) - 1)
 	{
@@ -881,12 +858,12 @@ bool SVPPQObject::SetCameraPPQPosition(long lPosition, SvIe::SVVirtualCamera* pC
 	return l_Status;
 }// end SetCameraPPQPosition
 
-bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SvIe::SVVirtualCamera* pCamera) const
+bool SVPPQObject::GetCameraPPQPosition(long &lPosition, const SvIe::SVVirtualCamera* const pCamera) const
 {
 	bool bFound;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pCamera);
+	assert(nullptr != pCamera);
 
 	lPosition = -1;
 
@@ -895,8 +872,8 @@ bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SvIe::SVVirtualCamera* p
 		return false;
 	}// end if
 
-	// Try to find to the Camera they sent it
-	SVCameraInfoMap::const_iterator l_svIter = m_Cameras.find(pCamera);
+	//The std::map find function seems to have a problem when the pointer is const
+	SVCameraInfoMap::const_iterator l_svIter = m_Cameras.find(const_cast<SvIe::SVVirtualCamera* const> (pCamera));
 
 	bFound = l_svIter != m_Cameras.end();
 
@@ -905,7 +882,7 @@ bool SVPPQObject::GetCameraPPQPosition(long &lPosition, SvIe::SVVirtualCamera* p
 	lPosition = l_svIter->second.m_CameraPPQIndex;
 
 	return true;
-}// end GetCameraPPQPosition
+}
 
 void SVPPQObject::RebuildProductCameraInfoStructs()
 {

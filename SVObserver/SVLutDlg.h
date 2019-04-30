@@ -26,7 +26,7 @@ public:
 	SVLutDlg(LPCTSTR Caption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVLutDlg();
 
-	bool Create(SvIe::SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut );
+	bool Create(SvIe::SVVirtualCameraPtrVector& rCameraVector, SVLutMap& raLut );
 
 // Operator(s):
 protected:

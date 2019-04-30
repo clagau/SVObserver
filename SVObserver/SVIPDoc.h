@@ -105,7 +105,7 @@ public:
 
 	void RefreshPublishedList();
 
-	HRESULT GetCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras) const;
+	SvIe::SVVirtualCameraPtrVector GetCameras() const;
 
 	HRESULT UpdateWithLastProduct();
 	bool RunOnce();

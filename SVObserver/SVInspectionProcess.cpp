@@ -1262,23 +1262,22 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	// Color SVIM
 	if (IsColorCamera())
 	{
-		SvIe::SVVirtualCameraMap CameraMap;
+		SvIe::SVVirtualCameraPtrVector cameraVector;
 		SVPPQObject* pPPQ = GetPPQ();
 		if (nullptr != pPPQ)
 		{
-			pPPQ->GetVirtualCameras(CameraMap);
+			cameraVector = pPPQ->GetVirtualCameras();
 		}
 
 		bool bColorSourceImage = false;
 		bool bCameraSupportsColor = false;
-		SvIe::SVVirtualCameraMap::iterator pos = CameraMap.begin();
-		while (pos != CameraMap.end())
+		for (const auto* pCamera : cameraVector)
 		{
 			SvIe::SVAcquisitionClassPtr pCamDevice = nullptr;
 
-			if (nullptr != pos->second)
+			if (nullptr != pCamera)
 			{
-				pCamDevice = pos->second->GetAcquisitionDevice();
+				pCamDevice = pCamera->GetAcquisitionDevice();
 			}
 
 			if (pCamDevice && 3L == pCamDevice->BandSize())
@@ -1311,8 +1310,6 @@ HRESULT SVInspectionProcess::RebuildInspection()
 					break;
 				}
 			}
-
-			++pos;
 		}
 
 		if (!bColorSourceImage)
@@ -2373,92 +2370,51 @@ SvOi::IObjectClass* SVInspectionProcess::getFirstPPQCamera() const
 
 	if (nullptr != pPPQ)
 	{
-		SvIe::SVVirtualCameraMap CameraMap;
+		SvIe::SVVirtualCameraPtrVector CameraVector = pPPQ->GetVirtualCameras();
 
-		pPPQ->GetVirtualCameras(CameraMap);
+		SvIe::SVVirtualCameraPtrVector::iterator iter = CameraVector.begin();
 
-		SvIe::SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
-
-		if (l_Iter != CameraMap.end())
+		if (iter != CameraVector.end())
 		{
-			pCamera = dynamic_cast<SvOi::IObjectClass*> (l_Iter->second);
+			pCamera = dynamic_cast<SvOi::IObjectClass*> (*iter);
 		}
 	}
 
 	return pCamera;
 }
 
-HRESULT SVInspectionProcess::GetPPQCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
+SvIe::SVVirtualCameraPtrVector SVInspectionProcess::GetCameras() const
 {
-	HRESULT l_Status = S_OK;
+	SvIe::SVVirtualCameraPtrVector cameraVector;
 
-	p_rCameras.clear();
-
-	SVPPQObject* pPPQ = GetPPQ();
-
-	if (nullptr != pPPQ)
+	for (const auto* const pCameraImage : m_CameraImages)
 	{
-		SvIe::SVVirtualCameraMap CameraMap;
-
-		pPPQ->GetVirtualCameras(CameraMap);
-
-		SvIe::SVVirtualCameraMap::const_iterator l_Iter = CameraMap.begin();
-
-		while (l_Iter != CameraMap.end())
+		if (nullptr != pCameraImage)
 		{
-			if (nullptr != l_Iter->second)
-			{
-				p_rCameras.insert(l_Iter->second);
-			}
-
-			++l_Iter;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVInspectionProcess::GetCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
-{
-	HRESULT l_Status = S_OK;
-
-	p_rCameras.clear();
-
-	SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin();
-
-	while (l_Iter != m_CameraImages.end())
-	{
-		if (nullptr != (*l_Iter))
-		{
-			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
 
 			if (nullptr != pCamera)
 			{
-				p_rCameras.insert(pCamera);
+				cameraVector.emplace_back(pCamera);
 			}
 		}
-
-		++l_Iter;
 	}
+	std::sort(cameraVector.begin(), cameraVector.end(), SvIe::isLessByName);
+	//Remove duplicates
+	cameraVector.erase(std::unique(cameraVector.begin(), cameraVector.end()), cameraVector.end());
 
-	return l_Status;
+	return cameraVector;
 }
 
-HRESULT SVInspectionProcess::GetCamerasForLut(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
+SvIe::SVVirtualCameraPtrVector SVInspectionProcess::GetCamerasForLut() const
 {
-	HRESULT l_Status = S_OK;
+	SvIe::SVVirtualCameraPtrVector cameraVector;
 
-	p_rCameras.clear();
-
-	for (SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin(); l_Iter != m_CameraImages.end(); ++l_Iter)
+	for (const auto* const pCameraImage : m_CameraImages)
 	{
-		if (nullptr != (*l_Iter))
+		if (nullptr != pCameraImage)
 		{
-			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
 
 			if (nullptr != pCamera)
 			{
@@ -2468,26 +2424,28 @@ HRESULT SVInspectionProcess::GetCamerasForLut(SvIe::SVVirtualCameraPtrSet& p_rCa
 					HRESULT hr = pCamera->GetLut(lut);
 					if (S_OK == hr && lut.NumBands() > 0)
 					{
-						p_rCameras.insert(pCamera);
+						cameraVector.emplace_back(pCamera);
 					}
 				}
 			}
 		}
 	}
-	return l_Status;
+	std::sort(cameraVector.begin(), cameraVector.end(), SvIe::isLessByName);
+	//Remove duplicates
+	cameraVector.erase(std::unique(cameraVector.begin(), cameraVector.end()), cameraVector.end());
+
+	return cameraVector;
 }
 
-HRESULT SVInspectionProcess::GetCamerasForLightReference(SvIe::SVVirtualCameraPtrSet& p_rCameras) const
+SvIe::SVVirtualCameraPtrVector SVInspectionProcess::GetCamerasForLightReference() const
 {
-	HRESULT l_Status = S_OK;
+	SvIe::SVVirtualCameraPtrVector cameraVector;
 
-	p_rCameras.clear();
-
-	for (SvIe::SVCameraImagePtrSet::const_iterator l_Iter = m_CameraImages.begin(); l_Iter != m_CameraImages.end(); ++l_Iter)
+	for (const auto* const pCameraImage : m_CameraImages)
 	{
-		if (nullptr != (*l_Iter))
+		if (nullptr != pCameraImage)
 		{
-			SvIe::SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
+			SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
 
 			if (nullptr != pCamera)
 			{
@@ -2497,13 +2455,17 @@ HRESULT SVInspectionProcess::GetCamerasForLightReference(SvIe::SVVirtualCameraPt
 					HRESULT hr = pCamera->GetLightReference(lightReference);
 					if (S_OK == hr && lightReference.NumBands() > 0)
 					{
-						p_rCameras.insert(pCamera);
+						cameraVector.emplace_back(pCamera);
 					}
 				}
 			}
 		}
 	}
-	return l_Status;
+	std::sort(cameraVector.begin(), cameraVector.end(), SvIe::isLessByName);
+	//Remove duplicates
+	cameraVector.erase(std::unique(cameraVector.begin(), cameraVector.end()), cameraVector.end());
+
+	return cameraVector;
 }
 
 HRESULT SVInspectionProcess::GetMainImages(const std::string& rCameraName, SvIe::SVCameraImagePtrSet& rMainImages) const

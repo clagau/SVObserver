@@ -67,20 +67,18 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectSheet message handlers
 
-void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, SvIe::SVVirtualCameraPtrSet CameraList )
+void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector)
 {
 	m_pRegressionList = RegessionList;
 	
-	SvIe::SVVirtualCameraPtrSet::iterator iter;
-
 	std::string PrevName( _T("Blank") );
-	for ( iter = CameraList.begin(); iter != CameraList.end(); ++iter )
+	for (const auto* const pCamera : rCameraVector)
 	{
-		if ( 0 != SvUl::CompareNoCase( PrevName, std::string((*iter)->GetName()) ) )
+		if ( 0 != SvUl::CompareNoCase( PrevName, std::string(pCamera->GetName()) ) )
 		{
-			CSVRegressionFileSelectDlg *pPage = new CSVRegressionFileSelectDlg((*iter)->GetName());
+			CSVRegressionFileSelectDlg *pPage = new CSVRegressionFileSelectDlg(pCamera->GetName());
 			AddPage(pPage);
-			PrevName = (*iter)->GetName();
+			PrevName = pCamera->GetName();
 		}
 	}
 	

@@ -47,7 +47,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, SvIe::SVVirtualCameraPtrSet CameraList );
+	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector);
 
 private: //methods
 	std::string MakeFileNameMask( const std::string& rFileName );

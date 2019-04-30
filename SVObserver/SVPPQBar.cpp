@@ -388,16 +388,10 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 			
 		}// end for
 		
-		std::deque<SvIe::SVVirtualCamera*> cameras;
+		SvIe::SVVirtualCameraPtrVector cameraVector = m_pPPQ->GetVirtualCameras();
 
-		m_pPPQ->GetCameraList( cameras );
-
-		std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-		while( l_Iter != cameras.end() )
+		for(const auto* const pCamera : cameraVector)
 		{
-			SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
-
 			if( nullptr != pCamera )
 			{
 				m_pPPQ->GetCameraPPQPosition( lPosition, pCamera );
@@ -408,8 +402,6 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 					buttonList.GetAt( lPosition )->SetWindowText( Caption.c_str() );
 				}// end if
 			}
-
-			++l_Iter;
 		}// end for
 		
 		// Check if DDE Inputs are applied...

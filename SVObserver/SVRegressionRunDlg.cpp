@@ -370,10 +370,9 @@ void CSVRegressionRunDlg::OnBtnSettings()
 
 	dlgRegFileSelect.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-	SvIe::SVVirtualCameraPtrSet CameraList;
-	HRESULT hrOk = m_pIPDocParent->GetCameras( CameraList );
+	SvIe::SVVirtualCameraPtrVector cameraVector = m_pIPDocParent->GetCameras();
 
-	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_listRegCameras,CameraList);
+	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_listRegCameras, cameraVector);
 	if ( IDOK == dlgRegFileSelect.DoModal() )
 	{
 		if ( m_pIPDocParent->m_listRegCameras.GetCount() > 0 )

@@ -72,27 +72,22 @@ void SVLightReferenceDialogPropertySheetClass::OnClose()
 
 
 
-bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& rLRA)
+bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCameraPtrVector& rCameraVector, SVLightReferenceVector& rLRA)
 {
-	miNumPages=0;
-	int i;
-	SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
-
-	for( i = 0; l_Iter != setCameras.end(); ++i, ++l_Iter )
+	for(size_t i = 0; i < rCameraVector.size(); ++i)
 	{
-		SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
+		SvIe::SVVirtualCamera* pCamera = rCameraVector[i];
 		//If pointer is nullptr then do next camera
 		if( nullptr == pCamera ){ continue; }
 		SvIe::SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
-		SVLightReference* pLR = rLRA[i];
-		int iNumBands=pLR->NumBands();
+		SVLightReference& rLightRef = rLRA[i];
 		int iBandSize = 1;
 		int iCamBand = 0;
 		HRESULT hr = pCamera->GetBand(iCamBand);
 		hr = pCamera->GetBandSize(iBandSize);
 		if (S_OK == hr )
 		{
-			if (0 == pLR->NumBands() )
+			if (0 == rLightRef.NumBands())
 			{
 				SvDef::StringVector msgList;
 				if(nullptr != pDevice)
@@ -113,24 +108,23 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCamera
 		
 			for (int iBand=iCamBand; iBand <= iMaxBand; iBand++)
 			{
-				SVLightReferenceBand* pLRBand = &(pLR->Band(iBand));
-				for (int iAttribute=0; iAttribute < pLRBand->NumAttributes(); iAttribute++)
+				const SVLightReferenceBand& rLRBand = rLightRef.Band(iBand);
+				for (int iAttribute=0; iAttribute < rLRBand.NumAttributes(); iAttribute++)
 				{
 					// the IDs are no longer valid... use the text instead
 					std::string DigitizerName = SvUl::Format( _T("Dig.%d"), pDevice->DigNumber() );
-					std::string TabText = pCamera->GetName() + std::string(_T(" ")) + DigitizerName + std::string(_T(" ")) + pLRBand->Attribute( iAttribute ).strName;
+					std::string TabText = pCamera->GetName() + std::string(_T(" ")) + DigitizerName + std::string(_T(" ")) + rLRBand.Attribute( iAttribute ).strName;
 					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( TabText.c_str() );
 					pPage->m_pCamera = pCamera;
 					pPage->m_pDevice = pDevice;
-					pPage->m_pLR = pLR;
-					pPage->m_AttributeType = pLRBand->Attribute(iAttribute).dwType;
-					pPage->m_AttributeName = pLRBand->Attribute(iAttribute).strName.c_str();
+					pPage->m_pLR = &rLightRef;
+					pPage->m_AttributeType = rLRBand.Attribute(iAttribute).dwType;
+					pPage->m_AttributeName = rLRBand.Attribute(iAttribute).strName.c_str();
 					pPage->miCurrentBand = iBand;
 					AddPage(pPage);
-					miNumPages++;
-				}// end for (int iAttribute=0; iAttribute < pLRBand->NumAttributes(); iAttribute++)
-			}// end for (int iBand=0; iBand < nNumBands; iBand++)
-		}// end if (S_OK == hr)
+				}
+			}
+		}
 	}
 	return true;
 }

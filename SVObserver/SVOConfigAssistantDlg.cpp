@@ -1372,16 +1372,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 
 				//do same for camera's
 
-				std::deque<SvIe::SVVirtualCamera*> cameras;
+				SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-				pPPQ->GetCameraList( cameras );
-
-				std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-				while( l_Iter != cameras.end() )
+				for(auto* pCamera : cameraVector)
 				{
-					SvIe::SVVirtualCamera* pCamera{*l_Iter};
-
 					if ( nullptr != pCamera )
 					{
 						if (!IsCameraOnPPQ(pPPQ->GetName(), pCamera->GetName()))
@@ -1389,8 +1383,6 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 							bRet = pPPQ->DetachCamera(pCamera, true);
 						}
 					}
-
-					++l_Iter;
 				}
 
 				//check trigger...
@@ -2236,16 +2228,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 						PPQCameraName = pPPQObj->GetAttachedCamera(i);
 
-						std::deque<SvIe::SVVirtualCamera*> cameras;
+						SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-						pPPQ->GetCameraList( cameras );
-
-						std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-						while( l_Iter != cameras.end() )
+						for(auto* pCamera : cameraVector)
 						{
-							SvIe::SVVirtualCamera* pCamera{*l_Iter};
-
 							if ( nullptr != pCamera )
 							{
 								if ( PPQCameraName == pCamera->GetName() )
@@ -2259,8 +2245,6 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 								pCamera = nullptr;
 							}
-
-							++l_Iter;
 						}
 
 						long lCfgAttachedCam = pConfig->GetCameraCount();
@@ -2761,22 +2745,14 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			long lppqIns;
 			pcfgPPQ->GetInspectionCount(lppqIns);
 
-			std::deque<SvIe::SVVirtualCamera*> cameras;
+			SvIe::SVVirtualCameraPtrVector cameraVector = pcfgPPQ->GetVirtualCameras();
 
-			pcfgPPQ->GetCameraList(cameras);
-
-			std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-			while( l_Iter != cameras.end() )
+			for(auto* pcfgCamera : cameraVector)
 			{
-				pcfgCamera = ( *l_Iter );
-
 				if ( nullptr != pcfgCamera && (nullptr != pcfgCamera->mpsvDevice) )
 				{
 					m_PPQList.AttachCameraToPPQ(PPQName.c_str(), pcfgCamera->GetName());
 				}
-
-				++l_Iter;
 			}
 
 			for (long lpIns = lppqIns -1; -1 < lpIns; lpIns--)

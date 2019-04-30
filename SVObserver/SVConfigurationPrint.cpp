@@ -1895,10 +1895,8 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Camera:"));
 			
-			std::deque<SvIe::SVVirtualCamera*> cameras;
-			pPPQ->GetCameraList(cameras);
-			std::sort(cameras.begin(), cameras.end(), SvIe::isLessByName);
-			for (auto* pCamera : cameras)
+			SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);
+			for (const auto* pCamera : cameraVector)
 			{
 				if (nullptr != pCamera)
 				{
@@ -1968,11 +1966,9 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 		{
 			bool bPosPrint = false;
-			std::deque<SvIe::SVVirtualCamera*> cameras;
-			pPPQ->GetCameraList( cameras );
-			std::sort(cameras.begin(), cameras.end(), SvIe::isLessByName);
+			SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);
 			
-			for (auto* pCamera : cameras)
+			for (const auto* const pCamera : cameraVector)
 			{
 				if ( nullptr != pCamera )
 				{

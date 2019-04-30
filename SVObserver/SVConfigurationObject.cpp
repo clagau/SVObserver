@@ -79,8 +79,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-typedef std::deque<SvIe::SVVirtualCamera*> SVVirtualCameraPtrList;
-
 SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectGuid);
 #pragma endregion Declarations
 
@@ -3371,29 +3369,26 @@ void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter
 
 void SVConfigurationObject::SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ) const
 {
-	std::deque<SvIe::SVVirtualCamera*> cameras;
-	rPPQ.GetCameraList(cameras);
-	if (0 < cameras.size())
+	SvIe::SVVirtualCameraPtrVector cameraVector = rPPQ.GetVirtualCameras();
+	if (0 < cameraVector.size())
 	{
 		rWriter.StartElement(SvXml::CTAG_CAMERA);
 
-		std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-		while (l_Iter != cameras.end())
+		for(const auto* const pCamera : cameraVector)
 		{
-			if (nullptr != (*l_Iter))
+			if (nullptr != pCamera)
 			{
-				std::string strName = (*l_Iter)->GetName();
+				std::string strName = pCamera->GetName();
 				rWriter.StartElement(strName.c_str());
 
 				long l_PPQIndex = -1;
-				rPPQ.GetCameraPPQPosition(l_PPQIndex, *l_Iter);
+				rPPQ.GetCameraPPQPosition(l_PPQIndex, pCamera);
 
 				_variant_t svValue = l_PPQIndex;
 				rWriter.WriteAttribute(SvXml::CTAG_POSITION, svValue);
 				svValue.Clear();
 				rWriter.EndElement();
 			}
-			++l_Iter;
 		}
 		rWriter.EndElement(); //SvXml::CTAG_CAMERA
 	}
@@ -3952,12 +3947,10 @@ void SVConfigurationObject::SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* p
 	{
 		SvTh::SVAcquisitionInitiator  acqInitiator;
 
-		SVVirtualCameraPtrList l_Cameras;
-		pPPQ->GetCameraList(l_Cameras);
+		SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-		for (SVVirtualCameraPtrList::iterator l_Iter = l_Cameras.begin(); l_Iter != l_Cameras.end(); ++l_Iter)
+		for (auto* pCamera : cameraVector)
 		{
-			SvIe::SVVirtualCamera* pCamera = (*l_Iter);
 			if (nullptr != pCamera)
 			{
 				// remove Trigger Relay, as we are using the Software Trigger
@@ -4082,14 +4075,10 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 				SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
 				if (nullptr != pPPQ && nullptr != pTrigger->mpsvDevice && nullptr != pTrigger->mpsvDevice->m_pDLLTrigger)
 				{
-					// Get The cameras Attached to this PPQ
-					SVVirtualCameraPtrList l_Cameras;
+					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-					pPPQ->GetCameraList(l_Cameras);
-
-					for (SVVirtualCameraPtrList::iterator l_Iter = l_Cameras.begin(); l_Iter != l_Cameras.end(); ++l_Iter)
+					for (auto* pCamera : cameraVector)
 					{
-						SvIe::SVVirtualCamera* pCamera = (*l_Iter);
 						if (nullptr != pCamera)
 						{
 							if (pCamera->IsFileAcquisition())
@@ -4940,7 +4929,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 {
 	HRESULT Status = S_OK;
 
-	SvIe::SVVirtualCameraPtrSet CamerasChanged;
+	SvIe::SVVirtualCameraPtrVector cameraChangedVector;
 
 	rStatus.clear();
 
@@ -4976,7 +4965,7 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 							SvIe::SVVirtualCamera* pVirtualCamera = dynamic_cast<SvIe::SVVirtualCamera*> (pValueObject->GetParent());
 							if (nullptr != pVirtualCamera)
 							{
-								CamerasChanged.insert(pVirtualCamera);
+								cameraChangedVector.emplace_back(pVirtualCamera);
 							}
 						}
 						else
@@ -5012,16 +5001,16 @@ HRESULT SVConfigurationObject::SetCameraItems(const SVNameStorageMap& rItems, SV
 	}
 
 	//Check which cameras device parameters have changed
-	for (SvIe::SVVirtualCameraPtrSet::iterator l_Iter = CamerasChanged.begin(); l_Iter != CamerasChanged.end(); ++l_Iter)
+	for (auto* pCamera : cameraChangedVector)
 	{
 		SVDeviceParamCollection CameraParameters;
-		HRESULT LoopStatus = (*l_Iter)->updateDeviceParameters(CameraParameters);
+		HRESULT LoopStatus = pCamera->updateDeviceParameters(CameraParameters);
 		if (S_OK == LoopStatus)
 		{
-			std::string DeviceName = (*l_Iter)->GetAcquisitionDevice()->DeviceName();
+			std::string DeviceName = pCamera->GetAcquisitionDevice()->DeviceName();
 			ModifyAcquisitionDevice(DeviceName.c_str(), &CameraParameters);
 			SVLightReference LightRef;
-			(*l_Iter)->GetAcquisitionDevice()->GetLightReference(LightRef);
+			pCamera->GetAcquisitionDevice()->GetLightReference(LightRef);
 			ModifyAcquisitionDevice(DeviceName.c_str(), LightRef);
 		}
 	}

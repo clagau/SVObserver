@@ -113,8 +113,7 @@ public:
 	void GetInspectionCount( long &lSize ) const;
 
 	size_t GetCameraCount() const;
-	void GetCameraList( std::deque<SvIe::SVVirtualCamera*>& rCameras ) const;
-	HRESULT GetVirtualCameras(SvIe::SVVirtualCameraMap& rCameras ) const;
+	SvIe::SVVirtualCameraPtrVector GetVirtualCameras(bool sortAndMakeUnique = false) const;
 
 	void GetTrigger( SvTi::SVTriggerObject*& ppTrigger );
 	bool GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
@@ -129,7 +128,7 @@ public:
 
 	// PPQ position management functions
 	bool SetCameraPPQPosition( long lPosition, SvIe::SVVirtualCamera* pCamera );
-	bool GetCameraPPQPosition( long &lPosition, SvIe::SVVirtualCamera* pCamera ) const;
+	bool GetCameraPPQPosition( long &lPosition, const SvIe::SVVirtualCamera* const pCamera ) const;
 
 	
 	/// Check and prepare if configuration can go online.

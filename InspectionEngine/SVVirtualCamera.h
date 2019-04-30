@@ -35,8 +35,6 @@ class SVVirtualCamera;
 
 #pragma region Declarations
 typedef std::vector<SVVirtualCamera*> SVVirtualCameraPtrVector;
-typedef std::set<SVVirtualCamera*> SVVirtualCameraPtrSet;
-typedef std::map<std::string, SVVirtualCamera*> SVVirtualCameraMap;
 #pragma endregion Declarations
 
 

@@ -46,14 +46,10 @@ SVLutDlg::~SVLutDlg()
 	DestroyAllPages();
 }
 
-bool SVLutDlg::Create(SvIe::SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut)
+bool SVLutDlg::Create(SvIe::SVVirtualCameraPtrVector& rCameraVector, SVLutMap& raLut)
 {
-	SvIe::SVVirtualCameraPtrSet::iterator l_Iter;
-
-	for( l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter )
+	for(auto* pCamera : rCameraVector)
 	{
-		SvIe::SVVirtualCamera* pCamera = ( *l_Iter );
-
 		if( nullptr != pCamera )
 		{
 			SvIe::SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();

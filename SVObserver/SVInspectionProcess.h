@@ -195,10 +195,9 @@ public:
 	SvIe::SVCameraImageTemplate* GetToolSetMainImage();
 
 	SvOi::IObjectClass* getFirstPPQCamera() const;
-	HRESULT GetCameras( SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
-	HRESULT GetPPQCameras(SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
-	HRESULT GetCamerasForLut(SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
-	HRESULT GetCamerasForLightReference(SvIe::SVVirtualCameraPtrSet& p_rCameras ) const;
+	SvIe::SVVirtualCameraPtrVector GetCameras() const;
+	SvIe::SVVirtualCameraPtrVector GetCamerasForLut() const;
+	SvIe::SVVirtualCameraPtrVector GetCamerasForLightReference() const;
 
 	HRESULT GetMainImages( const std::string& rCameraName, SvIe::SVCameraImagePtrSet& rMainImages ) const;
 

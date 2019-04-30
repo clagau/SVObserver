@@ -824,11 +824,10 @@ void SVIPDoc::OnAllowAdjustLightReference(CCmdUI* pCmdUI)
 		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
-		SvIe::SVVirtualCameraPtrSet cameraSet;
+		SvIe::SVVirtualCameraPtrVector cameraVector;
 		SVInspectionProcess* pInspection(GetInspectionProcess());
-		HRESULT hr = S_FALSE;
-		if (nullptr != pInspection) { hr = pInspection->GetCamerasForLightReference(cameraSet); }
-		bEnable = (S_OK == hr && cameraSet.size() > 0) ? true : false;
+		if (nullptr != pInspection) { cameraVector = pInspection->GetCamerasForLightReference(); }
+		bEnable = (cameraVector.size() > 0) ? true : false;
 	}
 	pCmdUI->Enable(bEnable);
 }
@@ -840,11 +839,10 @@ void SVIPDoc::OnAllowAdjustLut(CCmdUI* pCmdUI)
 		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
-		SvIe::SVVirtualCameraPtrSet cameraSet;
+		SvIe::SVVirtualCameraPtrVector cameraVector;
 		SVInspectionProcess* pInspection(GetInspectionProcess());
-		HRESULT hr = S_FALSE;
-		if (nullptr != pInspection) { hr = pInspection->GetCamerasForLut(cameraSet); }
-		bEnable = (S_OK == hr && cameraSet.size() > 0) ? true : false;
+		if (nullptr != pInspection) { cameraVector = pInspection->GetCamerasForLut(); }
+		bEnable = (cameraVector.size() > 0) ? true : false;
 	}
 	pCmdUI->Enable(bEnable);
 }
@@ -853,86 +851,70 @@ void SVIPDoc::OnAdjustLightReference()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	int i(0);
-
-	ASSERT(GetToolSet());
-	ASSERT(GetToolSet()->IsCreated());
+	assert(GetToolSet());
+	assert(GetToolSet()->IsCreated());
 
 	if (nullptr == pInspection || !GetToolSet()->IsCreated()) { return; }
 
 	// NOTE:
 	//		 At this time an IPDoc has only one camera image input!!!
 
-	int iChannel = 0;
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
 	SVLightReferenceDialogPropertySheetClass dlg(std::string(_T("Light Reference Adjustment - [") + GetTitle() + _T("]")).c_str());
 
 	// obtain copies of the arrays to set if IDOK
-	SVLightReferencePtrVector apLRA;
-	SVLightReferencePtrVector apLRAorig;
+	SVLightReferenceVector LightRefVector;
 
-	SvIe::SVVirtualCameraPtrSet setCameras;
+	SvIe::SVVirtualCameraPtrVector cameraVector = pInspection->GetCameras();
 
-	pInspection->GetCameras(setCameras);
-
-	SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
-
-	while (l_Iter != setCameras.end())
+	for (const auto* pCamera : cameraVector)
 	{
-		if (nullptr != (*l_Iter))
+		if (nullptr != pCamera)
 		{
-			SVLightReference* pLRA = new SVLightReference();
-			(*l_Iter)->GetAcquisitionDevice()->GetLightReference(*pLRA);
-			apLRA.push_back(pLRA);
-
-			// make another copy for cancel... this should move into the propsheet
-			SVLightReference* pLRAorig = new SVLightReference();
-			(*l_Iter)->GetAcquisitionDevice()->GetLightReference(*pLRAorig);
-			apLRAorig.push_back(pLRAorig);
+			SVLightReference lightRef;
+			pCamera->GetAcquisitionDevice()->GetLightReference(lightRef);
+			LightRefVector.push_back(lightRef);
 		}
-
-		++l_Iter;
 	}
+	//Make copy for cancel
+	SVLightReferenceVector LightRefVectorOriginal{LightRefVector};
+
 
 	//remove apply button
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-	if (dlg.CreatePages(setCameras, apLRA))
+	if (dlg.CreatePages(cameraVector, LightRefVector))
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		ASSERT(nullptr != pConfig);
+		assert(nullptr != pConfig);
 
+		SVLightReferenceVector* pResultLightRefVector{nullptr};
 		if (nullptr != pConfig && dlg.DoModal() == IDOK)
 		{
 			SetModifiedFlag();
-
-			for (i = 0, l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++i, ++l_Iter)
-			{
-				(*l_Iter)->SetLightReference(*(apLRA[i]));
-				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
-				(*l_Iter)->GetAcquisitionDevice()->GetLightReference(lra);
-				pConfig->ModifyAcquisitionDevice((*l_Iter)->GetAcquisitionDevice()->DeviceName().c_str(), lra);
-				delete apLRA[i];
-				delete apLRAorig[i];
-			}
+			pResultLightRefVector = &LightRefVector;
 		}
-		else    // if cancel
+		else
 		{
-			for (i = 0, l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++i, ++l_Iter)
+			pResultLightRefVector = &LightRefVectorOriginal;
+		}
+		if(nullptr != pResultLightRefVector)
+		{
+			for (size_t i = 0; i < cameraVector.size(); ++i)
 			{
-				(*l_Iter)->SetLightReference(*(apLRAorig[i]));
-				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
-				(*l_Iter)->GetAcquisitionDevice()->GetLightReference(lra);
-				pConfig->ModifyAcquisitionDevice((*l_Iter)->GetAcquisitionDevice()->DeviceName().c_str(), lra);
-				delete apLRA[i];
-				delete apLRAorig[i];
+				cameraVector[i]->SetLightReference(pResultLightRefVector->at(i));
+				SVLightReference lightRef; // get new device lra; camera Set only modifies its band(s)
+				cameraVector[i]->GetAcquisitionDevice()->GetLightReference(lightRef);
+				std::string deviceName {cameraVector[i]->GetAcquisitionDevice()->DeviceName()};
+				pConfig->ModifyAcquisitionDevice(deviceName.c_str(), lightRef);
 			}
 		}
+
 		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 	// Show default LUT: black --> black, white --> white...
@@ -945,8 +927,8 @@ void SVIPDoc::OnAdjustLut()
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	ASSERT(GetToolSet());
-	ASSERT(GetToolSet()->IsCreated());
+	assert(GetToolSet());
+	assert(GetToolSet()->IsCreated());
 
 	if (nullptr == pInspection || !GetToolSet()->IsCreated()) // is tool set created
 	{
@@ -963,20 +945,14 @@ void SVIPDoc::OnAdjustLut()
 	SVLutDlg::SVLutMap aLut;
 	SVLutDlg::SVLutMap aLutOrig;
 
-	SvIe::SVVirtualCameraPtrSet setCameras;
+	SvIe::SVVirtualCameraPtrVector cameraVector = pInspection->GetCameras();
 
-	pInspection->GetCameras(setCameras);
-
-	SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin();
-
-	while (l_Iter != setCameras.end())
+	for (const auto* const pCamera : cameraVector)
 	{
-		if (nullptr != *l_Iter)
+		if (nullptr != pCamera)
 		{
-			(*l_Iter)->GetAcquisitionDevice()->GetLut(aLut[(*l_Iter)->GetUniqueObjectID()]);
+			pCamera->GetAcquisitionDevice()->GetLut(aLut[pCamera->GetUniqueObjectID()]);
 		}
-
-		++l_Iter;
 	}
 
 	aLutOrig = aLut;
@@ -984,7 +960,7 @@ void SVIPDoc::OnAdjustLut()
 	//remove the apply button
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-	bool bSuccess = dlg.Create(setCameras, aLut);
+	bool bSuccess = dlg.Create(cameraVector, aLut);
 
 	if (bSuccess)
 	{
@@ -998,9 +974,12 @@ void SVIPDoc::OnAdjustLut()
 		else    // if cancel
 		{
 			// restore old LUT
-			for (SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter)
+			for (auto* const pCamera : cameraVector)
 			{
-				(*l_Iter)->SetLut(aLutOrig[(*l_Iter)->GetUniqueObjectID()]);
+				if (nullptr != pCamera)
+				{
+					pCamera->SetLut(aLutOrig[pCamera->GetUniqueObjectID()]);
+				}
 			}
 		}
 		SVConfigurationObject* pConfig(nullptr);
@@ -1009,10 +988,10 @@ void SVIPDoc::OnAdjustLut()
 
 		if (nullptr != pConfig)
 		{
-			for (SvIe::SVVirtualCameraPtrSet::iterator l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++l_Iter)
+			for (auto* const pCamera : cameraVector)
 			{
 				SVLut lut;
-				SvIe::SVAcquisitionClassPtr pDevice = (*l_Iter)->GetAcquisitionDevice();
+				SvIe::SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
 				pDevice->GetLut(lut);
 				pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), lut);
 
@@ -3106,20 +3085,15 @@ void SVIPDoc::RefreshPublishedList()
 	SetModifiedFlag();
 }
 
-HRESULT SVIPDoc::GetCameras(SvIe::SVVirtualCameraPtrSet& rCameras) const
+SvIe::SVVirtualCameraPtrVector SVIPDoc::GetCameras() const
 {
-	HRESULT l_Status = S_OK;
+	SvIe::SVVirtualCameraPtrVector cameraVector;
 
 	if (nullptr != GetInspectionProcess())
 	{
-		l_Status = GetInspectionProcess()->GetCameras(rCameras);
+		cameraVector = GetInspectionProcess()->GetCameras();
 	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
+	return cameraVector;
 }
 
 bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)

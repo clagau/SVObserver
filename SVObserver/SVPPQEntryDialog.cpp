@@ -62,23 +62,16 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	ASSERT( m_pSheet );
 
-	SvIe::SVVirtualCamera *pCamera( nullptr );
 	long lPosition;
 	int index;
 
-	std::deque<SvIe::SVVirtualCamera*> cameras;
+	SvIe::SVVirtualCameraPtrVector cameraVector = m_pSheet->m_pPPQ->GetVirtualCameras();
 
-	m_pSheet->m_pPPQ->GetCameraList(cameras);
-
-	std::deque<SvIe::SVVirtualCamera*>::iterator l_Iter = cameras.begin();
-
-	while( l_Iter != cameras.end() )
+	for (const auto* const pCamera : cameraVector)
 	{
-		pCamera = ( *l_Iter );
-
 		if( nullptr != pCamera )
 		{
-			m_pSheet->m_pPPQ->GetCameraPPQPosition( lPosition, pCamera );
+			m_pSheet->m_pPPQ->GetCameraPPQPosition(lPosition, pCamera);
 
 			// Fill selected box...
 			if( m_pSheet->m_lCurrentPosition == lPosition )			
@@ -96,7 +89,6 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 
 			GetDlgItem(IDC_ADD_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
 		}
-		++l_Iter;
 	}// end for
 
 	m_CurrentPos.Format( "Current PPQ\r\nPosition : %d", m_pSheet->m_lCurrentPosition + 1 );
