@@ -2014,22 +2014,8 @@ bool SVPPQObject::RebuildOutputList()
 
 void SVPPQObject::AddDefaultOutputs()
 {
-	SVIOEntryHostStructPtr pIOEntry;
-	bool	bFound{false};
-
-	std::string Name = _T("Not Inspected");
-	for(size_t l = 0, bFound = false; !bFound && l < m_AllOutputs.size(); l++ )
-	{
-		pIOEntry = m_AllOutputs[l];
-
-		if (Name == pIOEntry->getObject()->GetName())
-		{
-			bFound = true;
-			break;
-		}// end if
-	}// end for
-
-	static const std::string cPpqOutputNames[] = 
+	static_assert(PpqOutputEnums::OutputNr != 0, "PPQ output number enum should not be 0");
+	constexpr LPCTSTR cPpqOutputNames[PpqOutputEnums::OutputNr] =
 	{
 		_T("Trigger Toggle"),
 		_T("Output Toggle"),
@@ -2041,7 +2027,7 @@ void SVPPQObject::AddDefaultOutputs()
 		_T("Data Valid")		
 	};
 
-	static const bool cPpqOutputDefaults[] =
+	constexpr bool cPpqOutputDefaults[PpqOutputEnums::OutputNr] =
 	{
 		true,		//Trigger Toggle
 		true,		//Output Toggle
@@ -2053,11 +2039,22 @@ void SVPPQObject::AddDefaultOutputs()
 		false		//Data Valid
 	};
 
+	//This checks if the default outputs are already in the list by checking if the first default output is found
+	bool	bFound {false};
+	std::string Name = cPpqOutputNames[PpqOutputEnums::TriggerToggle];
+	for (auto pOutput : m_AllOutputs)
+	{
+		if (Name == pOutput->getObject()->GetName())
+		{
+			bFound = true;
+			break;
+		}
+	}
 
 	for (int i=0; i < PpqOutputEnums::OutputNr; ++i)
 	{
 		auto& rOutput = m_PpqOutputs[i];
-		rOutput.SetName(cPpqOutputNames[i].c_str());
+		rOutput.SetName(cPpqOutputNames[i]);
 		rOutput.SetObjectOwner(this);
 		rOutput.SetDefaultValue(BOOL(cPpqOutputDefaults[i]), true);
 		rOutput.SetValue(BOOL(cPpqOutputDefaults[i]));
@@ -2065,7 +2062,7 @@ void SVPPQObject::AddDefaultOutputs()
 
 		if (!bFound)
 		{
-			pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 			pIOEntry->m_DeleteValueObject = false;
 			pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&rOutput));
 			pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
