@@ -5,6 +5,6 @@
     <Stylesheet Link="Stylesheet.xml">
     </Stylesheet>
     <Toc LinesBetweenItems="true" LinesFromRoot="true" PlusMinusSquares="true" Border="None" />
-    <WebHelpOptions NavigationPanePosition="Left" NavigationPaneWidth="250" />
+    <WebHelpOptions NavigationPanePosition="Left" NavigationPaneWidth="175" HideNavigationOnStartup="false" VisibleAccordionItemCount="8" />
     <Toolbar EnableCustomLayout="true" Buttons="PreviousTopic|Back|Separator|Forward" ExcludeAccordionTitle="true" />
 </CatapultSkin>
