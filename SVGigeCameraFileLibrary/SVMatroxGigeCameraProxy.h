@@ -34,7 +34,6 @@ private:
 	//
 	HRESULT SetDigitizerParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 
-	const SVDeviceParamWrapper& GetCameraDeviceParam( SVDeviceParamEnum e ) const;
 	SVDeviceParamWrapper& GetCameraDeviceParamNonConst( SVDeviceParamEnum e );
 
 public:

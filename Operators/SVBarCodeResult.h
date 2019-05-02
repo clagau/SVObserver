@@ -26,7 +26,7 @@ class SVBarCodeResultClass : public SVStringResultClass
 	SV_DECLARE_CLASS(SVBarCodeResultClass);
 
 public:
-	bool m_bFailedToRead;
+	bool m_bFailedToRead = false;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	SVBarCodeResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);

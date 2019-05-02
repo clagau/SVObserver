@@ -286,14 +286,13 @@ bool SVExternalToolTask::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	{
 		if( nullptr != GetInspection() && nullptr != GetTool() )
 		{
-			HRESULT hr = S_OK;
 			try
 			{
-				hr = Initialize();
+				Initialize();
 			}
-			catch ( const SvStl::MessageContainer& e)
+			catch ( const SvStl::MessageContainer& /*e*/)
 			{
-				hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
+				//hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 			}
 
 			l_bOk = true;
@@ -310,7 +309,6 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 	HRESULT hr = S_FALSE;
 	BSTR bstrName = nullptr;
-	int i = 0; // used in for loops
 
 	GUID guid = GetUniqueObjectID();
 
@@ -389,7 +387,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			aInputImages.resize(m_Data.m_lNumInputImages);
 
 			m_aPreviousInputImageRect.clear();
-			for( i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
+			for(int i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
 			{
 				SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject());
 				if( pImage )
@@ -463,7 +461,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 			SVObjectClass* pObject = nullptr;
 
-			for ( i = 0 ; i < m_Data.m_lNumInputValues ; i++)
+			for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 			{
 				SvVol::LinkedValue& rInputValue = m_Data.m_aInputObjects[i];
 				if( rInputValue.GetDefaultType() == VT_EMPTY )
@@ -516,7 +514,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			m_aInspectionResultValues.resize(m_Data.m_lNumResultValues);
 			m_Data.m_aResultValueDefinitions.resize(m_Data.m_lNumResultValues);
 			
-			for ( i = 0 ; i < m_Data.m_lNumResultValues ; i++)
+			for (int i = 0 ; i < m_Data.m_lNumResultValues ; i++)
 			{
 				ResultValueDefinitionStruct& rDef = paResultValueDefs[i];
 				m_Data.m_aResultValueDefinitions[i] = rDef;
@@ -589,7 +587,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			m_aInspectionResultHBMImages.resize(m_Data.m_lNumResultImages);
 			m_Data.m_aResultImageDefinitions.resize(m_Data.m_lNumResultImages);
 
-			for ( i = 0 ; i < m_Data.m_lNumResultImages; i++)
+			for (int i = 0 ; i < m_Data.m_lNumResultImages; i++)
 			{
 				m_Data.m_aResultImageDefinitions[i] = paResultImageDefs[i];
 
@@ -631,7 +629,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 			}// end for ( int i = 0 ; i < m_Data.m_lNumResultImages; i++)
 
-			for ( i = m_Data.m_lNumResultImages ; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
+			for (int i = m_Data.m_lNumResultImages ; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 			{
 				// get image info
 				SVImageInfoClass imageInfo;
@@ -728,8 +726,8 @@ bool SVExternalToolTask::CloseObject()
 	Uninitialize();
 	if ( IsCreated() )
 	{
-		HRESULT hr = m_dll.UninitializeRun(GetUniqueObjectID());
-		hr = m_dll.Close();
+		m_dll.UninitializeRun(GetUniqueObjectID());
+		m_dll.Close();
 		if( SVTaskObjectClass::CloseObject() )
 		{
 			bool bRetVal = true; // m_svOutputImageObject.CloseObject();
@@ -1442,35 +1440,21 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 
 SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 {
-	SvOl::SVInputInfoListClass	resultInputList;
-	SVOutputInfoListClass	resultOutputList;
-	
-	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
-	
-	SvDef::SVObjectTypeInfoStruct  info;
 	SVVariantResultClass*   pResult = nullptr;
-	SVObjectClass*          pSVObject;
 	
-	info.ObjectType = SvPb::SVResultObjectType;
-	info.SubType = SvPb::SVResultVariantObjectType;
-	
+	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
 	SVObjectManagerClass::Instance().VisitElements( l_Visitor, GetUniqueObjectID() );
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
 	bool objectFound = false;
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !objectFound; ++l_Iter )
 	{
 		pResult = dynamic_cast< SVVariantResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
+		SvOl::SVInputInfoListClass	resultInputList;
 		pResult->GetPrivateInputList( resultInputList );
 		
-		pResultInputInfo = resultInputList[0];
-		
-		pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
-		
+		SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
 		if( &m_Data.m_aResultObjects[iIndex] == pSVObject )
 		{
 			objectFound = true;
@@ -1488,21 +1472,14 @@ std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
 {
 	std::vector<SVResultClass*> aObjects;
 	
-	SvDef::SVObjectTypeInfoStruct  info;
-	SVVariantResultClass*   pResult;
-	
-	info.ObjectType = SvPb::SVResultObjectType;
-	info.SubType = SvPb::SVResultVariantObjectType;
-	
+	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
 	SVObjectManagerClass::Instance().VisitElements( l_Visitor, GetUniqueObjectID() );
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 	{
-		pResult = dynamic_cast< SVVariantResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
+		SVVariantResultClass* pResult = dynamic_cast< SVVariantResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
 		aObjects.push_back( pResult );
 	}

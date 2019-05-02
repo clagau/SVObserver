@@ -101,23 +101,7 @@ HRESULT SVFileAcquisitionDevice::Open()
 
 HRESULT SVFileAcquisitionDevice::Close()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	l_hrOk = Destroy( true );
-
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::CameraCreate( SVFileCameraStruct *p_pBoard, SVFileCamera *p_pCamera )
-{
-	HRESULT hr = S_FALSE;
-	return hr;
-}
-
-HRESULT SVFileAcquisitionDevice::CameraDestroy( SVFileCamera *p_pCamera )
-{
-	HRESULT hr = S_FALSE;
-	return hr;
+	return Destroy(true);
 }
 
 HRESULT SVFileAcquisitionDevice::CameraGetCount( unsigned long &p_rulCount )
@@ -596,9 +580,6 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 	if ( p_ulIndex < m_cameras.size() )
 	{
 		SVFileCamera& rCamera = m_cameras[p_ulIndex];
-		
-		char l_szbuf[128];
-
 		if ( rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface )
 		{
 			if (rCamera.IsAcquisitionTriggered())
@@ -617,8 +598,9 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 
 					if( S_OK != l_hrOk )
 					{
-						wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+						char l_szbuf[128];
+						wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
 						TRACE( "%s\n", l_szbuf );
 #endif
 
@@ -629,6 +611,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				else
 				{
+					char l_szbuf[128];
 					wsprintf(l_szbuf,"Error In BufferGetAddress" );
 					TRACE( "%s\n", l_szbuf );
 					l_hrOk = E_FAIL;
@@ -754,7 +737,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long triggerchannel, BS
 			p_rbstrName = nullptr;
 		}
 
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
+		//SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
 		std::string name = SvUl::Format("CameraTrigger.Dig_%d", triggerchannel);
 		p_rbstrName = _bstr_t(name.c_str());
 		l_Result = S_OK;

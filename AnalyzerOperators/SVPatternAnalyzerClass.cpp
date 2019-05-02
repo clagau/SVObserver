@@ -258,8 +258,6 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 
 	if( nullptr != pInputImage)
 	{
-		HRESULT l_Code;
-
 		// Destroy and Recreate Model Image Buffer
 		CreateModelBuffer();
 
@@ -289,7 +287,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 			if (S_OK == hr && nullptr != childImageHandle && nullptr != m_patBufferHandlePtr)
 			{
 				// Copy from source child to Model Image buffer
-				l_Code = SVMatroxBufferInterface::CopyBuffer(m_patBufferHandlePtr->GetBuffer(), childImageHandle->GetBuffer());
+				SVMatroxBufferInterface::CopyBuffer(m_patBufferHandlePtr->GetBuffer(), childImageHandle->GetBuffer());
 
 				// free child buffer
 				childImageHandle.reset();
@@ -409,10 +407,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 
 		if (nullptr != pImage)
 		{
-			double	dParam;
 			long	lParam;
-			BOOL	bParam;
-
 			msv_lpatMaxOccurances.GetValue(lParam);
 
 			SvTrc::IImagePtr pImageBuffer = pImage->getLastImage(true);
@@ -456,6 +451,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 										SVValueAll, SVValueAll);
 					}
 
+					double	dParam;
 					if (S_OK == MatroxCode)
 					{
 						msv_dpatAcceptanceThreshold.GetValue(dParam);
@@ -480,6 +476,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 						MatroxCode = SVMatroxPatternInterface::SetSpeed( m_patContextHandle, lParam );
 					}
 					
+					BOOL	bParam;
 					if (S_OK == MatroxCode)
 					{
 						msv_bpatSearchAngleMode.GetValue( bParam ); 
@@ -901,9 +898,6 @@ bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::SVI
 SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
 {
 	SvStl::MessageContainerVector messages;
-	bool isModelFileNameToSet = false;
-	bool isDonCareFileNameToSet = false;
-	bool checkDontCareSize = false;
 	long dontCareWidth = 0;
 	long dontCareHeight = 0;
 	long modelWidth = 0;
@@ -912,10 +906,10 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValu
 
 	if (useDontCare)
 	{
-		isDonCareFileNameToSet = validateNewDontCareFileName(rValueVector, dontCareWidth, dontCareHeight, messages);
+		validateNewDontCareFileName(rValueVector, dontCareWidth, dontCareHeight, messages);
 	}
 
-	isModelFileNameToSet = validateNewModelFileName(rValueVector, modelWidth, modelHeight, messages);
+	bool isModelFileNameToSet = validateNewModelFileName(rValueVector, modelWidth, modelHeight, messages);
 	
 	IsValidSize(modelWidth, modelHeight, useDontCare, dontCareWidth, dontCareHeight, &messages);
 	

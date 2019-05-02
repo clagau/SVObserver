@@ -408,9 +408,6 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 {
 	DWORD Channel =0;
 	bool bValue = 0;
-	static int nCounter = 0;
-	int nCount = 0;
-	static int nSeqCount = 0;
 	CStatic *pCStatic;
 
 	// Update Digital Input status Indicators
@@ -471,7 +468,7 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		{
 			for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
 			{
-				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & 1 << ( triggerchannel - 1 ) ? IDI_ICON4 : IDI_ICON3 )));
+				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & (1 << ( triggerchannel - 1 ))) ? IDI_ICON4 : IDI_ICON3 ));
 			}
 		}
 		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
@@ -493,6 +490,7 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 
 	if (nSeq != 0)
 	{
+		int nCount = 0;
 		if (nSpeed != 0)
 		{
 			nCount = 10;
@@ -502,8 +500,10 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 			nCount = 80;
 		}
 
+		static int nCounter = 0;
 		if (nCounter >= nCount)
 		{
+			static int nSeqCount = 0;
 			// Outputs 0 - 7  
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue((nSeqCount + 7) % 8 , true);
 			SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(nSeqCount, false);
@@ -599,7 +599,7 @@ HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
 
 	if ( nullptr != triggerparams.m_pData )
 	{
-		SVIOTriggerDataStruct *l_pData = (SVIOTriggerDataStruct *)(triggerparams.m_pData);
+		SVIOTriggerDataStruct *l_pData = reinterpret_cast<SVIOTriggerDataStruct *>(triggerparams.m_pData);
 
 		(l_pData->lTriggerCount)++;
 
@@ -769,7 +769,6 @@ DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 {
 	CSVIOTESTDlg* l_pOwner = (CSVIOTESTDlg*) lpParam;
 
-	DWORD dwResult = 0;
 	DWORD l_dwAccum = 0;
 	do
 	{

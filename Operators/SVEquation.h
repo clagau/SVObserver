@@ -106,9 +106,9 @@ private:
 	SvOl::SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
 	std::string m_InspectionName;
 
-	std::string  m_ToolSetName;
-	std::string m_DIOInputName;
-	std::string  m_RemoteInputName;
+	std::string  m_ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET) + ".";
+	std::string m_DIOInputName {_T("DIO.Input")};
+	std::string  m_RemoteInputName {_T("Remote Input")};
 };
 
 /**

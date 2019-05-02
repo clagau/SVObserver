@@ -204,9 +204,7 @@ bool SVRankingFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 ////////////////////////////////////////////////////////////////////////////////
 void SVRankingFilterClass::RebuildRanking()
 {
-	HRESULT l_Code;
 	// First free old ranking
-
 	m_milRanking.clear();
 
 	// Average ranking information data definition
@@ -264,7 +262,7 @@ void SVRankingFilterClass::RebuildRanking()
 	l_Create.m_lSizeY = lHeight;
 	l_Create.m_eType = RANKING_BIT_DEPTH;
 	l_Create.m_eAttribute = SVBufAttStructElement;
-	l_Code = SVMatroxBufferInterface::Create( m_milRanking, l_Create );
+	SVMatroxBufferInterface::Create( m_milRanking, l_Create );
 
 	pRankingData = new long[lWidth*lHeight];
 	for( l = 0; l < lWidth; l++ )
@@ -278,7 +276,7 @@ void SVRankingFilterClass::RebuildRanking()
 	}// end for
 
 	// Put the custom data in it.
-	l_Code = SVMatroxBufferInterface::PutBuffer( m_milRanking, pRankingData );
+	SVMatroxBufferInterface::PutBuffer( m_milRanking, pRankingData );
 
 	delete [] pRankingData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
@@ -300,14 +298,11 @@ void SVRankingFilterClass::RebuildRanking()
 ////////////////////////////////////////////////////////////////////////////////
 bool SVRankingFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	long lRank;
-
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		HRESULT l_Code;
-
+		long lRank;
 		m_lvoRankingRank.GetValue( lRank );
-		l_Code = SVMatroxImageInterface::Rank(rOutputImageHandle->GetBuffer(),
+		HRESULT l_Code = SVMatroxImageInterface::Rank(rOutputImageHandle->GetBuffer(),
 				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 				m_milRanking, lRank );
 	    if( S_OK != l_Code )

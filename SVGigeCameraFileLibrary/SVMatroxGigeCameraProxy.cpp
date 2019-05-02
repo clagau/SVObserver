@@ -785,7 +785,6 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer, const SVCameraFormatsDeviceParam* pParam)
 {
 	HRESULT hr = S_OK;
-	HRESULT l_Temp = S_OK;
 	long horizontalBinning = 1;
 	long verticalBinning = 1;
 	const SVCameraFormat& rcf = pParam->options.find(pParam->strValue)->second;
@@ -794,10 +793,9 @@ HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigiti
 
 	_variant_t l_oValue;
 	int l_ParType;
-	bool l_bOffsetsFirst = false;
 
 	// Get Binning parameters
-	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterHorizontalBinning, &l_ParType, &l_oValue);
+	HRESULT l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterHorizontalBinning, &l_ParType, &l_oValue);
 	if (S_OK == l_Temp)
 	{
 		if (l_oValue.lVal > 0)
@@ -833,12 +831,6 @@ HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigiti
 	if (l_Width > maxWidth)
 	{
 		l_Width = maxWidth;
-	}
-
-	// if Height and Width are set to max then the offsets must be cleared first.
-	if( maxHeight == l_Height && maxWidth == l_Width)
-	{
-		l_bOffsetsFirst = true;
 	}
 
 	long l_XPrevSize=0;
@@ -1154,13 +1146,6 @@ HRESULT SVMatroxGigeCameraProxy::SetDigitizerParameter( const SVDeviceParamWrapp
 		}
 	}
 	return hr;
-}
-
-// Get the Device Parameter from the Parameter Collection in the Acquisition Class 
-// (As opposed to the Real Acquisition DLL)
-const SVDeviceParamWrapper& SVMatroxGigeCameraProxy::GetCameraDeviceParam( SVDeviceParamEnum e ) const
-{
-	return m_pAcquisition->m_DeviceParams.Parameter( e );
 }
 
 SVDeviceParamWrapper& SVMatroxGigeCameraProxy::GetCameraDeviceParamNonConst( SVDeviceParamEnum e )

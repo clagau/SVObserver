@@ -158,8 +158,6 @@ namespace SvOsl
 
 	void ObjectFilterPpg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 	{
-		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-
 		CPoint p;
 		if (GetCursorPos(&p))
 		{
@@ -347,15 +345,10 @@ namespace SvOsl
 		if ( !m_SingleSelect )
 		{
 			CMenu menu;
-			CMenu* pPopupMenu;
-
-			UINT menuResource = 0;
-
-			menuResource = IDR_TREE_ALL_VALUES_MENU;
-
-			if( 0 != menuResource && menu.LoadMenu( menuResource ) )
+			if( menu.LoadMenu(IDR_TREE_ALL_VALUES_MENU) )
 			{
-				if( pPopupMenu = menu.GetSubMenu( 0 ) )
+				CMenu* pPopupMenu = menu.GetSubMenu(0);
+				if( pPopupMenu )
 				{
 					ClientToScreen( &point );
 					pPopupMenu->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this );

@@ -133,8 +133,7 @@ BOOL CSMViewDlg::OnInitDialog()
 
 	for (int c = 0; c <= ePcount; c++)
 	{
-		int ret = m_MonListsCtrl.InsertColumn(c, ColHeader[c], LVCFMT_LEFT, 80);
-		int debug = ret;
+		/*int ret = */m_MonListsCtrl.InsertColumn(c, ColHeader[c], LVCFMT_LEFT, 80);
 	}
 
 
@@ -240,12 +239,9 @@ LRESULT  CSMViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 	bool isready = (wParam == SvSml::ShareEvents::Ready);
 	if (wParam == SvSml::ShareEvents::Ready)
 	{
-		SvSml::MLInspectionInfoMap InspectionInfoMap;
-		SvDef::StringVector PPQVector;
-		int inspectionCount(0);
-		DWORD version(0);
 		try
 		{
+			DWORD version(0);
 			m_MemReader.Reload(version);
 		}
 		catch (std::exception& rException)

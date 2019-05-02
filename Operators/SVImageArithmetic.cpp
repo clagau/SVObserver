@@ -344,8 +344,8 @@ void SVImageArithmeticClass::ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuff
 			{
 				long srcPitch = 0;
 				long dstPitch = 0;
-				HRESULT l_Code = SVMatroxBufferInterface::Get(pInputImageBuffer->getHandle()->GetBuffer(), SVPitch, srcPitch );
-				l_Code = SVMatroxBufferInterface::Get(pOutputImageBuffer->getHandle()->GetBuffer(), SVPitch, dstPitch );
+				/*HRESULT l_Code = */SVMatroxBufferInterface::Get(pInputImageBuffer->getHandle()->GetBuffer(), SVPitch, srcPitch );
+				/*l_Code = */SVMatroxBufferInterface::Get(pOutputImageBuffer->getHandle()->GetBuffer(), SVPitch, dstPitch );
 				
 				unsigned char* srcLinePtr = ( unsigned char * )pSrcHostBuffer;
 				unsigned char* srcLinePtr1 = ( unsigned char * )pSrcHostBuffer + srcPitch;

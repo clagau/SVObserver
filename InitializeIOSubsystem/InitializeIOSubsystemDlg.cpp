@@ -194,7 +194,6 @@ void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if( m_bLptIOInitialized )
 	{
-		long lVer = 0;
 		CDialog::OnTimer(nIDEvent);
 		VARIANT l_vVal;
 		::VariantInit( &l_vVal );
@@ -211,10 +210,10 @@ void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 			else if( m_FanSpeed.IsEmpty() )
 			{
 				::VariantInit( &l_vVal );
-				HRESULT Result = m_IOSystem.GetParameterValue( SVFanFreq, &l_vVal );
+				Result = m_IOSystem.GetParameterValue( SVFanFreq, &l_vVal );
 				long FanSpeed( l_vVal.lVal );
 				::VariantClear( &l_vVal );
-				m_FanSpeed.Format(_T("Fan1: %d, Fan2: %d, Fan3: %d, Fan4: %d"), FanSpeed & 0xff, (FanSpeed >> 8) & 0xff, (FanSpeed >> 16) & 0xff, (FanSpeed >> 24) & 0xff  );
+				m_FanSpeed.Format(_T("Fan1: %ld, Fan2: %ld, Fan3: %ld, Fan4: %ld"), FanSpeed & 0xff, (FanSpeed >> 8) & 0xff, (FanSpeed >> 16) & 0xff, (FanSpeed >> 24) & 0xff  );
 				m_strLog.push_back( m_FanSpeed );
 			}
 		}
@@ -281,7 +280,7 @@ void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 		{
 			m_FailedCounts++;
 			CString l_strTmp;
-			l_strTmp.Format( "Init Error %d\n", l_hr );
+			l_strTmp.Format( "Init Error %ld\n", l_hr );
 			m_strLog.push_back( l_strTmp );
 
 			if( m_TimeElapse > TIMEOUT_QUIT )
@@ -307,7 +306,6 @@ void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 
 CInitializeIOSubsystemDlg::~CInitializeIOSubsystemDlg()
 {
-	int i = 0;
 }
 
 void CInitializeIOSubsystemDlg::OnDestroy()
@@ -323,7 +321,7 @@ void CInitializeIOSubsystemDlg::OnDestroy()
 		struct tm NowInfo;
 		localtime_s( &NowInfo, &Now );
 		DateTime.Format(_T("Started InitializeIOSubsystem %02d.%02d.%04d %02d:%02d:%02d"), NowInfo.tm_mday, NowInfo.tm_mon + 1, NowInfo.tm_year + 1900, NowInfo.tm_hour, NowInfo.tm_min, NowInfo.tm_sec );
-		fprintf( fh, "\n%s\n%s\nStartup Time %lld Seconds, Errors %d\n", DateTime.GetString(), m_strVer.GetString(), m_TimeElapse, m_FailedCounts );
+		fprintf( fh, "\n%s\n%s\nStartup Time %lld Seconds, Errors %ld\n", DateTime.GetString(), m_strVer.GetString(), m_TimeElapse, m_FailedCounts );
 		for( size_t i = 0 ; i < m_strLog.size() ; i++ )
 		{
 			fprintf( fh, "%s\n", m_strLog[i].GetString() );
@@ -375,25 +373,19 @@ long Shutdown()
 		return 0;
 	}
 
-	BOOL b = ExitWindowsEx(	EWX_REBOOT|EWX_FORCE, SHTDN_REASON_MINOR_MAINTENANCE | SHTDN_REASON_FLAG_PLANNED);
+	ExitWindowsEx(	EWX_REBOOT|EWX_FORCE, SHTDN_REASON_MINOR_MAINTENANCE | SHTDN_REASON_FLAG_PLANNED);
 
-	DWORD dwerr = 0;
-	dwerr = GetLastError();
 	return 0;
 }
 
 void CInitializeIOSubsystemDlg::OnCancel()
 {
-	// TODO: Add your specialized code here and/or call the base class
 	return;
-	CDialog::OnCancel();
 }
 
 void CInitializeIOSubsystemDlg::OnOK()
 {
-	// TODO: Add your specialized code here and/or call the base class
 	return;
-	CDialog::OnOK();
 }
 
 void CInitializeIOSubsystemDlg::OnLButtonDown(UINT nFlags, CPoint point)

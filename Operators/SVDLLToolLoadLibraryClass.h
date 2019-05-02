@@ -115,7 +115,7 @@ private:
 	SVMachineTypeEnum CheckBitness(LPCTSTR p_szFile);
 
 	HMODULE m_hmHandle;
-	bool m_bUseMil;
+	bool m_bUseMil = false;
 
 	SimpleTestPtr m_pfnSimpleTest;
 	GetToolNamePtr m_pfnGetToolName;

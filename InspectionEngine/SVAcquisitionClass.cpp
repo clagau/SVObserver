@@ -124,20 +124,11 @@ HRESULT SVAcquisitionClass::Create(unsigned long ulSize)
 
 HRESULT SVAcquisitionClass::Destroy()
 {
-	HRESULT hrOk = S_OK;
-	HRESULT l_Status = S_OK;
-
 	DestroyLut();
 
+	HRESULT hrOk = SVODataDeviceClass::Destroy();
 
-	l_Status = SVODataDeviceClass::Destroy();
-
-	if (S_OK == hrOk)
-	{
-		hrOk = l_Status;
-	}
-
-	l_Status = DestroyBuffers();
+	HRESULT l_Status = DestroyBuffers();
 
 	if (S_OK == hrOk)
 	{
@@ -374,21 +365,14 @@ HRESULT SVAcquisitionClass::LoadLightReference(SVLightReference& rLR)
 
 HRESULT SVAcquisitionClass::GetLightReference(SVLightReference& rLR) const
 {
-	HRESULT hrOk = S_OK;
-
 	rLR = mLightReference;
-
-	return hrOk;
+	return S_OK;
 }
 
 HRESULT SVAcquisitionClass::SetLightReference(SVLightReference& rLR, int iWhichBand /* = -1 */)
 {
-	HRESULT hrOk = S_OK;
-
-	int iBeginBand = 0, iEndBand = rLR.NumBands() - 1;
 	if (iWhichBand >= 0 && mLightReference.IsSameDimensions(rLR))
 	{
-		iBeginBand = iEndBand = iWhichBand;
 		mLightReference.SetBandData(rLR, iWhichBand);
 	}
 	else
@@ -398,7 +382,7 @@ HRESULT SVAcquisitionClass::SetLightReference(SVLightReference& rLR, int iWhichB
 
 	SetLightReferenceImpl(mLightReference);
 
-	return hrOk;
+	return S_OK;
 }
 
 HRESULT SVAcquisitionClass::CreateLightReferenceBand(int iBand, int iAttributes)
@@ -509,9 +493,8 @@ HRESULT SVAcquisitionClass::GetFileName(long lIndex, SVFileNameClass &rFileName)
 
 HRESULT SVAcquisitionClass::GetLut(SVLut& lut)
 {
-	HRESULT hr = S_FALSE;
 	SVLut lutdata;
-	hr = GetLutImpl(lutdata);
+	HRESULT hr = GetLutImpl(lutdata);
 	if (S_OK == hr)
 	{
 		Lut().CopyNoTransform(lutdata);
@@ -523,14 +506,12 @@ HRESULT SVAcquisitionClass::GetLut(SVLut& lut)
 		}
 	}
 	lut = Lut();
-	hr = S_OK;
-	return hr;
+	return S_OK;
 }
 
 HRESULT SVAcquisitionClass::GetLutImpl(SVLut& lut)
 {
-	HRESULT hr = S_FALSE;
-	return hr;
+	return S_FALSE;
 }
 
 HRESULT SVAcquisitionClass::SetLut(const SVLutBand& lutBand)
@@ -547,19 +528,17 @@ HRESULT SVAcquisitionClass::SetLut(const SVLut& lut, int iBand)
 
 	bool bSuccess = true;
 
-	long l;
-	long lSize;
 	const SVLutTransformOperation* pTransform = lut.GetTransformOperation();
 	if (bSuccess && pTransform)
 	{
 		bSuccess &= Lut().SetTransformOperation(*pTransform);
 	}// end if
 
-	lSize = lut.NumBands();
-	bool bBandsEqual = true;
+	long lSize = lut.NumBands();
 	if (lSize > 0)
 	{
-		for (l = 1; l < lSize && bBandsEqual; l++)
+		bool bBandsEqual = true;
+		for (long l = 1; l < lSize && bBandsEqual; l++)
 		{
 			bBandsEqual = bBandsEqual && lut(l) == lut(0);
 		}

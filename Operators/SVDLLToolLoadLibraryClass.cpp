@@ -850,8 +850,8 @@ SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness( LPCTSTR p_szFile )
 		{
 			fseek(fh, 0x3c, 0);	// seek to pe header start.
 			_int32 peOffset;
-			size_t bytes = fread(&peOffset, 4, 1, fh); // read 4 bytes to get offset.
-			int iRet = fseek(fh, peOffset, 0 );
+			/*size_t bytes = */fread(&peOffset, 4, 1, fh); // read 4 bytes to get offset.
+			/*int iRet = */fseek(fh, peOffset, 0 );
 			_int32 peHead = 0;
 			fread( &peHead, 4, 1, fh);
 			if(peHead==0x00004550) // "PE\0\0", little-endian

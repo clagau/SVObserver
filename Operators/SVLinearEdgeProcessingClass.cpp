@@ -656,8 +656,6 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 {
 	RECT l_oRect;
 
-	SVImageExtentClass Extents;
-
 	HRESULT l_hrOk{S_OK};
 	rMultiLine.Initialize();
 
@@ -724,10 +722,6 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct &rLine )
 {
 	RECT l_oRect;
-
-	SVImageExtentClass l_svExtents;
-
-	long l_lBottom = 0;
 	double l_dDistance = 0.0;
 
 	HRESULT l_hrOk{S_OK};
@@ -774,8 +768,6 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues()
 	double dMin = 0.0;
 	double dMax = 0.0;
 
-	double dUpper = 0.0;
-
 	if( ( S_OK != GetInputMinThreshold(dMin) ) )
 	{
 		Result = S_FALSE;
@@ -790,6 +782,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues()
 	{
 		if( ! State )
 		{
+			double dUpper = 0.0;
 			if( ( S_OK == m_svUseUpperThresholdMaxMinusPercentDiff.GetValue( State ) ) && State )
 			{
 				DWORD PercentDiff( 0 );
@@ -871,7 +864,6 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues()
 	BOOL bState( false );
 	double dMin( 0.0 );
 	double dMax( 0.0 );
-	double dLower( 0.0 );
 
 	if( S_OK != GetInputMinThreshold(dMin) )
 	{
@@ -887,6 +879,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues()
 	{
 		if( ! bState )
 		{
+			double dLower(0.0);
 			if( ( S_OK == m_svUseLowerThresholdMaxMinusPercentDiff.GetValue( bState ) ) && bState )
 			{
 				DWORD PercentDiff( 0 );

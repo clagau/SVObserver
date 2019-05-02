@@ -42,8 +42,6 @@ HRESULT SVGigeLUTSetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGige
 					hr = GetLutBandBounds(var.parray, lBandLBound, lBandUBound);
 					if (S_OK == hr)
 					{
-						ULONG lNumBands = lBandUBound - lBandLBound + 1;
-
 						VARTYPE vt;
 						hr = ::SafeArrayGetVartype(var.parray, &vt);
 						if (S_OK == hr)

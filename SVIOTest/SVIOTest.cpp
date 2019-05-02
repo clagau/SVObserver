@@ -68,7 +68,7 @@ BOOL CSVIOTESTApp::InitInstance()
 	SvLib::InitialInformation initialInfo;
 	SvLib::SVOIniLoader l_iniLoader(initialInfo);
 
-	HRESULT l_hrOk = l_iniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	l_iniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	bool l_bOk = true;
 

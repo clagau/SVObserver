@@ -104,7 +104,7 @@ BOOL MonitorListDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	for(int c =0;c <= ECOL_Size; c++)
 	{
-		int ret =	m_ListCtrl.InsertColumn(c, ColHeader[c],LVCFMT_LEFT,ColHeaderWidth[c]);
+		/*int ret =	*/m_ListCtrl.InsertColumn(c, ColHeader[c],LVCFMT_LEFT,ColHeaderWidth[c]);
 	}
 	FillControl();
 	return TRUE;

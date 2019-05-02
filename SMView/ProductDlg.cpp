@@ -95,7 +95,6 @@ BOOL ProductDlg::AppendProduct(SvSml::MLProduct* pProduct, int& line)
 	}
 	CString csTrigger;
 	csTrigger.Format("%i", pProduct->m_trigger);
-	int item = 0;
 	CString csobj, csvar, csize;
 
 	for (int item = 0; item < pProduct->m_dataEntries.size() &&

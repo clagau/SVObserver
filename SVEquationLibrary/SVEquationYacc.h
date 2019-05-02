@@ -59,7 +59,7 @@ public:
 	HRESULT m_StatusCode;
 
 protected:
-	SVEquationBase* m_pEquation;
+	SVEquationBase* m_pEquation = nullptr;
 	
 	enum SVYaccLimitsEnum
 	{

@@ -80,10 +80,12 @@ double SVEquationYaccClass::GetAt(int symbolIndex, int index, double dDefault /*
 int SVEquationYaccClass::PushValues(int iSymbolIndex)
 {
 	std::vector<double> values;
-	HRESULT hr = m_pEquation->GetArrayValues(iSymbolIndex, values);
+	/*HRESULT hr = */m_pEquation->GetArrayValues(iSymbolIndex, values);
 	int iNum =0;
-	for (size_t i=0; i < values.size(); i++)
+	for (size_t i = 0; i < values.size(); i++)
+	{
 		iNum = AddToList(values[i]);
+	}
 	return iNum;
 }
 

@@ -220,8 +220,6 @@ bool SVCustomFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 ////////////////////////////////////////////////////////////////////////////////
 void SVCustomFilterClass::RebuildKernel()
 {
-	HRESULT l_Code;
-
 	// First free old kernel
 	m_milKernel.clear();
 
@@ -281,7 +279,7 @@ void SVCustomFilterClass::RebuildKernel()
 	l_Create.m_eType = SV8BitSigned;
 	l_Create.m_lSizeX = lWidth;
 	l_Create.m_lSizeY = lHeight;
-	l_Code = SVMatroxBufferInterface::Create( m_milKernel, l_Create );
+	SVMatroxBufferInterface::Create( m_milKernel, l_Create );
 
 	pKernelData = new unsigned char[lWidth*lHeight];
 	for( l = 0; l < lWidth; l++ )
@@ -339,16 +337,12 @@ void SVCustomFilterClass::RebuildKernel()
 ////////////////////////////////////////////////////////////////////////////////
 bool SVCustomFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	HRESULT l_Code;
-
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		l_Code = SVMatroxImageInterface::Convolve(rOutputImageHandle->GetBuffer(),
+		HRESULT l_Code = SVMatroxImageInterface::Convolve(rOutputImageHandle->GetBuffer(),
 						First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 						m_milKernel );
 
-
-		long l_MILError( 0 );
 		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)

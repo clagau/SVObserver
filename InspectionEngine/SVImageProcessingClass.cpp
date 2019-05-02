@@ -181,7 +181,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 			l_Create.m_lSizeY = l_lHeight;
 			l_Create.m_lSizeBand = l_iBandNumber;
 
-			l_Code = SVMatroxBufferInterface::Create(imageDIB_MIL, l_Create);
+			SVMatroxBufferInterface::Create(imageDIB_MIL, l_Create);
 
 
 			if (!imageDIB_MIL.empty())
@@ -189,16 +189,16 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 				//
 				// Copy old image data to new image data buffer.
 				//
-				l_Code = SVMatroxBufferInterface::CopyBuffer(imageDIB_MIL, rHandle->GetBuffer());
+				SVMatroxBufferInterface::CopyBuffer(imageDIB_MIL, rHandle->GetBuffer());
 
 				//
 				// Now request the HDC from the new image with M_DIB attribute.
 				//
 				long l_lValue = SVValueDefault;
-				l_Code = SVMatroxBufferInterface::Set(imageDIB_MIL, SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue));
+				SVMatroxBufferInterface::Set(imageDIB_MIL, SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue));
 
 				LONGLONG Handle;
-				l_Code = SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, Handle);
+				SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, Handle);
 				Result = reinterpret_cast<HDC>(Handle);
 
 				//
@@ -210,7 +210,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 			else
 			{
 				LONGLONG Value = 0;
-				l_Code = SVMatroxBufferInterface::Get(rHandle->GetBuffer(), SVWindowDC, Value);
+				SVMatroxBufferInterface::Get(rHandle->GetBuffer(), SVWindowDC, Value);
 				Result = reinterpret_cast<HDC> (Value);
 			}
 
@@ -219,7 +219,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 		else
 		{
 			LONGLONG Value = 0;
-			l_Code = SVMatroxBufferInterface::Get(rHandle->GetBuffer(), SVWindowDC, Value);
+			SVMatroxBufferInterface::Get(rHandle->GetBuffer(), SVWindowDC, Value);
 			Result = reinterpret_cast<HDC> (Value);
 		}
 	}
@@ -483,7 +483,6 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 
 
 		HRESULT l_Code;
-
 		if (8 < pbmhInfo->biBitCount && l_iBandNumber == 3)
 		{
 			l_Code = SVMatroxBufferInterface::CopyBuffer(rBufferHandle->GetBuffer(), oTempHandle->GetBuffer());
@@ -493,7 +492,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 			l_Code = SVMatroxBufferInterface::CopyBuffer(rBufferHandle->GetBuffer(), oTempHandle->GetBuffer(), l_iBandLink);
 		}
 
-		return S_OK;
+		return l_Code;
 	}
 
 	rBufferHandle.reset();

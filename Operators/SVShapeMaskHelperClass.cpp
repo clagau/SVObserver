@@ -232,11 +232,6 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& rMapP
 	m_Data.lvoWidth.SetValue  (mapProperties[SVShapeMaskPropertyWidthGuid].value);
 	m_Data.lvoHeight.SetValue (mapProperties[SVShapeMaskPropertyHeightGuid].value);
 
-	ShapeTypeEnum eShapeType;
-	long lShapeType = SVMaskShapeTypeInvalid;
-	m_Data.evoShapeType.GetValue( lShapeType );
-	eShapeType = static_cast <ShapeTypeEnum> (lShapeType);
-
 	// allow these values to be set regardless of current shape.
 	// This will allow SIAC to to a set on all properties without worrying about order.
 
@@ -318,7 +313,7 @@ HRESULT SVShapeMaskHelperClass::GetFillProperties(SVMaskFillPropertiesStruct& rF
 bool SVShapeMaskHelperClass::IsAutoResize() const
 {
 	BOOL bAutoResize = false;
-	HRESULT hr = m_Data.bvoAutoResize.GetValue( bAutoResize );
+	/*HRESULT hr = */m_Data.bvoAutoResize.GetValue( bAutoResize );
 	return bAutoResize ? true : false;
 }
 
@@ -395,18 +390,14 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 			BOOL bAutoResize = false;
 			m_Data.bvoAutoResize.GetValue( bAutoResize );
 			m_pShape->SetAutoResize( bAutoResize ? true : false );
-
-			HRESULT hrTemp = S_OK;
-
-			hrTemp = m_pShape->SetImageInfo( pMaskOperator->m_MaskBufferInfo );
-
-			hrTemp = m_pShape->SetProperties( mapProperties );
+			m_pShape->SetImageInfo( pMaskOperator->m_MaskBufferInfo );
+			m_pShape->SetProperties( mapProperties );
 
 			// render based on new values
-			hrTemp = m_pShape->Refresh();
+			m_pShape->Refresh();
 
 			// draw the mask to the MIL buffer
-			hrTemp = m_pShape->Draw(pMaskOperator->m_MaskBufferHandlePtr->GetBuffer() );
+			m_pShape->Draw(pMaskOperator->m_MaskBufferHandlePtr->GetBuffer() );
 		}
 	}
 	return hr;

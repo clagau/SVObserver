@@ -41,9 +41,6 @@ public:
 	HRESULT Open();
 	HRESULT Close();
 
-	HRESULT CameraCreate( SVFileCameraStruct *p_pCameraStruct, SVFileCamera *p_pCamera );
-	HRESULT CameraDestroy( SVFileCamera *p_pCamera );
-
 	HRESULT CameraGetCount( unsigned long &p_rulCount );
 	HRESULT CameraGetName( unsigned long p_ulIndex, BSTR &p_rbstrName );
 	HRESULT CameraGetHeight( unsigned long p_ulIndex, unsigned long &p_rulHeight );

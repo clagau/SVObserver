@@ -666,8 +666,8 @@ bool SVOutputObjectList::OutputIsNotValid( std::string Name )
 {
 	bool l_bRet = true;
 	
-	SVObjectClass* l_pObject;
-	HRESULT l_hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name, l_pObject );
+	SVObjectClass* l_pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByDottedName( Name, l_pObject );
 	// Check if the object exists.
 	if( nullptr != l_pObject )
 	{

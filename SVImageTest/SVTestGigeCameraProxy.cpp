@@ -1209,13 +1209,6 @@ HRESULT SVTestGigeCameraProxy::SetDigitizerParameter( const SVDeviceParamWrapper
 	return hr;
 }
 
-// Get the Device Parameter from the Parameter Collection in the Acquisition Class 
-// (As opposed to the Real Acquisition DLL)
-const SVDeviceParamWrapper& SVTestGigeCameraProxy::GetCameraDeviceParam( SVDeviceParamEnum e ) const
-{
-	return m_pAcquisition->m_DeviceParams.Parameter( e );
-}
-
 SVDeviceParamWrapper& SVTestGigeCameraProxy::GetCameraDeviceParamNonConst( SVDeviceParamEnum e )
 {
 	return m_pAcquisition->m_DeviceParams.GetParameter( e );

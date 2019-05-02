@@ -66,8 +66,6 @@ bool Custom2Filter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 #pragma region Protected Methods
 void Custom2Filter::RebuildKernel()
 {
-	HRESULT StatusCode;
-
 	// First free old kernel
 	m_milKernel.clear();
 
@@ -84,7 +82,7 @@ void Custom2Filter::RebuildKernel()
 	CreateStruct.m_eType = SV8BitSigned;
 	CreateStruct.m_lSizeX = Width;
 	CreateStruct.m_lSizeY = Height;
-	StatusCode = SVMatroxBufferInterface::Create( m_milKernel, CreateStruct );
+	SVMatroxBufferInterface::Create( m_milKernel, CreateStruct );
 
 	std::vector<long> KernelArray;
 	m_KernelArray.GetArrayValues( KernelArray );
@@ -137,11 +135,10 @@ void Custom2Filter::RebuildKernel()
 bool Custom2Filter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
-	HRESULT StatusCode;
 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		StatusCode = SVMatroxImageInterface::Convolve(rOutputImageHandle->GetBuffer(),
+		HRESULT StatusCode = SVMatroxImageInterface::Convolve(rOutputImageHandle->GetBuffer(),
 			First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
 			m_milKernel );
 

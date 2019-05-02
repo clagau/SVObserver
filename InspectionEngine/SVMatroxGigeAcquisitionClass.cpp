@@ -60,13 +60,9 @@ SVMatroxGigeAcquisitionClass::~SVMatroxGigeAcquisitionClass()
 
 bool SVMatroxGigeAcquisitionClass::IsValid() const
 {
-	bool bOk = FALSE;
-	bOk = SVAcquisitionClass::IsBufferCreated();
-
+	bool bOk = SVAcquisitionClass::IsBufferCreated();
 	bOk = IsValidBoard() && bOk;
-
 	bOk = SVAcquisitionClass::IsValid() && bOk;
-	
 	return bOk;
 }
 
@@ -202,7 +198,6 @@ HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference( int iBands )
 	
 	if ( S_OK == hr )
 	{
-		DWORD dwDefaultBrightness = 0;	// not used
 		for ( int i = 0; S_OK == hr && i < iBands; i++)
 		{
 			if ( S_OK == (hr = CreateLightReferenceBand( i, 0 )) )

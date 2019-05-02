@@ -28,7 +28,7 @@ HRESULT SVIHBitmapUtilities::SVCopyDIBitsFlip(HDC hDC, HBITMAP hDIB, void* pSrcB
 	HBITMAP hbmOld = (HBITMAP) ::SelectObject( hDC, hDIB );
 
 	// Set the bits of our new bitmap
-	int iRet = ::StretchDIBits( hDC,
+	/*int iRet = */::StretchDIBits( hDC,
 		                        0, 0,
 		                        pbmhInfo->biWidth,   abs(pbmhInfo->biHeight),
 		                        0,                   abs(pbmhInfo->biHeight),

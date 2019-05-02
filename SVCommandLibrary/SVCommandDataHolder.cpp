@@ -56,9 +56,8 @@ void SVCommandDataHolder::clear()
 
 	while( l_Iter != m_Data.end() )
 	{
-		std::string l_Data = SvUl::Format( _T( "SVCommandDataHolder::clear() - Erase %s\n" ), l_Iter->first.c_str() );
-
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
+		std::string l_Data = SvUl::Format(_T("SVCommandDataHolder::clear() - Erase %s\n"), l_Iter->first.c_str());
 		::OutputDebugString( l_Data.c_str() );
 #endif
 
@@ -135,13 +134,10 @@ HRESULT SVCommandDataHolder::GetData( const _bstr_t& p_rName, SVCommandDataFacad
 
 HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandDataHolder& p_rData ) const
 {
-	HRESULT l_Status = S_OK;
-
-	SVCommandDataFacadePtr l_ContainerPtr;
-
 	p_rData.clear();
 
-	l_Status = GetData( p_rName, l_ContainerPtr );
+	SVCommandDataFacadePtr l_ContainerPtr;
+	HRESULT l_Status = GetData( p_rName, l_ContainerPtr );
 
 	if( nullptr != l_ContainerPtr )
 	{
@@ -169,13 +165,10 @@ HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandData
 
 HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData ) const
 {
-	HRESULT l_Status = S_OK;
-
-	SVCommandDataFacadePtr l_ValuePtr;
-
 	::VariantClear( &p_rData );
 
-	l_Status = GetData( p_rName, l_ValuePtr );
+	SVCommandDataFacadePtr l_ValuePtr;
+	HRESULT l_Status = GetData( p_rName, l_ValuePtr );
 
 	if(nullptr != l_ValuePtr)
 	{
@@ -210,13 +203,10 @@ HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData 
 
 HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_rData ) const
 {
-	HRESULT l_Status = S_OK;
-
-	SVCommandDataFacadePtr l_ValuePtr;
-
 	p_rData.clear();
 
-	l_Status = GetData( p_rName, l_ValuePtr );
+	SVCommandDataFacadePtr l_ValuePtr;
+	HRESULT l_Status = GetData( p_rName, l_ValuePtr );
 
 	if(nullptr != l_ValuePtr)
 	{
@@ -244,13 +234,10 @@ HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_r
 
 HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_rData ) const
 {
-	HRESULT l_Status = S_OK;
-
 	p_rData.clear();
 
 	SVCommandDataFacadePtr l_DataPtr;
-
-	l_Status = GetData( p_rName, l_DataPtr );
+	HRESULT l_Status = GetData( p_rName, l_DataPtr );
 
 	if(nullptr != l_DataPtr)
 	{
@@ -276,20 +263,20 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::SetData( const _bstr_t& p_rName, SVCommandDataFacadePtr p_Data )
+HRESULT SVCommandDataHolder::SetData( _bstr_t nameBstr, SVCommandDataFacadePtr& rDataPointer )
 {
 	HRESULT l_Status = S_OK;
-	std::string name = SvUl::createStdString(p_rName);
+	std::string name = SvUl::createStdString(nameBstr);
 
 	SVNameDataMap::iterator l_Iter = m_Data.find( name );
 
 	if( l_Iter != m_Data.end() )
 	{
-		l_Iter->second = p_Data;
+		l_Iter->second = rDataPointer;
 	}
 	else
 	{
-		m_Data[ name ] = p_Data;
+		m_Data[ name ] = rDataPointer;
 	}
 
 	return l_Status;

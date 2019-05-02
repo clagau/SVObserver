@@ -98,7 +98,7 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 
 	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
-		HRESULT l_Code;
+		HRESULT l_Code = E_FAIL;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
 			SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_MarkerImageInfo, true);

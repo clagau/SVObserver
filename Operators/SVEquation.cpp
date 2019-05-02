@@ -35,22 +35,15 @@ namespace SvOp
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const TCHAR* const DIOInput = _T("DIO.Input");
-const TCHAR* const Remote_Input = _T("Remote Input");
 #pragma endregion Declarations
 
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
-	m_ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
-	m_ToolSetName += ".";
-	m_DIOInputName = DIOInput;
-	m_RemoteInputName = Remote_Input;
 }
 
 SVEquationSymbolTableClass::~SVEquationSymbolTableClass()
 {
-
 	ClearAll();
 }
 
@@ -679,7 +672,6 @@ double SVEquationClass::GetPropertyValue(int iSymbolIndex)
 HRESULT SVEquationClass::GetArrayValues(int iSymbolIndex, std::vector< double >& values)
 {
 	HRESULT hr = S_FALSE;
-	double value = 0.0;
 
 	if (iSymbolIndex != -1)
 	{

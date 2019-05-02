@@ -488,13 +488,13 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 	{
 		double dStartAngle = 0.0;
 		double dEndAngle = 0.0;
-		double dCenterX = 0.0;
-		double dCenterY = 0.0;
-		double dStartRadius = 0.0;
-		double dEndRadius = 0.0;
 		
 		if ( bUseFormula )
 		{
+			double dCenterX = 0.0;
+			double dCenterY = 0.0;
+			double dStartRadius = 0.0;
+			double dEndRadius = 0.0;
 			SvVol::SVDoubleValueObjectClass* pValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputStartAngleResult, true);
 			result = result && nullptr != pValue && S_OK == (pValue->GetValue(dStartAngle));
 			pValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputEndAngleResult, true);
@@ -590,7 +590,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 		if ( result )
 		{
-			long l_lInterpolationMode;
+			long l_lInterpolationMode = 0;
 
 			double dCenterX = 0.0;
 			double dCenterY = 0.0;
@@ -635,18 +635,16 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 					// Set the control word.   
 					_controlfp( newCw, MCW_EM );
-					double l_dTmpStartAngle = dStartAngle;
-					double l_dTmpEndAngle =  dEndAngle;
 
 					double l_dAngularDistance = dEndAngle - dStartAngle;
 					if( l_dAngularDistance > 720.0 )
 					{
-						l_dAngularDistance = 720.0 ;
+						l_dAngularDistance = 720.0;
 						dEndAngle = dStartAngle + 720.0;
 					}
 
 					// Do transform...
-					AnglesTo360(l_dTmpStartAngle, l_dTmpEndAngle);
+					AnglesTo360(dStartAngle, dEndAngle);
 
 
 					SVMatroxPolarTransformStruct l_Polar(pInputImageBuffer->getHandle()->GetBuffer());
@@ -654,8 +652,8 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					l_Polar.m_dCenterY = dCenterY;
 					l_Polar.m_dStartRadius = dStartRadius;
 					l_Polar.m_dEndRadius = dEndRadius;
-					l_Polar.m_dStartAngle = l_dTmpStartAngle;
-					l_Polar.m_dEndAngle = l_dTmpEndAngle;
+					l_Polar.m_dStartAngle = dStartAngle;
+					l_Polar.m_dEndAngle = dEndAngle;
 					l_Polar.m_eInterpMode = static_cast<SVImageOperationTypeEnum>(l_lInterpolationMode);
 					l_Polar.m_eOpMode = SVRectToPolar;
 
@@ -745,39 +743,38 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> ( GetTool() );
 
-	HRESULT hr;
 	BOOL Value( false );
 	Result = Result && ( S_OK == m_useFormulaInput.GetValue( Value ) );	// one formula option for all values?
 	bool bUseFormula = Value ? true : false;
 	SvIe::SVExtentPropertyInfoStruct info;
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointX, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointX, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointX, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointX, info );
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointY, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointY, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointY, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyPositionPointY, info );
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyInnerRadius, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyInnerRadius, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyInnerRadius, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyInnerRadius, info );
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyOuterRadius, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyOuterRadius, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyOuterRadius, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyOuterRadius, info );
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyStartAngle, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyStartAngle, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyStartAngle, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyStartAngle, info );
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyEndAngle, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyEndAngle, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyEndAngle, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyEndAngle, info );
 
-	hr = pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyRotationAngle, info );
+	pTool->getToolExtent().GetExtentPropertyInfo( SvPb::SVExtentPropertyRotationAngle, info );
 	info.bFormula = bUseFormula;
-	hr = pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyRotationAngle, info );
+	pTool->getToolExtent().SetExtentPropertyInfo( SvPb::SVExtentPropertyRotationAngle, info );
 
 	if (S_OK != m_outputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo)))
 	{

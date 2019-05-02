@@ -40,8 +40,6 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 
-	void GetOCVResultString( std::string& rResult );
-	
 	bool GenerateFontModel();
 	HRESULT LoadMatchString();
 	void HideResults();
@@ -69,14 +67,14 @@ public:
 
 protected:
 
-	long     m_lTotalBytes;
-	char     *m_pBuffer;
-	long     m_lLowValue;
-	long     m_lHighValue;
-	int      m_nTotalCount;
+	long     m_lTotalBytes = 0;
+	char     *m_pBuffer = nullptr;
+	long     m_lLowValue = 0;
+	long     m_lHighValue = 0;
+	int      m_nTotalCount = 0;
 	TCHAR    *m_pDataArr[OCV_MAX_ENTREES];
-	short    *m_pIndexTable;
-	double   m_dFactor;
+	short    *m_pIndexTable = nullptr;
+	double   m_dFactor = 1.;
 
 	SvSyl::SVLockableClass		lock;
 

@@ -217,10 +217,7 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 {
 	HRESULT Result = S_OK;
-
-	bool bOk = true;
-	BOOL bLoad = false;
-
+	
 	if (nullptr != m_pBuffer)
 	{
 		delete m_pBuffer;
@@ -229,6 +226,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 
 	m_lTotalBytes = 0;
 
+	BOOL bLoad = false;
 	msv_bUseMatchStringFile.GetValue(bLoad);
 	if (bLoad)
 	{
@@ -238,8 +236,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 		//
 		msv_szMatchStringFileName.GetValue(FileName);
 
-		bOk = !FileName.empty() && SVFileExists(FileName.c_str());
-
+		bool bOk = !FileName.empty() && SVFileExists(FileName.c_str());
 		if (bOk)
 		{
 			//
@@ -286,7 +283,6 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 					else
 					{
 						Result = E_FAIL;
-						bOk = false;
 					}
 				}
 				else
@@ -297,7 +293,6 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 			catch (...)
 			{
 				Result = E_FAIL;
-				bOk = false;
 			}
 		}
 		else
@@ -326,7 +321,7 @@ bool SVBarCodeResultClass::BuildHashTable(char *pBuffer)
 		// Assign each line into a char pointer array.
 		m_pDataArr[m_nTotalCount] = &pBuffer[lBufIndex];
 
-		while (pBuffer[lBufIndex] != BC_CAR_RETURN && (lBufIndex < m_lTotalBytes))
+		while ((lBufIndex < m_lTotalBytes) && pBuffer[lBufIndex] != BC_CAR_RETURN)
 		{
 			// The index value is calculated as follows.
 			// nValue = ASCII value of char at position index - ASCII of first displayable character

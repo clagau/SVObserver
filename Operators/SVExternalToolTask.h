@@ -66,10 +66,10 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	SVMultiCancelData m_RangeResultData;
 
-	long m_lNumInputImages;
-	long m_lNumInputValues;
-	long m_lNumResultImages;
-	long m_lNumResultValues;
+	long m_lNumInputImages = 0;
+	long m_lNumInputValues = 0;
+	long m_lNumResultImages = 0;
+	long m_lNumResultValues = 0;
 
 	SVRPropTreeState m_PropTreeState;
 };	// end struct SVExternalToolTaskData

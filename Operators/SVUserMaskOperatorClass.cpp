@@ -388,12 +388,10 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 			HRESULT l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
 			// User Mask draw with lines 
 
-			HRESULT l_Code;
-		
 			LPVOID pSrcHostBuffer = nullptr;
-			l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, m_MaskBufferHandlePtr->GetBuffer() );
+			SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, m_MaskBufferHandlePtr->GetBuffer() );
 			long l_lSrcBytes;
-			l_Code = SVMatroxBufferInterface::Get(m_MaskBufferHandlePtr->GetBuffer(), SVPitchByte, l_lSrcBytes );
+			SVMatroxBufferInterface::Get(m_MaskBufferHandlePtr->GetBuffer(), SVPitchByte, l_lSrcBytes );
 			unsigned char* pSrcLine = ( unsigned char* )pSrcHostBuffer;
 
 			long l_lSkip = 1;
@@ -501,7 +499,7 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 		if ( bImageInfoChanged )
 		{
 			m_MaskBufferInfo = l_MaskBufferInfo;
-			l_hrOk = DestroyLocalImageBuffer();
+			/*l_hrOk = */DestroyLocalImageBuffer();
 			l_hrOk = SvIe::SVImageProcessingClass::CreateImageBuffer( m_MaskBufferInfo, m_MaskBufferHandlePtr );
 		}
 
@@ -569,11 +567,8 @@ bool SVUserMaskOperatorClass::Refresh()
 					// Dump the images to .bmp files
 					try
 					{
-						HRESULT l_Code = 
-							SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
-						( char* )_T("C:\\Temp\\MaskBuffer.bmp"),
-						SVFileBitmap );
-
+						/*HRESULT l_Code = */
+						SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage, ( char* )_T("C:\\Temp\\MaskBuffer.bmp"), SVFileBitmap );
 					}
 					catch(...)
 					{
@@ -777,17 +772,17 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 				// Dump the images to .bmp files
 				try
 				{
-					MatroxCode = SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
+					/*MatroxCode = */SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
 						_T("C:\\Temp\\Mask.bmp"),
 						SVFileBitmap );
 
 
-					MatroxCode = SVMatroxBufferInterface::Export( rInputImageHandle.milImage,
+					/*MatroxCode = */SVMatroxBufferInterface::Export( rInputImageHandle.milImage,
 						_T("C:\\Temp\\Input.bmp"),
 						SVFileBitmap);
 
 
-					MatroxCode = SVMatroxBufferInterface::Export( rOutputImageHandle.milImage,
+					/*MatroxCode = */SVMatroxBufferInterface::Export( rOutputImageHandle.milImage,
 						_T("C:\\Temp\\Output.bmp"),
 						SVFileBitmap);
 

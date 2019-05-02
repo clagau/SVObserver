@@ -207,14 +207,12 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 
 	if ( !m_bHasLicenseError )
 	{
-		HRESULT l_Code;
-
 		if( !m_milFontID.empty() )
 		{
-			l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
+			/*l_Code = */SVMatroxOcrInterface::Destroy( m_milFontID );
 		}// end if
 
-		l_Code = SVMatroxOcrInterface::DestroyResult( m_milResultID );
+		/*l_Code = */SVMatroxOcrInterface::DestroyResult( m_milResultID );
 
 		if( m_pBuffer )
 		{
@@ -279,7 +277,7 @@ void SVOCVAnalyzeResultClass::HideResults()
 
 		for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 		{
-			SVOCVCharacterResultClass *pResult = (SVOCVCharacterResultClass*) GetAt( l );
+			SVOCVCharacterResultClass *pResult = dynamic_cast<SVOCVCharacterResultClass*>(GetAt( l ));
 			pResult->SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
 
 			if( l < m_lFontStringLength )
@@ -308,30 +306,17 @@ bool SVOCVAnalyzeResultClass::CloseObject()
 
 	if( bOk )
 	{
-		HRESULT l_Code;
-
 		// First destroy the MIL font and result buffer
 		if( !m_milFontID.empty() )
 		{
-			l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
+			/*l_Code = */SVMatroxOcrInterface::Destroy( m_milFontID );
 		}// end if
 
-		l_Code = SVMatroxOcrInterface::DestroyResult( m_milResultID );
+		/*l_Code = */SVMatroxOcrInterface::DestroyResult( m_milResultID );
 	}
 
 	return bOk;
 }
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-
-void SVOCVAnalyzeResultClass::GetOCVResultString( std::string& rResult )
-{
-	bool bResult = ( S_OK == m_svoFoundString.GetValue( rResult ) );
-	assert(bResult);
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : GenerateFontModel ()
@@ -341,16 +326,13 @@ void SVOCVAnalyzeResultClass::GetOCVResultString( std::string& rResult )
 ////////////////////////////////////////////////////////////////////////////////
 bool SVOCVAnalyzeResultClass::GenerateFontModel()
 {
-	long	l_lIsFontPreprocessed = 0;
-
-	HRESULT MatroxCode;
 	// First destroy the MIL font and result buffer
 	if( !m_milFontID.empty() )
 	{
-		MatroxCode = SVMatroxOcrInterface::Destroy( m_milFontID );
+		/*MatroxCode = */SVMatroxOcrInterface::Destroy( m_milFontID );
 	}// end if
 
-	MatroxCode = SVMatroxOcrInterface::DestroyResult( m_milResultID );
+	/*MatroxCode = */SVMatroxOcrInterface::DestroyResult( m_milResultID );
 
 	// Now recreate the MIL font and result buffer
 	std::string FontFileName;
@@ -396,7 +378,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		std::string Path;
 		Path = FontFileName;
 
-		MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
+		/*MatroxCode = */SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
 		if( m_milFontID.empty() )
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -407,7 +389,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		if( !ControlsFileName.empty() )
 		{
 			Path = ControlsFileName;
-			MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
+			/*MatroxCode = */SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
 			if( m_milFontID.empty() )
 			{
 				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -418,7 +400,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		if( !ConstraintsFileName.empty() )
 		{
 			Path = ConstraintsFileName;
-			MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
+			/*MatroxCode = */SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
 
 			if( m_milFontID.empty() )
 			{
@@ -427,6 +409,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 			}// end if
 		}// end if
 
+		long	l_lIsFontPreprocessed = 0;
 		HRESULT MatroxCode = SVMatroxOcrInterface::Get (m_milFontID, SVOcrIsFontPreprocessed, l_lIsFontPreprocessed);
 		if (S_OK != MatroxCode)
 		{
@@ -437,7 +420,6 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 		if (l_lIsFontPreprocessed == 0)
 		{
 			MatroxCode = SVMatroxOcrInterface::Preprocess( m_milFontID );
-
 			if (S_OK != MatroxCode)
 			{
 				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -445,21 +427,21 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 			}
 		}
 
-		MatroxCode = SVMatroxOcrInterface::CreateResult( m_milResultID );
+		/*MatroxCode = */SVMatroxOcrInterface::CreateResult( m_milResultID );
 		if( M_NULL == m_milResultID )
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16131, GetUniqueObjectID());
 		}// end if
 
-		MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
+		/*MatroxCode = */SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
 		if( m_lFontStringLength < 1 )
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16132, GetUniqueObjectID());
 		}// end if
 
-		MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
+		/*MatroxCode = */SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
 		if( m_lFontStringLengthMax < 1 )
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -473,9 +455,9 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 
 		if ( 0 < m_lMatchStringLength && m_lMatchStringLength != m_lFontStringLength && m_lMatchStringLength <= m_lFontStringLengthMax )
 		{
-			MatroxCode = SVMatroxOcrInterface::Set( m_milFontID, SVOcrStringSize, m_lMatchStringLength);
+			/*MatroxCode = */SVMatroxOcrInterface::Set( m_milFontID, SVOcrStringSize, m_lMatchStringLength);
 
-			MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
+			/*MatroxCode = */SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
 			if( m_lFontStringLength < 1 )
 			{
 				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -653,29 +635,6 @@ bool SVOCVAnalyzeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 //
 bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVMatroxBuffer l_milImageID;
-	BYTE* pMilBuffer = nullptr;
-	BOOL bOperation;
-	BOOL bUseFile;
-
-	long l_lLength = 0;
-
-	double dHigh( 0.0 );
-	double dLow( 0.0 );
-	double dAvg( 0.0 );
-	double dSum( 0.0 );
-	double dValidString( 0.0 );
-	double dNbrString( 0.0 );
-	std::string l_strLabel;
-	std::vector<double> l_adScores;
-	std::vector<double> l_adXCoords;
-	std::vector<double> l_adYCoords;
-	std::vector<double> l_adValidChars;
-	double dScore( 0.0 );
-	double dLength( 0.0 );
-	double dCharBoxSizeX( 0.0 );
-	double dCharBoxSizeY( 0.0 );
-
 	std::string FoundString;
 	std::string MatchString;
 	 
@@ -685,6 +644,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 	if( bOk && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 	{
+		SVMatroxBuffer l_milImageID;
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputObjectInfo, true);
 		if(nullptr == pInputImage)
 		{
@@ -706,9 +666,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 				//
 				// Get the Mil buffer host pointer ( address in the process address space )
 				//
-
+				BYTE* pMilBuffer = nullptr;
 				SVMatroxBufferInterface::GetHostAddress( &pMilBuffer, l_milImageID );				
-
 				if( nullptr == pMilBuffer )
 				{
 					//
@@ -779,13 +738,26 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 				//
 				// Get some settings.
 				//
+				BOOL bOperation;
 				m_bvoPerformOCR.GetValue( bOperation );
 
 				// Reset results
 				
 				std::string strFunctionName;
 				int iProgramCode=-12382;
-
+				long l_lLength = 0;
+				double dHigh(0.0);
+				double dLow(0.0);
+				double dAvg(0.0);
+				double dSum(0.0);
+				double dValidString(0.0);
+				double dCharBoxSizeX(0.0);
+				double dCharBoxSizeY(0.0);
+				std::string l_strLabel;
+				std::vector<double> l_adScores;
+				std::vector<double> l_adXCoords;
+				std::vector<double> l_adYCoords;
+				std::vector<double> l_adValidChars;
 				try
 				{
 					while (1)
@@ -814,6 +786,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 						}// if( l_bOperation )
 						else
 						{ // verify
+							BOOL bUseFile;
 							m_bvoUseMatchFile.GetValue( bUseFile );
 							if( bUseFile )
 							{
@@ -841,8 +814,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 						// Process the OCV chars returned from MocrReadString();
 						//
 						dValidString = 0.0f;
-						dNbrString = 0.0f;
-						dLength = 0.0f;
+						double dNbrString = 0.0f;
+						double dLength = 0.0f;
 						strFunctionName = _T("MocrGetResult");
 
 
@@ -916,6 +889,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 						strFunctionName = _T("MocrGetResult");
 						iProgramCode = -12387;
+						double dScore(0.0);
 						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrStringScore, dScore);
 						if ((MatroxCode & 0xc0000000) != 0)
 						{
@@ -989,7 +963,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 					if( l_lLength == 0 )
 					{
-						l_strLabel.empty();
+						l_strLabel.clear();
 					}
 
 					dHigh = 0.0f;
@@ -1263,16 +1237,14 @@ bool SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 	for(int i = 0; i < OCV_MAX_ENTREES; i++)
 		m_pDataArr[i] = 0;
 	
-	for(m_nTotalCount = 0; 
-	(m_nTotalCount < OCV_MAX_ENTREES) && (lBufIndex < m_lTotalBytes);
-	m_nTotalCount++)
+	for(m_nTotalCount = 0; (m_nTotalCount < OCV_MAX_ENTREES) && (lBufIndex < m_lTotalBytes); m_nTotalCount++)
 	{
 		int nCharCount = 0;
 		long lIndexValue = 0;
 		// Assign each line into a char pointer array.
 		m_pDataArr[m_nTotalCount] = &pBuffer[lBufIndex];
 		
-		while(pBuffer[lBufIndex] != CAR_RETURN && (lBufIndex < m_lTotalBytes))
+		while((lBufIndex < m_lTotalBytes) && pBuffer[lBufIndex] != CAR_RETURN)
 		{
 			// The index value is calculated as follows.
 			// nValue = ASCII value of char at position index - ASCII of first displayable character
@@ -1455,8 +1427,6 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SvIe::SVImageClass* pImage, S
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 	if (nullptr != pTool && pTool->WasEnabled())
 	{
-		long lLeft, lTop, lWidth, lHeight;
-
 		if( m_lCurrentFoundStringLength )
 		{
 			for( long i = 0; i < m_lCurrentFoundStringLength; i++ )
@@ -1467,13 +1437,13 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SvIe::SVImageClass* pImage, S
 
 				double Value;
 				pResult->m_dvoOverlayLeft.GetValue( Value );
-				lLeft = static_cast<long> (Value);
+				long lLeft = static_cast<long> (Value);
 				pResult->m_dvoOverlayTop.GetValue( Value );
-				lTop = static_cast<long> (Value);
+				long lTop = static_cast<long> (Value);
 				pResult->m_dvoOverlayWidth.GetValue( Value );
-				lWidth = static_cast<long> (Value);
+				long lWidth = static_cast<long> (Value);
 				pResult->m_dvoOverlayHeight.GetValue( Value );
-				lHeight = static_cast<long> (Value);
+				long lHeight = static_cast<long> (Value);
 
 				RECT l_oRect{lLeft, lTop, lLeft + lWidth, lTop + lHeight};
 

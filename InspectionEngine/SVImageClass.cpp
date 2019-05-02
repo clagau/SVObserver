@@ -1265,7 +1265,7 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 		if (efileformat != SVFileUnknown)
 		{
 			std::string strPath = rFilename.c_str();
-			HRESULT l_Code = SVMatroxBufferInterface::Export(pImage->getHandle()->GetBuffer(), strPath, efileformat);
+			hr = SVMatroxBufferInterface::Export(pImage->getHandle()->GetBuffer(), strPath, efileformat);
 		}
 		else
 		{
