@@ -19,11 +19,10 @@ namespace SvSyl
 	public:
 		static std::string GetVersion();
 		static unsigned long GetLongVersion();
-		static std::string GetTitleVersion();
 		static std::string GetShortTitleVersion();
 
 	private:
-		SVVersionInfo();
-		~SVVersionInfo();
+		SVVersionInfo() = delete;
+		~SVVersionInfo() = delete;
 	};
 } //namespace SvSyl

@@ -2083,14 +2083,7 @@ BOOL SVObserverApp::InitInstance()
 
 	// add message to event viewer - SVObserver Started
 	SvDef::StringVector msgList;
-	if ((m_CurrentVersion & 0xff) == 0xff)
-	{
-		msgList.push_back(SvSyl::SVVersionInfo::GetShortTitleVersion());
-	}
-	else
-	{
-		msgList.push_back(SvSyl::SVVersionInfo::GetTitleVersion());
-	}
+	msgList.push_back(SvSyl::SVVersionInfo::GetShortTitleVersion());
 	Exception.setMessage(SVMSG_SVO_25_SVOBSERVER_STARTED, SvStl::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 	SVDirectX::Instance().Initialize();

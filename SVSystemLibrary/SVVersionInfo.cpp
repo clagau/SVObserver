@@ -38,7 +38,18 @@ namespace SvSyl
 				std::stringstream buf;
 				buf << HIWORD(pFileInfo->dwFileVersionMS) << _T(".") << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
 
-				auto alphaOrBetaNumber=HIWORD(pFileInfo->dwFileVersionLS);
+				//Patch number when between 1-99,  SVN revision number when >= 100
+				auto patchOrSvnNumber = HIWORD(pFileInfo->dwFileVersionLS);
+				if (patchOrSvnNumber > 0 && patchOrSvnNumber < 100)
+				{
+					buf << _T(".") << patchOrSvnNumber;
+				}
+				else if (patchOrSvnNumber >= 100)
+				{
+					buf << _T(", Revision ") << patchOrSvnNumber;
+				}
+
+				auto alphaOrBetaNumber = LOWORD(pFileInfo->dwFileVersionLS);
 				if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 				{
 					buf << _T(" Beta ") << std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
@@ -46,11 +57,6 @@ namespace SvSyl
 				else if( alphaOrBetaNumber >1000)
 				{
 					buf << _T(" Alpha ") <<  std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
-				}
-
-				if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
-				{
-					buf << _T(", Revision ") << LOWORD(pFileInfo->dwFileVersionLS);
 				}
 
 				Result = buf.str();
@@ -110,7 +116,7 @@ namespace SvSyl
 				l_TempVersion.m_VersionParts.m_Unused = 0;
 				l_TempVersion.m_VersionParts.m_Major = static_cast< unsigned char >( std::min< WORD >( HIWORD( pFileInfo->dwFileVersionMS ), 255 ) );
 				l_TempVersion.m_VersionParts.m_Minor = static_cast< unsigned char >( std::min< WORD >( LOWORD( pFileInfo->dwFileVersionMS ), 255 ) );
-				l_TempVersion.m_VersionParts.m_Beta = static_cast< unsigned char >( std::min< WORD >( HIWORD( pFileInfo->dwFileVersionLS ), 255 ) );
+				l_TempVersion.m_VersionParts.m_Beta = static_cast< unsigned char >( std::min< WORD >( LOWORD( pFileInfo->dwFileVersionLS ), 255 ) );
 
 				l_Version = l_TempVersion.m_Version;
 			}
@@ -119,44 +125,6 @@ namespace SvSyl
 		delete [] lpData;
 
 		return l_Version;
-	}
-
-	std::string SVVersionInfo::GetTitleVersion()
-	{
-		std::string verStr;
-
-		TCHAR moduleFilename[512];
-		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
-
-		DWORD dwHandle;
-		DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
-		unsigned char* lpData = new unsigned char[size];
-
-		BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
-		if (rc)
-		{
-			VS_FIXEDFILEINFO* pFileInfo = nullptr;
-			UINT Len = 0;
-			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
-			{
-				std::stringstream buf;
-
-				buf << HIWORD(pFileInfo->dwFileVersionMS);
-				buf << ".";
-				buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
-				buf << ".";
-				buf << HIWORD(pFileInfo->dwFileVersionLS);
-
-				verStr = buf.str();
-			}
-		}
-		delete [] lpData;
-
-		#ifdef _DEBUG
-			verStr += _T("d");        // For debug builds.
-		#endif
-
-		return verStr;
 	}
 
 	std::string SVVersionInfo::GetShortTitleVersion()
@@ -183,9 +151,19 @@ namespace SvSyl
 				buf << _T(".");
 				buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
 
-				auto alphaOrBetaNumber=HIWORD(pFileInfo->dwFileVersionLS);
-				//Arvid this signifies a beta if nonzero and below 255 and an alpha if above 1001
+				//Patch number when between 1-99,  SVN revision number when >= 100
+				auto patchOrSvnNumber = HIWORD(pFileInfo->dwFileVersionLS);
+				if (patchOrSvnNumber > 0 && patchOrSvnNumber < 100)
+				{
+					buf << _T(".") << patchOrSvnNumber;
+				}
+				else if (patchOrSvnNumber >= 100)
+				{
+					buf << _T("r") << patchOrSvnNumber;
+				}
 
+				auto alphaOrBetaNumber = LOWORD(pFileInfo->dwFileVersionLS);
+				//Arvid this signifies a beta if nonzero and below 255 and an alpha if above 1001
 				if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 				{
 					buf << _T("b") << alphaOrBetaNumber;
@@ -193,11 +171,6 @@ namespace SvSyl
 				else if( alphaOrBetaNumber > 1000)
 				{
 					buf << _T("ALPHA") << alphaOrBetaNumber;
-				}
-
-				if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
-				{
-					buf << _T("r") << LOWORD(pFileInfo->dwFileVersionLS);
 				}
 
 				Result = buf.str();
