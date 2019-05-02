@@ -37,7 +37,7 @@ Image::~Image()
 
 bool Image::isValid() const
 {
-	return (getTriggerRecordControllerInstance().getResetId() == m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
+	return (getTriggerRecordControllerInstance().getResetId() == m_ResetId && 0 < m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
 }
 
 } //namespace SvTRC

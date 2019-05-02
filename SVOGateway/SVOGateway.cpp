@@ -97,6 +97,13 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		{
 			throw std::exception("MapAlloc failed");
 		}
+#ifdef _DEBUG
+		// Enable MIL error message to be displayed by MIL
+		MappControl(M_ERROR, M_PRINT_ENABLE);
+#else
+		// Disable MIL error message to be displayed by MIL
+		MappControl(M_ERROR, M_PRINT_DISABLE);
+#endif // DEBUG
 
 		SvAuth::AuthManager authManager(settings.authSettings);
 		SvAuth::RestHandler restHandler(authManager);
@@ -168,6 +175,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		ServerThread.join();
 
 		sharedMemoryAccess.reset();
+
+		SvTrc::destroyTriggerRecordController();
 
 		if (M_NULL != MilId)
 		{

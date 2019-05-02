@@ -1053,6 +1053,16 @@ void createTriggerRecordControllerInstance(TRC_DataType dataType)
 		assert(false);
 	}
 }
+
+void destroyTriggerRecordController()
+{
+	if (nullptr != g_pTriggerRecordController)
+	{
+		g_pTriggerRecordController->clearAll();
+		g_pTriggerRecordController = nullptr;
+	}
+}
+
 TriggerRecordController& getTriggerRecordControllerInstance()
 {
 	if (nullptr != g_pTriggerRecordController)

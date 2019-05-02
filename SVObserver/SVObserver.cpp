@@ -2211,6 +2211,7 @@ int SVObserverApp::ExitInstance()
 
 	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 
+	SvTrc::destroyTriggerRecordController();
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
 

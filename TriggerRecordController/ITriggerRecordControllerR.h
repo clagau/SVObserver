@@ -105,6 +105,8 @@ namespace SvTrc
 	};
 	void createTriggerRecordControllerInstance(TRC_DataType dataType);
 
+	void destroyTriggerRecordController();
+
 	/// Get an instance of the TR controller in read modus.
 	/// \returns ITriggerRecordControllerR&
 	ITriggerRecordControllerR& getTriggerRecordControllerRInstance();

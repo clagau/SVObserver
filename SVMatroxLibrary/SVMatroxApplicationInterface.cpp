@@ -465,15 +465,25 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			SVMatroxHookFunctionPtr l_pHandlerFunction = nullptr;
 			void* l_pHandlerUserData = nullptr;
 
+#ifdef _DEBUG
+			// Enable MIL error message to be displayed by MIL
+			MappControl(M_ERROR, M_PRINT_ENABLE);
+#else
 			// Disable MIL error message to be displayed by MIL
-			MappControl( M_ERROR, M_PRINT_DISABLE );
+			MappControl(M_ERROR, M_PRINT_DISABLE);
+#endif // DEBUG
+
+
 
 			// Retrieve previous handler ptr and user handler ptr
 			MappInquire( M_CURRENT_ERROR_HANDLER_PTR, &l_pHandlerFunction );
 			MappInquire( M_CURRENT_ERROR_HANDLER_USER_PTR, &l_pHandlerUserData );
 
-			// disable previous
-			MappHookFunction( M_ERROR_CURRENT + M_UNHOOK, l_pHandlerFunction, l_pHandlerUserData );
+			if (nullptr != l_pHandlerFunction && nullptr != l_pHandlerUserData)
+			{
+				// disable previous
+				MappHookFunction(M_ERROR_CURRENT + M_UNHOOK, l_pHandlerFunction, l_pHandlerUserData);
+			}
 
 			// Hook into MIL error handling
 			MappHookFunction( M_ERROR_CURRENT, SVMatroxHookHandler, nullptr );
