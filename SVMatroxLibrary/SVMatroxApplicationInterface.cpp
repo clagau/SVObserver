@@ -28,47 +28,47 @@ static const long MATROX_FILTER_EVENT_SUBCODE_COUNT = 3;
 
 SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr )
 {
-	MIL_TEXT_CHAR l_strMilText[M_ERROR_MESSAGE_SIZE];
+	MIL_TEXT_CHAR l_strMilText[M_ERROR_MESSAGE_SIZE] = MIL_TEXT("");
 	SVMatroxStatusInformation l_StatusInfo;
 
 	SVMatroxInt l_TempCode = 0;
-	MappGetHookInfo( EventId, M_CURRENT, &l_TempCode );
+	MappGetHookInfo( M_DEFAULT, EventId, M_CURRENT, &l_TempCode );
 	l_StatusInfo.m_StatusCode = SVMatroxIntToHRESULT( l_TempCode );
-	MappGetHookInfo( EventId, M_CURRENT + M_MESSAGE, l_strMilText );
+	MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT + M_MESSAGE, l_strMilText);
 	l_StatusInfo.m_StatusString = l_strMilText;
 	
-	MappGetHookInfo( EventId, M_CURRENT_FCT, &( l_StatusInfo.m_FunctionCode ) );
-	MappGetHookInfo( EventId, M_CURRENT_FCT + M_MESSAGE, l_strMilText );
+	MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_FCT, &( l_StatusInfo.m_FunctionCode ) );
+	MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_FCT + M_MESSAGE, l_strMilText);
 	l_StatusInfo.m_FunctionString = l_strMilText;
 
-	MappGetHookInfo( EventId, M_CURRENT_SUB_NB, &( l_StatusInfo.m_StatusSubCodeCount ) );
+	MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_NB, &( l_StatusInfo.m_StatusSubCodeCount ) );
 
 	switch( l_StatusInfo.m_StatusSubCodeCount )
 	{
 		case 3:
 		{
 			l_TempCode = 0;
-			MappGetHookInfo( EventId, M_CURRENT_SUB_3, &l_TempCode );
+			MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_3, &l_TempCode );
 			l_StatusInfo.m_StatusSubCode[ 2 ] = SVMatroxIntToHRESULT( l_TempCode );
-			MappGetHookInfo( EventId, M_CURRENT_SUB_3 + M_MESSAGE, l_strMilText );
+			MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_3 + M_MESSAGE, l_strMilText );
 			l_StatusInfo.m_StatusSubString[ 2 ] = l_strMilText;
 			// no break
 		}
 		case 2:
 		{
 			l_TempCode = 0;
-			MappGetHookInfo( EventId, M_CURRENT_SUB_2, &l_TempCode );
+			MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_2, &l_TempCode );
 			l_StatusInfo.m_StatusSubCode[ 1 ] = SVMatroxIntToHRESULT( l_TempCode );
-			MappGetHookInfo( EventId, M_CURRENT_SUB_2 + M_MESSAGE, l_strMilText );
+			MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_2 + M_MESSAGE, l_strMilText );
 			l_StatusInfo.m_StatusSubString[ 1 ] = l_strMilText;
 			// no break
 		}
 		case 1:
 		{
 			l_TempCode = 0;
-			MappGetHookInfo( EventId, M_CURRENT_SUB_1, &l_TempCode );
+			MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_1, &l_TempCode );
 			l_StatusInfo.m_StatusSubCode[ 0 ] = SVMatroxIntToHRESULT( l_TempCode );
-			MappGetHookInfo( EventId, M_CURRENT_SUB_1 + M_MESSAGE, l_strMilText );
+			MappGetHookInfo(M_DEFAULT, EventId, M_CURRENT_SUB_1 + M_MESSAGE, l_strMilText );
 			l_StatusInfo.m_StatusSubString[ 0 ] = l_strMilText;
 			// no break
 		}
@@ -470,7 +470,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			MappControl(M_ERROR, M_PRINT_ENABLE);
 #else
 			// Disable MIL error message to be displayed by MIL
-			MappControl(M_ERROR, M_PRINT_DISABLE);
+			MappControl( M_ERROR, M_PRINT_DISABLE );
 #endif // DEBUG
 
 
@@ -481,12 +481,12 @@ void SVMatroxApplicationInterface::LocalInitialize()
 
 			if (nullptr != l_pHandlerFunction && nullptr != l_pHandlerUserData)
 			{
-				// disable previous
-				MappHookFunction(M_ERROR_CURRENT + M_UNHOOK, l_pHandlerFunction, l_pHandlerUserData);
+			// disable previous
+			MappHookFunction( M_DEFAULT, M_ERROR_CURRENT + M_UNHOOK, l_pHandlerFunction, l_pHandlerUserData );
 			}
 
 			// Hook into MIL error handling
-			MappHookFunction( M_ERROR_CURRENT, SVMatroxHookHandler, nullptr );
+			MappHookFunction( M_DEFAULT, M_ERROR_CURRENT, SVMatroxHookHandler, nullptr );
 
 			// check version of MIL
 			MappInquire( M_VERSION, &l_MilVersion );
@@ -537,7 +537,7 @@ void SVMatroxApplicationInterface::LocalClear()
 		MappControl( M_ERROR, M_PRINT_DISABLE );
 
 		// Unhook Error handler
-		MappHookFunction( M_ERROR_CURRENT + M_UNHOOK, SVMatroxHookHandler, nullptr );
+		MappHookFunction( M_DEFAULT, M_ERROR_CURRENT + M_UNHOOK, SVMatroxHookHandler, nullptr );
 		
 		MappFree( appID );
 	}
