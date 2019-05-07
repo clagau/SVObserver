@@ -172,9 +172,8 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		m_Data.m_aInputObjectNames[i].setSaveValueFlag(false);
 	}
 
-	int l_pImageNames[] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2, IDS_OBJECTNAME_IMAGE3, IDS_OBJECTNAME_IMAGE4 };
-
 	// Set Default Image Parameters for Result Images
+	int l_pImageNames[] = {IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2, IDS_OBJECTNAME_IMAGE3, IDS_OBJECTNAME_IMAGE4};
 	for( i = 0 ; i < SVExternalToolTaskData::NUM_RESULT_IMAGES ; i++)
 	{
 		SVImageInfoClass imageInfo;
@@ -237,12 +236,6 @@ void SVExternalToolTask::SetAllAttributes()
 		attribute = (i < m_Data.m_lNumInputValues) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
 		attribute &= ~SvPb::viewable;
 		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
-	}
-
-	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
-	{
-		UINT attribute = (i < m_Data.m_lNumResultImages) ? SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage : SvPb::noAttributes;
-		m_aResultImages[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	}
 
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
@@ -587,11 +580,25 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			m_aInspectionResultHBMImages.resize(m_Data.m_lNumResultImages);
 			m_Data.m_aResultImageDefinitions.resize(m_Data.m_lNumResultImages);
 
+			int l_pImageNames[] = {IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2, IDS_OBJECTNAME_IMAGE3, IDS_OBJECTNAME_IMAGE4};
 			for (int i = 0 ; i < m_Data.m_lNumResultImages; i++)
 			{
 				m_Data.m_aResultImageDefinitions[i] = paResultImageDefs[i];
 
 				{// begin block
+				 // create buffer
+					SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
+					pImage->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::OverwriteAttribute);
+					//! Check is Feature already in embedded list	
+					SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [i](const SVObjectPtrVector::value_type pEntry)->bool
+					{
+						return (pEntry->GetEmbeddedID() == aSVVariantResultImageObjectGuid[i]);
+					}
+					);
+					if (m_embeddedList.end() == Iter)
+					{
+						RegisterEmbeddedObject(pImage, aSVVariantResultImageObjectGuid[i], l_pImageNames[i]);
+					}
 
 					// get image info
 					SVImageInfoClass imageInfo;
@@ -605,8 +612,6 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 						imageInfo.SetOwner( GUID_NULL );
 					}
 
-					// create buffer
-					SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
 					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 					pImage->UpdateImage( GUID_NULL, imageInfo );
 				}// end block
@@ -631,23 +636,9 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 			for (int i = m_Data.m_lNumResultImages ; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 			{
-				// get image info
-				SVImageInfoClass imageInfo;
-				if( nullptr != GetTool() )
-				{
-					imageInfo.SetOwner( GetTool()->GetUniqueObjectID() );
-				}
-				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
-				imageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 ); 
-
-				imageInfo.SetExtentProperty( SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
-				imageInfo.SetExtentProperty( SvPb::SVExtentPropertyWidth, 100 );
-				imageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, 100 );
-
-				// create buffer
+				RemoveEmbeddedObject(&(m_aResultImages[i]));
 				SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
-				pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
-				pImage->UpdateImage( GUID_NULL, imageInfo );
+				pImage->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::OverwriteAttribute);
 			}
 
 			hr = m_dll.DestroyImageDefinitionStructure(paResultImageDefs);

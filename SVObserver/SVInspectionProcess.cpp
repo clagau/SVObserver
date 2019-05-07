@@ -3518,7 +3518,19 @@ bool SVInspectionProcess::createAllObjects(const SVObjectLevelCreateStruct& rCre
 
 	if (nullptr != GetToolSet())
 	{
+		bool shouldResetTRC = !SvTrc::getTriggerRecordControllerRWInstance().isResetLocked();
+
+		if (shouldResetTRC)
+		{
+			SvTrc::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(SvTrc::getInspectionPos(GetUniqueObjectID()));
+		}
+
 		Result &= GetToolSet()->createAllObjects(rCreateStructure);
+
+		if (shouldResetTRC)
+		{
+			SvTrc::getTriggerRecordControllerRWInstance().finishResetTriggerRecordStructure();
+		}
 	}
 	return Result;
 }

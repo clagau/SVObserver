@@ -106,8 +106,7 @@ void LinkedValue::UpdateLinkedName()
 	{
 		std::string Value = m_LinkedName.GetDefaultValue();
 		m_LinkedName.SetValue( Value );
-		//Having an attribute set assures that the linked name is always available in the TRC and the monitor list
-		m_LinkedName.SetObjectAttributesAllowed(SvPb::publishable, SvOi::SetAttributeType::OverwriteAttribute);
+		m_LinkedName.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	}
 }
