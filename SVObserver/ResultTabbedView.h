@@ -30,6 +30,8 @@ public:
 	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	void SetViewSize(CSize &Size);
+
+	void UpdateTab(int TabIndex = -1);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -40,8 +42,6 @@ private:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg LRESULT OnChangingActiveTab(WPARAM wParam, LPARAM lParam);
-
-	void UpdateTab(int TabIndex = -1);
 #pragma endregion Private Methods
 
 #pragma region Member variables

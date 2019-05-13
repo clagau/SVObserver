@@ -151,6 +151,23 @@ void ResultTabbedView::SetViewSize(CSize &Size)
 		pSplitterFrame->SetViewSize(this, Size);
 	}
 }
+
+void ResultTabbedView::UpdateTab(int TabIndex /*= -1*/)
+{
+	TabIndex = (-1 == TabIndex) ? m_TabCtrl.GetActiveTab() : TabIndex;
+	switch (TabIndex)
+	{
+		case 0:
+			m_ResultList.updateList();
+			break;
+		case 1:
+			m_ResultTableList.updateList();
+			break;
+
+		default:
+			break;
+	}
+}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -220,21 +237,4 @@ afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM lPar
 	UpdateTab(static_cast<int> (wParam));
 
 	return 0;
-}
-
-void ResultTabbedView::UpdateTab(int TabIndex /*= -1*/)
-{
-	TabIndex = (-1 == TabIndex) ? m_TabCtrl.GetActiveTab() : TabIndex;
-	switch (TabIndex)
-	{
-	case 0:
-		m_ResultList.updateList();
-		break;
-	case 1:
-		m_ResultTableList.updateList();
-		break;
-
-	default:
-		break;
-	}
 }

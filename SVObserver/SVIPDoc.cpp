@@ -1719,6 +1719,12 @@ void SVIPDoc::OnResultsTablePicker()
 				SetModifiedFlag();
 				RebuildResultsList();
 				UpdateWithLastProduct();
+
+				ResultTabbedView* pView = GetResultView();
+				if (nullptr != pView)
+				{
+					pView->UpdateTab();
+				}
 			}
 		}
 	}
