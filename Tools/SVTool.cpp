@@ -374,6 +374,8 @@ void SVToolClass::UpdateAuxiliaryExtents()
 		{
 			SVExtentOffsetStruct l_svOffsetData;
 			SvIe::SVImageClass* pAuxSourceImage = SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo, true);
+			
+			m_toolExtent.SetSelectedImage(pAuxSourceImage);
 
 			hr = m_toolExtent.GetSelectedOffsetData(l_svOffsetData);
 			if (S_OK != hr || !l_svOffsetData.m_bIsLinear)
@@ -939,7 +941,7 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 		}
 
 		::KeepPrevError(l_hr, ConnectToObject(&m_AuxSourceImageObjectInfo, pConnectImage));
-
+		
 		m_toolExtent.SetSelectedImage(SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo));
 
 		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
