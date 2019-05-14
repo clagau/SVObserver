@@ -216,7 +216,7 @@ message GetInspectionNamesRequest
 ///Sends a shutdown request to the SVIM with an optional parameter
 message ShutdownRequest
 {
-	sint32 option = 1;				//Option 0=Shutdown SVObserver; 1=Shutdown SVObserver & Windows; 2=Shutdown SVObserver Restart Windows
+	ShutdownOption option = 1;
 }
 
 ///Gets the monitor list properties with the given name from SVObserver
@@ -344,28 +344,6 @@ message LoadClientChunkResponse
 	string chunk = 2;
 }
 
-enum LogSeverity
-{
-	fatal = 0;
-	error = 1;
-	warning = 2;
-	info = 3;
-	debug = 4;
-	trace = 5;
-}
-
-message LogEntry
-{
-	LogSeverity severity = 1;
-	string message = 2;
-}
-
-message StoreClientLogsRequest
-{
-	string client = 1;
-	repeated LogEntry logs = 2;
-}
-
 ///Standard responce for requests that only return names
 message NamesResponse
 {
@@ -379,3 +357,12 @@ message StandardResponse
 	sint32 hResult = 1;				//The request result (0 = no error)
 }
 
+message GetTriggerStreamRequest
+{
+}
+
+message GetTriggerStreamResponse
+{
+	uint32 trigger = 1;
+	bool is_reject = 2;
+}

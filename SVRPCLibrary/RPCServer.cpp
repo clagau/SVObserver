@@ -13,6 +13,7 @@
 #include "RPCServer.h"
 
 #include "SVLogLibrary/Logging.h"
+#include "SVRPCLibrary/ErrorUtil.h"
 
 namespace SvRpc
 {
@@ -62,6 +63,10 @@ void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 			on_stream_cancel(id, std::move(Request));
 			break;
 
+		case SvPenv::MessageType::streamAck:
+			on_stream_ack(id, std::move(Request));
+			break;
+
 		default:
 			SV_LOG_GLOBAL(error) << "Invalid message type " << type;
 			break;
@@ -70,6 +75,7 @@ void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 
 void RPCServer::onDisconnect(int id)
 {
+	SV_LOG_GLOBAL(info) << "RPCServer::onDisconnect(" << id << ")";
 	m_Connections.erase(id);
 	cancel_stream_contexts(id);
 	m_ServerStreamContexts.erase(id);
@@ -91,9 +97,26 @@ void RPCServer::on_stream(int id, SvPenv::Envelope&& Request)
 	m_ServerStreamContexts[id].insert({txId, ctx});
 	m_pRequestHandler->onStream(std::move(Request),
 		Observer<SvPenv::Envelope>(
-		[this, ctx, id, txId](SvPenv::Envelope&& Response) -> std::future<void>
+		[this, ctx, id, txId](SvPenv::Envelope&& Response) -> SvSyl::SVFuture<void>
 	{
-		return send_stream_response(id, txId, std::move(Response));
+		if (ctx->isThrottlingEnabled())
+		{
+			auto t = ctx->new_throttled_response();
+			if (!std::get<0>(t))
+			{
+				// TODO better status code needed
+				auto err = build_error(SvPenv::internalError, "Client overloaded");
+				return SvSyl::SVFuture<void>::make_exceptional(errorToExceptionPtr(err));
+			}
+			auto seqNr = std::get<1>(t);
+			send_stream_response(id, txId, seqNr, std::move(Response));
+			return std::move(std::get<2>(t));
+		}
+		else
+		{
+			uint64_t seqNr = 0;
+			return send_stream_response(id, txId, seqNr, std::move(Response));
+		}
 	},
 		[this, ctx, id, txId]()
 	{
@@ -125,6 +148,23 @@ void RPCServer::on_stream_cancel(int id, SvPenv::Envelope&& Request)
 	}
 }
 
+void RPCServer::on_stream_ack(int id, SvPenv::Envelope&& Request)
+{
+	auto it = m_ServerStreamContexts.find(id);
+	if (it != m_ServerStreamContexts.end())
+	{
+		auto txId = Request.transactionid();
+		auto ctxIt = it->second.find(txId);
+		if (ctxIt != it->second.end())
+		{
+			if (auto ctx = ctxIt->second.lock())
+			{
+				ctx->on_ack(Request.sequencenumber());
+			}
+		}
+	}
+}
+
 void RPCServer::cancel_stream_contexts(int id)
 {
 	auto it = m_ServerStreamContexts.find(id);
@@ -149,14 +189,14 @@ void RPCServer::remove_stream_context(int id, uint64_t txId)
 	}
 }
 
-std::future<void> RPCServer::send_response(int id, uint64_t txId, SvPenv::Envelope&& Response)
+SvSyl::SVFuture<void> RPCServer::send_response(int id, uint64_t txId, SvPenv::Envelope&& Response)
 {
 	Response.set_transactionid(txId);
 	Response.set_type(SvPenv::MessageType::response);
 	return send_envelope(id, Response);
 }
 
-std::future<void> RPCServer::send_error_response(int id, uint64_t txId, const SvPenv::Error& rError)
+SvSyl::SVFuture<void> RPCServer::send_error_response(int id, uint64_t txId, const SvPenv::Error& rError)
 {
 	SvPenv::Envelope response;
 	*response.mutable_error() = rError;
@@ -165,14 +205,15 @@ std::future<void> RPCServer::send_error_response(int id, uint64_t txId, const Sv
 	return send_envelope(id, response);
 }
 
-std::future<void> RPCServer::send_stream_response(int id, uint64_t txId, SvPenv::Envelope&& Response)
+SvSyl::SVFuture<void> RPCServer::send_stream_response(int id, uint64_t txId, uint64_t seqNr, SvPenv::Envelope&& Response)
 {
 	Response.set_transactionid(txId);
+	Response.set_sequencenumber(seqNr);
 	Response.set_type(SvPenv::MessageType::streamResponse);
 	return send_envelope(id, Response);
 }
 
-std::future<void> RPCServer::send_stream_error_response(int id, uint64_t txId, const SvPenv::Error& rError)
+SvSyl::SVFuture<void> RPCServer::send_stream_error_response(int id, uint64_t txId, const SvPenv::Error& rError)
 {
 	SvPenv::Envelope Response;
 	*Response.mutable_error() = rError;
@@ -181,7 +222,7 @@ std::future<void> RPCServer::send_stream_error_response(int id, uint64_t txId, c
 	return send_envelope(id, Response);
 }
 
-std::future<void> RPCServer::send_stream_finish(int id, uint64_t txId)
+SvSyl::SVFuture<void> RPCServer::send_stream_finish(int id, uint64_t txId)
 {
 	SvPenv::Envelope Response;
 	Response.set_transactionid(txId);
@@ -189,7 +230,7 @@ std::future<void> RPCServer::send_stream_finish(int id, uint64_t txId)
 	return send_envelope(id, Response);
 }
 
-std::future<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnvelope)
+SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnvelope)
 {
 	auto it = m_Connections.find(id);
 	if (it == m_Connections.end())
@@ -203,7 +244,7 @@ std::future<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& rEnve
 	buf.resize(resSize);
 	rEnvelope.SerializeToArray(buf.data(), resSize);
 
-	return it->second->sendBinaryMessage(std::move(buf));
+	return it->second->sendBinaryMessage(buf);
 }
 
 } // namespace SvRpc

@@ -23,23 +23,32 @@ static const uint16_t S_PORT = 8082;
 struct TestClient
 {
 	TestClient()
+		: m_Settings(build_settings())
+		, m_pRpcClient(std::make_unique<RPCClient>(m_Settings))
+		, m_getVersionClient(*m_pRpcClient)
 	{
-		m_Settings.Host = S_HOST;
-		m_Settings.Port = S_PORT;
-		m_pRpcClient = std::make_unique<RPCClient>(m_Settings);
 		m_pRpcClient->waitForConnect(m_ConnectTimeout);
 	}
 
-	std::future<GetVersionResponse> getGatewayVersion()
+	SvSyl::SVFuture<GetVersionResponse> getGatewayVersion()
 	{
-		SimpleClient<SVRCMessages, GetGatewayVersionRequest, GetVersionResponse> client(*m_pRpcClient);
-		return client.request(GetGatewayVersionRequest(), m_RequestTimeout);
+		return m_getVersionClient.request(GetGatewayVersionRequest(), m_RequestTimeout);
+	}
+
+private:
+	static WebsocketClientSettings build_settings()
+	{
+		WebsocketClientSettings settings;
+		settings.Host = S_HOST;
+		settings.Port = S_PORT;
+		return settings;
 	}
 
 	SvHttp::WebsocketClientSettings m_Settings;
 	std::unique_ptr<RPCClient> m_pRpcClient;
 	boost::posix_time::seconds m_ConnectTimeout {2};
 	boost::posix_time::seconds m_RequestTimeout {2};
+	SimpleClient<SVRCMessages, GetGatewayVersionRequest, GetVersionResponse> m_getVersionClient;
 };
 
 struct TestServer
@@ -68,13 +77,32 @@ struct TestServer
 	boost::asio::io_service m_IoService;
 	HttpServerSettings m_Settings;
 	std::unique_ptr<HttpServer> m_pHttpServer;
-	RequestHandler m_RequestHandler;
 	std::unique_ptr<RPCServer> m_pRpcServer;
+};
+
+static void register_get_gateway_version_handler(RequestHandler& rRequestHandler)
+{
+	rRequestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kGetGatewayVersionRequest,
+		GetGatewayVersionRequest,
+		GetVersionResponse>(
+		[](GetGatewayVersionRequest&& req, Task<GetVersionResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "GetGatewayVersionRequest";
+		GetVersionResponse res;
+		res.set_version("1.0.0");
+		task.finish(std::move(res));
+	});
+
 };
 
 BOOST_AUTO_TEST_CASE(should_respond_to_simple_request)
 {
-	TestServer testServer(nullptr);
+	RequestHandler requestHandler;
+	register_get_gateway_version_handler(requestHandler);
+
+	TestServer testServer(&requestHandler);
 
 	TestClient testClient;
 	auto res = testClient.getGatewayVersion().get();

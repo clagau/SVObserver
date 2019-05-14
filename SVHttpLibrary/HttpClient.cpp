@@ -14,10 +14,10 @@
 #include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
+#include "HttpClient.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVRPCLibrary/ErrorUtil.h"
-
-#include "HttpClient.h"
+#include "SVSystemLibrary/SVFuture.h"
 
 using namespace boost::beast;
 
@@ -34,7 +34,7 @@ class RestRequest : public std::enable_shared_from_this<RestRequest>
 	boost::beast::flat_buffer buffer_; // (Must persist between reads)
 	http::request<http::string_body> req_;
 	http::response<http::string_body> res_;
-	std::promise<HttpResponse> promise_;
+	SvSyl::SVPromise<HttpResponse> promise_;
 
 public:
 	// Resolver and socket require an io_context
@@ -45,7 +45,7 @@ public:
 	}
 
 	// Start the asynchronous operation
-	std::future<HttpResponse> request(HttpRequest req)
+	SvSyl::SVFuture<HttpResponse> request(HttpRequest req)
 	{
 		req_.version(11);
 		req_.method(req.Method);
@@ -151,7 +151,7 @@ public:
 
 		// If we get here then the connection is closed gracefully
 
-		promise_.set_value(res);
+		promise_.set_value(std::move(res));
 	}
 
 	void fail(boost::system::error_code ec, char const* what)

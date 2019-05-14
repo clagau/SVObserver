@@ -22,7 +22,6 @@ SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient, SVRCClientSer
 	m_GetRejectClient(rRpcClient),
 	m_GetFailStatusClient(rRpcClient),
 	m_GetImageFromIdClient(rRpcClient),
-	m_GetImageStreamFromIdClient(rRpcClient),
 	m_QueryListNameClient(rRpcClient),
 	m_QueryListItemClient(rRpcClient),
 	m_GetNotificationStreamClient(rRpcClient),
@@ -83,11 +82,6 @@ void SVRCClientService::GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::T
 void SVRCClientService::GetImageFromId(SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 {
 	m_GetImageFromIdClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
-}
-
-void SVRCClientService::GetImageStreamFromId(SvPb::GetImageStreamFromIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer)
-{
-	m_GetImageStreamFromIdClient.stream(std::move(req), observer);
 }
 
 void SVRCClientService::QueryListName(SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)

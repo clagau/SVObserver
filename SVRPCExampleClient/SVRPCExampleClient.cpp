@@ -10,7 +10,6 @@
 
 #include <chrono>
 #include <functional>
-#include <future>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -46,12 +45,12 @@ int main()
 			auto res = client.request(std::move(req), RequestTimeout).get();
 			SV_LOG_GLOBAL(info) << res.message();
 		}
-		
+
 		/// Alternative
 		{
 			HelloWorldReq req;
 			req.set_name("Marcus Eichengruen");
-			auto promise = std::make_shared<std::promise<HelloWorldRes>>();
+			auto promise = std::make_shared<SvSyl::SVPromise<HelloWorldRes>>();
 			auto FinishFkt = [&promise](HelloWorldRes&& res) { promise->set_value(res); };
 			auto ErrorFkt = [&promise](const Error& err) { promise->set_exception(errorToExceptionPtr(err)); };
 			auto task = Task<HelloWorldRes>(FinishFkt, ErrorFkt);
@@ -71,12 +70,12 @@ int main()
 		/// Streaming
 		{
 			auto lastcounter = 0;
-			auto CounterPromise = std::make_shared<std::promise<int>>();
-			auto nextFkt = [&lastcounter](GetCounterStreamResponse&& resp)-> std::future<void>
+			auto CounterPromise = std::make_shared<SvSyl::SVPromise<int>>();
+			auto nextFkt = [&lastcounter](GetCounterStreamResponse&& resp)-> SvSyl::SVFuture<void>
 			{
 				lastcounter = resp.counter();
 				SV_LOG_GLOBAL(info) << resp.counter();
-				return std::future<void>();
+				return SvSyl::SVFuture<void>::make_ready();
 			};
 			auto FinishFkt = [CounterPromise, &lastcounter]()
 			{

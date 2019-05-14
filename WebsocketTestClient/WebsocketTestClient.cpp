@@ -82,12 +82,12 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 {
 	SvPb::GetNotificationStreamRequest req;
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
-		[](SvPb::GetNotificationStreamResponse&& res) -> std::future<void>
+		[](SvPb::GetNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
 	{
 		//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 		
 		SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
-		return std::future<void>();
+		return SvSyl::SVFuture<void>::make_ready();
 	},
 		[]()
 	{
@@ -134,22 +134,13 @@ static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int
 	}
 	double volume = 0;
 	auto start = std::chrono::steady_clock::now();
-	if (use_streaming)
+
+	for (int i = 0; i < iterations; ++i)
 	{
-		SvPb::GetImageStreamFromIdRequest request;
-		request.set_count(iterations);
-		*request.mutable_id() = ImageId;
-		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromId, std::move(request), volume).get();
-	}
-	else
-	{
-		for (int i = 0; i < iterations; ++i)
-		{
-			SvPb::GetImageFromIdRequest Request;
-			*Request.mutable_id() = ImageId;
-			auto resp = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
-			volume += resp.ByteSize() / (1024.0 * 1024.0);
-		}
+		SvPb::GetImageFromIdRequest Request;
+		*Request.mutable_id() = ImageId;
+		auto resp = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
+		volume += resp.ByteSize() / (1024.0 * 1024.0);
 	}
 	auto finish = std::chrono::steady_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
@@ -189,7 +180,6 @@ public:
 	{
 		StringBenchmark,
 		ImageBenchmark,
-		ImageStreamBenchmark,
 	};
 
 	void run(BenchmarkType benchmark_type, int num_iterations)
@@ -202,9 +192,6 @@ public:
 				break;
 			case ImageBenchmark:
 				doImageBenchmark(m_rClient, num_iterations);
-				break;
-			case ImageStreamBenchmark:
-				doImageStreamBenchmark(m_rClient, num_iterations);
 				break;
 		}
 		auto finish = std::chrono::steady_clock::now();
@@ -232,17 +219,6 @@ private:
 			request.mutable_id()->set_inspectionid(0); 
 			auto response = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 		}
-	}
-
-	void doImageStreamBenchmark(SvWsl::SVRCClientService& rClient, int num_iterations)
-	{
-		SvPb::GetImageStreamFromIdRequest request;
-		request.set_count(num_iterations);
-		request.mutable_id()->set_trid(0);
-		request.mutable_id()->set_imageindex(0);
-		request.mutable_id()->set_inspectionid(0);
-		double volume = 0;
-		auto response = runStream(rClient, &SvWsl::SVRCClientService::GetImageStreamFromId, std::move(request), volume).get();
 	}
 
 private:

@@ -28,11 +28,11 @@ std::future<TRes> runStream(TClientService& client,
 	volume = 0;
 	auto promise = std::make_shared<std::promise<TRes>>();
 	auto observer = SvRpc::Observer<TRes>(
-		[&volume](TRes&& res) -> std::future<void>
+		[&volume](TRes&& res) -> SvSyl::SVFuture<void>
 	{
 		//Magig numbers ??
 		volume += (res.ByteSize() / 1024.0 / 1024.0); 
-		return std::future<void>();
+		return SvSyl::SVFuture<void>::make_ready();
 	},
 		[promise]() { promise->set_value({}); },
 		[promise](const SvPenv::Error& err) { promise->set_exception(SvRpc::errorToExceptionPtr(err)); });

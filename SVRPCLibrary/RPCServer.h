@@ -21,7 +21,7 @@
 
 #include "SvHttpLibrary/HttpServerConnection.h"
 #include "RequestHandlerBase.h"
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
 
 namespace SvRpc
 {
@@ -51,16 +51,17 @@ private:
 	void on_request(int id, SvPenv::Envelope&&);
 	void on_stream(int id, SvPenv::Envelope&&);
 	void on_stream_cancel(int id, SvPenv::Envelope&&);
+	void on_stream_ack(int id, SvPenv::Envelope&&);
 
 	void cancel_stream_contexts(int id);
 	void remove_stream_context(int id, uint64_t txId);
 
-	std::future<void> send_response(int id, uint64_t txId, SvPenv::Envelope&& Response);
-	std::future<void> send_error_response(int id, uint64_t txId, const SvPenv::Error& rError);
-	std::future<void> send_stream_response(int id, uint64_t txId, SvPenv::Envelope&& Response);
-	std::future<void> send_stream_error_response(int id, uint64_t txId, const SvPenv::Error& rError);
-	std::future<void> send_stream_finish(int id, uint64_t txId);
-	std::future<void> send_envelope(int id, const SvPenv::Envelope& rEnvelope);
+	SvSyl::SVFuture<void> send_response(int id, uint64_t txId, SvPenv::Envelope&& Response);
+	SvSyl::SVFuture<void> send_error_response(int id, uint64_t txId, const SvPenv::Error& rError);
+	SvSyl::SVFuture<void> send_stream_response(int id, uint64_t txId, uint64_t seqNr, SvPenv::Envelope&& Response);
+	SvSyl::SVFuture<void> send_stream_error_response(int id, uint64_t txId, const SvPenv::Error& rError);
+	SvSyl::SVFuture<void> send_stream_finish(int id, uint64_t txId);
+	SvSyl::SVFuture<void> send_envelope(int id, const SvPenv::Envelope& rEnvelope);
 
 private:
 	RequestHandlerBase* m_pRequestHandler;

@@ -7,7 +7,7 @@
 /// unwrapping the response from the response envelope.
 ///
 /// There is also one function that maps the `Task<TRes>` to a
-/// `std::future<TRes>` for easier integration into async flows using stl.
+/// `SvSyl::SVFuture<TRes>` for easier integration into async flows.
 //******************************************************************************
 
 #pragma once
@@ -19,7 +19,8 @@
 #include "ErrorUtil.h"
 #include "OneOfUtil.h"
 #include "RPCClient.h"
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
+#include "SVSystemLibrary/SVFuture.h"
 
 namespace SvRpc
 {
@@ -56,9 +57,9 @@ public:
 			timeout);
 	}
 
-	std::future<TRes> request(TReq&& req, boost::posix_time::time_duration timeout)
+	SvSyl::SVFuture<TRes> request(TReq&& req, boost::posix_time::time_duration timeout)
 	{
-		auto promise = std::make_shared<std::promise<TRes>>();
+		auto promise = std::make_shared<SvSyl::SVPromise<TRes>>();
 
 		SvPenv::Envelope Envelope;
 		m_ReqWrapper.wrap(Envelope, std::move(req));
@@ -90,13 +91,14 @@ public:
 
 		return m_rClient.stream(std::move(Envelope),
 			Observer<SvPenv::Envelope>(
-			[this, observer](SvPenv::Envelope&& resEnv) -> std::future<void>
+			[this, observer](SvPenv::Envelope&& resEnv) -> SvSyl::SVFuture<void>
 		{
 			TRes res;
 			if (!m_ResUnwrapper.unwrap(res, std::move(resEnv)))
 			{
 				observer.error(m_UnwrapError);
-				return std::future<void>();
+				// TODO set future failed as well?
+				return SvSyl::SVFuture<void>::make_ready();
 			}
 
 			return observer.onNext(std::move(res));

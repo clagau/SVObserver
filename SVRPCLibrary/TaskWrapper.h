@@ -26,7 +26,7 @@
 #include "OneOfUtil.h"
 #include "Task.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
 
 namespace SvRpc
 {

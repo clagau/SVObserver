@@ -21,6 +21,7 @@
 #include "SVInspectionProcess.h"
 #include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
+#include "Operators/SVDLLToolDefinitionStructs.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -77,16 +77,6 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		sma->GetImageFromId(req, task);
 	});
 
-	registerStreamHandler<
-		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetImageStreamFromIdRequest,
-		SvPb::GetImageStreamFromIdRequest,
-		SvPb::GetImageStreamFromIdResponse>(
-		[sma](SvPb::GetImageStreamFromIdRequest&& req, SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
-	{
-		sma->GetImageStreamFromId(req, observer, ctx);
-	});
-
 	registerRequestHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kQueryListNameRequest,

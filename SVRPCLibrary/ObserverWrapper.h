@@ -27,7 +27,7 @@
 #include "OneOfUtil.h"
 #include "ServerStreamContext.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
 
 namespace SvRpc
 {
@@ -56,7 +56,7 @@ public:
 
 		m_Handler(std::move(req),
 			Observer<TRes>(
-			[this, observer](TRes&& res) -> std::future<void>
+			[this, observer](TRes&& res) -> SvSyl::SVFuture<void>
 		{
 			SvPenv::Envelope resEnvelope;
 			m_ResWrapper.wrap(resEnvelope, std::move(res));

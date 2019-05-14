@@ -44,5 +44,8 @@
     <ClCompile Include="ObserverWrapper_test.cpp">
       <Filter>Quelldateien\Unit</Filter>
     </ClCompile>
+    <ClCompile Include="SVFuture_test.cpp">
+      <Filter>Quelldateien\Unit</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

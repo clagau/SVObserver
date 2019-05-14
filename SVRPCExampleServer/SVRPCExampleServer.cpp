@@ -35,8 +35,13 @@ using namespace SvPb;
 using namespace SvRpc;
 using namespace SvRpc::Example;
 
-static std::atomic_bool s_restartServer = false;
 static DeviceModeType s_deviceMode = DeviceModeType::runMode;
+static uint32_t s_trigger_count = 0;
+
+static uint32_t get_next_trigger_count()
+{
+	return (++s_trigger_count) % 4;
+}
 
 void register_auth_handler(RequestHandler& requestHandler, AuthManager* am)
 {
@@ -58,7 +63,7 @@ bool on_http_request(RestHandler& rRestHandler, const SvHttp::HttpRequest& req, 
 
 static void counter_async(const boost::system::error_code& ec,
 	std::shared_ptr<boost::asio::deadline_timer> timer,
-	boost::asio::io_service& io_service,
+	boost::asio::io_context& io_context,
 	Observer<GetCounterStreamResponse> observer,
 	ServerStreamContext::Ptr ctx,
 	int i)
@@ -100,12 +105,12 @@ static void counter_async(const boost::system::error_code& ec,
 		return;
 	}
 
-	timer = std::make_shared<boost::asio::deadline_timer>(io_service);
+	timer = std::make_shared<boost::asio::deadline_timer>(io_context);
 	timer->expires_from_now(boost::posix_time::milliseconds(100));
-	timer->async_wait(std::bind(counter_async, std::placeholders::_1, timer, std::ref(io_service), observer, ctx, ++i));
+	timer->async_wait(std::bind(counter_async, std::placeholders::_1, timer, std::ref(io_context), observer, ctx, ++i));
 }
 
-void register_example_handler(RequestHandler& requestHandler, boost::asio::io_service& io_service)
+void register_example_handler(RequestHandler& requestHandler, boost::asio::io_context& io_context)
 {
 	requestHandler.registerRequestHandler<
 		ApplicationMessages,
@@ -126,9 +131,9 @@ void register_example_handler(RequestHandler& requestHandler, boost::asio::io_se
 		ApplicationMessages::kGetCounterStreamRequest,
 		GetCounterStreamRequest,
 		GetCounterStreamResponse>
-		([&io_service](GetCounterStreamRequest&& req, Observer<GetCounterStreamResponse> observer, ServerStreamContext::Ptr ctx)
+		([&io_context](GetCounterStreamRequest&& req, Observer<GetCounterStreamResponse> observer, ServerStreamContext::Ptr ctx)
 	{
-		counter_async({}, nullptr, io_service, observer, ctx, req.start());
+		counter_async({}, nullptr, io_context, observer, ctx, req.start());
 	});
 }
 
@@ -161,37 +166,25 @@ static void createImageOfSize(std::string& data, unsigned int width, unsigned in
 
 static void getImageForId(Image& img, const ImageId& id)
 {
-	if (id.imageindex() == 0)
+	auto size = id.imageindex();
+	if (size == 0)
 	{
 		img.set_height(0);
 		img.set_width(0);
 	}
-	if (id.imageindex() == 100)
+	else
 	{
-		img.set_height(1);
-		img.set_width(1);
-		createImageOfSize(*img.mutable_rgbdata(), 100, 100);
-	}
-	if (id.imageindex() == 200)
-	{
-		img.set_height(200);
-		img.set_width(200);
-		createImageOfSize(*img.mutable_rgbdata(), 128, 128);
-	}
-	if (id.imageindex() == 300)
-	{
-		img.set_height(300);
-		img.set_width(300);
-		createImageOfSize(*img.mutable_rgbdata(), 300, 300);
+		img.set_height(size);
+		img.set_width(size);
+		createImageOfSize(*img.mutable_rgbdata(), size, size);
 	}
 }
 
 static void addValueToProduct(Product& prod, const std::string& listname, bool withValueNames = true)
 {
-	std::string inspection = (listname == "monitorlist1") ? "inspection1" : "inspection2";
 	if (withValueNames)
 	{
-		*prod.add_valuenames() = inspection + ".weight";
+		*prod.add_valuenames() = "inspection1.weight";
 	}
 	auto& weight = *prod.add_values();
 	weight.set_type(Variant::DataCase::kFltVal);
@@ -199,14 +192,73 @@ static void addValueToProduct(Product& prod, const std::string& listname, bool w
 	weight.set_fltval(++v + 0.23f);
 	if (withValueNames)
 	{
-		*prod.add_valuenames() = inspection + ".place";
+		*prod.add_valuenames() = "inspection2.place";
 	}
 	auto& place = *prod.add_values();
 	place.set_type(Variant::DataCase::kStrVal);
 	place.set_strval("Munich");
 }
 
-static void register_dummy_handler(RequestHandler& requestHandler)
+struct NotificationSender : public std::enable_shared_from_this<NotificationSender>
+{
+	boost::asio::io_context& m_io_context;
+	Observer<GetNotificationStreamResponse> m_observer;
+	std::shared_ptr<ServerStreamContext> m_ctx;
+	std::shared_ptr<boost::asio::deadline_timer> m_timer;
+
+	NotificationSender(boost::asio::io_context& io_context, Observer<GetNotificationStreamResponse> observer, std::shared_ptr<ServerStreamContext> ctx)
+		: m_io_context(io_context), m_observer(observer), m_ctx(ctx)
+	{
+	}
+	void schedule_timer()
+	{
+		m_timer = std::make_shared<boost::asio::deadline_timer>(m_io_context);
+		m_timer->expires_from_now(boost::posix_time::milliseconds(1000));
+		m_timer->async_wait(std::bind(&NotificationSender::on_timer, shared_from_this(),  std::placeholders::_1));
+	}
+	void on_timer(boost::system::error_code ec)
+	{
+		if (ec)
+		{
+			SV_LOG_GLOBAL(error) << "NotificationSender error: " << ec;
+			return;
+		}
+
+		if (m_ctx->isCancelled())
+		{
+			SV_LOG_GLOBAL(error) << "NotificationSender client disconnected. stopping notifications.";
+			return;
+		}
+
+		GetNotificationStreamResponse res;
+		res.set_currentmode(SvPb::DeviceModeType::runMode);
+		m_observer.onNext(std::move(res));
+
+		schedule_timer();
+	}
+};
+
+static void buildObjectSelectorItemsResponse(TreeItem& item, std::vector<std::string> levels)
+{
+	if (levels.empty())
+	{
+		return;
+	}
+
+	auto name = levels.front();
+	levels.erase(levels.begin());
+
+	item.set_name(name);
+
+	for (int i = 0; i < levels.size() + 1; ++i)
+	{
+		auto& child = *item.add_children();
+		buildObjectSelectorItemsResponse(child, levels);
+	}
+
+}
+
+static void register_dummy_handler(RequestHandler& requestHandler, boost::asio::io_context& io_context)
 {
 	requestHandler.registerRequestHandler<
 		SVRCMessages,
@@ -243,7 +295,6 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		s_deviceMode = req.mode();
 		StandardResponse res;
 		task.finish(std::move(res));
-		s_restartServer = true;
 	});
 	requestHandler.registerRequestHandler<
 		SVRCMessages,
@@ -267,7 +318,6 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		SV_LOG_GLOBAL(info) << "QueryListNameRequest";
 		QueryListNameResponse res;
 		res.add_listname("monitorlist1");
-		res.add_listname("monitorlist2");
 		task.finish(std::move(res));
 	});
 	requestHandler.registerRequestHandler<
@@ -279,8 +329,8 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 	{
 		SV_LOG_GLOBAL(info) << "QueryMonitorListNamesRequest";
 		NamesResponse res;
-		res.mutable_names()->mutable_item()->set_strval("monitorlist1;monitorlist2");
-		res.mutable_names()->set_count(2);
+		res.mutable_names()->mutable_item()->set_strval("monitorlist1");
+		res.mutable_names()->set_count(1);
 		task.finish(std::move(res));
 	});
 	requestHandler.registerRequestHandler<
@@ -303,19 +353,16 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		QueryListItemResponse>(
 		[](QueryListItemRequest&& req, Task<QueryListItemResponse> task)
 	{
-		SV_LOG_GLOBAL(info) << "QueryListItemRequest";
-		auto inspection = (req.listname() == "monitorlist1")
-			? std::string("inspection1")
-			: std::string("inspection2");
 		QueryListItemResponse res;
 		if (req.queryimages())
 		{
-			res.add_imagedeflist()->set_name(inspection + ".image");
+			res.add_imagedeflist()->set_name("inspection1.image1");
+			res.add_imagedeflist()->set_name("inspection2.image2");
 		}
 		if (req.queryvalues())
 		{
-			res.add_valuedeflist()->set_name(inspection + ".weight");
-			res.add_valuedeflist()->set_name(inspection + ".place");
+			res.add_valuedeflist()->set_name("inspection1.weight");
+			res.add_valuedeflist()->set_name("inspection2.place");
 		}
 		task.finish(std::move(res));
 	});
@@ -329,18 +376,13 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		SV_LOG_GLOBAL(info) << "GetProductRequest";
 		GetProductResponse res;
 		Product& prod = *res.mutable_productitem();
-		prod.set_trigger(0);
+		prod.set_trigger(get_next_trigger_count());
 		prod.set_status(State::isValid);
 		addValueToProduct(prod, req.listname(), req.nameinresponse());
-		ImageId& imgId200px = *prod.add_images();
-		imgId200px.set_imageindex(200);
-		imgId200px.set_imagestore(200);
-		imgId200px.set_slotindex(200);
-		prod.add_imagenames("200px");
 		ImageId& imgId300px = *prod.add_images();
 		imgId300px.set_imageindex(300);
-		imgId300px.set_imagestore(300);
-		imgId300px.set_slotindex(300);
+		//imgId300px.set_imagestore(300);
+		//imgId300px.set_slotindex(300);
 		prod.add_imagenames("300px");
 		task.finish(std::move(res));
 	});
@@ -354,15 +396,46 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		SV_LOG_GLOBAL(info) << "GetRejectRequest";
 		GetRejectResponse res;
 		Product& prod = *res.mutable_productitem();
-		static uint32_t trigger_count = 0;
-		prod.set_trigger(++trigger_count / 4);
+		prod.set_trigger(get_next_trigger_count());
 		prod.set_status(State::isValid);
 		addValueToProduct(prod, req.listname(), req.nameinresponse());
 		prod.add_imagenames("rejected image");
 		ImageId& imgId = *prod.add_images();
 		imgId.set_imageindex(300);
-		imgId.set_imagestore(300);
-		imgId.set_slotindex(300);
+		//imgId.set_imagestore(300);
+		//imgId.set_slotindex(300);
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kGetFailStatusRequest,
+		GetFailStatusRequest,
+		GetFailStatusResponse>(
+		[](GetFailStatusRequest&& req, Task<GetFailStatusResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "GetFailStatusResponse";
+		GetFailStatusResponse res;
+#if 0
+		{
+			Product& prod = *res.add_products();
+			prod.set_trigger(s_trigger_count);
+			prod.set_status(State::isValid);
+			addValueToProduct(prod, req.listname(), req.nameinresponse());
+		}
+		{
+			Product& prod = *res.add_products();
+			prod.set_trigger(s_trigger_count - 1);
+			prod.set_status(State::isValid);
+			addValueToProduct(prod, req.listname(), req.nameinresponse());
+		}
+		{
+			Product& prod = *res.add_products();
+			prod.set_trigger(s_trigger_count - 2);
+			prod.set_status(State::isValid);
+			addValueToProduct(prod, req.listname(), req.nameinresponse());
+		}
+#endif
+		res.set_status(State::isValid);
 		task.finish(std::move(res));
 	});
 	requestHandler.registerRequestHandler<
@@ -380,14 +453,41 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 	});
 	requestHandler.registerRequestHandler<
 		SVRCMessages,
+		SVRCMessages::kPutFileRequest,
+		PutFileRequest,
+		StandardResponse>(
+		[](PutFileRequest&& req, Task<StandardResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "PutFileRequest " << req.destinationpath();
+		std::ofstream out(req.destinationpath());
+		out << req.filedata();
+		out.close();
+		StandardResponse res;
+		res.set_hresult(0);
+		task.finish(std::move(res));
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
 		SVRCMessages::kGetFileRequest,
 		GetFileRequest,
 		GetFileResponse>(
 		[](GetFileRequest&& req, Task<GetFileResponse> task)
 	{
-		SV_LOG_GLOBAL(info) << "GetFileRequest";
+		SV_LOG_GLOBAL(info) << "GetFileRequest " << req.sourcepath();
+		std::ifstream in(req.sourcepath());
+		std::stringstream buffer;
+		buffer << in.rdbuf();
+		const auto str = buffer.str();
 		GetFileResponse res;
-		res.set_hresult(1);
+		if (!str.empty())
+		{
+			res.set_hresult(0);
+			res.set_filedata(buffer.str());
+		}
+		else
+		{
+			res.set_hresult(1);
+		}
 		task.finish(std::move(res));
 	});
 	requestHandler.registerStreamHandler<
@@ -413,10 +513,28 @@ static void register_dummy_handler(RequestHandler& requestHandler)
 		SVRCMessages::kGetNotificationStreamRequest,
 		GetNotificationStreamRequest,
 		GetNotificationStreamResponse>(
-		[](GetNotificationStreamRequest&& req, Observer<GetNotificationStreamResponse> observer, std::shared_ptr<ServerStreamContext> ctx)
+		[&io_context](GetNotificationStreamRequest&& req, Observer<GetNotificationStreamResponse> observer, std::shared_ptr<ServerStreamContext> ctx)
 	{
 		SV_LOG_GLOBAL(info) << "GetNotificationStreamRequest";
+#if 0
+		auto sender = std::make_shared<NotificationSender>(io_context, observer, ctx);
+		sender->schedule_timer();
+#else
 		observer.finish();
+#endif
+	});
+	requestHandler.registerRequestHandler<
+		SVRCMessages,
+		SVRCMessages::kGetObjectSelectorItemsRequest,
+		GetObjectSelectorItemsRequest,
+		GetObjectSelectorItemsResponse>(
+		[](GetObjectSelectorItemsRequest&& req, Task<GetObjectSelectorItemsResponse> task)
+	{
+		SV_LOG_GLOBAL(info) << "GetObjectSelectorItemsRequest";
+		GetObjectSelectorItemsResponse res;
+		std::vector<std::string> levels = {"Root", "Level1", "Level2"};
+		buildObjectSelectorItemsResponse(*res.mutable_tree(), levels);
+		task.finish(std::move(res));
 	});
 }
 
@@ -474,7 +592,7 @@ int main()
 {
 	try
 	{
-		boost::asio::io_service io_service {1};
+		boost::asio::io_context io_context {1};
 
 		SvOgw::Settings settings;
 		SvOgw::SettingsLoader settingsLoader;
@@ -485,8 +603,8 @@ int main()
 
 		RequestHandler requestHandler;
 		register_auth_handler(requestHandler, &authManager);
-		register_example_handler(requestHandler, io_service);
-		register_dummy_handler(requestHandler);
+		register_example_handler(requestHandler, io_context);
+		register_dummy_handler(requestHandler, io_context);
 		register_log_handler(requestHandler);
 
 		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
@@ -495,34 +613,20 @@ int main()
 		httpSettings.pEventHandler = rpcServer.get();
 		httpSettings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "dist";
 		httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
-		auto server = std::make_unique<HttpServer>(httpSettings, io_service);
+		auto server = std::make_unique<HttpServer>(httpSettings, io_context);
 		server->start();
 
 		SV_LOG_GLOBAL(info) << "Server running on ws://" << httpSettings.Host << ":" << httpSettings.Port << "/";
 
-		auto thread = std::thread([&io_service]() { io_service.run(); });
+		auto thread = std::thread([&io_context]() { io_context.run(); });
 
 		while (true)
 		{
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-			if (s_restartServer)
-			{
-				SV_LOG_GLOBAL(warning) << "Stopping current http server!";
-				server->stop();
-				server.reset();
-
-				std::this_thread::sleep_for(std::chrono::seconds(3));
-				SV_LOG_GLOBAL(warning) << "Starting new http server!";
-				server = std::make_unique<HttpServer>(httpSettings, io_service);
-				server->start();
-				SV_LOG_GLOBAL(warning) << "Server running on ws://" << httpSettings.Host << ":" << httpSettings.Port << "/";
-				
-				s_restartServer = false;
-			}
+			std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
 
 		server->stop();
-		io_service.stop();
+		io_context.stop();
 		thread.join();
 
 		rpcServer.reset();

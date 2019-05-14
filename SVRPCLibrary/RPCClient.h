@@ -93,6 +93,7 @@ private:
 	void on_stream_finish(SvPenv::Envelope&&);
 
 	void cancel_stream(uint64_t txId);
+	void ack_stream_response(uint64_t txId, uint64_t seqNr);
 	void send_envelope(SvPenv::Envelope&&);
 
 private:

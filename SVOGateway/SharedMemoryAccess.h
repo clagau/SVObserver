@@ -34,8 +34,6 @@ public:
 	void GetReject(const SvPb::GetRejectRequest&, SvRpc::Task<SvPb::GetRejectResponse>) override;
 	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
 	void GetImageFromId(const SvPb::GetImageFromIdRequest&, SvRpc::Task<SvPb::GetImageFromIdResponse>) override;
-	void GetImageStreamFromId(const SvPb::GetImageStreamFromIdRequest&,
-		SvRpc::Observer<SvPb::GetImageStreamFromIdResponse>, SvRpc::ServerStreamContext::Ptr) override;
 	void GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse>) override;
 	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) override;
 	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) override;
@@ -45,7 +43,6 @@ private:
 	boost::asio::io_service m_io_service;
 	boost::asio::io_service::work m_io_work;
 	boost::thread m_io_thread;
-	SvPb::GetImageStreamFromIdResponse m_unsent_resp;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	
 };

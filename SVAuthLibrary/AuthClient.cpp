@@ -8,8 +8,6 @@
 
 #include "stdafx.h"
 
-#include <future>
-
 #include "SVAuthLibrary/AuthClient.h"
 #include "SVAuthLibrary/JwtFactory.h"
 #include "SVAuthLibrary/Jwt.h"

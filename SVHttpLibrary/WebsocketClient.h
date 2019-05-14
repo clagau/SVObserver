@@ -26,7 +26,6 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
-#include <boost/thread/future.hpp>
 
 #include "WebsocketClientSettings.h"
 

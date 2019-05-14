@@ -9,7 +9,6 @@
 #pragma once
 
 #include <chrono>
-#include <future>
 #include <memory>
 #include <queue>
 
@@ -22,6 +21,7 @@
 #include "HttpServerSettings.h"
 #include "MediaType.h"
 #include "url.hpp"
+#include "SVSystemLibrary/SVFuture.h"
 
 namespace SvHttp
 {
@@ -45,8 +45,8 @@ public:
 	void start();
 	void close();
 
-	std::future<void> sendTextMessage(std::vector<char>&&);
-	std::future<void> sendBinaryMessage(std::vector<char>&&);
+	SvSyl::SVFuture<void> sendTextMessage(const std::vector<char>&);
+	SvSyl::SVFuture<void> sendBinaryMessage(const std::vector<char>&);
 
 private:
 	void close_impl();
@@ -83,7 +83,7 @@ private:
 	void ws_do_read();
 	void ws_on_read(const boost::system::error_code& error, size_t bytes_read);
 
-	std::future<void> ws_send_message_impl(std::vector<char>&&, bool is_binary);
+	SvSyl::SVFuture<void> ws_send_message_impl(const std::vector<char>&, bool is_binary);
 	void ws_send_next_frame();
 	void ws_on_frame_sent(const boost::system::error_code& error, size_t bytes_sent);
 
@@ -118,7 +118,7 @@ private:
 	{
 		bool IsBinary;
 		std::vector<char> Frame;
-		std::shared_ptr<std::promise<void>> Promise;
+		std::shared_ptr<SvSyl::SVPromise<void>> Promise;
 	};
 	std::queue<PendingFrame> m_FrameQueue;
 	bool m_IsWebsocketHandshakeDone {false};

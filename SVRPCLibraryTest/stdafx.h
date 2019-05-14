@@ -40,7 +40,6 @@
 #include <atomic>
 #include <condition_variable>
 #include <functional>
-#include <future>
 #include <map>
 #include <memory>
 #include <stdio.h>

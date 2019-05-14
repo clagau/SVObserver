@@ -6,7 +6,7 @@ class NotificationHandler
 {
 public:
 	NotificationHandler(SVControlCommands* pControlCommands);
-	std::future<void>  OnNext(SvPb::GetNotificationStreamResponse& resp);
+	SvSyl::SVFuture<void>  OnNext(SvPb::GetNotificationStreamResponse& resp);
 	void OnFinish();
 	void OnError(const SvPenv::Error& er);
 private:

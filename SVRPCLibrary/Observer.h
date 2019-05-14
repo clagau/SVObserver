@@ -17,9 +17,9 @@
 #pragma once
 
 //Moved to precompiled header: #include <functional>
-//Moved to precompiled header: #include <future>
 //Moved to precompiled header: #include <memory>
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
+#include "SVSystemLibrary/SVFuture.h"
 
 namespace SvRpc
 {
@@ -27,7 +27,7 @@ namespace SvRpc
 template <typename T> struct Observer
 {
 public:
-	using OnNextFn = std::function<std::future<void>(T&& t)>;
+	using OnNextFn = std::function<SvSyl::SVFuture<void>(T&& t)>;
 	using OnFinishFn = std::function<void()>;
 	using OnErrorFn = std::function<void(const SvPenv::Error&)>;
 
@@ -35,11 +35,11 @@ public:
 	{
 	}
 
-	std::future<void> onNext(T&& t) const
+	SvSyl::SVFuture<void> onNext(T&& t) const
 	{
 		if (!m_OnNext)
 		{
-			return std::future<void>();
+			return SvSyl::SVFuture<void>::make_ready();
 		}
 		return m_OnNext(std::move(t));
 	}

@@ -12,7 +12,10 @@ using namespace SvRpc;
 BOOST_AUTO_TEST_CASE(should_wrap_the_observer)
 {
 	bool onNextCalled = false;
-	auto onNext = [&](Envelope&&) -> std::future<void> { onNextCalled = true; return {}; };
+	auto onNext = [&](Envelope&&) -> SvSyl::SVFuture<void> {
+		onNextCalled = true;
+		return SvSyl::SVFuture<void>::make_ready();
+	};
 	bool onFinishCalled = false;
 	auto onFinish = [&]() { onFinishCalled = true; };
 	bool onErrorCalled = false;

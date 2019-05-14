@@ -105,6 +105,7 @@
     <ClInclude Include="SVCriticalSection.h" />
     <ClInclude Include="SVEncodeDecodeUtilities.h" />
     <ClInclude Include="SVEventThread.h" />
+    <ClInclude Include="SVFuture.h" />
     <ClInclude Include="SVImageConvertorGDI.h" />
     <ClInclude Include="SVLockableClass.h" />
     <ClInclude Include="SVObserverEnums.h" />
@@ -121,6 +122,7 @@
     <None Include="SVAsyncProcedure.inl" />
     <None Include="SVAutoLockAndReleaseTemplate.inl" />
     <None Include="SVEventThread.inl" />
+    <None Include="SVFuture.inl" />
     <None Include="SVSAXErrorHandlerImpl.inl" />
     <None Include="SVSequencer.inl" />
     <None Include="SVThread.inl" />

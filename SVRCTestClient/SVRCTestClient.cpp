@@ -22,12 +22,11 @@
 struct NotificationHandler
 {
 	//This compiles with a reference but not with a rhs reference 
-	std::future<void>  OnNext(SvPb::GetNotificationStreamResponse& resp)
+	SvSyl::SVFuture<void>  OnNext(SvPb::GetNotificationStreamResponse& resp)
 	{
-
 		SV_LOG_GLOBAL(info) << "Get New Notification: " <<
 			resp.message_case() << " DEBUGSTRING: " << resp.DebugString() << std::endl;
-		return std::future<void>();
+		return SvSyl::SVFuture<void>::make_ready();
 	}
 	void OnFinish()
 	{
@@ -48,12 +47,12 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 {
 	SvPb::GetNotificationStreamRequest req;
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
-		[](SvPb::GetNotificationStreamResponse&& res) -> std::future<void>
+		[](SvPb::GetNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
 	{
 		//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 
 		SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
-		return std::future<void>();
+		return SvSyl::SVFuture<void>::make_ready();
 	},
 		[]()
 	{

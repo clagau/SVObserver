@@ -9,7 +9,7 @@
 //******************************************************************************
 
 #pragma once
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
 
 namespace SvRpc
 {

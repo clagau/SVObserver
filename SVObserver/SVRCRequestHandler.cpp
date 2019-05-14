@@ -106,13 +106,12 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kActivateMontorListRequest,
+		SvPb::SVRCMessages::kActivateMonitorListRequest,
 		SvPb::ActivateMonitorListRequest,
 		SvPb::StandardResponse>(
 		[this, pCommand](SvPb::ActivateMonitorListRequest&& req, SvRpc::Task<SvPb::StandardResponse> task)
 	{
 		m_IoRunService.post([req, task, pCommand]() { pCommand->ActivateMonitorList(req, task); });
-
 	});
 
 	registerRequestHandler<

@@ -101,14 +101,6 @@ void SharedMemoryAccessMock::GetImageFromId(const SvPb::GetImageFromIdRequest& r
 	task.finish(std::move(resp));
 }
 
-void SharedMemoryAccessMock::GetImageStreamFromId(const SvPb::GetImageStreamFromIdRequest& req,
-	SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	m_io_service.post(
-		std::bind(&SharedMemoryAccessMock::getImageStreamFromIdStep, this, req.count(), req.id(), observer, ctx));
-}
-
 void SharedMemoryAccessMock::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
 	SvPenv::Error err;
@@ -193,33 +185,5 @@ void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::ImageId&
 			break;
 	}
 }
-
-void SharedMemoryAccessMock::getImageStreamFromIdStep(int iterations,
-	const SvPb::ImageId& id,
-	SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	static const auto MAX_PENDING_RESPONSES = 20;
-	std::queue<std::future<void>> futures;
-	for (int i = 0; i < iterations && !ctx->isCancelled(); ++i)
-	{
-		bool even = i % 2 == 0;
-		// will be true in the very first iteration only
-		while (futures.size() > MAX_PENDING_RESPONSES)
-		{
-			futures.front().wait();
-			futures.pop();
-		}
-
-		SvPb::GetImageStreamFromIdResponse resp;
-		this->getImageById(*resp.mutable_imagedata(), id, even);
-
-		auto future = observer.onNext(std::move(resp));
-		futures.emplace(std::move(future));
-	}
-
-	observer.finish();
-}
-
 
 }// namespace SvOgw

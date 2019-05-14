@@ -35,7 +35,7 @@
 #pragma once
 
 #include "EnvelopeUtil.h"
-#include "SVProtoBuf/envelope.h"
+#include "SVProtoBuf/Envelope.h"
 
 namespace SvRpc
 {

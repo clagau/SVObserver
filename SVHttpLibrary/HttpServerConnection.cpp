@@ -88,14 +88,14 @@ void HttpServerConnection::close_impl()
 	}
 }
 
-std::future<void> HttpServerConnection::sendTextMessage(std::vector<char>&& buf)
+SvSyl::SVFuture<void> HttpServerConnection::sendTextMessage(const std::vector<char>& buf)
 {
-	return ws_send_message_impl(std::move(buf), false);
+	return ws_send_message_impl(buf, false);
 }
 
-std::future<void> HttpServerConnection::sendBinaryMessage(std::vector<char>&& buf)
+SvSyl::SVFuture<void> HttpServerConnection::sendBinaryMessage(const std::vector<char>& buf)
 {
-	return ws_send_message_impl(std::move(buf), true);
+	return ws_send_message_impl(buf, true);
 }
 
 void HttpServerConnection::http_do_read()
@@ -290,7 +290,6 @@ template<class Body>
 void HttpServerConnection::http_do_write_impl(boost::beast::http::response<Body>& Response)
 {
 	http_access_log(Response);
-
 	boost::beast::http::async_write(
 		m_Socket,
 		Response,
@@ -664,9 +663,9 @@ void HttpServerConnection::ws_on_read(const boost::system::error_code& error, si
 	}
 }
 
-std::future<void> HttpServerConnection::ws_send_message_impl(std::vector<char>&& buf, bool is_binary)
+SvSyl::SVFuture<void> HttpServerConnection::ws_send_message_impl(const std::vector<char>& buf, bool is_binary)
 {
-	auto promise = std::make_shared<std::promise<void>>();
+	auto promise = std::make_shared<SvSyl::SVPromise<void>>();
 	m_rIoContext.dispatch([this, buf, is_binary, promise]()
 	{
 		PendingFrame pendingFrame;

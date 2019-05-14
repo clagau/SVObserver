@@ -305,7 +305,7 @@ enum ObjectAttributes
 	publishResultImage			= 0x00001000;	//Object result image can be published
 	dataDefinitionValue			= 0x00010000;	//Object is selected for the data definition list
 	dataDefinitionImage			= 0x00020000;	//Object is selected for the data definition list
-};
+}
 
 ///Object selector types
 enum ObjectSelectorType
@@ -313,7 +313,7 @@ enum ObjectSelectorType
 	toolsetItems = 0;				//Inspection toolset items
 	globalConstantItems = 1;		//Global constant items
 	ppqItems = 2;					//PPQ variable items
-};
+}
 
 enum SelectorFilter
 {
@@ -322,7 +322,7 @@ enum SelectorFilter
 	rangeValue = 2;					//Object selector filter for range values
 	monitorListRejectValue = 3;		//Object selector filter for monitor list reject values
 	ppqValue = 4;					//Object selector filter for ppq value
-};
+}
 
 enum SVExtentPropertyEnum
 {
@@ -388,7 +388,7 @@ enum SVExtentPropertyEnum
 	
 	//SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle | SVExtentPropertyStartAngle	| SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius,
 	SVExtentProperty2DecimalPlaces = 0x00F00010;
-};
+}
 
 enum EAutoSize
 {
@@ -399,7 +399,7 @@ enum EAutoSize
 	EnableNegativePosition = 0x4;
 	//EnableAll = EnableSizeAndPosition | EnableNegativePosition
 	EnableAll = 0x7;
-};
+}
 
 enum SVExtentLocationPropertyEnum
 {
@@ -416,7 +416,7 @@ enum SVExtentLocationPropertyEnum
 	SVExtentLocationPropertyRotate      = 10;
 	SVExtentLocationPropertyDisabled	= 11;
 	SVExtentLocationPropertySize		= 12;
-};
+}
 
 enum SVExtentTranslationEnum
 {
@@ -450,11 +450,18 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationCylindricalWarpV			= 111;
 	SVExtentTranslationHorizontalPerspective	= 120;
 	SVExtentTranslationVerticalPerspective		= 121;
-};
+}
 
 enum SVExtentDirectionsEnum
 {
 	SVExtentDirectionBoth		= 0;
 	SVExtentDirectionHorizontal	= 1;
 	SVExtentDirectionVertical	= 2;
-};
+}
+
+enum ShutdownOption
+{
+	shutdownSvObserver = 0;
+	shutdownSvObserverAndWindows = 1;
+	shutdownSvObserverAndRestartWindows = 2;
+}

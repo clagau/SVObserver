@@ -33,7 +33,7 @@
     <ClCompile Include="variant.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="envelope.pb.cc">
+    <ClCompile Include="Envelope.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRC.pb.cc">
@@ -115,13 +115,13 @@
     <ClInclude Include="variant.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="envelope.pb.h">
+    <ClInclude Include="Envelope.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BasicStructure.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="envelope.h">
+    <ClInclude Include="Envelope.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListStore.h">

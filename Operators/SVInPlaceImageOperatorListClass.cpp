@@ -6,7 +6,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVInplaceImageOperatorListClass.h"
+#include "SVInPlaceImageOperatorListClass.h"
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"

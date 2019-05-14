@@ -109,14 +109,6 @@ void SharedMemoryAccess::GetImageFromId(const SvPb::GetImageFromIdRequest& rRequ
 	}
 
 }
-void SharedMemoryAccess::GetImageStreamFromId(const SvPb::GetImageStreamFromIdRequest& rRequest,
-	SvRpc::Observer<SvPb::GetImageStreamFromIdResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-{
-	SvPenv::Error Error;
-	Error.set_errorcode(SvPenv::ErrorCode::notImplemented);
-	observer.error(Error);
-}
 void SharedMemoryAccess::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
 	SvPenv::Error Error;

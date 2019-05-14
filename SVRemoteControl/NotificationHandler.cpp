@@ -7,7 +7,7 @@ NotificationHandler::NotificationHandler(SVControlCommands* pControlCommands) :m
 {
 }
 
-std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamResponse& rResponse)
+SvSyl::SVFuture<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamResponse& rResponse)
 {
 
 	SVNotificationTypes type = UnknownNotificationType;
@@ -59,7 +59,7 @@ std::future<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamRespon
 	boost::property_tree::xml_writer_settings< boost::property_tree::ptree::key_type > Settings(' ', 4);
 	boost::property_tree::write_xml(OutStream, propTree, Settings);
 	m_pControlCommands->m_Notifier(_variant_t(OutStream.str().c_str()), type);
-	return std::future<void>();
+	return  SvSyl::SVFuture<void>::make_ready();
 }
 void NotificationHandler::OnFinish()
 {

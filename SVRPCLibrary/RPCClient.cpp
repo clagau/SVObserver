@@ -380,13 +380,18 @@ void RPCClient::on_error_response(SvPenv::Envelope&& Response)
 
 void RPCClient::on_stream_response(SvPenv::Envelope&& Response)
 {
-	auto it = m_PendingStreams.find(Response.transactionid());
+	auto txid = Response.transactionid();
+	auto seqNr = Response.sequencenumber();
+	auto it = m_PendingStreams.find(txid);
 	if (it != m_PendingStreams.end())
 	{
 		//We catch the exception and remove it as clients may have disconnected in the mean time
 		try
 		{
-			it->second.onNext(std::move(Response));
+			it->second.onNext(std::move(Response)).then(m_IoContex, [this, txid, seqNr](auto f)
+			{
+				ack_stream_response(txid, seqNr);
+			});
 		}
 		catch (const std::exception&)
 		{
@@ -438,6 +443,15 @@ void RPCClient::cancel_stream(uint64_t txId)
 	send_envelope(std::move(Request));
 }
 
+void RPCClient::ack_stream_response(uint64_t txId, uint64_t seqNr)
+{
+	SvPenv::Envelope Request;
+	Request.set_transactionid(txId);
+	Request.set_sequencenumber(seqNr);
+	Request.set_type(SvPenv::MessageType::streamAck);
+	send_envelope(std::move(Request));
+}
+
 void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 {
 	auto reqSize = Envelope.ByteSize();
@@ -449,7 +463,7 @@ void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 	auto client = m_WebsocketClient;
 	if (client)
 	{
-		client->sendBinaryMessage(std::move(buf));
+		client->sendBinaryMessage(buf);
 	}
 	else
 	{

@@ -12,7 +12,7 @@
 #include <sstream>
 #include <string>
 
-#include "SVProtobuf/envelope.h"
+#include "SVProtobuf/Envelope.h"
 
 namespace std
 {

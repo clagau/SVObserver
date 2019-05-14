@@ -98,6 +98,9 @@
     <ClInclude Include="SVObserverEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVFuture.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVAsyncProcedure.inl">
@@ -116,6 +119,9 @@
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVThread.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVFuture.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>
