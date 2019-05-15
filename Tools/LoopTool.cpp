@@ -204,7 +204,7 @@ HRESULT LoopTool::propagateSizeAndPosition()
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj);
 		if (nullptr != pTool)
 		{
-			result = pTool->propagateSizeAndPosition() && result;
+			result = (S_OK == pTool->propagateSizeAndPosition()) && result;
 		}
 	}
 
