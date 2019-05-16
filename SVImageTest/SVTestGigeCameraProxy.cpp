@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   03 Dec 2014 19:49:50  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #pragma warning (push)
 #pragma warning (disable : 4996)
@@ -18,7 +19,6 @@
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVTestGigeCameraProxy.h"
 #include "Definitions/SVGigeEnums.h"
-#include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
@@ -28,6 +28,7 @@
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVTestAcquisitionClass.h"
 #pragma warning (pop)
+#pragma endregion Includes
 
 static const int SVMSG_SVO_20_INCORRECT_CAMERA_FILE = 20;
 

@@ -15,8 +15,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
-
 /////////////////////////////////////////////////////////////////////////////
 // CSVSecurityApp
 // See SVSecurity.cpp for the implementation of this class

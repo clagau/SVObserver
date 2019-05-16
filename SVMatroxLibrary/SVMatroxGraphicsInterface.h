@@ -11,8 +11,9 @@
 
 #pragma once
 
-#include "SVMatroxApplicationInterface.h"
+#pragma region Includes
 #include "SVMatroxBuffer.h"
+#pragma endregion Includes
 
 class SVMatroxGraphicsInterface
 {
@@ -23,16 +24,16 @@ public:
 
 	static double CreateRGB888( unsigned char p_Red, unsigned char p_Green, unsigned char p_Blue );
 
-	static HRESULT Clear(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer );
+	static HRESULT Clear(__int64& p_rGraphicsID, SVMatroxBuffer& p_rBuffer );
 
-	static HRESULT RectangleFill(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle );
+	static HRESULT RectangleFill(__int64& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle );
 
-	static HRESULT Color(SVMatroxIdentifier& p_rGraphicsID, double p_Color );
-	static HRESULT BackColor(SVMatroxIdentifier& p_rGraphicsID, double p_Color );
+	static HRESULT Color(__int64& p_rGraphicsID, double p_Color );
+	static HRESULT BackColor(__int64& p_rGraphicsID, double p_Color );
 
-	static HRESULT Create(SVMatroxIdentifier& p_rGraphicsID );
+	static HRESULT Create(__int64& p_rGraphicsID );
 
-	static HRESULT Destroy(SVMatroxIdentifier& p_rGraphicsID );
+	static HRESULT Destroy(__int64& p_rGraphicsID );
 
 };
 

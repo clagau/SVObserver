@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "ResultTableListCtrl.h"
 #include "ResultListCtrl.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
 class ResultTabbedView : public CView

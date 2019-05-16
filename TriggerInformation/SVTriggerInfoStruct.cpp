@@ -8,7 +8,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVTriggerInfoStruct.h"
 
 

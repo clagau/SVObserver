@@ -12,6 +12,8 @@
 
 #pragma region Includes
 #include "SVFilterClass.h"
+#include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 class SVThinningFilterClass : public SVFilterClass

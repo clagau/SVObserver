@@ -18,12 +18,13 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObserver.h"
 #include "SVIPDoc.h"
-#include "SVLibrary/SVWinUtility.h"	// for SVYieldPaintMessages
 #include "Operators/SVMaskShape.h"
 #include "Operators/SVUserMaskOperatorClass.h"
 #include "SVOGui/DisplayHelper.h"
 #include "Definitions/Color.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
 #pragma region Declarations

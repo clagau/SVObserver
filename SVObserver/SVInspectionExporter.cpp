@@ -24,7 +24,6 @@
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVInspectionProcess.h"

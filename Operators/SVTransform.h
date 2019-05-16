@@ -12,6 +12,8 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

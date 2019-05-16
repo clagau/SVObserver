@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRCCommand.h"
-#include "RemoteCommand.h"
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"

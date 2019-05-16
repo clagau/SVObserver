@@ -13,6 +13,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVValueObjectLibrary/SVCharValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

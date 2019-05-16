@@ -63,9 +63,6 @@
     <ClInclude Include="SVTimerValueObjectClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVValueObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVValueObjectClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

@@ -11,7 +11,9 @@
 
 #pragma once
 
-//Includes for inl files are placed in the .h file
+#pragma region Includes
+#include "SVXMLLibrary/SVNavigateTree.h"
+#pragma endregion Includes
 
 template< typename SVTreeType >
 SVConfigurationTreeWriter< SVTreeType >::SVConfigurationTreeWriter(SVTreeType &rTree, typename SVTreeType::SVBranchHandle htiParent)

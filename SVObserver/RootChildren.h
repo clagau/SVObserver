@@ -15,7 +15,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\IRootObject.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #pragma endregion Includes

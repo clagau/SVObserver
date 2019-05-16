@@ -34,12 +34,15 @@
 
 #pragma once
 
+#pragma region Includes
 #include "EnvelopeUtil.h"
 #include "SVProtoBuf/Envelope.h"
+#pragma endregion Includes
 
 namespace SvRpc
 {
-template <typename TPayload, typename TMessage> class OneOfUtil
+template <typename TPayload, typename TMessage>
+class OneOfUtil
 {
 public:
 	OneOfUtil() : m_FieldDescriptor(getFieldDescriptor()) {}

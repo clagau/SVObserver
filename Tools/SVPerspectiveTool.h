@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVTool.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"

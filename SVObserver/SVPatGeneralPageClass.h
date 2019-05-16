@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 namespace SvAo

@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"

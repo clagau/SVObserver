@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVTimerValueObjectClass.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvVol

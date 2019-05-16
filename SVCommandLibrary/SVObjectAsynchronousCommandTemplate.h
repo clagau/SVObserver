@@ -11,12 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVObjectCommandWrapperTemplate.h"
 #include "SVObjectAsynchronousCommandTemplate.h"
-#include "SVObjectThreadCommandTemplate.h"
+#pragma endregion Includes
 
 template<typename CommandPtr>
 class SVObjectAsynchronousCommandTemplate

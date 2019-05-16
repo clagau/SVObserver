@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVMatroxStatusInformation.h"
-#include "SVMatroxTypedefs.h"
 #pragma endregion Includes
 
 /**
@@ -41,11 +40,11 @@ public:
 	static void Log( SVMatroxStatusInformation& p_rStatusInfo );
 	static void LogMatroxException();
 	static HRESULT GetSystemCount( long& p_lCount );
-	static HRESULT GetSystemName( SVMatroxInt p_lSystemNumber, std::string& p_rSystemName );
-	static HRESULT SVMatroxIntToHRESULT( SVMatroxIdentifier p_Int );
+	static HRESULT GetSystemName( long long p_lSystemNumber, std::string& p_rSystemName );
+	static HRESULT SVMatroxIntToHRESULT( __int64 p_Int );
 
 protected:
-   static SVMatroxInt _stdcall SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr );
+   static long long _stdcall SVMatroxHookHandler( long long HookType, __int64 EventId, void* UserDataPtr );
 
 private:
 	static void LocalInitialize();

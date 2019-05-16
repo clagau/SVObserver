@@ -13,6 +13,8 @@
 #include "stdafx.h"
 #include "SVPerspectiveTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageExtentClass.h"

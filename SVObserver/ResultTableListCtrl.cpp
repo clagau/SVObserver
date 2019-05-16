@@ -10,6 +10,7 @@
 #include "SVObserver.h"
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
+#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -18,9 +19,7 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 

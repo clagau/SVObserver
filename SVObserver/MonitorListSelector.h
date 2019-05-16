@@ -11,8 +11,6 @@
 #pragma once
 #pragma region Includes
 #include "RemoteMonitorNamedList.h"
-#include "SVUtilityLibrary/NameSelectionList.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

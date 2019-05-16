@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "afxcmn.h"
+#include "resource.h"
 #include "SVIOLibrary\SVIODigitalLoadLibraryClass.h"
 #include <vector>
 #pragma endregion Includes

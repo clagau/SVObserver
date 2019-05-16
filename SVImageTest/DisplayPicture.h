@@ -9,8 +9,10 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:07:54  $
 // ******************************************************************************
 #pragma  once
-#include "TriggerRecordController/IImage.h"
 
+#pragma region Includes
+#include "TriggerRecordController/IImage.h"
+#pragma endregion Includes
 
 class CDisplayPicture : public CStatic
 {

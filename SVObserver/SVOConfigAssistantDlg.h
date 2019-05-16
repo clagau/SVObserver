@@ -25,7 +25,6 @@
 #include "SVMFCControls\SVOConfigNameEdit.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVIOBoardCapabilities.h"
-#include "TriggerInformation/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
 #include "Definitions/GlobalConstantData.h"
 #include "Definitions/StringTypeDef.h"

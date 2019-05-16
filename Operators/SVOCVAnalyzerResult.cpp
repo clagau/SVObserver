@@ -13,12 +13,13 @@
 #include "stdafx.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxOcrInterface.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "Definitions/Color.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
@@ -495,7 +496,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 //
 			 std::string MatchStringFileName;
 			 m_fnvoMatchStringFileName.GetValue( MatchStringFileName  );
-			 if( ! ::SVFileExists( MatchStringFileName.c_str() ) )
+			 if(0 != _access(MatchStringFileName.c_str(), 0))
 			 {
 				 //
 				 // The file does not exist.  Set error and set defaults.

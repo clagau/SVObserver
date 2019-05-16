@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVIPProductStruct.h"
-#include "InspectionEngine/SVCameraInfoStruct.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 

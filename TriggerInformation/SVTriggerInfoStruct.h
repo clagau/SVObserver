@@ -23,11 +23,11 @@ namespace SvTi
 		bool bValid;
 		long lTriggerCount;
 		bool m_ToggleState;
-		SvTl::SVTimeStamp m_BeginProcess;
-		SvTl::SVTimeStamp m_ToggleTimeStamp;
-		SvTl::SVTimeStamp m_CallbackReceived;
-		SvTl::SVTimeStamp m_PushedOutputs;
-		SvTl::SVTimeStamp m_PreviousTrigger;
+		double m_BeginProcess;
+		double m_ToggleTimeStamp;
+		double m_CallbackReceived;
+		double m_PushedOutputs;
+		double m_PreviousTrigger;
 		boost::any m_Data;
 	};
 } //namespace SvTi

@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVInputInfoListClass.h"
-#include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
 #pragma endregion Includes
 

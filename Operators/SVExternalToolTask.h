@@ -22,8 +22,11 @@
 #include "SVLibrary/ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"
 #include "SVRPropertyTree/SVRPropTreeState.h"
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

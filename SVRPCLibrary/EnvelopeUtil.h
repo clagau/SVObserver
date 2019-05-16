@@ -13,13 +13,15 @@
 
 namespace SvRpc
 {
-template <typename TPayload> void wrap_payload(SvPenv::Envelope& rEnvelope, const TPayload& rPayload)
+template <typename TPayload> 
+void wrap_payload(SvPenv::Envelope& rEnvelope, const TPayload& rPayload)
 {
 	rEnvelope.set_payloadtype(rPayload.message_case());
 	rEnvelope.mutable_payload()->PackFrom(rPayload);
 }
 
-template <typename TPayload> bool unwrap_payload(const SvPenv::Envelope& rEnvelope, TPayload& rPayload)
+template <typename TPayload>
+bool unwrap_payload(const SvPenv::Envelope& rEnvelope, TPayload& rPayload)
 {
 	if (!rEnvelope.has_payload())
 	{

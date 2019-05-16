@@ -15,7 +15,6 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #pragma endregion Includes
@@ -268,7 +267,7 @@ bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 	std::string PathName;
 	m_currentPathName.GetValue( PathName );
 
-	if( ::SVFileExists( PathName.c_str() ) )
+	if(0 == _access(PathName.c_str(), 0))
 	{
 		return true;
 	}

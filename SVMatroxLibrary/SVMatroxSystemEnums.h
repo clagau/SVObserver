@@ -14,8 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
-#include "SVMatroxTypedefs.h"
-#include "SVMatroxEnumConvertor.h"
 #pragma endregion Includes
 
 /**

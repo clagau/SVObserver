@@ -283,7 +283,6 @@ echo %time%
     <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp" />
     <ClCompile Include="SVMessageWindow.cpp" />
     <ClCompile Include="SVMultiDocTemplate.cpp" />
-    <ClCompile Include="SVObjectCommandDataJson.cpp" />
     <ClCompile Include="SVObjectScriptParser.cpp" />
     <ClCompile Include="SVObjectScriptParserSVX.cpp" />
     <ClCompile Include="SVObserver.cpp">
@@ -481,7 +480,6 @@ echo %time%
     <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h" />
     <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
-    <ClInclude Include="SVObjectCommandDataJson.h" />
     <ClInclude Include="SVObjectScriptParser.h" />
     <ClInclude Include="SVObjectScriptParserBase.h" />
     <ClInclude Include="SVObjectScriptParserSVX.h" />

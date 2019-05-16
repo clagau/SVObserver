@@ -16,11 +16,21 @@
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
+#include "SVIPDoc.h"
+#include "SVInspectionProcess.h"
 #include "SVObserver.h"
+#include "SVToolGrouping.h"
+#include "SVToolSet.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "Operators/SVShapeMaskHelperClass.h"
+#include "Operators/SVUserMaskOperatorClass.h"
+#include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
+#include "Tools/SVStatTool.h"
 #pragma endregion Includes
 
-std::pair<GUID **, size_t> NonPrintGuids();
+std::pair<const GUID **, size_t> NonPrintGuids();
 
 typedef sv_xml::SVConfigXMLPrint SVConfigXMLPrint;
 
@@ -1011,7 +1021,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 		guidObjID = pObject->GetEmbeddedID();
 	}
 
-	std::pair<GUID**, size_t> nPrs = NonPrintGuids();
+	std::pair<const GUID**, size_t> nPrs = NonPrintGuids();
 	// Check for non-printing object type.
 	for (size_t nIndex = 0; nIndex < nPrs.second; nIndex++)
 	{

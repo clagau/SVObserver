@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
@@ -64,8 +63,8 @@ public:
 	HRESULT CreateAcquisitionBuffers(const SVMatroxSystem& rSystem, unsigned long width, unsigned long height, unsigned long format);
 	HRESULT DestroyAcquistionBuffers();
 
-	HRESULT StartGrabArray(SVMatroxDigitizerInterface::SVGrabProcessFunc func);
-	HRESULT StopGrabArray(SVMatroxDigitizerInterface::SVGrabProcessFunc func);
+	HRESULT StartGrabArray(SVMatroxDigitizerInterface::SVMatroxHookFunctionPtr func);
+	HRESULT StopGrabArray(SVMatroxDigitizerInterface::SVMatroxHookFunctionPtr func);
 
 	HRESULT BuildGigeFeaturesMap(BSTR xmlData);
 	const SVGigeDeviceParameterStruct& GetFeature(SvDef::SVGigeParameterEnum paramEnum) const;
@@ -110,7 +109,7 @@ public:
 	SVMatroxDigitizerPtr m_Digitizer;
 	SVMatroxGigeCameraId m_svCameraId;
 
-	SvTl::SVTimeStamp m_StartFrameTimeStamp;
+	double m_StartFrameTimeStamp;
 
 	SVMatroxGigeAcqParams m_params;
 

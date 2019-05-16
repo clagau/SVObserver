@@ -12,8 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVFilterClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 class SVWatershedFilterClass : public SVFilterClass

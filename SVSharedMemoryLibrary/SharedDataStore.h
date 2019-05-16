@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary\SourceFileParams.h"
 #include "SMParameterStruct.h"
 #pragma endregion Includes
 

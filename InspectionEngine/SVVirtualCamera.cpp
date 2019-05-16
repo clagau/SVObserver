@@ -14,12 +14,10 @@
 
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
-#include "CameraLibrary/SVDeviceParams.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 

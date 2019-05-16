@@ -1,8 +1,6 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "ShareEvents.h"
-#include "WinBase.h" 
-#include "SVStatusLibrary\CommandLineArgs.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"

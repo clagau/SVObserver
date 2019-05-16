@@ -13,7 +13,7 @@
 
 #include "7zTypes.h"
 
-enum
+enum PropertyIDType 
 {
   kpidNoProperty = 0,
   kpidMainSubfile,

@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "StdAfx.h"
-#include "resource.h"
 #include "SVPictureTabInfo.h"
 #pragma endregion Includes
 

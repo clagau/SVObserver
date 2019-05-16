@@ -10,7 +10,6 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <tuple>
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 

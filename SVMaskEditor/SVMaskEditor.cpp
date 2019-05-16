@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
-#include "SVMatroxLibrary\SVMatroxLibrary.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -119,7 +119,7 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
         return l_MilBuffer;
 
     // Try to get device context of mil buffer...
-	l_Code = l_BufIntf.Set( l_MilBuffer, SVBufWindowDCAlloc, (SVMatroxInt)SVValueDefault );
+	l_Code = l_BufIntf.Set( l_MilBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault );
 
     HDC hDC;
 
@@ -145,16 +145,16 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
             ::DeleteDC( hMemDC );
 
             // Release mil buffer dc...
-			l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (SVMatroxInt)SVValueDefault );
+			l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (long long)SVValueDefault );
 
 
-			l_BufIntf.Set( l_MilBuffer, SVBufModified, (SVMatroxInt)SVValueDefault );
+			l_BufIntf.Set( l_MilBuffer, SVBufModified, (long long)SVValueDefault );
 
             return l_MilBuffer;
         }
 
         // Release mil buffer dc...
-		l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (SVMatroxInt)SVValueDefault );
+		l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (long long)SVValueDefault );
 	}
 
 	l_MilBuffer.clear();

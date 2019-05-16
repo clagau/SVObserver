@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOResource/resource.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #include "SVOCVMatchDlg.h"

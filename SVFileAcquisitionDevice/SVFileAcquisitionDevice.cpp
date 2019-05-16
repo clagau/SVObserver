@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/bind.hpp>
-#include "CameraLibrary\SVDeviceParams.h"
 #include "SVFileAcquisitionDevice.h"
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
@@ -941,7 +940,7 @@ HRESULT SVFileAcquisitionDevice::SetAcquisitionTriggered(unsigned long triggerch
 
 void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 {
-	SvTl::SVTimeStamp timestamp = SvTl::GetTimeStamp();
+	double timestamp = SvTl::GetTimeStamp();
 	// Simulate Trigger and send Timestamp and Line State...
 	bool lineState = p_rCamera.GetLineState(); // could simulate line state via a socket connection
 

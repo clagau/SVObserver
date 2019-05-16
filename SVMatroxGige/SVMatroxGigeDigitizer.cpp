@@ -95,7 +95,7 @@ HRESULT SVMatroxGigeDigitizer::DestroyAcquistionBuffers()
 	return S_OK;
 }
 
-HRESULT SVMatroxGigeDigitizer::StartGrabArray(SVMatroxDigitizerInterface::SVGrabProcessFunc func)
+HRESULT SVMatroxGigeDigitizer::StartGrabArray(SVMatroxDigitizerInterface::SVMatroxHookFunctionPtr func)
 {
 	HRESULT hr = SVMatroxDigitizerInterface::EnableCorruptedFrameMonitoring(*(m_Digitizer.get()), true);
 	if (S_OK == hr)
@@ -105,7 +105,7 @@ HRESULT SVMatroxGigeDigitizer::StartGrabArray(SVMatroxDigitizerInterface::SVGrab
 	return hr;
 }
 
-HRESULT SVMatroxGigeDigitizer::StopGrabArray(SVMatroxDigitizerInterface::SVGrabProcessFunc func)
+HRESULT SVMatroxGigeDigitizer::StopGrabArray(SVMatroxDigitizerInterface::SVMatroxHookFunctionPtr func)
 {
 	HRESULT hr = SVMatroxDigitizerInterface::EnableCorruptedFrameMonitoring(*(m_Digitizer.get()), false);
 	hr = SVMatroxDigitizerInterface::StopGrabArray(*(m_Digitizer.get()), m_AcqBuffers, SVMatroxDigitizerGrab::SVGrabSynchronous, func, this);

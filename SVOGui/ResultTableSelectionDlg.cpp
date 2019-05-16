@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ResultTableSelectionDlg.h"
-#include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "TextDefinesSvOg.h"
 #pragma endregion Includes
 

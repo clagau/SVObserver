@@ -11,8 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxTypedefs.h"
-#include "SVMatroxEnums.h"
+#include "SVMatroxSimpleEnums.h"
 
 
 /**

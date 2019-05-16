@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVOResource/resource.h"
 #include "SVToolAdjustmentDialogFilterPageClass.h"
-#include "Definitions/ObjectDefines.h"
 #include "SVCustomFilterDlg.h"
 #include "SVRankingFilterDlg.h"
 #include "Ranking2FilterDlg.h"
@@ -29,7 +28,6 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "BlobReconstructFilterDlg.h"
 #include "ReconstructFilterDlg.h"
-#include "InspectionCommands/CommandFunction.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

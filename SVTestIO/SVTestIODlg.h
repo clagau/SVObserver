@@ -11,12 +11,12 @@
 
 #pragma once
 
-// SVTestIODlg dialog
-#include "resource.h"
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
+#include "resource.h"
 #include "TriggerInformation/IODeviceBase.h"
-#include "SVTestIOExports.h"
+#pragma endregion Includes
 
 
 const int c_upperBoundForInputChannel = 9;

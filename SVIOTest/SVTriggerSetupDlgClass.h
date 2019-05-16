@@ -11,8 +11,11 @@
 
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTriggerSetupDlgClass dialog
+#pragma region Includes
+#include "resource.h"
+#pragma endregion Includes
+
+class SVIOTriggerLoadLibraryClass;
 
 class SVTriggerSetupDlgClass : public CDialog
 {

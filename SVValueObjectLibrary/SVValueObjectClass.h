@@ -15,17 +15,13 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <memory>
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes

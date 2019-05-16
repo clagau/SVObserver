@@ -15,8 +15,8 @@
 namespace SvDef
 {
 		//! These are special SVObserver variant VT types for SVPointValueObjectClass and SVDPointValueObjectClass
-		const DWORD VT_POINT = 80;
-		const DWORD VT_DPOINT = 81;
+		constexpr unsigned long VT_POINT = 80;
+		constexpr unsigned long VT_DPOINT = 81;
 
 		struct SVObjectTypeInfoStruct
 		{

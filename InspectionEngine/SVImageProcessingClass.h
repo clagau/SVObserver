@@ -13,10 +13,19 @@
 #pragma region Includes
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
 
 class SVImageInfoClass;
+struct SVMatroxBufferCreateStruct;
+struct MatroxBufferChildDataStruct;
+
+
+namespace SvStl
+{
+class MessageContainer;
+typedef std::vector<MessageContainer> MessageContainerVector;
+}
 
 namespace SvIe
 {

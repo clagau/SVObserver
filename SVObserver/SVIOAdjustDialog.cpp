@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 
-#include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

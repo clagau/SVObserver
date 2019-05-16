@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "Definitions/ObjectDefines.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVFormulaEditorPage.h"

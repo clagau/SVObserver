@@ -5,10 +5,11 @@
 //* .Module Name     : SVLptExports
 //******************************************************************************
 
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVLptIOExports.h"
 #include "SVLptIOImpl.h"
-#include "SVIOLibrary/SVIOParameterEnum.h"
+#pragma endregion Includes
 
 long g_lRefCount = 0;
 SVLptIOImpl g_Lpt;

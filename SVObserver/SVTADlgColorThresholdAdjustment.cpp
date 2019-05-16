@@ -12,15 +12,15 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorThresholdAdjustment.h"
-
-#include "Tools/SVColorTool.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Operators/SVColorThreshold.h"
+#include "Tools/SVColorTool.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -29,6 +29,8 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+//This comment is to avoid that the SVColorToolClass include is marked as not required due to forward declaration from a base class
 
 static const GUID upperThresholdID[SvDef::BandEnum::BandNumber] = {SVBand0UpperThresholdObjectGuid, SVBand1UpperThresholdObjectGuid, SVBand2UpperThresholdObjectGuid};
 static const GUID lowerThresholdID[SvDef::BandEnum::BandNumber] = {SVBand0LowerThresholdObjectGuid, SVBand1LowerThresholdObjectGuid, SVBand2LowerThresholdObjectGuid};

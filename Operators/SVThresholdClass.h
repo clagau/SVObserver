@@ -14,7 +14,9 @@
 #pragma region Incudes
 #include <mil.h>
 #include "SVUnaryImageOperatorClass.h"
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Incudes
 
 namespace SvOp
@@ -45,7 +47,7 @@ public:
 protected:
 	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SVMatroxIdentifier m_histResultID = M_NULL;
+	__int64 m_histResultID = M_NULL;
 	std::vector<long>  m_HistValueArray;
 	int    m_histValueArraySize;
 	__int64 m_pixelNumber;

@@ -21,23 +21,23 @@ SVMatroxCommandDataImage::SVMatroxCommandDataImage()
 {
 }
 
-SVMatroxCommandDataImage::SVMatroxCommandDataImage( const SVMatroxBufferCreateStruct& p_rCreateData )
+SVMatroxCommandDataImage::SVMatroxCommandDataImage( const SVMatroxBufferCreateStruct& rCreateData )
 : SVCommandDataImage::SVCommandDataInterface(), m_Buffer()
 {
-	SVMatroxBufferInterface::Create( m_Buffer, p_rCreateData );
+	SVMatroxBufferInterface::Create( m_Buffer, rCreateData );
 }
 
-SVMatroxCommandDataImage::SVMatroxCommandDataImage( const SVMatroxBuffer& p_rBuffer, bool p_ReadOnly )
-: SVCommandDataImage::SVCommandDataInterface( p_ReadOnly ), m_Buffer()
+SVMatroxCommandDataImage::SVMatroxCommandDataImage( const SVMatroxBuffer& rBuffer, bool readOnly )
+: SVCommandDataImage::SVCommandDataInterface( readOnly ), m_Buffer()
 {
-	SVMatroxBufferInterface::Create( m_Buffer, p_rBuffer );
-	SVMatroxBufferInterface::CopyBuffer( m_Buffer, p_rBuffer );
+	SVMatroxBufferInterface::Create( m_Buffer, rBuffer );
+	SVMatroxBufferInterface::CopyBuffer( m_Buffer, rBuffer );
 }
 
-SVMatroxCommandDataImage::SVMatroxCommandDataImage( const SVByteVector& p_rData, bool p_ReadOnly )
-: SVCommandDataImage::SVCommandDataInterface( p_ReadOnly ), m_Buffer()
+SVMatroxCommandDataImage::SVMatroxCommandDataImage(const std::vector<unsigned char>& rData, bool readOnly )
+: SVCommandDataImage::SVCommandDataInterface( readOnly ), m_Buffer()
 {
-	SetData( p_rData );
+	SetData(rData);
 }
 
 SVMatroxCommandDataImage::~SVMatroxCommandDataImage()
@@ -45,16 +45,16 @@ SVMatroxCommandDataImage::~SVMatroxCommandDataImage()
 	m_Buffer.clear();
 }
 
-HRESULT SVMatroxCommandDataImage::GetData( SVByteVector& p_rData ) const
+HRESULT SVMatroxCommandDataImage::GetData(std::vector<unsigned char>& rData) const
 {
 	HBITMAP l_Bitmap = nullptr;
 	HRESULT l_Status = Convert( m_Buffer, l_Bitmap );
 
-	p_rData.clear();
+	rData.clear();
 
 	if( S_OK == l_Status )
 	{
-		l_Status = SVImageConvertorGDI::BitmapToByteVector( l_Bitmap, p_rData );
+		l_Status = SVImageConvertorGDI::BitmapToByteVector(l_Bitmap, rData);
 	}
 
 	if( nullptr != l_Bitmap )
@@ -65,7 +65,7 @@ HRESULT SVMatroxCommandDataImage::GetData( SVByteVector& p_rData ) const
 	return S_OK;
 }
 
-HRESULT SVMatroxCommandDataImage::SetData( const SVByteVector& p_rData )
+HRESULT SVMatroxCommandDataImage::SetData(const std::vector<unsigned char>& rData)
 {
 	HRESULT l_Status = S_OK;
 
@@ -73,7 +73,7 @@ HRESULT SVMatroxCommandDataImage::SetData( const SVByteVector& p_rData )
 	{
 		HBITMAP l_Bitmap = nullptr;
 
-		l_Status = SVImageConvertorGDI::ByteVectorToBitmap( p_rData, l_Bitmap );
+		l_Status = SVImageConvertorGDI::ByteVectorToBitmap(rData, l_Bitmap);
 
 		if( S_OK == l_Status )
 		{

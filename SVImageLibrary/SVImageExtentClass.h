@@ -14,7 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "Definitions/SVExtentEnums.h"
 #include "SVExtentFigureStruct.h"
 #include "SVExtentOffsetStruct.h"
 #include "SVExtentLineStruct.h"

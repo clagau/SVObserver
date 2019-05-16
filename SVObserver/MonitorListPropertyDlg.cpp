@@ -16,6 +16,7 @@
 #include "Definitions/GlobalConst.h"
 #include "RemoteMonitorListController.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
 enum {IDC_MONITOR_PROPERTY_TREE = 100};

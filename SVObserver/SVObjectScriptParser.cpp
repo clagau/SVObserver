@@ -11,9 +11,6 @@
 
 #include "stdafx.h"
 #include "SVObjectScriptParser.h"
-#include "SVParserProgressStruct.h"
-#include "Definitions/SVUserMessage.h"
-#include "CameraLibrary/SVDeviceParams.h"
 
 unsigned long SVObjectScriptParserClass::GetParserHandle()
 {

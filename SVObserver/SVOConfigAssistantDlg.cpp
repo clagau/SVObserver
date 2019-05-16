@@ -37,6 +37,7 @@
 #include "SVIPDoc.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVMessage/SVMessage.h"
+#include "TriggerInformation/SVIMTypeInfoStruct.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "SVInspectionImporter.h"
 #include "SVImportProgress.h"

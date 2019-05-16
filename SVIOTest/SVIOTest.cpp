@@ -9,13 +9,14 @@
 // * .Check In Date   : $Date:   01 Oct 2013 09:21:32  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
-#include "SVIOTEST.h"
-#include "SVIOTESTDlg.h"
+#include "SVIOTest.h"
+#include "SVIOTestDlg.h"
 #include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -10,13 +10,11 @@
 
 //Moved to precompiled header: #include <future>
 //Moved to precompiled header: #include <queue>
+//Moved to precompiled header: #include <boost/log/trivial.hpp>
 
 #include "SharedMemoryAccess.h"
-
-#include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
 namespace SvOgw

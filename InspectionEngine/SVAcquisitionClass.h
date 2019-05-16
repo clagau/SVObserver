@@ -129,7 +129,7 @@ public:
 	virtual int GetBufferFormat() const override;
 
 	virtual SvTrc::IImagePtr GetNextBuffer() override;
-	virtual HRESULT UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick) override;
+	virtual HRESULT UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick) override;
 
 	SVHANDLE m_hDigitizer;
 	BSTR m_LastImage;

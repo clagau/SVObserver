@@ -13,6 +13,9 @@
 #pragma region Includes
 #include "SVPolarTransform.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

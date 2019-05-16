@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVResult.h"
+#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

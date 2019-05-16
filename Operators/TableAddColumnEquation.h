@@ -12,6 +12,11 @@
 #include "SVValueObjectLibrary\DoubleSortValueObject.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+class SVLongValueObjectClass;
+}
+
 namespace SvOp
 {
 

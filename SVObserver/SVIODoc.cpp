@@ -15,11 +15,10 @@
 
 #include "SVIODoc.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInfoStructs.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVConfigurationObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVOutputObjectList.h"

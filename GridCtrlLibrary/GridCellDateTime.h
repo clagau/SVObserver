@@ -25,7 +25,6 @@
 
 #pragma region Includes
 #include "GridCell.h"
-#include "afxdtctl.h"	// for CDateTimeCtrl
 #pragma endregion Includes
 
 namespace SvGcl

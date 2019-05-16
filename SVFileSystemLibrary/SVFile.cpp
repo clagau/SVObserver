@@ -77,11 +77,11 @@ UINT SVFile::Read( void* lpBuf, UINT nCount )
 	return l_BytesRead;
 }
 
-HRESULT SVFile::ReadContents( SVByteVector& p_rContents )
+HRESULT SVFile::ReadContents(std::vector<unsigned char>& rContents)
 {
 	HRESULT l_Status = S_OK;
 
-	p_rContents.clear();
+	rContents.clear();
 
 	if( nullptr != m_pFile )
 	{
@@ -89,9 +89,9 @@ HRESULT SVFile::ReadContents( SVByteVector& p_rContents )
 
 		unsigned long strSize = static_cast< unsigned long >( GetLength() );
 
-		p_rContents.resize( strSize );
+		rContents.resize( strSize );
 
-		l_BytesRead = Read( &( p_rContents[ 0 ] ), strSize );
+		l_BytesRead = Read( &( rContents[ 0 ] ), strSize );
 
 		if( l_BytesRead != strSize )
 		{
@@ -121,15 +121,15 @@ HRESULT SVFile::Write( const void* lpBuf, UINT nCount )
 	return l_Status;
 }
 
-HRESULT SVFile::WriteContents( const SVByteVector& p_rContents )
+HRESULT SVFile::WriteContents(const std::vector<unsigned char>& rContents)
 {
 	HRESULT l_Status( S_OK );
 
 	if( nullptr != m_pFile )
 	{
-		unsigned long strSize = static_cast< unsigned long >( p_rContents.size() );
+		unsigned long strSize = static_cast< unsigned long >( rContents.size() );
 
-		l_Status = Write( &( p_rContents[ 0 ] ), strSize );
+		l_Status = Write( &( rContents[ 0 ] ), strSize );
 	}
 	else
 	{

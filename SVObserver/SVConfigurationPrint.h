@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVInfoStructs.h"
+#include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 #pragma region Declarations

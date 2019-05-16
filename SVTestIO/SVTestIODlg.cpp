@@ -9,13 +9,13 @@
 //* .Check In Date   : $Date:   16 Jul 2013 13:22:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <algorithm>
-#include "SVTestIO.h"
 #include "SVTestIODlg.h"
+#pragma endregion Includes
 
-// SVTestIODlg dialog
 
 IMPLEMENT_DYNAMIC(SVTestIODlg, CDialog)
 

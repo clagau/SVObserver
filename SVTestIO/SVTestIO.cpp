@@ -9,8 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 18:27:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTestIO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDrawObject.h"
-#include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -33,7 +33,7 @@
     <ClInclude Include="Resource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="MonitorLIstDlg.h">
+    <ClInclude Include="MonitorListDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MonEntryDlg.h">
@@ -53,7 +53,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="MonitorLIstDlg.cpp">
+    <ClCompile Include="MonitorListDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="MonEntryDlg.cpp">

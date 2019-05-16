@@ -16,7 +16,7 @@
 #pragma region Declarations
 struct MatroxBufferChildDataStruct;
 struct MatroxImageProps;
-class SVMatroxBufferCreateStruct;
+struct SVMatroxBufferCreateStruct;
 class SVMatroxBufferCreateChildStruct;
 class SVMatroxBuffer;
 

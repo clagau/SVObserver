@@ -15,7 +15,7 @@
 #include "SVShiftTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #pragma endregion Includes

@@ -12,11 +12,16 @@
 #pragma once
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "SVImageAnalyzerClass.h"
 #include "Operators/TableObject.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVLibrary/SVTemplate.h"
 #pragma endregion Includes
 
@@ -35,7 +40,7 @@ namespace SvAo
 struct SVBlobFeatureConstant
 {
 	SVBlobSelectionEnum  MILFeatureDef;
-	GUID&   rEmbeddedID;
+	const GUID&   rEmbeddedID;
 	int     NewStringResourceID;
 };
 
@@ -161,8 +166,8 @@ public:
 /*- data. ---------------------------------------------------------------------*/
 	std::vector<long> m_SortVector;
 
-	SVMatroxIdentifier			m_BlobContextID = M_NULL;
-	SVMatroxIdentifier			m_ResultBufferID = M_NULL;
+	__int64			m_BlobContextID = M_NULL;
+	__int64			m_ResultBufferID = M_NULL;
 
 	SvVol::SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 
@@ -189,8 +194,7 @@ private:
 	void init();
 	void CreateArray();
 	
-	std::string m_PreviousFeaturesEnabled
-		;
+	std::string m_PreviousFeaturesEnabled;
 	static const int m_defaultResultNumberOfBlobsLowFail = 0;
 	static const int m_defaultResultNumberOfBlobsLowWarn = 0;
 	static const int m_defaultResultNumberOfBlobsHighFail = 9999;

@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary\SVObjectLibrary.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVValueObjectLibrary\LinkedValue.h"
 #pragma endregion Includes

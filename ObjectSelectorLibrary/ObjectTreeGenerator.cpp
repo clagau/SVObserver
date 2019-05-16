@@ -13,11 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "ObjectTreeGenerator.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "Definitions/ObjectDefines.h"
-#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVMFCControls/ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"

@@ -22,8 +22,9 @@
 
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
+#include "SVPPQObject.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
@@ -498,7 +499,11 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 
 		if( S_OK == l_hr )
 		{
-			TheSVObserverApp.GetIODoc()->SetModifiedFlag();
+			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
+			if(nullptr != pIODoc)
+			{
+				pIODoc->SetModifiedFlag();
+			}
 			if( IsEmpty() )
 			{
 				TheSVObserverApp.HideIOTab( SVRemoteOutputsViewID );

@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "afxwin.h"
 #include "RemoteMonitorList.h"
 #pragma endregion Includes
 

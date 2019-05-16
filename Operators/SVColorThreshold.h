@@ -14,7 +14,9 @@
 #include "Definitions/BandEnums.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Operators/SVOperator.h"
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

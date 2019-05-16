@@ -10,7 +10,6 @@
 //Moved to precompiled header: #include <boost\function.hpp>
 #include "IObjectClass.h"
 #include "IValueObject.h"
-#include "ISVImage.h"
 #include "SVProtobuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"

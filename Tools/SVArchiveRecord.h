@@ -6,11 +6,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectReference.h"
+#include "ArchiveMethodEnum.h"
+#include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
-#include "ArchiveMethodEnum.h"
-#include "SVTool.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
 #include "TriggerRecordController/IImage.h"
 #pragma endregion Includes

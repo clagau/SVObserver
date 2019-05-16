@@ -10,6 +10,10 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes 
+#include "resource.h"
+#pragma endregion Includes
+
 #define INFO_BUFFER_SIZE 32767
 
 class SVAccessClass;

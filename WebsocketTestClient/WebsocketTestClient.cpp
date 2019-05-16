@@ -23,7 +23,6 @@
 
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVProtoBuf\SVRC.h"
-#include "SVHttpLibrary/WebsocketClientFactory.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVLogLibrary/Logging.h"

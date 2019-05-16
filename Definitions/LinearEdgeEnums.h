@@ -9,7 +9,6 @@
 #pragma once
 
 #pragma region Includes
-#include "Windef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -34,7 +33,7 @@ namespace SvDef
 	};// end SV_EDGECONTROL_POLARISATION_ENUM
 
 	  // Add String for SVEnumerateValueObjectClass
-	const TCHAR* const cPolarisationEnums = _T("Any=3,Negative=2,Positive=1");
+	constexpr char* cPolarisationEnums = _T("Any=3,Negative=2,Positive=1");
 
 	enum SV_EDGECONTROL_EDGESELECT_ENUM
 	{
@@ -45,7 +44,7 @@ namespace SvDef
 	};// end SV_EDGECONTROL_EDGESELECT_ENUM
 
 	  // Add String for SVEnumerateValueObjectClass
-	const TCHAR* const cEdgeSelectEnums = _T("First=32768,Last=8192,This=4096");
+	constexpr char* cEdgeSelectEnums = _T("First=32768,Last=8192,This=4096");
 
 	enum SV_EDGECONTROL_POSITION_ENUM
 	{
@@ -57,7 +56,7 @@ namespace SvDef
 	};// end SV_EDGECONTROL_POSITION_ENUM
 
 	  // Add String for SVEnumerateValueObjectClass
-	const TCHAR* const cPositionEnums = _T("Start=128,Center=64,End=32,Offset=16");
+	constexpr char* cPositionEnums = _T("Start=128,Center=64,End=32,Offset=16");
 
 	enum SV_EDGECONTROL_DIRECTION_ENUM
 	{
@@ -67,5 +66,5 @@ namespace SvDef
 	};// end SV_EDGECONTROL_DIRECTION_ENUM
 
 	  // Add String for SVEnumerateValueObjectClass
-	const TCHAR* const cDirectionEnums = _T("Undefined=0,Tail to Head=512,Head to Tail=256");
+	constexpr char* cDirectionEnums = _T("Undefined=0,Tail to Head=512,Head to Tail=256");
 } //namespace SvDef

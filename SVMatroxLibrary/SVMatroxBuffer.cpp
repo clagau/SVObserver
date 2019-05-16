@@ -75,9 +75,9 @@ const SVMatroxBuffer& SVMatroxBuffer::operator=( const SVMatroxBuffer& p_rBuf )
 	return *this;
 }
 
-SVMatroxIdentifier SVMatroxBuffer::GetIdentifier() const
+__int64 SVMatroxBuffer::GetIdentifier() const
 {
-	SVMatroxIdentifier l_Identifier = 0;
+	__int64 l_Identifier = 0;
 
 	if(nullptr != m_BufferPtr)
 	{

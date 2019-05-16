@@ -15,6 +15,8 @@
 #include "SVImagePolarTransform.h"
 
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVEvaluateCenterXClass.h"
 #include "SVEvaluateCenterYClass.h"

@@ -17,7 +17,6 @@
 #include "SVOResource/resource.h"
 #include "SVValueObjectClass.h"
 #include "ObjectInterfaces/IEnumerateValueObject.h"
-#include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
 namespace SvVol

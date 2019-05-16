@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
 //Moved to precompiled header: #include <boost\shared_ptr.hpp>
-#include "resource.h"
 #include "SVDisplayPicture.h"
 #include "SVROIList.h"
 #include "RectangleObject.h"

@@ -21,7 +21,6 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVXMLLibrary\SVConfigurationTags.h"
 #include "SVUtilityLibrary\ZipHelper.h"
-#include "SVSystemLibrary\SVEncodeDecodeUtilities.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVObserver.h"

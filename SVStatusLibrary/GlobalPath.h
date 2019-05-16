@@ -5,12 +5,7 @@
 #pragma once
 
 #pragma region Includes
-#include "stdafx.h"
-//Moved to precompiled header: #include <windows.h>
-//Moved to precompiled header: #include <winnt.h>
-
 #pragma endregion Includes
-
 
 namespace SvStl
 {

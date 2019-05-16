@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVAnalyzerResultDlg.h"
+#include "SVOResource/resource.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

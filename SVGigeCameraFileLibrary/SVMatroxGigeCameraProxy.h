@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #pragma endregion Includes

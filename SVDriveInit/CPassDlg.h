@@ -11,8 +11,9 @@
 
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// CCPassDlg dialog
+#pragma region Includes
+#include "resource.h"
+#pragma endregion Includes
 
 class CCPassDlg : public CDialog
 {

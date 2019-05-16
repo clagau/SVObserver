@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVImageArithmetic.h"
+#include "Definitions/ImageOperatorEnums.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -19,6 +20,9 @@
 #include "Tools/SVTool.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary/SVPointValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

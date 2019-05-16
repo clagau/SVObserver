@@ -17,9 +17,8 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <string>
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
+#include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVImageLibrary\SVImageInfoClass.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes
 
 namespace SvOp

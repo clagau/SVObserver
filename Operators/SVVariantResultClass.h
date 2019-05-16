@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVResult.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma region Includes
 
 namespace SvOp

@@ -16,9 +16,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
-
-
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes

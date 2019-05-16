@@ -12,10 +12,11 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVMatroxBufferInterface.h"
+#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxImageBuffer.h"
 #include "SVMatroxImageChildBuffer.h"
 #include "SVSystemLibrary/SVImageConvertorGDI.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
@@ -1398,7 +1399,7 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, cons
 			{
 				long l_DataFormat = 0;
 
-				SVMatroxIdentifier parentId = M_NULL;
+				__int64 parentId = M_NULL;
 				MbufInquire(p_rBuffer.GetIdentifier(), M_PARENT_ID, &parentId);
 
 				if (S_OK == SVMatroxBufferInterface::Get(p_rBuffer, SVDataFormat, l_DataFormat))
@@ -1669,7 +1670,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 }
 
 
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, __int64 p_From)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1698,7 +1699,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, SVMatroxIdent
 	return l_Code;
 }
 
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom)
+HRESULT SVMatroxBufferInterface::CopyBuffer(__int64 p_To, const SVMatroxBuffer& p_rFrom)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2265,11 +2266,11 @@ HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo,
 
 */
 HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf,
-	SVMatroxInt p_lXStart,
-	SVMatroxInt p_lYStart,
-	SVMatroxInt p_lXEnd,
-	SVMatroxInt p_lYEnd,
-	SVMatroxInt& p_rlNbrPixels,
+	long long p_lXStart,
+	long long p_lYStart,
+	long long p_lXEnd,
+	long long p_lYEnd,
+	long long& p_rlNbrPixels,
 	void* p_pUserArray)
 {
 	HRESULT l_Code(S_OK);
@@ -2489,7 +2490,7 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
 */
 HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
 	SVMatroxBufferInfoEnum p_eWhat,
-	const SVMatroxInt p_rlValue)
+	const long long p_rlValue)
 {
 	return Set(p_rBuf, p_eWhat, static_cast<const double>(p_rlValue));
 }
@@ -2741,7 +2742,7 @@ HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
 	return l_Code;
 }
 
-void SVMatroxBufferInterface::createImageBufferPtr(SVMatroxBuffer& rBuffer, SVMatroxIdentifier MatroxID, const std::string& rCreatorName)
+void SVMatroxBufferInterface::createImageBufferPtr(SVMatroxBuffer& rBuffer, __int64 MatroxID, const std::string& rCreatorName)
 {
 	if (!rBuffer.empty())
 	{

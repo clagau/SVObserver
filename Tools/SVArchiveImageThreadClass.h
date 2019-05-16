@@ -8,10 +8,9 @@
 #pragma region Inlcudes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <vector>
-#include "InspectionEngine/SVImageClass.h"
-#include "SVMatroxLibrary\SVMatroxBuffer.h"
-#include "SVLibrary\SVTemplate.h"
-
+#include "SVImageLibrary/SVImageInfoClass.h"
+#include "SVLibrary/SVTemplate.h"
+#include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -32,7 +31,7 @@ public:
 		SVArchiveRecord* pRecord = nullptr;
 
 		// maintained by the thread class
-		SvTl::SVTimeStamp m_Timestamp = 0;
+		double m_Timestamp = 0;
 
 		BufferInfo() {}
 

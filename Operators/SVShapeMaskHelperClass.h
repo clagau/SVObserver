@@ -16,6 +16,9 @@
 #include "SVMaskShape.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

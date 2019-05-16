@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTestAcquisitionSubsystem.h"
+#pragma endregion Includes
 
 class SVTestGigeAcquisitionSubsystem : public SVTestAcquisitionSubsystem
 {

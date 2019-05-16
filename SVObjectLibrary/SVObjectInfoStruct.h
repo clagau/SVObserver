@@ -12,10 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/IObjectClass.h"
-#include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
-
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectReference.h"
 #pragma endregion

@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:35:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVInObjectInfoStruct.h"
 #include "SVObjectClass.h"
-#include "SVObjectManagerClass.h"
+#pragma endregion Includes
 
 #pragma region Declarations
 #ifdef _DEBUG

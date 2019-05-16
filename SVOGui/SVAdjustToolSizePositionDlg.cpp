@@ -21,6 +21,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -9,9 +9,12 @@
 // * .Check In Date   : $Date:   16 Jul 2013 13:22:16  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVTestIO.h"
 #include "SVTestIOExports.h"
+#pragma endregion Includes
+
 extern CSVTestIOApp theApp;
 
 HRESULT WINAPI SVCreate()

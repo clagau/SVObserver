@@ -5,13 +5,15 @@
 //*****************************************************************************
 /// File with messages used in several places in SharedMemoryLib
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include "MesManHelper.h"
 #include "Definitions\StringTypeDef.h"
-#include "SVUtilityLibrary\SVMetrics.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
+#pragma endregion Includes
 
 void MesManHelper::ThrowCreateFileMappingFailed(LPCSTR MapFileName, SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 {

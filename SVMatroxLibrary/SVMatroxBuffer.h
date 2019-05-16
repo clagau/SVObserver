@@ -44,7 +44,7 @@ public:
 
 	bool IsParent( const SVMatroxBuffer& p_rParent ) const;
 
-	SVMatroxIdentifier GetIdentifier() const;
+	__int64 GetIdentifier() const;
 
 protected:
 	SVMatroxBufferPtr m_BufferPtr;

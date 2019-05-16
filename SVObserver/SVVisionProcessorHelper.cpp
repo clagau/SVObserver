@@ -15,13 +15,10 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVVisionProcessorHelper.h"
 
-#include "Definitions/SVIMCommand.h"
-#include "SVSystemLibrary/SVVersionInfo.h"
-
 #include "RemoteCommand.h"
+#include "RemoteMonitorListController.h"
 #include "SVConfigurationObject.h"
 #include "SVConfigXMLPrint.h"
-#include "SVGlobal.h"
 #include "SVObserver.h"
 #include "SVRemoteControlConstants.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -32,8 +29,8 @@
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/SVRC.h"
+#include "SVRPCLibrary/RPCServer.h"
 #pragma endregion Includes
 
 #pragma region Declarations

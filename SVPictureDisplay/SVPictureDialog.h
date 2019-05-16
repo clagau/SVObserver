@@ -11,10 +11,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVDisplayPicture.h"
 //Moved to precompiled header: #include <map>
-#include "afxwin.h"
-#include "afxcmn.h"
+#include "SVDisplayPicture.h"
+#include "resource.h"
 #pragma endregion Includes
 
 class SVPictureDialog : public CDialog

@@ -12,11 +12,13 @@
 #pragma once
 
 #pragma region Includes
+#include "resource.h"
 #include "SVMaskEditorWnd.h"
+#include "SVLibrary\SVGraphix.h"
+#include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes
 
-/////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorDialogClass dialog
+class SVGraphixDrawObjectClass;
 
 class SVMaskEditorDialogClass : public CDialog
 {
@@ -95,7 +97,7 @@ public:
 
 protected:
 
-	SVMatroxIdentifier     milDisplay = M_NULL;
+	__int64     milDisplay = 0LL;
 	SVMatroxBuffer      milDisplayBuffer;
     SVMatroxBuffer      milMaskBuffer;
     SVMatroxBuffer      milImageBuffer;

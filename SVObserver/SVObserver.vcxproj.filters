@@ -138,9 +138,6 @@
     <ClCompile Include="SVMultiDocTemplate.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectCommandDataJson.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectScriptParser.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -659,9 +656,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMultiDocTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectCommandDataJson.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectScriptParser.h">

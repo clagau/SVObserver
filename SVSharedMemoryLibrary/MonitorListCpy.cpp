@@ -2,10 +2,7 @@
 #include "MonitorEntry.h"
 #include "MonitorListCpy.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma warning (push ,2)
 #include "SVPRotobuf\MonitorListStore.pb.h"

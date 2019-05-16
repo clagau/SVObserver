@@ -14,8 +14,6 @@
 #include "SVTADlgRotationPage.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "Operators/SVEvaluate.h"
-#include "Operators/SVImageTransform.h"
-
 #pragma endregion
 
 #ifdef _DEBUG

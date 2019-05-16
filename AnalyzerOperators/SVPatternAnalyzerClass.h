@@ -11,14 +11,15 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
 #include "ObjectInterfaces/IPatternAnalyzer.h"
 #include "SVLibrary/SVTemplate.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -149,8 +150,8 @@ private:
 
 	HRESULT CreateModelHandle(long modelWidth, long modelHeight);
 private:
-	SVMatroxIdentifier m_patContextHandle = M_NULL;		// Model Identifer Handle
-	SVMatroxIdentifier m_patResultHandle = M_NULL;	// Pattern matching result buffer identifier handle
+	__int64 m_patContextHandle = M_NULL;		// Model Identifer Handle
+	__int64 m_patResultHandle = M_NULL;	// Pattern matching result buffer identifier handle
 
 	bool m_bAngleAccuracy;
 

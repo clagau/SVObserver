@@ -11,10 +11,15 @@
 #pragma once
 
 #pragma region Includes
+#include "SVMatroxLibrary/SVMatroxOcr.h"
 #include "SVSystemLibrary/SVLockableClass.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVOCVBlobRecord.h"
 #include "SVResult.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -103,7 +108,7 @@ public:
 
 	//	MIL object ids used in the OCR/OCV operation
 	SVMatroxOcr m_milFontID;
-	SVMatroxIdentifier m_milResultID = M_NULL;
+	__int64 m_milResultID = 0LL;
 	long m_lFontStringLength;
 	long m_lFontStringLengthMax;
 	long m_lMatchStringLength;

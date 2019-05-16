@@ -17,6 +17,7 @@
 #include "SVGigeCameraFileLibrary/SVMatroxGigeCameraProxy.h"
 #pragma endregion Includes
 
+class SVLongValueDeviceParam;
 class SVMatroxGigeCameraProxy;
 
 namespace SvIe

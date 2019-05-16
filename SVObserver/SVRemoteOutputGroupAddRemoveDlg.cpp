@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/StringTypeDef.h"

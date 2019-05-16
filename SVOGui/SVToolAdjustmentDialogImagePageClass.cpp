@@ -11,9 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <afxctl.h>
 #include "SVToolAdjustmentDialogImagePageClass.h"
-#include "SVObjectLibrary\SVClsIDs.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

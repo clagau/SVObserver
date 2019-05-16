@@ -11,13 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "TriggerInformation/SVInternalTrigger.h"
 #include "TriggerHandling/TriggerDispatcherCollection.h"
-#include "TriggerInformation/IODeviceBase.h"
-
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileCamera.h"
+#pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
 

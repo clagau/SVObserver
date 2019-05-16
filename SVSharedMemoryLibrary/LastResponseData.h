@@ -8,10 +8,10 @@
 
 #pragma once
 
-
-#include "ShareEvents.h"
+#pragma region Includes
 #include "MLProduct.h"
-#include <mutex>
+#pragma endregion Includes
+
 //!LastResponseData holds the data of the last response 
 namespace SvSml
 {

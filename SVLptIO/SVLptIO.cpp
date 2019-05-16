@@ -4,9 +4,12 @@
 //******************************************************************************
 //* .Module Name     : SVLptIO
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLptIO.h"
-#include "LPT/SVLptDll.h"
+#include "SVLPTIO/LPT/SVLptDll.h"
+#pragma endregion Includes
 
 #pragma comment(lib, "SVLpt")
 

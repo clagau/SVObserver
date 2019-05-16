@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVOutputObject.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes

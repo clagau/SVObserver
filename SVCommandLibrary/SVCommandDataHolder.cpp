@@ -25,13 +25,13 @@ SVCommandDataHolder::SVCommandDataHolder()
 {
 }
 
-SVCommandDataHolder::SVCommandDataHolder( const SVNameDataMap& p_rData )
-: m_Data( p_rData )
+SVCommandDataHolder::SVCommandDataHolder( const SVNameDataMap& rData )
+: m_Data( rData )
 {
 }
 
-SVCommandDataHolder::SVCommandDataHolder( const SVCommandDataHolder& p_rObject )
-: m_Data( p_rObject.m_Data )
+SVCommandDataHolder::SVCommandDataHolder( const SVCommandDataHolder& rObject )
+: m_Data( rObject.m_Data )
 {
 }
 
@@ -40,11 +40,11 @@ SVCommandDataHolder::~SVCommandDataHolder()
 	clear();
 }
 
-const SVCommandDataHolder& SVCommandDataHolder::operator=( const SVCommandDataHolder& p_rObject )
+const SVCommandDataHolder& SVCommandDataHolder::operator=( const SVCommandDataHolder& rObject )
 {
-	if( this != &p_rObject )
+	if( this != &rObject )
 	{
-		m_Data = p_rObject.m_Data;
+		m_Data = rObject.m_Data;
 	}
 
 	return *this;
@@ -67,7 +67,7 @@ void SVCommandDataHolder::clear()
 
 SVCommandDataHolder::SVNameDataTypeMap SVCommandDataHolder::GetDataInformation() const
 {
-	SVNameDataTypeMap l_Info;
+	SVNameDataTypeMap info;
 
 	SVNameDataMap::const_iterator l_Iter = m_Data.begin();
 
@@ -75,24 +75,24 @@ SVCommandDataHolder::SVNameDataTypeMap SVCommandDataHolder::GetDataInformation()
 	{
 		if( nullptr == l_Iter->second )
 		{
-			l_Info[ l_Iter->first ] = SV_COMMAND_DATA_TYPE_UNKNOWN;
+			info[ l_Iter->first ] = SV_COMMAND_DATA_TYPE_UNKNOWN;
 		}
 		else
 		{ 
-			l_Info[ l_Iter->first ] = l_Iter->second->GetDataType();
+			info[ l_Iter->first ] = l_Iter->second->GetDataType();
 		}
 
 		++l_Iter;
 	}
 
-	return l_Info;
+	return info;
 }
 
-unsigned long SVCommandDataHolder::GetDataType( const _bstr_t& p_rName ) const
+unsigned long SVCommandDataHolder::GetDataType( const _bstr_t& rName ) const
 {
 	unsigned long l_Type = SV_COMMAND_DATA_TYPE_UNKNOWN;
 
-	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(p_rName) );
+	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
@@ -105,19 +105,19 @@ unsigned long SVCommandDataHolder::GetDataType( const _bstr_t& p_rName ) const
 	return l_Type;
 }
 
-HRESULT SVCommandDataHolder::GetData( const _bstr_t& p_rName, SVCommandDataFacadePtr& p_rData ) const
+HRESULT SVCommandDataHolder::GetData( const _bstr_t& rName, SVCommandDataFacadePtr& rData ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rData.reset();
+	rData.reset();
 
-	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(p_rName) );
+	SVNameDataMap::const_iterator l_Iter = m_Data.find( SvUl::createStdString(rName) );
 
 	if( l_Iter != m_Data.end() )
 	{
 		if(nullptr != l_Iter->second)
 		{
-			p_rData = l_Iter->second;
+			rData = l_Iter->second;
 		}
 		else
 		{
@@ -132,20 +132,20 @@ HRESULT SVCommandDataHolder::GetData( const _bstr_t& p_rName, SVCommandDataFacad
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandDataHolder& p_rData ) const
+HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& rName, SVCommandDataHolder& rData ) const
 {
-	p_rData.clear();
+	rData.clear();
 
-	SVCommandDataFacadePtr l_ContainerPtr;
-	HRESULT l_Status = GetData( p_rName, l_ContainerPtr );
+	SVCommandDataFacadePtr containerPtr;
+	HRESULT l_Status = GetData( rName, containerPtr );
 
-	if( nullptr != l_ContainerPtr )
+	if( nullptr != containerPtr )
 	{
-		SVCommandDataContainer::SVCommandDataInterface* l_pContainer = dynamic_cast< SVCommandDataContainer::SVCommandDataInterface* >( l_ContainerPtr.get() );
+		SVCommandDataContainer::SVCommandDataInterface* l_pContainer = dynamic_cast< SVCommandDataContainer::SVCommandDataInterface* >( containerPtr.get() );
 
 		if( nullptr != l_pContainer )
 		{
-			l_Status = l_pContainer->GetData( p_rData );
+			l_Status = l_pContainer->GetData( rData );
 		}
 		else
 		{
@@ -163,12 +163,12 @@ HRESULT SVCommandDataHolder::GetContainer( const _bstr_t& p_rName, SVCommandData
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData ) const
+HRESULT SVCommandDataHolder::GetValue( const _bstr_t& rName, VARIANT& rData ) const
 {
-	::VariantClear( &p_rData );
+	::VariantClear( &rData );
 
 	SVCommandDataFacadePtr l_ValuePtr;
-	HRESULT l_Status = GetData( p_rName, l_ValuePtr );
+	HRESULT l_Status = GetData( rName, l_ValuePtr );
 
 	if(nullptr != l_ValuePtr)
 	{
@@ -182,7 +182,7 @@ HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData 
 
 			if( S_OK == l_Status )
 			{
-				p_rData = l_Variant.Detach();
+				rData = l_Variant.Detach();
 			}
 		}
 		else
@@ -201,12 +201,12 @@ HRESULT SVCommandDataHolder::GetValue( const _bstr_t& p_rName, VARIANT& p_rData 
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_rData ) const
+HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& rName, std::vector<unsigned char>& rData ) const
 {
-	p_rData.clear();
+	rData.clear();
 
 	SVCommandDataFacadePtr l_ValuePtr;
-	HRESULT l_Status = GetData( p_rName, l_ValuePtr );
+	HRESULT l_Status = GetData( rName, l_ValuePtr );
 
 	if(nullptr != l_ValuePtr)
 	{
@@ -214,7 +214,7 @@ HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_r
 
 		if( nullptr != l_pValue )
 		{
-			l_Status = l_pValue->GetData( p_rData );
+			l_Status = l_pValue->GetData( rData );
 		}
 		else
 		{
@@ -232,12 +232,12 @@ HRESULT SVCommandDataHolder::GetBlock( const _bstr_t& p_rName, SVByteVector& p_r
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_rData ) const
+HRESULT SVCommandDataHolder::GetImage( const _bstr_t& rName, std::vector<unsigned char>& rData ) const
 {
-	p_rData.clear();
+	rData.clear();
 
 	SVCommandDataFacadePtr l_DataPtr;
-	HRESULT l_Status = GetData( p_rName, l_DataPtr );
+	HRESULT l_Status = GetData( rName, l_DataPtr );
 
 	if(nullptr != l_DataPtr)
 	{
@@ -245,7 +245,7 @@ HRESULT SVCommandDataHolder::GetImage( const _bstr_t& p_rName, SVByteVector& p_r
 
 		if( nullptr != l_pData )
 		{
-			l_Status = l_pData->GetData( p_rData );
+			l_Status = l_pData->GetData( rData );
 		}
 		else
 		{
@@ -282,15 +282,15 @@ HRESULT SVCommandDataHolder::SetData( _bstr_t nameBstr, SVCommandDataFacadePtr& 
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::SetContainer( const _bstr_t& p_rName, const SVCommandDataHolder& p_rData, bool p_ReadOnly )
+HRESULT SVCommandDataHolder::SetContainer( const _bstr_t& rName, const SVCommandDataHolder& rData, bool readOnly )
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_ContainerPtr{ new SVCommandDataContainer(p_rData, p_ReadOnly) };
+	SVCommandDataFacadePtr l_ContainerPtr{ new SVCommandDataContainer(rData, readOnly) };
 
 	if(nullptr != l_ContainerPtr)
 	{
-		l_Status = SetData( p_rName, l_ContainerPtr );
+		l_Status = SetData( rName, l_ContainerPtr );
 	}
 	else
 	{
@@ -300,15 +300,15 @@ HRESULT SVCommandDataHolder::SetContainer( const _bstr_t& p_rName, const SVComma
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::SetValue( const _bstr_t& p_rName, const _variant_t& p_rData, bool p_ReadOnly )
+HRESULT SVCommandDataHolder::SetValue( const _bstr_t& rName, const _variant_t& rData, bool readOnly )
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataValue(p_rData, p_ReadOnly) };
+	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataValue(rData, readOnly) };
 
 	if(nullptr != l_DataPtr)
 	{
-		l_Status = SetData( p_rName, l_DataPtr );
+		l_Status = SetData( rName, l_DataPtr );
 	}
 	else
 	{
@@ -318,15 +318,15 @@ HRESULT SVCommandDataHolder::SetValue( const _bstr_t& p_rName, const _variant_t&
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::SetBlock( const _bstr_t& p_rName, const SVByteVector& p_rData, bool p_ReadOnly )
+HRESULT SVCommandDataHolder::SetBlock( const _bstr_t& rName, const std::vector<unsigned char>& rData, bool readOnly )
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataBlock(p_rData, p_ReadOnly) };
+	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataBlock(rData, readOnly) };
 
 	if(nullptr != l_DataPtr)
 	{
-		l_Status = SetData( p_rName, l_DataPtr );
+		l_Status = SetData( rName, l_DataPtr );
 	}
 	else
 	{
@@ -336,15 +336,15 @@ HRESULT SVCommandDataHolder::SetBlock( const _bstr_t& p_rName, const SVByteVecto
 	return l_Status;
 }
 
-HRESULT SVCommandDataHolder::SetImage( const _bstr_t& p_rName, const SVByteVector& p_rData, bool p_ReadOnly )
+HRESULT SVCommandDataHolder::SetImage( const _bstr_t& rName, const std::vector<unsigned char>& rData, bool readOnly )
 {
 	HRESULT l_Status = S_OK;
 
-	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataImage(p_rData, p_ReadOnly) };
+	SVCommandDataFacadePtr l_DataPtr{ new SVCommandDataImage(rData, readOnly) };
 
 	if(nullptr != l_DataPtr)
 	{
-		l_Status = SetData( p_rName, l_DataPtr );
+		l_Status = SetData( rName, l_DataPtr );
 	}
 	else
 	{

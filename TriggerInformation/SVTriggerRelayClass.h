@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/TriggerBasics.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 

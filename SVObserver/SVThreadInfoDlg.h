@@ -10,12 +10,11 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "afxcmn.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVSystemLibrary\SVThreadManager.h"
 #pragma endregion
 
-// SVThreadInfoDlg dialog
+class SVRPropertyItemCombo;
 
 class SVThreadInfoDlg : public CDialog
 {

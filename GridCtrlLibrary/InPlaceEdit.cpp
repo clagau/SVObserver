@@ -59,7 +59,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "TCHAR.h"
 #include "InPlaceEdit.h"
 #include "GridCtrl.h"
 #pragma endregion Includes

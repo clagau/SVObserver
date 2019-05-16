@@ -14,8 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <map>
-#include "SVClock.h"
-
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 /* // this class is meant to be used like this:
@@ -39,8 +38,8 @@ namespace SvTl
 
 	private:
 		__int64 m_iCount;
-		SvTl::SVTimeStamp m_TotalTime;
-		SvTl::SVTimeStamp m_BeginTime;
+		double m_TotalTime;
+		double m_BeginTime;
 		std::string m_Name;
 
 		friend class SVFunctionProfilerLocal;
@@ -97,7 +96,7 @@ namespace SvTl
 
 	inline void SVFunctionProfiler::End()
 	{
-		SvTl::SVTimeStamp EndTime = SvTl::GetTimeStamp();
+		double EndTime = SvTl::GetTimeStamp();
 		EndTime -= m_BeginTime;
 		m_TotalTime += EndTime;
 	}

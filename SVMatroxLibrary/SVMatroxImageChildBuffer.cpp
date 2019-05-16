@@ -9,12 +9,12 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:18:12  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxImageChildBuffer.h"
 #include "SVMatroxApplicationInterface.h"
-#include "SVMatroxErrorEnum.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
+#pragma endregion Includes
 
 SVMatroxImageChildBuffer::SVMatroxImageChildBuffer()
 : m_ParentPtr(), SVMatroxBufferTemplate()
@@ -23,7 +23,7 @@ SVMatroxImageChildBuffer::SVMatroxImageChildBuffer()
 
 SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 {
-	SVMatroxIdentifier Identifier = GetIdentifier();
+	__int64 Identifier = GetIdentifier();
 	if( 0 != Identifier )
 	{
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
@@ -48,7 +48,7 @@ SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 	m_ParentPtr.reset();
 }
 
-SVMatroxImageChildBuffer::SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName )
+SVMatroxImageChildBuffer::SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, __int64 p_Identifier, const std::string& p_rCreatorName )
 : m_ParentPtr( p_ParentPtr ), SVMatroxBufferTemplate( p_Identifier, p_rCreatorName )
 {
 	SVMatroxResourceMonitor::InsertIdentifier( SVChildBufferID, p_Identifier );

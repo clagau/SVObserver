@@ -17,6 +17,7 @@
 #include "SVTriggerObject.h"
 #include "SVTriggerConstants.h"
 #include "SVTriggerEnums.h"
+#include "SVTriggerInfoStruct.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -103,7 +103,6 @@
     <ClInclude Include="SVPointValueObjectClass.h" />
     <ClInclude Include="SVStringValueObjectClass.h" />
     <ClInclude Include="SVTimerValueObjectClass.h" />
-    <ClInclude Include="SVValueObject.h" />
     <ClInclude Include="SVValueObjectClass.h" />
     <ClInclude Include="SVVariantValueObjectClass.h" />
   </ItemGroup>

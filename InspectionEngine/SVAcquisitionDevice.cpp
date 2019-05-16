@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVAcquisitionDevice.h"
-#include "CameraLibrary/SVDeviceParams.h"
 
 namespace SvIe
 {

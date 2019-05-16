@@ -15,8 +15,6 @@
 #include "SVOResource/resource.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVTimerLibrary/SVClock.h"
-#include "SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*);

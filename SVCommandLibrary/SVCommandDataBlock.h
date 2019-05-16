@@ -11,9 +11,8 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVCommandLibraryEnums.h"
 #include "SVCommandDataTemplate.h"
 
-typedef SVCommandDataTemplate< SV_COMMAND_DATA_TYPE_BLOCK, SVByteVector > SVCommandDataBlock;
+typedef SVCommandDataTemplate<SV_COMMAND_DATA_TYPE_BLOCK, std::vector<unsigned char>> SVCommandDataBlock;
 

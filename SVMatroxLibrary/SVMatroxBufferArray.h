@@ -37,7 +37,7 @@ public:
 	bool empty() const;
 
 protected:
-	typedef std::vector< SVMatroxIdentifier > BufferIDList;
+	typedef std::vector< __int64 > BufferIDList;
 	typedef std::vector< SVMatroxBuffer > BufferList;
 
 	BufferIDList GetList() const;

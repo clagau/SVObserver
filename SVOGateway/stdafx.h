@@ -61,6 +61,7 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp> //Used by static library
+#include <boost/log/trivial.hpp>
 #include <boost/thread.hpp>
 
 #define BOOST_DATE_TIME_NO_LIB

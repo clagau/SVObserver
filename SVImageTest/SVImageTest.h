@@ -16,8 +16,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
-
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"

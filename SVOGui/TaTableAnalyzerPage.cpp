@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "TaTableAnalyzerPage.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageManager.h"

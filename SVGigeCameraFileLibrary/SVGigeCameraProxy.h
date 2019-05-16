@@ -9,13 +9,16 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:43:34  $
 //******************************************************************************
 
-#include "CameraLibrary/SVDeviceParams.h"
+#pragma region Includes
+#include "CameraLibrary/SVDeviceParam.h"
+#pragma endregion Includes
 
 namespace SvTh
 {
-	class SVDigitizerLoadLibraryClass;
-}//namespace SvTh
+class SVDigitizerLoadLibraryClass;
+}
 
+class SVDeviceParamCollection;
 
 class SVGigeCameraProxy
 {

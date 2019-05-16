@@ -9,11 +9,12 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:10:26  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "CameraLibrary\SVDeviceParams.h"
 #include "SVImageTest.h"
 #include "SVImageTestDlg.h"
 #include "SVTestAcquisitionClass.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -12,9 +12,12 @@
 #pragma once
 
 #pragma region Includes
+#include "resource.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
+
+class SVTestAcquisitionClass;
 
 //defines for the properties for each dlg
 enum PROPERTY_PAGE_PROPERTY
@@ -24,8 +27,6 @@ enum PROPERTY_PAGE_PROPERTY
 	PROP_ADV_CAMERA_BANDS,
 	PROP_CAMERA_FILE_BASE               = 10000
 };
-
-class SVTestAcquisitionClass;
 
 class SVCameraFilePropertyPageDlg : public CDialog
 {

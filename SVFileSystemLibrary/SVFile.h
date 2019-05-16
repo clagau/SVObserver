@@ -12,17 +12,7 @@
 #pragma once
 
 //Moved to precompiled header: #include <stdio.h>
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 
-
-/**
-@SVObjectName File
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
 class SVFile
 {
 public:
@@ -48,10 +38,10 @@ public:
 	void Close();
 
 	UINT Read( void* lpBuf, UINT nCount );
-	HRESULT ReadContents( SVByteVector& p_rContents );
+	HRESULT ReadContents(std::vector<unsigned char>& rContents );
 
 	HRESULT Write( const void* lpBuf, UINT nCount );
-	HRESULT WriteContents( const SVByteVector& p_rContents );
+	HRESULT WriteContents( const std::vector<unsigned char>& rContents );
 
 	ULONGLONG GetLength() const;
 

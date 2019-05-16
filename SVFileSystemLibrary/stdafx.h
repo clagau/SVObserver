@@ -53,6 +53,7 @@
 #include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
+#include <direct.h>
 #include <functional>
 #include <io.h>
 #include <iterator>			//Used by static library

@@ -36,7 +36,6 @@
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
-#include "Definitions/StringTypeDef.h"
 #include "SVMessage/SVMessage.h"
 
 using namespace boost::log;

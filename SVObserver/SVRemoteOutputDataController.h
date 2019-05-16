@@ -13,9 +13,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "svobjectlibrary\svobjectclass.h"
+#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputGroup.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
@@ -23,6 +22,7 @@
 #pragma endregion Includes
 
 class SVConfigurationObject;
+class SVPPQObject;
 
 class SVRemoteOutputDataController : public SVObjectClass
 {
@@ -64,10 +64,6 @@ public:
 	// Deletes an entire logical RemoteOutput associated with a PPQ
 	HRESULT DeleteRemoteOutput( const std::string& rRemoteGroupId );
 	
-	LPCTSTR GetConnectString( );	
-
-	HRESULT SetConnectString( LPCTSTR Connection );
-
 	// This function is used to tell if the RemoteOutput Outputs screen should be hidden
 	bool IsEmpty();
 
@@ -86,9 +82,6 @@ public:
 	void SetupRemoteOutput(SVConfigurationObject* p_pConfig );
 
 	void SetupRemoteOutputGroup(SVConfigurationObject* p_pConfig, SVGroupDefVect& p_rOriginalList );
-
-	// Returns the RemoteOutput size of the first element in the starting block address array.
-	long GetElementBitSize( LPCTSTR RemoteOutputId );
 
 	// This function walks the input list and attempts to validate each input GUID 
 	// by getting a pointer from the Object Manager for each GUID.

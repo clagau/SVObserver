@@ -12,7 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <string>
-#include "SVMatroxTypedefs.h"
 
 
 /**

@@ -14,7 +14,6 @@
 #include "SVTADlgTranslationPage.h"
 #include "Operators/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "Tools/SVTransformationTool.h"
 #pragma endregion
 
 #ifdef _DEBUG

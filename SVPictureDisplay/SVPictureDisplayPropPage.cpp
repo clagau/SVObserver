@@ -9,7 +9,6 @@
 //* .Check In Date   :     $Date:   26 Jun 2014 16:27:56  $
 //******************************************************************************
 #include "stdafx.h"
-#include "SVPictureDisplay.h"
 #include "SVPictureDisplayPropPage.h"
 
 #pragma region Declarations

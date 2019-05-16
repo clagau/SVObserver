@@ -19,7 +19,6 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVGigeCameraFileReader.h"
-#include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
 #include "CameraLibrary/SVBoolValueDeviceParam.h"

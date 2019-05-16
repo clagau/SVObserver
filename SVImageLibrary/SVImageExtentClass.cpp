@@ -13,6 +13,7 @@
 //Moved to precompiled header: #include <cmath>
 //Moved to precompiled header: #include <map>
 #include "SVImageExtentClass.h"
+#include "Definitions/SVExtentEnums.h"
 #include "SVFileSystemLibrary\SVFileNameClass.h"
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
@@ -3485,7 +3486,7 @@ HRESULT SVImageExtentClass::SetDataFromFile(LPCTSTR pFileName)
 		SVFileNameClass	svfncImageFile(pFileName);
 		SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str());
 
-		if (fileformatID != SVFileUnknown && ::SVFileExists(pFileName))
+		if (fileformatID != SVFileUnknown && 0 == _access(pFileName, 0))
 		{
 
 			std::string strFile(pFileName);

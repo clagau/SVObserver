@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "Tools/SVArchiveTool.h"
-#include "SVGlobal.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

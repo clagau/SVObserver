@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVThresholdClass.h"
 #include "Definitions/GlobalConst.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVUpperThresholdEquation.h"
 #include "SVLowerThresholdEquation.h"
 #include "SVAutoThresholdEquation.h"

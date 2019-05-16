@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVImageTool.h"
+#include "Definitions/ImageOperatorEnums.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
 #include "Operators/SVImageArithmetic.h"

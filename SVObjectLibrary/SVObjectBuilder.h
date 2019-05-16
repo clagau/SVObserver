@@ -15,7 +15,6 @@
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/SVGuidList.h"
 #include "SVObjectScriptEnums.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

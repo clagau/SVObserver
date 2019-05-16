@@ -6,13 +6,6 @@
 //******************************************************************************
 #pragma once
 
-#pragma region Includes
-#include "SVConfigurationTags.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVNavigateTree.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#pragma endregion Includes
-
 namespace SvXml
 {
 	template<typename TreeType>

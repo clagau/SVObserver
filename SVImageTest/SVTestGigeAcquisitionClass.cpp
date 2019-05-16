@@ -14,6 +14,7 @@
 #include "SVTestGigeAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "Definitions/SVGigeEnums.h"
+#include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
 #pragma endregion Includes
 
 SVTestGigeAcquisitionClass::SVTestGigeAcquisitionClass(SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer)

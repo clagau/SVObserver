@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "afxwin.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "RemoteMonitorList.h"
 #pragma endregion Includes

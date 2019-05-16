@@ -11,9 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVExternalToolResultPage.h"
-#include "SVGlobal.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
 #include "Tools/SVExternalTool.h"
@@ -22,6 +20,7 @@
 #include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "Operators/SVDLLToolDefinitionStructs.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

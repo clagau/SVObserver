@@ -5,6 +5,13 @@
 // This is the Configuration Obsolete Item checker
 //******************************************************************************
 
+#pragma region Includes
+#include "SVConfigurationTags.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVNavigateTree.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
+
 namespace SvXml
 {
 	#pragma region String Defines

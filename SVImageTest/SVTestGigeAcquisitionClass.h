@@ -11,9 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVTestAcquisitionClass.h"
 #include "SVTestGigeCameraProxy.h"
-
+#pragma endregion Includes
 
 class SVTestGigeAcquisitionClass : public SVTestAcquisitionClass
 {

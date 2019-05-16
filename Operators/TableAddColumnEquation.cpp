@@ -6,10 +6,12 @@
 /// Equation class for the add column formula in table analyzer tool.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "TableAddColumnEquation.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#pragma endregion Includes
 
 namespace SvOp
 {

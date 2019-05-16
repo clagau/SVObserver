@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:39:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVExtentFigureStruct.h"
 #include "SVLibrary/Intersect.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#pragma endregion Includes
 
 SVExtentFigureStruct::SVExtentFigureStruct()
 {

@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVMaskEditor.h"
 #include "SVScrollWnd1Ppg.h"
 #pragma endregion Includes
 

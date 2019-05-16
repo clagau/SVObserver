@@ -12,8 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxTypedefs.h"
-
 #pragma endregion Includes
 
 class SVMatroxOcrInterface;
@@ -40,7 +38,7 @@ public:
 	std::string		m_VerifyString;
 
 protected:
-	SVMatroxIdentifier	m_OcrFontID;
+	__int64	m_OcrFontID;
 
 private:
 	void LocalClear();

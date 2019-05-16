@@ -7,7 +7,6 @@
 
 #pragma once
 #pragma region Includes
-#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 #pragma region Declarations

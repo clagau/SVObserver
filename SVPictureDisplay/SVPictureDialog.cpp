@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
-#include "SVPictureDisplay.h"
 #include "SVPictureDialog.h"
 #include "SVPictureTabs.h"
 #pragma endregion Includes

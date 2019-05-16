@@ -15,8 +15,8 @@
 //Moved to precompiled header: #include <cstdlib>
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
-#include "SVGlobal.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes

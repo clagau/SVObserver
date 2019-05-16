@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "TriggerInformation/SVInternalTrigger.h"
 #include "TriggerHandling/TriggerDispatcherCollection.h"
-#include "TriggerInformation/IODeviceBase.h"
 #include "SVMatroxGigeSystemList.h" 
 #include "SVMatroxGigeCameraParamTracker.h"
 #pragma endregion Includes
@@ -112,9 +111,9 @@ private:
 	HRESULT StopDigitizer(SVMatroxGigeDigitizer& p_rCamera);
 
 	HRESULT ProcessStartFrame( SVMatroxGigeDigitizer& p_rCamera );
-	HRESULT ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier p_SrcBufferID );
+	HRESULT ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID );
 	HRESULT CameraStartFrame( SVMatroxGigeDigitizer& p_rCamera );
-	HRESULT CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier p_SrcBufferID );
+	HRESULT CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID );
 	
 	HRESULT FireOneShot( unsigned long p_Handle );
 	HRESULT DispatchTriggerCallback( unsigned long p_Handle );
@@ -153,14 +152,14 @@ private:
 
 	HRESULT IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const;
 	HRESULT SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered);
-	void DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier HookId );
+	void DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, __int64 HookId );
 
 	// Matrox Hooks
-	static SVMatroxIdentifier __stdcall DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
-	static SVMatroxIdentifier __stdcall DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
-	static SVMatroxIdentifier __stdcall ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* pContext );
-	static SVMatroxIdentifier __stdcall DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
-	static SVMatroxIdentifier __stdcall CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
-	static SVMatroxIdentifier __stdcall LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
+	static __int64 __stdcall DigitizerStartFrameCallback( __int64 HookType, __int64 EventId, void* pContext );
+	static __int64 __stdcall DigitizerEndFrameCallback( __int64 HookType, __int64 EventId, void* pContext );
+	static __int64 __stdcall ProcessFrame( __int64 HookType, __int64 HookId, void* pContext );
+	static __int64 __stdcall DigitizerCallback( __int64 HookType, __int64 EventId, void* pContext );
+	static __int64 __stdcall CameraPresentCallback( __int64 HookType, __int64 EventId, void* pContext );
+	static __int64 __stdcall LineEdgeEventCallback( __int64 HookType, __int64 EventId, void* pContext );
 };
 

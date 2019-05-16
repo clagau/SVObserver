@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   02 Oct 2013 08:17:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorThresholdBasePage.h"
 #include "SVTADlgColorThresholdSheet.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdBasePage, CPropertyPage)
 

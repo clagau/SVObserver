@@ -11,11 +11,6 @@
 
 #pragma once
 
-#pragma region Includes
-
-#include "SVFileInfo.h"
-#pragma endregion Includes
-
 template<typename Insertor>
 class SVFileSystemScanner
 {

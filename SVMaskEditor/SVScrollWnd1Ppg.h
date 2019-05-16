@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "resource.h"
+#pragma endregion Includes
+
 class SVScrollWnd1PropPage : public COlePropertyPage
 {
 	DECLARE_DYNCREATE(SVScrollWnd1PropPage)

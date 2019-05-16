@@ -10,7 +10,6 @@
 #include "SelectedObjectsPage.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource/ConstGlobalSvOr.h"

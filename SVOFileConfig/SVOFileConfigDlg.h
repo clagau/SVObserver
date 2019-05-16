@@ -14,6 +14,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
+#include "resource.h"
+#include "SVXMLLibrary/SVXMLCTreeCtrl.h"
 #pragma endregion Includes
 
 class SVOFileConfigDlg : public CDialog

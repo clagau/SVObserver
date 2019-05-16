@@ -9,6 +9,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <milblob.h>
 #include "ReconstructFilter.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"

@@ -8,7 +8,9 @@
 #pragma once
 #pragma region Includes
 #include "SVProtoBuf/SVRC.h"
-#include "SVRPCLibrary/RPCServer.h"
+#include "SVRPCLibrary/Observer.h"
+#include "SVRPCLibrary/ServerStreamContext.h"
+#include "SVRPCLibrary/Task.h"
 #include "SVStorageResult.h"
 #pragma endregion Includes
 

@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVMatroxBuffer.h"
-#include "SVMatroxEnums.h"
+#include "SVMatroxSimpleEnums.h"
 
 /**
 @SVObjectName Matrox Image Rotate Struct

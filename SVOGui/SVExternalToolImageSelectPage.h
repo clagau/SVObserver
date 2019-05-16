@@ -17,7 +17,6 @@
 #include "ImageController.h"
 #include "PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-
 #pragma endregion Includes
 
 namespace SvOg

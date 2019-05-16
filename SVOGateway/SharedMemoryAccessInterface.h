@@ -9,8 +9,6 @@
 
 #pragma once
 #include "SVProtobuf/SVRC.h"
-#include "SVRPCLibrary/Observer.h"
-#include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 

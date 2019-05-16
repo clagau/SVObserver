@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "EQAdjustSize.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "SVEquationLibrary\SVEquationLex.h"
 #include "Definitions/Color.h"
 #pragma endregion Includes
 

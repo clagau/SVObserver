@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <fstream>
 //Moved to precompiled header: #include <vector>
 
-#include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVTool.h"
 #include "ArchiveMethodEnum.h"
 #include "ArchiveToolHelper.h"

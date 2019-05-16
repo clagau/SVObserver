@@ -9,11 +9,12 @@
 // * .Check In Date   : $Date:   22 Apr 2013 15:27:16  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxStatusInformation.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVMatroxImagingLibrary.h"
 #include "SVMatroxErrorEnum.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 /**
 @SVOperationName Default Constructor

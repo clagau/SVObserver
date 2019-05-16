@@ -12,9 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include  "SaxXMLHandler.h"
-#include "SaxExtractPropertiesHandler.h"
 #pragma endregion Includes
 
 namespace  SvXml

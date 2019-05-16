@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVClock.h"
 #pragma endregion Includes
 
 //@TODO This is not a profiler! Class and files should be renamed to something like "TimeDelta"
@@ -22,7 +21,7 @@ namespace SvTl
 	#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 		double setReferenceTime(); ///< sets the current time as reference TimeStamp
 		double getReferenceTime(); ///< returns the reference TimeStamp
-		SvTl::SVTimeStamp GetRelTimeStamp();
+		double GetRelTimeStamp();
 	#endif
 
 	class SVProfiler
@@ -42,8 +41,8 @@ namespace SvTl
 
 	#pragma region Member Variables
 	private:
-		SvTl::SVTimeStamp m_startTime;
-		SvTl::SVTimeStamp m_endTime;
+		double m_startTime;
+		double m_endTime;
 	#pragma endregion Member Variables
 	};
 } //namespace SvTl

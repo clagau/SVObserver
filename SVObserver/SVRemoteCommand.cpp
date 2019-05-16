@@ -10,7 +10,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVObserver_i.h"
 #include "SVRemoteCommand.h"
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"

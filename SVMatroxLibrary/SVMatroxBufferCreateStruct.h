@@ -11,8 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxEnums.h"
-#include "SVMatroxTypedefs.h"
+#include "SVMatroxSimpleEnums.h"
 
 /**
 @SVObjectName Matrox Buffer Create Structure
@@ -22,7 +21,7 @@
 @SVObjectOperations This data class has a set image depth function.
 
 */
-class SVMatroxBufferCreateStruct  
+struct SVMatroxBufferCreateStruct  
 {
 public:
 	long						m_lSizeBand = 1;

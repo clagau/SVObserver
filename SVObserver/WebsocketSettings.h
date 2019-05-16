@@ -7,7 +7,6 @@
 //******************************************************************************
 #pragma once
 
-#include "SVAuthLibrary/AuthManagerSettings.h"
 #include "SVHttpLibrary/HttpServerSettings.h"
 #include "SVLogLibrary/LogSettings.h"
 #include "SvHttpLibrary/DefaultSettings.h"

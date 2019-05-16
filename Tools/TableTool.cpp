@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "TableTool.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "Operators/SVEquation.h"
 #include "Operators/TableColumnEquation.h"

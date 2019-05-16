@@ -13,12 +13,14 @@
 #include "stdafx.h"
 #include "SVImageTransform.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "Definitions/GlobalConst.h"
 #include "Tools/SVTool.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOp

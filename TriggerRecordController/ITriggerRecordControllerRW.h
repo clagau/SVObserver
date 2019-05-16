@@ -14,9 +14,9 @@
 
 
 #pragma region Declarations
-class SVMatroxBufferCreateStruct;
-class SVMatroxBufferCreateChildStruct;
+struct SVMatroxBufferCreateStruct;
 struct MatroxBufferChildDataStruct;
+class SVMatroxBufferCreateChildStruct;
 
 namespace SvTrc
 {

@@ -9,6 +9,7 @@
 #include "StdAfx.h"
 #include "RingBufferTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

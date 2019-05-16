@@ -15,7 +15,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "SVChildrenSetupDialog.h"
-#include "SVGlobal.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "Tools/SVTool.h"

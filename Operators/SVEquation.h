@@ -21,6 +21,7 @@
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVStatusLibrary/MessageContainer.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

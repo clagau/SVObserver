@@ -12,8 +12,6 @@
 #include "stdafx.h"
 #include "TADialogRingBufferParameterPage.h"
 
-#include "Definitions/ObjectDefines.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"

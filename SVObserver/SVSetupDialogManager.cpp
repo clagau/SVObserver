@@ -14,7 +14,7 @@
 #include "SVSetupDialogManager.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
+#include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"

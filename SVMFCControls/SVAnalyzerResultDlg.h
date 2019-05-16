@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Inlcudes
-#include "SVOResource/resource.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Inlcudes
 

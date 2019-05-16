@@ -13,7 +13,6 @@
 #include "SVOResource/resource.h"
 #include "Definitions/GlobalConst.h"
 #include "ISVPropertyPageDialog.h"
-#include "PictureDisplay.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ObjectSelectorController.h"

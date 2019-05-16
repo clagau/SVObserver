@@ -10,11 +10,17 @@
 #include "Definitions/SVExtentEnums.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "ObjectInterfaces/IToolSizeAdjustTask.h"
+#include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvTo
 {
 class SVToolClass;
+}
+
+namespace SvVol
+{
+class SVDoubleValueObjectClass;
 }
 
 namespace SvOp

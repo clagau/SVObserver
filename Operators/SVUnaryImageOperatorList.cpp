@@ -12,10 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUnaryImageOperatorList.h"
-
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVUnaryImageOperatorClass.h"

@@ -11,6 +11,7 @@
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

@@ -195,7 +195,6 @@
     <ClInclude Include="SVMatroxImageInterface.h" />
     <ClInclude Include="SVMatroxImageRotateStruct.h" />
     <ClInclude Include="SVMatroxImagingLibrary.h" />
-    <ClInclude Include="SVMatroxLibrary.h" />
     <ClInclude Include="SVMatroxLicenseInterface.h" />
     <ClInclude Include="SVMatroxOcr.h" />
     <ClInclude Include="SVMatroxOcrCalibrateStruct.h" />
@@ -210,7 +209,6 @@
     <ClInclude Include="SVMatroxSystemEnums.h" />
     <ClInclude Include="SVMatroxSystemInterface.h" />
     <ClInclude Include="SVMatroxSystemRef.h" />
-    <ClInclude Include="SVMatroxTypedefs.h" />
     <ClInclude Include="SVOLicenseManager.h" />
   </ItemGroup>
   <ItemGroup>

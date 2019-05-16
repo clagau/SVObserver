@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVLinearAnalyzerClass.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo

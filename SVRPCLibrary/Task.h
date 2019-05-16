@@ -17,7 +17,8 @@
 
 namespace SvRpc
 {
-template <typename T> class Task
+template <typename T>
+class Task
 {
 public:
 	using OnFinishFn = std::function<void(T&& t)>;

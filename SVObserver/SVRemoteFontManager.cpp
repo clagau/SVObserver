@@ -11,6 +11,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRemoteFontManager.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxOcrInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -305,7 +307,7 @@ bool SVRemoteFontManager::UpdateFontTime( long lIdentifier )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
-				SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
+				double tsNow = SvTl::GetTimeStamp();
 				m_arRemoteFontTimestamps[l] = tsNow;
 				
 				bRet = true;
@@ -380,20 +382,20 @@ bool SVRemoteFontManager::GetStatusHandles( unsigned long &p_rulSize, HANDLE **p
 	return l_bOk;
 }
 
-bool SVRemoteFontManager::RemoveFontsOlderThan( SvTl::SVTimeStamp p_Age )
+bool SVRemoteFontManager::RemoveFontsOlderThan( double p_Age )
 {
 	bool bRet = false;
 
 	if ( nullptr != m_hShutdown && m_bLockCreated && 
 	     ::TryEnterCriticalSection( &m_csLock ) )
 	{
-		SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
+		double tsNow = SvTl::GetTimeStamp();
 		
 		long lSize = static_cast<long> (m_arRemoteFontTimestamps.size());
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
-			SvTl::SVTimeStamp tsThen = m_arRemoteFontTimestamps[l];
-			SvTl::SVTimeStamp tsDiff = tsNow - tsThen;
+			double tsThen = m_arRemoteFontTimestamps[l];
+			double tsDiff = tsNow - tsThen;
 			if( tsDiff > p_Age )
 			{
 				long l_lIdentifier = m_arRemoteFontIdentifiers[l];

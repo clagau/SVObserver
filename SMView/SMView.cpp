@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SMView.h"
 #include "SMViewDlg.h"
-#include "SVMatroxLibrary\SVMatroxTypedefs.h"
 #include "TriggerRecordController\ITriggerRecordControllerR.h"
 #define M_MIL_USE_SAFE_TYPE 0
 #include <mil.h>
@@ -59,7 +58,7 @@ BOOL CSMViewApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	/// Allocate MilSystem
-	SVMatroxInt AppId = MappAlloc(M_DEFAULT, M_NULL);
+	long long AppId = MappAlloc(M_DEFAULT, M_NULL);
 	if (AppId == M_NULL)
 	{
 		AfxMessageBox(_T("Mil System could not be allocated. SMView will be closed"));

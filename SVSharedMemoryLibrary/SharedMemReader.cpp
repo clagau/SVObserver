@@ -5,11 +5,14 @@
 //*****************************************************************************
 ///// Class encapsulate function to open  and read from the  shared Memory
 //******************************************************************************
+
+#pragma region Includes
 #include "StdAfx.h"
 #include "SharedMemReader.h"
-#include "ShareEvents.h"
 #include "TriggerRecordController\ITriggerRecordControllerR.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#pragma endregion Includes
+
 //#define TRACE_TRC
 
 namespace SvSml

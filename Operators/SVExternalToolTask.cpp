@@ -21,14 +21,13 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
-#include "SVUtilityLibrary/SetBits.h"
 #include "Tools/SVTool.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVRange.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "SVStatusLibrary\GlobalPath.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -1343,7 +1342,6 @@ HRESULT SVExternalToolTask::GetImageDefinitionStruct( SVImageDefinitionStruct& r
 HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 {
 	SvIe::SVClassInfoStruct       resultClassInfo;
-	CString                 strTitle;
 	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
 	
 	SVVariantResultClass*    pResult;
@@ -1362,7 +1360,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultVariantObjectType;
 		resultClassInfo.m_ClassId = SVVariantResultClassGuid;
 		resultClassInfo.m_ClassName = _T("Range");
-		strTitle = m_Data.m_aResultObjects [iIndex].GetName(); 
+		std::string strTitle = m_Data.m_aResultObjects [iIndex].GetName(); 
 		resultClassInfo.m_ClassName += _T(" ") + strTitle;
 		
 		// Construct the result class

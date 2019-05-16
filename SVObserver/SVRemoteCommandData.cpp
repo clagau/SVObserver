@@ -12,14 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <Objidl.h>
-#include "SVObserver.h"
 #include "SVObserver_i.h"
 #include "SVRemoteCommandData.h"
-
-#include "SVCommandLibrary/SVCommandDataBlock.h"
-#include "SVCommandLibrary/SVCommandDataContainer.h"
-#include "SVCommandLibrary/SVCommandDataImage.h"
-#include "SVCommandLibrary/SVCommandDataValue.h"
+#include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
@@ -351,7 +346,7 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 			( *p_ppStream ) = nullptr;
 		}
 
-		SVByteVector l_Block;
+		std::vector<unsigned char> l_Block;
 
 		l_Status = m_Data.GetBlock( p_Name, l_Block );
 
@@ -450,7 +445,7 @@ STDMETHODIMP SVRemoteCommandData::SetBlock( BSTR p_Name, IStream* p_pStream )
 		if( S_OK == l_Status )
 		{
 			size_t l_Size = static_cast< size_t >( l_Stat.cbSize.QuadPart );
-			SVByteVector l_Block( l_Size );
+			std::vector<unsigned char> l_Block( l_Size );
 
 			if( l_Block.size() == l_Size )
 			{
@@ -493,7 +488,7 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 			( *p_ppStream ) = nullptr;
 		}
 
-		SVByteVector l_Block;
+		std::vector<unsigned char> l_Block;
 
 		l_Status = m_Data.GetImage( p_Name, l_Block );
 
@@ -592,7 +587,7 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 		if( S_OK == l_Status )
 		{
 			size_t l_Size = static_cast< size_t >( l_Stat.cbSize.QuadPart );
-			SVByteVector l_Block( l_Size );
+			std::vector<unsigned char> l_Block( l_Size );
 
 			if( l_Block.size() == l_Size )
 			{

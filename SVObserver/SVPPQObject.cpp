@@ -45,13 +45,12 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVToolSet.h"
-#include "SVSharedMemoryLibrary\ShareEvents.h"
-#include "SVSharedMemoryLibrary\MLPPQInfo.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #include "SVProtoBuf/TriggerRecordController.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -118,7 +117,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 
 	SVProductInfoStruct* l_pProduct = nullptr;
 
-	SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
+	double l_CurrentTime = SvTl::GetTimeStamp();
 
 	while (0 < m_oOutputsDelayQueue.GetCount() && nullptr == l_pProduct)
 	{
@@ -2434,7 +2433,7 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
-			SvTl::SVTimeStamp l_Offset = p_pProduct->oOutputsInfo.m_OutputDelay;
+			double l_Offset = p_pProduct->oOutputsInfo.m_OutputDelay;
 
 			// Set output delay expire time
 			p_pProduct->oOutputsInfo.m_EndOutputDelay = p_pProduct->oTriggerInfo.m_ToggleTimeStamp + l_Offset;
@@ -2786,7 +2785,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			l_CameraPositionOnPPQ = l_svIter->second.m_CameraPPQIndex;
 		}
 
-		SvTl::SVTimeStamp startTime = rElement.m_Data.getStartTime();
+		double startTime = rElement.m_Data.getStartTime();
 
 		if (l_CameraPositionOnPPQ < ppqSize)
 		{
@@ -2857,7 +2856,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 			if (IterCamera != pProduct->m_svCameraInfos.end())
 			{
-				SvTl::SVTimeStamp	priorCameraSF = IterCamera->second.m_StartFrameTimeStamp;
+				double	priorCameraSF = IterCamera->second.m_StartFrameTimeStamp;
 
 				// Attempting to make sure we don't have the previous trigger 
 				// count where the image has already been assigned (and 
@@ -2866,7 +2865,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				// Queue notification.
 				if (priorCameraSF == 0.0)
 				{
-					SvTl::SVTimeStamp endTime = rElement.m_Data.getEndTime();
+					double endTime = rElement.m_Data.getEndTime();
 
 					if (rElement.m_Data.isComplete())
 					{
@@ -3239,7 +3238,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	if (0 < m_lOutputDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputDelay), 1, 0) == 0)
 	{
-		SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
+		double l_CurrentTime = SvTl::GetTimeStamp();
 
 		if (0 < m_oOutputsDelayQueue.GetCount() || (0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= l_CurrentTime))
 		{
@@ -3253,7 +3252,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	if (0 < m_lResetDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputReset), 1, 0) == 0)
 	{
-		SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
+		double l_CurrentTime = SvTl::GetTimeStamp();
 
 		if (0 < m_oOutputsResetQueue.GetCount() || (0 < m_NextOutputResetTimestamp && m_NextOutputResetTimestamp <= l_CurrentTime))
 		{
@@ -3267,7 +3266,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	if (0 < m_DataValidDelay && ::InterlockedCompareExchange(&(m_ProcessingDataValidDelay), 1, 0) == 0)
 	{
-		SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
+		double l_CurrentTime = SvTl::GetTimeStamp();
 
 		if (0 < m_DataValidDelayQueue.GetCount() || (0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= l_CurrentTime))
 		{
@@ -3503,7 +3502,7 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 			rProcessed = false;
 			SVProductInfoStruct* pProduct{nullptr};
 
-			SvTl::SVTimeStamp currentTime = SvTl::GetTimeStamp();
+			double currentTime = SvTl::GetTimeStamp();
 
 			while (0 < m_oOutputsResetQueue.GetCount())
 			{
@@ -3569,7 +3568,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 		{
 			SVProductInfoStruct* pProduct(nullptr);
 
-			SvTl::SVTimeStamp CurrentTime = SvTl::GetTimeStamp();
+			double CurrentTime = SvTl::GetTimeStamp();
 
 			while (0 < m_DataValidDelayQueue.GetCount() && nullptr == pProduct)
 			{

@@ -10,6 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"

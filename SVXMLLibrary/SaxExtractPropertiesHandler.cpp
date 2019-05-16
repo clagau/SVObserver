@@ -12,6 +12,9 @@
 #include "stdafx.h"
 #include "SaxExtractPropertiesHandler.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

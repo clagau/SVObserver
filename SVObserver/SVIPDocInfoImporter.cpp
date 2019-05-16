@@ -12,7 +12,6 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVIPDoc.h"
 #include "SVImportedInspectionInfo.h"
 

@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 10:53:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImagePropertiesClass.h"
-#include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
+#include "Definitions/SVImageFormatEnum.h"
+#pragma endregion Includes
 
 SVImagePropertiesClass::SVImagePropertiesClass()
 {

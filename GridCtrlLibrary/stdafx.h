@@ -44,8 +44,11 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #include <afxadv.h>         // For CSharedFile
 #include <afxconv.h>        // For LPTSTR -> LPSTR macros
+#include "afxdtctl.h"		// for CDateTimeCtrl
 #include <afxtempl.h>
 #include <afxole.h>
+
+#include "TCHAR.h"
 
 #include <algorithm>
 #include <vector>

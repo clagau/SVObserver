@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "CameraLibrary\SVDeviceParams.h"
-#include "resource.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "Definitions/SVImageFormatEnum.h"
@@ -60,7 +58,7 @@ SvTrc::IImagePtr SVTestAcquisitionClass::GetNextBuffer()
 	return (nullptr != m_pDisplay) ?  m_pDisplay->m_CameraImage.GetNextBuffer() :  SvTrc::IImagePtr();
 }
 
-HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick)
+HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick)
 {
 	HRESULT l_Status = S_OK;
 

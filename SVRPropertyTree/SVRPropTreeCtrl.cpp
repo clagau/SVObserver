@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVRPropTree.h"
-//#include "Resource.h"
 #include "SVRPropTreeCtrl.h"
 
 #ifdef _DEBUG

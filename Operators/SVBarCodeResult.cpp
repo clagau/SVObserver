@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "SVBarCodeResult.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -236,7 +235,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 		//
 		msv_szMatchStringFileName.GetValue(FileName);
 
-		bool bOk = !FileName.empty() && SVFileExists(FileName.c_str());
+		bool bOk = !FileName.empty() && 0 == _access(FileName.c_str(), 0);
 		if (bOk)
 		{
 			//

@@ -23,7 +23,7 @@ typedef  std::unique_ptr<SharedDataStore> DataStorePointer;
 }
 
 struct MatroxImageProps;
-class SVMatroxBufferCreateStruct;
+struct SVMatroxBufferCreateStruct;
 class SVMatroxBuffer;
 #pragma endregion Declarations
 

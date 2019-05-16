@@ -12,11 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVImageClass.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
 #include "SVObjectLibrary/SVClsIds.h"
@@ -26,6 +27,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVTimerLibrary/SVClock.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -353,7 +355,7 @@ HRESULT SVImageClass::UpdateImage(SvDef::SVImageTypeEnum ImageType)
 	return l_Status;
 }
 
-const SvTl::SVTimeStamp& SVImageClass::GetLastResetTimeStamp() const
+const double& SVImageClass::GetLastResetTimeStamp() const
 {
 	return m_LastReset;
 }
@@ -714,7 +716,7 @@ bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle
 	return l_bOk;
 }
 
-HRESULT SVImageClass::LoadImage(LPCTSTR p_szFileName, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+HRESULT SVImageClass::LoadImage(LPCTSTR fileName, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	HRESULT l_hrOk = E_FAIL;
 
@@ -725,14 +727,14 @@ HRESULT SVImageClass::LoadImage(LPCTSTR p_szFileName, const SvTrc::ITriggerRecor
 
 		if (l_Code == S_OK)
 		{
-			if (0 < strlen(p_szFileName))
+			if (0 < strlen(fileName))
 			{
-				SVFileNameClass	svfncImageFile(p_szFileName);
+				SVFileNameClass	svfncImageFile(fileName);
 				SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str());
 
-				if (fileformatID != -1 && ::SVFileExists(p_szFileName))
+				if (fileformatID != -1 && 0 == _access(fileName, 0))
 				{
-					std::string l_strFile(p_szFileName);
+					std::string l_strFile(fileName);
 
 					l_Code = SVMatroxBufferInterface::Import(pBuffer->getHandle()->GetBuffer(), l_strFile, fileformatID, false);
 

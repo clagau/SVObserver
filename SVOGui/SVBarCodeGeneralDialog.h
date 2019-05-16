@@ -12,9 +12,17 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
+
+namespace SvVol
+{
+class SVBoolValueObjectClass;
+class SVDoubleValueObjectClass;
+class SVEnumerateValueObjectClass;
+class SVLongValueObjectClass;
+}
+
 
 // Enum for threshold type radio
 enum 

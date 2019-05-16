@@ -13,8 +13,6 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/NameGuidList.h"
-#include "ObjectInterfaces/ObjectInfo.h"
 #include "NavigatorElement.h"
 #pragma endregion Includes
 

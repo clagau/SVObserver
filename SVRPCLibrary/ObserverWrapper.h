@@ -18,16 +18,17 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <memory>
 
-#include "EnvelopeUtil.h"
 #include "ErrorUtil.h"
 #include "Observer.h"
 #include "OneOfUtil.h"
 #include "ServerStreamContext.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/Envelope.h"
+#pragma endregion Includes
 
 namespace SvRpc
 {
@@ -38,7 +39,8 @@ public:
 	virtual void operator()(SvPenv::Envelope&&, Observer<SvPenv::Envelope>, ServerStreamContext::Ptr) = 0;
 };
 
-template <typename TPayload, typename TReq, typename TRes> class ObserverWrapper : public ObserverWrapperBase
+template <typename TPayload, typename TReq, typename TRes>
+class ObserverWrapper : public ObserverWrapperBase
 {
 public:
 	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}

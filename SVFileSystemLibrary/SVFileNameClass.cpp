@@ -16,8 +16,6 @@
 #include "SVFileNameClass.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes

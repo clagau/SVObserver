@@ -15,7 +15,6 @@
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls\SVEditNumbers.h"
 #include "Tools/SVArchiveTool.h"
-#include "SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Declarations

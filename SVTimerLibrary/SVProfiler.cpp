@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVProfiler.h"
+#include "SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -25,11 +26,11 @@ namespace SvTl
 {
 	#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
-	SvTl::SVTimeStamp ReferenceTime = SvTl::GetTimeStamp();
+	double ReferenceTime = SvTl::GetTimeStamp();
 
 	double setReferenceTime()
 	{
-		SvTl::SVTimeStamp now  = SvTl::GetTimeStamp();
+		double now  = SvTl::GetTimeStamp();
 		double delta = now - ReferenceTime;
 		ReferenceTime= SvTl::GetTimeStamp();
 
@@ -37,14 +38,14 @@ namespace SvTl
 	}
 
 
-	SvTl::SVTimeStamp  getReferenceTime()
+	double  getReferenceTime()
 	{
 		return ReferenceTime;
 	}
 
-	SvTl::SVTimeStamp GetRelTimeStamp()
+	double GetRelTimeStamp()
 	{
-		SvTl::SVTimeStamp ts = SvTl::GetTimeStamp();
+		double ts = SvTl::GetTimeStamp();
 		return ts - ReferenceTime;
 	}
 

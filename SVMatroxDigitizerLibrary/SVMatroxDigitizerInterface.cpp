@@ -10,9 +10,9 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVMatroxLibrary/SVMatroxImagingLibrary.h"
 #include "SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -150,7 +150,7 @@ HRESULT SVMatroxDigitizerInterface::Release(SVMatroxDigitizer& DigitizerID)
 @SVOperationDescription This method determines if the frame is corrupted
 
 */
-HRESULT SVMatroxDigitizerInterface::IsCorruptedFrame(SVMatroxIdentifier milEventID, bool& bIsCorrupted)
+HRESULT SVMatroxDigitizerInterface::IsCorruptedFrame(__int64 milEventID, bool& bIsCorrupted)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -213,7 +213,7 @@ This method can only be called from the callback func used with MdigProcess
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetGrabBuffer(SVMatroxIdentifier milEventID, SVMatroxIdentifier& bufferID)
+HRESULT SVMatroxDigitizerInterface::GetGrabBuffer(__int64 milEventID, __int64& bufferID)
 {
 	HRESULT l_Code (S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -241,14 +241,14 @@ HRESULT SVMatroxDigitizerInterface::GetGrabBuffer(SVMatroxIdentifier milEventID,
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetHookInfo(SVMatroxIdentifier milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr)
+HRESULT SVMatroxDigitizerInterface::GetHookInfo(__int64 milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		SVMatroxInt l_matroxType = 0;
+		long long l_matroxType = 0;
 		HRESULT hr = ConvertEnumToMatroxType(SVMatroxDigitizerHook::m_HookInfoEnumConvertor, InfoType, l_matroxType);
 		if (S_OK == hr)
 		{
@@ -278,7 +278,7 @@ HRESULT SVMatroxDigitizerInterface::GetHookInfo(SVMatroxIdentifier milEventID, S
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetGigeCameraTimestamp(SVMatroxIdentifier milEventID, double& timestamp)
+HRESULT SVMatroxDigitizerInterface::GetGigeCameraTimestamp(__int64 milEventID, double& timestamp)
 {
 	HRESULT l_Code (S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -306,14 +306,14 @@ HRESULT SVMatroxDigitizerInterface::GetGigeCameraTimestamp(SVMatroxIdentifier mi
 
 */
 
-HRESULT SVMatroxDigitizerInterface::GetGigeEventType(SVMatroxIdentifier milEventID, long& p_rEventType)
+HRESULT SVMatroxDigitizerInterface::GetGigeEventType(__int64 milEventID, long& p_rEventType)
 {
 	HRESULT l_Code (S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		SVMatroxInt l_EventType;
+		long long l_EventType;
 		MdigGetHookInfo(milEventID, M_GC_EVENT_TYPE, &l_EventType);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		// map it to some SVR bullshit...
@@ -420,7 +420,7 @@ HRESULT SVMatroxDigitizerInterface::ReleaseHookFunction(const SVMatroxDigitizer&
 
 */
 
-bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(SVMatroxIdentifier EventType)
+bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(__int64 EventType)
 {
 	return ((EventType & M_GRAB_FRAME_START ) == M_GRAB_FRAME_START);
 }
@@ -432,7 +432,7 @@ bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(SVMatroxIdentifier EventT
 
 */
 
-bool SVMatroxDigitizerInterface::IsEventGrabFrameEnd(SVMatroxIdentifier EventType)
+bool SVMatroxDigitizerInterface::IsEventGrabFrameEnd(__int64 EventType)
 {
 	return ((EventType & M_GRAB_FRAME_END ) == M_GRAB_FRAME_END);
 }
@@ -1313,7 +1313,7 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 	try
 #endif
 	{
-		MatroxType l_matroxFeatureType = 0;
+		__int64 l_matroxFeatureType = 0;
 		HRESULT hr = ConvertEnumToMatroxType(SVMatroxDigitizerFeature::m_FeatureTypeEnumConvertor, FeatureType, l_matroxFeatureType);
 		if (S_OK == hr)
 		{
@@ -1462,7 +1462,7 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 	try
 #endif
 	{
-		MatroxType l_matroxFeatureType = 0;
+		__int64 l_matroxFeatureType = 0;
 		MIL_INT64 controlType = cFeatureControlType;
 		if (SVMatroxDigitizerFeature::SVTypeCommand == FeatureType)
 		{
@@ -1665,7 +1665,7 @@ It will process the buffer in a round robin fashion, wrapping back to the begini
 
 */
 
-HRESULT SVMatroxDigitizerInterface::StartGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVGrabProcessFunc func, void* userData)
+HRESULT SVMatroxDigitizerInterface::StartGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVMatroxHookFunctionPtr func, void* userData)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1678,7 +1678,7 @@ HRESULT SVMatroxDigitizerInterface::StartGrabArray(const SVMatroxDigitizer& Digi
 		{
 			SVMatroxBufferArray::BufferIDList l_List = p_rBufferArray.GetList(); 
 			long numBuffers = static_cast< long >( l_List.size() );
-			SVMatroxIdentifier* pList = nullptr;
+			__int64* pList = nullptr;
 
 			if( 0 < numBuffers )
 			{
@@ -1718,7 +1718,7 @@ HRESULT SVMatroxDigitizerInterface::StartGrabArray(const SVMatroxDigitizer& Digi
 StartGrabArray must be called prior to calling this method.
 
 */
-HRESULT SVMatroxDigitizerInterface::StopGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVGrabProcessFunc func, void* userData)
+HRESULT SVMatroxDigitizerInterface::StopGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVMatroxHookFunctionPtr func, void* userData)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1731,7 +1731,7 @@ HRESULT SVMatroxDigitizerInterface::StopGrabArray(const SVMatroxDigitizer& Digit
 		{
 			SVMatroxBufferArray::BufferIDList l_List = p_rBufferArray.GetList(); 
 			long numBuffers = static_cast< long >( l_List.size() );
-			SVMatroxIdentifier* pList = nullptr;
+			__int64* pList = nullptr;
 
 			if( 0 < numBuffers )
 			{
@@ -1834,15 +1834,15 @@ HRESULT SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& Digiti
 
 HRESULT SVMatroxDigitizerInterface::GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list)
 {
-	SVMatroxInt EventCnt = 0;
+	long long EventCnt = 0;
 	MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_FEATURE_ENUM_ENTRY_COUNT, MIL_TEXT("EventSelector"), M_DEFAULT, &EventCnt);
 	HRESULT l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 	if (l_Code == S_OK && EventCnt)
 	{
-		for ( SVMatroxInt i = 0; i < EventCnt && l_Code == S_OK; i++ )
+		for ( long long i = 0; i < EventCnt && l_Code == S_OK; i++ )
 		{
-			SVMatroxInt Len = 0;
+			long long Len = 0;
 			MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_FEATURE_ENUM_ENTRY_NAME + M_STRING_SIZE + i, MIL_TEXT("EventSelector"), M_DEFAULT, &Len);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			
@@ -1855,7 +1855,7 @@ HRESULT SVMatroxDigitizerInterface::GetGigeEventList(const SVMatroxDigitizer& Di
 				if (l_Code == S_OK)
 				{
 					std::string name(pEventName); // MIL_TEXT is null terminated
-					SVMatroxInt eventType = -1;
+					long long eventType = -1;
 					std::string evName = "Event";
 					evName += name;
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, evName.c_str(), M_TYPE_MIL_INT, &eventType);

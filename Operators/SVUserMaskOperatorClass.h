@@ -18,6 +18,10 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary\SVDWordValueObjectClass.h"
+#include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

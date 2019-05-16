@@ -9,13 +9,14 @@
 //* .Check In Date   : $Date:   29 Jan 2014 10:23:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "SVMatroxImagingLibrary.h"
 #include "SVMatroxSystemInterface.h"
-#include "SVMatroxEnums.h"
-#include "SVMatroxSystem.h"
 #include "SVMatroxApplicationInterface.h"
+#include "SVMatroxEnumConvertor.h"
+#include "SVMatroxSystem.h"
 #include "SVMatroxResourceMonitor.h"
+#pragma endregion Includes
 
 /**
 @SVOperationName Allocate
@@ -24,7 +25,7 @@
 
 */
 
-HRESULT SVMatroxSystemInterface::Allocate(const std::string& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
+HRESULT SVMatroxSystemInterface::Allocate(const std::string& SystemDescriptor, long long SystemNum, SVMatroxSystem& p_rSystem)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -37,7 +38,7 @@ HRESULT SVMatroxSystemInterface::Allocate(const std::string& SystemDescriptor, S
 
 		if( l_Code == S_OK )
 		{
-			SVMatroxIdentifier systemID;
+			__int64 systemID;
 
 			size_t len = SystemDescriptor.length() + 1;
 			char* tmp = new char[len];
@@ -180,7 +181,7 @@ HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSys
 	try
 #endif
 	{
-		SVMatroxInt l_MatroxType = 0;
+		long long l_MatroxType = 0;
 		HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemInquire::m_convertor, InquireType, l_MatroxType );
 		if (S_OK == hr)
 		{
@@ -218,7 +219,7 @@ HRESULT SVMatroxSystemInterface::Set(const SVMatroxSystem& SystemId, SVMatroxSys
 	try
 #endif
 	{
-		MatroxType l_MatroxType = 0;
+		__int64 l_MatroxType = 0;
 		HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemControl::m_convertor, ControlType, l_MatroxType);
 		if (S_OK == hr)
 		{
@@ -270,7 +271,7 @@ HRESULT SVMatroxSystemInterface::SetHookFunction(const SVMatroxSystem& SystemId,
 	HRESULT l_Code( S_OK );
 
 	// Convert Enum
-	SVMatroxInt l_MatroxType = 0;
+	long long l_MatroxType = 0;
 	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHook::m_convertor, HookType, l_MatroxType );
 	if (S_OK == hr)
 	{
@@ -296,7 +297,7 @@ HRESULT SVMatroxSystemInterface::ReleaseHookFunction(const SVMatroxSystem& Syste
 	HRESULT l_Code( S_OK );
 
 	// Convert Enum
-	SVMatroxInt l_MatroxType = 0;
+	long long l_MatroxType = 0;
 	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHook::m_convertor, HookType, l_MatroxType );
 	if (S_OK == hr)
 	{	
@@ -317,12 +318,12 @@ HRESULT SVMatroxSystemInterface::ReleaseHookFunction(const SVMatroxSystem& Syste
 @SVOperationDescription This method gets the hook info for the Matrox System.
 
 */
-HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value)
+HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, __int64 p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value)
 {
 	HRESULT l_Code( S_OK );
 	
 	// Convert Enum
-	SVMatroxInt l_MatroxType = 0;
+	long long l_MatroxType = 0;
 	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHookInfo::m_convertor, HookInfoType, l_MatroxType);
 	if (S_OK == hr)
 	{
@@ -345,12 +346,12 @@ HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVM
 @SVOperationDescription This method gets the hook info for the Matrox System.
 
 */
-HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value)
+HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, __int64 p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value)
 {
 	HRESULT l_Code( S_OK );
 
 	// Convert Enum
-	SVMatroxInt l_MatroxType = 0;
+	long long l_MatroxType = 0;
 	HRESULT hr = ConvertEnumToMatroxType(SVMatroxSystemHookInfo::m_convertor, HookInfoType, l_MatroxType);
 	if (S_OK == hr)
 	{

@@ -5,6 +5,10 @@
 /// Global constant data structure for comparing
 //******************************************************************************
 
+#pragma region Includes
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
+
 namespace SvDef
 {
 #pragma region Constructor

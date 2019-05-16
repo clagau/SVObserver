@@ -8,8 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
+#include "SVValueObjectLibrary/SVByteValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -43,8 +44,8 @@ public:
 protected:
 	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVMatroxIdentifier		m_contextID = M_NULL;
-	SVMatroxIdentifier		m_ResultID = M_NULL;
+	__int64		m_contextID = M_NULL;
+	__int64		m_ResultID = M_NULL;
 };
 
 } //namespace SvAo

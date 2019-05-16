@@ -8,10 +8,9 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 11:15:38  $
 // ******************************************************************************
+
 #pragma region Includes
 #include "stdafx.h"
-#include "CameraLibrary\SVDeviceParams.h"
-#include "svimagetest.h"
 #include "SVUnloadDeviceDialog.h"
 #pragma endregion Includes
 

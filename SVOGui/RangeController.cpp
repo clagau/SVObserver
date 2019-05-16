@@ -11,7 +11,6 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #include <boost/lexical_cast.hpp>
 #include "RangeController.h"
-#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "ObjectInterfaces/IObjectManager.h"

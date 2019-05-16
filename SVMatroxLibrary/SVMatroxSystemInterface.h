@@ -12,8 +12,6 @@
 #pragma once
 
 #pragma region Includes
-
-#include "SVMatroxStatusInformation.h"
 #include "SVMatroxSystem.h"
 #include "SVMatroxSystemEnums.h"
 #pragma endregion Includes
@@ -21,8 +19,9 @@
 class SVMatroxSystemInterface
 {
 public:
+	typedef __int64(_stdcall *SVMatroxHookFunctionPtr)(__int64, __int64, void*);
 
-	static HRESULT Allocate(const std::string& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
+	static HRESULT Allocate(const std::string& SystemDescriptor, long long SystemNum, SVMatroxSystem& system);
 	static HRESULT Release(SVMatroxSystem& SystemId);
 
 	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
@@ -36,8 +35,8 @@ public:
 	static HRESULT SetHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
 	static HRESULT ReleaseHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
 
-	static HRESULT GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
-	static HRESULT GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
+	static HRESULT GetHookInfo(const SVMatroxSystem& SystemId, __int64 p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
+	static HRESULT GetHookInfo(const SVMatroxSystem& SystemId, __int64 p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
 
 	static HRESULT getNonPagedMemory( long long& rMemorySize, long long& rMemoryUsed );
 };

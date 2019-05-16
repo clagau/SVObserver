@@ -25,10 +25,10 @@
 #include "SVInfoStructs.h"
 #include "Definitions/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVValueObjectLibrary/BasicValueObjects.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "TriggerInformation/SVCameraTriggerData.h"
-#include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
@@ -381,13 +381,13 @@ protected:
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
 	long m_ProcessingOutputDelay;
-	SvTl::SVTimeStamp m_NextOutputDelayTimestamp;
+	double m_NextOutputDelayTimestamp;
 
 	long m_ProcessingOutputReset;
-	SvTl::SVTimeStamp m_NextOutputResetTimestamp;
+	double m_NextOutputResetTimestamp;
 
 	long m_ProcessingDataValidDelay;
-	SvTl::SVTimeStamp m_NextDataValidDelayTimestamp;
+	double m_NextDataValidDelayTimestamp;
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
 	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTi::SVTriggerInfoStruct s and SVVariantBoolVector s

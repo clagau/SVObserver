@@ -34,10 +34,6 @@
 #include "SVRPropTreeCtrl.h"
 #include "SVRPropTreeInfo.h"
 #include "SVRPropTreeItem.h"
-#include "SVRPropTreeItemStatic.h"
-#include "SVRPropTreeItemEdit.h"
-#include "SVRPropTreeItemCombo.h"
-#include "SVRPropTreeItemFile.h"
 #include "SVRPropTreeState.h"
 #pragma endregion Includes
 

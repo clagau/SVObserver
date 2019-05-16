@@ -8,7 +8,15 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 16:17:06  $
 //******************************************************************************
-#include "SVUtilityLibrary\SVSafeArray.h"
+
+#pragma region Includes
+#include "Definitions/ObjectDefines.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVMessage/SVMessage.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
+#pragma endregion Includes
 
 namespace SvVol
 {

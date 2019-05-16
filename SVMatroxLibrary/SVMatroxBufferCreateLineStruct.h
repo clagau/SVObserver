@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxEnums.h"
+#include "SVMatroxSimpleEnums.h"
 
 /**
 @SVObjectName Matrox Buffer Create Line Structure

@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   15 May 2014 11:56:12  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPolarTransform.h"
-#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVValueObjectLibrary\SVDoubleValueObjectClass.h"
+#pragma endregion Includes
 
 namespace SvOp
 {

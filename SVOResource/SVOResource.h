@@ -13,7 +13,6 @@
 #pragma once
 
 #pragma region Includes
-#include "resource.h"
 #pragma endregion Includes
 
 namespace SvOr

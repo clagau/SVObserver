@@ -22,14 +22,14 @@ public:
 	friend class SVMatroxOcrInterface;
 
 	SVMatroxCommandDataImage();
-	SVMatroxCommandDataImage( const SVMatroxBufferCreateStruct& p_rCreateData );
-	SVMatroxCommandDataImage( const SVMatroxBuffer& p_rBuffer, bool p_ReadOnly = false );
-	SVMatroxCommandDataImage( const SVByteVector& p_rData, bool p_ReadOnly = false );
+	SVMatroxCommandDataImage( const SVMatroxBufferCreateStruct& rCreateData );
+	SVMatroxCommandDataImage( const SVMatroxBuffer& rBuffer, bool readOnly = false );
+	SVMatroxCommandDataImage( const std::vector<unsigned char>& rData, bool readOnly = false );
 
 	virtual ~SVMatroxCommandDataImage();
 
-	virtual HRESULT GetData( SVByteVector& p_rData ) const override;
-	virtual HRESULT SetData( const SVByteVector& p_rData ) override;
+	virtual HRESULT GetData(std::vector<unsigned char>& rData) const override;
+	virtual HRESULT SetData( const std::vector<unsigned char>& rData) override;
 
 protected:
 	static HRESULT Convert( HBITMAP hBitmap, SVMatroxBuffer& rImage );

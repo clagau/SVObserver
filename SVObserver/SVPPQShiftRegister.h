@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 struct SVProductInfoStruct;
@@ -38,12 +37,12 @@ public:
 	long GetIndexByTriggerCount(long triggerCount) const;
 	SVProductInfoStruct* GetProductByTriggerCount(long triggerCount) const;
 
-	long GetIndexByTriggerTimeStamp(SvTl::SVTimeStamp checkTime, int cameraID) const;
+	long GetIndexByTriggerTimeStamp(double checkTime, int cameraID) const;
 
 	HRESULT GetProductStates( std::string& p_rProductStates ) const;
 
 private:
-	bool findTimeMatch(SvTl::SVTimeStamp checkTime, SvTl::SVTimeStamp triggerTime, SvTl::SVTimeStamp nextTriggerTime, bool isPPQ1) const;
+	bool findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isPPQ1) const;
 
 	typedef std::vector< SVProductInfoStruct* > SVProductVector;
 

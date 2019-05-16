@@ -12,19 +12,21 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <future>
 //Moved to precompiled header: #include <memory>
 
-#include "EnvelopeUtil.h"
 #include "ErrorUtil.h"
 #include "OneOfUtil.h"
 #include "RPCClient.h"
 #include "SVProtoBuf/Envelope.h"
 #include "SVSystemLibrary/SVFuture.h"
+#pragma endregion Includes
 
 namespace SvRpc
 {
-template <typename TPayload, typename TReq, typename TRes> class SimpleClient
+template <typename TPayload, typename TReq, typename TRes>
+class SimpleClient
 {
 public:
 	SimpleClient(RPCClient& rClient)

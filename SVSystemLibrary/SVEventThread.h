@@ -10,11 +10,9 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVThreadManager.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 template< typename SVEventThreadSignalHandler >
 class SVEventThread

@@ -9,8 +9,9 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:24:24  $
 //******************************************************************************
 #pragma once
-#include "afxwin.h"
+#pragma region Inlcudes
 #include "SVEditHelper.h"
+#pragma endregion Inlcudes
 
 namespace SvMc
 {

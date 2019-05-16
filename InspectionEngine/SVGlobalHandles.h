@@ -14,7 +14,6 @@
 // These should go in svglobal.h but had compilation problems
   // Bit masking constants
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -34,7 +33,7 @@ struct SVDataBufferHandleStruct
 	};
 
 	DWORD DwSize = 0;					// Size of this structure...
-	SVMatroxIdentifier	milResult = M_NULL;	// MIL Buffer Handle, if available...
+	__int64	milResult = 0LL;	// MIL Buffer Handle, if available...
 	LPVOID PHostBuffer = nullptr;				// Buffer Pointer ( Process Address Space ), if available...
 };
 
@@ -46,7 +45,7 @@ struct SVBarCodeBufferHandleStruct
 	};
 
 	DWORD DwSize = 0;					// Size of this structure...
-	SVMatroxIdentifier	milBarCode = M_NULL;		// MIL Buffer Handle, if available...
+	__int64	milBarCode = 0LL;		// MIL Buffer Handle, if available...
 };
 
 } //namespace SvIe

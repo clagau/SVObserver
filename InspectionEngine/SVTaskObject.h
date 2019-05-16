@@ -21,7 +21,7 @@
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVObjectAppClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVImageLibrary/SVImageExtentClass.h"

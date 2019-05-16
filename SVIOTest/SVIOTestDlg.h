@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTimerLibrary/SVClock.h"
+#include "resource.h"
 #pragma endregion Includes
 
 class SVIOConfigurationInterfaceClass;
@@ -35,12 +35,12 @@ struct SVIOTriggerDataStruct
 
 	long lTriggerCount;
 
-	SvTl::SVTimeStamp m_TimeStamp[100];
+	double m_TimeStamp[100];
 
-	SvTl::SVTimeStamp m_LastTime;
-	SvTl::SVTimeStamp m_TotalTime;
-	SvTl::SVTimeStamp m_MinTime;
-	SvTl::SVTimeStamp m_MaxTime;
+	double m_LastTime;
+	double m_TotalTime;
+	double m_MinTime;
+	double m_MaxTime;
 
 	void OnTriggerStart();
 

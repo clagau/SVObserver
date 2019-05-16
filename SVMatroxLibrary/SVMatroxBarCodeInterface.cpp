@@ -13,15 +13,16 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVMatroxBarCodeInterface.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
+#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxResourceMonitor.h"
+#include "SVMatroxHelper.h"
 #include "SVBufferResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVMatroxHelper.h"
 #pragma endregion Includes
 
 /**
@@ -53,9 +54,9 @@ SVMatroxBarCodeInterface::~SVMatroxBarCodeInterface()
 @SVOperationDescription This function converts the SVObserver SVBarCodeControlTypeEnum to a matrox Enum.
 
 */
-MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) 
+__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) 
 {
-	MatroxType l_lControlType = M_UNINITIALIZED;
+	__int64 l_lControlType = M_UNINITIALIZED;
 	switch( p_eType )
 	{
 		case SVBCForeGroundValue:
@@ -171,9 +172,9 @@ MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum
 
 */
 // Bar Code Types......
-MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType) 
+__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType) 
 {
-	MatroxType l_lControlType = M_UNINITIALIZED;
+	__int64 l_lControlType = M_UNINITIALIZED;
 	switch( p_eType )
 	{
 		case SVBC412:
@@ -279,7 +280,7 @@ MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eTy
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
 */
-HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue )
+HRESULT SVMatroxBarCodeInterface::Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue )
 {
 	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -311,7 +312,7 @@ HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxIdentifier& p_rCodeID, SVBa
 				else
 				{
 					// One Matrox constant and value..
-					MatroxType l_lControlType = Convert2MatroxType( p_eType );
+					__int64 l_lControlType = Convert2MatroxType( p_eType );
 					if( l_lControlType != M_UNINITIALIZED )
 					{
 						McodeControl( p_rCodeID, l_lControlType ,p_dValue);
@@ -346,7 +347,7 @@ HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxIdentifier& p_rCodeID, SVBa
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
 */
-HRESULT SVMatroxBarCodeInterface::Set(const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue)
+HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue)
 {
 	return Set( p_rCodeID, p_eType, static_cast<double>( p_lValue ) );
 }
@@ -357,7 +358,7 @@ HRESULT SVMatroxBarCodeInterface::Set(const SVMatroxIdentifier& p_rCodeID, SVBar
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
-*/HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue )
+*/HRESULT SVMatroxBarCodeInterface::Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue )
 {
 	// Currently there are no strings to set.
 	return SVMEE_INVALID_PARAMETER;
@@ -371,7 +372,7 @@ HRESULT SVMatroxBarCodeInterface::Set(const SVMatroxIdentifier& p_rCodeID, SVBar
 @SVOperationDescription Uses McodeInquire to get the control type with value.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue )
+HRESULT SVMatroxBarCodeInterface::Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue )
 {
 	HRESULT Result( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -382,7 +383,7 @@ HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxIdentifier& p_rCodeID, SVBa
 		{
 			if( (p_eType & SVBCStringType) != SVBCStringType )
 			{
-				MatroxType l_lControlType = Convert2MatroxType( p_eType );
+				__int64 l_lControlType = Convert2MatroxType( p_eType );
 				if( l_lControlType != M_UNINITIALIZED )
 				{
 					McodeInquire( p_rCodeID, l_lControlType , &p_dValue);
@@ -421,7 +422,7 @@ HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxIdentifier& p_rCodeID, SVBa
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get(const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue)
+HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue)
 {
 	HRESULT l_Code;
 	double l_dValue = 0.0;
@@ -437,7 +438,7 @@ HRESULT SVMatroxBarCodeInterface::Get(const SVMatroxIdentifier& p_rCodeID, SVBar
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue )
+HRESULT SVMatroxBarCodeInterface::Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue )
 {
 	// Currently there are no strings to Get.
 	return SVMEE_INVALID_PARAMETER;
@@ -450,7 +451,7 @@ HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxIdentifier& p_rCodeID, SVBa
 @SVOperationDescription
 
 */
-bool SVMatroxBarCodeInterface::GetResult( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages)
+bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool RetValue = true;
 
@@ -460,7 +461,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxIdentifier& p_rCodeID, S
 	{
 		if( M_NULL != p_rCodeID )
 		{
-			MatroxType l_lControlType = Convert2MatroxType( p_eType );
+			__int64 l_lControlType = Convert2MatroxType( p_eType );
 			if( l_lControlType != M_UNINITIALIZED )
 			{
 				McodeGetResult( p_rCodeID, l_lControlType , &p_rdValue);
@@ -521,7 +522,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxIdentifier& p_rCodeID, S
 @SVOperationDescription
 
 */
-bool SVMatroxBarCodeInterface::GetResult(const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages)
+bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	double l_dValue = 0.0;
 	bool retValue = GetResult( p_rCodeID, p_eType, l_dValue, pErrorMessages);
@@ -535,7 +536,7 @@ bool SVMatroxBarCodeInterface::GetResult(const SVMatroxIdentifier& p_rCodeID, SV
 @SVOperationDescription
 
 */
-bool SVMatroxBarCodeInterface::GetResult( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
+bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
@@ -546,7 +547,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxIdentifier& p_rCodeID, S
 		{
 			if( (p_eType & SVBCStringType) == SVBCStringType )
 			{
-				MatroxType l_lControlType = Convert2MatroxType( p_eType );
+				__int64 l_lControlType = Convert2MatroxType( p_eType );
 				if( l_lControlType != M_UNINITIALIZED )
 				{
 					long l_lSize;
@@ -639,7 +640,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxIdentifier& p_rCodeID, S
 @SVOperationDescription Execute function calls the mil function McodeRead.
 
 */
-bool SVMatroxBarCodeInterface::Execute( const SVMatroxIdentifier& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMatroxBarCodeInterface::Execute( const __int64& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
@@ -696,7 +697,7 @@ bool SVMatroxBarCodeInterface::Execute( const SVMatroxIdentifier& p_rCodeID, con
 @SVOperationDescription This function creates a barcode object from the supplied SVBarCodeTypeEnum. This object is used for reading barcodes.
 
 */
-HRESULT SVMatroxBarCodeInterface::Create(SVMatroxIdentifier& p_rCodeID, SVBarCodeTypesEnum p_eType )
+HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, SVBarCodeTypesEnum p_eType )
 {
 	HRESULT Result( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -704,7 +705,7 @@ HRESULT SVMatroxBarCodeInterface::Create(SVMatroxIdentifier& p_rCodeID, SVBarCod
 #endif
 	{
 		MIL_ID l_NewID = M_NULL;
-		SVMatroxIdentifier l_lCodeType = Convert2MatroxType( p_eType );
+		__int64 l_lCodeType = Convert2MatroxType( p_eType );
 
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
@@ -747,7 +748,7 @@ HRESULT SVMatroxBarCodeInterface::Create(SVMatroxIdentifier& p_rCodeID, SVBarCod
 @SVOperationDescription This function creates a barcode object from an existing SVMatroxBarCode.
 
 */
-HRESULT SVMatroxBarCodeInterface::Create(SVMatroxIdentifier& p_rCodeID, const SVMatroxIdentifier& p_FromCodeID )
+HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_FromCodeID )
 {
 	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -830,7 +831,7 @@ HRESULT SVMatroxBarCodeInterface::Create(SVMatroxIdentifier& p_rCodeID, const SV
 @SVOperationDescription Destroys the Bar Code handle.
 
 */
-HRESULT SVMatroxBarCodeInterface::Destroy(SVMatroxIdentifier& rCodeID)
+HRESULT SVMatroxBarCodeInterface::Destroy(__int64& rCodeID)
 {
 	return DestroyMatroxId(rCodeID, McodeFree, SVBarCodeID);
 }

@@ -15,7 +15,6 @@
 #include "SVDisplayObject.h"
 
 #include "SVLibrary/SVWinUtility.h"
-#include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/GlobalConst.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -40,7 +39,7 @@ SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 , m_DisplayedTrigger( -1 )
 , m_IPDocDisplayComplete( 1 )
 , m_FrameRate( 10 )
-, m_LastUpdateTime(std::numeric_limits<SvTl::SVTimeStamp>::max())
+, m_LastUpdateTime(std::numeric_limits<double>::max())
 , m_pDoc(nullptr)
 , m_hStartEvent(nullptr)
 , m_hStopEvent(nullptr)

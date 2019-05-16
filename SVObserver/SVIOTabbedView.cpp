@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVIOTabbedView.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVDiscreteInputsView.h"

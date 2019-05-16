@@ -13,14 +13,9 @@
 #include "SVPixelAnalyzerDlg.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "AnalyzerOperators/SVPixelAnalyzer.h"        // Required for SVPixelAnalyzerClass
-#include "Tools/SVTool.h"
-#include "SVToolSet.h"              // Required for scripting
-#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
-#include "SVObserver.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

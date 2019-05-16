@@ -20,7 +20,8 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxGraphicsInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -90,7 +91,7 @@ namespace
 			}
 
 		protected:
-			SVMatroxIdentifier m_handle = M_NULL;
+			__int64 m_handle = M_NULL;
 		};
 	}
 

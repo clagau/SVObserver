@@ -14,6 +14,7 @@
 #include "SVDPointXResult.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVRange.h"
+#include "SVValueObjectLibrary/SVDPointValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

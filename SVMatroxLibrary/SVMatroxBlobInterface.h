@@ -11,12 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVMatroxEnums.h"
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxApplicationInterface.h"
+#pragma endregion Includes
 
 class SVCommandDataHolder;
 
@@ -68,38 +69,38 @@ public:
 	virtual ~SVMatroxBlobInterface();
 
 	// This function replaces MblobAllocFeatureList
-	static HRESULT CreateContext(SVMatroxIdentifier& rContextId );
+	static HRESULT CreateContext(__int64& rContextId );
 	// This function replaces MblobAllocResult
-	static HRESULT CreateResult( SVMatroxIdentifier& rResultId );
+	static HRESULT CreateResult( __int64& rResultId );
 
 	// This function replaces MblobFree
-	static HRESULT DestroyContext(SVMatroxIdentifier& rContextId );
-	static HRESULT DestroyResult( SVMatroxIdentifier& rResultId );
+	static HRESULT DestroyContext(__int64& rContextId );
+	static HRESULT DestroyResult( __int64& rResultId );
 
 
 	// This function replaces MblobCalculate( 
-	static HRESULT Execute( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rIdentId,  const SVMatroxIdentifier& rContextId );
+	static HRESULT Execute( const __int64& rResultId, const SVMatroxBuffer& rIdentId,  const __int64& rContextId );
 
-	static HRESULT GetNumber( const SVMatroxIdentifier& rResultId, long& rNumber ) ;
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray ) ;
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray );
+	static HRESULT GetNumber( const __int64& rResultId, long& rNumber ) ;
+	static HRESULT GetResult( const __int64& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray ) ;
+	static HRESULT GetResult( const __int64& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray );
 
 
 	// These functions replace MblobControl
-	static HRESULT Set( const SVMatroxIdentifier& rContextId, SVBlobControlEnum lControlType, const long lControlValue);
-	static HRESULT Set( const SVMatroxIdentifier& rContextId, SVBlobControlEnum lControlType, const double lControlValue);
+	static HRESULT Set( const __int64& rContextId, SVBlobControlEnum lControlType, const long lControlValue);
+	static HRESULT Set( const __int64& rContextId, SVBlobControlEnum lControlType, const double lControlValue);
 
 	//
-	static HRESULT GetForeground( const SVMatroxIdentifier& rContextId, bool& rIsDarkForeground);
-	static HRESULT SetForeground( const SVMatroxIdentifier& rContextId, bool isDarkForeground);
-	static HRESULT GetIdentifier( const SVMatroxIdentifier& rContextId, bool& bBinary);
-	static HRESULT SetIdentifier( const SVMatroxIdentifier& rContextId, bool bBinary);
+	static HRESULT GetForeground( const __int64& rContextId, bool& rIsDarkForeground);
+	static HRESULT SetForeground( const __int64& rContextId, bool isDarkForeground);
+	static HRESULT GetIdentifier( const __int64& rContextId, bool& bBinary);
+	static HRESULT SetIdentifier( const __int64& rContextId, bool bBinary);
 
-	static HRESULT BlobFill( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor);
+	static HRESULT BlobFill( const __int64& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor);
 	// This function replaces MblobSelect
-	static HRESULT BlobSelect( const SVMatroxIdentifier& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh);
+	static HRESULT BlobSelect( const __int64& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh);
 	// This function replaces MblobSelectFeature
-	static HRESULT BlobSelectFeature( const SVMatroxIdentifier& rContextID, std::set<SVBlobSelectionEnum> featureSet);
+	static HRESULT BlobSelectFeature( const __int64& rContextID, std::set<SVBlobSelectionEnum> featureSet);
 
 	static bool Compare(int criteria, const SVBlob& lBlob, const SVBlob& rBlob);
 

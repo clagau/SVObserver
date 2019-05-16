@@ -12,8 +12,10 @@
 #pragma once
 
 #pragma region Inlcudes
-#include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "SVImageAnalyzerClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Inlcudes
 
 namespace SvAo
@@ -63,7 +65,7 @@ protected:
 /*- These values are only used by the Run () function, and   */
 /*- are maintained here to avoid time loss in allocating and */
 /*- freeing these buffers for each function call. -----------*/
-	SVMatroxIdentifier        m_HistResultID = M_NULL;
+	__int64        m_HistResultID = M_NULL;
 	std::vector<long>          msvplHistValues;
 /*- End of USED BY Run (). ----------------------------------*/
 };

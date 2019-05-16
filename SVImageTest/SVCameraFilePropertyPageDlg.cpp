@@ -15,8 +15,8 @@
 //Moved to precompiled header: #include <math.h>
 #pragma warning (disable : 4786)
 #include "SVCameraFilePropertyPageDlg.h"
-#include "SVTestAcquisitionClass.h"
 #include "SVImageTest.h"
+#include "SVTestAcquisitionClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
@@ -24,8 +24,10 @@
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVRPropertyTree/SVRPropTreeItemFile.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

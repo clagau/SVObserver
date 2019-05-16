@@ -14,7 +14,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "svsecurity.h"
 #include "SVSecurityManager.h"
 #include "SVAccessClass.h"
 

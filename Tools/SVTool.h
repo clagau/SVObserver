@@ -19,7 +19,12 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
+#include "SVValueObjectLibrary/SVTimerValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

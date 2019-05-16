@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVLinearAnalyzerClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "Operators/SVLinearEdgeAProcessingClass.h"
+#include "Operators/SVLinearEdgeProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
 

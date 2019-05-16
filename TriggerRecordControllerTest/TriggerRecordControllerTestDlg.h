@@ -3,8 +3,9 @@
 //
 
 #pragma once
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
+#include "resource.h"
 #include "ToolObject.h"
+#include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVOGui\PictureDisplay.h"
 

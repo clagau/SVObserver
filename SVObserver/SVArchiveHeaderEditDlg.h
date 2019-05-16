@@ -11,10 +11,8 @@
 #pragma once
 
 #pragma region Includes
-#include "afxcmn.h"
-#include "SVMFCControls\SVListCtrl.h"
+#include "SVMFCControls/SVListCtrl.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVGlobal.h"
 #pragma endregion
 
 class SVArchiveHeaderEditDlg : public CDialog

@@ -11,9 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVArchiveHeaderEditDlg.h"
-#include "afxdialogex.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

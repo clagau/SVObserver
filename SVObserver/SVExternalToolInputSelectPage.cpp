@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
-#include "SVGlobal.h"
 #include "SVExternalToolInputSelectPage.h"
 #include "SVIPDoc.h"
 #include "Operators/SVExternalToolTask.h"
@@ -22,11 +21,10 @@
 #include "SVPPQObject.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "RootObject.h"
 #include "SVOGui/BoundValue.h"
 #include "TextDefinesSvO.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
 #pragma region Declarations

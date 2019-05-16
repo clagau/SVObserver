@@ -15,10 +15,8 @@
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

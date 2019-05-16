@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "TableColumnEquation.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVObjectLibrary/SVClsids.h"
 
 namespace SvOp

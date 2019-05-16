@@ -15,8 +15,6 @@
 #if !defined( __AFXCTL_H__ )
 #error "include 'afxctl.h' before including this file"
 #endif
-
-#include "resource.h"       // main symbols
 #pragma endregion Includes
 
 #pragma region Declarations

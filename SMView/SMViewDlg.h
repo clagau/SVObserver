@@ -11,11 +11,8 @@
 
 #pragma once
 
-#include "SVSharedMemoryLibrary\MonitorListCpy.h"
-#include "SVSharedMemoryLibrary\MLCpyContainer.h"
-#include "SVSharedMemoryLibrary\SharedDataContainer.h"
 #include "SVSharedMemoryLibrary\SharedMemReader.h"
-#include "afxwin.h"
+#include "resource.h"
 
 class MonitorListMap;
 enum CallBackType;

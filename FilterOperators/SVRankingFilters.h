@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVFilterClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////

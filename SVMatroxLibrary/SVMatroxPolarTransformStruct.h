@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxEnums.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Polar Transform Struct

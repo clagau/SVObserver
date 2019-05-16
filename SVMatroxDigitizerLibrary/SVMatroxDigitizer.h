@@ -14,7 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <boost/utility.hpp>
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #pragma endregion Includes
 
 class SVMatroxDigitizerInterface;
@@ -41,7 +40,7 @@ public:
 	bool empty() const;
 
 protected:
-	SVMatroxIdentifier m_DigitizerIdentifier;
+	__int64 m_DigitizerIdentifier;
 
 private:
 	void LocalClear();

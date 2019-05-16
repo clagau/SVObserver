@@ -14,9 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
-#include "SVMatroxEnumConvertor.h" //SVMatroxEnumConvertor 
-///all enums from this file were moved to SVMatroxSimpleEnums.h"
-#include "SVMatroxSimpleEnums.h" 
 #pragma endregion Includes
 
 //// Image processing enums

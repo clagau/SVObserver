@@ -16,8 +16,6 @@
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVInspectionProcess.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVIPDoc.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes

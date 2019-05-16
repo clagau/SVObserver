@@ -9,6 +9,12 @@
 //* .Check In Date   : $Date:   22 Apr 2013 17:01:02  $
 //******************************************************************************
 
+#pragma region Includes
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "SVObjectThreadCommandTemplate.h"
+#include "SVObjectCommandWrapperTemplate.h"
+#pragma endregion Includes
 
 template<typename CommandPtr>
 SVObjectSynchronousCommandTemplate<CommandPtr>::SVObjectSynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand)
@@ -30,13 +36,10 @@ HRESULT SVObjectSynchronousCommandTemplate<CommandPtr>::Execute(DWORD TimeoutInM
 	{
 		typedef SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
 
-		//SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperPtr pWrapper{new SVObjectCommandWrapperTemplate<CommandPtr>(m_pCommand)};
 		SVObjectCommandWrapperPtr pWrapper = std::make_shared<SVObjectCommandWrapperTemplate<CommandPtr>>(m_pCommand);
 
 		if (nullptr != pWrapper)
 		{
-			//SvOi::ICommandPtr pCommand{new SVObjectThreadCommandTemplate< SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperPtr >(pWrapper)};
-
 			SvOi::ICommandPtr pCommand = std::make_shared<SVObjectThreadCommandTemplate<SVObjectCommandWrapperPtr>>(pWrapper);
 
 			if (nullptr != pCommand)

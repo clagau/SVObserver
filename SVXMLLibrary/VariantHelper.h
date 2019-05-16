@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "comutil.h"
 #pragma endregion Includes
 
 namespace SvXml

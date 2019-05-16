@@ -21,8 +21,10 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
-#include "SVStatusLibrary/MessageManager.h"
+#include "SVMatroxLibrary/SVMatroxBarCodeInterface.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:17:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGraphicsInterface.h"
-#include "SVMatroxEnums.h"
-#include "SVMatroxImagingLibrary.h"
-#include "SVMatroxResourceMonitor.h"
+#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxHelper.h"
+#include "SVMatroxResourceMonitor.h"
+#pragma endregion Includes
 
 SVMatroxGraphicsInterface::SVMatroxGraphicsInterface()
 {
@@ -29,7 +31,7 @@ double SVMatroxGraphicsInterface::CreateRGB888( unsigned char p_Red, unsigned ch
 	return M_RGB888( p_Red, p_Green, p_Blue );
 }
 
-HRESULT SVMatroxGraphicsInterface::Clear(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer )
+HRESULT SVMatroxGraphicsInterface::Clear(__int64& p_rGraphicsID, SVMatroxBuffer& p_rBuffer )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -58,7 +60,7 @@ HRESULT SVMatroxGraphicsInterface::Clear(SVMatroxIdentifier& p_rGraphicsID, SVMa
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::RectangleFill(SVMatroxIdentifier& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle )
+HRESULT SVMatroxGraphicsInterface::RectangleFill(__int64& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -89,7 +91,7 @@ HRESULT SVMatroxGraphicsInterface::RectangleFill(SVMatroxIdentifier& p_rGraphics
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::Color(SVMatroxIdentifier& p_rGraphicsID, double p_Color )
+HRESULT SVMatroxGraphicsInterface::Color(__int64& p_rGraphicsID, double p_Color )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -118,7 +120,7 @@ HRESULT SVMatroxGraphicsInterface::Color(SVMatroxIdentifier& p_rGraphicsID, doub
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::BackColor(SVMatroxIdentifier& p_rGraphicsID, double p_Color )
+HRESULT SVMatroxGraphicsInterface::BackColor(__int64& p_rGraphicsID, double p_Color )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -147,7 +149,7 @@ HRESULT SVMatroxGraphicsInterface::BackColor(SVMatroxIdentifier& p_rGraphicsID, 
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::Create(SVMatroxIdentifier& p_rGraphicsID )
+HRESULT SVMatroxGraphicsInterface::Create(__int64& p_rGraphicsID )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -188,7 +190,7 @@ HRESULT SVMatroxGraphicsInterface::Create(SVMatroxIdentifier& p_rGraphicsID )
 	return l_Code;
 }
 
-HRESULT SVMatroxGraphicsInterface::Destroy(SVMatroxIdentifier& rGraphicsID )
+HRESULT SVMatroxGraphicsInterface::Destroy(__int64& rGraphicsID )
 {
 	return DestroyMatroxId(rGraphicsID, MgraFree, SVGraphicsID);
 }

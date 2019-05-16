@@ -14,6 +14,10 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVByteValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

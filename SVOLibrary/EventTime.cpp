@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "EventTime.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations

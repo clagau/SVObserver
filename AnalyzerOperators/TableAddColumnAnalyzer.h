@@ -8,10 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary\SVObjectLibrary.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
-#include "Operators/TableAddColumnEquation.h"
 #pragma endregion Includes
 
 

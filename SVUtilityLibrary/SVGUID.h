@@ -14,8 +14,13 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityGlobals.h"
 #pragma endregion Includes
+
+inline bool operator < (const GUID& guid1, const GUID& guid2)
+{
+	RPC_STATUS l_Status;
+	return ::UuidCompare(const_cast<GUID*>(&guid1), const_cast<GUID*>(&guid2), &l_Status) < 0;
+}
 
 class SVGUID
 {

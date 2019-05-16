@@ -15,13 +15,11 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <set>
 
-#include "SVOFileConfig.h"
 #include "SVOFileConfigDlg.h"
 #include "SVLibrary/SVBStr.h"
 
 #include "SVXMLLibrary\LoadConfiguration.h"
 
-#include "SVOLibrary/SVOLibrary.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"

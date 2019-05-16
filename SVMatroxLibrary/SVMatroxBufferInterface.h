@@ -15,10 +15,8 @@
 #include "SVUtilityLibrary/SVPoint.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxEnums.h"
-#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxBufferCreateExtStruct.h"
 #include "SVMatroxBufferCreateLineStruct.h"
@@ -26,7 +24,6 @@
 #include "SVMatroxSystem.h"
 #include "MatroxImageProps.h"
 #pragma endregion Includes
-
 
 /**
 @SVObjectName Matrox Buffer Interface
@@ -118,7 +115,7 @@ public:
 
 	static HRESULT GenLutRamp( SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue );
 
-	static HRESULT GetLine( SVMatroxBuffer& p_rBuf, SVMatroxIdentifier p_lXStart, SVMatroxIdentifier p_lYStart, SVMatroxIdentifier p_lXEnd, SVMatroxIdentifier p_lYEnd, SVMatroxIdentifier& p_rlNbrPixels, void* p_pUserArray );
+	static HRESULT GetLine( SVMatroxBuffer& p_rBuf, __int64 p_lXStart, __int64 p_lYStart, __int64 p_lXEnd, __int64 p_lYEnd, __int64& p_rlNbrPixels, void* p_pUserArray );
 
 	// ****** Get and Set Functions **********
 	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult );
@@ -137,7 +134,7 @@ public:
 	// MbufGet1d
 
 	static HRESULT Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const double p_rdValue);
-	static HRESULT Set( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const SVMatroxInt p_rlValue );
+	static HRESULT Set( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long long p_rlValue );
 
 	// ****** Miscellaneous *********
 	static HRESULT ControlNeighborhood( SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
@@ -166,10 +163,10 @@ public:
 
 
 protected:
-	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
-	static HRESULT CopyBuffer( SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom );
+	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, __int64 p_From );
+	static HRESULT CopyBuffer( __int64 p_To, const SVMatroxBuffer& p_rFrom );
 
-	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, SVMatroxIdentifier MatroxID, const std::string& rCreatorName);
+	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, __int64 MatroxID, const std::string& rCreatorName);
 
 private:
 	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );

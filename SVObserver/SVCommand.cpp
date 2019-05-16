@@ -23,7 +23,9 @@
 #include "SVCommandLibrary/SVFileSystemCommandFactory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxCommandFactory.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxOcrInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
@@ -48,7 +50,6 @@
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "RemoteCommand.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
-#include "SVStorageResult.h"
 #include "SVVisionProcessorHelper.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -2913,7 +2914,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 		{
 			HRESULT MatroxCode;
 			SVMatroxBuffer l_milImage = CreateImageFromBSTR(bstrReadImage);
-			SVMatroxIdentifier milResult = M_NULL;
+			__int64 milResult = M_NULL;
 			MatroxCode = SVMatroxOcrInterface::CreateResult(milResult);
 			// BRW - This l_Code is never checked.
 
@@ -3007,7 +3008,7 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 			{
 				HRESULT MatroxCode(S_OK);
 				SVMatroxBuffer l_milImage = CreateImageFromBSTR(bstrVerifyImage);
-				SVMatroxIdentifier milResult = M_NULL;
+				__int64 milResult = M_NULL;
 				MatroxCode = SVMatroxOcrInterface::CreateResult(milResult);
 
 				if (S_OK !=  MatroxCode)

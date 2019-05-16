@@ -134,6 +134,7 @@ namespace Gdiplus
 #include <thread>
 #include <winsock2.h>		//Used by static library
 #include <ws2tcpip.h>		//Used by static library
+#include <xmllite.h>
 
 #include <boost\algorithm\string.hpp>
 #include <boost\algorithm\string\replace.hpp>

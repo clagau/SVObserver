@@ -9,8 +9,6 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SharedDataStore.h"
 #include "SMParameterStruct.h"
 #include "MesManHelper.h"

@@ -17,7 +17,7 @@ SVMatroxBufferTemplate::SVMatroxBufferTemplate()
 {
 }
 
-SVMatroxBufferTemplate::SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName )
+SVMatroxBufferTemplate::SVMatroxBufferTemplate( __int64 p_Identifier, const std::string& p_rCreatorName )
 : m_Identifier( p_Identifier ), m_CreatorName( p_rCreatorName )
 {
 }

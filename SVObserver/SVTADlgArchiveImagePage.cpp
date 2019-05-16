@@ -15,7 +15,6 @@
 #include "SVTADlgArchiveImagePage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "Tools/SVArchiveTool.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVIPDoc.h"

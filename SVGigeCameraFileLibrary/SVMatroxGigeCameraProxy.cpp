@@ -21,7 +21,6 @@
 #include "SVMatroxGigeCameraProxy.h"
 #include "Definitions/SVGigeEnums.h"
 #include "SVMessage/SVMessage.h"
-#include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"

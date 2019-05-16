@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVMatroxTypedefs.h"
 #pragma endregion Includes
 
 class SVMatroxBufferTemplate
@@ -23,11 +22,11 @@ public:
 	virtual ~SVMatroxBufferTemplate();
 
 	bool empty() const { return (m_Identifier == 0); };
-	SVMatroxIdentifier GetIdentifier() const { return m_Identifier; };
+	__int64 GetIdentifier() const { return m_Identifier; };
 
 protected:
 	SVMatroxBufferTemplate();
-	SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName );
+	SVMatroxBufferTemplate( __int64 p_Identifier, const std::string& p_rCreatorName );
 
 	// Do not implement this method
 	SVMatroxBufferTemplate(const SVMatroxBufferTemplate& p_rObject) = delete;
@@ -38,7 +37,7 @@ protected:
 	virtual void freeBuffer();
 
 private:
-	SVMatroxIdentifier m_Identifier;
+	__int64 m_Identifier;
 	std::string m_CreatorName;
 };
 

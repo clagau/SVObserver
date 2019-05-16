@@ -127,7 +127,7 @@ private:
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
-	void setPostRunStatus(SvTl::SVTimeStamp l_Timer, SVRunStatusClass &rRunStatus);
+	void setPostRunStatus(double l_Timer, SVRunStatusClass &rRunStatus);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -136,13 +136,13 @@ protected:
 
 	long m_SetNumber;
 
-	SvTl::SVTimeStamp m_StartTime;
-	SvTl::SVTimeStamp m_EndTime;
-	SvTl::SVTimeStamp m_AverageTime;
-	SvTl::SVTimeStamp m_ProcessTime;
+	double m_StartTime;
+	double m_EndTime;
+	double m_AverageTime;
+	double m_ProcessTime;
 
-	SvTl::SVTimeStamp m_TimeStampStart;
-	SvTl::SVTimeStamp m_TimeStampEnd;
+	double m_TimeStampStart;
+	double m_TimeStampEnd;
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 	SvVol::SVBoolValueObjectClass m_Enabled;

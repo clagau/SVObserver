@@ -9,19 +9,22 @@
 // * .Check In Date   : $Date:   23 Oct 2013 08:50:50  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <boost/config.hpp>
 #include "SVMatroxImageInterface.h"
 
-#include "SVCommandLibrary/SVCommandDataHolder.h"
-#include "SVCommandLibrary/SVCommandDataValue.h"
-#include "SVMessage/SVMessage.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxCommandDataImage.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
+#include "SVMatroxEnumConvertor.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxResourceMonitor.h"
+#include "SVCommandLibrary/SVCommandDataHolder.h"
+#include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 
 SVInterpolationModeOptions::SVInterpolationModeOptionsEnumPair SVInterpolationModeOptions::m_Convertor
@@ -471,7 +474,7 @@ long SVMatroxImageInterface::Convert2MatroxType( SVImageWaterShedEnum p_eType)
 @SVOperationDescription This function creates a Result object and return the of it SVMatroxIdentifier.
 
 */
-HRESULT SVMatroxImageInterface::Create(SVMatroxIdentifier& rResultId, const long p_lNbEntries, SVImageOperationTypeEnum p_eResultType)
+HRESULT SVMatroxImageInterface::Create(__int64& rResultId, const long p_lNbEntries, SVImageOperationTypeEnum p_eResultType)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -520,7 +523,7 @@ HRESULT SVMatroxImageInterface::Create(SVMatroxIdentifier& rResultId, const long
 @SVOperationDescription This function destroys a Result object.
 
 */
-HRESULT SVMatroxImageInterface::Destroy(SVMatroxIdentifier& rResultId)
+HRESULT SVMatroxImageInterface::Destroy(__int64& rResultId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -723,7 +726,7 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold( const SVCommandDataHolder& p_
 
 	if( S_OK == l_Status )
 	{
-		SVByteVector l_TempImage;
+		std::vector<unsigned char> l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
@@ -830,7 +833,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 
 	if( S_OK == l_Status )
 	{
-		SVByteVector l_TempImage;
+		std::vector<unsigned char> l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
@@ -868,7 +871,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 		if( S_OK == l_Status )
 		{
 			// Read histogram...
-			SVMatroxIdentifier histResult;
+			__int64 histResult;
 				
 			HRESULT l_RetCode = SVMatroxImageInterface::Create(histResult, 256, SVImageHistList);
 
@@ -996,7 +999,7 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 
 	if( S_OK == l_Status )
 	{
-		SVByteVector l_TempImage;
+		std::vector<unsigned char> l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
@@ -1418,7 +1421,7 @@ HRESULT SVMatroxImageInterface::Flip( const SVMatroxBuffer& p_rDest,
 }
 
 
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, std::vector<double>& p_adArray)
+HRESULT SVMatroxImageInterface::GetResult( const __int64& rResultID, std::vector<double>& p_adArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1456,7 +1459,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, 
 	return l_Code;	
 }
 
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, std::vector<long>& p_alArray)
+HRESULT SVMatroxImageInterface::GetResult( const __int64& rResultID, std::vector<long>& p_alArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1494,7 +1497,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, 
 	return l_Code;	
 }
 
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, std::vector<BYTE>& p_acArray)
+HRESULT SVMatroxImageInterface::GetResult( const __int64& rResultID, std::vector<BYTE>& p_acArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1538,7 +1541,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, 
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, void * p_pArray)
+HRESULT SVMatroxImageInterface::GetResult( const __int64& rResultID, void * p_pArray)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1575,7 +1578,7 @@ HRESULT SVMatroxImageInterface::GetResult( const SVMatroxIdentifier& rResultID, 
 @SVOperationDescription This function calculates the histogram (or pixel intensity distribution) of the specified source buffer and stores results in the specified histogram result buffer.
 
 */
-HRESULT SVMatroxImageInterface::Histogram( const SVMatroxIdentifier& rHistResult, const SVMatroxBuffer& p_rSource)
+HRESULT SVMatroxImageInterface::Histogram( const __int64& rHistResult, const SVMatroxBuffer& p_rSource)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -1764,7 +1767,7 @@ HRESULT SVMatroxImageInterface::PolarTransform( const SVMatroxBuffer& p_rDest,
 @SVOperationDescription This function projects a two-dimensional buffer into a one-dimensional buffer from the specified angle, and writes results to the specified projection result buffer.
 
 */
-HRESULT SVMatroxImageInterface::Project( const SVMatroxIdentifier& rResultId,
+HRESULT SVMatroxImageInterface::Project( const __int64& rResultId,
 																	 const SVMatroxBuffer& p_rSource, 
 																	 double p_dAngle)
 {

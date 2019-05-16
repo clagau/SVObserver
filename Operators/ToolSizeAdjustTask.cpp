@@ -21,6 +21,7 @@
 #include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "SVValueObjectLibrary\SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

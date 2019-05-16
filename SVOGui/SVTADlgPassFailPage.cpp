@@ -14,8 +14,6 @@
 #include "SVTADlgPassFailPage.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes

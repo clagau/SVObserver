@@ -9,10 +9,11 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:10:40  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVTestAcquisitionClass.h"
-#include "CameraLibrary\SVDeviceParams.h"
+#pragma endregion Includes
 
 SVTestAcquisitionSubsystem::SVTestAcquisitionSubsystem()
 {

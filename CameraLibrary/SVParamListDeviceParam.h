@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVDeviceParams.h"
+#include "SVDeviceParam.h"
 #pragma region Includes
 
 class SVParamListDeviceParam : public SVDeviceParam

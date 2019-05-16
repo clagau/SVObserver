@@ -5,14 +5,14 @@
 //*****************************************************************************
 /// class for holding memory for the MonitorList in SharedMemory 
 //******************************************************************************
+
+#pragma region Includes
 #include "StdAfx.h"
 #include "MonitorListStore.h"
 #include "SVStatusLibrary\ErrorNumbers.h"
-#include "Definitions\StringTypeDef.h"
-#include "SVUtilityLibrary\SVMetrics.h"
-#include "SVUtilityLibrary\StringHelper.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
 #include "MesManHelper.h"
+#pragma endregion Includes
 
 namespace SvSml
 {

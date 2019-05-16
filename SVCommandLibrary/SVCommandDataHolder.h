@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVCommandDataFacade.h"
 #include "SVCommandAttributesFacade.h"
 #include "SVCommandResultsFacade.h"
@@ -28,30 +27,30 @@ public:
 	typedef SVCommandResultsFacade<SVCommandDataHolder> SVCommandResults;
 
 	SVCommandDataHolder();
-	SVCommandDataHolder( const SVNameDataMap& p_rData );
-	SVCommandDataHolder( const SVCommandDataHolder& p_rObject );
+	SVCommandDataHolder( const SVNameDataMap& rData );
+	SVCommandDataHolder( const SVCommandDataHolder& rObject );
 
 	virtual ~SVCommandDataHolder();
 
-	const SVCommandDataHolder& operator=( const SVCommandDataHolder& p_rObject );
+	const SVCommandDataHolder& operator=( const SVCommandDataHolder& rObject );
 
 	void clear();
 
 	SVNameDataTypeMap GetDataInformation() const;
 
-	unsigned long GetDataType( const _bstr_t& p_rName ) const;
+	unsigned long GetDataType( const _bstr_t& rName ) const;
 
-	HRESULT GetData( const _bstr_t& p_rName, SVCommandDataFacadePtr& p_rData ) const;
-	HRESULT GetContainer( const _bstr_t& p_rName, SVCommandDataHolder& p_rData ) const;
-	HRESULT GetValue( const _bstr_t& p_rName, VARIANT& p_rData ) const;
-	HRESULT GetBlock( const _bstr_t& p_rName, SVByteVector& p_rData ) const;
-	HRESULT GetImage( const _bstr_t& p_rName, SVByteVector& p_rData ) const;
+	HRESULT GetData( const _bstr_t& rName, SVCommandDataFacadePtr& rData ) const;
+	HRESULT GetContainer( const _bstr_t& rName, SVCommandDataHolder& rData ) const;
+	HRESULT GetValue( const _bstr_t& rName, VARIANT& rData ) const;
+	HRESULT GetBlock( const _bstr_t& rName, std::vector<unsigned char>& rData ) const;
+	HRESULT GetImage( const _bstr_t& rName, std::vector<unsigned char>& rData ) const;
 
 	HRESULT SetData( _bstr_t nameBstr, SVCommandDataFacadePtr& rDataPointer);
-	HRESULT SetContainer( const _bstr_t& p_rName, const SVCommandDataHolder& p_rData, bool p_ReadOnly = false );
-	HRESULT SetValue( const _bstr_t& p_rName, const _variant_t& p_rData, bool p_ReadOnly = false );
-	HRESULT SetBlock( const _bstr_t& p_rName, const SVByteVector& p_rData, bool p_ReadOnly = false );
-	HRESULT SetImage( const _bstr_t& p_rName, const SVByteVector& p_rData, bool p_ReadOnly = false );
+	HRESULT SetContainer( const _bstr_t& rName, const SVCommandDataHolder& rData, bool readOnly = false );
+	HRESULT SetValue( const _bstr_t& rName, const _variant_t& rData, bool ReadOnly = false );
+	HRESULT SetBlock( const _bstr_t& rName, const std::vector<unsigned char>& rData, bool readOnly = false );
+	HRESULT SetImage( const _bstr_t& rName, const std::vector<unsigned char>& rData, bool readOnly = false );
 
 protected:
 	SVNameDataMap m_Data;

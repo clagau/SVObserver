@@ -6,10 +6,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVArchiveImageThreadClass.h"
-#include "SVArchiveTool.h"
+#include "SVArchiveRecord.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -116,7 +117,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 			else	// not enough room on queue
 			{
 				// find oldest entry from source AT
-				SvTl::SVTimeStamp iOldest = SvTl::GetTimeStamp();
+				double iOldest = SvTl::GetTimeStamp();
 				QueueType::iterator iterOldest = m_Queue.end();
 				for (iter = m_Queue.begin(); iter != m_Queue.end(); ++iter)
 				{

@@ -86,11 +86,11 @@ struct SVOutputsInfoStruct
 	bool m_DataValidResult;
 	bool m_OutputToggleResult;
 	bool m_NakResult;
-	SvTl::SVTimeStamp m_EndOutputDelay;
-	SvTl::SVTimeStamp m_EndResetDelay;
-	SvTl::SVTimeStamp m_EndDataValidDelay;
-	SvTl::SVTimeStamp m_BeginProcess;
-	SvTl::SVTimeStamp m_EndProcess;
+	double m_EndOutputDelay;
+	double m_EndResetDelay;
+	double m_EndDataValidDelay;
+	double m_BeginProcess;
+	double m_EndProcess;
 	GuidVariantPairVector m_Outputs;
 };
 
@@ -123,11 +123,11 @@ struct SVInspectionInfoStruct
 	bool m_InProcess {false};
 	bool m_HasBeenQueued {false};
 	
-	SvTl::SVTimeStamp m_BeginInspection {0};
-	SvTl::SVTimeStamp m_EndInspection {0};
-	SvTl::SVTimeStamp m_BeginToolset {0};
-	SvTl::SVTimeStamp m_EndToolset {0};
-	SvTl::SVTimeStamp m_CallbackReceived {0};
+	double m_BeginInspection {0};
+	double m_EndInspection {0};
+	double m_BeginToolset {0};
+	double m_EndToolset {0};
+	double m_CallbackReceived {0};
 	
 	int m_inspectionPosInTrc = -1; //position of the inspection in triggerRecordController
 	SvTrc::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
@@ -166,7 +166,7 @@ struct SVProductInfoStruct
 	bool setNextAvailableCameraImage( );
 
 	inline long ProcessCount() const {return oTriggerInfo.lTriggerCount;}
-	inline const SvTl::SVTimeStamp& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
+	inline const double& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
 
 	void DumpIndexInfo( std::string& p_rData );
 

@@ -14,6 +14,10 @@
 
 #include "SVMaskEditor.h"
 #include "SVMaskEditorDialog.h"
+#include "SVLibrary\SVGraphix.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary\SVMatroxDisplayInterface.h"
+#include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -384,7 +388,7 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
 {
     // Get DC...
 	SVMatroxBufferInterface l_BufIntf;
-	l_BufIntf.Set( milMaskBuffer, SVBufWindowDCAlloc, (SVMatroxInt)SVValueDefault );
+	l_BufIntf.Set( milMaskBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault );
 	LONGLONG Handle( 0 );
 	l_BufIntf.Get( milMaskBuffer, SVWindowDC, Handle );
 	HDC dc = reinterpret_cast<HDC> (Handle);
@@ -401,7 +405,7 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
 
         GraphixObject.Draw( dc, rect );
 
-		l_BufIntf.Set( milMaskBuffer, SVBufWindowDCFree, static_cast<SVMatroxInt>(SVValueDefault) );
+		l_BufIntf.Set( milMaskBuffer, SVBufWindowDCFree, static_cast<long long>(SVValueDefault) );
     }
 }
 

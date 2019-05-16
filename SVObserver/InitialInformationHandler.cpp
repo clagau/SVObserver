@@ -15,7 +15,6 @@
 
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVLibrary\SVOINIClass.h"
 #include "SVLibrary\SVOINILoader.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"

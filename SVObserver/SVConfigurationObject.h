@@ -15,13 +15,11 @@
 //Moved to precompiled header: #include <map>
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
 #pragma warning( disable: 4244 )	//Disable warning for prototype conversion
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
-#include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVPPQObject.h"

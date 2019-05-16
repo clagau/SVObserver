@@ -14,6 +14,8 @@
 #pragma region Includes
 #include "SVTool.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvTo

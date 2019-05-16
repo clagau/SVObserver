@@ -8,8 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary\SVObjectLibrary.h"
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo

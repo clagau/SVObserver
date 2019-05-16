@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
-#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 struct SVMatroxGigeCallbackStruct
@@ -24,7 +23,7 @@ public:
 	unsigned long m_ulDigitizerHandle;
 	unsigned long m_ulBufferIndex;
 
-	SvTl::SVTimeStamp m_StartFrameTimeStamp;
+	double m_StartFrameTimeStamp;
 
 };
 

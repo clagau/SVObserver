@@ -11,13 +11,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVThreadInfoDlg.h"
-#include "afxdialogex.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
 // SVThreadInfoDlg dialog

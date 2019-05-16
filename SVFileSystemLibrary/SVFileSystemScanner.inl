@@ -9,6 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:37:36  $
 //******************************************************************************
 
+#pragma region Includes
+#include "SVFileInfo.h"
+#pragma endregion Includes
+
 template<typename Insertor>
 HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR filter, Insertor& insertor, bool bScanSubDirs)
 {

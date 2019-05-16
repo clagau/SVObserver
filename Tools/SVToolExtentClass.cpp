@@ -17,7 +17,7 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Definitions/SVResetStruct.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #pragma endregion Includes
 
 namespace SvTo

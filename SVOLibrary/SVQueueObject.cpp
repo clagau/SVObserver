@@ -10,7 +10,6 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include "SVQueueObject.h"
 
 bool __stdcall InitializeCriticalSectionAndSpinCount_(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount)
 {

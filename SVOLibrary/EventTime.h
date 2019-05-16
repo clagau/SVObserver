@@ -9,7 +9,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 class EventTime
@@ -33,11 +32,11 @@ public:
 	bool isComplete() const { return m_bIsComplete; };
 	void setIsComplete(bool bIsComplete) { m_bIsComplete = bIsComplete; }
 
-	const SvTl::SVTimeStamp& getStartTime() const { return m_StartTime; }
-	void setStartTime(const SvTl::SVTimeStamp& rTime) { m_StartTime = rTime; }
+	const double& getStartTime() const { return m_StartTime; }
+	void setStartTime(const double& rTime) { m_StartTime = rTime; }
 
-	const SvTl::SVTimeStamp& getEndTime() const { return m_EndTime; }
-	void setEndTime(const SvTl::SVTimeStamp& rTime) { m_EndTime = rTime; }
+	const double& getEndTime() const { return m_EndTime; }
+	void setEndTime(const double& rTime) { m_EndTime = rTime; }
 #pragma endregion Public Methods
 
 #pragma region Member Variables
@@ -46,8 +45,8 @@ private:
 	bool m_bIsComplete;
 
 	//This attribute holds the start time stamp
-	SvTl::SVTimeStamp m_StartTime;
+	double m_StartTime;
 	//This attribute holds the end time stamp
-	SvTl::SVTimeStamp m_EndTime;
+	double m_EndTime;
 #pragma endregion Member Variables
 };

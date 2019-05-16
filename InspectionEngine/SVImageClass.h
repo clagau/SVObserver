@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectAppClass.h"
 #include "TriggerRecordController/IImage.h"
@@ -61,7 +60,7 @@ public:
 	HRESULT UpdateImage( const SVGUID& rParentID, const SVImageInfoClass& rImageInfo );
 	HRESULT UpdateImage( SvDef::SVImageTypeEnum ImageType );
 
-	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const;
+	virtual const double& GetLastResetTimeStamp() const;
 	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
@@ -158,8 +157,8 @@ private:
 	bool UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages);
 
 protected:
-	mutable SvTl::SVTimeStamp m_LastUpdate;
-	mutable SvTl::SVTimeStamp m_LastReset;
+	mutable double m_LastUpdate;
+	mutable double m_LastReset;
 
 	SvDef::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;

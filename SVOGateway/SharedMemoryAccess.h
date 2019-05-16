@@ -14,7 +14,6 @@
 #include "SharedMemoryAccessInterface.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
-#include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/Task.h"
 #include "SVSharedMemoryLibrary/ShareControlSetting.h" 
 
@@ -44,6 +43,5 @@ private:
 	boost::asio::io_service::work m_io_work;
 	boost::thread m_io_thread;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
-	
 };
 }// namespace SvOgw

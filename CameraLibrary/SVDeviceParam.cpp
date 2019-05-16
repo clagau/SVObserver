@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVDeviceParam.h"
-#include "SVDeviceParams.h"
+#include "SVDeviceParamCollection.h"
 
 SVDeviceParam::SVDeviceParam()
 	: m_eParam(DeviceParamInvalid)

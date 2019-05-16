@@ -13,7 +13,6 @@
 #include "SVAuthLibrary/Jwt.h"
 #include "SVHttpLibrary/HttpClient.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVProtoBuf/SVRC.h"
 
 namespace SvAuth
 {

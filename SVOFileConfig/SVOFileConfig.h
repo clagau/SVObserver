@@ -15,9 +15,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
-#include "SVXMLLibrary/SVXMLCTreeCtrl.h"
-
 class SVOFileConfigDlg;
 
 class SVOFileConfigApp : public CWinApp

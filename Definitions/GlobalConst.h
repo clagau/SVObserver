@@ -8,112 +8,111 @@
 #pragma once
 
 #pragma region Includes
-#include "Windef.h"
 #include "Color.h"
 #pragma endregion Includes
 
 namespace SvDef
 {
 #pragma region Declarations
-	const int			cRingBufferDepthMin = 2;
-	const int			cRingBufferDepthMax = 30;
-	const int			cRingBufferNumberOutputImages = 2;
-	const int			cTableMaxRowMin = 1;
-	const int			cTableMaxRowMax = 10000;
-	const int			cMaxStringSize = 512;
+constexpr int			cRingBufferDepthMin = 2;
+constexpr int			cRingBufferDepthMax = 30;
+constexpr int			cRingBufferNumberOutputImages = 2;
+constexpr int			cTableMaxRowMin = 1;
+constexpr int			cTableMaxRowMax = 10000;
+constexpr int			cMaxStringSize = 512;
 
-	const long			cDefaultToolUpperThreshold = 255L;
-	const long			cDefaultToolLowerThreshold = 40L;
-	const bool			cDefaultToolThresholdActivate = true;
-	const bool			cDefaultToolUpperThresholdActivate = true;
-	const bool			cDefaultToolLowerThresholdActivate = true;			 
+constexpr long			cDefaultToolUpperThreshold = 255L;
+constexpr long			cDefaultToolLowerThreshold = 40L;
+constexpr bool			cDefaultToolThresholdActivate = true;
+constexpr bool			cDefaultToolUpperThresholdActivate = true;
+constexpr bool			cDefaultToolLowerThresholdActivate = true;
 
-	// Default view color settings...
-	const COLORREF		cDefaultImageViewBackgroundColor = Ivory;
+// Default view color settings...
+constexpr COLORREF		cDefaultImageViewBackgroundColor = Ivory;
 
-	// Default image settings...
-	const long			cDefaultSourceImageDepth = 15L;
-	const long			cDefaultCameraImageWidth = 640L;
-	const long			cDefaultCameraImageHeight = 480L;
-	const long			cDefaultImageViewWidth = cDefaultCameraImageWidth;
-	const long			cDefaultImageViewHeight = cDefaultCameraImageHeight;
-	const long			cDefaultToolsetViewWidth = 200L;
-	const long			cDefaultToolsetViewHeight = 400L;
-	const long			cDefaultResultViewWidth = 840L;
-	const long			cDefaultResultViewHeight = 200L;
+// Default image settings...
+constexpr long			cDefaultSourceImageDepth = 15L;
+constexpr long			cDefaultCameraImageWidth = 640L;
+constexpr long			cDefaultCameraImageHeight = 480L;
+constexpr long			cDefaultImageViewWidth = cDefaultCameraImageWidth;
+constexpr long			cDefaultImageViewHeight = cDefaultCameraImageHeight;
+constexpr long			cDefaultToolsetViewWidth = 200L;
+constexpr long			cDefaultToolsetViewHeight = 400L;
+constexpr long			cDefaultResultViewWidth = 840L;
+constexpr long			cDefaultResultViewHeight = 200L;
 
-	// Default tool extents
-	const double		cDefaultWindowToolLeft = 10.0;
-	const double		cDefaultWindowToolTop = 10.0;
-	const double		cDefaultWindowToolWidth = 100.0;
-	const double		cDefaultWindowToolHeight  = 100.0;
-	const double		cDefaultWindowToolWidthScaleFactor = 1.0;
-	const double		cDefaultWindowToolHeightScaleFactor = 1.0;
+// Default tool extents
+constexpr double		cDefaultWindowToolLeft = 10.0;
+constexpr double		cDefaultWindowToolTop = 10.0;
+constexpr double		cDefaultWindowToolWidth = 100.0;
+constexpr double		cDefaultWindowToolHeight = 100.0;
+constexpr double		cDefaultWindowToolWidthScaleFactor = 1.0;
+constexpr double		cDefaultWindowToolHeightScaleFactor = 1.0;
 
-	const long			cDefaultPolarTransformCenterX = 200L;
-	const long			cDefaultPolarTransformCenterY =  50L;
-	const long			cDefaultPolarTransformStartRadius = 200L;
-	const long			cDefaultPolarTransformEndRadius = 100L;
-	const long			cDefaultPolarTransformStartAngle = 210L;
-	const long			cDefaultPolarTransformEndAngle = 330L;
+constexpr long			cDefaultPolarTransformCenterX = 200L;
+constexpr long			cDefaultPolarTransformCenterY = 50L;
+constexpr long			cDefaultPolarTransformStartRadius = 200L;
+constexpr long			cDefaultPolarTransformEndRadius = 100L;
+constexpr long			cDefaultPolarTransformStartAngle = 210L;
+constexpr long			cDefaultPolarTransformEndAngle = 330L;
 
-	const int			cMaximumCameras = 4;
-	const int			cMinPatternModelNewSize = 8;
-	const int			cMinPatternModelLoadSize = 4;
+constexpr int			cMaximumCameras = 4;
+constexpr int			cMinPatternModelNewSize = 8;
+constexpr int			cMinPatternModelLoadSize = 4;
 
-	const TCHAR* const cGeneralExcludeChars = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
-	const TCHAR* const cExcludeCharsToolIpName = cGeneralExcludeChars;
-	const TCHAR* const cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");
+constexpr char* cGeneralExcludeChars = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
+constexpr char* cExcludeCharsToolIpName = cGeneralExcludeChars;
+constexpr char* cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");
 
 
-	//! Fully qualified names
-	const TCHAR* const FqnRoot = _T("Root");
-	const TCHAR* const FqnGlobal = _T("Global");
-	const TCHAR* const FqnConfiguration = _T("Configuration Object");
-	const TCHAR* const FqnInspections = _T("Inspections");
-	const TCHAR* const FqnPPQs = _T("PPQs");
-	const TCHAR* const FqnPPQVariables = _T("PPQ Variables");
-	const TCHAR* const FqnRemoteInputs = _T("RemoteInputs");
-	//! Environment FQN names
-	const TCHAR* const FqnEnvironment = _T("Environment");
-	const TCHAR* const FqnEnvironmentModelNumber = _T("Environment.Model Number");
-	const TCHAR* const FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
-	const TCHAR* const FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
-	const TCHAR* const FqnEnvironmentAutoSave = _T("Environment.Auto Save");
-	const TCHAR* const FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");
-	const TCHAR* const FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
-	const TCHAR* const FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
-	const TCHAR* const FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
-	const TCHAR* const FqnEnvironmentMode = _T("Environment.Mode");
-	const TCHAR* const FqnEnvironmentModeIsRun = _T("Environment.Mode.Is Run");
-	const TCHAR* const FqnEnvironmentModeIsStop = _T("Environment.Mode.Is Stop");
-	const TCHAR* const FqnEnvironmentModeIsRegressionTest = _T("Environment.Mode.Is Regression Test");
-	const TCHAR* const FqnEnvironmentModeIsTest = _T("Environment.Mode.Is Test");
-	const TCHAR* const FqnEnvironmentModeIsEdit = _T("Environment.Mode.Is Edit");
-	const TCHAR* const FqnEnvironmentModeValue = _T("Environment.Mode.Value");
-	//! Camera FQN names
-	const TCHAR* const FqnCameras = _T("Cameras");
-	const TCHAR* const FqnCameraSerialNumber = _T("Serial Number");
-	const TCHAR* const FqnCameraShutter = _T("Shutter");
-	const TCHAR* const FqnCameraGain = _T("Gain");
-	//! PPQ FQN names
-	const TCHAR* const FqnPpqLength = _T("Length");
-	const TCHAR* const FqnPpqTriggerCount = _T("Trigger Count");
-	//! PPQ Variables FQN names
-	const TCHAR* const FqnRemoteInput = _T(".Remote Input");
-	const TCHAR* const FqnDioInput = _T(".DIO.Input");
+//! Fully qualified names
+constexpr char* FqnRoot = _T("Root");
+constexpr char* FqnGlobal = _T("Global");
+constexpr char* FqnConfiguration = _T("Configuration Object");
+constexpr char* FqnInspections = _T("Inspections");
+constexpr char* FqnPPQs = _T("PPQs");
+constexpr char* FqnPPQVariables = _T("PPQ Variables");
+constexpr char* FqnRemoteInputs = _T("RemoteInputs");
+//! Environment FQN names
+constexpr char* FqnEnvironment = _T("Environment");
+constexpr char* FqnEnvironmentModelNumber = _T("Environment.Model Number");
+constexpr char* FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
+constexpr char* FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
+constexpr char* FqnEnvironmentAutoSave = _T("Environment.Auto Save");
+constexpr char* FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");
+constexpr char* FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
+constexpr char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
+constexpr char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
+constexpr char* FqnEnvironmentMode = _T("Environment.Mode");
+constexpr char* FqnEnvironmentModeIsRun = _T("Environment.Mode.Is Run");
+constexpr char* FqnEnvironmentModeIsStop = _T("Environment.Mode.Is Stop");
+constexpr char* FqnEnvironmentModeIsRegressionTest = _T("Environment.Mode.Is Regression Test");
+constexpr char* FqnEnvironmentModeIsTest = _T("Environment.Mode.Is Test");
+constexpr char* FqnEnvironmentModeIsEdit = _T("Environment.Mode.Is Edit");
+constexpr char* FqnEnvironmentModeValue = _T("Environment.Mode.Value");
+//! Camera FQN names
+constexpr char* FqnCameras = _T("Cameras");
+constexpr char* FqnCameraSerialNumber = _T("Serial Number");
+constexpr char* FqnCameraShutter = _T("Shutter");
+constexpr char* FqnCameraGain = _T("Gain");
+//! PPQ FQN names
+constexpr char* FqnPpqLength = _T("Length");
+constexpr char* FqnPpqTriggerCount = _T("Trigger Count");
+//! PPQ Variables FQN names
+constexpr char* FqnRemoteInput = _T(".Remote Input");
+constexpr char* FqnDioInput = _T(".DIO.Input");
 
-	const TCHAR* const cConfigExtension = _T(".svx");
-	const TCHAR* const cPackedConfigExtension = _T(".svz");
+constexpr char* cConfigExtension = _T(".svx");
+constexpr char* cPackedConfigExtension = _T(".svz");
 
-	static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
+constexpr LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 
-	//Filter constants
-	constexpr long cStandardKernelSize = 3;
-	constexpr int cMaxKernelSize = 21;
+//Filter constants
+constexpr long cStandardKernelSize = 3;
+constexpr int cMaxKernelSize = 21;
 
-	//SV Error condition mask
-	constexpr DWORD svErrorCondition = 0xc0000000;
+//SV Error condition mask
+constexpr DWORD svErrorCondition = 0xc0000000;
 
 #pragma endregion Declarations
 } //namespace SvDef

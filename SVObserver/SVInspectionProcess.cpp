@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVInspectionProcess.h"
 #include "SVInspectionProcessResetStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
@@ -43,6 +44,9 @@
 #include "SVOGui\FormulaController.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVTimerLibrary/SVClock.h"
+#include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 //#define TRACE_TRC
@@ -3154,7 +3158,7 @@ void SVInspectionProcess::SVInspectionTracking::SetStartTime()
 
 void SVInspectionProcess::SVInspectionTracking::EventStart(const std::string& p_rName)
 {
-	SvTl::SVTimeStamp l_StartTime = SvTl::GetTimeStamp();
+	double l_StartTime = SvTl::GetTimeStamp();
 	__int64 l_EventTime = static_cast<__int64>(l_StartTime - m_StartTime);
 
 	m_EventCounts[p_rName].m_StartTime = l_StartTime;
@@ -3164,7 +3168,7 @@ void SVInspectionProcess::SVInspectionTracking::EventStart(const std::string& p_
 
 void SVInspectionProcess::SVInspectionTracking::EventEnd(const std::string& p_rName)
 {
-	SvTl::SVTimeStamp l_EndTime = SvTl::GetTimeStamp();
+	double l_EndTime = SvTl::GetTimeStamp();
 	__int64 l_Duration = static_cast<__int64>(l_EndTime - m_EventCounts[p_rName].m_StartTime);
 	__int64 l_EventTime = static_cast<__int64>(l_EndTime - m_StartTime);
 

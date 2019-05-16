@@ -12,10 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOutObjectInfoStruct.h"
-#include "SVObjectLibrary.h"
 #include "SVObjectClass.h"
 #include "SVObjectManagerClass.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations

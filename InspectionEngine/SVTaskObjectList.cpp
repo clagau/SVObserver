@@ -200,7 +200,7 @@ HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const S
 	return l_Status;
 }
 
-const SvTl::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
+const double& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
 {
 	return m_LastListUpdateTimestamp;
 }

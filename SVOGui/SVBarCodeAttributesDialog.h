@@ -15,12 +15,12 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVValueObjectLibrary/SVValueObject.h"
-
 #pragma endregion Includes
 
-/////////////////////////////////////////////////////////////////////////////
-// SVBarCodeAttributesDialog dialog
+namespace SvVol
+{
+class SVDoubleValueObjectClass;
+}
 
 class SVBarCodeAttributesDialog : public CPropertyPage
 {

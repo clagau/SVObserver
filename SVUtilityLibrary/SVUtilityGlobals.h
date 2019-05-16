@@ -18,17 +18,9 @@
 
 typedef unsigned long SVHANDLE;
 
-typedef std::vector< unsigned char > SVByteVector;
-
-
 #define SV_SEVERITY( p_Status ) \
 	( ( ( ( unsigned long ) p_Status ) >> 30 ) & 0x00000003 )
 
-inline bool operator < ( const GUID& guid1, const GUID& guid2 )
-{
-	RPC_STATUS l_Status;
-	return ::UuidCompare( const_cast< GUID* >( &guid1 ), const_cast< GUID* >( &guid2 ), &l_Status ) < 0;
-}
 
 HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
 HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
@@ -41,6 +33,4 @@ HRESULT KeepPrevErrorReturnNew( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist );
 
 bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories );
-
-bool SVFileExists( LPCTSTR FilePath );
 

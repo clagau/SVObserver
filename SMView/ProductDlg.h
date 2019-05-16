@@ -6,7 +6,7 @@
 /// class derived from CDialog to Display results from getProduct getResult and get Failstatus
 //******************************************************************************
 #pragma once
-#include "afxcmn.h"
+#include "resource.h"
 #include "SVSharedMemoryLibrary\MLProduct.h"
 
 

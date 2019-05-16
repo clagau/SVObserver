@@ -235,19 +235,3 @@ bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 	return false;
 }
 
-bool SVFileExists( LPCTSTR FilePath )
-{
-	if( FilePath )
-	{
-		WIN32_FIND_DATA findData;
-		HANDLE hFindFile = FindFirstFile( FilePath, &findData );
-		if( hFindFile != INVALID_HANDLE_VALUE )
-		{
-			// Success...
-			FindClose( hFindFile );
-			return true;
-		}
-	}
-	return FALSE;
-}
-

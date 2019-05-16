@@ -1,5 +1,4 @@
-#ifndef URL_HPP
-#define URL_HPP
+#pragma once
 
 #include <string>
 #include <vector>
@@ -9,8 +8,8 @@
 #include <ostream>
 #include <utility>
 
-
-class Url {
+class Url
+{
 public:
     // Exception thut may be thrown when decoding an URL or an assigning value
     class parse_error: public std::invalid_argument {
@@ -201,9 +200,3 @@ private:
     mutable bool m_built;
     mutable std::int8_t m_ip_v;
 };
-
-
-
-
-#endif // URL_HPP
-

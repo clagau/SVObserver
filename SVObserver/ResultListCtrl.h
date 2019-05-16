@@ -9,7 +9,6 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "InspectionEngine/SVIPResultData.h"
 #pragma endregion Includes
 

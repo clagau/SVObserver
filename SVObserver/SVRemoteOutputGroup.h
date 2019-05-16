@@ -15,11 +15,8 @@
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVGUID.h"
-
-#include "SVInfoStructs.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
-
 #pragma endregion Includes
 
 class SVRemoteOutputGroup : public SVObjectClass

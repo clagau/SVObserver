@@ -12,9 +12,10 @@
 #pragma once
 
 #pragma region Includes
+#include "resource.h"
 #include "DisplayPicture.h"
-#pragma endregion Includes
 #include "TriggerRecordController\IImage.h"
+#pragma endregion Includes
 
 class SVCameraPage;
 

@@ -12,7 +12,6 @@
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 namespace SvOp

@@ -12,6 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
+#include "SVMatroxLibrary/SVMatroxBarCodeInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxErrorEnum.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
@@ -19,7 +23,6 @@
 #include "SVDataBuffer.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -159,7 +162,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 		// Try using the 'THE' image for the HDC allocation.
 		//
 		long l_lValue = SVValueDefault;
-		HRESULT l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue));
+		HRESULT l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCAlloc, static_cast<long long>(l_lValue));
 
 		//
 		// Check for an error - most likely an 'invalid parameter' since
@@ -195,7 +198,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 				// Now request the HDC from the new image with M_DIB attribute.
 				//
 				long l_lValue = SVValueDefault;
-				SVMatroxBufferInterface::Set(imageDIB_MIL, SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue));
+				SVMatroxBufferInterface::Set(imageDIB_MIL, SVBufWindowDCAlloc, static_cast<long long>(l_lValue));
 
 				LONGLONG Handle;
 				SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, Handle);
@@ -237,10 +240,10 @@ HRESULT SVImageProcessingClass::DestroyBufferDC(SvOi::SVImageBufferHandlePtr rHa
 	{
 		// Delete created device context. 
 		long l_lValue = SVValueDefault;
-		l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCFree, static_cast<SVMatroxInt>(l_lValue));
+		l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCFree, static_cast<long long>(l_lValue));
 
 		// Signal MIL that the buffer was modified. 
-		l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufModified, static_cast<SVMatroxInt>(l_lValue));
+		l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufModified, static_cast<long long>(l_lValue));
 		Result = (l_Code == S_OK) ? S_OK : l_Code | SVMEE_MATROX_ERROR;
 	}
 	else
@@ -280,7 +283,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 
 	if (!strImagePathName.empty())
 	{
-		if (!::SVFileExists(strImagePathName.c_str()))
+		if (0 != _access(strImagePathName.c_str(), 0))
 		{
 			return E_FAIL;
 		}
@@ -288,7 +291,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 		SVMatroxFileTypeEnum fileformat(SVMatroxImageInterface::getFileType(svfncImageFile.GetExtension().c_str()));
 
 		strImagePathName = svfncImageFile.GetFullFileName();
-		if (fileformat != SVFileUnknown && ::SVFileExists(strImagePathName.c_str()))
+		if (fileformat != SVFileUnknown && 0 == _access(strImagePathName.c_str(), 0))
 		{
 
 			HRESULT l_Code;

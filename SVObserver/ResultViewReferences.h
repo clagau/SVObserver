@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <list>
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "InspectionEngine/ResultViewItemDef.h"
 #include "InspectionEngine/SVIPResultItemDefinition.h"
 #include "InspectionEngine/SVIPResultData.h"
@@ -115,9 +114,9 @@ public:
 
 	//************************************
 	// Description:  Gets the value of the member variable m_LastUpdateTimeStamp
-	// Returns:  SvTl::SVTimeStamp:  the value of the member variable m_LastUpdateTimeStamp
+	// Returns:  double:  the value of the member variable m_LastUpdateTimeStamp
 	//************************************
-	SvTl::SVTimeStamp getUpdateTimeStamp() { return m_LastUpdateTimeStamp;  };
+	double getUpdateTimeStamp() { return m_LastUpdateTimeStamp;  };
 
 	//************************************
 	/// Check if the Object is Viewable
@@ -161,7 +160,7 @@ protected:
 	SvOp::TableObject* m_resultTable;
 	SVObjectReferenceVector m_ReferenceVector;
 	std::list<SvIe::ResultViewItemDef> m_ResultViewItemDefList;
-	SvTl::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.
+	double m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.
 #pragma endregion Member Variables
 };
 

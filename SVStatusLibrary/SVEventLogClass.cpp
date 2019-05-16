@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   20 Aug 2014 12:25:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <exception>
 #include "SVEventLogClass.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#pragma endregion Includes
 
 
 namespace SvStl

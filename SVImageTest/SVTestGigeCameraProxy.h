@@ -11,9 +11,10 @@
 
 #pragma once
 
-#include "SVGigeCameraFileLibrary/SVGigeCameraFileReader.h"
+#pragma region Includes
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
+#pragma endregion Includes
 
 
 namespace SvTh

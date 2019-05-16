@@ -14,10 +14,8 @@
 #include "SVInfoStructs.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 
 

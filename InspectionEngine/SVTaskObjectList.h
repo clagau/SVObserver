@@ -14,7 +14,6 @@
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"
 #include "SVProtoBuf/SVRC.h"
@@ -54,7 +53,7 @@ public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
-	const SvTl::SVTimeStamp& GetLastListUpdateTimestamp() const;
+	const double& GetLastListUpdateTimestamp() const;
 
 	int GetSize() const;
 	void InsertAt( int nIndex, SVTaskObjectClass* pTaskObject, int Count = 1 );
@@ -154,7 +153,7 @@ private:
 protected:
 	SVClassInfoStructVector m_availableChildren; // available children classes (not instantiated)
 
-	SvTl::SVTimeStamp m_LastListUpdateTimestamp;
+	double m_LastListUpdateTimestamp;
 	SVTaskObjectPtrVector m_TaskObjectVector;
 #pragma endregion Member Variables
 };

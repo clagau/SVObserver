@@ -14,19 +14,18 @@
 //Moved to precompiled header: #include <fstream>
 
 #include "SVAcquisitionClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "Definitions/StringTypeDef.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
@@ -761,7 +760,7 @@ SvTrc::IImagePtr SVAcquisitionClass::GetNextBuffer()
 	return m_rTRController.getImageBuffer(m_bufferStruct);
 }
 
-HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick)
+HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick)
 {
 	if (nullptr != m_SingleGrabHandle)
 	{

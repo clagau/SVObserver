@@ -11,9 +11,9 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <deque>
-#include "SVUtilityLibrary/SVGUID.h"
+#pragma region Includes
 #include "TriggerRecordController/ITriggerRecordRW.h"
+#pragma endregion Includes
 
 class SVRunStatusClass
 {

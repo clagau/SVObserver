@@ -9,14 +9,17 @@
 // * .Check In Date   : $Date:   03 Jun 2014 13:43:08  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVMatroxDisplayInterface.h"
+#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferTemplate.h"
-#include "SVMatroxImageBuffer.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
-#include "SVMatroxResourceMonitor.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxHelper.h"
+#include "SVMatroxImageBuffer.h"
+#include "SVMatroxResourceMonitor.h"
+#pragma endregion Includes
 
 /**
 @SVOperationName Default Constructor
@@ -44,7 +47,7 @@ SVMatroxDisplayInterface::~SVMatroxDisplayInterface()
 @SVOperationDescription This function Creates a SVMatroxDisplay.
 
 */
-HRESULT SVMatroxDisplayInterface::CreateDisplay(SVMatroxIdentifier& p_rDispId)
+HRESULT SVMatroxDisplayInterface::CreateDisplay(__int64& p_rDispId)
 {
 	HRESULT l_Code( S_OK );
 
@@ -190,7 +193,7 @@ HRESULT SVMatroxDisplayInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVM
 @SVOperationDescription This function destroys a SVMatroxDisplay.
 
 */
-HRESULT SVMatroxDisplayInterface::DestroyDisplay(SVMatroxIdentifier& rDispId)
+HRESULT SVMatroxDisplayInterface::DestroyDisplay(__int64& rDispId)
 {
 	return DestroyMatroxId(rDispId, MdispFree, SVDisplayID);
 }
@@ -323,7 +326,7 @@ long SVMatroxDisplayInterface::Convert2MatroxType( SVDisplayCntrlEnum p_eDisp)
 @SVOperationDescription This function inquires about a specified display settings and puts the results in a double.
 
 */
-HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdValue)
+HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -371,7 +374,7 @@ HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDi
 @SVOperationDescription This function inquires about a specified display settings and puts the results in a long.
 
 */
-HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData)
+HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -429,7 +432,7 @@ HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDi
 @SVOperationDescription This function gets the SVMatroxBuffer associated with the specified SVMatroxDisplay 
 
 */
-HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -476,7 +479,7 @@ HRESULT SVMatroxDisplayInterface::Get( const SVMatroxIdentifier& p_rDispId, SVDi
 @SVOperationDescription This function frees the specified SVMatroxDisplay.
 
 */
-HRESULT SVMatroxDisplayInterface::Set( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue)
+HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue)
 {
 	return Set(p_rDispId, p_eDispFlag, static_cast<long>( p_dValue ));
 }
@@ -487,7 +490,7 @@ HRESULT SVMatroxDisplayInterface::Set( const SVMatroxIdentifier& p_rDispId, SVDi
 @SVOperationDescription This function allows you to control the specified MIL display settings.
 
 */
-HRESULT SVMatroxDisplayInterface::Set( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue)
+HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -612,7 +615,7 @@ HRESULT SVMatroxDisplayInterface::GetHostAddress( LPVOID p_rpHostAddress, const 
 @SVOperationDescription This function associates a LUT buffer with the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::Lut( const SVMatroxIdentifier& p_rDispId, const SVMatroxBuffer& p_rLutBufId)
+HRESULT SVMatroxDisplayInterface::Lut( const __int64& p_rDispId, const SVMatroxBuffer& p_rLutBufId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -647,7 +650,7 @@ HRESULT SVMatroxDisplayInterface::Lut( const SVMatroxIdentifier& p_rDispId, cons
 @SVOperationDescription This function dis-associates or clears any LUT that was associated with the specified display
 
 */
-HRESULT SVMatroxDisplayInterface::LutClear( const SVMatroxIdentifier& p_rDispId)
+HRESULT SVMatroxDisplayInterface::LutClear( const __int64& p_rDispId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -682,7 +685,7 @@ HRESULT SVMatroxDisplayInterface::LutClear( const SVMatroxIdentifier& p_rDispId)
 @SVOperationDescription This function associates pan and scroll values with the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::Pan( const SVMatroxIdentifier& p_rDispId, const double& p_dXOffset, const double& p_dYOffset)
+HRESULT SVMatroxDisplayInterface::Pan( const __int64& p_rDispId, const double& p_dXOffset, const double& p_dYOffset)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -717,7 +720,7 @@ HRESULT SVMatroxDisplayInterface::Pan( const SVMatroxIdentifier& p_rDispId, cons
 @SVOperationDescription This function outputs the content of the specified image buffer to the specified MIL display. 
 
 */
-HRESULT SVMatroxDisplayInterface::Select( const SVMatroxIdentifier& p_rDispId, const SVMatroxBuffer& p_rImageId)
+HRESULT SVMatroxDisplayInterface::Select( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -752,7 +755,7 @@ HRESULT SVMatroxDisplayInterface::Select( const SVMatroxIdentifier& p_rDispId, c
 @SVOperationDescription This function displays the specified image buffer contents in the specified user window, using the specified MIL display.
 
 */
-HRESULT SVMatroxDisplayInterface::SelectWindow( const SVMatroxIdentifier& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle )
+HRESULT SVMatroxDisplayInterface::SelectWindow( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -787,7 +790,7 @@ HRESULT SVMatroxDisplayInterface::SelectWindow( const SVMatroxIdentifier& p_rDis
 @SVOperationDescription This function deselects any image that was selected to the specified MIL display.
 
 */
-HRESULT SVMatroxDisplayInterface::Deselect( const SVMatroxIdentifier& p_rDispId)
+HRESULT SVMatroxDisplayInterface::Deselect( const __int64& p_rDispId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -823,7 +826,7 @@ HRESULT SVMatroxDisplayInterface::Deselect( const SVMatroxIdentifier& p_rDispId)
 @SVOperationDescription This function associates a zoom factor with the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::Zoom( const SVMatroxIdentifier& p_rDispId, const double& p_dXFactor, const double& p_dYFactor )
+HRESULT SVMatroxDisplayInterface::Zoom( const __int64& p_rDispId, const double& p_dXFactor, const double& p_dYFactor )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS

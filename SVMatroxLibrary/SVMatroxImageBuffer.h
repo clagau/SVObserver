@@ -23,7 +23,7 @@ public:
 	friend class SVMatroxDisplayInterface;
 
 	SVMatroxImageBuffer();
-	SVMatroxImageBuffer(SVMatroxIdentifier p_Identifier, const std::string& p_rCreatorName);
+	SVMatroxImageBuffer(__int64 p_Identifier, const std::string& p_rCreatorName);
 
 	virtual ~SVMatroxImageBuffer();
 };

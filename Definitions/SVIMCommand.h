@@ -13,15 +13,15 @@
 
 namespace SvDef
 {
-	const DWORD SVIM_CONFIG_LOADING =	0x0001;
-	const DWORD SVIM_CONFIG_LOADED =	0x0002;
-	const DWORD SVIM_ONLINE_PENDING =	0x0004;
-	const DWORD SVIM_ONLINE =			0x0008;
-	const DWORD SVIM_RUNNING_TEST =		0x0010;
-	const DWORD SVIM_RUNNING =			0x0020;
-	const DWORD SVIM_REGRESSION_TEST =	0x0040;
-	const DWORD SVIM_SETUPMODE =		0x0080;
-	const DWORD SVIM_SAVING_CONFIG =	0x0100;
-	const DWORD SVIM_STOPPING =			0x0200;
-	const DWORD SVIM_RAID_FAILURE =		0x0400;
+	constexpr unsigned long SVIM_CONFIG_LOADING =	0x0001;
+	constexpr unsigned long SVIM_CONFIG_LOADED =	0x0002;
+	constexpr unsigned long SVIM_ONLINE_PENDING =	0x0004;
+	constexpr unsigned long SVIM_ONLINE =			0x0008;
+	constexpr unsigned long SVIM_RUNNING_TEST =		0x0010;
+	constexpr unsigned long SVIM_RUNNING =			0x0020;
+	constexpr unsigned long SVIM_REGRESSION_TEST =	0x0040;
+	constexpr unsigned long SVIM_SETUPMODE =		0x0080;
+	constexpr unsigned long SVIM_SAVING_CONFIG =	0x0100;
+	constexpr unsigned long SVIM_STOPPING =			0x0200;
+	constexpr unsigned long SVIM_RAID_FAILURE =		0x0400;
 } //namespace SvDef

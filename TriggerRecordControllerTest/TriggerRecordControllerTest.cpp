@@ -3,12 +3,9 @@
 //
 
 #include "stdafx.h"
+#include <mil.h>
 #include "TriggerRecordControllerTest.h"
 #include "TriggerRecordControllerTestDlg.h"
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
-#include "TriggerRecordController\ITriggerRecordRW.h"
-#include <mil.h>
-#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxResourceMonitor.h"
 
 #ifdef _DEBUG

@@ -7,11 +7,11 @@
 ///Data store and slot management  
 //******************************************************************************
 #pragma once
+#pragma region Includes
 #include "MLCpyContainer.h"
 #include "SharedDataStore.h"
 #include "SMRingbuffer.h"
-#include "MLProduct.h"
-
+#pragma endregion Includes
 		  
 namespace SvSml
 {

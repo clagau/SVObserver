@@ -9,6 +9,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Ranking2Filter.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"

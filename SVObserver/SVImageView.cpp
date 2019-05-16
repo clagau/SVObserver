@@ -28,7 +28,6 @@
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
 #include "SVDrawObject.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

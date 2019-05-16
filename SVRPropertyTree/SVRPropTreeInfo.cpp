@@ -29,7 +29,6 @@
 
 #include "stdafx.h"
 #include "SVRPropTree.h"
-//#include "Resource.h"
 #include "SVRPropTreeInfo.h"
 
 #ifdef _DEBUG

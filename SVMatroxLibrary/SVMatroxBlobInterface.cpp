@@ -13,10 +13,11 @@
 #include "stdafx.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxBlobInterface.h"
-#include "SVCommandLibrary/SVCommandDataHolder.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
-#include "SVMatroxResourceMonitor.h"
+#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxHelper.h"
+#include "SVMatroxResourceMonitor.h"
+#include "SVCommandLibrary/SVCommandDataHolder.h"
 #pragma endregion Includes
 
 /**
@@ -45,7 +46,7 @@ SVMatroxBlobInterface::~SVMatroxBlobInterface()
 @SVOperationDescription This function creates a Blob Feature List.
 
 */
-HRESULT SVMatroxBlobInterface::CreateContext( SVMatroxIdentifier& rContextId )
+HRESULT SVMatroxBlobInterface::CreateContext( __int64& rContextId )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -59,7 +60,7 @@ HRESULT SVMatroxBlobInterface::CreateContext( SVMatroxIdentifier& rContextId )
 
 		if( l_Code == S_OK )
 		{
-			SVMatroxIdentifier l_NewId = MblobAlloc(M_DEFAULT_HOST, M_DEFAULT, M_DEFAULT, M_NULL);
+			__int64 l_NewId = MblobAlloc(M_DEFAULT_HOST, M_DEFAULT, M_DEFAULT, M_NULL);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == S_OK )
 			{
@@ -89,7 +90,7 @@ HRESULT SVMatroxBlobInterface::CreateContext( SVMatroxIdentifier& rContextId )
 @SVOperationDescription This function creates a blob result object.
 
 */
-HRESULT SVMatroxBlobInterface::CreateResult(SVMatroxIdentifier& rResultId)
+HRESULT SVMatroxBlobInterface::CreateResult(__int64& rResultId)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -102,7 +103,7 @@ HRESULT SVMatroxBlobInterface::CreateResult(SVMatroxIdentifier& rResultId)
 
 		if( l_Code == S_OK )
 		{
-			SVMatroxIdentifier l_NewId = MblobAllocResult(M_DEFAULT_HOST, M_NULL );
+			__int64 l_NewId = MblobAllocResult(M_DEFAULT_HOST, M_NULL );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == S_OK )
 			{
@@ -132,7 +133,7 @@ HRESULT SVMatroxBlobInterface::CreateResult(SVMatroxIdentifier& rResultId)
 @SVOperationDescription This function frees the blob feature list.
 
 */
-HRESULT SVMatroxBlobInterface::DestroyContext( SVMatroxIdentifier& rBlobId )
+HRESULT SVMatroxBlobInterface::DestroyContext( __int64& rBlobId )
 {
 	return DestroyMatroxId(rBlobId, MblobFree, SVMatroxIdentifierEnum::SVBlobFeatureListID);
 }
@@ -143,7 +144,7 @@ HRESULT SVMatroxBlobInterface::DestroyContext( SVMatroxIdentifier& rBlobId )
 @SVOperationDescription This function frees the blob result resource.
 
 */
-HRESULT SVMatroxBlobInterface::DestroyResult(SVMatroxIdentifier& rResultId)
+HRESULT SVMatroxBlobInterface::DestroyResult(__int64& rResultId)
 {
 	return DestroyMatroxId(rResultId, MblobFree, SVMatroxIdentifierEnum::SVBlobResultID);
 }
@@ -155,7 +156,7 @@ HRESULT SVMatroxBlobInterface::DestroyResult(SVMatroxIdentifier& rResultId)
 @SVOperationDescription This function does the work of finding blobs in the "Blob Identifier Image".
 
 */
-HRESULT SVMatroxBlobInterface::Execute( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rIdentId,  const SVMatroxIdentifier& rBlobId )
+HRESULT SVMatroxBlobInterface::Execute( const __int64& rResultId, const SVMatroxBuffer& rIdentId,  const __int64& rBlobId )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -188,7 +189,7 @@ HRESULT SVMatroxBlobInterface::Execute( const SVMatroxIdentifier& rResultId, con
 @SVOperationDescription This function gets an array of doubles for the results.  The number of positions in the array will be the same as the value returned by GetNumber.
 
 */
-HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray )
+HRESULT SVMatroxBlobInterface::GetResult( const __int64& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -221,7 +222,7 @@ HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, S
 @SVOperationDescription This function gets an array of longs for the results.  The number of positions in the array will be the same as the value returned by GetNumber.
 
 */
-HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray )
+HRESULT SVMatroxBlobInterface::GetResult( const __int64& rResultId, SVBlobSelectionEnum lControlType, long* plResultsArray )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -256,7 +257,7 @@ HRESULT SVMatroxBlobInterface::GetResult( const SVMatroxIdentifier& rResultId, S
 @SVOperationDescription This function gets the number of currently included blobs.
 
 */
-HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxIdentifier& rResultId, long& rNumber )
+HRESULT SVMatroxBlobInterface::GetNumber( const __int64& rResultId, long& rNumber )
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -295,7 +296,7 @@ HRESULT SVMatroxBlobInterface::GetNumber( const SVMatroxIdentifier& rResultId, l
 @SVOperationDescription This function sets the selected control type with the supplied double value
 
 */
-HRESULT SVMatroxBlobInterface::Set( const SVMatroxIdentifier& rContextId, SVBlobControlEnum lControlType, const double lControlValue)
+HRESULT SVMatroxBlobInterface::Set( const __int64& rContextId, SVBlobControlEnum lControlType, const double lControlValue)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -329,7 +330,7 @@ HRESULT SVMatroxBlobInterface::Set( const SVMatroxIdentifier& rContextId, SVBlob
 @SVOperationDescription This function sets the selected control type with the supplied long value
 
 */
-HRESULT SVMatroxBlobInterface::Set( const SVMatroxIdentifier& rContextId, SVBlobControlEnum lControlType, const long lControlValue)
+HRESULT SVMatroxBlobInterface::Set( const __int64& rContextId, SVBlobControlEnum lControlType, const long lControlValue)
 {
 	return Set(rContextId, lControlType, static_cast<double>( lControlValue ));
 }
@@ -340,7 +341,7 @@ HRESULT SVMatroxBlobInterface::Set( const SVMatroxIdentifier& rContextId, SVBlob
 @SVOperationDescription This function gets the Foreground control value
 
 */
-HRESULT SVMatroxBlobInterface::GetForeground( const SVMatroxIdentifier& rContextId, bool& rIsDarkForeground)
+HRESULT SVMatroxBlobInterface::GetForeground( const __int64& rContextId, bool& rIsDarkForeground)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -375,7 +376,7 @@ HRESULT SVMatroxBlobInterface::GetForeground( const SVMatroxIdentifier& rContext
 @SVOperationDescription This function sets the Foreground control value
 
 */
-HRESULT SVMatroxBlobInterface::SetForeground( const SVMatroxIdentifier& rContextId, bool isDarkForeground)
+HRESULT SVMatroxBlobInterface::SetForeground( const __int64& rContextId, bool isDarkForeground)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -408,7 +409,7 @@ HRESULT SVMatroxBlobInterface::SetForeground( const SVMatroxIdentifier& rContext
 @SVOperationDescription This function gets the Blob Identifier Type control value
 
 */
-HRESULT SVMatroxBlobInterface::GetIdentifier( const SVMatroxIdentifier& rContextId, bool& bBinary)
+HRESULT SVMatroxBlobInterface::GetIdentifier( const __int64& rContextId, bool& bBinary)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -443,7 +444,7 @@ HRESULT SVMatroxBlobInterface::GetIdentifier( const SVMatroxIdentifier& rContext
 @SVOperationDescription This function sets the Blob Identifier Type control value
 
 */
-HRESULT SVMatroxBlobInterface::SetIdentifier( const SVMatroxIdentifier& rContextId, bool bBinary)
+HRESULT SVMatroxBlobInterface::SetIdentifier( const __int64& rContextId, bool bBinary)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -476,7 +477,7 @@ HRESULT SVMatroxBlobInterface::SetIdentifier( const SVMatroxIdentifier& rContext
 @SVOperationDescription This function draws the found blobs in an image that meet certian criteria with a specific color.
 
 */
-HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor)
+HRESULT SVMatroxBlobInterface::BlobFill( const __int64& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -512,7 +513,7 @@ HRESULT SVMatroxBlobInterface::BlobFill( const SVMatroxIdentifier& rResultId, co
 @SVOperationDescription This function selects blobs that meet a specified criterion. These blobs will be included in or excluded from future operations (calculations or result retrieval), or deleted entirely from the result buffer. 
 
 */
-HRESULT SVMatroxBlobInterface::BlobSelect( const SVMatroxIdentifier& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh)
+HRESULT SVMatroxBlobInterface::BlobSelect( const __int64& rResultId, SVBlobOperationEnum eOperation, SVBlobSelectionEnum eSelection, SVConditionEnum eCondition, const double& dCondLow, const double& dCondHigh)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -550,7 +551,7 @@ HRESULT SVMatroxBlobInterface::BlobSelect( const SVMatroxIdentifier& rResultId, 
 @SVOperationDescription This function selects the feature(s) to be calculated by Execute() when using the specified feature list. 
 
 */
-HRESULT SVMatroxBlobInterface::BlobSelectFeature( const SVMatroxIdentifier& rBlobId, std::set<SVBlobSelectionEnum> featureSet)
+HRESULT SVMatroxBlobInterface::BlobSelectFeature( const __int64& rBlobId, std::set<SVBlobSelectionEnum> featureSet)
 {
 	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
@@ -799,11 +800,11 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs( SVMatroxBuffer& rThresholdImage, 
 {
 	HRESULT l_Status = S_OK;
 
-	SVMatroxIdentifier blobResultId = M_NULL;
+	__int64 blobResultId = M_NULL;
 	// Note: Special Condition if Max Width and Height is 0
 	// We must try and suggest the width and height
 	// Create feature list
-	SVMatroxIdentifier blobContextId = M_NULL;
+	__int64 blobContextId = M_NULL;
 
 	l_Status = SVMatroxBlobInterface::CreateContext(blobContextId);
 	
@@ -930,8 +931,8 @@ HRESULT SVMatroxBlobInterface::NumBlobs( SVMatroxBuffer& rThresholdImage, BYTE B
 {
 	HRESULT l_Status = S_OK;
 
-	SVMatroxIdentifier blobContextId = M_NULL;
-	SVMatroxIdentifier blobResultId = M_NULL;
+	__int64 blobContextId = M_NULL;
+	__int64 blobResultId = M_NULL;
 
 	l_Status = SVMatroxBlobInterface::CreateContext(blobContextId);
 

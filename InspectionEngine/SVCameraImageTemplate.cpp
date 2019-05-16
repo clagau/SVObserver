@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVUtilityLibrary/SetBits.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvIe

@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   08 Jul 2014 08:47:10  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "RemoteMonitorNamedList.h"
 #include "SVSharedMemoryLibrary\MonitorEntry.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
-#include "SVMatroxLibrary\MatroxImageProps.h"
+#pragma endregion Includes
 
 
 class RemoteMonitorListHelper

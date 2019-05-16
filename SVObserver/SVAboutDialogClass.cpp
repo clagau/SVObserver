@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVAboutDialogClass.h"
-#include "SVGlobal.h"
-#include "SVObserver.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "Definitions/SVImageFormatEnum.h"
-#include "Definitions/SVImageEnums.h"
 #pragma endregion Includes
 
 class SVCameraFormat

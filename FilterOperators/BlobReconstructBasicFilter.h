@@ -9,6 +9,8 @@
 
 #pragma region Includes
 #include "SVFilterClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

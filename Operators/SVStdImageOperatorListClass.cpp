@@ -8,7 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVStdImageOperatorListClass.h"
-
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "InspectionEngine/SVImageClass.h"

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolImageSelectPage.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

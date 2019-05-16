@@ -9,13 +9,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "Definitions/SVUserMessage.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
-#include "SVLibrary/DirectoryUtilities.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
 #include "SVMessage/SVMessage.h"
@@ -24,7 +22,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/ZipHelper.h"
 #include "RootObject.h"
 #pragma endregion Includes
 

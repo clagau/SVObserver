@@ -12,10 +12,15 @@
 #pragma once
 
 //Moved to precompiled header: #include <comdef.h>
-#include "CameraLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParam.h"
 
+namespace SvTh
+{
+class TriggerDispatcher;
+}
 
 class SVAcquisitionBufferInterface;
+class SVDeviceParamCollection;
 
 // General Exports
 

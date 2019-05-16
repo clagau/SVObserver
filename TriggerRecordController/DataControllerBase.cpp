@@ -8,11 +8,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DataControllerBase.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
-#include "CopyData.h"
 #include "ImageBufferController.h"
-#include "SVStatusLibrary\SVRegistry.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVRegistry.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTrc

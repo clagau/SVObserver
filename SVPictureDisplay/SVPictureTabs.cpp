@@ -14,7 +14,6 @@
 #include "resource.h"
 #include "SVPictureDialog.h"
 #include "SVPictureTabs.h"
-#include "comutil.h"
 #pragma endregion Includes
 
 #pragma region Declarations

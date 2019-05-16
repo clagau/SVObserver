@@ -11,9 +11,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVUtilityLibrary/SVHistogramBase.h"
 #pragma endregion Includes
 
@@ -92,7 +94,7 @@ private:
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	SVMatroxIdentifier m_HistResultID = M_NULL;
+	__int64 m_HistResultID = 0LL;
 	std::vector<long>   msvplHistValues;
 	SvIe::SVImageClass	m_histogramImage;
 

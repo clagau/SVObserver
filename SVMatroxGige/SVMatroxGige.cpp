@@ -11,17 +11,15 @@
 #pragma region Includes
 #include "StdAfx.h"
 //Moved to precompiled header: #include <map>
-#include "CameraLibrary\SVDeviceParams.h"
 #include "SVMatroxGige.h"
-
+#include "SVMatroxGigeApp.h"
+#include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerInformation/SVTriggerActivatorFunc.h"
 #include "TriggerInformation/SVTriggerCallbackFunc.h"
 #include "TriggerInformation/SVTriggerEnums.h"
-#include "SVMatroxGigeApp.h"
-#include "SVMatroxGigeCallbackStruct.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -29,6 +27,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 // helpers for System/Digitizer Handles
@@ -67,19 +66,19 @@ bool SVMatroxGige::IsValidDigitizerHandle(unsigned long channel) const
 }
 
 // Callback used for MdigHook - Start Frame
-SVMatroxIdentifier SVMatroxGige::DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
+__int64 SVMatroxGige::DigitizerStartFrameCallback( __int64 HookType, __int64 EventId, void* pContext )
 {
 	return SVMatroxGige::DigitizerCallback(HookType, EventId, pContext);
 }
 
 // Callback used for MdigHook - End Frame
-SVMatroxIdentifier SVMatroxGige::DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
+__int64 SVMatroxGige::DigitizerEndFrameCallback( __int64 HookType, __int64 EventId, void* pContext )
 {
 	return SVMatroxGige::DigitizerCallback(HookType, EventId, pContext);
 }
 
 // Callback used for MdigProcess
-SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* pContext )
+__int64 SVMatroxGige::ProcessFrame( __int64 HookType, __int64 HookId, void* pContext )
 {
 	try
 	{
@@ -106,7 +105,7 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 					{
 						if (!bIsCorrupt) 
 						{
-							SVMatroxIdentifier ModifiedBufferId(0);
+							__int64 ModifiedBufferId(0);
 
 							// Retrieve the MIL_ID of the grabbed buffer.
 							l_Code = SVMatroxDigitizerInterface::GetGrabBuffer(HookId, ModifiedBufferId);
@@ -148,7 +147,7 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 }
 
 // General handler for MdigHook callbacks (Indirect)
-SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
+__int64 SVMatroxGige::DigitizerCallback( __int64 HookType, __int64 EventId, void* pContext )
 {
 	try
 	{
@@ -190,7 +189,7 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 	return 0L;
 }
 
-SVMatroxIdentifier __stdcall SVMatroxGige::LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
+__int64 __stdcall SVMatroxGige::LineEdgeEventCallback( __int64 HookType, __int64 EventId, void* pContext )
 {
 	SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(pContext);
 	// Get State of the line
@@ -211,7 +210,7 @@ SVMatroxIdentifier __stdcall SVMatroxGige::LineEdgeEventCallback( SVMatroxIdenti
 	return 0L;
 }
 
-void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier HookId )
+void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, __int64 HookId )
 {
 	// Get The Timestamp
 	double timestamp = 0.0;
@@ -1008,7 +1007,7 @@ HRESULT SVMatroxGige::ProcessStartFrame( SVMatroxGigeDigitizer& p_rCamera )
 	return hr;
 }
 
-HRESULT SVMatroxGige::ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier p_SrcBufferID)
+HRESULT SVMatroxGige::ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID)
 {
 	HRESULT hr = CameraEndFrame( p_rCamera, p_SrcBufferID );
 
@@ -1042,13 +1041,13 @@ HRESULT SVMatroxGige::CameraStartFrame( SVMatroxGigeDigitizer& rCamera )
 	return hr;
 }
 
-HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier p_SrcBufferID )
+HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID )
 {
 	HRESULT hr = S_OK;
 
 	//Save end frame time stamp before buffer copy
-	SvTl::SVTimeStamp endFrameTimeStamp = SvTl::GetTimeStamp();
-	SvTl::SVTimeStamp startFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
+	double endFrameTimeStamp = SvTl::GetTimeStamp();
+	double startFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
 
 	p_rCamera.m_StartFrameTimeStamp = 0.0;
 
@@ -1475,7 +1474,7 @@ unsigned long SVMatroxGige::GetDigitizerHandle(unsigned long index) const
 }
 
 // Handler for camera disconnect/reconnect
-SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
+__int64 SVMatroxGige::CameraPresentCallback( __int64 HookType, __int64 EventId, void* pContext )
 {
 	unsigned char systemHandle = *(reinterpret_cast<unsigned char*> (pContext));
 	HRESULT hr = S_OK;

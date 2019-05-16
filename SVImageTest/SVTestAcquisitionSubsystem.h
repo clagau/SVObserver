@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#pragma endregion Includes
 
 class SVTestAcquisitionClass;
 

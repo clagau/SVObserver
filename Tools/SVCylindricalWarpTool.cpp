@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "SVCylindricalWarpTool.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"

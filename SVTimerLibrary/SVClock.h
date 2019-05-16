@@ -26,15 +26,10 @@ namespace SvTl
 		Microseconds,
 	};
 
-	typedef double SVFrequency; // SVTimeStamp / SVFrequency = Seconds
-	typedef double SVTimeStamp; // In Milliseconds
+	double GetTimeStamp();
+	double GetMaxTimeStamp();
+	double GetMinTimeStamp();
 
-	SVFrequency GetFrequency();
-
-	SVTimeStamp GetTimeStamp();
-	SVTimeStamp GetMaxTimeStamp();
-	SVTimeStamp GetMinTimeStamp();
-
-	double ConvertTo(SVConversionEnum p_Units, const SVTimeStamp& p_rTimeStamp);
-	SVTimeStamp ConvertFrom(SVConversionEnum p_Units, double p_Time);
+	double ConvertTo(SVConversionEnum p_Units, const double& p_rTimeStamp);
+	double ConvertFrom(SVConversionEnum p_Units, double p_Time);
 } //namespace SvTl

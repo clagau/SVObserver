@@ -24,7 +24,8 @@
 namespace SvRpc
 {
 // typename is typically a result class
-template <typename T> struct Observer
+template <typename T>
+struct Observer
 {
 public:
 	using OnNextFn = std::function<SvSyl::SVFuture<void>(T&& t)>;

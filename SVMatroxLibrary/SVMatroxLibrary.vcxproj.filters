@@ -200,9 +200,6 @@
     <ClInclude Include="SVMatroxImagingLibrary.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxLibrary.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVMatroxOcr.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -237,9 +234,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSystemRef.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxTypedefs.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxLicenseInterface.h">

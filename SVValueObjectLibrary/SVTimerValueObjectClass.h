@@ -12,8 +12,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-
-#include "SVTimerLibrary/SVClock.h"
 #include "SVInt64ValueObjectClass.h"
 #pragma endregion Includes
 
@@ -35,7 +33,7 @@ public:
 private:
 	void LocalInitialize();
 
-	SvTl::SVTimeStamp m_Start;  // Time Stamp in Milliseconds
+	double m_Start;  // Time Stamp in Milliseconds
 };
 
 } //namespace SvVol

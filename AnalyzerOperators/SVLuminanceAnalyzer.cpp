@@ -14,7 +14,7 @@
 #include "SVLuminanceAnalyzer.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"

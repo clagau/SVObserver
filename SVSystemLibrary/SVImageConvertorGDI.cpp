@@ -65,7 +65,7 @@ HRESULT SVImageConvertorGDI::GetIPictureDispFromBitmap(HBITMAP Bitmap, IPictureD
 	return hr;
 }
 
-HRESULT SVImageConvertorGDI::BitmapToByteVector(HBITMAP hBitmap, SVByteVector& rImage)
+HRESULT SVImageConvertorGDI::BitmapToByteVector(HBITMAP hBitmap, std::vector<unsigned char>& rImage)
 {
 	HRESULT l_Status = S_OK;
 
@@ -173,7 +173,7 @@ HRESULT SVImageConvertorGDI::BitmapToByteVector(HBITMAP hBitmap, SVByteVector& r
 	return l_Status;
 }
 
-HRESULT SVImageConvertorGDI::ByteVectorToBitmap(const SVByteVector& Image, HBITMAP& rBitmap)
+HRESULT SVImageConvertorGDI::ByteVectorToBitmap(const std::vector<unsigned char>& rImage, HBITMAP& rBitmap)
 {
 	HRESULT hr = S_FALSE;
 
@@ -181,10 +181,10 @@ HRESULT SVImageConvertorGDI::ByteVectorToBitmap(const SVByteVector& Image, HBITM
 	HDC hDC = nullptr;
 	void* pBits = nullptr;
 
-	if (0 < Image.size())
+	if (0 < rImage.size())
 	{
 		// Find out how big it is and get pointers to BITMAPINFO and the bitmap bits
-		BYTE* pBytes   = (BYTE*)(&(Image[0]));
+		BYTE* pBytes   = (BYTE*)(&(rImage[0]));
 		BITMAPINFO* pbmInfo  = reinterpret_cast<BITMAPINFO*>(pBytes);
 		BITMAPINFOHEADER* pbmhInfo = reinterpret_cast<BITMAPINFOHEADER*>(&pbmInfo->bmiHeader);
 

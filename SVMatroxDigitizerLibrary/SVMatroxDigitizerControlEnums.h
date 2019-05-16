@@ -14,8 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
 #pragma endregion Includes
 
 struct SVMatroxDigitizerControl

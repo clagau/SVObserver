@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOp

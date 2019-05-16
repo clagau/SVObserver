@@ -13,7 +13,6 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOResource/ConstGlobalSvOr.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 

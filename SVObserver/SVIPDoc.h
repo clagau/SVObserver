@@ -13,18 +13,14 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVRingBuffer.h"
-#include "SVStatusLibrary/SVRunStatus.h"
-#include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVDisplayObject.h"
 #include "SVPublishList.h"
 #include "SVRegressionTestStruct.h"
-#include "SVIPImageDataElement.h"
 #include "SVIPProductStruct.h"
 #include "InspectionEngine/SVIPResultData.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #include "NavigatorElement.h"
@@ -241,7 +237,7 @@ public:
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
 	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
-	SvTl::SVTimeStamp getResultDefinitionUpdatTimeStamp() const;
+	double getResultDefinitionUpdatTimeStamp() const;
 	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
 	void GetResultData(SvIe::SVIPResultData& p_rResultData) const;
 	std::vector <SvIe::IPResultTableData> getResultTableData() const;
@@ -331,8 +327,8 @@ protected:
 
 	bool checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject );
 
-	mutable SvTl::SVTimeStamp m_ToolSetListTimestamp;
-	mutable SvTl::SVTimeStamp m_PPQListTimestamp;
+	mutable double m_ToolSetListTimestamp;
+	mutable double m_PPQListTimestamp;
 
 	bool m_bAllowRefresh;
 	SVProductDataQueue m_NewProductData;

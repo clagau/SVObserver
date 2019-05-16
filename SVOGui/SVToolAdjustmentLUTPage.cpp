@@ -17,7 +17,6 @@
 #include "Definitions/SVUserMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "GuiValueHelper.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -17,20 +17,16 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
-#include "SVSystemLibrary/SVAsyncProcedure.h"
 
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
-#include "SVUtilityLibrary/SVGUID.h"
-#include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
-#include "SVVisionProcessorConstants.h"
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVPPQObject.h"
-#include "SVRPCLibrary/RPCServer.h"
+#include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVStatusLibrary/NotificationTypeEnum.h"
 #pragma endregion Includes

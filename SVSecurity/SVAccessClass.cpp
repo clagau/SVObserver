@@ -23,9 +23,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextGenerator.h"
 
-#include "resource.h"
 #include "SVAccessPointNode.h"
-#include "Shellapi.h"
 #include "SVPasswordDlg.h"
 #include "SVSecuritySetupSheet.h"
 #pragma endregion Includes

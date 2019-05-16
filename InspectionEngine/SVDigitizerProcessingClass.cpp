@@ -18,6 +18,7 @@
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"

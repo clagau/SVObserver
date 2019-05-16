@@ -2981,9 +2981,9 @@ void SVIPDoc::SetModifiedFlag(BOOL bModified /*= TRUE*/)
 	}
 }
 
-SvTl::SVTimeStamp  SVIPDoc::getResultDefinitionUpdatTimeStamp() const
+double  SVIPDoc::getResultDefinitionUpdatTimeStamp() const
 {
-	SvTl::SVTimeStamp Result(0.0);
+	double Result(0.0);
 	SVResultListClass* pResultList = GetResultList();
 
 	if (nullptr != pResultList)

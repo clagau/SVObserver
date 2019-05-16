@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVDlgImageEditor.h"
-#include "SVROIFigureEditor.h"
 #pragma endregion Includes
 
 namespace SvOp

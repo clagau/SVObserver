@@ -13,7 +13,13 @@
 
 #pragma region Includes
 #include "SVResult.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma region Includes
+
+namespace SvVol
+{
+class SVDPointValueObjectClass;
+}
 
 namespace SvOp
 {

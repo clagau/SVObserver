@@ -25,7 +25,6 @@
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "TriggerInformation/SVTriggerEnums.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVCommandInspectionGetItems.h"
@@ -69,6 +68,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -4473,7 +4473,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 
 		if (SUCCEEDED(l_Status))
 		{
-			SvTl::SVTimeStamp l_EndTimeStamp = SvTl::GetTimeStamp() + SvTl::ConvertFrom(SvTl::Minutes, 10.0);
+			double l_EndTimeStamp = SvTl::GetTimeStamp() + SvTl::ConvertFrom(SvTl::Minutes, 10.0);
 
 			while (!(l_AsyncCommands.empty()) && (SvTl::GetTimeStamp() < l_EndTimeStamp))
 			{

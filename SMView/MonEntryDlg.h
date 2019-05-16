@@ -7,6 +7,7 @@
 //******************************************************************************
 
 #pragma once
+#include "resource.h"
 
 /// MonEntryDlg dialog to display details for one monitorentry
 class MonEntryDlg : public CDialog

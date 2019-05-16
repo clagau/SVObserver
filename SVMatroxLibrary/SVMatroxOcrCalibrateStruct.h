@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxTypedefs.h"
 #include "SVMatroxBuffer.h"
 
 #pragma endregion Includes

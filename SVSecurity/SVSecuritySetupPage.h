@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes 
+#include "resource.h"
+#pragma endregion Includes
+
 class SVAccessClass;
 class SVSecuritySetupSheet;
 

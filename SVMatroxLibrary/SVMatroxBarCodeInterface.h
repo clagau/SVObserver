@@ -12,13 +12,9 @@
 #pragma once
 
 #pragma region Includes
-
-#include "SVMatroxEnums.h"
-#include "SVMatroxBuffer.h"
-#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBuffer.h"
 #include "SVStatusLibrary\MessageContainer.h"
-
 #pragma endregion Includes
 
 /**
@@ -42,31 +38,31 @@ public:
 	virtual ~SVMatroxBarCodeInterface();
 
 	// Use this instead of McodeControl
-	static HRESULT Set( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue );
-	static HRESULT Set( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue );
-	static HRESULT Set( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue );
+	static HRESULT Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue );
+	static HRESULT Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue );
+	static HRESULT Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue );
 
 	// Use this instead of McodeInquire.
-	static HRESULT Get( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) ;
-	static HRESULT Get( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_dValue ) ;
-	static HRESULT Get( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_dValue ) ;
+	static HRESULT Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) ;
+	static HRESULT Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_dValue ) ;
+	static HRESULT Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_dValue ) ;
 
 	// The following functions call McodeGetResult.
-	static bool GetResult( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	static bool GetResult( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	static bool GetResult( const SVMatroxIdentifier& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rsValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	static bool GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	static bool GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	static bool GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rsValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	// Does the work of McodeAllocate 
-	static HRESULT Create(SVMatroxIdentifier& p_rCodeID, SVBarCodeTypesEnum p_eType );
-	static HRESULT Create(SVMatroxIdentifier& p_rCodeID, const SVMatroxIdentifier& p_eFromCodeID );
+	static HRESULT Create(__int64& p_rCodeID, SVBarCodeTypesEnum p_eType );
+	static HRESULT Create(__int64& p_rCodeID, const __int64& p_eFromCodeID );
 
 	// Does the work of McodeFree 
-	static HRESULT Destroy(SVMatroxIdentifier& p_rCodeID );
+	static HRESULT Destroy(__int64& p_rCodeID );
 
 	// McodeRead
-	static bool Execute( const SVMatroxIdentifier& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	static bool Execute( const __int64& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 private:
-	static MatroxType Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) ;
-	static MatroxType Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
+	static __int64 Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) ;
+	static __int64 Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
 };
 

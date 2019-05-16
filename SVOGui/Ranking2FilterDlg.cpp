@@ -12,8 +12,6 @@
 //Moved to precompiled header: #include <limits.h>
 #include "Ranking2FilterDlg.h"
 #include "BoundValue.h"
-#include "ObjectInterfaces/ISVOApp_Helper.h"
-#include "SVMFCControls/SVFileDialog.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary\SVClsids.h"

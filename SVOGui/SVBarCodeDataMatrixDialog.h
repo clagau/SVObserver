@@ -12,8 +12,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
+
+namespace SvVol
+{
+class SVDoubleValueObjectClass;
+}
 
 class SVBarCodeDataMatrixDialog : public CPropertyPage
 {

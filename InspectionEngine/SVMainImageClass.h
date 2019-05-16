@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTimerLibrary/SVClock.h"
 #include "SVCameraImageTemplate.h"
 #pragma endregion Includes
 

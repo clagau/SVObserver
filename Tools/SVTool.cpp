@@ -16,11 +16,11 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVUtilityLibrary/SetBits.h"
 #include "Operators/SVConditional.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #pragma endregion Includes
 
 namespace SvTo

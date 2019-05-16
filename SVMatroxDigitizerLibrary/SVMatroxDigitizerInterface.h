@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comdef.h>
 
-#include "SVMatroxLibrary/SVMatroxStatusInformation.h"
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferArray.h"
@@ -32,17 +31,17 @@ typedef std::map<std::string, long> SVGigeEventList;
 class SVMatroxDigitizerInterface
 {
 public:
-	typedef SVMatroxHookFunctionPtr SVGrabProcessFunc;
+	typedef __int64(_stdcall *SVMatroxHookFunctionPtr)(__int64, __int64, void*);
 
 	static HRESULT Allocate(const SVMatroxSystem& System, long DeviceNum, SVMatroxDigitizer& digitizerID);
 	static HRESULT Allocate(const SVMatroxSystem& System, long DeviceNum, const std::string& DataFormat, SVMatroxDigitizer& digitizerID);
 	static HRESULT Release(SVMatroxDigitizer& DigitizerID);
 
-	static HRESULT IsCorruptedFrame(SVMatroxIdentifier milEventID, bool& bIsCorrupted);
+	static HRESULT IsCorruptedFrame(__int64 milEventID, bool& bIsCorrupted);
 	static HRESULT GetGrabTimeStamp(const SVMatroxDigitizer& DigitizerID, double& timestamp);
-	static HRESULT GetGrabBuffer(SVMatroxIdentifier milEventID, SVMatroxIdentifier& bufferID);
+	static HRESULT GetGrabBuffer(__int64 milEventID, __int64& bufferID);
 
-	static HRESULT GetHookInfo(SVMatroxIdentifier milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr);
+	static HRESULT GetHookInfo(__int64 milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr);
 	
 	static HRESULT SetHookFunction(const SVMatroxDigitizer& DigitizerID,
                                   SVMatroxDigitizerHook::SVHookTypeEnum HookType,
@@ -54,10 +53,10 @@ public:
                                   SVMatroxHookFunctionPtr HookHandlerPtr,
 								  void* UserDataPtr);
 
-	static bool IsEventGrabFrameStart(SVMatroxIdentifier EventType);
-	static bool IsEventGrabFrameEnd(SVMatroxIdentifier EventType);
-	static bool IsEventErrorFrameNotify(SVMatroxIdentifier EventType);
-	static bool IsEventDevicePresentNotify(SVMatroxIdentifier EventType);
+	static bool IsEventGrabFrameStart(__int64 EventType);
+	static bool IsEventGrabFrameEnd(__int64 EventType);
+	static bool IsEventErrorFrameNotify(__int64 EventType);
+	static bool IsEventDevicePresentNotify(__int64 EventType);
 
 	// Getters
 	// Board
@@ -116,8 +115,8 @@ public:
 	static HRESULT GrabContinuous(const SVMatroxDigitizer& DigitizerID, const SVMatroxBuffer& DestImageId);
 	static HRESULT GrabWait(const SVMatroxDigitizer& DigitizerID, long Flag);
 
-	static HRESULT StartGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVGrabProcessFunc func, void* userData);
-	static HRESULT StopGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVGrabProcessFunc func, void* userData);
+	static HRESULT StartGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVMatroxHookFunctionPtr func, void* userData);
+	static HRESULT StopGrabArray(const SVMatroxDigitizer& DigitizerID, SVMatroxBufferArray& p_rBufferArray, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode, SVMatroxHookFunctionPtr func, void* userData);
 
 	static HRESULT Halt(const SVMatroxDigitizer& DigitizerID);
 	static HRESULT AbortGrab(const SVMatroxDigitizer& DigitizerID);
@@ -128,8 +127,8 @@ public:
 	// helper
 	static HRESULT Destroy(SVMatroxDigitizer& p_rDigitizer);
 
-	static HRESULT GetGigeCameraTimestamp(SVMatroxIdentifier milEventID, double& timestamp);
-	static HRESULT GetGigeEventType(SVMatroxIdentifier milEventID, long& p_rEventType);
+	static HRESULT GetGigeCameraTimestamp(__int64 milEventID, double& timestamp);
+	static HRESULT GetGigeEventType(__int64 milEventID, long& p_rEventType);
 	static HRESULT SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const std::string& name, const std::string& value);
 	static HRESULT GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list);
 };

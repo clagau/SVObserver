@@ -11,7 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "resource.h"
 #include "SVCameraPage.h"
+#pragma endregion Includes
 
 class SVTestAcquisitionSubsystem;
 

@@ -15,7 +15,6 @@
 #include "SVFileSystemCommandFactory.h"
 
 #include "SVCommandConcreteTemplate.h"
-#include "SVCommandDataContainer.h"
 #include "SVCommandDataValue.h"
 #include "SVCommandConcreteFactoryTemplate.h"
 

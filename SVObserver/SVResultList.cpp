@@ -13,11 +13,9 @@
 #include "stdafx.h"
 #include "SVResultList.h"
 
-#include "Definitions/GlobalConst.h"
 #include "InspectionEngine/SVIPResultData.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "Operators/SVResult.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -83,7 +81,7 @@ void SVResultListClass::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
 }
 
-SvTl::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
+double SVResultListClass::getUpdateTimeStamp()
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 

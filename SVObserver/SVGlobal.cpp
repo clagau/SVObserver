@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <direct.h>
 #include "SVGlobal.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

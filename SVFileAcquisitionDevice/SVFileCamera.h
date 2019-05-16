@@ -22,11 +22,8 @@
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
-
 #include "SVSystemLibrary/SVSequencer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVTimerLibrary/SVClock.h"
-
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
@@ -113,7 +110,7 @@ public:
 
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 
-	SvTl::SVTimeStamp m_StartTimeStamp;
+	double m_StartTimeStamp;
 	SvTh::TriggerDispatcher m_dispatcher;
 };
 

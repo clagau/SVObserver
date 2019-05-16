@@ -16,7 +16,6 @@
 #include "ZipHelper.h"
 #include "7zTypes.h"
 #include "LoadDll.h"
-#include "io.h"
 #include "IArchive.h"
 #include "PropVariant.h"
 #include "OutStreamWrapper.h"

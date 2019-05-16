@@ -15,7 +15,6 @@
 #include "Definitions/Color.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVOGui/DisplayHelper.h"
 #include "SVOGui/ImageController.h"
 #include "Tools/SVTool.h"
 #include "AnalyzerOperators/SVAnalyzer.h"

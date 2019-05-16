@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "Definitions/ImageOperatorEnums.h"
 #pragma endregion Includes
 
 namespace SvOp

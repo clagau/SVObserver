@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVDriveInit.h"
 #include "CPassDlg.h"
 
 #ifdef _DEBUG

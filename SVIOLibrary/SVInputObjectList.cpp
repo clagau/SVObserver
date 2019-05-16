@@ -16,7 +16,6 @@
 #include "SVCameraDataInputObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
 
 SVInputObjectList::SVInputObjectList( LPCSTR ObjectName )

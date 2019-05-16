@@ -12,6 +12,8 @@
 #pragma once
 
 #include "SVRPropertyTree/SVRPropTree.h"
+#include "resource.h"
+
 
 // CPropTreeTestDlg dialog
 class CPropTreeTestDlg : public CDialog

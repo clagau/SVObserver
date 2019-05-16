@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVMathContainer.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

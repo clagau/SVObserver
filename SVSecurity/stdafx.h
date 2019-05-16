@@ -71,6 +71,7 @@
 #include <memory>			//Used by static library
 #include <set>				//Used by static library
 #include <sequential_tree.h> //Used by static library
+#include <Shellapi.h>
 #include <sstream>			//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library

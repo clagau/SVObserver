@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "CameraLibrary\SVDeviceParams.h"
-#include "SVImageTest.h"
 #include "SVCameraPropDlgClass.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVUtilityLibrary/StringHelper.h"

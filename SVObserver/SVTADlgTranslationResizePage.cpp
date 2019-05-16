@@ -12,10 +12,8 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVTADlgTranslationResizePage.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVGuiExtentUpdater.h"
 #include "Tools/ResizeTool.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
@@ -23,6 +21,10 @@
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
+#include "SVRPropertyTree/SVRPropTree.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVRPropertyTree/SVRPropTreeItemStatic.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum

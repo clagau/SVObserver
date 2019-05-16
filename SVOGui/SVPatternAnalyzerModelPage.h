@@ -16,7 +16,6 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "PictureDisplay.h"
 #include "ImageController.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes

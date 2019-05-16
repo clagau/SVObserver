@@ -13,8 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "comutil.h"
-
 #pragma endregion Includes
 /**
 @SVObjectName XML Tree Base

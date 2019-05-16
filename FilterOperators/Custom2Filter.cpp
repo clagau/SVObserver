@@ -12,9 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Custom2Filter.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

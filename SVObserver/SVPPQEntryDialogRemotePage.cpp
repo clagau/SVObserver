@@ -17,10 +17,8 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVPPQEntryDialog.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes

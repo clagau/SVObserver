@@ -10,10 +10,9 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-
-
 #include "SVBarCodeDataMatrixDialog.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

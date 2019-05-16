@@ -12,10 +12,8 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "SVSecurityGeneralPage.h"
-
 #include "SVMessage/SVMessage.h"
 
-#include "SVAccessPointNode.h"
 #include "SVAccessClass.h"
 #include "SVSecuritySetupSheet.h"
 #include "SVSecurity.h"

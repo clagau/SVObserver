@@ -10,9 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "PropTreeTest.h"
 #include "PropTreeTestDlg.h"
-#include "afxdialogex.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 

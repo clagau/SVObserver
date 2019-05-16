@@ -31,7 +31,7 @@ SVMatroxResourceMonitor& SVMatroxResourceMonitor::Instance()
 	return l_Object;
 }
 
-HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier )
+HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier )
 {
 	HRESULT l_Status = S_OK;
 #ifdef MONITOR_MIL_RESOURCES
@@ -74,7 +74,7 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 	return l_Status;
 }
 
-bool SVMatroxResourceMonitor::FindReference(SVMatroxIdentifier Identifier) const
+bool SVMatroxResourceMonitor::FindReference(__int64 Identifier) const
 {
 	bool bRetVal = false;
 	for (std::vector<SVIdentifierSet>::const_iterator it = m_Identifiers.begin();!bRetVal && it != m_Identifiers.end();++it)
@@ -86,7 +86,7 @@ bool SVMatroxResourceMonitor::FindReference(SVMatroxIdentifier Identifier) const
 	return bRetVal;
 }
 
-HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier)
+HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier)
 {
 	HRESULT l_Status = S_OK;
 #ifdef MONITOR_MIL_RESOURCES

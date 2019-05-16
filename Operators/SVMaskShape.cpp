@@ -13,6 +13,8 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVMaskShape.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVLibrary/Intersect.h"
 #include "Definitions/Color.h"

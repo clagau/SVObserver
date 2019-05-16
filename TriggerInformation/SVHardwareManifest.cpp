@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
-#include "SVOResource/resource.h"
 #include "SVHardwareManifest.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

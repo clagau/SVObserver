@@ -10,14 +10,14 @@
 
 #include "stdafx.h"
 
-#include "TriggerRecordControllerModulTest.h"
-
 #include "TrcTester.h"
 #include "LogClass.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\SVRegistry.h"
 #include "TriggerRecordController\LocalConst.h"
 #include "SVProtoBuf\ConverterHelper.h"
+#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
+#include "TriggerRecordController\ITriggerRecordRW.h"
 
 constexpr int triggerIdOffset = 100'000;
 LPCSTR strTestConfig = _T("Config");

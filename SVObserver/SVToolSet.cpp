@@ -422,7 +422,7 @@ bool SVToolSetClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 	BOOL bDisabled = FALSE;
 	clearRunErrorMessages();
 
-	SvTl::SVTimeStamp l_Timer = SvTl::GetTimeStamp();
+	double l_Timer = SvTl::GetTimeStamp();
 	m_ToolTime.Start();
 
 	// If Conditional is disabled equation.Run() returns always TRUE.
@@ -687,9 +687,9 @@ bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 	}
 }
 
-void SVToolSetClass::setPostRunStatus(SvTl::SVTimeStamp timer, SVRunStatusClass &rRunStatus)
+void SVToolSetClass::setPostRunStatus(double timer, SVRunStatusClass &rRunStatus)
 {
-	SvTl::SVTimeStamp l_Elapsed = (SvTl::GetTimeStamp() - timer);
+	double l_Elapsed = (SvTl::GetTimeStamp() - timer);
 	m_EndTime = SvTl::ConvertTo(SvTl::Seconds, l_Elapsed);
 	m_AverageTime = (m_AverageTime + m_EndTime) / 2.0;
 

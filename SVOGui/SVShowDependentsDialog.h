@@ -12,9 +12,10 @@
 #pragma once
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVObjectLibrary/SVOutObjectInfoStruct.h"
 #include "SVMFCControls/DlgItemResizer.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/SVO-Enum.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOg

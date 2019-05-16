@@ -9,7 +9,6 @@
 
 #pragma region Includes
 #include "IObjectClass.h"
-#include "IEnumerateValueObject.h"
 #include "ISVImage.h"
 #include "IValueObject.h"
 #pragma endregion Includes

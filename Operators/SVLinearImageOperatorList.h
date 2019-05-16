@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVStdImageOperatorListClass.h"
 #include "InspectionEngine/SVDataBuffer.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

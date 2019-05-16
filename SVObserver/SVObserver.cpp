@@ -72,7 +72,6 @@
 #include "Tools/SVArchiveTool.h"
 #include "SVArchiveWritingDlg.h"
 #include "SVLibrary\SVWinUtility.h"
-#include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SoftwareTriggerDlg.h"
 
 #include "SVIOController.h"
@@ -81,14 +80,11 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary\SVVersionInfo.h"
-#include "SVConfigurationTreeWriter.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
-#include "RemoteCommand.h"
 #include "SVIOBoardCapabilities.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
@@ -105,9 +101,10 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
-#include "SVMatroxLibrary\SVMatroxSystemInterface.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxErrorEnum.h"
+#include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
-#include "SVSharedMemoryLibrary\MLPPQInfo.h"
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "SVRCWebsocketServer.h"
 #include "SVRCCommand.h"
@@ -753,11 +750,10 @@ void SVObserverApp::OnStop()
 	// Increment Offline Count
 	m_OfflineCount++;
 
-	SVPPQObject* pPPQ(nullptr);
 	long lSize = pConfig->GetPPQCount();
 	for (long l = 0; l < lSize; l++)
 	{
-		pPPQ = pConfig->GetPPQ(l);
+		SVPPQObject* pPPQ = pConfig->GetPPQ(l);
 		if (nullptr != pPPQ) { pPPQ->GoOffline(); }
 	}
 	// Stop the FailStatus Stream PPQ Listeners
@@ -1065,7 +1061,7 @@ void SVObserverApp::OnSVOFilePrintSetup()
 
 void SVObserverApp::OnExtrasLogin()
 {
-	HRESULT hr = m_svSecurityMgr.SVLogon();
+	m_svSecurityMgr.SVLogon();
 
 	// Check if Edit Mode should continue.
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
@@ -1076,7 +1072,7 @@ void SVObserverApp::OnExtrasLogin()
 		}
 		else
 		{	// If they are still allowed then select the current tool.
-			SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
+			SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetMainWnd());
 			if (pWndMain)
 			{
 				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
@@ -1284,7 +1280,7 @@ void SVObserverApp::OnExtrasLogout()
 	}
 
 	// We need to deselect any tool that might be set for operator move.
-	SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
+	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetMainWnd());
 	if (nullptr != pWndMain)
 	{
 		pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE);   // Deselect any tool selected for move.
@@ -1301,7 +1297,6 @@ void SVObserverApp::OnUpdateExtrasLogout(CCmdUI* PCmdUI)
 //
 BOOL SVObserverApp::OnOpenRecentFile(UINT nID)
 {
-	bool l_bOk = false;
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS))
 	{
 		ValidateMRUList();
@@ -1312,7 +1307,7 @@ BOOL SVObserverApp::OnOpenRecentFile(UINT nID)
 
 			if (!bRunning)
 			{
-				l_bOk = OpenConfigFileFromMostRecentList(nID);
+				bool l_bOk = OpenConfigFileFromMostRecentList(nID);
 				if (l_bOk && !m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 				{
 					SetModeEdit(true); // Set Edit mode
@@ -1439,13 +1434,12 @@ void SVObserverApp::OnUpdateResultsPicker(CCmdUI* PCmdUI)
 void SVObserverApp::OnExtrasUtilitiesEdit()
 {
 	SVUtilitiesClass util;
-	CWnd* pWindow;
-	CMenu* pMenu;
+
 	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
-		pWindow = AfxGetMainWnd();
-		pMenu = pWindow->GetMenu();
+		CWnd* pWindow = AfxGetMainWnd();
+		CMenu* pMenu = pWindow->GetMenu();
 
 		if (pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities")))
 		{
@@ -1862,8 +1856,6 @@ BOOL SVObserverApp::InitInstance()
 
 	InitializeSecurity();
 
-	int nRet = 0;
-
 	// the SVIPDoc constructor will create
 	//
 	// Make sure the dialog color matches 'system' choice.
@@ -2098,7 +2090,6 @@ BOOL SVObserverApp::InitInstance()
 	}
 
 	ExtrasEngine::Instance().SetAutoSaveEnabled(AutoSaveValue != 0);
-	unsigned short defaultPortNo = -1;
 
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
@@ -2385,8 +2376,8 @@ HRESULT SVObserverApp::OpenSVXFile()
 	CWaitCursor wait;
 
 	HRESULT hr;
-	SvTl::SVTimeStamp l_StartLoading;
-	SvTl::SVTimeStamp l_FinishLoad;
+	double l_StartLoading;
+	double l_FinishLoad;
 
 	bool bOk = false;
 
@@ -2937,7 +2928,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 			}
 		}
 
-		((SVMainFrame*)m_pMainWnd)->SetStatusInfoText(_T(""));
+		(dynamic_cast<SVMainFrame*> (GetMainWnd()))->SetStatusInfoText(_T(""));
 	}
 
 	if (S_OK == hr)
@@ -2994,7 +2985,7 @@ SVIODoc* SVObserverApp::GetIODoc() const
 bool SVObserverApp::Logout(bool bForceLogout)
 {
 	// We need to deselect any tool that might be set for operator move.
-	SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
+	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetMainWnd());
 	if (pWndMain)
 	{
 		DeselectTool();
@@ -3055,14 +3046,12 @@ bool SVObserverApp::InitPath(LPCTSTR PathName, bool CreateIfDoesNotExist /*= tru
 
 bool SVObserverApp::IsMatroxGige() const
 {
-	bool l_bOk = false;
-
-	l_bOk = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD2A)
+	 bool result = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD2A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD4A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD8A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO));
 
-	return l_bOk;
+	return result;
 }
 
 bool SVObserverApp::CheckSVIMType() const
@@ -3160,11 +3149,10 @@ bool SVObserverApp::IsProductTypeRAID() const
 
 void SVObserverApp::ValidateMRUList()
 {
-	int i, iSize;
 	if (!::IsBadReadPtr(m_pRecentFileList, sizeof(LPVOID)))
 	{
-		iSize = m_pRecentFileList->GetSize();
-		for (i = iSize - 1; i >= 0; i--)
+		int iSize = m_pRecentFileList->GetSize();
+		for (int i = iSize - 1; i >= 0; i--)
 		{
 			bool bGone = (_access(m_pRecentFileList->m_arrNames[i], 0) != 0);
 			if (bGone)
@@ -3941,7 +3929,6 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 	else if (_T("00") == m_rInitialInfo.m_IOBoard)
 	{
 		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
-		int numTriggers = 0;
 		const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
 		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
 	}
@@ -3994,9 +3981,6 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			SVDigitalInputObject* pInput = nullptr;
 			SVPPQObject* pPPQ = nullptr;
 			unsigned long ulCount = 0;
-			unsigned long l = 0;
-			long lPPQ = 0;
-			long lPPQCount = 0;
 
 			SVIOConfigurationInterfaceClass::Instance().Init();
 			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(ulCount);
@@ -4007,10 +3991,8 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 				SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
 				if (nullptr != pInputObjectList)
 				{
-					for (l = 0; l < ulCount; l++)
+					for (unsigned long l = 0; l < ulCount; l++)
 					{
-						pInput = nullptr;
-
 						std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
 
 						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l));
@@ -4023,8 +4005,8 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 				}
 
 				// Make all the PPQs build their default digital inputs
-				lPPQCount = pConfig->GetPPQCount();
-				for (lPPQ = 0; lPPQ < lPPQCount; lPPQ++)
+				long lPPQCount = pConfig->GetPPQCount();
+				for (long lPPQ = 0; lPPQ < lPPQCount; lPPQ++)
 				{
 					pPPQ = pConfig->GetPPQ(lPPQ);
 					ASSERT(nullptr != pPPQ);
@@ -4149,11 +4131,10 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 	CMDIFrameWnd* pMainFrame;
 	CMenu* pMenu;
 	CString sMenuText;
-	HMENU hMenu = nullptr;
 	CMenu menu;
 
 	pMainFrame = (CMDIFrameWnd*)AfxGetMainWnd();
-	hMenu = pMainFrame->m_hMenuDefault;    // default menu
+	HMENU hMenu = pMainFrame->m_hMenuDefault;    // default menu
 	menu.Attach(hMenu);
 	pMenu = &menu;
 	sMenuText = _T("&Utilities");
@@ -4186,7 +4167,7 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 		{
 			menu.Detach();
 		}
-		pMdiChild = (CMDIChildWnd*)pMdiChild->GetWindow(GW_HWNDNEXT);
+		pMdiChild = dynamic_cast<CMDIChildWnd*>(pMdiChild->GetWindow(GW_HWNDNEXT));
 	}
 }
 
@@ -4224,7 +4205,7 @@ long SVObserverApp::UpdateAndGetLogDataManager()
 
 void SVObserverApp::DeselectTool()
 {
-	SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
+	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetMainWnd());
 	if (pWndMain)
 	{
 		pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE);   // Deselect any tool selected for move.
@@ -4235,8 +4216,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 {
 	HRESULT hr = S_OK;
 
-	HCURSOR hCursor = nullptr;
-	hCursor = ::LoadCursor(nullptr, IDC_WAIT);
+	HCURSOR hCursor = ::LoadCursor(nullptr, IDC_WAIT);
 	hCursor = ::SetCursor(hCursor);
 
 	try
@@ -4317,7 +4297,6 @@ HRESULT SVObserverApp::ConnectToolsetBuffers()
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
 	long lInspectionCount = 0;
-	SVInspectionProcess* pInspection(nullptr);
 	//If the pointer is a nullptr then the count will be 0
 	if (nullptr != pConfig) { lInspectionCount = pConfig->GetInspectionCount(); }
 
@@ -4855,8 +4834,7 @@ void SVObserverApp::HideIOTab(DWORD p_dwID)
 		{
 			CView* pView = l_pIODoc->GetNextView(lViewPos);
 
-			CMDIChildWnd *pFrame = (CMDIChildWnd*)pView->GetParentFrame();
-			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pFrame);
+			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
 			if (pIOView)
 			{
 				TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_dwID);
@@ -4878,8 +4856,7 @@ void SVObserverApp::ShowIOTab(DWORD p_dwID)
 		{
 			CView* pView = l_pIODoc->GetNextView(lViewPos);
 
-			CMDIChildWnd *pFrame = (CMDIChildWnd*)pView->GetParentFrame();
-			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pFrame);
+			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
 			if (pIOView)
 			{
 				TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_dwID);
@@ -4998,8 +4975,7 @@ void SVObserverApp::Start()
 
 	UpdateAndGetLogDataManager();
 
-	SvTl::SVTimeStamp l_StartLoading;
-	SvTl::SVTimeStamp l_FinishLoad;
+	double l_StartLoading;
 
 	l_StartLoading = SvTl::GetTimeStamp();
 
@@ -5218,8 +5194,7 @@ void SVObserverApp::Start()
 
 		std::string TriggerCounts;
 		GetTriggersAndCounts(TriggerCounts);
-		l_FinishLoad = SvTl::GetTimeStamp();
-		long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
+		long l_lTime = static_cast<long>(SvTl::GetTimeStamp() - l_StartLoading);
 		SvDef::StringVector msgList;
 		msgList.push_back(TriggerCounts);
 		msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
@@ -5982,7 +5957,7 @@ bool SVObserverApp::InitATL()
 #endif
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10136);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10136);
 			return false;
 		}
 	}
@@ -6036,25 +6011,23 @@ void SVObserverApp::StopRegression()
 	CDocTemplate* pDocTemplate = nullptr;
 	CString strExt;
 	POSITION pos = GetFirstDocTemplatePosition();
-	bool bDone = false;
 	if (pos)
 	{
+		bool bDone = false;
 		do
 		{
 			pDocTemplate = GetNextDocTemplate(pos);
 			if (pDocTemplate)
 			{
-				SVIPDoc* pTmpDoc;
-				CDocument* newDoc;
 				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
 				if (posDoc)
 				{
 					do
 					{
-						newDoc = pDocTemplate->GetNextDoc(posDoc);
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
 						if (newDoc)
 						{
-							pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
 							if (pTmpDoc)
 							{
 								if (pTmpDoc->IsRegressionTestRunning())

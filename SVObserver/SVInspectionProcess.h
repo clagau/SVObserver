@@ -19,16 +19,13 @@
 //Moved to precompiled header: #include <boost/type_traits.hpp>
 
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/IToolSet.h"
 #include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
@@ -292,7 +289,7 @@ protected:
 
 		void clear();
 
-		SvTl::SVTimeStamp m_StartTime;
+		double m_StartTime;
 		SVTimeCountMap m_Start;
 		SVTimeCountMap m_End;
 		SVTimeCountMap m_Duration;
@@ -314,7 +311,7 @@ protected:
 		void EventStart( const std::string& p_rName );
 		void EventEnd( const std::string& p_rName );
 
-		SvTl::SVTimeStamp m_StartTime;
+		double m_StartTime;
 		SVEventTrackingMap m_EventCounts;
 	};
 #endif //EnableTracking

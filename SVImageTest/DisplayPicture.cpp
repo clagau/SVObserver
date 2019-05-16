@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   01 Oct 2013 08:25:50  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "DisplayPicture.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -16,7 +17,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "TriggerRecordController/Image.h"
 #include "Definitions/SVImageFormatEnum.h"
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

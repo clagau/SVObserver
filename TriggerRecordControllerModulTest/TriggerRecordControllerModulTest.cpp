@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "TriggerRecordControllerModulTest.h"
 #include "LogClass.h"
 
 #include "TrcTester.h"

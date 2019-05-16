@@ -15,7 +15,6 @@
 
 #include "Operators/SVEvaluate.h"
 #include "Operators/SVImageTransform.h"
-#include "SVIPDoc.h"
 #include "Tools/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVOGui/ValuesAccessor.h"

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "svimagetest.h"
 #include "SVCameraPage.h"
-#include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVCameraPropDlgClass.h"
 #include "SVCameraFilePropertyPageDlg.h"

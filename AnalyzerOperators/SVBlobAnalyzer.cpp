@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVBlobAnalyzer.h"
+#include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

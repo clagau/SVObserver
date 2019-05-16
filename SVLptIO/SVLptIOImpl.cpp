@@ -35,9 +35,9 @@ static const int MaxDebugData = 500;
 
 struct TriggerDebugData
 {
-	SvTl::SVTimeStamp m_lTimeStamp1;
-	SvTl::SVTimeStamp m_lTimeStamp2;
-	SvTl::SVTimeStamp m_lParTimeStamp;
+	double m_lTimeStamp1;
+	double m_lTimeStamp2;
+	double m_lParTimeStamp;
 	unsigned short m_dStatusReg0;
 	unsigned short m_dStatusReg1;
 	unsigned short m_dStatusReg2;
@@ -167,7 +167,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 	{
 #ifdef LogDebugData
 		FILE* pfh = fopen("c:\\temp\\DebugCounts.txt","w");
-		SvTl::SVTimeStamp LastTimeStamp = g_TDebugData[0].m_lTimeStamp1;
+		double LastTimeStamp = g_TDebugData[0].m_lTimeStamp1;
 		fprintf(pfh, "Critical Section inits %d", g_lCriticalSecInits);
 		for (int i = 0 ;i < g_CallbackCount; i++)
 		{
@@ -1400,14 +1400,14 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 					}
 				}
 			}
-			SvTl::SVTimeStamp Start = SvTl::GetTimeStamp();
+			double Start = SvTl::GetTimeStamp();
 
 			// **** Wait for Acknowledge off...
 			unsigned char status;
 			hr = GetStatusPort(status);
 			while (S_OK == hr && 0 == (status & 128))
 			{
-				SvTl::SVTimeStamp Check = SvTl::GetTimeStamp();
+				double Check = SvTl::GetTimeStamp();
 
 				if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 				{
@@ -1467,7 +1467,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 								hr = GetStatusPort(status);
 								while (S_OK == hr && 0 != (status & 128))
 								{
-									SvTl::SVTimeStamp Check = SvTl::GetTimeStamp();
+									double Check = SvTl::GetTimeStamp();
 									if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 									{
 										hr = GetStatusPort(status);
@@ -1500,7 +1500,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 							hr = GetStatusPort(status);
 							while (S_OK == hr && 0 != (status & 128))
 							{
-								SvTl::SVTimeStamp Check = SvTl::GetTimeStamp();
+								double Check = SvTl::GetTimeStamp();
 								if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 								{
 									hr = GetStatusPort(status);

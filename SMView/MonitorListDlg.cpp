@@ -7,7 +7,6 @@
 /// MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
 //******************************************************************************
 #include "stdafx.h"
-#include "SMView.h"
 #include "MonitorLIstDlg.h"
 #include "SMViewDlg.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"

@@ -6,9 +6,10 @@
 /// class for holding memory for the MonitorList in SharedMemory 
 //******************************************************************************
 #pragma once
-#include "ObjectInterfaces\IFormulaController.h"
-#include "SVStatusLibrary\SourceFileParams.h"
+#pragma region Includes
 #include "SMParameterStruct.h"
+#pragma endregion Includes
+
 namespace SvSml
 {
 

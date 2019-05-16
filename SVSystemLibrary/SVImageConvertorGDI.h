@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #pragma endregion Includes
 
 class SVImageConvertorGDI
@@ -27,8 +26,8 @@ public:
 	static HRESULT GetBitmapFromIPictureDisp(IPictureDisp* pPictureDisp, HBITMAP& rBitmap);
 	static HRESULT GetIPictureDispFromBitmap(HBITMAP Bitmap, IPictureDisp** ppPictureDisp);
 
-	static HRESULT BitmapToByteVector(HBITMAP Bitmap, SVByteVector& rImage);
-	static HRESULT ByteVectorToBitmap(const SVByteVector& Image, HBITMAP& rBitmap);
+	static HRESULT BitmapToByteVector(HBITMAP Bitmap, std::vector<unsigned char>& rImage);
+	static HRESULT ByteVectorToBitmap(const std::vector<unsigned char>& Image, HBITMAP& rBitmap);
 
 	static HRESULT CopyDIBits(HBITMAP SrcBitmap, BITMAPINFOHEADER* pDestInfo, void* pDestBits);
 	static HRESULT CopyDIBits(BITMAPINFOHEADER* pSrcInfo, void* pSrcBits, HBITMAP& DestBitmap);

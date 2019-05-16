@@ -15,13 +15,13 @@
 #include "SVIOTest.h"
 #include "SVIOTestDlg.h"
 #include "TriggerHandling/TriggerBasics.h"
-#include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVLibrary/SVOIniClass.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -595,7 +595,7 @@ void CSVIOTESTDlg::OnTestOutputs()
 
 HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
 {
-	SvTl::SVTimeStamp l_TimeStamp = SvTl::GetTimeStamp();
+	double l_TimeStamp = SvTl::GetTimeStamp();
 
 	if ( nullptr != triggerparams.m_pData )
 	{

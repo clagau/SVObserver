@@ -13,9 +13,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
+
+class SVMatroxBuffer;
+class SVMatroxOcr;
 
 class SVRemoteFontManager  
 {
@@ -56,7 +57,7 @@ public:
 protected:
 	bool GetStatusHandles( unsigned long &rulSize, HANDLE **pphArray );
 	
-	bool RemoveFontsOlderThan( SvTl::SVTimeStamp p_Age );
+	bool RemoveFontsOlderThan( double p_Age );
 	
 private:
 	bool m_bIsOnline;
@@ -71,7 +72,7 @@ private:
 	
 	std::vector<long> m_arRemoteFontIdentifiers;
 	std::vector<SVMatroxOcr> m_arRemoteFontHandles;
-	std::vector<SvTl::SVTimeStamp> m_arRemoteFontTimestamps;
+	std::vector<double> m_arRemoteFontTimestamps;
 	std::vector<SVMatroxBuffer> m_arRemoteFontImageHandles;
 	std::vector<long> m_arLastCharIds;
 

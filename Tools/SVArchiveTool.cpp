@@ -18,8 +18,6 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
@@ -33,6 +31,7 @@
 #include "SVLibrary/SVOINIClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -402,12 +401,14 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	//
 	// Write a date and time stamp to the archive file.
 	//
-	CTime  timeCurrent;
-	timeCurrent = CTime::GetCurrentTime();
-	//
+	auto in_time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+	std::stringstream stringStream;
+	stringStream << std::put_time(std::localtime(&in_time_t), _T("%d/%m/%Y %H:%M:%S"));
+
 	// Format date and time as DD/MM/YYYY HH:MM:SS
 	//
-	std::string TimeStamp = timeCurrent.Format(_T("%d/%m/%Y %H:%M:%S\r\n"));
+	std::string TimeStamp = stringStream.str() + _T("\r\n");
 	
 	//
 	// Write the result to the archive file.

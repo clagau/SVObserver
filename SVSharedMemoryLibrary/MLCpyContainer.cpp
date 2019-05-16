@@ -5,14 +5,15 @@
 //*****************************************************************************
 ///class encapsulate an container with all active monitorlists 
 //******************************************************************************
+
+#pragma region Includes
 #include "StdAfx.h"
 #include "MLcpyContainer.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
-
+#pragma endregion Includes
 
 namespace SvSml
 {

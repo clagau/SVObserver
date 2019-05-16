@@ -9,6 +9,10 @@
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
+#pragma region Includes
+#include "SVMessage/SVMessage.h"
+#pragma endregion Includes
+
 #pragma region Constructor
 template<typename SVEventThreadSignalHandler>
 SVEventThread<SVEventThreadSignalHandler>::SVEventThread()

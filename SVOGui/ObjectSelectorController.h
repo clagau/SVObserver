@@ -9,8 +9,6 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVOResource/resource.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 

@@ -14,7 +14,6 @@
 
 #include "SVObserver.h"
 #include "SVOCameraDlg.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
 #include "SVOCameraObj.h"

@@ -16,9 +16,8 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #define BOOST_DATE_TIME_NO_LIB
 //Moved to precompiled header: #include <boost/date_time.hpp>
-#include "xmllite.h"
+//Moved to precompiled header: #include <xmllite.h>
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
@@ -26,31 +25,16 @@
 #include "CameraLibrary/SVParamListDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
-#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Operators/SVEquation.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
-#include "SVToolSet.h"
 #include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "Tools/SVArchiveTool.h"
-#include "Tools/SVArchiveRecord.h"
-#include "Tools/SVArchiveRecordsArray.h"
-#include "Tools/SVStatTool.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
-#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVIODoc.h"
-#include "SVIPDoc.h"
-#include "Operators/SVShapeMaskHelperClass.h"
-#include "Operators/SVUserMaskOperatorClass.h"
-#include "SVIOController.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma region Includes
 

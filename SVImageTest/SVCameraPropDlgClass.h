@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "resource.h"
 #include "SVMFCControls\SVListCtrl.h"
 #pragma endregion Includes
 

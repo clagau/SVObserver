@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "afxdlgs.h"
 #include "SVPictureDisplay.h"
 #include "SVPictureDisplayCtrl.h"
 #include "SVPictureDisplayPropPage.h"

@@ -11,12 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxEnums.h"
-#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxPolarTransformStruct.h"
 #include "SVMatroxImageRotateStruct.h"
+#pragma endregion Includes
 
 class SVCommandDataHolder;
 
@@ -56,9 +58,9 @@ public:
 	virtual ~SVMatroxImageInterface();
 
 	// This function replaces MimAllocResult.
-	static HRESULT Create( SVMatroxIdentifier& rResultId, const long NbEntries, SVImageOperationTypeEnum ResultType);
+	static HRESULT Create( __int64& rResultId, const long NbEntries, SVImageOperationTypeEnum ResultType);
 	// This function replaces MimFree.
-	static HRESULT Destroy( SVMatroxIdentifier& rResultId);
+	static HRESULT Destroy( __int64& rResultId);
 	
 	// This function Replaces MimArith and MimArithMultiple( image tool )
 	static HRESULT Arithmetic( const SVMatroxBuffer& p_rDestId, const SVMatroxBuffer& p_dSource1, const SVMatroxBuffer& p_dSource2, SVImageOperationTypeEnum p_lOperation);
@@ -83,13 +85,13 @@ public:
 	static HRESULT Flip( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageFlipEnum p_lOperation);
 
 	// This function replaces MimGetResult
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, std::vector<double>& p_adArray);
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, std::vector<long>& p_alArray);
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, std::vector<BYTE>& p_acArray);
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, void * p_pArray);
+	static HRESULT GetResult( const __int64& rResultId, std::vector<double>& p_adArray);
+	static HRESULT GetResult( const __int64& rResultId, std::vector<long>& p_alArray);
+	static HRESULT GetResult( const __int64& rResultId, std::vector<BYTE>& p_acArray);
+	static HRESULT GetResult( const __int64& rResultId, void * p_pArray);
 
 	// This function replaces MimHistogram
-	static HRESULT Histogram( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& p_rSource);
+	static HRESULT Histogram( const __int64& rResultId, const SVMatroxBuffer& p_rSource);
 	// This function replaces MimLutMap
 	static HRESULT LutMap( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rLut);
 	// This function replaces MimOpen
@@ -97,7 +99,7 @@ public:
 	// This function replaces MimPolarTransform
 	static HRESULT PolarTransform( const SVMatroxBuffer& p_rDest, SVMatroxPolarTransformStruct& p_rTransformStruct);
 	// This function replaces MimProject (Linear tool)
-	static HRESULT Project( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& p_rSource, double p_dAngle);
+	static HRESULT Project( const __int64& rResultId, const SVMatroxBuffer& p_rSource, double p_dAngle);
 	// This function replaces MimRank
 	static HRESULT Rank( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rStructElem, long p_lRank);
 	// This function replaces MimRotate

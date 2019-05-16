@@ -11,9 +11,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/SVByteValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -69,7 +74,7 @@ public:
 	//for MIL 9.0 - New only for DataMatrix Codes
 	SvVol::SVBoolValueObjectClass msv_bUnEvenGrid;
 	
-	SVMatroxIdentifier m_MilCodeId = M_NULL;
+	__int64 m_MilCodeId = 0LL;
 
 	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
 	virtual ~SVBarCodeAnalyzerClass();

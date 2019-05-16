@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
 

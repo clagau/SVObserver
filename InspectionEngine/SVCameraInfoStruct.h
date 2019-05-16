@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
@@ -38,7 +37,7 @@ public:
 #pragma region Public Methods
 public:
 	HRESULT Assign( const SVCameraInfoStruct& rCameraInfo );
-	HRESULT Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SvTrc::IImagePtr pImage );
+	HRESULT Assign( double p_StartFrameTS, double p_EndFrameTS, const SvTrc::IImagePtr pImage );
 
 	void Reset();
 	void ClearInfo();
@@ -50,9 +49,9 @@ public:
 	const SvTrc::IImagePtr getImage() const { return m_pImage; };
 	bool setImage(SvTrc::IImagePtr pImage);
 
-	SvTl::SVTimeStamp m_StartFrameTimeStamp;
-	SvTl::SVTimeStamp m_EndFrameTimeStamp;
-	SvTl::SVTimeStamp m_CallbackTimeStamp;
+	double m_StartFrameTimeStamp;
+	double m_EndFrameTimeStamp;
+	double m_CallbackTimeStamp;
 #pragma endregion Public Methods
 
 protected:

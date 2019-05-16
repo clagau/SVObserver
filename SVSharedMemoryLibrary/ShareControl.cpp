@@ -6,13 +6,13 @@
 /// ShareControl implements the connection to the shared memory 
 //******************************************************************************
 #include  "StdAfx.h"
+#include "LastResponseData.h"
 #include "ShareControl.h"
 #include "ShareEvents.h"
-#include "LastResponseData.h"
+#include "ShareControlSetting.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions\StringTypeDef.h"
-#include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"

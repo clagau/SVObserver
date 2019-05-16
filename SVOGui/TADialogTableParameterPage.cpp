@@ -14,7 +14,6 @@
 #include "Definitions/TextDefineSVDef.h"
 #include "FormulaController.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 

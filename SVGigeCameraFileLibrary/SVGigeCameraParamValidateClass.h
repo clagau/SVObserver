@@ -11,8 +11,11 @@
 
 #pragma once
 
-#include "CameraLibrary/SVDeviceParams.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
+#pragma region Includes
+#include "CameraLibrary/SVDeviceParam.h"
+#pragma endregion Includes
+
+class SVDeviceParamCollection;
 
 class SVGigeCameraParamValidateClass  
 {

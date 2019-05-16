@@ -11,11 +11,10 @@
 
 #pragma once
 
-
+#pragma region Includes
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
-#include "SVTimerLibrary/SVClock.h"
-
+#pragma endregion Includes
 
 class SVCameraPage;
 class SVTestAcquisitionSubsystem;
@@ -37,7 +36,7 @@ public:
 	virtual int GetBufferFormat() const override;
 
 	virtual SvTrc::IImagePtr GetNextBuffer() override;
-	virtual HRESULT UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const SvTl::SVTimeStamp StartTick, const SvTl::SVTimeStamp StopTick = 0) override;
+	virtual HRESULT UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick = 0) override;
 
 	virtual HRESULT ReadCameraFile( const std::string& rFilename );
 

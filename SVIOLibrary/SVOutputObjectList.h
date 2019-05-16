@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <comdef.h>
 
 #include "SVOutputObject.h"
-#include "SVIOEntryStruct.h"
+#include "SVIOEntryHostStruct.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

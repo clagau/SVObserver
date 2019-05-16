@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVAnalyzer.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp

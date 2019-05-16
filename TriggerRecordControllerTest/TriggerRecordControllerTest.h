@@ -8,8 +8,6 @@
 #error "'stdafx.h' vor dieser Datei für PCH einschließen"
 #endif
 
-#include "resource.h"		// Hauptsymbole
-
 namespace SvTrcT
 {
 	// CTriggerRecordControllerTestApp:

@@ -10,7 +10,9 @@
 //******************************************************************************
 #pragma once
 
-// SVSoftwareTriggerSetupDlg dialog
+#pragma region Includes
+#include "resource.h"
+#pragma endregion Includes
 
 class SVSoftwareTriggerSetupDlg : public CDialog
 {

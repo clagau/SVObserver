@@ -13,9 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVActiveXLockStruct.h"	// Added by ClassView
 #include "SVInfoStructs.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;

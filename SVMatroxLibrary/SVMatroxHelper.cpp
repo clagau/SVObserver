@@ -7,7 +7,7 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxErrorEnum.h"
 
-HRESULT DestroyMatroxId(SVMatroxIdentifier& rId, void(*pFreeFunc)(MIL_ID), SVMatroxIdentifierEnum identifierType)
+HRESULT DestroyMatroxId(__int64& rId, void(*pFreeFunc)(MIL_ID), SVMatroxIdentifierEnum identifierType)
 {
 	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS

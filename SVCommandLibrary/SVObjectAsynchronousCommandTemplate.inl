@@ -9,6 +9,12 @@
 //* .Check In Date   : $Date:   13 Nov 2014 10:00:04  $
 //******************************************************************************
 
+#pragma region Includes
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "SVObjectThreadCommandTemplate.h"
+#pragma endregion Includes
+
 template<typename CommandPtr>
 SVObjectAsynchronousCommandTemplate<CommandPtr>::SVObjectAsynchronousCommandTemplate(const SVObjectAsynchronousCommandTemplate& rObject)
 : m_ObjectID( rObject.m_ObjectID), m_pCommand(rObject.m_pCommand), m_pWrapper(rObject.m_pWrapper)

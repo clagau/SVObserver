@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "resource.h"
 #include "SVProductId.h"
 #pragma endregion Includes
 

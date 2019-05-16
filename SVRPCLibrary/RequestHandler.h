@@ -14,18 +14,18 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <memory>
 
-#include "EnvelopeUtil.h"
 #include "ErrorUtil.h"
 #include "Observer.h"
 #include "ObserverWrapper.h"
-#include "OneOfUtil.h"
 #include "RequestHandlerBase.h"
 #include "Task.h"
 #include "TaskWrapper.h"
 #include "SVLogLibrary/Logging.h"
+#pragma endregion Includes
 
 namespace SvRpc
 {

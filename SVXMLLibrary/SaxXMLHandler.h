@@ -17,13 +17,6 @@
 #include "SaxParser.h"
 #include "SaxTreeElement.h"
 #include "SaxEncryptionHandler.h"
-#include "SVNavigateTree.h"
-#include "VariantHelper.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/SVMessage.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvXml

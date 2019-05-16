@@ -19,14 +19,15 @@
 
 #pragma once
 
-#include <functional>
-#include <memory>
+#pragma region Includes
+//Moved to precompiled header: #include <functional>
+//Moved to precompiled header: #include <memory>
 
-#include "EnvelopeUtil.h"
 #include "OneOfUtil.h"
 #include "Task.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/Envelope.h"
+#pragma endregion Includes
 
 namespace SvRpc
 {
@@ -38,7 +39,8 @@ public:
 	virtual void operator()(SvPenv::Envelope&&, Task<SvPenv::Envelope>) = 0;
 };
 
-template <typename TPayload, typename TReq, typename TRes> class TaskWrapper : public TaskWrapperBase
+template <typename TPayload, typename TReq, typename TRes>
+class TaskWrapper : public TaskWrapperBase
 {
 public:
 	TaskWrapper(std::function<void(TReq&&, Task<TRes>)>&& Handler) : m_Handler(std::move(Handler)) {}

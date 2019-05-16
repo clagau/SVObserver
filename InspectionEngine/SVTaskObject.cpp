@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVLibrary/SVTemplate.h"
-#include "SVUtilityLibrary/SetBits.h"
 #include "Definitions/Color.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"

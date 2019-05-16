@@ -7,6 +7,7 @@
 /// MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
 //******************************************************************************
 #pragma once
+#include "resource.h"
 
 
 //! MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
@@ -19,7 +20,7 @@ public:
 	static LPCTSTR ColHeader[ECOL_Size+1];
 	static DWORD ColHeaderWidth[ECOL_Size+1];
 
-	MonitorListDlg(CWnd* pParent = NULL);   // standard constructor
+	explicit MonitorListDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~MonitorListDlg();
 
 	afx_msg void OnBnClickedButtonProperties();

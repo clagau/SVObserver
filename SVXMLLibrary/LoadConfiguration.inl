@@ -9,9 +9,14 @@
 // * .Check In Date   : $Date:   03 Sep 2014 15:54:44  $
 // ******************************************************************************
 
+#pragma region Includes
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SaxExtractPropertiesHandler.h"
+#include  "SaxXMLHandler.h"
+#pragma endregion Includes
+
 namespace  SvXml
 {
-
 	template< typename SVTreeType >
 	HRESULT SVOCMLoadConfiguration(unsigned long& ulSVOConfigVersion, LPCTSTR FileName, SVTreeType& p_rTree)
 	{

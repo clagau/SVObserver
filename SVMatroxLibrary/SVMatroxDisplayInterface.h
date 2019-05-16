@@ -11,12 +11,12 @@
 
 #pragma once
 
-#include "SVMatroxEnums.h"
+#pragma region Includes
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBufferCreateStruct.h"
-
 #include "SVMatroxBuffer.h"
-#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferInterface.h"
+#pragma endregion Includes
 
 
 /**
@@ -42,45 +42,45 @@ public:
 	virtual ~SVMatroxDisplayInterface();
 
 	// This function replaces MdispAlloc
-	static HRESULT CreateDisplay(SVMatroxIdentifier& p_rDispId);
+	static HRESULT CreateDisplay(__int64& p_rDispId);
 	// This function replaces MbufAlloc with display flag.
 	static HRESULT Create( SVMatroxBuffer& p_rDispBufId, SVMatroxBufferCreateStruct p_CreateStruct);
 	// This function creates a SVMatroxBuffer from the attributes from a SVMatroxBuffer.
 	static HRESULT Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom );
 	// This function replaces MdispFree
-	static HRESULT DestroyDisplay(SVMatroxIdentifier& p_rDispId);
+	static HRESULT DestroyDisplay(__int64& p_rDispId);
 	static HRESULT Destroy( SVMatroxBuffer& p_rDispId );
 
 	// This function replaces MdispInquire
-	static HRESULT Get( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdData) ;
-	static HRESULT Get( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData) ;
-	static HRESULT Get( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer) ;
+	static HRESULT Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdData) ;
+	static HRESULT Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData) ;
+	static HRESULT Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer) ;
 
 	// This function replaces MdispControl
-	static HRESULT Set( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue);
-	static HRESULT Set( const SVMatroxIdentifier& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue);
+	static HRESULT Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue);
+	static HRESULT Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue);
 
 	// This function replaces MdispLut
-	static HRESULT Lut( const SVMatroxIdentifier& p_rDispId, const SVMatroxBuffer& p_rLutBufId);
+	static HRESULT Lut( const __int64& p_rDispId, const SVMatroxBuffer& p_rLutBufId);
 	// This function clears the LUT
-	static HRESULT LutClear( const SVMatroxIdentifier& p_rDispId);
+	static HRESULT LutClear( const __int64& p_rDispId);
 
 	// This function replaces MdispPan
-	static HRESULT Pan( const SVMatroxIdentifier& p_rDispId, const double& p_dXOffset, const double& p_dYOffset);
+	static HRESULT Pan( const __int64& p_rDispId, const double& p_dXOffset, const double& p_dYOffset);
 	// This function replaces MdispSelect
-	static HRESULT Select( const SVMatroxIdentifier& p_rDispId, const SVMatroxBuffer& p_rImageId);
+	static HRESULT Select( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId);
 
 	// This function replaces MdispSelect
-	static HRESULT Deselect( const SVMatroxIdentifier& p_rDispId);
+	static HRESULT Deselect( const __int64& p_rDispId);
 
 	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
 	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
 
 	
 	// This function replaces MdispSelectWindow
-	static HRESULT SelectWindow( const SVMatroxIdentifier& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle );
+	static HRESULT SelectWindow( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle );
 	// This function replaces MdispZoom
-	static HRESULT Zoom( const SVMatroxIdentifier& p_rDispId, const double& p_dXFactor, const double& p_dYFactor );
+	static HRESULT Zoom( const __int64& p_rDispId, const double& p_dXFactor, const double& p_dYFactor );
 public:
 	static long Convert2MatroxType( SVDisplayCntrlEnum p_eDisp) ;
 

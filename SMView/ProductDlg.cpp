@@ -7,9 +7,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SMView.h"
 #include "ProductDlg.h"
-#include "afxdialogex.h"
 #include "SVSharedMemoryLibrary\MLProduct.h"
 #include "SVUtilityLibrary\StringHelper.h"
 

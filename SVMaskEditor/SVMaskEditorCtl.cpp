@@ -13,10 +13,10 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVSystemLibrary\SVImageConvertorGDI.h"
-#include "SVMaskEditor.h"
-
+#include "resource.h"
 #include "SVMaskEditorCtl.h"
+#include "SVMaskEditor.h"
+#include "SVSystemLibrary\SVImageConvertorGDI.h"
 #include "SVMaskEditorPpg.h"
 #pragma endregion Includes
 

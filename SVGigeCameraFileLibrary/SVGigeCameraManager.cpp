@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVGigeCameraManager.h"
 
-#include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "Definitions/TextDefineSvDef.h"

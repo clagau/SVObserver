@@ -12,7 +12,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
-#include "Operators/TableColumnEquation.h"
+#include "Operators/TableAddColumnEquation.h"
 #pragma endregion Includes
 
 namespace SvAo

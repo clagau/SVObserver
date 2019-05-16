@@ -122,7 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MonEntryDlg.h" />
-    <ClInclude Include="MonitorLIstDlg.h" />
+    <ClInclude Include="MonitorListDlg.h" />
     <ClInclude Include="ProductDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SMView.h" />
@@ -132,7 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MonEntryDlg.cpp" />
-    <ClCompile Include="MonitorLIstDlg.cpp" />
+    <ClCompile Include="MonitorListDlg.cpp" />
     <ClCompile Include="ProductDlg.cpp" />
     <ClCompile Include="SMView.cpp" />
     <ClCompile Include="SMViewDlg.cpp" />

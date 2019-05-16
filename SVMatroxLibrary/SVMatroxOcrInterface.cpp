@@ -12,20 +12,19 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxOcrInterface.h"
-
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVCommandLibrary/SVCommandDataContainer.h"
-#include "SVCommandLibrary/SVCommandDataHolder.h"
-#include "SVFileSystemLibrary/SVFile.h"
-
+#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBlobInterface.h"
 #include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxCommandDataImage.h"
-#include "SVMatroxImageInterface.h"
-#include "SVMatroxImagingLibrary.h"  // has MIL includes
-#include "SVMatroxResourceMonitor.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxHelper.h"
+#include "SVMatroxImageInterface.h"
+#include "SVMatroxResourceMonitor.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVCommandLibrary/SVCommandDataContainer.h"
+#include "SVCommandLibrary/SVCommandDataHolder.h"
+#include "SVFileSystemLibrary/SVFile.h"
 #pragma endregion Includes
 
 /**
@@ -54,9 +53,9 @@ SVMatroxOcrInterface::~SVMatroxOcrInterface()
 @SVOperationDescription This function converts a SVOcrControlEnum to matrox constants.
 
 */
-MatroxType SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eType) 
+__int64 SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eType) 
 {
-	MatroxType l_lControlType = 0;
+	__int64 l_lControlType = 0;
 	switch( p_eType )
 	{
 		case SVCharCellSizeX:
@@ -256,9 +255,9 @@ MatroxType SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eT
 @SVOperationDescription This function converts a SVOcrResultEnum to matrox constants.
 
 */
-MatroxType SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType) 
+__int64 SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType) 
 {
-	MatroxType l_lControlType = 0;
+	__int64 l_lControlType = 0;
 	switch( p_eType )
 	{
 
@@ -369,9 +368,9 @@ MatroxType SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eTyp
 @SVOperationDescription This function converts a SVOcrTypeEnum to matrox constants.
 
 */
-MatroxType SVMatroxOcrInterface::Convert2MatroxCreateType( SVOcrTypeEnum p_eType ) 
+__int64 SVMatroxOcrInterface::Convert2MatroxCreateType( SVOcrTypeEnum p_eType ) 
 {
-	MatroxType l_lCode = 0;
+	__int64 l_lCode = 0;
 	switch( p_eType & SVBasics )
 	{
 		case SVSemiM1292:
@@ -413,9 +412,9 @@ MatroxType SVMatroxOcrInterface::Convert2MatroxCreateType( SVOcrTypeEnum p_eType
 @SVOperationDescription This function converts a SVOcrOperationEnum to matrox constants.
 
 */
-MatroxType SVMatroxOcrInterface::Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) 
+__int64 SVMatroxOcrInterface::Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) 
 {
-	MatroxType l_lCode = 0;
+	__int64 l_lCode = 0;
 
 	// Operation Constants
 	if( (p_eType & SVOcrLoadConstraint) == SVOcrLoadConstraint)
@@ -489,7 +488,7 @@ HRESULT SVMatroxOcrInterface::Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrC
 		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewID = M_NULL;
-			MatroxType l_lCreateType = Convert2MatroxCreateType( p_rCreateStruct.m_eFontType );
+			__int64 l_lCreateType = Convert2MatroxCreateType( p_rCreateStruct.m_eFontType );
 			if( l_lCreateType != 0 )
 			{
 				l_NewID = MocrAllocFont( M_DEFAULT_HOST, 
@@ -541,7 +540,7 @@ HRESULT SVMatroxOcrInterface::Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrC
 @SVOperationDescription Creates a SVMatroxIdentifier.
 
 */
-HRESULT SVMatroxOcrInterface::CreateResult(SVMatroxIdentifier& p_rFontResult )
+HRESULT SVMatroxOcrInterface::CreateResult(__int64& p_rFontResult )
 {
 	// This function replaces MocrAllocResult
 	HRESULT l_Code;
@@ -634,7 +633,7 @@ HRESULT SVMatroxOcrInterface::Destroy( SVMatroxOcr& p_rId )
 @SVOperationDescription Destroys a MatroxOcrResult.
 
 */
-HRESULT SVMatroxOcrInterface::DestroyResult(SVMatroxIdentifier& rId )
+HRESULT SVMatroxOcrInterface::DestroyResult(__int64& rId )
 {
 	return DestroyMatroxId(rId, MocrFree, SVOCRResultID);
 }
@@ -704,7 +703,7 @@ HRESULT SVMatroxOcrInterface::CalibrateFontCommand( const SVCommandDataHolder& p
 
 		if( S_OK == l_Status )
 		{
-			SVByteVector l_TempImage;
+			std::vector<unsigned char> l_TempImage;
 
 			l_Status = p_rAttributes.GetImage( _T( "Calibrate Image" ), l_TempImage );
 
@@ -912,7 +911,7 @@ HRESULT SVMatroxOcrInterface::RestoreFont( SVMatroxOcr& p_rFontId, const std::st
 
 	{
 		MIL_ID l_NewId = M_NULL;
-		MatroxType l_lOperation = 0;
+		__int64 l_lOperation = 0;
 		if( p_eOperation == SVOcrRestore)
 		{
 			l_lOperation = Convert2MatroxOperationType( p_eOperation );
@@ -959,9 +958,9 @@ HRESULT SVMatroxOcrInterface::RestoreFont( const SVCommandDataHolder& p_rAttribu
 {
 	HRESULT l_Status = S_OK;
 
-	SVByteVector l_CharacterFileContents;
-	SVByteVector l_ControlFileContents;
-	SVByteVector l_ConstraintFileContents;
+	std::vector<unsigned char> l_CharacterFileContents;
+	std::vector<unsigned char> l_ControlFileContents;
+	std::vector<unsigned char> l_ConstraintFileContents;
 	std::string l_CharacterFileName;
 	std::string l_ControlFileName;
 	std::string l_ConstraintFileName;
@@ -1039,7 +1038,7 @@ HRESULT SVMatroxOcrInterface::SaveFont( const SVMatroxOcr& p_rFontId, const std:
 #endif
 
 	{
-		MatroxType l_lOperation ;
+		__int64 l_lOperation ;
 		if( !p_rFontId.empty() )
 		{
 			l_lOperation = Convert2MatroxOperationType( p_eOperation );
@@ -1114,9 +1113,9 @@ HRESULT SVMatroxOcrInterface::SaveFont( const SVCommandDataHolder& p_rAttributes
 
 	if( S_OK == l_Status )
 	{
-		SVByteVector l_CharacterFileContents;
-		SVByteVector l_ControlFileContents;
-		SVByteVector l_ConstraintFileContents;
+		std::vector<unsigned char> l_CharacterFileContents;
+		std::vector<unsigned char> l_ControlFileContents;
+		std::vector<unsigned char> l_ConstraintFileContents;
 
 		if( S_OK == l_Status )
 		{
@@ -1207,7 +1206,7 @@ HRESULT SVMatroxOcrInterface::FindFontCharacters( const SVCommandDataHolder& p_r
 
 	if( S_OK == l_Status )
 	{
-		SVByteVector l_TempImage;
+		std::vector<unsigned char> l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Source Image" ), l_TempImage );
 
@@ -1292,7 +1291,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 
 	if( S_OK == l_Status )
 	{
-		SVByteVector l_TempImage;
+		std::vector<unsigned char> l_TempImage;
 
 		l_Status = p_rAttributes.GetImage( _T( "Threshold Image" ), l_TempImage );
 
@@ -1429,7 +1428,7 @@ HRESULT SVMatroxOcrInterface::Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnu
 #endif
 
 	{
-		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
+		__int64 l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1483,7 +1482,7 @@ HRESULT SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnu
 #endif
 
 	{
-		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
+		__int64 l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1602,7 +1601,7 @@ HRESULT SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnu
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SVOcrControlEnum p_eControlType, const double& p_dValue )
+HRESULT SVMatroxOcrInterface::SetResult( const __int64& rResultId, SVOcrControlEnum p_eControlType, const double& p_dValue )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1610,7 +1609,7 @@ HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SV
 #endif
 
 	{
-		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
+		__int64 l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(M_NULL != rResultId)
@@ -1644,7 +1643,7 @@ HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SV
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SVOcrControlEnum p_eControlType, const long& p_lValue )
+HRESULT SVMatroxOcrInterface::SetResult( const __int64& rResultId, SVOcrControlEnum p_eControlType, const long& p_lValue )
 {
 	return SetResult(rResultId, p_eControlType, static_cast<double>(p_lValue));
 }
@@ -1657,7 +1656,7 @@ HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxIdentifier& rResultId, SV
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum  p_eControlType, double& p_rdValue)
+HRESULT SVMatroxOcrInterface::GetResult( const __int64& rResultId, SVOcrResultEnum  p_eControlType, double& p_rdValue)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1665,7 +1664,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 #endif
 
 	{
-		MatroxType l_lControlType = Convert2MatroxResultType( p_eControlType );
+		__int64 l_lControlType = Convert2MatroxResultType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(M_NULL != rResultId)
@@ -1699,7 +1698,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum  p_eControlType, long& p_rlValue)
+HRESULT SVMatroxOcrInterface::GetResult( const __int64& rResultId, SVOcrResultEnum  p_eControlType, long& p_rlValue)
 {
 	double l_dValue;
 	HRESULT l_Code = GetResult(rResultId, p_eControlType, l_dValue);
@@ -1716,7 +1715,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum  p_eControlType, std::string& p_rStrValue)
+HRESULT SVMatroxOcrInterface::GetResult( const __int64& rResultId, SVOcrResultEnum  p_eControlType, std::string& p_rStrValue)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1724,7 +1723,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 #endif
 
 	{
-		MatroxType l_lControlType = Convert2MatroxResultType( p_eControlType );
+		__int64 l_lControlType = Convert2MatroxResultType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if( M_NULL != rResultId)
@@ -1757,7 +1756,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 	return l_Code;
 }
 
-HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SVOcrResultEnum InquireType, std::vector<double>& p_adValues )
+HRESULT SVMatroxOcrInterface::GetResult( const __int64& rResultId, SVOcrResultEnum InquireType, std::vector<double>& p_adValues )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1765,7 +1764,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 #endif
 
 	{
-		MatroxType l_lControlType = Convert2MatroxResultType( InquireType );
+		__int64 l_lControlType = Convert2MatroxResultType( InquireType );
 		if( l_lControlType != 0 )
 		{
 			if( M_NULL != rResultId)
@@ -1800,7 +1799,7 @@ HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxIdentifier& rResultId, SV
 @SVOperationDescription If the verify flag is off this function reads an unknown string from the specified target image using the specified OCR font context. If the verify flag is on this function determines whether a known string is present in the target image, and evaluates the quality of the string. 
 
 */
-HRESULT SVMatroxOcrInterface::Execute( const SVMatroxIdentifier& rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage )
+HRESULT SVMatroxOcrInterface::Execute( const __int64& rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage )
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -1854,13 +1853,13 @@ HRESULT SVMatroxOcrInterface::ReadString( const SVCommandDataHolder& p_rAttribut
 	if( S_OK == l_Status )
 	{
 		SVMatroxCommandDataImage l_Image;
-		SVMatroxIdentifier milResult = M_NULL;
+		__int64 milResult = M_NULL;
 
 		l_Font.m_bVerify = false;
 
 		if( S_OK == l_Status )
 		{
-			SVByteVector l_TempImage;
+			std::vector<unsigned char> l_TempImage;
 
 			l_Status = p_rAttributes.GetImage( _T( "Read Image" ), l_TempImage );
 
@@ -1936,13 +1935,13 @@ HRESULT SVMatroxOcrInterface::VerifyString( const SVCommandDataHolder& p_rAttrib
 		_variant_t l_Temp;
 
 		SVMatroxCommandDataImage l_Image;
-		SVMatroxIdentifier milResult = M_NULL;
+		__int64 milResult = M_NULL;
 
 		l_Font.m_bVerify = true;
 
 		if( S_OK == l_Status )
 		{
-			SVByteVector l_TempImage;
+			std::vector<unsigned char> l_TempImage;
 
 			l_Status = p_rAttributes.GetImage( _T( "Verify Image" ), l_TempImage );
 
@@ -2031,22 +2030,22 @@ HRESULT SVMatroxOcrInterface::CreateTempFileName( std::string& p_rFileName )
 	return l_Status;
 }
 
-HRESULT SVMatroxOcrInterface::ConvertFileToByteVector( const std::string& p_rFileName, SVByteVector& p_rFileContents )
+HRESULT SVMatroxOcrInterface::ConvertFileToByteVector(const std::string& rFileName, std::vector<unsigned char>& rFileContents)
 {
 	HRESULT l_Status = S_OK;
 
-	p_rFileContents.clear();
+	rFileContents.clear();
 
 	SVFile l_File;
 
-	l_File.Open( p_rFileName.c_str(), SVFile::modeRead );
-	l_Status = l_File.ReadContents( p_rFileContents );
+	l_File.Open( rFileName.c_str(), SVFile::modeRead );
+	l_Status = l_File.ReadContents( rFileContents );
 	l_File.Close();
 
 	return l_Status;
 }
 
-HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile( const SVByteVector& p_rFileContents, std::string& p_rFileName )
+HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile(const std::vector<unsigned char>& rFileContents, std::string& rFileName)
 {
 	HRESULT l_Status = S_OK;
 
@@ -2059,12 +2058,12 @@ HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile( const SVByteVector& p
 		SVFile l_File;
 
 		l_File.Open( l_FileName.c_str(), SVFile::modeWrite );
-		l_Status = l_File.WriteContents( p_rFileContents );
+		l_Status = l_File.WriteContents( rFileContents );
 		l_File.Close();
 
 		if( S_OK == l_Status )
 		{
-			p_rFileName = l_FileName;
+			rFileName = l_FileName;
 		}
 	}
 
@@ -2943,7 +2942,7 @@ HRESULT SVMatroxOcrInterface::UpdateFontIdFromCharacterList( const SVCommandData
 
 				if( S_OK == l_Status )
 				{
-					SVByteVector l_TempImage;
+					std::vector<unsigned char> l_TempImage;
 
 					l_Status = l_Character.GetImage( _T( "Image" ), l_TempImage );
 

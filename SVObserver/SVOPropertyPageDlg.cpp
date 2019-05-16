@@ -39,6 +39,9 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVRPropertyTree/SVRPropTreeItemFile.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

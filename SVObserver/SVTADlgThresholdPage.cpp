@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgThresholdPage.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "Operators/SVAutoThresholdEquation.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
@@ -229,7 +230,7 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 		{
 			// Calculate And Show White Pixels...
 			// &&&
-			SVMatroxIdentifier histResultID = M_NULL;
+			__int64 histResultID = M_NULL;
 			std::vector<long> l_alHistValues;
 			SvIe::SVDataBufferInfoClass svData;
 

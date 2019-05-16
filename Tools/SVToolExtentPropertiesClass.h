@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <map>
 #include "Definitions/SVExtentEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "InspectionEngine/SVExtentPropertiesInfoStruct.h"
 #include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes

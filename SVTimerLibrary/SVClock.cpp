@@ -20,6 +20,7 @@
 
 namespace SvTl
 {
+	constexpr double c_Frequency = 1000.0;
 	typedef std::map< SvTl::SVConversionEnum, double > SVConversionFactorMap;
 	static const SVConversionFactorMap cConversions
 	{
@@ -30,15 +31,10 @@ namespace SvTl
 		{SvTl::Microseconds, 1000000.0}
 	};
 
-	SvTl::SVFrequency SvTl::GetFrequency()
-	{
-		SVFrequency l_Frequency = 1000.0;
-		return l_Frequency;
-	}
 
-	SvTl::SVTimeStamp SvTl::GetTimeStamp()
+	double GetTimeStamp()
 	{
-		SVTimeStamp l_TimeStamp = 0.0;
+		double l_TimeStamp = 0.0;
 
 		// VMWare ESXI 5.0 has an issue with QueryPerformanceCounter (it's resolution is only 24bit not 64bit)
 		// need to use something different here like GetTickCount
@@ -58,17 +54,17 @@ namespace SvTl
 		return l_TimeStamp;
 	}
 
-	SvTl::SVTimeStamp SvTl::GetMaxTimeStamp()
+	double GetMaxTimeStamp()
 	{
 		return std::numeric_limits< double >::max();
 	}
 
-	SvTl::SVTimeStamp SvTl::GetMinTimeStamp()
+	double GetMinTimeStamp()
 	{
 		return std::numeric_limits< double >::min();
 	}
 
-	double SvTl::ConvertTo( SVConversionEnum p_Units, const SVTimeStamp& p_rTimeStamp )
+	double ConvertTo( SVConversionEnum p_Units, const double& p_rTimeStamp )
 	{
 		double l_Value = 0.0;
 
@@ -77,26 +73,26 @@ namespace SvTl
 		if( l_Iter != cConversions.end() )
 		{
 			l_Value = p_rTimeStamp;
-			l_Value /= GetFrequency();
+			l_Value /= c_Frequency;
 			l_Value *= l_Iter->second;
 		}
 
 		return l_Value;
 	}
 
-	SvTl::SVTimeStamp SvTl::ConvertFrom( SVConversionEnum p_Units, double p_Time )
+	double SvTl::ConvertFrom( SVConversionEnum p_Units, double p_Time )
 	{
-		SvTl::SVTimeStamp l_TimeStamp = 0.0;
+		double result{0.0};
 
 		SVConversionFactorMap::const_iterator l_Iter = cConversions.find( p_Units );
 
 		if( l_Iter != cConversions.end() )
 		{
-			l_TimeStamp = p_Time;
-			l_TimeStamp /= l_Iter->second;
-			l_TimeStamp *= GetFrequency();
+			result = p_Time;
+			result /= l_Iter->second;
+			result *= c_Frequency;
 		}
 
-		return l_TimeStamp;
+		return result;
 	}
 } //namespace SvTl

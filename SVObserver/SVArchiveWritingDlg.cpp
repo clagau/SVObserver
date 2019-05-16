@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVArchiveWritingDlg.h"
 #pragma endregion Includes
 

@@ -12,9 +12,6 @@
 #include <intsafe.h>
 
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
-#include "SVUtilityLibrary\NameGuidList.h"
-#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
-#include "TriggerRecordController\ITriggerRecordRW.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVLibrary/SVOINIClass.h"

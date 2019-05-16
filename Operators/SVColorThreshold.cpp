@@ -16,8 +16,8 @@
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "Definitions/Color.h"
-#include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 

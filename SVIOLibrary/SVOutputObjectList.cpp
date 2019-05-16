@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
 #include "SVIOEntryStruct.h"
@@ -381,7 +380,7 @@ bool SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, cons
 		{
 			SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
 			
-			if (SV_IS_KIND_OF(pOutput, SVDigitalOutputObject) || SV_IS_KIND_OF(pOutput, SVRemoteOutputObject))
+			if (nullptr != pOutput && (SvPb::SVDigitalOutputObjectType == pOutput->GetObjectSubType() || SvPb::SVRemoteOutputObjectType == pOutput->GetObjectSubType()))
 			{
 				pOutput->Write(p_rValue);
 			}// end if

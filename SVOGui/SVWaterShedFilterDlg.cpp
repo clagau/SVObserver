@@ -11,9 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVMatroxLibrary\SVMatroxEnums.h"
 #include "SVWatershedFilterDlg.h"
-#include "SVObjectLibrary\SVClsids.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma region Includes
 

@@ -11,10 +11,10 @@
 
 #pragma once
 
-#include "SVMatroxEnums.h"
-#include "SVMatroxStatusInformation.h"
+#pragma region Includes
+#include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxApplicationInterface.h"
+#pragma endregion Includes
 
 
 /**
@@ -40,72 +40,72 @@ public:
 	virtual ~SVMatroxPatternInterface();
 
 	// This function replaces MpatAllocModel
-	static HRESULT CreateContext( SVMatroxIdentifier& rModel, SVMatroxBuffer& rSrcImageId, 
+	static HRESULT CreateContext( __int64& rModel, SVMatroxBuffer& rSrcImageId, 
 		long lOffX, long lOffY, long lSizeX, long lSizeY, long lType=SVPatModelTypeNormalized );
 	
 	// This function replaces MpatAllocResult
-	static HRESULT CreateResult( SVMatroxIdentifier& rResultId, long& rlNbrEntries );
+	static HRESULT CreateResult( __int64& rResultId, long& rlNbrEntries );
 	
 	// This function replaces MpatFree
-	static HRESULT DestroyContext( SVMatroxIdentifier& rId );
-	static HRESULT DestroyResult( SVMatroxIdentifier& rId );
+	static HRESULT DestroyContext( __int64& rId );
+	static HRESULT DestroyResult( __int64& rId );
 
 	// This function replaces MpatPreprocModel
-	static HRESULT PreProcModel( const SVMatroxIdentifier& rModelId, const SVMatroxBuffer& rImageId);
+	static HRESULT PreProcModel( const __int64& rModelId, const SVMatroxBuffer& rImageId);
 
 	// This function replaces MpatFindModel
-	static HRESULT Execute( const SVMatroxIdentifier& rResultId, const SVMatroxBuffer& rSourceImageId, const SVMatroxIdentifier& rModelId );
+	static HRESULT Execute( const __int64& rResultId, const SVMatroxBuffer& rSourceImageId, const __int64& rModelId );
 
 	// Get Functions for model setup (MpatInquire)
-	static HRESULT Get( const SVMatroxIdentifier& rModelId, const SVPatternTypeEnum eType, double& rdValue ) ;
-	static HRESULT Get( const SVMatroxIdentifier& rModelId, const SVPatternTypeEnum eType, long& rlValue ) ;
+	static HRESULT Get( const __int64& rModelId, const SVPatternTypeEnum eType, double& rdValue ) ;
+	static HRESULT Get( const __int64& rModelId, const SVPatternTypeEnum eType, long& rlValue ) ;
 	
 	// Results... (MpatGetResult)
-	static HRESULT GetResult( const SVMatroxIdentifier& rResultId, const SVPatternResultEnum eType, double* pdValue ) ;
+	static HRESULT GetResult( const __int64& rResultId, const SVPatternResultEnum eType, double* pdValue ) ;
 
 	// (MpatGetNumber)
-	static HRESULT GetNumber( const SVMatroxIdentifier& rModelId, long& rlValue ) ;
+	static HRESULT GetNumber( const __int64& rModelId, long& rlValue ) ;
 
 	// Set Functions for model setup, general Search parameters (MpatSetSearchParameter)
-	static HRESULT Set( const SVMatroxIdentifier& rResultId, const SVPatternTypeEnum eType, const double& rdValue ) ;
-	static HRESULT Set( const SVMatroxIdentifier& rResultId, const SVPatternTypeEnum eType, const long& rlValue ) ;
+	static HRESULT Set( const __int64& rResultId, const SVPatternTypeEnum eType, const double& rdValue ) ;
+	static HRESULT Set( const __int64& rResultId, const SVPatternTypeEnum eType, const long& rlValue ) ;
 	
 	// Set Functions for model setup, advanced Search parameters (MpatSetSearchParameter)
-	static HRESULT Set( const SVMatroxIdentifier& rResultId, const SVPatternSearchParameterTypeEnum eType, const double& rdValue ) ;
-	static HRESULT Set( const SVMatroxIdentifier& rResultId, const SVPatternSearchParameterTypeEnum eType, const long& rlValue ) ;
+	static HRESULT Set( const __int64& rResultId, const SVPatternSearchParameterTypeEnum eType, const double& rdValue ) ;
+	static HRESULT Set( const __int64& rResultId, const SVPatternSearchParameterTypeEnum eType, const long& rlValue ) ;
 
 	// (MpatSetCenter)
-	static HRESULT SetCenter( const SVMatroxIdentifier& rModelId, long lXOffset, long lYOffset);
+	static HRESULT SetCenter( const __int64& rModelId, long lXOffset, long lYOffset);
 
 	/// Set the "don't care" pixels in a model. 
 	/// \param rDontCareImageId [in] Id of the Don't care image
 	/// \param rModelId [in] ID of the model.
 	/// \returns HRESULT
-	static HRESULT SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxIdentifier& rModelId );
+	static HRESULT SetDontCare( const SVMatroxBuffer& rDontCareImageId, const __int64& rModelId );
 
 	// (MpatSetNumber)
-	static HRESULT SetNumber( const SVMatroxIdentifier& rModelId, long lNumber );
+	static HRESULT SetNumber( const __int64& rModelId, long lNumber );
 
 	// (MpatSetPosition)
-	static HRESULT SetPosition( const SVMatroxIdentifier& rModelId, long lXOffset, long lYOffset, long lSizeX, long lSizeY );
+	static HRESULT SetPosition( const __int64& rModelId, long lXOffset, long lYOffset, long lSizeX, long lSizeY );
 	
 	// (MpatSetAcceptance)
-	static HRESULT SetAcceptance( const SVMatroxIdentifier& rModelId, const double dValue );
+	static HRESULT SetAcceptance( const __int64& rModelId, const double dValue );
 
 	// (MpatSetCertainty)
-	static HRESULT SetCertainty( const SVMatroxIdentifier& rModelId, const double dValue );
+	static HRESULT SetCertainty( const __int64& rModelId, const double dValue );
 	
 	// (MpatSetAccuracy)
-	static HRESULT SetAccuracy( const SVMatroxIdentifier& rModelId, const long lValue );
+	static HRESULT SetAccuracy( const __int64& rModelId, const long lValue );
 
 	// (MpatSetSpeed)
-	static HRESULT SetSpeed( const SVMatroxIdentifier& rModelId, const long lValue );
+	static HRESULT SetSpeed( const __int64& rModelId, const long lValue );
 	
 	// (MpatSetAngle)
-	static HRESULT SetAngle( const SVMatroxIdentifier& rModelId, SVPatternTypeEnum eType, double dValue );
+	static HRESULT SetAngle( const __int64& rModelId, SVPatternTypeEnum eType, double dValue );
 	
 	// (MpatSetAngle - M_SEARCH_ANGLE_MODE [M_ENABLE/M_DISABLE])
-	static HRESULT SetAngle( const SVMatroxIdentifier& rModelId, bool bEnable );
+	static HRESULT SetAngle( const __int64& rModelId, bool bEnable );
 
 	// helpers for Circular Overscan
 	static RECT CalculateOverscanOuterRect( const POINT& pos, const SIZE& size );

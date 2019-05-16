@@ -9,11 +9,10 @@
 //* .Check In Date   : $Date:   22 Apr 2013 12:50:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "SVIOTEST.h"
 #include "SVSoftwareTriggerSetupDlg.h"
-
-// SVSoftwareTriggerSetupDlg dialog
+#pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerSetupDlg, CDialog)
 

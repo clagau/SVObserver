@@ -6,9 +6,11 @@
 ///// Class encapsulate function to open  and read from the  shared Memory
 //******************************************************************************
 #pragma once
-#include <mutex>
+#pragma region Includes
 #include "SharedDataContainer.h"
+#include "MLProduct.h"
 #include "MonitorListStore.h"
+#pragma endregion Includes
 
 namespace SvSml
 {

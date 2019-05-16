@@ -16,10 +16,8 @@
 //Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <deque>
-#include "shellapi.h"
 #include "SVInspectionImporter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectBuilder.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"

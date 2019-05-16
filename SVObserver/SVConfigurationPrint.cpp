@@ -29,7 +29,8 @@
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "Operators/SVEquation.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -73,7 +74,7 @@ static const LPCTSTR ToolGroupCommentLabel = _T("Tool Comment:");
 
 static const int LEFT_MARGIN = 50;
 
-static GUID* pGuidNonPrintArray[] = 
+static const GUID* pGuidNonPrintArray[] = 
 {
 	&SVTaskObjectClassIsObjectValidGuid,
 	&SVStatusObjectGuid,
@@ -141,7 +142,7 @@ static GUID* pGuidNonPrintArray[] =
 	&SVOCVCharacterResultClassGuid
 };
 
-std::pair<GUID **, size_t> NonPrintGuids()
+std::pair<const GUID **, size_t> NonPrintGuids()
 {
 	return std::make_pair(pGuidNonPrintArray, sizeof(pGuidNonPrintArray)/sizeof(GUID *));
 }

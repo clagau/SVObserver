@@ -16,10 +16,7 @@
 #endif
 
 #pragma region Includes
-#include "resource.h"       // main symbols
-
-#include "SVLibrary\SVGraphix.h"
-#include "SVMatroxLibrary\SVMatroxLibrary.h"
+#include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes
 
 #pragma comment( lib, "mil" )

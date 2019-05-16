@@ -15,8 +15,6 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "CameraLibrary/SVDeviceParam.h"
-#include "CameraLibrary/SVDeviceParams.h"
-#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "InspectionEngine/SVAcquisitionClass.h"

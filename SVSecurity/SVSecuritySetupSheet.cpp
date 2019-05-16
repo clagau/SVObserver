@@ -12,8 +12,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <lm.h>
 #include "SVSecuritySetupSheet.h"
-#include "SVStatusLibrary/SVRegistry.h"
-#include "resource.h"
 #include "SVAccessClass.h"
 #include "SVSecuritySetupPage.h"
 #include "SVSecurityGeneralPage.h"

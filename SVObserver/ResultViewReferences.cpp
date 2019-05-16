@@ -21,6 +21,7 @@
 #include "InspectionEngine/SVIPResultItemDefinition.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
+#include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

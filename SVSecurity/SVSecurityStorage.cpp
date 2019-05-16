@@ -17,10 +17,8 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVSecurity.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SaxEncryptionHandler.h"
-#include "SVStatusLibrary/CommandLineArgs.h"
 #include "SVXMLLibrary/TreeToXml.h"
 #pragma endregion Includes
 

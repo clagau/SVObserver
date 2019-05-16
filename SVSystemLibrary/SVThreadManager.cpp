@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "sstream"
 #include "SVThreadManager.h"
-#include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"

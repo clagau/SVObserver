@@ -25,7 +25,6 @@
 #include "SVXmlLibrary/SaxParser.h"
 #include "SVXmlLibrary/SaxXMLHandler.h"
 #include "SVXmlLibrary/SVMaterialData.h"
-#include "SVXmlLibrary/SVXMLMaterialsTree.h"
 
 namespace SvAuth
 {

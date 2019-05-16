@@ -12,7 +12,6 @@
 #include "stdafx.h"
 
 #include "SVAuthLibrary/AuthManager.h"
-#include "SVRPCLibrary/ErrorUtil.h"
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #pragma endregion Includes

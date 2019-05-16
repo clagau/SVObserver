@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "LineObject.h"
-#include "SVPictureDisplayidl.h" // for SVOrientation (in .h) and _ParameterType (in .cpp)
+#include "SVPictureDisplayidl.h"
 #pragma endregion Includes
 
 class ArrowObject : public LineObject
