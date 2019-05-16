@@ -22,6 +22,7 @@
 #include "SVObjectAppClass.h"
 #include "TriggerRecordController/IImage.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 
@@ -110,6 +111,10 @@ public:
 	SvTrc::IImagePtr getImageReadOnly(const SvTrc::ITriggerRecordR* pTriggerRecord, bool lockImage = false) const;
 	SvTrc::IImagePtr getImageToWrite(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
 
+	void GetOutputList(SVOutputInfoListClass& p_rOutputInfoList);
+
+	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
+
 #pragma region virtual method (ISVImage)
 	virtual SvDef::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
@@ -167,9 +172,12 @@ private:
 	int m_imagePosInTRC = -1;
 	bool m_isChildImageInTRC = false;
 	mutable SVParentObjectPair m_ParentImageInfo;
+	SvVol::SVDoubleValueObjectClass m_width;
+	SvVol::SVDoubleValueObjectClass m_height;
 
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;
+	SVObjectPtrVector m_embeddedList;
 };
 
 typedef std::set<SVImageClass*> SVImageClassPtrSet;

@@ -160,6 +160,11 @@ HRESULT SVTaskObjectClass::GetOutputList(SVOutputInfoListClass& p_rOutputInfoLis
 		{
 			p_rOutputInfoList.Add(&(pObject->GetObjectOutputInfo()));
 		}
+		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
+		if (nullptr != pImage)
+		{
+			pImage->GetOutputList(p_rOutputInfoList);
+		}
 	}
 
 	return l_Status;
@@ -327,12 +332,12 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 				}
 			}
 
-			if ((S_OK != l_Status) && ((Index + 1) == (rNameInfo.m_NameArray.size() - 1)))
+			if (S_OK != l_Status)
 			{
 				for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); nullptr == rpObject && m_embeddedList.end() != Iter; ++Iter)
 				{
 					SVObjectClass* pObject = *Iter;
-					if (nullptr != pObject)
+					if (nullptr != pObject && (Index + 1 == rNameInfo.m_NameArray.size() - 1 || SvPb::SVImageObjectType == pObject->GetObjectType()) )
 					{
 						l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
 					}

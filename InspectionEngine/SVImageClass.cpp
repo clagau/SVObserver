@@ -27,6 +27,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -171,6 +172,20 @@ void SVImageClass::init()
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, SvDef::cDefaultWindowToolHeight);
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, SvDef::cDefaultWindowToolWidthScaleFactor);
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, SvDef::cDefaultWindowToolHeightScaleFactor);
+
+	m_width.SetTypeName(_T("Image Width"));
+	m_height.SetTypeName(_T("Image Height"));
+
+	m_width.setResetOptions(false, SvOi::SVResetItemTool);
+	m_width.SetObjectEmbedded(SVExtentWidthObjectGuid, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_WIDTH).c_str());
+	m_height.setResetOptions(false, SvOi::SVResetItemTool);
+	m_height.SetObjectEmbedded(SVExtentHeightObjectGuid, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_HEIGHT).c_str());
+
+	m_width.SetDefaultValue(100, true);
+	m_height.SetDefaultValue(100, true);
+
+	m_embeddedList.push_back(&m_width);
+	m_embeddedList.push_back(&m_height);
 }
 
 SVImageClass::~SVImageClass()
@@ -350,6 +365,13 @@ bool SVImageClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	bool Result = (S_OK == UpdateFromParentInformation(pErrorMessages)) && (S_OK == RebuildStorage(pErrorMessages)) && __super::ResetObject(pErrorMessages);
 
 	setImageSubType();
+
+	double value = 0.0;
+	m_ImageInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputWidth, value);
+	m_width.setValue(value);
+	m_ImageInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputHeight, value);
+	m_height.setValue(value);
+
 	return Result;
 }
 
@@ -1158,6 +1180,49 @@ SvTrc::IImagePtr SVImageClass::getImageToWrite(const SvTrc::ITriggerRecordRWPtr&
 		e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return pImage;
+}
+
+void SVImageClass::GetOutputList(SVOutputInfoListClass& p_rOutputInfoList)
+{
+	if (0 != ObjectAttributesAllowed())
+	{
+		for (auto* pObject : m_embeddedList)
+		{
+			if (nullptr != pObject)
+			{
+				p_rOutputInfoList.Add(&(pObject->GetObjectOutputInfo()));
+			}
+		}
+	}
+}
+
+HRESULT SVImageClass::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
+{
+	HRESULT l_Status = SVObjectAppClass::GetChildObject(rpObject, rNameInfo, Index);
+
+	if (S_OK != l_Status && 0 != ObjectAttributesAllowed())
+	{
+		if (static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName() && Index + 1 == rNameInfo.m_NameArray.size() - 1)
+		{
+			for (const auto* pObject : m_embeddedList)
+			{
+				if (nullptr != pObject)
+				{
+					l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
+					if (S_OK == l_Status && nullptr != rpObject)
+					{
+						return S_OK;
+					}
+				}
+			}
+		}
+		else
+		{
+			l_Status = S_FALSE;
+		}
+	}
+
+	return l_Status;
 }
 
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
