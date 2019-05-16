@@ -183,7 +183,7 @@ public:
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 
-	bool RebuildInputOutputLists();
+	bool RebuildInputOutputLists(bool isLoad = false);
 	bool Activate();
 
 	bool DestroyConfiguration();
@@ -392,7 +392,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 protected:
-	bool FinishIPDoc( SVInspectionProcess* pInspection );
+	bool FinishIPDoc( SVInspectionProcess* pInspection, bool isLoad = false);
 
 	SVIOController* m_pIOController;
 

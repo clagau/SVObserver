@@ -1245,7 +1245,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 // Message Operation(s):
 //******************************************************************************
 
-HRESULT SVInspectionProcess::RebuildInspection()
+HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 {
 	HRESULT l_Status = S_OK;
 
@@ -1327,9 +1327,12 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	SVObjectLevelCreateStruct createStruct;
 
-	if (createAllObjects(createStruct))
+	if (shouldCreateAllObject || !IsCreated())
 	{
-		l_Status = E_FAIL;
+		if (createAllObjects(createStruct))
+		{
+			l_Status = E_FAIL;
+		}
 	}
 
 	SetDefaultInputs();

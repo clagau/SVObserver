@@ -3785,7 +3785,7 @@ void SVConfigurationObject::SaveDeviceParamSpecial(SvXml::SVObjectXMLWriter& rWr
 	}// end switch ( pParam->Type() )
 }
 
-bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection)
+bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection, bool isLoad)
 {
 	bool bOk = false;
 
@@ -3803,7 +3803,7 @@ bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection)
 
 			pInspection->RebuildInspectionInputList();
 
-			pInspection->RebuildInspection();
+			pInspection->RebuildInspection(isLoad);
 
 			// Init Document
 			pInspection->ValidateAndInitialize(true);
@@ -3831,7 +3831,7 @@ bool SVConfigurationObject::Activate()
 	return bOk;
 }
 
-bool SVConfigurationObject::RebuildInputOutputLists()
+bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 // called after Environment is edited
 {
 	bool bOk = true;
@@ -3842,7 +3842,7 @@ bool SVConfigurationObject::RebuildInputOutputLists()
 	{
 		if (nullptr != pInspection)
 		{
-			bOk = FinishIPDoc(pInspection) && bOk;
+			bOk = FinishIPDoc(pInspection, isLoad) && bOk;
 		}
 	}
 

@@ -2526,7 +2526,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 						break;
 					}
 
-					pConfig->RebuildInputOutputLists();
+					pConfig->RebuildInputOutputLists(true);
 
 					if (pConfig->IsConfigurationLoaded())
 					{

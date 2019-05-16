@@ -174,7 +174,7 @@ public:
 
 	SVResultListClass* GetResultList() const;
 
-	HRESULT RebuildInspection();
+	HRESULT RebuildInspection(bool shouldCreateAllObject = true);
 	void ValidateAndInitialize( bool p_Validate );
 	void ClearResetCounts();
 	void SetResetCounts( );

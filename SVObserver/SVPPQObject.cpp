@@ -473,7 +473,7 @@ bool SVPPQObject::Rebuild()
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
 	{
-		pInspection->RebuildInspection();
+		pInspection->RebuildInspection(false);
 	}// end for
 
 	return result;
