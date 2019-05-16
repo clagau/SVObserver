@@ -19,10 +19,11 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-BlobReconstructFilterDlg::BlobReconstructFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) :
+BlobReconstructFilterDlg::BlobReconstructFilterDlg(UINT caption, const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) :
 	CDialog(BlobReconstructFilterDlg::IDD, pParent)
 	, m_filterID(rFilterID)
 	, m_rInspectionID(rInspectionID)
+	, m_captionId(caption)
 	, m_Values {SvOg::BoundValues {rInspectionID, rFilterID}}
 {
 	//{{AFX_DATA_INIT(BlobReconstructFilterDlg)
@@ -82,7 +83,9 @@ BOOL BlobReconstructFilterDlg::OnInitDialog()
 	m_cbBlobColor.SetEnumTypes(rBlobColorList);
 	long CurrentSelection = m_Values.Get<long>(SVBlobColorGuid);
 	m_cbBlobColor.SetCurSelItemData(CurrentSelection);
-	
+
+	SetWindowText(SvUl::LoadStdString(m_captionId).c_str());
+
 	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control

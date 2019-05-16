@@ -397,10 +397,20 @@ namespace SvOg
 					}
 					break;
 				case SvPb::EraseBorderBlobsFilterObjectType:
+				{
+					BlobReconstructFilterDlg dlg(IDS_CLASSNAME_ERASEBORDERBLOBSFILTER, m_InspectionID, filterGUID, this);
+					dlg.DoModal();
+				}
+				break;
 				case SvPb::ExtractHolesFilterObjectType:
+				{
+					BlobReconstructFilterDlg dlg(IDS_CLASSNAME_EXTRACTHOLESFILTER, m_InspectionID, filterGUID, this);
+					dlg.DoModal();
+				}
+				break;
 				case SvPb::FillHolesFilterObjectType:
 				{
-					BlobReconstructFilterDlg dlg(m_InspectionID, filterGUID, this);
+					BlobReconstructFilterDlg dlg(IDS_CLASSNAME_FILLHOLESFILTER, m_InspectionID, filterGUID, this);
 					dlg.DoModal();
 				}
 				break;

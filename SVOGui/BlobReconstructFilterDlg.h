@@ -23,7 +23,7 @@ class BlobReconstructFilterDlg : public CDialog
 {
 	// Construction
 public:
-	BlobReconstructFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+	BlobReconstructFilterDlg(UINT caption, const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~BlobReconstructFilterDlg();
 
 	HRESULT SetInspectionData();
@@ -56,6 +56,7 @@ protected:
 private:
 	const SVGUID& m_rInspectionID;
 	const SVGUID& m_filterID;
+	const UINT m_captionId;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 };
