@@ -80,7 +80,7 @@ namespace SvOg
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
 		std::string selectedImageName;
-		const SvUl::InputNameGuidPairList& rImageList = m_ImageController.GetConnectedImageList();
+		const SvUl::InputNameGuidPairList& rImageList = m_ImageController.GetInputImageList(GUID_NULL, 1);
 		if (rImageList.size())
 		{
 			m_inputName = rImageList.begin()->first;

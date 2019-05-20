@@ -37,7 +37,7 @@ namespace SvOg
 
 		const SvUl::NameGuidList& GetAvailableImageList() const;
 		const SvDef::StringVector& GetSpecialImageList() const;
-		const SvUl::InputNameGuidPairList& GetConnectedImageList(const GUID& rChildObjectID = GUID_NULL, int maxImages=1) const;
+		const SvUl::InputNameGuidPairList& GetInputImageList(const GUID& rChildObjectID = GUID_NULL, int maxImages=0) const;
 		SvUl::NameGuidList GetResultImages() const;
 
 		IPictureDisp* GetImage(const std::string& name) const;

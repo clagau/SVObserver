@@ -145,7 +145,7 @@ namespace SvOg
 			m_SVSourceImageCombo.AddString(it->first.c_str());
 		}
 		
-		const SvUl::InputNameGuidPairList& connectedImageList = GetConnectedImageList(m_filterID);
+		const SvUl::InputNameGuidPairList& connectedImageList = GetInputImageList(m_filterID);
 		std::string currentMarkerImageName; 
 		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::WatershedMarkerImageConnectionName)
 		{

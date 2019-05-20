@@ -63,7 +63,6 @@ namespace SvOg
 		Init();
 	
 		// Only show as many as the external tool has exposed...
-		const SvUl::InputNameGuidPairList& images = GetConnectedImageList(GUID_NULL, m_numImages);
 		if (m_numImages > 0)
 		{
 			GetDlgItem(IDC_NO_IMAGES_TXT)->ShowWindow(SW_HIDE);
@@ -167,7 +166,7 @@ namespace SvOg
 		pRoot->SetInfoText(_T(""));
 
 		const SvUl::NameGuidList& availImages = GetAvailableImageList();
-		const SvUl::InputNameGuidPairList& images = GetConnectedImageList(GUID_NULL, m_numImages);
+		const SvUl::InputNameGuidPairList& images = GetInputImageList(GUID_NULL, m_numImages);
 	
 		int i = 0;
 		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin();it != images.end();++it)
@@ -204,7 +203,7 @@ namespace SvOg
 
 	void SVExternalToolImageSelectPage::setImages()
 	{
-		const SvUl::InputNameGuidPairList& images = GetConnectedImageList(GUID_NULL, m_numImages);
+		const SvUl::InputNameGuidPairList& images = GetInputImageList(GUID_NULL, m_numImages);
 		int imageIndex = 0;
 		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin(); it != images.end(); ++it)
 		{

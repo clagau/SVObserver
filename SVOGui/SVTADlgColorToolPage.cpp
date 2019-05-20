@@ -92,10 +92,11 @@ namespace SvOg
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
 		std::string SelectedImageName;
-		const SvUl::InputNameGuidPairList& rImageList = m_Images.GetConnectedImageList();
-		if(0 < rImageList.size() && m_InputName == rImageList.begin()->first)
+		const SvUl::InputNameGuidPairList& rImageList = m_Images.GetInputImageList();
+		const SvUl::InputNameGuidPairList::const_iterator iter = rImageList.find(m_InputName);
+		if (rImageList.cend() != iter)
 		{
-			SelectedImageName = rImageList.begin()->second.first;
+			SelectedImageName = iter->second.first;
 		}
 		m_availableSourceImageListBox.Init(rAvailableImageList, SelectedImageName, cNoImageTag);
 		m_dialogImage.AddTab(cImageTag);

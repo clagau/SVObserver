@@ -48,10 +48,10 @@ namespace SvOi
 		//************************************
 		virtual void GetSelectorList(IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const = 0;
 
-		/// Get the List of Images connected to this Task Object.
+		/// Get the List of Input Images to this Task Object.
 		/// /param rList <in> The List to be populated.
 		/// /param maxEntries <in> maximum number of entries requested.
-		virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) = 0;
+		virtual void GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries) = 0;
 
 		/// Get the List of inputs (and connected object) to this Task Object.
 		/// \param rList [in,out] The List to be populated.

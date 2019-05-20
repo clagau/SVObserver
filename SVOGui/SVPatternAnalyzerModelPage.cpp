@@ -552,7 +552,7 @@ namespace SvOg
 	// SVPatternAnalyzerModelPage message handlers
 	void SVPatternAnalyzerModelPage::InitializeData()
 	{
-		const SvUl::InputNameGuidPairList& rImageList = GetConnectedImageList();
+		const SvUl::InputNameGuidPairList& rImageList = GetInputImageList();
 		const SvUl::InputNameGuidPairList::const_iterator Iter = rImageList.find(SvDef::ImageAnalyzerImageName);
 		if (rImageList.cend() != Iter)
 		{

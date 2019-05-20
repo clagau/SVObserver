@@ -237,7 +237,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogTwoImagePageClass::RetreiveCurrentlySelectedImageNames()
 	{
-		const SvUl::InputNameGuidPairList& rImageList = GetConnectedImageList(GUID_NULL, NumberOfImagesRequired);
+		const SvUl::InputNameGuidPairList& rImageList = GetInputImageList(GUID_NULL, NumberOfImagesRequired);
 
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list

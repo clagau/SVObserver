@@ -59,7 +59,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogTransformImagePageClass::CheckSourceImage()
 	{
-		const SvUl::InputNameGuidPairList& images = getImageController().GetConnectedImageList();
+		const SvUl::InputNameGuidPairList& images = getImageController().GetInputImageList();
 		if (images.size())
 		{
 			// Check if Main Image Type

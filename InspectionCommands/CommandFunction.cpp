@@ -467,7 +467,7 @@ HRESULT getInputs(const SvPb::GetInputsRequest& rRequest, SvPb::GetInputsRespons
 		SvUl::InputNameGuidPairList list;
 		if (SvPb::SVImageObjectType == typeInfo.ObjectType)
 		{
-			pTaskObject->GetConnectedImages(list, rRequest.maxrequested());
+			pTaskObject->GetInputImages(list, rRequest.maxrequested());
 		}
 		else
 		{

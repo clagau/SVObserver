@@ -95,7 +95,7 @@ BOOL ReconstructFilterDlg::OnInitDialog()
 		m_SeedImageCombo.AddString(it->first.c_str());
 	}
 
-	const SvUl::InputNameGuidPairList& connectedImageList = m_imageController.GetConnectedImageList(m_filterID);
+	const SvUl::InputNameGuidPairList& connectedImageList = m_imageController.GetInputImageList(m_filterID);
 	if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::SeedImageConnectionName)
 	{
 		m_seedImageName = connectedImageList.begin()->second.first;

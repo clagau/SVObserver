@@ -237,7 +237,7 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p
 
 	bool l_bFoundLast = nullptr != p_psvLastInfo && 0 < l_lCount &&
 		0 <= m_lLastToolInputListIndex && m_lLastToolInputListIndex < l_lCount &&
-		p_psvLastInfo != m_svToolInputList[m_lLastToolInputListIndex];
+		p_psvLastInfo == m_svToolInputList[m_lLastToolInputListIndex];
 
 	if (!l_bFoundLast)
 	{
@@ -429,7 +429,7 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 	}
 }
 
-void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries)
+void SVTaskObjectClass::GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries)
 {
 	SvOl::SVInObjectInfoStruct* psvImageInfo(nullptr);
 	SvOl::SVInObjectInfoStruct* psvLastImageInfo(nullptr);
@@ -438,25 +438,30 @@ void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, i
 	{
 		if (psvImageInfo)
 		{
+			SvOi::ISVImage* pImage = nullptr;
+			SVGUID imageId = GUID_NULL;
 			if (psvImageInfo->IsConnected())
 			{
 				SvOi::IObjectClass* pObject = psvImageInfo->GetInputObjectInfo().getObject();
 				if (nullptr != pObject)
 				{
-					SvOi::ISVImage* pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
-					if (nullptr != pImage)
-					{
-						std::string name = pImage->getDisplayedName();
-						rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, pObject->GetUniqueObjectID())));
-					}
-				}
-				if (static_cast<int>(rList.size()) < maxEntries)
-				{
-					psvLastImageInfo = psvImageInfo;
-					psvImageInfo = nullptr;
+					pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
+					imageId = pObject->GetUniqueObjectID();
 				}
 			}
-			else // get First Connected Image Info
+
+			if (nullptr != pImage)
+			{
+				std::string name = pImage->getDisplayedName();
+				rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, imageId)));
+			}
+			else
+			{
+				rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(std::string(), SVGUID())));
+			}
+
+			//0 == maxEntries means all input images
+			if (0 == maxEntries || static_cast<int>(rList.size()) < maxEntries)
 			{
 				psvLastImageInfo = psvImageInfo;
 				psvImageInfo = nullptr;

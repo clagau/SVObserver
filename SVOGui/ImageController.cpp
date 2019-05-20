@@ -99,7 +99,7 @@ namespace SvOg
 		return {};
 	}
 
-	const SvUl::InputNameGuidPairList& ImageController::GetConnectedImageList(const GUID& rInstanceID, int maxImages) const
+	const SvUl::InputNameGuidPairList& ImageController::GetInputImageList(const GUID& rInstanceID, int maxImages) const
 	{
 		GUID objectID = m_TaskObjectID;
 		if (GUID_NULL != rInstanceID)

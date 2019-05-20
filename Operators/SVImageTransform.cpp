@@ -152,6 +152,33 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 	
 	SvOl::ValidateInput(m_inputImageObjectInfo);
 
+	//check if input image is from priory tool or tool set
+	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);
+	if (nullptr != pImage)
+	{
+		const SvOi::ITool* pSourceImageTool = dynamic_cast<const SvOi::ITool*>(pImage->GetTool());
+		const SvOi::ITool* pTool = dynamic_cast<const SvOi::ITool*> (GetAncestorInterface(SvPb::SVToolObjectType));
+
+		if (nullptr != pSourceImageTool && nullptr != pTool)
+		{
+			if (pTool->getToolPosition() <= pSourceImageTool->getToolPosition())
+			{
+				m_inputImageObjectInfo.SetInputObject(nullptr);
+				pImage = nullptr;
+			}
+		}
+	}
+
+	if (nullptr == pImage)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	
 	if (S_OK != UpdateTransformData())
 	{
 		Result = false;

@@ -306,7 +306,7 @@ message GetInputsRequest
 	SVObjectTypeInfoStruct typeInfo = 2;
 	SVObjectTypeEnum objectTypeToInclude = 3; //define until which type the name should displayed (not used for image objects, it has the own name conventions)
 	bool shouldExcludeFirstObjectName = 4; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
-	int32 maxRequested = 5; //only used for image object, it define after how many founded entry it stops.
+	int32 maxRequested = 5; //only used for image object, it define after how many founded entry it stops. 0 means all.
 }
 
 message GetInputsResponse
