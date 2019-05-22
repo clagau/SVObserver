@@ -511,6 +511,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_ResetAllReadyStarted,
 	Tid_TRC_Error_ResetLocked,
 	Tid_TRC_Error_ResetWrongInspectionId,
+	Tid_TRC_Error_GlobalInitNotStarted,
 	Tid_TRC_Error_TriggerRecordSize2Big,
 	Tid_TRC_Error_ResetNotStart,
 	Tid_TRC_Error_InvalidResetState,

@@ -477,6 +477,68 @@ void TriggerRecordController::finishResetTriggerRecordStructure()
 	ResetTriggerRecordStructure();
 }
 
+void TriggerRecordController::setGlobalInit()
+{
+	if (m_isResetLocked)
+	{
+		assert(false);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	if (-1 != m_resetStarted4IP)
+	{   //new start of reset is not allowed if reset is in progress.
+		assert(false);
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), m_resetStarted4IP));
+		msgList.push_back(SvUl::Format(_T("%d"), -1));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetAllReadyStarted, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	m_pDataController->prepareReset();
+	m_pDataController->setGlobalInitFlag(true);
+	m_isGlobalInit = true;
+}
+
+void TriggerRecordController::finishGlobalInit()
+{
+	if (m_isResetLocked)
+	{
+		assert(false);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetLocked, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	if (-1 != m_resetStarted4IP)
+	{   //new start of reset is not allowed if reset is in progress.
+		assert(false);
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), m_resetStarted4IP));
+		msgList.push_back(SvUl::Format(_T("%d"), -1));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetAllReadyStarted, msgList, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	if (!m_isGlobalInit)
+	{
+		assert(false);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GlobalInitNotStarted, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	//ATTENTION: Order of the next line is important, because if getImageStructList is called m_isGlobalInit must be true to get the m_imageStructListGlobalInitTmp
+	m_imageStructListResetTmp = m_pDataController->getImageStructList();
+	m_isGlobalInit = false;
+	m_pDataController->setGlobalInitFlag(false);
+	ResetTriggerRecordStructure();
+}
+
 int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos /*= -1*/)
 {
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
@@ -631,17 +693,40 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	return imagePos;
 }
 
-bool TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers)
+void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer)
 {
-	if (-1 == m_resetStarted4IP || m_isResetLocked)
+	if (m_isResetLocked)
 	{   //addImageBuffer is not allowed if reset is not started.
-		assert(false);
-		return false;
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
 	}
+	bool isNewReset = -1 == m_resetStarted4IP;
+
 	auto& bufferMap = m_additionalBufferMap[ownerID];
-
 	std::string typeString(reinterpret_cast<const char*>(&bufferStruct), sizeof(bufferStruct));
+	if (isNewReset)
+	{ //check if value have to be changed
+		if (1 == bufferMap.size() || !clearBuffer)
+		{
+			auto& rImageStruct = m_pDataController->getImageStructList();
+			auto imageIter = std::find_if(rImageStruct.list().begin(), rImageStruct.list().end(), [typeString](auto data)->bool
+			{
+				return (0 == data.type().compare(typeString));
+			});
+			if (rImageStruct.list().end() != imageIter)
+			{
+				auto iter = bufferMap.find(imageIter->structid());
+				if (bufferMap.end() != iter && iter->second == numberOfBuffers)
+				{
+					return; //nothing have to do, because value are the same.
+				}
+			}
+		}
 
+		startResetTriggerRecordStructure();
+	}
+	
 	auto* pList = m_imageStructListResetTmp.mutable_list();
 	auto imageIter = std::find_if(pList->begin(), pList->end(), [typeString](auto data)->bool
 	{
@@ -684,7 +769,13 @@ bool TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 		::OutputDebugString(DebugString.c_str());
 #endif
 	}
-	return true;
+
+	if (isNewReset)
+	{
+		ResetTriggerRecordStructure();
+	}
+
+	return;
 }
 
 bool TriggerRecordController::removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct)

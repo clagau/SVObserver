@@ -547,6 +547,7 @@ namespace SvStl
 		{Tid_TRC_Error_ResetAllReadyStarted, _T("Reset of TriggerRecord-structure already started with %s. Restart with %s not possible.")},
 		{Tid_TRC_Error_ResetLocked, _T("Reset not possible, because it is locked.")},
 		{Tid_TRC_Error_ResetWrongInspectionId, _T("Reset not possible, %s is invalid inspectionId, number of inspection is %s")},
+		{Tid_TRC_Error_GlobalInitNotStarted, _T("Global init not started.")},
 		{Tid_TRC_Error_TriggerRecordSize2Big, _T("TriggerRecordSize of %s is too big. Maximal %s is valid.")},
 		{Tid_TRC_Error_ResetNotStart, _T("Reset of TriggerRecord-structure not started. Reset can not be finished.")},
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},

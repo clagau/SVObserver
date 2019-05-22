@@ -650,7 +650,7 @@ bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 		{
 			UuidCreateSequential(&guid);
 			independentOk &= m_TRController.removeAllImageBuffer();
-			independentOk &= m_TRController.addImageBuffer(guid, specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
+			m_TRController.addImageBuffer(guid, specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
 		}
 		m_TRController.finishResetTriggerRecordStructure();
 

@@ -635,7 +635,6 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 								return false;
 							}
 							rTRController.addImageBuffer(GetUniqueObjectID(), iter.first, bufferNumber);
-
 						}
 					}
 					else

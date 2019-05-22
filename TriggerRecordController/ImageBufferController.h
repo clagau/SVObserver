@@ -45,8 +45,9 @@ public:
 public:
 	/// Reset the whole buffers to new structures.
 	/// \param rImageStructList [in] New image Size list, entries with no needed image will be deleted.
+	/// \param isGlobalInit [in] If true, memory and image will not be changed. If false (default), memory and image will be changed.
 	/// \returns std::vector<std::pair<int, int>> Return a vector of pairs of change structID. First is old ID, Second is new ID.
-	std::vector<std::pair<int, int>> reset(const SvPb::ImageStructList& rImageStructList);
+	std::vector<std::pair<int, int>> reset(const SvPb::ImageStructList& rImageStructList, bool isGlobalInit = false);
 
 	const SvPb::ImageStructList& getImageStructList() const { return m_rDataController.getImageStructList(); };
 

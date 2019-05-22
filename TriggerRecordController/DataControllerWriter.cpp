@@ -317,20 +317,39 @@ void DataControllerWriter::setImageDefList(int inspectionPos, SvPb::ImageList&& 
 	}
 }
 
+const SvPb::ImageStructList& DataControllerWriter::getImageStructList() const
+{ 
+	if (!m_isGlobalInit)
+	{
+		return m_imageStructList;
+	}
+	else
+	{
+		return m_imageStructListGlobalInitTmp;
+	}
+};
+
 void DataControllerWriter::setImageStructList(SvPb::ImageStructList list)
 {
-	int sizeList = list.ByteSize();
-
-	if (list.ByteSize() > cMaxImageStructPbSize)
+	if (!m_isGlobalInit)
 	{
-		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
-		throw Exception;
+		int sizeList = list.ByteSize();
+
+		if (list.ByteSize() > cMaxImageStructPbSize)
+		{
+			assert(false);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
+			throw Exception;
+		}
+		m_imageStructList.Swap(&list);
+		m_pCommonData->m_imageStructListPBSize = m_imageStructList.ByteSize();
+		m_imageStructList.SerializeToArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
 	}
-	m_imageStructList.Swap(&list);
-	m_pCommonData->m_imageStructListPBSize = m_imageStructList.ByteSize();
-	m_imageStructList.SerializeToArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
+	else
+	{
+		m_imageStructListGlobalInitTmp.Swap(&list);
+	}
 }
 
 void DataControllerWriter::resetImageRefCounter()
@@ -459,7 +478,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 	}
 
 	//update structId to fit to the position in m_imageStructList
-	std::vector<std::pair<int, int>> changeVect = getImageBufferControllerInstance().reset(imageStructList);
+	std::vector<std::pair<int, int>> changeVect = getImageBufferControllerInstance().reset(imageStructList, m_isGlobalInit);
 	for (const auto& rChangePair : changeVect)
 	{
 		//update per Inspection
@@ -482,13 +501,33 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 		}
 	}
 
-	if (0 <= inspectionId)
+	if (!m_isGlobalInit)
 	{
-		m_dataVector[inspectionId]->setInitFlag(true);
+		if (0 <= inspectionId)
+		{
+			m_dataVector[inspectionId]->setInitFlag(true);
+		}
+		else
+		{  //set init flag for inspection which are changed during globalInit.
+			for (auto id : m_initAfterGlobalInitSet)
+			{
+				if (0 <= id && m_dataVector.size() > id)
+				{
+					m_dataVector[id]->setInitFlag(true);
+				}
+			}
+			m_initAfterGlobalInitSet.clear();
+		}
+
+		finishedReset();
 	}
-
-	finishedReset();
-
+	else
+	{
+		if (0 <= inspectionId)
+		{	//remember that the inspection was changed during globalInit.
+			m_initAfterGlobalInitSet.insert(inspectionId);
+		}
+	}
 	return changeVect;
 }
 
@@ -533,6 +572,15 @@ void DataControllerWriter::setInspectionList(const SvPb::InspectionList &rInspec
 			m_dataVector.pop_back();
 		}
 	}
+}
+
+void DataControllerWriter::setGlobalInitFlag(bool flag)
+{
+	if (flag && !m_isGlobalInit)
+	{	//if set globalInitFlag the first time, copy image struct list to the temporary list of the globalInit.
+		m_imageStructListGlobalInitTmp = m_imageStructList;
+	}
+	__super::setGlobalInitFlag(flag);
 }
 
 void DataControllerWriter::prepareReset()

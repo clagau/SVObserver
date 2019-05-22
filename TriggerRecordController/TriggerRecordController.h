@@ -72,10 +72,13 @@ public:
 	virtual void startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) override;
 	virtual void finishResetTriggerRecordStructure() override;
 
+	virtual void setGlobalInit() override;
+	virtual void finishGlobalInit() override;
+
 	virtual int addOrChangeImage(const GUID& rImageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
 	virtual int addOrChangeChildImage(const GUID& rImageId, const GUID& rParentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;
 
-	virtual bool addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers) override;
+	virtual void addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer = false) override;
 	virtual bool removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
 	virtual bool removeAllImageBuffer(const GUID& ownerID) override;
 	virtual bool removeAllImageBuffer() override;
@@ -144,6 +147,8 @@ private:
 	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;
 	std::vector<std::pair<int, std::function<void(int, int)>>> m_newTRCallbacks;
 	bool m_isResetLocked = false;
+
+	bool m_isGlobalInit = false;
 
 	mutable std::mutex m_callbackMutex;
 

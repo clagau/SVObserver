@@ -2404,6 +2404,19 @@ HRESULT SVObserverApp::OpenSVXFile()
 		try
 		{
 			unsigned long configVer = 0;
+			bool isGlobalInit = true;
+
+			try
+			{
+				//avoid that TRC-memory will be recreated for every loading step, but do it once at the end.
+				SvTrc::getTriggerRecordControllerRWInstance().setGlobalInit();
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(rExp.getMessage());
+				isGlobalInit = false;
+			}
 
 			while (1)
 			{
@@ -2515,6 +2528,22 @@ HRESULT SVObserverApp::OpenSVXFile()
 					if (hr & SvDef::svErrorCondition)
 					{
 						break;
+					}
+
+					if (isGlobalInit)
+					{
+						try
+						{
+							//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
+							SvTrc::getTriggerRecordControllerRWInstance().finishGlobalInit();
+						}
+						catch (const SvStl::MessageContainer& rExp)
+						{
+							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							Exception.setMessage(rExp.getMessage());
+							hr = E_FAIL;
+							break;
+						}
 					}
 
 					pConfig->RebuildInputOutputLists(true);

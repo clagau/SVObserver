@@ -216,20 +216,7 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo, unsigned long 
 		Result = DestroyBuffers();
 		try
 		{
-			bool mustRestartStart = !m_rTRController.isResetStarted();
-			if (mustRestartStart)
-			{
-				m_rTRController.startResetTriggerRecordStructure();
-			}
-
-			m_rTRController.removeAllImageBuffer(m_guid);
-			m_rTRController.addImageBuffer(m_guid, m_bufferStruct, ulSize);
-
-			if (mustRestartStart)
-			{
-				m_rTRController.finishResetTriggerRecordStructure();
-			}
-
+			m_rTRController.addImageBuffer(m_guid, m_bufferStruct, ulSize, true);
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{

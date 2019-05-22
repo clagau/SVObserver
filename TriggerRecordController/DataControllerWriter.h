@@ -90,7 +90,11 @@ public:
 
 	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) override;
 
-	virtual const SvPb::ImageStructList& getImageStructList() const override { return m_imageStructList; }; 
+	/// Return the image struct list. If globalInit active it return the temporary list which will be set if globalInit finished.
+	/// \returns const SvPb::ImageStructList&
+	virtual const SvPb::ImageStructList& getImageStructList() const override; 
+	/// Set the new image struct list and copy it to the SM. If globalInit active it set only the temporary list and the other list and the SM will be set if global finished.
+	/// \param list [in] New list.
 	virtual void setImageStructList(SvPb::ImageStructList list) override;
 
 	virtual void resetImageRefCounter() override;
@@ -110,6 +114,8 @@ public:
 	/// ATTENTION: Throw exception if InspectionList to large for the space in sharedMemory.
 	/// \param rInspectionList [in]
 	virtual void setInspectionList(const SvPb::InspectionList &rInspectionList) override;
+
+	virtual void setGlobalInitFlag(bool flag) override;
 
 	/// Reset resetId to 0 and wait until all reader finished his function.
 	virtual void prepareReset() override;
@@ -141,9 +147,11 @@ private:
 	void* m_pInspectionListInSM = nullptr;
 
 	SvPb::ImageStructList m_imageStructList;
+	SvPb::ImageStructList m_imageStructListGlobalInitTmp;
 	void* m_pImageStructListInSM = nullptr;
 
 	std::vector<std::shared_ptr<TRControllerWriterDataPerIP>> m_dataVector;
+	std::unordered_set<int> m_initAfterGlobalInitSet;
 
 	ImageBufferSMHelper m_imageMemoryHelper;
 	SvSml::SharedDataStore m_commonSHHandle;

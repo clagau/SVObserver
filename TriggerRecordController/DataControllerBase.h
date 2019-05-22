@@ -119,6 +119,10 @@ public:
 
 	bool isIPInit(int inspectionPos);
 
+	/// Set the flag for global initialization. If this flag is set the writer version will not recreate every time the memory, but if finished the global initialization.
+	/// \param flag [in] True, means global initialization is one.
+	virtual void setGlobalInitFlag(bool flag) { m_isGlobalInit = flag; };
+
 	/// Reset resetId to 0 and wait until all reader finished his function.
 	virtual void prepareReset();
 	/// Set resetId to a new number and send reset event.
@@ -132,6 +136,8 @@ public:
 
 #pragma region Member variables
 protected:
+	bool m_isGlobalInit = false;
+
 	std::vector<SVMatroxBuffer> m_bufferVector;
 	int m_maxNumberOfRequiredBuffer = 9000;
 	std::function<void()> m_reloadCallback;

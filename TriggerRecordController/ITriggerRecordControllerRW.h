@@ -80,6 +80,15 @@ namespace SvTrc
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		virtual void finishResetTriggerRecordStructure() = 0;
 
+		/// Set the TRC to global initialization, that means with changing of the TRC-structure the images (and its memory) will not be changed, but first with finishGlobalInit. 
+		/// This increase the performance, if it will be initialized more IPs.
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
+		virtual void setGlobalInit() = 0;
+
+		/// It finished the global initialization, that means it will change the images and its memory. 
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
+		virtual void finishGlobalInit() = 0;
+
 		/// Change the bufferStruct of the buffer, if for this image no entry available it will be added. It must not be in the reset state (called startResetTriggerRecordStructure before.)
 		/// ATTENTION: All old TR-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
@@ -96,12 +105,14 @@ namespace SvTrc
 		/// \returns int Return the position in the child list. May use it for getChildImage.
 		virtual int addOrChangeChildImage(const GUID& rImageId, const GUID& rParentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) = 0;
 
-		/// Add additional image buffer independent of inspections. The buffers numbers won't be fit immediately but with the next finishResetTriggerRecordStructure (for any inspection).  
+		/// Add additional image buffer independent of inspections.  
+		/// ATTENTION: All old TR-instances of all IPs have to be deleted before.
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param ownerID [in] Guid of the owner of this buffers.
 		/// \param bufferStruct [in] structure of the buffer.
 		/// \param numberOfBuffers [in] Number of buffers to be added.
-		/// \returns bool
-		virtual bool addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers) = 0;
+		/// \param clearBuffer [in] If true, it clear all buffer of this owner before it add the new one
+		virtual void addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer = false) = 0;
 
 		/// Remove additional image buffer of an owner (independent of inspections). The buffers numbers won't be fit immediately but with the next finishResetTriggerRecordStructure (for any inspection).  
 		/// \param ownerID [in] Guid of the owner of this buffers.

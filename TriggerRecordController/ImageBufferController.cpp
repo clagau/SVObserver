@@ -42,13 +42,8 @@ ImageBufferController::~ImageBufferController()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageStructList& rImageStructList)
+std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageStructList& rImageStructList, bool isGlobalInit)
 {
-	int groupPos = 0;
-	int vectorPos = 0;
-
-	SvPb::ImageStructList newImageStructList = m_rDataController.getImageStructList();
-
 	int completeNumberOfRequiredBuffer = 0;
 	for (const auto& rImageStruct : rImageStructList.list())
 	{
@@ -72,113 +67,134 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		Exception.Throw();
 	}
 
-	assert(rImageStructList.list_size() >= newImageStructList.list_size());
-	assert(0 == newImageStructList.list_size() || rImageStructList.list(newImageStructList.list_size() - 1).structid() == newImageStructList.list(newImageStructList.list_size() - 1).structid());
-	auto& rBufVec = m_rDataController.getBufferVectorRef();
-
-	//step through new imageSize list to fit buffer to the new required structure
-	for (const auto& rImageStruct : rImageStructList.list())
+	std::vector<std::pair<int, int>> moveVec;
+	if (!isGlobalInit)
 	{
-		SvPb::ImageStructData* pStructData = nullptr;
-		if (newImageStructList.list_size() > groupPos)
-		{
-			pStructData = newImageStructList.mutable_list(groupPos);
-			if (0 == rImageStruct.numberofbuffersrequired())
-			{
-				//this size is not longer used, delete the buffers.
-				auto bufferIter = rBufVec.begin() + vectorPos;
-				rBufVec.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
-				//memoryName temporary store, because it will be with the next erase
-				std::string memoryName = pStructData->memoryname();
-				newImageStructList.mutable_list()->erase(newImageStructList.list().begin() + groupPos);
+		SvPb::ImageStructList newImageStructList = m_rDataController.getImageStructList();
+		assert(rImageStructList.list_size() >= newImageStructList.list_size());
+		assert(0 == newImageStructList.list_size() || rImageStructList.list(newImageStructList.list_size() - 1).structid() == newImageStructList.list(newImageStructList.list_size() - 1).structid());
+		auto& rBufVec = m_rDataController.getBufferVectorRef();
 
-				m_rDataController.removeImageMemory(memoryName);
-				continue;
+		int groupPos = 0;
+		int vectorPos = 0;
+		//step through new imageSize list to fit buffer to the new required structure
+		for (const auto& rImageStruct : rImageStructList.list())
+		{
+			SvPb::ImageStructData* pStructData = nullptr;
+			if (newImageStructList.list_size() > groupPos)
+			{
+				pStructData = newImageStructList.mutable_list(groupPos);
+				if (0 == rImageStruct.numberofbuffersrequired())
+				{
+					//this size is not longer used, delete the buffers.
+					auto bufferIter = rBufVec.begin() + vectorPos;
+					rBufVec.erase(bufferIter, bufferIter + pStructData->numberofbuffers());
+					//memoryName temporary store, because it will be with the next erase
+					std::string memoryName = pStructData->memoryname();
+					newImageStructList.mutable_list()->erase(newImageStructList.list().begin() + groupPos);
+
+					m_rDataController.removeImageMemory(memoryName);
+					continue;
+				}
+				else
+				{
+					vectorPos = m_rDataController.contractMilBufferinMemory(rImageStruct.numberofbuffersrequired(), *pStructData, vectorPos);
+				}
 			}
 			else
-			{	
-				vectorPos = m_rDataController.contractMilBufferinMemory(rImageStruct.numberofbuffersrequired(), *pStructData, vectorPos);
-			}
-		}
-		else
-		{
-			if (0 == rImageStruct.numberofbuffersrequired())
 			{
-				//new empty size, ignore it.
-				continue;
+				if (0 == rImageStruct.numberofbuffersrequired())
+				{
+					//new empty size, ignore it.
+					continue;
+				}
+				//new size, add it to the image size list
+				pStructData = newImageStructList.add_list();
+				pStructData->set_type(rImageStruct.type());
 			}
-			//new size, add it to the image size list
-			pStructData = newImageStructList.add_list();
-			pStructData->set_type(rImageStruct.type());
-		}
 
-		int requiredNumbers = rImageStruct.numberofbuffersrequired();
-		pStructData->set_numberofbuffersrequired(requiredNumbers);
-		pStructData->set_structid(rImageStruct.structid());
+			int requiredNumbers = rImageStruct.numberofbuffersrequired();
+			pStructData->set_numberofbuffersrequired(requiredNumbers);
+			pStructData->set_structid(rImageStruct.structid());
 
-		assert(requiredNumbers > 0);
-		if (pStructData->numberofbuffers() < requiredNumbers)
-		{ //add more buffer of this size if necessary
-			try
+			assert(requiredNumbers > 0);
+			if (pStructData->numberofbuffers() < requiredNumbers)
+			{ //add more buffer of this size if necessary
+				try
+				{
+					vectorPos = m_rDataController.createMilBufferinMemory(requiredNumbers, *pStructData, vectorPos);
+				}
+				catch (const SvStl::MessageContainer& rSvE)
+				{
+					m_rDataController.clearAll();
+					//This is the topmost catch for MessageContainer exceptions
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+					Exception.setMessage(rSvE.getMessage());
+					Exception.Throw();
+				}
+
+				pStructData->set_numberofbuffers(requiredNumbers);
+			}
+
+			//correct offset
+			if (0 < groupPos)
 			{
-				vectorPos = m_rDataController.createMilBufferinMemory(requiredNumbers, *pStructData, vectorPos);
+				pStructData->set_offset(newImageStructList.list(groupPos - 1).offset() + newImageStructList.list(groupPos - 1).numberofbuffers());
 			}
-			catch (const SvStl::MessageContainer& rSvE)
+			else
 			{
-				m_rDataController.clearAll();
-				//This is the topmost catch for MessageContainer exceptions
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-				Exception.setMessage(rSvE.getMessage());
-				Exception.Throw();
+				pStructData->set_offset(0);
 			}
 
-			pStructData->set_numberofbuffers(requiredNumbers);
+			groupPos++;
 		}
 
-		//correct offset
-		if (0 < groupPos)
+		//update structId to fit to the position in newImageStructList
+		int i = 0;
+		for (auto& rImageStructData : (*newImageStructList.mutable_list()))
 		{
-			pStructData->set_offset(newImageStructList.list(groupPos - 1).offset() + newImageStructList.list(groupPos - 1).numberofbuffers());
+			//old structId must be equal or higher (it is higher if an size-entry was deleted.)
+			int oldId = rImageStructData.structid();
+			assert(oldId >= i);
+			if (oldId > i)
+			{
+				//Because oldID is 
+				moveVec.push_back({oldId, i});
+				rImageStructData.set_structid(i);
+			}
+			i++;
 		}
-		else
+
+		//resize the reference counter array if required and set the counter to 0
+		try
 		{
-			pStructData->set_offset(0);
+			m_rDataController.setImageStructList(std::move(newImageStructList));
 		}
-
-		groupPos++;
-	}
-
-	//update structId to fit to the position in newImageStructList
-	int i = 0;
-	std::vector<std::pair<int, int>> moveVec;
-	for (auto& rImageStructData : (*newImageStructList.mutable_list()))
-	{
-		//old structId must be equal or higher (it is higher if an size-entry was deleted.)
-		int oldId = rImageStructData.structid();
-		assert(oldId >= i);
-		if (oldId > i)
+		catch (const SvStl::MessageContainer& rSvE)
 		{
-			//Because oldID is 
-			moveVec.push_back({oldId, i});
-			rImageStructData.set_structid(i);
+			m_rDataController.clearAll();
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(rSvE.getMessage());
+			Exception.Throw();
 		}
-		i++;
+		m_rDataController.resetImageRefCounter();
 	}
-
-	//resize the reference counter array if required and set the counter to 0
-	try
+	else
 	{
-		m_rDataController.setImageStructList(std::move(newImageStructList));
+		try
+		{
+			m_rDataController.setImageStructList(std::move(rImageStructList));
+		}
+		catch (const SvStl::MessageContainer& rSvE)
+		{
+			m_rDataController.clearAll();
+			//This is the topmost catch for MessageContainer exceptions
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(rSvE.getMessage());
+			Exception.Throw();
+		}
 	}
-	catch (const SvStl::MessageContainer& rSvE)
-	{
-		m_rDataController.clearAll();
-		//This is the topmost catch for MessageContainer exceptions
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		Exception.setMessage(rSvE.getMessage());
-		Exception.Throw();
-	}
-	m_rDataController.resetImageRefCounter();
 
 	return moveVec;
 }
