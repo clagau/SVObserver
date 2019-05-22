@@ -108,7 +108,6 @@ namespace SvOg
 								if (S_OK == hr)
 								{
 									setImages();
-									Refresh();
 
 									*plResult = S_OK;
 								}
@@ -139,13 +138,6 @@ namespace SvOg
 	#pragma endregion Protected Methods
 
 	#pragma region Private Methods
-	void SVExternalToolImageSelectPage::Refresh()
-	{
-		ToolRunOnce();
-		m_ImageDisplay.Refresh();
-		UpdateData(false); // set data to dialog
-	}
-
 	void SVExternalToolImageSelectPage::buildPropertyTree()
 	{
 		// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
@@ -203,6 +195,7 @@ namespace SvOg
 
 	void SVExternalToolImageSelectPage::setImages()
 	{
+		ToolRunOnce();
 		const SvUl::InputNameGuidPairList& images = GetInputImageList(GUID_NULL, m_numImages);
 		int imageIndex = 0;
 		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin(); it != images.end(); ++it)
@@ -211,6 +204,7 @@ namespace SvOg
 			m_ImageDisplay.SetZoom(imageIndex++, -1.0);
 		}
 		m_ImageDisplay.Refresh();
+		UpdateData(false); // set data to dialog
 	}
 
 	#pragma endregion Private Methods

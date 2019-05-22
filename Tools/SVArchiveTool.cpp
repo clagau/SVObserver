@@ -607,8 +607,8 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 				try
 				{
 					SvTrc::ITriggerRecordControllerRW& rTRController = SvTrc::getTriggerRecordControllerRWInstance();
-					bool mustRestartStart = !rTRController.isResetStarted();
-					if (mustRestartStart)
+					bool mustResetStarted = !rTRController.isResetStarted();
+					if (mustResetStarted)
 					{
 						rTRController.startResetTriggerRecordStructure();
 					}
@@ -627,7 +627,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 									SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 									pErrorMessages->push_back(Msg);
 								}
-								if (mustRestartStart)
+								if (mustResetStarted)
 								{
 									rTRController.finishResetTriggerRecordStructure();
 								}
@@ -651,7 +651,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 									SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 									pErrorMessages->push_back(Msg);
 								}
-								if (mustRestartStart)
+								if (mustResetStarted)
 								{
 									rTRController.finishResetTriggerRecordStructure();
 								}
@@ -662,7 +662,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 							rTRController.addImageBuffer(GetUniqueObjectID(), iter.first, iter.second*dwMaxImages);
 						}
 					}
-					if (mustRestartStart)
+					if (mustResetStarted)
 					{
 						rTRController.finishResetTriggerRecordStructure();
 					}

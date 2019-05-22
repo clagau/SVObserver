@@ -50,8 +50,6 @@ namespace SvOg
 
 	#pragma region Private Methods
 	private:
-		void Refresh();
-
 		//************************************
 		// Method:    buildPropertyTree
 		// Description: build up the property tree for the input image selection
