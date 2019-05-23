@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTestIO.h"
+#include "SVTestIODlg.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

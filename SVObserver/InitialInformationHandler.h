@@ -10,7 +10,11 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVLibrary/InitialInformation.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#pragma endregion Includes
 
 class InitialInformationHandler
 {

@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <iterator>
 
 #include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVObjectInfoStruct.h"
@@ -24,14 +23,18 @@
 #include "SVOutObjectInfoStruct.h"
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameGuidList.h"
-#include "SVInputInfoListClass.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvOi
+{
+class IObjectWriter;
+}
 namespace SvOl
 {
 struct SVInObjectInfoStruct;
+class SVInputInfoListClass;
 }
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;

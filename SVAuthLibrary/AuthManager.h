@@ -8,13 +8,15 @@
 
 #pragma once
 
-#include "SVAuthLibrary/AuthManagerSettings.h"
-#include "SVAuthLibrary/JwtFactory.h"
-#include "SVAuthLibrary/UserDatabase.h"
+#pragma region Includes
+#include "JwtFactory.h"
+#include "UserDatabase.h"
 #include "SVProtoBuf/SVAuth.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {
+struct AuthManagerSettings;
 
 class AuthManager
 {

@@ -36,19 +36,19 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const int cHeaderSize = 1;
-	static const int CellSize = 40;
-	static const int HeaderColumnSize = 60;
-	static const int MaxCellCharSize = 3;
-	static const COLORREF KERNEL_CENTER_COLOR = RGB( 240, 240, 240 );
+	constexpr int cHeaderSize = 1;
+	constexpr int CellSize = 40;
+	constexpr int HeaderColumnSize = 60;
+	constexpr int MaxCellCharSize = 3;
+	constexpr COLORREF KERNEL_CENTER_COLOR = RGB( 240, 240, 240 );
 
-	static const TCHAR HeaderCell[] = _T("Row / Column");
-	static const TCHAR NoCommonValue[] = _T("###");
-	static const TCHAR* const SumSelections[] = {_T("Total Sum"), _T("Positive Sum"), _T("Negative Sum"), _T("Absolute Sum") };
-	static const TCHAR StatusGridSingleCell[] = _T("Row: %d  Col: %d  Index: %d");
-	static const TCHAR StatusGridMultiCell[] = _T("Count: %d  Sum: %d");
-	static const TCHAR CustomFilterExportFileFilters[] = _T("Custom Filter Export Files (*.xcf)|*.xcf||");
-	static const TCHAR CustomFilterExportFileExt[] = _T("xcf");
+	constexpr char* HeaderCell = _T("Row / Column");
+	constexpr char* NoCommonValue = _T("###");
+	constexpr char* SumSelections[] = {_T("Total Sum"), _T("Positive Sum"), _T("Negative Sum"), _T("Absolute Sum") };
+	constexpr char* StatusGridSingleCell = _T("Row: %d  Col: %d  Index: %d");
+	constexpr char* StatusGridMultiCell = _T("Count: %d  Sum: %d");
+	constexpr char* CustomFilterExportFileFilters = _T("Custom Filter Export Files (*.xcf)|*.xcf||");
+	constexpr char* CustomFilterExportFileExt = _T("xcf");
 #pragma endregion Declarations
 
 	BEGIN_MESSAGE_MAP(Custom2FilterDlg, CDialog)

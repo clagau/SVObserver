@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <string>
-
-#include <SVAuthLibrary/Crypto.h>
-#include <SVAuthLibrary/Jwt.h>
-#include <SVProtoBuf/SVAuth.h>
+#pragma region Includes
+#include "Crypto.h"
+#include "Jwt.h"
+#include "SVProtoBuf/SVAuth.h"
+#pragma endregion Includes
 
 namespace google
 {

@@ -8,10 +8,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include <array>
-#include <string>
-
 #include <wincrypt.h>
+#pragma endregion Includes
 
 namespace SvAuth
 {

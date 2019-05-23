@@ -14,11 +14,15 @@
 
 #pragma region Includes
 #include "SVOResource\resource.h"
-#include "SVContainerLibrary/ObjectTreeItems.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVMFCControls/SVEditControlWithHelp.h"
 #include "SVMFCControls/DlgItemResizer.h"
 #pragma endregion Includes
+
+namespace SvCl
+{
+class ObjectTreeItems;
+}
 
 namespace SvOsl
 {

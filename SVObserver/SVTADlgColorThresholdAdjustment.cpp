@@ -12,15 +12,16 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorThresholdAdjustment.h"
+#include "SVROIFigureEditor.h"
+#include "SVTADlgColorThresholdSheet.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "Operators/SVColorThreshold.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Operators/SVColorThreshold.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "Tools/SVColorTool.h"
-#include "SVTADlgColorThresholdSheet.h"
 #pragma endregion Includes
 
 #pragma region Declarations

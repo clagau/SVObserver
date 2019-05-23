@@ -14,11 +14,11 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVStorageResult.h"
-#include "SVInspectionProcess.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
+class SVInspectionProcess;
 class SVObjectReference;
 
 struct SVCommandInspectionGetItems

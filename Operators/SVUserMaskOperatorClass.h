@@ -12,17 +12,21 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\IMask.h"
 #include "SVUnaryImageOperatorClass.h"
-#include "SVLibrary\SVGraphix.h"
-#include "SVImageLibrary/SVImageInfoClass.h"
+#include "SVLibrary/SVGraphix.h"
+#include "ObjectInterfaces/IMask.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary\SVDWordValueObjectClass.h"
 #include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
+
+namespace SvIe
+{
+struct SVInputRequestStructMap;
+}
 
 namespace SvOp
 {

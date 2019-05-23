@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "TableAddColumnEquation.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 

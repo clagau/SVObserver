@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
 #include "NotificationTypeEnum.h"
-#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};

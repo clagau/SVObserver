@@ -11,7 +11,6 @@
 #include "SMViewDlg.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "MonEntryDlg.h"
-#include "Definitions\SVObjectTypeInfoStruct.h"
 
 IMPLEMENT_DYNAMIC(MonitorListDlg, CDialog)
 

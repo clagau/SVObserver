@@ -11,13 +11,16 @@
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
 #include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 namespace SvIe
 {
 class SVImageClass;
+}
+namespace SvTrc
+{
+class ITriggerRecordR;
 }
 
 namespace SvTo

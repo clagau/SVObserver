@@ -11,12 +11,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOResource/resource.h"
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVMessage/SVMessage.h"
+#include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations

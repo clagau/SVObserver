@@ -32,7 +32,7 @@ public:
 	virtual ~SVConfigurationTreeWriter();
 
 	virtual void WriteAttribute(LPCTSTR pName, const _variant_t& value) override;
-	virtual void WriteAttribute(LPCTSTR pName, const SVVariantList& rValues) override;
+	virtual void WriteAttribute(LPCTSTR pName, const std::vector<_variant_t>& rValues) override;
 
 	virtual void StartElement(LPCTSTR pName) override;
 	virtual void EndElement() override;

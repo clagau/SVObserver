@@ -12,18 +12,19 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVThresholdClass.h"
-#include "Definitions/GlobalConst.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVUpperThresholdEquation.h"
 #include "SVLowerThresholdEquation.h"
 #include "SVAutoThresholdEquation.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "Tools/SVTool.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "SVObjectLibrary\SVClsIds.h"
-#include "Definitions/StringTypeDef.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 namespace SvOp

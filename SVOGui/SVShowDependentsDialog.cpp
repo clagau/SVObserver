@@ -14,6 +14,7 @@
 #include "SVShowDependentsDialog.h"
 #include "Definitions/Color.h"
 #include "ObjectInterfaces/IDependencyManager.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

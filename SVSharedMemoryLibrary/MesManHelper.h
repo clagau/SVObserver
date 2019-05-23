@@ -5,10 +5,16 @@
 //*****************************************************************************
 /// File with messages used in several places in SharedMemoryLib
 //******************************************************************************
-#pragma region Includes
-#include "SVStatusLibrary\SourceFileParams.h"
-#pragma endregion Includes
 #pragma once
+
+#pragma region Includes
+#pragma endregion Includes
+
+namespace SvStl
+{
+struct SourceFileParams;
+}
+
 class MesManHelper
 {
 public:

@@ -18,13 +18,15 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/websocket.hpp>
 
-#include "HttpServerSettings.h"
 #include "MediaType.h"
 #include "url.hpp"
 #include "SVSystemLibrary/SVFuture.h"
 
 namespace SvHttp
 {
+struct HttpServerSettings;
+
+
 class HttpServerConnection : public std::enable_shared_from_this<HttpServerConnection>
 {
 private:

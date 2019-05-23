@@ -33,14 +33,14 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-static const int cHeaderSize = 1;
-static const int CellSize = 40;
-static const int HeaderColumnSize = 60;
-static const COLORREF KERNEL_CENTER_COLOR = RGB(240, 240, 240);
+constexpr int cHeaderSize = 1;
+constexpr int CellSize = 40;
+constexpr int HeaderColumnSize = 60;
+constexpr COLORREF KERNEL_CENTER_COLOR = RGB(240, 240, 240);
 
-static const TCHAR HeaderCell[] = _T("Row / Column");
-static const TCHAR StatusGridSingleCell[] = _T("Row: %d  Col: %d  Index: %d");
-static const TCHAR StatusGridMultiCell[] = _T("Count: %d");
+constexpr char* HeaderCell = _T("Row / Column");
+constexpr char* StatusGridSingleCell = _T("Row: %d  Col: %d  Index: %d");
+constexpr char* StatusGridMultiCell = _T("Count: %d");
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(Ranking2FilterDlg, CDialog)

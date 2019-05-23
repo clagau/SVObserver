@@ -6,25 +6,24 @@
 /// Not much to see here.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 
 #include <atlstr.h>
 #include <comutil.h>
-
-#include <map>
-#include <locale>
 #include <codecvt>
+#include <locale>
+#include <sequential_tree.h>
 
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <sequential_tree.h>
-
 #include "SVAuthLibrary/UserDatabaseLoader.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVXmlLibrary/ISaxElementHandler.h"
 #include "SVXmlLibrary/SaxParser.h"
-#include "SVXmlLibrary/SaxXMLHandler.h"
 #include "SVXmlLibrary/SVMaterialData.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

@@ -13,10 +13,9 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <set>
-#include "Definitions/SVImageEnums.h"
-#include "ObjectInterfaces/IValueObject.h"
-#include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
+#include "SVImageLibrary/SVExtentOffsetStruct.h"
+#include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -24,9 +23,13 @@ namespace SvIe
 class SVImageClass;
 }
 
+namespace SvOi
+{
+class IValueObject;
+}
+
 namespace SvTo
 {
-
 class SVToolClass;
 
 class SVToolExtentClass

@@ -11,9 +11,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVSharpen2FilterClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "ResultViewItemDef.h"
+#include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
 
 namespace SvIe

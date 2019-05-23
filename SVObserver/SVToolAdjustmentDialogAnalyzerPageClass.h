@@ -16,7 +16,6 @@
 #include "SVOGui\PictureDisplay.h"
 #include "SVOGui/ImageController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
 
 namespace SvAo

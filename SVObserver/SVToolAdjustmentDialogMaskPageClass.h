@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVMFCControls\SVMaskEditor.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
@@ -24,8 +23,12 @@
 #include "SVOGui\DataController.h"
 #include "SVOGui\MaskController.h"
 #include "SVUtilityLibrary\SVGUID.h"
-
 #pragma endregion Includes
+
+namespace SvMc
+{
+class SVMaskEditor;
+}
 
 class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 {
@@ -90,7 +93,7 @@ protected:
 	SvMc::SVEnumerateComboClass m_DrawCriteriaCombo;
 	//}}AFX_DATA
 
-	SvMc::CSVMaskEditor* m_pMaskEditorCtl;
+	SvMc::SVMaskEditor* m_pMaskEditorCtl;
 	SVFileNameClass	m_svfnFileName;    // SES 15-Jan-2001
 
 	static UINT_PTR CALLBACK ColorDlgHookFn(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);

@@ -13,10 +13,9 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary/SVGuid.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
+#include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -32,6 +31,7 @@ namespace SvVol
 class SVEnumerateValueObjectClass;
 }
 
+class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 
 enum SVShiftResultEnum

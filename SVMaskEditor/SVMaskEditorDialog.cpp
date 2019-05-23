@@ -110,7 +110,7 @@ END_DISPATCH_MAP()
 //  dispinterface in the .ODL file.
 
 // {BB21D9EF-E6F9-11D2-A77B-00106F000C7D}
-static const IID IID_ISVMaskEditorDialogClass =
+constexpr IID IID_ISVMaskEditorDialogClass =
 { 0xbb21d9ef, 0xe6f9, 0x11d2, { 0xa7, 0x7b, 0x0, 0x10, 0x6f, 0x0, 0xc, 0x7d } };
 
 BEGIN_INTERFACE_MAP(SVMaskEditorDialogClass, CDialog)

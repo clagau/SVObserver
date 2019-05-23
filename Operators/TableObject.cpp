@@ -9,11 +9,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableObject.h"
-#include "Tools/SVTool.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
 #pragma endregion Includes
 
 namespace SvOp

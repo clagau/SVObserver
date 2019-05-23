@@ -443,7 +443,7 @@ HRESULT SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD M
 void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;
+	std::vector<_variant_t> list;
 
 	// Get the Data Values (Member Info, Values)
 	_variant_t Value;

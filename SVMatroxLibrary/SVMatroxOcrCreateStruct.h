@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxSimpleEnums.h"
+#pragma endregion Includes
 
 
 /**

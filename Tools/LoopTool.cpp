@@ -8,10 +8,14 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "LoopTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "Operators/SVConditional.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "Operators/SVConditional.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
+
+//This comment is to avoid that the SVConditionalClass include is marked as not required due to forward declaration from a base class
 
 namespace SvTo
 {
@@ -174,8 +178,9 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 
 	UpdateStateAndCounter(rRunStatus);
 
+	SvOi::IInspectionProcess* pInspection{GetInspectionInterface()};
 
-	if (GetInspectionInterface()->getEnableAuxiliaryExtent())
+	if (pInspection->getEnableAuxiliaryExtent())
 	{
 		UpdateAuxiliaryExtents();
 	}

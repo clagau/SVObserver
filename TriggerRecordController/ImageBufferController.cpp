@@ -9,14 +9,14 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ImageBufferController.h"
+#include "IImage.h"
+#include "Image.h"
+#include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "IImage.h"
-#include "Image.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #pragma endregion Includes
 

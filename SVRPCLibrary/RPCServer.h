@@ -19,9 +19,14 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
 
-#include "SvHttpLibrary/HttpServerConnection.h"
 #include "RequestHandlerBase.h"
 #include "SVProtoBuf/Envelope.h"
+#include "SvHttpLibrary/HttpServerSettings.h"
+
+namespace SvHttp
+{
+class HttpServerConnection;
+}
 
 namespace SvRpc
 {

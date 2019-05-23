@@ -15,11 +15,11 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/LinearEdgeEnums.h"
-#include "InspectionEngine/SVImageClass.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "Operators/SVLinearEdgeBProcessingClass.h"
-#include "Tools/SVTool.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 namespace SvAo

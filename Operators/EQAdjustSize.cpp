@@ -53,7 +53,7 @@ void EQAdjustSize::Init()
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = m_SubType;
 	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults
-	static const double DefaultValue = 100.0;
+	constexpr double DefaultValue = 100.0;
 	m_result.SetDefaultValue( DefaultValue );
 	m_result.setSaveValueFlag(false);
 	// Set default inputs and outputs

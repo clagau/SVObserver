@@ -50,7 +50,7 @@ struct MatroxBufferChildDataStruct
 @SVObjectOperations This data class has no operations.
 
 */
-class SVMatroxBufferCreateChildStruct  
+struct SVMatroxBufferCreateChildStruct  
 {
 public:
 	SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& rBuf);

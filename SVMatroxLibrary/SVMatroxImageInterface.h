@@ -16,11 +16,11 @@
 #include "SVMatroxSimpleEnums.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxPolarTransformStruct.h"
-#include "SVMatroxImageRotateStruct.h"
 #pragma endregion Includes
 
 class SVCommandDataHolder;
+struct SVMatroxImageRotateStruct;
+struct SVMatroxPolarTransformStruct;
 
 /**
 @SVObjectName Matrox Image Interface

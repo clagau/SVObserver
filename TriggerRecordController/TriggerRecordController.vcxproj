@@ -85,7 +85,6 @@
     <ClInclude Include="DataControllerLocal.h" />
     <ClInclude Include="DataControllerReader.h" />
     <ClInclude Include="DataControllerWriter.h" />
-    <ClInclude Include="SharedMemoryStructs.h" />
     <ClInclude Include="IImage.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageBufferController.h" />
@@ -95,9 +94,10 @@
     <ClInclude Include="ITriggerRecordControllerRW.h" />
     <ClInclude Include="ITriggerRecordR.h" />
     <ClInclude Include="ITriggerRecordRW.h" />
-    <ClInclude Include="ResetLocker.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="LocalConst.h" />
+    <ClInclude Include="ResetLocker.h" />
+    <ClInclude Include="SharedMemoryStructs.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="TriggerRecord.h" />
     <ClInclude Include="TriggerRecordController.h" />
     <ClInclude Include="TriggerRecordData.h" />

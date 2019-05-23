@@ -14,13 +14,12 @@
 //Moved to precompiled header: #include <colordlg.h>
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "SVMaskShapeEditorDlg.h"
-#include "SVMFCControls\SVMaskEditor.h"
-#include "ObjectInterfaces\NameValueVector.h"
 #include "SVObserver.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "TextDefinesSvO.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/NameValueVector.h"
+#include "SVMFCControls/SVMaskEditor.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -240,7 +239,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 {
 	if( nullptr == m_pMaskEditorCtl )
 	{
-		m_pMaskEditorCtl = new SvMc::CSVMaskEditor;
+		m_pMaskEditorCtl = new SvMc::SVMaskEditor;
 
 		CRect r(0,0,1,1);
 		BOOL bResult = m_pMaskEditorCtl->Create(

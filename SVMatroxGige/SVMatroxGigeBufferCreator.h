@@ -11,8 +11,13 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxGigeBufferStruct.h"
+#include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #pragma endregion Includes
+
+class SVMatroxSystem;
+struct SVMatroxGigeBufferStruct;
+struct SVMatroxBufferCreateStruct;
+
 
 template <SVMatroxBufferAttributeEnum Attribute>
 class SVMatroxGigeBufferCreator

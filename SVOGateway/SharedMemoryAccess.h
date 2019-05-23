@@ -8,16 +8,20 @@
 
 #pragma once
 
-#include <boost/asio/io_service.hpp>
-#include <boost/thread.hpp>
+#pragma region Includes
+//Moved to precompiled header: #include <boost/asio/io_service.hpp>
+//Moved to precompiled header: #include <boost/thread.hpp>
 
 #include "SharedMemoryAccessInterface.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/Task.h"
-#include "SVSharedMemoryLibrary/ShareControlSetting.h" 
+#pragma endregion Includes
 
-
+namespace SvSml
+{
+struct ShareControlSettings;
+}
 
 namespace SvOgw
 {

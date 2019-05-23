@@ -14,10 +14,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVUtilityLibrary/SVGUID.h"
-
 #include "SVExtentLineStruct.h"
-#include "SVExtentFigureStruct.h"
 #pragma endregion Includes
+
+struct SVExtentFigureStruct;
 
 struct SVExtentMultiLineStruct  
 {

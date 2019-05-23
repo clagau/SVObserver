@@ -12,14 +12,16 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVStatTool.h"
-#include "SVObjectLibrary/SVClsids.h"
-#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
+#include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVResultDouble.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTo

@@ -12,11 +12,14 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "Definitions/SVExtentEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "InspectionEngine/SVExtentPropertiesInfoStruct.h"
-#include "ObjectInterfaces/IValueObject.h"
+#include "InspectionEngine/SVExtentPropertyInfoStruct.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+class IValueObject;
+}
 
 namespace SvTo
 {

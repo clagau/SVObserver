@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVRPCLibrary/RequestHandler.h"
-#include "SVRPCLibrary/RPCClient.h"
 #pragma endregion Includes
 
 namespace SvAuth

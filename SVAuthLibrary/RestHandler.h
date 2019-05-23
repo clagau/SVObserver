@@ -8,9 +8,15 @@
 
 #pragma once
 
-#include "SVAuthLibrary/AuthManager.h"
-#include "SvHttpLibrary/HttpRequest.h"
-#include "SvHttpLibrary/HttpResponse.h"
+#pragma region Includes
+#include "AuthManager.h"
+#pragma endregion Includes
+
+namespace SvHttp
+{
+class HttpRequest;
+class HttpResponse;
+}
 
 namespace SvAuth
 {

@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/SVGuidList.h"
 #include "SVObjectScriptEnums.h"
 #include "Definitions/StringTypeDef.h"
@@ -44,7 +43,7 @@ public:
 	/// \returns HRESULT
 	static HRESULT OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID);
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
-	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType);
+	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(const GUID& objectID, const SVGuidList& list);
 	static HRESULT SetInputs(const GUID& objectID, const SvDef::StringPairVector& rInputPairVector);
 

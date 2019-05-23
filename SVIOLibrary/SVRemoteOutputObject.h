@@ -14,8 +14,12 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOutputObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
+
+namespace  SvOi
+{
+class IObjectWriter;
+}
 
 class SVRemoteOutputObject : public SVOutputObject
 {
@@ -46,7 +50,7 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	bool GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const;
+	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
 
 	// Set Functions
 	HRESULT SetInputObject( SVObjectClass* p_pObject );

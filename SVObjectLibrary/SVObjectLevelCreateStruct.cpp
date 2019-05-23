@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectLevelCreateStruct.h"
+#include "SVObjectClass.h"
 #pragma endregion Includes
 
 SVObjectLevelCreateStruct::SVObjectLevelCreateStruct()

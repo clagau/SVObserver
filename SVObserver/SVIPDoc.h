@@ -33,7 +33,7 @@ class SVResultListClass;
 class SVToolSetClass;
 class SVInspectionProcess;
 class CSVRegressionRunDlg;
-class CSVRegressionFileSelectSheet;
+class SVRegressionFileSelectSheet;
 class SVImageViewClass;
 class ToolSetView;
 class ResultTabbedView;

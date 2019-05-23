@@ -16,7 +16,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 

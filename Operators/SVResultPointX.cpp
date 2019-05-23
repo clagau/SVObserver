@@ -14,8 +14,9 @@
 #include "SVResultPointX.h"
 #include "SVRange.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVValueObjectLibrary\SVPointValueObjectClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOp

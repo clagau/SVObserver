@@ -14,72 +14,68 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <algorithm>
 #include "SVIPDoc.h"
-
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "ObjectInterfaces/IObjectWriter.h"
-#include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVGUID.h"
-
-#include "Operators/SVConditional.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "ExtrasEngine.h"
+#include "ResultTabbedView.h"
+#include "SVCommandInspectionCollectImageData.h"
+#include "SVConfigurationObject.h"
+#include "SVDataDefinitionSheet.h"
+#include "SVDirectX.h"
+#include "SVGuiExtentUpdater.h"
 #include "SVGlobal.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVIODoc.h"
 #include "SVIPChildFrm.h"
+#include "SVInspectionProcess.h"
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectScriptParser.h"
 #include "SVObserver.h"
+#include "SVPPQObject.h"
+#include "SVRegressionRunDlg.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
-#include "ToolSetView.h"
-#include "ResultTabbedView.h"
-#include "Tools/SVTool.h"
-#include "SVOGui\SVSaveToolSetImageDialog.h"
-#include "SVOGui\SVShowDependentsDialog.h"
 #include "SVUtilities.h"
-#include "SVInspectionProcess.h"
-#include "SVPPQObject.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
-#include "SVConfigurationObject.h"
-#include "SVIODoc.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVMessage/SVMessage.h"
-#include "Definitions/SVUserMessage.h"
-#include "ObjectInterfaces/IDependencyManager.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVOGui/SVAdjustToolSizePositionDlg.h"
-#include "SVDataDefinitionSheet.h"
-#include "SVRegressionRunDlg.h"
-#include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
-#include "SVDirectX.h"
-#include "SVCommandInspectionCollectImageData.h"
-#include "SVGuiExtentUpdater.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "Definitions/GlobalConst.h"
 #include "ToolClipboard.h"
-#include "ExtrasEngine.h"
-#include "TextDefinesSvO.h"
-#include "SVOGui/ResultTableSelectionDlg.h"
-#include "InspectionCommands/CommandExternalHelper.h"
-#include "SVOGui/TextDefinesSvOg.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVMFCControls/SVFileDialog.h"
-#include "SvOGui/SVFormulaEditorSheet.h"
+#include "ToolSetView.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
-#include "Tools/SVColorTool.h"
-#include "SVProtoBuf/InspectionCommands.h"
-#include "Tools/LoopTool.h"
+#include "Definitions/StringTypeDef.h"
+#include "Definitions/SVUserMessage.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "ObjectInterfaces/IDependencyManager.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "Operators/SVConditional.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
+#include "SVMessage/SVMessage.h"
+#include "SVMFCControls/SVFileDialog.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOGui/ResultTableSelectionDlg.h"
+#include "SVOGui/SVAdjustToolSizePositionDlg.h"
+#include "SvOGui/SVFormulaEditorSheet.h"
+#include "SVOGui/SVSaveToolSetImageDialog.h"
+#include "SVOGui/SVShowDependentsDialog.h"
+#include "SVOGui/TextDefinesSvOg.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVProtoBuf/InspectionCommands.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
+#include "Tools/LoopTool.h"
+#include "Tools/SVColorTool.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -99,7 +95,7 @@ union SVViewUnion
 	ResultTabbedView *pResultView;
 };
 
-static const int MaxImageViews = 8;
+constexpr int MaxImageViews = 8;
 
 IMPLEMENT_DYNCREATE(SVIPDoc, CDocument)
 
@@ -1494,14 +1490,14 @@ void SVIPDoc::OnUpdateRemoveParameterToMonitorList(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnEditTool()
 {
-	static const int ImageTab = 0;
+	constexpr int ImageTab = 0;
 	return OpenToolAdjustmentDialog(ImageTab);
 }
 
 void SVIPDoc::OnEditToolTab1()
 {
 
-	static const int SizeTab = 1;
+	constexpr int SizeTab = 1;
 	return OpenToolAdjustmentDialog(SizeTab);
 }
 

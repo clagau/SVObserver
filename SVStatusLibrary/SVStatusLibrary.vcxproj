@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="CommandLineArgs.cpp" />
     <ClCompile Include="GlobalPath.cpp" />
+    <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="MessageData.cpp" />
     <ClCompile Include="MessageTextGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -162,7 +163,6 @@
     </ClCompile>
     <ClCompile Include="SVEventLogClass.cpp" />
     <ClCompile Include="SVEventRecordStruct.cpp" />
-    <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="SVOIntelRAIDStatusClass.cpp" />
     <ClCompile Include="SVRegistry.cpp" />
     <ClCompile Include="SVRunStatus.cpp" />
@@ -172,8 +172,9 @@
     <ClInclude Include="CommandLineArgs.h" />
     <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="GlobalPath.h" />
-    <ClInclude Include="MessageManager.h" />
+    <ClInclude Include="MessageContainer.h" />
     <ClInclude Include="MessageData.h" />
+    <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
@@ -182,7 +183,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVEventLogClass.h" />
     <ClInclude Include="SVEventRecordStruct.h" />
-    <ClInclude Include="MessageContainer.h" />
     <ClInclude Include="SVOIntelRAIDStatusClass.h" />
     <ClInclude Include="SVRegistry.h" />
     <ClInclude Include="SVRunStatus.h" />

@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "SVMatroxPolarTransformStruct.h"
+#include "SVMatroxBuffer.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "SVMatroxImageRotateStruct.h"
+#include "SVMatroxBuffer.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

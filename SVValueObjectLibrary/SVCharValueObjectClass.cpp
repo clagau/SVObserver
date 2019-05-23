@@ -104,7 +104,7 @@ void SVCharValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;
+	std::vector<_variant_t> list;
 
 	// for all elements in the array
 	_variant_t Value;

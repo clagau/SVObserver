@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVGigeCameraFileLibrary/SVGigeCameraProxy.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
 #pragma endregion Includes
 
 namespace SvTh
@@ -24,6 +23,9 @@ namespace SvIe
 {
 class SVMatroxGigeAcquisitionClass;
 }
+
+class SVCameraFormatsDeviceParam;
+class SVLut;
 
 class SVMatroxGigeCameraProxy : public SVGigeCameraProxy
 {

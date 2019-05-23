@@ -47,8 +47,6 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary\SVLightReference.h"
-#include "SVIODoc.h"
-#include "TriggerHandling/SVTriggerClass.h"
 #include "SVIPDoc.h"
 #include "Operators/SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
@@ -70,9 +68,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const LPCTSTR ToolGroupCommentLabel = _T("Tool Comment:");
+constexpr char* ToolGroupCommentLabel = _T("Tool Comment:");
 
-static const int LEFT_MARGIN = 50;
+constexpr int LEFT_MARGIN = 50;
 
 static const GUID* pGuidNonPrintArray[] = 
 {

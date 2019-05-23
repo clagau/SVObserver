@@ -11,6 +11,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comutil.h>
 #include "SaxParser.h"
+#include "ISaxElementHandler.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"

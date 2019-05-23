@@ -13,10 +13,9 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVInt64ValueObjectClass.h"
-#include "SVObjectLibrary\SVClsids.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "Definitions/TextDefineSVDef.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -76,7 +75,7 @@ void SVInt64ValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;
+	std::vector<_variant_t> list;
 	_variant_t Value;
 	Value.ChangeType(VT_I8);
 

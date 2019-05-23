@@ -9,11 +9,12 @@
 
 #pragma region Includes
 #include "ToolObject.h"
-#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+struct SVMatroxBufferCreateStruct;
 #pragma endregion Declarations
+
 namespace SvTrcT
 {
 class CopyTool : public ToolObject

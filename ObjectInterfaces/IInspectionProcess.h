@@ -8,10 +8,14 @@
 
 #pragma region Includes
 #include "ICommand.h"
-#include "IObjectClass.h"
-#include "ITaskObject.h"
 #include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+class IObjectClass;
+class ITaskObject;
+}
 
 namespace SvOi
 {

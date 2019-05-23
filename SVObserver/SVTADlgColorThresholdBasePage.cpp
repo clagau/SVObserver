@@ -12,8 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorThresholdBasePage.h"
+#include "SVROIFigureEditor.h"
 #include "SVTADlgColorThresholdSheet.h"
 #pragma endregion Includes
+
+//This comment is to avoid that SVROIFigureEditor include is marked as not required
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdBasePage, CPropertyPage)
 

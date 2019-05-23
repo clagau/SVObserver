@@ -13,15 +13,13 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits>
 #include "SVDisplayObject.h"
-
-#include "SVLibrary/SVWinUtility.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Definitions/GlobalConst.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
+#include "SVLibrary/SVWinUtility.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations

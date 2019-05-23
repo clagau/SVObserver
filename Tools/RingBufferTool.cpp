@@ -8,14 +8,15 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "RingBufferTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -14,8 +14,9 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
-#include "SVGigeFeature.h"
 #pragma endregion Includes
+
+class SVGigeFeature;
 
 struct SVGigeReadIPAddress
 {

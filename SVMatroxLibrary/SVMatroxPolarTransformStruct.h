@@ -13,8 +13,9 @@
 
 #pragma region Includes
 #include "SVMatroxSimpleEnums.h"
-#include "SVMatroxBuffer.h"
 #pragma endregion Includes
+
+class SVMatroxBuffer;
 
 /**
 @SVObjectName Matrox Polar Transform Struct
@@ -24,7 +25,7 @@
 @SVObjectOperations This data class has no operations.
 
 */
-class SVMatroxPolarTransformStruct  
+struct SVMatroxPolarTransformStruct  
 {
 public:
 	SVMatroxPolarTransformStruct(SVMatroxBuffer& p_rSource);

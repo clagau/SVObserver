@@ -115,7 +115,7 @@ const IID BASED_CODE IID_DSVPictureDisplayEvents =
 		{ 0x292B012C, 0xB2C2, 0x4C43, { 0x8E, 0xE0, 0x7F, 0xA7, 0xC3, 0xDA, 0xBE, 0x73 } };
 
 // Control type information
-static const DWORD BASED_CODE _dwSVPictureDisplayOleMisc =
+constexpr DWORD BASED_CODE _dwSVPictureDisplayOleMisc =
 	OLEMISC_ACTIVATEWHENVISIBLE |
 	OLEMISC_SETCLIENTSITEFIRST |
 	OLEMISC_INSIDEOUT |

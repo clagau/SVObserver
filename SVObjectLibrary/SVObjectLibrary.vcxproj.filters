@@ -15,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DependencyManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -22,6 +25,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVClassRegisterListClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVClsids.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVInObjectInfoStruct.cpp">
@@ -63,17 +72,20 @@
     <ClCompile Include="SVOutputInfoListClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVClsids.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DependencyManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DependencyManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DottedNameLookup.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="JoinType.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectNameLookup.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -81,6 +93,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVClassRegisterListClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVClsids.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVGetObjectListVisitor.h">
@@ -99,6 +117,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectInfoArrayClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectInfoStruct.h">
@@ -137,28 +158,7 @@
     <ClInclude Include="SVToolsetScriptTags.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectInfoArrayClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVClsids.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TextDefinesSvOl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DependencyManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="JoinType.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectNameLookup.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DottedNameLookup.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

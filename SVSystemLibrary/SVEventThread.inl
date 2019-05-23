@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageData.h"
 #pragma endregion Includes
 
 #pragma region Constructor

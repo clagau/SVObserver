@@ -12,9 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectClass.h"
 #include "SVObjectInfoStruct.h"
 #pragma endregion Includes
+
+class SVObjectClass;
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVObjectLevelCreateStruct

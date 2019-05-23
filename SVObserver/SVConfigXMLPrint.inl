@@ -21,13 +21,18 @@
 #include "SVObserver.h"
 #include "SVToolGrouping.h"
 #include "SVToolSet.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "Operators/SVShapeMaskHelperClass.h"
 #include "Operators/SVUserMaskOperatorClass.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
+#include "SVObjectLibrary/SVObjectClass.h"
+#include "Tools/SVArchiveTool.h"
 #include "Tools/SVStatTool.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 std::pair<const GUID **, size_t> NonPrintGuids();

@@ -12,8 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUtilitiesCustomizeDialog.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
+#include "SVUtilities.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"

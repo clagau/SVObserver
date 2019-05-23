@@ -37,7 +37,7 @@ enum SVIMCOMMANDSRV_VERSION
 @SVObjectOperations This object presents operations to perform the following functions: Get Application State, Load Configuration, Save Configuration, Get Parameter Data, Get Image Data, Set Parameter Data, Set Image Data, Stream Parameter Data, Collect Condition Image and Parameter Data, and Create and Modify OCR Font Files.
 
 */
-class ATL_NO_VTABLE CSVCommand : 
+class __declspec(novtable) CSVCommand :
 	public CComObjectRootEx<CComSingleThreadModel>,
 	public CComCoClass<CSVCommand, &CLSID_SVCommand>,
 	public IDispatchImpl<ISVCommand, &IID_ISVCommand, &LIBID_SVObserver>,

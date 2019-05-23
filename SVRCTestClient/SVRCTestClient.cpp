@@ -3,20 +3,22 @@
 
 #include "stdafx.h"
 
-#include "SVHttpLibrary/WebsocketClient.h"
-#include "SVProtobuf/SVRC.h"
-#include "SVRPCLibrary/RPCClient.h"
-#include "SVRPCLibrary/SimpleClient.h"
-
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#include "WebsocketLibrary/SVRCClientService.h"
-#include "WebsocketLibrary\RunRequest.inl"
+
+#include "SVHttpLibrary/WebsocketClient.h"
+#include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVProtobuf/SVRC.h"
+#include "SVRPCLibrary/RPCClient.h"
+#include "SVRPCLibrary/SimpleClient.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "WebsocketLibrary/SVRCClientService.h"
+#include "WebsocketLibrary/SVRCClientServiceSettings.h"
+#include "WebsocketLibrary\RunRequest.inl"
 
 
 struct NotificationHandler

@@ -21,6 +21,9 @@
 #include "ICoder.h"
 #include "IPassword.h"
 
+//This comment is to avoid that the ICoder CODER_INTERFACE include is marked as not required due to a macro
+//This comment is to avoid that the IPassword PASSWORD_INTERFACE include is marked as not required due to a macro
+
 class ArchiveUpdateCallback : public IArchiveUpdateCallback, public ICryptoGetTextPassword2, public ICompressProgressInfo
 {
 public:

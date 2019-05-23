@@ -25,21 +25,21 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvLib
 {
-	static const int Button1 = 0;
-	static const int Button2 = 1;
-	static const int Button3 = 2;
+	constexpr int Button1 = 0;
+	constexpr int Button2 = 1;
+	constexpr int Button3 = 2;
 
-	static const COLORREF WhiteColor = RGB( 255, 255, 255);
+	constexpr COLORREF WhiteColor = RGB( 255, 255, 255);
 
-	static const TCHAR ButtonOk[] = _T("OK");
-	static const TCHAR ButtonCancel[] = _T("Cancel");
-	static const TCHAR ButtonYes[] = _T("Yes");
-	static const TCHAR ButtonNo[] = _T("No");
-	static const TCHAR ButtonAbort[] = _T("Abort");
-	static const TCHAR ButtonRetry[] = _T("Retry");
-	static const TCHAR ButtonIgnore[] = _T("Ignore");
-	static const TCHAR ButtonTry[] = _T("Try");
-	static const TCHAR ButtonContinue[] = _T("Continue");
+	constexpr char ButtonOk[] = _T("OK");
+	constexpr char ButtonCancel[] = _T("Cancel");
+	constexpr char ButtonYes[] = _T("Yes");
+	constexpr char ButtonNo[] = _T("No");
+	constexpr char ButtonAbort[] = _T("Abort");
+	constexpr char ButtonRetry[] = _T("Retry");
+	constexpr char ButtonIgnore[] = _T("Ignore");
+	constexpr char ButtonTry[] = _T("Try");
+	constexpr char ButtonContinue[] = _T("Continue");
 	#pragma endregion Declarations
 
 	IMPLEMENT_DYNAMIC(DisplayMessageBox, CDialog)

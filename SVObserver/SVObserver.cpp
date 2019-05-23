@@ -14,114 +14,102 @@
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <google\protobuf\stubs\common.h>
 #include "SVObserver.h"
+#include "SVObserver_i.h"
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVLibrary\SVPackedFile.h"
-#include "CameraLibrary\SVDeviceParam.h"
-#include "CameraLibrary\SVDeviceParams.h"
-#include "CameraLibrary\SVLongValueDeviceParam.h"
-#include "SVLibrary\DisplayMessageBox.h"
-#include "SVLibrary\SVOINIClass.h"
-#include "SVLibrary\SVOINILoader.h"
-#include "SVTimerLibrary\SVClock.h"
+#include "ExtrasEngine.h"
+#include "RootObject.h"
+#include "SoftwareTriggerDlg.h"
+#include "SVAboutDialogClass.h"
+#include "SVArchiveWritingDlg.h"
+#include "SVOConfigAssistantDlg.h"
+#include "SVConfigurationObject.h"
+#include "SVConfigurationPrint.h"
+#include "SVDirectX.h"
+#include "SVDiscreteInputsView.h"
+#include "SVGigeCameraManagerDlg.h"
+#include "SVGlobal.h"
+#include "SVImageViewScroll.h"
+#include "SVImportedInspectionInfo.h"
+#include "SVInspectionProcess.h"
+#include "SVIOBoardCapabilities.h"
+#include "SVIOController.h"
+#include "SVIODoc.h"
+#include "SVIPChildFrm.h"
+#include "SVIPDoc.h"
+#include "SVIPDocInfoImporter.h"
+#include "SVMainFrm.h"
+#include "SVMessageWindow.h"
+#include "SVMonitorList.h"
+#include "SVMultiDocTemplate.h"
+#include "SVPPQObject.h"
+#include "SVRCCommand.h"
+#include "SVRCWebsocketServer.h"
+#include "SVStartWindow.h"
+#include "SVThreadInfoDlg.h"
+#include "SVToolSet.h"
+#include "SVVisionProcessorHelper.h"
+#include "SVUtilities.h"
+#include "TextDefinesSvO.h"
+#include "WebSocketSettingsLoader.h"
+#include "CameraLibrary/SVDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary\SVGUID.h"
-#include "SVUtilityLibrary\ZipHelper.h"
-#include "SVMessage\SVMessage.h"
-#include "SVObserver_i.h"
-#include "SVCommand.h"
-#include "SVAboutDialogClass.h"
-#include "SVConfigurationPrint.h"
+#include "Definitions/TextDefineSVDef.h"
+#include "Definitions/SVUserMessage.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVImageViewScroll.h"
-#include "SVIPChildFrm.h"
-#include "SVMainFrm.h"
-#include "SVDiscreteInputsView.h"
-#include "SVMultiDocTemplate.h"
-#include "SVStartWindow.h"
-#include "SVGlobal.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilities.h"
-#include "SVIPDoc.h"
-#include "SVIODoc.h"
-#include "SVMessageWindow.h"
-#include "SVToolSet.h"
-#include "ExtrasEngine.h"
-
-#include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
-
-
-#include "SVXMLLibrary\LoadConfiguration.h"
-#include "InspectionEngine/SVDigitizerProcessingClass.h"
-
-#include "SVOConfigAssistantDlg.h"
-
-#include "SVXMLLibrary\SVNavigateTree.h"
-
-#include "SVConfigurationObject.h"
-#include "Definitions/SVUserMessage.h"
-
-#include "SVGigeCameraManagerDlg.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVOLibrary/SVMemoryManager.h"
-#include "Tools/SVArchiveTool.h"
-#include "SVArchiveWritingDlg.h"
-#include "SVLibrary\SVWinUtility.h"
-#include "SoftwareTriggerDlg.h"
-
-#include "SVIOController.h"
-
-#include "SVDirectX.h"
-#include "TriggerInformation/SVHardwareManifest.h"
-#include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "InspectionEngine/SVDigitizerProcessingClass.h"
-#include "SVSystemLibrary\SVVersionInfo.h"
-#include "SVMatroxLibrary/SVOLicenseManager.h"
-#include "SVImportedInspectionInfo.h"
-#include "SVIPDocInfoImporter.h"
-#include "SVVisionProcessorHelper.h"
-#include "SVIOBoardCapabilities.h"
-#include "SVInspectionProcess.h"
-#include "SVPPQObject.h"
-#include "RootObject.h"
-#include "SVMonitorList.h"
-#include "SVThreadInfoDlg.h"
-#include "SVSharedMemoryLibrary/SharedMemWriter.h"
-#include "SVUtilityLibrary\LoadDll.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "Definitions/TextDefineSVDef.h"
-#include "TextDefinesSvO.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVStatusLibrary\GlobalPath.h"
-#include "SVXMLLibrary\ObsoleteItemChecker.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVLibrary/SVPackedFile.h"
+#include "SVLibrary/DisplayMessageBox.h"
+#include "SVLibrary/SVOINIClass.h"
+#include "SVLibrary/SVOINILoader.h"
+#include "SVLibrary/SVWinUtility.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
-#include "SVSharedMemoryLibrary\ShareEvents.h"
-#include "InspectionCommands\CommandExternalHelper.h"
-#include "SVRCWebsocketServer.h"
-#include "SVRCCommand.h"
-#include "SVLogLibrary\Logging.h"
-#include "WebSocketSettingsLoader.h"
+#include "SVMatroxLibrary/SVOLicenseManager.h"
+#include "SVMessage/SVMessage.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOLibrary/SVMemoryManager.h"
+#include "SVSharedMemoryLibrary/ShareEvents.h"
+#include "SVSharedMemoryLibrary/SharedMemWriter.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageContainer.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVSystemLibrary/SVVersionInfo.h"
+#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/LoadDll.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/ZipHelper.h"
+#include "SVXMLLibrary/LoadConfiguration.h"
+#include "SVXMLLibrary/ObsoleteItemChecker.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
+#include "TriggerInformation/SVHardwareManifest.h"
+#include "TriggerInformation/SVTriggerProcessingClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #define ID_TRIGGER_SETTINGS 21017
 
-static const int UseLargerArchiveMemoryPool = 16000;
-static const int AsyncDefault4GB = 50;
-static const int AsyncDefault16GB = 200;
-static const int GoOfflineDefault4GB = 300;
-static const int GoOfflineDefault16GB = 2000;
+constexpr int UseLargerArchiveMemoryPool = 16000;
+constexpr int AsyncDefault4GB = 50;
+constexpr int AsyncDefault16GB = 200;
+constexpr int GoOfflineDefault4GB = 300;
+constexpr int GoOfflineDefault16GB = 2000;
 
-static const double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of the total Non-Page size
+constexpr double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of the total Non-Page size
 
 #pragma endregion Declarations
 
@@ -161,7 +149,7 @@ public:
 // Sie können ihn ändern, wenn Sie einen bestimmten Bezeichnernamen bevorzugen.
 // used in .odl
 // {F4C4D491-D660-11D0-9B52-00805F717DCE}
-static const CLSID clsid =
+constexpr CLSID clsid =
 {0xf4c4d491, 0xd660, 0x11d0, { 0x9b, 0x52, 0x0, 0x80, 0x5f, 0x71, 0x7d, 0xce }};
 
 IMPLEMENT_SERIAL(SVObserverApp, CWinApp, 0);

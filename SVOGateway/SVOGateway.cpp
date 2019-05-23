@@ -13,28 +13,27 @@
 
 #include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
+//Moved to precompiled header: #include <boost/log/trivial.hpp>
+//Moved to precompiled header: #include <conio.h>
 
 #include <mil.h>
-#include <conio.h>
 
-#include "SVLogLibrary/Logging.h"
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
+#include "SVOGatewayService.h"
 #include "SVAuthLibrary/AuthManager.h"
 #include "SVAuthLibrary/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
+#include "SVLogLibrary/Logging.h"
+#include "SVMessage/SVMessage.h"
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
-#include "SVOGatewayService.h"
-#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVStatusLibrary/GlobalPath.h"
 #include "TriggerRecordController/ITriggerRecordControllerR.h"
 
-static const std::string cLocalHost(_T("127.0.0.1"));
+constexpr char* cLocalHost(_T("127.0.0.1"));
 
 bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 {

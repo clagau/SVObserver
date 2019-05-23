@@ -12,20 +12,21 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgStatisticsPage.h"
-#include "SVToolSet.h"
-#include "Tools/SVStatTool.h"
-#include "Operators/SVResult.h"
-#include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
+#include "SVIPDoc.h"
 #include "SVSetupDialogManager.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVToolSet.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
+#include "Operators/SVResult.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVUtilityLibrary\SVGUID.h"
+#include "Tools/SVStatTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

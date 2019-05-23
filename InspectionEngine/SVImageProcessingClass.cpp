@@ -14,6 +14,8 @@
 #include "SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxBarCodeInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"

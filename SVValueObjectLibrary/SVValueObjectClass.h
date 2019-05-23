@@ -16,14 +16,11 @@
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <memory>
 #include "ObjectInterfaces/IValueObject.h"
-#include "Definitions/TextDefineSVDef.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 namespace SvVol

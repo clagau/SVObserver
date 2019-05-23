@@ -11,8 +11,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectClass.h"
 #pragma endregion Includes
+
+class SVObjectClass;
 
 // base class to parser implementations
 class SVObjectScriptParserBase

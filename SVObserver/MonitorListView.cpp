@@ -35,14 +35,14 @@ enum MonitorListViewUpdateHints
 	RemoveNodeHint = 3
 };
 
-static const TCHAR* const cPPQ = _T("PPQ");
-static const TCHAR* const cItem = _T("Item");
-static const TCHAR* const cIsActivated = _T("Is Activated");
-static const TCHAR* const cProductITemList = _T("ProductItemList");
-static const TCHAR* const cRejectConditionList = _T("RejectConditionList");
-static const TCHAR* const cFailStatusList = _T("FailStatusList");
-static const TCHAR* const cValues = _T("Values");
-static const TCHAR* const cImages = _T("Images");
+constexpr char* cPPQ = _T("PPQ");
+constexpr char* cItem = _T("Item");
+constexpr char* cIsActivated = _T("Is Activated");
+constexpr char* cProductITemList = _T("ProductItemList");
+constexpr char* cRejectConditionList = _T("RejectConditionList");
+constexpr char* cFailStatusList = _T("FailStatusList");
+constexpr char* cValues = _T("Values");
+constexpr char* cImages = _T("Images");
 
 static std::string GetItemName(CListCtrl& rCtrl, int item)
 {

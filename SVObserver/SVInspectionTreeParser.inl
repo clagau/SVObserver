@@ -85,7 +85,7 @@ bool SVInspectionTreeParser< SVTreeType >::GetItemValue(const std::string& tag, 
 }
 
 template< typename SVTreeType >
-bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, SVVariantList& rValueList)
+bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, std::vector<_variant_t>& rValueList)
 {
 	bool bRetVal = false;
 
@@ -374,7 +374,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 	}
 	if (S_OK == hr)
 	{
-		SVVariantList values;
+		std::vector<_variant_t> values;
 		bool bVal = GetValues(hItem, scArrayElementsTag, values);
 		if (bVal)
 		{
@@ -398,7 +398,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 
 		while( S_OK == hr && m_rTree.isValidBranch( hValue ) )
 		{
-			SVVariantList values;
+			std::vector<_variant_t> values;
 
 			std::string DataName;
 
@@ -464,7 +464,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 
 		while( S_OK == hr && m_rTree.isValidLeaf(hItem, hValue) )
 		{
-			SVVariantList ValueList;
+			std::vector<_variant_t> ValueList;
 
 			std::string DataName;
 
@@ -509,7 +509,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(const GUID& owne
 {
 	HRESULT hr = S_OK;
 
-	SVVariantList attributes;
+	std::vector<_variant_t> attributes;
 	bool bVal = GetValues(hItem, scAttributesSetTag, attributes);
 	if (bVal)
 	{			

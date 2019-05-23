@@ -15,31 +15,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="InspectionCommands.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="BasicStructure.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerRecordController.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="MonitorListStore.pb.cc">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="variant.pb.cc">
+    <ClCompile Include="ConverterHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Envelope.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRC.pb.cc">
+    <ClCompile Include="InspectionCommands.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ConverterHelper.cpp">
+    <ClCompile Include="MonitorListStore.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAuth.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVO-Enum.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRC.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRC-Enum.pb.cc">
@@ -51,15 +51,18 @@
     <ClCompile Include="SVRC-SVOGateway.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVAuth.pb.cc">
+    <ClCompile Include="TriggerRecordController.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVO-Enum.pb.cc">
+    <ClCompile Include="variant.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Envelope.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="InspectionCommands.proto">
@@ -68,19 +71,13 @@
     <CustomBuild Include="MonitorListStore.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="TriggerRecordController.proto">
+    <CustomBuild Include="SVAuth.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="Envelope.proto">
-      <Filter>Ressourcendateien</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Variant.proto">
+    <CustomBuild Include="SVO-Enum.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="SVRC.proto">
-      <Filter>Ressourcendateien</Filter>
-    </CustomBuild>
-    <CustomBuild Include="SVRC-SVOGateway.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="SVRC-Enum.proto">
@@ -89,48 +86,60 @@
     <CustomBuild Include="SVRC-SVObserver.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="SVAuth.proto">
+    <CustomBuild Include="SVRC-SVOGateway.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
-    <CustomBuild Include="SVO-Enum.proto">
+    <CustomBuild Include="TriggerRecordController.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Variant.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InspectionCommands.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="BasicStructure.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BasicStructure.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerRecordController.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MonitorListStore.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="variant.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Envelope.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicStructure.h">
+    <ClInclude Include="ConverterHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Envelope.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="MonitorListStore.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="TriggerRecordController.h">
+    <ClInclude Include="Envelope.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="InspectionCommands.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectionCommands.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListStore.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListStore.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Protobuf2Rapidjson.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAuth.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAuth.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVO-Enum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVO-Enum.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRC.h">
@@ -139,16 +148,7 @@
     <ClInclude Include="Svrc.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Variant.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ConverterHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAuth.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAuth.h">
+    <ClInclude Include="SVRC-Enum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRC-Enum.pb.h">
@@ -160,16 +160,16 @@
     <ClInclude Include="SVRC-SVOGateway.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Protobuf2Rapidjson.h">
+    <ClInclude Include="TriggerRecordController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVRC-Enum.h">
+    <ClInclude Include="TriggerRecordController.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVO-Enum.pb.h">
+    <ClInclude Include="Variant.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVO-Enum.h">
+    <ClInclude Include="variant.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

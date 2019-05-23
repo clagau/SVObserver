@@ -11,7 +11,6 @@
 #include "MLCpyContainer.h"
 #include "MonitorListCpy.h"
 #include "SVSharedMemorySettings.h"
-#include "SVProductFilterEnum.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVUtilityLibrary/SVGUID.h"
 

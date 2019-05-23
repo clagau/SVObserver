@@ -15,31 +15,31 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "ToolClipboard.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVXMLLibrary\SVNavigateTree.h"
 
-#include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVXMLLibrary\SVConfigurationTags.h"
-#include "SVUtilityLibrary\ZipHelper.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVObserver.h"
 #include "SVInspectionProcess.h"
-#include "SVObjectScriptParser.h"
-#include "SVToolSet.h"
-#include "Tools/SVTool.h"
-#include "InspectionEngine/SVTaskObjectList.h"
-#include "SVParserProgressDialog.h"
-#include "SVInspectionTreeParser.h"
 #include "SVIPDoc.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVInspectionTreeParser.h"
+#include "SVObjectScriptParser.h"
+#include "SVObserver.h"
+#include "SVParserProgressDialog.h"
+#include "SVToolSet.h"
 #include "TextDefinesSvO.h"
-#include "SVXMLLibrary/SaxXMLHandler.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionEngine/SVTaskObjectList.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVUtilityLibrary\ZipHelper.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -280,7 +280,7 @@ HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUI
 	return Result;
 }
 
-void ToolClipboard::writeBaseAndEnvironmentNodes(SvXml::SVObjectXMLWriter& rXmlWriter ) const
+void ToolClipboard::writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t xmlnsValue;
 	_variant_t Value;
@@ -289,34 +289,34 @@ void ToolClipboard::writeBaseAndEnvironmentNodes(SvXml::SVObjectXMLWriter& rXmlW
 
 	Value.SetString( SvO::SV_BaseNode );
 
-	rXmlWriter.StartElement(SvXml::BaseTag );
-	rXmlWriter.ElementAttribute( SvO::XmlNameSpace, xmlnsValue );
-	rXmlWriter.ElementAttribute(SvXml::TypeTag, Value );
+	rWriter.StartElement(SvXml::BaseTag );
+	rWriter.ElementAttribute( SvO::XmlNameSpace, xmlnsValue );
+	rWriter.ElementAttribute(SvXml::TypeTag, Value );
 
 	Value.Clear();
 	Value = TheSVObserverApp.getCurrentVersion();
 
-	rXmlWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
-	rXmlWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
-	rXmlWriter.EndElement();
+	rWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
+	rWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
+	rWriter.EndElement();
 }
 
-void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SvTo::SVToolClass& rTool ) const
+void ToolClipboard::writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const
 {
 	_variant_t Value;
 
 	Value.Clear();
 	Value = SVGUID( m_rInspection.GetUniqueObjectID() ).ToVARIANT();
-	rXmlWriter.WriteAttribute( m_rInspection.GetObjectName(), Value );
+	rWriter.WriteAttribute( m_rInspection.GetObjectName(), Value );
 
 	Value.Clear();
 	Value = SVGUID( rTool.GetClassID() ).ToVARIANT();
-	rXmlWriter.WriteAttribute(SvXml::ToolTypeTag, Value );
+	rWriter.WriteAttribute(SvXml::ToolTypeTag, Value );
 
 	Value.Clear();
 	std::string tmpString = rTool.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 	Value = tmpString.c_str();
-	rXmlWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
+	rWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
 
 	std::set<SVGUID> imageGuidVector;
 	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
@@ -344,7 +344,7 @@ void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SvTo:
 	for(const auto& rImageGuid : imageGuidVector)
 	{
 		std::string inputImageName {SvUl::Format(SvXml::InputImageTag, imageIndex)};
-		rXmlWriter.WriteAttribute(inputImageName.c_str(), rImageGuid.ToVARIANT());
+		rWriter.WriteAttribute(inputImageName.c_str(), rImageGuid.ToVARIANT());
 		imageIndex++;
 	}
 }
@@ -577,6 +577,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(rPostGuid));
 	if (nullptr != pDoc)
 	{
+		SVToolSetClass* pToolSet =  m_rInspection.GetToolSet();
 		//Color tool can not be inserted into a IPD without color images
 		if (SVColorToolClassGuid == rToolTypeGuid && !pDoc->isImageAvailable(SvPb::SVImageColorType))
 		{
@@ -586,7 +587,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
-		else if (SVColorToolClassGuid != rToolTypeGuid && m_rInspection.IsColorCamera() && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (nullptr == pPostTool && 0 == m_rInspection.GetToolSet()->GetSize())))
+		else if (SVColorToolClassGuid != rToolTypeGuid && m_rInspection.IsColorCamera() && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (nullptr == pToolSet && 0 == pToolSet->GetSize())))
 		{
 			Result = E_FAIL;
 			SvStl::MessageMgrStd e(SvStl::MsgType::Data);

@@ -7,11 +7,11 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "SMParameterStruct.h"
 #pragma endregion Includes
 
 namespace SvSml
 {
+struct  SMParameterStruct;
 
 //!class for holding memory for the MonitorList in SharedMemory
 class MonitorListStore

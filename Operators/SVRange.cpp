@@ -12,11 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRange.h"
+#include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvOp

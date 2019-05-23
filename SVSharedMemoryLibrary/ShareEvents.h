@@ -7,10 +7,13 @@
 ///The events are used to signal status of shared memory  
 //******************************************************************************
 #pragma once
-#include <atomic>
-#include "ShareControlSetting.h" 
+#pragma region Includes
+//Moved to precompiled header: #include <atomic>
+#pragma endregion Includes
+
 namespace SvSml
 {
+struct ShareControlSettings;
 
 //!Singleton class handles two global events 
 ///The events are used to signal status of shared memory  

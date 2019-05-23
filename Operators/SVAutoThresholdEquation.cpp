@@ -12,7 +12,8 @@
 #include "stdafx.h"
 
 #include "SVAutoThresholdEquation.h"
-#include "SVObjectLibrary\SVClsIds.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp

@@ -7,7 +7,6 @@
 #pragma once
  
 #pragma region Includes
-#include "SVEquation.h"
 #include "EQAdjustSize.h"
 #pragma endregion Includes
 

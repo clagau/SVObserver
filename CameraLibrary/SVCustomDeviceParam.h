@@ -13,11 +13,7 @@
 
 #include "Stdafx.h"
 
-#include "SVBoolValueDeviceParam.h"
-#include "SVLongValueDeviceParam.h"
-#include "SVStringValueDeviceParam.h"
-#include "SVI64ValueDeviceParam.h"
-#include "SVNullDeviceParam.h"
+#include "SVDeviceParam.h"
 
 class SVCustomDeviceParam : public SVDeviceParam
 {

@@ -86,8 +86,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SaxEncryptionHandler.cpp">
-    </ClCompile>
+    <ClCompile Include="SaxContentHandler.cpp" />
+    <ClCompile Include="SaxEncryptionHandler.cpp" />
+    <ClCompile Include="SaxErrorHandler.cpp" />
     <ClCompile Include="SaxExtractPropertiesHandler.cpp" />
     <ClCompile Include="SaxParser.cpp" />
     <ClCompile Include="SaxTreeElement.cpp" />
@@ -96,8 +97,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVMaterialData.cpp" />
-    <ClCompile Include="SaxContentHandler.cpp" />
-    <ClCompile Include="SaxErrorHandler.cpp" />
     <ClCompile Include="SVObjectXMLWriter.cpp" />
     <ClCompile Include="SVVariantConverter.cpp" />
     <ClCompile Include="SVXMLCTreeCtrl.cpp" />
@@ -109,17 +108,17 @@
     <ClInclude Include="ISaxElementHandler.h" />
     <ClInclude Include="LoadConfiguration.h" />
     <ClInclude Include="ObsoleteItemChecker.h" />
+    <ClInclude Include="SaxContentHandler.h" />
     <ClInclude Include="SaxEncryptionHandler.h" />
+    <ClInclude Include="SaxErrorHandler.h" />
     <ClInclude Include="SaxExtractPropertiesHandler.h" />
     <ClInclude Include="SaxParser.h" />
     <ClInclude Include="SaxTreeElement.h" />
+    <ClInclude Include="SaxXMLHandler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVConfigurationTags.h" />
     <ClInclude Include="SVMaterialData.h" />
     <ClInclude Include="SVNavigateTree.h" />
-    <ClInclude Include="SaxContentHandler.h" />
-    <ClInclude Include="SaxErrorHandler.h" />
-    <ClInclude Include="SaxXMLHandler.h" />
     <ClInclude Include="SVObjectXMLWriter.h" />
     <ClInclude Include="SVVariantConverter.h" />
     <ClInclude Include="SVVariantCustomTypes.h" />
@@ -133,8 +132,8 @@
   <ItemGroup>
     <None Include="LoadConfiguration.inl" />
     <None Include="ObsoleteItemChecker.inl" />
-    <None Include="SVNavigateTree.inl" />
     <None Include="SaxXMLHandler.inl" />
+    <None Include="SVNavigateTree.inl" />
     <None Include="SVXMLTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

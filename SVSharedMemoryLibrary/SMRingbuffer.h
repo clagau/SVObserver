@@ -11,13 +11,12 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include <memory>
-#include "SVStatusLibrary\SourceFileParams.h"
-#include "SMParameterStruct.h"
 #pragma endregion Includes
 
 namespace  SvSml
 {
+struct SMParameterStruct;
+
 class SMRingBuffer
 {
 public:

@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SMView.h"
 #include "SMViewDlg.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"

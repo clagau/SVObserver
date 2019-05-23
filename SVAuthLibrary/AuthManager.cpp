@@ -6,17 +6,15 @@
 /// Not much to see here.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
-#include <fstream>
-#include <sstream>
-
 #include <boost/algorithm/string/replace.hpp>
-
-#include "SVAuthLibrary/AuthManager.h"
-#include "SVAuthLibrary/UserDatabaseLoader.h"
-#include "SVAuthLibrary/Jwt.h"
+#include "AuthManager.h"
+#include "AuthManagerSettings.h"
+#include "UserDatabaseLoader.h"
+#include "Jwt.h"
 #include "SVLogLibrary/Logging.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

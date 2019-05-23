@@ -9,25 +9,26 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "SVObserver.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region local helper function
 //************************************
 // Description: This method writes an element into the XML file
-// Parameter: rXmlWriter <in> Reference to the XML writer
+// Parameter: rWriter <in> Reference to the XML writer
 // Parameter: ResourceID <in> Resource ID containing the tag for the value
 // Parameter: Value <in> Variant value to write into the file
 //************************************
-void writeElement(SvXml::SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Value )
+void writeElement(SvOi::IObjectWriter& rWriter, UINT ResourceID, variant_t Value )
 {
 	std::string Label = SvUl::LoadStdString( ResourceID );
-	rXmlWriter.WriteAttribute( Label.c_str(), Value);
+	rWriter.WriteAttribute( Label.c_str(), Value);
 }
 
 //************************************
@@ -152,7 +153,7 @@ void SvOi::exportCustom2Filter(const std::string &filePath,
 
 		Label = SvUl::LoadStdString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		XmlWriter.StartElement( Label.c_str() );
-		SVVariantList KernelArray;
+		std::vector<_variant_t> KernelArray;
 		std::vector<long>::const_iterator Iter( kernelIteratorBegin );
 		while( kernelIteratorEnd != Iter )
 		{

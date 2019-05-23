@@ -23,8 +23,8 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const double cMinWarpAngle = 10.0;
-	static const double cMaxWarpAngle = 180.0;
+	constexpr double cMinWarpAngle = 10.0;
+	constexpr double cMaxWarpAngle = 180.0;
 
 	BEGIN_MESSAGE_MAP(SVCylindricalWarpDlg, CDialog)
 		//{{AFX_MSG_MAP(SVCylindricalWarpDlg)

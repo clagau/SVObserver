@@ -15,6 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BandEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="GlobalConst.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -24,13 +30,28 @@
     <ClInclude Include="ImageOperatorEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="LinearEdgeEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="ObjectDefines.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RangeEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="StringTypeDef.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVExtentEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGigeEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVImageEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageFormatEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVIMCommand.h">
@@ -49,27 +70,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TextDefineSvDef.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="StringTypeDef.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGigeEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageFormatEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="LinearEdgeEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVExtentEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="BandEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

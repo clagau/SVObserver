@@ -8,11 +8,12 @@
 #include "stdafx.h"
 #include "SVInPlaceImageOperatorListClass.h"
 
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVUnaryImageOperatorClass.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUnaryImageOperatorClass.h"
 #pragma endregion Includes
 
 namespace SvOp

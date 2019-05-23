@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVMathEquation.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp

@@ -11,14 +11,6 @@
 
 namespace SvDef
 {
-#pragma region Constructor
-	GlobalConstantData::GlobalConstantData():
-		m_Guid( GUID_NULL )
-		,m_Selected( false )
-	{
-	}
-#pragma endregion Constructor
-
 #pragma region Public Methods
 	bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
 	{

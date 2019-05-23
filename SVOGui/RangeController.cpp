@@ -11,9 +11,11 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #include <boost/lexical_cast.hpp>
 #include "RangeController.h"
-#include "SVObjectLibrary\SVClsIds.h"
-#include "SVProtoBuf/ConverterHelper.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOg

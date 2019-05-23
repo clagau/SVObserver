@@ -13,16 +13,17 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputGroup.h"
-#include "SVRemoteControlConstants.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-
-#include "SVObjectLibrary\SVClsIds.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
-#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "TextDefinesSvO.h"
+#include "SVRemoteControlConstants.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVIOLibrary/SVRemoteOutputObject.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );
@@ -85,7 +86,7 @@ BOOL SVRemoteOutputGroup::Destroy()
 }
 
 // Parameters >> Tree ( Save )
-BOOL SVRemoteOutputGroup::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const
+BOOL SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 {
 	BOOL bOk = TRUE;
 

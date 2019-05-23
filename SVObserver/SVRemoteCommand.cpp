@@ -10,10 +10,10 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver_i.h"
+#include "SVObserver_i.h" //Note this header must be before the classes dependent on the UUIDs
 #include "SVRemoteCommand.h"
-#include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVRemoteCommandData.h"
+#include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #pragma endregion Includes
 
 SVRemoteCommand::SVRemoteCommand()

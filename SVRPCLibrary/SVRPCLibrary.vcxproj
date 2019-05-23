@@ -168,18 +168,18 @@
     <ClInclude Include="ClientStreamContext.h" />
     <ClInclude Include="EnvelopeUtil.h" />
     <ClInclude Include="ErrorUtil.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="ObserverWrapper.h" />
     <ClInclude Include="OneOfUtil.h" />
     <ClInclude Include="RequestHandler.h" />
     <ClInclude Include="RequestHandlerBase.h" />
     <ClInclude Include="Router.h" />
-    <ClInclude Include="ServerStreamContext.h" />
-    <ClInclude Include="SimpleClient.h" />
-    <ClInclude Include="Task.h" />
-    <ClInclude Include="Observer.h" />
     <ClInclude Include="RPCClient.h" />
     <ClInclude Include="RPCServer.h" />
+    <ClInclude Include="ServerStreamContext.h" />
+    <ClInclude Include="SimpleClient.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Task.h" />
     <ClInclude Include="TaskWrapper.h" />
   </ItemGroup>
   <ItemGroup>

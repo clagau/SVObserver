@@ -14,23 +14,22 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
+#include "SVInfoStructs.h"
+#include "SVInspectionProcess.h"
+#include "SVMonitorList.h"
+#include "SVPPQShiftRegister.h"
+#include "Definitions/SVPPQEnums.h"
+#include "InspectionEngine/SVVirtualCamera.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
-#include "SVObjectLibrary/SVObserverTemplate.h"
-#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "TriggerRecordController/TriggerRecordController.h"
-#include "SVInfoStructs.h"
-#include "Definitions/SVPPQEnums.h"
-#include "SVPPQShiftRegister.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "InspectionEngine/SVVirtualCamera.h"
 #include "TriggerInformation/SVCameraTriggerData.h"
-#include "SVMonitorList.h"
-#include "SVInspectionProcess.h"
+#include "TriggerRecordController/TriggerRecordController.h"
 #pragma endregion Includes
 
 
@@ -38,10 +37,14 @@
 constexpr long	StandardPpqLength	= 2;
 constexpr long g_lPPQExtraBufferSize = 50;
 constexpr long g_lPPQExtraImageBufferSize = 5;
-#pragma endregion Declarations
 
+namespace SvOi
+{
+class IObjectWriter;
+}
 class SVInputObjectList;
 class SVOutputObjectList;
+#pragma endregion Declarations
 
 constexpr long getMaxPpqLength()
 {

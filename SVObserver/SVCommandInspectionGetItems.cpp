@@ -12,13 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCommandInspectionGetItems.h"
-
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

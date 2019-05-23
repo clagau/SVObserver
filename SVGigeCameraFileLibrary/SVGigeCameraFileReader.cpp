@@ -22,6 +22,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
@@ -31,55 +32,55 @@
 #pragma endregion Includes
 
 // section headings
-static const TCHAR* const cINFO = _T("Info");
-static const TCHAR* const cSETTINGS = _T("Settings");
-static const TCHAR* const cCUSTOMSETTINGS = _T("Custom Settings");
+constexpr char* cINFO = _T("Info");
+constexpr char* cSETTINGS = _T("Settings");
+constexpr char* cCUSTOMSETTINGS = _T("Custom Settings");
 
 // common tags
-static const TCHAR* const cDESCRIPTION = _T("_Description");
-static const TCHAR* const cVISUALNAME = _T("_VisualName");
-static const TCHAR* const cORDER = _T("_Order");
-static const TCHAR* const cDETAILLEVEL = _T("_DetailLevel");
-static const TCHAR* const cOPTIONFORMAT = _T("%s_Option_%d");
-static const TCHAR* const cOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
+constexpr char* cDESCRIPTION = _T("_Description");
+constexpr char* cVISUALNAME = _T("_VisualName");
+constexpr char* cORDER = _T("_Order");
+constexpr char* cDETAILLEVEL = _T("_DetailLevel");
+constexpr char* cOPTIONFORMAT = _T("%s_Option_%d");
+constexpr char* cOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
 
 // option qualifiers
-static const TCHAR* const cMIN = _T("_min");
-static const TCHAR* const cMAX = _T("_max");
-static const TCHAR* const cOFFSET = _T("_offset");
-static const TCHAR* const cMULTIPLIER = _T("_multiplier");
-static const TCHAR* const cUNIT_DIVISOR = _T("_unit_divisor");
-static const TCHAR* const cUNIT = _T("_unit");
+constexpr char* cMIN = _T("_min");
+constexpr char* cMAX = _T("_max");
+constexpr char* cOFFSET = _T("_offset");
+constexpr char* cMULTIPLIER = _T("_multiplier");
+constexpr char* cUNIT_DIVISOR = _T("_unit_divisor");
+constexpr char* cUNIT = _T("_unit");
 
 // defaults
-static const TCHAR* const cDEFAULTMULTIPLIER = _T("1.0");
-static const TCHAR* const cDEFAULTDIVISOR = _T("1.0");
-static const TCHAR* const cDEFAULTUNIT = "Unit";
+constexpr char* cDEFAULTMULTIPLIER = _T("1.0");
+constexpr char* cDEFAULTDIVISOR = _T("1.0");
+constexpr char* cDEFAULTUNIT = "Unit";
 
 // Info Tags
-static const TCHAR* const scVERSION = _T("Version");
-static const TCHAR* const scCAMERATYPE = _T("CameraType");
+constexpr char* scVERSION = _T("Version");
+constexpr char* scCAMERATYPE = _T("CameraType");
 
 // Settings Tags
-static const TCHAR* const scHSTEP = _T("_HStep");
-static const TCHAR* const scVSTEP = _T("_VStep");
-static const TCHAR* const scHPOSSTEP = _T("_HPosStep");
-static const TCHAR* const scVPOSSTEP = _T("_VPosStep");
-static const TCHAR* const scMINTRANSFERTIME = _T("_MinTransferTime");
-static const TCHAR* const scMAXTRANSFERTIME = _T("_MaxTransferTime");
-static const TCHAR* const scOPTIMIZEDTRANSFERX = _T("_OptimizedTransferX");
-static const TCHAR* const scOPTIMIZEDTRANSFERY = _T("_OptimizedTransferY");
+constexpr char* scHSTEP = _T("_HStep");
+constexpr char* scVSTEP = _T("_VStep");
+constexpr char* scHPOSSTEP = _T("_HPosStep");
+constexpr char* scVPOSSTEP = _T("_VPosStep");
+constexpr char* scMINTRANSFERTIME = _T("_MinTransferTime");
+constexpr char* scMAXTRANSFERTIME = _T("_MaxTransferTime");
+constexpr char* scOPTIMIZEDTRANSFERX = _T("_OptimizedTransferX");
+constexpr char* scOPTIMIZEDTRANSFERY = _T("_OptimizedTransferY");
 
 // LUT Tags
-static const TCHAR* const scNUMBANDS = _T("_NumBands");
-static const TCHAR* const scBANDSIZE = _T("_BandSize");
-static const TCHAR* const scMAXVALUE = _T("_MaxValue");
+constexpr char* scNUMBANDS = _T("_NumBands");
+constexpr char* scBANDSIZE = _T("_BandSize");
+constexpr char* scMAXVALUE = _T("_MaxValue");
 
-static const int iKEY_DOES_NOT_EXIST = -987654321;
-static const int MAX_STRING_BUFFER = 128;
+constexpr int iKEY_DOES_NOT_EXIST = -987654321;
+constexpr int MAX_STRING_BUFFER = 128;
 
 // For Custom params
-static const TCHAR* const cValue = _T("Value");
+constexpr char* cValue = _T("Value");
 
 static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::string& rKey)
 {

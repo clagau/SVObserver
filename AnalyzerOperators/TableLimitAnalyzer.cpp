@@ -23,8 +23,8 @@ namespace SvAo
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const int cDefaultLimitValue = 50;
-static const VARTYPE cVarType_Value = VT_I4;
+constexpr int cDefaultLimitValue = 50;
+constexpr VARTYPE cVarType_Value = VT_I4;
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(TableLimitAnalyzer, TableAnaylzerLimitGuid);

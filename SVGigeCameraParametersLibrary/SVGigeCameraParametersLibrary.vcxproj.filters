@@ -51,10 +51,10 @@
     <ClCompile Include="SVGigeParameterAccessor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVGigeReadSerialNumber.cpp">
+    <ClCompile Include="SVGigeReadIPAddress.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVGigeReadIPAddress.cpp">
+    <ClCompile Include="SVGigeReadSerialNumber.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,10 +95,10 @@
     <ClInclude Include="SVGigeParameterAccessor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVGigeReadSerialNumber.h">
+    <ClInclude Include="SVGigeReadIPAddress.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVGigeReadIPAddress.h">
+    <ClInclude Include="SVGigeReadSerialNumber.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,16 +14,17 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVExternalToolDlg.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
-#include "Operators/SVExternalToolTask.h"
 #include "SVExternalToolDetailsSheet.h"
-#include "SVOGui/SVShowDependentsDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
+#include "SVToolAdjustmentDialogSheetClass.h"
+#include "Operators/SVExternalToolTask.h"
+#include "SVLibrary/ISVCancel.h"
 #include "SVMFCControls\SVFileDialog.h"
-#include "SVStatusLibrary\MessageContainer.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVOGui/SVShowDependentsDialog.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -33,7 +34,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const TCHAR* const cCRLF (_T("\r\n"));
+constexpr char* cCRLF (_T("\r\n"));
 
 enum {WM_UPDATE_STATUS = WM_APP + 100};
 

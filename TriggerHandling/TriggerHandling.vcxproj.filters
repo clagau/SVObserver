@@ -15,25 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="STDAFX.CPP">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerBasics.cpp">
+    <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVAcquisitionInitiator.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerClass.cpp">
+    <ClCompile Include="SVTriggerActivator.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerActivator.cpp">
+    <ClCompile Include="SVTriggerCallback.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTriggerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTriggerHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerCallback.cpp">
+    <ClCompile Include="TriggerBasics.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TriggerDispatcherCollection.cpp">
@@ -44,13 +44,7 @@
     <ClInclude Include="Stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerBasics.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVAcquisitionInitiator.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDigitizerLoadLibraryClass.h">
@@ -68,7 +62,13 @@
     <ClInclude Include="SVTriggerCallbackFuncInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVTriggerClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVTriggerHandler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerBasics.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TriggerDispatcherCollection.h">

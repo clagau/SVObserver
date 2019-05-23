@@ -12,10 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "TextDefinesSvOg.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

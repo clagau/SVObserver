@@ -13,15 +13,18 @@
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
-
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-
 #include "SVInfoStructs.h"
 #include "SVRemoteOutputDataController.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "RemoteMonitorListController.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
+
+namespace  SvOi
+{
+class IObjectWriter;
+}
 
 class SVIODoc;
 
@@ -49,7 +52,7 @@ public:
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	bool GetParameters( SvXml::SVObjectXMLWriter& rWriter ) const;
+	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
 
 	HRESULT SetModuleReady( bool p_Value );
 	bool SetRaidErrorBit( bool p_Value );

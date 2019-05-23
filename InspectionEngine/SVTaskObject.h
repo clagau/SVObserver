@@ -17,15 +17,12 @@
 #include "SVProtobuf/SVO-Enum.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVObjectAppClass.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "SVExtentPropertiesInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -35,10 +32,13 @@ class SVToolClass;
 class LoopTool;
 }
 
+class SVOutputInfoListClass;
+class SVRunStatusClass;
 class SVToolSetClass;
 
 namespace SvIe
 {
+struct SVExtentPropertyInfoStruct;
 
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {

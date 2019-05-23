@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVAcquisitionClass.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVGigeCameraFileLibrary/SVMatroxGigeCameraProxy.h"
 #pragma endregion Includes
 

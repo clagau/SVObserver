@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableExcludeAnalyzer.h"
-#include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
@@ -25,9 +24,9 @@ namespace SvAo
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const double cDefaultHighValue = 999999;
-static const double cDefaultLowValue = -999999;
-static const VARTYPE cVarType_Value = VT_R8;
+constexpr double cDefaultHighValue = 999999;
+constexpr double cDefaultLowValue = -999999;
+constexpr VARTYPE cVarType_Value = VT_R8;
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(TableExcludeAnalyzer, TableAnaylzerExcludeGuid);

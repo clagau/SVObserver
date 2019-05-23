@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVExternalToolInputSelectPage.h"
 #include "SVIPDoc.h"
 #include "Operators/SVExternalToolTask.h"

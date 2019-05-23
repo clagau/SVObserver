@@ -8,14 +8,13 @@
 
 #pragma once
 
-#include <string>
-
+#pragma region Includes
 #include <boost/optional.hpp>
-
 #include <rapidjson/document.h>
 
-#include <SVAuthLibrary/Crypto.h>
-#include <SVProtoBuf/SVAuth.h>
+#include "Crypto.h"
+#include "SVProtoBuf/SVAuth.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

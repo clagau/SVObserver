@@ -12,11 +12,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectReference.h"
 #pragma endregion
 
+class SVGUID;
 class SVObjectClass;
 
 struct SVObjectInfoStruct

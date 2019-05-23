@@ -14,11 +14,10 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <typeinfo.h>
 #include "SVLutDlg.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "TextDefinesSvO.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

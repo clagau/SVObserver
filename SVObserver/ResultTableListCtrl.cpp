@@ -7,20 +7,17 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
+#include "SVInspectionProcess.h"
+#include "SVObserver.h"
+#include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Definitions/GlobalConst.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVInspectionProcess.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 #pragma region Declarations

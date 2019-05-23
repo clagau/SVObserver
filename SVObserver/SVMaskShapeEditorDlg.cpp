@@ -13,18 +13,17 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <colordlg.h>
 #include "SVMaskShapeEditorDlg.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObserver.h"
 #include "SVIPDoc.h"
+#include "Definitions/Color.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVMaskShape.h"
 #include "Operators/SVUserMaskOperatorClass.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/DisplayHelper.h"
-#include "Definitions/Color.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

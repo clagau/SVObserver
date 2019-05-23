@@ -7,6 +7,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SaxErrorHandler.h"
+#include "ISaxElementHandler.h"
 #pragma endregion Includes
 
 #pragma region Declarations

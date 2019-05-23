@@ -13,9 +13,9 @@
 
 #pragma region Includes
 #include "SVMatroxSimpleEnums.h"
-#include "SVMatroxBuffer.h"
 #pragma endregion Includes
 
+class SVMatroxBuffer;
 
 /**
 @SVObjectName Matrox Pattern Interface

@@ -16,17 +16,14 @@
 //Moved to precompiled header: #include <set>
 
 #include "SVOFileConfigDlg.h"
+#include "AutoBuild/AutoBuild.h"
+#include "Definitions/GlobalConst.h"
 #include "SVLibrary/SVBStr.h"
-
-#include "SVXMLLibrary\LoadConfiguration.h"
-
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "AutoBuild/AutoBuild.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "SVXMLLibrary/LoadConfiguration.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
-#include "Definitions/GlobalConst.h"
 #include "SVXMLLibrary/TreeToXml.h"
 
 

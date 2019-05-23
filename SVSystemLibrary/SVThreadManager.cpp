@@ -13,9 +13,10 @@
 #include "stdafx.h"
 #include "sstream"
 #include "SVThreadManager.h"
-#include "SVStatusLibrary\GlobalPath.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

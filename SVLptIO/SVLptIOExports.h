@@ -8,7 +8,11 @@
 #pragma once
 
 //Moved to precompiled header: #include <comdef.h>
-#include "TriggerHandling/TriggerBasics.h"
+
+namespace SvTh
+{
+class TriggerDispatcher;
+}
 
 #pragma region exports
 

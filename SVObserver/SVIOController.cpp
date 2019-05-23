@@ -12,20 +12,18 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVIOController.h"
-
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVUtilityLibrary/SVGUID.h"
-
-#include "SVIODoc.h"
 #include "SVConfigurationObject.h"
-#include "SVIOLibrary/SVDigitalOutputObject.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVInfoStructs.h"
+#include "SVIODoc.h"
 #include "SVObserver.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
@@ -184,7 +182,7 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 // Sets up tree - Gets Data from SVIODoc
 // Creates Tree items branches so data will be ready to save...
-bool SVIOController::GetParameters( SvXml::SVObjectXMLWriter& rWriter ) const
+bool SVIOController::GetParameters(SvOi::IObjectWriter& rWriter) const
 {
 	bool bOk = true;
 

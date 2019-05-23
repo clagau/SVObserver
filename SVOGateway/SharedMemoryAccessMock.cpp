@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <queue>
 
 #include "SVLogLibrary/Logging.h"
-#include "SharedMemoryAccessInterface.h"
 #include "SharedMemoryAccessMock.h"
 
 namespace SvOgw

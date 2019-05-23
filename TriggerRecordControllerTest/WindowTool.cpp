@@ -9,7 +9,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "WindowTool.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations

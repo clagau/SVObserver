@@ -12,8 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxBuffer.h"
 #pragma endregion Includes
+
+class SVMatroxBuffer;
 
 class SVMatroxGraphicsInterface
 {

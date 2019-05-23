@@ -119,22 +119,23 @@
     <ClCompile Include="NameSelectionTreeCtrl.cpp" />
     <ClCompile Include="ObjectsListBox.cpp" />
     <ClCompile Include="ResizablePropertySheet.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVActiveDisableButton.cpp" />
     <ClCompile Include="SVAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVDlgBitmap.cpp" />
-    <ClCompile Include="SVDlgGraph.cpp" />
-    <ClCompile Include="SVEditControlWithHelp.cpp" />
-    <ClCompile Include="SVEnumerateCombo.cpp" />
-    <ClCompile Include="SVHistogram.cpp" />
-    <ClCompile Include="SVOSelectItemListDlg.cpp" />
-    <ClCompile Include="SVSlideBar.cpp" />
-    <ClCompile Include="SVSliderCtrl.cpp" />
-    <ClCompile Include="SVActiveDisableButton.cpp" />
     <ClCompile Include="SVDlgFolder.cpp" />
+    <ClCompile Include="SVDlgGraph.cpp" />
     <ClCompile Include="SVDottedNameTreeCtrl.cpp" />
     <ClCompile Include="SVEditableListBox.cpp" />
+    <ClCompile Include="SVEditControlWithHelp.cpp" />
     <ClCompile Include="SVEditHelper.cpp" />
     <ClCompile Include="SVEditNumbers.cpp" />
+    <ClCompile Include="SVEnumerateCombo.cpp" />
     <ClCompile Include="SVFileDialog.cpp" />
+    <ClCompile Include="SVHistogram.cpp" />
     <ClCompile Include="SVHorizListBox.cpp" />
     <ClCompile Include="SVInPlaceEdit.cpp" />
     <ClCompile Include="SVKnobControl.cpp" />
@@ -142,13 +143,12 @@
     <ClCompile Include="SVMaskEditor.cpp" />
     <ClCompile Include="SVOConfigNameEdit.cpp" />
     <ClCompile Include="SVOEditorWnd.cpp" />
+    <ClCompile Include="SVOSelectItemListDlg.cpp" />
     <ClCompile Include="SVRemoteInputDialog.cpp" />
+    <ClCompile Include="SVSlideBar.cpp" />
+    <ClCompile Include="SVSliderCtrl.cpp" />
     <ClCompile Include="SVStatusBar.cpp" />
     <ClCompile Include="SVToolBar.cpp" />
-    <ClCompile Include="StdAfx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="SVTreeCtrl.cpp" />
     <ClCompile Include="SVUpDownButton.cpp" />
     <ClCompile Include="SVUtilityArgumentDialog.cpp" />
@@ -164,23 +164,20 @@
     <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVActiveDisableButton.h" />
     <ClInclude Include="SVAnalyzerResultDlg.h" />
     <ClInclude Include="SVDlgBitmap.H" />
-    <ClInclude Include="SVDlgGraph.h" />
-    <ClInclude Include="SVEditControlWithHelp.h" />
-    <ClInclude Include="SVEnumerateCombo.h" />
-    <ClInclude Include="SVHistogram.h" />
-    <ClInclude Include="SVHistogramLabels.h" />
-    <ClInclude Include="SVOSelectItemListDlg.h" />
-    <ClInclude Include="SVSlideBar.h" />
-    <ClInclude Include="SVSliderCtrl.h" />
-    <ClInclude Include="SVActiveDisableButton.h" />
     <ClInclude Include="SVDlgFolder.h" />
+    <ClInclude Include="SVDlgGraph.h" />
     <ClInclude Include="SVDottedNameTreeCtrl.h" />
     <ClInclude Include="SVEditableListBox.h" />
+    <ClInclude Include="SVEditControlWithHelp.h" />
     <ClInclude Include="SVEditHelper.h" />
     <ClInclude Include="SVEditNumbers.h" />
+    <ClInclude Include="SVEnumerateCombo.h" />
     <ClInclude Include="SVFileDialog.h" />
+    <ClInclude Include="SVHistogram.h" />
+    <ClInclude Include="SVHistogramLabels.h" />
     <ClInclude Include="SVHorizListBox.h" />
     <ClInclude Include="SVInPlaceEdit.h" />
     <ClInclude Include="SVKnobControl.h" />
@@ -188,7 +185,10 @@
     <ClInclude Include="SVMaskEditor.h" />
     <ClInclude Include="SVOConfigNameEdit.h" />
     <ClInclude Include="SVOEditorWnd.h" />
+    <ClInclude Include="SVOSelectItemListDlg.h" />
     <ClInclude Include="SVRemoteInputDialog.h" />
+    <ClInclude Include="SVSlideBar.h" />
+    <ClInclude Include="SVSliderCtrl.h" />
     <ClInclude Include="SVStatusBar.h" />
     <ClInclude Include="SVToolBar.h" />
     <ClInclude Include="SVTreeCtrl.h" />

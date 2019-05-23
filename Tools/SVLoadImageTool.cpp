@@ -12,11 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLoadImageTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvTo

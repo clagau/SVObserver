@@ -18,6 +18,8 @@
 #pragma endregion Includes
 
 class SVCameraPage;
+class SVDeviceParamCollection;
+class SVTestAcquisitionClass;
 
 struct SVCameraPageBufferInfoStruct
 {

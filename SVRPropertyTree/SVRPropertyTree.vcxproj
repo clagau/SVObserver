@@ -107,6 +107,12 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVNotifyButton.cpp" />
+    <ClCompile Include="SVRPropTree.cpp" />
     <ClCompile Include="SVRPropTreeCtrl.cpp" />
     <ClCompile Include="SVRPropTreeInfo.cpp" />
     <ClCompile Include="SVRPropTreeItem.cpp" />
@@ -114,15 +120,11 @@
     <ClCompile Include="SVRPropTreeItemEdit.cpp" />
     <ClCompile Include="SVRPropTreeItemFile.cpp" />
     <ClCompile Include="SVRPropTreeItemStatic.cpp" />
-    <ClCompile Include="StdAfx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="SVNotifyButton.cpp" />
-    <ClCompile Include="SVRPropTree.cpp" />
     <ClCompile Include="SVRPropTreeState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVNotifyButton.h" />
     <ClInclude Include="SVRPropTree.h" />
     <ClInclude Include="SVRPropTreeCtrl.h" />
     <ClInclude Include="SVRPropTreeInfo.h" />
@@ -131,8 +133,6 @@
     <ClInclude Include="SVRPropTreeItemEdit.h" />
     <ClInclude Include="SVRPropTreeItemFile.h" />
     <ClInclude Include="SVRPropTreeItemStatic.h" />
-    <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVNotifyButton.h" />
     <ClInclude Include="SVRPropTreeState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

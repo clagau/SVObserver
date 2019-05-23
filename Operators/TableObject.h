@@ -45,7 +45,7 @@ public:
 	/// \param rEmbeddedID [in] Emdedded GUID.
 	/// \param nameId [in] ID of the new name
 	/// \param arraysize [in] New array size.
-	/// \returns DoubleSortValueObject* Pointer to the valueObject or nullptr if creation failed.
+	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
 	SvVol::DoubleSortValuePtr updateOrCreateColumn(const GUID& rEmbeddedID, int nameId, int arraysize);
 
 	/// Remove a column.

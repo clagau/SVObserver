@@ -17,13 +17,15 @@
 #include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectAppClass.h"
 #include "TriggerRecordController/IImage.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
+
+class SVObjectClass;
+class SVOutputInfoListClass;
 
 namespace SvIe
 {

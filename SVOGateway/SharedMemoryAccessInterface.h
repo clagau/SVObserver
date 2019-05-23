@@ -8,9 +8,11 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/Task.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
+#pragma endregion Includes
 
 namespace SvOgw
 {

@@ -169,11 +169,11 @@
     <ClInclude Include="HttpClient.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="HttpResponse.h" />
+    <ClInclude Include="HttpServer.h" />
     <ClInclude Include="HttpServerConnection.h" />
+    <ClInclude Include="HttpServerSettings.h" />
     <ClInclude Include="MediaType.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="HttpServer.h" />
-    <ClInclude Include="HttpServerSettings.h" />
     <ClInclude Include="url.hpp" />
     <ClInclude Include="WebsocketClient.h" />
     <ClInclude Include="WebsocketClientFactory.h" />
@@ -181,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HttpClient.cpp" />
+    <ClCompile Include="HttpServer.cpp" />
     <ClCompile Include="HttpServerConnection.cpp" />
     <ClCompile Include="MediaType.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -189,7 +190,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="HttpServer.cpp" />
     <ClCompile Include="url.cpp" />
     <ClCompile Include="WebsocketClient.cpp" />
     <ClCompile Include="WebsocketClientFactory.cpp" />

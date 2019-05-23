@@ -141,9 +141,9 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="SVLptIO.cpp" />
     <ClCompile Include="SVLptIOExports.cpp" />
     <ClCompile Include="SVLptIOImpl.cpp" />
-    <ClCompile Include="SVLptIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SVLptIO.rc2" />
@@ -156,9 +156,9 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVLptIO.h" />
     <ClInclude Include="SVLptIOExports.h" />
     <ClInclude Include="SVLptIOImpl.h" />
-    <ClInclude Include="SVLptIO.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SVStatusLibrary\SVStatusLibrary.vcxproj">

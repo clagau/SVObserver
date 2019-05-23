@@ -12,14 +12,17 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTool.h"
-#include "SVObjectLibrary/SVClsids.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "Operators/SVConditional.h"
-#include "Operators/ToolSizeAdjustTask.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionEngine/SVExtentPropertyInfoStruct.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "Operators/SVConditional.h"
+#include "Operators/ToolSizeAdjustTask.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #pragma endregion Includes
 

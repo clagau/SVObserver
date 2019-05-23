@@ -12,14 +12,15 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTranslationShiftPage.h"
+#include "SVIPDoc.h"
+#include "SVShiftToolUtility.h"
+#include "SVToolAdjustmentDialogSheetClass.h"
 #include "Operators/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "SVIPDoc.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
-#include "Tools/SVShiftTool.h"
-#include "SVShiftToolUtility.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "SVRPropertyTree/SVRPropTreeItemStatic.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/SVGuid.h"
+#include "Tools/SVShiftTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

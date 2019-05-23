@@ -11,14 +11,15 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRankingFilters.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

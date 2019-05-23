@@ -19,19 +19,19 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <iterator>
 #include "SVInspectionExporter.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
+#include "RootObject.h"
+#include "SVInspectionProcess.h"
+#include "SVIPDoc.h"
+#include "SVObserver.h"
+#include "SVPPQObject.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
-#include "SVInspectionProcess.h"
-#include "SVPPQObject.h"
-#include "SVObserver.h"
-#include "SVIPDoc.h"
-#include "RootObject.h"
-#include "SVToolSet.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/GlobalConst.h"
@@ -44,7 +44,7 @@ static LPCTSTR scExportExt = _T(".bxp");
 static LPCTSTR scColorExportExt = _T(".cxp");
 #pragma endregion Declarations
 
-static void WriteBaseNode(SvXml::SVObjectXMLWriter& rWriter)
+static void WriteBaseNode(SvOi::IObjectWriter& rWriter)
 {
 	//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
 	_variant_t xmlnsValue;
@@ -58,7 +58,7 @@ static void WriteBaseNode(SvXml::SVObjectXMLWriter& rWriter)
 	rWriter.ElementAttribute("Type", value);
 }
 
-static void WriteVersion(SvXml::SVObjectXMLWriter& rWriter, unsigned long p_version)
+static void WriteVersion(SvOi::IObjectWriter& rWriter, unsigned long p_version)
 {
 	_variant_t version(p_version);
 
@@ -67,7 +67,7 @@ static void WriteVersion(SvXml::SVObjectXMLWriter& rWriter, unsigned long p_vers
 	rWriter.EndElement();
 }
 
-static void WritePPQInputs(SvXml::SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
+static void WritePPQInputs(SvOi::IObjectWriter& rWriter, SVObjectClass* pObject)
 {
 	rWriter.StartElement(SvXml::CTAG_PPQ);
 
@@ -83,7 +83,7 @@ static void WritePPQInputs(SvXml::SVObjectXMLWriter& rWriter, SVObjectClass* pOb
 	rWriter.EndElement();
 }
 
-static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
+static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pObject)
 {
 	rWriter.StartElement(SvXml::CTAG_GLOBAL_CONSTANTS);
 
@@ -159,7 +159,7 @@ static bool ShouldExcludeFile(LPCTSTR filename)
 	return bRetVal;
 }
 
-static bool WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const std::string& dstZipFile)
+static bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::string& dstZipFile)
 {
 	bool Result{false};
 

@@ -13,13 +13,18 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVObjectLibrary/SVObjectClass.h"
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVRemoteOutputGroup.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
-#include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVIOLibrary/SVRemoteOutputObject.h"
+#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
+
+namespace  SvOi
+{
+class IObjectWriter;
+}
 
 class SVConfigurationObject;
 class SVPPQObject;
@@ -41,7 +46,7 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	bool GetParameters(SvXml::SVObjectXMLWriter& rWriter );
+	bool GetParameters(SvOi::IObjectWriter& rWriter);
 
 	BOOL SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
 

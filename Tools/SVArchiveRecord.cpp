@@ -6,16 +6,17 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVArchiveRecord.h"
-#include "SVArchiveTool.h"
 #include "ArchiveToolHelper.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "ObjectInterfaces/IValueObject.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVArchiveTool.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/IValueObject.h"
+#include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
 namespace SvTo

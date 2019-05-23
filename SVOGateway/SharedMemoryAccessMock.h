@@ -9,10 +9,12 @@
 
 #pragma once
 
-#include <boost/asio/io_service.hpp>
-#include <boost/thread.hpp>
+#pragma region Includes
+//Moved to precompiled header: #include <boost/asio/io_service.hpp>
+//Moved to precompiled header: #include <boost/thread.hpp>
 
 #include "SharedMemoryAccessInterface.h"
+#pragma endregion Includes
 
 namespace SvOgw
 {

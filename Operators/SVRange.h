@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "Definitions/RangeEnum.h"
 #include "InspectionEngine/SVTaskObject.h"
+#include "ObjectInterfaces/ITool.h"
 #include "SVLibrary/ISVCancel.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes

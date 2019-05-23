@@ -27,10 +27,9 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 
-#include "WebsocketClientSettings.h"
-
 namespace SvHttp
 {
+struct WebsocketClientSettings;
 
 class WebsocketClient
 {

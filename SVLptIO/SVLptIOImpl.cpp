@@ -21,17 +21,17 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-static const int RETRY = 2;
-static const int cOneSecond = 1000;
+constexpr int RETRY = 2;
+constexpr int cOneSecond = 1000;
 
 // ******* Timeout for I/O board Acknowledge microseconds.
-static const int BOARD_SELECT_ACK_TIMEOUT  = 16000; // 16 millisecs
+constexpr int BOARD_SELECT_ACK_TIMEOUT  = 16000; // 16 millisecs
 
 // ******* Debug Data **********
 //#define LogDebugData 
 
 #ifdef LogDebugData
-static const int MaxDebugData = 500;
+constexpr int MaxDebugData = 500;
 
 struct TriggerDebugData
 {

@@ -13,7 +13,6 @@
 
 #pragma region Includes 
 #include "SVSecurityStorage.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
 class SVAccessClass

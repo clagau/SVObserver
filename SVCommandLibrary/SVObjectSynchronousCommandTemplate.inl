@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectThreadCommandTemplate.h"
 #include "SVObjectCommandWrapperTemplate.h"

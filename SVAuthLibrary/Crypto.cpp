@@ -6,6 +6,7 @@
 /// JWT (JSON Web Token) helper for generating and verfiying tokens.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 
 #pragma comment (lib, "crypt32.lib")
@@ -20,8 +21,9 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 
-#include "SVAuthLibrary/Crypto.h"
+#include "Crypto.h"
 #include "SVLogLibrary/Logging.h"
+#pragma endregion Includes
 
 namespace
 {

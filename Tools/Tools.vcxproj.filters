@@ -15,16 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPolarTransformationTool.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTool.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTransformationTool.cpp">
+    <ClCompile Include="ArchiveToolHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="LoopTool.cpp">
@@ -36,7 +27,19 @@
     <ClCompile Include="RingBufferTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVAcquisitionTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVArchiveImageThreadClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVArchiveRecord.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVArchiveRecordsArray.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVArchiveTool.cpp">
@@ -57,16 +60,34 @@
     <ClCompile Include="SVLinearToolClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVLoadImageTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVMathTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVPerspectiveTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVPolarTransformationTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVShiftTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVStatTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVToolExtentClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVToolExtentPropertiesClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTransformationTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVWindowTool.cpp">
@@ -78,39 +99,12 @@
     <ClCompile Include="TableTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ArchiveToolHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVArchiveImageThreadClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLoadImageTool.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVArchiveRecord.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVArchiveRecordsArray.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolExtentClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolExtentPropertiesClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="ArchiveMethodEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPolarTransformationTool.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTool.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTransformationTool.h">
+    <ClInclude Include="ArchiveToolHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LoopTool.h">
@@ -122,7 +116,19 @@
     <ClInclude Include="RingBufferTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVAcquisitionTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVArchiveImageThreadClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVArchiveRecord.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVArchiveRecordsArray.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVArchiveTool.h">
@@ -143,16 +149,34 @@
     <ClInclude Include="SVLinearToolClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVLoadImageTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVMathTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVPerspectiveTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVPolarTransformationTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVShiftTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVStatTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolExtentClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolExtentPropertiesClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTransformationTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVWindowTool.h">
@@ -162,30 +186,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TableTool.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ArchiveMethodEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ArchiveToolHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVArchiveImageThreadClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLoadImageTool.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVArchiveRecord.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVArchiveRecordsArray.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolExtentClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolExtentPropertiesClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

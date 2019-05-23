@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -16,6 +15,13 @@ namespace SvOi
 {
 class IObjectClass;
 }
+
+namespace SvPb
+{
+class GetAvailableObjectsRequest;
+class GetObjectSelectorItemsRequest;
+}
+
 #pragma endregion Declarations
 
 

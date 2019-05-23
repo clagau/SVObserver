@@ -12,12 +12,13 @@
 
 #include "TrcTester.h"
 #include "LogClass.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVStatusLibrary\SVRegistry.h"
-#include "TriggerRecordController\LocalConst.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
+#include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary\SVRegistry.h"
+#include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #include "TriggerRecordController\ITriggerRecordRW.h"
+#include "TriggerRecordController\LocalConst.h"
 
 constexpr int triggerIdOffset = 100'000;
 LPCSTR strTestConfig = _T("Config");
@@ -290,7 +291,7 @@ bool TrcTester::createTR2WriteAndRead()
 	const int maxRecords = *std::max_element(numbersOfRecords.begin(), numbersOfRecords.end());
 	const int minRecords = *std::min_element(numbersOfRecords.begin(), numbersOfRecords.end());
 	{
-		auto tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
+		SvTrc::ITriggerRecordRWPtr tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
 		if (nullptr != tr2W)
 		{
 			auto tr2R = m_TRController.createTriggerRecordObject(0, tr2W->getId());

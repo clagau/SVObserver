@@ -26,17 +26,19 @@
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVObjectLibrary/SVObjectClass.h"
-
 #include "InspectionEngine/SVImageClass.h"
-#include "Tools/SVTool.h"
 #include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVDigitalOutputObject.h"
-#include "Tools/SVArchiveTool.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma region Includes
+
+namespace SvTo
+{
+class SVArchiveTool;
+class SVToolClass;
+}
+
+class SVObjectClass;
 
 typedef CComPtr<IXmlWriter> Writer;
 

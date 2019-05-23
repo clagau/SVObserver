@@ -12,13 +12,14 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPerspectiveTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVImageLibrary/SVImageExtentClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVImageLibrary/SVImageExtentClass.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

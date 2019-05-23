@@ -109,9 +109,9 @@
     <ClInclude Include="GridCellNumeric.h" />
     <ClInclude Include="GridCtrl.h" />
     <ClInclude Include="GridDropTarget.h" />
+    <ClInclude Include="GridMemDC.h" />
     <ClInclude Include="GridURLCell.h" />
     <ClInclude Include="InPlaceEdit.h" />
-    <ClInclude Include="GridMemDC.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TitleTip.h" />
   </ItemGroup>

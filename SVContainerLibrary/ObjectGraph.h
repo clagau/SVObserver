@@ -22,12 +22,13 @@
 //Moved to precompiled header: #include <boost/graph/filtered_graph.hpp>
 //Moved to precompiled header: #include <boost/graph/graphviz.hpp>
 //Moved to precompiled header: #include <boost/utility.hpp>
-#include "IGraphNameLookup.h"
-
 #pragma endregion Includes
+
 
 namespace SvCl
 {
+class IGraphNameLookup;
+
 	#pragma region Declarations
 	struct edge_type_t 
 	{

@@ -11,13 +11,14 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "Tools/SVColorTool.h"
-#include "Operators/SVColorThreshold.h"
+#include "SVInspectionProcess.h"
+#include "SVROIFigureEditor.h"
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVInspectionProcess.h"
+#include "Operators/SVColorThreshold.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
+#include "Tools/SVColorTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -26,8 +27,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTADlgColorThresholdROI property page
+//This comment is to avoid that the SVTADlgColorThresholdSheet include is marked as not required due to forward declaration from a base class
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdROI, SVTADlgColorThresholdBasePage)
 

@@ -8,8 +8,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
+
+class SVGUID;
 
 namespace SvCl
 {

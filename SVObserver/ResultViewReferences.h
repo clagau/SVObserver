@@ -13,14 +13,22 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <list>
-#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "InspectionEngine/ResultViewItemDef.h"
 #include "InspectionEngine/SVIPResultItemDefinition.h"
 #include "InspectionEngine/SVIPResultData.h"
-#include "Operators/TableObject.h"
+#include "SVObjectLibrary/SVObjectReference.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+class IObjectWriter;
+}
+namespace SvOp
+{
+class TableObject;
+}
 namespace SvIe
 {
 struct SVIPResultData;

@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVExtentFigureStruct.h"
-#include "SVExtentOffsetStruct.h"
 #include "SVExtentLineStruct.h"
 #include "SVExtentMultiLineStruct.h"
 #include "SVUtilityLibrary/SVPoint.h"
@@ -36,6 +35,8 @@ extern SVPoint<double> SVRotateAndFlipPoint(const SVPoint<double>& rCenter, cons
 typedef std::map<SvPb::SVExtentPropertyEnum, std::string> SVExtentPropertyStringMap;
 typedef std::map<SvPb::SVExtentPropertyEnum, double> SVExtentPropertyValueMap;
 typedef std::map<SvPb::SVExtentPropertyEnum, std::pair<SvPb::SVExtentPropertyEnum, SvPb::SVExtentPropertyEnum>> SVExtentPropertyPointMap;
+
+struct SVExtentOffsetStruct;
 
 class SVImageExtentClass
 {

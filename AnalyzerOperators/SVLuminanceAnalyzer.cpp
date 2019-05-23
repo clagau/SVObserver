@@ -12,16 +12,16 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLuminanceAnalyzer.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
+#include "Operators/SVRange.h"
 #include "Operators/SVResultLong.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "Operators/SVRange.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo

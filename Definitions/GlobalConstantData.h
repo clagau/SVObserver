@@ -31,8 +31,8 @@ namespace SvDef
 
 #pragma region Constructor
 	public:
-		inline GlobalConstantData();
-		virtual ~GlobalConstantData() {};
+		GlobalConstantData() = default;
+		virtual ~GlobalConstantData() = default;
 
 #pragma region Public Methods
 	public:
@@ -44,11 +44,11 @@ namespace SvDef
 
 #pragma region Member variables
 	public:
-		SVGUID		m_Guid;						//The object unique ID or GUID_NULL
+		SVGUID		m_Guid{GUID_NULL};			//The object unique ID or GUID_NULL
 		std::string	m_DottedName;				//The dotted name of the constant
 		_variant_t	m_Value;					//The value of the constant
 		std::string	m_Description;				//The description of the constant
-		bool		m_Selected;					//To determine if this has been selected
+		bool		m_Selected{false};			//To determine if this has been selected
 #pragma endregion Member variables
 	};
 

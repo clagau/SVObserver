@@ -15,10 +15,52 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EquationTestResult.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IBlobAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ICustom2Filter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IDependencyManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IEnumerateValueObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IEquation.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="IFormulaController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ITaskObject.h">
+    <ClInclude Include="IInspectionProcess.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IMask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IObjectAppClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IObjectClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IObjectManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IObjectWriter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IPatternAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IRootObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ISVFilter.h">
@@ -27,76 +69,34 @@
     <ClInclude Include="ISVImage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ICustom2Filter.h">
+    <ClInclude Include="ISVOApp_Helper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IToolSet.h">
+    <ClInclude Include="ITaskObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ITaskObjectListClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IInspectionProcess.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IObjectClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IObjectAppClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IObjectManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ISVOApp_Helper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IRootObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IEquation.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="EquationTestResult.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IEnumerateValueObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IMask.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ITool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IBlobAnalyzer.h">
+    <ClInclude Include="IToolSet.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IToolSizeAdjustTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="IValueObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IPatternAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IDependencyManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="IObjectWriter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageBufferHandleInterface.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="NameValueVector.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ICommand.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IToolSizeAdjustTask.h">
+    <ClInclude Include="SVImageBufferHandleInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

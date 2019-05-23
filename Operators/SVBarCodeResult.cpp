@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "SVBarCodeResult.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 

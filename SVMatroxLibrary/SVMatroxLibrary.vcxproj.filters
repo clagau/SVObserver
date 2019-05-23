@@ -66,6 +66,9 @@
     <ClCompile Include="SVMatroxGraphicsInterface.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVMatroxHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVMatroxImageBuffer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -76,6 +79,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxImageRotateStruct.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMatroxLicenseInterface.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxOcr.cpp">
@@ -111,17 +117,14 @@
     <ClCompile Include="SVMatroxSystemInterface.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxLicenseInterface.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVOLicenseManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MatroxImageProps.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -182,6 +185,9 @@
     <ClInclude Include="SVMatroxGraphicsInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVMatroxHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVMatroxIdentifierEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -198,6 +204,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxImagingLibrary.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMatroxLicenseInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxOcr.h">
@@ -221,6 +230,9 @@
     <ClInclude Include="SVMatroxResourceMonitor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVMatroxSimpleEnums.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVMatroxStatusInformation.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -234,18 +246,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxSystemRef.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxLicenseInterface.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxSimpleEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MatroxImageProps.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOLicenseManager.h">

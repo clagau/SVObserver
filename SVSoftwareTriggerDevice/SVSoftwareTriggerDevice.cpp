@@ -21,8 +21,8 @@
 
 #pragma comment( lib, "Winmm" )
 
-static const long SVDefaultTimerPeriod = 200;
-static const int SVMaximumSoftwareTriggers = 4;
+constexpr long SVDefaultTimerPeriod = 200;
+constexpr int SVMaximumSoftwareTriggers = 4;
 
 SVSoftwareTriggerDevice::SVSoftwareTriggerDevice()
 	: m_numTriggers {SVMaximumSoftwareTriggers}

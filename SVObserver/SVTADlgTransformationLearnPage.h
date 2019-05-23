@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
+
 namespace SvOp
 {
 class SVImageTransformClass;
@@ -29,6 +29,7 @@ class SVBoolValueObjectClass;
 class SVDoubleValueObjectClass;
 }
 
+class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 
 class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage

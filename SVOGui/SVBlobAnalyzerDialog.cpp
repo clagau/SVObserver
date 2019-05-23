@@ -16,6 +16,7 @@
 #include "SVFillBlobDlg.h"
 #include "SVBlobFeaturePropertiesDlg.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVObjectLibrary/SVClsids.h"

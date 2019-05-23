@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "Tools/SVColorTool.h"
 #include "SVTADlgColorThresholdSheet.h"
+#include "SVROIFigureEditor.h"
 #pragma endregion Includes
 
 #pragma region Declarations

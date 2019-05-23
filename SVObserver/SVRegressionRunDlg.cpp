@@ -12,12 +12,10 @@
 //
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVRegressionRunDlg.h"
 #include "SVIPDoc.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVInspectionProcess.h"
-#include "SVRegressionFileSelectDlg.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionExitDlg.h"
 
@@ -366,7 +364,7 @@ void CSVRegressionRunDlg::OnBtnSettings()
 	//set regression to pause 
 	m_pIPDocParent->SetRegressionTestRunMode(RegModePause);
 
-	CSVRegressionFileSelectSheet dlgRegFileSelect("Regression Test");
+	SVRegressionFileSelectSheet dlgRegFileSelect("Regression Test");
 
 	dlgRegFileSelect.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 

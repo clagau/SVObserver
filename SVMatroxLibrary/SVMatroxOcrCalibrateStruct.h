@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVMatroxBuffer.h"
-
 #pragma endregion Includes
 
 /**

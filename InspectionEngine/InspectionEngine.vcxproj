@@ -97,7 +97,7 @@
     <ClInclude Include="SVClassInfoStruct.h" />
     <ClInclude Include="SVDataBuffer.h" />
     <ClInclude Include="SVDigitizerProcessingClass.h" />
-    <ClInclude Include="SVExtentPropertiesInfoStruct.h" />
+    <ClInclude Include="SVExtentPropertyInfoStruct.h" />
     <ClInclude Include="SVFileAcquisitionClass.h" />
     <ClInclude Include="SVGlobalHandles.h" />
     <ClInclude Include="SVImageBuffer.h" />

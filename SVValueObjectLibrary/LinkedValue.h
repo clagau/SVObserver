@@ -8,11 +8,15 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary\SVInObjectInfoStruct.h"
-#include "SVObjectLibrary\SVObjectReference.h"
 #include "SVStringValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
+#include "SVObjectLibrary\SVObjectReference.h"
 #pragma endregion Includes
+
+namespace SvOl
+{
+struct SVInObjectInfoStruct;
+}
 
 namespace SvVol
 {

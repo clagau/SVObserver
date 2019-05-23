@@ -11,10 +11,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVIProgress.h"
 #include "SVImportedInspectionInfo.h"
 #include "Definitions/GlobalConstantData.h"
 #pragma endregion Includes
+
+class SVIProgress;
 
 class SVInspectionImporter
 {

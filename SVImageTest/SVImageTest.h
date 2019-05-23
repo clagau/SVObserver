@@ -16,10 +16,11 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "SVTestAcquisitionSubsystem.h"
 #include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"
 #pragma endregion Includes
+
+class SVTestAcquisitionSubsystem;
 
 class CSVImageTestApp : public CWinApp
 {

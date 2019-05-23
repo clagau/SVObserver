@@ -14,6 +14,7 @@
 #include "SVObjectClass.h"
 #include "SVObjectReference.h"
 #include "SVObjectManagerClass.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

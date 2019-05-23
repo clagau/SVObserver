@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxBlobInterface.h"
+#include "SVMatroxBuffer.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxHelper.h"

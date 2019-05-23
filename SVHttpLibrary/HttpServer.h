@@ -23,10 +23,10 @@
 #include <boost/asio/ip/tcp.hpp>
 
 #include "HttpServerConnection.h"
-#include "HttpServerSettings.h"
 
 namespace SvHttp
 {
+struct HttpServerSettings;
 
 class HttpServer
 {

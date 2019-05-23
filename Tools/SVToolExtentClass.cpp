@@ -16,6 +16,7 @@
 #include "SVTool.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "Definitions/SVResetStruct.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #pragma endregion Includes

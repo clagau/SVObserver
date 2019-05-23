@@ -11,14 +11,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionFileSelectDlg.h"
-#include "InspectionEngine/SVVirtualCamera.h"
-#include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/MessageContainer.h"
+#include "SVObserver.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionEngine/SVVirtualCamera.h"
+#include "SVStatusLibrary/MessageContainer.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -28,19 +27,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNAMIC(CSVRegressionFileSelectSheet, CPropertySheet)
+IMPLEMENT_DYNAMIC(SVRegressionFileSelectSheet, CPropertySheet)
 
-CSVRegressionFileSelectSheet::CSVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
+SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 }
 
-CSVRegressionFileSelectSheet::CSVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
+SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 }
 
-CSVRegressionFileSelectSheet::~CSVRegressionFileSelectSheet()
+SVRegressionFileSelectSheet::~SVRegressionFileSelectSheet()
 {
 	int iPageCnt = GetPageCount();
 	CSVRegressionFileSelectDlg *pPage;
@@ -57,7 +56,7 @@ CSVRegressionFileSelectSheet::~CSVRegressionFileSelectSheet()
 }
 
 
-BEGIN_MESSAGE_MAP(CSVRegressionFileSelectSheet, CPropertySheet)
+BEGIN_MESSAGE_MAP(SVRegressionFileSelectSheet, CPropertySheet)
 	//{{AFX_MSG_MAP(CSVRegressionFileSelectSheet)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_MSG_MAP
@@ -67,7 +66,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectSheet message handlers
 
-void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector)
+void SVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector)
 {
 	m_pRegressionList = RegessionList;
 	
@@ -93,7 +92,7 @@ void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,Regre
 }
 
 
-void CSVRegressionFileSelectSheet::OnOK()
+void SVRegressionFileSelectSheet::OnOK()
 {
 	int iNumPages = GetPageCount();
 
@@ -170,7 +169,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 	EndDialog(IDOK);
 }
 
-std::string CSVRegressionFileSelectSheet::MakeFileNameMask( const std::string& rFileName )
+std::string SVRegressionFileSelectSheet::MakeFileNameMask( const std::string& rFileName )
 {
 	std::string Result;
 	size_t FileNameLength = rFileName.size();
@@ -191,7 +190,7 @@ std::string CSVRegressionFileSelectSheet::MakeFileNameMask( const std::string& r
 	return Result;
 }
 	
-void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
+void SVRegressionFileSelectSheet::ValidateAndFillFileList()
 {
 	long lTotalNumFiles = 0;
 
@@ -328,7 +327,7 @@ void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 	}
 }
 
-void CSVRegressionFileSelectSheet::ClearRegressionList()
+void SVRegressionFileSelectSheet::ClearRegressionList()
 {
 	int iCount = static_cast<int>(m_pRegressionList->GetCount());
 	for ( int i = iCount-1; i >= 0; i-- )
@@ -341,7 +340,7 @@ void CSVRegressionFileSelectSheet::ClearRegressionList()
 	}
 }
 
-int CSVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
+int SVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 {
 	int count = 0;
 	std::string fileMask = MakeFileNameMask(rStruct.FirstFile);
@@ -370,7 +369,7 @@ int CSVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 	return count;
 }
 
-int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct)
+int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct)
 {
 	std::string currentPath = rStruct.FirstFile;
 	if (RegressionFileEnum::RegSingleDirectory == rStruct.iFileMethod)
@@ -399,7 +398,7 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 	return count;
 }
 
-int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath)
+int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath)
 {
 	int count = 0;
 
@@ -438,7 +437,7 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 	return count;
 }
 
-BOOL CSVRegressionFileSelectSheet::OnInitDialog() 
+BOOL SVRegressionFileSelectSheet::OnInitDialog() 
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 	RegressionTestStruct *pTmpStruct;

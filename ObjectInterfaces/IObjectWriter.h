@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVVariantList.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -20,7 +19,7 @@ namespace SvOi
 		virtual ~IObjectWriter() {}
 
 		virtual void WriteAttribute(LPCTSTR rName, const _variant_t& value)=0;
-		virtual void WriteAttribute(LPCTSTR rName, const SVVariantList& rValues)=0;
+		virtual void WriteAttribute(LPCTSTR rName, const std::vector<_variant_t>& rValues)=0;
 
 		virtual void StartElement(LPCTSTR rName)=0;
 		virtual void EndElement()=0;

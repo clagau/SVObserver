@@ -8,6 +8,9 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 17:00:26  $
 //******************************************************************************
+#pragma region Includes
+#include "ObjectInterfaces/IValueObject.h"
+#pragma endregion Includes
 
 inline SVObjectReference::SVObjectReference()
 {

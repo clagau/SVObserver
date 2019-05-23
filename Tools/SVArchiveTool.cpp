@@ -14,24 +14,25 @@
 //Moved to precompiled header: #include <io.h>
 //Moved to precompiled header: #include <numeric>
 #include "SVArchiveTool.h"
-#include "SVObjectLibrary/SVClsids.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "SVOLibrary/SVMemoryManager.h"
-#include "SVSystemLibrary/SVThreadManager.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "Definitions/SVResetStruct.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVLibrary/SVOINIClass.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVLibrary/SVOINIClass.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOLibrary/SVMemoryManager.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVSystemLibrary/SVThreadManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -43,7 +44,7 @@ namespace SvTo
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const int cAsyncDefaultBufferNumber = 5;
+constexpr int cAsyncDefaultBufferNumber = 5;
 #pragma endregion Declarations
 
 

@@ -16,7 +16,7 @@
 #include "SVOFileConfig.h"
 #include "SVOFileConfigDlg.h"
 
-static const CLSID clsid =
+constexpr CLSID clsid =
 { 0xf4c4d491, 0xd660, 0x11d0, { 0x9b, 0x52, 0x0, 0x80, 0x5f, 0x71, 0x7d, 0xff } };
 
 IMPLEMENT_SERIAL( SVOFileConfigApp, CWinApp, 0 );

@@ -13,6 +13,8 @@
 #include "stdafx.h"
 #include "SVObjectAppClass.h"
 #include "Definitions/ObjectDefines.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/ITool.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

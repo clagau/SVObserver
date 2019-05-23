@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/ITool.h"
 #pragma endregion Includes
 
 namespace SvAo

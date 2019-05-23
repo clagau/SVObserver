@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <ostream>
 //Moved to precompiled header: #include <boost/function.hpp>
 
-#include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/XMLwriter.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #pragma endregion Includes
@@ -41,7 +40,7 @@ namespace  SvXml
 		void WriteAttribute(LPCTSTR Name, const _variant_t& value) override;
 	
 		///Write <DATA ...>
-		void WriteAttribute(LPCTSTR Name, const SVVariantList& rValues) override;
+		void WriteAttribute(LPCTSTR Name, const std::vector<_variant_t>& rValues) override;
 
 	
 

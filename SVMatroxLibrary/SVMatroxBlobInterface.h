@@ -16,10 +16,10 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxSimpleEnums.h"
-#include "SVMatroxBuffer.h"
 #pragma endregion Includes
 
 class SVCommandDataHolder;
+class SVMatroxBuffer;
 
 
 /**

@@ -14,22 +14,20 @@
 //Moved to precompiled header: #include <boost\config.hpp>
 //Moved to precompiled header: #include <boost\bind.hpp>
 #include "SVRemoteOutputsView.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVXMLLibrary\SVConfigurationTags.h"
-#include "SVOResource\ConstGlobalSvOr.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
-#include "SVObserver.h"
-#include "SVPPQObject.h"
 #include "SVRemoteOutputDataController.h"
 #include "SVRemoteOutputEditDialog.h"
 #include "SVRemoteOutputGroup.h"
+#include "SVObserver.h"
+#include "SVPPQObject.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "TextDefinesSvO.h"
-#include "Definitions/GlobalConst.h"
-#include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteOutputsView, CListView )

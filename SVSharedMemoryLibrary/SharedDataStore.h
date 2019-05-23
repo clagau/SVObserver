@@ -8,11 +8,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SMParameterStruct.h"
 #pragma endregion Includes
 
 namespace SvSml
 {
+struct SMParameterStruct;
+
 ///class for holding memory for the dataBufferes in SharedMemory
 class SharedDataStore
 {

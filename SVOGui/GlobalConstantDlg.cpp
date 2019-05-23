@@ -11,7 +11,6 @@
 //Moved to precompiled header: #include <regex>
 #include "GlobalConstantDlg.h"
 #include "TextDefinesSvOg.h"
-#include "SVTextEditDialog.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "Definitions/GlobalConst.h"
 #include "SVMessage/SVMessage.h"

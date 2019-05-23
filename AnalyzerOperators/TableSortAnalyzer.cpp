@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "TableSortAnalyzer.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "Tools/SVTool.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
 #pragma endregion Includes

@@ -18,56 +18,56 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-static const TCHAR* const EmptyString = _T("");
-static const TCHAR* const NTag = _T("N");
-static const TCHAR* const YTag = _T("Y");
-static const TCHAR* const RTag = _T("R");
+constexpr char* EmptyString = _T("");
+constexpr char* NTag = _T("N");
+constexpr char* YTag = _T("Y");
+constexpr char* RTag = _T("R");
 
-static const TCHAR* const OEMSpecificSectionTag = _T("OEMSpecific");
-static const TCHAR* const ProductIDTag = _T("ProductID");
-static const TCHAR* const ModelNoTag = _T("ModelNo");
-static const TCHAR* const EmptyModelNo = _T("00 00 00 00");
-static const TCHAR* const SerialNoTag = _T("SerialNo");
-static const TCHAR* const SingleCameraTag = _T("SingleCamera");
+constexpr char* OEMSpecificSectionTag = _T("OEMSpecific");
+constexpr char* ProductIDTag = _T("ProductID");
+constexpr char* ModelNoTag = _T("ModelNo");
+constexpr char* EmptyModelNo = _T("00 00 00 00");
+constexpr char* SerialNoTag = _T("SerialNo");
+constexpr char* SingleCameraTag = _T("SingleCamera");
 
-static const TCHAR* const SVIMInfoSectionTag = _T("SVIM Information");
-static const TCHAR* const LegacyEquationParsingTag = _T("LegacyEquationParsing");
-static const TCHAR* const TriggerEdgeCameraTag = _T("Trigger Edge Camera_%d");
-static const TCHAR* const StrobeEdgeCameraTag = _T("Strobe Edge Camera_%d");
-static const TCHAR* const UseStrobeasStartFrameCameraTag = _T("Use Strobe as Start Frame Camera_%d");
-static const TCHAR* const ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
-static const TCHAR* const DisplaySectionTag = _T("Display");
-static const TCHAR* const ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
+constexpr char* SVIMInfoSectionTag = _T("SVIM Information");
+constexpr char* LegacyEquationParsingTag = _T("LegacyEquationParsing");
+constexpr char* TriggerEdgeCameraTag = _T("Trigger Edge Camera_%d");
+constexpr char* StrobeEdgeCameraTag = _T("Strobe Edge Camera_%d");
+constexpr char* UseStrobeasStartFrameCameraTag = _T("Use Strobe as Start Frame Camera_%d");
+constexpr char* ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
+constexpr char* DisplaySectionTag = _T("Display");
+constexpr char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
 
-static const TCHAR* const NAKSectionTag = _T("NAK_SETTINGS");
-static const TCHAR* const  NAKMode = _T("NAKMode");
-static const TCHAR* const  NAKParameter = _T("NAKPar");
+constexpr char* NAKSectionTag = _T("NAK_SETTINGS");
+constexpr char*  NAKMode = _T("NAKMode");
+constexpr char*  NAKParameter = _T("NAKPar");
 
-static const TCHAR* const ProcessorSectionTag = _T("Processor");
-static const TCHAR* const RAIDTag = _T("RAID");
-static const TCHAR* const FrameGrabberSectionTag = _T("Frame Grabber");
-static const TCHAR* const DigitizerDLLTag = _T("DigitizerDLL");
-static const TCHAR* const TriggerDLLTag = _T("TriggerDLL");
+constexpr char* ProcessorSectionTag = _T("Processor");
+constexpr char* RAIDTag = _T("RAID");
+constexpr char* FrameGrabberSectionTag = _T("Frame Grabber");
+constexpr char* DigitizerDLLTag = _T("DigitizerDLL");
+constexpr char* TriggerDLLTag = _T("TriggerDLL");
 
-static const TCHAR* const SVIM_X2_GD2A = _T("SVIM X2-GD2A");
-static const TCHAR* const SVIM_X2_GD8A = _T("SVIM X2-GD8A");
-static const TCHAR* const SVIM_X2_GD1A = _T("SVIM X2-GD1A");
+constexpr char* SVIM_X2_GD2A = _T("SVIM X2-GD2A");
+constexpr char* SVIM_X2_GD8A = _T("SVIM X2-GD8A");
+constexpr char* SVIM_X2_GD1A = _T("SVIM X2-GD1A");
 
-static const TCHAR* const PacketSizeTag = _T("PacketSize");
+constexpr char* PacketSizeTag = _T("PacketSize");
 
-static const TCHAR* const IOBoardSectionTag = _T("IO Board");
-static const TCHAR* const DigitalIODLLTag = _T("DigitalIODLL");
-static const TCHAR* const ReloadDLLTag = _T("ReloadDLL");
+constexpr char* IOBoardSectionTag = _T("IO Board");
+constexpr char* DigitalIODLLTag = _T("DigitalIODLL");
+constexpr char* ReloadDLLTag = _T("ReloadDLL");
 
-static const TCHAR* const FrameGrabberTag = _T("FrameGrabber");
-static const TCHAR* const ProductNameTag = _T("ProductName");
-static const TCHAR* const IOBoardModeTag = _T("IOBoardMode");
-static const TCHAR* const IOBoardModeDefault = _T("10");
-static const TCHAR* const Opto22InputInvertTag = _T("Opto22InputInvert");
-static const TCHAR* const Opto22OutputInvertTag = _T("Opto22OutputInvert");
-static const TCHAR* const OptionsSectionTag = _T("Options");
-static const TCHAR* const FileAcquisitionDeviceFilename = _T("SVFileAcquisitionDevice.DLL");
-static const TCHAR* const SoftwareTriggerDeviceFilename = _T("SVSoftwareTriggerDevice.DLL");
+constexpr char* FrameGrabberTag = _T("FrameGrabber");
+constexpr char* ProductNameTag = _T("ProductName");
+constexpr char* IOBoardModeTag = _T("IOBoardMode");
+constexpr char* IOBoardModeDefault = _T("10");
+constexpr char* Opto22InputInvertTag = _T("Opto22InputInvert");
+constexpr char* Opto22OutputInvertTag = _T("Opto22OutputInvert");
+constexpr char* OptionsSectionTag = _T("Options");
+constexpr char* FileAcquisitionDeviceFilename = _T("SVFileAcquisitionDevice.DLL");
+constexpr char* SoftwareTriggerDeviceFilename = _T("SVSoftwareTriggerDevice.DLL");
 #pragma endregion Declarations
 
 namespace SvLib

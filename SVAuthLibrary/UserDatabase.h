@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <map>
-
-#include <SVProtoBuf/SVAuth.h>
+#pragma region Includes
+#include "SVProtoBuf/SVAuth.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

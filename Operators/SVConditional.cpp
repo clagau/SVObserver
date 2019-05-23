@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVConditional.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes

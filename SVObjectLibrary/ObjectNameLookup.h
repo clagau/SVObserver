@@ -7,10 +7,11 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/IGraphNameLookup.h"
-
-#include "SVObjectManagerClass.h"
 #include "SVObjectClass.h"
+#include "SVObjectManagerClass.h"
+#pragma endregion Includes
 
 namespace SvOl
 {

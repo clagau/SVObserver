@@ -9,11 +9,10 @@
 #include "stdafx.h"
 
 #include "SVCommandInspectionExtentUpdater.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "Tools/SVTool.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVToolSet.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

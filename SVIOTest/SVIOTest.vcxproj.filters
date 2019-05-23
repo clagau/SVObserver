@@ -37,6 +37,9 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -53,9 +56,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerSetupDlgClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AutoBuild\AutoBuild.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

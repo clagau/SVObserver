@@ -23,12 +23,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const std::string WidthTag("Width");
-	static const std::string HeidghtTag("Height");
-	static const std::string ClippingTag("IsClipping");
-	static const std::string AbsoluteValueTag("AbsoluteValue");
-	static const std::string TransformationTag("TransformationFactor");
-	static const std::string CellValueTag("CellValue");
+	constexpr char* WidthTag = "Width";
+	constexpr char* HeidghtTag = "Height";
+	constexpr char* ClippingTag = "IsClipping";
+	constexpr char* AbsoluteValueTag = "AbsoluteValue";
+	constexpr char* TransformationTag = "TransformationFactor";
+	constexpr char* CellValueTag = "CellValue";
 
 	static const std::vector<GUID> CellValueGuidList
 	{

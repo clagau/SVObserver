@@ -15,20 +15,19 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <iterator>
 #include "SVRemoteOutputDataController.h"
-
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVUtilityLibrary/SVGUID.h"
-
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
-#include "SVObserver.h"
 #include "SVPPQObject.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVObserver.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SVRemoteOutputDataControllerGUID );
@@ -144,7 +143,7 @@ HRESULT SVRemoteOutputDataController::GetItem( const std::string& rRemoteGroupId
 }
 
 // Parameters >> Tree ( Save )
-bool SVRemoteOutputDataController::GetParameters(SvXml::SVObjectXMLWriter& rWriter )
+bool SVRemoteOutputDataController::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t svVariant;
 

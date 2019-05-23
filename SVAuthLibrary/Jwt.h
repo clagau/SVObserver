@@ -8,10 +8,9 @@
 
 #pragma once
 
-#include <string>
-
-#include <SVAuthLibrary/Crypto.h>
-#include <SVProtoBuf/SVAuth.h>
+#pragma region Includes
+#include "SVProtoBuf/SVAuth.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {
@@ -36,4 +35,4 @@ private:
 
 } // namespace SvAuth
 
-#include "SVAuthLibrary/Jwt.inl"
+#include "Jwt.inl"

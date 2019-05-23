@@ -12,7 +12,9 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SVTestIO.h"
+#include "SVTestIODlg.h"
 #include "SVTestIOExports.h"
+#include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 extern CSVTestIOApp theApp;

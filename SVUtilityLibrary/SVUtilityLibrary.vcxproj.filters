@@ -21,13 +21,46 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArchiveExtractCallback.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchiveUpdateCallback.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="InStreamWrapper.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadDll.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="OutStreamWrapper.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="PropVariant.cpp">
+      <Filter>Quelldateien\7Zip</Filter>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="StringHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVBitmapInfo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVDottedName.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVGUID.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVHistogramBase.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMetrics.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVSafeArray.cpp">
@@ -36,133 +69,22 @@
     <ClCompile Include="SVUtilityGlobals.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDottedName.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="ZipHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadDll.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMetrics.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="StringHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="BitmapHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ArchiveExtractCallback.cpp">
-      <Filter>Quelldateien\7Zip</Filter>
-    </ClCompile>
-    <ClCompile Include="ArchiveUpdateCallback.cpp">
-      <Filter>Quelldateien\7Zip</Filter>
-    </ClCompile>
-    <ClCompile Include="InStreamWrapper.cpp">
-      <Filter>Quelldateien\7Zip</Filter>
-    </ClCompile>
-    <ClCompile Include="OutStreamWrapper.cpp">
-      <Filter>Quelldateien\7Zip</Filter>
-    </ClCompile>
-    <ClCompile Include="PropVariant.cpp">
-      <Filter>Quelldateien\7Zip</Filter>
-    </ClCompile>
-    <ClCompile Include="SVHistogramBase.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="StringToEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBitmapInfo.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGUID.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGuidList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHandleManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVNameVariantList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVNullDeleter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectID.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSafeArray.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUniqueIDGenerator.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUniqueObjectID.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUtilityGlobals.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVVariantList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="XMLWriter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVWinHandle.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDottedName.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ZipHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSelectionList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadDll.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NaturalStringCompare.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NameGuidList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHistogramBase.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHistogramStats.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMetrics.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SetBits.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="StringHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="BitmapHelper.h">
-      <Filter>Headerdateien</Filter>
+    <ClInclude Include="7zTypes.h">
+      <Filter>Headerdateien\7Zip</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveExtractCallback.h">
       <Filter>Headerdateien\7Zip</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveUpdateCallback.h">
       <Filter>Headerdateien\7Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapHelper.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="IArchive.h">
       <Filter>Headerdateien\7Zip</Filter>
@@ -185,6 +107,18 @@
     <ClInclude Include="IStream.h">
       <Filter>Headerdateien\7Zip</Filter>
     </ClInclude>
+    <ClInclude Include="LoadDll.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NameGuidList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NameSelectionList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NaturalStringCompare.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="OutStreamWrapper.h">
       <Filter>Headerdateien\7Zip</Filter>
     </ClInclude>
@@ -197,10 +131,73 @@
     <ClInclude Include="PropVariant.h">
       <Filter>Headerdateien\7Zip</Filter>
     </ClInclude>
-    <ClInclude Include="7zTypes.h">
-      <Filter>Headerdateien\7Zip</Filter>
+    <ClInclude Include="SetBits.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="StringHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="StringToEnum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBitmapInfo.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDottedName.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGUID.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGuidList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVHandleManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVHistogramBase.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVHistogramStats.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMetrics.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVNameVariantList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVNullDeleter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectID.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVPoint.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSafeArray.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUniqueIDGenerator.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUniqueObjectID.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUtilityGlobals.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVWinHandle.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLWriter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ZipHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

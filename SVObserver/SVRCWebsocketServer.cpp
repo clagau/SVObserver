@@ -8,7 +8,7 @@
 #include "StdAfx.h"
 #include "SVRCWebsocketServer.h"
 
-static const int cThreadCount = 1;
+constexpr int cThreadCount = 1;
 
 SVRCWebsocketServer::SVRCWebsocketServer()
 	:m_io_service {cThreadCount}

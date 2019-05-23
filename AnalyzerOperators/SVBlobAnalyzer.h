@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "SVImageAnalyzerClass.h"
-#include "Operators/TableObject.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -28,6 +27,7 @@
 namespace SvOp
 {
 class SVLongResultClass;
+class TableObject;
 }
 
 namespace SvAo

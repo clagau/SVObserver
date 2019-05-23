@@ -6,10 +6,14 @@
 /// Not much to see here.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 
-#include "SVAuthLibrary/RestHandler.h"
+#include "RestHandler.h"
+#include "SvHttpLibrary/HttpRequest.h"
+#include "SvHttpLibrary/HttpResponse.h"
 #include "SVProtoBuf/Protobuf2Rapidjson.h"
+#pragma endregion Includes
 
 using namespace Protobuf2Rapidjson;
 using boost::beast::http::field;

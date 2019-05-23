@@ -14,6 +14,7 @@
 #include "SVImageTest.h"
 #include "SVImageTestDlg.h"
 #include "SVTestAcquisitionClass.h"
+#include "SVTestAcquisitionSubsystem.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

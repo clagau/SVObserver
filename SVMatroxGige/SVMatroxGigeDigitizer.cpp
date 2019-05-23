@@ -11,7 +11,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeDigitizer.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVGigeCameraParametersLibrary/SVGigeCameraDBParser.h"
+#include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #pragma endregion Includes
 
 #define NUM_ACQUISITION_BUFFERS 5

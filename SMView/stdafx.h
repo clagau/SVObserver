@@ -21,6 +21,7 @@
 #include <afxwin.h>         // MFC core and standard components
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
+#include <atomic>
 #include <string>
 #include <vector>
 #include <map>

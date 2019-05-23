@@ -12,13 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 namespace SvTo
 {
 class SVStatisticsToolClass;
 }
+
+class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 class SVToolSetClass;
 

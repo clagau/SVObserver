@@ -89,7 +89,7 @@ const IID BASED_CODE IID_DSVScrollWnd1Events =
 /////////////////////////////////////////////////////////////////////////////
 // Control type information
 
-static const DWORD BASED_CODE _dwSVScrollWnd1OleMisc =
+constexpr DWORD BASED_CODE _dwSVScrollWnd1OleMisc =
 	OLEMISC_ACTIVATEWHENVISIBLE |
 	OLEMISC_SETCLIENTSITEFIRST |
 	OLEMISC_INSIDEOUT |

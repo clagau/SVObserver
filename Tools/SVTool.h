@@ -27,10 +27,17 @@
 #include "SVValueObjectLibrary/SVTimerValueObjectClass.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
+struct SVExtentPropertyInfoStruct;
+}
+
 namespace SvOp
 {
 class SVConditionalClass;
 }
+
+class SVRunStatusClass;
 
 namespace SvTo
 {

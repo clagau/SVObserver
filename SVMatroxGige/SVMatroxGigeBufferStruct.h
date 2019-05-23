@@ -18,7 +18,7 @@
 
 typedef std::shared_ptr<SVMatroxBuffer> SVMatroxBufferRef;
 
-class SVMatroxGigeBufferStruct
+struct SVMatroxGigeBufferStruct
 {
 public:
 	SVMatroxGigeBufferStruct();

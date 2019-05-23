@@ -12,15 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgAcquisitionSourcePage.h"
-#include "SVObjectLibrary/SVObjectClass.h"
-#include "SVToolSet.h"
-#include "Tools/SVTool.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
-#include "InspectionEngine/SVVirtualCamera.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
+#include "SVToolAdjustmentDialogSheetClass.h"
+#include "InspectionEngine/SVVirtualCamera.h"
+#include "SVObjectLibrary/SVObjectClass.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

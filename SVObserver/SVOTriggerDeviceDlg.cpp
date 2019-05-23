@@ -15,11 +15,9 @@
 #include "SVOTriggerDeviceDlg.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
-#include "TriggerInformation/SVOTriggerObj.h"
 #include "SVTriggerSelectionDlg.h"
-#include "SVOResource\ConstGlobalSvOr.h"
-#include "TextDefinesSvO.h"
-#pragma endregion Includes
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "TriggerInformation/SVOTriggerObj.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -28,7 +26,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const TCHAR* const cCameraTriggerTag = _T("CameraTrigger_");
+constexpr char* cCameraTriggerTag = _T("CameraTrigger_");
 
 CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* pParent /*=nullptr*/)
 : CPropertyPage(CSVOTriggerDeviceDlg::IDD)

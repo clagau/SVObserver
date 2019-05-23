@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "Definitions/SVImageFormatEnum.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerGrabEnums.h"
 #pragma endregion Includes
 
 namespace SVMatroxGigeTrigger

@@ -19,17 +19,18 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVMatroxGigeCameraProxy.h"
-#include "Definitions/SVGigeEnums.h"
-#include "SVMessage/SVMessage.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
-#include "InspectionEngine/SVMatroxGigeAcquisitionClass.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/SVGigeEnums.h"
+#include "InspectionEngine/SVMatroxGigeAcquisitionClass.h"
+#include "SVImageLibrary/SVImagingDeviceParams.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #pragma warning (pop)
 #pragma region Includes
 

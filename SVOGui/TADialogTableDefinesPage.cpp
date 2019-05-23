@@ -9,15 +9,14 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogTableDefinesPage.h"
-#include "SVObjectLibrary\SVClsids.h"
+#include "FormulaController.h"
+#include "SVFormulaEditorSheet.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
-#include "SVFormulaEditorSheet.h"
-#include "FormulaController.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
+#include "SVMessage/SVMessage.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -29,14 +28,14 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-static const int cHeaderSize = 1;
-static const int cNameColumnSize = 150;
-static const int cFormulaColumnSize = 500;
-static const int cNameColumn = 0;
-static const int cFormulaColumn = 1;
-static const TCHAR* const cEquationName = _T("Table Column");
-static const TCHAR* const cHeaderName_NameColumn = _T("Column Name");
-static const TCHAR* const cHeaderName_FormulaColumn = _T("Formula");
+constexpr int cHeaderSize = 1;
+constexpr int cNameColumnSize = 150;
+constexpr int cFormulaColumnSize = 500;
+constexpr int cNameColumn = 0;
+constexpr int cFormulaColumn = 1;
+constexpr char* cEquationName = _T("Table Column");
+constexpr char* cHeaderName_NameColumn = _T("Column Name");
+constexpr char* cHeaderName_FormulaColumn = _T("Formula");
 
 BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 	//{{AFX_MSG_MAP(TADialogTableDefinesPage)

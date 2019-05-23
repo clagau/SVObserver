@@ -16,6 +16,7 @@
 #pragma region Includes
 #include "SVMatroxPatternInterface.h"
 #include "SVMatroxApplicationInterface.h"
+#include "SVMatroxBuffer.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxHelper.h"
 #include "SVMatroxResourceMonitor.h"

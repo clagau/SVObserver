@@ -21,7 +21,7 @@
 @SVObjectOperations This data class has a set image depth function.
 
 */
-class SVMatroxBufferCreateLineStruct  
+struct SVMatroxBufferCreateLineStruct  
 {
 public:
 	SVMatroxBufferCreateLineStruct();

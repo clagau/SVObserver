@@ -11,14 +11,16 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVLUTEquation.h"
 #include "SVLUTOperator.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVLUTEquation.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateLineStruct.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp

@@ -11,8 +11,11 @@
 
 #pragma once
 
-#include "SVMatroxBuffer.h"
+#pragma region Includes
 #include "SVMatroxSimpleEnums.h"
+#pragma endregion Includes
+
+class SVMatroxBuffer;
 
 /**
 @SVObjectName Matrox Image Rotate Struct
@@ -22,7 +25,7 @@
 @SVObjectOperations This data class has no operations.
 
 */
-class SVMatroxImageRotateStruct  
+struct SVMatroxImageRotateStruct  
 {
 public:
 	SVMatroxImageRotateStruct(SVMatroxBuffer& p_rSource);

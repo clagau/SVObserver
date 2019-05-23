@@ -230,6 +230,7 @@
     <ClInclude Include="MonitorListStore.h" />
     <ClInclude Include="MonitorListStore.pb.h" />
     <ClInclude Include="Protobuf2Rapidjson.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAuth.h" />
     <ClInclude Include="SVAuth.pb.h" />
     <ClInclude Include="SVO-Enum.h" />
@@ -240,7 +241,6 @@
     <ClInclude Include="SVRC-SVOGateway.pb.h" />
     <ClInclude Include="SVRC.h" />
     <ClInclude Include="SVRC.pb.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="TriggerRecordController.h" />
     <ClInclude Include="TriggerRecordController.pb.h" />
     <ClInclude Include="Variant.h" />

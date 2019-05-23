@@ -8,8 +8,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableTool.h"
-#include "SVObjectLibrary\SVClsids.h"
-#include "ObjectInterfaces\IObjectManager.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "Operators/SVEquation.h"
 #include "Operators/TableColumnEquation.h"
 #include "Definitions/GlobalConst.h"

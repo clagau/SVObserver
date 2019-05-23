@@ -12,12 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVImageTest.h"
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVImageTestDlg.h"
+#include "SVTestAcquisitionSubsystem.h"
 #include "SVTestGigeAcquisitionSubsystem.h"
 #include "SVUnloadDeviceDialog.h"
-#include "SVStatusLibrary/GlobalPath.h"
 #include "Definitions/TextDefineSVDef.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include <google\protobuf\stubs\common.h>
 #pragma endregion Includes

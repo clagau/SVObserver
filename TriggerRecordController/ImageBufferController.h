@@ -8,16 +8,15 @@
 #pragma once
 
 #pragma region Includes
-#pragma warning( disable: 4244 )	//Disable warning for prototype conversion
-#include "SVProtoBuf/TriggerRecordController.h"
 #include "DataControllerBase.h"
+#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 struct MatroxBufferChildDataStruct;
-struct MatroxImageProps;
+struct SVMatroxBufferCreateChildStruct;
 struct SVMatroxBufferCreateStruct;
-class SVMatroxBufferCreateChildStruct;
+struct MatroxImageProps;
 class SVMatroxBuffer;
 
 namespace SvTrc

@@ -17,6 +17,7 @@
 #include "SVi64ValueDeviceParam.h"
 #include "SVLongValueDeviceParam.h"
 #include "SVStringValueDeviceParam.h"
+#include "SVDeviceParamCollection.h"
 #include "SVCustomDeviceParam.h"
 #include "SVParamListDeviceParam.h"
 #include "SVUtilityLibrary/StringHelper.h"

@@ -15,7 +15,6 @@
 #include "Operators/SVColorThreshold.h"
 #include "SVTADlgColorThresholdOutput.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVInspectionProcess.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"

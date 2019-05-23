@@ -17,6 +17,13 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
+namespace SvDef
+{
+struct SVObjectTypeInfoStruct;
+}
+
+class SVGUID;
+
 namespace SvOg
 {
 	class SVFormulaEditorSheetClass : public CPropertySheet

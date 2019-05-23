@@ -6,12 +6,11 @@
 /// Not much to see here.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
-#include <chrono>
-
 #include "SVAuthLibrary/JwtFactory.h"
 #include "SVProtoBuf/Protobuf2Rapidjson.h"
+#pragma endregion Includes
 
 using namespace Protobuf2Rapidjson;
 

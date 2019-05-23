@@ -11,9 +11,9 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "ImageController.h"
 #include "DisplayHelper.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
-#include "ObjectInterfaces\IObjectManager.h"
-#include "ObjectInterfaces\ISVImage.h"
+#include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/ISVImage.h"
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary\MessageManager.h"

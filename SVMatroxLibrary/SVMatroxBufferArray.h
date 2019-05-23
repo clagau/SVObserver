@@ -11,10 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVMatroxStatusInformation.h"
-#include "SVMatroxSystem.h"
-#include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxBuffer.h"
+#pragma endregion Includes
+
+class SVMatroxSystem;
+struct SVMatroxBufferCreateStruct;
 
 class SVMatroxBufferArray
 {

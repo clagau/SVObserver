@@ -8,14 +8,15 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <thread.h>
-#include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
-#include "CopyData.h"
 #include "DataControllerWriter.h"
+#include "CopyData.h"
 #include "ImageBufferController.h"
 #include "TriggerRecord.h"
 #include "TriggerRecordData.h"
+#include "SVMessage\SVMessage.h"
+#include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
+#include "SVSharedMemoryLibrary\SMParameterStruct.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 namespace SvTrc

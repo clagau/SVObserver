@@ -27,7 +27,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
-static const TCHAR* const DefaultConfigurationName = _T("Configuration");
+constexpr char* DefaultConfigurationName = _T("Configuration");
 
 SVRCCommand::SVRCCommand()
 {

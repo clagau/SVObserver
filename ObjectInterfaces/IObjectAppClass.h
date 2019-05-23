@@ -7,8 +7,12 @@
 #pragma once
 
 #pragma region Includes
-#include "IObjectClass.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+class IObjectClass;
+}
 
 namespace SvOi
 {

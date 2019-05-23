@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVLUTEquation.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

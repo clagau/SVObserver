@@ -6,10 +6,11 @@
 /// Not much to see here.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
-#include "SVAuthLibrary/Crypto.h"
-#include "SVAuthLibrary/UserDatabase.h"
+#include "Crypto.h"
+#include "UserDatabase.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

@@ -19,6 +19,7 @@
 #include "SVImageLibrary/SVLut.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"
@@ -38,7 +39,7 @@ namespace SvIe
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const TCHAR* const cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
+constexpr char* cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
 #pragma endregion Declarations
 
 SVDigitizerProcessingClass& SVDigitizerProcessingClass::Instance()

@@ -9,8 +9,11 @@
 // * .Check In Date   : $Date:   03 Jul 2013 16:26:16  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRPropTree.h"
+#include "SVRPropTreeState.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,8 +29,8 @@ const int SVRPropTree::PROPTREEITEM_CHECKBOX      = 14;			// size of the check b
 const int SVRPropTree::PNINDENT                   = 16;			// child level indent
 const int SVRPropTree::PROPTREEITEM_EXPANDBOXHALF = (PROPTREEITEM_EXPANDBOX / 2);
 
-static const TCHAR* const cOfficeFontName	= _T("Tahoma");
-static const TCHAR* const cDefaultFontName = _T("MS Sans Serif");
+constexpr char* cOfficeFontName	= _T("Tahoma");
+constexpr char* cDefaultFontName = _T("MS Sans Serif");
 
 static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRIC FAR*, ULONG, LPARAM)
 {

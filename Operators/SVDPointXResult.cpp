@@ -12,8 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDPointXResult.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVRange.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVValueObjectLibrary/SVDPointValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

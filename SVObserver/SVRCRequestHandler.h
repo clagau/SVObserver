@@ -10,8 +10,9 @@
 //Moved to precompiled header: #include <boost/asio/io_service.hpp>
 //Moved to precompiled header: #include <thread>
 #include "SVRPCLibrary/RequestHandler.h"
-#include "SVRCCommand.h"
 #pragma endregion Includes
+
+class SVRCCommand;
 
 class SVRCRequestHandler :public SvRpc::RequestHandler
 {

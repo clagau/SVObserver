@@ -15,6 +15,7 @@
 #include "ObjectInterfaces\IObjectClass.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVProtoBuf\ConverterHelper.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 

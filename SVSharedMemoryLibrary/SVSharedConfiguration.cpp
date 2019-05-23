@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <shlwapi.h>
 //Moved to precompiled header: #include <winioctl.h>
 #include "SVSharedConfiguration.h"
-#include "SVShared.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 

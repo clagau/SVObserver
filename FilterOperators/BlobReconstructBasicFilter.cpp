@@ -8,10 +8,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "BlobReconstructBasicFilter.h"
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -64,7 +66,9 @@ bool BlobReconstructBasicFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr 
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty())
 	{
 		long proceMode = getProceMode();
-		MblobReconstruct(rInputImageHandle->GetBuffer().GetIdentifier(), M_NULL, rOutputImageHandle->GetBuffer().GetIdentifier(), m_operatorMode, proceMode);
+		SVMatroxBuffer& rInBuffer = rInputImageHandle->GetBuffer();
+		SVMatroxBuffer& rOutBuffer = rOutputImageHandle->GetBuffer();
+		MblobReconstruct(rInBuffer.GetIdentifier(), M_NULL, rOutBuffer.GetIdentifier(), m_operatorMode, proceMode);
 		HRESULT hr = SVMatroxApplicationInterface::GetLastStatus();
 
 		if (S_OK != hr)

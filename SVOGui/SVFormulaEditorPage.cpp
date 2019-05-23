@@ -11,23 +11,20 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "Definitions/GlobalConst.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVFormulaEditorPage.h"
-#include "SVOResource/ConstGlobalSvOr.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/LoadDll.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "TextDefinesSvOg.h"
+#include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSVDef.h"
-#include "TextDefinesSvOg.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectReference.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/LoadDll.h"
 #pragma endregion Includes
 
 #pragma region Declarations

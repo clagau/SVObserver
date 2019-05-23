@@ -30,14 +30,14 @@ static char THIS_FILE[] = __FILE__;
 namespace SvOg
 {
 
-static LPCTSTR NoColumnTag = _T("(No Column Available)");
-static const std::string IsAscTag(_T("IsAsc"));
-static const std::string ExcludeHighTag(_T("ExcludeHigh"));
-static const std::string ExcludeHighLinkTag(_T("ExcludeHigh_Link"));
-static const std::string ExcludeLowTag(_T("ExcludeLow"));
-static const std::string ExcludeLowLinkTag(_T("ExcludeLow_Link"));
-static const std::string LimitValueTag(_T("LimitValue"));
-static const std::string LimitValueLinkTag(_T("LimitValue_Link"));
+constexpr char* NoColumnTag = _T("(No Column Available)");
+constexpr char* IsAscTag = _T("IsAsc");
+constexpr char* ExcludeHighTag = _T("ExcludeHigh");
+constexpr char* ExcludeHighLinkTag = _T("ExcludeHigh_Link");
+constexpr char* ExcludeLowTag = _T("ExcludeLow");
+constexpr char* ExcludeLowLinkTag = _T("ExcludeLow_Link");
+constexpr char* LimitValueTag = _T("LimitValue");
+constexpr char* LimitValueLinkTag = _T("LimitValue_Link");
 
 BEGIN_MESSAGE_MAP(TaTableAnalyzerPage, CPropertyPage)
 	//{{AFX_MSG_MAP(TaTableAnalyzerPage)

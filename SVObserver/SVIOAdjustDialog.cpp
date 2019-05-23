@@ -11,18 +11,16 @@
 
 #pragma region Includes
 #include "stdafx.h"
-
 #include "SVIOAdjustDialog.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVConfigurationObject.h"
+#include "SVPPQObject.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
-#include "SVPPQObject.h"
-#include "SVConfigurationObject.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "TextDefinesSvO.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #pragma endregion Includes
 
 #pragma region Declarations

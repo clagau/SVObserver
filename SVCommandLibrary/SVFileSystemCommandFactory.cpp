@@ -9,14 +9,17 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:37:50  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFileSystemCommandFactory.h"
 
 #include "SVCommandConcreteTemplate.h"
-#include "SVCommandDataValue.h"
 #include "SVCommandConcreteFactoryTemplate.h"
+#include "SVCommandDataValue.h"
+#include "SVCommandDataHolder.h"
+#pragma endregion Includes
 
 typedef SVCommandConcreteTemplate< 0x00020001 > SVDoesFileExistCommand;
 const SVDoesFileExistCommand::SVCommandAttributes::SVDefaultAttributes SVDoesFileExistCommand::SVCommandAttributes::m_DefaultAttributes

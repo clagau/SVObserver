@@ -12,9 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "RangeClassHelper.h"
-#include "SVObjectLibrary\SVObjectClass.h"
-#include "Definitions\SVObjectTypeInfoStruct.h"
 #include "SVMessage\SVMessage.h"
+#include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #pragma endregion Includes
 

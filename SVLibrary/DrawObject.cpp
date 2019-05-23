@@ -24,9 +24,9 @@ static char THIS_FILE[] = __FILE__;
 
 //! Note these values are set in SVPictureDisplay.idl of the SVPictureDisplay.ocx
 //! To avoid direct dependencies to the project the constants are set locally
-static const long cP_AllowEdit{ 10L };
-static const long cP_Color{ 24L };
-static const long cP_SelectedColor{ 25L };
+constexpr long cP_AllowEdit{ 10L };
+constexpr long cP_Color{ 24L };
+constexpr long cP_SelectedColor{ 25L };
 #pragma endregion Declarations
 
 DrawObject::DrawObject()

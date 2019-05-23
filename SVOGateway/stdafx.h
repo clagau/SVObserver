@@ -40,6 +40,7 @@
 
 #include <afx.h> //avoid linker error in DEBUG build
 #include <comutil.h>
+#include <conio.h>
 #include <fstream>
 #include <functional>
 #include <future>

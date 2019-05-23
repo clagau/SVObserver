@@ -13,21 +13,22 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <numeric>
 #include "SVTADlgArchiveResultsPage.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "InspectionCommands/CommandExternalHelper.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "Tools/SVArchiveTool.h"
+#include "SVArchiveHeaderEditDlg.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
-#include "SVArchiveHeaderEditDlg.h"
-#include "Tools/ArchiveToolHelper.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVOResource/ConstGlobalSvOr.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "Tools/SVArchiveTool.h"
+#include "Tools/ArchiveToolHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -47,10 +48,10 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveResultsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck)
 END_MESSAGE_MAP()
 
-static const int ItemSelectedCol = 1;
-static const int ItemsSelectedWidth = 500;
-static const int IconNumber = 1;
-static const int IconGrowBy = 2;
+constexpr int ItemSelectedCol = 1;
+constexpr int ItemsSelectedWidth = 500;
+constexpr int IconNumber = 1;
+constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
 #pragma region Constructor

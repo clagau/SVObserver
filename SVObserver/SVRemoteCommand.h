@@ -14,7 +14,7 @@
 #include "ObjectInterfaces/ICommand.h"
 #pragma endregion Includes
 
-class ATL_NO_VTABLE SVRemoteCommand
+class __declspec(novtable) SVRemoteCommand
 :	public CComObjectRootEx< CComSingleThreadModel >
 ,	public CComCoClass< SVRemoteCommand, &CLSID_SVRemoteCommand >
 ,	public IDispatchImpl< ISVRemoteCommand, &IID_ISVRemoteCommand, &LIBID_SVObserver >

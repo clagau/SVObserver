@@ -11,14 +11,19 @@
 #pragma region Includes
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/Observer.h"
-#include "SVRPCLibrary/RPCCLient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVRPCLibrary/Task.h"
-#include "SVRCClientServiceSettings.h"
 #pragma endregion Includes
+
+namespace SvRpc
+{
+class RPCCLient;
+}
 
 namespace SvWsl
 {
+struct SVRCClientServiceSetting;
+
 class SVRCClientService
 {
 public:

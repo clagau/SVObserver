@@ -17,9 +17,12 @@
 
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferInterface.h"
+#include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxCommandDataImage.h"
 #include "SVMatroxEnumConvertor.h"
 #include "SVMatroxErrorEnum.h"
+#include "SVMatroxImageRotateStruct.h"
+#include "SVMatroxPolarTransformStruct.h"
 #include "SVMatroxResourceMonitor.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMessage/SVMessage.h"

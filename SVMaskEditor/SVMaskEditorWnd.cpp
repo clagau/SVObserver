@@ -71,7 +71,7 @@ END_DISPATCH_MAP()
 //  dispinterface in the .ODL file.
 
 // {326BF441-EBC4-11D2-A75C-00106F000C7A}
-static const IID IID_ISVMaskEditorWndClass =
+constexpr IID IID_ISVMaskEditorWndClass =
 { 0x326bf441, 0xebc4, 0x11d2, { 0xa7, 0x5c, 0x0, 0x10, 0x6f, 0x0, 0xc, 0x7a } };
 
 BEGIN_INTERFACE_MAP(SVMaskEditorWndClass, CWnd)

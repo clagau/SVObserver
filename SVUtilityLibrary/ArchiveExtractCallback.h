@@ -18,6 +18,8 @@
 #include "IArchive.h"
 #include "IPassword.h"
 
+//This comment is to avoid that the IPassword PASSWORD_INTERFACE include is marked as not required due to a macro
+
 class ArchiveExtractCallback : public IArchiveExtractCallback, public ICryptoGetTextPassword
 {
 public:

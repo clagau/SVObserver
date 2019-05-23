@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVShapeMaskHelperClass.h"
 #include "SVUserMaskOperatorClass.h"
+#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/SVClsIds.h"

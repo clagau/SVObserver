@@ -11,11 +11,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCylindricalWarpTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVImageLibrary/SVImageExtentClass.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVImageLibrary/SVImageExtentClass.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

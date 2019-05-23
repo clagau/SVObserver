@@ -15,17 +15,15 @@
 #include "InspectionEngine/SVVirtualCamera.h"
 #pragma endregion Includes
 
-/////////////////////////////////////////////////////////////////////////////
-// CSVRegressionFileSelectSheet
 
-class CSVRegressionFileSelectSheet : public CPropertySheet
+class SVRegressionFileSelectSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(CSVRegressionFileSelectSheet)
+	DECLARE_DYNAMIC(SVRegressionFileSelectSheet)
 
 // Construction
 public:
-	CSVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	CSVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -37,7 +35,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CSVRegressionFileSelectSheet();
+	virtual ~SVRegressionFileSelectSheet();
 
 	// Generated message map functions
 protected:

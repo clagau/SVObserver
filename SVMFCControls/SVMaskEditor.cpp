@@ -9,57 +9,57 @@
 
 namespace SvMc
 {
-	IMPLEMENT_DYNCREATE(CSVMaskEditor, CWnd)
+	IMPLEMENT_DYNCREATE(SVMaskEditor, CWnd)
 
-	LPUNKNOWN CSVMaskEditor::GetImageDIBHandle()
+	LPUNKNOWN SVMaskEditor::GetImageDIBHandle()
 	{
 		LPUNKNOWN result;
 		GetProperty(0x1, VT_UNKNOWN, (void*)&result);
 		return result;
 	}
 
-	void CSVMaskEditor::SetImageDIBHandle(LPUNKNOWN propVal)
+	void SVMaskEditor::SetImageDIBHandle(LPUNKNOWN propVal)
 	{
 		SetProperty(0x1, VT_UNKNOWN, propVal);
 	}
 
-	long CSVMaskEditor::GetMaskOperator()
+	long SVMaskEditor::GetMaskOperator()
 	{
 		long result;
 		GetProperty(0x2, VT_I4, (void*)&result);
 		return result;
 	}
 
-	void CSVMaskEditor::SetMaskOperator(long propVal)
+	void SVMaskEditor::SetMaskOperator(long propVal)
 	{
 		SetProperty(0x2, VT_I4, propVal);
 	}
 
-	LPUNKNOWN CSVMaskEditor::GetMaskData()
+	LPUNKNOWN SVMaskEditor::GetMaskData()
 	{
 		LPUNKNOWN result;
 		GetProperty(0x3, VT_UNKNOWN, (void*)&result);
 		return result;
 	}
-	void CSVMaskEditor::SetMaskData(LPUNKNOWN propVal)
+	void SVMaskEditor::SetMaskData(LPUNKNOWN propVal)
 	{
 		SetProperty(0x3, VT_UNKNOWN, propVal);
 	}
 
 
-	void CSVMaskEditor::Refresh()
+	void SVMaskEditor::Refresh()
 	{
 		InvokeHelper(DISPID_REFRESH, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}
 
-	long CSVMaskEditor::DoEditMaskModal()
+	long SVMaskEditor::DoEditMaskModal()
 	{
 		long result;
 		InvokeHelper(0x4, DISPATCH_METHOD, VT_I4, (void*)&result, nullptr);
 		return result;
 	}
 
-	void CSVMaskEditor::AboutBox()
+	void SVMaskEditor::AboutBox()
 	{
 		InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 	}

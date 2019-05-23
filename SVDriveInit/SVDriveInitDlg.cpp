@@ -41,74 +41,74 @@ static char THIS_FILE[] = __FILE__;
 #define SERIALNUMBER_SIZE	20
 #define MODELNUMBER_SIZE	8
 
-static const TCHAR g_tszSVOUpdateFirmware[] = _T("Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Utilities\\Update Firmware");
-static const TCHAR g_tszSVOSettings[] = _T("Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Settings");
-static const TCHAR productIdLocation[] = _T("Software\\Microsoft\\Windows NT\\CurrentVersion");
-static const TCHAR oemSection[] = _T("OEMSpecific");
-static const TCHAR generalSection[] = _T("general");
-static const TCHAR UserDataSection[] = _T("UserData");
+constexpr char g_tszSVOUpdateFirmware[] = _T("Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Utilities\\Update Firmware");
+constexpr char g_tszSVOSettings[] = _T("Software\\SVR Gesellschaft für Bildverarbeitung mbH\\SVObserver\\Settings");
+constexpr char productIdLocation[] = _T("Software\\Microsoft\\Windows NT\\CurrentVersion");
+constexpr char oemSection[] = _T("OEMSpecific");
+constexpr char generalSection[] = _T("general");
+constexpr char UserDataSection[] = _T("UserData");
 
-static const TCHAR g_tszWindowsRunOnce[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+constexpr char g_tszWindowsRunOnce[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
 
-static const TCHAR g_bootIniFilepath[] = _T("C:\\boot.ini");
-static const TCHAR g_bootIniBackupFilepath[] = _T("C:\\boot.%03d");
+constexpr char g_bootIniFilepath[] = _T("C:\\boot.ini");
+constexpr char g_bootIniBackupFilepath[] = _T("C:\\boot.%03d");
 
-static const TCHAR g_mtxgigeSYS[] = _T("%s\\mtxgige.sys");
-static const TCHAR g_mtxgigeSVR[] = _T("%s\\mtxgige.svr");
-static const TCHAR g_mtxgigefilterSYS[] = _T("%s\\mtxgigefilter.sys");
-static const TCHAR g_mtxgigefilterSVR[] = _T("%s\\mtxgigefilter.svr");
+constexpr char g_mtxgigeSYS[] = _T("%s\\mtxgige.sys");
+constexpr char g_mtxgigeSVR[] = _T("%s\\mtxgige.svr");
+constexpr char g_mtxgigefilterSYS[] = _T("%s\\mtxgigefilter.sys");
+constexpr char g_mtxgigefilterSVR[] = _T("%s\\mtxgigefilter.svr");
 
-static const TCHAR g_MtxDmaParamRegKey[] = _T("SYSTEM\\ControlSet001\\Services\\MtxDma0\\Parameters");
-static const TCHAR g_MatroxReserveMemorySizeTag[] = _T("MatroxReserveMemorySize");
-static const TCHAR g_HighMemoryAreaReservedStartTag[] = _T("HighMemoryAreaReservedStart");
-static const TCHAR g_DmaBufferSizeTag[] = _T("DmaBufferSize");
-static const TCHAR g_HighMemoryAreaReservedSizeTag[] = _T("HighMemoryAreaReservedSize");
-static const TCHAR g_MaxMemTag[] = _T("/MAXMEM=");
-static const TCHAR g_MemoryNTTag[] = _T("(Memory: NT=");
-static const TCHAR g_ReserveMemoryEntry[] = _T("%s(Memory: NT=%d MB, MIL=%d.0 MB)%c /MAXMEM=%d%s");
+constexpr char g_MtxDmaParamRegKey[] = _T("SYSTEM\\ControlSet001\\Services\\MtxDma0\\Parameters");
+constexpr char g_MatroxReserveMemorySizeTag[] = _T("MatroxReserveMemorySize");
+constexpr char g_HighMemoryAreaReservedStartTag[] = _T("HighMemoryAreaReservedStart");
+constexpr char g_DmaBufferSizeTag[] = _T("DmaBufferSize");
+constexpr char g_HighMemoryAreaReservedSizeTag[] = _T("HighMemoryAreaReservedSize");
+constexpr char g_MaxMemTag[] = _T("/MAXMEM=");
+constexpr char g_MemoryNTTag[] = _T("(Memory: NT=");
+constexpr char g_ReserveMemoryEntry[] = _T("%s(Memory: NT=%d MB, MIL=%d.0 MB)%c /MAXMEM=%d%s");
 
-static const TCHAR g_SerialNoTag[] = _T("SerialNo");
-static const TCHAR g_ModelNoTag[] = _T("ModelNo");
-static const TCHAR g_DateTag[] = _T("Date");
-static const TCHAR g_ServicedByTag[] = _T("ServicedBy");
-static const TCHAR g_SingleCameraTag[] = _T("SingleCamera");
-static const TCHAR g_ModelTag[] = _T("Model");
+constexpr char g_SerialNoTag[] = _T("SerialNo");
+constexpr char g_ModelNoTag[] = _T("ModelNo");
+constexpr char g_DateTag[] = _T("Date");
+constexpr char g_ServicedByTag[] = _T("ServicedBy");
+constexpr char g_SingleCameraTag[] = _T("SingleCamera");
+constexpr char g_ModelTag[] = _T("Model");
 
-static const TCHAR g_ProductIdTag[] = _T("ProductId");
-static const TCHAR g_SVIMTag[] = _T("SVIM");
-static const TCHAR g_SVPCTag[] = _T("SVPC");
+constexpr char g_ProductIdTag[] = _T("ProductId");
+constexpr char g_SVIMTag[] = _T("SVIM");
+constexpr char g_SVPCTag[] = _T("SVPC");
 
-static const TCHAR g_FrameGrabberTag[] = _T("Frame Grabber");
-static const TCHAR g_DigitizerDLLTag[] = _T("DigitizerDLL");
-static const TCHAR g_SVMatroxGigeDLLTag[] = _T("SVMatroxGige.DLL");
-static const TCHAR g_NetStartMatroxGigECmd[] = _T("net start \042Matrox GigE Vision Assistant Service\042");
-static const TCHAR g_IOBoardTag[] = _T("IO Board");
-static const TCHAR g_DigitalIODLLTag[] = _T("DigitalIODLL");
+constexpr char g_FrameGrabberTag[] = _T("Frame Grabber");
+constexpr char g_DigitizerDLLTag[] = _T("DigitizerDLL");
+constexpr char g_SVMatroxGigeDLLTag[] = _T("SVMatroxGige.DLL");
+constexpr char g_NetStartMatroxGigECmd[] = _T("net start \042Matrox GigE Vision Assistant Service\042");
+constexpr char g_IOBoardTag[] = _T("IO Board");
+constexpr char g_DigitalIODLLTag[] = _T("DigitalIODLL");
 
-static const TCHAR g_bootLoaderTag[] = _T("boot loader");
-static const TCHAR g_defaultTag[] = _T("default");
-static const TCHAR g_OperatingSystemsTag[] = _T("operating systems");
+constexpr char g_bootLoaderTag[] = _T("boot loader");
+constexpr char g_defaultTag[] = _T("default");
+constexpr char g_OperatingSystemsTag[] = _T("operating systems");
 
-static const TCHAR g_svobserver1CmdFilepath[] = _T("C:\\SVObserver\\bin\\SVObserver1.cmd");
-static const TCHAR g_InitializeIOSubsystemFilepath[] = _T("C:\\SVObserver\\bin\\InitializeIOSubsystem.exe");
-static const TCHAR g_SVLptIODllFilename[] = _T("SVLptIO.dll");
+constexpr char g_svobserver1CmdFilepath[] = _T("C:\\SVObserver\\bin\\SVObserver1.cmd");
+constexpr char g_InitializeIOSubsystemFilepath[] = _T("C:\\SVObserver\\bin\\InitializeIOSubsystem.exe");
+constexpr char g_SVLptIODllFilename[] = _T("SVLptIO.dll");
 
-static const TCHAR g_ModelNumberNotValidMsg[] = _T("Model Number is not Valid.");
-static const TCHAR g_ModelNumberNotValidMsgPrompt[] = _T("Model Number is not Valid.\nWould you like to correct the Model Number ?");
+constexpr char g_ModelNumberNotValidMsg[] = _T("Model Number is not Valid.");
+constexpr char g_ModelNumberNotValidMsgPrompt[] = _T("Model Number is not Valid.\nWould you like to correct the Model Number ?");
 
-static const TCHAR g_SysprepUpdatefailedMsg[] = _T("Update System Prep Info Failed");
-static const TCHAR g_OEMUpdateFailedMsg[] = _T("Update OEM Info Failed");
-static const TCHAR g_SvimInfoUpdateFailedMsg[] = _T("Update SVIM Info Failed");
-static const TCHAR g_RegistryInfoUpdateFailedMsg[] = _T("Update Registry Info Failed");
-static const TCHAR g_CreateProcessFailedMsg[] = _T("Create Process Failed");
+constexpr char g_SysprepUpdatefailedMsg[] = _T("Update System Prep Info Failed");
+constexpr char g_OEMUpdateFailedMsg[] = _T("Update OEM Info Failed");
+constexpr char g_SvimInfoUpdateFailedMsg[] = _T("Update SVIM Info Failed");
+constexpr char g_RegistryInfoUpdateFailedMsg[] = _T("Update Registry Info Failed");
+constexpr char g_CreateProcessFailedMsg[] = _T("Create Process Failed");
 
 
-static const TCHAR g_SVObserverExeTag[] = _T("SVObserver.exe");
+constexpr char g_SVObserverExeTag[] = _T("SVObserver.exe");
 
 static TCHAR oeminfoFileName[_MAX_PATH];
 static TCHAR windowsDriverPath[_MAX_PATH];
 
-static const int TmpBufSize = 1024;
+constexpr int TmpBufSize = 1024;
 
 DWORD GetLastSystemErrorText(CString & szMsg);///< also in SVDriveInitDlg.cpp
 HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg);///< also in SVDriveInitDlg.cpp

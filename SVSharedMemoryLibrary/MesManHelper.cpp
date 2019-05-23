@@ -9,10 +9,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MesManHelper.h"
-#include "Definitions\StringTypeDef.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\StringHelper.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SourceFileParams.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 void MesManHelper::ThrowCreateFileMappingFailed(LPCSTR MapFileName, SvStl::SourceFileParams& FileParams, DWORD Programmcode)

@@ -13,11 +13,11 @@
 
 #pragma region Includes
 #include "SVOperator.h"
-#include "SVUnaryImageOperatorList.h"
 #pragma endregion Includes
 
 namespace SvOp
 {
+class SVUnaryImageOperatorListClass;
 
 class SVUnaryImageOperatorClass : public SVOperatorClass
 {

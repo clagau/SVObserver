@@ -11,16 +11,18 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/ISVCancel.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls/SVActiveDisableButton.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-class SVToolAdjustmentDialogSheetClass;
 namespace SvOp
 {
 class SVExternalToolTask;
 }
+
+class SVToolAdjustmentDialogSheetClass;
+struct SVCancelData;
 
 class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {

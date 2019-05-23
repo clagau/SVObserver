@@ -14,10 +14,6 @@
 //Moved to precompiled header: #include <float.h>
 #include "SVImagePolarTransform.h"
 
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVEvaluateCenterXClass.h"
 #include "SVEvaluateCenterYClass.h"
 #include "SVEvaluateStartRadiusClass.h"
@@ -27,9 +23,15 @@
 #include "SVEquation.h"
 #include "Definitions/GlobalConst.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxPolarTransformStruct.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #include "Tools/SVPolarTransformationTool.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOp

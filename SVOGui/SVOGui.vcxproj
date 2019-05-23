@@ -112,7 +112,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp" />
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
     <ClCompile Include="BlobReconstructFilterDlg.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
@@ -133,26 +132,27 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
-    <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp" />
-    <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
-    <ClCompile Include="SVFillBlobDlg.cpp" />
-    <ClCompile Include="SVLuminanceAnalyzerDlg.cpp" />
+    <ClCompile Include="SVAdjustToolSizePositionDlg.cpp" />
     <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
     <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
     <ClCompile Include="SVBarCodeGeneralDialog.cpp" />
     <ClCompile Include="SVBarCodeProperties.cpp" />
     <ClCompile Include="SVBarCodeStringMatchDialog.cpp" />
+    <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
+    <ClCompile Include="SVBlobFeaturePropertiesDlg.cpp" />
     <ClCompile Include="SVCustomFilterDlg.cpp" />
     <ClCompile Include="SVCylindricalWarpDlg.cpp" />
     <ClCompile Include="SVDlgImage.cpp" />
+    <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
     <ClCompile Include="SVExternalToolImageSelectPage.cpp" />
+    <ClCompile Include="SVFillBlobDlg.cpp" />
     <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVFormulaEditorSheet.cpp" />
     <ClCompile Include="SVLicenseMgrModelessDlg.cpp" />
-    <ClCompile Include="SVOCVSheet.cpp" />
+    <ClCompile Include="SVLuminanceAnalyzerDlg.cpp" />
     <ClCompile Include="SVOCVGeneralDlg.cpp" />
     <ClCompile Include="SVOCVMatchDlg.cpp" />
+    <ClCompile Include="SVOCVSheet.cpp" />
     <ClCompile Include="SVPatternAnalyzerModelPage.cpp" />
     <ClCompile Include="SVPerspectiveWarpPage.cpp" />
     <ClCompile Include="SVRankingFilterDlg.cpp" />
@@ -161,18 +161,18 @@
     <ClCompile Include="SVTADlgColorToolPage.cpp" />
     <ClCompile Include="SVTADlgFileImageSourcePage.cpp" />
     <ClCompile Include="SVTADlgGeneralPage.cpp" />
-    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
-    <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
     <ClCompile Include="SVTADlgPassFailPage.cpp" />
     <ClCompile Include="SVTADlgTransformImagePage.cpp" />
     <ClCompile Include="SVTextEditDialog.cpp" />
     <ClCompile Include="SVThickeningFilterDlg.cpp" />
     <ClCompile Include="SVThinningFilterDlg.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogCommentPage.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogFilterPageClass.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogImagePageClass.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogLinearSpecialPage.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp" />
+    <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
     <ClCompile Include="SVWaterShedFilterDlg.cpp" />
     <ClCompile Include="TADialogLoopToolParameterPage.cpp" />
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
@@ -183,18 +183,17 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SVAdjustToolSizePositionDlg.h" />
-    <ClInclude Include="BlobReconstructFilterDlg.h" />
-    <ClInclude Include="DisplayHelper.h" />
-    <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="AuxiliaryExtentsController.h" />
+    <ClInclude Include="BlobReconstructFilterDlg.h" />
     <ClInclude Include="BoundValue.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
-    <ClInclude Include="FormulaController.h" />
     <ClInclude Include="DataController.h" />
+    <ClInclude Include="DisplayHelper.h" />
+    <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
     <ClInclude Include="GlobalConstantDlg.h" />
+    <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="ImageController.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="MaskController.h" />
@@ -204,30 +203,31 @@
     <ClInclude Include="Ranking2FilterDlg.h" />
     <ClInclude Include="ReconstructFilterDlg.h" />
     <ClInclude Include="ResultTableSelectionDlg.h" />
+    <ClInclude Include="Sci_Position.h" />
     <ClInclude Include="SciLexer.h" />
     <ClInclude Include="Scintilla.h" />
-    <ClInclude Include="Sci_Position.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVBlobAnalyzerDialog.h" />
-    <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
-    <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
-    <ClInclude Include="SVFillBlobDlg.h" />
-    <ClInclude Include="SVLuminanceAnalyzerDlg.h" />
+    <ClInclude Include="SVAdjustToolSizePositionDlg.h" />
     <ClInclude Include="SVBarCodeAttributesDialog.h" />
     <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
     <ClInclude Include="SVBarCodeGeneralDialog.h" />
     <ClInclude Include="SVBarCodeProperties.h" />
     <ClInclude Include="SVBarCodeStringMatchDialog.h" />
+    <ClInclude Include="SVBlobAnalyzerDialog.h" />
+    <ClInclude Include="SVBlobFeaturePropertiesDlg.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
     <ClInclude Include="SVCylindricalWarpDlg.h" />
     <ClInclude Include="SVDlgImage.h" />
+    <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
     <ClInclude Include="SVExternalToolImageSelectPage.h" />
+    <ClInclude Include="SVFillBlobDlg.h" />
     <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVFormulaEditorSheet.h" />
     <ClInclude Include="SVLicenseMgrModelessDlg.h" />
-    <ClInclude Include="SVOCVSheet.h" />
+    <ClInclude Include="SVLuminanceAnalyzerDlg.h" />
     <ClInclude Include="SVOCVGeneralDlg.h" />
     <ClInclude Include="SVOCVMatchDlg.h" />
+    <ClInclude Include="SVOCVSheet.h" />
     <ClInclude Include="SVPatternAnalyzerModelPage.h" />
     <ClInclude Include="SVPerspectiveWarpPage.h" />
     <ClInclude Include="SVRankingFilterDlg.h" />
@@ -236,8 +236,6 @@
     <ClInclude Include="SVTADlgColorToolPage.h" />
     <ClInclude Include="SVTADlgFileImageSourcePage.h" />
     <ClInclude Include="SVTADlgGeneralPage.h" />
-    <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
-    <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVTADlgPassFailPage.h" />
     <ClInclude Include="SVTADlgTransformImagePage.h" />
     <ClInclude Include="SVTextEditDialog.h" />
@@ -247,7 +245,9 @@
     <ClInclude Include="SVToolAdjustmentDialogFilterPageClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogImagePageClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogLinearSpecialPage.h" />
+    <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
+    <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVWaterShedFilterDlg.h" />
     <ClInclude Include="TADialogLoopToolParameterPage.h" />
     <ClInclude Include="TADialogRingBufferParameterPage.h" />

@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include <string>
-
+#pragma region Includes
 #include <boost/asio/io_context.hpp>
 
 #include "SVProtoBuf/SVAuth.h"
 #include "SVHttpLibrary/HttpClient.h"
 #include "SVHttpLibrary/url.hpp"
+#pragma endregion Includes
 
 namespace SvAuth
 {

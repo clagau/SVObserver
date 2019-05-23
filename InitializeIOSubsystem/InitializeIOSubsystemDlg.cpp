@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "InitializeIOSubsystem.h"
 #include "InitializeIOSubsystemDlg.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #pragma endregion Includes

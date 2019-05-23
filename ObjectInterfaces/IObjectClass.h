@@ -10,12 +10,16 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
-#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVProtobuf/SVO-Enum.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvDef
+{
+struct SVObjectTypeInfoStruct;
+}
+
 //! Declaration is in SVStatusLibrary\MessageContainer.h
 namespace SvStl
 {

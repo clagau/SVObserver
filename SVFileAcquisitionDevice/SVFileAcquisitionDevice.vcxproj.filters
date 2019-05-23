@@ -48,6 +48,9 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -69,16 +72,13 @@
     <ClInclude Include="SVFileAcquisitionDeviceParamEnum.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVFileAcquisitionLoadingModeEnum.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVFileCamera.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileCameraStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileAcquisitionLoadingModeEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AutoBuild\AutoBuild.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,24 +17,24 @@
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <deque>
 #include "SVInspectionImporter.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVUtilityLibrary/ZipHelper.h"
+#include "RootObject.h"
+#include "SVConfigurationObject.h"
 #include "SVInspectionTreeParser.h"
+#include "SVInspectionProcess.h"
+#include "SVIProgress.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressDialog.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVInspectionProcess.h"
-
-#include "SVConfigurationObject.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "RootObject.h"
-#include "SVXMLLibrary/SaxXMLHandler.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/ZipHelper.h"
+#include "SVXMLLibrary/SaxXMLHandler.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
+#include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
 #pragma endregion Includes
 
 static LPCTSTR scImportNewExt = _T(".new.xml");

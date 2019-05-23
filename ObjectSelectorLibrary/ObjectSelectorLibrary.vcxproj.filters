@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectTreeGenerator.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectSelectorPpg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectTreeCtrl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="LeafTreeCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -22,12 +10,27 @@
     <ClCompile Include="ObjectFilterPpg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectSelectorPpg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTreeCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTreeGenerator.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ObjectTreeGenerator.h">
+    <ClInclude Include="LeafTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="NodeTreeCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFilterPpg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectSelectorPpg.h">
@@ -36,13 +39,10 @@
     <ClInclude Include="ObjectTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="LeafTreeCtrl.h">
+    <ClInclude Include="ObjectTreeGenerator.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTreeCtrl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectFilterPpg.h">
+    <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOsl.h">

@@ -10,17 +10,17 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVObjectLibrary.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVWaterShedFilter.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "SVWaterShedFilter.h"
-#include "Definitions/TextDefineSVDef.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVClsIds.h"
-
+#include "SVObjectLibrary/SVObjectLibrary.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

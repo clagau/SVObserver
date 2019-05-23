@@ -9,9 +9,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "RotationTool.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary\SVMatroxImageRotateStruct.h"
-#include "SVMatroxLibrary\SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 #pragma region Declarations

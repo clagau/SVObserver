@@ -12,6 +12,7 @@
 
 #include "RPCServer.h"
 
+#include "SVHttpLibrary/HttpServerConnection.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 

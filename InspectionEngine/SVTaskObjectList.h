@@ -13,12 +13,13 @@
 #pragma region Includes
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
+
+class SVRunStatusClass;
 
 namespace SvIe
 {

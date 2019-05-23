@@ -7,13 +7,13 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "ResizeTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTo

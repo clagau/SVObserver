@@ -126,19 +126,19 @@
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\SVOGateway\Settings.h" />
-    <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
     <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="..\SVOGateway\Settings.h" />
+    <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SVOGateway\SettingsLoader.cpp" />
-    <ClCompile Include="SVRPCStreamServer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVRPCStreamServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVRPCStreamServer.rc" />

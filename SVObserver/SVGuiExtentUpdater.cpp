@@ -11,12 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "InspectionEngine/SVTaskObject.h"
 #include "SVGuiExtentUpdater.h"
-#include "SVInspectionProcess.h"
-#include "Tools/SVTool.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVCommandInspectionExtentUpdater.h"
+#include "SVInspectionProcess.h"
+#include "InspectionEngine/SVTaskObject.h"
+#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 

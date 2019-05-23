@@ -11,7 +11,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMaskEditor.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

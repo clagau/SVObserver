@@ -6,16 +6,20 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
-#include "ArchiveMethodEnum.h"
 #include "SVArchiveRecord.h"
 #include "Definitions/StringTypeDef.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
+namespace SvVol
+{
+class SVStringValueObjectClass;
+}
+
+struct SVObjectInfoStruct;
+
 namespace SvTo
 {
-
 class SVArchiveTool;
 class SVArchiveRecord;
 

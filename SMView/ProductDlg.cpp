@@ -6,10 +6,11 @@
 /// class derived from CDialog to Display results from getProduct getResult and get Failstatus
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "ProductDlg.h"
-#include "SVSharedMemoryLibrary\MLProduct.h"
-#include "SVUtilityLibrary\StringHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 LPCTSTR ProductDlg::ColHeader[] = { _T("Trigger"),_T("Name"),_T("Obj"),_T("Var"), _T("Size"),_T("data") };
 DWORD ProductDlg::ColHeaderWidth[] = { 40,400,40, 40,40,100 };

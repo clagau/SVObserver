@@ -15,31 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Observer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RPCClient.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RPCServer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Task.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ErrorUtil.h">
+    <ClInclude Include="ClientStreamContext.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="EnvelopeUtil.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="RequestHandler.h">
+    <ClInclude Include="ErrorUtil.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="RequestHandlerBase.h">
+    <ClInclude Include="Observer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObserverWrapper.h">
@@ -48,24 +33,39 @@
     <ClInclude Include="OneOfUtil.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TaskWrapper.h">
+    <ClInclude Include="RequestHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleClient.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientStreamContext.h">
+    <ClInclude Include="RequestHandlerBase.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Router.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="RPCClient.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RPCServer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="ServerStreamContext.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleClient.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskWrapper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="Router.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="RPCClient.cpp">
@@ -74,7 +74,7 @@
     <ClCompile Include="RPCServer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Router.cpp">
+    <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

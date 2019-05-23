@@ -14,6 +14,7 @@
 #include "SVObjectInfoStruct.h"
 #include "SVObjectClass.h"
 #include "SVObjectManagerClass.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations

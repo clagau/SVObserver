@@ -13,8 +13,12 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <iostream>
-#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVDeviceParam.h"
 #pragma endregion Includes
+
+class SVDeviceParamCollection;
+class SVLongValueDeviceParam;
+
 
 class SVGigeCameraFileReader
 {

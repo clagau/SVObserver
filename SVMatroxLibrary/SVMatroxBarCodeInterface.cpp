@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <assert.h>
 #include "SVMatroxBarCodeInterface.h"
 #include "SVMatroxApplicationInterface.h"
+#include "SVMatroxBuffer.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxResourceMonitor.h"
 #include "SVMatroxHelper.h"

@@ -17,6 +17,8 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVDeviceParamCollection.h"
 #include "SVDeviceParams.h"
+#include "SVBoolValueDeviceParam.h"
+#include "SVStringValueDeviceParam.h"
 #include "SVCustomDeviceParam.h"
 
 SVDeviceParamIndexer::SVDeviceParamIndexer(const SVDeviceParamMap& map) : m_mapIndexed(map)

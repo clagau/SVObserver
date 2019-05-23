@@ -27,9 +27,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const LPCTSTR scAUTO = _T("Auto");
-static const LPCTSTR scENABLE = _T("Enable");
-static const LPCTSTR scDISABLE = _T("Disable");
+constexpr char* scAUTO = _T("Auto");
+constexpr char* scENABLE = _T("Enable");
+constexpr char* scDISABLE = _T("Disable");
 
 IMPLEMENT_DYNCREATE(SVPatAdvancedPageClass, CPropertyPage)
 

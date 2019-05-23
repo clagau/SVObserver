@@ -13,11 +13,9 @@
 #include "stdafx.h"
 #include "SVSaveToolSetImageDialog.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "TextDefinesSvOg.h"
-#include "SVMessage/SVMessage.h"
-
 #pragma endregion Includes
 
 #ifdef _DEBUG

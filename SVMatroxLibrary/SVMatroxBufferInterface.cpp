@@ -11,17 +11,23 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
+#include <boost/format.hpp>
+#include "MatroxImageProps.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxApplicationInterface.h"
+#include "SVMatroxBufferCreateChildStruct.h"
+#include "SVMatroxBufferCreateLineStruct.h"
+#include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxImageBuffer.h"
 #include "SVMatroxImageChildBuffer.h"
-#include "SVSystemLibrary/SVImageConvertorGDI.h"
 #include "SVMatroxResourceMonitor.h"
+#include "SVMatroxSystem.h"
+#include "SVSystemLibrary/SVImageConvertorGDI.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include <boost/format.hpp>
+#include "SVUtilityLibrary/SVBitmapInfo.h"
 #pragma endregion Includes
 
 enum ImageBands

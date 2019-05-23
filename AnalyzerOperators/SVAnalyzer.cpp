@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVAnalyzer.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "InspectionEngine/SVImageClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 

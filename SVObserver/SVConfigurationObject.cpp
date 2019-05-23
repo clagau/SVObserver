@@ -14,61 +14,61 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <regex>
 #include "SVConfigurationObject.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVSafeArray.h"
-#include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "CameraLibrary/SVDeviceParams.h"
-#include "CameraLibrary/SVBoolValueDeviceParam.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVTimerLibrary/SVClock.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVObserver.h"
+#include "RangeClassHelper.h"
+#include "RemoteMonitorListHelper.h"
+#include "RemoteMonitorNamedList.h"
+#include "RootObject.h"
 #include "SVCommandInspectionGetItems.h"
-#include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
-#include "SVIOLibrary/SVRemoteInputObject.h"
-#include "SVIOLibrary/SVDigitalInputObject.h"
-#include "SVIOLibrary/SVDigitalOutputObject.h"
+#include "SVConfigurationTreeWriter.h"
+#include "SVGlobal.h"
 #include "SVMainFrm.h"
 #include "SVIODoc.h"
 #include "SVIOController.h"
+#include "SVIPDoc.h"
+#include "SVObserver.h"
+#include "SVStorageResult.h"
+#include "SVToolSet.h"
+#include "TextDefinesSvO.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/SVUserMessage.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVAcquisitionDevice.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVToolSet.h"
-#include "Definitions/SVUserMessage.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVIOLibrary/SVCameraDataInputObject.h"
+#include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVDigitalOutputObject.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVIOLibrary/SVRemoteInputObject.h"
+#include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
+#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVImageLibrary/SVImagingDeviceParams.h"
+#include "SVProtoBuf/ConverterHelper.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVSystemLibrary\SVThreadManager.h"
+#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVObjectXMLWriter.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "TriggerHandling/SVAcquisitionInitiator.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "SVConfigurationTreeWriter.h"
 #include "TriggerInformation/SVCameraTriggerClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
-#include "SVIOLibrary/SVCameraDataInputObject.h"
-#include "SVGlobal.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStorageResult.h"
-#include "Definitions/GlobalConst.h"
-#include "RemoteMonitorNamedList.h"
-#include "RemoteMonitorListHelper.h"
-#include "RootObject.h"
-#include "SVSystemLibrary\SVThreadManager.h"
-#include "RangeClassHelper.h"
-#include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVIPDoc.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "Definitions/GlobalConst.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
-#include "TextDefinesSvO.h"
 #include "Tools/SVColorTool.h"
-#include "InspectionCommands/CommandExternalHelper.h"
-#include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVProtoBuf/ConverterHelper.h"
-#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2795,7 +2795,7 @@ HRESULT SVConfigurationObject::GetChildObject(SVObjectClass*& rpObject, const SV
 	return l_Status;
 }
 
-void SVConfigurationObject::SaveEnvironment(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_ENVIRONMENT);
 
@@ -2832,7 +2832,7 @@ void SVConfigurationObject::SaveEnvironment(SvXml::SVObjectXMLWriter& rWriter) c
 	rWriter.EndElement(); //End of Enviroment
 }
 
-void SVConfigurationObject::SaveIO(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_IO);
 
@@ -2966,7 +2966,7 @@ void SVConfigurationObject::SaveIO(SvXml::SVObjectXMLWriter& rWriter) const
 	rWriter.EndElement(); //End of SvXml::CTAG_IO
 }
 
-void SVConfigurationObject::SaveAcquisitionDevice(SvXml::SVObjectXMLWriter& rWriter)  const
+void SVConfigurationObject::SaveAcquisitionDevice(SvOi::IObjectWriter& rWriter)  const
 {
 	rWriter.StartElement(SvXml::CTAG_ACQUISITION_DEVICE);
 
@@ -3027,7 +3027,7 @@ void SVConfigurationObject::SaveAcquisitionDevice(SvXml::SVObjectXMLWriter& rWri
 	rWriter.EndElement(); //End of SvXml::CTAG_ACQUISITION_DEVICE
 }
 
-void SVConfigurationObject::SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const
+void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const
 {
 	rWriter.StartElement(SvXml::CTAG_LIGHT_REFERENCE_ARRAY);
 
@@ -3111,7 +3111,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter
 	SaveDeviceParameters(rWriter, rDeviceParams);
 }
 
-void SVConfigurationObject::SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SaveCamera(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_CAMERA);
 
@@ -3198,7 +3198,7 @@ void SVConfigurationObject::SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const
 	rWriter.EndElement(); //SvXml::CTAG_CAMERA
 }
 
-void SVConfigurationObject::SaveTrigger(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SaveTrigger(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_TRIGGER);
 
@@ -3233,7 +3233,7 @@ void SVConfigurationObject::SaveTrigger(SvXml::SVObjectXMLWriter& rWriter) const
 	rWriter.EndElement();  // SvXml::CTAG_TRIGGER
 }
 
-void SVConfigurationObject::SaveInspection(SvXml::SVObjectXMLWriter& rWriter, AttributesSetMap& rAttributeSetPairVector) const
+void SVConfigurationObject::SaveInspection(SvOi::IObjectWriter& rWriter, AttributesSetMap& rAttributeSetPairVector) const
 {
 	rWriter.StartElement(SvXml::CTAG_INSPECTION);
 
@@ -3276,7 +3276,7 @@ void SVConfigurationObject::SaveInspection(SvXml::SVObjectXMLWriter& rWriter, At
 	rWriter.EndElement(); //SvXml::CTAG_INSPECTION
 }
 
-void SVConfigurationObject::SavePPQ(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SavePPQ(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_PPQ);
 
@@ -3318,7 +3318,7 @@ void SVConfigurationObject::SavePPQ(SvXml::SVObjectXMLWriter& rWriter) const
 	rWriter.EndElement();  // SvXml::CTAG_PPQ
 }
 
-void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ) const
+void SVConfigurationObject::SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const
 {
 	SVGUID ObjectGuid = rPPQ.GetUniqueObjectID();
 	_variant_t svValue = ObjectGuid.ToVARIANT();
@@ -3367,7 +3367,7 @@ void SVConfigurationObject::SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter
 	svValue.Clear();
 }
 
-void SVConfigurationObject::SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ) const
+void SVConfigurationObject::SavePPQ_Cameras(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const
 {
 	SvIe::SVVirtualCameraPtrVector cameraVector = rPPQ.GetVirtualCameras();
 	if (0 < cameraVector.size())
@@ -3394,7 +3394,7 @@ void SVConfigurationObject::SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, c
 	}
 }
 
-void SVConfigurationObject::SavePPQ_Inspections(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ) const
+void SVConfigurationObject::SavePPQ_Inspections(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const
 {
 	long lInspectCount;
 	rPPQ.GetInspectionCount(lInspectCount);
@@ -3417,7 +3417,7 @@ void SVConfigurationObject::SavePPQ_Inspections(SvXml::SVObjectXMLWriter& rWrite
 	}// end if
 }
 
-bool SVConfigurationObject::SaveRemoteMonitorList(SvXml::SVObjectXMLWriter& rWriter) const
+bool SVConfigurationObject::SaveRemoteMonitorList(SvOi::IObjectWriter& rWriter) const
 {
 	bool bOk = true;
 	rWriter.StartElement(SvXml::CTAG_MONITOR_LISTS);
@@ -3455,7 +3455,7 @@ bool SVConfigurationObject::SaveRemoteMonitorList(SvXml::SVObjectXMLWriter& rWri
 	return bOk;
 }
 
-bool SVConfigurationObject::SaveMonitoredObjectList(SvXml::SVObjectXMLWriter& rWriter, const std::string& listName, const MonitoredObjectList& rList) const
+bool SVConfigurationObject::SaveMonitoredObjectList(SvOi::IObjectWriter& rWriter, const std::string& listName, const MonitoredObjectList& rList) const
 {
 	bool bOk = true;
 	rWriter.StartElement(listName.c_str());
@@ -3481,7 +3481,7 @@ bool SVConfigurationObject::SaveMonitoredObjectList(SvXml::SVObjectXMLWriter& rW
 	return bOk;
 }
 
-void SVConfigurationObject::SaveGlobalConstants(SvXml::SVObjectXMLWriter &rWriter) const
+void SVConfigurationObject::SaveGlobalConstants(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_GLOBAL_CONSTANTS);
 
@@ -3517,7 +3517,7 @@ void SVConfigurationObject::SaveGlobalConstants(SvXml::SVObjectXMLWriter &rWrite
 	rWriter.EndElement(); //SvXml::CTAG_GLOBAL_CONSTANTS
 }
 
-void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rWriter, const AttributesSetMap& rAttributesSetMap) const
+void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const
 {
 	const std::map<UINT, std::string> AttributeSetTypes
 	{
@@ -3596,7 +3596,7 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvXml::SVObjectXMLWriter &rW
 	rWriter.EndElement(); //SvXml::CTAG_OBJECT_ATTRIBUTES_SET
 }
 
-void SVConfigurationObject::SaveAdditionalFiles(SvXml::SVObjectXMLWriter &rWriter) const
+void SVConfigurationObject::SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) const
 {
 	if(m_AdditionalFiles.size() > 0)
 	{
@@ -3674,13 +3674,13 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	rWriter.EndElement(); // end of Root Element
 }
 
-void SVConfigurationObject::SaveFileAcquisitionConfiguration(SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams) const
+void SVConfigurationObject::SaveFileAcquisitionConfiguration(SvOi::IObjectWriter& rWriter, const SVDeviceParamCollection& rDeviceParams) const
 {
 	// save the camera params
 	SaveDeviceParameters(rWriter, rDeviceParams);
 }
 
-void SVConfigurationObject::SaveDeviceParameters(SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams) const
+void SVConfigurationObject::SaveDeviceParameters(SvOi::IObjectWriter& rWriter, const SVDeviceParamCollection& rDeviceParams) const
 {
 	rWriter.StartElement(SvXml::CTAG_DEVICE_PARAM_LIST);
 
@@ -3731,7 +3731,7 @@ void SVConfigurationObject::SaveDeviceParameters(SvXml::SVObjectXMLWriter& rWrit
 	rWriter.EndElement(); //SvXml::CTAG_DEVICE_PARAM_LIST
 }
 
-void SVConfigurationObject::SaveDeviceParamSpecial(SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam) const
+void SVConfigurationObject::SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter, const SVDeviceParam* pParam) const
 {
 	_variant_t svVariant;
 	VARIANT vValue;

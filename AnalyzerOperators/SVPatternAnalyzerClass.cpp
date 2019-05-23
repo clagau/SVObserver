@@ -13,12 +13,13 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
 #include "SVPatternAnalyzerClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "Definitions/Color.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/SVResetStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions/Color.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -27,10 +28,9 @@
 #include "Operators/SVRange.h"
 #include "Operators/SVResultLong.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "Tools/SVTool.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "Definitions/GlobalConst.h"
-#include "Definitions/SVResetStruct.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 namespace SvAo

@@ -15,19 +15,52 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SVToolBar.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="StdAfx.cpp">
+    <ClCompile Include="AvailableObjectListComboBox.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="CLabel.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVSliderCtrl.cpp">
+    <ClCompile Include="DlgItemResizer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelessMessageBox.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="NameSelectionTreeCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectsListBox.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizablePropertySheet.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVActiveDisableButton.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVAnalyzerResultDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDlgBitmap.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDlgFolder.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDlgGraph.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDottedNameTreeCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVEditableListBox.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEditControlWithHelp.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVEditHelper.cpp">
@@ -36,34 +69,28 @@
     <ClCompile Include="SVEditNumbers.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVUpDownButton.cpp">
+    <ClCompile Include="SVEnumerateCombo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVInPlaceEdit.cpp">
+    <ClCompile Include="SVFileDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVListCtrl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVKnobControl.cpp">
+    <ClCompile Include="SVHistogram.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVHorizListBox.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDottedNameTreeCtrl.cpp">
+    <ClCompile Include="SVInPlaceEdit.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTreeCtrl.cpp">
+    <ClCompile Include="SVKnobControl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVListCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMaskEditor.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualFx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteInputDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVOConfigNameEdit.cpp">
@@ -72,81 +99,87 @@
     <ClCompile Include="SVOEditorWnd.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVActiveDisableButton.cpp">
+    <ClCompile Include="SVOSelectItemListDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDlgFolder.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileDialog.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="NameSelectionTreeCtrl.cpp">
+    <ClCompile Include="SVRemoteInputDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVSlideBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOSelectItemListDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVWindowBar.cpp">
+    <ClCompile Include="SVSliderCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVStatusBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="AvailableObjectListComboBox.cpp">
+    <ClCompile Include="SVToolBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectsListBox.cpp">
+    <ClCompile Include="SVTreeCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVHistogram.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDlgBitmap.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEditControlWithHelp.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDlgGraph.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DlgItemResizer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ResizablePropertySheet.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelessMessageBox.cpp">
+    <ClCompile Include="SVUpDownButton.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVUtilityArgumentDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVEnumerateCombo.cpp">
+    <ClCompile Include="SVWindowBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVAnalyzerResultDlg.cpp">
+    <ClCompile Include="VisualFx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StdAfx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolBar.h">
+    <ClInclude Include="AvailableObjectListComboBox.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CLabel.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVSliderCtrl.h">
+    <ClInclude Include="DlgItemResizer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelessMessageBox.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NameSelectionTreeCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectsListBox.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizablePropertySheet.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVActiveDisableButton.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAnalyzerResultDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDlgBitmap.H">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDlgFolder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDlgGraph.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDottedNameTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEditableListBox.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEditControlWithHelp.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEditHelper.h">
@@ -155,70 +188,10 @@
     <ClInclude Include="SVEditNumbers.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVUpDownButton.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInPlaceEdit.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVListCtrl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVKnobControl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHorizListBox.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDottedNameTreeCtrl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTreeCtrl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMaskEditor.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="VisualFx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteInputDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOConfigNameEdit.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOEditorWnd.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVActiveDisableButton.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDlgFolder.h">
+    <ClInclude Include="SVEnumerateCombo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSelectionTreeCtrl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSlideBar.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOSelectItemListDlg.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVWindowBar.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStatusBar.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="AvailableObjectListComboBox.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectsListBox.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVHistogram.h">
@@ -227,31 +200,58 @@
     <ClInclude Include="SVHistogramLabels.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDlgBitmap.H">
+    <ClInclude Include="SVHorizListBox.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVEditControlWithHelp.h">
+    <ClInclude Include="SVInPlaceEdit.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDlgGraph.h">
+    <ClInclude Include="SVKnobControl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="DlgItemResizer.h">
+    <ClInclude Include="SVListCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ResizablePropertySheet.h">
+    <ClInclude Include="SVMaskEditor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ModelessMessageBox.h">
+    <ClInclude Include="SVOConfigNameEdit.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVOEditorWnd.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVOSelectItemListDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRemoteInputDialog.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSlideBar.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSliderCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVStatusBar.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolBar.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTreeCtrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUpDownButton.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVUtilityArgumentDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVEnumerateCombo.h">
+    <ClInclude Include="SVWindowBar.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVAnalyzerResultDlg.h">
+    <ClInclude Include="VisualFx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

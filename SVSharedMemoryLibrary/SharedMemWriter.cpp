@@ -9,14 +9,17 @@
 //* .Check In Date   : $Date:   15 Oct 2014 19:03:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "SVLibrary/SVOIniClass.h"
-#include "SVSharedConfiguration.h"
+#include "SMParameterStruct.h"
+#include "SharedMemIniFileTags.h"
 #include "SharedmemWriter.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "SVSharedConfiguration.h"
+#include "SVLibrary/SVOIniClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SharedMemIniFileTags.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#pragma endregion Includes
 
 namespace SvSml
 {

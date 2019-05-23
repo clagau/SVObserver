@@ -13,24 +13,24 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <numeric>
 #include "SVTADlgArchiveImagePage.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "Tools/SVArchiveTool.h"
-#include "InspectionCommands/CommandExternalHelper.h"
-#include "SVIPDoc.h"
-#include "InspectionEngine/SVImageClass.h"
 #include "SVInspectionProcess.h"
-#include "SVOLibrary/SVMemoryManager.h"
+#include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
-#include "SVArchiveHeaderEditDlg.h"
-#include "Tools/ArchiveToolHelper.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVOResource\ConstGlobalSvOr.h"
-#include "SVStatusLibrary\GlobalPath.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+#include "InspectionEngine/SVImageClass.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOLibrary/SVMemoryManager.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Tools/SVArchiveTool.h"
+#include "Tools/ArchiveToolHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -50,12 +50,12 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
 END_MESSAGE_MAP()
 
-static const int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
-static const int ItemSelectedCol = 1;
-static const int ItemsSelectedWidth = 500;
-static const int IconNumber = 1;
-static const int IconGrowBy = 1;
-static const long MaxImagesWarningLimit = 100L;
+constexpr int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
+constexpr int ItemSelectedCol = 1;
+constexpr int ItemsSelectedWidth = 500;
+constexpr int IconNumber = 1;
+constexpr int IconGrowBy = 1;
+constexpr long MaxImagesWarningLimit = 100L;
 #pragma endregion Declarations
 
 #pragma region Constructor

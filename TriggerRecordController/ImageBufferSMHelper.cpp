@@ -9,16 +9,16 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ImageBufferSMHelper.h"
-#include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\StringHelper.h"
-#include "SVSharedMemoryLibrary\SharedDataStore.h"
-#include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
-#pragma warning( disable: 4244 )	//Disable warning for conversion
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMatroxLibrary/MatroxImageProps.h"
+#include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/TriggerRecordController.h"
-#include "LocalConst.h"
+#include "SVSharedMemoryLibrary/SharedDataStore.h"
+#include "SVSharedMemoryLibrary/SMParameterStruct.h"
+#include "SVSharedMemoryLibrary/SVSharedMemorySettings.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -72,7 +72,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
 
 	auto& rSMPointer = m_sharedMemoryMap[newMemoryName] = std::make_unique<SvSml::SharedDataStore>();
-	rSMPointer->CreateDataStore(newMemoryName.c_str(), bufferProps.Bytesize, requiredNumbers, smParam);
+	rSMPointer->CreateDataStore(newMemoryName.c_str(), static_cast<DWORD> (bufferProps.Bytesize), requiredNumbers, smParam);
 
 	for (int i = 0; i < requiredNumbers; i++)
 	{

@@ -12,6 +12,7 @@
 #include "StdAfx.h"
 #include "SVEmptyIOExports.h"
 #include "Definitions/SVImageFormatEnum.h"
+#include "TriggerHandling/TriggerBasics.h"
 
 HRESULT WINAPI SVCreate()
 {

@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeLutGetter.h"
-
+#include "SVGigeFeature.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #pragma endregion Includes
 

@@ -27,7 +27,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "TextDefinesSvOl.h"
 #include "SVClsids.h"
 #pragma warning (pop)
 #pragma endregion Includes
@@ -273,13 +272,12 @@ HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const G
 	return hr;
 }
 
-static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string& itemName, const SVVariantList& ValueList, SVObjectScriptDataObjectTypeEnum dstDataType)
+static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string& itemName, const std::vector<_variant_t>& ValueList, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	dataObject.SetName(itemName.c_str());
 	// check embedded class type for SVPointValueObject/SVDPointValueObject/SVVariantValueObject
-	for (SVVariantList::const_iterator it = ValueList.begin();it != ValueList.end();++it)
+	for (const auto& rValue : ValueList)
 	{
-		const _variant_t& rValue = (*it);
 		if (dstDataType == SV_VARIANT_Type)
 		{
 			dataObject.AddData(rValue);
@@ -347,12 +345,12 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string
 
 HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
-	SVVariantList values;
+	std::vector<_variant_t> values;
 	values.push_back(value);
 	return SetObjectValue(ownerID, objectID, itemName, values, dstDataType);
 }
 
-HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType)
+HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	HRESULT hr = S_OK;
 

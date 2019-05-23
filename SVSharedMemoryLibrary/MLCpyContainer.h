@@ -10,7 +10,6 @@
 #pragma once
 #pragma region Includes
 #include "MonitorEntry.h"
-#include "SVProductFilterEnum.h"
 #include "MLInspectionInfo.h"
 #include "MonitorListCpy.h"
 #include "Definitions\StringTypeDef.h"

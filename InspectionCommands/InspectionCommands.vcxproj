@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ObjectSelectorFilter.h" />
-    <ClInclude Include="CommandFunction.h" />
     <ClInclude Include="CommandExternalHelper.h" />
+    <ClInclude Include="CommandFunction.h" />
     <ClInclude Include="CommandInternalHelper.h" />
     <ClInclude Include="GetMaskData.h" />
     <ClInclude Include="InspectionCommand_protoBuf.h" />
+    <ClInclude Include="ObjectSelectorFilter.h" />
     <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CommandFunction.cpp" />
     <ClCompile Include="CommandExternalHelper.cpp" />
+    <ClCompile Include="CommandFunction.cpp" />
     <ClCompile Include="CommandInternalHelper.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

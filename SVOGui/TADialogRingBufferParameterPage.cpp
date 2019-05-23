@@ -11,13 +11,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogRingBufferParameterPage.h"
-
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/SVMessage.h"
-#include "TextDefinesSvOg.h"
-#include "SVObjectLibrary/SVClsids.h"
-
 #include "Definitions/StringTypeDef.h"
+#include "SVMessage/SVMessage.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

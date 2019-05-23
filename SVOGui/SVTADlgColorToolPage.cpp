@@ -12,10 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorToolPage.h"
+#include "Definitions/TextDefineSvDef.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "Definitions/TextDefineSvDef.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"

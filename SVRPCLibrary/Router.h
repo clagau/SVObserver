@@ -13,6 +13,7 @@
 #include "RequestHandler.h"
 #include "RPCClient.h"
 #include "RequestHandler.h"
+#include "SVHttpLibrary/WebsocketClientSettings.h"
 #pragma endregion Includes
 
 namespace SvRpc

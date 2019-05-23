@@ -16,11 +16,11 @@
 #include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxOcr.h"
-#include "SVMatroxOcrCreateStruct.h"
-#include "SVMatroxOcrCalibrateStruct.h"
 #pragma endregion Includes
 
 class SVCommandDataHolder;
+struct SVMatroxOcrCalibrateStruct;
+struct SVMatroxOcrCreateStruct;
 
 /**
 @SVObjectName Matrox Ocr Interface

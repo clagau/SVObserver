@@ -12,16 +12,16 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVColorTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVColorThreshold.h"
 #include "Operators/ToolSizeAdjustTask.h"
-#include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvTo

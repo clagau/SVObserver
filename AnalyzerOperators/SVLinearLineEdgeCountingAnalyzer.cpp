@@ -13,8 +13,9 @@
 #include "stdafx.h"
 #include "SVLinearLineEdgeCountingAnalyzer.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo

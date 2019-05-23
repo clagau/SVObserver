@@ -21,6 +21,7 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 #include "HttpServerConnection.h"
+#include "HttpServerSettings.h"
 
 namespace SvHttp
 {

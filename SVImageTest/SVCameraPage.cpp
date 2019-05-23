@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "svimagetest.h"
 #include "SVCameraPage.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVCameraPropDlgClass.h"
 #include "SVCameraFilePropertyPageDlg.h"
@@ -29,8 +30,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const TCHAR* const cGigeCameraFileDefExt = _T(".ogc");
-static const TCHAR* const cGigeCameraFileFilter = _T("Digitizer Files (*.ogc)|*.ogc||");
+constexpr char* cGigeCameraFileDefExt = _T(".ogc");
+constexpr char* cGigeCameraFileFilter = _T("Digitizer Files (*.ogc)|*.ogc||");
 
 const static int AcqImageBufferCnt = 10;
 

@@ -12,22 +12,23 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolTask.h"
-
-#include "Definitions/TextDefineSVDef.h"
-#include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVLibrary\SVOINIClass.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
-#include "Tools/SVTool.h"
 #include "SVRange.h"
+#include "Definitions/TextDefineSVDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "SVLibrary\SVOINIClass.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
+#include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -1641,7 +1642,8 @@ bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObje
 				if ( rInfo.GetInputObjectInfo().getObject() == pImage )
 				{
 					// replace with tool set image
-					SvOi::IObjectClass* pInspection = dynamic_cast<SvOi::IObjectClass*>  (GetInspectionInterface());
+					SvOi::IInspectionProcess* pInspectionInterface = GetInspectionInterface();
+					SvOi::IObjectClass* pInspection = dynamic_cast<SvOi::IObjectClass*> (pInspectionInterface);
 					SvDef::SVObjectTypeInfoStruct imageObjectInfo;
 					imageObjectInfo.ObjectType = SvPb::SVImageObjectType;
 					SvIe::SVImageClass* pToolSetImage = (nullptr != pInspection) ? dynamic_cast <SvIe::SVImageClass*> (pInspection->getFirstObject(imageObjectInfo)) : nullptr;

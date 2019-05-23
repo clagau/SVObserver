@@ -13,8 +13,8 @@
 #include <iostream>
 
 #include "SVLogLibrary/Logging.h"
-
 #include "WebsocketClient.h"
+#include "WebsocketClientSettings.h"
 
 
 namespace SvHttp

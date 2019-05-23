@@ -12,11 +12,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilities.h"
 #pragma region Includes
 
-/////////////////////////////////////////////////////////////////////////////
-// SVUtilitiesCustomizeDialogClass dialog
+class SVUtilitiesClass;
 
 class SVUtilitiesCustomizeDialogClass : public CDialog
 {

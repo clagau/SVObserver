@@ -17,6 +17,8 @@
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
+class SVIPDoc;
+
 class CSVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor

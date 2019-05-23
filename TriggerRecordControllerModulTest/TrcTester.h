@@ -11,12 +11,15 @@
 #include <winerror.h>
 #include <intsafe.h>
 
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVLibrary/SVOINIClass.h"
 #include "LogClass.h"
 
+namespace SvTrc
+{
+class ITriggerRecordControllerRW;
+}
 
 /// configures the unit test
 class TrcTesterConfiguration

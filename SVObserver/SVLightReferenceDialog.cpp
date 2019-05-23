@@ -12,12 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLightReferenceDialog.h"
-#include "SVImageLibrary/SVLightReference.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "TextDefinesSvO.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "SVImageLibrary/SVLightReference.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

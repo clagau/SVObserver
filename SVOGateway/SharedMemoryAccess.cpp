@@ -12,10 +12,13 @@
 //Moved to precompiled header: #include <queue>
 //Moved to precompiled header: #include <boost/log/trivial.hpp>
 
+#pragma region Includes
 #include "SharedMemoryAccess.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVSharedMemoryLibrary/ShareControlSetting.h" 
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 namespace SvOgw
 {

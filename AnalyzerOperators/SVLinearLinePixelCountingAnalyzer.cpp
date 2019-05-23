@@ -12,10 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLinePixelCountingAnalyzer.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/LinearEdgeEnums.h"
-#include "InspectionEngine/SVImageClass.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

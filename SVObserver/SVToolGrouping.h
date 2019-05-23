@@ -10,10 +10,13 @@
 #pragma region Includes
 //Moved to precompiled header: #include <list>
 //Moved to precompiled header: #include <utility>
-#include "ObjectInterfaces/IObjectWriter.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+class IObjectWriter;
+}
 
 class ToolGroupData
 {

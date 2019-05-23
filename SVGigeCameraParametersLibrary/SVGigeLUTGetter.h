@@ -13,8 +13,9 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
-#include "SVGigeFeature.h"
 #pragma endregion Includes
+
+class SVGigeFeature;
 
 // Note: SafeArray must be allocated to the proper dimension for the camera
 // LUTEnable must be set prior to getting the Lut values

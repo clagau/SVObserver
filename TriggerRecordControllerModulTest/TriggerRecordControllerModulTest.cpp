@@ -6,6 +6,7 @@
 
 #include "TrcTester.h"
 #include "SVLibrary\SVOINIClass.h"
+#include "TriggerRecordController\ITriggerRecordControllerR.h"
 
 
 #ifdef _DEBUG
@@ -44,7 +45,7 @@ int main(int argc, char* argv[])
 
 			bool isLocal = (testIni.GetValueInt(_T("General"), _T("IsLocal"), 1) != 0);
 
-			SvTrc::createTriggerRecordControllerInstance(isLocal?SvTrc::TRC_DataType::Local:SvTrc::TRC_DataType::Writer);
+			SvTrc::createTriggerRecordControllerInstance(isLocal ? SvTrc::TRC_DataType::Local : SvTrc::TRC_DataType::Writer);
 			//if (g_logClass.Open(_T("log.txt"), false))
 			if (g_logClass.Open())
 			{

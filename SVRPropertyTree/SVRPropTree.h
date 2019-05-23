@@ -30,14 +30,13 @@
 #pragma once
 
 #pragma region Includes
-
 #include "SVRPropTreeCtrl.h"
 #include "SVRPropTreeInfo.h"
 #include "SVRPropTreeItem.h"
-#include "SVRPropTreeState.h"
 #pragma endregion Includes
 
 class SVRPropTree;
+class SVRPropTreeState;
 
 typedef bool (CALLBACK* ENUMPROPITEMPROC)(SVRPropTree*, SVRPropertyItem*, LPARAM);
 

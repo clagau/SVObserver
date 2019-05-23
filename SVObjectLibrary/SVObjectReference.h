@@ -13,13 +13,16 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectNameInfo.h"
 //! Do not include SVObjectClass.h this causes circular includes with SVOutObjectInfoStruct and SVInObjectInfoStruct
 ////@TODO[GRA][7.50][13.02.2017] The circular include dependencies need to be fixed
 #pragma endregion Includes
+
+namespace SvOi
+{
+class IValueObject;
+}
 
 class SVObjectClass;
 

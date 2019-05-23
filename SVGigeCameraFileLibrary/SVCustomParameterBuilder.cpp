@@ -13,40 +13,45 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/config.hpp>
 #include "SVCustomParameterBuilder.h"
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVI64ValueDeviceParam.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
 // For Custom params
-static const TCHAR* const cValue = _T("Value");
-static const TCHAR* const cCustomID = _T("CustomID");
-static const TCHAR* const cDataType = _T("DataType");
-static const TCHAR* const cLongDataType = _T("Long");
-static const TCHAR* const cBoolDataType = _T("Boolean");
-static const TCHAR* const cStringDataType = _T("String");
-static const TCHAR* const cInt64DataType = _T("I64");
-static const TCHAR* const cComplexDataType = _T("Complex");
-static const TCHAR* const cUnknownDataType = _T("Unknown");
+constexpr char* cValue = _T("Value");
+constexpr char* cCustomID = _T("CustomID");
+constexpr char* cDataType = _T("DataType");
+constexpr char* cLongDataType = _T("Long");
+constexpr char* cBoolDataType = _T("Boolean");
+constexpr char* cStringDataType = _T("String");
+constexpr char* cInt64DataType = _T("I64");
+constexpr char* cComplexDataType = _T("Complex");
+constexpr char* cUnknownDataType = _T("Unknown");
 
 // Commomn Attribtes
-static const TCHAR* const cDESCRIPTION = _T("Description");
-static const TCHAR* const cVISUALNAME = _T("VisualName");
-static const TCHAR* const cORDER = _T("Order");
-static const TCHAR* const cDETAILLEVEL = _T("DetailLevel");
+constexpr char* cDESCRIPTION = _T("Description");
+constexpr char* cVISUALNAME = _T("VisualName");
+constexpr char* cORDER = _T("Order");
+constexpr char* cDETAILLEVEL = _T("DetailLevel");
 
 // option qualifiers
-static const TCHAR* const cMIN = _T("min");
-static const TCHAR* const cMAX = _T("max");
-static const TCHAR* const cOFFSET = _T("offset");
-static const TCHAR* const cMULTIPLIER = _T("multiplier");
-static const TCHAR* const cUNIT_DIVISOR = _T("unit_divisor");
-static const TCHAR* const cUNIT = _T("unit");
+constexpr char* cMIN = _T("min");
+constexpr char* cMAX = _T("max");
+constexpr char* cOFFSET = _T("offset");
+constexpr char* cMULTIPLIER = _T("multiplier");
+constexpr char* cUNIT_DIVISOR = _T("unit_divisor");
+constexpr char* cUNIT = _T("unit");
 
-static const TCHAR* const cOPTION = _T("Option_");
+constexpr char* cOPTION = _T("Option_");
 
 // defaults
-static const double DefaultMultiplier = 1.0;
-static const double DefaultDivisor = 1.0;
-static const TCHAR* const cDEFAULTUNIT = _T("Unit");
+constexpr double DefaultMultiplier = 1.0;
+constexpr double DefaultDivisor = 1.0;
+constexpr char* cDEFAULTUNIT = _T("Unit");
 
 typedef std::map<std::string, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
 static const DeviceDataTypeEnumNameMap cDeviceDataTypeEnumNameMap

@@ -10,22 +10,23 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "GlobalConstantView.h"
-#include "SVObserver.h"
+#include "RootObject.h"
+#include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVIPDoc.h"
+#include "SVObserver.h"
 #include "SVToolSet.h"
-#include "SVConfigurationObject.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "RootObject.h"
 #include "TextDefinesSvO.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/GlobalConst.h"
-#include "SVOResource/ConstGlobalSvOr.h"
+#include "Definitions/GlobalConstantData.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVOGui/GlobalConstantDlg.h"
 #include "SVOGui/SVShowDependentsDialog.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 
@@ -36,10 +37,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const int GlobalConstantWidth = 125;
-static const int TypeWidth = 50;
-static const int ValueWidth = 300;
-static const int DescriptionWidth = 500;
+constexpr int GlobalConstantWidth = 125;
+constexpr int TypeWidth = 50;
+constexpr int ValueWidth = 300;
+constexpr int DescriptionWidth = 500;
 
 #pragma endregion Declarations
 

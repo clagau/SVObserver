@@ -14,7 +14,7 @@
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #pragma endregion Includes
 
-class ATL_NO_VTABLE SVRemoteCommandData
+class __declspec(novtable) SVRemoteCommandData
 :	public CComObjectRootEx< CComSingleThreadModel >
 ,	public CComCoClass< SVRemoteCommandData, &CLSID_SVRemoteCommandData >
 ,	public IDispatchImpl< ISVRemoteCommandData, &IID_ISVRemoteCommandData, &LIBID_SVObserver >

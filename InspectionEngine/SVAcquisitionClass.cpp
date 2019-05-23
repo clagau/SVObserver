@@ -16,7 +16,6 @@
 #include "SVAcquisitionClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
@@ -42,6 +41,7 @@ static char THIS_FILE[] = __FILE__;
 SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams& p_rParams)
 	: SVODataDeviceClass(p_rParams.m_DigitizerName.c_str())
 	, m_LUTAndLRSet(p_rParams.m_LUTAndLRSet)
+	, m_rTRController{SvTrc::getTriggerRecordControllerRWInstance()}
 	, m_rDigitizerProc(SVDigitizerProcessingClass::Instance())
 {
 	UuidCreateSequential(&m_guid);

@@ -60,7 +60,7 @@ private:
 	HRESULT ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem);
 
 	bool GetItemValue(const std::string& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue);
-	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, SVVariantList& rValueList);
+	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, std::vector<_variant_t>& rValueList);
 	bool HasTag(typename SVTreeType::SVBranchHandle hItem, const std::string& tag);
 };
 

@@ -26,19 +26,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="IGraphNameLookup.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVBiUniqueMap.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRingBuffer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVThreadSafeList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectArrayClassTemplate.h">
+    <ClInclude Include="ObjectGraph.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectSelectorItem.h">
@@ -47,33 +38,42 @@
     <ClInclude Include="ObjectTreeItems.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVBiUniqueMap.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVCompareKeys.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRingBuffer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObjectArrayClassTemplate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThreadSafeList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTree.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IGraphNameLookup.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectGraph.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVRingBuffer.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVTree.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="ObjectGraph.inl">
+    <None Include="BGLVisitorFilterEdges.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="GraphVizHelper.inl">
       <Filter>Headerdateien</Filter>
     </None>
-    <None Include="BGLVisitorFilterEdges.inl">
+    <None Include="ObjectGraph.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVRingBuffer.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="SVTree.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

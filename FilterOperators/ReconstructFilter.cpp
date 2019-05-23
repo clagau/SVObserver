@@ -9,10 +9,12 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <milblob.h>
 #include "ReconstructFilter.h"
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -61,7 +63,9 @@ bool ReconstructFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputIma
 		if (nullptr != pSeedBuffer && !pSeedBuffer->empty())
 		{
 			long proceMode = getProceMode();
-			MblobReconstruct(rInputImageHandle->GetBuffer().GetIdentifier(), pSeedBuffer->GetBuffer().GetIdentifier(), rOutputImageHandle->GetBuffer().GetIdentifier(), M_RECONSTRUCT_FROM_SEED, proceMode);
+			SVMatroxBuffer& rInBuffer = rInputImageHandle->GetBuffer();
+			SVMatroxBuffer& rOutBuffer = rOutputImageHandle->GetBuffer();
+			MblobReconstruct(rInBuffer.GetIdentifier(), pSeedBuffer->GetBuffer().GetIdentifier(), rOutBuffer.GetIdentifier(), M_RECONSTRUCT_FROM_SEED, proceMode);
 			HRESULT hr = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK != hr)

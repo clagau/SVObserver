@@ -20,6 +20,8 @@ typedef unsigned int UINT;
 #include "IStream.h"
 #include "PropID.h"
 
+//This comment is to avoid that the IStream STREAM_INTERFACE include is marked as not required due to a macro
+
 #define ARCHIVE_INTERFACE_SUB(i, base, x) DECL_INTERFACE_SUB(i, base, 6, x)
 #define ARCHIVE_INTERFACE(i, x) ARCHIVE_INTERFACE_SUB(i, IUnknown, x)
 

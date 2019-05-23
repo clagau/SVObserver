@@ -21,10 +21,19 @@
     <ClCompile Include="SVCriticalSection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVEncodeDecodeUtilities.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVImageConvertorGDI.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVLockableClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="SVSAXContentHandlerImpl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVThreadManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVThreadWait.cpp">
@@ -34,15 +43,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVWaitFuncs.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEncodeDecodeUtilities.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVThreadManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLockableClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,10 +59,22 @@
     <ClInclude Include="SVCriticalSection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVEncodeDecodeUtilities.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVEventThread.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVFuture.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVImageConvertorGDI.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVLockableClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObserverEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSAXContentHandlerImpl.h">
@@ -77,6 +89,9 @@
     <ClInclude Include="SVThread.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVThreadManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVThreadWait.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -84,21 +99,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVWaitFuncs.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEncodeDecodeUtilities.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVThreadManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLockableClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObserverEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFuture.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

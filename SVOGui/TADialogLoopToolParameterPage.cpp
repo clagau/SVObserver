@@ -9,11 +9,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogLoopToolParameterPage.h"
-#include "SVObjectLibrary\SVClsids.h"
-#include "Definitions/TextDefineSVDef.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
-#include "Definitions/GlobalConst.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

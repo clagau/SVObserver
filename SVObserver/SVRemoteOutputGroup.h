@@ -16,8 +16,12 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
+
+namespace  SvOi
+{
+class IObjectWriter;
+}
 
 class SVRemoteOutputGroup : public SVObjectClass
 {
@@ -37,7 +41,7 @@ public:
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const;
+	BOOL GetParameters(SvOi::IObjectWriter& rWriter) const;
 
 	// RemoteOutput Identifier and new output object will be managed by SVRemoteOutputGroup
 	HRESULT AddOutput( SVRemoteOutputObject* p_pOutputEntry );

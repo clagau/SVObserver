@@ -9,7 +9,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRCClientService.h"
-#include "SVProtoBuf\SVRC.h"
+#include "SVRCClientServiceSettings.h"
+#include "SVProtoBuf/SVRC.h"
+#include "SVRPCLibrary/RPCCLient.h"
 #pragma endregion Includes
 
 namespace SvWsl

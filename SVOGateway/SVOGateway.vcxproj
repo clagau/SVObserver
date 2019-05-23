@@ -117,13 +117,13 @@
   <ItemGroup>
     <ClCompile Include="SharedMemoryAccess.cpp" />
     <ClCompile Include="SharedMemoryAccessMock.cpp" />
-    <ClCompile Include="SVOGateway.cpp" />
     <ClCompile Include="ServerRequestHandler.cpp" />
     <ClCompile Include="SettingsLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVOGateway.cpp" />
     <ClCompile Include="SVOGatewayService.cpp" />
   </ItemGroup>
   <ItemGroup>

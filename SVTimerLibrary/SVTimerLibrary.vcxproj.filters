@@ -35,22 +35,22 @@
     <ClInclude Include="SVClock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVFunctionProfiler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVMMTimer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMMTimerEventHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVProfiler.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="SVTimerCallback.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTimerCallbackImpl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVProfiler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFunctionProfiler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

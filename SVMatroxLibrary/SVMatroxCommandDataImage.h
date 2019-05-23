@@ -11,9 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVMatroxBuffer.h"
-#include "SVMatroxBufferCreateStruct.h"
+#pragma endregion Includes
+
+struct SVMatroxBufferCreateStruct;
 
 class SVMatroxCommandDataImage : public SVCommandDataImage::SVCommandDataInterface
 {

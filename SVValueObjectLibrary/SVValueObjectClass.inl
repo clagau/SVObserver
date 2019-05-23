@@ -12,7 +12,10 @@
 #pragma region Includes
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/TextDefineSVDef.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVMessage/SVMessage.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVSafeArray.h"

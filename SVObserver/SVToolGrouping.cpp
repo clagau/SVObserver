@@ -10,24 +10,25 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <sstream>
 #include "SVToolGrouping.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
-static const std::string scDefaultToolGroupName = _T("Group");
-static const std::string scEndPrefix = _T("End ");
+constexpr char* c_DefaultToolGroupName = _T("Group");
+constexpr char* c_EndPrefix = _T("End ");
 
 std::string SVToolGrouping::GetDefaultName() const
 {
-	std::string name = scDefaultToolGroupName;
+	std::string name = c_DefaultToolGroupName;
 	int cnt = 0;
 	while (!IsNameUnique(name))
 	{
 		std::basic_stringstream<TCHAR> os;
 		os << ++cnt;
-		name = scDefaultToolGroupName + os.str();
+		name = c_DefaultToolGroupName + os.str();
 	}
 	return name;
 }
@@ -202,7 +203,7 @@ bool SVToolGrouping::AddEndGroup(const std::string& rGroupName, const std::strin
 
 	if (!rGroupName.empty())
 	{
-		std::string endName = scEndPrefix + rGroupName;
+		std::string endName = c_EndPrefix + rGroupName;
 		if (!IsNameUnique(endName))
 		{
 			endName = MakeNumericUniqueName(endName);

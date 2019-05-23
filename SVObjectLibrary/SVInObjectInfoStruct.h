@@ -13,9 +13,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectInfoStruct.h"
 #pragma endregion Includes
+
+class SVGUID;
 
 namespace SvOl
 {

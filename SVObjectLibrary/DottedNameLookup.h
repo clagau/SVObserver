@@ -7,10 +7,11 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/IGraphNameLookup.h"
-
-#include "SVObjectManagerClass.h"
-#include "SVObjectClass.h"
+#include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#pragma endregion Includes
 
 namespace SvOl
 {
@@ -31,7 +32,7 @@ namespace SvOl
 		{
 			LPCTSTR pResult( nullptr );
 
-			SVObjectClass* pObject( SVObjectManagerClass::Instance().GetObject(rGuid) );
+			SvOi::IObjectClass* pObject(SvOi::getObject(rGuid));
 			if( nullptr != pObject )
 			{
 				m_LabelName = pObject->GetCompleteName();

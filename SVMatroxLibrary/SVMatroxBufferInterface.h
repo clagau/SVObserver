@@ -12,18 +12,20 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVPoint.h"
-#include "SVUtilityLibrary/SVBitmapInfo.h"
-
 #include "SVMatroxBuffer.h"
 #include "SVMatroxSimpleEnums.h"
-#include "SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxBufferCreateExtStruct.h"
-#include "SVMatroxBufferCreateLineStruct.h"
-#include "SVMatroxBufferCreateStruct.h"
-#include "SVMatroxSystem.h"
-#include "MatroxImageProps.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
+
+
+class SVBitmapInfo;
+class SVMatroxSystem;
+struct MatroxImageProps;
+struct SVMatroxBufferCreateChildStruct;
+struct SVMatroxBufferCreateLineStruct;
+struct SVMatroxBufferCreateStruct;
+
 
 /**
 @SVObjectName Matrox Buffer Interface

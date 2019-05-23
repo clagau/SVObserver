@@ -43,11 +43,11 @@ void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, cons
 }
 
 template< typename SVTreeType >
-void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, const SVVariantList& rValues)
+void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, const std::vector<_variant_t>& rValues)
 {
-	BOOST_FOREACH(variant_t value, rValues)
+	for(const auto& rValue : rValues)
 	{
-		WriteAttribute(pName, value);
+		WriteAttribute(pName, rValue);
 	}
 }
 

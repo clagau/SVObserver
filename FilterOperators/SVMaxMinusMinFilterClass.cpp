@@ -12,11 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMaxMinusMinFilterClass.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "InspectionEngine/SVImageClass.h"
+#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 

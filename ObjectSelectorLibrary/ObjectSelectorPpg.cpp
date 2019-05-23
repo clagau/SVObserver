@@ -12,7 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectSelectorPpg.h"
-#include "SVOResource\ConstGlobalSvOr.h"
+#include "SVContainerLibrary/ObjectTreeItems.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -22,8 +23,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const int IconNumber = 8;
-static const int IconGrowBy = 1;
+constexpr int IconNumber = 8;
+constexpr int IconGrowBy = 1;
 #pragma endregion Declarations
 
 namespace SvOsl

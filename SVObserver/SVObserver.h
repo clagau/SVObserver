@@ -16,7 +16,6 @@
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "InitialInformationHandler.h"
 #include "SVSecurity/SVSecurityManager.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRemoteFontManager.h"
@@ -28,6 +27,7 @@
 
 #pragma region Declarations
 class SVConfigurationObject;
+class SVGUID;
 class SVInspectionProcess;
 class SVIOController;
 class SVIODoc;
@@ -35,6 +35,7 @@ class SVIPDoc;
 class SVMainFrame;
 class SVMessageWindowClass;
 class SVUserObjectListClass;
+
 namespace SvOi
 {
 	class IObjectWriter;

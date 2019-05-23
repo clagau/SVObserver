@@ -9,20 +9,19 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "TextDefinesSvO.h"
-#include "Definitions/GlobalConst.h"
-#include "Definitions/TextDefineSVDef.h"
-#include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
-#include "SVMainFrm.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVTimerLibrary/SVClock.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "RootObject.h"
+#include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
+#include "TextDefinesSvO.h"
+#include "SVMessage/SVMessage.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
+#include "Definitions/TextDefineSVDef.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -82,7 +81,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 		}
 	}	//this means the last autosave was less than m_AutoSaveDeltaTime_s seconds ago and the autosave is not automatic: nothing to do!
 
-	CWnd *pMainFrame = TheSVObserverApp.GetMainFrame(); 
+	CWnd *pMainFrame = TheSVObserverApp.GetMainWnd(); 
 
 	CDialog autosavePopupDialog; 
 	autosavePopupDialog.Create(IDD_AUTOSAVE_IN_PROGRESS, pMainFrame);

@@ -26,12 +26,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="BasicConnect_test.cpp">
       <Filter>Quelldateien\Integration</Filter>
     </ClCompile>
@@ -41,8 +35,14 @@
     <ClCompile Include="ErrorUtil_test.cpp">
       <Filter>Quelldateien\Unit</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="ObserverWrapper_test.cpp">
       <Filter>Quelldateien\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVFuture_test.cpp">
       <Filter>Quelldateien\Unit</Filter>

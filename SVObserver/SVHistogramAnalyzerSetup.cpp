@@ -11,11 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "AnalyzerOperators/SVHistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"

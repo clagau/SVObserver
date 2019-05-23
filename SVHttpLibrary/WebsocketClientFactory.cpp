@@ -7,8 +7,8 @@
 //******************************************************************************
 
 #include "stdafx.h"
-
 #include "WebsocketClientFactory.h"
+#include "WebsocketClientSettings.h"
 
 namespace SvHttp
 {

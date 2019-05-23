@@ -59,7 +59,8 @@ private:
 
 typedef ULONG SVLutValueType;
 
-template <typename T> class SVLutValue
+template <typename T> 
+class SVLutValue
 {
 public:
 	SVLutValue();

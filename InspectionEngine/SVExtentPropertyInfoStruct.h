@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExtentPropertiesInfoStruct
-//* .File Name       : $Workfile:   SVExtentPropertiesInfoStruct.h  $
+//* .Module Name     : SVExtentPropertyInfoStruct
+//* .File Name       : $Workfile:   SVExtentPropertyInfoStruct.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:30:12  $

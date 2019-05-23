@@ -10,11 +10,14 @@
 #pragma region Includes
 #include "JoinType.h"
 #include "ObjectInterfaces/IDependencyManager.h"
-#include "ObjectInterfaces/ITool.h"
-#include "SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVContainerLibrary/ObjectGraph.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+class ITool;
+}
 
 namespace SvOl
 {
@@ -55,35 +58,7 @@ namespace SvOl
 	{
 		DependencySort(bool SortRight) : m_SortRight(SortRight) {};
 
-		bool operator()(const Dependency &rLhs, const Dependency &rRhs)
-		{
-			bool isSmaller = false;
-			SVGUID GuidLhs = m_SortRight ? rLhs.second : rLhs.first;
-			SVGUID GuidRhs = m_SortRight ? rRhs.second : rRhs.first;
-			SVObjectClass* pLhs = SVObjectManagerClass::Instance().GetObject(GuidLhs);
-			SVObjectClass* pRhs = SVObjectManagerClass::Instance().GetObject(GuidRhs);
-			if (nullptr != pLhs && nullptr != pRhs)
-			{
-				bool isSupplier = pLhs->GetObjectType() == SvPb::SVToolObjectType;
-				SvOi::ITool* pToolLhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pLhs : pLhs->GetAncestor(SvPb::SVToolObjectType));
-				isSupplier = pRhs->GetObjectType() == SvPb::SVToolObjectType;
-				SvOi::ITool* pToolRhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pRhs : pRhs->GetAncestor(SvPb::SVToolObjectType));
-				if (nullptr != pToolLhs && nullptr != pToolRhs)
-				{
-					long LhsPosition = pToolLhs->getToolPosition();
-					long RhsPosition = pToolRhs->getToolPosition();
-					if (-1 != LhsPosition && -1 != RhsPosition && LhsPosition < RhsPosition)
-					{
-						isSmaller = true;
-					}
-					else
-					{
-						isSmaller = false;
-					}
-				}
-			}
-			return isSmaller;
-		}
+		bool operator()(const Dependency &rLhs, const Dependency &rRhs);
 
 	private:
 		bool m_SortRight;

@@ -6,12 +6,12 @@
 /// class derived from CDialog to Display results from getProduct getResult and get Failstatus
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 #include "resource.h"
-#include "SVSharedMemoryLibrary\MLProduct.h"
+#include "SVSharedMemoryLibrary/MLProduct.h"
+#pragma endregion Includes
 
-
-
-/// class derived from CDialog to Display results from getProduct getResult and get Failstatus
 class ProductDlg : public CDialog
 {
 	DECLARE_DYNAMIC(ProductDlg)

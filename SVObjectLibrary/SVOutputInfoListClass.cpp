@@ -17,10 +17,8 @@
 #include "SVOutputInfoListClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVInObjectInfoStruct.h"
 #include "SVObjectClass.h"
 #include "SVObjectInfoStruct.h"
-#include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
 #pragma endregion Includes
 

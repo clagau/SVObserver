@@ -11,9 +11,9 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <deque>
-#include "SVSecurity/SVSecurityManager.h"
 #pragma endregion Includes
+
+class SVSecurityManager;
 
 class SVUtilitiesClass  
 {

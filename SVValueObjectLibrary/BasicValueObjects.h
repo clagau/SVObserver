@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <sequential_tree.h>
 #include "BasicValueObject.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 

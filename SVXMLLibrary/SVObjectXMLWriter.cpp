@@ -288,11 +288,11 @@ namespace  SvXml
 		}
 	}
 
-	void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const SVVariantList& rValues)
+	void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const std::vector<_variant_t>& rValues)
 	{
-		BOOST_FOREACH(_variant_t value, rValues)
+		for(auto const& rValue : rValues)
 		{
-			WriteAttribute(rName, value);
+			WriteAttribute(rName, rValue);
 		}
 	}
 

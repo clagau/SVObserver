@@ -21,7 +21,7 @@
 @SVObjectOperations This data class has no operations.
 
 */
-class SVMatroxBufferCreateExtStruct  
+struct SVMatroxBufferCreateExtStruct  
 {
 public:
 	SVMatroxBufferCreateExtStruct();

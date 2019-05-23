@@ -12,19 +12,21 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
-#include "Definitions/Color.h"
-#include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-#include "SVUtilityLibrary/SVSafeArray.h"
+#include "JoinType.h"
+#include "SVInputInfoListClass.h"
 #include "SVObjectAttributeClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
-#include "JoinType.h"
 #include "SVToolsetScriptTags.h"
-#include "SVStatusLibrary/MessageManager.h"
+#include "Definitions/Color.h"
+#include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "Definitions/StringTypeDef.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
 #pragma region Declarations

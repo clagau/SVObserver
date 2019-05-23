@@ -14,11 +14,14 @@
 
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/GlobalConst.h"
+#include "SVImageLibrary/SVLightReference.h"
+#include "SVImageLibrary/SVLut.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvIe

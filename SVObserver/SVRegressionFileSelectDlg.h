@@ -11,8 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVRegressionTestStruct.h"
-#include "SVRegressionFileSelectSheet.h"
+#pragma endregion Includes
+
+class SVRegressionFileSelectSheet;
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectDlg dialog
@@ -70,7 +73,7 @@ private:
 	void ShowSelectDirectoryDlg(bool bFullAccess);
 
 private:
-    CSVRegressionFileSelectSheet *m_pParent;
+    SVRegressionFileSelectSheet *m_pParent;
 	std::string m_DialogName;
 	std::string m_RegistryPath;
 };

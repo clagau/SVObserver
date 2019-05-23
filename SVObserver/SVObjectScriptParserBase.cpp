@@ -8,10 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:40:58  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectScriptParserBase.h"
 #include "SVParserProgressStruct.h"
 #include "Definitions/SVUserMessage.h"
+#include "SVObjectLibrary/SVObjectClass.h"
+#pragma endregion Includes
 
 SVObjectScriptParserBase::SVObjectScriptParserBase(unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : m_parserHandle(parserHandle)

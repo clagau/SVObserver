@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMFCControls\SVEditNumbers.h"
 #include "ISVPropertyPageDialog.h"
 #include "RangeController.h"
 #include "Definitions/RangeEnum.h"

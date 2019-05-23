@@ -9,9 +9,10 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "MonitorListStore.h"
-#include "SVStatusLibrary\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageTextEnum.h"
 #include "MesManHelper.h"
+#include "SMParameterStruct.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/SourceFileParams.h"
 #pragma endregion Includes
 
 namespace SvSml

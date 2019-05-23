@@ -15,9 +15,10 @@
 #include "ObjectFilterPpg.h"
 
 #include "TextDefinesSvOsl.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "GridCtrlLibrary\GridCellCheck.h"
+#include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -27,13 +28,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const int FilterColumnNumber = 4;
-static const int IconNumber = 8;
-static const int IconGrowBy = 1;
-static const int NameColWidthDefault = 150;
-static const int LocationColWidthDefault = 290;
-static const int CheckColWidthDefault = 50;
-static const int TypeColWidthDefault = 72;
+constexpr int FilterColumnNumber = 4;
+constexpr int IconNumber = 8;
+constexpr int IconGrowBy = 1;
+constexpr int NameColWidthDefault = 150;
+constexpr int LocationColWidthDefault = 290;
+constexpr int CheckColWidthDefault = 50;
+constexpr int TypeColWidthDefault = 72;
 #pragma endregion Declarations
 
 namespace SvOsl

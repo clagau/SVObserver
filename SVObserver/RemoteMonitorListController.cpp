@@ -14,20 +14,18 @@
 //Moved to precompiled header: #include <algorithm>
 //Moved to precompiled header: #include <comdef.h>
 #include "RemoteMonitorListController.h"
-#include "RemoteMonitorList.h"
 #include "MonitorListAddRemoveDlg.h"
+#include "RemoteMonitorList.h"
+#include "RemoteMonitorListHelper.h"
 #include "SVConfigurationObject.h"
 #include "SVIOTabbedView.h"
-#include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "RemoteMonitorListHelper.h"
-#include "SVToolSet.h"
+#include "SVSharedMemoryLibrary/MonitorListCpy.h"
+#include "SVSharedMemoryLibrary/SharedMemWriter.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "TextDefinesSvO.h"
-#include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #pragma endregion Includes
 
 extern SVObserverApp TheSVObserverApp;

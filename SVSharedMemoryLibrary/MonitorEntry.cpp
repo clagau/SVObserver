@@ -1,15 +1,13 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "MonitorEntry.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVMatroxLibrary\MatroxImageProps.h"
-#include "SVProtoBuf\ConverterHelper.h"
+#include "SVMatroxLibrary/MatroxImageProps.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvSml
 {
-	
 	bool MonitorEntryData::GetMatroxImageProps(MatroxImageProps& rImageProps) const
 	{
 		if (ObjectType != SvPb::SVObjectTypeEnum::SVImageObjectType)

@@ -18,10 +18,10 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-static const TCHAR* const SVIM_TRIGGER_SOURCE_IO_BOARD_STRING = _T("IO_Board_1");
-static const TCHAR* const SVIM_SOFTWARE_TRIGGER_SOURCE_STRING = _T("SoftwareTrigger_1");
-static const TCHAR* const SVIM_CAMERA_TRIGGER_SOURCE_STRING = _T("CameraTrigger");
-static const TCHAR* const SVIM_DIG_NAME_STRING = _T(".Dig_");
+constexpr char* SVIM_TRIGGER_SOURCE_IO_BOARD_STRING = _T("IO_Board_1");
+constexpr char* SVIM_SOFTWARE_TRIGGER_SOURCE_STRING = _T("SoftwareTrigger_1");
+constexpr char* SVIM_CAMERA_TRIGGER_SOURCE_STRING = _T("CameraTrigger");
+constexpr char* SVIM_DIG_NAME_STRING = _T(".Dig_");
 
 namespace SvTi
 {

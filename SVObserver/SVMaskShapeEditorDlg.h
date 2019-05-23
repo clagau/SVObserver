@@ -12,12 +12,12 @@
 #pragma once
 
 #pragma region Includes
+#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 #include "Operators/SVShapeMaskHelperClass.h"
 #include "Operators/SVMaskShape.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/MaskController.h"
@@ -27,6 +27,8 @@ namespace SvOp
 {
 class SVUserMaskOperatorClass;
 }
+
+class SVGUID;
 
 class SVMaskShapeEditorDlg : public CDialog
 {

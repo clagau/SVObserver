@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVEquation.h"
+#include "ObjectInterfaces/ITool.h"
 #pragma endregion Includes
 
 namespace SvOp

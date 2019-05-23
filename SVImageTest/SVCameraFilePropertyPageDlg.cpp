@@ -19,6 +19,7 @@
 #include "SVTestAcquisitionClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"

@@ -15,6 +15,7 @@
 #include "SVLogLibrary/Logging.h"
 
 #include "HttpServer.h"
+#include "HttpServerSettings.h"
 
 namespace SvHttp
 {

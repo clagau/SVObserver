@@ -9,14 +9,17 @@
 //* .Check In Date   : $Date:   24 Sep 2013 15:47:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
 //Moved to precompiled header: #include <map>
 #include "SVImageExtentClass.h"
+#include "SVExtentOffsetStruct.h"
 #include "Definitions/SVExtentEnums.h"
 #include "SVFileSystemLibrary\SVFileNameClass.h"
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#pragma endregion Includes
 
 
 //These are the property extents which have values to be saved in the map

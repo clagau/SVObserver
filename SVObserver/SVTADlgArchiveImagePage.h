@@ -12,12 +12,24 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVMFCControls\SVEditNumbers.h"
-#include "Tools/SVArchiveTool.h"
+#include "SVObjectLibrary/SVObjectReference.h"
+#include "SVOGui/ISVPropertyPageDialog.h"
+#include "SVMFCControls/SVEditNumbers.h"
+#include "Tools/ArchiveMethodEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvIe
+{
+class SVImageClass;
+}
+
+namespace SvTo
+{
+class SVArchiveTool;
+}
+
+class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 #pragma endregion Declarations
 

@@ -11,8 +11,12 @@
 
 #pragma once
 
-#include "TriggerHandling/TriggerBasics.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
+
+namespace SvTh
+{
+class TriggerDispatcher;
+}
 
 class SVAcquisitionBufferInterface;
 

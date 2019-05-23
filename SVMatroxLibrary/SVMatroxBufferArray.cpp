@@ -8,9 +8,13 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 14:59:58  $
 //******************************************************************************
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxBufferArray.h"
+#include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxBufferInterface.h"
+#include "SVMatroxSystem.h"
+#pragma endregion Includes
 
 SVMatroxBufferArray::SVMatroxBufferArray()
 {

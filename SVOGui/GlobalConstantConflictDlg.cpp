@@ -25,10 +25,10 @@ static char THIS_FILE[] = __FILE__;
 namespace SvOg
 {
 #pragma region Declarations
-	static const int cHeaderSize = 1;
-	static const int DataSets = 2;
-	static const int GridColumnNumber = 4;
-	static const int GridColumnWidth[] = {30, 150, 80, 100};
+	constexpr int cHeaderSize = 1;
+	constexpr int DataSets = 2;
+	constexpr int GridColumnNumber = 4;
+	constexpr int GridColumnWidth[] = {30, 150, 80, 100};
 
 	IMPLEMENT_DYNAMIC(GlobalConstantConflictDlg, CDialog)
 

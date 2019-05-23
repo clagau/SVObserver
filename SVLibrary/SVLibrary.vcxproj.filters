@@ -15,6 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectoryUtilities.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayMessageBox.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="InitialInformation.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="Intersect.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -24,39 +36,42 @@
     <ClCompile Include="SVBStr.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVPackedFile.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVWinUtility.cpp">
+    <ClCompile Include="SVGraphix.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVOIniLoader.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="DisplayMessageBox.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectoryUtilities.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="InitialInformation.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGraphix.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVValueBaseNormalizerClass.cpp">
+    <ClCompile Include="SVPackedFile.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVUtilityIniClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVValueBaseNormalizerClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVWinUtility.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectoryUtilities.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayMessageBox.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InitialInformation.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="Intersect.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ISVCancel.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
@@ -65,10 +80,10 @@
     <ClInclude Include="SVBStr.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVPackedFile.h">
+    <ClInclude Include="SVDataItemManagerTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVWinUtility.h">
+    <ClInclude Include="SVGraphix.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOINIClass.h">
@@ -77,34 +92,19 @@
     <ClInclude Include="SVOIniLoader.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDataItemManagerTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplayMessageBox.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectoryUtilities.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ISVCancel.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="InitialInformation.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGraphix.h">
+    <ClInclude Include="SVPackedFile.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="DrawObject.h">
+    <ClInclude Include="SVUtilityIniClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVValueBaseNormalizerClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVUtilityIniClass.h">
+    <ClInclude Include="SVWinUtility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,7 +11,10 @@
 
 #pragma once
 
-
+namespace SvTh
+{
+class TriggerDispatcher;
+}
 
 class SVAcquisitionBufferInterface;
 

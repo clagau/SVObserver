@@ -10,14 +10,14 @@
 #include "stdafx.h"
 #include "LinkedValue.h"
 #include "BasicValueObject.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "ObjectInterfaces\IObjectClass.h"
-#include "Definitions/TextDefineSVDef.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/IObjectClass.h"
+#include "SVObjectLibrary/SVInObjectInfoStruct.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 namespace SvVol

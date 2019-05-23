@@ -14,20 +14,20 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "SVImageLibrary/SVLightReference.h"
-#include "SVImageLibrary/SVLut.h"
+#include "SVAcquisitionClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerRelayClass.h"
 #include "TriggerInformation/SVFileAcquisitionInitiator.h"
-#include "SVAcquisitionClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
-#include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVOResource/resource.h"
 #pragma endregion Includes
 
 class SVDeviceParamCollection;
+class SVLightReference;
+class SVLongValueDeviceParam;
+class SVLut;
 
 namespace SvIe
 {

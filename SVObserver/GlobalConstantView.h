@@ -8,10 +8,13 @@
 #pragma once
  
 #pragma region Includes
-#include "Definitions/GlobalConstantData.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
- 
+
+namespace SvDef
+{
+struct GlobalConstantData;
+}
 class SVIODoc;
  
 class GlobalConstantView : public CListView

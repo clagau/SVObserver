@@ -18,39 +18,39 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 
 #include "SVPPQObject.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Definitions/GlobalConst.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVDottedName.h"
-#include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
-#include "SVSharedMemoryLibrary/SharedMemWriter.h"
-#include "SVGlobal.h"
-#include "SVObserver.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
-#include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVRemoteInputObject.h"
-#include "SVInfoStructs.h"
-#include "SVMessage/SVMessage.h"
-#include "TriggerInformation/SVTriggerObject.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
-#include "TriggerHandling/SVTriggerClass.h"
 #include "SVConfigurationObject.h"
+#include "SVGlobal.h"
+#include "SVInfoStructs.h"
+#include "SVObserver.h"
 #include "SVPPQConstants.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVToolSet.h"
+#include "SVVisionProcessorHelper.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVVisionProcessorHelper.h"
-#include "SVToolSet.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "InspectionEngine/SVAcquisitionClass.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
+#include "SVIOLibrary/SVRemoteInputObject.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #include "SVProtoBuf/TriggerRecordController.h"
+#include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
+#include "SVSharedMemoryLibrary/SharedMemWriter.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVTimerLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
+#include "SVUtilityLibrary/SVDottedName.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "TriggerInformation/SVTriggerObject.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -60,7 +60,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const double TwentyPercent = .20;
+constexpr double TwentyPercent = .20;
 
 const long MinReducedPPQPosition = 2;
 #pragma endregion Declarations

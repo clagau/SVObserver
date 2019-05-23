@@ -12,7 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLowerThresholdEquation.h"
-#include "SVObjectLibrary\SVClsIds.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp

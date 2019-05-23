@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <filesystem>
-
-#include <SVAuthLibrary/UserDatabase.h>
+#pragma region Includes
+#include "UserDatabase.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

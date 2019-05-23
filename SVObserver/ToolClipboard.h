@@ -20,17 +20,18 @@
 #pragma endregion Includes
 
 //Forward declarations
-class SVGUID;
-class SVInspectionProcess;
-class SVObjectClass;
+namespace  SvOi
+{
+class IObjectWriter;
+}
 namespace SvTo
 {
 class SVToolClass;
 }
-namespace SvXml
-{
-	class SVObjectXMLWriter;
-}
+
+class SVGUID;
+class SVInspectionProcess;
+class SVObjectClass;
 
 class ToolClipboard
 {
@@ -91,14 +92,14 @@ protected:
 	// Description: This method writes the Base and Environment nodes
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	//************************************
-	void writeBaseAndEnvironmentNodes(SvXml::SVObjectXMLWriter& rXmlWriter ) const;
+	void writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) const;
 
 	//************************************
 	// Description: This method writes the Guids of sources like Inspection and Image
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	// Parameter: rTool <in> Reference to the tool to save
 	//************************************
-	void writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SvTo::SVToolClass& rTool ) const;
+	void writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const;
 
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string

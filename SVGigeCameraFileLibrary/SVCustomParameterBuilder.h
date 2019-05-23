@@ -12,8 +12,14 @@
 
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
-#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+
+class SVBoolValueDeviceParam;
+class SVCustomDeviceParam;
+class SVDeviceParam;
+class SVi64ValueDeviceParam;
+class SVLongValueDeviceParam;
+class SVStringValueDeviceParam;
 
 class SVCustomParameterBuilder
 {

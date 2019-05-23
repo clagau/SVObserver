@@ -15,10 +15,10 @@
 #include "ZoomHelper.h"
 #pragma endregion Includes
 
-static const double cDefault_Min = 0.0625;
-static const double cDefault_Max = 16.0;
-static const double cZoomStepLarge = 1.0;
-static const double cZoomStepSmall = 0.1;
+constexpr double cDefault_Min = 0.0625;
+constexpr double cDefault_Max = 16.0;
+constexpr double cZoomStepLarge = 1.0;
+constexpr double cZoomStepSmall = 0.1;
 
 int ZoomHelper::m_InstanceCount{0};
 double ZoomHelper::m_ScaleFactor[ZoomHelper::m_cScaleCount] = {0};
@@ -114,11 +114,11 @@ double ZoomHelper::GetZoom() const
 
 bool ZoomHelper::SetZoomType(ZoomEnum ZoomType, unsigned int ZoomIndex /*=0*/)
 {
-	static const unsigned int cZoomSmallestIndex = 0;
-	static const unsigned int cZoomSmallIndex = 12;
-	static const unsigned int cZoomNormalIndex = 15;
-	static const unsigned int cZoomLargeIndex = 22;
-	static const unsigned int cZoomLargestIndex = 30;
+	constexpr unsigned int cZoomSmallestIndex = 0;
+	constexpr unsigned int cZoomSmallIndex = 12;
+	constexpr unsigned int cZoomNormalIndex = 15;
+	constexpr unsigned int cZoomLargeIndex = 22;
+	constexpr unsigned int cZoomLargestIndex = 30;
 
 	bool Result{false};
 	double originalZoom = m_Zoom;

@@ -16,10 +16,9 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <list>
 //Moved to precompiled header: #include <comdef.h>
-#include "SVThreadManager\SVThreadAttribute.h"
-#include "SVStatusLibrary\MessageManager.h"
-
-#pragma endregion
+#include "SVStatusLibrary/SourceFileParams.h"
+#include "SVThreadManager/SVThreadAttribute.h"
+#pragma endregion Includes
 
 
 struct SVThreadSetup

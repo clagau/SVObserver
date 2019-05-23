@@ -13,9 +13,10 @@
 #include "stdafx.h"
 #include "SVResultLong.h"
 #include "SVRange.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOp

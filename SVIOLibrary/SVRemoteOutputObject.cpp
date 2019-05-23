@@ -13,10 +13,11 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputObject.h"
-#include "SVObjectLibrary\SVClsIds.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
@@ -57,7 +58,7 @@ std::string SVRemoteOutputObject::GetGroupID( ) const
 
 
 // Parameters >> Tree
-bool SVRemoteOutputObject::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const
+bool SVRemoteOutputObject::GetParameters(SvOi::IObjectWriter& rWriter ) const
 {
 	_variant_t svVariant;
 

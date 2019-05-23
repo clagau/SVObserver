@@ -31,8 +31,8 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_CHECK_ROTATION, OnCheckRotation)
 	END_MESSAGE_MAP()
 
-	static const long cRotationAngle_0	= 0;
-	static const long cRotationAngle_90 = 90;
+	constexpr long cRotationAngle_0	= 0;
+	constexpr long cRotationAngle_90 = 90;
 
 	SVToolAdjustmentDialogLinearSpecialPage::SVToolAdjustmentDialogLinearSpecialPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
 	: CPropertyPage(SVToolAdjustmentDialogLinearSpecialPage::IDD)

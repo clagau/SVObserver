@@ -8,17 +8,19 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost\function.hpp>
-#include "IObjectClass.h"
 #include "IValueObject.h"
 #include "SVProtobuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #include "SVImageBufferHandleInterface.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvOi
+{
+class IObjectClass;
+}
 //! Declaration is in SVStatusLibrary\MessageContainer.h
 namespace SvStl
 {
@@ -27,6 +29,8 @@ namespace SvStl
 }
 //! Declaration is in #include SVObjectLibrary/SVOutputInfoListClass.h
 class SVOutputInfoListClass;
+//! Declaration is in #include "SVUtilityLibrary/SVGUID.h"
+class SVGUID;
 #pragma endregion Declarations
 
 namespace SvOi

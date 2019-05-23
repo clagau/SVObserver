@@ -12,12 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearLineMaximumForegroundObjectAnalyzer.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "Operators/SVLinearEdgeBProcessingClass.h"
-#include "Tools/SVTool.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 namespace SvAo

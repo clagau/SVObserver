@@ -11,8 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <Objidl.h>
-#include "SVObserver_i.h"
+#include "SVObserver_i.h" //Note this header must be before the classes dependent on the UUIDs
 #include "SVRemoteCommandData.h"
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVUtilityLibrary/SVSafeArray.h"

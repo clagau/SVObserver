@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	static const int margin_padding = 6;
+	constexpr int margin_padding = 6;
 
 	SVHorizListBox::SVHorizListBox()
 	{

@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:02:34  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxCommandDataImage.h"
-#include "SVCommandLibrary/SVCommandLibraryEnums.h"
-#include "SVSystemLibrary/SVImageConvertorGDI.h"
+#include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxImageInterface.h"
+#include "SVCommandLibrary/SVCommandLibraryEnums.h"
+#include "SVSystemLibrary/SVImageConvertorGDI.h"
+#pragma endregion Includes
 
 SVMatroxCommandDataImage::SVMatroxCommandDataImage()
 : SVCommandDataImage::SVCommandDataInterface(), m_Buffer()

@@ -104,6 +104,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectoryUtilities.cpp" />
     <ClCompile Include="DisplayMessageBox.cpp" />
     <ClCompile Include="DrawObject.cpp" />
     <ClCompile Include="InitialInformation.cpp" />
@@ -119,9 +120,9 @@
     <ClCompile Include="SVUtilityIniClass.cpp" />
     <ClCompile Include="SVValueBaseNormalizerClass.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
-    <ClCompile Include="DirectoryUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectoryUtilities.h" />
     <ClInclude Include="DisplayMessageBox.h" />
     <ClInclude Include="DrawObject.h" />
     <ClInclude Include="InitialInformation.h" />
@@ -138,7 +139,6 @@
     <ClInclude Include="SVUtilityIniClass.h" />
     <ClInclude Include="SVValueBaseNormalizerClass.h" />
     <ClInclude Include="SVWinUtility.h" />
-    <ClInclude Include="DirectoryUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDataItemManagerTemplate.inl" />

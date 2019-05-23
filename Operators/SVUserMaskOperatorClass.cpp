@@ -12,21 +12,23 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
+#include "SVShapeMaskHelperClass.h"
+#include "SVUnaryImageOperatorList.h"
 #include "SVUserMaskOperatorClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
+#include "Definitions/TextDefineSvDef.h"
+#include "InspectionEngine/SVImageProcessingClass.h"
+#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "Tools/SVTool.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVShapeMaskHelperClass.h"
-#include "SVUnaryImageOperatorList.h"
-#include "Definitions/TextDefineSvDef.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
+
 
 namespace SvOp
 {

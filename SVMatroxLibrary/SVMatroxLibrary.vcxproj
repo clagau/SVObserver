@@ -124,23 +124,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVBufferResource.cpp" />
-    <ClCompile Include="SVMatroxApplicationInterface.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBarCodeInterface.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBlobInterface.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBuffer.cpp">
-    </ClCompile>
+    <ClCompile Include="SVMatroxApplicationInterface.cpp" />
+    <ClCompile Include="SVMatroxBarCodeInterface.cpp" />
+    <ClCompile Include="SVMatroxBlobInterface.cpp" />
+    <ClCompile Include="SVMatroxBuffer.cpp" />
     <ClCompile Include="SVMatroxBufferArray.cpp" />
-    <ClCompile Include="SVMatroxBufferCreateChildStruct.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBufferCreateExtStruct.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBufferCreateLineStruct.cpp">
-    </ClCompile>
-    <ClCompile Include="SVMatroxBufferCreateStruct.cpp">
-    </ClCompile>
+    <ClCompile Include="SVMatroxBufferCreateChildStruct.cpp" />
+    <ClCompile Include="SVMatroxBufferCreateExtStruct.cpp" />
+    <ClCompile Include="SVMatroxBufferCreateLineStruct.cpp" />
+    <ClCompile Include="SVMatroxBufferCreateStruct.cpp" />
     <ClCompile Include="SVMatroxBufferInterface.cpp" />
     <ClCompile Include="SVMatroxBufferTemplate.cpp" />
     <ClCompile Include="SVMatroxCommandDataImage.cpp" />

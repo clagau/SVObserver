@@ -14,17 +14,18 @@
 //Moved to precompiled header: #include <algorithm>
 #include "SVBarCodeAnalyzerClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "Operators/SVBarCodeResult.h"   
 #include "InspectionEngine/SVBarCodeBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBarCodeInterface.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -14,15 +14,17 @@
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <stack>
 //Moved to precompiled header: #include <vector>
-#include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
+#include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferArray.h"
 #include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+struct SVGigeDeviceParameterStruct;
 class SVAcquisitionBufferInterface;
 #pragma endregion Declarations
 

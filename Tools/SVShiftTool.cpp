@@ -13,11 +13,11 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
 #include "SVShiftTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // Add String for SVEnumerateValueObjectClass
-static const LPCTSTR g_strShiftToolEnum = _T( "None=0,Absolute=1,Reference=2" );
+constexpr char* g_strShiftToolEnum = _T( "None=0,Absolute=1,Reference=2" );
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVShiftTool, SVShiftToolClassGuid);

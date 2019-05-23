@@ -15,9 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comdef.h>
 
-#include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxBufferArray.h"
 #include "SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerControlEnums.h"
 #include "SVMatroxDigitizerInquireEnums.h"
@@ -25,6 +23,9 @@
 #include "SVMatroxDigitizerFeatureEnums.h"
 #include "SVMatroxDigitizerGrabEnums.h"
 #pragma endregion Includes
+
+class SVMatroxBufferArray;
+class SVMatroxSystem;
 
 typedef std::map<std::string, long> SVGigeEventList;
 

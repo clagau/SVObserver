@@ -13,47 +13,49 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVImageLibrary/SVLightReference.h"
-#include "SVImageLibrary/SVLut.h"
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
-
-#pragma warning( disable: 4244 )	//Disable warning for prototype conversion
-#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
+#include "RemoteMonitorList.h"
 #include "SVInspectionProcess.h"
-#include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVPPQObject.h"
-#include "TriggerInformation/SVTriggerObject.h"
-#include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerInformation/SVSoftwareTriggerClass.h"
-#include "TriggerInformation/SVCameraTriggerClass.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
-#include "RemoteMonitorList.h"
-#include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
+#include "SVImageLibrary/SVLightReference.h"
+#include "SVImageLibrary/SVLut.h"
 #include "SVProtoBuf/TriggerRecordController.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
+#include "SVSystemLibrary/SVObserverEnums.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerInformation/SVTriggerObject.h"
+#include "TriggerInformation/SVSoftwareTriggerClass.h"
+#include "TriggerInformation/SVCameraTriggerClass.h"
 #pragma endregion Includes
 
 
 #pragma region Declarations
-//Namespace used only for forward declaration
-
 namespace SvIe
 {
 struct SVConfigurationAcquisitionDeviceInfoStruct;
+}
+namespace  SvOi
+{
+class IObjectWriter;
+}
+namespace SvPb
+{
+class InspectionCmdMsgs;
 }
 namespace SvTh
 {
 class SVSoftwareTriggerClass;
 class SVCameraTriggerClass;
-} //namespace SvTh
-
-namespace SvPb
-{
-class InspectionCmdMsgs;
 }
+namespace  SvXml
+{
+class SVObjectXMLWriter;
+}
+
 
 class SVDeviceParamCollection;
 class SVDeviceParam;
@@ -401,24 +403,24 @@ private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
 
-	void SaveEnvironment(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SaveIO(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SaveAcquisitionDevice(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
-	void SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SaveTrigger(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SaveInspection(SvXml::SVObjectXMLWriter& rWriter, AttributesSetMap& rAttributeSetVector) const;
-	void SavePPQ(SvXml::SVObjectXMLWriter& rWriter) const;
-	void SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
-	void SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
-	void SavePPQ_Inspections(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
+	void SaveEnvironment(SvOi::IObjectWriter& rWriter) const;
+	void SaveIO(SvOi::IObjectWriter& rWriter) const;
+	void SaveAcquisitionDevice(SvOi::IObjectWriter& rWriter) const;
+	void SaveAcquistionConfiguration(SvOi::IObjectWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
+	void SaveCamera(SvOi::IObjectWriter& rWriter) const;
+	void SaveTrigger(SvOi::IObjectWriter& rWriter) const;
+	void SaveInspection(SvOi::IObjectWriter& rWriter, AttributesSetMap& rAttributeSetVector) const;
+	void SavePPQ(SvOi::IObjectWriter& rWriter) const;
+	void SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ ) const;
+	void SavePPQ_Cameras(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ ) const;
+	void SavePPQ_Inspections(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ ) const;
 
 	//************************************
 	//! Add the current monitor lists to the xml-file.
 	//! \param rWriter reference to the xml-writer.
 	//! \returns true on success
 	//************************************
-	bool SaveRemoteMonitorList(SvXml::SVObjectXMLWriter& rWriter ) const;
+	bool SaveRemoteMonitorList(SvOi::IObjectWriter& rWriter) const;
 
 	//************************************
 	//! Add the current sub monitor lists to the tree
@@ -427,26 +429,26 @@ private:
 	//! \param subList The sublist which should saved.
 	//! \returns true on success
 	//************************************
-	bool SaveMonitoredObjectList(SvXml::SVObjectXMLWriter& rWriter, const std::string& listName, const MonitoredObjectList& subList ) const;
+	bool SaveMonitoredObjectList(SvOi::IObjectWriter& rWriter, const std::string& listName, const MonitoredObjectList& subList ) const;
 
 	//************************************
 	//! The method saves the Global Constant list
 	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
-	void SaveGlobalConstants(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveGlobalConstants(SvOi::IObjectWriter& rWriter) const;
 
 	//************************************
 	//! The method saves the Object Attributes Set list
 	//! \param rWriter <in> a reference to the xml-writer
 	//! \param rAttributesSetMap <in> a reference to attribute set map
 	//************************************
-	void SaveObjectAttributesSet(SvXml::SVObjectXMLWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
+	void SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
 
 	//************************************
 	//! The method saves the Additional file list
 	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
-	void SaveAdditionalFiles(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) const;
 
 	//************************************
 	//! The method gets Object Attributes for the inspection
@@ -463,13 +465,13 @@ private:
 
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray );
 
-	void SaveFileAcquisitionConfiguration( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
+	void SaveFileAcquisitionConfiguration(SvOi::IObjectWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadFileAcquisitionConfiguration( SVTreeType& rTree, SVTreeType::SVBranchHandle htiBoardChild, long& lNumAcqDig );
 
-	void SaveDeviceParameters( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
+	void SaveDeviceParameters(SvOi::IObjectWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadDeviceParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDataChild, SVDeviceParamCollection& svDeviceParams );
 
-	void SaveDeviceParamSpecial( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam ) const;
+	void SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter, const SVDeviceParam* pParam ) const;
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
 	void SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);

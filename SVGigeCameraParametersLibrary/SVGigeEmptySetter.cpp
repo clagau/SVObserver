@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeEmptySetter.h"
+#include "SVGigeFeature.h"
 #pragma endregion Includes
 
 HRESULT SVGigeEmptySetter::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue)

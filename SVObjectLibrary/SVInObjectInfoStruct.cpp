@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVInObjectInfoStruct.h"
 #include "SVObjectClass.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations

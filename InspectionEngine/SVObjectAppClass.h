@@ -14,10 +14,14 @@
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "ObjectInterfaces/IObjectAppClass.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/ITool.h"
 #include "SVOResource/resource.h"
 #pragma endregion Includes
+
+namespace SvOi
+{
+class IInspectionProcess;
+class ITool;
+}
 
 namespace SvIe
 {

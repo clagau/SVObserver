@@ -8,10 +8,11 @@
 #pragma once
 
 #pragma region Includes
-#include "SVProtoBuf/TriggerRecordController.h"
-#include "SVSharedMemoryLibrary/SharedDataStore.h"
+#include "DataControllerBase.h"
 #include "ImageBufferSMHelper.h"
 #include "SharedMemoryStructs.h"
+#include "SVProtoBuf/TriggerRecordController.h"
+#include "SVSharedMemoryLibrary/SharedDataStore.h"
 #pragma endregion Includes
 
 

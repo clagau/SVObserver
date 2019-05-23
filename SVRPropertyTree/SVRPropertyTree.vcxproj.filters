@@ -21,9 +21,6 @@
     <ClCompile Include="SVNotifyButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVRPropTreeState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVRPropTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,15 +45,15 @@
     <ClCompile Include="SVRPropTreeItemStatic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVRPropTreeState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVNotifyButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRPropTreeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTree.h">
@@ -81,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeItemStatic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRPropTreeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

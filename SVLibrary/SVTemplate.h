@@ -95,7 +95,8 @@ int vector2d<T>::num_cols()
 		return 0;
 }
 
-template < typename TYPE > class TTemporaryPointerWrapper
+template < typename TYPE >
+class TTemporaryPointerWrapper
 {
 public:
 	TTemporaryPointerWrapper(TYPE*);
@@ -140,7 +141,8 @@ public:
 };
 
 
-template < typename BASETYPE > class TValueSemantics	// enable value semantics of polymorphic types
+template < typename BASETYPE >
+class TValueSemantics	// enable value semantics of polymorphic types
                                                         // you should not derive from this class
 {
 public:
@@ -323,7 +325,8 @@ const BASETYPE* TValueSemantics<BASETYPE>::operator -> () const
 
 
 // Singleton and Factory concepts borrowed from Loki
-template<class SINGLETON> class TBasicSingletonHolder
+template<class SINGLETON>
+class TBasicSingletonHolder
 {
 public:
 	typedef SINGLETON InstanceType;
@@ -429,7 +432,8 @@ FACTORYBASE* TFactory<TYPEID, FACTORYBASE>::New(TYPEID id)
 }
 
 
-template<typename TYPEID, class FACTORYBASE> class TFactorySingleton
+template<typename TYPEID, class FACTORYBASE>
+class TFactorySingleton
 {
 public:
 	typedef TFactory<TYPEID, FACTORYBASE> factoryclass;

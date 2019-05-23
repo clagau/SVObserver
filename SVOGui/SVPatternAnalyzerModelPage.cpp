@@ -35,11 +35,11 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-static const int SVMinModelWidthWithCircular = 25;
-static const int SVMinModelHeightWithCircular = 25;
-static const int ToolImageTab = 0;
-static const int ModelImageTab = 1;
-static const int DontCareImageTab = 2;
+constexpr int SVMinModelWidthWithCircular = 25;
+constexpr int SVMinModelHeightWithCircular = 25;
+constexpr int ToolImageTab = 0;
+constexpr int ModelImageTab = 1;
+constexpr int DontCareImageTab = 2;
 #pragma endregion Declarations
 
 namespace SvOg
@@ -1027,7 +1027,7 @@ namespace SvOg
 
 	void SVPatternAnalyzerModelPage::setModelCenterOverlay()
 	{
-		static const int pointCount = 10;
+		constexpr int pointCount = 10;
 		int points[pointCount];
 		points[0] = m_CenterX;
 		points[1] = 0;

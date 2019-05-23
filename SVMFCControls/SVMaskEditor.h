@@ -2,10 +2,10 @@
 
 namespace SvMc
 {
-	class CSVMaskEditor : public CWnd
+	class SVMaskEditor : public CWnd
 	{
 	protected:
-		DECLARE_DYNCREATE(CSVMaskEditor)
+		DECLARE_DYNCREATE(SVMaskEditor)
 	public:
 		CLSID const& GetClsid()
 		{

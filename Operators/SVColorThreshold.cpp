@@ -12,13 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVColorThreshold.h"
-#include "SVObjectLibrary/SVClsIds.h"
+#include "Definitions/GlobalConst.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "Definitions/GlobalConst.h"
+#include "SVObjectLibrary/SVClsIds.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp

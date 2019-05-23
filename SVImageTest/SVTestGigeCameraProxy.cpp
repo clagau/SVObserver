@@ -19,18 +19,18 @@
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVTestGigeCameraProxy.h"
 #include "Definitions/SVGigeEnums.h"
-#include "CameraLibrary/SVStringValueDeviceParam.h"
-#include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
-#include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVTestAcquisitionClass.h"
 #pragma warning (pop)
 #pragma endregion Includes
 
-static const int SVMSG_SVO_20_INCORRECT_CAMERA_FILE = 20;
+constexpr int SVMSG_SVO_20_INCORRECT_CAMERA_FILE = 20;
 
 typedef std::map<SVDeviceParamEnum, SvDef::SVGigeParameterEnum> DeviceParamToGigeParamAssoc;
 static const DeviceParamToGigeParamAssoc cDeviceParamEnumToGigeParamEnum

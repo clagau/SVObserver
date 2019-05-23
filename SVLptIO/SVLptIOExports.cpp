@@ -9,6 +9,7 @@
 #include "StdAfx.h"
 #include "SVLptIOExports.h"
 #include "SVLptIOImpl.h"
+#include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 long g_lRefCount = 0;

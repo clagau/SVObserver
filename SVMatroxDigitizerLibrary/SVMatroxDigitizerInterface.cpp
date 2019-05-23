@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxLibrary/SVMatroxBufferArray.h"
+#include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

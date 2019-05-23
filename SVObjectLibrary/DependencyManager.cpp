@@ -10,6 +10,9 @@
 #include "stdafx.h"
 #include "DependencyManager.h"
 #include "ObjectNameLookup.h"
+#include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
+#include "ObjectInterfaces/ITool.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -66,18 +69,18 @@ namespace SvOl
 		{
 			bool CopyItem( false );
 			//! Check if same Tool
-			SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject( rDependency.first );
-			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject( rDependency.second );
+			SvOi::IObjectClass* pSupplier = SvOi::getObject( rDependency.first );
+			SvOi::IObjectClass* pClient = SvOi::getObject( rDependency.second );
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
 				//Basic value objects don't have tools check if main object is of type ToolObjectType
 				bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
 				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
-				SVObjectClass* pParent = pSupplier->GetParent();
+				SvOi::IObjectClass* pParent = SvOi::getObject(pSupplier->GetParentID());
 				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
 				SvPb::SVObjectTypeEnum supplierAncestorType = isParentToolset ? SvPb::SVToolSetObjectType	: SvPb::SVToolObjectType;
-				SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(supplierAncestorType);
-				SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SvPb::SVToolObjectType);
+				SvOi::IObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestorInterface(supplierAncestorType);
+				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
 					//One of the dependency tools must be in the source set
@@ -98,11 +101,11 @@ namespace SvOl
 		std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
 		for (; DependencyVector.end() != IterDependency; ++IterDependency)
 		{
-			SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject(IterDependency->first);
-			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(IterDependency->second);
+			SvOi::IObjectClass* pSupplier = SvOi::getObject(IterDependency->first);
+			SvOi::IObjectClass* pClient = SvOi::getObject(IterDependency->second);
 			if (nullptr != pSupplier && nullptr != pClient)
 			{	
-				SVObjectClass* pParent = pSupplier->GetParent();
+				SvOi::IObjectClass* pParent = SvOi::getObject(pSupplier->GetParentID());
 				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
 				//To add also add the parent tool e.g. LoopTool if available
 				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
@@ -121,8 +124,8 @@ namespace SvOl
 					//Basic value objects don't have tools check if main object is of type ToolObjectType
 					bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
 					bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
-					SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SvPb::SVToolObjectType);
-					SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SvPb::SVToolObjectType);
+					SvOi::IObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestorInterface(SvPb::SVToolObjectType);
+					SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 					if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 					{
 						ObjectDependencies.insert(Dependency(pToolSupplier->GetUniqueObjectID(), pToolClient->GetUniqueObjectID()));
@@ -147,10 +150,10 @@ namespace SvOl
 
 		for (auto const& rEntry : ObjectDependencies)
 		{
-			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(rEntry.second);
+			SvOi::IObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(rEntry.second);
 			if (nullptr != pClient)
 			{
-				SVObjectClass* pTool = (SvPb::SVToolObjectType == pClient->GetObjectType()) ? pClient : pClient->GetAncestor(SvPb::SVToolObjectType);
+				SvOi::IObjectClass* pTool = (SvPb::SVToolObjectType == pClient->GetObjectType()) ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 				if (nullptr != pTool)
 				{
 					const SVGUID& rToolID = pTool->GetUniqueObjectID();
@@ -164,6 +167,36 @@ namespace SvOl
 		}
 	}
 	#pragma endregion Public Methods
+
+	bool DependencyManager::DependencySort::operator()(const Dependency &rLhs, const Dependency &rRhs)
+	{
+		bool isSmaller = false;
+		SVGUID GuidLhs = m_SortRight ? rLhs.second : rLhs.first;
+		SVGUID GuidRhs = m_SortRight ? rRhs.second : rRhs.first;
+		SvOi::IObjectClass* pLhs = SvOi::getObject(GuidLhs);
+		SvOi::IObjectClass* pRhs = SvOi::getObject(GuidRhs);
+		if (nullptr != pLhs && nullptr != pRhs)
+		{
+			bool isSupplier = pLhs->GetObjectType() == SvPb::SVToolObjectType;
+			SvOi::ITool* pToolLhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pLhs : pLhs->GetAncestorInterface(SvPb::SVToolObjectType));
+			isSupplier = pRhs->GetObjectType() == SvPb::SVToolObjectType;
+			SvOi::ITool* pToolRhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pRhs : pRhs->GetAncestorInterface(SvPb::SVToolObjectType));
+			if (nullptr != pToolLhs && nullptr != pToolRhs)
+			{
+				long LhsPosition = pToolLhs->getToolPosition();
+				long RhsPosition = pToolRhs->getToolPosition();
+				if (-1 != LhsPosition && -1 != RhsPosition && LhsPosition < RhsPosition)
+				{
+					isSmaller = true;
+				}
+				else
+				{
+					isSmaller = false;
+				}
+			}
+		}
+		return isSmaller;
+	}
 } //namespace SvOl
 
 #pragma region IDependencyManager
@@ -179,3 +212,5 @@ void SvOi::getToolDependency(SvGuidInserter Inserter, const SVGuidSet& rSourceSe
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet);
 }
 #pragma endregion IDependencyManager
+
+

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "resource.h"
-#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 
@@ -27,6 +26,8 @@ enum PROPERTY_PAGE_PROPERTY
 	PROP_ADV_CAMERA_BANDS,
 	PROP_CAMERA_FILE_BASE               = 10000
 };
+
+class SVDeviceParamCollection;
 
 class SVCameraFilePropertyPageDlg : public CDialog
 {

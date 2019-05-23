@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <math.h>
 #include "SVExtentMultiLineStruct.h"
+#include "SVExtentFigureStruct.h"
 #include "SVImageExtentClass.h"
 #pragma endregion Includes
 

@@ -12,13 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCommandInspectionCollectImageData.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
+#include "SVPPQObject.h"
 #include "SVResultList.h"
 #include "SVToolSet.h"
-#include "Definitions/GlobalConst.h"
-#include "SVPPQObject.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 #pragma region Constructor

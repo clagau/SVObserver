@@ -11,20 +11,17 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <iostream>
-#include "SVObserver.h"
-
-#include "SVUtilityLibrary/StringHelper.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVLibrary\SVOINILoader.h"
-#include "InspectionEngine/SVDigitizerProcessingClass.h"
-#include "SVIOLibrary\SVIOParameterEnum.h"
-#include "TriggerInformation/SVHardwareManifest.h"
-#include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "InitialInformationHandler.h"
-#include "SVStatusLibrary/GlobalPath.h"
-#include "Definitions/GlobalConst.h"
 #include "RootObject.h"
-
+#include "SVObserver.h"
+#include "Definitions/GlobalConst.h"
+#include "InspectionEngine/SVDigitizerProcessingClass.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
+#include "SVLibrary/SVOINILoader.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerInformation/SVTriggerProcessingClass.h"
 #pragma endregion Includes
 
 

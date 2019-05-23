@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadIPAddress.h"
+#include "SVGigeFeature.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

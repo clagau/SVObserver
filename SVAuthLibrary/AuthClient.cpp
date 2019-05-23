@@ -6,13 +6,14 @@
 /// Central class for handling authentication and authorization requests.
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
-#include "SVAuthLibrary/AuthClient.h"
-#include "SVAuthLibrary/JwtFactory.h"
-#include "SVAuthLibrary/Jwt.h"
+#include "AuthClient.h"
+#include "JwtFactory.h"
+#include "Jwt.h"
 #include "SVHttpLibrary/HttpClient.h"
 #include "SVLogLibrary/Logging.h"
+#pragma endregion Includes
 
 namespace SvAuth
 {

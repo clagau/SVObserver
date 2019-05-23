@@ -10,11 +10,11 @@
 #pragma region Includes
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "TableObject.h"
-#include "TableColumnEquation.h"
 #pragma endregion Includes
 
 namespace SvOp
 {
+class TableColumnEquation;
 
 class TableFillByEquationObject : public TableObject
 {

@@ -9,11 +9,14 @@
 //* .Check In Date   : $Date:   15 May 2014 11:07:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOCVAnalyzer.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
+#include "SVStatusLibrary/SVRunStatus.h"
+#pragma endregion Includes
 
 namespace SvAo
 {

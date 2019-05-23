@@ -31,7 +31,7 @@ DataControllerBase::DataControllerBase()
 		}
 		else
 		{
-			m_maxNumberOfRequiredBuffer = static_cast<int>(value) * 0.9;
+			m_maxNumberOfRequiredBuffer = static_cast<int>(value * 0.9);
 		}
 	}
 

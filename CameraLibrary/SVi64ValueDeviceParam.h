@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVDeviceParam.h"
 #include "SVDeviceParams.h"
 #pragma endregion Includes
 

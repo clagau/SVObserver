@@ -10,6 +10,7 @@
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <WinBase.h>
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxResourceMonitor.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"

@@ -18,10 +18,19 @@
     <ClCompile Include="ArrowObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Doughnut.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="EllipseObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="GraphObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
     <ClCompile Include="LineObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="MarkerObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="RectangleObject.cpp">
@@ -57,19 +66,10 @@
     <ClCompile Include="SVROIList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TextObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SymmetricTrapezoid.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Doughnut.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="MarkerObject.cpp">
+    <ClCompile Include="TextObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,13 +105,25 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="ArrowObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Doughnut.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="EllipseObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="GraphObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
     <ClInclude Include="LineObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MarkerObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RectangleObject.h">
@@ -150,22 +162,10 @@
     <ClInclude Include="SVROIList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TextObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SymmetricTrapezoid.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Doughnut.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="MarkerObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+    <ClInclude Include="TextObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

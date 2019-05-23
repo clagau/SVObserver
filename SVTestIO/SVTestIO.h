@@ -16,9 +16,9 @@
 	#error "include 'stdafx.h' before including this file for PCH"
 #endif
 
-#include "SVTestIODlg.h"
 #pragma endregion Includes
 
+class SVTestIODlg;
 
 class CSVTestIOApp : public CWinApp
 {

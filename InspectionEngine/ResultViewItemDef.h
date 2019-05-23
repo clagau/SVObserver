@@ -12,10 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectReference.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
+class SVObjectReference;
 
 namespace SvIe
 {

@@ -11,10 +11,11 @@
 #include <memory>
 
 #include "WebSocketClient.h"
-#include "WebsocketClientSettings.h"
 
 namespace SvHttp
 {
+struct WebsocketClientSettings;
+
 class WebsocketClientFactory
 {
 public:

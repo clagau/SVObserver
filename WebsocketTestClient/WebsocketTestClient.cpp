@@ -8,6 +8,7 @@
 
 #pragma once
 
+#pragma region Includes
 #include "stdafx.h"
 
 #include <chrono>
@@ -21,14 +22,16 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-#include "WebsocketLibrary/SVRCClientService.h"
+#include "SvHttpLibrary/WebsocketClientSettings.h"
+#include "SvHttpLibrary/DefaultSettings.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf\SVRC.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
-#include "SVLogLibrary/Logging.h"
 #include "WebsocketLibrary/RunRequest.inl"
-#include "SvHttpLibrary/DefaultSettings.h"
-
+#include "WebsocketLibrary/SVRCClientService.h"
+#include "WebsocketLibrary/SVRCClientServiceSettings.h"
+#pragma endregion Includes
 
 void PrintCurImage(const SvPb::ImageId& rCurrentImage)
 {

@@ -13,11 +13,16 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
-#include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+class IValueObject;
+}
+
 class SVObjectClass;
+
 
 enum SVIOObjectType
 {

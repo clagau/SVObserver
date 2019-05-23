@@ -21,11 +21,17 @@
 #include "SVOLibrary/SVODataDeviceClass.h"
 #include "SVOLibrary/SVODeviceClass.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
-#include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
+namespace SvTi
+{
+struct SVAcquisitionConstructParams;
+}
+namespace SvTrc
+{
+class ITriggerRecordControllerRW;
+}
 class SVMatroxGigeCameraProxy;
 
 namespace SvIe
@@ -178,7 +184,7 @@ private:
 
 	unsigned long mulSize;
 	bool m_LUTAndLRSet;
-	SvTrc::ITriggerRecordControllerRW& m_rTRController = SvTrc::getTriggerRecordControllerRWInstance();
+	SvTrc::ITriggerRecordControllerRW& m_rTRController;
 	SVMatroxBufferCreateStruct m_bufferStruct;
 	SVGUID m_guid = GUID_NULL;
 };

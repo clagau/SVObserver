@@ -20,6 +20,7 @@
 #include "Tools/SVTool.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/SVPointValueObjectClass.h"

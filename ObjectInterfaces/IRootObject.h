@@ -10,10 +10,14 @@
 
 #pragma region Includes
 #include "Definitions/StringTypeDef.h"
-#include "SVProtobuf/SVRC.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvPb
+{
+class GetObjectSelectorItemsResponse;
+}
+
 class SVOutputInfoListClass;
 #pragma endregion Declarations
 

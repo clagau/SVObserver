@@ -15,7 +15,6 @@
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdAdjustment.h"
 #include "SVTADlgColorThresholdOutput.h"
-#include "SVROIFigureEditor.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -23,8 +22,8 @@ namespace SvTo
 class SVColorToolClass;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTADlgColorThresholdSheet
+class SVROIFigureEditor;
+
 
 class SVTADlgColorThresholdSheet : public CPropertySheet
 {

@@ -3,13 +3,11 @@
 //
 
 #include "stdafx.h"
-#include "TriggerRecordControllerTest.h"
 #include "TriggerRecordControllerTestDlg.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "CopyTool.h"
 #include "WindowTool.h"
-#include "TriggerRecordController\ITriggerRecordRW.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "RotationTool.h"
 #include "DeactivedTool.h"

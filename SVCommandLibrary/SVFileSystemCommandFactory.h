@@ -11,12 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVCommandAbstractFactorySingleton.h"
 #include "SVCommandAbstractFactoryTemplate.h"
-#include "SVCommandDataHolder.h"
+#pragma endregion Includes
 
-/*
-*/
+class SVCommandDataHolder;
+
 class SVFileSystemCommandFactory : public SVCommandAbstractFactoryTemplate
 {
 public:

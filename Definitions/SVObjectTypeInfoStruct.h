@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVProtobuf/SVO-Enum.h"
 #pragma endregion Includes
 
@@ -20,7 +19,7 @@ namespace SvDef
 
 		struct SVObjectTypeInfoStruct
 		{
-			SVObjectTypeInfoStruct( SvPb::SVObjectTypeEnum ObjectType= SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType= SvPb::SVNotSetSubObjectType, const SVGUID& rEmbeddedID=GUID_NULL)
+			SVObjectTypeInfoStruct( SvPb::SVObjectTypeEnum ObjectType= SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType= SvPb::SVNotSetSubObjectType, const GUID& rEmbeddedID=GUID_NULL)
 				: ObjectType(ObjectType ), SubType(SubType ), EmbeddedID( rEmbeddedID ) {};
 
 			//******************************************************************************

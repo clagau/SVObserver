@@ -12,9 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUnaryImageOperatorClass.h"
+#include "SVUnaryImageOperatorList.h"
 #include "SVStdImageOperatorListClass.h"
 #include "SVInplaceImageOperatorListClass.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #pragma region Includes
 
 namespace SvOp

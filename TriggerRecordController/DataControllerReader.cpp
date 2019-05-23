@@ -7,18 +7,19 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
 #include "DataControllerReader.h"
 #include "ImageBufferController.h"
 #include "ResetLocker.h"
 #include "SharedMemoryStructs.h"
 #include "TriggerRecord.h"
 #include "TriggerRecordData.h"
+#include "SVMessage\SVMessage.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
+#include "SVSharedMemoryLibrary\SMParameterStruct.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 namespace SvTrc

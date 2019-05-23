@@ -11,18 +11,20 @@
 
 #pragma region Includes
 #include "StdAfx.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Definitions/Color.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVValueObjectLibrary/BasicValueObject.h"
 #include "ResultViewReferences.h"
+#include "SVInspectionProcess.h"
+#include "SVToolSet.h"
+#include "Definitions/Color.h"
 #include "InspectionEngine/SVIPResultData.h"
 #include "InspectionEngine/SVIPResultItemDefinition.h"
-#include "SVToolSet.h"
-#include "SVInspectionProcess.h"
+#include "ObjectInterfaces/IObjectWriter.h"
+#include "Operators/TableObject.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 #pragma region Constructor

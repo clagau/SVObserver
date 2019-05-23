@@ -10,6 +10,11 @@
 //******************************************************************************
 #include "Stdafx.h"
 #include "SVCustomDeviceParam.h"
+#include "SVBoolValueDeviceParam.h"
+#include "SVLongValueDeviceParam.h"
+#include "SVStringValueDeviceParam.h"
+#include "SVI64ValueDeviceParam.h"
+#include "SVNullDeviceParam.h"
 
 // Not particularly useful... (just here to statisfy factory signature)
 SVCustomDeviceParam::SVCustomDeviceParam()

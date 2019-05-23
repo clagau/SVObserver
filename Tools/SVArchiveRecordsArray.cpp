@@ -7,8 +7,10 @@
 #include "Stdafx.h"
 #include "SVArchiveRecordsArray.h"
 #include "SVArchiveTool.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "SVObjectLibrary/SVObjectInfoStruct.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

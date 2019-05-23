@@ -26,30 +26,30 @@ static char THIS_FILE[] = __FILE__;
 
 HINSTANCE SvStl::MessageContainer::m_MessageDll( nullptr );
 
-static const TCHAR* const SvEventSource = _T("SVException");
-static const TCHAR* const SvSecuritySource =  _T("SVSecurity");
-static const TCHAR* const SvAccessSource =  _T("SVAccess");
+constexpr char* SvEventSource = _T("SVException");
+constexpr char* SvSecuritySource =  _T("SVSecurity");
+constexpr char* SvAccessSource =  _T("SVAccess");
 
-static const TCHAR* const c_ShowDisplay = _T("g_ShowDisplay");
-static const TCHAR* const c_Notify = _T("g_Notify");
+constexpr char* c_ShowDisplay = _T("g_ShowDisplay");
+constexpr char* c_Notify = _T("g_Notify");
 
-static const TCHAR* const DetailsToken = _T("#Details#");
-static const TCHAR* const DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessage: %s\n" );
-static const TCHAR* const RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\EventLog\\Application\\");
-static const TCHAR* const EventMsgFile = _T( "EventMessageFile" );
-static const TCHAR* const SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
-static const TCHAR* const ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
-static const TCHAR* const DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
+constexpr char* DetailsToken = _T("#Details#");
+constexpr char* DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessage: %s\n" );
+constexpr char* RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\EventLog\\Application\\");
+constexpr char* EventMsgFile = _T( "EventMessageFile" );
+constexpr char* SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
+constexpr char* ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
+constexpr char* DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
 
-static const int SubstituteStringNr = 9;
+constexpr int SubstituteStringNr = 9;
 
-static const UINT CategoryNr = 31;
-static const UINT CategoryBase = FAC_SVProtoBuf;
-static const TCHAR* const CategoryUnknown = _T("Unknown");
-static const TCHAR* const CategoryNone = _T("None");
-static const TCHAR* const CategorySystem = _T("System");
-static const TCHAR* const CategoryApplication = _T("Application");
-static const TCHAR* const TaskCategory[CategoryNr]= { 
+constexpr UINT CategoryNr = 31;
+constexpr UINT CategoryBase = FAC_SVProtoBuf;
+constexpr char* const CategoryUnknown = _T("Unknown");
+constexpr char* const CategoryNone = _T("None");
+constexpr char* const CategorySystem = _T("System");
+constexpr char* const CategoryApplication = _T("Application");
+constexpr char* const TaskCategory[CategoryNr]= { 
 	_T("SVProtoBuf"),
 	_T("SVGateway"),  
 	_T("TriggerRecordController"), 

@@ -12,10 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObjectList.h"
+#include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
+#include "SVObjectLibrary/SVOutputInfoListClass.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"

@@ -18,6 +18,8 @@
 #include "SVDeviceParamCollection.h"
 #pragma endregion Includes
 
+//This comment is to avoid that the SVDeviceParamCollection include is marked as forward declaration due to TheDeviceParamFactory
+
 class SVDeviceParamStructTestCases
 {
 public:
@@ -223,7 +225,8 @@ inline const TDeviceParamInfo<TYPE>& TDeviceParamInfo<TYPE>::operator= (const TD
 	return *this;
 }
 
-template<> struct TDeviceParamInfo<long>
+template<> 
+struct TDeviceParamInfo<long>
 {
 	long min;
 	long max;
@@ -253,7 +256,8 @@ template<> struct TDeviceParamInfo<long>
 	}
 };
 
-template<> struct TDeviceParamInfo<__int64>
+template<> 
+struct TDeviceParamInfo<__int64>
 {
 	__int64 min;
 	__int64 max;

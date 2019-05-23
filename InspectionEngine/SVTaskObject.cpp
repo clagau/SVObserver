@@ -12,15 +12,18 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObject.h"
+#include "SVExtentPropertyInfoStruct.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
+#include "SVObjectLibrary/SVOutputInfoListClass.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVLibrary/SVTemplate.h"
 #include "Definitions/Color.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
-#include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "SVStatusLibrary/SVRunStatus.h"
 #include "ObjectInterfaces/IRootObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
@@ -1498,7 +1501,6 @@ void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter)
 	if (0 < inputList.size())
 	{
 		SVNameVariantList list;
-		//SVVariantList list;
 		for (int i = 0; i < static_cast<int> (inputList.size()); ++i)
 		{
 			if (nullptr != inputList[i])

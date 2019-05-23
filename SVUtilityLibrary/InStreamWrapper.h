@@ -11,8 +11,9 @@
 
 #pragma once
 
-
 #include "IStream.h"
+
+//This comment is to avoid that the IStream STREAM_INTERFACE include is marked as not required due to a macro
 
 class InStreamWrapper : public IInStream, public IStreamGetSize
 {

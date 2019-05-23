@@ -11,20 +11,20 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVRegressionFileSelectDlg.h"
-#include "SVMFCControls/SVFileDialog.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "TextDefinesSvO.h"
-#include "SVStatusLibrary/GlobalPath.h"
+#include "SVRegressionFileSelectSheet.h"
+#include "SVObserver.h"
 #include "SVMFCControls/SVDlgFolder.h"
+#include "SVMFCControls/SVFileDialog.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-static const int PathBufferLen = MAX_PATH +2;
-static const int MaxNumberCameraEntries = 4;
+constexpr int PathBufferLen = MAX_PATH +2;
+constexpr int MaxNumberCameraEntries = 4;
 #pragma endregion Declarations 
 
 #ifdef _DEBUG
@@ -134,7 +134,7 @@ BOOL CSVRegressionFileSelectDlg::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_pParent = dynamic_cast<CSVRegressionFileSelectSheet*>(GetParent());
+	m_pParent = dynamic_cast<SVRegressionFileSelectSheet*>(GetParent());
 	m_pParent->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 	UpdateData(FALSE);

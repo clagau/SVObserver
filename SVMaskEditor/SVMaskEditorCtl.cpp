@@ -98,7 +98,7 @@ const IID BASED_CODE IID_DSVMaskEditorEvents =
 /////////////////////////////////////////////////////////////////////////////
 // Control type information
 
-static const DWORD BASED_CODE _dwSVMaskEditorOleMisc =
+constexpr DWORD BASED_CODE _dwSVMaskEditorOleMisc =
 	OLEMISC_INVISIBLEATRUNTIME |
 	OLEMISC_ACTIVATEWHENVISIBLE |
 	OLEMISC_SETCLIENTSITEFIRST |
