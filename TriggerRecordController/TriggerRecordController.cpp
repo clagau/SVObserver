@@ -41,7 +41,9 @@ int getAdditionalTriggerRecordNumber()
 {
 	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 	constexpr int cTriggerRecordAddOn = 2; //number of additional slots for internal use
-	return l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("AdditionalTRNumber"), 5) + cTriggerRecordAddOn;
+	constexpr int cTriggerRecordMax = 50 + cTriggerRecordAddOn;
+	int retVal = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("AdditionalTRNumber"), 5) + cTriggerRecordAddOn;
+	return std::max(cTriggerRecordAddOn, std::min(cTriggerRecordMax, retVal));
 }
 
 #pragma region Constructor

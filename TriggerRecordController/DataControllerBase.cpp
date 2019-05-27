@@ -22,7 +22,9 @@ namespace SvTrc
 int getNumberOfTRKeepFreeForWrite()
 {
 	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-	return l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
+	constexpr int cTriggerRecordMax = 10;
+	int retVal = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
+	return std::max(0, std::min(cTriggerRecordMax, retVal));
 }
 const int g_cNumberOfTRKeepFreeForWrite = getNumberOfTRKeepFreeForWrite();
 int TRControllerBaseDataPerIP::getNumberOfTRKeepFreeForWrite() const
