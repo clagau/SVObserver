@@ -152,6 +152,8 @@ namespace SvTrc
 		virtual bool isResetStarted() const = 0;
 
 		static const int m_cResetStartedAddBuffer = -2;
+
+		static const int cMaxTriggerRecords = 400;
 	};
 
 	/// Get an instance of the TR controller in read/write modus.

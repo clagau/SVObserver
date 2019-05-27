@@ -83,7 +83,7 @@ bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspection
 {
 	for (auto& rInspection : rInspectionList.list())
 	{
-		if (cMaxTriggerRecords < rInspection.numberofrecords())
+		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords())
 		{
 			assert(false);
 			return false;

@@ -29,14 +29,14 @@
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "TriggerInformation/SVCameraTriggerData.h"
-#include "TriggerRecordController/TriggerRecordController.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 
 #pragma region Declarations
 constexpr long	StandardPpqLength	= 2;
 constexpr long g_lPPQExtraBufferSize = 50;
-constexpr long g_lPPQExtraImageBufferSize = 5;
+constexpr long g_maxPpqLength = 300;
 
 namespace SvOi
 {
@@ -48,7 +48,7 @@ class SVOutputObjectList;
 
 constexpr long getMaxPpqLength()
 {
-	return SvTrc::TriggerRecordController::cMaxTriggerRecords - g_lPPQExtraImageBufferSize;
+	return std::min<long>(g_maxPpqLength, SvTrc::ITriggerRecordControllerRW::cMaxTriggerRecords);
 };
 
 class SVPPQObject : 

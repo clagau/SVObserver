@@ -25,7 +25,7 @@ class ITriggerRecordControllerRW;
 class TrcTesterConfiguration
 {
 public:
-	TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile);
+	TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile, bool isLocal);
 	~TrcTesterConfiguration();
 
 	typedef std::vector<MIL_ID> ImageList;
@@ -64,6 +64,8 @@ public:
 	const ParamDefList& getValueObjectSet() const { return m_valueObjectSet; };
 	const ParamValueList& getValueSet() const { return m_valueSet; };
 	const TestDataList& getTestData() const { return m_testData; };
+	int getNumberOfRecordsAddOne() const { return m_numberOfRecordsAddOne; };
+	int getNumberOfKeepFreeRecords() const { return m_numberOfKeepFreeRecords; };
 
 private:
 	int m_NumberOfRuns = 20;
@@ -79,7 +81,8 @@ private:
 	double m_maxTimeCheckBufferPerBuffer = 0.0031;
 	double m_maxTimesetAndReadImage = 0.00065;
 
-	
+	int m_numberOfRecordsAddOne = 5;
+	int m_numberOfKeepFreeRecords = 2;
 
 	const std::vector<std::vector<std::string>> m_imageFileNameLists = {{R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0000.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0001.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0002.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0003.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0004.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0005.bmp)",
 													R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0006.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0007.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0008.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0009.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0010.bmp)",R"(C:\IMAGES\Grayscale\640x480\seq Rotate\Rotate640x480_0011.bmp)"},

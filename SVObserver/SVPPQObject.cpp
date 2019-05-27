@@ -4303,7 +4303,7 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 			{
 				try
 				{
-					pInspection->setTriggerRecordNumbers(GetPPQLength() + g_lPPQExtraImageBufferSize + m_rejectCount);
+					pInspection->setTriggerRecordNumbers(GetPPQLength() + m_rejectCount);
 				}
 				catch (const SvStl::MessageContainer& rSvE)
 				{
@@ -4379,7 +4379,7 @@ bool SVPPQObject::setInspections2TRC()
 		assert(pInspList->end() != pInspPB);
 		if (pInspList->end() != pInspPB)
 		{
-			pInspPB->set_numberofrecords(GetPPQLength() + g_lPPQExtraImageBufferSize + m_rejectCount);
+			pInspPB->set_numberofrecords(GetPPQLength() + m_rejectCount);
 		}
 	}
 	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);

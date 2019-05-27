@@ -9,7 +9,9 @@
 #include "stdafx.h"
 #include "DataControllerBase.h"
 #include "ImageBufferController.h"
+#include "SVLibrary/SVOINIClass.h"
 #include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRegistry.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -17,6 +19,17 @@
 
 namespace SvTrc
 {
+int getNumberOfTRKeepFreeForWrite()
+{
+	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	return l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
+}
+const int g_cNumberOfTRKeepFreeForWrite = getNumberOfTRKeepFreeForWrite();
+int TRControllerBaseDataPerIP::getNumberOfTRKeepFreeForWrite() const
+{
+	return g_cNumberOfTRKeepFreeForWrite;
+}
+
 #pragma region Constructor
 DataControllerBase::DataControllerBase()
 {
@@ -171,6 +184,15 @@ void DataControllerBase::prepareReset()
 	if (m_reloadCallback)
 	{
 		m_reloadCallback();
+	}
+}
+
+void DataControllerBase::increaseNumberOfFreeTr(int inspectionPos)
+{
+	auto* pTrDataIp = getTRControllerData(inspectionPos);
+	if (nullptr != pTrDataIp)
+	{
+		pTrDataIp->increaseFreeTrNumber();
 	}
 }
 }

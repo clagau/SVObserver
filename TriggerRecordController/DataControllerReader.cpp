@@ -82,6 +82,37 @@ int TRControllerReaderDataPerIP::getTrId2Send()
 	}
 	return -1;
 }
+
+void TRControllerReaderDataPerIP::increaseFreeTrNumber()
+{
+	if (nullptr != m_pBasicData)
+	{
+		InterlockedIncrement(&m_pBasicData->m_numberOfFreeTR);
+	}
+}
+
+void TRControllerReaderDataPerIP::decreaseFreeTrNumber()
+{
+	if (nullptr != m_pBasicData)
+	{
+		InterlockedDecrement(&m_pBasicData->m_numberOfFreeTR);
+		if (0 > m_pBasicData->m_numberOfFreeTR)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_DecreaseFreeTRC, SvStl::SourceFileParams(StdMessageParams));
+			InterlockedExchange(&m_pBasicData->m_numberOfFreeTR, 0l);
+		}
+	}
+}
+
+bool TRControllerReaderDataPerIP::isEnoughFreeForLock() const
+{
+	if (nullptr != m_pBasicData)
+	{
+		return getNumberOfTRKeepFreeForWrite() < m_pBasicData->m_numberOfFreeTR;
+	}
+	return false;
+}
 #pragma endregion TRControllerReaderDataPerIP
 
 #pragma region Constructor
@@ -138,27 +169,36 @@ ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectio
 	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
 	if (isUpToDate() && 0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
-		if (validFunc)
+		TRControllerReaderDataPerIP* pIPData = m_dataVector[inspectionPos].get();
+		if (nullptr != pIPData && validFunc)
 		{
-			for (int i = 0; i < m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber; i++)
+			if (pIPData->isEnoughFreeForLock())
 			{
-				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
-				if (validFunc(rCurrentTR))
+				for (int i = 0; i < m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber; i++)
 				{
-					long refTemp = rCurrentTR.m_referenceCount;
-					while (0 <= refTemp)
+					TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
+					if (validFunc(rCurrentTR))
 					{
-						if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+						long refTemp = rCurrentTR.m_referenceCount;
+						while (0 <= refTemp)
 						{
-							TRControllerReaderDataPerIP* pIPData = m_dataVector[inspectionPos].get();
-							if (nullptr != pIPData)
+							if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
 							{
+								if (0 == refTemp)
+								{
+									pIPData->decreaseFreeTrNumber();
+								}
 								return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, pIPData->getImageList(), pIPData->getDataDefList(), pIPData->getBasicData().m_dataListSize, m_pCommonData->m_resetId);
 							}
+							refTemp = rCurrentTR.m_referenceCount;
 						}
-						refTemp = rCurrentTR.m_referenceCount;
 					}
 				}
+			}
+			else
+			{
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotEnoughFreeForLock, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}

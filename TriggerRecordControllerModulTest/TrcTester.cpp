@@ -14,6 +14,7 @@
 #include "LogClass.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\SVRegistry.h"
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
@@ -46,12 +47,17 @@ bool areImageEqual(MIL_ID image1, MIL_ID image2);
 bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount);
 HANDLE createEvent(LPCTSTR eventName);
 
-TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile)
+TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile, bool isLocal)
 {
 	m_NumberOfRuns = iniFile.GetValueInt(_T("General"), _T("NumberOfRuns"), m_NumberOfRuns);
 	m_maxTimeSetBufferPerIter = iniFile.GetValueDouble(_T("MaxTime"), _T("SetBufferPerIter"), m_maxTimeSetBufferPerIter);
 	m_maxTimeCheckBufferPerBuffer = iniFile.GetValueDouble(_T("MaxTime"), _T("CheckBufferPerBuffer"), m_maxTimeCheckBufferPerBuffer);
 	m_maxTimesetAndReadImage = iniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadImage"), m_maxTimesetAndReadImage);
+
+	//get number from SVIM.ini
+	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	m_numberOfRecordsAddOne = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("AdditionalTRNumber"), 5) + 2;
+	m_numberOfKeepFreeRecords = isLocal ? 0 : l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
 	
 	for (auto imageFileList : m_imageFileNameLists)
 	{
@@ -179,7 +185,7 @@ bool TrcTester::checkBufferMaximum()
 
 	GUID guid = GUID_NULL;
 	const int maxBuffer = calcMaxBuffer();
-	const int numberOfRecordsAddOne = numberOfRecords + 2;
+	const int numberOfRecordsAddOne = numberOfRecords + m_config.getNumberOfRecordsAddOne();
 	const int numberOfImages = maxBuffer / numberOfRecordsAddOne;
 	const int numberOfAddBuffer = maxBuffer%numberOfRecordsAddOne;
 	//create maximum number of possible image buffers (no exception should happen.
@@ -245,7 +251,7 @@ bool TrcTester::checkBufferMaximum()
 bool TrcTester::createTR2WriteAndRead()
 {
 	std::random_device rd;
-	std::uniform_int_distribution<int> dist(1, SvTrc::cMaxTriggerRecords);
+	std::uniform_int_distribution<int> dist(1, SvTrc::ITriggerRecordControllerRW::ITriggerRecordControllerRW::cMaxTriggerRecords);
 	constexpr int numberOfInspection = 2;
 	std::vector<int> numbersOfRecords = {dist(rd), dist(rd)};
 	bool retValue = setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateTR2WriteAndRead);
@@ -302,6 +308,7 @@ bool TrcTester::createTR2WriteAndRead()
 		}
 	}
 
+	int numberOfFails = 0;
 	std::array<std::vector<SvTrc::ITriggerRecordRPtr>, numberOfInspection> readTRVector;
 	for (int i = 0; i < maxRecords+10; i++)
 	{
@@ -336,7 +343,7 @@ bool TrcTester::createTR2WriteAndRead()
 				}
 				else
 				{
-					if (readTRVector[j].size() > numbersOfRecords[j] + 4) //add some buffer, because the TRC have a few more TR than required.
+					if (readTRVector[j].size() > numbersOfRecords[j] + m_config.getNumberOfRecordsAddOne()) //add some buffer, because the TRC have a few more TR than required.
 					{
 						CString errorStr;
 						errorStr.Format(_T("createTriggerRecordObjectToWrite possible(insp %d run %d), but failed expected because to many read-version logged."), j, i);
@@ -346,13 +353,31 @@ bool TrcTester::createTR2WriteAndRead()
 			}
 			int id = m_TRController.getLastTRId(j);
 			auto tr2R = m_TRController.createTriggerRecordObject(j, id);
+			bool shouldFail = readTRVector[j].size() >= numbersOfRecords[j] + m_config.getNumberOfRecordsAddOne() - m_config.getNumberOfKeepFreeRecords();
 			if (nullptr == tr2R)
 			{
-				CString errorStr;
-				errorStr.Format(_T("could not create read version of TR (id%d) in inspection %d"), id, j);
-				m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
+				if (!shouldFail)
+				{
+					CString errorStr;
+					errorStr.Format(_T("could not create read version of TR (id%d) in inspection %d"), id, j);
+					m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
+				}
+				numberOfFails++;
+				if (0 == numberOfFails % 11)
+				{
+					readTRVector[j].erase(readTRVector[j].begin(), readTRVector[j].begin() + 13);
+				}
 			}
-			readTRVector[j].emplace_back(tr2R);
+			else
+			{
+				if (shouldFail)
+				{
+					CString errorStr;
+					errorStr.Format(_T("createTriggerRecordObject should fail, because to many records logged. (id%d in inspection %d)"), id, j);
+					m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
+				}
+				readTRVector[j].emplace_back(tr2R);
+			}
 		}
 	}
 

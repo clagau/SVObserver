@@ -564,6 +564,8 @@ namespace SvStl
 		{Tid_TRC_Error_EventCreation, _T("Creation of the TRC-Event failed, Error %s")},
 		{Tid_TRC_Error_GetValueWrongPos, _T("getDataValue failed, because the position %s is invalid")},
 		{Tid_TRC_Error_ValueNotReady, _T("getDataValue failed, because data not ready for reading")},
+		{Tid_TRC_Error_NotEnoughFreeForLock, _T("Not enough triggerRecord free. Not possible to lock a triggerRecord.")},
+		{Tid_TRC_Error_DecreaseFreeTRC, _T("Decrease of free triggerRecord failed. The number can not become lower than zero.")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 		{Tid_TRC_Error_CounterTimeOut, _T("ResetCounter is not go back to zero in %s seconds. Maybe a client is die without reset the counter. The current value is %s.")},

@@ -38,6 +38,10 @@ public:
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	virtual void setLastFinishedTRID(int id) override { assert(false); throw E_NOTIMPL; };
 	int getTrId2Send();
+	virtual void resetFreeTrNumber() override {	throw E_NOTIMPL; };
+	virtual void increaseFreeTrNumber() override;
+	virtual void decreaseFreeTrNumber() override;
+	virtual bool isEnoughFreeForLock() const override;
 
 private:
 	SvSml::DataStorePointer m_SMHandle;
@@ -81,6 +85,7 @@ public:
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+protected:
 	virtual TRControllerBaseDataPerIP* getTRControllerData(int inspectionId) override;
 	virtual const TRControllerBaseDataPerIP* getTRControllerData(int inspectionId) const override;
 

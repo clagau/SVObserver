@@ -40,6 +40,10 @@ TriggerRecord::~TriggerRecord()
 	{
 		bool finishedTR = (TriggerRecordData::cWriteBlocked == m_rData.m_referenceCount);
 		long value = InterlockedDecrement(&(m_rData.m_referenceCount));
+		if (0 >= value)
+		{
+			getTriggerRecordControllerInstance().increaseNumberOfFreeTr(m_inspectionPos);
+		}
 		if (0 > value)
 		{
 			InterlockedExchange(&(m_rData.m_referenceCount), 0);

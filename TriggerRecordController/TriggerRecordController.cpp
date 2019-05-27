@@ -10,12 +10,14 @@
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <WinBase.h>
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "SVLibrary\SVOINIClass.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxResourceMonitor.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMessage\SVMessage.h"
 #include "SVProtoBuf\ConverterHelper.h"
+#include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary\SVGUID.h"
@@ -35,10 +37,18 @@
 
 namespace SvTrc
 {
+int getAdditionalTriggerRecordNumber()
+{
+	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	constexpr int cTriggerRecordAddOn = 2; //number of additional slots for internal use
+	return l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("AdditionalTRNumber"), 5) + cTriggerRecordAddOn;
+}
+
 #pragma region Constructor
 TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerBase> pDataController) 
 	: m_pDataController(std::move(pDataController))
 	, m_imageBufferController(*m_pDataController)
+	, m_additionalTriggerRecordNumber(getAdditionalTriggerRecordNumber())
 {
 	//The next call is only to avoid a crash at the end of the application. 
 	//Reason of the crash was that SVMatroxResourceMonitor was destructed before the ImageBufferController, but this need it in its destructor.
@@ -48,7 +58,7 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 	SVMatroxResourceMonitor::GetAutoLock(autoLock);
 	m_pDataController->setResetCallback(std::bind(&TriggerRecordController::sendResetCall, this));
 	m_pDataController->setReadyCallback(std::bind(&TriggerRecordController::sendReadyCall, this));
-	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1, std::placeholders::_2));
+	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1, std::placeholders::_2));	
 }
 
 TriggerRecordController::~TriggerRecordController()
@@ -275,7 +285,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long ne
 
 		m_pDataController->setInspectionList(inspectionList);
 
-		m_TriggerRecordNumberResetTmp = newSize + cTriggerRecordAddOn;
+		m_TriggerRecordNumberResetTmp = newSize + m_additionalTriggerRecordNumber;
 		m_imageListResetTmp = imageListTmp;
 		auto* pImageStructList = m_imageStructListResetTmp.mutable_list();
 		for (auto imageDef : m_imageListResetTmp.list())
@@ -455,7 +465,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 
 		m_imageListResetTmp.Clear();
 
-		m_TriggerRecordNumberResetTmp = TriggerRecordSize + cTriggerRecordAddOn;
+		m_TriggerRecordNumberResetTmp = TriggerRecordSize + m_additionalTriggerRecordNumber;
 	}
 	else
 	{
@@ -565,7 +575,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 
 		//prefer reset
 		m_resetStarted4IP = inspectionPos;
-		m_TriggerRecordNumberResetTmp = TriggerRecordSize + cTriggerRecordAddOn;
+		m_TriggerRecordNumberResetTmp = TriggerRecordSize + m_additionalTriggerRecordNumber;
 		try
 		{
 			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP);
@@ -934,7 +944,7 @@ void TriggerRecordController::recalcRequiredBuffer()
 			if (m_resetStarted4IP != i)
 			{
 				rImageDef = m_pDataController->getImageDefList(i);
-				bufferCount = m_pDataController->getInspections().list(i).numberofrecords() + cTriggerRecordAddOn;
+				bufferCount = m_pDataController->getInspections().list(i).numberofrecords() + m_additionalTriggerRecordNumber;
 			}
 			
 			for (auto imageData : rImageDef.list())

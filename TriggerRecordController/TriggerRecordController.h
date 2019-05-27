@@ -30,6 +30,7 @@ public:
 #pragma region Public Methods
 public:
 	void setLastFinishedTR(int inspectionPos, int id);
+	void increaseNumberOfFreeTr(int inspectionPos) { return m_pDataController->increaseNumberOfFreeTr(inspectionPos); };
 	ImageBufferController& getImageBufferControllerInstance() { return m_imageBufferController; };
 
 #pragma region ITriggerRecordControllerR Methods
@@ -129,9 +130,6 @@ private:
 #pragma endregion Private Methods
 
 #pragma region Member variables
-public:
-	static const int cMaxTriggerRecords = 305;
-
 private:
 	//This Map contains per (non image- (e.g. AcqusitionObject))object a map of required buffers.
 	//First parameter of the second map is the structID of the buffer and the second parameter is the required number.
@@ -142,6 +140,7 @@ private:
 	SvPb::ImageStructList m_imageStructListResetTmp; //This ImageStructList is only temporary during reset process. In normal run don't use this.
 	SvPb::ImageList m_imageListResetTmp; //This imageList is only temporary during reset process. In normal run don't use this.
 	int m_TriggerRecordNumberResetTmp = 0; //This parameter is only temporary during reset process. In normal run don't use this.
+	const int m_additionalTriggerRecordNumber = 50;
 
 	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
 	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;

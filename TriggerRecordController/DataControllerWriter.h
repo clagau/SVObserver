@@ -42,6 +42,10 @@ public:
 	void setImageList(SvPb::ImageList&& imageList);
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	void* createTriggerRecordsBuffer(int trBufferSize, int trNumbers);
+	virtual void resetFreeTrNumber() override;
+	virtual void increaseFreeTrNumber() override;
+	virtual void decreaseFreeTrNumber() override;
+	virtual bool isEnoughFreeForLock() const override;
 	
 private:
 	void createSMBuffer(BasicData basicData, SMData smData);
@@ -125,6 +129,7 @@ public:
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+protected:
 	virtual TRControllerBaseDataPerIP* getTRControllerData(int inspectionId) override;
 	virtual const TRControllerBaseDataPerIP* getTRControllerData(int inspectionId) const override;
 

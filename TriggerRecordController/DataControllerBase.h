@@ -36,7 +36,8 @@ public:
 	struct BasicData
 	{
 		volatile bool m_bInit = false;
-		volatile int m_TriggerRecordNumber = 50 + cTriggerRecordAddOn;  //maximal number of trigger record to use
+		volatile int m_TriggerRecordNumber = 50;  //maximal number of trigger record to use
+		volatile long m_numberOfFreeTR = 0; // the number of free (unlocked) triggerRecords.
 		volatile int m_lastFinishedTRID {-1};
 		volatile int m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
 		volatile int m_dataListSize {0}; //data List byte size
@@ -47,7 +48,13 @@ public:
 	virtual TriggerRecordData& getTRData(int pos) const = 0;
 	virtual const SvPb::ImageList& getImageList() const = 0;
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
+	virtual void resetFreeTrNumber() {};
+	virtual void increaseFreeTrNumber() {};
+	virtual void decreaseFreeTrNumber() {};
+	virtual bool isEnoughFreeForLock() const { return true; };
 
+protected:
+	int getNumberOfTRKeepFreeForWrite() const;
 private:
 };
 
@@ -127,6 +134,8 @@ public:
 	virtual void prepareReset();
 	/// Set resetId to a new number and send reset event.
 	virtual void finishedReset() { assert(false); throw E_NOTIMPL; };
+
+	void increaseNumberOfFreeTr(int inspectionPos);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

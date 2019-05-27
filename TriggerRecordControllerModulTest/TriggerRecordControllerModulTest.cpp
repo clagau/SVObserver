@@ -56,10 +56,10 @@ int main(int argc, char* argv[])
 					MappControl(M_ERROR, M_PRINT_DISABLE);
 
 					{
-						const TrcTesterConfiguration config(g_logClass, testIni);
+						const TrcTesterConfiguration config(g_logClass, testIni, isLocal);
 						TrcTester trc_ut(config, g_logClass);
 						CString tmpString;
-						tmpString.Format(_T("Testing TRC (Type:%s, Runs:%d, %d iterations per step)"), isLocal ? _T("Local") : _T("Writer"), config.getNumberOfRuns(), config.getNoOfRepetitionsPerStep());
+						tmpString.Format(_T("Testing TRC (Type:%s, Runs:%d, %d iterations per step, %d number of add one records, %d number of keep free records)"), isLocal ? _T("Local") : _T("Writer"), config.getNumberOfRuns(), config.getNoOfRepetitionsPerStep(), config.getNumberOfRecordsAddOne(), config.getNumberOfKeepFreeRecords());
 						g_logClass.LogText0(tmpString, LogLevel::Information_Level1);
 						bool all_ok = true;
 						for (int i = 0; i < config.getNumberOfRuns(); i++)

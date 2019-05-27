@@ -135,6 +135,45 @@ void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trBufferSize, 
 	return m_pTriggerRecords;
 }
 
+void TRControllerWriterDataPerIP::resetFreeTrNumber()
+{
+	if (nullptr != m_pBasicData)
+	{
+		InterlockedExchange(&m_pBasicData->m_numberOfFreeTR, m_pBasicData->m_TriggerRecordNumber);
+	}
+}
+
+void TRControllerWriterDataPerIP::increaseFreeTrNumber()
+{
+	if (nullptr != m_pBasicData)
+	{
+		InterlockedIncrement(&m_pBasicData->m_numberOfFreeTR);
+	}
+}
+
+void TRControllerWriterDataPerIP::decreaseFreeTrNumber()
+{
+	if (nullptr != m_pBasicData)
+	{
+		InterlockedDecrement(&m_pBasicData->m_numberOfFreeTR);
+		if (0 > m_pBasicData->m_numberOfFreeTR)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_DecreaseFreeTRC, SvStl::SourceFileParams(StdMessageParams));
+			InterlockedExchange(&m_pBasicData->m_numberOfFreeTR, 0l);
+		}
+	}
+}
+
+bool TRControllerWriterDataPerIP::isEnoughFreeForLock() const
+{
+	if (nullptr != m_pBasicData)
+	{
+		return getNumberOfTRKeepFreeForWrite() < m_pBasicData->m_numberOfFreeTR;
+	}
+	return false;
+}
+
 void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smData)
 {
 	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
@@ -250,7 +289,7 @@ bool DataControllerWriter::setInspections(const SvPb::InspectionList& rInspectio
 {
 	for (auto& rInspection : rInspectionList.list())
 	{
-		if (cMaxTriggerRecords < rInspection.numberofrecords())
+		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords())
 		{
 			assert(false);
 			return false;
@@ -388,27 +427,36 @@ ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectio
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
-		if (validFunc)
+		TRControllerWriterDataPerIP* pIPData = m_dataVector[inspectionPos].get();
+		if (nullptr != pIPData && validFunc)
 		{
-			for (int i = 0; i < m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber; i++)
+			if (pIPData->isEnoughFreeForLock())
 			{
-				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
-				if (validFunc(rCurrentTR))
+				for (int i = 0; i < pIPData->getBasicData().m_TriggerRecordNumber; i++)
 				{
-					long refTemp = rCurrentTR.m_referenceCount;
-					while (0 <= refTemp)
+					TriggerRecordData& rCurrentTR = getTRData(inspectionPos, i);
+					if (validFunc(rCurrentTR))
 					{
-						if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+						long refTemp = rCurrentTR.m_referenceCount;
+						while (0 <= refTemp)
 						{
-							TRControllerWriterDataPerIP* pIPData = m_dataVector[inspectionPos].get();
-							if (nullptr != pIPData)
+							if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
 							{
+								if (0 == refTemp)
+								{
+									pIPData->decreaseFreeTrNumber();
+								}
 								return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, pIPData->getImageList(), pIPData->getDataDefList(), pIPData->getBasicData().m_dataListSize, m_pCommonData->m_resetId);
 							}
+							refTemp = rCurrentTR.m_referenceCount;
 						}
-						refTemp = rCurrentTR.m_referenceCount;
 					}
 				}
+			}
+			else
+			{
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotEnoughFreeForLock, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -421,25 +469,30 @@ ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int i
 
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && nullptr != m_dataVector[inspectionPos] && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
-		int currentPos = m_dataVector[inspectionPos]->getNextPosForFreeCheck();
-		do
+		TRControllerWriterDataPerIP* pIPData = m_dataVector[inspectionPos].get();
+		if (nullptr != pIPData)
 		{
-			TriggerRecordData& rCurrentTR = getTRData(inspectionPos, currentPos);
-			long count = rCurrentTR.m_referenceCount;
-			while (TriggerRecordData::cInvalidData == count || 0 == count)
+			int currentPos = m_dataVector[inspectionPos]->getNextPosForFreeCheck();
+			do
 			{
-				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecordData::cWriteBlocked, count) == count)
+				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, currentPos);
+				long count = rCurrentTR.m_referenceCount;
+				while (TriggerRecordData::cInvalidData == count || 0 == count)
 				{
-					rCurrentTR.m_trId = m_nextTRID++;
-					TRControllerWriterDataPerIP& rIPData = *m_dataVector[inspectionPos];
-					rIPData.setLastStartedTRID(rCurrentTR.m_trId);
-					rIPData.setNextPosForFreeCheck((currentPos + 1) % (rIPData.getBasicData().m_TriggerRecordNumber));
-					return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, rIPData.getImageList(), rIPData.getDataDefList(), rIPData.getBasicData().m_dataListSize, m_pCommonData->m_resetId);
+					if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecordData::cWriteBlocked, count) == count)
+					{
+						rCurrentTR.m_trId = m_nextTRID++;
+
+						pIPData->decreaseFreeTrNumber();
+						pIPData->setLastStartedTRID(rCurrentTR.m_trId);
+						pIPData->setNextPosForFreeCheck((currentPos + 1) % (pIPData->getBasicData().m_TriggerRecordNumber));
+						return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, pIPData->getImageList(), pIPData->getDataDefList(), pIPData->getBasicData().m_dataListSize, m_pCommonData->m_resetId);
+					}
 				}
-			}
-			currentPos++;
-			currentPos = currentPos % m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber;
-		} while (currentPos != m_dataVector[inspectionPos]->getNextPosForFreeCheck());
+				currentPos++;
+				currentPos = currentPos % m_dataVector[inspectionPos]->getBasicData().m_TriggerRecordNumber;
+			} while (currentPos != m_dataVector[inspectionPos]->getNextPosForFreeCheck());
+		}
 		assert(false);
 	}
 
@@ -469,6 +522,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 				{	//initialize buffer
 					getTRData(i, j).init(pIPData->getImageList().list_size());
 				}
+				pIPData->resetFreeTrNumber();
 			}
 			else
 			{
@@ -674,6 +728,7 @@ void DataControllerWriter::ResetInspectionData(TRControllerWriterDataPerIP& rDat
 		rData.createTriggerRecordsBuffer(0, 0);
 		rData.setImageList({});
 	}
+	rData.resetFreeTrNumber();
 	rData.setInitFlag(false);
 	rData.setNextPosForFreeCheck(0);
 }
