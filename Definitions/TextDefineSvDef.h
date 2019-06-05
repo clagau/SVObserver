@@ -24,11 +24,12 @@ constexpr char* cInputTag_SourceTable = _T("SourceTable");
 constexpr char* cTrue = _T("TRUE");
 constexpr char* cFalse = _T("FALSE");
 
-constexpr char* SVO_PRODUCT_KONTRON_X2_GD1A = _T("SVIM X2-GD1A");
-constexpr char* SVO_PRODUCT_KONTRON_X2_GD2A = _T("SVIM X2-GD2A");
-constexpr char* SVO_PRODUCT_KONTRON_X2_GD4A = _T("SVIM X2-GD4A");
-constexpr char* SVO_PRODUCT_KONTRON_X2_GD8A = _T("SVIM X2-GD8A");
-constexpr char* SVO_PRODUCT_KONTRON_X2_GD8A_NONIO = _T("SVIM Non I/O");
+constexpr char* SVO_PRODUCT_SVIM_X2_GD1A = _T("SVIM X2-GD1A");
+constexpr char* SVO_PRODUCT_SVIM_X2_GD2A = _T("SVIM X2-GD2A");
+constexpr char* SVO_PRODUCT_SVIM_X2_GD4A = _T("SVIM X2-GD4A");
+constexpr char* SVO_PRODUCT_SVIM_X2_GD8A = _T("SVIM X2-GD8A");
+constexpr char* SVO_PRODUCT_SVIM_X2_GD8A_NONIO = _T("SVIM Non I/O");
+constexpr char* SVO_PRODUCT_SVIM_X2_GD8A_PLC = _T("SVIM X2-GD8A PLC");
 
 constexpr char* cBucketTag = _T("Array");			// for backwards compatibility
 constexpr char* cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values

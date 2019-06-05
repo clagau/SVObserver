@@ -48,6 +48,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/TextDefineSvDef.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -56,23 +57,10 @@
 
 constexpr int GrayScaleBitDepth = 8;
 
+constexpr char*  c_Color = _T(" Color");
+
 // Defines for Camera File extensions
 constexpr char*  cGigeCameraFileDefExt = _T(".ogc");
-
-//const strings for Gig-E product types
-constexpr char* SYSTEM_SVIM_X2_GD1A			( _T("SVIM X2-GD1A") );
-constexpr char* SYSTEM_SVIM_X2_GD1A_COLOR	( _T("SVIM X2-GD1A Color") );
-constexpr char* SYSTEM_SVIM_X2_GD1A_MIXED	( _T("SVIM X2-GD1A Mixed camera") );
-constexpr char* SYSTEM_SVIM_X2_GD2A			( _T("SVIM X2-GD2A") );
-constexpr char* SYSTEM_SVIM_X2_GD2A_COLOR	( _T("SVIM X2-GD2A Color") );
-constexpr char* SYSTEM_SVIM_X2_GD4A			( _T("SVIM X2-GD4A") );
-constexpr char* SYSTEM_SVIM_X2_GD4A_COLOR	( _T("SVIM X2-GD4A Color") );
-constexpr char* SYSTEM_SVIM_X2_GD8A			( _T("SVIM X2-GD8A") );
-constexpr char* SYSTEM_SVIM_X2_GD8A_COLOR	( _T("SVIM X2-GD8A Color") );
-constexpr char* SYSTEM_SVIM_X2_GD8A_MIXED	( _T("SVIM X2-GD8A Mixed camera") );
-
-constexpr char* SYSTEM_SVIM_X2_GD8A_NONIO		( _T("SVIM Non I/O") );
-constexpr char* SYSTEM_SVIM_X2_GD8A_NONIO_COLOR	( _T("SVIM Non I/O Color") );
 
 constexpr char* SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
 constexpr char* SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
@@ -115,16 +103,17 @@ constexpr char* MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image
 const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap
 {
 	// SYSTEM ID, DISPLAY NAME
-	{SVIM_PRODUCT_X2_GD1A, std::string(SYSTEM_SVIM_X2_GD1A )},
-	{SVIM_PRODUCT_X2_GD1A_COLOR, std::string(SYSTEM_SVIM_X2_GD1A_COLOR)},
-	{SVIM_PRODUCT_X2_GD2A, std::string(SYSTEM_SVIM_X2_GD2A)},
-	{SVIM_PRODUCT_X2_GD2A_COLOR, std::string(SYSTEM_SVIM_X2_GD2A_COLOR)},
-	{SVIM_PRODUCT_X2_GD4A, std::string(SYSTEM_SVIM_X2_GD4A)},
-	{SVIM_PRODUCT_X2_GD4A_COLOR, std::string(SYSTEM_SVIM_X2_GD4A_COLOR)},
-	{SVIM_PRODUCT_X2_GD8A, std::string(SYSTEM_SVIM_X2_GD8A)},
-	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SYSTEM_SVIM_X2_GD8A_COLOR)},
-	//{SVIM_PRODUCT_X2_GD8A_NONIO, std::string(SYSTEM_SVIM_X2_GD8A_NONIO)},
-	//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string(SYSTEM_SVIM_X2_GD8A_NONIO_COLOR)};
+	{SVIM_PRODUCT_X2_GD1A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD1A)},
+	{SVIM_PRODUCT_X2_GD1A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD1A) + std::string(c_Color)},
+	{SVIM_PRODUCT_X2_GD2A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD2A)},
+	{SVIM_PRODUCT_X2_GD2A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD2A) + std::string(c_Color)},
+	{SVIM_PRODUCT_X2_GD4A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A)},
+	{SVIM_PRODUCT_X2_GD4A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A) + std::string(c_Color)},
+	{SVIM_PRODUCT_X2_GD8A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A)},
+	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A) + std::string(c_Color)},
+	//{SVIM_PRODUCT_X2_GD8A_NONIO, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO)},
+	//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO) + std::string(c_Color)};
+	{SVIM_PRODUCT_X2_GD8A_PLC, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_PLC)}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -473,6 +462,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			}
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
+			case SVIM_PRODUCT_X2_GD8A_PLC:
 			{
 				CreateDefaultForSVIMDigital(2, SvDef::cTriggerFixedName);
 				break;
@@ -798,6 +788,7 @@ std::string CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTri
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
+			case SVIM_PRODUCT_X2_GD8A_PLC:
 			{
 				Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
 				break;
@@ -827,6 +818,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
+			case SVIM_PRODUCT_X2_GD8A_PLC:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -850,6 +842,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
+			case SVIM_PRODUCT_X2_GD8A_PLC:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -3632,6 +3625,7 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 		case SVIM_PRODUCT_X2_GD2A:
 		case SVIM_PRODUCT_X2_GD4A:
 		case SVIM_PRODUCT_X2_GD8A:
+		case SVIM_PRODUCT_X2_GD8A_PLC:
 		case SVIM_PRODUCT_X2_GD1A_COLOR:
 		case SVIM_PRODUCT_X2_GD2A_COLOR:
 		case SVIM_PRODUCT_X2_GD4A_COLOR:
