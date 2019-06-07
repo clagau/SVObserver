@@ -23,8 +23,9 @@
 
 namespace SvTrc
 {
-TriggerRecord::TriggerRecord(int inspectionPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId)
+TriggerRecord::TriggerRecord(int inspectionPos, int trPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId)
 : m_inspectionPos(inspectionPos)
+, m_trPos(trPos)
 , m_rData(rData)
 , m_rImageList(rImageList)
 , m_rDataDefList(rDataDefList)
@@ -39,15 +40,7 @@ TriggerRecord::~TriggerRecord()
 	if (nullptr != pLock)
 	{
 		bool finishedTR = (TriggerRecordData::cWriteBlocked == m_rData.m_referenceCount);
-		long value = InterlockedDecrement(&(m_rData.m_referenceCount));
-		if (0 >= value)
-		{
-			getTriggerRecordControllerInstance().increaseNumberOfFreeTr(m_inspectionPos);
-		}
-		if (0 > value)
-		{
-			InterlockedExchange(&(m_rData.m_referenceCount), 0);
-		}
+		removeTRReferenceCount(m_inspectionPos, m_rData.m_referenceCount);
 		if (finishedTR && !m_blockUpdateLastId)
 		{
 			getTriggerRecordControllerInstance().setLastFinishedTR(m_inspectionPos, m_rData.m_trId);
@@ -511,4 +504,16 @@ void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
 	}
 }
 
+void removeTRReferenceCount(int ipPos, long& rReferenceCount)
+{
+	long value = InterlockedDecrement(&rReferenceCount);
+	if (0 >= value)
+	{
+		getTriggerRecordControllerInstance().increaseNumberOfFreeTr(ipPos);
+	}
+	if (0 > value)
+	{
+		InterlockedExchange(&rReferenceCount, 0);
+	}
+}
 } //namespace SvTrc

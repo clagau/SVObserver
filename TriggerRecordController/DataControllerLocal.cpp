@@ -44,12 +44,74 @@ TriggerRecordData& TRControllerLocalDataPerIP::getTRData(int pos) const
 	return *tr;
 };
 
+void TRControllerLocalDataPerIP::setTRofInterestNumber(int number)
+{
+	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
+	if (number != m_basicData.m_TRofInterestNumber)
+	{
+		m_basicData.m_TRofInterestNumber = number;
+		m_trOfInterestVec.resize(number + 1);
+	}
+	std::fill(m_trOfInterestVec.begin(), m_trOfInterestVec.end(), -1);
+}
+
+void TRControllerLocalDataPerIP::setTRofInterest(int inspectionPos, int pos)
+{
+	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
+	if (locker && 0 < m_trOfInterestVec.size())
+	{
+		int nextPos = (m_basicData.m_TrOfInterestCurrentPos + 1) % (m_trOfInterestVec.size());
+		if (0 <= m_trOfInterestVec[nextPos] && getBasicData().m_TriggerRecordNumber > m_trOfInterestVec[nextPos])
+		{
+			removeTRReferenceCount(inspectionPos, getTRData(m_trOfInterestVec[nextPos]).m_referenceCount);
+		}
+		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
+		{
+			TriggerRecordData& rCurrentTR = getTRData(pos);
+			long refTemp = rCurrentTR.m_referenceCount;
+			while (0 <= refTemp)
+			{
+				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+				{
+					m_trOfInterestVec[nextPos] = pos;
+					m_basicData.m_TrOfInterestCurrentPos = nextPos;
+					return;  //successfully set
+				}
+				refTemp = rCurrentTR.m_referenceCount;
+			}
+
+		}
+		
+		m_trOfInterestVec[nextPos] = -1; //unsuccessfully set
+	}
+}
+
+std::vector<int> TRControllerLocalDataPerIP::getTRofInterestPos(int n)
+{
+	std::vector<int> retVec;
+	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
+	int vecSize = static_cast<int>(m_trOfInterestVec.size());
+	if (nullptr != locker && 0 < vecSize)
+	{
+		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
+		int nextPos = std::min(static_cast<int>(m_basicData.m_TrOfInterestCurrentPos), vecSize - 1);
+		for (int i = 0; i < number; i++)
+		{
+			if (0 > nextPos)
+			{
+				nextPos = vecSize - 1;
+			}
+			retVec.push_back(m_trOfInterestVec[nextPos]);
+			nextPos--;
+		}
+	}
+	return retVec;
+}
 
 
 DataControllerLocal::DataControllerLocal() 
 	: DataControllerBase()
 	, m_imageMemoryHelper(m_bufferVector)
-
 {
 }
 
@@ -83,7 +145,7 @@ bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspection
 {
 	for (auto& rInspection : rInspectionList.list())
 	{
-		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords())
+		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rInspection.numberrecordsofinterest())
 		{
 			assert(false);
 			return false;
@@ -112,7 +174,8 @@ bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspection
 		for (int i = 0; i < m_dataVector.size(); i++)
 		{
 			if (rInspectionList.list(i).id() != m_inspectionList.list(i).id() ||
-				rInspectionList.list(i).numberofrecords() != m_inspectionList.list(i).numberofrecords())
+				rInspectionList.list(i).numberofrecords() != m_inspectionList.list(i).numberofrecords() ||
+				rInspectionList.list(i).numberrecordsofinterest() != m_inspectionList.list(i).numberrecordsofinterest())
 			{
 				if (!isReset)
 				{
@@ -184,7 +247,7 @@ ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int inspection
 						if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
 						{
 							TRControllerLocalDataPerIP& rIPData = m_dataVector[inspectionPos];
-							return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, rIPData.getImageList(), rIPData.getDataDefList(), rIPData.getBasicData().m_dataListSize, m_resetId);
+							return std::make_shared<TriggerRecord>(inspectionPos, i, rCurrentTR, rIPData.getImageList(), rIPData.getDataDefList(), rIPData.getBasicData().m_dataListSize, m_resetId);
 						}
 						refTemp = rCurrentTR.m_referenceCount;
 					}
@@ -214,7 +277,7 @@ ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int in
 					TRControllerLocalDataPerIP& rIPData = m_dataVector[inspectionPos];
 					rIPData.setLastStartedTRID(rCurrentTR.m_trId);
 					rIPData.setNextPosForFreeCheck((currentPos + 1) % (rIPData.getBasicData().m_TriggerRecordNumber));
-					return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, rIPData.getImageList(), rIPData.getDataDefList(), rIPData.getBasicData().m_dataListSize, m_resetId);
+					return std::make_shared<TriggerRecord>(inspectionPos, currentPos, rCurrentTR, rIPData.getImageList(), rIPData.getDataDefList(), rIPData.getBasicData().m_dataListSize, m_resetId);
 				}
 			}
 			currentPos++;
@@ -229,9 +292,11 @@ ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int in
 std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList)
 {
 	prepareReset();
+	assert(m_dataVector.size() == m_inspectionList.list_size());
 	for (int i = 0; i < m_dataVector.size(); i++)
 	{
 		TRControllerBaseDataPerIP::BasicData& rBaseData = m_dataVector[i].getMutableBasicData();
+		m_dataVector[i].setTRofInterestNumber(m_inspectionList.list(i).numberrecordsofinterest()+1); //add one more to reduce the possibility that the last interest will be overwritten during Reader create the interest-list.
 		if (i == inspectionId)
 		{
 			ResetInspectionData(m_dataVector[i]);
@@ -309,6 +374,32 @@ void DataControllerLocal::finishedReset()
 	{
 		m_readyCallback();
 	}
+}
+
+std::vector<ITriggerRecordRPtr> DataControllerLocal::getTRsOfInterest(int inspectionPos, int n)
+{
+	TRControllerLocalDataPerIP& rIPData = m_dataVector[inspectionPos];
+	std::vector<ITriggerRecordRPtr> retVec;
+	auto posVec = rIPData.getTRofInterestPos(n);
+
+	for (int pos : posVec)
+	{
+		if (0 <= pos && rIPData.getBasicData().m_TriggerRecordNumber > pos)
+		{
+			TriggerRecordData& rCurrentTR = getTRData(inspectionPos, pos);
+			long refTemp = rCurrentTR.m_referenceCount;
+			while (0 <= refTemp)
+			{
+				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+				{
+					retVec.emplace_back(std::make_shared<TriggerRecord>(inspectionPos, pos, rCurrentTR, rIPData.getImageList(), rIPData.getDataDefList(), rIPData.getBasicData().m_dataListSize, m_resetId));
+					break;
+				}
+				refTemp = rCurrentTR.m_referenceCount;
+			}
+		}
+	}
+	return retVec;
 }
 
 TRControllerBaseDataPerIP* DataControllerLocal::getTRControllerData(int inspectionId)

@@ -197,4 +197,21 @@ void DataControllerBase::increaseNumberOfFreeTr(int inspectionPos)
 		pTrDataIp->increaseFreeTrNumber();
 	}
 }
+
+bool DataControllerBase::setTRofInterest(std::vector<std::pair<int, int>> trVec)
+{
+	if (!getPauseTrsOfInterest())
+	{
+		for (auto pairVal : trVec)
+		{
+			auto* pTrDataIp = getTRControllerData(pairVal.first);
+			if (nullptr != pTrDataIp)
+			{
+				pTrDataIp->setTRofInterest(pairVal.first, pairVal.second);
+			}
+		}
+		return true;
+	}
+	return false;
+}
 }

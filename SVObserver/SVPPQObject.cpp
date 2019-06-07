@@ -289,7 +289,6 @@ SVPPQObject::SVPPQObject(SVObjectClass* POwner, int StringResourceID)
 
 SVPPQObject::~SVPPQObject()
 {
-	SvTrc::getTriggerRecordControllerRInstance().unregisterResetCallback(m_TRCResetCallbackHandle);
 	SVObjectManagerClass::Instance().ClearShortPPQIndicator();
 
 	// Stop the multimedia timer thread for the output and reset time delays
@@ -357,13 +356,6 @@ void SVPPQObject::init()
 	{
 		m_childObjects.push_back(pPpqLength.get());
 	}
-
-	m_TRCResetCallbackHandle = SvTrc::getTriggerRecordControllerRInstance().registerResetCallback(std::bind(&SVPPQObject::OnResetTRC, this));
-}
-
-void SVPPQObject::OnResetTRC()
-{
-	m_rejectTRStore.clear(); m_rejectTRStore.set_capacity(m_rejectCount);
 }
 
 HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
@@ -1020,8 +1012,6 @@ void SVPPQObject::PrepareGoOnline()
 
 void SVPPQObject::GoOnline()
 {
-	m_rejectTRStore.clear();
-	m_rejectTRStore.set_capacity(m_rejectCount);
 	std::string FailureObjectName;
 
 #ifdef EnableTracking
@@ -2592,12 +2582,12 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 
 	bool bValid = true;
 	SVGUIDSVInspectionInfoStructMap::iterator l_Iter = pProduct->m_svInspectionInfos.begin();
-	pProduct->m_bReject = false;
+	bool isReject = false;
 	while (l_Iter != pProduct->m_svInspectionInfos.end())
 	{
 		bool l_Complete = (l_Iter->second.m_EndInspection > 0);
 		bValid &= l_Complete;
-		pProduct->m_bReject |= l_Iter->second.m_bReject;
+		isReject |= l_Iter->second.m_bReject;
 		++l_Iter;
 	}
 
@@ -2625,15 +2615,51 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 			NotifyProcessTimerOutputs();
 		}
 
-		if (pProduct->m_bReject && HasActiveMonitorList())
-		{	//save triggerRecord for this reject to be available in SVOAccess longer.
-			std::vector<SvTrc::ITriggerRecordRPtr> trVector;
+		if (isReject && HasActiveMonitorList())
+		{	
+			std::vector<SvTrc::ITriggerRecordRPtr> trVec;
 			for (auto ipInfo : pProduct->m_svInspectionInfos)
 			{
-				trVector.push_back(ipInfo.second.m_triggerRecordComplete);
+				if (nullptr != ipInfo.second.m_triggerRecordComplete)
+				{
+					trVec.push_back(ipInfo.second.m_triggerRecordComplete);
+				}
 			}
 
-			m_rejectTRStore.push_front(trVector);
+			try
+			{
+				isReject = SvTrc::getTriggerRecordControllerRInstance().setTRofInterest(trVec);
+				long slotindex = pProduct->m_monitorListSMSlot;
+				if (pProduct->ProcessCount() > 0 && slotindex >= 0)
+				{
+					if (isReject)
+					{
+						GetSlotmanager()->SetToReject(slotindex);
+					}
+				}
+				else
+				{
+					assert("Error in getting next Slot");
+					SvDef::StringVector msgList;
+					msgList.push_back("Error in getting next Slot");
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
+			}
+			catch (const std::exception& e)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(e.what());
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
+			catch (...)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 	}
 
@@ -4296,14 +4322,14 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 	assert(depth >= 0);
 	if (m_rejectCount != depth)
 	{
-		m_rejectCount = depth + 1; //add one more to reduce the possibility that the last reject will be overwritten during Gateway create the FailstatusList.
+		m_rejectCount = depth;
 		for (auto pInspection : m_arInspections)
 		{
 			if (nullptr != pInspection)
 			{
 				try
 				{
-					pInspection->setTriggerRecordNumbers(GetPPQLength() + m_rejectCount);
+					pInspection->setTriggerRecordNumbers(GetPPQLength(), m_rejectCount);
 				}
 				catch (const SvStl::MessageContainer& rSvE)
 				{
@@ -4317,7 +4343,6 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 				}
 			}
 		}
-		m_rejectTRStore.set_capacity(m_rejectCount);
 	}
 	return true;
 }
@@ -4379,7 +4404,8 @@ bool SVPPQObject::setInspections2TRC()
 		assert(pInspList->end() != pInspPB);
 		if (pInspList->end() != pInspPB)
 		{
-			pInspPB->set_numberofrecords(GetPPQLength() + m_rejectCount);
+			pInspPB->set_numberofrecords(GetPPQLength());
+			pInspPB->set_numberrecordsofinterest(m_rejectCount);
 		}
 	}
 	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);

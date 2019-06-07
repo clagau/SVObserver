@@ -17,6 +17,7 @@ struct CommonDataStruct
 	int m_imageRefCountSize = 0; //the numbers of refCounts reserved in m_imageRefCountArray.
 	int m_inspectionListPBSize = 0;
 	int m_imageStructListPBSize = 0;
+	volatile bool m_pauseTRofInterest = false;
 };
 
 struct SMData

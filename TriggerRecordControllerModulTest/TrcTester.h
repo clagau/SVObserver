@@ -34,16 +34,26 @@ public:
 
 	struct InspectionsDef
 	{
-		InspectionsDef(int minRecord, int maxRecord, const std::vector<ImageList>& rImages, const ParamDefList& rParamDefs, const ParamValueList& rParamValues)
-			: m_minRecordSize(minRecord)
-			, m_maxRecordSize(maxRecord)
-			, m_imageFilesList(rImages)
+		InspectionsDef(int minRecord, int maxRecord, int minInterest, int maxInterest, const std::vector<ImageList>& rImages, const ParamDefList& rParamDefs, const ParamValueList& rParamValues)
+			: m_imageFilesList(rImages)
 			, m_ParamDefs(rParamDefs)
 			, m_ParamValues(rParamValues)
+			, m_minRecordSize(minRecord)
+			, m_maxRecordSize(maxRecord)
+			, m_minRecordInterestSize(minInterest)
+			, m_maxRecordInterestSize(maxInterest)
 		{
+			recalcRecordSizes();
 		}
-		int m_minRecordSize;
-		int m_maxRecordSize;
+
+		void recalcRecordSizes();
+
+		const int m_minRecordSize;
+		const int m_maxRecordSize;
+		int m_recordSize;
+		const int m_minRecordInterestSize;
+		const int m_maxRecordInterestSize;
+		int m_recordInterestSize;
 		const std::vector<ImageList> m_imageFilesList;
 		const ParamDefList& m_ParamDefs;
 		const ParamValueList& m_ParamValues; //(Size of m_ParamDefs and any m_ParamValue[n] must be equal)
@@ -64,6 +74,7 @@ public:
 	const ParamDefList& getValueObjectSet() const { return m_valueObjectSet; };
 	const ParamValueList& getValueSet() const { return m_valueSet; };
 	const TestDataList& getTestData() const { return m_testData; };
+	void recalcRecordSizes();
 	int getNumberOfRecordsAddOne() const { return m_numberOfRecordsAddOne; };
 	int getNumberOfKeepFreeRecords() const { return m_numberOfKeepFreeRecords; };
 
@@ -100,7 +111,7 @@ private:
 class TrcTester
 {
 public:
-	TrcTester(const TrcTesterConfiguration& rConfig, LogClass& rLogClass);
+	TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass);
 	~TrcTester();
 	bool fullTest();
 
@@ -119,7 +130,7 @@ private:
 	bool setIndependentBuffers(LPCSTR testAreaStr);
 	
 	SvTrc::ITriggerRecordControllerRW &m_TRController;
-	const TrcTesterConfiguration& m_config;
+	TrcTesterConfiguration& m_config;
 	LogClass& m_rLogClass;
 };
 

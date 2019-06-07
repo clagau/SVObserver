@@ -34,7 +34,8 @@ HANDLE g_resetEvent = nullptr;
 HANDLE g_readyEvent = nullptr;
 HANDLE g_newTrEvent = nullptr;
 
-bool setInspections(std::vector<int> numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr);
+//numbersOfRecords are list of pairs (one per inspection) with first = numberOfRecords and second = number”fInterest
+bool setInspections(std::vector<std::pair<int, int>> numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr);
 void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 SVMatroxBufferCreateStruct specifyBuffer(int sizeFactor);
@@ -45,7 +46,19 @@ std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames);
 void freeImages(std::vector<MIL_ID> images);
 bool areImageEqual(MIL_ID image1, MIL_ID image2);
 bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount);
+void getInterestPausePoints(int numberOfRecords, int numberOfRuns, int divValue, int& startPos, int& stopPos);
+std::vector<int> getInterestList(int numberOfRecords, int numberOfRuns, int divValue);
 HANDLE createEvent(LPCTSTR eventName);
+
+
+void TrcTesterConfiguration::InspectionsDef::recalcRecordSizes()
+{
+	std::random_device rd;
+	std::uniform_int_distribution<int> dist(m_minRecordSize, m_maxRecordSize);
+	m_recordSize = dist(rd);
+	std::uniform_int_distribution<int> distInterest(m_minRecordInterestSize, m_maxRecordInterestSize);
+	m_recordInterestSize = std::max(0, distInterest(rd));
+}
 
 TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile, bool isLocal)
 {
@@ -80,8 +93,8 @@ TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOIN
 		}		
 	}
 
-	m_testData = {{{10, 300, {m_imageLists[0],m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}},
-		{{10,30, {m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}, {10, 300, {m_imageLists[0]}, getValueObjectSet(), m_valueSet}}};
+	m_testData = {{{10, 30, 1, 20, {m_imageLists[0],m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}},
+		{{10,30, 0, 0, {m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}, {10, 300, 0, 0, {m_imageLists[0]}, getValueObjectSet(), m_valueSet}}};
 };
 
 TrcTesterConfiguration::~TrcTesterConfiguration()
@@ -93,7 +106,18 @@ TrcTesterConfiguration::~TrcTesterConfiguration()
 	m_imageLists.clear();
 }
 
-TrcTester::TrcTester(const TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
+void TrcTesterConfiguration::recalcRecordSizes() 
+{ 
+	for (auto& rDataVec : m_testData)
+	{
+		for (auto& rDef : rDataVec)
+		{
+			rDef.recalcRecordSizes();
+		}
+	}
+}
+
+TrcTester::TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
 	m_config(rConfig),
 	m_rLogClass(rLogClass),
 	m_TRController(SvTrc::getTriggerRecordControllerRWInstance())
@@ -122,7 +146,7 @@ bool TrcTester::fullTest()
 #pragma region test methods
 bool TrcTester::createInspections()
 {
-	std::vector<int> numbersOfRecords(m_config.getNumberOfInspections(), m_config.getNumberOfImagesPerInspection());
+	std::vector<std::pair<int, int>> numbersOfRecords(m_config.getNumberOfInspections(), {m_config.getNumberOfImagesPerInspection(), 0});
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
 		bool createInspectionsOk = setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateInspections);
@@ -176,7 +200,7 @@ bool TrcTester::checkBufferMaximum()
 {
 	constexpr int numberOfRecords = 100;
 	
-	bool retValue = setInspections({numberOfRecords}, m_TRController, m_rLogClass, strTestCheckBufferMaximum);
+	bool retValue = setInspections({{numberOfRecords, 0}}, m_TRController, m_rLogClass, strTestCheckBufferMaximum);
 	m_rLogClass.Log(_T("setInspections!"), retValue ? LogLevel::Information_Level3 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
 	if (!retValue)
 	{
@@ -253,7 +277,7 @@ bool TrcTester::createTR2WriteAndRead()
 	std::random_device rd;
 	std::uniform_int_distribution<int> dist(1, SvTrc::ITriggerRecordControllerRW::ITriggerRecordControllerRW::cMaxTriggerRecords);
 	constexpr int numberOfInspection = 2;
-	std::vector<int> numbersOfRecords = {dist(rd), dist(rd)};
+	std::vector<std::pair<int, int>> numbersOfRecords = {{dist(rd),0}, {dist(rd),0}};
 	bool retValue = setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateTR2WriteAndRead);
 	if (!retValue)
 	{
@@ -263,7 +287,7 @@ bool TrcTester::createTR2WriteAndRead()
 	else
 	{
 		CString errorStr;
-		errorStr.Format(_T("setInspections with the TR-size of %d/%d"), numbersOfRecords[0], numbersOfRecords[1]);
+		errorStr.Format(_T("setInspections with the TR-size of %d/%d"), numbersOfRecords[0].first, numbersOfRecords[1].first);
 		m_rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestCreateTR2WriteAndRead);
 	}
 
@@ -294,8 +318,12 @@ bool TrcTester::createTR2WriteAndRead()
 		return false;
 	}
 
-	const int maxRecords = *std::max_element(numbersOfRecords.begin(), numbersOfRecords.end());
-	const int minRecords = *std::min_element(numbersOfRecords.begin(), numbersOfRecords.end());
+	int maxRecords = 0;
+	for (auto valuePair : numbersOfRecords)
+	{
+		maxRecords = std::max(maxRecords, valuePair.first);
+	}
+
 	{
 		SvTrc::ITriggerRecordRWPtr tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
 		if (nullptr != tr2W)
@@ -318,7 +346,7 @@ bool TrcTester::createTR2WriteAndRead()
 				auto tr = m_TRController.createTriggerRecordObjectToWrite(j);
 				if (nullptr == tr)
 				{
-					if (readTRVector[j].size() <= numbersOfRecords[j])
+					if (readTRVector[j].size() <= numbersOfRecords[j].first)
 					{
 						CString errorStr;
 						errorStr.Format(_T("createTriggerRecordObjectToWrite in insp %d run %d"), j, i);
@@ -343,7 +371,7 @@ bool TrcTester::createTR2WriteAndRead()
 				}
 				else
 				{
-					if (readTRVector[j].size() > numbersOfRecords[j] + m_config.getNumberOfRecordsAddOne()) //add some buffer, because the TRC have a few more TR than required.
+					if (readTRVector[j].size() > numbersOfRecords[j].first + m_config.getNumberOfRecordsAddOne()) //add some buffer, because the TRC have a few more TR than required.
 					{
 						CString errorStr;
 						errorStr.Format(_T("createTriggerRecordObjectToWrite possible(insp %d run %d), but failed expected because to many read-version logged."), j, i);
@@ -353,7 +381,7 @@ bool TrcTester::createTR2WriteAndRead()
 			}
 			int id = m_TRController.getLastTRId(j);
 			auto tr2R = m_TRController.createTriggerRecordObject(j, id);
-			bool shouldFail = readTRVector[j].size() >= numbersOfRecords[j] + m_config.getNumberOfRecordsAddOne() - m_config.getNumberOfKeepFreeRecords();
+			bool shouldFail = readTRVector[j].size() >= numbersOfRecords[j].first + m_config.getNumberOfRecordsAddOne() - m_config.getNumberOfKeepFreeRecords();
 			if (nullptr == tr2R)
 			{
 				if (!shouldFail)
@@ -387,7 +415,7 @@ bool TrcTester::createTR2WriteAndRead()
 
 bool TrcTester::setAndReadImage()
 {
-	bool retValue = setInspections({12}, m_TRController, m_rLogClass, strTestSetAndReadImage);
+	bool retValue = setInspections({{12,0}}, m_TRController, m_rLogClass, strTestSetAndReadImage);
 	if (!retValue)
 	{
 		m_rLogClass.Log(_T("setInspections!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -506,7 +534,7 @@ bool TrcTester::setAndReadImage()
 
 bool TrcTester::setAndReadValues()
 {
-	bool retValue = setInspections({21}, m_TRController, m_rLogClass, strTestSetAndReadValues);
+	bool retValue = setInspections({{21, 0}}, m_TRController, m_rLogClass, strTestSetAndReadValues);
 	if (!retValue)
 	{
 		m_rLogClass.Log(_T("setInspections!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
@@ -615,6 +643,7 @@ bool TrcTester::testWithMoreThreads()
 	std::promise<bool> readerPromise;
 	std::future<bool> writerResult = writerPromise.get_future();
 	std::future<bool> readerResult = readerPromise.get_future();
+	m_config.recalcRecordSizes();
 	std::thread writerThread(runWriterTest, std::move(writerPromise), std::ref(m_rLogClass), 100, m_config.getTestData());
 	std::thread readerThread(runReaderTest, std::move(readerPromise), std::ref(m_rLogClass), 100, m_config.getTestData());
 	bool retValue = writerResult.get() && readerResult.get();
@@ -700,10 +729,10 @@ bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 	return true;
 }
 
-bool setInspections(std::vector<int> numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr)
+bool setInspections(std::vector < std::pair <int,int> > numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr)
 {
 	SvPb::InspectionList inspList;
-	for (int numberOfRecords : numbersOfRecords)
+	for (std::pair<int,int> numberOfRecords : numbersOfRecords)
 	{
 		auto* pInspStruct = inspList.add_list();
 		if (nullptr == pInspStruct)
@@ -711,7 +740,8 @@ bool setInspections(std::vector<int> numbersOfRecords, SvTrc::ITriggerRecordCont
 			rLogClass.Log(_T("createTR2WriteAndRead: Could not create inspection!"), LogLevel::Error, LogType::FAIL, __LINE__, testAreaStr);
 			return false;
 		}
-		pInspStruct->set_numberofrecords(numberOfRecords);
+		pInspStruct->set_numberofrecords(numberOfRecords.first);
+		pInspStruct->set_numberrecordsofinterest(numberOfRecords.second);
 	}
 	return rTrController.setInspections(inspList);
 }
@@ -721,7 +751,6 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 	bool retValue = true;
 	GUID guid = GUID_NULL;
 	CString logStr;
-	std::random_device rd;
 	auto& rTrController = SvTrc::getTriggerRecordControllerRWInstance();
 
 	for (int testDataId = 0; testDataId < rTestData.size(); testDataId++)
@@ -729,17 +758,26 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 		const auto& rInspectionsData = rTestData[testDataId];
 
 		//setInspections
-		std::vector<int> numbersOfRecords;
+		std::vector<std::pair<int,int>> numbersOfRecords;
 		CString inspectionNumberStr;
 		for (int j = 0; j < rInspectionsData.size(); j++)
 		{
-			std::uniform_int_distribution<int> dist(rInspectionsData[j].m_minRecordSize, rInspectionsData[j].m_maxRecordSize);
-			numbersOfRecords.emplace_back(dist(rd));
-			inspectionNumberStr.Format("%s%d, ", inspectionNumberStr, numbersOfRecords[j]);
+			numbersOfRecords.emplace_back(rInspectionsData[j].m_recordSize, rInspectionsData[j].m_recordInterestSize);
+			inspectionNumberStr.Format("%s%d/%d, ", inspectionNumberStr, numbersOfRecords[j].first, numbersOfRecords[j].second);
 		}
 		retValue = setInspections(numbersOfRecords, rTrController, rLogClass, strTestWithMoreThreads);
 		logStr.Format(_T("Writer Tests (%d): CreateInspections(%s)"), testDataId, inspectionNumberStr);
 		
+		//check if interest is set and set pauseStart and pauseStop values
+		bool isInterestTest = false;
+		int startInterestPause = 0;
+		int stopInterestPause = 0;
+		if (0 < numbersOfRecords[0].second)
+		{
+			isInterestTest = true;
+			getInterestPausePoints(numbersOfRecords[0].first, numberOfRuns, 3, startInterestPause, stopInterestPause);
+		}
+
 		if (!retValue)
 		{
 			rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
@@ -795,10 +833,19 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 		std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(500));
 
 		//the run
-		auto start = std::chrono::system_clock::now();
+		rTrController.pauseTrsOfInterest(0);
 		std::vector<SvTrc::ITriggerRecordRPtr> lastTRList(rInspectionsData.size());
 		for (int runId = 0; runId < numberOfRuns; runId++)
 		{
+			if (isInterestTest && (runId == startInterestPause || runId == stopInterestPause))
+			{
+				rTrController.pauseTrsOfInterest(runId == startInterestPause);
+				CString errorStr;
+				errorStr.Format(_T("Writer Tests (%d): pauseTrsOfInterest to %d by run %d"), testDataId, runId == startInterestPause, runId);
+				rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
+			}
+			
+
 			for (int ipId = 0; ipId < rInspectionsData.size(); ipId++)
 			{
 				const auto& rIPData = rInspectionsData[ipId];
@@ -905,6 +952,11 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 					}
 				}
 				lastTRList[ipId] = rTrController.closeWriteAndOpenReadTriggerRecordObject(tr2W);
+
+				if (0 == runId % 3 && nullptr != lastTRList[ipId])
+				{
+					rTrController.setTRofInterest({lastTRList[ipId]});
+				}
 			}
 			
 			std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(5500));
@@ -957,7 +1009,7 @@ void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 		int lastTestDataId = 0;
 		std::vector<int> lastTrIds;
 
-		int numberOfRunsComplete = numberOfRuns * static_cast<int>(rTestData.size());
+		//int numberOfRunsComplete = numberOfRuns * static_cast<int>(rTestData.size());
 		for (int testDataPos = 0; testDataPos < rTestData.size(); testDataPos++)
 		//for (int runId = 0; runId < numberOfRunsComplete; runId++)
 		{
@@ -1027,6 +1079,7 @@ void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 					}
 					break;
 				}
+
 				for (int ipId : g_newTrIpSet)
 				{
 					runId++;
@@ -1080,6 +1133,79 @@ void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 					//}
 
 					retValue = checkImages(rTestData[testDataId][ipId], tr2R, rLogClass, writerRunId, testDataId, ipId, runId, triggerCount) && retValue;
+
+					//check trofInterest
+					int maxInterestSize = rTestData[testDataId][ipId].m_recordInterestSize;
+					if (0 < maxInterestSize)
+					{
+						std::random_device rd;
+						std::uniform_int_distribution<int> dist(1, maxInterestSize);
+						int interestNumber = dist(rd);
+						auto interestTRVec = rTrController.getTRsOfInterest(ipId, interestNumber);
+						if (0 < interestTRVec.size())
+						{
+							std::vector<int> interestList = getInterestList(rTestData[testDataId][ipId].m_recordSize, numberOfRuns, 3);
+							int currentPos = -1;
+							for (auto pTr : interestTRVec)
+							{
+								if (nullptr != pTr)
+								{
+									int triggerCount = pTr->getTriggerData().m_TriggerCount;
+									if (-1 == currentPos)
+									{
+										auto findIter = std::find(interestList.begin(), interestList.end(), triggerCount);
+										if (interestList.end() != findIter)
+										{
+											currentPos = static_cast<int>(std::distance(interestList.begin(), findIter));
+											int expectedNumber = std::min<int>(interestNumber, currentPos+1);
+											if (interestTRVec.size() != expectedNumber)
+											{
+												retValue = false;
+												CString logStr;
+												logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: Number of TRs %d, but expected %d (first triggerCount %d) for ip %d with run %d"), testDataId, interestTRVec.size(), expectedNumber, triggerCount, ipId, runId);
+												rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+												break;
+											}
+										
+										}
+										else
+										{
+											retValue = false;
+											CString logStr;
+											logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: First TR (%d) should not be an interest TR for ip %d with run %d"), testDataId, triggerCount, ipId, runId);
+											rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+											break;
+										}
+									}
+
+									if (interestList[currentPos] != triggerCount)
+									{
+										retValue = false;
+										CString logStr;
+										logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: TR %d, but TR %d expected for ip %d with run %d"), testDataId, triggerCount, interestList[currentPos], ipId, runId);
+										rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+										break;
+									}
+									currentPos--;
+								}
+								else
+								{
+									retValue = false;
+									CString logStr;
+									logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: One of the TR is empty for ip %d with run %d"), testDataId, ipId, runId);
+									rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+									break;
+								}
+							}
+						}
+						else
+						{
+							retValue = false;
+							CString logStr;
+							logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: Return list is empty for ip %d with run %d"), testDataId, ipId, runId);
+							rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						}
+					}
 				}
 				g_newTrIpSet.clear();
 			}
@@ -1272,6 +1398,26 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 		}
 	}
 	return retValue;
+}
+
+void getInterestPausePoints(int numberOfRecords, int numberOfRuns, int divValue, int& startPos, int& stopPos)
+{
+	startPos = numberOfRecords * divValue;
+	stopPos = std::min<int>(startPos + 20, numberOfRuns - 10);
+}
+std::vector<int> getInterestList(int numberOfRecords, int numberOfRuns, int divValue)
+{
+	std::vector<int> retVec;
+	int startPos, stopPos;
+	getInterestPausePoints(numberOfRecords, numberOfRuns, divValue, startPos, stopPos);
+	for (int i = 0; i < numberOfRuns; i++)
+	{
+		if (0 == i%divValue && (i < startPos || i >= stopPos))
+		{
+			retVec.push_back(i);
+		}
+	}
+	return retVec;
 }
 
 HANDLE createEvent(LPCTSTR eventName)

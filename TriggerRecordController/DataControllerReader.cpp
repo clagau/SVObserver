@@ -41,10 +41,16 @@ void TRControllerReaderDataPerIP::init(const std::string& smName)
 		{
 			m_smName = smName;
 			m_pBasicData = reinterpret_cast<BasicData*>(pTemp);
-			m_pSmData = reinterpret_cast<SMData*>(pTemp + sizeof(BasicData));
-			m_pImageListInSM = pTemp + sizeof(BasicData) + sizeof(SMData);
-			m_pDataDefListInSM = pTemp + sizeof(BasicData) + sizeof(SMData) + m_pSmData->m_maxImageListSize;
-			m_pTriggerRecords = pTemp + sizeof(BasicData) + sizeof(SMData) + m_pSmData->m_maxImageListSize + m_pSmData->m_maxDataDefListSize;
+			int offset = sizeof(BasicData);
+			m_pSmData = reinterpret_cast<SMData*>(pTemp + offset);
+			offset += sizeof(SMData);
+			m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
+			offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
+			m_pImageListInSM = pTemp + offset;
+			offset += m_pSmData->m_maxImageListSize;
+			m_pDataDefListInSM = pTemp + offset;
+			offset += m_pSmData->m_maxDataDefListSize;
+			m_pTriggerRecords = pTemp + offset;
 			reloadData();
 			return;
 		}
@@ -112,6 +118,63 @@ bool TRControllerReaderDataPerIP::isEnoughFreeForLock() const
 		return getNumberOfTRKeepFreeForWrite() < m_pBasicData->m_numberOfFreeTR;
 	}
 	return false;
+}
+
+void TRControllerReaderDataPerIP::setTRofInterest(int inspectionPos, int pos)
+{
+	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+	if (locker && 0 < m_pBasicData->m_TRofInterestNumber)
+	{
+		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TRofInterestNumber);
+		if (0 <= m_pTRofInterestArray[nextPos] && getBasicData().m_TriggerRecordNumber > m_pTRofInterestArray[nextPos])
+		{
+			removeTRReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
+		}
+		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
+		{
+			TriggerRecordData& rCurrentTR = getTRData(pos);
+			long refTemp = rCurrentTR.m_referenceCount;
+			while (0 <= refTemp)
+			{
+				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+				{
+					if (0 == refTemp)
+					{
+						decreaseFreeTrNumber();
+					}
+					m_pTRofInterestArray[nextPos] = pos;
+					m_pBasicData->m_TrOfInterestCurrentPos = nextPos;
+					return;  //successfully set
+				}
+				refTemp = rCurrentTR.m_referenceCount;
+			}
+
+		}
+
+		m_pTRofInterestArray[nextPos] = -1; //unsuccessfully set
+	}
+}
+
+std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
+{
+	std::vector<int> retVec;
+	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+	int vecSize = m_pBasicData->m_TRofInterestNumber;
+	if (nullptr != locker && 0 < vecSize)
+	{
+		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
+		int nextPos = std::min(static_cast<int>(m_pBasicData->m_TrOfInterestCurrentPos), vecSize - 1);
+		for (int i = 0; i < number; i++)
+		{
+			if (0 > nextPos)
+			{
+				nextPos = vecSize - 1;
+			}
+			retVec.push_back(m_pTRofInterestArray[nextPos]);
+			nextPos--;
+		}
+	}
+	return retVec;
 }
 #pragma endregion TRControllerReaderDataPerIP
 
@@ -188,7 +251,7 @@ ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectio
 								{
 									pIPData->decreaseFreeTrNumber();
 								}
-								return std::make_shared<TriggerRecord>(inspectionPos, rCurrentTR, pIPData->getImageList(), pIPData->getDataDefList(), pIPData->getBasicData().m_dataListSize, m_pCommonData->m_resetId);
+								return std::make_shared<TriggerRecord>(inspectionPos, i, rCurrentTR, pIPData->getImageList(), pIPData->getDataDefList(), pIPData->getBasicData().m_dataListSize, m_pCommonData->m_resetId);
 							}
 							refTemp = rCurrentTR.m_referenceCount;
 						}
@@ -203,6 +266,45 @@ ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectio
 		}
 	}
 	return nullptr;
+}
+
+void DataControllerReader::setPauseTrsOfInterest(bool flag)
+{
+	m_pCommonData->m_pauseTRofInterest = flag;
+}
+
+bool DataControllerReader::getPauseTrsOfInterest() const
+{
+	return m_pCommonData->m_pauseTRofInterest;
+}
+
+std::vector<ITriggerRecordRPtr> DataControllerReader::getTRsOfInterest(int inspectionPos, int n)
+{
+	auto pIPData = m_dataVector[inspectionPos];
+	std::vector<ITriggerRecordRPtr> retVec;
+	if (nullptr != pIPData)
+	{
+		auto posVec = pIPData->getTRofInterestPos(n);
+
+		for (int pos : posVec)
+		{
+			if (0 <= pos && pIPData->getBasicData().m_TriggerRecordNumber > pos)
+			{
+				TriggerRecordData& rCurrentTR = getTRData(inspectionPos, pos);
+				long refTemp = rCurrentTR.m_referenceCount;
+				while (0 <= refTemp)
+				{
+					if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+					{
+						retVec.emplace_back(std::make_shared<TriggerRecord>(inspectionPos, pos, rCurrentTR, pIPData->getImageList(), pIPData->getDataDefList(), pIPData->getBasicData().m_dataListSize, m_pCommonData->m_resetId));
+						break;
+					}
+					refTemp = rCurrentTR.m_referenceCount;
+				}
+			}
+		}
+	}
+	return retVec;
 }
 
 TRControllerBaseDataPerIP* DataControllerReader::getTRControllerData(int inspectionId)

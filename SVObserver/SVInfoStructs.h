@@ -182,7 +182,6 @@ struct SVProductInfoStruct
 	bool bTriggered;
 	bool bhasCameraImage[SvDef::cMaximumCameras];
 	bool bDataComplete;
-	bool m_bReject = false;
 
 	SvTi::SVTriggerInfoStruct oTriggerInfo;
 	SVInputsInfoStruct oInputsInfo;
@@ -212,7 +211,6 @@ struct SVInspectionNameUpdate
 	virtual ~SVInspectionNameUpdate();
 
 	std::string m_InspectionName;
-
 };
 
 struct SVRemoveImages

@@ -295,7 +295,6 @@ namespace SvSml
 			throw std::exception("No Ringbuffer or invalid slot");
 		}
 		m_pRingBufferLast[writerslot].isReject = true;
-		return;
 	}
 
 	int   SMRingBuffer::GetNextWriteSlot()

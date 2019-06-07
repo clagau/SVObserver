@@ -70,4 +70,5 @@ message Inspection
 	int32 numberOfRecords = 2;
 	uint32 sizeOfSM = 3;
 	bytes nameOfSM = 4;
+	int32 numberRecordsOfInterest = 5;
 }

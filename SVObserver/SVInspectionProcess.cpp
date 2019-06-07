@@ -302,43 +302,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 
 		if (GetPPQ()->HasActiveMonitorList() && p_rProduct.bTriggered)
 		{
-			try
-			{
-				long slotindex = p_rProduct.m_monitorListSMSlot;
-				if (p_rProduct.ProcessCount() > 0 && slotindex >= 0)
-				{
-					bool rejectFlag = isReject();
-					if (rejectFlag)
-					{
-						GetSlotmanager()->SetToReject(slotindex);
-					}
-					p_rProduct.m_svInspectionInfos[GetUniqueObjectID()].m_bReject = rejectFlag;
-				}
-				else
-				{
-					ASSERT("Error in getting next Slot");
-					SvDef::StringVector msgList;
-					msgList.push_back("Error in getting next Slot");
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15023);
-
-				}
-
-			}
-			catch (const std::exception& e)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(e.what());
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15023);
-			}
-			catch (...)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15024);
-			}
+			p_rProduct.m_svInspectionInfos[GetUniqueObjectID()].m_bReject = isReject();
 		}
 		std::pair<SVInspectionInfoStruct, long> data {p_rProduct.m_svInspectionInfos[GetUniqueObjectID()], p_rProduct.ProcessCount()};
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), data);
@@ -3749,9 +3713,9 @@ bool SVInspectionProcess::shouldPauseRegressionTestByCondition()
 	return false;
 }
 
-void SVInspectionProcess::setTriggerRecordNumbers(long newSize)
+void SVInspectionProcess::setTriggerRecordNumbers(long newRecordSize, long rejectCount)
 {
-	SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(SvTrc::getInspectionPos(GetUniqueObjectID()), newSize);
+	SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(SvTrc::getInspectionPos(GetUniqueObjectID()), newRecordSize, rejectCount);
 }
 
 void SVInspectionProcess::SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager)

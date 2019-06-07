@@ -447,8 +447,6 @@ private:
 	bool EvaluateConditionalOutput() const;
 	void init();
 
-	void OnResetTRC();
-
 #ifdef EnableTracking
 	struct SVPPQTrackingElement
 	{
@@ -520,8 +518,6 @@ private:
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
 
 	SVObjectPtrVector m_childObjects;
-	boost::circular_buffer<std::vector<SvTrc::ITriggerRecordRPtr>> m_rejectTRStore;
-	int m_TRCResetCallbackHandle = -1;
 };
 
 typedef std::vector<SVPPQObject*> SVPPQObjectPtrVector;

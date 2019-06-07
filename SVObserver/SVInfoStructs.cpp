@@ -309,7 +309,6 @@ SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &rRhs )
 , m_svInspectionInfos( rRhs.m_svInspectionInfos )
 , m_ProductActive( 0 )
 , m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
-, m_bReject(rRhs.m_bReject)
 {
 	for(int i=0; i < SvDef::cMaximumCameras; ++i)
 	{
@@ -350,7 +349,6 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 		m_svCameraInfos = rRhs.m_svCameraInfos;
 		m_svInspectionInfos = rRhs.m_svInspectionInfos;
 		m_monitorListSMSlot = rRhs.m_monitorListSMSlot;
-		m_bReject = rRhs.m_bReject;
 
 		if( rRhs.IsProductActive() )
 		{
@@ -377,8 +375,6 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 			bhasCameraImage[i] = rData.bhasCameraImage[i];
 		}
 		bDataComplete = rData.bDataComplete;
-		m_bReject = rData.m_bReject;
-
 		oTriggerInfo = rData.oTriggerInfo;
 		oInputsInfo = rData.oInputsInfo;
 		oOutputsInfo = rData.oOutputsInfo;
@@ -463,7 +459,6 @@ void SVProductInfoStruct::InitProductInfo()
 	}
 	bTriggered			= false;
 	bDataComplete		= false;
-	m_bReject = false;
 	m_monitorListSMSlot = -1;
 	oInputsInfo.Init();
 	oOutputsInfo.Init();
@@ -499,7 +494,6 @@ void SVProductInfoStruct::Reset()
 	}
 	bTriggered			= false;
 	bDataComplete		= false;
-	m_bReject = false;
 	m_monitorListSMSlot = -1;
 	oInputsInfo.Reset();
 	oOutputsInfo.Reset();

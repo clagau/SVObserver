@@ -27,6 +27,46 @@ typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
 
 namespace SvTrc
 {
+class Locker
+{
+public:
+	explicit Locker(volatile long& rLocker)
+		: m_rLocker(rLocker)
+	{
+		int count = 0;
+		while (InterlockedCompareExchange(&rLocker, 1, 0) != 0)
+		{
+			std::this_thread::yield();
+			count++;
+			if (100 < count)
+			{
+				throw 0;
+			}
+		}
+	}
+
+	~Locker()
+	{
+		InterlockedExchange(&m_rLocker, 0l);
+	}
+
+	typedef std::unique_ptr<Locker> LockerPtr;
+	static LockerPtr lockReset(volatile long& rLocker)
+	{
+		try
+		{
+			return std::make_unique<Locker>(rLocker);
+		}
+		catch (...)
+		{
+			return nullptr;
+		}
+	}
+
+private:
+	volatile long& m_rLocker;
+};
+
 class TRControllerBaseDataPerIP
 {
 public:
@@ -37,10 +77,13 @@ public:
 	{
 		volatile bool m_bInit = false;
 		volatile int m_TriggerRecordNumber = 50;  //maximal number of trigger record to use
+		volatile int m_TRofInterestNumber = 0;
 		volatile long m_numberOfFreeTR = 0; // the number of free (unlocked) triggerRecords.
 		volatile int m_lastFinishedTRID {-1};
 		volatile int m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
 		volatile int m_dataListSize {0}; //data List byte size
+		volatile long m_mutexTrOfInterest {false};
+		volatile int m_TrOfInterestCurrentPos {-1};
 	};
 
 	virtual BasicData getBasicData() const = 0;
@@ -52,6 +95,8 @@ public:
 	virtual void increaseFreeTrNumber() {};
 	virtual void decreaseFreeTrNumber() {};
 	virtual bool isEnoughFreeForLock() const { return true; };
+	virtual void setTRofInterestNumber(int number) { assert(false); throw E_NOTIMPL; };
+	virtual void setTRofInterest(int inspectionPos, int pos) = 0;
 
 protected:
 	int getNumberOfTRKeepFreeForWrite() const;
@@ -135,7 +180,15 @@ public:
 	/// Set resetId to a new number and send reset event.
 	virtual void finishedReset() { assert(false); throw E_NOTIMPL; };
 
+	virtual void setPauseTrsOfInterest(bool flag) = 0;
+	virtual bool getPauseTrsOfInterest() const = 0;
+	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) = 0;
+
 	void increaseNumberOfFreeTr(int inspectionPos);
+
+	/// Set the TRs to the Interest list.
+	/// \param trVec [in] The vector of pair<inspectionPos, pos> 
+	bool setTRofInterest(std::vector<std::pair<int,int>> trVec);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

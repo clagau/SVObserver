@@ -259,8 +259,9 @@ public:
 
 
 	/// Set Numbers of TriggerRecord for this inspection. ATTENTIONS: In error case this method throw an exception.
-	/// \param newSize [in] The new size.
-	void setTriggerRecordNumbers(long newSize);
+	/// \param newSize [in] The new size of records.
+	/// \param rejectCount [in] The new max count of rejects.
+	void setTriggerRecordNumbers(long newRecordSize, long rejectCount);
 
 protected:
 	

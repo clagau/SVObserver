@@ -40,6 +40,9 @@ public:
 	void setImageList(SvPb::ImageList&& imageList) { m_ImageList = imageList; };
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	void setTriggerRecords(void* pTR);
+	virtual void setTRofInterestNumber(int number) override;
+	virtual void setTRofInterest(int inspectionPos, int pos) override;
+	std::vector<int> getTRofInterestPos(int n);
 
 private:
 	BasicData m_basicData;
@@ -49,6 +52,7 @@ private:
 	int m_nextPosForFreeCheck {0}; //This variable contains which position it should start searching for a free slot.
 	SvPb::ImageList m_ImageList;
 	SvPb::DataDefinitionList m_DataDefList;
+	std::vector<int> m_trOfInterestVec; //this a list of TR-pos with TrOfInterest, the last current tr is defined in m_basicData.m_TrOfInterestCurrentPos
 };
 
 class DataControllerLocal : public DataControllerBase
@@ -98,6 +102,10 @@ public:
 	virtual void prepareReset() override;
 	/// Set resetId to a new number and send reset event.
 	virtual void finishedReset() override;
+
+	virtual void setPauseTrsOfInterest(bool flag) override { m_pauseTrOfInterestFlag = flag; };
+	virtual bool getPauseTrsOfInterest() const override { return m_pauseTrOfInterestFlag; };
+	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -118,6 +126,7 @@ private:
 	long m_resetId = 0; //id of the last reset
 	long m_lastResetId = 0; //id of the last reset
 	long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
+	bool m_pauseTrOfInterestFlag = false;
 	SvPb::InspectionList m_inspectionList;
 
 	//image data

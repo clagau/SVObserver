@@ -95,6 +95,21 @@ namespace SvTrc
 		/// Unregister a Callback function to call if a new trigger record is finished.
 		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)
 		virtual void unregisterNewTrCallback(int handleId) = 0;
+
+		/// Set a list of trigger record to the list of interest. This means those TRs will be keep for longer. (But this method do nothing if TRofInterest mode is on pause.)
+		/// \param trVector [in] Vector of the TRs.
+		/// \returns bool True, if set done. If pause it returns false.
+		virtual bool setTRofInterest(std::vector<ITriggerRecordRPtr> trVector) = 0;
+
+		/// Return a list of interestTR for one IP. The size of the list are between 0 and n.
+		/// \param inspectionPos [in]
+		/// \param n [in] Number of TR requested.
+		/// \returns std::vector<ITriggerRecordRPtr>
+		virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) = 0;
+
+		/// Pause the setting of the interest TR.
+		/// \param pauseFlag [in] If true, the setting of interest TR is paused.
+		virtual void pauseTrsOfInterest(bool pauseFlag) = 0;
 	};
 
 	enum class TRC_DataType

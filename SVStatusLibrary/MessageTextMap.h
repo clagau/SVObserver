@@ -549,6 +549,7 @@ namespace SvStl
 		{Tid_TRC_Error_ResetWrongInspectionId, _T("Reset not possible, %s is invalid inspectionId, number of inspection is %s")},
 		{Tid_TRC_Error_GlobalInitNotStarted, _T("Global init not started.")},
 		{Tid_TRC_Error_TriggerRecordSize2Big, _T("TriggerRecordSize of %s is too big. Maximal %s is valid.")},
+		{Tid_TRC_Error_TriggerRecordOfInterestSize2Big, _T("TriggerRecordOfInterest-size of %s is too big. Maximal %s is valid.")},
 		{Tid_TRC_Error_ResetNotStart, _T("Reset of TriggerRecord-structure not started. Reset can not be finished.")},
 		{Tid_TRC_Error_InvalidResetState, _T("Invalid Reset-state. Action can not be done.")},
 		{Tid_TRC_Error_GetImageDefList, _T("Error in method GetImagDefList.")},

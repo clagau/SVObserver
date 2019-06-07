@@ -20,7 +20,7 @@ class TriggerRecord final : public ITriggerRecordRW
 {
 #pragma region Constructor
 public:
-	TriggerRecord(int inspectionPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId);
+	TriggerRecord(int inspectionPos, int trPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId);
 	TriggerRecord() = delete;
 	~TriggerRecord();
 #pragma endregion Constructor
@@ -63,7 +63,7 @@ public:
 #pragma endregion ITriggerRecordRW Methods
 
 	void blockUpdateLastTrId() { m_blockUpdateLastId = true; };
-
+	int getTrPos() { return m_trPos; };
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -79,10 +79,13 @@ private:
 	const SvPb::DataDefinitionList& m_rDataDefList;
 	const int m_dataListSize;
 	const long m_ResetId{0L};
-	int m_inspectionPos{-1};
+	const int m_inspectionPos{-1};
+	const int m_trPos {-1};
 	bool m_blockUpdateLastId = false;
 #pragma endregion Member variables
 };
+
+void removeTRReferenceCount(int ipPos, long& rReferenceCount);
 
 template<typename Container>
 int findGuidPos(const Container& rContainer, const std::string& rGuidIdBytes)

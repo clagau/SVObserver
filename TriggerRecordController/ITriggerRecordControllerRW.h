@@ -47,8 +47,9 @@ namespace SvTrc
 		/// Resize the number of records for this inspection. ATTENTION: All old TR-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
-		/// \param newSize [in] The new number of records.
-		virtual void resizeIPNumberOfRecords(int inspectionPos, long newSize) = 0;
+		/// \param newSizeTR [in] The new number of records.
+		/// \param newSizeTRofIntereset [in] The new number of records of interest.
+		virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTR, long newSizeTRofIntereset = 0) = 0;
 
 		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
@@ -154,6 +155,8 @@ namespace SvTrc
 		static const int m_cResetStartedAddBuffer = -2;
 
 		static const int cMaxTriggerRecords = 400;
+
+		static const int cMaxTriggerRecordsOfInterest = 50;
 	};
 
 	/// Get an instance of the TR controller in read/write modus.

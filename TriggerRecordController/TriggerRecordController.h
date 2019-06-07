@@ -53,6 +53,10 @@ public:
 	virtual void unregisterReadyCallback(int handleId) override;
 	virtual int registerNewTrCallback(std::function<void(int, int)> pCallback) override;
 	virtual void unregisterNewTrCallback(int handleId) override;
+
+	virtual bool setTRofInterest(std::vector<ITriggerRecordRPtr> trVector) override;
+	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
+	virtual void pauseTrsOfInterest(bool pauseFlag) override;
 #pragma endregion ITriggerRecordControllerR Methods
 
 #pragma region ITriggerRecordControllerRW Methods
@@ -60,7 +64,7 @@ public:
 
 	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
 
-	virtual void resizeIPNumberOfRecords(int inspectionPos, long newSize) override;
+	virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTR, long newSizeTRofIntereset) override;
 
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
@@ -97,6 +101,8 @@ public:
 	volatile long* getResetLockCounterRef() { return m_pDataController->getResetLockCounterRef(); };
 
 	bool isWritable() const { return m_pDataController->isWritable(); };
+
+	static int needNumberOfTR(SvPb::Inspection ipData);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -140,7 +146,6 @@ private:
 	SvPb::ImageStructList m_imageStructListResetTmp; //This ImageStructList is only temporary during reset process. In normal run don't use this.
 	SvPb::ImageList m_imageListResetTmp; //This imageList is only temporary during reset process. In normal run don't use this.
 	int m_TriggerRecordNumberResetTmp = 0; //This parameter is only temporary during reset process. In normal run don't use this.
-	const int m_additionalTriggerRecordNumber = 50;
 
 	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
 	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;

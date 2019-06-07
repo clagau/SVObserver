@@ -42,11 +42,14 @@ public:
 	virtual void increaseFreeTrNumber() override;
 	virtual void decreaseFreeTrNumber() override;
 	virtual bool isEnoughFreeForLock() const override;
+	virtual void setTRofInterest(int inspectionPos, int pos) override;
+	std::vector<int> getTRofInterestPos(int n);
 
 private:
 	SvSml::DataStorePointer m_SMHandle;
 	BasicData* m_pBasicData = nullptr;
 	SMData* m_pSmData = nullptr;
+	int* m_pTRofInterestArray = nullptr;
 
 	SvPb::ImageList m_ImageList;
 	void* m_pImageListInSM = nullptr;
@@ -82,6 +85,10 @@ public:
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 
 	virtual bool isWritable() const override { return false; };
+
+	virtual void setPauseTrsOfInterest(bool flag) override;
+	virtual bool getPauseTrsOfInterest() const override;
+	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
