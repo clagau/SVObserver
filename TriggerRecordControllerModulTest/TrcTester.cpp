@@ -9,113 +9,33 @@
 #pragma once
 
 #include "stdafx.h"
-
 #include "TrcTester.h"
+#include "TesterFunction.h"
 #include "LogClass.h"
+#include "TrcTesterConfiguration.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\SVRegistry.h"
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #include "TriggerRecordController\ITriggerRecordRW.h"
-#include "TriggerRecordController\LocalConst.h"
 
 constexpr int triggerIdOffset = 100'000;
-LPCSTR strTestConfig = _T("Config");
 LPTSTR strTestCreateInspections = _T("createInspections");
 LPTSTR strTestSetBuffers = _T("setBuffers");
 LPTSTR strTestCheckBufferMaximum = _T("checkBufferMaximum");
 LPTSTR strTestCreateTR2WriteAndRead = _T("createTR2WriteAndRead");
 LPTSTR strTestSetAndReadImage = _T("setAndReadImage");
 LPTSTR strTestSetAndReadValues = _T("setAndReadValues");
-LPTSTR strTestWithMoreThreads = _T("testWithMoreThreads");
-HANDLE g_resetEvent = nullptr;
-HANDLE g_readyEvent = nullptr;
-HANDLE g_newTrEvent = nullptr;
+LPTSTR strTestWithReaderApps = _T("testWithReaderApps");
 
-//numbersOfRecords are list of pairs (one per inspection) with first = numberOfRecords and second = number”fInterest
-bool setInspections(std::vector<std::pair<int, int>> numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr);
 void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 SVMatroxBufferCreateStruct specifyBuffer(int sizeFactor);
 SVMatroxBufferCreateStruct specifyBufferRandom();
-SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId);
 int calcMaxBuffer();
-std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames);
-void freeImages(std::vector<MIL_ID> images);
-bool areImageEqual(MIL_ID image1, MIL_ID image2);
-bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount);
-void getInterestPausePoints(int numberOfRecords, int numberOfRuns, int divValue, int& startPos, int& stopPos);
-std::vector<int> getInterestList(int numberOfRecords, int numberOfRuns, int divValue);
-HANDLE createEvent(LPCTSTR eventName);
-
-
-void TrcTesterConfiguration::InspectionsDef::recalcRecordSizes()
-{
-	std::random_device rd;
-	std::uniform_int_distribution<int> dist(m_minRecordSize, m_maxRecordSize);
-	m_recordSize = dist(rd);
-	std::uniform_int_distribution<int> distInterest(m_minRecordInterestSize, m_maxRecordInterestSize);
-	m_recordInterestSize = std::max(0, distInterest(rd));
-}
-
-TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOINIClass iniFile, bool isLocal)
-{
-	m_NumberOfRuns = iniFile.GetValueInt(_T("General"), _T("NumberOfRuns"), m_NumberOfRuns);
-	m_maxTimeSetBufferPerIter = iniFile.GetValueDouble(_T("MaxTime"), _T("SetBufferPerIter"), m_maxTimeSetBufferPerIter);
-	m_maxTimeCheckBufferPerBuffer = iniFile.GetValueDouble(_T("MaxTime"), _T("CheckBufferPerBuffer"), m_maxTimeCheckBufferPerBuffer);
-	m_maxTimesetAndReadImage = iniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadImage"), m_maxTimesetAndReadImage);
-
-	//get number from SVIM.ini
-	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-	m_numberOfRecordsAddOne = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("AdditionalTRNumber"), 5) + 2;
-	m_numberOfKeepFreeRecords = isLocal ? 0 : l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("NumberOfTRKeepFreeForWriter"), 2);
-	
-	for (auto imageFileList : m_imageFileNameLists)
-	{
-		std::vector<MIL_ID> imageIds;
-		try
-		{
-			imageIds = loadImages(imageFileList);
-		}
-		catch (CString& e)
-		{
-			rLogClass.Log(e, LogLevel::Error, LogType::FAIL, __LINE__, strTestConfig);
-		}
-		if (imageIds.size() == 0)
-		{
-			rLogClass.Log(_T("setAndReadImage: loadImage failed. 0 handle available!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestConfig);
-		}
-		else
-		{
-			m_imageLists.push_back(imageIds);
-		}		
-	}
-
-	m_testData = {{{10, 30, 1, 20, {m_imageLists[0],m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}},
-		{{10,30, 0, 0, {m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}, {10, 300, 0, 0, {m_imageLists[0]}, getValueObjectSet(), m_valueSet}}};
-};
-
-TrcTesterConfiguration::~TrcTesterConfiguration()
-{
-	for (auto imageList : m_imageLists)
-	{
-		freeImages(imageList);
-	}
-	m_imageLists.clear();
-}
-
-void TrcTesterConfiguration::recalcRecordSizes() 
-{ 
-	for (auto& rDataVec : m_testData)
-	{
-		for (auto& rDef : rDataVec)
-		{
-			rDef.recalcRecordSizes();
-		}
-	}
-}
 
 TrcTester::TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
 	m_config(rConfig),
@@ -140,6 +60,10 @@ bool TrcTester::fullTest()
 	isRunOk = setAndReadImage() && isRunOk;
 	isRunOk = setAndReadValues() && isRunOk;
 	isRunOk = testWithMoreThreads() && isRunOk;
+	if (!m_config.isLocal())
+	{
+		isRunOk = testWithReaderApps() && isRunOk;
+	}
 	return isRunOk;
 }
 
@@ -228,7 +152,7 @@ bool TrcTester::checkBufferMaximum()
 		auto end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_nano = end - start;
 		CString logStr;
-		logStr.Format(_T("set images good case (%f s/ %f s)"), elapsed_nano.count(), m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
+		logStr.Format(_T("set images (maxBuffer = %d) good case (%f s/ %f s)"), maxBuffer, elapsed_nano.count(), m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
 		bool isError = (!independentOk || m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages < elapsed_nano.count());
 		m_rLogClass.Log(logStr, !isError ? LogLevel::Information_Level3 : LogLevel::Error, !isError ? LogType::PASS : LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
 		if (!independentOk)
@@ -238,7 +162,9 @@ bool TrcTester::checkBufferMaximum()
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
-		m_rLogClass.logException("set images good case", rExp, __LINE__, strTestCheckBufferMaximum);
+		CString logStr;
+		logStr.Format(_T("set images good case (MaxBuffer = %d)"), maxBuffer);
+		m_rLogClass.logException(logStr, rExp, __LINE__, strTestCheckBufferMaximum);
 		return false;
 	}
 	catch (...)
@@ -393,7 +319,14 @@ bool TrcTester::createTR2WriteAndRead()
 				numberOfFails++;
 				if (0 == numberOfFails % 11)
 				{
-					readTRVector[j].erase(readTRVector[j].begin(), readTRVector[j].begin() + 13);
+					if (13 < readTRVector[j].size())
+					{
+						readTRVector[j].erase(readTRVector[j].begin(), readTRVector[j].begin() + 13);
+					}
+					else
+					{
+						readTRVector[j].clear();
+					}
 				}
 			}
 			else
@@ -654,6 +587,91 @@ bool TrcTester::testWithMoreThreads()
 	readerThread.join();
 	return retValue;
 }
+
+bool TrcTester::testWithReaderApps()
+{
+	bool retValue = true;
+	int timeoutInS = 10;
+
+	std::string reader1Name = "reader1";
+	auto reader1LogPath = std::experimental::filesystem::v1::path(reader1Name);
+	std::experimental::filesystem::v1::remove_all(reader1LogPath);
+	if (!std::experimental::filesystem::v1::create_directory(reader1LogPath))
+	{
+		CString tmpString;
+		tmpString.Format("Creating directory %s", reader1LogPath.string().c_str());
+		m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		return false;
+	}
+	std::string reader1LogFile = reader1Name + "/log.txt";
+
+	CString commandStr;
+	commandStr.Format(R"(TriggerRecordControllerReaderModulTest.exe %s %s)", reader1Name.c_str(), reader1LogFile.c_str());
+	STARTUPINFO info = {sizeof(info)};
+	PROCESS_INFORMATION processInfo;
+	if (!CreateProcess(R"(TriggerRecordControllerReaderModulTest.exe)", commandStr.GetBuffer(), NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))
+	{
+		CString tmpString;
+		tmpString.Format("Create Reader-Process %s", reader1Name.c_str());
+		m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		return false;
+	}
+
+	bool retWriterTest = writerTest(m_rLogClass, 100, m_config.getTestData());
+	retValue = retValue && retWriterTest;
+	m_rLogClass.Log("Finished writerTest", retWriterTest ? LogLevel::Information_Level1 : LogLevel::Error, retWriterTest ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
+
+	if (WAIT_OBJECT_0 == WaitForSingleObject(processInfo.hProcess, timeoutInS * 1000))
+	{
+		std::ifstream logFile(reader1LogFile.c_str());
+		if (logFile.is_open())
+		{
+			m_rLogClass.LogText0("Reader ready read logFile:", LogLevel::Information_Level3);
+			const std::regex passRegex(R"(\[PASS\]\[.*\]*)");
+			const std::regex failRegex(R"(\[FAIL\]\[.*\]*)");
+			std::string line;
+			while (getline(logFile, line))
+			{
+				if (!line.empty())
+				{
+					bool errorFlag = false;
+					if (std::regex_match(line, passRegex))
+					{
+						m_rLogClass.CountResults(LogType::PASS);
+					}
+					else if (std::regex_match(line, failRegex))
+					{
+						m_rLogClass.CountResults(LogType::FAIL);
+						retValue = false;
+						errorFlag = true;
+					}
+
+					m_rLogClass.LogText0(line.c_str(), errorFlag ? LogLevel::Error : LogLevel::Status);
+				}
+			}
+			logFile.close();
+			m_rLogClass.Log("Reader ready read logFile finished", retValue ? LogLevel::Status : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
+		}
+		else
+		{
+			m_rLogClass.Log("Reader ready, but logFile not found", LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		}
+	}
+	else
+	{
+		CString tmpString;
+		tmpString.Format("Timeout Reader finished not in %d s", timeoutInS);
+		m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		TerminateProcess(processInfo.hProcess, 0);
+		retValue = false;
+	}
+
+	// Close process and thread handles. 
+	CloseHandle(processInfo.hProcess);
+	CloseHandle(processInfo.hThread);
+
+	return retValue;
+}
 #pragma endregion test methods
 
 bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
@@ -729,503 +747,6 @@ bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 	return true;
 }
 
-bool setInspections(std::vector < std::pair <int,int> > numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr)
-{
-	SvPb::InspectionList inspList;
-	for (std::pair<int,int> numberOfRecords : numbersOfRecords)
-	{
-		auto* pInspStruct = inspList.add_list();
-		if (nullptr == pInspStruct)
-		{
-			rLogClass.Log(_T("createTR2WriteAndRead: Could not create inspection!"), LogLevel::Error, LogType::FAIL, __LINE__, testAreaStr);
-			return false;
-		}
-		pInspStruct->set_numberofrecords(numberOfRecords.first);
-		pInspStruct->set_numberrecordsofinterest(numberOfRecords.second);
-	}
-	return rTrController.setInspections(inspList);
-}
-
-void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
-{
-	bool retValue = true;
-	GUID guid = GUID_NULL;
-	CString logStr;
-	auto& rTrController = SvTrc::getTriggerRecordControllerRWInstance();
-
-	for (int testDataId = 0; testDataId < rTestData.size(); testDataId++)
-	{
-		const auto& rInspectionsData = rTestData[testDataId];
-
-		//setInspections
-		std::vector<std::pair<int,int>> numbersOfRecords;
-		CString inspectionNumberStr;
-		for (int j = 0; j < rInspectionsData.size(); j++)
-		{
-			numbersOfRecords.emplace_back(rInspectionsData[j].m_recordSize, rInspectionsData[j].m_recordInterestSize);
-			inspectionNumberStr.Format("%s%d/%d, ", inspectionNumberStr, numbersOfRecords[j].first, numbersOfRecords[j].second);
-		}
-		retValue = setInspections(numbersOfRecords, rTrController, rLogClass, strTestWithMoreThreads);
-		logStr.Format(_T("Writer Tests (%d): CreateInspections(%s)"), testDataId, inspectionNumberStr);
-		
-		//check if interest is set and set pauseStart and pauseStop values
-		bool isInterestTest = false;
-		int startInterestPause = 0;
-		int stopInterestPause = 0;
-		if (0 < numbersOfRecords[0].second)
-		{
-			isInterestTest = true;
-			getInterestPausePoints(numbersOfRecords[0].first, numberOfRuns, 3, startInterestPause, stopInterestPause);
-		}
-
-		if (!retValue)
-		{
-			rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-			break;
-		}
-		else
-		{
-			rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
-		}
-
-		//init Inspections
-		std::vector<SVMatroxBufferCreateStruct> cameraStructList;
-		for (int i = 0; i < rInspectionsData.size(); i++)
-		{
-			try
-			{
-				cameraStructList.emplace_back(specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0][0]));
-				rTrController.startResetTriggerRecordStructure(i);
-
-				for (const auto& rImageList : rInspectionsData[i].m_imageFilesList)
-				{
-					UuidCreateSequential(&guid);
-
-					rTrController.addOrChangeImage(guid, specifyBufferFromImage(rImageList[0]));
-				}
-				//add a special buffer which will be set only once and then should all the run the same.
-				UuidCreateSequential(&guid);
-				rTrController.addOrChangeImage(guid, specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0][0]));
-
-				rTrController.finishResetTriggerRecordStructure(); 
-			}
-			catch (const SvStl::MessageContainer& rExp)
-			{
-				logStr.Format(_T("Writer Tests (%d): resetTriggerRecordStructure"), testDataId);
-				rLogClass.logException(logStr, rExp, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-				break;
-			}
-			catch (...)
-			{
-				CString errorStr;
-				errorStr.Format(_T("Writer Tests (%d): resetTriggerRecordStructure throw an exception"), testDataId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-				break;
-			}
-		}
-		if (!retValue)
-		{
-			break;
-		}
-
-		std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(500));
-
-		//the run
-		rTrController.pauseTrsOfInterest(0);
-		std::vector<SvTrc::ITriggerRecordRPtr> lastTRList(rInspectionsData.size());
-		for (int runId = 0; runId < numberOfRuns; runId++)
-		{
-			if (isInterestTest && (runId == startInterestPause || runId == stopInterestPause))
-			{
-				rTrController.pauseTrsOfInterest(runId == startInterestPause);
-				CString errorStr;
-				errorStr.Format(_T("Writer Tests (%d): pauseTrsOfInterest to %d by run %d"), testDataId, runId == startInterestPause, runId);
-				rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
-			}
-			
-
-			for (int ipId = 0; ipId < rInspectionsData.size(); ipId++)
-			{
-				const auto& rIPData = rInspectionsData[ipId];
-				auto tr2W = rTrController.createTriggerRecordObjectToWrite(ipId);
-				if (nullptr == tr2W)
-				{
-					CString errorStr;
-					errorStr.Format(_T("Writer Tests (%d): createTriggerRecordObjectToWrite(%d) return nullptr by run %d!"), testDataId, ipId, runId);
-					rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-					retValue = false;
-					continue;
-				}
-				
-				if (nullptr != lastTRList[ipId])
-				{//set images from last run
-					tr2W->setImages(*lastTRList[ipId].get());
-				}
-
-				SvTrc::TriggerData trData;
-				trData.m_TriggerCount = triggerIdOffset*testDataId + runId;
-				tr2W->setTriggerData(trData);
-				//write image to buffer
-				auto cameraImageHandle = rTrController.getImageBuffer(cameraStructList[ipId]);
-				if (nullptr == cameraImageHandle || cameraImageHandle->isEmpty())
-				{
-					CString errorStr;
-					errorStr.Format(_T("Writer Tests (%d): getImageBuffer(%d) return nullptr by run %d!"), testDataId, ipId, runId);
-					rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-					retValue = false;
-					continue;
-				}
-				else
-				{
-					const auto imageId = rIPData.m_imageFilesList[0][runId%rIPData.m_imageFilesList[0].size()];
-					MbufCopy(imageId, cameraImageHandle->getHandle()->GetBuffer().GetIdentifier());
-					if (!areImageEqual(cameraImageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
-					{
-						CString errorStr;
-						errorStr.Format(_T("Writer Tests (%d): ImageCopy(%d:0) failed. Images are not equal by run %d!"), testDataId, ipId, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-						retValue = false;
-						continue;
-					}
-					try
-					{
-						tr2W->setImage(0, cameraImageHandle->getBufferPos());
-					}
-					catch (const SvStl::MessageContainer& rExp)
-					{
-						CString errorStr;
-						errorStr.Format(_T("Writer Tests (%d): setImage(%d) by run %d:"), testDataId, ipId, runId);
-						rLogClass.logException(errorStr, rExp, __LINE__, strTestWithMoreThreads);
-						retValue = false;
-						continue;
-					}		
-					if (0 == runId)
-					{//write special buffer only at the first run
-						auto lastImageHandle = tr2W->createNewImageHandle(static_cast<int>(rIPData.m_imageFilesList.size()));
-						if (nullptr == lastImageHandle || lastImageHandle->isEmpty())
-						{
-							CString errorStr;
-							errorStr.Format(_T("Writer Tests (%d): createNewImageHandle(%d:last) return nullptr by run %d!"), testDataId, ipId, runId);
-							rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-							retValue = false;
-							continue;
-						}
-						else
-						{
-							MbufCopy(imageId, lastImageHandle->getHandle()->GetBuffer().GetIdentifier());
-							if (!areImageEqual(lastImageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
-							{
-								CString errorStr;
-								errorStr.Format(_T("Writer Tests (%d): ImageCopy(%d:last) failed. Images are not equal by run %d!"), testDataId, ipId, runId);
-								rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-								retValue = false;
-								continue;
-							}
-						}
-					}
-				}
-				for (int imagePos = 1; imagePos < rIPData.m_imageFilesList.size(); imagePos++)
-				{
-					const auto imageId = rIPData.m_imageFilesList[imagePos][runId%rIPData.m_imageFilesList[imagePos].size()];
-					auto imageHandle = tr2W->createNewImageHandle(imagePos);
-					if (nullptr == imageHandle || imageHandle->isEmpty())
-					{
-						CString errorStr;
-						errorStr.Format(_T("Writer Tests (%d): createNewImageHandle(%d:%d) return nullptr by run %d!"), testDataId, ipId, imagePos, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-						retValue = false;
-						continue;
-					}
-					else
-					{
-						MbufCopy(imageId, imageHandle->getHandle()->GetBuffer().GetIdentifier());
-						if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
-						{
-							CString errorStr;
-							errorStr.Format(_T("Writer Tests (%d): ImageCopy(%d:%d) failed. Images are not equal by run %d!"), testDataId, ipId, imagePos, runId);
-							rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-							retValue = false;
-							continue;
-						}
-					}
-				}
-				lastTRList[ipId] = rTrController.closeWriteAndOpenReadTriggerRecordObject(tr2W);
-
-				if (0 == runId % 3 && nullptr != lastTRList[ipId])
-				{
-					rTrController.setTRofInterest({lastTRList[ipId]});
-				}
-			}
-			
-			std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(5500));
-		}
-
-		logStr.Format(_T("Writer Tests for run %d finished"), testDataId);
-		rLogClass.LogText(logStr, LogLevel::Information_Level3, LogType::PASS);
-		
-		//std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(1));
-	}
-
-	intPromise.set_value(retValue);
-	rLogClass.LogText("Finished runWriterTest", LogLevel::Information_Level1, LogType::PASS);
-}
-
-void OnResetTRC()
-{
-	::SetEvent(g_resetEvent);
-}
-
-void OnReadyTRC()
-{
-	::SetEvent(g_readyEvent);
-}
-
-std::set<int> g_newTrIpSet;
-std::mutex g_newTrIpSetMutex;
-void OnNewTr(int ipId, int)
-{
-	std::lock_guard<std::mutex> lock(g_newTrIpSetMutex);
-	g_newTrIpSet.emplace(ipId);
-	::SetEvent(g_newTrEvent);
-}
-
-void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
-{
-	bool retValue = true;
-	const LPCTSTR strResetEvent = _T("Global\\TRCModul_Reset");
-	g_resetEvent = createEvent(strResetEvent);
-	const LPCTSTR strReadyEvent = _T("Global\\TRCModul_Ready");
-	g_readyEvent = createEvent(strReadyEvent);
-	const LPCTSTR strNewTrEvent = _T("Global\\TRCModul_NewTrid");
-	g_newTrEvent = createEvent(strNewTrEvent);
-	if (nullptr != g_resetEvent && nullptr != g_readyEvent && nullptr != g_newTrEvent)
-	{
-		auto& rTrController = SvTrc::getTriggerRecordControllerRInstance();
-		int resetCallbackHandle = rTrController.registerResetCallback(OnResetTRC);
-		int readyCallbackHandle = rTrController.registerReadyCallback(OnReadyTRC);
-		int newTrCallBackHandle = rTrController.registerNewTrCallback(OnNewTr);
-		int lastTestDataId = 0;
-		std::vector<int> lastTrIds;
-
-		//int numberOfRunsComplete = numberOfRuns * static_cast<int>(rTestData.size());
-		for (int testDataPos = 0; testDataPos < rTestData.size(); testDataPos++)
-		//for (int runId = 0; runId < numberOfRunsComplete; runId++)
-		{
-			DWORD waitValue = WAIT_FAILED;
-			int isResetAgain = false;
-			do
-			{
-				isResetAgain = false;
-				do
-				{
-					HANDLE hChange[2];
-					hChange[0] = g_resetEvent;
-					hChange[1] = g_readyEvent;
-					waitValue = WaitForMultipleObjects(2, hChange, false, 5000);
-				} while (WAIT_OBJECT_0 == waitValue); //ignore resetEvent and wait again.
-				if (WAIT_OBJECT_0 + 1 == waitValue)
-				{
-					if (WAIT_OBJECT_0 == WaitForMultipleObjects(1, &g_resetEvent, false, 5))
-					{
-						isResetAgain = true;
-					}
-				}
-			} while (isResetAgain); //restart wait for ready if reset is done again (writer reset trc for every ip)
-
-			if (WAIT_OBJECT_0 + 1 != waitValue)
-			{
-				rLogClass.Log(_T("Fail by waiting of Ready-Event from TRC"), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-				break;
-			}
-
-			auto inspectionSize = rTrController.getInspections().list_size();
-			if (lastTrIds.size() != inspectionSize)
-			{
-				lastTrIds.resize(inspectionSize, -1);
-			}
-
-			int runId = -1;
-			while (true)
-			{
-				HANDLE hChange[2];
-				hChange[0] = g_resetEvent;
-				hChange[1] = g_newTrEvent;
-				waitValue = WaitForMultipleObjects(2, hChange, false, 1000);
-				if (WAIT_OBJECT_0 == waitValue)
-				{
-					CString logStr;
-					logStr.Format(_T("Reader Tests: Reset TRC after runId %d"), runId);
-					rLogClass.Log(logStr, LogLevel::Information_Level3, (runId+1 == numberOfRuns*inspectionSize) ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
-					break;
-				}
-
-				std::lock_guard<std::mutex> lock(g_newTrIpSetMutex);
-				if (0 == g_newTrIpSet.size())
-				{
-					if (runId+1 < numberOfRuns*inspectionSize)
-					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: No new TR after runId %d"), runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-					}
-					else
-					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: Finished run after runId %d"), runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
-					}
-					break;
-				}
-
-				for (int ipId : g_newTrIpSet)
-				{
-					runId++;
-					int trId = rTrController.getLastTRId(ipId);
-
-					if (lastTrIds[ipId] == trId)
-					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: (%d) check trId %d again by run %d"), ipId, trId, runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::WARN, __LINE__, strTestWithMoreThreads);
-					}
-					lastTrIds[ipId] = trId;
-
-					auto tr2R = rTrController.createTriggerRecordObject(ipId, trId);
-					if (nullptr == tr2R)
-					{
-						CString errorStr;
-						errorStr.Format(_T("Reader Tests: createTriggerRecordObject(%d, %d) return nullptr by run %d!"), ipId, trId, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-						retValue = false;
-						std::chrono::duration<int, std::micro> t(2);
-						std::this_thread::sleep_for(t);
-						continue;
-					}
-					int triggerCount = tr2R->getTriggerData().m_TriggerCount;
-					int testDataId = triggerCount / triggerIdOffset;
-					int writerRunId = triggerCount % triggerIdOffset;
-					if (0 > triggerCount || rTestData.size() <= testDataId)
-					{
-						CString errorStr;
-						errorStr.Format(_T("Reader Tests: (%d) triggerCount (%d) do not fit: , called testDataId %d, max testDataId %d by run %d"), ipId, triggerCount, testDataId, static_cast<int>(rTestData.size()) - 1, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-						retValue = false;
-						std::chrono::duration<int, std::micro> t(1);
-						std::this_thread::sleep_for(t);
-						continue;
-					}
-					//else
-					//{
-					//	CString logStr;
-					//	logStr.Format(_T("Reader Tests(%d): createTriggerRecordObject(%d) triggerCount %d by run %d"), testDataId, ipId, triggerCount, runId);
-					//	rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
-					//}
-
-					//if (testDataId != lastTestDataId)
-					//{
-					//	CString logStr;
-					//	logStr.Format(_T("Reader Tests(%d): Moved to this testDataId with run %d"), testDataId, runId);
-					//	rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
-					//	lastTestDataId = testDataId;
-					//}
-
-					retValue = checkImages(rTestData[testDataId][ipId], tr2R, rLogClass, writerRunId, testDataId, ipId, runId, triggerCount) && retValue;
-
-					//check trofInterest
-					int maxInterestSize = rTestData[testDataId][ipId].m_recordInterestSize;
-					if (0 < maxInterestSize)
-					{
-						std::random_device rd;
-						std::uniform_int_distribution<int> dist(1, maxInterestSize);
-						int interestNumber = dist(rd);
-						auto interestTRVec = rTrController.getTRsOfInterest(ipId, interestNumber);
-						if (0 < interestTRVec.size())
-						{
-							std::vector<int> interestList = getInterestList(rTestData[testDataId][ipId].m_recordSize, numberOfRuns, 3);
-							int currentPos = -1;
-							for (auto pTr : interestTRVec)
-							{
-								if (nullptr != pTr)
-								{
-									int triggerCount = pTr->getTriggerData().m_TriggerCount;
-									if (-1 == currentPos)
-									{
-										auto findIter = std::find(interestList.begin(), interestList.end(), triggerCount);
-										if (interestList.end() != findIter)
-										{
-											currentPos = static_cast<int>(std::distance(interestList.begin(), findIter));
-											int expectedNumber = std::min<int>(interestNumber, currentPos+1);
-											if (interestTRVec.size() != expectedNumber)
-											{
-												retValue = false;
-												CString logStr;
-												logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: Number of TRs %d, but expected %d (first triggerCount %d) for ip %d with run %d"), testDataId, interestTRVec.size(), expectedNumber, triggerCount, ipId, runId);
-												rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-												break;
-											}
-										
-										}
-										else
-										{
-											retValue = false;
-											CString logStr;
-											logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: First TR (%d) should not be an interest TR for ip %d with run %d"), testDataId, triggerCount, ipId, runId);
-											rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-											break;
-										}
-									}
-
-									if (interestList[currentPos] != triggerCount)
-									{
-										retValue = false;
-										CString logStr;
-										logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: TR %d, but TR %d expected for ip %d with run %d"), testDataId, triggerCount, interestList[currentPos], ipId, runId);
-										rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-										break;
-									}
-									currentPos--;
-								}
-								else
-								{
-									retValue = false;
-									CString logStr;
-									logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: One of the TR is empty for ip %d with run %d"), testDataId, ipId, runId);
-									rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-									break;
-								}
-							}
-						}
-						else
-						{
-							retValue = false;
-							CString logStr;
-							logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: Return list is empty for ip %d with run %d"), testDataId, ipId, runId);
-							rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-						}
-					}
-				}
-				g_newTrIpSet.clear();
-			}
-			//std::this_thread::sleep_for(std::chrono::duration<int, std::nano>(1));
-		}
-
-		rTrController.unregisterResetCallback(resetCallbackHandle);
-		rTrController.unregisterReadyCallback(readyCallbackHandle);
-		rTrController.unregisterNewTrCallback(newTrCallBackHandle);
-	}
-	else
-	{
-		rLogClass.Log(_T("Set Events for ReaderTest failed"), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-		retValue = false;
-	}
-		
-	intPromise.set_value(retValue);
-	rLogClass.LogText("Finished runReaderTest", LogLevel::Information_Level1, LogType::PASS);
-}
-
 constexpr int handleForReset = 1000;
 int calcMaxBuffer()
 {
@@ -1243,6 +764,20 @@ int calcMaxBuffer()
 		}
 	}
 	return 0;
+}
+
+void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
+{
+	bool retValue = writerTest(rLogClass, numberOfRuns, rTestData);
+	intPromise.set_value(retValue);
+	rLogClass.LogText("Finished runWriterTest", LogLevel::Information_Level1, LogType::PASS);
+}
+
+void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
+{
+	bool retValue = readerTest(rLogClass, numberOfRuns, rTestData);
+	intPromise.set_value(retValue);
+	rLogClass.LogText("Finished runReaderTest", LogLevel::Information_Level1, LogType::PASS);
 }
 
 SVMatroxBufferCreateStruct specifyBuffer(int sizeFactor)
@@ -1275,160 +810,4 @@ SVMatroxBufferCreateStruct specifyBufferRandom()
 	bufferStruct.m_eType = SV8BitUnsigned;
 
 	return bufferStruct;
-}
-
-SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId)
-{
-	SVMatroxBufferCreateStruct bufferStruct;
-	bufferStruct.m_lSizeX = static_cast<long>(MbufInquire(imageId, M_SIZE_X, M_NULL));
-	bufferStruct.m_lSizeY = static_cast<long>(MbufInquire(imageId, M_SIZE_Y, M_NULL));
-	bufferStruct.m_eAttribute = SVBufAttImageProcDib;
-	bufferStruct.m_eType = SV8BitUnsigned;
-	return bufferStruct;
-}
-
-std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames)
-{
-	std::vector<MIL_ID> retValue(fileNames.size());
-	for (int i=0; i<fileNames.size(); i++)
-	{
-		MbufRestore(fileNames[i], M_DEFAULT_HOST, &retValue[i]);
-		if (M_NULL == retValue[i])
-		{
-			retValue.clear();
-			CString errorStr;
-			errorStr.Format(_T("LoadImages failed by image %d with \"%s\""), i, fileNames[i].c_str());
-			throw errorStr;
-		}
-	}
-	return retValue;
-}
-
-void freeImages(std::vector<MIL_ID> images)
-{
-	for (MIL_ID id : images)
-	{
-		MbufFree(id);
-	}
-}
-
-bool areImageEqual(MIL_ID image1, MIL_ID image2)
-{
-	MIL_ID tmpImage = MbufClone(image1, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_DEFAULT, M_NULL);
-	MimArith(image1, image2, tmpImage, M_EQUAL);
-	MIL_ID contextID = MimAlloc(M_DEFAULT_HOST, M_STATISTICS_CONTEXT, M_DEFAULT, M_NULL);
-	MIL_ID resultID = MimAllocResult(M_DEFAULT_HOST, M_DEFAULT, M_STATISTICS_RESULT, M_NULL);
-	MimControl(contextID, M_STAT_MIN, M_ENABLE);
-	MimStatCalculate(contextID, tmpImage, resultID, M_DEFAULT);
-	MIL_INT minValue = 0;
-	MimGetResult(resultID, M_STAT_MIN + M_TYPE_MIL_INT, &minValue);
-	MimFree(resultID);
-	MimFree(contextID);
-	MbufFree(tmpImage);
-	return (255 == minValue);
-}
-
-bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount)
-{
-	bool retValue = true;
-	for (int imagePos = 0; imagePos < rIPData.m_imageFilesList.size(); imagePos++)
-	{
-		const auto imageId = rIPData.m_imageFilesList[imagePos][writerRunId%rIPData.m_imageFilesList[imagePos].size()];
-		auto imageHandle = tr2R->getImage(imagePos);
-		if (nullptr == imageHandle || imageHandle->isEmpty())
-		{
-			if (tr2R->isObjectUpToTime())
-			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:%d) return nullptr by run %d!"), testDataId, ipId, imagePos, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-				continue;
-			}
-			else
-			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:%d) Tr is not longer up to time by run %d!"), testDataId, ipId, imagePos, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::WARN, __LINE__, strTestWithMoreThreads);
-				return retValue;
-			}
-		}
-		else
-		{
-			if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
-			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): ImageCopy(%d:%d) failed. TriggerCount = %d. Images are not equal by run %d!"), testDataId, ipId, imagePos, triggerCount, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-				continue;
-			}
-		}
-	}
-	//check special image
-	{
-		const auto imageId = rIPData.m_imageFilesList[0][0];
-		auto imageHandle = tr2R->getImage(static_cast<int>(rIPData.m_imageFilesList.size()));
-		if (nullptr == imageHandle || imageHandle->isEmpty())
-		{
-			if (tr2R->isObjectUpToTime())
-			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:last) (TriggerCount = %d) return nullptr by run %d. Is TR upToTime: %d!"), testDataId, ipId, triggerCount, runId, tr2R->isObjectUpToTime());
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-			}
-			else
-			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:last) Tr is not longer up to time by run %d!"), testDataId, ipId, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::WARN, __LINE__, strTestWithMoreThreads);
-				return retValue;
-			}
-		}
-		else
-		{
-			if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
-			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): ImageCopy(%d:last) failed. TriggerCount = %d. Images are not equal by run %d!"), testDataId, ipId, triggerCount, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
-				retValue = false;
-			}
-		}
-	}
-	return retValue;
-}
-
-void getInterestPausePoints(int numberOfRecords, int numberOfRuns, int divValue, int& startPos, int& stopPos)
-{
-	startPos = numberOfRecords * divValue;
-	stopPos = std::min<int>(startPos + 20, numberOfRuns - 10);
-}
-std::vector<int> getInterestList(int numberOfRecords, int numberOfRuns, int divValue)
-{
-	std::vector<int> retVec;
-	int startPos, stopPos;
-	getInterestPausePoints(numberOfRecords, numberOfRuns, divValue, startPos, stopPos);
-	for (int i = 0; i < numberOfRuns; i++)
-	{
-		if (0 == i%divValue && (i < startPos || i >= stopPos))
-		{
-			retVec.push_back(i);
-		}
-	}
-	return retVec;
-}
-
-HANDLE createEvent(LPCTSTR eventName)
-{
-	PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR)LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
-	InitializeSecurityDescriptor(psd, SECURITY_DESCRIPTOR_REVISION);
-	SetSecurityDescriptorDacl(psd, TRUE, NULL, FALSE);
-	SECURITY_ATTRIBUTES sa = {0};
-	sa.nLength = sizeof(sa);
-	sa.lpSecurityDescriptor = psd;
-	sa.bInheritHandle = FALSE;
-
-	return ::CreateEvent(&sa, false, false, eventName);
 }

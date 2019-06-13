@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include "LocalConst.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #pragma endregion Includes

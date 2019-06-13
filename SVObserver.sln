@@ -555,6 +555,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebsocketTestClient", "Webs
 		{4B3ACAC6-849C-46FA-94CC-AEACD7F9AAE2} = {4B3ACAC6-849C-46FA-94CC-AEACD7F9AAE2}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TriggerRecordControllerReaderModulTest", "TriggerRecordControllerReaderModulTest\TriggerRecordControllerReaderModulTest.vcxproj", "{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DC235EC5-2F8C-4D99-B214-D66FBAFF156F} = {DC235EC5-2F8C-4D99-B214-D66FBAFF156F}
+		{3096C8E2-04EC-403B-9765-D934B412C124} = {3096C8E2-04EC-403B-9765-D934B412C124}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -983,12 +989,10 @@ Global
 		{3096C8E2-04EC-403B-9765-D934B412C124}.Release|x86.ActiveCfg = Release|x64
 		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Debug|x64.ActiveCfg = Debug|x64
 		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Debug|x64.Build.0 = Debug|x64
-		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Debug|x86.ActiveCfg = Debug|Win32
-		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Debug|x86.Build.0 = Debug|Win32
+		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Debug|x86.ActiveCfg = Debug|x64
 		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Release|x64.ActiveCfg = Release|x64
 		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Release|x64.Build.0 = Release|x64
-		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Release|x86.ActiveCfg = Release|Win32
-		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Release|x86.Build.0 = Release|Win32
+		{9A69DE2C-345A-4708-B3D8-58171EE85A26}.Release|x86.ActiveCfg = Release|x64
 		{DC235EC5-2F8C-4D99-B214-D66FBAFF156F}.Debug|x64.ActiveCfg = Debug|x64
 		{DC235EC5-2F8C-4D99-B214-D66FBAFF156F}.Debug|x64.Build.0 = Debug|x64
 		{DC235EC5-2F8C-4D99-B214-D66FBAFF156F}.Debug|x86.ActiveCfg = Debug|x64
@@ -1011,6 +1015,12 @@ Global
 		{C80F1E4E-9563-49C2-92F9-A8A8F2F5DB80}.Release|x64.Build.0 = Release|x64
 		{C80F1E4E-9563-49C2-92F9-A8A8F2F5DB80}.Release|x86.ActiveCfg = Release|Win32
 		{C80F1E4E-9563-49C2-92F9-A8A8F2F5DB80}.Release|x86.Build.0 = Release|Win32
+		{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}.Debug|x64.ActiveCfg = Debug|x64
+		{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}.Debug|x64.Build.0 = Debug|x64
+		{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}.Debug|x86.ActiveCfg = Debug|x64
+		{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}.Release|x64.ActiveCfg = Release|x64
+		{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}.Release|x64.Build.0 = Release|x64
+		{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

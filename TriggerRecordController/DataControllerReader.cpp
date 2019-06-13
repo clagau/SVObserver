@@ -191,8 +191,15 @@ DataControllerReader::~DataControllerReader()
 	m_stopThread = true;
 	SetEvent(m_stopThreads);
 	clearAll();
-	m_reloadFuture.wait();
-	m_newTrIdFuture.wait();
+
+	if (m_reloadFuture.valid())
+	{
+		m_reloadFuture.wait();
+	}
+	if (m_newTrIdFuture.valid())
+	{
+		m_newTrIdFuture.wait();
+	}
 }
 #pragma endregion Constructor
 

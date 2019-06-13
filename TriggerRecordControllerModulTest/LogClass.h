@@ -4,6 +4,7 @@
 /// All Rights Reserved
 //*****************************************************************************
 /// Class to log result of the tests.
+/// This class will be added also to TriggerRecordControllerReaderModuleTest-project.
 //******************************************************************************
 
 #pragma once

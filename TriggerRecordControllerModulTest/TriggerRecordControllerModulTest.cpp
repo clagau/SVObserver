@@ -5,6 +5,7 @@
 #include "LogClass.h"
 
 #include "TrcTester.h"
+#include "TrcTesterConfiguration.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "TriggerRecordController\ITriggerRecordControllerR.h"
 

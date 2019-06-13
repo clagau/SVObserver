@@ -32,19 +32,16 @@
 #include <atlbase.h>
 #include <atlstr.h>
 
-#include <algorithm>
+
 #include <array>
 #include <chrono>
 #include <comdef.h>
 #include <ctime>
 #include <deque>
-#include <filesystem>
-#include <fstream>
 #include <future>
 #include <map>
 #include <mutex>
 #include <random>
-#include <regex>
 #include <set>
 #include <tchar.h>
 #include <thread>

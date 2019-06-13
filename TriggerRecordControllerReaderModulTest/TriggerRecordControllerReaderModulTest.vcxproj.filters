@@ -15,42 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="LogClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TrcTester.h">
+    <ClInclude Include="..\TriggerRecordControllerModulTest\LogClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TrcTesterConfiguration.h">
+    <ClInclude Include="..\TriggerRecordControllerModulTest\TrcTesterConfiguration.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TesterFunction.h">
+    <ClInclude Include="..\TriggerRecordControllerModulTest\TesterFunction.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LogClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TrcTester.cpp">
+    <ClCompile Include="TriggerRecordControllerReaderModulTest.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerRecordControllerModulTest.cpp">
+    <ClCompile Include="..\TriggerRecordControllerModulTest\LogClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TrcTesterConfiguration.cpp">
+    <ClCompile Include="..\TriggerRecordControllerModulTest\TrcTesterConfiguration.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TesterFunction.cpp">
+    <ClCompile Include="..\TriggerRecordControllerModulTest\TesterFunction.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
