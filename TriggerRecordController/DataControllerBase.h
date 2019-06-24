@@ -19,6 +19,7 @@ namespace SvTrc
 struct TriggerRecordData;
 class ITriggerRecordR;
 class ITriggerRecordRW;
+struct TrEventData;
 typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
 }
@@ -76,7 +77,7 @@ public:
 	{
 		volatile bool m_bInit = false;
 		volatile int m_TriggerRecordNumber = 50;  //maximal number of trigger record to use
-		volatile int m_TRofInterestNumber = 0;
+		volatile int m_TrOfInterestNumber = 0;
 		volatile long m_numberOfFreeTR = 0; // the number of free (unlocked) triggerRecords.
 		volatile int m_lastFinishedTRID {-1};
 		volatile int m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
@@ -94,8 +95,8 @@ public:
 	virtual void increaseFreeTrNumber() {};
 	virtual void decreaseFreeTrNumber() {};
 	virtual bool isEnoughFreeForLock() const { return true; };
-	virtual void setTRofInterestNumber(int number) { assert(false); throw E_NOTIMPL; };
-	virtual void setTRofInterest(int inspectionPos, int pos) = 0;
+	virtual void setTrOfInterestNumber(int number) { assert(false); throw E_NOTIMPL; };
+	virtual void setTrOfInterest(int inspectionPos, int pos) = 0;
 
 protected:
 	int getNumberOfTRKeepFreeForWrite() const;
@@ -124,8 +125,8 @@ public:
 	virtual volatile long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
 
-	void setLastFinishedTR(int inspectionPos, int id);
-	int getLastTRId(int inspectionPos) const;
+	void setLastFinishedTr(TrEventData data);
+	int getLastTrId(int inspectionPos) const;
 
 	const SvPb::ImageList& getImageDefList(int inspectionPos) const;
 	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) { assert(false); throw E_NOTIMPL; };
@@ -162,7 +163,8 @@ public:
 
 	void setResetCallback(std::function<void()>&& reloadCallback) { m_reloadCallback = reloadCallback; };
 	void setReadyCallback(std::function<void()>&& readyCallback) { m_readyCallback = readyCallback; };
-	void setNewTrIdCallback(std::function<void(int, int)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
+	void setNewTrIdCallback(std::function<void(TrEventData)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
+	void setNewInterestTrIdsCallback(std::function<void(std::vector<TrEventData>)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
@@ -187,7 +189,7 @@ public:
 
 	/// Set the TRs to the Interest list.
 	/// \param trVec [in] The vector of pair<inspectionPos, pos> 
-	bool setTRofInterest(std::vector<std::pair<int,int>> trVec);
+	bool setTrOfInterest(std::vector<std::pair<int,int>> trVec);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -203,10 +205,12 @@ protected:
 	int m_maxNumberOfRequiredBuffer = 9000;
 	std::function<void()> m_reloadCallback;
 	std::function<void()> m_readyCallback;
-	std::function<void(int, int)> m_newTrIdCallback;
+	std::function<void(TrEventData)> m_newTrIdCallback;
+	std::function<void(std::vector<TrEventData>)> m_newInterestTrIdsCallback;
 	HANDLE m_hResetEvent {nullptr};
 	HANDLE m_hReadyEvent {nullptr};
 	HANDLE m_hTridEvent {nullptr};
+	HANDLE m_hInterestTridEvent {nullptr};
 #pragma endregion Member variables
 };
 } //namespace SvTrc

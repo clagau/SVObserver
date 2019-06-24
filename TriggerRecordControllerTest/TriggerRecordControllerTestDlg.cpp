@@ -160,7 +160,7 @@ namespace SvTrcT
 		{
 			m_resetCallbackId = m_recordController.registerResetCallback(std::bind(&CTriggerRecordControllerTestDlg::OnResetUpdate, this));
 			m_readyCallbackId = m_recordController.registerReadyCallback(std::bind(&CTriggerRecordControllerTestDlg::OnReadyUpdate, this));
-			m_newTrIdCallbackId = m_recordController.registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1, std::placeholders::_2));
+			m_newTrIdCallbackId = m_recordController.registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1));
 			m_isTRCValid = m_recordController.isValid();
 		}
 		resetController();
@@ -248,7 +248,7 @@ namespace SvTrcT
 		else
 		{
 			auto comboPos = m_ValueCombo.GetCurSel();
-			int id = m_recordController.getLastTRId(0);
+			int id = m_recordController.getLastTrId(0);
 			auto triggerRecord = m_recordController.createTriggerRecordObject(0, id);
 			if (nullptr != triggerRecord)
 			{
@@ -332,7 +332,7 @@ namespace SvTrcT
 		SvTrc::IImagePtr pMainImage = LoadMainImage(dlg.GetPathName());
 		if (nullptr != pMainImage)
 		{
-			int lastTRid = m_recordController.getLastTRId(m_inspectionPos);
+			int lastTRid = m_recordController.getLastTrId(m_inspectionPos);
 			auto& lastTriggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, lastTRid);
 			auto& triggerRecord = SvTrc::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPos);
 			if (m_isCopyTR && nullptr != lastTriggerRecord)
@@ -367,7 +367,7 @@ namespace SvTrcT
 			MessageBox("Trigger: LoadMainImage failed!");
 		}
 
-		m_lastID.Format("%d", m_recordController.getLastTRId(m_inspectionPos));
+		m_lastID.Format("%d", m_recordController.getLastTrId(m_inspectionPos));
 		UpdateData(false);
 	}
 
@@ -377,7 +377,7 @@ namespace SvTrcT
 		int id = m_trIDToDisplay;
 		if (-1 == id)
 		{
-			id = m_recordController.getLastTRId(m_inspectionPos);
+			id = m_recordController.getLastTrId(m_inspectionPos);
 			if (m_isReader)
 			{
 				m_lastID.Format("%d", id);
@@ -464,11 +464,11 @@ namespace SvTrcT
 		PostMessage(ID_GET_CALLBACK, reset, (LPARAM)0);
 	}
 
-	void CTriggerRecordControllerTestDlg::OnNewTrId(int ipPos, int newTrId)
+	void CTriggerRecordControllerTestDlg::OnNewTrId(SvTrc::TrEventData data)
 	{
-		if (0 == ipPos)
+		if (0 == data.m_inspectionPos)
 		{
-			PostMessage(ID_GET_CALLBACK, newTrcId, (LPARAM)newTrId);
+			PostMessage(ID_GET_CALLBACK, newTrcId, (LPARAM)data.m_trId);
 		}
 	}
 
@@ -548,7 +548,7 @@ namespace SvTrcT
 			}
 			rRecordControllerRW.finishResetTriggerRecordStructure();
 		}
-		m_lastID.Format("%d", m_recordController.getLastTRId(m_inspectionPos));
+		m_lastID.Format("%d", m_recordController.getLastTrId(m_inspectionPos));
 	}
 
 	void CTriggerRecordControllerTestDlg::updateToolList()

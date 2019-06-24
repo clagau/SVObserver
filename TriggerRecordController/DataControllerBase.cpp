@@ -16,6 +16,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRegistry.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
 namespace SvTrc
@@ -91,6 +92,17 @@ DataControllerBase::DataControllerBase()
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
 	}
+
+	m_hInterestTridEvent = ::CreateEvent(&sa, false, false, GNameInterestTridEvent);
+	if (nullptr == m_hInterestTridEvent)
+	{
+		DWORD errorCode = GetLastError();
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
+		assert(false);
+	}
 }
 
 DataControllerBase::~DataControllerBase()
@@ -112,17 +124,17 @@ TriggerRecordData& DataControllerBase::getTRData(int inspectionPos, int pos) con
 	return pData->getTRData(pos);
 }
 
-void DataControllerBase::setLastFinishedTR(int inspectionPos, int id)
+void DataControllerBase::setLastFinishedTr(TrEventData data)
 {
-	auto* pData = getTRControllerData(inspectionPos);
+	auto* pData = getTRControllerData(data.m_inspectionPos);
 	if (nullptr != pData)
 	{
-		pData->setLastFinishedTRID(id);
+		pData->setLastFinishedTRID(data.m_trId);
 		SetEvent(m_hTridEvent);
 	}
 }
 
-int DataControllerBase::getLastTRId(int inspectionPos) const
+int DataControllerBase::getLastTrId(int inspectionPos) const
 {
 	int id = -1;
 	auto* pData = getTRControllerData(inspectionPos);
@@ -199,20 +211,25 @@ void DataControllerBase::increaseNumberOfFreeTr(int inspectionPos)
 	}
 }
 
-bool DataControllerBase::setTRofInterest(std::vector<std::pair<int, int>> trVec)
+bool DataControllerBase::setTrOfInterest(std::vector<std::pair<int, int>> trVec)
 {
+	bool isSet = false;
 	if (!getPauseTrsOfInterest())
 	{
 		for (auto pairVal : trVec)
 		{
 			auto* pTrDataIp = getTRControllerData(pairVal.first);
-			if (nullptr != pTrDataIp)
+			if (nullptr != pTrDataIp && 0 < pTrDataIp->getBasicData().m_TrOfInterestNumber)
 			{
-				pTrDataIp->setTRofInterest(pairVal.first, pairVal.second);
+				pTrDataIp->setTrOfInterest(pairVal.first, pairVal.second);
+				isSet = true;
 			}
 		}
-		return true;
 	}
-	return false;
+	if (isSet)
+	{
+		SetEvent(m_hInterestTridEvent);
+	}
+	return isSet;
 }
 }

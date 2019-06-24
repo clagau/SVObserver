@@ -27,6 +27,18 @@ namespace SvTrc
 {
 	typedef void(CALLBACK *StartResetCallbackPtr)(void* pOwner);
 
+	struct TrEventData
+	{
+		TrEventData(int ipPos, int trId)
+			: m_inspectionPos(ipPos)
+			, m_trId(trId)
+		{
+		}
+
+		int m_inspectionPos = -1;
+		int m_trId = -1;
+	};
+
 	class ITriggerRecordControllerR
 	{
 	public:
@@ -40,10 +52,10 @@ namespace SvTrc
 		/// \returns bool
 		virtual bool isValid() const = 0;
 
-		/// Get the last TRId. if no trigger record used yet it return -1;
+		/// Get the last TrId. if no trigger record used yet it return -1;
 		/// \param inspectionPos [in] ID of the inspection.
 		/// \returns int
-		virtual int getLastTRId(int inspectionPos) const= 0;
+		virtual int getLastTrId(int inspectionPos) const= 0;
 
 		/// Return a list of the image definitions.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
@@ -90,26 +102,38 @@ namespace SvTrc
 		/// Register a Callback function to call if a new trigger record is finished.
 		/// \param pCallback [in] Pointer of the callback-function. First parameter is inspection and second is trId.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback.
-		virtual int registerNewTrCallback(std::function<void(int, int)> pCallback) = 0;
+		virtual int registerNewTrCallback(std::function<void(TrEventData)> pCallback) = 0;
 
 		/// Unregister a Callback function to call if a new trigger record is finished.
 		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)
 		virtual void unregisterNewTrCallback(int handleId) = 0;
 
-		/// Set a list of trigger record to the list of interest. This means those TRs will be keep for longer. (But this method do nothing if TRofInterest mode is on pause.)
-		/// \param trVector [in] Vector of the TRs.
+		/// Register a Callback function to call if a trigger record is set to interest.
+		/// \param pCallback [in] Pointer of the callback-function. A vector of pairs: First parameter is inspection and second is trId.
+		/// \returns int handleId of the Callback. It is needed to unregister the callback.
+		virtual int registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback) = 0;
+
+		/// Unregister a Callback function to call if a trigger record is set to interest.
+		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)
+		virtual void unregisterNewInterestTrCallback(int handleId) = 0;
+
+		/// Set a list of trigger record to the list of interest. This means those Trs will be keep for longer. (But this method do nothing if TrOfInterest mode is on pause.)
+		/// \param trVector [in] Vector of the Trs.
 		/// \returns bool True, if set done. If pause it returns false.
-		virtual bool setTRofInterest(std::vector<ITriggerRecordRPtr> trVector) = 0;
+		virtual bool setTrsOfInterest(std::vector<ITriggerRecordRPtr> trVector) = 0;
 
-		/// Return a list of interestTR for one IP. The size of the list are between 0 and n.
+		/// Return a list of interestTr for one IP. The size of the list are between 0 and n.
 		/// \param inspectionPos [in]
-		/// \param n [in] Number of TR requested.
+		/// \param n [in] Number of Tr requested.
 		/// \returns std::vector<ITriggerRecordRPtr>
-		virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) = 0;
+		virtual std::vector<ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) = 0;
 
-		/// Pause the setting of the interest TR.
-		/// \param pauseFlag [in] If true, the setting of interest TR is paused.
+		/// Pause the setting of the interest Tr.
+		/// \param pauseFlag [in] If true, the setting of interest Tr is paused.
 		virtual void pauseTrsOfInterest(bool pauseFlag) = 0;
+
+		/// Return if the pause of the interest Tr is set.
+		virtual bool isPauseTrsOfInterest() const = 0;
 	};
 
 	enum class TRC_DataType
@@ -122,7 +146,7 @@ namespace SvTrc
 
 	void destroyTriggerRecordController();
 
-	/// Get an instance of the TR controller in read modus.
+	/// Get an instance of the Tr controller in read modus.
 	/// \returns ITriggerRecordControllerR&
 	ITriggerRecordControllerR& getTriggerRecordControllerRInstance();
 

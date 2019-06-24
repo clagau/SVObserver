@@ -38,11 +38,12 @@ public:
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	virtual void setLastFinishedTRID(int id) override { assert(false); throw E_NOTIMPL; };
 	int getTrId2Send();
+	int getInterestTrId2Send();
 	virtual void resetFreeTrNumber() override {	throw E_NOTIMPL; };
 	virtual void increaseFreeTrNumber() override;
 	virtual void decreaseFreeTrNumber() override;
 	virtual bool isEnoughFreeForLock() const override;
-	virtual void setTRofInterest(int inspectionPos, int pos) override;
+	virtual void setTrOfInterest(int inspectionPos, int pos) override;
 	std::vector<int> getTRofInterestPos(int n);
 
 private:
@@ -56,6 +57,7 @@ private:
 	SvPb::DataDefinitionList m_DataDefList;
 	void* m_pDataDefListInSM = nullptr;
 	int m_lastSendTrId = -1;
+	int m_lastSendInterestTrId = -1;
 
 	void* m_pTriggerRecords = nullptr;
 	std::string m_smName = {};
@@ -110,6 +112,8 @@ private:
 
 	void newTrIdThread();
 
+	void newInterestTrIdThread();
+
 	void addBuffer(const SvPb::ImageStructData &imageStruct);
 
 #pragma endregion Private Methods
@@ -138,6 +142,7 @@ private:
 	bool m_stopThread = false;
 	std::future<void> m_reloadFuture;
 	std::future<void> m_newTrIdFuture;
+	std::future<void> m_newInterestTrIdsFuture;
 	HANDLE m_stopThreads {nullptr};
 #pragma endregion Member variables
 };

@@ -15,4 +15,5 @@ namespace SvTrc
 const LPCTSTR GNameResetEvent = _T("Global\\SvTrc_ResetEvent");
 const LPCTSTR GNameReadyEvent = _T("Global\\SvTrc_ReadyEvent");
 const LPCTSTR GNameTridEvent = _T("Global\\SvTrc_TridEvent");
+const LPCTSTR GNameInterestTridEvent = _T("Global\\SvTrc_InterestTridEvent");
 }

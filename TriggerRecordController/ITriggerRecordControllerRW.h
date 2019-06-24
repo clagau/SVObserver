@@ -44,12 +44,12 @@ namespace SvTrc
 		/// \returns bool True if successfully. If false, no set and reset is done.
 		virtual bool setInspections(const SvPb::InspectionList& rInspectionList) = 0;
 
-		/// Resize the number of records for this inspection. ATTENTION: All old TR-instances of all IPs have to be deleted before.
+		/// Resize the number of records for this inspection. ATTENTION: All old Tr-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
-		/// \param newSizeTR [in] The new number of records.
-		/// \param newSizeTRofIntereset [in] The new number of records of interest.
-		virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTR, long newSizeTRofIntereset = 0) = 0;
+		/// \param newSizeTr [in] The new number of records.
+		/// \param newSizeTrofIntereset [in] The new number of records of interest.
+		virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTr, long newSizeTrOfIntereset = 0) = 0;
 
 		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
@@ -91,7 +91,7 @@ namespace SvTrc
 		virtual void finishGlobalInit() = 0;
 
 		/// Change the bufferStruct of the buffer, if for this image no entry available it will be added. It must not be in the reset state (called startResetTriggerRecordStructure before.)
-		/// ATTENTION: All old TR-instances of all IPs have to be deleted before.
+		/// ATTENTION: All old Tr-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param rImageId [in] Guid of the image.
 		/// \param rBufferStruct [in] structure of the buffer of this image.
@@ -107,7 +107,7 @@ namespace SvTrc
 		virtual int addOrChangeChildImage(const GUID& rImageId, const GUID& rParentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) = 0;
 
 		/// Add additional image buffer independent of inspections.  
-		/// ATTENTION: All old TR-instances of all IPs have to be deleted before.
+		/// ATTENTION: All old Tr-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param ownerID [in] Guid of the owner of this buffers.
 		/// \param bufferStruct [in] structure of the buffer.

@@ -305,7 +305,7 @@ bool TrcTester::createTR2WriteAndRead()
 					}
 				}
 			}
-			int id = m_TRController.getLastTRId(j);
+			int id = m_TRController.getLastTrId(j);
 			auto tr2R = m_TRController.createTriggerRecordObject(j, id);
 			bool shouldFail = readTRVector[j].size() >= numbersOfRecords[j].first + m_config.getNumberOfRecordsAddOne() - m_config.getNumberOfKeepFreeRecords();
 			if (nullptr == tr2R)
@@ -426,7 +426,7 @@ bool TrcTester::setAndReadImage()
 				return false;
 			}
 		}
-		int id = m_TRController.getLastTRId(0);
+		int id = m_TRController.getLastTrId(0);
 		auto tr2R = m_TRController.createTriggerRecordObject(0, id);
 		if (nullptr == tr2R)
 		{
@@ -534,7 +534,7 @@ bool TrcTester::setAndReadValues()
 				return false;
 			}
 		}
-		int id = m_TRController.getLastTRId(0);
+		int id = m_TRController.getLastTrId(0);
 		auto tr2R = m_TRController.createTriggerRecordObject(0, id);
 		if (nullptr == tr2R)
 		{

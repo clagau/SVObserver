@@ -48,7 +48,7 @@ public:
 	virtual void setTriggerData(const TriggerData& data) override;
 
 	virtual void initImages() override;
-	virtual void setImages(const ITriggerRecordR& rDestTR) override;
+	virtual void setImages(const ITriggerRecordR& rDestTr) override;
 
 	virtual void setImage(const GUID& rImageId, const IImagePtr& pImage) override;
 	virtual void setImage(int pos, const IImagePtr& pImage) override;
@@ -69,7 +69,7 @@ public:
 #pragma region Private Methods
 private:
 
-	const TriggerRecordData& getTRData() const { return m_rData; };
+	const TriggerRecordData& getTrData() const { return m_rData; };
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -85,7 +85,7 @@ private:
 #pragma endregion Member variables
 };
 
-void removeTRReferenceCount(int ipPos, long& rReferenceCount);
+void removeTrReferenceCount(int ipPos, long& rReferenceCount);
 
 template<typename Container>
 int findGuidPos(const Container& rContainer, const std::string& rGuidIdBytes)

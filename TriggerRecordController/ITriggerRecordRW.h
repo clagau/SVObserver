@@ -27,9 +27,9 @@ namespace SvTrc
 		virtual void initImages() = 0;
 
 		/// Set all images from the other trigger record to this record. 
-		/// If in the Destination TR for an image no buffer assigned, the image in source image will be stay or a new buffer assigned
-		/// \param rDestTR [in] Destination trigger record.
-		virtual void setImages(const ITriggerRecordR& rDestTR) = 0;
+		/// If in the Destination Tr for an image no buffer assigned, the image in source image will be stay or a new buffer assigned
+		/// \param rDestTr [in] Destination trigger record.
+		virtual void setImages(const ITriggerRecordR& rDestTr) = 0;
 
 		/// Set a buffer to a image.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.

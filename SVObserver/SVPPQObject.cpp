@@ -2628,7 +2628,7 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 
 			try
 			{
-				isReject = SvTrc::getTriggerRecordControllerRInstance().setTRofInterest(trVec);
+				isReject = SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec);
 				long slotindex = pProduct->m_monitorListSMSlot;
 				if (pProduct->ProcessCount() > 0 && slotindex >= 0)
 				{

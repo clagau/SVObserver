@@ -61,7 +61,8 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 	SVMatroxResourceMonitor::GetAutoLock(autoLock);
 	m_pDataController->setResetCallback(std::bind(&TriggerRecordController::sendResetCall, this));
 	m_pDataController->setReadyCallback(std::bind(&TriggerRecordController::sendReadyCall, this));
-	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1, std::placeholders::_2));	
+	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1));	
+	m_pDataController->setNewInterestTrIdsCallback(std::bind(&TriggerRecordController::sendInterestTrIdCall, this, std::placeholders::_1));
 }
 
 TriggerRecordController::~TriggerRecordController()
@@ -72,10 +73,10 @@ TriggerRecordController::~TriggerRecordController()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void TriggerRecordController::setLastFinishedTR(int inspectionPos, int id) 
+void TriggerRecordController::setLastFinishedTr(TrEventData data) 
 { 
-	m_pDataController->setLastFinishedTR(inspectionPos, id); 
-	sendTrIdCall(inspectionPos, id);
+	m_pDataController->setLastFinishedTr(data); 
+	sendTrIdCall(data);
 }
 
 
@@ -171,7 +172,7 @@ void TriggerRecordController::unregisterReadyCallback(int handleId)
 	}
 }
 
-int TriggerRecordController::registerNewTrCallback(std::function<void(int, int)> pCallback)
+int TriggerRecordController::registerNewTrCallback(std::function<void(TrEventData)> pCallback)
 {
 	assert(pCallback);
 	if (nullptr != pCallback)
@@ -179,7 +180,7 @@ int TriggerRecordController::registerNewTrCallback(std::function<void(int, int)>
 		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
-		 m_newTRCallbacks.push_back(std::pair<int, std::function<void(int,int)>>(handle, pCallback));
+		 m_newTrCallbacks.push_back(std::pair<int, std::function<void(TrEventData)>>(handle, pCallback));
 		return handle;
 	}
 	return -1;
@@ -188,34 +189,64 @@ int TriggerRecordController::registerNewTrCallback(std::function<void(int, int)>
 void TriggerRecordController::unregisterNewTrCallback(int handleId)
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
-	auto Iter = find_if(m_newTRCallbacks.begin(), m_newTRCallbacks.end(), [handleId](const auto& rEntry)->bool { return rEntry.first == handleId; });
-	if (m_newTRCallbacks.end() != Iter)
+	auto Iter = find_if(m_newTrCallbacks.begin(), m_newTrCallbacks.end(), [handleId](const auto& rEntry)->bool { return rEntry.first == handleId; });
+	if (m_newTrCallbacks.end() != Iter)
 	{
-		m_newTRCallbacks.erase(Iter);
+		m_newTrCallbacks.erase(Iter);
 	}
 }
 
-bool TriggerRecordController::setTRofInterest(std::vector<ITriggerRecordRPtr> trVector)
+int TriggerRecordController::registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback)
+{
+	assert(pCallback);
+	if (nullptr != pCallback)
+	{
+		static int handleCounter = 0;
+		std::lock_guard<std::mutex> guard(m_callbackMutex);
+		int handle = handleCounter++;
+		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(std::vector<TrEventData>)>>(handle, pCallback));
+		return handle;
+	}
+	return -1;
+}
+
+void TriggerRecordController::unregisterNewInterestTrCallback(int handleId)
+{
+	std::lock_guard<std::mutex> guard(m_callbackMutex);
+	auto Iter = find_if(m_newInterestTrCallbacks.begin(), m_newInterestTrCallbacks.end(), [handleId](const auto& rEntry)->bool { return rEntry.first == handleId; });
+	if (m_newInterestTrCallbacks.end() != Iter)
+	{
+		m_newInterestTrCallbacks.erase(Iter);
+	}
+}
+
+bool TriggerRecordController::setTrsOfInterest(std::vector<ITriggerRecordRPtr> trVector)
 {
 	bool retValue = false;
 	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
 	if (nullptr != pLock)
 	{
 		std::vector<std::pair<int, int>> trValueVec;
+		std::vector<TrEventData> trEventVec;
 		for (auto tr : trVector)
 		{
 			auto* pTr = dynamic_cast<TriggerRecord*>(tr.get());
 			if (nullptr != pTr && pTr->isObjectUpToTime())
 			{
 				trValueVec.emplace_back(pTr->getInspectionPos(), pTr->getTrPos());
+				trEventVec.emplace_back(pTr->getInspectionPos(), pTr->getId());
 			}
 		}
-		retValue = m_pDataController->setTRofInterest(trValueVec);
+		retValue = m_pDataController->setTrOfInterest(trValueVec);
+		if (retValue)
+		{
+			sendInterestTrIdCall(trEventVec);
+		}
 	}
 	return retValue;
 }
 
-std::vector<ITriggerRecordRPtr> TriggerRecordController::getTRsOfInterest(int inspectionPos, int n)
+std::vector<ITriggerRecordRPtr> TriggerRecordController::getTrsOfInterest(int inspectionPos, int n)
 {
 	return m_pDataController->getTRsOfInterest(inspectionPos, n);
 }
@@ -238,7 +269,8 @@ void TriggerRecordController::clearAll()
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		m_resetCallbacks.clear();
 		m_readyCallbacks.clear();
-		m_newTRCallbacks.clear();
+		m_newTrCallbacks.clear();
+		m_newInterestTrCallbacks.clear();
 	}
 	m_isResetLocked = false;
 
@@ -257,7 +289,7 @@ bool TriggerRecordController::setInspections(const SvPb::InspectionList& rInspec
 	return result;
 }
 
-void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long newSizeTR, long newSizeTRofIntereset)
+void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long newSizeTr, long newSizeTrOfIntereset)
 {
 	if (m_isResetLocked)
 	{
@@ -278,22 +310,22 @@ void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long ne
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
-	if (0 >= newSizeTR || cMaxTriggerRecords < newSizeTR)
+	if (0 >= newSizeTr || cMaxTriggerRecords < newSizeTr)
 	{
 		assert(false);
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), newSizeTR));
+		msgList.push_back(SvUl::Format(_T("%d"), newSizeTr));
 		msgList.push_back(SvUl::Format(_T("%d"), cMaxTriggerRecords));
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
 
-	if (0 > newSizeTRofIntereset || cMaxTriggerRecordsOfInterest < newSizeTRofIntereset)
+	if (0 > newSizeTrOfIntereset || cMaxTriggerRecordsOfInterest < newSizeTrOfIntereset)
 	{
 		assert(false);
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), newSizeTRofIntereset));
+		msgList.push_back(SvUl::Format(_T("%d"), newSizeTrOfIntereset));
 		msgList.push_back(SvUl::Format(_T("%d"), cMaxTriggerRecordsOfInterest));
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordOfInterestSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -312,15 +344,15 @@ void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long ne
 		Exception.Throw();
 	}	
 
-	if (pIpData->numberofrecords() == newSizeTR && pIpData->numberrecordsofinterest() == newSizeTRofIntereset)
+	if (pIpData->numberofrecords() == newSizeTr && pIpData->numberrecordsofinterest() == newSizeTrOfIntereset)
 	{
 		return;
 	}
 
 	m_pDataController->prepareReset();
 
-	pIpData->set_numberofrecords(newSizeTR);
-	pIpData->set_numberrecordsofinterest(newSizeTRofIntereset);
+	pIpData->set_numberofrecords(newSizeTr);
+	pIpData->set_numberrecordsofinterest(newSizeTrOfIntereset);
 
 	if (m_pDataController->isIPInit(inspectionPos))
 	{
@@ -330,7 +362,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long ne
 
 		m_pDataController->setInspectionList(inspectionList);
 
-		m_TriggerRecordNumberResetTmp = needNumberOfTR(*pIpData);
+		m_TriggerRecordNumberResetTmp = needNumberOfTr(*pIpData);
 		m_imageListResetTmp = imageListTmp;
 		auto* pImageStructList = m_imageStructListResetTmp.mutable_list();
 		for (auto imageDef : m_imageListResetTmp.list())
@@ -494,7 +526,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 		m_resetStarted4IP = inspectionPos;
 
 		//clear imageList and reset ImageStructList
-		int TRNumber = 0;
+		int TrNumber = 0;
 		try
 		{
 			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP);
@@ -504,7 +536,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 			//nothing to do, because if 
 			m_imageListResetTmp.Clear();
 		}
-		TRNumber = m_pDataController->getTriggerRecordNumber(m_resetStarted4IP);
+		TrNumber = m_pDataController->getTriggerRecordNumber(m_resetStarted4IP);
 		m_imageStructListResetTmp.Clear();
 		m_imageStructListResetTmp = m_pDataController->getImageStructList();
 		//remove number of buffers from required list from old reserved images of this inspection.
@@ -516,14 +548,14 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 				auto* pImageStruct = m_imageStructListResetTmp.mutable_list(id);
 				if (nullptr != pImageStruct)
 				{
-					pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - TRNumber);
+					pImageStruct->set_numberofbuffersrequired(pImageStruct->numberofbuffersrequired() - TrNumber);
 				}
 			}
 		}
 
 		m_imageListResetTmp.Clear();
 
-		m_TriggerRecordNumberResetTmp = needNumberOfTR(ipData);
+		m_TriggerRecordNumberResetTmp = needNumberOfTr(ipData);
 	}
 	else
 	{
@@ -634,7 +666,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 
 		//prefer reset
 		m_resetStarted4IP = inspectionPos;
-		m_TriggerRecordNumberResetTmp = needNumberOfTR(ipData);
+		m_TriggerRecordNumberResetTmp = needNumberOfTr(ipData);
 		try
 		{
 			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP);
@@ -968,7 +1000,7 @@ bool TriggerRecordController::lockReset()
 	return m_isResetLocked;
 }
 
-int TriggerRecordController::needNumberOfTR(SvPb::Inspection ipData)
+int TriggerRecordController::needNumberOfTr(SvPb::Inspection ipData)
 {
 	return ipData.numberofrecords() + ipData.numberrecordsofinterest() + c_additionalTriggerRecordNumber;
 }
@@ -1008,7 +1040,7 @@ void TriggerRecordController::recalcRequiredBuffer()
 			if (m_resetStarted4IP != i)
 			{
 				rImageDef = m_pDataController->getImageDefList(i);
-				bufferCount = needNumberOfTR(m_pDataController->getInspections().list(i));
+				bufferCount = needNumberOfTr(m_pDataController->getInspections().list(i));
 			}
 			
 			for (auto imageData : rImageDef.list())
@@ -1127,14 +1159,26 @@ void TriggerRecordController::sendReadyCall()
 	}
 }
 
-void TriggerRecordController::sendTrIdCall(int inspectionPos, int trId)
+void TriggerRecordController::sendTrIdCall(TrEventData data)
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
-	for (auto& newTrIdCallback : m_newTRCallbacks)
+	for (auto& newTrIdCallback : m_newTrCallbacks)
 	{
 		if (nullptr != newTrIdCallback.second)
 		{
-			newTrIdCallback.second(inspectionPos, trId);
+			newTrIdCallback.second(data);
+		}
+	}
+}
+
+void TriggerRecordController::sendInterestTrIdCall(std::vector<TrEventData> data)
+{
+	std::lock_guard<std::mutex> guard(m_callbackMutex);
+	for (auto& newTrIdCallback : m_newInterestTrCallbacks)
+	{
+		if (nullptr != newTrIdCallback.second)
+		{
+			newTrIdCallback.second(data);
 		}
 	}
 }

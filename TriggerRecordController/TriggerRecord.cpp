@@ -39,11 +39,11 @@ TriggerRecord::~TriggerRecord()
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		bool finishedTR = (TriggerRecordData::cWriteBlocked == m_rData.m_referenceCount);
-		removeTRReferenceCount(m_inspectionPos, m_rData.m_referenceCount);
-		if (finishedTR && !m_blockUpdateLastId)
+		bool finishedTr = (TriggerRecordData::cWriteBlocked == m_rData.m_referenceCount);
+		removeTrReferenceCount(m_inspectionPos, m_rData.m_referenceCount);
+		if (finishedTr && !m_blockUpdateLastId)
 		{
-			getTriggerRecordControllerInstance().setLastFinishedTR(m_inspectionPos, m_rData.m_trId);
+			getTriggerRecordControllerInstance().setLastFinishedTr(TrEventData(m_inspectionPos, m_rData.m_trId));
 		}
 	}
 }
@@ -299,15 +299,15 @@ void TriggerRecord::initImages()
 	}
 }
 
-void TriggerRecord::setImages(const ITriggerRecordR& rDestTR)
+void TriggerRecord::setImages(const ITriggerRecordR& rDestTr)
 {
 	auto& rImageController = getImageBufferControllerInstance();
 	auto pLock = ResetLocker::lockReset(m_ResetId);
-	if (nullptr != pLock && rDestTR.isObjectUpToTime())
+	if (nullptr != pLock && rDestTr.isObjectUpToTime())
 	{
 		const auto& rImageList = m_rImageList.list();
 		int*const pImagePos = m_rData.getImagePos();
-		const int*const pImagePosOld = dynamic_cast<const TriggerRecord&>(rDestTR).getTRData().getImagePos();
+		const int*const pImagePosOld = dynamic_cast<const TriggerRecord&>(rDestTr).getTrData().getImagePos();
 		for (int i = 0; i < rImageList.size(); i++)
 		{
 			if (-1 != pImagePosOld[i])
@@ -504,7 +504,7 @@ void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
 	}
 }
 
-void removeTRReferenceCount(int ipPos, long& rReferenceCount)
+void removeTrReferenceCount(int ipPos, long& rReferenceCount)
 {
 	long value = InterlockedDecrement(&rReferenceCount);
 	if (0 >= value)

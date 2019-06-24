@@ -174,25 +174,25 @@ bool TRControllerWriterDataPerIP::isEnoughFreeForLock() const
 	return false;
 }
 
-void TRControllerWriterDataPerIP::setTRofInterestNumber(int number)
+void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 {
 	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	if (number != m_pBasicData->m_TRofInterestNumber && 0 <= number && TriggerRecordController::cMaxTriggerRecordsOfInterest + 1 >= number )
+	if (number != m_pBasicData->m_TrOfInterestNumber && 0 <= number && TriggerRecordController::cMaxTriggerRecordsOfInterest + 1 >= number )
 	{
-		m_pBasicData->m_TRofInterestNumber = number;
+		m_pBasicData->m_TrOfInterestNumber = number;
 	}
 	std::fill(m_pTRofInterestArray, m_pTRofInterestArray+ TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
 }
 
-void TRControllerWriterDataPerIP::setTRofInterest(int inspectionPos, int pos)
+void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 {
 	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	if (locker && 0 < m_pBasicData->m_TRofInterestNumber)
+	if (locker && 0 < m_pBasicData->m_TrOfInterestNumber)
 	{
-		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TRofInterestNumber);
+		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TrOfInterestNumber);
 		if (0 <= m_pTRofInterestArray[nextPos] && getBasicData().m_TriggerRecordNumber > m_pTRofInterestArray[nextPos])
 		{
-			removeTRReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
+			removeTrReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
 		}
 		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
 		{
@@ -223,7 +223,7 @@ std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
 	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	int vecSize = m_pBasicData->m_TRofInterestNumber; 
+	int vecSize = m_pBasicData->m_TrOfInterestNumber; 
 	if (nullptr != locker && 0 < vecSize)
 	{
 		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
@@ -581,7 +581,15 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 		auto pIPData = m_dataVector[i];
 		if (nullptr != pIPData)
 		{
-			pIPData->setTRofInterestNumber(m_inspectionList.list(i).numberrecordsofinterest()+1); //add one more to reduce the possibility that the last interest will be overwritten during Reader create the interest-list.
+			int number = m_inspectionList.list(i).numberrecordsofinterest();
+			if (0 < number)
+			{
+				pIPData->setTrOfInterestNumber(number + 1); //add one more to reduce the possibility that the last interest will be overwritten during Reader create the interest-list.
+			}
+			else
+			{
+				pIPData->setTrOfInterestNumber(0);
+			}
 			if (i == inspectionId)
 			{
 				ResetInspectionData(*pIPData);

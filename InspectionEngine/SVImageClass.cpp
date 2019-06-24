@@ -1121,7 +1121,7 @@ SvTrc::IImagePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
 	if (0 <= m_inspectionPosInTRC && !rRecordController.isResetStarted())
 	{
 		SvTrc::IImagePtr pImage = nullptr;
-		int lastTRid = rRecordController.getLastTRId(m_inspectionPosInTRC);
+		int lastTRid = rRecordController.getLastTrId(m_inspectionPosInTRC);
 		lastTriggerRecord = rRecordController.createTriggerRecordObject(m_inspectionPosInTRC, lastTRid);
 	}
 	if (nullptr == lastTriggerRecord && newIfNotAvailable)

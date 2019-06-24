@@ -44,18 +44,18 @@ TriggerRecordData& TRControllerLocalDataPerIP::getTRData(int pos) const
 	return *tr;
 };
 
-void TRControllerLocalDataPerIP::setTRofInterestNumber(int number)
+void TRControllerLocalDataPerIP::setTrOfInterestNumber(int number)
 {
 	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
-	if (number != m_basicData.m_TRofInterestNumber)
+	if (number != m_basicData.m_TrOfInterestNumber)
 	{
-		m_basicData.m_TRofInterestNumber = number;
-		m_trOfInterestVec.resize(number + 1);
+		m_basicData.m_TrOfInterestNumber = number;
+		m_trOfInterestVec.resize(number);
 	}
 	std::fill(m_trOfInterestVec.begin(), m_trOfInterestVec.end(), -1);
 }
 
-void TRControllerLocalDataPerIP::setTRofInterest(int inspectionPos, int pos)
+void TRControllerLocalDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 {
 	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
 	if (locker && 0 < m_trOfInterestVec.size())
@@ -63,7 +63,7 @@ void TRControllerLocalDataPerIP::setTRofInterest(int inspectionPos, int pos)
 		int nextPos = (m_basicData.m_TrOfInterestCurrentPos + 1) % (m_trOfInterestVec.size());
 		if (0 <= m_trOfInterestVec[nextPos] && getBasicData().m_TriggerRecordNumber > m_trOfInterestVec[nextPos])
 		{
-			removeTRReferenceCount(inspectionPos, getTRData(m_trOfInterestVec[nextPos]).m_referenceCount);
+			removeTrReferenceCount(inspectionPos, getTRData(m_trOfInterestVec[nextPos]).m_referenceCount);
 		}
 		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
 		{
@@ -296,7 +296,15 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 	for (int i = 0; i < m_dataVector.size(); i++)
 	{
 		TRControllerBaseDataPerIP::BasicData& rBaseData = m_dataVector[i].getMutableBasicData();
-		m_dataVector[i].setTRofInterestNumber(m_inspectionList.list(i).numberrecordsofinterest()+1); //add one more to reduce the possibility that the last interest will be overwritten during Reader create the interest-list.
+		int number = m_inspectionList.list(i).numberrecordsofinterest();
+		if (0 < number)
+		{
+			m_dataVector[i].setTrOfInterestNumber(number + 1); //add one more to reduce the possibility that the last interest will be overwritten during Reader create the interest-list.
+		}
+		else
+		{
+			m_dataVector[i].setTrOfInterestNumber(0);
+		}
 		if (i == inspectionId)
 		{
 			ResetInspectionData(m_dataVector[i]);

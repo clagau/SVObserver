@@ -153,11 +153,25 @@ void OnReadyTRC()
 
 std::set<int> g_newTrIpSet;
 std::mutex g_newTrIpSetMutex;
-void OnNewTr(int ipId, int)
+void OnNewTr(SvTrc::TrEventData data)
 {
 	std::lock_guard<std::mutex> lock(g_newTrIpSetMutex);
-	g_newTrIpSet.emplace(ipId);
+	g_newTrIpSet.emplace(data.m_inspectionPos);
 	::SetEvent(g_newTrEvent);
+}
+
+std::mutex g_newInterestTrIpSetMutex;
+std::map<int,std::vector<int>> g_newInterestTrMap;
+void OnNewInterestTr(std::vector<SvTrc::TrEventData> dataVec)
+{
+	std::lock_guard<std::mutex> lock(g_newTrIpSetMutex);
+	for (auto data : dataVec)
+	{
+		if (0 <= data.m_inspectionPos)
+		{
+			g_newInterestTrMap[data.m_inspectionPos].push_back(data.m_trId);
+		}
+	}
 }
 #pragma endregion Local Function 
 
@@ -415,7 +429,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 
 				if (0 == runId % 3 && nullptr != lastTRList[ipId])
 				{
-					rTrController.setTRofInterest({lastTRList[ipId]});
+					rTrController.setTrsOfInterest({lastTRList[ipId]});
 				}
 			}
 
@@ -444,6 +458,7 @@ bool readerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 		int resetCallbackHandle = rTrController.registerResetCallback(OnResetTRC);
 		int readyCallbackHandle = rTrController.registerReadyCallback(OnReadyTRC);
 		int newTrCallBackHandle = rTrController.registerNewTrCallback(OnNewTr);
+		int newInterestCallBackHandle = rTrController.registerNewInterestTrCallback(OnNewInterestTr);
 		if (rTrController.isValid())
 		{
 			OnReadyTRC();
@@ -527,7 +542,7 @@ bool readerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				for (int ipId : g_newTrIpSet)
 				{
 					runId++;
-					int trId = rTrController.getLastTRId(ipId);
+					int trId = rTrController.getLastTrId(ipId);
 
 					if (lastTrIds[ipId] == trId)
 					{
@@ -589,7 +604,7 @@ bool readerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 						std::random_device rd;
 						std::uniform_int_distribution<int> dist(1, maxInterestSize);
 						int interestNumber = dist(rd);
-						auto interestTRVec = rTrController.getTRsOfInterest(ipId, interestNumber);
+						auto interestTRVec = rTrController.getTrsOfInterest(ipId, interestNumber);
 						if (0 < interestTRVec.size())
 						{
 							std::vector<int> interestList = getInterestList(isOtherProcess? inspectionList.list(ipId).numberofrecords():rTestData[testDataId][ipId].m_recordSize, numberOfRuns, 3);
@@ -657,11 +672,54 @@ bool readerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				}
 				g_newTrIpSet.clear();
 			}
+
+			//check newInterestEvents
+			std::lock_guard<std::mutex> lock(g_newInterestTrIpSetMutex);
+			if (0 < g_newInterestTrMap.size())
+			{
+				for (auto iter : g_newInterestTrMap)
+				{
+					size_t expectedSize = (numberOfRuns+2) / 3;
+					if (0 < inspectionList.list(iter.first).numberrecordsofinterest())
+					{
+						std::vector<int> interestList = getInterestList(isOtherProcess ? inspectionList.list(iter.first).numberofrecords() : rTestData[testDataPos][iter.first].m_recordSize, numberOfRuns, 3);
+						expectedSize = interestList.size();
+					}
+					
+					CString logStr;
+					if (expectedSize == iter.second.size())
+					{
+						logStr.Format(_T("Reader Tests(%d): %d TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), iter.first);
+						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
+					}
+					else if (expectedSize-1 == iter.second.size())
+					{
+						logStr.Format(_T("Reader Tests(%d): %ld instead of %ld TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
+						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::WARN, __LINE__, strTestWithMoreThreads);
+					}
+					else
+					{
+						logStr.Format(_T("Reader Tests(%d): %ld instead of %ld TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
+						rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+					}					
+				}
+				g_newInterestTrMap.clear();
+			}
+			else
+			{
+				if (0 < inspectionList.list(0).numberrecordsofinterest())
+				{
+					CString logStr;
+					logStr.Format(_T("Reader Tests(%d): None TRsOfInterest-Events get"), testDataPos);
+					rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+				}
+			}
 		}
 
 		rTrController.unregisterResetCallback(resetCallbackHandle);
 		rTrController.unregisterReadyCallback(readyCallbackHandle);
 		rTrController.unregisterNewTrCallback(newTrCallBackHandle);
+		rTrController.unregisterNewInterestTrCallback(newInterestCallBackHandle);
 	}
 	else
 	{

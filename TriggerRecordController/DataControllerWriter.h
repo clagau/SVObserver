@@ -46,8 +46,8 @@ public:
 	virtual void increaseFreeTrNumber() override;
 	virtual void decreaseFreeTrNumber() override;
 	virtual bool isEnoughFreeForLock() const override;
-	virtual void setTRofInterestNumber(int number) override;
-	virtual void setTRofInterest(int inspectionPos, int pos) override;
+	virtual void setTrOfInterestNumber(int number) override;
+	virtual void setTrOfInterest(int inspectionPos, int pos) override;
 	std::vector<int> getTRofInterestPos(int n);
 	
 private:

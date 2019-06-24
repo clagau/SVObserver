@@ -29,7 +29,7 @@ public:
 
 #pragma region Public Methods
 public:
-	void setLastFinishedTR(int inspectionPos, int id);
+	void setLastFinishedTr(TrEventData data);
 	void increaseNumberOfFreeTr(int inspectionPos) { return m_pDataController->increaseNumberOfFreeTr(inspectionPos); };
 	ImageBufferController& getImageBufferControllerInstance() { return m_imageBufferController; };
 
@@ -38,7 +38,7 @@ public:
 
 	virtual bool isValid() const override { return 0 < getResetId(); };
 
-	virtual int getLastTRId(int inspectionPos) const override { return m_pDataController->getLastTRId(inspectionPos); };
+	virtual int getLastTrId(int inspectionPos) const override { return m_pDataController->getLastTrId(inspectionPos); };
 
 	virtual const SvPb::ImageList& getImageDefList(int inspectionPos) override;
 
@@ -51,12 +51,15 @@ public:
 	virtual void unregisterResetCallback(int handleId) override;
 	virtual int registerReadyCallback(std::function<void()> pCallback) override;
 	virtual void unregisterReadyCallback(int handleId) override;
-	virtual int registerNewTrCallback(std::function<void(int, int)> pCallback) override;
+	virtual int registerNewTrCallback(std::function<void(TrEventData)> pCallback) override;
 	virtual void unregisterNewTrCallback(int handleId) override;
+	virtual int registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback) override;
+	virtual void unregisterNewInterestTrCallback(int handleId) override;
 
-	virtual bool setTRofInterest(std::vector<ITriggerRecordRPtr> trVector) override;
-	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
+	virtual bool setTrsOfInterest(std::vector<ITriggerRecordRPtr> trVector) override;
+	virtual std::vector<ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
 	virtual void pauseTrsOfInterest(bool pauseFlag) override;
+	virtual bool isPauseTrsOfInterest() const override { return m_pDataController->getPauseTrsOfInterest(); };
 #pragma endregion ITriggerRecordControllerR Methods
 
 #pragma region ITriggerRecordControllerRW Methods
@@ -64,7 +67,7 @@ public:
 
 	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
 
-	virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTR, long newSizeTRofIntereset) override;
+	virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTr, long newSizeTrOfIntereset) override;
 
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
@@ -102,7 +105,7 @@ public:
 
 	bool isWritable() const { return m_pDataController->isWritable(); };
 
-	static int needNumberOfTR(SvPb::Inspection ipData);
+	static int needNumberOfTr(SvPb::Inspection ipData);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -130,7 +133,8 @@ private:
 
 	void sendResetCall();
 	void sendReadyCall();
-	void sendTrIdCall(int inspectionPos, int trId);
+	void sendTrIdCall(TrEventData data);
+	void sendInterestTrIdCall(std::vector<TrEventData> data);
 
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 #pragma endregion Private Methods
@@ -149,7 +153,8 @@ private:
 
 	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
 	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;
-	std::vector<std::pair<int, std::function<void(int, int)>>> m_newTRCallbacks;
+	std::vector<std::pair<int, std::function<void(TrEventData)>>> m_newTrCallbacks;
+	std::vector<std::pair<int, std::function<void(std::vector<TrEventData>)>>> m_newInterestTrCallbacks;
 	bool m_isResetLocked = false;
 
 	bool m_isGlobalInit = false;

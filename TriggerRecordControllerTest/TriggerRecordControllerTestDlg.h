@@ -50,7 +50,7 @@ namespace SvTrcT
 		void OnToolTypeChanged();
 		void OnResetUpdate();
 		void OnReadyUpdate();
-		void OnNewTrId(int ipPos, int newTr);
+		void OnNewTrId(SvTrc::TrEventData data);
 		LRESULT OnGetCallback(WPARAM wParam, LPARAM lParam);
 
 		SvTrc::IImagePtr LoadMainImage(const CString& Path);

@@ -89,6 +89,21 @@ int TRControllerReaderDataPerIP::getTrId2Send()
 	return -1;
 }
 
+int TRControllerReaderDataPerIP::getInterestTrId2Send()
+{
+	auto list = getTRofInterestPos(1);
+	if (0 < list.size())
+	{
+		int trid = list[0];
+		if (nullptr != m_pBasicData && m_lastSendInterestTrId != trid)
+		{
+			m_lastSendInterestTrId = trid;
+			return m_lastSendInterestTrId;
+		}
+	}
+	return -1;
+}
+
 void TRControllerReaderDataPerIP::increaseFreeTrNumber()
 {
 	if (nullptr != m_pBasicData)
@@ -120,15 +135,15 @@ bool TRControllerReaderDataPerIP::isEnoughFreeForLock() const
 	return false;
 }
 
-void TRControllerReaderDataPerIP::setTRofInterest(int inspectionPos, int pos)
+void TRControllerReaderDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 {
 	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	if (locker && 0 < m_pBasicData->m_TRofInterestNumber)
+	if (locker && 0 < m_pBasicData->m_TrOfInterestNumber)
 	{
-		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TRofInterestNumber);
+		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TrOfInterestNumber);
 		if (0 <= m_pTRofInterestArray[nextPos] && getBasicData().m_TriggerRecordNumber > m_pTRofInterestArray[nextPos])
 		{
-			removeTRReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
+			removeTrReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
 		}
 		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
 		{
@@ -159,7 +174,7 @@ std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
 	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	int vecSize = m_pBasicData->m_TRofInterestNumber;
+	int vecSize = m_pBasicData->m_TrOfInterestNumber;
 	if (nullptr != locker && 0 < vecSize)
 	{
 		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
@@ -199,6 +214,11 @@ DataControllerReader::~DataControllerReader()
 	if (m_newTrIdFuture.valid())
 	{
 		m_newTrIdFuture.wait();
+	}
+
+	if (m_newInterestTrIdsFuture.valid())
+	{
+		m_newInterestTrIdsFuture.wait();
 	}
 }
 #pragma endregion Constructor
@@ -365,6 +385,7 @@ void DataControllerReader::initAndreloadData()
 				m_pImageStructListInSM = pTemp + sizeof(CommonDataStruct) + m_maxNumberOfRequiredBuffer * sizeof(*m_imageRefCountArray) + cMaxInspectionPbSize;
 				m_isInit = true;
 				m_newTrIdFuture = std::async(std::launch::async, [&] { newTrIdThread(); });
+				m_newInterestTrIdsFuture = std::async(std::launch::async, [&] { newInterestTrIdThread(); });
 				break;
 			}
 			else
@@ -459,7 +480,7 @@ void DataControllerReader::newTrIdThread()
 		}
 
 
-		std::vector<std::pair<int, int>> newTrIdList;
+		std::vector<TrEventData> newTrIdList;
 		{
 			auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
 			if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)
@@ -479,9 +500,49 @@ void DataControllerReader::newTrIdThread()
 				}
 			}
 		}
-		for (auto newTrIdPair : newTrIdList)
+		for (auto newTrIdData : newTrIdList)
 		{
-			m_newTrIdCallback(newTrIdPair.first, newTrIdPair.second);
+			m_newTrIdCallback(newTrIdData);
+		}
+	}
+}
+
+void DataControllerReader::newInterestTrIdThread()
+{
+	HANDLE hChange[2];
+	hChange[0] = m_stopThreads;
+	hChange[1] = m_hInterestTridEvent;
+	while (true)
+	{
+		WaitForMultipleObjects(2, hChange, false, INFINITE);
+		if (m_stopThread)
+		{
+			return;
+		}
+
+		std::vector<TrEventData> newTrIdList;
+		{
+			auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
+			if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)
+			{
+				std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
+				for (int i = 0; i < m_dataVector.size(); i++)
+				{
+					auto pIpData = m_dataVector[i];
+					if (nullptr != pIpData)
+					{
+						int trId = pIpData->getInterestTrId2Send();
+						if (0 < trId)
+						{
+							newTrIdList.emplace_back(i, trId);
+						}
+					}
+				}
+			}
+		}
+		if (0 < newTrIdList.size())
+		{
+			m_newInterestTrIdsCallback(newTrIdList);
 		}
 	}
 }

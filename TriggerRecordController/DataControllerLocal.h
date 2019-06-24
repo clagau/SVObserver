@@ -40,8 +40,8 @@ public:
 	void setImageList(SvPb::ImageList&& imageList) { m_ImageList = imageList; };
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	void setTriggerRecords(void* pTR);
-	virtual void setTRofInterestNumber(int number) override;
-	virtual void setTRofInterest(int inspectionPos, int pos) override;
+	virtual void setTrOfInterestNumber(int number) override;
+	virtual void setTrOfInterest(int inspectionPos, int pos) override;
 	std::vector<int> getTRofInterestPos(int n);
 
 private:
