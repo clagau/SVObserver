@@ -206,18 +206,7 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			}
 			else if ((SVIPDoc::RefreshView == lHint) || (S_OK == pCurrentDocument->IsToolSetListUpdated()))
 			{
-				// Initialize the tool Groupings (for older saved configurations)
-				SVToolGrouping& rToolGroupings = pCurrentDocument->GetToolGroupings();
-				if (rToolGroupings.empty())
-				{
-					SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
-					std::string insertAtEnd;
-					for (int i = 0; i < pToolSet->GetSize(); i++)
-					{
-						std::string name = pToolSet->GetAt(i)->GetName();
-						rToolGroupings.AddTool(name.c_str(), insertAtEnd.c_str());
-					}
-				}
+			
 
 				SVGUID selectedToolID = GetSelectedTool();
 				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->GetUniqueObjectID(), pCurrentDocument->GetToolSet()->GetInspection()->GetUniqueObjectID());

@@ -368,6 +368,7 @@ private:
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
 	//!if not all tools from the toolset are in toolGrouping, tool grouping is cleared. 
+	//! Initialize the tool Groupings (for older saved configurations)
 	void correctToolGrouping();
 #pragma endregion Private Methods
 

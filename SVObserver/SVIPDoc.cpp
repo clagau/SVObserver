@@ -1371,6 +1371,7 @@ void SVIPDoc::OnEditPaste()
 		{
 			
 			m_toolGroupings.AddTool(pTool->GetName(), pNavElement->m_DisplayName);
+			
 		}
 
 		//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
@@ -2649,6 +2650,17 @@ void SVIPDoc::correctToolGrouping()
 			break;
 		}
 	}
+	
+	if (m_toolGroupings.empty())
+	{
+		std::string insertAtEnd;
+		for (int i = 0; i < pToolSet->GetSize(); i++)
+		{
+			std::string name = pToolSet->GetAt(i)->GetName();
+			m_toolGroupings.AddTool(name.c_str(), insertAtEnd.c_str());
+		}
+	}
+
 }
 
 bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
@@ -2948,9 +2960,10 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 		{
 			HRESULT hr = m_toolGroupings.SetParameters(rTree, htiParent);
 			bOk = (S_OK == hr) ? true : false;
-			if (S_OK == hr)
+			if (bOk)
 			{
 				//correct corrupt configuration with missing tools in toolgrouping
+				// Initialize the tool Groupings (for older saved configurations)
 				correctToolGrouping();
 			}
 		}
