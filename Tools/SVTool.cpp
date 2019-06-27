@@ -688,13 +688,13 @@ HRESULT SVToolClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetDa
 	return m_toolExtent.UpdateOffsetDataToImage(p_rsvOffsetData, pToolImage);
 }
 
-HRESULT SVToolClass::propagateSizeAndPosition()
+bool SVToolClass::propagateSizeAndPosition()
 {
 	if (SvOp::ToolSizeAdjustTask::UseSizeAdjust(this))
 	{
 		return resetAllObjects();
 	}
-	return S_OK;
+	return true;
 }
 
 bool SVToolClass::usePropagateSizeAndPosition() const

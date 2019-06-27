@@ -3361,7 +3361,7 @@ HRESULT SVInspectionProcess::propagateSizeAndPosition()
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(index));
 			if (nullptr != pTool)
 			{
-				result |= (S_OK == pTool->propagateSizeAndPosition());
+				result = pTool->propagateSizeAndPosition() || result;
 			}
 		}
 	}

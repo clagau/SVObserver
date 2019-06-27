@@ -201,7 +201,7 @@ int LoopTool::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject)
 	return retValue;
 }
 
-HRESULT LoopTool::propagateSizeAndPosition()
+bool LoopTool::propagateSizeAndPosition()
 {
 	bool result = true;
 	for (auto pObj : m_TaskObjectVector)
@@ -209,11 +209,11 @@ HRESULT LoopTool::propagateSizeAndPosition()
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj);
 		if (nullptr != pTool)
 		{
-			result = (S_OK == pTool->propagateSizeAndPosition()) && result;
+			result = pTool->propagateSizeAndPosition() && result;
 		}
 	}
 
-	return result ? S_OK : E_FAIL;
+	return result;
 }
 
 bool LoopTool::usePropagateSizeAndPosition() const

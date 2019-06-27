@@ -140,7 +140,7 @@ public:
 
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) { return nullptr; };
 
-	virtual HRESULT propagateSizeAndPosition();
+	virtual bool propagateSizeAndPosition();
 	virtual bool usePropagateSizeAndPosition() const;
 
 #pragma region ITool methods
