@@ -99,7 +99,19 @@ void ResultTableListCtrl::updateList()
 		int rowCountOld = GetItemCount();
 		if (0 < m_ResultData.size())
 		{
-			int rowCountNew = SvUl::getArraySizeFromOneDim(m_ResultData[0].m_rowData);
+			bool isArray = VT_ARRAY == (m_ResultData[0].m_rowData.vt & VT_ARRAY);
+			int rowCountNew = 0;
+			if (isArray)
+			{
+				rowCountNew = SvUl::getArraySizeFromOneDim(m_ResultData[0].m_rowData);
+			}
+			else
+			{
+				if (m_ResultData[0].m_rowData.vt == VT_R8)
+				{
+					rowCountNew = 1;
+				}
+			}
 			for (int i = rowCountOld; i < rowCountNew; i++)
 			{
 				CString tmp;
@@ -108,12 +120,21 @@ void ResultTableListCtrl::updateList()
 			}
 			for (int i = 0; i < m_ResultData.size(); i++)
 			{
-				std::vector<double> values = SvUl::getVectorFromOneDim<double>(m_ResultData[i].m_rowData);
-				for (int j=0; j <values.size(); j++)
+				if (isArray)
+				{
+					std::vector<double> values = SvUl::getVectorFromOneDim<double>(m_ResultData[i].m_rowData);
+					for (int j = 0; j < values.size(); j++)
+					{
+						CString tmp;
+						tmp.Format("%f", values[j]);
+						SetItemText(j, i + 1, tmp);
+					}
+				}
+				else
 				{
 					CString tmp;
-					tmp.Format("%f", values[j]);
-					SetItemText(j, i + 1, tmp);
+					tmp.Format("%f", m_ResultData[i].m_rowData.dblVal);
+					SetItemText(0, i + 1, tmp);
 				}
 			}
 			if (0 < rowCountNew)
