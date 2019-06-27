@@ -44,9 +44,11 @@ int main(int argc, char* argv[])
 				testName = argv[1];
 			}
 			bool isLogFileOpen = false;
-			if (2 < argc)
+			if (!testName.IsEmpty())
 			{
-				isLogFileOpen = g_logClass.Open(argv[2],false);
+				CString logFile;
+				logFile.Format("%s_log.txt", testName);
+				isLogFileOpen = g_logClass.Open(logFile,false);
 			}
 			else
 			{
@@ -56,15 +58,6 @@ int main(int argc, char* argv[])
 
 			if (isLogFileOpen)
 			{
-				auto dirPath = std::experimental::filesystem::v1::path(std::string(testName));
-				if (!std::experimental::filesystem::v1::is_directory(dirPath))
-				{
-					CString tmpString;
-					tmpString.Format("Directory %s not found", testName);
-					g_logClass.Log(tmpString, LogLevel::Information_Level1, LogType::FAIL, __LINE__, testName);
-					return -1;
-				}
-
 				MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
 				if (M_NULL != appId)
 				{
@@ -77,14 +70,14 @@ int main(int argc, char* argv[])
 						tmpString.Format(_T("Testing TRC-Reader(%s)"), testName);
 						g_logClass.LogText0(tmpString, LogLevel::Information_Level1);
 						TrcTesterConfiguration config(g_logClass);
-						bool retReaderTest = readerTest(g_logClass, 100, config.getTestData(), true);
+						bool retReaderTest = readerTest(testName, g_logClass, 100, config.getTestData(), true);
 						g_logClass.Log("Finished readerTest", retReaderTest ? LogLevel::Information_Level1 : LogLevel::Error, retReaderTest ? LogType::PASS : LogType::FAIL, __LINE__, testName);
 					}
 					MappFree(appId);
 				}
 				else
 				{
-					g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Always, LogType::ABORT);
+					g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Error, LogType::ABORT);
 				}
 
 				//g_logClass.PrintSummary();

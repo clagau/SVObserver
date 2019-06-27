@@ -23,6 +23,7 @@
 #include "TriggerRecordController\ITriggerRecordRW.h"
 
 constexpr int triggerIdOffset = 100'000;
+static int g_maxSizeFactor = 32;
 LPTSTR strTestCreateInspections = _T("createInspections");
 LPTSTR strTestSetBuffers = _T("setBuffers");
 LPTSTR strTestCheckBufferMaximum = _T("checkBufferMaximum");
@@ -31,18 +32,27 @@ LPTSTR strTestSetAndReadImage = _T("setAndReadImage");
 LPTSTR strTestSetAndReadValues = _T("setAndReadValues");
 LPTSTR strTestWithReaderApps = _T("testWithReaderApps");
 
+struct ReaderProcessData
+{
+	std::string m_name;
+	STARTUPINFO m_info = {sizeof(m_info)};
+	PROCESS_INFORMATION m_processInfo;
+};
+
+int calcMaxBuffer();
 void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 SVMatroxBufferCreateStruct specifyBuffer(int sizeFactor);
 SVMatroxBufferCreateStruct specifyBufferRandom();
-int calcMaxBuffer();
+bool startReaderApp(ReaderProcessData& data);
+bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogClass);
 
 TrcTester::TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
 	m_config(rConfig),
 	m_rLogClass(rLogClass),
 	m_TRController(SvTrc::getTriggerRecordControllerRWInstance())
 {
-
+	g_maxSizeFactor = m_config.getMaxSpecifyBufferFactor();
 }
 
 TrcTester::~TrcTester()
@@ -145,7 +155,7 @@ bool TrcTester::checkBufferMaximum()
 		for (int i = 0; i < numberOfImages; i++)
 		{
 			UuidCreateSequential(&guid);
-			independentOk &= ( 0 <= m_TRController.addOrChangeImage(guid, specifyBuffer(i / 3)));
+			independentOk &= ( 0 <= m_TRController.addOrChangeImage(guid, specifyBuffer(i / m_config.getSpecifyBufferDiv())));
 		}
 		m_TRController.addImageBuffer(guid, specifyBuffer(1), numberOfAddBuffer);
 		m_TRController.finishResetTriggerRecordStructure();
@@ -282,7 +292,7 @@ bool TrcTester::createTR2WriteAndRead()
 					{
 						CString errorStr;
 						errorStr.Format(_T("createTriggerRecordObjectToWrite failed ( in insp %d run %d) as excepted because to many read version logged."), j, i);
-						m_rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestCreateTR2WriteAndRead);
+						m_rLogClass.Log(errorStr, LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestCreateTR2WriteAndRead);
 						size_t countToDelete = 22;
 						if (readTRVector[j].size() <= countToDelete)
 						{
@@ -581,7 +591,7 @@ bool TrcTester::testWithMoreThreads()
 	std::thread readerThread(runReaderTest, std::move(readerPromise), std::ref(m_rLogClass), 100, m_config.getTestData());
 	bool retValue = writerResult.get() && readerResult.get();
 	{
-		m_rLogClass.Log(_T("End test"), retValue ? LogLevel::Information_Level1 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
+		m_rLogClass.Log(_T("----End test-----"), retValue ? LogLevel::Information_Level1 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
 	}
 	writerThread.join();
 	readerThread.join();
@@ -593,82 +603,37 @@ bool TrcTester::testWithReaderApps()
 	bool retValue = true;
 	int timeoutInS = 10;
 
-	std::string reader1Name = "reader1";
-	auto reader1LogPath = std::experimental::filesystem::v1::path(reader1Name);
-	std::experimental::filesystem::v1::remove_all(reader1LogPath);
-	if (!std::experimental::filesystem::v1::create_directory(reader1LogPath))
+	std::array<std::pair<bool, ReaderProcessData>, 2> readerArray;
+	CString tmpStr;
+	tmpStr.Format("Start testWithReaderApps with %d reader", static_cast<int>(readerArray.size()));
+	m_rLogClass.LogText(tmpStr, LogLevel::Information_Level3, LogType::BLANK);
+	for (int i = 0; i < readerArray.size(); i++)
 	{
-		CString tmpString;
-		tmpString.Format("Creating directory %s", reader1LogPath.string().c_str());
-		m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
-		return false;
-	}
-	std::string reader1LogFile = reader1Name + "/log.txt";
-
-	CString commandStr;
-	commandStr.Format(R"(TriggerRecordControllerReaderModulTest.exe %s %s)", reader1Name.c_str(), reader1LogFile.c_str());
-	STARTUPINFO info = {sizeof(info)};
-	PROCESS_INFORMATION processInfo;
-	if (!CreateProcess(R"(TriggerRecordControllerReaderModulTest.exe)", commandStr.GetBuffer(), NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))
-	{
-		CString tmpString;
-		tmpString.Format("Create Reader-Process %s", reader1Name.c_str());
-		m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
-		return false;
+		readerArray[i].second.m_name = "reader"+ std::to_string(i+1);
+		readerArray[i].first = startReaderApp(readerArray[i].second);
+		if (!readerArray[i].first)
+		{
+			CString tmpString;
+			tmpString.Format("Create Reader-Process %s", readerArray[i].second.m_name.c_str());
+			m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		}
 	}
 
 	bool retWriterTest = writerTest(m_rLogClass, 100, m_config.getTestData());
 	retValue = retValue && retWriterTest;
 	m_rLogClass.Log("Finished writerTest", retWriterTest ? LogLevel::Information_Level1 : LogLevel::Error, retWriterTest ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
 
-	if (WAIT_OBJECT_0 == WaitForSingleObject(processInfo.hProcess, timeoutInS * 1000))
+	for (auto readerPair : readerArray)
 	{
-		std::ifstream logFile(reader1LogFile.c_str());
-		if (logFile.is_open())
+		if (readerPair.first)
 		{
-			m_rLogClass.LogText0("Reader ready read logFile:", LogLevel::Information_Level3);
-			const std::regex passRegex(R"(\[PASS\]\[.*\]*)");
-			const std::regex failRegex(R"(\[FAIL\]\[.*\]*)");
-			std::string line;
-			while (getline(logFile, line))
-			{
-				if (!line.empty())
-				{
-					bool errorFlag = false;
-					if (std::regex_match(line, passRegex))
-					{
-						m_rLogClass.CountResults(LogType::PASS);
-					}
-					else if (std::regex_match(line, failRegex))
-					{
-						m_rLogClass.CountResults(LogType::FAIL);
-						retValue = false;
-						errorFlag = true;
-					}
-
-					m_rLogClass.LogText0(line.c_str(), errorFlag ? LogLevel::Error : LogLevel::Status);
-				}
-			}
-			logFile.close();
-			m_rLogClass.Log("Reader ready read logFile finished", retValue ? LogLevel::Status : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
-		}
-		else
-		{
-			m_rLogClass.Log("Reader ready, but logFile not found", LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+			retValue = finishedReaderApp(readerPair.second, timeoutInS * 1000, m_rLogClass) && retValue;
 		}
 	}
-	else
-	{
-		CString tmpString;
-		tmpString.Format("Timeout Reader finished not in %d s", timeoutInS);
-		m_rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
-		TerminateProcess(processInfo.hProcess, 0);
-		retValue = false;
-	}
 
-	// Close process and thread handles. 
-	CloseHandle(processInfo.hProcess);
-	CloseHandle(processInfo.hThread);
+	{
+		m_rLogClass.Log(_T("----End test-----"), retValue ? LogLevel::Information_Level1 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
+	}
 
 	return retValue;
 }
@@ -775,20 +740,17 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 
 void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
 {
-	bool retValue = readerTest(rLogClass, numberOfRuns, rTestData);
+	bool retValue = readerTest(_T("Local"), rLogClass, numberOfRuns, rTestData);
 	intPromise.set_value(retValue);
 	rLogClass.LogText("Finished runReaderTest", LogLevel::Information_Level1, LogType::PASS);
 }
 
 SVMatroxBufferCreateStruct specifyBuffer(int sizeFactor)
 {
-	if (sizeFactor < 1)
-	{
-		sizeFactor = 1;
-	}
+	sizeFactor = std::max<int>(std::min<int>(sizeFactor, g_maxSizeFactor), 1);
 	SVMatroxBufferCreateStruct bufferStruct;
-	int sizeX = sizeFactor * 64;
-	int sizeY = sizeFactor * 48;
+	int sizeX = sizeFactor * 32;
+	int sizeY = sizeFactor * 24;
 	bufferStruct.m_lSizeX = sizeX;
 	bufferStruct.m_lSizeY = sizeY;
 	bufferStruct.m_eAttribute = SVBufAttImageProcDib;
@@ -810,4 +772,56 @@ SVMatroxBufferCreateStruct specifyBufferRandom()
 	bufferStruct.m_eType = SV8BitUnsigned;
 
 	return bufferStruct;
+}
+
+bool startReaderApp(ReaderProcessData& data)
+{
+	CString commandStr;
+	commandStr.Format(R"(TriggerRecordControllerReaderModulTest.exe %s)", data.m_name.c_str());
+	if (!CreateProcess(R"(TriggerRecordControllerReaderModulTest.exe)", commandStr.GetBuffer(), NULL, NULL, TRUE, 0, NULL, NULL, &data.m_info, &data.m_processInfo))
+	{
+		return false;
+	}
+	return true;
+}
+
+bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogClass)
+{
+	bool retValue = true;
+	if (WAIT_OBJECT_0 == WaitForSingleObject(data.m_processInfo.hProcess, timeoutinMs))
+	{
+		std::ifstream logFile((data.m_name + "_log.txt").c_str());
+		if (logFile.is_open())
+		{
+			CString tmpString;
+			tmpString.Format("Reader (%s) ready read logFile:", data.m_name.c_str());
+			rLogClass.LogText0(tmpString, LogLevel::Information_Level3);
+			std::string line;
+			while (getline(logFile, line))
+			{
+				retValue = rLogClass.convertAndLogString(line) && retValue;
+			}
+			logFile.close();
+			tmpString.Format("Reader (%s) finished, read logFile finished", data.m_name.c_str());
+			rLogClass.Log(tmpString, retValue ? LogLevel::Information_Level1 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
+		}
+		else
+		{
+			CString tmpString;
+			tmpString.Format("Reader (%s) finished, but logFile not found", data.m_name.c_str());
+			rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		}
+	}
+	else
+	{
+		CString tmpString;
+		tmpString.Format("Timeout Reader (%s) finished not in %d s", data.m_name.c_str(), timeoutinMs/1000);
+		rLogClass.Log(tmpString, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithReaderApps);
+		TerminateProcess(data.m_processInfo.hProcess, 0);
+		retValue = false;
+	}
+	// Close process and thread handles. 
+	CloseHandle(data.m_processInfo.hProcess);
+	CloseHandle(data.m_processInfo.hThread);
+	return retValue;
 }

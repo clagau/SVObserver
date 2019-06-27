@@ -94,11 +94,15 @@ int TRControllerReaderDataPerIP::getInterestTrId2Send()
 	auto list = getTRofInterestPos(1);
 	if (0 < list.size())
 	{
-		int trid = list[0];
-		if (nullptr != m_pBasicData && m_lastSendInterestTrId != trid)
+		int pos = list[0];
+		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
 		{
-			m_lastSendInterestTrId = trid;
-			return m_lastSendInterestTrId;
+			TriggerRecordData& rCurrentTR = getTRData(pos);
+			if (nullptr != m_pBasicData && m_lastSendInterestTrId != rCurrentTR.m_trId)
+			{
+				m_lastSendInterestTrId = rCurrentTR.m_trId;
+				return m_lastSendInterestTrId;
+			}
 		}
 	}
 	return -1;
@@ -214,11 +218,6 @@ DataControllerReader::~DataControllerReader()
 	if (m_newTrIdFuture.valid())
 	{
 		m_newTrIdFuture.wait();
-	}
-
-	if (m_newInterestTrIdsFuture.valid())
-	{
-		m_newInterestTrIdsFuture.wait();
 	}
 }
 #pragma endregion Constructor
@@ -385,7 +384,6 @@ void DataControllerReader::initAndreloadData()
 				m_pImageStructListInSM = pTemp + sizeof(CommonDataStruct) + m_maxNumberOfRequiredBuffer * sizeof(*m_imageRefCountArray) + cMaxInspectionPbSize;
 				m_isInit = true;
 				m_newTrIdFuture = std::async(std::launch::async, [&] { newTrIdThread(); });
-				m_newInterestTrIdsFuture = std::async(std::launch::async, [&] { newInterestTrIdThread(); });
 				break;
 			}
 			else
@@ -468,82 +466,15 @@ void DataControllerReader::initAndreloadData()
 
 void DataControllerReader::newTrIdThread()
 {
-	HANDLE hChange[2];
-	hChange[0] = m_stopThreads;
-	hChange[1] = m_hTridEvent;
 	while (true)
 	{
-		WaitForMultipleObjects(2, hChange, false, INFINITE);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		if (m_stopThread)
 		{
 			return;
 		}
 
-
-		std::vector<TrEventData> newTrIdList;
-		{
-			auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
-			if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)
-			{
-				std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
-				for (int i = 0; i < m_dataVector.size(); i++)
-				{
-					auto pIpData = m_dataVector[i];
-					if (nullptr != pIpData)
-					{
-						int trId = pIpData->getTrId2Send();
-						if (0 < trId)
-						{
-							newTrIdList.emplace_back(i, trId);
-						}
-					}
-				}
-			}
-		}
-		for (auto newTrIdData : newTrIdList)
-		{
-			m_newTrIdCallback(newTrIdData);
-		}
-	}
-}
-
-void DataControllerReader::newInterestTrIdThread()
-{
-	HANDLE hChange[2];
-	hChange[0] = m_stopThreads;
-	hChange[1] = m_hInterestTridEvent;
-	while (true)
-	{
-		WaitForMultipleObjects(2, hChange, false, INFINITE);
-		if (m_stopThread)
-		{
-			return;
-		}
-
-		std::vector<TrEventData> newTrIdList;
-		{
-			auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
-			if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)
-			{
-				std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
-				for (int i = 0; i < m_dataVector.size(); i++)
-				{
-					auto pIpData = m_dataVector[i];
-					if (nullptr != pIpData)
-					{
-						int trId = pIpData->getInterestTrId2Send();
-						if (0 < trId)
-						{
-							newTrIdList.emplace_back(i, trId);
-						}
-					}
-				}
-			}
-		}
-		if (0 < newTrIdList.size())
-		{
-			m_newInterestTrIdsCallback(newTrIdList);
-		}
+		sendNewTrId();
 	}
 }
 
@@ -603,4 +534,49 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 	}
 }
 
+void DataControllerReader::sendNewTrId()
+{
+	std::vector<TrEventData> newTrIdList;
+	std::vector<TrEventData> newInterestTrIdList;
+	{
+		auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
+		if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)
+		{
+			std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
+			for (int i = 0; i < m_dataVector.size(); i++)
+			{
+				auto pIpData = m_dataVector[i];
+				if (nullptr != pIpData)
+				{
+					int trId = pIpData->getTrId2Send();
+					if (0 <= trId)
+					{
+						newTrIdList.emplace_back(i, trId);
+					}
+
+					trId = pIpData->getInterestTrId2Send();
+					if (0 < trId)
+					{
+						newInterestTrIdList.emplace_back(i, trId);
+					}
+				}
+			}
+		}
+	}
+	if (nullptr != m_newTrIdCallback)
+	{
+		for (auto newTrIdPair : newTrIdList)
+		{
+			m_newTrIdCallback(newTrIdPair);
+		}
+	}
+
+	if (nullptr != m_newInterestTrIdsCallback)
+	{
+		if (0 < newInterestTrIdList.size())
+		{
+			m_newInterestTrIdsCallback(newInterestTrIdList);
+		}
+	}
+}
 }

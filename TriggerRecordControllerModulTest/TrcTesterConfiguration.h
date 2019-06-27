@@ -60,6 +60,8 @@ public:
 	int getNumberOfImagesPerInspection() const { return m_NumberOfImagesPerInspection; };
 	int getNumberOfBuffersPerInspection() const { return m_NumberOfBuffersPerInspection; };
 	int getNumberOfIndependentBuffers() const { return m_NumberOfIndependentBuffers; };
+	int getMaxSpecifyBufferFactor() const { return m_maxSpecifyBufferFactor; };
+	int getSpecifyBufferDiv() const { return m_SpecifyBufferDiv; };
 	double getMaxTimeSetBuffer() const { return m_NoOfRepetitionsPerStep * m_maxTimeSetBufferPerIter; };
 	double getMaxTimeCheckBufferPerBuffer() const { return m_maxTimeCheckBufferPerBuffer; };
 	double getMaxTimesetAndReadImage() const { return m_maxTimesetAndReadImage; };
@@ -79,11 +81,13 @@ private:
 	bool m_isLocal = false;
 	int m_NumberOfRuns = 20;
 	const int m_NoOfRepetitionsPerStep = 200;
-
+	
 	int m_NumberOfImagesPerInspection = 99;
 	int m_NumberOfInspections = 5;
 	int m_NumberOfBuffersPerInspection = 10;
 	int m_NumberOfIndependentBuffers = 5;
+	int m_maxSpecifyBufferFactor = 32;
+	int m_SpecifyBufferDiv = 5;
 
 	//performance times
 	double m_maxTimeSetBufferPerIter = 0.0018;

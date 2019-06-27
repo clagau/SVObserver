@@ -23,4 +23,4 @@ SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId);
 bool setInspections(std::vector<std::pair<int, int>> numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr);
 
 bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
-bool readerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, bool isOtherProcess = false);
+bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, bool isOtherProcess = false);

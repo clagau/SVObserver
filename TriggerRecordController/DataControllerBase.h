@@ -209,7 +209,6 @@ protected:
 	std::function<void(std::vector<TrEventData>)> m_newInterestTrIdsCallback;
 	HANDLE m_hResetEvent {nullptr};
 	HANDLE m_hReadyEvent {nullptr};
-	HANDLE m_hTridEvent {nullptr};
 	HANDLE m_hInterestTridEvent {nullptr};
 #pragma endregion Member variables
 };

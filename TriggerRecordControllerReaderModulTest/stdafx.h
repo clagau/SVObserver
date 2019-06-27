@@ -42,6 +42,7 @@
 #include <map>
 #include <mutex>
 #include <random>
+#include <regex>
 #include <set>
 #include <tchar.h>
 #include <thread>

@@ -67,6 +67,8 @@ TrcTesterConfiguration::TrcTesterConfiguration(LogClass& rLogClass, SvLib::SVOIN
 	m_maxTimeSetBufferPerIter = iniFile.GetValueDouble(_T("MaxTime"), _T("SetBufferPerIter"), m_maxTimeSetBufferPerIter);
 	m_maxTimeCheckBufferPerBuffer = iniFile.GetValueDouble(_T("MaxTime"), _T("CheckBufferPerBuffer"), m_maxTimeCheckBufferPerBuffer);
 	m_maxTimesetAndReadImage = iniFile.GetValueDouble(_T("MaxTime"), _T("SetAndReadImage"), m_maxTimesetAndReadImage);
+	m_maxSpecifyBufferFactor = iniFile.GetValueInt(_T("General"), _T("MaxSpecifyFactor"), m_maxSpecifyBufferFactor);
+	m_SpecifyBufferDiv = iniFile.GetValueInt(_T("General"), _T("SpecifyBufferDiv"), m_SpecifyBufferDiv);
 
 	init(rLogClass);
 }

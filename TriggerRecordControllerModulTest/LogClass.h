@@ -21,7 +21,7 @@ enum class LogLevel
 	Information_Level1,
 	Information_Level2,
 	Information_Level3,
-	Status
+	Debug
 };
 
 // ***** Type ***********
@@ -31,7 +31,8 @@ enum class LogType
 	FAIL, // 1
 	WARN, // 2
 	BLANK, // 3
-	ABORT, // 4
+	BLANK_RET, //4
+	ABORT, // 5
 };
 
 class LogClass  
@@ -69,6 +70,11 @@ public:
 	void SetLogLevel(const LogLevel logLevel);
 	LogLevel GetLogLevel( );
 
+	/// Convert the string, check state and log the string.
+	/// \param line [in] log line
+	/// \returns bool false, if state fail or abort.
+	bool convertAndLogString(std::string line);
+
 private:
 	// Variables
 	unsigned int m_uiFail;
@@ -79,6 +85,8 @@ private:
 	LogLevel m_LogLevel;
 	FILE *m_File;
 	std::mutex m_logMutex;
+	const std::map<LogType, std::string> c_typeMap = {{LogType::PASS, "PASS"}, {LogType::FAIL, "FAIL"}, {LogType::WARN, "WARN"}, {LogType::ABORT, "ABORT"}, {LogType::BLANK, "    "}};
+	const std::map<LogLevel, std::string> c_levelMap = {{LogLevel::Always, "Always*"}, {LogLevel::Error, "Error**"}, {LogLevel::Information_Level1, "Info  1"}, {LogLevel::Information_Level2, "Info  2"}, {LogLevel::Information_Level3, "Info  3"}, {LogLevel::Debug, "Debug  "}};
 
 	CString BuildLogString(const LogLevel logLevel, const LogType logType);
 };

@@ -112,10 +112,9 @@ private:
 
 	void newTrIdThread();
 
-	void newInterestTrIdThread();
-
 	void addBuffer(const SvPb::ImageStructData &imageStruct);
 
+	void sendNewTrId();
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -142,7 +141,6 @@ private:
 	bool m_stopThread = false;
 	std::future<void> m_reloadFuture;
 	std::future<void> m_newTrIdFuture;
-	std::future<void> m_newInterestTrIdsFuture;
 	HANDLE m_stopThreads {nullptr};
 #pragma endregion Member variables
 };

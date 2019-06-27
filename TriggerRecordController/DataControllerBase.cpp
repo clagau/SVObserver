@@ -82,17 +82,6 @@ DataControllerBase::DataControllerBase()
 		assert(false);
 	}
 
-	m_hTridEvent = ::CreateEvent(&sa, false, false, GNameTridEvent);
-	if (nullptr == m_hTridEvent)
-	{
-		DWORD errorCode = GetLastError();
-		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
-	}
-
 	m_hInterestTridEvent = ::CreateEvent(&sa, false, false, GNameInterestTridEvent);
 	if (nullptr == m_hInterestTridEvent)
 	{
@@ -130,7 +119,6 @@ void DataControllerBase::setLastFinishedTr(TrEventData data)
 	if (nullptr != pData)
 	{
 		pData->setLastFinishedTRID(data.m_trId);
-		SetEvent(m_hTridEvent);
 	}
 }
 

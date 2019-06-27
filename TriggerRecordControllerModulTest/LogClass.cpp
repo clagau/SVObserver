@@ -19,7 +19,7 @@ static char THIS_FILE[]=__FILE__;
 LogClass::LogClass()
 {
 	m_File = nullptr;
-	m_LogLevel = LogLevel::Status;	// Default Log everything.
+	m_LogLevel = LogLevel::Debug; // Default Log everything.
 	ResetCounts();
 }
 
@@ -172,11 +172,11 @@ void LogClass::PrintSummary()
 
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
 	strTmp.Format(_T("[ Summary  ] Passed %d Steps"), m_uiPass);
-	LogText(strTmp, LogLevel::Always, LogType::BLANK);
+	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	strTmp.Format(_T("[ Summary  ] Failed %d Steps"), m_uiFail);
-	LogText(strTmp, LogLevel::Always, LogType::BLANK);
+	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	strTmp.Format(_T("[ Summary  ] Warning %d Steps"), m_uiWarn);
-	LogText(strTmp, LogLevel::Always, LogType::BLANK);
+	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	constexpr int cStrLength = 128;
 	TCHAR szTime[cStrLength];
 	TCHAR szDate[cStrLength];
@@ -193,7 +193,7 @@ void LogClass::PrintSummary()
 	else
 		strTmp.Format(_T("[ Summary  ] Completed %s %s"), szTime, szDate);
 
-	LogText(strTmp, LogLevel::Always, LogType::BLANK);
+	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
 
 }
@@ -258,72 +258,55 @@ LogLevel LogClass::GetLogLevel( )
 	return m_LogLevel;
 }
 
+bool LogClass::convertAndLogString(std::string line)
+{
+	static const std::regex regExCmd(R"(^\[([^\]]*)\]\[([^\]]*)\]*)");
+	if (!line.empty())
+	{
+		std::smatch m;
+		LogType type = LogType::BLANK;
+		LogLevel level = LogLevel::Always;
+		if (std::regex_search(line, m, regExCmd) && 3 <= m.size())
+		{
+			auto typeIter = find_if(c_typeMap.begin(), c_typeMap.end(), [m](auto pair)->bool { return pair.second == m[1]; });
+			if (c_typeMap.end() != typeIter)
+			{
+				type = typeIter->first;
+			}
+			auto levelIter = find_if(c_levelMap.begin(), c_levelMap.end(), [m](auto pair) { return pair.second == m[2]; });
+			if (c_levelMap.end() != levelIter)
+			{
+				level = levelIter->first;
+			}
+		}
+
+		LogText0(line.c_str(), level);
+		return type != LogType::FAIL && type != LogType::ABORT;
+	}
+	return true;
+}
+
 CString LogClass::BuildLogString(const LogLevel logLevel, const LogType logType)
 {
 	CString strTmp = _T("[????]");
 
-	switch(logType)
+	if (logType != LogType::BLANK_RET)
 	{
-		case LogType::PASS:
-		{
-			strTmp = _T("[PASS]");
-			break;
-		}
-		case LogType::FAIL:
-		{
-			strTmp = _T("[FAIL]");
-			break;
-		}
-		case LogType::WARN:
-		{
-			strTmp = _T("[WARN]");
-			break;
-		}
-		case LogType::ABORT:
-		{
-			strTmp = _T("[ABORT]");
-			break;
-		}
-		case LogType::BLANK:
-		default:
+		auto findIter = c_typeMap.find(logType);
+		if (c_typeMap.end() == findIter)
 		{
 			return _T("[    ]");
-			break;
 		}
+		strTmp = (_T("[") + findIter->second + _T("]")).c_str();
 	}
-
-	switch(logLevel)
+	else
 	{
-		case LogLevel::Always:
-		{
-			strTmp += _T("[Always*]");
-			break;
-		}
-		case LogLevel::Error:
-		{
-			strTmp += _T("[Error**]");
-			break;
-		}
-		case LogLevel::Information_Level1:
-		{
-			strTmp += _T("[Info  1]");
-			break;
-		}
-		case LogLevel::Information_Level2:
-		{
-			strTmp += _T("[Info  2]");
-			break;
-		}
-		case LogLevel::Information_Level3:
-		{
-			strTmp += _T("[Info  3]");
-			break;
-		}
-		case LogLevel::Status:
-		{
-			strTmp += _T("[Status*]");
-			break;
-		}
+		return _T("[    ]");
+	}
+	auto findIter = c_levelMap.find(logLevel);
+	if (c_levelMap.end() != findIter)
+	{
+		strTmp += (_T("[") + findIter->second + _T("]")).c_str();
 	}
 
 	return strTmp;

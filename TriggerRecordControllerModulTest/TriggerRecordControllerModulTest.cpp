@@ -57,10 +57,14 @@ int main(int argc, char* argv[])
 					MappControl(M_ERROR, M_PRINT_DISABLE);
 
 					{
+						LogLevel logLevel = static_cast<LogLevel>(testIni.GetValueInt(_T("General"), _T("LogLevel"), 3));
+						g_logClass.SetLogLevel(logLevel);
+
 						TrcTesterConfiguration config(g_logClass, testIni, isLocal);
+						int maxSpecfiyBufferFactor = config.getMaxSpecifyBufferFactor();
 						TrcTester trc_ut(config, g_logClass);
 						CString tmpString;
-						tmpString.Format(_T("Testing TRC (Type:%s, Runs:%d, %d iterations per step, %d number of add one records, %d number of keep free records)"), isLocal ? _T("Local") : _T("Writer"), config.getNumberOfRuns(), config.getNoOfRepetitionsPerStep(), config.getNumberOfRecordsAddOne(), config.getNumberOfKeepFreeRecords());
+						tmpString.Format(_T("Testing TRC (Type:%s, Runs:%d, %d iterations per step, %d number of add one records, %d number of keep free records, maxSpecfiyBufferFactor = %d)"), isLocal ? _T("Local") : _T("Writer"), config.getNumberOfRuns(), config.getNoOfRepetitionsPerStep(), config.getNumberOfRecordsAddOne(), config.getNumberOfKeepFreeRecords(), maxSpecfiyBufferFactor);
 						g_logClass.LogText0(tmpString, LogLevel::Information_Level1);
 						bool all_ok = true;
 						for (int i = 0; i < config.getNumberOfRuns(); i++)
@@ -68,7 +72,7 @@ int main(int argc, char* argv[])
 							bool ok = trc_ut.fullTest();
 							tmpString.Format(_T("%2d of %d tests complete: %sok."), i + 1, config.getNumberOfRuns(), ok ? L"" : L"NOT ");
 							g_logClass.LogText(tmpString, LogLevel::Information_Level1, ok ? LogType::PASS : LogType::FAIL);
-							g_logClass.LogText("--------------------------------------\n", LogLevel::Information_Level1, LogType::BLANK);
+							g_logClass.LogText("--------------------------------------\n", LogLevel::Information_Level1, LogType::BLANK_RET);
 							g_logClass.Flush();
 							all_ok &= ok;
 						}
@@ -77,7 +81,7 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Always, LogType::ABORT);
+					g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Error, LogType::ABORT);
 				}
 
 				g_logClass.PrintSummary();
