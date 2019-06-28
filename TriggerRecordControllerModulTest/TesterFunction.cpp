@@ -534,7 +534,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					CString logStr;
 					logStr.Format(_T("Reader Tests: Reset TRC after runId %d"), runId);
 					bool isPass = (runId + 1 == numberOfRuns*inspectionSize);
-					rLogClass.Log(logStr, isPass ? LogLevel::Information_Level3 : LogLevel::Error, isPass ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
+					rLogClass.Log(logStr, isPass ? LogLevel::Information_Level2 : LogLevel::Error, isPass ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					break;
 				}
 
@@ -551,7 +551,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					{
 						CString logStr;
 						logStr.Format(_T("Reader Tests: Finished run after runId %d"), runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
+						rLogClass.Log(logStr, LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
 					}
 					break;
 				}
