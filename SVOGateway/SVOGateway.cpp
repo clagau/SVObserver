@@ -25,6 +25,7 @@
 #include "SVAuthLibrary/AuthManager.h"
 #include "SVAuthLibrary/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
+#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMessage/SVMessage.h"
 #include "SVRPCLibrary/Router.h"
@@ -88,14 +89,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SV_LOG_GLOBAL(info) << "SVOGatewayIniPath:" << settingsLoader.GetIni();
 		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
 
-		SV_LOG_GLOBAL(debug) << "Initializing Matrox Image Library";
-		// Allocate MilSystem
-		MIL_ID MilId = MappAlloc(M_DEFAULT, M_NULL);
-		SV_LOG_GLOBAL(debug) << "Matrox Image library was successfully initialized";
-		if (M_NULL == MilId)
-		{
-			throw std::exception("MapAlloc failed");
-		}
+		boost::asio::io_service IoService {1};
+		boost::asio::io_service::work work(IoService);
 #ifdef _DEBUG
 		// Enable MIL error message to be displayed by MIL
 		MappControl(M_ERROR, M_PRINT_ENABLE);
@@ -107,16 +102,13 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvAuth::AuthManager authManager(settings.authSettings);
 		SvAuth::RestHandler restHandler(authManager);
 
-		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(settings.shareControlSettings);
+		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(IoService, settings.shareControlSettings);
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
 
 
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
-
 		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
-		boost::asio::io_service IoService {1};
-		boost::asio::io_service::work work(IoService);
 
 		std::unique_ptr<SvHttp::HttpServer> pServer = std::make_unique<SvHttp::HttpServer>(settings.httpSettings, IoService);
 
@@ -176,11 +168,6 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		sharedMemoryAccess.reset();
 
 		SvTrc::destroyTriggerRecordController();
-
-		if (M_NULL != MilId)
-		{
-			MappFree(MilId);
-		}
 	}
 	catch (std::exception& e)
 	{
@@ -196,6 +183,10 @@ int main(int argc, _TCHAR* argv[])
 	int Result {0};
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
+
+	// Startup Matrox App
+	SVMatroxApplicationInterface::Startup();
+
 	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
 
 	if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
@@ -224,6 +215,9 @@ int main(int argc, _TCHAR* argv[])
 			}
 		}
 	}
+
+	// Shutdown MIL
+	SVMatroxApplicationInterface::Shutdown();
 
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Stopped, SvStl::SourceFileParams(StdMessageParams));
 	return Result;

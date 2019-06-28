@@ -17,8 +17,10 @@
 
 #pragma once
 
+#include <deque>
 #include <memory>
 #include <thread>
+#include <tuple>
 #include <vector>
 
 #include <boost/asio/io_context.hpp>
@@ -82,6 +84,10 @@ private:
 	void handle_ping_sent(const boost::system::error_code& error);
 	void handle_control_command(boost::beast::websocket::frame_type, boost::beast::string_view);
 
+	void write_message(bool is_binary, std::shared_ptr<std::vector<char>>);
+	void write_message_impl(bool is_binary, std::shared_ptr<std::vector<char>>);
+	void check_write_queue();
+
 private:
 	WebsocketClientSettings& m_rSettings;
 	boost::asio::io_context m_IoContext;
@@ -97,6 +103,8 @@ private:
 	bool m_IsShuttingDown {false};
 	std::vector<char> m_Buf;
 	std::vector<char> m_Payload;
+	bool m_bIsWriting {false};
+	std::deque<std::pair<bool, std::shared_ptr<std::vector<char>>>> m_WriteQueue;
 };
 
 } // namespace SvHttp

@@ -7,6 +7,8 @@
 //******************************************************************************
 #pragma region Includes
 #include "StdAfx.h"
+#include <codecvt>
+#include <locale>
 #include "ConverterHelper.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -43,6 +45,63 @@ GUID GetGuidFromProtoBytes(const std::string& strguid)
 	GUID guid = GUID_NULL;
 	GetGuidFromProtoBytes(strguid, guid);
 	return guid;
+}
+
+GUID GetGuidFromString(const std::string& buf)
+{
+	const auto len = buf.size();
+	switch (len)
+	{
+		case 16:
+		{
+			char str[39];
+			snprintf(str, sizeof(str),
+				"{%hhx%hhx%hhx%hhx-%hhx%hhx-%hhx%hhx-%hhx%hhx-%hhx%hhx%hhx%hhx%hhx%hhx}",
+				buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7],
+				buf[8], buf[9], buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]);
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wcu8;
+			const auto wstr = wcu8.from_bytes(str);
+			GUID guid;
+			CLSIDFromString(wstr.c_str(), &guid);
+			return guid;
+		}
+		case 36:
+		{
+			GUID guid;
+			sscanf(buf.c_str(),
+				"%8x-%4hx-%4hx-%2hhx%2hhx-%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx",
+				&guid.Data1, &guid.Data2, &guid.Data3,
+				&guid.Data4[0], &guid.Data4[1], &guid.Data4[2], &guid.Data4[3],
+				&guid.Data4[4], &guid.Data4[5], &guid.Data4[6], &guid.Data4[7]);
+			return guid;
+		}
+		case 38:
+		{
+			GUID guid;
+			sscanf(buf.c_str(),
+				"{%8x-%4hx-%4hx-%2hhx%2hhx-%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx}",
+				&guid.Data1, &guid.Data2, &guid.Data3,
+				&guid.Data4[0], &guid.Data4[1], &guid.Data4[2], &guid.Data4[3],
+				&guid.Data4[4], &guid.Data4[5], &guid.Data4[6], &guid.Data4[7]);
+			return guid;
+		}
+		default:
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
+			return GUID_NULL;
+	}
+}
+
+std::string PrettyPrintGuid(const GUID& guid)
+{
+	wchar_t szGuidW[40] = {0};
+	char szGuidA[40] = {0};
+	StringFromGUID2(guid, szGuidW, 40);
+	WideCharToMultiByte(CP_ACP, 0, szGuidW, -1, szGuidA, 40, NULL, NULL);
+	// the indexes make sure we are not copying the curly braces, as
+	// StringFromGUID2 generates string with the following format:
+	// {7096126C-A089-45E2-9EA9-94B3A23CA236}
+	return std::string(&szGuidA[1], &szGuidA[37]);
 }
 
 HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant)

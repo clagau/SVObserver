@@ -625,6 +625,7 @@ bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
 		}));
 		auto inspId = m_inspList4TRC.add_list();
 		SvPb::SetGuidInProtoBytes(inspId->mutable_id(), pInspection->GetUniqueObjectID());
+		*inspId->mutable_name() = pInspection->GetName();
 
 		Result = true;
 	}

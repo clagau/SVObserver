@@ -18,7 +18,7 @@ struct AuthManagerSettings
 	/// of the HMI user database with one little exception: we use a different
 	/// function hashing the user password (because we don't know the original
 	/// algorithm).
-	std::string UserSettingsFile {"C:\\SVObserver\\UserSettings.xml"};
+	std::string UserSettingsFile {"C:\\SVObserver\\auth\\UserSettings.xml"};
 
 	/// This is the secret that is used to generate HMAC signed JSON Web Token.
 	/// It it is a shared secret between all parties that are allowed to issue

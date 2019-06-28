@@ -14,38 +14,60 @@
 
 #pragma region Includes
 #include "SharedMemoryAccess.h"
+#include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVSharedMemoryLibrary/ShareControlSetting.h" 
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerRecordController/TriggerRecordController.h"
 #pragma endregion Includes
 
 namespace SvOgw
 {
 
-SharedMemoryAccess::SharedMemoryAccess(const SvSml::ShareControlSettings& ControlParameter)
-	: m_io_service(), m_io_work(m_io_service), m_io_thread(boost::bind(&boost::asio::io_service::run, &m_io_service))
+SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter)
+	: m_io_service(rIoService)
 {
-
 	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>(ControlParameter);
-
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	m_TrcSubscriptionId = trc.registerNewTrCallback([this](SvTrc::TrEventData eventData)
+	{
+		m_io_service.post([this, eventData]()
+		{
+			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId);
+		});
+	});
 }
+
 SharedMemoryAccess::~SharedMemoryAccess()
 {
-	if (!m_io_service.stopped())
-	{
-		m_io_service.stop();
-	}
-	if (m_io_thread.joinable())
-	{
-		m_io_thread.join();
-	}
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	trc.unregisterNewTrCallback(m_TrcSubscriptionId);
 }
 
 void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
 	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetVersion()));
+	task.finish(std::move(Response));
+}
+
+void SharedMemoryAccess::GetInspections(const SvPb::GetInspectionsRequest& rRequest, SvRpc::Task<SvPb::GetInspectionsResponse> task)
+{
+	SvPenv::Error Error;
+	SvPb::GetInspectionsResponse Response;
+
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	const auto& inspections = trc.getInspections();
+	for (int i = 0; i < inspections.list_size(); ++i)
+	{
+		const auto& inspection = inspections.list(i);
+		auto& entry = *Response.add_inspections();
+		entry.set_id(inspection.id());
+		entry.set_name(inspection.name());
+	}
+
 	task.finish(std::move(Response));
 }
 
@@ -110,6 +132,7 @@ void SharedMemoryAccess::GetImageFromId(const SvPb::GetImageFromIdRequest& rRequ
 	}
 
 }
+
 void SharedMemoryAccess::GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 {
 	SvPenv::Error Error;
@@ -178,6 +201,128 @@ void SharedMemoryAccess::StoreClientLogs(const SvPb::StoreClientLogsRequest& rRe
 	}
 
 	task.finish(SvPb::EmptyResponse());
+}
+
+void SharedMemoryAccess::GetProductStream(const SvPb::GetProductStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	// TODO handle startAtTriggerCount
+	auto state = std::make_shared<product_stream_t>(rRequest, observer, ctx);
+	m_ProductStreams.push_back(state);
+}
+
+SharedMemoryAccess::product_stream_t::product_stream_t(
+	const SvPb::GetProductStreamRequest& streamReq,
+	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+	: observer(observer)
+	, ctx(ctx)
+{
+	this->req.CopyFrom(streamReq);
+}
+
+static bool is_subscribed_to(const SvPb::GetProductStreamRequest& req, const SvPb::Inspection& inspection)
+{
+	const auto guid1 = SvPb::GetGuidFromString(req.inspectionid());
+	const auto guid2 = SvPb::GetGuidFromString(inspection.id());
+	const auto guidsAreEqual = IsEqualGUID(guid1, guid2) != 0;
+	return guidsAreEqual;
+}
+
+void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId)
+{
+	if (m_ProductStreams.empty())
+	{
+		return;
+	}
+
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto tro = trc.createTriggerRecordObject(inspectionPos, trId);
+	const auto& defList = trc.getDataDefList(inspectionPos);
+	const auto& inspections = trc.getInspections();
+	const auto& inspection = inspections.list(inspectionPos);
+
+	for (auto it = m_ProductStreams.begin(); it != m_ProductStreams.end();)
+	{
+		auto& ptr = *it;
+		if (ptr->ctx->isCancelled())
+		{
+			it = m_ProductStreams.erase(it);
+			continue;
+		}
+
+		if (is_subscribed_to(ptr->req, inspection))
+		{
+			handle_new_trigger_record(*ptr, *tro, inspectionPos, trId);
+		}
+
+		++it;
+	}
+}
+
+static bool read_image(SvPb::Image& resImg, SvTrc::IImagePtr imgPtr)
+{
+	auto hdl = imgPtr->getHandle();
+	auto& info = hdl->GetBitmapInfo();
+	auto& buffer = hdl->GetBuffer();
+	auto& out = *resImg.mutable_rgbdata();
+	auto rc = SVMatroxBufferInterface::CopyBufferToFileDIB(out, info, buffer);
+	return rc == S_OK;
+}
+
+static bool read_variant(SvPb::Variant& resVar, const _variant_t& variant)
+{
+	return SvPb::ConvertVariantToProtobuf(variant, &resVar) == S_OK;
+}
+
+void SharedMemoryAccess::handle_new_trigger_record(product_stream_t& stream, SvTrc::ITriggerRecordR& tro, int inspectionPos, int trId)
+{
+	SvPb::GetProductStreamResponse res;
+
+	if (stream.req.rejectsonly())
+	{
+		// TODO handle rejects only
+		//res.set_isreject();
+	}
+
+	// TODO read fail status values
+	//res.add_failstatusvalues()
+
+	// TODO inform client about current trigger
+	//res.set_trigger();
+
+	for (const auto& imgId : stream.req.imageids())
+	{
+		auto& img = *res.add_images();
+		auto guid = SvPb::GetGuidFromString(imgId);
+		auto imgPtr = tro.getImage(guid);
+		if (!imgPtr)
+		{
+			SV_LOG_GLOBAL(debug) << "  > image " << SvPb::PrettyPrintGuid(guid) << " not found";
+			continue;
+		}
+
+		// TODO handle image format
+		//stream.req.imageformat()
+		if (!read_image(img, imgPtr))
+		{
+			SV_LOG_GLOBAL(warning) << "Error reading image with guid " << SvPb::PrettyPrintGuid(guid) << " for " << inspectionPos;
+		}
+	}
+
+	for (const auto& valueId : stream.req.valueids())
+	{
+		auto& value = *res.add_values();
+		auto guid = SvPb::GetGuidFromString(valueId);
+		auto variant = tro.getDataValue(guid);
+		if (!read_variant(value, variant))
+		{
+			SV_LOG_GLOBAL(warning) << "Error reading value with guid " << SvPb::PrettyPrintGuid(guid) << " for " << inspectionPos;
+		}
+	}
+
+	stream.observer.onNext(std::move(res));
 }
 
 }// namespace SvOgw

@@ -3,20 +3,20 @@ package SvPb;
 
 message MessageContainer //structure for a (error/warning/info-)message
 {
-	sint32 MessageCode = 1;
-	sint32 AdditionalTextId = 2;
-	repeated string AdditionalTextList = 3;
-	string CompileDate = 4;
-	string CompileTime = 5;
-	string FileName = 6;
-	sint32 FileLine = 7;
-	string FileDateTime = 8;
-	bytes ObjectId = 9;
+	sint32 messageCode = 1;
+	sint32 additionalTextId = 2;
+	repeated string additionalTextList = 3;
+	string compileDate = 4;
+	string compileTime = 5;
+	string fileName = 6;
+	sint32 fileLine = 7;
+	string fileDateTime = 8;
+	bytes objectId = 9;
 }
 
 message MessageContainerVector
 {
-	repeated MessageContainer Messages = 1; //list of messages
+	repeated MessageContainer messages = 1; //list of messages
 }
 
 message Image
@@ -24,4 +24,4 @@ message Image
 	bytes rgbData = 1;				//The raw RGB image data as a byte array
 	uint32 width = 2;				//The width of the image
 	uint32 height = 3;				//The height of the image
-} 
+}

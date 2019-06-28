@@ -38,6 +38,16 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetInspectionsRequest,
+		SvPb::GetInspectionsRequest,
+		SvPb::GetInspectionsResponse>(
+		[sma](SvPb::GetInspectionsRequest&& req, SvRpc::Task<SvPb::GetInspectionsResponse> task)
+	{
+		sma->GetInspections(req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetProductRequest,
 		SvPb::GetProductRequest,
 		SvPb::GetProductResponse>(
@@ -74,6 +84,16 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		[sma](SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 	{
 		sma->GetImageFromId(req, task);
+	});
+
+	registerStreamHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetProductStreamRequest,
+		SvPb::GetProductStreamRequest,
+		SvPb::GetProductStreamResponse>(
+		[sma](SvPb::GetProductStreamRequest&& req, SvRpc::Observer<SvPb::GetProductStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+	{
+		sma->GetProductStream(req, observer, ctx);
 	});
 
 	registerRequestHandler<

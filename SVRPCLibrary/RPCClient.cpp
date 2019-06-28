@@ -68,14 +68,30 @@ bool RPCClient::isConnected()
 
 bool RPCClient::waitForConnect(boost::posix_time::time_duration posix_timeout)
 {
+	std::unique_lock<std::mutex> lk(m_ConnectMutex);
+
 	if (isConnected())
 	{
 		return true;
 	}
-	std::unique_lock<std::mutex> lk(m_ConnectMutex);
+
 	std::chrono::milliseconds timeout(posix_timeout.total_milliseconds());
 	m_ConnectCV.wait_for(lk, timeout, [this] { return m_IsConnected.load(); });
 	return isConnected();
+}
+
+SvSyl::SVFuture<void> RPCClient::waitForConnectAsync()
+{
+	std::unique_lock<std::mutex> lk(m_ConnectMutex);
+
+	if (isConnected())
+	{
+		return SvSyl::SVFuture<void>::make_ready();
+	}
+
+	auto promise = std::make_shared<SvSyl::SVPromise<void>>();
+	m_ConnectPromises.push_back(promise);
+	return promise->get_future();
 }
 
 void RPCClient::request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
@@ -149,6 +165,11 @@ void RPCClient::on_connect()
 	{
 		std::lock_guard<std::mutex> lk(m_ConnectMutex);
 		m_IsConnected.store(true);
+		for (auto& promise : m_ConnectPromises)
+		{
+			promise->set_value();
+		}
+		m_ConnectPromises.clear();
 	}
 	m_ConnectCV.notify_all();
 

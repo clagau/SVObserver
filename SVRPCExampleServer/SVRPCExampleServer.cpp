@@ -24,8 +24,10 @@
 #include "SVLogLibrary/Logging.h"
 #include "SVOGateway/SettingsLoader.h"
 #include "SVProtoBuf/SVRC.h"
-#include "SVRPCExampleLibrary/format.h"
 #include "SVRPCExampleServer/bitmap_image.hpp"
+#include "SVRPCExampleServer/SVObserver.h"
+#include "SVRPCExampleServer/SVOGateway.h"
+#include "SVRPCExampleServer/SVOSharedMemory.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVRPCLibrary/RequestHandler.h"
 
@@ -33,110 +35,32 @@ using namespace SvAuth;
 using namespace SvHttp;
 using namespace SvPb;
 using namespace SvRpc;
-using namespace SvRpc::Example;
 
-static DeviceModeType s_deviceMode = DeviceModeType::runMode;
-static uint32_t s_trigger_count = 0;
-
-static uint32_t get_next_trigger_count()
+int main()
 {
-	return (++s_trigger_count) % 4;
-}
-
-void register_auth_handler(RequestHandler& requestHandler, AuthManager* am)
-{
-	requestHandler.registerAuthHandler([am](const std::string& token) -> bool
-	{
-		return am->rpcAuth(token);
-	});
-}
-
-bool on_http_request(RestHandler& rRestHandler, const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
-{
-	if (rRestHandler.onRestRequest(req, res))
-	{
-		return true;
-	}
-
-	return false;
-}
-
-static void counter_async(const boost::system::error_code& ec,
-	std::shared_ptr<boost::asio::deadline_timer> timer,
-	boost::asio::io_context& io_context,
-	Observer<GetCounterStreamResponse> observer,
-	ServerStreamContext::Ptr ctx,
-	int i)
-{
-	if (ec)
-	{
-		SvPenv::Error error;
-		error.set_message(ec.message());
-		error.set_errorcode(SvPenv::ErrorCode::internalError);
-		try
-		{
-			observer.error(error);
-		}
-		catch (const ConnectionLostException&)
-		{
-		}
-		return;
-	}
-	if (ctx->isCancelled())
-	{
-		try
-		{
-			observer.finish();
-		}
-		catch (const ConnectionLostException&)
-		{
-		}
-		return;
-	}
-
-	GetCounterStreamResponse resp;
-	resp.set_counter(i);
 	try
 	{
-		observer.onNext(std::move(resp));
-	}
-	catch (const ConnectionLostException&)
-	{
-		return;
-	}
+		boost::asio::io_context observer_io_context {1};
+		boost::asio::io_context gateway_io_context {1};
+		SVRPCExample::SVOSharedMemory shared_memory;
 
-	timer = std::make_shared<boost::asio::deadline_timer>(io_context);
-	timer->expires_from_now(boost::posix_time::milliseconds(100));
-	timer->async_wait(std::bind(counter_async, std::placeholders::_1, timer, std::ref(io_context), observer, ctx, ++i));
-}
+		auto observer_thread = std::thread([&observer_io_context, &shared_memory]() {
+			SvHttp::HttpServerSettings httpSettings;
+			httpSettings.Host = "127.0.0.1";
+			httpSettings.Port = 8081;
 
-void register_example_handler(RequestHandler& requestHandler, boost::asio::io_context& io_context)
-{
-	requestHandler.registerRequestHandler<
-		ApplicationMessages,
-		ApplicationMessages::kHelloWorldReq,
-		HelloWorldReq,
-		HelloWorldRes>(
-		[](HelloWorldReq&& req, Task<HelloWorldRes> task)
-	{
-		std::stringstream ss;
-		ss << "Hello " << req.name() << "!";
-		HelloWorldRes res;
-		res.set_message(ss.str());
-		task.finish(std::move(res));
-	});
+			SVRPCExample::SimulationSettings simSettings;
+			simSettings.Frequency = 10;
+			simSettings.PercentRejects = 0.10;
+			simSettings.ImageSizePx = 30;
 
-	requestHandler.registerStreamHandler<
-		ApplicationMessages,
-		ApplicationMessages::kGetCounterStreamRequest,
-		GetCounterStreamRequest,
-		GetCounterStreamResponse>
-		([&io_context](GetCounterStreamRequest&& req, Observer<GetCounterStreamResponse> observer, ServerStreamContext::Ptr ctx)
-	{
-		counter_async({}, nullptr, io_context, observer, ctx, req.start());
-	});
-}
+			SVRPCExample::SVObserver observer(simSettings, shared_memory, httpSettings, observer_io_context);
+			//SV_LOG_GLOBAL(info) << "Server running on ws://" << httpSettings.Host << ":" << httpSettings.Port << "/";
 
+			observer_io_context.run();
+		});
+
+		auto gateway_thread = std::thread([&gateway_io_context, &shared_memory]() {
 static void createImageOfSize(std::string& data, unsigned int width, unsigned int height)
 {
 	bitmap_image fractal(width, height);
@@ -594,43 +518,26 @@ int main()
 	{
 		boost::asio::io_context io_context {1};
 
-		SvOgw::Settings settings;
-		SvOgw::SettingsLoader settingsLoader;
-		settingsLoader.loadFromIni(settings);
+			SvOgw::Settings settings;
+			SvOgw::SettingsLoader settingsLoader;
+			settingsLoader.loadFromIni(settings);
+			settings.httpSettings.Host = "0.0.0.0";
+			settings.httpSettings.Port = 8080;
+			settings.httpSettings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-frontend" / "dist";
 
-		AuthManager authManager(settings.authSettings);
-		RestHandler restHandler(authManager);
+			SvHttp::WebsocketClientSettings client_settings;
+			client_settings.Host = "127.0.0.1";
+			client_settings.Port = 8081;
 
-		RequestHandler requestHandler;
-		register_auth_handler(requestHandler, &authManager);
-		register_example_handler(requestHandler, io_context);
-		register_dummy_handler(requestHandler, io_context);
-		register_log_handler(requestHandler);
+			SVRPCExample::SVOGateway gateway(shared_memory, settings, client_settings, gateway_io_context);
 
-		auto rpcServer = std::make_unique<RPCServer>(&requestHandler);
-
-		auto& httpSettings = settings.httpSettings;
-		httpSettings.pEventHandler = rpcServer.get();
-		httpSettings.DataDir = std::experimental::filesystem::path(".") / ".." / ".." / "seidenader-prototype" / "frontend" / "dist";
-		httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
-		auto server = std::make_unique<HttpServer>(httpSettings, io_context);
-		server->start();
-
-		SV_LOG_GLOBAL(info) << "Server running on ws://" << httpSettings.Host << ":" << httpSettings.Port << "/";
-
-		auto thread = std::thread([&io_context]() { io_context.run(); });
+			gateway_io_context.run();
+		});
 
 		while (true)
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
-
-		server->stop();
-		io_context.stop();
-		thread.join();
-
-		rpcServer.reset();
-		server.reset();
 	}
 	catch (std::exception& e)
 	{

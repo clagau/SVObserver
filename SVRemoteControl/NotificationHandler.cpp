@@ -7,7 +7,7 @@ NotificationHandler::NotificationHandler(SVControlCommands* pControlCommands) :m
 {
 }
 
-SvSyl::SVFuture<void>  NotificationHandler::OnNext(SvPb::GetNotificationStreamResponse& rResponse)
+SvSyl::SVFuture<void> NotificationHandler::OnNext(SvPb::GetNotificationStreamResponse& rResponse)
 {
 
 	SVNotificationTypes type = UnknownNotificationType;

@@ -46,6 +46,8 @@ message SVRCMessages
 		GetProductStreamRequest getProductStreamRequest = 1021;
 		GetProductStreamResponse getProductStreamResponse = 1022;
 		StoreClientLogsRequest storeClientLogsRequest = 1023;
+		GetInspectionsRequest getInspectionsRequest = 1024;
+		GetInspectionsResponse getInspectionsResponse = 1025;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;

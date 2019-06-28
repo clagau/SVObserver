@@ -73,6 +73,22 @@ message MsgNotification
 	int32 errorNumber = 3;			//The error number being displayed
 }
 
+//Retrieves the inspection details of the currently loaded configuration on the SVIM
+message GetInspectionsRequest
+{
+}
+
+message InspectionDetails
+{
+	bytes id = 1;
+	string name = 2;
+}
+
+message GetInspectionsResponse
+{
+	repeated InspectionDetails inspections = 1;
+}
+
 //Queries all active monitorlist
 message QueryListNameRequest
 {
@@ -258,8 +274,6 @@ message GetProductStreamRequest
 
 // Stream response for the GetProductStreamRequest request above.
 // The values and imaegs are in the same order as in the request.
-// TODO: do we need a list of bool informing which value triggered
-//       the reject? fail status stuff.
 message GetProductStreamResponse
 {
 	// The trigger count the data set belongs to.
@@ -271,27 +285,9 @@ message GetProductStreamResponse
 	// List of values in the same order as specified in the request.
 	repeated Variant values = 3;
 
-	// List of value names in the same order as specified in the
-	// request. The list will be set in the very first response only.
-	// The caller has to cache the list for all following requests.
-	// In case the names change (they can not change during run mode)
-	// a new list will be provided.
-	repeated string valueNames = 4;
-
 	// List of values responsible for the reject.
-	repeated Variant failStatusValues = 5;
-
-	// Names for the fail status values. They are in the same order.
-	// TODO do we need the ids for them as well?
-	repeated string failStatusValueNames = 6;
+	repeated Variant failStatusValues = 4;
 
 	// List of images in the same order as specified in the request.
-	repeated Image images = 7;
-
-	// List of image names in the same order as specified in the
-	// request. The list will be set in the very first response only.
-	// The caller has to cache the list for all following requests.
-	// In case the names change (they can not change during run mode)
-	// a new list will be provided.
-	repeated string imageNames = 8;
+	repeated Image images = 5;
 }

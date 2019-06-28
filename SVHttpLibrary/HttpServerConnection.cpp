@@ -300,8 +300,7 @@ void HttpServerConnection::http_do_write_impl(boost::beast::http::response<Body>
 		std::placeholders::_1,
 		std::placeholders::_2,
 		Response.need_eof()
-	)
-	);
+	));
 }
 
 void HttpServerConnection::http_do_write(boost::beast::http::response<boost::beast::http::empty_body>&& Response)

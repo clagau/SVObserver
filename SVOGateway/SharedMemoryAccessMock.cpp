@@ -76,6 +76,12 @@ void SharedMemoryAccessMock::GetVersion(const SvPb::GetGatewayVersionRequest& re
 	task.finish(std::move(resp));
 }
 
+void SharedMemoryAccessMock::GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse> task)
+{
+	SvPb::GetInspectionsResponse resp;
+	task.finish(std::move(resp));
+}
+
 void SharedMemoryAccessMock::GetProduct(const SvPb::GetProductRequest& request, SvRpc::Task<SvPb::GetProductResponse> task)
 {
 	SvPb::GetProductResponse resp;
@@ -130,6 +136,16 @@ void SharedMemoryAccessMock::StoreClientLogs(const SvPb::StoreClientLogsRequest&
 		SV_LOG_GLOBAL(info) << "[" << rRequest.client() << "] " << entry.message();
 	}
 	task.finish(SvPb::EmptyResponse());
+}
+
+void SharedMemoryAccessMock::GetProductStream(const SvPb::GetProductStreamRequest& req,
+	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	/*
+	m_io_service.post(
+		std::bind(&SharedMemoryAccessMock::getImageStreamFromIdStep, this, req.count(), req.id(), observer, ctx));
+	*/
 }
 
 void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_response)

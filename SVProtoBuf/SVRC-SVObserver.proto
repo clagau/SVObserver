@@ -41,7 +41,7 @@ message TreeItem
 	bool selected = 3;				//The flag which defines if the object is selected
 	string type = 4;				//The object type
 	string objectIDIndex = 5;		//The object ID including index for array values
-	repeated TreeItem Children = 6;	//The children of this node
+	repeated TreeItem children = 6;	//The children of this node
 }
 
 //Retrieves the SVObserver version
@@ -294,7 +294,7 @@ message LoadConfigRequest
 ///Get the required objects to be displayed for selection
 message GetObjectSelectorItemsRequest
 {
-	repeated ObjectSelectorType Types = 1;	//The list of item types required
+	repeated ObjectSelectorType types = 1;	//The list of item types required
 	string inspectionID = 2;			//The inspection GUID to query for the items or the inspection name (changed from bytes to string until inspection ID available)
 	bytes instanceID = 3;				//The object instance GUID to query if required can be GUID_NULL
 	ObjectAttributes attribute = 4;		//The object attribute to filter the toolset items
@@ -304,7 +304,7 @@ message GetObjectSelectorItemsRequest
 
 message GetObjectSelectorItemsResponse
 {
-	TreeItem Tree = 1;					//The object selector tree as recursive structure
+	TreeItem tree = 1;					//The object selector tree as recursive structure
 }
 
 message SaveClientChunkError

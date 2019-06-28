@@ -72,7 +72,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>nafxcwd.lib;LIBCMTD.lib;SVRPCExampleLibrary.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;libprotobufd.lib;Rpcrt4.lib;Version.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nafxcwd.lib;LIBCMTD.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;libprotobufd.lib;Rpcrt4.lib;Version.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>nafxcwd.lib;LIBCMTD.lib;</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>
@@ -109,7 +109,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVRPCExampleLibrary.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;SVProtobuf.lib;libprotobuf.lib;Rpcrt4.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;SVProtobuf.lib;libprotobuf.lib;Rpcrt4.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..</AdditionalIncludeDirectories>
@@ -127,10 +127,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AutoBuild.h" />
+    <ClInclude Include="ImageCache.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Simulation.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\SVOGateway\Settings.h" />
     <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
+    <ClInclude Include="SVObserver.h" />
+    <ClInclude Include="SVOGateway.h" />
+    <ClInclude Include="SVOSharedMemory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SVOGateway\SettingsLoader.cpp" />

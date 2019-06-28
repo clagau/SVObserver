@@ -52,4 +52,17 @@ static SvPenv::Error build_error(SvPenv::ErrorCode ErrorCode, const char* pMsg =
 	return Result;
 }
 
+template<class T>
+static SvPenv::Error build_packed_error(SvPenv::ErrorCode ErrorCode, const char* pMsg, const T& payload)
+{
+	SvPenv::Error Result;
+	Result.set_errorcode(ErrorCode);
+	if (nullptr != pMsg)
+	{
+		Result.set_message(pMsg);
+	}
+	Result.mutable_payload()->PackFrom(payload);
+	return Result;
+}
+
 } // namespace SvRpc

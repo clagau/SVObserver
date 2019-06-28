@@ -181,25 +181,69 @@ void WebsocketClient::handle_handshake_response(const boost::system::error_code&
 void WebsocketClient::sendTextMessage(const std::vector<char>& buf)
 {
 	auto res_frame = std::make_shared<std::vector<char>>(buf);
-	m_Socket.text(true);
-	m_Socket.async_write(
-		boost::asio::buffer(*res_frame),
-		std::bind(&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
+	m_IoContext.dispatch([this, res_frame]()
+	{
+		write_message(true, res_frame);
+	});
 }
 
 void WebsocketClient::sendBinaryMessage(const std::vector<char>& buf)
 {
 	auto res_frame = std::make_shared<std::vector<char>>(buf);
-	m_Socket.binary(true);
+	m_IoContext.dispatch([this, res_frame]()
+	{
+		write_message(true, res_frame);
+	});
+}
+
+void WebsocketClient::write_message(bool is_binary, std::shared_ptr<std::vector<char>> buf)
+{
+	if (m_bIsWriting)
+	{
+		m_WriteQueue.push_back(std::make_pair<>(is_binary, buf));
+	}
+	else
+	{
+		write_message_impl(is_binary, buf);
+	}
+}
+
+void WebsocketClient::write_message_impl(bool is_binary, std::shared_ptr<std::vector<char>> buf)
+{
+	if (is_binary)
+	{
+		m_Socket.binary(true);
+	}
+	else
+	{
+		m_Socket.text(true);
+	}
+
+	m_bIsWriting = true;
 	m_Socket.async_write(
-		boost::asio::buffer(*res_frame),
-		std::bind(&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, res_frame));
+		boost::asio::buffer(*buf),
+		std::bind(&WebsocketClient::handle_request_sent, this, std::placeholders::_1, std::placeholders::_2, buf));
+}
+
+void WebsocketClient::check_write_queue()
+{
+	if (m_bIsWriting || m_WriteQueue.empty())
+	{
+		return;
+	}
+
+	auto head = m_WriteQueue.front();
+	m_WriteQueue.pop_front();
+	write_message_impl(head.first, head.second);
 }
 
 void WebsocketClient::handle_request_sent(const boost::system::error_code& error,
 	size_t bytes_sent,
 	std::shared_ptr<std::vector<char>> buf)
 {
+	m_bIsWriting = false;
+	check_write_queue();
+
 	if (error)
 	{
 		handle_connection_error(error);

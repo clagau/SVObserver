@@ -25,6 +25,12 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
 //!GUID From protobufmessage 
 GUID GetGuidFromProtoBytes(const std::string& strguid);
 
+// allows passing binary representation of the guid and also
+// the string representation of it.
+GUID GetGuidFromString(const std::string& strguid);
+
+std::string PrettyPrintGuid(const GUID& guid);
+
 HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant);
 /// simpleType is required for the script tester (SVRemoteControl.ocx) which can only handle VT_I4 (signed) and VT_UI4 (unsigned) for all integer types
 HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant, bool simpleType = false);

@@ -58,6 +58,7 @@ public:
 	void stop();
 	bool isConnected();
 	bool waitForConnect(boost::posix_time::time_duration timeout);
+	SvSyl::SVFuture<void> waitForConnectAsync();
 
 	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>);
 	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>, boost::posix_time::time_duration);
@@ -106,6 +107,7 @@ private:
 	std::shared_ptr<SvHttp::WebsocketClient> m_WebsocketClient;
 	std::mutex m_ConnectMutex;
 	std::condition_variable m_ConnectCV;
+	std::vector<std::shared_ptr<SvSyl::SVPromise<void>>> m_ConnectPromises;
 	std::atomic_bool m_IsConnected {false};
 	boost::asio::deadline_timer m_ReconnectTimer;
 	uint64_t m_NextTransactionId = 0;

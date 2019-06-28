@@ -22,17 +22,22 @@ namespace SvSml
 {
 struct ShareControlSettings;
 }
+namespace SvTrc
+{
+class ITriggerRecordR;
+}
 
 namespace SvOgw
 {
 class SharedMemoryAccess : public SharedMemoryAccessInterface
 {
 public:
-	SharedMemoryAccess(const SvSml::ShareControlSettings& ControlParameter);
-	~SharedMemoryAccess();
+	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter);
+	virtual ~SharedMemoryAccess();
 
 public:
 	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
+	void GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse>) override;
 	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
 	void GetReject(const SvPb::GetRejectRequest&, SvRpc::Task<SvPb::GetRejectResponse>) override;
 	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
@@ -41,11 +46,23 @@ public:
 	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) override;
 	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) override;
 	void StoreClientLogs(const SvPb::StoreClientLogsRequest&, SvRpc::Task<SvPb::EmptyResponse>) override;
+	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
 
 private:
-	boost::asio::io_service m_io_service;
-	boost::asio::io_service::work m_io_work;
-	boost::thread m_io_thread;
+	struct product_stream_t
+	{
+		product_stream_t(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr);
+		SvPb::GetProductStreamRequest req;
+		SvRpc::Observer<SvPb::GetProductStreamResponse> observer;
+		SvRpc::ServerStreamContext::Ptr ctx;
+	};
+	void on_new_trigger_record(int inspectionPos, int trId);
+	void handle_new_trigger_record(product_stream_t&, SvTrc::ITriggerRecordR&, int inspectionPos, int trId);
+
+private:
+	boost::asio::io_service& m_io_service;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
+	int m_TrcSubscriptionId;
+	std::vector<std::shared_ptr<product_stream_t>> m_ProductStreams;
 };
 }// namespace SvOgw

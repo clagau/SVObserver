@@ -1065,9 +1065,9 @@ HRESULT SVControlCommands::ShutDown(SVShutdownOptionsEnum Option, SVCommandStatu
 		}
 
 		SvPb::ShutdownRequest Request;
-		
-		SvPb::ShutdownOption  option = (Option== Restart)? 
-			 SvPb::ShutdownOption::shutdownSvObserverAndRestartWindows : SvPb::ShutdownOption::shutdownSvObserverAndWindows;
+		//Request.set_option(static_cast<long> (Option));
+		SvPb::ShutdownOption  option = (Option == Restart) ?
+			SvPb::ShutdownOption::shutdownSvObserverAndRestartWindows : SvPb::ShutdownOption::shutdownSvObserverAndWindows;
 		Request.set_option(option);
 		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::Shutdown,
