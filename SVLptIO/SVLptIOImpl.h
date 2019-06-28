@@ -175,6 +175,7 @@ private:
 	//! It should be solved in the dll however changes could cause the driver signature to become invalid
 	//! The thread is closed on destruction causing the one thread handle to leak
 	bool m_TriggerActive;
+	bool m_isFirstTimeToReadOrWrite = true; //this variable introduced in SVO-1692 to suppress spurious "invalid line state" warning
 #pragma endregion Member Variables
 };
 

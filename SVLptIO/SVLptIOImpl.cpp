@@ -1381,9 +1381,15 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 		{
 			if (0 != (nPrevControl & 0xf))
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
-				Exception.setMessage( SVMSG_INVALID_LINE_STATE, SvStl::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams) );
+				if (!m_isFirstTimeToReadOrWrite)
+				{
+					// The following warning appeared once (probabaly spuriously) during SVIM startup.
+					// Suppressing it the first time solved this problem
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_INVALID_LINE_STATE, SvStl::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
+			m_isFirstTimeToReadOrWrite = false;
 			// Get Value of control port interrupt Bit 
 			unsigned char nVal = SVControlEnableInterrupt;
 			hr = SetControlPort(nVal);	// Set Control to known state with select line off...
