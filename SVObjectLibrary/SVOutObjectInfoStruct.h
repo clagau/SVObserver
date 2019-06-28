@@ -15,7 +15,6 @@
 
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
-#include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVInObjectInfoStruct.h"
 
 class SVObjectClass;
@@ -40,8 +39,8 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 	INT_PTR GetInputSize() { return static_cast<INT_PTR> (m_UserInfoList.size()); }
 	SvOl::SVInObjectInfoStruct& GetInputAt( long lIndex ) { return m_UserInfoList[lIndex]; }
 
-	bool Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
-	bool Unlock() const;
+	void lock() { return m_mutex.lock(); };
+	void unlock() { return m_mutex.unlock(); };;
 
 private:
 	// Who are my users...
@@ -50,7 +49,7 @@ private:
 	//  messages, but you can use the validated object pointer!
 	SvOl::SVInObjectInfoStructVector m_UserInfoList;
 
-	mutable SVCriticalSectionPtr m_CriticalSectionPtr;
+	mutable std::mutex m_mutex;
 
 };
 

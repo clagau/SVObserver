@@ -88,7 +88,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVCriticalSection.cpp" />
     <ClCompile Include="SVEncodeDecodeUtilities.cpp" />
     <ClCompile Include="SVImageConvertorGDI.cpp" />
     <ClCompile Include="SVLockableClass.cpp" />
@@ -101,8 +100,6 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAsyncProcedure.h" />
-    <ClInclude Include="SVAutoLockAndReleaseTemplate.h" />
-    <ClInclude Include="SVCriticalSection.h" />
     <ClInclude Include="SVEncodeDecodeUtilities.h" />
     <ClInclude Include="SVEventThread.h" />
     <ClInclude Include="SVFuture.h" />
@@ -120,7 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVAsyncProcedure.inl" />
-    <None Include="SVAutoLockAndReleaseTemplate.inl" />
     <None Include="SVEventThread.inl" />
     <None Include="SVFuture.inl" />
     <None Include="SVSAXErrorHandlerImpl.inl" />

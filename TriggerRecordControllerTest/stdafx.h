@@ -38,6 +38,7 @@
 #include <comdef.h>
 #include <deque>
 #include <map>
+#include <mutex>
 #include <set>
 #include <vector>
 #include <ctime>

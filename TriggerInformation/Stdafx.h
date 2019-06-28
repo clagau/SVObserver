@@ -63,6 +63,7 @@
 #include <cstdlib>
 #include <list>
 #include <memory>
+#include <mutex>
 #include <set>					//Used by static library
 #include <tchar.h>				//Used by static library
 

@@ -41,9 +41,6 @@
     <ClCompile Include="SVControlCommands.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCriticalSection.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVDataDefObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -159,9 +156,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVControlResponse.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCriticalSection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDataDefObject.h">

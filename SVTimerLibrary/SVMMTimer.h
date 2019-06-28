@@ -16,7 +16,8 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVMMTimerEventHandler.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVSystemLibrary/SVCriticalSection.h"
+
+
 
 #pragma endregion Includes
 
@@ -49,6 +50,8 @@ namespace SvTl
 		static void CALLBACK TimerAPCProc( ULONG_PTR dwParam );
 
 		void Dispatch( bool& p_WaitForEvents );
-		SVCriticalSection m_CritSec;
+		
+		//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  
+		std::recursive_mutex m_Mutex;
 	};
 } //namespace SvTl

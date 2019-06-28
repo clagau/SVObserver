@@ -32,12 +32,9 @@ HRESULT SVMatroxSystemInterface::Allocate(const std::string& SystemDescriptor, l
 	try
 #endif
 	{
-		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+		
 
-		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-		if( l_Code == S_OK )
-		{
+	
 			__int64 systemID;
 
 			size_t len = SystemDescriptor.length() + 1;
@@ -55,7 +52,7 @@ HRESULT SVMatroxSystemInterface::Allocate(const std::string& SystemDescriptor, l
 				p_rSystem.m_SystemIdentifier = systemID;
 				SVMatroxResourceMonitor::InsertIdentifier( SVSystemID, p_rSystem.m_SystemIdentifier );
 			}
-		}
+		
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
@@ -83,17 +80,14 @@ HRESULT SVMatroxSystemInterface::Release(SVMatroxSystem& SystemId)
 	{
 		if (SystemId.m_SystemIdentifier != 0)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+			
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
-			{
+			
 				MsysFree( SystemId.m_SystemIdentifier );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 				SVMatroxResourceMonitor::EraseIdentifier( SVSystemID, SystemId.m_SystemIdentifier );
-			}
+			
 		}
 	}
 #ifdef USE_TRY_BLOCKS

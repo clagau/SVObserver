@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <memory>
-#include "SVSystemLibrary/SVCriticalSection.h"
+
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectReference.h"
 #include "SVObserverNotificationFunctor.h"
@@ -280,8 +280,8 @@ protected:
 
 	long m_State;
 
-	mutable SVCriticalSection m_Lock;
-
+	//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  
+	mutable std::recursive_mutex m_Mutex;
 	SVCookieEntryMap		m_CookieEntries;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
 	RootNameChildMap		m_RootNameChildren;

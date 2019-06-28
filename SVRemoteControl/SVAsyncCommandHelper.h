@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVCommandStatus.h"
 #include "SVCommandTemplate.h"
-#include "SVCriticalSection.h"
+
 #pragma endregion Includes
 
 struct SVAsyncCommandHelper
@@ -48,8 +48,8 @@ private:
 	HRESULT GetWaitHandle( HANDLE& p_rHandle ) const;
 
 	mutable HANDLE m_WaitHandle;
-
-	mutable SVCriticalSection m_CriticalSection;
+	
+	mutable std::timed_mutex m_TimedMutex;
 	SVCommandTemplatePtr m_CommandPtr;
 
 	bool m_Cancel;

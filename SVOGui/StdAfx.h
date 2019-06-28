@@ -68,6 +68,7 @@
 #include <limits.h>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <oleauto.h>
 #include <regex>
 #include <sequential_tree.h> //Used by static library

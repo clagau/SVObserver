@@ -309,7 +309,6 @@
     <ClCompile Include="SVAsyncControlCommandSetMode.cpp" />
     <ClCompile Include="SVCommandTemplate.cpp" />
     <ClCompile Include="SVControlCommands.cpp" />
-    <ClCompile Include="SVCriticalSection.cpp" />
     <ClCompile Include="SVDataDefObject.cpp" />
     <ClCompile Include="SVDataDefObjectList.cpp" />
     <ClCompile Include="SVErrorObject.cpp" />
@@ -403,7 +402,6 @@
     <ClInclude Include="SVCommandTemplate.h" />
     <ClInclude Include="SVControlCommands.h" />
     <ClInclude Include="SVControlResponse.h" />
-    <ClInclude Include="SVCriticalSection.h" />
     <ClInclude Include="SVEventThread.h" />
     <ClInclude Include="SVFile.h" />
     <ClInclude Include="SVInputMatchItem.h" />

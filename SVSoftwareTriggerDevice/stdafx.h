@@ -56,6 +56,7 @@
 #include <functional>
 #include <list>				//Used by static library
 #include <map>
+#include <mutex>
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library

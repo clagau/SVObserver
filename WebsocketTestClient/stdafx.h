@@ -14,6 +14,7 @@
 
 #include <functional>
 #include <future>
+#include <mutex>
 #include <memory>
 #include <stdio.h>
 #include <tchar.h>

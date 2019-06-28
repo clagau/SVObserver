@@ -54,6 +54,7 @@
 #include <limits>
 #include <map>
 #include <mmsystem.h>
+#include <mutex>
 #include <set>				//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library

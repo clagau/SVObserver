@@ -18,9 +18,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCriticalSection.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVEncodeDecodeUtilities.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -51,12 +48,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVAsyncProcedure.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAutoLockAndReleaseTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCriticalSection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEncodeDecodeUtilities.h">
@@ -104,9 +95,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVAsyncProcedure.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVAutoLockAndReleaseTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVEventThread.inl">

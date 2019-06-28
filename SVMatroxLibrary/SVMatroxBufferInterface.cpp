@@ -416,24 +416,18 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 
 		if (0 != l_lType && 0 != l_lAttrib)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+			MIL_ID l_NewID = MbufAlloc1d(M_DEFAULT_HOST,
+				p_CreateLineStruct.m_lSizeX,
+				l_lType,
+				l_lAttrib,
+				M_NULL);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewID = MbufAlloc1d(M_DEFAULT_HOST,
-					p_CreateLineStruct.m_lSizeX,
-					l_lType,
-					l_lAttrib,
-					M_NULL);
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-CreateLine")));
-				}
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-CreateLine")));
 			}
+
 		}
 		else
 		{
@@ -487,28 +481,24 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const LPBITMAPI
 				lAttrib += (M_RGB16 + M_PACKED);
 			}
 
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+
+			// Allocate a multi or single band image buffer
+			MIL_ID l_NewID = MbufAllocColor(M_DEFAULT_HOST,
+				pbmhInfo->biBitCount <= Pixel8 ? SingleBand : MaxColorBands,
+				pbmhInfo->biWidth,
+				pbmhInfo->biHeight,
+				type,
+				lAttrib,
+				M_NULL);
+
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				// Allocate a multi or single band image buffer
-				MIL_ID l_NewID = MbufAllocColor(M_DEFAULT_HOST,
-					pbmhInfo->biBitCount <= Pixel8 ? SingleBand : MaxColorBands,
-					pbmhInfo->biWidth,
-					pbmhInfo->biHeight,
-					type,
-					lAttrib,
-					M_NULL);
-
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-LPBITMAPINFO")));
-				}
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-LPBITMAPINFO")));
 			}
+
 		}// end if (nullptr != p_pBitmapInfo)
 		else
 		{
@@ -545,55 +535,50 @@ HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatro
 
 		if (0 != l_lType && 0 != l_lAttrib)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+			MIL_ID MilSystemID = p_rSystem.empty() ? M_DEFAULT_HOST : p_rSystem.m_SystemIdentifier;
+			MIL_ID l_NewID = M_NULL;
+			if (MaxColorBands == p_CreateStruct.m_lSizeBand)
+			{
+				if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
+				{
+					l_lAttrib |= M_PLANAR;
+					if (M_DIB == (l_lAttrib & M_DIB))
+					{
+						// Remove M_DIB as it is not allowed with M_PLANAR
+						l_lAttrib ^= M_DIB;
+					}
+				}
+
+				if (M_DIB == (l_lAttrib & M_DIB))
+				{
+					l_lAttrib |= M_PACKED + M_BGR32;
+				}
+
+				l_NewID = MbufAllocColor(MilSystemID,
+					p_CreateStruct.m_lSizeBand,
+					p_CreateStruct.m_lSizeX,
+					p_CreateStruct.m_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_NULL);
+			}
+			else
+			{
+				l_NewID = MbufAlloc2d(MilSystemID,
+					p_CreateStruct.m_lSizeX,
+					p_CreateStruct.m_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_NULL);
+			}
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID MilSystemID = p_rSystem.empty() ? M_DEFAULT_HOST : p_rSystem.m_SystemIdentifier;
-				MIL_ID l_NewID = M_NULL;
-				if (MaxColorBands == p_CreateStruct.m_lSizeBand)
-				{
-					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
-					{
-						l_lAttrib |= M_PLANAR;
-						if (M_DIB == (l_lAttrib & M_DIB))
-						{
-							// Remove M_DIB as it is not allowed with M_PLANAR
-							l_lAttrib ^= M_DIB;
-						}
-					}
-
-					if (M_DIB == (l_lAttrib & M_DIB))
-					{
-						l_lAttrib |= M_PACKED + M_BGR32;
-					}
-
-					l_NewID = MbufAllocColor(MilSystemID,
-						p_CreateStruct.m_lSizeBand,
-						p_CreateStruct.m_lSizeX,
-						p_CreateStruct.m_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_NULL);
-				}
-				else
-				{
-					l_NewID = MbufAlloc2d(MilSystemID,
-						p_CreateStruct.m_lSizeX,
-						p_CreateStruct.m_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_NULL);
-				}
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-SystemID,BufferCreate")));
-				}
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-SystemID,BufferCreate")));
 			}
+
 		}
 		else
 		{
@@ -629,45 +614,39 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 
 		if (0 != l_lType && 0 != l_lAttrib)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+			MIL_ID l_NewID = M_NULL;
+			if (MaxColorBands == p_CreateStruct.m_lSizeBand)
+			{
+				if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
+				{
+					l_lAttrib |= M_PLANAR;
+					// Planar cannot be used with DIB
+					l_lAttrib &= ~M_DIB;
+				}
+				l_NewID = MbufAllocColor(M_DEFAULT_HOST,
+					p_CreateStruct.m_lSizeBand,
+					p_CreateStruct.m_lSizeX,
+					p_CreateStruct.m_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_NULL);
+			}
+			else
+			{
+				l_NewID = MbufAlloc2d(M_DEFAULT_HOST,
+					p_CreateStruct.m_lSizeX,
+					p_CreateStruct.m_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_NULL);
+			}
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewID = M_NULL;
-				if (MaxColorBands == p_CreateStruct.m_lSizeBand)
-				{
-					if (M_LUT == (l_lAttrib & M_LUT))	// Mil help states that LUT must be stored in planar format.
-					{
-						l_lAttrib |= M_PLANAR;
-						// Planar cannot be used with DIB
-						l_lAttrib &= ~M_DIB;
-					}
-					l_NewID = MbufAllocColor(M_DEFAULT_HOST,
-						p_CreateStruct.m_lSizeBand,
-						p_CreateStruct.m_lSizeX,
-						p_CreateStruct.m_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_NULL);
-				}
-				else
-				{
-					l_NewID = MbufAlloc2d(M_DEFAULT_HOST,
-						p_CreateStruct.m_lSizeX,
-						p_CreateStruct.m_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_NULL);
-				}
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-BufferCreate")));
-				}
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-BufferCreate")));
 			}
+
 		}
 		else
 		{
@@ -701,51 +680,45 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 	{
 		if (!p_CreateChildStruct.m_rParentBufId.empty())
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+			MIL_ID childBufID(M_NULL);
+			MIL_ID parentBufID = p_CreateChildStruct.m_rParentBufId.GetIdentifier();
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+			if (p_CreateChildStruct.m_data.m_lParentBandCount > 1)
+			{
+				// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
+				// Valid index values are from 0 to (number of bands of the buffer - 1). 
+				// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
+				// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
+				// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
+				childBufID = MbufChildColor2d(parentBufID,
+					p_CreateChildStruct.m_data.m_lBand,
+					p_CreateChildStruct.m_data.m_lOffX,
+					p_CreateChildStruct.m_data.m_lOffY,
+					p_CreateChildStruct.m_data.m_lSizeX,
+					p_CreateChildStruct.m_data.m_lSizeY,
+					M_NULL);
+			}
+			else
+			{
+				childBufID = MbufChild2d(parentBufID,
+					p_CreateChildStruct.m_data.m_lOffX,
+					p_CreateChildStruct.m_data.m_lOffY,
+					p_CreateChildStruct.m_data.m_lSizeX,
+					p_CreateChildStruct.m_data.m_lSizeY,
+					M_NULL);
+			}
+
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID childBufID(M_NULL);
-				MIL_ID parentBufID = p_CreateChildStruct.m_rParentBufId.GetIdentifier();
-
-				if (p_CreateChildStruct.m_data.m_lParentBandCount > 1)
+				if (!rBuffer.empty())
 				{
-					// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
-					// Valid index values are from 0 to (number of bands of the buffer - 1). 
-					// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
-					// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
-					// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
-					childBufID = MbufChildColor2d(parentBufID,
-						p_CreateChildStruct.m_data.m_lBand,
-						p_CreateChildStruct.m_data.m_lOffX,
-						p_CreateChildStruct.m_data.m_lOffY,
-						p_CreateChildStruct.m_data.m_lSizeX,
-						p_CreateChildStruct.m_data.m_lSizeY,
-						M_NULL);
+					rBuffer.clear();
 				}
-				else
-				{
-					childBufID = MbufChild2d(parentBufID,
-						p_CreateChildStruct.m_data.m_lOffX,
-						p_CreateChildStruct.m_data.m_lOffY,
-						p_CreateChildStruct.m_data.m_lSizeX,
-						p_CreateChildStruct.m_data.m_lSizeY,
-						M_NULL);
-				}
-
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					if (!rBuffer.empty())
-					{
-						rBuffer.clear();
-					}
-					rBuffer.m_BufferPtr = SVMatroxBufferPtr {std::make_shared<SVMatroxImageChildBuffer>(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer")};
-				}
+				rBuffer.m_BufferPtr = SVMatroxBufferPtr {std::make_shared<SVMatroxImageChildBuffer>(p_CreateChildStruct.m_rParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer")};
 			}
+
 		}
 		else
 		{
@@ -783,51 +756,46 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 
 		if (0 != l_lType && 0 != l_lAttrib)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+			MIL_ID l_NewID = M_NULL;
+			if (p_CreateColorStruct.m_lSizeBand > 1)
+			{
+				l_NewID = MbufCreateColor(M_DEFAULT_HOST,
+					p_CreateColorStruct.m_lSizeBand,
+					p_CreateColorStruct.m_lSizeX,
+					p_CreateColorStruct.m_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_HOST_ADDRESS + M_PITCH,
+					p_CreateColorStruct.m_PitchWidth,
+					reinterpret_cast<void**>(p_CreateColorStruct.m_ppArrayOfDataPtr),
+					M_NULL);
+			}
+			else
+			{
+				l_lAttrib &= ~M_PACKED;  //  Cannot have M_PACKED with a mono buffer.
+				if (M_IS_FORMAT_RGB_BGR(l_lAttrib))
+				{
+					l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
+				}
+				l_NewID = MbufCreate2d(M_DEFAULT_HOST,
+					p_CreateColorStruct.m_lSizeX,
+					p_CreateColorStruct.m_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_HOST_ADDRESS + M_PITCH,
+					p_CreateColorStruct.m_PitchWidth,
+					reinterpret_cast<void*>(*p_CreateColorStruct.m_ppArrayOfDataPtr),
+					M_NULL);
+			}
+
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewID = M_NULL;
-				if (p_CreateColorStruct.m_lSizeBand > 1)
-				{
-					l_NewID = MbufCreateColor(M_DEFAULT_HOST,
-						p_CreateColorStruct.m_lSizeBand,
-						p_CreateColorStruct.m_lSizeX,
-						p_CreateColorStruct.m_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_HOST_ADDRESS + M_PITCH,
-						p_CreateColorStruct.m_PitchWidth,
-						reinterpret_cast<void**>(p_CreateColorStruct.m_ppArrayOfDataPtr),
-						M_NULL);
-				}
-				else
-				{
-					l_lAttrib &= ~M_PACKED;  //  Cannot have M_PACKED with a mono buffer.
-					if (M_IS_FORMAT_RGB_BGR(l_lAttrib))
-					{
-						l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
-					}
-					l_NewID = MbufCreate2d(M_DEFAULT_HOST,
-						p_CreateColorStruct.m_lSizeX,
-						p_CreateColorStruct.m_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_HOST_ADDRESS + M_PITCH,
-						p_CreateColorStruct.m_PitchWidth,
-						reinterpret_cast<void*>(*p_CreateColorStruct.m_ppArrayOfDataPtr),
-						M_NULL);
-				}
-
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-BufferCreateExt")));
-				}
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-BufferCreateExt")));
 			}
+
 		}
 		else
 		{
@@ -877,45 +845,39 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 
 		if (S_OK == l_Code)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+			MIL_ID l_NewID = M_NULL;
+			if (MaxColorBands == l_lBandSize)
+			{
+				l_NewID = MbufAllocColor(M_DEFAULT_HOST,
+					l_lBandSize,
+					l_lSizeX,
+					l_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_NULL);
+			}
+			else
+			{
+				l_lAttrib &= ~M_PACKED;  //  Cannot have M_PACKED with a mono buffer.
+				if (M_IS_FORMAT_RGB_BGR(l_lAttrib))
+				{
+					l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
+				}
+				l_NewID = MbufAlloc2d(M_DEFAULT_HOST,
+					l_lSizeX,
+					l_lSizeY,
+					l_lType,
+					l_lAttrib,
+					M_NULL);
+			}
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewID = M_NULL;
-				if (MaxColorBands == l_lBandSize)
-				{
-					l_NewID = MbufAllocColor(M_DEFAULT_HOST,
-						l_lBandSize,
-						l_lSizeX,
-						l_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_NULL);
-				}
-				else
-				{
-					l_lAttrib &= ~M_PACKED;  //  Cannot have M_PACKED with a mono buffer.
-					if (M_IS_FORMAT_RGB_BGR(l_lAttrib))
-					{
-						l_lAttrib &= ~0xff00;  // remove rgb or bgr attribute
-					}
-					l_NewID = MbufAlloc2d(M_DEFAULT_HOST,
-						l_lSizeX,
-						l_lSizeY,
-						l_lType,
-						l_lAttrib,
-						M_NULL);
-				}
-
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-MatroxBuffer")));
-				}
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-MatroxBuffer")));
 			}
+
 		}
 
 	}
@@ -1002,45 +964,42 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm
 				lAttrib += (M_RGB16 + M_PACKED);
 			}
 
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
+
+
+			MIL_ID l_NewID = M_NULL;
+
+			// Allocate a multi or single band image buffer
+			MbufAllocColor(M_DEFAULT_HOST,
+				l_BitCount <= Pixel8 ? SingleBand : MaxColorBands,
+				l_Width,
+				l_Height,
+				type,
+				lAttrib,
+				&l_NewID);
+
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+
+			l_Code = (l_NewID != M_NULL) ? S_OK : S_FALSE;
 
 			if (S_OK == l_Code)
 			{
-				MIL_ID l_NewID = M_NULL;
+				LPVOID pHostBuffer = nullptr;
+				pHostBuffer = (LPVOID)MbufInquire(l_NewID, M_HOST_ADDRESS, M_NULL);
 
-				// Allocate a multi or single band image buffer
-				MbufAllocColor(M_DEFAULT_HOST,
-					l_BitCount <= Pixel8 ? SingleBand : MaxColorBands,
-					l_Width,
-					l_Height,
-					type,
-					lAttrib,
-					&l_NewID);
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-HBITMAP")));
 
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				l_Code = (l_NewID != M_NULL) ? S_OK : S_FALSE;
-
-				if (S_OK == l_Code)
+				// Set the bits of our new bitmap
+				if (dib.dsBm.bmBits)
 				{
-					LPVOID pHostBuffer = nullptr;
-					pHostBuffer = (LPVOID)MbufInquire(l_NewID, M_HOST_ADDRESS, M_NULL);
-
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-HBITMAP")));
-
-					// Set the bits of our new bitmap
-					if (dib.dsBm.bmBits)
-					{
-						memcpy(pHostBuffer, dib.dsBm.bmBits, l_SizeImage);
-					}
-					else
-					{
-						long cnt = ::GetBitmapBits(p_rHbm, l_SizeImage, pHostBuffer);
-					}
+					memcpy(pHostBuffer, dib.dsBm.bmBits, l_SizeImage);
+				}
+				else
+				{
+					long cnt = ::GetBitmapBits(p_rHbm, l_SizeImage, pHostBuffer);
 				}
 			}
+
 		}// end if (nullptr != p_rHbm)
 	}
 #ifdef USE_TRY_BLOCKS
@@ -1084,7 +1043,7 @@ HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p
 				if (pbmhInfo->biHeight > 0)
 				{
 					pbmhInfo->biHeight = pbmhInfo->biHeight * -1;
-	}
+				}
 
 				// Calculate the absolute height
 				long lHeight = abs(pbmhInfo->biHeight);
@@ -1281,7 +1240,7 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint<long>& rPoint, const S
 {
 	HRESULT l_Status(S_OK);
 
-	rPoint = SVPoint<long>{};
+	rPoint = SVPoint<long> {};
 
 	if (!(p_rBuffer.empty()))
 	{
@@ -1295,8 +1254,8 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint<long>& rPoint, const S
 			{
 				if (l_ParentID != p_rBuffer.GetIdentifier())
 				{
-					long offsetX{0L};
-					long offsetY{0L};
+					long offsetX {0L};
+					long offsetY {0L};
 
 					l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetX, offsetX);
 
@@ -1307,7 +1266,7 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint<long>& rPoint, const S
 
 					if (S_OK == l_Status)
 					{
-						rPoint = SVPoint<long>{offsetX, offsetY};
+						rPoint = SVPoint<long> {offsetX, offsetY};
 					}
 				}
 				else
@@ -1413,7 +1372,7 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, cons
 					NB_OF_BITS_PER_PIXEL(l_DataFormat, l_BitCount);
 				}
 
-				if (l_BitCount < 1 || p_rBuffer.GetIdentifier() != parentId )
+				if (l_BitCount < 1 || p_rBuffer.GetIdentifier() != parentId)
 				{
 					l_BitCount = static_cast<unsigned short>(l_PixelDepth * l_BandSize);
 				}
@@ -1608,12 +1567,12 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	HRESULT Code(S_OK);
 	if (pMemory == nullptr)
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMemoryPointer,  SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMemoryPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
 		throw message;
 	}
 	else if (rImageProps.Matrox_type == 0)
 	{
-		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxType,SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_InvalidMatroxType, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
 		throw message;
 	}
 	else if (rImageProps.Attrib == 0)
@@ -1688,12 +1647,12 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, __int64 p_Fro
 			MbufCopy(p_From, p_rTo.GetIdentifier());
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -1717,12 +1676,12 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(__int64 p_To, const SVMatroxBuffer& 
 			MbufCopy(p_rFrom.GetIdentifier(), p_To);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -1755,12 +1714,12 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 				p_lYOffset);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -1792,12 +1751,12 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 				p_lBand);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2011,7 +1970,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 		else
 		{
 			MbufGet(milId, bufferVector);
-			assert(bufferVector.size() == fabs(rBitMapInfo.GetHeight()*rBitMapInfo.GetWidth()*(rBitMapInfo.GetBitCount()/8)));
+			assert(bufferVector.size() == fabs(rBitMapInfo.GetHeight()*rBitMapInfo.GetWidth()*(rBitMapInfo.GetBitCount() / 8)));
 			if (0 < bufferVector.size())
 			{
 				pHostBuffer = bufferVector.data();
@@ -2131,12 +2090,12 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo,
 				const_cast<unsigned char*>(p_pcArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2167,12 +2126,12 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_
 				const_cast<long*>(p_plArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2207,12 +2166,12 @@ HRESULT SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo,
 				const_cast<unsigned char*>(p_pArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2247,13 +2206,13 @@ HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo,
 				const_cast<unsigned char*>(p_pArrayData));
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
 
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2366,12 +2325,12 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2411,12 +2370,12 @@ HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBuffe
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2471,12 +2430,12 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2531,12 +2490,12 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
 			{
 				l_Code = SVMEE_INVALID_PARAMETER;
 			}
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2567,12 +2526,12 @@ HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
 			MbufClear(p_rBuffer.GetIdentifier(), p_dColor);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{
@@ -2583,7 +2542,7 @@ HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
 	assert(S_OK == l_Code);
 	return l_Code;
 
-	}
+}
 
 HRESULT SVMatroxBufferInterface::GetImageSize(const std::string& rFileName, long &rWidth, long &rHeight)
 {
@@ -2650,44 +2609,38 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 	try
 #endif
 	{
-		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
-
-		l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
-
-		if (S_OK == l_Code)
-		{
-			if (p_bRestore)
-			{	// Restore Operation creates a new Mil handle.
-				MIL_ID l_NewID = M_NULL;
+		if (p_bRestore)
+		{	// Restore Operation creates a new Mil handle.
+			MIL_ID l_NewID = M_NULL;
+			MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()),
+				l_lFileFormat,
+				l_lOperation,
+				M_DEFAULT_HOST,
+				&l_NewID);
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			if (S_OK == l_Code)
+			{
+				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Import")));
+			}
+		}
+		else
+		{	// Load fills a previously created Mil handle.
+			if (!rBuffer.empty())
+			{
+				MIL_ID l_NewId = rBuffer.GetIdentifier();
 				MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()),
 					l_lFileFormat,
 					l_lOperation,
 					M_DEFAULT_HOST,
-					&l_NewID);
+					&l_NewId);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if (S_OK == l_Code)
-				{
-					createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Import")));
-				}
 			}
 			else
-			{	// Load fills a previously created Mil handle.
-				if (!rBuffer.empty())
-				{
-					MIL_ID l_NewId = rBuffer.GetIdentifier();
-					MbufImport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()),
-						l_lFileFormat,
-						l_lOperation,
-						M_DEFAULT_HOST,
-						&l_NewId);
-					l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				}
-				else
-				{
-					l_Code = SVMEE_INVALID_HANDLE;
-				}
+			{
+				l_Code = SVMEE_INVALID_HANDLE;
 			}
 		}
+
 	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
@@ -2731,12 +2684,12 @@ HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer,
 				rBuffer.GetIdentifier());
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-	}
+		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
 		}
-}
+	}
 #ifdef USE_TRY_BLOCKS
 	catch (...)
 	{

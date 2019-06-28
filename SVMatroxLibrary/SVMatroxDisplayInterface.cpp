@@ -42,105 +42,91 @@ SVMatroxDisplayInterface::~SVMatroxDisplayInterface()
 }
 
 /**
-@SVOperationName Create 
+@SVOperationName Create
 
 @SVOperationDescription This function Creates a SVMatroxDisplay.
 
 */
 HRESULT SVMatroxDisplayInterface::CreateDisplay(__int64& p_rDispId)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
-
 	{
-		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+		MIL_ID l_NewId = MdispAlloc(M_DEFAULT_HOST,
+			M_DEFAULT,		// M_AUTOMATIC new doc does not mention anything about this.
+			MIL_TEXT("M_DEFAULT"),
+			M_WINDOWED,		// M_WINDOWED | M_GDI_OVERLAY
+			M_NULL);
 
-		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-		if( l_Code == S_OK )
+		l_Code = SVMatroxApplicationInterface::GetLastStatus();
+		if (l_Code == S_OK)
 		{
-			MIL_ID l_NewId = MdispAlloc(M_DEFAULT_HOST,
-				M_DEFAULT,		// M_AUTOMATIC new doc does not mention anything about this.
-				MIL_TEXT("M_DEFAULT"),
-				M_WINDOWED,		// M_WINDOWED | M_GDI_OVERLAY
-				M_NULL);
-
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( l_Code == S_OK )
-			{
-				SVMatroxResourceMonitor::InsertIdentifier( SVDisplayID, l_NewId );
-				l_Code = DestroyDisplay(p_rDispId);
-				p_rDispId = l_NewId;				
-				}
-				}
-			}
+			SVMatroxResourceMonitor::InsertIdentifier(SVDisplayID, l_NewId);
+			l_Code = DestroyDisplay(p_rDispId);
+			p_rDispId = l_NewId;
+		}
+	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
 /**
-@SVOperationName Allocate Display 
+@SVOperationName Allocate Display
 
 @SVOperationDescription This function Creates a SVMatroxBuffer.
 
 */
-HRESULT SVMatroxDisplayInterface::Create( SVMatroxBuffer& p_rDispBufId, SVMatroxBufferCreateStruct p_CreateStruct )
+HRESULT SVMatroxDisplayInterface::Create(SVMatroxBuffer& p_rDispBufId, SVMatroxBufferCreateStruct p_CreateStruct)
 {
-	HRESULT l_Code;
+	HRESULT l_Code {S_OK};
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
-
 	{
-		__int64 l_lAttrib =   M_IMAGE | M_PROC | M_DISP | M_DIB;
+		__int64 l_lAttrib = M_IMAGE | M_PROC | M_DISP | M_DIB;
 
-		if( p_CreateStruct.m_eType > 0 )
+		if (p_CreateStruct.m_eType > 0)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
+			MIL_ID l_NewBuf = M_NULL;
+			if (p_CreateStruct.m_lSizeBand == 3)
 			{
-				MIL_ID l_NewBuf = M_NULL;
-				if( p_CreateStruct.m_lSizeBand == 3 )
-				{
-					l_NewBuf = MbufAllocColor(M_DEFAULT_HOST,
-						p_CreateStruct.m_lSizeBand,
-						p_CreateStruct.m_lSizeX,
-						p_CreateStruct.m_lSizeY,
-						p_CreateStruct.m_eType,
-						l_lAttrib,
-						M_NULL);
-				}
-				else
-				{
-					l_NewBuf = MbufAlloc2d(M_DEFAULT_HOST,
-						p_CreateStruct.m_lSizeX,
-						p_CreateStruct.m_lSizeY,
-						p_CreateStruct.m_eType,
-						l_lAttrib,
-						M_NULL);
-				}
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-				if( l_Code == S_OK )
-				{
-					SVMatroxResourceMonitor::InsertIdentifier( SVDisplayBufferID, l_NewBuf );
-
-					p_rDispBufId.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxImageBuffer(l_NewBuf, "SVMatroxDisplayInterface::Create-BufferCreate") };
-				}
+				l_NewBuf = MbufAllocColor(M_DEFAULT_HOST,
+					p_CreateStruct.m_lSizeBand,
+					p_CreateStruct.m_lSizeX,
+					p_CreateStruct.m_lSizeY,
+					p_CreateStruct.m_eType,
+					l_lAttrib,
+					M_NULL);
 			}
+			else
+			{
+				l_NewBuf = MbufAlloc2d(M_DEFAULT_HOST,
+					p_CreateStruct.m_lSizeX,
+					p_CreateStruct.m_lSizeY,
+					p_CreateStruct.m_eType,
+					l_lAttrib,
+					M_NULL);
+			}
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+
+			if (l_Code == S_OK)
+			{
+				SVMatroxResourceMonitor::InsertIdentifier(SVDisplayBufferID, l_NewBuf);
+
+				p_rDispBufId.m_BufferPtr = SVMatroxBufferPtr {new SVMatroxImageBuffer(l_NewBuf, "SVMatroxDisplayInterface::Create-BufferCreate")};
+			}
+
 		}
 		else
 		{
@@ -148,41 +134,36 @@ HRESULT SVMatroxDisplayInterface::Create( SVMatroxBuffer& p_rDispBufId, SVMatrox
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
 /**
-@SVOperationName Create - SVMatroxBuffer 
+@SVOperationName Create - SVMatroxBuffer
 
 @SVOperationDescription This function Creates a SVMatroxBuffer from an existing SVMatroxBuffer.
 
 */
 HRESULT SVMatroxDisplayInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom)
 {
-	HRESULT l_Code( S_OK );
-	SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+	HRESULT l_Code(S_OK);
 
-	l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-	if( l_Code == S_OK )
+	SVMatroxBufferInterface l_BufIntf;
+	SVMatroxBuffer l_Buf;
+	l_Code = l_BufIntf.Create(l_Buf, p_CreateFrom);
+	if (l_Code == S_OK)
 	{
-		SVMatroxBufferInterface l_BufIntf;
-		SVMatroxBuffer l_Buf;
-		l_Code = l_BufIntf.Create( l_Buf, p_CreateFrom );
-		if( l_Code == S_OK )
-		{
-			SVMatroxResourceMonitor::InsertIdentifier( SVDisplayBufferID, l_Buf.GetIdentifier() );
+		SVMatroxResourceMonitor::InsertIdentifier(SVDisplayBufferID, l_Buf.GetIdentifier());
 
-			p_rNewBuffer.m_BufferPtr = l_Buf.m_BufferPtr;
-		}
+		p_rNewBuffer.m_BufferPtr = l_Buf.m_BufferPtr;
 	}
+
 	return l_Code;
 }
 
@@ -206,34 +187,27 @@ HRESULT SVMatroxDisplayInterface::DestroyDisplay(__int64& rDispId)
 */
 HRESULT SVMatroxDisplayInterface::Destroy(SVMatroxBuffer& p_rDispBufId)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( !p_rDispBufId.empty() )
+		if (!p_rDispBufId.empty())
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
-
-			if( l_Code == S_OK )
-			{
-				SVMatroxResourceMonitor::EraseIdentifier( SVDisplayBufferID, p_rDispBufId.GetIdentifier() );
-
-				p_rDispBufId.clear();
-			}
+			SVMatroxResourceMonitor::EraseIdentifier(SVDisplayBufferID, p_rDispBufId.GetIdentifier());
+			p_rDispBufId.clear();
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -245,10 +219,10 @@ HRESULT SVMatroxDisplayInterface::Destroy(SVMatroxBuffer& p_rDispBufId)
 @SVOperationDescription This function converts the SVObserver type to a Matrox type.
 
 */
-long SVMatroxDisplayInterface::Convert2MatroxType( SVDisplayCntrlEnum p_eDisp) 
+long SVMatroxDisplayInterface::Convert2MatroxType(SVDisplayCntrlEnum p_eDisp)
 {
 	long l_lMatroxType = M_UNINITIALIZED;
-	switch( p_eDisp )
+	switch (p_eDisp)
 	{
 		case SVDispUpdate:
 		{
@@ -326,23 +300,23 @@ long SVMatroxDisplayInterface::Convert2MatroxType( SVDisplayCntrlEnum p_eDisp)
 @SVOperationDescription This function inquires about a specified display settings and puts the results in a double.
 
 */
-HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdValue)
+HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdValue)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		long l_lMatroxType = Convert2MatroxType( p_eDispFlag );
-		if( l_lMatroxType != M_UNINITIALIZED )
+		long l_lMatroxType = Convert2MatroxType(p_eDispFlag);
+		if (l_lMatroxType != M_UNINITIALIZED)
 		{
-			if( M_NULL != p_rDispId )
+			if (M_NULL != p_rDispId)
 			{
 				double l_dValue;
-				MdispInquire( p_rDispId, l_lMatroxType, &l_dValue );
+				MdispInquire(p_rDispId, l_lMatroxType, &l_dValue);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
+				if (l_Code == S_OK)
 				{
 					p_rdValue = l_dValue;
 				}
@@ -358,13 +332,13 @@ HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlE
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -374,32 +348,32 @@ HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlE
 @SVOperationDescription This function inquires about a specified display settings and puts the results in a long.
 
 */
-HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData)
+HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		long l_lMatroxType = Convert2MatroxType( p_eDispFlag );
-		if( l_lMatroxType != M_UNINITIALIZED )
+		long l_lMatroxType = Convert2MatroxType(p_eDispFlag);
+		if (l_lMatroxType != M_UNINITIALIZED)
 		{
-			if( M_NULL != p_rDispId )
+			if (M_NULL != p_rDispId)
 			{
 				MIL_INT l_lValue;
-				if(( p_eDispFlag & SVDispDouble) == SVDispDouble)
+				if ((p_eDispFlag & SVDispDouble) == SVDispDouble)
 				{	// if this parameter is expecting a double then we better use a double.
 					double l_dTmp = 0;
-					MdispInquire( p_rDispId, l_lMatroxType, &l_dTmp );
+					MdispInquire(p_rDispId, l_lMatroxType, &l_dTmp);
 					l_lValue = static_cast<long>(l_dTmp);
 				}
 				else
 				{
-					MdispInquire( p_rDispId, l_lMatroxType, &l_lValue );
+					MdispInquire(p_rDispId, l_lMatroxType, &l_lValue);
 				}
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
+				if (l_Code == S_OK)
 				{
 					p_rlData = static_cast<long>(l_lValue);
 				}
@@ -415,13 +389,13 @@ HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlE
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -429,27 +403,27 @@ HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlE
 /**
 @SVOperationName Get - SVMatroxBuffer
 
-@SVOperationDescription This function gets the SVMatroxBuffer associated with the specified SVMatroxDisplay 
+@SVOperationDescription This function gets the SVMatroxBuffer associated with the specified SVMatroxDisplay
 
 */
-HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( p_eDispFlag == SVDispWindowOvrBufID || p_eDispFlag == SVDispSelected )
+		if (p_eDispFlag == SVDispWindowOvrBufID || p_eDispFlag == SVDispSelected)
 		{
-			if( M_NULL != p_rDispId )
+			if (M_NULL != p_rDispId)
 			{
 				MIL_INT l_lValue;
-				MdispInquire( p_rDispId, M_SELECTED, &l_lValue );
+				MdispInquire(p_rDispId, M_SELECTED, &l_lValue);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if( l_Code == S_OK )
 				{
-					p_rBuffer.m_BufferPtr = SVMatroxBufferPtr{ new SVMatroxBufferTemplate(l_lValue, "SVMatroxDisplayInterface::Get") };
+				p_rBuffer.m_BufferPtr = SVMatroxBufferPtr {new SVMatroxBufferTemplate(l_lValue, "SVMatroxDisplayInterface::Get")};
 				}
 			}
 			else
@@ -463,13 +437,13 @@ HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlE
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -479,9 +453,9 @@ HRESULT SVMatroxDisplayInterface::Get( const __int64& p_rDispId, SVDisplayCntrlE
 @SVOperationDescription This function frees the specified SVMatroxDisplay.
 
 */
-HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue)
+HRESULT SVMatroxDisplayInterface::Set(const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue)
 {
-	return Set(p_rDispId, p_eDispFlag, static_cast<long>( p_dValue ));
+	return Set(p_rDispId, p_eDispFlag, static_cast<long>(p_dValue));
 }
 
 /**
@@ -490,20 +464,20 @@ HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlE
 @SVOperationDescription This function allows you to control the specified MIL display settings.
 
 */
-HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue)
+HRESULT SVMatroxDisplayInterface::Set(const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		long l_lMatroxType = Convert2MatroxType( p_eDispFlag );
-		if( l_lMatroxType != M_UNINITIALIZED )
+		long l_lMatroxType = Convert2MatroxType(p_eDispFlag);
+		if (l_lMatroxType != M_UNINITIALIZED)
 		{
-			if( M_NULL != p_rDispId )
+			if (M_NULL != p_rDispId)
 			{
-				MdispControl( p_rDispId, l_lMatroxType, p_lValue );
+				MdispControl(p_rDispId, l_lMatroxType, p_lValue);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -517,13 +491,13 @@ HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlE
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -533,8 +507,8 @@ HRESULT SVMatroxDisplayInterface::Set( const __int64& p_rDispId, SVDisplayCntrlE
 @SVOperationDescription Gets a pointer to the bitmapinfo of the display.
 
 */
-HRESULT SVMatroxDisplayInterface::GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, 
-																			 const SVMatroxBuffer& p_rBuffer )
+HRESULT SVMatroxDisplayInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo,
+	const SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
@@ -542,7 +516,7 @@ HRESULT SVMatroxDisplayInterface::GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo,
 #endif
 
 	{
-		if( !p_rBuffer.empty() )
+		if (!p_rBuffer.empty())
 		{
 			MbufInquire(p_rBuffer.GetIdentifier(),
 				M_BITMAPINFO,
@@ -557,13 +531,13 @@ HRESULT SVMatroxDisplayInterface::GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo,
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -575,7 +549,7 @@ HRESULT SVMatroxDisplayInterface::GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo,
 @SVOperationDescription Gets the host address for the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer )
+HRESULT SVMatroxDisplayInterface::GetHostAddress(LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Code;
 
@@ -584,7 +558,7 @@ HRESULT SVMatroxDisplayInterface::GetHostAddress( LPVOID p_rpHostAddress, const 
 #endif
 
 	{
-		if( !p_rBuffer.empty() )
+		if (!p_rBuffer.empty())
 		{
 			MIL_ID l_NewBuf = MbufInquire(p_rBuffer.GetIdentifier(),
 				M_HOST_ADDRESS,
@@ -599,13 +573,13 @@ HRESULT SVMatroxDisplayInterface::GetHostAddress( LPVOID p_rpHostAddress, const 
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -615,17 +589,17 @@ HRESULT SVMatroxDisplayInterface::GetHostAddress( LPVOID p_rpHostAddress, const 
 @SVOperationDescription This function associates a LUT buffer with the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::Lut( const __int64& p_rDispId, const SVMatroxBuffer& p_rLutBufId)
+HRESULT SVMatroxDisplayInterface::Lut(const __int64& p_rDispId, const SVMatroxBuffer& p_rLutBufId)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispLut( p_rDispId, p_rLutBufId.GetIdentifier() );
+			MdispLut(p_rDispId, p_rLutBufId.GetIdentifier());
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -634,13 +608,13 @@ HRESULT SVMatroxDisplayInterface::Lut( const __int64& p_rDispId, const SVMatroxB
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -650,17 +624,17 @@ HRESULT SVMatroxDisplayInterface::Lut( const __int64& p_rDispId, const SVMatroxB
 @SVOperationDescription This function dis-associates or clears any LUT that was associated with the specified display
 
 */
-HRESULT SVMatroxDisplayInterface::LutClear( const __int64& p_rDispId)
+HRESULT SVMatroxDisplayInterface::LutClear(const __int64& p_rDispId)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispLut( p_rDispId, M_DEFAULT );
+			MdispLut(p_rDispId, M_DEFAULT);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -669,13 +643,13 @@ HRESULT SVMatroxDisplayInterface::LutClear( const __int64& p_rDispId)
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -685,17 +659,17 @@ HRESULT SVMatroxDisplayInterface::LutClear( const __int64& p_rDispId)
 @SVOperationDescription This function associates pan and scroll values with the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::Pan( const __int64& p_rDispId, const double& p_dXOffset, const double& p_dYOffset)
+HRESULT SVMatroxDisplayInterface::Pan(const __int64& p_rDispId, const double& p_dXOffset, const double& p_dYOffset)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispPan( p_rDispId, p_dXOffset, p_dYOffset );
+			MdispPan(p_rDispId, p_dXOffset, p_dYOffset);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -704,33 +678,33 @@ HRESULT SVMatroxDisplayInterface::Pan( const __int64& p_rDispId, const double& p
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
 /**
 @SVOperationName Display Select
 
-@SVOperationDescription This function outputs the content of the specified image buffer to the specified MIL display. 
+@SVOperationDescription This function outputs the content of the specified image buffer to the specified MIL display.
 
 */
-HRESULT SVMatroxDisplayInterface::Select( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId)
+HRESULT SVMatroxDisplayInterface::Select(const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispSelect( p_rDispId, p_rImageId.GetIdentifier() );
+			MdispSelect(p_rDispId, p_rImageId.GetIdentifier());
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -739,13 +713,13 @@ HRESULT SVMatroxDisplayInterface::Select( const __int64& p_rDispId, const SVMatr
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -755,17 +729,17 @@ HRESULT SVMatroxDisplayInterface::Select( const __int64& p_rDispId, const SVMatr
 @SVOperationDescription This function displays the specified image buffer contents in the specified user window, using the specified MIL display.
 
 */
-HRESULT SVMatroxDisplayInterface::SelectWindow( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle )
+HRESULT SVMatroxDisplayInterface::SelectWindow(const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispSelectWindow( p_rDispId, p_rImageId.GetIdentifier(), p_hClientWindowHandle );
+			MdispSelectWindow(p_rDispId, p_rImageId.GetIdentifier(), p_hClientWindowHandle);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -774,13 +748,13 @@ HRESULT SVMatroxDisplayInterface::SelectWindow( const __int64& p_rDispId, const 
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -790,17 +764,17 @@ HRESULT SVMatroxDisplayInterface::SelectWindow( const __int64& p_rDispId, const 
 @SVOperationDescription This function deselects any image that was selected to the specified MIL display.
 
 */
-HRESULT SVMatroxDisplayInterface::Deselect( const __int64& p_rDispId)
+HRESULT SVMatroxDisplayInterface::Deselect(const __int64& p_rDispId)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispSelect( p_rDispId, M_NULL );
+			MdispSelect(p_rDispId, M_NULL);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -809,13 +783,13 @@ HRESULT SVMatroxDisplayInterface::Deselect( const __int64& p_rDispId)
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 
@@ -826,17 +800,17 @@ HRESULT SVMatroxDisplayInterface::Deselect( const __int64& p_rDispId)
 @SVOperationDescription This function associates a zoom factor with the specified display.
 
 */
-HRESULT SVMatroxDisplayInterface::Zoom( const __int64& p_rDispId, const double& p_dXFactor, const double& p_dYFactor )
+HRESULT SVMatroxDisplayInterface::Zoom(const __int64& p_rDispId, const double& p_dXFactor, const double& p_dYFactor)
 {
-	HRESULT l_Code( S_OK );
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 
 	{
-		if( M_NULL != p_rDispId )
+		if (M_NULL != p_rDispId)
 		{
-			MdispZoom( p_rDispId, p_dXFactor, p_dYFactor );
+			MdispZoom(p_rDispId, p_dXFactor, p_dYFactor);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -845,13 +819,13 @@ HRESULT SVMatroxDisplayInterface::Zoom( const __int64& p_rDispId, const double& 
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == S_OK );
+	assert(l_Code == S_OK);
 	return l_Code;
 }
 

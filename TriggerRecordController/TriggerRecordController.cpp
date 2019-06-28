@@ -53,12 +53,8 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 	: m_pDataController(std::move(pDataController))
 	, m_imageBufferController(*m_pDataController)
 {
-	//The next call is only to avoid a crash at the end of the application. 
-	//Reason of the crash was that SVMatroxResourceMonitor was destructed before the ImageBufferController, but this need it in its destructor.
-	//If the singleton of SVMatroxResourceMonitor created before of the singleton of ImageBufferController the destruction it in the right order.
-	//In Release-Mode this call do nothing.
-	SVMatroxResourceMonitor::SVAutoLock autoLock;
-	SVMatroxResourceMonitor::GetAutoLock(autoLock);
+	
+	
 	m_pDataController->setResetCallback(std::bind(&TriggerRecordController::sendResetCall, this));
 	m_pDataController->setReadyCallback(std::bind(&TriggerRecordController::sendReadyCall, this));
 	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1));	

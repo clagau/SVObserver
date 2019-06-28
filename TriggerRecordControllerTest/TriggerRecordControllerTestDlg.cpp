@@ -73,6 +73,8 @@ namespace SvTrcT
 		m_recordController.unregisterResetCallback(m_resetCallbackId);
 		m_recordController.unregisterReadyCallback(m_readyCallbackId);
 		m_recordController.unregisterNewTrCallback(m_newTrIdCallbackId);
+		SvTrc::destroyTriggerRecordController();
+
 	}
 
 	void CTriggerRecordControllerTestDlg::DoDataExchange(CDataExchange* pDX)

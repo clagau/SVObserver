@@ -24,7 +24,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
@@ -36,14 +35,14 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVObjectClass, GUID_NULL )
+SV_IMPLEMENT_CLASS(SVObjectClass, GUID_NULL)
 
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
 SVObjectClass::SVObjectClass()
 {
 	m_Name = m_ObjectName = _T("Base Class: SVResearch Base Object");
 	m_resourceID = 0;
-	SetObjectOwner( nullptr );
+	SetObjectOwner(nullptr);
 
 	init();
 }
@@ -51,7 +50,7 @@ SVObjectClass::SVObjectClass()
 /*
 This constructor initializes the name objects from the provided parameter, clears all owner information, and calls the init method.
 */
-SVObjectClass::SVObjectClass( LPCTSTR ObjectName )
+SVObjectClass::SVObjectClass(LPCTSTR ObjectName)
 {
 	m_Name = ObjectName;
 	m_ObjectName = ObjectName;
@@ -63,12 +62,12 @@ SVObjectClass::SVObjectClass( LPCTSTR ObjectName )
 /*
 This constructor initializes the name objects from the provided parameter, sets the owner information from the provided parameter, and calls the init method.
 */
-SVObjectClass::SVObjectClass( SVObjectClass* pOwner /* = nullptr */, int StringResourceID /* = IDS_CLASSNAME_SVOBJECT */ )
+SVObjectClass::SVObjectClass(SVObjectClass* pOwner /* = nullptr */, int StringResourceID /* = IDS_CLASSNAME_SVOBJECT */)
 {
-	m_ObjectName = SvUl::LoadStdString( StringResourceID );
+	m_ObjectName = SvUl::LoadStdString(StringResourceID);
 	m_Name = m_ObjectName;
 	m_resourceID = StringResourceID;
-	SetObjectOwner( pOwner );
+	SetObjectOwner(pOwner);
 
 	init();
 }
@@ -86,17 +85,17 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 */
 void SVObjectClass::init()
 {
-	m_isCreated	  = false;
+	m_isCreated = false;
 	m_embeddedID = GUID_NULL;
 
 	// Set object Info...
-	SVObjectManagerClass::Instance().CreateUniqueObjectID( this );
+	SVObjectManagerClass::Instance().CreateUniqueObjectID(this);
 
 	m_outObjectInfo.SetObject(this);
 
-	m_ObjectAttributesAllowed = SvPb::noAttributes; 
-	m_ObjectAttributesSet.resize( 1 );
-	m_ObjectAttributesSet[0]  = SvPb::noAttributes;
+	m_ObjectAttributesAllowed = SvPb::noAttributes;
+	m_ObjectAttributesSet.resize(1);
+	m_ObjectAttributesSet[0] = SvPb::noAttributes;
 	m_DefaultObjectAttributesSet = SvPb::noAttributes;
 }
 
@@ -105,15 +104,15 @@ This method destroys all friends on the friends list owned by this object.  All 
 */
 void SVObjectClass::DestroyFriends()
 {
-	for( size_t i = 0; i < m_friendList.size(); ++i )
+	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[ i ];
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.getUniqueObjectID() );
-		if( pFriend )
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getUniqueObjectID());
+		if (pFriend)
 		{
 			SVObjectClass* pOwner = pFriend->GetParent();
-			if( pOwner )
+			if (pOwner)
 			{
 				// Close, Disconnect and Delete Friend...
 				pOwner->DestroyFriend(pFriend);
@@ -136,7 +135,7 @@ SVObjectClass::~SVObjectClass()
 {
 	m_outObjectInfo.DisconnectAllInputs();
 
-	SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
+	SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
 }
 
 bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -145,7 +144,7 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -157,15 +156,15 @@ SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPreProcessObjects() const
 {
 	SVObjectPtrDeque l_Objects;
 
-	for( size_t i = 0; i < m_friendList.size(); i++ )
+	for (size_t i = 0; i < m_friendList.size(); i++)
 	{
 		const SVObjectInfoStruct& rFriend = m_friendList[i];
 
 		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.getUniqueObjectID() );
-		if( pFriend )
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getUniqueObjectID());
+		if (pFriend)
 		{
-			l_Objects.push_back( pFriend );
+			l_Objects.push_back(pFriend);
 		}
 	}
 
@@ -186,7 +185,7 @@ HRESULT SVObjectClass::ResetObjectInputs()
 	return l_hrOk;
 }
 
-HRESULT SVObjectClass::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
+HRESULT SVObjectClass::RefreshObject(const SVObjectClass* const pSender, RefreshObjectType Type)
 {
 	HRESULT Result = S_OK;
 
@@ -194,39 +193,34 @@ HRESULT SVObjectClass::RefreshObject( const SVObjectClass* const pSender, Refres
 }
 
 // Connect Input from somebody else to my Output...( to me )
-bool SVObjectClass::ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
+bool SVObjectClass::ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
-	if( pObjectInInfo )
+	if (pObjectInInfo)
 	{
-		SVAutoLockAndReleaseTemplate< SVOutObjectInfoStruct > l_AutoLock;
 
-		if( l_AutoLock.Assign( &m_outObjectInfo ) )
-		{
-			const SVGUID& rGuid = pObjectInInfo->getUniqueObjectID();
-			SVObjectManagerClass::Instance().connectDependency( GetUniqueObjectID(), rGuid, SvOl::JoinType::Dependent );
-			m_outObjectInfo.AddInput( *pObjectInInfo );
+		std::lock_guard<SVOutObjectInfoStruct> Autolock(m_outObjectInfo);
+		const SVGUID& rGuid = pObjectInInfo->getUniqueObjectID();
+		SVObjectManagerClass::Instance().connectDependency(GetUniqueObjectID(), rGuid, SvOl::JoinType::Dependent);
+		m_outObjectInfo.AddInput(*pObjectInInfo);
 
-			return true;
-		}
+		return true;
 	}
 	return false;
 }
 
 // Disconnect Input from somebody else from my Output...( from me )
-bool SVObjectClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
+bool SVObjectClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
-	if( nullptr != pObjectInInfo )
+	if (nullptr != pObjectInInfo)
 	{
-		SVAutoLockAndReleaseTemplate< SVOutObjectInfoStruct > l_AutoLock;
 
-		if( l_AutoLock.Assign( &m_outObjectInfo ) )
-		{
-			const SVGUID& rGuid = pObjectInInfo->getUniqueObjectID();
-			SVObjectManagerClass::Instance().disconnectDependency( GetUniqueObjectID(), rGuid, SvOl::JoinType::Dependent );
-			m_outObjectInfo.RemoveInput( *pObjectInInfo );
+		std::lock_guard<SVOutObjectInfoStruct> Autolock(m_outObjectInfo);
+		const SVGUID& rGuid = pObjectInInfo->getUniqueObjectID();
+		SVObjectManagerClass::Instance().disconnectDependency(GetUniqueObjectID(), rGuid, SvOl::JoinType::Dependent);
+		m_outObjectInfo.RemoveInput(*pObjectInInfo);
 
-			return true;
-		}
+		return true;
+
 	}
 	return false;
 }
@@ -239,7 +233,7 @@ bool SVObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 {
 	bool Result(false);
 
-	if(rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getUniqueObjectID() != GetUniqueObjectID() )
+	if (rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getUniqueObjectID() != GetUniqueObjectID())
 	{
 		SetObjectOwner(rCreateStructure.OwnerObjectInfo.getObject());
 		Result = true;
@@ -254,9 +248,9 @@ bool SVObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 	return Result;
 }
 
-void SVObjectClass::ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure )
+void SVObjectClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if(rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getUniqueObjectID() != GetUniqueObjectID() )
+	if (rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getUniqueObjectID() != GetUniqueObjectID())
 	{
 		SetObjectOwner(rCreateStructure.OwnerObjectInfo.getObject());
 	}
@@ -302,12 +296,12 @@ std::string SVObjectClass::GetCompleteName() const
 {
 	std::string Result;
 
-	if( nullptr != m_ownerObjectInfo.getObject() && m_ownerObjectInfo.getObject() != this )
+	if (nullptr != m_ownerObjectInfo.getObject() && m_ownerObjectInfo.getObject() != this)
 	{
 		Result = m_ownerObjectInfo.getObject()->GetCompleteName();
 	}
 
-	if( 0 < Result.size() )
+	if (0 < Result.size())
 	{
 		Result += _T(".");
 	}
@@ -328,7 +322,7 @@ HRESULT SVObjectClass::GetCompleteNameToType(SvPb::SVObjectTypeEnum objectType, 
 	else
 	{
 		const SvOi::IObjectClass* pObject = GetAncestorInterface(objectType);
-		if( nullptr != pObject )
+		if (nullptr != pObject)
 		{
 			rName = pObject->GetCompleteName();
 		}
@@ -355,9 +349,9 @@ SvPb::SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 	return static_cast<SvPb::SVObjectSubTypeEnum>(m_outObjectInfo.m_ObjectTypeInfo.SubType);
 }
 
-bool SVObjectClass::is_Created() const 
+bool SVObjectClass::is_Created() const
 {
-	return IsCreated(); 
+	return IsCreated();
 }
 
 SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
@@ -367,7 +361,7 @@ SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeI
 	return list;
 }
 
-void SVObjectClass::SetName( LPCTSTR Name )
+void SVObjectClass::SetName(LPCTSTR Name)
 {
 	m_Name = Name;
 }
@@ -375,20 +369,20 @@ void SVObjectClass::SetName( LPCTSTR Name )
 SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
 {
 	// check the owner of this class
-	if( nullptr != pRequestor && (pRequestor == this || pRequestor == GetParent()) )
+	if (nullptr != pRequestor && (pRequestor == this || pRequestor == GetParent()))
 	{
 		// Do not reference self or owner
 		return nullptr;
 	}
 
 	// Find best match....EmbeddedID, Type, SubType...
-	if(( GUID_NULL       == rObjectTypeInfo.EmbeddedID || rObjectTypeInfo.EmbeddedID == GetEmbeddedID() ) &&
-		(SvPb::SVNotSetObjectType == rObjectTypeInfo.ObjectType || rObjectTypeInfo.ObjectType == GetObjectType() ) &&
-		(SvPb::SVNotSetSubObjectType == rObjectTypeInfo.SubType || rObjectTypeInfo.SubType    == GetObjectSubType() )
+	if ((GUID_NULL == rObjectTypeInfo.EmbeddedID || rObjectTypeInfo.EmbeddedID == GetEmbeddedID()) &&
+		(SvPb::SVNotSetObjectType == rObjectTypeInfo.ObjectType || rObjectTypeInfo.ObjectType == GetObjectType()) &&
+		(SvPb::SVNotSetSubObjectType == rObjectTypeInfo.SubType || rObjectTypeInfo.SubType == GetObjectSubType())
 		)
 	{
-		if( GUID_NULL         != rObjectTypeInfo.EmbeddedID ||
-			SvPb::SVNotSetObjectType    != rObjectTypeInfo.ObjectType ||
+		if (GUID_NULL != rObjectTypeInfo.EmbeddedID ||
+			SvPb::SVNotSetObjectType != rObjectTypeInfo.ObjectType ||
 			SvPb::SVNotSetSubObjectType != rObjectTypeInfo.SubType
 			)
 		{
@@ -445,7 +439,7 @@ LPCTSTR SVObjectClass::GetObjectName() const
 /*
 Set the NOT user changeable object instance name.
 */
-void SVObjectClass::SetObjectName( LPCTSTR ObjectName )
+void SVObjectClass::SetObjectName(LPCTSTR ObjectName)
 {
 	m_ObjectName = ObjectName;
 	ResetName();
@@ -454,16 +448,16 @@ void SVObjectClass::SetObjectName( LPCTSTR ObjectName )
 /*
 Set new object owner using owner pointer.
 */
-bool SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
+bool SVObjectClass::SetObjectOwner(SVObjectClass* pNewOwner)
 {
 	// Check if object exists...
-	if( nullptr != pNewOwner )
+	if (nullptr != pNewOwner)
 	{
 		assert(pNewOwner != this); // can't own yourself...
 
 		//First disconnect the previous owner
 		SVGUID Guid = m_ownerObjectInfo.getUniqueObjectID();
-		if(GUID_NULL !=Guid)
+		if (GUID_NULL != Guid)
 		{
 			SVObjectManagerClass::Instance().disconnectDependency(Guid, GetUniqueObjectID(), SvOl::JoinType::Owner);
 		}
@@ -479,37 +473,37 @@ bool SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
 /*
 Set new object owner using owner GUID.  Uses TheSVObjectManager to get the owner pointer.
 */
-bool SVObjectClass::SetObjectOwner( const GUID& rNewOwnerGUID )
+bool SVObjectClass::SetObjectOwner(const GUID& rNewOwnerGUID)
 {
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( rNewOwnerGUID );
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rNewOwnerGUID);
 
-	return SetObjectOwner( pObject );
+	return SetObjectOwner(pObject);
 }
 
 /*
 Set embedded object info.  Use this only for real embedded objects.
 */
-void SVObjectClass::SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName )
+void SVObjectClass::SetObjectEmbedded(const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName)
 {
 	m_embeddedID = rEmbeddedID;
 	m_outObjectInfo.m_ObjectTypeInfo.EmbeddedID = rEmbeddedID;
-	SetObjectName( NewObjectName );
-	SetObjectOwner( pOwner );	
+	SetObjectName(NewObjectName);
+	SetObjectOwner(pOwner);
 }
 
-HRESULT SVObjectClass::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
+HRESULT SVObjectClass::GetObjectValue(const std::string& rValueName, _variant_t& rValue) const
 {
-	HRESULT Result( S_OK );
+	HRESULT Result(S_OK);
 
-	if( _T("AttributesSet") == rValueName )
+	if (_T("AttributesSet") == rValueName)
 	{
 		SvUl::SVSAFEARRAY l_SafeArray;
 
-		for( size_t i = 0; i < m_ObjectAttributesSet.size(); i++ )
+		for (size_t i = 0; i < m_ObjectAttributesSet.size(); i++)
 		{
 			_variant_t l_Value = m_ObjectAttributesSet.at(i);
 
-			l_SafeArray.Add( l_Value );
+			l_SafeArray.Add(l_Value);
 		}
 
 		rValue = l_SafeArray;
@@ -524,10 +518,10 @@ HRESULT SVObjectClass::GetObjectValue( const std::string& rValueName, _variant_t
 	return Result;
 }
 
-HRESULT SVObjectClass::SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject )
+HRESULT SVObjectClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject)
 {
 	// check if it is for us
-	if ( GetUniqueObjectID() == rAimObjectID)
+	if (GetUniqueObjectID() == rAimObjectID)
 	{
 		return SetObjectValue(pDataObject);
 	}
@@ -535,28 +529,28 @@ HRESULT SVObjectClass::SetValuesForAnObject( const GUID& rAimObjectID, SVObjectA
 	{
 		assert(false);
 		return E_FAIL;
-	} 
+	}
 }
 
 /*
 Must override this in the derived class if you wish to set any values upon restoration from a script.
 */
-HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
+HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT hr = S_FALSE;
 	bool bOk = false;
 
-	if( nullptr != pDataObject )
+	if (nullptr != pDataObject)
 	{
 		SvCl::SVObjectDWordArrayClass svDWordArray;
 		SvCl::SVObjectStdStringArrayClass StringArray;
 
-		if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesSet"), svDWordArray ) ) )
+		if ((bOk = pDataObject->GetAttributeData(_T("AttributesSet"), svDWordArray)))
 		{
 			int iSize = static_cast<int> (svDWordArray.size());
 			{
-				m_ObjectAttributesSet.resize( iSize );
-				for( int i = 0; i < iSize; i++ )
+				m_ObjectAttributesSet.resize(iSize);
+				for (int i = 0; i < iSize; i++)
 				{
 					m_ObjectAttributesSet.at(i) = svDWordArray[i];
 				}
@@ -567,7 +561,7 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 			; // Do nothing as it's obsolete
 		}
 	}
-	
+
 	hr = bOk ? S_OK : S_FALSE;
 	return hr;
 }
@@ -580,7 +574,7 @@ void SVObjectClass::SetDisabled()
 /*
 This method is a placeholder for derived functionality.  This method performs no operation.
 */
-SVObjectClass* SVObjectClass::UpdateObject( const GUID &rFriendGuid, SVObjectClass* pObject, SVObjectClass* pNewOwner )
+SVObjectClass* SVObjectClass::UpdateObject(const GUID &rFriendGuid, SVObjectClass* pObject, SVObjectClass* pNewOwner)
 {
 	return nullptr;
 }
@@ -588,25 +582,25 @@ SVObjectClass* SVObjectClass::UpdateObject( const GUID &rFriendGuid, SVObjectCla
 /*
 This method is used to add an object to the friends list via the object's unique object identifier.
 */
-bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid )
+bool SVObjectClass::AddFriend(const GUID& rFriendGUID, const GUID& rAddPreGuid)
 {
 	size_t position = m_friendList.size();
 	// Check GUID...
-	if( GUID_NULL == rFriendGUID )
+	if (GUID_NULL == rFriendGUID)
 	{
 		return false;
 	}
 	// Check if friend is already applied...
 	if (m_friendList.size())
 	{
-		for( int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; -- i )
+		for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
 		{
-			if( m_friendList[i].getUniqueObjectID() == rFriendGUID )
+			if (m_friendList[i].getUniqueObjectID() == rFriendGUID)
 			{
 				return false;
 			}
 
-			if( m_friendList[i].getUniqueObjectID() == rAddPreGuid)
+			if (m_friendList[i].getUniqueObjectID() == rAddPreGuid)
 			{
 				position = i;
 			}
@@ -615,25 +609,25 @@ bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 
 	SVObjectInfoStruct newFriendInfo;
 	// Check if Friend is alive...
-	SVObjectClass* pNewFriend = SVObjectManagerClass::Instance().GetObject( rFriendGUID );
-	if( pNewFriend )
+	SVObjectClass* pNewFriend = SVObjectManagerClass::Instance().GetObject(rFriendGUID);
+	if (pNewFriend)
 	{
 		// Check if we are the Owner
 		// Note:: Special hack for friend scripting
 		// if we are the owner - it's not from the script
 		SVObjectClass* l_psvOwner = pNewFriend->GetParent();
 
-		if ( l_psvOwner == this )
+		if (l_psvOwner == this)
 		{
 			newFriendInfo.SetObject(pNewFriend);
 		}
 		else
 		{
-			if( nullptr != l_psvOwner )
+			if (nullptr != l_psvOwner)
 			{
-				SVObjectClass* l_psvNewObject = l_psvOwner->UpdateObject( rFriendGUID, pNewFriend, this );
+				SVObjectClass* l_psvNewObject = l_psvOwner->UpdateObject(rFriendGUID, pNewFriend, this);
 
-				assert( nullptr != l_psvNewObject );
+				assert(nullptr != l_psvNewObject);
 
 				newFriendInfo.SetObject(l_psvNewObject);
 			}
@@ -644,18 +638,18 @@ bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 		newFriendInfo.GetObjectReference().setGuid(rFriendGUID);
 	}
 
-	return ( m_friendList.Insert( position, newFriendInfo ) >= 0  );
+	return (m_friendList.Insert(position, newFriendInfo) >= 0);
 }
 
-SVObjectClass*  SVObjectClass::GetFriend( const SvDef::SVObjectTypeInfoStruct& rObjectType ) const 
+SVObjectClass*  SVObjectClass::GetFriend(const SvDef::SVObjectTypeInfoStruct& rObjectType) const
 {
 	// Check if friend is already applied...
-	for(int i =0; i < static_cast<int>(m_friendList.size()); i++ ) 
+	for (int i = 0; i < static_cast<int>(m_friendList.size()); i++)
 	{
-		const SvDef::SVObjectTypeInfoStruct* pInfoStruct =  &(m_friendList[ i ].m_ObjectTypeInfo); 
-		if( pInfoStruct->ObjectType == rObjectType.ObjectType && pInfoStruct->SubType == rObjectType.SubType)
+		const SvDef::SVObjectTypeInfoStruct* pInfoStruct = &(m_friendList[i].m_ObjectTypeInfo);
+		if (pInfoStruct->ObjectType == rObjectType.ObjectType && pInfoStruct->SubType == rObjectType.SubType)
 		{
-			if( GUID_NULL == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID )
+			if (GUID_NULL == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID)
 			{
 				return 	m_friendList[i].getObject();
 			}
@@ -667,21 +661,21 @@ SVObjectClass*  SVObjectClass::GetFriend( const SvDef::SVObjectTypeInfoStruct& r
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
-SVObjectClass* SVObjectClass::GetAncestor( SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel /*= false*/) const
+SVObjectClass* SVObjectClass::GetAncestor(SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel /*= false*/) const
 {
-	SVObjectClass* pResult{nullptr};
+	SVObjectClass* pResult {nullptr};
 
 	SVObjectClass* pOwner = this->GetParent();
-	
-	while( nullptr != pOwner )
+
+	while (nullptr != pOwner)
 	{
-		if( pOwner->GetObjectType() == AncestorObjectType )
+		if (pOwner->GetObjectType() == AncestorObjectType)
 		{
 			pResult = pOwner;
-			if(!topLevel)
+			if (!topLevel)
 			{
 				break;
-		}
+			}
 		}
 		pOwner = pOwner->GetParent();
 	}
@@ -732,7 +726,7 @@ std::string SVObjectClass::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum obje
 		{
 			Result = pObject->GetObjectNameToObjectType(objectTypeToInclude);
 		}
-		}
+	}
 	if (!Result.empty())
 	{
 		Result += _T(".");
@@ -777,15 +771,15 @@ const SVObjectInfoArrayClass& SVObjectClass::GetFriendList() const
 
 bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if( !IsCreated() && !CreateObject( rCreateStructure ) )
+	if (!IsCreated() && !CreateObject(rCreateStructure))
 	{
-		assert( false );
+		assert(false);
 
 		SvDef::StringVector msgList;
-		msgList.push_back( GetName() );
-		msgList.push_back( GetCompleteName() );
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10209 );
+		msgList.push_back(GetName());
+		msgList.push_back(GetCompleteName());
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10209);
 
 		return false;
 	}
@@ -795,53 +789,53 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 
 SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
 {
-	if( GetEmbeddedID() == rEmbeddedID )
+	if (GetEmbeddedID() == rEmbeddedID)
 	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID( this, rUniqueID );
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, rUniqueID);
 		return this;
 	}
 	return nullptr;
 }
 
-HRESULT SVObjectClass::RemoveObjectConnection( const GUID& rObjectID )
+HRESULT SVObjectClass::RemoveObjectConnection(const GUID& rObjectID)
 {
 	return S_OK;
 }
 
-void SVObjectClass::Persist( SvOi::IObjectWriter& rWriter )
+void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter)
 {
-	_variant_t value; 
+	_variant_t value;
 	value.SetString(GetName()); // use user editable name for Data Element ObjectName attribute
-	rWriter.WriteAttribute( scObjectNameTag, value );
+	rWriter.WriteAttribute(scObjectNameTag, value);
 	value.Clear();
 
 	value.SetString(GetClassID().ToString().c_str());
-	rWriter.WriteAttribute( scClassIDTag, value );
+	rWriter.WriteAttribute(scClassIDTag, value);
 	value.Clear();
 
-	std::string UniqueID{ m_outObjectInfo.getUniqueObjectID().ToString() };
+	std::string UniqueID {m_outObjectInfo.getUniqueObjectID().ToString()};
 	value.SetString(UniqueID.c_str());
-	rWriter.WriteAttribute( scUniqueReferenceIDTag, value );
+	rWriter.WriteAttribute(scUniqueReferenceIDTag, value);
 	value.Clear();
 
 	// Set up object definition...
-	if( GUID_NULL != GetEmbeddedID() )
+	if (GUID_NULL != GetEmbeddedID())
 	{
 		value.SetString(GetEmbeddedID().ToString().c_str());
-		rWriter.WriteAttribute( scEmbeddedIDTag, value );
+		rWriter.WriteAttribute(scEmbeddedIDTag, value);
 		value.Clear();
 	}
 }
 
-HRESULT SVObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
+HRESULT SVObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( Index == ( rNameInfo.m_NameArray.size() - 1 ) )
+	if (Index == (rNameInfo.m_NameArray.size() - 1))
 	{
-		if( rNameInfo.m_NameArray[Index] == GetName() )
+		if (rNameInfo.m_NameArray[Index] == GetName())
 		{
-			rpObject = const_cast< SVObjectClass* >( this );
+			rpObject = const_cast<SVObjectClass*>(this);
 		}
 		else
 		{
@@ -867,19 +861,19 @@ UINT SVObjectClass::ObjectAttributesAllowed() const
 /*
 This method returns a reference to the allowed attributes of this object.
 */
-UINT SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
+UINT SVObjectClass::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type)
 {
-	switch( Type )
+	switch (Type)
 	{
-	case SvOi::SetAttributeType::AddAttribute:
-		m_ObjectAttributesAllowed |= Attributes;
-		break;
-	case SvOi::SetAttributeType::RemoveAttribute:
-		m_ObjectAttributesAllowed &= ~Attributes;
-		break;
-	case SvOi::SetAttributeType::OverwriteAttribute:
-		m_ObjectAttributesAllowed = Attributes;
-		break;
+		case SvOi::SetAttributeType::AddAttribute:
+			m_ObjectAttributesAllowed |= Attributes;
+			break;
+		case SvOi::SetAttributeType::RemoveAttribute:
+			m_ObjectAttributesAllowed &= ~Attributes;
+			break;
+		case SvOi::SetAttributeType::OverwriteAttribute:
+			m_ObjectAttributesAllowed = Attributes;
+			break;
 	}
 	return m_ObjectAttributesAllowed;
 }
@@ -911,15 +905,15 @@ UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeTy
 		UINT& rAttributesSet = m_ObjectAttributesSet.at(Index);
 		switch (Type)
 		{
-		case SvOi::SetAttributeType::AddAttribute:
-			rAttributesSet |= Attributes;
-			break;
-		case SvOi::SetAttributeType::RemoveAttribute:
-			rAttributesSet &= ~Attributes;
-			break;
-		case SvOi::SetAttributeType::OverwriteAttribute:
-			rAttributesSet = Attributes;
-			break;
+			case SvOi::SetAttributeType::AddAttribute:
+				rAttributesSet |= Attributes;
+				break;
+			case SvOi::SetAttributeType::RemoveAttribute:
+				rAttributesSet &= ~Attributes;
+				break;
+			case SvOi::SetAttributeType::OverwriteAttribute:
+				rAttributesSet = Attributes;
+				break;
 		}
 		return rAttributesSet;
 	}
@@ -941,7 +935,7 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 /*
 This method must be overridden if the derived class desires this functionality
 */
-HRESULT SVObjectClass::RegisterSubObject( SVObjectClass* pObject )
+HRESULT SVObjectClass::RegisterSubObject(SVObjectClass* pObject)
 {
 	return S_FALSE;
 }
@@ -949,7 +943,7 @@ HRESULT SVObjectClass::RegisterSubObject( SVObjectClass* pObject )
 /*
 This method must be overridden if the derived class desires this functionality
 */
-HRESULT SVObjectClass::UnregisterSubObject( SVObjectClass* pObject )
+HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass* pObject)
 {
 	return S_FALSE;
 }

@@ -17,36 +17,33 @@
 #pragma endregion Includes
 
 SVMatroxImageBuffer::SVMatroxImageBuffer()
-: SVMatroxBufferTemplate()
+	: SVMatroxBufferTemplate()
 {
 }
 
 SVMatroxImageBuffer::SVMatroxImageBuffer( __int64 p_Identifier, const std::string& p_rCreatorName )
-: SVMatroxBufferTemplate( p_Identifier, p_rCreatorName )
+	: SVMatroxBufferTemplate(p_Identifier, p_rCreatorName)
 {
-	SVMatroxResourceMonitor::InsertIdentifier( SVBufferID, p_Identifier );
+	SVMatroxResourceMonitor::InsertIdentifier(SVBufferID, p_Identifier);
 }
 
 SVMatroxImageBuffer::~SVMatroxImageBuffer()
 {
 	__int64 Identifier = GetIdentifier();
-	if( 0 != Identifier )
+	if (0 != Identifier)
 	{
-		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-		if( S_OK == SVMatroxResourceMonitor::GetAutoLock( l_AutoLock ) )
+		MIL_ID l_SystemID = MbufInquire(Identifier, M_OWNER_SYSTEM, nullptr);
+
+		if (M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus())
 		{
-			MIL_ID l_SystemID = MbufInquire( Identifier, M_OWNER_SYSTEM, nullptr );
-
-			if( M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus() )
-			{
-				SVMatroxResourceMonitor::EraseIdentifier( SVBufferID, Identifier );
-			}
-			else
-			{
-				assert( false );
-			}
+			SVMatroxResourceMonitor::EraseIdentifier(SVBufferID, Identifier);
 		}
+		else
+		{
+			assert(false);
+		}
+
 		freeBuffer();
 	}
 }

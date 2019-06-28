@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVSystemLibrary/SVCriticalSection.h"
+
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
@@ -65,7 +65,7 @@ public:
 	HRESULT SetGroupName( const std::string& p_rPPQ );
 
 protected:
-	mutable SVCriticalSection m_CriticalSection;
+	std::mutex m_Mutex;
 
 	BOOL m_bCreated;
 

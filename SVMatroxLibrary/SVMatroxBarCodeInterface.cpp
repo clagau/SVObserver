@@ -55,10 +55,10 @@ SVMatroxBarCodeInterface::~SVMatroxBarCodeInterface()
 @SVOperationDescription This function converts the SVObserver SVBarCodeControlTypeEnum to a matrox Enum.
 
 */
-__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) 
+__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eType)
 {
 	__int64 l_lControlType = M_UNINITIALIZED;
-	switch( p_eType )
+	switch (p_eType)
 	{
 		case SVBCForeGroundValue:
 		{
@@ -157,7 +157,7 @@ __int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_
 	}
 
 	// Combination long data type..
-	if( p_eType & SVBCTypeLong )
+	if (p_eType & SVBCTypeLong)
 	{
 		l_lControlType |= M_TYPE_LONG;
 	}
@@ -173,10 +173,10 @@ __int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_
 
 */
 // Bar Code Types......
-__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType) 
+__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType)
 {
 	__int64 l_lControlType = M_UNINITIALIZED;
-	switch( p_eType )
+	switch (p_eType)
 	{
 		case SVBC412:
 		{
@@ -185,12 +185,12 @@ __int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType)
 		}
 		case SVCodeABar:
 		{
-			l_lControlType = M_CODABAR ;
+			l_lControlType = M_CODABAR;
 			break;
 		}
 		case SVCode39:
 		{
-			l_lControlType = M_CODE39 ;
+			l_lControlType = M_CODE39;
 			break;
 		}
 		case SVCode128:
@@ -265,7 +265,7 @@ __int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType)
 	}
 
 	// Combination long data type..
-	if( p_eType & SVBCTypeLong )
+	if (p_eType & SVBCTypeLong)
 	{
 		l_lControlType |= M_TYPE_LONG;
 	}
@@ -281,49 +281,49 @@ __int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType)
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
 */
-HRESULT SVMatroxBarCodeInterface::Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue )
+HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue)
 {
 	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( M_NULL != p_rCodeID )
+		if (M_NULL != p_rCodeID)
 		{
-				// Two matrox constants..
-				if( p_eType == SVBCAdaptiveThreshold )
+			// Two matrox constants..
+			if (p_eType == SVBCAdaptiveThreshold)
+			{
+				McodeControl(p_rCodeID, M_THRESHOLD_MODE, M_ADAPTIVE);
+			}
+			else if (p_eType == SVBCAutoThreshold)
+			{
+				McodeControl(p_rCodeID, M_THRESHOLD_MODE, M_DEFAULT);
+			}
+			else if (p_eType == SVBCUnEvenGrid)
+			{
+				if (p_dValue)
 				{
-					McodeControl( p_rCodeID, M_THRESHOLD_MODE ,M_ADAPTIVE );
-				}
-				else if ( p_eType == SVBCAutoThreshold )
-				{
-					McodeControl( p_rCodeID, M_THRESHOLD_MODE ,M_DEFAULT );
-				}
-				else if ( p_eType == SVBCUnEvenGrid )
-				{
-					if ( p_dValue )
-					{
-						McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_DEFORMED);
-					}
-					else
-					{
-						McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_NOT_DEFORMED);
-					}
+					McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_DEFORMED);
 				}
 				else
 				{
-					// One Matrox constant and value..
-					__int64 l_lControlType = Convert2MatroxType( p_eType );
-					if( l_lControlType != M_UNINITIALIZED )
-					{
-						McodeControl( p_rCodeID, l_lControlType ,p_dValue);
-					}
-					else
-					{
-						Result = SVMEE_INVALID_PARAMETER;
-					}
+					McodeControl(p_rCodeID, M_DECODE_ALGORITHM, M_CODE_NOT_DEFORMED);
 				}
-				Result = SVMatroxApplicationInterface::GetLastStatus();
+			}
+			else
+			{
+				// One Matrox constant and value..
+				__int64 l_lControlType = Convert2MatroxType(p_eType);
+				if (l_lControlType != M_UNINITIALIZED)
+				{
+					McodeControl(p_rCodeID, l_lControlType, p_dValue);
+				}
+				else
+				{
+					Result = SVMEE_INVALID_PARAMETER;
+				}
+			}
+			Result = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
@@ -331,7 +331,7 @@ HRESULT SVMatroxBarCodeInterface::Set( const __int64& p_rCodeID, SVBarCodeContro
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -350,7 +350,7 @@ HRESULT SVMatroxBarCodeInterface::Set( const __int64& p_rCodeID, SVBarCodeContro
 */
 HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue)
 {
-	return Set( p_rCodeID, p_eType, static_cast<double>( p_lValue ) );
+	return Set(p_rCodeID, p_eType, static_cast<double>(p_lValue));
 }
 
 
@@ -359,7 +359,7 @@ HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControl
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
-*/HRESULT SVMatroxBarCodeInterface::Set( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue )
+*/HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue)
 {
 	// Currently there are no strings to set.
 	return SVMEE_INVALID_PARAMETER;
@@ -373,21 +373,21 @@ HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControl
 @SVOperationDescription Uses McodeInquire to get the control type with value.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue )
+HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue)
 {
-	HRESULT Result( S_OK );
+	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( M_NULL != p_rCodeID )
+		if (M_NULL != p_rCodeID)
 		{
-			if( (p_eType & SVBCStringType) != SVBCStringType )
+			if ((p_eType & SVBCStringType) != SVBCStringType)
 			{
-				__int64 l_lControlType = Convert2MatroxType( p_eType );
-				if( l_lControlType != M_UNINITIALIZED )
+				__int64 l_lControlType = Convert2MatroxType(p_eType);
+				if (l_lControlType != M_UNINITIALIZED)
 				{
-					McodeInquire( p_rCodeID, l_lControlType , &p_dValue);
+					McodeInquire(p_rCodeID, l_lControlType, &p_dValue);
 					Result = SVMatroxApplicationInterface::GetLastStatus();
 				}
 				else
@@ -406,7 +406,7 @@ HRESULT SVMatroxBarCodeInterface::Get( const __int64& p_rCodeID, SVBarCodeContro
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -427,8 +427,8 @@ HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControl
 {
 	HRESULT l_Code;
 	double l_dValue = 0.0;
-	l_Code = Get( p_rCodeID, p_eType, l_dValue);
-	p_rlValue = static_cast<long>( l_dValue );
+	l_Code = Get(p_rCodeID, p_eType, l_dValue);
+	p_rlValue = static_cast<long>(l_dValue);
 	return l_Code;
 }
 
@@ -439,7 +439,7 @@ HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControl
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue )
+HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue)
 {
 	// Currently there are no strings to Get.
 	return SVMEE_INVALID_PARAMETER;
@@ -452,7 +452,7 @@ HRESULT SVMatroxBarCodeInterface::Get( const __int64& p_rCodeID, SVBarCodeContro
 @SVOperationDescription
 
 */
-bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages)
+bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool RetValue = true;
 
@@ -460,14 +460,14 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 	try
 #endif
 	{
-		if( M_NULL != p_rCodeID )
+		if (M_NULL != p_rCodeID)
 		{
-			__int64 l_lControlType = Convert2MatroxType( p_eType );
-			if( l_lControlType != M_UNINITIALIZED )
+			__int64 l_lControlType = Convert2MatroxType(p_eType);
+			if (l_lControlType != M_UNINITIALIZED)
 			{
-				McodeGetResult( p_rCodeID, l_lControlType , &p_rdValue);
+				McodeGetResult(p_rCodeID, l_lControlType, &p_rdValue);
 				HRESULT MatroxCode = SVMatroxApplicationInterface::GetLastStatus();
-				if( S_OK != MatroxCode )
+				if (S_OK != MatroxCode)
 				{
 					RetValue = false;
 					if (nullptr != pErrorMessages)
@@ -476,7 +476,7 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 						MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
 						SvDef::StringVector messageList;
 						messageList.push_back(l_info.m_StatusString);
-						SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -486,7 +486,7 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 				RetValue = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));
+					SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -496,19 +496,19 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 			RetValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));
+				SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));
 				pErrorMessages->push_back(Msg);
 			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		RetValue = false;
 		SVMatroxApplicationInterface::LogMatroxException();
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));;
+			SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));;
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -526,8 +526,8 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	double l_dValue = 0.0;
-	bool retValue = GetResult( p_rCodeID, p_eType, l_dValue, pErrorMessages);
-	p_rlValue = static_cast<long>( l_dValue );
+	bool retValue = GetResult(p_rCodeID, p_eType, l_dValue, pErrorMessages);
+	p_rlValue = static_cast<long>(l_dValue);
 	return retValue;
 }
 
@@ -537,31 +537,31 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 @SVOperationDescription
 
 */
-bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
+bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( M_NULL != p_rCodeID )
+		if (M_NULL != p_rCodeID)
 		{
-			if( (p_eType & SVBCStringType) == SVBCStringType )
+			if ((p_eType & SVBCStringType) == SVBCStringType)
 			{
-				__int64 l_lControlType = Convert2MatroxType( p_eType );
-				if( l_lControlType != M_UNINITIALIZED )
+				__int64 l_lControlType = Convert2MatroxType(p_eType);
+				if (l_lControlType != M_UNINITIALIZED)
 				{
 					long l_lSize;
 					SVBufferResource l_Resource;
 
-					McodeGetResult( p_rCodeID, M_STRING_SIZE | M_TYPE_LONG, &l_lSize );
-					if( S_OK == l_Resource.Resize( l_lSize + 256 )  )
+					McodeGetResult(p_rCodeID, M_STRING_SIZE | M_TYPE_LONG, &l_lSize);
+					if (S_OK == l_Resource.Resize(l_lSize + 256))
 					{
 						MIL_TEXT_CHAR* l_pChars = nullptr;
-						l_Resource.GetBuffer( l_pChars );
-						McodeGetResult( p_rCodeID, l_lControlType , l_pChars );
+						l_Resource.GetBuffer(l_pChars);
+						McodeGetResult(p_rCodeID, l_lControlType, l_pChars);
 						HRESULT MatroxCode = SVMatroxApplicationInterface::GetLastStatus();
-						if( S_OK == MatroxCode )
+						if (S_OK == MatroxCode)
 						{
 							p_rstrValue = l_pChars;
 						}
@@ -574,7 +574,7 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 								MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
 								SvDef::StringVector messageList;
 								messageList.push_back(l_info.m_StatusString);
-								SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
+								SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
 								pErrorMessages->push_back(Msg);
 							}
 						}
@@ -584,7 +584,7 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 						retValue = false;
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
+							SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
 						}
 					}
@@ -594,7 +594,7 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 					retValue = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10251);//, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10251);//, GetUniqueObjectID() );
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -604,7 +604,7 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 				retValue = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10252);//, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10252);//, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -614,19 +614,19 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 			retValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10253);//, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10253);//, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		SVMatroxApplicationInterface::LogMatroxException();
 		retValue = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10253);//, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10253);//, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -641,18 +641,18 @@ bool SVMatroxBarCodeInterface::GetResult( const __int64& p_rCodeID, SVBarCodeCon
 @SVOperationDescription Execute function calls the mil function McodeRead.
 
 */
-bool SVMatroxBarCodeInterface::Execute( const __int64& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMatroxBarCodeInterface::Execute(const __int64& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		if( M_NULL != p_rCodeID && !p_rSourceId.empty() )
+		if (M_NULL != p_rCodeID && !p_rSourceId.empty())
 		{
 			McodeRead(p_rCodeID, p_rSourceId.GetIdentifier(), M_DEFAULT);
 			HRESULT MatroxCode = SVMatroxApplicationInterface::GetLastStatus();
-			if( S_OK != MatroxCode )
+			if (S_OK != MatroxCode)
 			{
 				retValue = false;
 				if (nullptr != pErrorMessages)
@@ -661,7 +661,7 @@ bool SVMatroxBarCodeInterface::Execute( const __int64& p_rCodeID, const SVMatrox
 					MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
 					SvDef::StringVector messageList;
 					messageList.push_back(l_info.m_StatusString);
-					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));
+					SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -671,18 +671,18 @@ bool SVMatroxBarCodeInterface::Execute( const __int64& p_rCodeID, const SVMatrox
 			retValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
+				SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
 				pErrorMessages->push_back(Msg);
 			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		retValue = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
+			SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
 			pErrorMessages->push_back(Msg);
 		}
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -698,41 +698,35 @@ bool SVMatroxBarCodeInterface::Execute( const __int64& p_rCodeID, const SVMatrox
 @SVOperationDescription This function creates a barcode object from the supplied SVBarCodeTypeEnum. This object is used for reading barcodes.
 
 */
-HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, SVBarCodeTypesEnum p_eType )
+HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, SVBarCodeTypesEnum p_eType)
 {
-	HRESULT Result( S_OK );
+	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
 		MIL_ID l_NewID = M_NULL;
-		__int64 l_lCodeType = Convert2MatroxType( p_eType );
+		__int64 l_lCodeType = Convert2MatroxType(p_eType);
 
-		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+		l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lCodeType, M_DEFAULT, M_NULL);
+		// Check For errors
+		Result = SVMatroxApplicationInterface::GetLastStatus();
 
-		Result = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
 		if (S_OK == Result)
-		{
-			l_NewID = McodeAlloc( M_DEFAULT_HOST , l_lCodeType, M_DEFAULT, M_NULL );
-			// Check For errors
-			Result = SVMatroxApplicationInterface::GetLastStatus();
+		{// Free handle if already filled.
+			long l_ID = SVMatroxApplicationInterface::SVMatroxIntToHRESULT(l_NewID);
+			SVMatroxResourceMonitor::InsertIdentifier(SVBarCodeID, l_ID);
 
+			Destroy(p_rCodeID);
 
-			if (S_OK == Result)
-			{// Free handle if already filled.
-				long l_ID = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_NewID );
-				SVMatroxResourceMonitor::InsertIdentifier( SVBarCodeID, l_ID );
-
-				Destroy( p_rCodeID );
-
-				// Set new handle
-				p_rCodeID = l_NewID;
-			}
+			// Set new handle
+			p_rCodeID = l_NewID;
 		}
+
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -749,7 +743,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, SVBarCodeTypesEnum 
 @SVOperationDescription This function creates a barcode object from an existing SVMatroxBarCode.
 
 */
-HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_FromCodeID )
+HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_FromCodeID)
 {
 	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -759,55 +753,49 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_Fr
 		// This function creates a new barcode from an existing barcode.
 		MIL_ID l_NewID = M_NULL;
 
-		if( M_NULL != p_FromCodeID )
+		if (M_NULL != p_FromCodeID)
 		{
-			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
+			long l_lValue;
 
-			Result = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
+			McodeInquire(p_FromCodeID, M_CODE_TYPE, &l_lValue);
+			l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lValue, M_DEFAULT, M_NULL);
 
+			// Check For errors
+			Result = SVMatroxApplicationInterface::GetLastStatus();
+
+			// If new code is ok then copy parameters from reference to new code.
 			if (S_OK == Result)
 			{
-				long l_lValue;
+				Result = SVMatroxApplicationInterface::GetFirstError();
+				McodeInquire(p_FromCodeID, M_ERROR_CORRECTION, &l_lValue);
+				McodeControl(l_NewID, M_ERROR_CORRECTION, l_lValue);
 
-				McodeInquire(p_FromCodeID, M_CODE_TYPE, &l_lValue );
-				l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lValue, M_DEFAULT, M_NULL );
+				McodeInquire(p_FromCodeID, M_FOREGROUND_VALUE, &l_lValue);
+				McodeControl(l_NewID, M_FOREGROUND_VALUE, l_lValue);
 
-				// Check For errors
-				Result = SVMatroxApplicationInterface::GetLastStatus();
+				McodeInquire(p_FromCodeID, M_DATAMATRIX_SHAPE, &l_lValue);
+				McodeControl(l_NewID, M_DATAMATRIX_SHAPE, l_lValue);
 
-				// If new code is ok then copy parameters from reference to new code.
-				if (S_OK == Result)
-				{
-					Result = SVMatroxApplicationInterface::GetFirstError();
-					McodeInquire( p_FromCodeID, M_ERROR_CORRECTION , &l_lValue );
-					McodeControl( l_NewID, M_ERROR_CORRECTION, l_lValue );
+				McodeInquire(p_FromCodeID, M_CELL_SIZE_MIN, &l_lValue);
+				McodeControl(l_NewID, M_CELL_SIZE_MIN, l_lValue);
 
-					McodeInquire( p_FromCodeID, M_FOREGROUND_VALUE , &l_lValue );
-					McodeControl( l_NewID, M_FOREGROUND_VALUE, l_lValue );
+				McodeInquire(p_FromCodeID, M_CELL_NUMBER_Y, &l_lValue);
+				McodeControl(l_NewID, M_CELL_NUMBER_Y, l_lValue);
 
-					McodeInquire( p_FromCodeID, M_DATAMATRIX_SHAPE  , &l_lValue );
-					McodeControl( l_NewID, M_DATAMATRIX_SHAPE , l_lValue );
-
-					McodeInquire( p_FromCodeID, M_CELL_SIZE_MIN  , &l_lValue );
-					McodeControl( l_NewID, M_CELL_SIZE_MIN , l_lValue );
-
-					McodeInquire( p_FromCodeID, M_CELL_NUMBER_Y , &l_lValue );
-					McodeControl( l_NewID, M_CELL_NUMBER_Y, l_lValue );
-
-					McodeInquire( p_FromCodeID, M_CELL_NUMBER_X  , &l_lValue );
-					McodeControl( l_NewID, M_CELL_NUMBER_X , l_lValue );
-					Result = SVMatroxApplicationInterface::GetFirstError();
-				}
-
-				if (S_OK == Result)
-				{// Free handle if already filled.
-					SVMatroxResourceMonitor::InsertIdentifier( SVBarCodeID, l_NewID );
-
-					Destroy( p_rCodeID );
-					// Set new handle
-					p_rCodeID = l_NewID;
-				}
+				McodeInquire(p_FromCodeID, M_CELL_NUMBER_X, &l_lValue);
+				McodeControl(l_NewID, M_CELL_NUMBER_X, l_lValue);
+				Result = SVMatroxApplicationInterface::GetFirstError();
 			}
+
+			if (S_OK == Result)
+			{// Free handle if already filled.
+				SVMatroxResourceMonitor::InsertIdentifier(SVBarCodeID, l_NewID);
+
+				Destroy(p_rCodeID);
+				// Set new handle
+				p_rCodeID = l_NewID;
+			}
+
 		}
 		else
 		{
@@ -815,7 +803,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_Fr
 		}
 	}
 #ifdef USE_TRY_BLOCKS
-	catch(...)
+	catch (...)
 	{
 		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
@@ -823,7 +811,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_Fr
 #endif
 	assert(S_OK == Result);
 	return Result;
-	
+
 }
 
 /**

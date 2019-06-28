@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVTimerCallbackImpl.h"
 #include "TriggerInformation/IODeviceBase.h"
-#include "SVSystemLibrary/SVCriticalSection.h"
 #pragma endregion Includes
 
 ///////////////////////////////////////////////////////////////////////
@@ -64,12 +63,12 @@ public:
 	HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 protected:
-	void lockIfRequired() override {m_CritSec.Lock();}
-	void unlockIfRequired() override {m_CritSec.Unlock();}
-	void beforeStartTrigger(unsigned long handle) override {SetTimerCallback(handle);	m_CritSec.Lock();}
-	HRESULT afterStartTrigger(HRESULT hr) override {m_CritSec.Unlock();return hr;}
-	virtual void beforeStopTrigger(unsigned long handle) override {RemoveTimerCallback(handle);m_CritSec.Lock();}
-	HRESULT afterStopTrigger(HRESULT hr) override {m_CritSec.Unlock();return hr;}
+	void lockIfRequired() override { m_Mutex.lock();}
+	void unlockIfRequired() override { m_Mutex.unlock();}
+	void beforeStartTrigger(unsigned long handle) override {SetTimerCallback(handle);	m_Mutex.lock();}
+	HRESULT afterStartTrigger(HRESULT hr) override { m_Mutex.unlock();return hr;}
+	virtual void beforeStopTrigger(unsigned long handle) override {RemoveTimerCallback(handle); m_Mutex.lock();}
+	HRESULT afterStopTrigger(HRESULT hr) override { m_Mutex.unlock();return hr;}
 
 
 private:
@@ -79,6 +78,6 @@ private:
 	HRESULT SetTimerCallback(unsigned long handle);
 	HRESULT RemoveTimerCallback(unsigned long handle);
 	void OnSoftwareTimer(const std::string& tag);
-	SVCriticalSection m_CritSec;
+	std::mutex	 m_Mutex;
 };
 

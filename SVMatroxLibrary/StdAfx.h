@@ -57,6 +57,7 @@
 #include <deque>
 #include <memory>
 #include <map>				//Used by static library
+#include <mutex> 
 #include <set>
 #include <string>
 #include <tchar.h>			//Used by static library

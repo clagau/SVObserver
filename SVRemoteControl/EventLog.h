@@ -14,8 +14,6 @@
 #pragma region Includes
 #include <winnt.h>
 #include <sstream>
-#include "SVCriticalSection.h"
-#include "SVAutoLockAndReleaseTemplate.h"
 #include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 

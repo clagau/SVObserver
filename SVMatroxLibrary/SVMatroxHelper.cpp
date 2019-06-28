@@ -18,21 +18,16 @@ HRESULT DestroyMatroxId(__int64& rId, void(*pFreeFunc)(MIL_ID), SVMatroxIdentifi
 		{
 			if (M_NULL != rId)
 			{
-				SVMatroxResourceMonitor::SVAutoLock AutoLock;
 
-				Result = SVMatroxResourceMonitor::GetAutoLock(AutoLock);
-
+				pFreeFunc(rId);
+				Result = SVMatroxApplicationInterface::GetLastStatus();
 				if (S_OK == Result)
 				{
-					pFreeFunc(rId);
-					Result = SVMatroxApplicationInterface::GetLastStatus();
-					if (S_OK == Result)
-					{
-						SVMatroxResourceMonitor::EraseIdentifier(identifierType, rId);
+					SVMatroxResourceMonitor::EraseIdentifier(identifierType, rId);
 
-						rId = M_NULL;
-					}
+					rId = M_NULL;
 				}
+
 			}
 		}
 		else

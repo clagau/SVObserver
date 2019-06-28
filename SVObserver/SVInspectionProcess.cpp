@@ -19,7 +19,7 @@
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVSystemLibrary\SVAutoLockAndReleaseTemplate.h"
+
 #include "SVXMLLibrary\SVConfigurationTags.h"
 #include "SVUtilityLibrary\NaturalStringCompare.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
@@ -361,7 +361,6 @@ void SVInspectionProcess::Init()
 {
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVInspectionObjectType;
-	m_LastRunLockPtr = SVCriticalSectionPtr {new SVCriticalSection};
 	m_LastRunProductNULL = false;
 	m_pCurrentToolset = nullptr;
 	m_PPQId.clear();
@@ -2205,9 +2204,7 @@ std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess
 {
 	if (!m_LastRunProductNULL)
 	{
-		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-		l_AutoLock.Assign(m_LastRunLockPtr.get());
-
+		std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
 		auto ipInfoIter = m_svLastRunProduct.m_svInspectionInfos.find(GetUniqueObjectID());
 		if (m_svLastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
 		{
@@ -3828,9 +3825,7 @@ HRESULT SVInspectionProcess::LastProductUpdate(SVProductInfoStruct *p_psvProduct
 	if (!m_LastRunProductNULL)
 	{
 		p_psvProduct->SetProductComplete();
-		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-
-		l_AutoLock.Assign(m_LastRunLockPtr.get());
+		std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
 
 		l_hrOk = m_svLastRunProduct.Assign(*p_psvProduct);
 	}
@@ -3842,8 +3837,7 @@ SVProductInfoStruct SVInspectionProcess::LastProductGet() const
 {
 	SVProductInfoStruct l_Temp;
 
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
-	l_AutoLock.Assign(m_LastRunLockPtr.get());
+	std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
 
 	l_Temp.Assign(m_svLastRunProduct);
 

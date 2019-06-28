@@ -17,30 +17,27 @@
 #pragma endregion Includes
 
 SVMatroxImageChildBuffer::SVMatroxImageChildBuffer()
-: m_ParentPtr(), SVMatroxBufferTemplate()
+	: m_ParentPtr(), SVMatroxBufferTemplate()
 {
 }
 
 SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 {
 	__int64 Identifier = GetIdentifier();
-	if( 0 != Identifier )
+	if (0 != Identifier)
 	{
-		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-		if( S_OK == SVMatroxResourceMonitor::GetAutoLock( l_AutoLock )  )
+		MIL_ID l_SystemID = MbufInquire(Identifier, M_OWNER_SYSTEM, nullptr);
+
+		if (M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus())
 		{
-			MIL_ID l_SystemID = MbufInquire( Identifier, M_OWNER_SYSTEM, nullptr );
-
-			if( M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus()  )
-			{
-				SVMatroxResourceMonitor::EraseIdentifier( SVChildBufferID, Identifier );
-			}
-			else
-			{
-				assert( false );
-			}
+			SVMatroxResourceMonitor::EraseIdentifier(SVChildBufferID, Identifier);
 		}
+		else
+		{
+			assert(false);
+		}
+
 
 		freeBuffer();
 	}
@@ -49,8 +46,8 @@ SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 }
 
 SVMatroxImageChildBuffer::SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, __int64 p_Identifier, const std::string& p_rCreatorName )
-: m_ParentPtr( p_ParentPtr ), SVMatroxBufferTemplate( p_Identifier, p_rCreatorName )
+	: m_ParentPtr(p_ParentPtr), SVMatroxBufferTemplate(p_Identifier, p_rCreatorName)
 {
-	SVMatroxResourceMonitor::InsertIdentifier( SVChildBufferID, p_Identifier );
+	SVMatroxResourceMonitor::InsertIdentifier(SVChildBufferID, p_Identifier);
 }
 

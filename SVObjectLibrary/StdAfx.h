@@ -57,6 +57,7 @@
 #include <guiddef.h>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <ostream>
 #include <set>
 #include <string>			//Used by static library

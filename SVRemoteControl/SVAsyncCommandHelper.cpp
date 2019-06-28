@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVAsyncCommandHelper.h"
-#include "SVAutoLockAndReleaseTemplate.h"
 #include "SVWaitFuncs.h"
 #pragma endregion Includes
 
@@ -125,13 +124,25 @@ bool SVAsyncCommandHelper::IsCommandEmpty() const
 	return nullptr == m_CommandPtr.get();
 }
 
-HRESULT SVAsyncCommandHelper::GetCommand( SVCommandTemplatePtr& p_rCommand, DWORD p_TimeoutInMilliseconds ) const
+HRESULT SVAsyncCommandHelper::GetCommand( SVCommandTemplatePtr& p_rCommand, DWORD Timeout) const
 {
 	HRESULT l_Status = S_OK;
 
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
+	std::unique_lock<std::timed_mutex> Lock(m_TimedMutex, std::defer_lock);
+	bool isLocked {false};
 
-	if( l_AutoLock.Assign( &m_CriticalSection, p_TimeoutInMilliseconds ) )
+	if (Timeout == INFINITE)
+	{
+		isLocked = true;
+		Lock.lock();
+	}
+	else
+	{
+		isLocked = Lock.try_lock_for(std::chrono::milliseconds(Timeout));
+	}
+
+	
+	if (isLocked)
 	{
 		if( nullptr != m_CommandPtr.get() )
 		{
@@ -150,13 +161,15 @@ HRESULT SVAsyncCommandHelper::GetCommand( SVCommandTemplatePtr& p_rCommand, DWOR
 	return l_Status;
 }
 
-HRESULT SVAsyncCommandHelper::SetCommand( const SVCommandTemplatePtr& p_rCommand, DWORD p_TimeoutInMilliseconds )
+HRESULT SVAsyncCommandHelper::SetCommand( const SVCommandTemplatePtr& p_rCommand, DWORD Timeout)
 {
 	HRESULT l_Status = S_OK;
+	
+	std::unique_lock<std::timed_mutex> Lock(m_TimedMutex, std::defer_lock);
+	bool isLocked = Timeout == INFINITE ? Lock.lock(), true : Lock.try_lock_for(std::chrono::milliseconds(Timeout));
 
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
-	if( l_AutoLock.Assign( &m_CriticalSection, p_TimeoutInMilliseconds ) )
+	if(isLocked)
 	{
 		if( ( 0 == m_CommandActive ) && ( nullptr == m_CommandPtr.get() ) )
 		{
@@ -182,13 +195,15 @@ HRESULT SVAsyncCommandHelper::SetCommand( const SVCommandTemplatePtr& p_rCommand
 	return l_Status;
 }
 
-HRESULT SVAsyncCommandHelper::ClearCommand( DWORD p_TimeoutInMilliseconds )
+HRESULT SVAsyncCommandHelper::ClearCommand( DWORD Timeout)
 {
 	HRESULT l_Status = S_OK;
 
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
+	std::unique_lock<std::timed_mutex> Lock(m_TimedMutex, std::defer_lock);
+	bool isLocked = Timeout == INFINITE ? Lock.lock(), true : Lock.try_lock_for(std::chrono::milliseconds(Timeout));
 
-	if( l_AutoLock.Assign( &m_CriticalSection, p_TimeoutInMilliseconds ) )
+
+	if( isLocked)
 	{
 		m_CommandPtr.reset();
 	}
@@ -214,13 +229,14 @@ void SVAsyncCommandHelper::SetStatus( const SVCommandStatus& p_Status )
 	m_Status = p_Status;
 }
 
-HRESULT SVAsyncCommandHelper::CancelCommand( DWORD p_TimeoutInMilliseconds )
+HRESULT SVAsyncCommandHelper::CancelCommand( DWORD Timeout)
 {
 	HRESULT l_Status = S_OK;
 
-	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
+	std::unique_lock<std::timed_mutex> Lock(m_TimedMutex, std::defer_lock);
+	bool isLocked = Timeout == INFINITE ? Lock.lock(), true : Lock.try_lock_for(std::chrono::milliseconds(Timeout));
 
-	if( l_AutoLock.Assign( &m_CriticalSection, p_TimeoutInMilliseconds ) )
+	if (isLocked)
 	{
 		if( nullptr != m_CommandPtr.get() )
 		{

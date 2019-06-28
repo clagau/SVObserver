@@ -238,7 +238,7 @@ HRESULT SVSoftwareTriggerDevice::GetTriggerPeriod( unsigned long handle, long* p
 HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( unsigned long handle, long p_lPeriod )
 {
 	HRESULT hr = S_FALSE;
-	m_CritSec.Lock();
+	std::lock_guard<std::mutex> autoLock(m_Mutex);
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
@@ -255,14 +255,14 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( unsigned long handle, long p_
 
 		hr = S_OK;
 	}
-	m_CritSec.Unlock();
+
 	return hr;
 }
 
 HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 {
 	HRESULT hr = S_FALSE;
-	m_CritSec.Lock();
+	std::lock_guard<std::mutex> autoLock(m_Mutex);
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
@@ -282,7 +282,7 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 			}
 		}
 	}
-	m_CritSec.Unlock();
+	
 	return hr;
 }
 
@@ -290,7 +290,7 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 {
 	HRESULT hr = S_FALSE;
-	m_CritSec.Lock();
+	std::lock_guard<std::mutex> autoLock(m_Mutex);
 	TimerList::iterator it = m_timerList.find(handle);
 	if (it != m_timerList.end())
 	{
@@ -305,7 +305,7 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 			}
 		}
 	}
-	m_CritSec.Unlock();
+	
 	return hr;
 }
 
@@ -319,9 +319,8 @@ void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& tag)
 		{
 			unsigned long channel = rEntry.second;
 			// get callback list
-			m_CritSec.Lock();
+			std::lock_guard<std::mutex> autoLock(m_Mutex);
 			m_TriggerDispatchers.DispatchIfPossible(channel);
-			m_CritSec.Unlock();
 			break;
 		}
 	}

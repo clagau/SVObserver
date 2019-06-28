@@ -35,8 +35,8 @@ namespace SvTrcT
 		//Reason of the crash was that SVMatroxResourceMonitor was destructed before the ImageBufferController, but this need it in its destructor.
 		//If the singleton of SVMatroxResourceMonitor created before of the singleton of ImageBufferController the destruction it in the right order.
 		//In Release-Mode this call do nothing.
-		SVMatroxResourceMonitor::SVAutoLock autoLock;
-		SVMatroxResourceMonitor::GetAutoLock(autoLock);
+		//SVMatroxResourceMonitor::SVAutoLock autoLock;
+		//SVMatroxResourceMonitor::GetAutoLock(autoLock);
 	}
 
 

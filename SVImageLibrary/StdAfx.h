@@ -58,6 +58,7 @@
 #include <fstream>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <set>				//Used by static library
 #include <stdint.h>
 #include <string>			//Used by static library

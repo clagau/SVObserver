@@ -25,7 +25,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
@@ -418,8 +417,8 @@ private:
 
 	HRESULT LastProductUpdate(SVProductInfoStruct *p_psvProduct);
 	SVProductInfoStruct LastProductGet() const;
-
-	SVCriticalSectionPtr m_LastRunLockPtr;
+	
+	mutable std::mutex m_LastRunMutex;
 	bool m_LastRunProductNULL;
 	SVProductInfoStruct m_svLastRunProduct;
 
