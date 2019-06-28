@@ -419,13 +419,12 @@ void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
 template <typename T>
 HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= -1*/)
 {
-	HRESULT result{S_OK};
-
+	HRESULT result {S_OK};
 	std::vector<T> valueVector = variant2VectorType(rValue);
 
 	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
-		if(1 == valueVector.size())
+		if (1 == valueVector.size())
 		{
 			result = SetValue(valueVector[0], Index);
 		}
@@ -433,16 +432,16 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 	else
 	{
 		int arraySize = static_cast<int> (valueVector.size());
-		if(arraySize > 0)
+		if (arraySize > 0)
 		{
 			//fit array size to safeArray-size
 			if (getArraySize() != arraySize)
 			{
 				result = SetArraySize((arraySize));
 			}
-			if(S_OK == result)
+			if (S_OK == result)
 			{
-				for(int i=0; i < arraySize && S_OK == result; i++)
+				for (int i = 0; i < arraySize && S_OK == result; i++)
 				{
 					result = SetValue(valueVector[i], i);
 				}
@@ -814,17 +813,34 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 	return result;
 }
 
+
 template <typename T>
 _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 {
 	_variant_t result;
 
-	if(arraySize > 0 && arraySize <= static_cast<long> (getArraySize()))
+	if (arraySize > 0 && arraySize <= static_cast<long> (getArraySize()))
 	{
 		SAFEARRAYBOUND arrayBound;
 		arrayBound.lLbound = 0;
 		arrayBound.cElements = arraySize;
 		VARTYPE varType = ValueType2Variant(m_DefaultValue).vt;
+		
+		//Take the typ of the first element when no defaultvalue is set
+		if (varType == VT_EMPTY)
+		{
+			T value;
+			if (S_OK == GetValue(value, 0))
+			{
+				varType = ValueType2Variant(value).vt;
+
+			}
+			if (varType == VT_EMPTY)
+			{
+				varType = VT_VARIANT;
+			}
+		}
+		
 		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
 		result.vt = varType | VT_ARRAY;
 
@@ -835,22 +851,78 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 				T value;
 				if (S_OK == GetValue(value, i))
 				{
-					if (VT_BSTR == varType)
+
+					switch (varType)
 					{
-						_bstr_t stringValue{ValueType2Variant(value)};
-						::SafeArrayPutElement(result.parray, &i, static_cast<void*> (stringValue.Detach()));
+						case VT_I8:
+						{
+							__int64 llValue = (__int64)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&llValue));
+							break;
+						}
+						
+						case VT_BSTR:
+						{
+							_bstr_t stringValue {ValueType2Variant(value)};
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*> (stringValue.Detach()));
+							break;
+						}
+						case  VT_R8:
+						{
+							double dValue = (double)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&dValue));
+							break;
+						}
+						case  VT_R4:
+						{
+							float fValue = (float)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&fValue));
+							break;
+						}
+
+						case VT_I4:
+						{
+							long lValue = (long)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&lValue));
+							break;
+						}
+
+						case VT_I2:
+						{
+							short sValue = (short)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&sValue));
+							break;
+						}
+
+						case VT_UI2:
+						{
+							unsigned short sValue = (unsigned short)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&sValue));
+							break;
+						}
+						
+						case VT_UI4:
+						{
+							unsigned long lValue = (unsigned long)ValueType2Variant(value);
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&lValue));
+							break;
+						} 
+						default:
+						{
+							//this works only if varType = T
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*> (&value));
+							break;
+						}
+
 					}
-					else
-					{
-						::SafeArrayPutElement(result.parray, &i, static_cast<void*> (&value));
-					}
+
 				}
 			}
 		}
 	}
-
 	return result;
 }
+
 #pragma endregion Protected Methods
 
 } //namespace SvVol

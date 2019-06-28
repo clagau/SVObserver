@@ -70,6 +70,7 @@ namespace Gdiplus
 	using std::max;
 }
 
+
 #include <afx.h>
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
 #include <afxctl.h>
@@ -91,6 +92,7 @@ namespace Gdiplus
 //#include <afxdialogex.h>
 
 #include <array>
+#include <atlsafe.h>
 #include <functional>
 #include <assert.h>
 #include <cmath>

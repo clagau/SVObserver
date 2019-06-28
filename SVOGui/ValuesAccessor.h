@@ -167,11 +167,11 @@ public:
 		m_MessageFailList.clear();
 		SvPb::InspectionCmdMsgs requestMessage;
 		SvPb::InspectionCmdMsgs responseMessage;
-
+		
 		SvPb::ResetObjectRequest* pRequest = requestMessage.mutable_resetobjectrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rObjectID);
 		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, &responseMessage);
-		if (responseMessage.has_resetobjectresponse())
+		if (responseMessage.has_resetobjectresponse()&& responseMessage.resetobjectresponse().has_messages())
 		{
 			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.resetobjectresponse().messages());
 		}

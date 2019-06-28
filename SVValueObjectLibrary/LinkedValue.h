@@ -33,6 +33,10 @@ public:
 #pragma region Public Methods
 public:
 
+	virtual void SetLinkDefaultValue(const _variant_t& rValue);
+	virtual const _variant_t& GetLinkDefaultValue() const ;
+
+
 	//************************************
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
 	/// \param rValue [out] reference to the value to write to
@@ -40,7 +44,14 @@ public:
 	/// \returns S_OK if successful
 	//************************************
 	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1) const override;
+	
+	/// similar to GetValue but works also for safearrays 
+	HRESULT GetValueEx(_variant_t& rValue, int Index = -1);
 
+	virtual HRESULT SetDefaultValue(const _variant_t& rValue, bool bResetAll = true) override;
+
+	virtual HRESULT  SetValue(const _variant_t& rValue, int Index = -1) override;
+	
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 
 	//************************************
@@ -100,6 +111,7 @@ private:
 
 #pragma region Member Variables
 private:
+	_variant_t m_LinkDefaultValue;
 	SVStringValueObjectClass m_LinkedName;
 	SVObjectReference m_LinkedObjectRef;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present

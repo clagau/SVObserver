@@ -51,6 +51,7 @@ protected:
 	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
 	SVObjectClass* FindObject(SVRPropertyItem* pItem);
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
+	bool ValidateValueObject(SVObjectClass* pObject, int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
 
 	enum

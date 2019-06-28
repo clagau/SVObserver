@@ -202,9 +202,11 @@ void SVRPropertyItemEdit::OnKillfocusReflect()
 void SVRPropertyItemEdit::OnKillFocus(CWnd *pNewWnd) 
 {
 	m_bKillFocusWorkaround = true;	// prevent this edit from setting focus again on Activate during Commit
-	CommitChanges();
+
 	if ( pNewWnd != &m_btnDots )
 	{
+		//commit when the ... button is not pressed
+		CommitChanges();
 		ShowWindow( SW_HIDE );
 		m_btnDots.ShowWindow( SW_HIDE );
 		__super::OnKillFocus(pNewWnd);

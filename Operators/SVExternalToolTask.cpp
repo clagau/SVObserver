@@ -168,6 +168,9 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		::VariantInit(&vtTemp);
 		vtTemp.vt = VT_EMPTY;
 		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, true);
+		
+		m_Data.m_aInputObjects[i].setSaveDefaultValueFlag(true);
+
 		m_Data.m_aInputObjectNames[i].SetDefaultValue(std::string(), true);
 		m_Data.m_aInputObjectNames[i].setSaveValueFlag(false);
 	}
@@ -457,10 +460,15 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 			{
 				SvVol::LinkedValue& rInputValue = m_Data.m_aInputObjects[i];
+				if (rInputValue.GetLinkDefaultValue().vt == VT_EMPTY)
+				{
+					rInputValue.SetLinkDefaultValue(paInputValueDefs[i].m_DefaultValue);
+				}
+				
 				if( rInputValue.GetDefaultType() == VT_EMPTY )
 				{
 					//! For a new tool set the default and value while a linked value of type VT_BSTR should not be overwritten
-					if (paInputValueDefs[i].m_DefaultValue.vt != rInputValue.GetValueType() && VT_BSTR != rInputValue.GetValueType())
+					if ((paInputValueDefs[i].m_DefaultValue.vt & ~VT_ARRAY) != rInputValue.GetValueType() && VT_BSTR != rInputValue.GetValueType())
 					{
 						rInputValue.SetDefaultValue(paInputValueDefs[i].m_DefaultValue, true);
 					}
@@ -473,7 +481,14 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				//But this method will called also in Create-process and there is not a reset called before.
 				rInputValue.resetAllObjects();
 
-				::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
+				
+				HRESULT hres = ::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
+				if (S_OK != hres)
+				{
+					///cant change variant empty to safe array
+					_variant_t temp(paInputValueDefs[i].m_DefaultValue);
+					m_aInspectionInputValues[i] = temp.Detach();
+				}
 
 				m_Data.m_aInputValueDefinitions[i] = paInputValueDefs[i];
 
@@ -531,7 +546,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 						if(nullptr != pValue)
 						{
 							_variant_t defaultValue;
-							defaultValue.ChangeType(static_cast<VARTYPE> (rDef.m_VT));
+						
+							defaultValue.ChangeType(static_cast<VARTYPE> ( ~(VT_ARRAY) & rDef.m_VT));
 							pValue->SetDefaultValue(defaultValue, false);
 						}
 					}
@@ -806,13 +822,26 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			// collect input values
 			for ( i=0; i < m_Data.m_lNumInputValues; i++)
 			{
-				m_Data.m_aInputObjects[i].GetValue(m_aInspectionInputValues[i]);
-				HRESULT hrChangeType = ::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].m_VT) );
-				if ( S_OK != hrChangeType )
+			
+				
+				if (0 ==  (m_Data.m_aInputValueDefinitions[i].m_VT & VT_ARRAY))
 				{
-					m_aInspectionInputValues[i].Clear();
-					m_aInspectionInputValues[i].ChangeType( static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].m_VT));
+					m_Data.m_aInputObjects[i].GetValue(m_aInspectionInputValues[i]);
+					HRESULT hrChangeType = ::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].m_VT));
+					if (S_OK != hrChangeType)
+					{
+						m_aInspectionInputValues[i].Clear();
+						m_aInspectionInputValues[i].ChangeType(static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].m_VT));
+					}
 				}
+				else
+				{
+					
+					/// if we have an array the typ must be correct
+					m_Data.m_aInputObjects[i].GetValueEx(m_aInspectionInputValues[i]);
+				
+				}
+
 			}
 			// send input values to DLL
 			hr = m_dll.SetInputValues( guid, m_Data.m_lNumInputValues, m_Data.m_lNumInputValues ? &(m_aInspectionInputValues[0]) : nullptr );
@@ -978,8 +1007,29 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 			for ( i=0; i < m_Data.m_lNumResultValues; i++ )
 			{
-				GetResultValueObject(i)->SetValue(m_aInspectionResultValues[i]);
+				if (m_aInspectionResultValues[i].vt & VT_ARRAY )
+				{
+					VARTYPE type = (m_aInspectionResultValues[i].vt & (~VT_ARRAY));
 
+					if (!GetResultValueObject(i)->isArray())
+					{
+						//if the value object is an array the correct size will be set in setValue
+						GetResultValueObject(i)->SetArraySize(2);
+					}
+					if (!GetResultValueObject(i)->GetDefaultType() != type)
+					{
+						_variant_t var(0.0);
+						var.ChangeType(type);
+						GetResultValueObject(i)->SetDefaultValue(var);
+					}
+					GetResultValueObject(i)->setValue(m_aInspectionResultValues[i]);
+
+				}
+				
+				else
+				{
+					GetResultValueObject(i)->SetValue(m_aInspectionResultValues[i]);
+				}
 				// Clear OleVariant that was created in Dll.
 				m_aInspectionResultValues[i].Clear();
 			}
@@ -1237,8 +1287,11 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 		{
 			m_Data.m_aInputObjects[i].setIndirectValueSaveFlag(true);
 		}
+		
 		_variant_t Value;
-		m_Data.m_aInputObjects[i].GetValue( Value );
+		m_Data.m_aInputObjects[i].GetValueEx(Value);
+
+	
 
 		_variant_t& rVT = m_aInspectionInputValues[i];
 		HRESULT hrChangeType = S_OK;
@@ -1250,8 +1303,14 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 		{
 			rVT = Value;
 		}
+		//else if (m_Data.m_aInputObjects[i].GetLinkDefaultValue().vt & VT_ARRAY)
+		//{
+		//	/// if we have an array the typ must be correct
+		//	rVT = m_Data.m_aInputObjects[i].GetLinkDefaultValue();
+		//}
 		else
 		{
+			/// if we have an array the typ must be correct
 			VARTYPE vt = rVT.vt;
 			rVT.Clear();
 			rVT.vt = vt;

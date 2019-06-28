@@ -1,0 +1,26 @@
+LIBRARY
+
+EXPORTS
+    SVSimpleTest          
+    SVGetToolName         
+    SVGetToolVersion      
+    SVRunTool 
+    SVStartup 
+    SVShutDown 
+    SVInitializeRun 
+    SVUninitializeRun 
+    SVGetInputValueDefinitions 
+    SVDestroyInputValueDefinitionStructures 
+    SVSetInputValues 
+    SVGetResultValues 
+    SVGetErrorMessageString 
+    SVValidateValueParameter 
+    SVGetResultValueDefinitions 
+    SVDestroyResultValueDefinitionStructures
+    SVGetNumberOfInputImages
+;    SVSetHBITMAPInputImages 
+;    SVGetHBITMAPResultImages
+    SVSetMILInputImages 
+	SVSetMILResultImages 
+    SVGetResultImageDefinitions 
+    SVDestroyImageDefinitionStructure 

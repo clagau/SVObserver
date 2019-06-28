@@ -72,6 +72,9 @@
     <ClCompile Include="ZipHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SafeArrayHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="7zTypes.h">
@@ -198,6 +201,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ZipHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SafeArrayHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

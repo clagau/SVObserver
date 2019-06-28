@@ -30,7 +30,7 @@ public:
 	SVPoint(SVPoint&& Rhs) = default;
 
 	SVPoint( T x, T y ){ m_x = x; m_y = y; }
-	SVPoint( const _variant_t& rVariant ) { *this = rVariant; }
+	explicit SVPoint(  const _variant_t& rVariant ) { *this = rVariant; }
 
 	virtual ~SVPoint() = default;
 

@@ -29,7 +29,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rTaskObjectID,  int id )
+SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id)
 	: CPropertyPage(SVExternalToolResultPage::IDD)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
@@ -37,8 +37,8 @@ SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, const SVGUID& 
 	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 
 	m_sTitle = Title;
-    m_psp.pszTitle = m_sTitle.c_str();
-    m_psp.dwFlags |= PSP_USETITLE;
+	m_psp.pszTitle = m_sTitle.c_str();
+	m_psp.dwFlags |= PSP_USETITLE;
 
 	//{{AFX_DATA_INIT(SVExternalToolResultPage)
 		// NOTE: the ClassWizard will add member initialization here
@@ -61,27 +61,27 @@ void SVExternalToolResultPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(SVExternalToolResultPage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVExternalToolResultPage)
 	//}}AFX_MSG_MAP
-    ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_RESULT_LIST, OnItemQueryShowButton)
-    ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_RESULT_LIST, OnItemButtonClick)
+	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_RESULT_LIST, OnItemQueryShowButton)
+	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_RESULT_LIST, OnItemButtonClick)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // SVExternalToolResultPage message handlers
 
-BOOL SVExternalToolResultPage::OnInitDialog() 
+BOOL SVExternalToolResultPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( m_pTask->m_Data.m_lNumResultValues > 0 )
+	if (m_pTask->m_Data.m_lNumResultValues > 0)
 	{
-		GetDlgItem( IDC_NO_RESULT_TXT )->ShowWindow(SW_HIDE);
-		GetDlgItem( IDC_RESULT_LIST )->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
 
 		DWORD dwStyle;
 		CRect rc;
 
 		// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
-		dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
+		dwStyle = WS_CHILD | WS_VISIBLE | PTS_NOTIFY;
 
 		// Init the control's size to cover the entire client area
 		GetDlgItem(IDC_RESULT_LIST)->GetWindowRect(rc);
@@ -91,50 +91,53 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		m_Tree.SetColumn(m_Tree.GetColumn() * 2);
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		ASSERT( pRoot );
+		ASSERT(pRoot);
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("Results"));
 		pRoot->SetInfoText(_T(""));
 
-		int iID = ID_BASE-1;	// the increment happens before using the value, so subtract one here
-	
-		for( int i = 0 ; i < m_pTask->m_Data.m_lNumResultValues ; i++ )
+		int iID = ID_BASE - 1;	// the increment happens before using the value, so subtract one here
+
+		for (int i = 0; i < m_pTask->m_Data.m_lNumResultValues; i++)
 		{
 			SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];
 			SvOp::ResultValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aResultValueDefinitions[i];
 
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
-			if( nullptr == pEdit )
+			if (nullptr == pEdit)
 			{
 				break;
 			}
 
 			iID++;
-			pEdit->SetCtrlID( iID );
+			pEdit->SetCtrlID(iID);
 
 			// display name like: "Result 01 ( )"
-			std::string sLabel = SvUl::Format( _T("%s (%s)"), rValue.GetName(), SvUl::createStdString(rDefinition.m_bDisplayName).c_str());
+			std::string sLabel = SvUl::Format(_T("%s (%s)"), rValue.GetName(), SvUl::createStdString(rDefinition.m_bDisplayName).c_str());
 
-			pEdit->SetLabelText( sLabel.c_str() );
+			pEdit->SetLabelText(sLabel.c_str());
 
 			std::string Type;
-			switch ( rDefinition.m_VT )
+			switch (rDefinition.m_VT)
 			{
 				case VT_BOOL: Type = _T("Bool");   break;
 				case VT_I4:   Type = _T("Long");   break;
 				case VT_R8:   Type = _T("Double"); break;
 				case VT_BSTR: Type = _T("String"); break;
+				case VT_ARRAY | VT_R8: Type = _T("Double Array"); break;
+				case VT_ARRAY | VT_I4: Type = _T("Long Array"); break;
+
 				default:      Type = _T("???");    break;
 			}
 
-			std::string sDescription = SvUl::Format( _T(" (Type : %s)  %s"), Type.c_str(), SvUl::createStdString( rDefinition.m_bDisplayName ).c_str() );
-			pEdit->SetInfoText( sDescription.c_str() ) ;
-			pEdit->SetButtonText( _T("Range"));
+			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), SvUl::createStdString(rDefinition.m_bDisplayName).c_str());
+			pEdit->SetInfoText(sDescription.c_str());
+			pEdit->SetButtonText(_T("Range"));
 
 			std::string sValue;
 			rValue.getValue(sValue);
-			pEdit->SetItemValue( sValue.c_str() );
-			if( rDefinition.m_VT == VT_BSTR )
+			pEdit->SetItemValue(sValue.c_str());
+			if (rDefinition.m_VT == VT_BSTR)
 			{
 				pEdit->ReadOnly();
 			}
@@ -142,37 +145,39 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		}// end for( int i = 0 ; i < m_pTask->m_Data.m_iNumResultValues ; i++ )
 
 		SVRPropertyItem* pChild = pRoot->GetChild();
-		while ( pChild )
+		while (pChild)
 		{
-			pChild->Expand( TRUE );
+			pChild->Expand(TRUE);
 			pChild = pChild->GetSibling();
 		}
-		pRoot->Expand( true );	// needed for redrawing
+		pRoot->Expand(true);	// needed for redrawing
 	}
 	else
 	{
-		GetDlgItem( IDC_NO_RESULT_TXT )->ShowWindow( SW_SHOW );
-		GetDlgItem( IDC_RESULT_LIST )->ShowWindow( SW_HIDE );
+		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_HIDE);
 
 	}
 
 	UpdateData(FALSE);
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
 void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
-	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
+	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 
-	if ( pNMPropTree->pItem )
+	if (pNMPropTree->pItem)
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
-	
-		if( m_pTask->m_Data.m_aResultValueDefinitions[iIndex].m_VT == VT_BSTR )
+
+		if (m_pTask->m_Data.m_aResultValueDefinitions[iIndex].m_VT == VT_BSTR ||
+			0 != (m_pTask->m_Data.m_aResultValueDefinitions[iIndex].m_VT & VT_ARRAY)  
+			)
 		{
 			*plResult = FALSE;	// Do not show button for a string, No Range available.
 		}
@@ -187,17 +192,17 @@ void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* 
 {
 	*plResult = TRUE;
 
-	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
+	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 
-	if ( pNMPropTree->pItem )
+	if (pNMPropTree->pItem)
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 
 		// display value object picker
-		if ( SelectObject(iIndex) == IDOK )
+		if (SelectObject(iIndex) == IDOK)
 		{
-			pItem->SetItemValue( _T("") );
+			pItem->SetItemValue(_T(""));
 			pItem->OnRefresh();
 		}
 	}// end if ( pNMPropTree->pItem )
@@ -208,11 +213,11 @@ void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* 
 int SVExternalToolResultPage::SelectObject(int iIndex)
 {
 
-	SvOp::SVVariantResultClass* pResult = dynamic_cast<SvOp::SVVariantResultClass*> (m_pTask->GetResultRangeObject(iIndex)) ;
+	SvOp::SVVariantResultClass* pResult = dynamic_cast<SvOp::SVVariantResultClass*> (m_pTask->GetResultRangeObject(iIndex));
 
-	if( pResult )
+	if (pResult)
 	{
-		SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this );
+		SVSetupDialogManager::Instance().SetupDialog(pResult->GetClassID(), pResult->GetUniqueObjectID(), this);
 	}
 
 	return 0;
@@ -220,20 +225,20 @@ int SVExternalToolResultPage::SelectObject(int iIndex)
 
 void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
-	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
+	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 	*plResult = S_OK;
 
-	
-	if ( pNMPropTree->pItem )
+
+	if (pNMPropTree->pItem)
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
-		ASSERT( iIndex >= 0 );
+		ASSERT(iIndex >= 0);
 
 		// do validation
 		bool bValidated = true;
 		// @TODO - add validation logic
-		if ( !bValidated )
+		if (!bValidated)
 		{
 			*plResult = S_FALSE;
 		}
@@ -244,22 +249,22 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 
 // Loops through Tree Items to fill existing SVResultObjectInfo array (if input is another VO) and/or SVValueObjects with 
 // constant values (if input is not another VO)
-void SVExternalToolResultPage::OnOK() 
+void SVExternalToolResultPage::OnOK()
 {
 
 	SVRPropertyItem* pGroup = nullptr;
 
-	if( m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild() )
+	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
 	{
 		pGroup = m_Tree.GetRootItem()->GetChild()->GetChild();
-		while ( pGroup )
+		while (pGroup)
 		{
 			SVRPropertyItem* pItem = nullptr;
 			pItem = pGroup->GetChild();
-			while ( pItem )
+			while (pItem)
 			{
 				int iIndex = GetItemIndex(pItem);
-				ASSERT( iIndex >= 0 );
+				ASSERT(iIndex >= 0);
 				SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[iIndex];
 
 				pItem = pItem->GetSibling();
@@ -274,7 +279,7 @@ void SVExternalToolResultPage::OnOK()
 
 int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)
 {
-	ASSERT( pItem );
+	ASSERT(pItem);
 	return pItem->GetCtrlID() - ID_BASE;
 }
 
