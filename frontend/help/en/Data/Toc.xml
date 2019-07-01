@@ -24,7 +24,7 @@
         </TocEntry>
         <TocEntry Title="View Set" Link="/Content/General strucutre/View_set.htm" ComputedFirstTopic="false" DescendantCount="2">
             <TocEntry Title="View" Link="/Content/General strucutre/View.htm" ComputedFirstTopic="false" DescendantCount="0" />
-            <TocEntry Title="View types" StartSection="false" StartChapter="false" ReplaceMergeNode="false" Link="/Content/General strucutre/View_types.htm" ComputedFirstTopic="false" DescendantCount="0" />
+            <TocEntry Title="View Types" StartSection="false" StartChapter="false" ReplaceMergeNode="false" Link="/Content/General strucutre/View_types.htm" ComputedFirstTopic="false" DescendantCount="0" />
         </TocEntry>
         <TocEntry Title="View Set Navigation" Link="/Content/General strucutre/View_set_navigation.htm" ComputedFirstTopic="false" DescendantCount="0" />
         <TocEntry Title="Menu" Link="/Content/General strucutre/Menu/Menu.htm" ComputedFirstTopic="false" DescendantCount="2">
