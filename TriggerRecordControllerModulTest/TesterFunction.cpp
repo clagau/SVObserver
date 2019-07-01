@@ -528,7 +528,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 				HANDLE hChange[2];
 				hChange[0] = g_resetEvent;
 				hChange[1] = g_newTrEvent;
-				waitValue = WaitForMultipleObjects(2, hChange, false, 1000);
+				waitValue = WaitForMultipleObjects(2, hChange, false, 1500);
 				if (WAIT_OBJECT_0 == waitValue)
 				{
 					CString logStr;
