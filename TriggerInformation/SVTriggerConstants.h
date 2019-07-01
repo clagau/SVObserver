@@ -15,5 +15,5 @@ namespace SvTi
 	constexpr char* SoftwareTriggerName = _T("SoftwareTrigger");
 	constexpr char* CameraTriggerName = _T("CameraTrigger");
 	constexpr long TimerPeriod = 200;
-	constexpr long MinTimerPeriod = 20;
+	constexpr long MinTimerPeriod = 4;
 } //namespace SvTi
