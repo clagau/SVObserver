@@ -150,6 +150,7 @@
 #define IDD_GLOBAL_CONSTANT             5125
 #define IDD_GLOBAL_CONSTANT_CONFLICT    5126
 #define IDD_RANKING2_FILTER             5127
+#define IDD_CONDITIONAL_TOOLSET_PAGE    5128 //Pseudo ID, needed for Help
 #define IDS_OF_STRING                   10000
 #define IDS_PAGE_STRING                 10001
 #define IDS_RESULT_STRING               10002

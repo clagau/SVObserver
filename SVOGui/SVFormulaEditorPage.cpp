@@ -58,7 +58,6 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_DISABLE_EQUATION, OnDisable)
 		ON_BN_CLICKED(IDC_DISABLE_TOOL, OnDisable)
 		ON_NOTIFY(SCN_UPDATEUI, IDC_MATHCOND_EDITOR, OnEquationFieldChanged)
-		ON_WM_HELPINFO()
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -135,11 +134,20 @@ namespace SvOg
 		{
 			m_DisableEquationCtrl.ShowWindow(SW_HIDE);
 			m_DisableToolCtrl.ShowWindow(SW_HIDE);
+			SetHelpID(IDD_FORMULA_DIALOG);
 		}
 		else
 		{
 			m_DisableEquationCtrl.ShowWindow(SW_SHOW);
 			m_DisableToolCtrl.ShowWindow(SW_SHOW);
+			if (IDS_CLASSNAME_SVTOOLSET == m_disableExtentionID)
+			{
+				SetHelpID(IDD_CONDITIONAL_TOOLSET_PAGE);
+			}
+			else
+			{
+				SetHelpID(IDD_CONDITIONAL_PAGE);
+			}
 		}
 
 		enableControls();
@@ -147,33 +155,6 @@ namespace SvOg
 
 		return TRUE;  // return TRUE unless you set the focus to a control
 		// EXCEPTION: OCX Property Pages should return FALSE
-	}
-
-	void SVFormulaEditorPageClass::OnHelp()
-	{
-		if (m_isConditionalPage)
-		{
-			AfxGetApp()->HtmlHelp( IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_DLG_IDD_OFFSET );
-		}
-		else
-		{
-			AfxGetApp()->HtmlHelp( IDD_FORMULA_DIALOG + SvOr::HELPFILE_DLG_IDD_OFFSET );
-		}
-	}
-
-	BOOL SVFormulaEditorPageClass::OnHelpInfo(HELPINFO* pHelpInfo)
-	{
-		if (m_isConditionalPage)
-		{
-			pHelpInfo->iCtrlId = IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_DLG_IDD_OFFSET;
-		}
-		else
-		{
-			pHelpInfo->iCtrlId = IDD_FORMULA_DIALOG + SvOr::HELPFILE_DLG_IDD_OFFSET;
-		}
-
-		AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
-		return TRUE ;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

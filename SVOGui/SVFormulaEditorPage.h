@@ -74,8 +74,6 @@ namespace SvOg
 
 		// Generated message map functions
 		//{{AFX_MSG(SVFormulaEditorPageClass)
-		afx_msg void OnHelp();
-		afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 		afx_msg void OnAddLocalVariableButton();
 		afx_msg void OnAddConstantButton();
 		virtual BOOL OnInitDialog() override;
