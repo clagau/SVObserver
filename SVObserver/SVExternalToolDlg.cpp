@@ -81,7 +81,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_ToolObjectID);
 	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVExternalToolTaskObjectType);
 
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		m_TaskObjectID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());

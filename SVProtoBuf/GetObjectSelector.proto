@@ -1,0 +1,41 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file GetObjectSelector.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file GetObjectSelector which is used by both InspectionCommands
+/// and SVRC-SVObserver and that is the reason it is in a separate file
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+import "SVO-Enum.proto";
+
+///This is the recursive structure for the object selector tree
+message TreeItem
+{
+	string name = 1;				//The name of the leaf or branch
+	string location = 2;			//The location which is the dotted name of leaf or branch
+	bool selected = 3;				//The flag which defines if the object is selected
+	string type = 4;				//The object type
+	string objectIDIndex = 5;		//The object ID including index for array values
+	repeated TreeItem children = 6;	//The children of this node
+}
+
+///Get the required objects to be displayed for selection
+message GetObjectSelectorItemsRequest
+{
+	repeated ObjectSelectorType types = 1;	//The list of item types required
+	bytes inspectionID = 2;				//The inspection GUID to query for the items
+	bytes instanceID = 3;				//The object instance GUID to query if required can be GUID_NULL
+	ObjectAttributes attribute = 4;		//The object attribute to filter the toolset items
+	bool wholeArray = 5;				//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
+	SelectorFilter filter = 6;			//The selector filter to remove certain tool set items, see enum for description
+}
+
+message GetObjectSelectorItemsResponse
+{
+	TreeItem tree = 1;					//The object selector tree as recursive structure
+}
+

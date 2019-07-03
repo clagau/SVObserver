@@ -50,7 +50,7 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
 		m_InspectionID, SvPb::selectableForEquation, m_InstanceID, false, FilterType);
-	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	SvCmd::InspectionCommands(m_InspectionID, request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject);
 	if (response.has_getobjectselectoritemsresponse())
@@ -91,7 +91,7 @@ GUID ObjectSelectorController::GetToolSetGUID() const
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
 	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVToolSetObjectType);
 
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());

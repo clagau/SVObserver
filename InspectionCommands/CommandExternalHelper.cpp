@@ -23,13 +23,32 @@
 namespace SvCmd
 {
 
-HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
+HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdMsgs& rRequest, SvPb::InspectionCmdMsgs* pResponse)
 {
-	InspectionCommands_protoBufPtr CommandPtr = std::make_shared<InspectionCommands_protoBuf>(pRequest, pResponse);
-	SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
+	InspectionCmdResult result;
+	result.m_hResult = E_FAIL;
 
-	HRESULT Result = Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	return Result;
+	switch (rRequest.message_case())
+	{
+		//GetObjectID does not need to be called synchronously
+		case SvPb::InspectionCmdMsgs::kGetObjectIdRequest:
+			result = getObjectId(rRequest.getobjectidrequest());
+			break;
+		default:
+			InspectionCommands_protoBufPtr CommandPtr = std::make_shared<InspectionCommands_protoBuf>(rRequest);
+			SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
+			Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			result = CommandPtr->getResult();
+			break;
+	}
+
+	if (nullptr != pResponse)
+	{
+		*pResponse = result.m_response;
+	}
+
+
+	return result.m_hResult;
 }
 
 HRESULT RunOnceSynchronous(const SVGUID& rInspectionID)
@@ -38,7 +57,7 @@ HRESULT RunOnceSynchronous(const SVGUID& rInspectionID)
 	SvPb::InspectionRunOnceRequest* pInspectionRunOnceRequest = Request.mutable_inspectionrunoncerequest();
 
 	SvPb::SetGuidInProtoBytes(pInspectionRunOnceRequest->mutable_inspectionid(), rInspectionID);
-	return SvCmd::InspectionCommandsSynchronous(rInspectionID, &Request, nullptr);
+	return SvCmd::InspectionCommands(rInspectionID, Request, nullptr);
 
 }
 

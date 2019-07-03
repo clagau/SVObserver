@@ -86,7 +86,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_Id = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -104,7 +104,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	evaluateObjectInfo.SubType = SvPb::EQSizePositionYType;
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
-	hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_Id = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -122,7 +122,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	evaluateObjectInfo.SubType = SvPb::EQSizeWidthType;
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
-	hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_Id = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -140,7 +140,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	evaluateObjectInfo.SubType = SvPb::EQSizeHeightType;
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
-	hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_Id = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -159,7 +159,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 	ToolSizeAdjustTaskInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
 	SvCmd::setTypeInfos(ToolSizeAdjustTaskInfo, *pRequest->mutable_infostruct());
-	hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
 	{
 		m_taskId = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -184,7 +184,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	{
 		auto* pParamRequest = requestMessage.mutable_gettoolsizeadjustparameterrequest();
 		SvPb::SetGuidInProtoBytes(pParamRequest->mutable_objectid(), m_taskId);
-		hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+		hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 		if (S_OK == hr && responseMessage.has_gettoolsizeadjustparameterresponse())
 		{
 			auto responseData = responseMessage.gettoolsizeadjustparameterresponse();
@@ -310,14 +310,14 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolId);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 	{
 		extentParameter = responseMessage.getextentparameterresponse().parameters();
 	}
 	responseMessage = SvPb::InspectionCmdMsgs(); //reset response
 	pRequest->set_shouldfromparent(true);
-	hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &requestMessage, &responseMessage);
+	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 	{
 		parentExtentParameter = responseMessage.getextentparameterresponse().parameters();
@@ -523,7 +523,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnKillActive()
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
 	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_toolId);
-	hr = SvCmd::InspectionCommandsSynchronous(m_ipId, &Request, &Response);
+	hr = SvCmd::InspectionCommands(m_ipId, Request, &Response);
 	if (S_OK == hr)
 	{
 		SvCmd::RunOnceSynchronous(m_ipId);

@@ -11,6 +11,7 @@ package SvPb;
 
 import "SVRC-SVOGateway.proto";
 import "SVRC-SVObserver.proto";
+import "GetObjectSelector.proto";
 
 /// This is the list of all request and response messages for SVRC
 message SVRCMessages
@@ -91,6 +92,8 @@ message SVRCMessages
 		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 2038;
 		GetTriggerStreamRequest getTriggerStreamRequest = 2039;
 		GetTriggerStreamResponse getTriggerStreamResponse = 2040;
+		ExecuteInspectionCmdRequest executeInspectionCmdRequest = 2041;
+		ExecuteInspectionCmdResponse executeInspectionCmdResponce = 2042;
 	}
 }
 

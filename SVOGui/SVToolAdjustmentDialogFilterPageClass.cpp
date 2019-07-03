@@ -59,7 +59,7 @@ namespace SvOg
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorListObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 		if (S_OK == hr && responseMessage.has_getobjectidresponse())
 		{
 			m_UnaryImageOperatorID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -97,7 +97,7 @@ namespace SvOg
 
 		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
 		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 		SvUl::NameGuidList availableList;
 		if (S_OK == hr && response.has_getavailableobjectsresponse())
 		{
@@ -123,7 +123,7 @@ namespace SvOg
 			SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 			SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), filterGUID);
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 			if (S_OK == hr && response.has_getobjectparametersresponse())
 			{
 				SvPb::SVObjectSubTypeEnum subType = response.getobjectparametersresponse().typeinfo().subtype();
@@ -177,7 +177,7 @@ namespace SvOg
 		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
 		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 		SvUl::InputNameGuidPairList connectedList;
 		if (S_OK == hr && response.has_getcreatableobjectsresponse())
 		{
@@ -222,7 +222,7 @@ namespace SvOg
 			SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), classID);
 			pRequest->set_taskobjectpos(destinyIndex);
 
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 			if (S_OK != hr)
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
@@ -246,7 +246,7 @@ namespace SvOg
 
 		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
 		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 		SvUl::NameGuidList availableList;
 		if (S_OK == hr && response.has_getavailableobjectsresponse())
 		{
@@ -267,7 +267,7 @@ namespace SvOg
 				SvPb::InspectionCmdMsgs request, response;
 				SvPb::ShouldInspectionResetRequest* pShouldResetRequest = request.mutable_shouldinspectionresetrequest();
 				SvPb::SetGuidInProtoBytes(pShouldResetRequest->mutable_objectid(), filterGUID);
-				HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 				if (S_OK == hr && response.has_shouldinspectionresetresponse())
 				{
 					bReset |= response.shouldinspectionresetresponse().shouldreset();
@@ -287,7 +287,7 @@ namespace SvOg
 				
 				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_UnaryImageOperatorID);
 				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), filterGUID);
-				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+				SvCmd::InspectionCommands(m_InspectionID, request, &response);
 			}
 		}
 
@@ -311,7 +311,7 @@ namespace SvOg
 			SvPb::InspectionCmdMsgs request, response;
 			SvPb::ShouldInspectionResetRequest* pShouldResetRequest = request.mutable_shouldinspectionresetrequest();
 			SvPb::SetGuidInProtoBytes(pShouldResetRequest->mutable_objectid(), filterGUID);
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 			if (S_OK == hr && response.has_shouldinspectionresetresponse())
 			{
 				bool bReset = response.shouldinspectionresetresponse().shouldreset();
@@ -324,7 +324,7 @@ namespace SvOg
 				}
 				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_UnaryImageOperatorID);
 				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), filterGUID);
-				SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+				SvCmd::InspectionCommands(m_InspectionID, request, &response);
 			}
 
 			// Refresh Dialog...
@@ -347,7 +347,7 @@ namespace SvOg
 			SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 			SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), filterGUID);
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 			if (S_OK == hr && response.has_getobjectparametersresponse())
 			{
 				switch (response.getobjectparametersresponse().typeinfo().subtype())

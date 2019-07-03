@@ -12,6 +12,7 @@ package SvPb;
 import "Variant.proto";
 import "SVRC-Enum.proto";
 import "SVO-Enum.proto";
+import "InspectionCommands.proto";
 
 ///This is the Data Definition structure returned for each item in the list
 message DataDefinition
@@ -31,17 +32,6 @@ message Value
 	sint32 count = 3;				//Trigger count
 
 	Variant item = 4;				//The value item as a variant
-}
-
-///This is the recursive structure for the object selector tree
-message TreeItem
-{
-	string name = 1;				//The name of the leaf or branch
-	string location = 2;			//The location which is the dotted name of leaf or branch
-	bool selected = 3;				//The flag which defines if the object is selected
-	string type = 4;				//The object type
-	string objectIDIndex = 5;		//The object ID including index for array values
-	repeated TreeItem children = 6;	//The children of this node
 }
 
 //Retrieves the SVObserver version
@@ -291,22 +281,6 @@ message LoadConfigRequest
 	string fileName = 1;			//The configuration file name to load 
 }
 
-///Get the required objects to be displayed for selection
-message GetObjectSelectorItemsRequest
-{
-	repeated ObjectSelectorType types = 1;	//The list of item types required
-	string inspectionID = 2;			//The inspection GUID to query for the items or the inspection name (changed from bytes to string until inspection ID available)
-	bytes instanceID = 3;				//The object instance GUID to query if required can be GUID_NULL
-	ObjectAttributes attribute = 4;		//The object attribute to filter the toolset items
-	bool wholeArray = 5;				//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
-	SelectorFilter filter = 6;			//The selector filter to remove certain tool set items, see enum for description
-}
-
-message GetObjectSelectorItemsResponse
-{
-	TreeItem tree = 1;					//The object selector tree as recursive structure
-}
-
 message SaveClientChunkError
 {
 	uint32 requestRevision = 1;
@@ -365,4 +339,15 @@ message GetTriggerStreamResponse
 {
 	uint32 trigger = 1;
 	bool is_reject = 2;
+}
+
+message ExecuteInspectionCmdRequest
+{
+	bytes inspectionID = 1;			//The inspection GUID to perform the command on
+	InspectionCmdMsgs cmdMsg = 2;	//The inspection command message
+}
+
+message ExecuteInspectionCmdResponse
+{
+	InspectionCmdMsgs cmdMsg = 1;	//The inspection command message
 }

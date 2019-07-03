@@ -38,7 +38,7 @@ namespace SvOg
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorObjectType);
 		pRequest->mutable_infostruct()->set_subtype(SvPb::SVShapeMaskHelperObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 		if (S_OK == hr && responseMessage.has_getobjectidresponse())
 		{
 			m_ShapeMaskHelperID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -85,7 +85,7 @@ namespace SvOg
 
 		SvPb::SetGuidInProtoBytes(pImportMaskRequest->mutable_objectid(), m_maskOperatorID);
 		pImportMaskRequest->set_filename(filename);
-		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestCmd, &response);
+		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, &response);
 	}
 
 	HRESULT MaskController::ExportMask(const std::string& filename)
@@ -95,7 +95,7 @@ namespace SvOg
 
 		SvPb::SetGuidInProtoBytes(pExportMaskRequest->mutable_objectid(), m_maskOperatorID);
 		pExportMaskRequest->set_filename(filename);
-		return SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestCmd, &response);
+		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, &response);
 	}
 
 	HGLOBAL MaskController::GetMaskData() const

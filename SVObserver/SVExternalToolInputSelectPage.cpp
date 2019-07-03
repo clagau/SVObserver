@@ -266,7 +266,7 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 	{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
 		m_InspectionID, SvPb::archivable);
-	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	SvCmd::InspectionCommands(m_InspectionID, request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	if (response.has_getobjectselectoritemsresponse())
@@ -516,7 +516,7 @@ std::string SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
 	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), guid);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	if (S_OK == hr && response.has_getobjectparametersresponse())
 	{
 		inspectionName = response.getobjectparametersresponse().name();

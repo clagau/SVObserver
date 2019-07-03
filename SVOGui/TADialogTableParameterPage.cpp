@@ -78,7 +78,7 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
 	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{
 		auto availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
@@ -178,7 +178,7 @@ void TADialogTableParameterPage::resetInspection()
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
 	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hres = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+	HRESULT hres = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 	if (hres == S_OK && Response.has_resetobjectresponse())
 	{
 		SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());

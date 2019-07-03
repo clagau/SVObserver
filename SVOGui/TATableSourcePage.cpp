@@ -68,7 +68,7 @@ BOOL TATableSourcePage::OnInitDialog()
 	pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
 	pGetInputsRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pGetInputsRequest->set_shouldexcludefirstobjectname(true);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	SvUl::InputNameGuidPairList connectedList;
 	if (S_OK == hr && response.has_getinputsresponse() && 0 < response.getinputsresponse().list_size())
 	{
@@ -124,7 +124,7 @@ HRESULT TATableSourcePage::RetrieveAvailableList()
 	pGetAvailableObjectsRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pGetAvailableObjectsRequest->set_shouldexcludefirstobjectname(true);
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_isbeforetoolmethod()->mutable_toolid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	SvUl::NameGuidList availableList;
 	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{
@@ -154,7 +154,7 @@ HRESULT TATableSourcePage::ConnectToObject(const std::string& inputName, const s
 		pConnectToObjectRequest->set_inputname(inputName);
 		SvPb::SetGuidInProtoBytes(pConnectToObjectRequest->mutable_newconnectedid(), it->second);
 		pConnectToObjectRequest->set_objecttype(SvPb::TableObjectType);
-		hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+		hr = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 	}
 	return hr;
 }

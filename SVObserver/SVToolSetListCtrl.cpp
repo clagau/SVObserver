@@ -104,7 +104,7 @@ int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, const GUID& rGuidT
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::TaskObjectListRequest*  pTaskObjectListRequest = Request.mutable_taskobjectlistrequest();
 	SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), rGuidToolId);
-	SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+	SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
 	SvOi::ObjectInfoVector  ObjectInfos;
 	SvCmd::ResponseToObjectInfo(Response, ObjectInfos);
 
@@ -143,7 +143,7 @@ void SVToolSetListCtrl::Rebuild()
 		SvPb::InspectionCmdMsgs Request, Response;
 		SvPb::TaskObjectListRequest*  pTaskObjectListRequest = Request.mutable_taskobjectlistrequest();
 		SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), m_ToolSetId);
-		SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+		SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
 		SvOi::ObjectInfoVector  ToolSetInfos;
 		SvCmd::ResponseToObjectInfo(Response, ToolSetInfos);
 
@@ -336,7 +336,7 @@ bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::GetMessageListRequest* pGetMessageListRequest = Request.mutable_getmessagelistrequest();
 	SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), rGuid);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
 	SvStl::MessageContainerVector messageList;
 	if (hr == S_OK && Response.has_getmessagelistresponse())
 	{
@@ -359,7 +359,7 @@ bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 	SvPb::GetObjectParametersRequest* pIsValidRequest = Request.mutable_getobjectparametersrequest();
 	SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), tool);
 
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &Request, &Response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
 	if (S_OK == hr && Response.has_getobjectparametersresponse())
 	{
 		isToolValid = Response.getobjectparametersresponse().isvalid();
@@ -382,7 +382,7 @@ void SVToolSetListCtrl::RebuildImages()
 	SvPb::InspectionCmdMsgs request, response;
 	SvPb::GetPPQNameRequest* pPPQNameRequest = request.mutable_getppqnamerequest();
 	SvPb::SetGuidInProtoBytes(pPPQNameRequest->mutable_inspectionid(), m_InspectionId);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionId, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, request, &response);
 	if (S_OK == hr && response.has_getppqnameresponse())
 	{
 		ppqName =  response.getppqnameresponse().ppqname();

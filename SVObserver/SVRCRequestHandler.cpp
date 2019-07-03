@@ -312,6 +312,17 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	});
 
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kExecuteInspectionCmdRequest,
+		SvPb::ExecuteInspectionCmdRequest,
+		SvPb::ExecuteInspectionCmdResponse>(
+		[this, pCommand](SvPb::ExecuteInspectionCmdRequest&& req, SvRpc::Task<SvPb::ExecuteInspectionCmdResponse> task)
+	{
+		m_IoRunService.post([req, task, pCommand]() { pCommand->ExecuteInspectionCmd(req, task); });
+
+	});
+
 	registerStreamHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetNotificationStreamRequest,

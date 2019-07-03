@@ -324,7 +324,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(),
 		SvPb::publishable, m_pParentObject->GetUniqueObjectID());
-	SvCmd::InspectionCommandsSynchronous(m_pDocument->GetInspectionID(), &request, &response);
+	SvCmd::InspectionCommands(m_pDocument->GetInspectionID(), request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (response.has_getobjectselectoritemsresponse())

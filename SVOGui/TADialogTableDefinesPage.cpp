@@ -115,7 +115,7 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 				pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_ResetInspection);
 				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_TaskObjectID);
 				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), m_gridList[i - 1].second);
-				HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 				if (S_OK != hr)
 				{
 					SvDef::StringVector msgList;
@@ -255,7 +255,7 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 
 						SvPb::SetGuidInProtoBytes(pSetObjectNameRequest->mutable_objectid(), m_gridList[pItem->iRow - 1].second.ToGUID());
 						pSetObjectNameRequest->set_objectname(newName.c_str());
-						HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 						if (S_OK != hr)
 						{
 							bAcceptChange = false;
@@ -323,7 +323,7 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
 	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
-	hResult = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+	hResult = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 	
 	if (hResult == S_OK && Response.has_resetobjectresponse())
 	{
@@ -372,7 +372,7 @@ void TADialogTableDefinesPage::FillGridControl()
 	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
 	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
 	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(SvPb::TableColumnEquationObjectType);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	if (S_OK == hr && response.has_getavailableobjectsresponse())
 	{
 		m_gridList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
@@ -446,7 +446,7 @@ void TADialogTableDefinesPage::MoveColumn(SVGUID moveGuid, SVGUID preGuid)
 	SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_movepreid(), preGuid);
 	pMovetaskobjectrequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_FriendList);
 
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 	if (S_OK != hr)
 	{
 		SvDef::StringVector msgList;
@@ -490,7 +490,7 @@ HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, SVGUID add
 	pRequest->mutable_friend_()->set_name(rName);
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_friend_()->mutable_preguid(), addPreGuid);
 
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 	if (S_OK != hr)
 	{
 		SvDef::StringVector msgList;

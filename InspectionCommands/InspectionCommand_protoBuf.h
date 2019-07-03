@@ -20,151 +20,151 @@ class SVGUID;
 
 namespace SvCmd
 {
+
 class InspectionCommands_protoBuf
 {
 public:
 	InspectionCommands_protoBuf(const InspectionCommands_protoBuf&) = delete;
 	InspectionCommands_protoBuf& operator=(const InspectionCommands_protoBuf&) = delete;
-	InspectionCommands_protoBuf(SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse)
-		: m_pRequest(pRequest), m_pResponse(pResponse)
+	InspectionCommands_protoBuf(const SvPb::InspectionCmdMsgs& rRequest)
+		: m_rRequest(rRequest)
 	{
 	};
 
 	virtual ~InspectionCommands_protoBuf() {};
 
+	const InspectionCmdResult& getResult() {return m_result;}
+
 	HRESULT Execute()
 	{
-		HRESULT hr = E_POINTER;
-		if (!m_pRequest)
-		{
-			return hr;
-		}
-		switch (m_pRequest->message_case())
+		m_result.m_hResult = E_FAIL;
+
+		switch (m_rRequest.message_case())
 		{
 			case SvPb::InspectionCmdMsgs::kInspectionRunOnceRequest:
-				hr = InspectionRunOnce(m_pRequest->inspectionrunoncerequest());
+				m_result = InspectionRunOnce(m_rRequest.inspectionrunoncerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kDestroyChildRequest:
-				hr = DestroyChildObject(m_pRequest->destroychildrequest());
+				m_result = DestroyChildObject(m_rRequest.destroychildrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetMessageListRequest:
-				hr = GetMessageList(m_pRequest->getmessagelistrequest(), *(m_pResponse->mutable_getmessagelistresponse()));
+				m_result = GetMessageList(m_rRequest.getmessagelistrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kResetObjectRequest:
-				hr = ResetObject(m_pRequest->resetobjectrequest(), m_pResponse->mutable_resetobjectresponse());
+				m_result = ResetObject(m_rRequest.resetobjectrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kCreateModelRequest:
-				hr = CreateModel(m_pRequest->createmodelrequest(), *m_pResponse->mutable_createmodelresponse());
+				m_result = CreateModel(m_rRequest.createmodelrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectParametersRequest:
-				hr = getObjectParameters(m_pRequest->getobjectparametersrequest(), *m_pResponse->mutable_getobjectparametersresponse());
+				m_result = getObjectParameters(m_rRequest.getobjectparametersrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetEquationRequest:
-				hr = GetEquation(m_pRequest->getequationrequest(), *m_pResponse->mutable_getequationresponse());
+				m_result = GetEquation(m_rRequest.getequationrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kValidateAndSetEquationRequest:
-				hr = ValidateAndSetEquation(m_pRequest->validateandsetequationrequest(), *m_pResponse->mutable_validateandsetequationresponse());
+				m_result = ValidateAndSetEquation(m_rRequest.validateandsetequationrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectsForMonitorListRequest:
-				hr = getObjectsForMonitorList(m_pRequest->getobjectsformonitorlistrequest(), *m_pResponse->mutable_getobjectsformonitorlistresponse());
+				m_result = getObjectsForMonitorList(m_rRequest.getobjectsformonitorlistrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kMoveObjectRequest:
-				hr = MoveObject(m_pRequest->moveobjectrequest());
+				m_result = MoveObject(m_rRequest.moveobjectrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kTaskObjectListRequest:
-				hr = GetTaskObjectsList(m_pRequest->taskobjectlistrequest(), *m_pResponse->mutable_taskobjectlistresponse());
+				m_result = GetTaskObjectsList(m_rRequest.taskobjectlistrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetImageRequest:
-				hr = getImage(m_pRequest->getimagerequest(), *m_pResponse->mutable_getimageresponse());
+				m_result = getImage(m_rRequest.getimagerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kAreAuxiliaryExtentsAvailableRequest:
-				hr = areAuxiliaryExtentsAvailable(m_pRequest->areauxiliaryextentsavailablerequest(), *m_pResponse->mutable_areauxiliaryextentsavailableresponse());
+				m_result = areAuxiliaryExtentsAvailable(m_rRequest.areauxiliaryextentsavailablerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetAvailableAuxImagesRequest:
-				hr = getAvailableAuxImages(m_pRequest->getavailableauximagesrequest(), *m_pResponse->mutable_getavailableauximagesresponse());
+				m_result = getAvailableAuxImages(m_rRequest.getavailableauximagesrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetAuxImageObjectRequest:
-				hr = getAuxImageObject(m_pRequest->getauximageobjectrequest(), *m_pResponse->mutable_getauximageobjectresponse());
+				m_result = getAuxImageObject(m_rRequest.getauximageobjectrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kSetAuxImageObjectRequest:
-				hr = setAuxImageObject(m_pRequest->setauximageobjectrequest(), *m_pResponse->mutable_setauximageobjectresponse());
+				m_result = setAuxImageObject(m_rRequest.setauximageobjectrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetInputsRequest:
-				hr = getInputs(m_pRequest->getinputsrequest(), *m_pResponse->mutable_getinputsresponse());
+				m_result = getInputs(m_rRequest.getinputsrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kConnectToObjectRequest:
-				hr = connectToObject(m_pRequest->connecttoobjectrequest());
+				m_result = connectToObject(m_rRequest.connecttoobjectrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kSaveImageRequest:
-				hr = saveImage(m_pRequest->saveimagerequest());
+				m_result = saveImage(m_rRequest.saveimagerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kSetObjectNameRequest:
-				hr = setObjectName(m_pRequest->setobjectnamerequest());
+				m_result = setObjectName(m_rRequest.setobjectnamerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetAvailableObjectsRequest:
-				hr = getAvailableObjects(m_pRequest->getavailableobjectsrequest(), *m_pResponse->mutable_getavailableobjectsresponse());
+				m_result = getAvailableObjects(m_rRequest.getavailableobjectsrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetSpecialImageListRequest:
-				hr = getSpecialImageList(m_pRequest->getspecialimagelistrequest(), *m_pResponse->mutable_getspecialimagelistresponse());
+				m_result = getSpecialImageList(m_rRequest.getspecialimagelistrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kExportMaskRequest:
-				hr = exportMask(m_pRequest->exportmaskrequest());
+				m_result = exportMask(m_rRequest.exportmaskrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kImportMaskRequest:
-				hr = importMask(m_pRequest->importmaskrequest());
+				m_result = importMask(m_rRequest.importmaskrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectIdRequest:
-				hr = getObjectId(m_pRequest->getobjectidrequest(), *m_pResponse->mutable_getobjectidresponse());
+				m_result = getObjectId(m_rRequest.getobjectidrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kConstructAndInsertRequest:
-				hr = constructAndInsert(m_pRequest->constructandinsertrequest(), *m_pResponse->mutable_constructandinsertresponse());
+				m_result = constructAndInsert(m_rRequest.constructandinsertrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetCreatableObjectsRequest:
-				hr = getCreatableObjects(m_pRequest->getcreatableobjectsrequest(), *m_pResponse->mutable_getcreatableobjectsresponse());
+				m_result = getCreatableObjects(m_rRequest.getcreatableobjectsrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kShouldInspectionResetRequest:
-				hr = shouldInspectionReset(m_pRequest->shouldinspectionresetrequest(), *m_pResponse->mutable_shouldinspectionresetresponse());
+				m_result = shouldInspectionReset(m_rRequest.shouldinspectionresetrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetPPQNameRequest:
-				hr = getPPQName(m_pRequest->getppqnamerequest(), *m_pResponse->mutable_getppqnameresponse());
+				m_result = getPPQName(m_rRequest.getppqnamerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetValueObjectEnumsRequest:
-				hr = getValueObjectEnums(m_pRequest->getvalueobjectenumsrequest(), *m_pResponse->mutable_getvalueobjectenumsresponse());
+				m_result = getValueObjectEnums(m_rRequest.getvalueobjectenumsrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetEmbeddedValuesRequest:
-				hr = getEmbeddedValues(m_pRequest->getembeddedvaluesrequest(), *m_pResponse->mutable_getembeddedvaluesresponse());
+				m_result = getEmbeddedValues(m_rRequest.getembeddedvaluesrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kSetEmbeddedValuesRequest:
-				hr = setEmbeddedValues(m_pRequest->setembeddedvaluesrequest(), *m_pResponse->mutable_setembeddedvaluesresponse());
+				m_result = setEmbeddedValues(m_rRequest.setembeddedvaluesrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetOutputRectangleRequest:
-				hr = getOutputRectangle(m_pRequest->getoutputrectanglerequest(), *m_pResponse->mutable_getoutputrectangleresponse());
+				m_result = getOutputRectangle(m_rRequest.getoutputrectanglerequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetToolSizeAdjustParameterRequest:
-				hr = getToolSizeAdjustParameter(m_pRequest->gettoolsizeadjustparameterrequest(), *m_pResponse->mutable_gettoolsizeadjustparameterresponse());
+				m_result = getToolSizeAdjustParameter(m_rRequest.gettoolsizeadjustparameterrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetExtentParameterRequest:
-				hr = getExtentParameter(m_pRequest->getextentparameterrequest(), *m_pResponse->mutable_getextentparameterresponse());
+				m_result = getExtentParameter(m_rRequest.getextentparameterrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kSetExtentParameterRequest:
-				hr = setExtentParameter(m_pRequest->setextentparameterrequest(), *m_pResponse->mutable_setextentparameterresponse());
+				m_result = setExtentParameter(m_rRequest.setextentparameterrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kIsAllowedLocationRequest:
-				hr = isAllowedLocation(m_pRequest->isallowedlocationrequest(), *m_pResponse->mutable_isallowedlocationresponse());
+				m_result = isAllowedLocation(m_rRequest.isallowedlocationrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kPropagateSizeAndPositionRequest:
-				hr = propagateSizeAndPosition(m_pRequest->propagatesizeandpositionrequest());
+				m_result = propagateSizeAndPosition(m_rRequest.propagatesizeandpositionrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kUsePropagateSizeAndPositionRequest:
-				hr = usePropagateSizeAndPosition(m_pRequest->usepropagatesizeandpositionrequest(), *m_pResponse->mutable_usepropagatesizeandpositionresponse());
+				m_result = usePropagateSizeAndPosition(m_rRequest.usepropagatesizeandpositionrequest());
 				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectSelectorItemsRequest:
-				hr = getObjectSelectorItems(m_pRequest->getobjectselectoritemsrequest(), *m_pResponse->mutable_getobjectselectoritemsresponse());
+				m_result = getObjectSelectorItems(m_rRequest.getobjectselectoritemsrequest());
 				break;
 			default:;
 		}
 
-		return hr;
+		return m_result.m_hResult;
 	}
 
 	bool empty() const
@@ -173,8 +173,8 @@ public:
 	}
 
 private:
-	SvPb::InspectionCmdMsgs* m_pRequest;
-	SvPb::InspectionCmdMsgs* m_pResponse;
+	const SvPb::InspectionCmdMsgs& m_rRequest;
+	InspectionCmdResult m_result;
 };
 typedef std::shared_ptr<InspectionCommands_protoBuf> InspectionCommands_protoBufPtr;
 } //namespace SvCmd

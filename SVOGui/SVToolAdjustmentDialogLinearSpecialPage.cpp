@@ -114,7 +114,7 @@ namespace SvOg
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		auto* pRequest = requestMessage.mutable_getextentparameterrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &requestMessage, &responseMessage);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 		if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 		{
 			auto extentParameter = responseMessage.getextentparameterresponse().parameters();

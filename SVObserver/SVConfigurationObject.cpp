@@ -5842,6 +5842,6 @@ bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb
 	SvPb::GetObjectsForMonitorListRequest* pGetObjectsForMonitorListRequest = Request.mutable_getobjectsformonitorlistrequest();
 	SvPb::SetGuidInProtoBytes(pGetObjectsForMonitorListRequest->mutable_objectid(), rToolId);
 
-	return S_OK == SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &Request, &rResponse);
+	return S_OK == SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), Request, &rResponse);
 }
 

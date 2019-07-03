@@ -43,7 +43,7 @@ bool AuxiliaryExtentsController::AreAuxiliaryExtentsAvailable() const
 	SvPb::AreAuxiliaryExtentsAvailableRequest* pRequest = request.mutable_areauxiliaryextentsavailablerequest();
 
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	if (S_OK == hr && response.has_areauxiliaryextentsavailableresponse())
 	{
 		bRetVal = response.areauxiliaryextentsavailableresponse().areavailable();
@@ -77,7 +77,7 @@ HRESULT AuxiliaryExtentsController::FindAuxSourceImages()
 	SvPb::GetAvailableAuxImagesRequest* pRequest = request.mutable_getavailableauximagesrequest();
 
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	if (S_OK == hr && response.has_getavailableauximagesresponse())
 	{
 		m_auxSourceImages.clear();
@@ -120,7 +120,7 @@ HRESULT AuxiliaryExtentsController::SetAuxSourceImage(const std::string& rName)
 
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_sourceimageid(), imageID);
-		hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 		if (SUCCEEDED(hr) && response.has_setauximageobjectresponse())
 		{
 			hr = RunOnce();
@@ -136,7 +136,7 @@ SvUl::NameGuidPair AuxiliaryExtentsController::GetAuxSourceImage() const
 	SvPb::GetAuxImageObjectRequest* pRequest = request.mutable_getauximageobjectrequest();
 
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	if (S_OK == hr && response.has_getauximageobjectresponse())
 	{
 		retValue.first = response.getauximageobjectresponse().auxobject().objectname();

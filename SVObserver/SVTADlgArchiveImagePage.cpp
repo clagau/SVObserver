@@ -398,7 +398,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, SvPb::archivableImage);
-	SvCmd::InspectionCommandsSynchronous(InspectionGuid, &request, &response);
+	SvCmd::InspectionCommands(InspectionGuid, request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (response.has_getobjectselectoritemsresponse())

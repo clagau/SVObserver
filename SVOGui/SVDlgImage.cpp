@@ -244,7 +244,7 @@ namespace SvOg
 			SvPb::GetImageRequest* pGetImageRequest = request.mutable_getimagerequest();
 
 			SvPb::SetGuidInProtoBytes(pGetImageRequest->mutable_imageid(), m_imageId);
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_inspectionId, &request, &response);
+			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, request, &response);
 			if (S_OK == hr && response.has_getimageresponse() && 0 == response.getimageresponse().messages().messages().size())
 			{
 				CComPtr<IPictureDisp> picDisp;
@@ -398,7 +398,7 @@ namespace SvOg
 		SvPb::GetOutputRectangleRequest* pGetRectRequest = request.mutable_getoutputrectanglerequest();
 
 		SvPb::SetGuidInProtoBytes(pGetRectRequest->mutable_imageid(), m_imageId);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_inspectionId, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, request, &response);
 		if (S_OK == hr && response.has_getoutputrectangleresponse())
 		{
 			rect.left = response.getoutputrectangleresponse().left();

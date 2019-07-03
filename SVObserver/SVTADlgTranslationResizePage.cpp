@@ -642,7 +642,7 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData()
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
-	HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_inspectionID, &requestMessage, &responseMessage);
+	HRESULT hr = SvCmd::InspectionCommands(m_inspectionID, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 	{
 		extents = responseMessage.getextentparameterresponse().parameters();
@@ -697,7 +697,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
-	HRESULT hr1 = SvCmd::InspectionCommandsSynchronous(m_inspectionID, &requestMessage, &responseMessage);
+	HRESULT hr1 = SvCmd::InspectionCommands(m_inspectionID, requestMessage, &responseMessage);
 	if (S_OK == hr1 && responseMessage.has_getextentparameterresponse())
 	{
 		extents = responseMessage.getextentparameterresponse().parameters();
@@ -919,7 +919,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		auto* pRequest = requestMessage.mutable_setextentparameterrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
 		pRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(extents);
-		SvCmd::InspectionCommandsSynchronous(m_inspectionID, &requestMessage, &responseMessage);
+		SvCmd::InspectionCommands(m_inspectionID, requestMessage, &responseMessage);
 	}
 
 	if (extentChanged || embeddedChanged)

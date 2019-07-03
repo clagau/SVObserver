@@ -45,7 +45,7 @@ public:
 		SvPb::GetEmbeddedValuesRequest* pGetEmbeddedValuesRequest = request.mutable_getembeddedvaluesrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetEmbeddedValuesRequest->mutable_objectid(), rTaskID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, request, &response);
 		if (S_OK == hr && response.has_getembeddedvaluesresponse())
 		{
 			for (auto& rItem : response.getembeddedvaluesresponse().list())
@@ -81,7 +81,7 @@ public:
 			ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
 			ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
 		}
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, request, &response);
 		if (response.has_setembeddedvaluesresponse())
 		{
 			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(response.setembeddedvaluesresponse().messages());
@@ -134,7 +134,7 @@ public:
 		SvPb::GetValueObjectEnumsRequest* pGetObjectEnumsRequest = request.mutable_getvalueobjectenumsrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetObjectEnumsRequest->mutable_objectid(), rObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, request, &response);
 		if (S_OK == hr && response.has_getvalueobjectenumsresponse())
 		{
 			SvOi::NameValueVector retValue;
@@ -154,7 +154,7 @@ public:
 		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), rObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, request, &response);
 		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
 			return response.getobjectparametersresponse().name();
@@ -170,7 +170,7 @@ public:
 		
 		SvPb::ResetObjectRequest* pRequest = requestMessage.mutable_resetobjectrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(rInspectionID, &requestMessage, &responseMessage);
+		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestMessage, &responseMessage);
 		if (responseMessage.has_resetobjectresponse()&& responseMessage.resetobjectresponse().has_messages())
 		{
 			m_MessageFailList = SvCmd::setMessageContainerFromMessagePB(responseMessage.resetobjectresponse().messages());

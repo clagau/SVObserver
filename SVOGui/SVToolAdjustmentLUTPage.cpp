@@ -213,7 +213,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rTaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, request, &response);
 		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
 			Caption = response.getobjectparametersresponse().name();

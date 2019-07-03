@@ -103,7 +103,7 @@ namespace SvOg
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVResultObjectType);
 		pRequest->mutable_infostruct()->set_subtype(SvPb::SVResultLongObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &requestMessage, &responseMessage);
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestMessage, &responseMessage);
 		if (S_OK != hr || !responseMessage.has_getobjectidresponse())
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );

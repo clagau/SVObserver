@@ -283,7 +283,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pTool->GetUniqueObjectID());
-	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
+	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (response.has_getobjectselectoritemsresponse())
@@ -331,7 +331,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::selectableForStatistics);
-	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
+	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	if (response.has_getobjectselectoritemsresponse())

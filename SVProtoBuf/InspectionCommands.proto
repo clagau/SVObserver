@@ -1,10 +1,18 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file InspectionCommands.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for all inspection commands handled by SVObserver
+//******************************************************************************
+
 syntax = "proto3";
 package SvPb;
 
 import "Variant.proto";
 import "BasicStructure.proto";
 import "SVO-Enum.proto";
-import "SVRC-SVObserver.proto";
+import "GetObjectSelector.proto";
 
 //***************************************************************************
 // Help Structs
@@ -97,7 +105,7 @@ message SetExtentList
 	repeated ExtentParameter extentList = 1;
 }
 //***************************************************************************
-// InspectionCommands - can be send with method InspectionCommandsSynchronous
+// InspectionCommands - can be send with method InspectionCommands
 //***************************************************************************
 // This message do a runOnce for an inspection or taskObject
 message InspectionRunOnceRequest
@@ -386,7 +394,7 @@ message GetObjectIdRequest
 
 	oneof message
 	{
-		bytes name = 1;
+		string name = 1;
 		InfoStruct info = 2;
 	}
 }

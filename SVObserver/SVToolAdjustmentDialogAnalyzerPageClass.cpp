@@ -147,7 +147,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
 		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVAnalyzerObjectType);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 		SvUl::InputNameGuidPairList connectedList;
 		if (S_OK == hr && response.has_getcreatableobjectsresponse())
 		{
@@ -420,7 +420,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pCurrentAnalyzer->GetUniqueObjectID());
-	SvCmd::InspectionCommandsSynchronous(pInspection->GetUniqueObjectID(), &request, &response);
+	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (response.has_getobjectselectoritemsresponse())

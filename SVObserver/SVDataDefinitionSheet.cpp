@@ -124,7 +124,7 @@ void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT At
 		SvPb::InspectionCmdMsgs request, response;
 		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 			{SvPb::ObjectSelectorType::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), GUID_NULL, false, filter);
-		SvCmd::InspectionCommandsSynchronous(m_InspectionID, &request, &response);
+		SvCmd::InspectionCommands(m_InspectionID, request, &response);
 
 		if (response.has_getobjectselectoritemsresponse())
 		{

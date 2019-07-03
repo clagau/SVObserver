@@ -178,7 +178,7 @@ void TADialogLoopToolParameterPage::resetInspection()
 	SvPb::ResetObjectRequest* pRequestMessage = Request.mutable_resetobjectrequest();
 
 	SvPb::SetGuidInProtoBytes(pRequestMessage->mutable_objectid(), m_TaskObjectID);
-	SvCmd::InspectionCommandsSynchronous(m_InspectionID, &Request, &Response);
+	SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 	SvStl::MessageContainerVector messages;
 	if (Response.has_resetobjectresponse())
 	{

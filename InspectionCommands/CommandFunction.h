@@ -12,138 +12,141 @@
 
 namespace SvCmd
 {
-	/// Do a runOnce for an inspection or taskObject.
-	/// \param rMessage [in] a request-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT InspectionRunOnce(const SvPb::InspectionRunOnceRequest& rMessage);
+struct InspectionCmdResult
+{
+	InspectionCmdResult() = default;
+	~InspectionCmdResult() = default;
 
-	/// Destroyed a child object.
-	/// \param rMessage [in] a request-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT DestroyChildObject(const SvPb::DestroyChildRequest& rMessage);
+	SvPb::InspectionCmdMsgs m_response;
+	HRESULT m_hResult {S_OK};
+};
 
-	/// Get the last (Error)MessageList from an taskObject.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT GetMessageList(const SvPb::GetMessageListRequest& rRequestMessage, SvPb::GetMessageListResponse& rResponseMessage);
+/// Do a runOnce for an inspection or taskObject.
+/// \param request [in] a request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult InspectionRunOnce(SvPb::InspectionRunOnceRequest request);
 
-	/// Reset an object.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT ResetObject(const SvPb::ResetObjectRequest& rRequestMessage, SvPb::ResetObjectResponse* pResponseMessage);
+/// Destroyed a child object.
+/// \param request [in] a request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult DestroyChildObject(SvPb::DestroyChildRequest request);
 
-	/// Create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT CreateModel(const SvPb::CreateModelRequest& rRequestMessage, SvPb::CreateModelResponse& rResponseMessage);
+/// Get the last (Error)MessageList from an taskObject.
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult GetMessageList(SvPb::GetMessageListRequest request);
 
-	//Return the parameter of an object.
-	HRESULT getObjectParameters(const SvPb::GetObjectParametersRequest& rRequest, SvPb::GetObjectParametersResponse& rResponse);
+/// Reset an object.
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult ResetObject(SvPb::ResetObjectRequest request);
 
-	/// Return the equation string.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT GetEquation(const SvPb::GetEquationRequest& rRequestMessage, SvPb::GetEquationResponse& rResponseMessage);
+/// Create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult CreateModel(SvPb::CreateModelRequest request);
 
-	/// Validate and if required set an equation. Return the status and if successfully the result.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT ValidateAndSetEquation(const SvPb::ValidateAndSetEquationRequest& rRequestMessage, SvPb::ValidateAndSetEquationResponse& rResponseMessage);
+//Return the parameter of an object.
+InspectionCmdResult getObjectParameters(SvPb::GetObjectParametersRequest request);
 
-	/// Return a list of object which should be added to the monitor list (e.g. HMI purpose)
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \param rResponseMessage [in,out] The response-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT getObjectsForMonitorList(const SvPb::GetObjectsForMonitorListRequest& rRequestMessage, SvPb::GetObjectsForMonitorListResponse& rResponseMessage);
+/// Return the equation string.
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult GetEquation(SvPb::GetEquationRequest request);
 
-	/// Moved a taskObject to a new position in the taskObject- or friend-list.
-	/// \param rRequestMessage [in] The request-protoBuf-message.
-	/// \returns HRESULT
-	HRESULT MoveObject(const SvPb::MoveObjectRequest& rRequestMessage);
+/// Validate and if required set an equation. Return the status and if successfully the result.
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult ValidateAndSetEquation(SvPb::ValidateAndSetEquationRequest request);
 
-	/// Get Definitions for all Taskobject in taskobjectlist
-	HRESULT GetTaskObjectsList(const SvPb::TaskObjectListRequest& rRequest, SvPb::TaskObjectListResponse &rResponse);
+/// Return a list of object which should be added to the monitor list (e.g. HMI purpose)
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult getObjectsForMonitorList(SvPb::GetObjectsForMonitorListRequest request);
 
-	/// Get an required image
-	HRESULT getImage(const SvPb::GetImageRequest& rRequest, SvPb::GetImageResponse& rResponse);
+/// Moved a taskObject to a new position in the taskObject- or friend-list.
+/// \param request [in] The request-protoBuf-message.
+/// \returns InspectionCmdResult
+InspectionCmdResult MoveObject(SvPb::MoveObjectRequest request);
 
-	// Get if Auxiliary extents are available
-	HRESULT areAuxiliaryExtentsAvailable(const SvPb::AreAuxiliaryExtentsAvailableRequest& rRequest, SvPb::AreAuxiliaryExtentsAvailableResponse& rResponse);
+/// Get Definitions for all Taskobject in taskobjectlist
+InspectionCmdResult GetTaskObjectsList(SvPb::TaskObjectListRequest request);
 
-	// Get the list of possible auxiliary extents images.
-	HRESULT getAvailableAuxImages(const SvPb::GetAvailableAuxImagesRequest& rRequest, SvPb::GetAvailableAuxImagesResponse& rResponse);
+/// Get an required image
+InspectionCmdResult getImage(SvPb::GetImageRequest request);
 
-	// Get the connected auxiliary extents image.
-	HRESULT getAuxImageObject(const SvPb::GetAuxImageObjectRequest& rRequest, SvPb::GetAuxImageObjectResponse& rResponse);
+// Get if Auxiliary extents are available
+InspectionCmdResult areAuxiliaryExtentsAvailable(SvPb::AreAuxiliaryExtentsAvailableRequest request);
 
-	// Set the connected auxiliary extents image.
-	HRESULT setAuxImageObject(const SvPb::SetAuxImageObjectRequest& rRequest, SvPb::SetAuxImageObjectResponse& rResponse);
+// Get the list of possible auxiliary extents images.
+InspectionCmdResult getAvailableAuxImages(SvPb::GetAvailableAuxImagesRequest request);
 
-	// Get the connected input of this object.
-	HRESULT getInputs(const SvPb::GetInputsRequest& rRequest, SvPb::GetInputsResponse& rResponse);
+// Get the connected auxiliary extents image.
+InspectionCmdResult getAuxImageObject(SvPb::GetAuxImageObjectRequest request);
 
-	// Connect an object to an input.
-	HRESULT connectToObject(const SvPb::ConnectToObjectRequest& rRequest);
+// Set the connected auxiliary extents image.
+InspectionCmdResult setAuxImageObject(SvPb::SetAuxImageObjectRequest request);
 
-	// Save an image to a file.
-	HRESULT saveImage(const SvPb::SaveImageRequest& rRequest);
+// Get the connected input of this object.
+InspectionCmdResult getInputs(SvPb::GetInputsRequest request);
 
-	//Set object name.
-	HRESULT setObjectName(const SvPb::SetObjectNameRequest& rRequest);
+// Connect an object to an input.
+InspectionCmdResult connectToObject(SvPb::ConnectToObjectRequest request);
 
-	//Get a list of available objects.
-	HRESULT getAvailableObjects(const SvPb::GetAvailableObjectsRequest& rRequest, SvPb::GetAvailableObjectsResponse& rResponse);
+// Save an image to a file.
+InspectionCmdResult saveImage(SvPb::SaveImageRequest request);
 
-	//Get a name list of special iamge of a task.
-	HRESULT getSpecialImageList(const SvPb::GetSpecialImageListRequest& rRequest, SvPb::GetSpecialImageListResponse& rResponse);
+//Set object name.
+InspectionCmdResult setObjectName(SvPb::SetObjectNameRequest request);
 
-	//Export the mask to a file.
-	HRESULT exportMask(const SvPb::ExportMaskRequest& rRequest);
+//Get a list of available objects.
+InspectionCmdResult getAvailableObjects(SvPb::GetAvailableObjectsRequest request);
 
-	//Import the mask from a file.
-	HRESULT importMask(const SvPb::ImportMaskRequest& rRequest);
+//Get a name list of special image of a task.
+InspectionCmdResult getSpecialImageList(SvPb::GetSpecialImageListRequest request);
 
-	//Get GUID of a object
-	HRESULT getObjectId(const SvPb::GetObjectIdRequest& rRequest, SvPb::GetObjectIdResponse& rResponse);
+//Export the mask to a file.
+InspectionCmdResult exportMask(SvPb::ExportMaskRequest request);
 
-	//Construct a new object and insert it in the friend- or taskObject-list.
-	HRESULT constructAndInsert(const SvPb::ConstructAndInsertRequest& rRequest, SvPb::ConstructAndInsertResponse& rResponse);
+//Import the mask from a file.
+InspectionCmdResult importMask(SvPb::ImportMaskRequest request);
 
-	//Get the creatable Objects based on the type.
-	HRESULT getCreatableObjects(const SvPb::GetCreatableObjectsRequest& rRequest, SvPb::GetCreatableObjectsResponse& rResponse);
+//Get GUID of a object
+InspectionCmdResult getObjectId(SvPb::GetObjectIdRequest request);
 
-	//Return if the inspection should be reset if the task has changed. (in the first step it works only with filters.)
-	HRESULT shouldInspectionReset(const SvPb::ShouldInspectionResetRequest& rRequest, SvPb::ShouldInspectionResetResponse& rResponse);
+//Construct a new object and insert it in the friend- or taskObject-list.
+InspectionCmdResult constructAndInsert(SvPb::ConstructAndInsertRequest request);
 
-	//Get the ppqName of the inspection
-	HRESULT getPPQName(const SvPb::GetPPQNameRequest& rRequest, SvPb::GetPPQNameResponse& rResponse);
+//Get the creatable Objects based on the type.
+InspectionCmdResult getCreatableObjects(SvPb::GetCreatableObjectsRequest request);
 
-	HRESULT getValueObjectEnums(const SvPb::GetValueObjectEnumsRequest& rRequest, SvPb::GetValueObjectEnumsResponse& rResponse);
+//Return if the inspection should be reset if the task has changed. (in the first step it works only with filters.)
+InspectionCmdResult shouldInspectionReset(SvPb::ShouldInspectionResetRequest request);
 
-	HRESULT getEmbeddedValues(const SvPb::GetEmbeddedValuesRequest& rRequest, SvPb::GetEmbeddedValuesResponse& rResponse);
+//Get the ppqName of the inspection
+InspectionCmdResult getPPQName(SvPb::GetPPQNameRequest request);
 
-	HRESULT setEmbeddedValues(const SvPb::SetEmbeddedValuesRequest& rRequest, SvPb::SetEmbeddedValuesResponse& rResponse);
+InspectionCmdResult getValueObjectEnums(SvPb::GetValueObjectEnumsRequest request);
 
-	HRESULT getOutputRectangle(const SvPb::GetOutputRectangleRequest& rRequest, SvPb::GetOutputRectangleResponse& rResponse);
+InspectionCmdResult getEmbeddedValues(SvPb::GetEmbeddedValuesRequest request);
 
-	HRESULT getToolSizeAdjustParameter(const SvPb::GetToolSizeAdjustParameterRequest& rRequest, SvPb::GetToolSizeAdjustParameterResponse& rResponse);
+InspectionCmdResult setEmbeddedValues(SvPb::SetEmbeddedValuesRequest request);
 
-	HRESULT getExtentParameter(const SvPb::GetExtentParameterRequest& rRequest, SvPb::GetExtentParameterResponse& rResponse);
+InspectionCmdResult getOutputRectangle(SvPb::GetOutputRectangleRequest request);
 
-	HRESULT setExtentParameter(const SvPb::SetExtentParameterRequest& rRequest, SvPb::SetExtentParameterResponse& rResponse);
+InspectionCmdResult getToolSizeAdjustParameter(SvPb::GetToolSizeAdjustParameterRequest request);
+
+InspectionCmdResult getExtentParameter(SvPb::GetExtentParameterRequest request);
+
+InspectionCmdResult setExtentParameter(SvPb::SetExtentParameterRequest request);
 	
-	HRESULT isAllowedLocation(const SvPb::IsAllowedLocationRequest& rRequest, SvPb::IsAllowedLocationResponse& rResponse);
+InspectionCmdResult isAllowedLocation(SvPb::IsAllowedLocationRequest request);
 
-	HRESULT propagateSizeAndPosition(const SvPb::PropagateSizeAndPositionRequest& rRequest);
+InspectionCmdResult propagateSizeAndPosition(SvPb::PropagateSizeAndPositionRequest request);
 
-	HRESULT usePropagateSizeAndPosition(const SvPb::UsePropagateSizeAndPositionRequest& rRequest, SvPb::UsePropagateSizeAndPositionResponse& rResponse);
+InspectionCmdResult usePropagateSizeAndPosition(SvPb::UsePropagateSizeAndPositionRequest request);
 
-	HRESULT getObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse);
+InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
 
-	HRESULT getSelectorList(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvPb::GetObjectSelectorItemsResponse& rResponse, SvPb::ObjectSelectorType selectorType);
+InspectionCmdResult getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
 } //namespace SvCmd

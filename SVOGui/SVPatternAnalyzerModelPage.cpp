@@ -242,7 +242,7 @@ namespace SvOg
 			pCreateModelRequest->set_modelwidth(m_lModelWidth);
 			pCreateModelRequest->set_modelheight(m_lModelHeight);
 			pCreateModelRequest->set_filename(m_strModelName);
-			HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &Request, &Response);
+			HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, Request, &Response);
 			if (S_OK == hr)
 			{
 				SvStl::MessageContainerVector ErrorMessages;

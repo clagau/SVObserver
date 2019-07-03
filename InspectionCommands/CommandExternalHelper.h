@@ -42,12 +42,12 @@ struct SVObjectTypeInfoStruct;
 
 namespace SvCmd
 {
-/// Call an inspection command synchronous. (Send it to the inspection thread.)
+/// Call an inspection command synchronous if required. (Send it to the inspection thread.)
 /// \param rInspectionID [in] Guid for the inspection to find the inspection thread.
-/// \param pRequest [in] The request message.
+/// \param rRequest [in] The request message.
 /// \param pResponse [in, out] The response message (must fit to the request message). If request message has no response message, it should be nullptr.
 /// \returns HRESULT ErrorCode.
-HRESULT InspectionCommandsSynchronous(const SVGUID& rInspectionID, SvPb::InspectionCmdMsgs* pRequest, SvPb::InspectionCmdMsgs* pResponse );
+HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdMsgs& rRequest, SvPb::InspectionCmdMsgs* pResponse);
 
 HRESULT RunOnceSynchronous(const SVGUID& rInspectionID);
 

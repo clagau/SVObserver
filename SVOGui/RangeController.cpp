@@ -156,7 +156,7 @@ namespace SvOg
 		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rTaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, request, &response);
 		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
 			name = response.getobjectparametersresponse().name();
@@ -172,7 +172,7 @@ namespace SvOg
 		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
 
 		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rInspectionID);
-		HRESULT hr = SvCmd::InspectionCommandsSynchronous(m_rInspectionID, &request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, request, &response);
 		if (S_OK == hr && response.has_getobjectparametersresponse())
 		{
 			inspectionName = response.getobjectparametersresponse().name();

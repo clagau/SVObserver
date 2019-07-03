@@ -140,7 +140,8 @@ int main(int argc, char* argv[])
 					<< "  e  (editmode)" << std::endl
 					<< "  r  rummode" << std::endl
 					<< "  c getconfig" << std::endl
-					<< "  o getobjectselector" << std::endl;
+					<< "  o getobjectselector" << std::endl
+					<< "  i executeInspectionCmd" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -239,6 +240,25 @@ int main(int argc, char* argv[])
 
 				csx = streamClient.stream(std::move(getNotificationStreamRequest), NotifikationObserver);
 	
+			}
+			else if (words[0] == "i")
+			{
+				///GetObjectID
+				SvPb::ExecuteInspectionCmdRequest requestID;
+				SvPb::GetObjectIdRequest* pGetObjectID = requestID.mutable_cmdmsg()->mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1");
+
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ExecuteInspectionCmdRequest, SvPb::ExecuteInspectionCmdResponse> client(*pRpcClient);
+				auto responseID = client.request(std::move(requestID), Timeout).get();
+				
+				///Run Once
+				SvPb::ExecuteInspectionCmdRequest requestRunonce;
+				requestRunonce.set_inspectionid(responseID.cmdmsg().getobjectidresponse().objectid());
+				SvPb::InspectionRunOnceRequest* pRunOnce = requestRunonce.mutable_cmdmsg()->mutable_inspectionrunoncerequest();
+				pRunOnce->set_inspectionid(responseID.cmdmsg().getobjectidresponse().objectid());
+
+				client.request(std::move(requestRunonce), Timeout);
+
 			}
 			else if (words[0] == "cn" )
 			{

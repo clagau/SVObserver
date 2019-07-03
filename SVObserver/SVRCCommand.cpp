@@ -937,27 +937,22 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
 {
-	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
-
-	//If not a GUID check if it is the inspection name need a copy of the request to modify it
-	SvPb::GetObjectSelectorItemsRequest modifyRequest{rRequest};
-	if(GUID_NULL == inspectionID)
-	{
-		std::string inspectionName = SvUl::to_ansi(rRequest.inspectionid());
-		std::string ObjectName{SvDef::FqnInspections};
-		ObjectName += '.';
-		ObjectName += inspectionName;
-		SvOi::IObjectClass* pObject = SvOi::getObjectByDottedName(ObjectName);
-		inspectionID = (nullptr != pObject) ? pObject->GetUniqueObjectID() : GUID_NULL;
-		SvPb::SetGuidInProtoBytes(modifyRequest.mutable_inspectionid(), inspectionID);
-	}
-
 	SvPb::InspectionCmdMsgs requestCmd, responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = modifyRequest;
-	SvCmd::InspectionCommandsSynchronous(inspectionID, &requestCmd, &responseCmd);
+	*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
+	SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
 
 	SvPb::GetObjectSelectorItemsResponse response{responseCmd.getobjectselectoritemsresponse()};
 	ConvertTreeNames(response.mutable_tree());
+	task.finish(std::move(response));
+}
+
+void SVRCCommand::ExecuteInspectionCmd(const SvPb::ExecuteInspectionCmdRequest& rRequest, SvRpc::Task<SvPb::ExecuteInspectionCmdResponse> task)
+{
+	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
+
+	SvPb::ExecuteInspectionCmdResponse response;
+	SvCmd::InspectionCommands(inspectionID, rRequest.cmdmsg(), response.mutable_cmdmsg());
+
 	task.finish(std::move(response));
 }
 
