@@ -83,7 +83,7 @@ public:
 	//! Sets the notification function
 	//! \param  [in] pointer to the notification function
 	//************************************
-	static void setNotificationFunction(NotifyFunctor Notify);
+	static void setNotificationFunction(const NotifyFunctor& rNotify);
 
 	//************************************
 	//! Sets the message type
@@ -113,7 +113,7 @@ public:
 	//! \param MsgBoxType [in] is the display message box type
 	//! \returns the result of the message box or IDCANCEL if not displayed
 	//************************************
-	INT_PTR setMessage(DWORD MessageCode, LPCTSTR sAdditionalText, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
+	INT_PTR setMessage(DWORD MessageCode, LPCTSTR sAdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
 	//************************************
 	//! Sets the message data
@@ -125,7 +125,7 @@ public:
 	//! \param MsgBoxType [in] is the display message box type
 	//! \returns the result of the message box or IDCANCEL if not displayed
 	//************************************
-	INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
+	INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
 	//************************************
 	//! Sets the message data
@@ -138,7 +138,7 @@ public:
 	//! \param MsgBoxType [in] is the display message box type
 	//! \returns the result of the message box or IDCANCEL if not displayed
 	//************************************
-	INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
+	INT_PTR setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL, const UINT MsgBoxType = MB_OK);
 
 	//************************************
 	//! Sets the message data
@@ -163,14 +163,19 @@ private:
 	//************************************
 	//! Logs the message if the type is set to be logged
 	//************************************
-	void Log();
+	void Log() const;
+
+	//************************************
+	//! Sends a notification if required
+	//************************************
+	void Notify() const;
 
 	//************************************
 	//! Displays the message if the type is set to be displayed
 	//! \param MsgBoxType [in] is the display message box type
 	//! \returns the result of the message box or IDCANCEL if not displayed
 	//************************************
-	INT_PTR Display(const UINT MsgBoxType) const;
+	INT_PTR Display(const UINT MsgBoxType);
 
 #pragma endregion Private Methods
 

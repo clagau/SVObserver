@@ -35,12 +35,12 @@ void MessageManager<M_Container, M_Data>::setShowDisplayFunction(ShowDisplayFunc
 }
 
 template <typename M_Container, typename M_Data>
-void MessageManager<M_Container, M_Data>::setNotificationFunction(NotifyFunctor Notify)
+void MessageManager<M_Container, M_Data>::setNotificationFunction(const NotifyFunctor& rNotify)
 {
 	Initialize();
 	if (nullptr != m_ppNotify)
 	{
-		*m_ppNotify = Notify;
+		*m_ppNotify = rNotify;
 	}
 }
 
@@ -51,25 +51,44 @@ void MessageManager<M_Container, M_Data>::Throw()
 	throw m_MessageHandler;
 }
 
+constexpr uint32_t s_maximumNumberOfCodeRepeats = 4;
+
 template <typename M_Container, typename M_Data>
 INT_PTR MessageManager<M_Container, M_Data>::Process(UINT MsgBoxType /*= MB_OK*/)
 {
-	INT_PTR Result(IDCANCEL);
+	static DWORD s_previousMessageCode = 0;
+	static long s_previousLineNumber = 0;
+	static uint32_t s_codeRepeats = 0;
 
-	Log();
+	const auto &currentMessage = m_MessageHandler.getMessage();
 
-	Result = Display(MsgBoxType);
-	if (nullptr != m_ppShowDisplay && nullptr != *m_ppShowDisplay && (MsgType::Display & m_Type))
+	// we want to avoid to log or notify successive "identical" messages
+	// comparing source file names was consireded unnececessary, since messages with
+	// identical MessageCodes and Line Numbers but different source files appear extremely unlikely
+	if (currentMessage.m_MessageCode == s_previousMessageCode && currentMessage.m_SourceFile.m_Line == s_previousLineNumber)
 	{
-		//Message has bin displayed
-		m_MessageHandler.setMessageDisplayed();
+		s_codeRepeats++;
+	}
+	else
+	{
+		s_codeRepeats = 0;
+		s_previousMessageCode = currentMessage.m_MessageCode;
+		s_previousLineNumber = currentMessage.m_SourceFile.m_Line;
 	}
 
-	return Result;
+	if (s_codeRepeats <= s_maximumNumberOfCodeRepeats)
+	{
+		Log();
+
+		Notify();
+	}
+
+
+	return Display(MsgBoxType);
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
 	SvDef::StringVector textList;
 	MessageTextEnum id = SvStl::Tid_Empty;
@@ -79,21 +98,21 @@ INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, LPCTS
 		id = SvStl::Tid_Default;
 	}
 
-	return setMessage(MessageCode, id, textList, SourceFile, ProgramCode, rObjectId, MsgBoxType);
+	return setMessage(MessageCode, id, textList, rSourceFile, ProgramCode, rObjectId, MsgBoxType);
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
-	return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId, MsgBoxType);
+	return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), rSourceFile, ProgramCode, rObjectId, MsgBoxType);
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+INT_PTR MessageManager<M_Container, M_Data>::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
 	INT_PTR Result(IDCANCEL);
 
-	m_MessageHandler.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId);
+	m_MessageHandler.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, ProgramCode, rObjectId);
 
 	Result = Process(MsgBoxType);
 
@@ -132,13 +151,19 @@ void MessageManager<M_Container, M_Data>::Initialize()
 }
 
 template <typename M_Container, typename M_Data>
-void MessageManager<M_Container, M_Data>::Log()
+void MessageManager<M_Container, M_Data>::Log() const
 {
 	if (MsgType::Log & m_Type)
 	{
 		m_MessageHandler.logMessage();
 	}
 
+}
+
+
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::Notify() const
+{
 	bool doNotify = (MsgType::Notify & m_Type) || (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) && (MsgType::Display& m_Type));
 
 	if (nullptr != m_ppNotify && nullptr != *m_ppNotify && doNotify)
@@ -152,8 +177,9 @@ void MessageManager<M_Container, M_Data>::Log()
 	}
 }
 
+
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::Display(const UINT MsgBoxType) const
+INT_PTR MessageManager<M_Container, M_Data>::Display(const UINT MsgBoxType)
 {
 	INT_PTR Result(IDCANCEL);
 
@@ -188,6 +214,9 @@ INT_PTR MessageManager<M_Container, M_Data>::Display(const UINT MsgBoxType) cons
 			long endMsgBox {static_cast<long> (NotificationMsgEnum::EndMsgBox)};
 			(*m_ppNotify)(msgNotify, endMsgBox, MsgCode, Msg.c_str());
 		}
+
+		//the message now has been displayed
+		m_MessageHandler.setMessageDisplayed();
 	}
 
 	return Result;

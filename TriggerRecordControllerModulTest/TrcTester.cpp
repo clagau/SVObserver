@@ -656,7 +656,8 @@ bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 				m_TRController.addOrChangeImage(guid, specifyBuffer(1 + j));
 			}
 
-			m_TRController.finishResetTriggerRecordStructure(); //ABXX die Änderung der in Arbeit befindlichen Inspektion wird abgeschlossen
+			m_TRController.finishResetTriggerRecordStructure(); // i.e the current inspection will be completed
+
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
