@@ -57,6 +57,11 @@ public:
 	int Add( SVArchiveRecord* pRecord );
 #pragma endregion Public Methods
 
+private:
+#pragma region Private Methods
+	std::string AdaptDottedNameToInspectionName(std::string DottedName, std::string NewInspectionName); //ABXXX
+#pragma endregion Private Methods
+
 protected:
 #pragma region Protected Members
 	SVArchiveTool* m_pArchiveTool;

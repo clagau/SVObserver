@@ -62,6 +62,31 @@ void SVArchiveRecordsArray::ClearArray()
 }
 
 
+std::string SVArchiveRecordsArray::AdaptDottedNameToInspectionName(std::string DottedName, std::string NewName)
+{
+	size_t Pos = DottedName.find('.');
+
+	std::string OldInspectionNameOrElse = SvUl::Left(DottedName, Pos);
+
+	if (OldInspectionNameOrElse == "Global" || OldInspectionNameOrElse == "Environment")
+	{	//this (hopefully) is not an inspection name:
+		//we return the DottedName unchanged since it contains no inspection name to be replaced
+		return DottedName;
+	}
+
+	if (std::string::npos != Pos)	// This assumes that the first part of the dotted name is the inspection.
+	{	// Build the object name with the current inspection name.
+		NewName += SvUl::Mid(DottedName, Pos);
+	}
+	else
+	{	// We should always find a dotted name here.
+		assert(false);
+	}
+
+	return NewName;
+}
+
+
 HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SvVol::SVStringValueObjectClass& rObject )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
@@ -71,61 +96,54 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 	assert(m_pArchiveTool->GetInspectionInterface());
 
 	int iSize = rObject.getResultSize();
-	for ( int i = 0; i < iSize; i++ )
+	for (int i = 0; i < iSize; i++)
 	{
 		std::string Name;
-		rObject.GetValue( Name, i );
-		if ( !Name.empty() )
+		rObject.GetValue(Name, i);
+		if (!Name.empty())
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectReference ObjectRef;
-			size_t Pos = Name.find('.');
-			if( std::string::npos != Pos )	// This assumes that the first part of the dotted name is the inspection.
-			{				// Build the object name with the current inspection name.
-				std::string NewName = pToolArchive->GetInspection()->GetName();
-				NewName += SvUl::Mid( Name, Pos );
-				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( NewName.c_str(), ObjectRef );
-				Pos = Name.find('[');
-				if (std::string::npos != Pos)
-				{	//Array brackets found
-					if (!ObjectRef.isArray() && 0 < ObjectRef.GetObjectNameInfo().GetIndexValue())
-					{
-						//delete entry
-						continue;
-					}
-				}
-				else
-				{
-					if (ObjectRef.isArray())
-					{
-						NewName += _T("[1]");
-						ObjectRef.SetArrayIndex(0);
-					}
-				}
 
-				if( S_OK == hrGetObject )
+			std::string NewName = AdaptDottedNameToInspectionName(Name, pToolArchive->GetInspection()->GetName());
+
+			HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName(NewName.c_str(), ObjectRef);
+			size_t Pos = Name.find('[');
+			if (std::string::npos != Pos)
+			{	//Array brackets found
+				if (!ObjectRef.isArray() && 0 < ObjectRef.GetObjectNameInfo().GetIndexValue())
 				{
-					if( NewName != Name )
-					{
-						// Set value with new inspection name.
-						rObject.SetValue(NewName, i );
-					}
+					//delete entry
+					continue;
 				}
 			}
 			else
-			{				// We should always find a dotted name here.
-				assert(false);
+			{
+				if (ObjectRef.isArray())
+				{
+					NewName += _T("[1]");
+					ObjectRef.SetArrayIndex(0);
+				}
 			}
 
-			if ( nullptr == ObjectRef.getObject() )
+			if (S_OK == hrGetObject)
 			{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
-				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteName(), Name );
-#endif
+				if (NewName != Name)
+				{
+					// Set value with new inspection name.
+					rObject.SetValue(NewName, i);
+				}
+			}
+
+			if (nullptr == ObjectRef.getObject())
+			{
+	#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
+				TRACE(_T("SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n"), m_pArchiveTool->GetCompleteName(), Name);
+	#endif
 			}
 			else
 			{
-				pArchiveRecord->InitArchiveRecord( pToolArchive, ObjectRef );
+				pArchiveRecord->InitArchiveRecord(pToolArchive, ObjectRef);
 			}
 			m_vecRecords.push_back(pArchiveRecord);
 		}
