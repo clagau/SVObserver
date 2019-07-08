@@ -3170,11 +3170,12 @@ SVResultListClass* SVInspectionProcess::GetResultList() const
 }
 
 #pragma region IInspectionProcess methods
-void SVInspectionProcess::GetPPQSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, const UINT attribute) const
+std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT attribute) const
 {
+	std::vector<SvPb::TreeItem> result;
+
 	SVPPQObject *pPPQ = GetPPQ();
 	SVObjectReferenceVector objectVector;
-	std::vector<SvPb::TreeItem> itemVector;
 
 	if (nullptr != pPPQ)
 	{
@@ -3182,7 +3183,7 @@ void SVInspectionProcess::GetPPQSelectorList(SvPb::GetObjectSelectorItemsRespons
 
 		SVObjectManagerClass::Instance().getTreeList(PpqName, objectVector, attribute);
 
-		itemVector.reserve(objectVector.size());
+		result.reserve(objectVector.size());
 
 		for(auto ObjectRef : objectVector)
 		{
@@ -3201,14 +3202,14 @@ void SVInspectionProcess::GetPPQSelectorList(SvPb::GetObjectSelectorItemsRespons
 					ObjectRef.SetArrayIndex(i);
 					insertItem.set_location(ObjectRef.GetCompleteName(true));
 					insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-					itemVector.emplace_back(insertItem);
+					result.emplace_back(insertItem);
 				}
 			}
 			else
 			{
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
 				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-				itemVector.emplace_back(insertItem);
+				result.emplace_back(insertItem);
 			}
 		}
 	}
@@ -3238,12 +3239,12 @@ void SVInspectionProcess::GetPPQSelectorList(SvPb::GetObjectSelectorItemsRespons
 				SvUl::searchAndReplace(location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				insertItem.set_location(location);
 				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-				itemVector.emplace_back(insertItem);
+				result.emplace_back(insertItem);
 			}
 		}
 	}
 
-	SvPb::convertVectorToTree(itemVector, rResponse.mutable_tree());
+	return result;
 }
 
 SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const

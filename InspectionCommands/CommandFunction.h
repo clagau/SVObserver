@@ -148,5 +148,5 @@ InspectionCmdResult usePropagateSizeAndPosition(SvPb::UsePropagateSizeAndPositio
 
 InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
 
-InspectionCmdResult getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
+std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
 } //namespace SvCmd

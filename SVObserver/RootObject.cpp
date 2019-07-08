@@ -333,14 +333,14 @@ void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR P
 	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
 }
 
-void SvOi::getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, LPCTSTR Path, UINT AttributesAllowedFilter)
+std::vector<SvPb::TreeItem> SvOi::getRootChildSelectorList(LPCTSTR Path, UINT AttributesAllowedFilter)
 {
+	std::vector<SvPb::TreeItem> result;
 	SvVol::BasicValueObjects::ValueVector objectVector;
 	
 	//To have the function available without knowing the class RootObject
 	RootObject::getRootChildObjectList( objectVector, Path, AttributesAllowedFilter );
-	std::vector<SvPb::TreeItem> itemVector;
-	itemVector.reserve(objectVector.size());
+	result.reserve(objectVector.size());
 
 	for(const auto rpObject : objectVector)
 	{
@@ -349,10 +349,10 @@ void SvOi::getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rRespo
 		insertItem.set_location(rpObject->GetCompleteName());
 		insertItem.set_objectidindex(rpObject->GetUniqueObjectID().ToString());
 		insertItem.set_type(rpObject->getTypeName());
-		itemVector.emplace_back(insertItem);
+		result.emplace_back(insertItem);
 	}
 
-	SvPb::convertVectorToTree(itemVector, rResponse.mutable_tree());
+	return result;
 }
 
 void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)

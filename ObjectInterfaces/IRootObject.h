@@ -33,11 +33,11 @@ namespace SvOi
 
 	//************************************
 	/// Get the Root child selector list from a path and specified filter.
-	/// /param rResponse <in> response message for method
 	/// \param Path [in] Path of the root child desired. Default = "", this means all objects.
 	/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
+	/// \returns the vector of tree items
 	//************************************
-	void getRootChildSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
+	std::vector<SvPb::TreeItem> getRootChildSelectorList(LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
 
 	//************************************
 	/// Add the Root child objects

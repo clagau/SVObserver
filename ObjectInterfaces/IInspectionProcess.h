@@ -36,7 +36,7 @@ namespace SvOi
 		/***********
 		This method gets the PPQ Variables selector list
 		***********/
-		virtual void GetPPQSelectorList(SvPb::GetObjectSelectorItemsResponse& rResponse, const UINT attribute) const = 0;
+		virtual std::vector<SvPb::TreeItem> GetPPQSelectorList(const UINT attribute) const = 0;
 
 		/***********
 		This method gets the Interface to the Tool Set

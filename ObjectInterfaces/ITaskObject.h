@@ -45,16 +45,16 @@ namespace SvOi
 
 		//************************************
 		/// Return the output list of this task object, filtered by functor.
-		/// /param pFunctor <in> functor to check the attribute
-		/// /param rResponse <in> response message for method
-		/// /param Attribute <in> attribute
-		/// /param WholeArray <in> flag determines if whole arrays are used
+		/// \param pFunctor <in> functor to check the attribute
+		/// \param Attribute <in> attribute
+		/// \param WholeArray <in> flag determines if whole arrays are used
+		/// \returns the vector of tree items
 		//************************************
-		virtual void GetSelectorList(IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const = 0;
+		virtual std::vector<SvPb::TreeItem> GetSelectorList(IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const = 0;
 
 		/// Get the List of Input Images to this Task Object.
-		/// /param rList <in> The List to be populated.
-		/// /param maxEntries <in> maximum number of entries requested.
+		/// \param rList <in> The List to be populated.
+		/// \param maxEntries <in> maximum number of entries requested.
 		virtual void GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries) = 0;
 
 		/// Get the List of inputs (and connected object) to this Task Object.

@@ -356,16 +356,17 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 }
 
 #pragma region virtual method (ITaskObject)
-void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb::GetObjectSelectorItemsResponse& rResponse, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const
+std::vector<SvPb::TreeItem> SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const
 {
+	std::vector<SvPb::TreeItem> result;
+
 	if (pFunctor)
 	{
 		objectType = (SvPb::SVNotSetObjectType == objectType) ? GetObjectType() : objectType;
 		SVOutputInfoListClass OutputList;
 		GetOutputList(OutputList);
 
-		std::vector<SvPb::TreeItem> itemVector;
-		itemVector.reserve(OutputList.GetSize());
+		result.reserve(OutputList.GetSize());
 
 		// Filter the list
 		for(const auto* pOutputInfo : OutputList)
@@ -390,7 +391,7 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 						insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true, true));
 						insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
 						insertItem.set_selected((AttributesSet & attribute) == attribute);
-						itemVector.emplace_back(insertItem);
+						result.emplace_back(insertItem);
 					}
 
 					// add array elements
@@ -405,7 +406,7 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 							insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true, true));
 							insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
 							insertItem.set_selected((AttributesSet & attribute) == attribute);
-							itemVector.emplace_back(insertItem);
+							result.emplace_back(insertItem);
 						}
 					}
 				}
@@ -416,12 +417,10 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true));
 					insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
 					insertItem.set_selected((AttributesSet & attribute) == attribute);
-					itemVector.emplace_back(insertItem);
+					result.emplace_back(insertItem);
 				}
 			}
 		}
-
-		SvPb::convertVectorToTree(itemVector, rResponse.mutable_tree());
 	}
 	else
 	{
@@ -430,6 +429,8 @@ void SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, SvPb
 		::OutputDebugString(_T("SVTaskObjectClass::SelectorList - empty functor"));
 #endif
 	}
+
+	return result;
 }
 
 void SVTaskObjectClass::GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries)

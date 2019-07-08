@@ -1181,23 +1181,23 @@ InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest r
 {
 	InspectionCmdResult result;
 
-	SVGUID inspectionID {SvPb::GetGuidFromProtoBytes(request.inspectionid())};
-
 	SvPb::GetObjectSelectorItemsResponse* pResponse = result.m_response.mutable_getobjectselectoritemsresponse();
 	for (int i = 0; i < request.types_size(); i++)
 	{
+		std::vector<SvPb::TreeItem> itemVector;
 		switch (request.types(i))
 		{
 			case SvPb::ObjectSelectorType::globalConstantItems:
 			{
-				SvOi::getRootChildSelectorList(*pResponse, _T(""), request.attribute());
+
+				itemVector = SvOi::getRootChildSelectorList(_T(""), request.attribute());
 				break;
 			}
 
 			case SvPb::ObjectSelectorType::ppqItems:
 			case SvPb::ObjectSelectorType::toolsetItems:
 			{
-				result = getSelectorList(request, request.types(i));
+				itemVector = getSelectorList(request, request.types(i));
 				break;
 			}
 
@@ -1206,14 +1206,15 @@ InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest r
 				break;
 			}
 		}
+		SvPb::convertVectorToTree(itemVector, pResponse->mutable_tree());
 	}
+
 	return result;
 }
 
-InspectionCmdResult getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType)
+std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType)
 {
-	InspectionCmdResult result;
-	result.m_hResult = E_POINTER;
+	std::vector<SvPb::TreeItem> result;
 
 	GUID inspectionID = SvPb::GetGuidFromProtoBytes(request.inspectionid());
 	GUID instanceID = SvPb::GetGuidFromProtoBytes(request.instanceid());
@@ -1223,9 +1224,7 @@ InspectionCmdResult getSelectorList(SvPb::GetObjectSelectorItemsRequest request,
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(inspectionID));
 		if (nullptr != pInspection)
 		{
-			SvPb::GetObjectSelectorItemsResponse* pResponse = result.m_response.mutable_getobjectselectoritemsresponse();
-			pInspection->GetPPQSelectorList(*pResponse, request.attribute());
-			result.m_hResult = S_OK;
+			result = pInspection->GetPPQSelectorList(request.attribute());
 			return result;
 		}
 	}
@@ -1266,12 +1265,7 @@ InspectionCmdResult getSelectorList(SvPb::GetObjectSelectorItemsRequest request,
 			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(request, name);
 			if(nullptr != pFunc)
 			{
-				SvPb::GetObjectSelectorItemsResponse* pResponse = result.m_response.mutable_getobjectselectoritemsresponse();
-				pTaskObject->GetSelectorList(pFunc, *pResponse, request.attribute(), request.wholearray(), objectTypeToName);
-			}
-			else
-			{
-				result.m_hResult = E_INVALIDARG;
+				result = pTaskObject->GetSelectorList(pFunc, request.attribute(), request.wholearray(), objectTypeToName);
 			}
 		}
 	}
