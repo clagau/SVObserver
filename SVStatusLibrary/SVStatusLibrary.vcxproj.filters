@@ -51,6 +51,9 @@
     <ClCompile Include="SVSVIMStateClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="MessageManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandLineArgs.h">
@@ -107,10 +110,5 @@
     <ClInclude Include="SVSVIMStateClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="MessageManager.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

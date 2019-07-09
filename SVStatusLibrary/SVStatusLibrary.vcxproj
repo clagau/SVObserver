@@ -154,6 +154,7 @@
     <ClCompile Include="GlobalPath.cpp" />
     <ClCompile Include="MessageContainer.cpp" />
     <ClCompile Include="MessageData.cpp" />
+    <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="MessageTextGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -187,9 +188,6 @@
     <ClInclude Include="SVRegistry.h" />
     <ClInclude Include="SVRunStatus.h" />
     <ClInclude Include="SVSVIMStateClass.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="MessageManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
