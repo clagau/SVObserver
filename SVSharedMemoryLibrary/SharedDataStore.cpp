@@ -13,6 +13,7 @@
 #include "SMParameterStruct.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SourceFileParams.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -97,7 +98,14 @@ void SharedDataStore::CreateDataStore(LPCTSTR StoreName, DWORD slotsize, DWORD  
 		m_slotSize = slotsize;
 	}
 
-	DWORD SharedSize = m_slotCount * m_slotSize + m_DataStoreHeaderSize;
+	unsigned long long sharedSizeLong = m_slotCount * static_cast<unsigned long long>(m_slotSize) + m_DataStoreHeaderSize;
+	if (sharedSizeLong > ULONG_MAX)
+	{
+		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Data);
+		MesMan.setMessage(SVMSG_SVO_5080_CREATEFILEMAPPINGFAILED, SvStl::Tid_SharedMemorySizeTooBig, SvStl::SourceFileParams(StdMessageParams));
+		MesMan.Throw();
+	}
+	DWORD SharedSize = static_cast<DWORD>(sharedSizeLong);
 
 	for (int time = 0; time <= rParam.SMCreateTimeout; time += rParam.SMCreateWaitTime)
 	{

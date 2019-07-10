@@ -70,7 +70,12 @@ void TRControllerWriterDataPerIP::setLastFinishedTRID(int id)
 void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& dataDefList)
 { 
 	m_DataDefList.Swap(&dataDefList); 
-
+	if (nullptr == m_pBasicData || nullptr == m_pSmData)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
 
 	int newPBSize = m_DataDefList.ByteSize();
 	if (newPBSize > m_pSmData->m_maxDataDefListSize)
@@ -100,6 +105,12 @@ TriggerRecordData& TRControllerWriterDataPerIP::getTRData(int pos) const
 void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 { 
 	m_ImageList = imageList; 
+	if (nullptr == m_pBasicData || nullptr == m_pSmData)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
 	int newPBSize = m_ImageList.ByteSize();
 	if (newPBSize > m_pSmData->m_maxImageListSize)
 	{
@@ -118,6 +129,14 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 
 void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trBufferSize, int trNumbers)
 {
+	assert(m_pBasicData && m_pSmData);
+	if (nullptr == m_pBasicData || nullptr == m_pSmData)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+	
 	if (m_pSmData->m_maxTriggerRecordBufferSize < trBufferSize*trNumbers)
 	{
 		SMData smData = *m_pSmData;
@@ -176,66 +195,78 @@ bool TRControllerWriterDataPerIP::isEnoughFreeForLock() const
 
 void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 {
-	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	if (number != m_pBasicData->m_TrOfInterestNumber && 0 <= number && TriggerRecordController::cMaxTriggerRecordsOfInterest + 1 >= number )
+	assert(nullptr != m_pBasicData && nullptr != m_pTRofInterestArray);
+	if (nullptr != m_pBasicData && nullptr != m_pTRofInterestArray)
 	{
-		m_pBasicData->m_TrOfInterestNumber = number;
+		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+		if (number != m_pBasicData->m_TrOfInterestNumber && 0 <= number && TriggerRecordController::cMaxTriggerRecordsOfInterest + 1 >= number)
+		{
+			m_pBasicData->m_TrOfInterestNumber = number;
+		}
+		std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
 	}
-	std::fill(m_pTRofInterestArray, m_pTRofInterestArray+ TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
 }
 
 void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 {
-	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	if (locker && 0 < m_pBasicData->m_TrOfInterestNumber)
+	assert(nullptr != m_pBasicData);
+	if (nullptr != m_pBasicData)
 	{
-		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TrOfInterestNumber);
-		if (0 <= m_pTRofInterestArray[nextPos] && getBasicData().m_TriggerRecordNumber > m_pTRofInterestArray[nextPos])
+		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+		if (locker && 0 < m_pBasicData->m_TrOfInterestNumber)
 		{
-			removeTrReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
-		}
-		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
-		{
-			TriggerRecordData& rCurrentTR = getTRData(pos);
-			long refTemp = rCurrentTR.m_referenceCount;
-			while (0 <= refTemp)
+			int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TrOfInterestNumber);
+			if (0 <= m_pTRofInterestArray[nextPos] && getBasicData().m_TriggerRecordNumber > m_pTRofInterestArray[nextPos])
 			{
-				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
+				removeTrReferenceCount(inspectionPos, getTRData(m_pTRofInterestArray[nextPos]).m_referenceCount);
+			}
+			if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
+			{
+				TriggerRecordData& rCurrentTR = getTRData(pos);
+				long refTemp = rCurrentTR.m_referenceCount;
+				while (0 <= refTemp)
 				{
-					if (0 == refTemp)
+					if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), refTemp + 1, refTemp) == refTemp)
 					{
-						decreaseFreeTrNumber();
+						if (0 == refTemp)
+						{
+							decreaseFreeTrNumber();
+						}
+						m_pTRofInterestArray[nextPos] = pos;
+						m_pBasicData->m_TrOfInterestCurrentPos = nextPos;
+						return;  //successfully set
 					}
-					m_pTRofInterestArray[nextPos] = pos;
-					m_pBasicData->m_TrOfInterestCurrentPos = nextPos;
-					return;  //successfully set
+					refTemp = rCurrentTR.m_referenceCount;
 				}
-				refTemp = rCurrentTR.m_referenceCount;
+
 			}
 
+			m_pTRofInterestArray[nextPos] = -1; //unsuccessfully set
 		}
-
-		m_pTRofInterestArray[nextPos] = -1; //unsuccessfully set
 	}
 }
 
 std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
-	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	int vecSize = m_pBasicData->m_TrOfInterestNumber; 
-	if (nullptr != locker && 0 < vecSize)
+	assert(m_pBasicData);
+	if (nullptr != m_pBasicData)
 	{
-		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
-		int nextPos = std::min(static_cast<int>(m_pBasicData->m_TrOfInterestCurrentPos), vecSize - 1);
-		for (int i = 0; i < number; i++)
+		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+		int vecSize = m_pBasicData->m_TrOfInterestNumber;
+		if (nullptr != locker && 0 < vecSize)
 		{
-			if (0 > nextPos)
+			int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
+			int nextPos = std::min(static_cast<int>(m_pBasicData->m_TrOfInterestCurrentPos), vecSize - 1);
+			for (int i = 0; i < number; i++)
 			{
-				nextPos = vecSize - 1;
+				if (0 > nextPos)
+				{
+					nextPos = vecSize - 1;
+				}
+				retVec.push_back(m_pTRofInterestArray[nextPos]);
+				nextPos--;
 			}
-			retVec.push_back(m_pTRofInterestArray[nextPos]);
-			nextPos--;
 		}
 	}
 	return retVec;
@@ -249,30 +280,44 @@ void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smD
 	void* pTriggerRecordOld = m_pTriggerRecords;
 	m_SMHandle = std::make_unique<SvSml::SharedDataStore>();
 	std::string newSMName = getNewSMIPName();
-	m_SMHandle->CreateDataStore(newSMName.c_str(), getNeedSMSize(smData), 1, smParam);
-	byte* pTemp = m_SMHandle->GetPtr(0, 0);
-	m_pBasicData = reinterpret_cast<BasicData*>(pTemp);
-	*m_pBasicData = basicData;
-	int offset = sizeof(BasicData);
-	m_pSmData = reinterpret_cast<SMData*>(pTemp + offset);
-	*m_pSmData = smData;
-	assert(nullptr != pTemp && nullptr != m_pSmData && nullptr != m_pBasicData);
-	offset += sizeof(SMData);
-	m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
-	offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
-	m_pImageListInSM = pTemp + offset;
-	offset += smData.m_maxImageListSize;
-	m_pDataDefListInSM = pTemp + offset;
-	offset += smData.m_maxDataDefListSize;
-	m_pTriggerRecords = pTemp + offset;
-	int minTriggerRecordBufferSize = std::min(oldTriggerRecodBufferSize, static_cast<int>(m_pSmData->m_maxTriggerRecordBufferSize));
-	if (0 < minTriggerRecordBufferSize && nullptr != pTriggerRecordOld && nullptr != m_pTriggerRecords)
+	try
 	{
-		memcpy(m_pTriggerRecords, pTriggerRecordOld, minTriggerRecordBufferSize);
-	}
-	smHandleOld.reset();
+		m_SMHandle->CreateDataStore(newSMName.c_str(), getNeedSMSize(smData), 1, smParam);
+		byte* pTemp = m_SMHandle->GetPtr(0, 0);
+		m_pBasicData = reinterpret_cast<BasicData*>(pTemp);
+		*m_pBasicData = basicData;
+		int offset = sizeof(BasicData);
+		m_pSmData = reinterpret_cast<SMData*>(pTemp + offset);
+		*m_pSmData = smData;
+		assert(nullptr != pTemp && nullptr != m_pSmData && nullptr != m_pBasicData);
+		offset += sizeof(SMData);
+		m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
+		offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
+		m_pImageListInSM = pTemp + offset;
+		offset += smData.m_maxImageListSize;
+		m_pDataDefListInSM = pTemp + offset;
+		offset += smData.m_maxDataDefListSize;
+		m_pTriggerRecords = pTemp + offset;
+		int minTriggerRecordBufferSize = std::min(oldTriggerRecodBufferSize, static_cast<int>(m_pSmData->m_maxTriggerRecordBufferSize));
+		if (0 < minTriggerRecordBufferSize && nullptr != pTriggerRecordOld && nullptr != m_pTriggerRecords)
+		{
+			memcpy(m_pTriggerRecords, pTriggerRecordOld, minTriggerRecordBufferSize);
+		}
+		smHandleOld.reset();
 
-	m_smDataCBFunc(newSMName, m_SMHandle->GetSlotSize());
+		m_smDataCBFunc(newSMName, m_SMHandle->GetSlotSize());
+	}
+	catch (...)
+	{
+		m_pBasicData = nullptr;
+		m_pSmData = nullptr;
+		m_pTRofInterestArray = nullptr;
+		m_pImageListInSM = nullptr;
+		m_pDataDefListInSM = nullptr;
+		m_pTriggerRecords = nullptr;
+		throw;
+	}
+	
 }
 #pragma endregion TRControllerWriterDataPerIP
 
@@ -447,8 +492,6 @@ void DataControllerWriter::setImageStructList(SvPb::ImageStructList list)
 {
 	if (!m_isGlobalInit)
 	{
-		int sizeList = list.ByteSize();
-
 		if (list.ByteSize() > cMaxImageStructPbSize)
 		{
 			assert(false);

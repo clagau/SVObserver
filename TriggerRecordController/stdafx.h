@@ -54,6 +54,7 @@
 #include <thread>
 #include <WinBase.h>
 
+#include <boost/algorithm/string/split.hpp>
 #include <boost/function.hpp>
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library

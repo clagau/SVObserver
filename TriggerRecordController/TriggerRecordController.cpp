@@ -633,6 +633,7 @@ void TriggerRecordController::finishGlobalInit()
 	m_imageStructListResetTmp = m_pDataController->getImageStructList();
 	m_isGlobalInit = false;
 	m_pDataController->setGlobalInitFlag(false);
+	m_mustRecalcRequiredBuffers = true;
 	ResetTriggerRecordStructure();
 }
 
@@ -1035,7 +1036,7 @@ void TriggerRecordController::recalcRequiredBuffer()
 			int bufferCount = m_TriggerRecordNumberResetTmp;
 			if (m_resetStarted4IP != i)
 			{
-				rImageDef = m_pDataController->getImageDefList(i);
+				rImageDef = m_pDataController->getImageDefList(i, false);
 				bufferCount = needNumberOfTr(m_pDataController->getInspections().list(i));
 			}
 			
@@ -1051,6 +1052,7 @@ void TriggerRecordController::recalcRequiredBuffer()
 		catch (...)
 		{
 			//nothing to do
+			assert(false);
 		}
 	}
 }
@@ -1064,7 +1066,48 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 		{
 			recalcRequiredBuffer();
 			m_mustRecalcRequiredBuffers = false;
-		}		
+		}	
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+		::OutputDebugString("\n\nResetTriggerRecordStructure:\nAdditional Buffer:\n");
+		for (auto& rMap : m_additionalBufferMap)
+		{
+			std::string DebugString = SVGUID(rMap.first).ToString() + "\n";
+			::OutputDebugString(DebugString.c_str());
+			for (auto& rPair : rMap.second)
+			{
+				std::string DebugString = SvUl::Format(_T("%d/%d\n"), rPair.first, rPair.second);
+				::OutputDebugString(DebugString.c_str());
+			}
+		}
+		int ipSize = m_pDataController->getInspections().list_size();
+		for (int i = 0; i < ipSize; i++)
+		{
+			SvPb::ImageList rImageDef = m_imageListResetTmp;
+			int bufferCount = m_TriggerRecordNumberResetTmp;
+			if (m_resetStarted4IP != i)
+			{
+				rImageDef = m_pDataController->getTRControllerData(i)->getImageList();
+				bufferCount = needNumberOfTr(m_pDataController->getInspections().list(i));
+			}
+			std::string DebugString = SvUl::Format(_T("Inspection: %d, count: %d\n"), i, bufferCount);
+			::OutputDebugString(DebugString.c_str());
+			std::map<int, int> imageMap;
+			for (auto imageData : rImageDef.list())
+			{
+				imageMap[imageData.structid()]++;
+				DebugString = SvUl::Format(_T("structId: %d, Guid: %s\n"), imageData.structid(), SVGUID(SvPb::GetGuidFromProtoBytes(imageData.guidid())).ToString().c_str());
+				::OutputDebugString(DebugString.c_str());
+			}
+			::OutputDebugString("Collected:\n");
+			for (auto mapPair : imageMap)
+			{
+				DebugString = SvUl::Format(_T("structId: %d, count: %d\n"), mapPair.first, mapPair.second);
+				::OutputDebugString(DebugString.c_str());
+			}
+		}
+#endif
+
 
 		std::vector<std::pair<int, int>> changeVect = m_pDataController->ResetTriggerRecordStructure(m_resetStarted4IP, m_TriggerRecordNumberResetTmp, std::move(m_imageListResetTmp), std::move(m_imageStructListResetTmp));
 		for (const auto& rChangePair : changeVect)

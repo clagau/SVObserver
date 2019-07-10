@@ -28,6 +28,8 @@ typedef std::shared_ptr<IImage> IImagePtr;
 
 namespace SvTrc
 {
+void fillBufferData(SvPb::ImageStructData& rImageStruct, SVMatroxBufferCreateStruct& rBufferStruct, MatroxImageProps& rBufferProps);
+
 class ImageBufferController final
 {
 #pragma region Constructor

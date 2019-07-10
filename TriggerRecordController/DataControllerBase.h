@@ -23,6 +23,8 @@ struct TrEventData;
 typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
 }
+
+constexpr long long c_MBInBytes = 1048576LL;//1024 * 1024
 #pragma endregion Declarations
 
 namespace SvTrc
@@ -128,7 +130,11 @@ public:
 	void setLastFinishedTr(TrEventData data);
 	int getLastTrId(int inspectionPos) const;
 
-	const SvPb::ImageList& getImageDefList(int inspectionPos) const;
+	/// Get ImageDefList. ATTENTION: Throw exception if get imageDef failed.
+	/// \param inspectionPos [in] Position of inspection.
+	/// \param onlyIfInit [in] If true it checked if inspection is initialized and not initialized throw an exception. If false not check if initialized.
+	/// \returns const SvPb::ImageList&
+	const SvPb::ImageList& getImageDefList(int inspectionPos, bool onlyIfInit = true) const;
 	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) { assert(false); throw E_NOTIMPL; };
 
 	virtual const SvPb::ImageStructList& getImageStructList() const = 0;
@@ -157,7 +163,8 @@ public:
 
 	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector; }
 
-	int getMaxNumberOfRequiredBuffer() { return m_maxNumberOfRequiredBuffer; };
+	int getMaxNumberOfRequiredBuffer() const { return m_maxNumberOfRequiredBuffer; };
+	long long getMaxBufferSizeInBytes() const {	return m_maxBufferSizeInBytes; }
 
 	virtual bool isWritable() const { return true; };
 
@@ -203,6 +210,7 @@ protected:
 
 	std::vector<SVMatroxBuffer> m_bufferVector;
 	int m_maxNumberOfRequiredBuffer = 9000;
+	long long m_maxBufferSizeInBytes = 8'000 * c_MBInBytes;
 	std::function<void()> m_reloadCallback;
 	std::function<void()> m_readyCallback;
 	std::function<void(TrEventData)> m_newTrIdCallback;

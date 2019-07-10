@@ -8,6 +8,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "ImageBufferController.h"
 #include "ImageBufferSMHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -51,7 +52,13 @@ void ImageBufferSMHelper::clearAll()
 
 void ImageBufferSMHelper::removeMemory(std::string memoryName)
 {
-	m_sharedMemoryMap.erase(memoryName);
+	std::vector<std::string> words;
+	boost::algorithm::split(words, memoryName, [](char c) { return c == ';'; }, boost::token_compress_off);
+
+	for (auto name : words)
+	{
+		m_sharedMemoryMap.erase(name);
+	}
 }
 
 int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos)
@@ -68,15 +75,50 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 	MatroxImageProps bufferProps;
 	fillBufferData(rImageStruct, bufferStruct, bufferProps);
 
-	std::string newMemoryName = SvUl::Format("TRC.Images%d", memoryCounter++);
+	std::vector<std::string> newMemoryNames;
+	newMemoryNames.emplace_back(SvUl::Format("TRC.Images%d", memoryCounter++));
 	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
-
-	auto& rSMPointer = m_sharedMemoryMap[newMemoryName] = std::make_unique<SvSml::SharedDataStore>();
-	rSMPointer->CreateDataStore(newMemoryName.c_str(), static_cast<DWORD> (bufferProps.Bytesize), requiredNumbers, smParam);
+	m_sharedMemoryMap[newMemoryNames[0]] = std::make_unique<SvSml::SharedDataStore>();
+	
+	int requiredPerStore = requiredNumbers;
+	bool isOk = false;
+	do 
+	{
+		try
+		{ 
+			int divFactor = static_cast<int>(newMemoryNames.size());
+			requiredPerStore = (requiredNumbers + divFactor - 1) / divFactor;
+			for (auto memoryName : newMemoryNames)
+			{
+				m_sharedMemoryMap[memoryName]->CreateDataStore(memoryName.c_str(), static_cast<DWORD> (bufferProps.Bytesize), requiredPerStore, smParam);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+				std::string DebugString = SvUl::Format(_T("ImageBufferSMHelper SM: %d - %s\n"), rImageStruct.structid(), memoryName.c_str());
+				::OutputDebugString(DebugString.c_str());
+#endif
+			}
+			isOk = true;
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{ //if exception thrown because size bigger than DWORD, split it in more stores
+			if (SvStl::Tid_SharedMemorySizeTooBig == rExp.getMessage().m_AdditionalTextId)
+			{
+				auto newName = SvUl::Format("TRC.Images%d", memoryCounter++);
+				m_sharedMemoryMap[newName] = std::make_unique<SvSml::SharedDataStore>();
+				newMemoryNames.emplace_back(newName);
+			}
+			else
+			{	//if exception is not because size bigger than DWORD, throw further
+				throw;
+			}
+		}
+	} 
+	while (!isOk);
 
 	for (int i = 0; i < requiredNumbers; i++)
 	{
-		BYTE* ptr = rSMPointer->GetPtr(i, 0);
+		int pos = i / requiredPerStore;
+		auto& rSMPointer = m_sharedMemoryMap[newMemoryNames[pos]];
+		BYTE* ptr = (nullptr != rSMPointer)? rSMPointer->GetPtr(i-requiredPerStore*pos, 0) : nullptr;
 		SVMatroxBuffer buffer;
 		HRESULT errCode = SVMatroxBufferInterface::CreateBuffer(buffer, bufferProps, ptr);
 		if (S_OK != errCode || buffer.empty())
@@ -108,7 +150,19 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 			Exception.Throw();
 		}
 	}
-	rImageStruct.set_memoryname(std::move(newMemoryName));
+	if (1 == newMemoryNames.size())
+	{
+		rImageStruct.set_memoryname(newMemoryNames[0]);
+	}
+	else
+	{
+		std::string newMemoryCompleteName;
+		for (auto name : newMemoryNames)
+		{
+			newMemoryCompleteName += name + ";";
+		}
+		rImageStruct.set_memoryname(std::move(newMemoryCompleteName));
+	}
 
 	return vectorPos;
 }
@@ -130,25 +184,6 @@ int ImageBufferSMHelper::contractMilBufferinMemory(int requiredNumbers, SvPb::Im
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-void ImageBufferSMHelper::fillBufferData(SvPb::ImageStructData& rImageStruct, SVMatroxBufferCreateStruct& rBufferStruct, MatroxImageProps& rBufferProps)
-{
-	memcpy(&rBufferStruct, rImageStruct.type().c_str(), sizeof(SVMatroxBufferCreateStruct));
-	if (0 < rImageStruct.imageprops().size())
-	{
-		memcpy(&rBufferProps, rImageStruct.imageprops().c_str(), sizeof(MatroxImageProps));
-	}
-	else
-	{
-		SVMatroxBuffer buffer;
-		HRESULT errCode = SVMatroxBufferInterface::Create(buffer, rBufferStruct);
-		if (S_OK == errCode && !buffer.empty())
-		{
-			SVMatroxBufferInterface::InquireBufferProperties(buffer, rBufferProps);
-			std::string typeStr(reinterpret_cast<const char*>(&rBufferProps), sizeof(MatroxImageProps));
-			rImageStruct.set_imageprops(typeStr);
-		}
-	}
-}
 
 #pragma endregion Private Methods
 } //namespace SvTrc

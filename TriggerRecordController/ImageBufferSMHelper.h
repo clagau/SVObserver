@@ -22,8 +22,6 @@ class SharedDataStore;
 typedef  std::unique_ptr<SharedDataStore> DataStorePointer;
 }
 
-struct MatroxImageProps;
-struct SVMatroxBufferCreateStruct;
 class SVMatroxBuffer;
 #pragma endregion Declarations
 
@@ -60,7 +58,6 @@ protected:
 
 #pragma region Private Methods
 private:
-	void fillBufferData(SvPb::ImageStructData& rImageStruct, SVMatroxBufferCreateStruct& rBufferStruct, MatroxImageProps& rBufferProps);
 
 #pragma endregion Private Methods
 

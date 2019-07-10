@@ -52,6 +52,10 @@ DataControllerBase::DataControllerBase()
 		}
 	}
 
+	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	int maxBufferSizeInMB = l_SvimIni.GetValueInt(_T("TriggerRecordController"), _T("MaxBufferSizeInMBytes"), 8000);
+	m_maxBufferSizeInBytes = maxBufferSizeInMB *c_MBInBytes;
+
 	PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR)LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
 	InitializeSecurityDescriptor(psd, SECURITY_DESCRIPTOR_REVISION);
 	SetSecurityDescriptorDacl(psd, TRUE, NULL, FALSE);
@@ -133,11 +137,11 @@ int DataControllerBase::getLastTrId(int inspectionPos) const
 	return id;
 }
 
-const SvPb::ImageList& DataControllerBase::getImageDefList(int inspectionPos) const
+const SvPb::ImageList& DataControllerBase::getImageDefList(int inspectionPos, bool onlyIfInit) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
 	assert(nullptr != pData);
-	if (nullptr != pData && pData->getBasicData().m_bInit)
+	if (nullptr != pData && (!onlyIfInit || pData->getBasicData().m_bInit))
 	{
 		return pData->getImageList();
 	}

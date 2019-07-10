@@ -409,6 +409,14 @@ void DataControllerReader::initAndreloadData()
 			{
 				m_reloadCallback();
 			}
+
+			m_bufferVector.clear();
+			m_sharedMemoryMap.clear();
+			{
+				std::unique_lock<std::shared_mutex> lock(m_dataVectorMutex);
+				m_dataVector.clear();
+			}
+
 			WaitForMultipleObjects(2, hReady, false, INFINITE);
 			if (m_stopThread) { return; };
 
@@ -436,8 +444,6 @@ void DataControllerReader::initAndreloadData()
 							}
 						}
 
-						m_bufferVector.clear();
-						m_sharedMemoryMap.clear();
 						for (auto imageStruct : m_imageStructList.list())
 						{
 							addBuffer(imageStruct);
@@ -480,16 +486,28 @@ void DataControllerReader::newTrIdThread()
 
 void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 {
-	auto& rSMPointer = m_sharedMemoryMap[imageStruct.memoryname()] = std::make_unique<SvSml::SharedDataStore>();
-	bool isOk = rSMPointer->OpenDataStore(imageStruct.memoryname().c_str());
-	if (!isOk)
+	std::vector<std::string> memoryNames;
+	boost::algorithm::split(memoryNames, imageStruct.memoryname(), [](char c) { return c == ';'; }, boost::token_compress_off);
+	//remove empty entries
+	auto removeIter = std::remove_if(memoryNames.begin(), memoryNames.end(), [](std::string entry) { return entry.empty(); });
+	if (memoryNames.end() != removeIter)
 	{
-		assert(false);
-		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%s"), imageStruct.memoryname().c_str()));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
+		memoryNames.erase(removeIter);
+	}
+
+	for (auto name : memoryNames)
+	{
+		auto& rSMPointer = m_sharedMemoryMap[name] = std::make_unique<SvSml::SharedDataStore>();
+		bool isOk = rSMPointer->OpenDataStore(name.c_str());
+		if (!isOk)
+		{
+			assert(false);
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%s"), name.c_str()));
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
+		}
 	}
 
 	SVMatroxBufferCreateStruct bufferStruct;
@@ -506,9 +524,14 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ImageProps, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
+
+	int divFactor = static_cast<int>(memoryNames.size());
+	int requiredPerStore = (imageStruct.numberofbuffersrequired() + divFactor - 1) / divFactor;
 	for (int i = 0; i < imageStruct.numberofbuffersrequired(); i++)
 	{
-		BYTE* ptr = rSMPointer->GetPtr(i, 0);
+		int pos = i / requiredPerStore;
+		auto& rSMPointer = m_sharedMemoryMap[memoryNames[pos]];
+		BYTE* ptr = (nullptr != rSMPointer) ? rSMPointer->GetPtr(i - requiredPerStore*pos, 0) : nullptr;
 		SVMatroxBuffer buffer;
 		HRESULT errCode = SVMatroxBufferInterface::CreateBuffer(buffer, bufferProps, ptr);
 		if (S_OK != errCode || buffer.empty())
