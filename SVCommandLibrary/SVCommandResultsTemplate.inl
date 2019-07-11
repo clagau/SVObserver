@@ -12,8 +12,6 @@
 #ifndef SVCOMMANDRESULTSTEMPLATE_INL
 #define SVCOMMANDRESULTSTEMPLATE_INL
 
-#include "SVCommandResultsTemplate.h"
-
 template< typename SVResultCollection >
 SVCommandResultsTemplate< SVResultCollection >::SVCommandResultsTemplate()
 : m_Results()

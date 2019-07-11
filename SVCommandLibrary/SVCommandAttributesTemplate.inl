@@ -12,8 +12,6 @@
 #ifndef SVCOMMANDATTRIBUTESTEMPLATE_INL
 #define SVCOMMANDATTRIBUTESTEMPLATE_INL
 
-#include "SVCommandAttributesTemplate.h"
-
 template< unsigned long CommandType, typename SVAttributeCollection, typename SVDefaultCollection >
 SVCommandAttributesTemplate< CommandType, SVAttributeCollection, SVDefaultCollection >::SVCommandAttributesTemplate()
 : m_Attributes( m_DefaultAttributes )

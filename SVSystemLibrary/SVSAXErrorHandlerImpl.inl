@@ -9,7 +9,6 @@
 //* .Check In Date   : $Date:   25 Apr 2013 18:01:34  $
 //******************************************************************************
 
-#include "SVSAXErrorHandlerImpl.h"
 
 template<typename ErrorStrategy>
 SVSAXErrorHandlerImpl<ErrorStrategy>::SVSAXErrorHandlerImpl(ErrorStrategy& errorStrategy)

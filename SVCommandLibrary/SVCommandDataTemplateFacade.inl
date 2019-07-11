@@ -12,8 +12,6 @@
 #ifndef SVCOMMANDDATATEMPLATEFACADE_INL
 #define SVCOMMANDDATATEMPLATEFACADE_INL
 
-#include "SVCommandDataTemplateFacade.h"
-
 template< unsigned long p_BaseDataType, typename SVTemplateDataType, typename SVTemplateArgType >
 SVCommandDataTemplateFacade< p_BaseDataType, SVTemplateDataType, SVTemplateArgType >::SVCommandDataTemplateFacade()
 : m_DataType( p_BaseDataType )

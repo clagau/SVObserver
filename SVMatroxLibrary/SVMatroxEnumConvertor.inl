@@ -9,7 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 15:13:06  $
 //******************************************************************************
 
-#include "SVMatroxEnumConvertor.h"
 #include "SVMatroxErrorEnum.h"
 
 template<typename SVEnumType>

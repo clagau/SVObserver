@@ -12,8 +12,6 @@
 #ifndef SVRINGBUFFER_INL
 #define SVRINGBUFFER_INL
 
-#include "SVRingBuffer.h"
-
 template< typename SVElement, typename SVClearElement >
 SVRingBuffer< SVElement, SVClearElement >::SVRingBuffer( size_t p_Capacity )
 : m_Active( 1 ), m_Head( 0 ), m_PopHead( 0 ), m_SizeHead( 0 ), m_Tail( 0 ), m_PushTail( 0 ), m_Buffer( ( 0 < p_Capacity ) ? p_Capacity : 1 ), m_Clear()
