@@ -23,6 +23,7 @@
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
+#include "RemoteCommand.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -139,7 +140,6 @@ public:
 	// Special for SVRCComm.DLL
 	afx_msg void OnRCGoOffline();
 	afx_msg void OnRCGoOnline();
-	afx_msg void OnRCSaveAllAndGetConfig();
 	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
 	afx_msg void OnUpdateAllIOViews();
 	afx_msg void OnExtrasSecuritySetup();
@@ -174,7 +174,7 @@ public:
 
 public:
 	void AddAdditionalFile(LPCTSTR FilePath);
-	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false);
+	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, bool useSvxName = false);
 	HRESULT OpenSVXFile();
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
@@ -182,8 +182,8 @@ public:
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
 
-	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileFormat);
-	HRESULT SavePackedConfiguration(const std::string& rFileName);
+	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type);
+	HRESULT SavePackedConfiguration(LPCTSTR pFileName);
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
@@ -206,7 +206,7 @@ public:
 	bool AddMenuItem(HMENU hTargetMenu, const std::string& itemText, UINT itemID);
 	bool RemoveMenu(HMENU hTargetMenu,  const std::string& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
-	HRESULT LoadConfiguration();
+	HRESULT LoadConfiguration(bool useSvxName = false);
 
 	HRESULT OnObjectRenamed( const std::string& p_rOldName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();

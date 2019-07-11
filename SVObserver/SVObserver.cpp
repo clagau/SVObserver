@@ -189,7 +189,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 
 	ON_COMMAND(ID_RC_GO_OFFLINE, OnRCGoOffline)
 	ON_COMMAND(ID_RC_GO_ONLINE, OnRCGoOnline)
-	ON_COMMAND(ID_RC_SAVE_ALL_AND_GET_CONFIG, OnRCSaveAllAndGetConfig)
 	ON_COMMAND(ID_RC_CLOSE_AND_CLEAN_RUN_DIR, OnRCCloseAndCleanUpDownloadDirectory)
 	ON_COMMAND(ID_RC_OPEN_CURRENT_SVX, OnRCOpenCurrentSVX)
 
@@ -1495,35 +1494,6 @@ void SVObserverApp::OnRCGoOnline()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCSaveAllAndGetConfig
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCSaveAllAndGetConfig()
-{
-	// Saves the current loaded config completely, transfers the CurrentPathName to 
-	// SVRCComm.Dll and at least closes the current config, because the opened 
-	// SVObserver documents cannot be transfered to SVFocus!
-
-	bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-
-	if (bRunning)
-	{
-		OnRCGoOffline();
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
-	{
-		fileSaveAsSVX();
-
-		if (bRunning)
-		{
-			OnRunMode();
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnRCCloseAndCleanUpDownloadDirectory
 // -----------------------------------------------------------------------------
 // .Description : ...
@@ -2260,7 +2230,7 @@ void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
 	}
 }
 
-HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/)
+HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, bool useSvxName /*= false*/)
 {
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
@@ -2269,6 +2239,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/)
 
 	_tsplitpath(PathName, szDrive, szDir, szFile, szExt);
 	std::string Extension = szExt;
+	std::string OriginalFile {szFile};
 	std::string FileName{PathName};
 	std::string loadPath {szDrive};
 	loadPath += szDir;
@@ -2303,6 +2274,13 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/)
 				if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 				{
 					m_SvxFileName.SetFullFileName(rFile.c_str());
+					//When this is set then we need to rename the file to the name of the svx file
+					if(useSvxName)
+					{
+						std::string oldFileName{FileName};
+						SvUl::searchAndReplace(FileName, OriginalFile.c_str(), szFile);
+						::rename(oldFileName.c_str(), FileName.c_str());
+					}
 					break;
 				}
 			}
@@ -2702,7 +2680,7 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 }
 #pragma endregion virtual
 
-HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileFormat)
+HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type)
 {
 	HRESULT l_Status = S_OK;
 	std::string fileName{pFileName};
@@ -2718,7 +2696,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileF
 
 	if (S_OK == l_Status)
 	{
-		if(bPacFileFormat)
+		if(PutConfigType::PackedFormat == type)
 		{
 			SVPackedFile PackedFile;
 			if (PackedFile.UnPackFiles(fileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
@@ -2742,7 +2720,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileF
 	if (S_OK == l_Status)
 	{
 		SVRCSetSVCPathName(fileName.c_str());
-		l_Status = LoadConfiguration();
+		l_Status = LoadConfiguration(PutConfigType::SvzFormatDefaultName == type);
 		//Need to remove the config file path when loaded via remote so that when saved a new file name is required
 		m_ConfigFileName.SetPathName(nullptr);
 	}
@@ -2750,18 +2728,32 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, bool bPacFileF
 	return l_Status;
 }
 
-HRESULT SVObserverApp::SavePackedConfiguration(const std::string& rPackedFileName)
+HRESULT SVObserverApp::SavePackedConfiguration(LPCTSTR pFileName)
 {
 	HRESULT Result{S_OK};
 
-	//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
-	//This should be changed using inspection commands
-	SendMessage(m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM(ID_RC_SAVE_ALL_AND_GET_CONFIG, 0), 0);
+	bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
-	SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
-	if (!SvUl::makeZipFile(rPackedFileName, FileNameList, _T(""), false))
+	if (bRunning)
 	{
-	   Result = E_UNEXPECTED;
+		OnRCGoOffline();
+	}
+
+	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
+	{
+		fileSaveAsSVX();
+
+		SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
+
+		if (!SvUl::makeZipFile(pFileName, FileNameList, _T(""), false))
+		{
+			Result = E_UNEXPECTED;
+		}
+
+		if (bRunning)
+		{
+			OnRunMode();
+		}
 	}
 
 	return Result;
@@ -3620,9 +3612,9 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 	return l_hr;
 }
 
-HRESULT SVObserverApp::LoadConfiguration()
+HRESULT SVObserverApp::LoadConfiguration(bool useSvxName)
 {
-	return OpenFile(SVRCGetSVCPathName());
+	return OpenFile(SVRCGetSVCPathName(), false, useSvxName);
 }
 
 HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, const SVGUID& p_rObjectId)

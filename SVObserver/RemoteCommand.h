@@ -13,15 +13,23 @@
 #pragma region Includes
 #pragma endregion Includes
 
-extern void GlobalRCGoOnline();
-extern void GlobalRCGoOffline();
-extern bool GlobalRCGetState( DWORD* pdwSVIMState );
-extern HRESULT GlobalRCSetMode( unsigned long lSVIMNewMode );
-extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
-extern std::string GlobalRCGetConfigurationName();
-extern void GlobalRCSaveConfiguration();
-extern bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
-extern void GlobalRCCloseAndCleanConfiguration();
-extern void GlobalRCCloseConfiguration();
-extern HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, bool bPackedFileFormat);
+enum PutConfigType
+{
+	PackedFormat,
+	SvzFormatWithName,
+	SvzFormatDefaultName,
+};
+
+void GlobalRCGoOnline();
+void GlobalRCGoOffline();
+bool GlobalRCGetState( DWORD* pdwSVIMState );
+HRESULT GlobalRCSetMode( unsigned long newMode );
+HRESULT GlobalRCGetMode( unsigned long* plMode );
+std::string GlobalRCGetConfigurationName();
+HRESULT GlobalRCSaveConfiguration(LPCTSTR pFileName);
+bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
+void GlobalRCCloseAndCleanConfiguration();
+void GlobalRCCloseConfiguration();
+HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type);
+HRESULT GlobalRCAddFileToConfig(LPCTSTR pFileName);
 

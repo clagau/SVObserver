@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRCCommand.h"
+#include "RemoteCommand.h"
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
@@ -27,7 +28,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
-constexpr char* DefaultConfigurationName = _T("Configuration");
+constexpr char* c_DefaultConfigurationName = _T("Configuration");
 
 SVRCCommand::SVRCCommand()
 {
@@ -72,7 +73,7 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 		if (nullptr != pConfig)
 		{
 			//Note this needs to be done using SendMessage due to this being a worker thread
-			Status = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, static_cast<LPARAM> (DesiredMode)));
+			Status = GlobalRCSetMode(static_cast<unsigned long> (DesiredMode));
 		}
 		else
 		{
@@ -146,7 +147,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 		if (RemoteFilePath.empty())
 		{
-			RemoteFilePath = DefaultConfigurationName;
+			RemoteFilePath = c_DefaultConfigurationName;
 			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
 		std::string TempFileName = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(RemoteFilePath).c_str());
@@ -157,7 +158,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 			try
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				Result = TheSVObserverApp.SavePackedConfiguration(TempFileName);
+				Result = GlobalRCSaveConfiguration(TempFileName.c_str());
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			catch (const SvStl::MessageContainer& rSvE)
@@ -218,11 +219,13 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 	if (S_OK == Result)
 	{
 		std::string RemoteFilePath = SvUl::to_ansi(rRequest.filename());
+		PutConfigType type {PutConfigType::SvzFormatWithName};
 
 		if (RemoteFilePath.empty())
 		{
-			RemoteFilePath = DefaultConfigurationName;
+			RemoteFilePath = c_DefaultConfigurationName;
 			RemoteFilePath += SvDef::cPackedConfigExtension;
+			type = PutConfigType::SvzFormatDefaultName;
 		}
 
 		std::string TempFileName = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension).c_str());
@@ -237,9 +240,8 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 				//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
 				//This should be changed using inspection commands
-				WPARAM wParam = static_cast<WPARAM> ((1 == fileVersion) ? true : false);
-				LPARAM lParam = reinterpret_cast<LPARAM> (TempFileName.c_str());
-				Result = static_cast<HRESULT> (::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_LOAD_PACKED_CONFIGURATION,  wParam, lParam));
+				type = (1 == fileVersion) ? PutConfigType::PackedFormat : type;
+				Result = GlobalRCLoadPackedConfiguration(TempFileName.c_str(), type);
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				::remove(TempFileName.c_str());
 			}
@@ -628,7 +630,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 		if(S_OK == Result && rRequest.saveinconfig())
 		{
 			//Note this needs to be done using SendMessage due to this being a worker thread
-			Result = static_cast<HRESULT>(SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_ADD_FILE_TO_CONFIG, 0, reinterpret_cast<LPARAM> (destinationPath.c_str())));
+			Result = GlobalRCAddFileToConfig(destinationPath.c_str());
 		}
 
 	}

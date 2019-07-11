@@ -122,6 +122,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_ZOOM, &SVMainFrame::OnUpdateToolbarZoom)
 	ON_MESSAGE(SV_REGISTER_MONITOR_LIST, &SVMainFrame::RemoteRegisterMonitorList)
 	ON_MESSAGE(SV_ADD_FILE_TO_CONFIG, &SVMainFrame::onAddFileToConfig)
+	ON_MESSAGE(SV_SAVE_CONFIG, &SVMainFrame::onSaveConfig)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -750,6 +751,12 @@ LRESULT SVMainFrame::onAddFileToConfig(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+LRESULT SVMainFrame::onSaveConfig(WPARAM wParam, LPARAM lParam)
+{
+	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
+	return TheSVObserverApp.SavePackedConfiguration(pFileName);
+}
+
 LRESULT SVMainFrame::Shutdown( WPARAM wParam, LPARAM lParam )
 {
 	long shutdownOption = static_cast<long>(wParam);
@@ -1267,7 +1274,7 @@ LRESULT SVMainFrame::OnSetMode( WPARAM wParam, LPARAM lParam )
 
 LRESULT SVMainFrame::OnLoadPackedConfiguration( WPARAM wParam, LPARAM lParam )
 {
-	return TheSVObserverApp.LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), (0 == wParam) ? false : true);
+	return TheSVObserverApp.LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), static_cast<PutConfigType> (wParam));
 }
 
 #ifdef _DEBUG

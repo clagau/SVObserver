@@ -249,7 +249,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 
 			if (bSuccess)
 			{
-				bSuccess = S_OK == TheSVObserverApp.SavePackedConfiguration(ConfigName);
+				bSuccess = S_OK == GlobalRCSaveConfiguration(ConfigName.c_str());
 			}
 		}//offset < 1  end of the fist time
 
@@ -327,7 +327,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 	//The file name is set only when the first block is sent (lOffset == 0) but is needed when the following blocks are sent
 	//After the last block the file name is cleared
 	static std::string PackedFileName;
-	static bool bPacFileFormat {false};
+	static PutConfigType type {PutConfigType::SvzFormatDefaultName};
 	std::string configFileName;
 	HRESULT hrResult = S_OK;
 	CFile binFile;
@@ -357,7 +357,8 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 				PackedFileName += SvDef::cPackedConfigExtension;
 				//For old .pac file format the first 4 bytes are always 1
 				DWORD fileVersion = (lBlockSize > sizeof(DWORD)) ? *(reinterpret_cast<DWORD*> (*pFileData)) : 0;
-				bPacFileFormat = (1 == fileVersion) ? true : false;
+				//With SIAC the file name is not sent so we need to use the .svx name inside a .svz file
+				type = (1 == fileVersion) ? PutConfigType::PackedFormat : PutConfigType::SvzFormatDefaultName;
 				if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::typeBinary, ex))
 				{
 					bRet = true;
@@ -391,8 +392,9 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 
 		if (bLastFlag)
 		{
-			bSuccess = S_OK == GlobalRCLoadPackedConfiguration(PackedFileName.c_str(), bPacFileFormat);
+			bSuccess = S_OK == GlobalRCLoadPackedConfiguration(PackedFileName.c_str(), type);
 			PackedFileName.clear();
+			type = PutConfigType::SvzFormatDefaultName;
 		}
 	}
 	catch (CFileException *theEx)

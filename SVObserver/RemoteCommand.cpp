@@ -100,9 +100,9 @@ bool GlobalRCGetState( DWORD* pdwSVIMState )
 	return bOk;
 }
 
-HRESULT GlobalRCSetMode( unsigned long p_lNewMode )
+HRESULT GlobalRCSetMode( unsigned long newMode )
 {
-	return static_cast<HRESULT>(SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_lNewMode ));
+	return static_cast<HRESULT>(SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, static_cast<LPARAM> (newMode)));
 }
 
 HRESULT GlobalRCGetMode( unsigned long* pMode )
@@ -138,9 +138,10 @@ std::string GlobalRCGetConfigurationName()
 	return Result;
 }
 
-void GlobalRCSaveConfiguration()
+HRESULT GlobalRCSaveConfiguration(LPCTSTR pFileName)
 {
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_SAVE_ALL_AND_GET_CONFIG, 0), 0);
+	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
+	return static_cast<HRESULT> (::SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, SV_SAVE_CONFIG, 0, lParam));
 }
 
 bool GlobalRCOpenConfiguration( LPCTSTR ConfigName )
@@ -161,11 +162,17 @@ void GlobalRCCloseConfiguration()
 {
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE, 0), 0);
 }
-#pragma endregion Global functions
 
-HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, bool bPackedFileFormat)
+HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type)
 {
-	WPARAM wParam = static_cast<WPARAM> (bPackedFileFormat);
+	WPARAM wParam = static_cast<WPARAM> (type);
 	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
 	return static_cast<HRESULT> (::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_LOAD_PACKED_CONFIGURATION, wParam, lParam));
 }
+
+HRESULT GlobalRCAddFileToConfig(LPCTSTR pFileName)
+{
+	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
+	return static_cast<HRESULT>(::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_ADD_FILE_TO_CONFIG, 0, lParam));
+}
+#pragma endregion Global functions
