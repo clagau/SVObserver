@@ -352,6 +352,13 @@ void SVToolSetClass::goingOffline()
 	}
 }
 
+long SVToolSetClass::getTriggerCount() const
+{
+	long count = 0;
+	m_TriggerCount.GetValue(count);
+	return count;
+}
+
 #pragma region virtual method (IToolSet)
 bool SVToolSetClass::IsToolPreviousToSelected(const SVGUID& p_rToolID) const
 {

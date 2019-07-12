@@ -97,6 +97,8 @@ public:
 	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
 
 	virtual void goingOffline() override;
+
+	long getTriggerCount() const;
 #pragma region virtual method (IToolSet)
 	virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const override;
 	/// Return the first band 0 image from the first color tool. If there are no color Tool it return nullptr.

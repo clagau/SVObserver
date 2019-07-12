@@ -764,15 +764,18 @@ bool SVInspectionProcess::GoOffline()
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
 	//save the last image to have it in the edit-mode
-	for (SvIe::SVCameraImageTemplate* pCameraImage : m_CameraImages)
+	if (0 < m_pCurrentToolset->getTriggerCount())
 	{
-		if (nullptr != pCameraImage)
+		for (SvIe::SVCameraImageTemplate* pCameraImage : m_CameraImages)
 		{
-			SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
-			auto pImageData = pCameraImage->getImageData();
-			if (nullptr != pCamera && nullptr != pImageData && !pImageData->empty())
+			if (nullptr != pCameraImage)
 			{
-				pCamera->setTempImage(pImageData->GetBuffer());
+				SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
+				auto pImageData = pCameraImage->getImageData();
+				if (nullptr != pCamera && nullptr != pImageData && !pImageData->empty())
+				{
+					pCamera->setTempImage(pImageData->GetBuffer());
+				}
 			}
 		}
 	}
