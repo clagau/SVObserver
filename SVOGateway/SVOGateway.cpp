@@ -123,12 +123,10 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 			}
 			else if (status == SvRpc::ClientStatus::Disconnected &&  pServer.get())
 			{
-				SV_LOG_GLOBAL(debug) << "Stop HTTP server incallback in Router";
+				SV_LOG_GLOBAL(debug) << "Stop HTTP server in callback in Router";
 				pServer->stop();
 				pServer.reset(nullptr);
 			}
-			;
-
 		}};
 
 

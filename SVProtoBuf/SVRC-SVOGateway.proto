@@ -65,14 +65,6 @@ message Product
 	State status = 6;				//The status of the product (error number)
 }
 
-//This structure is sent for message notifications
-message MsgNotification
-{
-	MessageType type = 1;			//The message type start end or log
-	string messageText = 2;			//The message text being displayed
-	int32 errorNumber = 3;			//The error number being displayed
-}
-
 //Retrieves the inspection details of the currently loaded configuration on the SVIM
 message GetInspectionsRequest
 {
@@ -179,21 +171,23 @@ message GetTriggerItemsResponse
 	repeated Image images = 3;
 }
 
-//This registers which notifications are streamed by SVObserver
-message GetNotificationStreamRequest
+//This registers which notifications are streamed by SVOGateway
+message GetGatewayNotificationStreamRequest
 {
 }
 
 //The notification response is one of the values depending which notification type is being streamed
-message GetNotificationStreamResponse
+message GetGatewayNotificationStreamResponse
 {
 	oneof message
 	{
-		DeviceModeType currentMode = 1;			//The current SVObserver device mode
-		uint32 lastModified = 2;				//The last modified time stamp
-		MsgNotification msgNotification = 3;	//The message notification structure
-		string configFileLoaded = 4;			//The path to the loaded configuration file 
+		RejectStreamPauseNotification rejectStreamPaused = 1;
 	}
+}
+
+message RejectStreamPauseNotification
+{
+	bool paused = 1;
 }
 
 //Similar to GetProductRequest for rejects
@@ -290,4 +284,10 @@ message GetProductStreamResponse
 
 	// List of images in the same order as specified in the request.
 	repeated Image images = 5;
+}
+
+message SetRejectStreamPauseStateRequest
+{
+	// set to false to continue the stream
+	bool pause = 1;
 }

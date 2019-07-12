@@ -46,6 +46,8 @@ public:
 	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) override;
 	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) override;
 	void StoreClientLogs(const SvPb::StoreClientLogsRequest&, SvRpc::Task<SvPb::EmptyResponse>) override;
+	void SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest&, SvRpc::Task<SvPb::EmptyResponse>) override;
+	void GetGatewayNotificationStream(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
 	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
 
 private:
@@ -57,12 +59,32 @@ private:
 		SvRpc::ServerStreamContext::Ptr ctx;
 	};
 	void on_new_trigger_record(int inspectionPos, int trId);
-	void handle_new_trigger_record(product_stream_t&, SvTrc::ITriggerRecordR&, int inspectionPos, int trId);
+	void handle_new_trigger_record(product_stream_t&, std::shared_ptr<SvTrc::ITriggerRecordR>, int inspectionPos, int trId);
+
+private:
+	struct notification_stream_t
+	{
+		notification_stream_t(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr);
+		SvPb::GetGatewayNotificationStreamRequest req;
+		SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer;
+		SvRpc::ServerStreamContext::Ptr ctx;
+	};
+	void schedule_trigger_record_pause_state();
+	void on_trigger_record_pause_state_timer(const boost::system::error_code&);
+	void check_trigger_record_pause_state_changed();
+	void on_trigger_record_pause_state_changed_impl(bool paused);
+	void send_trigger_record_pause_state_to_client(notification_stream_t&, bool paused);
 
 private:
 	boost::asio::io_service& m_io_service;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
-	int m_TrcSubscriptionId;
+	std::atomic_bool m_trc_ready {false};
+	int m_TrcNewTrSubscriptionId;
+	int m_TrcReadySubscriptionId;
+	int m_TrcResetSubscriptionId;
 	std::vector<std::shared_ptr<product_stream_t>> m_ProductStreams;
+	boost::asio::deadline_timer m_pause_timer;
+	std::atomic<bool> m_pause_state {false};
+	std::vector<std::shared_ptr<notification_stream_t>> m_notification_streams;
 };
 }// namespace SvOgw

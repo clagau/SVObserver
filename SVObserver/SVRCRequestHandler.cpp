@@ -333,6 +333,3 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 		pCommand->RegisterNotificationStream(req, observer,ctx);
 	});
 }
-
-
-

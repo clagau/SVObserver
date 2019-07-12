@@ -341,6 +341,31 @@ message GetTriggerStreamResponse
 	bool is_reject = 2;
 }
 
+//This structure is sent for message notifications
+message MsgNotification
+{
+	MessageType type = 1;			//The message type start end or log
+	string messageText = 2;			//The message text being displayed
+	int32 errorNumber = 3;			//The error number being displayed
+}
+
+//This registers which notifications are streamed by SVObserver
+message GetNotificationStreamRequest
+{
+}
+
+//The notification response is one of the values depending which notification type is being streamed
+message GetNotificationStreamResponse
+{
+	oneof message
+	{
+		DeviceModeType currentMode = 1;			//The current SVObserver device mode
+		uint32 lastModified = 2;				//The last modified time stamp
+		MsgNotification msgNotification = 3;	//The message notification structure
+		string configFileLoaded = 4;			//The path to the loaded configuration file
+	}
+}
+
 message ExecuteInspectionCmdRequest
 {
 	bytes inspectionID = 1;			//The inspection GUID to perform the command on

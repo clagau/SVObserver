@@ -40,8 +40,8 @@ message SVRCMessages
 		GetFailStatusResponse getFailStatusResponse = 1011;
 		GetTriggerItemsRequest getTriggerItemsRequest = 1012;
 		GetTriggerItemsResponse getTriggerItemsResponse = 1013;
-		GetNotificationStreamRequest getNotificationStreamRequest = 1015;
-		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
+		GetGatewayNotificationStreamRequest getGatewayNotificationStreamRequest = 1015;
+		GetGatewayNotificationStreamResponse getGatewayNotificationStreamResponse = 1016;
 		GetRejectRequest getRejectRequest = 1017;
 		GetRejectResponse getRejectResponse = 1018;
 		GetProductStreamRequest getProductStreamRequest = 1021;
@@ -49,6 +49,7 @@ message SVRCMessages
 		StoreClientLogsRequest storeClientLogsRequest = 1023;
 		GetInspectionsRequest getInspectionsRequest = 1024;
 		GetInspectionsResponse getInspectionsResponse = 1025;
+		SetRejectStreamPauseStateRequest setRejectStreamPauseStateRequest = 1026;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
@@ -92,8 +93,10 @@ message SVRCMessages
 		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 2038;
 		GetTriggerStreamRequest getTriggerStreamRequest = 2039;
 		GetTriggerStreamResponse getTriggerStreamResponse = 2040;
-		ExecuteInspectionCmdRequest executeInspectionCmdRequest = 2041;
-		ExecuteInspectionCmdResponse executeInspectionCmdResponce = 2042;
+		GetNotificationStreamRequest getNotificationStreamRequest = 2041;
+		GetNotificationStreamResponse getNotificationStreamResponse = 2042;
+		ExecuteInspectionCmdRequest executeInspectionCmdRequest = 2043;
+		ExecuteInspectionCmdResponse executeInspectionCmdResponce = 2044;
 	}
 }
 

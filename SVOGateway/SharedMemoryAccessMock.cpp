@@ -138,14 +138,27 @@ void SharedMemoryAccessMock::StoreClientLogs(const SvPb::StoreClientLogsRequest&
 	task.finish(SvPb::EmptyResponse());
 }
 
-void SharedMemoryAccessMock::GetProductStream(const SvPb::GetProductStreamRequest& req,
+void SharedMemoryAccessMock::SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
+{
+	SvPenv::Error err;
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
+	task.error(err);
+}
+
+void SharedMemoryAccessMock::GetGatewayNotificationStream(
+	const SvPb::GetGatewayNotificationStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	observer.finish();
+}
+
+void SharedMemoryAccessMock::GetProductStream(
+	const SvPb::GetProductStreamRequest& req,
 	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	/*
-	m_io_service.post(
-		std::bind(&SharedMemoryAccessMock::getImageStreamFromIdStep, this, req.count(), req.id(), observer, ctx));
-	*/
+	observer.finish();
 }
 
 void SharedMemoryAccessMock::getProduct(SvPb::Product& product, bool name_in_response)

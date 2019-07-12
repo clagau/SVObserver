@@ -86,6 +86,26 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		sma->GetImageFromId(req, task);
 	});
 
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kSetRejectStreamPauseStateRequest,
+		SvPb::SetRejectStreamPauseStateRequest,
+		SvPb::EmptyResponse>(
+		[sma](SvPb::SetRejectStreamPauseStateRequest&& req, SvRpc::Task<SvPb::EmptyResponse> task)
+	{
+		sma->SetRejectStreamPauseState(req, task);
+	});
+
+	registerStreamHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetGatewayNotificationStreamRequest,
+		SvPb::GetGatewayNotificationStreamRequest,
+		SvPb::GetGatewayNotificationStreamResponse>(
+		[sma](SvPb::GetGatewayNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+	{
+		sma->GetGatewayNotificationStream(req, observer, ctx);
+	});
+
 	registerStreamHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetProductStreamRequest,

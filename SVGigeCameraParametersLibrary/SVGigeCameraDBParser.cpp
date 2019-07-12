@@ -22,7 +22,7 @@ HRESULT SVGigeCameraDBParser::Parse(BSTR data, SVGigeDeviceParameterMap& params)
 	CoInitialize( nullptr );
 	MSXML2::ISAXXMLReader* pRdr( nullptr );
 
-	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader), nullptr, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
+	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader60), nullptr, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
 
 	if (S_OK == hr) 
 	{
