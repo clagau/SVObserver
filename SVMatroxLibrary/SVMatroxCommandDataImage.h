@@ -25,7 +25,7 @@ public:
 	friend class SVMatroxOcrInterface;
 
 	SVMatroxCommandDataImage();
-	SVMatroxCommandDataImage( const SVMatroxBufferCreateStruct& rCreateData );
+	explicit SVMatroxCommandDataImage( const SVMatroxBufferCreateStruct& rCreateData );
 	SVMatroxCommandDataImage( const SVMatroxBuffer& rBuffer, bool readOnly = false );
 	SVMatroxCommandDataImage( const std::vector<unsigned char>& rData, bool readOnly = false );
 

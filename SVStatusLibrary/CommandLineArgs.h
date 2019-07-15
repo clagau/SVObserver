@@ -23,11 +23,6 @@ public:
 	static CommandLineArgs& Inst();
 
 	//************************************
-	//! return the  directory of the executable
-	//! \returns LPCSTR
-	//************************************
-	LPCSTR GetStartDirectory();
-	//************************************
 	//! return the  directory from the command line or Getstartdirectorx  
 	//! \returns LPCSTR
 	//************************************

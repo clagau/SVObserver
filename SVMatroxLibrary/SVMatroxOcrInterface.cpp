@@ -671,13 +671,9 @@ HRESULT SVMatroxOcrInterface::CalibrateFont(const SVMatroxOcr& p_rFontId, const 
 
 HRESULT SVMatroxOcrInterface::CalibrateFontCommand(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
-	SVMatroxOcr l_Font;
-
 	p_rResults.clear();
-
-	l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
+	SVMatroxOcr l_Font;
+	HRESULT l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
 
 	if (S_OK == l_Status)
 	{
@@ -941,8 +937,6 @@ HRESULT SVMatroxOcrInterface::RestoreFont(SVMatroxOcr& p_rFontId, const std::str
 
 HRESULT SVMatroxOcrInterface::RestoreFont(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	std::vector<unsigned char> l_CharacterFileContents;
 	std::vector<unsigned char> l_ControlFileContents;
 	std::vector<unsigned char> l_ConstraintFileContents;
@@ -950,7 +944,7 @@ HRESULT SVMatroxOcrInterface::RestoreFont(const SVCommandDataHolder& p_rAttribut
 	std::string l_ControlFileName;
 	std::string l_ConstraintFileName;
 
-	l_Status = p_rAttributes.GetBlock(_T("Character File Contents"), l_CharacterFileContents);
+	HRESULT l_Status = p_rAttributes.GetBlock(_T("Character File Contents"), l_CharacterFileContents);
 
 	if (S_OK == l_Status)
 	{
@@ -1023,10 +1017,9 @@ HRESULT SVMatroxOcrInterface::SaveFont(const SVMatroxOcr& p_rFontId, const std::
 #endif
 
 	{
-		__int64 l_lOperation;
 		if (!p_rFontId.empty())
 		{
-			l_lOperation = Convert2MatroxOperationType(p_eOperation);
+			__int64 l_lOperation = Convert2MatroxOperationType(p_eOperation);
 			if (l_lOperation != 0)
 			{
 				MocrSaveFont(const_cast<MIL_TEXT_CHAR*>(p_sFileName.c_str()), l_lOperation, p_rFontId.m_OcrFontID);
@@ -1054,15 +1047,12 @@ HRESULT SVMatroxOcrInterface::SaveFont(const SVMatroxOcr& p_rFontId, const std::
 
 HRESULT SVMatroxOcrInterface::SaveFont(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	std::string l_CharacterFileName;
 	std::string l_ControlFileName;
 	std::string l_ConstraintFileName;
 
 	SVMatroxOcr l_Font;
-
-	l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
+	HRESULT l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
 
 	if (S_OK == l_Status)
 	{
@@ -1153,8 +1143,6 @@ HRESULT SVMatroxOcrInterface::SaveFont(const SVCommandDataHolder& p_rAttributes,
 
 HRESULT SVMatroxOcrInterface::FindFontCharacters(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	SVCommandDataFacadePtr l_BlobResultsPtr;
 	SIZE imageSize = {0, 0};
 	_variant_t l_OffsetX = 0;
@@ -1167,7 +1155,7 @@ HRESULT SVMatroxOcrInterface::FindFontCharacters(const SVCommandDataHolder& p_rA
 	SVMatroxBlobInterface::SVBlobList l_Blobs;
 	SVMatroxBlobInterface::SVBlobOffsetList l_FilteredBlobs;
 
-	l_Status = p_rAttributes.GetValue(_T("Offset X"), l_OffsetX);
+	HRESULT l_Status = p_rAttributes.GetValue(_T("Offset X"), l_OffsetX);
 
 	if (S_OK == l_Status)
 	{
@@ -1261,10 +1249,6 @@ HRESULT SVMatroxOcrInterface::FindFontCharacters(const SVCommandDataHolder& p_rA
 
 HRESULT SVMatroxOcrInterface::CharacterThickness(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
-	long l_Thickness = 0;
-
 	SVCommandDataFacadePtr l_BlobResultsPtr;
 	_variant_t l_BackgroundType = DARK;
 	SVMatroxCommandDataImage l_ThresholdImage;
@@ -1272,7 +1256,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness(const SVCommandDataHolder& p_rA
 	long lSizeX = 0;
 	long lSizeY = 0;
 
-	l_Status = p_rAttributes.GetValue(_T("Background Type"), l_BackgroundType);
+	HRESULT l_Status = p_rAttributes.GetValue(_T("Background Type"), l_BackgroundType);
 
 	if (S_OK == l_Status)
 	{
@@ -1303,6 +1287,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness(const SVCommandDataHolder& p_rA
 
 	if (S_OK == l_Status)
 	{
+		long l_Thickness = 0;
 		if (l_Blobs.size() > 0)
 		{
 			std::vector<long> l_aItterations;
@@ -1329,7 +1314,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness(const SVCommandDataHolder& p_rA
 					l_CreateStruct.m_data.m_lParentBandCount = 1;
 
 					SVMatroxBuffer ROIBuf;
-					HRESULT l_Code = SVMatroxBufferInterface::Create(ROIBuf, l_CreateStruct);
+					/*HRESULT l_Code = */SVMatroxBufferInterface::Create(ROIBuf, l_CreateStruct);
 
 					long l_tmp;
 					if (S_OK == ThicknessCalculation(ROIBuf, l_BackgroundType, l_tmp))
@@ -1361,43 +1346,6 @@ HRESULT SVMatroxOcrInterface::CharacterThickness(const SVCommandDataHolder& p_rA
 
 	return l_Status;
 }
-
-/**
-@SVOperationName Set Verify
-
-@SVOperationDescription This function sets the verify string and the verify flag which determine the operation is used during the execute.
-
-*/
-HRESULT SVMatroxOcrInterface::SetVerify(SVMatroxOcr& p_rFontId, const std::string& p_strVerifyString, const bool p_bVerifyOn)
-{
-	HRESULT l_Code;
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-
-	{
-		if (!p_rFontId.empty())
-		{
-			p_rFontId.m_bVerify = p_bVerifyOn;
-			p_rFontId.m_VerifyString = p_strVerifyString;
-			l_Code = S_OK;
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
-
 
 /**
 @SVOperationName Set - double&
@@ -1827,13 +1775,10 @@ HRESULT SVMatroxOcrInterface::Execute(const __int64& rResultId, const SVMatroxOc
 
 HRESULT SVMatroxOcrInterface::ReadString(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
-	SVMatroxOcr l_Font;
-
 	p_rResults.clear();
 
-	l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
+	SVMatroxOcr l_Font;
+	HRESULT l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
 
 	if (S_OK == l_Status)
 	{
@@ -1907,13 +1852,10 @@ HRESULT SVMatroxOcrInterface::ReadString(const SVCommandDataHolder& p_rAttribute
 
 HRESULT SVMatroxOcrInterface::VerifyString(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
-	SVMatroxOcr l_Font;
-
 	p_rResults.clear();
 
-	l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
+	SVMatroxOcr l_Font;
+	HRESULT l_Status = CreateFontIdFromFontData(p_rAttributes, l_Font);
 
 	if (S_OK == l_Status)
 	{
@@ -1966,8 +1908,6 @@ HRESULT SVMatroxOcrInterface::VerifyString(const SVCommandDataHolder& p_rAttribu
 			// Process the OCR chars returned from MocrReadString();
 			long l_Length = 0L;
 			double l_MatchScore = 0.0;
-			std::string l_ReadString;
-
 			l_Status = SVMatroxOcrInterface::GetResult(milResult, SVOcrResultStringSize, l_Length);
 
 			if (l_Length != 0)
@@ -2017,14 +1957,11 @@ HRESULT SVMatroxOcrInterface::CreateTempFileName(std::string& p_rFileName)
 
 HRESULT SVMatroxOcrInterface::ConvertFileToByteVector(const std::string& rFileName, std::vector<unsigned char>& rFileContents)
 {
-	HRESULT l_Status = S_OK;
-
 	rFileContents.clear();
 
 	SVFile l_File;
-
 	l_File.Open(rFileName.c_str(), SVFile::modeRead);
-	l_Status = l_File.ReadContents(rFileContents);
+	HRESULT l_Status = l_File.ReadContents(rFileContents);
 	l_File.Close();
 
 	return l_Status;
@@ -2032,11 +1969,8 @@ HRESULT SVMatroxOcrInterface::ConvertFileToByteVector(const std::string& rFileNa
 
 HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile(const std::vector<unsigned char>& rFileContents, std::string& rFileName)
 {
-	HRESULT l_Status = S_OK;
-
 	std::string l_FileName;
-
-	l_Status = CreateTempFileName(l_FileName);
+	HRESULT l_Status = CreateTempFileName(l_FileName);
 
 	if (S_OK == l_Status)
 	{
@@ -2057,8 +1991,6 @@ HRESULT SVMatroxOcrInterface::ConvertByteVectorToTempFile(const std::vector<unsi
 
 HRESULT SVMatroxOcrInterface::CreateFontDataFromFontId(const SVMatroxOcr& p_rFontId, SVCommandDataHolder& p_rFontData)
 {
-	HRESULT l_Status = S_OK;
-
 	long lForeground;
 	double dCharBoxSizeX;
 	double dCharBoxSizeY;
@@ -2089,10 +2021,8 @@ HRESULT SVMatroxOcrInterface::CreateFontDataFromFontId(const SVMatroxOcr& p_rFon
 
 	SVCommandDataHolder l_FontData;
 
-	if (S_OK == l_Status)
-	{
-		l_Status = SVMatroxOcrInterface::Get(p_rFontId, SVCharNumberInFont, lCharInCurrFont);
-	}
+	HRESULT l_Status = SVMatroxOcrInterface::Get(p_rFontId, SVCharNumberInFont, lCharInCurrFont);
+
 
 	if (S_OK == l_Status)
 	{
@@ -2340,15 +2270,9 @@ HRESULT SVMatroxOcrInterface::CreateFontDataFromFontId(const SVMatroxOcr& p_rFon
 
 HRESULT SVMatroxOcrInterface::CreateFontIdFromFontData(const SVCommandDataHolder& p_rFontData, SVMatroxOcr& p_rFontId)
 {
-	HRESULT l_Status = S_OK;
-
-	long l_Count = 0;
 	long l_lStringLength;
 
 	SVMatroxOcrCreateStruct l_Create;
-	std::string l_CharacterFileName;
-	std::string l_ControlFileName;
-	std::string l_ConstraintFileName;
 
 	double l_dCharacterAcceptance;
 	double l_dStringAcceptance;
@@ -2370,7 +2294,7 @@ HRESULT SVMatroxOcrInterface::CreateFontIdFromFontData(const SVCommandDataHolder
 
 	SVCommandDataHolder l_FontData;
 
-	l_Status = p_rFontData.GetContainer(_T("Font"), l_FontData);
+	HRESULT l_Status = p_rFontData.GetContainer(_T("Font"), l_FontData);
 
 	if (S_OK == l_Status)
 	{
@@ -2785,16 +2709,13 @@ HRESULT SVMatroxOcrInterface::CreateFontIdFromFontData(const SVCommandDataHolder
 
 HRESULT SVMatroxOcrInterface::UpdateCharacterListFromFontId(const SVMatroxOcr& p_rFontId, SVCommandDataHolder& p_rFontData)
 {
-	HRESULT l_Status = S_OK;
-
 	long l_Count = 0;
-	long l_Foreground = SVOcrForegroundBlack;
 	double dCharBoxSizeX = 0.0;
 	double dCharBoxSizeY = 0.0;
 	std::string l_strFontChars;
 	SVCommandDataHolder l_Characters;
 
-	l_Status = SVMatroxOcrInterface::Get(p_rFontId, SVCharNumberInFont, l_Count);
+	HRESULT l_Status = SVMatroxOcrInterface::Get(p_rFontId, SVCharNumberInFont, l_Count);
 
 	if (S_OK == l_Status)
 	{

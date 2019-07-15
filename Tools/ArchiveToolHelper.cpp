@@ -56,7 +56,6 @@ bool ArchiveToolHelper::isTokensValid()
 std::string ArchiveToolHelper::TranslatePath(const std::string& sPath)
 {
 	std::string sReturnPath = sPath;
-	std::string sTmpPath = sPath;
 	SYSTEMTIME stime;
 	memset( &stime, 0, sizeof( SYSTEMTIME));
 	::GetLocalTime( &stime );

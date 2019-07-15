@@ -158,8 +158,6 @@ namespace SvOg
 
 	BOOL SVPatternAnalyzerModelPage::OnInitDialog()
 	{
-		BOOL bOK = TRUE;
-
 		CPropertyPage::OnInitDialog();
 
 		Init(); //init of ImageController
@@ -589,11 +587,10 @@ namespace SvOg
 				dPoxY = ResultYArray[0];
 			}
 
-			double angle = 0;
 			std::vector<double> ResultAngleArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SVpatResultAngleObjectGuid));
 			if (0 < ResultAngleArray.size())
 			{
-				angle = ResultAngleArray[0];
+				double angle = ResultAngleArray[0];
 				SVPoint<double> moveVector = SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(m_CenterX, m_CenterY), -angle);
 				m_nXPos = static_cast<int>(dPosX - moveVector.m_x);
 				m_nYPos = static_cast<int>(dPoxY - moveVector.m_y);

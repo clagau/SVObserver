@@ -194,7 +194,7 @@ STDAPI DllRegisterServer(void)
 		l_Status = AddMessageKeys( _T( "SVAccess" ) );
 	}
 
-	return S_OK;
+	return l_Status;
 }
 
 // by exporting DllRegisterServer, you can use regsvr.exe

@@ -72,8 +72,6 @@ public:
 	// This function replaces MocrPreprocess
 	static HRESULT Preprocess( const SVMatroxOcr& p_rFontId );
 
-	static HRESULT SetVerify( SVMatroxOcr& p_rFontId, const std::string& p_strVerifyString, const bool p_bVerifyOn );
-
 	// These functions use MocrControl
 	static HRESULT Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const double& p_dValue );
 	static HRESULT Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const long& p_lValue );

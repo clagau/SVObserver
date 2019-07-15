@@ -280,12 +280,6 @@ void LineObject::GetParameter(VariantParamMap& ParameterMap) const
 	ParameterMap[P_Y2] = static_cast<long>(m_EndPos.y);
 }
 
-void LineObject::GetLine( POINT& p_rStart, POINT& p_rEnd ) const
-{
-	p_rStart = m_StartPos;
-	p_rEnd = m_EndPos;
-}
-
 RECT LineObject::GetRectangle() const
 {
 	CRect lRect( m_StartPos, m_EndPos );

@@ -39,7 +39,6 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	SVObjectReferenceVector getResultArchiveList();
 	void setResultArchiveList(const SVObjectReferenceVector& rObjectRefVector);
-	void AddImageToArray(SvIe::SVImageClass* pImage);
 	SVObjectReferenceVector getImageArchiveList();
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 

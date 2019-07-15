@@ -53,7 +53,7 @@ protected:
 	void FixConfiguration();
 	void ReIndexIOEntries(HTREEITEM p_Item);
 
-	unsigned long m_ulCurrentVersion;
+	unsigned long m_ulCurrentVersion = 0;
 
 	std::vector<std::string> m_Inspections;
 	typedef std::pair<HTREEITEM, std::string> HTIStringPair;

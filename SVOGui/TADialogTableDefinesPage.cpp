@@ -210,8 +210,6 @@ void TADialogTableDefinesPage::OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*p
 
 void TADialogTableDefinesPage::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-	SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-
 	CPoint p;
 	if (GetCursorPos(&p))
 	{
@@ -318,12 +316,12 @@ void TADialogTableDefinesPage::OnSelectionChanged(NMHDR *pNotifyStruct, LRESULT*
 HRESULT TADialogTableDefinesPage::ValidateData()
 {
 	UpdateData(TRUE);
-	HRESULT hResult = S_OK;
+
 	// Do a reset of the Tool
 	SvPb::InspectionCmdMsgs Request, Response;
 	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
 	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
-	hResult = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
+	HRESULT hResult = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
 	
 	if (hResult == S_OK && Response.has_resetobjectresponse())
 	{
@@ -425,11 +423,9 @@ bool TADialogTableDefinesPage::isTableNameUnique(const std::string& name)
 void TADialogTableDefinesPage::showContextMenu(CPoint point)
 {
 	CMenu menu;
-	CMenu* pPopupMenu;
-
 	if (menu.LoadMenu(IDR_TABLE_DEFINE_MOUSE_MENU))
 	{
-		if (pPopupMenu = menu.GetSubMenu(0))
+		if (CMenu* pPopupMenu = menu.GetSubMenu(0))
 		{
 			ClientToScreen(&point);
 			pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);

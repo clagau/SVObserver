@@ -44,7 +44,6 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 	DWORD dwDisposition = 0L;
 	std::string szKey = p_szKey;
 	std::string szFullKey = p_szKey;
-	std::string szTemp;
 	HKEY hBaseKey = HKEY_LOCAL_MACHINE;
 	LONG lResult;
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
@@ -80,10 +79,10 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 				}
 				else
 				{
-					if (szFullKey.substr(0, 20) == SV_HKEY_PERFORMANCE_DATA)
+					if (szFullKey.substr(0, strlen(SV_HKEY_PERFORMANCE_DATA)) == SV_HKEY_PERFORMANCE_DATA)
 					{
 						hBaseKey = HKEY_PERFORMANCE_DATA;
-						szFullKey.erase(0, 21);
+						szFullKey.erase(0, strlen(SV_HKEY_PERFORMANCE_DATA)+1);
 					}
 					else
 					{
@@ -237,8 +236,6 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, std::string& szValu
 
 bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 {
-	DWORD dwType = 0L;
-
 	if( ERROR_SUCCESS == RegSetValueEx( mhKey,
 		szValueName,
 		0,
@@ -293,8 +290,6 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 
 bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 {
-	DWORD dwType = 0L, dwSize = 0L;
-
 	if( ERROR_SUCCESS == RegSetValueEx( mhKey,
 		szValueName,
 		0,
@@ -344,11 +339,7 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 
 bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector )
 {
-	DWORD dwType = 0L;
-	DWORD dwSize = 0L;
-	LONG lResult = 0L;
-
-	lResult = RegSetValueEx( mhKey,
+	 LONG lResult = RegSetValueEx( mhKey,
 		szValueName,
 		0,
 		REG_BINARY,
@@ -393,34 +384,6 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 	return false;
 }
 
-bool SVRegistryClass::SaveKey(LPCTSTR p_szHive)
-{
-	LONG dwResult;
-
-	AdjustPrivileges (SE_BACKUP_NAME);
-
-	_tunlink( p_szHive );
-
-	dwResult = RegSaveKey( mhKey, p_szHive, nullptr );
-
-	return (ERROR_SUCCESS == dwResult);
-}
-
-bool SVRegistryClass::ReplaceKey(LPCTSTR p_szHive)
-{
-	WIN32_FIND_DATA wfd;
-	LONG dwResult;
-
-	AdjustPrivileges (SE_RESTORE_NAME);
-
-	if (INVALID_HANDLE_VALUE == FindFirstFile (p_szHive, &wfd))
-		SaveKey (p_szHive);
-
-	dwResult = RegRestoreKey (mhKey, p_szHive, 0L);
-
-	return true;
-}
-
 bool SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 {
 	HANDLE hToken;
@@ -442,42 +405,6 @@ bool SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 	return false;
 }
 
-void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
-{
-	std::string szKey;
-	DWORD dwIndex;
-	DWORD dwcbBuffSize;
-	DWORD dwcSubKeys;
-	DWORD dwcbMaxSubKeyLen;
-	FILETIME ftLastWriteTime;
-	LONG lResult;
-
-	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, &dwcSubKeys, &dwcbMaxSubKeyLen, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
-
-	if (dwcSubKeys)
-	{
-		for (lResult = ERROR_SUCCESS, dwIndex = 0; lResult == ERROR_SUCCESS; dwIndex++)
-		{
-			dwcbBuffSize = dwcbMaxSubKeyLen + 1;
-			TCHAR* pszKey = new TCHAR[dwcbBuffSize];
-			lResult = RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, nullptr, nullptr, nullptr, &ftLastWriteTime);
-			
-			if (lResult == ERROR_SUCCESS)
-				szKey = pszKey;
-
-			delete [] pszKey;
-
-			if (lResult == ERROR_SUCCESS)
-			{
-				if (!(*pKeyEnumProc) (szKey.c_str(), pUserData))
-				{
-					lResult = ERROR_NO_MORE_ITEMS;
-				}
-			}
-		}
-	}
-}
-
 bool SVRegistryClass::DeleteKey()
 {
 	if (ERROR_SUCCESS == RegDeleteKey (mhKey, _T("")))
@@ -494,25 +421,6 @@ bool SVRegistryClass::CreatedNewKey()
 	return mbCreatedNewKey;
 }
 
-SVRegistryClass * SVRegistryClass::OpenSubKey( LPCTSTR p_szSubKey )
-{
-	std::string szKey;
-	std::string szSubKey = p_szSubKey;
-
-	szKey = mszKey;
-	if (szSubKey.substr(0,1) != _T("\\"))
-	{
-		szKey += _T("\\");
-	}
-	szKey += szSubKey;
-	return new SVRegistryClass( szKey.c_str() );
-}
-
-bool SVRegistryClass::DeleteValue(LPCTSTR p_szValueName)
-{
-	return (ERROR_SUCCESS == RegDeleteValue (mhKey, p_szValueName));
-}
-
 bool SVRegistryClass::SetShadowFileName(LPCTSTR szFileName)
 {
 	return SetRegistryValue( SV_SHADOWFILE, szFileName );
@@ -525,11 +433,12 @@ bool SVRegistryClass::GetShadowFileName(std::string & szShadowFile)
 
 bool SVRegistryClass::GetDefaultShadowFileName(std::string & szShadowFile)
 {
-	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
+	TCHAR szPath[_MAX_PATH];
 	std::string szKey;
 
 	if (GetModuleFileName (nullptr, szPath, _MAX_PATH))
 	{
+		TCHAR szFname[_MAX_FNAME];
 		_tsplitpath (szPath, nullptr, nullptr, szFname, nullptr);
 		_tgetcwd (szPath, _MAX_PATH);
 
@@ -841,26 +750,23 @@ bool SVRegistryClass::Export(LPCTSTR szFileName)
 bool SVRegistryClass::ExportKeys(FILE * pFile)
 {
 	bool rc = true;
-	std::string szKey;
-	DWORD dwIndex;
-	DWORD dwcSubKeys;
-	DWORD dwcbMaxSubKeyLen;
-	DWORD dwcbBuffSize;
-	LONG lResult;
 
 	_ftprintf (pFile, _T("[%s]\n"), mszKey.c_str());
 
 	if (ExportValues (pFile))
 	{
 		_ftprintf (pFile, _T("\n"));
+
+		DWORD dwcSubKeys;
+		DWORD dwcbMaxSubKeyLen;
 		RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, &dwcSubKeys, &dwcbMaxSubKeyLen, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 
-		for (dwIndex = 0; dwIndex < dwcSubKeys; dwIndex++)
+		for (DWORD dwIndex = 0; dwIndex < dwcSubKeys; dwIndex++)
 		{
-			dwcbBuffSize = dwcbMaxSubKeyLen + 1;
+			DWORD dwcbBuffSize = dwcbMaxSubKeyLen + 1;
 			TCHAR* pszKey = new TCHAR[dwcbBuffSize];
-			lResult= RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, nullptr, nullptr, nullptr, nullptr);
-			szKey = pszKey;
+			LONG lResult= RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, nullptr, nullptr, nullptr, nullptr);
+			std::string szKey = pszKey;
 			delete [] pszKey;
 
 			if (lResult == ERROR_SUCCESS)
@@ -899,36 +805,30 @@ bool SVRegistryClass::ExportKeys(FILE * pFile)
 bool SVRegistryClass::ExportValues(FILE * pFile)
 {
 	bool rc = true;
-	TCHAR *pszName, *ptData;
-	BYTE *pData;
-	DWORD dwIndex;
 	DWORD dwcValues, dwcbValueMax, dwcbNameMax;
-	DWORD dwcbName, dwcbValue, dwType;
-	LONG lResult;
-	LONG lLineLen;
-	int i;
+	DWORD dwType;
 	std::string szComma;
 
 	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dwcValues, &dwcbNameMax, &dwcbValueMax, nullptr, nullptr);
 
 	if (dwcValues)
 	{
-		dwcbName = dwcbNameMax + 1;
-		dwcbValue = dwcbValueMax;
+		DWORD dwcbName = dwcbNameMax + 1;
+		DWORD dwcbValue = dwcbValueMax;
 
-		pszName = new TCHAR[dwcbName];
-		pData = (BYTE *) new char[dwcbValue];
+		TCHAR* pszName = new TCHAR[dwcbName];
+		BYTE* pData = (BYTE *) new char[dwcbValue];
 
-		for (dwIndex = 0; dwIndex < dwcValues; dwIndex++)
+		for (DWORD dwIndex = 0; dwIndex < dwcValues; dwIndex++)
 		{
 			dwcbName = dwcbNameMax + 1;
 			dwcbValue = dwcbValueMax;
-			lResult= RegEnumValue (mhKey, dwIndex, pszName, &dwcbName, nullptr, &dwType, pData, &dwcbValue);
+			LONG lResult= RegEnumValue (mhKey, dwIndex, pszName, &dwcbName, nullptr, &dwType, pData, &dwcbValue);
 
 			if (lResult == ERROR_SUCCESS)
 			{
-				lLineLen = _ftprintf (pFile, _T("\""));
-				for (i = 0; (i < (int) dwcbName) && pszName[i]; i++)
+				LONG lLineLen = _ftprintf (pFile, _T("\""));
+				for (int i = 0; (i < (int) dwcbName) && pszName[i]; i++)
 				{
 					switch (pszName[i])
 					{
@@ -956,33 +856,35 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 				switch (dwType)
 				{
 				case REG_SZ :
-					ptData = (TCHAR *) pData;
-					lLineLen += _ftprintf (pFile, _T("\""));
-					dwcbValue /= sizeof (TCHAR);
-					for (i = 0; (i < (int) dwcbValue) && ptData[i]; i++)
+				{
+					TCHAR* ptData = (TCHAR *)pData;
+					lLineLen += _ftprintf(pFile, _T("\""));
+					dwcbValue /= sizeof(TCHAR);
+					for (int i = 0; (i < (int)dwcbValue) && ptData[i]; i++)
 					{
 						switch (ptData[i])
 						{
-						case SV_BACKSLASHCHAR :
-							lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, SV_BACKSLASHCHAR);
-							break;
+							case SV_BACKSLASHCHAR:
+								lLineLen += _ftprintf(pFile, _T("%c%c"), SV_BACKSLASHCHAR, SV_BACKSLASHCHAR);
+								break;
 
-						case _T('"') :
-							lLineLen += _ftprintf (pFile, _T("%c%c"), SV_BACKSLASHCHAR, _T('"'));
-							break;
+							case _T('"'):
+								lLineLen += _ftprintf(pFile, _T("%c%c"), SV_BACKSLASHCHAR, _T('"'));
+								break;
 
-						default :
-							if (ptData[i] > _T('\xff'))
-							{
-								lLineLen += _ftprintf (pFile, _T("?"));
-							}
-							else
-							{
-								lLineLen += _ftprintf (pFile, _T("%c"), ptData[i]);
-							}
+							default:
+								if (ptData[i] > _T('\xff'))
+								{
+									lLineLen += _ftprintf(pFile, _T("?"));
+								}
+								else
+								{
+									lLineLen += _ftprintf(pFile, _T("%c"), ptData[i]);
+								}
 						}
 					}
-					lLineLen += _ftprintf (pFile, _T("\"\n"));
+					lLineLen += _ftprintf(pFile, _T("\"\n"));
+				}
 					break;
 
 				case REG_DWORD :
@@ -992,7 +894,7 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 				case REG_BINARY :
 					lLineLen += _ftprintf (pFile, _T("hex:"));
 					szComma = _T(""); 
-					for (i = 0; i < (int) dwcbValue; i++)
+					for (int i = 0; i < (int) dwcbValue; i++)
 					{
 						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.c_str() );
 						szComma = _T(",");
@@ -1009,24 +911,26 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 					break;
 
 				default :
-					ptData = (TCHAR *) pData;
-					lLineLen += _ftprintf (pFile, _T("hex(%d):"), dwType);
+				{
+					TCHAR* ptData = (TCHAR *)pData;
+					lLineLen += _ftprintf(pFile, _T("hex(%lu):"), dwType);
 					szComma = _T("");
-					dwcbValue /= sizeof (TCHAR);
-					for (i = 0; i < (int) dwcbValue; i++)
+					dwcbValue /= sizeof(TCHAR);
+					for (int i = 0; i < (int)dwcbValue; i++)
 					{
-						lLineLen += _ftprintf( pFile, _T( "%s" ), szComma.c_str() );
+						lLineLen += _ftprintf(pFile, _T("%s"), szComma.c_str());
 						szComma = _T(",");
 
 						if (lLineLen > 77)
 						{
-							_ftprintf (pFile, _T("\\\n  "));
+							_ftprintf(pFile, _T("\\\n  "));
 							lLineLen = 2;
 						}
 
-						lLineLen += _ftprintf (pFile, _T("%02.2x"), ptData[i]);
+						lLineLen += _ftprintf(pFile, _T("%02.2x"), ptData[i]);
 					}
-					_ftprintf (pFile, _T("\n"));
+					_ftprintf(pFile, _T("\n"));
+				}
 					break;
 				}
 			}
@@ -1073,12 +977,3 @@ bool SVRegistryClass::GetRegistryValue(DWORD dwIndex, std::string& szValueName, 
 
 	return rc;
 }
-
-DWORD SVRegistryClass::NumSubKeys()
-{
-	DWORD dwNumSubKeys;
-
-	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, &dwNumSubKeys, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
-	return dwNumSubKeys;
-}
-

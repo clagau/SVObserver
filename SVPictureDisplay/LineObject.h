@@ -31,7 +31,6 @@ public:
 	virtual bool Move( HTTYPE SelType, POINT imageMovePoint, const POINT &viewMovePoint ) override;
 	virtual void SetParameter(long parameterId, _variant_t parameterValue) override;
 	virtual void GetParameter(VariantParamMap& ParameterMap) const override;
-	virtual void GetLine( POINT& p_rStart, POINT& p_rEnd ) const;
 	virtual RECT GetRectangle() const override;
 #pragma endregion Public Methods
 

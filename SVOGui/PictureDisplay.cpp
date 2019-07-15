@@ -48,9 +48,9 @@ namespace SvOg
 				HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
 				if (S_OK == l_Code)
 				{
-					l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
-					l_Code = SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
-					l_Code = SVMatroxBufferInterface::GetHostAddress(&pMilBuffer, newBuffer);
+					/*l_Code =*/ SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
+					/*l_Code =*/ SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
+					/*l_Code =*/ SVMatroxBufferInterface::GetHostAddress(&pMilBuffer, newBuffer);
 				}
 				
 				if (nullptr != pMilBuffer && !dibInfo.empty())

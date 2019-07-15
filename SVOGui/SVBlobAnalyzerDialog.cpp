@@ -214,14 +214,14 @@ namespace SvOg
 
 				if (SvOi::SV_CENTER_X_SOURCE == index || SvOi::SV_CENTER_Y_SOURCE == index)
 				{
-					GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(false);
-					GetDlgItem(IDC_BUTTON4)->EnableWindow(false);
+					pSetSortButtonWnd->EnableWindow(false);
+					pSetRangeButtonWnd->EnableWindow(false);
 					l_bSetRange = false;
 				}
 				else
 				{
-					GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(true);
-					GetDlgItem(IDC_BUTTON4)->EnableWindow(true);
+					pSetSortButtonWnd->EnableWindow(true);
+					pSetRangeButtonWnd->EnableWindow(true);
 				}
 			}
 		}

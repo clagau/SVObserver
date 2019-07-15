@@ -316,7 +316,6 @@ SVArchiveTool::~SVArchiveTool()
 //
 bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool bValidFile = true;
 	//
 	// CFile object.
 	//
@@ -341,10 +340,6 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 		if(athFile.isTokensValid())
 		{
 			FileArchivePath = athFile.TranslatePath( FileArchivePath);
-		}
-		else
-		{
-			bValidFile = false;
 		}
 	}
 	
@@ -536,7 +531,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 
 		if ( m_eArchiveMethod == SVArchiveAsynchronous )
 		{
-			HRESULT hrThreadOnline = TheSVArchiveImageThreadClass().GoOnline();
+			/*HRESULT hrThreadOnline =*/ TheSVArchiveImageThreadClass().GoOnline();
 		}
 	}
 
@@ -832,14 +827,6 @@ void SVArchiveTool::setResultArchiveList(const SVObjectReferenceVector& rObjectR
 	}
 
 	m_stringArchiveResultGuids_OBSOLETE.SetValue( std::string() );
-}
-
-void SVArchiveTool::AddImageToArray(SvIe::SVImageClass* pImage)
-{
-	SVArchiveRecord* pImageRecord = new SVArchiveRecord;
-	pImageRecord->InitArchiveRecord(this, SVObjectReference(pImage));
-	pImageRecord->ConnectInputObject();
-	m_arrayImagesInfoObjectsToArchive.Add(pImageRecord);
 }
 
 void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector)

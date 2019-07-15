@@ -200,7 +200,6 @@ SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObj
 	SvDef::StringVector Result;
 
 	// Effective STL Item 9 p46: forward iteration / erase
-	int nCount = static_cast< int >( m_vecRecords.size() );
 	RecordsType::iterator iter;
 	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end();  )
 	{
@@ -232,7 +231,6 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 	// Validate the image objects to be archived.
 	//
 	// Effective STL Item 9 p46: forward iteration / erase
-	int nCount = static_cast< int >( m_vecRecords.size() );
 	RecordsType::iterator iter;
 	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end(); )
 	{
@@ -275,8 +273,7 @@ bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvTrc::ITriggerRecordRP
 {
 	assert( nullptr != m_pArchiveTool );
 	bool bOk = true;
-	HRESULT	hr = 0;
-	
+
 	int nCount = static_cast< int >( m_vecRecords.size() );
 	
 	for ( int i = 0; bOk && i < nCount; i++ )

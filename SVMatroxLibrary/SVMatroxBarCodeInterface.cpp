@@ -473,7 +473,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 					if (nullptr != pErrorMessages)
 					{
 						SVMatroxStatusInformation l_info;
-						MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
+						/*MatroxCode =*/ SVMatroxApplicationInterface::GetLastStatus(l_info);
 						SvDef::StringVector messageList;
 						messageList.push_back(l_info.m_StatusString);
 						SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
@@ -571,7 +571,7 @@ bool SVMatroxBarCodeInterface::GetResult(const __int64& p_rCodeID, SVBarCodeCont
 							if (nullptr != pErrorMessages)
 							{
 								SVMatroxStatusInformation l_info;
-								MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
+								/*MatroxCode =*/ SVMatroxApplicationInterface::GetLastStatus(l_info);
 								SvDef::StringVector messageList;
 								messageList.push_back(l_info.m_StatusString);
 								SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10250);//, GetUniqueObjectID() );
@@ -658,7 +658,7 @@ bool SVMatroxBarCodeInterface::Execute(const __int64& p_rCodeID, const SVMatroxB
 				if (nullptr != pErrorMessages)
 				{
 					SVMatroxStatusInformation l_info;
-					MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
+					/*MatroxCode =*/ SVMatroxApplicationInterface::GetLastStatus(l_info);
 					SvDef::StringVector messageList;
 					messageList.push_back(l_info.m_StatusString);
 					SvStl::MessageContainer Msg(SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvStl::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));
@@ -766,7 +766,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_Fr
 			// If new code is ok then copy parameters from reference to new code.
 			if (S_OK == Result)
 			{
-				Result = SVMatroxApplicationInterface::GetFirstError();
+				/*Result =*/ SVMatroxApplicationInterface::GetFirstError();
 				McodeInquire(p_FromCodeID, M_ERROR_CORRECTION, &l_lValue);
 				McodeControl(l_NewID, M_ERROR_CORRECTION, l_lValue);
 

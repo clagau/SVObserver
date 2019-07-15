@@ -644,7 +644,7 @@ HRESULT SVMatroxImageInterface::Arithmetic(const SVMatroxBuffer& p_rDestId,
 
 */
 HRESULT SVMatroxImageInterface::Binarize(const SVMatroxBuffer& p_rDest,
-	const SVMatroxBuffer p_rSource,
+	const SVMatroxBuffer& p_rSource,
 	SVConditionEnum p_eCondition,
 	double p_dCondLow,
 	double p_dCondHigh)
@@ -701,8 +701,6 @@ HRESULT SVMatroxImageInterface::Binarize(const SVMatroxBuffer& p_rDest,
 
 HRESULT SVMatroxImageInterface::AdaptiveThreshold(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	_variant_t l_IsBlack;
 	SVMatroxCommandDataImage l_SourceImage;
 	long l_Width = 0;
@@ -710,7 +708,7 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold(const SVCommandDataHolder& p_r
 	long l_Stride = 0;
 	unsigned char* l_pSource = nullptr;
 
-	l_Status = p_rAttributes.GetValue(_T("Is Black Background"), l_IsBlack);
+	HRESULT l_Status = p_rAttributes.GetValue(_T("Is Black Background"), l_IsBlack);
 
 	if (S_OK == l_Status)
 	{
@@ -804,15 +802,13 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold(const SVCommandDataHolder& p_r
 
 HRESULT SVMatroxImageInterface::AutoThreshold(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	_variant_t l_Multiplier;
 	_variant_t l_IsBlack;
 	SVMatroxCommandDataImage l_SourceImage;
 	long l_Width = 0;
 	long l_Height = 0;
 
-	l_Status = p_rAttributes.GetValue(_T("Threshold Multiplier"), l_Multiplier);
+	HRESULT l_Status = p_rAttributes.GetValue(_T("Threshold Multiplier"), l_Multiplier);
 
 	if (S_OK == l_Status)
 	{
@@ -845,7 +841,6 @@ HRESULT SVMatroxImageInterface::AutoThreshold(const SVCommandDataHolder& p_rAttr
 	{
 		// Create the Destination Buffer
 		SVMatroxBuffer dstBuffer;
-		unsigned char l_Value = 0;
 
 		SVMatroxBufferCreateStruct createStruct;
 		createStruct.m_lSizeBand = 1;
@@ -860,6 +855,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold(const SVCommandDataHolder& p_rAttr
 		{
 			// Read histogram...
 			__int64 histResult;
+			unsigned char l_Value = 0;
 
 			HRESULT l_RetCode = SVMatroxImageInterface::Create(histResult, 256, SVImageHistList);
 
@@ -970,15 +966,13 @@ HRESULT SVMatroxImageInterface::AutoThreshold(const SVCommandDataHolder& p_rAttr
 
 HRESULT SVMatroxImageInterface::FixedThreshold(const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	_variant_t l_Lower;
 	_variant_t l_Upper;
 	SVMatroxCommandDataImage l_SourceImage;
 	long l_Width = 0;
 	long l_Height = 0;
 
-	l_Status = p_rAttributes.GetValue(_T("Threshold Lower Value"), l_Lower);
+	HRESULT l_Status = p_rAttributes.GetValue(_T("Threshold Lower Value"), l_Lower);
 
 	if (S_OK == l_Status)
 	{
@@ -1537,7 +1531,6 @@ HRESULT SVMatroxImageInterface::GetResult(const __int64& rResultID, void * p_pAr
 #endif
 
 	{
-		long l_lSize = 0;
 		if (M_NULL != rResultID)
 		{
 			MimGetResult(rResultID, M_VALUE, p_pArray);

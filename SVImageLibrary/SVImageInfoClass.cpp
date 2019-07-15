@@ -63,7 +63,6 @@ const SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass &p_rs
 // And how 
 const SVImageInfoClass &SVImageInfoClass::operator=(const BITMAPINFOHEADER& p_rBitmapHeader)
 {
-	HRESULT l_hr = 0;
 	Initialize();
 
 	int l_iFormat = SvDef::SVImageFormatUnknown;
@@ -227,11 +226,8 @@ HRESULT SVImageInfoClass::SetImageProperty(SvDef::SVImagePropertyEnum p_ePropert
 
 HRESULT SVImageInfoClass::GetExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, long &p_rlValue) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
 	double l_dValue = 0.0;
-
-	l_hrOk = GetExtentProperty(p_eProperty, l_dValue);
+	HRESULT l_hrOk = GetExtentProperty(p_eProperty, l_dValue);
 
 	if (S_OK == l_hrOk)
 	{

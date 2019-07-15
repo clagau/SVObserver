@@ -193,7 +193,7 @@ HRESULT SVMatroxApplicationInterface::GetLastStatus()
 			SVMatroxApplicationInterface::GetLastStatus( l_info );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TCHAR buf[M_ERROR_MESSAGE_SIZE * 2];
-			_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%d - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
+			_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%ld - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
 			::OutputDebugString(buf );
 #endif
 		}
@@ -515,7 +515,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TCHAR buf[M_ERROR_MESSAGE_SIZE * 2];
-				_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%d - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
+				_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%ld - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
 				::OutputDebugString(buf );
 #endif
 			}

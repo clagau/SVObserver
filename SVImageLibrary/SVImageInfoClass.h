@@ -27,7 +27,7 @@ class SVImageInfoClass
 public:
 	SVImageInfoClass();
 	SVImageInfoClass( const SVImageInfoClass& p_rsvValue );
-	SVImageInfoClass( const BITMAPINFOHEADER& p_rBitmapHeader );
+	explicit SVImageInfoClass( const BITMAPINFOHEADER& p_rBitmapHeader );
 
 	~SVImageInfoClass();
 

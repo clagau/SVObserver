@@ -190,10 +190,9 @@ void SVMaskEditorCtrl::OnDraw(
 
 		RGBQUAD* pColors = new RGBQUAD[colNum];
 		::GetDIBColorTable( memDC.GetSafeHdc(), 0, colNum, pColors );
-		BYTE swap;
 		for( UINT i = 0; i < colNum; ++i )
 		{	// BGR -> RGB
-			swap = pColors[i].rgbBlue;
+			BYTE swap = pColors[i].rgbBlue;
 			pColors[i].rgbBlue = pColors[i].rgbRed;
 			pColors[i].rgbRed = swap;
 			pColors[i].rgbReserved = 0;//PC_EXPLICIT; //PC_NOCOLLAPSE;//PC_RESERVED; //; // //
@@ -290,7 +289,7 @@ void SVMaskEditorCtrl::AboutBox()
 IPictureDisp* SVMaskEditorCtrl::GetImageDIBHandle() 
 {
 	CComPtr<IPictureDisp> pPic;
-	HRESULT hr = SVImageConvertorGDI::GetIPictureDispFromBitmap(bitmap, &pPic);
+	/*HRESULT hr =*/ SVImageConvertorGDI::GetIPictureDispFromBitmap(bitmap, &pPic);
 	return pPic.Detach();
 }
 

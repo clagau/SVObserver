@@ -100,15 +100,13 @@ const SVGUID SVObjectManagerClass::GetChildRootObjectID(const std::string& rRoot
 
 HRESULT SVObjectManagerClass::ConstructRootObject(const SVGUID& rClassID)
 {
-	HRESULT Status = S_OK;
-
 	if (m_RootNameChildren.end() != m_RootNameChildren.find(SvDef::FqnRoot) && !m_RootNameChildren[SvDef::FqnRoot].empty())
 	{
 		DestroyRootObject();
 	}
 
 	SVObjectClass* pRootObject;
-	Status = ConstructObject(rClassID, pRootObject);
+	HRESULT Status = ConstructObject(rClassID, pRootObject);
 	if (S_OK == Status)
 	{
 		if (nullptr != pRootObject)
@@ -186,33 +184,27 @@ void SVObjectManagerClass::Shutdown()
 
 HRESULT SVObjectManagerClass::connectDependency(const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type)
 {
-	HRESULT Result(S_OK);
-
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
 
-	Result = SvOl::DependencyManager::Instance().Connect(rSource, rDestination, Type);
+	HRESULT Result = SvOl::DependencyManager::Instance().Connect(rSource, rDestination, Type);
 
 	return Result;
 }
 
 HRESULT SVObjectManagerClass::disconnectDependency(const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type)
 {
-	HRESULT Result(S_OK);
-
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
 
-	Result = SvOl::DependencyManager::Instance().Disconnect(rSource, rDestination, Type);
+	HRESULT Result = SvOl::DependencyManager::Instance().Disconnect(rSource, rDestination, Type);
 
 	return Result;
 }
 
 HRESULT SVObjectManagerClass::ConstructObject(const SVGUID& rClassID, GUID& rObjectID)
 {
-	HRESULT Result = S_OK;
-
 	SVObjectClass* l_pObject = nullptr;
 
-	Result = ConstructObject(rClassID, l_pObject);
+	HRESULT Result = ConstructObject(rClassID, l_pObject);
 
 	if (nullptr != l_pObject)
 	{
@@ -286,10 +278,8 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier(const SVGUID& rObjectID, SVO
 
 HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, GUID& rObjectID) const
 {
-	HRESULT Status = S_OK;
 	SVObjectReference ObjectRef;
-
-	Status = GetObjectByDottedName(rFullName, ObjectRef);
+	HRESULT Status = GetObjectByDottedName(rFullName, ObjectRef);
 
 	if (nullptr != ObjectRef.getObject())
 	{
@@ -310,11 +300,8 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 
 HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, SVObjectClass*& rpObject) const
 {
-	HRESULT Result = S_OK;
-
 	SVObjectReference ObjectRef;
-
-	Result = GetObjectByDottedName(rFullName, ObjectRef);
+	HRESULT Result = GetObjectByDottedName(rFullName, ObjectRef);
 
 	if (nullptr != ObjectRef.getObject())
 	{
@@ -606,7 +593,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName(LPCTSTR Name)
 
 			NameInfo.ParseObjectName(Name);
 
-			Status = S_OK == pConfig->GetChildObject(pObject, NameInfo);
+			/*Status = S_OK ==*/ pConfig->GetChildObject(pObject, NameInfo);
 		}
 	}
 
@@ -1041,12 +1028,10 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 
 HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataName, const SVGUID& rSubjectID)
 {
-	HRESULT Result = S_OK;
-
 	SVSubjectEnabledObserverMap Observers;
 	SVSubjectEnabledCookieMap CookieObservers;
 
-	Result = GetObservers(rSubjectDataName, rSubjectID, Observers, CookieObservers);
+	HRESULT Result = GetObservers(rSubjectDataName, rSubjectID, Observers, CookieObservers);
 
 	if (S_OK == Result)
 	{
@@ -1097,11 +1082,8 @@ HRESULT SVObjectManagerClass::DetachSubjectsAndObservers(const SVGUID& rObjectID
 
 HRESULT SVObjectManagerClass::DetachSubjects(long Cookie)
 {
-	HRESULT Result = S_OK;
-
 	SVSubjectDataNameDeque SubjectDataNames;
-
-	Result = GetObserverDataNames(Cookie, SubjectDataNames);
+	HRESULT Result = GetObserverDataNames(Cookie, SubjectDataNames);
 
 	if (S_OK == Result)
 	{
@@ -1122,11 +1104,9 @@ HRESULT SVObjectManagerClass::DetachSubjects(long Cookie)
 
 HRESULT SVObjectManagerClass::DetachSubjects(const SVGUID& rObserverID)
 {
-	HRESULT Result = S_OK;
-
 	SVSubjectDataNameDeque SubjectDataNames;
 
-	Result = GetObserverDataNames(rObserverID, SubjectDataNames);
+	HRESULT Result = GetObserverDataNames(rObserverID, SubjectDataNames);
 
 	if (S_OK == Result)
 	{
@@ -1147,11 +1127,9 @@ HRESULT SVObjectManagerClass::DetachSubjects(const SVGUID& rObserverID)
 
 HRESULT SVObjectManagerClass::DetachObservers(const SVGUID& rSubjectID)
 {
-	HRESULT Result = S_OK;
-
 	SVSubjectDataNameDeque SubjectDataNames;
 
-	Result = GetSubjectDataNames(rSubjectID, SubjectDataNames);
+	HRESULT Result = GetSubjectDataNames(rSubjectID, SubjectDataNames);
 
 	if (S_OK == Result)
 	{

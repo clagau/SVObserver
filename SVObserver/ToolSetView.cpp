@@ -337,7 +337,6 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	BOOL l_bMenuLoaded = false;
 	m_toolSetListCtrl.GetSelectedItemScreenPosition(l_Point);
 	CMenu l_menu;
-	CMenu* l_pPopup;
 	bool bRemoveAdjustToolPos = false;
 
 	// Get the tool comment...
@@ -391,7 +390,7 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (TRUE == l_bMenuLoaded)
 	{
-		if (l_pPopup = l_menu.GetSubMenu(0))
+		if (CMenu* l_pPopup = l_menu.GetSubMenu(0))
 		{
 			l_Point.y += 12;
 			l_Point.x += 20;
@@ -413,7 +412,7 @@ void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		NMITEMACTIVATE* pActivate = reinterpret_cast<NMITEMACTIVATE *>(pNMHDR);
 		UINT uFlags;
-		int item = m_toolSetListCtrl.HitTest(pActivate->ptAction, &uFlags);
+		/*int item =*/ m_toolSetListCtrl.HitTest(pActivate->ptAction, &uFlags);
 		if ((uFlags & LVHT_ONITEMICON))
 		{
 			//display error box and return else go further with TA dialog.
@@ -433,8 +432,6 @@ void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
-
 	// Don't allow editing if running.
 	if (!SvOi::isOkToEdit())
 	{
@@ -879,12 +876,9 @@ void ToolSetView::SetViewSize(CSize &Size)
 
 bool ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	bool bOk = false;
-
 	CSize l_Size;
 	_variant_t svVariant;
-
-	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant);
+	bool bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant);
 	if (bOk)
 	{
 		l_Size.cy = svVariant;
@@ -908,14 +902,12 @@ bool ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle ht
 
 bool ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	bool bOk = false;
 	CSize l_Size;
 	_variant_t svVariant;
-
 	CRect l_cRect;
 	GetWindowRect(l_cRect);
 
-	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant);
+	bool bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant);
 	if (bOk)
 	{
 		l_Size.cy = svVariant;

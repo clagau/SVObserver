@@ -122,30 +122,30 @@ namespace SvOg
 
 	#pragma region Member Variables
 	private:
-		enum 
+		enum Model_Property_Enums
 		{ 
 			ModelWidth_Property,
 			ModelHeight_Property,
 			ModelOriginX_Property,
 			ModelOriginY_Property
-		} Model_Property_Enums;
+		};
 
-		bool m_bAllowExit;
+		bool m_bAllowExit = false;
 
 		CButton m_CircularOverscanCheckbox;
 		SvOg::PictureDisplay m_dialogImage;
 		CString	m_strModelName;
-		BOOL m_bCircularOverscan;
+		BOOL m_bCircularOverscan = false;
 		CString	m_strDontCareName;
-		BOOL m_bDontCare;
+		BOOL m_bDontCare = false;
 		SVRPropTree          m_Tree;
 
 		int	m_nXPos;
 		int	m_nYPos;
 		long	m_lModelWidth;
 		long	m_lModelHeight;
-		long m_CenterX;
-		long m_CenterY;
+		long m_CenterX = 0;
+		long m_CenterY = 0;
 		SVGUID m_AnalyzerImageGUID;
 
 		long m_sourceImageWidth;

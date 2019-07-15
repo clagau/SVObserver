@@ -486,7 +486,7 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 	{
 		// Get the Object
 		SVObjectReference refObject;
-		HRESULT hrGet = SVObjectManagerClass::Instance().GetObjectByDottedName( rName.c_str(), refObject );
+		/*HRESULT hrGet = */SVObjectManagerClass::Instance().GetObjectByDottedName( rName.c_str(), refObject );
 		if( refObject.getObject() )
 		{
 			// Connect to the input

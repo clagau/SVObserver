@@ -38,14 +38,6 @@ CommandLineArgs::CommandLineArgs() :m_IsParsed(false)
 {
 }
 
-LPCSTR CommandLineArgs::GetStartDirectory()
-{
-	if (m_IsParsed == false)
-	{
-		ParseCommandline();
-	}
-	return m_startDirectory.c_str();
-}
 LPCSTR CommandLineArgs::GetIniDirectory()
 {
 	if (m_IsParsed == false)
@@ -81,12 +73,11 @@ void CommandLineArgs::ParseCommandline()
 	Tels els("", " ", "\""); //escape, separator, quote
 
 	boost::tokenizer<Tels>  tok(StrCommandline, els);
-	bool first(true), IsIni(false);
+	bool IsIni(false);
 
-	for (boost::tokenizer<Tels>::iterator beg = tok.begin(); beg != tok.end(); beg++)
+	for (boost::tokenizer<Tels>::iterator beg = tok.begin(); beg != tok.end(); ++beg)
 	{
 		std::string::size_type size = beg->size();
-		std::string temp = *beg;
 		if (size == 0)
 		{
 			continue;

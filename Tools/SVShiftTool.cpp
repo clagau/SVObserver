@@ -55,7 +55,7 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 	l_Status &= (S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_ImageInput)) );
 
-	const UINT cAttributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::printable;
+	constexpr UINT cAttributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::printable;
 	m_SourceImageName.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
@@ -73,8 +73,7 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
 	// This value object is obsolete, hide it.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
-	m_EnableSourceImageExtents.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = l_Status;
 

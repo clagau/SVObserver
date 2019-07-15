@@ -171,7 +171,7 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 		{
 			if ( m_Queue.size() > 0 )
 			{
-				HRESULT hr = PopAndWrite();
+				/*HRESULT hr = */PopAndWrite();
 			}
 		}
 	}
@@ -182,7 +182,7 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 	// finish writing buffers
 	while ( m_Queue.size() > 0 )
 	{
-		HRESULT hr = PopAndWrite();
+		/*HRESULT hr = */PopAndWrite();
 		::Sleep(1);
 	}
 

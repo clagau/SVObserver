@@ -46,9 +46,7 @@ The CopyBuffer with four parameters uses the Matrox function MbufCopyClip. This 
 The CopyBuffer with three parameters uses the Matrox function MbufCopyColor. This function copies one or all color bands of the specified source buffer to the specified destination buffer. It can also be used to insert or extract a color component from a color image. 
 The Put functions put raw data into a SVMatroxBuffer. The format of the raw data is unsigned char*.
 The PutBuffer function uses the Matrox function MbufPut. This function copies data from a user-supplied array to a specified SVMatroxBuffer.
-The PutColor function uses the Matrox function MbufPutColor.  This function copies data from a user-supplied array to one or all bands of a specified MIL destination buffer.
 The PutLine function uses the Matrox function MbufPutLine. This function reads pixel values from a user-defined array and writes them to the series of pixels, in the specified image, along the theoretical line defined by specified coordinates. The Bresenham algorithm is used to determine the theoretical line. 
-The GetLine function uses the Matrox function MbufGet1d. This function copies data from a specified one-dimensional area of a SVMatroxBuffer to a user-supplied array. For multi-band buffers, this function linearly copies the data from the one-dimensional region of each band (RRR...GGG...BBB...). 
 The Get function uses the Matrox function MbufInquire. This function inquires about a specified setting of a SVMatroxBuffer.
 The Set function uses the Matrox function MbufControl. This function allows you to control a specified data buffer setting.
 The ControlNeighborhood function uses the Matrox function MbufControlNeighborhood. This function changes the setting of an operation control type of the specified kernel buffer or structuring element buffer. The operation control type settings establish how to perform a neighborhood operation when using the specified kernel buffer or structuring element buffer.
@@ -113,12 +111,6 @@ public:
 
 	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
 
-	static HRESULT GetDDSurfaceInterfacePtr( LPVOID& p_rpSurface, const SVMatroxBuffer& p_rBuffer );
-
-	static HRESULT GenLutRamp( SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue );
-
-	static HRESULT GetLine( SVMatroxBuffer& p_rBuf, __int64 p_lXStart, __int64 p_lYStart, __int64 p_lXEnd, __int64 p_lYEnd, __int64& p_rlNbrPixels, void* p_pUserArray );
-
 	// ****** Get and Set Functions **********
 	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult );
 	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult );
@@ -128,9 +120,7 @@ public:
 	// MbufPut
 	static HRESULT PutBuffer( SVMatroxBuffer& p_rTo, const unsigned char* p_pcArrayData );
 	static HRESULT PutBuffer( SVMatroxBuffer& p_rTo, const long* p_plArrayData );
-	// MbufPutColor
-	static HRESULT PutColor( SVMatroxBuffer& p_rTo, const unsigned char* p_pArrayData );
-
+	
 	// MbufPut1d
 	static HRESULT PutLine( SVMatroxBuffer& p_rTo, long p_lCount, const unsigned char* p_pArrayData);
 	// MbufGet1d

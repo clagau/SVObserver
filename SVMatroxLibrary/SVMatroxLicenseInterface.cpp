@@ -28,17 +28,17 @@ SVMatroxLicenseInterface::~SVMatroxLicenseInterface(void)
 HRESULT SVMatroxLicenseInterface::InitMatroxLicense()
 {
 	HRESULT hrRet = S_OK;
-	bool bDebug = false;
 
 	long long LicenseModules=0;
 	try
 	{
 		long long appID = MappInquire( M_CURRENT_APPLICATION, 0 );
-		long long milInquire = MappInquire(appID, M_LICENSE_MODULES, &LicenseModules);//get all licenses off dongle, dev dongle
+		MappInquire(appID, M_LICENSE_MODULES, &LicenseModules);//get all licenses off dongle, dev dongle
 																					//only have M_LICENSE_DEBUG
 		long long milVal = MappInquire(M_ID_KEY_FINGERPRINT,M_NULL);
 
 		//check to see if it is a dev license
+		bool bDebug = false;
 		if ( LicenseModules & M_LICENSE_DEBUG )
 		{
 			bDebug = true;

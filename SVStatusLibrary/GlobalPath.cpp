@@ -196,7 +196,7 @@ namespace SvStl
 		std::string sValue;
 		TCHAR szResult[ 1024 ];
 
-		unsigned long written  = ::GetPrivateProfileString( p_szSection, p_szKey, 
+		/*unsigned long written  = */::GetPrivateProfileString( p_szSection, p_szKey, 
 			p_szDefault,
 			szResult, sizeof szResult,
 			p_szFileName );

@@ -12,10 +12,8 @@
 template< typename SV_OBJECT_TYPE >
 HRESULT SVImageInfoClass::GetOwnerImage( SV_OBJECT_TYPE*& p_rpObject ) const
 {
-	HRESULT l_Status = S_OK;
 	SVObjectClass* l_pObject = nullptr;
-
-	l_Status = GetOwnerImage( l_pObject );
+	HRESULT l_Status = GetOwnerImage( l_pObject );
 
 	if( nullptr != l_pObject )
 	{

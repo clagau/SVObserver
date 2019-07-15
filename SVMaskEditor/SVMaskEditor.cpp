@@ -106,21 +106,19 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
 
     // Try to create mil buffer...
 	SVMatroxBufferInterface l_BufIntf;
-	HRESULT l_Code;
 	SVMatroxBufferCreateStruct l_Create;
-
 	l_Create.m_eAttribute = SVBufAttImageProcDispDib;
 	l_Create.m_lSizeX = bmInfo.bmWidth;
 	l_Create.m_lSizeY = bmInfo.bmHeight;
 	SetImageDepth(l_Create, bmInfo.bmBitsPixel );
 	l_Create.m_lSizeBand = bmInfo.bmPlanes;
-	l_Code = l_BufIntf.Create( l_MilBuffer, l_Create );
+	/*l_Code =*/ l_BufIntf.Create( l_MilBuffer, l_Create );
 
     if( l_MilBuffer.empty() )
         return l_MilBuffer;
 
     // Try to get device context of mil buffer...
-	l_Code = l_BufIntf.Set( l_MilBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault );
+	/*l_Code =*/ l_BufIntf.Set( l_MilBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault );
 
     HDC hDC;
 

@@ -29,12 +29,6 @@ private:
 	HKEY mhKey;
 
 public:
-	//DWORD NumSubKeys()
-	//
-	//Returns the number of child keys owned by the current 
-	//key.
-	DWORD NumSubKeys();
-
 	//bool GetRegistryValue (int iIndex, std::string 
 	//&szValueName, std::string &szValue, LPDWORD pdwType)
 	//
@@ -98,17 +92,6 @@ public:
 	//Remarks:
 	//Sets a registry value with the data supplied in baValue.
 	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector );
-
-	//bool DeleteValue (std::string &szValueName)
-	//
-	//Returns:
-	//true if the value was deleted, false otherwise.
-	//
-	//Remarks:
-	//The value specified by szValueName is deleted from the
-	//registry. If the value did not exist previous to the
-	//call to DeleteValue, the function returns true.
-	bool DeleteValue(LPCTSTR p_szValueName);
 
 	//bool Import (LPCTSTR szFileName)
 	//
@@ -177,20 +160,6 @@ public:
 	//appname is determined from the AfxGetAppName function.
 	SVRegistryClass();
 
-	//SVRegistryClass* OpenSubKey (std::string szSubKey)
-	//
-	//Return Value:
-	//Pointer to an SVRegistryClass object representing the 
-	//sub-key.
-	//
-	//Parameters:
-	//szSubKey -- Name of the subordinate key to open.
-	//
-	//Remarks:
-	//Creates a new registry key subordinate to the current 
-	//key.
-	SVRegistryClass * OpenSubKey( LPCTSTR p_szSubKey );
-
 	//SVRegistryClass& operator= (SVRegistryClass& svrRight);
 	//
 	//Return Value:
@@ -229,59 +198,6 @@ public:
 	//Remarks:
 	//Deletes the key and all its sub-keys  from the registry.
 	bool DeleteKey ();
-
-	//void EnumKeys (PFKEYENUMPROC pKeyEnumProc, LPVOID 
-	//pUserData);
-	//
-	//Return Value:
-	//true if all keys were enumerated.
-	//
-	//Parameters:
-	//pKeyEnumProc -- Pointer to a function that will be 
-	//called for each key enumerated.
-	//pUserData -- Pointer to any application specific data 
-	//that will be passed to the function referenced by 
-	//pKeyEnumProc.
-	//
-	//Remarks:
-	//Enumerates child keys of the current key. 
-	//
-	//User data may be passed into the enumeration by setting 
-	//pUserData to a value that points to application 
-	//specific data. pUserData will be passed to the 
-	//pfnEnumProc with each key enumerated.
-	//
-	//Does not enumerate below the first generation (i.e. 
-	//children of children are not enumerated).
-	void EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData);
-
-	//bool ReplaceKey (std::string &szHive);
-	//
-	//Return Value:
-	//true if the registry was restored.
-	//
-	//Parameters:
-	//szHive -- Name of the file where the registry 
-	//information to load resides.
-	//
-	//Remarks:
-	//Loads the registry with keys and values saved in a 
-	//previous SaveKey operation.
-	bool ReplaceKey (LPCTSTR p_szHive);
-
-	//bool SaveKey (std::string &szHive);
-	//
-	//Return Value:
-	//true if the registry was successfully saved.
-	//
-	//Parameters:
-	//szHive -- Name of the file where the registry 
-	//information is stored.
-	//
-	//Remarks:
-	//Writes the contents of the registry key, its subkeys 
-	//and values to a file specified by szFile.
-	bool SaveKey (LPCTSTR p_szHive);
 
 	//bool SetRegistryValue (std::string &szValueName, DWORD 
 	//pdwValue)

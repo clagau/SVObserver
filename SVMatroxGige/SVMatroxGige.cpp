@@ -511,9 +511,8 @@ HRESULT SVMatroxGige::DestroySystem(SVMatroxGigeSystem& rSystem)
 {
 	HRESULT hr = S_OK;
 
-	HRESULT l_Code = S_OK;
 	// Unregister camera present hook
-	l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle)); 
+	HRESULT l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle));
 	l_Code = SVMatroxSystemInterface::Destroy(*(rSystem.m_System.get()));
 	if (l_Code != S_OK)
 	{
@@ -986,9 +985,6 @@ HRESULT SVMatroxGige::ProcessStartFrame( SVMatroxGigeDigitizer& p_rCamera )
 		hr = GetNextAvailableProcBuffer(p_rCamera);
 		if (S_OK == hr)
 		{
-			// Buffer index is set and locked
-			long l_lIndex = p_rCamera.m_lStartIndex;
-
 			// Keep Track of Start Frames
 			p_rCamera.m_frameStack.Increment();
 
@@ -1392,8 +1388,6 @@ HRESULT SVMatroxGige::SetGrabMode(const SVMatroxGigeDigitizer& p_rCamera)
 HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_FALSE;
-
-	const SVMatroxDigitizer& rDigitizer = *(p_rCamera.m_Digitizer.get());
 
 	if (p_rCamera.m_params.TriggerType != SVMatroxGigeTrigger::SoftwareTrigger)
 	{

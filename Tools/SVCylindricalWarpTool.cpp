@@ -177,8 +177,6 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 			imageExtents = m_OutputImage.GetImageExtents();
 		}
 
-		long l_lDiameter = 0;
-
 		// Warp Type..
 		long lWarpType = SvPb::SVExtentTranslationCylindricalWarpH;	// default
 		m_svWarpType.GetValue( lWarpType );
@@ -239,8 +237,6 @@ HRESULT SVCylindricalWarpToolClass::LocalDestroy()
 
 HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 {
-	HRESULT l_hrOk = S_OK;
-
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
 	// Get Input Width and Height put in output Image Extent.
 	const SVImageExtentClass rInputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
@@ -248,7 +244,7 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 	
 	// Set Translation
 	long lWarpType = SvPb::SVExtentTranslationCylindricalWarpH;	// default
-	l_hrOk = m_svWarpType.GetValue( lWarpType );
+	HRESULT l_hrOk = m_svWarpType.GetValue( lWarpType );
 	SvPb::SVExtentTranslationEnum eTranslation = lWarpType == WarpTypeVertical ? SvPb::SVExtentTranslationCylindricalWarpV : SvPb::SVExtentTranslationCylindricalWarpH;
 	OutputExtents.SetTranslation( eTranslation );
 
@@ -256,18 +252,18 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 	double l_dStartAngle;
 	m_svWarpAngle.GetValue( l_dStartAngle );
 	ValidateAngle( l_dStartAngle );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyStartAngle, l_dStartAngle );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyStartAngle, l_dStartAngle );
 
 	double l_dValue;
-	l_hrOk = rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_dValue);
+	/*l_hrOk = */rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, l_dValue );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_dValue);
 
-	l_hrOk = rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
+	/*l_hrOk = */rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dValue );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
 
-	l_hrOk = OutputExtents.UpdateData();
+	/*l_hrOk = */OutputExtents.UpdateData();
 
-	l_hrOk = SetImageExtent( OutputExtents );
+	/*l_hrOk = */SetImageExtent( OutputExtents );
 
 	SVGUID l_InputID;
 

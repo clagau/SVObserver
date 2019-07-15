@@ -84,7 +84,7 @@ public:
 	HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 private:
-	long m_lRefCount;
+	long m_lRefCount = 0;
 
 	SVMatroxGigeSystemList m_Systems;
 
