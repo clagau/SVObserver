@@ -15,95 +15,46 @@
 namespace SvRpc
 {
 static const boost::posix_time::seconds cConnectTimeout{2};
-Router::Router(RPCClient& rClient, RequestHandler* pRequestHandler)
+
+static bool conncet_client(SvRpc::RPCClient& client)
 {
-	if (nullptr != pRequestHandler)
-	{
-		pRequestHandler->registerDefaultRequestHandler([&rClient](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
-		{
-			rClient.request(std::move(Request), std::move(Task));
-		});
-
-		pRequestHandler->registerDefaultStreamHandler([&rClient](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
-		{
-			auto client_ctx = rClient.stream(std::move(Request), std::move(Observer));
-			pServerContext->registerOnCancelHandler([client_ctx]() mutable
-			{
-				client_ctx.cancel();
-			});
-		});
-	}
-}
-
-Router::Router(const SvHttp::WebsocketClientSettings& rClientSettings, RequestHandler* pRequestHandler, std::function<void(ClientStatus)> StatusCallback)
-{
-	m_Settings  = rClientSettings;
-	m_pStatusCallback = StatusCallback;
-	if (nullptr != pRequestHandler)
-	{
-		pRequestHandler->registerDefaultRequestHandler([this](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
-		{
-			if (ConnectToRouter())
-			{
-				m_pClientRouter->request(std::move(Request), std::move(Task));
-			}
-			else
-			{
-				Task.error(SvRpc::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
-			}
-
-		});
-
-		pRequestHandler->registerDefaultStreamHandler([this](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
-		{
-			try
-			{
-				if (ConnectToRouter())
-				{
-					auto client_ctx = m_pClientRouter->stream(std::move(Request), std::move(Observer));
-					pServerContext->registerOnCancelHandler([client_ctx]() mutable
-					{
-						client_ctx.cancel();
-					});
-				}
-				else
-				{
-					Observer.error(SvRpc::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
-				}
-			}
-			catch (const std::exception&)
-			{
-			}
-		});
-	}
-}
-
-
-bool Router::ConnectToRouter()
-{
-	if (m_pClientRouter && m_pClientRouter->isConnected())
+	if (client.isConnected())
 	{
 		return true;
 	}
-	if (nullptr == m_pClientRouter)
-	{
-		m_pClientRouter = std::make_unique<SvRpc::RPCClient>(m_Settings, m_pStatusCallback);
-	}
-	if (!m_pClientRouter->isConnected())
-	{
-		m_pClientRouter->waitForConnect(cConnectTimeout);
-	}
-	if (m_pClientRouter->isConnected())
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+
+	client.waitForConnect(cConnectTimeout);
+
+	return client.isConnected();
 }
 
+Router::Router(RPCClient& rClient, RequestHandler& rRequestHandler)
+{
+	rRequestHandler.registerDefaultRequestHandler([&rClient](SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
+	{
+		if (!conncet_client(rClient))
+		{
+			Task.error(SvRpc::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
+			return;
+		}
 
+		rClient.request(std::move(Request), std::move(Task));
+	});
 
+	rRequestHandler.registerDefaultStreamHandler([&rClient](SvPenv::Envelope&& Request, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr pServerContext)
+	{
+		if (!conncet_client(rClient))
+		{
+			Observer.error(SvRpc::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
+			return;
+		}
+
+		auto client_ctx = rClient.stream(std::move(Request), std::move(Observer));
+		pServerContext->registerOnCancelHandler([client_ctx]() mutable
+		{
+			client_ctx.cancel();
+		});
+	});
+}
 
 } // namespace SvRpc

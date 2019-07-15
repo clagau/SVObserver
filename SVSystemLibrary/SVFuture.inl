@@ -49,6 +49,43 @@ inline SVFuture<void> SVFuture<void>::make_exceptional(std::exception_ptr ptr)
 	return promise.get_future();
 }
 
+inline void SVFuture<void>::all_step(boost::asio::io_context& ctx, std::vector<SVFuture<void>> futures, std::shared_ptr<SVPromise<void>> promise, SVFuture<void> f)
+{
+	// TODO check status of f!
+
+	if (futures.empty())
+	{
+		promise->set_value();
+		return;
+	}
+
+	auto first = futures.front();
+	futures.erase(futures.begin());
+	first.then(ctx, [&ctx, futures, promise](SVFuture<void> f)
+	{
+		all_step(ctx, futures, promise, f);
+	});
+}
+
+inline SVFuture<void> SVFuture<void>::all(boost::asio::io_context& ctx, std::vector<SVFuture<void>> futures)
+{
+	if (futures.empty())
+	{
+		return make_ready();
+	}
+
+	auto promise = std::make_shared<SVPromise<void>>();
+
+	auto first = futures.front();
+	futures.erase(futures.begin());
+	first.then(ctx, [&ctx, futures, promise](SVFuture<void> f)
+	{
+		all_step(ctx, futures, promise, f);
+	});
+
+	return promise->get_future();
+}
+
 inline void SVFuture<void>::get()
 {
 	std::unique_lock<std::mutex> lk(m_state->mutex);
@@ -66,28 +103,52 @@ inline void SVFuture<void>::get()
 	}
 }
 
-inline void SVFuture<void>::then(boost::asio::io_context& ctx, std::function<void(SVFuture<void>)> fn)
+inline SVFuture<void> SVFuture<void>::then(boost::asio::io_context& ctx, std::function<void(SVFuture<void>)> fn)
 {
 	std::unique_lock<std::mutex> lk(m_state->mutex);
+	auto then_done = std::make_shared<SVPromise<void>>();
+
+	auto on_done = [fn, then_done](SVFuture<void> f)
+	{
+		try
+		{
+			fn(f);
+		}
+		catch (const std::exception& err)
+		{
+			then_done->set_exception(std::make_exception_ptr(err));
+			return;
+		}
+
+		if (!f.m_state->is_success)
+		{
+			then_done->set_exception(f.m_state->exptr);
+			return;
+		}
+
+		then_done->set_value();
+	};
 
 	if (m_state->is_done)
 	{
 		auto f = *this;
-		ctx.dispatch([fn, f]()
+		ctx.dispatch([on_done, f]()
 		{
-			fn(f);
+			on_done(f);
 		});
 	}
 	else
 	{
-		m_state->fn = [&ctx, fn](SVFuture<void> f)
+		m_state->fn = [&ctx, on_done](SVFuture<void> f)
 		{
-			ctx.dispatch([fn, f]()
+			ctx.dispatch([f, on_done]()
 			{
-				fn(f);
+				on_done(f);
 			});
 		};
 	}
+
+	return then_done->get_future();
 }
 
 template<>
@@ -174,28 +235,55 @@ inline T SVFuture<T>::get()
 }
 
 template<class T>
-inline void SVFuture<T>::then(boost::asio::io_context& ctx, std::function<void(SVFuture<T>)> fn)
+template<class R>
+inline SVFuture<R> SVFuture<T>::then(boost::asio::io_context& ctx, std::function<R(SVFuture<T>)> fn)
 {
-	std::unique_lock<std::mutex> lk(m_state->mutex);
+	auto then_done = std::make_shared<SVPromise<void>>();
+
+	auto on_done = [fn, then_done](SVFuture<T> f)
+	{
+		try
+		{
+			// TODO read return value
+			// TODO add specialization for void
+			fn(f);
+		}
+		catch (const std::exception& err)
+		{
+			then_done->set_exception(std::make_exception_ptr(err));
+			return;
+		}
+
+		if (!f.m_state->is_success)
+		{
+			then_done->set_exception(f.m_state->exptr);
+			return;
+		}
+
+		then_done->set_value();
+	};
 
 	if (m_state->is_done)
 	{
 		auto f = *this;
-		ctx.dispatch([fn, f]()
+		ctx.dispatch([on_done, f]()
 		{
-			fn(f);
+			on_done(f);
 		});
 	}
 	else
 	{
-		m_state->fn = [&ctx, fn](SVFuture<T> f)
+		std::unique_lock<std::mutex> lk(m_state->mutex);
+		m_state->fn = [&ctx, on_done](SVFuture<T> f)
 		{
-			ctx.dispatch([fn, f]()
+			ctx.dispatch([f, on_done]()
 			{
-				fn(f);
+				on_done(f);
 			});
 		};
 	}
+
+	return then_done->get_future();
 }
 
 template<class T>

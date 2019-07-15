@@ -9,6 +9,7 @@
 #pragma once
 
 #include <exception>
+#include <vector>
 
 #include <boost/asio/io_context.hpp>
 
@@ -41,7 +42,9 @@ public:
 
 public:
 	T get();
-	void then(boost::asio::io_context&, std::function<void(SVFuture<T>)>);
+
+	template <class R>
+	SVFuture<R> then(boost::asio::io_context&, std::function<R(SVFuture<T>)>);
 
 protected:
 	detail::StatePtr<T> m_state;
@@ -62,12 +65,17 @@ public:
 	static SVFuture<void> make_ready();
 	static SVFuture<void> make_exceptional(std::exception_ptr);
 
+	static SVFuture<void> all(boost::asio::io_context&, std::vector<SVFuture<void>>);
+
 public:
 	void get();
-	void then(boost::asio::io_context&, std::function<void(SVFuture<void>)>);
+	SVFuture<void> then(boost::asio::io_context&, std::function<void(SVFuture<void>)>);
 
 protected:
 	detail::StatePtr<void> m_state;
+
+private:
+	static void all_step(boost::asio::io_context& ctx, std::vector<SVFuture<void>>, std::shared_ptr<SVPromise<void>>, SVFuture<void>);
 };
 
 template<class T>

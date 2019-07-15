@@ -13,8 +13,10 @@
 //Moved to precompiled header: #include <boost/thread.hpp>
 
 #include "SharedMemoryAccessInterface.h"
+#include "SVOverlayLibrary/OverlayController.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
+#include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/Task.h"
 #pragma endregion Includes
 
@@ -32,7 +34,7 @@ namespace SvOgw
 class SharedMemoryAccess : public SharedMemoryAccessInterface
 {
 public:
-	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter);
+	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, SvRpc::RPCClient& rpcClient);
 	virtual ~SharedMemoryAccess();
 
 public:
@@ -59,7 +61,7 @@ private:
 		SvRpc::ServerStreamContext::Ptr ctx;
 	};
 	void on_new_trigger_record(int inspectionPos, int trId);
-	void handle_new_trigger_record(product_stream_t&, std::shared_ptr<SvTrc::ITriggerRecordR>, int inspectionPos, int trId);
+	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, std::shared_ptr<SvTrc::ITriggerRecordR>, int inspectionPos, GUID inspectionId, int trId);
 
 private:
 	struct notification_stream_t
@@ -86,5 +88,6 @@ private:
 	boost::asio::deadline_timer m_pause_timer;
 	std::atomic<bool> m_pause_state {false};
 	std::vector<std::shared_ptr<notification_stream_t>> m_notification_streams;
+	SvOv::OverlayController m_overlay_controller;
 };
 }// namespace SvOgw

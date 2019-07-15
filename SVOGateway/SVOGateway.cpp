@@ -99,21 +99,24 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		MappControl(M_ERROR, M_PRINT_DISABLE);
 #endif // DEBUG
 
+		// create client, but only start connecting when we also have the router running
+		SvRpc::RPCClient rpcClient(settings.observerSetting);
+
 		SvAuth::AuthManager authManager(settings.authSettings);
 		SvAuth::RestHandler restHandler(authManager);
 
-		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(IoService, settings.shareControlSettings);
+		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(IoService, settings.shareControlSettings, rpcClient);
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
-
 
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
 		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
 
-		std::unique_ptr<SvHttp::HttpServer> pServer = std::make_unique<SvHttp::HttpServer>(settings.httpSettings, IoService);
+		std::unique_ptr<SvHttp::HttpServer> pServer {nullptr};
+		std::thread ServerThread([&] { IoService.run(); });
 
-		//The callback function of  the router Stops the httpServer when the connection to the svobserver is broken.
-		SvRpc::Router SVObserverRouter {settings.observerSetting, &requestHandler,  [&settings, &IoService, &pServer](SvRpc::ClientStatus status)
+		// automatically start/stop the server based on the connection status of SVObserver client
+		rpcClient.addStatusListener([&settings, &IoService, &pServer](SvRpc::ClientStatus status)
 		{
 			if (status == SvRpc::ClientStatus::Connected &&  nullptr == pServer)
 			{
@@ -127,15 +130,13 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 				pServer->stop();
 				pServer.reset(nullptr);
 			}
-		}};
+		});
 
+		// now start the router. this will pass all unhandled requests & streams to the
+		// SVObserver client. it will also take care of actually connecting the client and
+		// re-connecting it when the connection was lost.
+		SvRpc::Router SVObserverRouter(rpcClient, requestHandler);
 
-		if (pServer)
-		{
-			pServer->start();
-		}
-
-		std::thread ServerThread([&] { IoService.run(); });
 		if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
 		{
 			bool exit {false};

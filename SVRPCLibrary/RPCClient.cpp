@@ -15,12 +15,11 @@
 
 namespace SvRpc
 {
-RPCClient::RPCClient(SvHttp::WebsocketClientSettings& rSettings, std::function<void(ClientStatus)> StatusCallback)
+RPCClient::RPCClient(SvHttp::WebsocketClientSettings& rSettings)
 	: m_IoContex(1)
 	, m_IoWork(std::make_unique<boost::asio::io_context::work>(m_IoContex))
 	, m_WebsocketClientFactory(rSettings)
 	, m_ReconnectTimer(m_IoContex)
-	, m_pStatusCallback(StatusCallback)
 {
 	m_IoThread = std::thread([this]() { m_IoContex.run(); });
 	m_WebsocketClient = m_WebsocketClientFactory.create(this);
@@ -92,6 +91,19 @@ SvSyl::SVFuture<void> RPCClient::waitForConnectAsync()
 	auto promise = std::make_shared<SvSyl::SVPromise<void>>();
 	m_ConnectPromises.push_back(promise);
 	return promise->get_future();
+}
+
+uint64_t RPCClient::addStatusListener(std::function<void(ClientStatus)> fn)
+{
+	std::unique_lock<std::mutex> lk(m_StatusCallbackMutex);
+
+	auto idx = m_StatusCallbackIdx.fetch_add(1);
+	m_StatusCallbacks.insert(std::make_pair(idx, fn));
+
+	// initially emit once with current status
+	fn(isConnected() ? ClientStatus::Connected : ClientStatus::Disconnected);
+
+	return idx;
 }
 
 void RPCClient::request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
@@ -173,10 +185,7 @@ void RPCClient::on_connect()
 	}
 	m_ConnectCV.notify_all();
 
-	if (nullptr != m_pStatusCallback)
-	{
-		m_pStatusCallback(ClientStatus::Connected);
-	}
+	emit_status_change(ClientStatus::Connected);
 }
 
 void RPCClient::onDisconnect()
@@ -192,10 +201,7 @@ void RPCClient::on_disconnect()
 	m_WebsocketClient.reset();
 	schedule_reconnect(boost::posix_time::seconds(1));
 
-	if (nullptr != m_pStatusCallback)
-	{
-		m_pStatusCallback(ClientStatus::Disconnected);
-	}
+	emit_status_change(ClientStatus::Disconnected);
 }
 
 void RPCClient::onTextMessage(std::vector<char>&&)
@@ -489,6 +495,19 @@ void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 	else
 	{
 		// TODO: check whether reconnecting right now and enqueue current envelope
+	}
+}
+
+void RPCClient::emit_status_change(ClientStatus status)
+{
+	std::unique_lock<std::mutex> lk(m_StatusCallbackMutex);
+
+	for (const auto& it : m_StatusCallbacks)
+	{
+		if (it.second)
+		{
+			it.second(status);
+		}
 	}
 }
 

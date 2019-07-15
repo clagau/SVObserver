@@ -12,6 +12,7 @@ package SvPb;
 import "Variant.proto";
 import "SVRC-Enum.proto";
 import "BasicStructure.proto";
+import "Overlay.proto";
 
 //Retrieves the Gateway version
 message GetGatewayVersionRequest 
@@ -264,6 +265,10 @@ message GetProductStreamRequest
 	// Format the images should be encoded with. Stream will fail
 	// and close if the requested format is not available.
 	ImageFormatEnum imageFormat = 7;
+
+	// If set to true, the response will include overlay information
+	// for images.
+	bool includeOverlays = 8;
 }
 
 // Stream response for the GetProductStreamRequest request above.
@@ -284,6 +289,9 @@ message GetProductStreamResponse
 
 	// List of images in the same order as specified in the request.
 	repeated Image images = 5;
+
+	// List of overlays. The array corresponds to entries in `images`.
+	repeated OverlayDesc overlays = 6;
 }
 
 message SetRejectStreamPauseStateRequest

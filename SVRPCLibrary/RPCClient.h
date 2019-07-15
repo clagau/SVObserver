@@ -52,13 +52,14 @@ class RPCClient : public SvHttp::WebsocketClient::EventHandler
 {
 public:
 	RPCClient() = delete;
-	RPCClient(SvHttp::WebsocketClientSettings&, std::function<void(ClientStatus)> = nullptr);
+	RPCClient(SvHttp::WebsocketClientSettings&);
 	virtual ~RPCClient();
 
 	void stop();
 	bool isConnected();
 	bool waitForConnect(boost::posix_time::time_duration timeout);
 	SvSyl::SVFuture<void> waitForConnectAsync();
+	uint64_t addStatusListener(std::function<void(ClientStatus)>);
 
 	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>);
 	void request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope>, boost::posix_time::time_duration);
@@ -97,6 +98,8 @@ private:
 	void ack_stream_response(uint64_t txId, uint64_t seqNr);
 	void send_envelope(SvPenv::Envelope&&);
 
+	void emit_status_change(ClientStatus);
+
 private:
 	// TODO: switch to boost::asio::thread_pool when upgrading to boost 1.66.0
 	boost::asio::io_context m_IoContex;
@@ -116,7 +119,9 @@ private:
 	using DeadlineTimerPtr = std::shared_ptr<boost::asio::deadline_timer>;
 	std::map<uint64_t, DeadlineTimerPtr> m_PendingRequestsTimer;
 	std::map<uint64_t, Observer<SvPenv::Envelope>> m_PendingStreams;
-	std::function<void(ClientStatus)> m_pStatusCallback;
+	std::mutex m_StatusCallbackMutex;
+	std::atomic_uint64_t m_StatusCallbackIdx {0};
+	std::map<uint64_t, std::function<void(ClientStatus)>> m_StatusCallbacks;
 };
 
 } // namespace SvRpc

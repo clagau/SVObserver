@@ -26,9 +26,10 @@
 namespace SvOgw
 {
 
-SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter)
+SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, SvRpc::RPCClient& rpcClient)
 	: m_io_service(rIoService)
 	, m_pause_timer(rIoService)
+	, m_overlay_controller(rIoService, rpcClient)
 {
 	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>(ControlParameter);
 	schedule_trigger_record_pause_state();
@@ -298,6 +299,7 @@ void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId)
 
 	const auto& inspections = trc.getInspections();
 	const auto& inspection = inspections.list(inspectionPos);
+	const auto inspectionId = SvPb::GetGuidFromString(inspection.id());
 
 	for (auto it = m_ProductStreams.begin(); it != m_ProductStreams.end();)
 	{
@@ -310,7 +312,7 @@ void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId)
 
 		if (is_subscribed_to(ptr->req, inspection))
 		{
-			handle_new_trigger_record(*ptr, tro, inspectionPos, trId);
+			handle_new_trigger_record(ptr, tro, inspectionPos, inspectionId, trId);
 		}
 
 		++it;
@@ -324,6 +326,8 @@ static bool read_image(SvPb::Image& resImg, SvTrc::IImagePtr imgPtr)
 	auto& buffer = hdl->GetBuffer();
 	auto& out = *resImg.mutable_rgbdata();
 	auto rc = SVMatroxBufferInterface::CopyBufferToFileDIB(out, info, buffer);
+	resImg.set_height(info.GetHeight());
+	resImg.set_width(info.GetWidth());
 	return rc == S_OK;
 }
 
@@ -332,11 +336,11 @@ static bool read_variant(SvPb::Variant& resVar, const _variant_t& variant)
 	return SvPb::ConvertVariantToProtobuf(variant, &resVar) == S_OK;
 }
 
-void SharedMemoryAccess::handle_new_trigger_record(product_stream_t& stream, std::shared_ptr<SvTrc::ITriggerRecordR> tro, int inspectionPos, int trId)
+void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, std::shared_ptr<SvTrc::ITriggerRecordR> tro, int inspectionPos, GUID inspectionId, int trId)
 {
-	SvPb::GetProductStreamResponse res;
+	auto res = std::make_shared<SvPb::GetProductStreamResponse>();
 
-	if (stream.req.rejectsonly())
+	if (stream->req.rejectsonly())
 	{
 		// TODO handle rejects only
 		//res.set_isreject();
@@ -348,9 +352,18 @@ void SharedMemoryAccess::handle_new_trigger_record(product_stream_t& stream, std
 	// TODO inform client about current trigger
 	//res.set_trigger();
 
-	for (const auto& imgId : stream.req.imageids())
+	const auto includeoverlays = stream->req.includeoverlays();
+	std::vector<SvSyl::SVFuture<void>> overlay_futures;
+
+	for (const auto& imgId : stream->req.imageids())
 	{
-		auto& img = *res.add_images();
+		auto& img = *res->add_images();
+		auto overlayDesc = static_cast<SvPb::OverlayDesc*>(nullptr);
+		if (includeoverlays)
+		{
+			overlayDesc = res->add_overlays();
+		}
+
 		auto guid = SvPb::GetGuidFromString(imgId);
 		auto imgPtr = tro->getImage(guid);
 		if (!imgPtr)
@@ -364,12 +377,25 @@ void SharedMemoryAccess::handle_new_trigger_record(product_stream_t& stream, std
 		if (!read_image(img, imgPtr))
 		{
 			SV_LOG_GLOBAL(warning) << "Error reading image with guid " << SvPb::PrettyPrintGuid(guid) << " for " << inspectionPos;
+			continue;
+		}
+
+		if (includeoverlays && overlayDesc)
+		{
+			// also binding stream will make sure desc's memory is available until callback is called
+			auto future = m_overlay_controller.getOverlays(inspectionId, guid).then<void>(m_io_service,
+				[res, overlayDesc](SvSyl::SVFuture<SvPb::OverlayDesc> future)
+			{
+				const auto& desc = future.get();
+				overlayDesc->CopyFrom(desc);
+			});
+			overlay_futures.emplace_back(std::move(future));
 		}
 	}
 
-	for (const auto& valueId : stream.req.valueids())
+	for (const auto& valueId : stream->req.valueids())
 	{
-		auto& value = *res.add_values();
+		auto& value = *res->add_values();
 		auto guid = SvPb::GetGuidFromString(valueId);
 		auto variant = tro->getDataValue(guid);
 		if (!read_variant(value, variant))
@@ -378,7 +404,14 @@ void SharedMemoryAccess::handle_new_trigger_record(product_stream_t& stream, std
 		}
 	}
 
-	stream.observer.onNext(std::move(res));
+	SvSyl::SVFuture<void>::all(m_io_service, overlay_futures)
+		.then(m_io_service, [stream, res](SvSyl::SVFuture<void> future)
+	{
+		if (!stream->ctx->isCancelled())
+		{
+			stream->observer.onNext(std::move(*res));
+		}
+	});
 }
 
 void SharedMemoryAccess::schedule_trigger_record_pause_state()

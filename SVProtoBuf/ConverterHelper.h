@@ -11,6 +11,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "Variant.h"
 #include "SVRC.h"
+#include <comutil.h>
 #pragma endregion Includes
 
 
