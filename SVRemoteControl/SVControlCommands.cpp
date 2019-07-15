@@ -127,15 +127,18 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::
 	{
 		//First try to connect to Gateway
 		m_settings.httpClientSettings.Host = host;
-		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.httpClientSettings, std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+		m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.httpClientSettings);
+		
 		if (nullptr != m_pRpcClient)
 		{
+			m_pRpcClient->addStatusListener(std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
 			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient, m_settings.svrcClientSettings);
 			m_pRpcClient->waitForConnect(timeout);
 
 			if (!m_pRpcClient->isConnected())
 			{
-				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.httpClientSettings , std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
+				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.httpClientSettings );
+				m_pRpcClient->addStatusListener(std::bind(&SVControlCommands::OnConnectionStatus, this, std::placeholders::_1));
 				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient, m_settings.svrcClientSettings);
 				m_pRpcClient->waitForConnect(timeout);
 			}
