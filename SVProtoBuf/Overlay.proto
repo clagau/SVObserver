@@ -1,0 +1,131 @@
+//*****************************************************************************
+/// \copyright (c) 2019,2019 by Seidenader Maschinenbau GmbH
+/// \file Overlay.proto
+/// All Rights Reserved
+//*****************************************************************************
+/// Protobuf containing messages describing image overlays.
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+import "Variant.proto";
+
+message ValueObject
+{
+	Variant value = 1;
+	bytes guid = 2;
+	bool editable = 3;
+}
+
+message OverlayDesc
+{
+	repeated Overlay overlays = 1;
+}
+
+message Overlay
+{
+	// Name of the overlay that is also displayed.
+	string name = 1;
+
+	// Hex color as rgba
+	// TODO: color as ValueObject as well?
+	uint32 color = 2;
+
+	// Bounding box of the overlay that introduces a local
+	// coordinate system for the shapes, positioning them relative
+	// on the image.
+	OverlayBoundingBox boundingBox = 3;
+
+	repeated OverlayShape shapes = 4;
+}
+
+message OverlayBoundingBox
+{
+	oneof shape
+	{
+		OverlayBoundingBoxRect rect = 1;
+	}
+}
+
+// The rectangle is the simplest overlay bounding box.
+// It has a lower-left anchor represented by x/y and a
+// width and height (w/h), all in pixels.
+message OverlayBoundingBoxRect
+{
+	ValueObject x = 1;
+	ValueObject y = 2;
+	ValueObject w = 3;
+	ValueObject h = 4;
+}
+
+// Message encapsulating the actual shape in an oneof.
+// All Coordinates are represented as relative positions on
+// the image, not as pixels. For example, if the image has
+// a width of 500px and here you use a w of 0.5, the width
+// of the overlay will be 250px.
+message OverlayShape
+{
+	// Hex color as rgba, for overwriting the default color
+	// specified in the Overlay message
+	// TODO: color as ValueObject as well?
+	uint32 color = 1;
+
+	oneof shape
+	{
+		OverlayShapeLine line = 2;
+		OverlayShapeRect rect = 3;
+		OverlayShapeArrow arrow = 4;
+		OverlayShapeArrowWithMarker arrowWithMarker = 5;
+	}
+}
+
+// Line shape with relative x/y for start and end of the line.
+message OverlayShapeLine
+{
+	float x1 = 1;
+	float y1 = 2;
+	float x2 = 3;
+	float y2 = 4;
+}
+
+// Rectangular shape with lower-left anchor represented by x/y
+// and width and height (w/h).
+message OverlayShapeRect
+{
+	float x = 1;
+	float y = 2;
+	float w = 3;
+	float h = 4;
+}
+
+enum ArrowDirection
+{
+	up = 0;
+	right = 1;
+	down = 2;
+	left = 3;
+}
+
+// Like shape line with an additional arrow placed at second point.
+message OverlayShapeArrow
+{
+	float x1 = 1;
+	float y1 = 2;
+	float x2 = 3;
+	float y2 = 4;
+	float arrowHeight = 5;
+}
+
+// Like arrow shape with an two additional marker.
+// Marker positions are relative between start and end.
+message OverlayShapeArrowWithMarker
+{
+	float x1 = 1;
+	float y1 = 2;
+	float x2 = 3;
+	float y2 = 4;
+	float arrowHeight = 5;
+	float marker1 = 6;
+	float marker2 = 7;
+}
