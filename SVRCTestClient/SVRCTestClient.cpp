@@ -172,9 +172,16 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "o")
 			{
+				SvPb::ExecuteInspectionCmdRequest requestID;
+				SvPb::GetObjectIdRequest* pGetObjectID = requestID.mutable_cmdmsg()->mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1");
+
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ExecuteInspectionCmdRequest, SvPb::ExecuteInspectionCmdResponse> clientInspectionCmd(*pRpcClient);
+				auto responseID = clientInspectionCmd.request(std::move(requestID), Timeout).get();
+
 				///GetObjectSelector
-				SvPb::GetObjectSelectorItemsRequest request;
-				request.set_inspectionid(_T("Inspection_1"));
+				SvPb::GetObjectSelectorItemsRequest request; 
+				request.set_inspectionid(responseID.cmdmsg().getobjectidresponse().objectid());
 				request.set_attribute(SvPb::ObjectAttributes::viewable);
 				request.set_wholearray(true);
 				request.set_filter(SvPb::SelectorFilter::attributesAllowed);

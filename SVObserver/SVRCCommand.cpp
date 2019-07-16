@@ -939,9 +939,11 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
 {
+	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
+
 	SvPb::InspectionCmdMsgs requestCmd, responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
-	SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 
 	SvPb::GetObjectSelectorItemsResponse response{responseCmd.getobjectselectoritemsresponse()};
 	ConvertTreeNames(response.mutable_tree());
