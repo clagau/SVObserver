@@ -118,7 +118,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	}
 	else
 	{
-		m_pTool = static_cast <SvTo::ResizeTool*> (m_ParentDialog->GetTool());
+		m_pTool = static_cast <SvTo::ResizeTool*> (m_ParentDialog->GetTaskObject());
 
 		if (nullptr == m_pTool)
 		{

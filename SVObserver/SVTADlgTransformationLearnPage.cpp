@@ -44,12 +44,12 @@ SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransf
 	//}}AFX_DATA_INIT
 
 	m_pParentDialog	= Parent;
-	m_pTool			= nullptr;
+	m_pTaskObject = nullptr;
 
-	m_pPerformTranslation		= nullptr;
+	m_pPerformTranslation = nullptr;
 
 	m_pEvaluateTranslationX	= nullptr;
-	m_pTranslationXResult		= nullptr;
+	m_pTranslationXResult = nullptr;
 
 	m_pEvaluateTranslationY	= nullptr;
 	m_pTranslationYResult		= nullptr;
@@ -104,7 +104,7 @@ HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()
 
 void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 {
-	if( m_pTool )
+	if( m_pTaskObject )
 	{
 		CWnd* pWnd = nullptr;
 
@@ -202,7 +202,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 	pWnd->SetWindowText("q:");
 
-	if( m_pParentDialog && ( m_pTool = m_pParentDialog->GetTool() ) )
+	if( m_pParentDialog && ( m_pTaskObject = m_pParentDialog->GetTaskObject() ) )
 	{
 		// Get EvaluateX Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
@@ -215,7 +215,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateTranslationXObjectType;
-		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateTranslationX )
 		{
 			// Get Evaluate Result Object for the Translation X coordinate...
@@ -225,7 +225,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the Translation Y coordinate...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateTranslationY )
 		{
 			// Get Evaluate Result Object for the Translation Y coordinate...
@@ -235,7 +235,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationX )
 		{
 			// Get Evaluate Result Object for the Rotation X coordinate...
@@ -245,7 +245,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the Rotation Y coordinate...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationY )
 		{
 			// Get Evaluate Result Object for the Rotation Y coordinate...
@@ -255,7 +255,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the Rotation Angle...
 		evaluateObjectInfo.SubType	   = SvPb::SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationAngle )
 		{
 			// Get Evaluate Result Object for the Rotation Angle...
@@ -268,18 +268,18 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		objectInfo.ObjectType = SvPb::SVValueObjectType;
 		objectInfo.SubType = SvPb::SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
-		m_pPerformRotation = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pPerformRotation = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTaskObject->getFirstObject(objectInfo));
 
 		// get Translation Enabled
 		objectInfo.EmbeddedID = SVPerformTranslationObjectGuid;
-		m_pPerformTranslation = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pPerformTranslation = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTaskObject->getFirstObject(objectInfo));
 
 		// Get SVImageTransformClass Object...
 		SvDef::SVObjectTypeInfoStruct transformObjectInfo;
 		transformObjectInfo.ObjectType = SvPb::SVTransformObjectType;
 		transformObjectInfo.SubType = SvPb::SVImageTransformObjectType;
 
-		m_pImageTransform = dynamic_cast<SvOp::SVImageTransformClass*>(m_pTool->getFirstObject(transformObjectInfo));
+		m_pImageTransform = dynamic_cast<SvOp::SVImageTransformClass*>(m_pTaskObject->getFirstObject(transformObjectInfo));
 		if( m_pImageTransform )
 		{
 			// Get learned Objects...

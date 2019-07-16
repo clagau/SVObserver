@@ -151,7 +151,7 @@ public:
 
 	void AddInput( SVIOEntryHostStructPtr pInput );
 	bool RemoveInput( SVIOEntryHostStructPtr pInput );
-	HRESULT GetInputIOValues(VariantBoolPairVector& rInputValues ) const;
+	HRESULT GetInputIOValues(std::vector<_variant_t>& rInputValues) const;
 	bool RebuildInputList(bool bHasCameraTrigger);
 	const SVIOEntryHostStructPtrVector& GetUsedInputs() const {return m_UsedInputs;}
 	const SVIOEntryHostStructPtrVector& GetAllInputs() const {return m_AllInputs;}
@@ -185,7 +185,7 @@ public:
 	/// \param pCaller [unused]
 	/// \param p_rTriggerInfo [in] the trigger information to be queued
 	//************************************
-	bool FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
+	bool FinishTrigger( void *pCaller, const SvTi::SVTriggerInfoStruct& rTriggerInfo);
 
 	bool IsProductAlive( long p_ProductCount ) const;
 
@@ -216,16 +216,6 @@ public:
 	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
 
 protected:
-	struct SVTriggerQueueElement
-	{
-		SVTriggerQueueElement();
-		SVTriggerQueueElement( const SVTriggerQueueElement& p_rObject );
-
-		virtual ~SVTriggerQueueElement();
-
-		SvTi::SVTriggerInfoStruct m_TriggerInfo;
-		VariantBoolPairVector m_Inputs;
-	};
 
 	struct SVCameraQueueElement
 	{
@@ -269,7 +259,7 @@ protected:
 	typedef std::set< long > SVProcessCountSet;
 	typedef SVTQueueObject< SVCameraQueueElement > SVCameraResponseQueue;
 	typedef SVTQueueObject< SVProductInfoStruct* > SVProductPointerQueue;
-	typedef SVRingBuffer< SVTriggerQueueElement > SVTriggerInfoQueue;
+	typedef SVRingBuffer<SvTi::SVTriggerInfoStruct> SVTriggerInfoQueue;
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
 	typedef SVTQueueObject< SVInspectionInfoPair > SVInspectionInfoQueue;
 	typedef SVTQueueObject< long > SVProcessCountQueue;
@@ -354,7 +344,7 @@ protected:
 
 	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
-	SVProductInfoStruct* IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
+	SVProductInfoStruct* IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerInfo);
 	void InitializeProduct( SVProductInfoStruct* pNewProduct);
 	bool StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );

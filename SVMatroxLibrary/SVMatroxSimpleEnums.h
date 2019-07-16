@@ -120,7 +120,7 @@ enum SVMatroxBufferAttributeEnum
 	// Image Buffer..
 	SVBufAttImageProc				= SVBufAttProc | SVBufAttImage,
 	// GrabImage Buffer..
-	SVBufAttGrabImageProcDib		= SVBufAttGrab | SVBufAttImage | SVBufAttProc | SVBufAttDib,
+	SVBufAttGrabImageProc		= SVBufAttGrab | SVBufAttImage | SVBufAttProc,
 };
 
 /**

@@ -90,13 +90,13 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		rIPInfo.m_BeginInspection = SvTl::GetTimeStamp();
 
 		double time {0.0};
-		if (rProduct.oTriggerInfo.m_PreviousTrigger > 0.0)
+		if (rProduct.m_triggerInfo.m_PreviousTrigger > 0.0)
 		{
-			time = (rProduct.oTriggerInfo.m_BeginProcess - rProduct.oTriggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
+			time = (rProduct.m_triggerInfo.m_BeginProcess - rProduct.m_triggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
 		}
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerDelta);
 
-		time = (rIPInfo.m_BeginInspection - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+		time = (rIPInfo.m_BeginInspection - rProduct.m_triggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
 		double triggerToAcqTime {0.0};
@@ -106,7 +106,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			SvIe::SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
 			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
-				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.m_triggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
 				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 			}
 		}
@@ -114,15 +114,28 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 
-		assert(m_PPQInputs.size() == rProduct.oInputsInfo.m_Inputs.size());
+		SvTh::IntVariantMap::const_iterator iterData{rProduct.m_triggerInfo.m_Data.end()};
+		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::ObjectID);
+		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
+		{
+			m_pCurrentToolset->setObjectID(static_cast<double> (iterData->second));
+		}
+		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerIndex);
+		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
+		{
+			m_pCurrentToolset->setTriggerIndex(iterData->second);
+		}
+
+
+		assert(m_PPQInputs.size() == rProduct.m_triggerInfo.m_Inputs.size());
 		// Copy inputs to Inspection Process's Value objects
 		for (size_t i = 0; i < m_PPQInputs.size(); i++)
 		{
 			auto& rInputEntry = m_PPQInputs[i];
-			const auto& rInputValue = rProduct.oInputsInfo.m_Inputs.at(i);
+			const auto& rInputValue = rProduct.m_triggerInfo.m_Inputs.at(i);
 				
 			//Is the input enabled
-			if(nullptr != rInputEntry.m_IOEntryPtr && rInputEntry.m_IOEntryPtr->m_Enabled && rInputValue.second)
+			if(nullptr != rInputEntry.m_IOEntryPtr && rInputEntry.m_IOEntryPtr->m_Enabled && VT_EMPTY != rInputValue.vt)
 			{
 				rInputEntry.m_EntryValid = true;
 				switch(rInputEntry.m_IOEntryPtr->m_ObjectType)
@@ -133,7 +146,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 					{
 						if (nullptr != rInputEntry.m_IOEntryPtr->getValueObject())
 						{
-							rInputEntry.m_IOEntryPtr->getValueObject()->setValue(rInputValue.first);
+							rInputEntry.m_IOEntryPtr->getValueObject()->setValue(rInputValue);
 						}
 						++l_InputXferCount;
 						break;
@@ -155,13 +168,13 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			}
 		}
 
-		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), rProduct.oTriggerInfo.lTriggerCount));
+		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), rProduct.m_triggerInfo.lTriggerCount));
 
 		// Check if tool set is alive and enabled...
 		if (!l_Process)
 		{
 			// Product has left the PPQ ... don't inspect
-			rIPInfo.oInspectedState = PRODUCT_NOT_INSPECTED;
+			rIPInfo.m_InspectedState = PRODUCT_NOT_INSPECTED;
 		}
 		else
 		{
@@ -169,19 +182,19 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			// That means: true  - The Tool Set were running.
 			//			   false - The Tool Set Condition failed and the Tool Set were
 			//					   NOT running!
-			RunInspection(rIPInfo, rProduct.m_svCameraInfos, rProduct.oTriggerInfo.lTriggerCount);
+			RunInspection(rIPInfo, rProduct.m_svCameraInfos, rProduct.m_triggerInfo.lTriggerCount);
 
-			if (PRODUCT_INSPECTION_NOT_RUN != (rIPInfo.oInspectedState & PRODUCT_INSPECTION_NOT_RUN))
+			if (PRODUCT_INSPECTION_NOT_RUN != (rIPInfo.m_InspectedState & PRODUCT_INSPECTION_NOT_RUN))
 			{
-				rIPInfo.oInspectedState = GetToolSet()->GetResultList()->GetInspectionState();
+				rIPInfo.m_InspectedState = GetToolSet()->GetResultList()->GetInspectionState();
 
 				rIPInfo.m_EndInspection = SvTl::GetTimeStamp();
 				rIPInfo.setTriggerRecordCompleted();
 
-				time = (rIPInfo.m_EndInspection - rProduct.oTriggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				time = (rIPInfo.m_EndInspection - rProduct.m_triggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
-
+				rIPInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
 				long ppqPosition {0L};
 				SVPPQObject* pPpq = GetPPQ();
 				if (nullptr != pPpq)
@@ -248,14 +261,14 @@ void SVInspectionProcess::BuildWatchlist()
 					if (false == it.second->data.wholeArray)
 					{
 						m_WatchListDatas.push_back(WatchlistelementPtr(new WatchListElement(ObjectRef, it.second)));
-					}
-					else
-					{
+				}
+				else
+				{
 						SV_LOG_GLOBAL(error) << "whole array not implemented";
-					}
 				}
 			}
 		}
+	}
 	}
 }
 
@@ -266,24 +279,24 @@ bool SVInspectionProcess::isReject()
 	{
 		if (element->MonEntryPtr.get())
 		{
-			int arrayindex(-1);
-			if (TRUE == element->MonEntryPtr->data.isArray)
-			{
-				arrayindex = element->MonEntryPtr->data.arrayIndex;
-			}
+				int arrayindex(-1);
+				if (TRUE == element->MonEntryPtr->data.isArray)
+				{
+					arrayindex = element->MonEntryPtr->data.arrayIndex;
+				}
 
 			SvOi::IObjectClass* pObj = dynamic_cast<SvOi::IObjectClass*>(element->ObjRef.getValueObject());
 			if (pObj)
-			{
-				double val(0);
-				pObj->getValue(val, arrayindex);
-				if (val != 0)
 				{
+					double val(0);
+				pObj->getValue(val, arrayindex);
+					if (val != 0)
+					{
 					result = true;
+					}
 				}
 			}
-		}
-	}
+			}
 	return result;
 }
 
@@ -300,7 +313,8 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 #endif
 		::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 
-		if (GetPPQ()->HasActiveMonitorList() && p_rProduct.bTriggered)
+
+		if (GetPPQ()->HasActiveMonitorList() && p_rProduct.m_triggered)
 		{
 			p_rProduct.m_svInspectionInfos[GetUniqueObjectID()].m_bReject = isReject();
 		}
@@ -795,15 +809,15 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 	if (pProduct)
 	{
 		// See if we have discrete inputs.
-		assert(m_PPQInputs.size() == pProduct->oInputsInfo.m_Inputs.size());
+		assert(m_PPQInputs.size() == pProduct->m_triggerInfo.m_Inputs.size());
 		for (size_t i = 0; bReady && i < m_PPQInputs.size(); i++)
 		{
 			auto& rInputEntry = m_PPQInputs[i];
-			const auto& rInputValue = pProduct->oInputsInfo.m_Inputs.at(i);
+			const auto& rInputValue = pProduct->m_triggerInfo.m_Inputs.at(i);
 			if(rInputEntry.m_EntryValid)
 			{
 				//Is input value valid
-				bReady &= rInputValue.second;
+				bReady &= (VT_EMPTY != rInputValue.vt);
 			}
 		}
 
@@ -854,7 +868,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 	SVInspectionInfoStruct* pIPInfo = &(pProduct->m_svInspectionInfos[GetUniqueObjectID()]);
 	bool isTriggerRecordValid = nullptr != pIPInfo && nullptr != pIPInfo->m_triggerRecordWrite;
 	// Make sure that the lists are the same size
-	if (!isTriggerRecordValid || m_PPQInputs.size() != pProduct->oInputsInfo.m_Inputs.size())
+	if (!isTriggerRecordValid || m_PPQInputs.size() != pProduct->m_triggerInfo.m_Inputs.size())
 	{
 		return E_FAIL;
 	}// end if
@@ -1372,7 +1386,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 
 	LastProductCopySourceImagesTo(&l_svProduct);
 
-	RunInspection(l_svProduct.m_svInspectionInfos[GetUniqueObjectID()], l_svProduct.m_svCameraInfos, l_svProduct.oTriggerInfo.lTriggerCount);
+	RunInspection(l_svProduct.m_svInspectionInfos[GetUniqueObjectID()], l_svProduct.m_svCameraInfos, l_svProduct.m_triggerInfo.lTriggerCount);
 	l_svProduct.setInspectionTriggerRecordComplete(GetUniqueObjectID());
 
 	LastProductUpdate(&l_svProduct);
@@ -1571,7 +1585,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 			l_Status = E_FAIL;
 		}
 
-		if (!(RunInspection(product.m_svInspectionInfos[GetUniqueObjectID()], product.m_svCameraInfos, product.oTriggerInfo.lTriggerCount, false)) && S_OK == l_Status)
+		if (!(RunInspection(product.m_svInspectionInfos[GetUniqueObjectID()], product.m_svCameraInfos, product.m_triggerInfo.lTriggerCount, false)) && S_OK == l_Status)
 		{
 			l_Status = E_FAIL;
 		}
@@ -2211,7 +2225,7 @@ std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess
 		auto ipInfoIter = m_svLastRunProduct.m_svInspectionInfos.find(GetUniqueObjectID());
 		if (m_svLastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
 		{
-			return {m_svLastRunProduct.oTriggerInfo, ipInfoIter->second};
+			return {m_svLastRunProduct.m_triggerInfo, ipInfoIter->second};
 		}
 	}
 	return {};
@@ -2787,7 +2801,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 	// Tool set is disabled! // Put out tool set disabled...
 	if (!GetToolSet()->IsEnabled())
 	{
-		rIPInfo.oInspectedState = PRODUCT_INSPECTION_DISABLED;
+		rIPInfo.m_InspectedState = PRODUCT_INSPECTION_DISABLED;
 	}// end if
 
 	rIPInfo.m_BeginToolset = SvTl::GetTimeStamp();
@@ -2822,11 +2836,11 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 
 	if (m_runStatus.IsValid() && !m_runStatus.IsCriticalFailure())
 	{
-		rIPInfo.oInspectedState = PRODUCT_INSPECTION_RUN;
+		rIPInfo.m_InspectedState = PRODUCT_INSPECTION_RUN;
 	}
 	else
 	{
-		rIPInfo.oInspectedState = PRODUCT_NOT_ACKNOWLEDGED;
+		rIPInfo.m_InspectedState = PRODUCT_NOT_ACKNOWLEDGED;
 	}
 
 	rIPInfo.m_ToolSetAvgTime = m_runStatus.m_ToolSetAvgTime;
@@ -3778,8 +3792,8 @@ std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineS
 				//				
 				if (VT_EMPTY != value.vt || !determineSize)
 				{
-					result.emplace_back(value);
-				}
+				result.emplace_back(value);
+			}
 			}
 			else
 			{
@@ -3807,10 +3821,10 @@ std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineS
 						value = arrayValue;
 					}
 				}
-				result.emplace_back(value);
+					result.emplace_back(value);
+				}
 			}
 		}
-	}
 	return result;
 }
 

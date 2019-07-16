@@ -30,9 +30,12 @@ SVCameraDataInputObject::~SVCameraDataInputObject()
 	Destroy();
 }
 
-HRESULT SVCameraDataInputObject::Read( _variant_t& p_rValue )
+HRESULT SVCameraDataInputObject::Read( _variant_t& rValue )
 {
 	HRESULT l_Status = S_OK;
+
+	rValue = 0L;
+
 	return l_Status;
 }
 

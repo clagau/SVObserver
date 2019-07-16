@@ -38,7 +38,7 @@ namespace SvTh
 		void Add(SVDigitizerLoadLibraryClass* pAcqDLL, unsigned long handle);
 
 		HRESULT EnableInternalTrigger();
-		HRESULT Exec();
+		HRESULT Exec() const;
 		HRESULT RegisterCallback(const TriggerDispatcher& rDispatcher );
 		HRESULT UnRegisterCallback(const TriggerDispatcher& rDispatcher );
 		HRESULT UnRegisterAllCallbacks();

@@ -57,15 +57,15 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 	UpdateData( FALSE );
 
-	if( m_pSheet && ( m_pTool = m_pSheet->GetTool() ) && SvPb::SVToolAcquisitionObjectType == m_pTool->GetObjectSubType())
+	if( m_pSheet && ( m_pTaskObject = m_pSheet->GetTaskObject() ) && SvPb::SVToolAcquisitionObjectType == m_pTaskObject->GetObjectSubType())
 	{
 		// Try to get main image of the current acquisition tool...
 		SvDef::SVObjectTypeInfoStruct info;
 		info.ObjectType = SvPb::SVImageObjectType;
-		m_pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (m_pTool->getFirstObject(info));
+		m_pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (m_pTaskObject->getFirstObject(info));
 		if( nullptr != m_pMainImage)
 		{
-			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( m_pTool->GetAncestor(SvPb::SVInspectionObjectType));
+			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( m_pTaskObject->GetAncestorInterface(SvPb::SVInspectionObjectType));
 
 			if( nullptr != pInspection && nullptr != pInspection->GetPPQ())
 			{
@@ -106,13 +106,13 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelchangeCameraCombo()
 {
 	SVGUID SelectedCameraGuid = m_CameraListBox.getSelectedGUID();
-	if( nullptr != m_pTool && nullptr != m_pMainImage && GUID_NULL != SelectedCameraGuid )
+	if( nullptr != m_pTaskObject && nullptr != m_pMainImage && GUID_NULL != SelectedCameraGuid )
 	{
 		// Set new digitizer of main image...
 		m_pMainImage->UpdateCameraImage(SelectedCameraGuid);
 
 		// Reset all objects...
-		m_pTool->resetAllObjects();
+		m_pTaskObject->resetAllObjects();
 	}
 }
 

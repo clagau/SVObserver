@@ -68,7 +68,7 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 , m_pUseExternATM(nullptr)
 , m_pUseExternLT(nullptr)
 , m_pUseExternUT(nullptr)
-, m_pTool(nullptr)
+, m_pTaskObject(nullptr)
 , m_pCurrentThreshold(nullptr)
 , m_pParentDialog(Parent)
 , m_upperThresholdActive(false)
@@ -90,12 +90,12 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 
 	if (m_pParentDialog)
 	{
-		m_pTool = m_pParentDialog->GetTool();
+		m_pTaskObject = m_pParentDialog->GetTaskObject();
 
-		if (nullptr != m_pTool)
+		if (nullptr != m_pTaskObject)
 		{
 			SvDef::SVObjectTypeInfoStruct info(SvPb::SVUnaryImageOperatorObjectType, SvPb::SVThresholdObjectType);
-			m_pCurrentThreshold = dynamic_cast<SvOp::SVThresholdClass *>(m_pTool->getFirstObject(info));
+			m_pCurrentThreshold = dynamic_cast<SvOp::SVThresholdClass *>(m_pTaskObject->getFirstObject(info));
 
 			if( nullptr != m_pCurrentThreshold )
 			{
@@ -272,7 +272,7 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 	m_ImageController.Init();
 	m_resultImageID = getFirstResultImageId(m_ImageController);
 
-	if( m_pTool )
+	if(nullptr != m_pTaskObject)
 	{
 		if( m_pCurrentThreshold )
 		{

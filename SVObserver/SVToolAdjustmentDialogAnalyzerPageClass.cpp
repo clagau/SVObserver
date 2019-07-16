@@ -56,14 +56,14 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 {
 	if (m_pParentDialog)
 	{
-		m_pTool = m_pParentDialog->GetTool();
+		m_pTool = dynamic_cast<SvTo::SVToolClass*> (m_pParentDialog->GetTaskObject());
 
 		if (m_pTool)
 		{
 			SvDef::SVObjectTypeInfoStruct info;
 			info.ObjectType = SvPb::SVAnalyzerObjectType;
 
-			m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass *>(m_pTool->getFirstObject(info));
+			m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (m_pTool->getFirstObject(info));
 		}
 	}
 }

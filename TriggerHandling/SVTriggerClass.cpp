@@ -19,20 +19,21 @@
 
 namespace SvTh
 {
-	HRESULT CALLBACK TriggerCallbackSvtc(TriggerParameters triggerparams)
+	HRESULT CALLBACK TriggerCallbackSvtc(const SvTh::TriggerParameters& rTriggerData)
 	{
 		HRESULT hrOk = S_OK;
 
-		if ( nullptr != triggerparams.m_pOwner)
+		if ( nullptr != rTriggerData.m_pOwner)
 		{
 			SVOResponseClass response;
 
-			SVTriggerClass *pDevice = (SVTriggerClass *)(triggerparams.m_pOwner);
+			const SVTriggerClass *pDevice = reinterpret_cast<const SVTriggerClass*> (rTriggerData.m_pOwner);
 
 			response.reset();
 
 			response.setIsValid(true);
 			response.setIsComplete(true);
+			response.setData(rTriggerData.m_Data);
 
 			HRESULT hr = pDevice->Notify( response );
 
@@ -62,7 +63,7 @@ namespace SvTh
 	{
 		HRESULT l_hrOk = S_OK;
 
-		TriggerDispatcher dispatcher(TriggerCallbackSvtc,TriggerParameters(this, pvOwner));
+		TriggerDispatcher dispatcher(TriggerCallbackSvtc, TriggerParameters(this));
 
 		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
@@ -95,7 +96,7 @@ namespace SvTh
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			TriggerDispatcher dispatcher(TriggerCallbackSvtc, TriggerParameters(this, pvOwner));
+			TriggerDispatcher dispatcher(TriggerCallbackSvtc, TriggerParameters(this));
 
 			l_hrOk = m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher );
 		}

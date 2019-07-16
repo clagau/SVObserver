@@ -12,40 +12,35 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/any.hpp>
 #include "EventTime.h"
 #pragma endregion Includes
 
 class SVOResponseClass : public EventTime
 {
+	typedef  std::map<int, _variant_t> IntVariantMap;
 public:
 	SVOResponseClass() {}
 	SVOResponseClass(const SVOResponseClass &rRhs) : EventTime(rRhs)
-		, m_ExtraData {rRhs.m_ExtraData}
+		, m_Data {rRhs.m_Data}
 	{
 	}
 
-	const SVOResponseClass& operator=(const SVOResponseClass &rRhs)
-	{
-		__super::operator =(rRhs);
-		m_ExtraData = rRhs.m_ExtraData;
-		return *this;
-	}
+	SVOResponseClass& operator=(const SVOResponseClass &rRhs) = default;
 
-	virtual ~SVOResponseClass() {}
+	virtual ~SVOResponseClass() = default;
 
 
 	virtual void reset()
 	{
 		__super::reset();
-		m_ExtraData.swap(boost::any());
+		m_Data.clear();
 	}
 
-	const boost::any& getExtraData() {return m_ExtraData;}
-	void setExtraData( const boost::any& rExtraData ) {m_ExtraData = rExtraData;}
+	const IntVariantMap& getData() {return m_Data;}
+	void setData( const IntVariantMap& rData ) {m_Data = rData;}
 
 private:
 	//This attribute holds context data of the response. 
-	boost::any m_ExtraData;  //used by SVCameraTriggerClass::TriggerCallback() only
+	IntVariantMap m_Data;
 };
 

@@ -13,7 +13,7 @@
 
 #pragma comment(lib, "SVLpt")
 
-static IrqHandler g_irqHandler;
+static IrqHandler g_IrqHandler;
 
 SVLptIO::SVLptIO()
 {
@@ -94,13 +94,13 @@ HRESULT SVLptIO::DisableAckInterrupt()
 
 HRESULT SVLptIO::EnableAckInterrupt(IrqHandler func)
 {
-	g_irqHandler = func;
+	g_IrqHandler = func;
 	return EnableInterrupt(&SVLptIO::OnLPTInterrupt);
 }
 
 bool SVLptIO::isIrqHandlerEnabled()  const
 {
-	return !g_irqHandler.empty();
+	return nullptr != g_IrqHandler;
 }
 
 void SVLptIO::Destroy()
@@ -113,9 +113,9 @@ void SVLptIO::Destroy()
 
 void SVLptIO::OnLPTInterrupt()
 {
-	if (!g_irqHandler.empty())
+	if (nullptr != g_IrqHandler)
 	{
-		g_irqHandler();
+		g_IrqHandler();
 	}
 }
 

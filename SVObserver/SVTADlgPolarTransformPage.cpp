@@ -43,7 +43,7 @@ SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransf
 	//}}AFX_DATA_INIT
 
 	m_pParentDialog	= Parent;
-	m_pTool			= nullptr;
+	m_pTaskObject			= nullptr;
 
 	m_pEvaluateCenterX	 = nullptr;
 	m_pCenterXResult		 = nullptr;
@@ -68,13 +68,13 @@ SVToolAdjustmentDialogPolarTransformPageClass::~SVToolAdjustmentDialogPolarTrans
 
 void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 {
-	if( nullptr != m_pTool )
+	if( nullptr != m_pTaskObject && nullptr != m_pParentDialog )
 	{
 		UpdateData( true ); // get data from dialog
 
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller PolarTransformValues{ SvOg::BoundValues{ m_pTool->GetInspection()->GetUniqueObjectID(), m_ImagePolarTransformID} };
+		Controller PolarTransformValues{ SvOg::BoundValues{m_pParentDialog->GetInspectionID(), m_ImagePolarTransformID} };
 		PolarTransformValues.Init();
 
 		PolarTransformValues.Set<bool>(m_pUseFormula->GetEmbeddedID(), bUseFormula ? true : false);
@@ -91,7 +91,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 		if (0 <= sel)
 		{
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-			Controller Values {SvOg::BoundValues {m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID()}};
+			Controller Values {SvOg::BoundValues {m_pParentDialog->GetInspectionID(), m_pTaskObject->GetUniqueObjectID()}};
 			Values.Init();
 
 			long lValue = static_cast<long>  (m_AngularMethodCombo.GetItemData(sel));
@@ -104,7 +104,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 
 void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 {
-	if( m_pTool )
+	if( m_pTaskObject )
 	{
 		CWnd* pWnd = nullptr;
 
@@ -258,7 +258,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( m_pParentDialog && ( m_pTool = m_pParentDialog->GetTool() ) )
+	if( m_pParentDialog && ( m_pTaskObject = m_pParentDialog->GetTaskObject() ) )
 	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
@@ -271,7 +271,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateCenterXObjectType;
-		m_pEvaluateCenterX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterX )
 		{
 			// Get Center X Result...
@@ -281,7 +281,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center Y...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateCenterYObjectType;
-		m_pEvaluateCenterY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterY )
 		{
 			// Get Center Y Result...
@@ -291,7 +291,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Start Radius...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateStartRadiusObjectType;
-		m_pEvaluateStartRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartRadius )
 		{
 			// Get Start Radius Result...
@@ -301,7 +301,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate End Radius...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateEndRadiusObjectType;
-		m_pEvaluateEndRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndRadius )
 		{
 			// Get End Radius Result...
@@ -311,7 +311,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Start Angle...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateStartAngleObjectType;
-		m_pEvaluateStartAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartAngle )
 		{
 			// Get Start Angle Result...
@@ -321,7 +321,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate End Angle...
 		evaluateObjectInfo.SubType = SvPb::SVEvaluateEndAngleObjectType;
-		m_pEvaluateEndAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndAngle )
 		{
 			// Get End Angle Result...
@@ -332,7 +332,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		// Get Use Formula...
 		SvDef::SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVOutputUseFormulaObjectGuid;
-		m_pUseFormula = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pUseFormula = dynamic_cast<SvVol::SVBoolValueObjectClass*>(m_pTaskObject->getFirstObject(objectInfo));
 		if( m_pUseFormula )
 		{
 			m_pUseFormula->GetValue( bUseFormula );
@@ -340,7 +340,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Use Angle Method ...
 		objectInfo.EmbeddedID = SVOutputAngularMethodObjectGuid;
-		m_pAngleMethod = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pAngleMethod = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(m_pTaskObject->getFirstObject(objectInfo));
 		if( m_pAngleMethod )
 		{
 			m_AngularMethodCombo.SetEnumTypes(m_pAngleMethod->GetEnumVector());
@@ -348,7 +348,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Interpolation Mode...
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
+		m_pInterpolationMode = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(m_pTaskObject->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
 			// Populate Interpolation Mode combo...
@@ -358,7 +358,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		objectInfo.ObjectType = SvPb::SVPolarTransformObjectType;
 		objectInfo.SubType = SvPb::SVImagePolarTransformObjectType;
 		objectInfo.EmbeddedID = GUID_NULL;
-		SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*> (m_pTool->getFirstObject(objectInfo));
+		SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*> (m_pTaskObject->getFirstObject(objectInfo));
 		if(nullptr != pImagePolarTransform)
 		{
 			m_ImagePolarTransformID = pImagePolarTransform->GetUniqueObjectID();
@@ -400,7 +400,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterXFormulaButton()
 		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateCenterXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
@@ -418,7 +418,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterYFormulaButton()
 		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateCenterYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
@@ -436,7 +436,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartRadiusFormulaButton()
 		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateStartRadiusObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
@@ -454,7 +454,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndRadiusFormulaButton()
 		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateEndRadiusObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
@@ -472,7 +472,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartAngleFormulaButton()
 		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateStartAngleObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
@@ -490,7 +490,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndAngleFormulaButton()
 		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateEndAngleObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();

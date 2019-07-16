@@ -210,7 +210,7 @@ __int64 __stdcall SVMatroxGige::LineEdgeEventCallback( __int64 HookType, __int64
 	return 0L;
 }
 
-void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, __int64 HookId )
+void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& rCamera, __int64 HookId )
 {
 	// Get The Timestamp
 	double timestamp = 0.0;
@@ -218,18 +218,17 @@ void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera,
 	if (l_Code == S_OK)
 	{
 		// Simulate Trigger and send Timestamp and Line State...
-		bool lineState = p_rCamera.GetLineState();
-		SvTh::TriggerDispatcher dispatcher(p_rCamera.GetTriggerDispatcher());
+		bool lineState = rCamera.GetLineState();
+		SvTh::TriggerDispatcher dispatcher(rCamera.GetTriggerDispatcher());
 
 		if (dispatcher.hasCallback())
 		{
-			typedef  std::map<std::string, _variant_t> NameVariantMap;
-			NameVariantMap Settings;
-			Settings[_T("Timestamp")] = _variant_t(timestamp);
-			Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
-			Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartFrameTimeStamp);
+			SvTh::IntVariantMap triggerData;
+			triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
+			triggerData[SvTh::TriggerDataEnum::LineState] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
+			triggerData[SvTh::TriggerDataEnum::StartFrameTime] = _variant_t(rCamera.m_StartFrameTimeStamp);
 			
-			dispatcher.SetData(&Settings);
+			dispatcher.SetData(triggerData);
 			dispatcher.Dispatch();
 		}
 	}

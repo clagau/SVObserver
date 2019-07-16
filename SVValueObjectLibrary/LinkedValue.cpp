@@ -226,7 +226,13 @@ _variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 {
 	_variant_t Result;
 
-	SVObjectReference LinkedObjectRef = ConvertStringInObject(rValue);
+	SVObjectReference LinkedObjectRef(rValue);
+
+	//If string is not GUID then check if it is a dotted name
+	if(nullptr == LinkedObjectRef.getObject())
+	{
+		LinkedObjectRef = ConvertStringInObject(rValue);
+	}
 
 	if (nullptr != LinkedObjectRef.getObject())
 	{

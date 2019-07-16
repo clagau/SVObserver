@@ -28,12 +28,12 @@ namespace SvTi
 		virtual HRESULT RegisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller ) override;
 		virtual HRESULT UnregisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller ) override;
 	
-		static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
-		static HRESULT CALLBACK TriggerCompleteCallback(SvTh::TriggerParameters triggerparams);
+		static HRESULT CALLBACK TriggerCallback(const SvTh::TriggerParameters& rTriggerData);
+		static HRESULT CALLBACK TriggerCompleteCallback(const SvTh::TriggerParameters& rTriggerData);
 
 		void RegisterAcquistionInitiator(SvTh::SVAcquisitionInitiator& rFunc);
 
 		virtual HRESULT EnableInternalTrigger() override;
-		HRESULT FireAcquisitionTrigger();
+		HRESULT FireAcquisitionTrigger() const;
 	};
 } //namespace SvTi

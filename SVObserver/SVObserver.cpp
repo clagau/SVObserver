@@ -226,7 +226,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITIOLIST, OnUpdateEditIOList)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITENVIRONMENT, OnUpdateEditEnvironment)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOL, OnUpdateEditEditTool)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOLSETCONDITION, OnUpdateEditEditToolSetCondition)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOLSET, OnUpdateEditEditToolSet)
 	ON_UPDATE_COMMAND_UI(ID_RESULTS_PICKER, OnUpdateResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_RESULTS_TABLE_PICKER, OnUpdateResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_SAVE_RESULTS_TO_FILE, OnUpdateResultsPicker)
@@ -800,7 +800,7 @@ void SVObserverApp::OnUpdateEditEditTool(CCmdUI* PCmdUI)
 		OkToEdit());
 }
 
-void SVObserverApp::OnUpdateEditEditToolSetCondition(CCmdUI* PCmdUI)
+void SVObserverApp::OnUpdateEditEditToolSet(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		OkToEdit());

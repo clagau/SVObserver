@@ -60,8 +60,8 @@
 #include <time.h>
 #include <vector>
 
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <boost/bind.hpp>		//Used by static library
+#include <boost/function.hpp>	//Used by static library
 #pragma endregion Precompiled Headers
 
 

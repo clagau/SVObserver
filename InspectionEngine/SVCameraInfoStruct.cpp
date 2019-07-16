@@ -24,65 +24,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-#pragma region Constructor
-SVCameraInfoStruct::SVCameraInfoStruct() :
- m_CameraGuid( GUID_NULL )
-,m_StartFrameTimeStamp( 0 )
-,m_EndFrameTimeStamp( 0 )
-,m_CallbackTimeStamp( 0 )
-,m_pImage(nullptr)
-{
-}
-
-SVCameraInfoStruct::SVCameraInfoStruct( const SVCameraInfoStruct &rRhs ) :
-m_CameraGuid( GUID_NULL )
-,m_StartFrameTimeStamp( 0 )
-,m_EndFrameTimeStamp( 0 )
-,m_CallbackTimeStamp( 0 )
-,m_pImage(nullptr)
-{
-	Assign( rRhs );
-}
-
-SVCameraInfoStruct::~SVCameraInfoStruct()
-{
-	Reset();
-}
-
-const SVCameraInfoStruct &SVCameraInfoStruct::operator=( const SVCameraInfoStruct &rRhs )
-{
-	if( this != &rRhs )
-	{
-		m_CameraGuid = rRhs.getCameraGuid();
-		m_NextImageFunctor = rRhs.m_NextImageFunctor;
-		m_StartFrameTimeStamp = rRhs.m_StartFrameTimeStamp;
-		m_EndFrameTimeStamp = rRhs.m_EndFrameTimeStamp;
-		m_CallbackTimeStamp = rRhs.m_CallbackTimeStamp;
-		m_pImage = rRhs.m_pImage;
-	}
-
-	return *this;
-}
-#pragma endregion Constructor
-
 #pragma region Public Methods
-HRESULT SVCameraInfoStruct::Assign( const SVCameraInfoStruct &rCameraInfo )
-{
-	HRESULT l_Status = S_OK;
-
-	if( this != &rCameraInfo )
-	{
-		m_CameraGuid = rCameraInfo.getCameraGuid();
-		m_NextImageFunctor = rCameraInfo.m_NextImageFunctor;
-		m_StartFrameTimeStamp = rCameraInfo.m_StartFrameTimeStamp;
-		m_EndFrameTimeStamp = rCameraInfo.m_EndFrameTimeStamp;
-		m_CallbackTimeStamp = rCameraInfo.m_CallbackTimeStamp;
-		m_pImage = rCameraInfo.m_pImage;
-	}
-
-	return l_Status;
-}
-
 HRESULT SVCameraInfoStruct::Assign( double p_StartFrameTS, double p_EndFrameTS, const SvTrc::IImagePtr pImage)
 {
 	HRESULT l_Status = S_OK;
@@ -96,17 +38,6 @@ HRESULT SVCameraInfoStruct::Assign( double p_StartFrameTS, double p_EndFrameTS, 
 	return l_Status;
 }
 
-
-void SVCameraInfoStruct::Reset()
-{
-	m_CameraGuid = GUID_NULL;
-	m_StartFrameTimeStamp = 0;
-	m_EndFrameTimeStamp = 0;
-	//! For Debugging Only
-	m_CallbackTimeStamp	= 0;
-
-	ClearIndexes();
-}// end Reset
 
 void SVCameraInfoStruct::ClearInfo()
 {

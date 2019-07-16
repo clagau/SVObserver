@@ -30,8 +30,8 @@ namespace SvTi
 		void Create(SvTh::SVAcquisitionInitiator & rFunc );
 		void Destroy();
 
-		HRESULT FireAcquisitionTrigger();
+		HRESULT FireAcquisitionTrigger() const;
 
-		static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
+		static HRESULT CALLBACK TriggerCallback(const SvTh::TriggerParameters& rTriggerData);
 	};
 } //namespace SvTi

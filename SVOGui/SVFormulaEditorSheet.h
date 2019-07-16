@@ -42,11 +42,7 @@ namespace SvOg
 		//}}AFX_VIRTUAL
 
 	protected:
-		/// Initialized the formulaEditorSheetClass 
-		/// \param rInfo [in] info struct of the equation
-		void init(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo);
-
-		void init(SvOi::IFormulaControllerPtr formulaController, bool isConditional=false);
+		void init(SvOi::IFormulaControllerPtr formulaController);
 
 		//{{AFX_MSG(SVFormulaEditorSheetClass)
 		afx_msg void OnSysCommand(UINT nID, LPARAM lParam);

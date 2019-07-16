@@ -16,10 +16,6 @@
 #pragma endregion Includes
 
 class SVIPDoc;
-namespace SvTo
-{
-class SVToolClass;
-}
 
 class SVToolAdjustmentDialogSheetClass : public CPropertySheet
 {
@@ -46,23 +42,9 @@ public:
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
 	SVIPDoc* GetIPDoc() const;
-	SvTo::SVToolClass* GetTool() const;
-	const GUID& GetInspectionID() const;
-	const GUID& GetToolID() const;
-	
-	template< typename SVToolType >
-	HRESULT GetToolByType( SVToolType*& rpTool ) const
-	{
-		HRESULT l_Status = S_OK;
-
-		rpTool = dynamic_cast< SVToolType* >( GetTool() );
-
-		if( nullptr == rpTool )
-		{
-			l_Status = E_FAIL;
-		}
-		return l_Status;
-	}
+	SvOi::IObjectClass* GetTaskObject() const;
+	const GUID& GetInspectionID() const {return m_InspectionID; }
+	const GUID& GetTaskObjectID() const {return m_TaskObjectID; }
 	
 protected:
 	void init();

@@ -63,7 +63,7 @@ public:
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szName );
 
-	virtual HRESULT Notify( SVOResponseClass& p_rResponse );
+	virtual HRESULT Notify(const SVOResponseClass& rResponse) const;
 
 protected:
 	typedef SVRingBuffer< SVOResponseClass > SVResponseQueue;
@@ -75,7 +75,7 @@ protected:
 	/* Device Callback Functions */
 
 	virtual HRESULT GetUsedResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
-	virtual HRESULT AddUsedResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
+	virtual HRESULT AddUsedResponse( SVResponseQueue &rUsedQueue, const SVOResponseClass& rResponse ) const;
 
 	virtual HRESULT ProcessResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
 
@@ -109,8 +109,8 @@ private:
 	bool m_IsRegistered {false};
 
 	//This attribute holds the handle to the application thread.
-	SVAsyncProcedure< SVAPCFunctionPtr, SVProcessFunctorImpl > m_Thread;
+	mutable SVAsyncProcedure< SVAPCFunctionPtr, SVProcessFunctorImpl > m_Thread;
 
 	//This attribute is a container that holds the unused resposes in the callback system.
-	SVResponseQueue mUsedQueue;
+	mutable SVResponseQueue m_UsedQueue;
 };

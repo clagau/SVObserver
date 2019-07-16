@@ -54,6 +54,12 @@
     <ClCompile Include="SVRemoteOutputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVIODigitalLoadLibraryClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -107,13 +113,5 @@
     <ClInclude Include="SVRemoteOutputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVIODigitalLoadLibraryClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVIOTriggerLoadLibraryClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

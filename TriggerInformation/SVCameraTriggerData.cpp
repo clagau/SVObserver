@@ -14,6 +14,7 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVCameraTriggerData.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -29,16 +30,16 @@ namespace SvTi
 		destroy();
 	}
 
-	void SVCameraTriggerData::Set(const NameVariantMap& rSettings)
+	void SVCameraTriggerData::Set(const IntVariantMap& rSettings)
 	{
 		_variant_t timeStamp;
 		_variant_t lineState;
-		NameVariantMap::const_iterator Iter( rSettings.end() );
-		Iter = rSettings.find( _T("Timestamp") );
+		IntVariantMap::const_iterator Iter( rSettings.end() );
+		Iter = rSettings.find(SvTh::TriggerDataEnum::TimeStamp);
 		if( rSettings.end() != Iter  )
 		{
 			timeStamp = Iter->second;
-			Iter = rSettings.find( _T("LineState") );
+			Iter = rSettings.find(SvTh::TriggerDataEnum::LineState);
 			if( rSettings.end() != Iter  )
 			{
 				lineState = Iter->second;

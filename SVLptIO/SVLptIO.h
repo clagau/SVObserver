@@ -8,10 +8,10 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/function.hpp>
+//Moved to precompiled header: #include <functional>
 #pragma endregion Includes
 
-typedef boost::function<void()> IrqHandler;
+typedef std::function<void()> IrqHandler;
 
 class SVLptIO
 {

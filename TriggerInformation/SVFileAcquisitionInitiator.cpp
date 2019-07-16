@@ -36,21 +36,21 @@ namespace SvTi
 		m_acquisitionInitiator = SvTh::SVAcquisitionInitiator ();
 	}
 
-	HRESULT SVFileAcquisitionInitiator::FireAcquisitionTrigger()
+	HRESULT SVFileAcquisitionInitiator::FireAcquisitionTrigger() const
 	{
 		HRESULT hr = m_acquisitionInitiator.Exec();
 		return hr;
 	}
 
-	HRESULT CALLBACK SVFileAcquisitionInitiator::TriggerCallback( SvTh::TriggerParameters triggerparams )
+	HRESULT CALLBACK SVFileAcquisitionInitiator::TriggerCallback(const SvTh::TriggerParameters& rTriggerData)
 	{
 		HRESULT hrOk = S_OK;
 
-		if (nullptr != triggerparams.m_pOwner)
+		if (nullptr != rTriggerData.m_pOwner)
 		{
 			try
 			{
-				SVFileAcquisitionInitiator* pDevice = (SVFileAcquisitionInitiator *)(triggerparams.m_pOwner);
+				const SVFileAcquisitionInitiator* pDevice = reinterpret_cast<const SVFileAcquisitionInitiator*> (rTriggerData.m_pOwner);
 				hrOk = pDevice->FireAcquisitionTrigger();
 			}
 			catch ( ... )

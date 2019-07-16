@@ -64,8 +64,6 @@ public:
 
 	HRESULT FinalConstruct();
 
-	void FinalRelease();
-
 	STDMETHOD( get_Name )( BSTR* pVal );
 	STDMETHOD( put_Name )( BSTR newVal );
 	STDMETHOD( get_Writable )( VARIANT_BOOL* pVal );

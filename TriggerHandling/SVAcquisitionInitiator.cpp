@@ -140,16 +140,16 @@ namespace SvTh
 		return hr;
 	}
 
-	HRESULT SVAcquisitionInitiator::Exec()
+	HRESULT SVAcquisitionInitiator::Exec() const
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())
 		{
 			hr = S_OK;
-			SVAcquisitionInitiatorList::iterator it;
+			SVAcquisitionInitiatorList::const_iterator it;
 			for (it = m_initiatorList.begin(); S_OK == hr && it != m_initiatorList.end(); ++it)
 			{
-				SVDigitizerLoadLibraryClass* pDLL = it->first;
+				const SVDigitizerLoadLibraryClass* pDLL = it->first;
 				const SVAcquisitionInitiatorHandleList& handleList = it->second;
 				SVAcquisitionInitiatorHandleList::const_iterator handleIt;
 				for (handleIt = handleList.begin(); S_OK == hr && handleIt != handleList.end(); ++handleIt)

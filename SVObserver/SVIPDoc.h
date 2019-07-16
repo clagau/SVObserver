@@ -168,7 +168,7 @@ public:
 	afx_msg void OnAddArchiveTool();
 	afx_msg void OnAddMathTool();
 	afx_msg void OnAddStatisticsTool();
-	afx_msg void OnEditToolSetCondition();
+	afx_msg void OnEditToolSet();
 	afx_msg void OnResultsPicker();
 	afx_msg void OnResultsTablePicker();
 	afx_msg void OnSaveResultsToFile();

@@ -17,6 +17,7 @@
 #include "Tools/SVTool.h"
 #include "SVResultList.h"
 #include "InspectionEngine/SVTaskObjectList.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma region Includes
 
 namespace SvOp
@@ -95,6 +96,9 @@ public:
 
 	void setTime(double time, ToolSetTimes timeType) { m_Times[timeType].SetValue(static_cast<__int64> (time)); }
 	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
+	void setObjectID(double ObjectID) { m_ObjectID.SetValue(ObjectID); }
+	DWORD getInspectedObjectID() { double value; m_InspectedObjectID.getValue(value); return static_cast<DWORD> (value); }
+	void setTriggerIndex(DWORD TriggerIndex) { m_TriggerIndex.SetValue(TriggerIndex); }
 
 	virtual void goingOffline() override;
 
@@ -188,8 +192,11 @@ private:
 	SvIe::SVMainImageClass m_MainImageObject;	// Main toolset image
 	SvVol::SVLongValueObjectClass m_PPQIndexAtCompletion; // the PPQ position at which the product was located when at completion
 	SvVol::SVTimerValueObjectClass m_Times[ToolSetTimes::MaxCount]; ///The times relevant to the tool set see the enums for detailed description
-	SvVol::SVDoubleValueObjectClass m_Width;	//! The toolset image width			
-	SvVol::SVDoubleValueObjectClass m_Height;	//! The toolset image height
+	SvVol::SVDoubleValueObjectClass m_Width;		//! The toolset image width			
+	SvVol::SVDoubleValueObjectClass m_Height;		//! The toolset image height
+	SvVol::SVDoubleValueObjectClass m_ObjectID;		//! The object ID, which has been received by the PLC, to be inspected
+	SvVol::SVDWordValueObjectClass m_TriggerIndex;	//! The trigger index, which has been received by the PLC
+	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
 #pragma endregion Member Variables
 };
 

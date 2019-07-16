@@ -53,6 +53,10 @@ public:
 
 	bool OutputIsNotValid( std::string p_strName );
 
+	typedef  std::map<int, _variant_t> IntVariantMap;
+	///This function returns no error because the IO PLC dll is the only type which supports this functionality
+	void WriteOutputData(unsigned long triggerChannel, const IntVariantMap& rData);
+
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
@@ -62,11 +66,7 @@ private:
 
 	void ClearOutputList();
 
-	bool Lock() const;
-	bool Unlock() const;
-
-	bool m_bCreated;
-	CRITICAL_SECTION m_hCriticalSection;
+	mutable std::mutex m_protectOutputList;
 
 	SVGuidSVOutputObjectPtrMap m_OutputObjects;
 };

@@ -31,58 +31,60 @@ public:
 	HRESULT OpenDigital( LPCTSTR p_szName );
 	HRESULT CloseDigital();
 
-	HRESULT GetDigitalInputCount( unsigned long &p_rulCount );
-	HRESULT GetDigitalInputIsInverted( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalInputIsInverted( unsigned long p_ulChannel, bool p_rbValue );
-	HRESULT GetDigitalInputIsForced( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalInputIsForced( unsigned long p_ulChannel, bool p_rbValue );
-	HRESULT GetDigitalInputForcedValue( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalInputForcedValue( unsigned long p_ulChannel, bool p_rbValue );
-	HRESULT GetDigitalInputValue( unsigned long p_ulChannel, bool &p_rbValue );
+	HRESULT GetDigitalInputCount( unsigned long& rCount );
+	HRESULT GetDigitalInputIsInverted( unsigned long channel, bool& rbValue );
+	HRESULT SetDigitalInputIsInverted( unsigned long channel, bool bValue );
+	HRESULT GetDigitalInputIsForced( unsigned long channel, bool& rbValue );
+	HRESULT SetDigitalInputIsForced( unsigned long channel, bool bValue );
+	HRESULT GetDigitalInputForcedValue( unsigned long channel, bool& rbValue );
+	HRESULT SetDigitalInputForcedValue( unsigned long channel, bool rbValue );
+	HRESULT GetDigitalInputValue( unsigned long channel, bool& rbValue );
 
-	HRESULT GetDigitalInputPortCount( unsigned long &p_rulCount );
-	HRESULT GetDigitalInputPortValue( unsigned long p_ulPort, unsigned long &p_rulValue );
+	HRESULT GetDigitalInputPortCount( unsigned long& rCount );
+	HRESULT GetDigitalInputPortValue( unsigned long port, unsigned long& rValue );
 
-	HRESULT GetDigitalOutputCount( unsigned long &p_rulCount );
-	HRESULT GetDigitalOutputIsInverted( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalOutputIsInverted( unsigned long p_ulChannel, bool p_rbValue );
-	HRESULT GetDigitalOutputIsForced( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalOutputIsForced( unsigned long p_ulChannel, bool p_rbValue );
-	HRESULT GetDigitalOutputForcedValue( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalOutputForcedValue( unsigned long p_ulChannel, bool p_rbValue );
-	HRESULT GetDigitalOutputValue( unsigned long p_ulChannel, bool &p_rbValue );
-	HRESULT SetDigitalOutputValue( unsigned long p_ulChannel, bool p_bValue );
-	HRESULT GetDigitalOutputState( unsigned long p_ulSizeInChars, unsigned char *p_pucBlock );
+	HRESULT GetDigitalOutputCount( unsigned long& rCount );
+	HRESULT GetDigitalOutputIsInverted( unsigned long channel, bool& rbValue );
+	HRESULT SetDigitalOutputIsInverted( unsigned long channel, bool bValue );
+	HRESULT GetDigitalOutputIsForced( unsigned long channel, bool& rbValue );
+	HRESULT SetDigitalOutputIsForced( unsigned long channel, bool bValue );
+	HRESULT GetDigitalOutputForcedValue( unsigned long channel, bool& rbValue );
+	HRESULT SetDigitalOutputForcedValue( unsigned long channel, bool bValue );
+	HRESULT GetDigitalOutputValue( unsigned long channel, bool& rValue );
+	HRESULT SetDigitalOutputValue( unsigned long channel, bool bValue );
+	HRESULT GetDigitalOutputState( unsigned long sizeInChars, unsigned char* pBlock );
 
-	HRESULT GetDigitalOutputPortCount( unsigned long &p_rulCount );
-	HRESULT SetDigitalOutputPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
+	HRESULT GetDigitalOutputPortCount( unsigned long& rCount );
+	HRESULT SetDigitalOutputPortValue( unsigned long port, unsigned long value );
+
+	HRESULT SetDigitalOutputData(unsigned long channel, const IntVariantMap& rData);
 
 	HRESULT ClearDigitalOutputs();
 	HRESULT TestDigitalOutputs();
 
-	HRESULT SetSVIMTriggerValue( unsigned long p_ulChannel, bool p_bRising );
-	HRESULT SetSVIMStrobeValue( unsigned long p_ulChannel, bool p_bRising );
-	HRESULT SetSVIMStrobeStartFrameActive( unsigned long p_ulChannel, bool p_bActive );
-	HRESULT GetSVIMStrobeStartFrameActive( unsigned long p_ulChannel, bool &p_rbActive );
+	HRESULT SetSVIMTriggerValue( unsigned long channel, bool bRising );
+	HRESULT SetSVIMStrobeValue( unsigned long channel, bool bRising );
+	HRESULT SetSVIMStrobeStartFrameActive( unsigned long channel, bool bActive );
+	HRESULT GetSVIMStrobeStartFrameActive( unsigned long channel, bool& rbActive );
 
-	HRESULT GetIOTriggerValue( unsigned long p_ulChannel, bool &p_rbRising );
-	HRESULT GetIOStrobeValue( unsigned long p_ulChannel, bool &p_rbRising );
+	HRESULT GetIOTriggerValue( unsigned long channel, bool& rbRising );
+	HRESULT GetIOStrobeValue( unsigned long channel, bool& rbRising );
 
-	HRESULT SetCameraTriggerValue( unsigned long p_ulChannel, bool p_bRising );
-	HRESULT SetCameraStrobeValue( unsigned long p_ulChannel, bool p_bRising );
+	HRESULT SetCameraTriggerValue( unsigned long channel, bool bRising );
+	HRESULT SetCameraStrobeValue( unsigned long channel, bool bRising );
 
 	// Parameter related functions. Not implemented in all dlls.
-	HRESULT GetParameterCount( unsigned long *p_pulCount );
-	HRESULT GetParameterName( unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT GetParameterValue( unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT SetParameterValue( unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT GetParameterCount( unsigned long* pCount );
+	HRESULT GetParameterName( unsigned long index, BSTR* pName );
+	HRESULT GetParameterValue( unsigned long index, VARIANT* pValue );
+	HRESULT SetParameterValue( unsigned long index, VARIANT* pValue );
 
 private:
 	SVIOConfigurationInterfaceClass();
 	SVIOConfigurationInterfaceClass( const SVIOConfigurationInterfaceClass& p_rObject );
 	const SVIOConfigurationInterfaceClass& operator=( const SVIOConfigurationInterfaceClass& p_rObject );
 
-	SVIODigitalLoadLibraryClass m_svDigitalBoard;
+	SVIODigitalLoadLibraryClass m_DigitalBoard;
 
 	bool m_Opto22InputInvert;
 	bool m_Opto22OutputInvert;

@@ -20,13 +20,13 @@ VOID CALLBACK SVODeviceClass::APCProc( ULONG_PTR dwParam )
 This constructor initializes the attributes to the desired default values.
 */
 SVODeviceClass::SVODeviceClass()
-: mUsedQueue( 10 )
+: m_UsedQueue( 10 )
 {
 }
 
 SVODeviceClass::SVODeviceClass(LPCTSTR deviceName)
 : m_DeviceName(deviceName), 
-	mUsedQueue( 10 )
+	m_UsedQueue( 10 )
 {
 }
 
@@ -53,7 +53,7 @@ void SVODeviceClass::ClearDevice()
 		m_CallbackList.clear();
 	}
 
-	mUsedQueue.clear();
+	m_UsedQueue.clear();
 }
 
 /*
@@ -370,7 +370,7 @@ HRESULT SVODeviceClass::Reset()
 {
 	HRESULT hrOk = S_OK;
 
-	mUsedQueue.clear();
+	m_UsedQueue.clear();
 
 	return hrOk;
 }
@@ -407,7 +407,7 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 	{
 		bool bDone = true;
 
-		lRes = mUsedQueue.size();
+		lRes = m_UsedQueue.size();
 
 		bDone = lRes < 1;
 		
@@ -415,7 +415,7 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 		{
 			SVOResponseClass l_Response;
 
-			hrOk = ProcessResponse( mUsedQueue, l_Response );
+			hrOk = ProcessResponse( m_UsedQueue, l_Response );
 			if ( S_OK == hrOk )
 			{
 				hrOk = ExecuteCallback( m_CallbackList, l_Response );
@@ -425,7 +425,7 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 				hrOk = -4332;
 			}
 
-			lRes = mUsedQueue.size();
+			lRes = m_UsedQueue.size();
 
 			bDone = lRes < 1;
 		} // while ((!bDone) ...;
@@ -441,16 +441,16 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 /*
 This method adds the new response to the process queue.
 */
-HRESULT SVODeviceClass::Notify( SVOResponseClass& p_rResponse )
+HRESULT SVODeviceClass::Notify(const SVOResponseClass& rResponse) const
 {
 	HRESULT hrOk = S_FALSE;
 
 	if ( mbIsStarted )
 	{
-		hrOk = AddUsedResponse( mUsedQueue, p_rResponse );
+		hrOk = AddUsedResponse( m_UsedQueue, rResponse );
 		if ( S_OK == hrOk )
 		{
-			hrOk = m_Thread.Signal( this );
+			hrOk = m_Thread.Signal(const_cast<SVODeviceClass*> (this) );
 		}
 		else
 		{
@@ -490,11 +490,11 @@ HRESULT SVODeviceClass::GetUsedResponse( SVResponseQueue &rUsedQueue, SVORespons
 /*
 This method adds the new response from the used queue.
 */
-HRESULT SVODeviceClass::AddUsedResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse )
+HRESULT SVODeviceClass::AddUsedResponse( SVResponseQueue &rUsedQueue, const SVOResponseClass& rResponse) const
 {
 	HRESULT hrOk = S_OK;
 
-	hrOk = rUsedQueue.PushTail( p_rResponse );
+	hrOk = rUsedQueue.PushTail( rResponse );
 
 	return hrOk;
 }
@@ -587,7 +587,7 @@ HRESULT SVODeviceClass::TriggerDevice()
 	{
 		SVOResponseClass l_Response;
 
-		hrOk = AddUsedResponse( mUsedQueue, l_Response );
+		hrOk = AddUsedResponse( m_UsedQueue, l_Response );
 		if ( S_OK == hrOk )
 		{
 			hrOk = m_Thread.Signal( this );
@@ -623,7 +623,7 @@ HRESULT SVODeviceClass::DestroyLocal()
 		m_CallbackList.Destroy();
 	}
 
-	mUsedQueue.clear();
+	m_UsedQueue.clear();
 
 	mbIsCreated = false;
 

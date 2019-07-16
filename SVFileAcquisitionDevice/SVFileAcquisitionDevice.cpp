@@ -938,23 +938,22 @@ HRESULT SVFileAcquisitionDevice::SetAcquisitionTriggered(unsigned long triggerch
 	return l_hrOk;
 }
 
-void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
+void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& rCamera)
 {
 	double timestamp = SvTl::GetTimeStamp();
 	// Simulate Trigger and send Timestamp and Line State...
-	bool lineState = p_rCamera.GetLineState(); // could simulate line state via a socket connection
+	bool lineState = rCamera.GetLineState(); // could simulate line state via a socket connection
 
-	SvTh::TriggerDispatcher dispatcher(p_rCamera.GetTriggerDispatcher());
+	SvTh::TriggerDispatcher dispatcher(rCamera.GetTriggerDispatcher());
 
 	if (dispatcher.hasCallback())
 	{
-		typedef  std::map<std::string, _variant_t> NameVariantMap;
-		NameVariantMap Settings;
-		Settings[_T("Timestamp")] = _variant_t(timestamp);
-		Settings[_T("LineState")] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
-		Settings[_T("StartFrameTimestamp")] = _variant_t(p_rCamera.m_StartTimeStamp);
+		SvTh::IntVariantMap triggerData;
+		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
+		triggerData[SvTh::TriggerDataEnum::LineState] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
+		triggerData[SvTh::TriggerDataEnum::StartFrameTime] = _variant_t(rCamera.m_StartTimeStamp);
 
-		dispatcher.SetData(&Settings);
+		dispatcher.SetData(triggerData);
 		dispatcher.Dispatch();
 	}
 }

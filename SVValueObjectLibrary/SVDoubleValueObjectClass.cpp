@@ -93,6 +93,22 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 	return Result;
 }
 
+HRESULT SVDoubleValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
+{
+	HRESULT Result = S_OK;
+	switch (outputFormat)
+	{
+		//This displays a double as an integer
+		case OutputFormat_int:
+			setOutputFormat(_T("%.0lf"));
+			break;
+		default:
+			Result = E_INVALIDARG;
+			break;
+	}
+	return Result;
+}
+
 double SVDoubleValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	std::string Digits = SvUl::ValidateString( rValue, _T("-0123456789. ") );

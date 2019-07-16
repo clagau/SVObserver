@@ -188,9 +188,9 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(double checkTime, int camera
 		{
 			if (nullptr != *iter)
 			{
-				bool hasCameraImage = (cameraID >= 0 && cameraID < SvDef::cMaximumCameras) ? (*iter)->bhasCameraImage[cameraID] : false;
+				bool hasCameraImage = (cameraID >= 0 && cameraID < SvDef::cMaximumCameras) ? (*iter)->m_hasCameraImage[cameraID] : false;
 				//If product already has camera image or product inactive then skip
-				if (!hasCameraImage && (*iter)->bTriggered && (*iter)->IsProductActive() && !(*iter)->bDataComplete)
+				if (!hasCameraImage && (*iter)->m_triggered && (*iter)->IsProductActive() && !(*iter)->m_dataComplete)
 				{
 					double triggerTime {(*iter)->TimeStamp()};
 					double nextTriggerTime = (ppqStart == iter) ? 0.0 : (*(iter+1))->TimeStamp();

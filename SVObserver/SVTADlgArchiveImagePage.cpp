@@ -75,7 +75,7 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(const SVGUID& rInspectionID, co
 {
 	if( m_pParent )
 	{
-		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTool());
+		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
 	}
 }
 

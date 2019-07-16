@@ -12,49 +12,58 @@
 
 namespace SvTh
 {
-	//! This struct was introduced to facilitate the passing of further parameters 
-	//! (beyond 'Owner' and 'Data') - in particular in preparation for the SVPLCIO.dll.
+enum TriggerDataEnum
+{
+	TimeStamp = 1,
+	LineState,
+	StartFrameTime,
+	ObjectID,
+	TriggerIndex,
+};
+//! This struct was introduced to facilitate the passing of further parameters 
+//! (beyond 'Owner' and 'Data') - in particular in preparation for the SVPLCIO.dll.
+typedef  std::map<int, _variant_t> IntVariantMap;
 
-	struct TriggerParameters
-	{
-		void* m_pOwner;
-		void* m_pData;
-		TriggerParameters(void* pOwner=nullptr, void* pData=nullptr): m_pOwner(pOwner), m_pData(pData){}
-	};
+struct TriggerParameters
+{
+	void* m_pOwner;
+	IntVariantMap m_Data;
+	TriggerParameters(void* pOwner = nullptr, const IntVariantMap& rData = IntVariantMap{}) : m_pOwner(pOwner), m_Data(rData) {}
+};
 
-	typedef HRESULT ( CALLBACK *SVTriggerCallbackPtr )(TriggerParameters triggerparams);
+typedef HRESULT(CALLBACK *SVTriggerCallbackPtr)(const TriggerParameters& rTriggerData);
 
-	//! this adds a callback function pointer and further informational variables
-	//! (currently just one) to the information contained in TriggerParameters
-	//! Note: assignment and comparison operators ('=' and '=='), which had been implemented previously,
-	//! were removed because the defaults for both TriggerDispatcher and m_TriggerParameters seemed 
-	//! better (and safer)
-	class TriggerDispatcher
-	{
-	public:
-		TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
-		TriggerDispatcher( const TriggerDispatcher &p_rOriginal );
+//! this adds a callback function pointer and further informational variables
+//! (currently just one) to the information contained in TriggerParameters
+//! Note: assignment and comparison operators ('=' and '=='), which had been implemented previously,
+//! were removed because the defaults for both TriggerDispatcher and m_TriggerParameters seemed 
+//! better (and safer)
+class TriggerDispatcher
+{
+public:
+	TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
+	TriggerDispatcher(const TriggerDispatcher &p_rOriginal);
 
-		bool operator==(const TriggerDispatcher &p_rOriginal ) const;
+	bool operator==(const TriggerDispatcher &p_rOriginal) const;
 
-		virtual ~TriggerDispatcher(){}
+	virtual ~TriggerDispatcher() {}
 
-		void clear();
-		void DispatchIfPossible() const ;
-		void Dispatch() const;
+	void clear();
+	void DispatchIfPossible() const;
+	void Dispatch() const;
 
-		bool hasCallback() const {return (nullptr != m_pCallback);}
+	bool hasCallback() const { return (nullptr != m_pCallback); }
 
-		const SVTriggerCallbackPtr getCallback() const {return m_pCallback;}
-		const TriggerParameters &GetTriggerParameters() const  {return m_TriggerParameters;}
+	const SVTriggerCallbackPtr getCallback() const { return m_pCallback; }
+	const TriggerParameters &GetTriggerParameters() const { return m_TriggerParameters; }
 
-		void SetData(void *data){m_TriggerParameters.m_pData = data;}
+	void SetData(const IntVariantMap& rData) { m_TriggerParameters.m_Data = rData; }
 
-		bool m_IsStarted;
+	bool m_IsStarted;
 
-	private:
+private:
 
-		SVTriggerCallbackPtr m_pCallback;
-		TriggerParameters m_TriggerParameters;
-	};
+	SVTriggerCallbackPtr m_pCallback;
+	TriggerParameters m_TriggerParameters;
+};
 } //namespace SvTh

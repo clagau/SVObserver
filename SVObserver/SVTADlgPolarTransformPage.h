@@ -25,10 +25,6 @@ namespace SvOp
 {
 class SVEvaluateClass;
 }
-namespace SvTo
-{
-class SVToolClass;
-}
 namespace SvVol
 {
 class SVBoolValueObjectClass;
@@ -88,7 +84,7 @@ public:
 
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-	SvTo::SVToolClass* m_pTool;
+	SvOi::IObjectClass* m_pTaskObject;
 
 	SVGUID m_ImagePolarTransformID;
 

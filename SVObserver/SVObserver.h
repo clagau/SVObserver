@@ -87,7 +87,7 @@ public:
 	afx_msg void OnStop();
 	afx_msg void OnUpdateEditDelete(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditEditToolSetCondition(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateEditEditToolSet(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateExtrasLightReference(CCmdUI* PCmdUI);

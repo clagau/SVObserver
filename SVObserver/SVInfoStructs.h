@@ -51,62 +51,45 @@ enum SVProductInspectedState
 class SVPPQObject;
 class SVInspectionProcess;
 
-typedef std::vector<std::pair<_variant_t, bool>> VariantBoolPairVector;
 typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
-
-struct SVInputsInfoStruct 
-{
-	SVInputsInfoStruct();
-	SVInputsInfoStruct( const SVInputsInfoStruct& p_rsvObject );
-	virtual ~SVInputsInfoStruct();
-
-	const SVInputsInfoStruct& operator=( const SVInputsInfoStruct& p_rsvObject );
-
-	void Reset();
-	void Init();
-
-	VariantBoolPairVector m_Inputs;
-};
-
 
 struct SVOutputsInfoStruct 
 {
-	SVOutputsInfoStruct();
-	SVOutputsInfoStruct( const SVOutputsInfoStruct& p_rsvObject );
-	virtual ~SVOutputsInfoStruct();
+	SVOutputsInfoStruct() = default;
+	SVOutputsInfoStruct(const SVOutputsInfoStruct& p_rsvObject) = default;
+	virtual ~SVOutputsInfoStruct() = default;
 
-	const SVOutputsInfoStruct& operator=( const SVOutputsInfoStruct& p_rsvObject );
+	SVOutputsInfoStruct& operator=(const SVOutputsInfoStruct& rRhs) = default;
+	SVOutputsInfoStruct& operator=(SVOutputsInfoStruct&& rRhs) = default;
 
-	void Reset();
 	void Init();
 
-	long m_OutputDelay;
-	long m_ResetDelay;
-	long m_DataValidDelay;
-	bool m_DataValidResult;
-	bool m_OutputToggleResult;
-	bool m_NakResult;
-	double m_EndOutputDelay;
-	double m_EndResetDelay;
-	double m_EndDataValidDelay;
-	double m_BeginProcess;
-	double m_EndProcess;
+	long m_OutputDelay {0L};
+	long m_ResetDelay {0L};
+	long m_DataValidDelay {0L};
+	bool m_DataValidResult {false};
+	bool m_OutputToggleResult {false};
+	bool m_NakResult {true};
+	double m_EndOutputDelay {0.0};
+	double m_EndResetDelay {0.0};
+	double m_EndDataValidDelay {0.0};
+	double m_BeginProcess {0.0};
+	double m_EndProcess {0.0};
 	GuidVariantPairVector m_Outputs;
 };
 
 
 struct SVInspectionInfoStruct 
 {
-	SVInspectionInfoStruct();
-	SVInspectionInfoStruct( const SVInspectionInfoStruct &p_rsvData );
-	virtual ~SVInspectionInfoStruct();
+	SVInspectionInfoStruct() = default;
+	SVInspectionInfoStruct( const SVInspectionInfoStruct& rRhs) = default;
+	virtual ~SVInspectionInfoStruct() = default;
 
-	const SVInspectionInfoStruct &operator=( const SVInspectionInfoStruct &p_rsvData );
+	SVInspectionInfoStruct& operator=(const SVInspectionInfoStruct& rRhs) = default;
+	SVInspectionInfoStruct& operator=(SVInspectionInfoStruct&& rRhs) = default;
 
-	HRESULT Assign( const SVInspectionInfoStruct &p_rsvData );
-
-	void Reset();
 	void Init();
+
 	void ClearIndexes();
 	
 	bool setNextAvailableTR();
@@ -116,18 +99,17 @@ struct SVInspectionInfoStruct
 	void setTriggerRecordCompleted();
 	void setTriggerRecordIncompleted();
 
-	SVInspectionProcess* pInspection {nullptr};
-	SVProductInspectedState oInspectedState {PRODUCT_NOT_INSPECTED};
+	SVInspectionProcess* m_pInspection {nullptr};
+	SVProductInspectedState m_InspectedState {PRODUCT_NOT_INSPECTED};
 
 	bool m_CanProcess {false};
 	bool m_InProcess {false};
 	bool m_HasBeenQueued {false};
 	
-	double m_BeginInspection {0};
-	double m_EndInspection {0};
-	double m_BeginToolset {0};
-	double m_EndToolset {0};
-	double m_CallbackReceived {0};
+	double m_BeginInspection {0.0};
+	double m_EndInspection {0.0};
+	double m_BeginToolset {0.0};
+	double m_EndToolset {0.0};
 	
 	int m_inspectionPosInTrc = -1; //position of the inspection in triggerRecordController
 	SvTrc::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
@@ -136,6 +118,7 @@ struct SVInspectionInfoStruct
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};
 	long m_lastInspectedSlot {-1}; // Shared Memory
+	DWORD m_ObjectID{0};
 	bool m_bReject = false;
 };
 
@@ -165,8 +148,8 @@ struct SVProductInfoStruct
 
 	bool setNextAvailableCameraImage( );
 
-	inline long ProcessCount() const {return oTriggerInfo.lTriggerCount;}
-	inline const double& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
+	inline long ProcessCount() const {return m_triggerInfo.lTriggerCount;}
+	inline const double& TimeStamp() const {return m_triggerInfo.m_BeginProcess;}
 
 	void DumpIndexInfo( std::string& p_rData );
 
@@ -179,13 +162,12 @@ struct SVProductInfoStruct
 	void setInspectionTriggerRecordComplete(const SVGUID& rIPGuid);
 
 	mutable std::string m_ProductState;
-	bool bTriggered;
-	bool bhasCameraImage[SvDef::cMaximumCameras];
-	bool bDataComplete;
+	bool m_triggered;
+	bool m_hasCameraImage[SvDef::cMaximumCameras];
+	bool m_dataComplete;
 
-	SvTi::SVTriggerInfoStruct oTriggerInfo;
-	SVInputsInfoStruct oInputsInfo;
-	SVOutputsInfoStruct oOutputsInfo;
+	SvTi::SVTriggerInfoStruct m_triggerInfo;
+	SVOutputsInfoStruct m_outputsInfo;
 	SVPPQObject* m_pPPQ = nullptr;
 
 	SvIe::SVGuidSVCameraInfoStructMap m_svCameraInfos;

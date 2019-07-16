@@ -22,10 +22,6 @@ HRESULT SVDataDefObject::FinalConstruct()
 	return S_OK;
 }
 
-void SVDataDefObject::FinalRelease()
-{
-}
-
 STDMETHODIMP SVDataDefObject::get_Name( BSTR* pVal )
 {
 	ATL::CComBSTR tmp;

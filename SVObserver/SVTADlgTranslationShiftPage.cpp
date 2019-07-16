@@ -46,7 +46,7 @@ SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(const SVGUID&
 {
 	if(nullptr != m_pParentDialog)
 	{
-		m_pParentDialog->GetToolByType(m_pTool);
+		m_pTool = dynamic_cast<SvTo::SVShiftTool*> (m_pParentDialog->GetTaskObject());
 	}
 }
 
@@ -207,7 +207,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationXObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
@@ -224,7 +224,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationYObjectType);
 		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();

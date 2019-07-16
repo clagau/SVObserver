@@ -23,6 +23,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "Tools/SVColorTool.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/ObjectNames.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS(SVToolSetClass, SVToolSetClassGuid);
@@ -76,8 +77,17 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject(&m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, EnableAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ObjectID, ObjectIDGuid, SvDef::c_ObjectID, false, SvOi::SVResetItemNone);
+	//m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
+	RegisterEmbeddedObject(&m_TriggerIndex, TriggerIndexGuid, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_InspectedObjectID, InspectedObjectIDGuid, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_InspectedObjectID.getLinkedName(), InspectedObjectIDLinkGuid, SvDef::c_InspectedObjectIDLink, false, SvOi::SVResetItemIP);
+	//Link inspected object ID with incoming object ID as default
+	m_InspectedObjectID.setValue(m_ObjectID.GetUniqueObjectID().ToString());
+	//Display them as integers
+	m_ObjectID.SetOutputFormat(SvVol::OutputFormat_int);
+	m_TriggerIndex.SetOutputFormat(SvVol::OutputFormat_int);
 
-	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	// Set Embedded defaults
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
@@ -133,6 +143,10 @@ void SVToolSetClass::init()
 	m_Height.SetDefaultValue(0.0);
 
 	m_EnableAuxiliaryExtents.SetDefaultValue(BOOL(false));
+
+	m_ObjectID.setDefaultValue(0.0);
+	m_TriggerIndex.setDefaultValue(0);
+	m_InspectedObjectID.setDefaultValue(0.0);
 
 	// Set local defaults
 	m_StartTime = 0.0;
@@ -200,7 +214,11 @@ bool SVToolSetClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruct
 	m_MaxToolsetTime.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_Width.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_Height.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_ObjectID.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_TriggerIndex.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_InspectedObjectID.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
+	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_MainImageObject.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	//This is only required to be able to read old configurations with auxiliary extents set in the old format

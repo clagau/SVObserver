@@ -133,7 +133,7 @@ public:
 	BOOL m_isEdit;
 
 protected:
-	SvTo::SVToolClass* m_pTool;
+	SvOi::IObjectClass* m_pTaskObject;
 	SvOp::SVThresholdClass* m_pCurrentThreshold;
 
 	SvVol::SVBoolValueObjectClass* m_pUseExternATM;

@@ -11,79 +11,88 @@
 
 #pragma once
 
+#pragma region Includes
+//Moved to precompiled header: #include <map>
+#pragma endregion Includes
+
+typedef  std::map<int, _variant_t> IntVariantMap;
+
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
-typedef HRESULT (WINAPI *SVInputGetCountPtr)( unsigned long * );
-typedef HRESULT (WINAPI *SVInputGetValuePtr)( unsigned long, bool * );
+typedef HRESULT (WINAPI *SVInputGetCountPtr)( unsigned long* );
+typedef HRESULT (WINAPI *SVInputGetValuePtr)( unsigned long, bool* );
 typedef HRESULT (WINAPI *SVInputSetValuePtr)( unsigned long, bool );
-typedef HRESULT (WINAPI *SVInputGetPortCountPtr)( unsigned long * );
-typedef HRESULT (WINAPI *SVInputGetPortValuePtr)( unsigned long, unsigned long * );
+typedef HRESULT (WINAPI *SVInputGetPortCountPtr)( unsigned long* );
+typedef HRESULT (WINAPI *SVInputGetPortValuePtr)( unsigned long, unsigned long* );
 typedef HRESULT (WINAPI *SVInputSetPortValuePtr)( unsigned long, unsigned long );
-typedef HRESULT (WINAPI *SVOutputGetCountPtr)( unsigned long * );
-typedef HRESULT (WINAPI *SVOutputGetValuePtr)( unsigned long, bool * );
+typedef HRESULT (WINAPI *SVOutputGetCountPtr)( unsigned long* );
+typedef HRESULT (WINAPI *SVOutputGetValuePtr)( unsigned long, bool* );
 typedef HRESULT (WINAPI *SVOutputSetValuePtr)( unsigned long, bool );
 typedef HRESULT (WINAPI *SVOutputGetPortCountPtr)( unsigned long * );
-typedef HRESULT (WINAPI *SVOutputGetPortValuePtr)( unsigned long, unsigned long * );
-typedef HRESULT (WINAPI *SVOutputSetPortValuePtr)( unsigned long, unsigned long );
+typedef HRESULT (WINAPI *SVOutputGetPortValuePtr)( unsigned long, unsigned long* );
+typedef HRESULT(WINAPI *SVOutputSetPortValuePtr)(unsigned long, unsigned long);
+typedef HRESULT(WINAPI *SVOutputSetDataPtr)(unsigned long, const IntVariantMap&);
 
-typedef HRESULT (WINAPI *SVGetParameterCountPtr)( unsigned long * );
-typedef HRESULT (WINAPI *SVGetParameterNamePtr)( unsigned long, BSTR * );
-typedef HRESULT (WINAPI *SVGetParameterValuePtr)( unsigned long, VARIANT * );
-typedef HRESULT (WINAPI *SVSetParameterValuePtr)( unsigned long , VARIANT * );
+typedef HRESULT (WINAPI *SVGetParameterCountPtr)( unsigned long* );
+typedef HRESULT (WINAPI *SVGetParameterNamePtr)( unsigned long, BSTR* );
+typedef HRESULT (WINAPI *SVGetParameterValuePtr)( unsigned long, VARIANT* );
+typedef HRESULT (WINAPI *SVSetParameterValuePtr)( unsigned long , VARIANT* );
 
 class SVIODigitalLoadLibraryClass  
 {
 public:
-	SVIODigitalLoadLibraryClass();
+	SVIODigitalLoadLibraryClass() = default;
 	~SVIODigitalLoadLibraryClass();
 
-	HRESULT Open( LPCTSTR p_szLibrary );
+	HRESULT Open(LPCTSTR library);
 	HRESULT Close();
 	
-	HRESULT GetInputCount( unsigned long *p_pulCount );
-	HRESULT GetInputValue( unsigned long p_ulChannel, bool *p_pbValue );
-	HRESULT SetInputValue( unsigned long p_ulChannel, bool p_bValue );
+	HRESULT GetInputCount( unsigned long* pCount );
+	HRESULT GetInputValue( unsigned long channel, bool* pValue );
+	HRESULT SetInputValue( unsigned long channel, bool value );
 
-	HRESULT GetInputPortCount( unsigned long *p_pulCount );
-	HRESULT GetInputPortValue( unsigned long p_ulPort, unsigned long *p_pulValue );
-	HRESULT SetInputPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
+	HRESULT GetInputPortCount( unsigned long* pCount );
+	HRESULT GetInputPortValue( unsigned long port, unsigned long* pValue );
+	HRESULT SetInputPortValue( unsigned long port, unsigned long value );
 
-	HRESULT GetOutputCount( unsigned long *p_pulCount );
-	HRESULT GetOutputValue( unsigned long p_ulChannel, bool *p_pbValue );
-	HRESULT SetOutputValue( unsigned long p_ulChannel, bool p_bValue );
+	HRESULT GetOutputCount( unsigned long* pCount );
+	HRESULT GetOutputValue( unsigned long channel, bool* pValue );
+	HRESULT SetOutputValue( unsigned long channel, bool value );
 
-	HRESULT GetOutputPortCount( unsigned long *p_pulCount );
-	HRESULT GetOutputPortValue( unsigned long p_ulPort, unsigned long *p_pulValue );
-	HRESULT SetOutputPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
+	HRESULT GetOutputPortCount( unsigned long* pCount );
+	HRESULT GetOutputPortValue( unsigned long port, unsigned long* pValue );
+	HRESULT SetOutputPortValue( unsigned long port, unsigned long value );
+
+	HRESULT SetOutputData(unsigned long channel, const IntVariantMap& rData);
+
 	// Parameter related functions. Not implemented in all dlls.
-	HRESULT GetParameterCount( unsigned long *p_pulCount );
-	HRESULT GetParameterName( unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT GetParameterValue( unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT SetParameterValue( unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT GetParameterCount( unsigned long* pCount );
+	HRESULT GetParameterName( unsigned long index, BSTR* pName );
+	HRESULT GetParameterValue( unsigned long index, VARIANT* pValue );
+	HRESULT SetParameterValue( unsigned long index, VARIANT* pValue );
 private:
-	HMODULE m_hmHandle;
+	HMODULE m_Handle {nullptr};
 
-	SVCreatePtr m_psvCreate;
-	SVDestroyPtr m_psvDestroy;
-	SVInputGetCountPtr m_psvGetInputCount;
-	SVInputGetValuePtr m_psvGetInputValue;
-	SVInputSetValuePtr m_psvSetInputValue;
-	SVInputGetPortCountPtr m_psvGetInputPortCount;
-	SVInputGetPortValuePtr m_psvGetInputPortValue;
-	SVInputSetPortValuePtr m_psvSetInputPortValue;
-	SVOutputGetCountPtr m_psvGetOutputCount;
-	SVOutputGetValuePtr m_psvGetOutputValue;
-	SVOutputSetValuePtr m_psvSetOutputValue;
-	SVOutputGetPortCountPtr m_psvGetOutputPortCount;
-	SVOutputGetPortValuePtr m_psvGetOutputPortValue;
-	SVOutputSetPortValuePtr m_psvSetOutputPortValue;
+	SVCreatePtr m_pCreate {nullptr};
+	SVDestroyPtr m_pDestroy {nullptr};
+	SVInputGetCountPtr m_pGetInputCount {nullptr};
+	SVInputGetValuePtr m_pGetInputValue {nullptr};
+	SVInputSetValuePtr m_pSetInputValue {nullptr};
+	SVInputGetPortCountPtr m_pGetInputPortCount {nullptr};
+	SVInputGetPortValuePtr m_pGetInputPortValue {nullptr};
+	SVInputSetPortValuePtr m_pSetInputPortValue {nullptr};
+	SVOutputGetCountPtr m_pGetOutputCount {nullptr};
+	SVOutputGetValuePtr m_pGetOutputValue {nullptr};
+	SVOutputSetValuePtr m_pSetOutputValue {nullptr};
+	SVOutputGetPortCountPtr m_pGetOutputPortCount {nullptr};
+	SVOutputGetPortValuePtr m_pGetOutputPortValue {nullptr};
+	SVOutputSetPortValuePtr m_pSetOutputPortValue {nullptr};
+	SVOutputSetDataPtr m_pSetOutputData {nullptr};
 
 	// Parameter related pointers.
-	SVSetParameterValuePtr m_psvSetParameterValue;
-	SVGetParameterValuePtr m_psvGetParameterValue;
-	SVGetParameterNamePtr m_psvGetParameterName;
-	SVGetParameterCountPtr m_psvGetParameterCount;
+	SVSetParameterValuePtr m_pSetParameterValue {nullptr};
+	SVGetParameterValuePtr m_pGetParameterValue {nullptr};
+	SVGetParameterNamePtr m_pGetParameterName {nullptr};
+	SVGetParameterCountPtr m_pGetParameterCount {nullptr};
 };
-
-#include "SVIODigitalLoadLibraryClass.inl"
 

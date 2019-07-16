@@ -47,6 +47,7 @@
 #include <windows.h>
 
 #include <comdef.h>
+#include <comutil.h>
 #include <concrt.h>							//Used by static library
 #include <ctime>							//Used by static library
 #include <deque>

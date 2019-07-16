@@ -82,7 +82,7 @@ namespace SvTh
 		HRESULT UnregisterBufferInterface(SVHANDLE p_hHandle);
 
 		HRESULT InternalTriggerEnable(SVHANDLE p_hHandle);
-		HRESULT InternalTrigger(SVHANDLE p_hHandle);
+		HRESULT InternalTrigger(SVHANDLE p_hHandle) const;
 		HRESULT InternalTriggerRegister(SVHANDLE p_hHandle, const TriggerDispatcher &rDispatcher);
 		HRESULT InternalTriggerUnregister(SVHANDLE p_hHandle, const SvTh::TriggerDispatcher &rDispatcher);
 		HRESULT InternalTriggerUnregisterAll(SVHANDLE p_hHandle);

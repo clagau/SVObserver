@@ -20,8 +20,6 @@
 class SVInputObjectList : public SVObjectClass
 {
 public:
-	typedef std::vector<std::pair<_variant_t, bool>> VariantBoolPairVector;
-
 	SVInputObjectList( LPCSTR ObjectName );
 	SVInputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECTLIST );
 	virtual ~SVInputObjectList();
@@ -38,7 +36,7 @@ public:
 	HRESULT AttachInput( SVInputObject *pInput );
 	HRESULT DetachInput( const SVGUID& p_rOutputID );
 
-	bool ReadInputs( const SVIOEntryHostStructPtrVector& rInputs, VariantBoolPairVector& rInputValues );
+	bool ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues);
 	bool ReadInput( SVIOEntryStruct pIOEntry, _variant_t& rVariant );
 
 	bool FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries );

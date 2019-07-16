@@ -42,20 +42,19 @@ namespace SvTi
 		return hr;
 	}
 
-	HRESULT CALLBACK SVCameraTriggerClass::TriggerCallback(SvTh::TriggerParameters triggerparams)
+	HRESULT CALLBACK SVCameraTriggerClass::TriggerCallback(const SvTh::TriggerParameters& rTriggerData)
 	{
 		HRESULT hr = S_OK;
-		if (nullptr != triggerparams.m_pOwner)
+		if (nullptr != rTriggerData.m_pOwner)
 		{
 			SVOResponseClass response;
 
-			SVCameraTriggerClass *pDevice = reinterpret_cast<SVCameraTriggerClass *>(triggerparams.m_pOwner);
-			SVCameraTriggerData::NameVariantMap* pSettings = reinterpret_cast<SVCameraTriggerData::NameVariantMap*> (triggerparams.m_pData);
+			const SVCameraTriggerClass *pDevice = reinterpret_cast<const SVCameraTriggerClass *>(rTriggerData.m_pOwner);
 
 			_variant_t startVal;
-			SVCameraTriggerData::NameVariantMap::const_iterator Iter( pSettings->end() );
-			Iter = pSettings->find( _T("StartFrameTimestamp") );
-			if( pSettings->end() != Iter )
+			SvTh::IntVariantMap::const_iterator Iter(rTriggerData.m_Data.end() );
+			Iter = rTriggerData.m_Data.find(SvTh::TriggerDataEnum::StartFrameTime);
+			if(rTriggerData.m_Data.end() != Iter )
 			{
 				startVal = Iter->second;
 			}
@@ -64,8 +63,7 @@ namespace SvTi
 			response.setIsComplete(true);
 			response.setStartTime(startVal);
 
-			boost::any holder(*pSettings);
-			response.setExtraData(holder);
+			response.setData(rTriggerData.m_Data);
 			hr = pDevice->Notify( response );
 
 
@@ -124,7 +122,7 @@ namespace SvTi
 		}
 		if (nullptr != m_pDLLTrigger)
 		{
-			SvTh::TriggerDispatcher dispatcher(SVCameraTriggerClass::TriggerCallback, SvTh::TriggerParameters(this, nullptr));
+			SvTh::TriggerDispatcher dispatcher(SVCameraTriggerClass::TriggerCallback, SvTh::TriggerParameters(this));
 
 			if (S_OK != m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher))
 			{

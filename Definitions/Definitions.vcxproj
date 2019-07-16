@@ -90,6 +90,7 @@
     <ClInclude Include="ImageOperatorEnums.h" />
     <ClInclude Include="LinearEdgeEnums.h" />
     <ClInclude Include="ObjectDefines.h" />
+    <ClInclude Include="ObjectNames.h" />
     <ClInclude Include="RangeEnum.h" />
     <ClInclude Include="StringTypeDef.h" />
     <ClInclude Include="SVExtentEnums.h" />

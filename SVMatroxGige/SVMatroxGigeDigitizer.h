@@ -42,7 +42,7 @@ public:
 class SVMatroxGigeDigitizer
 {
 private:
-	typedef SVMatroxGigeBufferCreator<SVBufAttGrabImageProcDib> AcqBufferCreator;
+	typedef SVMatroxGigeBufferCreator<SVBufAttGrabImageProc> AcqBufferCreator;
 	SVMatroxBufferArray m_AcqBuffers;
 	SVGigeDeviceParameterMap m_featuresMap;
 	unsigned long m_deviceNumber;

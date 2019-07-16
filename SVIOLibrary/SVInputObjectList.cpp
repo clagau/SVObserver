@@ -241,7 +241,7 @@ HRESULT SVInputObjectList::DetachInput( const SVGUID& p_rOutputID )
 	return l_Status;
 }// end RemoveInput
 
-bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& rInputs, VariantBoolPairVector& rInputValues )
+bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues)
 {
 	size_t inputSize( rInputs.size() );
 	size_t i( 0 );
@@ -268,12 +268,11 @@ bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& rInputs,
 
 				if( nullptr != pInput )
 				{
-					rInputValues[ i ].second = ( S_OK == pInput->Read( rInputValues[ i ].first ) );
+					pInput->Read(rInputValues[i]);
 				}
 				else
 				{
-					rInputValues[ i ].first.Clear();
-					rInputValues[ i ].second = false;
+					rInputValues[ i ].Clear();
 				}
 			}// end if
 		}// end for

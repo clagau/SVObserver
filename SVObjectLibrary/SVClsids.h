@@ -135,6 +135,10 @@ extern const GUID SVAcquisitionTimeGuid;
 extern const GUID ToolsetWidthGuid;
 extern const GUID ToolsetHeightGuid;
 extern const GUID EnableAuxiliaryExtentsObjectGuid;
+extern const GUID ObjectIDGuid;
+extern const GUID TriggerIndexGuid;
+extern const GUID InspectedObjectIDGuid;
+extern const GUID InspectedObjectIDLinkGuid;
 
 // GUID for the SVWindowToolClass
 extern const GUID SVWindowToolClassGuid;

@@ -25,15 +25,15 @@ namespace SvTi
 	{
 	}
 
-	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCallback(SvTh::TriggerParameters triggerparams)
+	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCallback(const SvTh::TriggerParameters& rTriggerData)
 	{
 		HRESULT hrOk = S_OK;
 
-		if ( nullptr != triggerparams.m_pOwner )
+		if ( nullptr != rTriggerData.m_pOwner )
 		{
 			try
 			{
-				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)(triggerparams.m_pOwner);
+				const SVSoftwareTriggerClass* pDevice = reinterpret_cast<const SVSoftwareTriggerClass*> (rTriggerData.m_pOwner);
 				hrOk = pDevice->FireAcquisitionTrigger();
 			}
 			catch ( ... )
@@ -43,15 +43,15 @@ namespace SvTi
 		return hrOk;
 	}
 
-	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCompleteCallback(SvTh::TriggerParameters triggerparams)
+	HRESULT CALLBACK SVSoftwareTriggerClass::TriggerCompleteCallback(const SvTh::TriggerParameters& rTriggerData)
 	{
 		HRESULT hrOk = S_OK;
 
-		if ( nullptr != triggerparams.m_pOwner )
+		if ( nullptr != rTriggerData.m_pOwner )
 		{
 			try
 			{
-				SVSoftwareTriggerClass* pDevice = (SVSoftwareTriggerClass *)(triggerparams.m_pOwner);
+				const SVSoftwareTriggerClass* pDevice = reinterpret_cast<const SVSoftwareTriggerClass*> (rTriggerData.m_pOwner);
 
 				SVOResponseClass response;
 
@@ -59,7 +59,7 @@ namespace SvTi
 				response.setIsValid(true);
 				response.setIsComplete(true);
 
-				pDevice->Notify( response );
+				pDevice->Notify(response);
 			}
 			catch ( ... )
 			{
@@ -74,7 +74,7 @@ namespace SvTi
 
 		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
-		SvTh::TriggerParameters tp(this, pvOwner);
+		SvTh::TriggerParameters tp(this);
 
 		if ( nullptr != m_pDLLTrigger )
 		{
@@ -117,9 +117,9 @@ namespace SvTi
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			SvTh::TriggerDispatcher localCallback(SVSoftwareTriggerClass::TriggerCallback, SvTh::TriggerParameters(this, pvOwner));
+			SvTh::TriggerDispatcher localCallback(SVSoftwareTriggerClass::TriggerCallback, SvTh::TriggerParameters(this));
 
-			SvTh::TriggerDispatcher dispatcher(SVSoftwareTriggerClass::TriggerCompleteCallback, SvTh::TriggerParameters(this, pvOwner));
+			SvTh::TriggerDispatcher dispatcher(SVSoftwareTriggerClass::TriggerCompleteCallback, SvTh::TriggerParameters(this));
 
 			if ( S_OK != m_pDLLTrigger->Unregister( m_triggerchannel, localCallback ) )
 			{
@@ -145,7 +145,7 @@ namespace SvTi
 		return m_acquisitionInitiator.EnableInternalTrigger();
 	}
 
-	HRESULT SVSoftwareTriggerClass::FireAcquisitionTrigger()
+	HRESULT SVSoftwareTriggerClass::FireAcquisitionTrigger() const
 	{
 		return m_acquisitionInitiator.Exec();
 	}

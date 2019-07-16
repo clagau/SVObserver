@@ -194,7 +194,7 @@ namespace SvTi
 		if ( pResponse )
 		{
 			SVTriggerInfoStruct l_Info;
-			l_Info.m_Data = pResponse->getExtraData();
+			l_Info.m_Data = pResponse->getData();
 
 			l_Info.m_BeginProcess = pResponse->getStartTime();
 

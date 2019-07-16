@@ -34,6 +34,7 @@ UINT_PTR m_nTimer;
 extern CSVIOTESTApp theApp;
 
 static LPCTSTR SVLPTIODLL = _T("SVLptIO.dll");
+constexpr int cTriggerDataPointer = 0x100;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -593,48 +594,54 @@ void CSVIOTESTDlg::OnTestOutputs()
 	SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 }
 
-HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
+HRESULT CALLBACK SVCallback(const SvTh::TriggerParameters& rTriggerData)
 {
 	double l_TimeStamp = SvTl::GetTimeStamp();
 
-	if ( nullptr != triggerparams.m_pData )
+	_variant_t dataAddress;
+	SvTh::IntVariantMap::const_iterator Iter(rTriggerData.m_Data.end());
+	Iter = rTriggerData.m_Data.find(cTriggerDataPointer);
+	if (rTriggerData.m_Data.end() != Iter)
 	{
-		SVIOTriggerDataStruct *l_pData = reinterpret_cast<SVIOTriggerDataStruct *>(triggerparams.m_pData);
+		SVIOTriggerDataStruct *pData = reinterpret_cast<SVIOTriggerDataStruct *>(Iter->second.llVal);
 
-		(l_pData->lTriggerCount)++;
-
-		if ( 101 < l_pData->lTriggerCount )
+		if (nullptr != pData)
 		{
-			l_pData->m_TotalTime -= ( l_pData->m_TimeStamp[ l_pData->ulNextIndex ] -
-			                           l_pData->m_TimeStamp[ l_pData->ulIndex ] ) ;
-		}
+			(pData->lTriggerCount)++;
 
-		l_pData->m_TimeStamp[ l_pData->ulIndex ] = l_TimeStamp;
-
-		if ( 1 < l_pData->lTriggerCount )
-		{
-			l_pData->m_LastTime = ( l_pData->m_TimeStamp[ l_pData->ulIndex ] -
-															 l_pData->m_TimeStamp[ l_pData->ulLastIndex ] ) ;
-
-			l_pData->m_TotalTime += l_pData->m_LastTime;
-
-			if ( 2 < l_pData->lTriggerCount )
+			if ( 101 < pData->lTriggerCount )
 			{
-				if ( l_pData->m_MaxTime < l_pData->m_LastTime )
-				{
-					l_pData->m_MaxTime = l_pData->m_LastTime;
-				}
+				pData->m_TotalTime -= ( pData->m_TimeStamp[ pData->ulNextIndex ] -
+										   pData->m_TimeStamp[ pData->ulIndex ] ) ;
+			}
 
-				if ( l_pData->m_LastTime < l_pData->m_MinTime )
+			pData->m_TimeStamp[ pData->ulIndex ] = l_TimeStamp;
+
+			if ( 1 < pData->lTriggerCount )
+			{
+				pData->m_LastTime = ( pData->m_TimeStamp[ pData->ulIndex ] -
+																 pData->m_TimeStamp[ pData->ulLastIndex ] ) ;
+
+				pData->m_TotalTime += pData->m_LastTime;
+
+				if ( 2 < pData->lTriggerCount )
 				{
-					l_pData->m_MinTime = l_pData->m_LastTime;
+					if ( pData->m_MaxTime < pData->m_LastTime )
+					{
+						pData->m_MaxTime = pData->m_LastTime;
+					}
+
+					if ( pData->m_LastTime < pData->m_MinTime )
+					{
+						pData->m_MinTime = pData->m_LastTime;
+					}
 				}
 			}
-		}
 
-		l_pData->ulLastIndex = l_pData->ulIndex;
-		l_pData->ulIndex = l_pData->ulNextIndex;
-		l_pData->ulNextIndex = ( l_pData->ulNextIndex + 1 ) % 100;
+			pData->ulLastIndex = pData->ulIndex;
+			pData->ulIndex = pData->ulNextIndex;
+			pData->ulNextIndex = ( pData->ulNextIndex + 1 ) % 100;
+		}
 	}
 
 	return S_OK;
@@ -674,11 +681,18 @@ void CSVIOTESTDlg::OnStartTriggers()
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	SvTh::TriggerDispatcher dispatcher(SVCallback,SvTh::TriggerParameters(this));
+	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters(this));
 
 	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
-		dispatcher.SetData(&m_TriggerData[triggerchannel]);
+		SvTh::IntVariantMap triggerData;
+
+		_variant_t dataAddress;
+		dataAddress.ChangeType(VT_I8);
+		dataAddress.llVal = reinterpret_cast<long long> (&m_TriggerData[triggerchannel]);
+		triggerData[cTriggerDataPointer] = dataAddress;
+		
+		dispatcher.SetData(triggerData);
 
 		StartTrigger(triggerchannel);
 		if (numTriggers >= triggerchannel)
@@ -728,29 +742,22 @@ void CSVIOTESTDlg::OnStopTriggers()
 		m_psvTriggers->Stop( 1 );
 	}
 
-	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters(this ,&m_TriggerData[4]));
+	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters(this));
 
 	if (numTriggers > 3)
 	{
 		m_psvTriggers->Unregister( 4, dispatcher );
 	}
 
-	dispatcher.SetData(&m_TriggerData[3]);
-
 	if (numTriggers > 2)
 	{
 		m_psvTriggers->Unregister( 3, dispatcher );
 	}
 
-	dispatcher.SetData(&m_TriggerData[2]);
-
-
 	if (numTriggers > 1)
 	{
 		m_psvTriggers->Unregister( 2, dispatcher );
 	}
-
-	dispatcher.SetData(&m_TriggerData[1]);
 
 	if (numTriggers > 1)
 	{

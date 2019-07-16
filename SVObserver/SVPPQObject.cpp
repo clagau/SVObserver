@@ -145,7 +145,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 					l_pNextProduct = GetProductInfoStruct(l_ProcessCount);
 				}
 
-				if (nullptr != l_pNextProduct && l_pNextProduct->oOutputsInfo.m_EndOutputDelay <= l_CurrentTime)
+				if (nullptr != l_pNextProduct && l_pNextProduct->m_outputsInfo.m_EndOutputDelay <= l_CurrentTime)
 				{
 					l_pProduct = nullptr;
 				}
@@ -156,9 +156,9 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 		{
 			// if time delay has not expired yet, then put back on the 
 			// m_oOutputsDelayQueue.  Then why did we remove it to begin with?
-			if (l_CurrentTime < l_pProduct->oOutputsInfo.m_EndOutputDelay)
+			if (l_CurrentTime < l_pProduct->m_outputsInfo.m_EndOutputDelay)
 			{
-				m_NextOutputDelayTimestamp = l_pProduct->oOutputsInfo.m_EndOutputDelay;
+				m_NextOutputDelayTimestamp = l_pProduct->m_outputsInfo.m_EndOutputDelay;
 
 				m_oOutputsDelayQueue.AddHead(l_pProduct->ProcessCount());
 
@@ -218,9 +218,9 @@ HRESULT SVPPQObject::ProcessTimeDelayOutputs(SVProductInfoStruct& rProduct)
 		
 		if (lResetDelay)
 		{
-			rProduct.oOutputsInfo.m_EndProcess = SvTl::GetTimeStamp();
+			rProduct.m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
-			rProduct.oOutputsInfo.m_EndResetDelay = rProduct.oOutputsInfo.m_EndProcess + rProduct.oOutputsInfo.m_ResetDelay;
+			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + rProduct.m_outputsInfo.m_ResetDelay;
 
 			m_oOutputsResetQueue.AddTail(rProduct.ProcessCount());
 
@@ -239,13 +239,13 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 {
 	HRESULT l_Status = S_OK;
 
-	if (p_rProduct.bDataComplete)
+	if (p_rProduct.m_dataComplete)
 	{
 		l_Status = ProcessTimeDelayOutputs(p_rProduct);
 	}
 	else
 	{
-		m_NextOutputDelayTimestamp = p_rProduct.oOutputsInfo.m_EndOutputDelay;
+		m_NextOutputDelayTimestamp = p_rProduct.m_outputsInfo.m_EndOutputDelay;
 
 		m_oOutputsDelayQueue.AddHead(p_rProduct.ProcessCount());
 
@@ -385,7 +385,6 @@ HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectName
 HRESULT SVPPQObject::ObserverUpdate(const std::pair<SVInspectionInfoStruct, long>& rData)
 {
 	SVInspectionInfoPair infoPair(rData.second, rData.first);
-	infoPair.second.m_CallbackReceived = SvTl::GetTimeStamp();
 	infoPair.second.ClearIndexes();
 	m_oInspectionQueue.AddTail(infoPair);
 
@@ -1436,7 +1435,7 @@ bool SVPPQObject::RemoveInput(SVIOEntryHostStructPtr pInput)
 	return l_Status;
 }
 
-HRESULT SVPPQObject::GetInputIOValues(VariantBoolPairVector& rInputValues) const
+HRESULT SVPPQObject::GetInputIOValues(std::vector<_variant_t>& rInputValues) const
 {
 	HRESULT l_Status(S_OK);
 
@@ -1794,6 +1793,7 @@ bool SVPPQObject::EvaluateConditionalOutput() const
 bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 {
 	bool bRet = true;
+	DWORD inspectedObjectID{0};
 
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
@@ -1805,13 +1805,28 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 	if (nullptr != pProduct)
 	{
-		pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
-
-		if (!pProduct->bDataComplete)
+		if (!pProduct->m_dataComplete)
 		{
 			SetProductIncomplete(*pProduct);
-			//Data index with -1 will return the default output values wich is required in this case
-			pProduct->oOutputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
+			//Data index with -1 will return the default output values which is required in this case
+			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
+		}
+		
+		//As all inspections have been tested to have the same object ID we will set it to the first inspection
+		SVGUIDSVInspectionInfoStructMap::const_iterator iter{pProduct->m_svInspectionInfos.begin()};
+		if(pProduct->m_svInspectionInfos.end() != iter)
+		{
+			inspectedObjectID = iter->second.m_ObjectID;
+		}
+		else
+		{
+			//Set the default inspected object ID which would be the input object ID
+			SvTh::IntVariantMap::const_iterator iterData {pProduct->m_triggerInfo.m_Data.end()};
+			iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::ObjectID);
+			if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+			{
+				inspectedObjectID = static_cast<DWORD> (iterData->second);
+			}
 		}
 
 #ifdef _DEBUG
@@ -1828,39 +1843,43 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		bWriteOutputs = EvaluateConditionalOutput();
 	}
 
-	GuidVariantPairVector OutputValues = pProduct->oOutputsInfo.m_Outputs;
-	pProduct->oOutputsInfo.m_OutputToggleResult = m_OutputToggle;
-	bool bNak = pProduct->oOutputsInfo.m_NakResult;
+	const GuidVariantPairVector& rOutputValues = pProduct->m_outputsInfo.m_Outputs;
+	pProduct->m_outputsInfo.m_OutputToggleResult = m_OutputToggle;
+	bool bNak = pProduct->m_outputsInfo.m_NakResult;
 
 	if (bWriteOutputs)
 	{
-		bRet = m_pOutputList->WriteOutputs(OutputValues);
+		if(nullptr != m_pTrigger)
+		{
+			//Trigger channel needs to  be one based
+			long triggerChannel = (nullptr != m_pTrigger->mpsvDevice) ? m_pTrigger->mpsvDevice->miChannelNumber + 1 : -1;
+
+			if(triggerChannel >= 0)
+			{
+				SvTh::IntVariantMap outputData;
+				outputData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
+				m_pOutputList->WriteOutputData(triggerChannel, outputData);
+			}
+		}
+		bRet = m_pOutputList->WriteOutputs(rOutputValues);
 		if (0 == m_DataValidDelay)
 		{
 			if (nullptr != m_pDataValid)
 			{
-				m_pOutputList->WriteOutputValue(m_pDataValid, _variant_t(pProduct->oOutputsInfo.m_DataValidResult));
+				m_pOutputList->WriteOutputValue(m_pDataValid, _variant_t(pProduct->m_outputsInfo.m_DataValidResult));
 			}
 			if (nullptr != m_pOutputToggle)
 			{
-				m_pOutputList->WriteOutputValue(m_pOutputToggle, _variant_t(pProduct->oOutputsInfo.m_OutputToggleResult));
+				m_pOutputList->WriteOutputValue(m_pOutputToggle, _variant_t(pProduct->m_outputsInfo.m_OutputToggleResult));
 			}
 		}
 		else
 		{
 			// Set output data valid expire time
-			pProduct->oOutputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + pProduct->oOutputsInfo.m_DataValidDelay;
+			pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + pProduct->m_outputsInfo.m_DataValidDelay;
 			m_DataValidDelayQueue.AddTail(pProduct->ProcessCount());
 		}
 	}
-	pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
-	long l_lTime = static_cast<long>(pProduct->oTriggerInfo.m_PushedOutputs - pProduct->oTriggerInfo.m_ToggleTimeStamp);
-	// Caution! enabling the logging here will cause thread contention because
-	// the tracking class is not lock-less. It needs more work before we can use it here.
-#ifdef EnableTracking
-		//m_PPQTracking.IncrementTimeCount( _T( "Output Toggle"), l_lTime );
-#endif
-
 
 
 #ifdef _DEBUG
@@ -2091,7 +2110,7 @@ void SVPPQObject::GetAllOutputs(SVIOEntryHostStructPtrVector& ppIOEntries) const
 	ppIOEntries = m_AllOutputs;
 }
 
-SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTriggerInfo)
+SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerInfo)
 {
 	SVProductInfoStruct* l_pProduct = nullptr;
 	SVProductInfoStruct* l_pNewProduct = nullptr;
@@ -2100,19 +2119,19 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct& p_rTrigger
 
 	if (m_qAvailableProductInfos.RemoveHead(&l_pNewProduct) && nullptr != l_pNewProduct)
 	{
-		l_pNewProduct->oTriggerInfo = p_rTriggerInfo;
+		l_pNewProduct->m_triggerInfo = std::move(rTriggerInfo);
 
 		if (nullptr != l_pPrevProduct)
 		{
-			l_pNewProduct->oTriggerInfo.m_PreviousTrigger = l_pPrevProduct->oTriggerInfo.m_BeginProcess;
+			l_pNewProduct->m_triggerInfo.m_PreviousTrigger = l_pPrevProduct->m_triggerInfo.m_BeginProcess;
 		}
 
-		l_pNewProduct->bTriggered = true;
+		l_pNewProduct->m_triggered = true;
 
 		l_pNewProduct->m_ProductState += _T("|");
 		l_pNewProduct->m_ProductState += GetName();
 		l_pNewProduct->m_ProductState += _T("|TRI=");
-		l_pNewProduct->m_ProductState += SvUl::Format(_T("%ld"), p_rTriggerInfo.lTriggerCount);
+		l_pNewProduct->m_ProductState += SvUl::Format(_T("%ld"), l_pNewProduct->m_triggerInfo.lTriggerCount);
 
 		l_pNewProduct->SetProductActive();
 
@@ -2164,7 +2183,7 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
 	for (auto& rInspection : pNewProduct->m_svInspectionInfos)
 	{
-		rInspection.second.setNextTriggerRecord(SvTrc::TriggerData{pNewProduct->oTriggerInfo.lTriggerCount});
+		rInspection.second.setNextTriggerRecord(SvTrc::TriggerData{pNewProduct->m_triggerInfo.lTriggerCount});
 	}
 	
 	// ************************************************************************
@@ -2351,13 +2370,13 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 		}
 	}
 
-	if (nullptr != l_pProduct && nullptr != l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection)
+	if (nullptr != l_pProduct && nullptr != l_pProduct->m_svInspectionInfos[p_rInspectionID].m_pInspection)
 	{
 
-		l_Status = l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection->StartProcess(l_pProduct);
+		l_Status = l_pProduct->m_svInspectionInfos[p_rInspectionID].m_pInspection->StartProcess(l_pProduct);
 
 #ifdef EnableTracking
-		std::string l_Title = l_pProduct->m_svInspectionInfos[p_rInspectionID].pInspection->GetName();
+		std::string l_Title = l_pProduct->m_svInspectionInfos[p_rInspectionID].m_pInspection->GetName();
 		l_Title += _T(" Start");
 		m_PPQTracking.IncrementCount(l_Title, l_ProductIndex);
 #endif
@@ -2387,13 +2406,13 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 {
 	if (p_pProduct)
 	{
-		p_pProduct->oOutputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
-		p_pProduct->oOutputsInfo.m_OutputDelay = m_lOutputDelay;
-		p_pProduct->oOutputsInfo.m_ResetDelay = m_lResetDelay;
-		p_pProduct->oOutputsInfo.m_DataValidDelay = m_DataValidDelay;
-		p_pProduct->oOutputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
-		p_pProduct->oOutputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
-		p_pProduct->oOutputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
+		p_pProduct->m_outputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
+		p_pProduct->m_outputsInfo.m_OutputDelay = m_lOutputDelay;
+		p_pProduct->m_outputsInfo.m_ResetDelay = m_lResetDelay;
+		p_pProduct->m_outputsInfo.m_DataValidDelay = m_DataValidDelay;
+		p_pProduct->m_outputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
+		p_pProduct->m_outputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
+		p_pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
 
 		switch (m_oOutputMode)
 		{
@@ -2402,14 +2421,14 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 			// The trigger has come, time to write the outputs
 			WriteOutputs(p_pProduct);
 
-			p_pProduct->oOutputsInfo.m_EndProcess = SvTl::GetTimeStamp();
+			p_pProduct->m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
 			// Check if we should fire up the reset outputs thread
 			if (0 < m_lResetDelay)
 			{
 				// Set output reset expire time
-				p_pProduct->oOutputsInfo.m_EndResetDelay = p_pProduct->oOutputsInfo.m_EndProcess +
-					p_pProduct->oOutputsInfo.m_ResetDelay;
+				p_pProduct->m_outputsInfo.m_EndResetDelay = p_pProduct->m_outputsInfo.m_EndProcess +
+					p_pProduct->m_outputsInfo.m_ResetDelay;
 
 				m_oOutputsResetQueue.AddTail(p_pProduct->ProcessCount());
 			}
@@ -2423,12 +2442,12 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
-			double l_Offset = p_pProduct->oOutputsInfo.m_OutputDelay;
+			double l_Offset = p_pProduct->m_outputsInfo.m_OutputDelay;
 
 			// Set output delay expire time
-			p_pProduct->oOutputsInfo.m_EndOutputDelay = p_pProduct->oTriggerInfo.m_ToggleTimeStamp + l_Offset;
+			p_pProduct->m_outputsInfo.m_EndOutputDelay = p_pProduct->m_triggerInfo.m_ToggleTimeStamp + l_Offset;
 
-			if (p_pProduct->oOutputsInfo.m_BeginProcess < p_pProduct->oOutputsInfo.m_EndOutputDelay)
+			if (p_pProduct->m_outputsInfo.m_BeginProcess < p_pProduct->m_outputsInfo.m_EndOutputDelay)
 			{
 				m_oOutputsDelayQueue.AddTail(p_pProduct->ProcessCount());
 			}
@@ -2452,16 +2471,26 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 {
 	bool bValid{true};
 	long oState{0};
+	DWORD previousObjectID{0};
 
 	for(const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
 	{
-		oState |= rInspectionInfo.second.oInspectedState;
+		oState |= rInspectionInfo.second.m_InspectedState;
 		bValid &= (rInspectionInfo.second.m_EndInspection > 0);
+		//Make sure that the inspected object ID is the same for all inspections if not then failed
+		if(0 == previousObjectID)
+		{
+			previousObjectID = rInspectionInfo.second.m_ObjectID;
+		}
+		else if(rInspectionInfo.second.m_ObjectID != previousObjectID)
+		{
+			oState |= PRODUCT_INSPECTION_FAILED;
+		}
 	}
 	m_PpqOutputs[PpqOutputEnums::DataValid].SetValue(BOOL(bValid));
 
 	//Save these values for later
-	rProduct.oOutputsInfo.m_DataValidResult = bValid;
+	rProduct.m_outputsInfo.m_DataValidResult = bValid;
 
 	// Set the value objects depending on the inspection state result
 	if (PRODUCT_INSPECTION_NOT_RUN & oState)
@@ -2554,7 +2583,7 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 	// First, write the trigger toggle output if it is okay
 	if (nullptr != m_pTriggerToggle && nullptr != m_pTriggerToggle->getValueObject())
 	{
-		m_pTriggerToggle->getValueObject()->setValue(_variant_t(rProduct.oTriggerInfo.m_ToggleState));
+		m_pTriggerToggle->getValueObject()->setValue(_variant_t(rProduct.m_triggerInfo.m_ToggleState));
 	}
 	// Toggle the Output Toggle if it is okay
 	if (nullptr != m_pOutputToggle && nullptr != m_pOutputToggle->getValueObject())
@@ -2567,8 +2596,8 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 	m_PpqOutputs[PpqOutputEnums::ACK].GetValue(bACK);
 	m_PpqOutputs[PpqOutputEnums::NAK].GetValue(bNAK);
 
-	rProduct.oOutputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
-	rProduct.oOutputsInfo.m_NakResult =  bNAK ? true : false;
+	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
+	rProduct.m_outputsInfo.m_NakResult =  bNAK ? true : false;
 
 }
 
@@ -2605,9 +2634,9 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 	}
 
 	//Only place that could set bDataComplete to true
-	pProduct->bDataComplete = bValid;
+	pProduct->m_dataComplete = bValid;
 
-	if (pProduct->bDataComplete)
+	if (pProduct->m_dataComplete)
 	{
 		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode) ||
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode))
@@ -2832,11 +2861,11 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				if (l_ProductIndex < ppqSize)
 				{
 					pProduct = m_ppPPQPositions.GetProductAt(l_ProductIndex);
-					if(nullptr != pProduct && pProduct->IsProductActive() && !pProduct->bDataComplete)
+					if(nullptr != pProduct && pProduct->IsProductActive() && !pProduct->m_dataComplete)
 					{
 						if (cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
 						{
-							pProduct->bhasCameraImage[cameraID] = true;
+							pProduct->m_hasCameraImage[cameraID] = true;
 						}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 						::OutputDebugString(SvUl::Format(_T("Camera %s | TRI=%d\n"), rElement.m_pCamera->GetName(), pProduct->ProcessCount()).c_str());
@@ -3032,28 +3061,32 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 	return l_Status;
 }
 
-bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& rTriggerInfo)
+bool SVPPQObject::FinishTrigger(void *pCaller, const SvTi::SVTriggerInfoStruct& rTriggerInfo)
 {
 	bool l_Status = m_bOnline;
 
 	if (l_Status)
 	{
-		SVTriggerQueueElement l_TriggerInfo;
+		SvTi::SVTriggerInfoStruct triggerInfo{rTriggerInfo};
 
-		l_TriggerInfo.m_TriggerInfo = rTriggerInfo;
+		GetInputIOValues(triggerInfo.m_Inputs);
 
-		l_TriggerInfo.m_TriggerInfo.m_CallbackReceived = SvTl::GetTimeStamp();
-
-		GetInputIOValues(l_TriggerInfo.m_Inputs);
+		//If in the input data it has a valid value then it is more accurate
+		SvTh::IntVariantMap::const_iterator iterData {triggerInfo.m_Data.end()};
+		iterData = triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
+		if (triggerInfo.m_Data.end() != iterData && 0.0 < static_cast<double> (iterData->second))
+		{
+			triggerInfo.m_BeginProcess = static_cast<double> (iterData->second);
+		}
 
 		switch (m_oOutputMode)
 		{
-		case SvDef::SVPPQTimeDelayMode:
-		case SvDef::SVPPQTimeDelayAndDataCompleteMode:
-		{
-			ResetOutputs();
-			break;
-		}
+			case SvDef::SVPPQTimeDelayMode:
+			case SvDef::SVPPQTimeDelayAndDataCompleteMode:
+			{
+				ResetOutputs();
+				break;
+			}
 		}
 
 		m_TriggerToggle = !m_TriggerToggle;
@@ -3063,20 +3096,20 @@ bool SVPPQObject::FinishTrigger(void *pCaller, SvTi::SVTriggerInfoStruct& rTrigg
 			m_pOutputList->WriteOutputValue(m_pTriggerToggle, m_TriggerToggle);
 		}
 
-		l_TriggerInfo.m_TriggerInfo.m_ToggleState = m_TriggerToggle;
-		l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp = SvTl::GetTimeStamp();
+		triggerInfo.m_ToggleState = m_TriggerToggle;
+		triggerInfo.m_ToggleTimeStamp = SvTl::GetTimeStamp();
 
 		// Caution! enabling the logging here will cause thread contention because
 		// the tracking class is not lock-less. It needs more work before we can use it here.
 #ifdef EnableTracking
-		//long l_lTime = static_cast<long>( l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp - l_TriggerInfo.m_TriggerInfo.m_BeginProcess );
+		//long l_lTime = static_cast<long>( triggerInfo.m_ToggleTimeStamp - triggerInfo.m_BeginProcess );
 		//m_PPQTracking.IncrementTimeCount( _T( "Trigger Toggle"), l_lTime );
 #endif
 
-		m_oTriggerQueue.PushTail(l_TriggerInfo);
+		m_oTriggerQueue.PushTail(triggerInfo);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		::OutputDebugString(SvUl::Format(_T("Finished Trigger TRI=%d\n"), rTriggerInfo.lTriggerCount).c_str());
+		::OutputDebugString(SvUl::Format(_T("Finished Trigger TRI=%d\n"), triggerInfo.lTriggerCount).c_str());
 #endif
 
 		m_AsyncProcedure.Signal(nullptr);
@@ -3113,7 +3146,7 @@ SVProductInfoStruct SVPPQObject::getProductReadyForRunOnce(const SVGUID& rIpGuid
 		if (m_arInspections.end() != pInspection)
 		{
 			SVInspectionInfoStruct& rInspectionStruct = product.m_svInspectionInfos[(*pInspection)->GetUniqueObjectID()];
-			rInspectionStruct.pInspection = *pInspection;
+			rInspectionStruct.m_pInspection = *pInspection;
 			rInspectionStruct.m_inspectionPosInTrc = SvTrc::getInspectionPos((*pInspection)->GetUniqueObjectID());
 			bOk = rInspectionStruct.setNextAvailableTR();
 		}
@@ -3175,7 +3208,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 			{
 				SVInspectionInfoPair l_Info(rProduct.ProcessCount(), rProduct.m_svInspectionInfos[pInspection->GetUniqueObjectID()]);
 
-				l_Info.second.oInspectedState = PRODUCT_NOT_INSPECTED;
+				l_Info.second.m_InspectedState = PRODUCT_NOT_INSPECTED;
 				l_Info.second.m_CanProcess = false;
 				l_Info.second.m_InProcess = true;
 				l_Info.second.m_EndInspection = SvTl::GetTimeStamp();
@@ -3326,18 +3359,17 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 
 	if( rProcessed )
 	{
-		SVTriggerQueueElement poppedFromQueue;
+		SvTi::SVTriggerInfoStruct poppedFromQueue;
 
 		if (S_OK == m_oTriggerQueue.PopHead(poppedFromQueue))
 		{
 			if (m_bOnline)
 			{
-				SVProductInfoStruct* pProduct = IndexPPQ(poppedFromQueue.m_TriggerInfo);
+				SVProductInfoStruct* pProduct = IndexPPQ(std::move(poppedFromQueue));
 				
 				if (nullptr != pProduct)
 				{
 					InitializeProduct(pProduct);
-					pProduct->oInputsInfo.m_Inputs.swap(poppedFromQueue.m_Inputs);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 					::OutputDebugString(SvUl::Format(_T("Process Trigger TRI=%d, ProdActive=%d\n"), pProduct->ProcessCount(), pProduct->IsProductActive()).c_str());
 #endif
@@ -3345,14 +3377,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 					SvVol::BasicValueObjectPtr pPpqTriggerCount = m_PpqValues.getValueObject(SvDef::FqnPpqTriggerCount);
 					if(nullptr != pPpqTriggerCount)
 					{
-						pPpqTriggerCount->setValue(poppedFromQueue.m_TriggerInfo.lTriggerCount);
+						pPpqTriggerCount->setValue(pProduct->m_triggerInfo.lTriggerCount);
 					}
 
 					m_oNotifyInspectionsSet.insert(pProduct->ProcessCount());
 
-					if (!poppedFromQueue.m_TriggerInfo.m_Data.empty())
+					if (!pProduct->m_triggerInfo.m_Data.empty())
 					{
-						m_CameraInputData.Set(boost::any_cast<SvTi::SVCameraTriggerData::NameVariantMap>(poppedFromQueue.m_TriggerInfo.m_Data));
+						m_CameraInputData.Set(pProduct->m_triggerInfo.m_Data);
 					}
 					// Get Shared Memory Slot
 					if (HasActiveMonitorList() && GetSlotmanager().get())
@@ -3547,14 +3579,14 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 
 				if (nullptr != pProduct)
 				{
-					if(currentTime >= pProduct->oOutputsInfo.m_EndResetDelay)
+					if(currentTime >= pProduct->m_outputsInfo.m_EndResetDelay)
 					{
 						m_oOutputsResetQueue.RemoveHead(&processCount);
 						rProcessed = true;
 					}
 					else
 					{
-						m_NextOutputResetTimestamp = pProduct->oOutputsInfo.m_EndResetDelay;
+						m_NextOutputResetTimestamp = pProduct->m_outputsInfo.m_EndResetDelay;
 						break;
 					}
 				}
@@ -3618,7 +3650,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 					{
 						pNextProduct = GetProductInfoStruct(ProcessCount);
 					}
-					if (nullptr != pNextProduct && pNextProduct->oOutputsInfo.m_EndDataValidDelay <= CurrentTime)
+					if (nullptr != pNextProduct && pNextProduct->m_outputsInfo.m_EndDataValidDelay <= CurrentTime)
 					{
 						pProduct = nullptr;
 					}
@@ -3626,9 +3658,9 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 
 				if (nullptr != pProduct)
 				{
-					if (CurrentTime < pProduct->oOutputsInfo.m_EndDataValidDelay)
+					if (CurrentTime < pProduct->m_outputsInfo.m_EndDataValidDelay)
 					{
-						m_NextOutputDelayTimestamp = pProduct->oOutputsInfo.m_EndDataValidDelay;
+						m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndDataValidDelay;
 
 						m_DataValidDelayQueue.AddHead(pProduct->ProcessCount());
 
@@ -3644,11 +3676,11 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 			{
 				if (nullptr != m_pDataValid)
 				{
-					m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->oOutputsInfo.m_DataValidResult);
+					m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->m_outputsInfo.m_DataValidResult);
 				}
 				if (nullptr != m_pOutputToggle)
 				{
-					m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->oOutputsInfo.m_OutputToggleResult);
+					m_pOutputList->WriteOutputValue(m_pOutputToggle, pProduct->m_outputsInfo.m_OutputToggleResult);
 				}
 			}
 			else
@@ -3760,9 +3792,9 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 			{
 				if (m_oInspectionQueue.GetAt(i, &l_Info))
 				{
-					if (nullptr != l_Info.second.pInspection)
+					if (nullptr != l_Info.second.m_pInspection)
 					{
-						m_ProcessInspectionsSet.insert(l_Info.second.pInspection->GetUniqueObjectID());
+						m_ProcessInspectionsSet.insert(l_Info.second.m_pInspection->GetUniqueObjectID());
 					}
 				}
 			}
@@ -3797,21 +3829,19 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 
 			if( rProcessed )
 			{
-				if (l_pPPQProduct->oOutputsInfo.m_EndProcess == 0.0)
+				if (l_pPPQProduct->m_outputsInfo.m_EndProcess == 0.0)
 				{
 					SVInspectionInfoStruct& l_rInspectInfo = l_Info.second;
-					SVInspectionInfoStruct& l_rPPQInspectInfo = l_pPPQProduct->m_svInspectionInfos[l_rInspectInfo.pInspection->GetUniqueObjectID()];
+					SVInspectionInfoStruct& l_rPPQInspectInfo = l_pPPQProduct->m_svInspectionInfos[l_rInspectInfo.m_pInspection->GetUniqueObjectID()];
 
 					l_rPPQInspectInfo = l_rInspectInfo;
 
 					l_rPPQInspectInfo.ClearIndexes();
 
-					l_rPPQInspectInfo.m_CallbackReceived = SvTl::GetTimeStamp();
-
 					l_pPPQProduct->m_ProductState += _T("|");
-					l_pPPQProduct->m_ProductState += l_rInspectInfo.pInspection->GetName();
+					l_pPPQProduct->m_ProductState += l_rInspectInfo.m_pInspection->GetName();
 #ifdef EnableTracking
-					std::string l_Title = l_rInspectInfo.pInspection->GetName();
+					std::string l_Title = l_rInspectInfo.m_pInspection->GetName();
 
 					l_Title += _T(" Complete");
 
@@ -3826,7 +3856,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 					}
 				}
 
-				if (l_pPPQProduct->bDataComplete)
+				if (l_pPPQProduct->m_dataComplete)
 				{
 					SetProductComplete(l_PPQIndex);
 
@@ -4077,24 +4107,6 @@ void SVPPQObject::SetConditionalOutputName(const std::string& conditionalOutputN
 {
 	m_conditionalOutputName = conditionalOutputName;
 }
-
-#pragma region SVTriggerQueueElement Constructor
-SVPPQObject::SVTriggerQueueElement::SVTriggerQueueElement()
-	: m_TriggerInfo()
-	, m_Inputs()
-{
-}
-
-SVPPQObject::SVTriggerQueueElement::SVTriggerQueueElement(const SVTriggerQueueElement& p_rObject)
-	: m_TriggerInfo(p_rObject.m_TriggerInfo)
-	, m_Inputs(p_rObject.m_Inputs)
-{
-}
-
-SVPPQObject::SVTriggerQueueElement::~SVTriggerQueueElement()
-{
-}
-#pragma endregion SVTriggerQueueElement Constructor
 
 #pragma region SVCameraQueueElement Constructor
 SVPPQObject::SVCameraQueueElement::SVCameraQueueElement()
@@ -4376,7 +4388,7 @@ bool SVPPQObject::SetupProductInfoStructs()
 		for (int i = 0; i < m_arInspections.size(); i++)
 		{
 			SVInspectionInfoStruct& rInspectionStruct = m_pMasterProductInfos[j].m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()];
-			rInspectionStruct.pInspection = m_arInspections[i];
+			rInspectionStruct.m_pInspection = m_arInspections[i];
 			rInspectionStruct.m_inspectionPosInTrc = inspPosVec[i];
 		}// end for
 

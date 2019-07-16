@@ -72,6 +72,9 @@
     <ClInclude Include="TextDefineSvDef.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectNames.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalConstantData.inl">

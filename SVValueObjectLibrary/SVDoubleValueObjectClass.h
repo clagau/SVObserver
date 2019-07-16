@@ -32,6 +32,8 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;	// for compat loading legacy SVDoubleVectorObjectClass
 
+	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
+
 protected:
 	virtual double ValueType2Double(const double& rValue) const override { return rValue; };
 	virtual _variant_t ValueType2Variant( const double& rValue ) const override { return _variant_t( rValue ); };

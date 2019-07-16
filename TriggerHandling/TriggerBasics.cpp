@@ -34,7 +34,7 @@ namespace SvTh
 	{
 		if(m_pCallback == rDispatcher.m_pCallback)
 		{
-			if (m_TriggerParameters.m_pData == rDispatcher.m_TriggerParameters.m_pData &&
+			if (m_TriggerParameters.m_Data == rDispatcher.m_TriggerParameters.m_Data &&
 				m_TriggerParameters.m_pOwner == rDispatcher.m_TriggerParameters.m_pOwner)
 			{
 				return true;

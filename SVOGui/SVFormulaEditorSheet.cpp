@@ -34,7 +34,7 @@ namespace SvOg
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
-		init(rInspectionID, rTaskObjectID, rInfo);
+		init(SvOi::IFormulaControllerPtr {new FormulaController(rInspectionID, rTaskObjectID, rInfo)});
 	}
 
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
@@ -53,22 +53,9 @@ namespace SvOg
 	{
 	}
 
-	void SVFormulaEditorSheetClass::init(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
+	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController)
 	{
-		bool isConditional = SvPb::SVConditionalObjectType == rInfo.SubType;
-		init(SvOi::IFormulaControllerPtr{ new FormulaController(rInspectionID, rTaskObjectID, rInfo) }, isConditional);
-	}
-
-	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController, bool isConditional /*= false*/)
-	{
-		if(isConditional)
-		{
-			m_formulaPage = FormulaEditorPagePtr {new SvOg::SVFormulaEditorPageClass(formulaController, true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET)};
-		}
-		else
-		{
-			m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(formulaController));
-		}
+		m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(formulaController));
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		AddPage(m_formulaPage.get());
 	}

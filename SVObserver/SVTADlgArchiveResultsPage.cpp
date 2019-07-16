@@ -65,7 +65,7 @@ SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(const SVGUID& rInspectionID
 	m_strCaption = m_psp.pszTitle;
 	if( nullptr != m_pParent )
 	{
-		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTool());
+		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
 	}
 }
 

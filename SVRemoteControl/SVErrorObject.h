@@ -48,7 +48,7 @@ public:
 
 private:
 	CComBSTR m_Name;
-	LONG m_Status;
+	LONG m_Status{0L};
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(SVErrorObject), SVErrorObject)

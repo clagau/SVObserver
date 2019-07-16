@@ -117,8 +117,10 @@
     <ClCompile Include="SVInputObject.cpp" />
     <ClCompile Include="SVInputObjectList.cpp" />
     <ClCompile Include="SVIOConfigurationInterfaceClass.cpp" />
+    <ClCompile Include="SVIODigitalLoadLibraryClass.cpp" />
     <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVIOEntryStruct.cpp" />
+    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp" />
     <ClCompile Include="SVOutputObject.cpp" />
     <ClCompile Include="SVOutputObjectList.cpp" />
     <ClCompile Include="SVRemoteInputObject.cpp" />
@@ -142,10 +144,6 @@
     <ClInclude Include="SVOutputObjectList.h" />
     <ClInclude Include="SVRemoteInputObject.h" />
     <ClInclude Include="SVRemoteOutputObject.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVIODigitalLoadLibraryClass.inl" />
-    <None Include="SVIOTriggerLoadLibraryClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

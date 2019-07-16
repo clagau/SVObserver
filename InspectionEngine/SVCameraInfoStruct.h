@@ -28,18 +28,18 @@ struct SVCameraInfoStruct
 {
 #pragma region Constructor
 public:
-	SVCameraInfoStruct();
-	SVCameraInfoStruct( const SVCameraInfoStruct &rRhs );
-	virtual ~SVCameraInfoStruct();
-	const SVCameraInfoStruct &operator=( const SVCameraInfoStruct &rRhs );
+	SVCameraInfoStruct() = default;
+	SVCameraInfoStruct(const SVCameraInfoStruct &rRhs) = default;
+	virtual ~SVCameraInfoStruct() = default;
+
+	SVCameraInfoStruct &operator=(const SVCameraInfoStruct& rRhs) = default;
+	SVCameraInfoStruct &operator=(SVCameraInfoStruct&& rRhs) = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	HRESULT Assign( const SVCameraInfoStruct& rCameraInfo );
 	HRESULT Assign( double p_StartFrameTS, double p_EndFrameTS, const SvTrc::IImagePtr pImage );
 
-	void Reset();
 	void ClearInfo();
 	void ClearCameraInfo();
 
@@ -49,9 +49,9 @@ public:
 	const SvTrc::IImagePtr getImage() const { return m_pImage; };
 	bool setImage(SvTrc::IImagePtr pImage);
 
-	double m_StartFrameTimeStamp;
-	double m_EndFrameTimeStamp;
-	double m_CallbackTimeStamp;
+	double m_StartFrameTimeStamp {0.0};
+	double m_EndFrameTimeStamp {0.0};
+	double m_CallbackTimeStamp {0.0};
 #pragma endregion Public Methods
 
 protected:
@@ -63,8 +63,8 @@ private:
 #pragma region Member Variables
 private:
 	NextImageHandleFunctor m_NextImageFunctor;
-	SVGUID m_CameraGuid;
-	SvTrc::IImagePtr m_pImage;
+	SVGUID m_CameraGuid {GUID_NULL};
+	SvTrc::IImagePtr m_pImage {nullptr};
 #pragma endregion Member Variables
 };
 

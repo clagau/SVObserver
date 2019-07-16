@@ -127,7 +127,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_ARCHIVETOOL, OnAddArchiveTool)
 	ON_COMMAND(ID_ADD_MATHTOOL, OnAddMathTool)
 	ON_COMMAND(ID_ADD_STATISTICSTOOL, OnAddStatisticsTool)
-	ON_COMMAND(ID_EDIT_EDITTOOLSETCONDITION, OnEditToolSetCondition)
+	ON_COMMAND(ID_EDIT_EDITTOOLSET, OnEditToolSet)
 	ON_COMMAND(ID_RESULTS_PICKER, OnResultsPicker)
 	ON_COMMAND(ID_RESULTS_TABLE_PICKER, OnResultsTablePicker)
 	ON_COMMAND(ID_SAVE_RESULTS_TO_FILE, OnSaveResultsToFile)
@@ -1558,7 +1558,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	}
 }
 
-void SVIPDoc::OnEditToolSetCondition()
+void SVIPDoc::OnEditToolSet()
 {
 	// Check current user access...
 	if (TheSVObserverApp.OkToEdit())
@@ -1567,12 +1567,9 @@ void SVIPDoc::OnEditToolSetCondition()
 		{
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
-			SvDef::SVObjectTypeInfoStruct Info(SvPb::SVEquationObjectType, SvPb::SVConditionalObjectType);
-			std::string Title {_T("ToolSet Adjustment: ")};
-			Title += GetToolSet()->GetName();
-			SvOg::SVFormulaEditorSheetClass dlg(GetInspectionID(), GetToolSet()->GetUniqueObjectID(), Info, Title.c_str());
+			SVToolAdjustmentDialogSheetClass toolSetDialog(this, GetInspectionID(), GetToolSet()->GetUniqueObjectID(), _T("Tool Set Adjustment: "));
 
-			INT_PTR dlgResult = dlg.DoModal();
+			INT_PTR dlgResult = toolSetDialog.DoModal();
 			if (dlgResult == IDOK)
 			{
 				SetModifiedFlag();

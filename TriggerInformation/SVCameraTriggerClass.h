@@ -42,6 +42,6 @@ namespace SvTi
 		virtual HRESULT UnregisterCallback(SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller) override;
 	
 		static HRESULT CALLBACK SoftwareTriggerCompleteCallback(void *p_pvOwner, void *p_pvData, void * p_pvResponse);
-		static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
+		static HRESULT CALLBACK TriggerCallback(const SvTh::TriggerParameters& rTriggerData);
 	};
 } //namespace SvTi

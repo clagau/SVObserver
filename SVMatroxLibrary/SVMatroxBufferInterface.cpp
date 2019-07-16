@@ -1497,7 +1497,6 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	MIL_ID NewID = M_NULL;
 	if (MaxColorBands == rImageProps.Bandsize || RGB || yuv)
 	{
-		assert(rImageProps.Attrib & M_PACKED);
 		void* pa[3];
 		pa[0] = pMemory;
 		pa[1] = nullptr;

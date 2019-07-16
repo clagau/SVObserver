@@ -3,31 +3,34 @@
 /// \file SVTriggerInfoStruct.h
 /// All Rights Reserved
 //*****************************************************************************
-  
 /// Contains the struct SVTriggerInfoStruct 
 //******************************************************************************
 
 #pragma once
+
 namespace SvTi
 {
 	struct SVTriggerInfoStruct 
 	{
-		SVTriggerInfoStruct();
-		SVTriggerInfoStruct( const SVTriggerInfoStruct& p_rsvObject );
-		virtual ~SVTriggerInfoStruct();
+		typedef  std::map<int, _variant_t> IntVariantMap;
 
-		const SVTriggerInfoStruct& operator=( const SVTriggerInfoStruct& p_rsvObject );
+		SVTriggerInfoStruct() = default;
+		SVTriggerInfoStruct(const SVTriggerInfoStruct& rRhs) = default;
+		SVTriggerInfoStruct(SVTriggerInfoStruct&& rRhs) = default;
+		virtual ~SVTriggerInfoStruct() = default;
+
+		SVTriggerInfoStruct& operator=(const SVTriggerInfoStruct& rRhs) = default;
+		SVTriggerInfoStruct& operator=(SVTriggerInfoStruct&& rRhs) = default;
 
 		void Reset();
 
-		bool bValid;
-		long lTriggerCount;
-		bool m_ToggleState;
-		double m_BeginProcess;
-		double m_ToggleTimeStamp;
-		double m_CallbackReceived;
-		double m_PushedOutputs;
-		double m_PreviousTrigger;
-		boost::any m_Data;
+		bool bValid{false};
+		long lTriggerCount{0L};
+		bool m_ToggleState{false};
+		double m_BeginProcess{0.0};
+		double m_ToggleTimeStamp{0.0};
+		double m_PreviousTrigger{0.0};
+		IntVariantMap m_Data;
+		std::vector<_variant_t> m_Inputs;
 	};
 } //namespace SvTi

@@ -456,9 +456,9 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruc
 		{
 			bool l_State = !(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST));
 
-			l_State = l_State || (inspectionData.first.oInspectedState == PRODUCT_INSPECTION_WARNING);
-			l_State = l_State || (inspectionData.first.oInspectedState == PRODUCT_INSPECTION_FAILED);
-			l_State = l_State || (inspectionData.first.oInspectedState == PRODUCT_INSPECTION_PASSED);
+			l_State = l_State || (inspectionData.first.m_InspectedState == PRODUCT_INSPECTION_WARNING);
+			l_State = l_State || (inspectionData.first.m_InspectedState == PRODUCT_INSPECTION_FAILED);
+			l_State = l_State || (inspectionData.first.m_InspectedState == PRODUCT_INSPECTION_PASSED);
 
 			if (l_State)
 			{
