@@ -219,6 +219,23 @@ DWORD LinkedValue::GetType() const
 	return result;
 };
 
+bool LinkedValue::isCircularReference() const
+{
+	if (m_CircularReference)
+	{
+		return true;
+	}
+	LinkedValue* pRefObject = dynamic_cast<LinkedValue*>(m_LinkedObjectRef.getObject());
+	if (nullptr == pRefObject)
+	{
+		return false;
+	}
+	m_CircularReference = true;
+	bool result = pRefObject->isCircularReference();
+	m_CircularReference = false;
+	return result;
+}
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -437,6 +454,15 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
 	Result = Result && UpdateConnection(pErrorMessages);
+	if (isCircularReference())
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
 	return Result;
 }
 

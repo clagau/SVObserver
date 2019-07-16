@@ -558,5 +558,6 @@ enum MessageTextEnum
 	Tid_ErrorPpqTriggerCount,
 
 	Tid_ProtBuf_ConvertToGUID_WrongSize,
+	Tid_CircularReference,
 };
 } //namespace SvStl

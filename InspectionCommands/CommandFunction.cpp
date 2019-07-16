@@ -917,7 +917,7 @@ InspectionCmdResult getEmbeddedValues(SvPb::GetEmbeddedValuesRequest request)
 				ConvertVariantToProtobuf(Value, pElement->mutable_value());
 				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
 			}
-			else if (E_BOUNDS == tmpHr)
+			else if (E_BOUNDS == tmpHr || SVMSG_SVO_105_CIRCULAR_REFERENCE == tmpHr)
 			{
 				Value.Clear();
 				auto* pElement = pResponse->add_list();

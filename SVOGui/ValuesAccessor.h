@@ -46,7 +46,7 @@ public:
 
 		SvPb::SetGuidInProtoBytes(pGetEmbeddedValuesRequest->mutable_objectid(), rTaskID);
 		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, request, &response);
-		if (S_OK == hr && response.has_getembeddedvaluesresponse())
+		if (response.has_getembeddedvaluesresponse())
 		{
 			for (auto& rItem : response.getembeddedvaluesresponse().list())
 			{

@@ -62,11 +62,13 @@ public:
 
 	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
 
-	bool isIndirectValue() { return (nullptr != m_LinkedObjectRef.getObject()); };
+	bool isIndirectValue() const { return (nullptr != m_LinkedObjectRef.getObject()); };
 
 	void setIndirectValueSaveFlag(bool shouldSaveValue);
 
 	virtual DWORD GetType() const override;
+
+	bool isCircularReference() const;
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override { UpdateLinkedName(); };
