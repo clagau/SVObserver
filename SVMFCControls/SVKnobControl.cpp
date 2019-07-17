@@ -17,11 +17,11 @@ namespace SvMc
 {
 	IMPLEMENT_DYNAMIC(SVKnobControl, CStatic)
 
-	SVKnobControl::SVKnobControl(): 
-	CStatic(),
+	SVKnobControl::SVKnobControl(long minTimerInterval_ms, long maxTimerInterval_ms) :
+		CStatic(),
 		m_dragging(false),
-		m_min(min_val()),
-		m_max(max_val()),
+		m_minValue(long2val(minTimerInterval_ms)),
+		m_maxValue(long2val(maxTimerInterval_ms)),
 		m_angle(3.0)
 	{
 		clicks = 0;
@@ -126,20 +126,20 @@ namespace SvMc
 			double l_value = angle2val(l_angle);
 			CString msg;
 				
-			if (l_value < m_min)
+			if (l_value < m_minValue)
 			{
-				l_value = m_min;
+				l_value = m_minValue;
 				l_angle = val2angle(l_value);
 			}
-			else if (l_value > m_max)
+			else if (l_value > m_maxValue)
 			{
-				if (m_value < m_min + (m_max-m_min)/2.0)
+				if (m_currentValue < m_minValue + (m_maxValue-m_minValue)/2.0)
 				{
-					l_value = m_min;
+					l_value = m_minValue;
 				}
 				else
 				{
-					l_value = m_max;
+					l_value = m_maxValue;
 				}
 				l_angle = val2angle(l_value);
 			}
@@ -147,11 +147,11 @@ namespace SvMc
 			pt = m_dotPoint + CSize(4,4);
 			ClientToScreen(&pt);
 			ClientToScreen(&point);
-			if (fabs(m_value - l_value) > .001)
+			if (fabs(m_currentValue - l_value) > .001)
 			{
-				m_value = l_value;
+				m_currentValue = l_value;
 				m_angle = l_angle;
-				GetParent()->PostMessage(WM_TRIGGER_CHANGE, (WPARAM)int_value(m_value), 0);
+				GetParent()->PostMessage(WM_TRIGGER_CHANGE, (WPARAM)int_value(m_currentValue), 0);
 				Invalidate(FALSE);
 			}
 		}
@@ -260,9 +260,9 @@ namespace SvMc
 		m_radius = knob.rect.Width()/2 - 2;
 		m_center = knob.center;
 		m_radius -= dot.rect.Width() * 2;
-		CPoint pt = val2xy(m_min);
+		CPoint pt = val2xy(m_minValue);
 		m_maxy = pt.y;
-		pt = val2xy(m_max);
+		pt = val2xy(m_maxValue);
 		if (m_maxy < pt.y)
 			m_maxy = pt.y;
 		++m_maxy;
@@ -281,21 +281,21 @@ namespace SvMc
 	int SVKnobControl::SetValue(int value)
 	{
 		int ret = value;
-		m_value = int2val(value);
-		if (m_value < m_min)
+		m_currentValue = long2val(value);
+		if (m_currentValue < m_minValue)
 		{
-			m_value = m_min;
-			ret = int_value(m_value);
+			m_currentValue = m_minValue;
+			ret = int_value(m_currentValue);
 		}
-		if (m_value > m_max)
+		if (m_currentValue > m_maxValue)
 		{
-			m_value = m_max;
-			ret = int_value(m_value);
+			m_currentValue = m_maxValue;
+			ret = int_value(m_currentValue);
 		}
-		m_angle = val2angle(m_value);
+		m_angle = val2angle(m_currentValue);
 #ifdef TRACE_KNOB		
 		CString msg;
-		msg.Format("angle: %.4f, value: %.4f, int: %d\n", m_angle, m_value, value);
+		msg.Format("angle: %.4f, value: %.4f, int: %d\n", m_angle, m_currentValue, value);
 		OutputDebugString(msg);
 #endif 		
 		Invalidate();

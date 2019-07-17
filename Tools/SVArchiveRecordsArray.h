@@ -59,7 +59,7 @@ public:
 
 private:
 #pragma region Private Methods
-	std::string AdaptDottedNameToInspectionName(std::string DottedName, std::string NewInspectionName); //ABXXX
+	std::string AdaptDottedNameToInspectionName(std::string DottedName, std::string NewInspectionName);
 #pragma endregion Private Methods
 
 protected:

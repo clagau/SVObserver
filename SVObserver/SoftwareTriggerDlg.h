@@ -137,7 +137,7 @@ private:
 	CStatic				m_ppmLabel;
 	CButton				m_pauseBtn;
 
-	SVSpinGroup*		m_pSpins;
+	SVSpinGroup*		m_pSpins = nullptr;
 	CBrush*				m_pBrush;
 
 public:
@@ -146,7 +146,7 @@ public:
 
 // SVSpinGroup inline implementation
 
-inline	SVSpinGroup::SVSpinGroup(CSpinButtonCtrl & spin, CEdit & edit, CStatic & label, sv::Def & def, SVSpinGroup * next):
+inline	SVSpinGroup::SVSpinGroup(CSpinButtonCtrl & spin, CEdit & edit, CStatic & label, sv::Def & def, SVSpinGroup * next) :
 		m_spin(spin),
 		m_edit(edit),
 		m_label(label),

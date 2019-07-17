@@ -180,7 +180,7 @@ namespace SvStl
 	#pragma region Member variables
 	private:
 		MsgType m_Type {MsgType::Data};
-		MessageContainer m_MessageHandler;				//! The message handler //ABXXXX umbenennen
+		MessageContainer m_MessageHandler;				//! The message handler //@TODO [Arvid][8.20][16.7.2019] ein besserer Name für die Variable wäre vielleicht m_MessageContainer
 
 		static ShowDisplayFunctor* m_ppShowDisplay;
 		static NotifyFunctor* m_ppNotify;

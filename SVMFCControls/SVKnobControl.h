@@ -12,7 +12,6 @@
 #pragma  once
 
 #define WM_TRIGGER_CHANGE WM_USER + 401
-#define KNOB_MAX 120000
 
 namespace SvMc
 {
@@ -59,7 +58,7 @@ namespace SvMc
 		DECLARE_DYNAMIC(SVKnobControl)
 
 	public:
-		SVKnobControl();
+		SVKnobControl(long minTimerInterval_ms, long maxTimerInterval_ms);
 		virtual ~SVKnobControl();
 
 	protected:
@@ -75,7 +74,7 @@ namespace SvMc
 		int click() { return ++clicks; }
 
 		void CreateBitmaps();
-		int GetValue() const { return int_value(m_value); }
+		int GetValue() const { return int_value(m_currentValue); }
 		int SetValue(int value);
 	private:
 		bool TransparentBlt(CDC & dest, sv::hold & src, CPoint pt);
@@ -98,13 +97,11 @@ namespace SvMc
 		double pithird() const { return pi()/3.0; }
 		double pisixth() const { return pi()/6.0; }
 		double pifourth() const { return pi()/4.0; }
-		double m_min;
-		double m_max;
-		double m_value;
+		double m_minValue;
+		double m_maxValue;
+		double m_currentValue;
 		double m_angle;
-		double min_val() const { return int2val(20); }
-		double max_val() const { return int2val(KNOB_MAX); }
-		double span() const { return (max_val() - min_val())/(pitwo() - pihalf()); }
+		double span() const { return (m_maxValue - m_minValue)/(pitwo() - pihalf()); }
 		bool m_dragging;
 		int int_value(double value) const { return static_cast<int>(exp(value*value*value) + 0.5); }//{ return static_cast<int>(exp(angle2val(value))); }
 		int dotSize() const { return dot.rect.Width() / 2; }
@@ -116,9 +113,9 @@ namespace SvMc
 		double xy2angle(CPoint & pt) const { return atan2(static_cast<double>(pt.y), static_cast<double>(pt.x)) + pi(); }
 		double xy2val(const CPoint & pt) const;
 
-		double angle2val(double angle) const { return fmod(pitwo() + angle - (pihalf() + pifourth()), pitwo())*span() + min_val(); }
-		double val2angle(double value) const { return fmod((value-min_val())/span() + pihalf() + pifourth(), pitwo()); }
-		double int2val(int i) const { return pow(log(static_cast<double>(i)), 1.0/3.0); }
+		double angle2val(double angle) const { return fmod(pitwo() + angle - (pihalf() + pifourth()), pitwo())*span() + m_minValue; }
+		double val2angle(double value) const { return fmod((value- m_minValue)/span() + pihalf() + pifourth(), pitwo()); }
+		double long2val(long i) const { return pow(log(static_cast<double>(i)), 1.0/3.0); }
 
 		CRect dotRect() const { CRect rect = dot.rect; rect.MoveToXY(m_dotPoint.x, m_dotPoint.y); return rect; }
 	};

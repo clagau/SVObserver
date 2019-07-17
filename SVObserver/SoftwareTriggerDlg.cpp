@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SoftwareTriggerDlg.h"
+#include "TriggerInformation\SVTriggerConstants.h"
 #pragma endregion Includes
 
 #define COLOR_WARN RGB(255,240,64)
@@ -20,10 +21,10 @@
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
 
-SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVSoftwareTriggerDlg::IDD, pParent)
+SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
+	CDialog(SVSoftwareTriggerDlg::IDD, pParent),
+	m_knobCtrl(SvTi::MinTimerPeriod_ms, SvTi::MaxTimerPeriod_ms)
 {
-	m_pSpins = 0;
 }
 
 SVSoftwareTriggerDlg::~SVSoftwareTriggerDlg()
@@ -136,7 +137,7 @@ bool SVSoftwareTriggerDlg::EditOK()
 	CString Text;
 	m_intervalEdit.GetWindowText(Text);
 	int Value = _ttoi(Text);
-	return (20 <= Value && Value <= KNOB_MAX);
+	return (SvTi::MinTimerPeriod_ms <= Value && Value <= SvTi::MaxTimerPeriod_ms);
 }
 
 void SVSoftwareTriggerDlg::OnEnChangeUsecEdit()
