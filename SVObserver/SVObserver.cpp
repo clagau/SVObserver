@@ -3948,6 +3948,14 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 		const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
 		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
 	}
+	else if (_T("30") == m_rInitialInfo.m_IOBoard)
+	{
+		// Get Trigger count from the SVPlcIO.dll
+		const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		l_svCapable.SetStrobeInverters(info.m_MaxTriggers);
+		l_svCapable.SetTriggerInverters(info.m_MaxTriggers);
+		l_svCapable.SetTriggerCount(info.m_MaxTriggers);
+	}
 	else
 	{
 		l_svCapable.SetStrobeInverters(3);
