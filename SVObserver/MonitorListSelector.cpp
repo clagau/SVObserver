@@ -116,10 +116,10 @@ int  MonitorlistSelector::DisplayDialog()
 				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
 			}
 		}
-	}
-	if (response.has_getobjectselectoritemsresponse())
-	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		if (response.has_getobjectselectoritemsresponse())
+		{
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		}
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(BuildCheckItems());
 	
