@@ -22,7 +22,10 @@ HRESULT SVGigeCameraDBParser::Parse(BSTR data, SVGigeDeviceParameterMap& params)
 	CoInitialize( nullptr );
 	MSXML2::ISAXXMLReader* pRdr( nullptr );
 
-	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader60), nullptr, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
+	///Note MSXML2::SAXXMLReader60 does not work as the camera XML section is not parsed correctly
+	///The problem seems to be in SVGigeCameraDBContent::GetGigeDeviceParameterStructAttributes at pAttributes->getLocalName
+	///which seems to be filtered for version MS XML parser 6.0
+	HRESULT hr = CoCreateInstance(__uuidof(MSXML2::SAXXMLReader), nullptr, CLSCTX_ALL, __uuidof(MSXML2::ISAXXMLReader), (void **)&pRdr);
 
 	if (S_OK == hr) 
 	{
