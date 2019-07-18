@@ -92,9 +92,9 @@ void  SVObjectReference::clear()
 }
 
 
-SvOi::IValueObject* SVObjectReference::getValueObject() const
+SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
 {
-	if(nullptr == m_pValueObject)
+	if(nullptr == m_pValueObject || forceCast)
 	{
 		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
 	}

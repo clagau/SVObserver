@@ -56,7 +56,7 @@ public:
 
 	SVObjectClass* getObject() const;
 
-	SvOi::IValueObject* getValueObject() const;
+	SvOi::IValueObject* getValueObject(bool forceCast=false) const;
 	
 	//************************************
 	//! returns the 0 based Index. If Index is not used or the the whole array is referenced -1 is returned.
