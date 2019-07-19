@@ -19,25 +19,70 @@
 namespace SvPb
 {
 
+// TODO handle big-endian case as well
 void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
 {
 	if (nullptr != pString)
 	{
-		pString->assign(reinterpret_cast<const char*>(&guid), sizeof(GUID));
+		const char* buf = reinterpret_cast<const char*>(&guid);
+		char arr[16];
+		// unsigned long  Data1;
+		arr[0] = buf[3];
+		arr[1] = buf[2];
+		arr[2] = buf[1];
+		arr[3] = buf[0];
+		// unsigned short Data2;
+		arr[4] = buf[5];
+		arr[5] = buf[4];
+		// unsigned short Data3;
+		arr[6] = buf[7];
+		arr[7] = buf[6];
+		// unsigned char  Data4[8];
+		arr[8] = buf[8];
+		arr[9] = buf[9];
+		arr[10] = buf[10];
+		arr[11] = buf[11];
+		arr[12] = buf[12];
+		arr[13] = buf[13];
+		arr[14] = buf[14];
+		arr[15] = buf[15];
+		*pString = std::string(&arr[0], &arr[0] + 16);
 	}
 }
 
+// TODO handle big-endian case as well
 void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
 {
-	if (sizeof(GUID) == strguid.size())
-	{
-		rGuid = *(reinterpret_cast<const GUID*>(strguid.data()));
-	}
-	else
+	if (sizeof(GUID) != strguid.size())
 	{
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
+		return;
 	}
+
+	const char* buf = strguid.c_str();
+	char arr[16];
+	// unsigned long  Data1;
+	arr[0] = buf[3];
+	arr[1] = buf[2];
+	arr[2] = buf[1];
+	arr[3] = buf[0];
+	// unsigned short Data2;
+	arr[4] = buf[5];
+	arr[5] = buf[4];
+	// unsigned short Data3;
+	arr[6] = buf[7];
+	arr[7] = buf[6];
+	// unsigned char  Data4[8];
+	arr[8] = buf[8];
+	arr[9] = buf[9];
+	arr[10] = buf[10];
+	arr[11] = buf[11];
+	arr[12] = buf[12];
+	arr[13] = buf[13];
+	arr[14] = buf[14];
+	arr[15] = buf[15];
+	memcpy(&rGuid, arr, sizeof(GUID));
 }
 
 GUID GetGuidFromProtoBytes(const std::string& strguid)

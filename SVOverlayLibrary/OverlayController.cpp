@@ -62,6 +62,7 @@ static void generate_dummy_overlay_data(SvPb::OverlayDesc& desc)
 		s1r.set_w(1);
 		s1r.set_h(1);
 	}
+
 	auto& overlay2 = *desc.add_overlays();
 	{
 		overlay2.set_name("Arrow Overlay");
@@ -88,6 +89,110 @@ static void generate_dummy_overlay_data(SvPb::OverlayDesc& desc)
 		s2a.set_x2(1.0f);
 		s2a.set_y2(0.5f);
 		s2a.set_arrowheight(0.1f);
+	}
+
+	auto& overlay3 = *desc.add_overlays();
+	{
+		overlay3.set_name("Arrow Overlay Left");
+		overlay3.set_color(rgba_to_uint32(0x00, 0xff, 0xff, 0xff));
+		// rectangular bounding box
+		auto& bb = *overlay3.mutable_boundingbox();
+		auto& bb_shape = *bb.mutable_rect();
+		set_int_value(*bb_shape.mutable_x(), 300);
+		set_int_value(*bb_shape.mutable_y(), 500);
+		set_int_value(*bb_shape.mutable_w(), 100);
+		set_int_value(*bb_shape.mutable_h(), 50);
+		// rectangular shape
+		auto& s1 = *overlay3.add_shapes();
+		auto& s1r = *s1.mutable_rect();
+		s1r.set_x(0);
+		s1r.set_y(0);
+		s1r.set_w(1);
+		s1r.set_h(1);
+		// add horizontal arrow in the middle
+		auto& s2 = *overlay3.add_shapes();
+		auto& s2a = *s2.mutable_arrow();
+		s2a.set_x1(1.0f);
+		s2a.set_y1(0.5f);
+		s2a.set_x2(0.0f);
+		s2a.set_y2(0.5f);
+		s2a.set_arrowheight(0.1f);
+	}
+
+	auto& overlay4 = *desc.add_overlays();
+	{
+		overlay4.set_name("Arrow Overlay Up");
+		overlay4.set_color(rgba_to_uint32(0xff, 0x00, 0x50, 0xff));
+		// rectangular bounding box
+		auto& bb = *overlay4.mutable_boundingbox();
+		auto& bb_shape = *bb.mutable_rect();
+		set_int_value(*bb_shape.mutable_x(), 450);
+		set_int_value(*bb_shape.mutable_y(), 500);
+		set_int_value(*bb_shape.mutable_w(), 50);
+		set_int_value(*bb_shape.mutable_h(), 100);
+		// rectangular shape
+		auto& s1 = *overlay4.add_shapes();
+		auto& s1r = *s1.mutable_rect();
+		s1r.set_x(0);
+		s1r.set_y(0);
+		s1r.set_w(1);
+		s1r.set_h(1);
+		// add horizontal arrow in the middle
+		auto& s2 = *overlay4.add_shapes();
+		auto& s2a = *s2.mutable_arrow();
+		s2a.set_x1(0.5f);
+		s2a.set_y1(1.0f);
+		s2a.set_x2(0.5f);
+		s2a.set_y2(0.0f);
+		s2a.set_arrowheight(0.1f);
+	}
+
+	auto& overlay5 = *desc.add_overlays();
+	{
+		overlay5.set_name("Arrow Overlay Down");
+		overlay5.set_color(rgba_to_uint32(0xff, 0x00, 0x50, 0xff));
+		// rectangular bounding box
+		auto& bb = *overlay5.mutable_boundingbox();
+		auto& bb_shape = *bb.mutable_rect();
+		set_int_value(*bb_shape.mutable_x(), 450);
+		set_int_value(*bb_shape.mutable_y(), 200);
+		set_int_value(*bb_shape.mutable_w(), 50);
+		set_int_value(*bb_shape.mutable_h(), 100);
+		// rectangular shape
+		auto& s1 = *overlay5.add_shapes();
+		auto& s1r = *s1.mutable_rect();
+		s1r.set_x(0);
+		s1r.set_y(0);
+		s1r.set_w(1);
+		s1r.set_h(1);
+		// add horizontal arrow in the middle
+		auto& s2 = *overlay5.add_shapes();
+		auto& s2a = *s2.mutable_arrow();
+		s2a.set_x1(0.5f);
+		s2a.set_y1(0.0f);
+		s2a.set_x2(0.5f);
+		s2a.set_y2(1.0f);
+		s2a.set_arrowheight(0.1f);
+	}
+
+	auto& overlay6 = *desc.add_overlays();
+	{
+		overlay6.set_name("Rectangle Overlay");
+		overlay6.set_color(rgba_to_uint32(0xf0, 0x50, 0x50, 0xff));
+		// rectangular bounding box
+		auto& bb = *overlay6.mutable_boundingbox();
+		auto& bb_shape = *bb.mutable_rect();
+		set_int_value(*bb_shape.mutable_x(), 600);
+		set_int_value(*bb_shape.mutable_y(), 600);
+		set_int_value(*bb_shape.mutable_w(), 80);
+		set_int_value(*bb_shape.mutable_h(), 50);
+		// rectangular shape
+		auto& s1 = *overlay6.add_shapes();
+		auto& s1r = *s1.mutable_rect();
+		s1r.set_x(0);
+		s1r.set_y(0);
+		s1r.set_w(1);
+		s1r.set_h(1);
 	}
 }
 
