@@ -598,18 +598,15 @@ void SVToolClass::setAuxiliaryExtents()
 	{
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 	}
-	else
-	{
-		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	}
-	SvOi::SetAttributeType AllowedAttribute = bEnabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 
-	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(SvDef::selectableAttributes, AllowedAttribute);
+	UINT auxAttribute = bEnabled ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
+
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
