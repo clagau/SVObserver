@@ -57,6 +57,7 @@ public:
 	//--GetTranslatedImagePath -Called from SVArchiveRecord::BuildArchiveImageFilePath
 	//--to get the already translated path.
 	void getTranslatedImagePath(std::string& rImagePath);
+	long currentTriggerCount();
 
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
@@ -73,6 +74,7 @@ public:
 
 	SvVol::SVDWordValueObjectClass m_dwAppendArchiveFile;
 	SvVol::SVDWordValueObjectClass m_dwArchiveStopAtMaxImages;
+	SvVol::SVDWordValueObjectClass m_dwUseTriggerCountForImages;
 	SvVol::SVDWordValueObjectClass m_dwArchiveMaxImagesCount;
 	SvVol::SVEnumerateValueObjectClass m_evoArchiveMethod;
 
@@ -96,6 +98,7 @@ protected:
 
 private:
 	void initializeArchiveTool();
+	void InitialiseTriggercountObject();
 	bool initializeOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
@@ -135,6 +138,8 @@ private:
 
 	BufferStructCountMap m_lastBufferMap;
 	DWORD m_lastMaxImages = 0;
+
+	SvOi::IObjectClass* m_pTriggerCountObject = nullptr; //used when the trigger count is incorporated into image filenames
 };
 
 } //namespace SvTo

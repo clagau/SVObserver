@@ -76,6 +76,8 @@ private:
 	SVImageInfoClass    m_ImageInfo;                   // images only
 	long                m_lLastIndex;
 	long                m_lMaxIndex;
+	std::string			m_ImagePathRoot;
+
 
 	//Attributes
 	SVArchiveMethodEnum m_eArchiveMethod;

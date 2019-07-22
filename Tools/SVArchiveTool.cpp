@@ -56,6 +56,13 @@ SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
 	initializeArchiveTool();
 }
 
+SVArchiveTool::~SVArchiveTool()
+{
+	TheSVArchiveImageThreadClass().GoOffline();
+	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
+	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+}
+
 void SVArchiveTool::initializeArchiveTool()
 {
 	// Override base class exposure of the auxiliary extent variables
@@ -119,12 +126,19 @@ void SVArchiveTool::initializeArchiveTool()
 		false, SvOi::SVResetItemTool );
 	m_dwAppendArchiveFile.SetOutputFormat(SvVol::OutputFormat_int);
 	
-	RegisterEmbeddedObject(	
+	RegisterEmbeddedObject(
 		&m_dwArchiveStopAtMaxImages,
 		SVArchiveStopAtMaxImagesGuid,
 		IDS_OBJECTNAME_ARCHIVE_STOP_AT_MAX_IMAGES,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone);
 	m_dwArchiveStopAtMaxImages.SetOutputFormat(SvVol::OutputFormat_int);
+
+	RegisterEmbeddedObject(
+		&m_dwUseTriggerCountForImages,
+		SVArchiveUseTriggerCountForImagesGuid,
+		IDS_OBJECTNAME_ARCHIVE_USE_TRIGGER_COUNT_FOR_IMAGE_NAMES,
+		false, SvOi::SVResetItemNone);
+	m_dwUseTriggerCountForImages.SetOutputFormat(SvVol::OutputFormat_int);
 	
 	RegisterEmbeddedObject(	
 		&m_dwArchiveMaxImagesCount,
@@ -179,6 +193,7 @@ void SVArchiveTool::initializeArchiveTool()
 	m_stringImageFileRootPath.SetDefaultValue( _T( "D:\\TEMP" ), true);
 	m_dwAppendArchiveFile.SetDefaultValue(0, true);
 	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
+	m_dwUseTriggerCountForImages.SetDefaultValue(0, true);
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
 	m_evoArchiveMethod.SetDefaultValue( SVArchiveAsynchronous, true);
@@ -225,11 +240,14 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_stringImageFileRootPath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_dwUseTriggerCountForImages.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_evoArchiveMethod.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_HeaderLabelNames.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoUseHeaders.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+
+	m_dwUseTriggerCountForImages.SetValue(0);
 
 	// These values will not be exposed for the this Tool.
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
@@ -300,16 +318,26 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		result = AllocateImageBuffers(pErrorMessages) && result;
 	}
 
+
+	InitialiseTriggercountObject();
+
 	m_uiValidateCount = 0;
 
 	return ValidateImageSpace(true, pErrorMessages) && result;
 }
 
-SVArchiveTool::~SVArchiveTool()
+
+void SVArchiveTool::InitialiseTriggercountObject()
 {
-	TheSVArchiveImageThreadClass().GoOffline();
-	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
-	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+	auto pInterface = GetInspectionInterface()->GetToolSetInterface();
+	auto pObject = dynamic_cast<SvOi::IObjectClass*>(pInterface);
+
+	SvDef::SVObjectTypeInfoStruct otis;
+	otis.EmbeddedID = SVTriggerCountGuid;
+	otis.ObjectType = SvPb::SVValueObjectType;
+	otis.SubType = SvPb::SVLongValueObjectType;
+
+	m_pTriggerCountObject = pObject->getFirstObject(otis);
 }
 
 // Create a file to store selected results in text format.
@@ -952,6 +980,21 @@ bool SVArchiveTool::isImagePathUsingKeywords()
 void SVArchiveTool::getTranslatedImagePath(std::string &rImagePath)
 {
 	rImagePath = m_ImageTranslatedPath;
+}
+
+long SVArchiveTool::currentTriggerCount()
+{
+	double triggerCount;
+	if (nullptr != m_pTriggerCountObject)
+	{
+		m_pTriggerCountObject->getValue(triggerCount);
+	}
+	else
+	{
+		triggerCount = -1;
+	}
+
+	return static_cast<long>(floor(triggerCount + 0.05)); //add 0.05 before floor just to be on the safe side
 }
 
 bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )

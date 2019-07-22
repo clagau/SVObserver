@@ -504,6 +504,7 @@ extern const GUID SVArchiveImageFileRootPathGuid;
 extern const GUID SVArchiveResultGuidsObjectGuid;
 extern const GUID SVArchiveAppendArchiveFileGuid;
 extern const GUID SVArchiveStopAtMaxImagesGuid;
+extern const GUID SVArchiveUseTriggerCountForImagesGuid;
 extern const GUID SVArchiveMaxImagesCountGuid;
 extern const GUID SVArchiveMethodGuid;
 extern const GUID SVArchiveUseHeadersGUID;

@@ -89,6 +89,7 @@ private:
 	SvMc::CEditNumbers	m_MaxImages;
 	CEdit	m_ImageFilesRoot;
 	BOOL	m_StopAtMaxImages;
+	BOOL	m_UseTriggerCount;
 	int		m_iModeIndex;
 	SvTo::SVArchiveMethodEnum m_eSelectedArchiveMethod;
 	long m_ImagesToArchive;

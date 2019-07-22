@@ -64,6 +64,7 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(const SVGUID& rInspectionID, co
 , m_pParent(Parent)
 , m_pTool(nullptr)
 , m_StopAtMaxImages( false )
+, m_UseTriggerCount(false)
 , m_iModeIndex( -1 )
 , m_eSelectedArchiveMethod(SvTo::SVArchiveInvalidMethod)
 , m_ImagesToArchive( 0 )
@@ -152,6 +153,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_pTool->SetImageArchivePath( ImageFolder.c_str() );
 
 	m_pTool->m_dwArchiveStopAtMaxImages.SetValue(static_cast<DWORD> (m_StopAtMaxImages));
+	m_pTool->m_dwUseTriggerCountForImages.SetValue(static_cast<DWORD> (m_UseTriggerCount));
 
 	int iCurSel = m_Mode.GetCurSel();
 	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
@@ -217,6 +219,7 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_MAX_IMAGES, m_MaxImages);
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEROOT, m_ImageFilesRoot);
 	DDX_Check(pDX, IDC_CHECK_STOP_AT_MAX, m_StopAtMaxImages);
+	DDX_Check(pDX, IDC_USE_TRIGGER_COUNT, m_UseTriggerCount);
 	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
 }
 
@@ -279,6 +282,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
 	m_StopAtMaxImages = (int)dwTemp;
+
+	m_pTool->m_dwUseTriggerCountForImages.GetValue(dwTemp);
+	m_UseTriggerCount = (int)dwTemp;
 
 	m_List.swap(m_pTool->getImageArchiveList());
 

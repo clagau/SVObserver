@@ -71,24 +71,22 @@ void SVArchiveRecord::BuildArchiveImageFilePaths()
 	DWORD		dwMaxImages;
 	m_FileNames.clear();
 
-	SVFileNameClass svFileName;
-	std::string PathRoot;
 	if (m_pArchiveTool->isImagePathUsingKeywords())
 	{
-		m_pArchiveTool->getTranslatedImagePath(PathRoot);
+		m_pArchiveTool->getTranslatedImagePath(m_ImagePathRoot);
 	}
 	else
 	{
-		m_pArchiveTool->GetImageArchivePath(PathRoot);
+		m_pArchiveTool->GetImageArchivePath(m_ImagePathRoot);
 	}
 
-	svFileName.SetPathName(PathRoot.c_str());
-
+	SVFileNameClass svFileName;
+	svFileName.SetPathName(m_ImagePathRoot.c_str());
 
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	for (DWORD i = 0; i < dwMaxImages; i++)
 	{
-		std::string FileName = SvUl::Format(_T("%s__%06.6ld.bmp"), m_FileNameImage.c_str(), i + 1);
+		std::string FileName = SvUl::Format(_T("%s__%06ld.bmp"), m_FileNameImage.c_str(), i + 1);
 		svFileName.SetFileName(FileName.c_str());
 		m_FileNames.push_back(svFileName.GetFullFileName());
 	}
@@ -100,8 +98,11 @@ HRESULT SVArchiveRecord::GetNextFileName(std::string& rImageFile)
 
 	DWORD		dwMaxImages = 0;
 	DWORD		dwStopAtMaxCount = 0;
+	DWORD		dwUseTriggerCountForImages = 0;
+	
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	m_pArchiveTool->m_dwArchiveStopAtMaxImages.GetValue(dwStopAtMaxCount);
+	m_pArchiveTool->m_dwUseTriggerCountForImages.GetValue(dwUseTriggerCountForImages);
 
 	if (m_lCountImages >= (long)dwMaxImages)
 	{
@@ -117,8 +118,18 @@ HRESULT SVArchiveRecord::GetNextFileName(std::string& rImageFile)
 	m_lMaxIndex = std::max(m_lMaxIndex, m_lLastIndex);
 
 	m_lCountImages++;
+
+	SVFileNameClass svFileName;
+	svFileName.SetPathName(m_ImagePathRoot.c_str());
+
 	if (m_FileNames.size() > m_lLastIndex)
 	{
+		if (dwUseTriggerCountForImages)
+		{
+			std::string FileName = SvUl::Format(_T("%s__trigger%06ld.bmp"), m_FileNameImage.c_str(), m_pArchiveTool->currentTriggerCount());
+			svFileName.SetFileName(FileName.c_str());
+			m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName());
+		}
 		rImageFile = m_FileNames[m_lLastIndex];
 	}
 	else
