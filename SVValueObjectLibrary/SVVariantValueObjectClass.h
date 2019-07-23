@@ -36,6 +36,9 @@ public:
 	HRESULT SetValueKeepType(LPCTSTR Value, int Index);
 	VARTYPE GetDefaultType() const;
 	VARTYPE GetValueType() const { return Value().vt; };
+	//GetType  for arrays too
+	VARTYPE  GetValueTypeEx() { return getValuePointer(0)->vt; };
+	
 
 protected:
 	static std::string ToString(const VARIANT& rvt, bool bScript = false );

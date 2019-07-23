@@ -44,31 +44,9 @@ LinkedValue::~LinkedValue()
 #pragma region Public Methods
 
 
-
-void LinkedValue::SetLinkDefaultValue(const _variant_t& rValue)
-{
-	m_LinkDefaultValue = rValue;
-
-}
-
-const _variant_t& LinkedValue::GetLinkDefaultValue() const
-{
-
-	return m_LinkDefaultValue;
-
-}
-
-
-
-
-HRESULT LinkedValue::GetValueEx(_variant_t& rValue, int Index /*= -1*/) 
+HRESULT LinkedValue::GetArrayValue(_variant_t& rValue) 
 {
 	
-	if(!isArray() || Index != -1)
-	{
-		return GetValue(rValue, Index);
-	}
-
 	//! If this flag is still set then this value is trying to reference itself!
 	if (m_CircularReference)
 	{
@@ -83,6 +61,7 @@ HRESULT LinkedValue::GetValueEx(_variant_t& rValue, int Index /*= -1*/)
 		Result = m_LinkedObjectRef.getValue(rValue);
 		m_CircularReference = false;
 	}
+	//@Todo[MEC][8.20] [08.07.2019] check for arraysize1
 	else
 	{
 		Result = __super::getValue(rValue, -1, false);
@@ -92,7 +71,38 @@ HRESULT LinkedValue::GetValueEx(_variant_t& rValue, int Index /*= -1*/)
 
 HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 {
-	if ((m_LinkDefaultValue.vt & VT_ARRAY) && (rValue.vt & VT_ARRAY))
+	if (0 == (rValue.vt & VT_ARRAY))
+	{
+		return __super::SetDefaultValue(rValue, bResetAll);
+	}
+	else
+	{
+		HRESULT hres;
+		_variant_t value;
+		value.ChangeType(rValue.vt & ~VT_ARRAY);
+		hres = __super::SetDefaultValue(value, bResetAll);
+		
+		if (bResetAll)
+		{
+			long lBound(0), uBound(0);
+			SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
+			SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
+			long cnt_elements = uBound - lBound + 1;
+			if (getArraySize() != cnt_elements)
+			{
+				SetArraySize(cnt_elements);
+			}
+			hres = __super::setValue(rValue);
+		}
+		return hres;
+	}
+	
+	
+}
+
+HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/)
+{
+	if( (rValue.vt & VT_ARRAY) && Index == -1)
 	{
 		long lBound(0), uBound(0);
 		SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
@@ -102,23 +112,21 @@ HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 		{
 			SetArraySize(cnt_elements);
 		}
-		_variant_t value;
-		value.ChangeType(rValue.vt & ~VT_ARRAY);
-		__super::SetDefaultValue(value, bResetAll);
-		return __super::setValue(rValue);
 	}
-
-	return __super::SetDefaultValue(rValue, bResetAll);
+	return __super::setValue(rValue, Index);
 }
-
+HRESULT LinkedValue::setValue(const std::string& rValue, int Index /*= -1*/)
+{
+	return __super::setValue(rValue, Index);
+}
 
 HRESULT  LinkedValue::SetValue(const _variant_t& rValue, int Index)
 {
 	///enabling setting Linked Value
-	if (((m_LinkDefaultValue.vt & VT_ARRAY) != 0) && (Index == -1) && (rValue.vt == VT_BSTR))
+	if ((Index == -1) && isArray())
 	{
-
 		Index = 0;
+		SetArraySize(0);
 	}
 	return __super::SetValue(rValue, Index);
 }
@@ -528,6 +536,11 @@ bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, Sv
 
 	return Result;
 }
+
+const SVObjectClass* LinkedValue::GetLinkedObject() const
+{
+	return m_LinkedObjectRef.getObject(); 
+} 
 #pragma endregion Private Methods
 
 } //namespace SvVol

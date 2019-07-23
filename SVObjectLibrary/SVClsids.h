@@ -1125,6 +1125,7 @@ extern const GUID SVResizePerformanceGuid;
 extern const GUID SVLogicalROIImageGuid;
 
 const int COUNT_OF_INPUT_OUTPUT_GUIDs = 50;
+
 extern const GUID aInputObjectGUID[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern const GUID aInputObject_LinkedGUID[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern const GUID aInputObjectNameGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];

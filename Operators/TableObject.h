@@ -56,6 +56,12 @@ public:
 	void clearTable();
 
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
+
+	/// rValue contents a 2 dim SafeArray of double  
+	void  getTableValues(_variant_t& rValue,long* pSizeX, long* pSizeY )const;
+	/// rValue contents a 1 dim Safe array of BSTR with the columnames returnvalue is size
+	unsigned  getColumNames(_variant_t& rValue) const;
+	
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

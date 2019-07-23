@@ -20,6 +20,9 @@ enum InputValuesEnum
 	InputValue_BSTR,
 	InputValue_DOUBLE_ARRAY,
 	InputValue_INT_ARRAY,
+	InputValue_TABLE_ARRAY,
+	InputValue_TABLE_NAMES,
+	InputValue_LONG_TABLE_SELECT,
 	NUM_INPUT_VALUES
 };
 enum InputImagesEnum
@@ -35,6 +38,9 @@ enum ResultValuesEnum
 	ResultValue_BSTR,
 	ResultValue_DOUBLE_ARRAY,
 	ResultValue_INT_ARRAY,
+	ResultValue_INT_ROWCOUNT,
+	RESULTVALUE_BSTR_ROWNAME,
+	RESULTVALUE_DOUBLE_ARRAY_ROW,
 	NUM_RESULT_VALUES
 };
 enum ResultImagesEnum

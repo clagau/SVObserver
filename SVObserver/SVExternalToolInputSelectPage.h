@@ -19,6 +19,7 @@
 namespace SvOp
 {
 class SVExternalToolTask;
+class InputValueDefinition;
 }
 class SVObjectClass;
 
@@ -53,6 +54,7 @@ protected:
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
 	bool ValidateValueObject(SVObjectClass* pObject, int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
+	const SvOp::InputValueDefinition*  GetInputValueDefinitionPtr(SVRPropertyItem* pItem);
 
 	enum
 	{

@@ -34,6 +34,7 @@
 #pragma region Precompiled Headers
 #include <algorithm>
 #include <assert.h>
+#include <atlsafe.h>
 #include <comdef.h>
 #include <concrt.h>
 #include <ctime>

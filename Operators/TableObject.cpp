@@ -13,6 +13,7 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+
 #pragma endregion Includes
 
 namespace SvOp
@@ -174,7 +175,7 @@ void TableObject::clearTable()
 	m_NumberOfRows.SetValue(0L);
 }
 
-SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
+SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID) 
 {
 	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
 	bool isColumnValue = false;
@@ -293,5 +294,59 @@ void TableObject::BuildEmbeddedObjectList ()
 	m_NumberOfRows.SetDefaultValue( 0L, true );
 }
 #pragma endregion Private Methods
+
+
+void  TableObject::getTableValues(_variant_t& rValue, long* pSizeX, long* pSizeY) const
+{
+	CComSafeArrayBound bound[2];
+	auto valueList = getValueList();
+	long Ysize = (long) valueList.size();
+	long Xsize = (long) valueList[0]->getSortContainer().size();
+	bound[0] = Xsize;
+	bound[1] = Ysize;
+
+
+	CComSafeArray<double> tdimsa(bound, 2);
+	LONG aIndex[2];
+	for (int x = 0; x < Xsize; x++)
+	{
+		for (int y = 0; y < Ysize; y++)
+		{
+			aIndex[0] = x;
+			aIndex[1] = y;
+			double val;
+			valueList[y]->GetValue(val, x);
+			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
+			ATLASSERT(hr == S_OK);
+		}
+	}
+	rValue.Clear();
+	rValue.vt = VT_ARRAY | VT_R8;
+	rValue.parray = tdimsa.Detach();
+	if (pSizeX)
+	{
+		*pSizeX = Xsize;
+	}
+	if (pSizeY)
+	{
+		*pSizeY = Ysize;
+	}
+}
+
+unsigned  TableObject::getColumNames(_variant_t& rValue) const
+{
+	auto valueList = getValueList();
+	CComSafeArray<BSTR> saStr(static_cast<unsigned>(valueList.size()));
+	for (unsigned i = 0; i < valueList.size(); i++)
+	{
+		_bstr_t temp = valueList[i]->GetName();
+		saStr.SetAt(i, temp);
+	}
+	rValue.Clear();
+	rValue.vt = VT_ARRAY | VT_BSTR;
+	rValue.parray = saStr.Detach();
+	return static_cast<unsigned>( valueList.size());
+}
+
 
 } //namespace SvOp

@@ -29,7 +29,6 @@
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
-
 namespace SvOp
 {
 struct SVExternalToolTaskData : public SVCancelData
@@ -49,6 +48,8 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	const SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
 
+	void  Initialize(long Arraysize, InputValueDefinitionStruct*  pInputValueDefs);
+
 	SvVol::SVFileNameValueObjectClass m_voDllPath;
 	std::vector<SvVol::SVFileNameValueObjectClass>  m_aDllDependencies; //[NUM_TOOL_DEPENDENCIES];
 
@@ -64,8 +65,8 @@ struct SVExternalToolTaskData : public SVCancelData
 	std::vector<SvVol::SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
 
 	SVImageDefinitionStructArray m_aResultImageDefinitions;
-	ResultValueDefinitionStructArray m_aResultValueDefinitions;
-	InputValueDefinitionStructArray m_aInputValueDefinitions;
+	std::vector<ResultValueDefinitionStruct> m_aResultValueDefinitions;
+	std::vector<InputValueDefinition> m_aInputValueDefinitions;
 
 	SVMultiCancelData m_RangeResultData;
 
@@ -73,6 +74,7 @@ struct SVExternalToolTaskData : public SVCancelData
 	long m_lNumInputValues = 0;
 	long m_lNumResultImages = 0;
 	long m_lNumResultValues = 0;
+	long m_NumLinkedValue {0};
 
 	SVRPropTreeState m_PropTreeState;
 };	// end struct SVExternalToolTaskData
@@ -97,8 +99,8 @@ public:
 	HRESULT SetPathName( const std::string& rPath );
 	HRESULT SetDependencies( const SvDef::StringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
-	HRESULT GetResultValueDefinitions ( ResultValueDefinitionStructArray& raResultValueDefinitions );
-	HRESULT GetInputValueDefinitions( InputValueDefinitionStructArray& raInputValueDefinitions );
+	HRESULT GetResultValueDefinitions ( std::vector<ResultValueDefinitionStruct>& raResultValueDefinitions );
+	
 
 	// ISVCancel interface
 	virtual bool CanCancel() override;

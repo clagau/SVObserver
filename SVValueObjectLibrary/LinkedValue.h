@@ -33,9 +33,7 @@ public:
 #pragma region Public Methods
 public:
 
-	virtual void SetLinkDefaultValue(const _variant_t& rValue);
-	virtual const _variant_t& GetLinkDefaultValue() const ;
-
+	
 
 	//************************************
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
@@ -45,19 +43,19 @@ public:
 	//************************************
 	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1) const override;
 	
-	/// similar to GetValue but works also for safearrays 
-	HRESULT GetValueEx(_variant_t& rValue, int Index = -1);
+	/// similar to GetValue but  for safe arrays 
+	HRESULT   GetArrayValue(_variant_t& rValue);
 
 	virtual HRESULT SetDefaultValue(const _variant_t& rValue, bool bResetAll = true) override;
 
 	virtual HRESULT  SetValue(const _variant_t& rValue, int Index = -1) override;
+
+	virtual HRESULT  setValue(const _variant_t& rValue, int Index = -1) override;
+	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
 	
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 
-	//************************************
-	/// Update the linked name 
-	/// \returns HRESULT
-	//************************************
+	
 	void UpdateLinkedName();
 
 	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
@@ -73,6 +71,9 @@ public:
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override { UpdateLinkedName(); };
 #pragma endregion Methods to replace processMessage
+
+	const SVObjectClass* GetLinkedObject()  const;
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -109,11 +110,13 @@ private:
 	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
 	/// \returns bool true if linked object is valid
 	bool CheckLinkedObject( const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages=nullptr ) const;
+
+	
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
-	_variant_t m_LinkDefaultValue;
+	
 	SVStringValueObjectClass m_LinkedName;
 	SVObjectReference m_LinkedObjectRef;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present

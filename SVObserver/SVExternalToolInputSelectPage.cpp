@@ -25,6 +25,8 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "Operators/TableObject.h"
+#include "Operators/SVDLLToolDefinitionStructs.h"
 
 #pragma endregion Includes
 
@@ -94,7 +96,7 @@ void SVExternalToolInputSelectPage::DoDataExchange(CDataExchange* pDX)
 BOOL SVExternalToolInputSelectPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	m_Values.Init();
 
 	if (m_inputValueCount > 0)
@@ -130,11 +132,15 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 		for (int i = 0; i < m_inputValueCount; i++)
 		{
-			SvOp::InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
+			SvOp::InputValueDefinition& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
+			if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableNames)
+			{
+				continue;
+			}
 
 			iID++;
 
-			std::string GroupName = SvUl::createStdString(rDefinition.m_bGroup);
+			std::string GroupName = rDefinition.getGroup();
 
 			if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
 			{	// if group does not already exist
@@ -175,32 +181,53 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 			pEdit->SetCtrlID(iID);
 
+			int Index = rDefinition.getLinkedValueIndex();
 			// display name like: "Input 01 (Translation-X)"
-			std::string sLabel = SvUl::Format(_T("%s (%s)"), m_Values.GetName(aInputObjectGUID[i]).c_str(), m_Values.Get<CString>(aInputObjectNameGuid[i]));
+			std::string sLabel = SvUl::Format(_T("%s (%s)"), m_Values.GetName(aInputObjectGUID[Index]).c_str(), m_Values.Get<CString>(aInputObjectNameGuid[Index]));
 			pEdit->SetLabelText(sLabel.c_str());
 
-			std::string Type;
-			switch (rDefinition.m_VT)
+			std::string strType;
+			switch (rDefinition.GetVt())
 			{
-				case VT_BOOL: Type = _T("Bool");   break;
-				case VT_I4:   Type = _T("Long");   break;
-				case VT_R8:   Type = _T("Double"); break;
-				case VT_BSTR: Type = _T("String"); break;
-				case VT_R8 | VT_ARRAY: Type = _T("Double array"); break;
-				case VT_I4 | VT_ARRAY: Type = _T("Long Array"); break;
+				case VT_BOOL: strType = _T("Bool");   break;
+				case VT_I4:   strType = _T("Long");   break;
+				case VT_R8:   strType = _T("Double"); break;
+				case VT_BSTR: strType = _T("String"); break;
+				case VT_R8 | VT_ARRAY:
+
+					if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableArray)
+					{
+						strType = _T("Table or Table Element");
+					}
+					else
+					{
+						strType = _T("Double array");
+					}
+					break;
+
+				case VT_I4 | VT_ARRAY:
+					if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableArray)
+					{
+						strType = _T("Table or Table Element");
+					}
+					else
+					{
+						strType = _T("Long Array");
+					}
+					break;
 
 
-				default:      Type = _T("???");    break;
+				default:      strType = _T("???");    break;
 			}
 
-			std::string Description = SvUl::createStdString(rDefinition.m_bHelpText);
-			Description = _T(" (Type : ") + Type + _T(")  ") + Description;
+			std::string Description = rDefinition.getHelpText();
+			Description = _T(" (Type : ") + strType + _T(")  ") + Description;
 			pEdit->SetInfoText(Description.c_str());
 
-			std::string Value(m_Values.Get<CString>(aInputObject_LinkedGUID[i]));
+			std::string Value(m_Values.Get<CString>(aInputObject_LinkedGUID[Index]));
 			if (Value.empty())
 			{
-				_variant_t temp = m_Values.Get<_variant_t>(aInputObjectGUID[i]);
+				_variant_t temp = m_Values.Get<_variant_t>(aInputObjectGUID[Index]);
 
 				Value = SvUl::VariantToString(temp);
 
@@ -262,10 +289,10 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
 {
-	SvPb::InspectionCmdMsgs request, response;
+		SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 	{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
-		m_InspectionID, SvPb::archivable);
+		m_InspectionID, SvPb::archivable,GUID_NULL,true);
 	SvCmd::InspectionCommands(m_InspectionID, request, &response);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
@@ -273,7 +300,8 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 	{
 		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
 	}
-
+	//@Todo[MEC][8.20] [12.07.2019] EXTERNAL TOOL
+	// Enable Table Objects in Object Selector 
 	std::string value;
 	pItem->GetItemValue(value);
 
@@ -286,7 +314,7 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 
 	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
 	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
-	std::string Title = SvUl::Format(_T("%s - %s"), ToolsetOutput.c_str(), GetName(m_ToolObjectID));
+	std::string Title = SvUl::Format(_T("%s - %s"), ToolsetOutput.c_str(), GetName(m_ToolObjectID).c_str());
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this);
 
@@ -339,13 +367,11 @@ void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 void SVExternalToolInputSelectPage::OnOK()
 {
 	SVRPropertyItem* pGroup = nullptr;
-
 	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
 	{
 		pGroup = m_Tree.GetRootItem()->GetChild()->GetChild();
 		while (pGroup)
 		{
-			
 			SVRPropertyItem* pItem = pGroup->GetChild();
 			while (pItem)
 			{
@@ -357,7 +383,7 @@ void SVExternalToolInputSelectPage::OnOK()
 					pItem->GetItemValue(Value);
 					bool done {false};
 					_variant_t  array;
-					switch (m_pTask->m_Data.m_aInputValueDefinitions[iIndex].m_VT)
+					switch (m_pTask->m_Data.m_aInputValueDefinitions[iIndex].GetVt())
 					{
 						case VT_ARRAY | VT_R8:
 						{
@@ -377,7 +403,6 @@ void SVExternalToolInputSelectPage::OnOK()
 							}
 							break;
 						}
-
 					}
 					if (!done)
 					{
@@ -398,13 +423,10 @@ void SVExternalToolInputSelectPage::OnOK()
 SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 {
 	SVObjectClass* pObject = nullptr;
-
 	std::string CompleteObjectName = GetName(m_InspectionID);
 	std::string Name;
 	pItem->GetItemValue(Name);
-
 	std::string ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
-
 	// if object name starts with tool set, inspection name must be added
 	// else it must not be added, because it can be another object (e.g. "PPQ_1.Length" or "Environment.Mode.IsRun")
 	if (0 == Name.find(ToolSetName))
@@ -425,22 +447,29 @@ SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 
 bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, int iIndex)
 {
-	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>(pObject);
-	bool res = (pValueObject != nullptr);
-
-	if (res)
+	bool res {false};
+	if (m_pTask->m_Data.m_aInputValueDefinitions[iIndex].getType() == SvOp::ExDllInterfaceType::TableArray)
 	{
-
-		switch (m_pTask->m_Data.m_aInputValueDefinitions[iIndex].m_VT)
+		SvOp::TableObject* pTableObject = dynamic_cast<SvOp::TableObject*>(pObject);
+		res=   (pTableObject != nullptr);
+	}
+	else
+	{
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>(pObject);
+		res = (pValueObject != nullptr);
+		if (res)
 		{
-			case VT_ARRAY | VT_R8:
-				if (!pValueObject->isArray() || pValueObject->GetType() != VT_R8)
-					res = false;
-				break;
-			case VT_ARRAY | VT_I4:
-				if (!pValueObject->isArray()|| pValueObject->GetType() != VT_I4)
-					res = false;
-				break;
+			switch (m_pTask->m_Data.m_aInputValueDefinitions[iIndex].GetVt())
+			{
+				case VT_ARRAY | VT_R8:
+					if (!pValueObject->isArray() || pValueObject->GetType() != VT_R8)
+						res = false;
+					break;
+				case VT_ARRAY | VT_I4:
+					if (!pValueObject->isArray() || pValueObject->GetType() != VT_I4)
+						res = false;
+					break;
+			}
 		}
 	}
 	if (!res)
@@ -451,36 +480,70 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 	return res;
 }
 
+const SvOp::InputValueDefinition* SVExternalToolInputSelectPage::GetInputValueDefinitionPtr(SVRPropertyItem* pItem)
+{
+	int iIndex = GetItemIndex(pItem);
+	
+	for (int i = 0; i < m_pTask->m_Data.m_aInputValueDefinitions.size(); i++)
+	{
+		if(m_pTask->m_Data.m_aInputValueDefinitions[i].getLinkedValueIndex() == iIndex)
+			return &(m_pTask->m_Data.m_aInputValueDefinitions[i]);
+	}
+	return nullptr;
+}
+
 HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 {
+	
 	int iIndex = GetItemIndex(pItem);
 	std::string Value;
 	pItem->GetItemValue(Value);
 	_variant_t  vtItem(Value.c_str());
 	_variant_t  vtNew;
+	
+	const SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
+	if (!pDef)
+		return E_FAIL;
 
-	VARTYPE vt = static_cast<VARTYPE>(m_pTask->m_Data.m_aInputValueDefinitions[iIndex].m_VT);
+	VARTYPE vt = static_cast<VARTYPE>(pDef->GetVt());
+	SvOp::ExDllInterfaceType type = pDef->getType();
 	HRESULT  hr = E_FAIL;
-	if (vt == (VT_ARRAY | VT_R8))
+	if (type == SvOp::ExDllInterfaceType::Array)
 	{
-		if (SvUl::StringToSafeArray<double>(Value, vtNew) > 0)
+		if (vt == (VT_ARRAY | VT_R8))
 		{
-			hr = S_OK;
-		}
+			if (SvUl::StringToSafeArray<double>(Value, vtNew) > 0)
+			{
+				hr = S_OK;
+			}
 
-	}
-	else if (vt == (VT_ARRAY | VT_I4))
-	{
-		if (SvUl::StringToSafeArray<long>(Value, vtNew) > 0)
+		}
+		else if (vt == (VT_ARRAY | VT_I4))
 		{
-			hr = S_OK;
-		}
+			if (SvUl::StringToSafeArray<long>(Value, vtNew) > 0)
+			{
+				hr = S_OK;
+			}
 
+		}
 	}
-	else
+	else if (type == SvOp::ExDllInterfaceType::Scalar)
 	{
 		hr = ::VariantChangeTypeEx(&vtNew, &vtItem, SvDef::LCID_USA, VARIANT_ALPHABOOL, vt);
 	}
+	else if (type == SvOp::ExDllInterfaceType::TableArray)
+	{
+		if (Value.empty())
+		{
+			return S_OK;
+		}
+		else
+		{
+			return E_FAIL;
+		}
+	}
+	
+	
 	if (S_OK != hr)
 	{
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

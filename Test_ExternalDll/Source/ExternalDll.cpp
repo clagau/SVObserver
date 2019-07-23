@@ -312,11 +312,7 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize,
 
 	////////////////////////////////////////////////////////////////////////
 
-	//@Todo[MEC][8.20] [23.05.2019] External Tool
-	//	for (i=0;i<NUM_INPUT_VALUES;i++)
-	//	{
-	//		(*ppaStructs)[i].vDefaultValue.vt = (VARTYPE)(*ppaStructs)[i].lVT;
-	//	}	
+	
 
 #if _DEBUG
 	fdb("===== SVGetInputValueDefinitions - Exit - hr=0x%X\n", hr);
