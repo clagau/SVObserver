@@ -119,5 +119,6 @@ else
   }
 }
 
+D:\Utilities\BGInfo\bginfoIP.bat
 C:\SVObserver\bin\SVObserver.exe
 start-process "C:\SVObserver\bin\SyncSystemTime.bat" -WindowStyle Minimized
