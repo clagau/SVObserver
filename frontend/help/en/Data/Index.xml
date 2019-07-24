@@ -5,7 +5,7 @@
             <IndexEntry Term="Bottom Bar">
                 <Entries />
                 <Links>
-                    <IndexLink Title="General structure" Link="/Content/General strucutre/General structure.htm#kanchor3" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="User Interface" Link="/Content/User_Interface/User_Interface.htm#kanchor3" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -13,7 +13,7 @@
             <IndexEntry Term="Configuration">
                 <Entries />
                 <Links>
-                    <IndexLink Title="System Configuration" Link="/Content/General strucutre/Top_bar/2_System_configuration.htm#kanchor5" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="System Configuration" Link="/Content/User_Interface/Top_bar/2_System_configuration.htm#kanchor5" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -29,7 +29,7 @@
             <IndexEntry Term="Custom Overlay Parameters">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Parameter View" Link="/Content/Parameter_view.htm#kanchor34" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Parameter View" Link="/Content/User_Interface/View_set/View_types/Parameter_view.htm#kanchor27" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -37,7 +37,7 @@
             <IndexEntry Term="Custom Overlays">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Image View" Link="/Content/Image_view.htm#kanchor31" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Image View" Link="/Content/User_Interface/View_set/View_types/Image_view.htm#kanchor24" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -45,7 +45,7 @@
             <IndexEntry Term="Date and Time">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Date and Time" Link="/Content/General strucutre/Top_bar/5_Date_and_time.htm#kanchor13" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Date and Time" Link="/Content/User_Interface/Top_bar/5_Date_and_time.htm#kanchor13" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -53,7 +53,7 @@
             <IndexEntry Term="Edit Mode">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor11" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor11" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -61,7 +61,7 @@
             <IndexEntry Term="Help">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Menu" Link="/Content/General strucutre/Menu/Menu.htm#kanchor26" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Menu" Link="/Content/User_Interface/Menu/Menu.htm#kanchor35" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -69,7 +69,7 @@
             <IndexEntry Term="Image Information">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Image View" Link="/Content/Image_view.htm#kanchor32" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Image View" Link="/Content/User_Interface/View_set/View_types/Image_view.htm#kanchor25" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -77,7 +77,7 @@
             <IndexEntry Term="Image Strip">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Image Strip View" Link="/Content/Image_strip_view.htm#kanchor37" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Image Strip View" Link="/Content/User_Interface/View_set/View_types/Image_strip_view.htm#kanchor30" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -85,7 +85,7 @@
             <IndexEntry Term="Image Strip View">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Image Strip View" Link="/Content/Image_strip_view.htm#kanchor36" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Image Strip View" Link="/Content/User_Interface/View_set/View_types/Image_strip_view.htm#kanchor29" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -93,7 +93,7 @@
             <IndexEntry Term="Image View">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Image View" Link="/Content/Image_view.htm#kanchor29" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Image View" Link="/Content/User_Interface/View_set/View_types/Image_view.htm#kanchor22" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -101,7 +101,7 @@
             <IndexEntry Term="Language Settings">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Language Settings" Link="/Content/General strucutre/Top_bar/7_Language_settings.htm#kanchor14" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Language Settings" Link="/Content/User_Interface/Top_bar/7_Language_settings.htm#kanchor14" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -117,7 +117,7 @@
             <IndexEntry Term="List View">
                 <Entries />
                 <Links>
-                    <IndexLink Title="List View" Link="/Content/List_view.htm#kanchor35" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="List View" Link="/Content/User_Interface/View_set/View_types/List_view.htm#kanchor28" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -125,7 +125,7 @@
             <IndexEntry Term="Login">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Login" Link="/Content/Getting started/Login.htm#kanchor1" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Login" Link="/Content/Login/Login.htm#kanchor1" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -133,7 +133,7 @@
             <IndexEntry Term="Logout">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Menu" Link="/Content/General strucutre/Menu/Menu.htm#kanchor25" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Menu" Link="/Content/User_Interface/Menu/Menu.htm#kanchor34" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -141,7 +141,7 @@
             <IndexEntry Term="Menu">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Menu" Link="/Content/General strucutre/Menu/Menu.htm#kanchor23" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Menu" Link="/Content/User_Interface/Menu/Menu.htm#kanchor32" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -149,7 +149,7 @@
             <IndexEntry Term="Modes">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor6" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor6" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -157,7 +157,7 @@
             <IndexEntry Term="Notifications">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Notifications" Link="/Content/General strucutre/Top_bar/4_Notifications.htm#kanchor12" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Notifications" Link="/Content/User_Interface/Top_bar/4_Notifications.htm#kanchor12" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -165,7 +165,7 @@
             <IndexEntry Term="Operating Mode">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor6" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor6" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -173,7 +173,7 @@
             <IndexEntry Term="Overlays">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Image View" Link="/Content/Image_view.htm#kanchor30" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Image View" Link="/Content/User_Interface/View_set/View_types/Image_view.htm#kanchor23" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -181,7 +181,7 @@
             <IndexEntry Term="Parameter View">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Parameter View" Link="/Content/Parameter_view.htm#kanchor33" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Parameter View" Link="/Content/User_Interface/View_set/View_types/Parameter_view.htm#kanchor26" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -189,7 +189,7 @@
             <IndexEntry Term="Regression Mode">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor9" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor9" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -197,7 +197,7 @@
             <IndexEntry Term="Run Mode">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor7" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor7" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -205,8 +205,8 @@
             <IndexEntry Term="Shortcuts">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Menu" Link="/Content/General strucutre/Menu/Menu.htm#kanchor24" UsedConditions="" LocalConditions="" />
-                    <IndexLink Title="Shortcuts" Link="/Content/General strucutre/Menu/Shortcuts.htm#kanchor28" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Menu" Link="/Content/User_Interface/Menu/Menu.htm#kanchor33" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Shortcuts" Link="/Content/User_Interface/Menu/Shortcuts.htm#kanchor37" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -214,7 +214,7 @@
             <IndexEntry Term="Stop Mode">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor8" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor8" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -222,7 +222,7 @@
             <IndexEntry Term="System Configuration">
                 <Entries />
                 <Links>
-                    <IndexLink Title="System Configuration" Link="/Content/General strucutre/Top_bar/2_System_configuration.htm#kanchor5" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="System Configuration" Link="/Content/User_Interface/Top_bar/2_System_configuration.htm#kanchor5" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -230,7 +230,7 @@
             <IndexEntry Term="Test Mode">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Operating Mode" Link="/Content/General strucutre/Top_bar/3_Operating_mode.htm#kanchor10" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Operating Mode" Link="/Content/User_Interface/Top_bar/3_Operating_mode.htm#kanchor10" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -238,7 +238,7 @@
             <IndexEntry Term="Top Bar">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Top Bar" Link="/Content/General strucutre/Top_bar/1_Top_bar.htm#kanchor4" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Top Bar" Link="/Content/User_Interface/Top_bar/1_Top_bar.htm#kanchor4" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -246,8 +246,8 @@
             <IndexEntry Term="User">
                 <Entries />
                 <Links>
-                    <IndexLink Title="Login" Link="/Content/Getting started/Login.htm#kanchor2" UsedConditions="" LocalConditions="" />
-                    <IndexLink Title="User" Link="/Content/General strucutre/Top_bar/6_User.htm#kanchor15" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="Login" Link="/Content/Login/Login.htm#kanchor2" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="User" Link="/Content/User_Interface/Top_bar/6_User.htm#kanchor15" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -255,7 +255,7 @@
             <IndexEntry Term="View">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View" Link="/Content/General strucutre/View.htm#kanchor17" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View" Link="/Content/User_Interface/View_set/View.htm#kanchor17" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -263,7 +263,7 @@
             <IndexEntry Term="View Controls">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View" Link="/Content/General strucutre/View.htm#kanchor20" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View" Link="/Content/User_Interface/View_set/View.htm#kanchor20" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -271,7 +271,7 @@
             <IndexEntry Term="View Manager">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View Manager" Link="/Content/General strucutre/Menu/View_manager.htm#kanchor27" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View Manager" Link="/Content/User_Interface/Menu/View_manager.htm#kanchor36" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -279,7 +279,7 @@
             <IndexEntry Term="View Set">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View Set" Link="/Content/General strucutre/View_set.htm#kanchor16" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View Set" Link="/Content/User_Interface/View_set/View_set.htm#kanchor16" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -287,7 +287,7 @@
             <IndexEntry Term="View Set Navigation">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View Set Navigation" Link="/Content/General strucutre/View_set_navigation.htm#kanchor22" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View Set Navigation" Link="/Content/User_Interface/View_set_navigation/View_set_navigation.htm#kanchor31" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -295,8 +295,8 @@
             <IndexEntry Term="View Title">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View" Link="/Content/General strucutre/View.htm#kanchor18" UsedConditions="" LocalConditions="" />
-                    <IndexLink Title="View" Link="/Content/General strucutre/View.htm#kanchor19" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View" Link="/Content/User_Interface/View_set/View.htm#kanchor18" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View" Link="/Content/User_Interface/View_set/View.htm#kanchor19" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />
@@ -304,7 +304,7 @@
             <IndexEntry Term="View Types">
                 <Entries />
                 <Links>
-                    <IndexLink Title="View Types" Link="/Content/General strucutre/View_types.htm#kanchor21" UsedConditions="" LocalConditions="" />
+                    <IndexLink Title="View Types" Link="/Content/User_Interface/View_set/View_types/View_types.htm#kanchor21" UsedConditions="" LocalConditions="" />
                 </Links>
                 <SeeAlsoLinks />
                 <IndexControlLinks />

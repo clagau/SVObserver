@@ -11,16 +11,16 @@ package SvPb;
 
 message Variant
 {
-	uint32 type = 1;			//The Variant type VT
-	uint32 count = 2;			//The number of array elements if of type VT_ARRAY
+	fixed32 type = 1;			//The Variant type VT
+	fixed32 count = 2;			//The number of array elements if of type VT_ARRAY
 
 	oneof data
 	{
 		bool bVal = 3;
-		sint32 lVal = 4;
-		sint64 llVal = 5;
-		uint32 ulVal = 6;
-		uint64 ullVal = 7;
+		sfixed32 lVal = 4;
+		sfixed64 llVal = 5;
+		fixed32 ulVal = 6;
+		fixed64 ullVal = 7;
 		double dblVal = 8;
 		float fltVal = 9;
 		string strVal = 10;

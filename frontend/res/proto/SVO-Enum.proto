@@ -1,0 +1,467 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file SVO-Enum.proto
+/// All Rights Reserved 
+//*****************************************************************************
+/// Protobuf file for the Enums used by SVObserver
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+enum SVObjectTypeEnum
+{
+	SVNotSetObjectType						= 0x00000000;
+
+	SVSystemObjectType						= 0x00000001;
+	SVDigitizerObjectType					= 0x00000002;
+	SVImageProcessingObjectType				= 0x00000003;
+
+	SVInspectionObjectType					= 0x00000004;
+
+	SVFreezeSetObjectType					= 0x00000005;
+	SVToolSetObjectType						= 0x00000006;
+
+	SVToolObjectType						= 0x00000007;
+	SVEquationObjectType					= 0x00000008;
+	SVImageArithmeticObjectType				= 0x0000000a;
+	SVMathContainerObjectType				= 0x0000000b;
+	SVRotateReferenceObjectType				= 0x0000000c;
+
+	SVImageObjectType						= 0x00000011;
+	SVDataBufferClassObjectType				= 0x00000012;
+
+	SVTriggerProcessingObjectType			= 0x00000013;
+	SVDigitizerProcessingObjectType			= 0x00000014;
+	SVRootObjectType						= 0x00000015;
+
+	SVExternalToolTaskObjectType            = 0x00000020;
+
+	SVTransformObjectType					= 0x00000040;
+	SVPolarTransformObjectType				= 0x00000041;
+
+	SVPPQObjectType							= 0x00000050;
+	SVDisplayObjectType						= 0x00000051;
+	SVInspectionProcessType					= 0x00000052;
+	SVVirtualCameraType						= 0x00000053;
+	SVTriggerObjectType						= 0x00000054;
+	SVInputObjectListType					= 0x00000055;
+	SVOutputObjectListType					= 0x00000056;
+	SVIOControllerType                      = 0x00000057;
+	SVRemoteOutputGroupType					= 0x00000058;
+	SVIoObjectType							= 0x00000059;
+	SVLinearEdgeProcessingObjectType        = 0x00000060;
+	SVBasicValueObjectType			        = 0x00000061;
+
+	SVValueObjectType						= 0x00000200;
+
+	SVOperatorObjectType					= 0x00001000;
+	SVBinaryOperatorObjectType				= 0x00002000;
+	SVUnaryOperatorObjectType				= 0x00003000;
+	SVUnaryImageOperatorObjectType			= 0x00004000;
+	SVFilterObjectType						= 0x00005000;
+	SVUnaryImageOperatorListObjectType		= 0x00006000;
+	TableObjectType							= 0x00007000;
+	TableAnalyzerType						= 0x00007001;
+
+	SVAnalyzerObjectType					= 0x00010000;
+
+	SVAcquisitionObjectType					= 0x00020000;
+
+	SVResultObjectType						= 0x00100000;
+	SVRangeObjectType						= 0x00200000;
+	SVToolSizeAdjustTaskType				= 0x00300000;
+}
+
+// place all sub types here
+enum SVObjectSubTypeEnum
+{
+	SVNotSetSubObjectType						= 0x00000000;
+
+	// Image Subtypes:
+	SVImageMonoType								= 0x00000001;
+	SVImageColorType							= 0x00000002;
+
+	// System Subtypes:
+	SVMatroxSystemObjectType					= 0x00000005;
+
+	SVMatroxImageProcessingObjectType			= 0x00000007;
+	SVFileAcquisitionImageProcessingObjectType	= 0x00000009;
+
+	// Tool Subtypes:
+	SVWindowToolObjectType						= 0x00000010;
+	SVMathToolObjectType						= 0x00000012;
+	SVToolImageObjectType						= 0x00000015;
+	SVToolArchiveObjectType                     = 0x00000016;
+	SVToolLoadImageObjectType					= 0x00000017;
+	SVRoundWindowToolObjectType					= 0x00000018;
+	SVStatisticsToolObjectType					= 0x00000019;
+	SVToolAcquisitionObjectType					= 0x0000001a;
+	SVToolFreezeObjectType						= 0x0000001b;
+	SVTransformationToolObjectType				= 0x0000001c;
+	SVPolarTransformationToolObjectType			= 0x0000001d; 
+	SVColorToolObjectType						= 0x0000001e;
+	SVToolCylindricalObjectType					= 0x0000001f;
+	SVPerspectiveToolObjectType                 = 0x00000020;
+	SVExternalToolObjectType                    = 0x00000025;
+	SVLinearToolObjectType						= 0x00000026;
+	SVShiftToolObjectType						= 0x00000028;
+	SVResizeToolObjectType						= 0x00000029;
+	SVRingBufferToolObjectType					= 0x0000002a;
+	SVTableToolObjectType						= 0x0000002b;
+	SVTableAnalyzerToolObjectType				= 0x0000002c;
+	LoopToolObjectType							= 0x0000002d;
+
+	SVEnvironmentObjectType						= 0x00000062;
+	SVCameraObjectType							= 0x00000063;
+	SVGlobalConstantObjectType					= 0x00000064;
+
+	// Analyzer Subtypes:	
+	SVPixelAnalyzerObjectType				    = 0x00000100;
+	SVBlobAnalyzerObjectType					= 0x00000101;
+	SVLuminanceAnalyzerObjectType				= 0x00000102;
+	SVOCVAnalyzerObjectType						= 0x00000105;
+	SVHistogramAnalyzerObjectType				= 0x00000106;
+	SVPixelAnalyzerResultObjectType		        = 0x00000200;
+	SVPixelCountObjectType						= 0x00000201;
+
+	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;
+	SVLineEdgeCountingAnalyzerObjectType		= 0x00000301;
+	SVLineEdgePositionAnalyzerObjectType		= 0x00000302;
+	SVLineLinearMeasurementAnalyzerObjectType	= 0x00000303;
+	SVLineMaximumForegroundObjectAnalyzerObjectType = 0x00000304;
+	SVLineMaximumBackgroundObjectAnalyzerObjectType = 0x00000305;
+	SVLineMaximumObjectAnalyzerObjectType		= 0x00000306;
+
+	SVLinearEdgeAProcessingObjectType			= 0x00000380;
+	SVLinearEdgeBProcessingObjectType			= 0x00000381;
+
+	SVLinearPixelCountingAnalyzerObjectType		= 0x00000397;
+	SVLinearEdgeCountingAnalyzerObjectType		= 0x00000398;
+	SVLinearEdgePositionAnalyzerObjectType		= 0x00000399;
+	SVLinearMeasurementAnalyzerObjectType	    = 0x0000039a;
+	SVLinearMaximumForegroundObjectAnalyzerObjectType = 0x0000039b;
+	SVLinearMaximumBackgroundObjectAnalyzerObjectType = 0x0000039c;
+	SVLinearMaximumObjectAnalyzerObjectType		= 0x0000039d;
+
+
+	// Equation Subtypes:
+	SVConditionalObjectType						= 0x00000400;
+	SVMathEquationObjectType					= 0x00000401;
+	SVUpperThresholdEquationObjectType			= 0x00000402;
+	SVLowerThresholdEquationObjectType			= 0x00000403;
+	SVAutoThresholdEquationObjectType			= 0x00000404;
+	SVLUTEquationObjectType						= 0x00000405;
+
+	//Equation Subtypes for VAriableSize 	
+	EQSizeWidthType								= 0x00000406;
+	EQSizeHeightType							= 0x00000407;
+	EQSizePositionXType							= 0x00000408;
+	EQSizePositionYType							= 0x00000409;
+
+	TableColumnEquationObjectType				= 0x0000040a;
+	TableAddColumnEquationObjectType			= 0x0000040b;
+
+	// Math Container Subtypes:
+	SVEvaluateXObjectType						= 0x00000480;
+	SVEvaluateYObjectType						= 0x00000481;
+	SVEvaluateBetaObjectType					= 0x00000482;
+	SVEvaluateObjectType						= 0x00000483;
+	SVEvaluateTranslationXObjectType			= 0x00000484;
+	SVEvaluateTranslationYObjectType			= 0x00000485;
+	SVEvaluateRotationXObjectType				= 0x00000486;
+	SVEvaluateRotationYObjectType				= 0x00000487;
+	SVEvaluateRotationAngleObjectType			= 0x00000488;
+	SVEvaluateCenterXObjectType					= 0x00000489;
+	SVEvaluateCenterYObjectType					= 0x0000048a;
+	SVEvaluateStartRadiusObjectType				= 0x0000048b;
+	SVEvaluateEndRadiusObjectType				= 0x0000048c;
+	SVEvaluateStartAngleObjectType				= 0x0000048d;
+	SVEvaluateEndAngleObjectType				= 0x0000048e;
+			
+	// IO Subtypes:
+	SVDigitalInputObjectType					= 0x00000500;
+	SVDigitalOutputObjectType					= 0x00000501;
+	SVRemoteInputObjectType						= 0x00000502;
+	SVRemoteOutputObjectType					= 0x00000503;
+	SVCameraDataInputObjectType					= 0x00000504;
+
+	// Transform Subtypes:
+	SVImageTransformObjectType					= 0x00000600;
+	SVPointTransformObjectType					= 0x00000601;
+
+	// Polar Transform Subtypes:
+	SVImagePolarTransformObjectType				= 0x00000700;
+
+	// Result Subtypes:
+	SVResultPointXObjectType					= 0x00000800;
+	SVResultPointYObjectType					= 0x00000801;
+	SVResultLongObjectType						= 0x00000802;
+	SVResultDoubleObjectType					= 0x00000803;
+	SVResultDPointXObjectType					= 0x00000804;
+	SVResultDPointYObjectType					= 0x00000805;
+	SVResultVariantObjectType                   = 0x00000806;
+
+	SVResultOCVObjectType						= 0x00000902;
+	SVResultStringObjectType                    = 0x00000955;
+	SVBarCodeAnalyzerObjectType					= 0x0000095a;
+	SVResultBarCodeObjectType					= 0x0000095c;
+	SVPatternAnalyzerObjectType					= 0x00000960;
+
+	// Unary Image Operator List Subtypes:
+	SVStdImageOperatorListObjectType			= 0x00001000;
+	SVInPlaceImageOperatorListObjectType		= 0x00001001;
+	SVLinearImageOperatorListObjectType			= 0x00001002;
+
+	// Unary Image Operator Subtypes:
+	SVThresholdObjectType						= 0x00002000;
+	SVRoundMaskOperatorObjectType				= 0x00002001;
+	SVUserMaskOperatorObjectType				= 0x00002002;
+	SVClosingFilterObjectType					= 0x00002003;
+	SVOpeningFilterObjectType					= 0x00002004;
+	SVDilationFilterObjectType					= 0x00002005;
+	SVErosionFilterObjectType					= 0x00002006;
+	SVEdgeDetectFilterObjectType				= 0x00002007;
+	SVEdgeDetect2FilterObjectType				= 0x00002008;
+	SVLaplacianEdgeFilterObjectType				= 0x00002009;
+	SVLaplacianEdge2FilterObjectType			= 0x0000200b;
+	SVVertEdgeFilterObjectType					= 0x0000200c;
+	SVHorzEdgeFilterObjectType					= 0x0000200d;
+	SVSharpenFilterObjectType					= 0x0000200e;
+	SVSharpen2FilterObjectType					= 0x0000200f;
+	SVSmoothFilterObjectType					= 0x00002010;
+	SVMaxMinusMinFilterObjectType				= 0x00002011;
+	SVLUTOperatorObjectType						= 0x00002012;
+	SVCustomFilterObjectType					= 0x00002013;
+	SVRankingFilterObjectType					= 0x00002014;
+	SVSkeletonFilterObjectType                  = 0x00002015;
+	SVWatershedFilterObjectType                 = 0x00002016;
+	SVThinningFilterObjectType                  = 0x00002017;
+	SVThickeningFilterObjectType                = 0x00002018;
+	SVShapeMaskHelperObjectType					= 0x00002019;
+	SVCustom2FilterObjectType					= 0x0000201a;
+	EraseBorderBlobsFilterObjectType			= 0x0000201b;
+	ExtractHolesFilterObjectType				= 0x0000201c;
+	FillHolesFilterObjectType					= 0x0000201d;
+	ReconstructFilterObjectType					= 0x0000201e;
+	Ranking2FilterObjectType					= 0x0000201f;
+
+	// Operator SubTypes
+	SVColorThresholdObjectType					= 0x00003000;
+
+	//TableObject SubTypes
+	TableFillObjectType						= 0x00004000;
+	TableCopyObjectType						= 0x00004001;
+
+	TableAnalyzerSortType					= 0x00004010;
+	TableAnalyzerExcludeType				= 0x00004011;
+	TableAnalyzerLimitType					= 0x00004012;
+	TableAnalyzerAddColumnType				= 0x00004013;
+
+
+	//ValueObject SubTypes
+	SVDWordValueObjectType					= 0x00005000;
+	SVLongValueObjectType					= 0x00005001;
+	SVDoubleValueObjectType					= 0x00005002;
+	SVBoolValueObjectType					= 0x00005003;
+	SVPointValueObjectType					= 0x00005004;
+	SVByteValueObjectType					= 0x00005005;
+	SVStringValueObjectType					= 0x00005006;
+	SVEnumValueObjectType					= 0x00005007;
+	SVDPointValueObjectType					= 0x00005008;
+	SVInt64ValueObjectType					= 0x00005009;
+	SVCharValueObjectType					= 0x0000500A;
+	SVVariantValueObjectType				= 0x0000500B;
+	DoubleSortValueObjectType				= 0x0000500C;
+}
+
+enum LUTModeEnum
+{
+	LUTIdentity = 0;
+	LUTInversion = 1;
+	LUTSign = 2;
+	LUTClip = 3;
+	LUTFormula = 4;
+	LUTFreeForm = 5;
+	LUTStretch = 6;
+}
+
+///SVObserver object attributes
+enum ObjectAttributes
+{
+	noAttributes				= 0x00000000;	//None
+	viewable					= 0x00000001;	//Object is viewable in object selector
+	publishable					= 0x00000002;	//Object value can be published
+	archivable					= 0x00000004;	//Object value is displayed in the object selector when used for archiving
+	selectableForEquation		= 0x00000008;	//Object is displayed in the object selector when used for equations
+	embedable					= 0x00000010;	//Object is an embedded value
+	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
+	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
+	printable					= 0x00000080;	//Object is printed in the configuration report
+	remotelySetable				= 0x00000100;	//Object can be set remotely
+	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online
+	extentObject				= 0x00000400;	//Object is an extent value object
+	taskObject					= 0x00000800;	//Object is a task object
+	publishResultImage			= 0x00001000;	//Object result image can be published
+	dataDefinitionValue			= 0x00010000;	//Object is selected for the data definition list
+	dataDefinitionImage			= 0x00020000;	//Object is selected for the data definition list
+}
+
+///Object selector types
+enum ObjectSelectorType
+{
+	toolsetItems = 0;				//Inspection toolset items
+	globalConstantItems = 1;		//Global constant items
+	ppqItems = 2;					//PPQ variable items
+}
+
+enum SelectorFilter
+{
+	attributesAllowed = 0;			//Object selector filter for attributes allowed
+	attributesSet = 1;				//Object selector filter for attributes set
+	rangeValue = 2;					//Object selector filter for range values
+	monitorListRejectValue = 3;		//Object selector filter for monitor list reject values
+	ppqValue = 4;					//Object selector filter for ppq value
+}
+
+enum SVExtentPropertyEnum
+{
+	SVExtentPropertyNone					= 0;
+	SVExtentPropertyPositionPointX          = 0x00000001;
+	SVExtentPropertyPositionPointY          = 0x00000002;
+	SVExtentPropertyPositionPoint           = 0x00000003;
+	SVExtentPropertyPositionPointEndOfLineX = 0x00000004;
+	SVExtentPropertyPositionPointEndOfLineY = 0x00000008;
+	SVExtentPropertyPositionPointEndOfLine  = 0x0000000C;
+	SVExtentPropertyRotationAngle           = 0x00000010;
+	SVExtentPropertyTranslationOffsetX      = 0x00000040;
+	SVExtentPropertyTranslationOffsetY      = 0x00000080;
+	SVExtentPropertyTranslationOffset       = 0x000000C0;
+	SVExtentPropertyOutputPositionPointX    = 0x00000100;
+	SVExtentPropertyOutputPositionPointY    = 0x00000200;
+	SVExtentPropertyOutputPositionPoint     = 0x00000300;
+
+	SVExtentPropertyHeightScaleFactor		= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	SVExtentPropertyWidthScaleFactor		= 0x00080000; ///< Used by Resize Tool
+
+	SVExtentPropertyStartAngle              = 0x00100000;
+	SVExtentPropertyEndAngle                = 0x00200000;
+	SVExtentPropertyInnerRadius             = 0x00400000;
+	SVExtentPropertyOuterRadius             = 0x00800000;
+	SVExtentPropertyWidth                   = 0x01000000;
+	SVExtentPropertyHeight                  = 0x02000000;
+	SVExtentPropertyOutputWidth             = 0x04000000;
+	SVExtentPropertyOutputHeight            = 0x08000000;
+
+	//SVExtentPropertyPositionsInput = SVExtentPropertyPositionPointX | SVExtentPropertyPositionPointY | SVExtentPropertyPositionPointEndOfLineX | 
+	//								SVExtentPropertyPositionPointEndOfLineY | SVExtentPropertyTranslationOffsetX | SVExtentPropertyTranslationOffsetY | SVExtentPropertyRotationAngle,
+	SVExtentPropertyPositionsInput = 0x000000DF;
+
+	//SVExtentPropertyDimensionsInput = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyStartAngle | SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius
+	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightScaleFactor | SVExtentPropertyWidthScaleFactor,
+	SVExtentPropertyDimensionsInput = 0x03FC0000;
+
+	//SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
+	SVExtentPropertyDimentionsOutput = 0x0C000000;
+
+	//SVExtentPropertyRectangle = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyDimentionsOutput,
+	SVExtentPropertyRectangle = 0x0F000000;
+
+	//SVExtentPropertyScaleFactor = SVExtentPropertyWidthScaleFactor | SVExtentPropertyHeightScaleFactor,
+	SVExtentPropertyScaleFactor = 0x000C0000;
+
+	//SVExtentPropertyPie = SVExtentPropertyStartAngle | SVExtentPropertyEndAngle	| SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius	| SVExtentPropertyDimentionsOutput,
+	SVExtentPropertyPie = 0x0CF00000;
+
+	//SVExtentPropertyPositionsAll = SVExtentPropertyPositionsInput | SVExtentPropertyPositionsOutput,
+	SVExtentPropertyPositionsAll = 0x000003DF;
+
+	//SVExtentPropertyDimensionsAll = SVExtentPropertyDimensionsInput	| SVExtentPropertyDimentionsOutput,
+	SVExtentPropertyDimensionsAll = 0x0FFC0000;
+
+	//SVExtentPropertyAll = SVExtentPropertyPositionsAll | SVExtentPropertyDimensionsAll,
+	SVExtentPropertyAll = 0x0FFC03DF;
+
+	//SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint | SVExtentPropertyPositionPointEndOfLine | SVExtentPropertyTranslationOffset | SVExtentPropertyOutputPositionPoint
+	//						| SVExtentPropertyWidth	| SVExtentPropertyHeight | SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
+	SVExtentPropertyNoDecimalPlaces = 0x0F0003CF;
+	
+	//SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle | SVExtentPropertyStartAngle	| SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius,
+	SVExtentProperty2DecimalPlaces = 0x00F00010;
+}
+
+enum EAutoSize
+{
+	EnableNone = 0x0;
+	EnableSize = 0x1;
+	EnablePosition = 0x2;
+	EnableSizeAndPosition = 0x3;
+	EnableNegativePosition = 0x4;
+	//EnableAll = EnableSizeAndPosition | EnableNegativePosition
+	EnableAll = 0x7;
+}
+
+enum SVExtentLocationPropertyEnum
+{
+	SVExtentLocationPropertyUnknown     = 0;
+	SVExtentLocationPropertyTopLeft     = 1;
+	SVExtentLocationPropertyTopRight    = 2;
+	SVExtentLocationPropertyBottomRight = 3;
+	SVExtentLocationPropertyBottomLeft  = 4;
+	SVExtentLocationPropertyLeft        = 5;
+	SVExtentLocationPropertyRight       = 6;
+	SVExtentLocationPropertyTop         = 7;
+	SVExtentLocationPropertyBottom      = 8;
+	SVExtentLocationPropertyCenter      = 9;
+	SVExtentLocationPropertyRotate      = 10;
+	SVExtentLocationPropertyDisabled	= 11;
+	SVExtentLocationPropertySize		= 12;
+}
+
+enum SVExtentTranslationEnum
+{
+	SVExtentTranslationUnknown         = 0;
+	SVExtentTranslationNone            = 10;
+	SVExtentTranslationShift           = 20; //<default e.g WindowTool Shifttool
+	SVExtentTranslationRotate          = 30;
+	SVExtentTranslationFlippedRotate   = 31;
+	SVExtentTranslationProfile         = 40; //<LinearTool with Rotation
+	SVExtentTranslationProfileShift    = 41; //<LinearTool without Rotation
+	SVExtentTranslationTransformShift  = 50;
+	SVExtentTranslationTransformRotate = 51;
+	SVExtentTranslationPolarUnwrap     = 60;
+	SVExtentTranslationLine            = 80;
+
+	/// SvDef::SVExtentTranslationResize - Does a position, height, and width, 
+	///  translation that uses the scale factor values.
+	///  Uses include the Resize Tool.
+	SVExtentTranslationResize		   = 89;
+
+	/// SVExtentDoubleHeight - Does a position, and height translation 
+	///  that uses the height scale factor value.
+	///  Uses include the Image Tool, Double Height operation.
+	SVExtentTranslationDoubleHeight    = 90;
+
+	SVExtentTranslationFlipVertical	   = 91;
+	SVExtentTranslationFlipHorizontal  = 92;
+	SVExtentTranslationFigureShift	   = 93;
+	SVExtentTranslationLinear          = 100;
+	SVExtentTranslationCylindricalWarpH			= 110;
+	SVExtentTranslationCylindricalWarpV			= 111;
+	SVExtentTranslationHorizontalPerspective	= 120;
+	SVExtentTranslationVerticalPerspective		= 121;
+}
+
+enum SVExtentDirectionsEnum
+{
+	SVExtentDirectionBoth		= 0;
+	SVExtentDirectionHorizontal	= 1;
+	SVExtentDirectionVertical	= 2;
+}
+
+enum ShutdownOption
+{
+	shutdownSvObserver = 0;
+	shutdownSvObserverAndWindows = 1;
+	shutdownSvObserverAndRestartWindows = 2;
+}

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CatapultSkin Version="1" Comment="This is the default skin" Anchors="Width,Height" Width="800" Height="600" Top="0" Left="0" Bottom="0" Right="0" Tabs="TOC,Index,Search,Glossary" DefaultTab="TOC" UseBrowserDefaultSize="true" UseDefaultBrowserSetup="true" Title="SVObserver WebApp Help" ToolbarInTopic="false" NavigationLinkTop="false" NavigationLinkBottom="false" EnableAboutBox="false">
+<CatapultSkin Version="1" Comment="This is the default skin" Anchors="Width,Height" Width="800" Height="600" Top="0" Left="0" Bottom="0" Right="0" Tabs="TOC,Index,Glossary" DefaultTab="Search" UseBrowserDefaultSize="true" UseDefaultBrowserSetup="true" Title="SVObserver WebApp Help" ToolbarInTopic="false" NavigationLinkTop="false" NavigationLinkBottom="false" EnableAboutBox="false">
     <Index BinaryStorage="True" />
     <HtmlHelpOptions ShowMenuBar="false" TopmostWindowStyle="false" Buttons="Hide,Locate,Back,Forward,Stop,Refresh,Home,Font,Print" EnableButtonCaptions="True" AdvancedSearch="false" />
     <Stylesheet Link="Stylesheet.xml">
     </Stylesheet>
     <Toc LinesBetweenItems="true" LinesFromRoot="true" PlusMinusSquares="true" Border="None" />
-    <WebHelpOptions NavigationPanePosition="Left" NavigationPaneWidth="175" HideNavigationOnStartup="false" VisibleAccordionItemCount="8" />
+    <WebHelpOptions NavigationPanePosition="Left" NavigationPaneWidth="250" />
     <Toolbar EnableCustomLayout="true" Buttons="PreviousTopic|Back|Separator|Forward" ExcludeAccordionTitle="true" />
 </CatapultSkin>

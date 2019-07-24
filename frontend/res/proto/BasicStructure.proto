@@ -1,0 +1,27 @@
+syntax = "proto3";
+package SvPb;
+
+message MessageContainer //structure for a (error/warning/info-)message
+{
+	sint32 messageCode = 1;
+	sint32 additionalTextId = 2;
+	repeated string additionalTextList = 3;
+	string compileDate = 4;
+	string compileTime = 5;
+	string fileName = 6;
+	sint32 fileLine = 7;
+	string fileDateTime = 8;
+	bytes objectId = 9;
+}
+
+message MessageContainerVector
+{
+	repeated MessageContainer messages = 1; //list of messages
+}
+
+message Image
+{
+	bytes rgbData = 1;				//The raw RGB image data as a byte array
+	uint32 width = 2;				//The width of the image
+	uint32 height = 3;				//The height of the image
+}

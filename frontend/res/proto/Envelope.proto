@@ -46,6 +46,7 @@ enum MessageType
 	streamErrorResponse = 5;
 	streamFinish = 6;
 	streamCancel = 7;
+	streamAck = 8;
 }
 
 message Envelope
@@ -55,4 +56,5 @@ message Envelope
 	Error error = 3;
 	google.protobuf.Any payload = 4;
 	uint32 payloadType = 5;
+	uint64 sequenceNumber = 6;
 }

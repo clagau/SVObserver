@@ -11,6 +11,8 @@ package SvPb;
 
 import "Variant.proto";
 import "SVRC-Enum.proto";
+import "SVO-Enum.proto";
+import "InspectionCommands.proto";
 
 ///This is the Data Definition structure returned for each item in the list
 message DataDefinition
@@ -30,15 +32,6 @@ message Value
 	sint32 count = 3;				//Trigger count
 
 	Variant item = 4;				//The value item as a variant
-}
-
-///This is the recursive structure for the object selector tree
-message TreeItem
-{
-	string name = 1;				//The name of the leaf or branch
-	bool selected = 2;				//The flag which defines if the object is selected
-	bytes objectID = 3;				//The objects UUID
-	repeated TreeItem Children = 4;	//The children of this node
 }
 
 //Retrieves the SVObserver version
@@ -213,7 +206,7 @@ message GetInspectionNamesRequest
 ///Sends a shutdown request to the SVIM with an optional parameter
 message ShutdownRequest
 {
-	sint32 option = 1;				//Option 0=Shutdown SVObserver; 1=Shutdown SVObserver & Windows; 2=Shutdown SVObserver Restart Windows
+	ShutdownOption option = 1;
 }
 
 ///Gets the monitor list properties with the given name from SVObserver
@@ -288,21 +281,6 @@ message LoadConfigRequest
 	string fileName = 1;			//The configuration file name to load 
 }
 
-///Get the required objects to be displayed for selection
-message GetObjectSelectorItemsRequest
-{
-	repeated ObjectSelectorType Types = 1;	//The list of item types required
-	string inspectionID = 2;			//The inspection GUID to query for the items or the inspection name (changed from bytes to string until inspection ID available)
-	bytes instanceID = 3;				//The object instance GUID to query if required can be GUID_NULL
-	ObjectAttributes Filter = 4;		//The object attribute to filter with
-	bool wholeArray = 5;				//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
-}
-
-message GetObjectSelectorItemsResponse
-{
-	TreeItem Tree = 1;					//The object selector tree as recursive structure
-}
-
 message SaveClientChunkError
 {
 	uint32 requestRevision = 1;
@@ -340,28 +318,6 @@ message LoadClientChunkResponse
 	string chunk = 2;
 }
 
-enum LogSeverity
-{
-	fatal = 0;
-	error = 1;
-	warning = 2;
-	info = 3;
-	debug = 4;
-	trace = 5;
-}
-
-message LogEntry
-{
-	LogSeverity severity = 1;
-	string message = 2;
-}
-
-message StoreClientLogsRequest
-{
-	string client = 1;
-	repeated LogEntry logs = 2;
-}
-
 ///Standard responce for requests that only return names
 message NamesResponse
 {
@@ -375,3 +331,48 @@ message StandardResponse
 	sint32 hResult = 1;				//The request result (0 = no error)
 }
 
+message GetTriggerStreamRequest
+{
+}
+
+message GetTriggerStreamResponse
+{
+	uint32 trigger = 1;
+	bool is_reject = 2;
+}
+
+//This structure is sent for message notifications
+message MsgNotification
+{
+	MessageType type = 1;			//The message type start end or log
+	string messageText = 2;			//The message text being displayed
+	int32 errorNumber = 3;			//The error number being displayed
+}
+
+//This registers which notifications are streamed by SVObserver
+message GetNotificationStreamRequest
+{
+}
+
+//The notification response is one of the values depending which notification type is being streamed
+message GetNotificationStreamResponse
+{
+	oneof message
+	{
+		DeviceModeType currentMode = 1;			//The current SVObserver device mode
+		uint32 lastModified = 2;				//The last modified time stamp
+		MsgNotification msgNotification = 3;	//The message notification structure
+		string configFileLoaded = 4;			//The path to the loaded configuration file
+	}
+}
+
+message ExecuteInspectionCmdRequest
+{
+	bytes inspectionID = 1;			//The inspection GUID to perform the command on
+	InspectionCmdMsgs cmdMsg = 2;	//The inspection command message
+}
+
+message ExecuteInspectionCmdResponse
+{
+	InspectionCmdMsgs cmdMsg = 1;	//The inspection command message
+}

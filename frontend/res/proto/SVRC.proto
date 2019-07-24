@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file SVRC.proto
-/// All Rights Reserved 
+/// All Rights Reserved
 //*****************************************************************************
 /// Protobuf file for all SVRC commands
 //******************************************************************************
@@ -11,6 +11,7 @@ package SvPb;
 
 import "SVRC-SVOGateway.proto";
 import "SVRC-SVObserver.proto";
+import "GetObjectSelector.proto";
 
 /// This is the list of all request and response messages for SVRC
 message SVRCMessages
@@ -18,7 +19,7 @@ message SVRCMessages
 	oneof message
 	{
 		/// The first parameter is the message type which is declared in this file below the second parameter is the variable
-		/// Genaral commands
+		/// General commands
 		StandardResponse standardResponse = 1;
 		NamesResponse namesResponse = 2;
 		GetGatewayVersionRequest getGatewayVersionRequest = 3;
@@ -35,18 +36,20 @@ message SVRCMessages
 		GetProductResponse getProductResponse = 1005;
 		GetImageFromIdRequest getImageFromIdRequest = 1006;
 		GetImageFromIdResponse getImageFromIdResponse = 1007;
-		GetImageStreamFromIdRequest getImageStreamFromIdRequest = 1008;
-		GetImageStreamFromIdResponse getImageStreamFromIdResponse = 1009;
 		GetFailStatusRequest getFailStatusRequest = 1010;
 		GetFailStatusResponse getFailStatusResponse = 1011;
 		GetTriggerItemsRequest getTriggerItemsRequest = 1012;
 		GetTriggerItemsResponse getTriggerItemsResponse = 1013;
-		GetImageStreamRequest getImageStreamRequest = 1014;
-		GetNotificationStreamRequest getNotificationStreamRequest = 1015;
-		GetNotificationStreamResponse getNotificationStreamResponse = 1016;
+		GetGatewayNotificationStreamRequest getGatewayNotificationStreamRequest = 1015;
+		GetGatewayNotificationStreamResponse getGatewayNotificationStreamResponse = 1016;
 		GetRejectRequest getRejectRequest = 1017;
 		GetRejectResponse getRejectResponse = 1018;
+		GetProductStreamRequest getProductStreamRequest = 1021;
+		GetProductStreamResponse getProductStreamResponse = 1022;
 		StoreClientLogsRequest storeClientLogsRequest = 1023;
+		GetInspectionsRequest getInspectionsRequest = 1024;
+		GetInspectionsResponse getInspectionsResponse = 1025;
+		SetRejectStreamPauseStateRequest setRejectStreamPauseStateRequest = 1026;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
@@ -59,7 +62,7 @@ message SVRCMessages
 		PutConfigRequest putConfigRequest = 2007;
 		GetOfflineCountRequest getOfflineCountRequest = 2008;
 		GetOfflineCountResponse getOfflineCountResponse = 2009;
-		ActivateMonitorListRequest activateMontorListRequest = 2010;
+		ActivateMonitorListRequest activateMonitorListRequest = 2010;
 		SetProductFilterRequest setProductFilterRequest = 2011;
 		GetProductFilterRequest getProductFilterRequest = 2012;
 		GetProductFilterResponse getProductFilterResponse = 2013;
@@ -88,10 +91,16 @@ message SVRCMessages
 		LoadConfigRequest loadConfigRequest = 2036;
 		GetObjectSelectorItemsRequest getObjectSelectorItemsRequest = 2037;
 		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 2038;
+		GetTriggerStreamRequest getTriggerStreamRequest = 2039;
+		GetTriggerStreamResponse getTriggerStreamResponse = 2040;
+		GetNotificationStreamRequest getNotificationStreamRequest = 2041;
+		GetNotificationStreamResponse getNotificationStreamResponse = 2042;
+		ExecuteInspectionCmdRequest executeInspectionCmdRequest = 2043;
+		ExecuteInspectionCmdResponse executeInspectionCmdResponce = 2044;
 	}
 }
 
-message GetVersionResponse 
+message GetVersionResponse
 {
 	string version = 1;				//The version number as string
 }
@@ -100,5 +109,3 @@ message GetVersionResponse
 message EmptyResponse
 {
 }
-
-
