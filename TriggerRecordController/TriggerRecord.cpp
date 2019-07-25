@@ -15,6 +15,7 @@
 #include "ResetLocker.h"
 #include "CopyData.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
+#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
 #include "SVUtilityLibrary\StringHelper.h"
@@ -293,6 +294,13 @@ void TriggerRecord::initImages()
 					msgList.push_back(SvUl::Format(_T("%d"), pImagePos[i]));
 					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NewBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
+				else
+				{
+					if (!pImage->isEmpty())
+					{
+						SVMatroxBufferInterface::ClearBuffer(pImage->getHandle()->GetBuffer(), 0);
+					}
 				}
 			}
 		}
