@@ -58,7 +58,7 @@ ImageBufferController::ImageBufferController(DataControllerBase& rDataController
 
 ImageBufferController::~ImageBufferController()
 {
-	m_rDataController.clearAll();
+	m_rDataController.clearImageBuffer();
 }
 #pragma endregion Constructor
 
@@ -183,7 +183,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 				}
 				catch (const SvStl::MessageContainer& rSvE)
 				{
-					m_rDataController.clearAll();
+					m_rDataController.clearImageBuffer(true);
 					//This is the topmost catch for MessageContainer exceptions
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 					Exception.setMessage(rSvE.getMessage());
@@ -234,7 +234,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			m_rDataController.clearAll();
+			m_rDataController.clearImageBuffer(true);
 			//This is the topmost catch for MessageContainer exceptions
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 			Exception.setMessage(rSvE.getMessage());
@@ -250,7 +250,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			m_rDataController.clearAll();
+			m_rDataController.clearImageBuffer(true);
 			//This is the topmost catch for MessageContainer exceptions
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 			Exception.setMessage(rSvE.getMessage());

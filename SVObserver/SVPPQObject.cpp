@@ -4335,25 +4335,27 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 	if (m_rejectCount != depth)
 	{
 		m_rejectCount = depth;
+		std::vector<int> inspectionPosVec;
 		for (auto pInspection : m_arInspections)
 		{
 			if (nullptr != pInspection)
 			{
-				try
-				{
-					pInspection->setTriggerRecordNumbers(GetPPQLength(), m_rejectCount);
-				}
-				catch (const SvStl::MessageContainer& rSvE)
-				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
-					Msg.setMessage(rSvE.getMessage());
-					if (nullptr != pErrorMessages)
-					{
-						pErrorMessages->push_back(rSvE);
-					}
-					return false;
-				}
+				inspectionPosVec.push_back(SvTrc::getInspectionPos(pInspection->GetUniqueObjectID()));
 			}
+		}
+		try
+		{
+			SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(inspectionPosVec, GetPPQLength(), m_rejectCount);
+		}
+		catch (const SvStl::MessageContainer& rSvE)
+		{
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+			Msg.setMessage(rSvE.getMessage());
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(rSvE);
+			}
+			return false;
 		}
 	}
 	return true;

@@ -285,7 +285,7 @@ bool TriggerRecordController::setInspections(const SvPb::InspectionList& rInspec
 	return result;
 }
 
-void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long newSizeTr, long newSizeTrOfIntereset)
+void TriggerRecordController::resizeIPNumberOfRecords(std::vector<int> inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset)
 {
 	if (m_isResetLocked)
 	{
@@ -295,17 +295,6 @@ void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long ne
 		Exception.Throw();
 	}
 
-	auto inspectionList = m_pDataController->getInspections();
-	if (0 > inspectionPos || inspectionList.list_size() <= inspectionPos)
-	{   //new start of reset is not allowed if reset is in progress.
-		assert(false);
-		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
-		msgList.push_back(SvUl::Format(_T("%d"), inspectionList.list_size()));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
-	}
 	if (0 >= newSizeTr || cMaxTriggerRecords < newSizeTr)
 	{
 		assert(false);
@@ -328,57 +317,64 @@ void TriggerRecordController::resizeIPNumberOfRecords(int inspectionPos, long ne
 		Exception.Throw();
 	}
 
-	auto* pIpData = inspectionList.mutable_list(inspectionPos);
-	if (nullptr == pIpData)
+	bool mustRecalc = false;
+	auto inspectionList = m_pDataController->getInspections();
+	for (int inspectionPos : inspectionPosVec)
 	{
-		assert(false);
-		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
-		msgList.push_back(SvUl::Format(_T("%d"), inspectionList.list_size()));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
-	}	
-
-	if (pIpData->numberofrecords() == newSizeTr && pIpData->numberrecordsofinterest() == newSizeTrOfIntereset)
-	{
-		return;
-	}
-
-	m_pDataController->prepareReset();
-
-	pIpData->set_numberofrecords(newSizeTr);
-	pIpData->set_numberrecordsofinterest(newSizeTrOfIntereset);
-
-	if (m_pDataController->isIPInit(inspectionPos))
-	{
-		auto imageListTmp = m_pDataController->getImageDefList(inspectionPos);
-
-		startResetTriggerRecordStructure(inspectionPos);
-
-		m_pDataController->setInspectionList(inspectionList);
-
-		m_TriggerRecordNumberResetTmp = needNumberOfTr(*pIpData);
-		m_imageListResetTmp = imageListTmp;
-		auto* pImageStructList = m_imageStructListResetTmp.mutable_list();
-		for (auto imageDef : m_imageListResetTmp.list())
-		{
-			auto pStructIter = std::find_if(pImageStructList->begin(), pImageStructList->end(), [&imageDef](auto data)->bool
-			{
-				return (imageDef.structid() == data.structid());
-			});
-			if (pImageStructList->end() != pStructIter)
-			{
-				auto pStructData = &(*pStructIter);
-				pStructData->set_numberofbuffersrequired(pStructData->numberofbuffersrequired() + m_TriggerRecordNumberResetTmp);
-			}
+		if (0 > inspectionPos || inspectionList.list_size() <= inspectionPos)
+		{   //new start of reset is not allowed if reset is in progress.
+			assert(false);
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+			msgList.push_back(SvUl::Format(_T("%d"), inspectionList.list_size()));
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
 		}
 
-		ResetTriggerRecordStructure();
-	}
-	else
-	{
+		auto* pIpData = inspectionList.mutable_list(inspectionPos);
+		if (nullptr == pIpData)
+		{
+			assert(false);
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+			msgList.push_back(SvUl::Format(_T("%d"), inspectionList.list_size()));
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetWrongInspectionId, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
+		}
+
+		if (pIpData->numberofrecords() == newSizeTr && pIpData->numberrecordsofinterest() == newSizeTrOfIntereset)
+		{
+			continue;
+		}
+
+		m_pDataController->prepareReset();
+
+		pIpData->set_numberofrecords(newSizeTr);
+		pIpData->set_numberrecordsofinterest(newSizeTrOfIntereset);
+
 		m_pDataController->setInspectionList(inspectionList);
+		try
+		{
+			auto imageListTmp = m_pDataController->getImageDefList(inspectionPos, false);
+			if (0 < imageListTmp.list_size())
+			{
+				mustRecalc = true;
+				m_pDataController->setIpToInitFlagList(inspectionPos);
+			}
+		}
+		catch (...)
+		{
+			//nothing to do, only if imageDefList is valid and size > 0 do something.
+		}
+	}
+
+	if (mustRecalc)
+	{
+		m_imageStructListResetTmp = m_pDataController->getImageStructList();
+		m_mustRecalcRequiredBuffers = true;
+		ResetTriggerRecordStructure();
 	}
 }
 
@@ -442,9 +438,12 @@ void TriggerRecordController::closeWriteObjectWithoutUpdateLastTrId(ITriggerReco
 IImagePtr TriggerRecordController::getImageBuffer(const SVMatroxBufferCreateStruct& rBufferStruct, bool createBufferExternIfNecessary) const
 {
 	IImagePtr retImage;
-	if (-1 == m_resetStarted4IP)
 	{
-		retImage = m_imageBufferController.createNewImageHandle(rBufferStruct, m_pDataController->getResetId());
+		auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
+		if (-1 == m_resetStarted4IP && nullptr != pLock)
+		{
+			retImage = m_imageBufferController.createNewImageHandle(rBufferStruct, m_pDataController->getResetId());
+		}
 	}
 
 	if (nullptr == retImage && createBufferExternIfNecessary)

@@ -67,7 +67,7 @@ public:
 
 	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
 
-	virtual void resizeIPNumberOfRecords(int inspectionPos, long newSizeTr, long newSizeTrOfIntereset) override;
+	virtual void resizeIPNumberOfRecords(std::vector<int> inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset) override;
 
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 

@@ -3728,11 +3728,6 @@ bool SVInspectionProcess::shouldPauseRegressionTestByCondition()
 	return false;
 }
 
-void SVInspectionProcess::setTriggerRecordNumbers(long newRecordSize, long rejectCount)
-{
-	SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(SvTrc::getInspectionPos(GetUniqueObjectID()), newRecordSize, rejectCount);
-}
-
 void SVInspectionProcess::SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager)
 {
 	if (m_SlotManager.get())

@@ -378,7 +378,24 @@ DataControllerWriter::~DataControllerWriter()
 }
 #pragma endregion Constructor
 
+void DataControllerWriter::clearImageBuffer(bool shouldResetImageStruct)
+{
+	//first free MIL-buffer, before free SM-buffer
+	__super::clearImageBuffer();
+	m_imageMemoryHelper.clearAll();
 
+	if (shouldResetImageStruct)
+	{
+		auto* pList = m_imageStructList.mutable_list();
+		if (nullptr != pList)
+		{
+			for (int i=0; i< pList->size(); i++)
+			{
+				pList->Mutable(i)->set_numberofbuffers(0);
+			}
+		}
+	}
+}
 
 void DataControllerWriter::clearAll()
 {
@@ -397,8 +414,6 @@ void DataControllerWriter::clearAll()
 
 	m_pCommonData->m_imageRefCountSize = 0;
 	setImageStructList({});
-
-	m_imageMemoryHelper.clearAll();
 
 	__super::clearAll();
 }
@@ -690,14 +705,14 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 		}
 		else
 		{  //set init flag for inspection which are changed during globalInit.
-			for (auto id : m_initAfterGlobalInitSet)
+			for (auto id : m_setInitFlagAfterResetSet)
 			{
 				if (0 <= id && m_dataVector.size() > id)
 				{
 					m_dataVector[id]->setInitFlag(true);
 				}
 			}
-			m_initAfterGlobalInitSet.clear();
+			m_setInitFlagAfterResetSet.clear();
 		}
 
 		finishedReset();
@@ -706,7 +721,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 	{
 		if (0 <= inspectionId)
 		{	//remember that the inspection was changed during globalInit.
-			m_initAfterGlobalInitSet.insert(inspectionId);
+			m_setInitFlagAfterResetSet.insert(inspectionId);
 		}
 	}
 	return changeVect;

@@ -544,7 +544,7 @@ namespace SvStl
 		{Tid_TRC_Error_UnknownStructID, _T("New image buffer failed : Unknown structID %s.")},
 		{Tid_TRC_Error_NewBufferFailed, _T("New image buffer for pos %s failed.")},
 		{Tid_TRC_Error_ResetBuffer_TooMany, _T("Reset Image Buffers failed: Too many buffers required (%s). Maximum number is %s.")},
-		{Tid_TRC_Error_ResetBuffer_TooMuch, _T("Reset Image Buffers failed: Too much memory required (%s MB). Maximum size is %s MB.")},
+		{Tid_TRC_Error_ResetBuffer_TooMuch, _T("Reset Image Buffers failed: Too much memory required (> %s MB). Maximum size is %s MB.")},
 		{Tid_TRC_Error_CreateBuffer, _T("Create Buffer failed (%s): Maybe too many buffers required.")},
 		{Tid_TRC_Error_ResetAllReadyStarted, _T("Reset of TriggerRecord-structure already started with %s. Restart with %s not possible.")},
 		{Tid_TRC_Error_ResetLocked, _T("Reset not possible, because it is locked.")},

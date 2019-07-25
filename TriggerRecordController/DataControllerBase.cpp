@@ -102,10 +102,14 @@ DataControllerBase::~DataControllerBase()
 {
 }
 #pragma endregion Constructor
+void DataControllerBase::clearImageBuffer(bool shouldResetImageStruct)
+{
+	m_bufferVector.clear();
+}
 
 void DataControllerBase::clearAll()
 {
-	m_bufferVector.clear();
+	clearImageBuffer();
 }
 
 TriggerRecordData& DataControllerBase::getTRData(int inspectionPos, int pos) const

@@ -129,6 +129,10 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
+		else
+		{	//set Buffer to zero. Also needed because the first use of the buffer may require more time and therefore should be avoided in RunMode.
+			SVMatroxBufferInterface::ClearBuffer(buffer, 0);
+		}
 		if (m_rBufferVector.size() < m_maxNumberOfRequiredBuffer)
 		{
 			if (m_rBufferVector.size() <= vectorPos)

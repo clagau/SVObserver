@@ -87,6 +87,7 @@ public:
 
 #pragma region Public Methods
 public:
+	virtual void clearImageBuffer(bool shouldResetImageStruct = false) override;
 	virtual void clearAll() override;
 
 	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
@@ -165,7 +166,6 @@ private:
 	void* m_pImageStructListInSM = nullptr;
 
 	std::vector<std::shared_ptr<TRControllerWriterDataPerIP>> m_dataVector;
-	std::unordered_set<int> m_initAfterGlobalInitSet;
 
 	ImageBufferSMHelper m_imageMemoryHelper;
 	SvSml::SharedDataStore m_commonSHHandle;

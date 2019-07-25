@@ -118,6 +118,7 @@ public:
 
 #pragma region Public Methods
 public:
+	virtual void clearImageBuffer(bool shouldResetImageStruct = false);
 	virtual void clearAll();
 
 	TriggerRecordData& getTRData(int inspectionPos, int pos) const;
@@ -197,6 +198,8 @@ public:
 	/// Set the TRs to the Interest list.
 	/// \param trVec [in] The vector of pair<inspectionPos, pos> 
 	bool setTrOfInterest(std::vector<std::pair<int,int>> trVec);
+
+	void setIpToInitFlagList(int pos) { m_setInitFlagAfterResetSet.insert(pos); };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -206,7 +209,9 @@ public:
 
 #pragma region Member variables
 protected:
+	//GlobalInit and m_setInitFlagAfterResetSet will only work for Writer (for Local it is not implemented)
 	bool m_isGlobalInit = false;
+	std::unordered_set<int> m_setInitFlagAfterResetSet;
 
 	std::vector<SVMatroxBuffer> m_bufferVector;
 	int m_maxNumberOfRequiredBuffer = 9000;

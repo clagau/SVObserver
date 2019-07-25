@@ -630,6 +630,10 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						std::random_device rd;
 						std::uniform_int_distribution<int> dist(1, maxInterestSize);
 						int interestNumber = dist(rd);
+						if (0 == runId)
+						{	//at the first run, give writer time to set tr of interest.
+							std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(1));
+						}
 						auto interestTRVec = rTrController.getTrsOfInterest(newTrInfo.m_inspectionPos, interestNumber);
 						if (0 < interestTRVec.size())
 						{
