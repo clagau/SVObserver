@@ -33,35 +33,13 @@ SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, cons
 {
 	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>(ControlParameter);
 	schedule_trigger_record_pause_state();
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
-	m_TrcReadySubscriptionId = trc.registerReadyCallback([this]()
-	{
-		m_trc_ready = true;
-	});
-	m_TrcResetSubscriptionId = trc.registerResetCallback([this]()
-	{
-		m_trc_ready = false;
-	});
-	m_TrcNewTrSubscriptionId = trc.registerNewTrCallback([this](SvTrc::TrEventData eventData)
-	{
-		if (!m_trc_ready)
-		{
-			return;
-		}
-		m_io_service.post([this, eventData]()
-		{
-			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId);
-		});
-	});
+	subscribe_to_trc();
 }
 
 SharedMemoryAccess::~SharedMemoryAccess()
 {
 	m_pause_timer.cancel();
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
-	trc.unregisterReadyCallback(m_TrcReadySubscriptionId);
-	trc.unregisterResetCallback(m_TrcResetSubscriptionId);
-	trc.unregisterNewTrCallback(m_TrcNewTrSubscriptionId);
+	unsubscribe_from_trc();
 }
 
 void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
@@ -244,22 +222,13 @@ void SharedMemoryAccess::GetGatewayNotificationStream(
 	send_trigger_record_pause_state_to_client(*state, trc.isPauseTrsOfInterest());
 }
 
-SharedMemoryAccess::notification_stream_t::notification_stream_t(
-	const SvPb::GetGatewayNotificationStreamRequest& streamReq,
-	SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer,
-	SvRpc::ServerStreamContext::Ptr ctx)
-	: observer(observer)
-	, ctx(ctx)
-{
-	this->req.CopyFrom(streamReq);
-}
-
 void SharedMemoryAccess::GetProductStream(
 	const SvPb::GetProductStreamRequest& rRequest,
 	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	// TODO handle startAtTriggerCount
+	// TODO mutex protection for stream lists
 	auto state = std::make_shared<product_stream_t>(rRequest, observer, ctx);
 	m_ProductStreams.push_back(state);
 }
@@ -274,15 +243,32 @@ SharedMemoryAccess::product_stream_t::product_stream_t(
 	this->req.CopyFrom(streamReq);
 }
 
-static bool is_subscribed_to(const SvPb::GetProductStreamRequest& req, const SvPb::Inspection& inspection)
+static bool is_guid_equal(const GUID& guid1, const GUID& guid2)
 {
-	const auto guid1 = SvPb::GetGuidFromString(req.inspectionid());
-	const auto guid2 = SvPb::GetGuidFromString(inspection.id());
-	const auto guidsAreEqual = IsEqualGUID(guid1, guid2) != 0;
-	return guidsAreEqual;
+	return IsEqualGUID(guid1, guid2) != 0;
 }
 
-void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId)
+static bool is_guid_equal(const std::string& guid1, const std::string& guid2)
+{
+	return is_guid_equal(SvPb::GetGuidFromString(guid1), SvPb::GetGuidFromString(guid2));
+}
+
+static bool is_guid_equal(const GUID& guid1, const std::string& guid2)
+{
+	return is_guid_equal(guid1, SvPb::GetGuidFromString(guid2));
+}
+
+static bool is_guid_equal(const std::string& guid1, const GUID& guid2)
+{
+	return is_guid_equal(SvPb::GetGuidFromString(guid1), guid2);
+}
+
+static bool is_subscribed_to(const SvPb::GetProductStreamRequest& req, const SvPb::Inspection& inspection)
+{
+	return is_guid_equal(req.inspectionid(), inspection.id());
+}
+
+void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId, bool is_reject)
 {
 	if (m_ProductStreams.empty())
 	{
@@ -310,9 +296,10 @@ void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId)
 			continue;
 		}
 
-		if (is_subscribed_to(ptr->req, inspection))
+
+		if (is_subscribed_to(ptr->req, inspection) && is_reject == ptr->req.rejectsonly())
 		{
-			handle_new_trigger_record(ptr, tro, inspectionPos, inspectionId, trId);
+			handle_new_trigger_record(ptr, tro, inspectionPos, inspectionId, trId, is_reject);
 		}
 
 		++it;
@@ -336,36 +323,41 @@ static bool read_variant(SvPb::Variant& resVar, const _variant_t& variant)
 	return SvPb::ConvertVariantToProtobuf(variant, &resVar) == S_OK;
 }
 
-void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, std::shared_ptr<SvTrc::ITriggerRecordR> tro, int inspectionPos, GUID inspectionId, int trId)
+void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, std::shared_ptr<SvTrc::ITriggerRecordR> tro, int inspectionPos, GUID inspectionId, int trId, bool is_reject)
 {
 	auto res = std::make_shared<SvPb::GetProductStreamResponse>();
 
-	if (stream->req.rejectsonly())
-	{
-		// TODO handle rejects only
-		//res.set_isreject();
-	}
-
-	// TODO read fail status values
-	//res.add_failstatusvalues()
-
-	// TODO inform client about current trigger
-	//res.set_trigger();
+	res->set_trigger(trId);
+	res->set_isreject(is_reject);
 
 	const auto includeoverlays = stream->req.includeoverlays();
+	auto future = collect_images(*res, *tro, stream->req.imageids(), inspectionPos, inspectionId, includeoverlays);
+	collect_values(*res, *tro, stream->req.valueids());
+
+	future.then(m_io_service, [stream, res](SvSyl::SVFuture<void> future)
+	{
+		if (!stream->ctx->isCancelled())
+		{
+			stream->observer.onNext(std::move(*res));
+		}
+	});
+}
+
+SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamResponse& res, SvTrc::ITriggerRecordR& tro, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeoverlays)
+{
 	std::vector<SvSyl::SVFuture<void>> overlay_futures;
 
-	for (const auto& imgId : stream->req.imageids())
+	for (const auto& imgId : imageGuids)
 	{
-		auto& img = *res->add_images();
+		auto& img = *res.add_images();
 		auto overlayDesc = static_cast<SvPb::OverlayDesc*>(nullptr);
 		if (includeoverlays)
 		{
-			overlayDesc = res->add_overlays();
+			overlayDesc = res.add_overlays();
 		}
 
 		auto guid = SvPb::GetGuidFromString(imgId);
-		auto imgPtr = tro->getImage(guid);
+		auto imgPtr = tro.getImage(guid);
 		if (!imgPtr)
 		{
 			SV_LOG_GLOBAL(debug) << "  > image " << SvPb::PrettyPrintGuid(guid) << " not found";
@@ -393,25 +385,31 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 		}
 	}
 
-	for (const auto& valueId : stream->req.valueids())
+	return SvSyl::SVFuture<void>::all(m_io_service, overlay_futures);
+}
+
+void SharedMemoryAccess::collect_values(SvPb::GetProductStreamResponse& res, SvTrc::ITriggerRecordR& tro, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids)
+{
+	for (const auto& valueId : valueGuids)
 	{
-		auto& value = *res->add_values();
+		auto& value = *res.add_values();
 		auto guid = SvPb::GetGuidFromString(valueId);
-		auto variant = tro->getDataValue(guid);
+		auto variant = tro.getDataValue(guid);
 		if (!read_variant(value, variant))
 		{
-			SV_LOG_GLOBAL(warning) << "Error reading value with guid " << SvPb::PrettyPrintGuid(guid) << " for " << inspectionPos;
+			SV_LOG_GLOBAL(warning) << "Error reading value with guid " << SvPb::PrettyPrintGuid(guid);
 		}
 	}
+}
 
-	SvSyl::SVFuture<void>::all(m_io_service, overlay_futures)
-		.then(m_io_service, [stream, res](SvSyl::SVFuture<void> future)
-	{
-		if (!stream->ctx->isCancelled())
-		{
-			stream->observer.onNext(std::move(*res));
-		}
-	});
+SharedMemoryAccess::notification_stream_t::notification_stream_t(
+	const SvPb::GetGatewayNotificationStreamRequest& streamReq,
+	SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+	: observer(observer)
+	, ctx(ctx)
+{
+	this->req.CopyFrom(streamReq);
 }
 
 void SharedMemoryAccess::schedule_trigger_record_pause_state()
@@ -480,6 +478,54 @@ void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_
 	auto& notification = *res.mutable_rejectstreampaused();
 	notification.set_paused(paused);
 	client.observer.onNext(std::move(res));
+}
+
+void SharedMemoryAccess::subscribe_to_trc()
+{
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	m_TrcReadySubscriptionId = trc.registerReadyCallback([this]()
+	{
+		m_trc_ready = true;
+	});
+	m_TrcResetSubscriptionId = trc.registerResetCallback([this]()
+	{
+		m_trc_ready = false;
+	});
+	m_TrcNewTrSubscriptionId = trc.registerNewTrCallback([this](SvTrc::TrEventData eventData)
+	{
+		if (!m_trc_ready)
+		{
+			return;
+		}
+		m_io_service.post([this, eventData]()
+		{
+			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, false);
+		});
+	});
+	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](std::vector<SvTrc::TrEventData> events)
+	{
+		if (!m_trc_ready)
+		{
+			return;
+		}
+
+		m_io_service.post([this, events]()
+		{
+			for (const auto& eventData : events)
+			{
+				on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, true);
+			}
+		});
+	});
+}
+
+void SharedMemoryAccess::unsubscribe_from_trc()
+{
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	trc.unregisterReadyCallback(m_TrcReadySubscriptionId);
+	trc.unregisterResetCallback(m_TrcResetSubscriptionId);
+	trc.unregisterNewTrCallback(m_TrcNewTrSubscriptionId);
+	trc.unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
 }
 
 }// namespace SvOgw

@@ -139,6 +139,7 @@ static void generate_dummy_overlay_data(SvPb::OverlayDesc& desc)
 		s1r.set_h(1);
 		// add horizontal arrow in the middle
 		auto& s2 = *overlay4.add_shapes();
+		s2.set_color(rgba_to_uint32(0xff, 0xff, 0x50, 0xff));
 		auto& s2a = *s2.mutable_arrow();
 		s2a.set_x1(0.5f);
 		s2a.set_y1(1.0f);
@@ -167,6 +168,7 @@ static void generate_dummy_overlay_data(SvPb::OverlayDesc& desc)
 		s1r.set_h(1);
 		// add horizontal arrow in the middle
 		auto& s2 = *overlay5.add_shapes();
+		s2.set_color(rgba_to_uint32(0x00, 0xff, 0x00, 0xff));
 		auto& s2a = *s2.mutable_arrow();
 		s2a.set_x1(0.5f);
 		s2a.set_y1(0.0f);

@@ -99,16 +99,7 @@ GUID GetGuidFromString(const std::string& buf)
 	{
 		case 16:
 		{
-			char str[39];
-			snprintf(str, sizeof(str),
-				"{%hhx%hhx%hhx%hhx-%hhx%hhx-%hhx%hhx-%hhx%hhx-%hhx%hhx%hhx%hhx%hhx%hhx}",
-				buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7],
-				buf[8], buf[9], buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]);
-			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wcu8;
-			const auto wstr = wcu8.from_bytes(str);
-			GUID guid;
-			CLSIDFromString(wstr.c_str(), &guid);
-			return guid;
+			return GetGuidFromProtoBytes(buf);
 		}
 		case 36:
 		{
