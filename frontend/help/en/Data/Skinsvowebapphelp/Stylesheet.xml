@@ -7,12 +7,12 @@
                     <Properties>
                         <Property Name="Label">Glossary</Property>
                         <Property Name="Icon">url('GlossaryIcon.gif')</Property>
-                        <Property Name="BackgroundImage">url('GlossaryAccordionBackground.jpg')</Property>
                         <Property Name="FontFamily">Arial</Property>
                         <Property Name="FontSize">9pt</Property>
                         <Property Name="FontWeight">normal</Property>
                         <Property Name="FontStyle">normal</Property>
                         <Property Name="Color">#696969</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
                         <Property Name="BackgroundGradientHover">solid #87ceeb #add8e6</Property>
                         <Property Name="ItemHeight">28px</Property>
                     </Properties>
@@ -21,12 +21,12 @@
                     <Properties>
                         <Property Name="Label">Index</Property>
                         <Property Name="Icon">url('IndexIcon.gif')</Property>
-                        <Property Name="BackgroundImage">none</Property>
                         <Property Name="FontFamily">Arial</Property>
                         <Property Name="FontSize">9pt</Property>
                         <Property Name="FontWeight">normal</Property>
                         <Property Name="FontStyle">normal</Property>
                         <Property Name="Color">#696969</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
                         <Property Name="BackgroundGradientHover">solid #87ceeb #add8e6</Property>
                         <Property Name="ItemHeight">28px</Property>
                     </Properties>
@@ -35,11 +35,11 @@
                     <Properties>
                         <Property Name="Label">TOC</Property>
                         <Property Name="Icon">url('BookOrange.gif')</Property>
-                        <Property Name="BackgroundImage">url('TocAccordionBackground.jpg')</Property>
                         <Property Name="FontFamily">Arial</Property>
                         <Property Name="FontSize">9pt</Property>
                         <Property Name="FontStyle">normal</Property>
                         <Property Name="Color">#696969</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
                         <Property Name="BackgroundGradientHover">solid #87ceeb #add8e6</Property>
                         <Property Name="ItemHeight">28px</Property>
                     </Properties>
@@ -48,12 +48,12 @@
                     <Properties>
                         <Property Name="Label">Search</Property>
                         <Property Name="Icon">url('SearchIcon.gif')</Property>
-                        <Property Name="BackgroundImage">url('SearchAccordionBackground.jpg')</Property>
                         <Property Name="FontFamily">Arial</Property>
-                        <Property Name="FontSize">10px</Property>
+                        <Property Name="FontSize">9pt</Property>
                         <Property Name="FontWeight">normal</Property>
                         <Property Name="FontStyle">normal</Property>
                         <Property Name="Color">#696969</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
                         <Property Name="BackgroundGradientHover">solid #87ceeb #add8e6</Property>
                         <Property Name="ItemHeight">28px</Property>
                     </Properties>
@@ -61,15 +61,18 @@
                 <StyleClass Name="IconTray">
                     <Properties>
                         <Property Name="ItemHeight">28px</Property>
-                        <Property Name="BackgroundImage">url('AccordionIconsBackground.jpg')</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
+                        <Property Name="FontFamily">Arial</Property>
+                        <Property Name="BackgroundGradientHover">solid</Property>
                     </Properties>
                 </StyleClass>
                 <StyleClass Name="Favorites">
                     <Properties>
                         <Property Name="Label">Favorites</Property>
                         <Property Name="Icon">url('FavoritesIcon.gif')</Property>
-                        <Property Name="BackgroundImage">url('FavoritesAccordionBackground.jpg')</Property>
-                        <Property Name="BackgroundImageHover">url('FavoritesAccordionBackground_over.jpg')</Property>
+                        <Property Name="FontFamily">Arial</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
+                        <Property Name="BackgroundGradientHover">solid</Property>
                         <Property Name="ItemHeight">28px</Property>
                     </Properties>
                 </StyleClass>
@@ -77,13 +80,17 @@
                     <Properties>
                         <Property Name="Label">Browse Sequences</Property>
                         <Property Name="Icon">url('BrowsesequencesIcon.gif')</Property>
-                        <Property Name="BackgroundImage">url('BrowsesequencesAccordionBackground.jpg')</Property>
-                        <Property Name="BackgroundImageHover">url('BrowsesequencesAccordionBackground_over.jpg')</Property>
+                        <Property Name="FontFamily">Arial</Property>
+                        <Property Name="BackgroundGradient">solid</Property>
+                        <Property Name="BackgroundGradientHover">solid</Property>
                         <Property Name="ItemHeight">28px</Property>
                     </Properties>
                 </StyleClass>
             </Classes>
             <Properties>
+                <Property Name="FontFamily">Arial</Property>
+                <Property Name="BackgroundGradient">solid</Property>
+                <Property Name="BackgroundGradientHover">solid</Property>
                 <Property Name="ItemHeight">28px</Property>
             </Properties>
         </Style>
@@ -745,19 +752,11 @@
         <Resource Name="Forward_over.gif" Width="23" Height="22" />
         <Resource Name="Forward_selected.gif" Width="23" Height="22" />
         <Resource Name="BookOrange.gif" Width="16" Height="16" />
-        <Resource Name="TocAccordionBackground.jpg" Width="2" Height="28" />
         <Resource Name="IndexIcon.gif" Width="16" Height="16" />
         <Resource Name="SearchIcon.gif" Width="16" Height="16" />
-        <Resource Name="SearchAccordionBackground.jpg" Width="2" Height="28" />
         <Resource Name="FavoritesIcon.gif" Width="16" Height="16" />
-        <Resource Name="FavoritesAccordionBackground.jpg" Width="2" Height="28" />
-        <Resource Name="FavoritesAccordionBackground_over.jpg" Width="2" Height="28" />
         <Resource Name="BrowsesequencesIcon.gif" Width="16" Height="16" />
-        <Resource Name="BrowsesequencesAccordionBackground.jpg" Width="2" Height="28" />
-        <Resource Name="BrowsesequencesAccordionBackground_over.jpg" Width="2" Height="28" />
         <Resource Name="GlossaryIcon.gif" Width="16" Height="16" />
-        <Resource Name="GlossaryAccordionBackground.jpg" Width="2" Height="28" />
-        <Resource Name="AccordionIconsBackground.jpg" Width="2" Height="28" />
         <Resource Name="header.png" Width="1" Height="42" />
         <Resource Name="IndexHeadingBG.png" Width="1" Height="23" />
         <Resource Name="SearchBG.png" Width="1" Height="43" />

@@ -1,26 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CatapultAliasFile DefaultSkinName="SVOWebAppHelp">
-    <Map Name="Shortcuts" Link="User_Interface/Menu/Shortcuts.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="11" />
-    <Map Name="Menu" Link="User_Interface/Menu/Menu.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="7" />
-    <Map Name="Connection" Link="Connection/Connection.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="20" />
-    <Map Name="View_Manager" Link="User_Interface/Menu/View_manager.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="16" />
-    <Map Name="Date_Time" Link="User_Interface/Top_bar/5_Date_and_time.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="2" />
-    <Map Name="Language_Settings" Link="User_Interface/Top_bar/4_Notifications.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="5" />
-    <Map Name="Notifications" Link="User_Interface/Top_bar/4_Notifications.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="8" />
-    <Map Name="Operating_Mode" Link="User_Interface/Top_bar/3_Operating_mode.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="9" />
-    <Map Name="Top_Bar" Link="User_Interface/Top_bar/1_Top_bar.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="12" />
-    <Map Name="User" Link="User_Interface/Top_bar/6_User.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="13" />
-    <Map Name="User_Interface" Link="User_Interface/User_Interface.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="14" />
-    <Map Name="View" Link="User_Interface/View_set/View.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="15" />
-    <Map Name="View_Set" Link="User_Interface/View_set/View_set.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="17" />
-    <Map Name="Image_Strip_View" Link="User_Interface/View_set/View_types/Image_strip_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="3" />
-    <Map Name="Image_View" Link="User_Interface/View_set/View_types/Image_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="4" />
-    <Map Name="List_View" Link="User_Interface/View_set/View_types/List_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="6" />
-    <Map Name="Parameter_View" Link="User_Interface/View_set/View_types/Parameter_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="10" />
-    <Map Name="View_Types" Link="User_Interface/View_set/View_types/View_types.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="18" />
-    <Map Name="View_Set_Navigation" Link="User_Interface/View_set_navigation/View_set_navigation.htm" ResolvedId="19" />
-    <Map Name="Login" Link="Login/Login.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="21" />
-    <Map Name="Requirements" Link="Requirements/Requirements.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="22" />
+    <Map Name="Shortcuts" Link="General strucutre/Menu/Shortcuts.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="11" />
+    <Map Name="Menu" Link="General strucutre/Menu/Menu.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="7" />
+    <Map Name="Connection" Link="Getting started/Connection.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="20" />
+    <Map Name="View_Manager" Link="General strucutre/Menu/View_manager.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="16" />
+    <Map Name="Date_Time" Link="General strucutre/Top_bar/5_Date_and_time.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="2" />
+    <Map Name="Language_Settings" Link="General strucutre/Top_bar/4_Notifications.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="5" />
+    <Map Name="Notifications" Link="General strucutre/Top_bar/4_Notifications.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="8" />
+    <Map Name="Operating_Mode" Link="General strucutre/Top_bar/3_Operating_mode.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="9" />
+    <Map Name="Top_Bar" Link="General strucutre/Top_bar/1_Top_bar.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="12" />
+    <Map Name="User" Link="General strucutre/Top_bar/6_User.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="13" />
+    <Map Name="User_Interface" Link="General strucutre/General structure.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="14" />
+    <Map Name="View" Link="General strucutre/View.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="15" />
+    <Map Name="View_Set" Link="General strucutre/View_set.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="17" />
+    <Map Name="Image_Strip_View" Link="Image_strip_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="3" />
+    <Map Name="Image_View" Link="Image_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="4" />
+    <Map Name="List_View" Link="List_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="6" />
+    <Map Name="Parameter_View" Link="Parameter_view.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="10" />
+    <Map Name="View_Types" Link="General strucutre/View_types.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="18" />
+    <Map Name="View_Set_Navigation" Link="General strucutre/View_set_navigation.htm" ResolvedId="19" />
+    <Map Name="Login" Link="Getting started/Login.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="21" />
+    <Map Name="Requirements" Link="Getting started/Requirements.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="22" />
     <Map Name="Start" Link="Start.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="23" />
-    <Map Name="System_Configuration" Link="User_Interface/Top_bar/2_System_configuration.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="24" />
+    <Map Name="System_Configuration" Link="General strucutre/Top_bar/2_System_configuration.htm" Skin="SkinSVOWebAppHelp/Skin.xml" ResolvedId="24" />
 </CatapultAliasFile>
