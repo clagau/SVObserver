@@ -60,7 +60,6 @@ namespace SvSml
 		SharedMemWriter(const SharedMemWriter& p_rObject) =delete;
 		const SharedMemWriter& operator=(const SharedMemWriter& p_rObject) =delete;
 		void ReadSettings();
-		void CheckDirectories();
 	private:
 		MonitorListStore	m_monitorListStore;		
 		SharedDataContainer m_DataContainer;

@@ -1764,7 +1764,7 @@ BOOL SVObserverApp::InitInstance()
 	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
 	SVVisionProcessorHelper::Instance().Startup();
 	// Check for proper setup of V: for SVRemoteControl
-	if (S_OK != CheckDrive(SvStl::GlobalPath::Inst().GetRamDrive().c_str()))
+	if (S_OK != CheckDrive(SvStl::GlobalPath::Inst().GetPathOnRamDrive().c_str()))
 	{
 		return false;
 	}

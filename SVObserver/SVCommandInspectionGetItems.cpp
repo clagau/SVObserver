@@ -131,7 +131,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			std::string Temp = SvUl::Format(_T("%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
-			std::string FileName = SvStl::GlobalPath::Inst().GetRamDrive(Temp.c_str());
+			std::string FileName = SvStl::GlobalPath::Inst().GetPathOnRamDrive(Temp.c_str());
 
 			GetStatus = SvIe::SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , pImageBuffer->getHandle());
 

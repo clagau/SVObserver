@@ -191,6 +191,18 @@ namespace SvStl
 	}
 
 
+	std::string GlobalPath::GetPathOnRamDrive(LPCTSTR filename)
+	{
+		return GetRamDrive(filename);
+	}
+
+
+	std::string GlobalPath::GetPathInTempFolderOnC_Drive(LPCTSTR filename) 
+	{
+		return AppendFilename("C:\\TEMP", filename);
+	}
+	
+
 	std::string GetValueString( LPCTSTR p_szSection, LPCTSTR p_szKey, LPCTSTR p_szDefault, LPCTSTR p_szFileName )
 	{
 		std::string sValue;

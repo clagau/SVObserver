@@ -31,7 +31,8 @@ namespace SvStl
 		std::string GetObserverPath(LPCTSTR filename = nullptr);
 		std::string GetSecondObserverPath(LPCTSTR filename = nullptr);
 		std::string GetAutoSaveRootPath(LPCTSTR filename = nullptr);
-		std::string GetRamDrive(LPCTSTR filename = nullptr);
+		std::string GetPathOnRamDrive(LPCTSTR filename = nullptr);
+		std::string GetPathInTempFolderOnC_Drive(LPCTSTR filename = nullptr);
 		std::string GetAutosaveTemp1FileName(){return m_AutosaveTemp1FileName;}
 		std::string GetAutosaveTemp2FileName(){return m_AutosaveTemp2FileName;}
 		std::string GetAutosaveTemp3FileName(){return m_AutosaveTemp3FileName;}
@@ -47,6 +48,7 @@ namespace SvStl
 #pragma region private  functions
 		void InitializeIniFolder();
 		void InitializePath();
+		std::string GetRamDrive(LPCTSTR filename = nullptr);
 		std::string AppendFilename(const std::string& rPath, LPCTSTR filename);
 #pragma endregion private  functions
 

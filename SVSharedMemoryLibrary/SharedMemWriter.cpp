@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVSharedMemorySingleton
-//* .File Name       : $Workfile:   SVSharedMemorySingleton.cpp  $
+//* .File Name       : $Workfile:   SharedMemWriter.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   15 Oct 2014 19:03:54  $
@@ -13,8 +13,7 @@
 #include "stdafx.h"
 #include "SMParameterStruct.h"
 #include "SharedMemIniFileTags.h"
-#include "SharedmemWriter.h"
-#include "SVSharedConfiguration.h"
+#include "SharedMemWriter.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -37,7 +36,6 @@ namespace SvSml
 	SharedMemWriter::SharedMemWriter()
 	{
 		ReadSettings();
-		CheckDirectories();
 	}
 
 	int SharedMemWriter::CreateManagment()
@@ -72,26 +70,6 @@ namespace SvSml
 		m_settings.SetNumProductSlot(numProductSlot);
 		m_settings.SeCreateTimout(ConnectionTimout);
 		m_settings.SetCreateWaitTime(CreateWaitTime);
-	}
-
-	void SharedMemWriter::CheckDirectories()
-	{
-		// Ensure Directories exist
-		try
-		{
-			if (SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
-			{
-				const std::string& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
-				DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
-				if (res == INVALID_FILE_ATTRIBUTES)
-				{
-					CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
-				}
-			}
-		}
-		catch (...)
-		{
-		}
 	}
 
 	const SvSml::SVSharedMemorySettings& SharedMemWriter::GetSettings() const

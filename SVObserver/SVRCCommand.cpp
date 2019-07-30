@@ -150,7 +150,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 			RemoteFilePath = c_DefaultConfigurationName;
 			RemoteFilePath += SvDef::cPackedConfigExtension;
 		}
-		std::string TempFileName = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(RemoteFilePath).c_str());
+		std::string TempFileName = SvStl::GlobalPath::Inst().GetPathInTempFolderOnC_Drive(GetFileNameFromFilePath(RemoteFilePath).c_str());
 
 		//Old .pac file extension is no longer valid!
 		if (!TempFileName.empty() && std::string::npos == TempFileName.find(_T(".pac")))
@@ -228,7 +228,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 			type = PutConfigType::SvzFormatDefaultName;
 		}
 
-		std::string TempFileName = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension).c_str());
+		std::string TempFileName = SvStl::GlobalPath::Inst().GetPathInTempFolderOnC_Drive(GetFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension).c_str());
 
 		if (0 != rRequest.filedata().length() && !TempFileName.empty())
 		{
@@ -1086,7 +1086,7 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 			const std::string& rContent = rImage.item().bytesval();
 			std::string FileName {name};
 			FileName += _T(".bmp");
-			FilePath = SvStl::GlobalPath::Inst().GetRamDrive(GetFileNameFromFilePath(FileName).c_str());
+			FilePath = SvStl::GlobalPath::Inst().GetPathOnRamDrive(GetFileNameFromFilePath(FileName).c_str());
 			if (!FilePath.empty())
 			{
 				Result = SVEncodeDecodeUtilities::StringContentToFile(FilePath, rContent);
@@ -1094,7 +1094,7 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 		}
 		else if (rImage.item().type() == VT_BSTR)
 		{
-			FilePath = SvStl::GlobalPath::Inst().GetRamDrive(rImage.item().strval().c_str());
+			FilePath = SvStl::GlobalPath::Inst().GetPathOnRamDrive(rImage.item().strval().c_str());
 		}
 
 		if (S_OK == Result)

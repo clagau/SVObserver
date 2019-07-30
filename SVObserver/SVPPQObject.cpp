@@ -39,7 +39,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/TriggerRecordController.h"
-#include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
