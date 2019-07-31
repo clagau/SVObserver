@@ -48,6 +48,9 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
 	ON_CBN_SELCHANGE(IDC_MODE_COMBO, OnSelchangeModeCombo)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
+	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, UpdateMaxImageWidgetState)
+	ON_BN_CLICKED(IDC_USE_TRIGGER_COUNT, UpdateMaxImageWidgetState)
+	
 END_MESSAGE_MAP()
 
 constexpr int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
@@ -221,7 +224,16 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_STOP_AT_MAX, m_StopAtMaxImages);
 	DDX_Check(pDX, IDC_USE_TRIGGER_COUNT, m_UseTriggerCount);
 	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
+
+	EnableMaxImagesAccordingToOtherSettings();
 }
+
+
+void SVTADlgArchiveImagePage::EnableMaxImagesAccordingToOtherSettings()
+{
+	m_MaxImages.EnableWindow(!m_UseTriggerCount || m_StopAtMaxImages);
+}
+
 
 BOOL SVTADlgArchiveImagePage::OnInitDialog() 
 {
@@ -448,6 +460,14 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		ReadSelectedObjects();
 	}
 }
+
+
+void SVTADlgArchiveImagePage::UpdateMaxImageWidgetState()
+{
+	UpdateData(TRUE);
+	EnableMaxImagesAccordingToOtherSettings();
+}
+
 
 void SVTADlgArchiveImagePage::OnBrowse() 
 {

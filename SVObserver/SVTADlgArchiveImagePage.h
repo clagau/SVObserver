@@ -60,12 +60,14 @@ protected:
 	afx_msg void OnRemoveItem();
 	afx_msg void OnRemoveAllItems();
 	afx_msg void OnBrowse();
+	afx_msg void UpdateMaxImageWidgetState();
 	afx_msg void OnSelchangeModeCombo();
 	afx_msg void OnChangeEditMaxImages();
 
 	void MemoryUsage();
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
+	void EnableMaxImagesAccordingToOtherSettings();
 
 	bool checkImageMemory( SVGUID ImageGuid , bool bNewState );
 	__int64 CalculateToolMemoryUsage();
