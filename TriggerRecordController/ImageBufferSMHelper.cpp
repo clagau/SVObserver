@@ -65,9 +65,10 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 {
 	static int memoryCounter = 0;
 	vectorPos -= rImageStruct.numberofbuffers();
-
+	assert(0 <= vectorPos);
 	//old memory must be free
 	auto bufferIter = m_rBufferVector.begin() + vectorPos;
+	assert(m_rBufferVector.size() >= vectorPos+ rImageStruct.numberofbuffers());
 	m_rBufferVector.erase(bufferIter, bufferIter + rImageStruct.numberofbuffers());
 	removeMemory(rImageStruct.memoryname());
 

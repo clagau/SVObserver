@@ -453,7 +453,6 @@ IImagePtr TriggerRecordController::getImageBuffer(const SVMatroxBufferCreateStru
 		SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(ImageBufId)};
 		retImage = std::make_shared<Image>(pImagePtr, 0, Image::cLocalTmpImagePos, false, false);
 	}
-	assert(nullptr != retImage);
 	return retImage;
 }
 

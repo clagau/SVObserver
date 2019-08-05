@@ -2742,7 +2742,6 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 		else
 		{
 			rIPInfo.setNextTriggerRecord(SvTrc::TriggerData{triggerCount});
-			assert(nullptr != rIPInfo.m_triggerRecordWrite);
 			if (nullptr != rIPInfo.m_triggerRecordWrite)
 			{
 				rIPInfo.m_triggerRecordWrite->initImages();

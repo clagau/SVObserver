@@ -147,7 +147,7 @@ protected:
 
 #pragma region Private Methods
 private:
-	void ResetInspectionData(TRControllerWriterDataPerIP& rData);
+	void ResetInspectionData(TRControllerWriterDataPerIP& rData, bool shouldReduceRequiredBuffer = true);
 
 	void setInspectionSMData(int ipPos, const std::string& rSmName, int smSize);
 #pragma endregion Private Methods

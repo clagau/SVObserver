@@ -597,8 +597,6 @@ ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectio
 
 ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int inspectionPos)
 {
-	assert(0 <= inspectionPos && m_dataVector.size() > inspectionPos && nullptr != m_dataVector[inspectionPos] && m_dataVector[inspectionPos]->getBasicData().m_bInit);
-
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && nullptr != m_dataVector[inspectionPos] && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
 		TRControllerWriterDataPerIP* pIPData = m_dataVector[inspectionPos].get();
@@ -650,7 +648,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 			}
 			if (i == inspectionId)
 			{
-				ResetInspectionData(*pIPData);
+				ResetInspectionData(*pIPData, false);
 				int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*imageList.list_size()) + sizeof(int) + pIPData->getBasicData().m_dataListSize;
 				//Reserve memory space for the data size and the data
 				pIPData->setImageList(std::move(imageList));
@@ -898,13 +896,16 @@ long* DataControllerWriter::getImageRefCountPtr(int pos)
 	return nullptr;
 }
 
-void DataControllerWriter::ResetInspectionData(TRControllerWriterDataPerIP& rData)
+void DataControllerWriter::ResetInspectionData(TRControllerWriterDataPerIP& rData, bool shouldReduceRequiredBuffer)
 {
 	rData.setLastFinishedTRID(-1);
 	rData.setLastStartedTRID(-1);
 	if (rData.getBasicData().m_bInit)
 	{
-		getImageBufferControllerInstance().reduceRequiredBuffers(rData.getImageList(), rData.getBasicData().m_TriggerRecordNumber);
+		if (shouldReduceRequiredBuffer)
+		{
+			getImageBufferControllerInstance().reduceRequiredBuffers(rData.getImageList(), rData.getBasicData().m_TriggerRecordNumber);
+		}
 		rData.createTriggerRecordsBuffer(0, 0);
 		rData.setImageList({});
 	}
