@@ -49,6 +49,15 @@ enum ResultImagesEnum
 	ResultImage_2,
 	NUM_RESULT_IMAGES
 };
+enum ResultTablesEnum
+{
+	FirstResultTable =0,
+	NUM_RESULT_TABLES
+};
+
+#define ColumnCountA 6
+#define RowCountA 30
+
 
 //ATTENTION: S_FALSE is 1L, increase for every define not the last digital.
 //TODO: add your error code and delete comment sample afterwards

@@ -24,3 +24,7 @@ EXPORTS
 	SVSetMILResultImages 
     SVGetResultImageDefinitions 
     SVDestroyImageDefinitionStructure 
+    GetResultTableDefinitions
+    DestroyResultTableDefinitionStructures
+    GetResultTables
+

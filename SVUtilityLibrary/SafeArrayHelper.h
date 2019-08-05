@@ -12,6 +12,9 @@ namespace SvUl
 /// function converts var to string. If var is a 1 dim safearray the string is the comma seperated values 
 std::string VariantToString(_variant_t var);
 
+//! function returns a 1 dim safe array with one element for an scalar variant
+_variant_t VariantToSafeArray(_variant_t var);
+
 /// function converts 1 dim safearray of type T to  ; seperated values 
 template <typename T> std::string SafeArrayToString(SAFEARRAY  *pArray)
 {

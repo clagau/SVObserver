@@ -21,6 +21,7 @@
 #include "SVSetupDialogManager.h"
 #include "Operators/SVDLLToolDefinitionStructs.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "Operators/TableObject.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -97,12 +98,12 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		pRoot->SetInfoText(_T(""));
 
 		int iID = ID_BASE - 1;	// the increment happens before using the value, so subtract one here
-
-		for (int i = 0; i < m_pTask->m_Data.m_lNumResultValues; i++)
+		int NumResults = m_pTask->m_Data.getNumResults();
+		for (int i = 0; i < NumResults; i++)
 		{
 			SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];
-			SvOp::ResultValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aResultValueDefinitions[i];
-
+			SvOp::ResultValueDefinition& rDefinition = m_pTask->m_Data.m_ResultDefinitions[i];
+			
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
 			if (nullptr == pEdit)
 			{
@@ -113,12 +114,11 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			pEdit->SetCtrlID(iID);
 
 			// display name like: "Result 01 ( )"
-			std::string sLabel = SvUl::Format(_T("%s (%s)"), rValue.GetName(), SvUl::createStdString(rDefinition.m_bDisplayName).c_str());
-
+			std::string sLabel = SvUl::Format(_T("%s (%s)"), rValue.GetName(), rDefinition.getDisplayName().c_str());
 			pEdit->SetLabelText(sLabel.c_str());
-
+			
 			std::string Type;
-			switch (rDefinition.m_VT)
+			switch (rDefinition.getVT())
 			{
 				case VT_BOOL: Type = _T("Bool");   break;
 				case VT_I4:   Type = _T("Long");   break;
@@ -130,19 +130,49 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 				default:      Type = _T("???");    break;
 			}
 
-			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), SvUl::createStdString(rDefinition.m_bDisplayName).c_str());
+			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.getDisplayName());
 			pEdit->SetInfoText(sDescription.c_str());
 			pEdit->SetButtonText(_T("Range"));
 
 			std::string sValue;
 			rValue.getValue(sValue);
 			pEdit->SetItemValue(sValue.c_str());
-			if (rDefinition.m_VT == VT_BSTR)
+			if (rDefinition.getVT() == VT_BSTR || (rDefinition.getVT()& VT_ARRAY) )
 			{
 				pEdit->ReadOnly();
 			}
 			pEdit->OnRefresh();
-		}// end for( int i = 0 ; i < m_pTask->m_Data.m_iNumResultValues ; i++ )
+		}
+		
+		int NumTableResults = m_pTask->m_Data.getNumTableResults();
+		for (int i = 0; i < NumTableResults; i++)
+		{
+			
+			SvOp::ResultTableDefinition& rDefinition = m_pTask->m_Data.m_TableResultDefinitions[i];
+			SvOp::TableObject* pTable = m_pTask->m_Data.m_ResultTableObjects[i];
+			if (!pTable)
+				break;
+
+			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+			if (nullptr == pEdit)
+			{
+				break;
+			}
+
+			iID++;
+			pEdit->SetCtrlID(iID);
+			
+			std::string sLabel = SvUl::Format(_T("%s (%s)"), pTable->GetName(), rDefinition.getDisplayName().c_str());
+			pEdit->SetLabelText(sLabel.c_str());
+			pEdit->ReadOnly();
+
+			std::string sDescription = SvUl::Format(_T(" (Type : Table object)  %s"), rDefinition.getDisplayName());
+			pEdit->SetInfoText(sDescription.c_str());
+			
+			pEdit->OnRefresh();
+		}
+
+
 
 		SVRPropertyItem* pChild = pRoot->GetChild();
 		while (pChild)
@@ -175,8 +205,8 @@ void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESU
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 
-		if (m_pTask->m_Data.m_aResultValueDefinitions[iIndex].m_VT == VT_BSTR ||
-			0 != (m_pTask->m_Data.m_aResultValueDefinitions[iIndex].m_VT & VT_ARRAY)  
+		if (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT()== VT_BSTR ||
+			0 != (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() & VT_ARRAY)
 			)
 		{
 			*plResult = FALSE;	// Do not show button for a string, No Range available.

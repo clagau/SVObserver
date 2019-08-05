@@ -35,6 +35,19 @@ struct ImageDefinitionStruct
 	long lWidth;
 	SVImageFormatEnum eImageFormat;
 };
+
+struct ResultTableDefinitionStruct
+{
+	long lVT {VT_EMPTY};
+	_bstr_t bstrDisplayName;	// not used at this time
+	DWORD type {0}; 	// not used at this time
+	long ColoumnCount {0};
+	long RowCount {0};
+	_variant_t ColumnNames; //smart array of bstr with names
+	
+};
+
+
 #pragma pack(pop) 
 
 #endif	// STRUCTDEFINITIONS_H_

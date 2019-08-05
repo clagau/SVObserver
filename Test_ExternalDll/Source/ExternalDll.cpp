@@ -260,6 +260,9 @@ TOOLDLL_API HRESULT __stdcall SVUninitializeRun(GUID guidTool)
 }
 
 
+
+
+
 TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize,
 	InputValueDefinitionStruct** ppaStructs)
 {
@@ -397,9 +400,7 @@ TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,
 TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID guidTool, long lArraySize,
 	VARIANT* paResultValues)
 {
-#if _DEBUG
-	fdb("===== SVGetResultValues - Enter - lArraySize=%d = NUM_RESULT_VALUES=%d\n", lArraySize, NUM_RESULT_VALUES);
-#endif
+
 	HRESULT hr = S_FALSE;
 	if (lArraySize == NUM_RESULT_VALUES)
 	{
@@ -409,26 +410,13 @@ TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID guidTool, long lArraySize,
 		if (hr == S_OK)
 		{	// found tool
 			hr = pTool->getResultValues(paResultValues);
-#if _DEBUG
-			if (0 < NUM_RESULT_VALUES)
-			{
-				//TODO not finished
-				fdb("===== SVGetResultValues - set result value - lArraySize=%d = , Value01=%d\n", lArraySize, paResultValues[0].lVal);
-			}
-			else
-			{
-				fdb("===== SVGetResultValues - set result value - lArraySize=%d \n", lArraySize);
-			}
-
-#endif
 		}
 	}
 
-#if _DEBUG
-	fdb("===== SVGetResultValues - Exit - hr=0x%X\n", hr);
-#endif
 	return hr;
 }
+
+
 
 TOOLDLL_API HRESULT __stdcall SVGetErrorMessageString(unsigned long ulErrorNumber,
 	BSTR* pbstrErrorMessage)
@@ -563,59 +551,6 @@ TOOLDLL_API HRESULT __stdcall SVSetMILResultImages(GUID guidTool, long lArraySiz
 }
 
 
-//// Only implement One of the set.. InputImages
-//TOOLDLL_API HRESULT __stdcall SVSetHBITMAPInputImages (GUID guidTool, HBITMAP* paHandles)
-//{
-//#if _DEBUG
-//	fdb("===== SVSetHBITMAPInputImages - Enter\n");
-//#endif
-//	HRESULT hr = S_FALSE;
-//	//	if ( lArraySize == NUM_INPUT_IMAGES )
-//	{
-//		CDllTool* pTool = NULL;
-//		hr = LookupTool(guidTool, pTool);
-//		if( hr == S_OK )	// found tool
-//		{
-//			hr = pTool->setHBITMAPInputImages(paHandles);
-//		}
-//	}
-//
-//#if _DEBUG
-//	fdb("===== SVSetHBITMAPInputImages - Exit - hr=0x%X\n",hr);
-//#endif
-//	return hr;
-//}
-//
-//
-//// Only implement One of the set.. ResultImages
-//TOOLDLL_API HRESULT __stdcall SVGetHBITMAPResultImages (GUID guidTool, long lArraySize, HBITMAP* paHandles)
-//{
-//#if _DEBUG
-//	fdb("===== SVGetHBITMAPResultImages - Enter - lArraySize=%d = NUM_RESULT_IMAGES=%d\n",lArraySize,NUM_RESULT_IMAGES);
-//#endif
-//
-//	if (NUM_RESULT_IMAGES==0) {
-//		// do nothing
-//		return S_OK;
-//	}
-//
-//	HRESULT hr = S_FALSE;
-//	if ( lArraySize == NUM_RESULT_IMAGES )
-//	{
-//		CDllTool* pTool = NULL;
-//		hr = LookupTool(guidTool, pTool);
-//		if( hr == S_OK )	// found tool
-//		{
-//			pTool->getHBITMAPResultImages(lArraySize, paHandles);
-//		}
-//	}
-//
-//#if _DEBUG
-//	fdb("===== SVGetHBITMAPResultImages - Exit - hr=0x%X\n",hr);
-//#endif
-//	return hr;
-//}
-
 
 TOOLDLL_API HRESULT __stdcall SVGetResultImageDefinitions(GUID guidTool, long* plArraySize, ImageDefinitionStruct** ppaStructs)
 {
@@ -668,4 +603,52 @@ TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure(ImageDefinitionS
 	return hr;
 }
 
+TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTableDefinitionStruct** ppaResultTableDefs)
+{
+	HRESULT hr = S_OK;
+
+	if (NUM_RESULT_TABLES > 0)
+	{
+		*ppaResultTableDefs = new ResultTableDefinitionStruct[NUM_RESULT_TABLES];
+	}
+	else
+	{
+		*ppaResultTableDefs = NULL;
+	}
+
+	
+	if (ppaResultTableDefs == NULL)
+	{
+
+		return S_FALSE;
+	}
+
+
+	*pSize = NUM_RESULT_TABLES;
+	CDllTool::getResultTableDefinition(ppaResultTableDefs);
+
+	return hr;
+}
+TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs)
+{
+	HRESULT hr = S_OK;
+	delete[] paStructs;
+	return hr;
+}
+
+TOOLDLL_API HRESULT __stdcall GetResultTables(GUID guidTool, long lArraySize, VARIANT* paResultValues)
+{
+	HRESULT hr = S_FALSE;
+	if (lArraySize == NUM_RESULT_TABLES)
+	{
+		CDllTool* pTool = NULL;
+		hr = LookupTool(guidTool, pTool);
+
+		if (hr == S_OK)
+		{	// found tool
+			hr = pTool->getResultTables(paResultValues);
+		}
+	}
+	return hr;
+}
 

@@ -18,6 +18,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -56,12 +57,21 @@ HRESULT LinkedValue::GetArrayValue(_variant_t& rValue)
 	//! When getting the value from an indirect value make sure it is not referencing this object
 	if (nullptr != m_LinkedObjectRef.getValueObject())
 	{
+		
 		m_CircularReference = true;
-		m_LinkedObjectRef.SetEntireArray();
-		Result = m_LinkedObjectRef.getValue(rValue);
+		if (m_LinkedObjectRef.isEntireArray())
+		{
+			Result = m_LinkedObjectRef.getValue(rValue);
+		}
+		else
+		{
+			_variant_t skalvalue;
+			Result = m_LinkedObjectRef.getValue(skalvalue);
+			rValue = SvUl::VariantToSafeArray(skalvalue);
+		}
+
 		m_CircularReference = false;
 	}
-	//@Todo[MEC][8.20] [08.07.2019] check for arraysize1
 	else
 	{
 		Result = __super::getValue(rValue, -1, false);

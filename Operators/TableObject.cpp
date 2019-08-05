@@ -30,13 +30,13 @@ SV_IMPLEMENT_CLASS(TableObject, TableObjectGuid);
 
 
 #pragma region Constructor
-TableObject::TableObject( LPCTSTR ObjectName )
+TableObject::TableObject(LPCTSTR ObjectName)
 	: SVTaskObjectClass(ObjectName)
 {
 	Initialize();
 }
 
-TableObject::TableObject( SVObjectClass* POwner, int StringResourceID )
+TableObject::TableObject(SVObjectClass* POwner, int StringResourceID)
 	: SVTaskObjectClass(POwner, StringResourceID)
 {
 	Initialize();
@@ -44,7 +44,7 @@ TableObject::TableObject( SVObjectClass* POwner, int StringResourceID )
 
 TableObject::~TableObject()
 {
-	while(0 < m_ValueList.size())
+	while (0 < m_ValueList.size())
 	{
 		SvVol::DoubleSortValuePtr pObject = m_ValueList.back();
 		m_ValueList.pop_back();
@@ -54,11 +54,11 @@ TableObject::~TableObject()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool TableObject::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool TableObject::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool l_bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	m_NumberOfRows.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_NumberOfRows.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_NumberOfRows.setSaveValueFlag(false);
 
 	return l_bOk;
@@ -78,7 +78,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 SVObjectClass* TableObject::getNumberOfRowObject() const
 {
 	SvVol::SVLongValueObjectClass* pObject = const_cast<SvVol::SVLongValueObjectClass*>(&m_NumberOfRows);
-	return pObject; 
+	return pObject;
 }
 
 void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus)
@@ -90,10 +90,8 @@ void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMa
 	}
 	m_NumberOfRows.SetValue(static_cast<long>(sortMap.size()));
 }
-
-SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
+SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, std::string& newName, int arraysize)
 {
-	std::string newName = SvUl::LoadStdString(nameId);
 	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const SvVol::DoubleSortValuePtr& entry)->bool
 	{
 		return (nullptr != entry.get() && entry->GetEmbeddedID() == rEmbeddedId);
@@ -141,6 +139,13 @@ SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbedde
 	return nullptr;
 }
 
+
+SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
+{
+	std::string newName = SvUl::LoadStdString(nameId);
+	return updateOrCreateColumn(rEmbeddedId, newName, arraysize);
+}
+
 void TableObject::removeColumn(const GUID& rEmbeddedId)
 {
 	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const SvVol::DoubleSortValuePtr& entry)->bool
@@ -175,11 +180,11 @@ void TableObject::clearTable()
 	m_NumberOfRows.SetValue(0L);
 }
 
-SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID) 
+SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
 {
 	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
 	bool isColumnValue = false;
-	for (int i=0; i < c_maxTableColumn; ++i)
+	for (int i = 0; i < c_maxTableColumn; ++i)
 	{
 		if (TableColumnValueObjectGuid[i] == rEmbeddedID)
 		{
@@ -190,8 +195,8 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 	{
 		// Construct new object...
 		SvVol::DoubleSortValueObject* pObject = dynamic_cast<SvVol::DoubleSortValueObject*>(SvOi::ConstructObject(DoubleSortValueObjectGuid));
-		RegisterEmbeddedObject( pObject, rEmbeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool );
-		m_ValueList.push_back(SvVol::DoubleSortValuePtr{ pObject });
+		RegisterEmbeddedObject(pObject, rEmbeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool);
+		m_ValueList.push_back(SvVol::DoubleSortValuePtr {pObject});
 	}
 
 	return __super::OverwriteEmbeddedObject(rUniqueID, rEmbeddedID);
@@ -206,9 +211,9 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SVGUID embeddedID, LPC
 	// Construct new object...
 	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
 
-	if( CreateChildObject(pObject) )
+	if (CreateChildObject(pObject))
 	{
-		RegisterEmbeddedObject( pObject, embeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool );
+		RegisterEmbeddedObject(pObject, embeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool);
 		pObject->SetName(name);
 		pObject->SetArraySize(arraySize);
 		pRetObject = SvVol::DoubleSortValuePtr {pObject};
@@ -219,8 +224,8 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SVGUID embeddedID, LPC
 		delete pObject;
 		pObject = nullptr;
 		assert(false);
-		SvStl::MessageMgrStd e( SvStl::MsgType::Data);
-		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		SvStl::MessageMgrStd e(SvStl::MsgType::Data);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		e.Throw();
 	}
 	return pRetObject;
@@ -288,34 +293,32 @@ void TableObject::Initialize()
 	BuildEmbeddedObjectList();
 }
 
-void TableObject::BuildEmbeddedObjectList ()
+void TableObject::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject( &m_NumberOfRows, TableObject_NumberOfRowsGuid, IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS, true, SvOi::SVResetItemTool );
-	m_NumberOfRows.SetDefaultValue( 0L, true );
+	RegisterEmbeddedObject(&m_NumberOfRows, TableObject_NumberOfRowsGuid, IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS, true, SvOi::SVResetItemTool);
+	m_NumberOfRows.SetDefaultValue(0L, true);
 }
 #pragma endregion Private Methods
 
 
-void  TableObject::getTableValues(_variant_t& rValue, long* pSizeX, long* pSizeY) const
+void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pColoumnCount) const
 {
 	CComSafeArrayBound bound[2];
 	auto valueList = getValueList();
-	long Ysize = (long) valueList.size();
-	long Xsize = (long) valueList[0]->getSortContainer().size();
-	bound[0] = Xsize;
-	bound[1] = Ysize;
-
+	long coloumnCount = (long)valueList.size();
+	long rowCount = (long)valueList[0]->getSortContainer().size();
+	bound[0] = coloumnCount;
+	bound[1] = rowCount;
 
 	CComSafeArray<double> tdimsa(bound, 2);
-	LONG aIndex[2];
-	for (int x = 0; x < Xsize; x++)
+	
+	for (int c = 0; c < coloumnCount; c++)
 	{
-		for (int y = 0; y < Ysize; y++)
+		for (int r = 0; r < rowCount; r++)
 		{
-			aIndex[0] = x;
-			aIndex[1] = y;
-			double val;
-			valueList[y]->GetValue(val, x);
+			LONG aIndex[2] = {c,r};
+			double val {0.0};
+			valueList[c]->GetValue(val, r);
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
 			ATLASSERT(hr == S_OK);
 		}
@@ -323,14 +326,71 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pSizeX, long* pSizeY
 	rValue.Clear();
 	rValue.vt = VT_ARRAY | VT_R8;
 	rValue.parray = tdimsa.Detach();
-	if (pSizeX)
+	if (pRowCount)
 	{
-		*pSizeX = Xsize;
+		*pRowCount = rowCount;
 	}
-	if (pSizeY)
+	if (pColoumnCount)
 	{
-		*pSizeY = Ysize;
+		*pColoumnCount = coloumnCount;
 	}
+}
+bool TableObject::setTableValues(const _variant_t& rValue)
+{
+	if ((rValue.vt != (VT_R8 | VT_ARRAY)) || (rValue.parray == nullptr))
+	{
+		return false;
+	}
+	CComSafeArray<double> sa(rValue.parray);
+	int dim = sa.GetDimensions();
+	if (dim != 2)
+	{
+		return false;
+	}
+
+	int nRows = sa.GetCount(1);
+
+
+	if (m_sortContainer.size() != nRows)
+	{
+		m_sortContainer.resize(nRows);
+		for (int r = 0; r < nRows; r++)
+		{
+			m_sortContainer[r] = r;
+		}
+	}
+
+	for (int col = 0; col < m_ValueList.size(); col++)
+	{
+		m_ValueList[col]->setSortContainer(m_sortContainer);
+	}
+	m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
+
+
+	long NCols = (long)m_ValueList.size();
+	assert(NCols == sa.GetCount(0));
+
+
+	for (int col = 0; col < NCols; col++)
+	{
+		m_ValueList[col]->SetArraySize(nRows);
+		for (int r = 0; r < nRows; r++)
+		{
+			double val {0};
+			long Index[2] = {col,r};
+			try
+			{
+				sa.MultiDimGetAt(Index, val);
+			}
+			catch (...)
+			{
+				val = 0.0;
+			}
+			m_ValueList[col]->SetValue(val, r);
+		}
+	}
+
+	return true;
 }
 
 unsigned  TableObject::getColumNames(_variant_t& rValue) const
@@ -345,7 +405,7 @@ unsigned  TableObject::getColumNames(_variant_t& rValue) const
 	rValue.Clear();
 	rValue.vt = VT_ARRAY | VT_BSTR;
 	rValue.parray = saStr.Detach();
-	return static_cast<unsigned>( valueList.size());
+	return static_cast<unsigned>(valueList.size());
 }
 
 

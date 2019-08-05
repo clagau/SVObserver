@@ -71,6 +71,12 @@ typedef HRESULT (__stdcall *GetHBITMAPResultImagesPtr) (GUID tool, long lArraySi
 typedef HRESULT (__stdcall *SetMILResultImagesPtr) (GUID tool, long lArraySize, long* paMILhandles);
 typedef HRESULT (__stdcall *GetResultImageDefinitionsPtr) (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 typedef HRESULT (__stdcall *DestroyImageDefinitionStructurePtr) ( SVImageDefinitionStruct* paStructs);
+typedef HRESULT(__stdcall *GetResultTableDefinitionsPtr) (long* pSize, ResultTableDefinitionStruct** ppaResultValues);
+typedef HRESULT(__stdcall *DestroyResultTableDefinitionStructuresPtr) (ResultTableDefinitionStruct* paStructs);
+typedef HRESULT(__stdcall *GetResultTablesPtr) (GUID tool, long lArraySize, VARIANT* paResultValues);
+
+
+
 
 
 typedef std::function< void(LPCTSTR) > SVDllLoadLibraryCallback;
@@ -108,14 +114,20 @@ public:
 	HRESULT SetMILResultImages (GUID tool, long lArraySize, long* paMILhandles);
 	HRESULT GetResultImageDefinitions (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 	HRESULT DestroyImageDefinitionStructure ( SVImageDefinitionStruct* paStructs);
+
+	HRESULT getResultTableDefinitions(long* Size, ResultTableDefinitionStruct** ppaResultTableDefs);
+	HRESULT destroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
+	HRESULT getResultTables(GUID tool, long lArraySize, VARIANT* paResultValues);
 	bool UseMil();
 	bool IsHandleNull();
+	bool UseTableOutput() const;
 
 private:
 	SVMachineTypeEnum CheckBitness(LPCTSTR p_szFile);
 
 	HMODULE m_hmHandle;
 	bool m_bUseMil = false;
+	
 
 	SimpleTestPtr m_pfnSimpleTest;
 	GetToolNamePtr m_pfnGetToolName;
@@ -140,6 +152,10 @@ private:
 	SetMILResultImagesPtr m_pfnSetMILResultImages;
 	GetResultImageDefinitionsPtr m_pfnGetResultImageDefinitions;
 	DestroyImageDefinitionStructurePtr m_pfnDestroyImageDefinitionStructure;
+
+	GetResultTableDefinitionsPtr m_pfnGetResultTableDefinitions {nullptr};
+	DestroyResultTableDefinitionStructuresPtr m_pfnDestroyResultTableDefinitionStructures {nullptr};
+	GetResultTablesPtr  m_pfnGetResultTables {nullptr};
 };
 
 } //namespace SvOp

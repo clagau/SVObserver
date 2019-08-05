@@ -49,12 +49,11 @@ private:
 // contents the structure from the dll with some additional calculated information 
 class  InputValueDefinition
 {
-
 public:
 	InputValueDefinition() = default;
 	~InputValueDefinition() = default;
 
-	long GetVt() const;
+	long getVt() const;
 	std::string getDisplayName() const;
 	std::string getHelpText() const;
 	std::string getGroup() const;
@@ -74,8 +73,6 @@ private:
 };
 
 
-
-
 #pragma pack (push, 1)
 struct ResultValueDefinitionStruct
 {
@@ -85,10 +82,69 @@ public:
 	ResultValueDefinitionStruct();
 	~ResultValueDefinitionStruct();
 	ResultValueDefinitionStruct(const ResultValueDefinitionStruct& rhs);
-	const ResultValueDefinitionStruct& operator = (const ResultValueDefinitionStruct& rhs);
+	ResultValueDefinitionStruct& operator = (const ResultValueDefinitionStruct& rhs);
 private:
 	void Clear();
 };
 #pragma pack (pop)
+
+#pragma pack (push, 1)
+struct ResultTableDefinitionStruct
+{
+	ResultTableDefinitionStruct& operator = (const ResultTableDefinitionStruct& rhs);
+	ResultTableDefinitionStruct(const ResultTableDefinitionStruct& rhs);
+	ResultTableDefinitionStruct() = default;
+	~ResultTableDefinitionStruct() = default;
+	long lVT {VT_EMPTY};
+	_bstr_t bstrDisplayName;	// not used at this time
+	DWORD type {0}; 	// not used at this time
+	long ColoumnCount {0};
+	long RowCount {0};
+	_variant_t ColumnNames; //smart array of bstr with rownames
+};
+
+#pragma pack (pop)
+
+class ResultValueDefinition
+{
+public:
+	ResultValueDefinition() = default;
+	~ResultValueDefinition() = default;
+
+	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex);
+
+	int getIndex() const;
+	std::string getDisplayName() const;
+	SvOp::ExDllInterfaceType getType() const;
+	long getVT() const;
+
+private:
+	int m_ValueIndex {-1};
+
+	ResultValueDefinitionStruct m_ValueDefinition;
+};
+class ResultTableDefinition
+{
+public:
+	ResultTableDefinition() = default;
+	~ResultTableDefinition() = default;
+
+	long getTableColoumnCount() const { return m_TableDefinition.ColoumnCount; };
+	long getTableRowCount() const { return m_TableDefinition.RowCount; };
+	void setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long ValueIndex);
+	std::vector<std::string> getColoumnNames() const;
+
+	int getIndex() const { return m_ValueIndex; };
+	std::string getDisplayName() const;
+	SvOp::ExDllInterfaceType getType() const;
+	long getVT() const { return m_TableDefinition.lVT; };
+
+private:
+
+
+	ResultTableDefinitionStruct m_TableDefinition;
+	int m_ValueIndex {-1};
+};
+
 
 } //namespace SvOp

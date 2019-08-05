@@ -108,6 +108,12 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 			m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultImageDefinitions");
 			m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "SVDestroyImageDefinitionStructure");
 
+
+			 m_pfnGetResultTableDefinitions = (GetResultTableDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultTableDefinitions");
+			m_pfnDestroyResultTableDefinitionStructures = (DestroyResultTableDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultTableDefinitionStructures");
+			m_pfnGetResultTables = (GetResultTablesPtr)::GetProcAddress(m_hmHandle, "GetResultTables");
+			
+
 			// Backwards compatability
 			if (nullptr == m_pfnSimpleTest) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SimpleTest");
 			if (nullptr == m_pfnGetToolName) m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress(m_hmHandle, "GetToolName");
@@ -132,7 +138,6 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 			if (nullptr == m_pfnGetHBITMAPResultImages) m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress(m_hmHandle, "GetHBITMAPResultImages");
 			if (nullptr == m_pfnGetResultImageDefinitions) m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultImageDefinitions");
 			if (nullptr == m_pfnDestroyImageDefinitionStructure) m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "DestroyImageDefinitionStructure");
-
 
 
 			if ((
@@ -328,7 +333,10 @@ bool SVDLLToolLoadLibraryClass::UseMil()
 {
 	return m_bUseMil;
 }
-
+bool  SVDLLToolLoadLibraryClass::UseTableOutput() const
+{
+	return  m_pfnGetResultTableDefinitions != nullptr && m_pfnDestroyResultTableDefinitionStructures != nullptr;
+}
 bool SVDLLToolLoadLibraryClass::IsHandleNull()
 {
 	if (nullptr == m_hmHandle)
@@ -392,6 +400,8 @@ HRESULT SVDLLToolLoadLibraryClass::Close()
 	m_pfnSetMILResultImages = nullptr;
 	m_pfnGetResultImageDefinitions = nullptr;
 	m_pfnDestroyImageDefinitionStructure = nullptr;
+	m_pfnGetResultTableDefinitions = nullptr;
+	m_pfnDestroyResultTableDefinitionStructures = nullptr;
 
 	return l_hrOk;
 }
@@ -861,6 +871,62 @@ SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness( LPCTSTR p_szFile )
 			fclose( fh );
 		}
 		return l_machineType;
+}
+
+HRESULT SVDLLToolLoadLibraryClass::getResultTableDefinitions(long* Size, ResultTableDefinitionStruct** ppaResultTableDefs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetResultTableDefinitions)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetResultTableDefinitions(Size, ppaResultTableDefs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+HRESULT SVDLLToolLoadLibraryClass::destroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnDestroyResultTableDefinitionStructures)
+	{
+		try
+		{
+			l_hrOk = m_pfnDestroyResultTableDefinitionStructures(paStructs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVDLLToolLoadLibraryClass::getResultTables(GUID tool, long lArraySize, VARIANT* paResultValues)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetResultTables)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetResultTables(tool, lArraySize, paResultValues);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
 }
 
 } //namespace SvOp

@@ -47,6 +47,12 @@ public:
 	/// \param arraysize [in] New array size.
 	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
 	SvVol::DoubleSortValuePtr updateOrCreateColumn(const GUID& rEmbeddedID, int nameId, int arraysize);
+	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
+	/// \param rEmbeddedID [in] Emdedded GUID.
+	/// \param newname [in]  the new name
+	/// \param arraysize [in] New array size.
+	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
+	SvVol::DoubleSortValuePtr updateOrCreateColumn(const GUID& rEmbeddedId, std::string& newName, int arraysize);
 
 	/// Remove a column.
 	/// \param rEmbeddedId [in] Emdedded GUID of the value object.
@@ -57,11 +63,13 @@ public:
 
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
 
+	/// for rValue  a 2 dim SafeArray of double  is expected, otherwise false is returned
+	bool setTableValues(const _variant_t& rValue);
 	/// rValue contents a 2 dim SafeArray of double  
-	void  getTableValues(_variant_t& rValue,long* pSizeX, long* pSizeY )const;
+	void  getTableValues(_variant_t& rValue,long* pRowCount, long* pColoumnCount)const;
 	/// rValue contents a 1 dim Safe array of BSTR with the columnames returnvalue is size
 	unsigned  getColumNames(_variant_t& rValue) const;
-	
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

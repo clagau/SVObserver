@@ -44,7 +44,9 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVExternalToolTask, SVExternalToolTaskGuid)
 
-SVExternalToolTaskData::SVExternalToolTaskData() {}
+SVExternalToolTaskData::SVExternalToolTaskData() : m_ResultTableObjects(NUM_RESULT_TABLE_OBJECTS, nullptr)
+{
+}
 
 SVExternalToolTaskData::SVExternalToolTaskData(const SVExternalToolTaskData& src)
 {
@@ -94,13 +96,15 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 		std::copy(rhs.m_aResultObjects.begin(), rhs.m_aResultObjects.end(), m_aResultObjects.begin());
 
 		m_aResultImageDefinitions = rhs.m_aResultImageDefinitions;
-		m_aResultValueDefinitions = rhs.m_aResultValueDefinitions;
-		m_aInputValueDefinitions = rhs.m_aInputValueDefinitions;
+		m_ResultDefinitions = rhs.m_ResultDefinitions;
+		m_InputDefinitions = rhs.m_InputDefinitions;
 
 		m_lNumInputImages = rhs.m_lNumInputImages;
 		m_lNumInputValues = rhs.m_lNumInputValues;
 		m_lNumResultImages = rhs.m_lNumResultImages;
 		m_lNumResultValues = rhs.m_lNumResultValues;
+		m_NumResultTables = rhs.m_NumResultTables;
+		m_NumLinkedValue = rhs.m_NumLinkedValue;
 
 		m_RangeResultData = rhs.m_RangeResultData;
 
@@ -222,6 +226,9 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		m_Data.m_aResultObjects[i].setSaveValueFlag(false);
 	}
 
+
+
+
 	addDefaultInputObjects();
 
 	// default tool counts
@@ -229,6 +236,9 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	m_Data.m_lNumInputValues = 0;
 	m_Data.m_lNumResultImages = 0;
 	m_Data.m_lNumResultValues = 0;
+
+	m_Data.m_NumLinkedValue = 0;
+	m_Data.m_NumResultTables = 0;
 
 	SetAllAttributes();
 }
@@ -242,10 +252,7 @@ void SVExternalToolTask::SetAllAttributes()
 		SvOi::SetAttributeType addOverwriteType = (i < m_Data.m_NumLinkedValue) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::OverwriteAttribute;
 		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed(attribute, addOverwriteType);
 
-
-
-
-		attribute = (i < m_Data.m_lNumInputValues) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
+		attribute = (i < m_Data.m_NumLinkedValue) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
 		attribute &= ~SvPb::viewable;
 		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	}
@@ -260,6 +267,22 @@ void SVExternalToolTask::SetAllAttributes()
 		}
 		attribute &= ~SvPb::printable;
 		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
+	}
+
+	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS; i++)
+	{
+		if (m_Data.m_ResultTableObjects[i])
+		{
+			if (i < m_Data.getNumTableResults())
+			{
+				m_Data.m_ResultTableObjects[i]->SetObjectAttributesAllowed(SvPb::taskObject, SvOi::AddAttribute);
+			}
+			else
+			{
+				m_Data.m_ResultTableObjects[i]->SetObjectAttributesAllowed(SvPb::taskObject, SvOi::RemoveAttribute);
+			}
+
+		}
 	}
 
 	for (int i = 0; i < static_cast<long>(m_Data.m_aDllDependencies.size()); i++)
@@ -283,6 +306,84 @@ SVExternalToolTask::~SVExternalToolTask()
 	m_embeddedList.clear();
 }
 
+void SVExternalToolTask::CreateArray()
+{
+	int TableNum = m_Data.getNumTableResults();
+
+	for (int t = 0; t < TableNum; t++)
+	{
+		if (t >= m_Data.m_ResultTableObjects.size() || m_Data.m_ResultTableObjects[t] == nullptr)
+		{
+			assert(false);
+			break;
+		}
+		TableObject* pTab = m_Data.m_ResultTableObjects[t];
+		int nRows = m_Data.m_TableResultDefinitions[t].getTableRowCount();
+		int nCols = m_Data.m_TableResultDefinitions[t].getTableColoumnCount();
+		std::vector<std::string> Columnames = m_Data.m_TableResultDefinitions[t].getColoumnNames();
+
+		for (int i = 0; i < nCols; i++)
+		{
+			if (i >= c_maxTableColumn)
+			{
+				assert(false);
+				break;
+			}
+
+			pTab->updateOrCreateColumn(TableColumnValueObjectGuid[i], Columnames[i], nRows);
+		}
+		SvVol::ValueObjectSortContainer resultTableSortContainer;
+		resultTableSortContainer.resize(nRows);
+		for (int i = 0; i < nRows; i++)
+		{
+			resultTableSortContainer[i] = i;
+		}
+		pTab->setSortContainer(resultTableSortContainer, SVRunStatusClass());
+	}
+}
+bool SVExternalToolTask::CreateTableObjects()
+{
+	bool result = true;
+	int Index {0};
+	for (SVTaskObjectClass* pOb : m_TaskObjectVector)
+	{
+
+		if (pOb && pOb->GetObjectType() == SvPb::TableObjectType && pOb->GetObjectSubType() == SvPb::SVNotSetSubObjectType)
+		{
+			assert(Index < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);
+			if (Index < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS)
+			{
+				m_Data.m_ResultTableObjects[Index++] = dynamic_cast<SvOp::TableObject*>(pOb);
+			}
+
+
+		}
+
+	}
+
+	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS; i++)
+	{
+
+		if (nullptr == m_Data.m_ResultTableObjects[i])
+		{
+			m_Data.m_ResultTableObjects[i] = new SvOp::TableObject(this);
+			Add(m_Data.m_ResultTableObjects[i]);
+			if (!CreateChildObject(m_Data.m_ResultTableObjects[i]))
+			{
+				result = false;
+				SvStl::MessageContainer message;
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+				Msg.setMessage(message.getMessage());
+				break;
+			}
+		}
+
+	}
+	return result;
+
+
+}
 bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool l_bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
@@ -293,6 +394,9 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 		{
 			try
 			{
+
+				CreateTableObjects();
+
 				Initialize();
 			}
 			catch (const SvStl::MessageContainer& /*e*/)
@@ -322,12 +426,12 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 	HRESULT hrUninitialize = Uninitialize();
 
 	m_aInspectionInputImages.clear();
-	m_aInspectionInputValues.clear();
-	m_aInspectionResultValues.clear();
+	m_InspectionInputValues.clear();
+	m_InspectionResultValues.clear();
 	m_aInspectionResultImages.clear();
 
-	m_Data.m_aInputValueDefinitions.clear();
-	m_Data.m_aResultValueDefinitions.clear();
+	m_Data.m_InputDefinitions.clear();
+	m_Data.m_ResultDefinitions.clear();
 	m_Data.m_aResultImageDefinitions.clear();
 
 	// try to connect to DLL
@@ -456,23 +560,23 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 
 			InputValueDefinitionStruct* paInputValueDefs = nullptr;
 			long ArraySize {0};
-			
+
 			hr = m_dll.GetInputValueDefinitions(&ArraySize, &paInputValueDefs);
-			m_Data.m_lNumInputValues  = ArraySize;
+			m_Data.m_lNumInputValues = ArraySize;
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
-			m_aInspectionInputValues.resize(ArraySize);
-			m_Data.Initialize(ArraySize, paInputValueDefs);
+			m_InspectionInputValues.resize(ArraySize);
+			m_Data.InitializeInputs(ArraySize, paInputValueDefs);
 			for (int i = 0; i < ArraySize; i++)
 			{
-				HRESULT hres = ::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT));
+				HRESULT hres = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT));
 				if (S_OK != hres)
 				{
 					///cant change variant empty to safe array
 					_variant_t temp(paInputValueDefs[i].m_DefaultValue);
-					m_aInspectionInputValues[i] = temp.Detach();
+					m_InspectionInputValues[i] = temp.Detach();
 				}
 			}
 
@@ -492,21 +596,23 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 
 			// Initialize Result Objects
 			ResultValueDefinitionStruct* paResultValueDefs = nullptr;
-			hr = m_dll.GetResultValueDefinitions(&m_Data.m_lNumResultValues, &paResultValueDefs);
+			long NumResultObjects {0};
+			hr = m_dll.GetResultValueDefinitions(&NumResultObjects, &paResultValueDefs);
+			m_Data.m_lNumResultValues = NumResultObjects;
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
 
-			m_aInspectionResultValues.resize(m_Data.m_lNumResultValues);
-			m_Data.m_aResultValueDefinitions.resize(m_Data.m_lNumResultValues);
+			m_InspectionResultValues.resize(NumResultObjects);
+			m_Data.m_ResultDefinitions.resize(NumResultObjects);
 
-			for (int i = 0; i < m_Data.m_lNumResultValues; i++)
+
+			for (int i = 0; i < NumResultObjects; i++)
 			{
-				ResultValueDefinitionStruct& rDef = paResultValueDefs[i];
-				m_Data.m_aResultValueDefinitions[i] = rDef;
-
-				if (rDef.m_VT != VT_BSTR)	// Do not allocate result if already exists....
+				m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
+				long vt = paResultValueDefs[i].m_VT;
+				if (vt != VT_BSTR)	// Do not allocate result if already exists....
 				{
 					SVResultClass* pResult = GetResultRangeObject(i);
 					if (nullptr == pResult)
@@ -526,27 +632,47 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 						{
 							_variant_t defaultValue;
 
-							defaultValue.ChangeType(static_cast<VARTYPE> (~(VT_ARRAY)& rDef.m_VT));
+							defaultValue.ChangeType(static_cast<VARTYPE> (~(VT_ARRAY)& vt));
 							pValue->SetDefaultValue(defaultValue, false);
 						}
 					}
 				}
 			}
-
 			hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefs);
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
 
+			ResultTableDefinitionStruct* paResultTableDefs {nullptr};
+			long ResultTableNum {0};
+			if (m_dll.UseTableOutput())
+			{
+				hr = m_dll.getResultTableDefinitions(&ResultTableNum, &paResultTableDefs);
+
+			}
+			m_Data.m_NumResultTables = ResultTableNum;
+			m_Data.m_TableResultDefinitions.resize(ResultTableNum);
+			m_InspectionResultTables.resize(ResultTableNum);
+			for (int j = 0; j < ResultTableNum; j++)
+			{
+				m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
+			}
+
+			hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
+
+
 			paResultValueDefs = nullptr;
+
+			//Initialize TableObjects!
+			CreateArray();
 
 			///////////////////////////////////////
 			//    InitializeRun
 			///////////////////////////////////////
 
-			hr = m_dll.InitializeRun(guid, m_Data.m_lNumInputImages, m_Data.m_lNumInputImages ? &(aInputImages[0]) : nullptr,
-				m_Data.m_lNumInputValues, m_Data.m_lNumInputValues ? &(m_aInspectionInputValues[0]) : nullptr);
+			hr = m_dll.InitializeRun(guid, (long)aInputImages.size(), aInputImages.size() ? &(aInputImages[0]) : nullptr,
+				(long)m_InspectionInputValues.size(), m_InspectionInputValues.size() ? &(m_InspectionInputValues[0]) : nullptr);
 			if (S_OK != hr)
 			{
 				throw hr;
@@ -554,7 +680,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			if (m_dll.UseMil())
 			{
 				// This must be done after InitializeRun so the Dll has a guid for this tool
-				hr = m_dll.SetMILInputImages(guid, m_Data.m_lNumInputImages, m_Data.m_lNumInputImages ? &(m_aInspectionInputImages[0]) : nullptr);
+				hr = m_dll.SetMILInputImages(guid, (long)m_aInspectionInputImages.size(), (long)m_aInspectionInputImages.size() ? &(m_aInspectionInputImages[0]) : nullptr);
 				if (S_OK != hr)
 				{
 					throw hr;
@@ -565,18 +691,19 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			///////////////////////////////////////
 
 			SVImageDefinitionStruct* paResultImageDefs = nullptr;
-			hr = m_dll.GetResultImageDefinitions(guid, &m_Data.m_lNumResultImages, &paResultImageDefs);
+			long NumResultImages {0};
+			hr = m_dll.GetResultImageDefinitions(guid, &NumResultImages, &paResultImageDefs);
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
-
-			m_aInspectionResultImages.resize(m_Data.m_lNumResultImages);
-			m_aInspectionResultHBMImages.resize(m_Data.m_lNumResultImages);
-			m_Data.m_aResultImageDefinitions.resize(m_Data.m_lNumResultImages);
+			m_Data.m_lNumResultImages = NumResultImages;
+			m_aInspectionResultImages.resize(NumResultImages);
+			m_aInspectionResultHBMImages.resize(NumResultImages);
+			m_Data.m_aResultImageDefinitions.resize(NumResultImages);
 
 			int l_pImageNames[] = {IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2, IDS_OBJECTNAME_IMAGE3, IDS_OBJECTNAME_IMAGE4};
-			for (int i = 0; i < m_Data.m_lNumResultImages; i++)
+			for (int i = 0; i < m_Data.m_aResultImageDefinitions.size(); i++)
 			{
 				m_Data.m_aResultImageDefinitions[i] = paResultImageDefs[i];
 
@@ -799,56 +926,57 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 			/////////////////////////////////////////////////////
 
 			// collect input values
-			for (i = 0; i < m_Data.m_lNumInputValues; i++)
+			for (i = 0; i < m_Data.m_InputDefinitions.size(); i++)
 			{
-				int LVIndex = m_Data.m_aInputValueDefinitions[i].getLinkedValueIndex();
-				if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::Scalar)
+				int LVIndex = m_Data.m_InputDefinitions[i].getLinkedValueIndex();
+				if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::Scalar)
 				{
-					m_Data.m_aInputObjects[LVIndex].GetValue(m_aInspectionInputValues[i]);
-					HRESULT hrChangeType = ::VariantChangeTypeEx(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].GetVt()));
+					m_Data.m_aInputObjects[LVIndex].GetValue(m_InspectionInputValues[i]);
+					HRESULT hrChangeType = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
 					if (S_OK != hrChangeType)
 					{
-						m_aInspectionInputValues[i].Clear();
-						m_aInspectionInputValues[i].ChangeType(static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].GetVt()));
+						m_InspectionInputValues[i].Clear();
+						m_InspectionInputValues[i].ChangeType(static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
 					}
 				}
-				else if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::Array)
+				else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::Array)
 				{
 					/// if we have an array the typ must be correct
 
-					m_Data.m_aInputObjects[LVIndex].GetArrayValue(m_aInspectionInputValues[i]);
+					m_Data.m_aInputObjects[LVIndex].GetArrayValue(m_InspectionInputValues[i]);
 				}
-				else if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableArray)
+				else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableArray)
 				{
 					const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
 					if (pTableObject)
 					{
 						long SX {0}, SY {0};
-						pTableObject->getTableValues(m_aInspectionInputValues[i], &SX, &SY);
+						pTableObject->getTableValues(m_InspectionInputValues[i], &SX, &SY);
 					}
 					else
 					{
-						m_aInspectionInputValues[i] = m_Data.m_aInputValueDefinitions[i].getDefaultValue();
+						m_InspectionInputValues[i] = m_Data.m_InputDefinitions[i].getDefaultValue();
 					}
 
 				}
-				else if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableNames)
+				else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableNames)
 				{
 					const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
 					if (pTableObject)
 					{
-						long SX = pTableObject->getColumNames(m_aInspectionInputValues[i]);
+						long SX = pTableObject->getColumNames(m_InspectionInputValues[i]);
 					}
 					else
 					{
-						m_aInspectionInputValues[i] = m_Data.m_aInputValueDefinitions[i].getDefaultValue();
+						m_InspectionInputValues[i] = m_Data.m_InputDefinitions[i].getDefaultValue();
 					}
 
 				}
 
 			}
 			// send input values to DLL
-			hr = m_dll.SetInputValues(guid, m_Data.m_lNumInputValues, m_Data.m_lNumInputValues ? &(m_aInspectionInputValues[0]) : nullptr);
+			long size = static_cast<long>(m_InspectionInputValues.size());
+			hr = m_dll.SetInputValues(guid, size, size ? &(m_InspectionInputValues[0]) : nullptr);
 			if (S_OK != hr)
 			{
 				throw hr;
@@ -1002,19 +1130,18 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 			///////////////////////////////////////
 
 			// Result Values
-
-			hr = m_dll.GetResultValues(guid, m_Data.m_lNumResultValues, m_Data.m_lNumResultValues ? &(m_aInspectionResultValues[0]) : nullptr);
+			long Resultsize = static_cast<long>(m_InspectionResultValues.size());
+			hr = m_dll.GetResultValues(guid, Resultsize, Resultsize ? &(m_InspectionResultValues[0]) : nullptr);
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
 
-			for (i = 0; i < m_Data.m_lNumResultValues; i++)
+			for (i = 0; i < Resultsize; i++)
 			{
-				if (m_aInspectionResultValues[i].vt & VT_ARRAY)
+				if (m_InspectionResultValues[i].vt & VT_ARRAY)
 				{
-					VARTYPE type = (m_aInspectionResultValues[i].vt & (~VT_ARRAY));
-
+					VARTYPE type = (m_InspectionResultValues[i].vt & (~VT_ARRAY));
 					if (!GetResultValueObject(i)->isArray())
 					{
 						//if the value object is an array the correct size will be set in setValue
@@ -1026,16 +1153,28 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 						var.ChangeType(type);
 						GetResultValueObject(i)->SetDefaultValue(var);
 					}
-					GetResultValueObject(i)->setValue(m_aInspectionResultValues[i]);
+					GetResultValueObject(i)->setValue(m_InspectionResultValues[i]);
 
 				}
 
 				else
 				{
-					GetResultValueObject(i)->SetValue(m_aInspectionResultValues[i]);
+					GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
 				}
 				// Clear OleVariant that was created in Dll.
-				m_aInspectionResultValues[i].Clear();
+				m_InspectionResultValues[i].Clear();
+			}
+
+			/////////////////// TABLES RESULT 
+			int NumTableResults = m_Data.getNumTableResults();
+			if (S_OK == m_dll.getResultTables(GetUniqueObjectID(), NumTableResults, NumTableResults ? &(m_InspectionResultTables[0]) : nullptr))
+			{
+				for (int i = 0; i < NumTableResults; i++)
+				{
+					GetResultTableObject(i)->setTableValues(m_InspectionResultTables[i]);
+					// Clear OleVariant that was created in Dll.
+					m_InspectionResultTables[i].Clear();
+				}
 			}
 
 			// Result Images
@@ -1186,9 +1325,9 @@ HRESULT SVExternalToolTask::GetResultImageDefinitions(SVImageDefinitionStructArr
 	return S_OK;
 }
 
-HRESULT SVExternalToolTask::GetResultValueDefinitions(std::vector<ResultValueDefinitionStruct>&  raResultValueDefinitions)
+HRESULT SVExternalToolTask::GetResultValueDefinitions(std::vector<ResultValueDefinition>&  raResultValueDefinitions)
 {
-	raResultValueDefinitions = m_Data.m_aResultValueDefinitions;
+	raResultValueDefinitions = m_Data.m_ResultDefinitions;
 	return S_OK;
 }
 
@@ -1279,33 +1418,34 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 
 HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 {
-	for (int i = 0; i < m_Data.m_lNumInputValues; i++)
+	long size = static_cast<long>(m_Data.m_InputDefinitions.size());
+	for (int i = 0; i < size; i++)
 	{
-		if (m_Data.m_aInputObjects[i].isIndirectValue())
+		if (i < (int)m_Data.m_aInputObjects.size() && m_Data.m_aInputObjects[i].isIndirectValue())
 		{
 			m_Data.m_aInputObjects[i].setIndirectValueSaveFlag(true);
 		}
 
 		_variant_t Value;
 
-		int LVIndex = m_Data.m_aInputValueDefinitions[i].getLinkedValueIndex();
-		if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::Scalar)
+		int LVIndex = m_Data.m_InputDefinitions[i].getLinkedValueIndex();
+		if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::Scalar)
 		{
 			m_Data.m_aInputObjects[LVIndex].GetValue(Value);
-			HRESULT hrChangeType = ::VariantChangeTypeEx(&Value, &Value, SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].GetVt()));
+			HRESULT hrChangeType = ::VariantChangeTypeEx(&Value, &Value, SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
 			if (S_OK != hrChangeType)
 			{
 				Value.Clear();
-				Value.ChangeType(static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].GetVt()));
+				Value.ChangeType(static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
 			}
 		}
-		else if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::Array)
+		else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::Array)
 		{
 			/// if we have an array the typ must be correct
 
-			m_Data.m_aInputObjects[LVIndex].GetArrayValue (Value);
+			m_Data.m_aInputObjects[LVIndex].GetArrayValue(Value);
 		}
-		else if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableArray)
+		else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableArray)
 		{
 			const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
 			if (pTableObject)
@@ -1315,25 +1455,25 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 			}
 			else
 			{
-				Value = m_Data.m_aInputValueDefinitions[i].getDefaultValue();
+				Value = m_Data.m_InputDefinitions[i].getDefaultValue();
 			}
 
 		}
-		else if (m_Data.m_aInputValueDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableNames)
+		else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableNames)
 		{
 			const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
 			if (pTableObject)
 			{
-				 pTableObject->getColumNames(Value);
+				pTableObject->getColumNames(Value);
 			}
 			else
 			{
-				Value = m_Data.m_aInputValueDefinitions[i].getDefaultValue();
+				Value = m_Data.m_InputDefinitions[i].getDefaultValue();
 			}
 
 		}
 
-		m_aInspectionInputValues[i] = Value;
+		m_InspectionInputValues[i] = Value;
 
 	}
 	return S_OK;
@@ -1363,6 +1503,15 @@ SvVol::SVVariantValueObjectClass* SVExternalToolTask::GetResultValueObject(int i
 	if (iIndex >= 0 && iIndex < m_Data.m_lNumResultValues)
 	{
 		return &(m_Data.m_aResultObjects[iIndex]);
+	}
+	return nullptr;
+}
+
+SvOp::TableObject*  SVExternalToolTask::GetResultTableObject(int iIndex)
+{
+	if (iIndex >= 0 && iIndex < m_Data.m_NumResultTables)
+	{
+		return  m_Data.m_ResultTableObjects[iIndex];
 	}
 	return nullptr;
 }
@@ -1587,10 +1736,11 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 {
 	HRESULT hr = S_OK;
 
-	for (int i = 0; i < m_Data.m_lNumInputValues; i++)
+	int size = m_Data.getNumInputs();
+	for (int i = 0; i < size; i++)
 	{
 		m_Data.m_aInputObjectNames[i].SetDefaultValue(_T(""), true);
-		InputValueDefinition& rInputDef = m_Data.m_aInputValueDefinitions[i];
+		InputValueDefinition& rInputDef = m_Data.m_InputDefinitions[i];
 		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
 		{
 			int LinkValueIndex = rInputDef.getLinkedValueIndex();
@@ -1630,16 +1780,29 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 				pErrorMessages->push_back(Msg);
 			}
 		}
-		if (S_OK == m_dll.GetResultValues(GetUniqueObjectID(), m_Data.m_lNumResultValues, m_Data.m_lNumResultValues ? &(m_aInspectionResultValues[0]) : nullptr))
+
+		int NumResults = m_Data.getNumResults();
+		if (S_OK == m_dll.GetResultValues(GetUniqueObjectID(), NumResults, NumResults ? &(m_InspectionResultValues[0]) : nullptr))
 		{
-			for (int i = 0; i < m_Data.m_lNumResultValues; i++)
+			for (int i = 0; i < NumResults; i++)
 			{
-				GetResultValueObject(i)->SetValue(m_aInspectionResultValues[i]);
+				GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
 
 				// Clear OleVariant that was created in Dll.
-				m_aInspectionResultValues[i].Clear();
+				m_InspectionResultValues[i].Clear();
 			}
 		}
+		int NumTableResults = m_Data.getNumTableResults();
+		if (S_OK == m_dll.getResultTables(GetUniqueObjectID(), NumTableResults, NumTableResults ? &(m_InspectionResultTables[0]) : nullptr))
+		{
+			for (int i = 0; i < NumTableResults; i++)
+			{
+				GetResultTableObject(i)->setTableValues(m_InspectionResultTables[i]);
+				// Clear OleVariant that was created in Dll.
+				m_InspectionResultTables[i].Clear();
+			}
+		}
+
 	}
 	catch (const SvStl::MessageContainer& e)
 	{
@@ -1649,6 +1812,11 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			pErrorMessages->push_back(e);
 		}
 	}
+	catch (...)
+	{
+		Result = false;
+	}
+
 
 	return Result;
 }
@@ -1807,18 +1975,18 @@ HRESULT SVExternalToolTask::CollectInputImageNames()
 }
 
 
-void SVExternalToolTaskData::Initialize(long ArraySize, InputValueDefinitionStruct  InputValueDefs[])
+void SVExternalToolTaskData::InitializeInputs(long ArraySize, InputValueDefinitionStruct  InputValueDefs[])
 {
 
 	m_lNumInputValues = ArraySize;
-	m_aInputValueDefinitions.resize(m_lNumInputValues);
+	m_InputDefinitions.resize(ArraySize);
 	m_NumLinkedValue = 0;
 
-	for (int i = 0; i < m_lNumInputValues; i++)
+	for (int i = 0; i < ArraySize; i++)
 	{
-		m_aInputValueDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
+		m_InputDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
 
-		InputValueDefinition& rInputDef = m_aInputValueDefinitions[i];
+		InputValueDefinition& rInputDef = m_InputDefinitions[i];
 		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
 		{
 			int LinkValueIndex = rInputDef.getLinkedValueIndex();

@@ -29,6 +29,8 @@ public:
 	 \param ppaResultValues <in/output> the structure must be preallocated with the length NUM_RESULT_VALUES.
 	***********/
 	static void getResultValueDefinition(ResultValueDefinitionStruct** ppaResultValues);
+
+	static  void getResultTableDefinition(ResultTableDefinitionStruct** ppaResultTables);
 	/**********
 	 Check if the value valid and return an error code. S_OK if value valid.
 	 \param lParameterNumber <in> the index of the parameter. Must be at least 0 and less than NUM_INPUT_VALUES.
@@ -98,6 +100,8 @@ public:
 	 \return hresult value
 	***********/
 	HRESULT getResultValues(VARIANT* paResultValues) const;
+	
+	HRESULT  getResultTables(VARIANT* ResultValues) const;
 #pragma endregion
 #pragma endregion
 
@@ -122,6 +126,7 @@ private:
 
 	std::vector<_variant_t> m_aInputValues;
 	std::vector<_variant_t> m_aResultValues;
+	std::vector<_variant_t> m_ResultTables;
 
 	// Images
 	std::vector<ImageDefinitionStruct> m_aResultImageDefs;

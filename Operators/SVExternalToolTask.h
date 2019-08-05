@@ -29,8 +29,11 @@
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
+
 namespace SvOp
 {
+class TableObject;
+	
 struct SVExternalToolTaskData : public SVCancelData
 {
 	enum
@@ -40,6 +43,7 @@ struct SVExternalToolTaskData : public SVCancelData
 		NUM_RESULT_OBJECTS = 50,
 		NUM_INPUT_IMAGES = 4,
 		NUM_RESULT_IMAGES = 4,
+		NUM_RESULT_TABLE_OBJECTS =4,
 	};
 
 	SVExternalToolTaskData();
@@ -48,8 +52,11 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	const SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
 
-	void  Initialize(long Arraysize, InputValueDefinitionStruct*  pInputValueDefs);
-
+	void  InitializeInputs(long Arraysize, InputValueDefinitionStruct*  pInputValueDefs);
+	
+	long  getNumInputs() const { return static_cast<long>(m_InputDefinitions.size()); };
+	long  getNumResults() const { return static_cast<long>(m_ResultDefinitions.size()); };
+	long  getNumTableResults() const { return static_cast<long>(m_TableResultDefinitions.size()); };
 	SvVol::SVFileNameValueObjectClass m_voDllPath;
 	std::vector<SvVol::SVFileNameValueObjectClass>  m_aDllDependencies; //[NUM_TOOL_DEPENDENCIES];
 
@@ -63,18 +70,23 @@ struct SVExternalToolTaskData : public SVCancelData
 	std::vector<SvVol::SVStringValueObjectClass>  m_aInputObjectNames; //[NUM_INPUT_OBJECTS]; // our value object names
 
 	std::vector<SvVol::SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
+	std::vector<SvOp::TableObject*>  m_ResultTableObjects;// SvOp::SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);
+	
 
 	SVImageDefinitionStructArray m_aResultImageDefinitions;
-	std::vector<ResultValueDefinitionStruct> m_aResultValueDefinitions;
-	std::vector<InputValueDefinition> m_aInputValueDefinitions;
+	std::vector<ResultValueDefinition> m_ResultDefinitions;
+	std::vector<InputValueDefinition> m_InputDefinitions;
+	std::vector<ResultTableDefinition> m_TableResultDefinitions;
 
 	SVMultiCancelData m_RangeResultData;
 
 	long m_lNumInputImages = 0;
-	long m_lNumInputValues = 0;
+	long m_lNumInputValues = 0;  //Number of input definition m_aInputValueDefinitions.size  m_InspectionInputValues.size
 	long m_lNumResultImages = 0;
-	long m_lNumResultValues = 0;
-	long m_NumLinkedValue {0};
+	long m_lNumResultValues = 0; //Number of resulT definition m_ResultDefinitions.size m_InspectionResultValues.size
+	long m_NumLinkedValue {0}; //Number of used InputObjects(LinkedValue)
+	long m_NumResultTables{0};
+	
 
 	SVRPropTreeState m_PropTreeState;
 };	// end struct SVExternalToolTaskData
@@ -88,6 +100,8 @@ public:
 	virtual ~SVExternalToolTask();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	bool CreateTableObjects();
+	void CreateArray();
 	virtual bool CloseObject() override;
 	virtual bool ConnectAllInputs() override;
 
@@ -99,7 +113,7 @@ public:
 	HRESULT SetPathName( const std::string& rPath );
 	HRESULT SetDependencies( const SvDef::StringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
-	HRESULT GetResultValueDefinitions ( std::vector<ResultValueDefinitionStruct>& raResultValueDefinitions );
+	HRESULT GetResultValueDefinitions ( std::vector<ResultValueDefinition>& raResultValueDefinitions );
 	
 
 	// ISVCancel interface
@@ -139,6 +153,7 @@ protected:
 	SvIe::SVImageClass* GetResultImage(int iIndex);
 
 	SvVol::SVVariantValueObjectClass* GetResultValueObject(int iIndex);
+	SvOp::TableObject*  GetResultTableObject(int iIndex);
 	SVResultClass* GetResultRangeObject(int iIndex);
 	std::vector<SVResultClass*> GetResultRangeObjects();
 
@@ -154,15 +169,16 @@ private:
 	std::vector<SVDIBITMAPINFO> m_aInspectionInputHBMImages;
 	std::vector<HBITMAP> m_aInspectionResultHBMImages;
 
-	std::vector<_variant_t> m_aInspectionInputValues;
-	std::vector<_variant_t> m_aInspectionResultValues;
+	std::vector<_variant_t> m_InspectionInputValues;
+	std::vector<_variant_t> m_InspectionResultValues;
+	std::vector<_variant_t> m_InspectionResultTables;
 
 	std::vector<RECT> m_aPreviousInputImageRect;
 
 	// Result Images
 	SvIe::SVImageClass m_aResultImages[SVExternalToolTaskData::NUM_RESULT_IMAGES];
 
-	// Temperary Images to run slower and safer..........
+	// Temporary Images to run slower and safer..........
 	SvOi::SVImageBufferHandlePtr             m_aResultImagesCopy[SVExternalToolTaskData::NUM_RESULT_IMAGES];
 	SvOi::SVImageBufferHandlePtr             m_aInputImagesCopy[SVExternalToolTaskData::NUM_INPUT_IMAGES];
 	bool                     m_bUseImageCopies;

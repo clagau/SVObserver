@@ -118,7 +118,7 @@ ResultValueDefinitionStruct::~ResultValueDefinitionStruct()
 	Clear();
 }
 
-const ResultValueDefinitionStruct& ResultValueDefinitionStruct::operator = (const ResultValueDefinitionStruct& rRhs)
+ResultValueDefinitionStruct& ResultValueDefinitionStruct::operator = (const ResultValueDefinitionStruct& rRhs)
 {
 
 	if (this != &rRhs)
@@ -140,7 +140,7 @@ void ResultValueDefinitionStruct::Clear()
 	}
 }
 
-long InputValueDefinition::GetVt() const
+long InputValueDefinition::getVt() const
 {
 	return m_InputValueDefStruct.m_VT;
 }
@@ -177,7 +177,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 {
 	m_Dim = 0;
 	m_Type = SvOp::ExDllInterfaceType::Invalid;
-	m_LinkedValueIndex = -1 ;
+	m_LinkedValueIndex = -1;
 	m_InputValueDefStruct = InputValueDefStruct;
 
 	if (!(m_InputValueDefStruct.m_DefaultValue.vt & VT_ARRAY))
@@ -196,7 +196,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 				//until now BSTR Arrays are only used for TablRowNames
 				/// therefore the same index like the table before
 				m_Type = SvOp::ExDllInterfaceType::TableNames;
-				m_LinkedValueIndex = (*pNLValue)-1;
+				m_LinkedValueIndex = (*pNLValue) - 1;
 			}
 			else if ((m_InputValueDefStruct.m_DefaultValue.vt &  VT_R8)
 				|| (m_InputValueDefStruct.m_DefaultValue.vt &  VT_I4))
@@ -214,6 +214,78 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 	}
 }
 
+ResultTableDefinitionStruct& ResultTableDefinitionStruct::operator = (const ResultTableDefinitionStruct& rhs)
+{
+	if (this != &rhs)
+	{
+		lVT = rhs.lVT;
+		bstrDisplayName = rhs.bstrDisplayName.copy();
+		type = rhs.type;
+		ColoumnCount = rhs.ColoumnCount;
+		RowCount = rhs.RowCount;
 
+		ColumnNames = rhs.ColumnNames;
+	}
+	return *this;
+}
+ResultTableDefinitionStruct::ResultTableDefinitionStruct(const ResultTableDefinitionStruct& rRhs) 
+{
+	*this = rRhs;
+}
+
+
+void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex)
+{
+	m_ValueIndex = ValueIndex;
+	m_ValueDefinition = resultValueDefinitionStruct;
+
+}
+
+int ResultValueDefinition::getIndex() const
+{
+	return m_ValueIndex;
+}
+
+long ResultValueDefinition::getVT() const
+{
+	return m_ValueDefinition.m_VT;
+}
+std::string ResultValueDefinition::getDisplayName() const
+{
+	_bstr_t ret(m_ValueDefinition.m_bDisplayName);
+	std::string result((LPCSTR)ret);
+	return result;
+}
+
+void ResultTableDefinition::setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long Index)
+{
+	m_TableDefinition = DefinitionStruct;
+	m_ValueIndex = Index;
+}
+
+std::vector<std::string>  ResultTableDefinition::getColoumnNames() const
+{
+	std::vector<std::string> Ret;
+	if (m_TableDefinition.ColoumnCount > 0 && (m_TableDefinition.ColumnNames.vt == (VT_ARRAY | VT_BSTR)))
+	{
+		CComSafeArray<BSTR> saInput(m_TableDefinition.ColumnNames.parray);
+		int dim = saInput.GetDimensions();
+		ATLASSERT(dim == 1);
+		int len = saInput.GetCount();
+		for (int y = 0; y < len; y++)
+		{
+			CComBSTR  name = saInput.GetAt(y);
+			_bstr_t bstrname = name.m_str;
+			Ret.push_back(LPCSTR(bstrname));
+		}
+
+	}
+	return Ret;
+}
+std::string ResultTableDefinition::getDisplayName() const
+{
+	std::string result((LPCSTR)m_TableDefinition.bstrDisplayName);
+	return result;
+}
 
 } //namespace SvOp

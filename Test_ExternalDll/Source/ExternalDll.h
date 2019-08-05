@@ -58,3 +58,6 @@ TOOLDLL_API HRESULT __stdcall SVGetNumberOfResultImages (long* plNumberOfResultI
 TOOLDLL_API HRESULT __stdcall SVGetResultImageDefinitions (GUID tool, long* plArraySize, ImageDefinitionStruct** ppaImageDefinitions);
 TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure (ImageDefinitionStruct* paStructs);
 
+TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTableDefinitionStruct** ppaResultValues);
+TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
+TOOLDLL_API HRESULT __stdcall GetResultTables(GUID tool, long  Size, VARIANT* pResultTables);
