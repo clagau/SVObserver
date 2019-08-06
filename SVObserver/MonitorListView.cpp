@@ -884,17 +884,11 @@ bool MonitorListView::EditMonitoredItem(int item, bool bEditImage)
 			case MonitorListNameNode:
 			{
 				// Show Add/Remove List Dialog
-				SvStl::MessageContainerVector errorMessages;
-				bRetVal = pConfig->SetupRemoteMonitorList(&errorMessages);
+				bRetVal = pConfig->SetupRemoteMonitorList();
 				if (bRetVal)
 				{
 					OnUpdate(this, 0, nullptr);
 					return true;
-				}
-				else if (0 < errorMessages.size())
-				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Display);
-					Msg.setMessage(errorMessages[0].getMessage());
 				}
 			}
 			break;

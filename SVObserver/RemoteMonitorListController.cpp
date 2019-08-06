@@ -75,7 +75,7 @@ bool RemoteMonitorListController::IsEmpty() const
 	return m_list.empty();
 }
 
-bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig, SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 {
 	bool bRetVal = false;
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
@@ -84,7 +84,13 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig, SvStl::M
 	INT_PTR rc = dlg.DoModal();
 	if (IDOK == rc)
 	{
-		 bRetVal = SetRemoteMonitorList(dlg.GetRemoteMonitorList(), pErrorMessages); // Update the list
+		SvStl::MessageContainerVector errorMessages;
+		bRetVal = SetRemoteMonitorList(dlg.GetRemoteMonitorList(), &errorMessages); // Update the list
+		if (0 < errorMessages.size())
+		{
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Display);
+			Msg.setMessage(errorMessages[0].getMessage());
+		}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;

@@ -166,6 +166,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(const SvPb::ImageS
 				std::string DebugString = SvUl::Format(_T("Failed because required memory size %lld\n"), neededBufferSpace / 1024 / 1024);
 				::OutputDebugString(DebugString.c_str());
 #endif
+				m_rDataController.clearImageBuffer(true);
 				SvDef::StringVector msgList;
 				msgList.push_back(SvUl::Format(_T("%d"), static_cast<long>(neededBufferSpace / 1024 / 1024)));
 				msgList.push_back(SvUl::Format(_T("%d"), static_cast<long>(m_rDataController.getMaxBufferSizeInBytes()/1024/1024)));

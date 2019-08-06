@@ -33,7 +33,7 @@ class RemoteMonitorListController
 public:
 	void Clear();
 	bool IsEmpty() const;
-	bool Setup(SVConfigurationObject* pConfig, SvStl::MessageContainerVector *pErrorMessages = nullptr );
+	bool Setup(SVConfigurationObject* pConfig);
 	const RemoteMonitorListMap& GetRemoteMonitorList() const;
 	bool SetRemoteMonitorList(const RemoteMonitorListMap& rList, SvStl::MessageContainerVector *pErrorMessages = nullptr );
 

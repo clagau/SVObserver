@@ -5342,12 +5342,12 @@ void SVConfigurationObject::OnObjectRenamed(const SVObjectClass& rRenamedObject,
 	}
 }
 
-bool SVConfigurationObject::SetupRemoteMonitorList(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+bool SVConfigurationObject::SetupRemoteMonitorList()
 {
 	bool bRetVal = false;
 	if (nullptr != m_pIOController)
 	{
-		bRetVal = m_pIOController->SetupRemoteMonitorList(this, pErrorMessages);
+		bRetVal = m_pIOController->SetupRemoteMonitorList(this);
 	}
 	return bRetVal;
 }
