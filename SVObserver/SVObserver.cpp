@@ -489,8 +489,8 @@ void SVObserverApp::OnRunMode()
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
-		//Log exception, (do not display the error because it is called from remote)
-		SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log);
+		
+		SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 		Exception.setMessage(rExp.getMessage());
 	}
 }
@@ -3532,8 +3532,8 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 				Start();
 			}
 			catch (const SvStl::MessageContainer& rExp)
-			{ //Log exception, (do not display the error because it is called from remote)
-				SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log);
+			{ 
+				SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 				Exception.setMessage(rExp.getMessage());
 				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
 			}

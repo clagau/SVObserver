@@ -136,7 +136,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 		msgList.push_back( SvUl::Format( _T("%d"), OsError ));
 		msgList.push_back( SvUl::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
 	}
 }
