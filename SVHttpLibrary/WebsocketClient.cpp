@@ -15,6 +15,7 @@
 #include "SVLogLibrary/Logging.h"
 #include "WebsocketClient.h"
 #include "WebsocketClientSettings.h"
+#include <winerror.h>
 
 
 namespace SvHttp
@@ -126,6 +127,10 @@ void WebsocketClient::handle_connection_error(const boost::system::error_code& e
 	{
 		SV_LOG_GLOBAL(info) << "server disconnected :(";
 	}
+	else if (ec.value() == WSAECONNREFUSED)
+	{
+		SV_LOG_GLOBAL(debug) << "No connection could be made because the target machine actively refused it";
+	}
 	else
 	{
 		SV_LOG_GLOBAL(error) << "server connection error: " << ec;
@@ -153,7 +158,7 @@ void WebsocketClient::close_connection()
 	if (!m_IsDisconnectEventSent && !m_IsShuttingDown)
 	{
 		m_IsDisconnectEventSent = true;
-		SV_LOG_GLOBAL(info) << "Server disconnected";
+		SV_LOG_GLOBAL(debug) << "Server disconnected";
 		m_pEventHandler->onDisconnect();
 	}
 }

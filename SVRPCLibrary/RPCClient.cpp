@@ -196,7 +196,7 @@ void RPCClient::onDisconnect()
 void RPCClient::on_disconnect()
 {
 	m_IsConnected.store(false);
-	SV_LOG_GLOBAL(info) << "RPCClient received disconnect event. Trying to reconnect.";
+	SV_LOG_GLOBAL(debug) << "RPCClient received disconnect event. Trying to reconnect.";
 	cancel_all_pending();
 	m_WebsocketClient.reset();
 	schedule_reconnect(boost::posix_time::seconds(1));
@@ -281,7 +281,7 @@ void RPCClient::on_reconnect(const boost::system::error_code& error)
 		return;
 	}
 
-	SV_LOG_GLOBAL(info) << "Trying to reconnect.";
+	SV_LOG_GLOBAL(debug) << "Trying to reconnect.";
 	m_WebsocketClient = m_WebsocketClientFactory.create(this);
 }
 
