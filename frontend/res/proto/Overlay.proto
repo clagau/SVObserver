@@ -9,13 +9,11 @@
 syntax = "proto3";
 package SvPb;
 
-import "Variant.proto";
-
 message ValueObject
 {
-	Variant value = 1;
+	double value = 1;
 	bytes guid = 2;
-	bool editable = 3;
+	int32 trPos = 3;	//The position in triggerRecord, but one-based (that mean trPos-1 is the pos in TR) because 0 = default and means not set.
 }
 
 message OverlayDesc
@@ -28,35 +26,33 @@ message Overlay
 	// Name of the overlay that is also displayed.
 	string name = 1;
 
-	// Hex color as rgba
-	// TODO: color as ValueObject as well?
-	uint32 color = 2;
+	bytes guid = 2;
+
+	// Hex color as abgr (a = alpha will not used yet)
+	ValueObject color = 3;
 
 	// Bounding box of the overlay that introduces a local
 	// coordinate system for the shapes, positioning them relative
 	// on the image.
-	OverlayBoundingBox boundingBox = 3;
+	OverlayBoundingShape boundingShape = 4;
 
-	repeated OverlayShape shapes = 4;
+	bool displayBounding = 5;
+
+	repeated OverlayShapeGroup shapeGroups = 6;
 }
 
-message OverlayBoundingBox
+message OverlayBoundingShape
 {
 	oneof shape
 	{
-		OverlayBoundingBoxRect rect = 1;
+		OverlayShapeRect rect = 1;
 	}
 }
 
-// The rectangle is the simplest overlay bounding box.
-// It has a lower-left anchor represented by x/y and a
-// width and height (w/h), all in pixels.
-message OverlayBoundingBoxRect
+message OverlayShapeGroup
 {
-	ValueObject x = 1;
-	ValueObject y = 2;
-	ValueObject w = 3;
-	ValueObject h = 4;
+	string name = 1;
+	repeated OverlayShape shapes = 2;
 }
 
 // Message encapsulating the actual shape in an oneof.
@@ -66,66 +62,85 @@ message OverlayBoundingBoxRect
 // of the overlay will be 250px.
 message OverlayShape
 {
-	// Hex color as rgba, for overwriting the default color
+	// Hex color as abgr, for overwriting the default color
 	// specified in the Overlay message
-	// TODO: color as ValueObject as well?
-	uint32 color = 1;
+	ValueObject color = 1;
 
 	oneof shape
 	{
 		OverlayShapeLine line = 2;
 		OverlayShapeRect rect = 3;
 		OverlayShapeArrow arrow = 4;
-		OverlayShapeArrowWithMarker arrowWithMarker = 5;
+		OverlayShapeRectArray rectArray = 5;
 	}
 }
 
 // Line shape with relative x/y for start and end of the line.
 message OverlayShapeLine
 {
-	float x1 = 1;
-	float y1 = 2;
-	float x2 = 3;
-	float y2 = 4;
+	ValueObject x1 = 1;
+	ValueObject y1 = 2;
+	ValueObject x2 = 3;
+	ValueObject y2 = 4;
 }
 
 // Rectangular shape with lower-left anchor represented by x/y
 // and width and height (w/h).
 message OverlayShapeRect
 {
-	float x = 1;
-	float y = 2;
-	float w = 3;
-	float h = 4;
-}
-
-enum ArrowDirection
-{
-	up = 0;
-	right = 1;
-	down = 2;
-	left = 3;
+	ValueObject x = 1;
+	ValueObject y = 2;
+	ValueObject w = 3;
+	ValueObject h = 4;
+	ValueObject angle = 5;
 }
 
 // Like shape line with an additional arrow placed at second point.
 message OverlayShapeArrow
 {
-	float x1 = 1;
-	float y1 = 2;
-	float x2 = 3;
-	float y2 = 4;
-	float arrowHeight = 5;
+	ValueObject x1 = 1;
+	ValueObject y1 = 2;
+	ValueObject x2 = 3;
+	ValueObject y2 = 4;
 }
 
-// Like arrow shape with an two additional marker.
-// Marker positions are relative between start and end.
-message OverlayShapeArrowWithMarker
+message RectData
 {
-	float x1 = 1;
-	float y1 = 2;
-	float x2 = 3;
-	float y2 = 4;
-	float arrowHeight = 5;
-	float marker1 = 6;
-	float marker2 = 7;
+	double x = 1;
+	double y = 2;
+	double w = 3;
+	double h = 4;
+}
+
+//This message is for rectArray data from SVObserver for x1/y1 x2/y2 without rotation (needed e.g. for blob boxes)
+message SVORectArray12Data
+{
+	//The position in triggerRecord, but one-based (that mean trPos-1 is the pos in TR) because 0 = default and means not set.
+	int32 x1TrPos = 1;
+	int32 y1TrPos = 2;
+	int32 x2TrPos = 3;
+	int32 y2TrPos = 4;
+}
+
+//This message is for rectArray data from SVObserver for pattern x/y and angle is for all rects variable. Width and Height is the same for all.
+message SVORectArrayPatternData
+{
+	//The position in triggerRecord, but one-based (that mean trPos-1 is the pos in TR) because 0 = default and means not set.
+	int32 xTrPos = 1; //array value
+	int32 yTrPos = 2; //array value
+	int32 angleTrPos = 3; //array value
+	int32 wTrPos = 4; //only single value
+	int32 hTrPos = 5; //only single value
+}
+
+// An Array of rectangular shape.
+message OverlayShapeRectArray
+{
+	repeated RectData rectArray = 1;
+
+	oneof SVOData
+	{
+		SVORectArray12Data x12Data = 2;
+		SVORectArrayPatternData patternData = 3;
+	}
 }
