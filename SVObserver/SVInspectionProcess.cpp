@@ -46,6 +46,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
+#include "InspectionEngine/SVImageClass.h"
 #pragma endregion Includes
 
 //#define TRACE_TRC
@@ -3408,6 +3409,17 @@ bool SVInspectionProcess::usePropagateSizeAndPosition() const
 	}
 	return false;
 }
+
+SvPb::OverlayDesc SVInspectionProcess::getOverlayStruct(const SvOi::ISVImage& rImage) const
+{
+	auto* pToolSet = GetToolSet();
+	if (nullptr != pToolSet)
+	{
+		return pToolSet->getOverlayStruct(rImage);
+	}
+	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+	throw msg;
+}
 #pragma endregion IInspectionProcess methods
 
 bool SVInspectionProcess::IsDisabledPPQVariable(const SVObjectClass* pObject) const
@@ -3751,6 +3763,7 @@ void SVInspectionProcess::buildValueObjectDefList() const
 			pValueObjectDef->set_name(pObject->GetCompleteName());
 			pValueObjectDef->set_type(pObject->GetObjectSubType());
 			pValueObjectDef->set_typestring(pValueObject->getTypeName());
+			pValueObject->setTrPos(pList->size() - 1);
 		}
 	}
 

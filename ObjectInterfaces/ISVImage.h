@@ -11,6 +11,11 @@
 #include "SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
+namespace SvPb
+{
+class OverlayDesc;
+}
+
 namespace SvOi
 {
 	//this class is a interface. It should only have pure virtual public method and no member variables
@@ -59,5 +64,9 @@ namespace SvOi
 		/// Return the output rectangle
 		//************************************
 		virtual RECT GetOutputRectangle() const = 0;
+
+		/// Return the Overlay struct depend of this image.
+		/// \returns SvPb::OverlayDesc
+		virtual SvPb::OverlayDesc getOverlayStruct() const = 0;
 	};
 } //namespace SvOi

@@ -61,8 +61,8 @@ private:
 		SvRpc::ServerStreamContext::Ptr ctx;
 	};
 	void on_new_trigger_record(int inspectionPos, int trId, bool is_reject);
-	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, std::shared_ptr<SvTrc::ITriggerRecordR>, int inspectionPos, GUID inspectionId, int trId, bool is_reject);
-	SvSyl::SVFuture<void> collect_images(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeOverlays);
+	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, GUID inspectionId, int trId, bool is_reject);
+	SvSyl::SVFuture<void> collect_images(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeOverlays);
 	void collect_values(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids);
 
 private:

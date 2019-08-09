@@ -146,6 +146,8 @@ InspectionCmdResult propagateSizeAndPosition(SvPb::PropagateSizeAndPositionReque
 
 InspectionCmdResult usePropagateSizeAndPosition(SvPb::UsePropagateSizeAndPositionRequest request);
 
+InspectionCmdResult getOverlayStruct(SvPb::GetOverlayStructRequest request);
+
 InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
 
 std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);

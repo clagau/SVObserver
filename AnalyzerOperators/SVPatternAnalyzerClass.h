@@ -73,6 +73,7 @@ protected:
 	SVObjectClass* CreateResult();
 
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
+	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
 	
 	void ResetResultValues();
 	void ResizeResultValues(int nNum);

@@ -28,10 +28,11 @@
 #include "Definitions\ObjectDefines.h"
 #include "Definitions\TextDefineSvDef.h"
 #include "SVStatusLibrary\ErrorNumbers.h"
+#include "SVStatusLibrary/MessageContainer.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
-#include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
@@ -1169,6 +1170,38 @@ InspectionCmdResult usePropagateSizeAndPosition(SvPb::UsePropagateSizeAndPositio
 	{
 		SvPb::UsePropagateSizeAndPositionResponse* pResponse = result.m_response.mutable_usepropagatesizeandpositionresponse();
 		pResponse->set_isused(pInspection->usePropagateSizeAndPosition());
+	}
+	else
+	{
+		result.m_hResult = E_POINTER;
+	}
+	return result;
+}
+
+InspectionCmdResult getOverlayStruct(SvPb::GetOverlayStructRequest request)
+{
+	InspectionCmdResult result;
+
+	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.imageid())));
+	if (nullptr != pImage)
+	{
+		try
+		{
+			SvPb::OverlayDesc overlay = pImage->getOverlayStruct();
+			SvPb::GetOverlayStructResponse* pResponse = result.m_response.mutable_getoverlaystructresponse();
+			SvPb::OverlayDesc* pOverlay = pResponse->mutable_overlays();
+			*pOverlay = overlay;
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(rExp.getMessage());
+			result.m_hResult = E_FAIL;
+		}
+		catch (...)
+		{
+			result.m_hResult = E_FAIL;
+		}
 	}
 	else
 	{

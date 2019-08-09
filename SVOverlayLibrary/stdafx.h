@@ -42,6 +42,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <stdio.h>
 #include <tchar.h>
 #include <vector>

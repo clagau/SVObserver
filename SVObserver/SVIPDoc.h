@@ -37,6 +37,10 @@ class SVRegressionFileSelectSheet;
 class SVImageViewClass;
 class ToolSetView;
 class ResultTabbedView;
+namespace SvIe
+{
+class SVImageClass;
+}
 namespace SvOi
 {
 	class IObjectWriter;

@@ -78,6 +78,7 @@ public:
 	const std::string  SVTaskObjectListClass::MakeUniqueToolName(LPCTSTR ToolName) const;
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
+	virtual void collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
 
 	/// The method destroys a child object. 
 	/// \param pTaskObject [in] object to destroy
@@ -113,8 +114,6 @@ public:
 protected:
 	void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
-
-	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner ) override;
 

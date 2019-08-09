@@ -2023,6 +2023,20 @@ HRESULT SVTaskObjectClass::CollectOverlays(SVImageClass* p_Image, SVExtentMultiL
 	return hrRet;
 }
 
+void SVTaskObjectClass::collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+{
+	addOverlayGroups(pImage, rOverlay);
+
+	for (size_t j = 0; j < m_friendList.size(); j++)
+	{
+		SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(m_friendList[j].getObject());
+		if (pObject)
+		{
+			pObject->collectOverlays(pImage, rOverlay);
+		}
+	}
+}
+
 HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray)
 {
 	HRESULT l_Status = S_OK;

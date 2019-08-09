@@ -21,6 +21,7 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -289,6 +290,29 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 	}
 
 	return retList;
+}
+
+void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	BOOL isRotation = false;
+	m_voUseProfileRotation.GetValue(isRotation);
+
+	auto* pOverlay = rOverlay.add_overlays();
+	pOverlay->set_name(GetName());
+	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+	pOverlay->set_displaybounding(true);
+	auto* pBoundingBox = pOverlay->mutable_boundingshape();
+	auto* pRect = pBoundingBox->mutable_rect();
+	setValueObject(m_ExtentLeft, *pRect->mutable_x());
+	setValueObject(m_ExtentTop, *pRect->mutable_y());
+	setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	if (isRotation)
+	{
+		setValueObject(m_svRotationAngle, *pRect->mutable_angle());
+	}
+	collectOverlays(pImage, *pOverlay);
 }
 #pragma endregion Public Methods
 

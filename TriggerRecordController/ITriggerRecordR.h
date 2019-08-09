@@ -64,6 +64,10 @@ namespace SvTrc
 		/// Return if this triggerRecord is up-to-date and can be used.
 		/// \returns bool
 		virtual bool isObjectUpToTime() const = 0;
+
+		/// Return the resetId with this tr is created.
+		/// \returns long
+		virtual long getResetId() const = 0;
 	};
 
 	typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;

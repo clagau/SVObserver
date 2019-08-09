@@ -124,6 +124,7 @@ public:
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const std::string& rFilename) override; 
 	virtual RECT GetOutputRectangle() const override;
+	virtual SvPb::OverlayDesc getOverlayStruct() const override;
 #pragma region virtual method (ISVImage)
 
 protected:

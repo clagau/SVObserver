@@ -26,6 +26,7 @@
 #include "Operators/SVRange.h"
 #include "Operators/TableObject.h"
 #include "Tools/SVTool.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -1695,6 +1696,19 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage, SVExt
 		}
 	}
 	return S_OK;
+}
+
+void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+{
+	auto* pGroup = rOverlay.add_shapegroups();
+	pGroup->set_name("Blobs");
+	auto* pShape = pGroup->add_shapes();
+	pShape->mutable_color()->set_value(SvDef::DefaultSubFunctionColor1);
+	auto* pRectArray = pShape->mutable_rectarray()->mutable_x12data();
+	pRectArray->set_x1trpos(m_Value[SvOi::SV_BOXX_MIN].getTrPos() + 1);
+	pRectArray->set_y1trpos(m_Value[SvOi::SV_BOXY_MIN].getTrPos() + 1);
+	pRectArray->set_x2trpos(m_Value[SvOi::SV_BOXX_MAX].getTrPos() + 1);
+	pRectArray->set_y2trpos(m_Value[SvOi::SV_BOXY_MAX].getTrPos() + 1);
 }
 
 void SVBlobAnalyzerClass::addDefaultInputObjects( SvOl::SVInputInfoListClass* PInputListToFill )

@@ -130,6 +130,12 @@ namespace SvOi
 		//! Sets the save flag for the value object
 		//! \param shouldSaveValue [in] flag determining if value saved
 		virtual void setSaveValueFlag(bool shouldSaveValue) = 0;
+
+		void setTrPos(int pos) const { m_trPos = pos; };
+		int getTrPos() const { return m_trPos; };
+
+	private:
+		mutable int m_trPos = -1;
 	};
 
 	struct SetValueStruct 

@@ -42,6 +42,8 @@ public:
 
 	virtual bool isValueDataValid() const override;
 	virtual bool isObjectUpToTime() const override;
+
+	virtual long getResetId() const override { return m_ResetId; };
 #pragma endregion ITriggerRecordR Methods
 
 #pragma region ITriggerRecordRW Methods

@@ -377,6 +377,24 @@ long SVToolSetClass::getTriggerCount() const
 	return count;
 }
 
+SvPb::OverlayDesc SVToolSetClass::getOverlayStruct(const SvOi::ISVImage& rImage) const
+{
+	SvPb::OverlayDesc overlayDesc;
+	auto* pImage = dynamic_cast<const SvIe::SVImageClass*>(&rImage);
+	if (nullptr != pImage)
+	{
+		for (auto* pTask : m_TaskObjectVector)
+		{
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
+			if (nullptr != pTool && pTool->isInputImage(pImage->GetUniqueObjectID()))
+			{
+				pTool->addOverlays(pImage, overlayDesc);
+			}
+		}
+	}
+	return overlayDesc;
+}
+
 #pragma region virtual method (IToolSet)
 bool SVToolSetClass::IsToolPreviousToSelected(const SVGUID& p_rToolID) const
 {

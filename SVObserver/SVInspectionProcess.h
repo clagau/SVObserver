@@ -109,6 +109,7 @@ public:
 	HRESULT resetTool(SvOi::IObjectClass& rTool) override;
 	virtual HRESULT propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
+	virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;

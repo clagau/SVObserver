@@ -177,6 +177,10 @@ public:
 	virtual HRESULT UnregisterSubObject(SVObjectClass* pObject) override;
 
 	virtual HRESULT CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray);
+	/// Collect all ShapeGroups for this overlay in the protoBuf-message and return it.
+	/// \param pImage [in] Image for with the overlay should be collected.
+	/// \param rOverlay [in,out] Protobuf Message.
+	virtual void collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const;
 
 	void AddEmbeddedObject(SVObjectClass* pObject);
 	void RemoveEmbeddedObject(SVObjectClass* pObjectToRemove);
@@ -203,6 +207,10 @@ protected:
 	HRESULT UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine);
 	HRESULT UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents);
 	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray);
+	/// Add a overlay group if available to the protoBuf-message.
+	/// \param pImage [in] Image for with the overlay should be collected.
+	/// \param rOverlay [in,out] Protobuf Message.
+	virtual void addOverlayGroups(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const {};
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;

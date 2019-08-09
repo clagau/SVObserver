@@ -54,6 +54,8 @@ public:
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
+
+	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const;
 #pragma endregion Public Methods
 
 protected:

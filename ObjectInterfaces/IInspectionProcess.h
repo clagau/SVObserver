@@ -13,8 +13,14 @@
 
 namespace SvOi
 {
+class ISVImage;
 class IObjectClass;
 class ITaskObject;
+}
+
+namespace SvPb
+{
+class OverlayDesc;
 }
 
 namespace SvOi
@@ -86,5 +92,10 @@ namespace SvOi
 		virtual HRESULT propagateSizeAndPosition() = 0;
 
 		virtual bool usePropagateSizeAndPosition() const = 0;
+
+		/// Return the Overlay struct depend of the image.
+		/// \param rImage [in] Image
+		/// \returns SvPb::OverlayDesc
+		virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const = 0;
 	};
 } //namespace SvOi

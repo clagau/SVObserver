@@ -22,6 +22,10 @@
 
 struct IDirectDrawSurface7;
 
+namespace SvIe
+{
+class SVImageClass;
+}
 namespace SvTo
 {
 class SVToolClass;

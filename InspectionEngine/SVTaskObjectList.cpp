@@ -476,6 +476,19 @@ HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentM
 	return hrRet;
 }
 
+void SVTaskObjectListClass::collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+{
+	__super::collectOverlays(pImage, rOverlay);
+
+	for (auto* pObject : m_TaskObjectVector)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->collectOverlays(pImage, rOverlay);
+		}
+	}
+}
+
 bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, DWORD context )
 {
 	// Kill the Object
@@ -879,13 +892,6 @@ void SVTaskObjectListClass::DeleteAll()
 	DeleteAt(0, static_cast<int> (m_TaskObjectVector.size()));
 
 	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
-}
-
-HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
-{
-	HRESULT hrRet = SVTaskObjectClass::onCollectOverlays(p_Image, p_MultiLineArray);
-
-	return hrRet;
 }
 
 SVObjectClass* SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )

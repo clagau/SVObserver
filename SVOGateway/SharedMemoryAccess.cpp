@@ -323,7 +323,7 @@ static bool read_variant(SvPb::Variant& resVar, const _variant_t& variant)
 	return SvPb::ConvertVariantToProtobuf(variant, &resVar) == S_OK;
 }
 
-void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, std::shared_ptr<SvTrc::ITriggerRecordR> tro, int inspectionPos, GUID inspectionId, int trId, bool is_reject)
+void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, SvTrc::ITriggerRecordRPtr pTro, int inspectionPos, GUID inspectionId, int trId, bool is_reject)
 {
 	auto res = std::make_shared<SvPb::GetProductStreamResponse>();
 
@@ -331,8 +331,8 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 	res->set_isreject(is_reject);
 
 	const auto includeoverlays = stream->req.includeoverlays();
-	auto future = collect_images(*res, *tro, stream->req.imageids(), inspectionPos, inspectionId, includeoverlays);
-	collect_values(*res, *tro, stream->req.valueids());
+	auto future = collect_images(*res, pTro, stream->req.imageids(), inspectionPos, inspectionId, includeoverlays);
+	collect_values(*res, *pTro, stream->req.valueids());
 
 	future.then(m_io_service, [stream, res](SvSyl::SVFuture<void> future)
 	{
@@ -343,7 +343,7 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 	});
 }
 
-SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamResponse& res, SvTrc::ITriggerRecordR& tro, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeoverlays)
+SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamResponse& res, SvTrc::ITriggerRecordRPtr pTro, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeoverlays)
 {
 	std::vector<SvSyl::SVFuture<void>> overlay_futures;
 
@@ -357,7 +357,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamR
 		}
 
 		auto guid = SvPb::GetGuidFromString(imgId);
-		auto imgPtr = tro.getImage(guid);
+		SvTrc::IImagePtr imgPtr = (nullptr != pTro) ? pTro->getImage(guid) : nullptr;
 		if (!imgPtr)
 		{
 			SV_LOG_GLOBAL(debug) << "  > image " << SvPb::PrettyPrintGuid(guid) << " not found";
@@ -375,7 +375,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamR
 		if (includeoverlays && overlayDesc)
 		{
 			// also binding stream will make sure desc's memory is available until callback is called
-			auto future = m_overlay_controller.getOverlays(inspectionId, guid).then<void>(m_io_service,
+			auto future = m_overlay_controller.getOverlays(pTro, inspectionId, guid).then<void>(m_io_service,
 				[res, overlayDesc](SvSyl::SVFuture<SvPb::OverlayDesc> future)
 			{
 				const auto& desc = future.get();

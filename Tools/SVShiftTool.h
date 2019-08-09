@@ -61,6 +61,9 @@ public:
 	//These need to be public so that SVShiftToolUtility can access the values
 	SvVol::SVDoubleValueObjectClass* GetTranslationXInput(bool bRunMode = false) const;
 	SvVol::SVDoubleValueObjectClass* GetTranslationYInput(bool bRunMode = false) const;
+
+	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const;
+
 #pragma endregion Public Methods
 
 protected:

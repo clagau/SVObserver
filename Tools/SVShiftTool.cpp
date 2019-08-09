@@ -18,6 +18,7 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -365,6 +366,22 @@ SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput(bool bRunMode
 SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= false*/) const
 {
 	return SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_TranslationYInput, bRunMode);
+}
+
+void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	auto* pOverlay = rOverlay.add_overlays();
+	pOverlay->set_name(GetName());
+	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+	pOverlay->set_displaybounding(true);
+	auto* pBoundingBox = pOverlay->mutable_boundingshape();
+	auto* pRect = pBoundingBox->mutable_rect();
+	setValueObject(m_LeftResult, *pRect->mutable_x(), true);
+	setValueObject(m_TopResult, *pRect->mutable_y(), true);
+	setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	collectOverlays(pImage, *pOverlay);
 }
 #pragma endregion Protected Methods
 

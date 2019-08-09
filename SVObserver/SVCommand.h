@@ -17,6 +17,10 @@
 #pragma endregion Includes
 
 class SVInspectionProcess;
+namespace SvIe
+{
+class SVImageClass;
+}
 
 enum SVIMCOMMANDSRV_VERSION
 {

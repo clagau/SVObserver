@@ -12,7 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Definitions/GlobalConst.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITool.h"
+#include "ObjectInterfaces/IToolSet.h"
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
@@ -1353,6 +1355,18 @@ RECT SVImageClass::GetOutputRectangle() const
 	RECT rectTemp;
 	m_ImageInfo.GetOutputRectangle(rectTemp);
 	return rectTemp;
+}
+
+SvPb::OverlayDesc SVImageClass::getOverlayStruct() const
+{
+	auto* pInsp = dynamic_cast<SvOi::IInspectionProcess*>(GetInspection());
+	assert(nullptr != pInsp);
+	if (nullptr != pInsp)
+	{
+		return pInsp->getOverlayStruct(*this);
+	}
+	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+	throw msg;
 }
 #pragma endregion virtual method (ISVImage)
 

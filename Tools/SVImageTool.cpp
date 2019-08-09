@@ -22,6 +22,7 @@
 #include "Operators/SVThresholdClass.h"
 #include "Operators/SVUserMaskOperatorClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -302,6 +303,22 @@ HRESULT SVImageToolClass::UpdateTranslation()
 SvVol::SVStringValueObjectClass* SVImageToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;
+}
+
+void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	auto* pOverlay = rOverlay.add_overlays();
+	pOverlay->set_name(GetName());
+	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+	pOverlay->set_displaybounding(true);
+	auto* pBoundingBox = pOverlay->mutable_boundingshape();
+	auto* pRect = pBoundingBox->mutable_rect();
+	pRect->mutable_x()->set_value(0);
+	pRect->mutable_y()->set_value(0);
+	setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	collectOverlays(pImage, *pOverlay);
 }
 
 HRESULT SVImageToolClass::SetImageExtentToParent()

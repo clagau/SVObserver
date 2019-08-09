@@ -90,6 +90,7 @@ public:
 	bool getConditionalResult(bool bRunMode = false) const;
 
 	virtual HRESULT CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
+	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const;
 
 	// Auxiliary Source Image functions
 	HRESULT GetSourceImages(SvIe::SVImageClassPtrVector* p_psvImageList) const;
@@ -254,4 +255,6 @@ protected:
 	bool m_hasToolExtents{true};
 };
 
+
+void setValueObject(const SvVol::SVDoubleValueObjectClass& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos = false);
 } //namespace SvTo

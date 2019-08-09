@@ -158,6 +158,9 @@ public:
 			case SvPb::InspectionCmdMsgs::kUsePropagateSizeAndPositionRequest:
 				m_result = usePropagateSizeAndPosition(m_rRequest.usepropagatesizeandpositionrequest());
 				break;
+			case SvPb::InspectionCmdMsgs::kGetOverlayStructRequest:
+				m_result = getOverlayStruct(m_rRequest.getoverlaystructrequest());
+				break;
 			case SvPb::InspectionCmdMsgs::kGetObjectSelectorItemsRequest:
 				m_result = getObjectSelectorItems(m_rRequest.getobjectselectoritemsrequest());
 				break;

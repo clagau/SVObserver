@@ -15,6 +15,7 @@
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
+#include "SVProtoBuf/ConverterHelper.h"
 
 namespace SvAo
 {
@@ -435,6 +436,31 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage,SVEx
 		}
 	}
 	return l_hrRet;
+}
+
+void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+{
+	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
+
+	if (rAnalyzerExtents.hasFigure())
+	{
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
+		const SVImageExtentClass& rToolExtents = (nullptr != pTool) ? pTool->GetImageExtent() : SVImageExtentClass {};
+		SVExtentFigureStruct figure = rAnalyzerExtents.GetFigure();
+		rToolExtents.TranslateFromOutputSpace(figure, figure);
+		if (SvDef::SVExtentShapeArrow == figure.m_eShape)
+		{
+			auto* pGroup = rOverlay.add_shapegroups();
+			pGroup->set_name("LAnalyzer-Arrow");
+			auto* pShape = pGroup->add_shapes();
+			auto* pArrow = pShape->mutable_arrow();
+			pArrow->mutable_x1()->set_value(figure.m_svCenterLeft.m_x);
+			pArrow->mutable_x2()->set_value(figure.m_svCenterRight.m_x);
+			pArrow->mutable_y1()->set_value(figure.m_svCenterLeft.m_y);
+			pArrow->mutable_y2()->set_value(figure.m_svCenterRight.m_y);
+		}
+	}
+	//@TODO[MZA][8.20][01.08.2019] add graph overlays
 }
 
 bool SVLinearAnalyzerClass::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages)

@@ -962,6 +962,44 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage, SV
 	return S_OK;
 }
 
+void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+{
+	auto* pGroup = rOverlay.add_shapegroups();
+	pGroup->set_name("Pattern");
+	auto* pShape = pGroup->add_shapes();
+	pShape->mutable_color()->set_value(SvDef::DefaultSubFunctionColor1);
+	auto* pRectArray = pShape->mutable_rectarray()->mutable_patterndata();
+	pRectArray->set_xtrpos(msv_dpatResultX.getTrPos() + 1);
+	pRectArray->set_ytrpos(msv_dpatResultY.getTrPos() + 1);
+	pRectArray->set_angletrpos(msv_dpatResultAngle.getTrPos() + 1);
+
+	long width = 0;
+	long height = 0;
+	m_lpatModelWidth.GetValue(width);
+	m_lpatModelHeight.GetValue(height);
+	BOOL bCircularScan;
+	msv_bpatCircularOverscan.GetValue(bCircularScan);
+	if (bCircularScan)
+	{
+		POINT pos = {0, 0};
+		SIZE size = {width, height};
+
+		RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
+		width = rect.right - rect.left;
+		height = rect.bottom - rect.top;
+	}
+	pRectArray->set_width(width);
+	pRectArray->set_height(height);
+
+	long centerX = 0;
+	long centerY = 0;
+	m_lpatModelCenterX.GetValue(centerX);
+	m_lpatModelCenterY.GetValue(centerY);
+	pRectArray->set_centerx(centerX);
+	pRectArray->set_centery(centerY);
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : IsPtOverResult( CPoint point )
 // -----------------------------------------------------------------------------
@@ -1121,9 +1159,6 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 				lpatModelWidth = rect.right - rect.left;
 				lpatModelHeight = rect.bottom - rect.top;
 			}
-
-			BOOL bAngleMode;
-			msv_bpatSearchAngleMode.GetValue(bAngleMode); 
 
 			long centerX = 0;
 			long centerY = 0;

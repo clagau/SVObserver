@@ -13,6 +13,7 @@ import "Variant.proto";
 import "BasicStructure.proto";
 import "SVO-Enum.proto";
 import "GetObjectSelector.proto";
+import "Overlay.proto";
 
 //***************************************************************************
 // Help Structs
@@ -578,6 +579,16 @@ message UsePropagateSizeAndPositionResponse
 	bool isUsed = 1;
 }
 
+message GetOverlayStructRequest
+{
+	bytes imageId = 1; //Guid of the image
+}
+
+message GetOverlayStructResponse
+{
+	OverlayDesc overlays = 1;
+}
+
 message InspectionCmdMsgs
 {
 	oneof message
@@ -653,6 +664,8 @@ message InspectionCmdMsgs
 		PropagateSizeAndPositionRequest propagateSizeAndPositionRequest = 69;
 		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 70;
 		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 71;
+		GetOverlayStructRequest getOverlayStructRequest = 72;
+		GetOverlayStructResponse getOverlayStructResponse = 73;
 	}
 }
 
