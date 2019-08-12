@@ -35,9 +35,19 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlays(std::shared_pt
 		{
 			try
 			{
-				auto& desc = future.get();
-				fillOverlay(desc, pTr);
-				promise->set_value(desc);
+				if (nullptr != pTr && pTr->isObjectUpToTime())
+				{
+					auto& desc = future.get();
+					fillOverlay(desc, *pTr.get());
+					promise->set_value(desc);
+				}
+				else
+				{
+					SvPenv::Error err;
+					err.set_errorcode(SvPenv::ErrorCode::unknown);
+					err.set_message("TriggerRecord is not valid anymore");
+					promise->set_exception(SvRpc::errorToExceptionPtr(err));
+				}
 			}
 			catch (const std::exception& rEx)
 			{

@@ -20,13 +20,13 @@
 
 namespace SvOv
 {
-bool fillValue(SvTrc::ITriggerRecordRPtr pTr, long trPos, SvPb::ValueObject* pValue)
+bool fillValue(const SvTrc::ITriggerRecordR& rTr, long trPos, SvPb::ValueObject* pValue)
 {
 	bool isSet = false;
 	if (0 < trPos)
 	{
 		//trPos in PB is one based and in tr it is zero based.
-		_variant_t var = pTr->getDataValue(trPos - 1);
+		_variant_t var = rTr.getDataValue(trPos - 1);
 		if (VT_EMPTY != var.vt)
 		{
 			pValue->set_value(var);
@@ -36,24 +36,33 @@ bool fillValue(SvTrc::ITriggerRecordRPtr pTr, long trPos, SvPb::ValueObject* pVa
 	return isSet;
 }
 
-void fillRect(SvTrc::ITriggerRecordRPtr pTr, SvPb::OverlayShapeRect& rRect)
+void fillRect(const SvTrc::ITriggerRecordR& rTr, SvPb::OverlayShapeRect& rRect)
 {
-	fillValue(pTr, rRect.x().trpos(), rRect.mutable_x());
-	fillValue(pTr, rRect.y().trpos(), rRect.mutable_y());
-	fillValue(pTr, rRect.w().trpos(), rRect.mutable_w());
-	fillValue(pTr, rRect.h().trpos(), rRect.mutable_h());
+	fillValue(rTr, rRect.x().trpos(), rRect.mutable_x());
+	fillValue(rTr, rRect.y().trpos(), rRect.mutable_y());
+	fillValue(rTr, rRect.w().trpos(), rRect.mutable_w());
+	fillValue(rTr, rRect.h().trpos(), rRect.mutable_h());
 }
 
-bool fillRectArray(SvTrc::ITriggerRecordRPtr pTr, const SvPb::SVORectArray12Data& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
+std::vector<float> getDataArray(const SvTrc::ITriggerRecordR& rTr, int pos)
 {
-	_variant_t varX1 = pTr->getDataValue(rRectArrayData.x1trpos() - 1);
-	auto x1Array = SvUl::getVectorFromOneDim<float>(varX1);
-	_variant_t varY1 = pTr->getDataValue(rRectArrayData.y1trpos() - 1);
-	auto y1Array = SvUl::getVectorFromOneDim<float>(varY1);
-	_variant_t varX2 = pTr->getDataValue(rRectArrayData.x2trpos() - 1);
-	auto x2Array = SvUl::getVectorFromOneDim<float>(varX2);
-	_variant_t varY2 = pTr->getDataValue(rRectArrayData.y2trpos() - 1);
-	auto y2Array = SvUl::getVectorFromOneDim<float>(varY2);
+	_variant_t varX1 = rTr.getDataValue(pos);
+	if (VT_ARRAY & varX1.vt)
+	{
+		return SvUl::getVectorFromOneDim<float>(varX1);
+	}
+	else
+	{
+		return {varX1};
+	}
+}
+
+bool fillRectArray(const SvTrc::ITriggerRecordR& rTr, const SvPb::SVORectArray12Data& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
+{
+	auto x1Array = getDataArray(rTr, rRectArrayData.x1trpos() - 1);
+	auto y1Array = getDataArray(rTr, rRectArrayData.y1trpos() - 1);
+	auto x2Array = getDataArray(rTr, rRectArrayData.x2trpos() - 1);
+	auto y2Array = getDataArray(rTr, rRectArrayData.y2trpos() - 1);
 	if (0 == x1Array.size() || x1Array.size() != y1Array.size() || x1Array.size() != x2Array.size() || x1Array.size() != y2Array.size())
 	{
 		return false;
@@ -71,14 +80,11 @@ bool fillRectArray(SvTrc::ITriggerRecordRPtr pTr, const SvPb::SVORectArray12Data
 	return retValue;
 }
 
-bool fillRectArray(SvTrc::ITriggerRecordRPtr pTr, const SvPb::SVORectArrayPatternData& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
+bool fillRectArray(const SvTrc::ITriggerRecordR& rTr, const SvPb::SVORectArrayPatternData& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
 {
-	_variant_t varX = pTr->getDataValue(rRectArrayData.xtrpos() - 1);
-	auto xArray = SvUl::getVectorFromOneDim<float>(varX);
-	_variant_t varY = pTr->getDataValue(rRectArrayData.ytrpos() - 1);
-	auto yArray = SvUl::getVectorFromOneDim<float>(varY);
-	_variant_t varAngle = pTr->getDataValue(rRectArrayData.angletrpos() - 1);
-	auto angleArray = SvUl::getVectorFromOneDim<float>(varAngle);
+	auto xArray = getDataArray(rTr, rRectArrayData.xtrpos() - 1);
+	auto yArray = getDataArray(rTr, rRectArrayData.ytrpos() - 1);
+	auto angleArray = getDataArray(rTr, rRectArrayData.angletrpos() - 1);
 	if (0 == xArray.size() || xArray.size() != yArray.size() || xArray.size() != angleArray.size())
 	{
 		return false;
@@ -109,7 +115,7 @@ bool fillRectArray(SvTrc::ITriggerRecordRPtr pTr, const SvPb::SVORectArrayPatter
 	return retValue;
 }
 
-void fillOverlay(SvPb::OverlayDesc& overlayDesc, SvTrc::ITriggerRecordRPtr pTr)
+void fillOverlay(SvPb::OverlayDesc& overlayDesc, const SvTrc::ITriggerRecordR& rTr)
 {
 	for (int i = 0; i < overlayDesc.overlays_size(); i++)
 	{
@@ -117,7 +123,7 @@ void fillOverlay(SvPb::OverlayDesc& overlayDesc, SvTrc::ITriggerRecordRPtr pTr)
 		if (nullptr == pOverlay) { continue; }
 
 		//set overlay color
-		fillValue(pTr, pOverlay->color().trpos(), pOverlay->mutable_color());
+		fillValue(rTr, pOverlay->color().trpos(), pOverlay->mutable_color());
 
 		auto* pBoundingBox = pOverlay->mutable_boundingshape();
 		if (nullptr == pBoundingBox) { continue; }
@@ -127,7 +133,7 @@ void fillOverlay(SvPb::OverlayDesc& overlayDesc, SvTrc::ITriggerRecordRPtr pTr)
 			{
 				auto* pRect = pBoundingBox->mutable_rect();
 				if (nullptr == pRect) { continue; }
-				fillRect(pTr, *pRect);
+				fillRect(rTr, *pRect);
 			}
 			break;
 		}
@@ -140,14 +146,14 @@ void fillOverlay(SvPb::OverlayDesc& overlayDesc, SvTrc::ITriggerRecordRPtr pTr)
 			{
 				auto* pShape = pGroups->mutable_shapes(k);
 				if (nullptr == pShape) { continue; }
-				fillValue(pTr, pShape->color().trpos(), pShape->mutable_color());
+				fillValue(rTr, pShape->color().trpos(), pShape->mutable_color());
 				switch (pShape->shape_case())
 				{
 					case SvPb::OverlayShape::kRect:
 					{
 						auto* pRect = pShape->mutable_rect();
 						if (nullptr == pRect) { continue; }
-						fillRect(pTr, *pRect);
+						fillRect(rTr, *pRect);
 					}
 					break;
 					case SvPb::OverlayShape::kRectArray:
@@ -159,11 +165,11 @@ void fillOverlay(SvPb::OverlayDesc& overlayDesc, SvTrc::ITriggerRecordRPtr pTr)
 							switch (pRectArray->SVOData_case())
 							{
 								case SvPb::OverlayShapeRectArray::kX12Data:
-									isValid = fillRectArray(pTr, pRectArray->x12data(), *pRectArray);
+									isValid = fillRectArray(rTr, pRectArray->x12data(), *pRectArray);
 									pRectArray->clear_x12data();
 									break;
 								case SvPb::OverlayShapeRectArray::kPatternData:
-									isValid = fillRectArray(pTr, pRectArray->patterndata(), *pRectArray);
+									isValid = fillRectArray(rTr, pRectArray->patterndata(), *pRectArray);
 									pRectArray->clear_patterndata();
 									break;
 								default:
