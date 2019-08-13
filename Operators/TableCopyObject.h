@@ -20,7 +20,7 @@ class TableCopyObject : public TableObject
 #pragma region Constructor
 	SV_DECLARE_CLASS( TableCopyObject );
 public:
-	TableCopyObject( LPCTSTR ObjectName );
+	explicit TableCopyObject( LPCTSTR ObjectName );
 	TableCopyObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );
 
 	virtual ~TableCopyObject();

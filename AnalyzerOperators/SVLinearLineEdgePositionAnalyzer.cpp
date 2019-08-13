@@ -58,10 +58,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	m_bEnableThreshold = true;
 
 	// Set Embedded defaults
-	POINT defaultPoint;
-	defaultPoint.x = 0;
-	defaultPoint.y = 0;
-
+	SVPoint<double> defaultPoint(0,0);
 	dpEdge.SetDefaultValue( defaultPoint, true);
 	dpEdge.setSaveValueFlag(false);
 

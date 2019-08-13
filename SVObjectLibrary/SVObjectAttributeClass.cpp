@@ -1146,7 +1146,7 @@ bool SVObjectAttributeClass::AddData(POINT Value)
 
 	if ( bOk )
 	{
-		m_PointArray.push_back( Value );
+		m_PointArray.push_back(SVPoint<long>(Value));
 	}
 
 	return bOk;

@@ -2035,7 +2035,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 
 			if (nullptr != rIpInfoStruct.m_triggerRecordWrite && nullptr != pImageBuffer && !pImageBuffer->isEmpty() && nullptr != l_pInRequest->m_ImageHandlePtr)
 			{
-				HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
+				/*HRESULT l_Code = */SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), l_pInRequest->m_ImageHandlePtr->GetBuffer());
 				if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && nullptr != pVirtualCamera)
 				{
 					pVirtualCamera->setTempImage(l_pInRequest->m_ImageHandlePtr->GetBuffer());

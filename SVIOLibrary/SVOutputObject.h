@@ -20,7 +20,7 @@
 class SVOutputObject : public SVObjectClass
 {
 public:
-	SVOutputObject( LPCSTR strObjectName );
+	explicit SVOutputObject( LPCSTR strObjectName );
 	SVOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECT );
 
 	virtual ~SVOutputObject();

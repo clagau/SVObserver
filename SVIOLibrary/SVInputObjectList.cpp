@@ -244,13 +244,12 @@ HRESULT SVInputObjectList::DetachInput( const SVGUID& p_rOutputID )
 bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues)
 {
 	size_t inputSize( rInputs.size() );
-	size_t i( 0 );
 
 	if( Lock() )
 	{
 		rInputValues.resize( inputSize );
 
-		for( i = 0; i < inputSize; i++ )
+		for(size_t i = 0; i < inputSize; i++ )
 		{
 			SVIOEntryHostStructPtr pIOEntry = rInputs[i];
 
@@ -283,37 +282,6 @@ bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, 
 
 	return false;
 }// end ReadInputs
-
-bool SVInputObjectList::ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVariant )
-{
-	p_rVariant.Clear();
-
-	bool l_Status = Lock();
-
-	if( l_Status )
-	{
-		// Check if output is enabled for this call
-		l_Status = ( !( pIOEntry.empty() ) && pIOEntry.m_IOEntryPtr->m_Enabled );
-
-		if( l_Status )
-		{
-			SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
-
-			l_Status = ( l_Iter != m_InputObjects.end() );
-
-			if( l_Status )
-			{
-				SVInputObject* l_pInput = l_Iter->second;
-
-				l_Status = ( nullptr != l_pInput ) && ( S_OK == l_pInput->Read( p_rVariant ) ); 
-			}
-		}
-
-		Unlock();
-	}
-
-	return l_Status;
-}// end ReadInput
 
 bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 {

@@ -182,10 +182,8 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 HRESULT SVLinearToolClass::SetImageExtentToParent()
 {
-	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
-
-	l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
+	HRESULT l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{

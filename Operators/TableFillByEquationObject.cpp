@@ -61,7 +61,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 	assert(m_equationList.size() == m_ValueList.size());
 
 	int i = 0;
-	for (std::vector<TableColumnEquation*>::iterator forIter = columnList.begin(); columnList.end() != forIter; forIter++, i++)
+	for (std::vector<TableColumnEquation*>::iterator forIter = columnList.begin(); columnList.end() != forIter; ++forIter, i++)
 	{
 		//check if column at position i different between old equation list and new one
 		if (m_equationList.size() <=i || *forIter != *(m_equationList.begin()+i))

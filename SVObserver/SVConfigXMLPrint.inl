@@ -94,17 +94,17 @@ inline const std::string SVConfigXMLPrint::Print() const
 	m_cfo = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject(m_cfo);
 	CComPtr<IXmlWriter> writer;
-	HRESULT hr = ::CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), 0);
+	/*HRESULT hr = */::CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), 0);
 	writer->SetProperty(XmlWriterProperty_OmitXmlDeclaration, TRUE);
 	CComPtr<IStream> stream;
-	hr = ::CreateStreamOnHGlobal(nullptr, TRUE, &stream);
+	/*hr = */::CreateStreamOnHGlobal(nullptr, TRUE, &stream);
 
-	hr = writer->SetOutput(stream);
+	/*hr = */writer->SetOutput(stream);
 	PrintXMLDoc(writer);
 	ULONG wrt;
 	stream->Write("\0", 1, &wrt);
 	HGLOBAL hg;
-	hr = ::GetHGlobalFromStream(stream, &hg);
+	/*hr = */::GetHGlobalFromStream(stream, &hg);
 	return HG2String(hg)();
 }
 
@@ -255,7 +255,7 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SvIe::SVVirtualCam
 		{
 			writer->WriteStartElement(nullptr, L"Parameters", nullptr);
 			SVDeviceParamCollection l_CameraFileParams;
-			HRESULT hr = pAcqDevice->GetCameraFileParameters(l_CameraFileParams);
+			/*HRESULT hr = */pAcqDevice->GetCameraFileParameters(l_CameraFileParams);
 			const int iDetailLevel = 0;
 			SVDeviceParamConfigXMLHelper helper(writer, l_CameraFileParams);
 
@@ -504,19 +504,12 @@ inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 {
-	int					nFirstHeight = 0;
-	int					nLastHeight = 0;
-	long				lSize = 0;
-	wchar_t buff[64];
-
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
 	if (nullptr != pConfig && nullptr != pApp && pApp->GetIODoc())
 	{
-		SVPPQObject				*pPPQ;
-		SVDigitalOutputObject	*pDigOutput;
 		SVIOEntryHostStructPtrVector ppIOEntries;
 		long lPPQSize = pConfig->GetPPQCount();
 
@@ -524,6 +517,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 		DWORD dwMaxOutput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(dwMaxOutput);
 		writer->WriteStartElement(nullptr, L"ResultOutputs", nullptr);
+		wchar_t buff[64];
 		writer->WriteAttributeString(nullptr, L"NumberOfOutputs", nullptr, _itow(dwMaxOutput, buff, 10));
 
 		// Result Outputs
@@ -534,7 +528,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(l_pModuleReady->m_IOId);
 
 			// Check Module Ready first
-			pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
+			SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
 			if (pDigOutput)
 			{
 				if (i == pDigOutput->GetChannel())
@@ -550,7 +544,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 
 			for (int j = 0; j < lPPQSize; j++)
 			{
-				pPPQ = pConfig->GetPPQ(j);
+				SVPPQObject* pPPQ = pConfig->GetPPQ(j);
 				if (nullptr != pPPQ)
 				{
 					// Get list of available outputs
@@ -590,11 +584,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 {
-	int					nFirstHeight = 0;
-	int					nLastHeight = 0;
-	long				lSize = 0;
 	CPoint				ptTemp(0, 0);
-	wchar_t				buff[64];
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -604,20 +594,20 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 	if (pApp->GetIODoc())
 	{
 		SVInputObjectList* pInputList = nullptr;
-		SVDigitalInputObject	*pDigInput;
 		SVIOEntryHostStructPtrVector ppIOEntries;
 
 		// Get list of available inputs
 		if (nullptr != pConfig) { pInputList = pConfig->GetInputObjectList(); }
 		if (nullptr != pInputList && pInputList->FillInputs(ppIOEntries))
 		{
-			lSize = static_cast<long>(ppIOEntries.size());
+			long lSize = static_cast<long>(ppIOEntries.size());
 
 			// Print module input title...
 			DWORD dwMaxInput = 0;
 			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(dwMaxInput);
 
 			writer->WriteStartElement(nullptr, L"DigitalInputs", nullptr);
+			wchar_t				buff[64];
 			writer->WriteAttributeString(nullptr, L"NumberOfInputs", nullptr, _itow(dwMaxInput, buff, 10));
 
 			// Module Inputs
@@ -633,7 +623,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 
 					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ppIOEntries[j]->m_IOId);
 
-					pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
+					SVDigitalInputObject* pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
 
 					if (!pDigInput)
 						continue;
@@ -679,9 +669,6 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 {
-	wchar_t buff[64];
-	int ItemCount = 0;
-
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -707,6 +694,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 
 			//Attribute  Queue Depth
 			int Depth = monitorList.GetRejectDepthQueue();
+			wchar_t				buff[64];
 			writer->WriteAttributeString(nullptr, XML_RejectQuueDepth, nullptr, _itow(Depth, buff, 10));
 
 			//write Active Flag 
@@ -714,7 +702,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 			writer->WriteAttributeString(nullptr, XML_IsActive, nullptr, isActive ? XML_TRUE : XML_FALSE);
 
 			//write Product Value List
-			ItemCount = 0;
+			int ItemCount = 0;
 			const MonitoredObjectList& ValueList = monitorList.GetProductValuesList();
 			MonitoredObjectList::const_iterator vlIt = ValueList.begin();
 			writer->WriteStartElement(nullptr, L"ProductValueList", nullptr);
@@ -730,7 +718,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 					writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
-				vlIt++;
+				++vlIt;
 			}
 			writer->WriteEndElement();
 
@@ -751,7 +739,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 					writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
-				ilIt++;
+				++ilIt;
 			}
 			writer->WriteEndElement();
 
@@ -772,7 +760,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 					writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
-				rlIt++;
+				++rlIt;
 			}
 			writer->WriteEndElement();
 
@@ -793,11 +781,11 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 					writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
-				flIt++;
+				++flIt;
 			}
 			writer->WriteEndElement();
 
-			iterMonitorList++;
+			++iterMonitorList;
 
 			writer->WriteEndElement();//RemoteMonitroList
 		}
@@ -812,10 +800,6 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	writer->WriteStartElement(nullptr, L"PPQBar", nullptr);
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	int     nFirstHeight = 0;
-	int     nLastHeight = 0;
-	wchar_t buff[64];
 
 	long	lPPQ = 0;
 	//The nullptr check here is enough because then lPPQ would be 0
@@ -834,6 +818,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 				bool	bPosPrint = false;
 				SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);
 
+				wchar_t				buff[64];
 				for (const auto* const pCamera : cameraVector)
 				{
 					if (nullptr != pCamera)
@@ -861,11 +846,10 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 
 				for(const auto& pEntry : pPPQ->GetAllInputs())
 				{
-					bool bValid = false;
 					if (pEntry->m_PPQIndex == intPPQPos)
 					{
+						bool bValid = false;
 						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
-
 						if (nullptr != l_pObject)
 						{
 							if (l_pObject->IsCreated())
@@ -1008,14 +992,9 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject) const
 {
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	int      nFirstHeight = 0;
-	int      nLastHeight = 0;
-
 	std::string sLabel, sValue;
 	std::string  strType = pObject->GetObjectName();
 	std::string  strName = pObject->GetName();
-	wchar_t buff[64];
-
 	GUID     guidObjID = pObject->GetClassID();
 
 	BOOL	bWriteToolExtents = FALSE;		// Sri 2/17/00
@@ -1070,6 +1049,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 				//    tool, will increment to 1.
 				nToolNumber++;
 				bWriteToolExtents = TRUE;		// Sri 2/17/00
+				wchar_t				buff[64];
 				writer->WriteAttributeString(nullptr, L"ToolNumber", nullptr, _itow(nToolNumber, buff, 10));
 			}
 
@@ -1279,27 +1259,25 @@ void SVConfigXMLPrint::WriteInputOutputList(Writer writer, SVObjectClass* pObj) 
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigXMLPrint:::PrintInputOutputList( ... )
 
-void SVConfigXMLPrint::WriteValueObject(Writer writer, const std::wstring tag, const std::wstring lpszName, const std::wstring lpszValue) const
+void SVConfigXMLPrint::WriteValueObject(Writer writer, const std::wstring& rTag, const std::wstring& rName, const std::wstring& rValue) const
 {
-	writer->WriteStartElement(nullptr, tag.c_str(), nullptr);
-	writer->WriteAttributeString(nullptr, XML_Name, nullptr, lpszName.c_str());
-	writer->WriteAttributeString(nullptr, L"Value", nullptr, lpszValue.c_str());
+	writer->WriteStartElement(nullptr, rTag.c_str(), nullptr);
+	writer->WriteAttributeString(nullptr, XML_Name, nullptr, rName.c_str());
+	writer->WriteAttributeString(nullptr, L"Value", nullptr, rValue.c_str());
 	writer->WriteEndElement();
 }
 
 void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const
 {
-	SVDigitalInputObject	*pDigInput = nullptr;
-	SVDigitalOutputObject	*pDigOutput = nullptr;
 	std::wstring 			sValue;
-
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(IOEntry->m_IOId);
 	writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(l_pObject->GetName(), cp_dflt).c_str());
 
 	switch (IOEntry->m_ObjectType)
 	{
 		case IO_DIGITAL_INPUT:
-			pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
+		{
+			SVDigitalInputObject* pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
 			if (pDigInput->IsForced())
 				sValue = pDigInput->GetForcedValue() ? L"1" : L"0";
 			else
@@ -1308,9 +1286,11 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 
 			WriteValueObject(writer, L"Property", L"Inverted", pDigInput->IsInverted() ? L"1" : L" ");
 			break;
+		}
 
 		case IO_DIGITAL_OUTPUT:
-			pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
+		{
+			SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
 			if (pDigOutput->IsForced())
 				sValue = pDigOutput->GetForcedValue() ? L"1" : L"0";
 			else
@@ -1326,6 +1306,7 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 			sValue = pDigOutput->GetCombinedValue() ? L"AND w ACK" : L"OR w NAK";
 			WriteValueObject(writer, L"Property", L"Combined using", sValue.c_str());
 			break;
+		}
 
 		case IO_REMOTE_INPUT:
 			break;

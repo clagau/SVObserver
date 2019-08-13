@@ -724,12 +724,12 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					}
 					else if (expectedSize-1 == iter.second.size())
 					{
-						logStr.Format(_T("Reader Tests(%d): %ld instead of %ld TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
+						logStr.Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
 						rLogClass.Log(logStr, LogLevel::Information_Level1, LogType::WARN, __LINE__, strTestWithMoreThreads);
 					}
 					else
 					{
-						logStr.Format(_T("Reader Tests(%d): %ld instead of %ld TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
+						logStr.Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
 						rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					}		
 					logStr = _T("");

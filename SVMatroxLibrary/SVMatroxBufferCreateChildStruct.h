@@ -53,7 +53,7 @@ struct MatroxBufferChildDataStruct
 struct SVMatroxBufferCreateChildStruct  
 {
 public:
-	SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& rBuf);
+	explicit SVMatroxBufferCreateChildStruct(const SVMatroxBuffer& rBuf);
 	virtual ~SVMatroxBufferCreateChildStruct();
 
 	// Specifies the identifier of the parent buffer.

@@ -32,7 +32,7 @@ class SVHistogramAnalyzerClass : public SVImageAnalyzerClass
 // Constructor(s):
 //******************************************************************************
 public:
-	SVHistogramAnalyzerClass( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
+	explicit SVHistogramAnalyzerClass( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
 	SVHistogramAnalyzerClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 
 public:

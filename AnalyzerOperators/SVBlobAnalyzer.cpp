@@ -1505,7 +1505,7 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 				SVExtentFigureStruct l_svFigure = l_oRect;
 				pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
-				if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
+				if( S_OK == l_svFigure.IsPointOverFigure( SVPoint<double>(rPoint) ) )
 				{
 					m_nBlobIndex = m_SortVector[i]; 
 

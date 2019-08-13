@@ -23,7 +23,7 @@ typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
 class SVOutputObjectList : public SVObjectClass
 {
 public:
-	SVOutputObjectList( LPCSTR ObjectName );
+	explicit SVOutputObjectList( LPCSTR ObjectName );
 	SVOutputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECTLIST );
 
 	virtual ~SVOutputObjectList();

@@ -450,7 +450,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 	Value.resize(ValueSize);
 	if (!Value.empty())
 	{
-		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
+		rParams.SetParameter( e, static_cast<const SVDeviceParam*>(SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) ));
 		SVCameraFormatsDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
 		pParam->strValue = Value;
@@ -560,7 +560,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection&
 	int iTransformOperation = GetPrivateProfileInt( sSection.c_str(), rKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() );
 	if (iKEY_DOES_NOT_EXIST != iTransformOperation )
 	{
-		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
+		rParams.SetParameter( e, static_cast<const SVDeviceParam*>(SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) ));
 		SVLutDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
 		pParam->SetName( rKey );

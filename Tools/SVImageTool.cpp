@@ -69,9 +69,7 @@ void SVImageToolClass::init()
 	m_SourceImageNames.SetArraySize(2);
 
 	// Set Embedded Defaults...
-	POINT defaultPoint;
-	defaultPoint.x = 0;
-	defaultPoint.y = 0;
+	SVPoint<long> defaultPoint(0,0);
 	m_outputEnableOffsetA.SetDefaultValue( BOOL(false) );
 	m_outputOffsetAPoint.SetDefaultValue( defaultPoint );
 	m_outputEnableOffsetB.SetDefaultValue(BOOL(false) );
@@ -262,12 +260,10 @@ HRESULT SVImageToolClass::UpdateTranslation()
 	{
 		//change translation type on extents to match operator if:
 		//			Height Double, Flip Horizontal of Flip Vertical
-		double	heightScaleFactor = 1.0;
-		
 		if ( l_lValue == SvDef::SVImageOperatorDoubleHeight )
 		{
 			toolImageExtents.SetTranslation(SvPb::SVExtentTranslationDoubleHeight);
-			heightScaleFactor = 2.0;
+			double heightScaleFactor = 2.0;
 			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
 			extentChanged = true;
 		}
@@ -323,10 +319,8 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 
 HRESULT SVImageToolClass::SetImageExtentToParent()
 {
-	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
-
-	l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
+	HRESULT l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{

@@ -20,7 +20,7 @@ class TableLimitAnalyzer : public SvIe::SVTaskObjectClass
 #pragma region Constructor
 	SV_DECLARE_CLASS( TableLimitAnalyzer );
 public:
-	TableLimitAnalyzer( LPCTSTR ObjectName );
+	explicit TableLimitAnalyzer( LPCTSTR ObjectName );
 	TableLimitAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_LIMIT );
 
 	virtual ~TableLimitAnalyzer();

@@ -25,7 +25,7 @@ public:
 	SVPoint()
 	{ 
 	}
-	SVPoint( const POINT& rRhs ) { *this = rRhs; }
+	explicit SVPoint( const POINT& rRhs ) { *this = rRhs; }
 	SVPoint(const SVPoint& rRhs) = default;
 	SVPoint(SVPoint&& Rhs) = default;
 

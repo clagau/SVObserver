@@ -71,6 +71,6 @@ private: //methods
 
 private: //data members
 	CList<CString, CString&> m_listMasks;
-	CList<RegressionTestStruct*,RegressionTestStruct*> *m_pRegressionList;
+	CList<RegressionTestStruct*,RegressionTestStruct*>* m_pRegressionList = nullptr;
 };
 

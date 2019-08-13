@@ -26,7 +26,7 @@ class InspectionCommands_protoBuf
 public:
 	InspectionCommands_protoBuf(const InspectionCommands_protoBuf&) = delete;
 	InspectionCommands_protoBuf& operator=(const InspectionCommands_protoBuf&) = delete;
-	InspectionCommands_protoBuf(const SvPb::InspectionCmdMsgs& rRequest)
+	explicit InspectionCommands_protoBuf(const SvPb::InspectionCmdMsgs& rRequest)
 		: m_rRequest(rRequest)
 	{
 	};

@@ -271,7 +271,7 @@ void SVDisplayObject::SetIPDocDisplayComplete()
 
 DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
 {
-	SVDisplayObject *pDisplay = (SVDisplayObject*)lpParam;
+	SVDisplayObject *pDisplay = reinterpret_cast<SVDisplayObject*>(lpParam);
 
 	if( nullptr != pDisplay )
 	{

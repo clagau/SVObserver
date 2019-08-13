@@ -21,7 +21,7 @@ class SVPixelAnalyzerClass : public SVImageAnalyzerClass
 	SV_DECLARE_CLASS( SVPixelAnalyzerClass );
 
 public:
-	SVPixelAnalyzerClass( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
+	explicit SVPixelAnalyzerClass( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
 	SVPixelAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
 
 	virtual ~SVPixelAnalyzerClass();

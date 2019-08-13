@@ -20,7 +20,7 @@
 class SVInputObjectList : public SVObjectClass
 {
 public:
-	SVInputObjectList( LPCSTR ObjectName );
+	explicit SVInputObjectList( LPCSTR ObjectName );
 	SVInputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECTLIST );
 	virtual ~SVInputObjectList();
 
@@ -37,7 +37,6 @@ public:
 	HRESULT DetachInput( const SVGUID& p_rOutputID );
 
 	bool ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues);
-	bool ReadInput( SVIOEntryStruct pIOEntry, _variant_t& rVariant );
 
 	bool FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries );
 

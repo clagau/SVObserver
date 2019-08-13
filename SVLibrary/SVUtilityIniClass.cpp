@@ -29,19 +29,6 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVUtilityIniClass::SVUtilityIniClass()
-{
-	m_DisplayName = "";
-	m_Command = "";
-	m_WorkingDirectory = "";
-	m_Arguments = "";
-	m_PromptForArguments = "";
-}
-
-SVUtilityIniClass::~SVUtilityIniClass()
-{
-
-}
 SVUtilityIniClass::SVUtilityIniClass( const SVUtilityIniClass& rRhs )
 {
 	*this = rRhs;

@@ -67,6 +67,6 @@ public:
 	YYSTYPE yylval;
 
 protected:
-	SVEquationBase* m_pEquation;
+	SVEquationBase* m_pEquation = nullptr;
 };
 

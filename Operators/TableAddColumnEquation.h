@@ -50,7 +50,7 @@ private:
 #pragma region Member Variables
 private:
 	SvVol::DoubleSortValuePtr m_pResultColumn;
-	SvVol::SVLongValueObjectClass	*m_pIndex;
+	SvVol::SVLongValueObjectClass* m_pIndex = nullptr;
 #pragma endregion Member Variables
 };
 

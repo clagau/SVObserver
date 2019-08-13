@@ -39,7 +39,7 @@ public:
 	// Variables needed
 	int yacc_err;
 	int sIndex;
-	int numTokens;
+	int numTokens = 0;
 	SVLEX_STACK lex_stack[4096];
 	double equationResult;
 

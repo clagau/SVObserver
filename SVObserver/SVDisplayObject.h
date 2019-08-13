@@ -79,7 +79,7 @@ protected:
 	long m_IPDocDisplayComplete;
 
 	long m_FrameRate;
-	double m_NextDisplayEvent;
-	double m_LastUpdateTime;
-	SVIPDoc* m_pDoc;
+	double m_NextDisplayEvent = 0;
+	double m_LastUpdateTime = 0;
+	SVIPDoc* m_pDoc = nullptr;
 };

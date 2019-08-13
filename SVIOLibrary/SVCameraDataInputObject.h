@@ -20,7 +20,7 @@ class SVCameraDataInputObject : public SVInputObject
 {
 #pragma region Constructor
 public:
-	SVCameraDataInputObject(LPCSTR strObjectName);
+	explicit SVCameraDataInputObject(LPCSTR strObjectName);
 	SVCameraDataInputObject(SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT);
 
 	virtual ~SVCameraDataInputObject();

@@ -1022,7 +1022,7 @@ bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 
 	for (int i=0; i < figureList.size(); i++)
 	{
-		if( S_OK == figureList[i].IsPointOverFigure( rPoint ) )
+		if( S_OK == figureList[i].IsPointOverFigure( SVPoint<double>(rPoint) ) )
 		{
 			m_nPatternIndex = i;
 			return true;

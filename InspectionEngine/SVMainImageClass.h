@@ -23,7 +23,7 @@ class SVMainImageClass : public SVCameraImageTemplate
 // 	SV_DECLARE_CLASS( SVMainImageClass );
 
 public:
-	SVMainImageClass( LPCSTR ObjectName );
+	explicit SVMainImageClass( LPCSTR ObjectName );
 	SVMainImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMAINIMAGE );
 
 	virtual ~SVMainImageClass();

@@ -377,9 +377,9 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 		for (int r = 0; r < nRows; r++)
 		{
 			double val {0};
-			long Index[2] = {col,r};
 			try
 			{
+				long Index[2] = {col,r};
 				sa.MultiDimGetAt(Index, val);
 			}
 			catch (...)

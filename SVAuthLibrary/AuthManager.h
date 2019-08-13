@@ -21,7 +21,7 @@ struct AuthManagerSettings;
 class AuthManager
 {
 public:
-	AuthManager(const AuthManagerSettings&);
+	explicit AuthManager(const AuthManagerSettings&);
 
 	Jwks getJsonWebKeySet() const;
 

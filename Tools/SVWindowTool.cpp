@@ -209,10 +209,8 @@ HRESULT SVWindowToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 
 HRESULT SVWindowToolClass::SetImageExtentToParent()
 {
-	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass NewExtent;
-
-	l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
+	HRESULT l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
@@ -224,10 +222,7 @@ HRESULT SVWindowToolClass::SetImageExtentToParent()
 
 HRESULT SVWindowToolClass::SetImageExtentToFit( const SVImageExtentClass& rImageExtent )
 {
-	HRESULT l_hrOk = S_OK;
-
-	l_hrOk = m_toolExtent.UpdateExtentAgainstParentImage( rImageExtent );
-
+	HRESULT l_hrOk = m_toolExtent.UpdateExtentAgainstParentImage( rImageExtent );
 	return l_hrOk;
 }
 

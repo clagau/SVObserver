@@ -40,9 +40,6 @@ public:
 	HRESULT SetDigitalInputForcedValue( unsigned long channel, bool rbValue );
 	HRESULT GetDigitalInputValue( unsigned long channel, bool& rbValue );
 
-	HRESULT GetDigitalInputPortCount( unsigned long& rCount );
-	HRESULT GetDigitalInputPortValue( unsigned long port, unsigned long& rValue );
-
 	HRESULT GetDigitalOutputCount( unsigned long& rCount );
 	HRESULT GetDigitalOutputIsInverted( unsigned long channel, bool& rbValue );
 	HRESULT SetDigitalOutputIsInverted( unsigned long channel, bool bValue );
@@ -50,11 +47,8 @@ public:
 	HRESULT SetDigitalOutputIsForced( unsigned long channel, bool bValue );
 	HRESULT GetDigitalOutputForcedValue( unsigned long channel, bool& rbValue );
 	HRESULT SetDigitalOutputForcedValue( unsigned long channel, bool bValue );
-	HRESULT GetDigitalOutputValue( unsigned long channel, bool& rValue );
 	HRESULT SetDigitalOutputValue( unsigned long channel, bool bValue );
-	HRESULT GetDigitalOutputState( unsigned long sizeInChars, unsigned char* pBlock );
 
-	HRESULT GetDigitalOutputPortCount( unsigned long& rCount );
 	HRESULT SetDigitalOutputPortValue( unsigned long port, unsigned long value );
 
 	HRESULT SetDigitalOutputData(unsigned long channel, const IntVariantMap& rData);
@@ -65,7 +59,6 @@ public:
 	HRESULT SetSVIMTriggerValue( unsigned long channel, bool bRising );
 	HRESULT SetSVIMStrobeValue( unsigned long channel, bool bRising );
 	HRESULT SetSVIMStrobeStartFrameActive( unsigned long channel, bool bActive );
-	HRESULT GetSVIMStrobeStartFrameActive( unsigned long channel, bool& rbActive );
 
 	HRESULT GetIOTriggerValue( unsigned long channel, bool& rbRising );
 	HRESULT GetIOStrobeValue( unsigned long channel, bool& rbRising );

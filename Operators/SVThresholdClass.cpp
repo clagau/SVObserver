@@ -360,10 +360,10 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 			{
 				if( bUseExternalUT )
 				{
-					double dUpper = 0.0;
 					SvVol::SVDoubleValueObjectClass* pExtUTValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputUT, true);
 					if(nullptr != pExtUTValue)
 					{
+						double dUpper = 0.0;
 						pExtUTValue->GetValue( dUpper );
 						upper = static_cast<long> (dUpper);
 						// Range check...
@@ -382,10 +382,10 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 			{
 				if( bUseExternalLT )
 				{
-					double dLower = 0.0;
 					SvVol::SVDoubleValueObjectClass* pExtLTValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputLT, true);
 					if(nullptr != pExtLTValue)
 					{
+						double dLower = 0.0;
 						pExtLTValue->GetValue( dLower );
 						lower = static_cast<LONG> (dLower);
 						// Range check...

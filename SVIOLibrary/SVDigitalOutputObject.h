@@ -14,7 +14,7 @@ class SVDigitalOutputObject : public SVOutputObject
 {
 #pragma region Constructor
 public:
-	SVDigitalOutputObject( LPCSTR strObjectName );
+	explicit SVDigitalOutputObject( LPCSTR strObjectName );
 	SVDigitalOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
 
 	virtual ~SVDigitalOutputObject();

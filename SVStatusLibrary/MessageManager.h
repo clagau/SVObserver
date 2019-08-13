@@ -64,7 +64,7 @@ namespace SvStl
 		//! Constructor which sets the message type 
 		//! \param Type [in] Determines if the message is logged, or displayed and logged
 		//************************************
-		MessageMgrStd(MsgType Type);
+		explicit MessageMgrStd(MsgType Type);
 
 		virtual ~MessageMgrStd();
 	#pragma endregion Constructor

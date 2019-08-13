@@ -23,7 +23,7 @@ class SVAnalyzerClass : public SvIe::SVTaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVAnalyzerClass );
 public:
-	SVAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
+	explicit SVAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
 	SVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
 	virtual ~SVAnalyzerClass();
 

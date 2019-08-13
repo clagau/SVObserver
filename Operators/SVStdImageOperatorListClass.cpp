@@ -126,11 +126,10 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 ////////////////////////////////////////////////////////////////////////////////
 bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool bRetVal = true;
 	clearRunErrorMessages();
 
 	// Run yourself...
-	bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
+	bool bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
 
 	SvIe::SVImageClass* pInputImage = getInputImage(true);
 
@@ -229,7 +228,7 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-				SVUnaryImageOperatorClass*  pOperator = (SVUnaryImageOperatorClass*)GetAt(i);
+				SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass*>(GetAt(i));
 				if (nullptr != pOperator)
 				{
 					if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))

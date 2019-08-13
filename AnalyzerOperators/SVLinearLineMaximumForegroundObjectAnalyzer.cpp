@@ -92,9 +92,7 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::init()
 	}
 
 	// Set Embedded defaults
-	POINT defaultPoint;
-	defaultPoint.x = 0;
-	defaultPoint.y = 0;
+	SVPoint<double> defaultPoint(0,0);
 	mdpEdgeA.SetDefaultValue( defaultPoint, true );
 	mdpEdgeA.setSaveValueFlag(false);
 	mdpEdgeB.SetDefaultValue( defaultPoint, true );

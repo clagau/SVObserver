@@ -141,10 +141,9 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 
 HRESULT SVCylindricalWarpToolClass::LocalCreate()
 {
-	HRESULT l_hrOk = S_FALSE;
 	HRESULT l_hr= S_OK;
 
-	l_hrOk = S_OK;
+	HRESULT l_hrOk = S_OK;
 	if ( S_OK == LocalDestroy() )
 	{
 		SVGUID l_InputID;

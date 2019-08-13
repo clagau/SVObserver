@@ -151,15 +151,6 @@ bool LogClass::LogText0(LPCTSTR strEntry, const LogLevel logLevel)
 }
 
 
-void LogClass::Remark(LPCTSTR strEntry)
-{
-	std::lock_guard<std::mutex> guard(m_logMutex);
-	if (m_LogLevel > LogLevel::Error)
-	{
-		_ftprintf(m_File, _T("------|%s\n"), strEntry);
-	}
-}
-
 void LogClass::Flush()
 {
 	std::lock_guard<std::mutex> guard(m_logMutex);
@@ -171,11 +162,11 @@ void LogClass::PrintSummary()
 	CString strTmp;
 
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
-	strTmp.Format(_T("[ Summary  ] Passed %d Steps"), m_uiPass);
+	strTmp.Format(_T("[ Summary  ] Passed %ul Steps"), m_uiPass);
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Failed %d Steps"), m_uiFail);
+	strTmp.Format(_T("[ Summary  ] Failed %ul Steps"), m_uiFail);
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Warning %d Steps"), m_uiWarn);
+	strTmp.Format(_T("[ Summary  ] Warning %ul Steps"), m_uiWarn);
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	constexpr int cStrLength = 128;
 	TCHAR szTime[cStrLength];

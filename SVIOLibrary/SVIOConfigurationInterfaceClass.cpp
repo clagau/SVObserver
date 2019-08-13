@@ -111,7 +111,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsInverted( unsigned lon
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		rValue = m_DigitalInputs[channel].m_bIsInverted;
 
@@ -127,7 +127,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputIsInverted( unsigned lon
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		m_DigitalInputs[channel].m_bIsInverted = Value;
 
@@ -143,7 +143,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputIsForced( unsigned long 
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		rValue = m_DigitalInputs[channel].m_bIsForced;
 
@@ -159,7 +159,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputIsForced( unsigned long 
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		m_DigitalInputs[channel].m_bIsForced = Value;
 
@@ -175,7 +175,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputForcedValue( unsigned lo
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		rValue = m_DigitalInputs[channel].m_bForcedValue;
 
@@ -191,7 +191,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalInputForcedValue( unsigned lo
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		m_DigitalInputs[ channel ].m_bForcedValue = Value;
 
@@ -207,7 +207,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long cha
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalInputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		bool l_bValue = false;
 
@@ -234,16 +234,6 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long cha
 	return Result;
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputPortCount( unsigned long& rCount )
-{
-	return m_DigitalBoard.GetInputPortCount( &rCount );
-}
-
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputPortValue( unsigned long port, unsigned long& rValue )
-{
-	return m_DigitalBoard.GetInputPortValue(port, &rValue);
-}
-
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputCount( unsigned long& rCount )
 {
 	rCount = static_cast<unsigned long> (m_DigitalOutputs.size());
@@ -257,7 +247,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsInverted( unsigned lo
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		rValue = m_DigitalOutputs[ channel ].m_bIsInverted;
 
@@ -273,7 +263,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputIsInverted( unsigned lo
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		m_DigitalOutputs[ channel ].m_bIsInverted = Value;
 
@@ -289,7 +279,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputIsForced( unsigned long
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		rValue = m_DigitalOutputs[ channel ].m_bIsForced;
 
@@ -305,7 +295,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputIsForced( unsigned long
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		m_DigitalOutputs[ channel ].m_bIsForced = Value;
 
@@ -321,7 +311,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputForcedValue( unsigned l
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		rValue = m_DigitalOutputs[ channel ].m_bForcedValue;
 
@@ -337,32 +327,9 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputForcedValue( unsigned l
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		m_DigitalOutputs[ channel ].m_bForcedValue = Value;
-
-		Result = S_OK;
-	}
-
-	return Result;
-}
-
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputValue( unsigned long channel, bool& rValue )
-{
-	HRESULT Result{E_FAIL};
-
-	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
-
-	if ( 0 <= channel && channel < Count )
-	{
-		bool l_bValue = m_DigitalOutputs[ channel ].m_bValue;
-
-		if ( m_Opto22OutputInvert )
-		{
-			l_bValue = ! l_bValue;
-		}
-
-		rValue = l_bValue;
 
 		Result = S_OK;
 	}
@@ -376,7 +343,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputValue( unsigned long ch
 
 	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
 
-	if ( 0 <= channel && channel < Count )
+	if ( channel < Count )
 	{
 		bool l_bValue = Value;
 
@@ -396,50 +363,6 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputValue( unsigned long ch
 	}
 
 	return Result;
-}
-
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputState( unsigned long sizeInChars, unsigned char* pBlock )
-{
-	HRESULT Result{E_FAIL};
-
-	if( 0 < sizeInChars && nullptr != pBlock )
-	{
-		unsigned long Count = 0;
-
-		Result = GetDigitalOutputCount( Count );
-
-		if ( sizeInChars * 8 < Count )
-		{
-			Result = E_FAIL;
-		}
-
-		memset( (void *)pBlock, 0x00, sizeInChars );
-
-		for ( unsigned long l = 0; S_OK == Result && l < Count; l++ )
-		{
-			bool l_bValue = false;
-
-			Result = GetDigitalOutputValue( l, l_bValue );
-
-			if ( S_OK == Result )
-			{
-				if ( l_bValue ) 
-				{
-					unsigned char l_ucBlock = static_cast<unsigned char >(l / 8);
-					unsigned char l_ucBit = static_cast<unsigned char >(l % 8);
-
-					pBlock[ l_ucBlock ] |= 0x01 << l_ucBit;
-				}
-			}
-		}
-	}
-
-	return Result;
-}
-
-HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputPortCount( unsigned long& rCount )
-{
-	return m_DigitalBoard.GetOutputPortCount( &rCount );
 }
 
 HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputPortValue( unsigned long port, unsigned long Value )
@@ -559,21 +482,6 @@ HRESULT SVIOConfigurationInterfaceClass::SetSVIMStrobeStartFrameActive( unsigned
 
 	return Result;
 }
-
-HRESULT SVIOConfigurationInterfaceClass::GetSVIMStrobeStartFrameActive( unsigned long channel, bool& rbActive )
-{
-	HRESULT Result{E_FAIL};
-
-	if ( channel < 4 )
-	{
-		rbActive = m_abSVIMStrobeStartFrame[ channel ];
-
-		Result = S_OK;
-	}
-
-	return Result;
-}
-
 
 HRESULT SVIOConfigurationInterfaceClass::GetIOTriggerValue( unsigned long channel, bool& rbRising )
 {

@@ -21,7 +21,7 @@ class TableAddColumnAnalyzer : public SvIe::SVTaskObjectClass
 #pragma region Constructor
 	SV_DECLARE_CLASS(TableAddColumnAnalyzer);
 public:
-	TableAddColumnAnalyzer(LPCTSTR ObjectName);
+	explicit TableAddColumnAnalyzer(LPCTSTR ObjectName);
 	TableAddColumnAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_ADDCOLUMN);
 
 	virtual ~TableAddColumnAnalyzer();

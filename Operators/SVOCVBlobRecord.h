@@ -26,7 +26,7 @@ protected:
 	SV_DECLARE_CLASS( SVOCVCharacterResultClass )
 
 public:
-	SVOCVCharacterResultClass(LPCSTR ObjectName );
+	explicit SVOCVCharacterResultClass(LPCSTR ObjectName );
 	SVOCVCharacterResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVCHARACTERRESULTOBJECT );
 	virtual ~SVOCVCharacterResultClass();
 

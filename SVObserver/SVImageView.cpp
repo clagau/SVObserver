@@ -833,7 +833,7 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 
 			if( pTool )
 			{
-				if( nullptr != pTool->GetObjectAtPoint( l_point ) )
+				if( nullptr != pTool->GetObjectAtPoint( SVPoint<double>(l_point) ) )
 				{
 					l_psvIPDoc->OnEditTool();
 				}
@@ -988,10 +988,10 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 				TransformFromViewSpace( l_startPoint );
 
 				l_hCursor = GetObjectCursor( m_svMousePickLocation, l_point );
-
+				SVPoint<double> startPoint(l_startPoint);
 				if( (SvPb::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
-					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt( l_startPoint ) ) &&
-					S_OK == l_svTempExtents.Update( m_svMousePickLocation, l_startPoint, l_point ) )
+					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt(startPoint) ) &&
+					S_OK == l_svTempExtents.Update( m_svMousePickLocation, startPoint, SVPoint<double>(l_point) ) )
 				{
 					bool l_bUpdate = false;
 
@@ -1685,12 +1685,12 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 	if( nullptr != pTool && pTool->isInputImage( m_ImageId ) )
 	{
 		SVImageExtentClass l_svExtents;
-
-		m_pTool = pTool->GetObjectAtPoint( p_point );
+		SVPoint<double> point(p_point);
+		m_pTool = pTool->GetObjectAtPoint(point);
 
 		if( S_OK == GetToolExtents( l_svExtents ) )
 		{
-			m_svLocation = l_svExtents.GetLocationPropertyAt( p_point );
+			m_svLocation = l_svExtents.GetLocationPropertyAt(point);
 		}
 	
 		////check if move or sizing is allowed  

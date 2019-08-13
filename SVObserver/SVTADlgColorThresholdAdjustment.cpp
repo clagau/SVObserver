@@ -374,9 +374,6 @@ void SVTADlgColorThresholdAdjustment::updateHistogram()
 {
 	if (nullptr != m_pThreshold)
 	{
-		long lTop = 0;
-		long lLeft = 0;
-
 		if (m_Values.Get<bool>(thresholdEnabledID[m_band]))
 		{
 			SvIe::SVImageClass* pImage = m_pThreshold->GetBandInputImage(m_band);
@@ -384,7 +381,7 @@ void SVTADlgColorThresholdAdjustment::updateHistogram()
 
 			if (nullptr != m_histogramImage && nullptr != pImageData && !pImageData->empty())
 			{
-				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_histogramImage->GetBuffer(), pImageData->GetBuffer(), -lLeft, -lTop);
+				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_histogramImage->GetBuffer(), pImageData->GetBuffer(), 0, 0);
 				if(S_OK == MatroxCode)
 				{
 					MatroxCode = SVMatroxImageInterface::Histogram(m_histogramResultID, m_histogramImage->GetBuffer());

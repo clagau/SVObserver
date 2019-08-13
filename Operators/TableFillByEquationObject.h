@@ -21,7 +21,7 @@ class TableFillByEquationObject : public TableObject
 #pragma region Constructor
 	SV_DECLARE_CLASS( TableFillByEquationObject );
 public:
-	TableFillByEquationObject( LPCTSTR ObjectName );
+	explicit TableFillByEquationObject( LPCTSTR ObjectName );
 	TableFillByEquationObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );
 
 	virtual ~TableFillByEquationObject();

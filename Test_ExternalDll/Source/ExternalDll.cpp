@@ -50,7 +50,7 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 		fdb("DLL_PROCESS_DETACH Vers %d  <%s>\n", static_iToolVersion, static_strToolName);
 #endif
 		MapToolsType::iterator iter;
-		for (iter = g_DllTools.begin(); iter != g_DllTools.end(); iter++)
+		for (iter = g_DllTools.begin(); iter != g_DllTools.end(); ++iter)
 		{
 			delete iter->second;
 		}

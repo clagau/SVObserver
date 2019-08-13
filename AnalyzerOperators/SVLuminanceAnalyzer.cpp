@@ -264,13 +264,9 @@ void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContaine
 
 bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SvIe::SVImageClass *pInputImage(nullptr);
 	__int64          sum(0);
-	size_t           lI(0);
 	long             lNbrPixels(0);
 	double			 value = 0.0;
-
-	HRESULT MatroxResult;
 	bool  LastError(false);
 
 	while (1)
@@ -287,7 +283,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		pInputImage = getInputImage(true);
+		SvIe::SVImageClass* pInputImage = getInputImage(true);
 
 		if(nullptr == pInputImage)
 		{
@@ -315,7 +311,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		SVMatroxImageInterface l_lImageIntf;
 
-		MatroxResult = l_lImageIntf.Histogram(m_HistResultID, pImageBuffer->getHandle()->GetBuffer() );
+		HRESULT MatroxResult = l_lImageIntf.Histogram(m_HistResultID, pImageBuffer->getHandle()->GetBuffer() );
 		if( S_OK != MatroxResult )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h
@@ -343,7 +339,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		}
 
-		for (lI = 0; lI < msvplHistValues.size(); lI++)
+		for (size_t lI = 0; lI < msvplHistValues.size(); lI++)
 		{
 			sum = sum + (msvplHistValues [lI] * lI);
 			lNbrPixels = lNbrPixels + msvplHistValues [lI];
@@ -391,7 +387,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		{
 			double accumulatedSquares = 0.0;	// for calculating variance
 
-			for (lI = 0; lI < msvplHistValues.size(); lI++)
+			for (size_t lI = 0; lI < msvplHistValues.size(); lI++)
 			{
 				///////////////////////////////////////////////////
 				// Accumulate the Squares of the luminance

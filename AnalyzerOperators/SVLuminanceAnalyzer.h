@@ -26,7 +26,7 @@ class SVLuminanceAnalyzerClass : public SVImageAnalyzerClass
 	SV_DECLARE_CLASS( SVLuminanceAnalyzerClass );
 
 public:
-	SVLuminanceAnalyzerClass( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
+	explicit SVLuminanceAnalyzerClass( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
 	SVLuminanceAnalyzerClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
 
 	virtual ~SVLuminanceAnalyzerClass();

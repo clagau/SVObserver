@@ -246,11 +246,11 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 
 			if ( nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 			{
-				HRESULT l_Code = SVMatroxImageInterface::Histogram( histResultID, pImageBuffer->getHandle()->GetBuffer() );
-				l_Code = SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
-				l_Code = SVMatroxImageInterface::Destroy( histResultID );
+				/*HRESULT l_Code = */SVMatroxImageInterface::Histogram( histResultID, pImageBuffer->getHandle()->GetBuffer() );
+				/*l_Code = */SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
+				/*l_Code = */SVMatroxImageInterface::Destroy( histResultID );
 
-				m_strWhitePixel.Format( "White Pixel: %d", l_alHistValues[ MaxThresholdValue ] );
+				m_strWhitePixel.Format( "White Pixel: %ld", l_alHistValues[ MaxThresholdValue ] );
 			}
 		}
 		setImages();

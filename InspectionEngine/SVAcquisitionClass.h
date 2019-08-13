@@ -52,7 +52,7 @@ class SVAcquisitionClass :
 	public SVAcquisitionBufferInterface
 {
 public:
-	SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
+	explicit SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVAcquisitionClass();
 
 	virtual bool IsValid() const override;  // SVODataDeviceClass Override

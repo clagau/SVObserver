@@ -34,8 +34,6 @@ namespace SvTl
 
 	double GetTimeStamp()
 	{
-		double l_TimeStamp = 0.0;
-
 		// VMWare ESXI 5.0 has an issue with QueryPerformanceCounter (it's resolution is only 24bit not 64bit)
 		// need to use something different here like GetTickCount
 		#ifndef COMPILE_FOR_VM
@@ -45,10 +43,10 @@ namespace SvTl
 			::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&l_Tick));
 			::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&l_Frequency));
 
-			l_TimeStamp = static_cast< double >( l_Tick );
+			double l_TimeStamp = static_cast< double >( l_Tick );
 			l_TimeStamp /= static_cast< double >( l_Frequency ) / 1000.0;   // in millisec
 		#else
-			 l_TimeStamp = static_cast< double >( GetTickCount() );  // in millisec
+			double l_TimeStamp = static_cast< double >( GetTickCount() );  // in millisec
 		#endif
 
 		return l_TimeStamp;

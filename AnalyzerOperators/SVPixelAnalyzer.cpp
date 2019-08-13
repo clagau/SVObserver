@@ -92,7 +92,6 @@ bool SVPixelAnalyzerClass::CloseObject()
 
 bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	SvIe::SVImageClass *pImage(nullptr);
 	bool isError(false);
     	
     while (1)
@@ -106,7 +105,7 @@ bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 			break;
         }
 		
-        pImage = getInputImage ();
+		SvIe::SVImageClass* pImage = getInputImage ();
 		
         if (!pImage)
         {

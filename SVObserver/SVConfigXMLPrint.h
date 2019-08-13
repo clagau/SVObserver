@@ -78,7 +78,7 @@ namespace sv_xml
 		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
 		void WriteFriends( Writer writer, SVObjectClass* pObj ) const;
 		void WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const;
-		void WriteValueObject(Writer writer, const std::wstring  tag, const std::wstring  lpszName, const std::wstring  lpszValue) const;
+		void WriteValueObject(Writer writer, const std::wstring&  rTag, const std::wstring&  rName, const std::wstring&  rValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
 		void WriteGlobalConstants(Writer writer) const;
 

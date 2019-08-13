@@ -19,7 +19,7 @@
 class SVInputObject : public SVObjectClass
 {
 public:
-	SVInputObject( LPCSTR strObjectName );
+	explicit SVInputObject( LPCSTR strObjectName );
 	SVInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT );
 
 	virtual ~SVInputObject();

@@ -624,11 +624,9 @@ HRESULT SVMatroxBlobInterface::BlobSelectFeature(const __int64& rBlobId, std::se
 
 HRESULT SVMatroxBlobInterface::FillResults(const SVBlobOffsetList& rBlobList, SVCommandDataHolder& rResults)
 {
-	HRESULT l_Status = S_OK;
-
 	long l_lNumberBlobs = static_cast<long>(rBlobList.size());
 
-	l_Status = rResults.SetValue(_T("Number of Blobs"), l_lNumberBlobs, true);
+	HRESULT l_Status = rResults.SetValue(_T("Number of Blobs"), l_lNumberBlobs, true);
 
 	if (S_OK == l_Status)
 	{
@@ -789,15 +787,13 @@ long SVMatroxBlobInterface::CalculateOptimalWidth(const SVBlobList& rList, unsig
 
 HRESULT SVMatroxBlobInterface::FindSizedBlobs(SVMatroxBuffer& rThresholdImage, bool LightBackground, SVBlobList& rList)
 {
-	HRESULT l_Status = S_OK;
-
 	__int64 blobResultId = M_NULL;
 	// Note: Special Condition if Max Width and Height is 0
 	// We must try and suggest the width and height
 	// Create feature list
 	__int64 blobContextId = M_NULL;
 
-	l_Status = SVMatroxBlobInterface::CreateContext(blobContextId);
+	HRESULT l_Status = SVMatroxBlobInterface::CreateContext(blobContextId);
 
 	if (l_Status == S_OK)
 	{
@@ -920,12 +916,10 @@ HRESULT SVMatroxBlobInterface::FindSizedBlobs(SVMatroxBuffer& rThresholdImage, b
 
 HRESULT SVMatroxBlobInterface::NumBlobs(SVMatroxBuffer& rThresholdImage, BYTE Background, long& rBlobCount)
 {
-	HRESULT l_Status = S_OK;
-
 	__int64 blobContextId = M_NULL;
 	__int64 blobResultId = M_NULL;
 
-	l_Status = SVMatroxBlobInterface::CreateContext(blobContextId);
+	HRESULT l_Status = SVMatroxBlobInterface::CreateContext(blobContextId);
 
 	if (S_OK == l_Status)
 	{

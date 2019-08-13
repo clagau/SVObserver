@@ -25,7 +25,7 @@ class SVVirtualCamera;
 class SVCameraImageTemplate : public SVImageClass 
 {
 public:
-	SVCameraImageTemplate( LPCSTR ObjectName );
+	explicit SVCameraImageTemplate( LPCSTR ObjectName );
 	SVCameraImageTemplate( SVObjectClass* POwner, int StringResourceID );
 
 	virtual ~SVCameraImageTemplate();

@@ -165,9 +165,6 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 			m_RunErrorMessages.push_back(Msg);
 		}
 
-		double dMin(9999999.0);
-		double dMax(0.0);
-
 		if (result)
 		{
 			double l_dProjectHeight = 0.0;
@@ -189,6 +186,8 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 				rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidth, l_dProjectHeight);
 			}
 
+			double dMin(9999999.0);
+			double dMax(0.0);
 			if (l_dProjectHeight == 0.0 || l_dProjectHeight == 1.0)
 			{
 				for (unsigned long i = 0; i < m_ulLineLength; i++)

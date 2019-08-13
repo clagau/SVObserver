@@ -435,7 +435,6 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 			{
 				// Create the Train Color Property Sheet
 				SVTADlgColorThresholdSheet dlg(pTool, Title.c_str());
-				SvOp::SVColorThresholdClass* pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (pTool->GetAt(0));
 				if (ID_OK == dlg.DoModal())
 				{
 					pIPDoc->SetModifiedFlag();

@@ -18,8 +18,8 @@ namespace SvLib
 class SVUtilityIniClass  
 {
 public:
-	SVUtilityIniClass();
-	virtual ~SVUtilityIniClass();
+	SVUtilityIniClass() = default;
+	virtual ~SVUtilityIniClass() = default;
 
 	SVUtilityIniClass( const SVUtilityIniClass& rRhs );
 

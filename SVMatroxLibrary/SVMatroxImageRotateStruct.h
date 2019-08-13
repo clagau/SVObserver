@@ -28,7 +28,7 @@ class SVMatroxBuffer;
 struct SVMatroxImageRotateStruct  
 {
 public:
-	SVMatroxImageRotateStruct(SVMatroxBuffer& p_rSource);
+	explicit SVMatroxImageRotateStruct(SVMatroxBuffer& p_rSource);
 	virtual ~SVMatroxImageRotateStruct();
 
 	SVMatroxBuffer&			m_rSource;

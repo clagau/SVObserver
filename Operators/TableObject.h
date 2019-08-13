@@ -22,7 +22,7 @@ class TableObject : public SvIe::SVTaskObjectClass
 #pragma region Constructor
 	SV_DECLARE_CLASS( TableObject );
 public:
-	TableObject( LPCTSTR ObjectName );
+	explicit TableObject( LPCTSTR ObjectName );
 	TableObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );
 
 	virtual ~TableObject();

@@ -58,22 +58,13 @@ bool SVDigitalOutputObject::Destroy()
 
 HRESULT SVDigitalOutputObject::Write( const _variant_t& rValue )
 {
-	HRESULT l_Status = S_OK;
-
 	m_bLastValue = rValue;
-
-	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bLastValue );
-
-	return l_Status;
+	return SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bLastValue );
 }
 
 HRESULT SVDigitalOutputObject::Reset()
 {
-	HRESULT l_Status = S_OK;
-
-	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bDefaultValue );
-
-	return l_Status;
+	return SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bDefaultValue );
 }
 
 bool SVDigitalOutputObject::Force(bool bForced, bool bForcedValue)

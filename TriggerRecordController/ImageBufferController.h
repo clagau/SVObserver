@@ -34,7 +34,7 @@ class ImageBufferController final
 {
 #pragma region Constructor
 public:
-	ImageBufferController(DataControllerBase& rDataController);
+	explicit ImageBufferController(DataControllerBase& rDataController);
 	~ImageBufferController();
 
 	ImageBufferController(const ImageBufferController&) = delete;

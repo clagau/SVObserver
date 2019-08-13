@@ -20,7 +20,7 @@ class TriggerRecordController final : public ITriggerRecordControllerRW
 {
 #pragma region Constructor
 public:
-	TriggerRecordController(std::unique_ptr<DataControllerBase> pDataController);
+	explicit TriggerRecordController(std::unique_ptr<DataControllerBase> pDataController);
 	~TriggerRecordController();
 
 	TriggerRecordController(const TriggerRecordController&) = delete;

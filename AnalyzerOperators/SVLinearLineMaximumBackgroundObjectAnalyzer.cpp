@@ -90,10 +90,8 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	// Set Edge defaults
 
 	// Set Embedded defaults
-	POINT defaultPoint;
-	defaultPoint.x = 0;
-	defaultPoint.y = 0;
-	
+	SVPoint<double> defaultPoint(0,0);
+		
 	mdpEdgeA.SetDefaultValue( defaultPoint, true );
 	mdpEdgeA.setSaveValueFlag(false);
 	mdpEdgeB.SetDefaultValue( defaultPoint, true );
@@ -373,9 +371,7 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 		edgePointA.m_y + ((edgePointB.m_y - edgePointA.m_y) / 2.0)
 	};
 
-	double Width = 0.0;
-
-	Width = fabs( DistanceB - DistanceA );
+	double Width = fabs( DistanceB - DistanceA );
 
 	Result = ( S_OK == m_svLinearDistanceA.SetValue(DistanceA) ) && Result;
 	Result = ( S_OK == m_svLinearDistanceB.SetValue(DistanceB) ) && Result;

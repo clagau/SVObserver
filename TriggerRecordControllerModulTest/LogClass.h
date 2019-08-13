@@ -54,7 +54,6 @@ public:
 	bool LogText(LPCTSTR strEntry, const LogLevel logLevel, const LogType logType);
 	bool logException(LPCTSTR strEntry, const SvStl::MessageContainer& rExp, int lineNumber, LPCTSTR strTestName = _T(""), const LogLevel logLevel = LogLevel::Error, const LogType logType = LogType::FAIL);
 	bool LogText0(LPCTSTR strEntry, const LogLevel logLevel=LogLevel::Always);
-	void Remark(LPCTSTR strEntry);
 
 	// Batch count functions.
 	void PrintSummary();

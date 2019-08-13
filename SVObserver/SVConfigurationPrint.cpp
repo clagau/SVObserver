@@ -262,7 +262,7 @@ public:
 	//{{AFX_DATA(CPrintingDialog)
 	enum { IDD = AFX_IDD_PRINTDLG };
 	//}}AFX_DATA
-	CPrintingDialog(CWnd* pParent)
+	explicit CPrintingDialog(CWnd* pParent)
 	{
 		Create(CPrintingDialog::IDD, pParent);      // modeless !
 		_afxWinState->m_bUserAbort = FALSE;
@@ -640,9 +640,6 @@ void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& p
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoint& ptCurPos, int nIndentLevel )
 {
-    int      nFirstHeight   = 0;
-    int      nLastHeight    = 0;
-	
 	std::string sLabel, sValue;
     std::string strType = pObject->GetObjectName();
     std::string strName = pObject->GetName();
@@ -1214,14 +1211,10 @@ void SVConfigurationPrint::PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR 
     }
     else
     {
-		CPoint	ptTemp;
-		int		nFirstHeight = 0;
-		int		nLastHeight  = 0;
-		
-		ptTemp       = ptCurPos;
-		nFirstHeight = PrintString(pDC, ptTemp, Name);
+		CPoint	ptTemp = ptCurPos;
+		int nFirstHeight = PrintString(pDC, ptTemp, Name);
 		ptTemp.x     = (ptTemp.x <(m_pageCenter - 10)) ? m_pageCenter :(ptTemp.x + m_TabPixels);
-		nLastHeight  = PrintString(pDC, ptTemp, Value);
+		int nLastHeight  = PrintString(pDC, ptTemp, Value);
 		ptCurPos.y  += std::max(nFirstHeight, nLastHeight); 
     }
 }
@@ -1279,10 +1272,6 @@ void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nI
 
 void SVConfigurationPrint::PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue)
 {
-	SVDigitalInputObject	*pDigInput = nullptr;
-	SVDigitalOutputObject	*pDigOutput = nullptr;
-	std::string				sValue;
-	
 	ptCurPos.x = nIndentLevel * m_shortTabPixels;
 	
 	PrintValueObject(pDC, ptCurPos, lpszName, lpszValue);
@@ -1295,17 +1284,12 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
     m_isRealPrint = bRealPrintInput;
 	
     CDC* pDC = &m_printDC;
-    CPrintInfo* pPrintInfo = &m_printInfo;
 	
 	// Will be called by OnBeginPrinting
 	CPoint  ptCurPos(0, 0);
 	CPoint	ptTemp(0, 0);
 	
     int      nIndentLevel = 0;
-    int      nFirstHeight = 0;
-	int      nLastHeight  = 0;
-	long	 lSize = 0;
-	
     CFont*   pcfontOldFont;
 	
 	// Exchange font and store old one
@@ -1552,8 +1536,6 @@ void SVConfigurationPrint::OnBeginPrinting()
 
 void SVConfigurationPrint::PrintPage() 
 {
-    SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	
 	CDC* pDC = &m_printDC;
 	
 	OnVirtualPrint(TRUE);       // Real print
@@ -1587,8 +1569,6 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	int     nFirstHeight = 0;
-	int     nLastHeight  = 0;
 	long	lSize        = 0;
 	CPoint	ptTemp(0, 0);
 	
@@ -1683,7 +1663,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 					{
 						PrintValueObject(pDC, ptCurPos, _T("Camera Parameters:"), _T("") );
 						SVDeviceParamCollection l_CameraFileParams;
-						HRESULT hr = pAcqDevice->GetCameraFileParameters(l_CameraFileParams);
+						/*HRESULT hr =*/ pAcqDevice->GetCameraFileParameters(l_CameraFileParams);
 						CPoint pt(ptCurPos);
 						pt.x += m_shortTabPixels;
 						SVDeviceParamConfigPrintHelper helper(this, l_CameraFileParams, pDC, pt, nIndentLevel+1);
@@ -1703,7 +1683,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 								if ( pCamFileParam->DetailLevel() > iDetailLevel )
 									continue;
 
-								hr = pParam->Accept(helper);
+								/*hr = */pParam->Accept(helper);
 							}
 							// Visitor was used instead of a huge switch statement.
 							// It was done this way partly as an example of how to use Visitor.
@@ -1721,8 +1701,6 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	int     nFirstHeight = 0;
-	int     nLastHeight  = 0;
 	long	lSize = 0;
 	CPoint	ptTemp(0, 0);
 	
@@ -1770,8 +1748,6 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 
 void SVConfigurationPrint::PrintInspectionSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	int      nFirstHeight   = 0;
-	int      nLastHeight    = 0;
 	long		lSize = 0;
 	CPoint	ptTemp(0, 0);
 	SVConfigurationObject* pConfig( nullptr );
@@ -1802,8 +1778,6 @@ void SVConfigurationPrint::PrintInspectionSummary(CDC* pDC, CPoint& ptCurPos, in
 
 void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	int     nFirstHeight = 0;
-	int     nLastHeight  = 0;
 	long	lPPQ = 0, lSize = 0;
 	CPoint	ptTemp(0, 0);
 	
@@ -1931,8 +1905,6 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	int     nFirstHeight = 0;
-	int     nLastHeight  = 0;
 	CPoint  ptTemp(0, 0);
 
 	pDC->SelectObject(&m_fontSection);
@@ -2035,16 +2007,9 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 {
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
-	std::string sLabel, sValue;
-	int      nFirstHeight   = 0;
-	int      nLastHeight    = 0;
 	long     lSize = 0;
-	CPoint   ptTemp(0, 0);
-	
 	SVInspectionProcess*    pInspection( nullptr );
-	SVToolSetClass*         pToolset( nullptr );
 	
 	// Print all IPDocs
 	//The nullptr check here is enough because then lSize would be 0
@@ -2054,21 +2019,21 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 		pInspection = pConfig->GetInspection(nIPDNumber);
 		if( nullptr != pInspection )
 		{
-			sLabel = pInspection->GetName();
 			SVToolSetClass* pToolSet = pInspection->GetToolSet();
 			pDC->SelectObject(&m_fontSection);
 		
 			m_toolNumber = 0;
 		
 			// Print IPDoc number
-			sLabel = SvUl::Format(_T("\nInspection Process %d"), nIPDNumber + 1);
+			std::string sLabel = SvUl::Format(_T("\nInspection Process %d"), nIPDNumber + 1);
 			ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-			ptTemp      = ptCurPos;
+			CPoint ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, sLabel.c_str());
 			pDC->SelectObject(&m_fontText);
 		
 			PrintValueObject(pDC, ptCurPos, _T("Title:"), pInspection->GetName());
 		
+			std::string sValue;
 			// Print number of IPD tools
 			if ( nullptr != pToolSet )
 			{
@@ -2088,15 +2053,11 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 				PrintObject(pDC, pToolSet, ptCurPos, nIndentLevel);
 			}  // end if( pToolSet )
 		}
-	}  // for( int j = 0; j < pApp->pActivatedSystemList->GetAt( i )->GetBoardIPDocNumber();
+	} 
 }
 
 void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	int     nFirstHeight   = 0;
-	int     nLastHeight    = 0;
-	long	lSize = 0;
 	CPoint	ptTemp(0, 0);
 	
 	pDC->SelectObject(&m_fontSection);
@@ -2113,9 +2074,6 @@ void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nInden
 
 void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	int		nFirstHeight = 0;
-	int		nLastHeight = 0;
-	long	lSize = 0;
 	CPoint	ptTemp(0, 0);
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -2144,7 +2102,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 			DebugBreak();
 		}
 
-		lSize = static_cast< long >( ppIOEntries.size() );
+		long lSize = static_cast< long >( ppIOEntries.size() );
 
 		// Print module input title...
 		DWORD dwMaxInput = 0;
@@ -2218,7 +2176,7 @@ void SVConfigurationPrint::PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int n
 	// Set Thread Affinities
 	ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 	SVThreadManager::ThreadList Threads;
-	HRESULT hRet = SVThreadManager::Instance().GetThreadInfo(Threads, SVAffinityUser );
+	/*HRESULT hRet = */SVThreadManager::Instance().GetThreadInfo(Threads, SVAffinityUser );
 	for( SVThreadManager::ThreadList::const_iterator it = Threads.begin() ; it != Threads.end() ; ++it)
 	{
 		std::string strName;
@@ -2238,9 +2196,6 @@ void SVConfigurationPrint::PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int n
 
 void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	int		nFirstHeight = 0;
-	int		nLastHeight  = 0;
-	long	lSize        = 0;
 	CPoint	ptTemp(0, 0);
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -2263,10 +2218,6 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	// Print IODoc contents
 	if (pApp->GetIODoc())
 	{
-		SVPPQObject* pPPQ( nullptr );
-		SVDigitalOutputObject* pDigOutput( nullptr );
-		SVIOEntryHostStructPtrVector ppIOEntries;
-
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
@@ -2284,7 +2235,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( l_pModuleReady->m_IOId );
 
 			// Check Module Ready first
-			pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
+			SVDigitalOutputObject* pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
 			if (pDigOutput)
 			{
 				if (i == pDigOutput->GetChannel())
@@ -2296,7 +2247,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 			for (int j = 0; j < lPPQSize; j++)
 			{
-				pPPQ = pConfig->GetPPQ( j );
+				SVPPQObject* pPPQ = pConfig->GetPPQ( j );
 				if ( nullptr == pPPQ )
 				{
 					SvStl::MessageMgrStd e(SvStl::MsgType::Log );
@@ -2305,10 +2256,10 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				}
 
 				// Get list of available outputs
-				long lIOEntries = 0;
+				SVIOEntryHostStructPtrVector ppIOEntries;
 				pPPQ->GetAllOutputs(ppIOEntries);
 
-				lIOEntries = static_cast< long >( ppIOEntries.size() );
+				long lIOEntries = static_cast< long >( ppIOEntries.size() );
 
 				// Find each digital output
 				for (int k = 0; k < lIOEntries; k++)
@@ -2355,12 +2306,11 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Monitor List Name"), ListName.c_str());
 
 			// Write out PPQ 
-			std::string Value = monitorList.GetPPQName();
 			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("PPQ"), monitorList.GetPPQName().c_str());
 
 			// Write out reject queue depth
 			int Depth = monitorList.GetRejectDepthQueue();
-			Value = SvUl::Format( _T("%d"), Depth );
+			std::string Value = SvUl::Format( _T("%d"), Depth );
 			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Reject Queue Depth"), Value.c_str());
 
 			// Print Product Value List
@@ -2376,7 +2326,7 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 					Value = rObjectName;
 					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, Value.c_str(), "");
 				}
-				vlIt++;
+				++vlIt;
 			}			
 
 			// Print Product Image List
@@ -2392,7 +2342,7 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 					Value = rObjectName;
 					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, Value.c_str(), "");
 				}
-				ilIt++;
+				++ilIt;
 			}
 
 			// Print Reject Condition List
@@ -2408,7 +2358,7 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 					Value = rObjectName;
 					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, Value.c_str(), "");
 				}
-				rlIt++;
+				++rlIt;
 			}
 
 			// Print Fail Status List
@@ -2424,9 +2374,9 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 					Value = rObjectName.c_str();
 					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, Value.c_str(), "");
 				}
-				flIt++;
+				++flIt;
 			}
-			iterMonitorList++;
+			++iterMonitorList;
 		}
 	}
 }

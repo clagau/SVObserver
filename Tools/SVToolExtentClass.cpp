@@ -340,13 +340,9 @@ void SVToolExtentClass::SetExtentObject(SvPb::SVExtentPropertyEnum p_eProperty, 
 
 HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty, _variant_t& rValue) const
 {
-	HRESULT l_hrOk = S_OK;
-
-	SvOi::IValueObject* pValueObject(nullptr);
-
 	rValue.Clear();
-
-	l_hrOk = GetExtentObject(p_eProperty, pValueObject);
+	SvOi::IValueObject* pValueObject(nullptr);
+	HRESULT l_hrOk = GetExtentObject(p_eProperty, pValueObject);
 
 	if (nullptr != pValueObject)
 	{
@@ -362,11 +358,8 @@ HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty
 
 HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue)
 {
-	HRESULT l_hrOk = S_OK;
-
 	SvOi::IValueObject* pValueObject(nullptr);
-
-	l_hrOk = GetExtentObject(p_eProperty, pValueObject);
+	HRESULT l_hrOk = GetExtentObject(p_eProperty, pValueObject);
 
 	if (nullptr != pValueObject)
 	{
@@ -556,7 +549,7 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 	if (pImageParent != pAuxRefImage && pImageParent != m_pToolImage &&
 		nullptr != pToolParent && pToolParent != m_pTool)
 	{
-		l_svOk = m_rImageExtent.UpdateSourceOffset(offsetData);
+		/*l_svOk =*/ m_rImageExtent.UpdateSourceOffset(offsetData);
 		l_svOk = pToolParent->UpdateOffsetDataToImage(offsetData, pAuxRefImage);
 	}
 	else if (pImageParent == pAuxRefImage || nullptr == pAuxRefImage)

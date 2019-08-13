@@ -28,7 +28,7 @@ class SVMatroxBuffer;
 struct SVMatroxPolarTransformStruct  
 {
 public:
-	SVMatroxPolarTransformStruct(SVMatroxBuffer& p_rSource);
+	explicit SVMatroxPolarTransformStruct(SVMatroxBuffer& p_rSource);
 	virtual ~SVMatroxPolarTransformStruct();
 
 	SVMatroxBuffer&				m_rSource;

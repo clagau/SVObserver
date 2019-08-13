@@ -42,14 +42,15 @@ SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWn
 SVRegressionFileSelectSheet::~SVRegressionFileSelectSheet()
 {
 	int iPageCnt = GetPageCount();
-	CSVRegressionFileSelectDlg *pPage;
 
 	for (int i = iPageCnt-1; i >= 0; i-- )
 	{
-		pPage = (CSVRegressionFileSelectDlg*) GetPage(i);
+		CSVRegressionFileSelectDlg* pPage = (CSVRegressionFileSelectDlg*) GetPage(i);
 		RemovePage(i);
-		if ( pPage )
+		if (pPage)
+		{
 			delete pPage;
+		}
 	}
 
 	int iStructCnt = static_cast<int>(m_pRegressionList->GetCount());
@@ -427,7 +428,6 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 				std::string tmpPathName(fileFinder.GetFilePath());
 				if (tmpPathName.size() > rCurrentPath.size()+1 && '_' != tmpPathName[rCurrentPath.size()+1])
 				{
-					char tmp = tmpPathName[rCurrentPath.size()+1];
 					count += FillFileListFromDirectory(rStruct, tmpPathName);
 				}
 			}			
@@ -440,8 +440,6 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 BOOL SVRegressionFileSelectSheet::OnInitDialog() 
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
-	RegressionTestStruct *pTmpStruct;
-
 	int iPageCnt = GetPageCount();
 
 	for ( int i = 0; i <= iPageCnt; i++ )
@@ -467,7 +465,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 					POSITION pos = m_pRegressionList->FindIndex(iPos);
 					if ( pos )
 					{
-						pTmpStruct = m_pRegressionList->GetAt(pos);
+						RegressionTestStruct* pTmpStruct = m_pRegressionList->GetAt(pos);
 						if ( pTmpStruct->Camera == TmpName )
 						{
 							pPage->SetRegressionData(pTmpStruct);

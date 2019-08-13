@@ -40,23 +40,12 @@ struct SVMaskFillPropertiesStruct
 
 struct SVMaskShapeProperty
 {
-	long value;
-	int order;
-	bool bAvailableWithAutoResize;
+	long value {0};
+	int order {0};
+	bool bAvailableWithAutoResize {false};
 	std::string strName;
-	SVMaskShapeProperty()
-	{
-		value = 0;
-		order = 0;
-		bAvailableWithAutoResize = false;
-	}
-	SVMaskShapeProperty(const SVMaskShapeProperty& rhs)
-	{
-		value = rhs.value;
-		order = rhs.order;
-		bAvailableWithAutoResize = rhs.bAvailableWithAutoResize;
-		strName = rhs.strName;
-	}
+	SVMaskShapeProperty() = default;
+	SVMaskShapeProperty(const SVMaskShapeProperty& rhs) = default;
 	SVMaskShapeProperty& operator = (const SVMaskShapeProperty& rhs)
 	{
 		if ( this != &rhs )

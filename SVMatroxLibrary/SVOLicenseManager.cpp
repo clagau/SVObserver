@@ -41,13 +41,11 @@ SVOLicenseManager::~SVOLicenseManager()
 
 HRESULT SVOLicenseManager::InitLicenseManager()
 {
-	HRESULT hrRet = S_OK;
-
 	m_svErrorList.clear();
 
 	SVMatroxLicenseInterface svMatroxLicense; 
 
-	hrRet = svMatroxLicense.InitMatroxLicense();
+	HRESULT hrRet = svMatroxLicense.InitMatroxLicense();
 
 	if ( S_OK == hrRet )
 	{

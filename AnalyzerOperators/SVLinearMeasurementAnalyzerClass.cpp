@@ -82,9 +82,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 	}
 
 	// Set Embedded defaults
-	POINT defaultPoint;
-	defaultPoint.x = 0;
-	defaultPoint.y = 0;
+	SVPoint<double> defaultPoint(0,0);
 	mdpEdgeA.SetDefaultValue( defaultPoint, true );
 	mdpEdgeA.setSaveValueFlag(false);
 	mdpEdgeB.SetDefaultValue( defaultPoint, true );
@@ -242,11 +240,6 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 {
 	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 
-	SVPoint<double> edgePointA;
-	SVPoint<double> edgePointB;
-	double DistanceA( 0.0 );
-	double DistanceB( 0.0 );
-
 	if ( nullptr == GetTool())
 	{
 		Result = false;
@@ -261,21 +254,25 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 	{
 		SVImageExtentClass l_svExtents;
 
+		SVPoint<double> edgePointA;
 		if ( S_OK != GetEdgeA()->GetOutputEdgePoint(edgePointA) )
 		{
 			rRunStatus.SetFailed();
 		}
 
+		double DistanceA(0.0);
 		if ( S_OK != GetEdgeA()->GetOutputEdgeDistance(DistanceA) )
 		{
 			rRunStatus.SetFailed();
 		}
 
+		SVPoint<double> edgePointB;
 		if ( S_OK != GetEdgeB()->GetOutputEdgePoint(edgePointB) )
 		{
 			rRunStatus.SetFailed();
 		}
 
+		double DistanceB(0.0);
 		if ( S_OK != GetEdgeB()->GetOutputEdgeDistance(DistanceB) )
 		{
 			rRunStatus.SetFailed();

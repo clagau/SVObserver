@@ -98,7 +98,7 @@ namespace
 	class MILCanvas: public mil::Context
 	{
 	public:
-		MILCanvas( const SVMatroxBuffer& p_rBuffer )
+		explicit MILCanvas( const SVMatroxBuffer& p_rBuffer )
 		:	Context(), m_buffer( p_rBuffer ) 
 		{
 			setForeColor(mil::color::white());
@@ -475,7 +475,6 @@ SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()
 
 bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	SvIe::SVImageClass *pImage(nullptr);
    DWORD LastError(0);
 
     while (1)
@@ -488,7 +487,7 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 			break;
         }
 
-        pImage = getInputImage();
+		SvIe::SVImageClass* pImage = getInputImage();
         if (!pImage)
         {
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -591,24 +590,13 @@ bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 
 bool SVHistogramAnalyzerClass::CloseObject()
 {
-	DWORD LastError(0);
-	
 	m_histogramImage.CloseObject();
 	msvplHistValues.clear();
 	SVMatroxImageInterface l_lIntf;
 	l_lIntf.Destroy( m_HistResultID );
 	SVImageAnalyzerClass::CloseObject();
 
-
-   if( 0 !=LastError)
-   {
-      return false;
-   }
-   else
-   {
-	   return true;
-   }
-   
+   return true;
 }
 
 SvOi::IObjectClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
@@ -628,8 +616,6 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 {
 	bool Result = true;
 	SvIe::SVImageClass *pInputImage{nullptr};
-
-	HRESULT MatroxCode;
 
 	while (1)
 	{
@@ -691,7 +677,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		MatroxCode = l_lImageIntf.Histogram(m_HistResultID, pImageBuffer->getHandle()->GetBuffer() );
+		HRESULT MatroxCode = l_lImageIntf.Histogram(m_HistResultID, pImageBuffer->getHandle()->GetBuffer() );
 		if (S_OK != MatroxCode)
 		{
 			Result = false;
