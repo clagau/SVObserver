@@ -100,7 +100,7 @@ public:
 	//************************************
 	void GetResultData(SvIe::SVIPResultData& rResultData) const; 
 
-	std::vector <SvIe::IPResultTableData> getResultTableData(SvTrc::ITriggerRecordRPtr pTriggerRecord);
+	std::vector <SvIe::IPResultTableData> getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord);
 
 	//************************************
 	// Description:  Clears the lists.

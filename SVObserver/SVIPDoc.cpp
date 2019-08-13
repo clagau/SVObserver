@@ -3026,9 +3026,9 @@ std::vector <SvIe::IPResultTableData> SVIPDoc::getResultTableData() const
 	if (nullptr != pInspection)
 	{
 		SVResultListClass* pResultList = pInspection->GetResultList();
-		if (nullptr != pResultList)
+		if (nullptr != pResultList && nullptr != m_triggerRecord && m_triggerRecord->isObjectUpToTime())
 		{
-			return pResultList->getResultTableData(m_triggerRecord);
+			return pResultList->getResultTableData(*m_triggerRecord);
 		}
 	}
 	return {};

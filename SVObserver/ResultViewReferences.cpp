@@ -272,7 +272,7 @@ void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) con
 	}
 }
 
-std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(SvTrc::ITriggerRecordRPtr pTriggerRecord)
+std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord)
 {
 	std::vector <SvIe::IPResultTableData> returnData;
 	if (nullptr != m_resultTable)
@@ -286,7 +286,7 @@ std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(S
 				SvIe::IPResultTableData data = SvIe::IPResultTableData();
 				data.m_LastUpdateTimeStamp = m_LastUpdateTimeStamp;
 				data.m_columnName = valueObject->GetName();
-				data.m_rowData = pTriggerRecord->getDataValue(valueObject->GetUniqueObjectID());
+				data.m_rowData = rTriggerRecord.getDataValue(valueObject->GetUniqueObjectID());
 				returnData.push_back(data);
 			}
 		}
