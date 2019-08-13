@@ -162,11 +162,11 @@ void LogClass::PrintSummary()
 	CString strTmp;
 
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
-	strTmp.Format(_T("[ Summary  ] Passed %ul Steps"), m_uiPass);
+	strTmp.Format(_T("[ Summary  ] Passed %lu Steps"), m_uiPass);
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Failed %ul Steps"), m_uiFail);
+	strTmp.Format(_T("[ Summary  ] Failed %u Steps"), m_uiFail);
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Warning %ul Steps"), m_uiWarn);
+	strTmp.Format(_T("[ Summary  ] Warning %u Steps"), m_uiWarn);
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	constexpr int cStrLength = 128;
 	TCHAR szTime[cStrLength];
