@@ -56,9 +56,10 @@ typedef HRESULT (__stdcall *StartupPtr) ();
 typedef HRESULT (__stdcall *ShutDownPtr) ();
 typedef HRESULT (__stdcall *InitializeRunPtr) ( GUID tool, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavInputValues);
 typedef HRESULT (__stdcall *UninitializeRunPtr) ( GUID tool );
-typedef HRESULT (__stdcall *GetInputValueDefinitionsPtr) (long* plArraySize, InputValueDefinitionStruct** ppaStructs);
+typedef HRESULT(__stdcall *GetInputValueDefinitionsPtr) (long* plArraySize, InputValueDefinitionStruct** ppaStructs);
 typedef HRESULT (__stdcall *DestroyInputValueDefinitionStructuresPtr) (InputValueDefinitionStruct* paStructs);
 typedef HRESULT (__stdcall *SetInputValuesPtr) (GUID tool, long lArraySize, VARIANT* paInputValues);
+typedef HRESULT (__stdcall *GetInputImageInformationPtr) (long* plArraySize, InputImageInformationStruct** ppaStructs);
 typedef HRESULT (__stdcall *GetResultValuesPtr) (GUID tool, long lArraySize, VARIANT* paResultValues);
 typedef HRESULT (__stdcall *GetMessageStringPtr) (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage);
 typedef HRESULT (__stdcall *ValidateValueParameterPtr) (GUID tool, long lParameterNumber, VARIANT vParameterValue);
@@ -102,6 +103,7 @@ public:
 	HRESULT GetInputValueDefinitions (long* plArraySize,InputValueDefinitionStruct** ppaStructs);
 	HRESULT DestroyInputValueDefinitionStructures (InputValueDefinitionStruct* paStructs);
 	HRESULT SetInputValues (GUID tool, long lArraySize, VARIANT* paInputValues);
+	HRESULT GetInputImageInformation(std::vector<SvOp::InputImageInformationStruct> *pVector);
 	HRESULT GetResultValues (GUID tool, long lArraySize, VARIANT* paResultValues);
 	HRESULT GetMessageString (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage) const;
 	HRESULT ValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
@@ -140,6 +142,7 @@ private:
 	GetInputValueDefinitionsPtr m_pfnGetInputValueDefinitions;
 	DestroyInputValueDefinitionStructuresPtr m_pfnDestroyInputValueDefinitionStructures;
 	SetInputValuesPtr m_pfnSetInputValues;
+	GetInputImageInformationPtr m_pfnGetInputImageInformation;
 	GetResultValuesPtr m_pfnGetResultValues;
 	GetMessageStringPtr m_pfnGetMessageString;
 	ValidateValueParameterPtr m_pfnValidateValueParameter;

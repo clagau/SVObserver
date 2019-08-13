@@ -99,7 +99,7 @@ namespace SvOg
 		return {};
 	}
 
-	const SvUl::InputNameGuidPairList& ImageController::GetInputImageList(const GUID& rInstanceID, int maxImages) const
+	const SvUl::InputNameGuidPairList& ImageController::GetInputImageList(const GUID& rInstanceID, size_t maxImages) const
 	{
 		GUID objectID = m_TaskObjectID;
 		if (GUID_NULL != rInstanceID)
@@ -110,9 +110,8 @@ namespace SvOg
 		SvPb::GetInputsRequest* pGetInputsRequest = request.mutable_getinputsrequest();
 		SvPb::SetGuidInProtoBytes(pGetInputsRequest->mutable_objectid(), objectID);
 		pGetInputsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
-		pGetInputsRequest->set_maxrequested(maxImages);
+		pGetInputsRequest->set_maxrequested(static_cast<int32_t>(maxImages));
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-		SvUl::InputNameGuidPairList connectedList;
 		if (S_OK == hr && response.has_getinputsresponse())
 		{
 			m_connectedList.clear();

@@ -9,7 +9,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/any.hpp>
-//Moved to precompiled header: #include <boost/noncopyable.hpp>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
 #include "ImageController.h"
@@ -18,10 +17,13 @@
 
 namespace SvOg
 {
-	class MaskController : public boost::noncopyable
+	class MaskController
 	{
 	public:
 		MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& maskOperatorID);
+		MaskController(const MaskController&) = delete;
+		const MaskController& operator==(const MaskController&) = delete;
+
 		void Init();
 		const GUID& GetInstanceID() const;
 		const GUID& GetShapeMaskHelperID() const;

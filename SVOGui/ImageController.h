@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageEnums.h"
@@ -18,7 +17,7 @@
 
 namespace SvOg
 {
-	class ImageController : public boost::noncopyable
+	class ImageController
 	{
 		GUID m_InspectionID;
 		GUID m_TaskObjectID;
@@ -32,12 +31,16 @@ namespace SvOg
 
 	public:
 		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType, bool OnlyAboveImages = true);
-	
+		~ImageController() {}
+
+		ImageController(const ImageController&) = delete;
+		ImageController &ImageController::operator=(const ImageController&) = delete;
+
 		HRESULT Init();
 
 		const SvUl::NameGuidList& GetAvailableImageList() const;
 		const SvDef::StringVector& GetSpecialImageList() const;
-		const SvUl::InputNameGuidPairList& GetInputImageList(const GUID& rChildObjectID = GUID_NULL, int maxImages=0) const;
+		const SvUl::InputNameGuidPairList& GetInputImageList(const GUID& rChildObjectID = GUID_NULL, size_t maxImages=0) const;
 		SvUl::NameGuidList GetResultImages() const;
 
 		IPictureDisp* GetImage(const std::string& name) const;

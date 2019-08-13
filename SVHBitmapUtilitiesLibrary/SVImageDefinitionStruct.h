@@ -31,6 +31,8 @@ private:
 	void Clear();
 	void Init();
 };
+
+
 #pragma pack (pop)
 
 typedef std::vector<SVImageDefinitionStruct> SVImageDefinitionStructArray;

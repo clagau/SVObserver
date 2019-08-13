@@ -13,9 +13,9 @@
 //Moved to precompiled header: #include <boost/bind>
 #include "stdafx.h"
 #include "svobserver.h"
+#include "SVInspectionProcess.h"
 #include "SVExternalToolDlg.h"
 #include "SVExternalToolDetailsSheet.h"
-#include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "Operators/SVExternalToolTask.h"
@@ -211,7 +211,7 @@ void SVExternalToolDlg::OnDetails()
 	if ( sheet.CanCancel() )
 		sheet.GetCancelData(pCancelData);
 
-	sheet.CreatePages();
+	sheet.CreatePages(m_pTask->m_aInputImageInformationStructs);
 
 	if( sheet.DoModal() == IDOK )
 	{	// sheet modifies tool; no need to do anything

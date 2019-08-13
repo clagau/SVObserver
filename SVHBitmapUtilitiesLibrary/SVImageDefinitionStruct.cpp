@@ -33,7 +33,6 @@ SVImageDefinitionStruct::~SVImageDefinitionStruct( )
 
 const SVImageDefinitionStruct& SVImageDefinitionStruct::operator = (const SVImageDefinitionStruct& rhs )
 {
-
 	if( this != &rhs )
 	{
 		Clear();
@@ -62,4 +61,11 @@ void SVImageDefinitionStruct::Init( )
 	eImageFormat = SvDef::SVImageFormatUnknown;
 	bstrDisplayName = nullptr;
 }
+
+
+
+
+
+
+
 

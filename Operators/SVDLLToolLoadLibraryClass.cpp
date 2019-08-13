@@ -43,6 +43,7 @@ SVDLLToolLoadLibraryClass::SVDLLToolLoadLibraryClass()
 	m_pfnDestroyInputValueDefinitionStructures = nullptr;
 	m_pfnDestroyResultValueDefinitionStructures = nullptr;
 	m_pfnSetInputValues = nullptr;
+	m_pfnGetInputImageInformation = nullptr;
 	m_pfnGetResultValues = nullptr;
 	m_pfnGetMessageString = nullptr;
 	m_pfnValidateValueParameter = nullptr;
@@ -96,6 +97,7 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 			m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "SVDestroyInputValueDefinitionStructures");
 			m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "SVDestroyResultValueDefinitionStructures");
 			m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress(m_hmHandle, "SVSetInputValues");
+			m_pfnGetInputImageInformation = (GetInputImageInformationPtr)::GetProcAddress(m_hmHandle, "SVGetInputImageInformation");
 			m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress(m_hmHandle, "SVGetResultValues");
 			m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress(m_hmHandle, "SVGetErrorMessageString");
 			m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress(m_hmHandle, "SVValidateValueParameter");
@@ -633,6 +635,48 @@ HRESULT SVDLLToolLoadLibraryClass::SetInputValues(GUID tool, long lArraySize, VA
 	return l_hrOk;
 }
 
+HRESULT SVDLLToolLoadLibraryClass::GetInputImageInformation(std::vector<InputImageInformationStruct> *pVector)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetInputImageInformation)
+	{
+		try
+		{
+			InputImageInformationStruct *ppIIISs;
+			long ArraySize;
+			l_hrOk = m_pfnGetInputImageInformation(&ArraySize, &ppIIISs);
+
+			for (auto &rIiis : *pVector)
+			{
+				rIiis = *ppIIISs;
+				ppIIISs++;
+			}
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+	else
+	{	// the external DLL we are using does not provide SVGetInputImageInformation:
+		// so we assume it is an old DLL and can only handle black-and-white Images
+		int i = 0;
+		for (auto& rIiis : *pVector)
+		{
+			rIiis = InputImageInformationStruct();
+			rIiis.DisplayName = SvUl::Format(_T("Image %02d"), ++i).c_str();
+			rIiis.HelpText = "No HelpText available!";
+			rIiis.allowBlackAndWhite();
+		}
+		l_hrOk = S_OK;
+	}
+
+	return l_hrOk;
+}
+
+
+
 HRESULT SVDLLToolLoadLibraryClass::GetResultValues(GUID tool, long lArraySize, VARIANT* paResultValues)
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -821,6 +865,8 @@ HRESULT SVDLLToolLoadLibraryClass::GetResultImageDefinitions(GUID tool, long* pl
 
 	return l_hrOk;
 }
+
+
 
 HRESULT SVDLLToolLoadLibraryClass::DestroyImageDefinitionStructure(SVImageDefinitionStruct* paStructs)
 {

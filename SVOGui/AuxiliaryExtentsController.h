@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "SVUtilityLibrary\SVGUID.h"
 
 #include "ImageController.h"
@@ -19,7 +18,7 @@
 
 namespace SvOg
 {
-	class AuxiliaryExtentsController : public boost::noncopyable
+	class AuxiliaryExtentsController
 	{
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 		const SVGUID m_InspectionID;
@@ -31,6 +30,8 @@ namespace SvOg
 		public:
 			AuxiliaryExtentsController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 			virtual ~AuxiliaryExtentsController() {}
+			AuxiliaryExtentsController(const AuxiliaryExtentsController&) = delete;
+			AuxiliaryExtentsController& operator=(const AuxiliaryExtentsController&) = delete;
 			HRESULT Init();
 			HRESULT Commit();
 			bool AreAuxiliaryExtentsAvailable() const;

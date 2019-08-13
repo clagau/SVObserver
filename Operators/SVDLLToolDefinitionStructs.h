@@ -123,6 +123,7 @@ private:
 
 	ResultValueDefinitionStruct m_ValueDefinition;
 };
+
 class ResultTableDefinition
 {
 public:
@@ -141,9 +142,27 @@ public:
 
 private:
 
-
 	ResultTableDefinitionStruct m_TableDefinition;
 	int m_ValueIndex {-1};
+};
+
+
+struct InputImageInformationStruct
+{
+	_bstr_t DisplayName="";
+	_bstr_t HelpText = "";
+	///AllowedImageTypes is meant to contain flags that specify which image types are acceptable.
+	/// currently, only two bits are used: 
+	///		bit 0 allows black and white images
+	///		bit 32 allows color images
+	/// later, bits 1 to 31 could specify specific black and white image types and
+	/// later, bits 33 to 63 could specify specific color image types
+	uint64_t AllowedImageTypes = 0;
+	
+	void allowBlackAndWhite();
+	void allowColor();
+	bool mayBeBlackAndWhite() const;
+	bool mayBeColor() const;
 };
 
 

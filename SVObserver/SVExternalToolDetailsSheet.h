@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVLibrary\ISVCancel.h"
+#include "Operators/SVDLLToolDefinitionStructs.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -30,7 +31,7 @@ class SVExternalToolDetailsSheet : public CPropertySheet, public ISVCancel
 // Construction
 public:
 	SVExternalToolDetailsSheet(const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd = nullptr, UINT iSelectPage = 0 );
-	HRESULT CreatePages();
+	HRESULT CreatePages(const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector);
 
 	SVIPDoc* GetIPDoc() const;
 

@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVExternalToolDetailsSheet.h"
 
+#include "SVExternalToolDetailsSheet.h"
 #include "svobserver.h"
 #include "Operators/SVExternalToolTask.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
@@ -63,11 +63,11 @@ SVExternalToolDetailsSheet::~SVExternalToolDetailsSheet()
 	m_pTask = nullptr;
 }
 
-HRESULT SVExternalToolDetailsSheet::CreatePages()
+HRESULT SVExternalToolDetailsSheet::CreatePages(const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector)
 {
 	ASSERT( m_pTask );
 
-	SvOg::SVExternalToolImageSelectPage* pImageDlg = new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_ToolObjectID, m_numImages);
+	SvOg::SVExternalToolImageSelectPage* pImageDlg = new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_ToolObjectID, rInfostructVector);
 	AddPage(pImageDlg);
 
 	SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage( _T("External Tool Inputs"), m_InspectionID, m_ToolObjectID, m_TaskObjectID);

@@ -17,18 +17,19 @@
 #include "ImageController.h"
 #include "PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
+#include "Operators/SVDLLToolDefinitionStructs.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
-	class SVExternalToolImageSelectPage : public CPropertyPage, protected SvOg::ImageController
+	class SVExternalToolImageSelectPage : public CPropertyPage
 	{
 		typedef std::map<UINT, std::string> ImageInputList; // maps CtrlID to InputName
 
 	#pragma region Constructor
 	public:
-		SVExternalToolImageSelectPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, long numImages, int id = IDD );
-		virtual ~SVExternalToolImageSelectPage();
+		SVExternalToolImageSelectPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id = IDD );
+		virtual ~SVExternalToolImageSelectPage() {}
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
@@ -62,7 +63,7 @@ namespace SvOg
 		// Description: Sets the images to the image control.
 		// Returns:   void
 		//************************************
-		void setImages();
+		void setImages(ImageController &imgCtrl);
 
 	#pragma endregion Private Methods
 
@@ -71,13 +72,15 @@ namespace SvOg
 		// Dialog Data
 		//{{AFX_DATA(SVExternalToolImageSelectPage)
 		enum { IDD = IDD_EXTERNAL_TOOL_IMAGES };
-		SvOg::PictureDisplay m_ImageDisplay;
+		PictureDisplay m_ImageDisplay;
 		//}}AFX_DATA
+
+		std::vector<SvOp::InputImageInformationStruct> m_Infostructs;
 
 		SVRPropTree	m_Tree;
 		const SVGUID m_InspectionID;
 		const SVGUID m_TaskObjectID;
-		int m_numImages;
+		size_t m_numImages;
 		ImageInputList m_imageInputList;
 	#pragma endregion Member variables
 	};

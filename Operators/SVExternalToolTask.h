@@ -104,18 +104,16 @@ public:
 	void CreateArray();
 	virtual bool CloseObject() override;
 	virtual bool ConnectAllInputs() override;
-
 	
 	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {});
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 
-	HRESULT SetPathName( const std::string& rPath );
+	void SetPathName( const std::string& rPath );
 	HRESULT SetDependencies( const SvDef::StringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
 	HRESULT GetResultValueDefinitions ( std::vector<ResultValueDefinition>& raResultValueDefinitions );
 	
-
 	// ISVCancel interface
 	virtual bool CanCancel() override;
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
@@ -160,12 +158,22 @@ protected:
 	HRESULT AllocateResult (int iIndex);
 
 private:
+	bool prepareInput(SvTrc::IImagePtr pResultImageBuffers[], SVRunStatusClass& rRunStatus);
+	void getResults(SvTrc::IImagePtr pResultImageBuffers[]);
+	bool anyImagesResized();
+	void collectInputValues();
+	bool collectInputImages(SVRunStatusClass& rRunStatus);
+	bool collectMilResultBuffers(SvTrc::IImagePtr pResultImageBuffers[]);
+	void collectResultValues();
+	void collectResultImages(SvTrc::IImagePtr pResultImageBuffers[]);
+
 	SVDLLToolLoadLibraryClass m_dll;
 
 	SVExternalToolTaskData m_Data;	// this is our cancelable data
 
 	std::vector<long>      m_aInspectionInputImages;
 	std::vector<long>      m_aInspectionResultImages;
+	std::vector<InputImageInformationStruct> m_aInputImageInformationStructs;
 	std::vector<SVDIBITMAPINFO> m_aInspectionInputHBMImages;
 	std::vector<HBITMAP> m_aInspectionResultHBMImages;
 
@@ -184,7 +192,7 @@ private:
 	bool                     m_bUseImageCopies;
 	
 private:
-	HRESULT CollectInputImageNames( );
+	HRESULT collectInputImageNames( );
 
 public:
 	friend class SVExternalToolDlg;

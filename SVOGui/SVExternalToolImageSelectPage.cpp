@@ -16,6 +16,9 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+namespace SvOg
+{
+
 #pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,8 +26,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace SvOg
-{
+	
+
 	BEGIN_MESSAGE_MAP(SVExternalToolImageSelectPage, CPropertyPage)
 		//{{AFX_MSG_MAP(SVExternalToolImageSelectPage)
 		ON_NOTIFY(PTN_ITEMCHANGED, IDC_IMAGE_LIST, OnItemChanged)
@@ -33,19 +36,36 @@ namespace SvOg
 	END_MESSAGE_MAP()
 	#pragma endregion Declarations
 
+	SvPb::SVObjectSubTypeEnum GetImageSubtype(const SvOp::InputImageInformationStruct &rInfostruct)
+	{
+		SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType; //for the time being: b/w Images are always acceptable
+
+		if (rInfostruct.mayBeColor())
+		{
+			if (rInfostruct.mayBeBlackAndWhite())
+			{
+				ImageSubType = SvPb::SVNotSetSubObjectType;
+			}
+			else
+			{
+				ImageSubType = SvPb::SVImageColorType;
+			}
+
+		}
+
+		return ImageSubType;
+	}
+
 	#pragma region Constructor
-	SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, long numImages, int id )
+	SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id )
 	: CPropertyPage(id)
-	, SvOg::ImageController(rInspectionID, rTaskObjectID)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-	, m_numImages(numImages)
+	, m_numImages(rInfostructVector.size())
+	, m_Infostructs(rInfostructVector)
 	{
 	}
 
-	SVExternalToolImageSelectPage::~SVExternalToolImageSelectPage()
-	{
-	}
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
@@ -60,7 +80,6 @@ namespace SvOg
 	BOOL SVExternalToolImageSelectPage::OnInitDialog()
 	{
 		CPropertyPage::OnInitDialog();
-		Init();
 	
 		// Only show as many as the external tool has exposed...
 		if (m_numImages > 0)
@@ -69,7 +88,10 @@ namespace SvOg
 			GetDlgItem(IDC_IMAGE_LIST)->ShowWindow(SW_SHOW);
 
 			buildPropertyTree();
-			setImages();
+			ImageController ImgCtrlDisplay(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
+			ImgCtrlDisplay.Init();
+			setImages(ImgCtrlDisplay);
+
 			UpdateData(false); // set data to dialog
 		}
 
@@ -91,7 +113,9 @@ namespace SvOg
 				UINT ctrlID = pItem->GetCtrlID();
 				if (ctrlID >= 0 && static_cast<int>(ctrlID) < m_numImages)
 				{
-					const SvUl::NameGuidList& availImages = GetAvailableImageList();
+					ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(m_Infostructs[ctrlID]));
+					ImgCtrl.Init();
+					const SvUl::NameGuidList& availImages = ImgCtrl.GetAvailableImageList();
 					long dist = -1;
 					pItem->GetItemValue(dist);
 					if (dist >= 0 && dist < static_cast<int>(availImages.size()))
@@ -104,10 +128,10 @@ namespace SvOg
 							std::string inputName = m_imageInputList[ctrlID];
 							if (!imageName.empty() && !inputName.empty())
 							{
-								HRESULT hr = ConnectToImage(inputName, imageName);
+								HRESULT hr = ImgCtrl.ConnectToImage(inputName, imageName);
 								if (S_OK == hr)
 								{
-									setImages();
+									setImages(ImgCtrl);
 
 									*plResult = S_OK;
 								}
@@ -157,13 +181,20 @@ namespace SvOg
 		pRoot->SetLabelText(_T("Input Source Images"));
 		pRoot->SetInfoText(_T(""));
 
-		const SvUl::NameGuidList& availImages = GetAvailableImageList();
-		const SvUl::InputNameGuidPairList& images = GetInputImageList(GUID_NULL, m_numImages);
-	
+		//we need to iterate over an InputImageList
+		//these are the same for all ImageControllers so let's generate one of them immediately
+		//to obtain such a list
+		ImageController justForInputImageListGeneration(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
+		justForInputImageListGeneration.Init();
+		const SvUl::InputNameGuidPairList NameGuidPairs = justForInputImageListGeneration.GetInputImageList(GUID_NULL, m_numImages);
+
 		int i = 0;
-		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin();it != images.end();++it)
+		for (SvUl::InputNameGuidPairList::const_iterator it = NameGuidPairs.begin();it != NameGuidPairs.end();++it)
 		{
-			std::string Temp = SvUl::Format( _T("Image %02d"), i + 1);
+			ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(m_Infostructs[i]));
+			ImgCtrl.Init();
+			const SvUl::NameGuidList& availImages = ImgCtrl.GetAvailableImageList();
+			std::string Temp = m_Infostructs[i].DisplayName;
 
 			SVRPropertyItemCombo* pCombo = static_cast<SVRPropertyItemCombo *>(m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot));
 
@@ -193,19 +224,20 @@ namespace SvOg
 		pRoot->Expand();
 	}
 
-	void SVExternalToolImageSelectPage::setImages()
+
+	void SVExternalToolImageSelectPage::setImages(ImageController &imgCtrl)
 	{
-		ToolRunOnce();
-		const SvUl::InputNameGuidPairList& images = GetInputImageList(GUID_NULL, m_numImages);
+		imgCtrl.ToolRunOnce();
+		const SvUl::InputNameGuidPairList& NameGuidPairs = imgCtrl.GetInputImageList(GUID_NULL, m_numImages);
 		int imageIndex = 0;
-		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin(); it != images.end(); ++it)
+		for (auto& rNameGuidPair : NameGuidPairs)
 		{
-			m_ImageDisplay.setImage(GetImage(it->second.second.ToGUID()), imageIndex);
+			m_ImageDisplay.setImage(imgCtrl.GetImage(rNameGuidPair.second.second.ToGUID()), imageIndex);
 			m_ImageDisplay.SetZoom(imageIndex++, -1.0);
 		}
 		m_ImageDisplay.Refresh();
 		UpdateData(false); // set data to dialog
 	}
 
-	#pragma endregion Private Methods
+#pragma endregion Private Methods
 } //namespace SvOg

@@ -282,10 +282,32 @@ std::vector<std::string>  ResultTableDefinition::getColoumnNames() const
 	}
 	return Ret;
 }
+
+
 std::string ResultTableDefinition::getDisplayName() const
 {
 	std::string result((LPCSTR)m_TableDefinition.bstrDisplayName);
 	return result;
+}
+
+void InputImageInformationStruct::allowBlackAndWhite()
+{
+	AllowedImageTypes |= 1u; //currently this means 'basic' Black and white
+}
+
+void InputImageInformationStruct::allowColor()
+{
+	AllowedImageTypes |= 1llu<<32; //currently this means 'basic' Color
+}
+
+bool InputImageInformationStruct::mayBeBlackAndWhite() const
+{
+	return (AllowedImageTypes & 0xFFFFFFFF)!=0; //see definition of InputImageInformationStruct
+}
+
+bool InputImageInformationStruct::mayBeColor() const
+{
+	return (AllowedImageTypes & 0xFFFFFFFFllu<<32) != 0;  //see definition of InputImageInformationStruct
 }
 
 } //namespace SvOp
