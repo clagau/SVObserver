@@ -62,11 +62,6 @@ struct SVOutputsInfoStruct
 	SVOutputsInfoStruct& operator=(const SVOutputsInfoStruct& rRhs) = default;
 	SVOutputsInfoStruct& operator=(SVOutputsInfoStruct&& rRhs) = default;
 
-	void Init();
-
-	long m_OutputDelay {0L};
-	long m_ResetDelay {0L};
-	long m_DataValidDelay {0L};
 	bool m_DataValidResult {false};
 	bool m_OutputToggleResult {false};
 	bool m_NakResult {true};

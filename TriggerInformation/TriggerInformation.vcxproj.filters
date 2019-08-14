@@ -51,9 +51,6 @@
     <ClCompile Include="SVTriggerDeviceParams.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerInfoStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTriggerObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

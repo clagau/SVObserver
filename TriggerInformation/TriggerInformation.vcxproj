@@ -98,7 +98,6 @@
     <ClCompile Include="SVOTriggerObj.cpp" />
     <ClCompile Include="SVSoftwareTriggerClass.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
-    <ClCompile Include="SVTriggerInfoStruct.cpp" />
     <ClCompile Include="SVTriggerObject.cpp" />
     <ClCompile Include="SVTriggerProcessingClass.cpp" />
   </ItemGroup>

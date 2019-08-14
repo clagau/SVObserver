@@ -18,18 +18,6 @@
 #include "SVPPQObject.h"
 #pragma endregion Includes
 
-void SVOutputsInfoStruct::Init()
-{
-	//Init only initializes these values because the rest of the values are required for the next process cycle
-	m_EndOutputDelay = 0.0;
-	m_EndResetDelay = 0.0;
-	m_EndDataValidDelay	= 0.0;
-	m_BeginProcess = 0.0;
-	m_EndProcess = 0.0;
-	m_NakResult = true;
-	m_Outputs.clear();
-}// end Init
-
 void SVInspectionInfoStruct::Init()
 {
 	//Init only initializes these values because the rest of the values are required for the next process cycle
@@ -50,6 +38,7 @@ void SVInspectionInfoStruct::Init()
 	m_triggerRecordWrite = nullptr;
 	m_triggerRecordComplete = nullptr;
 	m_lastInspectedSlot = -1;
+	m_ObjectID = 0;
 	m_bReject = false;
 }
 
@@ -232,8 +221,8 @@ void SVProductInfoStruct::InitProductInfo()
 	m_triggered			= false;
 	m_dataComplete		= false;
 	m_monitorListSMSlot = -1;
-	m_outputsInfo.Init();
-	m_triggerInfo.Reset();
+	m_outputsInfo = std::move(SVOutputsInfoStruct{});
+	m_triggerInfo = std::move(SvTi::SVTriggerInfoStruct{});
 	
 	for(auto& rCamera : m_svCameraInfos)
 	{
@@ -260,7 +249,7 @@ void SVProductInfoStruct::Reset()
 	m_monitorListSMSlot = -1;
 	m_outputsInfo = std::move(SVOutputsInfoStruct {});
 	m_pPPQ = nullptr;
-	m_triggerInfo.Reset();
+	m_triggerInfo = std::move(SvTi::SVTriggerInfoStruct {});
 	
 	for(auto& rCamera : m_svCameraInfos)
 	{

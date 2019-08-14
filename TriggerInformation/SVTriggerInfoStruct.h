@@ -22,8 +22,6 @@ namespace SvTi
 		SVTriggerInfoStruct& operator=(const SVTriggerInfoStruct& rRhs) = default;
 		SVTriggerInfoStruct& operator=(SVTriggerInfoStruct&& rRhs) = default;
 
-		void Reset();
-
 		bool bValid{false};
 		long lTriggerCount{0L};
 		bool m_ToggleState{false};

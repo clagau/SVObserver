@@ -219,7 +219,7 @@ HRESULT SVPPQObject::ProcessTimeDelayOutputs(SVProductInfoStruct& rProduct)
 		{
 			rProduct.m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
-			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + rProduct.m_outputsInfo.m_ResetDelay;
+			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + m_lResetDelay;
 
 			m_oOutputsResetQueue.AddTail(rProduct.ProcessCount());
 
@@ -1791,7 +1791,9 @@ bool SVPPQObject::EvaluateConditionalOutput() const
 
 bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 {
-	bool bRet = true;
+	bool result{true};
+	bool bNak{true};
+	bool dataValidResult{false};
 	DWORD inspectedObjectID{0};
 
 #ifdef _DEBUG
@@ -1827,7 +1829,9 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 				inspectedObjectID = static_cast<DWORD> (iterData->second);
 			}
 		}
-
+		pProduct->m_outputsInfo.m_OutputToggleResult = m_OutputToggle;
+		bNak = pProduct->m_outputsInfo.m_NakResult;
+		dataValidResult = pProduct->m_outputsInfo.m_DataValidResult;
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
 		l_ProductState = pProduct->m_ProductState;
@@ -1842,9 +1846,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		bWriteOutputs = EvaluateConditionalOutput();
 	}
 
-	const GuidVariantPairVector& rOutputValues = pProduct->m_outputsInfo.m_Outputs;
-	pProduct->m_outputsInfo.m_OutputToggleResult = m_OutputToggle;
-	bool bNak = pProduct->m_outputsInfo.m_NakResult;
+	const GuidVariantPairVector& rOutputValues = (nullptr != pProduct) ? pProduct->m_outputsInfo.m_Outputs : GuidVariantPairVector();
 
 	if (bWriteOutputs)
 	{
@@ -1860,22 +1862,22 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 				m_pOutputList->WriteOutputData(triggerChannel, outputData);
 			}
 		}
-		bRet = m_pOutputList->WriteOutputs(rOutputValues);
+		result = m_pOutputList->WriteOutputs(rOutputValues);
 		if (0 == m_DataValidDelay)
 		{
 			if (nullptr != m_pDataValid)
 			{
-				m_pOutputList->WriteOutputValue(m_pDataValid, _variant_t(pProduct->m_outputsInfo.m_DataValidResult));
+				m_pOutputList->WriteOutputValue(m_pDataValid, _variant_t(dataValidResult));
 			}
 			if (nullptr != m_pOutputToggle)
 			{
-				m_pOutputList->WriteOutputValue(m_pOutputToggle, _variant_t(pProduct->m_outputsInfo.m_OutputToggleResult));
+				m_pOutputList->WriteOutputValue(m_pOutputToggle, _variant_t(m_OutputToggle));
 			}
 		}
-		else
+		else if(nullptr != pProduct)
 		{
 			// Set output data valid expire time
-			pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + pProduct->m_outputsInfo.m_DataValidDelay;
+			pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + m_DataValidDelay;
 			m_DataValidDelayQueue.AddTail(pProduct->ProcessCount());
 		}
 	}
@@ -1906,7 +1908,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		::InterlockedExchange(&m_NewNAKCount, 0);
 	}
 
-	return bRet;
+	return result;
 }// end WriteOutputs
 
 bool SVPPQObject::ResetOutputs()
@@ -2406,9 +2408,6 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 	if (p_pProduct)
 	{
 		p_pProduct->m_outputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
-		p_pProduct->m_outputsInfo.m_OutputDelay = m_lOutputDelay;
-		p_pProduct->m_outputsInfo.m_ResetDelay = m_lResetDelay;
-		p_pProduct->m_outputsInfo.m_DataValidDelay = m_DataValidDelay;
 		p_pProduct->m_outputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
 		p_pProduct->m_outputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
 		p_pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
@@ -2426,8 +2425,7 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 			if (0 < m_lResetDelay)
 			{
 				// Set output reset expire time
-				p_pProduct->m_outputsInfo.m_EndResetDelay = p_pProduct->m_outputsInfo.m_EndProcess +
-					p_pProduct->m_outputsInfo.m_ResetDelay;
+				p_pProduct->m_outputsInfo.m_EndResetDelay = p_pProduct->m_outputsInfo.m_EndProcess + m_lResetDelay;
 
 				m_oOutputsResetQueue.AddTail(p_pProduct->ProcessCount());
 			}
@@ -2441,10 +2439,8 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
-			double l_Offset = p_pProduct->m_outputsInfo.m_OutputDelay;
-
 			// Set output delay expire time
-			p_pProduct->m_outputsInfo.m_EndOutputDelay = p_pProduct->m_triggerInfo.m_ToggleTimeStamp + l_Offset;
+			p_pProduct->m_outputsInfo.m_EndOutputDelay = p_pProduct->m_triggerInfo.m_ToggleTimeStamp + m_lOutputDelay;
 
 			if (p_pProduct->m_outputsInfo.m_BeginProcess < p_pProduct->m_outputsInfo.m_EndOutputDelay)
 			{
@@ -2468,14 +2464,14 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 
 void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 {
-	bool bValid{true};
+	bool bValid{rProduct.m_svInspectionInfos.size() > 0};
 	long oState{0};
 	DWORD previousObjectID{0};
 
 	for(const auto& rInspectionInfo : rProduct.m_svInspectionInfos)
 	{
 		oState |= rInspectionInfo.second.m_InspectedState;
-		bValid &= (rInspectionInfo.second.m_EndInspection > 0);
+		bValid &= (rInspectionInfo.second.m_EndInspection > 0.0);
 		//Make sure that the inspected object ID is the same for all inspections if not then failed
 		if(0 == previousObjectID)
 		{
@@ -2487,9 +2483,6 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 		}
 	}
 	m_PpqOutputs[PpqOutputEnums::DataValid].SetValue(BOOL(bValid));
-
-	//Save these values for later
-	rProduct.m_outputsInfo.m_DataValidResult = bValid;
 
 	// Set the value objects depending on the inspection state result
 	if (PRODUCT_INSPECTION_NOT_RUN & oState)
@@ -2597,7 +2590,7 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
 	rProduct.m_outputsInfo.m_NakResult =  bNAK ? true : false;
-
+	rProduct.m_outputsInfo.m_DataValidResult = bValid & !bNAK;
 }
 
 bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
