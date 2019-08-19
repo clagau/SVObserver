@@ -394,6 +394,7 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 		// happens in OnCreate of the Tool.  Therefore the following 
 		// UpdatePosition() will return an E_FAIL.
 		hr = UpdatePosition();
+		
 
 		//Update children but do not check if they cause errors as these are handled somewhere else
 		UpdateChildren();
@@ -412,7 +413,10 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 		m_LastReset = SvTl::GetTimeStamp();
 	}
 
-	if (S_OK != hr  && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
+	//Update Position returns S_FALSE when ROI for LiniarTool without rotation is moved 
+	// outside the parentwindow. When moved with the mouse this is corrected 
+	//later should be ignored here S_OK != S_FALSE  &&
+	if ( S_OK != hr  && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		pErrorMessages->push_back(Msg);

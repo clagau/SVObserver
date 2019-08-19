@@ -86,6 +86,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			{
 				retVal = SvStl::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
 			}
+			pInspection->RemoveResetState(SvDef::SVResetAutoMoveAndResize);
 		}
 	}
 	else
