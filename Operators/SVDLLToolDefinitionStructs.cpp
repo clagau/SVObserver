@@ -204,6 +204,10 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 				m_Type = SvOp::ExDllInterfaceType::Array;
 				m_LinkedValueIndex = (*pNLValue)++;
 			}
+			else
+			{
+				throw std::invalid_argument("Invalid::DefaultValue dim == 1");
+			}
 
 		}
 		else if (m_Dim == 2 && (m_InputValueDefStruct.m_DefaultValue.vt == (VT_ARRAY | VT_R8)))
@@ -211,8 +215,13 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 			m_Type = SvOp::ExDllInterfaceType::TableArray;
 			m_LinkedValueIndex = (*pNLValue)++;
 		}
+		else
+		{
+			throw std::invalid_argument("Invalid::DefaultValue");
+		}
 	}
 }
+
 
 ResultTableDefinitionStruct& ResultTableDefinitionStruct::operator = (const ResultTableDefinitionStruct& rhs)
 {
@@ -238,6 +247,7 @@ void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  re
 {
 	m_ValueIndex = ValueIndex;
 	m_ValueDefinition = resultValueDefinitionStruct;
+	
 
 }
 
@@ -257,10 +267,17 @@ std::string ResultValueDefinition::getDisplayName() const
 	return result;
 }
 
+
+
 void ResultTableDefinition::setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long Index)
 {
 	m_TableDefinition = DefinitionStruct;
 	m_ValueIndex = Index;
+	if (m_TableDefinition.lVT != VT_R8 || 
+		(m_TableDefinition.ColumnNames.vt != (VT_ARRAY | VT_BSTR)))
+	{
+		throw(std::invalid_argument("Wrong vt in ResultTableDefinition"));
+	}
 }
 
 std::vector<std::string>  ResultTableDefinition::getColoumnNames() const

@@ -44,7 +44,6 @@ private:
 #pragma pack (pop)
 
 
-
 //!class describing the inputvalue definitions for External dll
 // contents the structure from the dll with some additional calculated information 
 class  InputValueDefinition
@@ -58,12 +57,13 @@ public:
 	std::string getHelpText() const;
 	std::string getGroup() const;
 	const _variant_t& getDefaultValue() const;
+	//Throw exception if InputValueDefinitionStruct is not allowed
 	void setDefinition(const InputValueDefinitionStruct&  InputValueDefStruct, long* NofLinkedValue);
 
 	int getDim()const { return m_Dim; };
 	SvOp::ExDllInterfaceType getType() const { return m_Type; };
 	int  getLinkedValueIndex() const { return m_LinkedValueIndex; };
-
+	
 private:
 
 	int m_LinkedValueIndex {-1};
@@ -88,6 +88,9 @@ private:
 };
 #pragma pack (pop)
 
+
+
+
 #pragma pack (push, 1)
 struct ResultTableDefinitionStruct
 {
@@ -111,13 +114,15 @@ public:
 	ResultValueDefinition() = default;
 	~ResultValueDefinition() = default;
 
+	//Throw exception if ResultValueDefinitionStruct is not allowed
 	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex);
 
 	int getIndex() const;
 	std::string getDisplayName() const;
 	SvOp::ExDllInterfaceType getType() const;
 	long getVT() const;
-
+	
+	
 private:
 	int m_ValueIndex {-1};
 
@@ -132,6 +137,7 @@ public:
 
 	long getTableColoumnCount() const { return m_TableDefinition.ColoumnCount; };
 	long getTableRowCount() const { return m_TableDefinition.RowCount; };
+	//Throw exception if ResultValueDefinitionStruct is not allowed
 	void setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long ValueIndex);
 	std::vector<std::string> getColoumnNames() const;
 
@@ -139,7 +145,8 @@ public:
 	std::string getDisplayName() const;
 	SvOp::ExDllInterfaceType getType() const;
 	long getVT() const { return m_TableDefinition.lVT; };
-
+	
+	
 private:
 
 	ResultTableDefinitionStruct m_TableDefinition;

@@ -421,7 +421,6 @@ HRESULT CDllTool::run()
 	}
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
-
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
 		ATLASSERT(dim == 2);

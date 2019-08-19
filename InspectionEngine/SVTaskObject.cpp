@@ -551,14 +551,21 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 
 	}
 
-	//@Todo[MEC][8.20] [15.07.2019] EXTERNAL TOOL catch exception
 	if (shouldSet)
 	{
 		for (auto const& rEntry : rValueVector)
 		{
 			if (nullptr != rEntry.m_pValueObject)
 			{
-				Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
+				try
+				{
+
+					Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
+				}
+				catch (...)
+				{
+					Result = E_FAIL; 
+				}
 			}
 			else
 			{

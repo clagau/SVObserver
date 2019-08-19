@@ -794,6 +794,11 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			// logging ???
 			hr = S_FALSE;// Error Initializing Tool
 		}
+		catch (std::exception& Ex)
+		{
+		
+			hr = S_FALSE;
+		}
 
 #ifndef _DEBUG
 		catch (...)
