@@ -110,8 +110,7 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 			m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultImageDefinitions");
 			m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "SVDestroyImageDefinitionStructure");
 
-
-			 m_pfnGetResultTableDefinitions = (GetResultTableDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultTableDefinitions");
+			m_pfnGetResultTableDefinitions = (GetResultTableDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultTableDefinitions");
 			m_pfnDestroyResultTableDefinitionStructures = (DestroyResultTableDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultTableDefinitionStructures");
 			m_pfnGetResultTables = (GetResultTablesPtr)::GetProcAddress(m_hmHandle, "GetResultTables");
 			

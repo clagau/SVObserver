@@ -218,7 +218,7 @@ HRESULT SVFileCamera::CopySameBitDepthImage(const unsigned char* pSrcBuf, unsign
 
 	if (pSrcBuf && pDstBuf)
 	{
-		// determine source and destintation stride
+		// determine source and destination stride
 		int srcStride = ((((imageSize.cx * bitDepth) + 31 ) & ~31 ) >> 3 );				// align
 		int dstStride = ((((m_fileData.imageSize.cx * bitDepth) + 31 ) & ~31 ) >> 3 );	// align
 		
