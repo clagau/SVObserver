@@ -10,16 +10,6 @@
 
 namespace SvTh
 {
-	/// a functor that sets the trigger callback pointer in a TriggerDispatcher struct
-	class TriggerFinder : public std::binary_function<SvTh::TriggerDispatcher, SvTh::SVTriggerCallbackPtr, bool>
-	{
-	public:
-		bool operator()(const SvTh::TriggerDispatcher& rDispatcher, const SvTh::SVTriggerCallbackPtr& pCallback) const
-		{
-			return (rDispatcher.getCallback() == pCallback);
-		}
-	};
-
 	bool TriggerDispatcherCollection::ContainsNoActiveTriggers()
 	{
 		bool bNoActiveTriggers = true;
@@ -78,8 +68,12 @@ namespace SvTh
 		{
 			SvTh::DispatcherVector& list = it->second;
 
-			// check for dups
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), rDispatcher.getCallback()));
+			// check for duplicates
+			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type rEntry)->bool
+			{
+				return (rEntry.getCallback() == rDispatcher.getCallback() && rEntry.GetTriggerParameters().m_pOwner == rDispatcher.GetTriggerParameters().m_pOwner);
+			}
+			);
 
 			if (callbackIt != list.end())
 			{
@@ -112,7 +106,12 @@ namespace SvTh
 			// check if it is in the list
 			SvTh::DispatcherVector& list = it->second;
 
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), std::bind2nd(TriggerFinder(), rDispatcher.getCallback()));
+			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type rEntry)->bool
+			{
+				return (rEntry.getCallback() == rDispatcher.getCallback() && rEntry.GetTriggerParameters().m_pOwner == rDispatcher.GetTriggerParameters().m_pOwner);
+			}
+			);
+
 			if (callbackIt != list.end())
 			{
 				list.erase(callbackIt);
