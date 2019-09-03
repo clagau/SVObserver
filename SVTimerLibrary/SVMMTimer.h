@@ -16,6 +16,8 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVMMTimerEventHandler.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
+#include <boost/thread/mutex.hpp>
+
 
 
 
@@ -30,13 +32,18 @@ namespace SvTl
 
 	public:
 		static SVMMTimer& Instance();
-	
 		static void Start();
 		static void Stop();
-
 		static void Subscribe(const std::string& receiverTag, unsigned long interval, SVTimerCallback* pCallback);
 		static void SetInterval(const std::string& receiverTag, unsigned long interval);
 		static void UnSubscribe(const std::string& receiverTag);
+	private:
+		void _Start();
+		void _Stop();
+		 void _Subscribe(const std::string& receiverTag, unsigned long interval, SVTimerCallback* pCallback);
+		 void _SetInterval(const std::string& receiverTag, unsigned long interval);
+		 void _UnSubscribe(const std::string& receiverTag);
+
 
 	private:
 		SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_asyncProcedure;
@@ -51,7 +58,7 @@ namespace SvTl
 
 		void Dispatch( bool& p_WaitForEvents );
 		
-		//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  
-		std::recursive_mutex m_Mutex;
+		//here boost::mutex is used instead of std::mutex because SvB-293
+		boost::mutex m_Mutex;
 	};
 } //namespace SvTl
