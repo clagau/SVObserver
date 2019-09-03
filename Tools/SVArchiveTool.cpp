@@ -247,8 +247,6 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoUseHeaders.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 
-	m_dwUseTriggerCountForImages.SetValue(0);
-
 	// These values will not be exposed for the this Tool.
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
