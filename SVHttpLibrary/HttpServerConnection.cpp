@@ -123,7 +123,21 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 
 	m_ReceivedAt = std::chrono::system_clock::now();
 
-	const auto url = Url(std::string(m_Request.target()));
+	auto target = m_Request.target();
+	Url url;
+
+	try
+	{
+		// The Url constructor does not trigger parsing.
+		// Only calling one of the getter will trigger Url::lazy_parse().
+		url = Url(std::string(target));
+		url.path();
+	}
+	catch (const Url::parse_error& pe)
+	{
+		SV_LOG_GLOBAL(debug) << "Received request for invalid path \"" << target << "\": " << pe.what();
+		return http_do_write(http_build_bad_request("Illegal URL"));
+	}
 
 	const auto& url_path = url.path();
 	if (url_path.empty() || url_path[0] != '/' || url_path.find("..") != std::string::npos)
