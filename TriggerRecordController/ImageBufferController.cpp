@@ -333,10 +333,10 @@ SvTrc::IImagePtr ImageBufferController::getChildImage(const SVMatroxBufferCreate
 IImagePtr ImageBufferController::createNewImageHandle(const SVMatroxBufferCreateStruct& bufferStruct, long resetId) const
 {
 	const auto& rImageStructList = m_rDataController.getImageStructList();
-	auto imageSizeIter = std::find_if(rImageStructList.list().begin(), rImageStructList.list().end(), [bufferStruct](auto data)->bool
+	auto imageSizeIter = std::find_if(rImageStructList.list().begin(), rImageStructList.list().end(), [bufferStruct](const auto& rData)->bool
 	{
 		SVMatroxBufferCreateStruct bufferStruct2;
-		memcpy(&bufferStruct2, data.type().c_str(), sizeof(SVMatroxBufferCreateStruct));
+		memcpy(&bufferStruct2, rData.type().c_str(), sizeof(SVMatroxBufferCreateStruct));
 		return bufferStruct == bufferStruct2;
 	});
 	if (rImageStructList.list().end() != imageSizeIter)

@@ -69,7 +69,7 @@ namespace SvTh
 			SvTh::DispatcherVector& list = it->second;
 
 			// check for duplicates
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type rEntry)->bool
+			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type& rEntry)->bool
 			{
 				return (rEntry.getCallback() == rDispatcher.getCallback() && rEntry.GetTriggerParameters().m_pOwner == rDispatcher.GetTriggerParameters().m_pOwner);
 			}
@@ -106,7 +106,7 @@ namespace SvTh
 			// check if it is in the list
 			SvTh::DispatcherVector& list = it->second;
 
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type rEntry)->bool
+			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type& rEntry)->bool
 			{
 				return (rEntry.getCallback() == rDispatcher.getCallback() && rEntry.GetTriggerParameters().m_pOwner == rDispatcher.GetTriggerParameters().m_pOwner);
 			}

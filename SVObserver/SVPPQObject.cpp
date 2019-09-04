@@ -4402,9 +4402,9 @@ bool SVPPQObject::setInspections2TRC()
 	{
 		std::string tmpGuid;
 		SvPb::SetGuidInProtoBytes(&tmpGuid, pInspection->GetUniqueObjectID());
-		auto pInspPB = std::find_if(pInspList->begin(), pInspList->end(), [tmpGuid](auto data)->bool
+		auto pInspPB = std::find_if(pInspList->begin(), pInspList->end(), [tmpGuid](const auto& rData)->bool
 		{
-			return (0 == data.id().compare(tmpGuid));
+			return (0 == rData.id().compare(tmpGuid));
 		});
 
 		assert(pInspList->end() != pInspPB);

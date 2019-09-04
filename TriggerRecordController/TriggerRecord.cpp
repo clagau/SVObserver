@@ -203,14 +203,16 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 			int DataSize = *pSize;
 			if (DataSize > 0)
 			{
-				SvPb::DataList valueList;
-
-				//The next position is where the value data list is streamed
-				void* pSource = reinterpret_cast<void*> (pSize + 1);
-				valueList.ParseFromArray(pSource, DataSize);
-				if (valueList.valuelist_size() > pos)
+				if (!m_isValueListSet)
 				{
-					SvPb::ConvertProtobufToVariant(valueList.valuelist()[pos], result);
+					//The next position is where the value data list is streamed
+					void* pSource = reinterpret_cast<void*> (pSize + 1);
+					m_valueList.ParseFromArray(pSource, DataSize);
+					m_isValueListSet = true;
+				}
+				if (m_valueList.valuelist_size() > pos)
+				{
+					SvPb::ConvertProtobufToVariant(m_valueList.valuelist()[pos], result);
 				}
 				else
 				{

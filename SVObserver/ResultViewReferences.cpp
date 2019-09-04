@@ -286,7 +286,7 @@ std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(c
 				SvIe::IPResultTableData data = SvIe::IPResultTableData();
 				data.m_LastUpdateTimeStamp = m_LastUpdateTimeStamp;
 				data.m_columnName = valueObject->GetName();
-				data.m_rowData = rTriggerRecord.getDataValue(valueObject->GetUniqueObjectID());
+				data.m_rowData = rTriggerRecord.getDataValue(valueObject->getTrPos());
 				returnData.push_back(data);
 			}
 		}

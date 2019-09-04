@@ -678,9 +678,9 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	//check if rBufferStruct already in sizeList
 	std::string typeStr(reinterpret_cast<const char*>(&rBufferStruct), sizeof(rBufferStruct));
 	auto pImageStructList = m_imageStructListResetTmp.mutable_list();
-	auto bufferStructIter = std::find_if(pImageStructList->begin(), pImageStructList->end(), [typeStr](auto data)->bool
+	auto bufferStructIter = std::find_if(pImageStructList->begin(), pImageStructList->end(), [typeStr](const auto& rData)->bool
 	{
-		return (0 == data.type().compare(typeStr));
+		return (0 == rData.type().compare(typeStr));
 	});
 	SvPb::ImageStructData* pStructData = nullptr;
 	if (pImageStructList->end() != bufferStructIter)
@@ -692,9 +692,9 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
 	auto* pList = m_imageListResetTmp.mutable_list();
 	//check if image with this GUID already in list (this is not allowed.)
-	auto pImageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](auto data)->bool
+	auto pImageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](const auto& rData)->bool
 	{
-		return (0 == data.guidid().compare(ImageIdBytes));
+		return (0 == rData.guidid().compare(ImageIdBytes));
 	});
 	int imagePos = -1;
 	SvPb::ImageDefinition* pImageDefinition = nullptr;
@@ -761,9 +761,9 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
 	auto* pList = m_imageListResetTmp.mutable_childlist();
 	//check if image with this GUID already in list (this is not allowed.)
-	auto imageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](auto data)->bool
+	auto imageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](const auto& rData)->bool
 	{
-		return (0 == data.guidid().compare(ImageIdBytes));
+		return (0 == rData.guidid().compare(ImageIdBytes));
 	});
 
 	int imagePos = -1;
@@ -807,9 +807,9 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 		if (1 == bufferMap.size() || !clearBuffer)
 		{
 			auto& rImageStruct = m_pDataController->getImageStructList();
-			auto imageIter = std::find_if(rImageStruct.list().begin(), rImageStruct.list().end(), [typeString](auto data)->bool
+			auto imageIter = std::find_if(rImageStruct.list().begin(), rImageStruct.list().end(), [typeString](const auto& rData)->bool
 			{
-				return (0 == data.type().compare(typeString));
+				return (0 == rData.type().compare(typeString));
 			});
 			if (rImageStruct.list().end() != imageIter)
 			{
@@ -825,9 +825,9 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 	}
 	
 	auto* pList = m_imageStructListResetTmp.mutable_list();
-	auto imageIter = std::find_if(pList->begin(), pList->end(), [typeString](auto data)->bool
+	auto imageIter = std::find_if(pList->begin(), pList->end(), [typeString](const auto& rData)->bool
 	{
-		return (0 == data.type().compare(typeString));
+		return (0 == rData.type().compare(typeString));
 	});
 	if (pList->end() != imageIter)
 	{
@@ -888,9 +888,9 @@ bool TriggerRecordController::removeImageBuffer(const GUID& ownerID, const SVMat
 		std::string typeString(reinterpret_cast<const char*>(&bufferStruct), sizeof(bufferStruct));
 
 		auto* pList = m_imageStructListResetTmp.mutable_list();
-		auto imageIter = std::find_if(pList->begin(), pList->end(), [typeString](auto data)->bool
+		auto imageIter = std::find_if(pList->begin(), pList->end(), [typeString](const auto& rData)->bool
 		{
-			return (0 == data.type().compare(typeString));
+			return (0 == rData.type().compare(typeString));
 		});
 		if (pList->end() != imageIter)
 		{
@@ -1225,9 +1225,9 @@ void TriggerRecordController::reduceRequiredImageBuffer(const std::map<int, int>
 	auto* pList = m_imageStructListResetTmp.mutable_list();
 	for (auto& structNumberPair : bufferMap)
 	{
-		auto imageIter = std::find_if(pList->begin(), pList->end(), [structNumberPair](auto data)->bool
+		auto imageIter = std::find_if(pList->begin(), pList->end(), [structNumberPair](const auto& rData)->bool
 		{
-			return (structNumberPair.first == data.structid());
+			return (structNumberPair.first == rData.structid());
 		});
 		if (pList->end() != imageIter)
 		{
@@ -1263,9 +1263,9 @@ int getInspectionPos(const GUID& inspectionGuid)
 	std::string inspectionIdBytes;
 	SvPb::SetGuidInProtoBytes(&inspectionIdBytes, inspectionGuid);
 	auto& rInspectionList = getTriggerRecordControllerInstance().getInspections();
-	const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionIdBytes](const auto& item)-> bool
+	const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionIdBytes](const auto& rItem)-> bool
 	{
-		return (0 == item.id().compare(inspectionIdBytes));
+		return (0 == rItem.id().compare(inspectionIdBytes));
 	});
 	if (rInspectionList.list().end() != Iter)
 	{

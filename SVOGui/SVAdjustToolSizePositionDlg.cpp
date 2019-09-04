@@ -155,7 +155,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 
 	GetDlgItem(IDC_BUTTON_PROPAGATE)->EnableWindow(UsePropagate());
 
-	auto iterFindRot = std::find_if(m_extents.begin(), m_extents.end(), [](auto item) { return SvPb::SVExtentPropertyRotationAngle == item.type(); });
+	auto iterFindRot = std::find_if(m_extents.begin(), m_extents.end(), [](const auto& rItem) { return SvPb::SVExtentPropertyRotationAngle == rItem.type(); });
 	if (m_extents.end() == iterFindRot || iterFindRot->filteredoutflag() )
 	{
 		GetDlgItem(IDC_ROTATION_RADIO)->ShowWindow(SW_HIDE);	// hide rotation option

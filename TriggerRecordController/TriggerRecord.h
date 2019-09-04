@@ -84,6 +84,10 @@ private:
 	const int m_inspectionPos{-1};
 	const int m_trPos {-1};
 	bool m_blockUpdateLastId = false;
+
+	//store valueList by first call of getDataValue to speed up for the next calls.
+	mutable bool m_isValueListSet = false;
+	mutable SvPb::DataList m_valueList;
 #pragma endregion Member variables
 };
 
@@ -93,9 +97,9 @@ template<typename Container>
 int findGuidPos(const Container& rContainer, const std::string& rGuidIdBytes)
 {
 	int pos = -1;
-	auto imageIter = std::find_if(rContainer.begin(), rContainer.end(), [&rGuidIdBytes](auto data)->bool
+	auto imageIter = std::find_if(rContainer.begin(), rContainer.end(), [&rGuidIdBytes](const auto& rData)->bool
 	{
-		return (0 == data.guidid().compare(rGuidIdBytes));
+		return (0 == rData.guidid().compare(rGuidIdBytes));
 	});
 	if (rContainer.end() != imageIter)
 	{
