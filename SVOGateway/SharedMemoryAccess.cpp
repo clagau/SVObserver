@@ -16,18 +16,21 @@
 #include "SharedMemoryAccess.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVOGateway/WebAppVersionLoader.h"
 #include "SVSharedMemoryLibrary/ShareControlSetting.h" 
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerRecordController/TriggerRecord.h"
 #include "TriggerRecordController/TriggerRecordController.h"
 #pragma endregion Includes
 
 namespace SvOgw
 {
 
-SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, SvRpc::RPCClient& rpcClient)
+SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader& rWebAppVersionLoader, SvRpc::RPCClient& rpcClient)
 	: m_io_service(rIoService)
+	, m_rWebAppVersionLoader(rWebAppVersionLoader)
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
 {
@@ -46,6 +49,13 @@ void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rReque
 {
 	SvPb::GetVersionResponse Response;
 	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetVersion()));
+	task.finish(std::move(Response));
+}
+
+void SharedMemoryAccess::GetWebAppVersion(const SvPb::GetWebAppVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
+{
+	SvPb::GetVersionResponse Response;
+	Response.set_version(m_rWebAppVersionLoader.getVersion());
 	task.finish(std::move(Response));
 }
 
@@ -230,7 +240,10 @@ void SharedMemoryAccess::GetProductStream(
 	// TODO handle startAtTriggerCount
 	// TODO mutex protection for stream lists
 	auto state = std::make_shared<product_stream_t>(rRequest, observer, ctx);
+	ctx->enableThrottling();
+	ctx->setMaxPendingAcks(rRequest.rejectsonly() ? 5 : 0);
 	m_ProductStreams.push_back(state);
+	rebuild_trc_pos_cache(*state);
 }
 
 SharedMemoryAccess::product_stream_t::product_stream_t(
@@ -331,8 +344,8 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 	res->set_isreject(is_reject);
 
 	const auto includeoverlays = stream->req.includeoverlays();
-	auto future = collect_images(*res, pTro, stream->req.imageids(), inspectionPos, inspectionId, includeoverlays);
-	collect_values(*res, *pTro, stream->req.valueids());
+	auto future = collect_images(*res, pTro, stream->req.imageids(), stream->imagePositions, inspectionPos, inspectionId, includeoverlays);
+	collect_values(*res, *pTro, stream->req.valueids(), stream->valuePositions);
 
 	future.then(m_io_service, [stream, res](SvSyl::SVFuture<void> future)
 	{
@@ -343,12 +356,24 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 	});
 }
 
-SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamResponse& res, SvTrc::ITriggerRecordRPtr pTro, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeoverlays)
+SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
+	SvPb::GetProductStreamResponse& res,
+	SvTrc::ITriggerRecordRPtr pTro,
+	const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids,
+	const std::vector<int>& imagePositions,
+	int inspectionPos,
+	GUID inspectionId,
+	bool includeoverlays
+)
 {
 	std::vector<SvSyl::SVFuture<void>> overlay_futures;
 
-	for (const auto& imgId : imageGuids)
+	for (auto i = 0ULL, len = imagePositions.size(); i < len; ++i)
 	{
+		const auto imagePos = imagePositions[i];
+		const auto imageGiud = imageGuids.Get(static_cast<int>(i));
+		const auto guid = SvPb::GetGuidFromString(imageGiud);
+
 		auto& img = *res.add_images();
 		auto overlayDesc = static_cast<SvPb::OverlayDesc*>(nullptr);
 		if (includeoverlays)
@@ -356,8 +381,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamR
 			overlayDesc = res.add_overlays();
 		}
 
-		auto guid = SvPb::GetGuidFromString(imgId);
-		SvTrc::IImagePtr imgPtr = (nullptr != pTro) ? pTro->getImage(guid) : nullptr;
+		SvTrc::IImagePtr imgPtr = (nullptr != pTro) ? pTro->getImage(imagePos) : nullptr;
 		if (!imgPtr)
 		{
 			SV_LOG_GLOBAL(debug) << "  > image " << SvPb::PrettyPrintGuid(guid) << " not found";
@@ -388,17 +412,73 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(SvPb::GetProductStreamR
 	return SvSyl::SVFuture<void>::all(m_io_service, overlay_futures);
 }
 
-void SharedMemoryAccess::collect_values(SvPb::GetProductStreamResponse& res, SvTrc::ITriggerRecordR& tro, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids)
+void SharedMemoryAccess::collect_values(
+	SvPb::GetProductStreamResponse& res,
+	SvTrc::ITriggerRecordR& tro,
+	const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids,
+	const std::vector<int>& valuePositions
+)
 {
-	for (const auto& valueId : valueGuids)
+	for (auto i = 0ULL, len = valuePositions.size(); i < len; ++i)
 	{
 		auto& value = *res.add_values();
-		auto guid = SvPb::GetGuidFromString(valueId);
-		auto variant = tro.getDataValue(guid);
+		auto variant = tro.getDataValue(valuePositions[i]);
 		if (!read_variant(value, variant))
 		{
-			SV_LOG_GLOBAL(warning) << "Error reading value with guid " << SvPb::PrettyPrintGuid(guid);
+			const auto valueGuid = valueGuids.Get(static_cast<int>(i));
+			const auto guid = SvPb::GetGuidFromString(valueGuid);
+			const auto prettyGuid = SvPb::PrettyPrintGuid(guid);
+			SV_LOG_GLOBAL(warning) << "Error reading value with guid " << prettyGuid;
 		}
+	}
+}
+
+void SharedMemoryAccess::rebuild_trc_pos_caches()
+{
+	if (!m_trc_ready)
+	{
+		return;
+	}
+
+	for (auto& streamPtr : m_ProductStreams)
+	{
+		rebuild_trc_pos_cache(*streamPtr);
+	}
+}
+
+void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
+{
+	if (!m_trc_ready)
+	{
+		return;
+	}
+
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	int inspectionPos = get_inspection_pos_for_guid(trc, stream.req.inspectionid());
+	if (inspectionPos >= 0)
+	{
+		collect_value_pos(stream.valuePositions, trc.getDataDefList(inspectionPos), stream.req.valueids());
+		collect_image_pos(stream.imagePositions, trc.getImageDefList(inspectionPos), stream.req.imageids());
+	}
+}
+
+void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const SvPb::DataDefinitionList& dataDefList, const ::google::protobuf::RepeatedPtrField<std::string>& guids)
+{
+	positions.clear();
+	for (const auto& guid : guids)
+	{
+		const auto pos = SvTrc::findGuidPos(dataDefList.list(), guid);
+		positions.push_back(pos);
+	}
+}
+
+void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const SvPb::ImageList& imageList, const ::google::protobuf::RepeatedPtrField<std::string>& guids)
+{
+	positions.clear();
+	for (const auto& guid : guids)
+	{
+		const auto pos = SvTrc::findGuidPos(imageList.list(), guid);
+		positions.push_back(pos);
 	}
 }
 
@@ -486,6 +566,10 @@ void SharedMemoryAccess::subscribe_to_trc()
 	m_TrcReadySubscriptionId = trc.registerReadyCallback([this]()
 	{
 		m_trc_ready = true;
+		m_io_service.post([this]()
+		{
+			rebuild_trc_pos_caches();
+		});
 	});
 	m_TrcResetSubscriptionId = trc.registerResetCallback([this]()
 	{
@@ -526,6 +610,20 @@ void SharedMemoryAccess::unsubscribe_from_trc()
 	trc.unregisterResetCallback(m_TrcResetSubscriptionId);
 	trc.unregisterNewTrCallback(m_TrcNewTrSubscriptionId);
 	trc.unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
+}
+
+int SharedMemoryAccess::get_inspection_pos_for_guid(SvTrc::TriggerRecordController& trc, const std::string& guid)
+{
+	const auto& inspections = trc.getInspections();
+	for (int i = 0; i < inspections.list_size(); ++i)
+	{
+		const auto& inspection = inspections.list(i);
+		if (guid.compare(inspection.id()) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 }// namespace SvOgw

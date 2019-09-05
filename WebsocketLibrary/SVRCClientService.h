@@ -31,6 +31,7 @@ public:
 	~SVRCClientService();
 
 	void GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task);
+	void GetWebAppVersion(SvPb::GetWebAppVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task);
 	void GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task);
 	void GetReject(SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task);
 	void GetFailStatus(SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task);
@@ -68,6 +69,7 @@ public:
 
 private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetGatewayVersionRequest, SvPb::GetVersionResponse> m_GetGatewayVersionClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetWebAppVersionRequest, SvPb::GetVersionResponse> m_GetWebAppVersionClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryListNameRequest, SvPb::QueryListNameResponse> m_QueryListNameClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryListItemRequest, SvPb::QueryListItemResponse> m_QueryListItemClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetProductRequest, SvPb::GetProductResponse> m_GetProductClient;

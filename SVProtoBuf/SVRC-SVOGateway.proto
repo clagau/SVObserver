@@ -19,6 +19,10 @@ message GetGatewayVersionRequest
 {
 }
 
+message GetWebAppVersionRequest
+{
+}
+
 message WindowsError
 {
 	sint32 hResult = 1;	//The request result (0 = no error)

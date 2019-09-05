@@ -20,6 +20,7 @@ namespace SvWsl
 SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient, SVRCClientServiceSetting&  rSVRCSetting) :
 	m_rSVRCSettings(rSVRCSetting),
 	m_GetGatewayVersionClient(rRpcClient),
+	m_GetWebAppVersionClient(rRpcClient),
 	m_GetProductClient(rRpcClient),
 	m_GetRejectClient(rRpcClient),
 	m_GetFailStatusClient(rRpcClient),
@@ -64,6 +65,11 @@ SVRCClientService::~SVRCClientService()
 void SVRCClientService::GetGatewayVersion(SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	m_GetGatewayVersionClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
+}
+
+void SVRCClientService::GetWebAppVersion(SvPb::GetWebAppVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+{
+	m_GetWebAppVersionClient.request(std::move(req), task, m_rSVRCSettings.ShortTimeout);
 }
 
 void SVRCClientService::GetProduct(SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task)

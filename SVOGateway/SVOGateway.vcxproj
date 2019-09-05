@@ -113,6 +113,7 @@
     <ClInclude Include="SettingsLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVOGatewayService.h" />
+    <ClInclude Include="WebAppVersionLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SharedMemoryAccess.cpp" />
@@ -125,6 +126,7 @@
     </ClCompile>
     <ClCompile Include="SVOGateway.cpp" />
     <ClCompile Include="SVOGatewayService.cpp" />
+    <ClCompile Include="WebAppVersionLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVOGateway.rc" />

@@ -76,6 +76,13 @@ void SharedMemoryAccessMock::GetVersion(const SvPb::GetGatewayVersionRequest& re
 	task.finish(std::move(resp));
 }
 
+void SharedMemoryAccessMock::GetWebAppVersion(const SvPb::GetWebAppVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+{
+	SvPb::GetVersionResponse resp;
+	resp.set_version("Mock Version");
+	task.finish(std::move(resp));
+}
+
 void SharedMemoryAccessMock::GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse> task)
 {
 	SvPb::GetInspectionsResponse resp;

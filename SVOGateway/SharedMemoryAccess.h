@@ -27,18 +27,22 @@ struct ShareControlSettings;
 namespace SvTrc
 {
 class ITriggerRecordR;
+class TriggerRecordController;
 }
 
 namespace SvOgw
 {
+class WebAppVersionLoader;
+
 class SharedMemoryAccess : public SharedMemoryAccessInterface
 {
 public:
-	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, SvRpc::RPCClient& rpcClient);
+	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader&, SvRpc::RPCClient& rpcClient);
 	virtual ~SharedMemoryAccess();
 
 public:
 	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
+	void GetWebAppVersion(const SvPb::GetWebAppVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
 	void GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse>) override;
 	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
 	void GetReject(const SvPb::GetRejectRequest&, SvRpc::Task<SvPb::GetRejectResponse>) override;
@@ -59,11 +63,17 @@ private:
 		SvPb::GetProductStreamRequest req;
 		SvRpc::Observer<SvPb::GetProductStreamResponse> observer;
 		SvRpc::ServerStreamContext::Ptr ctx;
+		std::vector<int> valuePositions;
+		std::vector<int> imagePositions;
 	};
 	void on_new_trigger_record(int inspectionPos, int trId, bool is_reject);
 	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, GUID inspectionId, int trId, bool is_reject);
-	SvSyl::SVFuture<void> collect_images(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, int inspectionPos, GUID inspectionId, bool includeOverlays);
-	void collect_values(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids);
+	SvSyl::SVFuture<void> collect_images(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, const std::vector<int>& imagePositions, int inspectionPos, GUID inspectionId, bool includeOverlays);
+	void collect_values(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids, const std::vector<int>& valuePositions);
+	void rebuild_trc_pos_caches();
+	void rebuild_trc_pos_cache(product_stream_t&);
+	void collect_value_pos(std::vector<int>&, const SvPb::DataDefinitionList&, const ::google::protobuf::RepeatedPtrField<std::string>& guids);
+	void collect_image_pos(std::vector<int>&, const SvPb::ImageList&, const ::google::protobuf::RepeatedPtrField<std::string>& guids);
 
 private:
 	struct notification_stream_t
@@ -82,9 +92,11 @@ private:
 private:
 	void subscribe_to_trc();
 	void unsubscribe_from_trc();
+	int get_inspection_pos_for_guid(SvTrc::TriggerRecordController&, const std::string& guid);
 
 private:
 	boost::asio::io_service& m_io_service;
+	const WebAppVersionLoader& m_rWebAppVersionLoader;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	std::atomic_bool m_trc_ready {false};
 	int m_TrcReadySubscriptionId;

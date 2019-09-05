@@ -22,6 +22,7 @@
 #include "ServerRequestHandler.h"
 #include "SettingsLoader.h"
 #include "SVOGatewayService.h"
+#include "WebAppVersionLoader.h"
 #include "SVAuthLibrary/AuthManager.h"
 #include "SVAuthLibrary/RestHandler.h"
 #include "SVHttpLibrary/HttpServer.h"
@@ -105,7 +106,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvAuth::AuthManager authManager(settings.authSettings);
 		SvAuth::RestHandler restHandler(authManager);
 
-		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(IoService, settings.shareControlSettings, rpcClient);
+		SvOgw::WebAppVersionLoader webAppVersionLoader(settings.httpSettings);
+		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(IoService, settings.shareControlSettings, webAppVersionLoader, rpcClient);
 		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
 
 		SvRpc::RPCServer rpcServer(&requestHandler);

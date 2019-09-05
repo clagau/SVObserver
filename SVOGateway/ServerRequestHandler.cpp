@@ -38,6 +38,16 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetWebAppVersionRequest,
+		SvPb::GetWebAppVersionRequest,
+		SvPb::GetVersionResponse>(
+		[sma](SvPb::GetWebAppVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+	{
+		sma->GetWebAppVersion(req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetInspectionsRequest,
 		SvPb::GetInspectionsRequest,
 		SvPb::GetInspectionsResponse>(
