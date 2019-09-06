@@ -501,7 +501,7 @@ void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
 #endif
 		copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId);
 		//@TODO[MZA][8.20][09.04.2019] check if async is useful and safety. In the first version we should use it in the same thread until we are sure that there is no other bugs left.
-		//auto copyDataThread = std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId); });
+		//std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId); });
 	}
 	else
 	{

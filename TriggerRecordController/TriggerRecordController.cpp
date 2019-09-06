@@ -523,7 +523,7 @@ void TriggerRecordController::startResetTriggerRecordStructure(int inspectionPos
 		int TrNumber = 0;
 		try
 		{
-			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP);
+			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP, false);
 		}
 		catch (const SvStl::MessageContainer&)
 		{
@@ -664,7 +664,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 		m_TriggerRecordNumberResetTmp = needNumberOfTr(ipData);
 		try
 		{
-			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP);
+			m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP, false);
 		}
 		catch (const SvStl::MessageContainer&)
 		{
@@ -691,7 +691,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	std::string ImageIdBytes;
 	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
 	auto* pList = m_imageListResetTmp.mutable_list();
-	//check if image with this GUID already in list (this is not allowed.)
+	//check if image with this GUID already in list
 	auto pImageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](const auto& rData)->bool
 	{
 		return (0 == rData.guidid().compare(ImageIdBytes));
@@ -748,7 +748,7 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	{
 		try
 		{
-			m_imageListResetTmp = m_pDataController->getImageDefList(inspectionPos);
+			m_imageListResetTmp = m_pDataController->getImageDefList(inspectionPos, false);
 		}
 		catch (const SvStl::MessageContainer&)
 		{
@@ -970,7 +970,7 @@ void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefL
 		//prefer reset
 		m_resetStarted4IP = inspectionPos;
 		m_TriggerRecordNumberResetTmp = m_pDataController->getTriggerRecordNumber(m_resetStarted4IP);
-		m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP);
+		m_imageListResetTmp = m_pDataController->getImageDefList(m_resetStarted4IP, false);
 		m_imageStructListResetTmp.Clear();
 		m_imageStructListResetTmp = m_pDataController->getImageStructList();
 	}
@@ -1062,6 +1062,9 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 	{
 		if (m_mustRecalcRequiredBuffers)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+			::OutputDebugString("\n\nrecalcRequiredBuffer\n");
+#endif
 			recalcRequiredBuffer();
 			m_mustRecalcRequiredBuffers = false;
 		}	
@@ -1098,11 +1101,15 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 				::OutputDebugString(DebugString.c_str());
 			}
 			::OutputDebugString("Collected:\n");
+			int collectNumber = 0;
 			for (auto mapPair : imageMap)
 			{
 				DebugString = SvUl::Format(_T("structId: %d, count: %d\n"), mapPair.first, mapPair.second);
 				::OutputDebugString(DebugString.c_str());
+				collectNumber += mapPair.second;
 			}
+			DebugString = SvUl::Format(_T("Complette-count: %d\n"), collectNumber);
+			::OutputDebugString(DebugString.c_str());
 		}
 #endif
 
