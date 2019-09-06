@@ -50,6 +50,7 @@ message SVRCMessages
 		GetInspectionsRequest getInspectionsRequest = 1024;
 		GetInspectionsResponse getInspectionsResponse = 1025;
 		SetRejectStreamPauseStateRequest setRejectStreamPauseStateRequest = 1026;
+		GetWebAppVersionRequest getWebAppVersionRequest = 1027;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
