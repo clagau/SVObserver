@@ -24,7 +24,7 @@ SVMatroxBufferTemplate::SVMatroxBufferTemplate( __int64 p_Identifier, const std:
 
 SVMatroxBufferTemplate::~SVMatroxBufferTemplate()
 {
-	m_Identifier = 0;
+	freeBuffer();
 }
 
 void SVMatroxBufferTemplate::freeBuffer()

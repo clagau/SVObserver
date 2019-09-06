@@ -42,10 +42,10 @@ class SVImageExtentClass
 {
 public:
 	SVImageExtentClass();
-	SVImageExtentClass(const SVImageExtentClass& rRhs);
-	~SVImageExtentClass();
+	SVImageExtentClass(const SVImageExtentClass& rRhs) =default;
+	~SVImageExtentClass() = default;
 
-	const SVImageExtentClass &operator=(const SVImageExtentClass &rRhs);
+	SVImageExtentClass& operator=(const SVImageExtentClass& rRhs);
 
 	void Initialize();
 

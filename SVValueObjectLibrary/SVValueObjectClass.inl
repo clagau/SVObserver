@@ -856,54 +856,53 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 					{
 						case VT_I8:
 						{
-							__int64 llValue = (__int64)ValueType2Variant(value);
+							__int64 llValue = static_cast<__int64> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&llValue));
 							break;
 						}
 						
 						case VT_BSTR:
 						{
-							_bstr_t stringValue {ValueType2Variant(value)};
-							::SafeArrayPutElement(result.parray, &i, static_cast<void*> (stringValue.Detach()));
+							::SafeArrayPutElement(result.parray, &i, static_cast<void*> (V_BSTR(ValueType2Variant(value).GetAddress())));
 							break;
 						}
 						case  VT_R8:
 						{
-							double dValue = (double)ValueType2Variant(value);
+							double dValue = static_cast<double> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&dValue));
 							break;
 						}
 						case  VT_R4:
 						{
-							float fValue = (float)ValueType2Variant(value);
+							float fValue = static_cast<float> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&fValue));
 							break;
 						}
 
 						case VT_I4:
 						{
-							long lValue = (long)ValueType2Variant(value);
+							long lValue = static_cast<long> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&lValue));
 							break;
 						}
 
 						case VT_I2:
 						{
-							short sValue = (short)ValueType2Variant(value);
+							short sValue = static_cast<short> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&sValue));
 							break;
 						}
 
 						case VT_UI2:
 						{
-							unsigned short sValue = (unsigned short)ValueType2Variant(value);
+							unsigned short sValue = static_cast<unsigned short> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&sValue));
 							break;
 						}
 						
 						case VT_UI4:
 						{
-							unsigned long lValue = (unsigned long)ValueType2Variant(value);
+							unsigned long lValue = static_cast<unsigned long> (ValueType2Variant(value));
 							::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&lValue));
 							break;
 						} 

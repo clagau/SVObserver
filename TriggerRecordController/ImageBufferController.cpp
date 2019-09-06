@@ -298,8 +298,8 @@ IImagePtr ImageBufferController::getImage(int pos, long resetId, bool shouldUnlo
 	IImagePtr pImage;
 	if (0 <= pos &&  m_rDataController.getBufferVectorRef().size() > pos)
 	{
-		SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(m_rDataController.getBufferVectorRef()[pos])};
-		pImage = IImagePtr {new Image(pImagePtr, resetId, pos, true, shouldUnlockAutomatically)};
+		SvOi::SVImageBufferHandlePtr pImagePtr = std::make_shared<SVImageBufferHandleImage>(m_rDataController.getBufferVectorRef()[pos]);
+		pImage = std::make_shared<Image>(pImagePtr, resetId, pos, true, shouldUnlockAutomatically);
 	}
 	return pImage;
 }
@@ -324,8 +324,8 @@ SvTrc::IImagePtr ImageBufferController::getChildImage(const SVMatroxBufferCreate
 	SVMatroxBufferInterface::Create(buffer, rBufferStruct);
 	if (!buffer.empty())
 	{
-		SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(buffer)};
-		pImage = IImagePtr {new Image(pImagePtr, resetId, bufferPos, true, shouldUnlockAutomatically)};
+		SvOi::SVImageBufferHandlePtr pImagePtr = std::make_shared<SVImageBufferHandleImage>(buffer);
+		pImage = std::make_shared<Image>(pImagePtr, resetId, bufferPos, true, shouldUnlockAutomatically);
 	}
 	return pImage;
 }
@@ -362,8 +362,8 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 				if (InterlockedCompareExchange(pValue, 1, 0) == 0)
 				{
 					rImagePos = imagePosTmp;
-					SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage(m_rDataController.getBufferVectorRef()[rImagePos])};
-					return IImagePtr {new Image(pImagePtr, resetId, rImagePos, false, shouldUnlockAutomatically)};
+					SvOi::SVImageBufferHandlePtr pImagePtr = std::make_shared<SVImageBufferHandleImage>(m_rDataController.getBufferVectorRef()[rImagePos]);
+					return std::make_shared<Image>(pImagePtr, resetId, rImagePos, false, shouldUnlockAutomatically);
 				}
 			}
 		}

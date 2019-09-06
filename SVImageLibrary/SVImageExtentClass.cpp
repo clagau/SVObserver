@@ -200,16 +200,7 @@ SVImageExtentClass::SVImageExtentClass()
 	Initialize();
 }
 
-SVImageExtentClass::SVImageExtentClass(const SVImageExtentClass& rRhs)
-{
-	*this = rRhs;
-}
-
-SVImageExtentClass::~SVImageExtentClass()
-{
-}
-
-const SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass& rRhs)
+SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass& rRhs)
 {
 	if (this != &rRhs)
 	{
@@ -219,6 +210,7 @@ const SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass
 	}
 	return *this;
 }
+
 
 void SVImageExtentClass::Initialize()
 {

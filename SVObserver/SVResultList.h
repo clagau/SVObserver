@@ -72,11 +72,11 @@ public:
 	void Clear();
 	
 	//************************************
-	// Description:  Build SVResultDefinitionDeque from the reference vector.  (Defines the list of viewed variables.)
+	// Description:  Build SVResultDefinitionVector from the reference vector.  (Defines the list of viewed variables.)
 	// Parameter:  rDefinitions <out>:  object containing data from the class's variables.
 	// Returns:  S_OK if no error occurs   
 	//************************************
-	HRESULT GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions ) const; 
+	HRESULT GetResultDefinitions( ResultViewReferences::SVResultDefinitionVector& rDefinitions ) const; 
 
 	bool LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent);
 	

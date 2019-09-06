@@ -37,8 +37,6 @@ class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 	SV_DECLARE_CLASS( SVImageClass );
 
 public:
-	typedef std::pair< SVGUID, SVImageExtentClass > SVChildExtentPair;
-	typedef std::deque< SVChildExtentPair > SVChildExtentDeque;
 
 	SVImageClass( LPCSTR ObjectName );
 	SVImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGE );

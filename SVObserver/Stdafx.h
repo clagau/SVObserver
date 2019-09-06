@@ -161,9 +161,6 @@ namespace Gdiplus
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/lexical_cast.hpp>
 #include <boost/math/special_functions/round.hpp>
-#include <boost/multi_index_container.hpp>					//Used by static library
-#include <boost/multi_index/member.hpp>						//Used by static library
-#include <boost/multi_index/ordered_index.hpp>				//Used by static library
 #include <boost/scoped_array.hpp>							//Used by static library
 #include <boost/shared_array.hpp>							//Used by static library
 #include <boost/tokenizer.hpp>

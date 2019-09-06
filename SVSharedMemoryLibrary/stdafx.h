@@ -68,9 +68,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #define BOOST_DATE_TIME_NO_LIB
-#include <boost/multi_index_container.hpp>				//Used by static library
-#include <boost/multi_index/member.hpp>					//Used by static library
-#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 #include <boost/utility.hpp>
 //#define  TRACE_MANAGER TRUE 
 #pragma endregion Precompiled Headers

@@ -68,6 +68,5 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/any.hpp>
 #include <boost/config.hpp>
-#include <boost/multi_index_container.hpp>				//Used by static library
 #pragma endregion Precompiled Headers
 

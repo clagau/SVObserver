@@ -18,24 +18,24 @@
 
 struct SVObjectNameInfo
 {
-	typedef std::deque< std::string > SVNameDeque;
+	typedef std::vector<std::string> SVNameVector;
 
-	static HRESULT ParseObjectName( SVObjectNameInfo& p_rNameInfo, const std::string& p_rObjectName );
+	static HRESULT ParseObjectName(SVObjectNameInfo& rNameInfo, const std::string& p_rObjectName);
 
 	SVObjectNameInfo();
-	SVObjectNameInfo( const SVNameDeque& p_rNameArray );
-	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::string& p_rIndex );
-	SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::string& p_rIndex, const std::string& p_rDefaultValue );
-	SVObjectNameInfo( const SVObjectNameInfo& p_rObject );
+	SVObjectNameInfo(const SVNameVector& rNameArray);
+	SVObjectNameInfo(const SVNameVector& rNameArray, const std::string& rIndex);
+	SVObjectNameInfo(const SVNameVector& rNameArray, const std::string& rIndex, const std::string& rDefaultValue);
+	SVObjectNameInfo(const SVObjectNameInfo& rNameInfo);
 
 	~SVObjectNameInfo();
 
 	void clear();
 
-	HRESULT ParseObjectName( const std::string& p_rObjectName );
+	HRESULT ParseObjectName(const std::string& rObjectName);
 
-	std::string GetObjectName( size_t p_StartIndex = 0 ) const;
-	std::string GetObjectArrayName( size_t p_StartIndex = 0 ) const;
+	std::string GetObjectName(size_t p_StartIndex = 0) const;
+	std::string GetObjectArrayName(size_t p_StartIndex = 0) const;
 
 	void RemoveTopName();
 	void RemoveBottomName();
@@ -49,7 +49,7 @@ struct SVObjectNameInfo
 	void SetIndex(const std::string& Index ) {m_Index = Index;}
 	
 	//************************************
-	//! Get Funtionn for m_Index 
+	//! Get function for m_Index 
 	//! \returns const std::string&
 	//************************************
 	const std::string&      GetIndex() const {return m_Index;} 
@@ -85,7 +85,7 @@ struct SVObjectNameInfo
 	const std::string&      GetDefaultValue() const {return m_DefaultValue;} 
 	void SetDefaultValue(const std::string& DefaultValue ) {m_DefaultValue = DefaultValue;}
 
-	SVNameDeque m_NameArray;
+	SVNameVector m_NameArray;
 
 private:
 	bool m_IndexPresent; /// true for arrays 

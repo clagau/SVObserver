@@ -55,6 +55,7 @@
 #include <cmath>
 #include <comdef.h>
 #include <deque>
+#include <iterator>			//Used by static library
 #include <memory>
 #include <map>				//Used by static library
 #include <mutex> 
@@ -67,9 +68,6 @@
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>							//Used by static library
-#include <boost/multi_index_container.hpp>				//Used by static library
-#include <boost/multi_index/member.hpp>					//Used by static library
-#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 
 #define M_MIL_USE_SAFE_TYPE 0
 

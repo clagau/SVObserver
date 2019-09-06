@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVMatroxResourceMonitor.h"
 #include "SVMatroxErrorEnum.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 #ifdef _DEBUG
 #define MONITOR_MIL_RESOURCES
@@ -21,8 +22,15 @@ SVMatroxResourceMonitor::SVMatroxResourceMonitor()
 :m_Identifiers(SVIdentifierCount)
 , m_AllIdentifiers()
 {
-	;
 }
+
+SVMatroxResourceMonitor::~SVMatroxResourceMonitor()
+{
+#ifdef MONITOR_MIL_RESOURCES
+	OutputDebug();
+#endif 
+}
+
 
 #ifdef MONITOR_MIL_RESOURCES
 SVMatroxResourceMonitor& SVMatroxResourceMonitor::Instance()
@@ -83,6 +91,7 @@ bool SVMatroxResourceMonitor::FindReference(__int64 Identifier) const
 	return bRetVal;
 }
 #endif 
+
 HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier)
 {
 	HRESULT l_Status = S_OK;
@@ -132,3 +141,44 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_Identi
 	return l_Status;
 }
 
+void SVMatroxResourceMonitor::OutputDebug()
+{
+#ifdef MONITOR_MIL_RESOURCES
+	constexpr LPCTSTR MatroxIdentifierName[] =
+	{
+		"SVApplicationID",
+		"SVBarCodeID",
+		"SVBlobFeatureListID",
+		"SVBlobResultID",
+		"SVBufferID",
+		"SVChildBufferID",
+		"SVDisplayID",
+		"SVDisplayBufferID",
+		"SVGraphicsID",
+		"SVImageID",
+		"SVOCRID",
+		"SVOCRResultID",
+		"SVPatternModelID",
+		"SVPatternResultID",
+		"SVSystemID"
+	};
+
+	SVMatroxResourceMonitor& rMonitor = SVMatroxResourceMonitor::Instance();
+	std::lock_guard<std::mutex> Autolock(rMonitor.m_Mutex);
+	for(int i=0; i < static_cast<int> (SVIdentifierCount); ++i)
+	{
+		const SVIdentifierSet& rSet = rMonitor.m_Identifiers[i];
+		if(rSet.size() > 0)
+		{
+			std::string Text{MatroxIdentifierName[i]};
+			for(const auto& rID : rSet)
+			{
+				Text += SvUl::Format(" %d; ", rID);
+			}
+			Text += " Matrox IDs have not been freed\n";
+			::OutputDebugString(Text.c_str());
+		}
+	}
+
+#endif
+}

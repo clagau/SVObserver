@@ -83,9 +83,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/multi_index_container.hpp>				//Used by static library
-#include <boost/multi_index/member.hpp>					//Used by static library
-#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 
 #include "SVOResource\resource.h"
 

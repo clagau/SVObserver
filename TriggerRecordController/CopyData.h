@@ -64,6 +64,8 @@ inline int copyDataList(std::vector<_variant_t>&& valueObjectList, void* pDestin
 		}
 	}
 
+	valueList.Clear();
+
 	return result;
 }
 

@@ -21,7 +21,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
-#include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -65,7 +64,7 @@ class SVInspectionProcess :
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
-	typedef SVBiUniqueMap<std::string, SVObjectClass* >::type SVValueObjectMap;
+	typedef std::map<std::string, SVObjectClass*> SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 
 	SVInspectionProcess( LPCSTR ObjectName );

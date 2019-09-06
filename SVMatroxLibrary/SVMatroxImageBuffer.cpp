@@ -43,8 +43,6 @@ SVMatroxImageBuffer::~SVMatroxImageBuffer()
 		{
 			assert(false);
 		}
-
-		freeBuffer();
 	}
 }
 

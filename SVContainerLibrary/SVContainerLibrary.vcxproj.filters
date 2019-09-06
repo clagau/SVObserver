@@ -41,9 +41,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVBiUniqueMap.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVCompareKeys.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

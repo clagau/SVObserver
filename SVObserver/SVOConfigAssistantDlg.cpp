@@ -100,7 +100,7 @@ constexpr char* MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size
 constexpr char* MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
 constexpr char* MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
 
-const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap
+const CSVOConfigAssistantDlg::SVProductStringVector CSVOConfigAssistantDlg::m_ProductStringVector
 {
 	// SYSTEM ID, DISPLAY NAME
 	{SVIM_PRODUCT_X2_GD1A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD1A)},
@@ -4080,30 +4080,35 @@ void CSVOConfigAssistantDlg::ClearImportedInspectionInfoList()
 	m_ImportedInspectionInfoList.clear();
 }
 
-std::string CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
+std::string CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum productID )
 {
-	std::string Result( _T("Unknown") );
+	std::string result{_T("Unknown")};
 
-	SVProductStringMap::index_iterator< from >::type l_Iter = m_ProductStringMap.get< from >().find( p_ID );
-
-	if( l_Iter != m_ProductStringMap.get< from >().end() )
+	for(const auto& rEntry : m_ProductStringVector)
 	{
-		Result = l_Iter->second;
+		if(rEntry.first == productID)
+		{
+			result = rEntry.second;
+			break;
+		}
 	}
-	return Result;
+	return result;
 }
 
 SVIMProductEnum CSVOConfigAssistantDlg::GetProductIDFromName( const std::string& rName )
 {
-	SVIMProductEnum l_Retval = SVIM_PRODUCT_INVALID_TYPE;
+	SVIMProductEnum result{SVIM_PRODUCT_INVALID_TYPE};
 
-	SVProductStringMap::index_iterator< to >::type l_Iter = m_ProductStringMap.get< to >().find( rName );
-
-	if( l_Iter != m_ProductStringMap.get< to >().end() )
+	for (const auto& rEntry : m_ProductStringVector)
 	{
-		l_Retval = l_Iter->first;
+		if (rEntry.second == rName)
+		{
+			result = rEntry.first;
+			break;
+		}
 	}
-	return l_Retval;
+
+	return result;
 }
 
 bool CSVOConfigAssistantDlg::IsNonIOSVIM(SVIMProductEnum productType) const

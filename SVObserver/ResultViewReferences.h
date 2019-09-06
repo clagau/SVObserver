@@ -41,7 +41,7 @@ class SVInspectionProcess;
 class ResultViewReferences
 {
 public:
-	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
+	typedef std::vector<SvIe::SVIPResultItemDefinition> SVResultDefinitionVector;
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 #pragma region Constructor
@@ -84,11 +84,11 @@ public:
 	void RebuildReferenceVector(SVInspectionProcess* pInspection = nullptr);
 
 	//************************************
-	// Description:  Build SVResultDefinitionDeque from the reference vector.  (Defines the list of viewed variables.)
+	// Description:  Build SVResultDefinitionVector from the reference vector.  (Defines the list of viewed variables.)
 	// Parameter:  rDefinitions <out>:  object containing data from the class's variables.
 	// Returns:  S_OK if no error occurs   
 	//************************************
-	HRESULT GetResultDefinitions( SVResultDefinitionDeque& rDefinitions ) const; 
+	HRESULT GetResultDefinitions( SVResultDefinitionVector& rDefinitions ) const; 
 
 	const SVGUID& getTableGuid() const { return m_resultTableGuid; }
 	void setTableGuid(const SVGUID& guid) { m_resultTableGuid = guid; }

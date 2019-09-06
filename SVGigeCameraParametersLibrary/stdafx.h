@@ -48,8 +48,5 @@
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
-#include <boost/multi_index_container.hpp>				//Used by static library
-#include <boost/multi_index/member.hpp>					//Used by static library
-#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 #pragma endregion Precompiled Headers
 

@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVOCameraDlg.h"
 #include "SVOTriggerDeviceDlg.h"
 #include "SVOInspectionSourceDlg.h"
@@ -73,7 +72,7 @@ class SVOTriggerList;
 class CSVOConfigAssistantDlg : public CDialog
 {
 public:
-	typedef SVBiUniqueMap< SVIMProductEnum, std::string >::type SVProductStringMap;
+	typedef std::vector<std::pair<SVIMProductEnum, std::string>> SVProductStringVector;
 
 	CSVOConfigAssistantDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -225,8 +224,8 @@ private:
 	HRESULT ConnectToolsetBuffers();
 	void resolveGlobalConflicts( SvDef::GlobalConflictPairVector& rGlobalConflicts );
 
-	static std::string GetNameFromProductID( SVIMProductEnum p_ID );
-	static SVIMProductEnum GetProductIDFromName( const std::string& rName );
+	static std::string GetNameFromProductID(SVIMProductEnum ProductID);
+	static SVIMProductEnum GetProductIDFromName(const std::string& rName);
 
 	void ClearMessages();
 	//data members
@@ -248,7 +247,7 @@ private:
 	int m_iNextCameraNumber;
 	SVIOBoardCapabilities m_svCapabilities;
 
-	static const SVProductStringMap m_ProductStringMap;
+	static const SVProductStringVector m_ProductStringVector;
 
 	SVImportedInspectionInfoList m_ImportedInspectionInfoList;
 

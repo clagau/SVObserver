@@ -27,15 +27,17 @@ class SVMatroxDigitizerInterface;
 
 */
 
-class SVMatroxDigitizer : public boost::noncopyable
+class SVMatroxDigitizer
 {
 	friend SVMatroxDigitizerInterface;
 
 public:
 	SVMatroxDigitizer();
+	SVMatroxDigitizer(const SVMatroxDigitizer& rRhs) = delete;
 	virtual ~SVMatroxDigitizer();
 
-	bool operator<( const SVMatroxDigitizer& p_rDigitizer ) const;
+	SVMatroxDigitizer& operator=(const SVMatroxDigitizer& rRhs) = delete;
+	bool operator<( const SVMatroxDigitizer& rDigitizer ) const;
 
 	bool empty() const;
 

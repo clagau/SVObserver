@@ -240,9 +240,9 @@ public:
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
-	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
+	typedef std::vector<SvIe::SVIPResultItemDefinition> SVResultDefinitionVector;
 	double getResultDefinitionUpdatTimeStamp() const;
-	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
+	HRESULT GetResultDefinitions(SVResultDefinitionVector& p_rDefinitions) const;
 	void GetResultData(SvIe::SVIPResultData& p_rResultData) const;
 	std::vector <SvIe::IPResultTableData> getResultTableData() const;
 

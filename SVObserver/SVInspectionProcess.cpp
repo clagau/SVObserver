@@ -540,20 +540,11 @@ HRESULT SVInspectionProcess::GetInspectionValueObject(LPCTSTR Name, SVObjectRefe
 			NameInfo.RemoveTopName();
 		}
 
-		if (0 < NameInfo.m_NameArray.size() && NameInfo.m_NameArray[0] != GetName())
+		SVValueObjectMap::const_iterator iter = m_mapValueObjects.find(NameInfo.GetObjectName());
+
+		if (m_mapValueObjects.end() != iter)
 		{
-			NameInfo.m_NameArray.push_front(GetName());
-		}
-
-		const std::string& l_ObjectName = NameInfo.GetObjectName();
-
-		SVValueObjectMap::index_const_iterator< from >::type l_Iter;
-
-		l_Iter = m_mapValueObjects.get< from >().find(l_ObjectName.c_str());
-
-		if (l_Iter != m_mapValueObjects.get< from >().end())
-		{
-			pObject = l_Iter->second;
+			pObject = iter->second;
 		}
 	}
 
@@ -2965,7 +2956,7 @@ HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
 	else if (nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)))
 	{
 		m_ValueObjectSet.insert(pValueObject);
-		m_mapValueObjects.insert(SVValueObjectMap::value_type(pObject->GetCompleteName(), pObject));
+		m_mapValueObjects.insert({pObject->GetCompleteName(), pObject});
 		Result = S_OK;
 	}
 
@@ -2998,7 +2989,11 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 		{
 			m_ValueObjectSet.erase(pValueObject);
 		}
-		m_mapValueObjects.get< to >().erase(pObject);
+		SVValueObjectMap::iterator iter =  m_mapValueObjects.find(pObject->GetCompleteName());
+		if(m_mapValueObjects.end() != iter)
+		{
+			m_mapValueObjects.erase(iter);
+		}
 
 		Result = S_OK;
 	}
@@ -3306,7 +3301,10 @@ void SVInspectionProcess::BuildValueObjectMap()
 	for (; m_ValueObjectSet.end() != Iter; ++Iter)
 	{
 		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (*Iter);
-		m_mapValueObjects.insert(SVValueObjectMap::value_type(pObject->GetCompleteName().c_str(), pObject));
+		if(nullptr != pObject)
+		{
+			m_mapValueObjects.insert({pObject->GetCompleteName(), pObject});
+		}
 	}
 }// end BuildValueObjectMap
 

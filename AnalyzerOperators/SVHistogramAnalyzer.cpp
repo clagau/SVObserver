@@ -55,20 +55,22 @@ namespace
 			inline double color(unsigned char val) { return SVMatroxGraphicsInterface::CreateRGB888(val,val,val); }
 		}
 
-		class Context: // RAII wrapper around MIL graphic context
-			public boost::noncopyable
+		class Context // RAII wrapper around MIL graphic context
 		{
 		public:
-			explicit Context()
-			: m_handle()
+			explicit Context() : m_handle()
 			{
 				SVMatroxGraphicsInterface::Create( m_handle );
 			}
+
+			Context(const Context& rRhs) = delete;
 
 			~Context()
 			{
 				SVMatroxGraphicsInterface::Destroy( m_handle );
 			}
+
+			Context& operator=(const Context& rRhs) = delete;
 
 			void Clear( SVMatroxBuffer& p_rBuffer )
 			{

@@ -66,9 +66,6 @@
 #include <boost/thread.hpp>
 
 #define BOOST_DATE_TIME_NO_LIB
-#include <boost/multi_index/member.hpp>                     //Used by static library
-#include <boost/multi_index/ordered_index.hpp>              //Used by static library
-#include <boost/multi_index_container.hpp>                  //Used by static library
 #include <boost/scoped_array.hpp>
 #include <boost/shared_array.hpp> //Used by static library
 #include <boost/utility.hpp>      //Used by static library

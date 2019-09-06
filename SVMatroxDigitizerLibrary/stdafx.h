@@ -60,9 +60,6 @@
 
 #include <boost/config.hpp>
 #include <boost/utility.hpp>
-#include <boost/multi_index_container.hpp>				//Used by static library
-#include <boost/multi_index/member.hpp>					//Used by static library
-#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 
 #define M_MIL_USE_SAFE_TYPE 0
 

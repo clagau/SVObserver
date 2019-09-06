@@ -54,6 +54,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <functional>
+#include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>
 #include <mutex>
@@ -64,7 +65,4 @@
 
 #include <boost/config.hpp>
 #include <boost/function.hpp>							//Used by static library
-#include <boost/multi_index_container.hpp>				//Used by static library
-#include <boost/multi_index/member.hpp>					//Used by static library
-#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 #pragma endregion Precompiled Headers

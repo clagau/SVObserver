@@ -52,6 +52,7 @@ SVMaskShape::~SVMaskShape()	// this is a base class
 		::DeleteObject( m_dib.hbm );
 		m_dib.FreeBitmapInfo();
 		m_dib.Clear();
+		::DeleteDC(m_RenderDC);
 	}
 }
 
@@ -115,7 +116,7 @@ HRESULT SVMaskShape::Refresh()
 		RECT rect;
 		m_svImageInfo.GetOutputRectangle(rect);
 		::FillRect(m_RenderDC, &rect, hBrush);
-		DeleteObject(hBrush);
+		::DeleteObject(hBrush);
 
 		hBrush = ::CreateSolidBrush(rgbShape);
 		HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject(m_RenderDC, hBrush));
@@ -674,6 +675,7 @@ HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBack
 	HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject(hDC, hBrush));
 	result = ::Ellipse(hDC, rectDoughnutHole.left, rectDoughnutHole.top, rectDoughnutHole.right, rectDoughnutHole.bottom) ? S_OK : E_FAIL;
 	::SelectObject(hDC, hOldBrush);
+	::DeleteObject(hBrush);
 
 	return result;
 }

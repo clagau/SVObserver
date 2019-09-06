@@ -61,5 +61,4 @@
 #include <boost/fusion/container.hpp>
 #include <boost/fusion/algorithm.hpp>
 #include <boost/circular_buffer.hpp>				//Used by static library
-#include <boost/noncopyable.hpp>
 #pragma endregion Precompiled Headers

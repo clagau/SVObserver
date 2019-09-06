@@ -1742,7 +1742,7 @@ void SVIPDoc::OnSaveResultsToFile()
 		if (bResult)
 		{
 			std::string tmpText;
-			SVResultDefinitionDeque ResultDefinitions;
+			SVResultDefinitionVector ResultDefinitions;
 			SvIe::SVIPResultData ResultData;
 			GetResultData(ResultData);
 			GetResultDefinitions(ResultDefinitions);
@@ -1853,7 +1853,7 @@ void SVIPDoc::OnSaveTableResultsToFile()
 		if (bResult)
 		{
 			std::string tmpText;
-			SVResultDefinitionDeque ResultDefinitions;
+			SVResultDefinitionVector ResultDefinitions;
 			std::vector <SvIe::IPResultTableData> resultTableData = getResultTableData();
 			GetResultDefinitions(ResultDefinitions);
 
@@ -3000,7 +3000,7 @@ double  SVIPDoc::getResultDefinitionUpdatTimeStamp() const
 	return Result;
 }
 
-HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& rDefinitions) const
+HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionVector& rDefinitions) const
 {
 	HRESULT hres = E_FAIL;
 	rDefinitions.clear();

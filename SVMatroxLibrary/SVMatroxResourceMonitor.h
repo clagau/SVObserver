@@ -25,6 +25,7 @@ class SVMatroxResourceMonitor
 public:
 	static HRESULT InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier );
 	static HRESULT EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier );
+	static void OutputDebug();
 	
 
 private:
@@ -35,6 +36,7 @@ private:
 	SVIdentifierSet m_AllIdentifiers;
 
 	SVMatroxResourceMonitor();
+	~SVMatroxResourceMonitor();
 #ifdef MONITOR_MIL_RESOURCES
 	static SVMatroxResourceMonitor& Instance();
 	bool FindReference(__int64 p_Identifier) const;

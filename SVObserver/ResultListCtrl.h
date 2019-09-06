@@ -49,10 +49,10 @@ private:
 
 #pragma region Member variables
 private:
-	typedef std::deque<SvIe::SVIPResultItemDefinition> SVResultDefinitionDeque;
+	typedef std::vector<SvIe::SVIPResultItemDefinition> SVResultDefinitionVector;
 
 	CMenu m_ContextMenuItem;
-	SVResultDefinitionDeque m_ResultDefinitions;
+	SVResultDefinitionVector m_ResultDefinitions;
 	SvIe::SVIPResultData m_ResultData;
 	bool m_ColumnWidthSet = false;
 	mutable double m_UpdateTimeStamp = 0.0;

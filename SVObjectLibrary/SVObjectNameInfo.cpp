@@ -121,7 +121,7 @@ SVObjectNameInfo::SVObjectNameInfo()
 {
 }
 
-SVObjectNameInfo::SVObjectNameInfo( const SVNameDeque& p_rNameArray )
+SVObjectNameInfo::SVObjectNameInfo( const SVNameVector& p_rNameArray )
 :	m_NameArray( p_rNameArray ), 
 	m_IndexPresent( false ), 
 	m_Index(), 
@@ -130,7 +130,7 @@ SVObjectNameInfo::SVObjectNameInfo( const SVNameDeque& p_rNameArray )
 {
 }
 
-SVObjectNameInfo::SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::string& p_rIndex )
+SVObjectNameInfo::SVObjectNameInfo( const SVNameVector& p_rNameArray, const std::string& p_rIndex )
 :	m_NameArray( p_rNameArray ), 
 	m_IndexPresent( true ), 
 	m_Index( p_rIndex ), 
@@ -139,7 +139,7 @@ SVObjectNameInfo::SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::
 {
 }
 
-SVObjectNameInfo::SVObjectNameInfo( const SVNameDeque& p_rNameArray, const std::string& p_rIndex, const std::string& p_rDefaultValue )
+SVObjectNameInfo::SVObjectNameInfo( const SVNameVector& p_rNameArray, const std::string& p_rIndex, const std::string& p_rDefaultValue )
 :	m_NameArray( p_rNameArray ), 
 	m_IndexPresent( true ), 
 	m_Index( p_rIndex ), 
@@ -166,7 +166,7 @@ void SVObjectNameInfo::clear()
 {
 	m_NameArray.clear();
 	m_IndexPresent = false;
-	m_Index.clear(); 
+	m_Index.clear();
 	m_DefaultValuePresent = false; 
 	m_DefaultValue.clear();
 }
@@ -237,7 +237,7 @@ void SVObjectNameInfo::RemoveTopName()
 {
 	if(m_NameArray.begin() != m_NameArray.end())
 	{
-		m_NameArray.pop_front();
+		m_NameArray.erase(m_NameArray.begin());
 	}
 }
 

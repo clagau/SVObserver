@@ -294,7 +294,7 @@ std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(c
 	return returnData;
 }
 
-HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rDefinitions ) const
+HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionVector &rDefinitions ) const
 {
 	for( size_t i = 0; i < m_ReferenceVector.size(); ++i )
 	{
