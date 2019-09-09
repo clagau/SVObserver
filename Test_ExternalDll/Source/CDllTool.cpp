@@ -357,6 +357,121 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	return hr;
 }
 
+HRESULT CDllTool::run_copyTableInput2Output()
+{
+	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
+	{
+		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
+		int dim = saInput.GetDimensions();
+		ATLASSERT(dim == 2);
+		int NX = saInput.GetCount();
+		int NY = saInput.GetCount(1);
+		CComSafeArrayBound bound[2] = {(ULONG)ColumnCountA,(LONG)NY};
+		CComSafeArray<double> tdimsa(bound, 2);
+		LONG aIndex[2];
+		for (int x = 0; x < ColumnCountA; x++)
+		{
+			for (int y = 0; y < NY; y++)
+			{
+				aIndex[0] = x;
+				aIndex[1] = y;
+				double val {0};
+
+				if (x < NX &&  y < NY)
+				{
+					saInput.MultiDimGetAt(aIndex, val);
+				}
+			
+				HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
+				ATLASSERT(hr == S_OK);
+			}
+		}
+		
+		m_ResultTables[FirstResultTable].vt = VT_ARRAY | VT_R8;
+		
+		SafeArrayDestroy(m_ResultTables[FirstResultTable].parray);
+
+		m_ResultTables[FirstResultTable].parray = tdimsa.Detach();
+	}
+	return S_OK;
+}
+HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
+{
+	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
+	{
+		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
+		int dim = saInput.GetDimensions();
+		ATLASSERT(dim == 2);
+		int NX = saInput.GetCount();
+		int NY = saInput.GetCount(1);
+
+		m_aResultValues[ResultValue_INT_ROWCOUNT] = NY;
+
+		long Index[2];
+		std::stringstream sts;
+		double val {0};
+		::OutputDebugString(" Table Array:\n");
+
+		for (int y = 0; y < NY; y++)
+		{
+			sts = std::stringstream();
+			for (int x = 0; x < NX; x++)
+			{
+				Index[0] = x;
+				Index[1] = y;
+				saInput.MultiDimGetAt(Index, val);
+				sts << "(" << x << "," << y << "): " << val << " ";
+			}
+			sts << std::endl;
+			::OutputDebugString(sts.str().c_str());
+		}
+
+		if (Select < NX)
+		{
+			CComSafeArray<double> saOutput(NY);
+			for (int y = 0; y < NY; y++)
+			{
+				Index[0] = Select;
+				Index[1] = y;
+				saInput.MultiDimGetAt(Index, val);
+				saOutput[y] = val;
+			}
+
+			m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_ARRAY | VT_R8;
+			SafeArrayDestroy(m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray);
+			m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray = saOutput.Detach();
+		}
+
+	}
+	if (m_aInputValues[InputValue_TABLE_NAMES].vt == (VT_ARRAY | VT_BSTR))
+	{
+
+		CComSafeArray<BSTR> saInput((m_aInputValues[InputValue_TABLE_NAMES].parray));
+		int dim = saInput.GetDimensions();
+		ATLASSERT(dim == 1);
+		int len = saInput.GetCount();
+		std::stringstream sts;
+
+		::OutputDebugString(" Table Names\n");
+
+
+		for (int y = 0; y < len; y++)
+		{
+			CComBSTR  name = saInput.GetAt(y);
+			_bstr_t bstrname = name.m_str;
+			if (Select == y)
+			{
+				m_aResultValues[RESULTVALUE_BSTR_ROWNAME] = bstrname;
+			}
+			::OutputDebugString(LPCSTR(bstrname));
+			::OutputDebugString("\n");
+		}
+
+	}
+	return S_OK;
+}
+
+
 HRESULT CDllTool::run()
 {
 	///copy input to output
@@ -398,6 +513,7 @@ HRESULT CDllTool::run()
 		m_aResultValues[ResultValue_DOUBLE_ARRAY].parray = saOutput.Detach();
 	}
 
+	
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
 		int inputarrayLen = 0;
@@ -419,78 +535,9 @@ HRESULT CDllTool::run()
 		SafeArrayDestroy(m_aResultValues[ResultValue_INT_ARRAY].parray);
 		m_aResultValues[ResultValue_INT_ARRAY].parray = saOutput.Detach();
 	}
-	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
-	{
-		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
-		int dim = saInput.GetDimensions();
-		ATLASSERT(dim == 2);
-		int NX = saInput.GetCount();
-		int NY = saInput.GetCount(1);
-		
-		m_aResultValues[ResultValue_INT_ROWCOUNT] = NY;
-		
-		long Index[2];
-		std::stringstream sts;
-		double val {0};
-		::OutputDebugString(" Table Array:\n");
-
-		for (int y = 0; y < NY; y++)
-		{
-			sts = std::stringstream();
-			for (int x = 0; x < NX; x++)
-			{
-				Index[0] = x;
-				Index[1] = y;
-				saInput.MultiDimGetAt(Index, val);
-				sts << "(" << x << "," << y << "): " << val << " ";
-			}
-			sts << std::endl;
-			::OutputDebugString(sts.str().c_str());
-		}
 	
-		if (Select < NX)
-		{
-			CComSafeArray<double> saOutput(NY);
-			for (int y = 0; y < NY; y++)
-			{
-				Index[0] = Select;
-				Index[1] = y;
-				saInput.MultiDimGetAt(Index, val);
-				saOutput[y] = val;
-			}
-
-			m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_ARRAY | VT_R8;
-			SafeArrayDestroy(m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray);
-			m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray = saOutput.Detach();
-		}
-		
-	}
-
-	if (m_aInputValues[InputValue_TABLE_NAMES].vt == (VT_ARRAY | VT_BSTR))
-	{
-
-		CComSafeArray<BSTR> saInput((m_aInputValues[InputValue_TABLE_NAMES].parray));
-		int dim = saInput.GetDimensions();
-		ATLASSERT(dim == 1);
-		int len = saInput.GetCount();
-		std::stringstream sts;
-		
-		::OutputDebugString(" Table Names\n");
-		
-		
-		for (int y = 0; y < len; y++)
-		{
-			CComBSTR  name = saInput.GetAt(y);
-			_bstr_t bstrname = name.m_str;
-			if (Select == y)
-			{
-				m_aResultValues[RESULTVALUE_BSTR_ROWNAME] = bstrname;
-			}
-			::OutputDebugString(LPCSTR(bstrname));
-			::OutputDebugString("\n");
-		}
-
-	}
+	run_copySelectedTableInput2Output(Select);
+	run_copyTableInput2Output();
 
 	//copy first input image to first result image
 	static_assert(0 < NUM_INPUT_IMAGES && 0 < NUM_RESULT_IMAGES, "for this sample you need at least one input and one result image");

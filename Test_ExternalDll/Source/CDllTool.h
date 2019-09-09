@@ -107,6 +107,9 @@ public:
 
 #pragma region private function
 private:
+	HRESULT run_copyTableInput2Output();
+	HRESULT run_copySelectedTableInput2Output(int select);
+	
 	/**********
 	 Copy an HBITIMAGES. 
 	 \param l_hBitMapSource <in> the handle to the source image.
