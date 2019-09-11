@@ -270,13 +270,12 @@ void SVExternalToolTask::SetAllAttributes()
 		{
 			if (i < m_Data.getNumTableResults())
 			{
-				m_Data.m_ResultTableObjects[i]->SetObjectAttributesAllowed(SvPb::taskObject, SvOi::AddAttribute);
+				m_Data.m_ResultTableObjects[i]->Hide(false);
 			}
 			else
 			{
-				m_Data.m_ResultTableObjects[i]->SetObjectAttributesAllowed(SvPb::taskObject, SvOi::RemoveAttribute);
+				m_Data.m_ResultTableObjects[i]->Hide(true);
 			}
-
 		}
 	}
 
@@ -350,7 +349,6 @@ bool SVExternalToolTask::CreateTableObjects()
 			{
 				m_Data.m_ResultTableObjects[Index++] = dynamic_cast<SvOp::TableObject*>(pOb);
 			}
-
 
 		}
 
@@ -491,7 +489,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			aInputImages.resize(m_Data.m_lNumInputImages);
 			m_aInputImageInformationStructs.resize(m_Data.m_lNumInputImages);
 
-			hr = m_dll.GetInputImageInformation(&m_aInputImageInformationStructs); 
+			hr = m_dll.GetInputImageInformation(&m_aInputImageInformationStructs);
 			if (S_OK != hr)
 			{
 				throw hr;
@@ -794,9 +792,9 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			// logging ???
 			hr = S_FALSE;// Error Initializing Tool
 		}
-		catch (std::exception& )
+		catch (std::exception&)
 		{
-		
+
 			hr = S_FALSE;
 		}
 
@@ -977,7 +975,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	else
 	{
 		ok = false;
-	}
+		}
 
 	if (!ok)
 	{
@@ -985,7 +983,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	}
 
 	return ok;
-}
+	}
 
 
 
@@ -1515,7 +1513,6 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	{
 		Result = false;
 	}
-
 
 	return Result;
 }

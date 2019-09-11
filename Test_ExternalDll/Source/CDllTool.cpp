@@ -142,7 +142,7 @@ void CDllTool::getResultValueDefinition(ResultValueDefinitionStruct** ppaResultV
 	(*ppaResultValues)[ResultValue_INT_ARRAY].lVT = VT_ARRAY | VT_I4;
 	(*ppaResultValues)[ResultValue_INT_ARRAY].bstrDisplayName = ::SysAllocString(L"copy from input5");
 
-	
+
 	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].lVT = VT_I4;
 	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].bstrDisplayName = ::SysAllocString(L" Row Count input 6,7");
 
@@ -161,8 +161,8 @@ void CDllTool::getResultTableDefinition(ResultTableDefinitionStruct** ppaResultT
 	{
 		saStr.SetAt(i, ColumnNames[i]);
 	}
-	
-	
+
+
 	(*ppaResultTables)[FirstResultTable].lVT = VT_R8;
 	(*ppaResultTables)[FirstResultTable].bstrDisplayName = ::SysAllocString(L"First table");
 	(*ppaResultTables)[FirstResultTable].ColoumnCount = ColumnCountA;
@@ -306,7 +306,7 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	m_aResultValues[ResultValue_INT_ARRAY].vt = VT_ARRAY | VT_I4;
 	m_aResultValues[ResultValue_INT_ARRAY].parray = isa.Detach();
 
-	
+
 
 	m_aResultValues[ResultValue_INT_ROWCOUNT].vt = VT_I4;
 	m_aResultValues[ResultValue_INT_ROWCOUNT].lVal = 0;
@@ -314,7 +314,7 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	m_aResultValues[RESULTVALUE_BSTR_ROWNAME].vt = VT_BSTR;
 	m_aResultValues[RESULTVALUE_BSTR_ROWNAME].bstrVal = ::SysAllocString(L"n.a.");
 
-		
+
 	CComSafeArray<double> sa2(2);
 	sa2[0] = 0.0;
 	sa2[1] = 0.0;
@@ -322,7 +322,7 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_ARRAY | VT_R8;
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray = sa2.Detach();
 
-	
+
 	setInputValues(p_pavInputValues);
 
 	for (int i = 0; i < NUM_RESULT_IMAGES; i++)
@@ -343,7 +343,7 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 		{
 			aIndex[0] = x;
 			aIndex[1] = y;
-			double value = (x + 1) *(y+1);
+			double value = (x + 1) *(y + 1);
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, value);
 			ATLASSERT(hr == S_OK);
 		}
@@ -359,44 +359,65 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 
 HRESULT CDllTool::run_copyTableInput2Output()
 {
+	if (m_ResultTables[FirstResultTable].vt == (VT_ARRAY | VT_R8) && m_ResultTables[FirstResultTable].parray)
+	{
+		SafeArrayDestroy(m_ResultTables[FirstResultTable].parray);
+		m_ResultTables[FirstResultTable].parray = nullptr;
+		m_ResultTables[FirstResultTable].vt = VT_EMPTY;
+	}
+
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
 		ATLASSERT(dim == 2);
-		int NX = saInput.GetCount();
-		int NY = saInput.GetCount(1);
-		CComSafeArrayBound bound[2] = {(ULONG)ColumnCountA,(LONG)NY};
-		CComSafeArray<double> tdimsa(bound, 2);
-		LONG aIndex[2];
-		for (int x = 0; x < ColumnCountA; x++)
+		unsigned long NX = saInput.GetCount();
+		unsigned long NY = saInput.GetCount(1);
+		if (NX > 0 && NY > 0)
 		{
-			for (int y = 0; y < NY; y++)
+			CComSafeArrayBound bound[2] = {{ULONG(ColumnCountA),0}, {NY,0}};
+			CComSafeArray<double> tdimsa(bound, 2);
+			LONG aIndex[2];
+			for (unsigned long x = 0; x < ColumnCountA; x++)
 			{
-				aIndex[0] = x;
-				aIndex[1] = y;
-				double val {0};
-
-				if (x < NX &&  y < NY)
+				for (unsigned long  y = 0; y < NY; y++)
 				{
-					saInput.MultiDimGetAt(aIndex, val);
-				}
-			
-				HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
-				ATLASSERT(hr == S_OK);
-			}
-		}
-		
-		m_ResultTables[FirstResultTable].vt = VT_ARRAY | VT_R8;
-		
-		SafeArrayDestroy(m_ResultTables[FirstResultTable].parray);
+					aIndex[0] = x;
+					aIndex[1] = y;
+					double val {0};
 
-		m_ResultTables[FirstResultTable].parray = tdimsa.Detach();
+					if (x < NX &&  y < NY)
+					{
+						saInput.MultiDimGetAt(aIndex, val);
+					}
+
+					HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
+					ATLASSERT(hr == S_OK);
+				}
+			}
+
+			m_ResultTables[FirstResultTable].vt = VT_ARRAY | VT_R8;
+
+			SafeArrayDestroy(m_ResultTables[FirstResultTable].parray);
+
+			m_ResultTables[FirstResultTable].parray = tdimsa.Detach();
+		}
 	}
 	return S_OK;
 }
 HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 {
+
+	if ((m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt == (VT_ARRAY | VT_R8)) && m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray)
+	{
+		SafeArrayDestroy(m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray);
+	}
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_EMPTY;
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray = nullptr;
+
+
+
+
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
@@ -426,7 +447,7 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 			::OutputDebugString(sts.str().c_str());
 		}
 
-		if (Select < NX)
+		if (Select < NX && NY >0)
 		{
 			CComSafeArray<double> saOutput(NY);
 			for (int y = 0; y < NY; y++)
@@ -443,6 +464,9 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 		}
 
 	}
+
+	m_aResultValues[RESULTVALUE_BSTR_ROWNAME] = _bstr_t();
+
 	if (m_aInputValues[InputValue_TABLE_NAMES].vt == (VT_ARRAY | VT_BSTR))
 	{
 
@@ -451,9 +475,7 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 		ATLASSERT(dim == 1);
 		int len = saInput.GetCount();
 		std::stringstream sts;
-
 		::OutputDebugString(" Table Names\n");
-
 
 		for (int y = 0; y < len; y++)
 		{
@@ -489,9 +511,18 @@ HRESULT CDllTool::run()
 	//::SysFreeString(m_aResultValues[ResultValue_BSTR].bstrVal);
 
 	m_aResultValues[ResultValue_BSTR] = ::SysAllocString(output.c_str());
-	
+
 	long Select = m_aInputValues[InputValue_LONG_TABLE_SELECT];
 
+
+	if (m_aResultValues[ResultValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8) && m_aResultValues[ResultValue_DOUBLE_ARRAY].parray)
+	{
+		SafeArrayDestroy(m_aResultValues[ResultValue_DOUBLE_ARRAY].parray);
+		m_aResultValues[ResultValue_DOUBLE_ARRAY].parray = nullptr;
+		m_aResultValues[ResultValue_DOUBLE_ARRAY].vt = VT_EMPTY;
+	}
+
+	
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
@@ -507,13 +538,20 @@ HRESULT CDllTool::run()
 		{
 			saOutput[i] = saInput[i];
 		}
-
-		m_aResultValues[ResultValue_DOUBLE_ARRAY].vt = VT_ARRAY | VT_R8;
-		SafeArrayDestroy(m_aResultValues[ResultValue_DOUBLE_ARRAY].parray);
-		m_aResultValues[ResultValue_DOUBLE_ARRAY].parray = saOutput.Detach();
+		if (inputarrayLen)
+		{
+			m_aResultValues[ResultValue_DOUBLE_ARRAY].vt = VT_ARRAY | VT_R8;
+			m_aResultValues[ResultValue_DOUBLE_ARRAY].parray = saOutput.Detach();
+		}
 	}
 
-	
+	if (m_aResultValues[ResultValue_INT_ARRAY].parray && m_aResultValues[ResultValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
+	{
+		SafeArrayDestroy(m_aResultValues[ResultValue_INT_ARRAY].parray);
+		m_aResultValues[ResultValue_INT_ARRAY].parray = nullptr;
+		m_aInputValues[InputValue_INT_ARRAY].vt = VT_EMPTY;
+	}
+
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
 		int inputarrayLen = 0;
@@ -529,13 +567,14 @@ HRESULT CDllTool::run()
 		{
 			saOutput[i] = saInput[i];
 		}
-		m_aResultValues[ResultValue_INT_ARRAY].vt = VT_ARRAY | VT_I4;
 
-		//free old array!
-		SafeArrayDestroy(m_aResultValues[ResultValue_INT_ARRAY].parray);
-		m_aResultValues[ResultValue_INT_ARRAY].parray = saOutput.Detach();
+		if (inputarrayLen)
+		{
+			m_aResultValues[ResultValue_INT_ARRAY].vt = VT_ARRAY | VT_I4;
+			m_aResultValues[ResultValue_INT_ARRAY].parray = saOutput.Detach();
+		}
 	}
-	
+
 	run_copySelectedTableInput2Output(Select);
 	run_copyTableInput2Output();
 

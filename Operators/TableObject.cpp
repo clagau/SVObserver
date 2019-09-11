@@ -64,6 +64,21 @@ bool TableObject::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	return l_bOk;
 }
 
+void TableObject::Hide(bool hide)
+{
+	UINT attributeTaskObject = SvPb::taskObject;
+	UINT attribute = SvDef::defaultValueObjectAttributes & ~SvPb::printable;
+	if (hide)
+	{
+		attributeTaskObject = SvPb::noAttributes;
+		attribute = SvPb::noAttributes;
+	}
+	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::OverwriteAttribute);
+	m_NumberOfRows.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
+	m_statusTag.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
+	m_statusColor.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
+}
+
 bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
@@ -407,6 +422,9 @@ unsigned  TableObject::getColumNames(_variant_t& rValue) const
 	rValue.parray = saStr.Detach();
 	return static_cast<unsigned>(valueList.size());
 }
+
+
+
 
 
 } //namespace SvOp

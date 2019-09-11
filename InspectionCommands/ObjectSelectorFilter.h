@@ -119,6 +119,7 @@ public:
 			DWORD type = pValueObject->GetType();
 			const UINT attributesAllowed = pObject->ObjectAttributesAllowed();
 			const std::string& name = pObject->GetCompleteName();
+			//@Todo[MEC][8.20] [10.09.2019] EXTERNAL TOOL to allow output from External tool insert VT_VARIANT ..
 			constexpr std::array<DWORD, 11> filter {VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL};
 			bRetVal = (attributeMask == (attributesAllowed & attributeMask) &&
 					   !IsSameLineage(name, m_excludePath) &&

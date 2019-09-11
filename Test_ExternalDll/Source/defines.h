@@ -1,7 +1,7 @@
 #pragma once
 
 //TODO: set all defines and static parameters to you needed values
-#define	DLLVERSION 0,1,2,3
+#define	DLLVERSION 1,0,0,0
 #define TOOLNAME					"Test External DLL"
 #define	DLLINTERFACEVERSION		"DLL-V 0.1.2.3 (27.02.2018)"
 #define	LSTRGROUPNAME			TOOLNAME "-ExternalDll"

@@ -69,7 +69,8 @@ public:
 	void  getTableValues(_variant_t& rValue,long* pRowCount, long* pColoumnCount)const;
 	/// rValue contents a 1 dim Safe array of BSTR with the columnames returnvalue is size
 	unsigned  getColumNames(_variant_t& rValue) const;
-
+	/// hide table in ResultPicker
+	void Hide(bool hide);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

@@ -289,6 +289,14 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
 {
+	
+	const  SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
+	bool isTable(false);
+	if (pDef)
+	{
+		isTable = (pDef->getType() == SvOp::ExDllInterfaceType::TableArray);
+	}
+	
 	SvPb::InspectionCmdMsgs request, response;
 	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 	{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
