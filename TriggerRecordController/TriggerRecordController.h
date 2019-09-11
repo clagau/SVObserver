@@ -82,7 +82,6 @@ public:
 
 	virtual void setGlobalInit() override;
 	virtual void finishGlobalInit() override;
-	virtual bool isGlobalInit() const override { return m_isGlobalInit; };
 
 	virtual int addOrChangeImage(const GUID& rImageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
 	virtual int addOrChangeChildImage(const GUID& rImageId, const GUID& rParentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;

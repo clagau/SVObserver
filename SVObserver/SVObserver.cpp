@@ -2496,8 +2496,6 @@ HRESULT SVObserverApp::OpenSVXFile()
 						break;
 					}
 
-					pConfig->RebuildInputOutputLists(true);
-
 					if (isGlobalInit)
 					{
 						try
@@ -2513,6 +2511,8 @@ HRESULT SVObserverApp::OpenSVXFile()
 							break;
 						}
 					}
+
+					pConfig->RebuildInputOutputLists(true);
 
 					if (pConfig->IsConfigurationLoaded())
 					{
