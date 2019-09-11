@@ -48,7 +48,7 @@ inline int copyDataList(std::vector<_variant_t>&& valueObjectList, void* pDestin
 			void* pData = reinterpret_cast<void*> (pDataSize + 1);
 			if (result <= maxByteSize)
 			{
-				valueList.SerializeToArray(pData, result);
+				valueList.SerializePartialToArray(pData, result);
 				*pDataSize = result;
 			}
 			else

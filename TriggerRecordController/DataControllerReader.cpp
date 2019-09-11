@@ -66,8 +66,8 @@ void TRControllerReaderDataPerIP::init(const std::string& smName)
 
 void TRControllerReaderDataPerIP::reloadData()
 {
-	m_ImageList.ParseFromArray(m_pImageListInSM, m_pSmData->m_imageListSize);
-	m_DataDefList.ParseFromArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
+	m_ImageList.ParsePartialFromArray(m_pImageListInSM, m_pSmData->m_imageListSize);
+	m_DataDefList.ParsePartialFromArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
 }
 
 TriggerRecordData& TRControllerReaderDataPerIP::getTRData(int pos) const
@@ -426,8 +426,8 @@ void DataControllerReader::initAndreloadData()
 				{
 					try
 					{
-						m_inspectionList.ParseFromArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
-						m_imageStructList.ParseFromArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
+						m_inspectionList.ParsePartialFromArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
+						m_imageStructList.ParsePartialFromArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
 
 						std::unique_lock<std::shared_mutex> lock(m_dataVectorMutex);
 						m_dataVector.resize(m_inspectionList.list_size());

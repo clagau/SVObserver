@@ -256,6 +256,9 @@ public:
 	/// \returns bool
 	bool shouldPauseRegressionTestByCondition();
 
+	void setTrcPos(int pos) { m_trcPos = pos; };
+	int getTrcPos() const { return m_trcPos; };
+
 protected:
 	
 	struct WatchListElement 
@@ -433,6 +436,7 @@ private:
 	//For RegressionTest
 	SvOp::SVEquationClass m_RegressionTestPlayEquation;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
+	int m_trcPos = -1;
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

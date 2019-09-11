@@ -141,7 +141,7 @@ void DataControllerLocal::clearAll()
 	__super::clearAll();
 }
 
-bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspectionList)
+bool DataControllerLocal::setInspections(SvPb::InspectionList&& rInspectionList)
 {
 	for (auto& rInspection : rInspectionList.list())
 	{
@@ -189,7 +189,7 @@ bool DataControllerLocal::setInspections(const SvPb::InspectionList& rInspection
 
 	if (isReset)
 	{
-		m_inspectionList = rInspectionList;
+		m_inspectionList.Swap(&rInspectionList);
 	}
 
 	return true;
@@ -289,7 +289,7 @@ ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int in
 	return nullptr;
 }; 
 
-std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList)
+std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList)
 {
 	prepareReset();
 	assert(m_dataVector.size() == m_inspectionList.list_size());
@@ -309,10 +309,10 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 		{
 			ResetInspectionData(m_dataVector[i]);
 			rBaseData.m_TriggerRecordNumber = triggerRecordNumber;
-			rBaseData.m_triggerRecordBufferSize = (sizeof(TriggerRecordData) + sizeof(int)*imageList.list_size());
+			rBaseData.m_triggerRecordBufferSize = (sizeof(TriggerRecordData) + sizeof(int)*rImageList.list_size());
 			//Reserve memory space for the data size and the data
 			rBaseData.m_triggerRecordBufferSize += sizeof(int) + rBaseData.m_dataListSize;
-			m_dataVector[i].setImageList(std::move(imageList));
+			m_dataVector[i].setImageList(std::move(rImageList));
 			m_dataVector[i].setTriggerRecords(malloc(rBaseData.m_triggerRecordBufferSize * rBaseData.m_TriggerRecordNumber));
 		}
 		if (nullptr != m_dataVector[i].getTriggerRecords() && 0 < rBaseData.m_triggerRecordBufferSize)
@@ -331,7 +331,7 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 	}
 
 	//update structId to fit to the position in m_imageStructList
-	std::vector<std::pair<int, int>> changeVect = getImageBufferControllerInstance().reset(imageStructList);
+	std::vector<std::pair<int, int>> changeVect = getImageBufferControllerInstance().reset(std::move(rImageStructList));
 	for (const auto& rChangePair : changeVect)
 	{
 		//update per Inspection

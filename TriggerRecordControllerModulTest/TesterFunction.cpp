@@ -223,7 +223,7 @@ bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvTrc
 		pInspStruct->set_numberofrecords(numberOfRecords.first);
 		pInspStruct->set_numberrecordsofinterest(numberOfRecords.second);
 	}
-	return rTrController.setInspections(inspList);
+	return rTrController.setInspections(std::move(inspList));
 }
 
 bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)

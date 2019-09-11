@@ -207,7 +207,7 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 				{
 					//The next position is where the value data list is streamed
 					void* pSource = reinterpret_cast<void*> (pSize + 1);
-					m_valueList.ParseFromArray(pSource, DataSize);
+					m_valueList.ParsePartialFromArray(pSource, DataSize);
 					m_isValueListSet = true;
 				}
 				if (m_valueList.valuelist_size() > pos)

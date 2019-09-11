@@ -120,7 +120,7 @@ namespace SvTrc
 		/// Set a list of trigger record to the list of interest. This means those Trs will be keep for longer. (But this method do nothing if TrOfInterest mode is on pause.)
 		/// \param trVector [in] Vector of the Trs.
 		/// \returns bool True, if set done. If pause it returns false.
-		virtual bool setTrsOfInterest(std::vector<ITriggerRecordRPtr> trVector) = 0;
+		virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector) = 0;
 
 		/// Return a list of interestTr for one IP. The size of the list are between 0 and n.
 		/// \param inspectionPos [in]

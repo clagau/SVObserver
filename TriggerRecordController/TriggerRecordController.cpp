@@ -53,8 +53,6 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 	: m_pDataController(std::move(pDataController))
 	, m_imageBufferController(*m_pDataController)
 {
-	
-	
 	m_pDataController->setResetCallback(std::bind(&TriggerRecordController::sendResetCall, this));
 	m_pDataController->setReadyCallback(std::bind(&TriggerRecordController::sendReadyCall, this));
 	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1));	
@@ -216,7 +214,7 @@ void TriggerRecordController::unregisterNewInterestTrCallback(int handleId)
 	}
 }
 
-bool TriggerRecordController::setTrsOfInterest(std::vector<ITriggerRecordRPtr> trVector)
+bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector)
 {
 	bool retValue = false;
 	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
@@ -273,19 +271,19 @@ void TriggerRecordController::clearAll()
 	m_pDataController->clearAll();
 }
 
-bool TriggerRecordController::setInspections(const SvPb::InspectionList& rInspectionList)
+bool TriggerRecordController::setInspections(SvPb::InspectionList&& rInspectionList)
 {
 	if (m_isResetLocked)
 	{
 		return false;
 	}
 
-	bool result = m_pDataController->setInspections(rInspectionList);
+	bool result = m_pDataController->setInspections(std::move(rInspectionList));
 
 	return result;
 }
 
-void TriggerRecordController::resizeIPNumberOfRecords(std::vector<int> inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset)
+void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset)
 {
 	if (m_isResetLocked)
 	{
@@ -318,7 +316,8 @@ void TriggerRecordController::resizeIPNumberOfRecords(std::vector<int> inspectio
 	}
 
 	bool mustRecalc = false;
-	auto inspectionList = m_pDataController->getInspections();
+	bool mustSetIPList = false;
+	SvPb::InspectionList inspectionList = m_pDataController->getInspections();
 	for (int inspectionPos : inspectionPosVec)
 	{
 		if (0 > inspectionPos || inspectionList.list_size() <= inspectionPos)
@@ -354,7 +353,8 @@ void TriggerRecordController::resizeIPNumberOfRecords(std::vector<int> inspectio
 		pIpData->set_numberofrecords(newSizeTr);
 		pIpData->set_numberrecordsofinterest(newSizeTrOfIntereset);
 
-		m_pDataController->setInspectionList(inspectionList);
+		mustSetIPList = true;
+
 		try
 		{
 			auto imageListTmp = m_pDataController->getImageDefList(inspectionPos, false);
@@ -368,6 +368,11 @@ void TriggerRecordController::resizeIPNumberOfRecords(std::vector<int> inspectio
 		{
 			//nothing to do, only if imageDefList is valid and size > 0 do something.
 		}
+	}
+
+	if (mustSetIPList)
+	{
+		m_pDataController->setInspectionList(std::move(inspectionList));
 	}
 
 	if (mustRecalc)
@@ -1012,9 +1017,9 @@ void TriggerRecordController::recalcRequiredBuffer()
 	}
 
 	//add required count for additionalBuffer
-	for (auto& rMap : m_additionalBufferMap)
+	for (const auto& rMap : m_additionalBufferMap)
 	{
-		for (auto& rPair : rMap.second)
+		for (const auto& rPair : rMap.second)
 		{
 			if (rPair.first < m_imageStructListResetTmp.list_size() && 0 <= rPair.first)
 			{
@@ -1030,19 +1035,14 @@ void TriggerRecordController::recalcRequiredBuffer()
 	{
 		try
 		{
-			SvPb::ImageList rImageDef = m_imageListResetTmp;
-			int bufferCount = m_TriggerRecordNumberResetTmp;
-			if (m_resetStarted4IP != i)
-			{
-				rImageDef = m_pDataController->getImageDefList(i, false);
-				bufferCount = needNumberOfTr(m_pDataController->getInspections().list(i));
-			}
+			const SvPb::ImageList& rImageDef = (m_resetStarted4IP != i) ? m_pDataController->getImageDefList(i, false) : m_imageListResetTmp;
+			int bufferCount = (m_resetStarted4IP != i) ? needNumberOfTr(m_pDataController->getInspections().list(i)) : m_TriggerRecordNumberResetTmp;
 			
-			for (auto imageData : rImageDef.list())
+			for (const auto& rImageData : rImageDef.list())
 			{
-				if (imageData.structid() < m_imageStructListResetTmp.list_size() && 0 <= imageData.structid())
+				if (rImageData.structid() < m_imageStructListResetTmp.list_size() && 0 <= rImageData.structid())
 				{
-					auto pBufferStruct = m_imageStructListResetTmp.mutable_list(imageData.structid());
+					auto pBufferStruct = m_imageStructListResetTmp.mutable_list(rImageData.structid());
 					pBufferStruct->set_numberofbuffersrequired(pBufferStruct->numberofbuffersrequired() + bufferCount);
 				}
 			}
@@ -1230,7 +1230,7 @@ void TriggerRecordController::sendInterestTrIdCall(std::vector<TrEventData> data
 void TriggerRecordController::reduceRequiredImageBuffer(const std::map<int, int>& bufferMap)
 {
 	auto* pList = m_imageStructListResetTmp.mutable_list();
-	for (auto& structNumberPair : bufferMap)
+	for (const auto& structNumberPair : bufferMap)
 	{
 		auto imageIter = std::find_if(pList->begin(), pList->end(), [structNumberPair](const auto& rData)->bool
 		{
@@ -1269,7 +1269,7 @@ int getInspectionPos(const GUID& inspectionGuid)
 	int Return = -1;
 	std::string inspectionIdBytes;
 	SvPb::SetGuidInProtoBytes(&inspectionIdBytes, inspectionGuid);
-	auto& rInspectionList = getTriggerRecordControllerInstance().getInspections();
+	const auto& rInspectionList = getTriggerRecordControllerInstance().getInspections();
 	const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionIdBytes](const auto& rItem)-> bool
 	{
 		return (0 == rItem.id().compare(inspectionIdBytes));

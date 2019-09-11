@@ -56,7 +56,7 @@ public:
 	virtual int registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback) override;
 	virtual void unregisterNewInterestTrCallback(int handleId) override;
 
-	virtual bool setTrsOfInterest(std::vector<ITriggerRecordRPtr> trVector) override;
+	virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector) override;
 	virtual std::vector<ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
 	virtual void pauseTrsOfInterest(bool pauseFlag) override;
 	virtual bool isPauseTrsOfInterest() const override { return m_pDataController->getPauseTrsOfInterest(); };
@@ -65,9 +65,9 @@ public:
 #pragma region ITriggerRecordControllerRW Methods
 	virtual void clearAll() override;
 
-	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
+	virtual bool setInspections(SvPb::InspectionList&& rInspectionList) override;
 
-	virtual void resizeIPNumberOfRecords(std::vector<int> inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset) override;
+	virtual void resizeIPNumberOfRecords(const std::vector<int>& inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset) override;
 
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 

@@ -70,7 +70,7 @@ public:
 public:
 	virtual void clearAll() override;
 
-	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
+	virtual bool setInspections(SvPb::InspectionList&& rInspectionList) override;
 
 	virtual long getResetId() const override { return m_resetId; };
 
@@ -81,7 +81,7 @@ public:
 	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) override;
 
 	virtual const SvPb::ImageStructList& getImageStructList() const override { return m_imageStructList; };
-	virtual void setImageStructList(SvPb::ImageStructList list) override { m_imageStructList.Swap(&list); };
+	virtual void setImageStructList(SvPb::ImageStructList&& list) override { m_imageStructList.Swap(&list); };
 
 	virtual void resetImageRefCounter() override;
 	
@@ -94,9 +94,9 @@ public:
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
-	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) override;
+	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList) override;
 
-	virtual void setInspectionList(const SvPb::InspectionList &rInspectionList) override { m_inspectionList = rInspectionList; };
+	virtual void setInspectionList(SvPb::InspectionList&& rInspectionList) override { m_inspectionList.Swap(&rInspectionList); };
 
 	/// Reset resetId to 0 and wait until all reader finished his function.
 	virtual void prepareReset() override;

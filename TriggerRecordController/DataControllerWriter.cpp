@@ -84,13 +84,13 @@ void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& data
 		smData.m_dataDefListSize = newPBSize;
 		smData.m_maxDataDefListSize = ((newPBSize / m_dataDefListStepSize) + 1)*m_dataDefListStepSize;
 		createSMBuffer(*m_pBasicData, smData);
-		m_ImageList.SerializeToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
+		m_ImageList.SerializePartialToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
 	}
 	else
 	{
 		m_pSmData->m_dataDefListSize = newPBSize;
 	}
-	m_DataDefList.SerializeToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
+	m_DataDefList.SerializePartialToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
 }
 
 TriggerRecordData& TRControllerWriterDataPerIP::getTRData(int pos) const
@@ -104,7 +104,7 @@ TriggerRecordData& TRControllerWriterDataPerIP::getTRData(int pos) const
 
 void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 { 
-	m_ImageList = imageList; 
+	m_ImageList.Swap(&imageList); 
 	if (nullptr == m_pBasicData || nullptr == m_pSmData)
 	{
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
@@ -118,13 +118,13 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 		smData.m_imageListSize = newPBSize;
 		smData.m_maxImageListSize = ((newPBSize / m_imageListStepSize) + 1)*m_imageListStepSize;
 		createSMBuffer(*m_pBasicData, smData);
-		m_DataDefList.SerializeToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
+		m_DataDefList.SerializePartialToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
 	}
 	else
 	{
 		m_pSmData->m_imageListSize = newPBSize;
 	}
-	m_ImageList.SerializeToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
+	m_ImageList.SerializePartialToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
 }
 
 void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trBufferSize, int trNumbers)
@@ -142,8 +142,8 @@ void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trBufferSize, 
 		SMData smData = *m_pSmData;
 		smData.m_maxTriggerRecordBufferSize = ((trBufferSize*trNumbers / m_triggerRecordBufferStepSize) + 1)*m_triggerRecordBufferStepSize;
 		createSMBuffer(*m_pBasicData, smData);
-		m_DataDefList.SerializeToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
-		m_ImageList.SerializeToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
+		m_DataDefList.SerializePartialToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
+		m_ImageList.SerializePartialToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
 	}
 	m_pBasicData->m_TriggerRecordNumber = trNumbers;
 	m_pBasicData->m_triggerRecordBufferSize = trBufferSize;
@@ -272,7 +272,7 @@ std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
 	return retVec;
 }
 
-void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smData)
+void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, const SMData& rSmData)
 {
 	SvSml::SMParameterStruct smParam(SvSml::SVSharedMemorySettings::DefaultConnectionTimout, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
 	auto smHandleOld = std::move(m_SMHandle);
@@ -282,21 +282,21 @@ void TRControllerWriterDataPerIP::createSMBuffer(BasicData basicData, SMData smD
 	std::string newSMName = getNewSMIPName();
 	try
 	{
-		m_SMHandle->CreateDataStore(newSMName.c_str(), getNeedSMSize(smData), 1, smParam);
+		m_SMHandle->CreateDataStore(newSMName.c_str(), getNeedSMSize(rSmData), 1, smParam);
 		byte* pTemp = m_SMHandle->GetPtr(0, 0);
 		m_pBasicData = reinterpret_cast<BasicData*>(pTemp);
-		*m_pBasicData = basicData;
+		*m_pBasicData = rBasicData;
 		int offset = sizeof(BasicData);
 		m_pSmData = reinterpret_cast<SMData*>(pTemp + offset);
-		*m_pSmData = smData;
+		*m_pSmData = rSmData;
 		assert(nullptr != pTemp && nullptr != m_pSmData && nullptr != m_pBasicData);
 		offset += sizeof(SMData);
 		m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
 		offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
 		m_pImageListInSM = pTemp + offset;
-		offset += smData.m_maxImageListSize;
+		offset += rSmData.m_maxImageListSize;
 		m_pDataDefListInSM = pTemp + offset;
-		offset += smData.m_maxDataDefListSize;
+		offset += rSmData.m_maxDataDefListSize;
 		m_pTriggerRecords = pTemp + offset;
 		int minTriggerRecordBufferSize = std::min(oldTriggerRecodBufferSize, static_cast<int>(m_pSmData->m_maxTriggerRecordBufferSize));
 		if (0 < minTriggerRecordBufferSize && nullptr != pTriggerRecordOld && nullptr != m_pTriggerRecords)
@@ -418,9 +418,9 @@ void DataControllerWriter::clearAll()
 	__super::clearAll();
 }
 
-bool DataControllerWriter::setInspections(const SvPb::InspectionList& rInspectionList)
+bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList)
 {
-	for (auto& rInspection : rInspectionList.list())
+	for (const auto& rInspection : rInspectionList.list())
 	{
 		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rInspection.numberrecordsofinterest())
 		{
@@ -469,7 +469,7 @@ bool DataControllerWriter::setInspections(const SvPb::InspectionList& rInspectio
 	{
 		try
 		{
-			setInspectionList(rInspectionList);
+			setInspectionList(std::move(rInspectionList));
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -503,7 +503,7 @@ const SvPb::ImageStructList& DataControllerWriter::getImageStructList() const
 	}
 };
 
-void DataControllerWriter::setImageStructList(SvPb::ImageStructList list)
+void DataControllerWriter::setImageStructList(SvPb::ImageStructList&& list)
 {
 	if (!m_isGlobalInit)
 	{
@@ -516,7 +516,7 @@ void DataControllerWriter::setImageStructList(SvPb::ImageStructList list)
 		}
 		m_imageStructList.Swap(&list);
 		m_pCommonData->m_imageStructListPBSize = m_imageStructList.ByteSize();
-		m_imageStructList.SerializeToArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
+		m_imageStructList.SerializePartialToArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
 	}
 	else
 	{
@@ -629,7 +629,7 @@ ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int i
 	return nullptr;
 };
 
-std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList)
+std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList)
 {
 	prepareReset();
 	for (int i = 0; i < m_dataVector.size(); i++)
@@ -649,9 +649,9 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 			if (i == inspectionId)
 			{
 				ResetInspectionData(*pIPData, false);
-				int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*imageList.list_size()) + sizeof(int) + pIPData->getBasicData().m_dataListSize;
+				int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*rImageList.list_size()) + sizeof(int) + pIPData->getBasicData().m_dataListSize;
 				//Reserve memory space for the data size and the data
-				pIPData->setImageList(std::move(imageList));
+				pIPData->setImageList(std::move(rImageList));
 				pIPData->createTriggerRecordsBuffer(bufferSize, triggerRecordNumber);
 			}
 			if (nullptr != pIPData->getTriggerRecords() && 0 < pIPData->getBasicData().m_triggerRecordBufferSize)
@@ -672,7 +672,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 	}
 
 	//update structId to fit to the position in m_imageStructList
-	std::vector<std::pair<int, int>> changeVect = getImageBufferControllerInstance().reset(imageStructList, m_isGlobalInit);
+	std::vector<std::pair<int, int>> changeVect = getImageBufferControllerInstance().reset(std::move(rImageStructList), m_isGlobalInit);
 	for (const auto& rChangePair : changeVect)
 	{
 		//update per Inspection
@@ -725,7 +725,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 	return changeVect;
 }
 
-void DataControllerWriter::setInspectionList(const SvPb::InspectionList &rInspectionList)
+void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionList)
 {
 	if (rInspectionList.ByteSize() > cMaxInspectionPbSize)
 	{
@@ -735,18 +735,17 @@ void DataControllerWriter::setInspectionList(const SvPb::InspectionList &rInspec
 		throw Exception;
 	}
 
-	SvPb::InspectionList tmpList = rInspectionList;
-	size_t size = std::min(tmpList.list_size(), m_inspectionList.list_size());
+	size_t size = std::min(rInspectionList.list_size(), m_inspectionList.list_size());
 
 	for (int i = 0; i < size; i++)
 	{
-		tmpList.mutable_list(i)->set_nameofsm(m_inspectionList.list(i).nameofsm());
-		tmpList.mutable_list(i)->set_sizeofsm(m_inspectionList.list(i).sizeofsm());
+		rInspectionList.mutable_list(i)->set_nameofsm(m_inspectionList.list(i).nameofsm());
+		rInspectionList.mutable_list(i)->set_sizeofsm(m_inspectionList.list(i).sizeofsm());
 	}
 
-	m_inspectionList = tmpList;
+	m_inspectionList.Swap(std::move(&rInspectionList));
 	m_pCommonData->m_inspectionListPBSize = m_inspectionList.ByteSize();
-	m_inspectionList.SerializeToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
+	m_inspectionList.SerializePartialToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
 
 	//fit the m_dataVector to inspectionLsit
 	if (m_inspectionList.list_size() > m_dataVector.size())
@@ -930,7 +929,7 @@ void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSm
 		else
 		{
 			m_pCommonData->m_inspectionListPBSize = m_inspectionList.ByteSize();
-			m_inspectionList.SerializeToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
+			m_inspectionList.SerializePartialToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
 		}
 	}
 }

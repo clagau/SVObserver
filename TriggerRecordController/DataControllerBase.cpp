@@ -121,7 +121,7 @@ TriggerRecordData& DataControllerBase::getTRData(int inspectionPos, int pos) con
 	return pData->getTRData(pos);
 }
 
-void DataControllerBase::setLastFinishedTr(TrEventData data)
+void DataControllerBase::setLastFinishedTr(const TrEventData& data)
 {
 	auto* pData = getTRControllerData(data.m_inspectionPos);
 	if (nullptr != pData)
@@ -207,17 +207,17 @@ void DataControllerBase::increaseNumberOfFreeTr(int inspectionPos)
 	}
 }
 
-bool DataControllerBase::setTrOfInterest(std::vector<std::pair<int, int>> trVec)
+bool DataControllerBase::setTrOfInterest(const std::vector<std::pair<int, int>>& rTrVec)
 {
 	bool isSet = false;
 	if (!getPauseTrsOfInterest())
 	{
-		for (auto pairVal : trVec)
+		for (const auto& rPairVal : rTrVec)
 		{
-			auto* pTrDataIp = getTRControllerData(pairVal.first);
+			auto* pTrDataIp = getTRControllerData(rPairVal.first);
 			if (nullptr != pTrDataIp && 0 < pTrDataIp->getBasicData().m_TrOfInterestNumber)
 			{
-				pTrDataIp->setTrOfInterest(pairVal.first, pairVal.second);
+				pTrDataIp->setTrOfInterest(rPairVal.first, rPairVal.second);
 				isSet = true;
 			}
 		}

@@ -51,7 +51,7 @@ public:
 	std::vector<int> getTRofInterestPos(int n);
 	
 private:
-	void createSMBuffer(BasicData basicData, SMData smData);
+	void createSMBuffer(const BasicData& basicData, const SMData& smData);
 
 	SvSml::DataStorePointer m_SMHandle;
 	BasicData* m_pBasicData = nullptr;
@@ -90,7 +90,7 @@ public:
 	virtual void clearImageBuffer(bool shouldResetImageStruct = false) override;
 	virtual void clearAll() override;
 
-	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) override;
+	virtual bool setInspections(SvPb::InspectionList&& rInspectionList) override;
 
 	virtual long getResetId() const override { return m_pCommonData->m_resetId; };
 
@@ -105,7 +105,7 @@ public:
 	virtual const SvPb::ImageStructList& getImageStructList() const override; 
 	/// Set the new image struct list and copy it to the SM. If globalInit active it set only the temporary list and the other list and the SM will be set if global finished.
 	/// \param list [in] New list.
-	virtual void setImageStructList(SvPb::ImageStructList list) override;
+	virtual void setImageStructList(SvPb::ImageStructList&& list) override;
 
 	virtual void resetImageRefCounter() override;
 
@@ -118,12 +118,12 @@ public:
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
-	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) override;
+	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList) override;
 
 	/// Set the InspectionList
 	/// ATTENTION: Throw exception if InspectionList to large for the space in sharedMemory.
 	/// \param rInspectionList [in]
-	virtual void setInspectionList(const SvPb::InspectionList &rInspectionList) override;
+	virtual void setInspectionList(SvPb::InspectionList&& rInspectionList) override;
 
 	virtual void setGlobalInitFlag(bool flag) override;
 

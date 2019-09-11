@@ -123,12 +123,12 @@ public:
 
 	TriggerRecordData& getTRData(int inspectionPos, int pos) const;
 
-	virtual bool setInspections(const SvPb::InspectionList& rInspectionList) { assert(false); throw E_NOTIMPL; };
+	virtual bool setInspections(SvPb::InspectionList&& rInspectionList) { assert(false); throw E_NOTIMPL; };
 	virtual long getResetId() const = 0;
 	virtual volatile long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
 
-	void setLastFinishedTr(TrEventData data);
+	void setLastFinishedTr(const TrEventData& data);
 	int getLastTrId(int inspectionPos) const;
 
 	/// Get ImageDefList. ATTENTION: Throw exception if get imageDef failed.
@@ -142,7 +142,7 @@ public:
 	/// Set the ImageStructList
 	/// ATTENTION: Throw exception if ImageStructList cannot set (e.g. in writer object to large for the space in sharedMemory).
 	/// \param list [in]
-	virtual void setImageStructList(SvPb::ImageStructList list) { assert(false); throw E_NOTIMPL; };
+	virtual void setImageStructList(SvPb::ImageStructList&& list) { assert(false); throw E_NOTIMPL; };
 
 	virtual void resetImageRefCounter() { assert(false); throw E_NOTIMPL; };
 
@@ -154,7 +154,7 @@ public:
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
-	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList imageList, SvPb::ImageStructList imageStructList) { assert(false); throw E_NOTIMPL; };
+	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList) { assert(false); throw E_NOTIMPL; };
 
 	virtual long* getImageRefCountPtr(int pos) = 0;
 
@@ -176,7 +176,7 @@ public:
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
-	virtual void setInspectionList(const SvPb::InspectionList &rInspectionList) { assert(false); throw E_NOTIMPL; };
+	virtual void setInspectionList(SvPb::InspectionList&& rInspectionList) { assert(false); throw E_NOTIMPL; };
 
 	bool isIPInit(int inspectionPos);
 
@@ -196,8 +196,8 @@ public:
 	void increaseNumberOfFreeTr(int inspectionPos);
 
 	/// Set the TRs to the Interest list.
-	/// \param trVec [in] The vector of pair<inspectionPos, pos> 
-	bool setTrOfInterest(std::vector<std::pair<int,int>> trVec);
+	/// \param rTrVec [in] The vector of pair<inspectionPos, pos> 
+	bool setTrOfInterest(const std::vector<std::pair<int,int>>& rTrVec);
 
 	void setIpToInitFlagList(int pos) { m_setInitFlagAfterResetSet.insert(pos); };
 #pragma endregion Public Methods

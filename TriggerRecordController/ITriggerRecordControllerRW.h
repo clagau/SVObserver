@@ -42,14 +42,14 @@ namespace SvTrc
 		/// Set the list of GUID of the available inspections. ATTENTION: This command reset the whole controller. A new reset of all inspection and all images have to be done.
 		/// \param rInspectionList [in] inspection list.
 		/// \returns bool True if successfully. If false, no set and reset is done.
-		virtual bool setInspections(const SvPb::InspectionList& rInspectionList) = 0;
+		virtual bool setInspections(SvPb::InspectionList&& rInspectionList) = 0;
 
 		/// Resize the number of records for inspections. ATTENTION: All old Tr-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param inspectionPosVec [in] A vector of position (in the inspection list) of the inspections.
 		/// \param newSizeTr [in] The new number of records.
 		/// \param newSizeTrofIntereset [in] The new number of records of interest.
-		virtual void resizeIPNumberOfRecords(std::vector<int> inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset = 0) = 0;
+		virtual void resizeIPNumberOfRecords(const std::vector<int>& inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset = 0) = 0;
 
 		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.

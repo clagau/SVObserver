@@ -600,11 +600,14 @@ bool SVInspectionProcess::CanGoOnline()
 
 	if (0 <= m_StoreIndex)
 	{
-		int pos = SvTrc::getInspectionPos(GetUniqueObjectID());
-		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, pos);
-		const SvPb::DataDefinitionList& rDataDefList = SvTrc::getTriggerRecordControllerRInstance().getDataDefList(pos);
-		const SvPb::ImageList& rImageDefList = SvTrc::getTriggerRecordControllerRInstance().getImageDefList(pos);
-		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, pos, rDataDefList, rImageDefList);
+		if (0 > m_trcPos)
+		{
+			m_trcPos = SvTrc::getInspectionPos(GetUniqueObjectID());
+		}
+		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, m_trcPos);
+		const SvPb::DataDefinitionList& rDataDefList = SvTrc::getTriggerRecordControllerRInstance().getDataDefList(m_trcPos);
+		const SvPb::ImageList& rImageDefList = SvTrc::getTriggerRecordControllerRInstance().getImageDefList(m_trcPos);
+		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefList, rImageDefList);
 	}
 
 	return l_bOk;
@@ -1404,7 +1407,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 
 		if (shouldResetTRC)
 		{
-			SvTrc::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(SvTrc::getInspectionPos(GetUniqueObjectID()));
+			SvTrc::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(m_trcPos);
 		}
 
 		for (size_t l = 0; l < m_PPQInputs.size(); l++)
@@ -3767,7 +3770,7 @@ void SVInspectionProcess::buildValueObjectDefList() const
 
 	std::vector<_variant_t> valueObjectList{copyValueObjectList(true)};
 	
-	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), std::move(valueObjectList), SvTrc::getInspectionPos(GetUniqueObjectID()));
+	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), std::move(valueObjectList), m_trcPos);
 }
 
 std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineSize /*=false*/) const

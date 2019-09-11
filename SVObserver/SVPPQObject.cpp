@@ -3139,7 +3139,7 @@ SVProductInfoStruct SVPPQObject::getProductReadyForRunOnce(const SVGUID& rIpGuid
 		{
 			SVInspectionInfoStruct& rInspectionStruct = product.m_svInspectionInfos[(*pInspection)->GetUniqueObjectID()];
 			rInspectionStruct.m_pInspection = *pInspection;
-			rInspectionStruct.m_inspectionPosInTrc = SvTrc::getInspectionPos((*pInspection)->GetUniqueObjectID());
+			rInspectionStruct.m_inspectionPosInTrc = (*pInspection)->getTrcPos();
 			bOk = rInspectionStruct.setNextAvailableTR();
 		}
 		else
@@ -4332,7 +4332,7 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 		{
 			if (nullptr != pInspection)
 			{
-				inspectionPosVec.push_back(SvTrc::getInspectionPos(pInspection->GetUniqueObjectID()));
+				inspectionPosVec.push_back(pInspection->getTrcPos());
 			}
 		}
 		try
@@ -4371,7 +4371,7 @@ bool SVPPQObject::SetupProductInfoStructs()
 	std::vector<int> inspPosVec;
 	for (auto pInspection : m_arInspections)
 	{
-		inspPosVec.push_back(SvTrc::getInspectionPos(pInspection->GetUniqueObjectID()));
+		inspPosVec.push_back(pInspection->getTrcPos());
 	}
 	for (int j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
@@ -4412,9 +4412,14 @@ bool SVPPQObject::setInspections2TRC()
 		{
 			pInspPB->set_numberofrecords(GetPPQLength());
 			pInspPB->set_numberrecordsofinterest(m_rejectCount);
+			pInspection->setTrcPos(static_cast<int>(std::distance(pInspList->begin(), pInspPB)));
+		}
+		else
+		{
+			pInspection->setTrcPos(-1);
 		}
 	}
-	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspListMessage);
+	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(std::move(inspListMessage));
 	if (result)
 	{
 		pConfig->UpdateInspectionList4TRC();

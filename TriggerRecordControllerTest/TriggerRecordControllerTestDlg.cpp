@@ -156,7 +156,7 @@ namespace SvTrcT
 			SvPb::InspectionList inspList;
 			auto insp = inspList.add_list();
 			insp->set_numberofrecords(m_trNumbers);
-			SvTrc::getTriggerRecordControllerRWInstance().setInspections(inspList);
+			SvTrc::getTriggerRecordControllerRWInstance().setInspections(std::move(inspList));
 		}
 		else
 		{
@@ -525,9 +525,9 @@ namespace SvTrcT
 		if (!m_isReader)
 		{
 			auto& rRecordControllerRW = SvTrc::getTriggerRecordControllerRWInstance();
-			auto InspList = rRecordControllerRW.getInspections();
-			InspList.mutable_list(0)->set_numberofrecords(m_trNumbers);
-			rRecordControllerRW.setInspections(InspList);
+			auto inspList = rRecordControllerRW.getInspections();
+			inspList.mutable_list(0)->set_numberofrecords(m_trNumbers);
+			rRecordControllerRW.setInspections(std::move(inspList));
 
 			SVMatroxBufferCreateStruct bufferStruct;
 			bufferStruct.m_lSizeX = m_mainWidth;
