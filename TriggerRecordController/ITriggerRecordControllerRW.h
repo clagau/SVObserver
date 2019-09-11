@@ -90,6 +90,10 @@ namespace SvTrc
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		virtual void finishGlobalInit() = 0;
 
+		/// Return if globalInit flag is set or not.
+		/// \returns bool
+		virtual bool isGlobalInit() const = 0;
+
 		/// Change the bufferStruct of the buffer, if for this image no entry available it will be added. It must not be in the reset state (called startResetTriggerRecordStructure before.)
 		/// ATTENTION: All old Tr-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.

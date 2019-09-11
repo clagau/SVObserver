@@ -3842,7 +3842,13 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 	try
 	{
 		//avoid that TRC-memory will be recreated for every inspection, but do it once at the end.
-		SvTrc::getTriggerRecordControllerRWInstance().setGlobalInit();
+		auto& rTrController = SvTrc::getTriggerRecordControllerRWInstance();
+		bool isGlobalInit = !rTrController.isGlobalInit();
+		if (isGlobalInit)
+		{
+			//avoid that TRC-memory will be recreated for every loading step, but do it once at the end.
+			SvTrc::getTriggerRecordControllerRWInstance().setGlobalInit();
+		}
 		for (auto pInspection : m_arInspectionArray)
 		{
 			if (nullptr != pInspection)
@@ -3850,7 +3856,10 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 				bOk = FinishIPDoc(pInspection, isLoad) && bOk;
 			}
 		}
-		SvTrc::getTriggerRecordControllerRWInstance().finishGlobalInit();
+		if (isGlobalInit)
+		{
+			SvTrc::getTriggerRecordControllerRWInstance().finishGlobalInit();
+		}
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
