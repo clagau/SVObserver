@@ -73,7 +73,7 @@ void TableObject::Hide(bool hide)
 		attributeTaskObject = SvPb::noAttributes;
 		attribute = SvPb::noAttributes;
 	}
-	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::OverwriteAttribute);
+	SetObjectAttributesAllowed(attributeTaskObject, SvOi::OverwriteAttribute);
 	m_NumberOfRows.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	m_statusTag.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	m_statusColor.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);

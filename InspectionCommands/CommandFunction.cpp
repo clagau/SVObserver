@@ -41,6 +41,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "CommandInternalHelper.h"
+#include "ObjectSelectorFilter.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -1227,6 +1228,7 @@ InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest r
 				break;
 			}
 
+			case SvPb::ObjectSelectorType::tableObjects:
 			case SvPb::ObjectSelectorType::ppqItems:
 			case SvPb::ObjectSelectorType::toolsetItems:
 			{
@@ -1258,6 +1260,27 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 		if (nullptr != pInspection)
 		{
 			result = pInspection->GetPPQSelectorList(request.attribute());
+			return result;
+		}
+	}
+
+	if (SvPb::ObjectSelectorType::tableObjects == selectorType)
+	{
+
+		const GUID& rGuid = (GUID_NULL != instanceID) ? instanceID : inspectionID;
+		SvOi::IObjectClass* pObject = SvOi::getObject(rGuid);
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
+		SvOi::ITaskObject* pTaskObject(nullptr);
+		if (pInspection)
+		{
+			pTaskObject = pInspection->GetToolSetInterface();
+		}
+	
+		if (nullptr != pTaskObject)
+		{
+		
+			IsObjectInfoAllowed pFunc = SvCmd::TableObjectSelector();
+			pTaskObject->GetObjectSelectorList(pFunc, result);
 			return result;
 		}
 	}

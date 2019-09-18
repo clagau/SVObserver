@@ -176,4 +176,35 @@ private:
 	}
 
 };
+class TableObjectSelector
+{
+public:
+	TableObjectSelector(const TableObjectSelector&) = default;
+	TableObjectSelector& operator=(const TableObjectSelector&) = delete;
+
+	TableObjectSelector() {};
+
+	virtual ~TableObjectSelector() {};
+
+	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex) const
+	{
+		if (!pObject)
+		{
+			return false;
+		}
+		if (pObject->GetObjectType() != SvPb::TableObjectType)
+		{
+			return false;
+		}
+		
+		unsigned int  AttributesAllowed = pObject->ObjectAttributesAllowed();
+		if (0 == (SvPb::taskObject & AttributesAllowed))
+		{
+			return false;
+		}
+		
+		return true;
+	}
+};
+
 } //namespace SvCmd

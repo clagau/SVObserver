@@ -313,6 +313,7 @@ enum ObjectSelectorType
 	toolsetItems = 0;				//Inspection toolset items
 	globalConstantItems = 1;		//Global constant items
 	ppqItems = 2;					//PPQ variable items
+	tableObjects = 3;				//Inspection  table Objects 
 }
 
 enum SelectorFilter

@@ -85,7 +85,8 @@ public:
 	/// \param context [in]
 	/// \returns bool true if successfully
 	bool DestroyChildObject( SVTaskObjectClass* pTaskObject, DWORD context = 0 );
-
+	
+	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const override;
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual void Delete(const SVGUID& rObjectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int Count = 1) override;

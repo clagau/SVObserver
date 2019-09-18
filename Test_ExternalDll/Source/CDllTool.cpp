@@ -415,9 +415,6 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_EMPTY;
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray = nullptr;
 
-
-
-
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));

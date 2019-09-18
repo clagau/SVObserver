@@ -118,7 +118,9 @@ public:
 	/// Set the flag, that the first friend (is normally the conditional task, if it is a tool) should be skipped in runFriends.
 	void setSkipFirstFriendFromRun() { m_bSkipFirstFriend = true; };
 
+	
 #pragma region virtual method (ITaskObject)
+	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems ) const override;
 	virtual std::vector<SvPb::TreeItem> GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const override;
 	virtual void GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;

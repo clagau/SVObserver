@@ -122,7 +122,7 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMes
 	Result &= resetAllOutputListObjects(&m_ResetErrorMessages);
 
 	Result &= __super::resetAllObjects(&m_ResetErrorMessages);
- 
+
 	if (nullptr != pErrorMessages && !m_ResetErrorMessages.empty())
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
@@ -227,12 +227,12 @@ HRESULT SVTaskObjectClass::GetNonToolsetOutputList(SVOutputInfoListClass& rOutpu
 	return Result;
 }
 
-HRESULT SVTaskObjectClass::IsAuxInputImage( const SvOl::SVInObjectInfoStruct* p_psvInfo ) const
+HRESULT SVTaskObjectClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo ) const
+HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p_rpsvFoundInfo, const SvOl::SVInObjectInfoStruct* p_psvLastInfo) const
 {
 	HRESULT l_svOk = S_FALSE;
 
@@ -339,7 +339,7 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 				for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); nullptr == rpObject && m_embeddedList.end() != Iter; ++Iter)
 				{
 					SVObjectClass* pObject = *Iter;
-					if (nullptr != pObject && (Index + 1 == rNameInfo.m_NameArray.size() - 1 || SvPb::SVImageObjectType == pObject->GetObjectType()) )
+					if (nullptr != pObject && (Index + 1 == rNameInfo.m_NameArray.size() - 1 || SvPb::SVImageObjectType == pObject->GetObjectType()))
 					{
 						l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
 					}
@@ -353,6 +353,45 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 	}
 
 	return l_Status;
+}
+
+
+
+int  SVTaskObjectClass::GetObjectSelectorList(SvOi::IsObjectInfoAllowed  pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const
+{
+	int result(0);
+	UINT AttributesSet = ObjectAttributesSet();
+	if (pFunctor(this, AttributesSet, 0))
+	{
+		SvPb::TreeItem insertItem;
+		insertItem.set_type("Object");
+		insertItem.set_name( GetName());
+		insertItem.set_location(GetCompleteName());
+		std::string strObjectId = GetUniqueObjectID().ToString();
+		insertItem.set_objectidindex(strObjectId);
+		insertItem.set_selected(false);
+		rTreeItems.emplace_back(insertItem);
+		result++;
+
+	}
+	
+	
+	for (size_t i = 0; i < m_friendList.size(); ++i)
+	{
+		const SVObjectInfoStruct& rFriend = m_friendList[i];
+
+		// Check if Friend is alive...
+		SVTaskObjectClass* pObject(nullptr);
+
+		pObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(rFriend.getUniqueObjectID()));
+
+		if (nullptr != pObject)
+		{
+			result += pObject->GetObjectSelectorList(pFunctor, rTreeItems);
+
+		}
+	}
+	return result;
 }
 
 #pragma region virtual method (ITaskObject)
@@ -369,7 +408,7 @@ std::vector<SvPb::TreeItem> SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInf
 		result.reserve(OutputList.GetSize());
 
 		// Filter the list
-		for(const auto* pOutputInfo : OutputList)
+		for (const auto* pOutputInfo : OutputList)
 		{
 			SVObjectReference ObjectRef = pOutputInfo->GetObjectReference();
 			if (ObjectRef.isArray() || pFunctor(ObjectRef.getObject(), attribute, -1))
@@ -564,7 +603,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 				}
 				catch (...)
 				{
-					Result = E_FAIL; 
+					Result = E_FAIL;
 				}
 			}
 			else
@@ -1892,23 +1931,23 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectPtrVector& rListOfObj
 	SVOutputInfoListClass l_OutputInfoList;
 	GetOutputList(l_OutputInfoList);
 
-	for ( auto* pObject : rListOfObjects)
+	for (auto* pObject : rListOfObjects)
 	{
 		// check inputs
 		SvOl::SVInputInfoListClass::iterator iterInput = std::find_if(m_InputObjectList.begin(), m_InputObjectList.end(), local::IsInput(pObject));
-		if ( iterInput != m_InputObjectList.end() )
+		if (iterInput != m_InputObjectList.end())
 		{
 			SvOl::SVInObjectInfoStruct* pInObjectInfo = *iterInput;
-			if( nullptr != pInObjectInfo && pInObjectInfo->IsConnected() && GUID_NULL != pInObjectInfo->getUniqueObjectID())
+			if (nullptr != pInObjectInfo && pInObjectInfo->IsConnected() && GUID_NULL != pInObjectInfo->getUniqueObjectID())
 			{
-					// Send to the Object we are using
-				SVObjectManagerClass::Instance().DisconnectObjectInput( pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo );
-				}
+				// Send to the Object we are using
+				SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo);
 			}
+		}
 
 		// check outputs
 		SVOutputInfoListClass::iterator iterOutput = std::find_if(l_OutputInfoList.begin(), l_OutputInfoList.end(), local::IsOutput(pObject));
-		if ( iterOutput != l_OutputInfoList.end() )
+		if (iterOutput != l_OutputInfoList.end())
 		{
 			SVOutObjectInfoStruct* pOutObjectInfo = *iterOutput;
 			if (pOutObjectInfo)
@@ -1917,7 +1956,7 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectPtrVector& rListOfObj
 			}
 			l_OutputInfoList.erase(iterOutput);
 		}
-			}
+	}
 
 	return S_OK;
 }

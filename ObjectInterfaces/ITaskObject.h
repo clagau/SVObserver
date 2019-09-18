@@ -51,6 +51,10 @@ namespace SvOi
 		/// \returns the vector of tree items
 		//************************************
 		virtual std::vector<SvPb::TreeItem> GetSelectorList(IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const = 0;
+		
+		///Insert all objects in this taskobject filterd by functor
+		/// returns the number of insert objects
+		virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const =0;
 
 		/// Get the List of Input Images to this Task Object.
 		/// \param rList <in> The List to be populated.

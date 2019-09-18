@@ -81,6 +81,23 @@ HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputIn
 
 	return l_Status;
 }
+int SVTaskObjectListClass::GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const
+{
+	int result = SVTaskObjectClass::GetObjectSelectorList(pFunctor, rTreeItems);
+
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++i)
+	{
+		SVTaskObjectClass* l_pObject(m_TaskObjectVector[i]);
+
+		if (nullptr != l_pObject)
+		{
+			result += l_pObject->GetObjectSelectorList(pFunctor, rTreeItems);
+
+		}
+	}
+
+	return result;
+}
 
 void SVTaskObjectListClass::AppendInputObjects()
 {

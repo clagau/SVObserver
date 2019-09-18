@@ -975,7 +975,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	else
 	{
 		ok = false;
-		}
+	}
 
 	if (!ok)
 	{
@@ -983,7 +983,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	}
 
 	return ok;
-	}
+}
 
 
 
@@ -2025,10 +2025,24 @@ void SVExternalToolTask::collectResultValues()
 				GetResultValueObject(i)->SetDefaultValue(var);
 			}
 			GetResultValueObject(i)->setValue(m_InspectionResultValues[i]);
+			
+			if ((m_Data.m_ResultDefinitions[i].getVT()  & VT_ARRAY) && !GetResultValueObject(i)->isArray())
+			{
+				//Force scalar Resultvalue to an array.  
+				_variant_t value;
+				GetResultValueObject(i)->GetValue(value);
+				GetResultValueObject(i)->SetArraySize(2);
+				GetResultValueObject(i)->SetValue(value, 0);
+				GetResultValueObject(i)->SetResultSize(1);
+			}
+			
+
 		}
 
 		else
 		{
+			
+
 			GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
 		}
 		// Clear OleVariant that was created in Dll.
