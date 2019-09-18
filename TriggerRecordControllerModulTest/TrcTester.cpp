@@ -19,6 +19,7 @@
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\SVRegistry.h"
+#include "SVTimerLibrary\SVClock.h"
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #include "TriggerRecordController\ITriggerRecordRW.h"
 
@@ -100,7 +101,7 @@ bool TrcTester::setBuffers()
 {
 	CString logStr;
 	bool setBufferOk = true;
-	auto start = std::chrono::system_clock::now();
+	double start = SvTl::GetTimeStamp();
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
 		setBufferOk = setInspectionBuffers(strTestSetBuffers);
@@ -119,12 +120,12 @@ bool TrcTester::setBuffers()
 			break;
 		}
 	}
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_nano = end - start;
+	double end = SvTl::GetTimeStamp();
+	double elapsed_ms = end - start;
 	if (setBufferOk)
 	{
-		bool isTimeOK = (elapsed_nano.count() <= m_config.getMaxTimeSetBuffer());
-		logStr.Format(_T("time (%f s, max time is %f)"), elapsed_nano.count(), m_config.getMaxTimeSetBuffer());
+		bool isTimeOK = (elapsed_ms <= m_config.getMaxTimeSetBuffer());
+		logStr.Format(_T("time (%f ms, max time is %f)"), elapsed_ms, m_config.getMaxTimeSetBuffer());
 		m_rLogClass.Log(logStr, isTimeOK ? LogLevel::Information_Level1 : LogLevel::Error, isTimeOK ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetBuffers);
 	}
 	return setBufferOk;
@@ -149,7 +150,7 @@ bool TrcTester::checkBufferMaximum()
 	//create maximum number of possible image buffers (no exception should happen.
 	try
 	{
-		auto start = std::chrono::system_clock::now();
+		double start = SvTl::GetTimeStamp();
 		m_TRController.startResetTriggerRecordStructure(0);
 		bool independentOk = m_TRController.removeAllImageBuffer();
 		for (int i = 0; i < numberOfImages; i++)
@@ -159,11 +160,11 @@ bool TrcTester::checkBufferMaximum()
 		}
 		m_TRController.addImageBuffer(guid, specifyBuffer(1), numberOfAddBuffer);
 		m_TRController.finishResetTriggerRecordStructure();
-		auto end = std::chrono::system_clock::now();
-		std::chrono::duration<double> elapsed_nano = end - start;
+		double end = SvTl::GetTimeStamp();
+		double elapsed_ms = end - start;
 		CString logStr;
-		logStr.Format(_T("set images (maxBuffer = %d) good case (%f s/ %f s)"), maxBuffer, elapsed_nano.count(), m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
-		bool isError = (!independentOk || m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages < elapsed_nano.count());
+		logStr.Format(_T("set images (maxBuffer = %d) good case (%f ms/ %f ms)"), maxBuffer, elapsed_ms, m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
+		bool isError = (!independentOk || m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages < elapsed_ms);
 		m_rLogClass.Log(logStr, !isError ? LogLevel::Information_Level3 : LogLevel::Error, !isError ? LogType::PASS : LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
 		if (!independentOk)
 		{
@@ -399,7 +400,7 @@ bool TrcTester::setAndReadImage()
 
 	//constexpr int numberOfRuns = 100;
 	const int numberOfRuns = m_config.getNoOfRepetitionsPerStep();
-	auto start = std::chrono::system_clock::now();
+	double start = SvTl::GetTimeStamp();
 	for (int i = 0; i < numberOfRuns; i++)
 	{
 		//write image to buffer
@@ -465,12 +466,12 @@ bool TrcTester::setAndReadImage()
 			//}
 		}
 	}
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_nano = end - start;
+	double end = SvTl::GetTimeStamp();
+	double elapsed_ms = end - start;
 
 	CString logStr;
-	logStr.Format(_T("(%f s/ %f s)"), elapsed_nano.count(), numberOfRuns*m_config.getMaxTimesetAndReadImage());
-	bool isTimeOk = elapsed_nano.count() < numberOfRuns*m_config.getMaxTimesetAndReadImage();
+	logStr.Format(_T("(%f ms/ %f ms)"), elapsed_ms, numberOfRuns*m_config.getMaxTimesetAndReadImage());
+	bool isTimeOk = elapsed_ms < numberOfRuns*m_config.getMaxTimesetAndReadImage();
 	m_rLogClass.Log(logStr, isTimeOk ? LogLevel::Information_Level1 : LogLevel::Error, isTimeOk ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadImage);
 	return true;
 }
@@ -520,62 +521,28 @@ bool TrcTester::setAndReadValues()
 		return false;
 	}
 
+	//first run empty run, because the first two runs can last longer.
+	for (int i = 0; i < 2; i++)
+	{
+		writeAndReadSingleValue(i, dataDefList.list_size());
+	}
+
 	constexpr int numberOfRuns = 10;
-	auto start = std::chrono::system_clock::now();
+	double start = SvTl::GetTimeStamp();
 	for (int i = 0; i < numberOfRuns; i++)
 	{
-		auto runData = m_config.getValueSet()[i%m_config.getValueSet().size()];
-		{//scope for tr2W
-		 //get TR and set new image
-			auto tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
-			if (nullptr == tr2W)
-			{
-				m_rLogClass.Log(_T("createTriggerRecordObjectToWrite return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
-				return false;
-			}
-			try
-			{
-				auto tmpData = runData;
-				tr2W->writeValueData(std::move(tmpData));
-			}
-			catch (const SvStl::MessageContainer& rExp)
-			{
-				m_rLogClass.logException("", rExp, __LINE__, strTestSetAndReadValues);
-				return false;
-			}
-		}
-		int id = m_TRController.getLastTrId(0);
-		auto tr2R = m_TRController.createTriggerRecordObject(0, id);
-		if (nullptr == tr2R)
+		bool retVal = writeAndReadSingleValue(i, dataDefList.list_size());
+		if (!retVal)
 		{
-			CString errorStr;
-			errorStr.Format(_T("could not create read version of TR (id%d) in run %d"), id, i);
-			m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
-			continue;
-		}
-		
-		int pos = i%dataDefList.list_size();
-		variant_t testValue = tr2R->getDataValue(SvPb::GetGuidFromProtoBytes(dataDefList.list(pos).guidid()));
-		if (runData[pos] != testValue)
-		{
-			CString errorStr;
-			errorStr.Format(_T("value unexpected. Run %d, value = %s, expect = %s"), i, SvUl::createStdString(testValue).c_str(), SvUl::createStdString(runData[pos]).c_str());
-			m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
-			return false;
-		}
-		else
-		{
-			CString errorStr;
-			errorStr.Format(_T("value expected. Run %d, value = %s"), i, SvUl::createStdString(testValue).c_str());
-			m_rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestSetAndReadValues);
-		}
+			return retVal;
+		}		
 	}
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_nano = end - start;
+	double end = SvTl::GetTimeStamp();
+	double elapsed_ms = end - start;
 
 	CString logStr;
-	logStr.Format(_T("(%f s/ %f s)"), elapsed_nano.count(), numberOfRuns*m_config.getMaxTimesetAndReadImage());
-	bool isTimeOk = elapsed_nano.count() < numberOfRuns*m_config.getMaxTimesetAndReadImage();
+	logStr.Format(_T("(%f ms/ %f ms)"), elapsed_ms, numberOfRuns*m_config.getMaxTimesetAndReadValue());
+	bool isTimeOk = elapsed_ms < numberOfRuns*m_config.getMaxTimesetAndReadValue();
 	m_rLogClass.Log(logStr, isTimeOk ? LogLevel::Information_Level1 : LogLevel::Error, isTimeOk ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetAndReadValues);
 	return true;
 }
@@ -798,13 +765,15 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 			tmpString.Format("Reader (%s) ready read logFile:", data.m_name.c_str());
 			rLogClass.LogText0(tmpString, LogLevel::Information_Level3);
 			std::string line;
+			bool bFindString = false;
 			while (getline(logFile, line))
 			{
 				retValue = rLogClass.convertAndLogString(line) && retValue;
+				bFindString = true;
 			}
 			logFile.close();
 			tmpString.Format("Reader (%s) finished, read logFile finished", data.m_name.c_str());
-			rLogClass.Log(tmpString, retValue ? LogLevel::Information_Level1 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
+			rLogClass.Log(tmpString, (retValue&&bFindString) ? LogLevel::Information_Level1 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
 		}
 		else
 		{
@@ -825,4 +794,55 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 	CloseHandle(data.m_processInfo.hProcess);
 	CloseHandle(data.m_processInfo.hThread);
 	return retValue;
+}
+
+bool TrcTester::writeAndReadSingleValue(int index, int listSize)
+{
+	const auto& rRunData = m_config.getValueSet()[index%m_config.getValueSet().size()];
+	{//scope for tr2W
+	 //get TR and set new image
+		auto tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
+		if (nullptr == tr2W)
+		{
+			m_rLogClass.Log(_T("createTriggerRecordObjectToWrite return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
+			return false;
+		}
+		try
+		{
+			auto tmpData = rRunData;
+			tr2W->writeValueData(std::move(tmpData));
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			m_rLogClass.logException("", rExp, __LINE__, strTestSetAndReadValues);
+			return false;
+		}
+	}
+	std::this_thread::yield();
+	int id = m_TRController.getLastTrId(0);
+	auto tr2R = m_TRController.createTriggerRecordObject(0, id);
+	if (nullptr == tr2R)
+	{
+		CString errorStr;
+		errorStr.Format(_T("could not create read version of TR (id%d) in run %d"), id, index);
+		m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
+		return true;
+	}
+
+	int pos = index%listSize;
+	variant_t testValue = tr2R->getDataValue(pos);
+	if (rRunData[pos] != testValue)
+	{
+		CString errorStr;
+		errorStr.Format(_T("value unexpected. Run %d, value = %s, expect = %s"), index, SvUl::createStdString(testValue).c_str(), SvUl::createStdString(rRunData[pos]).c_str());
+		m_rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
+		return false;
+	}
+	else
+	{
+		CString errorStr;
+		errorStr.Format(_T("value expected. Run %d, value = %s"), index, SvUl::createStdString(testValue).c_str());
+		m_rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestSetAndReadValues);
+	}
+	return true;
 }

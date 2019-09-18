@@ -178,20 +178,28 @@ std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
 	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-	int vecSize = m_pBasicData->m_TrOfInterestNumber;
-	if (nullptr != locker && 0 < vecSize)
+	if (nullptr != locker)
 	{
-		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
-		int nextPos = std::min(static_cast<int>(m_pBasicData->m_TrOfInterestCurrentPos), vecSize - 1);
-		for (int i = 0; i < number; i++)
+		int vecSize = m_pBasicData->m_TrOfInterestNumber;
+		if (0 < vecSize)
 		{
-			if (0 > nextPos)
+			int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
+			int nextPos = std::min(static_cast<int>(m_pBasicData->m_TrOfInterestCurrentPos), vecSize - 1);
+			for (int i = 0; i < number; i++)
 			{
-				nextPos = vecSize - 1;
+				if (0 > nextPos)
+				{
+					nextPos = vecSize - 1;
+				}
+				retVec.push_back(m_pTRofInterestArray[nextPos]);
+				nextPos--;
 			}
-			retVec.push_back(m_pTRofInterestArray[nextPos]);
-			nextPos--;
 		}
+	}
+	else
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetInterestFailedLockFailed, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return retVec;
 }

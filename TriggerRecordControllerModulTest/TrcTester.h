@@ -37,6 +37,7 @@ private:
 
 	bool setInspectionBuffers(LPCSTR testAreaStr);
 	bool setIndependentBuffers(LPCSTR testAreaStr);
+	bool writeAndReadSingleValue(int index, int listSize);
 	
 	SvTrc::ITriggerRecordControllerRW &m_TRController;
 	TrcTesterConfiguration& m_config;

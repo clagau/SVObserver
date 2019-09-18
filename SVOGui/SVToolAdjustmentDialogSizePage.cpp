@@ -376,7 +376,7 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 			{
 				auto propEnum = m_EQAdjustStruct[vType].m_extentProp;
 				auto valuePair = find_if(parentExtentParameter.begin(), parentExtentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
-				if (extentParameter.end() != valuePair)
+				if (parentExtentParameter.end() != valuePair)
 				{
 					csResult.Format(_T("%ld"), static_cast<long>(valuePair->value()));
 				}
