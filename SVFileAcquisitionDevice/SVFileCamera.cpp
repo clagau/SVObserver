@@ -356,13 +356,10 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	SVFileCamera* pCamera = (SVFileCamera *)data;
 	std::string filename = pCamera->GetNextFilename();
 
+	// fire StartFrame event
+	pCamera->m_startFrameEvent.Fire(pCamera->m_index);
 	// Load file
-	if (!filename.empty() && S_OK == SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap))
-	{
-		// fire StartFrame event
-		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
-	}
-	else
+	if (filename.empty() || S_OK != SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap))
 	{
 		// add to event log
 		SvDef::StringVector msgList;
