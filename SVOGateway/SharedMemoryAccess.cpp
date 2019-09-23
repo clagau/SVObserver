@@ -48,7 +48,7 @@ SharedMemoryAccess::~SharedMemoryAccess()
 void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
-	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetVersion()));
+	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetShortTitleVersion()));
 	task.finish(std::move(Response));
 }
 
