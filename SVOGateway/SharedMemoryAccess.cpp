@@ -92,6 +92,15 @@ void SharedMemoryAccess::GetProduct(const SvPb::GetProductRequest& rRequest, SvR
 	}
 }
 
+void SharedMemoryAccess::GetProductData(const SvPb::GetProductDataRequest& rRequest, SvRpc::Task<SvPb::GetProductDataResponse> task)
+{
+	auto res = std::make_shared<SvPb::GetProductDataResponse>();
+	get_product_data(*res, rRequest).then(m_io_service, [task, res](SvSyl::SVFuture<void> future)
+	{
+		task.finish(std::move(*res));
+	});
+}
+
 void SharedMemoryAccess::GetReject(const SvPb::GetRejectRequest& rRequest, SvRpc::Task<SvPb::GetRejectResponse> task)
 {
 	SvPenv::Error Error;
@@ -246,6 +255,13 @@ void SharedMemoryAccess::GetProductStream(
 	rebuild_trc_pos_cache(*state);
 }
 
+SharedMemoryAccess::new_trigger_t::new_trigger_t(int inspectionPos, int trId, bool isReject)
+	: inspectionPos(inspectionPos)
+	, trId(trId)
+	, isReject(isReject)
+{
+}
+
 SharedMemoryAccess::product_stream_t::product_stream_t(
 	const SvPb::GetProductStreamRequest& streamReq,
 	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
@@ -283,21 +299,60 @@ static bool is_subscribed_to(const SvPb::GetProductStreamRequest& req, const SvP
 
 void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId, bool is_reject)
 {
-	if (m_ProductStreams.empty())
+	add_new_trigger_to_queue(std::make_shared<new_trigger_t>(inspectionPos, trId, is_reject));
+
+	m_io_service.post([this, is_reject]()
+	{
+		check_queue_for_new_trigger_record(is_reject);
+	});
+}
+
+void SharedMemoryAccess::add_new_trigger_to_queue(std::shared_ptr<new_trigger_t> new_trigger)
+{
+	std::lock_guard<std::mutex> l(m_NewTriggerMutex);
+	auto& queue = new_trigger->isReject ? m_NewTriggerInterestQueue : m_NewTriggerQueue;
+	queue.push_back(new_trigger);
+}
+
+std::shared_ptr<SharedMemoryAccess::new_trigger_t> SharedMemoryAccess::pop_new_trigger_from_queue(bool is_reject)
+{
+	std::lock_guard<std::mutex> l(m_NewTriggerMutex);
+
+	auto& queue = is_reject ? m_NewTriggerInterestQueue : m_NewTriggerQueue;
+	if (queue.empty())
+	{
+		return nullptr;
+	}
+
+	// TODO allow processing more than one entry of the reject queue!
+	// TODO print warning when more than one entry in reject queue? this means we are dropping rejects here
+
+	auto new_trigger = queue.back();
+	queue.clear();
+
+	return new_trigger;
+}
+
+void SharedMemoryAccess::check_queue_for_new_trigger_record(bool is_reject)
+{
+	auto new_trigger_ptr = pop_new_trigger_from_queue(is_reject);
+	if (!new_trigger_ptr || m_ProductStreams.empty())
 	{
 		return;
 	}
 
+	const auto& new_trigger = *new_trigger_ptr;
+
 	auto& trc = SvTrc::getTriggerRecordControllerInstance();
-	auto tro = trc.createTriggerRecordObject(inspectionPos, trId);
+	auto tro = trc.createTriggerRecordObject(new_trigger.inspectionPos, new_trigger.trId);
 	if (!tro)
 	{
-		SV_LOG_GLOBAL(warning) << "TRC returned invalid TRO for inspectionPos=" << inspectionPos << " and trId=" << trId;
+		SV_LOG_GLOBAL(warning) << "TRC returned invalid TRO for inspectionPos=" << new_trigger.inspectionPos << " and trId=" << new_trigger.trId;
 		return;
 	}
 
 	const auto& inspections = trc.getInspections();
-	const auto& inspection = inspections.list(inspectionPos);
+	const auto& inspection = inspections.list(new_trigger.inspectionPos);
 	const auto inspectionId = SvPb::GetGuidFromString(inspection.id());
 
 	for (auto it = m_ProductStreams.begin(); it != m_ProductStreams.end();)
@@ -309,10 +364,9 @@ void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId, bool
 			continue;
 		}
 
-
 		if (is_subscribed_to(ptr->req, inspection) && is_reject == ptr->req.rejectsonly())
 		{
-			handle_new_trigger_record(ptr, tro, inspectionPos, inspectionId, trId, is_reject);
+			handle_new_trigger_record(ptr, tro, new_trigger.inspectionPos, inspectionId, new_trigger.trId, is_reject);
 		}
 
 		++it;
@@ -326,7 +380,9 @@ static bool read_image(SvPb::Image& resImg, SvTrc::IImagePtr imgPtr)
 	auto& buffer = hdl->GetBuffer();
 	auto& out = *resImg.mutable_rgbdata();
 	auto rc = SVMatroxBufferInterface::CopyBufferToFileDIB(out, info, buffer);
-	resImg.set_height(info.GetHeight());
+	// height can be negative to indicate that the image origin is the upper-left corner
+	// See https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
+	resImg.set_height(std::labs(info.GetHeight()));
 	resImg.set_width(info.GetWidth());
 	return rc == S_OK;
 }
@@ -344,8 +400,8 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 	res->set_isreject(is_reject);
 
 	const auto includeoverlays = stream->req.includeoverlays();
-	auto future = collect_images(*res, pTro, stream->req.imageids(), stream->imagePositions, inspectionPos, inspectionId, includeoverlays);
-	collect_values(*res, *pTro, stream->req.valueids(), stream->valuePositions);
+	auto future = collect_images(*res->mutable_images(), *res->mutable_overlays(), pTro, stream->req.imageids(), stream->imagePositions, inspectionPos, inspectionId, includeoverlays);
+	collect_values(*res->mutable_values(), *pTro, stream->req.valueids(), stream->valuePositions);
 
 	future.then(m_io_service, [stream, res](SvSyl::SVFuture<void> future)
 	{
@@ -356,8 +412,49 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 	});
 }
 
+SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataResponse& res, const SvPb::GetProductDataRequest& req)
+{
+	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	const auto& inspectionIdStr = req.inspectionid();
+	const auto inspectionId = SvPb::GetGuidFromString(inspectionIdStr);
+	const auto inspectionPos = get_inspection_pos_for_guid(trc, inspectionIdStr);
+	if (inspectionPos < 0)
+	{
+		// TODO;
+		return SvSyl::SVPromise<void>::make_ready();
+	}
+
+	auto trId = req.trigger();
+	if (trId <= 0)
+	{
+		trId = trc.getLastTrId(inspectionPos);
+	}
+
+	auto tro = trc.createTriggerRecordObject(inspectionPos, trId);
+	if (!tro)
+	{
+		// TODO;
+		return SvSyl::SVPromise<void>::make_ready();
+	}
+
+	std::vector<int> imagePositions;
+	collect_image_pos(imagePositions, trc.getImageDefList(inspectionPos), req.imageids());
+
+	std::vector<int> valuePositions;
+	collect_value_pos(valuePositions, trc.getDataDefList(inspectionPos), req.valueids());
+
+	res.set_trigger(trId);
+
+	const auto includeoverlays = req.includeoverlays();
+	auto future = collect_images(*res.mutable_images(), *res.mutable_overlays(), tro, req.imageids(), imagePositions, inspectionPos, inspectionId, includeoverlays);
+	collect_values(*res.mutable_values(), *tro, req.valueids(), valuePositions);
+
+	return future;
+}
+
 SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
-	SvPb::GetProductStreamResponse& res,
+	::google::protobuf::RepeatedPtrField<SvPb::Image>& images,
+	::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>& overlays,
 	SvTrc::ITriggerRecordRPtr pTro,
 	const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids,
 	const std::vector<int>& imagePositions,
@@ -374,11 +471,11 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 		const auto imageGiud = imageGuids.Get(static_cast<int>(i));
 		const auto guid = SvPb::GetGuidFromString(imageGiud);
 
-		auto& img = *res.add_images();
+		auto& img = *images.Add();
 		auto overlayDesc = static_cast<SvPb::OverlayDesc*>(nullptr);
 		if (includeoverlays)
 		{
-			overlayDesc = res.add_overlays();
+			overlayDesc = overlays.Add();
 		}
 
 		SvTrc::IImagePtr imgPtr = (nullptr != pTro) ? pTro->getImage(imagePos) : nullptr;
@@ -398,9 +495,8 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 
 		if (includeoverlays && overlayDesc)
 		{
-			// also binding stream will make sure desc's memory is available until callback is called
-			auto future = m_overlay_controller.getOverlays(pTro, inspectionId, guid).then<void>(m_io_service,
-				[res, overlayDesc](SvSyl::SVFuture<SvPb::OverlayDesc> future)
+			auto future = m_overlay_controller.getOverlays(pTro, inspectionId, guid)
+				.then<void>(m_io_service, [overlayDesc](SvSyl::SVFuture<SvPb::OverlayDesc> future)
 			{
 				const auto& desc = future.get();
 				overlayDesc->CopyFrom(desc);
@@ -413,7 +509,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 }
 
 void SharedMemoryAccess::collect_values(
-	SvPb::GetProductStreamResponse& res,
+	::google::protobuf::RepeatedPtrField<SvPb::Variant>& values,
 	SvTrc::ITriggerRecordR& tro,
 	const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids,
 	const std::vector<int>& valuePositions
@@ -421,7 +517,7 @@ void SharedMemoryAccess::collect_values(
 {
 	for (auto i = 0ULL, len = valuePositions.size(); i < len; ++i)
 	{
-		auto& value = *res.add_values();
+		auto& value = *values.Add();
 		auto variant = tro.getDataValue(valuePositions[i]);
 		if (!read_variant(value, variant))
 		{
@@ -581,10 +677,8 @@ void SharedMemoryAccess::subscribe_to_trc()
 		{
 			return;
 		}
-		m_io_service.post([this, eventData]()
-		{
-			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, false);
-		});
+
+		on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, false);
 	});
 	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](std::vector<SvTrc::TrEventData> events)
 	{
@@ -593,13 +687,10 @@ void SharedMemoryAccess::subscribe_to_trc()
 			return;
 		}
 
-		m_io_service.post([this, events]()
+		for (const auto& eventData : events)
 		{
-			for (const auto& eventData : events)
-			{
-				on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, true);
-			}
-		});
+			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, true);
+		}
 	});
 }
 

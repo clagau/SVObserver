@@ -68,6 +68,16 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetProductDataRequest,
+		SvPb::GetProductDataRequest,
+		SvPb::GetProductDataResponse>(
+		[sma](SvPb::GetProductDataRequest&& req, SvRpc::Task<SvPb::GetProductDataResponse> task)
+	{
+		sma->GetProductData(req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetRejectRequest,
 		SvPb::GetRejectRequest,
 		SvPb::GetRejectResponse>(

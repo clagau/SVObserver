@@ -231,6 +231,47 @@ message StoreClientLogsRequest
 	repeated LogEntry logs = 2;
 }
 
+message GetProductDataRequest
+{
+	// The inspection id in which context the stream is running.
+	// When requesting values or images that don't belong to this
+	// inspection, the stream will fail.
+	bytes inspectionId = 1;
+
+	sint32 trigger = 2;
+
+	// List of ObjectIds of values the client is subscribing to.
+	// The very first response will contain the names as well.
+	repeated bytes valueIds = 3;
+
+	// List of ObjectIds of images the client is subscribing to.
+	// The very first response will contain the names as well.
+	repeated bytes imageIds = 4;
+
+	// Format the images should be encoded with. Stream will fail
+	// and close if the requested format is not available.
+	ImageFormatEnum imageFormat = 5;
+
+	// If set to true, the response will include overlay information
+	// for images.
+	bool includeOverlays = 6;
+}
+
+message GetProductDataResponse
+{
+	// The trigger count the data set belongs to.
+	sint32 trigger = 1;
+
+	// List of values in the same order as specified in the request.
+	repeated Variant values = 2;
+
+	// List of images in the same order as specified in the request.
+	repeated Image images = 3;
+
+	// List of overlays. The array corresponds to entries in `images`.
+	repeated OverlayDesc overlays = 4;
+}
+
 // Request a stream of data related to an product in
 // context of one inspection.
 message GetProductStreamRequest

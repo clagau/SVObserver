@@ -96,7 +96,11 @@ void SharedMemoryAccessMock::GetProduct(const SvPb::GetProductRequest& request, 
 	task.finish(std::move(resp));
 }
 
-
+void SharedMemoryAccessMock::GetProductData(const SvPb::GetProductDataRequest& request, SvRpc::Task<SvPb::GetProductDataResponse> task)
+{
+	SvPb::GetProductDataResponse resp;
+	task.finish(std::move(resp));
+}
 
 void SharedMemoryAccessMock::GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 {

@@ -45,6 +45,7 @@ public:
 	void GetWebAppVersion(const SvPb::GetWebAppVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
 	void GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse>) override;
 	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
+	void GetProductData(const SvPb::GetProductDataRequest&, SvRpc::Task<SvPb::GetProductDataResponse>) override;
 	void GetReject(const SvPb::GetRejectRequest&, SvRpc::Task<SvPb::GetRejectResponse>) override;
 	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
 	void GetImageFromId(const SvPb::GetImageFromIdRequest&, SvRpc::Task<SvPb::GetImageFromIdResponse>) override;
@@ -57,6 +58,13 @@ public:
 	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
 
 private:
+	struct new_trigger_t
+	{
+		new_trigger_t(int inspectionPos, int trId, bool is_reject);
+		int inspectionPos;
+		int trId;
+		bool isReject;
+	};
 	struct product_stream_t
 	{
 		product_stream_t(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr);
@@ -67,9 +75,13 @@ private:
 		std::vector<int> imagePositions;
 	};
 	void on_new_trigger_record(int inspectionPos, int trId, bool is_reject);
+	void add_new_trigger_to_queue(std::shared_ptr<new_trigger_t>);
+	std::shared_ptr<new_trigger_t> pop_new_trigger_from_queue(bool is_reject);
+	void check_queue_for_new_trigger_record(bool is_reject);
 	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, GUID inspectionId, int trId, bool is_reject);
-	SvSyl::SVFuture<void> collect_images(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, const std::vector<int>& imagePositions, int inspectionPos, GUID inspectionId, bool includeOverlays);
-	void collect_values(SvPb::GetProductStreamResponse&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids, const std::vector<int>& valuePositions);
+	SvSyl::SVFuture<void> get_product_data(SvPb::GetProductDataResponse&, const SvPb::GetProductDataRequest& rRequest);
+	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, const std::vector<int>& imagePositions, int inspectionPos, GUID inspectionId, bool includeOverlays);
+	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids, const std::vector<int>& valuePositions);
 	void rebuild_trc_pos_caches();
 	void rebuild_trc_pos_cache(product_stream_t&);
 	void collect_value_pos(std::vector<int>&, const SvPb::DataDefinitionList&, const ::google::protobuf::RepeatedPtrField<std::string>& guids);
@@ -103,6 +115,11 @@ private:
 	int m_TrcResetSubscriptionId;
 	int m_TrcNewTrSubscriptionId;
 	int m_TrcNewInterestTrSubscriptionId;
+
+	std::mutex m_NewTriggerMutex;
+	std::vector<std::shared_ptr<new_trigger_t>> m_NewTriggerQueue;
+	std::vector<std::shared_ptr<new_trigger_t>> m_NewTriggerInterestQueue;
+
 	std::vector<std::shared_ptr<product_stream_t>> m_ProductStreams;
 	boost::asio::deadline_timer m_pause_timer;
 	std::atomic<bool> m_pause_state {false};
