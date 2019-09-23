@@ -91,7 +91,7 @@ public:
 	virtual bool removeAllImageBuffer(const GUID& ownerID) override;
 	virtual bool removeAllImageBuffer() override;
 
-	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos = -1) override;
+	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos = -1) override;
 
 	virtual bool lockReset() override;
 	virtual void unlockReset() override { m_isResetLocked = false; };

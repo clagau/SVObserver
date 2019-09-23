@@ -507,7 +507,8 @@ bool TrcTester::setAndReadValues()
 		auto tmpDefList = dataDefList;
 		auto tmpValueList = valueList;
 		m_TRController.startResetTriggerRecordStructure(0);
-		m_TRController.changeDataDef(std::move(tmpDefList), std::move(tmpValueList), 0);
+		//@TODO[gra][8.20][23.09.2019]: This needs to still be adapted to the new changeDataDef
+		//m_TRController.changeDataDef(std::move(tmpDefList), std::move(tmpValueList), 0);
 		m_TRController.finishResetTriggerRecordStructure();
 	}
 	catch (const SvStl::MessageContainer& rExp)
@@ -810,7 +811,8 @@ bool TrcTester::writeAndReadSingleValue(int index, int listSize)
 		try
 		{
 			auto tmpData = rRunData;
-			tr2W->writeValueData(std::move(tmpData));
+			//@TODO[gra][8.20][23.09.2019]: This needs to still be adapted to the new writeValueData
+			//tr2W->writeValueData(std::move(tmpData));
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{

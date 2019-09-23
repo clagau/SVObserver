@@ -46,6 +46,7 @@ SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResou
 	// Set Embedded defaults
 	m_Value.SetDefaultValue (_T(""));
 	m_Value.setSaveValueFlag(false);
+	m_Value.SetMaxByteSize(SvDef::cMaxStringByteSize);
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -61,6 +62,7 @@ bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo);
 
 	m_Value.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+
 
 	m_isCreated = bOk;
 

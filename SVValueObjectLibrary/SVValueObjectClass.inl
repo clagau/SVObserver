@@ -457,14 +457,14 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/, bool useResultSize /*= true*/) const
+HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) const
 {
 	HRESULT Result(E_FAIL);
 
 	//! If index is -1 and it is an array then get the whole array
 	if (-1 == Index && isArray())
 	{
-		rValue = vectorType2SafeArray(useResultSize ? getResultSize() : getArraySize());
+		rValue = vectorType2SafeArray(getResultSize());
 		Result = S_OK;
 	}
 	else
@@ -612,43 +612,57 @@ void SVValueObjectClass<T>::Initialize()
 }
 
 template <typename T>
-DWORD SVValueObjectClass<T>::GetByteSize() const
+long SVValueObjectClass<T>::GetByteSize(bool useResultSize) const
 {
-	DWORD Result(0);
+	long result(0L);
 
-	if (VT_BSTR == ValueType2Variant(m_Value).vt)
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed())
 	{
-		Result = SvDef::cMaxStringSize;
+		result = sizeof(m_Value);
+		long numberOfElements = useResultSize ? getResultSize() : getArraySize();
+		result *= numberOfElements;
+		//If the value object is an array the first value shall contain the result size which is variable
+		if(isArray())
+		{
+			result += sizeof(int);
+		}
 	}
-	else
-	{
-		Result = sizeof(m_Value);
-	}
-	return Result;
+
+	return result;
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+long SVValueObjectClass<T>::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
 {
-	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+	long result{0L};
 
-	if (S_OK == Result)
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
 	{
-		if (isArray())
+		result = GetByteSize(false);
+		if (result <= MemByteSize)
 		{
-			memcpy(pMemoryBlock, &m_ValueArray[Index], GetByteSize());
+			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
+			if (isArray())
+			{
+				//For arrays we need to write the result size at the start of the memory as an int
+				*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
+				pMemoryLocation += sizeof(int);
+				memcpy(pMemoryLocation, &m_ValueArray[0], getResultSize() * sizeof(m_Value));
+			}
+			else
+			{
+				memcpy(pMemoryLocation, &m_Value, result);
+			}
 		}
 		else
 		{
-			memcpy(pMemoryBlock, &m_Value, GetByteSize());
+			result = -1L;
 		}
 	}
-	else if (GetByteSize() == MemByteSize)
-	{
-		memcpy(pMemoryBlock, &m_DefaultValue, GetByteSize());
-	}
 
-	return Result;
+	return result;
 }
 
 template <typename T>
@@ -685,28 +699,6 @@ inline HRESULT SVValueObjectClass<T>::ValidateIndex(int ArrayIndex) const
 	return S_OK;
 }
 
-template <typename T>
-inline HRESULT SVValueObjectClass<T>::ValidateMemoryBlockParameters(BYTE* pMemoryBlock, DWORD MemByteSize, int Index) const
-{
-	HRESULT Result = ValidateIndex(Index);
-
-	if (S_OK == Result)
-	{
-		if (nullptr != pMemoryBlock)
-		{
-			if (MemByteSize != GetByteSize())
-			{
-				Result = E_FAIL;
-			}
-		}
-		else
-		{
-			Result = E_POINTER;
-		}
-	}
-
-	return Result;
-}
 template <typename T>
 typename T* SVValueObjectClass<T>::getValuePointer(int Index)
 {

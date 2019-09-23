@@ -105,26 +105,39 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 }
 
 
-HRESULT DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+long DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
 {
-	//! When Value Object is an array and index is -1 then use first index
-	if (isArray() && 0 > Index)
+	long result{0L};
+
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
 	{
-		Index = 0;
-	}
-	if (0 <= Index)
-	{
-		if (m_sortContainer.size() > Index)
+		result = GetByteSize(false);
+		if (result <= MemByteSize)
 		{
-			Index = m_sortContainer[Index];
-			return SVValueObjectClass<double>::CopyToMemoryBlock(pMemoryBlock, MemByteSize, Index);
+			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
+			if (isArray())
+			{
+				//For arrays we need to write the result size at the start of the memory as an int
+				*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
+				pMemoryLocation += sizeof(int);
+			}
+			for(int i=0; i < getResultSize(); ++i)
+			{
+				int index = m_sortContainer[i];
+				double value{0.0};
+				SVValueObjectClass<double>::GetValue(value, index);
+				memcpy(pMemoryLocation, &value, sizeof(double));
+				pMemoryLocation += sizeof(double);
+			}
 		}
 		else
 		{
-			return E_BOUNDS;
+			result = -1L;
 		}
 	}
-	return E_FAIL;
+
+	return result;
 }
 
 HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues) const

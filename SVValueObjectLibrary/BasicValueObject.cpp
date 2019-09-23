@@ -126,7 +126,7 @@ HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/,  bool useResultSize /*= true*/) const
+HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/) const
 {
 	RefreshOwner( SVObjectClass::PreRefresh );
 
@@ -190,86 +190,111 @@ HRESULT BasicValueObject::getValue(std::string& rValue, int Index /*= -1*/) cons
 	return Result;
 }
 
-DWORD BasicValueObject::GetByteSize() const
+long BasicValueObject::GetByteSize(bool useResultSize) const
 {
-	DWORD Result(0);
+	long result(0L);
 
-	switch (GetType())
+	//Note: BasicValueObject cannot be an array so memory size only for one element
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed())
 	{
-	case VT_BOOL:
-		Result = sizeof(VARIANT::boolVal);
-		break;
-	case VT_I4:
-		Result = sizeof(VARIANT::lVal);
-		break;
-	case VT_I8:
-		Result = sizeof(VARIANT::llVal);
-		break;
-	case VT_INT:
-		Result = sizeof(VARIANT::intVal);
-		break;
-	case VT_R4:
-		Result = sizeof(VARIANT::fltVal);
-		break;
-	case VT_R8:
-		Result = sizeof(VARIANT::dblVal);
-		break;
-	case VT_BSTR:
-		Result = SvDef::cMaxStringSize;
-		break;
-	default:
-		break;
-	}
-	return Result;
-}
-
-HRESULT BasicValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
-{
-	HRESULT Result = (nullptr != pMemoryBlock && MemByteSize == GetByteSize()) ? S_OK : E_FAIL;
-
-	if (S_OK == Result)
-	{
-		const void* pValue(nullptr);
-
-		switch (m_Value.vt)
+		switch (GetType())
 		{
 		case VT_BOOL:
-			pValue = &m_Value.boolVal;
+			result = sizeof(VARIANT::boolVal);
 			break;
 		case VT_I4:
-			pValue = &m_Value.lVal;
+			result = sizeof(VARIANT::lVal);
 			break;
 		case VT_I8:
-			pValue = &m_Value.llVal;
+			result = sizeof(VARIANT::llVal);
 			break;
 		case VT_INT:
-			pValue = &m_Value.intVal;
+			result = sizeof(VARIANT::intVal);
 			break;
 		case VT_R4:
-			pValue = &m_Value.fltVal;
+			result = sizeof(VARIANT::fltVal);
 			break;
 		case VT_R8:
-			pValue = &m_Value.dblVal;
+			result = sizeof(VARIANT::dblVal);
 			break;
 		case VT_BSTR:
 			{
-				std::string TempString = SvUl::createStdString(m_Value.bstrVal);
-				size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), TempString.size());
-				pValue = nullptr;
-				memcpy(pMemoryBlock, TempString.c_str(), Size);
+				std::string tempString = SvUl::createStdString(m_Value.bstrVal);
+				//Add place for the ending \0 of the string
+				result = static_cast<long> (tempString.size() + 1);
+				break;
 			}
-			break;
 		default:
 			break;
 		}
-		//This is for all types except VT_BSTR
-		if (nullptr != pValue)
+	}
+	return result;
+}
+
+long BasicValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
+{
+	long result {0L};
+
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed() && -1 != m_memOffset)
+	{
+		result = GetByteSize(false);
+		if (result <= MemByteSize)
 		{
-			memcpy(pMemoryBlock, pValue, GetByteSize());
+			BYTE* pMemoryLocation = pMemoryBlock + m_memOffset;
+			//Note: BasicValueObject cannot be an array so copy only one element
+			const void* pValue(nullptr);
+
+			switch (m_Value.vt)
+			{
+			case VT_BOOL:
+				pValue = &m_Value.boolVal;
+				break;
+			case VT_I4:
+				pValue = &m_Value.lVal;
+				break;
+			case VT_I8:
+				pValue = &m_Value.llVal;
+				break;
+			case VT_INT:
+				pValue = &m_Value.intVal;
+				break;
+			case VT_R4:
+				pValue = &m_Value.fltVal;
+				break;
+			case VT_R8:
+				pValue = &m_Value.dblVal;
+				break;
+			case VT_BSTR:
+				{
+					std::string tempString = SvUl::createStdString(m_Value.bstrVal);
+					pValue = nullptr;
+					//Copy also the ending \0 of the string
+					memcpy(pMemoryBlock, tempString.c_str(), tempString.size() + 1);
+					break;
+				}
+			default:
+				break;
+			}
+			//This is for all types except VT_BSTR
+			if (nullptr != pValue)
+			{
+				memcpy(pMemoryLocation, pValue, result);
+			}
+		}
+		else
+		{
+			result = -1L;
 		}
 	}
+	else
+	{
+		result = 0L;
+	}
 
-	return Result;
+
+	return result;
 }
 
 HRESULT BasicValueObject::getValue( BOOL& rValue ) const

@@ -12,8 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOCVAnalyzerResult.h"
-#include "Definitions/StringTypeDef.h"
 #include "Definitions/Color.h"
+#include "Definitions/GlobalConst.h"
+#include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -167,6 +168,8 @@ void SVOCVAnalyzeResultClass::clearAll()
 	m_svoMatchString.SetDefaultValue( _T( "" ), true );
 	m_svoFoundString.SetDefaultValue( _T( "" ), true);
 	m_svoFoundString.setSaveValueFlag(false);
+	m_svoFoundString.setSaveValueFlag(false);
+	m_svoFoundString.SetMaxByteSize(SvDef::cMaxStringByteSize);
 
 	m_lvoMatchLineNumber.SetDefaultValue ( -1l);
 	m_lvoMatchLineNumber.setSaveValueFlag(false);

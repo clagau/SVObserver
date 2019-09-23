@@ -59,21 +59,23 @@ public:
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return E_NOTIMPL; }
 	virtual _variant_t getDefaultValue() const override { return _variant_t(); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
-	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, bool useResultSize=true) const override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>& rValues) const override { return E_NOTIMPL; }
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
 	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
 	virtual void setResetOptions( bool bResetAlways, SvOi::SVResetItemEnum eResetItem ) override {};
 	virtual void validateValue( const _variant_t& rValue ) const override {};
 	virtual bool isArray() const override { return false; };
-	virtual int getArraySize() const override { return 0; };
-	virtual int getResultSize() const override { return 0; };
+	virtual int getArraySize() const override { return 1; };
+	virtual int getResultSize() const override { return 1; };
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return SvOi::SVResetItemNone; };
 	virtual bool ResetAlways() const override { return false; };
-	virtual DWORD GetByteSize() const override;
+	virtual long GetByteSize(bool useResultSize = true) const override;
 	virtual DWORD GetType() const override { return m_Value.vt; };
-	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
+	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
 	virtual void setSaveValueFlag(bool shouldSaveValue) override { };
+	virtual void setTrData(long memOffset, int pos) const override { m_memOffset = memOffset; m_trPos = pos; }
+	virtual int getTrPos() const override { return m_trPos; }
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
 	//************************************
@@ -191,7 +193,9 @@ private:
 	std::string			m_Description;		//The description text for the object
 	bool				m_Created;			//Object is created
 	bool				m_Node;				//Object is only a node in the tree structure
-	#pragma endregion Member Variables
+	mutable long		m_memOffset {0L};	//The trigger record memory offset
+	mutable int			m_trPos {-1};		//The trigger record position
+#pragma endregion Member Variables
 };
 
 typedef std::shared_ptr<BasicValueObject> BasicValueObjectPtr;

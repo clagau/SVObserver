@@ -56,14 +56,13 @@ protected:
 
 	//! Returns the value object byte size
 	//! \returns the number of bytes for the data
-	virtual DWORD GetByteSize() const override;
+	virtual long GetByteSize(bool useResultSize = true) const override;
 
 	//! Copies the value object to the memory block
 	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
 	//! \param MemByteSize [in] The memory block byte size
-	//! \param Index [in] The index of the array (-1 if no array)
 	//! \returns S_OK if successful
-	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
+	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
 
 	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;

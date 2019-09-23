@@ -79,7 +79,7 @@ public:
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
 	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
-	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, bool useResultSize = true) const override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
 	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
@@ -91,10 +91,12 @@ public:
 	virtual int getResultSize() const override { return m_ResultSize; };
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return m_eResetItem; };
 	virtual bool ResetAlways() const override {	return m_ResetAlways; };
-	virtual DWORD GetByteSize() const override;
+	virtual long GetByteSize(bool useResultSize = true) const override;
 	virtual DWORD GetType() const override { return ValueType2Variant(m_Value).vt; };
-	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
+	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
 	virtual void setSaveValueFlag(bool shouldSaveValue) override { m_shouldSaveValue = shouldSaveValue; };
+	virtual void setTrData(long memOffset, int pos) const override  { m_memOffset = memOffset; m_trPos = pos; }
+	virtual int getTrPos() const override { return m_trPos; }
 #pragma endregion virtual method (IObjectClass/IValueObject)
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
@@ -130,13 +132,6 @@ protected:
 
 	HRESULT ValidateIndex(int ArrayIndex) const;
 
-	//! Validates the parameters required for the CopyToMemoryBlock method
-	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
-	//! \param MemByteSize [in] The memory block byte size
-	//! \param Index [in] The index of the array (-1 if no array)
-	/// \returns S_OK on success
-	HRESULT ValidateMemoryBlockParameters(BYTE* pMemoryBlock, DWORD MemByteSize, int Index) const;
-
 	ValueType& DefaultValue() { return m_DefaultValue; };
 	ValueType& Value() { return m_Value; };
 	const ValueType& Value() const { return m_Value; };
@@ -165,6 +160,8 @@ protected:
 	ValueVector variant2VectorType(const _variant_t& rValue) const;
 	/// Uses move semantics
 	_variant_t vectorType2SafeArray(long arraySize) const;
+
+	long GetMemOffset() const { return m_memOffset; }
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
@@ -174,8 +171,10 @@ private:
 	bool m_shouldSaveDefaultValue;			//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
 	bool m_ResetAlways;
 	bool m_LegacyVectorObjectCompatibility;
-	std::string m_OutFormat;					//This is used to format the value object to a string
+	std::string m_OutFormat;				//This is used to format the value object to a string
 
+	mutable long m_memOffset {-1L};			//The trigger record memory offset
+	mutable int m_trPos {-1};				//The trigger record position
 	SvOi::SVResetItemEnum m_eResetItem;
 
 	//NOTE! Never access these variables directly as getResultSize and getArraySize are overloaded

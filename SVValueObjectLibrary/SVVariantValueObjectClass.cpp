@@ -314,130 +314,156 @@ std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rVa
 	return Result;
 }
 
-DWORD SVVariantValueObjectClass::GetByteSize() const
+long SVVariantValueObjectClass::GetByteSize(bool useResultSize) const
 {
-	DWORD Result(0);
+	long result(0L);
 
-	switch (GetValueType())
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed())
 	{
-	case VT_BOOL:
-		Result = sizeof(VARIANT::boolVal);
-		break;
-	case VT_I1:
-		Result = sizeof(VARIANT::cVal);
-		break;
-	case VT_UI1:
-		Result = sizeof(VARIANT::bVal);
-		break;
-	case VT_I2:
-		Result = sizeof(VARIANT::iVal);
-		break;
-	case VT_UI2:
-		Result = sizeof(VARIANT::uiVal);
-		break;
-	case VT_I4:
-		Result = sizeof(VARIANT::lVal);
-		break;
-	case VT_UI4:
-		Result = sizeof(VARIANT::ulVal);
-		break;
-	case VT_I8:
-		Result = sizeof(VARIANT::llVal);
-		break;
-	case VT_UI8:
-		Result = sizeof(VARIANT::ullVal);
-		break;
-	case VT_INT:
-		Result = sizeof(VARIANT::intVal);
-		break;
-	case VT_UINT:
-		Result = sizeof(VARIANT::uintVal);
-		break;
-	case VT_R4:
-		Result = sizeof(VARIANT::fltVal);
-		break;
-	case VT_R8:
-		Result = sizeof(VARIANT::dblVal);
-		break;
-	case VT_BSTR:
-		Result = SvDef::cMaxStringSize;
-		break;
-	default:
-		break;
-	}
-	return Result;
-}
-
-HRESULT SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
-{
-	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
-
-	if (S_OK == Result)
-	{
-		_variant_t Value;
-		SVVariantValueObjectClass::GetValue(Value, Index);
-		const void* pValue(nullptr);
-
-		switch (Value.vt)
+		_variant_t value;
+		GetValue(value, 0);
+		switch (value.vt)
 		{
 		case VT_BOOL:
-			pValue = &Value.boolVal;
+			result = sizeof(VARIANT::boolVal);
 			break;
 		case VT_I1:
-			pValue = &Value.cVal;
+			result = sizeof(VARIANT::cVal);
 			break;
 		case VT_UI1:
-			pValue = &Value.bVal;
+			result = sizeof(VARIANT::bVal);
 			break;
 		case VT_I2:
-			pValue = &Value.iVal;
+			result = sizeof(VARIANT::iVal);
 			break;
 		case VT_UI2:
-			pValue = &Value.uiVal;
+			result = sizeof(VARIANT::uiVal);
 			break;
 		case VT_I4:
-			pValue = &Value.lVal;
+			result = sizeof(VARIANT::lVal);
 			break;
 		case VT_UI4:
-			pValue = &Value.ulVal;
+			result = sizeof(VARIANT::ulVal);
 			break;
 		case VT_I8:
-			pValue = &Value.llVal;
+			result = sizeof(VARIANT::llVal);
 			break;
 		case VT_UI8:
-			pValue = &Value.ullVal;
+			result = sizeof(VARIANT::ullVal);
 			break;
 		case VT_INT:
-			pValue = &Value.intVal;
+			result = sizeof(VARIANT::intVal);
 			break;
 		case VT_UINT:
-			pValue = &Value.uintVal;
+			result = sizeof(VARIANT::uintVal);
 			break;
 		case VT_R4:
-			pValue = &Value.fltVal;
+			result = sizeof(VARIANT::fltVal);
 			break;
 		case VT_R8:
-			pValue = &Value.dblVal;
+			result = sizeof(VARIANT::dblVal);
 			break;
 		case VT_BSTR:
-			{
-				std::string TempString = SvUl::createStdString(Value.bstrVal);
-				size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), TempString.size());
-				pValue = nullptr;
-				memcpy(pMemoryBlock, TempString.c_str(), Size);
-			}
+			result = SvDef::cMaxStringByteSize;
 			break;
 		default:
 			break;
 		}
-		//This is for all types except VT_BSTR
-		if (nullptr != pValue)
+
+		long numberOfElements = useResultSize ? getResultSize() : getArraySize();
+		result *= numberOfElements;
+	}
+
+	return result;
+}
+
+long SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
+{
+	long result{0L};
+
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
+	{
+		result = GetByteSize(false);
+		if (result <= MemByteSize)
 		{
-			memcpy(pMemoryBlock, pValue, GetByteSize());
+			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
+			long byteSize = result / getArraySize();
+			for (int i = 0; i < getResultSize(); ++i)
+			{
+				_variant_t Value;
+				//!Note this calls the virtual function important for Linked values
+				GetValue(Value);
+				const void* pValue(nullptr);
+
+				switch (Value.vt)
+				{
+				case VT_BOOL:
+					pValue = &Value.boolVal;
+					break;
+				case VT_I1:
+					pValue = &Value.cVal;
+					break;
+				case VT_UI1:
+					pValue = &Value.bVal;
+					break;
+				case VT_I2:
+					pValue = &Value.iVal;
+					break;
+				case VT_UI2:
+					pValue = &Value.uiVal;
+					break;
+				case VT_I4:
+					pValue = &Value.lVal;
+					break;
+				case VT_UI4:
+					pValue = &Value.ulVal;
+					break;
+				case VT_I8:
+					pValue = &Value.llVal;
+					break;
+				case VT_UI8:
+					pValue = &Value.ullVal;
+					break;
+				case VT_INT:
+					pValue = &Value.intVal;
+					break;
+				case VT_UINT:
+					pValue = &Value.uintVal;
+					break;
+				case VT_R4:
+					pValue = &Value.fltVal;
+					break;
+				case VT_R8:
+					pValue = &Value.dblVal;
+					break;
+				case VT_BSTR:
+					{
+						std::string tempString = SvUl::createStdString(Value.bstrVal);
+						pValue = nullptr;
+						memcpy(pMemoryLocation, tempString.c_str(), tempString.size());
+						pMemoryLocation += tempString.size();
+					}
+					break;
+				default:
+					break;
+				}
+				//This is for all types except VT_BSTR
+				if (nullptr != pValue)
+				{
+					memcpy(pMemoryLocation, pValue, byteSize);
+					pMemoryLocation += byteSize;
+				}
+			}
+		}
+		else
+		{
+			result = -1L;
 		}
 	}
 
-	return Result;
+	return result;
 }
 
 void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)

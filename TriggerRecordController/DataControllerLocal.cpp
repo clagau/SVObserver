@@ -10,9 +10,9 @@
 #include "DataControllerLocal.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#include "CopyData.h"
 #include "ImageBufferController.h"
 #include "TriggerRecord.h"
+#include "TriggerRecordController.h"
 #include "TriggerRecordData.h"
 #pragma endregion Includes
 
@@ -215,7 +215,7 @@ void DataControllerLocal::resetImageRefCounter()
 	memset(m_imageRefCountArray, 0, sizeof(long)*m_imageRefCountSize);
 }
 
-void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, std::vector<_variant_t>&& valueObjectList, int inspectionPos)
+void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, long valueObjectMemSize, int inspectionPos)
 {
 	if (0 > inspectionPos || m_dataVector.size() < inspectionPos)
 	{
@@ -225,8 +225,8 @@ void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, 
 		Exception.Throw();
 	}
 		
-	//Only obtain the size of the data
-	m_dataVector[inspectionPos].getMutableBasicData().m_dataListSize = copyDataList(std::move(valueObjectList));
+	//Note we need to add to valueObjectMemSize an additional long which has the size of the memory block copied for the TRC data
+	m_dataVector[inspectionPos].getMutableBasicData().m_dataListSize = valueObjectMemSize + sizeof(long);
 	m_dataVector[inspectionPos].setDataDefList(std::move(dataDefList));
 }
 

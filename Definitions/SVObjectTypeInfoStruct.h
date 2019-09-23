@@ -13,10 +13,6 @@
 
 namespace SvDef
 {
-		//! These are special SVObserver variant VT types for SVPointValueObjectClass and SVDPointValueObjectClass
-		constexpr unsigned long VT_POINT = 80;
-		constexpr unsigned long VT_DPOINT = 81;
-
 		struct SVObjectTypeInfoStruct
 		{
 			SVObjectTypeInfoStruct( SvPb::SVObjectTypeEnum ObjectType= SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType= SvPb::SVNotSetSubObjectType, const GUID& rEmbeddedID=GUID_NULL)

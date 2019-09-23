@@ -194,22 +194,62 @@ std::string SVFileNameValueObjectClass::ConvertString2Type( const std::string& r
 	return rValue;
 }
 
-HRESULT SVFileNameValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+long SVFileNameValueObjectClass::GetByteSize(bool useResultSize) const
 {
-	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+	long result(0L);
 
-	if (S_OK == Result)
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed())
 	{
-		std::string Value;
-		SVFileNameValueObjectClass::GetValue(Value, Index);
-		//! For strings the memory hast to first be cleared
-		memset(pMemoryBlock, 0, GetByteSize());
-		//! Either the whole string or maximum bytes size -1
-		size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), Value.size());
-		memcpy(pMemoryBlock, Value.c_str(), Size);
+		int numberOfElements = useResultSize ? getResultSize() : getArraySize();
+		for (int i = 0; i < numberOfElements; ++i)
+		{
+			std::string valueString;
+			SVFileNameValueObjectClass::GetValue(valueString, i);
+			//Add place for the ending \0 of the string
+			result += static_cast<long> (valueString.size() + 1);
+		}
+		//If the value object is an array the first value shall contain the result size which is variable
+		if (isArray())
+		{
+			result += sizeof(int);
+		}
 	}
 
-	return Result;
+	return result;
+}
+
+long SVFileNameValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
+{
+	long result {0L};
+
+	//Attribute must be set otherwise do not consider for memory requirements
+	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
+	{
+		result = GetByteSize(false);
+		if (result <= MemByteSize)
+		{
+			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
+			if (isArray())
+			{
+				//For arrays we need to write the result size at the start of the memory as an int
+				*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
+				pMemoryLocation += sizeof(int);
+			}
+			for (int i = 0; i < getResultSize(); ++i)
+			{
+				std::string valueString;
+				SVFileNameValueObjectClass::GetValue(valueString, i);
+				//Copy also the ending \0 of the string
+				memcpy(pMemoryLocation, valueString.c_str(), valueString.size() + 1);
+			}
+		}
+		else
+		{
+			result = -1L;
+		}
+	}
+	return result;
 }
 
 void SVFileNameValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)

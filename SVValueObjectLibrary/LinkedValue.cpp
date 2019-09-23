@@ -74,7 +74,7 @@ HRESULT LinkedValue::GetArrayValue(_variant_t& rValue)
 	}
 	else
 	{
-		Result = __super::getValue(rValue, -1, false);
+		Result = __super::getValue(rValue, -1);
 	}
 	return Result;
 }

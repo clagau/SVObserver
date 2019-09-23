@@ -408,8 +408,6 @@ protected:
 private:
 	void Init();
 
-	std::vector<_variant_t> copyValueObjectList(bool determineSize=false) const;
-
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
 	HRESULT LastProductUpdate(SVProductInfoStruct *p_psvProduct);
@@ -437,6 +435,8 @@ private:
 	SvOp::SVEquationClass m_RegressionTestPlayEquation;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 	int m_trcPos = -1;
+	mutable long m_memTrcDataBytes{0L};		//Is the memory block size required for the TRC data
+	mutable std::unique_ptr<BYTE[]> m_pValueData{nullptr}; //Is the memory block pointer required for the TRC data
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

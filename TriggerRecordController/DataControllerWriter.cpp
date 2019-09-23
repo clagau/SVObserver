@@ -9,9 +9,9 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <thread.h>
 #include "DataControllerWriter.h"
-#include "CopyData.h"
 #include "ImageBufferController.h"
 #include "TriggerRecord.h"
+#include "TriggerRecordController.h"
 #include "TriggerRecordData.h"
 #include "SVMessage\SVMessage.h"
 #include "SVSharedMemoryLibrary\SVSharedMemorySettings.h"
@@ -43,7 +43,7 @@ void TRControllerWriterDataPerIP::init(std::function<void(const std::string&, in
 	createSMBuffer(BasicData(), SMData());
 };
 
-void TRControllerWriterDataPerIP::setDataListSize(int dataSize)
+void TRControllerWriterDataPerIP::setDataListSize(long dataSize)
 {
 	if (nullptr != m_pBasicData)
 	{
@@ -127,7 +127,7 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 	m_ImageList.SerializePartialToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
 }
 
-void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trBufferSize, int trNumbers)
+void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(long trBufferSize, int trNumbers)
 {
 	assert(m_pBasicData && m_pSmData);
 	if (nullptr == m_pBasicData || nullptr == m_pSmData)
@@ -137,7 +137,7 @@ void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trBufferSize, 
 		Exception.Throw();
 	}
 	
-	if (m_pSmData->m_maxTriggerRecordBufferSize < trBufferSize*trNumbers)
+	if (m_pSmData->m_maxTriggerRecordBufferSize < static_cast<int> (trBufferSize*trNumbers))
 	{
 		SMData smData = *m_pSmData;
 		smData.m_maxTriggerRecordBufferSize = ((trBufferSize*trNumbers / m_triggerRecordBufferStepSize) + 1)*m_triggerRecordBufferStepSize;
@@ -540,7 +540,7 @@ void DataControllerWriter::resetImageRefCounter()
 	memset(m_imageRefCountArray, 0, sizeof(*m_imageRefCountArray)*m_pCommonData->m_imageRefCountSize);
 }
 
-void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList, std::vector<_variant_t>&& valueObjectList, int inspectionPos)
+void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList, long valueObjectMemSize, int inspectionPos)
 {
 	if (0 > inspectionPos || m_dataVector.size() < inspectionPos || nullptr == m_dataVector[inspectionPos])
 	{
@@ -550,8 +550,8 @@ void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList,
 		Exception.Throw();
 	}
 
-	//Only obtain the size of the data
-	m_dataVector[inspectionPos]->setDataListSize(copyDataList(std::move(valueObjectList)));
+	//Note we need to add to valueObjectMemSize an additional long which has the size of the memory block copied for the TRC data
+	m_dataVector[inspectionPos]->setDataListSize(valueObjectMemSize + sizeof(long));
 	m_dataVector[inspectionPos]->setDataDefList(std::move(dataDefList));
 }
 
@@ -649,7 +649,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 			if (i == inspectionId)
 			{
 				ResetInspectionData(*pIPData, false);
-				int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*rImageList.list_size()) + sizeof(int) + pIPData->getBasicData().m_dataListSize;
+				unsigned int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*rImageList.list_size()) + sizeof(int) + pIPData->getBasicData().m_dataListSize;
 				//Reserve memory space for the data size and the data
 				pIPData->setImageList(std::move(rImageList));
 				pIPData->createTriggerRecordsBuffer(bufferSize, triggerRecordNumber);

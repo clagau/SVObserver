@@ -19,7 +19,7 @@ constexpr int			cRingBufferDepthMax = 30;
 constexpr int			cRingBufferNumberOutputImages = 2;
 constexpr int			cTableMaxRowMin = 1;
 constexpr int			cTableMaxRowMax = 10000;
-constexpr int			cMaxStringSize = 512;
+constexpr int			cMaxStringByteSize = 200;
 
 constexpr long			cDefaultToolUpperThreshold = 255L;
 constexpr long			cDefaultToolLowerThreshold = 40L;
@@ -113,6 +113,10 @@ constexpr int cMaxKernelSize = 21;
 
 //SV Error condition mask
 constexpr DWORD svErrorCondition = 0xc0000000;
+
+//! These are special SVObserver variant VT types for SVPointValueObjectClass and SVDPointValueObjectClass
+constexpr unsigned long VT_POINT = 80;
+constexpr unsigned long VT_DPOINT = 81;
 
 #pragma endregion Declarations
 } //namespace SvDef

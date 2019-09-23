@@ -82,8 +82,8 @@ public:
 		volatile int m_TrOfInterestNumber = 0;
 		volatile long m_numberOfFreeTR = 0; // the number of free (unlocked) triggerRecords.
 		volatile int m_lastFinishedTRID {-1};
-		volatile int m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
-		volatile int m_dataListSize {0}; //data List byte size
+		volatile long m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
+		volatile long m_dataListSize {0}; //data List byte size
 		volatile long m_mutexTrOfInterest {false};
 		volatile int m_TrOfInterestCurrentPos {-1};
 	};
@@ -149,7 +149,7 @@ public:
 	int getTriggerRecordNumber(int inspectionPos) const;
 
 	const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) const;
-	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) { assert(false); throw E_NOTIMPL; };
+	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) { assert(false); throw E_NOTIMPL; };

@@ -69,8 +69,9 @@ namespace SvTrc
 		virtual void initValueData() = 0;
 
 		/// Write inspection value data 
-		/// \param ValueObjectList [in] Value object list (Move semantics!)
-		virtual void writeValueData(std::vector<_variant_t>&& ValueObjectList) = 0;
+		/// \param pMemSource [in] pointer to memory containing the value data 
+		/// \param memBytes [in] The number of bytes to copy
+		virtual void writeValueData(const BYTE* pMemSource, long memBytes) = 0;
 	};
 
 	typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;

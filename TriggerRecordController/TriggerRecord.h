@@ -20,7 +20,7 @@ class TriggerRecord final : public ITriggerRecordRW
 {
 #pragma region Constructor
 public:
-	TriggerRecord(int inspectionPos, int trPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId);
+	TriggerRecord(int inspectionPos, int trPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, long dataListSize, long resetId);
 	TriggerRecord() = delete;
 	~TriggerRecord();
 #pragma endregion Constructor
@@ -61,7 +61,7 @@ public:
 	virtual IImagePtr createNewImageHandle(int pos) override;
 
 	virtual void initValueData() override;
-	virtual void writeValueData(std::vector<_variant_t>&& rValueObjectList) override;
+	virtual void writeValueData(const BYTE* pMemSource, long memBytes) override;
 #pragma endregion ITriggerRecordRW Methods
 
 	void blockUpdateLastTrId() { m_blockUpdateLastId = true; };
@@ -70,8 +70,11 @@ public:
 
 #pragma region Private Methods
 private:
-
 	const TriggerRecordData& getTrData() const { return m_rData; };
+
+	_variant_t readValue(VARTYPE vtType, const BYTE* pMemBlock) const;
+	_variant_t readArrayValue(VARTYPE vtType, const BYTE* pMemBlock) const;
+	int getElementSize(VARTYPE vtType) const;
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -79,15 +82,11 @@ private:
 	TriggerRecordData& m_rData;
 	const SvPb::ImageList& m_rImageList;
 	const SvPb::DataDefinitionList& m_rDataDefList;
-	const int m_dataListSize;
+	const long m_dataListSize;
 	const long m_ResetId{0L};
 	const int m_inspectionPos{-1};
 	const int m_trPos {-1};
 	bool m_blockUpdateLastId = false;
-
-	//store valueList by first call of getDataValue to speed up for the next calls.
-	mutable bool m_isValueListSet = false;
-	mutable SvPb::DataList m_valueList;
 #pragma endregion Member variables
 };
 

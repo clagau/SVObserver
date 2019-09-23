@@ -36,11 +36,11 @@ struct TriggerRecordData
 		return reinterpret_cast<const int*const>(reinterpret_cast<const char*>(this) + sizeof(TriggerRecordData));
 	}
 
-	void* getValueData()
+	BYTE* getValueData()
 	{
-		byte* pResult = reinterpret_cast<byte*>(this) + sizeof(TriggerRecordData);
+		BYTE* pResult = reinterpret_cast<BYTE*>(this) + sizeof(TriggerRecordData);
 		pResult += sizeof(int) * m_ImageCount;
-		return reinterpret_cast<void*> (pResult);
+		return pResult;
 	}
 
 	int m_trId = cInvalidTrId; //This should be unique ID for the trigger record

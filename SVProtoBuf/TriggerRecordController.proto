@@ -47,6 +47,9 @@ message ValueObjectDefinition
 	string name = 2;				//Value object name
 	SVObjectSubTypeEnum type = 3;	//Value object type
 	string typeString = 4;			//Value object type string
+	fixed32 vtType = 5;				//Value object VT type
+	sfixed32 arraySize = 6;			//Array size for single value = 1
+	sfixed32 memOffset = 7;			//Memory offset of the value object in SM
 }
 
 message DataDefinitionList

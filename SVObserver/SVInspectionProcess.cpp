@@ -2628,8 +2628,31 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStat
 		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord; %d\n"), rRunStatus.m_triggerRecord->getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
-		std::vector<_variant_t> valueList{copyValueObjectList()};
-		rRunStatus.m_triggerRecord->writeValueData(std::move(valueList));
+		if(nullptr != m_pValueData)
+		{
+			long memBytesUsed {0L};
+			for (const auto pValue : m_ValueObjectSet)
+			{
+				if (nullptr != pValue)
+				{
+					long sizeCopied = pValue->CopyToMemoryBlock(m_pValueData.get(), m_memTrcDataBytes - memBytesUsed);
+					if (-1 == sizeCopied)
+					{
+						SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+						e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
+						break;
+					}
+					memBytesUsed += sizeCopied;
+				}
+			}
+			rRunStatus.m_triggerRecord->writeValueData(m_pValueData.get(), m_memTrcDataBytes);
+		}
+		else
+		{
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
+		}
+
 		return S_OK;
 	}
 	else
@@ -3752,11 +3775,12 @@ void SVInspectionProcess::buildValueObjectDefList() const
 {
 	SvPb::DataDefinitionList dataDefList;
 
+	long memOffset{0};
 	auto* pList = dataDefList.mutable_list();
 	for (const auto* const pValueObject : m_ValueObjectSet)
 	{
-		const SvOi::IObjectClass* pObject = dynamic_cast<const SvOi::IObjectClass*> (pValueObject);
-		if (nullptr != pValueObject && nullptr != pObject && 0 != pObject->ObjectAttributesAllowed())
+		long memSize = pValueObject->GetByteSize(false);
+		if (nullptr != pValueObject && 0 != memSize)
 		{
 			auto* pValueObjectDef = pList->Add();
 			const SvOi::IObjectClass* const pObject = dynamic_cast<const SvOi::IObjectClass* const> (pValueObject);
@@ -3764,77 +3788,20 @@ void SVInspectionProcess::buildValueObjectDefList() const
 			pValueObjectDef->set_name(pObject->GetCompleteName());
 			pValueObjectDef->set_type(pObject->GetObjectSubType());
 			pValueObjectDef->set_typestring(pValueObject->getTypeName());
-			pValueObject->setTrPos(pList->size() - 1);
+			pValueObjectDef->set_vttype(pValueObject->GetType());
+			pValueObjectDef->set_arraysize(pValueObject->getArraySize());
+			pValueObjectDef->set_memoffset(memOffset);
+			pValueObject->setTrData(memOffset, pList->size() - 1);
+			memOffset += memSize;
 		}
 	}
+	m_memTrcDataBytes = memOffset;
+	m_pValueData.reset();
+	//this is the value data pointer used to copy the value data to TRC
+	m_pValueData = std::make_unique<BYTE[]>(m_memTrcDataBytes);
 
-	std::vector<_variant_t> valueObjectList{copyValueObjectList(true)};
-	
-	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), std::move(valueObjectList), m_trcPos);
+	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), memOffset, m_trcPos);
 }
-
-std::vector<_variant_t> SVInspectionProcess::copyValueObjectList(bool determineSize /*=false*/) const
-{
-	constexpr int cStringExtraBuffer = 15;		//For value objects which are saved as strings reserve 15 characters extra
-
-	std::vector<_variant_t> result;
-
-	result.reserve(m_ValueObjectSet.size());
-	for (const auto* const pValueObject : m_ValueObjectSet)
-	{
-		const SvOi::IObjectClass* pObject = dynamic_cast<const SvOi::IObjectClass*> (pValueObject);
-		if (nullptr != pValueObject && nullptr != pObject && 0 != pObject->ObjectAttributesAllowed())
-		{
-			_variant_t value;
-			//when determineSize is true then the array size not the result size is returned to be able to determine the memory requirements
-			if (S_OK == pValueObject->getValue(value, -1, !determineSize))
-			{
-				//This sets a standard size for strings of 15 characters
-				if (VT_BSTR == value.vt && determineSize)
-				{
-					std::string temp = SvUl::createStdString(value);
-					temp.resize(temp.size() + cStringExtraBuffer, ' ');
-					value.SetString(temp.c_str());
-				}
-				//				
-				if (VT_EMPTY != value.vt || !determineSize)
-				{
-				result.emplace_back(value);
-			}
-			}
-			else
-			{
-				value.Clear();
-				if (!determineSize)
-				{
-					result.emplace_back(value);
-				}
-			}
-
-			if (VT_EMPTY == value.vt && determineSize)
-			{
-				value = pValueObject->getDefaultValue();
-				if (VT_EMPTY != value.vt)
-				{
-					int arraySize = pValueObject->getArraySize();
-					if (arraySize > 1 && VT_BSTR != value.vt)
-					{
-						variant_t arrayValue;
-						SAFEARRAYBOUND arrayBound;
-						arrayBound.lLbound = 0;
-						arrayBound.cElements = arraySize;
-						arrayValue.parray = ::SafeArrayCreate(value.vt, 1, &arrayBound);
-						arrayValue.vt = value.vt | VT_ARRAY;
-						value = arrayValue;
-					}
-				}
-					result.emplace_back(value);
-				}
-			}
-		}
-	return result;
-}
-
 
 SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()
 {

@@ -80,7 +80,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CopyData.h" />
     <ClInclude Include="DataControllerBase.h" />
     <ClInclude Include="DataControllerLocal.h" />
     <ClInclude Include="DataControllerReader.h" />

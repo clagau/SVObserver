@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CopyData.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="DataControllerBase.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

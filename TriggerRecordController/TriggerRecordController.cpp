@@ -959,7 +959,7 @@ bool TriggerRecordController::removeAllImageBuffer()
 
 	return true;
 }
-void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos)
+void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos)
 {
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
@@ -981,7 +981,7 @@ void TriggerRecordController::changeDataDef(SvPb::DataDefinitionList&& rDataDefL
 	}
 
 	//Only obtain the size of the data
-	m_pDataController->changeDataDef(std::move(rDataDefList), std::move(rValueObjectList), m_resetStarted4IP);
+	m_pDataController->changeDataDef(std::move(rDataDefList), valueObjectMemSize, m_resetStarted4IP);
 	
 	if (ResetEnum::NewReset == resetEnum)
 	{

@@ -27,7 +27,7 @@ public:
 	void init(std::function<void(const std::string&, int)> smDataCBFunc);
 
 	BasicData getBasicData() const override { return m_pBasicData ? *m_pBasicData : BasicData(); };
-	void setDataListSize(int dataSize);
+	void setDataListSize(long dataSize);
 	void setInitFlag(bool flag);
 	void setLastFinishedTRID(int id) override;
 	void setDataDefList(SvPb::DataDefinitionList&& dataDefList);
@@ -41,7 +41,7 @@ public:
 	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	void setImageList(SvPb::ImageList&& imageList);
 	void* getTriggerRecords() { return m_pTriggerRecords; };
-	void* createTriggerRecordsBuffer(int trBufferSize, int trNumbers);
+	void* createTriggerRecordsBuffer(long trBufferSize, int trNumbers);
 	virtual void resetFreeTrNumber() override;
 	virtual void increaseFreeTrNumber() override;
 	virtual void decreaseFreeTrNumber() override;
@@ -113,7 +113,7 @@ public:
 	virtual int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) override { return m_imageMemoryHelper.createMilBufferinMemory(requiredNumbers, rImageStruct, vectorPos); };
 	virtual int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) override { return m_imageMemoryHelper.contractMilBufferinMemory(requiredNumbers, rImageStruct, vectorPos); };
 
-	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, std::vector<_variant_t>&& rValueObjectList, int inspectionPos) override;
+	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos) override;
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;

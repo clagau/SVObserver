@@ -11,20 +11,21 @@
 #include "stdafx.h"
 #include "TriggerRecord.h"
 #include "ImageBufferController.h"
-#include "SVProtoBuf\ConverterHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "ResetLocker.h"
-#include "CopyData.h"
-#include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary\MessageTextEnum.h"
-#include "SVUtilityLibrary\StringHelper.h"
+#include "Definitions/GlobalConst.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
 //#define TRACE_TRC
 
 namespace SvTrc
 {
-TriggerRecord::TriggerRecord(int inspectionPos, int trPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, int dataListSize, long resetId)
+TriggerRecord::TriggerRecord(int inspectionPos, int trPos, TriggerRecordData& rData, const SvPb::ImageList& rImageList, const SvPb::DataDefinitionList& rDataDefList, long dataListSize, long resetId)
 : m_inspectionPos(inspectionPos)
 , m_trPos(trPos)
 , m_rData(rData)
@@ -203,16 +204,25 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 			int DataSize = *pSize;
 			if (DataSize > 0)
 			{
-				if (!m_isValueListSet)
+				if (m_rDataDefList.list_size() > pos)
 				{
-					//The next position is where the value data list is streamed
-					void* pSource = reinterpret_cast<void*> (pSize + 1);
-					m_valueList.ParsePartialFromArray(pSource, DataSize);
-					m_isValueListSet = true;
-				}
-				if (m_valueList.valuelist_size() > pos)
-				{
-					SvPb::ConvertProtobufToVariant(m_valueList.valuelist()[pos], result);
+					long memOffset = m_rDataDefList.list()[pos].memoffset();
+					if(DataSize > memOffset)
+					{
+						long arraySize = m_rDataDefList.list()[pos].arraysize();
+						VARTYPE vtType = static_cast<VARTYPE> (m_rDataDefList.list()[pos].vttype());
+						BYTE* pMemBlock = reinterpret_cast<BYTE*> (pSize + 1);
+						pMemBlock += memOffset;
+						//If it is an array then the first value is the result size
+						if(1 == arraySize)
+						{
+							result = readValue(vtType, pMemBlock);
+						}
+						else
+						{
+							result = readArrayValue(vtType, pMemBlock);
+						}
+					}
 				}
 				else
 				{
@@ -489,19 +499,31 @@ void TriggerRecord::initValueData()
 	}
 }
 
-void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
+void TriggerRecord::writeValueData(const BYTE* pMemSource, long memBytes)
 {
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		void* pData = m_rData.getValueData();
+		BYTE* pData = m_rData.getValueData();
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
 		std::string DebugString = SvUl::Format(_T("writeValueData; %d\n"), getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
-		copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId);
-		//@TODO[MZA][8.20][09.04.2019] check if async is useful and safety. In the first version we should use it in the same thread until we are sure that there is no other bugs left.
-		//std::async(std::launch::async, [&] { copyDataList(std::move(valueObjectList), pData, m_dataListSize, m_ResetId); });
+		if (nullptr != pData && memBytes < m_dataListSize)
+		{
+			//The destination start is the size 
+			std::atomic_long* pDataSize = reinterpret_cast<std::atomic_long*> (pData);
+			//The next position is where the value data list is streamed
+			pData = reinterpret_cast<BYTE*> (pDataSize + 1);
+			memcpy(pData, pMemSource, memBytes);
+			//The data size needs to be set after the memcpy as only when this is not 0 is the TR valid
+			*pDataSize = memBytes;
+		}
+		else
+		{
+			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 	else
 	{
@@ -513,6 +535,212 @@ void TriggerRecord::writeValueData(std::vector<_variant_t>&& valueObjectList)
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
+
+_variant_t TriggerRecord::readValue(VARTYPE vtType, const BYTE* pMemBlock) const
+{
+	_variant_t result;
+
+	result.vt = vtType;
+	switch (vtType)
+	{
+		case VT_BOOL:
+			result = _variant_t((0 == *(reinterpret_cast<const short*> (pMemBlock))) ? false : true);
+			break;
+		case VT_I1:
+			result.bVal = *(reinterpret_cast<const char*> (pMemBlock));
+			break;
+		case VT_I2:
+			result.iVal = *(reinterpret_cast<const short*> (pMemBlock));
+			break;
+		case VT_I4:
+			result.lVal = *(reinterpret_cast<const long*> (pMemBlock));
+			break;
+		case VT_I8:
+			result.llVal = *(reinterpret_cast<const long long*> (pMemBlock));
+			break;
+		case VT_INT:
+			result.intVal = *(reinterpret_cast<const int*> (pMemBlock));
+			break;
+		case VT_UI1:
+			result.cVal = *(reinterpret_cast<const unsigned char*> (pMemBlock));
+			break;
+		case VT_UI2:
+			result.uiVal = *(reinterpret_cast<const unsigned short*> (pMemBlock));
+			break;
+		case VT_UI4:
+			result.ulVal = *(reinterpret_cast<const unsigned long*> (pMemBlock));
+			break;
+		case VT_UI8:
+			result.ullVal = *(reinterpret_cast<const unsigned long long*> (pMemBlock));
+			break;
+		case VT_UINT:
+			result.uintVal = *(reinterpret_cast<const unsigned int*> (pMemBlock));
+			break;
+		case VT_R4:
+			result.fltVal = *(reinterpret_cast<const float*> (pMemBlock));
+			break;
+		case VT_R8:
+			result.dblVal = *(reinterpret_cast<const double*> (pMemBlock));
+			break;
+		case VT_BSTR:
+		{
+			//For variant set back to VT_EMPTY otherwise SetString will try and delete the string which is not existing 
+			result.vt = VT_EMPTY;
+			std::string tempString = reinterpret_cast<const char*> (pMemBlock);
+			result.SetString(tempString.c_str());
+			break;
+		}
+		//!Note these are special SVObserver variant VT types
+		case SvDef::VT_DPOINT:
+		{
+			result.vt = VT_EMPTY;
+			//Type double point has x and y value directly behind each other in memory
+			SVPoint<double> point;
+			point.m_x = *(reinterpret_cast<const double*> (pMemBlock));
+			point.m_y = *(reinterpret_cast<const double*> (pMemBlock + sizeof(double)));
+			result.SetString(point.toString().c_str());
+			break;
+		}
+		case SvDef::VT_POINT:
+		{
+			result.vt = VT_EMPTY;
+			//Type long point has x and y value directly behind each other in memory
+			SVPoint<long> point;
+			point.m_x = *(reinterpret_cast<const long*> (pMemBlock));
+			point.m_y = *(reinterpret_cast<const long*> (pMemBlock + sizeof(long)));
+			result.SetString(point.toString().c_str());
+			break;
+		}
+		default:
+			break;
+	}
+	return result;
+ }
+
+_variant_t TriggerRecord::readArrayValue(VARTYPE vtType, const BYTE* pMemBlock) const
+{
+	_variant_t result;
+
+	//For array values the first value is the result size
+	int resultSize = *(reinterpret_cast<const int*> (pMemBlock));
+	pMemBlock += sizeof(int);
+	if (resultSize > 0)
+	{
+		int elementSize = getElementSize(vtType);
+
+		VARTYPE vtArrayType{vtType};
+		if(vtArrayType == SvDef::VT_DPOINT || vtArrayType == SvDef::VT_POINT)
+		{
+			vtArrayType = VT_BSTR | VT_ARRAY;
+		}
+		else
+		{
+			vtArrayType |= VT_ARRAY;
+		}
+		
+		SAFEARRAYBOUND arrayBound;
+		arrayBound.lLbound = 0;
+		arrayBound.cElements = resultSize;
+		result.parray = ::SafeArrayCreate(vtType, 1, &arrayBound);
+		result.vt = vtArrayType;
+		if (nullptr != result.parray)
+		{
+			for (long i = 0; i < resultSize; ++i)
+			{
+				switch(vtType)
+				{
+					case VT_BSTR:
+					{
+						std::string tempString = reinterpret_cast<const char*> (pMemBlock);
+						_variant_t variantString;
+						variantString.SetString(tempString.c_str());
+						::SafeArrayPutElement(result.parray, &i, static_cast<void*> V_BSTR(variantString.GetAddress()));
+						pMemBlock += (tempString.size() + 1);
+						break;
+					}
+					case SvDef::VT_DPOINT:
+					{
+						//Type double point has x and y value directly behind each other in memory
+						SVPoint<double> point;
+						point.m_x = *(reinterpret_cast<const double*> (pMemBlock));
+						point.m_y = *(reinterpret_cast<const double*> (pMemBlock + sizeof(double)));
+						_variant_t variantString;
+						variantString.SetString(point.toString().c_str());
+						::SafeArrayPutElement(result.parray, &i, static_cast<void*> V_BSTR(variantString.GetAddress()));
+						pMemBlock += elementSize;
+						break;
+					}
+					case SvDef::VT_POINT:
+					{
+						//Type long point has x and y value directly behind each other in memory
+						SVPoint<long> point;
+						point.m_x = *(reinterpret_cast<const long*> (pMemBlock));
+						point.m_y = *(reinterpret_cast<const long*> (pMemBlock + sizeof(long)));
+						_variant_t variantString;
+						variantString.SetString(point.toString().c_str());
+						::SafeArrayPutElement(result.parray, &i, static_cast<void*> V_BSTR(variantString.GetAddress()));
+						pMemBlock += elementSize;
+						break;
+					}
+					default:
+					{
+						::SafeArrayPutElement(result.parray, &i, static_cast<void*> (const_cast<BYTE*>(pMemBlock)));
+						pMemBlock += elementSize;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+int TriggerRecord::getElementSize(VARTYPE vtType) const
+{
+	int result{0};
+
+	switch (vtType)
+	{
+		case VT_BOOL:
+		case VT_I2:
+		case VT_UI2:
+			result = sizeof(short);
+			break;
+		case VT_I1:
+		case VT_UI1:
+			result = sizeof(char);
+			break;
+		case VT_I4:
+		case VT_UI4:
+		case VT_INT:
+		case VT_UINT:
+			result = sizeof(long);
+			break;
+		case VT_I8:
+		case VT_UI8:
+			result = sizeof(long long);
+			break;
+		case VT_R4:
+			result = sizeof(float);
+			break;
+		case VT_R8:
+			result = sizeof(double);
+			break;
+		case SvDef::VT_DPOINT:
+			//Type double point has x and y value directly behind each other in memory
+			result = 2 * sizeof(double);
+			break;
+		case SvDef::VT_POINT:
+			//Type long point has x and y value directly behind each other in memory
+			result = 2 * sizeof(long);
+			break;
+		default:
+			break;
+	}
+	return result;
+}
+
 
 void removeTrReferenceCount(int ipPos, long& rReferenceCount)
 {

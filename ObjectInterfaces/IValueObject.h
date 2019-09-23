@@ -58,9 +58,8 @@ namespace SvOi
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
-		//! \param useResultSize [in] When index -1 should use array or result size
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(_variant_t& rValue, int Index = -1, bool useResultSize=true) const = 0;
+		virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const = 0;
 
 		//! Gets the values for Value object
 		//! \param rValue [out] The reference to _variant_t vector to store the values
@@ -114,7 +113,7 @@ namespace SvOi
 
 		//! Returns he value object byte size
 		//! \returns the number of bytes for the data
-		virtual DWORD GetByteSize() const = 0;
+		virtual long GetByteSize(bool useResultSize = true) const = 0;
 
 		//! Returns the variant type of the value object
 		//! \returns the VT type
@@ -123,19 +122,15 @@ namespace SvOi
 		//! Copies the value object to memory
 		//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
 		//! \param MemByteSize [in] The memory block byte size
-		//! \param pMemoryBlock [in] The index of the array (-1 if no array)
-		//! \returns S_OK if succesful
-		virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index=-1) const = 0;
+		//! \returns the size copied to memory
+		virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const = 0;
 
 		//! Sets the save flag for the value object
 		//! \param shouldSaveValue [in] flag determining if value saved
 		virtual void setSaveValueFlag(bool shouldSaveValue) = 0;
 
-		void setTrPos(int pos) const { m_trPos = pos; };
-		int getTrPos() const { return m_trPos; };
-
-	private:
-		mutable int m_trPos = -1;
+		virtual void setTrData(long memOffset, int pos) const = 0;
+		virtual int getTrPos() const = 0;
 	};
 
 	struct SetValueStruct 
