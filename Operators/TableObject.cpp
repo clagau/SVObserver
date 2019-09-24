@@ -83,9 +83,13 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	clearTable();
+	//Avoid time consuming not necessary function calls 
+	if (ObjectAttributesAllowed() & SvPb::taskObject)
+	{
+		clearTable();
 
-	GetInspectionInterface()->SetDefaultInputs();
+		GetInspectionInterface()->SetDefaultInputs();
+	}
 
 	return Result;
 }
@@ -326,7 +330,7 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pCo
 	bound[1] = rowCount;
 
 	CComSafeArray<double> tdimsa(bound, 2);
-	
+
 	for (int c = 0; c < coloumnCount; c++)
 	{
 		for (int r = 0; r < rowCount; r++)
@@ -363,9 +367,13 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 		return false;
 	}
 
-	int nRows = sa.GetCount(1);
-
-
+	
+	long NCols = (long)m_ValueList.size();
+	if (NCols == 0)
+	{
+		return false;
+	}
+	int nRows = __min(m_ValueList[0]->getArraySize(), sa.GetCount(1));
 	if (m_sortContainer.size() != nRows)
 	{
 		m_sortContainer.resize(nRows);
@@ -380,15 +388,14 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 		m_ValueList[col]->setSortContainer(m_sortContainer);
 	}
 	m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
-
-
-	long NCols = (long)m_ValueList.size();
+	
+	
 	assert(NCols == sa.GetCount(0));
-
-
+	
 	for (int col = 0; col < NCols; col++)
 	{
-		m_ValueList[col]->SetArraySize(nRows);
+		//m_ValueList[col]->SetArraySize(nRows);
+		//m_ValueList[col]->SetResultSize(nRows);
 		for (int r = 0; r < nRows; r++)
 		{
 			double val {0};

@@ -56,7 +56,7 @@ enum ResultTablesEnum
 };
 
 #define ColumnCountA 6
-#define RowCountA 30
+#define RowCountA 9
 
 
 //ATTENTION: S_FALSE is 1L, increase for every define not the last digital.

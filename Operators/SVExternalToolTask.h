@@ -101,7 +101,8 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	bool CreateTableObjects();
-	void CreateArray();
+	void CreateArrayInTable();
+	void SetResultArraySize();
 	virtual bool CloseObject() override;
 	virtual bool ConnectAllInputs() override;
 	
@@ -124,6 +125,7 @@ public:
 
 	void SetAllAttributes();
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	enum FindEnum
 	{
 		FIND_VALUES = 1,

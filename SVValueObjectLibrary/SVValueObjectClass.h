@@ -78,7 +78,7 @@ public:
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
 	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
-	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
+	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1,bool fixArraysize = false) override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;

@@ -300,7 +300,26 @@ SVExternalToolTask::~SVExternalToolTask()
 	m_embeddedList.clear();
 }
 
-void SVExternalToolTask::CreateArray()
+void SVExternalToolTask::SetResultArraySize()
+{
+	int ResultNum = m_Data.getNumResults();
+	for (int rn = 0; rn < ResultNum; rn++)
+	{
+		if (rn >= m_Data.m_aResultObjects.size())
+		{
+			assert(false);
+			break;
+		}
+
+		int nArraysize = 0;
+		if (m_Data.m_ResultDefinitions[rn].getVT() & VT_ARRAY)
+		{
+			nArraysize = m_Data.m_ResultDefinitions[rn].getMaxArraysize();
+			m_Data.m_aResultObjects[rn].SetArraySize(nArraysize);
+		}
+	}
+}
+void SVExternalToolTask::CreateArrayInTable()
 {
 	int TableNum = m_Data.getNumTableResults();
 
@@ -606,11 +625,24 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 
 			m_InspectionResultValues.resize(NumResultObjects);
 			m_Data.m_ResultDefinitions.resize(NumResultObjects);
-
-
+			bool hasAdDefinition{false};
+			long NumAdObjects {0};
+			ResultValueDefinitionStructAd* paResultValueDefsAd {nullptr};
+			if (m_dll.GetResultValueDefinitionsAd(&NumAdObjects, &paResultValueDefsAd) == S_OK)
+			{
+				hasAdDefinition = NumResultObjects == NumAdObjects;
+			}
 			for (int i = 0; i < NumResultObjects; i++)
 			{
-				m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
+				if (hasAdDefinition)
+				{
+					m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], paResultValueDefsAd[i], i);
+				}
+				else
+				{
+					m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
+				}
+
 				long vt = paResultValueDefs[i].m_VT;
 				if (vt != VT_BSTR)	// Do not allocate result if already exists....
 				{
@@ -637,6 +669,9 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 						}
 					}
 				}
+				///Set Arraysize 
+				SetResultArraySize();
+
 			}
 			hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefs);
 			if (S_OK != hr)
@@ -665,7 +700,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			paResultValueDefs = nullptr;
 
 			//Initialize TableObjects!
-			CreateArray();
+			CreateArrayInTable();
 
 			///////////////////////////////////////
 			//    InitializeRun
@@ -1517,6 +1552,13 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	return Result;
 }
 
+bool SVExternalToolTask::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+{
+	bool Result = __super::resetAllObjects(pErrorMessages);
+	CreateArrayInTable();
+	return Result;
+
+}
 // compare cancel data (original) with current data.
 HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, const SVCancelData* pCancelData, FindEnum eWhich)
 {
@@ -2017,6 +2059,7 @@ void SVExternalToolTask::collectResultValues()
 			{
 				//if the value object is an array the correct size will be set in setValue
 				GetResultValueObject(i)->SetArraySize(2);
+				assert(false);
 			}
 			if (!GetResultValueObject(i)->GetDefaultType() != type)
 			{
@@ -2024,24 +2067,10 @@ void SVExternalToolTask::collectResultValues()
 				var.ChangeType(type);
 				GetResultValueObject(i)->SetDefaultValue(var);
 			}
-			GetResultValueObject(i)->setValue(m_InspectionResultValues[i]);
-			
-			if ((m_Data.m_ResultDefinitions[i].getVT()  & VT_ARRAY) && !GetResultValueObject(i)->isArray())
-			{
-				//Force scalar Resultvalue to an array.  
-				_variant_t value;
-				GetResultValueObject(i)->GetValue(value);
-				GetResultValueObject(i)->SetArraySize(2);
-				GetResultValueObject(i)->SetValue(value, 0);
-				GetResultValueObject(i)->SetResultSize(1);
-			}
-			
-
+			GetResultValueObject(i)->setValue(m_InspectionResultValues[i],-1,true);
 		}
-
 		else
 		{
-			
 
 			GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
 		}

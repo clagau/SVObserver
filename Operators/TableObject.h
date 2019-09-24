@@ -64,6 +64,7 @@ public:
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
 
 	/// for rValue  a 2 dim SafeArray of double  is expected, otherwise false is returned
+	/// if fixarrasize is true the row size is unchanged.
 	bool setTableValues(const _variant_t& rValue);
 	/// rValue contents a 2 dim SafeArray of double  
 	void  getTableValues(_variant_t& rValue,long* pRowCount, long* pColoumnCount)const;

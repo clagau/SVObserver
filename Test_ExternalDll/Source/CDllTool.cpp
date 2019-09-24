@@ -153,6 +153,15 @@ void CDllTool::getResultValueDefinition(ResultValueDefinitionStruct** ppaResultV
 	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].bstrDisplayName = ::SysAllocString(L"ARRAY input 6,7 ");
 
 }
+void CDllTool::getResultValueDefinitionAd(ResultValueDefinitionStructAd** ppaResultValues)
+{
+	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].MaxArraylen = 17;
+
+	(*ppaResultValues)[ResultValue_INT_ARRAY].MaxArraylen = 17;
+
+}
+
+
 void CDllTool::getResultTableDefinition(ResultTableDefinitionStruct** ppaResultTables)
 {
 	_bstr_t ColumnNames[ColumnCountA] = {"eins", "zwei", "drei", "vier","fünf","sechs"};
@@ -380,7 +389,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 			LONG aIndex[2];
 			for (unsigned long x = 0; x < ColumnCountA; x++)
 			{
-				for (unsigned long  y = 0; y < NY; y++)
+				for (unsigned long y = 0; y < NY; y++)
 				{
 					aIndex[0] = x;
 					aIndex[1] = y;
@@ -519,7 +528,7 @@ HRESULT CDllTool::run()
 		m_aResultValues[ResultValue_DOUBLE_ARRAY].vt = VT_EMPTY;
 	}
 
-	
+
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
@@ -546,7 +555,7 @@ HRESULT CDllTool::run()
 	{
 		SafeArrayDestroy(m_aResultValues[ResultValue_INT_ARRAY].parray);
 		m_aResultValues[ResultValue_INT_ARRAY].parray = nullptr;
-		m_aInputValues[InputValue_INT_ARRAY].vt = VT_EMPTY;
+		m_aResultValues[ResultValue_INT_ARRAY].vt = VT_EMPTY;
 	}
 
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))

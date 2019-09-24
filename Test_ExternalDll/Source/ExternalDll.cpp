@@ -365,6 +365,16 @@ TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructures(
 #endif
 	return hr;
 }
+TOOLDLL_API HRESULT __stdcall DestroyResultValueDefinitionStructuresAd(
+	ResultValueDefinitionStructAd* paStructs)
+{
+	HRESULT hr = S_OK;
+	
+	delete[] paStructs;
+
+	return hr;
+}
+
 
 TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,
 	VARIANT* paInputValues)
@@ -478,6 +488,29 @@ TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitions(long* plArraySize, Res
 #endif
 	return hr;
 }
+
+
+TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues)
+{
+
+	HRESULT hr = S_OK;
+
+	*plArraySize = NUM_RESULT_VALUES;
+	*ppaResultValues = new ResultValueDefinitionStructAd[NUM_RESULT_VALUES];
+
+	//### Check for alloc failed
+	if (*ppaResultValues != NULL)
+	{
+		CDllTool::getResultValueDefinitionAd(ppaResultValues);
+	}
+	else
+	{
+		hr = S_FALSE;
+	}
+
+	return hr;
+}
+
 
 TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImages)
 {

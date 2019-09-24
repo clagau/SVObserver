@@ -31,6 +31,9 @@ public:
 	static void getResultValueDefinition(ResultValueDefinitionStruct** ppaResultValues);
 
 	static  void getResultTableDefinition(ResultTableDefinitionStruct** ppaResultTables);
+
+	static void getResultValueDefinitionAd(ResultValueDefinitionStructAd** ppaResultValuesAd);
+
 	/**********
 	 Check if the value valid and return an error code. S_OK if value valid.
 	 \param lParameterNumber <in> the index of the parameter. Must be at least 0 and less than NUM_INPUT_VALUES.

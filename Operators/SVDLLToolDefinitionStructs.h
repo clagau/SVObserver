@@ -86,6 +86,18 @@ public:
 private:
 	void Clear();
 };
+
+struct ResultValueDefinitionStructAd
+{
+	
+	DWORD type {0}; 	// not used at this time
+	long MaxArraylen {20};
+public:	
+	ResultValueDefinitionStructAd();
+	~ResultValueDefinitionStructAd();
+	ResultValueDefinitionStructAd(const ResultValueDefinitionStructAd& rhs);
+	ResultValueDefinitionStructAd& operator = (const ResultValueDefinitionStructAd& rhs);
+};
 #pragma pack (pop)
 
 
@@ -116,15 +128,18 @@ public:
 
 	//Throw exception if ResultValueDefinitionStruct is not allowed
 	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex);
-
+	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct,
+		const ResultValueDefinitionStructAd&  DefStructAd, long ValueIndex);
 	int getIndex() const;
 	std::string getDisplayName() const;
 	SvOp::ExDllInterfaceType getType() const;
 	long getVT() const;
+	long getMaxArraysize() const;
 	
 	
 private:
 	int m_ValueIndex {-1};
+	int m_MaxArraysize {20};
 
 	ResultValueDefinitionStruct m_ValueDefinition;
 };

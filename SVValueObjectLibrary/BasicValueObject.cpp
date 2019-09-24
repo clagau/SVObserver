@@ -69,7 +69,7 @@ HRESULT BasicValueObject::getValue(double& rValue, int Index /*= -1*/) const
 	return getValue<double>(rValue);
 }
 
-HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ )
+HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ ,bool  )
 {
 	HRESULT	Result = S_OK;
 
@@ -113,7 +113,7 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ 
 	return Result;
 }
 
-HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*/ )
+HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*/  )
 {
 	HRESULT Result( S_FALSE );
 

@@ -47,6 +47,11 @@ struct ResultTableDefinitionStruct
 	
 };
 
+struct ResultValueDefinitionStructAd
+{
+	DWORD type {0}; 	// not used at this time
+	long MaxArraylen {20}; 
+};
 
 #pragma pack(pop) 
 

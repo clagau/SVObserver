@@ -110,7 +110,7 @@ HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 	
 }
 
-HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/)
+HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArraysize)
 {
 	if( (rValue.vt & VT_ARRAY) && Index == -1)
 	{
@@ -118,12 +118,12 @@ HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/)
 		SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
 		SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
 		long cnt_elements = uBound - lBound + 1;
-		if (getArraySize() != cnt_elements)
+		if (getArraySize() != cnt_elements && !fixArraysize)
 		{
 			SetArraySize(cnt_elements);
 		}
 	}
-	return __super::setValue(rValue, Index);
+	return __super::setValue(rValue, Index, fixArraysize);
 }
 HRESULT LinkedValue::setValue(const std::string& rValue, int Index /*= -1*/)
 {

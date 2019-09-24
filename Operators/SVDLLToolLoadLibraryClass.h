@@ -75,6 +75,8 @@ typedef HRESULT (__stdcall *DestroyImageDefinitionStructurePtr) ( SVImageDefinit
 typedef HRESULT(__stdcall *GetResultTableDefinitionsPtr) (long* pSize, ResultTableDefinitionStruct** ppaResultValues);
 typedef HRESULT(__stdcall *DestroyResultTableDefinitionStructuresPtr) (ResultTableDefinitionStruct* paStructs);
 typedef HRESULT(__stdcall *GetResultTablesPtr) (GUID tool, long lArraySize, VARIANT* paResultValues);
+typedef HRESULT(__stdcall *GetResultValueDefinitionsAdPtr) (long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
+typedef HRESULT(__stdcall *DestroyResultValueDefinitionStructuresAdPtr) (ResultValueDefinitionStructAd* paStructs);
 
 
 
@@ -108,7 +110,9 @@ public:
 	HRESULT GetMessageString (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage) const;
 	HRESULT ValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
 	HRESULT GetResultValueDefinitions (long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
+	HRESULT GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
 	HRESULT DestroyResultValueDefinitionStructures (ResultValueDefinitionStruct* paStructs);
+	HRESULT DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs);
 	HRESULT GetNumberOfInputImages (long* plNumberOfInputImages);
 	HRESULT SetMILInputImages (GUID tool, long lArraySize, long* paMILhandles);
 	HRESULT SetHBITMAPInputImages (GUID tool, HBITMAP* paHandles);
@@ -159,6 +163,8 @@ private:
 	GetResultTableDefinitionsPtr m_pfnGetResultTableDefinitions {nullptr};
 	DestroyResultTableDefinitionStructuresPtr m_pfnDestroyResultTableDefinitionStructures {nullptr};
 	GetResultTablesPtr  m_pfnGetResultTables {nullptr};
+	GetResultValueDefinitionsAdPtr  m_pfnGetResultValueDefinitionsAd {nullptr};
+	DestroyResultValueDefinitionStructuresAdPtr m_pfnDestroyResultValueDefinitionStructuresAd {nullptr};
 };
 
 } //namespace SvOp

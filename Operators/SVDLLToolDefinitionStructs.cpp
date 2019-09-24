@@ -242,12 +242,22 @@ ResultTableDefinitionStruct::ResultTableDefinitionStruct(const ResultTableDefini
 	*this = rRhs;
 }
 
-
 void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex)
 {
 	m_ValueIndex = ValueIndex;
 	m_ValueDefinition = resultValueDefinitionStruct;
 	
+
+}
+
+
+void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, 
+	const ResultValueDefinitionStructAd&  DefStructAd, long ValueIndex)
+{
+	m_ValueIndex = ValueIndex;
+	m_ValueDefinition = resultValueDefinitionStruct;
+	m_MaxArraysize = DefStructAd.MaxArraylen;
+
 
 }
 
@@ -267,6 +277,11 @@ std::string ResultValueDefinition::getDisplayName() const
 	return result;
 }
 
+
+long ResultValueDefinition::getMaxArraysize() const
+{
+	return m_MaxArraysize;
+}
 
 
 void ResultTableDefinition::setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long Index)
