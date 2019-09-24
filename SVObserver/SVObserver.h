@@ -174,7 +174,7 @@ public:
 
 public:
 	void AddAdditionalFile(LPCTSTR FilePath);
-	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, bool useSvxName = false);
+	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, ConfigFileType fileType = ConfigFileType::SvzStandard);
 	HRESULT OpenSVXFile();
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
@@ -182,7 +182,7 @@ public:
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
 
-	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type);
+	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType type);
 	HRESULT SavePackedConfiguration(LPCTSTR pFileName);
 
 	SVMainFrame* GetMainFrame() const;
@@ -206,7 +206,6 @@ public:
 	bool AddMenuItem(HMENU hTargetMenu, const std::string& itemText, UINT itemID);
 	bool RemoveMenu(HMENU hTargetMenu,  const std::string& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
-	HRESULT LoadConfiguration(bool useSvxName = false);
 
 	HRESULT OnObjectRenamed( const std::string& p_rOldName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();
@@ -265,7 +264,7 @@ public:
 
 	HRESULT CheckDrive(const std::string& p_strDrive) const;
 
-	bool fileSaveAsSVX(const std::string& rFileName = std::string());
+	bool fileSaveAsSVX(const std::string& rFileName, bool resetAutoSave);
 
 
 #pragma region Encapsulation Methods

@@ -219,13 +219,13 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 	if (S_OK == Result)
 	{
 		std::string RemoteFilePath = SvUl::to_ansi(rRequest.filename());
-		PutConfigType type {PutConfigType::SvzFormatWithName};
+		ConfigFileType fileType {ConfigFileType::SvzFormatPutConfig};
 
 		if (RemoteFilePath.empty())
 		{
 			RemoteFilePath = c_DefaultConfigurationName;
 			RemoteFilePath += SvDef::cPackedConfigExtension;
-			type = PutConfigType::SvzFormatDefaultName;
+			fileType = ConfigFileType::SvzFormatDefaultName;
 		}
 
 		std::string TempFileName = SvStl::GlobalPath::Inst().GetPathInTempFolderOnC_Drive(GetFileNameFromFilePath(RemoteFilePath, SvDef::cPackedConfigExtension).c_str());
@@ -240,8 +240,8 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 				//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
 				//This should be changed using inspection commands
-				type = (1 == fileVersion) ? PutConfigType::PackedFormat : type;
-				Result = GlobalRCLoadPackedConfiguration(TempFileName.c_str(), type);
+				fileType = (1 == fileVersion) ? ConfigFileType::PackedFormat : fileType;
+				Result = GlobalRCLoadPackedConfiguration(TempFileName.c_str(), fileType);
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				::remove(TempFileName.c_str());
 			}

@@ -398,7 +398,7 @@ void SVObserverApp::OnFileSaveConfig(bool saveAs /*= false*/)
 	}
 	std::string fileName {getConfigFullFileName()};
 
-	if(fileSaveAsSVX(fileName))
+	if(fileSaveAsSVX(fileName, true))
 	{
 		setConfigFullFileName(fileName.c_str(), false);
 		if (0 == _access(fileName.c_str(), 0))
@@ -2230,7 +2230,7 @@ void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
 	}
 }
 
-HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, bool useSvxName /*= false*/)
+HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, ConfigFileType fileType /*= ConfigFileType::SvzStandard*/)
 {
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
@@ -2275,7 +2275,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, boo
 				{
 					m_SvxFileName.SetFullFileName(rFile.c_str());
 					//When this is set then we need to rename the file to the name of the svx file
-					if(useSvxName)
+					if(fileType == ConfigFileType::SvzFormatDefaultName)
 					{
 						std::string oldFileName{FileName};
 						SvUl::searchAndReplace(FileName, OriginalFile.c_str(), szFile);
@@ -2304,8 +2304,17 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, boo
 
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 	{
-		setConfigFullFileName(FileName.c_str(), true);
-		SVRCSetSVCPathName(getConfigFullFileName().c_str());
+		if(ConfigFileType::SvzStandard == fileType)
+		{
+			setConfigFullFileName(FileName.c_str(), true);
+			SVRCSetSVCPathName(getConfigFullFileName().c_str());
+		}
+		else
+		{
+			m_ConfigFileName.SetFileName(OriginalFile.c_str());
+			m_ConfigFileName.SetExtension(Extension.c_str());
+			m_ConfigFileName.SetPathName(nullptr);
+		}
 		result = OpenSVXFile();
 		//Only if loaded locally then add to recent list
 		if(editMode && S_OK == result)
@@ -2680,7 +2689,7 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 }
 #pragma endregion virtual
 
-HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type)
+HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 {
 	HRESULT l_Status = S_OK;
 	std::string fileName{pFileName};
@@ -2696,7 +2705,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType 
 
 	if (S_OK == l_Status)
 	{
-		if(PutConfigType::PackedFormat == type)
+		if(ConfigFileType::PackedFormat == fileType)
 		{
 			SVPackedFile PackedFile;
 			if (PackedFile.UnPackFiles(fileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
@@ -2709,6 +2718,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType 
 				{
 					fileName = PackedFile.getConfigFilePath();
 				}
+				fileType = ConfigFileType::SvzFormatPutConfig;
 			}
 			else
 			{
@@ -2719,10 +2729,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, PutConfigType 
 
 	if (S_OK == l_Status)
 	{
-		SVRCSetSVCPathName(fileName.c_str());
-		l_Status = LoadConfiguration(PutConfigType::SvzFormatDefaultName == type);
-		//Need to remove the config file path when loaded via remote so that when saved a new file name is required
-		m_ConfigFileName.SetPathName(nullptr);
+		l_Status = OpenFile(fileName.c_str(), false, fileType);
 	}
 
 	return l_Status;
@@ -2741,11 +2748,7 @@ HRESULT SVObserverApp::SavePackedConfiguration(LPCTSTR pFileName)
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 	{
-		fileSaveAsSVX();
-
-		SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
-
-		if (!SvUl::makeZipFile(pFileName, FileNameList, _T(""), false))
+		if(false == fileSaveAsSVX(pFileName, false))
 		{
 			Result = E_UNEXPECTED;
 		}
@@ -3612,10 +3615,6 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 	return l_hr;
 }
 
-HRESULT SVObserverApp::LoadConfiguration(bool useSvxName)
-{
-	return OpenFile(SVRCGetSVCPathName(), false, useSvxName);
-}
 
 HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, const SVGUID& p_rObjectId)
 {
@@ -4146,7 +4145,7 @@ bool SVObserverApp::OkToEdit()
 
 void SVObserverApp::OnRCOpenCurrentSVX()
 {
-	LoadConfiguration();
+	OpenFile(SVRCGetSVCPathName());
 }
 
 void SVObserverApp::UpdateAllMenuExtrasUtilities()
@@ -5374,7 +5373,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 	return S_OK;
 }
 
-bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()*/)
+bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSave)
 {
 	//When a file name is present it must have the correct extension
 	if (!rFileName.empty() && std::string::npos == rFileName.find(SvDef::cPackedConfigExtension))
@@ -5414,7 +5413,10 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName /*= std::string()
 			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
 			if (SvUl::makeZipFile(rFileName, FileNameList, _T(""), false))
 			{
-				ExtrasEngine::Instance().ResetAutoSaveInformation();
+				if(resetAutoSave)
+				{
+					ExtrasEngine::Instance().ResetAutoSaveInformation();
+				}
 			}
 			else
 			{

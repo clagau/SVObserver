@@ -1274,7 +1274,7 @@ LRESULT SVMainFrame::OnSetMode( WPARAM wParam, LPARAM lParam )
 
 LRESULT SVMainFrame::OnLoadPackedConfiguration( WPARAM wParam, LPARAM lParam )
 {
-	return TheSVObserverApp.LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), static_cast<PutConfigType> (wParam));
+	return TheSVObserverApp.LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), static_cast<ConfigFileType> (wParam));
 }
 
 #ifdef _DEBUG

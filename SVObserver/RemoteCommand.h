@@ -11,14 +11,8 @@
 
 #pragma once
 #pragma region Includes
+#include "SVGlobal.h"
 #pragma endregion Includes
-
-enum PutConfigType
-{
-	PackedFormat,
-	SvzFormatWithName,
-	SvzFormatDefaultName,
-};
 
 void GlobalRCGoOnline();
 void GlobalRCGoOffline();
@@ -30,6 +24,6 @@ HRESULT GlobalRCSaveConfiguration(LPCTSTR pFileName);
 bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
 void GlobalRCCloseAndCleanConfiguration();
 void GlobalRCCloseConfiguration();
-HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type);
+HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType);
 HRESULT GlobalRCAddFileToConfig(LPCTSTR pFileName);
 

@@ -16,7 +16,6 @@
 #include "SVObserver.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVGlobal.h"
 #include "Definitions/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -163,9 +162,9 @@ void GlobalRCCloseConfiguration()
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE, 0), 0);
 }
 
-HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, PutConfigType type)
+HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 {
-	WPARAM wParam = static_cast<WPARAM> (type);
+	WPARAM wParam = static_cast<WPARAM> (fileType);
 	LPARAM lParam = reinterpret_cast<LPARAM> (pFileName);
 	return static_cast<HRESULT> (::SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, SV_LOAD_PACKED_CONFIGURATION, wParam, lParam));
 }

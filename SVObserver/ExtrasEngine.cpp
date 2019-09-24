@@ -113,7 +113,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 	::MoveFile(Temp1Name.c_str(), Temp2Name.c_str());
 
 	//save the current configuration in the AutoSave Directory
-	TheSVObserverApp.fileSaveAsSVX(Temp1Name);
+	TheSVObserverApp.fileSaveAsSVX(Temp1Name, true);
 
 	autosavePopupDialog.DestroyWindow();
 }
