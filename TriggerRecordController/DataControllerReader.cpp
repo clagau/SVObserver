@@ -141,7 +141,7 @@ bool TRControllerReaderDataPerIP::isEnoughFreeForLock() const
 
 void TRControllerReaderDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 {
-	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+	Locker::LockerPtr locker = (nullptr != m_pBasicData) ? Locker::lockReset(m_pBasicData->m_mutexTrOfInterest) : nullptr;
 	if (locker && 0 < m_pBasicData->m_TrOfInterestNumber)
 	{
 		int nextPos = (m_pBasicData->m_TrOfInterestCurrentPos + 1) % (m_pBasicData->m_TrOfInterestNumber);
@@ -177,7 +177,7 @@ void TRControllerReaderDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
-	Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+	Locker::LockerPtr locker = (nullptr != m_pBasicData) ? Locker::lockReset(m_pBasicData->m_mutexTrOfInterest) : nullptr;
 	if (nullptr != locker)
 	{
 		int vecSize = m_pBasicData->m_TrOfInterestNumber;
