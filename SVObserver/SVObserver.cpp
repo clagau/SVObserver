@@ -2312,7 +2312,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 		else
 		{
 			m_ConfigFileName.SetFileName(OriginalFile.c_str());
-			m_ConfigFileName.SetExtension(Extension.c_str());
+			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 			m_ConfigFileName.SetPathName(nullptr);
 		}
 		result = OpenSVXFile();
