@@ -684,4 +684,35 @@ TOOLDLL_API HRESULT __stdcall GetResultTables(GUID guidTool, long lArraySize, VA
 	}
 	return hr;
 }
+TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID guidTool, long Size, int pRowSizes[])
+{
+	HRESULT hr = S_FALSE;
+	if (Size == NUM_RESULT_TABLES)
+	{
+		CDllTool* pTool = NULL;
+		hr = LookupTool(guidTool, pTool);
 
+		if (hr == S_OK)
+		{	
+			hr = pTool->getResultTablesMaxRowSize(Size, pRowSizes);
+		}
+	}
+	return hr;
+}
+
+
+TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID guidTool, long Size, int Arraysize[])
+{
+	HRESULT hr = S_FALSE;
+	if (Size == NUM_RESULT_VALUES)
+	{
+		CDllTool* pTool = NULL;
+		hr = LookupTool(guidTool, pTool);
+
+		if (hr == S_OK)
+		{
+			hr = pTool->getResultValuesMaxArraySize(Size, Arraysize);
+		}
+	}
+	return hr;
+}

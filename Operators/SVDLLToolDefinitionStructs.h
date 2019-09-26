@@ -87,17 +87,6 @@ private:
 	void Clear();
 };
 
-struct ResultValueDefinitionStructAd
-{
-	
-	DWORD type {0}; 	// not used at this time
-	long MaxArraylen {20};
-public:	
-	ResultValueDefinitionStructAd();
-	~ResultValueDefinitionStructAd();
-	ResultValueDefinitionStructAd(const ResultValueDefinitionStructAd& rhs);
-	ResultValueDefinitionStructAd& operator = (const ResultValueDefinitionStructAd& rhs);
-};
 #pragma pack (pop)
 
 
@@ -128,14 +117,12 @@ public:
 
 	//Throw exception if ResultValueDefinitionStruct is not allowed
 	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex);
-	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct,
-		const ResultValueDefinitionStructAd&  DefStructAd, long ValueIndex);
 	int getIndex() const;
 	std::string getDisplayName() const;
 	SvOp::ExDllInterfaceType getType() const;
 	long getVT() const;
 	long getMaxArraysize() const;
-	
+	void setMaxArraysize(long);
 	
 private:
 	int m_ValueIndex {-1};
@@ -160,7 +147,7 @@ public:
 	std::string getDisplayName() const;
 	SvOp::ExDllInterfaceType getType() const;
 	long getVT() const { return m_TableDefinition.lVT; };
-	
+	void  setTableRowCount(long count ) {  m_TableDefinition.RowCount = count; };
 	
 private:
 

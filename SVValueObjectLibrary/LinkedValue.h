@@ -50,7 +50,7 @@ public:
 
 	virtual HRESULT  SetValue(const _variant_t& rValue, int Index = -1) override;
 
-	virtual HRESULT  setValue(const _variant_t& rValue, int Index = -1, bool fixarraysize = false) override;
+	virtual HRESULT  setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false) override;
 	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
 	
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;

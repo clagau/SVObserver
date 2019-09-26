@@ -75,10 +75,8 @@ typedef HRESULT (__stdcall *DestroyImageDefinitionStructurePtr) ( SVImageDefinit
 typedef HRESULT(__stdcall *GetResultTableDefinitionsPtr) (long* pSize, ResultTableDefinitionStruct** ppaResultValues);
 typedef HRESULT(__stdcall *DestroyResultTableDefinitionStructuresPtr) (ResultTableDefinitionStruct* paStructs);
 typedef HRESULT(__stdcall *GetResultTablesPtr) (GUID tool, long lArraySize, VARIANT* paResultValues);
-typedef HRESULT(__stdcall *GetResultValueDefinitionsAdPtr) (long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
-typedef HRESULT(__stdcall *DestroyResultValueDefinitionStructuresAdPtr) (ResultValueDefinitionStructAd* paStructs);
-
-
+typedef HRESULT(__stdcall *GetResultTablesMaxRowSizePtr) (GUID tool, long  Size, int pRowSizes[]);
+typedef HRESULT(__stdcall *GetResultValuesMaxArraySizePtr) (GUID tool, long  Size, int pArraySizes[]);
 
 
 
@@ -110,9 +108,7 @@ public:
 	HRESULT GetMessageString (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage) const;
 	HRESULT ValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
 	HRESULT GetResultValueDefinitions (long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
-	HRESULT GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
 	HRESULT DestroyResultValueDefinitionStructures (ResultValueDefinitionStruct* paStructs);
-	HRESULT DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs);
 	HRESULT GetNumberOfInputImages (long* plNumberOfInputImages);
 	HRESULT SetMILInputImages (GUID tool, long lArraySize, long* paMILhandles);
 	HRESULT SetHBITMAPInputImages (GUID tool, HBITMAP* paHandles);
@@ -124,6 +120,12 @@ public:
 	HRESULT getResultTableDefinitions(long* Size, ResultTableDefinitionStruct** ppaResultTableDefs);
 	HRESULT destroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
 	HRESULT getResultTables(GUID tool, long lArraySize, VARIANT* paResultValues);
+
+	HRESULT getResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[]);
+	HRESULT getResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[]);
+	
+	bool UseResultTablesMaxRowSize() const;
+	bool  UseResultValuesMaxArraySize() const;
 	bool UseMil();
 	bool IsHandleNull();
 	bool UseTableOutput() const;
@@ -163,8 +165,8 @@ private:
 	GetResultTableDefinitionsPtr m_pfnGetResultTableDefinitions {nullptr};
 	DestroyResultTableDefinitionStructuresPtr m_pfnDestroyResultTableDefinitionStructures {nullptr};
 	GetResultTablesPtr  m_pfnGetResultTables {nullptr};
-	GetResultValueDefinitionsAdPtr  m_pfnGetResultValueDefinitionsAd {nullptr};
-	DestroyResultValueDefinitionStructuresAdPtr m_pfnDestroyResultValueDefinitionStructuresAd {nullptr};
+	GetResultTablesMaxRowSizePtr m_pfnGetResultTablesMaxRowSize {nullptr};
+	GetResultValuesMaxArraySizePtr m_pfnGetResultValuesMaxArraySize {nullptr};
 };
 
 } //namespace SvOp

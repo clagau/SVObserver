@@ -682,6 +682,27 @@ HRESULT CDllTool::getResultTables(VARIANT* pResultValues) const
 	return S_OK;
 }
 
+HRESULT CDllTool::getResultTablesMaxRowSize(long Size, int pRowSizes[]) const
+{
+	if (Size != NUM_RESULT_TABLES)
+		return E_FAIL;
+	for (int i = 0; i < NUM_RESULT_TABLES; i++)
+	{
+		pRowSizes[i] = 17;
+	}
+	return S_OK;
+}
+
+HRESULT  CDllTool::getResultValuesMaxArraySize(long Size, int ArraySizes[]) const
+{
+	if (Size != NUM_RESULT_VALUES)
+		return E_FAIL;
+	for (int i = 0; i < NUM_RESULT_VALUES; i++)
+	{
+		ArraySizes[i] = 5 +i;
+	}
+	return S_OK;
+}
 
 #pragma endregion
 #pragma endregion

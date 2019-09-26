@@ -53,7 +53,8 @@ namespace SvOi
 		//! \param rValue [in] The value to set the Value object to
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixarrasize = false) = 0;
+		//!\param fixArrasize [in] if this true the arraysisize is unchanged in every case
+		virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false) = 0;
 
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to

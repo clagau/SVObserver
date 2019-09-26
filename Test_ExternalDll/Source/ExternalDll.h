@@ -60,5 +60,5 @@ TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure (ImageDefinition
 TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTableDefinitionStruct** ppaResultValues);
 TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
 TOOLDLL_API HRESULT __stdcall GetResultTables(GUID tool, long  Size, VARIANT* pResultTables);
-TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
-TOOLDLL_API HRESULT __stdcall DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs);
+TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[]);
+TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[]);

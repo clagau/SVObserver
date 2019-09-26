@@ -105,6 +105,12 @@ public:
 	HRESULT getResultValues(VARIANT* paResultValues) const;
 	
 	HRESULT  getResultTables(VARIANT* ResultValues) const;
+
+	//Return MaxRowSize respectively Arraysize. 
+	// This Function will be called by SVobserver when reseting the 
+	//external tool 
+	HRESULT getResultTablesMaxRowSize(long Size, int pRowSizes[]) const;
+	HRESULT getResultValuesMaxArraySize(long Size, int pArraySizes[]) const;
 #pragma endregion
 #pragma endregion
 

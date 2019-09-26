@@ -106,7 +106,9 @@ public:
 	virtual bool CloseObject() override;
 	virtual bool ConnectAllInputs() override;
 	
+	
 	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {});
+	
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 
@@ -160,6 +162,8 @@ protected:
 	HRESULT AllocateResult (int iIndex);
 
 private:
+	HRESULT InitializeResultObjects();
+
 	bool prepareInput(SvTrc::IImagePtr pResultImageBuffers[], SVRunStatusClass& rRunStatus);
 	void getResults(SvTrc::IImagePtr pResultImageBuffers[]);
 	bool anyImagesResized();

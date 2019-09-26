@@ -27,6 +27,6 @@ EXPORTS
     GetResultTableDefinitions
     DestroyResultTableDefinitionStructures
     GetResultTables
-	GetResultValueDefinitionsAd 
-    DestroyResultValueDefinitionStructuresAd
+	GetResultTablesMaxRowSize
+    GetResultValuesMaxArraySize
 

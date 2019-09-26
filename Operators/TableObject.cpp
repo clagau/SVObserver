@@ -373,7 +373,7 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 	{
 		return false;
 	}
-	int nRows = __min(m_ValueList[0]->getArraySize(), sa.GetCount(1));
+	int nRows = __min(m_ValueList[0]->getArraySize(), static_cast<int>(sa.GetCount(1)));
 	if (m_sortContainer.size() != nRows)
 	{
 		m_sortContainer.resize(nRows);
@@ -394,8 +394,6 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 	
 	for (int col = 0; col < NCols; col++)
 	{
-		//m_ValueList[col]->SetArraySize(nRows);
-		//m_ValueList[col]->SetResultSize(nRows);
 		for (int r = 0; r < nRows; r++)
 		{
 			double val {0};

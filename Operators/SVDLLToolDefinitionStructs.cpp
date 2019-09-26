@@ -251,15 +251,6 @@ void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  re
 }
 
 
-void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, 
-	const ResultValueDefinitionStructAd&  DefStructAd, long ValueIndex)
-{
-	m_ValueIndex = ValueIndex;
-	m_ValueDefinition = resultValueDefinitionStruct;
-	m_MaxArraysize = DefStructAd.MaxArraylen;
-
-
-}
 
 int ResultValueDefinition::getIndex() const
 {
@@ -275,6 +266,13 @@ std::string ResultValueDefinition::getDisplayName() const
 	_bstr_t ret(m_ValueDefinition.m_bDisplayName);
 	std::string result((LPCSTR)ret);
 	return result;
+}
+void ResultValueDefinition::setMaxArraysize(long size)
+{
+	if (size > 0)
+	{
+		m_MaxArraysize = size;
+	}
 }
 
 

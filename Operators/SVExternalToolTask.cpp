@@ -302,19 +302,13 @@ SVExternalToolTask::~SVExternalToolTask()
 
 void SVExternalToolTask::SetResultArraySize()
 {
-	int ResultNum = m_Data.getNumResults();
+	int ResultNum = __min(m_Data.getNumResults(), static_cast<int>(m_Data.m_aResultObjects.size()));
+	assert(m_Data.getNumResults() <= m_Data.m_aResultObjects.size());
 	for (int rn = 0; rn < ResultNum; rn++)
 	{
-		if (rn >= m_Data.m_aResultObjects.size())
-		{
-			assert(false);
-			break;
-		}
-
-		int nArraysize = 0;
 		if (m_Data.m_ResultDefinitions[rn].getVT() & VT_ARRAY)
 		{
-			nArraysize = m_Data.m_ResultDefinitions[rn].getMaxArraysize();
+			int nArraysize = m_Data.m_ResultDefinitions[rn].getMaxArraysize();
 			m_Data.m_aResultObjects[rn].SetArraySize(nArraysize);
 		}
 	}
@@ -360,7 +354,6 @@ bool SVExternalToolTask::CreateTableObjects()
 	int Index {0};
 	for (SVTaskObjectClass* pOb : m_TaskObjectVector)
 	{
-
 		if (pOb && pOb->GetObjectType() == SvPb::TableObjectType && pOb->GetObjectSubType() == SvPb::SVNotSetSubObjectType)
 		{
 			assert(Index < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);
@@ -368,9 +361,7 @@ bool SVExternalToolTask::CreateTableObjects()
 			{
 				m_Data.m_ResultTableObjects[Index++] = dynamic_cast<SvOp::TableObject*>(pOb);
 			}
-
 		}
-
 	}
 
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS; i++)
@@ -423,6 +414,108 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 	m_isCreated = ok;
 
 	return ok;
+}
+HRESULT SVExternalToolTask::InitializeResultObjects()
+{
+	// Initialize Result Objects
+	ResultValueDefinitionStruct* paResultValueDefs = nullptr;
+	long numResultObjects {0};
+	HRESULT hr = m_dll.GetResultValueDefinitions(&numResultObjects, &paResultValueDefs);
+	m_Data.m_lNumResultValues = numResultObjects;
+	if (S_OK != hr)
+	{
+		return  hr;
+	}
+
+	m_InspectionResultValues.resize(numResultObjects);
+	m_Data.m_ResultDefinitions.resize(numResultObjects);
+
+	std::unique_ptr<int[]> MaxArraySize(nullptr);
+	if (m_dll.UseResultValuesMaxArraySize())
+	{
+		GUID guid = GetUniqueObjectID();
+		MaxArraySize = std::make_unique<int[]>(numResultObjects);
+		m_dll.getResultValuesMaxArraySize(guid, numResultObjects, MaxArraySize.get());
+	}
+
+	for (int i = 0; i < numResultObjects; i++)
+	{
+		m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
+		if (MaxArraySize.get())
+		{
+			m_Data.m_ResultDefinitions[i].setMaxArraysize(MaxArraySize[i]);
+		}
+
+		long vt = paResultValueDefs[i].m_VT;
+		if (vt != VT_BSTR)	// Do not allocate result if already exists....
+		{
+			SVResultClass* pResult = GetResultRangeObject(i);
+			if (nullptr == pResult)
+			{
+				AllocateResult(i);
+				pResult = GetResultRangeObject(i);
+			}
+			if (nullptr != pResult)
+			{
+				SvDef::SVObjectTypeInfoStruct info;
+				info.ObjectType = SvPb::SVValueObjectType;
+				info.SubType = SvPb::SVVariantValueObjectType;
+				info.EmbeddedID = SVValueObjectGuid;
+				SvVol::SVVariantValueObjectClass* pValue = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pResult->getFirstObject(info));
+
+				if (nullptr != pValue)
+				{
+					_variant_t defaultValue;
+
+					defaultValue.ChangeType(static_cast<VARTYPE> (~(VT_ARRAY)& vt));
+					pValue->SetDefaultValue(defaultValue, false);
+				}
+			}
+		}
+		///Set Arraysize 
+		SetResultArraySize();
+
+	}
+	hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefs);
+	if (S_OK != hr)
+	{
+		return hr;
+	}
+
+	ResultTableDefinitionStruct* paResultTableDefs {nullptr};
+	long resultTableNum {0};
+	std::unique_ptr<int[]> maxRowSizes(nullptr);
+	if (m_dll.UseTableOutput())
+	{
+		hr = m_dll.getResultTableDefinitions(&resultTableNum, &paResultTableDefs);
+		if (m_dll.UseResultTablesMaxRowSize())
+		{
+			GUID guid = GetUniqueObjectID();
+			maxRowSizes = std::make_unique<int[]>(resultTableNum);
+			m_dll.getResultTablesMaxRowSize(guid, resultTableNum, maxRowSizes.get());
+		}
+	}
+	
+	m_Data.m_NumResultTables = resultTableNum;
+	m_Data.m_TableResultDefinitions.resize(resultTableNum);
+	m_InspectionResultTables.resize(resultTableNum);
+	for (int j = 0; j < resultTableNum; j++)
+	{
+		m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
+		if (maxRowSizes.get())
+		{
+			m_Data.m_TableResultDefinitions[j].setTableRowCount(maxRowSizes[j]);
+		}
+	}
+
+	hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
+
+
+	paResultValueDefs = nullptr;
+
+	//Initialize TableObjects!
+	CreateArrayInTable();
+	return hr;
 }
 
 HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
@@ -598,113 +691,14 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 					m_InspectionInputValues[i] = temp.Detach();
 				}
 			}
-
-
 			hr = m_dll.DestroyInputValueDefinitionStructures(paInputValueDefs);
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
 			paInputValueDefs = nullptr;
-
 			InspectionInputsToVariantArray();
 
-			///////////////////////////////////////
-			//    Initialize Results
-			///////////////////////////////////////
-
-			// Initialize Result Objects
-			ResultValueDefinitionStruct* paResultValueDefs = nullptr;
-			long NumResultObjects {0};
-			hr = m_dll.GetResultValueDefinitions(&NumResultObjects, &paResultValueDefs);
-			m_Data.m_lNumResultValues = NumResultObjects;
-			if (S_OK != hr)
-			{
-				throw hr;
-			}
-
-			m_InspectionResultValues.resize(NumResultObjects);
-			m_Data.m_ResultDefinitions.resize(NumResultObjects);
-			bool hasAdDefinition{false};
-			long NumAdObjects {0};
-			ResultValueDefinitionStructAd* paResultValueDefsAd {nullptr};
-			if (m_dll.GetResultValueDefinitionsAd(&NumAdObjects, &paResultValueDefsAd) == S_OK)
-			{
-				hasAdDefinition = NumResultObjects == NumAdObjects;
-			}
-			for (int i = 0; i < NumResultObjects; i++)
-			{
-				if (hasAdDefinition)
-				{
-					m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], paResultValueDefsAd[i], i);
-				}
-				else
-				{
-					m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
-				}
-
-				long vt = paResultValueDefs[i].m_VT;
-				if (vt != VT_BSTR)	// Do not allocate result if already exists....
-				{
-					SVResultClass* pResult = GetResultRangeObject(i);
-					if (nullptr == pResult)
-					{
-						AllocateResult(i);
-						pResult = GetResultRangeObject(i);
-					}
-					if (nullptr != pResult)
-					{
-						SvDef::SVObjectTypeInfoStruct info;
-						info.ObjectType = SvPb::SVValueObjectType;
-						info.SubType = SvPb::SVVariantValueObjectType;
-						info.EmbeddedID = SVValueObjectGuid;
-						SvVol::SVVariantValueObjectClass* pValue = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pResult->getFirstObject(info));
-
-						if (nullptr != pValue)
-						{
-							_variant_t defaultValue;
-
-							defaultValue.ChangeType(static_cast<VARTYPE> (~(VT_ARRAY)& vt));
-							pValue->SetDefaultValue(defaultValue, false);
-						}
-					}
-				}
-				///Set Arraysize 
-				SetResultArraySize();
-
-			}
-			hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefs);
-			if (S_OK != hr)
-			{
-				throw hr;
-			}
-
-			ResultTableDefinitionStruct* paResultTableDefs {nullptr};
-			long ResultTableNum {0};
-			if (m_dll.UseTableOutput())
-			{
-				hr = m_dll.getResultTableDefinitions(&ResultTableNum, &paResultTableDefs);
-
-			}
-			m_Data.m_NumResultTables = ResultTableNum;
-			m_Data.m_TableResultDefinitions.resize(ResultTableNum);
-			m_InspectionResultTables.resize(ResultTableNum);
-			for (int j = 0; j < ResultTableNum; j++)
-			{
-				m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
-			}
-
-			hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
-
-
-			paResultValueDefs = nullptr;
-
-			//Initialize TableObjects!
-			CreateArrayInTable();
-
-			///////////////////////////////////////
-			//    InitializeRun
-			///////////////////////////////////////
 
 			hr = m_dll.InitializeRun(guid, (long)aInputImages.size(), aInputImages.size() ? &(aInputImages[0]) : nullptr,
 				(long)m_InspectionInputValues.size(), m_InspectionInputValues.size() ? &(m_InspectionInputValues[0]) : nullptr);
@@ -712,6 +706,12 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			{
 				throw hr;
 			}
+			hr = InitializeResultObjects();
+			if (S_OK != hr)
+			{
+				throw hr;
+			}
+
 			if (m_dll.UseMil())
 			{
 				// This must be done after InitializeRun so the Dll has a guid for this tool
@@ -852,13 +852,11 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 	}
 
 	return hr;
-}
+	}
 
 HRESULT SVExternalToolTask::Uninitialize()
 {
 	HRESULT hr = S_OK;
-
-
 
 	for (std::vector<SVDIBITMAPINFO>::iterator it = m_aInspectionInputHBMImages.begin(); it != m_aInspectionInputHBMImages.end(); ++it)
 	{
@@ -1018,7 +1016,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	}
 
 	return ok;
-}
+	}
 
 
 
@@ -1829,7 +1827,6 @@ void SVExternalToolTask::getResults(SvTrc::IImagePtr pResultImageBuffers[])
 {
 	collectResultValues();
 
-	/////////////////// TABLES RESULT
 	int NumTableResults = m_Data.getNumTableResults();
 	if (S_OK == m_dll.getResultTables(GetUniqueObjectID(), NumTableResults, NumTableResults ? &(m_InspectionResultTables[0]) : nullptr))
 	{
@@ -1841,7 +1838,6 @@ void SVExternalToolTask::getResults(SvTrc::IImagePtr pResultImageBuffers[])
 		}
 	}
 
-	// Result Images
 	collectResultImages(pResultImageBuffers);
 }
 
@@ -2038,8 +2034,6 @@ bool SVExternalToolTask::collectMilResultBuffers(SvTrc::IImagePtr pResultImageBu
 	return allMilResultsAreOk;
 }
 
-
-
 void SVExternalToolTask::collectResultValues()
 {
 	GUID guid = GetUniqueObjectID();
@@ -2067,11 +2061,10 @@ void SVExternalToolTask::collectResultValues()
 				var.ChangeType(type);
 				GetResultValueObject(i)->SetDefaultValue(var);
 			}
-			GetResultValueObject(i)->setValue(m_InspectionResultValues[i],-1,true);
+			GetResultValueObject(i)->setValue(m_InspectionResultValues[i], -1, true);
 		}
 		else
 		{
-
 			GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);
 		}
 		// Clear OleVariant that was created in Dll.

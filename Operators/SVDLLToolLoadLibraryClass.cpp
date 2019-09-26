@@ -113,11 +113,9 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 			m_pfnGetResultTableDefinitions = (GetResultTableDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultTableDefinitions");
 			m_pfnDestroyResultTableDefinitionStructures = (DestroyResultTableDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultTableDefinitionStructures");
 			m_pfnGetResultTables = (GetResultTablesPtr)::GetProcAddress(m_hmHandle, "GetResultTables");
-
-
-			m_pfnGetResultValueDefinitionsAd = (GetResultValueDefinitionsAdPtr)::GetProcAddress(m_hmHandle, "GetResultValueDefinitionsAd");
-			m_pfnDestroyResultValueDefinitionStructuresAd = (DestroyResultValueDefinitionStructuresAdPtr)::GetProcAddress(m_hmHandle, "DestroyResultValueDefinitionStructuresAd");
-
+			
+			m_pfnGetResultTablesMaxRowSize = (GetResultTablesMaxRowSizePtr)::GetProcAddress(m_hmHandle, "GetResultTablesMaxRowSize");
+			m_pfnGetResultValuesMaxArraySize = (GetResultValuesMaxArraySizePtr)::GetProcAddress(m_hmHandle, "GetResultValuesMaxArraySize");
 
 			// Backwards compatability
 			if (nullptr == m_pfnSimpleTest) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SimpleTest");
@@ -342,6 +340,17 @@ bool  SVDLLToolLoadLibraryClass::UseTableOutput() const
 {
 	return  m_pfnGetResultTableDefinitions != nullptr && m_pfnDestroyResultTableDefinitionStructures != nullptr;
 }
+
+bool  SVDLLToolLoadLibraryClass::UseResultTablesMaxRowSize() const
+{
+	return  (m_pfnGetResultTablesMaxRowSize != nullptr);
+}
+bool  SVDLLToolLoadLibraryClass::UseResultValuesMaxArraySize() const
+{
+	return  (m_pfnGetResultValuesMaxArraySize != nullptr);
+}
+
+
 bool SVDLLToolLoadLibraryClass::IsHandleNull()
 {
 	if (nullptr == m_hmHandle)
@@ -407,9 +416,9 @@ HRESULT SVDLLToolLoadLibraryClass::Close()
 	m_pfnDestroyImageDefinitionStructure = nullptr;
 	m_pfnGetResultTableDefinitions = nullptr;
 	m_pfnDestroyResultTableDefinitionStructures = nullptr;
-	m_pfnGetResultValueDefinitionsAd = nullptr;
-	m_pfnDestroyResultValueDefinitionStructuresAd = nullptr;
-
+	m_pfnGetResultTablesMaxRowSize = nullptr;
+	m_pfnGetResultValuesMaxArraySize = nullptr ;
+	
 	return l_hrOk;
 }
 
@@ -620,24 +629,6 @@ HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructures(Result
 
 	return l_hrOk;
 }
-HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs)
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (nullptr != m_pfnDestroyResultValueDefinitionStructuresAd)
-	{
-		try
-		{
-			l_hrOk = m_pfnDestroyResultValueDefinitionStructuresAd(paStructs);
-		}
-		catch (...)
-		{
-			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
-		}
-	}
-
-	return l_hrOk;
-}
 
 HRESULT SVDLLToolLoadLibraryClass::SetInputValues(GUID tool, long lArraySize, VARIANT* paInputValues)
 {
@@ -766,25 +757,6 @@ HRESULT SVDLLToolLoadLibraryClass::GetResultValueDefinitions(long* plArraySize, 
 		try
 		{
 			l_hrOk = m_pfnGetResultValueDefinitions(plArraySize, ppaResultValues);
-		}
-		catch (...)
-		{
-			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVDLLToolLoadLibraryClass::GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues)
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (nullptr != m_pfnGetResultValueDefinitionsAd)
-	{
-		try
-		{
-			l_hrOk = m_pfnGetResultValueDefinitionsAd(plArraySize, ppaResultValues);
 		}
 		catch (...)
 		{
@@ -1019,5 +991,47 @@ HRESULT SVDLLToolLoadLibraryClass::getResultTables(GUID tool, long lArraySize, V
 
 	return l_hrOk;
 }
+
+
+HRESULT SVDLLToolLoadLibraryClass::getResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[])
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetResultTablesMaxRowSize)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetResultTablesMaxRowSize(tool, Size, pRowSizes);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
+
+
+HRESULT SVDLLToolLoadLibraryClass::getResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[])
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetResultValuesMaxArraySize)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetResultValuesMaxArraySize(tool, Size, pArraySizes);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
 
 } //namespace SvOp
