@@ -562,6 +562,13 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
+
+		if (0 >= getResetId())
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_StopReloadingReader, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
+		}
 	}
 }
 

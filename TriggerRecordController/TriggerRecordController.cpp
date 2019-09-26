@@ -232,6 +232,7 @@ bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordR
 			}
 		}
 		retValue = m_pDataController->setTrOfInterest(trValueVec);
+		pLock.reset();
 		if (retValue)
 		{
 			sendInterestTrIdCall(trEventVec);

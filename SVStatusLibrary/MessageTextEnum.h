@@ -535,6 +535,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_NotEnoughFreeForLock,
 	Tid_TRC_Error_DecreaseFreeTRC,
 	Tid_TRC_Error_GetInterestFailedLockFailed,
+	Tid_TRC_Error_StopReloadingReader,
 
 	Tid_TRC_Error_ResetInspectionFailed,
 	Tid_TRC_Error_CounterTimeOut,

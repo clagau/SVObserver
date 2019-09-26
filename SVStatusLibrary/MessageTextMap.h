@@ -571,6 +571,7 @@ namespace SvStl
 		{Tid_TRC_Error_NotEnoughFreeForLock, _T("Not enough triggerRecord free. Not possible to lock a triggerRecord.")},
 		{Tid_TRC_Error_DecreaseFreeTRC, _T("Decrease of free triggerRecord failed. The number can not become lower than zero.")},
 		{Tid_TRC_Error_GetInterestFailedLockFailed, _T("getTRofInterest failed because no lock obtained.")},
+		{Tid_TRC_Error_StopReloadingReader, _T("Stopping Reloading TRC-Reader, because of new reset.")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 		{Tid_TRC_Error_CounterTimeOut, _T("ResetCounter is not go back to zero in %s seconds. Maybe a client is die without reset the counter. The current value is %s.")},
