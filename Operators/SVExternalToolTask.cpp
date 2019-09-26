@@ -494,27 +494,32 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 			maxRowSizes = std::make_unique<int[]>(resultTableNum);
 			m_dll.getResultTablesMaxRowSize(guid, resultTableNum, maxRowSizes.get());
 		}
-	}
-	
-	m_Data.m_NumResultTables = resultTableNum;
-	m_Data.m_TableResultDefinitions.resize(resultTableNum);
-	m_InspectionResultTables.resize(resultTableNum);
-	for (int j = 0; j < resultTableNum; j++)
-	{
-		m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
-		if (maxRowSizes.get())
+
+
+		m_Data.m_NumResultTables = resultTableNum;
+		m_Data.m_TableResultDefinitions.resize(resultTableNum);
+		m_InspectionResultTables.resize(resultTableNum);
+
+		for (int j = 0; j < resultTableNum; j++)
 		{
-			m_Data.m_TableResultDefinitions[j].setTableRowCount(maxRowSizes[j]);
+			m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
+			if (maxRowSizes.get())
+			{
+				m_Data.m_TableResultDefinitions[j].setTableRowCount(maxRowSizes[j]);
+			}
 		}
+
+		hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
+		paResultValueDefs = nullptr;
+		CreateArrayInTable();
 	}
+	else
+	{
+		m_Data.m_NumResultTables = 0;
+		m_Data.m_TableResultDefinitions.resize(0);
+		m_InspectionResultTables.resize(0);
 
-	hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
-
-
-	paResultValueDefs = nullptr;
-
-	//Initialize TableObjects!
-	CreateArrayInTable();
+	}
 	return hr;
 }
 
@@ -852,7 +857,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 	}
 
 	return hr;
-	}
+}
 
 HRESULT SVExternalToolTask::Uninitialize()
 {
@@ -1016,7 +1021,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	}
 
 	return ok;
-	}
+}
 
 
 
