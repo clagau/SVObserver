@@ -2870,7 +2870,9 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 					}
 				}
 			}
-			if(position < 0 && !notPending)
+			//@TODO[MZA][8.20][27.09.2019] We add this hack to solve bug SVO-2364 in 8.20: The images will pending until 4ms since acquisition start, even if pending is not wanted.
+			//This has to be removed in the next version and solved with SVO-2427
+			if(position < 0 && (!notPending || SvTl::GetTimeStamp() < startTime + 4.))
 			{
 				m_PendingCameraResponses[rElement.m_pCamera] = rElement;
 
