@@ -101,9 +101,13 @@ bool TrcTester::setBuffers()
 {
 	CString logStr;
 	bool setBufferOk = true;
-	double start = SvTl::GetTimeStamp();
+	double elapsed_ms_sum = 0.;
+	std::vector<std::pair<int, int>> numbersOfRecords(m_config.getNumberOfInspections(), {m_config.getNumberOfImagesPerInspection(), 0});
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
+		setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateInspections);
+		m_TRController.setGlobalInit();
+		double start = SvTl::GetTimeStamp();
 		setBufferOk = setInspectionBuffers(strTestSetBuffers);
 		if (!setBufferOk)
 		{
@@ -119,13 +123,17 @@ bool TrcTester::setBuffers()
 			m_rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestSetBuffers);
 			break;
 		}
+		m_TRController.finishGlobalInit();
+		double end = SvTl::GetTimeStamp();
+		double elapsed_ms = end - start;
+		elapsed_ms_sum += elapsed_ms;
+		m_TRController.clearAll();
 	}
-	double end = SvTl::GetTimeStamp();
-	double elapsed_ms = end - start;
+
 	if (setBufferOk)
 	{
-		bool isTimeOK = (elapsed_ms <= m_config.getMaxTimeSetBuffer());
-		logStr.Format(_T("time (%f ms, max time is %f)"), elapsed_ms, m_config.getMaxTimeSetBuffer());
+		bool isTimeOK = (elapsed_ms_sum <= m_config.getMaxTimeSetBuffer());
+		logStr.Format(_T("time (%f ms, max time is %f)"), elapsed_ms_sum, m_config.getMaxTimeSetBuffer());
 		m_rLogClass.Log(logStr, isTimeOK ? LogLevel::Information_Level1 : LogLevel::Error, isTimeOK ? LogType::PASS : LogType::FAIL, __LINE__, strTestSetBuffers);
 	}
 	return setBufferOk;
@@ -486,29 +494,16 @@ bool TrcTester::setAndReadValues()
 	}
 
 	//create ValueList
-	std::vector<_variant_t> valueList;
 	SvPb::DataDefinitionList dataDefList;
-	auto* pList = dataDefList.mutable_list();
-	for (const auto valueObject : m_config.getValueObjectSet())
-	{
-		auto* pValueObjectDef = pList->Add();
-		std::string uniqueIdBytes;
-		GUID guid = GUID_NULL;
-		UuidCreateSequential(&guid);
-		SvPb::SetGuidInProtoBytes(&uniqueIdBytes, guid);
-		pValueObjectDef->set_guidid(uniqueIdBytes);
-		pValueObjectDef->set_name(valueObject.first);
-		valueList.push_back(valueObject.second);
-	}
+	std::vector<std::vector<BYTE>> dataMemVector;
+	long memOffset = createDataDefContainer(dataMemVector, dataDefList);
 
 	//init triggerRecord
 	try
 	{
 		auto tmpDefList = dataDefList;
-		auto tmpValueList = valueList;
 		m_TRController.startResetTriggerRecordStructure(0);
-		//@TODO[gra][8.20][23.09.2019]: This needs to still be adapted to the new changeDataDef
-		//m_TRController.changeDataDef(std::move(tmpDefList), std::move(tmpValueList), 0);
+		m_TRController.changeDataDef(std::move(tmpDefList), memOffset, 0);
 		m_TRController.finishResetTriggerRecordStructure();
 	}
 	catch (const SvStl::MessageContainer& rExp)
@@ -525,14 +520,14 @@ bool TrcTester::setAndReadValues()
 	//first run empty run, because the first two runs can last longer.
 	for (int i = 0; i < 2; i++)
 	{
-		writeAndReadSingleValue(i, dataDefList.list_size());
+		writeAndReadSingleValue(i, dataDefList.list_size(), dataMemVector);
 	}
 
-	constexpr int numberOfRuns = 10;
+	constexpr int numberOfRuns = 22;
 	double start = SvTl::GetTimeStamp();
 	for (int i = 0; i < numberOfRuns; i++)
 	{
-		bool retVal = writeAndReadSingleValue(i, dataDefList.list_size());
+		bool retVal = writeAndReadSingleValue(i, dataDefList.list_size(), dataMemVector);
 		if (!retVal)
 		{
 			return retVal;
@@ -797,9 +792,10 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 	return retValue;
 }
 
-bool TrcTester::writeAndReadSingleValue(int index, int listSize)
+bool TrcTester::writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<BYTE>>& rDataVector)
 {
 	const auto& rRunData = m_config.getValueSet()[index%m_config.getValueSet().size()];
+	const auto& rMemData = rDataVector[index%rDataVector.size()];
 	{//scope for tr2W
 	 //get TR and set new image
 		auto tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
@@ -810,9 +806,8 @@ bool TrcTester::writeAndReadSingleValue(int index, int listSize)
 		}
 		try
 		{
-			auto tmpData = rRunData;
-			//@TODO[gra][8.20][23.09.2019]: This needs to still be adapted to the new writeValueData
-			//tr2W->writeValueData(std::move(tmpData));
+			auto tmpData = rMemData;
+			tr2W->writeValueData(&tmpData[0], static_cast<long>(tmpData.size()));
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
@@ -847,4 +842,57 @@ bool TrcTester::writeAndReadSingleValue(int index, int listSize)
 		m_rLogClass.Log(errorStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestSetAndReadValues);
 	}
 	return true;
+}
+
+int TrcTester::createDataDefContainer(std::vector<std::vector<BYTE>>& rDataMemVector, SvPb::DataDefinitionList& rDataDefList)
+{
+	rDataMemVector.clear();
+	auto* pList = rDataDefList.mutable_list();
+	long memOffset {0};
+	const auto& rParamDefVec = m_config.getValueObjectSet();
+	for (const auto valueObject : rParamDefVec)
+	{
+		long memSize = valueObject.getByteSize();
+		auto* pValueObjectDef = pList->Add();
+		std::string uniqueIdBytes;
+		GUID guid = GUID_NULL;
+		UuidCreateSequential(&guid);
+		SvPb::SetGuidInProtoBytes(pValueObjectDef->mutable_guidid(), guid);
+		pValueObjectDef->set_name(valueObject.m_name);
+		pValueObjectDef->set_arraysize(1);
+		pValueObjectDef->set_vttype(valueObject.getVarType());
+		pValueObjectDef->set_memoffset(memOffset);
+		memOffset += memSize;
+	}
+
+	const auto& rValueVec = m_config.getValueSet();
+	for (const auto& rValues : rValueVec)
+	{
+		std::vector<BYTE> memData;
+		memData.resize(memOffset);
+		for (int i = 0; i < rParamDefVec.size(); i++)
+		{
+			switch (rValues[i].vt)
+			{
+				case VT_I4:
+				case VT_INT:
+					memcpy(&memData[pList->Get(i).memoffset()], &rValues[i].intVal, rParamDefVec[i].getByteSize());
+					break;
+				case VT_R8:
+					memcpy(&memData[pList->Get(i).memoffset()], &rValues[i].dblVal, rParamDefVec[i].getByteSize());
+					break;
+				case VT_BSTR:
+				{
+					std::string tmpStr = SvUl::createStdString(rValues[i].bstrVal);
+					memcpy(&memData[pList->Get(i).memoffset()], tmpStr.c_str(), rParamDefVec[i].getByteSize());
+					break;
+				}
+				default:
+					break;
+			}
+
+		}
+		rDataMemVector.push_back(std::move(memData));
+	}
+	return memOffset;
 }

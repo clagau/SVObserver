@@ -15,6 +15,11 @@ namespace SvTrc
 class ITriggerRecordControllerRW;
 }
 
+namespace SvPb
+{
+class DataDefinitionList;
+}
+
 /// controls the flow of the test
 class TrcTester
 {
@@ -37,7 +42,8 @@ private:
 
 	bool setInspectionBuffers(LPCSTR testAreaStr);
 	bool setIndependentBuffers(LPCSTR testAreaStr);
-	bool writeAndReadSingleValue(int index, int listSize);
+	bool writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<BYTE>>& rDataVector);
+	int createDataDefContainer(std::vector<std::vector<BYTE>>& rDataMemVector, SvPb::DataDefinitionList& rDataDefList);
 	
 	SvTrc::ITriggerRecordControllerRW &m_TRController;
 	TrcTesterConfiguration& m_config;

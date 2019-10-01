@@ -13,6 +13,18 @@ namespace SvLib
 class  SVOINIClass;
 }
 
+struct ParamDef
+{
+	ParamDef(std::string name, variant_t value, int byteSize = 0);
+
+	std::string m_name;
+	variant_t m_value;
+	int m_byteSize = 0; //only used if string, else size of object
+
+	DWORD getVarType() const { return m_value.vt; };
+	int getByteSize() const { return m_byteSize; };
+};
+
 class TrcTesterConfiguration
 {
 public:
@@ -22,7 +34,7 @@ public:
 	~TrcTesterConfiguration();
 
 	typedef std::vector<MIL_ID> ImageList;
-	typedef std::vector<std::pair<std::string, variant_t>> ParamDefList;
+	typedef std::vector<ParamDef> ParamDefList;
 	typedef std::vector<std::vector<variant_t>> ParamValueList;
 
 	struct InspectionsDef
@@ -81,7 +93,7 @@ private:
 private:
 	bool m_isLocal = false;
 	int m_NumberOfRuns = 20;
-	const int m_NoOfRepetitionsPerStep = 200;
+	const int m_NoOfRepetitionsPerStep = 20;
 	
 	int m_NumberOfImagesPerInspection = 99;
 	int m_NumberOfInspections = 5;
@@ -105,8 +117,8 @@ private:
 		{R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000001.bmp)",R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000002.bmp)",R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000003.bmp)",R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000004.bmp)", R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000005.bmp)",R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000006.bmp)",R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000007.bmp)",R"(C:\Images\RGB\656x416\CrimpWave\CrimpWave_000008.bmp)"}};
 	std::vector<ImageList> m_imageLists;
 
-	const ParamDefList m_valueObjectSet = {{"Value_int", 4}, {"Value_double", 4.0}, {"Value_string", "Test100"}};
-	const ParamValueList m_valueSet = {{4,4.0,"Test1.0"}, {7,3.1,"Test2.0"}, {1,0.5,"Test3.0"}, {5,5.5,"Test4.0"}, {2,3.0,"Test5.0"}, {100,1000.0,"Test6.0"}, {4,4.0,"Test7.0"}};
+	const ParamDefList m_valueObjectSet = {{"Value_int", 4}, {"Value_double", 4.0}, {"Value_string", "Test100", 9}};
+	const ParamValueList m_valueSet = {{4,4.0,"Test1.0"}, {7,3.1,"Test2.0"}, {1,0.5,"Test3.0"}, {5,5.5,"Test4.0"}, {2,3.0,"Test5.0"}, {100,1000.0,"Test116."}, {4,4.0,"Test17.0"}};
 
 	TestDataList m_testData;
 };

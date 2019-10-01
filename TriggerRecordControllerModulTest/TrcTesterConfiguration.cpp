@@ -50,6 +50,20 @@ std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames)
 	return retValue;
 }
 
+ParamDef::ParamDef(std::string name, variant_t value, int byteSize)
+	: m_name(name), m_value(value), m_byteSize(byteSize)
+{
+	switch (m_value.vt)
+	{
+		case VT_I4: case VT_INT: m_byteSize = 4; break;
+		case VT_R8: m_byteSize = sizeof(double); break;
+		default:
+			break;
+	}
+
+	assert(m_byteSize > 0);
+}
+
 
 void TrcTesterConfiguration::InspectionsDef::recalcRecordSizes()
 {
