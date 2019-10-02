@@ -44,6 +44,7 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	bool GetRotation() const;
+	
 
 	//************************************
 	//! return Flag with enabled Autosize

@@ -40,6 +40,7 @@ public:
 
 #pragma region public methods
 public:
+	
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const override;
 
 	void AppendInputObjects();

@@ -216,6 +216,7 @@ bool SVLinearToolClass::GetRotation() const
 	return (TRUE == bVal);
 }
 
+
 SvPb::EAutoSize SVLinearToolClass::GetAutoSizeEnabled() const
 {
 	if (GetRotation())

@@ -108,6 +108,9 @@ public:
 	void clearTaskMessages() { m_ResetErrorMessages.clear(); m_RunErrorMessages.clear(); };
 	void clearRunErrorMessages() { m_RunErrorMessages.clear(); };
 
+	void removeTaskMessage(long MessageCode, SvStl::MessageTextEnum AdditionalTextId);
+
+
 	bool IsRunErrorMessageEmpty() { return m_RunErrorMessages.empty(); };
 
 	/// Preparing to go offline. Is used e.g. by the Archive Tool.

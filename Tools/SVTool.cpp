@@ -704,6 +704,14 @@ bool SVToolClass::usePropagateSizeAndPosition() const
 	return false;
 }
 
+void SVToolClass::removeTaskMessages(long MessageCode, SvStl::MessageTextEnum AdditionalTextId)
+{
+	removeTaskMessage(MessageCode, AdditionalTextId);
+	for (auto& TaskObj : m_TaskObjectVector)
+	{
+		TaskObj->removeTaskMessage(MessageCode, AdditionalTextId);
+	}
+}
 HRESULT SVToolClass::updateImageExtent()
 {
 	return m_toolExtent.updateImageExtent();

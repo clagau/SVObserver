@@ -293,6 +293,33 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p
 	return l_svOk;
 }
 
+
+void SVTaskObjectClass::removeTaskMessage(long MessageCode, SvStl::MessageTextEnum AdditionalTextId)
+{
+	
+	auto it = std::find_if(m_ResetErrorMessages.begin(), m_ResetErrorMessages.end(),
+		[&](SvStl::MessageContainer &mc)
+	{
+		return ((mc.getMessage().m_MessageCode == MessageCode) && (mc.getMessage().m_AdditionalTextId == AdditionalTextId));
+		
+	});
+	if (it != m_ResetErrorMessages.end())
+	{
+		m_ResetErrorMessages.erase(it);
+	}
+	auto it2 = std::find_if(m_RunErrorMessages.begin(), m_RunErrorMessages.end(),
+		[&](SvStl::MessageContainer &mc)
+	{
+		return ((mc.getMessage().m_MessageCode == MessageCode) && (mc.getMessage().m_AdditionalTextId == AdditionalTextId));
+	});
+	if (it2 != m_RunErrorMessages.end())
+	{
+		m_RunErrorMessages.erase(it2);
+	}
+
+
+}
+
 HRESULT SVTaskObjectClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject)
 {
 	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)

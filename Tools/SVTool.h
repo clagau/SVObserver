@@ -144,6 +144,9 @@ public:
 	virtual bool propagateSizeAndPosition();
 	virtual bool usePropagateSizeAndPosition() const;
 
+	
+	 void removeTaskMessages(long MessageCode, SvStl::MessageTextEnum AdditionalTextId);
+
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
 	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;

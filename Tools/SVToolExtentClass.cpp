@@ -220,6 +220,10 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExte
 					{
 						if (S_OK != m_pToolImage->ValidateAgainstParentExtents(imageExtents))
 						{
+							if (m_pTool && m_pTool->GetObjectSubType() == SvPb::SVLinearToolObjectType)
+							{
+								m_pTool->removeTaskMessages(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed);
+							}
 							pParent->GetImageExtentsToFit(imageExtents, imageExtents);
 
 							SetImageExtent(imageExtents);
