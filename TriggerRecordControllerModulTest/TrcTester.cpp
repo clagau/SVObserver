@@ -406,6 +406,13 @@ bool TrcTester::setAndReadImage()
 		return false;
 	}
 
+	//first time of the next commands needs much longer. Run this before check performance
+	{
+		auto imageHandle = m_TRController.getImageBuffer(bufferStruct);
+		MbufCopy(imageIds[0], imageHandle->getHandle()->GetBuffer().GetIdentifier());
+		areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageIds[0]);
+	}
+
 	//constexpr int numberOfRuns = 100;
 	const int numberOfRuns = m_config.getNoOfRepetitionsPerStep();
 	double start = SvTl::GetTimeStamp();

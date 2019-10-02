@@ -50,8 +50,8 @@ std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames)
 	return retValue;
 }
 
-ParamDef::ParamDef(std::string name, variant_t value, int byteSize)
-	: m_name(name), m_value(value), m_byteSize(byteSize)
+ParamDef::ParamDef(std::string&& rName, variant_t value, int byteSize)
+	: m_name(std::move(rName)), m_value(value), m_byteSize(byteSize)
 {
 	switch (m_value.vt)
 	{

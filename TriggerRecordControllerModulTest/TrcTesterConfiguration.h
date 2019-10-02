@@ -15,7 +15,7 @@ class  SVOINIClass;
 
 struct ParamDef
 {
-	ParamDef(std::string name, variant_t value, int byteSize = 0);
+	ParamDef(std::string&& rName, variant_t value, int byteSize = 0);
 
 	std::string m_name;
 	variant_t m_value;
