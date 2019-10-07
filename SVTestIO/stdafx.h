@@ -52,6 +52,7 @@
 #include <afxtempl.h>
 
 #include <algorithm>
+#include <assert.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <map>

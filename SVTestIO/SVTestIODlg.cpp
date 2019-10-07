@@ -16,6 +16,7 @@
 #include "SVTestIODlg.h"
 #pragma endregion Includes
 
+#define WM_SETOUTPUT (WM_USER + 101)
 
 IMPLEMENT_DYNAMIC(SVTestIODlg, CDialog)
 
@@ -24,13 +25,13 @@ SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/)
 	, m_lInputs(0)
 	, m_bResetStart(true)
 {
-	::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 10000);
+	
 	m_pCallBacks.resize(4);
 }
 
 SVTestIODlg::~SVTestIODlg()
 {
-	::DeleteCriticalSection( &m_CriticalSection );
+	
 }
 
 void SVTestIODlg::DoDataExchange(CDataExchange* pDX)
@@ -58,11 +59,14 @@ BEGIN_MESSAGE_MAP(SVTestIODlg, CDialog)
 	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_INPUT1, IDC_INPUT8, &SVTestIODlg::OnInputButtonClicked)
 
-	ON_BN_CLICKED(IDC_LOG_BUTTON, &SVTestIODlg::OnBnClickedLogButton)
+	ON_BN_CLICKED(IDC_LOG_CHECK, &SVTestIODlg::OnBnClickedLogging)
+	ON_BN_CLICKED(IDC_LOG_BUTTON, &SVTestIODlg::OnBnClickedResetTs)
 	ON_BN_CLICKED(IDC_CLEAR_BTN, &SVTestIODlg::OnBnClickedClearButton)
 
 	// IDC_TRIGGER_1 to IDC_TRIGGER_4 must be contiguous and sequential for this to work:
 	ON_CONTROL_RANGE(BN_CLICKED, IDC_TRIGGER_1, IDC_TRIGGER_4, &SVTestIODlg::OnTriggerButtonClicked)
+
+	ON_MESSAGE(WM_SETOUTPUT, OnSetOutput)
 
 END_MESSAGE_MAP()
 
@@ -98,62 +102,27 @@ void SVTestIODlg::ToggleInput(unsigned int inputchannel)
 	}
 }
 
-void SVTestIODlg::SetOutput( unsigned long zeroBasedOutputchannel, bool p_bState)
+void SVTestIODlg::SetOutput( unsigned long zeroBasedOutputchannel, bool bState)
 {
-
-	HICON l_hState = nullptr;
-
-	::EnterCriticalSection( &m_CriticalSection );
-	if( p_bState )
-	{
-		l_hState = AfxGetApp()->LoadIconA( IDI_ICON1 );
-	}
-	else
-	{
-		l_hState = AfxGetApp()->LoadIconA( IDI_ICON4 );
-	}
-
-	unsigned long oneBasedOutputchannel = zeroBasedOutputchannel +1;
-
-	if (oneBasedOutputchannel < c_upperBoundForOutputChannel)
-	{
-		m_Output[oneBasedOutputchannel].SetIcon( l_hState );
-	}
-
-	if( m_LogBtn.GetCheck() != 0 )
-	{
-		CString l_strTmp;
-		unsigned __int64 l_i64Check;
-		unsigned __int64 l_iTime;
-
-		if( m_bResetStart )
-		{
-			::QueryPerformanceCounter( (LARGE_INTEGER*)&m_i64Start);
-			::QueryPerformanceFrequency((LARGE_INTEGER*)&m_i64Frequency);
-			m_i64Frequency/=1000;
-			m_bResetStart = false;
-		}
-
-		::QueryPerformanceCounter( (LARGE_INTEGER*)&l_i64Check);
-		l_iTime = (l_i64Check - m_i64Start)/m_i64Frequency;
-		l_strTmp.Format( "%010I64u Ch %02d %s", l_iTime, oneBasedOutputchannel, p_bState? "Off" : "On");
-		m_LogList.AddString(l_strTmp);
-	}
-	::LeaveCriticalSection(&m_CriticalSection);
+	PostMessage(WM_SETOUTPUT, static_cast<WPARAM>( zeroBasedOutputchannel), static_cast<LPARAM>(bState));
 }
 
 BOOL SVTestIODlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-
+	m_isLogButtonChecked = (BST_CHECKED == m_LogBtn.GetCheck());
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVTestIODlg::OnBnClickedLogButton()
+void SVTestIODlg::OnBnClickedResetTs()
 {
 	m_bResetStart = true;
 	m_LogList.AddString("*** Reset TS ****");
+}
+void SVTestIODlg::OnBnClickedLogging()
+{
+	m_isLogButtonChecked = (BST_CHECKED == m_LogBtn.GetCheck());
 }
 
 
@@ -177,4 +146,54 @@ void SVTestIODlg::OnCancel()
 	return;
 
 	CDialog::OnCancel();
+}
+
+
+
+
+LRESULT SVTestIODlg::OnSetOutput(WPARAM wParam, LPARAM lParam)
+{
+
+	HICON l_hState = nullptr;
+
+	unsigned long zeroBasedOutputchannel = static_cast<unsigned long>(wParam);
+	bool bState = lParam != 0;
+	if (bState)
+	{
+		l_hState = AfxGetApp()->LoadIconA(IDI_ICON1);
+	}
+	else
+	{
+		l_hState = AfxGetApp()->LoadIconA(IDI_ICON4);
+	}
+
+	unsigned long oneBasedOutputchannel = zeroBasedOutputchannel + 1;
+
+	if (oneBasedOutputchannel < c_upperBoundForOutputChannel)
+	{
+		m_Output[oneBasedOutputchannel].SetIcon(l_hState);
+	}
+
+	
+	assert(m_isLogButtonChecked  == (m_LogBtn.GetCheck()== BST_CHECKED));
+	if(m_isLogButtonChecked) 
+	{
+		CString l_strTmp;
+		unsigned __int64 l_i64Check;
+		unsigned __int64 l_iTime;
+
+		if (m_bResetStart)
+		{
+			::QueryPerformanceCounter((LARGE_INTEGER*)&m_i64Start);
+			::QueryPerformanceFrequency((LARGE_INTEGER*)&m_i64Frequency);
+			m_i64Frequency /= 1000;
+			m_bResetStart = false;
+		}
+
+		::QueryPerformanceCounter((LARGE_INTEGER*)&l_i64Check);
+		l_iTime = (l_i64Check - m_i64Start) / m_i64Frequency;
+		l_strTmp.Format("%010I64u Ch %02d %s", l_iTime, oneBasedOutputchannel, bState ? "Off" : "On");
+		m_LogList.AddString(l_strTmp);
+	}
+	return 0;
 }

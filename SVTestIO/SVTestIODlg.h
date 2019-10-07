@@ -44,7 +44,8 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-
+	LRESULT OnSetOutput(WPARAM wParam, LPARAM lParam);
+	
 	void SetOutput( unsigned long p_iChannel, bool p_bState);
 	CRITICAL_SECTION m_CriticalSection;
 	unsigned __int64 m_i64Frequency;
@@ -59,15 +60,17 @@ public:
 	CStatic m_Output[c_upperBoundForOutputChannel];
 	CListBox m_LogList;
 
-	afx_msg void OnBnClickedLogButton();
+	afx_msg void OnBnClickedResetTs();
 	afx_msg void OnBnClickedClearButton();
+	afx_msg void  OnBnClickedLogging();
 	CButton m_LogBtn;
+	bool m_isLogButtonChecked {false};
 	bool m_bResetStart;
 	std::vector<SvTh::SVTriggerCallbackPtr> m_pCallBacks;
-
 	void OnTriggerButtonClicked( UINT nID );
 
 protected:
 	virtual void OnCancel() override;
+
 };
 
