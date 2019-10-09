@@ -2280,6 +2280,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 						std::string oldFileName{FileName};
 						SvUl::searchAndReplace(FileName, OriginalFile.c_str(), szFile);
 						::rename(oldFileName.c_str(), FileName.c_str());
+						OriginalFile = m_SvxFileName.GetFileNameOnly();
 					}
 					break;
 				}
