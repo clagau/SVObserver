@@ -1122,12 +1122,14 @@ void SVObserverApp::OnGoOffline()
 	}
 	else if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_STOP))
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		bool isRegression = SVSVIMStateClass::CheckState(SV_STATE_REGRESSION);
+		//Call OnStop first otherwise the SV_STATE_STOP is not set as StopRegression removes SV_STATE_REGRESSION
+		OnStop();
+		if (isRegression)
 		{
 			StopRegression();
 		}
-			OnStop();
-	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
