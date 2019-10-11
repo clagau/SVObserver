@@ -106,7 +106,7 @@ HRESULT SVDeviceParam::SetDescription(const std::string& rDescription)
 
 HRESULT SVDeviceParam::SetType( SVDeviceParamEnum e )
 {
-	if ( m_eParam == DeviceDataTypeUnknown )
+	if (DeviceParamInvalid == m_eParam)
 	{
 		m_eParam = e;
 		return S_OK;
