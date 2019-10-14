@@ -310,7 +310,9 @@ bool SVBarCodeResultClass::BuildHashTable(char *pBuffer)
 	bool  bRet = true;
 
 	for (int i = 0; i < BC_MAX_ENTREES; i++)
+	{
 		m_pDataArr[i] = 0;
+	}
 
 	for (m_nTotalCount = 0;
 		(m_nTotalCount < BC_MAX_ENTREES) && (lBufIndex < m_lTotalBytes);

@@ -190,8 +190,6 @@ bool SVLUTOperatorClass::CloseObject()
 ////////////////////////////////////////////////////////////////////////////////
 bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 {
-	long lLutMode = 0;
-
 	if( getOutputImage() )
 	{
 		long pixelDepth = getOutputImage()->getPixelDepth();
@@ -218,6 +216,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 		}
 
 		// Get current LUT Operator Mode...
+		long lLutMode = 0;
 		if (S_OK != m_lutMode.GetValue(lLutMode))
 		{
 			return false;

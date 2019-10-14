@@ -735,14 +735,10 @@ void CSVOPropertyPageDlg::SetupInspection()
 			pCombo->SetInfoText(_T("This specifies which Camera from the attached PPQ to use as the main Toolset Image."));
 			pCombo->CreateComboBox(CBS_DROPDOWNLIST);
 			// enter the Cameras available on the PPQ that this inspection is attached to...
-			
-			long lSize;
-			long l;
-			
 			if( 0 < m_PPQObj.GetAttachedInspectionCount() )
 			{
-				lSize = m_PPQObj.GetAttachedCameraCount();
-				for( l = 0; l < lSize; l++ )
+				long lSize = m_PPQObj.GetAttachedCameraCount();
+				for(long l = 0; l < lSize; l++ )
 				{
 					std::string CameraName = m_PPQObj.GetAttachedCamera( l );
 					iInsIndex = pCombo->AddString( CameraName.c_str() );
@@ -750,7 +746,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 				}// end for
 				
 				long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetToolsetImage().c_str() );
-				bool bResult = pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
+				/*bool bResult =*/ pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
 			}// end if
 			else
 			{
@@ -774,7 +770,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 			pCombo->SetItemData( iInsIndex, 1 );
 			
 			long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetNewDisableMethodString().c_str() );
-			bool bResult = pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
+			/*bool bResult = */pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
 		}// end if
 
 		if( m_InspectionObj.GetShowAuxExtent() )
@@ -958,7 +954,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 					m_PPQObj.SetPPQLength(2);
 				}
 			}
-			bool bResult = pEdit->SetItemValue(m_PPQObj.GetPPQLength());
+			/*bool bResult = */pEdit->SetItemValue(m_PPQObj.GetPPQLength());
 		}
 		
 		// PPQOutputDelayTime
@@ -969,7 +965,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 			pEdit->SetLabelText(_T("Output Delay Time"));
 			pEdit->SetInfoText(_T("All Modes - in all modes this is the number of milliseconds between the "
 								  "trigger and the setting of the outputs."));
-			bool bResult = pEdit->SetItemValue(m_PPQObj.GetPPQOutputDelayTime());
+			/*bool bResult = */pEdit->SetItemValue(m_PPQObj.GetPPQOutputDelayTime());
 		}
 		
 		// PPQOutputResetDelayTime
@@ -981,7 +977,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 			pEdit->SetInfoText(_T("All Modes - in all modes this is the number of milliseconds between the "
 								  "setting of the outputs and the resetting of the outputs to their defaults. "
 									"A value of 0 means there will be no reset."));
-			bool bResult = pEdit->SetItemValue(m_PPQObj.GetPPQOutputResetDelay());
+			/*bool bResult = */pEdit->SetItemValue(m_PPQObj.GetPPQOutputResetDelay());
 		}
 		
 		//add new property for "Maintain Source Image"  default to FALSE;
@@ -1008,7 +1004,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 			pEdit->SetInfoText(_T("Unit: milliseconds. "
 			                      "Time offset before the end of the Extended Time Delay after which an inspection will not start. "
 			                      "Set the value to 0 to disable this feature." ));
-			bool bResult = pEdit->SetItemValue( m_PPQObj.GetInspectionTimeout() );
+			/*bool bResult = */pEdit->SetItemValue( m_PPQObj.GetInspectionTimeout() );
 		}
 
 		// Add Conditional Output
@@ -1185,8 +1181,6 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			ASSERT( pDeviceParam );
 			ASSERT( pFileDeviceParam );
 
-			long lValue;
-
 			// If Custom get real DeviceParam
 			if (pDeviceParam && pDeviceParam->DataType() == DeviceDataTypeCustom)
 			{
@@ -1199,6 +1193,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			if (pDeviceParam && pFileDeviceParam)
 			{
+				long lValue;
 				switch ( pDeviceParam->DataType() )
 				{
 					case DeviceDataTypeLong:
@@ -1891,7 +1886,6 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	long l_WidthMax = format.m_lWidthMax;
 	long l_HeightMax = format.m_lHeightMax;
 
-	bool bHaveImage = false;
 	bool bChangedAcqFormat = false;
 	SVImageInfoClass l_ImageInfo;
 
@@ -1939,7 +1933,6 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 		for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
 		{
-			bool bHasCamera = false;
 			pInspection = pConfig->GetInspection( lInspection );
 			if ( nullptr != pInspection )
 			{
@@ -2011,11 +2004,6 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 		{
 			l_ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_WidthMax );
 			l_ImageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_HeightMax );
-		}
-
-		if ( S_OK == hr )
-		{
-			bHaveImage = true;
 		}
 	}
 

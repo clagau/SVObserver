@@ -218,15 +218,6 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjec
 	return S_OK;
 }
 
-HRESULT SVTaskObjectClass::GetNonToolsetOutputList(SVOutputInfoListClass& rOutputInfoList) const
-{
-	HRESULT Result(S_OK);
-
-	SvOi::addRootChildObjects(rOutputInfoList);
-
-	return Result;
-}
-
 HRESULT SVTaskObjectClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const
 {
 	return S_FALSE;
@@ -1095,7 +1086,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
 struct CompareInputName
 {
 	std::string m_Name;
-	CompareInputName(const std::string& rName) : m_Name(rName) {}
+	explicit CompareInputName(const std::string& rName) : m_Name(rName) {}
 	bool operator()(const SvOl::SVInObjectInfoStruct* pInfo) const { return pInfo->GetInputName() == m_Name; }
 };
 
@@ -1479,13 +1470,6 @@ DWORD SVTaskObjectClass::GetObjectColor() const
 	DWORD dwColor;
 	m_statusColor.GetValue(dwColor);
 	return dwColor;
-}
-
-DWORD SVTaskObjectClass::GetObjectState() const
-{
-	DWORD dwState;
-	m_statusTag.GetValue(dwState);
-	return dwState;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1940,13 +1924,13 @@ struct local
 {
 	struct IsInput
 	{
-		IsInput(const SVObjectClass* pInput) : m_pInput(pInput) {}
+		explicit IsInput(const SVObjectClass* pInput) : m_pInput(pInput) {}
 		bool operator () (const SvOl::SVInObjectInfoStruct* pInput) { return pInput->getObject() == m_pInput; }
 		const SVObjectClass* m_pInput;
 	};
 	struct IsOutput
 	{
-		IsOutput(const SVObjectClass* pOutput) : m_pOutput(pOutput) {}
+		explicit IsOutput(const SVObjectClass* pOutput) : m_pOutput(pOutput) {}
 		bool operator () (const SVOutObjectInfoStruct* pOutput) { return pOutput->getObject() == m_pOutput; }
 		const SVObjectClass* m_pOutput;
 	};

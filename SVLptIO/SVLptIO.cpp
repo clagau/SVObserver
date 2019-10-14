@@ -92,7 +92,7 @@ HRESULT SVLptIO::DisableAckInterrupt()
 	return DisableInterrupt();
 }
 
-HRESULT SVLptIO::EnableAckInterrupt(IrqHandler func)
+HRESULT SVLptIO::EnableAckInterrupt(const IrqHandler& func)
 {
 	g_IrqHandler = func;
 	return EnableInterrupt(&SVLptIO::OnLPTInterrupt);

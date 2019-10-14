@@ -20,7 +20,7 @@ namespace SvMc
 		//Constructor
 		CSVOEditorWnd( CListBox& rListBox, LPCTSTR ExcludeChar );
 
-	protected:
+	//protected:
 		//Destructor
 		virtual ~CSVOEditorWnd();
 

@@ -337,12 +337,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 
 	if (l_bOk)
 	{
-		SVImageViewClass* pView = nullptr;
-		int i;
-
 		if (IsNew)
 		{
-			pView = GetImageView();
+			SVImageViewClass* pView = GetImageView();
 
 			if (nullptr != pView)
 			{
@@ -392,9 +389,9 @@ bool SVIPDoc::InitAfterSystemIsDocked()
 		}
 		else
 		{
-			for (i = 0; i < MaxImageViews; ++i)
+			for (int i = 0; i < MaxImageViews; ++i)
 			{
-				pView = GetImageView(i);
+				SVImageViewClass* pView = GetImageView(i);
 
 				if (nullptr != pView)
 				{
@@ -795,7 +792,7 @@ void SVIPDoc::OnUpdateStatusInfo(CCmdUI *pCmdUI)
 	{
 		case ID_INDICATOR_INFO:
 		{
-			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->OnUpdateStatusInfo(pCmdUI);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->OnUpdateStatusInfo(pCmdUI);
 			break;
 		}
 		default:
@@ -1934,8 +1931,6 @@ void SVIPDoc::OnPublishedResultsPicker()
 
 			// Set the Document as modified
 			SetModifiedFlag();
-			SVPPQObject* pPPQ(nullptr);
-
 			SVConfigurationObject* pConfig = nullptr;
 			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 			if (nullptr != pConfig)
@@ -1947,7 +1942,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 
 				for (long l = 0; l < lSize; l++)
 				{
-					pPPQ = pConfig->GetPPQ(l);
+					SVPPQObject* pPPQ = pConfig->GetPPQ(l);
 					if (nullptr != pPPQ)
 					{
 						pPPQ->RebuildOutputList();
@@ -3321,11 +3316,6 @@ void SVIPDoc::OnToolDependencies()
 	}
 }
 
-void SVIPDoc::OnUpdateToolDependencies(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(TheSVObserverApp.OkToEdit());
-}
-
 void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
 {
 	bool Enabled = TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
@@ -3441,12 +3431,11 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 
 	bool l_bUsingSingleFile = false;
 	bool bRunFlag = false;
-	bool bModeReset = false;
 
 	while (pIPDoc->m_regtestRunMode != RegModeStopExit)
 	{
 		//while in Pause mode, sleep
-		bModeReset = false;
+		bool bModeReset = false;
 		if (pIPDoc->m_regtestRunMode == RegModePause)
 		{
 			::Sleep(50);
@@ -3494,7 +3483,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 					bRunFlag = true;
 					if (!l_bFirst)
 					{
-						ptmpRegTestStruct->stdIteratorCurrent++;
+						++ptmpRegTestStruct->stdIteratorCurrent;
 					}
 					if (ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdVectorFile.end())
 					{
@@ -3558,7 +3547,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 				{
 					if (!l_bFirst)
 					{
-						ptmpRegTestStruct->stdIteratorCurrent++;
+						++ptmpRegTestStruct->stdIteratorCurrent;
 					}
 
 					if (ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdVectorFile.end())
@@ -3579,7 +3568,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 						}
 						else
 						{
-							ptmpRegTestStruct->stdIteratorCurrent--;
+							--ptmpRegTestStruct->stdIteratorCurrent;
 						}
 					}
 
@@ -4079,24 +4068,6 @@ HRESULT SVIPDoc::RegisterImage(const SVGUID& p_rImageId, SVImageViewClass* p_pIm
 	return l_Status;
 }
 
-HRESULT SVIPDoc::UnregisterImage(const SVGUID& p_rImageId, SVImageViewClass* p_pImageView)
-{
-	HRESULT l_Status = S_OK;
-
-	SVMasterImageRegisterMap::iterator l_Iter = m_RegisteredImages.find(p_rImageId);
-
-	if (l_Iter != m_RegisteredImages.end())
-	{
-		l_Iter->second.erase(p_pImageView);
-
-		if (l_Iter->second.empty()) { m_RegisteredImages.erase(l_Iter); }
-
-		l_Status = RebuildImages();
-	}
-
-	return l_Status;
-}
-
 HRESULT SVIPDoc::UnregisterImageView(SVImageViewClass* p_pImageView)
 {
 	HRESULT l_Status = S_OK;
@@ -4118,31 +4089,6 @@ HRESULT SVIPDoc::UnregisterImageView(SVImageViewClass* p_pImageView)
 	}
 
 	l_Status = RebuildImages();
-
-	return l_Status;
-}
-
-HRESULT SVIPDoc::IsImageDataSent(const SVGUID& p_rImageId, SVImageViewClass* p_pImageView) const
-{
-	HRESULT l_Status = S_OK;
-
-	if (m_AllViewsUpdated == 0)
-	{
-		SVImageIdImageDataStructMap::const_iterator l_Iter = m_Images.find(p_rImageId);
-
-		if (l_Iter != m_Images.end())
-		{
-			SVImageViewPtrImageViewStatusMap::const_iterator l_ViewIter = l_Iter->second.m_ImageViews.find(p_pImageView);
-
-			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
-			{
-				if (!(l_ViewIter->second.m_ViewNotified))
-				{
-					l_Status = S_FALSE;
-				}
-			}
-		}
-	}
 
 	return l_Status;
 }
@@ -4268,36 +4214,6 @@ HRESULT SVIPDoc::SetImageData(const SVGUID& p_rImageId, const std::string& p_rIm
 	else
 	{
 		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVIPDoc::MarkImageDataSent(const SVGUID& p_rImageId, SVImageViewClass* p_pImageView)
-{
-	HRESULT l_Status = S_OK;
-
-	if (m_AllViewsUpdated == 0)
-	{
-		SVImageIdImageDataStructMap::iterator l_Iter = m_Images.find(p_rImageId);
-
-		if (l_Iter != m_Images.end())
-		{
-			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.find(p_pImageView);
-
-			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
-			{
-				l_ViewIter->second.m_ViewNotified = true;
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
 	}
 
 	return l_Status;

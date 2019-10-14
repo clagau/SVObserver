@@ -50,7 +50,7 @@ struct SVExternalToolTaskData : public SVCancelData
 	SVExternalToolTaskData(const SVExternalToolTaskData& src);
 	virtual ~SVExternalToolTaskData();
 
-	const SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
+	SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
 
 	void  InitializeInputs(long Arraysize, InputValueDefinitionStruct*  pInputValueDefs);
 	

@@ -21,9 +21,9 @@ public:
 	SVUtilityIniClass() = default;
 	virtual ~SVUtilityIniClass() = default;
 
-	SVUtilityIniClass( const SVUtilityIniClass& rRhs );
+	SVUtilityIniClass( const SVUtilityIniClass& rRhs ) = default;
 
-	const SVUtilityIniClass& operator=( const SVUtilityIniClass& rRhs);
+	SVUtilityIniClass& operator=( const SVUtilityIniClass& rRhs) = default;
 
 	std::string m_DisplayName;
 	std::string m_Command;

@@ -97,22 +97,20 @@ std::string Crypto::hmac(const std::string& msg, const std::string& key, ALG_ID 
 std::string Crypto::rsaSign(const std::string& payload, const std::string& privateKey)
 {
 	std::string result = "";
-	BIO* bio = nullptr;
-	RSA* rsa = nullptr;
 	SHA256_CTX sha256;
 	unsigned char hash[SHA256_DIGEST_LENGTH];
 	unsigned int sig_len = 0u;
 	unsigned char* sig = nullptr;
 	int rc;
 
-	bio = BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size()));
+	BIO* bio = BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size()));
 	if (!bio)
 	{
 		// TODO: fail
 		goto cleanup;
 	}
 
-	rsa = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
+	RSA* rsa = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
 	if (!rsa)
 	{
 		goto cleanup;
@@ -165,8 +163,6 @@ bool Crypto::rsaVerify(
 	const std::string& publicKey)
 {
 	bool result = false;
-	BIO* bio = nullptr;
-	RSA* rsa = nullptr;
 	SHA256_CTX sha256;
 	unsigned char hash[SHA256_DIGEST_LENGTH];
 	unsigned int sig_len = static_cast<unsigned int>(signature.size());
@@ -174,14 +170,14 @@ bool Crypto::rsaVerify(
 		reinterpret_cast<unsigned char*>(const_cast<char*>(signature.data()));
 	int rc;
 
-	bio = BIO_new_mem_buf(publicKey.data(), static_cast<int>(publicKey.size()));
+	BIO* bio = BIO_new_mem_buf(publicKey.data(), static_cast<int>(publicKey.size()));
 	if (!bio)
 	{
 		//@Todo[][8.10] [05.10.2018] TODO: fail
 		goto cleanup;
 	}
 
-	rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL);
+	RSA* rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL);
 	if (!rsa)
 	{
 		auto errorTrack = ERR_get_error();
@@ -231,21 +227,6 @@ cleanup:
 std::string Crypto::encodeBase64(const std::string& str)
 {
 	return encode_base64(str, base64::data(), base64::fill());
-}
-
-std::string Crypto::decodeBase64(const std::string& str)
-{
-	return decode_base64(str, base64::data(), base64::fill());
-}
-
-std::string Crypto::encodeBase64Url(const std::string& str)
-{
-	return encode_base64(str, base64url::data(), base64url::fill());
-}
-
-std::string Crypto::decodeBase64Url(const std::string& str)
-{
-	return decode_base64(str, base64url::data(), base64url::fill());
 }
 
 std::string Crypto::encodeBase64Jwt(const std::string& str)

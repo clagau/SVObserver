@@ -101,7 +101,6 @@ public:
 	RECT GetMaskImageRect() const;
 	RECT GetRect() const;
 	SIZE GetSize() const;
-	POINT GetCenter() const;
 
 protected:
 	SVMaskShape();	// don't create instances of base class

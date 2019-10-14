@@ -91,7 +91,6 @@ public:
 
 	HRESULT Open( LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = [](LPCTSTR) {});
 	HRESULT Close();
-	bool IsOpen();
 
 	HRESULT GetToolName (BSTR* pbstrToolName);
 	HRESULT GetToolVersion (long* plVersionNumber);

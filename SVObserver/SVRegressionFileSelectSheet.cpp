@@ -31,11 +31,13 @@ IMPLEMENT_DYNAMIC(SVRegressionFileSelectSheet, CPropertySheet)
 
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+	, m_pRegressionList(nullptr)
 {
 }
 
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	, m_pRegressionList(nullptr)
 {
 }
 

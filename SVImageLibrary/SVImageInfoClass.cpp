@@ -44,7 +44,7 @@ SVImageInfoClass::~SVImageInfoClass()
 	Initialize();
 }
 
-const SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass &p_rsvValue)
+SVImageInfoClass &SVImageInfoClass::operator=(const SVImageInfoClass &p_rsvValue)
 {
 	if (this != &p_rsvValue)
 	{

@@ -42,7 +42,7 @@ class SVVirtualCamera : public SVObjectClass
 {
 public:
 #pragma region Constructor
-	SVVirtualCamera( LPCSTR ObjectName );
+	explicit SVVirtualCamera( LPCSTR ObjectName );
 	SVVirtualCamera( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERAOBJECT );
 	virtual ~SVVirtualCamera();
 #pragma endregion Constructor

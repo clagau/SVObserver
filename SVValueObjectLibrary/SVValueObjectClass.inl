@@ -105,7 +105,7 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 
 	m_ResultSize = iSize;
 
-	m_ObjectAttributesSet.resize(getArraySize(), m_DefaultObjectAttributesSet);
+	m_ObjectAttributesSet.resize(getArraySize(), SvPb::noAttributes);
 
 	if (1 == getArraySize())
 	{

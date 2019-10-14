@@ -72,18 +72,16 @@ bool SVPerspectiveToolClass::CloseObject()
 
 HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 {
-	HRESULT l_hrOk;
-
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
 	// Get Input Width and Height put in output Image Extent.
 	const SVImageExtentClass& rInputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
 	SVImageExtentClass OutputExtents = m_OutputImage.GetImageExtents();
 	double l_dValue;
-	l_hrOk = rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_dValue );
+	/*HRESULT l_hrOk = */rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputWidth, l_dValue );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyWidth, l_dValue );
 
-	l_hrOk = rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
+	/*l_hrOk = */rInputExtents.GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_dValue );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
 
 	// Set Translation
 	bool l_bHideX;
@@ -101,23 +99,23 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 		OutputExtents.SetTranslation(SvPb::SVExtentTranslationVerticalPerspective);
 		l_bHideX = true;
 	}
-	l_hrOk = OutputExtents.UpdateData();
+	/*l_hrOk = */OutputExtents.UpdateData();
 
 
 	// Set Position Points to zero for output image.
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyPositionPointX, 0 );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyPositionPointY, 0 );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyPositionPointX, 0 );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyPositionPointY, 0 );
 
 	const SVImageExtentClass& rToolExtents = GetImageExtent();
 	// Set tool Extent PositionPoints to Output Extent.
-	l_hrOk = rToolExtents.GetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetX, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetX, l_dValue );
-	l_hrOk = rToolExtents.GetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetY, l_dValue );
-	l_hrOk = OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetY, l_dValue );
-	l_hrOk = SetImageExtent(OutputExtents);
+	/*l_hrOk = */rToolExtents.GetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetX, l_dValue );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetX, l_dValue );
+	/*l_hrOk = */rToolExtents.GetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetY, l_dValue );
+	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyTranslationOffsetY, l_dValue );
+	/*l_hrOk = */SetImageExtent(OutputExtents);
 
 
-	l_hrOk = OutputExtents.UpdateData();
+	/*l_hrOk = */OutputExtents.UpdateData();
 
 	SVGUID l_InputID;
 	if(nullptr != pInputImage)
@@ -129,7 +127,7 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 
 	l_ImageInfo.SetExtents( OutputExtents );
 
-	l_hrOk = m_OutputImage.UpdateImage( l_InputID, l_ImageInfo);
+	HRESULT l_hrOk = m_OutputImage.UpdateImage( l_InputID, l_ImageInfo);
 
 	// Enable / Disable Extent Properties..
 	SvIe::SVExtentPropertyInfoStruct info;

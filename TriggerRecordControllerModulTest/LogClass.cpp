@@ -84,7 +84,7 @@ void LogClass::Close()
 
 bool LogClass::Log(LPCTSTR strEntry, const LogLevel logLevel, const LogType logType, int lineNumber, LPCTSTR strTestName)
 {
-	if (logLevel <= m_LogLevel)
+	if (logLevel <= GetLogLevel())
 	{
 		CountResults(logType);
 		CString strTmp;
@@ -106,7 +106,7 @@ bool LogClass::Log(LPCTSTR strEntry, const LogLevel logLevel, const LogType logT
 
 bool LogClass::LogText(LPCTSTR strEntry, const LogLevel logLevel, const LogType logType)
 {
-	if(logLevel <= m_LogLevel)
+	if(logLevel <= GetLogLevel())
 	{
 		CountResults(logType);
 		CString strTmp;
@@ -134,7 +134,7 @@ bool LogClass::logException(LPCTSTR strEntry, const SvStl::MessageContainer& rEx
 
 bool LogClass::LogText0(LPCTSTR strEntry, const LogLevel logLevel)
 {
-	if(logLevel <= m_LogLevel)
+	if(logLevel <= GetLogLevel())
 	{
 		std::lock_guard<std::mutex> guard(m_logMutex);
 		if(m_File)
@@ -162,11 +162,13 @@ void LogClass::PrintSummary()
 	CString strTmp;
 
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
-	strTmp.Format(_T("[ Summary  ] Passed %lu Steps"), m_uiPass);
+	strTmp.Format(_T("[ Summary  ] Passed %lu Steps"), GetPassCount());
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Failed %u Steps"), m_uiFail);
+	strTmp.Format(_T("[ Summary  ] Failed %lu Steps"), GetFailCount());
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Warning %u Steps"), m_uiWarn);
+	strTmp.Format(_T("[ Summary  ] Warning %lu Steps"), GetWarnCount());
+	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
+	strTmp.Format(_T("[ Summary  ] Abort %lu Steps"), GetAbortCount());
 	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
 	constexpr int cStrLength = 128;
 	TCHAR szTime[cStrLength];
@@ -219,22 +221,22 @@ void LogClass::ResetCounts()
 
 }
 
-long LogClass::GetFailCount()
+unsigned long LogClass::GetFailCount() const
 {
 	return m_uiFail;
 }
 
-long LogClass::GetWarnCount()
+unsigned long LogClass::GetWarnCount() const
 {
 	return m_uiWarn;
 }
 
-long LogClass::GetPassCount()
+unsigned long LogClass::GetPassCount() const
 {
 	return m_uiPass;
 }
 
-long LogClass::GetAbortCount()
+unsigned long LogClass::GetAbortCount() const
 {
 	return m_uiAbort;
 }
@@ -244,7 +246,7 @@ void LogClass::SetLogLevel(const LogLevel logLevel)
 	m_LogLevel = logLevel;
 }
 
-LogLevel LogClass::GetLogLevel( )
+LogLevel LogClass::GetLogLevel( ) const
 {
 	return m_LogLevel;
 }

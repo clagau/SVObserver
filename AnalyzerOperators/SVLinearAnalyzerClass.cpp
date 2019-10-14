@@ -242,29 +242,16 @@ void SVLinearAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVe
 
 SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
 {
-	SvOp::SVLinearEdgeProcessingClass *pEdge = nullptr;
-
-	SvDef::SVObjectTypeInfoStruct  info;
-
-	info.ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
-	info.SubType = SvPb::SVLinearEdgeAProcessingObjectType;
-
-	pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
-
+	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeAProcessingObjectType};
+	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
 	return pEdge;
 }
 
 SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 {
-	SvOp::SVLinearEdgeProcessingClass *pEdge = nullptr;
 
-	SvDef::SVObjectTypeInfoStruct  info;
-
-	info.ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
-	info.SubType = SvPb::SVLinearEdgeBProcessingObjectType;
-
-	pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
-
+	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeBProcessingObjectType};;
+	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
 	return pEdge;
 }
 

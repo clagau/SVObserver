@@ -667,11 +667,10 @@ void SVDisplayPicture::RemoveAllOverlays()
 
 SVPictureTabs* SVDisplayPicture::GetPictureTab() const
 {
-	SVPictureTabs* ret = nullptr;
 	CWnd* pParent1 = GetParent();
 	CWnd* pParent2 = pParent1->GetParent();
 	CWnd* pParent3 = pParent2->GetParent();
-	ret = dynamic_cast<SVPictureTabs*>(pParent3);
+	SVPictureTabs* ret = dynamic_cast<SVPictureTabs*>(pParent3);
 	return ret;
 }
 

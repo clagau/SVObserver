@@ -156,26 +156,6 @@ ULONGLONG SVFile::GetLength() const
 	return l_Size;
 }
 
-ULONGLONG SVFile::SeekToEnd()
-{
-	ULONGLONG l_Location( 0 );
-
-	if( nullptr != m_pFile )
-	{
-		if( ::fseek( m_pFile, 0L, SEEK_END ) == 0 )
-		{
-			fpos_t l_Position( 0 );
-
-			if( fgetpos( m_pFile, &l_Position ) == 0 )
-			{
-				l_Location = l_Position;
-			}
-		}
-	}
-
-	return l_Location;
-}
-
 HRESULT SVFile::GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UINT p_OpenFlags )
 {
 	HRESULT l_Status( S_OK );

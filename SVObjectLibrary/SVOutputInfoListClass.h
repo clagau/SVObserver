@@ -42,20 +42,15 @@ public:
 
 	int  Add( SVOutObjectInfoStruct* );
 	void InsertAt( int nIndex, SVOutObjectInfoStruct* POutObjectInfo );
-	SVOutObjectInfoStruct*& ElementAt( int p_iIndex );
 
 	void RemoveAt( int nIndex );
 	void RemoveAll();
 
 	// for those that don't care about arrays (e.g. Publish List):
 	void GetSetAttributesList( UINT uAttributeMask, SVOutputInfoListClass* pFillList );
-	void GetAllowedAttributesList( UINT uAttributeMask, SVOutputInfoListClass* pFillList );	// same for all elements of an array; array version unnecessary
 
 	// for those that do care about arrays (e.g. Results List):
 	void GetSetAttributesList( UINT uAttributeMask, SVObjectReferenceVector&  rvecObjects );
-	void GetObjectReferenceList( SVObjectReferenceVector&  rvecObjects );
-
-	bool HasDependents();
 
 protected:
 	SVOutObjectInfoStructPtrVector m_svObjectArray;

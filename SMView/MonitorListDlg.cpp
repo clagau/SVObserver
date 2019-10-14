@@ -27,7 +27,7 @@ CString  Type2String(DWORD type)
 		break;
 	
 	default:
-		ret.Format(_T("%X"), type);
+		ret.Format(_T("%X"), static_cast<int>(type));
 		break;
 	}
 	
@@ -37,7 +37,7 @@ CString  Type2String(DWORD type)
 CString Size2String(DWORD size)
 {
 	CString ret;
-	ret.Format(_T("%i"), size);
+	ret.Format(_T("%lu"), size);
 	return ret;
 }
 
@@ -84,7 +84,7 @@ void MonitorListDlg::FillControl()
 	LPCTSTR Typename[ SvSml::ListType::Count] = {_T("Prod"),_T("Image"), _T("Rej"), _T("Fail") };
 	for(int list  =  0; list  < SvSml::ListType::Count; list++)
 	{
-		for(Eit = pML->m_MonitorEntries[list].begin(); Eit != pML->m_MonitorEntries[list].end(); Eit++)
+		for(Eit = pML->m_MonitorEntries[list].begin(); Eit != pML->m_MonitorEntries[list].end(); ++Eit)
 		{
 			m_ListCtrl.InsertItem(item, Typename[list]);
 			m_ListCtrl.SetItemText(item,Name,Eit->get()->name.c_str());

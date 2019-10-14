@@ -11,20 +11,6 @@
 #include "SVIOEntryStruct.h"
 #pragma endregion Includes
 
-SVIOEntryStruct::SVIOEntryStruct()
-	: m_IOEntryPtr()
-	, m_EntryValid(false)
-	, m_CombinedValue(false)
-{
-}
-
-SVIOEntryStruct::SVIOEntryStruct(const SVIOEntryStruct& rRhs)
-	: m_IOEntryPtr(rRhs.m_IOEntryPtr)
-	, m_EntryValid(rRhs.m_EntryValid)
-	, m_CombinedValue(rRhs.m_CombinedValue)
-{
-}
-
 SVIOEntryStruct::~SVIOEntryStruct()
 {
 	clear();
@@ -44,12 +30,6 @@ void SVIOEntryStruct::clear()
 {
 	m_IOEntryPtr.reset();
 
-	m_EntryValid = false;
-	m_CombinedValue = false;
-}
-
-void SVIOEntryStruct::InitEntry()
-{
 	m_EntryValid = false;
 	m_CombinedValue = false;
 }

@@ -95,8 +95,6 @@ public:
 
 	HRESULT GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true); /* true means AND, false means OR */
 
-	HRESULT GetNonToolsetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const;
-
 	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const;
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
@@ -165,8 +163,6 @@ protected:
 public:
 	// Get the local object color...
 	virtual DWORD GetObjectColor() const override;
-	// Get the local object state...
-	virtual DWORD GetObjectState() const override;
 	void GetInputObjects(SvOl::SVInputInfoListClass& RInputObjectList);
 	virtual void GetAllInputObjects();
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;

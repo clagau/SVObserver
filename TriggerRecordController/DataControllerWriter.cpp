@@ -37,7 +37,7 @@ TRControllerWriterDataPerIP::~TRControllerWriterDataPerIP()
 {
 };
 
-void TRControllerWriterDataPerIP::init(std::function<void(const std::string&, int)> smDataCBFunc)
+void TRControllerWriterDataPerIP::init(const std::function<void(const std::string&, int)>& smDataCBFunc)
 {
 	m_smDataCBFunc = smDataCBFunc;
 	createSMBuffer(BasicData(), SMData());

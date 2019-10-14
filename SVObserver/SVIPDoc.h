@@ -215,7 +215,6 @@ public:
 	afx_msg void OnShowToolRelations();
 	afx_msg void OnUpdateShowToolRelations(CCmdUI* pCmdUI);
 	afx_msg void OnToolDependencies();
-	afx_msg void OnUpdateToolDependencies(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddGeneralTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddCylindricalWarpTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
@@ -312,16 +311,13 @@ protected:
 	HRESULT CheckImages();
 
 	HRESULT RegisterImage( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
-	HRESULT UnregisterImage( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 	HRESULT UnregisterImageView( SVImageViewClass* p_pImageView );
 
-	HRESULT IsImageDataSent( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
 	HRESULT IsImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
 	HRESULT IsImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
 	HRESULT GetBitmapInfo( const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmapInfo ) const;
 	HRESULT GetImageData( const SVGUID& p_rImageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const;
 	HRESULT SetImageData( const SVGUID& p_rImageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray );
-	HRESULT MarkImageDataSent( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 	HRESULT MarkImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 	HRESULT MarkImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 

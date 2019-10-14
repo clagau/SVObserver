@@ -211,7 +211,6 @@ public:
 	HRESULT RebuildOutputList();
 	bool SetStatusText( LPCTSTR PStrStatusText );
 
-	const std::string& getConfigFileNameOnly() const;
 	const std::string& getConfigPathName() const;
 	const std::string& getConfigFileName() const;
 	const std::string getConfigFullFileName() const;

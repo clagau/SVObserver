@@ -47,14 +47,13 @@ SVLightReferenceDialogPropertySheetClass::~SVLightReferenceDialogPropertySheetCl
 	DestroyAllPages();
 }
 
-// Removes and Drestroys all Pages from List.
+// Removes and Destroys all Pages from List.
 // All Pages must be dynamically created using new!
 void SVLightReferenceDialogPropertySheetClass::DestroyAllPages()
 {
-	CPropertyPage* pPage;
 	for( int i = GetPageCount() - 1; i >= 0; -- i )
 	{
-		pPage = GetPage( i );
+		CPropertyPage* pPage = GetPage( i );
 		RemovePage( i );
 		if( pPage )
 		{
@@ -82,8 +81,8 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages(SvIe::SVVirtualCamera
 		SVLightReference& rLightRef = rLRA[i];
 		int iBandSize = 1;
 		int iCamBand = 0;
-		HRESULT hr = pCamera->GetBand(iCamBand);
-		hr = pCamera->GetBandSize(iBandSize);
+		/*HRESULT hr = */pCamera->GetBand(iCamBand);
+		HRESULT hr = pCamera->GetBandSize(iBandSize);
 		if (S_OK == hr )
 		{
 			if (0 == rLightRef.NumBands())
@@ -238,8 +237,8 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	}
 
 	m_NumBands=m_pLR->NumBands();
-	HRESULT hr = m_pCamera->GetBand(m_CamBand);
-	hr = m_pCamera->GetBandSize(m_BandSize);
+	/*HRESULT hr = */m_pCamera->GetBand(m_CamBand);
+	/*HRESULT hr = */m_pCamera->GetBandSize(m_BandSize);
 
 	UpdateData( TRUE );	// set data to dialog...
 

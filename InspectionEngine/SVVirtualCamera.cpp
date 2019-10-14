@@ -138,9 +138,7 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 
 bool SVVirtualCamera::Destroy()
 {
-	bool bOk = true;
-
-	bOk = DestroyLocal();
+	bool bOk = DestroyLocal();
 
 	UnregisterTriggerRelay();
 
@@ -621,10 +619,7 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 	Result = mpsvDevice->GetDeviceParameters( CameraParameters );
 	if(S_OK == Result)
 	{
-		SVDeviceParam* pDeviceParam = nullptr;
-
-		pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
-
+		SVDeviceParam* pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
 		if( nullptr != pDeviceParam )
 		{
 			variant_t SerialNumberValue;
@@ -633,7 +628,7 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 			m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, SerialNumberValue, this, SvPb::SVCameraObjectType );
 		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
-		Result = updateCameraLongParameter( SvDef::FqnCameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
+		/*Result = */updateCameraLongParameter( SvDef::FqnCameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
 
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamShutter );
 		Result = updateCameraLongParameter( SvDef::FqnCameraShutter, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
@@ -672,14 +667,13 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 	if( S_OK == mpsvDevice->GetDeviceParameters( rCameraParameters ) )
 	{
 		SVDeviceParamCollection	ChangedCameraParameters;
-		SVDeviceParam* pDeviceParam = nullptr;
-		pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
+		SVDeviceParam* pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
 		SvVol::BasicValueObjectPtr pValueObject;
 		pValueObject = m_CameraValues.getValueObject( SvDef::FqnCameraGain );
 
 		if(nullptr != pValueObject)
 		{
-			Result = pValueObject->updateDeviceParameter( pDeviceParam );
+			/*Result = */pValueObject->updateDeviceParameter( pDeviceParam );
 			ChangedCameraParameters.SetParameter(pDeviceParam);
 			Result = S_OK;
 		}

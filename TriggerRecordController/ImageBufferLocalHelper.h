@@ -25,7 +25,7 @@ class ImageBufferLocalHelper final
 {
 #pragma region Constructor
 public:
-	ImageBufferLocalHelper(std::vector<SVMatroxBuffer>&);
+	explicit ImageBufferLocalHelper(std::vector<SVMatroxBuffer>&);
 	~ImageBufferLocalHelper();
 
 private:

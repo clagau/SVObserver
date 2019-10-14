@@ -111,7 +111,7 @@ static char THIS_FILE[] = __FILE__;
 			if (nullptr != pItem)
 			{
 				UINT ctrlID = pItem->GetCtrlID();
-				if (ctrlID >= 0 && static_cast<int>(ctrlID) < m_numImages)
+				if (static_cast<int>(ctrlID) < m_numImages)
 				{
 					ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(m_Infostructs[ctrlID]));
 					ImgCtrl.Init();

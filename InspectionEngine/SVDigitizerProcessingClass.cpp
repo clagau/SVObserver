@@ -193,7 +193,8 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerL
 			if ( S_OK == Result )
 			{
 				std::string CameraName;
-				if( 0 == AcquisitionName.find( _T( "Matrox_GIGE" ) ) )
+				constexpr LPCTSTR cMGige = _T("Matrox_GIGE");
+				if( 0 == AcquisitionName.compare(0,  strlen(cMGige), cMGige) )
 				{
 					CameraName =  SVGigeCameraManager::Instance().getCameraName( IPAddress );
 				}

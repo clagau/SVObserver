@@ -18,7 +18,7 @@ class SVRemoteInputObject : public SVInputObject
 {
 #pragma region Constructor
 public:
-	SVRemoteInputObject( LPCSTR strObjectName );
+	explicit SVRemoteInputObject( LPCSTR strObjectName );
 	SVRemoteInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
 
 	virtual ~SVRemoteInputObject();

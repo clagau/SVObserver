@@ -3706,11 +3706,6 @@ bool SVObserverApp::SetStatusText(LPCTSTR PStrStatusText)
 	return false;
 }
 
-const std::string& SVObserverApp::getConfigFileNameOnly() const
-{
-	return m_ConfigFileName.GetFileNameOnly();
-}
-
 const std::string& SVObserverApp::getConfigPathName() const
 {
 	return m_ConfigFileName.GetPathName();
@@ -4180,7 +4175,7 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 
 	while (nullptr != pMdiChild)
 	{
-		hMenu = ((CMdiChildWorkaround*)pMdiChild)->GetMenu();
+		hMenu = static_cast<CMdiChildWorkaround*>(pMdiChild)->GetMenu();
 		menu.Attach(hMenu);
 		pMenu = &menu;
 
@@ -4835,7 +4830,7 @@ bool SVObserverApp::SetActiveIOTabView(SVTabbedViewSplitterIDEnum p_eTabbedID)
 
 void SVObserverApp::HideRemoteOutputTab()
 {
-	SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
+	SVMainFrame* pWndMain = static_cast<SVMainFrame*>(GetMainWnd());
 	SetActiveIOTabView(SVIODiscreteInputsViewID);
 
 	pWndMain->PostMessage(SV_IOVIEW_HIDE_TAB, SVRemoteOutputsViewID);
@@ -4843,7 +4838,7 @@ void SVObserverApp::HideRemoteOutputTab()
 
 void SVObserverApp::HideRemoteMonitorListTab()
 {
-	SVMainFrame* pWndMain = (SVMainFrame*)GetMainWnd();
+	SVMainFrame* pWndMain = static_cast<SVMainFrame*>(GetMainWnd());
 	SetActiveIOTabView(SVIODiscreteInputsViewID);
 
 	pWndMain->PostMessage(SV_IOVIEW_HIDE_TAB, SVRemoteMonitorListViewID);
@@ -5110,7 +5105,7 @@ void SVObserverApp::Start()
 			l_trgrDlg.SelectTrigger();
 		}
 	}
-	catch (const SvStl::MessageContainer& rExp)
+	catch (SvStl::MessageContainer& rExp)
 	{
 		//cleanup goOnline, after fail, before exception leave this method
 		SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
@@ -5144,7 +5139,7 @@ void SVObserverApp::Start()
 				}
 			}// end for
 		}
-		catch (const SvStl::MessageContainer& rExp)
+		catch (SvStl::MessageContainer& rExp)
 		{
 			//cleanup goOnline, after fail, before exception leave this method
 			for (long l = 0; l < lSize; l++)

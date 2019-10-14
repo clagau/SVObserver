@@ -167,7 +167,7 @@ void SVThreadInfoDlg::UpdateThreadInfo( SVThreadAttribute eAttribute)
 }
 void SVThreadInfoDlg::InsertComboThreadItem( SVRPropertyItem* pRoot, LPCTSTR Name, unsigned int Affinity, unsigned int nID )
 {
-	SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)(m_ThreadList.InsertItem( new SVRPropertyItemCombo(), pRoot ));
+	SVRPropertyItemCombo* pCombo = static_cast<SVRPropertyItemCombo*>(m_ThreadList.InsertItem( new SVRPropertyItemCombo(), pRoot ));
 	pCombo->SetCtrlID( nID );
 	pCombo->SetLabelText( Name );
 	pCombo->SetInfoText(_T("This Item sets which processor pipe to run in."));

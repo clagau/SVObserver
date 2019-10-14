@@ -44,8 +44,6 @@ namespace SvOg
 		std::string GetIndirectValue(const GUID& rEmbeddedID) const;
 		std::string GetDirectValue(const GUID& rEmbeddedID) const;
 
-		std::string GetInspectionName() const;
-
 		const GUID& m_rInspectionID;
 		const GUID& m_rTaskObjectID;
 		GUID m_RangeID;

@@ -59,7 +59,7 @@ private:
 	TCHAR*   m_pBuffer;
 	long     m_lLowValue;
 	long     m_lHighValue;
-	TCHAR*   m_pDataArr[BC_MAX_ENTREES];
+	TCHAR*   m_pDataArr[BC_MAX_ENTREES] {0};
 	short*   m_pIndexTable;
 	double   m_dFactor;
 };

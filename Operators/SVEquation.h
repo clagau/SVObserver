@@ -142,20 +142,9 @@ class SVEquationClass : public SvIe::SVTaskObjectClass, public SVEquationBase, p
 	*/
 	struct SVEquationStruct 
 	{
-		SVEquationStruct ()
-		{
-			EquationBuffer.clear();
-			StartPos = 0;
-			EndPos = 0;
-		};
-
-		SVEquationStruct& operator=( const SVEquationStruct &REquationStruct)
-		{
-			EquationBuffer = REquationStruct.EquationBuffer;
-			StartPos = REquationStruct.StartPos;
-			EndPos = REquationStruct.EndPos;
-			return (*this);
-		};
+		SVEquationStruct() = default;
+		SVEquationStruct(const SVEquationStruct&) = default;
+		SVEquationStruct& operator=(const SVEquationStruct &REquationStruct) = default;
 
 		const std::string& GetEquationText() const
 		{
@@ -168,8 +157,8 @@ class SVEquationClass : public SvIe::SVTaskObjectClass, public SVEquationBase, p
 		};
 
 		std::string EquationBuffer;
-		int StartPos;
-		int EndPos;
+		int StartPos = 0;
+		int EndPos = 0;
 	};
 
 public:

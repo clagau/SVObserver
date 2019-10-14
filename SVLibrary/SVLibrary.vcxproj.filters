@@ -45,9 +45,6 @@
     <ClCompile Include="SVPackedFile.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVUtilityIniClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVValueBaseNormalizerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

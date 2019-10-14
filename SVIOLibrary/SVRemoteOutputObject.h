@@ -44,8 +44,6 @@ public:
 	HRESULT GetInputValueObjectGUID( GUID& p_rGUID ) const;
 	SVGUID GetInputValueObjectGUID() const;
 
-	SVObjectClass* GetValueObject();
-
 	std::string GetGroupID( ) const ;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
@@ -70,9 +68,6 @@ private:
 	// Member Variables
 	// The Value Objects name.
 	std::string m_strObjectName;
-
-	// The value object
-	SVObjectClass* m_pValueObject;
 
 	// Guid of the value object used to output
 	SVGUID m_InputObjectId;	

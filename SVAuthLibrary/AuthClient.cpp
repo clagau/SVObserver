@@ -17,7 +17,7 @@
 
 namespace SvAuth
 {
-AuthClient::AuthClient(boost::asio::io_context& rIoContext, std::string host, uint16_t port)
+AuthClient::AuthClient(boost::asio::io_context& rIoContext, const std::string& host, uint16_t port)
 	: m_HttpClient(rIoContext)
 	, m_Host(host)
 	, m_Port(port)

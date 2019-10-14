@@ -38,10 +38,4 @@ namespace SvOi
 	/// \returns the vector of tree items
 	//************************************
 	std::vector<SvPb::TreeItem> getRootChildSelectorList(LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
-
-	//************************************
-	/// Add the Root child objects
-	/// \param rList [in] SVOutputInfoListClass to receive objects from the root tree
-	//************************************
-	void addRootChildObjects(SVOutputInfoListClass& rList);
 } //namespace SvOi

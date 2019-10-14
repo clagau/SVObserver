@@ -236,16 +236,14 @@ HRESULT SVImageProcessingClass::DestroyBufferDC(SvOi::SVImageBufferHandlePtr rHa
 {
 	HRESULT Result(S_OK);
 
-	HRESULT l_Code;
-
 	if (nullptr != rHandle)
 	{
 		// Delete created device context. 
 		long l_lValue = SVValueDefault;
-		l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCFree, static_cast<long long>(l_lValue));
+		/*l_Code = */SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCFree, static_cast<long long>(l_lValue));
 
 		// Signal MIL that the buffer was modified. 
-		l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufModified, static_cast<long long>(l_lValue));
+		HRESULT l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufModified, static_cast<long long>(l_lValue));
 		Result = (l_Code == S_OK) ? S_OK : l_Code | SVMEE_MATROX_ERROR;
 	}
 	else
@@ -263,10 +261,9 @@ HRESULT SVImageProcessingClass::InitBuffer(SvOi::SVImageBufferHandlePtr rHandle,
 	Result = nullptr != rHandle ? S_OK : S_FALSE;
 	if (S_OK == Result)
 	{
-		HRESULT l_Code;
 		try
 		{
-			l_Code = SVMatroxBufferInterface::ClearBuffer(rHandle->GetBuffer(), static_cast<double>(dwValue));
+			HRESULT l_Code = SVMatroxBufferInterface::ClearBuffer(rHandle->GetBuffer(), static_cast<double>(dwValue));
 			Result = (l_Code == S_OK) ? S_OK : l_Code | SVMEE_MATROX_ERROR;
 		}
 		catch (...)
@@ -295,7 +292,6 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 		strImagePathName = svfncImageFile.GetFullFileName();
 		if (fileformat != SVFileUnknown && 0 == _access(strImagePathName.c_str(), 0))
 		{
-
 			HRESULT l_Code;
 			std::string l_strPath = strImagePathName;
 
@@ -316,7 +312,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 
 			// Restore
 			SVMatroxBuffer newBuffer;
-			l_Code = SVMatroxBufferInterface::Import(newBuffer, l_strPath, fileformat, true);
+			/*l_Code = */SVMatroxBufferInterface::Import(newBuffer, l_strPath, fileformat, true);
 			if (!newBuffer.empty())
 			{
 				// Get buffer data...
@@ -326,10 +322,10 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 				long l_lPixelDepth = 0;
 				long l_DataFormat = 0;
 
-				l_Code = SVMatroxBufferInterface::Get(newBuffer, SVSizeX, l_lSizeX);
-				l_Code = SVMatroxBufferInterface::Get(newBuffer, SVSizeY, l_lSizeY);
-				l_Code = SVMatroxBufferInterface::Get(newBuffer, SVType, l_lPixelDepth);
-				l_Code = SVMatroxBufferInterface::Get(newBuffer, SVSizeBand, l_lBandSize);
+				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeX, l_lSizeX);
+				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeY, l_lSizeY);
+				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVType, l_lPixelDepth);
+				/*l_Code = */SVMatroxBufferInterface::Get(newBuffer, SVSizeBand, l_lBandSize);
 				l_Code = SVMatroxBufferInterface::Get(newBuffer, SVDataFormat, l_DataFormat);
 
 				if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR24, l_DataFormat))

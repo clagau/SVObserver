@@ -26,10 +26,6 @@ public:
 	bool rsaVerify(const std::string& payload, const std::string& signature, const std::string& publicKey);
 
 	std::string encodeBase64(const std::string&);
-	std::string decodeBase64(const std::string&);
-
-	std::string encodeBase64Url(const std::string&);
-	std::string decodeBase64Url(const std::string&);
 
 	// Same as encodeBase64Url but without padding.
 	std::string encodeBase64Jwt(const std::string&);

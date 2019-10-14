@@ -140,9 +140,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		delete m_pShape;
 	}
 
-	long lShapeType;
-	m_Data.evoShapeType.GetValue( lShapeType );
-	ShapeTypeEnum eShapeType = static_cast<ShapeTypeEnum> (lShapeType);
+	ShapeTypeEnum eShapeType = GetShape();
 	switch ( eShapeType )
 	{
 		case SVMaskShapeTypeOval:
@@ -208,12 +206,6 @@ bool SVShapeMaskHelperClass::onRun( bool First, SvOi::SVImageBufferHandlePtr RIn
 	return TRUE;	// what do we want to do here for the status?
 }
 
-HRESULT SVShapeMaskHelperClass::SetShape( ShapeTypeEnum eShapeType )
-{
-	HRESULT hr = m_Data.evoShapeType.SetValue(static_cast<long> (eShapeType));
-	return hr;
-}
-
 SVShapeMaskHelperClass::ShapeTypeEnum SVShapeMaskHelperClass::GetShape( )
 {
 	long lValue;
@@ -266,10 +258,7 @@ HRESULT SVShapeMaskHelperClass::GetProperties(SVMaskShape::MapType& rMapProperti
 		hr = S_OK;
 		m_pShape->GetProperties( rMapProperties );
 
-		ShapeTypeEnum eShapeType;
-		long lShapeType = SVMaskShapeTypeInvalid;
-		m_Data.evoShapeType.GetValue( lShapeType );
-		eShapeType = static_cast <ShapeTypeEnum> (lShapeType);
+		ShapeTypeEnum eShapeType = GetShape();
 
 		long lValue;
 		m_Data.lvoCenterX.GetValue( lValue );
@@ -331,10 +320,7 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 		hr = S_OK;
 		
 		// set shape properties based on value objects
-		ShapeTypeEnum eShapeType;
-		long lShapeType = SVMaskShapeTypeInvalid;
-		m_Data.evoShapeType.GetValue( lShapeType );
-		eShapeType = static_cast <ShapeTypeEnum> (lShapeType);
+		ShapeTypeEnum eShapeType = GetShape();
 
 		SVMaskShape::MapType mapProperties;
 		m_pShape->GetProperties( mapProperties );

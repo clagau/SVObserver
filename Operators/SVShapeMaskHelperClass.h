@@ -67,7 +67,6 @@ public:
 		SVMaskShapeTypeSymmetricTrapezoid = 4,
 	};
 
-	HRESULT SetShape( ShapeTypeEnum eShapeType );
 	ShapeTypeEnum GetShape();
 	HRESULT SetProperties(const SVMaskShape::MapType& rMapProperties);	// sets value objects based on properties
 	HRESULT GetProperties(SVMaskShape::MapType& rMapProperties);	// gets properties based on value objects

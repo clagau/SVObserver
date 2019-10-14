@@ -111,13 +111,13 @@ void ReadWriteLPT(uint8_t controlPort, uint8_t value, int8_t bitNr = -1)
 	{
 		return;
 	}
-	HRESULT hResult = WriteControlPort(SVControlEnableInterrupt);
+	/*HRESULT hResult = */WriteControlPort(SVControlEnableInterrupt);
 
 	uint8_t& rOutput = (SVControlWriteDigital1_110 == controlPort) ? currentOutput[1] : currentOutput[0];
-	hResult = WriteControlPort(SVControlEnableInterrupt | controlPort);
+	/*hResult = */WriteControlPort(SVControlEnableInterrupt | controlPort);
 	double Start = SvTl::GetTimeStamp();
 	unsigned char status;
-	hResult = ReadStatusPort(status);
+	HRESULT hResult = ReadStatusPort(status);
 	while (S_OK == hResult && 0 == (status & 128))
 	{
 		SvTl::SVTimeStamp Check = SvTl::GetTimeStamp();
@@ -211,10 +211,10 @@ void LptInterruptHandler()
 				}
 			}
 
-			if (nTriggerBit != SVTriggerNone && (nTriggerBit & StatusReg) != (nTriggerBit & LastTriggerState))
-			{
-				bool bitState = (0 != (nTriggerBit & StatusReg));
-			}
+			//if (nTriggerBit != SVTriggerNone && (nTriggerBit & StatusReg) != (nTriggerBit & LastTriggerState))
+			//{
+			//	bool bitState = (0 != (nTriggerBit & StatusReg));
+			//}
 		}
 	}
 	LastTriggerState = StatusReg;

@@ -446,7 +446,7 @@ SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 	std::string ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 	// if object name starts with tool set, inspection name must be added
 	// else it must not be added, because it can be another object (e.g. "PPQ_1.Length" or "Environment.Mode.IsRun")
-	if (0 == Name.find(ToolSetName))
+	if (0 == Name.compare(0, ToolSetName.length(), ToolSetName))
 	{
 		// Inspection name plus object name.
 		CompleteObjectName += "." + Name;

@@ -193,11 +193,6 @@ void SVCameraImageTemplate::Persist(SvOi::IObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-GUID SVCameraImageTemplate::GetDigitizerID()
-{
-	return m_digitizerObjectID.ToGUID();
-}
-
 HRESULT SVCameraImageTemplate::DisconnectBuffers()
 {
 	return S_OK;
@@ -205,9 +200,7 @@ HRESULT SVCameraImageTemplate::DisconnectBuffers()
 
 HRESULT SVCameraImageTemplate::ReconnectBuffers()
 {
-	HRESULT hr = S_OK;
-
-	hr = RebuildCameraImage();
+	 HRESULT hr = RebuildCameraImage();
 
 	if (S_OK == hr)
 	{

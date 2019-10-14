@@ -474,14 +474,12 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 
 void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pConfig)
 {
-	HRESULT l_hr = S_OK;
-
 	//Only ASSERT not to change runtime
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 
 	SVGroupDefVect l_OriginalList;
 	SvDef::StringVector GroupOutputNames;
-	l_hr = GetRemoteOutputGroups( GroupOutputNames );
+	HRESULT l_hr = GetRemoteOutputGroups( GroupOutputNames );
 	SvDef::StringVector::const_iterator Iter;
 	for( Iter = GroupOutputNames.begin() ; Iter != GroupOutputNames.end() ; ++Iter)
 	{

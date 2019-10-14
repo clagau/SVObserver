@@ -30,7 +30,7 @@ public:
 	/// \param bufferPos [in] Position of the buffer, also needed for reference count.
 	/// \param isReadOnly [in] Flag if buffer is read only.
 	/// \param shouldUnlockAuto [in] false means no auto lock, if true then it MUST be increased outside, before the call of this constructor.
-	Image(SvOi::SVImageBufferHandlePtr pBuffer, long ResetId, int bufferPos, bool isReadOnly = true, bool shouldUnlockAuto = false);
+	Image(const SvOi::SVImageBufferHandlePtr& pBuffer, long ResetId, int bufferPos, bool isReadOnly = true, bool shouldUnlockAuto = false);
 
 	virtual ~Image();
 #pragma endregion Constructor

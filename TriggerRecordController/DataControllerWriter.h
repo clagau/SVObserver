@@ -24,7 +24,7 @@ public:
 	TRControllerWriterDataPerIP() = default;
 	~TRControllerWriterDataPerIP();
 
-	void init(std::function<void(const std::string&, int)> smDataCBFunc);
+	void init(const std::function<void(const std::string&, int)>& smDataCBFunc);
 
 	BasicData getBasicData() const override { return m_pBasicData ? *m_pBasicData : BasicData(); };
 	void setDataListSize(long dataSize);

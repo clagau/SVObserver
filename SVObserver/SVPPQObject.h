@@ -71,7 +71,7 @@ class SVPPQObject :
 
 public:
 
-	SVPPQObject( LPCSTR ObjectName );
+	explicit SVPPQObject( LPCSTR ObjectName );
 	SVPPQObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
 
 	virtual ~SVPPQObject();
@@ -219,27 +219,29 @@ protected:
 
 	struct SVCameraQueueElement
 	{
-		SVCameraQueueElement();
-		SVCameraQueueElement( const SVCameraQueueElement& p_rObject );
+		SVCameraQueueElement() = default;
+		SVCameraQueueElement( const SVCameraQueueElement& p_rObject ) = default;
 		SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const SVODataResponseClass& p_rData );
+		SVCameraQueueElement& operator=(const SVCameraQueueElement&) = default;
 
-		virtual ~SVCameraQueueElement();
+		virtual ~SVCameraQueueElement() = default;
 
-		SvIe::SVVirtualCamera* m_pCamera;
-		SVODataResponseClass m_Data;
+		SvIe::SVVirtualCamera* m_pCamera = nullptr;
+		SVODataResponseClass m_Data {};
 	};
 
 	struct SVCameraInfoElement
 	{
-		SVCameraInfoElement();
-		SVCameraInfoElement( const SVCameraInfoElement& p_rObject );
+		SVCameraInfoElement() = default;
+		SVCameraInfoElement( const SVCameraInfoElement& p_rObject ) = default;
+		SVCameraInfoElement& operator=(const SVCameraInfoElement&) = default;
 
-		virtual ~SVCameraInfoElement();
+		virtual ~SVCameraInfoElement() = default;
 
-		long m_CameraPPQIndex;
+		long m_CameraPPQIndex = -1;
 
-		SVIOEntryHostStructPtr m_IOEntryPtr;
-		bool m_ToggleState;
+		SVIOEntryHostStructPtr m_IOEntryPtr {};
+		bool m_ToggleState = true;
 
 	};
 
@@ -442,8 +444,9 @@ private:
 	{
 		typedef std::vector< long > SVCountVector;
 
-		SVPPQTrackingElement();
-		SVPPQTrackingElement( const SVPPQTrackingElement& p_rObject );
+		SVPPQTrackingElement() = default;
+		SVPPQTrackingElement( const SVPPQTrackingElement& p_rObject ) = default;
+		SVPPQTrackingElement& operator=(const SVPPQTrackingElement&) = default;
 
 		virtual ~SVPPQTrackingElement();
 
@@ -451,7 +454,7 @@ private:
 
 		void IncrementCount( size_t p_Index, size_t p_VectorSize );
 
-		SVCountVector m_TrackedCounts;
+		SVCountVector m_TrackedCounts {};
 	};
 
 	struct SVPPQTracking
@@ -459,8 +462,9 @@ private:
 		typedef std::map<std::string, SVPPQTrackingElement> SVQueueTrackingMap;
 		typedef std::map<std::string, long> SVPPQTrackingMap;
 
-		SVPPQTracking();
-		SVPPQTracking( const SVPPQTracking& p_rObject );
+		SVPPQTracking() = default;
+		SVPPQTracking( const SVPPQTracking& p_rObject ) = default;
+		SVPPQTracking& operator=(const SVPPQTracking&) = default;
 
 		virtual ~SVPPQTracking();
 
@@ -470,12 +474,12 @@ private:
 		void IncrementCount( const std::string& p_rName, size_t p_Index );
 		void IncrementTimeCount( const std::string& p_rName, size_t p_Index );
 
-		size_t m_QueueLength;
-		size_t m_TimeLength;
+		size_t m_QueueLength = 0;
+		size_t m_TimeLength = 0;
 
-		SVPPQTrackingMap m_Counts;
-		SVQueueTrackingMap m_QueueCounts;
-		SVQueueTrackingMap m_QueueWriteTimeCounts;
+		SVPPQTrackingMap m_Counts {};
+		SVQueueTrackingMap m_QueueCounts {};
+		SVQueueTrackingMap m_QueueWriteTimeCounts {};
 	};
 
 	SVPPQTracking m_PPQTracking;

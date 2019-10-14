@@ -22,7 +22,7 @@ namespace SvAuth
 class AuthClient
 {
 public:
-	AuthClient(boost::asio::io_context&, std::string host, uint16_t port);
+	AuthClient(boost::asio::io_context&, const std::string& host, uint16_t port);
 
 	bool login(const std::string& user, const std::string& pass, std::string& access_token);
 	bool auth(const std::string& access_token, std::string& auth_token);

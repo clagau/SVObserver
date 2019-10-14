@@ -149,12 +149,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonRemove()
 //
 void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, TCHAR atcTestChar)
 {
-
-    long lEmpty;
-	long lReturned;
-    long lError;
-
-    lError = 0;
+    long lError = 0;
 
     while (1)
     {
@@ -163,13 +158,11 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 		
         pListBox->ResetContent();
 
-        lEmpty = TRUE;
-
 		for (int i = SvTo::SV_STATS_MIN_VALUE; i < SvTo::SV_STATS_TOPOF_LIST; i++ )
 		{	
             if( FeatureString[i] == atcTestChar)
             {
-				lReturned = pListBox->AddString( m_pTool->GetFeatureName( i ).c_str() );
+				long lReturned = pListBox->AddString( m_pTool->GetFeatureName( i ).c_str() );
                 
                 if (lReturned == LB_ERR || lReturned == LB_ERRSPACE)
                 {
@@ -183,7 +176,6 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
                     lError = -SvStl::Err_15006;
                     break;
                 }
-                lEmpty = FALSE;
 	        }
 		}
 

@@ -150,8 +150,6 @@ void SVBarCodeAnalyzerClass::init()
 
 bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 {
-	double dParm;
-
 	CloseMil();
 	
 	SvIe::SVImageClass *pInputImage = getInputImage();
@@ -167,9 +165,6 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 		svData.m_lCodeType = static_cast<SVBarCodeTypesEnum>( l_lTmpType );
 		if ( S_OK == SvIe::SVImageProcessingClass::CreateBarCodeBuffer( &svData ) )
 		{
-			
-			HRESULT MatroxCode;
-
 			m_MilCodeId = svData.HBuffer.milBarCode;
 
 			// get M_TIMEOUT value from Registry
@@ -179,30 +174,31 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 			msv_lBarcodeTimeout.GetValue(l_mTimeout);
 			double dL1 = (double) l_mTimeout;
 
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCodeTimeout, dL1 );
+			double dParm = 0.;
+			/*HRESULT MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCodeTimeout, dL1 );
 			msv_dOrientation.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngle, dParm );
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngle, dParm );
 
 			msv_dSkewNegative.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaNeg, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaNeg, dParm);
 
 			msv_dSkewPositive.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaPos, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaPos, dParm);
 
 			msv_dCellMinSize.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMin, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMin, dParm);
 
 			msv_dCellMaxSize.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMax, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMax, dParm);
 
 			msv_dCellNumberX.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberX, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberX, dParm);
 
 			msv_dCellNumberY.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberY, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberY, dParm);
 
 			msv_dSpeed.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSpeed, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSpeed, dParm);
 
 			// Threshold
 			long l_lThresholdType ;
@@ -212,19 +208,19 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 				case 0:
 				{
 					msv_dThreshold.GetValue (dParm);
-					MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCThreshold, dParm);
+					/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCThreshold, dParm);
 					break;
 				}
 				case 1:	// Auto Threshold
 				{
 					dParm = 0;
-					MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAutoThreshold, dParm );
+					/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAutoThreshold, dParm );
 					break;
 				}
 				case 2:	// Adaptive Threshold
 				{
 					dParm = 0;
-					MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAdaptiveThreshold, dParm );
+					/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAdaptiveThreshold, dParm );
 					break;
 				}
 			}
@@ -234,20 +230,20 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 			{
 				dParm = (double) SVValueAny;		// M_ANY;
 			}
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCBarcodeStringSize, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCBarcodeStringSize, dParm);
 
 			msv_dEncoding.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCEncoding, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCEncoding, dParm);
 
 			msv_dErrorCorrection.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCErrorCorrection, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCErrorCorrection, dParm);
 
 			msv_dForegroundColor.GetValue (dParm);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCForeGroundValue, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCForeGroundValue, dParm);
 
 			BOOL bUnevenGrid;
 			msv_bUnEvenGrid.GetValue(bUnevenGrid);
-			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCUnEvenGrid, (long)bUnevenGrid );
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCUnEvenGrid, (long)bUnevenGrid );
 			return true;
 		}
 		else
@@ -412,11 +408,11 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 				{
 					if (nullptr != pErrorMessages)
 					{
-						for (SvStl::MessageContainerVector::iterator iter = pErrorMessages->begin(); pErrorMessages->end() != iter; iter++ )
-						{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
-							if (GUID_NULL == iter->getObjectId())
+						for (SvStl::MessageContainer& rMessage : *pErrorMessages)
+						{
+							if (GUID_NULL == rMessage.getObjectId())
 							{
-								iter->setObjectId(GetUniqueObjectID());
+								rMessage.setObjectId(GetUniqueObjectID());
 							}
 						}
 					}
@@ -530,11 +526,11 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						{
 							if (nullptr != pErrorMessages)
 							{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
-								for (SvStl::MessageContainerVector::iterator iter = pErrorMessages->begin(); pErrorMessages->end() != iter; iter++ )
+								for (SvStl::MessageContainer& rMessage : *pErrorMessages)
 								{
-									if (GUID_NULL == iter->getObjectId())
+									if (GUID_NULL == rMessage.getObjectId())
 									{
-										iter->setObjectId(GetUniqueObjectID());
+										rMessage.setObjectId(GetUniqueObjectID());
 									}
 								}
 							}

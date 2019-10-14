@@ -35,7 +35,7 @@ namespace SvTh
 			response.setIsComplete(true);
 			response.setData(rTriggerData.m_Data);
 
-			HRESULT hr = pDevice->Notify( response );
+			/*HRESULT hr = */pDevice->Notify( response );
 
 			#ifdef SV_LOG_STATUS_INFO
 				std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
@@ -61,11 +61,9 @@ namespace SvTh
 
 	HRESULT SVTriggerClass::RegisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller )
 	{
-		HRESULT l_hrOk = S_OK;
-
 		TriggerDispatcher dispatcher(TriggerCallbackSvtc, TriggerParameters(this));
 
-		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
+		HRESULT l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
 		if( nullptr != m_pDLLTrigger )
 		{

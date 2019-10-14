@@ -902,11 +902,6 @@ HRESULT SVDLLToolLoadLibraryClass::DestroyImageDefinitionStructure(SVImageDefini
 	return l_hrOk;
 }
 
-bool SVDLLToolLoadLibraryClass::IsOpen()
-{
-	return nullptr != m_hmHandle;
-}
-
 SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness( LPCTSTR p_szFile )
 {
 		//see http://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx

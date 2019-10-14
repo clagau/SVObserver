@@ -24,7 +24,7 @@ namespace SvAuth
 class RestHandler
 {
 public:
-	RestHandler(AuthManager&);
+	explicit RestHandler(AuthManager&);
 
 	bool onRestRequest(const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res);
 

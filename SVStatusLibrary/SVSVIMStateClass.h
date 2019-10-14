@@ -85,7 +85,7 @@ public:
 	//! Sets the notification function
 	//! \param  [in] pointer to the notification function
 	//************************************
-	static void setNotificationFunction(NotifyFunctor Notify);
+	static void setNotificationFunction(const NotifyFunctor& Notify);
 
 	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
 	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }

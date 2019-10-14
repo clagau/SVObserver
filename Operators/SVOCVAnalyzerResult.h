@@ -77,7 +77,7 @@ protected:
 	long     m_lLowValue = 0;
 	long     m_lHighValue = 0;
 	int      m_nTotalCount = 0;
-	TCHAR    *m_pDataArr[OCV_MAX_ENTREES];
+	TCHAR    *m_pDataArr[OCV_MAX_ENTREES] {};
 	short    *m_pIndexTable = nullptr;
 	double   m_dFactor = 1.;
 

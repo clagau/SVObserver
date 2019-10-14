@@ -20,7 +20,7 @@ namespace SvOgw
 class WebAppVersionLoader
 {
 public:
-	WebAppVersionLoader(const SvHttp::HttpServerSettings&);
+	explicit WebAppVersionLoader(const SvHttp::HttpServerSettings&);
 
 	std::string getVersion() const;
 

@@ -125,9 +125,7 @@ bool SVTransformationToolClass::DoesObjectHaveExtents() const
 
 HRESULT SVTransformationToolClass::UpdateImageWithExtent()
 {
-	HRESULT l_Status = S_OK;
-
-	l_Status = m_toolExtent.UpdateImageWithExtent(SVToolExtentClass::SVTransformationToolExtent);
+	HRESULT l_Status = m_toolExtent.UpdateImageWithExtent(SVToolExtentClass::SVTransformationToolExtent);
 
 	return l_Status;
 }

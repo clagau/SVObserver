@@ -90,7 +90,6 @@ public:
 	/// Set status color to disabled (in SVTaskObjectClass), but also for all children
 	virtual void SetDisabled();
 	virtual DWORD GetObjectColor() const;
-	virtual DWORD GetObjectState() const;
 
 	virtual void Persist( SvOi::IObjectWriter& rWriter );
 
@@ -136,9 +135,7 @@ public:
 	// Returns:   SVObjectClass*
 	//************************************
 	SVObjectClass* GetAncestor( SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel=false ) const;
-	int GetNameLength() const;
 	LPCTSTR GetObjectName() const;
-	int GetObjectNameLength() const;
 
 	SVObjectClass* GetParent() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
@@ -228,17 +225,11 @@ protected:
 	/// \returns bool
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) { return false; };
 
-public:
-
-	void SetDefaultObjectAttributesSet(UINT uAttributes);
-
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
 	UINT m_ObjectAttributesAllowed;
 	//This attribute holds the array enumerated bits of set object attributes based on object array depth.
 	std::vector<UINT> m_ObjectAttributesSet;
-	//This attribute holds the enumerated bits of default object attributes.
-	UINT m_DefaultObjectAttributesSet;
 
 	// Refer to IsCreated()
 	bool m_isCreated;
@@ -254,6 +245,7 @@ protected:
 private:
 	void init();
 
+	//ATTENTION: order of the parameter (especially m_ObjectName before m_Name) is important, because it is needed for the constructors.
 	int m_resourceID;		//String resource ID, of NOT user changeable name.
 	std::string m_ObjectName;	//NOT user changeable name
 	std::string m_Name;			//user given name

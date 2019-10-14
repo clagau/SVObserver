@@ -204,11 +204,7 @@ HRESULT SVColorToolClass::SetImageExtentToParent()
 
 HRESULT SVColorToolClass::SetImageExtentToFit(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = S_OK;
-
-	l_hrOk = m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);
-
-	return l_hrOk;
+	return m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);;
 }
 
 SVToolClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
@@ -364,8 +360,6 @@ bool SVColorToolClass::createBandChildLayer(SvDef::BandEnum Band)
 
 HRESULT SVColorToolClass::CollectInputImageNames()
 {
-	std::string Name;
-
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
 	if (nullptr != pInputImage)
 	{

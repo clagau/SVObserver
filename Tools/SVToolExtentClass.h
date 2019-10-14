@@ -42,7 +42,7 @@ public:
 		SVTransformationToolExtent = 2,
 	};
 
-	SVToolExtentClass(SVImageExtentClass& rImageExtent);
+	explicit SVToolExtentClass(SVImageExtentClass& rImageExtent);
 	~SVToolExtentClass();
 
 	HRESULT Initialize();

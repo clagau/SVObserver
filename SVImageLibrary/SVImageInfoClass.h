@@ -26,7 +26,7 @@ public:
 
 	~SVImageInfoClass();
 
-	const SVImageInfoClass &operator=( const SVImageInfoClass& p_rsvValue );
+	SVImageInfoClass &operator=( const SVImageInfoClass& p_rsvValue );
 	const SVImageInfoClass &operator=( const BITMAPINFOHEADER& p_rBitmapHeader );
 
 	HRESULT Initialize();

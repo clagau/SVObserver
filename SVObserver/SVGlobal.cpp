@@ -39,14 +39,6 @@ CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd )
 	return nullptr;
 }
 
-// Calculate real pixel number of a line, which is built by Bresenham.
-// Works also with negative values.
-long SVCalcLinePixelNumber( long Width, long Height )
-{
-	long Length = std::max( labs( Width ), labs( Height ) );
-	return( ( Width && Height ) ? ++Length : Length );
-}
-
 BOOL SVGetPathInformation( std::string& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask )
 {
 	// Only for MFC-Threads!
@@ -270,67 +262,4 @@ void SVRCSetSVCPathName( LPCTSTR TStrPathName )
 		}
 	}
 	AfxGetApp()->WriteProfileString( _T( "Settings" ), _T( "CurrentSVCPathName" ), SVRCCurrentSVCPathName );
-}
-
-
-
-#define INDEX_FOUND  -2
-
-//************************************
-// Method:    _FindMenuIndex
-// Description:  Function is only used in EnableParentMenu
-// Parameter: CMenu *  & pParent pointer to parent menu (output)
-// Parameter: int &ParentMenuIndex index of the parenmenuentry
-// Parameter: CMenu * pMenu 
-// Parameter: UINT ID CommandId 
-// Parameter: int  start index of submenu where search for the command entry is started.
-// Returns:   int index of Entry, 
-//************************************
-int   _FindMenuIndex( CMenu*  &pParent,  int&  ParentMenuIndex, CMenu*  pMenu, UINT ID , int start =0)
-{
-	for(int i =start ; i < pMenu->GetMenuItemCount(); i++)
-	{
-		if( pMenu->GetMenuItemID(i) == ID)
-		{
-			return i;
-		}
-		else
-		{
-			CMenu* pSubMenu = pMenu->GetSubMenu(i);
-
-			if(pSubMenu)
-			{
-				int index = _FindMenuIndex(pParent,ParentMenuIndex, pSubMenu, ID);
-
-				if(index == INDEX_FOUND)
-				{
-					return INDEX_FOUND;
-				}
-
-				if(index > -1)
-				{
-					ParentMenuIndex = i;
-					pParent =  pMenu;
-					return INDEX_FOUND;
-				}
-			}
-		}
-
-	}
-	return -1;
-}
-
-bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start )
-{
-	UINT flag = Enable?  MF_BYPOSITION | MF_ENABLED : MF_BYPOSITION |  MF_GRAYED;
-	CMenu* pParentMenu =nullptr;
-	int ParentMenuIndex =-1;
-	if( _FindMenuIndex( pParentMenu, ParentMenuIndex, pMenu, ID , start ) == INDEX_FOUND)
-	{
-		if(pParentMenu )
-		{
-			return (-1 != pParentMenu->EnableMenuItem(ParentMenuIndex, flag ));
-		}
-	}
-	return false;
 }

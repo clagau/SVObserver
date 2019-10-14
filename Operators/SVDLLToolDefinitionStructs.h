@@ -36,7 +36,7 @@ public:
 	InputValueDefinitionStruct();
 	~InputValueDefinitionStruct();
 	InputValueDefinitionStruct(const InputValueDefinitionStruct& rhs);
-	const InputValueDefinitionStruct& operator = (const InputValueDefinitionStruct& rhs);
+	InputValueDefinitionStruct& operator = (const InputValueDefinitionStruct& rhs);
 	bool operator == (const InputValueDefinitionStruct& rhs);
 private:
 	void Clear();

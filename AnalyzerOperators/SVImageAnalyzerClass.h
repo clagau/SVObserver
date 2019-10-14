@@ -20,7 +20,7 @@ class SVImageAnalyzerClass : public SVAnalyzerClass
 	SV_DECLARE_CLASS( SVImageAnalyzerClass );
 
 public:
-	SVImageAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
+	explicit SVImageAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
 	SVImageAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEANALYZER );
 	virtual ~SVImageAnalyzerClass();
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

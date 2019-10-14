@@ -86,7 +86,7 @@ protected:
 	// Parameter: rToolGuid <in> Reference to the selected tool GUID to write to the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT streamToolToZip( const std::string rFileName, const SVGUID& rToolGuid ) const;
+	HRESULT streamToolToZip( const std::string& rFileName, const SVGUID& rToolGuid ) const;
 
 	//************************************
 	// Description: This method writes the Base and Environment nodes

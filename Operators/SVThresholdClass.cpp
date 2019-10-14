@@ -143,7 +143,7 @@ bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	m_lowerThresh.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 
-	bOk = Rebuild();
+	bOk = Rebuild() && bOk;
 
 	m_isCreated = bOk;
 

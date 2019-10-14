@@ -18,7 +18,7 @@
 
 namespace SvTrc
 {
-Image::Image(SvOi::SVImageBufferHandlePtr pBuffer, long ResetId, int bufferPos, bool isReadOnly, bool shouldUnlockAuto) :
+Image::Image(const SvOi::SVImageBufferHandlePtr& pBuffer, long ResetId, int bufferPos, bool isReadOnly, bool shouldUnlockAuto) :
 	m_pBuffer(pBuffer), m_ResetId(ResetId), m_isReadOnly(isReadOnly), m_bufferPos(bufferPos), m_shouldUnlockAuto(shouldUnlockAuto)
 {
 };

@@ -662,8 +662,6 @@ bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, b
 	}
 	else
 	{
-		std::string l_Name = SvUl::Format(_T("%s Toggle"), pCamera->GetName());
-
 		m_Cameras[pCamera].m_CameraPPQIndex = lPosition;
 		m_Cameras[pCamera].m_ToggleState = true;
 
@@ -1985,7 +1983,7 @@ bool SVPPQObject::RebuildOutputList()
 					pOldOutput->getObject()->ResetObject();
 
 					// Check for prefix of PPQ for these special signals...
-					if (0 == NewName.find(_T("PPQ_")))
+					if (0 == NewName.compare(0, 4, _T("PPQ_")))
 					{
 						// Disable Trigger Toggle since it is not written with the outputs
 						if (std::string::npos != NewName.find(_T("Trigger Toggle")))
@@ -4103,61 +4101,17 @@ void SVPPQObject::SetConditionalOutputName(const std::string& conditionalOutputN
 }
 
 #pragma region SVCameraQueueElement Constructor
-SVPPQObject::SVCameraQueueElement::SVCameraQueueElement()
-	: m_pCamera(nullptr)
-	, m_Data()
-{
-}
-
-SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(const SVCameraQueueElement& rObject)
-	: m_pCamera(rObject.m_pCamera)
-	, m_Data(rObject.m_Data)
-{
-}
-
 SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const SVODataResponseClass& rData)
 	: m_pCamera(pCamera)
 	, m_Data(rData)
 {
 }
 
-SVPPQObject::SVCameraQueueElement::~SVCameraQueueElement()
-{
-}
 #pragma endregion SVCameraQueueElement Constructor
 
-#pragma region SVCameraInfoElement Constructor
-SVPPQObject::SVCameraInfoElement::SVCameraInfoElement()
-	: m_CameraPPQIndex(-1)
-	, m_IOEntryPtr()
-	, m_ToggleState(true)
-{
-}
-
-SVPPQObject::SVCameraInfoElement::SVCameraInfoElement(const SVCameraInfoElement& p_rObject)
-	: m_CameraPPQIndex(p_rObject.m_CameraPPQIndex)
-	, m_IOEntryPtr(p_rObject.m_IOEntryPtr)
-	, m_ToggleState(p_rObject.m_ToggleState)
-{
-}
-
-SVPPQObject::SVCameraInfoElement::~SVCameraInfoElement()
-{
-}
-#pragma endregion SVCameraInfoElement Constructor
 
 #ifdef EnableTracking
 #pragma region SVPPQTrackingElement Constructor
-SVPPQObject::SVPPQTrackingElement::SVPPQTrackingElement()
-	: m_TrackedCounts()
-{
-}
-
-SVPPQObject::SVPPQTrackingElement::SVPPQTrackingElement(const SVPPQTrackingElement& p_rObject)
-	: m_TrackedCounts(p_rObject.m_TrackedCounts)
-{
-}
-
 SVPPQObject::SVPPQTrackingElement::~SVPPQTrackingElement()
 {
 	clear();
@@ -4186,23 +4140,6 @@ void SVPPQObject::SVPPQTrackingElement::IncrementCount(size_t p_Index, size_t p_
 }
 
 #pragma region SVPPQTracking Constructor
-SVPPQObject::SVPPQTracking::SVPPQTracking()
-	: m_QueueLength(0)
-	, m_Counts()
-	, m_QueueCounts()
-	, m_QueueWriteTimeCounts()
-{
-}
-
-SVPPQObject::SVPPQTracking::SVPPQTracking(const SVPPQTracking& p_rObject)
-	: m_QueueLength(p_rObject.m_QueueLength)
-	, m_Counts(p_rObject.m_Counts)
-	, m_QueueCounts(p_rObject.m_QueueCounts)
-	, m_TimeLength(p_rObject.m_TimeLength)
-	, m_QueueWriteTimeCounts(p_rObject.m_QueueWriteTimeCounts)
-{
-}
-
 SVPPQObject::SVPPQTracking::~SVPPQTracking()
 {
 	clear();

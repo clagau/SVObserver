@@ -511,8 +511,8 @@ HRESULT SVMatroxGige::DestroySystem(SVMatroxGigeSystem& rSystem)
 	HRESULT hr = S_OK;
 
 	// Unregister camera present hook
-	HRESULT l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle));
-	l_Code = SVMatroxSystemInterface::Destroy(*(rSystem.m_System.get()));
+	/*HRESULT l_Code = */SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle));
+	HRESULT l_Code = SVMatroxSystemInterface::Destroy(*(rSystem.m_System.get()));
 	if (l_Code != S_OK)
 	{
 		hr = l_Code; 
@@ -804,7 +804,7 @@ HRESULT SVMatroxGige::CameraBufferUnlockAll(unsigned long channel)
 
 	if ( IsValidDigitizerHandle(channel) )
 	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(channel);
+		/*SVMatroxGigeDigitizer& l_rCamera = */GetDigitizer(channel);
 	}
 	else
 	{
@@ -1308,12 +1308,12 @@ HRESULT SVMatroxGige::UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer
 	HRESULT l_Code = S_OK;
 	if (nullptr != p_rCamera.m_Digitizer)
 	{
-		l_Code = SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, &SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
+		/*l_Code = */SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, &SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
 		l_Code = SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, &SVMatroxGige::DigitizerStartFrameCallback, (void *)&p_rCamera);
 
 		if (p_rCamera.IsAcquisitionTriggered())
 		{
-			l_Code = SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGigeEvent, SVMatroxGige::LineEdgeEventCallback, (void *)&p_rCamera);
+			/*l_Code = */SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGigeEvent, SVMatroxGige::LineEdgeEventCallback, (void *)&p_rCamera);
 
 			// Disable Gige Event(s)
 			l_Code = DisableGigeEvents(p_rCamera);

@@ -168,7 +168,6 @@ long SVDPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByt
 void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Get the Data Values (Member Info, Values)
-	std::string tmp;
 	_variant_t value;
 	value.Clear();
 

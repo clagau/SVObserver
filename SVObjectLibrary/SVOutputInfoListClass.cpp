@@ -34,7 +34,7 @@ namespace
 	class DebugOutput
 	{
 	public:
-		DebugOutput( LPCTSTR strFunctionName ) : m_strFunction(strFunctionName) {}
+		explicit DebugOutput( LPCTSTR strFunctionName ) : m_strFunction(strFunctionName) {}
 
 		virtual ~DebugOutput();
 
@@ -123,8 +123,7 @@ bool SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 			// Check only this entry...
 			if( nullptr != pObjectInfo )
 			{
-				SVObjectClass* pObject = pObjectInfo->getObject();
-				pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
 				Result = ( nullptr != pObject ) ? true : false;
 			}
 		}
@@ -139,8 +138,7 @@ bool SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 
 				if( nullptr != pObjectInfo )
 				{
-					SVObjectClass* pObject = pObjectInfo->getObject();
-					pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
+					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
 					Result = ( ( nullptr != pObject) ? true : false ) && Result;
 				}
 				else
@@ -256,11 +254,6 @@ void SVOutputInfoListClass::InsertAt( int nIndex, SVOutObjectInfoStruct* pOutObj
 	}
 }
 
-SVOutObjectInfoStruct *&SVOutputInfoListClass::ElementAt( int Index )
-{
-	return m_svObjectArray[Index];
-}
-
 void SVOutputInfoListClass::RemoveAt( int nIndex )
 {
 	long l_lSize = static_cast<int> (m_svObjectArray.size());
@@ -349,62 +342,6 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVOutputI
 	}
 }// end GetSetAttributesList
 
-void SVOutputInfoListClass::GetObjectReferenceList( SVObjectReferenceVector& rvecObjects )
-{
-	DebugOutput debug(_T("SVOutputInfoListClass::GetObjectReferenceList"));
-	int nCount = static_cast<int> (m_svObjectArray.size());
-	for( int i=0; i<nCount; i++)
-	{
-		SVOutObjectInfoStruct* pInfoObject = m_svObjectArray[i];
-
-		if ( nullptr != pInfoObject )
-		{
-
-			if ( nullptr != pInfoObject )
-			{	
-				if ( nullptr != pInfoObject->getObject() )
-				{
-					SVObjectReference ObjectRef = pInfoObject->GetObjectReference();
-					SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
-					if( nullptr != pValueObject )
-					{
-						if ( pValueObject->isArray() )
-						{
-							ObjectRef.SetEntireArray();
-							rvecObjects.push_back( ObjectRef );
-
-							for ( int i=0; i < pValueObject->getArraySize(); i++ )
-							{
-								ObjectRef.SetArrayIndex(i);
-								rvecObjects.push_back( ObjectRef );
-							}
-						}
-						else
-						{
-							rvecObjects.push_back( ObjectRef );
-						}
-					}
-				}
-				else
-				{
-					debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject)"));
-					pInfoObject->GetObjectReference().clear();
-				}
-			}
-			else
-			{
-				debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-				m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-			}
-		}
-		else
-		{
-			debug.Add(_T("NULL object"));
-		}
-	}// end for( int i=0; i<nCount; i++)
-
-}// end GetObjectReferenceList
-
 void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectReferenceVector& rvecObjects )
 {
 	DebugOutput debug(_T("SVOutputInfoListClass::GetSetAttributesList"));
@@ -461,66 +398,3 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVObjectR
 		}
 	}// end for( int i=0; i<nCount; i++)
 }// end GetSetAttributesList
-
-/////////////////////////////////////////////////////////////////////////////
-// Build a list of objects with desired attributes allowed.
-/////////////////////////////////////////////////////////////////////////////
-void SVOutputInfoListClass::GetAllowedAttributesList( UINT uAttributeMask, SVOutputInfoListClass * pFillList )
-{
-	DebugOutput debug(_T("SVOutputInfoListClass::GetAllowedAttributesList"));
-	int nCount = static_cast<int> (m_svObjectArray.size());
-	for( int i=0; i<nCount; i++)
-	{
-		SVOutObjectInfoStruct* pInfoObject = m_svObjectArray[i];
-
-		if ( nullptr != pInfoObject )
-		{
-			if ( nullptr != pInfoObject )
-			{
-				if ( nullptr != pInfoObject->getObject())
-				{
-
-					UINT uAttributes = pInfoObject->getObject()->ObjectAttributesAllowed();
-
-					if(( uAttributes & uAttributeMask ) == uAttributeMask)
-					{
-						pFillList->Add(pInfoObject);
-					}
-				}
-				else
-				{
-					std::string Temp = SvUl::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->getObject());
-					debug.Add( Temp.c_str() );
-					pInfoObject->GetObjectReference().clear();
-				}
-			}
-			else
-			{
-				debug.Add(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject)"));
-				m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-			}
-		}
-		else // nullptr
-		{
-			debug.Add(_T("NULL object"));
-		}
-	}
-}
-
-bool SVOutputInfoListClass::HasDependents()
-{
-	long l_lSize = static_cast<int> (m_svObjectArray.size());
-
-	for( int i = 0;i < l_lSize; i++ )
-	{
-		SVOutObjectInfoStruct* pOutObjectInfo = m_svObjectArray[i];
-		
-		// is anyone using this output
-		if( pOutObjectInfo && pOutObjectInfo->GetInputSize() )
-		{
-			return true;
-		}
-	}
-	return false;
-}
-

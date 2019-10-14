@@ -182,8 +182,8 @@ SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduc
 struct SVInspectionNameUpdate
 {
 	SVInspectionNameUpdate();
-	SVInspectionNameUpdate( const std::string& p_rName );
-	SVInspectionNameUpdate( const SVInspectionNameUpdate& p_rObject );
+	explicit SVInspectionNameUpdate( const std::string& p_rName );
+	explicit SVInspectionNameUpdate( const SVInspectionNameUpdate& p_rObject );
 
 	virtual ~SVInspectionNameUpdate();
 
@@ -193,8 +193,8 @@ struct SVInspectionNameUpdate
 struct SVRemoveImages
 {
 	SVRemoveImages();
-	SVRemoveImages( const SVGuidSet& p_rImages );
-	SVRemoveImages( const SVRemoveImages& p_rObject );
+	explicit SVRemoveImages( const SVGuidSet& p_rImages );
+	explicit SVRemoveImages( const SVRemoveImages& p_rObject );
 
 	virtual ~SVRemoveImages();
 
@@ -205,8 +205,8 @@ struct SVRemoveImages
 struct SVRemoveValues
 {
 	SVRemoveValues();
-	SVRemoveValues( const SVGuidSet& p_rValues );
-	SVRemoveValues( const SVRemoveValues& p_rObject );
+	explicit SVRemoveValues( const SVGuidSet& p_rValues );
+	explicit SVRemoveValues( const SVRemoveValues& p_rObject );
 
 	virtual ~SVRemoveValues();
 
@@ -284,8 +284,8 @@ struct SVOutputRequestInfoStruct
 struct SVProductInfoRequestStruct
 {
 	SVProductInfoRequestStruct();
-	SVProductInfoRequestStruct( SVProductInfoStruct* p_pProduct );
-	SVProductInfoRequestStruct( const SVProductInfoRequestStruct& p_rObject );
+	explicit SVProductInfoRequestStruct( SVProductInfoStruct* p_pProduct );
+	explicit SVProductInfoRequestStruct( const SVProductInfoRequestStruct& p_rObject );
 	virtual ~SVProductInfoRequestStruct();
 
 	const SVProductInfoRequestStruct& operator=( const SVProductInfoRequestStruct& p_rObject );

@@ -57,7 +57,7 @@ SVExternalToolTaskData::~SVExternalToolTaskData()
 {
 }
 
-const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalToolTaskData& rhs)
+SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalToolTaskData& rhs)
 {
 	if (this != &rhs)
 	{

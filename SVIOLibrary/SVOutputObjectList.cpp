@@ -474,9 +474,9 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 				bool l_Skip = false;
 
 				// Check if the name starts with a valid PPQ_X prefix. Skip these outputs.
-				for(SvDef::StringVector::const_iterator it = rPPQNames.begin() ; it != rPPQNames.end() ; ++it)
+				for(const std::string& rName : rPPQNames)
 				{
-					if( 0 == OutputName.find( *it ) )
+					if( 0 == OutputName.compare( 0, rName.length(), rName) )
 					{
 						l_Skip = true;
 						break;

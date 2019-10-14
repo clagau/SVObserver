@@ -35,16 +35,16 @@ int TRControllerBaseDataPerIP::getNumberOfTRKeepFreeForWrite() const
 }
 
 #pragma region Constructor
+constexpr int handleForRest = 1000;
 DataControllerBase::DataControllerBase()
 {
-	constexpr int handleForReset = 1000;
 	SVRegistryClass reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
 	DWORD value = 0;
 	if (reg.GetRegistryValue(_T("GDIProcessHandleQuota"), &value) || 0 < value)
 	{
-		if (handleForReset < value)
+		if (handleForRest < value)
 		{
-			m_maxNumberOfRequiredBuffer = static_cast<int>(value) - handleForReset;
+			m_maxNumberOfRequiredBuffer = static_cast<int>(value) - handleForRest;
 		}
 		else
 		{

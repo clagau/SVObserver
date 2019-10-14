@@ -14,7 +14,7 @@ class SVDigitalInputObject : public SVInputObject
 {
 #pragma region Constructor
 public:
-	SVDigitalInputObject( LPCSTR strObjectName );
+	explicit SVDigitalInputObject( LPCSTR strObjectName );
 	SVDigitalInputObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALINPUTOBJECT );
 
 	virtual ~SVDigitalInputObject();

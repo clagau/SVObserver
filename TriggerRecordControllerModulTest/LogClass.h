@@ -61,13 +61,13 @@ public:
 
 	void ResetCounts();
 
-	long GetFailCount();	// Gets Fail count for the current script.
-	long GetPassCount();	// Gets Pass count for the current script.
-	long GetWarnCount();	// Gets Warn count for the current script.
-	long GetAbortCount();	// Gets Abort count for the current script.
+	unsigned long GetFailCount() const;	// Gets Fail count for the current script.
+	unsigned long GetPassCount() const;	// Gets Pass count for the current script.
+	unsigned long GetWarnCount() const;	// Gets Warn count for the current script.
+	unsigned long GetAbortCount() const;	// Gets Abort count for the current script.
 
 	void SetLogLevel(const LogLevel logLevel);
-	LogLevel GetLogLevel( );
+	LogLevel GetLogLevel( ) const;
 
 	/// Convert the string, check state and log the string.
 	/// \param line [in] log line
@@ -76,10 +76,10 @@ public:
 
 private:
 	// Variables
-	unsigned int m_uiFail;
+	unsigned long m_uiFail;
 	unsigned long m_uiPass;
-	unsigned int m_uiWarn;
-	unsigned int m_uiAbort;
+	unsigned long m_uiWarn;
+	unsigned long m_uiAbort;
 private:
 	LogLevel m_LogLevel;
 	FILE *m_File;

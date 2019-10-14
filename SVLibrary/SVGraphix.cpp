@@ -324,22 +324,6 @@ void SVGraphixClass::FlushDrawObjects()
 	m_drawObjectVector.clear();
 }
 
-void SVGraphixClass::GetGraphixRect(RECT& rRect, int ScaleX /*= 1*/, int ScaleY /*= 1*/)
-{
-	rRect = m_rect;
-	if (ScaleX)
-	{
-		rRect.left = (ScaleX < 0) ? (m_rect.left / (-ScaleX)) : (m_rect.left   * ScaleX);
-		rRect.right = (ScaleX < 0) ? (m_rect.right / (-ScaleX)) : (m_rect.right  * ScaleX);
-	}
-
-	if (ScaleY)
-	{
-		rRect.top = (ScaleY < 0) ? (m_rect.top / (-ScaleY)) : (m_rect.top    * ScaleY);
-		rRect.bottom = (ScaleY < 0) ? (m_rect.bottom / (-ScaleY)) : (m_rect.bottom * ScaleY);
-	}
-}
-
 void SVGraphixClass::InsertDrawObject(SVGraphixDrawObjectClass* pNewDrawObject)
 {
 	if (nullptr != pNewDrawObject)
@@ -390,30 +374,22 @@ void SVGraphixClass::ScalePoint(POINT& rPoint, bool bDown /*= true*/)
 
 void SVGraphixClass::Draw( HDC hDC, const RECT& rRect )
 {
-    HDC     hMemDC              = nullptr;
-    HBRUSH  hBackgroundBrush    = nullptr;
-    HBRUSH  hOldBrush           = nullptr;
-    HBITMAP hBM                 = nullptr;
-    HBITMAP hOldBM              = nullptr;
-
     int graphixWidth  = m_rect.right - m_rect.left;
     int graphixHeight = m_rect.bottom - m_rect.top;
     int destWidth  = rRect.right - rRect.left;
     int destHeight = rRect.bottom - rRect.top;
             
-    hMemDC = ::CreateCompatibleDC(hDC);
-
-    hBackgroundBrush = ::CreateSolidBrush( m_backGroundColor );
-
-    hBM = ::CreateCompatibleBitmap( hDC, graphixWidth, graphixHeight );
+	HDC hMemDC = ::CreateCompatibleDC(hDC);
+	HBRUSH hBackgroundBrush = ::CreateSolidBrush( m_backGroundColor );
+	HBITMAP hBM = ::CreateCompatibleBitmap( hDC, graphixWidth, graphixHeight );
 
 	if(nullptr != hMemDC && nullptr != hBackgroundBrush && nullptr != hBM)
 	{
 		// Select background brush for memDC...
-		hOldBrush = static_cast<HBRUSH> (::SelectObject( hMemDC, hBackgroundBrush ));
+		HBRUSH hOldBrush = static_cast<HBRUSH> (::SelectObject( hMemDC, hBackgroundBrush ));
 
 		// Select bitmap for memDC...
-		hOldBM = static_cast<HBITMAP> (::SelectObject( hMemDC, hBM ));
+		HBITMAP hOldBM = static_cast<HBITMAP> (::SelectObject( hMemDC, hBM ));
         
 		// Set memDC background color...
 		::PatBlt( hMemDC, m_rect.left, m_rect.top, graphixWidth, graphixHeight, PATCOPY );
@@ -556,7 +532,7 @@ HGLOBAL SVGraphixClass::GetGraphixData()
 	size_t memFileSize = data.size();
 	HGLOBAL hMem = ::GlobalAlloc( GMEM_MOVEABLE, memFileSize );
 	BYTE* pMem = ( BYTE* ) ::GlobalLock( hMem );
-	if( nullptr != hMem && nullptr != pMem && memFileSize > 0)
+	if( nullptr != pMem && memFileSize > 0)
 	{
 		memcpy( pMem, &data[0], memFileSize );
 		::GlobalUnlock( pMem );

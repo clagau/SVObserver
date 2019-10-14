@@ -158,7 +158,6 @@ protected:
 	void PositionPictureDisplay();
 	void PositionButtons();
 	void SetupWindow();
-	void ToEditCtrl( unsigned int p_iResource, long p_lValue );
 
 	DECLARE_MESSAGE_MAP()
 

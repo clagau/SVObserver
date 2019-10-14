@@ -48,7 +48,7 @@ InputValueDefinitionStruct::~InputValueDefinitionStruct()
 	Clear();
 }
 
-const InputValueDefinitionStruct& InputValueDefinitionStruct::operator = (const InputValueDefinitionStruct& rRhs)
+InputValueDefinitionStruct& InputValueDefinitionStruct::operator = (const InputValueDefinitionStruct& rRhs)
 {
 
 	if (this != &rRhs)

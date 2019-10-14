@@ -114,7 +114,7 @@ SvPb::DeviceModeType SVSVIMStateClass::GetMode()
 	return result;
 }
 
-void SVSVIMStateClass::setNotificationFunction(NotifyFunctor Notify)
+void SVSVIMStateClass::setNotificationFunction(const NotifyFunctor& Notify)
 {
 	m_pNotify = Notify;
 }

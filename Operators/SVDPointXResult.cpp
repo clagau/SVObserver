@@ -74,9 +74,11 @@ SVDPointXResultClass::SVDPointXResultClass( SVObjectClass* POwner, int StringRes
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
-	SVRangeClass* pRange = (SVRangeClass* )rangeClassInfo.Construct(); 
-	if( pRange )
-		Add( pRange );
+	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(rangeClassInfo.Construct()); 
+	if (pRange)
+	{
+		Add(pRange);
+	}
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

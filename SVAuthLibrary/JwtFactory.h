@@ -34,7 +34,7 @@ public:
 		std::string PrivateKey;
 	};
 
-	JwtFactory(SignatureContext);
+	explicit JwtFactory(SignatureContext);
 
 	enum ParseResult
 	{

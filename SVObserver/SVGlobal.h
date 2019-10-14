@@ -123,13 +123,6 @@ typedef BOOL ( CALLBACK* SVDLL_BOOL_BYTEPTR_DWORDPTR_FUNCTION ) ( BYTE*, DWORD* 
 CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd );
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVCalcLinePixelNumber
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-long SVCalcLinePixelNumber( long Width, long Height );
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetPathInformation
 // -----------------------------------------------------------------------------
 // .Description : Uses SVGetPathInfo enumeration...
@@ -150,17 +143,6 @@ CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSub
 //Methods that were once in SVCommRC
 LPCTSTR SVRCGetSVCPathName();
 void 	SVRCSetSVCPathName( LPCTSTR TStrPathName );
-
-//************************************
-// Method:    EnableParentMenu
-// Description:  Find the ParentMenu entry  of an Entry and enable or disable it 
-// Parameter: CMenu * pMenu 
-// Parameter: UINT ID Command Id of the entry 
-// Parameter: bool Enable true is enable false is disable 
-// Parameter: int  start index of submenu where search for the command entry is started.
-// Returns:   bool true if sucessfull 
-//************************************
-bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start =0);
 
 extern TCHAR	SVRCCurrentSVCPathName[];
 

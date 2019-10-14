@@ -97,6 +97,8 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 
 						if( nullptr == ::SetClipboardData( ClipboardFormat, ClipboardData ) )
 						{
+							::CloseClipboard();
+							::GlobalFree(ClipboardData);
 							Result = E_FAIL;
 							SvStl::MessageMgrStd e( SvStl::MsgType::Data);
 							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25000_SetClipboardData );
@@ -105,6 +107,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 					}
 					else
 					{
+						::CloseClipboard();
 						Result = E_FAIL;
 						SvStl::MessageMgrStd e( SvStl::MsgType::Data);
 						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25001_ClipboardMemory );
@@ -227,7 +230,7 @@ bool ToolClipboard::isClipboardDataValid()
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT ToolClipboard::streamToolToZip( const std::string rFileName, const SVGUID& rToolGuid ) const
+HRESULT ToolClipboard::streamToolToZip( const std::string& rFileName, const SVGUID& rToolGuid ) const
 {
 	HRESULT Result( S_OK );
 

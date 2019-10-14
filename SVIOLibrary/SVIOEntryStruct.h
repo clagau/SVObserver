@@ -18,8 +18,9 @@
 
 struct SVIOEntryStruct
 {
-	SVIOEntryStruct();
-	SVIOEntryStruct(const SVIOEntryStruct& rRhs);
+	SVIOEntryStruct() = default;
+	SVIOEntryStruct(const SVIOEntryStruct& rRhs) = default;
+	SVIOEntryStruct& operator=(SVIOEntryStruct&) = default;
 
 	virtual ~SVIOEntryStruct();
 
@@ -28,12 +29,10 @@ struct SVIOEntryStruct
 	bool empty() const;
 	void clear();
 
-	void InitEntry();
-
 	SVIOEntryHostStructPtr m_IOEntryPtr;
 
-	bool m_EntryValid;
-	bool m_CombinedValue;
+	bool m_EntryValid = false;
+	bool m_CombinedValue = false;
 
 };
 

@@ -535,17 +535,8 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 SvOp::SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 {
 	SvOl::SVInputInfoListClass	resultInputList;
-	SVOutputInfoListClass	resultOutputList;
-
-	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
 	SvOp::SVLongResultClass*    pResult = nullptr;
-	SVObjectClass*          pSVObject;
-
-	SvDef::SVObjectTypeInfoStruct info;
-
-	info.ObjectType = SvPb::SVResultObjectType;
-	info.SubType = SvPb::SVResultLongObjectType;
-
+	SvDef::SVObjectTypeInfoStruct info {SvPb::SVResultObjectType, SvPb::SVResultLongObjectType};
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
 	SVObjectManagerClass::Instance().VisitElements( l_Visitor, GetUniqueObjectID() );
@@ -558,11 +549,9 @@ SvOp::SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 
 		pResult->GetPrivateInputList( resultInputList );
 
-		pResultInputInfo = resultInputList[0];
+		SvOl::SVInObjectInfoStruct* pResultInputInfo = resultInputList[0];
 
-		pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
-
-		if (&m_lvoNumberOfBlobsFound == pSVObject)
+		if (&m_lvoNumberOfBlobsFound == pResultInputInfo->GetInputObjectInfo().getObject())
 		{
 			break;
 		}
@@ -852,10 +841,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 	long lSortFeature;
 	bool l_bCenterXSet = false;
 	bool l_bCenterYSet = false;
-
 	SvIe::SVImageClass* pInputImage(nullptr);
-
-	HRESULT MatroxCode;
 
 	do
 	{
@@ -909,7 +895,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//
 		// Analyze the image for blobs and features of blobs.
 		//
-		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer(), m_BlobContextID );
+		HRESULT MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer(), m_BlobContextID );
 
 		if( S_OK != MatroxCode )
 		{
@@ -1038,7 +1024,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			//while loop, designed to achieve the correct nbr of blobs, 
 			//below were added to correct this problem.	EJC 07/31/01
 			long l_lValue=0;
-			MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
+			/*MatroxCode = */SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
 				SVEBlobExclude,
 				SVEBlobLabelValue,
 				SVECondGreater,
@@ -1062,7 +1048,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				while(lSelectedNbrOfBlobs < m_lBlobSampleSize)
 				{
 					x += (m_lBlobSampleSize - lSelectedNbrOfBlobs);
-					MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
+					/*MatroxCode = */SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
 						SVEBlobExcludeOnly,
 						SVEBlobLabelValue,
 						SVECondGreater,
@@ -1213,13 +1199,6 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 			for(int n=0; n < m_lBlobSampleSize; n++)
 			{
-				double dMaxX{pBoxXMaxData[n]};
-				double dMinX{pBoxXMinData[n]};
-				double dMaxY{pBoxYMaxData[n]};
-				double dMinY{pBoxYMinData[n]};
-				double dCenterX{(dMaxX - dMinX)/2 + dMinX};
-				double dCenterY{(dMaxY - dMinY)/2 + dMinY};
-
 				if (nullptr != pInputImage)
 				{
 					SvIe::SVImageClass* pTmpImage {pInputImage};
@@ -1228,7 +1207,11 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						pTmpImage = pTmpImage->GetParentImage();
 					}
 	
-					SVPoint<double> point{dCenterX, dCenterY};
+					double dMaxX {pBoxXMaxData[n]};
+					double dMinX {pBoxXMinData[n]};
+					double dMaxY {pBoxYMaxData[n]};
+					double dMinY {pBoxYMinData[n]};
+					SVPoint<double> point{(dMaxX - dMinX) / 2 + dMinX, (dMaxY - dMinY) / 2 + dMinY};
 					pInputImage->TranslateFromOutputSpaceToImage(pTmpImage,point,point);
 
 					if ( l_bCenterXSet )

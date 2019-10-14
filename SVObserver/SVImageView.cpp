@@ -354,7 +354,6 @@ void SVImageViewClass::GetImageRect( CRect& p_rect )
 
 BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 {
-	long l_err = 0;
 	long l_index = 0;
 
 	switch( p_wParam )
@@ -400,6 +399,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 		case ID_ADJUST_POSITION:
 		{
+			long l_err = 0;
 			if( m_ImageId.empty() ||
 				!TheSVObserverApp.OkToEdit() )
 			{
@@ -505,9 +505,9 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 			CRect SourceRect;
 			CRect DestRect;
 
-			auto Status = GetRectInfo( SourceRect, DestRect );
+			/*auto Status = */GetRectInfo( SourceRect, DestRect );
 
-			Status = BlitToScaledSurface( SourceRect, DestRect, m_ViewOrImageFilename.GetFullFileName().c_str(), showOverlays);
+			/*Status =*/ BlitToScaledSurface( SourceRect, DestRect, m_ViewOrImageFilename.GetFullFileName().c_str(), showOverlays);
 		}
 		else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
 		{
@@ -525,7 +525,6 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 {
 	CMenu l_menu;
-	CMenu* l_pPopup( nullptr );
 	bool RunOrTestMode( false );
 
 	RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
@@ -538,7 +537,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 	if( l_menu.LoadMenu( IDR_IMAGE_ADJUST ) )
 	{
-		if( l_pPopup = l_menu.GetSubMenu( 0 ) )
+		if(CMenu* l_pPopup = l_menu.GetSubMenu( 0 ) )
 		{
 			if(!IsZoomAllowed())
 			{
@@ -732,7 +731,7 @@ void SVImageViewClass::OnDraw( CDC* p_pDC )
 
 		if( S_OK == hr)
 		{
-			hr = DisplaySurface();
+			/*hr = */DisplaySurface();
 		}
 		NotifyIPDocDisplayComplete();
 	}
@@ -993,9 +992,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt(startPoint) ) &&
 					S_OK == l_svTempExtents.Update( m_svMousePickLocation, startPoint, SVPoint<double>(l_point) ) )
 				{
-					bool l_bUpdate = false;
-
-					l_bUpdate = S_OK == l_pIPDoc->UpdateExtents( m_pTool, l_svTempExtents );
+					bool l_bUpdate = S_OK == l_pIPDoc->UpdateExtents( m_pTool, l_svTempExtents );
 
 					if( l_bUpdate || l_rect.PtInRect( l_clientPoint ) )
 					{
@@ -1243,8 +1240,6 @@ void SVImageViewClass::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyze
 
 double SVImageViewClass::SetZoomValue(double Value, bool bSetZoomSlider )
 {
-	double Result{1.0};
-
 	m_ZoomHelper.ExtendMinMax(Value);
 	m_ZoomHelper.SetZoom(Value);
 
@@ -1730,14 +1725,13 @@ void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 
 bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
-	bool l_bOk = false;
 	bool bZoomExOK = false;
 
 	_variant_t Value;
 
 	bool l_bUseImageView = false;
 
-	l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
+	bool l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
@@ -1808,14 +1802,12 @@ bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
-	bool l_bOk = false;
-
 	_variant_t Value;
 
 	bool l_bUseImageView = false;
 	bool bZoomExOK = false;
 
-	l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
+	bool l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
@@ -2423,15 +2415,13 @@ void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
 {
 	CView::OnSetFocus(pOldWnd);
 
-	SVMainFrame* pFrame  = nullptr;
-	pFrame =  dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+	SVMainFrame* pFrame =  dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
 	if(pFrame==nullptr)
 	{
 		return;
 	}
 
-	SVIPSplitterFrame* pSplitterFrame = nullptr;
-	pSplitterFrame =  dynamic_cast< SVIPSplitterFrame*> (pFrame->GetActiveFrame());
+	SVIPSplitterFrame* pSplitterFrame =  dynamic_cast< SVIPSplitterFrame*> (pFrame->GetActiveFrame());
 
 	if( nullptr != pSplitterFrame )
 	{
@@ -2449,8 +2439,7 @@ void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
 	CView::OnKillFocus(pNewWnd);
 
 	SVIPSplitterFrame* pSplitterFrame = nullptr;
-	CMDIFrameWnd* pMDIFrame =  nullptr;
-	pMDIFrame =  dynamic_cast< CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd);
+	CMDIFrameWnd* pMDIFrame =  dynamic_cast< CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd);
 	if( nullptr != pMDIFrame )
 	{
 		pSplitterFrame =  dynamic_cast< SVIPSplitterFrame*> (pMDIFrame->GetActiveFrame());

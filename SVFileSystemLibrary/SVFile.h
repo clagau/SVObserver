@@ -45,8 +45,6 @@ public:
 
 	ULONGLONG GetLength() const;
 
-	ULONGLONG SeekToEnd();
-
 protected:
 	HRESULT GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UINT p_OpenFlags );
 

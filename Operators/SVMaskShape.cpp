@@ -145,7 +145,6 @@ HRESULT SVMaskShape::SetProperties(const MapType& p_mapProperties)
 	
 	if ( m_bImageInfoSet )
 	{
-		hr = S_OK;
 		MapType l_mapProperties(p_mapProperties);
 
 		// let derived classes put constraints on the values, etc.
@@ -311,22 +310,6 @@ SIZE SVMaskShape::GetSize() const
 		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyWidthGuid)) ? iter->second.value : 0L;
 		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyHeightGuid)) ? iter->second.value : 0L;
 		return SIZE{lWidth, lHeight};
-	}
-}
-
-POINT SVMaskShape::GetCenter() const
-{
-	if ( m_bAutoResize )
-	{
-		RECT rect = GetMaskImageRect();
-		return POINT {std::abs(rect.right - rect.left) / 2, std::abs(rect.top - rect.bottom) / 2};
-	}
-	else
-	{
-		MapTypeConstIterator iter;
-		long lCenterX = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyCenterXGuid)) ? iter->second.value : 0L;
-		long lCenterY = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyCenterYGuid)) ? iter->second.value : 0L;
-		return POINT{lCenterX, lCenterY};
 	}
 }
 

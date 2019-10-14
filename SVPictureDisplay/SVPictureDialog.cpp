@@ -583,18 +583,6 @@ HRESULT SVPictureDialog::SetScrollBars()
 	return hr;
 }
 
-// Debug Function
-void SVPictureDialog::ToEditCtrl( unsigned int p_iResource, long p_lValue )
-{
-	CEdit* l_pEdit = dynamic_cast< CEdit* >( GetDlgItem( p_iResource ) );
-	if( nullptr != l_pEdit )
-	{
-		CString l_strTmp;
-		l_strTmp.Format( _T("%d"), p_lValue );
-		l_pEdit->SetWindowText( l_strTmp );
-	}
-}
-
 void SVPictureDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CWnd* pWnd = dynamic_cast< CWnd* >( pScrollBar );
@@ -933,11 +921,9 @@ void SVPictureDialog::ZoomToSliderPos()
 // @TODO:  Change to avoid using raw pointers.
 SVPictureTabs* SVPictureDialog::GetPictureTab()
 {
-	SVPictureTabs* ret = nullptr;
 	CWnd* pParent1 = GetParent(); //Tabcontrol
 	CWnd* pParent2 = pParent1->GetParent();
-	ret = dynamic_cast<SVPictureTabs*>(pParent2);
-	return ret;
+	return dynamic_cast<SVPictureTabs*>(pParent2);
 }
 
 const ZoomHelper& SVPictureDialog::GetZoomHelper()

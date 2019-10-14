@@ -165,21 +165,6 @@ namespace SvOg
 	}
 
 	#pragma region Protected Methods
-	std::string RangeController::GetInspectionName() const
-	{
-		std::string inspectionName;
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
-
-		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rInspectionID);
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, request, &response);
-		if (S_OK == hr && response.has_getobjectparametersresponse())
-		{
-			inspectionName = response.getobjectparametersresponse().name();
-		}
-		return inspectionName;
-	}
-
 	void RangeController::IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue)
 	{
 		size_t len = rValue.size();

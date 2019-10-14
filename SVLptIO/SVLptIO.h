@@ -37,7 +37,7 @@ public:
 	 HRESULT SetActive(bool bActivate);
 
 	 HRESULT DisableAckInterrupt();
-	 HRESULT EnableAckInterrupt(IrqHandler func);
+	 HRESULT EnableAckInterrupt(const IrqHandler& func);
 
 	 bool isIrqHandlerEnabled() const;
 

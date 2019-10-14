@@ -39,11 +39,11 @@ SV_IMPLEMENT_CLASS(SVObjectClass, GUID_NULL)
 
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
 SVObjectClass::SVObjectClass()
+	: m_resourceID(0)
+	, m_ObjectName (_T("Base Class: SVResearch Base Object"))
+	, m_Name(m_ObjectName)
 {
-	m_Name = m_ObjectName = _T("Base Class: SVResearch Base Object");
-	m_resourceID = 0;
 	SetObjectOwner(nullptr);
-
 	init();
 }
 
@@ -51,11 +51,10 @@ SVObjectClass::SVObjectClass()
 This constructor initializes the name objects from the provided parameter, clears all owner information, and calls the init method.
 */
 SVObjectClass::SVObjectClass(LPCTSTR ObjectName)
+	: m_resourceID(0)
+	, m_ObjectName(ObjectName)
+	, m_Name(ObjectName)
 {
-	m_Name = ObjectName;
-	m_ObjectName = ObjectName;
-	m_resourceID = 0;
-
 	init();
 }
 
@@ -63,12 +62,11 @@ SVObjectClass::SVObjectClass(LPCTSTR ObjectName)
 This constructor initializes the name objects from the provided parameter, sets the owner information from the provided parameter, and calls the init method.
 */
 SVObjectClass::SVObjectClass(SVObjectClass* pOwner /* = nullptr */, int StringResourceID /* = IDS_CLASSNAME_SVOBJECT */)
+	: m_resourceID(StringResourceID)
+	, m_ObjectName(SvUl::LoadStdString(StringResourceID))
+	, m_Name(m_ObjectName)
 {
-	m_ObjectName = SvUl::LoadStdString(StringResourceID);
-	m_Name = m_ObjectName;
-	m_resourceID = StringResourceID;
 	SetObjectOwner(pOwner);
-
 	init();
 }
 
@@ -96,7 +94,6 @@ void SVObjectClass::init()
 	m_ObjectAttributesAllowed = SvPb::noAttributes;
 	m_ObjectAttributesSet.resize(1);
 	m_ObjectAttributesSet[0] = SvPb::noAttributes;
-	m_DefaultObjectAttributesSet = SvPb::noAttributes;
 }
 
 /*
@@ -689,28 +686,6 @@ DWORD SVObjectClass::GetObjectColor() const
 	return SvDef::DefaultInactiveColor;
 }
 
-// Get the local object state...
-DWORD SVObjectClass::GetObjectState() const
-{
-	return 0x0000; // ERROR_INSPECTED_STATE;
-}
-
-/*
-Get user changeable name length.
-*/
-int SVObjectClass::GetNameLength() const
-{
-	return static_cast<int> (m_Name.size());
-}
-
-/*
-Get the length in Byte of the NOT user changeable object instance name.
-*/
-int SVObjectClass::GetObjectNameLength() const
-{
-	return static_cast<int> (m_ObjectName.size());
-}
-
 /*
 Get the complete object name including selected SVObjectTypeEnum value.
 */
@@ -922,14 +897,6 @@ UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeTy
 		assert(false);
 		return 0;
 	}
-}
-
-/*
-This method sets the default attributes of this object.
-*/
-void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
-{
-	m_DefaultObjectAttributesSet = uAttributes;
 }
 
 /*

@@ -37,7 +37,6 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	GUID GetDigitizerID();
 	SVVirtualCamera* GetCamera() const;
 	std::string GetCameraName() const;
 

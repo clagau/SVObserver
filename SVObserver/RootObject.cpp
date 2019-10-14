@@ -354,16 +354,5 @@ std::vector<SvPb::TreeItem> SvOi::getRootChildSelectorList(LPCTSTR Path, UINT At
 
 	return result;
 }
-
-void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)
-{
-	SvVol::BasicValueObjects::ValueVector list;
-
-	RootObject::getRootChildObjectList( list, _T(""), 0 );
-	for (auto iter = list.begin(); iter != list.end(); ++iter) 
-	{
-		rList.Add( &((*iter)->GetObjectOutputInfo()) );
-	}
-}
 #pragma endregion IRootObject-function
 

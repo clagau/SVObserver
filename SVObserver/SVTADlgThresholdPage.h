@@ -34,12 +34,6 @@ class SVBoolValueObjectClass;
 class SVToolAdjustmentDialogSheetClass;
 
 // Threshold Dialog
-void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value );
-bool GetThreshold( CWnd* pWnd, DWORD& Value );
-bool GetThreshold( HWND hWnd, DWORD& Value );
-void SetThreshold( CWnd* pWnd, DWORD Value );
-void SetThreshold( HWND hWnd, DWORD Value );
-
 class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage
 {
 	//******************************************************************************

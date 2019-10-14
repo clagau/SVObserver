@@ -25,7 +25,7 @@ public:
 	struct BufferInfo
 	{
 		// passed into the thread class
-		SvTrc::IImagePtr m_pImageBuffer;
+		SvTrc::IImagePtr m_pImageBuffer = nullptr;
 		std::string m_FileName;
 		SVImageInfoClass info;
 		SVArchiveRecord* pRecord = nullptr;
@@ -33,22 +33,14 @@ public:
 		// maintained by the thread class
 		double m_Timestamp = 0;
 
-		BufferInfo() {}
+		BufferInfo() = default;
 
-		BufferInfo( const BufferInfo& rhs )
-			: m_pImageBuffer(rhs.m_pImageBuffer), m_FileName(rhs.m_FileName), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pRecord(rhs.pRecord) {}
+		BufferInfo(const BufferInfo& rhs) = default;
 
 		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
 			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), info(p_info), pRecord(p_pRecord) {}
 
-		const BufferInfo& operator = ( const BufferInfo& rhs )
-		{ 
-			if ( this != &rhs ) 
-			{ 
-				m_pImageBuffer = rhs.m_pImageBuffer; m_FileName = rhs.m_FileName; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pRecord = rhs.pRecord; 
-			} 
-			return *this; 
-		}
+		BufferInfo& operator = (const BufferInfo& rhs) = default;
 	};
 
 #pragma region Constructor

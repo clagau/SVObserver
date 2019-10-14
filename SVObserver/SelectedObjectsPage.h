@@ -62,6 +62,6 @@ private:
 	CButton m_Select;							//The tree select button
 	CBitmap m_TreeBitmap;						//The bitmap for the tree button
 	UINT	m_AttributeFilter;					//The attribute filter for the object selector
-	int m_helpID;								//The help ID for help file
+	int m_helpID = 0;								//The help ID for help file
 #pragma endregion Member variables
 };

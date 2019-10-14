@@ -471,9 +471,7 @@ const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 
 HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
 {
-	HRESULT hrRet = S_OK;
-
-	hrRet = SVTaskObjectClass::CollectOverlays(p_Image,p_MultiLineArray);
+	HRESULT hrRet = SVTaskObjectClass::CollectOverlays(p_Image,p_MultiLineArray);
 
 	for ( int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++ )
 	{
@@ -526,7 +524,6 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 
 			// delete object.
 			delete pTaskObject;
-			pTaskObject = nullptr;
 
 			SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 			if (nullptr != pInspection)
@@ -892,10 +889,9 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 		Count = static_cast<int> (m_TaskObjectVector.size()) - Index; 
 	}
 	
-	SVTaskObjectClass* pTaskObject( nullptr );
 	for (int i = Index + Count - 1; i >= Index; -- i)
 	{
-		pTaskObject = m_TaskObjectVector[i];
+		SVTaskObjectClass* pTaskObject = m_TaskObjectVector[i];
 		if (pTaskObject)
 		{
 			DestroyChildObject( pTaskObject );

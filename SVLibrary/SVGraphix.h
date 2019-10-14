@@ -360,8 +360,6 @@ public:
     //                         clip Graphix, if necessary.
     SVGraphixOverlayModeEnum GetOverlayMode() { return m_overlayMode; }
 
-    void GetGraphixRect(RECT& rRect, int ScaleX = 1, int ScaleY = 1);
-
     void SetGraphixRect( const RECT& rRect ) { m_rect = rRect; }
 
     // void SVGraphixClass::SetRasterOperationCode( DWORD DwNewROP = SRCCOPY );
