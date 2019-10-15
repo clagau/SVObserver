@@ -2068,6 +2068,11 @@ void SVExternalToolTask::collectResultValues()
 			}
 			GetResultValueObject(i)->setValue(m_InspectionResultValues[i], -1, true);
 		}
+		else if (m_InspectionResultValues[i].vt == VT_EMPTY && GetResultValueObject(i)->isArray())
+		{
+			GetResultValueObject(i)->SetResultSize(0);
+		
+		}
 		else
 		{
 			GetResultValueObject(i)->SetValue(m_InspectionResultValues[i]);

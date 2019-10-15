@@ -356,6 +356,31 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pCo
 }
 bool TableObject::setTableValues(const _variant_t& rValue)
 {
+	
+	long NCols = (long)m_ValueList.size();
+	if (NCols == 0)
+	{
+		return false;
+	}
+
+	if (rValue.vt == VT_EMPTY)
+	{
+		if (m_sortContainer.size() != 0)
+		{
+			m_sortContainer.resize(0);
+			
+		}
+
+		for (int col = 0; col < m_ValueList.size(); col++)
+		{
+			m_ValueList[col]->setSortContainer(m_sortContainer);
+		}
+		m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
+		return true;
+
+	}
+	
+
 	if ((rValue.vt != (VT_R8 | VT_ARRAY)) || (rValue.parray == nullptr))
 	{
 		return false;
@@ -366,14 +391,9 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 	{
 		return false;
 	}
-
 	
-	long NCols = (long)m_ValueList.size();
-	if (NCols == 0)
-	{
-		return false;
-	}
 	int nRows = __min(m_ValueList[0]->getArraySize(), static_cast<int>(sa.GetCount(1)));
+	
 	if (m_sortContainer.size() != nRows)
 	{
 		m_sortContainer.resize(nRows);
