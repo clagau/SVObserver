@@ -8,9 +8,13 @@
 
 #include "SVProtoBuf/SVRC.h"
 #include "SVProtoBuf/Overlay.h"
-#include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVSystemLibrary/SVFuture.h"
+
+namespace SvRpc
+{
+class RPCClient;
+}
 
 namespace SvTrc
 {

@@ -17,7 +17,6 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

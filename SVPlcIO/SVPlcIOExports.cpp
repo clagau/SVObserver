@@ -8,7 +8,6 @@
 #include "StdAfx.h"
 #include "SVPlcIOExports.h"
 #include "SVPlcIOImpl.h"
-#include "SVIOLibrary/SVIOParameterEnum.h"
 
 std::atomic_long g_RefCount = 0;
 

@@ -16,6 +16,7 @@
 #include "SVMatroxImageInterface.h"
 
 #include "SVMatroxApplicationInterface.h"
+#include "SVMatroxBuffer.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxCommandDataImage.h"

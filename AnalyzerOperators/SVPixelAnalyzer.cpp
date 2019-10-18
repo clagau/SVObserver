@@ -12,6 +12,7 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVRange.h"
 #include "Operators/SVResultLong.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxResourceMonitor.h"
 #include "SVObjectLibrary\SVClsids.h"

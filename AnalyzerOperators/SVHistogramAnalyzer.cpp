@@ -23,6 +23,7 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVResultLong.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxGraphicsInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

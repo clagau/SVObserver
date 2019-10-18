@@ -18,7 +18,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "Definitions/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion includes
 
 #pragma region Global functions

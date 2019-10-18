@@ -28,6 +28,8 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary/SVRunStatus.h"
+#include "SVResult.h"
+#include "SVVariantResultClass.h"
 #include "Tools/SVTool.h"
 #include "TableObject.h"
 #pragma endregion Includes

@@ -15,7 +15,6 @@
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
-#include "SVProtoBuf/ConverterHelper.h"
 
 namespace SvAo
 {

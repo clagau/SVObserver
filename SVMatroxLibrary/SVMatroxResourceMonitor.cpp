@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVMatroxResourceMonitor.h"
-#include "SVMatroxErrorEnum.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
 #ifdef _DEBUG

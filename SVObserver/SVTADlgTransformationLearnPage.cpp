@@ -18,7 +18,6 @@
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVUtilityLibrary/SVGuid.h"
-#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -11,11 +11,12 @@
 
 #pragma region Includes
 #include "RequestHandler.h"
-#include "RPCClient.h"
 #pragma endregion Includes
 
 namespace SvRpc
 {
+class RPCClient;
+
 class Router
 {
 public:

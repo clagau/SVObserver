@@ -24,7 +24,6 @@
 #include "Definitions/Color.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "ObjectInterfaces/IRootObject.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "ObjectInterfaces/IToolSet.h"
@@ -32,7 +31,6 @@
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVNameVariantList.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvIe

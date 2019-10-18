@@ -20,7 +20,6 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

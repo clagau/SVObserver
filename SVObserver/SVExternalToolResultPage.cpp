@@ -22,6 +22,7 @@
 #include "Operators/SVDLLToolDefinitionStructs.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "Operators/TableObject.h"
+#include "Operators/SVVariantResultClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

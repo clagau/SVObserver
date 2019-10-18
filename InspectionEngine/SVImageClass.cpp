@@ -14,7 +14,6 @@
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITool.h"
-#include "ObjectInterfaces/IToolSet.h"
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"

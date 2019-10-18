@@ -5,7 +5,6 @@
 #include <filesystem>
 #include <fstream>
 
-#include "SVLibrary\SVOINIClass.h"
 #include "TriggerRecordController\ITriggerRecordControllerR.h"
 #include "TriggerRecordControllerModulTest\LogClass.h"
 #include "TriggerRecordControllerModulTest\TesterFunction.h"

@@ -18,12 +18,12 @@
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "SVGlobal.h"
 #include "SVRemoteFontManager.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
-#include "RemoteCommand.h"
 #pragma endregion Includes
 
 #pragma region Declarations

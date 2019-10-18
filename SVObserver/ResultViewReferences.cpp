@@ -25,6 +25,7 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
 #pragma region Constructor

@@ -16,9 +16,9 @@
 
 #pragma region Includes
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
-#include "InspectionEngine/SVTaskObject.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "SVVariantResultClass.h"
+#include "InspectionEngine/SVTaskObject.h"
+#include "InspectionEngine/SVTaskObjectList.h"
 #include "SVLibrary/ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"
 #include "SVRPropertyTree/SVRPropTreeState.h"
@@ -26,13 +26,13 @@
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
-#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
 namespace SvOp
 {
 class TableObject;
+class SVResultClass;
 	
 struct SVExternalToolTaskData : public SVCancelData
 {

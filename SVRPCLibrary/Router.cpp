@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Router.h"
+#include "RPCClient.h"
 #pragma endregion Includes
 
 namespace SvRpc

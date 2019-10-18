@@ -16,6 +16,7 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"

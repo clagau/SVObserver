@@ -149,40 +149,31 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonRemove()
 //
 void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, TCHAR atcTestChar)
 {
-    long lError = 0;
+	std::string FeatureString;
+	FeatureString = m_pTool->GetFeatureString();
 
-    while (1)
-    {
-		std::string FeatureString;
-		FeatureString = m_pTool->GetFeatureString();
-		
-        pListBox->ResetContent();
+	pListBox->ResetContent();
 
-		for (int i = SvTo::SV_STATS_MIN_VALUE; i < SvTo::SV_STATS_TOPOF_LIST; i++ )
-		{	
-            if( FeatureString[i] == atcTestChar)
-            {
-				long lReturned = pListBox->AddString( m_pTool->GetFeatureName( i ).c_str() );
-                
-                if (lReturned == LB_ERR || lReturned == LB_ERRSPACE)
-                {
-                    lError = -SvStl::Err_15005;
-                    break;
-                }
+	for (int i = SvTo::SV_STATS_MIN_VALUE; i < SvTo::SV_STATS_TOPOF_LIST; i++)
+	{
+		if (FeatureString[i] == atcTestChar)
+		{
+			long lReturned = pListBox->AddString(m_pTool->GetFeatureName(i).c_str());
 
-    			lReturned = pListBox->SetItemData( lReturned, static_cast<DWORD_PTR>(i) );
-                if (lReturned == LB_ERR)
-                {
-                    lError = -SvStl::Err_15006;
-                    break;
-                }
-	        }
+			if (lReturned == LB_ERR || lReturned == LB_ERRSPACE)
+			{
+				break;
+			}
+
+			lReturned = pListBox->SetItemData(lReturned, static_cast<DWORD_PTR>(i));
+			if (lReturned == LB_ERR)
+			{
+				break;
+			}
 		}
+	}
 
-		pListBox->SetCurSel( 0 );
-
-        break;
-    }
+	pListBox->SetCurSel(0);
 }
 
 /////////////////////////////////////////////////////////////////////////////

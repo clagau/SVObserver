@@ -26,7 +26,6 @@
 #include "Operators/SVRange.h"
 #include "Operators/TableObject.h"
 #include "Tools/SVTool.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVRunStatus.h"

@@ -15,12 +15,12 @@
 //Moved to precompiled header: #include <vector>
 #include "SVMatroxSimpleEnums.h"
 #include "SVMatroxEnums.h"
-#include "SVMatroxBuffer.h"
 #pragma endregion Includes
 
 class SVCommandDataHolder;
 struct SVMatroxImageRotateStruct;
 struct SVMatroxPolarTransformStruct;
+class SVMatroxBuffer;
 
 /**
 @SVObjectName Matrox Image Interface

@@ -18,7 +18,6 @@
 #include "InspectionEngine/SVIPResultItemDefinition.h"
 #include "InspectionEngine/SVIPResultData.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -32,6 +31,10 @@ class TableObject;
 namespace SvIe
 {
 struct SVIPResultData;
+}
+namespace SvTrc
+{
+class ITriggerRecordR;
 }
 class SVInspectionProcess;
 

@@ -23,7 +23,6 @@
 #include "ObjectInterfaces\IRootObject.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "ExtrasEngine.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

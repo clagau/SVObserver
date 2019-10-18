@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVOResource/resource.h"
 #include "SVInputObject.h"
-#include "SVIOEntryStruct.h"
+#include "SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 class SVInputObjectList : public SVObjectClass

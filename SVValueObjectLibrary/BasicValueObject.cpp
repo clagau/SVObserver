@@ -20,7 +20,6 @@
 #include "CameraLibrary\SVLongValueDeviceParam.h"
 #include "CameraLibrary\SVStringValueDeviceParam.h"
 #include "Definitions/Color.h"
-#include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
