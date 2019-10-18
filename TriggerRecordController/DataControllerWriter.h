@@ -132,8 +132,8 @@ public:
 	/// Set resetId to a new number and send reset event.
 	virtual void finishedReset() override;
 	
-	virtual void setPauseTrsOfInterest(bool flag) override;
-	virtual bool getPauseTrsOfInterest() const override;
+	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) override;
+	virtual bool getPauseTrsOfInterest(int inspectionPos) const override;
 	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
 #pragma endregion Public Methods
 

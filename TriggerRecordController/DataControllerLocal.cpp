@@ -384,6 +384,51 @@ void DataControllerLocal::finishedReset()
 	}
 }
 
+void DataControllerLocal::setPauseTrsOfInterest(bool flag, int inspectionPos)
+{
+	if (0 <= inspectionPos && 64 > inspectionPos)
+	{
+		if (flag)
+		{
+			m_pauseTrOfInterestFlag[0] |= (1ll << inspectionPos);
+		}
+		else
+		{
+			m_pauseTrOfInterestFlag[0] &= (~(1ll << inspectionPos));
+		}
+	}
+	else if (64 <= inspectionPos && 128 > inspectionPos)
+	{
+		if (flag)
+		{
+			m_pauseTrOfInterestFlag[1] |= (1ll << (inspectionPos-64));
+		}
+		else
+		{
+			m_pauseTrOfInterestFlag[1] &= (~(1ll << (inspectionPos-64)));
+		}
+	}
+	else
+	{
+		m_pauseTrOfInterestFlag[0] = flag ? ULLONG_MAX : 0;
+		m_pauseTrOfInterestFlag[1] = flag ? ULLONG_MAX : 0;
+	}	
+}
+
+bool DataControllerLocal::getPauseTrsOfInterest(int inspectionPos) const 
+{ 
+	if (0 <= inspectionPos && 64 > inspectionPos)
+	{
+		return ((1ll << inspectionPos) & m_pauseTrOfInterestFlag[0]) > 0;
+	}
+	else if (64 <= inspectionPos && 128 > inspectionPos)
+	{
+		return ((1ll << (inspectionPos-64)) & m_pauseTrOfInterestFlag[1]) > 0;
+	}
+
+	return (1 & m_pauseTrOfInterestFlag[0]) > 0;
+}
+
 std::vector<ITriggerRecordRPtr> DataControllerLocal::getTRsOfInterest(int inspectionPos, int n)
 {
 	TRControllerLocalDataPerIP& rIPData = m_dataVector[inspectionPos];

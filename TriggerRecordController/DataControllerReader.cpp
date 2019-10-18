@@ -302,14 +302,49 @@ ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectio
 	return nullptr;
 }
 
-void DataControllerReader::setPauseTrsOfInterest(bool flag)
+void DataControllerReader::setPauseTrsOfInterest(bool flag, int inspectionPos)
 {
-	m_pCommonData->m_pauseTRofInterest = flag;
+	if (0 <= inspectionPos && 64 > inspectionPos)
+	{
+		if (flag)
+		{
+			m_pCommonData->m_pauseTRofInterest[0] |= (1ll << inspectionPos);
+		}
+		else
+		{
+			m_pCommonData->m_pauseTRofInterest[0] &= (~(1ll << inspectionPos));
+		}
+	}
+	else if (64 <= inspectionPos && 128 > inspectionPos)
+	{
+		if (flag)
+		{
+			m_pCommonData->m_pauseTRofInterest[1] |= (1ll << (inspectionPos - 64));
+		}
+		else
+		{
+			m_pCommonData->m_pauseTRofInterest[1] &= (~(1ll << (inspectionPos - 64)));
+		}
+	}
+	else
+	{
+		m_pCommonData->m_pauseTRofInterest[0] = flag ? ULLONG_MAX : 0;
+		m_pCommonData->m_pauseTRofInterest[1] = flag ? ULLONG_MAX : 0;
+	}
 }
 
-bool DataControllerReader::getPauseTrsOfInterest() const
+bool DataControllerReader::getPauseTrsOfInterest(int inspectionPos) const
 {
-	return m_pCommonData->m_pauseTRofInterest;
+	if (0 <= inspectionPos && 64 > inspectionPos)
+	{
+		return ((1ll << inspectionPos) & m_pCommonData->m_pauseTRofInterest[0]) > 0;
+	}
+	else if (64 <= inspectionPos && 128 > inspectionPos)
+	{
+		return ((1ll << (inspectionPos - 64)) & m_pCommonData->m_pauseTRofInterest[1]) > 0;
+	}
+
+	return (1 & m_pCommonData->m_pauseTRofInterest[0]) > 0;
 }
 
 std::vector<ITriggerRecordRPtr> DataControllerReader::getTRsOfInterest(int inspectionPos, int n)

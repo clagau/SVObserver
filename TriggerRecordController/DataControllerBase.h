@@ -189,8 +189,8 @@ public:
 	/// Set resetId to a new number and send reset event.
 	virtual void finishedReset() { assert(false); throw E_NOTIMPL; };
 
-	virtual void setPauseTrsOfInterest(bool flag) = 0;
-	virtual bool getPauseTrsOfInterest() const = 0;
+	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) = 0;
+	virtual bool getPauseTrsOfInterest(int inspectionPos) const = 0;
 	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) = 0;
 
 	void increaseNumberOfFreeTr(int inspectionPos);

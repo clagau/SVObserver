@@ -130,10 +130,12 @@ namespace SvTrc
 
 		/// Pause the setting of the interest Tr.
 		/// \param pauseFlag [in] If true, the setting of interest Tr is paused.
-		virtual void pauseTrsOfInterest(bool pauseFlag) = 0;
+		/// \param inspectionPos [in] Position of the inspection with should be paused. If inspectionPos>127 or inspectionPos<0, all inspection (0..127) will be paused. 
+		virtual void pauseTrsOfInterest(bool pauseFlag, int inspectionPos = -1) = 0;
 
 		/// Return if the pause of the interest Tr is set.
-		virtual bool isPauseTrsOfInterest() const = 0;
+		/// \param inspectionPos [in] Position of the inspection with should be paused. If inspectionPos>127 or inspectionPos<0, the state of inspection 0 will be returned. 
+		virtual bool isPauseTrsOfInterest(int inspectionPos = 0) const = 0;
 	};
 
 	enum class TRC_DataType

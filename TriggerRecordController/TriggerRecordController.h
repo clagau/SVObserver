@@ -58,8 +58,8 @@ public:
 
 	virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector) override;
 	virtual std::vector<ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
-	virtual void pauseTrsOfInterest(bool pauseFlag) override;
-	virtual bool isPauseTrsOfInterest() const override { return m_pDataController->getPauseTrsOfInterest(); };
+	virtual void pauseTrsOfInterest(bool pauseFlag, int inspectionPos = -1) override;
+	virtual bool isPauseTrsOfInterest(int inspectionPos = 0) const override { return m_pDataController->getPauseTrsOfInterest(inspectionPos); };
 #pragma endregion ITriggerRecordControllerR Methods
 
 #pragma region ITriggerRecordControllerRW Methods

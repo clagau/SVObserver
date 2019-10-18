@@ -103,8 +103,9 @@ public:
 	/// Set resetId to a new number and send reset event.
 	virtual void finishedReset() override;
 
-	virtual void setPauseTrsOfInterest(bool flag) override { m_pauseTrOfInterestFlag = flag; };
-	virtual bool getPauseTrsOfInterest() const override { return m_pauseTrOfInterestFlag; };
+	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) override;
+	virtual bool getPauseTrsOfInterest(int inspectionPos) const override;
+
 	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
 #pragma endregion Public Methods
 
@@ -126,7 +127,7 @@ private:
 	long m_resetId = 0; //id of the last reset
 	long m_lastResetId = 0; //id of the last reset
 	long m_resetLockCounter = 0; //counter of current used methods of ITriggerRecordR-instance 
-	bool m_pauseTrOfInterestFlag = false;
+	unsigned __int64 m_pauseTrOfInterestFlag[2] = {0}; //this is one bit per inspection
 	SvPb::InspectionList m_inspectionList;
 
 	//image data

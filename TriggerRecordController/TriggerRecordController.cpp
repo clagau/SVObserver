@@ -246,9 +246,9 @@ std::vector<ITriggerRecordRPtr> TriggerRecordController::getTrsOfInterest(int in
 	return m_pDataController->getTRsOfInterest(inspectionPos, n);
 }
 
-void TriggerRecordController::pauseTrsOfInterest(bool pauseFlag)
+void TriggerRecordController::pauseTrsOfInterest(bool pauseFlag, int inspectionPos)
 {
-	m_pDataController->setPauseTrsOfInterest(pauseFlag);
+	m_pDataController->setPauseTrsOfInterest(pauseFlag, inspectionPos);
 }
 
 void TriggerRecordController::clearAll()
