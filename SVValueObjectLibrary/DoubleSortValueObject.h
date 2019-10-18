@@ -40,6 +40,7 @@ public:
 	virtual HRESULT SetValue(const double& rValue, int Index) override;
 	virtual HRESULT GetValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
+	virtual bool isArray() const override { return true; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

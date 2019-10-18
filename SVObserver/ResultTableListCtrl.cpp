@@ -105,13 +105,6 @@ void ResultTableListCtrl::updateList()
 			{
 				rowCountNew = SvUl::getArraySizeFromOneDim(m_ResultData[0].m_rowData);
 			}
-			else
-			{
-				if (m_ResultData[0].m_rowData.vt == VT_R8)
-				{
-					rowCountNew = 1;
-				}
-			}
 			for (int i = rowCountOld; i < rowCountNew; i++)
 			{
 				CString tmp;
@@ -129,12 +122,6 @@ void ResultTableListCtrl::updateList()
 						tmp.Format("%f", values[j]);
 						SetItemText(j, i + 1, tmp);
 					}
-				}
-				else
-				{
-					CString tmp;
-					tmp.Format("%f", m_ResultData[i].m_rowData.dblVal);
-					SetItemText(0, i + 1, tmp);
 				}
 			}
 			if (0 < rowCountNew)

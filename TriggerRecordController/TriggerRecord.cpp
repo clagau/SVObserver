@@ -214,7 +214,7 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 						BYTE* pMemBlock = reinterpret_cast<BYTE*> (pSize + 1);
 						pMemBlock += memOffset;
 						//If it is an array then the first value is the result size
-						if(1 == arraySize)
+						if(1 == arraySize && m_rDataDefList.list()[pos].type() != SvPb::SVObjectSubTypeEnum::DoubleSortValueObjectType)
 						{
 							result = readValue(vtType, pMemBlock);
 						}

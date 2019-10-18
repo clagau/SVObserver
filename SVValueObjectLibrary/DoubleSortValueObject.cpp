@@ -116,12 +116,10 @@ long DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSi
 		if (result <= MemByteSize)
 		{
 			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
-			if (isArray())
-			{
-				//For arrays we need to write the result size at the start of the memory as an int
-				*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
-				pMemoryLocation += sizeof(int);
-			}
+			//Note for double sort value always use array!
+			//For arrays we need to write the result size at the start of the memory as an int
+			*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
+			pMemoryLocation += sizeof(int);
 			for(int i=0; i < getResultSize(); ++i)
 			{
 				int index = m_sortContainer[i];
