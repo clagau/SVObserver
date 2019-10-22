@@ -52,7 +52,7 @@ class RPCClient : public SvHttp::WebsocketClient::EventHandler
 {
 public:
 	RPCClient() = delete;
-	RPCClient(SvHttp::WebsocketClientSettings&);
+	explicit RPCClient(SvHttp::WebsocketClientSettings&);
 	virtual ~RPCClient();
 
 	void stop();

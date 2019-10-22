@@ -19,7 +19,7 @@ struct WebsocketClientSettings;
 class WebsocketClientFactory
 {
 public:
-	WebsocketClientFactory(WebsocketClientSettings&);
+	explicit WebsocketClientFactory(WebsocketClientSettings&);
 
 	std::shared_ptr<WebsocketClient> create(WebsocketClient::EventHandler*);
 

@@ -43,7 +43,7 @@ template <typename TPayload, typename TReq, typename TRes>
 class ObserverWrapper : public ObserverWrapperBase
 {
 public:
-	ObserverWrapper(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}
+	explicit ObserverWrapper(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}
 	~ObserverWrapper() override {}
 
 	void operator()(SvPenv::Envelope&& envelope, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) override

@@ -53,9 +53,9 @@ private:
 
 struct TestServer
 {
-	TestServer(RequestHandlerBase* pRequestHandler)
+	explicit TestServer(RequestHandlerBase* pRequestHandler)
+		: m_pRpcServer(std::make_unique<RPCServer>(pRequestHandler))
 	{
-		m_pRpcServer = std::make_unique<RPCServer>(pRequestHandler);
 		m_Settings.Port = S_PORT;
 		m_Settings.Host = S_HOST;
 		m_Settings.pEventHandler = m_pRpcServer.get();
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(should_respond_to_simple_request)
 	TestServer testServer(&requestHandler);
 
 	TestClient testClient;
-	auto res = testClient.getGatewayVersion().get();
+	testClient.getGatewayVersion().get();
 
 	testServer.stop();
 }

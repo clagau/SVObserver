@@ -50,6 +50,13 @@ void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
 	}
 }
 
+std::string SetGuidInProtoBytes(const GUID& guid)
+{
+	std::string result;
+	SetGuidInProtoBytes(&result, guid);
+	return result;
+}
+
 // TODO handle big-endian case as well
 void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
 {

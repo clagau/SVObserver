@@ -60,7 +60,7 @@ namespace  SvXml
 		return m_Variant;
 	}
 
-	const SVMaterialData& SVMaterialData::operator=( const SVMaterialData& rObject )
+	SVMaterialData& SVMaterialData::operator=( const SVMaterialData& rObject )
 	{
 		if( this != &rObject )
 		{
@@ -72,7 +72,7 @@ namespace  SvXml
 		return *this;
 	}
 
-	const SVMaterialData& SVMaterialData::operator=( const _variant_t& rVariant )
+	SVMaterialData& SVMaterialData::operator=( const _variant_t& rVariant )
 	{
 		if( &m_Variant != &rVariant )
 		{

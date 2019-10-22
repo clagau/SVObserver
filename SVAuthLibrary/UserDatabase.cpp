@@ -27,8 +27,7 @@ bool UserDatabase::checkPassword(const std::string& username, const std::string&
 		return false;
 	}
 
-	const auto hash = hashPassword(password, username);
-	return hash == entry->password();
+	return hashPassword(password, username) == entry->password();
 }
 
 // You can use the following bash one-liner to manually generate hashes

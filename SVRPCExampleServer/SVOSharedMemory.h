@@ -33,7 +33,7 @@ public:
 		}
 	}
 
-	bool getInspectionResultForTrigger(uint32_t trigger, std::string inspectionId, SvPb::InspectionResult& inspection)
+	bool getInspectionResultForTrigger(uint32_t trigger, const std::string& inspectionId, SvPb::InspectionResult& inspection)
 	{
 		std::lock_guard<std::mutex> lock(m_inspections_mutex);
 

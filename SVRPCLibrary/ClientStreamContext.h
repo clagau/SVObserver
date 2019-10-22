@@ -16,7 +16,7 @@ class ClientStreamContext
 public:
 	using OnCancelFn = std::function<void()>;
 
-	ClientStreamContext(OnCancelFn OnCancel) : m_OnCancel(OnCancel)
+	explicit ClientStreamContext(OnCancelFn OnCancel) : m_OnCancel(OnCancel)
 	{
 	}
 

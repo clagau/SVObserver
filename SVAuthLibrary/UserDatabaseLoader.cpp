@@ -145,7 +145,7 @@ static bool isValidUser(const UserDatabaseEntry& entry, std::string& errMsg)
 struct UserDatabaseXmlElementHandler : public SvXml::ISaxElementHandler
 {
 public:
-	UserDatabaseXmlElementHandler(std::map<std::string, UserDatabaseEntry>& rDb)
+	explicit UserDatabaseXmlElementHandler(std::map<std::string, UserDatabaseEntry>& rDb)
 		: m_rDb(rDb)
 	{
 		m_State.push_back(PS_START);
@@ -250,7 +250,7 @@ public:
 		return S_OK;
 	}
 
-	HRESULT  OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal)
+	HRESULT  OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal) override
 	{
 		std::wcout << "OnXMLError: " << pwchErrorText << std::endl;
 		return S_OK;

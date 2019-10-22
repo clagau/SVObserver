@@ -18,11 +18,11 @@ namespace SvRpc
 RPCClient::RPCClient(SvHttp::WebsocketClientSettings& rSettings)
 	: m_IoContex(1)
 	, m_IoWork(std::make_unique<boost::asio::io_context::work>(m_IoContex))
+	, m_IoThread(std::thread([this]() { m_IoContex.run(); }))
 	, m_WebsocketClientFactory(rSettings)
+	, m_WebsocketClient(m_WebsocketClientFactory.create(this))
 	, m_ReconnectTimer(m_IoContex)
 {
-	m_IoThread = std::thread([this]() { m_IoContex.run(); });
-	m_WebsocketClient = m_WebsocketClientFactory.create(this);
 }
 
 RPCClient::~RPCClient()

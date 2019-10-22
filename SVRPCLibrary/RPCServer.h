@@ -43,7 +43,7 @@ struct ConnectionLostException : public std::runtime_error
 class RPCServer : public SvHttp::EventHandler
 {
 public:
-	RPCServer(RequestHandlerBase* request_handler);
+	explicit RPCServer(RequestHandlerBase* request_handler);
 
 protected:
 	virtual bool onHandshake(int id, const std::string&) override;

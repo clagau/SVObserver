@@ -14,13 +14,13 @@ public:
     // Exception thut may be thrown when decoding an URL or an assigning value
     class parse_error: public std::invalid_argument {
     public:
-        parse_error(const std::string &reason) : std::invalid_argument(reason) {}
+        explicit parse_error(const std::string &reason) : std::invalid_argument(reason) {}
     };
 
     // Exception that may be thrown when building an URL
     class build_error: public std::runtime_error {
     public:
-        build_error(const std::string &reason) : std::runtime_error(reason) {}
+        explicit build_error(const std::string &reason) : std::runtime_error(reason) {}
     };
 
     // Default constructor
@@ -33,7 +33,7 @@ public:
     Url(Url&& url) : m_ip_v(-1) {assign(std::move(url));}
 
     // Construct Url with the given string
-    Url(const std::string &url_str) : m_url(url_str),m_parse(false),m_built(false),m_ip_v(-1) {}
+    explicit Url(const std::string &url_str) : m_url(url_str),m_parse(false),m_built(false),m_ip_v(-1) {}
 
     // Assign the given URL string
     Url &operator=(const std::string &url_str) {return str(url_str);}
@@ -98,7 +98,7 @@ public:
         KeyVal(const std::string &key, const std::string &val) : m_key(key),m_val(val) {}
 
         // Construct with provided Key string, val will be empty
-        KeyVal(const std::string &key) : m_key(key) {}
+        explicit KeyVal(const std::string &key) : m_key(key) {}
 
         // Equality test operator
         bool operator==(const KeyVal &q) const {return m_key==q.m_key&&m_val==q.m_val;}

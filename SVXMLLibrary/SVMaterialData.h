@@ -23,7 +23,7 @@ namespace  SvXml
 	public:
 		SVMaterialData();
 		SVMaterialData( const SVMaterialData& rObject );
-		SVMaterialData( const _variant_t& rVariant );
+		explicit SVMaterialData( const _variant_t& rVariant );
 
 		virtual ~SVMaterialData();
 
@@ -35,8 +35,8 @@ namespace  SvXml
 
 		operator const _variant_t & () const;
 
-		const SVMaterialData& operator=( const SVMaterialData& rObject );
-		const SVMaterialData& operator=( const _variant_t& rVariant );
+		SVMaterialData& operator=( const SVMaterialData& rObject );
+		SVMaterialData& operator=( const _variant_t& rVariant );
 
 	  bool operator==( const SVMaterialData& rObject ) const;
 

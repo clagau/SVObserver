@@ -137,20 +137,6 @@ public:
 	}
 
 private:
-	void get_image_for_id(Image& img, const ImageId& id)
-	{
-		auto size = id.imageindex();
-		if (size == 0)
-		{
-			img.set_height(0);
-			img.set_width(0);
-		}
-		else
-		{
-			create_image_of_size(img, size, size);
-		}
-	}
-
 	void create_image_of_size(Image& img, unsigned int width, unsigned int height)
 	{
 		img.set_width(width);
@@ -323,12 +309,6 @@ private:
 		return guid;
 	}
 
-	void build_float_variant(Variant& variant, float v)
-	{
-		variant.set_type(Variant::DataCase::kFltVal);
-		variant.set_fltval(v);
-	}
-
 	void build_double_variant(Variant& variant, double v)
 	{
 		variant.set_type(Variant::DataCase::kDblVal);
@@ -341,7 +321,7 @@ private:
 		variant.set_strval(str);
 	}
 
-	void add_inspection_result_to_shared_memory(InspectionResult& inspection, uint32_t trigger, bool is_reject)
+	void add_inspection_result_to_shared_memory(const InspectionResult& inspection, uint32_t trigger, bool is_reject)
 	{
 		InspectionResult inspectionCopy;
 		inspectionCopy.CopyFrom(inspection);

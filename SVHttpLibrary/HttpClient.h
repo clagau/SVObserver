@@ -20,7 +20,7 @@ namespace SvHttp
 class HttpClient
 {
 public:
-	HttpClient(boost::asio::io_context&);
+	explicit HttpClient(boost::asio::io_context&);
 
 	HttpResponse request_sync(HttpRequest);
 

@@ -51,7 +51,7 @@ public:
 		register_dummy_handler(m_request_handler);
 		register_log_handler(m_request_handler);
 
-		m_router = std::make_unique<Router>(*m_rpc_client, &m_request_handler);
+		m_router = std::make_unique<Router>(*m_rpc_client, m_request_handler);
 		m_rpc_server = std::make_unique<RPCServer>(&m_request_handler);
 
 		settings.httpSettings.pEventHandler = m_rpc_server.get();
@@ -323,7 +323,7 @@ private:
 				{
 					res.add_values()->CopyFrom(inspection.values(i));
 					// TODO only for first response!
-					res.add_valuenames(inspection.valuenames(i));
+					//res.add_valuenames(inspection.valuenames(i));
 					break;
 				}
 			}
@@ -337,7 +337,7 @@ private:
 				{
 					res.add_images()->CopyFrom(inspection.images(i));
 					// TODO only for first response!
-					res.add_imagenames(inspection.imagenames(i));
+					//res.add_imagenames(inspection.imagenames(i));
 					break;
 				}
 			}

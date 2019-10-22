@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -126,24 +126,25 @@
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\SVOGateway\Settings.h" />
+    <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
     <ClInclude Include="AutoBuild.h" />
+    <ClInclude Include="bitmap_image.hpp" />
     <ClInclude Include="ImageCache.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="..\SVOGateway\Settings.h" />
-    <ClInclude Include="..\SVOGateway\SettingsLoader.h" />
     <ClInclude Include="SVObserver.h" />
     <ClInclude Include="SVOGateway.h" />
     <ClInclude Include="SVOSharedMemory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\SVOGateway\SettingsLoader.cpp" />
+    <ClCompile Include="SVRPCExampleServer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVRPCExampleServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVRPCExampleServer.rc" />

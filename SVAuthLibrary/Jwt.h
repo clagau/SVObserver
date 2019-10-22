@@ -18,6 +18,8 @@ template<class Payload>
 class Jwt
 {
 public:
+	Jwt() = default;
+
 	void setAlgorithm(JwtAlgorithm);
 	JwtAlgorithm getAlgorithm() const;
 
@@ -29,7 +31,7 @@ public:
 
 private:
 	JwtAlgorithm m_Algorithm;
-	uint64_t m_ValidityInSeconds;
+	uint64_t m_ValidityInSeconds {60 * 60};
 	Payload m_Payload;
 };
 

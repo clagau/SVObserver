@@ -19,6 +19,7 @@ namespace SvPb
 {
 ///Set a Guid to a bytes variable in a protobufmessage 
 void SetGuidInProtoBytes(std::string  *pString, const GUID& guid);
+std::string SetGuidInProtoBytes(const GUID& guid);
 
 ///Get a Guid from a bytes variable in a protobufmessage. 
 void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid);
