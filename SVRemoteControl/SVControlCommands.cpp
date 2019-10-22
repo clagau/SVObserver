@@ -182,6 +182,7 @@ void SVControlCommands::StartNotificationStreaming()
 void  SVControlCommands::StopNotificationStreaming()
 {
 	m_csx.cancel();
+	m_csx = SvRpc::ClientStreamContext{nullptr};
 	SV_LOG_GLOBAL(info) << "StopNotificationStreaming";
 
 }
