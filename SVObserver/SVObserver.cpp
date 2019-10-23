@@ -5105,12 +5105,12 @@ void SVObserverApp::Start()
 			l_trgrDlg.SelectTrigger();
 		}
 	}
-	catch (SvStl::MessageContainer& rExp)
+	catch (SvStl::MessageContainer&)
 	{
 		//cleanup goOnline, after fail, before exception leave this method
 		SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
 		RunAllIPDocuments();
-		throw rExp;
+		throw;
 	}
 	catch (std::exception& ex)
 	{
@@ -5139,7 +5139,7 @@ void SVObserverApp::Start()
 				}
 			}// end for
 		}
-		catch (SvStl::MessageContainer& rExp)
+		catch (SvStl::MessageContainer&)
 		{
 			//cleanup goOnline, after fail, before exception leave this method
 			for (long l = 0; l < lSize; l++)
@@ -5156,7 +5156,7 @@ void SVObserverApp::Start()
 			RunAllIPDocuments();
 			SetAllIPDocumentsOffline();
 
-			throw rExp;
+			throw;
 		}// end if
 
 		SetAllIPDocumentsOnline();

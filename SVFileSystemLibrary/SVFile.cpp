@@ -164,8 +164,6 @@ HRESULT SVFile::GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UI
 	p_rShareMode = 0;
 
 	UINT l_AccessFlags( p_OpenFlags & ( modeRead | modeWrite | modeReadWrite | modeCreate | modeNoTruncate ) );
-	UINT l_TypeFlags( p_OpenFlags & ( typeText | typeBinary ) );
-	UINT l_ShareFlags( p_OpenFlags & ( shareDenyNone ) );
 
 	switch( l_AccessFlags )
 	{
@@ -205,6 +203,7 @@ HRESULT SVFile::GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UI
 
 	if( S_OK == l_Status )
 	{
+		UINT l_TypeFlags(p_OpenFlags & (typeText | typeBinary));
 		switch( l_TypeFlags )
 		{
 			default:
@@ -225,6 +224,7 @@ HRESULT SVFile::GetAccessMode( std::string& p_rAccessMode, int& p_rShareMode, UI
 
 	if( S_OK == l_Status )
 	{
+		UINT l_ShareFlags(p_OpenFlags & (shareDenyNone));
 		switch( l_ShareFlags )
 		{
 			default:

@@ -82,8 +82,6 @@ public:
 
 	void CloseDocument();
 
-	bool IsColorInspectionDocument() const;
-
 	void RecreateImageSurfaces();
 
 	void SaveViews(SvOi::IObjectWriter& rWriter);
@@ -314,7 +312,6 @@ protected:
 	HRESULT UnregisterImageView( SVImageViewClass* p_pImageView );
 
 	HRESULT IsImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
-	HRESULT IsImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
 	HRESULT GetBitmapInfo( const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmapInfo ) const;
 	HRESULT GetImageData( const SVGUID& p_rImageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const;
 	HRESULT SetImageData( const SVGUID& p_rImageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray );

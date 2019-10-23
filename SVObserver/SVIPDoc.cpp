@@ -2113,16 +2113,11 @@ void SVIPDoc::RunRegressionTest()
 
 			// check to see if the list of files are the same...
 			m_bRegressionTestRunning = true;
-			int iNumCameras = static_cast<int>(m_listRegCameras.GetCount());
-
-			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->m_pregTestDlg = new CSVRegressionRunDlg(m_pRegressionTestPlayEquationController);
-			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetUsePlayCondition(m_bRegressionTestUsePlayCondition);
-
-			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetIPDocParent(this);
-
-			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->m_pregTestDlg->Create(IDD_DIALOG_REGRESSIONTEST_RUN);
-
-			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->m_pregTestDlg->ShowWindow(SW_SHOW);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg = new CSVRegressionRunDlg(m_pRegressionTestPlayEquationController);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetUsePlayCondition(m_bRegressionTestUsePlayCondition);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetIPDocParent(this);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->Create(IDD_DIALOG_REGRESSIONTEST_RUN);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->ShowWindow(SW_SHOW);
 
 			DWORD dwThreadID;
 
@@ -2143,16 +2138,12 @@ void SVIPDoc::RunRegressionTest()
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::InitMenu()
 {
-	// Load Utilities Menu
-	SVUtilitiesClass util;
-	CWnd *pWindow(nullptr);
-	CMenu *pMenu(nullptr);
-
-	pWindow = AfxGetMainWnd();
+	CWnd* pWindow = AfxGetMainWnd();
 	if (nullptr != pWindow)
 	{
+		SVUtilitiesClass util;
 		// Load and init Utility Menu
-		pMenu = pWindow->GetMenu();
+		CMenu* pMenu = pWindow->GetMenu();
 		if (pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"))) { util.LoadMenu(pMenu); }
 
 		// Load and init Tool Set Draw Menu
@@ -2341,20 +2332,6 @@ CFile* SVIPDoc::GetFile(LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* p
 		CFile::shareDenyNone;
 
 	return CDocument::GetFile(lpszFileName, nNewFlags, pError);
-}
-
-bool SVIPDoc::IsColorInspectionDocument() const
-{
-	bool bRetVal = false;
-
-	SVInspectionProcess* pInspection = GetInspectionProcess();
-
-	if (nullptr != pInspection)
-	{
-		bRetVal = pInspection->IsColorCamera();
-	}
-
-	return bRetVal;
 }
 
 bool SVIPDoc::GetParameters(SvOi::IObjectWriter& rWriter)
@@ -4108,31 +4085,6 @@ HRESULT SVIPDoc::IsImageDataUpdated(const SVGUID& p_rImageId, SVImageViewClass* 
 			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
 			{
 				if (!(l_ViewIter->second.m_ViewDataUpdated))
-				{
-					l_Status = S_FALSE;
-				}
-			}
-		}
-	}
-
-	return l_Status;
-}
-
-HRESULT SVIPDoc::IsImageDataDisplayed(const SVGUID& p_rImageId, SVImageViewClass* p_pImageView) const
-{
-	HRESULT l_Status = S_OK;
-
-	if (m_AllViewsUpdated == 0)
-	{
-		SVImageIdImageDataStructMap::const_iterator l_Iter = m_Images.find(p_rImageId);
-
-		if (l_Iter != m_Images.end())
-		{
-			SVImageViewPtrImageViewStatusMap::const_iterator l_ViewIter = l_Iter->second.m_ImageViews.find(p_pImageView);
-
-			if (l_ViewIter != l_Iter->second.m_ImageViews.end())
-			{
-				if (!(l_ViewIter->second.m_DisplayComplete))
 				{
 					l_Status = S_FALSE;
 				}

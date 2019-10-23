@@ -47,7 +47,7 @@ SVRegressionFileSelectSheet::~SVRegressionFileSelectSheet()
 
 	for (int i = iPageCnt-1; i >= 0; i-- )
 	{
-		CSVRegressionFileSelectDlg* pPage = (CSVRegressionFileSelectDlg*) GetPage(i);
+		CSVRegressionFileSelectDlg* pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(i));
 		RemovePage(i);
 		if (pPage)
 		{
@@ -107,7 +107,7 @@ void SVRegressionFileSelectSheet::OnOK()
 	for ( int i = 0; i < iNumPages; i++ )
 	{
 		RegressionTestStruct *pStruct = new RegressionTestStruct;
-		CSVRegressionFileSelectDlg *pPage = (CSVRegressionFileSelectDlg*)GetPage(i);
+		CSVRegressionFileSelectDlg *pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(i));
 		if ( (pPage) && (pPage->GetSafeHwnd()) )
 		{
 			if ( pPage->GetFileSelectType() != RegNone )
@@ -126,7 +126,7 @@ void SVRegressionFileSelectSheet::OnOK()
 		ValidateAndFillFileList();
 		for (int i = 0; i < iNumPages; i++)
 		{
-			CSVRegressionFileSelectDlg *pPage = (CSVRegressionFileSelectDlg*)GetPage(i);
+			CSVRegressionFileSelectDlg *pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(i));
 			if ((pPage) && (pPage->GetSafeHwnd()))
 			{
 				pPage->OnOK();
@@ -456,7 +456,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 	{
 		for ( int l_iCount = 0; l_iCount <= iPageCnt-1; l_iCount++ )
 		{
-			pPage = (CSVRegressionFileSelectDlg*)GetPage(l_iCount);
+			pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(l_iCount));
 			if ( pPage )
 			{
 				std::string TmpName = pPage->GetPageName();
@@ -480,7 +480,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 	}
 	else //No list set yet, set in first tab the mode to RegFileList
 	{
-		pPage = (CSVRegressionFileSelectDlg*)GetPage(0);
+		pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(0));
 		if (nullptr != pPage)
 		{
 			RegressionTestStruct tmpStruct;

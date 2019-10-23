@@ -45,6 +45,7 @@ HRESULT SVObjectSynchronousCommandTemplate<CommandPtr>::Execute(DWORD TimeoutInM
 
 			if (nullptr != pCommand)
 			{
+				//SvOi::getObject return IObjectClass*, so we need the include from IObjectClass.h
 				auto pInspection = dynamic_cast<SvOi::IInspectionProcess*>  (SvOi::getObject(m_ObjectID));
 				Result = (nullptr != pInspection) ? pInspection->SubmitCommand(pCommand) : E_POINTER;
 
