@@ -37,46 +37,67 @@
 #define SVERROR(msg, iid, hr) SVLOG(msg); Error(msg, iid, hr)
 
 
+//code from SVVersionInfo.cpp
 static std::string GetVersionString()
 {
-	std::string verStr;
+	std::string Result;
 
-	HINSTANCE hInst = (HINSTANCE)_AtlBaseModule.m_hInst;
-	char moduleFilename[512];
-	::GetModuleFileNameA(hInst, moduleFilename, sizeof(moduleFilename));
+	TCHAR moduleFilename[512];
+	::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
 
 	DWORD dwHandle;
-	DWORD size = ::GetFileVersionInfoSizeA(moduleFilename, &dwHandle);
+	DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
 
-	BOOL rc = ::GetFileVersionInfoA(moduleFilename, NULL, size, lpData);
+	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
 		VS_FIXEDFILEINFO* pFileInfo = nullptr;
 		UINT Len = 0;
-		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len))
+		if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len))
 		{
 			std::stringstream buf;
+			buf << HIWORD(pFileInfo->dwFileVersionMS) << _T(".") << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
 
-			buf << HIWORD(pFileInfo->dwFileVersionMS);
-			buf << ".";
-			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
-
-			if (HIWORD(pFileInfo->dwFileVersionLS) < 255)
+			//Patch number when between 1-99,  SVN revision number when >= 100
+			auto patchOrSvnNumber = HIWORD(pFileInfo->dwFileVersionLS);
+			if (patchOrSvnNumber > 0 && patchOrSvnNumber < 100)
 			{
-				buf << "b" << HIWORD(pFileInfo->dwFileVersionLS);
+				buf << _T(".") << patchOrSvnNumber;
 			}
-			verStr = buf.str();
+			else if (patchOrSvnNumber >= 100)
+			{
+				buf << _T(", Revision ") << patchOrSvnNumber;
+			}
+
+			auto alphaOrBetaNumber = LOWORD(pFileInfo->dwFileVersionLS);
+			if (alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
+			{
+				buf << _T(" Beta ") << std::setfill('0') << std::setw(3) << alphaOrBetaNumber;
+			}
+			else if (alphaOrBetaNumber > 1000)
+			{
+				buf << _T(" Alpha ") << std::setfill('0') << std::setw(3) << alphaOrBetaNumber;
+			}
+
+			Result = buf.str();
 		}
 	}
 	delete[] lpData;
 
 #ifdef _DEBUG
-	verStr += "d";        // For debug builds.
+	Result += _T("d");        // For debug builds.
 #endif
+#ifdef 	_WIN64
+	Result += _T(" (win64)");
+#endif 
 
-	return verStr;
+	return Result;
 }
+
+
+
+
 
 SVRemoteCtrl::SVRemoteCtrl()
 	: m_ctlStatic(_T("Static"), this, 1),

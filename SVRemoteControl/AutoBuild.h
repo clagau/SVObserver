@@ -21,7 +21,7 @@
 //    a is the major version number
 //    b is the minor version number
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
-//    d is unused
+//    d is used for the revision number underlying the build (if zero it is ignored)
 
 
 #define FILEVER        8,30,0,001
