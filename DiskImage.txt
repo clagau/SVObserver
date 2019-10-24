@@ -1,57 +1,80 @@
-﻿Notable changes from 8.00 to 8.10
-
+﻿2. Notable changes from 8.10.1 to 8.20
 Known new Bugs:
-	SVO-2074 Image Dependencies displayed for inactive images
-	SVO-2130 Changed Behaviour related to the Camera Properties Settings: "Image Size Mode" : "User Editable", could lead to confusion
-
+	SVO-2455 Status Change of MonitorLists leads to failure during transition to Run mode or SVO crash
+	SVO-2440 Sporadic fails (Trigger count > Processed count+1): Test script run: RT00100.0156.001-RingBuffer.txt
 Compatible Changes:  
-	SVO-1364 Group Loop Tool  
-	SVO-1583 Create SVOWebApp Webserver for GUI 2.0
-	SVO-1585 HTML Help
-	SVO-1358 "One-Click" option to publish and add a tool into the MonitorList
-	SVO-2026 Recalculate all tool if ROI changed for one tool
-	SVO-1913 Use LinkedValue in SVRangeClass
-	SVO-1798 Store and Read SVIM Serial from BIOS (X2C only)
-	SVO-1656 Replace JSON Communication with Protobuf
-	SVO-854 Add Load Method to SVRC
-	SVO-1758 Add SetupTestInputs to SVRC
-	SVO-351 Additional SVRC Function AutoSave, StartLastConfigurationAutomatically, FBWF
-	SVO-1547 Logger for SVObserver SVRC
-
+	SVO-2036 Update C# Wrapper Connection to SAMI with 64Bit
+	SVO-2232 Prevent EvtentLogs and Notifications
+	SVO-2070 External Tools: Allow input of Table Objects
+	SVO-2068 External Tools: Allow return of Table Objects
+	SVO-2067 External Tools: Allow Arrays as input parameters
+	SVO-597 External Tools: Allow return of Arrays
+	SVO-939 Allow color images as output of external Tool
+	SVO-938 Allow color images as input of external tools
+	SVO-2061 Faster update rate of the WebApp
+	SVO-2017 Streaming, Notification, Listener concept in WebApp
+	SVO-1943 Implement Object Selector in WebApp
+	VO-2263 Webapp Reject View: Introduce Dedicated Pause Message
+	SVO-2326 WebApp RejectStripe - show Images with Overlays
+	SVO-2400 WebApp: Change reject strip order
+	SVO-1942 Change WebApp polling to streaming
+	SVO-1950 Implement inspection overlays in WebApp
+	SVO-2194 Object ID handelling in SVObserver
+	SVO-2156 Add the possibility to us the TriggerCount Number in the image names of the Archive Tool
+	SVO-2155 Reduce SW Trigger minimum time to 4ms
+	SVO-988 Auxiliary Extents for Shift Tool
+	SVO-906 Custom Ranking Filter like CustomFilter2
+	SVO-2229 Do not use V Drive for SVObserver
 Incompatible Changes:
-	SVO-1728 Change old Pac-File as 7 ZIP
-	SVO-1914 Update MIL 10 PP3
-	SVO-2028 External Tools: Changing values of input variables lead (sometimes) to AuditTrail entries
-	SVO-2041 Missing AuditTrail variable names in Printout Report for SAControl
-	SVO-1887 Remove SVUnlockImage,SVlockImage, SVUnlockAllImages and SVGetLockedImage from SIAC
-	SVO-910 Naming for GetProduct and GetItem is not the same in SVRC
-
+	SVO-2217 Remove Remote Input Tool from SVObserver
+	SVO-1445 Remove IsValid completely (Exception Tool- and Tool Set-Objects)
+	SVO-2027 Transformation Tool: Own result image or result images of later processed tools can be set as image source
 Fixed Bugs:
-	SVO-2040 Configuration unreadable if used in the column names in the characters (ä, ö, ü)
-	SVO-1890 Change Camera to Trigger Correlation, Analyze the Image Workflow
-	SVO-2055 Complete set of "Trigger-/Acquisition-Time" - values only available after the third trigger
-	SVO-2074 Image Dependencies displayed for inactive images
-
+	SVO-2328 Configuration file path is lost when loaded over SVRC
+	SVO-2441 SVO Mode Change from "Regression Test" to "Stop" leads to a hanging Mode:Change state
+	SVO-2273 SIAC: Temp.svz after PutSVIMConfig; Temp.svx after GetSVIMConfig
+	SVO-1835 Table Result Tab in Run-mode: No display update w/o trigger
+	SVO-2335 00 customer config cannot be switched to run in 8.10 due to lack of memory for archive tools
+	SVO-2148 Permanently per (roughly) 1 sec, 5 SVGateway - entries in the event log file if SVObserver is not active
+	SVO-2077 Graph von Linear Tool wir in Run mode angezeigt
+	SVO-2050 "Ring Closure" of linked values can destroy the configuration
+	SVO-1858 Hidden Digits in Math and Condition Formula Editor
+	SVO-1917 One Camera assigned to two PPQs prevents RUN - mode
+	SVO-1430 Auxiliary Angle is not calculated correctly for rotation
+	SVO-1514 Similar variable name in table tool and math tool causes problems
+	SVO-1785 Selection of result picker can crash SVObserver
+	SVO-1567 TableAnalyzerTool: Analyzer not updated correctly after changing Source Table
+	SVO-2398 File acquisition start frame time stamp incorrect
+	SVO-2439 Deadlock when change from Run to Edit
+	SVO-1540 change of the camera position in regression test dialog
+	SVO-2312 SVO displays wrong image in edit mode
+	SVO-2304 Increasing the PPQ length of a configuration which uses very large images can cause a SVObserver crash
+	SVO-2401 ArchiveTool in LoopTool not working
+	SVO-2297 Make global constans available for Archive tool
+	SVO-2364 Sporadically SVRC-GetReject / SVRC-GetProduct for the Last TriggerCount, provides data of a previous TriggerCount
+	SVO-1613 Change Toolset Printout Folder
+	SVO-2197 SVRC: Disconnect notification only available after sending first command
 Notable SVIM Image Changes:
-	SVO-1639 Remove NTBackup functionality from SVObserver Utilities
-	SVO-1853 Put the crash-dump files of the SVO Gateway application into "our" Dr.Watson folder7
-	SVO-1866 PDF Reader on SVIM
-	SVO-2030 Compress V:\ drive to compress images
-	SVO-2025 Time sync, net time command twice
-	SVO-2049 Install Chrome on the image
-	SVO-1930 X2C Clone Monitor as default
-	SVO-2060 Force IP from IPConfig not always successful
-
+	SVO-1665 .net 4.5
+	SVO-2108 SVRC-Installer incl. Test-App / File for SAMI
+	SVO-2087 Increase register entry GDIProcessHandleQuota to 21000
+	SVO-2234 New Model Number for SVIM with PLC connection
+	SVO-2097 BGInfo on SVIM
+	SVO-2363 Hilscher driver on SVIM image (X2C)
+	SVO-2380 Add C:\Run to PATH on the release image
+	SVO-2292 Install SQLLiteBrowser to Utilities
+	SVO-1613 Change Toolset Printout Folder
+	SVO-2231 Deep Learning on the SVIM
 Base Image Name:
-	X2B0810
-	X2C0810
+	X2B0820
+	X2C0820
 
 SOFTWARE VERSIONS:
 
-SVObserver version 8.10
-SVRC Version 8.10
+SVObserver version 8.20
+SVRC Version 8.20
 SIAC Version 7.50
-SVOGateway Version 8.10
+SVOGateway Version 8.20
 
 SVLpt version 7.0.0.0 (11)
 
@@ -76,10 +99,11 @@ MIL 10 Update              53     Build 21       Matrox Indio
 MIL 10 Update              63     Build 633      SureDotOCR™ update
 MIL 10 Engineering Fix    566 F   Build 01       Genicam v3_0 XML
 MIL 10 Engineering Fix    569 F   Build 05       License dongle firmware update
+MIL 10 Engineering Fix    631 F   Build 01       MappGetHookInfo error message
 
 Microsoft Internet Explorer version 8.0
 
-Chrome Version 70.0.3538.110 (Official Build) (64-bit)
+Chrome Version 78.0.3904.70 (Official Build) (64-bit)
 
 Microsoft PosReady 7
 
