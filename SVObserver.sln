@@ -568,6 +568,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOverlayLibrary", "SVOverlayLibrary\SVOverlayLibrary.vcxproj", "{FD1E7560-CE36-4DE0-95B5-E669768FC0A7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPlcIO", "SVPlcIO\SVPlcIO.vcxproj", "{9F63D46B-2B24-4A8C-AB93-05320871467C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7C407AA0-B1D6-430B-A919-096E3D7F809D} = {7C407AA0-B1D6-430B-A919-096E3D7F809D}
+		{12178FE8-6FBA-45F2-A311-0B1659D6C1BE} = {12178FE8-6FBA-45F2-A311-0B1659D6C1BE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
