@@ -17,6 +17,7 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "TriggerEngineConnection.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -24,10 +25,18 @@
 //#define TRIGGER_SIMULATE
 //#define PLC_LPTIO
 
+std::vector<TriggerData> g_PlcList;
+std::vector<TriggerData> g_LptList;
+
+std::atomic_uint32_t g_PlcTriggerCount[cNumberTriggers] {0, 0, 0, 0};
+std::atomic_uint32_t g_LptTriggerCount[cNumberTriggers] {0, 0, 0, 0};
+std::atomic_bool g_enableInterrupt{false};
+
 #ifdef PLC_LPTIO
 //@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)
-//#include "LPT/SVLptDll.h"
+#include "LPT/SVLptDll.h"
 #pragma comment(lib, "SVLpt")
+
 
 enum SVHWControlEnum
 {
@@ -79,7 +88,7 @@ constexpr LPCTSTR c_BoardName = "IO_Board_1.Dig_%d";
 #pragma endregion Declarations
 
 #ifdef TRIGGER_SIMULATE
-void TriggerTimer(std::function<void(const TriggerReport&)> pTrigger, uint8_t channel, long period, const std::atomic_bool* pRun)
+void TriggerTimer(std::function<void(const TriggerReport&)> pTrigger, uint8_t channel, unsigned long period, const std::atomic_bool* pRun)
 {
 	TriggerReport triggerRecord{channel, 0L, 0L, 0LL, true};
 
@@ -93,11 +102,6 @@ void TriggerTimer(std::function<void(const TriggerReport&)> pTrigger, uint8_t ch
 
 	triggerRecord.m_objectID = 0L;
 }
-
-
-#else
-#pragma comment(lib, "TriggerEngineConnection.lib")
-#pragma comment(lib, "RtxBasics.lib")
 #endif
 
 #ifdef PLC_LPTIO
@@ -110,16 +114,16 @@ void ReadWriteLPT(uint8_t controlPort, uint8_t value, int8_t bitNr = -1)
 	{
 		return;
 	}
-	/*HRESULT hResult = */WriteControlPort(SVControlEnableInterrupt);
+	HRESULT hResult = WriteControlPort(SVControlEnableInterrupt);
 
 	uint8_t& rOutput = (SVControlWriteDigital1_110 == controlPort) ? currentOutput[1] : currentOutput[0];
-	/*hResult = */WriteControlPort(SVControlEnableInterrupt | controlPort);
+	hResult = WriteControlPort(SVControlEnableInterrupt | controlPort);
 	double Start = SvTl::GetTimeStamp();
 	unsigned char status;
-	HRESULT hResult = ReadStatusPort(status);
+	hResult = ReadStatusPort(status);
 	while (S_OK == hResult && 0 == (status & 128))
 	{
-		SvTl::SVTimeStamp Check = SvTl::GetTimeStamp();
+		double Check = SvTl::GetTimeStamp();
 
 		if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > 16000)
 		{
@@ -157,7 +161,7 @@ void ReadWriteLPT(uint8_t controlPort, uint8_t value, int8_t bitNr = -1)
 		hResult = ReadStatusPort(status);
 		while (S_OK == hResult && 0 != (status & 128))
 		{
-			SvTl::SVTimeStamp Check = SvTl::GetTimeStamp();
+			double Check = SvTl::GetTimeStamp();
 			if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > 16000)
 			{
 				hResult = ReadStatusPort(status);
@@ -176,47 +180,58 @@ void ReadWriteLPT(uint8_t controlPort, uint8_t value, int8_t bitNr = -1)
 
 void LptInterruptHandler()
 {
-	static unsigned char LastTriggerState{0};
+	static unsigned char LastTriggerState {0};
 
-	unsigned char StatusReg;
-	HRESULT result = ReadStatusPort(StatusReg);
-	if (S_OK == result)
+	if(g_enableInterrupt)
 	{
-		for (int i = 0; i < cNumberTriggers - 1; ++i)
-		{
-			short nTriggerBit = SVTriggerNone;
+		double timeStamp = SvTl::GetTimeStamp();
 
-			// Get the trigger bit 
-			switch (i) //the 1 based channel.
+		unsigned char StatusReg;
+		HRESULT result = ReadStatusPort(StatusReg);
+		if (S_OK == result)
+		{
+			for (int i = 0; i < cNumberTriggers - 1; ++i)
 			{
-				case 0: // trigger 1 Bit 3 of Status port
+				short nTriggerBit = SVTriggerNone;
+
+				// Get the trigger bit 
+				switch (i) //the 1 based channel.
 				{
-					nTriggerBit = SVTrigger1;
-					break;
+					case 0: // trigger 1 Bit 3 of Status port
+					{
+						nTriggerBit = SVTrigger1;
+						break;
+					}
+					case 1:
+					{
+						nTriggerBit = SVTrigger2;
+						break;
+					}
+					case 2:
+					{
+						nTriggerBit = SVTrigger3;
+						break;
+					}
+					default:
+					{
+						break;
+					}
 				}
-				case 1:
+
+				if (nTriggerBit != SVTriggerNone && (nTriggerBit & StatusReg) != (nTriggerBit & LastTriggerState))
 				{
-					nTriggerBit = SVTrigger2;
-					break;
-				}
-				case 2:
-				{
-					nTriggerBit = SVTrigger3;
-					break;
-				}
-				default:
-				{
-					break;
+					bool bitState = (0 != (nTriggerBit & StatusReg));
+					//Negative flank
+					if(bitState == false)
+					{
+						g_LptTriggerCount[i]++;
+						g_LptList.emplace_back(TriggerData{static_cast<uint8_t> (i + 1), g_LptTriggerCount[i], timeStamp});
+					}
 				}
 			}
-
-			//if (nTriggerBit != SVTriggerNone && (nTriggerBit & StatusReg) != (nTriggerBit & LastTriggerState))
-			//{
-			//	bool bitState = (0 != (nTriggerBit & StatusReg));
-			//}
 		}
+		LastTriggerState = StatusReg;
 	}
-	LastTriggerState = StatusReg;
 }
 
 void SetOutputBitTimed(SVHWControlEnum controlType, int8_t bitNr, long resetTime)
@@ -303,12 +318,12 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 							//Set Bit0-Bit7 and Bit8-Bit15 to off
 							ReadWriteLPT(SVControlWriteDigital0, 0xff);
 							ReadWriteLPT(SVControlWriteDigital1_110, 0xff);
-							EnableInterrupt(&LptInterruptHandler);
 						}
 					}
-
-					m_isLptActive = true;
 				}
+				EnableInterrupt(&LptInterruptHandler);
+				::OutputDebugString("Irq Enabled\n");
+				m_isLptActive = true;
 			}
 			//@TODO[gra][8.20][08.04.2019]
 #endif
@@ -487,14 +502,25 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerChannel)
 #ifndef TRIGGER_SIMULATE
 			if (!m_engineStarted)
 			{
+				for(int i=0; i < cNumberTriggers; ++i)
+				{
+					g_PlcTriggerCount[i] = 0;
+					g_LptTriggerCount[i] = 0;
+				}
+				g_LptList.clear();
+				g_PlcList.clear();
+				g_LptList.reserve(20000);
+				g_PlcList.reserve(20000);
 				m_OutputData.clear();
 				startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcSimulation);
 				m_engineStarted = true;
+				g_enableInterrupt = true;
+				::OutputDebugString("Irq Enabled set\n");
 			}
 			if (!rTrigger.m_started)
 			{
-				//RTX trigger channel is zero based while SVObserver is one based!
-				startTriggerchannel(static_cast<uint8_t> (triggerIndex));
+				//Trigger Engine trigger channel is zero based while SVObserver is one based!
+				SetTriggerChannel(static_cast<uint8_t> (triggerIndex), true, rTrigger.m_period);
 				rTrigger.m_started = true;
 			}
 #endif
@@ -523,9 +549,9 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 #ifndef TRIGGER_SIMULATE
 			if (rTrigger.m_started)
 			{
-				//RTX channel is zero based while SVObserver is one based!
-				stopTriggerchannel(static_cast<uint8_t> (triggerIndex));
 				rTrigger.m_started = false;
+				//Trigger Engine trigger channel is zero based while SVObserver is one based!
+				SetTriggerChannel(static_cast<uint8_t> (triggerIndex), false, rTrigger.m_period);
 			}
 			//Still some active trigger
 			bool activeTrigger{false};
@@ -537,24 +563,42 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 			{
 				stopTriggerEngine();
 				m_engineStarted = false;
-
-				std::string fileData;
-				for(const auto& rLine : m_OutputData)
-				{
-					fileData += rLine;
-				}
+				g_enableInterrupt = false;
+				::OutputDebugString("Irq Enabled reset\r\n");
 
 				if(!m_OutputFileName.empty())
 				{
-					::DeleteFile(m_OutputFileName.c_str());
+					std::string fileName = m_OutputFileName;
+					fileName += "_Plc.txt";
+					::DeleteFile(fileName.c_str());
 
-					std::ofstream testFile {m_OutputFileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::app};
-					if(testFile.is_open())
+					std::string fileData = _T("Channel; Count; Timestamp\r\n");
+					for (const auto& rData : g_PlcList)
 					{
-						testFile.write(fileData.c_str(), fileData.size());
-						testFile.close();
+						fileData += SvUl::Format(_T("%d; %d; %f\r\n"), rData.m_Channel, rData.m_Count, rData.m_TimeStamp);
 					}
-					m_OutputData.clear();
+					std::ofstream outputFile {fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::app};
+					if(outputFile.is_open())
+					{
+						outputFile.write(fileData.c_str(), fileData.size());
+						outputFile.close();
+					}
+
+					fileName = m_OutputFileName;
+					fileName += "_Lpt.txt";
+					::DeleteFile(fileName.c_str());
+
+					fileData = _T("Channel; Count; Timestamp\r\n");
+					for (const auto& rData : g_LptList)
+					{
+						fileData += SvUl::Format(_T("%d; %d; %f\r\n"), rData.m_Channel, rData.m_Count, rData.m_TimeStamp);
+					}
+					outputFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::app);
+					if (outputFile.is_open())
+					{
+						outputFile.write(fileData.c_str(), fileData.size());
+						outputFile.close();
+					}
 				}
 			}
 #endif
@@ -752,7 +796,6 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 	std::lock_guard<std::mutex> guard(m_protectPlc);
-	double now = SvTl::GetTimeStamp();
 	if(cNumberTriggers > rTriggerReport.m_channel)
 	{
 		const TriggerParameter& rTrigger = m_trigger[rTriggerReport.m_channel];
@@ -761,19 +804,19 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		{
 			return;
 		}
-#ifdef PLC_LPTIO
-		//@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)
-		if(m_isLptActive)
-		{
-			SVHWControlEnum controlType = (rTrigger.m_outputBit < cOutputCount / 2) ? SVControlWriteDigital0 : SVControlWriteDigital1_110;
-			int8_t outputBit = static_cast<int8_t> (rTrigger.m_outputBit);
-			outputBit = (SVControlWriteDigital0 == controlType) ? outputBit : outputBit - cOutputCount / 2;
-			if (rTrigger.m_outputBit >= 0 && rTrigger.m_outputBit < cOutputCount)
-			{
-				auto setOutputThread = std::async(std::launch::async, [&] { SetOutputBitTimed(controlType, outputBit, m_resetOutputTime); });
-			}
-		}
-#endif
+//#ifdef PLC_LPTIO
+//		//@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)
+//		if(m_isLptActive)
+//		{
+//			SVHWControlEnum controlType = (rTrigger.m_outputBit < cOutputCount / 2) ? SVControlWriteDigital0 : SVControlWriteDigital1_110;
+//			int8_t outputBit = static_cast<int8_t> (rTrigger.m_outputBit);
+//			outputBit = (SVControlWriteDigital0 == controlType) ? outputBit : outputBit - cOutputCount / 2;
+//			if (rTrigger.m_outputBit >= 0 && rTrigger.m_outputBit < cOutputCount)
+//			{
+//				auto setOutputThread = std::async(std::launch::async, [&] { SetOutputBitTimed(controlType, outputBit, m_resetOutputTime); });
+//			}
+//		}
+//#endif
 
 		//If condition index is set then set the corresponding input
 		if (-1 != rTrigger.m_conditionIndex)
@@ -784,12 +827,17 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 	}
 	
 	SvTh::IntVariantMap triggerData;
-	triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(now); //_variant_t(rTriggerReport.m_triggerTime_ms);
+	triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
 	triggerData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_objectID);
 	triggerData[SvTh::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
 
 	//RTX channel is zero based while SVObserver is one based!
 	int triggerChannel = rTriggerReport.m_channel + 1;
+
+	g_PlcTriggerCount[rTriggerReport.m_channel]++;
+	
+	g_PlcList.emplace_back(TriggerData{static_cast<uint8_t> (triggerChannel), g_PlcTriggerCount[rTriggerReport.m_channel], rTriggerReport.m_triggerTimestamp});
+
 	// call trigger callbacks
 	for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
 	{

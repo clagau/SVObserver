@@ -19,6 +19,15 @@ class SVPlcIOImpl;
 extern SVPlcIOImpl g_Plc;
 #pragma endregion Declarations
 
+struct TriggerData
+{
+	TriggerData(uint8_t channel, uint32_t count, double timestamp) : m_Channel{channel}, m_Count{count}, m_TimeStamp{timestamp}{}
+
+	uint8_t m_Channel{0};
+	uint32_t m_Count{0UL};
+	double m_TimeStamp{0.0};
+};
+
 struct TriggerParameter
 {
 	uint32_t m_ObjectID {0};
@@ -26,7 +35,7 @@ struct TriggerParameter
 	long m_conditionIndex {-1L};
 	long m_dataValidIndex {-1L};
 	long m_objectGoodIndex {-1L};
-	long m_period {0L};
+	unsigned long m_period {0UL};
 	std::thread m_timer;
 
 	//@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)

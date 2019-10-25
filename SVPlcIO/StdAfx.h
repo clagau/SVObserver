@@ -55,15 +55,24 @@
 #include <future>
 #include <iterator>			//Used by static library
 #include <map>
+#include <memory>
 #include <mutex>
 #include <set>				//Used by static library
 #include <string>
+#include <sstream>
 #include <tchar.h>			//Used by static library
 #include <time.h>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/bind.hpp>		//Used by static library
 #include <boost/function.hpp>	//Used by static library
 #pragma endregion Precompiled Headers
 
-
+#ifdef UNDER_RTSS
+inline void printOutput(LPCTSTR text){ RtPrintf(text);}
+#else
+inline void printOutput(LPCTSTR text) { ::OutputDebugString(text); }
+#endif

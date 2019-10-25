@@ -75,7 +75,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;rtapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cifX32DLL64.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;rtapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVPlcIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -118,7 +118,7 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;rtapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cifX32DLL64.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;rtapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVPlcIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -140,9 +140,16 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CifxCard.cpp" />
+    <ClCompile Include="CifxCommonData.cpp" />
+    <ClCompile Include="HardwareTriggerSource.cpp" />
+    <ClCompile Include="PowerLinkConnection.cpp" />
+    <ClCompile Include="SimulatedTriggerSource.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="SVPlcIOExports.cpp" />
     <ClCompile Include="SVPlcIOImpl.cpp" />
+    <ClCompile Include="TriggerEngineConnection.cpp" />
+    <ClCompile Include="TriggerSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SVPlcIO.rc2" />
@@ -153,11 +160,31 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
+    <ClInclude Include="CifxCard.h" />
+    <ClInclude Include="CifxCommonData.h" />
+    <ClInclude Include="cifXErrors.h" />
+    <ClInclude Include="cifXUser.h" />
+    <ClInclude Include="ConfigDataSet.h" />
+    <ClInclude Include="EplCn_If_Public.h" />
+    <ClInclude Include="Epl_Common_Defines.h" />
+    <ClInclude Include="HardwareTriggerSource.h" />
+    <ClInclude Include="InspectionCommand.h" />
+    <ClInclude Include="InspectionState.h" />
+    <ClInclude Include="PlcDataTypes.h" />
+    <ClInclude Include="PlcDataVersion.h" />
+    <ClInclude Include="PowerLinkConnection.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SimulatedTriggerSource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVPlcIOExports.h" />
     <ClInclude Include="SVPlcIOImpl.h" />
+    <ClInclude Include="Telegram.h" />
+    <ClInclude Include="TimeSync.h" />
+    <ClInclude Include="TLR_Results.h" />
+    <ClInclude Include="TLR_Types.h" />
     <ClInclude Include="TriggerEngineConnection.h" />
+    <ClInclude Include="TriggerInformation.h" />
+    <ClInclude Include="TriggerSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SVStatusLibrary\SVStatusLibrary.vcxproj">
