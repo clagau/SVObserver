@@ -39,6 +39,7 @@ public:
 	SvPb::ImageList& getMutableImageList() { return m_ImageList; };
 	void setImageList(SvPb::ImageList&& imageList) { m_ImageList = imageList; };
 	void* getTriggerRecords() { return m_pTriggerRecords; };
+	virtual void createTriggerRecordsBuffer(int trNumbers) override;
 	void setTriggerRecords(void* pTR);
 	virtual void setTrOfInterestNumber(int number) override;
 	virtual void setTrOfInterest(int inspectionPos, int pos) override;

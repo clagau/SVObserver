@@ -93,6 +93,7 @@ public:
 	virtual TriggerRecordData& getTRData(int pos) const = 0;
 	virtual const SvPb::ImageList& getImageList() const = 0;
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
+	virtual void createTriggerRecordsBuffer(int trNumbers) { assert(false); throw E_NOTIMPL; };
 	virtual void resetFreeTrNumber() {};
 	virtual void increaseFreeTrNumber() {};
 	virtual void decreaseFreeTrNumber() {};
@@ -179,6 +180,7 @@ public:
 	virtual void setInspectionList(SvPb::InspectionList&& rInspectionList) { assert(false); throw E_NOTIMPL; };
 
 	bool isIPInit(int inspectionPos);
+	void createTriggerRecordsBuffer(int inspectionPos, int trNumbers);
 
 	/// Set the flag for global initialization. If this flag is set the writer version will not recreate every time the memory, but if finished the global initialization.
 	/// \param flag [in] True, means global initialization is one.

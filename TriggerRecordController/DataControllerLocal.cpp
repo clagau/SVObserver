@@ -26,6 +26,16 @@ TRControllerLocalDataPerIP::~TRControllerLocalDataPerIP()
 	}
 };
 
+void TRControllerLocalDataPerIP::createTriggerRecordsBuffer(int trNumbers)
+{
+	getMutableBasicData().m_TriggerRecordNumber = trNumbers;
+	getMutableBasicData().m_triggerRecordBufferSize = (sizeof(TriggerRecordData) + sizeof(int)*m_ImageList.list_size());
+	//Reserve memory space for the data size and the data
+	getMutableBasicData().m_triggerRecordBufferSize += sizeof(int) + getBasicData().m_dataListSize;
+	setTriggerRecords(malloc(getBasicData().m_triggerRecordBufferSize * getBasicData().m_TriggerRecordNumber));
+	setNextPosForFreeCheck(getNextPosForFreeCheck() % (getBasicData().m_TriggerRecordNumber));
+}
+
 void TRControllerLocalDataPerIP::setTriggerRecords(void* pTR)
 { 
 	if (nullptr != m_pTriggerRecords)
@@ -308,12 +318,8 @@ std::vector<std::pair<int, int>> DataControllerLocal::ResetTriggerRecordStructur
 		if (i == inspectionId)
 		{
 			ResetInspectionData(m_dataVector[i]);
-			rBaseData.m_TriggerRecordNumber = triggerRecordNumber;
-			rBaseData.m_triggerRecordBufferSize = (sizeof(TriggerRecordData) + sizeof(int)*rImageList.list_size());
-			//Reserve memory space for the data size and the data
-			rBaseData.m_triggerRecordBufferSize += sizeof(int) + rBaseData.m_dataListSize;
 			m_dataVector[i].setImageList(std::move(rImageList));
-			m_dataVector[i].setTriggerRecords(malloc(rBaseData.m_triggerRecordBufferSize * rBaseData.m_TriggerRecordNumber));
+			m_dataVector[i].createTriggerRecordsBuffer(triggerRecordNumber);
 		}
 		if (nullptr != m_dataVector[i].getTriggerRecords() && 0 < rBaseData.m_triggerRecordBufferSize)
 		{

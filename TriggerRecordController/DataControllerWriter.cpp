@@ -127,6 +127,13 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 	m_ImageList.SerializePartialToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
 }
 
+void TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trNumbers)
+{
+	unsigned int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*m_ImageList.list_size()) + sizeof(int) + getBasicData().m_dataListSize;
+	//Reserve memory space for the data size and the data
+	createTriggerRecordsBuffer(bufferSize, trNumbers);
+}
+
 void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(long trBufferSize, int trNumbers)
 {
 	assert(m_pBasicData && m_pSmData);
@@ -147,10 +154,12 @@ void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(long trBufferSize,
 	}
 	m_pBasicData->m_TriggerRecordNumber = trNumbers;
 	m_pBasicData->m_triggerRecordBufferSize = trBufferSize;
+
 	if (0 >= trBufferSize*trNumbers)
 	{
 		return nullptr;
 	}
+	setNextPosForFreeCheck(getNextPosForFreeCheck() % (getBasicData().m_TriggerRecordNumber));
 	return m_pTriggerRecords;
 }
 
@@ -649,10 +658,8 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 			if (i == inspectionId)
 			{
 				ResetInspectionData(*pIPData, false);
-				unsigned int bufferSize = (sizeof(TriggerRecordData) + sizeof(int)*rImageList.list_size()) + sizeof(int) + pIPData->getBasicData().m_dataListSize;
-				//Reserve memory space for the data size and the data
 				pIPData->setImageList(std::move(rImageList));
-				pIPData->createTriggerRecordsBuffer(bufferSize, triggerRecordNumber);
+				pIPData->createTriggerRecordsBuffer(triggerRecordNumber);
 			}
 			if (nullptr != pIPData->getTriggerRecords() && 0 < pIPData->getBasicData().m_triggerRecordBufferSize)
 			{

@@ -41,6 +41,7 @@ public:
 	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	void setImageList(SvPb::ImageList&& imageList);
 	void* getTriggerRecords() { return m_pTriggerRecords; };
+	virtual void createTriggerRecordsBuffer(int trNumbers) override;
 	void* createTriggerRecordsBuffer(long trBufferSize, int trNumbers);
 	virtual void resetFreeTrNumber() override;
 	virtual void increaseFreeTrNumber() override;

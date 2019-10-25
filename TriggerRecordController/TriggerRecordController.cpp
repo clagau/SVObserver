@@ -363,6 +363,7 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 			{
 				mustRecalc = true;
 				m_pDataController->setIpToInitFlagList(inspectionPos);
+				m_pDataController->createTriggerRecordsBuffer(inspectionPos, needNumberOfTr(*pIpData));
 			}
 		}
 		catch (...)

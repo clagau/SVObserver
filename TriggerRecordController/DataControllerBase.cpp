@@ -190,6 +190,16 @@ bool DataControllerBase::isIPInit(int inspectionPos)
 	return false;
 }
 
+void DataControllerBase::createTriggerRecordsBuffer(int inspectionPos, int trNumbers)
+{
+	auto* pData = getTRControllerData(inspectionPos);
+	assert(nullptr != pData);
+	if (nullptr != pData)
+	{
+		pData->createTriggerRecordsBuffer(trNumbers);
+	}
+}
+
 void DataControllerBase::prepareReset()
 {
 	if (m_reloadCallback)
