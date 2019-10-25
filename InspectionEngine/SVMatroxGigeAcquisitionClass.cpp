@@ -625,25 +625,14 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 	unsigned long bufHeight = 480;
 	int iFormat = SvDef::SVImageFormatUnknown;
 
-	//check if valid board, subsystem and if connected camera matches chosen camera file
-	SvTh::SVDigitizerLoadLibraryClass *digSub = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
-	if ( IsValidBoard() && nullptr != digSub && CameraMatchesCameraFile() )
+	SVCameraFormatsDeviceParam* pParam;
+	pParam = m_DeviceParams.GetParameter( DeviceParamCameraFormats).DerivedValue( pParam );
+	if ( pParam )
 	{
-		digSub->GetBufferHeight( m_hDigitizer, &bufHeight );
-		digSub->GetBufferWidth( m_hDigitizer, &bufWidth );
-		digSub->GetBufferFormat( m_hDigitizer, &iFormat );
-	}
-	else
-	{
-		SVCameraFormatsDeviceParam* pParam;
-		pParam = m_DeviceParams.GetParameter( DeviceParamCameraFormats).DerivedValue( pParam );
-		if ( pParam )
-		{
-			SVCameraFormat& rFormat = pParam->options[ pParam->strValue ];
-			bufWidth = rFormat.m_lWidth;
-			bufHeight = rFormat.m_lHeight;
-			iFormat = rFormat.m_eImageType;
-		}
+		SVCameraFormat& rFormat = pParam->options[ pParam->strValue ];
+		bufWidth = rFormat.m_lWidth;
+		bufHeight = rFormat.m_lHeight;
+		iFormat = rFormat.m_eImageType;
 	}
 
 	// Band number depends on video type...

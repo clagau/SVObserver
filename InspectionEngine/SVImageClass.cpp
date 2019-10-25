@@ -43,6 +43,9 @@ namespace SvIe
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+constexpr long cColorBandNumber = 3L;
+constexpr long cMonoBandNumber = 1L;
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVImageClass, SVImageClassGuid);
@@ -955,9 +958,29 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* PDataObject)
 	}
 	else if ((bOk = PDataObject->GetAttributeData(_T("BandNumber"), svLongArray)))
 	{
+		long BandNumber{0L};
 		for (int i = 0; i < static_cast<int> (svLongArray.size()); i++)
 		{
-			m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, svLongArray[i]);
+			BandNumber = svLongArray[i];
+			m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, BandNumber);
+		}
+		//In previous versions the Band Number was saved incorrectly this is a check to see if it fits to the format 
+		long formatValue {0L};
+		m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, formatValue);
+		SvDef::SVImageFormatEnum imageFormat{static_cast<SvDef::SVImageFormatEnum> (formatValue)};
+		if(SvDef::SVImageFormatEnum::SVImageFormatRGB888 ==  imageFormat || SvDef::SVImageFormatEnum::SVImageFormatRGB8888 == imageFormat)
+		{
+			if(cMonoBandNumber == BandNumber)
+			{
+				m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, cColorBandNumber);
+			}
+		}
+		else
+		{
+			if (cColorBandNumber == BandNumber)
+			{
+				m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, cMonoBandNumber);
+			}
 		}
 	}
 	else if ((bOk = PDataObject->GetAttributeData(_T("BandLink"), svLongArray)))
