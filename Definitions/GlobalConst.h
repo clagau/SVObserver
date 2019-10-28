@@ -15,7 +15,7 @@ namespace SvDef
 {
 #pragma region Declarations
 constexpr int			cRingBufferDepthMin = 2;
-constexpr int			cRingBufferDepthMax = 30;
+constexpr int			cRingBufferDepthMax = 100;
 constexpr int			cRingBufferNumberOutputImages = 2;
 constexpr int			cTableMaxRowMin = 1;
 constexpr int			cTableMaxRowMax = 10000;

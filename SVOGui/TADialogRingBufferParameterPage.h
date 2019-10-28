@@ -56,6 +56,7 @@ namespace SvOg
 		virtual BOOL OnKillActive( ) override;
 		//afx_msg void OnButtonBufferDepth();
 		afx_msg void OnButtonImageIndex( UINT nID );
+		afx_msg void OnButtonDepth();
 		//}}AFX_MSG
 
 		//************************************
@@ -79,6 +80,7 @@ namespace SvOg
 		GUID m_TaskObjectID;
 
 		CEdit m_EditRingDepth;
+		CButton m_ButtonRingDepth;
 		CEdit m_EditImageIndex[SvDef::cRingBufferNumberOutputImages];
 		CButton m_ButtonImageIndex1;
 		CButton m_ButtonImageIndex2;

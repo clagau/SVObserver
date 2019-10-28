@@ -18,6 +18,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -103,9 +105,9 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	SetToolROIExtentToFullInputImage ();
 
-	long ringBufferDepth = 0;
-	m_BufferDepth.GetValue(ringBufferDepth);
-	if( SvDef::cRingBufferDepthMin > ringBufferDepth || SvDef::cRingBufferDepthMax < ringBufferDepth )
+	_variant_t depthVariant;
+	m_BufferDepth.GetValue(depthVariant);
+	if (cVarType_imageIndex != depthVariant.vt || SvDef::cRingBufferDepthMin > depthVariant.lVal || SvDef::cRingBufferDepthMax < depthVariant.lVal)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -113,10 +115,14 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMin));
 			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMax));
-			msgList.push_back(SvUl::Format("%d", ringBufferDepth));
+			msgList.push_back(SvUl::Format("%d", depthVariant.lVal));
 			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10013_RingBuffer_DepthValueInvalid, GetUniqueObjectID() );
 			pErrorMessages->push_back(message);
 		}
+	}
+	else
+	{
+		m_ringBufferDepth = depthVariant.lVal;
 	}
 
 	if (Result)
@@ -135,18 +141,37 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_SourceImageNames.SetValue( pInputImage->GetCompleteName() );
 
 			//create ring buffer images
+			SVMatroxBufferCreateStruct bufferStruct;
+			HRESULT hrOk = SvIe::SVImageProcessingClass::FillBufferStructFromInfo(ImageInfo, bufferStruct);
+			if (S_OK == hrOk)
+			{
+				try
+				{
+					SvTrc::getTriggerRecordControllerRWInstance().addImageBuffer(GetUniqueObjectID(), bufferStruct, m_ringBufferDepth);
+				}
+				catch (const SvStl::MessageContainer& rExp)
+				{
+					Result = false;
+					if (nullptr != pErrorMessages)
+					{
+						pErrorMessages->push_back(rExp);
+					}
+				}
+				
+			}
+			else
+			{
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{ 
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
+				}
+			}
 			m_ringBuffer.clear();
-			m_ringBuffer.resize(ringBufferDepth);
+			m_ringBuffer.resize(m_ringBufferDepth);
 			m_isBufferFull = false;
 			m_nextBufferPos = 0;
-
-			ImageInfo.setDibBufferFlag(false);
-			for (int i=0; i<ringBufferDepth; i++)
-			{
-				SvOi::SVImageBufferHandlePtr imageHandle;
-				SvIe::SVImageProcessingClass::CreateImageBuffer(ImageInfo, imageHandle);
-				m_ringBuffer[i] = imageHandle;
-			}
 		}
 		else
 		{
@@ -190,9 +215,7 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 	{
 		//-----	Execute this objects run functionality. -----------------------------
 		int imageOutputFlag = 0;
-		long ringBufferDepth = 0;
-		m_BufferDepth.GetValue(ringBufferDepth);
-		int maxIndexPos = ringBufferDepth -1;
+		int maxIndexPos = m_ringBufferDepth -1;
 		if (!m_isBufferFull)
 		{
 			maxIndexPos = m_nextBufferPos -1;
@@ -201,34 +224,24 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		//set output image
 		for (int i=0; i < SvDef::cRingBufferNumberOutputImages; ++i)
 		{
-			_variant_t depthVariant;
-			m_ImageIndexManager[i].GetValue( depthVariant );
-			if (cVarType_imageIndex == depthVariant.vt && 0 < depthVariant.lVal && ringBufferDepth >= depthVariant.lVal) //imageIndex invalid -> output image deactivated.
+			_variant_t indexVariant;
+			m_ImageIndexManager[i].GetValue( indexVariant );
+			if (cVarType_imageIndex == indexVariant.vt && 0 < indexVariant.lVal && m_ringBufferDepth >= indexVariant.lVal) //imageIndex invalid -> output image deactivated.
 			{
-				imageOutputFlag |= SetOutputImage(i, depthVariant.lVal, maxIndexPos, ringBufferDepth, rRunStatus.m_triggerRecord);
+				imageOutputFlag |= SetOutputImage(i, indexVariant.lVal, maxIndexPos, m_ringBufferDepth, rRunStatus.m_triggerRecord, pErrorMessages);
 			}
 		}
 
 		//copy input image to ring buffer
-		SvOi::SVImageBufferHandlePtr milHandleTo;
-		if( static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos && nullptr != m_ringBuffer[m_nextBufferPos] )
-		{
-			milHandleTo = m_ringBuffer[m_nextBufferPos];
-		}
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
-		SvTrc::IImagePtr pInputImageBuffer;
-		if (nullptr != pInputImage)
+		if (nullptr != pInputImage && static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos)
 		{
-			pInputImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
-		}
-		if (nullptr != milHandleTo.get() && !milHandleTo->empty() && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
-		{
-			SVMatroxBufferInterface::CopyBuffer( milHandleTo->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer());
+			m_ringBuffer[m_nextBufferPos] = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get(), true);
 		}
 
 		//calculate next image pos
 		m_nextBufferPos++;
-		if (ringBufferDepth <= m_nextBufferPos)
+		if (m_ringBufferDepth <= m_nextBufferPos)
 		{
 			m_nextBufferPos=0;
 			m_isBufferFull = true;
@@ -282,7 +295,15 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject( &m_BufferDepth, RingBuffer_DepthGuid, IDS_OBJECTNAME_RINGBUFFER_DEPTH, true, SvOi::SVResetItemTool );
-	m_BufferDepth.SetDefaultValue( cDefaultRingBufferDepth, true );
+	_variant_t vtTemp;
+	::VariantInit(&vtTemp);
+	vtTemp.vt = cVarType_imageIndex;
+	vtTemp.lVal = cDefaultRingBufferDepth;
+	m_BufferDepth.SetDefaultValue(vtTemp, true);
+	std::string objectName = SvUl::LoadStdString(IDS_OBJECTNAME_RINGBUFFER_DEPTH);
+	objectName += SvDef::cLinkName;
+	RegisterEmbeddedObject(&m_BufferDepth.getLinkedName(), RingBufferLink_DepthGuid, objectName.c_str(), false, SvOi::SVResetItemNone);
+	m_BufferDepth.getLinkedName().SetDefaultValue(_T(""), false);
 
 	RegisterEmbeddedObject( &m_FlagOfOutputImage, RingBuffer_FlagOfOutputImagesGuid, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
 	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
@@ -294,37 +315,41 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	for( int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
 	{
 		RegisterEmbeddedObject( &m_ImageIndexManager[i], RingBuffer_IndexGuid[i], RingbufferIndexNames[i], true, SvOi::SVResetItemTool );
-		_variant_t vtTemp;
 		::VariantInit(&vtTemp);
 		vtTemp.vt = cVarType_imageIndex;
 		vtTemp.lVal = cDefaultIndexValue[i];
 		m_ImageIndexManager[i].SetDefaultValue( vtTemp, true );
 
-		std::string ObjectName = SvUl::LoadStdString( RingbufferIndexNames[i] );
-		ObjectName +=  SvDef::cLinkName;
-		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), RingBufferLink_IndexGuid[i], ObjectName.c_str(), false, SvOi::SVResetItemNone );
+		objectName = SvUl::LoadStdString( RingbufferIndexNames[i] );
+		objectName +=  SvDef::cLinkName;
+		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), RingBufferLink_IndexGuid[i], objectName.c_str(), false, SvOi::SVResetItemNone );
 		m_ImageIndexManager[i].getLinkedName().SetDefaultValue( _T(""), false );
 
 		RegisterEmbeddedObject( &m_OutputImages[i], aSVVariantResultImageObjectGuid[i], ImageNames[i] );
 	}
 }
 
-int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord, SvStl::MessageContainerVector *pErrorMessages)
 {
 	int retValue = 0;
 	int pos = (m_nextBufferPos + imageIndex - 1)%ringBufferDepth;
 	
 	if ( 0 <= pos && maxIndexPos >= pos)
 	{
-		if (static_cast<int>(m_ringBuffer.size()) > pos && nullptr != m_ringBuffer[pos])
+		if (static_cast<int>(m_ringBuffer.size()) > pos && nullptr != m_ringBuffer[pos] && !m_ringBuffer[pos]->isEmpty())
 		{
-			SvTrc::IImagePtr image = m_OutputImages[outputIndex].getImageToWrite(pTriggerRecord);
-			if (nullptr != image && !image->isEmpty())
+			try
 			{
-				HRESULT statusCode = SVMatroxBufferInterface::CopyBuffer(image->getHandle()->GetBuffer(), m_ringBuffer[pos]->GetBuffer());
-				if (S_OK == statusCode)
+				m_OutputImages[outputIndex].setImage(m_ringBuffer[pos], pTriggerRecord);
+				retValue = 1 << outputIndex;
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{
+				SvStl::MessageMgrStd  message(SvStl::MsgType::Log);
+				message.setMessage(rExp.getMessage());
+				if (nullptr != pErrorMessages)
 				{
-					retValue = 1 << outputIndex;
+					pErrorMessages->push_back(message.getMessageContainer());
 				}
 			}
 		}

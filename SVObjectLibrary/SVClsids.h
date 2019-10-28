@@ -443,6 +443,7 @@ extern const GUID SVRangeClassGuid;
 ///////////////////////////////////////////////////
 extern const GUID RingBufferToolGuid;
 extern const GUID RingBuffer_DepthGuid;
+extern const GUID RingBufferLink_DepthGuid;
 extern const GUID RingBuffer_IndexGuid[];
 extern const GUID RingBufferLink_IndexGuid[];
 extern const GUID RingBuffer_FlagOfOutputImagesGuid;

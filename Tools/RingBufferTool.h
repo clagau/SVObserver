@@ -70,7 +70,7 @@ private:
 	/// \param ringBufferDepth [in] the depth of the ringbuffer.
 	/// \param pTriggerRecord [in,out] pointer to the trigger record.
 	/// \returns int if the set bit to 1 if outputIndex is set (outputIndex == 1 => 1, outputIndex == 2 => 2, outputIndex == 3 => 4), else the return value is 0.
-	int SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord );
+	int SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord, SvStl::MessageContainerVector *pErrorMessages);
 
 	//************************************
 	/// Set the tool ROI extent to the full size of the input image.
@@ -89,14 +89,16 @@ private:
 	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 
 	//embedded parameter
-	SvVol::SVLongValueObjectClass m_BufferDepth;
+	SvVol::LinkedValue m_BufferDepth;
 	SvVol::LinkedValue m_ImageIndexManager[SvDef::cRingBufferNumberOutputImages];
 	SvVol::SVLongValueObjectClass m_FlagOfOutputImage;
 
 	//ringbuffer
-	std::vector<SvOi::SVImageBufferHandlePtr> m_ringBuffer;
+	std::vector<SvTrc::IImagePtr> m_ringBuffer;
+	//std::vector<SvOi::SVImageBufferHandlePtr> m_ringBuffer;
 	bool m_isBufferFull;
 	int m_nextBufferPos;
+	int m_ringBufferDepth = 10;
 #pragma endregion Member Variables
 };
 

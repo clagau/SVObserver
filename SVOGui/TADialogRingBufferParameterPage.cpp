@@ -30,6 +30,7 @@ namespace SvOg
 {
 #pragma region Declarations
 	BEGIN_MESSAGE_MAP(TADialogRingBufferParameterPage, CPropertyPage)
+		ON_BN_CLICKED(IDC_BUTTON_RING_DEPTH, OnButtonDepth)
 		ON_CONTROL_RANGE(BN_CLICKED, IDC_BUTTON_IMAGE_INDEX1, IDC_BUTTON_IMAGE_INDEX2, OnButtonImageIndex)
 	END_MESSAGE_MAP()
 #pragma endregion Declarations
@@ -62,6 +63,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		CPropertyPage::DoDataExchange(pDX);
 		DDX_Control(pDX, IDC_EDIT_RING_DEPTH, m_EditRingDepth);
+		DDX_Control(pDX, IDC_BUTTON_RING_DEPTH, m_ButtonRingDepth);
 		DDX_Control(pDX, IDC_EDIT_IMAGE_INDEX1, m_EditImageIndex[0]);
 		DDX_Control(pDX, IDC_EDIT_IMAGE_INDEX2, m_EditImageIndex[1]);
 		DDX_Control(pDX, IDC_BUTTON_IMAGE_INDEX1, m_ButtonImageIndex1);
@@ -77,9 +79,15 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		// Put the Down Arrow on the Button
 		m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
 
+		m_ButtonRingDepth.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
 		m_ButtonImageIndex1.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 		m_ButtonImageIndex2.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 
+		std::string depthString(m_Values.Get<CString>(RingBufferLink_DepthGuid));
+		if (depthString.empty())
+		{
+			depthString = m_Values.Get<CString>(RingBuffer_DepthGuid);
+		}
 		std::string indexString1( m_Values.Get<CString>(RingBufferLink_IndexGuid[0]) );
 		if( indexString1.empty() )
 		{
@@ -91,7 +99,6 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 			indexString2 = m_Values.Get<CString>(RingBuffer_IndexGuid[1]);
 		}
 		//set edit controls
-		std::string depthString = SvUl::Format( _T("%d"), m_Values.Get<long>(RingBuffer_DepthGuid) );
 		m_EditRingDepth.SetWindowText( depthString.c_str() );
 		m_EditImageIndex[0].SetWindowText( indexString1.c_str() );
 		m_EditImageIndex[1].SetWindowText( indexString2.c_str() );
@@ -109,6 +116,18 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		else
 		{
 			return FALSE;
+		}
+	}
+
+	void TADialogRingBufferParameterPage::OnButtonDepth()
+	{
+		CString Temp;
+		m_EditRingDepth.GetWindowText(Temp);
+		std::string Value = Temp;
+		std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RINGBUFFER_DEPTH);
+		if (m_objectSelector.Show(Value, Title, this))
+		{
+			m_EditRingDepth.SetWindowText(Value.c_str());
 		}
 	}
 
@@ -169,9 +188,9 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		std::string Value = Text;
 		long depth = 0;
 		bool isNumber = SvUl::Convert2Number( Value, depth, true );
-		if( isNumber && SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth )
+		if( !isNumber || (SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth) )
 		{
-			m_Values.Set<long>(RingBuffer_DepthGuid, depth);
+			m_Values.Set<CString>(RingBuffer_DepthGuid, Text);
 		}
 		else
 		{
