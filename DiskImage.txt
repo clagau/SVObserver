@@ -1,4 +1,4 @@
-﻿2. Notable changes from 8.10.1 to 8.20
+﻿Notable changes from 8.10.1 to 8.20
 Known new Bugs:
 	SVO-2455 Status Change of MonitorLists leads to failure during transition to Run mode or SVO crash
 	SVO-2440 Sporadic fails (Trigger count > Processed count+1): Test script run: RT00100.0156.001-RingBuffer.txt
