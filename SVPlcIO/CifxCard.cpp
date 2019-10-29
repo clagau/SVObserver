@@ -10,6 +10,7 @@
 
 #include "CifXCard.h"
 #include "cifXErrors.h"
+#include "cifXUser.h"
 #include "InspectionState.h"
 #include "PlcDataVersion.h"
 #include "TLR_Results.h"

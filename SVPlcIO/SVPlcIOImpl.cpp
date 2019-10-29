@@ -17,8 +17,6 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "TriggerEngineConnection.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 
@@ -34,7 +32,7 @@ std::atomic_bool g_enableInterrupt{false};
 
 #ifdef PLC_LPTIO
 //@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)
-#include "LPT/SVLptDll.h"
+//#include "LPT/SVLptDll.h"
 #pragma comment(lib, "SVLpt")
 
 

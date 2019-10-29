@@ -14,7 +14,7 @@
 #pragma endregion Includes
 
 /// processes all information that is either gained from the incoming process data or put into outgoing process data 
-class HardwareTriggerSource:public TriggerSource
+class HardwareTriggerSource : public TriggerSource
 {
 public:
 	HardwareTriggerSource();

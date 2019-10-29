@@ -11,7 +11,7 @@
 #pragma endregion Includes
 
 /// a simplified simulation of HardwareTriggerSource
-class SimulatedTriggerSource:public TriggerSource
+class SimulatedTriggerSource : public TriggerSource
 {
 public:
 	SimulatedTriggerSource() = default;

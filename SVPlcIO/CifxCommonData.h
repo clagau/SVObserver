@@ -9,8 +9,9 @@
   extern "C" {
 #endif  /* _cplusplus */
 
-#include "cifXUser.h"
 #include "TLR_Types.h"
+
+struct CIFX_PACKETtag;
 
 /*************************************************************************************************
  * @brief This structure is part of all application data.
@@ -42,7 +43,7 @@ struct CommonData
   TLR_UINT8* m_pWriteBuffer;
   TLR_UINT32 m_writeBufferSize;
 
-  TLR_RESULT SendRecvPkt(CIFX_PACKET* ptSendPkt, CIFX_PACKET* ptRecvPkt);
+  TLR_RESULT SendRecvPkt(CIFX_PACKETtag* ptSendPkt, CIFX_PACKETtag* ptRecvPkt);
   TLR_RESULT SendRecvEmptyPkt(TLR_UINT32 ulCmd);
 
   /* initialize / finalize application */
@@ -63,7 +64,7 @@ struct CommonData
  */
 
 /* configuration */
-TLR_RESULT BuildConfigurationReq(CIFX_PACKET* ptPacket, TLR_UINT8 NodeId, TLR_UINT16 DataLength);
+TLR_RESULT BuildConfigurationReq(CIFX_PACKETtag* ptPacket, TLR_UINT8 NodeId, TLR_UINT16 DataLength);
 
 /*************************************************************************************************/
 

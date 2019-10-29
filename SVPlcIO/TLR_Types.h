@@ -55,7 +55,9 @@
 #endif
 
 #if defined (__TLR_USE_CUSTOM_TYPES__)
-  #include "TLR_CustomTypes.h"
+  ///This include has been commented out to avoid false positives when using CheckInclude
+  ///Remove the comment if __TLR_USE_CUSTOM_TYPES is defined
+  //#include "TLR_CustomTypes.h"
 #else
   #include <stdint.h> /* ISO/IEC 9899:1999 fixed width data types */
 #endif

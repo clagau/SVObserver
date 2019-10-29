@@ -21,7 +21,7 @@
 #include "CifxCommonData.h"
 
 #include "cifXErrors.h"
-//Arvid: the following are the Powerlink V3 headers (which were not used in the original version of the file)
+#include "cifXUser.h"
 #include "EplCn_If_Public.h"
 #include "Epl_Common_Defines.h"
 #include "TLR_Results.h"
