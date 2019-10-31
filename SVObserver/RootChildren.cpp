@@ -14,8 +14,6 @@
 #include "RootChildren.h"
 
 #include "SVConfigurationObject.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVObjectLibrary\SVObjectLibrary.h"
 #pragma endregion Includes
 
 #pragma region Declarations

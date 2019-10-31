@@ -26,7 +26,6 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxGraphicsInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"

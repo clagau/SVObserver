@@ -26,7 +26,6 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
 #include "Definitions/GlobalConst.h"
-#include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/SVRC.h"

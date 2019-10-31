@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 
+#include "AuthManager.h"
 #include "RestHandler.h"
 #include "SvHttpLibrary/HttpRequest.h"
 #include "SvHttpLibrary/HttpResponse.h"

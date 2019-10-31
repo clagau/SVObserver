@@ -16,7 +16,6 @@
 #include "BoundValue.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "ObjectInterfaces\ICustom2Filter.h"
-#include "SVMFCControls/SVFileDialog.h"
 #include "Definitions\GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

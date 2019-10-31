@@ -15,7 +15,6 @@
 #include "SVRemoteOutputGroup.h"
 #include "SVObserver.h"
 #include "TextDefinesSvO.h"
-#include "SVRemoteControlConstants.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
 #include "SVObjectLibrary/SVClsIds.h"

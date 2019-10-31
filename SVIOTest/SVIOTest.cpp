@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVIOTest.h"
 #include "SVIOTestDlg.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"
 #include "SVStatusLibrary/GlobalPath.h"

@@ -15,8 +15,10 @@
 //Moved to precompiled header: #include <vector>
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
-#include "SVObjectLibrary/SVObjectClass.h"
 
+class SVObjectAttributeClass;
+class SVObjectClass;
+struct SVObjectInfoStruct;
 #pragma endregion Includes
 
 

@@ -16,7 +16,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "TextDefinesSvO.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"

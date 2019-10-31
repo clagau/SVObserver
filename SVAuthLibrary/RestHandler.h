@@ -9,7 +9,6 @@
 #pragma once
 
 #pragma region Includes
-#include "AuthManager.h"
 #pragma endregion Includes
 
 namespace SvHttp
@@ -20,6 +19,7 @@ class HttpResponse;
 
 namespace SvAuth
 {
+class AuthManager;
 
 class RestHandler
 {

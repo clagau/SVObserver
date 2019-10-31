@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DataControllerBase.h"
-#include "ImageBufferController.h"
 #include "LocalConst.h"
 #include "SVLibrary/SVOINIClass.h"
 #include "SVMessage/SVMessage.h"

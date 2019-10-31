@@ -18,7 +18,6 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"

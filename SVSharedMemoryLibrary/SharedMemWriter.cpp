@@ -15,8 +15,6 @@
 #include "SharedMemIniFileTags.h"
 #include "SharedMemWriter.h"
 #include "SVLibrary/SVOIniClass.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 

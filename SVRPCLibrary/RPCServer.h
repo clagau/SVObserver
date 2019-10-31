@@ -20,12 +20,17 @@
 //Moved to precompiled header: #include <vector>
 
 #include "RequestHandlerBase.h"
-#include "SVProtoBuf/Envelope.h"
 #include "SvHttpLibrary/HttpServerSettings.h"
 
 namespace SvHttp
 {
 class HttpServerConnection;
+}
+
+namespace SvPenv
+{
+class Envelope;
+class Error;
 }
 
 namespace SvRpc

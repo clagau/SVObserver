@@ -15,7 +15,6 @@
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/StringHelper.h"

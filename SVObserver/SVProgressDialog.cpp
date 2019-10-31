@@ -10,6 +10,7 @@
 //******************************************************************************
 #pragma region Inlcudes
 #include "stdafx.h"
+#include "SVIProgress.h"
 #include "SVProgressDialog.h"
 #include "Definitions/SVUserMessage.h"
 #pragma endregion Inlcudes

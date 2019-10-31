@@ -445,6 +445,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 		}
 
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
+		//GetToolSet return SVToolSetClass and for this it needs #include "SVToolSet.h"
 		PublishList.Refresh(static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()));
 
 		SVIPDoc* pIPDoc = m_pParentDialog->GetIPDoc();

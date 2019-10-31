@@ -12,12 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVSystemLibrary/SVThreadWait.h"
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVUtilityLibrary/SVWinHandle.h"
-#include "SVInfoStructs.h"
-#include "SVOGui/ZoomHelper.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
+#include "SVImageLibrary/SVExtentMultiLineStruct.h"
+#include "SVSystemLibrary/SVThreadWait.h"
+#include "SVProtoBuf/SVO-Enum.h"
+#include "SVOGui/ZoomHelper.h"
+#include "SVUtilityLibrary/SVBitmapInfo.h"
+#include "SVUtilityLibrary/SVWinHandle.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
 struct IDirectDrawSurface7;
@@ -35,8 +37,10 @@ namespace SvOi
 	class IObjectWriter;
 }
 
+class SVGUID;
 class SVIPDoc;
 class SVDrawContext;
+class SVImageExtentClass;
 
 class SVImageViewClass : public CView
 {

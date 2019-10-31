@@ -12,12 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolResultPage.h"
-#include "SVToolSet.h"
-#include "SVIPDoc.h"
-#include "Tools/SVExternalTool.h"
 #include "Operators/SVExternalToolTask.h"
 #include "SVInspectionProcess.h"
-#include "Operators/SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "Operators/SVDLLToolDefinitionStructs.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"

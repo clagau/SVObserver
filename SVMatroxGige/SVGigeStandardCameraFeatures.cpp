@@ -19,6 +19,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeLUTGetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadSerialNumber.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadIPAddress.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

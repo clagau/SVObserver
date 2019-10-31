@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "MonitorEntry.h"
 #include "MonitorListCpy.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma warning (push ,2)

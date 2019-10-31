@@ -10,12 +10,13 @@
 #pragma region Includes
 #include "ITriggerRecordR.h"
 #include "ITriggerRecordRW.h"
-#include "TriggerRecordData.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 namespace SvTrc
 {
+struct TriggerRecordData;
+
 class TriggerRecord final : public ITriggerRecordRW
 {
 #pragma region Constructor

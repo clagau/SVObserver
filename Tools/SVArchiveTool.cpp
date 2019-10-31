@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <io.h>
 //Moved to precompiled header: #include <numeric>
 #include "SVArchiveTool.h"
+#include "ArchiveToolHelper.h"
 #include "SVArchiveImageThreadClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Definitions/SVResetStruct.h"

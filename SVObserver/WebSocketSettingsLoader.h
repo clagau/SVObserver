@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "WebsocketSettings.h"
+struct WebSocketSettings;
 
 class WebSocketSettingsLoader
 {

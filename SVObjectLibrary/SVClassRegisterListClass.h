@@ -14,10 +14,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVClassRegisterClass.h"
 #pragma endregion Includes
 
 class SVObjectClass;
+class SVClassRegisterClass;
 
 class SVClassRegisterListClass
 {

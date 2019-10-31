@@ -10,7 +10,6 @@
 
 #include "SharedDataContainer.h"
 #include "SMRingbuffer.h"
-#include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 
 namespace SvSml
 {

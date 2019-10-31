@@ -18,7 +18,6 @@
 #include "Operators/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVRPropertyTree/SVRPropTreeItemStatic.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/SVGuid.h"
 #include "Tools/SVShiftTool.h"
 #pragma endregion Includes

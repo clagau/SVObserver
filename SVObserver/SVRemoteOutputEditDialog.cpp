@@ -12,13 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRemoteOutputEditDialog.h"
+#include "SVRemoteOutputGroup.h"
 #include "SVConfigurationObject.h"
-#include "SVRemoteOutputDataController.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "TextDefinesSvO.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 

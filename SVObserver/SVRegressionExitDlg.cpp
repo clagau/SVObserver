@@ -10,7 +10,6 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVRegressionExitDlg.h"
 #pragma endregion Includes
 

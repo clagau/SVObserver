@@ -20,6 +20,7 @@
 
 #include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
+#include "Settings.h"
 #include "SettingsLoader.h"
 #include "SVOGatewayService.h"
 #include "WebAppVersionLoader.h"

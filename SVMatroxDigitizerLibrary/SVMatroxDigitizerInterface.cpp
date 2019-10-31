@@ -10,6 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
+#include "SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferArray.h"

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOTriggerObj.h"
+#include "SVTriggerConstants.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

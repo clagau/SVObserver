@@ -11,8 +11,9 @@
 #pragma  once
 
 #pragma region Includes
-#include "SVImageFile.h"
 #pragma endregion Includes
+
+class SVImageFile;
 
 class SVImageFileLoader
 {

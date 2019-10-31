@@ -16,7 +16,6 @@
 #include "SciLexer.h"
 #include "TextDefinesSvOg.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectReference.h"

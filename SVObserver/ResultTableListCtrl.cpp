@@ -14,7 +14,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

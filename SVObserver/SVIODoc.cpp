@@ -32,7 +32,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

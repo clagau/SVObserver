@@ -18,7 +18,6 @@
 #include "SVInspectionProcess.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
-#include "TextDefinesSvO.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"

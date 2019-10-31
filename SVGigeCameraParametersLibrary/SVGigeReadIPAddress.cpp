@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVGigeReadIPAddress.h"
 #include "SVGigeFeature.h"
+#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

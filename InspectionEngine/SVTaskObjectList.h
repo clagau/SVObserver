@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces/ObjectInfo.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"

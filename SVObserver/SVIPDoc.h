@@ -14,9 +14,7 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVDisplayObject.h"
-#include "SVPublishList.h"
 #include "SVRegressionTestStruct.h"
 #include "SVIPProductStruct.h"
 #include "InspectionEngine/SVIPResultData.h"
@@ -40,6 +38,7 @@ class ResultTabbedView;
 namespace SvIe
 {
 class SVImageClass;
+class SVTaskObjectClass;
 }
 namespace SvOi
 {

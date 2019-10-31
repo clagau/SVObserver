@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFileSystemLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 class SVIOController;

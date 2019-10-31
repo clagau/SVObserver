@@ -24,7 +24,6 @@
 #include "Definitions/Color.h"
 #include "SVObserver.h"
 #include "SVParserProgressDialog.h"
-#include "SVToolSet.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"

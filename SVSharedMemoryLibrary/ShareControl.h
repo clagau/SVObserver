@@ -10,7 +10,6 @@
 #pragma region Includes
 #include "SharedMemReader.h"
 #include "LastResponseData.h"
-#include "SVProtobuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvSml

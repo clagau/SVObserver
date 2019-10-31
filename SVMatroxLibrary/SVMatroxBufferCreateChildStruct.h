@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxBuffer.h"
+class SVMatroxBuffer;
 
 
 

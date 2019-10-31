@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeCameraROIDlg.h"
-#include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "Definitions/Color.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"

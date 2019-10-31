@@ -10,8 +10,9 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
+
+class SVImageExtentClass;
 
 namespace SvIe
 {

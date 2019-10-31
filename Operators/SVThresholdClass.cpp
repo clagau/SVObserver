@@ -22,7 +22,6 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes

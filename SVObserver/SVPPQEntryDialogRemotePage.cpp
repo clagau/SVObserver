@@ -14,11 +14,9 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVPPQEntryDialogRemotePage.h"
-#include "SVInfoStructs.h"
 #include "SVPPQEntryDialog.h"
 #include "SVPPQObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 

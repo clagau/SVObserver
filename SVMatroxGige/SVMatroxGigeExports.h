@@ -11,11 +11,12 @@
 #pragma once
 
 #pragma region Includes
-#include "CameraLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParam.h"
 #include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
+class SVDeviceParamCollection;
 
 // General Exports
 

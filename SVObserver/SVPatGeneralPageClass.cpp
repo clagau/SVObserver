@@ -17,7 +17,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

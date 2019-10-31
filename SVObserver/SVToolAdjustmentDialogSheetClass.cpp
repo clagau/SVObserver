@@ -15,7 +15,6 @@
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVExternalToolDlg.h"
-#include "TextDefinesSvO.h"
 #include "SVOGui/SVPerspectiveWarpPage.h"
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVTADlgArchiveImagePage.h"

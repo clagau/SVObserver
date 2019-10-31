@@ -22,7 +22,6 @@
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
-#include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes

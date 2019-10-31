@@ -13,10 +13,14 @@
 #include "MLInspectionInfo.h"
 #include "MonitorListCpy.h"
 #include "Definitions\StringTypeDef.h"
-#include "SVProtoBuf/envelope.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
+
+namespace SvPenv
+{
+class Error;
+}
 
 
 namespace SvSml

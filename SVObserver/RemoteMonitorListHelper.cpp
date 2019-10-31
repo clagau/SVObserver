@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"

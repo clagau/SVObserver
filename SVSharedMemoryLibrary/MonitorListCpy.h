@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "MonitorEntry.h"
 #include "SVProductFilterEnum.h"
+#include "SVShared.h"
 #include "MLInspectionInfo.h"
 #include "MLPPQInfo.h"
 #include "SVProtobuf/SVRC.h"

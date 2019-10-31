@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVGigeReadSerialNumber.h"
 #include "SVGigeFeature.h"
+#include "SVMatroxDigitizerLibrary\SVMatroxDigitizerInterface.h"
 #pragma endregion Includes
 
 HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const

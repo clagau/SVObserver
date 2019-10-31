@@ -12,8 +12,9 @@
 #include "stdafx.h"
 
 #include "SVAuthLibrary/AuthManager.h"
-#include "SharedMemoryAccess.h"
 #include "ServerRequestHandler.h"
+#include "SharedMemoryAccessInterface.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvOgw

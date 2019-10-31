@@ -19,7 +19,6 @@
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVProtoBuf/TriggerRecordController.h"
@@ -59,11 +58,13 @@ class SVObjectXMLWriter;
 
 class SVDeviceParamCollection;
 class SVDeviceParam;
+class SVFileNameArrayClass;
 class SVIOController;
 class SVNavigateTree;
 class SVRemoteOutputGroup;
 class SVRemoteOutputObject;
 class SVPPQObject;
+class SVLightReference;
 
 typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations

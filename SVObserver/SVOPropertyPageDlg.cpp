@@ -36,6 +36,7 @@
 #include "SVPPQObject.h"
 #include "SVPPQConstants.h"
 #include "TriggerInformation/SVHardwareManifest.h"
+#include "TriggerInformation/SVTriggerConstants.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

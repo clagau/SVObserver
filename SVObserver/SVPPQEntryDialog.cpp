@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVPPQEntryDialog.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "SVPPQObject.h"

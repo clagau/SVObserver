@@ -8,13 +8,12 @@
 
 #pragma once
 #pragma region Includes
-#include "ITaskObject.h"
+#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 //! Declaration is in #include SVObjectLibrary/SVOutObjectInfoStruct.h
 struct SVOutObjectInfoStruct;
-class SVGUID;
 namespace SvPb
 {
 class  TaskObjectListResponse;
@@ -24,6 +23,8 @@ class  TaskObjectListResponse;
 
 namespace SvOi
 {
+class ITaskObject;
+
 //this class is a interface. It should only have pure virtual public method and no member variables
 class ITaskObjectListClass
 {
@@ -53,7 +54,7 @@ public:
 	virtual bool DestroyChild(ITaskObject& rObject, DWORD context) = 0;
 
 	/**********
-		This method removes he connection to the output objject.
+		This method removes he connection to the output object.
 		/param pOutObject <in> object to disconnect.
 	***********/
 	virtual void RemoveOutputObject(SVOutObjectInfoStruct* pOutObject) = 0;

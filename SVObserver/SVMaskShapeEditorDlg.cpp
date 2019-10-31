@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <colordlg.h>
 #include "SVMaskShapeEditorDlg.h"
-#include "SVIPDoc.h"
 #include "Definitions/Color.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVMaskShape.h"

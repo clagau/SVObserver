@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <colordlg.h>
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "SVMaskShapeEditorDlg.h"
-#include "SVObserver.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/NameValueVector.h"
 #include "SVMFCControls/SVMaskEditor.h"

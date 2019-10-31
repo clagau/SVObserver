@@ -20,7 +20,6 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVObserver.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 
 #pragma endregion Includes

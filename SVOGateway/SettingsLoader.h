@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include "Settings.h"
 namespace SvOgw
 {
+struct Settings;
+
 class SettingsLoader
 {
 public:

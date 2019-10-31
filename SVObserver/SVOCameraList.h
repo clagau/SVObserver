@@ -13,9 +13,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <list>
-#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVOCameraObj.h"
 #pragma endregion Includes
+
+class SVDeviceParamCollection;
 
 class SVOCameraList  
 {

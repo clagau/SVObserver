@@ -16,7 +16,6 @@
 #include "SVInfoStructs.h"
 #include "SVIODoc.h"
 #include "SVObserver.h"
-#include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

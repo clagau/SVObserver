@@ -13,6 +13,7 @@
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtobuf/Envelope.h"
 #pragma endregion Includes
 
 namespace SvSml

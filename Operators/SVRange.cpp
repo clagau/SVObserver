@@ -15,7 +15,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes

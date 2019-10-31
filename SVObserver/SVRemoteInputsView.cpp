@@ -21,7 +21,6 @@
 #include "SVRemoteIOAdjustDialog.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
-#include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVConfigurationObject.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"

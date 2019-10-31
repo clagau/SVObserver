@@ -18,8 +18,9 @@
 
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVLogLibrary/Logging.h"
-
+#include "Settings.h"
 #include "SettingsLoader.h"
+
 namespace SvOgw
 {
 static void RegGetStringIfExists(const boost::property_tree::ptree& pt, std::string& dst, const std::string& path)

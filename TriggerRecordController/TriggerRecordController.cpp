@@ -13,7 +13,6 @@
 #include "SVLibrary\SVOINIClass.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
-#include "SVMatroxLibrary\SVMatroxResourceMonitor.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMessage\SVMessage.h"
 #include "SVProtoBuf\ConverterHelper.h"

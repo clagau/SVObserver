@@ -10,6 +10,7 @@
 
 #include "stdafx.h"
 
+#include "SVProtobuf/Envelope.h"
 #include "RPCServer.h"
 
 #include "SVHttpLibrary/HttpServerConnection.h"

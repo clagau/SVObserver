@@ -16,7 +16,6 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
 #include "Definitions/SVGigeEnums.h"
 #include "SVGigeDeviceParameterStruct.h"
-#include "SVGigeFeatureStringEnumList.h"
 #include "SVGigeFeature.h"
 #include "SVGigeParameterAccessor.h"
 #pragma endregion Includes

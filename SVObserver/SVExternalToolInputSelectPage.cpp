@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolInputSelectPage.h"
-#include "SVIPDoc.h"
 #include "Operators/SVExternalToolTask.h"
 #include "Definitions/GlobalConst.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -21,7 +20,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/BoundValue.h"
-#include "TextDefinesSvO.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"

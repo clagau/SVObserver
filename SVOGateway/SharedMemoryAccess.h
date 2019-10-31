@@ -16,7 +16,6 @@
 #include "SVOverlayLibrary/OverlayController.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
-#include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/Task.h"
 #pragma endregion Includes
 
@@ -28,6 +27,11 @@ namespace SvTrc
 {
 class ITriggerRecordR;
 class TriggerRecordController;
+}
+
+namespace SvRpc
+{
+class RPCClient;
 }
 
 namespace SvOgw

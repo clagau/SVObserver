@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVTriggerConstants.h"
 #pragma endregion Includes
 
 

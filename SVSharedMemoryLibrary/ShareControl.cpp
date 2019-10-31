@@ -13,6 +13,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions\StringTypeDef.h"
+#include "SVProtobuf/Envelope.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"

@@ -12,6 +12,11 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+class IObjectWriter;
+}
+
 class ResultTabbedView : public CView
 {
 	DECLARE_DYNCREATE(ResultTabbedView)

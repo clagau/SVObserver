@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <iostream>
 #include "InitialInformationHandler.h"
 #include "RootObject.h"
-#include "SVObserver.h"
 #include "Definitions/GlobalConst.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"

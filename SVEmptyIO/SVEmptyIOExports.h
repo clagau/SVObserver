@@ -10,8 +10,7 @@
 // ******************************************************************************
 
 #pragma once
-
-#include "CameraLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary\SVDeviceParam.h"
 
 namespace SvTh
 {
@@ -19,6 +18,7 @@ class TriggerDispatcher;
 }
 
 class SVAcquisitionBufferInterface;
+class SVDeviceParamCollection;
 
 HRESULT WINAPI SVCreate();
 HRESULT WINAPI SVDestroy();

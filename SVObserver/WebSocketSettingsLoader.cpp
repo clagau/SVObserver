@@ -16,6 +16,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVLogLibrary/Logging.h"
 
+#include "WebsocketSettings.h"
 #include "WebSocketSettingsLoader.h"
 
 

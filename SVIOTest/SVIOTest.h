@@ -16,7 +16,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 

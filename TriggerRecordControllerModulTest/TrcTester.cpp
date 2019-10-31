@@ -16,7 +16,6 @@
 #include "SVProtoBuf\ConverterHelper.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\SVRegistry.h"
 #include "SVTimerLibrary\SVClock.h"

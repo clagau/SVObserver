@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <iterator>
 #include "SVImageFileLoader.h"
+#include "SVImageFile.h"
 
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"

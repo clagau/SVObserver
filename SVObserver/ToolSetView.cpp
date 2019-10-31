@@ -27,7 +27,6 @@
 #include "SVIPChildFrm.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVOGui/SVTextEditDialog.h"
 #include "Tools/LoopTool.h"
 #include "Tools/SVShiftTool.h"

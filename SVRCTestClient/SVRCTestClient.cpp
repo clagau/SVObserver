@@ -9,7 +9,6 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-#include "SVHttpLibrary/WebsocketClient.h"
 #include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVProtobuf/SVRC.h"

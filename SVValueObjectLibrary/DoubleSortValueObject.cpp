@@ -11,7 +11,6 @@
 #include "DoubleSortValueObject.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
-#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 namespace SvVol

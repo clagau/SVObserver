@@ -21,7 +21,6 @@
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxImageBuffer.h"
 #include "SVMatroxImageChildBuffer.h"
-#include "SVMatroxResourceMonitor.h"
 #include "SVMatroxSystem.h"
 #include "SVSystemLibrary/SVImageConvertorGDI.h"
 #include "SVStatusLibrary/MessageContainer.h"

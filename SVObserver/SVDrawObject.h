@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVImageLibrary/SVExtentFigureStruct.h"
 #include "SVImageLibrary/SVExtentLineStruct.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVDrawContext.h"

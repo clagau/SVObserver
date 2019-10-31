@@ -24,7 +24,6 @@
 #include "Operators/SVBarCodeResult.h"
 #include "AnalyzerOperators/SVBlobAnalyzer.h"
 #include "SVOGui/SVBlobAnalyzerDialog.h"
-#include "Operators/SVColorThreshold.h"
 #include "Tools/SVColorTool.h"
 #include "AnalyzerOperators/SVHistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
@@ -46,7 +45,6 @@
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "Operators/SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "Tools/SVTool.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "Operators/SVRange.h"
@@ -667,6 +665,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 						// 16 Dec 1999 - frb (100)
 						//
 						// Reset all objects...
+						//The GetToolSet return SVToolSetClass and need for this the include SVToolSet.h
 						bool bOk = pInspection->GetToolSet()->resetAllObjects();
 						if (bOk)
 						{

@@ -14,8 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <concrt.h>
 //Moved to precompiled header: #include <vector>
-#include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVInfoStructs.h"
 #include "ResultViewReferences.h"
 

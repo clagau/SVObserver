@@ -16,7 +16,6 @@
 #include "SVMessage/SVMessage.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/TextDefineSVDef.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

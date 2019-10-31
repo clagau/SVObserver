@@ -20,11 +20,9 @@
 #include "SVObserver.h"
 #include "SVPatResultDlgClass.h"
 #include "SVSetupDialogManager.h"
-#include "Tools/SVLoadImageTool.h"
 #include "SVMainFrm.h"
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "TextDefinesSvO.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IObjectWriter.h"
@@ -41,6 +39,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
+#include "Tools/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

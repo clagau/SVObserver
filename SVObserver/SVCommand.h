@@ -13,10 +13,12 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVInfoStructs.h"
+#include "ObjectInterfaces\SVImageBufferHandleInterface.h"
+#include "TriggerRecordController\DataControllerBase.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
+class SVImageInfoClass;
 namespace SvIe
 {
 class SVImageClass;

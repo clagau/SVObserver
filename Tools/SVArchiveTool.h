@@ -17,7 +17,6 @@
 
 #include "SVTool.h"
 #include "ArchiveMethodEnum.h"
-#include "ArchiveToolHelper.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"

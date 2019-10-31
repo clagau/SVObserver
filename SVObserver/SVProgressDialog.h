@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Inlcudes
-#include "SVIProgress.h"
+class SVIProgress;
 #pragma endregion Inlcudes
 
 class SVProgressDialog : public CDialog

@@ -11,7 +11,6 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
 
-#include "SVShared.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
 #include "SVProtobuf/MonitorListStore.h"
 #include "SVProtobuf/SVRC.h"

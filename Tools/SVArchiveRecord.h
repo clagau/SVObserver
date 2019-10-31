@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "ArchiveMethodEnum.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerRecordController/IImage.h"
@@ -22,6 +21,7 @@ namespace SvTrc
 {
 class ITriggerRecordR;
 }
+class SVMatroxBuffer;
 
 namespace SvTo
 {

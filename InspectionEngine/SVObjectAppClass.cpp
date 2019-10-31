@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/ITool.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #pragma endregion Includes
 

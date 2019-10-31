@@ -16,7 +16,6 @@
 
 #include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
-#include "SVInfoStructs.h"
 
 #pragma endregion Includes
 

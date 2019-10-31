@@ -19,7 +19,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 
 #include "SVClassRegisterListClass.h"
-#include "SVObjectLibrary.h"
 #include "TextDefinesSvOl.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"

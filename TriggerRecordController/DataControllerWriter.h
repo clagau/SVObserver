@@ -92,7 +92,7 @@ public:
 	virtual void clearAll() override;
 
 	virtual bool setInspections(SvPb::InspectionList&& rInspectionList) override;
-
+	// CommonDataStruct will be used in Header file, forward declared not possible, need include from SharedMemoryStructs.h
 	virtual long getResetId() const override { return m_pCommonData->m_resetId; };
 
 	virtual volatile long* getResetLockCounterRef() override { return &m_pCommonData->m_resetLockCounter; };

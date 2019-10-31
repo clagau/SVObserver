@@ -30,7 +30,6 @@
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
-#include "SVObjectScriptParser.h"
 #include "SVObserver.h"
 #include "SVPPQObject.h"
 #include "SVRegressionRunDlg.h"

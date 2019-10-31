@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
-#include "CameraLibrary/SVi64ValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"

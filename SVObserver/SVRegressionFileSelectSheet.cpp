@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionFileSelectDlg.h"
-#include "SVObserver.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "SVStatusLibrary/MessageContainer.h"

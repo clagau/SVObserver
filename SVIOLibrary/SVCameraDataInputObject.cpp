@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVCameraDataInputObject.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 
 SVCameraDataInputObject::SVCameraDataInputObject(LPCSTR strObjectName)
 : SVInputObject(strObjectName)

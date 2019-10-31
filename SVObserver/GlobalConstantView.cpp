@@ -15,7 +15,6 @@
 #include "SVIODoc.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
-#include "SVToolSet.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/GlobalConstantData.h"

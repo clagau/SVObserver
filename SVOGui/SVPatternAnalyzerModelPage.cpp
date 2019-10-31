@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPatternAnalyzerModelPage.h"
-#include "SVLibrary\SVGraphix.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"

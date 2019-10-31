@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPixelAnalyzerDlg.h"
-#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "AnalyzerOperators/SVPixelAnalyzer.h"        // Required for SVPixelAnalyzerClass

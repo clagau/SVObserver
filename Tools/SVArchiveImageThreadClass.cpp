@@ -9,7 +9,6 @@
 #include "SVArchiveRecord.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVSystemLibrary/SVThreadManager.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
