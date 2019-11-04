@@ -68,35 +68,11 @@ namespace SvStl
 
 	INT_PTR MessageMgrStd::Process(UINT MsgBoxType /*= MB_OK*/)
 	{
-		// We want to avoid to log or notify successive "identical" messages.
-		// Comparing source file names was considered unnececessary, since messages with
-		// identical MessageCodes and Line Numbers but different source files appear extremely unlikely
-		static DWORD s_previousMessageCode = 0;
-		static long s_previousLineNumber = 0;
-		static uint32_t s_codeRepeats = 0;
-
-		const auto &currentMessage = m_MessageHandler.getMessage();
-
-		//Since we are only comparing numbers, no synchronisation was considered necessary.
-		//If in the future strings or more complex data are to be compared, a mutex or similar will be necessary
-		if (currentMessage.m_MessageCode == s_previousMessageCode && currentMessage.m_SourceFile.m_Line == s_previousLineNumber)
-		{
-			s_codeRepeats++;
-		}
-		else
-		{
-			s_codeRepeats = 0;
-			s_previousMessageCode = currentMessage.m_MessageCode;
-			s_previousLineNumber = currentMessage.m_SourceFile.m_Line;
-		}
-
-		if (s_codeRepeats <= s_maximumNumberOfCodeRepeats)
+		if (!suppressLogAndNotify())
 		{
 			Log();
-
 			Notify();
 		}
-
 
 		return Display(MsgBoxType);
 	}
@@ -164,17 +140,46 @@ namespace SvStl
 		}
 	}
 
-
-	void MessageMgrStd::Log() const
+	bool MessageMgrStd::suppressLogAndNotify() const
 	{
-		if (MsgType::Log & m_Type)
+		// We want to avoid to log or notify successive "identical" messages.
+		// Comparing source file names was considered unnecessary, since messages with
+		// identical MessageCodes and Line Numbers but different source files appear extremely unlikely
+
+		if ((MsgType::Log | MsgType::Notify) & m_Type)
 		{
-			m_MessageHandler.logMessage();
+			static DWORD s_previousMessageCode = 0;
+			static long s_previousLineNumber = 0;
+			static uint32_t s_codeRepeats = 0;
+
+			const auto &currentMessage = m_MessageHandler.getMessage();
+
+			//Since we are only comparing numbers, no synchronisation was considered necessary.
+			//If in the future strings or more complex data are to be compared, a mutex or similar will be necessary
+			if (currentMessage.m_MessageCode == s_previousMessageCode && currentMessage.m_SourceFile.m_Line == s_previousLineNumber)
+			{
+				s_codeRepeats++;
+			}
+			else
+			{
+				s_codeRepeats = 0;
+				s_previousMessageCode = currentMessage.m_MessageCode;
+				s_previousLineNumber = currentMessage.m_SourceFile.m_Line;
+			}
+
+			if (s_codeRepeats > s_maximumNumberOfCodeRepeats)
+			{
+				return true;
+			}
 		}
 
+		return false;
 	}
 
-
+	void MessageMgrStd::Log() const 
+	{
+		m_MessageHandler.logMessage();
+	}
 
 	void MessageMgrStd::Notify() const
 	{
