@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "Stdafx.h"
-#import <msxml6.dll> raw_interfaces_only 
+#import <msxml3.dll> raw_interfaces_only 
 #include "SVSystemLibrary/SVSAXErrorHandlerImpl.h"
 #include "SVSystemLibrary/SVSAXContentHandlerImpl.h"
 #include "SVGigeCameraDBParser.h"

@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "StdAfx.h"
-#import <msxml6.dll> raw_interfaces_only 
+#import <msxml3.dll> raw_interfaces_only 
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>

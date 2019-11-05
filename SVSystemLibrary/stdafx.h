@@ -81,4 +81,4 @@
 #include <boost/scoped_array.hpp>
 #pragma endregion Precompiled Headers
 
-#import <msxml6.dll> raw_interfaces_only 
+#import <msxml3.dll> raw_interfaces_only 
