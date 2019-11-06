@@ -40,15 +40,16 @@
 //code from SVVersionInfo.cpp
 static std::string GetVersionString()
 {
-	std::string Result;
-
+	// we want the version of the ocx, for hinst == nullptr we would  get the version of the calling executable
+	HINSTANCE hInst = (HINSTANCE)_AtlBaseModule.m_hInst; 
+	
 	TCHAR moduleFilename[512];
-	::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
+	::GetModuleFileName(hInst, moduleFilename, sizeof(moduleFilename));
 
-	DWORD dwHandle;
+	DWORD dwHandle {0};
 	DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
 	unsigned char* lpData = new unsigned char[size];
-
+	std::string Result;
 	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
 	if (rc)
 	{
