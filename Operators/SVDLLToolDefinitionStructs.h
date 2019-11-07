@@ -16,6 +16,7 @@
 #pragma endregion Includes
 
 
+///Operators
 namespace SvOp
 {
 
@@ -45,7 +46,7 @@ private:
 
 
 //!class describing the inputvalue definitions for External dll
-// contents the structure from the dll with some additional calculated information 
+/// contents the structure from the dll with some additional calculated information 
 class  InputValueDefinition
 {
 public:
@@ -109,6 +110,8 @@ struct ResultTableDefinitionStruct
 
 #pragma pack (pop)
 
+//!class describing the resultvalue definitions for External dll
+/// contents the structure from the dll with some additional calculated information 
 class ResultValueDefinition
 {
 public:
@@ -131,6 +134,8 @@ private:
 	ResultValueDefinitionStruct m_ValueDefinition;
 };
 
+//!class describing the resulttable definitions for External dll
+/// contents the structure from the dll with some additional calculated information 
 class ResultTableDefinition
 {
 public:

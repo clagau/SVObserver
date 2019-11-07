@@ -474,17 +474,25 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 		res = (pValueObject != nullptr);
 		if (res)
 		{
+			DWORD type = pValueObject->GetType();
+		
+			SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
+			if (pVariant)
+			{
+				type |= pVariant->GetValueTypeEx();
+				type |= pVariant->GetDefaultType();
+			}
+
 			switch (m_pTask->m_Data.m_InputDefinitions[iIndex].getVt())
 			{
-
 				case VT_ARRAY | VT_R8:
-					if (pValueObject->GetType() != VT_R8) //allow not array objects
+					if (type != VT_R8) //allow not array objects
 					{
 						res = false;
 					}
 					break;
 				case VT_ARRAY | VT_I4:
-					if (pValueObject->GetType() != VT_I4)
+					if( type != VT_I4)
 					{
 						res = false;
 					}
