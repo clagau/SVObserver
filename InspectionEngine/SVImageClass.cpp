@@ -67,6 +67,8 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 	bool l_bOk = SVObjectAppClass::CreateObject(rCreateStructure);
 
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
+	SVObjectManagerClass::Instance().RegisterSubObject(m_width.GetUniqueObjectID());
+	SVObjectManagerClass::Instance().RegisterSubObject(m_height.GetUniqueObjectID());
 
 	l_bOk &= (S_OK == UpdateFromToolInformation());
 
@@ -93,6 +95,8 @@ bool SVImageClass::CloseObject()
 	}
 
 	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
+	SVObjectManagerClass::Instance().UnregisterSubObject(m_width.GetUniqueObjectID());
+	SVObjectManagerClass::Instance().UnregisterSubObject(m_height.GetUniqueObjectID());
 
 	rc = SVObjectAppClass::CloseObject() && rc;
 
