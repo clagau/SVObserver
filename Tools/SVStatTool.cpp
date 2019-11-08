@@ -606,7 +606,11 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		double dInputValue = getInputValue();
 
 		numberOfSamples = getNumberOfSamples();
-
+		if (numberOfSamples <= 1)
+		{
+			resetValues();
+		}
+	
 		// Calculate Average (Mean)
 		value = dInputValue;
 		m_AccumulatedTotal += value;
