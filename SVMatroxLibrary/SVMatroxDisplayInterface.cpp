@@ -401,53 +401,6 @@ HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEn
 
 
 /**
-@SVOperationName Get - SVMatroxBuffer
-
-@SVOperationDescription This function gets the SVMatroxBuffer associated with the specified SVMatroxDisplay
-
-*/
-HRESULT SVMatroxDisplayInterface::Get(const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-
-	{
-		if (p_eDispFlag == SVDispWindowOvrBufID || p_eDispFlag == SVDispSelected)
-		{
-			if (M_NULL != p_rDispId)
-			{
-				MIL_INT l_lValue;
-				MdispInquire(p_rDispId, M_SELECTED, &l_lValue);
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == S_OK )
-				{
-				p_rBuffer.m_BufferPtr = SVMatroxBufferPtr {new SVMatroxBufferTemplate(l_lValue, "SVMatroxDisplayInterface::Get")};
-				}
-			}
-			else
-			{
-				l_Code = SVMEE_INVALID_HANDLE;
-			}
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_PARAMETER;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(l_Code == S_OK);
-	return l_Code;
-}
-
-/**
 @SVOperationName Destroy
 
 @SVOperationDescription This function frees the specified SVMatroxDisplay.

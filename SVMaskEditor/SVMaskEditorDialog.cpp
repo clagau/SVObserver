@@ -124,7 +124,6 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SVMatroxBufferInterface l_BufIntf;
 	HRESULT MatroxCode;
 
     if( HImageBitmap )
@@ -145,8 +144,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 			long width;
 			long height;
 
-			MatroxCode = l_BufIntf.Get( milImageBuffer, SVSizeX, width );
-			MatroxCode = l_BufIntf.Get( milImageBuffer, SVSizeY, height );
+			MatroxCode = SVMatroxBufferInterface::Get( milImageBuffer, SVSizeX, width );
+			MatroxCode = SVMatroxBufferInterface::Get( milImageBuffer, SVSizeY, height );
 			 
 			MatroxCode = SVMatroxDisplayInterface::Create( milDisplayBuffer, milImageBuffer );
 			if (S_OK != MatroxCode)
@@ -155,7 +154,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 			}
 
 			// Try to get a mil mask buffer handle...
-			MatroxCode = l_BufIntf.Create( milMaskBuffer, milImageBuffer );
+			MatroxCode = SVMatroxBufferInterface::Create( milMaskBuffer, milImageBuffer );
 			if (S_OK != MatroxCode)
 			{
 				break;
@@ -356,28 +355,12 @@ void SVMaskEditorDialogClass::OnOK()
 
 void SVMaskEditorDialogClass::freeMilResources()
 {
-	SVMatroxBuffer l_CurrentSelected;
-	SVMatroxBufferInterface l_BufIntf;
-
-	SVMatroxDisplayInterface::Get( milDisplay, SVDispSelected, l_CurrentSelected );
-	if( !l_CurrentSelected.empty() )
+	if( !milDisplayBuffer.empty() )
 	{
 		SVMatroxDisplayInterface::Deselect( milDisplay );
+		//This is required to remove the buffer from the SVMatroxResourceMonitor
+		SVMatroxDisplayInterface::Destroy(milDisplayBuffer);
 	}
-
-    // Deselect Display...
-
-    // Free mil mask buffer...
-		milMaskBuffer.clear();
-
-    // Free mil display buffer...
-    if( !milDisplayBuffer.empty() )
-    {
-		SVMatroxDisplayInterface::Destroy( milDisplayBuffer );
-    }
-
-    // Free mil image buffer...
-	milImageBuffer.clear();
 
     // Free mil display...
 	SVMatroxDisplayInterface::DestroyDisplay( milDisplay );
@@ -387,10 +370,9 @@ void SVMaskEditorDialogClass::freeMilResources()
 void SVMaskEditorDialogClass::prepareMaskBuffer()
 {
     // Get DC...
-	SVMatroxBufferInterface l_BufIntf;
-	l_BufIntf.Set( milMaskBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault );
+	SVMatroxBufferInterface::Set( milMaskBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault );
 	LONGLONG Handle( 0 );
-	l_BufIntf.Get( milMaskBuffer, SVWindowDC, Handle );
+	SVMatroxBufferInterface::Get( milMaskBuffer, SVWindowDC, Handle );
 	HDC dc = reinterpret_cast<HDC> (Handle);
     if( dc )
     {
@@ -398,14 +380,14 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
         rect.left = 0;
         rect.top  = 0;
 		long l_Temp = 0;
-		l_BufIntf.Get( milMaskBuffer, SVSizeX, l_Temp );
+		SVMatroxBufferInterface::Get( milMaskBuffer, SVSizeX, l_Temp );
 		rect.right = static_cast< LONG >( l_Temp );
-		l_BufIntf.Get( milMaskBuffer, SVSizeY, l_Temp );
+		SVMatroxBufferInterface::Get( milMaskBuffer, SVSizeY, l_Temp );
 		rect.bottom = static_cast< LONG >( l_Temp );
 
         GraphixObject.Draw( dc, rect );
 
-		l_BufIntf.Set( milMaskBuffer, SVBufWindowDCFree, static_cast<long long>(SVValueDefault) );
+		SVMatroxBufferInterface::Set( milMaskBuffer, SVBufWindowDCFree, static_cast<long long>(SVValueDefault) );
     }
 }
 
@@ -453,18 +435,15 @@ void SVMaskEditorDialogClass::zoom( int ZoomOperand )
     // Invalidate complete display area...
     DisplayWndCtl.Invalidate();
 
-	SVMatroxBuffer curDisplayBuf;
-	SVMatroxDisplayInterface::Get(milDisplay, SVDispSelected, curDisplayBuf );
-    if( !curDisplayBuf.empty() )
+    if( !milDisplayBuffer.empty() )
     {
         // Check/Calculate for scroll bars...
         CRect rect;
         DisplayWndCtl.GetClientRect( &rect );
         long bufWidth;
         long bufHeight;
-		SVMatroxBufferInterface l_BufIntf;
-		l_BufIntf.Get(curDisplayBuf, SVSizeX, bufWidth );
-		l_BufIntf.Get(curDisplayBuf, SVSizeX, bufHeight );
+		SVMatroxBufferInterface::Get(milDisplayBuffer, SVSizeX, bufWidth );
+		SVMatroxBufferInterface::Get(milDisplayBuffer, SVSizeX, bufHeight );
 
         BOOL bHorz = ( currentZoomX >= 0 ) ? ( ( bufWidth * currentZoomX ) > rect.Width() ) : ( ( bufWidth / ( - currentZoomX ) ) > rect.Width() );
         BOOL bVert = ( currentZoomY >= 0 ) ? ( ( bufHeight * currentZoomY ) > rect.Height() ) : ( ( bufHeight / ( - currentZoomY ) ) > rect.Height() );

@@ -54,7 +54,6 @@ public:
 	// This function replaces MdispInquire
 	static HRESULT Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdData) ;
 	static HRESULT Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData) ;
-	static HRESULT Get( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer) ;
 
 	// This function replaces MdispControl
 	static HRESULT Set( const __int64& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue);
