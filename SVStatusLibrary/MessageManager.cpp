@@ -178,7 +178,10 @@ namespace SvStl
 
 	void MessageMgrStd::Log() const 
 	{
-		m_MessageHandler.logMessage();
+		if (MsgType::Log & m_Type)
+		{
+			m_MessageHandler.logMessage();
+		}
 	}
 
 	void MessageMgrStd::Notify() const
