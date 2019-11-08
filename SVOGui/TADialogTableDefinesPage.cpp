@@ -322,7 +322,7 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
 	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
 	HRESULT hResult = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
-	
+
 	if (hResult == S_OK && Response.has_resetobjectresponse())
 	{
 		SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
@@ -332,6 +332,15 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 			Msg.setMessage(errorMessageList[0].getMessage());
 		}
 	}
+
+	if (hResult == S_OK)
+	{
+		SvPb::InspectionCmdMsgs RequestSet, ResponseSet;
+		SvPb::SetDefaultInputsRequest* pSetDefaultInputsRequest = RequestSet.mutable_setdefaultinputsrequest();
+		SvPb::SetGuidInProtoBytes(pSetDefaultInputsRequest->mutable_objectid(), m_InspectionID);
+		hResult = SvCmd::InspectionCommands(m_InspectionID, RequestSet, &ResponseSet);
+	}
+	
 	return hResult;
 }
 

@@ -1327,4 +1327,24 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 	}
 	return result;
 }
+
+InspectionCmdResult setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request)
+{
+	InspectionCmdResult result;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
+
+	if (nullptr != pInspection)
+	{
+		pInspection->SetDefaultInputs();
+		result.m_hResult =  S_OK;
+	}
+	else
+	{
+		result.m_hResult = E_POINTER;
+	}
+	return result;
+}
+
 } //namespace SvCmd

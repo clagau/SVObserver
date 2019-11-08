@@ -588,6 +588,11 @@ message GetOverlayStructResponse
 {
 	OverlayDesc overlays = 1;
 }
+message SetDefaultInputsRequest
+{
+	bytes objectId = 1; //GUID of the inspection object.
+}
+
 
 message InspectionCmdMsgs
 {
@@ -666,6 +671,7 @@ message InspectionCmdMsgs
 		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 71;
 		GetOverlayStructRequest getOverlayStructRequest = 72;
 		GetOverlayStructResponse getOverlayStructResponse = 73;
+		SetDefaultInputsRequest  setDefaultInputsRequest =74;
 	}
 }
 

@@ -164,6 +164,9 @@ public:
 			case SvPb::InspectionCmdMsgs::kGetObjectSelectorItemsRequest:
 				m_result = getObjectSelectorItems(m_rRequest.getobjectselectoritemsrequest());
 				break;
+			case SvPb::InspectionCmdMsgs::kSetDefaultInputsRequest:
+				m_result = setDefaultInputsRequest(m_rRequest.setdefaultinputsrequest());
+				break;
 			default:;
 		}
 

@@ -149,6 +149,7 @@ InspectionCmdResult usePropagateSizeAndPosition(SvPb::UsePropagateSizeAndPositio
 InspectionCmdResult getOverlayStruct(SvPb::GetOverlayStructRequest request);
 
 InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
+InspectionCmdResult setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request);
 
 std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
 } //namespace SvCmd

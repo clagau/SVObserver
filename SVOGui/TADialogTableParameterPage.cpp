@@ -188,6 +188,16 @@ void TADialogTableParameterPage::resetInspection()
 			Msg.setMessage(messages[0].getMessage());
 		}
 	}
+
+	if (hres == S_OK)
+	{
+		SvPb::InspectionCmdMsgs RequestSet, ResponseSet;
+		SvPb::SetDefaultInputsRequest* pSetDefaultInputsRequest = RequestSet.mutable_setdefaultinputsrequest();
+		SvPb::SetGuidInProtoBytes(pSetDefaultInputsRequest->mutable_objectid(), m_InspectionID);
+		SvCmd::InspectionCommands(m_InspectionID, RequestSet, &ResponseSet);
+	}
+	
 }
+
 #pragma endregion Private Mehods
 } //namespace SvOg

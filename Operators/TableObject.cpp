@@ -88,7 +88,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		clearTable();
 
-		GetInspectionInterface()->SetDefaultInputs();
+	
 	}
 
 	return Result;
