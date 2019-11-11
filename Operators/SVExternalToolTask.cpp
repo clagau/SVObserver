@@ -1283,9 +1283,8 @@ HRESULT SVExternalToolTask::GetImageDefinitionStruct(SVImageDefinitionStruct& rI
 	long l_lBandNumber = 1;
 	long l_lFormat = SvDef::SVImageFormatUnknown;
 
-	rInfo.GetExtentProperty(SvPb::SVExtentPropertyWidth, rImageDef.lWidth);
-	rInfo.GetExtentProperty(SvPb::SVExtentPropertyHeight, rImageDef.lHeight);
-
+	rInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputWidth, rImageDef.lWidth);
+	rInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputHeight, rImageDef.lHeight);
 	rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_lFormat);
 	rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber);
 
