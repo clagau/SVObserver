@@ -20,18 +20,17 @@ public:
 	HardwareTriggerSource();
 	virtual ~HardwareTriggerSource();
 
-	bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
-	void PrepareProductForSending(const Product& rProduct) override;
-	bool initialize() override;
-	bool analyzeTelegramData() override;
-
+	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
+	virtual bool initialize() override;
+	virtual void queueResult(uint8_t channel, ChannelOut& rChannelOut) override;
+	virtual bool analyzeTelegramData() override;
 	
 protected: 	
 	uint64_t getCurrentInterruptCount();
 
 private:
 	uint32_t getObjectID(uint8_t channel);
-	void createTriggerInfo(uint8_t channel) override; ///> Creates a new trigger specification from process data and queues it for transfer to the shared memory
+	virtual  void createTriggerInfo(uint8_t channel) override;
 
 	/// Calculates the trigger offset time from the relative SOC and time stamp
 	int32_t getPlcTriggerTime(int32_t socRelative, int16_t timeStamp);

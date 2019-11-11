@@ -12,6 +12,7 @@
 
 
 struct TriggerReport;
+struct ResultReport;
 
 extern HANDLE g_hTelegramEvent;
 extern HANDLE g_hStopEvent;
@@ -23,7 +24,7 @@ public:
 	~PowerlinkConnection();
 
 	void SetTriggerChannel(uint8_t channel, bool active, uint32_t period);
-	//void WriteProductResult(const Product& rProduct);
+	void writeResult(const ResultReport& rResult);
 
 	void StartEventSignalThread();
 

@@ -70,6 +70,8 @@ enum SVTriggerChannel
 #pragma region Declarations
 SVPlcIOImpl g_Plc;
 
+constexpr uint8_t c_InspectionBad = 5;
+constexpr uint8_t c_InspectionGood = 6;
 constexpr unsigned long cNumberPorts = 2;
 constexpr unsigned long cInputCount = 16;
 constexpr unsigned long cOutputCount = 16;
@@ -82,7 +84,6 @@ constexpr LPCTSTR c_ConditionIndex = "ConditionIndex";
 constexpr LPCTSTR c_PLCSimulation = "PLCSimulation";
 constexpr LPCTSTR c_TriggerSimulation = "TriggerSimulation";
 constexpr LPCTSTR c_BoardName = "IO_Board_1.Dig_%d";
-
 #pragma endregion Declarations
 
 #ifdef TRIGGER_SIMULATE
@@ -507,9 +508,12 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerChannel)
 				}
 				g_LptList.clear();
 				g_PlcList.clear();
-				g_LptList.reserve(20000);
-				g_PlcList.reserve(20000);
 				m_OutputData.clear();
+				if(false == m_OutputFileName.empty())
+				{
+					g_LptList.reserve(20000);
+					g_PlcList.reserve(20000);
+				}
 				startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcSimulation);
 				m_engineStarted = true;
 				g_enableInterrupt = true;
@@ -564,7 +568,7 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 				g_enableInterrupt = false;
 				::OutputDebugString("Irq Enabled reset\r\n");
 
-				if(!m_OutputFileName.empty())
+				if(false == m_OutputFileName.empty())
 				{
 					std::string fileName = m_OutputFileName;
 					fileName += "_Plc.txt";
@@ -832,9 +836,12 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 	//RTX channel is zero based while SVObserver is one based!
 	int triggerChannel = rTriggerReport.m_channel + 1;
 
-	g_PlcTriggerCount[rTriggerReport.m_channel]++;
+	if(false == m_OutputFileName.empty())
+	{
+		g_PlcTriggerCount[rTriggerReport.m_channel]++;
 	
-	g_PlcList.emplace_back(TriggerData{static_cast<uint8_t> (triggerChannel), g_PlcTriggerCount[rTriggerReport.m_channel], rTriggerReport.m_triggerTimestamp});
+		g_PlcList.emplace_back(TriggerData{static_cast<uint8_t> (triggerChannel), g_PlcTriggerCount[rTriggerReport.m_channel], rTriggerReport.m_triggerTimestamp});
+	}
 
 	// call trigger callbacks
 	for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
@@ -858,24 +865,19 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 
 void SVPlcIOImpl::WriteResult(int triggerIndex)
 {
-	ResultReport reportResult{static_cast<uint8_t> (triggerIndex), 0, 0, 0};
+	ResultReport reportResult;
 	const TriggerParameter& rTrigger = m_trigger[triggerIndex];
 	//Reduce mutex scope
 	{
 		std::lock_guard<std::mutex> guard(m_protectPlc);
 		reportResult.m_objectID = rTrigger.m_ObjectID;
 		uint16_t bitMask = 1 << rTrigger.m_objectGoodIndex;
-		reportResult.m_result = 0 != (m_Output & bitMask) ?  1 : 0;
-		reportResult.m_outbits = m_Output;
+		reportResult.m_results.m_value[0] = 0 != (m_Output & bitMask) ? c_InspectionGood : c_InspectionBad;
+		//For now we copy the output bits into the last 2 bytes of the result
+		memcpy(&reportResult.m_results.m_value[6], &m_Output, sizeof(m_Output));
 #ifndef TRIGGER_SIMULATE
 		writeResult(reportResult);
 #endif
-	}
-
-	if (!m_OutputFileName.empty())
-	{
-		std::string outText = SvUl::Format(_T("Trigger = %d, ObjectID = %d, OutputValue=0x%x\n"), triggerIndex + 1, reportResult.m_objectID, reportResult.m_outbits);
-		m_OutputData.emplace_back(outText);
 	}
 }
 

@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "PlcDataTypes.h"
+
 struct TriggerReport
 {
 	TriggerReport(uint8_t channel, uint32_t objectID, uint32_t triggerIndex, double triggerTimestamp, bool isComplete)
@@ -24,12 +26,11 @@ struct TriggerReport
 
 struct ResultReport
 {
-	ResultReport(uint8_t channel, uint32_t oid, uint8_t result, uint16_t outbits) : 
-		m_channel(channel), m_objectID(oid), m_result(result), m_outbits(outbits) {}
+	ResultReport() = default;
+	ResultReport(const ResultReport& rRhs) = default;
 	uint8_t m_channel = 0;
 	uint32_t m_objectID = 0;
-	uint8_t m_result = 0;
-	uint16_t m_outbits = 0;
+	TypeResults m_results;
 };
 
 

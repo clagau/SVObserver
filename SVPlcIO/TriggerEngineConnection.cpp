@@ -43,15 +43,11 @@ void SetTriggerChannel(uint8_t channel, bool active, uint32_t period)
 	}
 }
 
-void writeResult(const ResultReport& rRr)
+void writeResult(const ResultReport& rResult)
 {
 	if(nullptr != g_pPowerLink)
 	{
-		//Product product;
-		//product.m_Channel = rRr.m_channel;
-		//product.m_ObjectId = rRr.m_objectID;
-		//product.m_InspectionResult = rRr.m_result;
-		//g_pPowerLink->WriteProductResult(product);
+		g_pPowerLink->writeResult(rResult);
 	}
 }
 

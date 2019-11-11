@@ -67,6 +67,15 @@ bool HardwareTriggerSource::initialize()
 	return result;
 }
 
+void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut& rChannelOut)
+{
+	if(0 <= channel && c_NumberOfChannels > channel)
+	{
+		std::lock_guard<std::mutex> guard {m_triggerChannelMutex};
+		m_inspectionState.m_channels[channel] = rChannelOut;
+	}
+}
+
 bool HardwareTriggerSource::analyzeTelegramData()
 {
 	bool result{false};
@@ -90,7 +99,12 @@ bool HardwareTriggerSource::analyzeTelegramData()
 		}
 		case TelegramContent::OperationData:
 		{
-			m_cifXCard.sendOperationData(m_inspectionState);
+			{
+				std::lock_guard<std::mutex> guard {m_triggerChannelMutex};
+				m_cifXCard.sendOperationData(m_inspectionState);
+				//Clear the data
+				m_inspectionState = InspectionState{};
+			}
 			const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
 			m_triggerDataChanged = m_previousTriggerData.hasTriggerDataChanged(rInsCmd);
 
@@ -176,13 +190,6 @@ void HardwareTriggerSource::createTriggerInfo(uint8_t channel)
 	}
 }
 
-
-void HardwareTriggerSource::PrepareProductForSending(const Product& rProduct)
-{
-	ChannelOut& rChannel = m_inspectionState.m_channels[rProduct.m_Channel];
-	rChannel.m_currentObject.m_ID = rProduct.m_ObjectId;
-	rChannel.m_results.m_value[0] =  rProduct.m_InspectionResult;
-}
 
 uint64_t HardwareTriggerSource::getCurrentInterruptCount()
 {

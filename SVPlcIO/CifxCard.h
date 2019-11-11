@@ -69,7 +69,7 @@ private:
 
 	bool m_processDataCanBeRead {false};
 	uint64_t m_processDataReadCount {0ULL}; ///< running count of process data reads. This is also the number of interrupts 
-	double m_TelegramReceiveTime {0.0};
+	std::atomic<double> m_TelegramReceiveTime {0.0};
 
 	double m_syncTime {0.0};
 	int32_t m_syncSocRelative {INT_MAX};
@@ -80,11 +80,11 @@ private:
 
 	HANDLE m_hTelegramReadEvent {nullptr};
 
+	std::mutex m_cifxMutex;
+
 	CommonData m_commonData;
 	Telegram m_inputTelegram;
 	TimeSync m_timeSync;
 	InspectionCommand m_inspectionCmd;
-
-	//ConfigDataSet m_testInConfig[c_ConfigListSize];		//Only required for test purposes
 };
 

@@ -11,6 +11,8 @@
 #include "TriggerInformation.h"
 #pragma endregion Includes
 
+struct ChannelOut;
+
 struct TriggerChannel
 {
 	TriggerChannel() = default;
@@ -32,8 +34,7 @@ public:
 
 	virtual bool initialize() {return false;}
 	virtual bool isReady() { return true; }
-	virtual void PrepareProductForSending(const Product&) {} //ABX für Simulation: nichts zu tun (die Simulation leitet die Ergebnisse nicht weiter)!
-	virtual void ConstructAndSendPowerlinkTelegram(bool = false) {} //ABX für Simulation: nichts zu tun (die Simulation sendet keine Telegramme)!
+	virtual void queueResult(uint8_t channel, ChannelOut& rChannelOut) {}
 	virtual bool analyzeTelegramData() = 0;
 
 
@@ -44,8 +45,9 @@ protected:
 	virtual void createTriggerInfo(uint8_t channel) = 0;
 	void addTriggerInfo(const TriggerInformation& rTriggerInfo);
 
-private:
 	std::mutex m_triggerChannelMutex;
+
+private:
 
 	TriggerChannel m_triggerChannels[c_NumberOfChannels];
 };

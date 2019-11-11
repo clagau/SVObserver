@@ -72,6 +72,14 @@ void PowerlinkConnection::SetTriggerChannel(uint8_t channel, bool active, uint32
 	}
 }
 
+void PowerlinkConnection::writeResult(const ResultReport& rResult)
+{
+	ChannelOut channelOut;
+	channelOut.m_currentObject.m_ID = rResult.m_objectID;
+	channelOut.m_results = rResult.m_results;
+	m_pTriggersource->queueResult(rResult.m_channel, channelOut);
+}
+
 void PowerlinkConnection::StartEventSignalThread()
 {
 	if (!m_eventSignalThread.joinable())

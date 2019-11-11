@@ -276,10 +276,6 @@ TLR_RESULT CifXCard::closeDriver(bool showDetails)
 	return tResult;
 }
 
-//TelegramIn g_inputDataCopy;
-//uint64_t g_interruptCount{ 0ULL };
-
-
 void CifXCard::readProcessData()
 {
 	m_TelegramReceiveTime = SvTl::GetTimeStamp();
@@ -295,60 +291,38 @@ void CifXCard::readProcessData()
 		}
 		return;
 	}
-	uint8_t* pData = m_commonData.m_pReadBuffer;
-	memcpy(&m_inputTelegram, pData, sizeof(Telegram));
-	pData += sizeof(Telegram);
-
-	switch(m_inputTelegram.m_content)
+	
+	//Reduce lock guard scope
 	{
-		case TelegramContent::TimeSyncData:
+		std::lock_guard<std::mutex> guard {m_cifxMutex};
+		uint8_t* pData = m_commonData.m_pReadBuffer;
+		memcpy(&m_inputTelegram, pData, sizeof(Telegram));
+		pData += sizeof(Telegram);
+
+		switch(m_inputTelegram.m_content)
 		{
-			memcpy(&m_timeSync, pData, sizeof(TimeSync));
-			m_inspectionCmd = InspectionCommand {};
-			break;
-		}
-		case TelegramContent::OperationData:
-		{
-			memcpy(&m_inspectionCmd, pData, sizeof(InspectionCommand));
-			if (m_syncSocRelative > m_inspectionCmd.m_socRelative)
+			case TelegramContent::TimeSyncData:
 			{
-				m_syncSocRelative = m_inspectionCmd.m_socRelative;
-				m_syncTime = m_TelegramReceiveTime;
+				memcpy(&m_timeSync, pData, sizeof(TimeSync));
+				m_inspectionCmd = InspectionCommand {};
+				break;
 			}
-			break;
-		}
-		/// Only for test purposes
-		//case TelegramContent::ConfigurationData:
-		//{
-		//	memcpy(&m_testInConfig, pData, c_ConfigListSize * sizeof(ConfigDataSet));
-		//}
-		default:
-		{
-			break;
+			case TelegramContent::OperationData:
+			{
+				memcpy(&m_inspectionCmd, pData, sizeof(InspectionCommand));
+				if (m_syncSocRelative > m_inspectionCmd.m_socRelative)
+				{
+					m_syncSocRelative = m_inspectionCmd.m_socRelative;
+					m_syncTime = m_TelegramReceiveTime;
+				}
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
-
-	//Simulate data after every 10 interrupts
-	//if(g_inputDataCopy.m_telegram.m_contentID == 0)
-	//{
-	//	g_inputDataCopy.m_telegram.m_contentID++;
-	//	g_inputDataCopy.m_telegram.m_type = TelegramType::Request;
-	//	g_inputDataCopy.m_telegram.m_content = TelegramContent::OperationData;
-	//	g_inputDataCopy.m_inspectionCmd.m_channels[0].m_sequence = 1;
-	//	g_inputDataCopy.m_inspectionCmd.m_channels[0].m_triggerCount = 1;
-	//	g_inputDataCopy.m_inspectionCmd.m_channels[0].m_triggerIndex = 1;
-	//	g_inputDataCopy.m_inspectionCmd.m_channels[0].m_timeStamp1  = 1000;
-	//}
-	//g_interruptCount++;
-	//if(g_interruptCount % 10 == 0)
-	//{
-	//	g_inputDataCopy.m_inspectionCmd.m_channels[0].m_currentObjectID++;
-	//	g_inputDataCopy.m_inspectionCmd.m_channels[0].m_sequence += 2;
-	//	//Now + 2ms in the future and transfer it to SOC Absolute
-	//	double triggerTime = GetTimeStamp() + 2.0;
-	//	memcpy(&g_inputDataCopy.m_inspectionCmd.m_socAbsolute, &triggerTime, sizeof(uint64_t));
-	//	m_plcInputData = g_inputDataCopy;
-	//}
 
 	if (m_hTelegramReadEvent != nullptr)
 	{
@@ -438,19 +412,6 @@ void CifXCard::sendConfigList()
 		const uint8_t* pData = reinterpret_cast<const uint8_t*> (&configList[0]);
 		writeResponseData(pData, sizeof(ConfigDataSet) * configList.size());
 	}
-
-	///For test purposes the config data set is also sent by the PLC needs to be removed
-	//for(int i=0; i < configList.size(); ++i)
-	//{
-	//	if(configList[i].m_byteSize != m_testInConfig[i].m_byteSize ||
-	//	   configList[i].m_dataType != m_testInConfig[i].m_dataType ||
-	//	   configList[i].m_mode != m_testInConfig[i].m_mode ||
-	//	   configList[i].m_startByte != m_testInConfig[i].m_startByte)
-	//	{
-	//		int someval=5;
-	//		someval *=10;
-	//	}
-	//}
 }
 
 void CifXCard::sendOperationData(const InspectionState& rState)
@@ -594,8 +555,6 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 
 void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize)
 {
-	//Clear the write buffer
-	memset(m_commonData.m_pWriteBuffer, 0, m_commonData.m_writeBufferSize);
 
 	Telegram outputTelegram;
 	///The content ID needs to be incremented for each send
@@ -612,16 +571,21 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 	outputTelegram.m_layout = m_inputTelegram.m_layout;
 	outputTelegram.m_systemStatus = m_inputTelegram.m_systemStatus;
 
-	//Copy the SDO Static data
-	uint8_t* pData = m_commonData.m_pWriteBuffer;
-	memcpy(pData, &outputTelegram, sizeof(Telegram));
-	pData += sizeof(Telegram);
-
-	//If nullptr or size 0 then no dynamic data
-	if(nullptr != pSdoDynamic && 0 != sdoDynamicSize)
 	{
-		//Copy the SDO Dynamic data
-		memcpy(pData, pSdoDynamic, sdoDynamicSize);
+		std::lock_guard<std::mutex> guard {m_cifxMutex};
+		//Clear the write buffer
+		memset(m_commonData.m_pWriteBuffer, 0, m_commonData.m_writeBufferSize);
+		//Copy the SDO Static data
+		uint8_t* pData = m_commonData.m_pWriteBuffer;
+		memcpy(pData, &outputTelegram, sizeof(Telegram));
+		pData += sizeof(Telegram);
+
+		//If nullptr or size 0 then no dynamic data
+		if (nullptr != pSdoDynamic && 0 != sdoDynamicSize)
+		{
+			//Copy the SDO Dynamic data
+			memcpy(pData, pSdoDynamic, sdoDynamicSize);
+		}
 	}
 	m_currentResult = xChannelIOWrite(m_commonData.m_hChannel, 0, 0, m_commonData.m_writeBufferSize, m_commonData.m_pWriteBuffer, 2);
 

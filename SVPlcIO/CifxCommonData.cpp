@@ -149,6 +149,7 @@ TLR_RESULT BuildConfigurationReq(CIFX_PACKET* ptPacket, TLR_UINT8 NodeId, TLR_UI
 	ptConfigReq->tData.ulSystemFlags = 0;                            /* System Flags                             */
 	ptConfigReq->tData.ulWatchdogTime = 1000;                         /* Watchdog time                            */
 	ptConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG; /* Stack creates default PDO objects */
+	//MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_NMT_TRIGGERED_BY_APP
 	//Arvid: MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG: Damit wird die Aktualisierung des DualPort-Memorys von netX angestoßen,
 	//Arvid: Lesevorgänge mit xChannelIORead werden dann immer bei ankommenden Telegrammen abgeschlossen.
 	//Arvid: Synchronisation ist damit möglich, z.B. direkt nach dem abgeschlossenen Lesevorgang, aber auch mit CIFX_NOTIFY_PD0_IN - Callback.*/
