@@ -211,8 +211,6 @@ public:
 
 	virtual DWORD GetObjectColor() const override;
 
-	long getPpqPosition(long triggerCount) const {return m_ppPPQPositions.GetIndexByTriggerCount(triggerCount);}
-
 	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
 
 protected:
@@ -510,6 +508,7 @@ private:
 	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
+	long m_lastPPQPosition {0L};		/// This is the PPQ position of the last SetInspectionComplete call
 
 	SVObjectPtrVector m_childObjects;
 };

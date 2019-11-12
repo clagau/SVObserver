@@ -1010,6 +1010,7 @@ void SVPPQObject::GoOnline()
 {
 	std::string FailureObjectName;
 
+	m_lastPPQPosition = 0L;
 #ifdef EnableTracking
 	m_PPQTracking.clear();
 	m_PPQTracking.m_QueueLength = m_ppPPQPositions.size();
@@ -2180,6 +2181,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
+	pNewProduct->m_lastPPQPosition = m_lastPPQPosition;
 	for (auto& rInspection : pNewProduct->m_svInspectionInfos)
 	{
 		rInspection.second.setNextTriggerRecord(SvTrc::TriggerData{pNewProduct->m_triggerInfo.lTriggerCount});
@@ -2593,6 +2595,8 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 
 bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 {
+	m_lastPPQPosition = p_PPQIndex;
+
 	SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(p_PPQIndex);
 	if (nullptr == pProduct)
 	{

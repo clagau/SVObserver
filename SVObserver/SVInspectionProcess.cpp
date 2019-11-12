@@ -89,6 +89,8 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		SVInspectionInfoStruct& rIPInfo = rProduct.m_svInspectionInfos[GetUniqueObjectID()];
 		rIPInfo.m_BeginInspection = SvTl::GetTimeStamp();
 
+		/// Note this is the PPQ position of the previous trigger
+		m_pCurrentToolset->setPpqPosition(rProduct.m_lastPPQPosition);
 		double time {0.0};
 		if (rProduct.m_triggerInfo.m_PreviousTrigger > 0.0)
 		{
@@ -195,13 +197,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
 				rIPInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
-				long ppqPosition {0L};
-				SVPPQObject* pPpq = GetPPQ();
-				if (nullptr != pPpq)
-				{
-					ppqPosition = pPpq->getPpqPosition(rProduct.ProcessCount());
-				}
-				m_pCurrentToolset->setPpqPosition(ppqPosition);
 #ifdef _DEBUG
 				//					std::string l_TempStateString = SvUl::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
 				//						GetName(), p_rProduct.ProcessCount() );

@@ -91,7 +91,7 @@ void SVInspectionInfoStruct::setTriggerRecordIncompleted()
 SVProductInfoStruct::SVProductInfoStruct()
 : m_ProductActive( 0 )
 , m_monitorListSMSlot(-1)
-
+, m_lastPPQPosition {0L}
 {
 	Reset();
 }
@@ -107,6 +107,7 @@ SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &rRhs )
 , m_svInspectionInfos( rRhs.m_svInspectionInfos )
 , m_ProductActive( 0 )
 , m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
+, m_lastPPQPosition{rRhs.m_lastPPQPosition}
 {
 	for(int i=0; i < SvDef::cMaximumCameras; ++i)
 	{
@@ -138,6 +139,7 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 			m_hasCameraImage[i] = rRhs.m_hasCameraImage[i];
 		}
 		m_dataComplete = rRhs.m_dataComplete;
+		m_lastPPQPosition = rRhs.m_lastPPQPosition;
 
 		m_triggerInfo = rRhs.m_triggerInfo;
 		m_outputsInfo = rRhs.m_outputsInfo;
@@ -172,9 +174,10 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 			m_hasCameraImage[i] = rData.m_hasCameraImage[i];
 		}
 		m_dataComplete = rData.m_dataComplete;
+		m_lastPPQPosition = rData.m_lastPPQPosition;
+		
 		m_triggerInfo = rData.m_triggerInfo;
 		m_outputsInfo = rData.m_outputsInfo;
-
 		m_pPPQ = rData.m_pPPQ;
 
 		m_monitorListSMSlot = rData.m_monitorListSMSlot;

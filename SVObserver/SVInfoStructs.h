@@ -160,6 +160,7 @@ struct SVProductInfoStruct
 	bool m_triggered;
 	bool m_hasCameraImage[SvDef::cMaximumCameras];
 	bool m_dataComplete;
+	long m_lastPPQPosition;
 
 	SvTi::SVTriggerInfoStruct m_triggerInfo;
 	SVOutputsInfoStruct m_outputsInfo;
