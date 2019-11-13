@@ -59,8 +59,8 @@ h5
 	font-family: Arial;
 	margin-bottom: 12px;
 	margin-top: 24px;
-	background-color: #dbdbdb;
 	mc-auto-number-format: ;
+	background-color: #dcdcdc;
 }
 
 h6
@@ -240,6 +240,14 @@ p.Concept
 	p
 	{
 		
+	}
+}
+
+@media non-print
+{
+	h2
+	{
+		background: background-color;
 	}
 }
 

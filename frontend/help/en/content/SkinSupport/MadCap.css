@@ -270,6 +270,48 @@ footnoteBlock
 	display: block;
 }
 
+a.MCTextPopupSpot
+{
+	color: Olive;
+	font-weight: bold;
+}
+
+a.MCTextPopupSpot:link
+{
+	color: Olive;
+	font-weight: bold;
+}
+
+a.MCTextPopupSpot:visited
+{
+	color: Olive;
+	font-weight: bold;
+}
+
+a.MCTextPopupSpot:hover
+{
+	
+}
+
+a.MCTextPopupSpot:focus
+{
+	
+}
+
+span.MCTextPopupBody
+{
+	position: absolute;
+	overflow: auto;
+	filter: alpha( opacity = 0 );
+	-moz-opacity: 0.0;
+	z-index: 2;
+	padding: 5px;
+	margin: 0px;
+	border: solid 1px #000000;
+	background-color: #dcdcdc;
+	color: #000000;
+}
+
 span.MCExpanding
 {
 	color: Olive;

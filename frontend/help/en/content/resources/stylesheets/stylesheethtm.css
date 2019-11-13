@@ -44,6 +44,7 @@ h1
 	font-family: Arial;
 	margin-top: 24px;
 	margin-bottom: 6px;
+	background-color: #dcdcdc;
 }
 
 h2
@@ -54,6 +55,7 @@ h2
 	font-family: Arial;
 	margin-bottom: 6px;
 	margin-top: 24px;
+	background-color: #dcdcdc;
 }
 
 h3
@@ -64,6 +66,7 @@ h3
 	font-family: Arial;
 	margin-top: 24px;
 	margin-bottom: 6px;
+	background-color: #dcdcdc;
 }
 
 h4
@@ -74,6 +77,7 @@ h4
 	font-size: 18pt;
 	margin-top: 24px;
 	margin-bottom: 6px;
+	background-color: #dcdcdc;
 }
 
 p.Image_click_on
@@ -146,5 +150,14 @@ h5
 	margin-bottom: 6px;
 	font-size: 18pt;
 	font-family: Arial;
+	background-color: #dcdcdc;
+}
+
+@media non-print
+{
+	h2
+	{
+		background-color: #dcdcdc;
+	}
 }
 
