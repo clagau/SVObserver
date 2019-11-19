@@ -41,12 +41,12 @@ namespace SvOg
 		HRESULT SetViewportOrigin( CPoint ptOrigin, bool bRedraw = false );
 		CPoint  GetViewportOrigin();
 		HRESULT SetViewportRect( CRect rect );	// sets origin and zoom
+		CRect GetOutputRectFromImage();
 
 	protected:
 
 		void DestroyBuffers();
 		virtual void OnSetZoom();
-		CRect GetOutputRectFromImage();
 
 		CRect m_SourceRect;
 		CRect m_ClientRect;

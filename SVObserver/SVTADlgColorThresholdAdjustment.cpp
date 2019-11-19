@@ -358,13 +358,6 @@ bool SVTADlgColorThresholdAdjustment::initHistogram()
 			{
 				return false;
 			}
-			
-			ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, {0.0, 0.0});
-			ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
-			if(S_OK != SvIe::SVImageProcessingClass::CreateImageBuffer(ImageInfo, m_histogramImage))
-			{
-				return false;
-			}
 		}
 	}
 	return result;
@@ -372,21 +365,39 @@ bool SVTADlgColorThresholdAdjustment::initHistogram()
 
 void SVTADlgColorThresholdAdjustment::updateHistogram()
 {
-	if (nullptr != m_pThreshold)
+	if (nullptr != m_pThreshold && nullptr != m_pSheet)
 	{
 		if (m_Values.Get<bool>(thresholdEnabledID[m_band]))
 		{
 			SvIe::SVImageClass* pImage = m_pThreshold->GetBandInputImage(m_band);
-			auto pImageData = (nullptr != pImage) ? pImage->getImageData() : nullptr;
 
-			if (nullptr != m_histogramImage && nullptr != pImageData && !pImageData->empty())
+			m_histogramImage.reset();
+			m_graphFigure.SetListSize(0);
+			if(nullptr != pImage)
 			{
-				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_histogramImage->GetBuffer(), pImageData->GetBuffer(), 0, 0);
-				if(S_OK == MatroxCode)
+				SVImageInfoClass childImageInfo;
+				//Need to normalize the ROI for the image boundaries
+				CRect rectImage = m_svDlgImage.GetOutputRectFromImage();
+				CRect rectRoi;
+				if (m_pSheet->m_rectROI.left < rectImage.Width() && m_pSheet->m_rectROI.top < rectImage.Height())
 				{
-					MatroxCode = SVMatroxImageInterface::Histogram(m_histogramResultID, m_histogramImage->GetBuffer());
+					rectRoi.left = (m_pSheet->m_rectROI.left < 0) ? 0 : m_pSheet->m_rectROI.left;
+					rectRoi.top = (m_pSheet->m_rectROI.top < 0) ? 0 : m_pSheet->m_rectROI.top;
+					rectRoi.right = (m_pSheet->m_rectROI.right > rectImage.Width()) ? rectImage.Width() : m_pSheet->m_rectROI.right;
+					rectRoi.bottom = (m_pSheet->m_rectROI.bottom > rectImage.Height()) ? rectImage.Height() : m_pSheet->m_rectROI.bottom;
+					childImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
+					childImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
+					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, rectRoi.left);
+					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, rectRoi.top);
+					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, rectRoi.Width());
+					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, rectRoi.Height());
+					SvIe::SVImageProcessingClass::CreateImageChildBuffer(pImage->GetImageInfo(), pImage->getImageData(), childImageInfo, m_histogramImage);
 				}
-				if (S_OK != MatroxCode)
+			}
+
+			if (nullptr != m_histogramImage)
+			{
+				if (S_OK != SVMatroxImageInterface::Histogram(m_histogramResultID, m_histogramImage->GetBuffer()))
 				{
 					return;
 				}
