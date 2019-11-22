@@ -671,11 +671,10 @@ std::string SVFileNameClass::checkFileName( LPCTSTR PathName, LPCTSTR FileName )
 
 	if( !m_ExcludeChar.empty() )
 	{
-		bool NameChanged( false );
 		std::string NewFileName( FileName );
 
 		SvUl::RemoveCharacters(NewFileName, m_ExcludeChar.c_str());
-		NameChanged = NewFileName == FileName;
+		bool NameChanged = NewFileName != FileName;
 		
 		if( NewFileName.empty() || NewFileName == m_DefaultFileExtension )
 		{
