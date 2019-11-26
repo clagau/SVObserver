@@ -1578,7 +1578,9 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 		{
 			l_Status = E_FAIL;
 		}
-		product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
+		//GUID_NULL reset all inspection-TR and do not mark the TR as new TR. 
+		//And this is important, because else an event is sent and leads to wrong image updates in webApp.
+		product.setInspectionTriggerRecordComplete(GUID_NULL);
 
 		HRESULT l_Temp = LastProductUpdate(&product);
 
