@@ -502,6 +502,7 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 		if ( bImageInfoChanged )
 		{
 			m_MaskBufferInfo = l_MaskBufferInfo;
+			m_MaskBufferInfo.setDibBufferFlag(true);
 			/*l_hrOk = */DestroyLocalImageBuffer();
 			l_hrOk = SvIe::SVImageProcessingClass::CreateImageBuffer( m_MaskBufferInfo, m_MaskBufferHandlePtr );
 		}

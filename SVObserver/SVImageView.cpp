@@ -612,8 +612,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 
 void SVImageViewClass::TransformFromViewSpace( CPoint& p_point )
 {
-	SvIe::SVImageClass* l_pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
-	SVDrawContext l_svDrawContext( nullptr, l_pImage, m_ZoomHelper.GetZoom() );
+	SVDrawContext l_svDrawContext( nullptr, m_ZoomHelper.GetZoom() );
 
 	l_svDrawContext.InverseTransform( &p_point, &p_point, 1 );
 }
@@ -1481,33 +1480,28 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 	}
 }
 
-void SVImageViewClass::UpdateOverlays( HDC hDC, long p_X, long p_Y )
+void SVImageViewClass::UpdateOverlays(HDC hDC, long p_X, long p_Y)
 {
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
+	// Get drawing device context...
+	::SetBkMode(hDC, TRANSPARENT);
 
-	if( nullptr != pImage )
+	// Select Font...
+	HGDIOBJ hFontOld = ::SelectObject(hDC, m_ZoomHelper.GetFont());
+
+	// Use Drawing Context
+
+	SVDrawContext drawContext(hDC, m_ZoomHelper.GetZoom());
+	drawContext.ViewPortOffset.x = -p_X;
+	drawContext.ViewPortOffset.y = -p_Y;
+
+	// Draw tool figures...
+	for (SVExtentMultiLineStructVector::iterator l_Iter = m_OverlayData.begin(); l_Iter != m_OverlayData.end(); ++l_Iter)
 	{
-		// Get drawing device context...
-		::SetBkMode( hDC, TRANSPARENT );
-
-		// Select Font...
-		HGDIOBJ hFontOld = ::SelectObject( hDC,m_ZoomHelper.GetFont() );
-
-		// Use Drawing Context
-
-		SVDrawContext drawContext( hDC, pImage, m_ZoomHelper.GetZoom() );
-		drawContext.ViewPortOffset.x = -p_X;
-		drawContext.ViewPortOffset.y = -p_Y;
-
-		// Draw tool figures...
-		for( SVExtentMultiLineStructVector::iterator l_Iter = m_OverlayData.begin(); l_Iter != m_OverlayData.end(); ++l_Iter )
-		{
-			DrawOverlay( &drawContext, *l_Iter );
-		}
-
-		// Restore Font...
-		::SelectObject( hDC, hFontOld );
+		DrawOverlay(&drawContext, *l_Iter);
 	}
+
+	// Restore Font...
+	::SelectObject(hDC, hFontOld);
 }
 
 HICON SVImageViewClass::GetObjectCursor( POINT p_point )

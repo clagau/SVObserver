@@ -101,7 +101,7 @@ const SVImageInfoClass &SVImageInfoClass::operator=(const BITMAPINFOHEADER& p_rB
 HRESULT SVImageInfoClass::Initialize()
 {
 	HRESULT l_hrOk = S_OK;
-	m_isDibBuffer = true;
+	m_isDibBuffer = false;
 
 	m_OwnerImageID.clear();
 

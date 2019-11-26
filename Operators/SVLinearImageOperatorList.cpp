@@ -136,19 +136,21 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 		m_RunErrorMessages.push_back(Msg);
 	}
 
-	SvTrc::IImagePtr pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+	SvTrc::IImagePtr pOutputBuffer = nullptr;
 
 	if (result)
 	{
 		if (UseRotation)
 		{
 			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
+			pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 			result = RunLocalRotation(rRunStatus, pInputBuffer, pOutputBuffer, rImageExtent);
 		}
 		else
 		{
 			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
-			result = RunLocal(rRunStatus, pInputImageBuffer, pOutputBuffer);
+			result = RunLocal(rRunStatus, pInputImageBuffer, m_OutputImage);
+			pOutputBuffer = m_OutputImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		}
 	}
 

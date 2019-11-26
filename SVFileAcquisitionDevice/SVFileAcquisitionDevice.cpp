@@ -17,6 +17,7 @@
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "TriggerInformation/SVTriggerActivatorFunc.h"
@@ -589,33 +590,19 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 			
 			if( nullptr != pImage && nullptr != pImage->getHandle() )
 			{
-				unsigned char *pBuffer = pImage->getHandle()->GetBufferAddress();
+				l_hrOk = rCamera.CopyImage(pImage.get());
 
-				if( nullptr != pBuffer )
+				if (S_OK != l_hrOk)
 				{
-					l_hrOk = rCamera.CopyImage( pBuffer );
-
-					if( S_OK != l_hrOk )
-					{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-						char l_szbuf[128];
-						wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
-						TRACE( "%s\n", l_szbuf );
-#endif
-
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
-						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams) );
-					}
-				}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				else
-				{
 					char l_szbuf[128];
-					wsprintf(l_szbuf,"Error In BufferGetAddress" );
-					TRACE( "%s\n", l_szbuf );
-					l_hrOk = E_FAIL;
-				}
+					wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
+					TRACE("%s\n", l_szbuf);
 #endif
+
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
 			else
 			{

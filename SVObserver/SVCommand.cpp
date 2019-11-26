@@ -1702,6 +1702,7 @@ HRESULT CSVCommand::SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITr
 	if (nullptr != pImage)
 	{
 		SVImageInfoClass oChildInfo = pImage->GetImageInfo();
+		oChildInfo.setDibBufferFlag(true);
 
 		SvOi::SVImageBufferHandlePtr oChildHandle;
 

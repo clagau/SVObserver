@@ -16,10 +16,10 @@
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
+#include <mil.h>
 #include "SVFileCameraStruct.h"
 #include "SVEventHandler.h"
 #include "TriggerHandling/TriggerBasics.h"
-#include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
 #include "SVSystemLibrary/SVSequencer.h"
@@ -27,6 +27,10 @@
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
+namespace SvTrc
+{
+class IImage;
+}
 
 class SVFileCamera
 {
@@ -48,20 +52,16 @@ private:
 	std::string m_name;
 	SVFileList m_fileList;
 	SVSequencer<FileListIterator> m_loadSequence;
-	SVImageFile m_bitmap;
+	MIL_ID m_image = M_NULL;
 	SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_thread;
 	SVFrameEventHandler m_startFrameEvent;
 	SVFrameEventHandler m_endFrameEvent;
-	bool m_lineState;
+	bool m_lineState = false;
 
 	static void CALLBACK OnAPCEvent( ULONG_PTR data );
 	void OnThreadEvent( bool& p_WaitForEvents );
 
 	std::string GetNextFilename();
-	bool ValidImageFormatForCopy() const;
-
-	HRESULT CopySameBitDepthImage(const unsigned char* pSrcBuf, unsigned char* pDstBuf, int bitDepth, const SIZE& imageSize, bool bInvert);
-	HRESULT Copy24BitTo32BitImage(const unsigned char* pSrcBuf, unsigned char* pDstBuf, const SIZE& imageSize, bool bInvert);
 
 public:
 	long m_lIsStarted;
@@ -86,8 +86,6 @@ public:
 
 	void SetLoadingMode(SVFileAcquisitonLoadingModeEnum mode);
 	SVFileAcquisitonLoadingModeEnum GetLoadingMode() const;
-	bool IsSingleFileMode() const;
-	bool IsContinuousLoadMode() const;
 	bool IsSingleIterationLoadMode() const;
 	
 	HRESULT Start(const EventHandler& startFrameHandler, const EventHandler& endFrameHandler, unsigned long p_ulIndex);
@@ -97,7 +95,7 @@ public:
 
 	HRESULT DoOneShot();
 
-	HRESULT CopyImage(unsigned char* ulBuffer);
+	HRESULT CopyImage(SvTrc::IImage* pImagePtr);
 
 	bool IsAcquisitionTriggered() const;
 	void SetAcquisitionTriggered(bool bAcquisitionTriggered);
@@ -107,6 +105,7 @@ public:
 	const SvTh::TriggerDispatcher& GetTriggerDispatcher() const;
 	void SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher);
 	void ClearTriggerCallback();
+	HRESULT loadImage(std::string fileName);
 
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 

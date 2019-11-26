@@ -41,19 +41,26 @@ namespace SvOg
 			BYTE* pMilBuffer = static_cast< BYTE* >( imageData->GetBufferAddress() );
 			if (nullptr != pMilBuffer)
 			{
-				//copy the image buffer - because the UnaryImageOperatorList/StdImageOperatorList does not support DIB!
+				//copy the image buffer - because the some images does not support DIB!
 				SVMatroxBuffer newBuffer;
 				SVMatroxBuffer oldBuffer = imageData->GetBuffer();
 
-				HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
+				HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer, true);
 				if (S_OK == l_Code)
 				{
-					/*l_Code =*/ SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
-					/*l_Code =*/ SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
-					/*l_Code =*/ SVMatroxBufferInterface::GetHostAddress(&pMilBuffer, newBuffer);
+					l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
+				}
+				if (S_OK == l_Code)
+				{
+					l_Code = SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
+				}
+
+				if (S_OK == l_Code)
+				{
+					l_Code = SVMatroxBufferInterface::GetHostAddress(&pMilBuffer, newBuffer);
 				}
 				
-				if (nullptr != pMilBuffer && !dibInfo.empty())
+				if (S_OK == l_Code && nullptr != pMilBuffer && !dibInfo.empty())
 				{
 					HBITMAP hBitmap = SvUl::CreateDIBitmap(*dibInfo.GetBitmapInfo(), pMilBuffer);
 					if (nullptr != hBitmap)

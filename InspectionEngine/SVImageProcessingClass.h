@@ -38,6 +38,7 @@ class SVImageProcessingClass
 public:
 	static HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SvOi::SVImageBufferHandlePtr& rHandle, SvStl::MessageContainerVector* pErrorContainer = nullptr);
 	static HRESULT CreateImageBuffer( const SvOi::SVImageBufferHandlePtr& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SvOi::SVImageBufferHandlePtr& rToHandle );
+	static HRESULT convertToMILBuffer(HBITMAP hBmp, SvOi::SVImageBufferHandlePtr& rToHandle);
 
 	static HRESULT CreateImageChildBuffer( const SVImageInfoClass& rParentInfo, SvOi::SVImageBufferHandlePtr rParentHandle,
 	                                SVImageInfoClass& rChildInfo, SvOi::SVImageBufferHandlePtr& rChildHandle );

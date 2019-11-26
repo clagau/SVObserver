@@ -14,12 +14,13 @@
 #include "SVFileCamera.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
 
-#include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
+#include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
-#include "Definitions/StringTypeDef.h"
+#include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
 SVFileCamera::SVFileCamera()
@@ -82,11 +83,6 @@ void SVFileCamera::SetFileName(const std::string& fileName)
 	m_fileData.fileName = fileName;
 }
 
-bool SVFileCamera::IsSingleFileMode() const
-{
-	return (m_fileData.mode == SingleFileMode);
-}
-
 void SVFileCamera::SetLoadingMode(SVFileAcquisitonLoadingModeEnum mode)
 {
 	m_fileData.mode = mode;
@@ -95,11 +91,6 @@ void SVFileCamera::SetLoadingMode(SVFileAcquisitonLoadingModeEnum mode)
 SVFileAcquisitonLoadingModeEnum SVFileCamera::GetLoadingMode() const
 {
 	return m_fileData.mode;
-}
-
-bool SVFileCamera::IsContinuousLoadMode() const
-{
-	return (m_fileData.mode == ContinuousMode);
 }
 
 bool SVFileCamera::IsSingleIterationLoadMode() const
@@ -142,8 +133,11 @@ void SVFileCamera::Stop()
 	//stop loader thread
 	m_thread.Destroy();
 
-	// close bitmap
-	m_bitmap.Destroy();
+	if (M_NULL != m_image)
+	{
+		MbufFree(m_image);
+		m_image = M_NULL;
+	}
 }
 
 bool SVFileCamera::IsRunning() const
@@ -153,7 +147,6 @@ bool SVFileCamera::IsRunning() const
 
 std::string SVFileCamera::GetNextFilename()
 {
-	std::string fileName;
 	const SVFileInfo& fileInfo = m_loadSequence.GetNext();
 	return fileInfo.filename;
 }
@@ -163,203 +156,21 @@ HRESULT SVFileCamera::DoOneShot()
 	return m_thread.Signal((void *)this);
 }
 
-HRESULT SVFileCamera::CopyImage(unsigned char* pBuffer)
+HRESULT SVFileCamera::CopyImage(SvTrc::IImage* pImage)
 {
-	HRESULT hr = S_FALSE;
-
-	if (ValidImageFormatForCopy())
-	{
-		const unsigned char* pBits = m_bitmap.GetBits();
-		if (pBits && pBuffer)
-		{
-			bool bInvert = false;
-			// crop or fill for mismatch sizes
-			SIZE imageSize = m_bitmap.GetSize();
-			if (imageSize.cy > 0)
-			{
-				bInvert = true;
-			}
-			else
-			{
-				imageSize.cy = abs(imageSize.cy);
-			}
-
-			int srcBitDepth = m_bitmap.GetBitDepth();
-			int dstBitDepth = 0;
-			if (m_fileData.imageFormat == SvDef::SVImageFormatRGB8888)
-			{
-				dstBitDepth = 32;
-			}
-			else if (m_fileData.imageFormat == SvDef::SVImageFormatRGB888)
-			{
-				dstBitDepth = 24;
-			}
-			else //if (m_fileData.imageFormat == SvDef::SVImageFormatMono8)
-			{
-				dstBitDepth = 8;
-			}
-
-			if (dstBitDepth == 32 && srcBitDepth == 24)
-			{
-				hr = Copy24BitTo32BitImage(pBits, pBuffer, imageSize, bInvert);
-			}
-			else
-			{
-				hr = CopySameBitDepthImage(pBits, pBuffer, dstBitDepth, imageSize, bInvert);
-			}
-		}
-	}
+	HRESULT hr = SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), m_image);
 	return hr;
-}
-
-HRESULT SVFileCamera::CopySameBitDepthImage(const unsigned char* pSrcBuf, unsigned char* pDstBuf, int bitDepth, const SIZE& imageSize, bool bInvert)
-{
-	HRESULT hr = S_FALSE;
-
-	if (pSrcBuf && pDstBuf)
-	{
-		// determine source and destination stride
-		int srcStride = ((((imageSize.cx * bitDepth) + 31 ) & ~31 ) >> 3 );				// align
-		int dstStride = ((((m_fileData.imageSize.cx * bitDepth) + 31 ) & ~31 ) >> 3 );	// align
-		
-		//
-		int width = min(imageSize.cx, m_fileData.imageSize.cx);
-		if (bitDepth == 32)
-		{
-			width *= sizeof(RGBQUAD);
-		}
-		else if (bitDepth == 24)
-		{
-			width *= sizeof(RGBTRIPLE);
-		}
-
-		// copy row by row
-		int numRows = min(imageSize.cy, m_fileData.imageSize.cy);
-
-		for (int row = 0; row < numRows; row++)
-		{
-			const unsigned char* pSrc = pSrcBuf + (row * srcStride);
-			long rowOffset = ((bInvert) ? (((numRows - 1) - row) * dstStride) : (row * dstStride));
-			unsigned char* pDest = pDstBuf + rowOffset;
-			
-			memcpy(pDest, pSrc, width);
-
-			// check for fill needed
-			int remainder = dstStride - width;
-			if (remainder > 0)
-			{
-				memset(pDest + width, 0, remainder);
-			}
-		}
-		// fill remaining rows
-		int rows = m_fileData.imageSize.cy - imageSize.cy;
-		if (rows > 0)
-		{
-			unsigned char* pDest = pDstBuf + (imageSize.cy * dstStride);
-			for (int row = 0; row < rows; row++)
-			{
-				memset(pDest, 0, dstStride);
-				pDest += dstStride;
-			}
-		}
-		hr = S_OK;
-	}
-	return hr;
-}
-
-HRESULT SVFileCamera::Copy24BitTo32BitImage(const unsigned char* pSrcBuf, unsigned char* pDstBuf, const SIZE& imageSize, bool bInvert)
-{
-	HRESULT hr = S_FALSE;
-
-	if (pSrcBuf && pDstBuf)
-	{
-		int srcBitDepth = 24;
-		int dstBitDepth = 32;
-		
-		// determine source and destintation stride
-		int srcStride = ((((imageSize.cx * srcBitDepth) + 31 ) & ~31 ) >> 3 );				// align
-		int dstStride = ((((m_fileData.imageSize.cx * dstBitDepth) + 31 ) & ~31 ) >> 3 );	// align
-				
-		//
-		int width = min(imageSize.cx, m_fileData.imageSize.cx);
-		width *= sizeof(RGBQUAD);
-		
-		// copy row by row, column by column
-		int numRows = min(imageSize.cy, m_fileData.imageSize.cy);
-		int numCols = min(imageSize.cx, m_fileData.imageSize.cx);
-
-		for (int row = 0; row < numRows; row++)
-		{
-			const unsigned char* pSrc = pSrcBuf + (row * srcStride);
-			long rowOffset = ((bInvert) ? (((numRows - 1) - row) * dstStride) : (row * dstStride));
-			unsigned char* pDest = pDstBuf + rowOffset;
-		
-			for (int col = 0; col < numCols; col++)
-			{
-				memcpy(pDest + (col * sizeof(RGBQUAD)), pSrc + (col * sizeof(RGBTRIPLE)), sizeof(RGBTRIPLE));
-			}
-			
-			// check for fill needed
-			int remainder = dstStride - width;
-			if (remainder > 0)
-			{
-				memset(pDest + width, 0, remainder);
-			}
-		}
-		// fill remaining rows
-		int rows = m_fileData.imageSize.cy - imageSize.cy;
-		if (rows > 0)
-		{
-			unsigned char* pDest = pDstBuf + (imageSize.cy * dstStride);
-			for (int row = 0; row < rows; row++)
-			{
-				memset(pDest, 0, dstStride);
-				pDest += dstStride;
-			}
-		}
-		hr = S_OK;
-	}
-	return hr;
-}
-
-bool SVFileCamera::ValidImageFormatForCopy() const
-{
-	bool bRetVal = false;
-	// check image formats
-	// check for SvDef::SVImageFormatRGB8888 (32 bit color)
-	// check for SvDef::SVImageFormatRGB888 (24 bit color)
-	// check for SvDef::SVImageFormatMono8 (8 bit grayscale)
-	int bitDepth = m_bitmap.GetBitDepth();
-	if (bitDepth == 32 && m_fileData.imageFormat == SvDef::SVImageFormatRGB8888)
-	{
-		bRetVal = true;
-	}
-	else if (bitDepth == 24 && m_fileData.imageFormat == SvDef::SVImageFormatRGB888)
-	{
-		bRetVal = true;
-	}
-	// allow 24 to 32 bit conversion
-	else if (bitDepth == 24 && m_fileData.imageFormat == SvDef::SVImageFormatRGB8888)
-	{
-		bRetVal = true;
-	}
-	else if (bitDepth == 8 && m_fileData.imageFormat == SvDef::SVImageFormatMono8)
-	{
-		// check for gray scale palette?
-		bRetVal = true;
-	}
-	return bRetVal;
 }
 
 void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 {
-	SVFileCamera* pCamera = (SVFileCamera *)data;
+	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*>(data);
 	std::string filename = pCamera->GetNextFilename();
 
 	// fire StartFrame event
 	pCamera->m_startFrameEvent.Fire(pCamera->m_index);
 	// Load file
-	if (filename.empty() || S_OK != SVImageFileLoader::Load(filename.c_str(), pCamera->m_bitmap))
+	if (filename.empty() || S_OK != pCamera->loadImage(filename))
 	{
 		// add to event log
 		SvDef::StringVector msgList;
@@ -382,7 +193,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 void SVFileCamera::OnThreadEvent( bool& p_WaitForEvents )
 {
 	// check file Load status ?
-	if (m_bitmap.GetBitmapHandle())
+	if (M_NULL != m_image)
 	{
 		// fire EndFrame event
 		m_endFrameEvent.Fire(m_index);
@@ -422,5 +233,24 @@ void SVFileCamera::SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatch
 void SVFileCamera::ClearTriggerCallback()
 {
 	m_dispatcher.clear();
+}
+
+HRESULT SVFileCamera::loadImage(std::string fileName)
+{
+	if (M_NULL != m_image)
+	{
+		MbufClear(m_image,0);
+		m_image = MbufImport(fileName.c_str(), M_DEFAULT, M_LOAD, M_DEFAULT_HOST, &m_image);
+	}
+	else
+	{
+		m_image = MbufImport(fileName.c_str(), M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
+	}
+	
+	if (M_NULL != m_image)
+	{
+		return S_OK;
+	}
+	return E_FAIL;
 }
 

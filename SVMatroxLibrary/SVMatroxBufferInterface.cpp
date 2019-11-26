@@ -445,78 +445,6 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 }
 
 /**
-@SVOperationName Create - LPBITMAPINFO
-
-@SVOperationDescription This function creates a Matrox buffer using a LPBITMAPINFO, it does not copy any pixels.
-
-*/
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const LPBITMAPINFO p_pBitmapInfo)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (nullptr != p_pBitmapInfo)
-		{
-			BITMAPINFOHEADER* pbmhInfo = &p_pBitmapInfo->bmiHeader;
-			MIL_INT64 lAttrib = M_PROC + M_IMAGE + M_DIB;
-
-			// we always use 8 bit per plane
-			long type = Pixel8 + M_UNSIGNED;
-
-			unsigned short l_BitCount = pbmhInfo->biBitCount;
-
-			if (Pixel32 == l_BitCount)
-			{
-				lAttrib += (M_BGR32 + M_PACKED);
-			}
-			else if (Pixel24 == l_BitCount)
-			{
-				lAttrib += (M_BGR24 + M_PACKED);
-			}
-			else if (Pixel16 == l_BitCount)
-			{
-				lAttrib += (M_RGB16 + M_PACKED);
-			}
-
-
-
-			// Allocate a multi or single band image buffer
-			MIL_ID l_NewID = MbufAllocColor(M_DEFAULT_HOST,
-				pbmhInfo->biBitCount <= Pixel8 ? SingleBand : MaxColorBands,
-				pbmhInfo->biWidth,
-				pbmhInfo->biHeight,
-				type,
-				lAttrib,
-				M_NULL);
-
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-			if (S_OK == l_Code)
-			{
-				createImageBufferPtr(rBuffer, l_NewID, std::string(_T("SVMatroxBufferInterface::Create-LPBITMAPINFO")));
-			}
-
-		}// end if (nullptr != p_pBitmapInfo)
-		else
-		{
-			l_Code = SVMEE_BAD_POINTER;
-		}
-
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(S_OK == l_Code);
-	return l_Code;
-}
-
-/**
 @SVOperationName Create - SVMatroxBufferCreateStruct
 
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxSystem and a SVMatroxBufferCreateStruct.
@@ -819,7 +747,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, SVMatroxBufferC
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBuffer& p_CreateFrom)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxBuffer& p_CreateFrom, bool addDibFlag)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -839,6 +767,10 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_Y, &l_lSizeY);
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_TYPE, &l_lType);
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_EXTENDED_ATTRIBUTE, &l_lAttrib);
+		if (addDibFlag)
+		{
+			l_lAttrib |= M_DIB;
+		}
 
 		l_Code = SVMatroxApplicationInterface::GetFirstError();
 
@@ -1142,6 +1074,39 @@ HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p
 #endif
 	assert(S_OK == l_Code);
 	return l_Code;
+}
+
+HRESULT SVMatroxBufferInterface::createToHBitmap(SVMatroxBuffer& rNewMilId, const HBITMAP& rHbm)
+{
+	MIL_ID milImage = M_NULL;
+	MIL_INT64 bufInternalFormat = 0;
+	BITMAP bmpObj;  // Bitmap Objects contain Width, Height and WidthBytes
+
+					// Fetch the object using the bitmap handle
+	GetObject(rHbm, sizeof(bmpObj), &bmpObj);
+
+	// Select the buffer format, we have to match the data that was loaded from the bitmap
+	// The bitmap format will change depending on desktops color depth
+	if (bmpObj.bmBitsPixel == 16)
+	{
+		bufInternalFormat = M_RGB16;
+	}
+	else if (bmpObj.bmBitsPixel == 24)
+	{
+		bufInternalFormat = M_RGB24;
+	}
+	else if (bmpObj.bmBitsPixel == 32)
+	{
+		bufInternalFormat = M_BGR32;
+	}
+
+	MbufCreateColor(M_DEFAULT_HOST, (0 == bufInternalFormat) ? 1 : 3, bmpObj.bmWidth, bmpObj.bmHeight, 8, M_IMAGE + M_DIB + bufInternalFormat, M_HOST_ADDRESS + M_PITCH, M_DEFAULT, (void **)&bmpObj.bmBits/*bmpBuffer*/, &milImage);
+	if (M_NULL != milImage)
+	{
+		createImageBufferPtr(rNewMilId, milImage, std::string(_T("SVMatroxBufferInterface::CreateToHBITMAP")));
+		return S_OK;
+	}
+	return E_FAIL;
 }
 
 HRESULT SVMatroxBufferInterface::IsParent(const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer)
@@ -1878,7 +1843,18 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 		}
 		else
 		{
-			MbufGet(milId, bufferVector);
+			switch (rBitMapInfo.GetBitCount())
+			{
+				case 32:
+					MbufGetColor(milId, M_PACKED+M_BGR32, M_ALL_BAND, bufferVector);
+					break;
+				case 24:
+				case 8:
+				default:
+					MbufGet(milId, bufferVector);
+					break;
+			}
+						
 			assert(bufferVector.size() == fabs(rBitMapInfo.GetHeight()*rBitMapInfo.GetWidth()*(rBitMapInfo.GetBitCount() / 8)));
 			if (0 < bufferVector.size())
 			{
@@ -1928,7 +1904,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 				size_t fromStride = toStride;
 				if (!isMilInfo)
 				{
-					fromStride = l_pBitmapInfo->bmiHeader.biWidth;
+					fromStride = l_pBitmapInfo->bmiHeader.biWidth * (l_pBitmapInfo->bmiHeader.biBitCount / 8);
 				}
 
 				unsigned char* l_pFrom = reinterpret_cast<unsigned char*>(pHostBuffer);
@@ -1958,7 +1934,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 					unsigned char* l_pFrom = reinterpret_cast<unsigned char*>(pHostBuffer);
 					unsigned char* l_pTo = reinterpret_cast<unsigned char*>(&(rTo[bitmapPos + l_InfoSize]));
 					size_t toStride = rBitMapInfo.GetBitmapImageStrideInBytes();
-					size_t fromStride = l_pBitmapInfo->bmiHeader.biWidth;
+					size_t fromStride = l_pBitmapInfo->bmiHeader.biWidth * (l_pBitmapInfo->bmiHeader.biBitCount/8);
 					for (size_t i = 0; i < abs(l_pBitmapInfo->bmiHeader.biHeight); ++i)
 					{
 						unsigned char* l_pToRow = l_pTo + (i * toStride);

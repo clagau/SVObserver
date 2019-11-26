@@ -57,7 +57,7 @@ public:
 protected:
 
 	HRESULT CollectInputImageNames();
-	bool RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvTrc::IImagePtr pOutputImageBuffer);
+	bool RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvIe::SVImageClass& rOutputImage);
 	
 private:
 	void init();
@@ -73,6 +73,8 @@ private:
 protected:
 	SvIe::SVImageClass m_LogicalROIImage; // Embedded
 	SvIe::SVImageClass m_OutputImage;	// Embedded
+	SvOi::SVImageBufferHandlePtr m_milTmpImageObjectInfo1;
+	SvOi::SVImageBufferHandlePtr m_milTmpImageObjectInfo2;
 };
 
 } //namespace SvOp

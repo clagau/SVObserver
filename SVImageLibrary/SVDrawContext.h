@@ -13,25 +13,19 @@
 
 enum { FromViewPort, ToViewPort };
 
-namespace SvIe
-{
-class SVImageClass;
-}
-
 class SVDrawContext
 {
 public:
 	HDC DC;					// GDI Device Context
 	double ScaleFactor;		// Scale Factor (not used yet - always 1)
-	SvIe::SVImageClass *m_pImage;// Image being displayed
 
 	POINT ViewPortOffset;	// View Port Normalization
 
 	long m_lIndex;
 
 public:
-	SVDrawContext( HDC Hdc, SvIe::SVImageClass *pImage );
-	SVDrawContext( HDC Hdc, SvIe::SVImageClass *pImage, double dScale );
+	explicit SVDrawContext( HDC Hdc );
+	explicit SVDrawContext( HDC Hdc, double dScale );
 	void Transform( POINT* PInPoints, POINT* POutPoints, int Cnt );
 	void InverseTransform( POINT* PInPoints, POINT* POutPoints, int Cnt );
 	void Scale( POINT& RPoint, double ScaleValue );

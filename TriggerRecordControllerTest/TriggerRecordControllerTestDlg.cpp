@@ -532,7 +532,7 @@ namespace SvTrcT
 			SVMatroxBufferCreateStruct bufferStruct;
 			bufferStruct.m_lSizeX = m_mainWidth;
 			bufferStruct.m_lSizeY = m_mainHeigth;
-			bufferStruct.m_eAttribute = SVBufAttImageProcDib;
+			bufferStruct.m_eAttribute = SVBufAttImageProc;
 			bufferStruct.m_eType = SV8BitUnsigned;
 			rRecordControllerRW.startResetTriggerRecordStructure();
 			rRecordControllerRW.removeAllImageBuffer(m_mainGuid);
@@ -647,7 +647,7 @@ namespace SvTrcT
 		SVMatroxBufferCreateStruct bufferStruct;
 		bufferStruct.m_lSizeX = m_mainWidth;
 		bufferStruct.m_lSizeY = m_mainHeigth;
-		bufferStruct.m_eAttribute = SVBufAttImageProcDib;
+		bufferStruct.m_eAttribute = SVBufAttImageProc;
 		bufferStruct.m_eType = SV8BitUnsigned;
 		SvTrc::IImagePtr pImage = SvTrc::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct);
 		if (nullptr != pImage)

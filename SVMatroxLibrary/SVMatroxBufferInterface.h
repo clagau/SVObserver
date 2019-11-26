@@ -66,8 +66,6 @@ public:
 	//******* Create Functions *********
 	// MbuffAlloc1d or Line
 	static HRESULT Create( SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct);
-	// CreateBuffer LPBitmapInfo..
-	static HRESULT Create( SVMatroxBuffer& p_rBuffer, const LPBITMAPINFO p_pBitmapInfo );
 	// Mainly for Grab Buffers
 	static HRESULT Create( const SVMatroxSystem& p_rSystem, SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct);
 	// MbufAllocColor - Standard buffer..
@@ -77,12 +75,14 @@ public:
 	// MbufCreateColor -  Caution	 : Uses external data buffer that you must manage.
 	static HRESULT Create( SVMatroxBuffer& p_rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct);
 
-	static HRESULT Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom );
+	static HRESULT Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom, bool addDibFlag = false );
 
 	// HBitmapToNewMilHandle
 	static HRESULT Create( SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm );
 	// MilHandleToNewHBitmap
 	static HRESULT Create( HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId );
+
+	static HRESULT createToHBitmap(SVMatroxBuffer& rNewMilId, const HBITMAP& rHbm);
 
 	// ****** Copy Buffer  **********
 	// MbufCopy
@@ -153,11 +153,9 @@ public:
 	static HRESULT InquireBufferProperties(const SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps );
 	static HRESULT CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *Memory);
 
-
-protected:
 	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, __int64 p_From );
 	static HRESULT CopyBuffer( __int64 p_To, const SVMatroxBuffer& p_rFrom );
-
+protected:
 	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, __int64 MatroxID, const std::string& rCreatorName);
 
 private:

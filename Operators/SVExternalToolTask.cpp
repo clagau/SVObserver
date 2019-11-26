@@ -644,6 +644,11 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 							m_aInspectionInputHBMImages[i].Clear();
 						}
 						HRESULT hrInitialCopy = SVIHBitmapUtilities::SVImageInfoToNewDIB(imageInfo, m_aInspectionInputHBMImages[i]);
+						if (S_OK == hrInitialCopy)
+						{
+							SvIe::SVImageProcessingClass::convertToMILBuffer(m_aInspectionInputHBMImages[i].hbm, m_aInputImagesCopy[i]);
+							MbufClear(m_aInputImagesCopy[i]->GetBuffer().GetIdentifier(), 0);
+						}
 					}
 					else
 					{
@@ -722,7 +727,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			if (m_dll.UseMil())
 			{
 				// This must be done after InitializeRun so the Dll has a guid for this tool
-				hr = m_dll.SetMILInputImages(guid, (long)m_aInspectionInputImages.size(), (long)m_aInspectionInputImages.size() ? &(m_aInspectionInputImages[0]) : nullptr);
+				hr = m_dll.SetMILInputImages(guid, (long)m_aInspectionInputImages.size(), m_aInspectionInputImages.size() ? &(m_aInspectionInputImages[0]) : nullptr);
 				if (S_OK != hr)
 				{
 					throw hr;
@@ -777,6 +782,10 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 					}
 
 					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+					if (!m_dll.UseMil())
+					{
+						imageInfo.setDibBufferFlag(true);
+					}
 					pImage->UpdateImage(GUID_NULL, imageInfo);
 				}// end block
 				if (m_bUseImageCopies)
@@ -1982,7 +1991,15 @@ bool SVExternalToolTask::collectInputImages(SVRunStatusClass& rRunStatus)
 				}// if( m_dll.UseMil() )
 				else
 				{
-					SVMatroxBufferInterface::CopyBuffer(m_aInspectionInputHBMImages[i].hbm, pImageBuffer->getHandle()->GetBuffer());
+					SvOi::SVImageBufferHandlePtr l_ImageBufferCopy = m_aInputImagesCopy[i];
+					if (nullptr != l_ImageBufferCopy && !l_ImageBufferCopy->empty())
+					{
+						SVMatroxBufferInterface::CopyBuffer(l_ImageBufferCopy->GetBuffer(), pImageBuffer->getHandle()->GetBuffer());
+					}
+					else
+					{
+						okToRun = false;
+					}
 				}
 			}
 			else

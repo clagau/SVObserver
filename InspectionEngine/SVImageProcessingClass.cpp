@@ -108,6 +108,21 @@ HRESULT SVImageProcessingClass::CreateImageBuffer(const SvOi::SVImageBufferHandl
 	return Result;
 }
 
+HRESULT SVImageProcessingClass::convertToMILBuffer(HBITMAP hBmp, SvOi::SVImageBufferHandlePtr& rToHandle)
+{
+	SVMatroxBuffer tmp;
+	HRESULT result = SVMatroxBufferInterface::createToHBitmap(tmp, hBmp);
+	if (S_OK == result)
+	{
+		rToHandle = std::make_shared<SVImageBufferHandleImage>(tmp);
+		return (nullptr != rToHandle && !rToHandle->empty()) ? S_OK : E_FAIL;
+	}
+	else
+	{
+		return S_OK;
+	}
+}
+
 HRESULT SVImageProcessingClass::CreateImageChildBuffer(const SVImageInfoClass& rParentInfo,
 	SvOi::SVImageBufferHandlePtr rParentHandle,
 	SVImageInfoClass& rChildInfo,
@@ -460,6 +475,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 		oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3);
 	}
 
+	oTempInfo.setDibBufferFlag(true);
 	if (S_OK != CreateImageBuffer(oTempInfo, oTempHandle))
 	{
 		rBufferHandle.reset();
@@ -632,17 +648,17 @@ HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass&
 		{
 			case SvDef::SVImageFormatRGB565:
 			{
-				format = SVBuffAttImageProcPackedOffBoardDibPagedRgb16;
+				format = rInfo.getDibBufferFlag() ? SVBuffAttImageProcPackedOffBoardDibPagedRgb16 : SVBuffAttImageProcPackedOffBoardPagedRgb16;
 				break;
 			}
 			case SvDef::SVImageFormatRGB888:
 			{
-				format = SVBuffAttImageProcPackedOffBoardDibPagedBgr24;
+				format = rInfo.getDibBufferFlag() ? SVBuffAttImageProcPackedOffBoardDibPagedBgr24 : SVBuffAttImageProcPackedOffBoardPagedBgr24;
 				break;
 			}
 			case SvDef::SVImageFormatRGB8888:
 			{
-				format = SVBufAttImageProcPackedOffBoardDibPagedBgr32;
+				format = rInfo.getDibBufferFlag() ? SVBufAttImageProcPackedOffBoardDibPagedBgr32 : SVBufAttImageProcPackedOffBoardPagedBgr32;
 				break;
 			}
 			default:

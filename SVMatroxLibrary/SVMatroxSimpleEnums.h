@@ -101,20 +101,16 @@ enum SVMatroxBufferAttributeEnum
 	// Mono8
 	//SVBuffAttImageProcPackedOffBoardDibPaged = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttNoFlip,
 	// RGB565
-	SVBuffAttImageProcPackedOffBoardDibPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
+	SVBuffAttImageProcPackedOffBoardPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
+	SVBuffAttImageProcPackedOffBoardDibPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttDib | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
 	// RGB888
-	SVBuffAttImageProcPackedOffBoardDibPagedBgr24 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttBgr24 | SVBufAttNoFlip,
+	SVBuffAttImageProcPackedOffBoardPagedBgr24 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttBgr24 | SVBufAttNoFlip,
+	SVBuffAttImageProcPackedOffBoardDibPagedBgr24 = SVBufAttImage | SVBufAttProc | SVBufAttDib | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttBgr24 | SVBufAttNoFlip,
 	// RGB8888
-	SVBufAttImageProcPackedOffBoardDibPagedBgr32 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttBgr32 | SVBufAttNoFlip,
+	SVBufAttImageProcPackedOffBoardPagedBgr32 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttBgr32 | SVBufAttNoFlip,
+	SVBufAttImageProcPackedOffBoardDibPagedBgr32 = SVBufAttImage | SVBufAttProc | SVBufAttDib | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttBgr32 | SVBufAttNoFlip,
 
-	// RGB565 DirectX
-	SVBuffAttDirectXImageProcPackedOffBoardDibPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDirectX | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
-	// RGB888 DirectX
-	SVBuffAttDirectXImageProcPackedOffBoardDibPagedBgr24 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDirectX | SVBufAttPaged | SVBufAttBgr24 | SVBufAttNoFlip,
-	// RGB8888 DirectX
-	SVBufAttDirectXImageProcPackedOffBoardDibPagedBgr32 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDirectX | SVBufAttPaged | SVBufAttBgr32 | SVBufAttNoFlip,
-
-	SVBufAttImageProcDispDib		= SVBufAttProc | SVBufAttImage | SVBufAttDisp | SVBufAttDib,
+	SVBufAttImageProcDispDib		= SVBufAttProc | SVBufAttImage | SVBufAttDisp | SVBufAttDib,  //Nur für SVMaskEditor
 	// Image Buffer Dib
 	SVBufAttImageProcDib			= SVBufAttProc | SVBufAttImage | SVBufAttDib,
 	// Image Buffer..

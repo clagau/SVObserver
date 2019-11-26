@@ -17,6 +17,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/SVRunStatus.h"
+#include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -110,9 +111,7 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 
 	CollectInputImageNames();
 
-	//create tmp mil buffer for operator
-	SVImageInfoClass imageInfo = m_LogicalROIImage.GetImageInfo();
-	imageInfo.setDibBufferFlag(false);
+	SVImageInfoClass imageInfo = m_OutputImage.GetImageInfo();
 	SvIe::SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
 	SvIe::SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
 
@@ -142,9 +141,8 @@ bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Messa
 
 	if (bRetVal)
 	{
-		SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 		SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
-		bRetVal = RunLocal(rRunStatus, pInputImageBuffer, pOutputImageBuffer);
+		bRetVal = RunLocal(rRunStatus, pInputImageBuffer, m_OutputImage);
 	}
 
 	if (!bRetVal)
@@ -187,9 +185,10 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvTrc::IImagePtr pOutputImageBuffer)
+bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvIe::SVImageClass& rOutputImage)
 {
 	bool bRetVal = true;
+	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
 		SvOi::SVImageBufferHandlePtr input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
@@ -197,15 +196,10 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 
 		if (nullptr == input || nullptr == output)
 		{
-			bRetVal = false;
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			m_RunErrorMessages.push_back(Msg);
-			if (nullptr == input)
-			{
-				SvIe::SVImageProcessingClass::InitBuffer(output);
-
-				input = output;
-			}
+			SvIe::SVImageProcessingClass::InitBuffer(output);
+			return false;
 		}
 
 		//set tmp variable
@@ -213,83 +207,76 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 		SvOi::SVImageBufferHandlePtr destinationImage = m_milTmpImageObjectInfo2;
 		if (sourceImage->empty() || destinationImage->empty() || !copyBuffer(input, sourceImage))
 		{
-			bRetVal = false;
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			m_RunErrorMessages.push_back(Msg);
+			return false;
 		}
 
-		if (bRetVal)
+		SVRunStatusClass ChildRunStatus;
+		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
+		ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+		// Run children...
+		for (int i = 0; i < GetSize(); i++)
 		{
-			SVRunStatusClass ChildRunStatus;
-			ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
-			ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
-			// Run children...
-			for (int i = 0; i < GetSize(); i++)
+			ChildRunStatus.ResetRunStateAndToolSetTimes();
+
+			SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass*>(GetAt(i));
+			if (nullptr != pOperator)
 			{
-				ChildRunStatus.ResetRunStateAndToolSetTimes();
-
-				SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass*>(GetAt(i));
-				if (nullptr != pOperator)
+				if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))
 				{
-					if (pOperator->Run(true, sourceImage, destinationImage, ChildRunStatus))
-					{
-						//switch image buffer for next run
-						SvOi::SVImageBufferHandlePtr tmpImage = sourceImage;
-						sourceImage = destinationImage;
-						destinationImage = tmpImage;
-					}
-					// NOTE:
-					// If operator returns FALSE, he was not running ( may be deactivated )
-					// So, don't switch first flag off, so that a following operator knows
-					// he is the first one or the 'no operator was running' check can do his job!!!
-					// RO_22Mar2000
+					//switch image buffer for next run
+					std::swap(sourceImage, destinationImage);
+				}
+				// NOTE:
+				// If operator returns FALSE, he was not running ( may be deactivated )
+				// So, don't switch first flag off, so that a following operator knows
+				// he is the first one or the 'no operator was running' check can do his job!!!
+				// RO_22Mar2000
 
-					// WARNING:
-					// Do not set bRetVal automatically to FALSE, if operator was not running !!!
-					// ChildRunStatus keeps information about, if an error occurred while running !!!
-				}
-				else
-				{
-					bRetVal = false;
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-					m_RunErrorMessages.push_back(Msg);
-				}
-
-				// Update our Run Status
-				if (ChildRunStatus.IsDisabled())
-				{
-					rRunStatus.SetDisabled();
-				}
-
-				if (ChildRunStatus.IsDisabledByCondition())
-				{
-					rRunStatus.SetDisabledByCondition();
-				}
-
-				if (ChildRunStatus.IsWarned())
-				{
-					rRunStatus.SetWarned();
-				}
-
-				if (ChildRunStatus.IsFailed())
-				{
-					rRunStatus.SetFailed();
-				}
-
-				if (ChildRunStatus.IsPassed())
-				{
-					rRunStatus.SetPassed();
-				}
-
-				if (ChildRunStatus.IsCriticalFailure())
-				{
-					rRunStatus.SetCriticalFailure();
-				}
+				// WARNING:
+				// Do not set bRetVal automatically to FALSE, if operator was not running !!!
+				// ChildRunStatus keeps information about, if an error occurred while running !!!
 			}
-			rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
-		} // for( int i = 0; i < GetSize(); i++ )
+			else
+			{
+				bRetVal = false;
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				m_RunErrorMessages.push_back(Msg);
+			}
 
+			// Update our Run Status
+			if (ChildRunStatus.IsDisabled())
+			{
+				rRunStatus.SetDisabled();
+			}
 
+			if (ChildRunStatus.IsDisabledByCondition())
+			{
+				rRunStatus.SetDisabledByCondition();
+			}
+
+			if (ChildRunStatus.IsWarned())
+			{
+				rRunStatus.SetWarned();
+			}
+
+			if (ChildRunStatus.IsFailed())
+			{
+				rRunStatus.SetFailed();
+			}
+
+			if (ChildRunStatus.IsPassed())
+			{
+				rRunStatus.SetPassed();
+			}
+
+			if (ChildRunStatus.IsCriticalFailure())
+			{
+				rRunStatus.SetCriticalFailure();
+			}
+		}// for( int i = 0; i < GetSize(); i++ )
+		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 
 		// 'no operator was running' check...
 		// RO_22Mar2000
@@ -320,7 +307,7 @@ bool SVStdImageOperatorListClass::copyBuffer(const SvOi::SVImageBufferHandlePtr 
 	bRetVal = bRetVal && !(input->empty());
 	bRetVal = bRetVal && !(output->empty());
 
-	if (bRetVal)
+	if (bRetVal && input != output)
 	{
 		HRESULT  Code = SVMatroxBufferInterface::CopyBuffer(output->GetBuffer(), input->GetBuffer());
 		bRetVal = (S_OK == Code);
