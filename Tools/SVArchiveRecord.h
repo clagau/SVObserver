@@ -51,11 +51,11 @@ public:
 	void ConnectInputObject();
 	void DisconnectInputObject();
 
-	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap);
+	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
 	HRESULT QueueImage(SvTrc::IImagePtr& rImage, const std::string& rFileName );
 	HRESULT WriteImageQueue();
 	HRESULT WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord);
-	static HRESULT WriteImage( SVMatroxBuffer& buf, const std::string& rFileName );
+	static HRESULT WriteImage( const SVMatroxBuffer& buf, const std::string& rFileName );
 
 	void Init( SVArchiveTool* pArchiveTool );
 
@@ -82,6 +82,7 @@ private:
 	//Attributes
 	SVArchiveMethodEnum m_eArchiveMethod;
 	SVArchiveTool*      m_pArchiveTool;
+	int m_toolPos = -1;
 
 	friend class SVArchiveRecordsArray;
 #pragma endregion Private Members

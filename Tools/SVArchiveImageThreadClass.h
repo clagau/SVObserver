@@ -28,7 +28,7 @@ public:
 		SvTrc::IImagePtr m_pImageBuffer = nullptr;
 		std::string m_FileName;
 		SVImageInfoClass info;
-		SVArchiveRecord* pRecord = nullptr;
+		int m_toolPos= -1;
 
 		// maintained by the thread class
 		double m_Timestamp = 0;
@@ -37,8 +37,8 @@ public:
 
 		BufferInfo(const BufferInfo& rhs) = default;
 
-		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
-			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), info(p_info), pRecord(p_pRecord) {}
+		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, int pos)
+			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), info(p_info), m_toolPos(pos) {}
 
 		BufferInfo& operator = (const BufferInfo& rhs) = default;
 	};
@@ -52,14 +52,14 @@ public:
 	HRESULT GoOnline();
 	HRESULT GoOffline();
 	HRESULT QueueImage( BufferInfo info );
-	void setMaxNumberOfBuffer(long maxNumber) { m_MaxNumberOfBuffer = maxNumber; };
+	void setMaxNumberOfBuffer(int toolPos, long maxNumber) { m_maxBufferNumber[toolPos] = maxNumber; };
 #pragma endregion Public Methods
 
 private:
 #pragma region Private Methods
 	static DWORD WINAPI    ThreadEntry( LPVOID lpParam );
 	DWORD ThreadFunction( );
-	HRESULT PopAndWrite();
+	void PopAndWrite();
 #pragma endregion Private Methods
 
 #pragma region Private Members
@@ -69,12 +69,11 @@ private:
 	std::mutex		  m_mtxQueue;	// not needed if queue is done in APC
 	volatile bool     m_bRunThread;
 
-	typedef std::deque<BufferInfo> QueueType;
-	QueueType m_Queue;
+	std::deque<BufferInfo> m_Queue;
 	volatile HANDLE    m_hExitEvent;
+	std::unordered_map<int, int> m_maxBufferNumber;
+	std::unordered_map<int, int> m_currentBufferNumber;
 	long m_MaxNumberOfBuffer = 1;
-
-	typedef std::pair<SVArchiveImageThreadClass*, BufferInfo> APCDataType;
 #pragma endregion Private Members
 };
 

@@ -42,7 +42,7 @@ public:
 	SvDef::StringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
 	void ValidateImageObjects();
 
-	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap);
+	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
 
 	bool WriteArchiveImageFiles(const SvTrc::ITriggerRecordRPtr& pTriggerRecord);
 	HRESULT WriteImageQueue();

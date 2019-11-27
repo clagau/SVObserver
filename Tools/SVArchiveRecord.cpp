@@ -211,7 +211,7 @@ HRESULT SVArchiveRecord::QueueImage(SvTrc::IImagePtr& rImage, const std::string&
 	if (m_eArchiveMethod == SVArchiveAsynchronous)
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
-		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, m_ImageInfo, this);
+		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, m_ImageInfo, m_toolPos);
 		TheSVArchiveImageThreadClass().QueueImage(info);
 	}
 	else
@@ -230,10 +230,11 @@ HRESULT SVArchiveRecord::QueueImage(SvTrc::IImagePtr& rImage, const std::string&
 }
 
 // right now called if method == SVArchiveGoOffline or SVArchiveAsynchronous
-HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap)
+HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos)
 {
-	HRESULT hr = S_FALSE;
+	m_toolPos = toolPos;
 
+	HRESULT hr = S_FALSE;
 	m_lMaxIndex = 0;
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject());
 	assert(pImage);
@@ -351,7 +352,7 @@ HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord
 
 	return hr;
 }
-/*static*/HRESULT SVArchiveRecord::WriteImage(SVMatroxBuffer& milBuffer, const std::string& rFileName)
+/*static*/HRESULT SVArchiveRecord::WriteImage(const SVMatroxBuffer& milBuffer, const std::string& rFileName)
 {
 	HRESULT Result = S_OK;
 

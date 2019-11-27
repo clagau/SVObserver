@@ -613,13 +613,15 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 			DWORD asyncBufferNumber = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferNumber"), cAsyncDefaultBufferNumber);
 			dwMaxImages = std::min(dwMaxImages, asyncBufferNumber);
 		}
+		long toolPos = -1;
+		m_ToolPosition.GetValue(toolPos);
 		BufferStructCountMap bufferMap;
-		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers(dwMaxImages, bufferMap);
+		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers(dwMaxImages, bufferMap, toolPos);
 
 		if (SVArchiveAsynchronous == m_eArchiveMethod)
 		{
 			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
-			TheSVArchiveImageThreadClass().setMaxNumberOfBuffer(dwMaxImages*imageCount);
+			TheSVArchiveImageThreadClass().setMaxNumberOfBuffer(toolPos, dwMaxImages*imageCount);
 		}
 
 		assert( S_OK == hrAllocate );

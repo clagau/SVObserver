@@ -404,14 +404,14 @@ void SVArchiveRecordsArray::DisconnectAllResultObjects()
 	}
 }
 
-HRESULT SVArchiveRecordsArray::AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap)
+HRESULT SVArchiveRecordsArray::AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos)
 {
 	HRESULT hr = S_OK;
 	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
-		HRESULT hrRecord = pResultRecord->AllocateBuffers(bufferNumber, rBufferMap);
+		HRESULT hrRecord = pResultRecord->AllocateBuffers(bufferNumber, rBufferMap, toolPos);
 		if ( S_OK == hr )
 		{
 			hr = hrRecord;
