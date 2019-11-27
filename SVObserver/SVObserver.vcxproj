@@ -316,7 +316,6 @@ echo %time%
     <ClCompile Include="SVRegressionRunDlg.cpp" />
     <ClCompile Include="SVRemoteCommand.cpp" />
     <ClCompile Include="SVRemoteCommandData.cpp" />
-    <ClCompile Include="SVRemoteFontManager.cpp" />
     <ClCompile Include="SVRemoteInputsView.cpp" />
     <ClCompile Include="SVRemoteIOAdjustDialog.cpp" />
     <ClCompile Include="SVRemoteOutputDataController.cpp" />
@@ -509,7 +508,6 @@ echo %time%
     <ClInclude Include="SVRemoteCommand.h" />
     <ClInclude Include="SVRemoteCommandData.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
-    <ClInclude Include="SVRemoteFontManager.h" />
     <ClInclude Include="SVRemoteInputsView.h" />
     <ClInclude Include="SVRemoteIOAdjustDialog.h" />
     <ClInclude Include="SVRemoteOutputDataController.h" />

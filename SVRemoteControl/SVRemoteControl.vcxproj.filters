@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="SVRemoteControl_i.c" />
-    <ClCompile Include="SVFile.cpp">
-      <Filter>Headerdateien</Filter>
-    </ClCompile>
     <ClCompile Include="dlldatax.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -204,9 +201,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageBuffer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFile.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVImageConvertorGDI.h">

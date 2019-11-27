@@ -21,9 +21,6 @@
     <ClCompile Include="SVFileInfoComparator.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVFile.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileNameArrayClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -48,9 +45,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileSystemScanner.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFile.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileNameArrayClass.h">

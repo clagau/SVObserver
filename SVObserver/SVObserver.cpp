@@ -1914,8 +1914,6 @@ BOOL SVObserverApp::InitInstance()
 	//check to see what licenses are available before setting up any documents
 	SVOLicenseManager::Instance().InitLicenseManager();
 
-	m_mgrRemoteFonts.Startup();
-
 #ifdef LUT_DEBUG
 	// temp debugging code EB 2002 12 20
 	SVLutTestCases test;
@@ -2143,8 +2141,6 @@ int SVObserverApp::ExitInstance()
 	// *** // ***
 
 	m_IniInfoHandler.INIClose();
-
-	m_mgrRemoteFonts.Shutdown();
 
 	SvTi::SVTriggerProcessingClass::Instance().Shutdown();
 	SvIe::SVDigitizerProcessingClass::Instance().Shutdown();
@@ -5166,8 +5162,6 @@ void SVObserverApp::Start()
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 		SvTrc::getTriggerRecordControllerRWInstance().lockReset();
-
-		m_mgrRemoteFonts.GoOnline();
 
 		if (IsProductTypeRAID())
 		{

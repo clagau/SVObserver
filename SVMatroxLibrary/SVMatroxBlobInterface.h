@@ -104,9 +104,6 @@ public:
 
 	static bool Compare(int criteria, const SVBlob& lBlob, const SVBlob& rBlob);
 
-	static HRESULT FindSizedBlobs( SVMatroxBuffer& rThresholdImage, bool LightBackground, SVBlobList& rList ); 
-	static HRESULT NumBlobs( SVMatroxBuffer& rThresholdImage, BYTE Background, long& rBlobCount );
-
 	static HRESULT FillResults( const SVBlobOffsetList& rBlobList, SVCommandDataHolder& rResults );
 
 	static long CalculateOptimalWidth(const SVBlobList& rBlobList, unsigned short padding);

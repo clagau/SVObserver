@@ -66,9 +66,6 @@ public:
 	static HRESULT Arithmetic( const SVMatroxBuffer& p_rDestId, const SVMatroxBuffer& p_dSource1, const SVMatroxBuffer& p_dSource2, SVImageOperationTypeEnum p_lOperation);
 	// This function replaces MimBinarize ( threshold )
 	static HRESULT Binarize( const SVMatroxBuffer& p_rDestID, const SVMatroxBuffer& p_rSource, SVConditionEnum p_eCondition, double p_dCondLow, double p_dCondHigh );
-	static HRESULT AdaptiveThreshold( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
-	static HRESULT AutoThreshold( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
-	static HRESULT FixedThreshold( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	// This function replaces MimClose ( filter)
 	static HRESULT Close( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
@@ -129,7 +126,5 @@ private:
 	static long Convert2MatroxType( SVImageWaterShedEnum p_eType) ;
 	static long Convert2MatroxType( SVFilterOperationEnum p_eType) ;
 	static long Convert2MatroxType(SVConditionEnum p_eControlType) ;
-
-	static void AdaptiveThreshold( unsigned char* input, unsigned char* bin, int width, int height, int stride, float interval );
 };
 

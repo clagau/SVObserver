@@ -20,14 +20,9 @@
 #include "SVCommand.h"
 
 #include "SVLibrary/DirectoryUtilities.h"
-#include "SVCommandLibrary/SVFileSystemCommandFactory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVMatroxLibrary/SVMatroxCommandFactory.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
-#include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxOcrCalibrateStruct.h"
-#include "SVMatroxLibrary/SVMatroxOcrInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
@@ -37,7 +32,6 @@
 
 #include "SVInfoStructs.h"
 #include "SVIPDoc.h"
-#include "SVRemoteCommand.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "InspectionEngine/SVImageBuffer.h"	//SVImageOverlayClass
@@ -53,7 +47,6 @@
 #include "RemoteCommand.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVVisionProcessorHelper.h"
-#include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -179,7 +172,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 {
 	HRESULT hrResult = S_OK;
-	bool bSuccess = false;
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDITING))
 	{
@@ -187,6 +179,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 	}
 	else
 	{
+		bool bSuccess = false;
 		try
 		{
 			if (ulSVIMState)
@@ -223,21 +216,13 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 
 STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bstrFileData, BOOL *bLastFlag)
 {
-	std::string ConfigName;
-	CFile binFile;
-	CFileStatus Status;
-	long lSize = 0;
-	long lBytesRead = 0;
-	long lFileSize = 0;
-	long lBytesToGo = 0;
-	CFileException *ex;
 	bool bHrSet = false;
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
 
 	try
 	{
-		ConfigName = GlobalRCGetConfigurationName();
+		std::string ConfigName = GlobalRCGetConfigurationName();
 
 		bSuccess = !ConfigName.empty();
 
@@ -257,11 +242,12 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 
 		if (bSuccess)
 		{
-			ex = new CFileException;
+			CFileException* ex = new CFileException;
+			CFile binFile;
 			if (binFile.Open(ConfigName.c_str(), CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, ex))
 			{
-				lFileSize = (long)binFile.GetLength();
-				lBytesToGo = lFileSize - lOffset;
+				long lFileSize = (long)binFile.GetLength();
+				long lBytesToGo = lFileSize - lOffset;
 				if ((*lBlockSize > lBytesToGo) || (*lBlockSize < 1))
 				{
 					*lBlockSize = lBytesToGo;
@@ -328,11 +314,8 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 	//After the last block the file name is cleared
 	static std::string PackedFileName;
 	static ConfigFileType fileType {ConfigFileType::SvzFormatDefaultName};
-	std::string configFileName;
 	HRESULT hrResult = S_OK;
 	CFile binFile;
-	bool bRet = false;
-	CFileException *ex;
 	bool bHrSet = false;
 
 	// Check if we are in an allowed state first
@@ -350,7 +333,8 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 	{
 		if (CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
 		{
-			ex = new CFileException;
+			bool bRet = false;
+			CFileException* ex = new CFileException;
 			if (lOffset < 1)
 			{
 				PackedFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("Temp"));
@@ -455,7 +439,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 			{
 				long lFileSize = (long)binFile.GetLength();
 				long lBytesToGo = lFileSize - lOffset;
-				long lCurrentBytesRead = lOffset;
 
 				if ((*lBlockSize > lBytesToGo) || (*lBlockSize < 1))
 				{
@@ -765,7 +748,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		// set default status for objects in list
 		for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
 		{
-			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
+			/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 		}
 
 		bool l_bItemNotFound = false;
@@ -804,7 +787,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 					l_bItemNotFound = true;
 
-					HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
+					/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 				}
 			}
 			else	// couldn't find inspection
@@ -815,7 +798,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 				l_bInspectionNotFound = true;
 
-				HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
+				/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 			}
 		}// end for ( long l = 0; l < lNumberOfElements && SUCCEEDED( hrOK ); l++ )
 
@@ -913,11 +896,10 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						// Add the image to the outgoing array
 						SafeArrayPutElementNoCopy(*ppsaImages, &l, bstrImage);
 
-						hr = SafeArrayPutElement(*ppsaProcCounts, &l, (void*)&lProcessCount);
+						/*hr =*/ SafeArrayPutElement(*ppsaProcCounts, &l, (void*)&lProcessCount);
 
-						BYTE* pBytes = nullptr;
 						long lSize = l_OverlayClass.GetBufferSize();
-						pBytes = l_OverlayClass.GetBuffer();
+						BYTE* pBytes = l_OverlayClass.GetBuffer();
 
 						BSTR bstrOverlay = ::SysAllocStringByteLen(nullptr, lSize);
 						memcpy(bstrOverlay, pBytes, lSize);
@@ -1072,7 +1054,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 						// set the status of all objects to this error
 						for (long l = 0; l < lNumberOfElements; l++)
 						{
-							HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
+							/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
 						}
 						break;
 					}
@@ -1082,7 +1064,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 			{
 				aValueObjects.push_back(SVObjectReference());
 				hrOK = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-				HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
+				/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 			}
 		}
 		else	// couldn't find inspection
@@ -1090,7 +1072,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 			InspectionVector.push_back(nullptr);
 			aValueObjects.push_back(SVObjectReference());
 			hrOK = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
+			/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 		}
 	}
 
@@ -1255,10 +1237,10 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		// set default status for objects in list
 		for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
 		{
-			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
+			/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 			// No overlays for no for product source images
 			bstr = nullptr;
-			hrTemp = SafeArrayPutElement(*ppsaOverlays, &lIndex, bstr);
+			/*hrTemp = */SafeArrayPutElement(*ppsaOverlays, &lIndex, bstr);
 		}
 
 		SVConfigurationObject* pConfig(nullptr);
@@ -1305,7 +1287,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						hrOK = SVMSG_REQUEST_IMAGE_NOT_SOURCE_IMAGE;
 						l_bItemNotFound = true;
 						ImageObjects.push_back(nullptr);
-						HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
+						/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
 					}
 
 					// if image is OK, check PPQ
@@ -1323,7 +1305,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 								// set the status of all objects to this error
 								for (long i = 0; i < lNumberOfElements; i++)
 								{
-									HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
+									/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 								}
 								break;
 							}
@@ -1335,7 +1317,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 					hrOK = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 					l_bItemNotFound = true;
 					ImageObjects.push_back(nullptr);
-					HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
+					/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
 
 					// Add nullptr to the outgoing array
 					::SafeArrayPutElement(*ppsaImages, &l, nullptr);
@@ -1348,7 +1330,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 				l_bInspectionNotFound = true;
 				ImageObjects.push_back(nullptr);
 				aInspections.push_back(nullptr);
-				HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
+				/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
 			}
 		}// end for ( long l = 0; l < lNumberOfElements && SUCCEEDED( hrOK ); l++ )
 
@@ -1540,8 +1522,6 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 
 	if (S_OK == hr)
 	{
-		HRESULT l_Code;
-
 		SVImageInfoClass oChildInfo;
 		SvOi::SVImageBufferHandlePtr oChildHandle;
 		BITMAPINFOHEADER* pbmhInfo = nullptr;
@@ -1553,8 +1533,6 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 		bool IsColor(false);
 
 		char* pDIB = nullptr;
-
-		bool bDestroyHandle = false;
 
 		oChildInfo = rImageInfo;
 		oChildHandle = rImageHandle;
@@ -1582,41 +1560,37 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 
 		if (IsColor && l_lType == SvDef::SVImageTypeEnum::SVImageTypePhysical && l_lBandNumber == 3)
 		{
-			bDestroyHandle = true;
-
 			oChildInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
-			HRESULT hrImage = SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
+			/*HRESULT hrImage =*/ SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
 			if (nullptr != oChildHandle)
 			{
 				// Copy input image to output image
-				l_Code = SVMatroxBufferInterface::CopyBuffer(oChildHandle->GetBuffer(), rImageHandle->GetBuffer(), l_lBandLink);
+				hr = SVMatroxBufferInterface::CopyBuffer(oChildHandle->GetBuffer(), rImageHandle->GetBuffer(), l_lBandLink);
 			}
 			else
 			{
-				l_Code = E_FAIL;
+				hr = E_FAIL;
 			}
 		}
 
 		if (l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogical)
 		{
-			bDestroyHandle = true;
-
-			HRESULT hrImage = SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
+			/*HRESULT hrImage =*/ SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
 			if (nullptr != oChildHandle)
 			{
 				// Copy input image to output image
-				l_Code = SVMatroxBufferInterface::CopyBuffer(oChildHandle->GetBuffer(), rImageHandle->GetBuffer());
+				hr = SVMatroxBufferInterface::CopyBuffer(oChildHandle->GetBuffer(), rImageHandle->GetBuffer());
 			}
 			else
 			{
-				l_Code = E_FAIL;
+				hr = E_FAIL;
 			}
 		}
 
@@ -1624,7 +1598,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBuff
 		l_BitmapInfo = oChildHandle->GetBitmapInfo();
 		if (l_BitmapInfo.empty())
 		{
-			l_Code = SVMatroxBufferInterface::GetBitmapInfo(l_BitmapInfo, nullptr != oChildHandle ? oChildHandle->GetBuffer() : SVMatroxBuffer());
+			hr = SVMatroxBufferInterface::GetBitmapInfo(l_BitmapInfo, nullptr != oChildHandle ? oChildHandle->GetBuffer() : SVMatroxBuffer());
 		}
 
 		pbmhInfo = &(l_BitmapInfo.GetBitmapInfo()->bmiHeader);
@@ -1807,7 +1781,6 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		std::string Name;
 		std::string Value;
 		BSTR bstrName = nullptr;
-		long ProcessCount = -1;
 		SVObjectReference ObjectRef;
 		SVInspectionProcess* pInspection(nullptr);
 
@@ -1816,7 +1789,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		// Get name of requested value out of the safearray
 		SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 		Name = SvUl::createStdString(bstrName);
-		ProcessCount = -1;
+		long ProcessCount = -1;
 		if (nullptr != pConfig)
 		{
 			pConfig->GetInspectionObject(Name.c_str(), &pInspection);
@@ -1948,10 +1921,10 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	USES_CONVERSION;
 
 	HRESULT              hrResult = S_FALSE;
-	SVInspectionProcess* pInspection(nullptr);
 
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
+		SVInspectionProcess* pInspection(nullptr);
 		if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
 		{
 			hrResult =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
@@ -1971,8 +1944,6 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 	USES_CONVERSION;
 
 	HRESULT                  hrResult = S_OK;
-	SVInspectionProcess*     pInspection(nullptr);
-	SvIe::SVCameraImageTemplate*   pMainImage(nullptr);
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST | SV_STATE_RUNNING))
 	{
@@ -1980,9 +1951,10 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 		return hrResult;
 	}
 
+	SVInspectionProcess* pInspection(nullptr);
 	if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
 	{
-		pMainImage = pInspection->GetToolSetMainImage();
+		SvIe::SVCameraImageTemplate* pMainImage = pInspection->GetToolSetMainImage();
 		if (nullptr != pMainImage)
 		{
 			if (S_OK != pInspection->AddInputImageRequest(pMainImage, bstrImage))
@@ -2193,29 +2165,6 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 	return hr;
 }
 
-namespace
-{
-inline std::string StripBrackets(const std::string& rValue)
-{
-	std::string Result(rValue);
-	Result = SvUl::Trim(Result);
-		size_t Pos = Result.rfind('[');
-	if (std::string::npos != Pos)
-		{
-			Result = SvUl::Left(Result, Pos);
-		}
-		return Result;
-}
-
-inline std::string StripQuotes(const std::string& rValue)
-{
-	std::string Result(rValue);
-	Result = SvUl::Trim(Result);
-	Result = SvUl::Trim(Result, _T("`\'")); // strip single quotes or back-ticks
-		return Result;
-}
-}
-
 HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** ppsaStatus)
 {
 	USES_CONVERSION;
@@ -2375,1160 +2324,6 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 	return hrResult;
 }// end SVSetRemoteInput
 
-// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup yet.
-SVMatroxBuffer CSVCommand::CreateImageFromBSTR(BSTR bstrImage)
-{
-	SVMatroxBuffer l_ImageBuf;
-	BITMAPINFOHEADER* pbmhInfo;
-	BITMAPINFO* pbmInfo;
-	BYTE* pBits;
-	long lTabSize;
-	long lNumColor;
-
-	// Make sure color table size is calculated
-	pbmInfo = (BITMAPINFO*)(BYTE*)bstrImage;
-	pbmhInfo = (BITMAPINFOHEADER*)&pbmInfo->bmiHeader;
-
-	lNumColor = pbmhInfo->biClrUsed;
-	if (0 == lNumColor)
-	{
-		if (pbmhInfo->biBitCount != 24)
-			lNumColor = 1 << pbmhInfo->biBitCount;
-	}// end if
-
-	lTabSize = lNumColor * sizeof(RGBQUAD);
-	pBits = ((BYTE*)bstrImage) + sizeof(BITMAPINFOHEADER) + lTabSize;
-
-	if (pbmhInfo->biBitCount == 16 ||
-		pbmhInfo->biBitCount == 32)
-	{
-		return l_ImageBuf; // this is an error
-	}// end if
-
-	SVImageInfoClass oTempInfo;
-	SvOi::SVImageBufferHandlePtr oTempHandle;
-
-	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, pbmhInfo->biBitCount);
-	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
-	oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0);
-
-	oTempInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, abs(pbmhInfo->biHeight));
-	oTempInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, pbmhInfo->biWidth);
-
-	if (pbmhInfo->biBitCount == 24)
-	{
-		oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8);
-		oTempInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3);
-	}// end if
-
-	if (S_OK != SvIe::SVImageProcessingClass::CreateImageBuffer(oTempInfo, oTempHandle) || nullptr == oTempHandle)
-	{
-		return l_ImageBuf;
-	}
-
-	// Copy the bits into the image object
-	if (nullptr != pBits && nullptr != oTempHandle)
-	{
-		// Set buffer data...
-		memcpy(oTempHandle->GetBufferAddress(), pBits, pbmhInfo->biSizeImage);
-	}// end if
-
-	return oTempHandle->GetBuffer();
-};// end CreateImageFromBSTR
-
-STDMETHODIMP CSVCommand::SVConnectFont(long* lFontIdentifier)
-{
-	long lIndentifier;
-	HRESULT hr = SVMSG_FAILED_TO_ADD_FONT;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.AddFont(lIndentifier))
-		{
-			*lFontIdentifier = lIndentifier;
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SVConnectFont
-
-STDMETHODIMP CSVCommand::SVDisconnectFont(long lFontIdentifier)
-{
-	HRESULT hr = SVMSG_FAILED_TO_REMOVE_FONT;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.RemoveFont(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SVDisconnectFont
-
-STDMETHODIMP CSVCommand::SVGetCellSize(long lFontIdentifier, long* plWidth, long* plHeight, long* plSpacing)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetCellSize
-
-STDMETHODIMP CSVCommand::SVSetCellSize(long lFontIdentifier, long lWidth, long lHeight)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetCellSize
-
-STDMETHODIMP CSVCommand::SVGetSearchSettings(long lFontIdentifier, long* plLength, double* pdStringAcceptance, double* pdCharacterAcceptance, BSTR* pbstrInvalidCharacter, BSTR* pbstrSearchSpeed)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetSearchSettings
-
-STDMETHODIMP CSVCommand::SVSetSearchSettings(long lFontIdentifier, long lLength, double dStringAcceptance, double dCharacterAcceptance, BSTR bstrInvalidCharacter, BSTR bstrSearchSpeed)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetSearchSettings
-
-STDMETHODIMP CSVCommand::SVGetPositionVariance(long lFontIdentifier, double* pdXDirection, double* pdYDirection)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetPositionVariance
-
-STDMETHODIMP CSVCommand::SVSetPositionVariance(long lFontIdentifier, double dXDirection, double dYDirection)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetPositionVariance
-
-STDMETHODIMP CSVCommand::SVGetSearchAngleSettings(long lFontIdentifier, double* pdSearchAngle, long* plInterpolation, double* pdDeltaPositive, double* pdDeltaNegative)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetSearchAngleSettings
-
-STDMETHODIMP CSVCommand::SVSetSearchAngleSettings(long lFontIdentifier, double dSearchAngle, long lInterpolation, double dDeltaPositive, double dDeltaNegative)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetSearchAngleSettings
-
-STDMETHODIMP CSVCommand::SVGetCharacterEnhancementSettings(long lFontIdentifier, long* plMorphIterations, double* pdThickenCharacters, long* plBrokenCharacters, long* plTouchingCharacters)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetCharacterEnhancementSettings
-
-STDMETHODIMP CSVCommand::SVSetCharacterEnhancementSettings(long lFontIdentifier, long lMorphIterations, double dThickenCharacters, long lBrokenCharacters, long lTouchingCharacters)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetCharacterEnhancementSettings
-
-STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BSTR bstrFontControls, BSTR bstrFontConstraints)
-{
-	HRESULT hr = S_OK;
-	SVMatroxOcr lFontHandle;
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			std::string FontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlffont.mfo"));
-			std::string ControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfcont.mfo"));
-			std::string ConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo"));
-			CFile oFile;
-
-			HRESULT MatroxCode;
-
-			if (nullptr != bstrFontFile)
-			{
-				oFile.Open(FontFileName.c_str(), CFile::modeCreate | CFile::modeWrite);
-				oFile.Write(bstrFontFile, ::SysStringByteLen(bstrFontFile));
-				oFile.Close();
-
-				if (!lFontHandle.empty())
-				{
-					MatroxCode = SVMatroxOcrInterface::Destroy(lFontHandle);
-				}
-				std::string l_strFontFileName = FontFileName;
-
-				MatroxCode = SVMatroxOcrInterface::RestoreFont(lFontHandle, l_strFontFileName, SVOcrRestore);
-
-				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontHandle(lFontIdentifier, lFontHandle);
-
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_46_LOADFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}// end if
-
-			if (nullptr != bstrFontControls)
-			{
-				oFile.Open(ControlsFileName.c_str(), CFile::modeCreate | CFile::modeWrite);
-				oFile.Write(bstrFontControls, ::SysStringByteLen(bstrFontControls));
-				oFile.Close();
-
-				std::string l_strControlsFileName = ControlsFileName;
-				MatroxCode = SVMatroxOcrInterface::RestoreFont(lFontHandle, l_strControlsFileName, SVOcrLoadControl);
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_46_LOADFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}// end if
-
-			if (nullptr != bstrFontConstraints)
-			{
-				oFile.Open(ConstraintsFileName.c_str(), CFile::modeCreate | CFile::modeWrite);
-				oFile.Write(bstrFontConstraints, ::SysStringByteLen(bstrFontConstraints));
-				oFile.Close();
-				MatroxCode = SVMatroxOcrInterface::RestoreFont(lFontHandle, ConstraintsFileName, SVOcrLoadConstraint);
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_46_LOADFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}// end if
-
-			// fill the character's / ID mapping for the font
-			double NbChar;
-			MatroxCode = SVMatroxOcrInterface::Get(lFontHandle, SVCharNumberInFont, NbChar);
-			std::string l_strCharacters;
-			MatroxCode = SVMatroxOcrInterface::Get(lFontHandle, SVCharInFont, l_strCharacters);
-
-			TheSVObserverApp.m_mgrRemoteFonts.CreateCharMapping(lFontIdentifier, CString(l_strCharacters.c_str()));
-		}// end if
-		else
-		{
-			hr = SVMSG_FONT_INVALID;
-		}// end else
-	}
-	else
-	{
-		hr = SVMSG_FONT_INVALID;
-	}
-
-	return hr;
-};// end SVLoadFont
-
-STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BSTR* bstrFontControls, BSTR* bstrFontConstraints)
-{
-	HRESULT hr = S_OK;
-	SVMatroxOcr lFontHandle;
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			std::string strFontFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsffont.mfo")).c_str();
-			std::string strControlsFileName		= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfcont.mfo")).c_str();
-			std::string strConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svsfstra.mfo")).c_str();
-			CFileStatus rStatus;
-			CFile oFile;
-
-			HRESULT MatroxCode;
-
-			if (nullptr != *bstrFontFile)
-			{
-				MatroxCode = SVMatroxOcrInterface::SaveFont(lFontHandle, strFontFileName, SVOcrSave);
-				if (S_OK != MatroxCode)
-				{
-
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_47_SAVEFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				CFile::GetStatus(strFontFileName.c_str(), rStatus);
-				unsigned long strSize = static_cast<unsigned long>(rStatus.m_size);
-				*bstrFontFile = ::SysAllocStringByteLen(nullptr, strSize);
-
-				oFile.Open(strFontFileName.c_str(), CFile::modeRead);
-				oFile.Read(*bstrFontFile, ::SysStringByteLen(*bstrFontFile));
-				oFile.Close();
-			}// end if
-
-			if (nullptr != *bstrFontControls)
-			{
-				MatroxCode = SVMatroxOcrInterface::SaveFont(lFontHandle, strControlsFileName, SVOcrSaveControl);
-				if (S_OK !=  MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_47_SAVEFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				CFile::GetStatus(strControlsFileName.c_str(), rStatus);
-
-				unsigned long strSize = static_cast<unsigned long>(rStatus.m_size);
-				*bstrFontControls = ::SysAllocStringByteLen(nullptr, strSize);
-
-				oFile.Open(strControlsFileName.c_str(), CFile::modeRead);
-				oFile.Read(*bstrFontControls, ::SysStringByteLen(*bstrFontControls));
-				oFile.Close();
-			}// end if
-
-			if (nullptr != *bstrFontConstraints)
-			{
-				MatroxCode = SVMatroxOcrInterface::SaveFont(lFontHandle, strConstraintsFileName, SVOcrSaveConstraint);
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_47_SAVEFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				CFile::GetStatus(strConstraintsFileName.c_str(), rStatus);
-				unsigned long strSize = static_cast<unsigned long>(rStatus.m_size);
-
-				*bstrFontConstraints = ::SysAllocStringByteLen(nullptr, strSize);
-
-				oFile.Open(strConstraintsFileName.c_str(), CFile::modeRead);
-				oFile.Read(*bstrFontConstraints, ::SysStringByteLen(*bstrFontConstraints));
-				oFile.Close();
-			}// end if
-		}// end if
-		else
-		{
-			hr = SVMSG_FONT_INVALID;
-		}// end else
-	}
-	else
-	{
-		hr = SVMSG_FONT_INVALID;
-	}
-	return hr;
-};// end SVSaveFont
-
-STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
-	BSTR bstrCalibrateString,
-	BSTR bstrCalibrateImage,
-	double dXMinSize,
-	double dXMaxSize,
-	double dXStepSize,
-	double dYMinSize,
-	double dYMaxSize,
-	double dYStepSize)
-{
-	CString strCalibrate(bstrCalibrateString, ::SysStringLen(bstrCalibrateString));
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-
-	HRESULT hr = SVSetStringLength(lFontIdentifier, strCalibrate.GetLength());
-
-	if (S_OK == hr)
-	{
-		HRESULT MatroxCode(S_OK);
-		SVMatroxOcr lFontHandle;
-
-		if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-		{
-			if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-			{
-				SVMatroxBuffer l_milImage = CreateImageFromBSTR(bstrCalibrateImage);
-
-				SVMatroxOcrCalibrateStruct l_CalStruct;
-				l_CalStruct.m_ImageBuff = l_milImage;
-				l_CalStruct.m_strCalString = strCalibrate;
-				l_CalStruct.m_TargetCharSizeXMax = dXMaxSize;
-				l_CalStruct.m_TargetCharSizeXMin = dXMinSize;
-				l_CalStruct.m_TargetCharSizeYMax = dYMaxSize;
-				l_CalStruct.m_TargetCharSizeYMin = dYMinSize;
-				l_CalStruct.m_TargetCharSizeXStep = dXStepSize;
-				l_CalStruct.m_TargetCharSizeYStep = dYStepSize;
-
-				MatroxCode = SVMatroxOcrInterface::CalibrateFont(lFontHandle, l_CalStruct);
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVCalibrateFont"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_45_CALIBRATEFONT_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-					//return some mil error
-				}
-				l_milImage.clear();
-			}// end if
-			else
-			{
-				hr = SVMSG_FONT_INVALID;
-			}// end else
-		}
-		else
-		{
-			hr = SVMSG_FONT_INVALID;
-		}
-	}
-
-	return hr;
-};// end SVCalibrateFont
-
-STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundString, BSTR bstrReadImage, double* dMatchScore)
-{
-	HRESULT hr = S_OK;
-	SVMatroxOcr lFontHandle;
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			HRESULT MatroxCode;
-			SVMatroxBuffer l_milImage = CreateImageFromBSTR(bstrReadImage);
-			__int64 milResult = M_NULL;
-			MatroxCode = SVMatroxOcrInterface::CreateResult(milResult);
-			// BRW - This l_Code is never checked.
-
-			lFontHandle.m_bVerify = false;
-			MatroxCode = SVMatroxOcrInterface::Execute(milResult, lFontHandle, l_milImage);
-
-			if (S_OK != MatroxCode)
-			{
-				SVMatroxStatusInformation l_info;
-				SVMatroxApplicationInterface::GetLastStatus(l_info);
-				SvDef::StringVector msgList;
-				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-				msgList.push_back(l_info.m_StatusString);
-				hr = SVMSG_48_READSTRING_ERROR;
-				Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-			}
-
-			// Process the OCR chars returned from MocrReadString();
-			long l_lLength = 0L;
-
-			MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrResultStringSize, l_lLength);
-
-			if (l_lLength != 0)
-			{
-				MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrStringScore, *dMatchScore);
-				// BRW - This l_Code is never checked.
-				std::string Text;
-				MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrString, Text);
-				*bstrFoundString = _bstr_t(Text.c_str()).Detach();
-			}// end if
-			else
-			{
-				*dMatchScore = 0.0F;
-				*bstrFoundString = _bstr_t(_T("")).Detach();
-			}// end else
-
-			l_milImage.clear();
-			if (S_OK !=  MatroxCode)
-			{
-				SVMatroxStatusInformation l_info;
-				SVMatroxApplicationInterface::GetLastStatus(l_info);
-				SvDef::StringVector msgList;
-				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-				msgList.push_back(l_info.m_StatusString);
-				hr = SVMSG_48_READSTRING_ERROR;
-				Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-			}
-
-			MatroxCode = SVMatroxOcrInterface::DestroyResult(milResult);
-			if (S_OK !=  MatroxCode)
-			{
-				SVMatroxStatusInformation l_info;
-				SVMatroxApplicationInterface::GetLastStatus(l_info);
-				SvDef::StringVector msgList;
-				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-				msgList.push_back(l_info.m_StatusString);
-				hr = SVMSG_48_READSTRING_ERROR;
-				Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-			}
-		}// end if
-		else
-		{
-			hr = SVMSG_FONT_INVALID;
-		}// end else
-	}
-	else
-	{
-		hr = SVMSG_FONT_INVALID;
-	}
-	return hr;
-};// end SVReadString
-
-STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyString, BSTR bstrVerifyImage, double* dMatchScore)
-{
-	CString strVerify(bstrVerifyString, ::SysStringLen(bstrVerifyString));
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-
-	HRESULT hr = SVSetStringLength(lFontIdentifier, strVerify.GetLength());
-
-	if (S_OK == hr)
-	{
-		SVMatroxOcr lFontHandle;
-
-		if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-		{
-			if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-			{
-				HRESULT MatroxCode(S_OK);
-				SVMatroxBuffer l_milImage = CreateImageFromBSTR(bstrVerifyImage);
-				__int64 milResult = M_NULL;
-				MatroxCode = SVMatroxOcrInterface::CreateResult(milResult);
-
-				if (S_OK !=  MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				lFontHandle.m_bVerify = true;
-				lFontHandle.m_VerifyString = strVerify;
-
-				SVMatroxOcrInterface::Execute(milResult, lFontHandle, l_milImage);
-
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				// Process the OCV chars returned from MocrVerifyString();
-				long l_lLength = 0L;
-
-				MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrResultStringSize, l_lLength);
-
-				if (l_lLength != 0L)
-				{
-					MatroxCode = SVMatroxOcrInterface::GetResult(milResult, SVOcrStringScore, *dMatchScore);
-				}// end if
-				else
-				{
-					*dMatchScore = 0.0F;
-				}// end else
-
-				l_milImage.clear();
-
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				MatroxCode = SVMatroxOcrInterface::DestroyResult(milResult);
-
-				if (S_OK != MatroxCode)
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus(l_info);
-					SvDef::StringVector msgList;
-					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl::Format(_T("%d"), MatroxCode));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_49_VERIFYSTRING_ERROR;
-					Exception.setMessage(hr, SvStl::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}// end if
-			else
-			{
-				hr = SVMSG_FONT_INVALID;
-			}// end else
-		}
-		else
-		{
-			hr = SVMSG_FONT_INVALID;
-		}
-	}
-
-	return hr;
-};// end SVVerifyString
-
-STDMETHODIMP CSVCommand::SVGetConstraints(long lFontIdentifier, long* plPosition, long* plType, BSTR* pbstrValues)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetConstraints
-
-STDMETHODIMP CSVCommand::SVSetConstraints(long lFontIdentifier, long lPosition, long lType, BSTR bstrValues)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetConstraints
-
-STDMETHODIMP CSVCommand::SVCreateNew(long lFontIdentifier, BSTR bstrImage)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end CreateNew
-
-STDMETHODIMP CSVCommand::SVSetTrainingImage(long lFontIdentifier, BSTR bstrImage)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end SetTrainingImage
-
-STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, long lYPosition, long lHeight, long lWidth, BSTR bstrLabel, long *lCharId)
-{
-	HRESULT hr = SVMSG_FONT_INVALID; // Invalid Font
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			SVMatroxBuffer milFontImage;
-			if (TheSVObserverApp.m_mgrRemoteFonts.GetFontImage(lFontIdentifier, milFontImage))
-			{
-				HRESULT MatroxCode;
-
-				long lOcrWidth;
-				long lOcrHeight;
-
-				MatroxCode = SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeX, lOcrWidth);
-				KeepPrevError(MatroxCode, SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeY, lOcrHeight));
-
-				SVMatroxBuffer milTmpID;
-				SVMatroxBufferCreateChildStruct l_Create(milFontImage);
-				l_Create.m_data.m_lOffX = lXPosition;
-				l_Create.m_data.m_lOffY = lYPosition;
-				l_Create.m_data.m_lSizeX = lWidth;
-				l_Create.m_data.m_lSizeY = lHeight;
-
-				SVMatroxBufferInterface::Create(milTmpID, l_Create);
-				if (!milTmpID.empty())
-				{
-					try
-					{
-						SVMatroxOcr milNewFontID;
-						if (TheSVObserverApp.m_mgrRemoteFonts.CopyFont(lFontHandle, milNewFontID, 1))
-						{
-							long lId;
-							std::string Text = SvUl::createStdString(_bstr_t(bstrLabel));
-
-							KeepPrevError(MatroxCode, SVMatroxOcrInterface::CopyFont(milNewFontID, milTmpID, SVOcrCopytoFont, Text));
-							if (S_OK != MatroxCode)
-							{
-								TheSVObserverApp.m_mgrRemoteFonts.UpdateFontHandle(lFontIdentifier, milNewFontID);
-								TheSVObserverApp.m_mgrRemoteFonts.AddFontChar(lFontIdentifier, Text[0], &lId);
-
-								*lCharId = lId;
-								SVMatroxOcrInterface::Destroy(lFontHandle);
-							}
-							else
-							{
-								//there was an error.  
-								hr = SVMSG_FONT_COPY_FAIL;
-								return hr;
-							}
-						}
-						else
-						{
-							hr = SVMSG_FONT_COPY_FAIL;
-						}
-					}
-					catch (...)
-					{
-						hr = SVMSG_FONT_COPY_THREW_EXCEPTION;
-					}
-				}
-				milTmpID.clear();
-
-				hr = S_OK;
-			}
-			else
-			{
-				hr = SVMSG_FONT_IMAGE_FAIL;
-			}
-		}// end if
-	}
-
-	return hr;
-};// end AddCharacter
-
-STDMETHODIMP CSVCommand::SVAddCharacters(long lFontIdentifier, BSTR bstrLabelList)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end AddCharacters
-
-STDMETHODIMP CSVCommand::SVDeleteCharacters(long lFontIdentifier, SAFEARRAY* psaCharIds)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			long lNumberOfChars = psaCharIds->rgsabound[0].cElements;
-
-			for (long l = 0; l < lNumberOfChars; l++)
-			{
-				unsigned long ulVal;
-
-				HRESULT hrStatus = SafeArrayGetElementNoCopy(psaCharIds, &l, &ulVal);
-				if (FAILED(hrStatus))
-				{
-					hr = S_FALSE;
-					break;
-				}
-				TheSVObserverApp.m_mgrRemoteFonts.DeleteFontChar(lFontIdentifier, lFontHandle, ulVal);
-			}
-
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end DeleteCharacters
-
-STDMETHODIMP CSVCommand::SVThresholdImage(long lFontIdentifier, BSTR bstrImage, long lThreshold, BSTR* pbstrThresholdImage)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end ThresholdImage
-
-STDMETHODIMP CSVCommand::SVGetFontCharacterCount(long lFontIdentifier, long* plCharacterCount)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			hr = S_OK;
-		}// end if
-	}
-	return hr;
-};// end GetFontCharacterCount
-
-STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID, BSTR* pbstrLabelImage)
-{
-	HRESULT hr = SVMSG_FONT_INVALID;
-	SVMatroxOcr lFontHandle;
-	HRESULT l_Code;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(lFontIdentifier))
-		{
-			SVMatroxBuffer lCharHandle;
-			if (TheSVObserverApp.m_mgrRemoteFonts.GetFontCharImage(lFontIdentifier, lFontHandle, lCharID, lCharHandle))
-			{
-				SVImageInfoClass ImageInfo;
-
-				long l_lValue = 0;
-
-				ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
-				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeX, l_lValue);
-				ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, l_lValue);
-
-				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeY, l_lValue);
-				ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, l_lValue);
-
-				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVSizeBand, l_lValue);
-				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lValue);
-
-				l_Code = SVMatroxBufferInterface::Get(lCharHandle, SVType, l_lValue);
-				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lValue);
-
-				SvOi::SVImageBufferHandlePtr ImageBufferHandle {new SVImageBufferHandleImage(lCharHandle)};
-
-				ImageToBSTR(ImageInfo, ImageBufferHandle, pbstrLabelImage);
-				lCharHandle.clear();
-
-				hr = S_OK;
-			}
-			else
-			{
-				hr = SVMSG_NO_FONT_FOUND;
-			}
-		}// end if
-	}
-	return hr;
-};// end GetFontCharacter
-
-STDMETHODIMP CSVCommand::SVGetStringLength(long p_lFontIdentifier, double* p_plLength)
-{
-	HRESULT l_hr = S_FALSE;
-	SVMatroxOcr l_lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, l_lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
-		{
-			SVMatroxOcrInterface::Get(l_lFontHandle, SVOcrStringSize, *p_plLength);
-
-			l_hr = S_OK;
-		}// end if
-	}
-	return l_hr;
-};// end GetCellSize
-
-STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLength)
-{
-	HRESULT l_hr = S_FALSE;
-	SVMatroxOcr l_lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, l_lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
-		{
-			double l_dMaxLength = 0.0;
-
-			SVMatroxOcrInterface::Get(l_lFontHandle, SVOcrStringSizeMax, l_dMaxLength);
-
-			if (l_dMaxLength < p_dLength)
-			{
-				l_hr = SVMSG_43_FONT_STR_LEN_GREATER_THAN_MAX;
-			}
-			else
-			{
-				SVMatroxOcrInterface::Set(l_lFontHandle, SVOcrStringSize, p_dLength);
-
-				l_hr = S_OK;
-			}
-		}// end if
-	}
-	return l_hr;
-};// end SetCellSize
-
-// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup yet.
-
-// New functions for OCR
-
-STDMETHODIMP CSVCommand::SVLoadFontImage(long p_lFontIdentifier, BSTR bstrFontImage)
-{
-	HRESULT l_hr = S_OK;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
-		{
-			SVMatroxBuffer l_milImage = CreateImageFromBSTR(bstrFontImage);
-
-			TheSVObserverApp.m_mgrRemoteFonts.AddFontImage(p_lFontIdentifier, l_milImage);
-		}
-	}
-
-	return l_hr;
-}
-
-STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bstrCharacterList, SAFEARRAY** ppsaCharIds)
-{
-	HRESULT l_hr = S_OK;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
-		{
-			double NbChar;
-			SVMatroxOcrInterface::Get(lFontHandle, SVCharNumberInFont, NbChar);
-			std::string Characters;
-			SVMatroxOcrInterface::Get(lFontHandle, SVCharInFont, Characters);
-
-			*bstrCharacterList = _bstr_t(Characters.c_str()).Detach();
-
-			SAFEARRAYBOUND saBounds[1];
-			saBounds[0].lLbound = 0;
-			saBounds[0].cElements = static_cast<long> (Characters.size());
-
-			*ppsaCharIds = ::SafeArrayCreate(VT_UI4, 1, saBounds);
-
-			TheSVObserverApp.m_mgrRemoteFonts.GetCharIdSafeArray(p_lFontIdentifier, ppsaCharIds);
-		}
-		else
-		{
-			l_hr = S_FALSE;
-		}
-	}
-	else
-	{
-		l_hr = S_FALSE;
-	}
-	return l_hr;
-}
-
-STDMETHODIMP CSVCommand::SVGetExpectedTargetCharacterSize(long p_lFontIdentifier, long *plWidth, long *plHeight)
-{
-	HRESULT l_hr = S_OK;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
-		{
-			SVMatroxOcrInterface::Get(lFontHandle, SVTargetCharSizeX, *plWidth);
-			SVMatroxOcrInterface::Get(lFontHandle, SVTargetCharSizeY, *plHeight);
-		}
-		else
-		{
-			l_hr = SVMSG_NO_FONT_FOUND;
-		}
-	}
-	else
-	{
-		l_hr = SVMSG_NO_FONT_FOUND;
-	}
-	return l_hr;
-}
-
-STDMETHODIMP CSVCommand::SVGetFontCharacterSize(long p_lFontIdentifier, long *plWidth, long *plHeight)
-{
-	HRESULT l_hr = S_OK;
-	SVMatroxOcr lFontHandle;
-
-	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
-	{
-		if (TheSVObserverApp.m_mgrRemoteFonts.IsValidFont(p_lFontIdentifier, lFontHandle) &&
-			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime(p_lFontIdentifier))
-		{
-			HRESULT l_Code;
-
-			l_Code = SVMatroxOcrInterface::Get(lFontHandle, SVCharCellSizeX, *plWidth);
-			l_Code = SVMatroxOcrInterface::Get(lFontHandle, SVCharCellSizeY, *plHeight);
-		}
-		else
-		{
-			l_hr = SVMSG_NO_FONT_FOUND;
-		}
-	}
-	else
-	{
-		l_hr = SVMSG_NO_FONT_FOUND;
-	}
-	return l_hr;
-}
-
 // This method is used to connect the event object to the application.
 HRESULT CSVCommand::StoreEventObserver(DWORD dwCookie, CComPtr< CSVCommand > p_pObserver)
 {
@@ -3573,9 +2368,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 		for (int i = 0; i < static_cast<int>(nCount); i++)
 		{
 			// Get OutObjectInfoStruct...
-			SVOutObjectInfoStruct* pInfoItem = nullptr;
-
-			pInfoItem = l_OutputList.GetAt(i);
+			SVOutObjectInfoStruct* pInfoItem = l_OutputList.GetAt(i);
 
 			SVObjectReference ObjectRef;
 			if (pInfoItem)
@@ -3625,7 +2418,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			l_Index[1] = 0;
 			_variant_t Value;
 			Value.SetString(SelectedObjects[i]->GetCompleteName().c_str());
-			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
+			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Writable
 			l_Index[1] = 1;
@@ -3633,7 +2426,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
-			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
+			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Data Type
 			l_Index[1] = 2;
@@ -3643,7 +2436,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			{
 				Value.SetString(pValueObject->getTypeName().c_str());
 			}
-			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
+			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Enumeration List.
 			l_Index[1] = 3;
@@ -3775,7 +2568,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			l_Index[1] = 0;
 			_variant_t Value;
 			Value.SetString(objectList[i]->GetCompleteName().c_str());
-			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
+			/*hr =*/ ::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Writable
 			l_Index[1] = 1;
@@ -3783,7 +2576,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
-			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
+			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Published Image
 			l_Index[1] = 2;
@@ -3791,7 +2584,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			Value.ChangeType(VT_BOOL);
 			Value = (objectList[i]->ObjectAttributesSet() & SvPb::publishResultImage) != 0;
 			//l_saData.PutElement( l_Index, l_vTmp );
-			hr = ::SafeArrayPutElement(l_psaData, l_Index, &Value);
+			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Fully Qualified Source Image Name
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (objectList[i]->GetTool());
@@ -3810,7 +2603,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 					for (long l_lIndex = 0; l_lIndex < l_lSize; l_lIndex++)
 					{
 						std::string strTmp;
-						HRESULT l_hr = pSourceNames->getValue(strTmp, l_lIndex);
+						/*HRESULT l_hr =*/ pSourceNames->getValue(strTmp, l_lIndex);
 						_bstr_t bstTmp = strTmp.c_str();
 						SafeArrayPutElement(l_psaTemp, &l_lIndex, bstTmp.GetBSTR());
 					}
@@ -3837,73 +2630,6 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 		hr = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 	}
 	return hr;
-}
-
-STDMETHODIMP CSVCommand::SVConstructCommand(long CommandType, ISVRemoteCommand **ppCommand)
-{
-	HRESULT l_Status = S_OK;
-
-	if (nullptr != ppCommand)
-	{
-		if (nullptr != *ppCommand)
-		{
-			(*ppCommand)->Release();
-
-			*ppCommand = nullptr;
-		}
-
-		SvOi::ICommandPtr pCommand = SVMatroxCommandFactorySingleton::Instance().CreateCommand(CommandType);
-
-		if (nullptr == pCommand)
-		{
-			pCommand = SVFileSystemCommandFactorySingleton::Instance().CreateCommand(CommandType);
-		}
-
-		if (nullptr != pCommand)
-		{
-			CComPtr< ISVRemoteCommand > pRemoteCommandPtr;
-
-			l_Status = pRemoteCommandPtr.CoCreateInstance(__uuidof(SVRemoteCommand));
-
-			if (nullptr == pRemoteCommandPtr.p)
-			{
-				if (S_OK == l_Status)
-				{
-					l_Status = E_FAIL;
-				}
-			}
-
-			if (S_OK == l_Status)
-			{
-				// This has issues when using _ATL_DEBUG_INTERFACES...
-				SVRemoteCommand* l_pRemoteCommand = dynamic_cast<SVRemoteCommand*>(pRemoteCommandPtr.p);
-
-				if (nullptr != l_pRemoteCommand)
-				{
-					l_pRemoteCommand->SetCommand(pCommand);
-				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-			}
-
-			if (S_OK == l_Status)
-			{
-				l_Status = pRemoteCommandPtr.QueryInterface(ppCommand);
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-	}
-
-	return l_Status;
 }
 
 STDMETHODIMP CSVCommand::SVIsAvailiable()

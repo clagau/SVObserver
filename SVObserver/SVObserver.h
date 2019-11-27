@@ -19,7 +19,6 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVGlobal.h"
-#include "SVRemoteFontManager.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
@@ -327,8 +326,6 @@ private:
 #pragma region Public member variables
 public:
 	SVSecurityManager m_svSecurityMgr;	// Security
-	// For managing remotely created/edited fonts through the SIAC
-	SVRemoteFontManager m_mgrRemoteFonts;
 
 	typedef std::map<UINT, SvLib::SVUtilityIniClass> UtilityMenuMap;
 	UtilityMenuMap m_UtilityMenu;

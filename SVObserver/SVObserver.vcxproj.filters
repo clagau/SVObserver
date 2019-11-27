@@ -372,9 +372,6 @@
     <ClCompile Include="SVRemoteCommandData.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRemoteFontManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVRemoteInputsView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -914,9 +911,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteControlConstants.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteFontManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteInputsView.h">

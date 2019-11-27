@@ -407,71 +407,72 @@ public:
 
 
 	// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup.
-	STDMETHOD(SVConnectFont)(long* lFontIdentifier);
+	STDMETHOD(SVConnectFont)(long* lFontIdentifier)	{ return E_FAIL; };
 
-	STDMETHOD(SVDisconnectFont)(long lFontIdentifier);
+	STDMETHOD(SVDisconnectFont)(long lFontIdentifier) { return E_FAIL; };
 
-	STDMETHOD(SVGetCellSize)(long lFontIdentifier, long* plWidth, long* plHeight, long* plSpacing);
+	STDMETHOD(SVGetCellSize)(long lFontIdentifier, long* plWidth, long* plHeight, long* plSpacing) { return E_FAIL; };
 
-	STDMETHOD(SVSetCellSize)(long lFontIdentifier, long lWidth, long lHeight);
+	STDMETHOD(SVSetCellSize)(long lFontIdentifier, long lWidth, long lHeight) { return E_FAIL; };
 
-	STDMETHOD(SVGetSearchSettings)(long lFontIdentifier, long* plLength, double* pdStringAcceptance, double* pdCharacterAcceptance, BSTR* pbstrInvalidCharacter, BSTR* pbstrSearchSpeed);
+	STDMETHOD(SVGetSearchSettings)(long lFontIdentifier, long* plLength, double* pdStringAcceptance, double* pdCharacterAcceptance, BSTR* pbstrInvalidCharacter, BSTR* pbstrSearchSpeed) { return E_FAIL; };
 
-	STDMETHOD(SVSetSearchSettings)(long lFontIdentifier, long lLength, double dStringAcceptance, double dCharacterAcceptance, BSTR bstrInvalidCharacter, BSTR bstrSearchSpeed);
+	STDMETHOD(SVSetSearchSettings)(long lFontIdentifier, long lLength, double dStringAcceptance, double dCharacterAcceptance, BSTR bstrInvalidCharacter, BSTR bstrSearchSpeed) { return E_FAIL; };
 
-	STDMETHOD(SVGetPositionVariance)(long lFontIdentifier, double* pdXDirection, double* pdYDirection);
+	STDMETHOD(SVGetPositionVariance)(long lFontIdentifier, double* pdXDirection, double* pdYDirection) { return E_FAIL; };
  
-	STDMETHOD(SVSetPositionVariance)(long lFontIdentifier, double dXDirection, double dYDirection);
+	STDMETHOD(SVSetPositionVariance)(long lFontIdentifier, double dXDirection, double dYDirection) { return E_FAIL; };
 
-	STDMETHOD(SVGetSearchAngleSettings)(long lFontIdentifier, double* pdSearchAngle, long* plInterpolation, double* pdDeltaPositive, double* pdDeltaNegative);
+	STDMETHOD(SVGetSearchAngleSettings)(long lFontIdentifier, double* pdSearchAngle, long* plInterpolation, double* pdDeltaPositive, double* pdDeltaNegative) { return E_FAIL; };
 
-	STDMETHOD(SVSetSearchAngleSettings)(long lFontIdentifier, double dSearchAngle, long lInterpolation, double dDeltaPositive, double dDeltaNegative);
+	STDMETHOD(SVSetSearchAngleSettings)(long lFontIdentifier, double dSearchAngle, long lInterpolation, double dDeltaPositive, double dDeltaNegative) { return E_FAIL; };
 
-	STDMETHOD(SVGetCharacterEnhancementSettings)(long lFontIdentifier, long* plMorphIterations, double* pdThickenCharacters, long* plBrokenCharacters, long* plTouchingCharacters);
+	STDMETHOD(SVGetCharacterEnhancementSettings)(long lFontIdentifier, long* plMorphIterations, double* pdThickenCharacters, long* plBrokenCharacters, long* plTouchingCharacters) { return E_FAIL; };
 
-	STDMETHOD(SVSetCharacterEnhancementSettings)(long lFontIdentifier, long lMorphIterations, double dThickenCharacters, long lBrokenCharacters, long lTouchingCharacters);
+	STDMETHOD(SVSetCharacterEnhancementSettings)(long lFontIdentifier, long lMorphIterations, double dThickenCharacters, long lBrokenCharacters, long lTouchingCharacters) { return E_FAIL; };
 
-	STDMETHOD(SVLoadFont)(long lFontIdentifier, BSTR bstrFontFile, BSTR bstrFontControls, BSTR bstrFontConstraints);
+	STDMETHOD(SVLoadFont)(long lFontIdentifier, BSTR bstrFontFile, BSTR bstrFontControls, BSTR bstrFontConstraints) { return E_FAIL; };
 
-	STDMETHOD(SVSaveFont)(long lFontIdentifier, BSTR* bstrFontFile, BSTR* bstrFontControls, BSTR* bstrFontConstraints);
+	STDMETHOD(SVSaveFont)(long lFontIdentifier, BSTR* bstrFontFile, BSTR* bstrFontControls, BSTR* bstrFontConstraints) { return E_FAIL; };
 
-	STDMETHOD(SVCalibrateFont)(long lFontIdentifier, BSTR bstrCalibrateString, BSTR bstrCalibrateImage, double dXMinSize, double dXMaxSize, double dXStepSize, double dYMinSize, double dYMaxSize, double dYStepSize );
+	STDMETHOD(SVCalibrateFont)(long lFontIdentifier, BSTR bstrCalibrateString, BSTR bstrCalibrateImage, double dXMinSize, double dXMaxSize, double dXStepSize, double dYMinSize, double dYMaxSize, double dYStepSize ) { return E_FAIL; };
 
-	STDMETHOD(SVReadString)(long lFontIdentifier, BSTR* bstrFoundString, BSTR bstrReadImage, double* dMatchScore );
+	STDMETHOD(SVReadString)(long lFontIdentifier, BSTR* bstrFoundString, BSTR bstrReadImage, double* dMatchScore ) { return E_FAIL; };
 
-	STDMETHOD(SVVerifyString)(long lFontIdentifier, BSTR bstrVerifyString, BSTR bstrVerifyImage, double* dMatchScore );
+	STDMETHOD(SVVerifyString)(long lFontIdentifier, BSTR bstrVerifyString, BSTR bstrVerifyImage, double* dMatchScore ) { return E_FAIL; };
 
-	STDMETHOD(SVGetConstraints)(long lFontIdentifier, long* plPosition, long* plType, BSTR* pbstrValues);
+	STDMETHOD(SVGetConstraints)(long lFontIdentifier, long* plPosition, long* plType, BSTR* pbstrValues) { return E_FAIL; };
 
-	STDMETHOD(SVSetConstraints)(long lFontIdentifier, long lPosition, long lType, BSTR bstrValues);
+	STDMETHOD(SVSetConstraints)(long lFontIdentifier, long lPosition, long lType, BSTR bstrValues) { return E_FAIL; };
 
-	STDMETHOD(SVCreateNew)(long lFontIdentifier, BSTR bstrImage);
+	STDMETHOD(SVCreateNew)(long lFontIdentifier, BSTR bstrImage) { return E_FAIL; };
 
-	STDMETHOD(SVSetTrainingImage)(long lFontIdentifier, BSTR bstrImage);
+	STDMETHOD(SVSetTrainingImage)(long lFontIdentifier, BSTR bstrImage) { return E_FAIL; };
 
-	STDMETHOD(SVAddCharacter)(long lFontIdentifier, long lXPosition, long lYPosition, long lHeight, long lWidth, BSTR bstrLabel, long *lCharID);
+	STDMETHOD(SVAddCharacter)(long lFontIdentifier, long lXPosition, long lYPosition, long lHeight, long lWidth, BSTR bstrLabel, long *lCharID) { return E_FAIL; };
 
-	STDMETHOD(SVAddCharacters)(long lFontIdentifier, BSTR bstrLabelList);
+	STDMETHOD(SVAddCharacters)(long lFontIdentifier, BSTR bstrLabelList) { return E_FAIL; };
 
-	STDMETHOD(SVDeleteCharacters)(long lFontIdentifier, SAFEARRAY* psaCharIds);
+	STDMETHOD(SVDeleteCharacters)(long lFontIdentifier, SAFEARRAY* psaCharIds) { return E_FAIL; };
 
-	STDMETHOD(SVThresholdImage)(long lFontIdentifier, BSTR bstrImage, long lThreshold, BSTR* pbstrThresholdImage);
+	STDMETHOD(SVThresholdImage)(long lFontIdentifier, BSTR bstrImage, long lThreshold, BSTR* pbstrThresholdImage) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacterCount)(long lFontIdentifier, long* plCharacterCount);
+	STDMETHOD(SVGetFontCharacterCount)(long lFontIdentifier, long* plCharacterCount) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacter)(long lFontIdentifier, long lIndex, BSTR* pbstrLabelImage);
+	STDMETHOD(SVGetFontCharacter)(long lFontIdentifier, long lIndex, BSTR* pbstrLabelImage) { return E_FAIL; };
 
-	STDMETHOD(SVGetStringLength)(long p_lFontIdentifier, double* p_pdLength );
+	STDMETHOD(SVGetStringLength)(long p_lFontIdentifier, double* p_pdLength ) { return E_FAIL; };
 
-	STDMETHOD(SVSetStringLength)(long p_lFontIdentifier, double p_dLength );
+	STDMETHOD(SVSetStringLength)(long p_lFontIdentifier, double p_dLength ) { return E_FAIL; };
 
-	STDMETHOD(SVLoadFontImage)(long p_lFontIdentifier, BSTR bstrFontImage );
+	STDMETHOD(SVLoadFontImage)(long p_lFontIdentifier, BSTR bstrFontImage ) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacterList)(long p_lFontIdentifier, BSTR *bstrCharacterList, SAFEARRAY** ppsaCharIds);
+	STDMETHOD(SVGetFontCharacterList)(long p_lFontIdentifier, BSTR *bstrCharacterList, SAFEARRAY** ppsaCharIds) { return E_FAIL; };
 
-	STDMETHOD(SVGetExpectedTargetCharacterSize)(long p_lFontIdentifier, long *plWidth, long *plHeight);
+	STDMETHOD(SVGetExpectedTargetCharacterSize)(long p_lFontIdentifier, long *plWidth, long *plHeight) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacterSize)(long p_lFontIdentifier, long *plWidth, long *plHeight);
+	STDMETHOD(SVGetFontCharacterSize)(long p_lFontIdentifier, long *plWidth, long *plHeight) { return E_FAIL; };
+
 		// **********************************************************************************
 		//////// *********** Transfer Definition List Functions ************** //////////////
 		// **********************************************************************************
@@ -484,15 +485,13 @@ public:
 														  long* p_plVersion, 
 														  VARIANT* p_pvData);
 
-  STDMETHOD(SVConstructCommand)( long p_CommandType, ISVRemoteCommand **p_ppCommand );
+  STDMETHOD(SVConstructCommand)( long p_CommandType, ISVRemoteCommand **p_ppCommand ) { return E_FAIL; };
 
   STDMETHOD(SVIsAvailiable)();
 
 public:
 	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SvOi::SVImageBufferHandlePtr ImageHandle, BSTR *pbstr);
 	static HRESULT SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
-
-	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );
 
     static HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
     static HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);

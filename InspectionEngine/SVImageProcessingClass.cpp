@@ -663,14 +663,7 @@ HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass&
 			}
 			default:
 			{
-				if (!rInfo.getDibBufferFlag())
-				{
-					format = SVBufAttImageProc;
-				}
-				else
-				{
-					format = SVBufAttImageProcDib;
-				}
+				format = rInfo.getDibBufferFlag() ? SVBufAttImageProcDib : SVBufAttImageProc;
 			}
 		}
 	}

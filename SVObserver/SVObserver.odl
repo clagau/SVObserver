@@ -336,63 +336,63 @@ library SVObserver
 		[id(0x60020027), helpstring("method SVSetRemoteInput")] HRESULT SVSetRemoteInput([in] long lIndex, [in] VARIANT vtValue);
 
 		// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup.
-		[id(0x60020028), helpstring("method SVConnectFont")] HRESULT SVConnectFont([in,out]long* lFontIdentifier);
+		[id(0x60020028), helpstring("method SVConnectFont (out of order)")] HRESULT SVConnectFont([in,out]long* lFontIdentifier);
 
-		[id(0x60020029), helpstring("method SVDisconnectFont")] HRESULT SVDisconnectFont([in]long lFontIdentifier);
+		[id(0x60020029), helpstring("method SVDisconnectFont (out of order)")] HRESULT SVDisconnectFont([in]long lFontIdentifier);
 
-		[id(0x6002002a), helpstring("method SVGetCellSize.")] HRESULT SVGetCellSize([in]long lFontIdentifier, [in,out]long* plWidth, [in,out]long* plHeight, [in,out]long* plSpacing);
+		[id(0x6002002a), helpstring("method SVGetCellSize (out of order)")] HRESULT SVGetCellSize([in]long lFontIdentifier, [in,out]long* plWidth, [in,out]long* plHeight, [in,out]long* plSpacing);
 
-		[id(0x6002002b), helpstring("method SVSetCellSize.")] HRESULT SVSetCellSize([in]long lFontIdentifier, [in]long lWidth, [in]long lHeight);
+		[id(0x6002002b), helpstring("method SVSetCellSize (out of order)")] HRESULT SVSetCellSize([in]long lFontIdentifier, [in]long lWidth, [in]long lHeight);
 
-		[id(0x6002002c), helpstring("method SVGetSearchSettings.")] HRESULT SVGetSearchSettings([in]long lFontIdentifier, [in,out]long* plLength, [in,out]double* pdStringAcceptance, [in,out]double* pdCharacterAcceptance, [in,out]BSTR* pbstrInvalidCharacter, [in,out]BSTR* pbstrSearchSpeed);
+		[id(0x6002002c), helpstring("method SVGetSearchSettings (out of order)")] HRESULT SVGetSearchSettings([in]long lFontIdentifier, [in,out]long* plLength, [in,out]double* pdStringAcceptance, [in,out]double* pdCharacterAcceptance, [in,out]BSTR* pbstrInvalidCharacter, [in,out]BSTR* pbstrSearchSpeed);
 
-		[id(0x6002002d), helpstring("method SVSetSearchSettings.")] HRESULT SVSetSearchSettings([in]long lFontIdentifier, [in]long lLength, [in]double dStringAcceptance, [in]double dCharacterAcceptance, [in]BSTR bstrInvalidCharacter, [in]BSTR bstrSearchSpeed);
+		[id(0x6002002d), helpstring("method SVSetSearchSettings (out of order)")] HRESULT SVSetSearchSettings([in]long lFontIdentifier, [in]long lLength, [in]double dStringAcceptance, [in]double dCharacterAcceptance, [in]BSTR bstrInvalidCharacter, [in]BSTR bstrSearchSpeed);
 
-		[id(0x6002002e), helpstring("method SVGetPositionVariance.")] HRESULT SVGetPositionVariance([in]long lFontIdentifier, [in,out]double* pdXDirection, [in,out]double* pdYDirection);
+		[id(0x6002002e), helpstring("method SVGetPositionVariance (out of order)")] HRESULT SVGetPositionVariance([in]long lFontIdentifier, [in,out]double* pdXDirection, [in,out]double* pdYDirection);
 	 
-		[id(0x6002002f), helpstring("method SVSetPositionVariance.")] HRESULT SVSetPositionVariance([in]long lFontIdentifier, [in]double dXDirection, [in]double dYDirection);
+		[id(0x6002002f), helpstring("method SVSetPositionVariance (out of order)")] HRESULT SVSetPositionVariance([in]long lFontIdentifier, [in]double dXDirection, [in]double dYDirection);
 
-		[id(0x60020030), helpstring("method SVGetSearchAngleSettings.")] HRESULT SVGetSearchAngleSettings([in]long lFontIdentifier, [in,out]double* pdSearchAngle, [in,out]long* plInterpolation, [in,out]double* pdDeltaPositive, [in,out]double* pdDeltaNegative);
+		[id(0x60020030), helpstring("method SVGetSearchAngleSettings (out of order)")] HRESULT SVGetSearchAngleSettings([in]long lFontIdentifier, [in,out]double* pdSearchAngle, [in,out]long* plInterpolation, [in,out]double* pdDeltaPositive, [in,out]double* pdDeltaNegative);
 
-		[id(0x60020031), helpstring("method SVSetSearchAngleSettings.")] HRESULT SVSetSearchAngleSettings([in]long lFontIdentifier, [in]double dSearchAngle, [in]long lInterpolation, [in]double dDeltaPositive, [in]double dDeltaNegative);
+		[id(0x60020031), helpstring("method SVSetSearchAngleSettings (out of order)")] HRESULT SVSetSearchAngleSettings([in]long lFontIdentifier, [in]double dSearchAngle, [in]long lInterpolation, [in]double dDeltaPositive, [in]double dDeltaNegative);
 
-		[id(0x60020032), helpstring("method SVGetCharacterEnhancementSettings.")] HRESULT SVGetCharacterEnhancementSettings([in]long lFontIdentifier, [in,out]long* plMorphIterations, [in,out]double* pdThickenCharacters, [in,out]long* plBrokenCharacters, [in,out]long* plTouchingCharacters);
+		[id(0x60020032), helpstring("method SVGetCharacterEnhancementSettings (out of order)")] HRESULT SVGetCharacterEnhancementSettings([in]long lFontIdentifier, [in,out]long* plMorphIterations, [in,out]double* pdThickenCharacters, [in,out]long* plBrokenCharacters, [in,out]long* plTouchingCharacters);
 
-		[id(0x60020033), helpstring("method SVSetCharacterEnhancementSettings.")] HRESULT SVSetCharacterEnhancementSettings([in]long lFontIdentifier, [in]long lMorphIterations, [in]double dThickenCharacters, [in]long lBrokenCharacters, [in]long lTouchingCharacters);
+		[id(0x60020033), helpstring("method SVSetCharacterEnhancementSettings (out of order)")] HRESULT SVSetCharacterEnhancementSettings([in]long lFontIdentifier, [in]long lMorphIterations, [in]double dThickenCharacters, [in]long lBrokenCharacters, [in]long lTouchingCharacters);
 
-		[id(0x60020034), helpstring("method SVLoadFont")] HRESULT SVLoadFont([in]long lFontIdentifier, [in]BSTR bstrFontFile, [in]BSTR bstrFontControls, [in]BSTR bstrFontConstraints);
+		[id(0x60020034), helpstring("method SVLoadFont (out of order)")] HRESULT SVLoadFont([in]long lFontIdentifier, [in]BSTR bstrFontFile, [in]BSTR bstrFontControls, [in]BSTR bstrFontConstraints);
 
-		[id(0x60020035), helpstring("method SVSaveFont")] HRESULT SVSaveFont([in]long lFontIdentifier, [in,out]BSTR* bstrFontFile, [in,out]BSTR* bstrFontControls, [in,out]BSTR* bstrFontConstraints);
+		[id(0x60020035), helpstring("method SVSaveFont (out of order)")] HRESULT SVSaveFont([in]long lFontIdentifier, [in,out]BSTR* bstrFontFile, [in,out]BSTR* bstrFontControls, [in,out]BSTR* bstrFontConstraints);
 
-		[id(0x60020036), helpstring("method SVCalibrateFont")] HRESULT SVCalibrateFont([in]long lFontIdentifier, [in]BSTR bstrCalibrateString, [in]BSTR bstrCalibrateImage, [in]double dXMinSize, [in]double dXMaxSize, [in]double dXStepSize, [in]double dYMinSize, [in]double dYMaxSize, [in]double dYStepSize);
+		[id(0x60020036), helpstring("method SVCalibrateFont (out of order)")] HRESULT SVCalibrateFont([in]long lFontIdentifier, [in]BSTR bstrCalibrateString, [in]BSTR bstrCalibrateImage, [in]double dXMinSize, [in]double dXMaxSize, [in]double dXStepSize, [in]double dYMinSize, [in]double dYMaxSize, [in]double dYStepSize);
 
-		[id(0x60020037), helpstring("method SVReadString")] HRESULT SVReadString([in]long lFontIdentifier, [in,out]BSTR* bstrFoundString, [in]BSTR bstrReadImage, [in,out]double* dMatchScore);
+		[id(0x60020037), helpstring("method SVReadString (out of order)")] HRESULT SVReadString([in]long lFontIdentifier, [in,out]BSTR* bstrFoundString, [in]BSTR bstrReadImage, [in,out]double* dMatchScore);
 
-		[id(0x60020038), helpstring("method SVVerifyString")] HRESULT SVVerifyString([in]long lFontIdentifier, [in]BSTR bstrVerifyString, [in]BSTR bstrVerifyImage, [in,out]double* dMatchScore);
+		[id(0x60020038), helpstring("method SVVerifyString (out of order)")] HRESULT SVVerifyString([in]long lFontIdentifier, [in]BSTR bstrVerifyString, [in]BSTR bstrVerifyImage, [in,out]double* dMatchScore);
 
-		[id(0x60020039), helpstring("method SVGetConstraints")] HRESULT SVGetConstraints([in]long lFontIdentifier, [in,out]long* plPosition, [in,out]long* plType, [in,out]BSTR* pbstrValues);
+		[id(0x60020039), helpstring("method SVGetConstraints (out of order)")] HRESULT SVGetConstraints([in]long lFontIdentifier, [in,out]long* plPosition, [in,out]long* plType, [in,out]BSTR* pbstrValues);
 
-		[id(0x6002003a), helpstring("method SVSetConstraints")] HRESULT SVSetConstraints([in]long lFontIdentifier, [in]long lPosition, [in]long lType, [in]BSTR bstrValues);
+		[id(0x6002003a), helpstring("method SVSetConstraints (out of order)")] HRESULT SVSetConstraints([in]long lFontIdentifier, [in]long lPosition, [in]long lType, [in]BSTR bstrValues);
 
-		[id(0x6002003b), helpstring("method SVCreateNew")] HRESULT SVCreateNew([in]long lFontIdentifier, [in]BSTR bstrImage);
+		[id(0x6002003b), helpstring("method SVCreateNew (out of order)")] HRESULT SVCreateNew([in]long lFontIdentifier, [in]BSTR bstrImage);
 
-		[id(0x6002003c), helpstring("method SVSetTrainingImage")] HRESULT SVSetTrainingImage([in]long lFontIdentifier, [in]BSTR bstrImage);
+		[id(0x6002003c), helpstring("method SVSetTrainingImage (out of order)")] HRESULT SVSetTrainingImage([in]long lFontIdentifier, [in]BSTR bstrImage);
 
-		[id(0x6002003d), helpstring("method SVAddCharacter")] HRESULT SVAddCharacter([in]long lFontIdentifier, [in]long lXPosition, [in]long lYPosition, [in]long lHeight, [in]long lWidth, [in]BSTR bstrLabel, [out]long *lCharID);
+		[id(0x6002003d), helpstring("method SVAddCharacter (out of order)")] HRESULT SVAddCharacter([in]long lFontIdentifier, [in]long lXPosition, [in]long lYPosition, [in]long lHeight, [in]long lWidth, [in]BSTR bstrLabel, [out]long *lCharID);
 
-		[id(0x6002003e), helpstring("method SVAddCharacters")] HRESULT SVAddCharacters([in]long lFontIdentifier, [in]BSTR bstrLabelList);
+		[id(0x6002003e), helpstring("method SVAddCharacters (out of order)")] HRESULT SVAddCharacters([in]long lFontIdentifier, [in]BSTR bstrLabelList);
 
-		[id(0x6002003f), helpstring("method SVDeleteCharacters")] HRESULT SVDeleteCharacters([in]long lFontIdentifier, [in]SAFEARRAY(long) psaCharIds);
+		[id(0x6002003f), helpstring("method SVDeleteCharacters (out of order)")] HRESULT SVDeleteCharacters([in]long lFontIdentifier, [in]SAFEARRAY(long) psaCharIds);
 
-		[id(0x60020040), helpstring("method SVThresholdImage")] HRESULT SVThresholdImage([in]long lFontIdentifier, [in]BSTR bstrImage, [in]long lThreshold, [in,out]BSTR* pbstrThresholdImage);
+		[id(0x60020040), helpstring("method SVThresholdImage (out of order)")] HRESULT SVThresholdImage([in]long lFontIdentifier, [in]BSTR bstrImage, [in]long lThreshold, [in,out]BSTR* pbstrThresholdImage);
 
-		[id(0x60020041), helpstring("method SVGetFontCharacterCount")] HRESULT SVGetFontCharacterCount([in]long lFontIdentifier, [in,out]long* plCharacterCount);
+		[id(0x60020041), helpstring("method SVGetFontCharacterCount (out of order)")] HRESULT SVGetFontCharacterCount([in]long lFontIdentifier, [in,out]long* plCharacterCount);
 
-		[id(0x60020042), helpstring("method SVGetFontCharacter")] HRESULT SVGetFontCharacter([in]long lFontIdentifier, [in]long lID, [in,out]BSTR* pbstrLabelImage);
+		[id(0x60020042), helpstring("method SVGetFontCharacter (out of order)")] HRESULT SVGetFontCharacter([in]long lFontIdentifier, [in]long lID, [in,out]BSTR* pbstrLabelImage);
 
-		[id(0x60020043), helpstring("method SVGetStringLength.")] HRESULT SVGetStringLength([in]long p_lFontIdentifier, [in,out]double* p_pdLength );
+		[id(0x60020043), helpstring("method SVGetStringLength (out of order)")] HRESULT SVGetStringLength([in]long p_lFontIdentifier, [in,out]double* p_pdLength );
 
-		[id(0x60020044), helpstring("method SVSetStringLength.")] HRESULT SVSetStringLength([in]long p_lFontIdentifier, [in]double p_dLength );
+		[id(0x60020044), helpstring("method SVSetStringLength (out of order)")] HRESULT SVSetStringLength([in]long p_lFontIdentifier, [in]double p_dLength );
 
 		//Sets the current operating Mode of the SVIM.
 		//
@@ -453,13 +453,13 @@ library SVObserver
 		////////////////////////////////////////////////////////////////////////////////////////
 
 		////////New Font Methods////////////////////////////////////////////////////////////////
-		[id(0x6002004D), helpstring("method SVLoadFontImage")]
+		[id(0x6002004D), helpstring("method SVLoadFontImage (out of order)")]
 		HRESULT SVLoadFontImage([in]long lFontIdentifier, [in]BSTR bstrVerifyString);
-		[id(0x6002004E), helpstring("method SVGetFontCharacterList")]
+		[id(0x6002004E), helpstring("method SVGetFontCharacterList (out of order)")]
 		HRESULT SVGetFontCharacterList([in] long lFontIdentifier, [out]BSTR *bstrCharacterList, [in,out] SAFEARRAY(long)* psaCharIds);
-		[id(0x6002004F), helpstring("method SVGetExpectedTargetCharacterSize")]
+		[id(0x6002004F), helpstring("method SVGetExpectedTargetCharacterSize (out of order)")]
 		HRESULT SVGetExpectedTargetCharacterSize([in] long p_lFontIdentifier, [out]long *plWidth, [out]long *plHeight);
-		[id(0x60020050), helpstring("method SVGetFontCharacterSize")]
+		[id(0x60020050), helpstring("method SVGetFontCharacterSize (out of order)")]
 		HRESULT SVGetFontCharacterSize([in] long p_lFontIdentifier, [out]long *plWidth, [out]long *plHeight);
 		// **********************************************************************************
 		//////// *********** Transfer Definition List Functions ************** //////////////
@@ -473,7 +473,7 @@ library SVObserver
 												  [in, out]long* plVersion,
 												  [in, out]VARIANT* psaData);
 
-		[id(0x60020053), helpstring("method SVConstructCommand")]
+		[id(0x60020053), helpstring("method SVConstructCommand (out of order)")]
 		HRESULT SVConstructCommand( [in]long p_CommandType, [out]ISVRemoteCommand** p_ppCommand );
 
 		[id(0x60020054), helpstring("method SVIsAvailiable")] 

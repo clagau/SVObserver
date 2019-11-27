@@ -313,7 +313,6 @@
     <ClCompile Include="SVDataDefObjectList.cpp" />
     <ClCompile Include="SVErrorObject.cpp" />
     <ClCompile Include="SVErrorObjectList.cpp" />
-    <ClCompile Include="SVFile.cpp" />
     <ClCompile Include="SVImageConvertorGDI.cpp" />
     <ClCompile Include="SVImageObject.cpp" />
     <ClCompile Include="SVImageObjectList.cpp" />
@@ -403,7 +402,6 @@
     <ClInclude Include="SVControlCommands.h" />
     <ClInclude Include="SVControlResponse.h" />
     <ClInclude Include="SVEventThread.h" />
-    <ClInclude Include="SVFile.h" />
     <ClInclude Include="SVInputMatchItem.h" />
     <ClInclude Include="SVInputMatchList.h" />
     <ClInclude Include="SVMatchStruct.h" />
