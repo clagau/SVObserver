@@ -11,6 +11,7 @@
 #include "StructDefinitions.h"
 #include <comutil.h>
 
+
 class CDllTool
 {
 public:
@@ -23,17 +24,16 @@ public:
 	 Return the input value definition.
 	 \param ppaStructs <in/output> the structure must be preallocated with the length NUM_INPUT_VALUES.
 	***********/
-	static void getInputValuesDefinition(InputValueDefinitionStruct** ppaStructs);
+
+	static void getInputValuesDefinitionEx(InputValueDefinitionStructEx** ppaStructs);
+
 	/**********
 	 Return the result value definition.
 	 \param ppaResultValues <in/output> the structure must be preallocated with the length NUM_RESULT_VALUES.
 	***********/
-	static void getResultValueDefinition(ResultValueDefinitionStruct** ppaResultValues);
 
-	static  void getResultTableDefinition(ResultTableDefinitionStruct** ppaResultTables);
-
-	static void getResultValueDefinitionAd(ResultValueDefinitionStructAd** ppaResultValuesAd);
-
+	static void getResultValueDefinitionEx(ResultValueDefinitionStructEx** ppaResultValues);
+	static  void getResultTableDefinitionEx(ResultTableDefinitionStructEx** ppaResultTables);
 	/**********
 	 Check if the value valid and return an error code. S_OK if value valid.
 	 \param lParameterNumber <in> the index of the parameter. Must be at least 0 and less than NUM_INPUT_VALUES.

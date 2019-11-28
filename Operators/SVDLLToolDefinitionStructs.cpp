@@ -142,35 +142,30 @@ void ResultValueDefinitionStruct::Clear()
 
 long InputValueDefinition::getVt() const
 {
-	return m_InputValueDefStruct.m_VT;
+	return m_VT;
 }
 std::string InputValueDefinition::getDisplayName() const
 {
-	_bstr_t ret(m_InputValueDefStruct.m_bDisplayName);
-	std::string result((LPCSTR)ret);
-	return result;
+	return m_DisplayName;
 }
 
 std::string InputValueDefinition::getHelpText() const
 {
-	_bstr_t ret(m_InputValueDefStruct.m_bHelpText);
-	std::string result((LPCSTR)ret);
-	return result;
+	
+	return m_HelpText;
 
 }
 
 std::string InputValueDefinition::getGroup() const
 {
-	_bstr_t ret(m_InputValueDefStruct.m_bGroup);
-	std::string result((LPCSTR)ret);
-	return result;
+	return  m_Group;
 }
 
 
 const _variant_t& InputValueDefinition::getDefaultValue() const
 {
 
-	return m_InputValueDefStruct.m_DefaultValue;
+	return m_DefaultValue;
 
 }
 void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  InputValueDefStruct, long* pNLValue)
@@ -178,28 +173,34 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 	m_Dim = 0;
 	m_Type = SvOp::ExDllInterfaceType::Invalid;
 	m_LinkedValueIndex = -1;
-	m_InputValueDefStruct = InputValueDefStruct;
+	m_VT = InputValueDefStruct.m_VT;
+	m_DisplayName = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.m_bDisplayName));
+	m_HelpText = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.m_bHelpText));
+	m_Group = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.m_bGroup));
+	m_DefaultValue = InputValueDefStruct.m_DefaultValue;
 
-	if (!(m_InputValueDefStruct.m_DefaultValue.vt & VT_ARRAY))
+	m_UseDisplaynames = false;
+
+	if (!(m_DefaultValue.vt & VT_ARRAY))
 	{
 		m_Type = SvOp::ExDllInterfaceType::Scalar;
 		m_LinkedValueIndex = (*pNLValue)++;
 	}
 	else
 	{
-		m_Dim = SafeArrayGetDim(m_InputValueDefStruct.m_DefaultValue.parray);
+		m_Dim = SafeArrayGetDim(m_DefaultValue.parray);
 
 		if (m_Dim == 1)
 		{
-			if (m_InputValueDefStruct.m_DefaultValue.vt & VT_BSTR)
+			if (m_DefaultValue.vt & VT_BSTR)
 			{
 				//until now BSTR Arrays are only used for TablRowNames
 				/// therefore the same index like the table before
 				m_Type = SvOp::ExDllInterfaceType::TableNames;
 				m_LinkedValueIndex = (*pNLValue) - 1;
 			}
-			else if ((m_InputValueDefStruct.m_DefaultValue.vt &  VT_R8)
-				|| (m_InputValueDefStruct.m_DefaultValue.vt &  VT_I4))
+			else if ((m_DefaultValue.vt &  VT_R8)
+				|| (m_DefaultValue.vt &  VT_I4))
 			{
 				m_Type = SvOp::ExDllInterfaceType::Array;
 				m_LinkedValueIndex = (*pNLValue)++;
@@ -210,7 +211,63 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 			}
 
 		}
-		else if (m_Dim == 2 && (m_InputValueDefStruct.m_DefaultValue.vt == (VT_ARRAY | VT_R8)))
+		else if (m_Dim == 2 && (m_DefaultValue.vt == (VT_ARRAY | VT_R8)))
+		{
+			m_Type = SvOp::ExDllInterfaceType::TableArray;
+			m_LinkedValueIndex = (*pNLValue)++;
+		}
+		else
+		{
+			throw std::invalid_argument("Invalid::DefaultValue");
+		}
+	}
+}
+
+
+void InputValueDefinition::setDefinition(const InputValueDefinitionStructEx&  InputValueDefStruct, long* pNLValue)
+{
+	m_Dim = 0;
+	m_Type = SvOp::ExDllInterfaceType::Invalid;
+	m_LinkedValueIndex = -1;
+	m_VT = InputValueDefStruct.vt;
+	m_DisplayName = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.Name.copy()));
+	m_HelpText = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.HelpText.copy()));
+	m_Group = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.Group.copy()));
+	m_DefaultValue = InputValueDefStruct.vDefaultValue;
+
+	m_UseDisplaynames = true;
+
+	if (!(m_DefaultValue.vt & VT_ARRAY))
+	{
+		m_Type = SvOp::ExDllInterfaceType::Scalar;
+		m_LinkedValueIndex = (*pNLValue)++;
+	}
+	else
+	{
+		m_Dim = SafeArrayGetDim(m_DefaultValue.parray);
+
+		if (m_Dim == 1)
+		{
+			if (m_DefaultValue.vt & VT_BSTR)
+			{
+				//until now BSTR Arrays are only used for TablRowNames
+				/// therefore the same index like the table before
+				m_Type = SvOp::ExDllInterfaceType::TableNames;
+				m_LinkedValueIndex = (*pNLValue) - 1;
+			}
+			else if ((m_DefaultValue.vt &  VT_R8)
+				|| (m_DefaultValue.vt &  VT_I4))
+			{
+				m_Type = SvOp::ExDllInterfaceType::Array;
+				m_LinkedValueIndex = (*pNLValue)++;
+			}
+			else
+			{
+				throw std::invalid_argument("Invalid::DefaultValue dim == 1");
+			}
+
+		}
+		else if (m_Dim == 2 && (m_DefaultValue.vt == (VT_ARRAY | VT_R8)))
 		{
 			m_Type = SvOp::ExDllInterfaceType::TableArray;
 			m_LinkedValueIndex = (*pNLValue)++;
@@ -245,12 +302,31 @@ ResultTableDefinitionStruct::ResultTableDefinitionStruct(const ResultTableDefini
 void ResultValueDefinition::setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex)
 {
 	m_ValueIndex = ValueIndex;
-	m_ValueDefinition = resultValueDefinitionStruct;
-	
+	m_DisplayName = static_cast<LPCSTR>(_bstr_t(resultValueDefinitionStruct.m_bDisplayName));
+	m_VT = 	resultValueDefinitionStruct.m_VT;
 
+	m_UseDisplayNames = false;
 }
 
 
+
+
+void ResultValueDefinition::setDefinition(const ResultValueDefinitionStructEx&  resultValueDefinitionStruct, long ValueIndex)
+{
+	m_ValueIndex = ValueIndex;
+	
+	/*
+	The operator LPSTR must not be called from resultValueDefinitionStruct.Displayname direct
+	because the operator allocates memory and the destructor from resultValueDefinitionStruct
+	is called in the external dll
+	*/
+	m_DisplayName = static_cast<LPCSTR>(_bstr_t( resultValueDefinitionStruct.Name.copy()));
+	m_HelpText = static_cast<LPCSTR>(_bstr_t(resultValueDefinitionStruct.HelpText.copy()));
+	m_Group = static_cast<LPCSTR>(_bstr_t(resultValueDefinitionStruct.Group.copy()));
+	m_VT = resultValueDefinitionStruct.vt;
+	m_MaxArraysize = resultValueDefinitionStruct.ArraySize;
+	m_UseDisplayNames = true;
+}
 
 int ResultValueDefinition::getIndex() const
 {
@@ -259,13 +335,11 @@ int ResultValueDefinition::getIndex() const
 
 long ResultValueDefinition::getVT() const
 {
-	return m_ValueDefinition.m_VT;
+	return m_VT;
 }
 std::string ResultValueDefinition::getDisplayName() const
 {
-	_bstr_t ret(m_ValueDefinition.m_bDisplayName);
-	std::string result((LPCSTR)ret);
-	return result;
+	return m_DisplayName;
 }
 void ResultValueDefinition::setMaxArraysize(long size)
 {
@@ -284,21 +358,51 @@ long ResultValueDefinition::getMaxArraysize() const
 
 void ResultTableDefinition::setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long Index)
 {
-	m_TableDefinition = DefinitionStruct;
+	
+	m_vt = DefinitionStruct.lVT;
+	m_ColoumnCount = DefinitionStruct.ColoumnCount;
+	m_RowCount = DefinitionStruct.RowCount;
+	m_ColumnNames = DefinitionStruct.ColumnNames;
+	m_UseDisplayNames = false;
 	m_ValueIndex = Index;
-	if (m_TableDefinition.lVT != VT_R8 || 
-		(m_TableDefinition.ColumnNames.vt != (VT_ARRAY | VT_BSTR)))
+	m_HelpText.clear();
+	m_Group.clear();
+	m_DisplayName = static_cast<LPCSTR>(_bstr_t(DefinitionStruct.bstrDisplayName.copy()));
+	
+
+	
+	if (m_vt != VT_R8 ||
+		(m_ColumnNames.vt != (VT_ARRAY | VT_BSTR)))
+	{
+		throw(std::invalid_argument("Wrong vt in ResultTableDefinition"));
+	}
+}
+void ResultTableDefinition::setDefinition(const ResultTableDefinitionStructEx&  DefinitionStruct, long Index)
+{
+	m_vt = DefinitionStruct.vt;
+	m_ColoumnCount = DefinitionStruct.ColoumnCount;
+	m_RowCount = DefinitionStruct.RowCount;
+	m_ColumnNames = DefinitionStruct.ColumnNames;
+	m_UseDisplayNames = true;
+	m_ValueIndex = Index;
+	m_HelpText = static_cast<LPCSTR>(_bstr_t(DefinitionStruct.HelpText.copy()));
+	m_Group = static_cast<LPCSTR>(_bstr_t(DefinitionStruct.Group.copy()));
+	m_DisplayName = static_cast<LPCSTR>(_bstr_t(DefinitionStruct.Name.copy()));
+
+	if (m_vt != VT_R8 ||
+		(m_ColumnNames.vt != (VT_ARRAY | VT_BSTR)))
 	{
 		throw(std::invalid_argument("Wrong vt in ResultTableDefinition"));
 	}
 }
 
+
 std::vector<std::string>  ResultTableDefinition::getColoumnNames() const
 {
 	std::vector<std::string> Ret;
-	if (m_TableDefinition.ColoumnCount > 0 && (m_TableDefinition.ColumnNames.vt == (VT_ARRAY | VT_BSTR)))
+	if (m_ColoumnCount > 0 && (m_ColumnNames.vt == (VT_ARRAY | VT_BSTR)))
 	{
-		CComSafeArray<BSTR> saInput(m_TableDefinition.ColumnNames.parray);
+		CComSafeArray<BSTR> saInput(m_ColumnNames.parray);
 		int dim = saInput.GetDimensions();
 		ATLASSERT(dim == 1);
 		int len = saInput.GetCount();
@@ -306,7 +410,7 @@ std::vector<std::string>  ResultTableDefinition::getColoumnNames() const
 		{
 			CComBSTR  name = saInput.GetAt(y);
 			_bstr_t bstrname = name.m_str;
-			Ret.push_back(LPCSTR(bstrname));
+			Ret.push_back(static_cast<LPCSTR>(bstrname));
 		}
 
 	}
@@ -316,8 +420,7 @@ std::vector<std::string>  ResultTableDefinition::getColoumnNames() const
 
 std::string ResultTableDefinition::getDisplayName() const
 {
-	std::string result((LPCSTR)m_TableDefinition.bstrDisplayName);
-	return result;
+	return m_DisplayName;
 }
 
 void InputImageInformationStruct::allowBlackAndWhite()

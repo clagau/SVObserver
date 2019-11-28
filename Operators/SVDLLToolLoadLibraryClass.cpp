@@ -8,7 +8,7 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   21 Oct 2013 08:35:56  $
 // ******************************************************************************
- 
+
 #include "stdafx.h"
 //Moved to precompiled header: #include <io.h>
 #include "SVDLLToolLoadLibraryClass.h"
@@ -29,299 +29,363 @@ static char THIS_FILE[] = __FILE__;
 
 SVDLLToolLoadLibraryClass::SVDLLToolLoadLibraryClass()
 {
-	m_hmHandle = nullptr;
-
-	m_pfnSimpleTest = nullptr;
-	m_pfnGetToolName = nullptr;
-	m_pfnGetToolVersion = nullptr;
-	m_pfnRunTool = nullptr;
-	m_pfnStartup = nullptr;
-	m_pfnShutDown = nullptr;
-	m_pfnInitializeRun = nullptr;
-	m_pfnUninitializeRun = nullptr;
-	m_pfnGetInputValueDefinitions = nullptr;
-	m_pfnDestroyInputValueDefinitionStructures = nullptr;
-	m_pfnDestroyResultValueDefinitionStructures = nullptr;
-	m_pfnSetInputValues = nullptr;
-	m_pfnGetInputImageInformation = nullptr;
-	m_pfnGetResultValues = nullptr;
-	m_pfnGetMessageString = nullptr;
-	m_pfnValidateValueParameter = nullptr;
-	m_pfnGetResultValueDefinitions = nullptr;
-	m_pfnGetNumberOfInputImages = nullptr;
-	m_pfnSetMILInputImages = nullptr;
-	m_pfnSetHBITMAPInputImages = nullptr;
-	m_pfnGetHBITMAPResultImages = nullptr;
-	m_pfnSetMILResultImages = nullptr;
-	m_pfnGetResultImageDefinitions = nullptr;
-	m_pfnDestroyImageDefinitionStructure = nullptr;
 }
 
 SVDLLToolLoadLibraryClass::~SVDLLToolLoadLibraryClass()
 {
 	Close();
 }
+HRESULT  SVDLLToolLoadLibraryClass::InitInputValueDef(SvStl::MessageContainer& rE)
+{
+	HRESULT Result {S_OK};
+	m_pfnGetInputValueDefinitionsEx = (GetInputValueDefinitionsPtrEx)::GetProcAddress(m_hmHandle, "SVGetInputValueDefinitionsEx");
+	m_pfnDestroyInputValueDefinitionStructuresEx = (DestroyInputValueDefinitionStructuresPtrEx)::GetProcAddress(m_hmHandle, "SVDestroyInputValueDefinitionStructuresEx");
+	if (m_pfnGetInputValueDefinitionsEx && m_pfnDestroyInputValueDefinitionStructuresEx)
+	{
+		m_bUseInputEx = true;
+	}
+	else
+	{
+		m_pfnGetInputValueDefinitions = (GetInputValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetInputValueDefinitions");
+		m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "SVDestroyInputValueDefinitionStructures");
+		if (nullptr == m_pfnGetInputValueDefinitions)
+		{
+			m_pfnGetInputValueDefinitions = (GetInputValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetInputValueDefinitions");
+		}
+		if (nullptr == m_pfnDestroyInputValueDefinitionStructures)
+		{
+			m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyInputValueDefinitionStructures");
+		}
+		if (m_pfnGetInputValueDefinitions && m_pfnDestroyInputValueDefinitionStructures)
+		{
+			m_bUseInputEx = false;
+		}
+		else
+		{
+			Result = -12350;
+			if (!m_pfnGetInputValueDefinitions)              
+				rE.addMessage(SvStl::MessageData(-12359, SvStl::Tid_GetProcAddressError_GetInputValueDefinitions), false);
+			if (!m_pfnDestroyInputValueDefinitionStructures)  
+				rE.addMessage(SvStl::MessageData(-12360, SvStl::Tid_GetProcAddressError_DestroyInputValueDefinitionStructures), false);
+
+
+		}
+	
+	}
+
+	return Result;
+}
+
+HRESULT  SVDLLToolLoadLibraryClass::InitResultValueDef(SvStl::MessageContainer& rE)
+{
+	HRESULT Result {S_OK};
+	m_pfnDestroyResultValueDefinitionStructuresEx = (DestroyResultValueDefinitionStructuresPtrEx)::GetProcAddress(m_hmHandle, "SVDestroyResultValueDefinitionStructuresEx");
+	m_pfnGetResultValueDefinitionsEx = (GetResultValueDefinitionsPtrEx)::GetProcAddress(m_hmHandle, "SVGetResultValueDefinitionsEx");
+	if (m_pfnDestroyResultValueDefinitionStructuresEx && m_pfnGetResultValueDefinitionsEx)
+	{
+		m_bUseResultEx = true;
+	}
+	else
+	{
+		m_pfnGetResultValueDefinitions = (GetResultValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultValueDefinitions");
+		m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "SVDestroyResultValueDefinitionStructures");
+		if (nullptr == m_pfnGetResultValueDefinitions)
+		{
+			m_pfnGetResultValueDefinitions = (GetResultValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultValueDefinitions");
+		}
+		if (nullptr == m_pfnDestroyResultValueDefinitionStructures)
+		{
+			m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultValueDefinitionStructures");
+		}
+		if (m_pfnDestroyResultValueDefinitionStructures && m_pfnGetResultValueDefinitions)
+		{
+			m_bUseResultEx = false;
+		}
+		else
+		{
+			Result = -12350;
+			rE.setMessage(static_cast<DWORD> (Result), SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+			if (!m_pfnDestroyInputValueDefinitionStructures)
+			{
+				rE.addMessage(SvStl::MessageData(-12360, SvStl::Tid_GetProcAddressError_DestroyInputValueDefinitionStructures), false);
+			}
+			if (!m_pfnDestroyResultValueDefinitionStructures)
+			{
+				rE.addMessage(SvStl::MessageData(-12361, SvStl::Tid_GetProcAddressError_DestroyResultValueDefinitionStructures), false);
+			}
+		}
+	}
+	if (Result == S_OK)
+	{
+		if (m_bUseResultEx)
+		{
+			m_pfnGetResultTableDefinitionsEx = (GetResultTableDefinitionsPtrEx)::GetProcAddress(m_hmHandle, "GetResultTableDefinitionsEx");
+			m_pfnDestroyResultTableDefinitionStructuresEx = (DestroyResultTableDefinitionStructuresPtrEx)::GetProcAddress(m_hmHandle, "DestroyResultTableDefinitionStructuresEx");
+		}
+		else
+		{
+			m_pfnGetResultTableDefinitions = (GetResultTableDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultTableDefinitions");
+			m_pfnDestroyResultTableDefinitionStructures = (DestroyResultTableDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultTableDefinitionStructures");
+		}
+	}
+	return Result;
+}
 
 HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress)
 {
 	HRESULT Result(S_OK);
-
 	SvStl::MessageContainer e;
-
-	if (nullptr == m_hmHandle)
+	if (nullptr != m_hmHandle)
 	{
-		if (_access(p_szLibrary, 0) == 0)
+		return Result;
+	}
+
+	if (_access(p_szLibrary, 0) == 0)
+	{
+		// Check bitness
+		if (CheckBitness(p_szLibrary) != ImageFileMachineAMD64)
 		{
-			// Check bitness
-			if (CheckBitness(p_szLibrary) != ImageFileMachineAMD64)
-			{
-				std::string Message = SvUl::Format(_T("External Tool %s is not 64Bit"), p_szLibrary);
-				fnNotifyProgress(Message.c_str());
-			}
+			std::string Message = SvUl::Format(_T("External Tool %s is not 64Bit"), p_szLibrary);
+			fnNotifyProgress(Message.c_str());
 		}
-		fnNotifyProgress(_T("Attempting LoadLibrary"));
-		m_hmHandle = ::LoadLibrary(p_szLibrary);
-		Sleep(0);
+	}
+	fnNotifyProgress(_T("Attempting LoadLibrary"));
+	m_hmHandle = ::LoadLibrary(p_szLibrary);
+	Sleep(0);
+	if (nullptr == m_hmHandle)	// can't load library
+	{
+		Result = -12378;
+		e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError, SvStl::SourceFileParams(StdMessageParams));
+	}
+	if (Result == S_OK) //checkResultValueDefinition
+	{
+		Result = InitResultValueDef(e);
+	}
+	if (Result == S_OK)
+	{
+		Result = InitInputValueDef(e);
+	}
 
-		if (nullptr != m_hmHandle)
+	if (Result == S_OK)
+	{
+		m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SVSimpleTest");
+		m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress(m_hmHandle, "SVGetToolName");
+		m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress(m_hmHandle, "SVGetToolVersion");
+		m_pfnRunTool = (RunToolPtr)::GetProcAddress(m_hmHandle, "SVRunTool");
+		m_pfnStartup = (StartupPtr)::GetProcAddress(m_hmHandle, "SVStartup");
+		m_pfnShutDown = (ShutDownPtr)::GetProcAddress(m_hmHandle, "SVShutDown");
+		m_pfnInitializeRun = (InitializeRunPtr)::GetProcAddress(m_hmHandle, "SVInitializeRun");
+		m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress(m_hmHandle, "SVUninitializeRun");
+		m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress(m_hmHandle, "SVSetInputValues");
+		m_pfnGetInputImageInformation = (GetInputImageInformationPtr)::GetProcAddress(m_hmHandle, "SVGetInputImageInformation");
+		m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress(m_hmHandle, "SVGetResultValues");
+		m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress(m_hmHandle, "SVGetErrorMessageString");
+		m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress(m_hmHandle, "SVValidateValueParameter");
+		m_pfnGetNumberOfInputImages = (GetNumberOfInputImagesPtr)::GetProcAddress(m_hmHandle, "SVGetNumberOfInputImages");
+		m_pfnSetMILInputImages = (SetMILInputImagesPtr)::GetProcAddress(m_hmHandle, "SVSetMILInputImages");
+		m_pfnSetMILResultImages = (SetMILResultImagesPtr)::GetProcAddress(m_hmHandle, "SVSetMILResultImages");
+		m_pfnSetHBITMAPInputImages = (SetHBITMAPInputImagesPtr)::GetProcAddress(m_hmHandle, "SVSetHBITMAPInputImages");
+		m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress(m_hmHandle, "SVGetHBITMAPResultImages");
+		m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultImageDefinitions");
+		m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "SVDestroyImageDefinitionStructure");
+
+
+		m_pfnGetResultTables = (GetResultTablesPtr)::GetProcAddress(m_hmHandle, "GetResultTables");
+
+		m_pfnGetResultTablesMaxRowSize = (GetResultTablesMaxRowSizePtr)::GetProcAddress(m_hmHandle, "GetResultTablesMaxRowSize");
+		m_pfnGetResultValuesMaxArraySize = (GetResultValuesMaxArraySizePtr)::GetProcAddress(m_hmHandle, "GetResultValuesMaxArraySize");
+
+		// Backwards compatability
+		if (nullptr == m_pfnSimpleTest) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SimpleTest");
+		if (nullptr == m_pfnGetToolName) m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress(m_hmHandle, "GetToolName");
+		if (nullptr == m_pfnGetToolVersion) m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress(m_hmHandle, "GetToolVersion");
+		if (nullptr == m_pfnRunTool) m_pfnRunTool = (RunToolPtr)::GetProcAddress(m_hmHandle, "RunTool");
+		if (nullptr == m_pfnStartup) m_pfnStartup = (StartupPtr)::GetProcAddress(m_hmHandle, "Startup");
+		if (nullptr == m_pfnShutDown) m_pfnShutDown = (ShutDownPtr)::GetProcAddress(m_hmHandle, "ShutDown");
+		if (nullptr == m_pfnInitializeRun) m_pfnInitializeRun = (InitializeRunPtr)::GetProcAddress(m_hmHandle, "InitializeRun");
+		if (nullptr == m_pfnUninitializeRun) m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress(m_hmHandle, "UninitializeRun");
+		if (nullptr == m_pfnSetInputValues) m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress(m_hmHandle, "SetInputValues");
+		if (nullptr == m_pfnGetResultValues) m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress(m_hmHandle, "GetResultValues");
+		if (nullptr == m_pfnGetMessageString) m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress(m_hmHandle, "GetErrorMessageString");
+		if (nullptr == m_pfnValidateValueParameter) m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress(m_hmHandle, "ValidateValueParameter");
+
+		if (nullptr == m_pfnGetNumberOfInputImages) m_pfnGetNumberOfInputImages = (GetNumberOfInputImagesPtr)::GetProcAddress(m_hmHandle, "GetNumberOfInputImages");
+		if (nullptr == m_pfnSetMILInputImages) m_pfnSetMILInputImages = (SetMILInputImagesPtr)::GetProcAddress(m_hmHandle, "SetMILInputImages");
+		if (nullptr == m_pfnSetMILResultImages) m_pfnSetMILResultImages = (SetMILResultImagesPtr)::GetProcAddress(m_hmHandle, "SetMILResultImages");
+		if (nullptr == m_pfnSetHBITMAPInputImages) m_pfnSetHBITMAPInputImages = (SetHBITMAPInputImagesPtr)::GetProcAddress(m_hmHandle, "SetHBITMAPInputImages");
+		if (nullptr == m_pfnGetHBITMAPResultImages) m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress(m_hmHandle, "GetHBITMAPResultImages");
+		if (nullptr == m_pfnGetResultImageDefinitions) m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultImageDefinitions");
+		if (nullptr == m_pfnDestroyImageDefinitionStructure) m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "DestroyImageDefinitionStructure");
+
+
+		if ((
+			nullptr != m_pfnSimpleTest &&
+			nullptr != m_pfnGetToolName &&
+			nullptr != m_pfnGetToolVersion &&
+			nullptr != m_pfnRunTool &&
+			nullptr != m_pfnStartup &&
+			nullptr != m_pfnShutDown &&
+			nullptr != m_pfnInitializeRun &&
+			nullptr != m_pfnUninitializeRun &&
+			nullptr != m_pfnSetInputValues &&
+			nullptr != m_pfnGetResultValues &&
+			nullptr != m_pfnGetMessageString &&
+			nullptr != m_pfnValidateValueParameter &&
+			nullptr != m_pfnGetNumberOfInputImages &&
+			nullptr != m_pfnGetResultImageDefinitions &&
+			nullptr != m_pfnDestroyImageDefinitionStructure)
+			)
 		{
-			m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SVSimpleTest");
-			m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress(m_hmHandle, "SVGetToolName");
-			m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress(m_hmHandle, "SVGetToolVersion");
-			m_pfnRunTool = (RunToolPtr)::GetProcAddress(m_hmHandle, "SVRunTool");
-			m_pfnStartup = (StartupPtr)::GetProcAddress(m_hmHandle, "SVStartup");
-			m_pfnShutDown = (ShutDownPtr)::GetProcAddress(m_hmHandle, "SVShutDown");
-			m_pfnInitializeRun = (InitializeRunPtr)::GetProcAddress(m_hmHandle, "SVInitializeRun");
-			m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress(m_hmHandle, "SVUninitializeRun");
-			m_pfnGetInputValueDefinitions = (GetInputValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetInputValueDefinitions");
-			m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "SVDestroyInputValueDefinitionStructures");
-			m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "SVDestroyResultValueDefinitionStructures");
-			m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress(m_hmHandle, "SVSetInputValues");
-			m_pfnGetInputImageInformation = (GetInputImageInformationPtr)::GetProcAddress(m_hmHandle, "SVGetInputImageInformation");
-			m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress(m_hmHandle, "SVGetResultValues");
-			m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress(m_hmHandle, "SVGetErrorMessageString");
-			m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress(m_hmHandle, "SVValidateValueParameter");
-			m_pfnGetResultValueDefinitions = (GetResultValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultValueDefinitions");
-			m_pfnGetNumberOfInputImages = (GetNumberOfInputImagesPtr)::GetProcAddress(m_hmHandle, "SVGetNumberOfInputImages");
-			m_pfnSetMILInputImages = (SetMILInputImagesPtr)::GetProcAddress(m_hmHandle, "SVSetMILInputImages");
-			m_pfnSetMILResultImages = (SetMILResultImagesPtr)::GetProcAddress(m_hmHandle, "SVSetMILResultImages");
-			m_pfnSetHBITMAPInputImages = (SetHBITMAPInputImagesPtr)::GetProcAddress(m_hmHandle, "SVSetHBITMAPInputImages");
-			m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress(m_hmHandle, "SVGetHBITMAPResultImages");
-			m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultImageDefinitions");
-			m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "SVDestroyImageDefinitionStructure");
-
-			m_pfnGetResultTableDefinitions = (GetResultTableDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultTableDefinitions");
-			m_pfnDestroyResultTableDefinitionStructures = (DestroyResultTableDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultTableDefinitionStructures");
-			m_pfnGetResultTables = (GetResultTablesPtr)::GetProcAddress(m_hmHandle, "GetResultTables");
-			
-			m_pfnGetResultTablesMaxRowSize = (GetResultTablesMaxRowSizePtr)::GetProcAddress(m_hmHandle, "GetResultTablesMaxRowSize");
-			m_pfnGetResultValuesMaxArraySize = (GetResultValuesMaxArraySizePtr)::GetProcAddress(m_hmHandle, "GetResultValuesMaxArraySize");
-
-			// Backwards compatability
-			if (nullptr == m_pfnSimpleTest) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SimpleTest");
-			if (nullptr == m_pfnGetToolName) m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress(m_hmHandle, "GetToolName");
-			if (nullptr == m_pfnGetToolVersion) m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress(m_hmHandle, "GetToolVersion");
-			if (nullptr == m_pfnRunTool) m_pfnRunTool = (RunToolPtr)::GetProcAddress(m_hmHandle, "RunTool");
-			if (nullptr == m_pfnStartup) m_pfnStartup = (StartupPtr)::GetProcAddress(m_hmHandle, "Startup");
-			if (nullptr == m_pfnShutDown) m_pfnShutDown = (ShutDownPtr)::GetProcAddress(m_hmHandle, "ShutDown");
-			if (nullptr == m_pfnInitializeRun) m_pfnInitializeRun = (InitializeRunPtr)::GetProcAddress(m_hmHandle, "InitializeRun");
-			if (nullptr == m_pfnUninitializeRun) m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress(m_hmHandle, "UninitializeRun");
-			if (nullptr == m_pfnGetInputValueDefinitions) m_pfnGetInputValueDefinitions = (GetInputValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetInputValueDefinitions");
-			if (nullptr == m_pfnDestroyInputValueDefinitionStructures) m_pfnDestroyInputValueDefinitionStructures = (DestroyInputValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyInputValueDefinitionStructures");
-			if (nullptr == m_pfnDestroyResultValueDefinitionStructures) m_pfnDestroyResultValueDefinitionStructures = (DestroyResultValueDefinitionStructuresPtr)::GetProcAddress(m_hmHandle, "DestroyResultValueDefinitionStructures");
-			if (nullptr == m_pfnSetInputValues) m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress(m_hmHandle, "SetInputValues");
-			if (nullptr == m_pfnGetResultValues) m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress(m_hmHandle, "GetResultValues");
-			if (nullptr == m_pfnGetMessageString) m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress(m_hmHandle, "GetErrorMessageString");
-			if (nullptr == m_pfnValidateValueParameter) m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress(m_hmHandle, "ValidateValueParameter");
-			if (nullptr == m_pfnGetResultValueDefinitions) m_pfnGetResultValueDefinitions = (GetResultValueDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultValueDefinitions");
-			if (nullptr == m_pfnGetNumberOfInputImages) m_pfnGetNumberOfInputImages = (GetNumberOfInputImagesPtr)::GetProcAddress(m_hmHandle, "GetNumberOfInputImages");
-			if (nullptr == m_pfnSetMILInputImages) m_pfnSetMILInputImages = (SetMILInputImagesPtr)::GetProcAddress(m_hmHandle, "SetMILInputImages");
-			if (nullptr == m_pfnSetMILResultImages) m_pfnSetMILResultImages = (SetMILResultImagesPtr)::GetProcAddress(m_hmHandle, "SetMILResultImages");
-			if (nullptr == m_pfnSetHBITMAPInputImages) m_pfnSetHBITMAPInputImages = (SetHBITMAPInputImagesPtr)::GetProcAddress(m_hmHandle, "SetHBITMAPInputImages");
-			if (nullptr == m_pfnGetHBITMAPResultImages) m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress(m_hmHandle, "GetHBITMAPResultImages");
-			if (nullptr == m_pfnGetResultImageDefinitions) m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultImageDefinitions");
-			if (nullptr == m_pfnDestroyImageDefinitionStructure) m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "DestroyImageDefinitionStructure");
-
-
-			if ((
-				nullptr != m_pfnSimpleTest &&
-				nullptr != m_pfnGetToolName &&
-				nullptr != m_pfnGetToolVersion &&
-				nullptr != m_pfnRunTool &&
-				nullptr != m_pfnStartup &&
-				nullptr != m_pfnShutDown &&
-				nullptr != m_pfnInitializeRun &&
-				nullptr != m_pfnUninitializeRun &&
-				nullptr != m_pfnGetInputValueDefinitions &&
-				nullptr != m_pfnDestroyInputValueDefinitionStructures &&
-				nullptr != m_pfnDestroyResultValueDefinitionStructures &&
-				nullptr != m_pfnSetInputValues &&
-				nullptr != m_pfnGetResultValues &&
-				nullptr != m_pfnGetMessageString &&
-				nullptr != m_pfnValidateValueParameter &&
-				nullptr != m_pfnGetResultValueDefinitions &&
-				nullptr != m_pfnGetNumberOfInputImages &&
-				nullptr != m_pfnGetResultImageDefinitions &&
-				nullptr != m_pfnDestroyImageDefinitionStructure)
-				)
+			if (m_pfnSetMILResultImages && m_pfnSetMILInputImages
+				&& !m_pfnSetHBITMAPInputImages && !m_pfnGetHBITMAPResultImages)
 			{
-				if (m_pfnSetMILResultImages && m_pfnSetMILInputImages
+				m_bUseMil = true;
+			}
+			else if (!m_pfnSetMILResultImages && !m_pfnSetMILInputImages
+				&&  m_pfnSetHBITMAPInputImages && m_pfnGetHBITMAPResultImages)
+			{
+				m_bUseMil = false;
+			}
+			else	// error in MIL/HBITMAP definitions
+			{
+				Result = -12372;
+				e.setMessage(-12372, SvStl::Tid_ToolLoadError_ImageDef, SvStl::SourceFileParams(StdMessageParams));
+
+				// none are defined
+				if (!m_pfnSetMILResultImages && !m_pfnSetMILInputImages
 					&& !m_pfnSetHBITMAPInputImages && !m_pfnGetHBITMAPResultImages)
 				{
-					m_bUseMil = true;
+					e.addMessage(SvStl::MessageData(-12373, SvStl::Tid_ToolLoadError_NoImageDef), false);
 				}
-				else if (!m_pfnSetMILResultImages && !m_pfnSetMILInputImages
-						 &&  m_pfnSetHBITMAPInputImages && m_pfnGetHBITMAPResultImages)
+				else if (m_pfnSetMILResultImages && m_pfnSetMILInputImages
+					&&  m_pfnSetHBITMAPInputImages && m_pfnGetHBITMAPResultImages)
 				{
-					m_bUseMil = false;
+					e.addMessage(SvStl::MessageData(-12375, SvStl::Tid_ToolLoadError_BothSetsImagesDef), false);
 				}
-				else	// error in MIL/HBITMAP definitions
+				else if ((m_pfnSetMILResultImages && (m_pfnGetHBITMAPResultImages || m_pfnSetHBITMAPInputImages))
+					|| (m_pfnSetHBITMAPInputImages && (m_pfnSetMILInputImages || m_pfnSetMILResultImages)))
 				{
-					Result = -12372;
-					e.setMessage(-12372, SvStl::Tid_ToolLoadError_ImageDef, SvStl::SourceFileParams(StdMessageParams));
+					e.addMessage(SvStl::MessageData(-12376, SvStl::Tid_ToolLoadError_BothImagesDef), false);
+				}
+				else
+				{
+					e.addMessage(SvStl::MessageData(-12374, SvStl::Tid_ToolLoadError_InFunctionDef), false);
+				}
 
-					// none are defined
-					if (!m_pfnSetMILResultImages && !m_pfnSetMILInputImages
-						&& !m_pfnSetHBITMAPInputImages && !m_pfnGetHBITMAPResultImages)
+			}// end else	// error in MIL/HBITMAP definitions
+
+			if (S_OK == Result)
+			{
+				fnNotifyProgress(_T("Attempting SimpleTest"));
+
+				try
+				{
+					long lTest = m_pfnSimpleTest(820, 2); //the first parameter is the version number of the SVOberver (820 means 8.20).This makes it possible for an external DLL to know the (interface) version of the SVObserver calling it
+					if (lTest != 2)
 					{
-						e.addMessage(SvStl::MessageData(-12373, SvStl::Tid_ToolLoadError_NoImageDef), false);
+						Result = -12349;
+						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_SimpleTest, SvStl::SourceFileParams(StdMessageParams));
 					}
-					else if (m_pfnSetMILResultImages && m_pfnSetMILInputImages
-							 &&  m_pfnSetHBITMAPInputImages && m_pfnGetHBITMAPResultImages)
+				}
+				catch (...)
+				{
+					Result = -12384;
+					e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_SimpleTestException, SvStl::SourceFileParams(StdMessageParams));
+				}
+
+			}
+			if (S_OK == Result)
+			{
+				fnNotifyProgress(_T("Attempting Startup"));
+				try
+				{
+					Result = m_pfnStartup();
+					if (S_OK != Result)
 					{
-						e.addMessage(SvStl::MessageData(-12375, SvStl::Tid_ToolLoadError_BothSetsImagesDef), false);
+						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_DllStartup, SvStl::SourceFileParams(StdMessageParams));
 					}
-					else if ((m_pfnSetMILResultImages && (m_pfnGetHBITMAPResultImages || m_pfnSetHBITMAPInputImages))
-							 || (m_pfnSetHBITMAPInputImages && (m_pfnSetMILInputImages || m_pfnSetMILResultImages)))
+				}
+				catch (...)
+				{
+					Result = -12385;
+					e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_DllStartupException, SvStl::SourceFileParams(StdMessageParams));
+				}
+			}
+			// Get Tool Name
+			if (S_OK == Result)
+			{
+				fnNotifyProgress(_T("Attempting GetToolName"));
+				BSTR bstName = nullptr;
+				try
+				{
+					Result = m_pfnGetToolName(&bstName);
+					if (S_OK != Result)
 					{
-						e.addMessage(SvStl::MessageData(-12376, SvStl::Tid_ToolLoadError_BothImagesDef), false);
+						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolName, SvStl::SourceFileParams(StdMessageParams));
 					}
 					else
 					{
-						e.addMessage(SvStl::MessageData(-12374, SvStl::Tid_ToolLoadError_InFunctionDef), false);
-					}
-
-				}// end else	// error in MIL/HBITMAP definitions
-
-				if (S_OK == Result)
-				{
-					fnNotifyProgress(_T("Attempting SimpleTest"));
-
-					try
-					{
-						long lTest = m_pfnSimpleTest(820, 2); //the first parameter is the version number of the SVOberver (820 means 8.20).This makes it possible for an external DLL to know the (interface) version of the SVObserver calling it
-						if (lTest != 2)
-						{
-							Result = -12349;
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_SimpleTest, SvStl::SourceFileParams(StdMessageParams));
-						}
-					}
-					catch (...)
-					{
-						Result = -12384;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_SimpleTestException, SvStl::SourceFileParams(StdMessageParams));
-					}
-
-				}
-				if (S_OK == Result)
-				{
-					fnNotifyProgress(_T("Attempting Startup"));
-					try
-					{
-						Result = m_pfnStartup();
-						if (S_OK != Result)
-						{
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_DllStartup, SvStl::SourceFileParams(StdMessageParams));
-						}
-					}
-					catch (...)
-					{
-						Result = -12385;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_DllStartupException, SvStl::SourceFileParams(StdMessageParams));
+						fnNotifyProgress(SvUl::createStdString(_bstr_t(bstName)).c_str());
 					}
 				}
-				// Get Tool Name
-				if (S_OK == Result)
+				catch (...)
 				{
-					fnNotifyProgress(_T("Attempting GetToolName"));
-					BSTR bstName = nullptr;
-					try
-					{
-						Result = m_pfnGetToolName(&bstName);
-						if (S_OK != Result)
-						{
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolName, SvStl::SourceFileParams(StdMessageParams));
-						}
-						else
-						{
-							fnNotifyProgress(SvUl::createStdString(_bstr_t(bstName)).c_str());
-						}
-					}
-					catch (...)
-					{
-						Result = -12386;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolNameException, SvStl::SourceFileParams(StdMessageParams));
-					}
-
-				}
-				// Get Tool Version
-				if (S_OK == Result)
-				{
-					fnNotifyProgress(_T("Attempting GetToolVersion"));
-					long lTmp = 0;
-					try
-					{
-						Result = m_pfnGetToolVersion(&lTmp);
-						if (S_OK != Result)
-						{
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolVersion, SvStl::SourceFileParams(StdMessageParams));
-						}
-						else
-						{
-							std::string Version = SvUl::Format(_T("Version %d"), lTmp);
-							fnNotifyProgress(Version.c_str());
-						}
-					}
-					catch (...)
-					{
-						Result = -12387;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolVersionException, SvStl::SourceFileParams(StdMessageParams));
-					}
+					Result = -12386;
+					e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolNameException, SvStl::SourceFileParams(StdMessageParams));
 				}
 
 			}
-			else	// get proc address failure
+			// Get Tool Version
+			if (S_OK == Result)
 			{
-				Result = -12350;
-				e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-
-				if (!m_pfnSimpleTest)                             e.addMessage(SvStl::MessageData(-12351, SvStl::Tid_GetProcAddressError_SimpleTest), false);
-				if (!m_pfnGetToolName)                            e.addMessage(SvStl::MessageData(-12352, SvStl::Tid_GetProcAddressError_GetToolName), false);
-				if (!m_pfnGetToolVersion)                         e.addMessage(SvStl::MessageData(-12353, SvStl::Tid_GetProcAddressError_GetToolVersion), false);
-				if (!m_pfnRunTool)                                e.addMessage(SvStl::MessageData(-12354, SvStl::Tid_GetProcAddressError_RunTool), false);
-				if (!m_pfnStartup)                                e.addMessage(SvStl::MessageData(-12355, SvStl::Tid_GetProcAddressError_Startup), false);
-				if (!m_pfnShutDown)                               e.addMessage(SvStl::MessageData(-12356, SvStl::Tid_GetProcAddressError_ShutDown), false);
-				if (!m_pfnInitializeRun)                          e.addMessage(SvStl::MessageData(-12357, SvStl::Tid_GetProcAddressError_InitializeRun), false);
-				if (!m_pfnUninitializeRun)                        e.addMessage(SvStl::MessageData(-12358, SvStl::Tid_GetProcAddressError_UninitializeRun), false);
-				if (!m_pfnGetInputValueDefinitions)               e.addMessage(SvStl::MessageData(-12359, SvStl::Tid_GetProcAddressError_GetInputValueDefinitions), false);
-				if (!m_pfnDestroyInputValueDefinitionStructures)  e.addMessage(SvStl::MessageData(-12360, SvStl::Tid_GetProcAddressError_DestroyInputValueDefinitionStructures), false);
-				if (!m_pfnDestroyResultValueDefinitionStructures) e.addMessage(SvStl::MessageData(-12361, SvStl::Tid_GetProcAddressError_DestroyResultValueDefinitionStructures), false);
-				if (!m_pfnSetInputValues)                         e.addMessage(SvStl::MessageData(-12362, SvStl::Tid_GetProcAddressError_SetInputValues), false);
-				if (!m_pfnGetResultValues)                        e.addMessage(SvStl::MessageData(-12363, SvStl::Tid_GetProcAddressError_GetResultValues), false);
-				if (!m_pfnGetMessageString)                       e.addMessage(SvStl::MessageData(-12364, SvStl::Tid_GetProcAddressError_GetMessageString), false);
-				if (!m_pfnValidateValueParameter)                 e.addMessage(SvStl::MessageData(-12365, SvStl::Tid_GetProcAddressError_ValidateValueParameter), false);
-				if (!m_pfnGetResultValueDefinitions)              e.addMessage(SvStl::MessageData(-12366, SvStl::Tid_GetProcAddressError_GetResultValueDefinitions), false);
-				if (!m_pfnGetNumberOfInputImages)                 e.addMessage(SvStl::MessageData(-12367, SvStl::Tid_GetProcAddressError_GetNumberOfInputImages), false);
-				if (!m_pfnGetResultImageDefinitions)              e.addMessage(SvStl::MessageData(-12368, SvStl::Tid_GetProcAddressError_GetResultImageDefinitions), false);
-				if (!m_pfnDestroyImageDefinitionStructure)        e.addMessage(SvStl::MessageData(-12369, SvStl::Tid_GetProcAddressError_DestroyImageDefinitionStructure), false);
+				fnNotifyProgress(_T("Attempting GetToolVersion"));
+				long lTmp = 0;
+				try
+				{
+					Result = m_pfnGetToolVersion(&lTmp);
+					if (S_OK != Result)
+					{
+						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolVersion, SvStl::SourceFileParams(StdMessageParams));
+					}
+					else
+					{
+						std::string Version = SvUl::Format(_T("Version %d"), lTmp);
+						fnNotifyProgress(Version.c_str());
+					}
+				}
+				catch (...)
+				{
+					Result = -12387;
+					e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolVersionException, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
-		}// end if ( nullptr != m_hmHandle )
-		else	// can't load library
-		{
-			Result = -12378;
-			e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError, SvStl::SourceFileParams(StdMessageParams));
+
 		}
-	}
+		else	// get proc address failure
+		{
+			Result = -12350;
+			e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+
+			if (!m_pfnSimpleTest)                             e.addMessage(SvStl::MessageData(-12351, SvStl::Tid_GetProcAddressError_SimpleTest), false);
+			if (!m_pfnGetToolName)                            e.addMessage(SvStl::MessageData(-12352, SvStl::Tid_GetProcAddressError_GetToolName), false);
+			if (!m_pfnGetToolVersion)                         e.addMessage(SvStl::MessageData(-12353, SvStl::Tid_GetProcAddressError_GetToolVersion), false);
+			if (!m_pfnRunTool)                                e.addMessage(SvStl::MessageData(-12354, SvStl::Tid_GetProcAddressError_RunTool), false);
+			if (!m_pfnStartup)                                e.addMessage(SvStl::MessageData(-12355, SvStl::Tid_GetProcAddressError_Startup), false);
+			if (!m_pfnShutDown)                               e.addMessage(SvStl::MessageData(-12356, SvStl::Tid_GetProcAddressError_ShutDown), false);
+			if (!m_pfnInitializeRun)                          e.addMessage(SvStl::MessageData(-12357, SvStl::Tid_GetProcAddressError_InitializeRun), false);
+			if (!m_pfnUninitializeRun)                        e.addMessage(SvStl::MessageData(-12358, SvStl::Tid_GetProcAddressError_UninitializeRun), false);
+			if (!m_pfnSetInputValues)                         e.addMessage(SvStl::MessageData(-12362, SvStl::Tid_GetProcAddressError_SetInputValues), false);
+			if (!m_pfnGetResultValues)                        e.addMessage(SvStl::MessageData(-12363, SvStl::Tid_GetProcAddressError_GetResultValues), false);
+			if (!m_pfnGetMessageString)                       e.addMessage(SvStl::MessageData(-12364, SvStl::Tid_GetProcAddressError_GetMessageString), false);
+			if (!m_pfnValidateValueParameter)                 e.addMessage(SvStl::MessageData(-12365, SvStl::Tid_GetProcAddressError_ValidateValueParameter), false);
+			if (!m_pfnGetResultValueDefinitions)              e.addMessage(SvStl::MessageData(-12366, SvStl::Tid_GetProcAddressError_GetResultValueDefinitions), false);
+			if (!m_pfnGetNumberOfInputImages)                 e.addMessage(SvStl::MessageData(-12367, SvStl::Tid_GetProcAddressError_GetNumberOfInputImages), false);
+			if (!m_pfnGetResultImageDefinitions)              e.addMessage(SvStl::MessageData(-12368, SvStl::Tid_GetProcAddressError_GetResultImageDefinitions), false);
+			if (!m_pfnDestroyImageDefinitionStructure)        e.addMessage(SvStl::MessageData(-12369, SvStl::Tid_GetProcAddressError_DestroyImageDefinitionStructure), false);
+		}
+	}// end if ( nullptr != m_hmHandle )
+
+
 
 	if (S_OK != Result)
 	{
@@ -336,10 +400,20 @@ bool SVDLLToolLoadLibraryClass::UseMil()
 {
 	return m_bUseMil;
 }
+
 bool  SVDLLToolLoadLibraryClass::UseTableOutput() const
 {
-	return  m_pfnGetResultTableDefinitions != nullptr && m_pfnDestroyResultTableDefinitionStructures != nullptr;
+	if (m_bUseResultEx)
+	{
+		return (m_pfnGetResultTableDefinitionsEx != nullptr && m_pfnDestroyResultTableDefinitionStructuresEx != nullptr);
+	}
+	else
+	{
+		return(m_pfnGetResultTableDefinitions != nullptr && m_pfnDestroyResultTableDefinitionStructures != nullptr);
+	}
+
 }
+
 
 bool  SVDLLToolLoadLibraryClass::UseResultTablesMaxRowSize() const
 {
@@ -390,7 +464,11 @@ HRESULT SVDLLToolLoadLibraryClass::Close()
 			l_hrOk = S_FALSE;
 		}
 	}
-
+	
+	
+	m_bUseMil = false;
+	m_bUseResultEx = false;
+	m_bUseInputEx = false;
 	m_pfnSimpleTest = nullptr;
 	m_pfnGetToolName = nullptr;
 	m_pfnGetToolVersion = nullptr;
@@ -400,13 +478,20 @@ HRESULT SVDLLToolLoadLibraryClass::Close()
 	m_pfnInitializeRun = nullptr;
 	m_pfnUninitializeRun = nullptr;
 	m_pfnGetInputValueDefinitions = nullptr;
+	m_pfnGetInputValueDefinitionsEx = nullptr;
 	m_pfnDestroyInputValueDefinitionStructures = nullptr;
+	m_pfnDestroyInputValueDefinitionStructuresEx = nullptr;
 	m_pfnDestroyResultValueDefinitionStructures = nullptr;
+	m_pfnDestroyResultValueDefinitionStructuresEx = nullptr;
 	m_pfnSetInputValues = nullptr;
+	m_pfnGetInputImageInformation = nullptr;
 	m_pfnGetResultValues = nullptr;
 	m_pfnGetMessageString = nullptr;
 	m_pfnValidateValueParameter = nullptr;
 	m_pfnGetResultValueDefinitions = nullptr;
+	m_pfnGetResultValueDefinitionsEx = nullptr;
+	m_pfnDestroyResultValueDefinitionStructures = nullptr;
+	m_pfnDestroyResultValueDefinitionStructuresEx = nullptr;
 	m_pfnGetNumberOfInputImages = nullptr;
 	m_pfnSetMILInputImages = nullptr;
 	m_pfnSetHBITMAPInputImages = nullptr;
@@ -415,10 +500,14 @@ HRESULT SVDLLToolLoadLibraryClass::Close()
 	m_pfnGetResultImageDefinitions = nullptr;
 	m_pfnDestroyImageDefinitionStructure = nullptr;
 	m_pfnGetResultTableDefinitions = nullptr;
+	m_pfnGetResultTableDefinitionsEx = nullptr;
 	m_pfnDestroyResultTableDefinitionStructures = nullptr;
+	m_pfnDestroyResultTableDefinitionStructuresEx = nullptr;
+	m_pfnGetResultTables = nullptr;
 	m_pfnGetResultTablesMaxRowSize = nullptr;
-	m_pfnGetResultValuesMaxArraySize = nullptr ;
-	
+	m_pfnGetResultValuesMaxArraySize = nullptr;
+
+
 	return l_hrOk;
 }
 
@@ -572,6 +661,26 @@ HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(GUID tool)
 	}
 	return l_hrOk;
 }
+HRESULT SVDLLToolLoadLibraryClass::GetInputValueDefinitions(long* plArraySize, InputValueDefinitionStructEx** ppaStructs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetInputValueDefinitionsEx)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetInputValueDefinitionsEx(plArraySize, ppaStructs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
+
 
 HRESULT SVDLLToolLoadLibraryClass::GetInputValueDefinitions(long* plArraySize, InputValueDefinitionStruct** ppaStructs)
 {
@@ -592,6 +701,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetInputValueDefinitions(long* plArraySize, I
 	return l_hrOk;
 }
 
+
 HRESULT SVDLLToolLoadLibraryClass::DestroyInputValueDefinitionStructures(InputValueDefinitionStruct* paStructs)
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -611,6 +721,26 @@ HRESULT SVDLLToolLoadLibraryClass::DestroyInputValueDefinitionStructures(InputVa
 	return l_hrOk;
 }
 
+HRESULT SVDLLToolLoadLibraryClass::DestroyInputValueDefinitionStructures(InputValueDefinitionStructEx* paStructs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnDestroyInputValueDefinitionStructuresEx)
+	{
+		try
+		{
+			l_hrOk = m_pfnDestroyInputValueDefinitionStructuresEx(paStructs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
+
 HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructures(ResultValueDefinitionStruct* paStructs)
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -629,6 +759,25 @@ HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructures(Result
 
 	return l_hrOk;
 }
+HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructures(ResultValueDefinitionStructEx* paStructs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnDestroyResultValueDefinitionStructuresEx)
+	{
+		try
+		{
+			l_hrOk = m_pfnDestroyResultValueDefinitionStructuresEx(paStructs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
 
 HRESULT SVDLLToolLoadLibraryClass::SetInputValues(GUID tool, long lArraySize, VARIANT* paInputValues)
 {
@@ -757,6 +906,24 @@ HRESULT SVDLLToolLoadLibraryClass::GetResultValueDefinitions(long* plArraySize, 
 		try
 		{
 			l_hrOk = m_pfnGetResultValueDefinitions(plArraySize, ppaResultValues);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+HRESULT SVDLLToolLoadLibraryClass::GetResultValueDefinitions(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetResultValueDefinitionsEx)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetResultValueDefinitionsEx(plArraySize, ppaResultValues);
 		}
 		catch (...)
 		{
@@ -902,31 +1069,31 @@ HRESULT SVDLLToolLoadLibraryClass::DestroyImageDefinitionStructure(SVImageDefini
 	return l_hrOk;
 }
 
-SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness( LPCTSTR p_szFile )
+SVMachineTypeEnum SVDLLToolLoadLibraryClass::CheckBitness(LPCTSTR p_szFile)
 {
-		//see http://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx
-		//offset to PE header is always at 0x3C
-		//PE header starts with "PE\0\0" =  0x50 0x45 0x00 0x00
-		//followed by 2-byte machine type field (see document above for enum)
-		FILE* fh = nullptr;
-		SVMachineTypeEnum l_machineType = ImageFileUnknownMachine;
+	//see http://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx
+	//offset to PE header is always at 0x3C
+	//PE header starts with "PE\0\0" =  0x50 0x45 0x00 0x00
+	//followed by 2-byte machine type field (see document above for enum)
+	FILE* fh = nullptr;
+	SVMachineTypeEnum l_machineType = ImageFileUnknownMachine;
 
-		errno_t err =  fopen_s( &fh, p_szFile, "rb");
-		if( err == 0 )
+	errno_t err = fopen_s(&fh, p_szFile, "rb");
+	if (err == 0)
+	{
+		fseek(fh, 0x3c, 0);	// seek to pe header start.
+		_int32 peOffset;
+		/*size_t bytes = */fread(&peOffset, 4, 1, fh); // read 4 bytes to get offset.
+		/*int iRet = */fseek(fh, peOffset, 0);
+		_int32 peHead = 0;
+		fread(&peHead, 4, 1, fh);
+		if (peHead == 0x00004550) // "PE\0\0", little-endian
 		{
-			fseek(fh, 0x3c, 0);	// seek to pe header start.
-			_int32 peOffset;
-			/*size_t bytes = */fread(&peOffset, 4, 1, fh); // read 4 bytes to get offset.
-			/*int iRet = */fseek(fh, peOffset, 0 );
-			_int32 peHead = 0;
-			fread( &peHead, 4, 1, fh);
-			if(peHead==0x00004550) // "PE\0\0", little-endian
-			{
-				fread( &l_machineType, 2, 1, fh);
-			}
-			fclose( fh );
+			fread(&l_machineType, 2, 1, fh);
 		}
-		return l_machineType;
+		fclose(fh);
+	}
+	return l_machineType;
 }
 
 HRESULT SVDLLToolLoadLibraryClass::getResultTableDefinitions(long* Size, ResultTableDefinitionStruct** ppaResultTableDefs)
@@ -947,6 +1114,25 @@ HRESULT SVDLLToolLoadLibraryClass::getResultTableDefinitions(long* Size, ResultT
 
 	return l_hrOk;
 }
+HRESULT SVDLLToolLoadLibraryClass::getResultTableDefinitions(long* Size, ResultTableDefinitionStructEx** ppaResultTableDefs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnGetResultTableDefinitionsEx)
+	{
+		try
+		{
+			l_hrOk = m_pfnGetResultTableDefinitionsEx(Size, ppaResultTableDefs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
 HRESULT SVDLLToolLoadLibraryClass::destroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs)
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -956,6 +1142,25 @@ HRESULT SVDLLToolLoadLibraryClass::destroyResultTableDefinitionStructures(Result
 		try
 		{
 			l_hrOk = m_pfnDestroyResultTableDefinitionStructures(paStructs);
+		}
+		catch (...)
+		{
+			l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+		}
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVDLLToolLoadLibraryClass::destroyResultTableDefinitionStructures(ResultTableDefinitionStructEx* paStructs)
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if (nullptr != m_pfnDestroyResultTableDefinitionStructuresEx)
+	{
+		try
+		{
+			l_hrOk = m_pfnDestroyResultTableDefinitionStructuresEx(paStructs);
 		}
 		catch (...)
 		{

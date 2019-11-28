@@ -6223,6 +6223,13 @@ BEGIN
     IDS_CLASSNAME_RANKING2FILTER "Ranking2 Filter"
 END
 
+STRINGTABLE
+BEGIN
+	IDS_EXTERNAL_DLL_RESULT_PREFIX   "Res"
+	IDS_EXTERNAL_DLL_TRESULT_PREFIX  "TRes"
+	IDS_EXTERNAL_DLL_INPUT_PREFIX	  "In"		
+END
+
 #endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -10,6 +10,7 @@
 // ******************************************************************************
 #pragma once
 
+
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
@@ -19,6 +20,40 @@
 ///Operators
 namespace SvOp
 {
+/// The structure definition must be the same as the one in the External dll
+/// Use shared files?
+#pragma pack (push, 1)
+
+struct DefinitionStructEx
+{
+	long vt {VT_EMPTY};
+	_bstr_t Name;
+	_bstr_t HelpText;
+	_bstr_t Group;
+	_variant_t Reseved1; // not used at this time
+	_variant_t Reserved2; // not used at this time
+};
+
+struct InputValueDefinitionStructEx : public DefinitionStructEx
+{
+	_variant_t vDefaultValue;
+};
+
+struct ResultValueDefinitionStructEx : public DefinitionStructEx
+{
+	long ArraySize {20};
+};
+
+struct ResultTableDefinitionStructEx : public DefinitionStructEx
+{
+	long ColoumnCount {0};
+	long RowCount {0};
+	_variant_t ColumnNames; //smart array of bstr with names
+	
+};
+
+#pragma pack (pop)
+
 
 enum class ExDllInterfaceType
 {
@@ -44,7 +79,6 @@ private:
 };
 #pragma pack (pop)
 
-
 //!class describing the inputvalue definitions for External dll
 /// contents the structure from the dll with some additional calculated information 
 class  InputValueDefinition
@@ -60,15 +94,20 @@ public:
 	const _variant_t& getDefaultValue() const;
 	//Throw exception if InputValueDefinitionStruct is not allowed
 	void setDefinition(const InputValueDefinitionStruct&  InputValueDefStruct, long* NofLinkedValue);
-
+	void setDefinition(const InputValueDefinitionStructEx&  InputValueDefStruct, long* pNLValue);
 	int getDim()const { return m_Dim; };
 	SvOp::ExDllInterfaceType getType() const { return m_Type; };
 	int  getLinkedValueIndex() const { return m_LinkedValueIndex; };
-	
+	bool UseDisplayNames() const { return m_UseDisplaynames; };
 private:
-
 	int m_LinkedValueIndex {-1};
-	InputValueDefinitionStruct m_InputValueDefStruct;
+	
+	long m_VT;
+	std::string  m_DisplayName;
+	std::string  m_HelpText;
+	std::string  m_Group;
+	_variant_t m_DefaultValue;
+	bool m_UseDisplaynames;
 	int							m_Dim {0}; //dimension of Arrays
 	SvOp::ExDllInterfaceType             m_Type {SvOp::ExDllInterfaceType::Scalar};
 };
@@ -110,6 +149,9 @@ struct ResultTableDefinitionStruct
 
 #pragma pack (pop)
 
+
+
+
 //!class describing the resultvalue definitions for External dll
 /// contents the structure from the dll with some additional calculated information 
 class ResultValueDefinition
@@ -118,20 +160,26 @@ public:
 	ResultValueDefinition() = default;
 	~ResultValueDefinition() = default;
 
-	//Throw exception if ResultValueDefinitionStruct is not allowed
 	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex);
+	void setDefinition(const ResultValueDefinitionStructEx&  resultValueDefinitionStruct, long ValueIndex);
 	int getIndex() const;
 	std::string getDisplayName() const;
 	SvOp::ExDllInterfaceType getType() const;
 	long getVT() const;
 	long getMaxArraysize() const;
 	void setMaxArraysize(long);
+	bool UseDisplayNames() const { return m_UseDisplayNames; };
+	std::string getGroup() const { return m_Group; }
+	std::string  getHelpText() const { return m_HelpText; }
 	
 private:
 	int m_ValueIndex {-1};
 	int m_MaxArraysize {20};
-
-	ResultValueDefinitionStruct m_ValueDefinition;
+	long m_VT {VT_EMPTY};
+	std::string  m_DisplayName;	
+	std::string  m_HelpText;
+	std::string  m_Group;
+	bool m_UseDisplayNames {false};
 };
 
 //!class describing the resulttable definitions for External dll
@@ -142,22 +190,31 @@ public:
 	ResultTableDefinition() = default;
 	~ResultTableDefinition() = default;
 
-	long getTableColoumnCount() const { return m_TableDefinition.ColoumnCount; };
-	long getTableRowCount() const { return m_TableDefinition.RowCount; };
+	long getTableColoumnCount() const { return m_ColoumnCount; };
+	long getTableRowCount() const { return m_RowCount; };
 	//Throw exception if ResultValueDefinitionStruct is not allowed
 	void setDefinition(const ResultTableDefinitionStruct&  DefinitionStruct, long ValueIndex);
+	void setDefinition(const ResultTableDefinitionStructEx&  DefinitionStruct, long ValueIndex);
 	std::vector<std::string> getColoumnNames() const;
 
 	int getIndex() const { return m_ValueIndex; };
 	std::string getDisplayName() const;
-	SvOp::ExDllInterfaceType getType() const;
-	long getVT() const { return m_TableDefinition.lVT; };
-	void  setTableRowCount(long count ) {  m_TableDefinition.RowCount = count; };
-	
+	long getVT() const { return m_vt; };
+	void  setTableRowCount(long count ) {  m_RowCount = count; };
+	bool UseDisplayNames() const { return m_UseDisplayNames; };
+	std::string  getGroup() const { return m_Group; }
+	std::string getHelpText() const { return m_HelpText; }
 private:
-
-	ResultTableDefinitionStruct m_TableDefinition;
+	
+	long m_vt {VT_EMPTY};
+	long m_ColoumnCount {0};
+	long m_RowCount {0};
+	_variant_t m_ColumnNames; ///<smart array of bstr with rownames
+	bool  m_UseDisplayNames {false};
 	int m_ValueIndex {-1};
+	std::string  m_HelpText;
+	std::string  m_Group;
+	std::string m_DisplayName;
 };
 
 
@@ -178,6 +235,5 @@ struct InputImageInformationStruct
 	bool mayBeBlackAndWhite() const;
 	bool mayBeColor() const;
 };
-
 
 } //namespace SvOp

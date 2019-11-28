@@ -26,38 +26,40 @@ CDllTool::~CDllTool()
 
 #pragma region static function
 
-void CDllTool::getInputValuesDefinition(InputValueDefinitionStruct** ppaStructs)
+void CDllTool::getInputValuesDefinitionEx(InputValueDefinitionStructEx** ppaStructs)
 {
 	//TODO: add the definition for all inputs, like the comment sample. Delete the comment sample afterwards.
-	(*ppaStructs)[InputValue_LONG].lVT = VT_I4;
-	(*ppaStructs)[InputValue_LONG].bstrDisplayName = ::SysAllocString(L"Long Wert");
-	(*ppaStructs)[InputValue_LONG].bstrHelpText = ::SysAllocString(L"Long Wert eingeben");
-	(*ppaStructs)[InputValue_LONG].bstrGroup = ::SysAllocString(L"Common");
+	(*ppaStructs)[InputValue_LONG].vt = VT_I4;
+	(*ppaStructs)[InputValue_LONG].Name = "Eingabe1";
+	(*ppaStructs)[InputValue_LONG].HelpText = "Long Wert eingeben";
+	(*ppaStructs)[InputValue_LONG].Group = "Common";
 	(*ppaStructs)[InputValue_LONG].vDefaultValue.lVal = 4;
 	(*ppaStructs)[InputValue_LONG].vDefaultValue.vt = VT_I4;
 
-	(*ppaStructs)[InputValue_DOUBLE].lVT = VT_R8;
-	(*ppaStructs)[InputValue_DOUBLE].bstrDisplayName = ::SysAllocString(L"Double Wert");
-	(*ppaStructs)[InputValue_DOUBLE].bstrHelpText = ::SysAllocString(L"Double Wert Eingeben");
-	(*ppaStructs)[InputValue_DOUBLE].bstrGroup = ::SysAllocString(L"Common");
-	(*ppaStructs)[InputValue_DOUBLE].vDefaultValue.dblVal = 2.5;
-	(*ppaStructs)[InputValue_DOUBLE].vDefaultValue.vt = VT_R8;
+	(*ppaStructs)[InputValue_DOUBLE].vt = VT_R8;
+	(*ppaStructs)[InputValue_DOUBLE].Name = "Wert2";
+	(*ppaStructs)[InputValue_DOUBLE].HelpText = "Double Wert Eingeben";
+	(*ppaStructs)[InputValue_DOUBLE].Group =  "Common";
+	(*ppaStructs)[InputValue_DOUBLE].vDefaultValue  = 2.5;
+	//(*ppaStructs)[InputValue_DOUBLE].vDefaultValue.dblVal = 2.5;
+	//(*ppaStructs)[InputValue_DOUBLE].vDefaultValue.vt = VT_R8;
 
-	(*ppaStructs)[InputValue_BSTR].lVT = VT_BSTR;
-	(*ppaStructs)[InputValue_BSTR].bstrDisplayName = ::SysAllocString(L"BSTR Wert");
-	(*ppaStructs)[InputValue_BSTR].bstrHelpText = ::SysAllocString(L"BSTR Wert eingeben");
-	(*ppaStructs)[InputValue_BSTR].bstrGroup = ::SysAllocString(L"Common");
-	(*ppaStructs)[InputValue_BSTR].vDefaultValue.bstrVal = ::SysAllocString(L"Markus");;
-	(*ppaStructs)[InputValue_BSTR].vDefaultValue.vt = VT_BSTR;
+	(*ppaStructs)[InputValue_BSTR].vt = VT_BSTR;
+	(*ppaStructs)[InputValue_BSTR].Name = "Name";
+	(*ppaStructs)[InputValue_BSTR].HelpText = "String eingeben";
+	(*ppaStructs)[InputValue_BSTR].Group = "Common";
+	(*ppaStructs)[InputValue_BSTR].vDefaultValue = "Markus";
+	//(*ppaStructs)[InputValue_BSTR].vDefaultValue.bstrVal = ::SysAllocString(L"Markus");;
+	//(*ppaStructs)[InputValue_BSTR].vDefaultValue.vt = VT_BSTR;
 
 	CComSafeArray<double> sa(50);
 	for (int i = 0; i < 50; i++)
 		sa[i] = double(i)*1.5;
 
-	(*ppaStructs)[InputValue_DOUBLE_ARRAY].lVT = VT_ARRAY | VT_R8;
-	(*ppaStructs)[InputValue_DOUBLE_ARRAY].bstrDisplayName = ::SysAllocString(L"Double Vektor ");
-	(*ppaStructs)[InputValue_DOUBLE_ARRAY].bstrHelpText = ::SysAllocString(L"Double Vektor eingeben");
-	(*ppaStructs)[InputValue_DOUBLE_ARRAY].bstrGroup = ::SysAllocString(L"Array");
+	(*ppaStructs)[InputValue_DOUBLE_ARRAY].vt = VT_ARRAY | VT_R8;
+	(*ppaStructs)[InputValue_DOUBLE_ARRAY].Name = "DVektor";
+	(*ppaStructs)[InputValue_DOUBLE_ARRAY].HelpText = "Double Vektor eingeben";
+	(*ppaStructs)[InputValue_DOUBLE_ARRAY].Group = "Array";
 	(*ppaStructs)[InputValue_DOUBLE_ARRAY].vDefaultValue.parray = sa.Detach();
 	(*ppaStructs)[InputValue_DOUBLE_ARRAY].vDefaultValue.vt = VT_ARRAY | VT_R8;
 
@@ -66,10 +68,10 @@ void CDllTool::getInputValuesDefinition(InputValueDefinitionStruct** ppaStructs)
 	for (int i = 0; i < 12; i++)
 		sai[i] = i * 12;
 
-	(*ppaStructs)[InputValue_INT_ARRAY].lVT = VT_ARRAY | VT_I4;
-	(*ppaStructs)[InputValue_INT_ARRAY].bstrDisplayName = ::SysAllocString(L"Int Vektor");
-	(*ppaStructs)[InputValue_INT_ARRAY].bstrHelpText = ::SysAllocString(L"Int Vektor eingeben");
-	(*ppaStructs)[InputValue_INT_ARRAY].bstrGroup = ::SysAllocString(L"Array");
+	(*ppaStructs)[InputValue_INT_ARRAY].vt = VT_ARRAY | VT_I4;
+	(*ppaStructs)[InputValue_INT_ARRAY].Name = "IntWert";
+	(*ppaStructs)[InputValue_INT_ARRAY].HelpText = "Int Vektor eingeben";
+	(*ppaStructs)[InputValue_INT_ARRAY].Group = "Array";
 	(*ppaStructs)[InputValue_INT_ARRAY].vDefaultValue.parray = sai.Detach();
 	(*ppaStructs)[InputValue_INT_ARRAY].vDefaultValue.vt = VT_ARRAY | VT_I4;
 
@@ -90,10 +92,10 @@ void CDllTool::getInputValuesDefinition(InputValueDefinitionStruct** ppaStructs)
 			ATLASSERT(hr == S_OK);
 		}
 	}
-	(*ppaStructs)[InputValue_TABLE_ARRAY].lVT = VT_ARRAY | VT_R8;
-	(*ppaStructs)[InputValue_TABLE_ARRAY].bstrDisplayName = ::SysAllocString(L"Table Objekt");
-	(*ppaStructs)[InputValue_TABLE_ARRAY].bstrHelpText = ::SysAllocString(L" Table Object eingeben");
-	(*ppaStructs)[InputValue_TABLE_ARRAY].bstrGroup = ::SysAllocString(L"Table");
+	(*ppaStructs)[InputValue_TABLE_ARRAY].vt = VT_ARRAY | VT_R8;
+	(*ppaStructs)[InputValue_TABLE_ARRAY].Name = "Wert6";
+	(*ppaStructs)[InputValue_TABLE_ARRAY].HelpText ="Table Object eingeben";
+	(*ppaStructs)[InputValue_TABLE_ARRAY].Group = "Table";
 	(*ppaStructs)[InputValue_TABLE_ARRAY].vDefaultValue.parray = tdimsa.Detach();
 	(*ppaStructs)[InputValue_TABLE_ARRAY].vDefaultValue.vt = VT_ARRAY | VT_R8;
 
@@ -106,63 +108,75 @@ void CDllTool::getInputValuesDefinition(InputValueDefinitionStruct** ppaStructs)
 		saStr.SetAt(i, Columname[i]);
 	}
 
-	(*ppaStructs)[InputValue_TABLE_NAMES].lVT = VT_ARRAY | VT_BSTR;
-	(*ppaStructs)[InputValue_TABLE_NAMES].bstrDisplayName = ::SysAllocString(L"Table Array ColumnNames");
-	(*ppaStructs)[InputValue_TABLE_NAMES].bstrHelpText = ::SysAllocString(L" BSTR Array für Namen");
-	(*ppaStructs)[InputValue_TABLE_NAMES].bstrGroup = ::SysAllocString(L"Table");
+	(*ppaStructs)[InputValue_TABLE_NAMES].vt = VT_ARRAY | VT_BSTR;
+	(*ppaStructs)[InputValue_TABLE_NAMES].Name =  "ColumnNames";
+	(*ppaStructs)[InputValue_TABLE_NAMES].HelpText = "BSTR Array für Namen";
+	(*ppaStructs)[InputValue_TABLE_NAMES].Group = "Table";
 	(*ppaStructs)[InputValue_TABLE_NAMES].vDefaultValue.parray = saStr.Detach();
 	(*ppaStructs)[InputValue_TABLE_NAMES].vDefaultValue.vt = VT_ARRAY | VT_BSTR;
 
 
-	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].lVT = VT_I4;
-	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].bstrDisplayName = ::SysAllocString(L"LONG Value SELECTED Table Index");
-	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].bstrHelpText = ::SysAllocString(L"Long selected Colum for table");
-	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].bstrGroup = ::SysAllocString(L"TABLE SELECT");
+	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].vt = VT_I4;
+	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].Name = "tableCol";
+	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].HelpText = "Long selected Colum for table";
+	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].Group = "TABLE SELECT";
 	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].vDefaultValue.lVal = 0;
 	(*ppaStructs)[InputValue_LONG_TABLE_SELECT].vDefaultValue.vt = VT_I4;
-
-
 }
 
-void CDllTool::getResultValueDefinition(ResultValueDefinitionStruct** ppaResultValues)
+
+void CDllTool::getResultValueDefinitionEx(ResultValueDefinitionStructEx** ppaResultValues)
 {
 	//TODO: Add the definition for all results, like the comment sample. Delete the comment sample afterwards.
-	(*ppaResultValues)[ResultValue_LONG].lVT = VT_I4;
-	(*ppaResultValues)[ResultValue_LONG].bstrDisplayName = ::SysAllocString(L"copy from input1");
+	(*ppaResultValues)[ResultValue_LONG].vt = VT_I4;
+	(*ppaResultValues)[ResultValue_LONG].Name = "cpyFromIn1";
+	(*ppaResultValues)[ResultValue_LONG].HelpText = "copy from input1";
+	(*ppaResultValues)[ResultValue_LONG].Group = "Copy";
 
-	(*ppaResultValues)[ResultValue_DOUBLE].lVT = VT_R8;
-	(*ppaResultValues)[ResultValue_DOUBLE].bstrDisplayName = ::SysAllocString(L"copy from input2");
+	(*ppaResultValues)[ResultValue_DOUBLE].vt = VT_R8;
+	(*ppaResultValues)[ResultValue_DOUBLE].Name = "cpyFromIn2";;
+	(*ppaResultValues)[ResultValue_DOUBLE].HelpText = "copy from input2";
+	(*ppaResultValues)[ResultValue_DOUBLE].Group = "Copy";
 
-	(*ppaResultValues)[ResultValue_BSTR].lVT = VT_BSTR;
-	(*ppaResultValues)[ResultValue_BSTR].bstrDisplayName = ::SysAllocString(L"copy from input3");
+	(*ppaResultValues)[ResultValue_BSTR].vt = VT_BSTR;
+	(*ppaResultValues)[ResultValue_BSTR].Name = "cpyFromIn3";;
+	(*ppaResultValues)[ResultValue_BSTR].HelpText = "copy from input3";
+	(*ppaResultValues)[ResultValue_BSTR].Group = "Copy";
 
-	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].lVT = VT_ARRAY | VT_R8;
-	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].bstrDisplayName = ::SysAllocString(L"copy from input4");
+	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].vt = VT_ARRAY | VT_R8;
+	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].Name = "cpyFromIn4";;;
+	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].HelpText = "copy from input4";
+	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].Group = "Copy";
+	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].ArraySize = 7;
 
-	(*ppaResultValues)[ResultValue_INT_ARRAY].lVT = VT_ARRAY | VT_I4;
-	(*ppaResultValues)[ResultValue_INT_ARRAY].bstrDisplayName = ::SysAllocString(L"copy from input5");
 
+	(*ppaResultValues)[ResultValue_INT_ARRAY].vt = VT_ARRAY | VT_I4;
+	(*ppaResultValues)[ResultValue_INT_ARRAY].Name = "cpyFromIn5";
+	(*ppaResultValues)[ResultValue_INT_ARRAY].HelpText = "copy from input5";
+	(*ppaResultValues)[ResultValue_INT_ARRAY].Group = "Copy";
+	(*ppaResultValues)[ResultValue_INT_ARRAY].ArraySize = 9;
 
-	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].lVT = VT_I4;
-	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].bstrDisplayName = ::SysAllocString(L" Row Count input 6,7");
+	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].vt = VT_I4;
+	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].Name = "RowCountIn_6_7";
+	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].HelpText = " Row Count input 6,7";
+	(*ppaResultValues)[ResultValue_INT_ROWCOUNT].Group = "SpecCopy";
 
-	(*ppaResultValues)[RESULTVALUE_BSTR_ROWNAME].lVT = VT_BSTR;
-	(*ppaResultValues)[RESULTVALUE_BSTR_ROWNAME].bstrDisplayName = ::SysAllocString(L"Columname input 6,7");
+	(*ppaResultValues)[RESULTVALUE_BSTR_ROWNAME].vt = VT_BSTR;
+	(*ppaResultValues)[RESULTVALUE_BSTR_ROWNAME].Name = "ColInput_6_7";
+	(*ppaResultValues)[RESULTVALUE_BSTR_ROWNAME].HelpText = "Columname input 6,7";
+	(*ppaResultValues)[RESULTVALUE_BSTR_ROWNAME].Group = "SpecCopy";
 
-	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].lVT = VT_ARRAY | VT_R8;
-	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].bstrDisplayName = ::SysAllocString(L"ARRAY input 6,7 ");
-
+	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_ARRAY | VT_R8;
+	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].Name = "Array_6_7";
+	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].HelpText = "ARRAY input 6,7 ";
+	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].Group = "SpecCopy";
+	(*ppaResultValues)[RESULTVALUE_DOUBLE_ARRAY_ROW].ArraySize = 10;
 }
-void CDllTool::getResultValueDefinitionAd(ResultValueDefinitionStructAd** ppaResultValues)
-{
-	(*ppaResultValues)[ResultValue_DOUBLE_ARRAY].MaxArraylen = 17;
-
-	(*ppaResultValues)[ResultValue_INT_ARRAY].MaxArraylen = 17;
-
-}
 
 
-void CDllTool::getResultTableDefinition(ResultTableDefinitionStruct** ppaResultTables)
+
+
+void CDllTool::getResultTableDefinitionEx(ResultTableDefinitionStructEx** ppaResultTables)
 {
 	_bstr_t ColumnNames[ColumnCountA] = {"eins", "zwei", "drei", "vier","fünf","sechs"};
 	CComSafeArray<BSTR> saStr(ColumnCountA);
@@ -172,16 +186,16 @@ void CDllTool::getResultTableDefinition(ResultTableDefinitionStruct** ppaResultT
 	}
 
 
-	(*ppaResultTables)[FirstResultTable].lVT = VT_R8;
-	(*ppaResultTables)[FirstResultTable].bstrDisplayName = ::SysAllocString(L"First table");
+	(*ppaResultTables)[FirstResultTable].vt = VT_R8;
+	(*ppaResultTables)[FirstResultTable].Name = "First_table";
+	(*ppaResultTables)[FirstResultTable].HelpText = "Erstes Table Objekt";
 	(*ppaResultTables)[FirstResultTable].ColoumnCount = ColumnCountA;
-	(*ppaResultTables)[FirstResultTable].type = 0;
 	(*ppaResultTables)[FirstResultTable].ColumnNames.vt = VT_ARRAY | VT_BSTR;
 	(*ppaResultTables)[FirstResultTable].ColumnNames.parray = saStr.Detach();
 	(*ppaResultTables)[FirstResultTable].RowCount = RowCountA;
+	(*ppaResultTables)[FirstResultTable].Group = "TableGroup";
 
 }
-
 HRESULT CDllTool::validateInputValues(long lParameterNumber, const	VARIANT vParameterValue)
 {
 	HRESULT hr = S_OK;

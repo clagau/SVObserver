@@ -52,8 +52,9 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
 
-	void  InitializeInputs(long Arraysize, InputValueDefinitionStruct*  pInputValueDefs);
-	
+	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStruct  InputValueDefs[]);
+	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[]);
+	void  InitializeInputs();
 	long  getNumInputs() const { return static_cast<long>(m_InputDefinitions.size()); };
 	long  getNumResults() const { return static_cast<long>(m_ResultDefinitions.size()); };
 	long  getNumTableResults() const { return static_cast<long>(m_TableResultDefinitions.size()); };
@@ -67,7 +68,7 @@ struct SVExternalToolTaskData : public SVCancelData
 	// Inputs
 	std::vector<SvOl::SVInObjectInfoStruct> m_aInputImageInfo; //[NUM_INPUT_IMAGES]; // used to connect to other images
 	std::vector<SvVol::LinkedValue> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
-	std::vector<SvVol::SVStringValueObjectClass>  m_aInputObjectNames; //[NUM_INPUT_OBJECTS]; // our value object names
+
 
 	std::vector<SvVol::SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
 	std::vector<SvOp::TableObject*>  m_ResultTableObjects;// SvOp::SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);

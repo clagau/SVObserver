@@ -85,11 +85,6 @@ SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalTool
 		}
 		std::copy(rhs.m_aInputObjects.begin(), rhs.m_aInputObjects.end(), m_aInputObjects.begin());
 
-		if (m_aInputObjectNames.size() != rhs.m_aInputObjectNames.size())	// if this is only a copy of the original, size will be 0
-		{
-			m_aInputObjectNames.resize(rhs.m_aInputObjectNames.size());
-		}
-		std::copy(rhs.m_aInputObjectNames.begin(), rhs.m_aInputObjectNames.end(), m_aInputObjectNames.begin());
 
 		if (m_aResultObjects.size() != rhs.m_aResultObjects.size())	// if this is only a copy of the original, size will be 0
 		{
@@ -163,7 +158,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 
 	// Init Input Object Info array
 	m_Data.m_aInputObjects.resize(SVExternalToolTaskData::NUM_INPUT_OBJECTS);
-	m_Data.m_aInputObjectNames.resize(SVExternalToolTaskData::NUM_INPUT_OBJECTS);
+
 
 	for (i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
@@ -172,7 +167,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		ObjectName += SvDef::cLinkName;
 		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i].getLinkedName(), aInputObject_LinkedGUID[i], ObjectName.c_str(), false, SvOi::SVResetItemNone);
 
-		RegisterEmbeddedObject(&m_Data.m_aInputObjectNames[i], aInputObjectNameGuid[i], IDS_OBJECTNAME_INPUT_01_NAME + static_cast<int>(i), false, SvOi::SVResetItemNone);
+
 
 		// set default values
 		VARIANT vtTemp;
@@ -181,8 +176,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, true);
 
 
-		m_Data.m_aInputObjectNames[i].SetDefaultValue(std::string(), true);
-		m_Data.m_aInputObjectNames[i].setSaveValueFlag(false);
+
 	}
 
 	// Set Default Image Parameters for Result Images
@@ -251,7 +245,7 @@ void SVExternalToolTask::SetAllAttributes()
 
 		attribute = (i < m_Data.m_NumLinkedValue) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
 		attribute &= ~SvPb::viewable;
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
+
 	}
 
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
@@ -420,9 +414,20 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 HRESULT SVExternalToolTask::InitializeResultObjects()
 {
 	// Initialize Result Objects
-	ResultValueDefinitionStruct* paResultValueDefs = nullptr;
 	long numResultObjects {0};
-	HRESULT hr = m_dll.GetResultValueDefinitions(&numResultObjects, &paResultValueDefs);
+	HRESULT hr {S_OK};
+
+	ResultValueDefinitionStruct* paResultValueDefs {nullptr};
+	ResultValueDefinitionStructEx* paResultValueDefsEx {nullptr};
+	if (m_dll.UseResultEx())
+	{
+		hr = m_dll.GetResultValueDefinitions(&numResultObjects, &paResultValueDefsEx);
+	}
+	else
+	{
+		m_dll.GetResultValueDefinitions(&numResultObjects, &paResultValueDefs);
+	}
+
 	m_Data.m_lNumResultValues = numResultObjects;
 	if (S_OK != hr)
 	{
@@ -442,13 +447,21 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 
 	for (int i = 0; i < numResultObjects; i++)
 	{
-		m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
+
+		if (nullptr != paResultValueDefsEx)
+		{
+			m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefsEx[i], i);
+		}
+		else if (nullptr != paResultValueDefs)
+		{
+			m_Data.m_ResultDefinitions[i].setDefinition(paResultValueDefs[i], i);
+		}
 		if (MaxArraySize.get())
 		{
 			m_Data.m_ResultDefinitions[i].setMaxArraysize(MaxArraySize[i]);
 		}
 
-		long vt = paResultValueDefs[i].m_VT;
+		long vt = m_Data.m_ResultDefinitions[i].getVT();
 		if (vt != VT_BSTR)	// Do not allocate result if already exists....
 		{
 			SVResultClass* pResult = GetResultRangeObject(i);
@@ -474,22 +487,49 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 				}
 			}
 		}
+
+
+		if (m_Data.m_ResultDefinitions[i].UseDisplayNames())
+		{
+			std::string resPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_RESULT_PREFIX);
+
+			std::stringstream str;
+			str << resPrefix << std::setfill('0') << std::setw(2) << i + 1 << "_" << m_Data.m_ResultDefinitions[i].getDisplayName();
+			m_Data.m_aResultObjects[i].SetName(str.str().c_str());
+		}
+
 		///Set Arraysize 
 		SetResultArraySize();
 
 	}
-	hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefs);
+	if (nullptr != paResultValueDefsEx)
+	{
+		hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefsEx);
+	}
+	else if (nullptr != paResultValueDefs)
+	{
+		hr = m_dll.DestroyResultValueDefinitionStructures(paResultValueDefs);
+	}
+
 	if (S_OK != hr)
 	{
 		return hr;
 	}
 
 	ResultTableDefinitionStruct* paResultTableDefs {nullptr};
+	ResultTableDefinitionStructEx* paResultTableDefsEx {nullptr};
 	long resultTableNum {0};
 	std::unique_ptr<int[]> maxRowSizes(nullptr);
 	if (m_dll.UseTableOutput())
 	{
-		hr = m_dll.getResultTableDefinitions(&resultTableNum, &paResultTableDefs);
+		if (m_dll.UseResultEx())
+		{
+			hr = m_dll.getResultTableDefinitions(&resultTableNum, &paResultTableDefsEx);
+		}
+		else
+		{
+			hr = m_dll.getResultTableDefinitions(&resultTableNum, &paResultTableDefs);
+		}
 		if (m_dll.UseResultTablesMaxRowSize())
 		{
 			GUID guid = GetUniqueObjectID();
@@ -504,15 +544,45 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 
 		for (int j = 0; j < resultTableNum; j++)
 		{
-			m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
+			if (nullptr != paResultTableDefs)
+			{
+				m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefs[j], j);
+			}
+			else if (nullptr != paResultTableDefsEx)
+			{
+				m_Data.m_TableResultDefinitions[j].setDefinition(paResultTableDefsEx[j], j);
+			}
+
 			if (maxRowSizes.get())
 			{
 				m_Data.m_TableResultDefinitions[j].setTableRowCount(maxRowSizes[j]);
 			}
+
+
+
+			if (m_Data.m_TableResultDefinitions[j].UseDisplayNames())
+			{
+				std::stringstream str;
+				std::string tresPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_TRESULT_PREFIX);
+				str << tresPrefix << std::setfill('0') << std::setw(2) << j + 1 << "_" << m_Data.m_TableResultDefinitions[j].getDisplayName();
+				std::string name = str.str();
+				if (GetResultTableObject(j))
+				{
+					GetResultTableObject(j)->SetName(name.c_str());
+				}
+			}
 		}
 
-		hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
+		if (nullptr != paResultTableDefsEx)
+		{
+			hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefsEx);
+		}
+		else if (nullptr != paResultTableDefs)
+		{
+			hr = m_dll.destroyResultTableDefinitionStructures(paResultTableDefs);
+		}
 		paResultValueDefs = nullptr;
+		paResultValueDefsEx = nullptr;
 		CreateArrayInTable();
 	}
 	else
@@ -682,33 +752,59 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			// Initialize Input Objects
 			///////////////////////////////////////
 
+			InputValueDefinitionStructEx* paInputValueDefsEx = nullptr;
 			InputValueDefinitionStruct* paInputValueDefs = nullptr;
 			long ArraySize {0};
+			HRESULT hr {S_OK};
+			if (m_dll.UseInputEx())
+			{
+				hr = m_dll.GetInputValueDefinitions(&ArraySize, &paInputValueDefsEx);
+				if (hr == S_OK)
+				{
+					m_Data.SetInputValueDefinitions(ArraySize, paInputValueDefsEx);
+				}
+			}
+			else
+			{
+				hr = m_dll.GetInputValueDefinitions(&ArraySize, &paInputValueDefs);
+				if (hr == S_OK)
+				{
+					m_Data.SetInputValueDefinitions(ArraySize, paInputValueDefs);
+				}
+			}
 
-			hr = m_dll.GetInputValueDefinitions(&ArraySize, &paInputValueDefs);
-			m_Data.m_lNumInputValues = ArraySize;
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
 			m_InspectionInputValues.resize(ArraySize);
-			m_Data.InitializeInputs(ArraySize, paInputValueDefs);
+
+			m_Data.InitializeInputs();
 			for (int i = 0; i < ArraySize; i++)
 			{
-				HRESULT hres = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT));
+
+				HRESULT hres = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
 				if (S_OK != hres)
 				{
 					///cant change variant empty to safe array
-					_variant_t temp(paInputValueDefs[i].m_DefaultValue);
+					_variant_t temp(m_Data.m_InputDefinitions[i].getDefaultValue());
 					m_InspectionInputValues[i] = temp.Detach();
 				}
 			}
-			hr = m_dll.DestroyInputValueDefinitionStructures(paInputValueDefs);
+			if (m_dll.UseInputEx())
+			{
+				hr = m_dll.DestroyInputValueDefinitionStructures(paInputValueDefsEx);
+			}
+			else
+			{
+				hr = m_dll.DestroyInputValueDefinitionStructures(paInputValueDefs);
+			}
 			if (S_OK != hr)
 			{
 				throw hr;
 			}
 			paInputValueDefs = nullptr;
+			paInputValueDefsEx = nullptr;
 			InspectionInputsToVariantArray();
 
 
@@ -1484,7 +1580,7 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 	int size = m_Data.getNumInputs();
 	for (int i = 0; i < size; i++)
 	{
-		m_Data.m_aInputObjectNames[i].SetDefaultValue(_T(""), true);
+
 		InputValueDefinition& rInputDef = m_Data.m_InputDefinitions[i];
 		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
 		{
@@ -1724,9 +1820,18 @@ HRESULT SVExternalToolTask::collectInputImageNames()
 	}
 	return S_OK;
 }
+void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValueDefinitionStruct  InputValueDefs[])
+{
+	m_lNumInputValues = ArraySize;
+	m_InputDefinitions.resize(ArraySize);
+	m_NumLinkedValue = 0;
 
-
-void SVExternalToolTaskData::InitializeInputs(long ArraySize, InputValueDefinitionStruct  InputValueDefs[])
+	for (int i = 0; i < ArraySize; i++)
+	{
+		m_InputDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
+	}
+}
+void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[])
 {
 
 	m_lNumInputValues = ArraySize;
@@ -1736,7 +1841,15 @@ void SVExternalToolTaskData::InitializeInputs(long ArraySize, InputValueDefiniti
 	for (int i = 0; i < ArraySize; i++)
 	{
 		m_InputDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
+	}
 
+
+}
+void SVExternalToolTaskData::InitializeInputs()
+{
+
+	for (int i = 0; i < m_InputDefinitions.size(); i++)
+	{
 		InputValueDefinition& rInputDef = m_InputDefinitions[i];
 		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
 		{
@@ -1767,13 +1880,21 @@ void SVExternalToolTaskData::InitializeInputs(long ArraySize, InputValueDefiniti
 			rLinkedObject.resetAllObjects();
 		}
 
+		if (rInputDef.UseDisplayNames())
+		{
+			std::string InputPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_INPUT_PREFIX);
+			std::stringstream str;
+			str << InputPrefix << std::setfill('0') << std::setw(2) << i << "_" << rInputDef.getDisplayName();
+			std::string name = str.str();
+			m_aInputObjects[i].SetName(name.c_str());
+		}
 
-		// get Input object name
-		SvVol::SVStringValueObjectClass& rvo = m_aInputObjectNames[i];
-		rvo.SetDefaultValue(rInputDef.getDisplayName(), true);
 
 	}
+
 }
+
+
 
 
 bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], SVRunStatusClass& rRunStatus)
@@ -2089,7 +2210,7 @@ void SVExternalToolTask::collectResultValues()
 		else if (m_InspectionResultValues[i].vt == VT_EMPTY && GetResultValueObject(i)->isArray())
 		{
 			GetResultValueObject(i)->SetResultSize(0);
-		
+
 		}
 		else
 		{

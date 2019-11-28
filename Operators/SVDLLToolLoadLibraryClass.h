@@ -21,6 +21,11 @@
 
 struct SVImageDefinitionStruct;
 
+namespace SvStl
+{
+	class MessageContainer;
+
+}
 namespace SvOp
 {
 
@@ -48,6 +53,8 @@ enum SVMachineTypeEnum
 	ImageFileMachineWCEMIPSV2 = 0x169
 };
 
+
+
 typedef long    (__stdcall *SimpleTestPtr) (long lValue1, long lValue2);
 typedef HRESULT (__stdcall *GetToolNamePtr) (BSTR* pbstrToolName);
 typedef HRESULT (__stdcall *GetToolVersionPtr) (long* plVersionNumber);
@@ -58,13 +65,20 @@ typedef HRESULT (__stdcall *InitializeRunPtr) ( GUID tool, long lImageArraySize,
 typedef HRESULT (__stdcall *UninitializeRunPtr) ( GUID tool );
 typedef HRESULT(__stdcall *GetInputValueDefinitionsPtr) (long* plArraySize, InputValueDefinitionStruct** ppaStructs);
 typedef HRESULT (__stdcall *DestroyInputValueDefinitionStructuresPtr) (InputValueDefinitionStruct* paStructs);
+typedef HRESULT(__stdcall *GetInputValueDefinitionsPtrEx) (long* plArraySize, InputValueDefinitionStructEx** ppaStructs);
+typedef HRESULT(__stdcall *DestroyInputValueDefinitionStructuresPtrEx) (InputValueDefinitionStructEx* paStructs);
+
+
 typedef HRESULT (__stdcall *SetInputValuesPtr) (GUID tool, long lArraySize, VARIANT* paInputValues);
 typedef HRESULT (__stdcall *GetInputImageInformationPtr) (long* plArraySize, InputImageInformationStruct** ppaStructs);
 typedef HRESULT (__stdcall *GetResultValuesPtr) (GUID tool, long lArraySize, VARIANT* paResultValues);
 typedef HRESULT (__stdcall *GetMessageStringPtr) (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage);
 typedef HRESULT (__stdcall *ValidateValueParameterPtr) (GUID tool, long lParameterNumber, VARIANT vParameterValue);
 typedef HRESULT (__stdcall *GetResultValueDefinitionsPtr) (long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
+typedef HRESULT(__stdcall *GetResultValueDefinitionsPtrEx) (long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues);
 typedef HRESULT (__stdcall *DestroyResultValueDefinitionStructuresPtr) (ResultValueDefinitionStruct* paStructs);
+typedef HRESULT(__stdcall *DestroyResultValueDefinitionStructuresPtrEx) (ResultValueDefinitionStructEx* paStructs);
+
 typedef HRESULT (__stdcall *GetNumberOfInputImagesPtr) (long* plNumberOfInputImages);
 typedef HRESULT (__stdcall *SetMILInputImagesPtr) (GUID tool, long lArraySize, long* paMILhandles);
 typedef HRESULT (__stdcall *SetHBITMAPInputImagesPtr) (GUID tool, HBITMAP* paHandles);
@@ -73,7 +87,9 @@ typedef HRESULT (__stdcall *SetMILResultImagesPtr) (GUID tool, long lArraySize, 
 typedef HRESULT (__stdcall *GetResultImageDefinitionsPtr) (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 typedef HRESULT (__stdcall *DestroyImageDefinitionStructurePtr) ( SVImageDefinitionStruct* paStructs);
 typedef HRESULT(__stdcall *GetResultTableDefinitionsPtr) (long* pSize, ResultTableDefinitionStruct** ppaResultValues);
+typedef HRESULT(__stdcall *GetResultTableDefinitionsPtrEx) (long* pSize, ResultTableDefinitionStructEx** ppaResultValues);
 typedef HRESULT(__stdcall *DestroyResultTableDefinitionStructuresPtr) (ResultTableDefinitionStruct* paStructs);
+typedef HRESULT(__stdcall *DestroyResultTableDefinitionStructuresPtrEx) (ResultTableDefinitionStructEx* paStructs);
 typedef HRESULT(__stdcall *GetResultTablesPtr) (GUID tool, long lArraySize, VARIANT* paResultValues);
 typedef HRESULT(__stdcall *GetResultTablesMaxRowSizePtr) (GUID tool, long  Size, int pRowSizes[]);
 typedef HRESULT(__stdcall *GetResultValuesMaxArraySizePtr) (GUID tool, long  Size, int pArraySizes[]);
@@ -101,13 +117,18 @@ public:
 	HRESULT UninitializeRun ( GUID tool );
 	HRESULT GetInputValueDefinitions (long* plArraySize,InputValueDefinitionStruct** ppaStructs);
 	HRESULT DestroyInputValueDefinitionStructures (InputValueDefinitionStruct* paStructs);
+	HRESULT GetInputValueDefinitions(long* plArraySize, InputValueDefinitionStructEx** ppaStructs);
+	HRESULT DestroyInputValueDefinitionStructures(InputValueDefinitionStructEx* paStructs);
+
 	HRESULT SetInputValues (GUID tool, long lArraySize, VARIANT* paInputValues);
 	HRESULT GetInputImageInformation(std::vector<SvOp::InputImageInformationStruct> *pVector);
 	HRESULT GetResultValues (GUID tool, long lArraySize, VARIANT* paResultValues);
 	HRESULT GetMessageString (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage) const;
 	HRESULT ValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
 	HRESULT GetResultValueDefinitions (long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
+	HRESULT GetResultValueDefinitions(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues);
 	HRESULT DestroyResultValueDefinitionStructures (ResultValueDefinitionStruct* paStructs);
+	HRESULT DestroyResultValueDefinitionStructures(ResultValueDefinitionStructEx* paStructs);
 	HRESULT GetNumberOfInputImages (long* plNumberOfInputImages);
 	HRESULT SetMILInputImages (GUID tool, long lArraySize, long* paMILhandles);
 	HRESULT SetHBITMAPInputImages (GUID tool, HBITMAP* paHandles);
@@ -117,11 +138,14 @@ public:
 	HRESULT DestroyImageDefinitionStructure ( SVImageDefinitionStruct* paStructs);
 
 	HRESULT getResultTableDefinitions(long* Size, ResultTableDefinitionStruct** ppaResultTableDefs);
+	HRESULT getResultTableDefinitions(long* Size, ResultTableDefinitionStructEx** ppaResultTableDefs);
 	HRESULT destroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
+	HRESULT destroyResultTableDefinitionStructures(ResultTableDefinitionStructEx* paStructs);
 	HRESULT getResultTables(GUID tool, long lArraySize, VARIANT* paResultValues);
 
 	HRESULT getResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[]);
 	HRESULT getResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[]);
+
 	
 	bool UseResultTablesMaxRowSize() const;
 	bool  UseResultValuesMaxArraySize() const;
@@ -129,40 +153,57 @@ public:
 	bool IsHandleNull();
 	bool UseTableOutput() const;
 
+
+	bool UseResultEx()
+	{
+		return m_bUseResultEx;
+	}
+	bool UseInputEx()
+	{
+		return m_bUseInputEx;
+	}
 private:
-	SVMachineTypeEnum CheckBitness(LPCTSTR p_szFile);
-
-	HMODULE m_hmHandle;
-	bool m_bUseMil = false;
 	
+	SVMachineTypeEnum CheckBitness(LPCTSTR p_szFile);
+	HRESULT  InitResultValueDef(SvStl::MessageContainer& rR);
+	HRESULT  InitInputValueDef(SvStl::MessageContainer& rR);
 
-	SimpleTestPtr m_pfnSimpleTest;
-	GetToolNamePtr m_pfnGetToolName;
-	GetToolVersionPtr m_pfnGetToolVersion;
-	RunToolPtr m_pfnRunTool;
-	StartupPtr m_pfnStartup;
-	ShutDownPtr m_pfnShutDown;
-	InitializeRunPtr m_pfnInitializeRun;
-	UninitializeRunPtr m_pfnUninitializeRun;
-	GetInputValueDefinitionsPtr m_pfnGetInputValueDefinitions;
-	DestroyInputValueDefinitionStructuresPtr m_pfnDestroyInputValueDefinitionStructures;
-	SetInputValuesPtr m_pfnSetInputValues;
-	GetInputImageInformationPtr m_pfnGetInputImageInformation;
-	GetResultValuesPtr m_pfnGetResultValues;
-	GetMessageStringPtr m_pfnGetMessageString;
-	ValidateValueParameterPtr m_pfnValidateValueParameter;
-	GetResultValueDefinitionsPtr m_pfnGetResultValueDefinitions;
-	DestroyResultValueDefinitionStructuresPtr m_pfnDestroyResultValueDefinitionStructures;
-	GetNumberOfInputImagesPtr m_pfnGetNumberOfInputImages;
-	SetMILInputImagesPtr m_pfnSetMILInputImages;
-	SetHBITMAPInputImagesPtr m_pfnSetHBITMAPInputImages;
-	GetHBITMAPResultImagesPtr m_pfnGetHBITMAPResultImages;
-	SetMILResultImagesPtr m_pfnSetMILResultImages;
-	GetResultImageDefinitionsPtr m_pfnGetResultImageDefinitions;
-	DestroyImageDefinitionStructurePtr m_pfnDestroyImageDefinitionStructure;
-
+	HMODULE m_hmHandle {nullptr};
+	bool m_bUseMil {false};
+	bool m_bUseResultEx {false};
+	bool m_bUseInputEx {false};
+	SimpleTestPtr m_pfnSimpleTest {nullptr};
+	GetToolNamePtr m_pfnGetToolName {nullptr};
+	GetToolVersionPtr m_pfnGetToolVersion {nullptr};
+	RunToolPtr m_pfnRunTool {nullptr};
+	StartupPtr m_pfnStartup {nullptr};
+	ShutDownPtr m_pfnShutDown {nullptr};
+	InitializeRunPtr m_pfnInitializeRun {nullptr};
+	UninitializeRunPtr m_pfnUninitializeRun {nullptr};
+	GetInputValueDefinitionsPtr m_pfnGetInputValueDefinitions {nullptr};
+	DestroyInputValueDefinitionStructuresPtr m_pfnDestroyInputValueDefinitionStructures {nullptr};
+	GetInputValueDefinitionsPtrEx m_pfnGetInputValueDefinitionsEx {nullptr};
+	DestroyInputValueDefinitionStructuresPtrEx m_pfnDestroyInputValueDefinitionStructuresEx {nullptr};
+	SetInputValuesPtr m_pfnSetInputValues {nullptr};
+	GetInputImageInformationPtr m_pfnGetInputImageInformation {nullptr};
+	GetResultValuesPtr m_pfnGetResultValues {nullptr};
+	GetMessageStringPtr m_pfnGetMessageString {nullptr};
+	ValidateValueParameterPtr m_pfnValidateValueParameter {nullptr};
+	GetResultValueDefinitionsPtr m_pfnGetResultValueDefinitions {nullptr};
+	GetResultValueDefinitionsPtrEx m_pfnGetResultValueDefinitionsEx {nullptr};
+	DestroyResultValueDefinitionStructuresPtr m_pfnDestroyResultValueDefinitionStructures {nullptr};
+	DestroyResultValueDefinitionStructuresPtrEx m_pfnDestroyResultValueDefinitionStructuresEx {nullptr};
+	GetNumberOfInputImagesPtr m_pfnGetNumberOfInputImages {nullptr};
+	SetMILInputImagesPtr m_pfnSetMILInputImages {nullptr};
+	SetHBITMAPInputImagesPtr m_pfnSetHBITMAPInputImages {nullptr};
+	GetHBITMAPResultImagesPtr m_pfnGetHBITMAPResultImages {nullptr};
+	SetMILResultImagesPtr m_pfnSetMILResultImages {nullptr};
+	GetResultImageDefinitionsPtr m_pfnGetResultImageDefinitions {nullptr};
+	DestroyImageDefinitionStructurePtr m_pfnDestroyImageDefinitionStructure {nullptr};
 	GetResultTableDefinitionsPtr m_pfnGetResultTableDefinitions {nullptr};
+	GetResultTableDefinitionsPtrEx m_pfnGetResultTableDefinitionsEx {nullptr};
 	DestroyResultTableDefinitionStructuresPtr m_pfnDestroyResultTableDefinitionStructures {nullptr};
+	DestroyResultTableDefinitionStructuresPtrEx m_pfnDestroyResultTableDefinitionStructuresEx {nullptr};
 	GetResultTablesPtr  m_pfnGetResultTables {nullptr};
 	GetResultTablesMaxRowSizePtr m_pfnGetResultTablesMaxRowSize {nullptr};
 	GetResultValuesMaxArraySizePtr m_pfnGetResultValuesMaxArraySize {nullptr};

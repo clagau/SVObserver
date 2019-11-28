@@ -1,24 +1,38 @@
-#ifndef STRUCTDEFINITIONS_H_
-#define STRUCTDEFINITIONS_H_
+#pragma once 
 
 #include <WTypes.h>
 #include <OAIdl.h>
 #include <comutil.h>
 
+
 #pragma pack( push, 1 ) 
-struct InputValueDefinitionStruct
+/// The structure definition must be the same as the one in the SVObserver
+struct DefinitionStructEx
 {
-	long lVT;
-	BSTR bstrDisplayName;
-	BSTR bstrHelpText;
-	BSTR bstrGroup;
+	long vt {VT_EMPTY};
+	_bstr_t Name;
+	_bstr_t HelpText;
+	_bstr_t Group;
+	_variant_t Reseved1; // not used at this time
+	_variant_t Reserved2; // not used at this time
+};
+
+struct InputValueDefinitionStructEx : public DefinitionStructEx
+{
 	_variant_t vDefaultValue;
 };
 
-struct ResultValueDefinitionStruct
+struct ResultValueDefinitionStructEx : public DefinitionStructEx
 {
-	long lVT;
-	BSTR bstrDisplayName;	// not used at this time
+	long ArraySize {20};
+};
+
+struct ResultTableDefinitionStructEx : public DefinitionStructEx
+{
+	long ColoumnCount {0};
+	long RowCount {0};
+	_variant_t ColumnNames; //smart array of bstr with names
+
 };
 
 enum SVImageFormatEnum
@@ -36,23 +50,5 @@ struct ImageDefinitionStruct
 	SVImageFormatEnum eImageFormat;
 };
 
-struct ResultTableDefinitionStruct
-{
-	long lVT {VT_EMPTY};
-	_bstr_t bstrDisplayName;	// not used at this time
-	DWORD type {0}; 	// not used at this time
-	long ColoumnCount {0};
-	long RowCount {0};
-	_variant_t ColumnNames; //smart array of bstr with names
-	
-};
-
-struct ResultValueDefinitionStructAd
-{
-	DWORD type {0}; 	// not used at this time
-	long MaxArraylen {20}; 
-};
 
 #pragma pack(pop) 
-
-#endif	// STRUCTDEFINITIONS_H_

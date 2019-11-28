@@ -263,8 +263,8 @@ TOOLDLL_API HRESULT __stdcall SVUninitializeRun(GUID guidTool)
 
 
 
-TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize,
-	InputValueDefinitionStruct** ppaStructs)
+TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
+	InputValueDefinitionStructEx** ppaStructs)
 {
 #if _DEBUG
 	fdb("===== SVGetInputValueDefinitions - Enter - NumInputValues %d\n", NUM_INPUT_VALUES);
@@ -275,7 +275,7 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize,
 	typedef std::basic_string<WCHAR> wstring;
 
 	if (NUM_INPUT_VALUES > 0)
-		*ppaStructs = new InputValueDefinitionStruct[NUM_INPUT_VALUES];
+		*ppaStructs = new InputValueDefinitionStructEx[NUM_INPUT_VALUES];
 	else
 		*ppaStructs = NULL;
 
@@ -303,7 +303,7 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize,
 	/////////////////////////////////////////////////////////////////////////
 	//### Algo Input Parameters
 	*plArraySize = NUM_INPUT_VALUES;
-	CDllTool::getInputValuesDefinition(ppaStructs);
+	CDllTool::getInputValuesDefinitionEx(ppaStructs);
 
 #if _DEBUG
 	fdb("      SVGetInputValueDefinitions - Checkpoint1\n");
@@ -323,8 +323,8 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize,
 	return hr;
 }
 
-TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures(
-	InputValueDefinitionStruct* paStructs)
+TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructuresEx(
+	InputValueDefinitionStructEx* paStructs)
 {
 #if _DEBUG
 	fdb("===== SVDestroyInputValueDefinitionStructures - Enter\n");
@@ -333,9 +333,7 @@ TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures(
 	HRESULT hr = S_OK;
 	for (int i = 0; i < NUM_INPUT_VALUES; i++)
 	{
-		::SysFreeString(paStructs[i].bstrDisplayName);
-		::SysFreeString(paStructs[i].bstrGroup);
-		::SysFreeString(paStructs[i].bstrHelpText);
+		
 		::VariantClear(&paStructs[i].vDefaultValue);
 	}
 	delete[] paStructs;
@@ -346,35 +344,12 @@ TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures(
 	return hr;
 }
 
-TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructures(
-	ResultValueDefinitionStruct* paStructs)
+
+TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructuresEx(ResultValueDefinitionStructEx* paStructs)
 {
-#if _DEBUG
-	fdb("===== SVDestroyResultValueDefinitionStructures - Enter\n");
-#endif
-
-	HRESULT hr = S_OK;
-	for (int i = 0; i < NUM_RESULT_VALUES; i++)
-	{
-		::SysFreeString(paStructs[i].bstrDisplayName);
-	}
 	delete[] paStructs;
-
-#if _DEBUG
-	fdb("===== SVDestroyResultValueDefinitionStructures - Exit - hr=0x%X\n", hr);
-#endif
-	return hr;
+	return S_OK;
 }
-TOOLDLL_API HRESULT __stdcall DestroyResultValueDefinitionStructuresAd(
-	ResultValueDefinitionStructAd* paStructs)
-{
-	HRESULT hr = S_OK;
-	
-	delete[] paStructs;
-
-	return hr;
-}
-
 
 TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,
 	VARIANT* paInputValues)
@@ -459,55 +434,20 @@ TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID guidTool, long lPara
 }
 
 
-TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitions(long* plArraySize, ResultValueDefinitionStruct** ppaResultValues)
-{
-#if _DEBUG
-	fdb("===== SVGetResultValueDefinitions - Enter - NumResults %d\n", NUM_RESULT_VALUES);
-#endif
-
-	HRESULT hr = S_OK;
-
-	*plArraySize = NUM_RESULT_VALUES;
-	*ppaResultValues = new ResultValueDefinitionStruct[NUM_RESULT_VALUES];
-
-	//### Check for alloc failed
-	if (*ppaResultValues != NULL)
-	{
-		CDllTool::getResultValueDefinition(ppaResultValues);
-	}
-	else
-	{
-#if _DEBUG
-		fdb("      SVGetResultValueDefinitions - allocation ResultValueDefinitionStruct failed\n");
-#endif
-		hr = S_FALSE;
-	}
-
-#if _DEBUG
-	fdb("===== SVGetResultValueDefinitions - Exit - hr=0x%X\n", hr);
-#endif
-	return hr;
-}
-
-
-TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues)
+TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitionsEx(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues)
 {
 
 	HRESULT hr = S_OK;
-
 	*plArraySize = NUM_RESULT_VALUES;
-	*ppaResultValues = new ResultValueDefinitionStructAd[NUM_RESULT_VALUES];
-
-	//### Check for alloc failed
+	*ppaResultValues = new ResultValueDefinitionStructEx[NUM_RESULT_VALUES];
 	if (*ppaResultValues != NULL)
 	{
-		CDllTool::getResultValueDefinitionAd(ppaResultValues);
+		CDllTool::getResultValueDefinitionEx(ppaResultValues);
 	}
 	else
 	{
 		hr = S_FALSE;
 	}
-
 	return hr;
 }
 
@@ -636,38 +576,37 @@ TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure(ImageDefinitionS
 	return hr;
 }
 
-TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTableDefinitionStruct** ppaResultTableDefs)
+
+TOOLDLL_API HRESULT __stdcall GetResultTableDefinitionsEx(long* pSize, ResultTableDefinitionStructEx** ppaResultTableDefs)
 {
 	HRESULT hr = S_OK;
-
 	if (NUM_RESULT_TABLES > 0)
 	{
-		*ppaResultTableDefs = new ResultTableDefinitionStruct[NUM_RESULT_TABLES];
+		*ppaResultTableDefs = new ResultTableDefinitionStructEx[NUM_RESULT_TABLES];
 	}
 	else
 	{
 		*ppaResultTableDefs = NULL;
 	}
-
-	
 	if (ppaResultTableDefs == NULL)
 	{
 
 		return S_FALSE;
 	}
-
-
 	*pSize = NUM_RESULT_TABLES;
-	CDllTool::getResultTableDefinition(ppaResultTableDefs);
+	CDllTool::getResultTableDefinitionEx(ppaResultTableDefs);
 
 	return hr;
 }
-TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs)
+TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructuresEx(ResultTableDefinitionStructEx* paStructs)
 {
 	HRESULT hr = S_OK;
 	delete[] paStructs;
 	return hr;
 }
+
+
+
 
 TOOLDLL_API HRESULT __stdcall GetResultTables(GUID guidTool, long lArraySize, VARIANT* paResultValues)
 {
@@ -716,3 +655,5 @@ TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID guidTool, long Si
 	}
 	return hr;
 }
+
+

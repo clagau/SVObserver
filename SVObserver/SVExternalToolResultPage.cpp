@@ -95,13 +95,40 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		pRoot->SetInfoText(_T(""));
 
 		int iID = ID_BASE - 1;	// the increment happens before using the value, so subtract one here
+		std::map<std::string, SVRPropertyItem*> mapGroupItems;
+		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
+
+		SVRPropertyItem* pGroupItem = nullptr;
+
 		int NumResults = m_pTask->m_Data.getNumResults();
 		for (int i = 0; i < NumResults; i++)
 		{
 			SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];
 			SvOp::ResultValueDefinition& rDefinition = m_pTask->m_Data.m_ResultDefinitions[i];
-			
-			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+			if (rDefinition.UseDisplayNames())
+			{
+				std::string GroupName = rDefinition.getGroup();
+
+				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
+				{	
+					bool bTreeStyle = true;	// false = list-style
+					pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+					pGroupItem->SetCanShrink(bTreeStyle);
+					pGroupItem->SetLabelText(GroupName.c_str());
+					pGroupItem->SetInfoText(_T(""));
+					pGroupItem->Expand();
+					pGroupItem->SetBold(true);
+					mapGroupItems[GroupName] = pGroupItem;
+				}
+				else	
+				{
+					pGroupItem = iterGroup->second;
+				}
+			}
+
+
+			SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
+			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
 			if (nullptr == pEdit)
 			{
 				break;
@@ -110,10 +137,17 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			iID++;
 			pEdit->SetCtrlID(iID);
 
-			// display name like: "Result 01 ( )"
-			std::string sLabel = SvUl::Format(_T("%s (%s)"), rValue.GetName(), rDefinition.getDisplayName().c_str());
+			std::string sLabel = rValue.GetName();
+			if (false == rDefinition.UseDisplayNames())
+			{
+				sLabel += " (";
+				sLabel += rDefinition.getDisplayName();
+				sLabel += ")";
+			}
+
+
 			pEdit->SetLabelText(sLabel.c_str());
-			
+
 			std::string Type;
 			switch (rDefinition.getVT())
 			{
@@ -127,45 +161,72 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 				default:      Type = _T("???");    break;
 			}
 
-			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.getDisplayName());
+			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.getHelpText().c_str());
 			pEdit->SetInfoText(sDescription.c_str());
 			pEdit->SetButtonText(_T("Range"));
 
 			std::string sValue;
 			rValue.getValue(sValue);
 			pEdit->SetItemValue(sValue.c_str());
-			if (rDefinition.getVT() == VT_BSTR || (rDefinition.getVT()& VT_ARRAY) )
+			if (rDefinition.getVT() == VT_BSTR || (rDefinition.getVT()& VT_ARRAY))
 			{
 				pEdit->ReadOnly();
 			}
 			pEdit->OnRefresh();
 		}
-		
+
 		int NumTableResults = m_pTask->m_Data.getNumTableResults();
 		for (int i = 0; i < NumTableResults; i++)
 		{
-			
+
 			SvOp::ResultTableDefinition& rDefinition = m_pTask->m_Data.m_TableResultDefinitions[i];
 			SvOp::TableObject* pTable = m_pTask->m_Data.m_ResultTableObjects[i];
 			if (!pTable)
 				break;
 
-			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+			if (rDefinition.UseDisplayNames())
+			{
+				std::string GroupName = rDefinition.getGroup();
+
+				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
+				{	
+					bool bTreeStyle = true;	// false = list-style
+					pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+					pGroupItem->SetCanShrink(bTreeStyle);
+					pGroupItem->SetLabelText(GroupName.c_str());
+					pGroupItem->SetInfoText(_T(""));
+					pGroupItem->Expand();
+					pGroupItem->SetBold(true);
+					mapGroupItems[GroupName] = pGroupItem;
+				}
+				else	
+				{
+					pGroupItem = iterGroup->second;
+				}
+			}
+
+			SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
+			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
 			if (nullptr == pEdit)
 			{
 				break;
 			}
-
 			iID++;
 			pEdit->SetCtrlID(iID);
-			
-			std::string sLabel = SvUl::Format(_T("%s (%s)"), pTable->GetName(), rDefinition.getDisplayName().c_str());
+			std::string sLabel = pTable->GetName();
+			// display name like: "Result 01 ( )"
+			if (false == rDefinition.UseDisplayNames())
+			{
+				sLabel += " (";
+				sLabel += rDefinition.getDisplayName();
+				sLabel += ")";
+			}
 			pEdit->SetLabelText(sLabel.c_str());
 			pEdit->ReadOnly();
 
-			std::string sDescription = SvUl::Format(_T(" (Type : Table object)  %s"), rDefinition.getDisplayName());
+			std::string sDescription = SvUl::Format(_T(" (Type: Tableobject)  %s"), rDefinition.getHelpText().c_str());
 			pEdit->SetInfoText(sDescription.c_str());
-			
+
 			pEdit->OnRefresh();
 		}
 
@@ -202,7 +263,7 @@ void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESU
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 
-		if (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT()== VT_BSTR ||
+		if (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() == VT_BSTR ||
 			0 != (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() & VT_ARRAY)
 			)
 		{
@@ -302,7 +363,6 @@ void SVExternalToolResultPage::OnOK()
 		CPropertyPage::OnOK();
 	}
 }
-
 
 int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)
 {

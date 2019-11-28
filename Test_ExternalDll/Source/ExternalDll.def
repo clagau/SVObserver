@@ -9,24 +9,27 @@ EXPORTS
     SVShutDown 
     SVInitializeRun 
     SVUninitializeRun 
-    SVGetInputValueDefinitions 
-    SVDestroyInputValueDefinitionStructures 
+    SVGetInputValueDefinitionsEx 
+    SVDestroyInputValueDefinitionStructuresEx 
     SVSetInputValues 
     SVGetResultValues 
     SVGetErrorMessageString 
     SVValidateValueParameter 
-    SVGetResultValueDefinitions 
-    SVDestroyResultValueDefinitionStructures
+    SVGetResultValueDefinitionsEx 
+	SVDestroyResultValueDefinitionStructuresEx
     SVGetNumberOfInputImages
-;    SVSetHBITMAPInputImages 
-;    SVGetHBITMAPResultImages
+;   SVSetHBITMAPInputImages 
+;   SVGetHBITMAPResultImages
     SVSetMILInputImages 
 	SVSetMILResultImages 
     SVGetResultImageDefinitions 
     SVDestroyImageDefinitionStructure 
-    GetResultTableDefinitions
-    DestroyResultTableDefinitionStructures
+  ; GetResultTableDefinitions
+	GetResultTableDefinitionsEx
+  ; DestroyResultTableDefinitionStructures
+	DestroyResultTableDefinitionStructuresEx
     GetResultTables
 	GetResultTablesMaxRowSize
     GetResultValuesMaxArraySize
+   
 

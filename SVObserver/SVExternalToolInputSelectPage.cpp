@@ -25,6 +25,7 @@
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "Operators/TableObject.h"
 #include "Operators/SVDLLToolDefinitionStructs.h"
+#include "Operators/SVDLLToolLoadLibraryClass.h"
 
 #pragma endregion Includes
 
@@ -181,7 +182,15 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 			int Index = rDefinition.getLinkedValueIndex();
 			// display name like: "Input 01 (Translation-X)"
-			std::string sLabel = SvUl::Format(_T("%s (%s)"), m_Values.GetName(aInputObjectGUID[Index]).c_str(), m_Values.Get<CString>(aInputObjectNameGuid[i]));
+			std::string  sLabel = m_Values.GetName(aInputObjectGUID[Index]).c_str();
+
+			if (false == rDefinition.UseDisplayNames() )
+			{
+				sLabel += " (";
+				sLabel += rDefinition.getDisplayName();
+				sLabel += ")";
+			}
+			
 			pEdit->SetLabelText(sLabel.c_str());
 
 			std::string strType;
@@ -219,7 +228,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			}
 
 			std::string Description = rDefinition.getHelpText();
-			Description = _T(" (Type : ") + strType + _T(")  ") + Description;
+			Description = _T(" (Type: ") + strType + _T(")  ") + Description;
 			pEdit->SetInfoText(Description.c_str());
 
 			std::string Value(m_Values.Get<CString>(aInputObject_LinkedGUID[Index]));
