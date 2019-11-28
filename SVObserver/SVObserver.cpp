@@ -4519,9 +4519,8 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 						return;
 					}
 
-					SvTi::SVTriggerObject* pTrigger(nullptr);
-					pPPQ->GetTrigger(pTrigger);
-					if (nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
+					SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
+					if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 					{
 						l_trgrDlg.AddTrigger(pTrigger);
 					}
@@ -4615,12 +4614,13 @@ HRESULT SVObserverApp::GetTriggersAndCounts(std::string& rTriggerCounts) const
 			//Returns true when pointer valid
 			if (nullptr != pPPQ)
 			{
-				SvTi::SVTriggerObject* pTrigger(nullptr);
-				//If returns true has valid pointer
-				pPPQ->GetTrigger(pTrigger);
-				l_hr = S_OK;
-				std::string Temp = SvUl::Format(_T("\n%s count-%d"), pTrigger->GetName(), pTrigger->m_lTriggerCount);
-				rTriggerCounts += Temp;
+				SvTi::SVTriggerObject* pTrigger(pPPQ->GetTrigger());
+				if(nullptr != pTrigger)
+				{
+					l_hr = S_OK;
+					std::string Temp = SvUl::Format(_T("\n%s count-%d"), pTrigger->GetName(), pTrigger->getTriggerCount());
+					rTriggerCounts += Temp;
+				}
 			}
 		}
 	}
@@ -5079,9 +5079,8 @@ void SVObserverApp::Start()
 				pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
 				pPPQ->PrepareGoOnline();
 
-				SvTi::SVTriggerObject* pTrigger(nullptr);
-				pPPQ->GetTrigger(pTrigger);
-				if (nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
+				SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
+				if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 				{
 					l_trgrDlg.AddTrigger(pTrigger);
 				}
@@ -5477,8 +5476,7 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 			auto* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr != pPPQ)
 			{
-				SvTi::SVTriggerObject* pTrigger(nullptr);
-				pPPQ->GetTrigger(pTrigger);
+				SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
 				if (nullptr != pTrigger)
 				{
 					pPPQ->setOnline();

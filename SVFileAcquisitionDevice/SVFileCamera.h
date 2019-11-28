@@ -19,7 +19,7 @@
 #include <mil.h>
 #include "SVFileCameraStruct.h"
 #include "SVEventHandler.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
 #include "SVSystemLibrary/SVSequencer.h"
@@ -47,7 +47,7 @@ public:
 	typedef SVEventHandler<EventHandler> SVFrameEventHandler;
 
 private:
-	unsigned long m_index;
+	long m_index{-1L};
 	SVFileCameraStruct m_fileData;
 	std::string m_name;
 	SVFileList m_fileList;
@@ -56,7 +56,6 @@ private:
 	SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_thread;
 	SVFrameEventHandler m_startFrameEvent;
 	SVFrameEventHandler m_endFrameEvent;
-	bool m_lineState = false;
 
 	static void CALLBACK OnAPCEvent( ULONG_PTR data );
 	void OnThreadEvent( bool& p_WaitForEvents );
@@ -64,10 +63,14 @@ private:
 	std::string GetNextFilename();
 
 public:
-	long m_lIsStarted;
-	bool m_bAcquisitionTriggered;
+	long m_lIsStarted{0L};
 
-	SVFileCamera();
+	SVFileCamera() = default;
+	explicit SVFileCamera(LPCTSTR name) : m_name{name} {};
+	SVFileCamera::SVFileCamera(const SVFileCamera& rRhs) = delete;
+	SVFileCamera::SVFileCamera(SVFileCamera&& rRhs) = default;
+	SVFileCamera &operator=(const SVFileCamera& rRhs) = delete;
+	SVFileCamera &operator=(SVFileCamera&& rRhs) = default;
 
 	const std::string& GetName() const;
 	void SetName(const std::string& name);
@@ -97,21 +100,11 @@ public:
 
 	HRESULT CopyImage(SvTrc::IImage* pImagePtr);
 
-	bool IsAcquisitionTriggered() const;
-	void SetAcquisitionTriggered(bool bAcquisitionTriggered);
-	void SetLineState(bool bState);
-	bool GetLineState() const;
-
-	const SvTh::TriggerDispatcher& GetTriggerDispatcher() const;
-	void SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher);
-	void ClearTriggerCallback();
 	HRESULT loadImage(std::string fileName);
 
-	SVAcquisitionBufferInterface* m_pBufferInterface;
 
-	double m_StartTimeStamp;
-	SvTh::TriggerDispatcher m_dispatcher;
+	double m_StartTimeStamp{0.0};
+	SvTh::TriggerDispatcher m_dispatcher {nullptr,SvTh::TriggerParameters{}};
+	SVAcquisitionBufferInterface* m_pBufferInterface{nullptr};
 };
-
-typedef std::vector<SVFileCamera> SVFileCameraList;
 

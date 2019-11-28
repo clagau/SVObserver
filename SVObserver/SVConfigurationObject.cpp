@@ -44,6 +44,7 @@
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
@@ -64,9 +65,8 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "TriggerHandling/SVAcquisitionInitiator.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "TriggerInformation/SVCameraTriggerClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
 #pragma endregion Includes
@@ -1807,11 +1807,6 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 				DeviceName = SvUl::createStdString(Value);
 			}
 
-			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_SOFTWARETRIGGER_DEVICE, hSubChild, Value))
-			{
-				pTrigger->SetSoftwareTrigger(Value);
-			}
-
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_SOFTWARETRIGGER_PERIOD, hSubChild, Value))
 			{
 				pTrigger->SetSoftwareTriggerPeriod(Value);
@@ -3126,7 +3121,7 @@ void SVConfigurationObject::SaveCamera(SvOi::IObjectWriter& rWriter) const
 		{
 			rWriter.StartElement(pCamera->GetName());
 
-			if (nullptr != pCamera->mpsvDevice)
+			if (nullptr != pCamera->GetAcquisitionDevice())
 			{
 				_variant_t svVariant;
 				svVariant = pCamera->getCameraID();
@@ -3134,7 +3129,7 @@ void SVConfigurationObject::SaveCamera(SvOi::IObjectWriter& rWriter) const
 				svVariant.Clear();
 
 				//@WARNING [gra][7.40][02.11.2016] We need to add the channel for forward compatibility with version 7.30, can be removed in next version
-				std::string AcquisitionName = pCamera->mpsvDevice->DeviceName();
+				std::string AcquisitionName = pCamera->GetAcquisitionDevice()->DeviceName();
 				if (pCamera->IsColor())
 				{
 					AcquisitionName += _T(".Ch_All");
@@ -3212,13 +3207,13 @@ void SVConfigurationObject::SaveTrigger(SvOi::IObjectWriter& rWriter) const
 		{
 			rWriter.StartElement(pTrigger->GetName());
 
-			if (nullptr != pTrigger->mpsvDevice)
+			if (nullptr != pTrigger->getDevice())
 			{
 				_variant_t svVariant;
-				svVariant.SetString(pTrigger->mpsvDevice->GetDeviceName());
+				svVariant.SetString(pTrigger->getDevice()->GetDeviceName());
 				rWriter.WriteAttribute(SvXml::CTAG_TRIGGER_DEVICE, svVariant);
 			}
-			if (pTrigger->IsSoftwareTrigger())
+			if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 			{
 				_variant_t svVariant = true;
 				rWriter.WriteAttribute(SvXml::CTAG_SOFTWARETRIGGER_DEVICE, svVariant);
@@ -3295,13 +3290,10 @@ void SVConfigurationObject::SavePPQ(SvOi::IObjectWriter& rWriter) const
 
 			SavePPQ_Attributes(rWriter, *pPPQ);
 
-			SvTi::SVTriggerObject* pTrigger(nullptr);
-			pPPQ->GetTrigger(pTrigger);
-
-			if (nullptr != pTrigger)
+			if (nullptr != pPPQ->GetTrigger())
 			{
 				rWriter.StartElement(SvXml::CTAG_TRIGGER);
-				strName = pTrigger->GetName();
+				strName = pPPQ->GetTrigger()->GetName();
 				rWriter.StartElement(strName.c_str());
 				rWriter.EndElement();
 				rWriter.EndElement(); //SvXml::CTAG_TRIGGER
@@ -3935,57 +3927,46 @@ unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
 	}
 }
 
-void SVConfigurationObject::SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
+void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
 {
-	ASSERT(nullptr != pTriggerDevice && nullptr != pPPQ);
-	if (nullptr == pTriggerDevice || nullptr == pPPQ)
+	ASSERT(nullptr != pTrigger && nullptr != pPPQ);
+	if (nullptr == pTrigger || nullptr == pPPQ)
 	{
 		return;
 	}
 
 	unsigned long triggerHandle;
-	pTriggerDevice->m_pDLLTrigger->GetHandle(&triggerHandle, iDigNum);
+	pTrigger->getDLLTrigger()->GetHandle(&triggerHandle, iDigNum);
 	VARIANT l_vValue;
 	::VariantInit(&l_vValue);
 	l_vValue.vt = VT_I4;
 	l_vValue.lVal = triggerPeriod;
 
 	// Setup the Triggering device
-	pTriggerDevice->m_pDLLTrigger->SetParameterValue(triggerHandle, 0, &l_vValue);
+	pTrigger->getDLLTrigger()->SetParameterValue(triggerHandle, 0, &l_vValue);
 
 	// get Handles for all cameras associated with this trigger
+	SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-	// Get The PPQ for this Trigger Object
-	if (pPPQ)
+	for (auto* pCamera : cameraVector)
 	{
-		SvTh::SVAcquisitionInitiator  acqInitiator;
-
-		SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
-
-		for (auto* pCamera : cameraVector)
+		if (nullptr != pCamera)
 		{
-			if (nullptr != pCamera)
+			SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
+			if (nullptr != pAcq)
 			{
-				// remove Trigger Relay, as we are using the Software Trigger
-				pCamera->UnregisterTriggerRelay();
-
-				SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
-				if (nullptr != pAcq)
+				// need the digitizer name here ...
+				SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+				if (pAcqDLL)
 				{
-					// need the digitizer name here ...
-					SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
-					if (pAcqDLL)
-					{
-						acqInitiator.Add(pAcqDLL, pAcq->m_hDigitizer);
-					}
+					pTrigger->addAcquisitionTrigger(pAcqDLL, pAcq->m_hDigitizer);
 				}
 			}
 		}
-		pTriggerDevice->RegisterAcquistionInitiator(acqInitiator);
 	}
 }
 
-void SVConfigurationObject::SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod)
+void SVConfigurationObject::SetupCameraTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod)
 {
 	ASSERT(nullptr != pTriggerDevice && nullptr != pPPQ);
 	if (nullptr == pTriggerDevice || nullptr == pPPQ)
@@ -3996,16 +3977,13 @@ void SVConfigurationObject::SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTrig
 	if (bSoftwareTrigger)
 	{
 		std::string DeviceName = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum);
-		SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str());
-		if (psvDevice)
+		SvTh::SVTriggerClass* pTrigger = SvTi::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str());
+		if (pTrigger)
 		{
-			psvDevice->Create();
+			pTrigger->Create();
 		}
 
-		SvTi::SVSoftwareTriggerClass* pSoftwareTriggerDevice = dynamic_cast<SvTi::SVSoftwareTriggerClass*>(psvDevice);
-		pTriggerDevice->SetSoftwareTriggerDevice(pSoftwareTriggerDevice);
-
-		SetupSoftwareTrigger(pSoftwareTriggerDevice, iDigNum, triggerPeriod, pPPQ);
+		SetupSoftwareTrigger(pTrigger, iDigNum, triggerPeriod, pPPQ);
 	}
 	else
 	{
@@ -4018,11 +3996,11 @@ void SVConfigurationObject::SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTrig
 				SvIe::SVVirtualCamera* pCamera = GetCamera(i);
 				if (nullptr != pCamera)
 				{
-					if (nullptr != pCamera->mpsvDevice)
+					if (nullptr != pCamera->GetAcquisitionDevice())
 					{
-						if (iDigNum == pCamera->mpsvDevice->DigNumber())
+						if (iDigNum == pCamera->GetAcquisitionDevice()->DigNumber())
 						{
-							pTriggerDevice->m_triggerchannel = pCamera->mpsvDevice->m_hDigitizer;
+							pTriggerDevice->setTriggerChannel(pCamera->GetAcquisitionDevice()->m_hDigitizer);
 							break;
 						}
 					}
@@ -4059,45 +4037,40 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 		bOk = (nullptr != pTrigger);
 		if (bOk)
 		{
-			if (pTrigger->IsAcquisitionTrigger())
+			SvTh::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
+			SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->getOwner());
+			if(nullptr != pTriggerDevice)
 			{
-				int iDigNum = pTrigger->mpsvDevice->miChannelNumber;
-				SvTi::SVCameraTriggerClass* pTriggerDevice = dynamic_cast<SvTi::SVCameraTriggerClass*>(pTrigger->mpsvDevice);
-				if (nullptr != pTriggerDevice)
-				{
-					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-					if (nullptr != pPPQ) { SetupCameraTrigger(pTriggerDevice, iDigNum, pPPQ, pTrigger->IsSoftwareTrigger(), pTrigger->GetSoftwareTriggerPeriod()); }
+				pTriggerDevice->clearAcquisitionTriggers();
+			}
+			if (SvDef::TriggerType::CameraTrigger == pTrigger->getType())
+			{
+				int iDigNum = pTrigger->getDevice()->getDigitizerNumber();
+				if (nullptr != pPPQ && nullptr != pTriggerDevice)
+				{ 
+					SetupCameraTrigger(pTriggerDevice, iDigNum, pPPQ, true, pTrigger->GetSoftwareTriggerPeriod());
 				}
 			}
-			else if (pTrigger->IsSoftwareTrigger())
+			else if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 			{
-				int iDigNum = pTrigger->mpsvDevice->miChannelNumber;
-				SvTi::SVSoftwareTriggerClass* pTriggerDevice = dynamic_cast<SvTi::SVSoftwareTriggerClass *>(pTrigger->mpsvDevice);
-
-				if (nullptr != pTriggerDevice && nullptr != pTriggerDevice->m_pDLLTrigger)
+				int iDigNum = pTrigger->getDevice()->getDigitizerNumber();
+				if (nullptr != pPPQ && nullptr != pTriggerDevice && nullptr != pTriggerDevice->getDLLTrigger())
 				{
-					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-					if (nullptr != pPPQ) { SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ); }
+					SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ);
 				}
 			}
-			else
+			// need to add acquisition trigger for File Acquisition
+			if (nullptr != pPPQ && nullptr != pTrigger->getDevice() && nullptr != pTrigger->getDevice()->getDLLTrigger())
 			{
-				// need to wire up Trigger Relay for File Acquisition
-				// Get all cameras for this trigger
-				// Get The PPQ for this Trigger Object
-				SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-				if (nullptr != pPPQ && nullptr != pTrigger->mpsvDevice && nullptr != pTrigger->mpsvDevice->m_pDLLTrigger)
-				{
-					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
+				SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
-					for (auto* pCamera : cameraVector)
+				for (auto* pCamera : cameraVector)
+				{
+					if (nullptr != pCamera)
 					{
-						if (nullptr != pCamera)
+						if (pCamera->IsFileAcquisition())
 						{
-							if (pCamera->IsFileAcquisition())
-							{
-								hr = pCamera->RegisterTriggerRelay(pTrigger->mpsvDevice->m_pDLLTrigger, pTrigger->mpsvDevice->m_triggerchannel);
-							}
+							pCamera->RegisterTrigger(pTrigger->getDevice());
 						}
 					}
 				}
@@ -5072,12 +5045,12 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 		SvTi::SVTriggerObject* pTrigger = GetTrigger(i);
 		if (nullptr != pTrigger)
 		{
-			if (pTrigger->IsAcquisitionTrigger())
+			if (SvDef::TriggerType::CameraTrigger == pTrigger->getType())
 			{
-				SvTi::SVCameraTriggerClass* pTriggerDevice = dynamic_cast<SvTi::SVCameraTriggerClass*>(pTrigger->mpsvDevice);
+				SvTh::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
 				if (nullptr != pTriggerDevice)
 				{
-					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
+					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->getOwner());
 					if (pCameraPPQ == pPPQ)
 					{
 						bRetVal = true;

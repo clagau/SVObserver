@@ -128,8 +128,6 @@ public:
 	// helper
 	static HRESULT Destroy(SVMatroxDigitizer& p_rDigitizer);
 
-	static HRESULT GetGigeCameraTimestamp(__int64 milEventID, double& timestamp);
-	static HRESULT GetGigeEventType(__int64 milEventID, long& p_rEventType);
 	static HRESULT SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const std::string& name, const std::string& value);
 	static HRESULT GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list);
 };

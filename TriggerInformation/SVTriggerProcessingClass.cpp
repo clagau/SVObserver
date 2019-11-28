@@ -14,9 +14,7 @@
 #include "SVTriggerProcessingClass.h"
 #include "SVHardwareManifest.h"
 #include "TriggerHandling/SVTriggerClass.h"
-#include "SVSoftwareTriggerClass.h"
-#include "SVCameraTriggerClass.h"
-#include "SVTriggerConstants.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -48,26 +46,12 @@ namespace SvTi
 
 		while( l_Iter != l_rTriggerParams.end() )
 		{
-			SvTh::SVTriggerClass* l_pTrigger = nullptr;
+			std::unique_ptr<SvTh::SVTriggerClass> pTriggerDevice = std::make_unique<SvTh::SVTriggerClass>(l_Iter->m_Name.c_str());
 
-			if( 0 == l_Iter->m_Name.find( SoftwareTriggerName ) )
+			if( nullptr != pTriggerDevice)
 			{
-				l_pTrigger = new SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
-			}
-			else if( 0 == l_Iter->m_Name.find( _T( "IO_Board" ) ) )
-			{
-				l_pTrigger = new SvTh::SVTriggerClass( l_Iter->m_Name.c_str() );
-			}
-			else if( 0 == l_Iter->m_Name.find( CameraTriggerName ) )
-			{
-				l_pTrigger = new SVCameraTriggerClass( l_Iter->m_Name.c_str() );
-			}
-
-			if( nullptr != l_pTrigger )
-			{
-				l_pTrigger->miChannelNumber = l_Iter->m_Channel;
-
-				m_Triggers[ l_Iter->m_Name ] = l_pTrigger;
+				pTriggerDevice->setDigitizerNumber(l_Iter->m_Channel);
+				m_Triggers[ l_Iter->m_Name ] = std::move(pTriggerDevice);
 			}
 
 			++l_Iter;
@@ -78,22 +62,7 @@ namespace SvTi
 	{
 		clear();
 
-		if( !( m_Triggers.empty() ) )
-		{
-			SVNameTriggerMap::iterator l_Iter = m_Triggers.begin();
-
-			while( l_Iter != m_Triggers.end() )
-			{
-				SvTh::SVTriggerClass* l_pTrigger = l_Iter->second;
-
-				if( nullptr != l_pTrigger )
-				{
-					delete l_pTrigger;
-				}
-
-				l_Iter = m_Triggers.erase( l_Iter );
-			}
-		}
+		m_Triggers.clear();
 	}
 
 	void SVTriggerProcessingClass::clear()
@@ -106,8 +75,8 @@ namespace SvTi
 			{
 				if( nullptr != l_Iter->second )
 				{
-					l_Iter->second->m_pDLLTrigger = nullptr;
-					l_Iter->second->m_triggerchannel = 0;
+					l_Iter->second->setDLLTrigger(nullptr);
+					l_Iter->second->setTriggerChannel(0);
 				}
 				++l_Iter;
 			}
@@ -181,16 +150,16 @@ namespace SvTi
 
 	SvTh::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
 	{
-		SvTh::SVTriggerClass* l_pTrigger = nullptr;
+		SvTh::SVTriggerClass* pTrigger{nullptr};
 
 		SVNameTriggerMap::const_iterator l_Iter = m_Triggers.find( szName );
 
 		if( l_Iter != m_Triggers.end() )
 		{
-			l_pTrigger = l_Iter->second;
+			pTrigger = l_Iter->second.get();
 		}
 
-		return l_pTrigger;
+		return pTrigger;
 	}
 
 	HRESULT SVTriggerProcessingClass::AddTrigger( LPCTSTR p_szName, SVIOTriggerLoadLibraryClass* p_pTriggerSubsystem, unsigned long p_Handle )
@@ -201,10 +170,10 @@ namespace SvTi
 
 		if( l_Iter != m_Triggers.end() && nullptr != l_Iter->second )
 		{
-			if( l_Iter->second->m_pDLLTrigger != p_pTriggerSubsystem )
+			if( l_Iter->second->getDLLTrigger() != p_pTriggerSubsystem )
 			{
-				l_Iter->second->m_pDLLTrigger = p_pTriggerSubsystem;
-				l_Iter->second->m_triggerchannel = p_Handle;
+				l_Iter->second->setDLLTrigger(p_pTriggerSubsystem);
+				l_Iter->second->setTriggerChannel(p_Handle);
 
 				SVNameTriggerSubsystemMap::iterator l_SubsystemIter = m_TriggerSubsystems.find( p_szName );
 

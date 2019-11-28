@@ -58,6 +58,7 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <mutex>			//Used by static library
 #include <sequential_tree.h> //Used by static library
 #include <set>				//Used by static library
 #include <string>

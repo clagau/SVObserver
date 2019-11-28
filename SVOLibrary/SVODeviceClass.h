@@ -58,7 +58,6 @@ public:
 	virtual HRESULT Start();
 	virtual HRESULT Stop();
 	virtual HRESULT Reset();
-	virtual HRESULT Pulse();
 
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szName );
@@ -79,12 +78,11 @@ protected:
 
 	virtual HRESULT ProcessResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
 
-	virtual HRESULT ExecuteCallback( SVCallbackClassPtrQueue &rCallbackList, SVOResponseClass& p_rResponse );
+	virtual HRESULT ExecuteCallback(SVOResponseClass& rResponse);
+	virtual HRESULT processAcquisitionTriggers(const SVOResponseClass& rResponse) const { return S_OK; } 
 
 	virtual HRESULT GetIsValid( bool &rbIsValid )const;
 	virtual HRESULT SetIsValid( bool bIsValid );
-
-	virtual HRESULT TriggerDevice();
 
 	//This attribute is a container that holds the list of registered recipients of the acquisition notifications.
 	SVCallbackClassPtrQueue m_CallbackList;

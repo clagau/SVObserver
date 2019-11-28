@@ -64,6 +64,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <Psapi.h>
 #include <set>				//Used by static library
 #include <share.h>

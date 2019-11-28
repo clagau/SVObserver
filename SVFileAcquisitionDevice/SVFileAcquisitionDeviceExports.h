@@ -14,11 +14,6 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "CameraLibrary/SVDeviceParam.h"
 
-namespace SvTh
-{
-class TriggerDispatcher;
-}
-
 class SVAcquisitionBufferInterface;
 class SVDeviceParamCollection;
 
@@ -26,21 +21,6 @@ class SVDeviceParamCollection;
 
 HRESULT WINAPI SVCreate();
 HRESULT WINAPI SVDestroy();
-
-// Trigger Exports
-
-HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher );
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 // Digitizer Exports
 
@@ -71,8 +51,3 @@ HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDevi
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long triggerchannel );
-
-

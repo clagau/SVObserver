@@ -14,7 +14,7 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVCameraTriggerData.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 namespace SvTi

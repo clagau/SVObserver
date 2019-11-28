@@ -60,6 +60,8 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1598,9 +1600,9 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			{
 				// print camera name
 				ptCurPos.x   = (nIndentLevel+1) * m_shortTabPixels;
-				if ( pCamera->mpsvDevice )
+				if (nullptr != pCamera->GetAcquisitionDevice())
 				{
-					PrintValueObject(pDC, ptCurPos, pCamera->GetName(), pCamera->mpsvDevice->DeviceName().c_str());
+					PrintValueObject(pDC, ptCurPos, pCamera->GetName(), pCamera->GetAcquisitionDevice()->DeviceName().c_str());
 				}
 				else
 				{
@@ -1718,9 +1720,9 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 		if( nullptr != pTrigger )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-			if ( pTrigger->mpsvDevice )
+			if ( pTrigger->getDevice() )
 			{
-			PrintValueObject(pDC, ptCurPos, pTrigger->GetName(), pTrigger->mpsvDevice->GetDeviceName());
+				PrintValueObject(pDC, ptCurPos, pTrigger->GetName(), pTrigger->getDevice()->GetDeviceName());
 			}
 			else
 			{
@@ -1729,7 +1731,7 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 			
 			ptCurPos.x   = (nIndentLevel + 2) * m_shortTabPixels;
 
-			if (pTrigger->IsSoftwareTrigger())
+			if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 			{
 				PrintValueObject(pDC, ptCurPos, _T("Trigger Type:"), _T("Software"));
 
@@ -1856,10 +1858,8 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Trigger:"));
 			
-			SvTi::SVTriggerObject* pTrigger( nullptr );
-			pPPQ->GetTrigger(pTrigger);
 			Value.clear();
-			if(nullptr != pTrigger ) { Value = pTrigger->GetName();}
+			if(nullptr != pPPQ->GetTrigger()) { Value = pPPQ->GetTrigger()->GetName();}
 			ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, Value.c_str());

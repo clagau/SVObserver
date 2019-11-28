@@ -24,28 +24,16 @@
     <ClCompile Include="SVAcquisitionConstructParams.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCameraTriggerClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVCameraTriggerData.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileAcquisitionInitiator.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVHardwareManifest.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInternalTrigger.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVOTriggerList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVOTriggerObj.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSoftwareTriggerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTriggerDeviceParams.cpp">
@@ -68,34 +56,16 @@
     <ClInclude Include="SVAcquisitionConstructParams.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVCameraTriggerClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVCameraTriggerData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVFileAcquisitionInitiator.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVHardwareManifest.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInternalTrigger.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOTriggerList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOTriggerObj.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerActivatorFunc.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerCallbackFunc.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSoftwareTriggerClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerConstants.h">
@@ -119,13 +89,5 @@
     <ClInclude Include="SVTriggerProcessingClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTriggerRelayClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVTriggerRelayClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

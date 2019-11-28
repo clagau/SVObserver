@@ -12,9 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
-#include "TriggerBasics.h"
+#include "SVDigitizerLoadLibraryClass.h"
 #include "SVTriggerClass.h"
+#include "TriggerDispatcher.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "TriggerInformation/SVTriggerConstants.h"
 #pragma endregion Includes
 
 namespace SvTh
@@ -27,20 +30,21 @@ namespace SvTh
 		{
 			SVOResponseClass response;
 
-			const SVTriggerClass *pDevice = reinterpret_cast<const SVTriggerClass*> (rTriggerData.m_pOwner);
+			const SVTriggerClass *pTrigger = reinterpret_cast<const SVTriggerClass*> (rTriggerData.m_pOwner);
 
+			///This sets the m_StartTime value which is the fallback trigger time stamp if the time stamp is not in rTriggerData.m_Data
 			response.reset();
 
 			response.setIsValid(true);
 			response.setIsComplete(true);
 			response.setData(rTriggerData.m_Data);
 
-			/*HRESULT hr = */pDevice->Notify( response );
+			pTrigger->Notify( response );
 
 			#ifdef SV_LOG_STATUS_INFO
-				std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
+				std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - HR = 0x%X" ), pTrigger->GetDeviceName(), hr );
 
-				pDevice->m_StatusLog.push_back( LogEntry );
+				pTrigger->m_StatusLog.push_back( LogEntry );
 			#endif
 		}
 
@@ -49,14 +53,49 @@ namespace SvTh
 
 	SVTriggerClass::SVTriggerClass(LPCTSTR deviceName)
 	: SVODeviceClass(deviceName)
-	, m_pDLLTrigger(nullptr)
-	, m_triggerchannel(0)
-	, miChannelNumber(-1)
 	{
+		std::string name{deviceName};
+		if (0 == name.compare(0, strlen(SvTi::SoftwareTriggerName), SvTi::SoftwareTriggerName))
+		{
+			m_type = SvDef::SoftwareTrigger;
+		}
+		else if (0 == name.compare(0, strlen(SvTi::CameraTriggerName), SvTi::CameraTriggerName))
+		{
+			m_type = SvDef::CameraTrigger;
+		}
 	}
 
 	SVTriggerClass::~SVTriggerClass()
 	{
+	}
+
+	void SVTriggerClass::addAcquisitionTrigger(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel)
+	{
+		AcquisitionParameter acqParameter;
+		acqParameter.m_pDllDigitizer = pDllDigitizer;
+		acqParameter.m_triggerChannel = triggerChannel;
+		auto it = std::find(m_acqTriggerParameters.begin(), m_acqTriggerParameters.end(), acqParameter);
+		if(it == m_acqTriggerParameters.end())
+		{
+			m_acqTriggerParameters.emplace_back(acqParameter);
+		}
+	}
+
+	void SVTriggerClass::clearAcquisitionTriggers()
+	{
+		m_acqTriggerParameters.clear();
+	}
+	
+	void SVTriggerClass::enableInternalTrigger() const
+	{
+		///When software trigger then we need to enable the internal trigger
+		for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
+		{
+			if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
+			{
+				rAcquisitionParameter.m_pDllDigitizer->InternalTriggerEnable(rAcquisitionParameter.m_triggerChannel);
+			}
+		}
 	}
 
 	HRESULT SVTriggerClass::RegisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller )
@@ -69,12 +108,12 @@ namespace SvTh
 		{
 			if ( S_OK == l_hrOk )
 			{
-				l_hrOk = m_pDLLTrigger->Register( m_triggerchannel, dispatcher );
+				l_hrOk = m_pDLLTrigger->Register( m_triggerChannel, dispatcher );
 			}
 
 			if ( S_OK != l_hrOk )
 			{
-				m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher );
+				m_pDLLTrigger->Unregister( m_triggerChannel, dispatcher );
 			}
 		}
 		else
@@ -96,7 +135,7 @@ namespace SvTh
 		{
 			TriggerDispatcher dispatcher(TriggerCallbackSvtc, TriggerParameters(this));
 
-			l_hrOk = m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher );
+			l_hrOk = m_pDLLTrigger->Unregister( m_triggerChannel, dispatcher );
 		}
 		else
 		{
@@ -119,7 +158,7 @@ namespace SvTh
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			HRESULT l_Temp = m_pDLLTrigger->UnregisterAll( m_triggerchannel );
+			HRESULT l_Temp = m_pDLLTrigger->UnregisterAll( m_triggerChannel );
 		
 			if( S_OK != l_Temp && S_OK == l_hrOk )
 			{
@@ -147,7 +186,7 @@ namespace SvTh
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			l_hrOk = m_pDLLTrigger->Start( m_triggerchannel );
+			l_hrOk = m_pDLLTrigger->Start( m_triggerChannel );
 		}
 		else
 		{
@@ -168,7 +207,7 @@ namespace SvTh
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			HRESULT l_Temp = m_pDLLTrigger->Stop( m_triggerchannel );
+			HRESULT l_Temp = m_pDLLTrigger->Stop( m_triggerChannel );
 
 			if( S_OK != l_Temp && S_OK == l_hrOk )
 			{
@@ -197,8 +236,16 @@ namespace SvTh
 		return l_hrOk;
 	}
 
-	HRESULT SVTriggerClass::EnableInternalTrigger()
+	HRESULT SVTriggerClass::processAcquisitionTriggers(const SVOResponseClass& rResponse) const
 	{
-		return E_NOTIMPL;
+		for(const auto& rAcquisitionParameter : m_acqTriggerParameters)
+		{
+			if(nullptr != rAcquisitionParameter.m_pDllDigitizer)
+			{
+				rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel);
+			}
+		}
+		return S_OK;
 	}
+
 } //namespace SvTh

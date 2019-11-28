@@ -16,18 +16,23 @@
 //Moved to precompiled header: #include <vector>
 #include "SVAcquisitionClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "TriggerInformation/SVTriggerObject.h"
-#include "TriggerInformation/SVTriggerRelayClass.h"
-#include "TriggerInformation/SVFileAcquisitionInitiator.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVOResource/resource.h"
 #pragma endregion Includes
 
 class SVDeviceParamCollection;
+class SVIOTriggerLoadLibraryClass;
 class SVLightReference;
 class SVLongValueDeviceParam;
 class SVLut;
+
+namespace SvTh
+{
+class SVTriggerClass;
+}
+
+typedef HRESULT(CALLBACK *LPSVFINISHPROC)(void*, void*, void*);
 
 namespace SvIe
 {
@@ -69,7 +74,7 @@ public:
 	bool RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 	bool UnregisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 
-    SVAcquisitionClassPtr GetAcquisitionDevice() const { return mpsvDevice; }
+    SVAcquisitionClassPtr GetAcquisitionDevice() const { return m_pDevice; }
 	
     HRESULT SetLightReference( SVLightReference& rArray );
 	HRESULT GetLightReference( SVLightReference& rArray ) const;
@@ -79,9 +84,6 @@ public:
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
 	SvTrc::IImagePtr ReserveNextImageHandle( ) const;
-
-	SVAcquisitionClassPtr mpsvDevice;
-	SVCallbackClassPtrQueue m_CallbackList;
 
     HRESULT GetBand(int& riBand) const;
     HRESULT GetBandSize(int& riBandSize) const;
@@ -113,8 +115,7 @@ public:
 	long GetFileImageHeight() const;
 	void SetFileImageHeight(long height);
 
-	HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulIndex);
-	HRESULT UnregisterTriggerRelay();
+	void RegisterTrigger(SvTh::SVTriggerClass* pTrigger);
 
 	void	createCameraParameters();
 	HRESULT updateCameraParameters();
@@ -129,14 +130,9 @@ public:
 
 	void setTempImage(const SVMatroxBuffer pImage);
 	SVMatroxBuffer getTempImage();
-#pragma endregion Public Methods
-
-protected:
-#pragma region Protected Methods
-	static HRESULT CALLBACK SVImageCallback( void *pvOwner, void *pvCaller, void *pvResponse );
 
 	void FinishProcess( SVODataResponseClass *pResponse );
-#pragma endregion Protected Methods
+#pragma endregion Public Methods
 
 private:
 #pragma region Private Methods
@@ -148,6 +144,8 @@ protected:
 	long mlBandLink;
 
 private:
+	SVAcquisitionClassPtr m_pDevice;
+	SVCallbackClassPtrQueue m_CallbackList;
 	SvVol::BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition;
 	bool m_IsColor;
@@ -156,7 +154,7 @@ private:
 	bool m_bImageSizeEditModeFileBased;
 	long m_imageLoadingMode;
 	SIZE m_imageSize;
-	SvTi::SVTriggerRelayClass<SvTi::SVFileAcquisitionInitiator> m_triggerRelay;
+	SvTh::SVTriggerClass* m_pTrigger{nullptr};
 	long m_CameraID;
 
 	std::mutex m_tmpImage_mutex;

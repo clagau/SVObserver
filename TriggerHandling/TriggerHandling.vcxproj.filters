@@ -18,25 +18,13 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVAcquisitionInitiator.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerActivator.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTriggerCallback.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTriggerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerHandler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerBasics.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TriggerDispatcherCollection.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerDispatcher.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,34 +32,16 @@
     <ClInclude Include="Stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVAcquisitionInitiator.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVDigitizerLoadLibraryClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerActivator.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerActivatorFuncInterface.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerCallback.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerCallbackFuncInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTriggerHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="TriggerBasics.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TriggerDispatcherCollection.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerDispatcher.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

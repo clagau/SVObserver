@@ -13,13 +13,9 @@
 //Moved to precompiled header: #include <map>
 #include "SVMatroxGige.h"
 #include "SVMatroxGigeApp.h"
-#include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerInformation/SVTriggerActivatorFunc.h"
-#include "TriggerInformation/SVTriggerCallbackFunc.h"
-#include "TriggerInformation/SVTriggerEnums.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -94,10 +90,6 @@ __int64 SVMatroxGige::ProcessFrame( __int64 HookType, __int64 HookId, void* pCon
 				//
 				if (l_pCamera->m_frameStack.get() == 1)
 				{
-					if (l_pCamera->IsAcquisitionTriggered())
-					{
-						g_svTheApp.m_svSystem.DoAcquisitionTrigger(*l_pCamera, HookId);
-					}
 					// check for Corrupted first
 					bool bIsCorrupt = false;
 					HRESULT l_Code = SVMatroxDigitizerInterface::IsCorruptedFrame(HookId, bIsCorrupt);
@@ -189,57 +181,6 @@ __int64 SVMatroxGige::DigitizerCallback( __int64 HookType, __int64 EventId, void
 	return 0L;
 }
 
-__int64 __stdcall SVMatroxGige::LineEdgeEventCallback( __int64 HookType, __int64 EventId, void* pContext )
-{
-	SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(pContext);
-	// Get State of the line
-	long l_EventType = 0;
-	SVMatroxDigitizerInterface::GetGigeEventType(EventId, l_EventType);
-
-	long risingEvent = l_pCamera->GetLineRisingEvent();
-	long fallingEvent = l_pCamera->GetLineFallingEvent();
-
-	if (l_EventType == risingEvent) // LineN Rising Event
-	{
-		l_pCamera->SetLineState(true);
-	}
-	else if (l_EventType == fallingEvent)  // LineN Falling Event
-	{
-		l_pCamera->SetLineState(false);
-	}
-	return 0L;
-}
-
-void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& rCamera, __int64 HookId )
-{
-	// Get The Timestamp
-	double timestamp = 0.0;
-	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeCameraTimestamp(HookId, timestamp);
-	if (l_Code == S_OK)
-	{
-		// Simulate Trigger and send Timestamp and Line State...
-		bool lineState = rCamera.GetLineState();
-		SvTh::TriggerDispatcher dispatcher(rCamera.GetTriggerDispatcher());
-
-		if (dispatcher.hasCallback())
-		{
-			SvTh::IntVariantMap triggerData;
-			triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
-			triggerData[SvTh::TriggerDataEnum::LineState] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
-			triggerData[SvTh::TriggerDataEnum::StartFrameTime] = _variant_t(rCamera.m_StartFrameTimeStamp);
-			
-			dispatcher.SetData(triggerData);
-			dispatcher.Dispatch();
-		}
-	}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-	else
-	{
-		TRACE("SVMatroxGige::DoAcquisitionTrigger unable to get timestamp\n");
-	}
-#endif
-}
-
 HRESULT SVMatroxGige::Open()
 {
 	HRESULT hr = S_OK;
@@ -252,8 +193,6 @@ HRESULT SVMatroxGige::Create()
 
 	if ( ::InterlockedIncrement( &m_lRefCount ) == 1 )
 	{
-		m_triggerMgr.Create(_T("SVMatrox GigE"), SVAffinityAcq );
-
 		hr = CreateSystems();
 
 		if ( S_OK != hr )
@@ -370,7 +309,6 @@ HRESULT SVMatroxGige::Destroy( bool p_bClose )
 		DestroyBuffers();
 		DestroySystems();
 	}
-	m_triggerMgr.Destroy();
 
 	return hr;
 }
@@ -921,7 +859,7 @@ HRESULT SVMatroxGige::CameraStop( unsigned long channel )
 			hr = StopDigitizer(l_rCamera);
 			
 			// reset to Hardware Trigger
-			l_rCamera.m_params.TriggerType = SVMatroxGigeTrigger::HardwareTrigger;
+			l_rCamera.m_params.TriggerType = SvDef::HardwareTrigger;
 
 			if( S_OK == SVMatroxGigeDeviceParameterManager::IsParameterSupported(l_rCamera, SvDef::SVGigeParameterStrobeEnable) )
 			{
@@ -1164,14 +1102,14 @@ bool SVMatroxGige::IsCameraActive(unsigned long channel)
 	return bRetVal;
 }
 
-HRESULT SVMatroxGige::InternalTriggerEnable( unsigned long channel )
+HRESULT SVMatroxGige::InternalTriggerEnable(unsigned long channel)
 {
 	HRESULT hr = S_FALSE;
 	if (IsValidDigitizer(channel))
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(channel);
 
-		l_rCamera.m_params.TriggerType = SVMatroxGigeTrigger::SoftwareTrigger;
+		l_rCamera.m_params.TriggerType = SvDef::SoftwareTrigger;
 
 		hr = S_OK;
 	}
@@ -1183,57 +1121,7 @@ HRESULT SVMatroxGige::InternalTrigger( unsigned long channel )
 	HRESULT hr = S_FALSE;
 	if (IsValidDigitizer(channel))
 	{
-		if (m_triggerMgr.HasSubscribers(channel))
-		{
-			hr = m_triggerMgr.Fire(channel);
-		}
-		else
-		{
-			hr = FireOneShot(channel);
-		}
-	}
-	return hr;
-}
-
-HRESULT SVMatroxGige::RegisterInternalTriggerCallback( unsigned long channel, const SvTh::TriggerDispatcher& rDispatcher )
-{
-	HRESULT hr = S_FALSE;
-
-	if (IsValidDigitizer(channel))
-	{
-		m_AcquisitionDispatchers.AddDispatcher(channel, rDispatcher);
-		
-		typedef SvTi::SVTriggerActivatorFunc<SVMatroxGige> Activator;
-		typedef SvTi::SVTriggerCallbackFunc<SVMatroxGige> TriggerCallback;
-		SvTh::SVTriggerHandler handler(channel,
-			SvTh::SVTriggerActivator(new Activator(this, &SVMatroxGige::FireOneShot)),
-			SvTh::SVTriggerCallback(new TriggerCallback(this, &SVMatroxGige::DispatchTriggerCallback)));
-
-		hr = m_triggerMgr.Subscribe(channel, handler);
-	}
-	return hr;
-}
-
-HRESULT SVMatroxGige::UnregisterInternalTriggerCallback( unsigned long channel, const SvTh::TriggerDispatcher& rDispatcher )
-{
-	HRESULT hr = S_FALSE;
-
-	if (IsValidDigitizer(channel))
-	{
-		m_AcquisitionDispatchers.RemoveDispatcher(channel, rDispatcher);
-		hr = m_triggerMgr.Unsubscribe( channel );
-	}
-	return hr;
-}
-
-HRESULT SVMatroxGige::UnregisterAllInternalTriggerCallbacks( unsigned long channel )
-{
-	HRESULT hr = S_FALSE;
-
-	if (IsValidDigitizer(channel))
-	{
-		m_AcquisitionDispatchers.RemoveAllDispatchers(channel);
-		hr = m_triggerMgr.Unsubscribe( channel );
+		hr = FireOneShot(channel);
 	}
 	return hr;
 }
@@ -1249,18 +1137,6 @@ HRESULT SVMatroxGige::FireOneShot( unsigned long channel )
 		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVMatroxDigitizerFeature::SVTypeCommand, _variant_t(0L));
 	}
 	return hr;
-}
-
-HRESULT SVMatroxGige::DispatchTriggerCallback( unsigned long channel )
-{
-	if (m_AcquisitionDispatchers.Dispatch(channel))
-	{
-		return S_OK;
-	}
-	else
-	{
-		return S_FALSE;
-	}
 }
 
 // Get the next available Buffer from the processing Buffer pool
@@ -1287,18 +1163,6 @@ HRESULT SVMatroxGige::RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& 
 	{
 		l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
 	}
-	if (l_Code == S_OK)
-	{
-		if (p_rCamera.HasLineInput())
-		{
-			l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGigeEvent, SVMatroxGige::LineEdgeEventCallback, (void *)&p_rCamera);
-			if (l_Code == S_OK)
-			{
-				// Enable Gige Event(s)
-				l_Code = EnableGigeEvents(p_rCamera);
-			}
-		}
-	}
 	return l_Code;
 }
 
@@ -1310,64 +1174,6 @@ HRESULT SVMatroxGige::UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer
 	{
 		/*l_Code = */SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, &SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
 		l_Code = SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, &SVMatroxGige::DigitizerStartFrameCallback, (void *)&p_rCamera);
-
-		if (p_rCamera.IsAcquisitionTriggered())
-		{
-			/*l_Code = */SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGigeEvent, SVMatroxGige::LineEdgeEventCallback, (void *)&p_rCamera);
-
-			// Disable Gige Event(s)
-			l_Code = DisableGigeEvents(p_rCamera);
-		}
-	}
-	return l_Code;
-}
-
-HRESULT SVMatroxGige::EnableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
-{
-	HRESULT l_Code = S_OK;
-	// Enable the GIGE Event(s)
-	const std::string& risingName =  p_rCamera.GetLineInputRisingEventName();
-	const std::string& fallingName = p_rCamera.GetLineInputFallingEventName();
-
-	if (!risingName.empty() && !fallingName.empty())
-	{
-		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SvDef::SVGigeParameterInputEvent);
-		std::string featureValue;
-		param.accessor.feature.GetGigeFeatureString("Enable", featureValue);
-
-		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
-		if (l_Code == S_OK)
-		{
-			l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), fallingName.c_str(), featureValue.c_str());
-		}
-	}
-	else
-	{
-		l_Code = SVMEE_INVALID_PARAMETER;
-	}
-	return l_Code;
-}
-
-HRESULT SVMatroxGige::DisableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
-{
-	HRESULT l_Code = S_OK;
-	// Disable the GIGE Event(s)
-	const std::string& risingName =  p_rCamera.GetLineInputRisingEventName();
-	const std::string& fallingName = p_rCamera.GetLineInputFallingEventName();
-	if (!risingName.empty() && !fallingName.empty())
-	{
-		const SVGigeDeviceParameterStruct& param = p_rCamera.GetFeature(SvDef::SVGigeParameterInputEvent);
-		std::string featureValue;
-		param.accessor.feature.GetGigeFeatureString("Disable", featureValue);
-		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
-		if (l_Code == S_OK)
-		{
-			l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), fallingName.c_str(), featureValue.c_str());
-		}
-	}
-	else
-	{
-		l_Code = SVMEE_INVALID_PARAMETER;
 	}
 	return l_Code;
 }
@@ -1388,12 +1194,12 @@ HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_FALSE;
 
-	if (p_rCamera.m_params.TriggerType != SVMatroxGigeTrigger::SoftwareTrigger)
+	if (p_rCamera.m_params.TriggerType == SvDef::HardwareTrigger)
 	{
 		_variant_t value("External Trigger");
 		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerSource, 0, &value);
 	}
-	else
+	else if (p_rCamera.m_params.TriggerType == SvDef::SoftwareTrigger)
 	{
 		_variant_t value("Software Trigger");
 		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerSource, 0, &value);
@@ -1696,227 +1502,5 @@ HRESULT SVMatroxGige::FindCamera(const SVMatroxGigeSystem& p_rSystem, long p_Dev
 		}
 	}
 	return hr;
-}
-
-HRESULT SVMatroxGige::TriggerGetCount(unsigned long& p_ulCount)
-{
-	HRESULT l_Result = CameraGetCount(p_ulCount);
-	return l_Result;
-}
-
-// convert ordinal to handle
-unsigned long SVMatroxGige::TriggerGetHandle(unsigned long p_ulIndex)
-{
-	return GetDigitizerHandle(p_ulIndex); 
-}
-
-HRESULT SVMatroxGige::TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		if ( nullptr != p_rbstrName )
-		{
-			::SysFreeString( p_rbstrName );
-			p_rbstrName = nullptr;
-		}
-
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		std::string name = SvUl::Format("CameraTrigger.Dig_%d", l_rCamera.GetDeviceNumber());
-		p_rbstrName = _bstr_t(name.c_str());
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVMatroxGige::TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.SetTriggerDispatcher(rDispatcher);
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVMatroxGige::TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.ClearTriggerCallback();
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVMatroxGige::TriggerUnregisterAllCallbacks(unsigned long triggerchannel)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.ClearTriggerCallback();
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVMatroxGige::TriggerStart(unsigned long triggerchannel)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.m_params.bAcquisitionTriggered = true;
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVMatroxGige::TriggerStop(unsigned long triggerchannel)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.m_params.bAcquisitionTriggered = false;
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVMatroxGige::TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		if (IsValidDigitizer(triggerchannel))
-		{
-			*p_pulCount = 1;
-			l_hrOk = S_OK;
-		}
-		else
-		{
-			*p_pulCount = 0;
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVMatroxGige::TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pbstrName )
-	{
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-			*p_pbstrName = nullptr;
-		}
-
-		if (IsValidDigitizer(triggerchannel))
-		{
-			switch ( p_ulIndex )
-			{
-				case SvTi::SVAcquisitionTriggered:
-				*p_pbstrName = ::SysAllocString( L"Acquisition Triggered" );
-				break;
-			}
-			if ( nullptr != *p_pbstrName )
-			{
-				l_hrOk = S_OK;
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVMatroxGige::TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pvarValue )
-	{
-		if ( S_OK == ::VariantClear( p_pvarValue ) )
-		{
-			if (IsValidDigitizer(triggerchannel))
-			{
-				switch ( p_ulIndex)
-				{
-					case SvTi::SVAcquisitionTriggered:
-					{
-						p_pvarValue->vt = VT_BOOL;
-						bool bAcquisitonTriggered;
-						l_hrOk = IsAcquisitionTriggered(triggerchannel, bAcquisitonTriggered);
-						if (S_OK == l_hrOk)
-						{
-							p_pvarValue->bVal = (bAcquisitonTriggered) ? VARIANT_TRUE : VARIANT_FALSE;
-						}
-						break;
-					}
-
-					default:
-						break;
-				}
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVMatroxGige::TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (IsValidDigitizer(triggerchannel))
-	{
-		if ( nullptr != p_pvarValue )
-		{
-			switch (p_ulIndex)
-			{
-				case SvTi::SVAcquisitionTriggered:
-				{
-					if( p_pvarValue->vt == VT_BOOL )
-					{
-						l_hrOk = SetAcquisitionTriggered( triggerchannel, (p_pvarValue->boolVal == VARIANT_TRUE) ? true : false );
-					}
-					break;
-				}
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVMatroxGige::IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (IsValidDigitizer(triggerchannel))
-	{
-		l_hrOk = S_OK;
-		const SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		bAcquisitionTriggered = l_rCamera.IsAcquisitionTriggered();
-	}
-	return l_hrOk;
-}
-
-HRESULT SVMatroxGige::SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered)
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (IsValidDigitizer(triggerchannel))
-	{
-		l_hrOk = S_OK;
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.SetAcquisitionTriggered(bAcquisitionTriggered);
-	}
-	return l_hrOk;
 }
 

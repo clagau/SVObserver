@@ -376,25 +376,6 @@ HRESULT SVODeviceClass::Reset()
 }
 
 /*
-This method calls TriggerDevice if this object is in a valid state.
-*/
-HRESULT SVODeviceClass::Pulse()
-{
-	HRESULT hrOk = S_FALSE;
-
-	if ( mbIsValid )
-	{
-		hrOk = TriggerDevice();
-	}
-	else
-	{
-		hrOk = -4378;
-	}
-
-	return hrOk;
-}
-
-/*
 This method processes the data in the device process thread.
 */
 HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
@@ -413,12 +394,16 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 		
 		while( ! bDone && S_OK == hrOk )
 		{
-			SVOResponseClass l_Response;
+			SVOResponseClass response;
 
-			hrOk = ProcessResponse( m_UsedQueue, l_Response );
+			hrOk = ProcessResponse( m_UsedQueue, response );
 			if ( S_OK == hrOk )
 			{
-				hrOk = ExecuteCallback( m_CallbackList, l_Response );
+				hrOk = ExecuteCallback(response);
+				if(S_OK == hrOk)
+				{
+					hrOk = processAcquisitionTriggers(response);
+				}
 			}
 			else
 			{
@@ -514,7 +499,7 @@ HRESULT SVODeviceClass::ProcessResponse( SVResponseQueue &rUsedQueue, SVORespons
 /*
 This method walks the Callback list and executes the provided callback with the provided response.
 */
-HRESULT SVODeviceClass::ExecuteCallback( SVCallbackClassPtrQueue&, SVOResponseClass& p_rResponse )
+HRESULT SVODeviceClass::ExecuteCallback(SVOResponseClass& rResponse)
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -533,9 +518,9 @@ HRESULT SVODeviceClass::ExecuteCallback( SVCallbackClassPtrQueue&, SVOResponseCl
 			m_CallbackList.GetAt( l, &pData );
 			if (nullptr != pData )
 			{
-				if ( S_OK != (pData->mpCallback)( pData->mpvOwner, pData->mpvCaller, &p_rResponse ) )
+				if ( S_OK != (pData->mpCallback)( pData->mpvOwner, pData->mpvCaller, &rResponse))
 				{
-					hrOk = -4386;;
+					hrOk = -4386;
 				}
 			}
 			else
@@ -572,35 +557,6 @@ HRESULT SVODeviceClass::SetIsValid(bool bIsValid)
 	HRESULT hrOk = S_OK;
 
 	mbIsValid = bIsValid;
-
-	return hrOk;
-}
-
-/*
-This method will initiate a trigger to send a response through the process loop.
-*/
-HRESULT SVODeviceClass::TriggerDevice()
-{
-	HRESULT hrOk = S_FALSE;
-
-	if ( mbIsValid )
-	{
-		SVOResponseClass l_Response;
-
-		hrOk = AddUsedResponse( m_UsedQueue, l_Response );
-		if ( S_OK == hrOk )
-		{
-			hrOk = m_Thread.Signal( this );
-		}
-		else
-		{
-			hrOk = -4402;
-		}
-	}
-	else
-	{
-		hrOk = -4391;
-	}
 
 	return hrOk;
 }

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   25 Apr 2013 17:29:22  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <functional>
@@ -18,6 +19,8 @@
 
 #include "SVSoftwareTriggerDevice.h"
 #include "SVTimerLibrary/SVMMTimer.h"
+#include "SVTimerLibrary\SVClock.h"
+#pragma endregion Includes
 
 #pragma comment( lib, "Winmm" )
 
@@ -310,18 +313,31 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 }
 
 
-void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& tag)
+void SVSoftwareTriggerDevice::OnSoftwareTimer(const std::string& rTag)
 {
-	// find trigger callbacks for this trigger and dispatch
-	for (const auto& rEntry : m_nameHandleList)
+	double timeStamp = SvTl::GetTimeStamp();
+
+	auto handleIter = std::find_if(m_nameHandleList.begin(), m_nameHandleList.end(),
+						   [&rTag](const std::pair<std::string, unsigned long>& rElement) { return rElement.first == rTag; });
+	if (m_nameHandleList.end() != handleIter)
 	{
-		if (rEntry.first == tag)
+		auto dispatcherMap = m_TriggerDispatchers.GetDispatchers();
+		std::lock_guard<std::mutex> autoLock(m_Mutex);
+		auto dispatchIter = dispatcherMap.find(handleIter->second);
+		if(dispatchIter != dispatcherMap.end())
 		{
-			unsigned long channel = rEntry.second;
-			// get callback list
-			std::lock_guard<std::mutex> autoLock(m_Mutex);
-			m_TriggerDispatchers.DispatchIfPossible(channel);
-			break;
+			SvTh::IntVariantMap triggerData;
+			triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+
+			SvTh::DispatcherVector& rList = dispatchIter->second;
+			for(auto& rEntry : rList)
+			{
+				if (rEntry.m_IsStarted)
+				{
+					rEntry.SetData(triggerData);
+					rEntry.Dispatch();
+				}
+			}
 		}
 	}
 }

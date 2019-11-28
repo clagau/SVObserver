@@ -87,25 +87,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVAcquisitionInitiator.cpp" />
-    <ClCompile Include="SVTriggerActivator.cpp" />
-    <ClCompile Include="SVTriggerCallback.cpp" />
     <ClCompile Include="SVTriggerClass.cpp" />
-    <ClCompile Include="SVTriggerHandler.cpp" />
-    <ClCompile Include="TriggerBasics.cpp" />
+    <ClCompile Include="TriggerDispatcher.cpp" />
     <ClCompile Include="TriggerDispatcherCollection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
-    <ClInclude Include="SVAcquisitionInitiator.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
-    <ClInclude Include="SVTriggerActivator.h" />
-    <ClInclude Include="SVTriggerActivatorFuncInterface.h" />
-    <ClInclude Include="SVTriggerCallback.h" />
-    <ClInclude Include="SVTriggerCallbackFuncInterface.h" />
     <ClInclude Include="SVTriggerClass.h" />
-    <ClInclude Include="SVTriggerHandler.h" />
-    <ClInclude Include="TriggerBasics.h" />
+    <ClInclude Include="TriggerDispatcher.h" />
     <ClInclude Include="TriggerDispatcherCollection.h" />
   </ItemGroup>
   <ItemGroup>

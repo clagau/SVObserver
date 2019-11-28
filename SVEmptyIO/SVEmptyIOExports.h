@@ -67,9 +67,6 @@ HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchanne
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher );
-HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher );
-HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long triggerchannel );
 
 HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel );

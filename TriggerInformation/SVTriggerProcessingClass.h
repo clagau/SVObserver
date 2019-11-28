@@ -47,7 +47,7 @@ namespace SvTi
 	
 	private:
 		typedef std::set< SVIOTriggerLoadLibraryClass* > SVTriggerSubsystemSet;
-		typedef std::map<std::string, SvTh::SVTriggerClass*> SVNameTriggerMap;
+		typedef std::map<std::string, std::unique_ptr<SvTh::SVTriggerClass>> SVNameTriggerMap;
 		typedef std::map<std::string, SVIOTriggerLoadLibraryClass*> SVNameTriggerSubsystemMap;
 
 		SVTriggerProcessingClass();

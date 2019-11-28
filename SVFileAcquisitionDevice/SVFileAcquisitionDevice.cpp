@@ -17,17 +17,10 @@
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "TriggerInformation/SVTriggerActivatorFunc.h"
-#include "TriggerInformation/SVTriggerCallbackFunc.h"
-#include "TriggerInformation/SVTriggerEnums.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
-
-static const long MaxFileCameras = 12;
 
 SVFileAcquisitionDevice::SVFileAcquisitionDevice()
 : m_lRefCount(0)
@@ -36,17 +29,17 @@ SVFileAcquisitionDevice::SVFileAcquisitionDevice()
 
 SVFileAcquisitionDevice::~SVFileAcquisitionDevice()
 {
-	Close();
+	Destroy(true);
 }
 // Handle is just the original
-static unsigned long GetDigitizerHandle(unsigned long p_ulIndex)
+static unsigned long GetDigitizerHandle(unsigned long index)
 {
-	return p_ulIndex;
+	return index;
 }
 
 bool SVFileAcquisitionDevice::IsValidDigitizer(unsigned long triggerchannel) const
 {
-	return ( triggerchannel < m_cameras.size() );
+	return ( triggerchannel < MaxFileCameras);
 }
 
 SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long triggerchannel)
@@ -66,15 +59,13 @@ HRESULT SVFileAcquisitionDevice::Create()
 	if ( ::InterlockedIncrement( &m_lRefCount ) == 1 )
 	{
 		// Allocate Max File Cameras ?
-		m_cameras.resize(MaxFileCameras);
-		for (int i = 0;i < MaxFileCameras;i++)
+		for (int i = 0; i < MaxFileCameras; i++)
 		{
-			std::string camName = SvUl::Format("File.Dig_%d", i);
+			std::string camName{"File.Dig_"};
+			camName += std::to_string(i);
 			m_cameras[i].SetName(camName);
 		}
-		// Allocate Max Buffers ?
 	}
-	m_triggerMgr.Create(_T("File AcquisitionDevice Manager"), SVAffinityAcq);
 
 	return l_hrOk;
 }
@@ -88,36 +79,23 @@ HRESULT SVFileAcquisitionDevice::Destroy( bool p_bClose )
 		::InterlockedExchange( &m_lRefCount, 0 );
 	}
 
-	m_triggerMgr.Destroy();
-
 	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::Open()
-{
-	HRESULT hr = S_OK;
-	return hr;
-}
-
-HRESULT SVFileAcquisitionDevice::Close()
-{
-	return Destroy(true);
 }
 
 HRESULT SVFileAcquisitionDevice::CameraGetCount( unsigned long &p_rulCount )
 {
 	HRESULT l_hrOk = S_OK;
 
-	p_rulCount = static_cast<unsigned long>(m_cameras.size());
+	p_rulCount = MaxFileCameras;
 
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetName( unsigned long p_ulIndex, BSTR &p_rbstrName )
+HRESULT SVFileAcquisitionDevice::CameraGetName( unsigned long index, BSTR &p_rbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
 		l_hrOk = S_OK;
 
@@ -128,44 +106,44 @@ HRESULT SVFileAcquisitionDevice::CameraGetName( unsigned long p_ulIndex, BSTR &p
 			p_rbstrName = nullptr;
 		}
 
-		p_rbstrName = _bstr_t(m_cameras[p_ulIndex].GetName().c_str()).Detach();
+		p_rbstrName = _bstr_t(m_cameras[index].GetName().c_str()).Detach();
 	} 
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetHeight( unsigned long p_ulIndex, unsigned long &p_rulHeight )
+HRESULT SVFileAcquisitionDevice::CameraGetHeight( unsigned long index, unsigned long &p_rulHeight )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		p_rulHeight = m_cameras[p_ulIndex].GetImageSize().cy;
+		p_rulHeight = m_cameras[index].GetImageSize().cy;
 
 		l_hrOk = S_OK;
 	}
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetWidth( unsigned long p_ulIndex, unsigned long &p_rulWidth )
+HRESULT SVFileAcquisitionDevice::CameraGetWidth( unsigned long index, unsigned long &p_rulWidth )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		p_rulWidth = m_cameras[p_ulIndex].GetImageSize().cx;
+		p_rulWidth = m_cameras[index].GetImageSize().cx;
 
 		l_hrOk = S_OK;
 	}
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetFormat( unsigned long p_ulIndex, int &p_riFormat )
+HRESULT SVFileAcquisitionDevice::CameraGetFormat( unsigned long index, int &p_riFormat )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		switch( m_cameras[p_ulIndex].GetImageFormat() )
+		switch( m_cameras[index].GetImageFormat() )
 		{
 			case SvDef::SVImageFormatMono16:
 			case SvDef::SVImageFormatRGB888:
@@ -181,7 +159,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetFormat( unsigned long p_ulIndex, int &
 			}
 			default:
 			{
-				p_riFormat = m_cameras[p_ulIndex].GetImageFormat();
+				p_riFormat = m_cameras[index].GetImageFormat();
 
 				break;
 			}
@@ -192,7 +170,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetFormat( unsigned long p_ulIndex, int &
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetParameterList( unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::CameraGetParameterList( unsigned long index, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -200,7 +178,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameterList( unsigned long p_ulIndex
 	{
 		::VariantClear( p_pvarValue );
 
-		if( p_ulIndex < m_cameras.size() )
+		if(index < MaxFileCameras)
 		{
 			SAFEARRAYBOUND l_psabData[1];
 			long l_plIndex[1];
@@ -224,11 +202,11 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameterList( unsigned long p_ulIndex
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetParameterName( unsigned long p_ulIndex, int p_iParameterID, BSTR &p_rbstrName )
+HRESULT SVFileAcquisitionDevice::CameraGetParameterName( unsigned long index, int p_iParameterID, BSTR &p_rbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if (index < MaxFileCameras)
 	{
 		l_hrOk = S_OK;
 
@@ -295,15 +273,15 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameterName( unsigned long p_ulIndex
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long p_ulIndex, int p_iParameterID, int *p_piParameterIDType, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long index, int p_iParameterID, int *p_piParameterIDType, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pvarValue )
 	{
-		if( p_ulIndex < m_cameras.size() )
+		if(index < MaxFileCameras)
 		{
-			SVFileCamera& rCamera = m_cameras[ p_ulIndex ];
+			SVFileCamera& rCamera = m_cameras[ index ];
 
 			switch( p_iParameterID )
 			{
@@ -376,13 +354,13 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long p_ulIndex, in
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long p_ulIndex, int p_iParameterID, int p_iParameterIDType, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long index, int p_iParameterID, int p_iParameterIDType, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		SVFileCamera& rCamera = m_cameras[ p_ulIndex ];
+		SVFileCamera& rCamera = m_cameras[ index ];
 
 		switch( p_iParameterID )
 		{
@@ -413,14 +391,18 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long p_ulIndex, in
 
 			case SVFileAcquisitionParameterFilename:
 			{
-				rCamera.SetFileName(SvUl::createStdString(p_pvarValue->bstrVal));
+				std::string fileName;
+				fileName.assign(_bstr_t(p_pvarValue->bstrVal));
+				rCamera.SetFileName(fileName);
 				l_hrOk = S_OK;
 				break;
 			}
 
 			case SVFileAcquisitionParameterDirectory:
 			{
-				rCamera.SetDirectory(SvUl::createStdString(p_pvarValue->bstrVal));
+				std::string directoryName;
+				directoryName.assign(_bstr_t(p_pvarValue->bstrVal));
+				rCamera.SetDirectory(directoryName);
 				l_hrOk = S_OK;
 				break;
 			}
@@ -445,11 +427,11 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long p_ulIndex, in
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraBufferCreateAll( unsigned long p_ulIndex, unsigned long p_ulCount )
+HRESULT SVFileAcquisitionDevice::CameraBufferCreateAll( unsigned long index, unsigned long p_ulCount )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_cameras.size() <= p_ulIndex )
+	if (MaxFileCameras <= index)
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -457,11 +439,11 @@ HRESULT SVFileAcquisitionDevice::CameraBufferCreateAll( unsigned long p_ulIndex,
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraBufferDestroyAll( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::CameraBufferDestroyAll( unsigned long index )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( m_cameras.size() <= p_ulIndex )
+	if (MaxFileCameras <= index)
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -469,13 +451,13 @@ HRESULT SVFileAcquisitionDevice::CameraBufferDestroyAll( unsigned long p_ulIndex
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraRegisterBufferInterface( unsigned long p_ulIndex, SVAcquisitionBufferInterface* p_pInterface )
+HRESULT SVFileAcquisitionDevice::CameraRegisterBufferInterface( unsigned long index, SVAcquisitionBufferInterface* p_pInterface )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if ( index < MaxFileCameras)
 	{
-		m_cameras[p_ulIndex].m_pBufferInterface = p_pInterface;
+		m_cameras[index].m_pBufferInterface = p_pInterface;
 	} 
 	else
 	{
@@ -485,13 +467,13 @@ HRESULT SVFileAcquisitionDevice::CameraRegisterBufferInterface( unsigned long p_
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraUnregisterBufferInterface( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::CameraUnregisterBufferInterface( unsigned long index )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		m_cameras[p_ulIndex].m_pBufferInterface = nullptr;
+		m_cameras[index].m_pBufferInterface = nullptr;
 	} 
 	else
 	{
@@ -501,13 +483,13 @@ HRESULT SVFileAcquisitionDevice::CameraUnregisterBufferInterface( unsigned long 
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long index )
 {
 	HRESULT result = S_FALSE;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		SVFileCamera& rCamera = m_cameras[p_ulIndex];
+		SVFileCamera& rCamera = m_cameras[index];
 		if ( ::InterlockedExchange( &(rCamera.m_lIsStarted), 1 ) == 0 )
 		{
 			// Check if already Running
@@ -516,7 +498,7 @@ HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long p_ulIndex )
 				SVFileCamera::EventHandler startHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessStartFrame, this, _1);
 				SVFileCamera::EventHandler endHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessEndFrame, this, _1);
 
-				result = rCamera.Start( startHandler, endHandler, p_ulIndex);
+				result = rCamera.Start( startHandler, endHandler, index);
 			}
 			
 			if( S_OK != result )
@@ -533,13 +515,13 @@ HRESULT SVFileAcquisitionDevice::CameraStart( unsigned long p_ulIndex )
 	return result;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraStop( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::CameraStop( unsigned long index )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		SVFileCamera& rCamera = m_cameras[p_ulIndex];
+		SVFileCamera& rCamera = m_cameras[index];
 		if ( ::InterlockedExchange( &(rCamera.m_lIsStarted), 0 ) == 1 )
 		{
 			// Stop File Loader Thread
@@ -552,13 +534,13 @@ HRESULT SVFileAcquisitionDevice::CameraStop( unsigned long p_ulIndex )
 // this is called at the start of the acquisition
 // in the case of file acquisition, it's called from the loader apc callback
 // which is activated via the DoOneShot signaller
-HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame( unsigned long index )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if(index < MaxFileCameras)
 	{
-		SVFileCamera& rCamera = m_cameras[ p_ulIndex ];
+		SVFileCamera& rCamera = m_cameras[ index ];
 
 		if ( 1 == rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface )
 		{
@@ -573,19 +555,15 @@ HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame( unsigned long p_ulInde
 }
 
 // call this when Loader finishes ?
-HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long index )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( p_ulIndex < m_cameras.size() )
+	if ( index < MaxFileCameras)
 	{
-		SVFileCamera& rCamera = m_cameras[p_ulIndex];
+		SVFileCamera& rCamera = m_cameras[index];
 		if ( rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface )
 		{
-			if (rCamera.IsAcquisitionTriggered())
-			{
-				DoAcquisitionTrigger(rCamera);
-			}
 			SvTrc::IImagePtr pImage = rCamera.m_pBufferInterface->GetNextBuffer();
 			
 			if( nullptr != pImage && nullptr != pImage->getHandle() )
@@ -595,14 +573,21 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 				if (S_OK != l_hrOk)
 				{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					char l_szbuf[128];
-					wsprintf(l_szbuf, "FileAcquisition::CopyImage - Error in Format");
-					TRACE("%s\n", l_szbuf);
+						std::string outputText{"FileAcquisition::CopyImage - Error in Format\r\n"};
+						::OutputDebugString(outputText.c_str());
 #endif
 
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams));
 				}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+				else
+				{
+					std::string outputText {"Error In BufferGetAddress\r\n"};
+					::OutputDebugString(outputText.c_str());
+					l_hrOk = E_FAIL;
+				}
+#endif
 			}
 			else
 			{
@@ -627,321 +612,31 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraLoadFiles(unsigned long p_ulIndex, SAFEARRAY* p_psaFileNames)
+HRESULT SVFileAcquisitionDevice::CameraLoadFiles(unsigned long index, SAFEARRAY* p_psaFileNames)
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionDevice::InternalTriggerEnable( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::InternalTriggerEnable( unsigned long index )
 {
 	HRESULT hr = S_OK;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionDevice::InternalTrigger( unsigned long p_ulIndex )
+HRESULT SVFileAcquisitionDevice::InternalTrigger( unsigned long index )
+{
+	return FireOneShot(index);
+}
+
+HRESULT SVFileAcquisitionDevice::FireOneShot( unsigned long index )
 {
 	HRESULT hr = S_FALSE;
-	if (m_triggerMgr.HasSubscribers(p_ulIndex))
+	if( index >= 0 && index < MaxFileCameras)
 	{
-		hr = m_triggerMgr.Fire(p_ulIndex);
-	}
-	else
-	{
-		hr = FireOneShot(p_ulIndex);
+		hr = m_cameras[index].DoOneShot();
 	}
 	return hr;
 }
 
-HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher )
-{
-	m_AcquisitionDispatchers.AddDispatcher(p_ulIndex, rDispatcher );
-	
-	typedef SvTi::SVTriggerActivatorFunc<SVFileAcquisitionDevice> Activator;
-	typedef SvTi::SVTriggerCallbackFunc<SVFileAcquisitionDevice> TriggerCallback;
-	SvTh::SVTriggerHandler handler(p_ulIndex,
-		SvTh::SVTriggerActivator(new Activator(this, &SVFileAcquisitionDevice::FireOneShot)),
-		SvTh::SVTriggerCallback(new TriggerCallback(this, &SVFileAcquisitionDevice::DispatchTriggerCallback)));
-
-	return m_triggerMgr.Subscribe(p_ulIndex, handler);
-}
-
-HRESULT SVFileAcquisitionDevice::UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher )
-{
-	m_AcquisitionDispatchers.RemoveDispatcher(p_ulIndex, rDispatcher);
-	return m_triggerMgr.Unsubscribe( p_ulIndex);
-}
-
-HRESULT SVFileAcquisitionDevice::UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex )
-{
-	m_AcquisitionDispatchers.RemoveAllDispatchers(p_ulIndex);
-	return m_triggerMgr.Unsubscribe( p_ulIndex );
-}
-
-HRESULT SVFileAcquisitionDevice::FireOneShot( unsigned long p_ulIndex )
-{
-	HRESULT hr = S_FALSE;
-	if( p_ulIndex >= 0 && p_ulIndex < m_cameras.size())
-	{
-		hr = m_cameras[ p_ulIndex ].DoOneShot();
-	}
-	return hr;
-}
-
-HRESULT SVFileAcquisitionDevice::DispatchTriggerCallback( unsigned long p_ulIndex )
-{
-	if(m_AcquisitionDispatchers.Dispatch(p_ulIndex))
-	{
-		return S_OK;
-	}
-	else
-	{
-		return S_FALSE;
-	}
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerGetCount(unsigned long& p_ulCount)
-{
-	HRESULT l_Result = CameraGetCount(p_ulCount);
-	return l_Result;
-}
-
-// convert ordinal to handle
-unsigned long SVFileAcquisitionDevice::TriggerGetHandle(unsigned long p_ulIndex)
-{
-	return GetDigitizerHandle(p_ulIndex); 
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		if ( nullptr != p_rbstrName )
-		{
-			::SysFreeString( p_rbstrName );
-			p_rbstrName = nullptr;
-		}
-
-		//SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		std::string name = SvUl::Format("CameraTrigger.Dig_%d", triggerchannel);
-		p_rbstrName = _bstr_t(name.c_str());
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.SetTriggerDispatcher(rDispatcher);
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.ClearTriggerCallback();
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerUnregisterAllCallbacks(unsigned long triggerchannel)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.ClearTriggerCallback();
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerStart(unsigned long triggerchannel)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.m_bAcquisitionTriggered = true;
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerStop(unsigned long triggerchannel)
-{
-	HRESULT l_Result = S_FALSE;
-	if (IsValidDigitizer(triggerchannel))
-	{
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.m_bAcquisitionTriggered = false;
-		l_Result = S_OK;
-	}
-	return l_Result;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		if (IsValidDigitizer(triggerchannel))
-		{
-			*p_pulCount = 1;
-			l_hrOk = S_OK;
-		}
-		else
-		{
-			*p_pulCount = 0;
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pbstrName )
-	{
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-			*p_pbstrName = nullptr;
-		}
-
-		if (IsValidDigitizer(triggerchannel))
-		{
-			switch ( p_ulIndex )
-			{
-				case SvTi::SVAcquisitionTriggered:
-				*p_pbstrName = ::SysAllocString( L"Acquisition Triggered" );
-				break;
-			}
-			if ( nullptr != *p_pbstrName )
-			{
-				l_hrOk = S_OK;
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pvarValue )
-	{
-		if ( S_OK == ::VariantClear( p_pvarValue ) )
-		{
-			if (IsValidDigitizer(triggerchannel))
-			{
-				// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
-				// however at some time in the future the Dll parameters may be implemented
-				// as an array and therefore this enum may not apply.
-				switch ( p_ulIndex)
-				{
-					case SvTi::SVAcquisitionTriggered:
-					{
-						p_pvarValue->vt = VT_BOOL;
-						bool bAcquisitonTriggered;
-						l_hrOk = IsAcquisitionTriggered(triggerchannel, bAcquisitonTriggered);
-						if ( S_OK == l_hrOk )
-						{
-							p_pvarValue->bVal = (bAcquisitonTriggered) ? VARIANT_TRUE : VARIANT_FALSE;
-						}
-						break;
-					}
-				
-					default:
-						break;
-				}
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (IsValidDigitizer(triggerchannel))
-	{
-		if ( nullptr != p_pvarValue )
-		{
-			switch (p_ulIndex)
-			{
-				case SvTi::SVAcquisitionTriggered:
-				{
-					if( p_pvarValue->vt == VT_BOOL )
-					{
-						l_hrOk = SetAcquisitionTriggered( triggerchannel, (p_pvarValue->boolVal == VARIANT_TRUE) ? true : false);
-					}
-					break;
-				}
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (IsValidDigitizer(triggerchannel))
-	{
-		l_hrOk = S_OK;
-		const SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		bAcquisitionTriggered = l_rCamera.IsAcquisitionTriggered();
-	}
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered)
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (IsValidDigitizer(triggerchannel))
-	{
-		l_hrOk = S_OK;
-		SVFileCamera& l_rCamera = GetDigitizer(triggerchannel);
-		l_rCamera.SetAcquisitionTriggered(bAcquisitionTriggered);
-	}
-	return l_hrOk;
-}
-
-void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& rCamera)
-{
-	double timestamp = SvTl::GetTimeStamp();
-	// Simulate Trigger and send Timestamp and Line State...
-	bool lineState = rCamera.GetLineState(); // could simulate line state via a socket connection
-
-	SvTh::TriggerDispatcher dispatcher(rCamera.GetTriggerDispatcher());
-
-	if (dispatcher.hasCallback())
-	{
-		SvTh::IntVariantMap triggerData;
-		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timestamp);
-		triggerData[SvTh::TriggerDataEnum::LineState] = _variant_t((lineState) ? VARIANT_TRUE : VARIANT_FALSE);
-		triggerData[SvTh::TriggerDataEnum::StartFrameTime] = _variant_t(rCamera.m_StartTimeStamp);
-
-		dispatcher.SetData(triggerData);
-		dispatcher.Dispatch();
-	}
-}
 

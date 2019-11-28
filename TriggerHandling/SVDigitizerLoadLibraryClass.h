@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #pragma endregion Includes
 
@@ -35,9 +35,6 @@ namespace SvTh
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterBufferInterfacePtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerEnablePtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerPtr)(SVHANDLE);
-	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerRegisterPtr)(SVHANDLE, const TriggerDispatcher &rDispatcher);
-	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerUnregisterPtr)(SVHANDLE, const TriggerDispatcher &rDispatcher);
-	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerUnregisterAllPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterStartAcquirePtr)(SVHANDLE, unsigned long, const TriggerDispatcher &rDispatcher);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterStopAcquirePtr)(SVHANDLE, unsigned long, const TriggerDispatcher &rDispatcher);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterAllAcquirePtr)(SVHANDLE, unsigned long);
@@ -83,9 +80,6 @@ namespace SvTh
 
 		HRESULT InternalTriggerEnable(SVHANDLE p_hHandle);
 		HRESULT InternalTrigger(SVHANDLE p_hHandle) const;
-		HRESULT InternalTriggerRegister(SVHANDLE p_hHandle, const TriggerDispatcher &rDispatcher);
-		HRESULT InternalTriggerUnregister(SVHANDLE p_hHandle, const SvTh::TriggerDispatcher &rDispatcher);
-		HRESULT InternalTriggerUnregisterAll(SVHANDLE p_hHandle);
 
 		HRESULT DestroyBuffers(SVHANDLE p_hHandle);
 		HRESULT UnloadCameraFile(SVHANDLE p_hHandle);
@@ -136,12 +130,6 @@ namespace SvTh
 		SVDigitizerInternalTriggerEnablePtr m_psvInternalTriggerEnable;
 		//This attribute holds the address to the SVDigitizerInternalTrigger function in the DLL.
 		SVDigitizerInternalTriggerPtr m_psvInternalTrigger;
-		//This attribute holds the address to the SVDigitizerInternalTriggerRegister function in the DLL.
-		SVDigitizerInternalTriggerRegisterPtr m_psvInternalTriggerRegister;
-		//This attribute holds the address to the SVDigitizerInternalTriggerUnregister function in the DLL.
-		SVDigitizerInternalTriggerUnregisterPtr m_psvInternalTriggerUnregister;
-		//This attribute holds the address to the SVDigitizerInternalTriggerUnregisterAll function in the DLL.
-		SVDigitizerInternalTriggerUnregisterAllPtr m_psvInternalTriggerUnregisterAll;
 		//This attribute holds the address to the SVDigitizerDestroyBuffers function in the DLL.
 		SVDigitizerDestroyBuffersPtr m_psvDestroyBuffers;
 		//This attribute holds the address to the SVDigitizerUnloadCameraFile function in the DLL.

@@ -4,19 +4,6 @@ EXPORTS
 	SVCreate @1
 	SVDestroy @2
 
-	SVTriggerGetCount @60
-	SVTriggerGetHandle @61
-	SVTriggerGetName @62
-	SVTriggerRegister @64
-	SVTriggerUnregister @65
-	SVTriggerUnregisterAll @66
-	SVTriggerStart @68
-	SVTriggerStop @69
-	SVTriggerGetParameterCount @70
-	SVTriggerGetParameterName @71
-	SVTriggerGetParameterValue @72
-	SVTriggerSetParameterValue @73
-	
 	SVDigitizerGetCount @100
 	SVDigitizerGetHandle @101
 	SVDigitizerGetName @102
@@ -37,9 +24,6 @@ EXPORTS
 	
 	SVDigitizerInternalTriggerEnable @132
 	SVDigitizerInternalTrigger @133
-	SVDigitizerInternalTriggerRegister @134
-	SVDigitizerInternalTriggerUnregister @135
-	SVDigitizerInternalTriggerUnregisterAll @136
 	
 	SVDigitizerSetParameters @150
 	SVDigitizerSetParameter @151

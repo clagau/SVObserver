@@ -31,7 +31,7 @@ public:
 	HRESULT CloseTriggerDLL();
 
 	HRESULT LoadSoftwareTriggerDLL();
-	HRESULT LoadAcquisitionTriggerDLL();
+	HRESULT LoadCameraTriggerDLL();
 
 	HRESULT LoadAcquisitionDLL();
 	HRESULT CloseAcquisitionDLL();
@@ -57,12 +57,12 @@ private:
 
 	std::string m_IOBoardOption;			// TRB - Added to have a parameter to send to Rabbit Board. (original name: m_DigitalOption)
 
-	SvTh::SVDigitizerLoadLibraryClass m_svDLLDigitizers;
-	SvTh::SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
+	SvTh::SVDigitizerLoadLibraryClass m_dllDigitizers;
+	SvTh::SVDigitizerLoadLibraryClass m_dllFileAcquisition;
 
 	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
 	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLAcquisitionTriggers;
+	SVIOTriggerLoadLibraryClass m_svDLLCameraTriggers;
 
 	SvLib::InitialInformation m_InitialInfo;
 #pragma endregion Member variables

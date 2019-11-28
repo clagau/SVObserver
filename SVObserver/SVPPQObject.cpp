@@ -64,44 +64,42 @@ constexpr double TwentyPercent = .20;
 const long MinReducedPPQPosition = 2;
 #pragma endregion Declarations
 
-HRESULT CALLBACK SVFinishTriggerCallback(void *pOwner, void *pCaller, void *pTriggerInfo)
+HRESULT CALLBACK SVFinishTriggerCallback(void *pOwner, void *pCaller, void *pData)
 {
 	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pOwner);
-	SvTi::SVTriggerInfoStruct* pInfo = reinterpret_cast<SvTi::SVTriggerInfoStruct*>(pTriggerInfo);
+	SvTi::SVTriggerInfoStruct* pTriggerInfo = reinterpret_cast<SvTi::SVTriggerInfoStruct*>(pData);
 
-	bool bRet = (nullptr != pPPQ && nullptr != pInfo);
-
-	if (bRet)
-	{
-		bRet = pPPQ->FinishTrigger(pCaller, *pInfo);
-	}
+	bool bRet = (nullptr != pPPQ && nullptr != pTriggerInfo);
 
 	if (bRet)
 	{
-		return S_OK;
+		bRet = pPPQ->FinishTrigger(pCaller, *pTriggerInfo);
 	}
-	else
-	{
-		return S_FALSE;
-	}
+
+	return bRet ? S_OK : E_FAIL;
 }
 
-HRESULT CALLBACK SVFinishCameraCallback(void *pOwner, void *pCaller, void *pResponse)
+HRESULT CALLBACK SVFinishCameraCallback(void *pOwner, void *pCaller, void *pData)
 {
-	bool bRet(false);
-
 	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*> (pOwner);
+	SVODataResponseClass* pResponse = reinterpret_cast<SVODataResponseClass*> (pData);
 
-	if (nullptr != pPPQ) { bRet = pPPQ->FinishCamera(pCaller, reinterpret_cast<SVODataResponseClass*>(pResponse)); }
+	bool bRet = (nullptr != pPPQ && nullptr != pResponse);
 
 	if (bRet)
 	{
-		return S_OK;
+		if(nullptr != pPPQ->GetTrigger())
+		{
+			///If camera trigger we need to fire the trigger when a valid image has arrived
+			if(SvDef::TriggerType::CameraTrigger == pPPQ->GetTrigger()->getType() && nullptr != pResponse->getImage())
+			{
+				pPPQ->GetTrigger()->Fire(pResponse->getStartTime());
+			}
+		}
+		bRet = pPPQ->FinishCamera(pCaller, pResponse);
 	}
-	else
-	{
-		return S_FALSE;
-	}
+
+	return bRet ? S_OK : E_FAIL;
 }
 
 HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
@@ -812,11 +810,6 @@ SvIe::SVVirtualCameraPtrVector SVPPQObject::GetVirtualCameras(bool sortAndMakeUn
 	return cameraVector;
 }
 
-void SVPPQObject::GetTrigger(SvTi::SVTriggerObject*& ppTrigger)
-{
-	ppTrigger = m_pTrigger;
-}// end GetTrigger
-
 bool SVPPQObject::GetInspection(long lIndex, SVInspectionProcess*& ppInspection) const
 {
 	if (lIndex < 0 || lIndex >= static_cast<long> (m_arInspections.size())) { return false; }
@@ -883,35 +876,9 @@ void SVPPQObject::RebuildProductCameraInfoStructs()
 	}// end for
 }
 
-void SVPPQObject::AssignCameraToAcquisitionTrigger()
-{
-	if (m_pTrigger->IsAcquisitionTrigger() && m_pTrigger->mpsvDevice)
-	{
-		// Get Camera by Trigger DigNum
-		int iDigNum = m_pTrigger->mpsvDevice->miChannelNumber;
-
-		for (SVCameraInfoMap::iterator it = m_Cameras.begin(); it != m_Cameras.end(); ++it)
-		{
-			SvIe::SVVirtualCamera* pCamera = it->first;
-			if (nullptr != pCamera)
-			{
-				SvIe::SVAcquisitionClassPtr acquisitionPtr = pCamera->GetAcquisitionDevice();
-				if (nullptr != acquisitionPtr && acquisitionPtr->DigNumber() == iDigNum)
-				{
-					m_pTrigger->mpsvDevice->m_triggerchannel = acquisitionPtr->m_hDigitizer;
-					break;
-				}
-			}
-		}
-	}
-}
-
 void SVPPQObject::PrepareGoOnline()
 {
 	SvSml::SharedMemWriter::Instance().clearInspectionIdsVector(GetName());
-
-	// Fixup Acquisition triggers (as Cameras can be in a different order than Triggers)
-	AssignCameraToAcquisitionTrigger();
 
 	if (!m_pTrigger->CanGoOnline())
 	{
@@ -1084,20 +1051,6 @@ void SVPPQObject::GoOnline()
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 		throw Msg;
 	}// end if
-
-	if (m_pTrigger->IsSoftwareTrigger())
-	{
-		// must do this before the Camera starts for Digital cameras
-		HRESULT hr = m_pTrigger->EnableInternalTrigger();
-		if (S_OK != hr)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%X"), hr));
-
-			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_InternalTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
-			throw Msg;
-		}
-	}
 
 	SVCameraInfoMap::iterator l_svIter;
 	bool bCameraGoOnline = true;
@@ -1852,7 +1805,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		if(nullptr != m_pTrigger)
 		{
 			//Trigger channel needs to  be one based
-			long triggerChannel = (nullptr != m_pTrigger->mpsvDevice) ? m_pTrigger->mpsvDevice->miChannelNumber + 1 : -1;
+			long triggerChannel = (nullptr != m_pTrigger->getDevice()) ? m_pTrigger->getDevice()->getDigitizerNumber() + 1 : -1;
 
 			if(triggerChannel >= 0)
 			{
@@ -2123,7 +2076,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 
 		if (nullptr != l_pPrevProduct)
 		{
-			l_pNewProduct->m_triggerInfo.m_PreviousTrigger = l_pPrevProduct->m_triggerInfo.m_BeginProcess;
+			l_pNewProduct->m_triggerInfo.m_PreviousTrigger = l_pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
 		}
 
 		l_pNewProduct->m_triggered = true;
@@ -3066,14 +3019,6 @@ bool SVPPQObject::FinishTrigger(void *pCaller, const SvTi::SVTriggerInfoStruct& 
 		SvTi::SVTriggerInfoStruct triggerInfo{rTriggerInfo};
 
 		GetInputIOValues(triggerInfo.m_Inputs);
-
-		//If in the input data it has a valid value then it is more accurate
-		SvTh::IntVariantMap::const_iterator iterData {triggerInfo.m_Data.end()};
-		iterData = triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
-		if (triggerInfo.m_Data.end() != iterData && 0.0 < static_cast<double> (iterData->second))
-		{
-			triggerInfo.m_BeginProcess = static_cast<double> (iterData->second);
-		}
 
 		switch (m_oOutputMode)
 		{

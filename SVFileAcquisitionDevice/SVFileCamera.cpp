@@ -23,16 +23,6 @@
 #include "TriggerRecordController/IImage.h"
 #pragma endregion Includes
 
-SVFileCamera::SVFileCamera()
-: m_lIsStarted(0)
-, m_index(-1)
-, m_bAcquisitionTriggered(false)
-, m_dispatcher(nullptr,SvTh::TriggerParameters())
-{
-	m_pBufferInterface = nullptr;
-	m_StartTimeStamp = 0;
-}
-
 const std::string& SVFileCamera::GetName() const
 {
 	return m_name;
@@ -165,28 +155,30 @@ HRESULT SVFileCamera::CopyImage(SvTrc::IImage* pImage)
 void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 {
 	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*>(data);
-	std::string filename = pCamera->GetNextFilename();
-
-	// fire StartFrame event
-	pCamera->m_startFrameEvent.Fire(pCamera->m_index);
-	// Load file
-	if (filename.empty() || S_OK != pCamera->loadImage(filename))
+	if(nullptr != pCamera)
 	{
-		// add to event log
-		SvDef::StringVector msgList;
-		SvStl::MessageTextEnum id = SvStl::Tid_Empty;
-		if (filename.empty())
+		std::string filename = pCamera->GetNextFilename();
+		// fire StartFrame event
+		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
+		// Load file
+		if (filename.empty() || S_OK != pCamera->loadImage(filename))
 		{
-			msgList.push_back(pCamera->GetDirectory());
-			id = SvStl::Tid_FileCamera_NoImageFile;
+			// add to event log
+			SvDef::StringVector msgList;
+			SvStl::MessageTextEnum id = SvStl::Tid_Empty;
+			if (filename.empty())
+			{
+				msgList.push_back(pCamera->GetDirectory());
+				id = SvStl::Tid_FileCamera_NoImageFile;
+			}
+			else
+			{
+				msgList.push_back(filename);
+				id = SvStl::Tid_FileCamera_LoadFailed;
+			}
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+			Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
-		else
-		{
-			msgList.push_back(filename);
-			id = SvStl::Tid_FileCamera_LoadFailed;
-		}
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
-		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 }
 
@@ -198,41 +190,6 @@ void SVFileCamera::OnThreadEvent( bool& p_WaitForEvents )
 		// fire EndFrame event
 		m_endFrameEvent.Fire(m_index);
 	}
-}
-
-bool SVFileCamera::IsAcquisitionTriggered() const
-{
-	return m_bAcquisitionTriggered;
-}
-
-void SVFileCamera::SetAcquisitionTriggered(bool bAcquisitionTriggered)
-{
-	m_bAcquisitionTriggered = bAcquisitionTriggered;
-}
-
-bool SVFileCamera::GetLineState() const
-{
-	return m_lineState;
-}
-
-void SVFileCamera::SetLineState(bool bState)
-{
-	m_lineState = bState;
-}
-
-const SvTh::TriggerDispatcher& SVFileCamera::GetTriggerDispatcher() const
-{
-	return m_dispatcher;
-}
-
-void SVFileCamera::SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher)
-{
-	m_dispatcher = rDispatcher;
-}
-
-void SVFileCamera::ClearTriggerCallback()
-{
-	m_dispatcher.clear();
 }
 
 HRESULT SVFileCamera::loadImage(std::string fileName)

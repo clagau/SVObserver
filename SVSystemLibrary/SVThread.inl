@@ -71,6 +71,11 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		}
 		else
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
+			std::string l_Message = SvUl::Format(_T("SVThread(%d) - Create thread = %s\n"), m_ulThreadID, m_tag.c_str());
+			::OutputDebugString(l_Message.c_str());
+#endif
+	
 			SVThreadManager::Instance().Add(m_hThread, tag, eAttribute); // keep track of thread.
 
 			if( S_OK == Result )
@@ -213,9 +218,6 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 
 	if( lpParam )
 	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
-		std::string l_Message;
-#endif
 
 		SVThread* pThread = static_cast< SVThread* >( lpParam );
 
@@ -244,7 +246,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 				else
 				{
-					l_Message = SvUl::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+					std::string l_Message = SvUl::Format( _T( "SVThread(%d) - Shutdown Thread = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 					::OutputDebugString( l_Message.c_str() );
 				}
 #endif
@@ -252,7 +254,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 #if defined (TRACE_THEM_ALL) || defined (TRACE_THREAD)
 			else
 			{
-				l_Message = SvUl::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
+				std::string l_Message = SvUl::Format( _T( "SVThread(%d) - Exit Loop = %s\n" ), pThread->m_ulThreadID, pThread->m_tag.c_str() );
 				::OutputDebugString( l_Message.c_str() );
 			}
 #endif

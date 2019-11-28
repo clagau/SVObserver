@@ -20,7 +20,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferArray.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -45,11 +45,10 @@ private:
 	typedef SVMatroxGigeBufferCreator<SVBufAttGrabImageProc> AcqBufferCreator;
 	SVMatroxBufferArray m_AcqBuffers;
 	SVGigeDeviceParameterMap m_featuresMap;
-	unsigned long m_deviceNumber;
+	unsigned long m_deviceNumber{0UL};
 	std::string m_lineInputMoniker;
 	std::string m_lineInputRisingEventName;
 	std::string m_lineInputFallingEventName;
-	bool m_lineState;
 	SVGigeEventList m_eventList;
 
 public:
@@ -78,46 +77,34 @@ public:
 	std::string GetLineInputRisingEventName() const;
 	std::string GetLineInputFallingEventName() const;
 
-	bool IsAcquisitionTriggered() const;
-	void SetAcquisitionTriggered(bool bAcquisitionTriggered);
-
 	bool IsGigeEventListValid() const;
 	HRESULT GetGigeEventList();
-	long GetLineRisingEvent() const;
-	long GetLineFallingEvent() const;
-
-	void SetLineState(bool bState);
-	bool GetLineState() const;
-
-	const SvTh::TriggerDispatcher& GetTriggerDispatcher() const;
-	void SetTriggerDispatcher(const SvTh::TriggerDispatcher& rDispatcher);
-	void ClearTriggerCallback();
 
 #pragma region Member Variables
 public:
 	std::string m_Name;
 	std::string m_FullName;
 
-	unsigned char m_SystemHandle;
-	unsigned char m_Handle;
+	unsigned char m_SystemHandle{0};
+	unsigned char m_Handle{0xff};
 
-	long m_lIsStarted; // long (not bool) because of InterlockedExchange...
+	long m_lIsStarted{false}; // long (not bool) because of InterlockedExchange...
 
 	// Image processing buffers in use
-	long m_lStartIndex;
-	long m_lLastUsedIndex;
+	long m_lStartIndex{-1};
+	long m_lLastUsedIndex{-1};
 
 	SVConditionVariable m_frameStack;
 	SVMatroxDigitizerPtr m_Digitizer;
 	SVMatroxGigeCameraId m_svCameraId;
 
-	double m_StartFrameTimeStamp;
+	double m_StartFrameTimeStamp{0.0};
 
 	SVMatroxGigeAcqParams m_params;
 
-	SVAcquisitionBufferInterface* m_pBufferInterface;
+	SVAcquisitionBufferInterface* m_pBufferInterface{nullptr};
 
 private:
-	SvTh::TriggerDispatcher m_dispatcher;
+	SvTh::TriggerDispatcher m_dispatcher {nullptr,SvTh::TriggerParameters {}};
 #pragma endregion Member Variables
 };

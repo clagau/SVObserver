@@ -47,7 +47,7 @@ namespace SvLib
 	{
 		m_TriggerDLL.clear();
 		m_SoftwareTriggerDLL.clear();
-		m_AcquisitionTriggerDLL.clear();
+		m_CameraTriggerDLL.clear();
 		m_DigitizerDLL.clear();
 		m_FileAcquisitionDLL.clear();
 		m_DigitalIODLL.clear();

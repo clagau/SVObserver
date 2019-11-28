@@ -94,11 +94,11 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		double time {0.0};
 		if (rProduct.m_triggerInfo.m_PreviousTrigger > 0.0)
 		{
-			time = (rProduct.m_triggerInfo.m_BeginProcess - rProduct.m_triggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
+			time = (rProduct.m_triggerInfo.m_triggerTimeStamp - rProduct.m_triggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
 		}
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerDelta);
 
-		time = (rIPInfo.m_BeginInspection - rProduct.m_triggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+		time = (rIPInfo.m_BeginInspection - rProduct.m_triggerInfo.m_triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
 		double triggerToAcqTime {0.0};
@@ -108,7 +108,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			SvIe::SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
 			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
-				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.m_triggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.m_triggerInfo.m_triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 			}
 		}
@@ -193,7 +193,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				rIPInfo.m_EndInspection = SvTl::GetTimeStamp();
 				rIPInfo.setTriggerRecordCompleted();
 
-				time = (rIPInfo.m_EndInspection - rProduct.m_triggerInfo.m_BeginProcess) * SvTl::c_MicrosecondsPerMillisecond;
+				time = (rIPInfo.m_EndInspection - rProduct.m_triggerInfo.m_triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
 				rIPInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();

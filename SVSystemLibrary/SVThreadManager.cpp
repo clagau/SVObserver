@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "sstream"
 #include "SVThreadManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -39,7 +38,6 @@ SVThreadManager::SVThreadManager()
  ,m_bThreadAffinityEnabled(FALSE)
  ,m_bThreadManagerInstalled(FALSE)
 {
-	::InitializeCriticalSection(&m_CritSec);
 	// Temperary place to de-activate SVThreadManager
 	m_bThreadManagerInstalled = GetPrivateProfileInt( _T( "Settings" ), _T( "ThreadManagerActive" ), 1, SvStl::GlobalPath::Inst().GetSVIMIniPath());
 	if( m_bThreadManagerInstalled )
@@ -139,13 +137,12 @@ HRESULT SVThreadManager::IsAllowed( LPCTSTR strName,  SVThreadAttribute eAttrib 
 HRESULT SVThreadManager::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttribute eAttrib )
 {
 	HRESULT hr = S_FALSE;
-	::EnterCriticalSection( &m_CritSec );
 	if( nullptr != m_pAdd )
 	{
+		std::lock_guard<std::mutex> guard(m_threadMgrMutex);
 		_bstr_t bstName(strName);
 		hr = m_pAdd(hThread, bstName.Detach(), eAttrib);
 	}
-	::LeaveCriticalSection( &m_CritSec );
 	return hr;
 }
 
@@ -244,12 +241,11 @@ BOOL SVThreadManager::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNu
 HRESULT SVThreadManager::Remove( HANDLE p_hThread )
 {
 	HRESULT hr = S_FALSE;
-	::EnterCriticalSection( &m_CritSec );
 	if( nullptr != m_pRemove )
 	{
+		std::lock_guard<std::mutex> guard(m_threadMgrMutex);
 		hr = m_pRemove(p_hThread);
 	}
-	::LeaveCriticalSection( &m_CritSec );
 	return hr;
 }
 
@@ -320,7 +316,6 @@ void SVThreadManager::Destroy()
 		FreeLibrary( m_hThreadManagerDll );
 		m_hThreadManagerDll = nullptr;
 	}
-	::DeleteCriticalSection( &m_CritSec );
 }
 
 

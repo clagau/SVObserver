@@ -33,6 +33,8 @@
 #include "Tools/SVArchiveTool.h"
 #include "Tools/SVStatTool.h"
 #include "Tools/SVTool.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #pragma endregion Includes
 
 std::pair<const GUID **, size_t> NonPrintGuids();
@@ -167,8 +169,8 @@ inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTi::SVTriggerObject*
 	writer->WriteStartElement(nullptr, L"Trigger", nullptr);
 	writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pTrigger->GetName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"DeviceName", nullptr,
-		(pTrigger->mpsvDevice) ? SvUl::to_utf16(pTrigger->mpsvDevice->GetDeviceName(), cp_dflt).c_str() : L"** Device **");
-	if (pTrigger->IsSoftwareTrigger())
+		(nullptr != pTrigger->getDevice()) ? SvUl::to_utf16(pTrigger->getDevice()->GetDeviceName(), cp_dflt).c_str() : L"** Device **");
+	if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 	{
 		writer->WriteAttributeString(nullptr, L"Type", nullptr, L"Software");
 		std::wostringstream os;
@@ -223,7 +225,7 @@ inline void SVConfigXMLPrint::WriteCamera(Writer writer, SvIe::SVVirtualCamera* 
 	writer->WriteStartElement(nullptr, L"Camera", nullptr);
 	writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"DeviceName", nullptr,
-		(pCamera->mpsvDevice) ? SvUl::to_utf16(pCamera->mpsvDevice->GetDeviceName(), cp_dflt).c_str() : L"** No Device **");
+		(pCamera->GetAcquisitionDevice()) ? SvUl::to_utf16(pCamera->GetAcquisitionDevice()->GetDeviceName(), cp_dflt).c_str() : L"** No Device **");
 	writer->WriteAttributeString(nullptr, L"AcquisitionType", nullptr,
 		(pCamera->IsFileAcquisition()) ? L"File Acquisition" : L"Hardware Acquisition");
 	if (pCamera->IsFileAcquisition())
@@ -372,12 +374,10 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteAttributeString(nullptr, L"OutputResetDelay", nullptr, _itow(lResetDelay, buff, 10));
 		writer->WriteAttributeString(nullptr, L"OutputDelayTime", nullptr, _itow(lDelayTime, buff, 10));
 
-		SvTi::SVTriggerObject* pTrigger;
-		pPPQ->GetTrigger(pTrigger);
-		if (nullptr != pTrigger)
+		if (nullptr != pPPQ->GetTrigger())
 		{
 			writer->WriteStartElement(nullptr, L"Trigger", nullptr);
-			writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pTrigger->GetName(), cp_dflt).c_str());
+			writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pPPQ->GetTrigger()->GetName(), cp_dflt).c_str());
 			writer->WriteEndElement();
 		}
 

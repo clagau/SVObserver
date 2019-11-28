@@ -66,7 +66,7 @@ namespace SvLib
 		std::string m_DigitalIODLL;
 		std::string m_FileAcquisitionDLL;
 		std::string m_SoftwareTriggerDLL;
-		std::string m_AcquisitionTriggerDLL;
+		std::string m_CameraTriggerDLL;
 
 		std::string m_ReloadAcquisitionDLL;
 		std::string m_ReloadTriggerDLL;

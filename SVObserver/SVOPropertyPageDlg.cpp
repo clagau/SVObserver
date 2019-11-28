@@ -1946,7 +1946,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 					for(const auto* pCamera : cameraVector)
 					{
-						if ( nullptr != pCamera && pCamera->mpsvDevice == pDevice )
+						if ( nullptr != pCamera && pCamera->GetAcquisitionDevice() == pDevice )
 						{
 							bFoundCamera = true;
 						}

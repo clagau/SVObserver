@@ -118,7 +118,7 @@ public:
 	size_t GetCameraCount() const;
 	SvIe::SVVirtualCameraPtrVector GetVirtualCameras(bool sortAndMakeUnique = false) const;
 
-	void GetTrigger( SvTi::SVTriggerObject*& ppTrigger );
+	SvTi::SVTriggerObject* GetTrigger() { return m_pTrigger; }
 	bool GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
 
 	//************************************
@@ -431,7 +431,6 @@ private:
 	std::string m_conditionalOutputName; // persist this
 	SVGUID m_conditionalOutputValueID; // do not persist this
 
-	void AssignCameraToAcquisitionTrigger();
 	bool ResolveConditionalOutput();
 	bool AlwaysWriteOutputs() const;
 	bool EvaluateConditionalOutput() const;

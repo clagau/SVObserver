@@ -21,21 +21,12 @@
 SVMatroxGigeDigitizer::SVMatroxGigeDigitizer(unsigned long deviceNumber, unsigned char systemHandle)
 : m_deviceNumber(deviceNumber)
 , m_SystemHandle(systemHandle)
-, m_Handle(0xFF)
-, m_lIsStarted(false)
-, m_lStartIndex(-1)
-, m_lLastUsedIndex(-1)
-, m_pBufferInterface(nullptr)
-, m_StartFrameTimeStamp(0) 
-, m_lineState(false)
-, m_dispatcher(nullptr,SvTh::TriggerParameters())
 {
-	m_params.TriggerType = SVMatroxGigeTrigger::HardwareTrigger;
+	m_params.TriggerType = SvDef::HardwareTrigger;
 	m_params.TriggerMode = SVMatroxDigitizerGrab::SVEdgeRising;
 }
 
 SVMatroxGigeDigitizer::SVMatroxGigeDigitizer( const SVMatroxGigeDigitizer& p_rValue)
-: m_dispatcher(nullptr,SvTh::TriggerParameters())
 {
 	*this = p_rValue;
 }
@@ -63,7 +54,6 @@ const SVMatroxGigeDigitizer& SVMatroxGigeDigitizer::operator=( const SVMatroxGig
 		m_lLastUsedIndex = p_rValue.m_lLastUsedIndex;
 
 		m_StartFrameTimeStamp = p_rValue.m_StartFrameTimeStamp ;
-		m_lineState = p_rValue.m_lineState;
 
 		m_params = p_rValue.m_params;
 
@@ -191,16 +181,6 @@ std::string SVMatroxGigeDigitizer::GetLineInputFallingEventName() const
 	return featureName.c_str();
 }
 
-bool SVMatroxGigeDigitizer::IsAcquisitionTriggered() const
-{
-	return m_params.bAcquisitionTriggered;
-}
-
-void SVMatroxGigeDigitizer::SetAcquisitionTriggered(bool bAcquisitionTriggered)
-{
-	m_params.bAcquisitionTriggered = bAcquisitionTriggered;
-}
-
 bool SVMatroxGigeDigitizer::IsGigeEventListValid() const
 {
 	return (m_eventList.size() > 0);
@@ -210,54 +190,5 @@ HRESULT SVMatroxGigeDigitizer::GetGigeEventList()
 {
 	m_eventList.clear();
 	return SVMatroxDigitizerInterface::GetGigeEventList(*(m_Digitizer.get()), m_eventList);
-}
-
-long SVMatroxGigeDigitizer::GetLineRisingEvent() const
-{
-	long eventId = 0;
-	SVGigeEventList::const_iterator it = m_eventList.find(m_lineInputRisingEventName);
-	if (it != m_eventList.end())
-	{
-		eventId = it->second;
-	}
-	return eventId;
-}
-
-long SVMatroxGigeDigitizer::GetLineFallingEvent() const
-{
-	long eventId = 0;
-	SVGigeEventList::const_iterator it = m_eventList.find(m_lineInputFallingEventName);
-	if (it != m_eventList.end())
-	{
-		eventId = it->second;
-	}
-	return eventId;
-}
-
-//@TODO[Arvid] SVMatroxGigeDigitizer and SVFileCamera share some functions - they should be derived from the same base class
-
-bool SVMatroxGigeDigitizer::GetLineState() const
-{
-	return m_lineState;
-}
-
-void SVMatroxGigeDigitizer::SetLineState(bool bState)
-{
-	m_lineState = bState;
-}
-
-const SvTh::TriggerDispatcher& SVMatroxGigeDigitizer::GetTriggerDispatcher() const
-{
-	return m_dispatcher;
-}
-
-void SVMatroxGigeDigitizer::SetTriggerDispatcher(const SvTh::TriggerDispatcher& callback)
-{
-	m_dispatcher = callback;
-}
-
-void SVMatroxGigeDigitizer::ClearTriggerCallback()
-{
-	m_dispatcher.clear();
 }
 

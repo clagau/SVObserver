@@ -14,7 +14,7 @@
 #include "SVTestIO.h"
 #include "SVTestIODlg.h"
 #include "SVTestIOExports.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 extern CSVTestIOApp theApp;

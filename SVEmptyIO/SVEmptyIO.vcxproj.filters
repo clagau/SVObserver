@@ -18,9 +18,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVEmptyIO.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVEmptyIOExports.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -41,9 +38,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEmptyIO.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEmptyIOExports.h">

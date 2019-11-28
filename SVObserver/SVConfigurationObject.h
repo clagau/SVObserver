@@ -26,9 +26,6 @@
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerInformation/SVTriggerObject.h"
-#include "TriggerInformation/SVSoftwareTriggerClass.h"
-#include "TriggerInformation/SVCameraTriggerClass.h"
 #pragma endregion Includes
 
 
@@ -47,8 +44,7 @@ class InspectionCmdMsgs;
 }
 namespace SvTh
 {
-class SVSoftwareTriggerClass;
-class SVCameraTriggerClass;
+class SvTh::SVTriggerClass;
 }
 namespace  SvXml
 {
@@ -475,8 +471,8 @@ private:
 	void SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter, const SVDeviceParam* pParam ) const;
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
-	void SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
-	void SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
+	void SetupSoftwareTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
+	void SetupCameraTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
 
 	void GetRemoteInputInspections( const std::string& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
 

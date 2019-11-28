@@ -26,7 +26,6 @@ SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/)
 	, m_bResetStart(true)
 {
 	
-	m_pCallBacks.resize(4);
 }
 
 SVTestIODlg::~SVTestIODlg()

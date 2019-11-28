@@ -21,9 +21,6 @@
     <ClCompile Include="SVFileAcquisitionDevice.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileAcquisitionDeviceApp.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileAcquisitionDeviceExports.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -61,9 +58,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileAcquisitionDevice.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileAcquisitionDeviceApp.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileAcquisitionDeviceExports.h">

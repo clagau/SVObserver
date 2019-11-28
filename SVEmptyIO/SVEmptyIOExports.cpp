@@ -9,33 +9,32 @@
 // * .Check In Date   : $Date:   22 Apr 2013 09:13:42  $
 // ******************************************************************************
 
-#include "StdAfx.h"
+#pragma region Includes
+#include "stdafx.h"
 #include "SVEmptyIOExports.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "SVIOLibrary\SVIOParameterEnum.h"
+#include "TriggerHandling/TriggerDispatcher.h"
+#pragma endregion Includes
+
+
+constexpr char* c_ioBoardName = "IO_Board_1";
+constexpr char* c_digitizer = ".Dig_";
+
+static std::string g_boardName{c_ioBoardName};
 
 HRESULT WINAPI SVCreate()
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDestroy()
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -50,8 +49,6 @@ HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pbValue )
@@ -64,17 +61,11 @@ HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
 
 HRESULT WINAPI SVInputSetValue( unsigned long p_ulChannel, bool p_bValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVInputGetPortCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -89,8 +80,6 @@ HRESULT WINAPI SVInputGetPortCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulValue )
@@ -105,17 +94,11 @@ HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pul
 
 HRESULT WINAPI SVInputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -130,26 +113,16 @@ HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVOutputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -164,26 +137,16 @@ HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVOutputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -198,8 +161,6 @@ HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != pTriggerchannel )
@@ -214,8 +175,6 @@ HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long
 
 HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pbstrName && 0 < triggerchannel && triggerchannel <= 4 )
@@ -229,11 +188,11 @@ HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName
 			*p_pbstrName = nullptr;
 		}
 
-		CString l_csName;
-		
-		l_csName.Format( "IO_Board_1.Dig_%d", triggerchannel - 1 );
-
-		*p_pbstrName = l_csName.AllocSysString();
+		std::string triggerName{g_boardName};
+		triggerName += c_digitizer;
+		triggerName += std::to_string(triggerchannel - 1);
+		_bstr_t name{triggerName.c_str()};
+		*p_pbstrName = name.Detach();
 	} 
 
 	return l_hrOk;
@@ -241,8 +200,6 @@ HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName
 
 HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
@@ -255,8 +212,6 @@ HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::Trig
 
 HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
@@ -269,8 +224,6 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::Tr
 
 HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( 0 < triggerchannel && triggerchannel <= 4 )
@@ -283,8 +236,6 @@ HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel )
 
 HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( 0 < triggerchannel && triggerchannel <= 4 )
@@ -297,8 +248,6 @@ HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
 
 HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( 0 < triggerchannel && triggerchannel <= 4 )
@@ -311,8 +260,6 @@ HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel )
 
 HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -334,8 +281,6 @@ HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigne
 
 HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pbstrName )
@@ -355,8 +300,6 @@ HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned
 
 HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pvarValue )
@@ -373,29 +316,37 @@ HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigne
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long ulIndex, VARIANT *pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result{S_FALSE};
 
 	if ( 0 < triggerchannel && triggerchannel <= 4 )
 	{
-		if ( nullptr != p_pvarValue )
+		if ( nullptr != pvarValue )
 		{
-			l_hrOk = S_OK;
+
+			if (SVIOParameterEnum::SVBoardName == ulIndex)
+			{
+				if (VT_BSTR == pvarValue->vt)
+				{
+					g_boardName.assign(_bstr_t{pvarValue->bstrVal});
+					result = S_OK;
+				}
+			}
+			else
+			{
+				result = S_OK;
+			}
 		}
 	}
 
-	return l_hrOk;
+	return result;
 }
 
 // Digitizer Export Functions
 
 HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulCount )
@@ -410,8 +361,6 @@ HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != pTriggerchannel )
@@ -424,8 +373,6 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned lo
 
 HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pbstrName )
@@ -445,17 +392,11 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrNa
 
 HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARRAY* p_psaFileNames )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulWidth )
@@ -468,8 +409,6 @@ HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned
 
 HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pulHeight )
@@ -482,8 +421,6 @@ HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigne
 
 HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_piFormat )
@@ -496,71 +433,41 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_
 
 HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel, unsigned long p_ulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLut( unsigned long triggerchannel, SAFEARRAY *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLut( unsigned long triggerchannel, SAFEARRAY p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	return l_hrOk;
@@ -568,110 +475,51 @@ HRESULT WINAPI SVDigitizerGetLutBand( unsigned long triggerchannel, unsigned lon
 
 HRESULT WINAPI SVDigitizerSetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVDigitizerInternalTriggerRegister( unsigned long triggerchannel, SvTh::TriggerDispatcher& )
-{
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerInternalTriggerUnregister( unsigned long triggerchannel, SvTh::TriggerDispatcher& )
-{
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerInternalTriggerUnregisterAll( unsigned long triggerchannel )
-{
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerGetRawParameter( unsigned long triggerchannel, unsigned long p_ulParameter, VARIANT *p_pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( nullptr != p_pvarValue )
@@ -684,39 +532,23 @@ HRESULT WINAPI SVDigitizerGetRawParameter( unsigned long triggerchannel, unsigne
 
 HRESULT WINAPI SVDigitizerSetRawParameter( unsigned long triggerchannel, unsigned long p_ulParameter, VARIANT *p_pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDeviceParamWrapper* p_pParameter )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
-}// end SVDigitizerGetParameter
+	return S_OK;
+}
 
 HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDeviceParamWrapper* p_pParameter )
 {

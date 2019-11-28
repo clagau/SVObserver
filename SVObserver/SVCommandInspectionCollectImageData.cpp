@@ -48,7 +48,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 		if(product.first.m_PreviousTrigger > 0 )
 		{
-			l_TriggerDistance = (double) (product.first.m_BeginProcess - product.first.m_PreviousTrigger );
+			l_TriggerDistance = (double) (product.first.m_triggerTimeStamp - product.first.m_PreviousTrigger );
 		}
 
 		if( (product.second.m_BeginToolset > 0 ) &&	(product.second.m_EndToolset > 0 ) )

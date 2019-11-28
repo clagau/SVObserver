@@ -12,8 +12,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
+#include "Definitions/TriggerType.h"
 #include "SVOResource/resource.h"
-#include "SVOLibrary/SVQueueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #pragma endregion Includes
 
@@ -36,7 +36,7 @@ namespace SvTi
 		SVTriggerObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
 		virtual ~SVTriggerObject();
 
-		bool Create( SvTh::SVTriggerClass *psvDevice );
+		bool Create( SvTh::SVTriggerClass* pTrigger );
 		bool Destroy();
 
 		// Runtime Functions
@@ -50,26 +50,26 @@ namespace SvTi
 		bool UnregisterFinishProcess( void *pOwner );
 
 		void FinishProcess( SVOResponseClass *pResponse );
+		///Fires a trigger with given time stamp
+		void Fire(double timeStamp);
 
-		HRESULT EnableInternalTrigger();
-		bool IsSoftwareTrigger() const;
-		void SetSoftwareTrigger(bool bSoftwareTrigger);
 		long GetSoftwareTriggerPeriod() const;
 		void SetSoftwareTriggerPeriod(long period, bool setTimer = false);
 
-		bool IsAcquisitionTrigger() const;
-		void SetAcquisitionTriggered(bool bAcquisitionTriggered);
+		SvTh::SVTriggerClass* getDevice() { return m_pTriggerDevice; }
 
-		LPSVFINISHPROC m_pFinishProc;
-		void* m_pOwner;
-
-		long m_lTriggerCount;
-
-		SvTh::SVTriggerClass* mpsvDevice;
+		SvDef::TriggerType getType() const;
+		void* getOwner() { return m_pOwner; }
+		long getTriggerCount() { return m_triggerCount; }
 
 	private:
-		bool m_bSoftwareTrigger;
-		long m_timerPeriod;
+		long m_timerPeriod{0L};
+		void* m_pOwner {nullptr};
+
+		LPSVFINISHPROC m_pFinishProc{nullptr};
+
+		long m_triggerCount{0L};
+		SvTh::SVTriggerClass* m_pTriggerDevice{nullptr};
 
 		#ifdef SV_LOG_STATUS_INFO
 			std::vector<std::string> m_StatusLog;

@@ -68,6 +68,7 @@ constexpr char* Opto22OutputInvertTag = _T("Opto22OutputInvert");
 constexpr char* OptionsSectionTag = _T("Options");
 constexpr char* FileAcquisitionDeviceFilename = _T("SVFileAcquisitionDevice.DLL");
 constexpr char* SoftwareTriggerDeviceFilename = _T("SVSoftwareTriggerDevice.DLL");
+constexpr char* CameraTriggerDeviceFilename = _T("SVEmptyIO.DLL");
 #pragma endregion Declarations
 
 namespace SvLib
@@ -185,7 +186,7 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 
 	m_rInitialInfo.m_ProductName.clear();
 	m_rInitialInfo.m_SoftwareTriggerDLL.clear();
-	m_rInitialInfo.m_AcquisitionTriggerDLL.clear();
+	m_rInitialInfo.m_CameraTriggerDLL.clear();
 	m_rInitialInfo.m_FileAcquisitionDLL.clear();
 
 	m_rInitialInfo.ResetBoardNames();
@@ -319,7 +320,7 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 		m_rInitialInfo.m_SoftwareTriggerDLL = SoftwareTriggerDeviceFilename;
 	}
 
-	m_rInitialInfo.m_AcquisitionTriggerDLL = m_rInitialInfo.m_DigitizerDLL; // Digitizer must be set before triggers..
+	m_rInitialInfo.m_CameraTriggerDLL = CameraTriggerDeviceFilename;
 
 	return l_hrOk;
 }

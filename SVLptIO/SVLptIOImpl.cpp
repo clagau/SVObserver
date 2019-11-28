@@ -1642,6 +1642,7 @@ void SVLptIOImpl::HandleIRQ()
 	HRESULT hr = GetStatusPort(StatusReg);
 	if (S_OK == hr)
 	{
+		double timeStamp = SvTl::GetTimeStamp();
 		#ifdef SV_LOG_STATUS_INFO
 			std::string String;
 
@@ -1689,12 +1690,16 @@ void SVLptIOImpl::HandleIRQ()
 					m_StatusLog.push_back(String);
 				#endif
 
+				SvTh::IntVariantMap triggerData;
+				triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+					
 				SvTh::DispatcherVector& list = ChannelAndDispatcherList.second;
 
 				for (size_t i = 0;i < list.size();i++)
 				{
 					if (list[i].m_IsStarted)
 					{
+						list[i].SetData(triggerData);
 						list[i].Dispatch();
 					}
 				}

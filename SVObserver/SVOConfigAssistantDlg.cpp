@@ -1380,8 +1380,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 				}
 
 				//check trigger...
-				SvTi::SVTriggerObject* pTrigger( nullptr );
-				pPPQ->GetTrigger(pTrigger);
+				SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
 				if ( nullptr != pTrigger )
 				{
 					if (!IsTriggerOnPPQ(pPPQ->GetName(), pTrigger->GetName()))
@@ -1853,12 +1852,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 				{
 					if (pTriggerObj->IsSoftwareTrigger())
 					{
-						pTrigger->SetSoftwareTrigger(true);
 						pTrigger->SetSoftwareTriggerPeriod(pTriggerObj->GetTimerPeriod());
-					}
-					else
-					{
-						pTrigger->SetSoftwareTrigger(false);
 					}
 
 					SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( DeviceName.c_str() );
@@ -1870,7 +1864,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 
 					if ( bAddTrigger )
 					{
-						pTrigger->mpsvDevice->miChannelNumber = pTriggerObj->GetTriggerDigNumber();
+						pTrigger->getDevice()->setDigitizerNumber(pTriggerObj->GetTriggerDigNumber());
 						bRet = pConfig->AddTrigger(pTrigger) && bRet;
 					}
 				}
@@ -2574,21 +2568,21 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 		if ( nullptr != pcfgCamera )
 		{
 			CameraName = pcfgCamera->GetName();
-			if ( nullptr != pcfgCamera->mpsvDevice )
+			if ( nullptr != pcfgCamera->GetAcquisitionDevice())
 			{
-				DigName = pcfgCamera->mpsvDevice->DigName();
-				iDigNumber = pcfgCamera->mpsvDevice->DigNumber();
-				iChannel = pcfgCamera->mpsvDevice->Channel();
+				DigName = pcfgCamera->GetAcquisitionDevice()->DigName();
+				iDigNumber = pcfgCamera->GetAcquisitionDevice()->DigNumber();
+				iChannel = pcfgCamera->GetAcquisitionDevice()->Channel();
 				CameraID = pcfgCamera->getCameraID();
 
 				CameraFileName.clear();
 				
 				long lSize;
 				SVFileNameClass oCamFile;
-				pcfgCamera->mpsvDevice->GetFileNameArraySize( lSize );
+				pcfgCamera->GetAcquisitionDevice()->GetFileNameArraySize( lSize );
 				for ( long lFile = 0; lFile < lSize && CameraFileName.empty(); lFile++)
 				{
-					pcfgCamera->mpsvDevice->GetFileName( lFile, oCamFile );
+					pcfgCamera->GetAcquisitionDevice()->GetFileName( lFile, oCamFile );
 					std::string Extension = oCamFile.GetExtension();				
 
 					if ( 0 == SvUl::CompareNoCase( Extension, std::string(cGigeCameraFileDefExt) ) && CameraFileName.empty() )
@@ -2605,8 +2599,8 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 				SVDeviceParamCollection l_Params;
 				SVDeviceParamCollection l_CameraFileParams;
-				pcfgCamera->mpsvDevice->GetDeviceParameters( l_Params );
-				pcfgCamera->mpsvDevice->GetCameraFileParameters( l_CameraFileParams );
+				pcfgCamera->GetAcquisitionDevice()->GetDeviceParameters( l_Params );
+				pcfgCamera->GetAcquisitionDevice()->GetCameraFileParameters( l_CameraFileParams );
 
 				m_CameraList.SetCameraDeviceParams( CameraName.c_str(), l_Params, l_CameraFileParams );
 				m_TmpCameraList.SetCameraDeviceParams( CameraName.c_str(), l_Params, l_CameraFileParams );
@@ -2638,10 +2632,10 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	{
 		pcfgTrigger = pConfig->GetTrigger(lTrg);
 		bRet = (nullptr != pcfgTrigger) && bRet;
-		if ( nullptr != pcfgTrigger && nullptr != pcfgTrigger->mpsvDevice )
+		if ( nullptr != pcfgTrigger && nullptr != pcfgTrigger->getDevice() )
 		{
 			TriggerName = pcfgTrigger->GetName();
-			iDigNumber = pcfgTrigger->mpsvDevice->miChannelNumber;
+			iDigNumber = pcfgTrigger->getDevice()->getDigitizerNumber();
 			if (iDigNumber < 0)
 			{
 				// use the numeric at the end of the name (it's one based and we want zero based)
@@ -2665,7 +2659,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(std::string(TriggerName)) );
 			if( nullptr != pTriggerObj )
 			{
-				pTriggerObj->SetSoftwareTrigger(pcfgTrigger->IsSoftwareTrigger());
+				pTriggerObj->SetSoftwareTrigger(pcfgTrigger->getType() == SvDef::TriggerType::SoftwareTrigger);
 				pTriggerObj->SetTimerPeriod(pcfgTrigger->GetSoftwareTriggerPeriod());
 			}
 		}
@@ -2743,7 +2737,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 			for(auto* pcfgCamera : cameraVector)
 			{
-				if ( nullptr != pcfgCamera && (nullptr != pcfgCamera->mpsvDevice) )
+				if ( nullptr != pcfgCamera && (nullptr != pcfgCamera->GetAcquisitionDevice()) )
 				{
 					m_PPQList.AttachCameraToPPQ(PPQName.c_str(), pcfgCamera->GetName());
 				}
@@ -2760,9 +2754,8 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				}
 			}
 
-			pcfgTrigger = nullptr;
-			pcfgPPQ->GetTrigger(pcfgTrigger);
-			if ( (nullptr != pcfgTrigger ) && (nullptr != pcfgTrigger->mpsvDevice) )
+			pcfgTrigger = pcfgPPQ->GetTrigger();
+			if ( (nullptr != pcfgTrigger ) && (nullptr != pcfgTrigger->getDevice()) )
 			{
 				m_PPQList.AttachTriggerToPPQ(PPQName.c_str(), pcfgTrigger->GetName());
 				AddUsedTrigger(pcfgTrigger->GetName());

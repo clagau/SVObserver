@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .File Name       : $Workfile:   TriggerBasics.h  $
+//* .File Name       : $Workfile:   TriggerDispatcher.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 18:58:36  $
@@ -26,9 +26,9 @@ typedef  std::map<int, _variant_t> IntVariantMap;
 
 struct TriggerParameters
 {
-	void* m_pOwner;
+	void* m_pOwner{nullptr};
 	IntVariantMap m_Data;
-	TriggerParameters(void* pOwner = nullptr, const IntVariantMap& rData = IntVariantMap{}) : m_pOwner(pOwner), m_Data(rData) {}
+	TriggerParameters(void* pOwner = nullptr) : m_pOwner(pOwner) {}
 };
 
 typedef HRESULT(CALLBACK *SVTriggerCallbackPtr)(const TriggerParameters& rTriggerData);
@@ -41,10 +41,12 @@ typedef HRESULT(CALLBACK *SVTriggerCallbackPtr)(const TriggerParameters& rTrigge
 class TriggerDispatcher
 {
 public:
-	TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
-	TriggerDispatcher(const TriggerDispatcher &p_rOriginal);
+	explicit TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
+	explicit TriggerDispatcher(const TriggerDispatcher& rRhs) = default;
 
-	bool operator==(const TriggerDispatcher &p_rOriginal) const;
+	TriggerDispatcher& operator=(const TriggerDispatcher& rRhs) = default;
+
+	bool operator==(const TriggerDispatcher &rRhs) const;
 
 	virtual ~TriggerDispatcher() {}
 

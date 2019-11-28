@@ -110,7 +110,7 @@ private:
 
 	BOOL m_bThreadAffinityEnabled;
 	BOOL m_bThreadManagerInstalled;
-	CRITICAL_SECTION m_CritSec;
+	std::mutex m_threadMgrMutex;
 #pragma endregion
 };
 

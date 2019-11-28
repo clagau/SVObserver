@@ -275,63 +275,11 @@ HRESULT SVMatroxDigitizerInterface::GetHookInfo(__int64 milEventID, SVMatroxDigi
 }
 
 /**
-@SVOperationName GetGigeCameraTimestamp
-
-@SVOperationDescription This method gets the Gige camera's timestamp 
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetGigeCameraTimestamp(__int64 milEventID, double& timestamp)
-{
-	HRESULT l_Code (S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigGetHookInfo(milEventID, M_GC_CAMERA_TIME_STAMP, &timestamp);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName GetGigeEventType
 
 @SVOperationDescription This method gets the Event Type
 
 */
-
-HRESULT SVMatroxDigitizerInterface::GetGigeEventType(__int64 milEventID, long& p_rEventType)
-{
-	HRESULT l_Code (S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		long long l_EventType;
-		MdigGetHookInfo(milEventID, M_GC_EVENT_TYPE, &l_EventType);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		// map it to some SVR bullshit...
-		p_rEventType = static_cast<long>(l_EventType);
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
 
 /**
 @SVOperationName SetHookFunction

@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <string>
 #include "SVIOTest.h"
 #include "SVIOTestDlg.h"
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVLibrary/SVOIniClass.h"
@@ -681,7 +681,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters(this));
+	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters{this});
 
 	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
@@ -742,7 +742,7 @@ void CSVIOTESTDlg::OnStopTriggers()
 		m_psvTriggers->Stop( 1 );
 	}
 
-	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters(this));
+	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters{this});
 
 	if (numTriggers > 3)
 	{

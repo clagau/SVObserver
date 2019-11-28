@@ -103,6 +103,7 @@
     <ClInclude Include="SVResetStruct.h" />
     <ClInclude Include="SVUserMessage.h" />
     <ClInclude Include="TextDefineSvDef.h" />
+    <ClInclude Include="TriggerType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalConstantData.inl" />

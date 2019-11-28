@@ -12,12 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
-#include "TriggerHandling/TriggerBasics.h"
-#include "TriggerHandling/SVTriggerClass.h"
 #include "SVTriggerObject.h"
 #include "SVTriggerConstants.h"
-#include "SVTriggerEnums.h"
 #include "SVTriggerInfoStruct.h"
+#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerHandling/TriggerDispatcher.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -40,22 +40,12 @@ namespace SvTi
 
 	SVTriggerObject::SVTriggerObject( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
-	, mpsvDevice(nullptr)
-	, m_pFinishProc(nullptr)
-	, m_pOwner(nullptr)
-	, m_lTriggerCount(0)
-	, m_bSoftwareTrigger(false)
 	, m_timerPeriod(TimerPeriod) 
 	{
 	}
 
 	SVTriggerObject::SVTriggerObject( SVObjectClass* POwner, int StringResourceID )
 	: SVObjectClass( POwner, StringResourceID )
-	, mpsvDevice(nullptr)
-	, m_pFinishProc(nullptr)
-	, m_pOwner(nullptr)
-	, m_lTriggerCount(0)
-	, m_bSoftwareTrigger(false)
 	, m_timerPeriod(TimerPeriod) 
 	{
 	}
@@ -63,24 +53,19 @@ namespace SvTi
 	SVTriggerObject::~SVTriggerObject()
 	{
 		Destroy();
-		mpsvDevice = nullptr;
-
-		m_pOwner = nullptr;
-		m_pFinishProc = nullptr;
-		m_lTriggerCount	= 0;
 	}
 
-	bool SVTriggerObject::Create( SvTh::SVTriggerClass *psvDevice )
+	bool SVTriggerObject::Create( SvTh::SVTriggerClass* pTrigger )
 	{
 		bool bOk = true;
 
-		if ( nullptr != psvDevice )
+		if ( nullptr != pTrigger )
 		{
-			mpsvDevice = psvDevice;
+			m_pTriggerDevice = pTrigger;
 
 			m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVTriggerObjectType;
 
-			bOk = S_OK == psvDevice->Create();
+			bOk = S_OK == m_pTriggerDevice->Create();
 		}
 		else 
 		{
@@ -93,18 +78,26 @@ namespace SvTi
 	{
 		bool bOk = false;
 
-		if ( nullptr != mpsvDevice )
+		if ( nullptr != m_pTriggerDevice )
 		{
-			bOk = S_OK == mpsvDevice->Destroy();
+			bOk = S_OK == m_pTriggerDevice->Destroy();
 
-			mpsvDevice = nullptr;
+			m_pTriggerDevice = nullptr;
 		}
 		return bOk;
 	}
 
 	bool SVTriggerObject::CanGoOnline()
 	{
-		return nullptr != mpsvDevice && mpsvDevice->IsValid();
+		///This needs to be done before the cameras are started
+		if (nullptr != m_pTriggerDevice)
+		{
+			if (SvDef::TriggerType::SoftwareTrigger == getType())
+			{
+				m_pTriggerDevice->enableInternalTrigger();
+			}
+		}
+		return nullptr != m_pTriggerDevice && m_pTriggerDevice->IsValid();
 	}
 
 	bool SVTriggerObject::GoOnline()
@@ -115,9 +108,9 @@ namespace SvTi
 			m_StatusLog.clear();
 		#endif
 
-		if ( nullptr != mpsvDevice && !mpsvDevice->IsRegistered())
+		if ( nullptr != m_pTriggerDevice && !m_pTriggerDevice->IsRegistered())
 		{
-		  bOk = S_OK == mpsvDevice->RegisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice );
+			bOk = S_OK == m_pTriggerDevice->RegisterCallback( SVOTriggerObjectCallbackPtr, this, m_pTriggerDevice );
 		}
 		return bOk;
 	}
@@ -126,14 +119,14 @@ namespace SvTi
 	{
 	  bool bOk = false;
 
-	  if ( nullptr != mpsvDevice )
+	  if ( nullptr != m_pTriggerDevice )
 	  {
 
-		bOk = S_OK == mpsvDevice->Stop();
+		bOk = S_OK == m_pTriggerDevice->Stop();
 
-		if ( mpsvDevice->IsRegistered() )
+		if ( m_pTriggerDevice->IsRegistered() )
 		{
-		  bOk = S_OK == mpsvDevice->UnregisterCallback( SVOTriggerObjectCallbackPtr, this, mpsvDevice ) && bOk;
+		  bOk = S_OK == m_pTriggerDevice->UnregisterCallback( SVOTriggerObjectCallbackPtr, this, m_pTriggerDevice ) && bOk;
 		}
 	  }
   
@@ -160,14 +153,14 @@ namespace SvTi
 
 	bool SVTriggerObject::Start()
 	{ 
-		return (nullptr != mpsvDevice) && (S_OK == mpsvDevice->Start());
+		return (nullptr != m_pTriggerDevice) && (S_OK == m_pTriggerDevice->Start());
 	}
 
 	bool SVTriggerObject::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc )
 	{
 		bool bOk = false;
 
-		if ( nullptr != mpsvDevice )
+		if ( nullptr != m_pTriggerDevice )
 		{
 			bOk = true;
 
@@ -193,50 +186,46 @@ namespace SvTi
 	{
 		if ( pResponse )
 		{
-			SVTriggerInfoStruct l_Info;
-			l_Info.m_Data = pResponse->getData();
+			SVTriggerInfoStruct triggerInfo;
+			triggerInfo.m_Data = pResponse->getData();
 
-			l_Info.m_BeginProcess = pResponse->getStartTime();
+			//If in the input data it has a valid time stamp value then it is more accurate then use it
+			SvTh::IntVariantMap::const_iterator iterData {triggerInfo.m_Data.end()};
+			iterData = triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
+			if (triggerInfo.m_Data.end() != iterData && 0.0 < static_cast<double> (iterData->second))
+			{
+				triggerInfo.m_triggerTimeStamp = static_cast<double> (iterData->second);
+			}
+			else
+			{
+				///This is the fallback triiger time stamp
+				triggerInfo.m_triggerTimeStamp = pResponse->getStartTime();
+			}
 
-			l_Info.lTriggerCount = ++m_lTriggerCount;
-			l_Info.bValid = pResponse->isValid();
+			triggerInfo.lTriggerCount = ++m_triggerCount;
+			triggerInfo.bValid = pResponse->isValid();
 
 			if ( m_pFinishProc )
 			{
-				(m_pFinishProc)( m_pOwner, this, &l_Info );
+				(m_pFinishProc)( m_pOwner, this, &triggerInfo );
 			}
 		}
 
 		#ifdef SV_LOG_STATUS_INFO
-			std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - TC = %d" ), GetName(), m_lTriggerCount );
+			std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - TC = %d" ), GetName(), m_triggerCount );
 
 			m_StatusLog.push_back(LogEntry);
 		#endif
 	}
 
-	HRESULT SVTriggerObject::EnableInternalTrigger()
+	void SVTriggerObject::Fire(double timeStamp)
 	{
-		HRESULT hr = S_FALSE;
+		SVOResponseClass response;
 
-		if (nullptr != mpsvDevice)
-		{
-			SvTh::SVTriggerClass* pTrigger = dynamic_cast<SvTh::SVTriggerClass *>(mpsvDevice);
-			if (nullptr != pTrigger)
-			{
-				hr = pTrigger->EnableInternalTrigger();
-			}
-		}
-		return hr;
-	}
+		 response.setStartTime(timeStamp);
+		 response.setIsValid(true);
 
-	bool SVTriggerObject::IsSoftwareTrigger() const
-	{
-		return m_bSoftwareTrigger;
-	}
-
-	void SVTriggerObject::SetSoftwareTrigger(bool bSoftwareTrigger)
-	{
-		m_bSoftwareTrigger = bSoftwareTrigger;
+		 FinishProcess(&response);
 	}
 
 	long SVTriggerObject::GetSoftwareTriggerPeriod() const
@@ -248,48 +237,30 @@ namespace SvTi
 	{
 		m_timerPeriod = period;
 
-		if( setTimer && nullptr != mpsvDevice )
+		if( setTimer && nullptr != m_pTriggerDevice )
 		{
-			SVIOTriggerLoadLibraryClass* l_pLib = mpsvDevice->m_pDLLTrigger;
+			SVIOTriggerLoadLibraryClass* pDllTrigger = m_pTriggerDevice->getDLLTrigger();
 
-			if( nullptr != l_pLib )
+			if( nullptr != pDllTrigger )
 			{
 				unsigned long triggerHandle = 0;
-				l_pLib->GetHandle(&triggerHandle, mpsvDevice->miChannelNumber);
+				pDllTrigger->GetHandle(&triggerHandle, m_pTriggerDevice->getDigitizerNumber());
 				_variant_t var;
 				var.vt = VT_I4;
 				var.intVal = period;
-				l_pLib->SetParameterValue(triggerHandle, 0, &var);
+				pDllTrigger->SetParameterValue(triggerHandle, 0, &var);
 			}
 		}
 	}
 
-	bool SVTriggerObject::IsAcquisitionTrigger() const
+	SvDef::TriggerType SVTriggerObject::getType() const
 	{
-		bool bRet = false;
-		if (mpsvDevice)
+		SvDef::TriggerType result{SvDef::TriggerType::HardwareTrigger};
+		if(nullptr != m_pTriggerDevice)
 		{
-			std::string name = mpsvDevice->GetDeviceName();
-			bRet = (0 == name.find(CameraTriggerName) );
+			result = m_pTriggerDevice->getType();
 		}
-		return bRet;
-	}
-
-	void SVTriggerObject::SetAcquisitionTriggered(bool bAcquisitionTriggered)
-	{
-		if (nullptr != mpsvDevice)
-		{
-			SVIOTriggerLoadLibraryClass* l_pLib = mpsvDevice->m_pDLLTrigger;
-
-			if (nullptr != l_pLib)
-			{
-				unsigned long triggerHandle = 0;
-				l_pLib->GetHandle(&triggerHandle, mpsvDevice->miChannelNumber);
-				_variant_t var;
-				var.vt = VT_BOOL;
-				var.boolVal = (bAcquisitionTriggered) ? VARIANT_TRUE : VARIANT_FALSE;
-				l_pLib->SetParameterValue(triggerHandle, SVAcquisitionTriggered, &var);
-			}
-		}
+		
+		return result;
 	}
 } //namespace SvTi

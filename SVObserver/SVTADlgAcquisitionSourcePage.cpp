@@ -73,7 +73,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 				for (auto const* pCamera : cameraVector)
 				{
-					if( nullptr != pCamera && nullptr != pCamera->mpsvDevice )
+					if( nullptr != pCamera && nullptr != pCamera->GetAcquisitionDevice())
 					{
 						CameraGuidList.push_back(SvUl::NameGuidPair(pCamera->GetCompleteName(), pCamera->GetUniqueObjectID()));
 					}

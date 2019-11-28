@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "TriggerBasics.h"
+#include "TriggerDispatcher.h"
 
 namespace SvTh
 {

@@ -45,9 +45,6 @@ namespace SvTh
 		, m_psvScanForCameras(nullptr)
 		, m_psvInternalTriggerEnable(nullptr)
 		, m_psvInternalTrigger(nullptr)
-		, m_psvInternalTriggerRegister(nullptr)
-		, m_psvInternalTriggerUnregister(nullptr)
-		, m_psvInternalTriggerUnregisterAll(nullptr)
 	{
 	}
 
@@ -94,9 +91,6 @@ namespace SvTh
 				m_psvUnregisterBufferInterface = (SVDigitizerUnregisterBufferInterfacePtr) ::GetProcAddress(m_hmHandle, "SVDigitizerUnregisterBufferInterface");
 				m_psvInternalTriggerEnable = (SVDigitizerInternalTriggerEnablePtr) ::GetProcAddress(m_hmHandle, "SVDigitizerInternalTriggerEnable");
 				m_psvInternalTrigger = (SVDigitizerInternalTriggerPtr) ::GetProcAddress(m_hmHandle, "SVDigitizerInternalTrigger");
-				m_psvInternalTriggerRegister = (SVDigitizerInternalTriggerRegisterPtr) ::GetProcAddress(m_hmHandle, "SVDigitizerInternalTriggerRegister");
-				m_psvInternalTriggerUnregister = (SVDigitizerInternalTriggerUnregisterPtr) ::GetProcAddress(m_hmHandle, "SVDigitizerInternalTriggerUnregister");
-				m_psvInternalTriggerUnregisterAll = (SVDigitizerInternalTriggerUnregisterAllPtr) ::GetProcAddress(m_hmHandle, "SVDigitizerInternalTriggerUnregisterAll");
 				m_psvDestroyBuffers = (SVDigitizerDestroyBuffersPtr) ::GetProcAddress(m_hmHandle, "SVDigitizerDestroyBuffers");
 				m_psvUnloadCameraFile = (SVDigitizerUnloadCameraFilePtr) ::GetProcAddress(m_hmHandle, "SVDigitizerUnloadCameraFile");
 				m_psvSetParameters = (SVDigitizerSetParametersPtr) ::GetProcAddress(m_hmHandle, "SVDigitizerSetParameters");
@@ -127,9 +121,6 @@ namespace SvTh
 					nullptr != m_psvUnregisterBufferInterface &&
 					nullptr != m_psvInternalTriggerEnable &&
 					nullptr != m_psvInternalTrigger &&
-					nullptr != m_psvInternalTriggerRegister &&
-					nullptr != m_psvInternalTriggerUnregister &&
-					nullptr != m_psvInternalTriggerUnregisterAll &&
 					nullptr != m_psvDestroyBuffers &&
 					nullptr != m_psvUnloadCameraFile &&
 					nullptr != m_psvSetParameters &&
@@ -197,9 +188,6 @@ namespace SvTh
 		m_psvUnregisterBufferInterface = nullptr;
 		m_psvInternalTriggerEnable = nullptr;
 		m_psvInternalTrigger = nullptr;
-		m_psvInternalTriggerRegister = nullptr;
-		m_psvInternalTriggerUnregister = nullptr;
-		m_psvInternalTriggerUnregisterAll = nullptr;
 		m_psvDestroyBuffers = nullptr;
 		m_psvUnloadCameraFile = nullptr;
 		m_psvSetParameters = nullptr;
@@ -464,51 +452,6 @@ namespace SvTh
 		if (nullptr != m_psvInternalTrigger)
 		{
 			l_hrOk = m_psvInternalTrigger(p_hHandle);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the m_psvInternalTriggerRegister attribute to call the DLL SVDigitizerInternalTriggerRegister function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerRegister(SVHANDLE p_hHandle, const TriggerDispatcher& rDispatcher)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_psvInternalTriggerRegister)
-		{
-			l_hrOk = m_psvInternalTriggerRegister(p_hHandle, rDispatcher);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the m_psvInternalTriggerUnregister attribute to call the DLL SVDigitizerInternalTriggerUnregister function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerUnregister(SVHANDLE p_hHandle, const TriggerDispatcher& rDispatcher)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_psvInternalTriggerUnregister)
-		{
-			l_hrOk = m_psvInternalTriggerUnregister(p_hHandle, rDispatcher);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the m_psvInternalTriggerUnregisterAll attribute to call the DLL SVDigitizerInternalTriggerUnregisterAll function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	inline HRESULT SVDigitizerLoadLibraryClass::InternalTriggerUnregisterAll(SVHANDLE p_hHandle)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_psvInternalTriggerUnregisterAll)
-		{
-			l_hrOk = m_psvInternalTriggerUnregisterAll(p_hHandle);
 		}
 
 		return l_hrOk;

@@ -12,43 +12,23 @@
 
 #pragma region Includes
 #include "Definitions/SVImageFormatEnum.h"
+#include "Definitions/TriggerType.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerGrabEnums.h"
 #pragma endregion Includes
 
-namespace SVMatroxGigeTrigger
-{
-	enum TriggerSource
-	{
-		HardwareTrigger = 0,
-		SoftwareTrigger
-	};
-}
-
 struct SVMatroxGigeAcqParams
 {
-	unsigned long Width;		// X-Dimension
-	unsigned long Height;		// Y-Dimension
-	unsigned long Format;		// Actual ColorFormat (pixel depth ?)
-	unsigned long XOffsetPos;	// X-Offset
-	unsigned long YOffsetPos;	// Y-Offset
-	UINT8 TriggerMode;			// Triggermode (Bulb mode ?)
-	UINT8 BayerPattern;			// Used bayer pattern
-	bool bAcquisitionTriggered;	//
+	unsigned long Width {640UL};		// X-Dimension
+	unsigned long Height {480UL};		// Y-Dimension
+	unsigned long Format {SvDef::SVImageFormatMono8}; // Actual ColorFormat (pixel depth ?)
+	unsigned long XOffsetPos {0UL};		// X-Offset
+	unsigned long YOffsetPos {0UL};		// Y-Offset
+	UINT8 TriggerMode {0};				// Triggermode (Bulb mode ?)
+	UINT8 BayerPattern {0};				// Used bayer pattern
 
-	SVMatroxGigeTrigger::TriggerSource TriggerType;				// Trigger Source (Hardware/Software)
-	SVMatroxDigitizerGrab::SVGrabTriggerModeEnum TriggerEdge;	// Trigger Edge(Rising/Falling)
+	SvDef::TriggerType TriggerType {SvDef::HardwareTrigger};
+	SVMatroxDigitizerGrab::SVGrabTriggerModeEnum TriggerEdge{SVMatroxDigitizerGrab::SVEdgeRising};
 
-	SVMatroxGigeAcqParams()
-	: Width(640)
-	, Height(480)
-	, XOffsetPos(0)
-	, YOffsetPos(0)
-	, Format(SvDef::SVImageFormatMono8)
-	, TriggerMode(0)
-	, BayerPattern(0)
-	, TriggerType(SVMatroxGigeTrigger::HardwareTrigger)
-	, TriggerEdge(SVMatroxDigitizerGrab::SVEdgeRising)
-	, bAcquisitionTriggered(false)
-	{}
+	SVMatroxGigeAcqParams() = default;
 };
 

@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
+#include "TriggerInformation/SVTriggerConstants.h"
 #pragma endregion Includes
 
 
@@ -85,7 +86,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 		l_hrOk = l_hrOk | LoadDigitalDLL();
 		l_hrOk = l_hrOk | LoadTriggerDLL();
 		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
+		l_hrOk = l_hrOk | LoadCameraTriggerDLL();
 		l_hrOk = l_hrOk | LoadAcquisitionDLL();
 		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
 	}
@@ -167,7 +168,7 @@ HRESULT InitialInformationHandler::CloseTriggerDLL()
 
 	m_svDLLTriggers.Close();
 	m_svDLLSoftwareTriggers.Close();
-	m_svDLLAcquisitionTriggers.Close();
+	m_svDLLCameraTriggers.Close();
 
 	return S_OK;
 }
@@ -191,22 +192,24 @@ HRESULT InitialInformationHandler::LoadSoftwareTriggerDLL()
 	return l_hrOk;
 }
 
-HRESULT InitialInformationHandler::LoadAcquisitionTriggerDLL()
+HRESULT InitialInformationHandler::LoadCameraTriggerDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (!m_InitialInfo.m_AcquisitionTriggerDLL.empty())
+	if (!m_InitialInfo.m_CameraTriggerDLL.empty())
 	{
-		HRESULT ResultLoadDLL(m_svDLLAcquisitionTriggers.Open(m_InitialInfo.m_AcquisitionTriggerDLL.c_str()));
-		//Do not care about the Matrox service here as it will be handled in the LoadAcquisitionDLL
-		if (S_OK != ResultLoadDLL && ErrorMatroxServiceNotRunning != ResultLoadDLL)
+		HRESULT ResultLoadDLL(m_svDLLCameraTriggers.Open(m_InitialInfo.m_CameraTriggerDLL.c_str()));
+		if (S_OK != ResultLoadDLL)
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 		}
 
 		if (S_OK == ResultLoadDLL)
 		{
-			if (S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLAcquisitionTriggers))
+			_variant_t value;
+			value.SetString(SvTi::CameraTriggerName);
+			m_svDLLCameraTriggers.SetParameterValue(1, SVIOParameterEnum::SVBoardName, &value.GetVARIANT());
+			if (S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLCameraTriggers))
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 			}
@@ -221,7 +224,7 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 
 	if (!m_InitialInfo.m_DigitizerDLL.empty())
 	{
-		HRESULT ResultLoadDLL(m_svDLLDigitizers.Open(m_InitialInfo.m_DigitizerDLL.c_str()));
+		HRESULT ResultLoadDLL(m_dllDigitizers.Open(m_InitialInfo.m_DigitizerDLL.c_str()));
 		if (S_OK != ResultLoadDLL)
 		{
 			//This is the error result which indicates that the Matrox Gige service is not running
@@ -237,7 +240,7 @@ HRESULT InitialInformationHandler::LoadAcquisitionDLL()
 		}
 		else
 		{
-			if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_svDLLDigitizers))
+			if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_dllDigitizers))
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 			}
@@ -259,9 +262,9 @@ HRESULT InitialInformationHandler::CloseAcquisitionDLL()
 {
 	SvIe::SVDigitizerProcessingClass::Instance().clear();
 
-	m_svDLLDigitizers.Close();
+	m_dllDigitizers.Close();
 
-	m_svDLLFileAcquisition.Close();
+	m_dllFileAcquisition.Close();
 
 	return S_OK;
 }
@@ -272,12 +275,12 @@ HRESULT InitialInformationHandler::LoadFileAcquisitionDLL()
 
 	if (!m_InitialInfo.m_FileAcquisitionDLL.empty())
 	{
-		if (S_OK != m_svDLLFileAcquisition.Open(m_InitialInfo.m_FileAcquisitionDLL.c_str()))
+		if (S_OK != m_dllFileAcquisition.Open(m_InitialInfo.m_FileAcquisitionDLL.c_str()))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}
 
-		if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_svDLLFileAcquisition))
+		if (S_OK != SvIe::SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem(&m_dllFileAcquisition))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}
@@ -359,7 +362,7 @@ HRESULT InitialInformationHandler::INIReset()
 	{
 		l_hrOk = l_hrOk | LoadTriggerDLL();
 		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
+		l_hrOk = l_hrOk | LoadCameraTriggerDLL();
 	}
 
 	if (0 == SvUl::CompareNoCase(m_InitialInfo.m_ReloadAcquisitionDLL, _T("Y")))

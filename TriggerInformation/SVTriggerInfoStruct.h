@@ -25,7 +25,7 @@ namespace SvTi
 		bool bValid{false};
 		long lTriggerCount{0L};
 		bool m_ToggleState{false};
-		double m_BeginProcess{0.0};
+		double m_triggerTimeStamp{0.0};
 		double m_ToggleTimeStamp{0.0};
 		double m_PreviousTrigger{0.0};
 		IntVariantMap m_Data;

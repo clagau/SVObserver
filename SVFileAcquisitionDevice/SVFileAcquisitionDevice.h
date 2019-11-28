@@ -12,33 +12,27 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerInformation/SVInternalTrigger.h"
-#include "TriggerHandling/TriggerDispatcherCollection.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVFileCamera.h"
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
 
+constexpr long MaxFileCameras = 12;
+
 class SVFileAcquisitionDevice
 {
 private:
 	long m_lRefCount;
 
-	SVFileCameraList m_cameras;
+	std::array<SVFileCamera, MaxFileCameras> m_cameras;
 	
-	SvTi::SVInternalTrigger m_triggerMgr;
-	SvTh::TriggerDispatcherCollection m_AcquisitionDispatchers;
-
 public:
 	SVFileAcquisitionDevice();
 	~SVFileAcquisitionDevice();
 
 	HRESULT Create();
 	HRESULT Destroy( bool p_bClose = false );
-
-	HRESULT Open();
-	HRESULT Close();
 
 	HRESULT CameraGetCount( unsigned long &p_rulCount );
 	HRESULT CameraGetName( unsigned long p_ulIndex, BSTR &p_rbstrName );
@@ -60,9 +54,6 @@ public:
 
 	HRESULT InternalTriggerEnable( unsigned long p_ulIndex );
 	HRESULT InternalTrigger( unsigned long p_ulIndex );
-	HRESULT RegisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher );
-	HRESULT UnregisterInternalTriggerCallback( unsigned long p_ulIndex, const SvTh::TriggerDispatcher& rDispatcher );
-	HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_ulIndex );
 
 	// Trigger stuff...
 	HRESULT TriggerGetCount(unsigned long& p_ulCount);
@@ -91,10 +82,5 @@ private:
 	HRESULT CameraProcessEndFrame( unsigned long p_ulIndex );
 
 	HRESULT FireOneShot( unsigned long p_ulIndex );
-	HRESULT DispatchTriggerCallback( unsigned long p_ulIndex );
-
-	void DoAcquisitionTrigger(SVFileCamera& rCamera);
-	HRESULT IsAcquisitionTriggered(unsigned long triggerchannel, bool& bAcquisitionTriggered) const;
-	HRESULT SetAcquisitionTriggered(unsigned long triggerchannel, bool bAcquisitionTriggered);
 };
 

@@ -17,6 +17,7 @@ EXPORTS
 	SVOutputGetPortCount @50
 	SVOutputGetPortValue @51
 	SVOutputSetPortValue @52
+	
 	SVTriggerGetCount @60
 	SVTriggerGetHandle @61
 	SVTriggerGetName @62

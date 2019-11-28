@@ -66,7 +66,6 @@ public:
 	CButton m_LogBtn;
 	bool m_isLogButtonChecked {false};
 	bool m_bResetStart;
-	std::vector<SvTh::SVTriggerCallbackPtr> m_pCallBacks;
 	void OnTriggerButtonClicked( UINT nID );
 
 protected:

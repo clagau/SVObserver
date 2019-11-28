@@ -22,6 +22,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "TriggerHandling/SVTriggerClass.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -34,19 +35,18 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-HRESULT CALLBACK SVVirtualCamera::SVImageCallback( void *pvOwner, void *pvCaller, void *pvResponse )
+HRESULT CALLBACK ImageCallback(void *pOwner, void *pCaller, void *pData)
 {
-	HRESULT hrOk = S_OK;
+	SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*> (pCaller);
+	SVODataResponseClass* pResponse = reinterpret_cast<SVODataResponseClass*> (pData);
 
-	SVVirtualCamera* pCamera = reinterpret_cast< SVVirtualCamera* >( pvCaller );
-	SVODataResponseClass* pResponse = reinterpret_cast< SVODataResponseClass* >( pvResponse );
-
-	//Only do an assert check so that in release mode no check is made
 	assert( nullptr != pCamera && nullptr != pResponse );
+	if(nullptr != pCamera)
+	{
+		pCamera->FinishProcess( pResponse );
+	}
 
-	pCamera->FinishProcess( pResponse );
-
-	return hrOk;
+	return S_OK;
 }
 
 SVVirtualCamera::SVVirtualCamera( LPCSTR ObjectName ) : SVObjectClass( ObjectName )
@@ -82,9 +82,9 @@ bool SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
 {
 	bool bOk = false;
 
-	if(nullptr != mpsvDevice)
+	if(nullptr != m_pDevice)
 	{
-		bOk = S_OK == mpsvDevice->GetImageInfo( pImageInfo );
+		bOk = S_OK == m_pDevice->GetImageInfo( pImageInfo );
 		if ( nullptr != pImageInfo )
 		{
 			bOk = S_OK == pImageInfo->SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, mlBandLink );
@@ -111,19 +111,19 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 {
 	bool bOk = true;
 
-	if(nullptr != mpsvDevice )
+	if(nullptr != m_pDevice )
 	{
 		bOk = Destroy();
 	}
 
 	SVDigitizerProcessingClass::Instance().SetDigitizerColor( DeviceName, m_IsColor );
-	mpsvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName );
+	m_pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName );
 
-	bOk = (nullptr != mpsvDevice) && bOk;
+	bOk = (nullptr != m_pDevice) && bOk;
 
 	if ( bOk )
 	{
-		SetBandLink( mpsvDevice->Channel() );
+		SetBandLink( m_pDevice->Channel() );
 
 		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVVirtualCameraType;
 
@@ -138,12 +138,8 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 
 bool SVVirtualCamera::Destroy()
 {
-	bool bOk = DestroyLocal();
-
-	UnregisterTriggerRelay();
-
-	return bOk;
-}// end Destroy	
+	return DestroyLocal();
+}
 
 HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
@@ -168,17 +164,17 @@ HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjec
 
 bool SVVirtualCamera::CanGoOnline() const
 {
-	return mpsvDevice && mpsvDevice->IsValid();
+	return m_pDevice && m_pDevice->IsValid();
 }// end CanGoOnline
 
 bool SVVirtualCamera::GoOnline()
 {
-	return (nullptr != mpsvDevice) && ( S_OK == mpsvDevice->Start() );
+	return (nullptr != m_pDevice) && ( S_OK == m_pDevice->Start() );
 }
 
 bool SVVirtualCamera::GoOffline()
 {
-	return (nullptr != mpsvDevice) && ( S_OK == mpsvDevice->Stop() );
+	return (nullptr != m_pDevice) && ( S_OK == m_pDevice->Stop() );
 }
 
 bool SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCallback )
@@ -230,7 +226,7 @@ bool SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCall
 
 					if( bOk )
 					{
-						bOk = S_OK == mpsvDevice->RegisterCallback( SVVirtualCamera::SVImageCallback, pData->mpvOwner, pData->mpvCaller );
+						bOk = S_OK == m_pDevice->RegisterCallback( ImageCallback, pData->mpvOwner, pData->mpvCaller );
 					}// end if
 
 				}
@@ -272,9 +268,9 @@ bool SVVirtualCamera::UnregisterFinishProcess(void *pvOwner, LPSVFINISHPROC pCal
 							bOk = true;
 						}
 
-						if ( bOk && nullptr != mpsvDevice )
+						if ( bOk && nullptr != m_pDevice )
 						{
-							bOk = S_OK == mpsvDevice->UnregisterCallback( SVVirtualCamera::SVImageCallback, pData->mpvOwner, pData->mpvCaller );
+							bOk = S_OK == m_pDevice->UnregisterCallback( ImageCallback, pData->mpvOwner, pData->mpvCaller );
 						}	
 
 						break;
@@ -336,9 +332,9 @@ bool SVVirtualCamera::DestroyLocal()
 				
 				m_CallbackList.GetAt( l, &pData );
 
-				if (nullptr != pData && nullptr != mpsvDevice )
+				if (nullptr != pData && nullptr != m_pDevice )
 				{
-					bOk &= S_OK == mpsvDevice->UnregisterCallback( SVVirtualCamera::SVImageCallback, 
+					bOk &= S_OK == m_pDevice->UnregisterCallback( ImageCallback, 
 					                                       pData->mpvOwner, 
 					                                       pData->mpvCaller );
 				}
@@ -355,7 +351,7 @@ bool SVVirtualCamera::DestroyLocal()
 		m_CallbackList.Destroy();
 	}
 
-	mpsvDevice = nullptr;
+	m_pDevice = nullptr;
 	mlBandLink = 0;
 
 	return bOk;
@@ -371,9 +367,9 @@ HRESULT SVVirtualCamera::GetBandSize(int& riBandSize) const
 {
 	HRESULT hr = S_OK;
 	
-	if (nullptr != mpsvDevice )
+	if (nullptr != m_pDevice )
 	{
-		riBandSize = mpsvDevice->BandSize();
+		riBandSize = m_pDevice->BandSize();
 	}
 	else
 	{
@@ -466,9 +462,9 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut ) const
 
 SvTrc::IImagePtr SVVirtualCamera::ReserveNextImageHandle(  ) const
 {
-	if(nullptr != mpsvDevice)
+	if(nullptr != m_pDevice)
 	{
-		return mpsvDevice->GetNextBuffer();
+		return m_pDevice->GetNextBuffer();
 	}
 
 	return nullptr;
@@ -554,34 +550,22 @@ void SVVirtualCamera::SetFileImageHeight(long height)
 	m_imageSize.cy = height;
 }
 
-HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulHandle)
+void SVVirtualCamera::RegisterTrigger(SvTh::SVTriggerClass* pTrigger)
 {
-	HRESULT hr = S_FALSE;
-
-	if (triggerDLL && 0 != ulHandle)
+	if (nullptr != pTrigger)
 	{
-		SVAcquisitionClassPtr pAcq = GetAcquisitionDevice();
-		if(nullptr != pAcq)
+		m_pTrigger = pTrigger;
+		if(nullptr != m_pDevice)
 		{
-			SvTh::SVAcquisitionInitiator  acqInitiator;
-
 			// need the digitizer name here ...
-			SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+			SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(m_pDevice->DigName().c_str());
 
-			if (pAcqDLL)
+			if (nullptr != pAcqDLL)
 			{
-				acqInitiator.Add(pAcqDLL, pAcq->m_hDigitizer);
+				m_pTrigger->addAcquisitionTrigger(pAcqDLL, m_pDevice->m_hDigitizer);
 			}
-
-			hr = m_triggerRelay.RegisterTriggerRelay(triggerDLL, ulHandle, SvTi::SVFileAcquisitionInitiator(acqInitiator));
 		}
 	}
-	return hr;
-}
-
-HRESULT SVVirtualCamera::UnregisterTriggerRelay()
-{
-	return m_triggerRelay.UnregisterTriggerRelay();
 }
 
 void SVVirtualCamera::createCameraParameters()
@@ -609,14 +593,14 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 {
 	HRESULT Result = S_OK;
 
-	if(nullptr == mpsvDevice)
+	if(nullptr == m_pDevice)
 	{
 		Result = E_FAIL;
 		return Result;
 	}
 
 	SVDeviceParamCollection CameraParameters;
-	Result = mpsvDevice->GetDeviceParameters( CameraParameters );
+	Result = m_pDevice->GetDeviceParameters( CameraParameters );
 	if(S_OK == Result)
 	{
 		SVDeviceParam* pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
@@ -659,12 +643,12 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 {
 	HRESULT Result = E_FAIL;
 
-	if(nullptr ==  mpsvDevice)
+	if(nullptr ==  m_pDevice)
 	{
 		return Result;
 	}
 
-	if( S_OK == mpsvDevice->GetDeviceParameters( rCameraParameters ) )
+	if( S_OK == m_pDevice->GetDeviceParameters( rCameraParameters ) )
 	{
 		SVDeviceParamCollection	ChangedCameraParameters;
 		SVDeviceParam* pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
@@ -695,7 +679,7 @@ HRESULT SVVirtualCamera::updateDeviceParameters(SVDeviceParamCollection& rCamera
 
 		if( S_OK == Result )
 		{
-			mpsvDevice->SetDeviceParameters( ChangedCameraParameters );
+			m_pDevice->SetDeviceParameters( ChangedCameraParameters );
 		}
 	}
 

@@ -11,17 +11,43 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/TriggerType.h"
 #include "SVOLibrary/SVODeviceClass.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
+
+class SVIOTriggerLoadLibraryClass;
 
 namespace SvTh
 {
+	class SVDigitizerLoadLibraryClass;
+
+	struct AcquisitionParameter
+	{
+		//AcquisitionParameter(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel) :
+		//	m_pDllDigitizer{pDllDigitizer}, m_triggerChannel{triggerChannel}
+		//{
+		//}
+
+		bool operator==(const AcquisitionParameter& rRhs)
+		{
+			bool result = (m_pDllDigitizer == rRhs.m_pDllDigitizer);
+			result &= (m_triggerChannel == rRhs.m_triggerChannel);
+			return result;
+		}
+
+		SVDigitizerLoadLibraryClass* m_pDllDigitizer {nullptr};
+		unsigned long m_triggerChannel {0UL};
+	};
+
 	class SVTriggerClass : public SVODeviceClass  
 	{
 	public:
 		SVTriggerClass(LPCTSTR deviceName);
 		virtual ~SVTriggerClass();
+
+		void addAcquisitionTrigger(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel);
+		void clearAcquisitionTriggers();
+		void enableInternalTrigger() const;
 
 		virtual HRESULT RegisterCallback( SVOCallbackPtr pCallback, 
 										  void *pvOwner, void *pvCaller ) override;
@@ -32,14 +58,28 @@ namespace SvTh
 		virtual HRESULT Start() override;
 		virtual HRESULT Stop() override;
 
-		virtual HRESULT EnableInternalTrigger();
+		void setDigitizerNumber(int digitizerNr) { m_digitizerNumber = digitizerNr; }
+		int getDigitizerNumber() const { return m_digitizerNumber; }
+		void setTriggerChannel(unsigned long triggerChannel) { m_triggerChannel = triggerChannel; }
+		unsigned long getTriggerChannel() const { return m_triggerChannel; }
 
-		int miChannelNumber;  // &&& var needs to be set...
+		void setDLLTrigger(SVIOTriggerLoadLibraryClass* pDllTrigger) { m_pDLLTrigger = pDllTrigger; }
+		SVIOTriggerLoadLibraryClass* getDLLTrigger() { return m_pDLLTrigger; }
 
-		SVIOTriggerLoadLibraryClass *m_pDLLTrigger;
-		unsigned long m_triggerchannel;
+		SvDef::TriggerType getType() const { return m_type; }
 
-		#ifdef SV_LOG_STATUS_INFO
+	protected:
+		virtual HRESULT processAcquisitionTriggers(const SVOResponseClass& rResponse) const override;
+
+	private:
+		int m_digitizerNumber {-1};
+
+		SVIOTriggerLoadLibraryClass* m_pDLLTrigger{nullptr};
+		unsigned long m_triggerChannel {0UL};
+		SvDef::TriggerType m_type{SvDef::TriggerType::HardwareTrigger};
+
+		std::vector<AcquisitionParameter> m_acqTriggerParameters;
+#ifdef SV_LOG_STATUS_INFO
 			std::vector<std::string> m_StatusLog;
 		#endif
 	};

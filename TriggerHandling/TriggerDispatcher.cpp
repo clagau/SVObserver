@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include "TriggerBasics.h"
+#include "TriggerDispatcher.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -23,11 +23,6 @@ namespace SvTh
 				m_IsStarted(false)
 	{
 		//m_TriggerParameters is initialized by default
-	}
-
-	TriggerDispatcher::TriggerDispatcher( const TriggerDispatcher &rOriginal )
-	{
-		*this = rOriginal;
 	}
 
 	bool TriggerDispatcher::operator==(const TriggerDispatcher& rDispatcher) const 

@@ -58,6 +58,7 @@
 #include <list>				//Used by static library
 #include <map>				//Used by static library
 #include <memory>
+#include <mutex>			//Used by static library
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
