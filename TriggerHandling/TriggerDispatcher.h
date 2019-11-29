@@ -28,7 +28,7 @@ struct TriggerParameters
 {
 	void* m_pOwner{nullptr};
 	IntVariantMap m_Data;
-	TriggerParameters(void* pOwner = nullptr) : m_pOwner(pOwner) {}
+	explicit TriggerParameters(void* pOwner = nullptr) : m_pOwner(pOwner) {}
 };
 
 typedef HRESULT(CALLBACK *SVTriggerCallbackPtr)(const TriggerParameters& rTriggerData);
