@@ -111,7 +111,7 @@ namespace SvUl
 	/// \param pToStr [in] replace substring
 	/// \returns std::string& Reference to rStringValue
 	//************************************
-	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::_Elem* pFromStr, const std::string::traits_type::_Elem* pToStr );
+	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::_Elem* pFromStr, const std::string::traits_type::_Elem* pToStr, size_t beginPos = 0);
 
 	//************************************
 	/// Converts the value of objects to strings based on the formats specified and inserts them into another string. 

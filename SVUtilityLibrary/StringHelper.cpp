@@ -176,11 +176,11 @@ namespace SvUl
 		return retVal;
 	}
 
-	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::_Elem* pFromStr, const std::string::traits_type::_Elem* pToStr )
+	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::_Elem* pFromStr, const std::string::traits_type::_Elem* pToStr, size_t beginPos)
 	{
 		if (nullptr != pFromStr && nullptr != pToStr && 0 < strlen(pFromStr))
 		{
-			size_t pos = rStringValue.find(pFromStr);
+			size_t pos = rStringValue.find(pFromStr, beginPos);
 
 			while( pos != std::string::npos )
 			{

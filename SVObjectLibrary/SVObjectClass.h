@@ -149,7 +149,7 @@ public:
 	virtual LPCTSTR GetName() const override;
 	virtual std::string GetCompleteName() const override;
 	virtual HRESULT GetCompleteNameToType(SvPb::SVObjectTypeEnum objectType, std::string& rName) const override;
-	virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType) const override;
+	virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType, bool withOwnName = true) const override;
 	//Get the complete object name before selected SvPb::SVObjectTypeEnum value.
 	virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const override;
 	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override;

@@ -63,7 +63,7 @@ namespace SvOi
 			This method gets the complete name of this object, to a certain lineage.
 			Note: this method builds the name in reverse by ancestry (meaning that the lineage is traversed by youngest to oldest)
 		***********/
-		virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const = 0;
+		virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude, bool withOwnName = true) const = 0;
 
 		//Get the complete object name before selected SVObjectTypeEnum value.
 		virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const = 0;

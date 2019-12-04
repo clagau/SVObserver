@@ -1040,22 +1040,29 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if(SvPb::SVInspectionObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType) + _T( "." );
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
+		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() +_T(".");
+		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName +_T(".");
 	}
 	else if(SvPb::SVBasicValueObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType);
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
+		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName();
+		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName;
 	}
 	else if(SvPb::SVValueObjectType == type)
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
+		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName();
+		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName;
 	}
 	else
 	{
-		newPrefix = rRenamedObject.GetObjectNameToObjectType() + _T( "." );
-	}// end else
-	oldPrefix = newPrefix;
-	SvUl::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
+		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
+		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
+	}
+	
 
 	int iSize = m_svoArchiveResultNames.getResultSize();
 

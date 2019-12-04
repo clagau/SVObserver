@@ -727,24 +727,29 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if (SvPb::SVInspectionObjectType == type)
 	{
-		newPrefix = _T(".") + rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType) + _T(".");
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
+		newPrefix = _T(".") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
+		oldPrefix = _T(".") + dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
 	}
 	else if (SvPb::SVBasicValueObjectType == type)
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType) + _T("\"");
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
+		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
+		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
 	}
 	else if (SvPb::SVValueObjectType == type)
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType() + _T("\"");
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVValueObjectType, false);
+		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
+		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
 	}
 	else
 	{
-		newPrefix = _T("\"") + rRenamedObject.GetObjectNameToObjectType() + _T(".");
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
+		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
+		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
 	}
-
-
-	oldPrefix = newPrefix;
-	SvUl::searchAndReplace(oldPrefix, rRenamedObject.GetName(), rOldName.c_str());
+	 
 
 	std::string equationBuff = GetEquationText();
 

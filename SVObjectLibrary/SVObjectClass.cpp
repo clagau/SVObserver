@@ -689,7 +689,7 @@ DWORD SVObjectClass::GetObjectColor() const
 /*
 Get the complete object name including selected SVObjectTypeEnum value.
 */
-std::string SVObjectClass::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const
+std::string SVObjectClass::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude, bool withOwnName) const
 {
 	std::string Result;
 
@@ -702,11 +702,15 @@ std::string SVObjectClass::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum obje
 			Result = pObject->GetObjectNameToObjectType(objectTypeToInclude);
 		}
 	}
-	if (!Result.empty())
+
+	if (withOwnName)
 	{
-		Result += _T(".");
+		if (!Result.empty())
+		{
+			Result += _T(".");
+		}
+		Result += GetName();
 	}
-	Result += GetName();
 
 	return Result;
 }
