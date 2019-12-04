@@ -798,12 +798,6 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 
 void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer)
 {
-	if (m_isResetLocked)
-	{   //addImageBuffer is not allowed if reset is not started.
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
-	}
 	bool isNewReset = -1 == m_resetStarted4IP;
 
 	auto& bufferMap = m_additionalBufferMap[ownerID];
@@ -826,7 +820,17 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 				}
 			}
 		}
+	}
 
+	if (m_isResetLocked)
+	{   //addImageBuffer is not allowed if reset is not started.
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	if (isNewReset)
+	{
 		startResetTriggerRecordStructure();
 	}
 	
