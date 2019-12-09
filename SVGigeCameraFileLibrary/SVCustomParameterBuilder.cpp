@@ -360,7 +360,9 @@ void SVCustomParameterBuilder::BuildInt64Param(SVi64ValueDeviceParam* pParam, co
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		catch(_com_error& e)
 		{
-			TRACE1("%s\n", e.ErrorMessage());
+			std::string outputText(e.ErrorMessage());
+			outputText += '\n';
+			::OutputDebugString(outputText.c_str());
 		}
 #else
 		catch(_com_error& )

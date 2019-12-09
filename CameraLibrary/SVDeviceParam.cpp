@@ -69,14 +69,16 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 	}
 	catch (std::runtime_error&)
 	{
-		ASSERT(FALSE);
+		assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		TRACE(_T("SVDeviceParam::Create unable to create type %d\n"), (long)eType);
+		std::string outputText{_T("SVDeviceParam::Create unable to create type")};
+		outputText += std::to_string(static_cast<long> (eType)) + '\n';
+		::OutputDebugString(outputText.c_str());
 #endif
 		throw;
 	}
 
-	ASSERT(pParam);
+	assert(pParam);
 	return pParam;
 }
 

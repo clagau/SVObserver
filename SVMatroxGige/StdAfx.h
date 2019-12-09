@@ -49,8 +49,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxwin.h>         // MFC core and standard components
+#include <windows.h>
 
 #include <atomic>			//Used by static library
 #include <bitset>			//Used by static library

@@ -227,36 +227,33 @@ namespace  SvXml
 							_bstr_t Name(rName);
 							_bstr_t Type( varTypeStr.c_str());
 							_bstr_t content(valueStr.c_str());
-							SVBStr EnName;
-							SVBStr EnType;
-							SVBStr EnContent;
+							_bstr_t EnName;
+							_bstr_t EnType;
+							_bstr_t EnContent;
 						
 						
 							if(m_pEncryption->m_lEncryptionMethod == -1)
 							{
-								m_pEncryption->EncryptString(1,Name,&EnName );
-								m_pEncryption->EncryptString(1,Type,&EnType );
-								m_pEncryption->EncryptString(1,content,&EnContent );
+								m_pEncryption->EncryptString(1,Name, EnName);
+								m_pEncryption->EncryptString(1,Type, EnType);
+								m_pEncryption->EncryptString(1,content, EnContent);
 							}
 							else
 							{
 									long encryption = m_pEncryption->m_lEncryptionMethod;
-									m_pEncryption->EncryptNameAttribute(Name,&EnName );
-									m_pEncryption->EncryptString(encryption,Type,&EnType );
-									m_pEncryption->EncryptString(encryption,content,&EnContent );
-
+									m_pEncryption->EncryptNameAttribute(Name, EnName);
+									m_pEncryption->EncryptString(encryption, Type, EnType);
+									m_pEncryption->EncryptString(encryption, content, EnContent);
 							}
 						
-							std::wstring encryptedName =  (LPWSTR) EnName;
-							std::wstring encyptedType = (LPWSTR) EnType;
-							std::wstring encryptedContent =  (LPWSTR) EnContent;
+							std::wstring encryptedName = static_cast<LPWSTR> (EnName);
+							std::wstring encyptedType = static_cast<LPWSTR> (EnType);
+							std::wstring encryptedContent =  static_cast<LPWSTR> (EnContent);
 						
 							xml::element data(scDataTag.c_str(), *m_pWriter);
 							data.attr(scNameTag.c_str(), to_utf8(encryptedName.c_str()));
 							data.attr(scTypeTag.c_str(), to_utf8(encyptedType.c_str()));
 							data.contents( to_utf8(encryptedContent.c_str()));
-						
-			
 				}
 				else
 				{
@@ -304,20 +301,20 @@ namespace  SvXml
 		if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
 		{
 			_bstr_t Name(rName);
-			SVBStr EnName;
-		
-			if(m_pEncryption->m_lEncryptionMethod == -1)
+			_bstr_t EnName;
+
+			if (m_pEncryption->m_lEncryptionMethod == -1)
 			{
-				m_pEncryption->EncryptString(1,Name,&EnName );
+				m_pEncryption->EncryptString(1, Name, EnName);
 			}
 			else
 			{
 				long encryption = m_pEncryption->m_lEncryptionMethod;
-				m_pEncryption->EncryptNameAttribute(Name,&EnName );
+				m_pEncryption->EncryptNameAttribute(Name, EnName);
 			}
-			std::wstring encryptedName =  (LPWSTR) EnName;
-		
-			pNode->attr(scNameTag.c_str(), to_utf8(encryptedName.c_str() ) );
+			std::wstring encryptedName = static_cast<LPWSTR> (EnName);
+
+			pNode->attr(scNameTag.c_str(), to_utf8(encryptedName.c_str()));
 		}
 	
 		else 
@@ -582,8 +579,8 @@ namespace  SvXml
 		if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE) 
 		{
 			_bstr_t basenode("SV_BASENODE");
-			SVBStr  Enbasenode;
-			m_pEncryption->EncryptString (2, basenode, &Enbasenode);
+			_bstr_t Enbasenode;
+			m_pEncryption->EncryptString (2, basenode, Enbasenode);
 			value.SetString( (LPCTSTR) Enbasenode);
 		}
 		else

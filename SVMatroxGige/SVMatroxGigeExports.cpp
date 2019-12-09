@@ -11,41 +11,35 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SVMatroxGigeExports.h"
-#include "SVMatroxGigeApp.h"
+#include "SVMatroxGige.h"
 
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-
 #pragma endregion Includes
 
-// General Export Functions
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 HRESULT WINAPI SVCreate()
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.Create();
+	HRESULT l_hr = g_matroxAcqDevice.Create();
 	return l_hr;
 }
 
 HRESULT WINAPI SVDestroy()
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.Destroy();
+	HRESULT l_hr = g_matroxAcqDevice.Destroy();
 	return l_hr;
 }
 
-// Digitizer Export Functions
-
 HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	if ( nullptr != p_pulCount )
 	{
-		l_hr = g_svTheApp.m_svSystem.CameraGetCount( *p_pulCount );
+		l_hr = g_matroxAcqDevice.CameraGetCount( *p_pulCount );
 	}
 
 	return l_hr;
@@ -53,15 +47,13 @@ HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 
 HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	if ( nullptr != pTriggerchannel )
 	{
 		unsigned long l_ulCount = 0;
 
-		l_hr = g_svTheApp.m_svSystem.CameraGetCount( l_ulCount );
+		l_hr = g_matroxAcqDevice.CameraGetCount( l_ulCount );
 
 		if ( S_OK == l_hr )
 		{
@@ -69,7 +61,7 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned lo
 			{
 				l_hr = S_OK;
 
-				*pTriggerchannel = g_svTheApp.m_svSystem.GetDigitizerHandle(p_ulIndex);
+				*pTriggerchannel = g_matroxAcqDevice.GetDigitizerHandle(p_ulIndex);
 			}
 			else
 			{
@@ -83,8 +75,6 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned lo
 
 HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	if ( nullptr != p_pbstrName )
@@ -96,7 +86,7 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrNa
 			*p_pbstrName = nullptr;
 		}
 
-		l_hr = g_svTheApp.m_svSystem.CameraGetName( triggerchannel, *p_pbstrName );
+		l_hr = g_matroxAcqDevice.CameraGetName( triggerchannel, *p_pbstrName );
 	} 
 
 	return l_hr;
@@ -104,24 +94,20 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrNa
 
 HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARRAY* p_psaFileNames )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraLoadFiles(triggerchannel, p_psaFileNames);
+	HRESULT l_hr = g_matroxAcqDevice.CameraLoadFiles(triggerchannel, p_psaFileNames);
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	if ( nullptr != p_pulWidth )
 	{
 		*p_pulWidth = 0;
 
-		l_hr = g_svTheApp.m_svSystem.CameraGetWidth( triggerchannel, *p_pulWidth );
+		l_hr = g_matroxAcqDevice.CameraGetWidth( triggerchannel, *p_pulWidth );
 	}
 
 	return l_hr;
@@ -129,15 +115,13 @@ HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned
 
 HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	if ( nullptr != p_pulHeight )
 	{
 		*p_pulHeight = 0;
 
-		l_hr = g_svTheApp.m_svSystem.CameraGetHeight( triggerchannel, *p_pulHeight );
+		l_hr = g_matroxAcqDevice.CameraGetHeight( triggerchannel, *p_pulHeight );
 	}
 
 	return l_hr;
@@ -145,15 +129,13 @@ HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigne
 
 HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	if ( nullptr != p_piFormat )
 	{
 		*p_piFormat = SvDef::SVImageFormatUnknown;
 
-		l_hr = g_svTheApp.m_svSystem.CameraGetFormat( triggerchannel, *p_piFormat );
+		l_hr = g_matroxAcqDevice.CameraGetFormat( triggerchannel, *p_piFormat );
 	}
 
 	return l_hr;
@@ -161,152 +143,102 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_
 
 HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel, unsigned long p_ulCount )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraBufferCreateAll( triggerchannel, p_ulCount );
+	HRESULT l_hr = g_matroxAcqDevice.CameraBufferCreateAll( triggerchannel, p_ulCount );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerGetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLut( unsigned long triggerchannel, SAFEARRAY *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLut( unsigned long triggerchannel, SAFEARRAY p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerGetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY *p_psaData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY p_saData )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
+	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraRegisterBufferInterface( triggerchannel, p_pInterface );
+	HRESULT l_hr = g_matroxAcqDevice.CameraRegisterBufferInterface( triggerchannel, p_pInterface );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraStart( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.CameraStart( triggerchannel );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraStop( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.CameraStop( triggerchannel );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraUnregisterBufferInterface( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.CameraUnregisterBufferInterface( triggerchannel );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.InternalTriggerEnable( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.InternalTriggerEnable( triggerchannel );
 	
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.InternalTrigger( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.InternalTrigger( triggerchannel );
 	
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraBufferDestroyAll( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.CameraBufferDestroyAll( triggerchannel );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_FALSE;
 
 	return l_hr;
@@ -314,44 +246,34 @@ HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel )
 
 HRESULT WINAPI SVDigitizerParameterGetList( unsigned long triggerchannel, VARIANT *p_pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraGetParameterList( triggerchannel, p_pvarValue );
+	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterList( triggerchannel, p_pvarValue );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerParameterGetName( unsigned long triggerchannel, unsigned long p_ulParameter, BSTR *p_pbstrName )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraGetParameterName( triggerchannel, p_ulParameter, p_pbstrName );
+	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterName( triggerchannel, p_ulParameter, p_pbstrName );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerParameterGetValue( unsigned long triggerchannel, int p_iParameter, int *p_piParameterType, VARIANT *p_pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraGetParameter( triggerchannel, p_iParameter, p_piParameterType, p_pvarValue );
+	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameter( triggerchannel, p_iParameter, p_piParameterType, p_pvarValue );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerParameterSetValue( unsigned long triggerchannel, int p_iParameter, int p_iParameterType, VARIANT *p_pvarValue )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = g_svTheApp.m_svSystem.CameraSetParameter( triggerchannel, p_iParameter, p_iParameterType, p_pvarValue );
+	HRESULT l_hr = g_matroxAcqDevice.CameraSetParameter( triggerchannel, p_iParameter, p_iParameterType, p_pvarValue );
 
 	return l_hr;
 }
 
 HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_OK;
 	
 	SVDeviceParamMap::const_iterator iter;
@@ -369,8 +291,6 @@ HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVD
 
 HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDeviceParamWrapper* p_pParameter )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_OK;
 
 	if ( nullptr != p_pParameter )
@@ -407,8 +327,6 @@ HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDe
 
 HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
 	HRESULT l_hr = S_OK;
 	
 	if ( nullptr != p_ppParameter )
@@ -445,24 +363,16 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDevicePa
 
 HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDeviceParamWrapper* p_pParameter )
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hr = S_OK;
-
 	SVDeviceParamWrapper& rw = *p_pParameter;
 	rw.Clear();
 
-	return l_hr;
+	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerScanForCameras()
 {
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
+	g_matroxAcqDevice.ScanForCameras();
 
-	HRESULT l_hr = S_OK;
-
-	g_svTheApp.m_svSystem.ScanForCameras();
-
-	return l_hr;
+	return S_OK;
 }
 

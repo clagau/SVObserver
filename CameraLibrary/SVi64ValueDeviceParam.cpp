@@ -110,7 +110,7 @@ __int64& i64Value(SVDeviceParamWrapper& w)
 		w = SVi64ValueDeviceParam(); 
 		p = w.DerivedValue(p);
 	} 
-	ASSERT(p); 
+	assert(p); 
 	return const_cast<SVi64ValueDeviceParam*>(p)->iValue;
 }
 
@@ -120,7 +120,7 @@ __int64 i64Value(const SVDeviceParamWrapper& w)
 	if (p) 
 		return p->iValue; 
 	
-	ASSERT(FALSE); 
+	assert(false);
 	return 0;
 }
 

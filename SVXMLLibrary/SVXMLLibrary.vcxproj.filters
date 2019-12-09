@@ -45,9 +45,6 @@
     <ClCompile Include="SVVariantConverter.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVXMLCTreeCtrl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVXMLEncryptionClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -108,9 +105,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVVariantCustomTypes.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXMLCTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLEncryptionClass.h">

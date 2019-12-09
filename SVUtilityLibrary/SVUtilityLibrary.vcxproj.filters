@@ -51,16 +51,10 @@
     <ClCompile Include="SVBitmapInfo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVDottedName.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVGUID.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVHistogramBase.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMetrics.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVSafeArray.cpp">
@@ -113,12 +107,6 @@
     <ClInclude Include="LoadDll.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="NameGuidList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSelectionList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="NaturalStringCompare.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -149,9 +137,6 @@
     <ClInclude Include="SVBitmapInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDottedName.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVGUID.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -167,28 +152,16 @@
     <ClInclude Include="SVHistogramStats.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMetrics.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVNameVariantList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVNullDeleter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectID.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVPoint.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSafeArray.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUniqueIDGenerator.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUniqueObjectID.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVUtilityGlobals.h">
@@ -204,6 +177,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SafeArrayHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="NameGuidList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

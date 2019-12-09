@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "resource.h"
-#include "SVXMLLibrary/SVXMLCTreeCtrl.h"
+#include "SVXMLCTreeCtrl.h"
 #pragma endregion Includes
 
 class SVOFileConfigDlg : public CDialog
@@ -27,7 +27,7 @@ public:
 
 	virtual ~SVOFileConfigDlg();
 
-	SvXml::SVXMLCTreeCtrl m_XMLCTree;
+	SVXMLCTreeCtrl m_XMLCTree;
 
 	//{{AFX_DATA(SVOFileConfigDlg)
 	enum { IDD = IDD_SVOFILECONFIG_DIALOG };

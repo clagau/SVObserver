@@ -14,17 +14,18 @@
     <ProjectGuid>{28590458-BCC0-4B29-9AAC-5008C1C0094D}</ProjectGuid>
     <RootNamespace>SVMatroxGige</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Static</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Static</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
@@ -83,7 +84,7 @@
       <ModuleDefinitionFile>.\SVMatroxGige.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -134,7 +135,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -148,7 +149,6 @@
     </ClCompile>
     <ClCompile Include="SVGigeStandardCameraFeatures.cpp" />
     <ClCompile Include="SVMatroxGige.cpp" />
-    <ClCompile Include="SVMatroxGigeApp.cpp" />
     <ClCompile Include="SVMatroxGigeBufferStruct.cpp" />
     <ClCompile Include="SVMatroxGigeCallbackStruct.cpp" />
     <ClCompile Include="SVMatroxGigeCameraParam.cpp" />
@@ -175,7 +175,6 @@
     <ClInclude Include="SVGigeStandardCameraFeatures.h" />
     <ClInclude Include="SVMatroxGige.h" />
     <ClInclude Include="SVMatroxGigeAcqParams.h" />
-    <ClInclude Include="SVMatroxGigeApp.h" />
     <ClInclude Include="SVMatroxGigeBufferCreator.h" />
     <ClInclude Include="SVMatroxGigeBufferStruct.h" />
     <ClInclude Include="SVMatroxGigeCallbackStruct.h" />

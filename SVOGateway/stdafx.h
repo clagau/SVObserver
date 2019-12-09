@@ -37,8 +37,8 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
+#include <windows.h>
 
-#include <afx.h> //avoid linker error in DEBUG build
 #include <comutil.h>
 #include <conio.h>
 #include <fstream>

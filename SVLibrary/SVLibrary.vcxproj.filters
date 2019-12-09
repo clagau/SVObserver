@@ -33,9 +33,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVBStr.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVGraphix.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -72,9 +69,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBStr.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDataItemManagerTemplate.h">

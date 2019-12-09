@@ -160,9 +160,7 @@ HRESULT ToVariant( __int64 iValue, VARIANT& rv )
 
 	// no real support for VT_I8 yet; stuff into a string; see also FromVariant
 	rv.vt = VT_BSTR;
-	CString s;
-	s.Format("%I64d", iValue);
-	rv.bstrVal = s.AllocSysString();
+	rv.bstrVal = _bstr_t(SvUl::Format("%I64d", iValue).c_str()).Detach();
 
 	return hr;
 }
@@ -231,13 +229,14 @@ HRESULT FromVariant( __int64& riValue, const VARIANT& rv )
 			break;
 		case VT_BSTR:
 			{
-				CString s = rv.bstrVal;
-				if ( s.GetLength() > 0 )
+				if (wcslen(rv.bstrVal) > 0 )
 				{
-					sscanf((LPCTSTR) s, "%I64d", &riValue);
+					swscanf(rv.bstrVal, L"%I64d", &riValue);
 				}
 				else
+				{
 					hr = S_FALSE;
+				}
 			}
 			break;
 		default:
@@ -328,7 +327,7 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 		{
 			bool bOk;
 			bOk = pParam->lValue == 10;
-			ASSERT( bOk );
+			assert(bOk);
 			SVLongValueDeviceParam::OptionType option(123, "OneTwoThree");
 			pParam->info.options.push_back(option);
 			

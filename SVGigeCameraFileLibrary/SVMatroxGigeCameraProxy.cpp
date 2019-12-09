@@ -620,7 +620,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 			case DeviceParamLut:
 			{
 				const SVLutDeviceParam* pLutParam = rw.DerivedValue( pLutParam );
-				ASSERT( pLutParam );
+				assert( pLutParam );
 
 				// why plus one?
 				int l_FileMaxValue = pLutParam->lut.Info().MaxValue() + 1;
@@ -999,15 +999,16 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
 					S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterModelName, 0, &l_oValue ) )
 				{
-					CString sHardwareModel( l_oValue.bstrVal );
+					std::string sHardwareModel(SvUl::createStdString(l_oValue.bstrVal));
 
-					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).c_str();
+					std::string sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName ));
 
-					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
+					bool sameModel = 0 == SvUl::CompareNoCase(sHardwareModel, sModel);
+					if ( !sHardwareModel.empty() && !sModel.empty() && false == sameModel)
 					{
 						SvDef::StringVector msgList;
-						msgList.push_back(std::string(sModel));
-						msgList.push_back(std::string(sHardwareModel));
+						msgList.push_back(sModel);
+						msgList.push_back(sHardwareModel);
 						SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 						Exception.setMessage( SVMSG_SVO_87_GOONLINE_CAMERA_ERROR, SvStl::Tid_Error_WrongCameraModel, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10026_GoOnline_WrongCameraModel );
 						Exception.Throw();

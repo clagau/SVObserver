@@ -31,7 +31,7 @@ typedef std::vector<ObjectInfo> ObjectInfoVector;
 namespace SvUl
 {
 typedef std::pair<std::string, SVGUID> NameGuidPair;
-typedef std::deque<NameGuidPair> NameGuidList;
+typedef std::vector<NameGuidPair> NameGuidList;
 }
 
 namespace SvDef

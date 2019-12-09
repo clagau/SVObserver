@@ -13,7 +13,6 @@
 #pragma warning (disable: 4786)	// identifier truncation 255 chars
 
 //Moved to precompiled header: #include <map>
-#include "SVLibrary/SVBStr.h" 					// SVBStr
 
 namespace  SvXml
 {
@@ -22,7 +21,7 @@ namespace  SvXml
 		char					charValue [8];
 		WCHAR					wcharValue [4];
 		unsigned long		longValue [2];
-		unsigned __int64	int64Value;
+		unsigned __int64	int64Value{0ULL};
 	};
 
 	// SVXMLEncryptionClass -----------------------------------------------------
@@ -61,10 +60,6 @@ namespace  SvXml
 
 		unsigned long GetNameSeed();
 
-	// SetEncryption () ---------------------------------------------------------
-	// This function sets the encryption element information in the schema.
-		HRESULT	SetEncryption();
-
 		void  SetIsEncryption(BOOL isEncrypted){ m_lIsEncrypted = isEncrypted;};
 		BOOL GetIsEncrypted() {return m_lIsEncrypted; } ;
 		void CreateNameSeed() {CreateNameSeed(&m_ulNameSeed);};
@@ -75,21 +70,14 @@ namespace  SvXml
 		HRESULT	SetEncryptionMethod (long	p_lEncryptionMethod);
 
 	// DOM Interface ----------------------------------------------------------\/
-		//HRESULT	InitializeDOMInterface (SVDOMClass*		p_opParentDOM);
+		HRESULT  EncryptNameAttribute(const _bstr_t& rDecryptedString, _bstr_t& rEncryptedString);
+		HRESULT  DecryptNameAttribute(const _bstr_t& rEncryptedString, _bstr_t& rDecryptedString);
 
-		HRESULT	EncryptNameAttribute (BSTR		p_bstrSourceString, 
-											   SVBStr*	p_bstrEncryptedString);
+		HRESULT	EncryptString (long		encryptionMethod,
+										const _bstr_t& rString, 
+										_bstr_t& rEncryptedString);
 
-		HRESULT  DecryptNameAttribute (BSTR		p_bstrEncryptedString, 
-												 SVBStr*	p_bstrpDecryptedString);
-
-
-		HRESULT	EncryptString (long		p_lNameEncryptionMethod, 
-										BSTR		p_bstrElementName, 
-										SVBStr*	p_bstrElementTag);
-
-		HRESULT  DecryptString (BSTR		p_bstrEncryptedString, 
-									  SVBStr*	p_bstrpDecryptedString);
+		HRESULT  DecryptString (const _bstr_t& rEncryptedString, _bstr_t& rDecryptedString);
 
 
 	// END OF DOM Interface----------------------------------------------------/\
@@ -103,13 +91,10 @@ namespace  SvXml
 	// CreateRandomLong () ------------------------------------------------------
 	// This function will generate a 32 bit random value (even though the rand 
 	//	function only provides a 31 bit random value.
-		HRESULT			CreateRandomLong (unsigned long* p_lSeedValue);
+		long CreateRandomLong ();
 
 		HRESULT			CreateNameSeed (unsigned long* p_ulpSeedValue);
 
-
-		HRESULT			Method1Encryption (BSTR		p_bstrSourceString, 
-													SVBStr*	p_bstrEncryptedString);
 
 		HRESULT			Method1Encryption (
 				long					p_lSourceStringLength,
@@ -142,9 +127,9 @@ namespace  SvXml
 	//	    -2  = means hard coded second format.
 	//     > 0 = positive values represent the MOD (%) variable that will be used 
 	//  	   internally to determine the format.
-		HRESULT			SetFiller (long				p_lValue,
-										  long				p_lOption,
-										  SVValue64Union* p_opNewValueUnion);
+		HRESULT			SetFiller (bool filler,
+									long option,
+									SVValue64Union* pValueUnion);
 
 	//	SetPadding () ------------------------------------------------------------
 	// This function will SET ALL affected bits.
@@ -171,31 +156,6 @@ namespace  SvXml
 										  SVValue64Union*	p_opNewValueUnion);
 
 
-	// JumpTracking1Initialization () -------------------------------------------
-	// 
-		HRESULT			JumpTracking1Initialization (long	p_lSourceStringLength, 
-														long**	p_lppTrackJumping, 
-																 long*	p_lpMaxTrackingLength);
-
-
-	// Method1Sub1 () -----------------------------------------------------------
-	// A complex subroutine call from multiple locations from within 
-	//	Method1Encryption ().
-		HRESULT			Method1Sub1 (
-				long				p_lSourceStringLength,
-				long				p_lMaxTrackingLength,
-				long				p_lChecksumSeed,
-				unsigned long	p_ulEmbeddedSeed,
-				long*				p_lpCurrentSourceIndex,
-				long*				p_lpCurrentDestinationIndex,
-				long*				p_lpCurrentTrackingLengthThreshold,
-				long*				p_lpTrackJumping,
-				long*				p_lpFirstTrackingUnused,
-				WCHAR*			p_wcpSource,
-				SVBStr*			p_bstrpEncryptedString);
-
-
-
 		HRESULT			Method1Decryption (unsigned long		p_ulChecksumSeed,
 													 unsigned long		p_ulEmbeddedSeed,
 													 long					p_lCurrentDestinationIndex,
@@ -214,17 +174,13 @@ namespace  SvXml
 	// intent is that this function be used on both the original (unencrypted)
 	// string, and the encrypted string. The checksum for both should be the 
 	// same.  
-		HRESULT			CalculateEncryptionChecksum (BSTR				p_bstrString, 
-																  unsigned long	p_ulMask,
-													 unsigned long*	p_ulpChecksum);
+		long CalculateEncryptionChecksum(const _bstr_t& rString, unsigned long	mask);
 
 	// FindChecksumParity () ---------------------------------------------------
 	// This function calculates the current checksum of the string, and 
 	//	calculates a word whoes appended values would make the given string 
 	// calculate to the desired checksum.
-		HRESULT			FindChecksumParity (SVBStr*			p_bstrEncryptedString, 
-													  unsigned long	p_ulChecksumSeed, 
-													  unsigned long*  p_ulpChecksumParity);
+		long FindChecksumParity (const bstr_t& rEncryptedString, unsigned long	checksumSeed);
 
 
 		long				m_lInitializedXMLInterface;
@@ -236,10 +192,7 @@ namespace  SvXml
 
 		long							m_lIsEncrypted;
 
-		static long					m_lLookUpTable1 [256];
 		std::map <long, long>	m_oRevLookUpTable1Map;
-
-		static unsigned char		m_cCharTable [128];
 		std::map <long, long>	m_oRevCharTableMap;
 
 	};

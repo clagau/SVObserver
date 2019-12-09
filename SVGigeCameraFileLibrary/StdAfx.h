@@ -45,8 +45,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxwin.h>
+#include <windows.h>
 
 #include <atomic>			//Used by status library
 #include <comdef.h>

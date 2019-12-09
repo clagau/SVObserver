@@ -41,13 +41,13 @@ namespace SvXml
 	{
 		if(nullptr != pTreeElement && SaxIsEncrypted())
 		{
-			_bstr_t  bstrString(pTreeElement->GetNameAtt() );
-			SVBStr bstrDecryptedString;	
-			m_Encryptionclass.DecryptNameAttribute(bstrString.GetBSTR(), &bstrDecryptedString);
-			pTreeElement->SetNameAttribute((LPCWSTR) bstrDecryptedString);
-			bstrString =  pTreeElement->GetTypeAtt();
-			m_Encryptionclass.DecryptString(bstrString.GetBSTR(),&bstrDecryptedString );
-			pTreeElement->SetTypeAttribute((LPCWSTR) bstrDecryptedString);
+			_bstr_t attribute(pTreeElement->GetNameAtt());
+			_bstr_t decryptedString;	
+			m_Encryptionclass.DecryptNameAttribute(attribute, decryptedString);
+			pTreeElement->SetNameAttribute(static_cast<LPCWSTR> (decryptedString));
+			attribute =  pTreeElement->GetTypeAtt();
+			m_Encryptionclass.DecryptString(attribute, decryptedString);
+			pTreeElement->SetTypeAttribute(static_cast<LPCWSTR> (decryptedString));
 		}
 	}
 
@@ -55,10 +55,10 @@ namespace SvXml
 	{
 		if(nullptr != pTreeElement && SaxIsEncrypted())
 		{
-			_bstr_t  bstrString(pTreeElement->GetContent() );
-			SVBStr bstrDecryptedString;	
-			m_Encryptionclass.DecryptString(bstrString.GetBSTR(),&bstrDecryptedString );
-			pTreeElement->SetContent((LPCWSTR) bstrDecryptedString);
+			_bstr_t  content(pTreeElement->GetContent() );
+			_bstr_t decryptedString;	
+			m_Encryptionclass.DecryptString(content, decryptedString);
+			pTreeElement->SetContent((LPCWSTR) decryptedString);
 		}
 
 	}

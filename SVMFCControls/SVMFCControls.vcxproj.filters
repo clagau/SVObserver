@@ -27,9 +27,6 @@
     <ClCompile Include="ModelessMessageBox.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="NameSelectionTreeCtrl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectsListBox.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -144,9 +141,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ModelessMessageBox.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSelectionTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectsListBox.h">

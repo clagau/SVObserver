@@ -46,11 +46,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxole.h>
-#include <afxstr.h>
-#include <afxtempl.h>
-#include <afxwin.h>
+#include <windows.h>
 
 #include <assert.h>
 #include <algorithm>

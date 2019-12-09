@@ -116,7 +116,6 @@
     <ClCompile Include="CLabel.cpp" />
     <ClCompile Include="DlgItemResizer.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp" />
-    <ClCompile Include="NameSelectionTreeCtrl.cpp" />
     <ClCompile Include="ObjectsListBox.cpp" />
     <ClCompile Include="ResizablePropertySheet.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -160,7 +159,6 @@
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="DlgItemResizer.h" />
     <ClInclude Include="ModelessMessageBox.h" />
-    <ClInclude Include="NameSelectionTreeCtrl.h" />
     <ClInclude Include="ObjectsListBox.h" />
     <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="StdAfx.h" />

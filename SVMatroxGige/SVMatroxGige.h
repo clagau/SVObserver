@@ -23,8 +23,6 @@ public:
 	SVMatroxGige();
 	~SVMatroxGige();
 
-	HRESULT Open();
-	HRESULT Close();
 
 	HRESULT Create();
 	HRESULT Destroy( bool p_bClose = false );
@@ -56,6 +54,9 @@ public:
 	// convert ordinal to handle
 	unsigned long GetDigitizerHandle(unsigned long index) const;
 
+	void ProcessStartFrame(SVMatroxGigeDigitizer* pCamera);
+	void ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookID);
+
 private:
 	long m_lRefCount = 0;
 
@@ -80,11 +81,6 @@ private:
 	HRESULT StartDigitizer(unsigned long p_Handle, SVMatroxGigeDigitizer& p_rCamera);
 	HRESULT StopDigitizer(SVMatroxGigeDigitizer& p_rCamera);
 
-	HRESULT ProcessStartFrame( SVMatroxGigeDigitizer& p_rCamera );
-	HRESULT ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID );
-	HRESULT CameraStartFrame( SVMatroxGigeDigitizer& p_rCamera );
-	HRESULT CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID );
-	
 	HRESULT FireOneShot( unsigned long p_Handle );
 
 	bool IsValidDigitizerHandle(unsigned long p_Handle) const;
@@ -95,8 +91,6 @@ private:
 	HRESULT ReadCameraIPAddress(SVMatroxGigeDigitizer& p_rCamera);
 
 	bool IsCameraActive(unsigned long p_Handle);
-
-	HRESULT GetNextAvailableProcBuffer(SVMatroxGigeDigitizer& p_rCamera);
 
 	HRESULT RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera);
 	HRESULT UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera);
@@ -119,9 +113,7 @@ private:
 	// Matrox Hooks
 	static __int64 __stdcall DigitizerStartFrameCallback( __int64 HookType, __int64 EventId, void* pContext );
 	static __int64 __stdcall DigitizerEndFrameCallback( __int64 HookType, __int64 EventId, void* pContext );
-	static __int64 __stdcall ProcessFrame( __int64 HookType, __int64 HookId, void* pContext );
-	static __int64 __stdcall DigitizerCallback( __int64 HookType, __int64 EventId, void* pContext );
 	static __int64 __stdcall CameraPresentCallback( __int64 HookType, __int64 EventId, void* pContext );
-	static __int64 __stdcall LineEdgeEventCallback( __int64 HookType, __int64 EventId, void* pContext );
 };
 
+extern SVMatroxGige g_matroxAcqDevice;

@@ -11,12 +11,8 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <set>
-//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <guiddef.h>
 
-typedef std::deque<GUID> SVGuidList;
-typedef std::set<GUID> SVUniqueGuidList;
-typedef std::map<_bstr_t, GUID> SVNameGuidList;
+typedef std::vector<GUID> SVGuidList;
 

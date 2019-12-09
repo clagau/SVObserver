@@ -44,7 +44,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
-#include "SVUtilityLibrary/SVDottedName.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "TriggerInformation/SVTriggerObject.h"

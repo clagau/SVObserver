@@ -95,7 +95,7 @@ std::string& StringValue(SVDeviceParamWrapper& w)
 		w = SVStringValueDeviceParam(); 
 		p = w.DerivedValue(p);
 	} 
-	ASSERT(p); 
+	assert(p); 
 	return const_cast<SVStringValueDeviceParam*>(p)->strValue;
 }
 
@@ -105,7 +105,7 @@ const std::string& StringValue(const SVDeviceParamWrapper& w)
 	if (p) 
 		return p->strValue; 
 	
-	ASSERT(FALSE); 
+	assert(false); 
 	static std::string s(""); 
 	return s;
 }

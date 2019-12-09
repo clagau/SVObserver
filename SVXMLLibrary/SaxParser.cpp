@@ -20,7 +20,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -42,7 +41,7 @@ namespace SvXml
 		HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		if((S_OK != hr) && (S_FALSE != hr) && (RPC_E_CHANGED_MODE != hr))
 		{
-			ASSERT(false);
+			assert(false);
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16073_COINITIALIZE_ );
 		}

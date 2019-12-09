@@ -46,11 +46,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxwin.h>         // MFC core and standard components
-#include <afxcmn.h>
-#include <afxpriv.h>
-#include <atlbase.h>
+#include <windows.h>
 
 #include <assert.h>
 #include <algorithm>

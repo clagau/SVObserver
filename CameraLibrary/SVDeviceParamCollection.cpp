@@ -118,8 +118,7 @@ HRESULT SVDeviceParamCollection::SetParameterDefaults()
 		if ( ParameterExists( DeviceParamGigeStrobeEdge ) )
 		{
 			const SVStringValueDeviceParam* pParam = Parameter( DeviceParamGigeStrobeEdge ).DerivedValue( pParam );
-			CString l_Temp( _T( "rising" ) );
-			l_bRising = l_Temp.CompareNoCase( pParam->strValue.c_str() ) == 0;
+			l_bRising = pParam->strValue.compare(_T("rising")) == 0;
 		}
 
 		if ( ParameterExists( DeviceParamIOStrobeInvert ) )
@@ -155,8 +154,7 @@ HRESULT SVDeviceParamCollection::SetParameterDefaults()
 		if ( ParameterExists( DeviceParamGigeTriggerEdge ) )
 		{
 			const SVStringValueDeviceParam* pParam = Parameter( DeviceParamGigeTriggerEdge ).DerivedValue( pParam );
-			CString l_Temp( _T( "rising" ) );
-			l_bRising = l_Temp.CompareNoCase( pParam->strValue.c_str() ) == 0;
+			l_bRising = pParam->strValue.compare( _T( "rising" )) == 0;
 		}
 
 		if ( ParameterExists( DeviceParamIOTriggerInvert ) )

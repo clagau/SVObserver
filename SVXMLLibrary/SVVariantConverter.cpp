@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVVariantConverter.h"
 #include "SVVariantCustomTypes.h"
-#include "SVLibrary/SVBStr.h"
 
 constexpr WCHAR* cBaseNode = L"SV_BASENODE";
 
@@ -21,11 +20,8 @@ namespace  SvXml
 {
 	HRESULT SVVariantConverter::TranslateVariant(VARIANT* avpValue, BSTR* abstrpValue, BSTR* abstrpType)
 	{
-		USES_CONVERSION;
-
 		HRESULT hr = 0;
 		long lIsArray = 0;
-		SVBStr bstrType;
 		WCHAR wszTempBuildBuffer[500];
 
 		while (1)
@@ -41,10 +37,9 @@ namespace  SvXml
 	//-		It is understood that standard variants which reference SAFEARRAYs
 	//-	   will also reference the type of elements within the SAFEARRAY.  
 	//-		This function looses that information at this time.
-				swprintf (wszTempBuildBuffer, A2W("%p"), avpValue->parray);
+				swprintf (wszTempBuildBuffer, L"%p", avpValue->parray);
 				*abstrpValue = SysAllocString (wszTempBuildBuffer);
-				bstrType = "VT_ARRAY";
-				*abstrpType = SysAllocString (bstrType);
+				*abstrpType = SysAllocString (L"VT_ARRAY");
 			}
 			else if (avpValue->vt == VT_SVARRAYNODE)
 			{
@@ -52,10 +47,9 @@ namespace  SvXml
 	//-	   will also reference the type of elements within the SAFEARRAY.  
 	//-		This function looses that information at this time.
 
-				swprintf (wszTempBuildBuffer, A2W("%p"), avpValue->parray);
+				swprintf (wszTempBuildBuffer, L"%p", avpValue->parray);
 				*abstrpValue = SysAllocString (wszTempBuildBuffer);
-				bstrType = "SV_ARRAYNODE";
-				*abstrpType = SysAllocString (bstrType);
+				*abstrpType = SysAllocString (L"SV_ARRAYNODE");
 			}
 			else
 			{
@@ -64,37 +58,32 @@ namespace  SvXml
 				case VT_SVBASENODE:
 					{
 						*abstrpValue = nullptr;
-						bstrType = cBaseNode;
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (cBaseNode);
 						break;
 					}
 				case VT_SVNODEWITHDATA:
 					{
 						*abstrpValue = nullptr;
-						bstrType = "SV_NODEWITHDATA";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"SV_NODEWITHDATA");
 						break;
 					}
 				case VT_NULL:
 					{
 						*abstrpValue = nullptr;
-						bstrType = "VT_NULL";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_NULL");
 						break;
 					}
 				case VT_EMPTY:
 					{
 						swprintf (wszTempBuildBuffer, L"");
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_EMPTY";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_EMPTY");
 						break;
 					}
 				case VT_BSTR:
 					{
 						*abstrpValue = SysAllocString (avpValue->bstrVal);
-						bstrType = "VT_BSTR";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_BSTR");
 						break;
 					}
 				case VT_BOOL:
@@ -108,88 +97,77 @@ namespace  SvXml
 							*abstrpValue = SysAllocString (L"TRUE");
 						}
 
-						bstrType = "VT_BOOL";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_BOOL");
 						break;
 					}
 				case VT_INT:
 					{
 						swprintf (wszTempBuildBuffer, L"%d", avpValue->intVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_INT";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_INT");
 						break;
 					}
 				case VT_I4:
 					{
 						swprintf (wszTempBuildBuffer, L"%d", avpValue->lVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_I4";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_I4");
 						break;
 					}
 				case VT_R4:
 					{
 						swprintf (wszTempBuildBuffer, L"%f", avpValue->fltVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_R4";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_R4");
 						break;
 					}
 				case VT_R8:
 					{
 						swprintf (wszTempBuildBuffer, L"%lf", avpValue->dblVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_R8";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_R8");
 						break;
 					}
 				case VT_UINT:
 					{
 						swprintf (wszTempBuildBuffer, L"%lu", avpValue->uintVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_UINT";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_UINT");
 						break;
 					}
 				case VT_UI4:
 					{
 						swprintf (wszTempBuildBuffer, L"%lu", avpValue->ulVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_UI4";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_UI4");
 						break;
 					}
 				case VT_I8:
 					{
 						swprintf (wszTempBuildBuffer, L"%I64d", avpValue->llVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_I8";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_I8");
 						break;
 					}
 				case VT_UI8:
 					{
 						swprintf (wszTempBuildBuffer, L"%I64u", avpValue->ullVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_UI8";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_UI8");
 						break;
 					}
 				case VT_UI1:
 					{
 						swprintf (wszTempBuildBuffer, L"%02X", avpValue->bVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_UI1";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_UI1");
 						break;
 					}
 				case VT_I1:
 					{
 						swprintf (wszTempBuildBuffer, L"%02X", avpValue->bVal);
 						*abstrpValue = SysAllocString (wszTempBuildBuffer);
-						bstrType = "VT_I1";
-						*abstrpType = SysAllocString (bstrType);
+						*abstrpType = SysAllocString (L"VT_I1");
 						break;
 					}
 				default:
@@ -208,8 +186,6 @@ namespace  SvXml
 	
 	HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARIANT* avpValue)
 	{
-		USES_CONVERSION;
-
 		HRESULT hr = 0;
 
 		WCHAR wszWhiteSpace[500];

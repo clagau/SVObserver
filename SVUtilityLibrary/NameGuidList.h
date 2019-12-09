@@ -5,16 +5,16 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <string>
+//Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <guiddef.h>
 #include "SVGUID.h"
 #pragma endregion Includes
 namespace SvUl
 {
 	typedef std::pair<std::string, SVGUID> NameGuidPair;
-	typedef std::deque<NameGuidPair> NameGuidList;
+	typedef std::vector<NameGuidPair> NameGuidList;
 	typedef std::map<std::string, NameGuidPair> InputNameGuidPairList;
 
 	template<typename T>

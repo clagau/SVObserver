@@ -24,6 +24,9 @@
     <ClCompile Include="SVOFileConfigDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVXMLCTreeCtrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVOFileConfig.rc">
@@ -44,6 +47,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOFileConfigDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVXMLCTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,6 +16,11 @@
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #pragma endregion Includes
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 #define NUM_ACQUISITION_BUFFERS 5
 
 SVMatroxGigeDigitizer::SVMatroxGigeDigitizer(unsigned long deviceNumber, unsigned char systemHandle)

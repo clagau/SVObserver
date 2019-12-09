@@ -18,7 +18,6 @@
 #include "SVOFileConfigDlg.h"
 #include "AutoBuild/AutoBuild.h"
 #include "Definitions/GlobalConst.h"
-#include "SVLibrary/SVBStr.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
@@ -199,50 +198,37 @@ bool SVOFileConfigDlg::GetDirectoryRemoveLevel( std::string& rFileName, int p_le
 
 void SVOFileConfigDlg::OnButtonloadSvx() 
 {
-	// TODO: Add your control notification handler code here
+	CFileDialog dlg( TRUE, SvDef::cConfigExtension, NULL, 
+										OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
+										OFN_ENABLESIZING | OFN_EXPLORER,
+										_T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
 
-	SVBStr	bstrFileName;
+	dlg.m_ofn.lpstrTitle = _T("Select Configuration File");
+	dlg.m_ofn.lpstrInitialDir = m_strLastDirectory.c_str();
 
-
-	while (1)
+	if (dlg.DoModal () != IDOK)
 	{
-		CFileDialog dlg( TRUE, SvDef::cConfigExtension, NULL, 
-										 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
-										 OFN_ENABLESIZING | OFN_EXPLORER,
-										 _T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
-
-		dlg.m_ofn.lpstrTitle = _T("Select Configuration File");
-		dlg.m_ofn.lpstrInitialDir = m_strLastDirectory.c_str();
-
-		if (dlg.DoModal () != IDOK)
-		{
-			break;
-		}
-
-		m_strLastDirectory = dlg.m_ofn.lpstrFile;
-
-		GetDirectoryRemoveLevel( m_strLastDirectory, 1);
-
-
-		mTree.SetRedraw( false );
-
-		bstrFileName = dlg.GetPathName();
-
-		m_XMLCTree.Clear();
-		SvXml::SVOCMLoadConfiguration(m_ulCurrentVersion, bstrFileName, m_XMLCTree);
-		if( m_ulCurrentVersion >= 0x50100)
-		{
-			CheckConfiguration();
-		}
-		else
-		{
-			MessageBox(_T("This program will only detect IOEntry errors in Configurations saved with SVObserver 5.00 or newer"));
-		}
-		mTree.SetRedraw( true );
-			
-	break;
+		return;
 	}
-	
+
+	m_strLastDirectory = dlg.m_ofn.lpstrFile;
+
+	GetDirectoryRemoveLevel( m_strLastDirectory, 1);
+
+
+	mTree.SetRedraw( false );
+
+	m_XMLCTree.Clear();
+	SvXml::SVOCMLoadConfiguration(m_ulCurrentVersion, dlg.GetPathName(), m_XMLCTree);
+	if( m_ulCurrentVersion >= 0x50100)
+	{
+		CheckConfiguration();
+	}
+	else
+	{
+		MessageBox(_T("This program will only detect IOEntry errors in Configurations saved with SVObserver 5.00 or newer"));
+	}
+	mTree.SetRedraw( true );
 }
 
 void SVOFileConfigDlg::OnButtonsaveSvx() 
@@ -271,7 +257,7 @@ void SVOFileConfigDlg::OnButtonsaveSvx()
 			std::string RootName( SvDef::FqnRoot );
 			writer.WriteRootElement( RootName.c_str() );
 			writer.WriteSchema();
-			SvXml::TreeToXMl::CopyTreeNodeToWriter<SvXml::SVXMLCTreeCtrl>(m_XMLCTree,m_XMLCTree.getRoot(),writer );
+			SvXml::TreeToXMl::CopyTreeNodeToWriter<SVXMLCTreeCtrl>(m_XMLCTree,m_XMLCTree.getRoot(),writer );
 			writer.EndAllElements();
 			XMLOutFile.close();
 		}

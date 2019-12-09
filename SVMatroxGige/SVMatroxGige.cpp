@@ -12,7 +12,6 @@
 #include "StdAfx.h"
 //Moved to precompiled header: #include <map>
 #include "SVMatroxGige.h"
-#include "SVMatroxGigeApp.h"
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -26,6 +25,13 @@
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+SVMatroxGige g_matroxAcqDevice;
+
 // helpers for System/Digitizer Handles
 #define SV_MAKE_MATROXGIGE_SYSTEM_DIGITIZER_HANDLE( SystemHandle, DigitizerHandle ) \
 	( static_cast<unsigned long>( (SystemHandle) ) << 8 ) | static_cast<unsigned char>( (DigitizerHandle) & 0xFF )
@@ -33,13 +39,13 @@
 #define SV_EXTRACT_MATROXGIGE_SYSTEM_HANDLE( handle ) ( static_cast<unsigned char>( (handle) >> 8 ) )
 #define SV_EXTRACT_MATROXGIGE_DIGITIZER_HANDLE( handle ) ( static_cast<unsigned char>( (handle) ) )
 
-
 SVMatroxGige::SVMatroxGige()
 {
 }
 
 SVMatroxGige::~SVMatroxGige()
 {
+	Destroy(true);
 }
 
 bool SVMatroxGige::IsValidDigitizer(unsigned long channel) const
@@ -64,71 +70,28 @@ bool SVMatroxGige::IsValidDigitizerHandle(unsigned long channel) const
 // Callback used for MdigHook - Start Frame
 __int64 SVMatroxGige::DigitizerStartFrameCallback( __int64 HookType, __int64 EventId, void* pContext )
 {
-	return SVMatroxGige::DigitizerCallback(HookType, EventId, pContext);
-}
-
-// Callback used for MdigHook - End Frame
-__int64 SVMatroxGige::DigitizerEndFrameCallback( __int64 HookType, __int64 EventId, void* pContext )
-{
-	return SVMatroxGige::DigitizerCallback(HookType, EventId, pContext);
+	try
+	{
+		if (SVMatroxDigitizerInterface::IsEventGrabFrameStart(HookType))
+		{
+			SVMatroxGigeDigitizer* pCamera = reinterpret_cast<SVMatroxGigeDigitizer*> (pContext);
+			g_matroxAcqDevice.ProcessStartFrame(pCamera);
+		}
+	}
+	catch (...)
+	{
+		// Log Exception ?
+	}
+	return 0L;
 }
 
 // Callback used for MdigProcess
-__int64 SVMatroxGige::ProcessFrame( __int64 HookType, __int64 HookId, void* pContext )
+__int64 SVMatroxGige::DigitizerEndFrameCallback( __int64 HookType, __int64 HookId, void* pContext )
 {
 	try
 	{
-		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer*> (pContext);
-		if ( nullptr != l_pCamera )
-		{
-			if ( l_pCamera->m_lIsStarted == 1 )
-			{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-				TRACE( "ProcessFrame\n" );
-#endif
-
-				//
-				if (l_pCamera->m_frameStack.get() == 1)
-				{
-					// check for Corrupted first
-					bool bIsCorrupt = false;
-					HRESULT l_Code = SVMatroxDigitizerInterface::IsCorruptedFrame(HookId, bIsCorrupt);
-					if (l_Code == S_OK)
-					{
-						if (!bIsCorrupt) 
-						{
-							__int64 ModifiedBufferId(0);
-
-							// Retrieve the MIL_ID of the grabbed buffer.
-							l_Code = SVMatroxDigitizerInterface::GetGrabBuffer(HookId, ModifiedBufferId);
-
-							if (l_Code == S_OK && ModifiedBufferId)
-							{
-								// Copy the data
-								g_svTheApp.m_svSystem.ProcessEndFrame(*l_pCamera, ModifiedBufferId);
-							}
-						}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-						else
-						{
-							TRACE( "Corrupt Frame\n" );
-						}
-#endif
-					}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-					std::string Temp = SvUl::Format( _T("Process End Frame Callback - Camera %d-%d\n"), l_pCamera->m_SystemHandle, l_pCamera->m_Handle );
-					TRACE( Temp.c_str() );
-#endif
-				}
-				else
-				{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-					TRACE( "Start Frame Count %d\n", l_pCamera->m_frameStack.get() );
-#endif
-				}
-				l_pCamera->m_frameStack.clear();
-			}
-		}
+		SVMatroxGigeDigitizer* pCamera = reinterpret_cast<SVMatroxGigeDigitizer*> (pContext);
+		g_matroxAcqDevice.ProcessEndFrame(pCamera, HookId);
 	}
 	catch (...)
 	{
@@ -136,55 +99,6 @@ __int64 SVMatroxGige::ProcessFrame( __int64 HookType, __int64 HookId, void* pCon
 	}
 
 	return 0;
-}
-
-// General handler for MdigHook callbacks (Indirect)
-__int64 SVMatroxGige::DigitizerCallback( __int64 HookType, __int64 EventId, void* pContext )
-{
-	try
-	{
-		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(pContext);
-		if ( nullptr != l_pCamera )
-		{
-			if ( l_pCamera->m_lIsStarted == 1 )
-			{
-				if( SVMatroxDigitizerInterface::IsEventGrabFrameStart(HookType) )
-				{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-					TRACE( "Gige Start Frame\n" );
-#endif
-					// Do StartFrame Logic
-					g_svTheApp.m_svSystem.ProcessStartFrame( *l_pCamera );
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-					std::string Temp = SvUl::Format( _T("Process Start Frame Callback - Camera %d-%d Buffer %d\n"), 
-						l_pCamera->m_SystemHandle, 
-						l_pCamera->m_Handle, 
-						l_pCamera->m_lStartIndex );
-					TRACE( Temp.c_str() );
-#endif
-				}
-				
-				else if( SVMatroxDigitizerInterface::IsEventGrabFrameEnd(HookType) )
-				{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-					TRACE( "Gige End Frame\n" );
-#endif
-				}
-			}
-		}
-	}
-	catch ( ... )
-	{
-		// Log Exception ?
-	}
-	return 0L;
-}
-
-HRESULT SVMatroxGige::Open()
-{
-	HRESULT hr = S_OK;
-	return hr;
 }
 
 HRESULT SVMatroxGige::Create()
@@ -456,12 +370,6 @@ HRESULT SVMatroxGige::DestroySystem(SVMatroxGigeSystem& rSystem)
 		hr = l_Code; 
 	}
 	return hr; 
-}
-
-HRESULT SVMatroxGige::Close()
-{
-	HRESULT hr = Destroy( true );
-	return hr;
 }
 
 HRESULT SVMatroxGige::CameraGetCount( unsigned long &p_rulCount )
@@ -890,7 +798,7 @@ HRESULT SVMatroxGige::StartDigitizer(unsigned long channel, SVMatroxGigeDigitize
 	if ( S_OK == hr )
 	{
 		// Start the Asynchronous Grab (using MdigProcess)
-		hr = p_rCamera.StartGrabArray(SVMatroxGige::ProcessFrame);
+		hr = p_rCamera.StartGrabArray(SVMatroxGige::DigitizerEndFrameCallback);
 	}
 	return hr;
 }
@@ -901,7 +809,7 @@ HRESULT SVMatroxGige::StopDigitizer(SVMatroxGigeDigitizer& p_rCamera)
 	if (nullptr != p_rCamera.m_Digitizer)
 	{
 		// stop acquiring
-		hr = p_rCamera.StopGrabArray(SVMatroxGige::ProcessFrame);
+		hr = p_rCamera.StopGrabArray(SVMatroxGige::DigitizerEndFrameCallback);
 
 		// Remove Matrox Hooks
 		UnRegisterMatroxDigitizerHooks(p_rCamera);
@@ -911,119 +819,123 @@ HRESULT SVMatroxGige::StopDigitizer(SVMatroxGigeDigitizer& p_rCamera)
 	return hr;
 }
 
-HRESULT SVMatroxGige::ProcessStartFrame( SVMatroxGigeDigitizer& p_rCamera )
+void SVMatroxGige::ProcessStartFrame(SVMatroxGigeDigitizer* pCamera)
 {
-	HRESULT hr = S_OK;
-
-	if ( p_rCamera.m_lIsStarted == 1 )
+	if (nullptr != pCamera)
 	{
-		// Get a Buffer to copy in to
-		// Sets m_lStartIndex and sets Buffer lock flag
-		hr = GetNextAvailableProcBuffer(p_rCamera);
-		if (S_OK == hr)
+		if (pCamera->m_lIsStarted == 1)
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
+			::OutputDebugString("Gige Start Frame\n");
+#endif
+			long l_lIndex = (pCamera->m_lLastUsedIndex + 1) % 16;
+
+			pCamera->m_lStartIndex = l_lIndex;
+			pCamera->m_lLastUsedIndex = l_lIndex;
 			// Keep Track of Start Frames
-			p_rCamera.m_frameStack.Increment();
+			pCamera->m_frameStack.Increment();
 
-			hr = CameraStartFrame( p_rCamera );
-		}
-		else
-		{
-			p_rCamera.m_lStartIndex = -1;
-		}
-	}
-	else
-	{
-		hr = S_FALSE;
-	}
-
-	return hr;
-}
-
-HRESULT SVMatroxGige::ProcessEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID)
-{
-	HRESULT hr = CameraEndFrame( p_rCamera, p_SrcBufferID );
-
-	return hr;
-}
-
-HRESULT SVMatroxGige::CameraStartFrame( SVMatroxGigeDigitizer& rCamera )
-{
-	HRESULT hr = S_OK;
-
-	if ( rCamera.m_lIsStarted == 1 && nullptr != rCamera.m_pBufferInterface )
-	{
-		//When the time stamp is not 0 then a new start frame has been received before the last end frame!
-		//This will cause a NAK! 
-		if(0 != rCamera.m_StartFrameTimeStamp)
-		{
-			// log an exception
-			SvDef::StringVector msgList;
-			msgList.emplace_back(rCamera.m_FullName);
-			msgList.emplace_back(SvUl::Format(_T("%.3f"), (SvTl::GetTimeStamp() - rCamera.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NAK_Error_MissingEndFrame, msgList, SvStl::SourceFileParams(StdMessageParams));
-		}
-		rCamera.m_StartFrameTimeStamp = SvTl::GetTimeStamp();
-	}
-	else
-	{
-		hr = S_FALSE;
-	}
-
-	return hr;
-}
-
-HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, __int64 p_SrcBufferID )
-{
-	HRESULT hr = S_OK;
-
-	//Save end frame time stamp before buffer copy
-	double endFrameTimeStamp = SvTl::GetTimeStamp();
-	double startFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
-
-	p_rCamera.m_StartFrameTimeStamp = 0.0;
-
-	if ( 1 == p_rCamera.m_lIsStarted && nullptr != p_rCamera.m_pBufferInterface  )
-	{
-		SvTrc::IImagePtr pImage = p_rCamera.m_pBufferInterface->GetNextBuffer();
-		if (nullptr != pImage )
-		{
-			auto pImageHandle = pImage->getHandle();
-			if(nullptr != pImageHandle && !(pImageHandle->empty() ) )
+			if (nullptr != pCamera->m_pBufferInterface)
 			{
-				hr = SVMatroxBufferInterface::CopyBuffer(pImageHandle->GetBuffer(), p_SrcBufferID );
+				//When the time stamp is not 0 then a new start frame has been received before the last end frame!
+				//This will cause a NAK! 
+				if (0 != pCamera->m_StartFrameTimeStamp)
+				{
+					// log an exception
+					SvDef::StringVector msgList;
+					msgList.emplace_back(pCamera->m_FullName);
+					msgList.emplace_back(SvUl::Format(_T("%.3f"), (SvTl::GetTimeStamp() - pCamera->m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond));
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NAK_Error_MissingEndFrame, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
+				pCamera->m_StartFrameTimeStamp = SvTl::GetTimeStamp();
 			}
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
+			std::string outputText = SvUl::Format(_T("Camera Start Frame Callback - Camera %d-%d Buffer %d\n"),
+												  pCamera->m_SystemHandle,
+												  pCamera->m_Handle,
+												  pCamera->m_lStartIndex);
+			::OutputDebugString(outputText.c_str());
+#endif
+		}
+	}
+}
+
+void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookId)
+{
+	if (nullptr != pCamera)
+	{
+		if (pCamera->m_lIsStarted == 1)
+		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
+			::OutputDebugString("Gige End Frame\n");
+#endif
+			if (pCamera->m_frameStack.get() == 1)
+			{
+				// check for Corrupted first
+				bool bIsCorrupt = false;
+				HRESULT l_Code = SVMatroxDigitizerInterface::IsCorruptedFrame(HookId, bIsCorrupt);
+				if (l_Code == S_OK && false == bIsCorrupt)
+				{
+					__int64 ModifiedBufferId(0);
+
+					// Retrieve the MIL_ID of the grabbed buffer.
+					l_Code = SVMatroxDigitizerInterface::GetGrabBuffer(HookId, ModifiedBufferId);
+
+					if (l_Code == S_OK && ModifiedBufferId)
+					{
+						//Save end frame time stamp before buffer copy
+						double endFrameTimeStamp = SvTl::GetTimeStamp();
+						double startFrameTimeStamp = pCamera->m_StartFrameTimeStamp;
+
+						pCamera->m_StartFrameTimeStamp = 0.0;
+
+						if (nullptr != pCamera->m_pBufferInterface)
+						{
+							SvTrc::IImagePtr pImage = pCamera->m_pBufferInterface->GetNextBuffer();
+							if (nullptr != pImage)
+							{
+								auto pImageHandle = pImage->getHandle();
+								if (nullptr != pImageHandle && !(pImageHandle->empty()))
+								{
+									SVMatroxBufferInterface::CopyBuffer(pImageHandle->GetBuffer(), ModifiedBufferId);
+								}
+							}
+
+							//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
+							pCamera->m_pBufferInterface->UpdateWithCompletedBuffer(pImage, startFrameTimeStamp, endFrameTimeStamp);
+						}
+					}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
+					else
+					{
+						::OutputDebugString("Corrupt Frame\n");
+					}
+#endif
+				}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
+				std::string outputText = SvUl::Format(_T("Process End Frame Callback - Camera %d-%d\n"), pCamera->m_SystemHandle, pCamera->m_Handle);
+				::OutputDebugString(outputText.c_str());
+#endif
+			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
 			else
 			{
-				hr = E_FAIL;
+				std::string outputText = SvUl::Format(_T("Start Frame Count %d\n"), pCamera->m_frameStack.get());
+				::OutputDebugString(outputText.c_str());
 			}
-		}
-		else
-		{
-			hr = E_FAIL;
-		}
-
-		//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
-		HRESULT tmpHr = p_rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, startFrameTimeStamp, endFrameTimeStamp);
-		if (S_OK == hr)
-		{
-			hr = tmpHr;
+#endif
+			pCamera->m_frameStack.clear();
 		}
 	}
-	else
-	{
-		hr = S_FALSE;
-	}
-	return hr;
 }
 
 // Just a stub, actual loading is done in SVObserver via SVGigeCameraFileReader ?
 HRESULT SVMatroxGige::CameraLoadFiles(unsigned long triggerchannel, SAFEARRAY* p_psaFileNames)
 {
-	HRESULT hr = S_FALSE;
 	// in order to load the dcf file, we have to destroy and recreate the digitizer ?
-	return hr;
+	return S_FALSE;
 }
 
 HRESULT SVMatroxGige::ReadCameraSerialNumber(SVMatroxGigeDigitizer& p_rCamera)
@@ -1139,43 +1051,24 @@ HRESULT SVMatroxGige::FireOneShot( unsigned long channel )
 	return hr;
 }
 
-// Get the next available Buffer from the processing Buffer pool
-HRESULT SVMatroxGige::GetNextAvailableProcBuffer(SVMatroxGigeDigitizer& p_rCamera)
-{
-	HRESULT hr = S_OK;
-	
-	long l_lSize = 16;//p_rCamera.m_numProcBuffers;
-	long l_lLastUsed = p_rCamera.m_lLastUsedIndex;
-	long l_lIndex = ( l_lLastUsed + 1 ) % l_lSize;
-
-	p_rCamera.m_lStartIndex = l_lIndex;
-	p_rCamera.m_lLastUsedIndex = l_lIndex;
-
-	return hr;
-}
-
-HRESULT SVMatroxGige::RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera)
+HRESULT SVMatroxGige::RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& rCamera)
 {
 	// Register Matrox Hook callback(s)
-	HRESULT l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, SVMatroxGige::DigitizerStartFrameCallback, (void *)&p_rCamera);
-
-	if (l_Code == S_OK)
+	if (nullptr != rCamera.m_Digitizer)
 	{
-		l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
+		return SVMatroxDigitizerInterface::SetHookFunction(*(rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, SVMatroxGige::DigitizerStartFrameCallback, (void *)&rCamera);
 	}
-	return l_Code;
+	return S_FALSE;
 }
 
-HRESULT SVMatroxGige::UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera)
+HRESULT SVMatroxGige::UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& rCamera)
 {
 	// Unregister Matrox Hook callback
-	HRESULT l_Code = S_OK;
-	if (nullptr != p_rCamera.m_Digitizer)
+	if (nullptr != rCamera.m_Digitizer)
 	{
-		/*l_Code = */SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, &SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
-		l_Code = SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, &SVMatroxGige::DigitizerStartFrameCallback, (void *)&p_rCamera);
+		return SVMatroxDigitizerInterface::ReleaseHookFunction(*(rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, &SVMatroxGige::DigitizerStartFrameCallback, (void *)&rCamera);
 	}
-	return l_Code;
+	return S_OK;
 }
 
 HRESULT SVMatroxGige::SetGrabMode(const SVMatroxGigeDigitizer& p_rCamera)
@@ -1277,7 +1170,7 @@ __int64 SVMatroxGige::CameraPresentCallback( __int64 HookType, __int64 EventId, 
 {
 	unsigned char systemHandle = *(reinterpret_cast<unsigned char*> (pContext));
 	HRESULT hr = S_OK;
-	SVMatroxGigeSystem& system = g_svTheApp.m_svSystem.m_Systems.Get(systemHandle, hr);
+	SVMatroxGigeSystem& system = g_matroxAcqDevice.m_Systems.Get(systemHandle, hr);
 	const SVMatroxSystem& l_rMatroxSystem = *(system.m_System.get());
 
 	// Inquire the camera present state (present or not present).
@@ -1298,7 +1191,7 @@ __int64 SVMatroxGige::CameraPresentCallback( __int64 HookType, __int64 EventId, 
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvStl::Tid_MatroxGigE_Connect, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-				g_svTheApp.m_svSystem.HandleConnect(system, static_cast<unsigned char>(deviceNumber));
+				g_matroxAcqDevice.HandleConnect(system, static_cast<unsigned char>(deviceNumber));
 			}
 			else
 			{
@@ -1308,11 +1201,11 @@ __int64 SVMatroxGige::CameraPresentCallback( __int64 HookType, __int64 EventId, 
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvStl::Tid_MatroxGigE_Disconnect, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-				g_svTheApp.m_svSystem.HandleDisconnect(system, deviceNumber);
+				g_matroxAcqDevice.HandleDisconnect(system, deviceNumber);
 			}
 		}
 	}
-	return 0L;
+	return 0l;
 }
 
 void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumber)

@@ -24,9 +24,6 @@
     <ClCompile Include="SVMatroxGige.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxGigeApp.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxGigeBufferStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -91,9 +88,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGigeAcqParams.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxGigeApp.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGigeBufferCreator.h">

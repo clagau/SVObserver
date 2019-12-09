@@ -136,10 +136,10 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileImpl( SVDeviceParamCollection &rPa
 {
 	HRESULT hr = S_OK;
 
-	CStdioFile file;
-	if ( file.Open( m_Filename.c_str(), CFile::modeRead | CFile::shareDenyWrite ) )
+	std::ifstream cameraFile {m_Filename.c_str()};
+	if(cameraFile.is_open())
 	{
-		file.Close();
+		cameraFile.close();
 
 		rParams.SetParameterDefaults();
 
@@ -328,7 +328,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 
 		SVStringValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
-		ASSERT( pParam );
+		assert( pParam );
 		pParam->strValue = Value;
 		pParam->SetName( rKey );
 
@@ -373,7 +373,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 	{
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVBoolValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
-		ASSERT( pParam );
+		assert( pParam );
 		pParam->bValue = iVal != 0;
 		pParam->SetName( rKey );
 
@@ -410,7 +410,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLongParam( SVDeviceParamCollection
 	{
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVLongValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
-		ASSERT( pParam );
+		assert( pParam );
 		pParam->lValue = iVal;
 		pParam->SetName( rKey );
 
@@ -452,7 +452,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 	{
 		rParams.SetParameter( e, static_cast<const SVDeviceParam*>(SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) ));
 		SVCameraFormatsDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
-		ASSERT( pParam );
+		assert( pParam );
 		pParam->strValue = Value;
 		pParam->SetName( rKey );
 
@@ -562,7 +562,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection&
 	{
 		rParams.SetParameter( e, static_cast<const SVDeviceParam*>(SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) ));
 		SVLutDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
-		ASSERT( pParam );
+		assert( pParam );
 		pParam->SetName( rKey );
 
 		ReadCameraFileCommonParams( sSection, rKey, m_Filename, pParam );
@@ -575,7 +575,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection&
 		lutinfo.SetBands( iVal );	/////!!!   may vary for different image formats!
 
 		iVal = GetPrivateProfileInt(sSection.c_str(), std::string(rKey + scBANDSIZE).c_str(), 1, m_Filename.c_str());
-		ASSERT( iVal != 1 );	// file needs to define this!!!
+		assert( iVal != 1 );	// file needs to define this!!!
 		lutinfo.SetBandSize( iVal );	/////!!!   may vary for different image formats!
 
 		iVal = GetPrivateProfileInt(sSection.c_str(), std::string(rKey + scMAXVALUE).c_str(), 1024, m_Filename.c_str());
@@ -586,7 +586,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection&
 
 		SVLutTransformParameters param;
 		const SVLutTransformOperation* pOperation = SVLutTransform::GetEquivalentType( (SVLutTransformOperationEnum) iTransformOperation );
-		ASSERT(pOperation);
+		assert(pOperation);
 		if (pOperation)
 		{
 			rLut.SetTransformOperation(*pOperation);

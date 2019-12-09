@@ -48,8 +48,8 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
-#include <atltypes.h>
-#include <atlbase.h>
+#include <atlcomcli.h>
+#include <shlwapi.h>
 
 #include <algorithm>
 #include <assert.h>
@@ -57,7 +57,6 @@
 #include <cassert>
 #include <comdef.h>
 #include <comutil.h>
-#include <deque>
 #include <direct.h>
 #include <iostream>
 #include <guiddef.h>
