@@ -52,21 +52,19 @@ public:
 	std::string BuildResultsArchiveString();
 	void DisconnectAllResultObjects();
 
+	const std::vector <SVArchiveRecord>& getRecordVec() const;
 	int GetSize();
-	SVArchiveRecord* GetAt(int i);
-	int Add( SVArchiveRecord* pRecord );
+	SVArchiveRecord& push_back();
 #pragma endregion Public Methods
 
 private:
 #pragma region Private Methods
-	std::string AdaptDottedNameToInspectionName(std::string DottedName, std::string NewInspectionName);
 #pragma endregion Private Methods
 
 protected:
 #pragma region Protected Members
 	SVArchiveTool* m_pArchiveTool;
-	typedef std::vector <SVArchiveRecord*> RecordsType;
-	RecordsType m_vecRecords;
+	std::vector <SVArchiveRecord> m_vecRecords;
 #pragma endregion Protected Members
 };	// end class SVArchiveRecordsArray
 

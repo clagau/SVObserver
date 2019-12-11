@@ -1231,6 +1231,7 @@ InspectionCmdResult getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest r
 			case SvPb::ObjectSelectorType::tableObjects:
 			case SvPb::ObjectSelectorType::ppqItems:
 			case SvPb::ObjectSelectorType::toolsetItems:
+			case SvPb::ObjectSelectorType::cameraObject:
 			{
 				itemVector = getSelectorList(request, request.types(i));
 				break;
@@ -1260,6 +1261,16 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 		if (nullptr != pInspection)
 		{
 			result = pInspection->GetPPQSelectorList(request.attribute());
+			return result;
+		}
+	}
+
+	if (SvPb::ObjectSelectorType::cameraObject == selectorType)
+	{
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(inspectionID));
+		if (nullptr != pInspection)
+		{
+			result = pInspection->GetCameraSelectorList(request.attribute());
 			return result;
 		}
 	}

@@ -26,12 +26,12 @@ enum RegressionFileEnum
 
 struct RegressionTestStruct
 {
-	std::string Camera;
-	std::string FirstFile;
-	RegressionFileEnum iFileMethod; 
-	SvDef::StringVector stdVectorFile;
-	SvDef::StringVector::iterator stdIteratorStart;
-	SvDef::StringVector::iterator stdIteratorCurrent;
+	std::string Camera {};
+	std::string FirstFile {};
+	RegressionFileEnum iFileMethod {};
+	SvDef::StringVector stdVectorFile {};
+	SvDef::StringVector::iterator stdIteratorStart {};
+	SvDef::StringVector::iterator stdIteratorCurrent {};
 };
 
 struct RegressionRunFileStruct

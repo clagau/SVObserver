@@ -348,7 +348,7 @@ void CSVOProPosQueDlg::OnBtnRemoveVc()
 		for( l = 0; l < lSize; l++ )
 		{
 			InspectionName = pPPQObj->GetAttachedInspection( l );
-			pInspectionObj = m_pParent->GetInspectionObjectByName( InspectionName.c_str() );
+			pInspectionObj = m_pParent->GetInspectionObjectByLabel( InspectionName.c_str() );
 			if( nullptr != pInspectionObj && CameraName == pInspectionObj->GetToolsetImage().c_str() )
 			{
 				pInspectionObj->SetToolsetImage( _T("") );

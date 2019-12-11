@@ -162,7 +162,7 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 			{
 				Name = l_Iter->second;
 			}
-			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName( Name.c_str() );
+			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel( Name.c_str() );
 			if( nullptr != pInspectionObj )
 			{
 				SVObjectClass *pObject;
@@ -195,7 +195,7 @@ void CSVOInspectionSourceDlg::OnBtnPropVi()
 			Label = l_Iter->second;
 		}
 
-		SVOInspectionObjPtr pInpectionObj = m_pParent->GetInspectionObjectByName( Label.c_str() );
+		SVOInspectionObjPtr pInpectionObj = m_pParent->GetInspectionObjectByLabel( Label.c_str() );
 		if( nullptr != pInpectionObj )
 		{
 			// Get the PPQ that this inspection is attached to
@@ -279,7 +279,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 				Label = l_Iter->second;
 			}
 			
-			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(Label.c_str());
+			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel(Label.c_str());
 			
 			// Update EnableAuxillaryExtents and NewDisableMethod from Import file
 			long l_NewDisableMethod = 0;
@@ -332,7 +332,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 			Label = l_Iter->second;
 		}
 
-		SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(Label.c_str());
+		SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel(Label.c_str());
 		if( nullptr != pInspectionObj )
 		{
 			SVObjectClass* pObject( nullptr );

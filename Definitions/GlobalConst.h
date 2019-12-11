@@ -95,6 +95,8 @@ constexpr char* FqnCameras = _T("Cameras");
 constexpr char* FqnCameraSerialNumber = _T("Serial Number");
 constexpr char* FqnCameraShutter = _T("Shutter");
 constexpr char* FqnCameraGain = _T("Gain");
+constexpr char* FqnCameraRegPath = _T("Reg Image Pathname");
+constexpr char* FqnCameraRegFile = _T("Reg Image Filename");
 //! PPQ FQN names
 constexpr char* FqnPpqLength = _T("Length");
 constexpr char* FqnPpqTriggerCount = _T("Trigger Count");

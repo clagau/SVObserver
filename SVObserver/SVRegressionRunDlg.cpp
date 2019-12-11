@@ -171,7 +171,7 @@ BOOL CSVRegressionRunDlg::OnInitDialog()
 		}
 		delete[] lwp;
 
-		EnableButtons(m_pIPDocParent->m_listRegCameras.GetCount() > 0);
+		EnableButtons(m_pIPDocParent->m_regCameras.size() > 0);
 
 		UpdateData(FALSE);
 
@@ -370,10 +370,10 @@ void CSVRegressionRunDlg::OnBtnSettings()
 
 	SvIe::SVVirtualCameraPtrVector cameraVector = m_pIPDocParent->GetCameras();
 
-	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_listRegCameras, cameraVector);
+	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_regCameras, cameraVector);
 	if ( IDOK == dlgRegFileSelect.DoModal() )
 	{
-		if ( m_pIPDocParent->m_listRegCameras.GetCount() > 0 )
+		if ( m_pIPDocParent->m_regCameras.size() > 0 )
 		{
 			EnableButtons(TRUE);
 		}
@@ -389,7 +389,7 @@ void CSVRegressionRunDlg::OnBtnSettings()
 	}
 	else
 	{
-		if ( 0 == m_pIPDocParent->m_listRegCameras.GetCount() )
+		if ( 0 == m_pIPDocParent->m_regCameras.size() )
 		{
 			EnableButtons(FALSE);
 		}
@@ -407,10 +407,9 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 {
 	HRESULT hRet = S_OK;
 
-	CList<RegressionRunFileStruct*,RegressionRunFileStruct*> *RegressionFileList =
-	(CList<RegressionRunFileStruct*,RegressionRunFileStruct*>*) wParam;
+	std::vector<RegressionRunFileStruct>* pRegressionFileVec = (std::vector<RegressionRunFileStruct>*) wParam;
 
-	int iCount = static_cast<int>(RegressionFileList->GetCount());
+	int iCount = static_cast<int>(pRegressionFileVec->size());
 
 	size_t MaxStringSize = 0;
 	std::string Text;
@@ -421,31 +420,25 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 		bIsListUsed = true;
 	}
 
-	for( int i = 0; i <= iCount-1; i++ )
+	for( const auto& rRegFile : *pRegressionFileVec )
 	{
-		POSITION pos = RegressionFileList->FindIndex(i);
-		if ( pos )
-		{
-			int iVal;
-			RegressionRunFileStruct *pRegressionFile = RegressionFileList->GetAt(pos);
-			std::string Name = pRegressionFile->CameraName + " : "+ pRegressionFile->FileName;
+		std::string Name = rRegFile.CameraName + " : "+ rRegFile.FileName;
 
-			if ( MaxStringSize == 0 )
+		if ( MaxStringSize == 0 )
+		{
+			MaxStringSize = Name.size();
+			Text = Name;
+		}
+		else
+		{
+			if ( MaxStringSize < Name.size() )
 			{
 				MaxStringSize = Name.size();
 				Text = Name;
 			}
-			else
-			{
-				if ( MaxStringSize < Name.size() )
-				{
-					MaxStringSize = Name.size();
-					Text = Name;
-				}
-			}
-
-			iVal = m_lstCameraImages.AddString( Name.c_str() );
 		}
+
+		m_lstCameraImages.AddString( Name.c_str() );
 	}
 
 	//delete what was previously there...

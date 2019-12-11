@@ -99,6 +99,7 @@ public:
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
 	virtual std::vector<SvPb::TreeItem> GetPPQSelectorList(const UINT attribute) const override;
+	virtual std::vector<SvPb::TreeItem> GetCameraSelectorList(const UINT attribute) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce() override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;

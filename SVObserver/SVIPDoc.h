@@ -130,7 +130,7 @@ public:
 	//Returns an index of the ToolsetList. The new Tool should be insert after this tool
 	int GetToolToInsertBefore(const std::string& rName, int listIndex) const;
 
-	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras; // @WARNING:  bad practice making members public
+	std::vector<RegressionTestStruct> m_regCameras; // @WARNING:  bad practice making members public
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
@@ -344,8 +344,6 @@ private:
 #pragma region Private Methods
 	void init();
 	void InitMenu();
-
-	void ClearRegressionTestStructures();
 
 	bool LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	/// Load the Regression Test variables from configuration.

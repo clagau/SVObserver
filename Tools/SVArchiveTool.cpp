@@ -818,15 +818,13 @@ SVObjectReferenceVector SVArchiveTool::getResultArchiveList()
 {
 	SVObjectReferenceVector Result;
 
-	for (int i = 0; i < m_arrayResultsInfoObjectsToArchive.GetSize(); i++)
+	const auto& rRecVec = m_arrayResultsInfoObjectsToArchive.getRecordVec();
+	for (const auto& rRecord : rRecVec)
 	{
-		// SVObjectInfoStruct InfoItemArchive = 
-		//	arrayResultsInfoObjectsToArchive.GetAt(k);
-		SVObjectReference ObjectRef = m_arrayResultsInfoObjectsToArchive.GetAt( i )->GetObjectReference();
-
-		if (ObjectRef.ObjectAttributesAllowed() & SvPb::archivable)
+		const SVObjectReference& rObjectRef = rRecord.GetObjectReference();
+		if (rObjectRef.ObjectAttributesAllowed() & SvPb::archivable)
 		{
-			Result.push_back(ObjectRef);
+			Result.push_back(rObjectRef);
 		}
 	}
 	return Result;
@@ -845,12 +843,10 @@ void SVArchiveTool::setResultArchiveList(const SVObjectReferenceVector& rObjectR
 	{
 		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
-		SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
-		pArchiveRecord->Init( this );
-		pArchiveRecord->GetObjectReference() = rObjectRef;
-		
-		m_arrayResultsInfoObjectsToArchive.Add( pArchiveRecord );
-		pArchiveRecord->ConnectInputObject();
+		SVArchiveRecord& rArchiveRecord = m_arrayResultsInfoObjectsToArchive.push_back();
+		rArchiveRecord.Init( this );
+		rArchiveRecord.GetObjectReference() = rObjectRef;
+		rArchiveRecord.ConnectInputObject();
 
 		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(true), i );
 	}
@@ -878,12 +874,10 @@ void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRe
 SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 {
 	SVObjectReferenceVector Result;
-
-	for (int i = 0; i < m_arrayImagesInfoObjectsToArchive.GetSize(); i++)
+	const auto& rRecVec = m_arrayImagesInfoObjectsToArchive.getRecordVec();
+	for (const auto& rRecord : rRecVec)
 	{
-		SVArchiveRecord* pRecordImage = m_arrayImagesInfoObjectsToArchive.GetAt(i);
-		assert(pRecordImage);
-		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pRecordImage->GetObjectReference().getObject() );
+		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( rRecord.GetObjectReference().getObject() );
 		if (nullptr != pImage)
 		{
 			if (SvPb::archivableImage == (pImage->ObjectAttributesAllowed() & SvPb::archivableImage))
@@ -1034,33 +1028,38 @@ void SVArchiveTool::goingOffline()
 
 void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const std::string& rOldName )
 {
+	enum class ReplaceType { Search, Full, First};
 	std::string newPrefix;
 	std::string oldPrefix;
 
+	ReplaceType replaceType {ReplaceType::Search};
 	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if(SvPb::SVInspectionObjectType == type)
 	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
-		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() +_T(".");
-		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName +_T(".");
+		newPrefix = rRenamedObject.GetName();
+		oldPrefix = rOldName;
+		replaceType = ReplaceType::First;
 	}
 	else if(SvPb::SVBasicValueObjectType == type)
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVRootObjectType, false);
 		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName();
 		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName;
+		replaceType = ReplaceType::Full;
 	}
 	else if(SvPb::SVValueObjectType == type)
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
 		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName();
 		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName;
+		replaceType = ReplaceType::Full;
 	}
 	else
 	{
 		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
 		newPrefix = dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
 		oldPrefix = dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
+		replaceType = ReplaceType::Search;
 	}
 	
 
@@ -1071,23 +1070,32 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 		std::string Name;
 		m_svoArchiveResultNames.GetValue(Name, i);
 
-		if ('.' == oldPrefix[oldPrefix.size()-1])
-		{	//check if part of the name (ends with '.') is to replace
-			SvUl::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
-		}
-		else
+		switch (replaceType)
 		{
-			std::string indirectTmp = Name;
-			size_t pos = indirectTmp.find('[');
-			if (std::string::npos != pos)
-			{	//if array ("[x]") in the name, remove it for the check
-				indirectTmp = indirectTmp.substr(0, pos);
-			}
-			//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
-			if (oldPrefix == indirectTmp)
+			case ReplaceType::Search:
+				SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
+				break;
+			case ReplaceType::First:
+				if (0 == Name.compare(0, oldPrefix.length(), oldPrefix))
+				{
+					Name.replace(0, oldPrefix.length(), newPrefix);
+				}				
+				break;
+			case ReplaceType::Full:
 			{
-				SvUl::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
+				std::string indirectTmp = Name;
+				size_t pos = indirectTmp.find('[');
+				if (std::string::npos != pos)
+				{	//if array ("[x]") in the name, remove it for the check
+					indirectTmp = indirectTmp.substr(0, pos);
+				}
+				//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
+				if (oldPrefix == indirectTmp)
+				{
+					SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
+				}
 			}
+			break;			
 		}
 		m_svoArchiveResultNames.SetValue( Name, i );
 	}

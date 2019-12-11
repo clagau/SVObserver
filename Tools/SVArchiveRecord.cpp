@@ -23,21 +23,6 @@ namespace SvTo
 {
 
 #pragma region Constructor
-SVArchiveRecord::SVArchiveRecord()
-{
-	m_lCountImages = 0L;
-	m_pArchiveTool = nullptr;
-
-	m_lLastIndex = m_lCountImages;
-	m_lMaxIndex = 0;
-	m_eArchiveMethod = SVArchiveInvalidMethod;
-}
-
-SVArchiveRecord::~SVArchiveRecord()
-{
-	m_FileNames.clear();
-	m_ImageStoreVector.clear();
-}
 #pragma endregion Constructor
 
 #pragma region Public Methods

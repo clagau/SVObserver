@@ -44,6 +44,8 @@ namespace SvOi
 		***********/
 		virtual std::vector<SvPb::TreeItem> GetPPQSelectorList(const UINT attribute) const = 0;
 
+		virtual std::vector<SvPb::TreeItem> GetCameraSelectorList(const UINT attribute) const = 0;
+
 		/***********
 		This method gets the Interface to the Tool Set
 		***********/

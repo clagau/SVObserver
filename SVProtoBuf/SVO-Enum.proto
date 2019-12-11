@@ -314,6 +314,7 @@ enum ObjectSelectorType
 	globalConstantItems = 1;		//Global constant items
 	ppqItems = 2;					//PPQ variable items
 	tableObjects = 3;				//Inspection  table Objects 
+	cameraObject = 4;				//camera variable items
 }
 
 enum SelectorFilter

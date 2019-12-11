@@ -950,39 +950,29 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 	if (ar)
 	{
 		wchar_t buff[64];
-		int i, s;
-		SvTo::SVArchiveRecord* pRecord;
 
 		writer->WriteStartElement(nullptr, L"Results", nullptr);
-		s = ar->m_arrayResultsInfoObjectsToArchive.GetSize();
-		for (i = 0; i < s; i++)
+		const auto& rRecVec = ar->m_arrayResultsInfoObjectsToArchive.getRecordVec();
+		for (int i=0; i< rRecVec.size(); ++i)
 		{
-			pRecord = ar->m_arrayResultsInfoObjectsToArchive.GetAt(i);
-			if (nullptr != pRecord->GetObjectReference().getObject())
+			if (nullptr != rRecVec[i].GetObjectReference().getObject())
 			{
 				writer->WriteStartElement(nullptr, L"Result", nullptr);
 				writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-				writer->WriteAttributeString(nullptr, XML_Name, nullptr, utf16(pRecord->GetObjectReference().GetCompleteName()).c_str());
+				writer->WriteAttributeString(nullptr, XML_Name, nullptr, utf16(rRecVec[i].GetObjectReference().GetCompleteName()).c_str());
 				writer->WriteEndElement();
 			}
 		}
+		
 		writer->WriteEndElement();
 		writer->WriteStartElement(nullptr, L"Images", nullptr);
 
-		s = ar->m_arrayImagesInfoObjectsToArchive.GetSize();
-		for (i = 0; i < s; i++)
+		const auto& rRecImageVec = ar->m_arrayImagesInfoObjectsToArchive.getRecordVec();
+		for (int i = 0; i< rRecImageVec.size(); ++i)
 		{
-			pRecord = ar->m_arrayImagesInfoObjectsToArchive.GetAt(i);
 			writer->WriteStartElement(nullptr, L"Result", nullptr);
 			writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-			if (pRecord)
-			{
-				writer->WriteAttributeString(nullptr, XML_Name, nullptr, utf16(std::string(pRecord->GetImageObjectName())).c_str());
-			}
-			else
-			{
-				writer->WriteAttributeString(nullptr, L"Error", nullptr, invalid);
-			}
+			writer->WriteAttributeString(nullptr, XML_Name, nullptr, utf16(std::string(rRecImageVec[i].GetImageObjectName())).c_str());
 			writer->WriteEndElement();
 		}
 		writer->WriteEndElement();

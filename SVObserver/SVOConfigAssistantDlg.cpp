@@ -627,7 +627,7 @@ std::string CSVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR Inspectio
 
 BOOL CSVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName)
 {
-	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName(InspectLabel) );
+	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByLabel(InspectLabel) );
 	std::string OldName;
 
 	if( nullptr != pInspectionObj )
@@ -684,9 +684,9 @@ SVOInspectionObjPtr CSVOConfigAssistantDlg::GetInspectionObject(int iPos)
 	return m_InspectList.GetInspectionByPosition(iPos);
 }
 
-SVOInspectionObjPtr CSVOConfigAssistantDlg::GetInspectionObjectByName(LPCTSTR Name)
+SVOInspectionObjPtr CSVOConfigAssistantDlg::GetInspectionObjectByLabel(LPCTSTR Name)
 {
-	return m_InspectList.GetInspectionByName(Name);
+	return m_InspectList.GetInspectionByLabel(Name);
 }
 
 SVOCameraObjPtr CSVOConfigAssistantDlg::GetCameraObject(int iPos)
@@ -1344,7 +1344,8 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 					bRet = pPPQ->GetInspection(lI, pInspection);
 					if ( nullptr != pInspection)
 					{
-						const SVOInspectionObjPtr pTmpInspection( GetInspectionObjectByName(pInspection->GetName()) );
+						//Inspection has the old name by now
+						const SVOInspectionObjPtr pTmpInspection( GetInspectionObjectByLabel(pInspection->GetName()) );
 						if ( nullptr != pTmpInspection )
 						{
 							if ( (!IsInspectionOnPPQ(pPPQ->GetName(), pInspection->GetName())) ||
@@ -1950,7 +1951,8 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		SVInspectionProcess* pInspection = pConfig->GetInspection(l1);
 		if ( nullptr != pInspection )
 		{
-			const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName( pInspection->GetName()) );
+			//Inspection has the old name by now
+			const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByLabel( pInspection->GetName()) );
 			BOOL bDeleteInspect = FALSE;
 
 			if ( nullptr != pInspectionObj )
@@ -1981,7 +1983,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	if ( iInsCnt > 0 )
 	{
 		std::string Key;
-		std::string FileName;
+		std::string inspectionName;
 		std::string ToolsetImage;
 		std::string NewDisableMethod;
 		bool EnableAuxiliaryExtent;
@@ -1992,7 +1994,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 			if( nullptr != pInspectionObj )
 			{
 				Key = pInspectionObj->GetInspectionLabelName();
-				FileName = pInspectionObj->GetInspectionName();
+				inspectionName = pInspectionObj->GetInspectionName();
 				ToolsetImage = pInspectionObj->GetToolsetImage();
 				NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
 				EnableAuxiliaryExtent = (1 == pInspectionObj->GetEnableAuxiliaryExtent());
@@ -2006,9 +2008,12 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					{
 						if ( Key == pInspection->GetName() )
 						{
-							pInspection->SetName( FileName.c_str() );
+							pInspection->SetName( inspectionName.c_str() );
 
-							pConfig->RenameOutputListInspectionNames( Key.c_str(), FileName.c_str() );
+							pConfig->RenameOutputListInspectionNames( Key.c_str(), inspectionName.c_str() );
+
+							//rename in configuration
+							pInspection->OnObjectRenamed(*pInspection, Key);
 
 							TheSVObserverApp.OnUpdateAllIOViews();
 							break;
@@ -2028,7 +2033,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					const std::string& importFilename = pInspectionObj->GetImportFilename();
 					if (!importFilename.empty())
 					{
-						SVInspectionImportHelper importer  = SVInspectionImportHelper(std::string(importFilename), std::string(FileName), std::string(ToolsetImage));
+						SVInspectionImportHelper importer  = SVInspectionImportHelper(std::string(importFilename), std::string(inspectionName), std::string(ToolsetImage));
 						std::string title = _T( "Importing Inspection..." );
 						SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
 						progress.DoModal();
@@ -2048,10 +2053,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 								if( bRet )
 								{
 									pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
-									RenameInspectionObjects(Key.c_str(), FileName.c_str());
+									RenameInspectionObjects(Key.c_str(), inspectionName.c_str());
 									bRet = pConfig->AddInspection( pInspection );
 
-									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(FileName);
+									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(inspectionName);
 									if( nullptr != pPPQObj )
 									{
 										pPPQObj->SetImportedInputList(importer.info.m_inputList);
@@ -2081,12 +2086,12 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 						if( bRet )
 						{
-							pInspection->SetName( FileName.c_str() );
-							RenameInspectionObjects(Key.c_str(), FileName.c_str());
+							pInspection->SetName( inspectionName.c_str() );
+							RenameInspectionObjects(Key.c_str(), inspectionName.c_str());
 
 							pInspection->SetToolsetImage(ToolsetImage.c_str());
 
-							bRet = pInspection->CreateInspection(FileName.c_str());
+							bRet = pInspection->CreateInspection(inspectionName.c_str());
 
 							if( bRet )
 							{
@@ -2293,7 +2298,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 						BOOL bFound = FALSE;
 
 						PpqInspectionName = pPPQObj->GetAttachedInspection(i);
-						const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByName(PpqInspectionName.c_str());
+						const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByLabel(PpqInspectionName.c_str());
 						pPPQ->GetInspectionCount(lInsCnt);
 
 						if( nullptr != pInspectionObj )
@@ -2304,7 +2309,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 								
 								if ( ( nullptr != pInspection ) && (!pInspectionObj->IsNewInspection()) )
 								{
-									if ( PpqInspectionName == pInspection->GetName() )
+									if (pInspectionObj->GetInspectionName() == pInspection->GetName() )
 									{
 										bFound = TRUE;
 										break;
@@ -2468,45 +2473,6 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 	// a temp solution
 	// the better solution is to have the acqs subscribe and the triggers provide
 	HRESULT hrAttach = pConfig->AttachAcqToTriggers();
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// go through each inspection, if HasInspectionNameChanged
-	// send messages to all objects...
-	long lInsCfgCnt = pConfig->GetInspectionCount();
-
-	for (long lI = lInsCfgCnt -1; -1 < lI; lI--)
-	{
-		SVInspectionProcess* pInspection = pConfig->GetInspection(lI);
-		SVOInspectionObjPtr pTmpObj;
-		//If pInspection is nullptr then pTmpObj will also be nullptr
-		if( nullptr != pInspection ){ pTmpObj = GetInspectionObjectByName(pInspection->GetName()); }
-
-		if( nullptr != pTmpObj )
-		{
-			if (pTmpObj->HasInspectionNameChange())
-			{
-				pInspection->OnObjectRenamed(*pInspection, std::string(pTmpObj->GetOrginalInspectionName()));
-				SVPPQObject* pPPQ( nullptr );
-				SVOutputObjectList* pOutputObjList = pConfig->GetOutputObjectList();
-
-				if (nullptr != pOutputObjList)
-				{
-					pOutputObjList->OnObjectRenamed(*pInspection, std::string(pTmpObj->GetOrginalInspectionName()));
-				}
-
-				long lCount = pConfig->GetPPQCount();
-				for (long lPPQcount = 0; lPPQcount < lCount; lPPQcount++)
-				{
-					pPPQ = pConfig->GetPPQ(lPPQcount);
-					if (nullptr != pPPQ)
-					{
-						pPPQ->OnObjectRenamed(*pInspection, std::string(pTmpObj->GetOrginalInspectionName()));
-					} //if (pPPQ)
-				} //for ppqcount
-			} // if name has changed
-		}//if pTmpObj
-	}//for each inspection
 
 	if ( m_bNewConfiguration )
 	{
@@ -3015,7 +2981,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 			{
 				case ITEM_ACTION_NEW:
 				{
-					pInspectionObj = GetInspectionObjectByName(LabelName);
+					pInspectionObj = GetInspectionObjectByLabel(LabelName);
 					if( nullptr != pInspectionObj )
 					{
 						pInspectionObj->SetNewInspection();
@@ -3052,7 +3018,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 
 				case ITEM_ACTION_PROP:
 				{
-					pInspectionObj = GetInspectionObjectByName(LabelName);
+					pInspectionObj = GetInspectionObjectByLabel(LabelName);
 					if( nullptr != pInspectionObj )
 					{
 						if( !pInspectionObj->GetToolsetImage().empty() )
@@ -3167,7 +3133,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 				case ITEM_PPQ_DEL_INS:
 				{
 					std::string sInsLabelName = GetInspectionLabelFromName(LabelName);
-					pInspectionObj = GetInspectionObjectByName(sInsLabelName.c_str());
+					pInspectionObj = GetInspectionObjectByLabel(sInsLabelName.c_str());
 					if( nullptr != pInspectionObj )
 					{
 						pInspectionObj->SetToolsetImage(_T(""));

@@ -1213,6 +1213,8 @@ extern const GUID EnvironmentStartLastConfigUidGuid;
 extern const GUID CameraBaseSerialNumberUidGuid;
 extern const GUID CameraBaseGainUidGuid;
 extern const GUID CameraBaseShutterUidGuid;
+extern const GUID CameraBaseRegPathUidGuid;
+extern const GUID CameraBaseRegFileUidGuid;
 // Unique base ID GUID for PPQ variables always have 0x100 GUIDS free after the base GUID
 extern const GUID PpqBaseLengthUidGuid;
 extern const GUID PpqBaseTriggerCountUidGuid;

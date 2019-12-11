@@ -118,14 +118,13 @@ public:
 	SvTi::SVOTriggerObjPtr GetTriggerObject(int iPos);
 	SvTi::SVOTriggerObjPtr GetTriggerObjectByName(LPCTSTR TriggerName);
 	SVOInspectionObjPtr GetInspectionObject(int iPos);
-	SVOInspectionObjPtr GetInspectionObjectByName(LPCTSTR Name);
+	SVOInspectionObjPtr GetInspectionObjectByLabel(LPCTSTR Name);
 	SVOPPQObjPtr GetPPQObject(int iPos);
 	SVOPPQObjPtr GetPPQObjectByName(LPCTSTR PPQName);
 
 	std::string GetNextCameraName();
 	int GetNextCameraNumber() const;
 	std::string GetNextInspectionName() const;
-	std::string GetNextInspectionDisplayName() const;
 	std::string GetNextTriggerName(LPCTSTR BaseName) const;
 	int GetNextTriggerID() const;
 	std::string GetNextPPQName() const;

@@ -95,24 +95,9 @@ void SVOInspectionObj::SetEnableAuxiliaryExtent( long  lEnable)
     m_lEnableAuxiliaryExtent = lEnable;
 } 
 
-bool SVOInspectionObj::HasInspectionNameChange() const
-{
-    return m_NameChanged;
-}
-
-const std::string& SVOInspectionObj::GetOrginalInspectionName() const
-{
-    return m_OrginalName;
-}
-
 void SVOInspectionObj::RenameInspection(LPCTSTR NewName)
 {
-    if (!m_NameChanged)
-    {
-        //only change once...
-        m_NameChanged = true;
-        m_OrginalName = m_InspectionName;
-    }
+    m_NameChanged = true;
     m_InspectionName = NewName;
 }
 

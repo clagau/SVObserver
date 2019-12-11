@@ -155,6 +155,7 @@ HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjec
 			if(nullptr != pBasicValueObject)
 			{
 				rpObject = dynamic_cast<SVObjectClass*> (pBasicValueObject.get());
+				l_Status = (nullptr != rpObject) ? S_OK : S_FALSE;
 			}
 		}
 	}
@@ -587,6 +588,16 @@ void SVVirtualCamera::createCameraParameters()
 	ParameterUID = CameraBaseShutterUidGuid;
 	ParameterUID.ToGUID().Data1 += m_CameraID;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
+
+	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraRegPath, _T(""), this, SvPb::SVCameraObjectType);
+	ParameterUID = CameraBaseRegPathUidGuid;
+	ParameterUID.ToGUID().Data1 += m_CameraID;
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ParameterUID);
+
+	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraRegFile, _T(""), this, SvPb::SVCameraObjectType);
+	ParameterUID = CameraBaseRegFileUidGuid;
+	ParameterUID.ToGUID().Data1 += m_CameraID;
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ParameterUID);
 }
 
 HRESULT SVVirtualCamera::updateCameraParameters()
@@ -700,6 +711,21 @@ SVMatroxBuffer SVVirtualCamera::getTempImage()
 { 
 	std::lock_guard<std::mutex> guard(m_tmpImage_mutex);
 	return m_tmpImage; 
+}
+
+void SVVirtualCamera::setRegFileName(const std::string& rFullFileName)
+{
+	size_t pos = rFullFileName.find_last_of("\\");
+	if (std::string::npos != pos)
+	{
+		m_CameraValues.setValueObject(SvDef::FqnCameraRegPath, rFullFileName.substr(0, pos));
+		m_CameraValues.setValueObject(SvDef::FqnCameraRegFile, rFullFileName.substr(pos+1));
+	}
+	else
+	{
+		m_CameraValues.setValueObject(SvDef::FqnCameraRegPath, _T(""));
+		m_CameraValues.setValueObject(SvDef::FqnCameraRegFile, rFullFileName);
+	}
 }
 
 } //namespace SvIe

@@ -769,21 +769,18 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			SvTo::SVArchiveTool* pArchiveTool = dynamic_cast <SvTo::SVArchiveTool*> (pObject);
 			if( nullptr != pArchiveTool )
 			{
-				int i, Size;
-				SvTo::SVArchiveRecord* pRecord;
-				
+			
 				ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Results"));
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				Size = pArchiveTool->m_arrayResultsInfoObjectsToArchive.GetSize();
-				for (i = 0; i < Size; i++)
+				const auto& rRecVec = pArchiveTool->m_arrayResultsInfoObjectsToArchive.getRecordVec();
+				for (int i = 0; i < rRecVec.size(); ++i)
 				{
-					pRecord = pArchiveTool->m_arrayResultsInfoObjectsToArchive.GetAt(i);
-					if (nullptr != pRecord->GetObjectReference().getObject())
+					if (nullptr != rRecVec[i].GetObjectReference().getObject())
 					{
 						ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 						sLabel = SvUl::Format(_T("Result %d:"), i + 1);
-						sValue = pRecord->GetObjectReference().GetCompleteName();
+						sValue = rRecVec[i].GetObjectReference().GetCompleteName();
 						PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
 					}
 				}
@@ -793,13 +790,12 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Images"));
 				
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				Size = pArchiveTool->m_arrayImagesInfoObjectsToArchive.GetSize();
-				for (i = 0; i < Size; i++)
+				const auto& rRecImageVec = pArchiveTool->m_arrayImagesInfoObjectsToArchive.getRecordVec();
+				for (int i = 0; i < rRecImageVec.size(); ++i)
 				{
-					pRecord = pArchiveTool->m_arrayImagesInfoObjectsToArchive.GetAt(i);
 					ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 					sLabel = SvUl::Format( _T("Image %d:"), i + 1);
-					PrintValueObject( pDC, ptCurPos, sLabel.c_str(), pRecord->GetImageObjectName().c_str() );
+					PrintValueObject( pDC, ptCurPos, sLabel.c_str(), rRecImageVec[i].GetImageObjectName().c_str() );
 				}
 				
 				nIndentLevel -= 2;

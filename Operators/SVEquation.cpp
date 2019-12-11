@@ -727,9 +727,8 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	SvPb::SVObjectTypeEnum type = rRenamedObject.GetObjectType();
 	if (SvPb::SVInspectionObjectType == type)
 	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, false);
-		newPrefix = _T(".") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T(".");
-		oldPrefix = _T(".") + dottedNameWithoutObjectname + _T(".") + rOldName + _T(".");
+		//InspectionName is not part in Equation, so nothing to do.
+		return;
 	}
 	else if (SvPb::SVBasicValueObjectType == type)
 	{

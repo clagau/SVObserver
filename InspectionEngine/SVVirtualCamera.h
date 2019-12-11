@@ -131,6 +131,8 @@ public:
 	void setTempImage(const SVMatroxBuffer pImage);
 	SVMatroxBuffer getTempImage();
 
+	void setRegFileName(const std::string& rFullFileName);
+
 	void FinishProcess( SVODataResponseClass *pResponse );
 #pragma endregion Public Methods
 

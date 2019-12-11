@@ -39,8 +39,6 @@ public:
 	long GetEnableAuxiliaryExtent() const;
 	void SetEnableAuxiliaryExtent(long lEnable);
 
-	bool HasInspectionNameChange() const;
-    const std::string& GetOrginalInspectionName() const;
     void RenameInspection(LPCTSTR NewName);
     
 	bool IsNewInspection() const;
@@ -57,7 +55,6 @@ private:
 	std::string m_ToolsetImage;
     std::string m_LabelName;
     std::string m_InspectionName;
-    std::string m_OrginalName;
 	std::string m_NewDisableMethod;
 	std::string m_ImportFilename;
 	long m_lEnableAuxiliaryExtent;

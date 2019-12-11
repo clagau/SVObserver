@@ -38,7 +38,7 @@ public:
 
 	std::string GetInspectionName( LPCTSTR InspectLabel );
 	std::string GetInspectionLabel( LPCTSTR InspectName );
-	SVOInspectionObjPtr GetInspectionByName( LPCTSTR InspectLabel );
+	SVOInspectionObjPtr GetInspectionByLabel( LPCTSTR InspectLabel );
 	SVOInspectionObjPtr GetInspectionByPosition(int iPos);
 	BOOL IsInspectionInList( LPCTSTR InspectLabel) const;
 	BOOL IsInspectionNameInList( LPCTSTR InspectName) const;
@@ -49,8 +49,5 @@ public:
 
 private:
 	SVInspectionList m_InspectionList;
-
-	iterator FindInspectionPosition( LPCTSTR InspectLabel );
-	iterator FindInspectionPositionFromName( LPCTSTR InspectName );
 };
 

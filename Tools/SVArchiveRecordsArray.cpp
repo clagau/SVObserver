@@ -32,60 +32,20 @@ SVArchiveRecordsArray::~SVArchiveRecordsArray()
 #pragma region Public Methods
 void SVArchiveRecordsArray::ResetImageCounts()
 {
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	for (int i = 0; i < nCount; i++)
+	for (auto& rRecord : m_vecRecords)
 	{
-		SVArchiveRecord* pRecord = m_vecRecords.at(i);
-		if (pRecord)
-		{
-			pRecord->m_lCountImages = 0L;
-		}
+		rRecord.m_lCountImages = 0L;
 	}
 }
 
 void SVArchiveRecordsArray::ClearArray()
 {
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	for (int i = 0; i < nCount; i++)
+	for (auto& rRecord : m_vecRecords)
 	{
-		SVArchiveRecord* pRecord = m_vecRecords.at(i);
-		if (pRecord)
-		{
-			//
-			// Make sure object is 'disconnected' as registered input.
-			//
-			pRecord->DisconnectInputObject();
-			delete pRecord;
-		}
+		rRecord.DisconnectInputObject();
 	}
 	m_vecRecords.clear();
 }
-
-
-std::string SVArchiveRecordsArray::AdaptDottedNameToInspectionName(std::string DottedName, std::string NewName)
-{
-	size_t Pos = DottedName.find('.');
-
-	std::string OldInspectionNameOrElse = SvUl::Left(DottedName, Pos);
-
-	if (OldInspectionNameOrElse == "Global" || OldInspectionNameOrElse == "Environment")
-	{	//this (hopefully) is not an inspection name:
-		//we return the DottedName unchanged since it contains no inspection name to be replaced
-		return DottedName;
-	}
-
-	if (std::string::npos != Pos)	// This assumes that the first part of the dotted name is the inspection.
-	{	// Build the object name with the current inspection name.
-		NewName += SvUl::Mid(DottedName, Pos);
-	}
-	else
-	{	// We should always find a dotted name here.
-		assert(false);
-	}
-
-	return NewName;
-}
-
 
 HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SvVol::SVStringValueObjectClass& rObject )	// use array capability of string vo
 {
@@ -102,12 +62,8 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 		rObject.GetValue(Name, i);
 		if (!Name.empty())
 		{
-			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectReference ObjectRef;
-
-			std::string NewName = AdaptDottedNameToInspectionName(Name, pToolArchive->GetInspection()->GetName());
-
-			HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName(NewName.c_str(), ObjectRef);
+			SVObjectManagerClass::Instance().GetObjectByDottedName(Name.c_str(), ObjectRef);
 			size_t Pos = Name.find('[');
 			if (std::string::npos != Pos)
 			{	//Array brackets found
@@ -121,50 +77,41 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 			{
 				if (ObjectRef.isArray())
 				{
-					NewName += _T("[1]");
+					Name += _T("[1]");
 					ObjectRef.SetArrayIndex(0);
 				}
 			}
 
-			if (S_OK == hrGetObject)
-			{
-				if (NewName != Name)
-				{
-					// Set value with new inspection name.
-					rObject.SetValue(NewName, i);
-				}
-			}
-
+			m_vecRecords.emplace_back();
 			if (nullptr == ObjectRef.getObject())
 			{
-	#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
+#if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
 				TRACE(_T("SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n"), m_pArchiveTool->GetCompleteName(), Name);
-	#endif
+#endif
 			}
 			else
 			{
-				pArchiveRecord->InitArchiveRecord(pToolArchive, ObjectRef);
+				m_vecRecords.at(m_vecRecords.size() - 1).InitArchiveRecord(pToolArchive, ObjectRef);
 			}
-			m_vecRecords.push_back(pArchiveRecord);
 		}
 	}
 	return hr;
 }
 
-void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, LPCTSTR Value )
+void SVArchiveRecordsArray::ConvertStringToGuids(SVArchiveTool * pToolArchive, LPCTSTR Value)
 {
 	ClearArray();
-	
+
 	std::string Text = Value;
-	
+
 	bool bDone = false;
 	while (!bDone)
 	{
 		std::string GuidText;
-		size_t Pos = Text.find( _T('\n') );
-		if( std::string::npos != Pos )
+		size_t Pos = Text.find(_T('\n'));
+		if (std::string::npos != Pos)
 		{
-			GuidText = SvUl::Left( Text, Pos );
+			GuidText = SvUl::Left(Text, Pos);
 		}
 		else
 		{
@@ -174,50 +121,41 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, 
 		//
 		// Adjust for next iteration.
 		//
-		Text = SvUl::Right( Text, Text.size() - Pos -1 );
-		
+		Text = SvUl::Right(Text, Text.size() - Pos - 1);
+
 		//
 		// Convert string guid to guid structure
 		//
-		SVGUID objectGuid( _bstr_t(GuidText.c_str()) );
-	
+		SVGUID objectGuid(_bstr_t(GuidText.c_str()));
+
 		//
 		// The image record has a dotted name that needs to be 
 		// associated with a pointer to an image later.
 		//
-		if ( GUID_NULL != objectGuid && !GuidText.empty())
+		if (GUID_NULL != objectGuid && !GuidText.empty())
 		{
-			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( objectGuid );
-			pArchiveRecord->InitArchiveRecord( pToolArchive, SVObjectReference( pObject ) );
-			m_vecRecords.push_back(pArchiveRecord);
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectGuid);
+			m_vecRecords.emplace_back();
+			m_vecRecords.at(m_vecRecords.size() - 1).InitArchiveRecord(pToolArchive, SVObjectReference(pObject));
+
 		}
 	}
 }
 
-SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObjectInfoStruct& p_rInfoObject )
+SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject)
 {
 	SvDef::StringVector Result;
-
-	// Effective STL Item 9 p46: forward iteration / erase
-	RecordsType::iterator iter;
-	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end();  )
+	auto func = [&Result, &p_rInfoObject](const auto& entry)
 	{
-		SVArchiveRecord* pImageRecord = *iter;
-		if ( pImageRecord )
+		if (p_rInfoObject.getUniqueObjectID() == entry.m_svObjectReference.Guid())
 		{
-			if( p_rInfoObject.getUniqueObjectID() == pImageRecord->m_svObjectReference.Guid() )
-			{
-				Result.push_back( pImageRecord->m_svObjectReference.GetCompleteName() );
-				delete pImageRecord;
-				iter = m_vecRecords.erase(iter);
-			}
-			else
-			{
-				++iter;
-			}
+			Result.emplace_back(entry.m_svObjectReference.GetCompleteName());
+			return true;
 		}
-	}
+		return false;
+	};
+
+	m_vecRecords.erase(std::remove_if(m_vecRecords.begin(), m_vecRecords.end(), func), m_vecRecords.end());
 
 	return Result;
 }
@@ -227,45 +165,35 @@ SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObj
 //
 void SVArchiveRecordsArray::ValidateImageObjects()
 {
-	//
-	// Validate the image objects to be archived.
-	//
-	// Effective STL Item 9 p46: forward iteration / erase
-	RecordsType::iterator iter;
-	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end(); )
+	auto func = [](auto& entry)
 	{
-		SVArchiveRecord* pImageRecord = *iter;
-		assert(pImageRecord);
-		pImageRecord->DisconnectInputObject();
-		
-		SvIe::SVImageClass* pImageObject = pImageRecord->GetImage();
+		entry.DisconnectInputObject();
+
+		SvIe::SVImageClass* pImageObject = entry.GetImage();
 		if (pImageObject)
 		{
-			pImageRecord->m_svObjectReference = pImageObject;
-			pImageRecord->BuildFileName();
-			pImageRecord->ConnectInputObject();
+			entry.m_svObjectReference = pImageObject;
+			entry.BuildFileName();
+			entry.ConnectInputObject();
 
-			++iter;
+			return false;
 		}
 		else
 		{
-			//
-			// Remove this image record from our list.
-			//
-			delete pImageRecord;
-			iter = m_vecRecords.erase(iter);
+			return true; //delete object
 		}
-	}
+	};
+
+	m_vecRecords.erase(std::remove_if(m_vecRecords.begin(), m_vecRecords.end(), func), m_vecRecords.end());
 }
 
 
 void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pTool )
 {
 	m_pArchiveTool = pTool;
-	RecordsType::iterator iter;
-	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end(); ++iter )
+	for ( auto& rRecord: m_vecRecords )
 	{
-		(*iter)->Init(m_pArchiveTool);
+		rRecord.Init(m_pArchiveTool);
 	}
 }
 
@@ -274,13 +202,14 @@ bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvTrc::ITriggerRecordRP
 	assert( nullptr != m_pArchiveTool );
 	bool bOk = true;
 
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	
-	for ( int i = 0; bOk && i < nCount; i++ )
+	for (auto& rRecord : m_vecRecords)
 	{
-		SVArchiveRecord* pImageRecord = m_vecRecords.at(i);
-		bOk = bOk && (S_OK == pImageRecord->WriteImage(pTriggerRecord.get()));
-	}// end for ( int i = 0; bOk && i < nCount; i++ )
+		bOk = S_OK == rRecord.WriteImage(pTriggerRecord.get());
+		if (!bOk)
+		{
+			break;
+		}
+	}
 	
 	return bOk;
 }
@@ -295,42 +224,35 @@ bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvTrc::ITriggerRecordRP
 //
 int SVArchiveRecordsArray::ValidateResultsObjects()
 {
-	RecordsType::iterator iter;
-	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end(); )
+	auto func = [](auto& entry)
 	{
-		SVArchiveRecord* pResultRecord = *iter;
-		pResultRecord->DisconnectInputObject();
-		
-		GUID guid = pResultRecord->m_svObjectReference.Guid();
-
+		entry.DisconnectInputObject();
+		GUID guid = entry.m_svObjectReference.Guid();
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
 
 		bool bRecordOK = false;
-		if( nullptr != pObject )
+		if (nullptr != pObject)
 		{
-			if ( pObject != pResultRecord->m_svObjectReference.getObject() )
+			if (pObject != entry.m_svObjectReference.getObject())
 			{
-				long lArrayIndex = pResultRecord->m_svObjectReference.ArrayIndex();
-				pResultRecord->m_svObjectReference = SVObjectReference( pObject );
-				pResultRecord->m_svObjectReference.SetArrayIndex( lArrayIndex );
+				long lArrayIndex = entry.m_svObjectReference.ArrayIndex();
+				entry.m_svObjectReference = SVObjectReference(pObject);
+				entry.m_svObjectReference.SetArrayIndex(lArrayIndex);
 			}
 
 			double Value;
-			if( pObject->getValue(Value, 0) != SVMSG_SVO_33_OBJECT_INDEX_INVALID )
+			if (pObject->getValue(Value, 0) != SVMSG_SVO_33_OBJECT_INDEX_INVALID)
 			{
 				bRecordOK = true;
-				pResultRecord->ConnectInputObject();
-				++iter;
+				entry.ConnectInputObject();
 			}
 		}
 
-		if ( !bRecordOK )
-		{
-			pResultRecord->m_svObjectReference = nullptr;
-			iter = m_vecRecords.erase(iter);
-		}
-	}
-	
+		return !bRecordOK;
+	};
+
+	m_vecRecords.erase(std::remove_if(m_vecRecords.begin(), m_vecRecords.end(), func), m_vecRecords.end());
+
 	//
 	// return the count of objects to archive.
 	//
@@ -339,12 +261,9 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 
 void SVArchiveRecordsArray::BuildArchiveImageFilePaths()
 {
-	for (auto pRecord : m_vecRecords)
+	for (auto& rRecord : m_vecRecords)
 	{
-		if (nullptr != pRecord)
-		{
-			pRecord->BuildArchiveImageFilePaths();
-		}
+		rRecord.BuildArchiveImageFilePaths();
 	}
 }
 
@@ -353,21 +272,18 @@ std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 	std::string Result;
 	
 	bool bFirst = true;	
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	for (int i = 0; i < nCount; i++)
+	for (const auto& rRecord: m_vecRecords)
 	{
-		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
-		assert(pResultRecord);
 		//
 		// We assume all archivable objects are Value Objects.
 		//
-		SvOi::IValueObject* pValueObject = pResultRecord->m_svObjectReference.getValueObject();
+		SvOi::IValueObject* pValueObject = rRecord.m_svObjectReference.getValueObject();
 		assert( nullptr != pValueObject );
 
 		if ( nullptr != pValueObject )
 		{
 			std::string Temp;
-			HRESULT hr = pValueObject->getValue( Temp, pResultRecord->m_svObjectReference.ArrayIndex());
+			HRESULT hr = pValueObject->getValue( Temp, rRecord.m_svObjectReference.ArrayIndex());
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )
@@ -393,26 +309,19 @@ std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 
 void SVArchiveRecordsArray::DisconnectAllResultObjects()
 {
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	for (int i = 0; i < nCount; i++)
+	for (auto& rRecord : m_vecRecords)
 	{
-		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
-		if ( pResultRecord )
-		{
-			pResultRecord->DisconnectInputObject();
-		}
+		rRecord.DisconnectInputObject();
 	}
 }
 
 HRESULT SVArchiveRecordsArray::AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos)
 {
 	HRESULT hr = S_OK;
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	for (int i = 0; i < nCount; i++)
+	for (auto& rRecord : m_vecRecords)
 	{
-		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
-		HRESULT hrRecord = pResultRecord->AllocateBuffers(bufferNumber, rBufferMap, toolPos);
-		if ( S_OK == hr )
+		HRESULT hrRecord = rRecord.AllocateBuffers(bufferNumber, rBufferMap, toolPos);
+		if (S_OK == hr)
 		{
 			hr = hrRecord;
 		}
@@ -423,12 +332,10 @@ HRESULT SVArchiveRecordsArray::AllocateBuffers(long bufferNumber, BufferStructCo
 HRESULT SVArchiveRecordsArray::WriteImageQueue()
 {
 	HRESULT hr = S_OK;
-	int nCount = static_cast< int >( m_vecRecords.size() );
-	for (int i = 0; i < nCount; i++)
+	for (auto& rRecord : m_vecRecords)
 	{
-		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
-		HRESULT hrRecord = pResultRecord->WriteImageQueue();
-		if ( S_OK == hr )
+		HRESULT hrRecord = rRecord.WriteImageQueue();
+		if (S_OK == hr)
 		{
 			hr = hrRecord;
 		}
@@ -436,20 +343,20 @@ HRESULT SVArchiveRecordsArray::WriteImageQueue()
 	return hr;
 }
 
+const std::vector <SVArchiveRecord>& SVArchiveRecordsArray::getRecordVec() const
+{
+	return m_vecRecords;
+}
+
 int SVArchiveRecordsArray::GetSize()
 {
 	return static_cast< int >( m_vecRecords.size() );
 }
 
-SVArchiveRecord* SVArchiveRecordsArray::GetAt(int i)
+SVArchiveRecord& SVArchiveRecordsArray::push_back()
 {
-	return m_vecRecords.at(i);
-}
-
-int SVArchiveRecordsArray::Add( SVArchiveRecord* pRecord )
-{
-	m_vecRecords.push_back( pRecord );
-	return static_cast< int >( m_vecRecords.size() - 1 );
+	m_vecRecords.emplace_back();
+	return m_vecRecords.at( m_vecRecords.size() - 1 );
 }
 #pragma endregion Public Methods
 

@@ -34,8 +34,8 @@ class SVArchiveRecord
 {
 public:
 #pragma region Constructor
-	SVArchiveRecord();
-	virtual ~SVArchiveRecord();
+//default 
+	SVArchiveRecord() = default;
 #pragma endregion Constructor
 	
 #pragma region Public Methods
@@ -61,8 +61,9 @@ public:
 
 	SvIe::SVImageClass* GetImage();
 
-	const std::string&         GetImageObjectName() { return m_ImageObjectName; }
+	const std::string&         GetImageObjectName() const { return m_ImageObjectName; }
 	SVObjectReference&      GetObjectReference() { return m_svObjectReference; }
+	const SVObjectReference&      GetObjectReference() const { return m_svObjectReference; }
 #pragma endregion Public Methods
 
 private:
@@ -70,18 +71,18 @@ private:
 	SVObjectReference   m_svObjectReference;
 	std::string            m_ImageObjectName;           // images only
 	std::string            m_FileNameImage;             // images only
-	long                m_lCountImages;                // images only
+	long                m_lCountImages {0L};                // images only
 	std::vector<std::string> m_FileNames;
 	std::vector<SvTrc::IImagePtr>	m_ImageStoreVector;
 	SVImageInfoClass    m_ImageInfo;                   // images only
-	long                m_lLastIndex;
-	long                m_lMaxIndex;
+	long                m_lLastIndex {0L};
+	long                m_lMaxIndex {0L};
 	std::string			m_ImagePathRoot;
 
 
 	//Attributes
-	SVArchiveMethodEnum m_eArchiveMethod;
-	SVArchiveTool*      m_pArchiveTool;
+	SVArchiveMethodEnum m_eArchiveMethod {SVArchiveInvalidMethod};
+	SVArchiveTool*      m_pArchiveTool {nullptr};
 	int m_toolPos = -1;
 
 	friend class SVArchiveRecordsArray;

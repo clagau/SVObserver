@@ -47,11 +47,43 @@
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "InspectionEngine/SVImageClass.h"
+#include <iterator>
 #pragma endregion Includes
 
 //#define TRACE_TRC
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
+
+void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, const SVObjectReferenceVector& rObjectVector)
+{
+	for (auto ObjectRef : rObjectVector)
+	{
+		SvPb::TreeItem insertItem;
+		insertItem.set_name(ObjectRef.GetName());
+		if (nullptr != ObjectRef.getValueObject())
+		{
+			insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
+		}
+		if (ObjectRef.isArray())
+		{
+			// add array elements
+			int iArraySize = ObjectRef.getValueObject()->getArraySize();
+			for (int i = 0; i < iArraySize; i++)
+			{
+				ObjectRef.SetArrayIndex(i);
+				insertItem.set_location(ObjectRef.GetCompleteName(true));
+				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+				result = insertItem;
+			}
+		}
+		else
+		{
+			insertItem.set_location(ObjectRef.GetCompleteName(true));
+			insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+			result = insertItem;
+		}
+	}
+}
 
 bool isProductAlive(SVPPQObject* pPPQ, long triggerCount)
 {
@@ -3219,33 +3251,7 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT a
 
 		result.reserve(objectVector.size());
 
-		for(auto ObjectRef : objectVector)
-		{
-			SvPb::TreeItem insertItem;
-			insertItem.set_name(ObjectRef.GetName());
-			if (nullptr != ObjectRef.getValueObject())
-			{
-				insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
-			}
-			if (ObjectRef.isArray())
-			{
-				// add array elements
-				int iArraySize = ObjectRef.getValueObject()->getArraySize();
-				for (int i = 0; i < iArraySize; i++)
-				{
-					ObjectRef.SetArrayIndex(i);
-					insertItem.set_location(ObjectRef.GetCompleteName(true));
-					insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-					result.emplace_back(insertItem);
-				}
-			}
-			else
-			{
-				insertItem.set_location(ObjectRef.GetCompleteName(true));
-				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-				result.emplace_back(insertItem);
-			}
-		}
+		fillSelectorList(std::back_inserter(result), objectVector);
 	}
 
 
@@ -3277,6 +3283,29 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT a
 			}
 		}
 	}
+
+	return result;
+}
+
+std::vector<SvPb::TreeItem> SVInspectionProcess::GetCameraSelectorList(const UINT attribute) const
+{
+	std::vector<SvPb::TreeItem> result;
+
+	const auto& rCameras = GetCameras();
+
+	for (const auto* pCamera : rCameras)
+	{
+		if (nullptr != pCamera)
+		{
+			std::string cameraName(pCamera->GetName());
+
+			SVObjectReferenceVector objectVector;
+			SVObjectManagerClass::Instance().getTreeList(cameraName, objectVector, attribute);
+
+			fillSelectorList(std::back_inserter(result), objectVector);
+		}
+	}
+
 
 	return result;
 }
