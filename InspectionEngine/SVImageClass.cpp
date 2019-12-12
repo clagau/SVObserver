@@ -1158,21 +1158,21 @@ SvTrc::IImagePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
 	}
 	if (nullptr == lastTriggerRecord && newIfNotAvailable)
 	{
-		return GetTempImageBuffer();
+		return getTempImageBuffer();
 
 	}
 	assert(nullptr != lastTriggerRecord);
 	return getImageReadOnly(lastTriggerRecord.get());
 }
 
-SvTrc::IImagePtr SVImageClass::GetTempImageBuffer() const
+SvTrc::IImagePtr SVImageClass::getTempImageBuffer(bool createBufferExternIfNecessary) const
 {
 	SvTrc::IImagePtr pImage = nullptr;
 	SVMatroxBufferCreateStruct bufferStruct;
 	HRESULT Result = SVImageProcessingClass::FillBufferStructFromInfo(m_ImageInfo, bufferStruct);
 	if (S_OK == Result)
 	{
-		pImage = SvTrc::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct, true);
+		pImage = SvTrc::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct, createBufferExternIfNecessary);
 	}
 	return pImage;
 }

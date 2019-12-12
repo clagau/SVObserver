@@ -236,7 +236,21 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage && static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos)
 		{
-			m_ringBuffer[m_nextBufferPos] = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get(), true);
+			SvTrc::IImagePtr pImageBuffer = nullptr;
+			if (!pInputImage->isChildImageInTRC())
+			{
+				pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get(), true);
+			}
+			else
+			{
+				auto pInputImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				pImageBuffer = m_OutputImages->getTempImageBuffer(false);
+				if (nullptr != pImageBuffer && !pImageBuffer->isEmpty() && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
+				{
+					SVMatroxBufferInterface::CopyBuffer(pImageBuffer->getHandle()->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer());
+				}
+			}
+			m_ringBuffer[m_nextBufferPos] = pImageBuffer;
 		}
 
 		//calculate next image pos

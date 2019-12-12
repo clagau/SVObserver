@@ -2046,7 +2046,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 				SvIe::SVGuidSVCameraInfoStructMap::iterator l_svIter = rCameraInfos.find(l_psvMainImage->GetCamera()->GetUniqueObjectID());
 				if (l_svIter != rCameraInfos.end())
 				{
-					pImageBuffer = l_psvMainImage->GetTempImageBuffer();
+					pImageBuffer = l_psvMainImage->getTempImageBuffer();
 					l_svIter->second.setImage(pImageBuffer);
 				}
 				pVirtualCamera = l_psvMainImage->GetCamera();

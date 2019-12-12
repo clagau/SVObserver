@@ -101,7 +101,7 @@ public:
 
 	/// Get a new image buffer which is not connected to this object. The buffer is blocked as long as the caller hold the handle.
 	/// \returns SvTrc::IImagePtr
-	SvTrc::IImagePtr GetTempImageBuffer() const;
+	SvTrc::IImagePtr getTempImageBuffer(bool createBufferExternIfNecessary = true) const;
 
 	/// Return an pointer to a image instance (only in read only modus).
 	/// \param pTriggerRecord [in] Pointer to the TriggerRecord from where the image is set.
@@ -113,6 +113,8 @@ public:
 	void GetOutputList(SVOutputInfoListClass& p_rOutputInfoList);
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
+
+	bool isChildImageInTRC() const { return m_isChildImageInTRC; };
 
 #pragma region virtual method (ISVImage)
 	virtual SvDef::SVImageTypeEnum GetImageType() const override;
