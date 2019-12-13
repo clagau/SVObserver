@@ -112,7 +112,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVThreadManagerDLL.cpp" />
     <ClCompile Include="SVThreadManagerExports.cpp" />
     <ClCompile Include="SVThreadManagerImpl.cpp" />
   </ItemGroup>
@@ -121,10 +120,8 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVThreadAttribute.h" />
-    <ClInclude Include="SVThreadManagerDLL.h" />
     <ClInclude Include="SVThreadManagerExports.h" />
     <ClInclude Include="SVThreadManagerImpl.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVThreadManager.rc" />

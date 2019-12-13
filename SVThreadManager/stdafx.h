@@ -35,13 +35,12 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include "targetver.h"
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
+#include <windows.h>
 
 #include <comdef.h>
 #include <list>
 #include <map>
 #include <sstream>
 #include <string>
+#include <tchar.h>
 #pragma endregion Precompiled Headers

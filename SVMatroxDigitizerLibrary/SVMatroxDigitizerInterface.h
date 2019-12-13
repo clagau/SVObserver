@@ -55,9 +55,6 @@ public:
 								  void* UserDataPtr);
 
 	static bool IsEventGrabFrameStart(__int64 EventType);
-	static bool IsEventGrabFrameEnd(__int64 EventType);
-	static bool IsEventErrorFrameNotify(__int64 EventType);
-	static bool IsEventDevicePresentNotify(__int64 EventType);
 
 	// Getters
 	// Board

@@ -13,11 +13,11 @@
 #include "TrcTesterConfiguration.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVUtilityLibrary\StringHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -42,8 +42,7 @@ std::vector<MIL_ID> loadImages(const std::vector<std::string>& fileNames)
 		if (M_NULL == retValue[i])
 		{
 			retValue.clear();
-			CString errorStr;
-			errorStr.Format(_T("LoadImages failed by image %d with \"%s\""), i, fileNames[i].c_str());
+			std::string errorStr = SvUl::Format(_T("LoadImages failed by image %d with \"%s\""), i, fileNames[i].c_str());
 			throw errorStr;
 		}
 	}
@@ -128,9 +127,9 @@ void TrcTesterConfiguration::init(LogClass& rLogClass)
 		{
 			imageIds = loadImages(imageFileList);
 		}
-		catch (CString& e)
+		catch (std::string& rError)
 		{
-			rLogClass.Log(e, LogLevel::Error, LogType::FAIL, __LINE__, strTestConfig);
+			rLogClass.Log(rError.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestConfig);
 		}
 		if (imageIds.size() == 0)
 		{

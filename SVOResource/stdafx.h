@@ -23,9 +23,6 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afxwin.h>         // MFC-Kern- und Standardkomponenten
-#include <afxcmn.h>         // MFC-Unterstützung für allgemeine Windows-Steuerelemente
-#include <afxdtctl.h>       // MFC-Unterstützung für allgemeine Steuerelemente von Internet Explorer 4
-#include <afxext.h>         // MFC-Erweiterungen
+#include <windows.h>
 #pragma endregion Precompiled Headers
 

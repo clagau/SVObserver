@@ -377,18 +377,6 @@ bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(__int64 EventType)
 }
 
 /**
-@SVOperationName IsEventGrabFrameEnd
-
-@SVOperationDescription This method evaluates the EventType to see if it's the Grab Frame End event.
-
-*/
-
-bool SVMatroxDigitizerInterface::IsEventGrabFrameEnd(__int64 EventType)
-{
-	return ((EventType & M_GRAB_FRAME_END ) == M_GRAB_FRAME_END);
-}
-
-/**
 @SVOperationName AbortGrab
 
 @SVOperationDescription This method aborts the grab in progress for the Digitizer

@@ -637,7 +637,6 @@ HRESULT SVXMLEncryptionClass::Method1Encryption(
 {
 	HRESULT			hr;
 
-	long				l_lCounter;
 	long				l_lNewDestinationIndex;
 	long				l_lTempOffset;
 
@@ -793,7 +792,7 @@ HRESULT SVXMLEncryptionClass::Method1Encryption(
 
 		long l_lRelativeJump = l_ulTempRand1 % 8;
 
-		l_lCounter = 0;
+		long l_lCounter = 0;
 		long l_lFoundGoodIndex = FALSE;
 
 		//-	We will loop to find an unused index to jump to (from 3 forward to 

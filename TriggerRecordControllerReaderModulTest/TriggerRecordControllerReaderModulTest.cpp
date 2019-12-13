@@ -15,83 +15,63 @@
 #endif
 
 // Das einzige Anwendungsobjekt
-CWinApp theApp;
 LogClass g_logClass;
 
 int main(int argc, char* argv[])
 {
 	int nRetCode = 0;
 
-	HMODULE hModule = ::GetModuleHandle(nullptr);
+	_set_error_mode(_OUT_TO_MSGBOX);
 
-	if (hModule != nullptr)
+	std::string testName;
+	if (1 < argc)
 	{
-		// MFC initialisieren. Bei Fehlschlag Fehlermeldung aufrufen.
-		if (!AfxWinInit(hModule, nullptr, ::GetCommandLine(), 0))
+		testName = argv[1];
+	}
+	bool isLogFileOpen = false;
+	if (!testName.empty())
+	{
+		std::string logFile{testName};
+		logFile += _T("_log.txt");
+		isLogFileOpen = g_logClass.Open(logFile,false);
+	}
+	else
+	{
+		isLogFileOpen = g_logClass.Open();
+	}
+
+
+	if (isLogFileOpen)
+	{
+		MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
+		if (M_NULL != appId)
 		{
-			wprintf(L"Schwerwiegender Fehler bei der MFC-Initialisierung\n");
-			nRetCode = 1;
+			SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
+			// Disable MIL error message to be displayed by MIL
+			MappControl(M_ERROR, M_PRINT_DISABLE);
+
+			{
+				std::string tmpString{_T("Testing TRC-Reader(")};
+				tmpString += testName + ')';
+				g_logClass.LogText0(tmpString.c_str(), LogLevel::Information_Level1);
+				TrcTesterConfiguration config(g_logClass);
+				bool retReaderTest = readerTest(testName.c_str(), g_logClass, 100, config.getTestData(), true);
+				g_logClass.Log("Finished readerTest", retReaderTest ? LogLevel::Information_Level1 : LogLevel::Error, retReaderTest ? LogType::PASS : LogType::FAIL, __LINE__, testName.c_str());
+			}
+			MappFree(appId);
 		}
 		else
 		{
-			_set_error_mode(_OUT_TO_MSGBOX);
-
-			CString testName;
-			CString logName;
-			if (1 < argc)
-			{
-				testName = argv[1];
-			}
-			bool isLogFileOpen = false;
-			if (!testName.IsEmpty())
-			{
-				CString logFile;
-				logFile.Format("%s_log.txt", testName);
-				isLogFileOpen = g_logClass.Open(logFile,false);
-			}
-			else
-			{
-				isLogFileOpen = g_logClass.Open();
-			}
-
-
-			if (isLogFileOpen)
-			{
-				MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
-				if (M_NULL != appId)
-				{
-					SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
-					// Disable MIL error message to be displayed by MIL
-					MappControl(M_ERROR, M_PRINT_DISABLE);
-
-					{
-						CString tmpString;
-						tmpString.Format(_T("Testing TRC-Reader(%s)"), testName);
-						g_logClass.LogText0(tmpString, LogLevel::Information_Level1);
-						TrcTesterConfiguration config(g_logClass);
-						bool retReaderTest = readerTest(testName, g_logClass, 100, config.getTestData(), true);
-						g_logClass.Log("Finished readerTest", retReaderTest ? LogLevel::Information_Level1 : LogLevel::Error, retReaderTest ? LogType::PASS : LogType::FAIL, __LINE__, testName);
-					}
-					MappFree(appId);
-				}
-				else
-				{
-					g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Error, LogType::ABORT);
-				}
-
-				//g_logClass.PrintSummary();
-				g_logClass.Close();
-			}
-			else
-			{
-				wprintf(L"Error opening log-file\n");
-			}
+			g_logClass.LogText(_T("MIL System could not be allocated. Aborting."), LogLevel::Error, LogType::ABORT);
 		}
-    }
-    else
-    {
-		nRetCode = 1;
-    }
+
+		//g_logClass.PrintSummary();
+		g_logClass.Close();
+	}
+	else
+	{
+		wprintf(L"Error opening log-file\n");
+	}
 
     return nRetCode;
 }

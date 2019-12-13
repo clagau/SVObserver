@@ -1854,7 +1854,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<double>(ObjectRef, Value.c_str(), bResetObject);
+						hrSet = SetObjectArrayValues<double>(ObjectRef, Value, bResetObject);
 					}
 					else
 					{
@@ -2739,7 +2739,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 	double del = SvTl::setReferenceTime();
-	std::string DebugString = SvUl::.Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"), SvTl::GetRelTimeStamp(), del);
+	std::string DebugString = SvUl::Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"), SvTl::GetRelTimeStamp(), del);
 	::OutputDebugString(DebugString.c_str());
 #endif
 

@@ -14,6 +14,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVUtilityLibrary\StringHelper.h"
 #include "TriggerRecordController\ITriggerRecordControllerR.h"
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
 #include "TriggerRecordController\ITriggerRecordR.h"
@@ -22,7 +23,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -59,17 +59,15 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 		{
 			if (tr2R->isObjectUpToTime())
 			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:%d) return nullptr by run %d!"), testDataId, ipId, imagePos, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Reader Tests (%d): getImage(%d:%d) return nullptr by run %d!"), testDataId, ipId, imagePos, runId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				retValue = false;
 				continue;
 			}
 			else
 			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:%d) Tr is not longer up to time by run %d!"), testDataId, ipId, imagePos, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::WARN, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Reader Tests (%d): getImage(%d:%d) Tr is not longer up to time by run %d!"), testDataId, ipId, imagePos, runId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::WARN, __LINE__, strTestWithMoreThreads);
 				return retValue;
 			}
 		}
@@ -77,9 +75,8 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 		{
 			if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
 			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): ImageCopy(%d:%d) failed. TriggerCount = %d. Images are not equal by run %d!"), testDataId, ipId, imagePos, triggerCount, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Reader Tests (%d): ImageCopy(%d:%d) failed. TriggerCount = %d. Images are not equal by run %d!"), testDataId, ipId, imagePos, triggerCount, runId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				retValue = false;
 				continue;
 			}
@@ -93,16 +90,14 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 		{
 			if (tr2R->isObjectUpToTime())
 			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:last) (TriggerCount = %d) return nullptr by run %d. Is TR upToTime: %d!"), testDataId, ipId, triggerCount, runId, tr2R->isObjectUpToTime());
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Reader Tests (%d): getImage(%d:last) (TriggerCount = %d) return nullptr by run %d. Is TR upToTime: %d!"), testDataId, ipId, triggerCount, runId, tr2R->isObjectUpToTime());
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				retValue = false;
 			}
 			else
 			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): getImage(%d:last) Tr is not longer up to time by run %d!"), testDataId, ipId, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::WARN, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Reader Tests (%d): getImage(%d:last) Tr is not longer up to time by run %d!"), testDataId, ipId, runId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::WARN, __LINE__, strTestWithMoreThreads);
 				return retValue;
 			}
 		}
@@ -110,9 +105,8 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 		{
 			if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
 			{
-				CString errorStr;
-				errorStr.Format(_T("Reader Tests (%d): ImageCopy(%d:last) failed. TriggerCount = %d. Images are not equal by run %d!"), testDataId, ipId, triggerCount, runId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Reader Tests (%d): ImageCopy(%d:last) failed. TriggerCount = %d. Images are not equal by run %d!"), testDataId, ipId, triggerCount, runId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				retValue = false;
 			}
 		}
@@ -230,7 +224,6 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 {
 	bool retValue = true;
 	GUID guid = GUID_NULL;
-	CString logStr;
 	auto& rTrController = SvTrc::getTriggerRecordControllerRWInstance();
 
 	for (int testDataId = 0; testDataId < rTestData.size(); testDataId++)
@@ -239,14 +232,14 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 
 		//setInspections
 		std::vector<std::pair<int, int>> numbersOfRecords;
-		CString inspectionNumberStr;
+		std::string inspectionNumberStr;
 		for (int j = 0; j < rInspectionsData.size(); j++)
 		{
 			numbersOfRecords.emplace_back(rInspectionsData[j].m_recordSize, rInspectionsData[j].m_recordInterestSize);
-			inspectionNumberStr.Format("%s%d/%d, ", inspectionNumberStr, numbersOfRecords[j].first, numbersOfRecords[j].second);
+			inspectionNumberStr = SvUl::Format("%s%d/%d, ", inspectionNumberStr.c_str(), numbersOfRecords[j].first, numbersOfRecords[j].second);
 		}
 		retValue = setInspections(numbersOfRecords, rTrController, rLogClass, strTestWithMoreThreads);
-		logStr.Format(_T("Writer Tests (%d): CreateInspections(%s)"), testDataId, inspectionNumberStr);
+		std::string logStr = SvUl::Format(_T("Writer Tests (%d): CreateInspections(%s)"), testDataId, inspectionNumberStr.c_str());
 
 		//check if interest is set and set pauseStart and pauseStop values
 		bool isInterestTest = false;
@@ -260,12 +253,12 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 
 		if (!retValue)
 		{
-			rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+			rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 			break;
 		}
 		else
 		{
-			rLogClass.Log(logStr, LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
+			rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
 		}
 
 		//init Inspections
@@ -291,16 +284,15 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
-				logStr.Format(_T("Writer Tests (%d): resetTriggerRecordStructure"), testDataId);
-				rLogClass.logException(logStr, rExp, __LINE__, strTestWithMoreThreads);
+				logStr = SvUl::Format(_T("Writer Tests (%d): resetTriggerRecordStructure"), testDataId);
+				rLogClass.logException(logStr.c_str(), rExp, __LINE__, strTestWithMoreThreads);
 				retValue = false;
 				break;
 			}
 			catch (...)
 			{
-				CString errorStr;
-				errorStr.Format(_T("Writer Tests (%d): resetTriggerRecordStructure throw an exception"), testDataId);
-				rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Writer Tests (%d): resetTriggerRecordStructure throw an exception"), testDataId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				retValue = false;
 				break;
 			}
@@ -325,9 +317,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 			if (isInterestTest && (runId == startInterestPause || runId == stopInterestPause))
 			{
 				rTrController.pauseTrsOfInterest(runId == startInterestPause);
-				CString errorStr;
-				errorStr.Format(_T("Writer Tests (%d): pauseTrsOfInterest to %d by run %d"), testDataId, runId == startInterestPause, runId);
-				rLogClass.Log(errorStr, LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
+				std::string errorStr = SvUl::Format(_T("Writer Tests (%d): pauseTrsOfInterest to %d by run %d"), testDataId, runId == startInterestPause, runId);
+				rLogClass.Log(errorStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
 			}
 
 
@@ -337,9 +328,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				auto tr2W = rTrController.createTriggerRecordObjectToWrite(ipId);
 				if (nullptr == tr2W)
 				{
-					CString errorStr;
-					errorStr.Format(_T("Writer Tests (%d): createTriggerRecordObjectToWrite(%d) return nullptr by run %d!"), testDataId, ipId, runId);
-					rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+					std::string errorStr = SvUl::Format(_T("Writer Tests (%d): createTriggerRecordObjectToWrite(%d) return nullptr by run %d!"), testDataId, ipId, runId);
+					rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					retValue = false;
 					continue;
 				}
@@ -356,9 +346,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				auto cameraImageHandle = rTrController.getImageBuffer(cameraStructList[ipId]);
 				if (nullptr == cameraImageHandle || cameraImageHandle->isEmpty())
 				{
-					CString errorStr;
-					errorStr.Format(_T("Writer Tests (%d): getImageBuffer(%d) return nullptr by run %d!"), testDataId, ipId, runId);
-					rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+					std::string errorStr = SvUl::Format(_T("Writer Tests (%d): getImageBuffer(%d) return nullptr by run %d!"), testDataId, ipId, runId);
+					rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					retValue = false;
 					continue;
 				}
@@ -368,9 +357,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 					MbufCopy(imageId, cameraImageHandle->getHandle()->GetBuffer().GetIdentifier());
 					if (!areImageEqual(cameraImageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
 					{
-						CString errorStr;
-						errorStr.Format(_T("Writer Tests (%d): ImageCopy(%d:0) failed. Images are not equal by run %d!"), testDataId, ipId, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						std::string errorStr = SvUl::Format(_T("Writer Tests (%d): ImageCopy(%d:0) failed. Images are not equal by run %d!"), testDataId, ipId, runId);
+						rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						retValue = false;
 						continue;
 					}
@@ -380,9 +368,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 					}
 					catch (const SvStl::MessageContainer& rExp)
 					{
-						CString errorStr;
-						errorStr.Format(_T("Writer Tests (%d): setImage(%d) by run %d:"), testDataId, ipId, runId);
-						rLogClass.logException(errorStr, rExp, __LINE__, strTestWithMoreThreads);
+						std::string errorStr = SvUl::Format(_T("Writer Tests (%d): setImage(%d) by run %d:"), testDataId, ipId, runId);
+						rLogClass.logException(errorStr.c_str(), rExp, __LINE__, strTestWithMoreThreads);
 						retValue = false;
 						continue;
 					}
@@ -391,9 +378,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 						auto lastImageHandle = tr2W->createNewImageHandle(static_cast<int>(rIPData.m_imageFilesList.size()));
 						if (nullptr == lastImageHandle || lastImageHandle->isEmpty())
 						{
-							CString errorStr;
-							errorStr.Format(_T("Writer Tests (%d): createNewImageHandle(%d:last) return nullptr by run %d!"), testDataId, ipId, runId);
-							rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+							std::string errorStr = SvUl::Format(_T("Writer Tests (%d): createNewImageHandle(%d:last) return nullptr by run %d!"), testDataId, ipId, runId);
+							rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 							retValue = false;
 							continue;
 						}
@@ -402,9 +388,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 							MbufCopy(imageId, lastImageHandle->getHandle()->GetBuffer().GetIdentifier());
 							if (!areImageEqual(lastImageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
 							{
-								CString errorStr;
-								errorStr.Format(_T("Writer Tests (%d): ImageCopy(%d:last) failed. Images are not equal by run %d!"), testDataId, ipId, runId);
-								rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+								std::string errorStr = SvUl::Format(_T("Writer Tests (%d): ImageCopy(%d:last) failed. Images are not equal by run %d!"), testDataId, ipId, runId);
+								rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 								retValue = false;
 								continue;
 							}
@@ -417,9 +402,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 					auto imageHandle = tr2W->createNewImageHandle(imagePos);
 					if (nullptr == imageHandle || imageHandle->isEmpty())
 					{
-						CString errorStr;
-						errorStr.Format(_T("Writer Tests (%d): createNewImageHandle(%d:%d) return nullptr by run %d!"), testDataId, ipId, imagePos, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						std::string errorStr = SvUl::Format(_T("Writer Tests (%d): createNewImageHandle(%d:%d) return nullptr by run %d!"), testDataId, ipId, imagePos, runId);
+						rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						retValue = false;
 						continue;
 					}
@@ -428,9 +412,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 						MbufCopy(imageId, imageHandle->getHandle()->GetBuffer().GetIdentifier());
 						if (!areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
 						{
-							CString errorStr;
-							errorStr.Format(_T("Writer Tests (%d): ImageCopy(%d:%d) failed. Images are not equal by run %d!"), testDataId, ipId, imagePos, runId);
-							rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+							std::string errorStr = SvUl::Format(_T("Writer Tests (%d): ImageCopy(%d:%d) failed. Images are not equal by run %d!"), testDataId, ipId, imagePos, runId);
+							rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 							retValue = false;
 							continue;
 						}
@@ -447,8 +430,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 			std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(5500));
 		}
 
-		logStr.Format(_T("Writer Tests for run %d finished"), testDataId);
-		rLogClass.LogText(logStr, LogLevel::Information_Level2, LogType::PASS);
+		logStr = SvUl::Format(_T("Writer Tests for run %d finished"), testDataId);
+		rLogClass.LogText(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS);
 
 		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(10));
 	}
@@ -459,15 +442,15 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, bool isOtherProcess )
 {
 	bool retValue = true;
-	CString strResetEvent;
-	strResetEvent.Format(_T("Global\\TRCModul_Reset%s"), testName);
-	g_resetEvent = createEvent(strResetEvent);
-	CString strReadyEvent;
-	strReadyEvent.Format(_T("Global\\TRCModul_Ready%s"), testName);
-	g_readyEvent = createEvent(strReadyEvent);
-	CString strNewTrEvent;
-	strNewTrEvent.Format(_T("Global\\TRCModul_NewTrid%s"), testName);
-	g_newTrEvent = createEvent(strNewTrEvent);
+	std::string strResetEvent{_T("Global\\TRCModul_Reset")};
+	strResetEvent += testName;
+	g_resetEvent = createEvent(strResetEvent.c_str());
+	std::string strReadyEvent{_T("Global\\TRCModul_Ready")};
+	strReadyEvent += testName;
+	g_readyEvent = createEvent(strReadyEvent.c_str());
+	std::string strNewTrEvent{_T("Global\\TRCModul_NewTrid")};
+	strNewTrEvent += testName;
+	g_newTrEvent = createEvent(strNewTrEvent.c_str());
 	if (nullptr != g_resetEvent && nullptr != g_readyEvent && nullptr != g_newTrEvent)
 	{
 		auto& rTrController = SvTrc::getTriggerRecordControllerRInstance();
@@ -531,10 +514,9 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 				waitValue = WaitForMultipleObjects(2, hChange, false, 1500);
 				if (WAIT_OBJECT_0 == waitValue)
 				{
-					CString logStr;
-					logStr.Format(_T("Reader Tests: Reset TRC after runId %d"), runId);
+					std::string logStr = SvUl::Format(_T("Reader Tests: Reset TRC after runId %d"), runId);
 					bool isPass = (runId + 1 == numberOfRuns*inspectionSize);
-					rLogClass.Log(logStr, isPass ? LogLevel::Information_Level2 : LogLevel::Error, isPass ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
+					rLogClass.Log(logStr.c_str(), isPass ? LogLevel::Information_Level2 : LogLevel::Error, isPass ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					break;
 				}
 
@@ -543,15 +525,13 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 				{
 					if (runId+1 < numberOfRuns*inspectionSize)
 					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: No new TR after runId %d"), runId);
-						rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						std::string logStr = SvUl::Format(_T("Reader Tests: No new TR after runId %d"), runId);
+						rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					}
 					else
 					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: Finished run after runId %d"), runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
+						std::string logStr = SvUl::Format(_T("Reader Tests: Finished run after runId %d"), runId);
+						rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
 					}
 					break;
 				}
@@ -565,15 +545,13 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 
 					if (lastTrIds[newTrInfo.m_inspectionPos] == newTrInfo.m_trId)
 					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: (%d) check trId %d again by run %d"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level1, LogType::WARN, __LINE__, strTestWithMoreThreads);
+						std::string logStr = SvUl::Format(_T("Reader Tests: (%d) check trId %d again by run %d"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, runId);
+						rLogClass.Log(logStr.c_str(), LogLevel::Information_Level1, LogType::WARN, __LINE__, strTestWithMoreThreads);
 					}
 					else if (trIdLast != newTrInfo.m_trId)
 					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests: (%d) check trId %d not lastTrId %d again by run %d"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, trIdLast, runId);
-						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::WARN, __LINE__, strTestWithMoreThreads);
+						std::string logStr = SvUl::Format(_T("Reader Tests: (%d) check trId %d not lastTrId %d again by run %d"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, trIdLast, runId);
+						rLogClass.Log(logStr.c_str(), LogLevel::Information_Level3, LogType::WARN, __LINE__, strTestWithMoreThreads);
 					}
 
 					lastTrIds[newTrInfo.m_inspectionPos] = newTrInfo.m_trId;
@@ -581,9 +559,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					auto tr2R = rTrController.createTriggerRecordObject(newTrInfo.m_inspectionPos, newTrInfo.m_trId);
 					if (nullptr == tr2R)
 					{
-						CString errorStr;
-						errorStr.Format(_T("Reader Tests: createTriggerRecordObject(%d, %d) return nullptr by run %d!"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						std::string errorStr = SvUl::Format(_T("Reader Tests: createTriggerRecordObject(%d, %d) return nullptr by run %d!"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, runId);
+						rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						retValue = false;
 						std::chrono::duration<int, std::micro> t(2);
 						std::this_thread::sleep_for(t);
@@ -594,9 +571,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					int writerRunId = triggerCount % triggerIdOffset;
 					if (0 > triggerCount || rTestData.size() <= testDataId)
 					{
-						CString errorStr;
-						errorStr.Format(_T("Reader Tests: (%d) triggerCount (%d) do not fit: , called testDataId %d, max testDataId %d by run %d"), newTrInfo.m_inspectionPos, triggerCount, testDataId, static_cast<int>(rTestData.size()) - 1, runId);
-						rLogClass.Log(errorStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						std::string errorStr = SvUl::Format(_T("Reader Tests: (%d) triggerCount (%d) do not fit: , called testDataId %d, max testDataId %d by run %d"), newTrInfo.m_inspectionPos, triggerCount, testDataId, static_cast<int>(rTestData.size()) - 1, runId);
+						rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						retValue = false;
 						std::chrono::duration<int, std::micro> t(1);
 						std::this_thread::sleep_for(t);
@@ -604,16 +580,14 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					}
 					else
 					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests(%d): createTriggerRecordObject(%d) triggerCount %d by run %d"), testDataId, newTrInfo.m_inspectionPos, triggerCount, runId);
-						rLogClass.Log(logStr, LogLevel::Debug, LogType::PASS, __LINE__, strTestWithMoreThreads);
+						std::string logStr = SvUl::Format(_T("Reader Tests(%d): createTriggerRecordObject(%d) triggerCount %d by run %d"), testDataId, newTrInfo.m_inspectionPos, triggerCount, runId);
+						rLogClass.Log(logStr.c_str(), LogLevel::Debug, LogType::PASS, __LINE__, strTestWithMoreThreads);
 					}
 
 					if (testDataId != lastTestDataId)
 					{
-						CString logStr;
-						logStr.Format(_T("Reader Tests(%d): Moved to this testDataId with run %d"), testDataId, runId);
-						rLogClass.Log(logStr, LogLevel::Debug, LogType::PASS, __LINE__, strTestWithMoreThreads);
+						std::string logStr = SvUl::Format(_T("Reader Tests(%d): Moved to this testDataId with run %d"), testDataId, runId);
+						rLogClass.Log(logStr.c_str(), LogLevel::Debug, LogType::PASS, __LINE__, strTestWithMoreThreads);
 						lastTestDataId = testDataId;
 					}
 
@@ -654,9 +628,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 											if (interestTRVec.size() != expectedNumber)
 											{
 												retValue = false;
-												CString logStr;
-												logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: Number of TRs %d, but expected %d (first triggerCount %d) for ip %d with run %d"), testDataId, interestTRVec.size(), expectedNumber, triggerCount, newTrInfo.m_inspectionPos, runId);
-												rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+												std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Number of TRs %d, but expected %d (first triggerCount %d) for ip %d with run %d"), testDataId, interestTRVec.size(), expectedNumber, triggerCount, newTrInfo.m_inspectionPos, runId);
+												rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 												break;
 											}
 										
@@ -664,9 +637,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 										else
 										{
 											retValue = false;
-											CString logStr;
-											logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: First TR (%d) should not be an interest TR for ip %d with run %d"), testDataId, triggerCount, newTrInfo.m_inspectionPos, runId);
-											rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+											std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: First TR (%d) should not be an interest TR for ip %d with run %d"), testDataId, triggerCount, newTrInfo.m_inspectionPos, runId);
+											rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 											break;
 										}
 									}
@@ -674,9 +646,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 									if (interestList[currentPos] != triggerCount)
 									{
 										retValue = false;
-										CString logStr;
-										logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: TR %d, but TR %d expected for ip %d with run %d"), testDataId, triggerCount, interestList[currentPos], newTrInfo.m_inspectionPos, runId);
-										rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+										std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: TR %d, but TR %d expected for ip %d with run %d"), testDataId, triggerCount, interestList[currentPos], newTrInfo.m_inspectionPos, runId);
+										rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 										break;
 									}
 									currentPos--;
@@ -684,9 +655,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 								else
 								{
 									retValue = false;
-									CString logStr;
-									logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: One of the TR is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
-									rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+									std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: One of the TR is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
+									rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 									break;
 								}
 							}
@@ -694,9 +664,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						else
 						{
 							retValue = false;
-							CString logStr;
-							logStr.Format(_T("Reader Tests(%d): getTRsOfInterest: Return list is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
-							rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+							std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Return list is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
+							rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						}
 					}
 				}
@@ -716,37 +685,36 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						expectedSize = interestList.size();
 					}
 					
-					CString logStr;
+					std::string logStr;
 					if (expectedSize == iter.second.size())
 					{
-						logStr.Format(_T("Reader Tests(%d): %d TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), iter.first);
-						rLogClass.Log(logStr, LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
+						logStr = SvUl::Format(_T("Reader Tests(%d): %d TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), iter.first);
+						rLogClass.Log(logStr.c_str(), LogLevel::Information_Level3, LogType::PASS, __LINE__, strTestWithMoreThreads);
 					}
 					else if (expectedSize-1 == iter.second.size())
 					{
-						logStr.Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
-						rLogClass.Log(logStr, LogLevel::Information_Level1, LogType::WARN, __LINE__, strTestWithMoreThreads);
+						logStr = SvUl::Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
+						rLogClass.Log(logStr.c_str(), LogLevel::Information_Level1, LogType::WARN, __LINE__, strTestWithMoreThreads);
 					}
 					else
 					{
-						logStr.Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
-						rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						logStr = SvUl::Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
+						rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					}		
-					logStr = _T("");
+					logStr.clear();
 					for (auto trId : iter.second)
 					{
-						logStr.Format(_T("%s;%d"), logStr, trId);
+						logStr = SvUl::Format(_T("%s;%d"), logStr, trId);
 					}
-					rLogClass.Log(logStr, LogLevel::Debug, LogType::BLANK, __LINE__, strTestWithMoreThreads);
+					rLogClass.Log(logStr.c_str(), LogLevel::Debug, LogType::BLANK, __LINE__, strTestWithMoreThreads);
 				}
 			}
 			else
 			{
 				if (0 < inspectionList.list(0).numberrecordsofinterest())
 				{
-					CString logStr;
-					logStr.Format(_T("Reader Tests(%d): None TRsOfInterest-Events get"), testDataPos);
-					rLogClass.Log(logStr, LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+					std::string logStr = SvUl::Format(_T("Reader Tests(%d): None TRsOfInterest-Events get"), testDataPos);
+					rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				}
 			}
 			g_newInterestTrMap.clear();

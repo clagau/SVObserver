@@ -43,7 +43,7 @@ public:
 	virtual ~LogClass();
 
 	// Log Open and Close
-	bool Open(CString strFileName, bool bAppend);
+	bool Open(const std::string& rFileName, bool bAppend);
 	bool Open();
 	void Close();
 	void Flush();
@@ -87,5 +87,5 @@ private:
 	const std::map<LogType, std::string> c_typeMap = {{LogType::PASS, "PASS"}, {LogType::FAIL, "FAIL"}, {LogType::WARN, "WARN"}, {LogType::ABORT, "ABORT"}, {LogType::BLANK, "    "}};
 	const std::map<LogLevel, std::string> c_levelMap = {{LogLevel::Always, "Always*"}, {LogLevel::Error, "Error**"}, {LogLevel::Information_Level1, "Info  1"}, {LogLevel::Information_Level2, "Info  2"}, {LogLevel::Information_Level3, "Info  3"}, {LogLevel::Debug, "Debug  "}};
 
-	CString BuildLogString(const LogLevel logLevel, const LogType logType);
+	std::string BuildLogString(const LogLevel logLevel, const LogType logType);
 };

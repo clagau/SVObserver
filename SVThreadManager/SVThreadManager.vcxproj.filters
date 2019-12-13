@@ -27,9 +27,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVThreadManagerDLL.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVThreadManagerImpl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -50,16 +47,10 @@
     <ClInclude Include="SVThreadAttribute.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVThreadManagerDLL.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVThreadManagerImpl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVThreadManagerExports.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

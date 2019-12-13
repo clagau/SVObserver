@@ -8,12 +8,12 @@
 
 #include "stdafx.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVUtilityLibrary\StringHelper.h"
 #include "LogClass.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
-#define new DEBUG_NEW
 #endif
 
 LogClass::LogClass()
@@ -29,7 +29,7 @@ LogClass::~LogClass()
 
 
 
-bool LogClass::Open(CString strFileName, bool bAppend)
+bool LogClass::Open(const std::string& rFileName, bool bAppend)
 {
 	Close();
 	// Open default file.
@@ -42,16 +42,15 @@ bool LogClass::Open(CString strFileName, bool bAppend)
 	{
 		_wfopen_s(&m_File, strFileName, _T("w, ccs=UNICODE"));
 #else
-		fopen_s(&m_File, strFileName, _T("a"));
+		fopen_s(&m_File, rFileName.c_str(), _T("a"));
 	}
 	else
 	{
-		fopen_s(&m_File, strFileName, _T("w"));
+		fopen_s(&m_File, rFileName.c_str(), _T("w"));
 #endif
 	}
 	if(nullptr == m_File)
 	{
-		AfxMessageBox(_T("Error Opening File"));
 		return false;
 	}
 	else
@@ -87,17 +86,15 @@ bool LogClass::Log(LPCTSTR strEntry, const LogLevel logLevel, const LogType logT
 	if (logLevel <= GetLogLevel())
 	{
 		CountResults(logType);
-		CString strTmp;
-		strTmp = BuildLogString(logLevel, logType);
-		strTmp.Format(_T("%s[%s][%d] "), strTmp, strTestName, lineNumber);
+		std::string strTmp = BuildLogString(logLevel, logType);
+		strTmp = SvUl::Format(_T("%s[%s][%d] "), strTmp.c_str(), strTestName, lineNumber);
 		std::lock_guard<std::mutex> guard(m_logMutex);
 		if (m_File)
 		{
-			_ftprintf(m_File, _T("%s\n"), (strTmp + strEntry).GetString());
+			_ftprintf(m_File, _T("%s\n"), (strTmp + strEntry).c_str());
 		}
 		else
 		{
-			AfxMessageBox(strEntry);
 			return false;
 		}
 	}
@@ -109,16 +106,14 @@ bool LogClass::LogText(LPCTSTR strEntry, const LogLevel logLevel, const LogType 
 	if(logLevel <= GetLogLevel())
 	{
 		CountResults(logType);
-		CString strTmp;
-		strTmp = BuildLogString(logLevel, logType);
+		std::string strTmp = BuildLogString(logLevel, logType);
 		std::lock_guard<std::mutex> guard(m_logMutex);
 		if(m_File)
 		{
-			_ftprintf(m_File, _T("%s\n"), (strTmp + strEntry).GetString());
+			_ftprintf(m_File, _T("%s\n"), (strTmp + strEntry).c_str());
 		}
 		else
 		{
-			AfxMessageBox(strEntry);
 			return false;
 		}
 	}
@@ -127,9 +122,8 @@ bool LogClass::LogText(LPCTSTR strEntry, const LogLevel logLevel, const LogType 
 
 bool LogClass::logException(LPCTSTR strEntry, const SvStl::MessageContainer& rExp, int lineNumber, LPCTSTR strTestName, const LogLevel logLevel, const LogType logType)
 {
-	CString strTmp;
-	strTmp.Format("%s\n\tFollowing Exception was caught: %s\n\tFileinfo: %s (%d)", strEntry, rExp.what(), rExp.getMessage().m_SourceFile.m_FileName.c_str(), rExp.getMessage().m_SourceFile.m_Line);
-	return Log(strTmp, logLevel, logType, lineNumber, strTestName);
+	std::string strTmp = SvUl::Format("%s\n\tFollowing Exception was caught: %s\n\tFileinfo: %s (%d)", strEntry, rExp.what(), rExp.getMessage().m_SourceFile.m_FileName.c_str(), rExp.getMessage().m_SourceFile.m_Line);
+	return Log(strTmp.c_str(), logLevel, logType, lineNumber, strTestName);
 }
 
 bool LogClass::LogText0(LPCTSTR strEntry, const LogLevel logLevel)
@@ -143,7 +137,6 @@ bool LogClass::LogText0(LPCTSTR strEntry, const LogLevel logLevel)
 		}
 		else
 		{
-			AfxMessageBox(strEntry);
 			return false;
 		}
 	}
@@ -159,17 +152,17 @@ void LogClass::Flush()
 
 void LogClass::PrintSummary()
 {
-	CString strTmp;
+	std::string strTmp;
 
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
-	strTmp.Format(_T("[ Summary  ] Passed %lu Steps"), GetPassCount());
-	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Failed %lu Steps"), GetFailCount());
-	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Warning %lu Steps"), GetWarnCount());
-	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
-	strTmp.Format(_T("[ Summary  ] Abort %lu Steps"), GetAbortCount());
-	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
+	strTmp = SvUl::Format(_T("[ Summary  ] Passed %lu Steps"), GetPassCount());
+	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
+	strTmp = SvUl::Format(_T("[ Summary  ] Failed %lu Steps"), GetFailCount());
+	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
+	strTmp = SvUl::Format(_T("[ Summary  ] Warning %lu Steps"), GetWarnCount());
+	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
+	strTmp = SvUl::Format(_T("[ Summary  ] Abort %lu Steps"), GetAbortCount());
+	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
 	constexpr int cStrLength = 128;
 	TCHAR szTime[cStrLength];
 	TCHAR szDate[cStrLength];
@@ -182,11 +175,11 @@ void LogClass::PrintSummary()
 #endif
 
 	if (m_uiAbort)
-		strTmp.Format(_T("[ Summary  ] Script Aborted !!!"));
+		strTmp = SvUl::Format(_T("[ Summary  ] Script Aborted !!!"));
 	else
-		strTmp.Format(_T("[ Summary  ] Completed %s %s"), szTime, szDate);
+		strTmp = SvUl::Format(_T("[ Summary  ] Completed %s %s"), szTime, szDate);
 
-	LogText(strTmp, LogLevel::Always, LogType::BLANK_RET);
+	LogText(strTmp.c_str(), LogLevel::Always, LogType::BLANK_RET);
 	_ftprintf(m_File,_T("---------------------------------------------\n"));
 
 }
@@ -279,9 +272,9 @@ bool LogClass::convertAndLogString(std::string line)
 	return true;
 }
 
-CString LogClass::BuildLogString(const LogLevel logLevel, const LogType logType)
+std::string LogClass::BuildLogString(const LogLevel logLevel, const LogType logType)
 {
-	CString strTmp = _T("[????]");
+	std::string strTmp{_T("[????]")};
 
 	if (logType != LogType::BLANK_RET)
 	{
@@ -290,7 +283,7 @@ CString LogClass::BuildLogString(const LogLevel logLevel, const LogType logType)
 		{
 			return _T("[    ]");
 		}
-		strTmp = (_T("[") + findIter->second + _T("]")).c_str();
+		strTmp = (_T("[") + findIter->second + _T("]"));
 	}
 	else
 	{
@@ -299,7 +292,7 @@ CString LogClass::BuildLogString(const LogLevel logLevel, const LogType logType)
 	auto findIter = c_levelMap.find(logLevel);
 	if (c_levelMap.end() != findIter)
 	{
-		strTmp += (_T("[") + findIter->second + _T("]")).c_str();
+		strTmp += _T("[") + findIter->second + _T("]");
 	}
 
 	return strTmp;
