@@ -49,7 +49,7 @@ TableFillByEquationObject::~TableFillByEquationObject()
 #pragma region Public Methods
 void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableColumnEquation*>& rColumnEquationList, int maxArray)
 {
-	m_sortContainer.set_capacity(maxArray);
+	m_spSortContainer->set_capacity(maxArray);
 
 	std::vector<TableColumnEquation*> columnList = rColumnEquationList;
 
@@ -119,11 +119,11 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 	if (returnValue)
 	{
 		int nextPos = 0;
-		if (!m_sortContainer.empty())
+		if (!m_spSortContainer->empty())
 		{
-			nextPos = (m_sortContainer[0]+1)%(m_sortContainer.capacity());
+			nextPos = (m_spSortContainer->at(0)+1)%(m_spSortContainer->capacity());
 		}
-		m_sortContainer.push_front(nextPos);
+		m_spSortContainer->push_front(nextPos);
 
 		for (int i = 0; i < m_equationList.size(); ++i )
 		{
@@ -131,12 +131,12 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 			TableColumnEquation* pEquation = m_equationList[i];
 			if (nullptr != pValueObject && nullptr != pEquation)
 			{
-				pValueObject->setSortContainer(m_sortContainer);
+				pValueObject->setSortContainerPtr(m_spSortContainer);
 				pValueObject->SetValue(pEquation->GetYACCResult(), 0 );
 			}
 		}
 
-		m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
+		m_NumberOfRows.SetValue(static_cast<long>(m_spSortContainer->size()));
 	}
 
 	return returnValue;

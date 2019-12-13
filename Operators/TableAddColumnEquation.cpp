@@ -74,7 +74,7 @@ bool TableAddColumnEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageC
 	bool   bRetVal = true;
 	if (nullptr != m_pResultColumn && nullptr != m_pIndex)
 	{
-		size_t arrayIndex = m_pResultColumn->getSortContainer().size();
+		size_t arrayIndex = m_pResultColumn->getSortContainerSize();
 
 		for (int i = 1; i <= arrayIndex; i++)
 		{

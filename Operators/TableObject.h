@@ -14,7 +14,7 @@
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
-namespace SvOp
+namespace SvOp //< Operators
 {
 
 class TableObject : public SvIe::SVTaskObjectClass
@@ -36,10 +36,14 @@ public:
 	SVObjectClass* getNumberOfRowObject() const;
 
 	const std::vector<SvVol::DoubleSortValuePtr>& getValueList() const { return m_ValueList; };
-	const SvVol::ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
+	SvVol::ValueObjectSortContainer& getSortContainer() ;
 	/// Set a new sort Container to this object and its column values.
 	/// \param sortMap [in] the new container
 	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus);
+
+	void  setSortContainerDummy(const SvVol::DummySortContainer& rDummy);
+	
+	void UpdateNumberOfRows();
 
 	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
 	/// \param rEmbeddedID [in] Emdedded GUID.
@@ -107,7 +111,8 @@ private:
 
 #pragma region Member Variables
 protected:
-	SvVol::ValueObjectSortContainer m_sortContainer;
+	SvVol::DummySortContainer m_DummySortContainer;
+	SvVol::spValueObjectSortContainer m_spSortContainer {nullptr};
 	std::vector<SvVol::DoubleSortValuePtr> m_ValueList;
 	SvVol::SVLongValueObjectClass m_NumberOfRows;
 #pragma endregion Member Variables

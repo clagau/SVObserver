@@ -82,8 +82,8 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		SvVol::DoubleSortValueObject* pColumnValues = dynamic_cast<SvVol::DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (nullptr != pColumnValues)
 		{
-			SvVol::ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();
-			size_t sizeTmp = sortContainer.capacity();
+		
+			size_t sizeTmp = pColumnValues->getSortContainerCapacity();
 			CheckAndResizeTmpArray(sizeTmp);
 		}
 	}
@@ -105,8 +105,9 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 		SvVol::DoubleSortValueObject* pColumnValues = dynamic_cast<SvVol::DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
-			SvVol::ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();
-			size_t sizeValues = sortContainer.size();
+			SvVol::ValueObjectSortContainer& rSortContainer = pTool->getSortContainer();
+			size_t sizeValues = pColumnValues->getSortContainerSize();
+			assert(sizeValues == rSortContainer.size());
 			if (0 < sizeValues)
 			{
 				CheckAndResizeTmpArray(sizeValues);
@@ -126,12 +127,13 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 						if((pValues[n] > pValues[n+1] && isASC) || (pValues[n] < pValues[n+1] && !isASC))
 						{
 							std::swap( pValues[n], pValues[n+1] );
-							std::swap( sortContainer[n], sortContainer[n+1] );
+							std::swap(rSortContainer[n], rSortContainer[n+1] );
 							isSwitched=true;
 						}
 					}
 				}while(isSwitched);
-				pTool->setSortContainer(sortContainer, rRunStatus);
+				pTool->UpdateNumberOfRows();
+		
 			}
 		}
 		else

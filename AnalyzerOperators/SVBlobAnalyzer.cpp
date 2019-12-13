@@ -1237,17 +1237,10 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			SortBlobs( lSortFeature, m_SortVector.data(), static_cast<long> (m_SortVector.size()));
 		}
 
-		//create a sort Container with the size of founded blobs and from 0 to n
-		SvVol::ValueObjectSortContainer resultTableSortContainer;
-		resultTableSortContainer.resize(m_lNumberOfBlobsToProcess);
-		for (int i = 0; i < m_lNumberOfBlobsToProcess; i++)
-		{
-			//@TODO[MZA][7.50][02.08.2017] This version is for the case we want to go back to full size in the table tool
-			//resultTableSortContainer[i] = msvlSortMap[i];
-			resultTableSortContainer[i] = i;
-		}
-		m_pResultTable->setSortContainer(resultTableSortContainer, rRunStatus);
+	
 
+		
+		m_pResultTable->setSortContainerDummy(SvVol::DummySortContainer(m_lNumberOfBlobsToProcess));
 		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
 			if (_T('1') == FeaturesEnabled[i])

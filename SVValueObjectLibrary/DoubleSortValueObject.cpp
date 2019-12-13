@@ -57,25 +57,48 @@ DoubleSortValueObject::~DoubleSortValueObject()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT DoubleSortValueObject::setSortContainer(const ValueObjectSortContainer& sortMap) 
+HRESULT DoubleSortValueObject::setSortContainerPtr(spValueObjectSortContainer sortMap)
 {
 	HRESULT result(E_FAIL);
 	if (m_isCreated)
 	{
-		m_sortContainer = sortMap;
+		m_DummySortContainer.bIsActive = false;
+		if (m_spSortContainer != sortMap)
+		{
+			m_spSortContainer = sortMap;
+		}
 		result = S_OK;
 	}
 	return result;
 }
+HRESULT DoubleSortValueObject::setSortContainerDummy(const DummySortContainer& rDummy)
+{
+	HRESULT result(E_FAIL);
+	if (m_isCreated)
+	{
+		m_DummySortContainer = rDummy;
+		
+		result = S_OK;
+	}
+	return result;
+}
+
+
 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
 {
-	if (0 <= Index && m_sortContainer.size() > Index)
+
+	if (0 <= Index && m_DummySortContainer.bIsActive && m_DummySortContainer.SimpleSize > Index)
 	{
-		return SVValueObjectClass<double>::SetValue( rValue, m_sortContainer[Index] );
+		return SVValueObjectClass<double>::SetValue(rValue, Index);
+	}
+
+	if (0 <= Index && m_spSortContainer.get()&& m_spSortContainer->size() > Index)
+	{
+		return SVValueObjectClass<double>::SetValue( rValue, m_spSortContainer->at(Index));
 	}
 	return E_FAIL;
 }
@@ -90,9 +113,15 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 	rValue = 0.0;
 	if(0 <= Index)
 	{
-		if (m_sortContainer.size() > Index)
+		if (m_DummySortContainer.bIsActive &&  m_DummySortContainer.SimpleSize > Index)
 		{
-			Index = m_sortContainer[Index];
+			
+			return SVValueObjectClass<double>::GetValue(rValue, Index);
+		}
+
+		else if (m_spSortContainer.get() && m_spSortContainer->size() > Index)
+		{
+			Index = m_spSortContainer->at(Index);
 			return SVValueObjectClass<double>::GetValue(rValue, Index);
 		}
 		else
@@ -121,7 +150,11 @@ long DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSi
 			pMemoryLocation += sizeof(int);
 			for(int i=0; i < getResultSize(); ++i)
 			{
-				int index = m_sortContainer[i];
+				int index = i;
+				if(!m_DummySortContainer.bIsActive)
+				{
+					index = m_spSortContainer->at(i);
+				}
 				double value{0.0};
 				SVValueObjectClass<double>::GetValue(value, index);
 				memcpy(pMemoryLocation, &value, sizeof(double));
@@ -173,6 +206,42 @@ HRESULT DoubleSortValueObject::GetArrayValues(std::vector<double>& rValues) cons
 	return Result;
 }
 
+size_t DoubleSortValueObject::getSortContainerSize() const 
+{ 
+	if (m_DummySortContainer.bIsActive)
+	{
+		return m_DummySortContainer.SimpleSize;
+	}
+	else if (m_spSortContainer)
+	{
+		return m_spSortContainer->size();
+	}
+	else
+	{
+		return 0;
+	}
+}
+size_t  DoubleSortValueObject::getSortContainerCapacity() const
+{
+	if (m_DummySortContainer.bIsActive)
+	{
+		return m_DummySortContainer.Capacity;
+	}
+	else if (m_spSortContainer)
+	{
+		return m_spSortContainer->capacity();
+	}
+	else
+	{
+		return 0;
+	}
+}
+int  DoubleSortValueObject::getResultSize() const  
+{ 
+	return static_cast<int> (getSortContainerSize());
+
+}
+
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -186,5 +255,7 @@ void DoubleSortValueObject::LocalInitialize()
 	SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 }
 #pragma endregion Private Methods
+
+
 
 } //namespace SvVol

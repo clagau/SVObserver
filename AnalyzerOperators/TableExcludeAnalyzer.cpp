@@ -122,8 +122,10 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		SvVol::DoubleSortValueObject* pColumnValues = dynamic_cast<SvVol::DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
-			SvVol::ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();
-			size_t sizeValues = sortContainer.size();
+			
+			SvVol::ValueObjectSortContainer& rSortContainer = pTool->getSortContainer();
+			size_t sizeValues = pColumnValues->getSortContainerSize();
+			assert(sizeValues == rSortContainer.size());
 			if (0 < sizeValues)
 			{
 				double Value;
@@ -132,10 +134,11 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 					pColumnValues->GetValue(Value, i);
 					if (excludeHigh<Value || excludeLow>Value)
 					{
-						sortContainer.erase(sortContainer.begin()+i);
+						rSortContainer.erase(rSortContainer.begin()+i);
 					}
 				}
-				pTool->setSortContainer(sortContainer, rRunStatus);
+				pTool->UpdateNumberOfRows();
+			
 			}
 		}
 		else

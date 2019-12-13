@@ -102,13 +102,35 @@ SVObjectClass* TableObject::getNumberOfRowObject() const
 
 void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus)
 {
-	m_sortContainer = sortMap;
+	*m_spSortContainer.get() = sortMap;
 	for (int i = 0; i < m_ValueList.size(); ++i)
 	{
-		m_ValueList[i]->setSortContainer(m_sortContainer);
+		m_ValueList[i]->setSortContainerPtr(m_spSortContainer);
 	}
 	m_NumberOfRows.SetValue(static_cast<long>(sortMap.size()));
 }
+
+void  TableObject::setSortContainerDummy(const SvVol::DummySortContainer& rDummy)
+{
+	m_DummySortContainer = rDummy;
+	for (int i = 0; i < m_ValueList.size(); ++i)
+	{
+		m_ValueList[i]->setSortContainerDummy(rDummy);
+	}
+	m_NumberOfRows.SetValue(static_cast<long>(rDummy.SimpleSize));
+}
+void TableObject::UpdateNumberOfRows()
+{
+	if (m_DummySortContainer.bIsActive)
+	{
+		m_NumberOfRows.SetValue(static_cast<long>(m_DummySortContainer.SimpleSize));
+	}
+	else
+	{
+		m_NumberOfRows.SetValue(static_cast<long>(m_spSortContainer->size()));
+	}
+}
+
 SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, std::string& newName, int arraysize)
 {
 	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const SvVol::DoubleSortValuePtr& entry)->bool
@@ -189,13 +211,13 @@ void TableObject::removeColumn(const GUID& rEmbeddedId)
 
 void TableObject::clearTable()
 {
-	m_sortContainer.clear();
-
-	for (std::vector<SvVol::DoubleSortValuePtr>::iterator iter = m_ValueList.begin(); iter != m_ValueList.end(); ++iter)
+	
+	if (m_DummySortContainer.bIsActive)
 	{
-		(*iter)->setSortContainer(m_sortContainer);
-		(*iter)->setSaveValueFlag(false);
+		setSortContainerDummy(SvVol::DummySortContainer(0));
 	}
+	m_spSortContainer->clear();
+	
 	m_NumberOfRows.SetValue(0L);
 }
 
@@ -310,6 +332,8 @@ void TableObject::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableObjectType;
 
 	BuildEmbeddedObjectList();
+	m_spSortContainer = std::make_shared<SvVol::ValueObjectSortContainer>();
+
 }
 
 void TableObject::BuildEmbeddedObjectList()
@@ -325,7 +349,7 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pCo
 	CComSafeArrayBound bound[2];
 	auto valueList = getValueList();
 	long coloumnCount = (long)valueList.size();
-	long rowCount = (long)valueList[0]->getSortContainer().size();
+	long rowCount = (long)valueList[0]->getSortContainerSize();
 	bound[0] = coloumnCount;
 	bound[1] = rowCount;
 
@@ -363,19 +387,13 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 		return false;
 	}
 
+	
 	if (rValue.vt == VT_EMPTY)
 	{
-		if (m_sortContainer.size() != 0)
-		{
-			m_sortContainer.resize(0);
-			
-		}
-
-		for (int col = 0; col < m_ValueList.size(); col++)
-		{
-			m_ValueList[col]->setSortContainer(m_sortContainer);
-		}
-		m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
+		setSortContainerDummy(SvVol::DummySortContainer(0));
+		
+		
+		
 		return true;
 
 	}
@@ -394,20 +412,9 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 	
 	int nRows = __min(m_ValueList[0]->getArraySize(), static_cast<int>(sa.GetCount(1)));
 	
-	if (m_sortContainer.size() != nRows)
-	{
-		m_sortContainer.resize(nRows);
-		for (int r = 0; r < nRows; r++)
-		{
-			m_sortContainer[r] = r;
-		}
-	}
-
-	for (int col = 0; col < m_ValueList.size(); col++)
-	{
-		m_ValueList[col]->setSortContainer(m_sortContainer);
-	}
-	m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
+	
+	setSortContainerDummy(SvVol::DummySortContainer(nRows));
+	
 	
 	
 	assert(NCols == sa.GetCount(0));
@@ -448,6 +455,25 @@ unsigned  TableObject::getColumNames(_variant_t& rValue) const
 	return static_cast<unsigned>(valueList.size());
 }
 
+SvVol::ValueObjectSortContainer&  TableObject::getSortContainer()  
+{ 
+	//make a real sortcontainer if we have only a dummy
+	if (m_DummySortContainer.bIsActive)
+	{
+		m_DummySortContainer.bIsActive = false;
+		m_spSortContainer->resize(m_DummySortContainer.SimpleSize);
+		for (int i = 0; i < m_spSortContainer->size(); i++)
+		{
+			m_spSortContainer->at(i) = i;
+		}
+	}
+	//make sure all have the same sortcontainerPtr
+	for ( auto& rpSortValue : m_ValueList)
+	{
+		rpSortValue->setSortContainerPtr(m_spSortContainer);
+	}
+	return *m_spSortContainer.get(); 
+};
 
 
 

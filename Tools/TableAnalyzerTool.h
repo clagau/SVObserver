@@ -44,7 +44,8 @@ public:
 	virtual void InsertAt(int index, ITaskObject& rObject, int count = 1) override;
 
 	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus) {m_pResultTable->setSortContainer(sortMap, rRunStatus);};
-	const SvVol::ValueObjectSortContainer&  getSortContainer() const { return m_pResultTable->getSortContainer();};
+	SvVol::ValueObjectSortContainer&  getSortContainer() { return m_pResultTable->getSortContainer();};
+	void UpdateNumberOfRows() { return m_pResultTable->UpdateNumberOfRows(); };
 
 	/// Add a new column to the table, which is add on to the copied column of the source table.
 	/// \param name [in] Name of the new column.

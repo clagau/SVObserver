@@ -73,12 +73,13 @@ bool TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 		
 		if (nullptr != pTool)
 		{
-			SvVol::ValueObjectSortContainer sortContainer = pTool->getSortContainer();
-			size_t sizeValues = sortContainer.size();
+			SvVol::ValueObjectSortContainer& rSortContainer = pTool->getSortContainer();
+			size_t sizeValues = rSortContainer.size();
 			if (LimitCount < sizeValues && 0 < LimitCount)
 			{
-				sortContainer.erase(sortContainer.begin()+LimitCount, sortContainer.end());
-				pTool->setSortContainer(sortContainer, rRunStatus);
+				rSortContainer.erase(rSortContainer.begin()+LimitCount, rSortContainer.end());
+				pTool->UpdateNumberOfRows();
+			
 			}
 		}
 		else

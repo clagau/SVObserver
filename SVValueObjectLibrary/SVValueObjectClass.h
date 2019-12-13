@@ -23,7 +23,8 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-namespace SvVol
+
+namespace SvVol //<SvValueObjectlibrary
 {
 
 #pragma region Declarations

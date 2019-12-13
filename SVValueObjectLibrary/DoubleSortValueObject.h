@@ -13,12 +13,24 @@
 #include "SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
-namespace SvVol
+namespace SvVol //<SVValueObjectLibrary
 {
 
 #pragma region Declarations
 typedef boost::circular_buffer<int> ValueObjectSortContainer;
+typedef std::shared_ptr<boost::circular_buffer<int>> spValueObjectSortContainer;
+
 #pragma endregion Declarations
+/// For performance reason this is used instead of the sortcontainer, when the order is unchanged 
+struct DummySortContainer
+{
+	explicit DummySortContainer(size_t size) :bIsActive {true}, SimpleSize {size}, Capacity {size} { ; };
+	DummySortContainer() = default;
+	bool bIsActive {false};
+	size_t SimpleSize {0};
+	size_t  Capacity {0};
+};
+
 
 class DoubleSortValueObject : public SVDoubleValueObjectClass
 {
@@ -35,8 +47,11 @@ public:
 
 #pragma region Public Methods
 public:
-	const ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
-	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap);
+	size_t getSortContainerSize() const;
+	size_t getSortContainerCapacity() const;
+	
+	HRESULT setSortContainerPtr(spValueObjectSortContainer sortMap);
+	HRESULT setSortContainerDummy(const DummySortContainer& rDummy);
 	virtual HRESULT SetValue(const double& rValue, int Index) override;
 	virtual HRESULT GetValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
@@ -48,7 +63,7 @@ protected:
 	/// Return the result size. 
 	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
 	/// \returns int Result size
-	virtual int getResultSize() const override { return static_cast<int> (m_sortContainer.size()); };
+	virtual int getResultSize() const override;
 	virtual HRESULT GetArrayValues( std::vector<double>& rValues) const override;
 
 	//! Copies the value object to the memory block
@@ -65,7 +80,9 @@ private:
 
 #pragma region Member Variables
 private:
-	ValueObjectSortContainer m_sortContainer;
+
+	spValueObjectSortContainer m_spSortContainer {nullptr};
+	DummySortContainer m_DummySortContainer;
 #pragma endregion Member Variables
 };
 

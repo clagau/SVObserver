@@ -199,7 +199,7 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 			const std::vector<SvVol::DoubleSortValuePtr>& rSourceValues = m_pSourceTable->getValueList();
 			if (!rSourceValues.empty())
 			{
-				m_sortContainer = m_pSourceTable->getSortContainer();
+				*m_spSortContainer.get() = m_pSourceTable->getSortContainer();
 
 				for (std::vector<SvVol::DoubleSortValuePtr>::const_iterator itSource = rSourceValues.begin(); rSourceValues.end() != itSource; ++itSource)
 				{
@@ -212,8 +212,8 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 					if (m_ValueList.end() != itDest && nullptr != itDest->get())
 					{
 						SvVol::DoubleSortValueObject* object = itDest->get();
-						object->setSortContainer(m_sortContainer);
-						for (int i = 0; i < m_sortContainer.size(); ++i)
+						object->setSortContainerPtr(m_spSortContainer);
+						for (int i = 0; i < m_spSortContainer->size(); ++i)
 						{
 							double Value(0.0);
 							if (S_OK == (*itSource)->GetValue(Value, i))
@@ -225,15 +225,15 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 				}
 				if (rSourceValues.size() < m_ValueList.size())
 				{
-					std::vector<double> Values(m_sortContainer.size(), 0.0);
+					std::vector<double> Values(m_spSortContainer->size(), 0.0);
 					for (size_t i = rSourceValues.size(); i < m_ValueList.size(); i++)
 					{
-						m_ValueList[i]->setSortContainer(m_sortContainer);
+						m_ValueList[i]->setSortContainerPtr(m_spSortContainer);
 						m_ValueList[i]->SetArrayValues(Values);
 					}
 				}
 
-				m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
+				m_NumberOfRows.SetValue(static_cast<long>(m_spSortContainer->size()));
 			}
 			else
 			{
