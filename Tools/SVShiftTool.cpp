@@ -89,6 +89,7 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	bool inputImageAvailable = true;
 	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
 		&m_ImageInput,
@@ -109,11 +110,20 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 		//Set input name to source image name to display it in result picker
 		m_SourceImageName.SetValue( pInputImage->GetCompleteName() );
+
+		m_OutputImage.UpdateImage(ParentGuid, pInputImage->GetImageInfo());
+	}
+	else
+	{
+		inputImageAvailable = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	m_OutputImage.UpdateImage( ParentGuid, m_OutputImage.GetImageInfo() );
-	
-	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
+	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages) && inputImageAvailable;
 }
 
 HRESULT SVShiftTool::SetImageExtentToParent()
@@ -415,7 +425,7 @@ void SVShiftTool::LocalInitialize()
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, false, true, true);
 
 	// Identify our input type needs...
-	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType); //this is not a problem even if color images will be used since m_ImageInput will be updated in ResetObject() anyway
 	m_ImageInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_ImageInput, _T( "ShiftToolImage" ) );
 

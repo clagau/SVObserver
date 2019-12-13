@@ -263,7 +263,13 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SvPb::SVObjectSubTypeEnum::SVShiftToolObjectType:
-			AddPage(new SvOg::SVToolAdjustmentDialogImagePageClass(m_InspectionID, m_TaskObjectID));
+			AddPage(new SvOg::SVToolAdjustmentDialogImagePageClass(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType)); 
+			//@WARNING [Arvid][12.12.2019]: for enabling colour images for this tool, SVNotSetSubObjectType is used here instead of
+			// SVImageMonoType to indicate that color _or_ monochrome images are acceptable here.
+			// However, it would be better if there was a way to specify "any type of image" instead of "any type of objects",
+			// i.e. something like 'SVImageMonoOrColorType'. Maybe a new type of enum is needed for this, since SVObjectSubTypeEnum
+			// is meant to describe properties of individual images (which of course are always either 'mono' or 'color')
+
 			if (bHasSize)
 			{
 				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
