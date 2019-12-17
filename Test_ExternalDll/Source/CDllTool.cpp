@@ -178,7 +178,7 @@ void CDllTool::getResultValueDefinitionEx(ResultValueDefinitionStructEx** ppaRes
 
 void CDllTool::getResultTableDefinitionEx(ResultTableDefinitionStructEx** ppaResultTables)
 {
-	_bstr_t ColumnNames[ColumnCountA] = {"eins", "zwei", "drei", "vier","fünf","sechs"};
+	_bstr_t ColumnNames[ColumnCountA] = {"eins", "zwei", "drei", "vier","fuenf","sechs"};
 	CComSafeArray<BSTR> saStr(ColumnCountA);
 	for (int i = 0; i < ColumnCountA; i++)
 	{
