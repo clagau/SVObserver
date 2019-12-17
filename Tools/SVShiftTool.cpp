@@ -89,7 +89,6 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool inputImageAvailable = true;
 	SvOl::SVInObjectInfoStructPtrVector InputList
 	{
 		&m_ImageInput,
@@ -104,7 +103,10 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	SetAttributeData();
 
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput);
-	if( nullptr != pInputImage )
+
+	bool inputImageAvailable = (nullptr != pInputImage);
+
+	if(inputImageAvailable)
 	{
 		ParentGuid = pInputImage->GetUniqueObjectID();
 
@@ -115,7 +117,6 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 	else
 	{
-		inputImageAvailable = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
@@ -123,7 +124,7 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
-	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages) && inputImageAvailable;
+	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
 HRESULT SVShiftTool::SetImageExtentToParent()
