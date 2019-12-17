@@ -84,6 +84,7 @@ void ResultTableListCtrl::updateList()
 			DeleteAllItems();
 			//Deletes all columns
 			addColumnHeadings(m_ResultData);
+			m_UpdateTimeStamp = 0;
 			return;
 		}
 
