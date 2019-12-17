@@ -498,4 +498,46 @@ std::vector<std::string> SVLinearAnalyzerClass::getParameterNamesForML() const
 	return {};
 }
 
+void SVLinearAnalyzerClass::addDPointResultToAvailableChildren(GUID embeddedID, UINT idForClassnamePart1)
+{
+	SvIe::SVClassInfoStruct resultClassInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
+
+	// Declare Input Interface ...
+	interfaceInfo.EmbeddedID = embeddedID;
+	resultClassInfo.m_DesiredInputVector.push_back(interfaceInfo);
+
+	// Add the X Result...
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDPointXObjectType;
+	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_X);
+	m_availableChildren.push_back(resultClassInfo);
+
+	// Add the Y Result...
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDPointYObjectType;
+	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_Y);
+	m_availableChildren.push_back(resultClassInfo);
+}
+
+
+void SVLinearAnalyzerClass::addScalarResultToAvailableChildren(GUID embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2)
+{
+	SvIe::SVClassInfoStruct resultClassInfo;
+	SvDef::SVObjectTypeInfoStruct interfaceInfo;
+
+	interfaceInfo.EmbeddedID = embeddedID;
+	resultClassInfo.m_DesiredInputVector.push_back(interfaceInfo);
+
+	// Add the Result...
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType = subtype;
+	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(idForClassnamePart2);
+	m_availableChildren.push_back(resultClassInfo);
+}
+
+
 } //namespace SvAo

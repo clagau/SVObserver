@@ -46,6 +46,8 @@ protected:
 
 private:
 	void init();
+
+
 };
 
 } //namespace SvAo

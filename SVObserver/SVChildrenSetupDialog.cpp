@@ -111,15 +111,15 @@ void SVChildrenSetupDialogClass::redrawLists()
 		m_AvailableChildrenListCtrl.DeleteAllItems();
 		for( int i = 0; i < static_cast<int> (m_pAvailableChildrenList->size()); ++i )
 		{
-			SvIe::SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at(i);
+			SvIe::SVClassInfoStruct& rChildInfo = m_pAvailableChildrenList->at(i);
 
 			// Make simple name comparison...
 			LVFINDINFO findInfo;
 			findInfo.flags = LVFI_STRING;
-			findInfo.psz   = rChildrenInfo.m_ClassName.c_str();
+			findInfo.psz   = rChildInfo.m_ClassName.c_str();
 			if( m_AllowMultipleChildrenInstances || m_ChildrenListCtrl.FindItem( &findInfo ) < 0 )
 			{
-				m_AvailableChildrenListCtrl.SetItemData( m_AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.m_ClassName.c_str() ), static_cast<DWORD_PTR>(i) );
+				m_AvailableChildrenListCtrl.SetItemData( m_AvailableChildrenListCtrl.InsertItem( 0, rChildInfo.m_ClassName.c_str() ), static_cast<DWORD_PTR>(i) );
 			}
 		}
 
@@ -210,40 +210,13 @@ void SVChildrenSetupDialogClass::OnAddButton()
 			{
 				// It´s a valid index ...
 
-				SvIe::SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->at( listIndex );
-				// Construct Children...
-				SvIe::SVTaskObjectClass* pObject = dynamic_cast<SvIe::SVTaskObjectClass*> (rChildrenInfo.Construct());
-				if( nullptr != pObject )
+				SvIe::SVClassInfoStruct& rChildInfo = m_pAvailableChildrenList->at( listIndex );
+
+				if (CreateSelectedResults(rChildInfo))
 				{
-					// Add children to parent...
-					m_pParentObject->Add( pObject );
-
-					// Ensure this Object's inputs get connected
-					pObject->ConnectAllInputs();
-
-					// And finally try to create the child object...
-					if( !m_pParentObject->CreateChildObject(pObject, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection ) )
-					{
-						SvDef::StringVector msgList;
-						msgList.push_back(std::string(pObject->GetName()));
-						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10043 ); 
-
-						// Remove it from the Tool TaskObjectList ( Destruct it )
-						GUID objectID = pObject->GetUniqueObjectID();
-						if( GUID_NULL != objectID )
-						{
-							m_pParentObject->Delete( objectID );
-						}
-						else
-						{
-							delete pObject;
-						}
-
-						pObject = nullptr;
-						continue;
-					}
+					continue;
 				}
+				// Construct Children...
 			}
 		}
 
@@ -251,6 +224,49 @@ void SVChildrenSetupDialogClass::OnAddButton()
 		redrawLists();
 	}
 }
+
+
+
+bool SVChildrenSetupDialogClass::CreateSelectedResults(SvIe::SVClassInfoStruct& rChildInfo)
+{
+	// Construct Children...
+	SvIe::SVTaskObjectClass* pObject = dynamic_cast<SvIe::SVTaskObjectClass*> (rChildInfo.Construct());
+	if (nullptr != pObject)
+	{
+		// Add children to parent...
+		m_pParentObject->Add(pObject);
+
+		// Ensure this object's inputs get connected
+		pObject->ConnectAllInputs();
+
+		// And finally try to create the child object...
+		if (!m_pParentObject->CreateChildObject(pObject, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection))
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(std::string(pObject->GetName()));
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10043);
+
+			// Remove it from the Tool TaskObjectList ( Destruct it )
+			GUID objectID = pObject->GetUniqueObjectID();
+			if (GUID_NULL != objectID)
+			{
+				m_pParentObject->Delete(objectID);
+			}
+			else
+			{
+				delete pObject;
+			}
+
+			pObject = nullptr;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 
 void SVChildrenSetupDialogClass::OnRemoveButton()
 {

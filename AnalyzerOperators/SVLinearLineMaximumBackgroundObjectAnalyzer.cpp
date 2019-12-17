@@ -17,7 +17,6 @@
 #include "Operators/SVLinearEdgeBProcessingClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -104,117 +103,23 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 	
-	// Populate the available result list
-	SvIe::SVClassInfoStruct resultClassInfo;
-	SvDef::SVObjectTypeInfoStruct interfaceInfo;
+	// Add the Sub-pixel EdgeA X and Y Results...
+	addDPointResultToAvailableChildren(SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE_A);
 
-	// Declare Input Interface of Sub-pixel Edge A Results...
-	interfaceInfo.EmbeddedID = SVDPEdgeAObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
+	// Add the Sub-pixel EdgeB X and Y Results...
+	addDPointResultToAvailableChildren(SVDPEdgeBObjectGuid, IDS_OBJECTNAME_DPEDGE_B);
 
-	// Add the Sub-pixel EdgeA X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointXObjectType;
-	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_A );
-	std::string Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Add the Sub-pixel EdgeA Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointYObjectType;
-	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_A );
-	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Declare Input Interface of Sub-pixel Edge B Results...
-	resultClassInfo.m_DesiredInputVector.clear();
-	interfaceInfo.EmbeddedID = SVDPEdgeBObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
-
-	// Add the Sub-pixel EdgeB X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointXObjectType;
-	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_B );
-	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Add the Sub-pixel EdgeB Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointYObjectType;
-	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPEDGE_B );
-	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Declare Input Interface of Sub-pixel Center Results...
-	resultClassInfo.m_DesiredInputVector.clear();
-	interfaceInfo.EmbeddedID = SVDPCenterObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
-
-	// Add the Sub-pixel Center X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointXObjectType;
-	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPCENTER );
-	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Add the Sub-pixel Center Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDPointYObjectType;
-	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DPCENTER );
-	Title = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Declare Input Interface of Sub-pixel Width Result...
-	resultClassInfo.m_DesiredInputVector.clear();
-	interfaceInfo.EmbeddedID = SVDWidthObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
+	// Add the Sub-pixel Center X and Y Results...
+	addDPointResultToAvailableChildren(SVDPCenterObjectGuid, IDS_OBJECTNAME_DPCENTER);
 
 	// Add the Sub-pixel Width Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_DWIDTH );
-	Title = SvUl::LoadStdString( IDS_RESULT_STRING );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
+	addScalarResultToAvailableChildren(SVDWidthObjectGuid, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_DWIDTH, IDS_RESULT_STRING);
 
-	resultClassInfo.m_DesiredInputVector.clear();
-	interfaceInfo.EmbeddedID = SVLinearDistanceEdgeAObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
+	// Add the Linear Distance (EdgeA) Result...
+	addScalarResultToAvailableChildren(SVLinearDistanceEdgeAObjectGuid, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT);
 
-	// Add the Linear Distance Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
-	Title = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
-
-	resultClassInfo.m_DesiredInputVector.clear();
-	interfaceInfo.EmbeddedID = SVLinearDistanceEdgeBObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
-
-	// Add the Linear Distance Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
-	Title = SvUl::LoadStdString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT );
-	resultClassInfo.m_ClassName += _T(" ") + Title;
-	m_availableChildren.push_back( resultClassInfo );
+	// Add the Linear Distance (EdgeB) Result...
+	addScalarResultToAvailableChildren(SVLinearDistanceEdgeBObjectGuid, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT);
 }
 
 SVLinearMaximumBackgroundObjectLineAnalyzerClass::~SVLinearMaximumBackgroundObjectLineAnalyzerClass()

@@ -16,7 +16,6 @@
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -72,36 +71,11 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 	
-	// Populate the available result list
-	SvIe::SVClassInfoStruct resultClassInfo;
-	SvDef::SVObjectTypeInfoStruct interfaceInfo;
-
-	// Declare Input Interface of Black Pixel Count Result...
-	interfaceInfo.EmbeddedID = SVBlackPixelObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
+	// Add the White Pixel Count Result...
+	addScalarResultToAvailableChildren(SVBlackPixelObjectGuid, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_BLACKPIXELCOUNT, IDS_RESULT_STRING);
 
 	// Add the Black Pixel Count Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
-	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
-	std::string strTitle = SvUl::LoadStdString( IDS_RESULT_STRING );
-	resultClassInfo.m_ClassName += _T(" ") + strTitle;
-	m_availableChildren.push_back( resultClassInfo );
-
-	// Declare Input Interface of White Pixel Count Result...
-	resultClassInfo.m_DesiredInputVector.clear();
-	interfaceInfo.EmbeddedID = SVWhitePixelObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
-
-	// Add the White Pixel Count Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
-	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
-	strTitle = SvUl::LoadStdString(IDS_RESULT_STRING);
-	resultClassInfo.m_ClassName += _T(" ") + strTitle;
-	m_availableChildren.push_back( resultClassInfo );
+	addScalarResultToAvailableChildren(SVWhitePixelObjectGuid, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_WHITEPIXELCOUNT, IDS_RESULT_STRING);
 }
 
 

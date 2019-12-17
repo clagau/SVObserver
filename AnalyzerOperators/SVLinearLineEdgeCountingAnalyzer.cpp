@@ -15,7 +15,6 @@
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -62,23 +61,8 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 
-	// Populate the available result list
-	SvIe::SVClassInfoStruct resultClassInfo;
-	SvDef::SVObjectTypeInfoStruct interfaceInfo;
-
-	// Declare Input Interface of Edge Count Result...
-	interfaceInfo.EmbeddedID = SVEdgeCountObjectGuid;
-	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
-
 	// Add the Edge Count Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
-	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_EDGE_COUNT );
-	std::string Title = SvUl::LoadStdString( IDS_RESULT_STRING );
-	resultClassInfo.m_ClassName += _T(" ");
-	resultClassInfo.m_ClassName += Title.c_str();
-	m_availableChildren.push_back( resultClassInfo );
+	addScalarResultToAvailableChildren(SVEdgeCountObjectGuid, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_EDGE_COUNT, IDS_RESULT_STRING);
 }
 
 SVLinearEdgeCountingLineAnalyzerClass::~SVLinearEdgeCountingLineAnalyzerClass()

@@ -35,6 +35,7 @@ public:
 protected:
 	//{{AFX_MSG(SVChildrenSetupDialogClass)
 	afx_msg void OnAddButton();
+	bool CreateSelectedResults(SvIe::SVClassInfoStruct& rChildInfo);
 	afx_msg void OnRemoveButton();
 	virtual BOOL OnInitDialog() override;
 	virtual void OnCancel() override;
