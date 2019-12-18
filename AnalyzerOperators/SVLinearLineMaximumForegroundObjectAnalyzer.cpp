@@ -17,7 +17,6 @@
 #include "Operators/SVLinearEdgeBProcessingClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
