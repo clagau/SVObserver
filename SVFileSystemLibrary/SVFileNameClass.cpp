@@ -17,6 +17,9 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
+#include "SVMessage\SVMessage.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
@@ -622,7 +625,7 @@ bool SVFileNameClass::SaveFile()
 				SetExtension(SvDef::cPackedConfigExtension);
 
 				bDone = (0 == SvUl::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
-				        ( 0 == _access( GetFullFileName().c_str(), 0 ) );
+				        ( 0 != _access( GetFullFileName().c_str(), 0 ) );
 
 				if ( ! bDone )
 				{
@@ -635,10 +638,10 @@ bool SVFileNameClass::SaveFile()
 
 					if ( ! bDone )
 					{
-						std::string csMessage = GetFullFileName();
-						csMessage += _T(" already exists.\nDo you want to replace it?");
-
-						bDone = IDYES == ::MessageBox(NULL, csMessage.c_str(), GetFileSaveDialogTitle().c_str(), MB_ICONWARNING | MB_YESNO);
+						SvDef::StringVector msgList;
+						msgList.push_back(GetFullFileName());
+						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GUID_NULL, MB_YESNO);
 					}
 				}
 			}
