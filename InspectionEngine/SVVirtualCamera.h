@@ -134,10 +134,14 @@ public:
 	void setRegFileName(const std::string& rFullFileName);
 
 	void FinishProcess( SVODataResponseClass *pResponse );
+
+	void addNeededBuffer(const GUID& rGuid, int neededBufferSize);
+	void removeNeededBufferEntry(const GUID& rGuid);
 #pragma endregion Public Methods
 
 private:
 #pragma region Private Methods
+	void setNeededBuffer();
 	bool DestroyLocal();
 #pragma endregion Private Methods
 
@@ -161,6 +165,7 @@ private:
 
 	std::mutex m_tmpImage_mutex;
 	SVMatroxBuffer m_tmpImage;
+	std::unordered_map<GUID, int> m_neededBufferMap;
 #pragma endregion Member Variables
 };
 

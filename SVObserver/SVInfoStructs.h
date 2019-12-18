@@ -86,6 +86,7 @@ struct SVInspectionInfoStruct
 	void Init();
 
 	void ClearIndexes();
+	void clearTRCs();
 	
 	bool setNextAvailableTR();
 
@@ -140,6 +141,7 @@ struct SVProductInfoStruct
 	void Reset();
 
 	void ClearIndexes();
+	void clearTRCs();
 
 	bool setNextAvailableCameraImage( );
 

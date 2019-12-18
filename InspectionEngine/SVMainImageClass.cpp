@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMainImageClass.h"
-#include "SVAcquisitionClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 

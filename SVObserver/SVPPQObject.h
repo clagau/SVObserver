@@ -92,6 +92,7 @@ public:
 	void SetResetDelay( long lResetTime );
 	void SetPPQLength( long lPPQLength );
 	void SetMaintainSourceImages( bool bMaintainImages );
+	void setMaxGap4Interest(int maxGap4Interest) { m_maxGap4Interest = maxGap4Interest; };
 	void SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const std::string& conditionName );
 
@@ -101,6 +102,7 @@ public:
 	void GetPPQLength( long& rlPPQLength ) const;
 	long GetPPQLength() const;
 	void GetMaintainSourceImages( bool& rbMaintainImages ) const;
+	int getMaxGap4Interest() const { return m_maxGap4Interest; };
 	void GetInspectionTimeout( long& rlTimeoutMillisec ) const;
 	const std::string& GetConditionalOutputName() const;
 
@@ -294,10 +296,9 @@ protected:
 
 	//************************************
 	/// Empties m_ProcessInspectionsSet and starts all Inspections that were contained in it
-	/// \param rProcessed [out] true if an item was removed from m_oCamerasQueue, otherwise false
-	/// \returns S_OK on success, otherwise E_FAIL
+	/// \return true if an item was removed from m_oCamerasQueue, otherwise false
 	//************************************
-	HRESULT ProcessInspections( bool& rProcessed );
+	bool processInspections( );
 
 	//************************************
 	/// Controls the output of completed results that require a delay before they are output.
@@ -351,8 +352,9 @@ protected:
 	HRESULT StartInspection( const SVGUID& p_rInspectionID );
 
 	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
-	bool SetInspectionComplete( long p_PPQIndex );
-	bool SetProductComplete( long p_PPQIndex );
+	bool SetInspectionComplete(SVProductInfoStruct& rProduct, const GUID& rInspGuid);
+
+	bool SetProductComplete(long p_PPQIndex);
 	bool SetProductComplete( SVProductInfoStruct& p_rProduct );
 
 	bool SetProductIncomplete( long p_PPQIndex );
@@ -490,6 +492,11 @@ private:
 
 	bool setInspections2TRC();
 
+	void setTRofInterest(const SVProductInfoStruct& rProduct);
+	void setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfoStruct &rProduct);
+	void calcUseGap4InterestFlag();
+	long getNeededRecords() const;
+
 	SvVol::BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_oOutputMode;
 	long m_lOutputDelay;
@@ -508,6 +515,11 @@ private:
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
 	long m_lastPPQPosition {0L};		/// This is the PPQ position of the last SetInspectionComplete call
+	int m_maxGap4Interest {0};  
+	bool m_useGap4Interest {false};	///Flag if Gap will used. It should only used if m_maxGap4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.
+
+	using IpInfoDeque = std::deque<SVInspectionInfoStruct>;
+	std::unordered_map<GUID, IpInfoDeque> m_storeForInterestMap;
 
 	SVObjectPtrVector m_childObjects;
 };

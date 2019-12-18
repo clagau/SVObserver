@@ -4188,13 +4188,6 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 	}
 }
 
-// Source Image Depth plus 2 - adjusted length to handle 
-// locking issues with runonce and MaintainImages
-long SVObserverApp::GetSourceImageDepth() const
-{
-	return m_lSouceImageDepth + 2;
-}
-
 // Returns sourceImageDepth for the PPQ Length
 // This is not the real sourceImageDepth.
 long SVObserverApp::GetMaxPPQLength() const
@@ -5277,7 +5270,7 @@ HRESULT SVObserverApp::ConnectCameraBuffers()
 				{
 					SVImageInfoClass svImageInfo;
 					pAcqDevice->GetImageInfo(&svImageInfo);
-					hr = pAcqDevice->CreateBuffers(svImageInfo, TheSVObserverApp.GetSourceImageDepth());
+					hr = pAcqDevice->CreateBuffers(svImageInfo);
 				}
 			}
 		}

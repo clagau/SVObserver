@@ -115,7 +115,7 @@ public:
 			infoTemp.SetExtentProperty(SvPb::SVExtentPropertyHeight, height);
 
 			pAcqDevice->DestroyBuffers();
-			pAcqDevice->CreateBuffers( infoTemp, TheSVObserverApp.GetSourceImageDepth() );
+			pAcqDevice->CreateBuffers( infoTemp );
 		}
 	}
 };
@@ -988,12 +988,22 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		{
 			std::string InfoString = SvUl::Format( _T("Enabling this option will maintain source images and published result images "
 				"throughout the length of the PPQ. Because of this, "
-				"the PPQ Length can not be > %d"),TheSVObserverApp.GetMaxPPQLength()); //GetSourceImageDepth() - 2 );
+				"the PPQ Length can not be > %d"),TheSVObserverApp.GetMaxPPQLength());
 			pCombo->SetCtrlID(PROP_PPQ_MAINTAIN_SRC_IMG);
 			pCombo->SetLabelText(_T("Maintain Published Images"));
 			pCombo->SetInfoText( InfoString.c_str() );
 			pCombo->CreateComboBoxBool();
 			pCombo->SetItemValue(m_PPQObj.GetMaintainSourceImageProperty());
+		}
+
+		pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+		if (nullptr != pEdit)
+		{
+			pEdit->SetCtrlID(PROP_PPQ_MAXGAP4INTEREST);
+			pEdit->SetLabelText(_T("Max. Trigger Gap for Interest"));
+			pEdit->SetInfoText(_T("The maximum gap of trigger between the finishing of two inspections should be. "
+				"If the gap higher of this, interest data of an inspection can be lost, but if value to high too many buffer are required. 0 means full ppqLength, else must between 2 and ppqLength."));
+			pEdit->SetItemValue(m_PPQObj.GetMaxTriggerGapProperty());
 		}
 		
 		// add "Inspection Timeout" property
@@ -1633,6 +1643,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 							iLen = getMaxPpqLength();
 							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetItemValue(iLen);
 						}
+						checkAndSetMaxGap4Interest(iLen);
 					}
 					if ( (lPPQMode == 1) || (lPPQMode == 2) )
 					{
@@ -1691,6 +1702,14 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					long iVal;
 					m_Tree.FindItem(PROP_PPQ_MAINTAIN_SRC_IMG)->GetItemValue(iVal);
 					m_PPQObj.SetMaintainSourceImageProperty( iVal != 0 );
+					break;
+				}
+
+				case PROP_PPQ_MAXGAP4INTEREST:
+				{
+					int iLen;
+					m_Tree.FindItem(PROP_PPQ_LENGTH)->GetItemValue(iLen);
+					checkAndSetMaxGap4Interest(iLen);
 					break;
 				}
 
@@ -2075,27 +2094,30 @@ void CSVOPropertyPageDlg::PPQHideItems()
     long lPPQMode;
 
     m_Tree.FindItem(PROP_PPQ_MODE)->GetItemValue(lPPQMode);
-    switch(lPPQMode)
+    switch(static_cast<SvDef::SVPPQOutputModeEnum>(lPPQMode))
     {
-        case 0:
+		case SvDef::SVPPQNextTriggerMode:
         {
             //NextTrigger mode - hide OutputDelay
             m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem();
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem();
+			m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->HideItem(false);
             break;
         }
-        case 1: //timedelay
-        case 2: //timedelaydatacomplete
+        case SvDef::SVPPQTimeDelayMode:
+        case SvDef::SVPPQTimeDelayAndDataCompleteMode:
 		{
 			m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem();
+			m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->HideItem();
 			break;
 		}
 
-        case 3: //extendedtimedelay
+        case SvDef::SVPPQExtendedTimeDelayMode:
         {
             m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem(FALSE);
+			m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->HideItem();
             break;
         }
         default:
@@ -2138,5 +2160,23 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_COLOR
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO 
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR) ? true : false;
+}
+
+void CSVOPropertyPageDlg::checkAndSetMaxGap4Interest(int ppqLen)
+{
+	long iVal;
+	m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->GetItemValue(iVal);
+
+	if (iVal < 2 && 0 != iVal)  //0 == iVal means PPQLength
+	{
+		iVal = 2;
+		m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->SetItemValue(iVal);
+	}
+	else if (iVal > ppqLen)
+	{
+		iVal = ppqLen;
+		m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->SetItemValue(iVal);
+	}
+	m_PPQObj.SetMaxTriggerGapProperty(iVal);
 }
 

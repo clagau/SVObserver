@@ -28,7 +28,7 @@ namespace SvTrcT
 
 #pragma region Public Methods
 	public:
-		virtual void reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
+		virtual void reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
 		virtual CString getName() const override { return _T("Rotation Tool"); };
 		static CString getDescription() { return _T("Rotated the input image (by 45°)."); };
 

@@ -33,21 +33,9 @@ namespace SvTrc
 
 		/// Set a buffer to a image.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		/// \param imageId [in] Image Id in trigger record.
-		/// \param pImage [in] Handle to the buffer which should set.
-		virtual void setImage(const GUID& rImageId, const IImagePtr& pImage) = 0;
-
-		/// Set a buffer to a image.
-		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param pos [in] Image position in trigger record.
 		/// \param pImage [in] Handle to the buffer which should set.
 		virtual void setImage(int pos, const IImagePtr& pImage) = 0;
-
-		/// Set a buffer to a image.
-		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		/// \param rImageId [in] Image Id in trigger record.
-		/// \param bufferPos [in] Position of the buffer to be set.
-		virtual void setImage(const GUID& rImageId, int bufferPos) = 0;
 
 		/// Set a buffer to a image.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
@@ -59,11 +47,6 @@ namespace SvTrc
 		/// \param pos [in] Position in this triggerRecord.
 		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr createNewImageHandle(int pos) = 0;
-
-		/// Return an pointer to a image instance in write modus. Content of the Buffer is random. Clear or Set the buffer by your own. ATTENTION: Use this instance only as long as this TriggerRecord-instance existing.
-		/// \param imageId [in] ID of the image in this triggerRecord.
-		/// \returns SvTrc::IImagePtr
-		virtual IImagePtr createNewImageHandle(const GUID& imageId) = 0;
 
 		/// Initialize value data
 		virtual void initValueData() = 0;

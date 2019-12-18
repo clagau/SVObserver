@@ -33,12 +33,6 @@ namespace SvTrc
 		/// \returns const TriggerData&
 		virtual const TriggerData& getTriggerData() const = 0;
 
-		/// Return an pointer to an image instance (only in read only modus). 
-		/// \param imageId [in] GUID of the image.
-		/// \param lockImage (default:false) [in] If true image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
-		/// \returns SvTrc::IImagePtr
-		virtual IImagePtr getImage(const GUID& imageId, bool lockImage = false) const = 0;
-
 		/// Return an pointer to an image instance (only in read only modus).
 		/// \param pos [in] Position in this triggerRecord.
 		/// \param lockImage (default:false) [in] If true image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
@@ -52,9 +46,8 @@ namespace SvTrc
 		virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const = 0;
 
 		/// Return the data corresponding to the GUID
-		/// \param dataId [in] GUID of the value object.
+		/// \param pos [in] Position of the value object in definition list.
 		/// \returns _variant_t
-		virtual _variant_t getDataValue(const GUID& dataId) const = 0;
 		virtual _variant_t getDataValue(int pos) const = 0;
 
 		/// Return true if value data has been written to the trigger record
@@ -71,4 +64,20 @@ namespace SvTrc
 	};
 
 	typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
+
+	template<typename Container>
+	int findGuidPos(const Container& rContainer, const std::string& rGuidIdBytes)
+	{
+		int pos = -1;
+		auto imageIter = std::find_if(rContainer.begin(), rContainer.end(), [&rGuidIdBytes](const auto& rData)->bool
+		{
+			return (0 == rData.guidid().compare(rGuidIdBytes));
+		});
+		if (rContainer.end() != imageIter)
+		{
+			pos = static_cast<int>(std::distance(rContainer.begin(), imageIter));
+		}
+
+		return pos;
+	}
 } //namespace SvTrc

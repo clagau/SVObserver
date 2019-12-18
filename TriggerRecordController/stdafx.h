@@ -46,6 +46,7 @@
 #include <future>
 #include <memory>
 #include <map>
+#include <numeric>
 #include <set>
 #include <shared_mutex>
 #include <vector>

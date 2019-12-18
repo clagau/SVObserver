@@ -1524,7 +1524,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					psvDevice->DestroyBuffers();
 
 					// create the buffers
-					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
+					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo );
 
 					// Add the acquisition device
 					bRet = pConfig->AddAcquisitionDevice( DigName.c_str(), svFiles, lightRef, lut, &deviceParams ) && bRet;
@@ -1601,7 +1601,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					psvDevice->SetDeviceParameters( svDeviceParams );	// must be done before CreateBuffers (in case CameraFormat changes)
 					psvDevice->GetDeviceParameters( svDeviceParams );	// LoadFiles may have created CameraFormat params which were not in the original list; retrieve the new complete list
 					psvDevice->GetImageInfo(&svImageInfo);
-					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
+					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo );
 
 					// needs to happen AFTER SetDeviceParameters on a New
 					if ( bGetLightReference )
@@ -2197,6 +2197,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay());
 				pPPQ->SetOutputDelay(pPPQObj->GetPPQOutputDelayTime());
 				pPPQ->SetMaintainSourceImages( pPPQObj->GetMaintainSourceImageProperty() );
+				pPPQ->setMaxGap4Interest(pPPQObj->GetMaxTriggerGapProperty());
 				pPPQ->SetInspectionTimeout( pPPQObj->GetInspectionTimeout() );
 				pPPQ->SetConditionalOutputName( pPPQObj->GetConditionalOutputName() );
 
@@ -2736,6 +2737,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPPQObj->SetPPQOutputDelayTime((int)lPPQDelayTime);
 				pPPQObj->SetPPQOutputResetDelay((int)lPPQResetDelay);
 				pPPQObj->SetMaintainSourceImageProperty(bPPQMaintainSrcImg);
+				pPPQObj->SetMaxTriggerGapProperty(pcfgPPQ->getMaxGap4Interest());
 				pPPQObj->SetInspectionTimeout( lInspectionTimeout );
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
 
@@ -3149,7 +3151,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 					if ( pPPQObj )
 					{
 						long l_lPpqLength = pPPQObj->GetPPQLength();
-						long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); // GetSourceImageDepth() - 2;
+						long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
 						if ( pPPQObj->GetMaintainSourceImageProperty() )
 						{
 							if ( l_lPpqLength <= l_lImageDepth )
@@ -3179,7 +3181,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 						if ( pPPQObj->GetMaintainSourceImageProperty() )
 						{
 							long l_lPpqLength = pPPQObj->GetPPQLength();
-							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); //GetSourceImageDepth() - 2;
+							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
 							if ( l_lPpqLength > l_lImageDepth )
 							{
 								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
@@ -3191,7 +3193,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 						{
 							// see if error conditions exist, if so remove it
 							// maintain source image = false
-							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); //GetSourceImageDepth() - 2;
+							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
 							std::string Msg = SvUl::Format( _T("%s%d"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
 							//create error display message
 							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );

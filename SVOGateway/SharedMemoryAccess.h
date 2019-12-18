@@ -26,7 +26,7 @@ struct ShareControlSettings;
 namespace SvTrc
 {
 class ITriggerRecordR;
-class TriggerRecordController;
+class ITriggerRecordControllerR;
 }
 
 namespace SvRpc
@@ -108,7 +108,7 @@ private:
 private:
 	void subscribe_to_trc();
 	void unsubscribe_from_trc();
-	int get_inspection_pos_for_guid(SvTrc::TriggerRecordController&, const std::string& guid);
+	int get_inspection_pos_for_guid(SvTrc::ITriggerRecordControllerR&, const std::string& guid);
 
 private:
 	boost::asio::io_service& m_io_service;

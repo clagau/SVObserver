@@ -125,6 +125,7 @@ enum MessageTextEnum
 	Tid_ErrorNotAllDataItemsFound,
 	Tid_ErrorNotAllImageItemsFound,
 	Tid_ErrorProcessNotifyLastInspected,
+	Tid_RejectTRBeforeInterestDecision,
 	Tid_Unknown,
 	Tid_ErrorLockingInputRequests,
 	Tid_ErrorRemovingAllInputRequests,

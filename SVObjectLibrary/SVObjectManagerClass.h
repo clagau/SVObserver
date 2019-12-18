@@ -256,7 +256,7 @@ protected:
 	};
 
 	typedef std::shared_ptr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
-	typedef std::map< GUID, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
+	typedef std::unordered_map< GUID, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
 
 	SVObjectManagerClass();
 

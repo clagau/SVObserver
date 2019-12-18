@@ -59,6 +59,7 @@ enum PROPERTY_PAGE_PROPERTY
 	PROP_FILECAMERA_DIRECTORY,
 	PROP_FILECAMERA_MODE,
 	PROP_PPQ_CONDITIONAL_OUTPUT,
+	PROP_PPQ_MAXGAP4INTEREST,
 	PROP_CAMERA_COLOR,
 
 	//defines for advanced properties
@@ -132,7 +133,7 @@ protected:
 	afx_msg void OnClose();
 	//}}AFX_MSG
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
-    afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
+	afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 
 	DECLARE_MESSAGE_MAP()
@@ -170,6 +171,8 @@ private: //data members
 	void SetupPPQ();
 
 	bool IsGigeSystem() const;
+
+	void checkAndSetMaxGap4Interest(int iLen);
 };
 
 

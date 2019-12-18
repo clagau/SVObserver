@@ -1584,7 +1584,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 							psvDevice->SetLightReference(svLight);
 							psvDevice->SetLut(lut);
 							psvDevice->GetImageInfo(&svImageInfo);
-							psvDevice->CreateBuffers(svImageInfo, TheSVObserverApp.GetSourceImageDepth());
+							psvDevice->CreateBuffers(svImageInfo);
 
 							// set the trigger and strobe polarity in the I/O board based on Acq. device params
 							// must get from the acq device instead of using svDeviceParams because the
@@ -2057,6 +2057,15 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 			pPPQ->SetOutputDelay(lDelay);
 		}// end if
 
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_MAX_GAP_4INTEREST, hSubChild, Value);
+
+		if (bOk)
+		{
+			lDelay = Value;
+
+			pPPQ->setMaxGap4Interest(lDelay);
+		}// end if
+
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_MAINTAIN_SRC_IMAGE, hSubChild, Value);
 
 		if (bOk)
@@ -2490,7 +2499,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				}
 
 				psvDevice->GetImageInfo(&svImageInfo);
-				psvDevice->CreateBuffers(svImageInfo, TheSVObserverApp.GetSourceImageDepth());
+				psvDevice->CreateBuffers(svImageInfo);
 			}
 			if (!(AddAcquisitionDevice(DeviceName.c_str(), svFileArray, svLight, lut, &svDeviceParams)))
 			{
@@ -3345,6 +3354,10 @@ void SVConfigurationObject::SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, con
 	rPPQ.GetMaintainSourceImages(bMaintainSrcImg);
 	svValue = bMaintainSrcImg;
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAINTAIN_SRC_IMAGE, svValue);
+	svValue.Clear();
+
+	svValue = rPPQ.getMaxGap4Interest();
+	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAX_GAP_4INTEREST, svValue);
 	svValue.Clear();
 
 	long lInspectionTimeout = 0;

@@ -48,7 +48,6 @@ SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams&
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
 	m_LastImage = nullptr;
-	mulSize = 0;
 
 	mlStartFrameIndex = -1;
 
@@ -208,7 +207,7 @@ HRESULT SVAcquisitionClass::Reset()
 	return l_Status;
 }
 
-HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo, unsigned long ulSize)
+HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo)
 {
 	HRESULT Result = SVImageProcessingClass::FillBufferStructFromInfo(IInfo, m_bufferStruct);
 	if (S_OK == Result)
@@ -216,7 +215,7 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo, unsigned long 
 		Result = DestroyBuffers();
 		try
 		{
-			m_rTRController.addImageBuffer(m_guid, m_bufferStruct, ulSize, true);
+			m_rTRController.addImageBuffer(m_guid, m_bufferStruct, m_neededBuffer, true);
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
@@ -229,12 +228,11 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo, unsigned long 
 
 	if (S_OK == Result)
 	{
-		mulSize = ulSize + 3;
 		msvImageInfo = IInfo;
 
 		if (IsDigitizerSubsystemValid())
 		{
-			Result = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->CreateBuffers(m_hDigitizer, ulSize + 3);
+			Result = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->CreateBuffers(m_hDigitizer);
 		}
 	}
 
@@ -253,8 +251,6 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo, unsigned long 
 HRESULT SVAcquisitionClass::DestroyBuffers()
 {
 	HRESULT hrOk = S_OK;
-
-	mulSize = 0;
 
 	mlStartFrameIndex = -1;
 
@@ -769,6 +765,21 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rI
 	l_Response.setIsComplete(true);
 
 	return Notify(l_Response);
+}
+
+void SVAcquisitionClass::setNeededBuffers(int neededBuffers)
+{
+	m_neededBuffer = neededBuffers;
+	try
+	{
+		m_rTRController.addImageBuffer(m_guid, m_bufferStruct, m_neededBuffer, true);
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		//This is the topmost catch for MessageContainer exceptions
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(rExp.getMessage());
+	}
 }
 
 HRESULT SVAcquisitionClass::StartDigitizer()

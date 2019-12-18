@@ -150,7 +150,7 @@ bool SVTestAcquisitionClass::StartAcquire( SVCameraPage& p_rDisplay )
 
 	m_pDisplay = &p_rDisplay;
 
-	m_rSubsystem.m_svDigitizers.CreateBuffers( m_hDigitizer, 10 );
+	m_rSubsystem.m_svDigitizers.CreateBuffers( m_hDigitizer );
 	m_rSubsystem.m_svDigitizers.RegisterBufferInterface( m_hDigitizer, this );
 
 	m_pDisplay->m_CameraImage.UpdateDisplayBufferInfo( GetBufferWidth(), GetBufferHeight(), GetBufferFormat() );

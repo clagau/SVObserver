@@ -141,9 +141,9 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_
 	return l_hr;
 }
 
-HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel, unsigned long p_ulCount )
+HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel )
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraBufferCreateAll( triggerchannel, p_ulCount );
+	HRESULT l_hr = g_matroxAcqDevice.CameraBufferCreateAll( triggerchannel );
 
 	return l_hr;
 }

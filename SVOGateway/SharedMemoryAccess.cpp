@@ -21,8 +21,8 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerRecordController/TriggerRecord.h"
-#include "TriggerRecordController/TriggerRecordController.h"
+#include "TriggerRecordController/ITriggerRecordR.h"
+#include "TriggerRecordController/ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
 namespace SvOgw
@@ -64,7 +64,7 @@ void SharedMemoryAccess::GetInspections(const SvPb::GetInspectionsRequest& rRequ
 	SvPenv::Error Error;
 	SvPb::GetInspectionsResponse Response;
 
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	const auto& inspections = trc.getInspections();
 	for (int i = 0; i < inspections.list_size(); ++i)
 	{
@@ -220,7 +220,7 @@ void SharedMemoryAccess::StoreClientLogs(const SvPb::StoreClientLogsRequest& rRe
 
 void SharedMemoryAccess::SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
 {
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	trc.pauseTrsOfInterest(rRequest.pause());
 	check_trigger_record_pause_state_changed();
 
@@ -237,7 +237,7 @@ void SharedMemoryAccess::GetGatewayNotificationStream(
 	m_notification_streams.push_back(state);
 
 	// send initial pause state to client
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	send_trigger_record_pause_state_to_client(*state, trc.isPauseTrsOfInterest());
 }
 
@@ -343,7 +343,7 @@ void SharedMemoryAccess::check_queue_for_new_trigger_record(bool is_reject)
 
 	const auto& new_trigger = *new_trigger_ptr;
 
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	auto tro = trc.createTriggerRecordObject(new_trigger.inspectionPos, new_trigger.trId);
 	if (!tro)
 	{
@@ -414,7 +414,7 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 
 SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataResponse& res, const SvPb::GetProductDataRequest& req)
 {
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	const auto& inspectionIdStr = req.inspectionid();
 	const auto inspectionId = SvPb::GetGuidFromString(inspectionIdStr);
 	const auto inspectionPos = get_inspection_pos_for_guid(trc, inspectionIdStr);
@@ -549,7 +549,7 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 		return;
 	}
 
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	int inspectionPos = get_inspection_pos_for_guid(trc, stream.req.inspectionid());
 	if (inspectionPos >= 0)
 	{
@@ -613,7 +613,7 @@ void SharedMemoryAccess::on_trigger_record_pause_state_timer(const boost::system
 
 void SharedMemoryAccess::check_trigger_record_pause_state_changed()
 {
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	if (!trc.isValid())
 	{
 		return;
@@ -658,7 +658,7 @@ void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_
 
 void SharedMemoryAccess::subscribe_to_trc()
 {
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	m_TrcReadySubscriptionId = trc.registerReadyCallback([this]()
 	{
 		m_trc_ready = true;
@@ -696,14 +696,14 @@ void SharedMemoryAccess::subscribe_to_trc()
 
 void SharedMemoryAccess::unsubscribe_from_trc()
 {
-	auto& trc = SvTrc::getTriggerRecordControllerInstance();
+	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	trc.unregisterReadyCallback(m_TrcReadySubscriptionId);
 	trc.unregisterResetCallback(m_TrcResetSubscriptionId);
 	trc.unregisterNewTrCallback(m_TrcNewTrSubscriptionId);
 	trc.unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
 }
 
-int SharedMemoryAccess::get_inspection_pos_for_guid(SvTrc::TriggerRecordController& trc, const std::string& guid)
+int SharedMemoryAccess::get_inspection_pos_for_guid(SvTrc::ITriggerRecordControllerR& trc, const std::string& guid)
 {
 	const auto& inspections = trc.getInspections();
 	for (int i = 0; i < inspections.list_size(); ++i)

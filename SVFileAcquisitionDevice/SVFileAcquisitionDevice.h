@@ -44,7 +44,7 @@ public:
 	HRESULT CameraGetParameter( unsigned long p_ulIndex, int p_iParameterID, int *p_piParameterIDType, VARIANT *p_pvarValue );
 	HRESULT CameraSetParameter( unsigned long p_ulIndex, int p_iParameterID, int p_iParameterIDType, VARIANT *p_pvarValue );
 	
-	HRESULT CameraBufferCreateAll( unsigned long p_ulIndex, unsigned long p_ulCount );
+	HRESULT CameraBufferCreateAll( unsigned long p_ulIndex );
 	HRESULT CameraBufferDestroyAll( unsigned long p_ulIndex );
 	HRESULT CameraRegisterBufferInterface( unsigned long p_ulIndex, SVAcquisitionBufferInterface* p_pInterface );
 	HRESULT CameraUnregisterBufferInterface( unsigned long p_ulIndex );

@@ -887,7 +887,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 	}
 
 	SVInspectionInfoStruct* pIPInfo = &(pProduct->m_svInspectionInfos[GetUniqueObjectID()]);
-	bool isTriggerRecordValid = nullptr != pIPInfo && nullptr != pIPInfo->m_triggerRecordWrite;
+	bool isTriggerRecordValid = nullptr != pIPInfo;
 	// Make sure that the lists are the same size
 	if (!isTriggerRecordValid || m_PPQInputs.size() != pProduct->m_triggerInfo.m_Inputs.size())
 	{
@@ -2766,6 +2766,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 			m_runStatus.SetInvalid();  //sets run.status.valid = false, and since no bits are set = SV_INVALID
 		}
 
+		rIPInfo.setNextTriggerRecord(SvTrc::TriggerData {triggerCount});
 		if (!ProcessInputImageRequests(rIPInfo, rCameraInfos))
 		{
 			Exception.setMessage(SVMSG_SVO_39_IMAGE_REQUEST_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
@@ -2788,17 +2789,8 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 		}
 		else
 		{
-			rIPInfo.setNextTriggerRecord(SvTrc::TriggerData{triggerCount});
-			if (nullptr != rIPInfo.m_triggerRecordWrite)
-			{
-				rIPInfo.m_triggerRecordWrite->initImages();
-				Exception.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RunInspection_ResetTR, SvStl::SourceFileParams(StdMessageParams));
-			}
-			else
-			{
-				l_bImageRequest = true;
-				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunInspection_ResetTR, SvStl::SourceFileParams(StdMessageParams));
-			}
+			l_bImageRequest = true;
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunInspection_ResetTR, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 		try

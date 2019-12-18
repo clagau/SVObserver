@@ -51,6 +51,7 @@ public:
 	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rw );
 
 	virtual HRESULT InitializeDevice( const SVDeviceParamCollection& rParams );
+	virtual void setNeededBuffers(int neededBuffers) {}
 	
 	bool IsOnline();
 	virtual bool StartAcquire(SVCameraPage& p_rDisplay);

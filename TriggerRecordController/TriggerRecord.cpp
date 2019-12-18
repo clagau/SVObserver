@@ -16,7 +16,6 @@
 #include "Definitions/GlobalConst.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -70,31 +69,6 @@ const TriggerData& TriggerRecord::getTriggerData() const
 	}
 	static TriggerData emptyData;
 	return emptyData;
-}
-
-IImagePtr TriggerRecord::getImage(const GUID& imageId, bool lockImage) const
-{
-	IImagePtr pImage;
-	std::string ImageIdBytes;
-	SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
-	auto pLock = ResetLocker::lockReset(m_ResetId);
-	if (nullptr != pLock)
-	{
-		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-		if (-1 < pos)
-		{
-			pImage = getImage(pos, lockImage);
-		}
-		else //check if child image
-		{
-			pos = findGuidPos(m_rImageList.childlist(), ImageIdBytes);
-			if (-1 < pos)
-			{
-				pImage = getChildImage(pos, lockImage);
-			}
-		}
-	}
-	return pImage;
 }
 
 IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
@@ -176,21 +150,6 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 		}
 	}
 	return pImage;
-}
-
-_variant_t TriggerRecord::getDataValue(const GUID& dataId) const
-{
-	std::string guidIdBytes;
-	SvPb::SetGuidInProtoBytes(&guidIdBytes, dataId);
-	auto pLock = ResetLocker::lockReset(m_ResetId);
-	if (nullptr != pLock)
-	{
-		int pos = findGuidPos(m_rDataDefList.list(), guidIdBytes);
-		return getDataValue(pos);
-	}
-	SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-	e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
-	return {};
 }
 
 _variant_t TriggerRecord::getDataValue(int pos) const
@@ -364,33 +323,9 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTr)
 	}
 }
 
-void TriggerRecord::setImage(const GUID& rImageId, const IImagePtr& pImage)
-{
-	std::string ImageIdBytes;
-	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
-	auto pLock = ResetLocker::lockReset(m_ResetId);
-	if (nullptr != pLock)
-	{
-		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-		setImage(pos, pImage->getBufferPos());
-	}
-}
-
 void TriggerRecord::setImage(int pos, const IImagePtr& pImage)
 {
 	setImage(pos, pImage->getBufferPos());
-}
-
-void TriggerRecord::setImage(const GUID& rImageId, int bufferPos)
-{
-	std::string ImageIdBytes;
-	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
-	auto pLock = ResetLocker::lockReset(m_ResetId);
-	if (nullptr != pLock)
-	{
-		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-		setImage(pos, bufferPos);
-	}
 }
 
 void TriggerRecord::setImage(int pos, int bufferPos)
@@ -443,24 +378,6 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 			Exception.Throw();
 		}
 	}
-}
-
-IImagePtr TriggerRecord::createNewImageHandle(const GUID& imageId)
-{
-	IImagePtr pImage;
-	std::string ImageIdBytes;
-	SvPb::SetGuidInProtoBytes(&ImageIdBytes, imageId);
-
-	auto pLock = ResetLocker::lockReset(m_ResetId);
-	if (nullptr != pLock)
-	{
-		int pos = findGuidPos(m_rImageList.list(), ImageIdBytes);
-		if (-1 < pos)
-		{
-			pImage = createNewImageHandle(pos);
-		}
-	}
-	return pImage;
 }
 
 IImagePtr TriggerRecord::createNewImageHandle(int pos)

@@ -16,6 +16,17 @@
 //Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
+namespace std
+{
+template<> struct hash<GUID>
+{
+	std::size_t operator()(GUID const& s) const noexcept
+	{
+		return std::hash<unsigned long> {}(s.Data1);
+	}
+};
+}
+
 inline bool operator < (const GUID& guid1, const GUID& guid2)
 {
 	RPC_STATUS l_Status;

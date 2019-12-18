@@ -315,6 +315,31 @@ void SVVirtualCamera::FinishProcess( SVODataResponseClass *pResponse )
 	}
 }
 
+void SVVirtualCamera::addNeededBuffer(const GUID& rGuid, int neededBufferSize)
+{
+	m_neededBufferMap[rGuid] = neededBufferSize;
+	setNeededBuffer();
+}
+
+void SVVirtualCamera::removeNeededBufferEntry(const GUID& rGuid)
+{
+	auto iter = m_neededBufferMap.find(rGuid);
+	if (m_neededBufferMap.end() != iter)
+	{
+		m_neededBufferMap.erase(iter);
+		setNeededBuffer();
+	}
+}
+
+void SVVirtualCamera::setNeededBuffer()
+{
+	const auto maxElement = std::max_element(m_neededBufferMap.begin(), m_neededBufferMap.end(), [](const auto& rEntry1, const auto& rEntry2) { return rEntry1.second < rEntry2.second; });
+	if (m_neededBufferMap.end() != maxElement && nullptr != m_pDevice)
+	{
+		m_pDevice->setNeededBuffers(maxElement->second);
+	}
+}
+
 bool SVVirtualCamera::DestroyLocal()
 {
 	bool bOk = GoOffline();

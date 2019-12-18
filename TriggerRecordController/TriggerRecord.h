@@ -10,8 +10,13 @@
 #pragma region Includes
 #include "ITriggerRecordR.h"
 #include "ITriggerRecordRW.h"
-#include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
+
+namespace SvPb
+{
+class DataDefinitionList;
+class ImageList;
+}
 
 namespace SvTrc
 {
@@ -34,11 +39,9 @@ public:
 
 	virtual const TriggerData& getTriggerData() const override;
 
-	virtual IImagePtr getImage(const GUID& imageId, bool lockImage = false) const override;
 	virtual IImagePtr getImage(int pos, bool lockImage = false) const override;
 	virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const override;
 
-	virtual _variant_t getDataValue(const GUID& dataId) const override;
 	virtual _variant_t getDataValue(int pos) const override;
 
 	virtual bool isValueDataValid() const override;
@@ -53,12 +56,9 @@ public:
 	virtual void initImages() override;
 	virtual void setImages(const ITriggerRecordR& rDestTr) override;
 
-	virtual void setImage(const GUID& rImageId, const IImagePtr& pImage) override;
 	virtual void setImage(int pos, const IImagePtr& pImage) override;
-	virtual void setImage(const GUID& rImageId, int bufferPos) override;
 	virtual void setImage(int pos, int bufferPos) override;
 
-	virtual IImagePtr createNewImageHandle(const GUID& imageId) override;
 	virtual IImagePtr createNewImageHandle(int pos) override;
 
 	virtual void initValueData() override;
@@ -92,20 +92,4 @@ private:
 };
 
 void removeTrReferenceCount(int ipPos, long& rReferenceCount);
-
-template<typename Container>
-int findGuidPos(const Container& rContainer, const std::string& rGuidIdBytes)
-{
-	int pos = -1;
-	auto imageIter = std::find_if(rContainer.begin(), rContainer.end(), [&rGuidIdBytes](const auto& rData)->bool
-	{
-		return (0 == rData.guidid().compare(rGuidIdBytes));
-	});
-	if (rContainer.end() != imageIter)
-	{
-		pos = static_cast<int>(std::distance(rContainer.begin(), imageIter));
-	}
-
-	return pos;
-}
 } //namespace SvTrc

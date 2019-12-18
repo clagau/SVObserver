@@ -16,6 +16,7 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
 #include "SVImportedInputList.h"
+#include "SVPPQConstants.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -25,10 +26,7 @@ typedef std::deque<SVNameGuidPair> SVNameGuidPairList;
 class SVOPPQObj  
 {
 public:
-	SVOPPQObj();
-	virtual ~SVOPPQObj();
-
-	SVOPPQObj& operator=(const SVOPPQObj &source);
+	SVOPPQObj() = default;
 
 	void SetPPQName(LPCTSTR PPQName);
 	const std::string& GetPPQName();
@@ -53,6 +51,7 @@ public:
 	void SetPPQOutputResetDelay(long lResetDelay);
 	void SetPPQOutputDelayTime(long lDelayTime);
 	void SetMaintainSourceImageProperty(bool bValue);
+	void SetMaxTriggerGapProperty(int value);
 	void SetInspectionTimeout( long lTimeoutMillisec );
 
 	int GetPPQMode() const;
@@ -60,6 +59,7 @@ public:
 	long GetPPQOutputResetDelay() const;
 	long GetPPQOutputDelayTime() const;
 	bool GetMaintainSourceImageProperty() const;
+	int GetMaxTriggerGapProperty() const;
 	long GetInspectionTimeout() const;
 
 	void SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list);
@@ -75,19 +75,20 @@ public:
 	void ClearImportedInputList();
 
 private:
-	std::string m_PPQName;
-	std::string m_AttachedTrigger;
+	std::string m_PPQName {};
+	std::string m_AttachedTrigger {};
 	SvDef::StringVector m_AttachedCameraList;
 	SvDef::StringVector m_AttachedInspectList;
 
 	//properties
-	int m_iPPQMode;
-	long m_lPPQLength;
-	long m_lPPQOutputResetDelay;
-	long m_lPPQOutputDelayTime;
-	bool m_bMaintainSrcImg;
-	long m_lInspectionTimeout;
-	std::string m_conditionalOutputName;
+	int m_iPPQMode {0};
+	long m_lPPQLength {2};
+	long m_lPPQOutputResetDelay {0};
+	long m_lPPQOutputDelayTime {100};
+	bool m_bMaintainSrcImg {false};
+	int m_MaxTriggerGapFlag {0};
+	long m_lInspectionTimeout {0};
+	std::string m_conditionalOutputName {PPQ_CONDITIONAL_OUTPUT_ALWAYS};
 	SVNameGuidPairList m_availableInputs;
 	SVImportedInputList m_importedInputList;
 };

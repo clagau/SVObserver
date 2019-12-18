@@ -31,7 +31,7 @@ HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARR
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth );
 HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight );
 HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat );
-HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel, unsigned long p_ulCount );
+HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface );
 HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel );

@@ -355,13 +355,13 @@ namespace SvTh
 	/*
 	This method uses the p_psvCreateBuffers attribute to call the DLL SVDigitizerCreateBuffers function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
 	*/
-	inline HRESULT SVDigitizerLoadLibraryClass::CreateBuffers(SVHANDLE p_hHandle, unsigned long p_ulCount)
+	inline HRESULT SVDigitizerLoadLibraryClass::CreateBuffers(SVHANDLE p_hHandle)
 	{
 		HRESULT l_hrOk = S_FALSE;
 
 		if (nullptr != m_psvCreateBuffers)
 		{
-			l_hrOk = m_psvCreateBuffers(p_hHandle, p_ulCount);
+			l_hrOk = m_psvCreateBuffers(p_hHandle);
 		}
 
 		return l_hrOk;

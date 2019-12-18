@@ -427,7 +427,7 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long index, int p_
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraBufferCreateAll( unsigned long index, unsigned long p_ulCount )
+HRESULT SVFileAcquisitionDevice::CameraBufferCreateAll( unsigned long index )
 {
 	HRESULT l_hrOk = S_OK;
 

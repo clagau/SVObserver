@@ -421,6 +421,7 @@ bool SVPPQObject::Create()
 
 	m_oNotifyInspectionsSet.clear();
 	m_ProcessInspectionsSet.clear();
+	calcUseGap4InterestFlag();
 
 	if (m_isCreated)
 	{
@@ -455,6 +456,8 @@ bool SVPPQObject::Rebuild()
 	m_ppPPQPositions.resize(GetPPQLength());
 
 	bool result = SetupProductInfoStructs();
+
+	calcUseGap4InterestFlag();
 
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
@@ -580,6 +583,15 @@ void SVPPQObject::SetPPQLength(long lPPQLength)
 	{
 		Rebuild();
 	}
+
+	int ppqLength = GetPPQLength();
+	for (auto& cameraPair : m_Cameras)
+	{
+		if (nullptr != cameraPair.first)
+		{
+			cameraPair.first->addNeededBuffer(GetUniqueObjectID(), ppqLength);
+		}
+	}
 }
 
 void SVPPQObject::SetMaintainSourceImages(bool bMaintainImages)
@@ -665,6 +677,7 @@ bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, b
 		RebuildProductCameraInfoStructs();
 
 		l_bOk &= pCamera->RegisterFinishProcess(this, SVFinishCameraCallback);
+		pCamera->addNeededBuffer(GetUniqueObjectID(), GetPPQLength());
 	}
 
 	return l_bOk;
@@ -702,6 +715,7 @@ bool SVPPQObject::DetachCamera(SvIe::SVVirtualCamera* pCamera, bool bRemoveDepen
 	bool l_Status = true;
 
 	l_Status &= pCamera->UnregisterFinishProcess(this, SVFinishCameraCallback);
+	pCamera->removeNeededBufferEntry(GetUniqueObjectID());
 
 	SVCameraInfoMap::iterator l_svIter = m_Cameras.find(pCamera);
 
@@ -879,6 +893,8 @@ void SVPPQObject::PrepareGoOnline()
 {
 	SvSml::SharedMemWriter::Instance().clearInspectionIdsVector(GetName());
 
+	calcUseGap4InterestFlag();
+
 	if (!m_pTrigger->CanGoOnline())
 	{
 		SvDef::StringVector msgList;
@@ -938,7 +954,7 @@ void SVPPQObject::PrepareGoOnline()
 	{
 		if (!m_arInspections[i]->CanGoOnline())
 		{
-			SvStl::MessageTextEnum messageId = SvStl::Tid_Empty;
+			SvStl::MessageTextEnum messageId = SvStl::Tid_CanGoOnlineFailure_Inspection;
 			SvDef::StringVector msgList;
 
 			//@TODO[gra][7.40][25.05.2016]: This should at a later stage show all the tool errors not only the first error
@@ -956,7 +972,6 @@ void SVPPQObject::PrepareGoOnline()
 			}
 			else
 			{
-				messageId = SvStl::Tid_CanGoOnlineFailure_Inspection;
 				msgList.push_back(m_arInspections[i]->GetCompleteName());
 			}
 			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, sourceFileParam, SvStl::Err_10185);
@@ -1024,13 +1039,14 @@ void SVPPQObject::GoOnline()
 		m_pOutputToggle->m_Enabled = false;
 	}
 
-	size_t lSize = m_arInspections.size();
+	m_storeForInterestMap.clear();
+
 	bool bInspGoOnline = true;
-	for (size_t i = 0; i < lSize; i++)
+	for (auto* pInspection : m_arInspections)
 	{
-		if (!m_arInspections[i]->GoOnline())
+		if (!pInspection->GoOnline())
 		{
-			FailureObjectName = m_arInspections[i]->GetCompleteName();
+			FailureObjectName = pInspection->GetCompleteName();
 			bInspGoOnline = false;
 			break;
 		}
@@ -1038,10 +1054,9 @@ void SVPPQObject::GoOnline()
 
 	if (!bInspGoOnline)
 	{
-		lSize = m_arInspections.size();
-		for (size_t i = 0; i < lSize; i++)
+		for (auto* pInspection : m_arInspections)
 		{
-			m_arInspections[i]->GoOffline();
+			pInspection->GoOffline();
 		}// end for
 
 		SvDef::StringVector msgList;
@@ -1051,14 +1066,12 @@ void SVPPQObject::GoOnline()
 		throw Msg;
 	}// end if
 
-	SVCameraInfoMap::iterator l_svIter;
 	bool bCameraGoOnline = true;
-	for (l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter)
+	for (auto& rCameraPair : m_Cameras)
 	{
-		if (!l_svIter->first->GoOnline())
+		if (!rCameraPair.first->GoOnline())
 		{
-			FailureObjectName = l_svIter->first->GetCompleteName();
-
+			FailureObjectName = rCameraPair.first->GetCompleteName();
 			bCameraGoOnline = false;
 			break;
 		}
@@ -1066,15 +1079,14 @@ void SVPPQObject::GoOnline()
 
 	if (!bCameraGoOnline)
 	{
-		for (l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter)
+		for (auto& rCameraPair : m_Cameras)
 		{
-			l_svIter->first->GoOffline();
+			rCameraPair.first->GoOffline();
 		}// end for
 
-		lSize = m_arInspections.size();
-		for (size_t i = 0; i < lSize; i++)
+		for (auto* pInspection : m_arInspections)
 		{
-			m_arInspections[i]->GoOffline();
+			pInspection->GoOffline();
 		}// end for
 
 		SvDef::StringVector msgList;
@@ -1089,17 +1101,14 @@ void SVPPQObject::GoOnline()
 		FailureObjectName = m_pTrigger->GetCompleteName();
 		m_pTrigger->GoOffline();
 
-		SVCameraInfoMap::iterator l_svIter;
-
-		for (l_svIter = m_Cameras.begin(); l_svIter != m_Cameras.end(); ++l_svIter)
+		for (auto& rCameraPair : m_Cameras)
 		{
-			l_svIter->first->GoOffline();
+			rCameraPair.first->GoOffline();
 		}// end for
 
-		lSize = m_arInspections.size();
-		for (size_t i = 0; i < lSize; i++)
+		for (auto* pInspection : m_arInspections)
 		{
-			m_arInspections[i]->GoOffline();
+			pInspection->GoOffline();
 		}// end for
 
 		SvDef::StringVector msgList;
@@ -2134,10 +2143,6 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
 	pNewProduct->m_lastPPQPosition = m_lastPPQPosition;
-	for (auto& rInspection : pNewProduct->m_svInspectionInfos)
-	{
-		rInspection.second.setNextTriggerRecord(SvTrc::TriggerData{pNewProduct->m_triggerInfo.lTriggerCount});
-	}
 	
 	// ************************************************************************
 	// Now we need to get the IO ready for this Product. Make sure that all locks are set
@@ -2236,8 +2241,6 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 	HRESULT l_Status = S_OK;
 
 	SVProductInfoStruct* l_pProduct = nullptr;
-
-	size_t l_ProductIndex = m_ppPPQPositions.size();
 	size_t l_Count = m_ppPPQPositions.size();
 
 	switch (m_NAKMode)
@@ -2285,6 +2288,9 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 
 	}
 
+#ifdef EnableTracking
+	size_t l_ProductIndex = m_ppPPQPositions.size();
+#endif
 	// Begin checking inspections to start processing
 	for (size_t i = 0; i < l_Count; ++i)
 	{
@@ -2301,7 +2307,9 @@ HRESULT SVPPQObject::StartInspection(const SVGUID& p_rInspectionID)
 					!(l_rInfo.m_HasBeenQueued))		// This flag prevents the inspection from getting queued more than once
 				{
 					l_pProduct = pTempProduct; // product info
-					l_ProductIndex = i;
+#ifdef EnableTracking
+					l_ProductIndex = m_ppPPQPositions.GetIndexByTriggerCount(l_pProduct->ProcessCount());
+#endif
 					if (SvDef::Bursts == m_NAKMode)
 					{
 						if ((m_NewNAKCount > 2 && m_FirstNAKProcessCount == 0))
@@ -2402,7 +2410,6 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 			break;
 		}
 		default:
-			DWORD dw = GetLastError();
 			return false;
 		}// end switch
 
@@ -2542,28 +2549,17 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
 	rProduct.m_outputsInfo.m_NakResult =  bNAK ? true : false;
-	rProduct.m_outputsInfo.m_DataValidResult = bValid & !bNAK;
+	rProduct.m_outputsInfo.m_DataValidResult = bValid && !bNAK;
 }
 
-bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
+bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, const GUID& rInspGuid)
 {
-	m_lastPPQPosition = p_PPQIndex;
-
-	SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(p_PPQIndex);
-	if (nullptr == pProduct)
-	{
-		return false;
-	}
-
 	bool bValid = true;
-	SVGUIDSVInspectionInfoStructMap::iterator l_Iter = pProduct->m_svInspectionInfos.begin();
 	bool isReject = false;
-	while (l_Iter != pProduct->m_svInspectionInfos.end())
+	for (const auto& rInsp : rProduct.m_svInspectionInfos)
 	{
-		bool l_Complete = (l_Iter->second.m_EndInspection > 0);
-		bValid &= l_Complete;
-		isReject |= l_Iter->second.m_bReject;
-		++l_Iter;
+		bValid &= (rInsp.second.m_EndInspection > 0);
+		isReject |= rInsp.second.m_bReject;
 	}
 
 	if (bValid)
@@ -2571,18 +2567,13 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 		// Currently only used for Remote Outputs and Fail Status Stream.
 		// returns E_FAIL when there are no listeners/observers.  Not having 
 		// Remote Outputs or Fail Status is not an error in this case.
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), GetUniqueObjectID(), *pProduct);
-	}
-
-	if (bValid)
-	{
-		AddResultsToPPQ(*pProduct);
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cPPQObjectTag), GetUniqueObjectID(), rProduct);
+		AddResultsToPPQ(rProduct);
 	}
 
 	//Only place that could set bDataComplete to true
-	pProduct->m_dataComplete = bValid;
-
-	if (pProduct->m_dataComplete)
+	rProduct.m_dataComplete = bValid;
+	if (rProduct.m_dataComplete)
 	{
 		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode) ||
 			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode))
@@ -2592,51 +2583,19 @@ bool SVPPQObject::SetInspectionComplete(long p_PPQIndex)
 
 		if (isReject && HasActiveMonitorList())
 		{	
-			std::vector<SvTrc::ITriggerRecordRPtr> trVec;
-			for (auto ipInfo : pProduct->m_svInspectionInfos)
-			{
-				if (nullptr != ipInfo.second.m_triggerRecordComplete)
-				{
-					trVec.push_back(ipInfo.second.m_triggerRecordComplete);
-				}
-			}
-
-			try
-			{
-				isReject = SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec);
-				long slotindex = pProduct->m_monitorListSMSlot;
-				if (pProduct->ProcessCount() > 0 && slotindex >= 0)
-				{
-					if (isReject)
-					{
-						GetSlotmanager()->SetToReject(slotindex);
-					}
-				}
-				else
-				{
-					assert("Error in getting next Slot");
-					SvDef::StringVector msgList;
-					msgList.push_back("Error in getting next Slot");
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}
-			catch (const std::exception& e)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(e.what());
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
-			}
-			catch (...)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
-			}
+			setTRofInterest(rProduct);
+		}
+		rProduct.clearTRCs();
+	}
+	else
+	{
+		if (m_useGap4Interest && nullptr != rProduct.m_svInspectionInfos[rInspGuid].m_triggerRecordComplete)
+		{
+			setTR2StoreForInterestMap(rInspGuid, rProduct);
+			rProduct.m_svInspectionInfos[rInspGuid].clearTRCs();
 		}
 	}
+
 
 	return bValid;
 }
@@ -3211,7 +3170,7 @@ void SVPPQObject::ThreadProcess(bool& p_WaitForEvents)
 	if (!processed)
 	{
 		// will only execute if 0 == m_oTriggerQueue.size().
-		ProcessInspections(processed);
+		processed = processInspections();
 	}
 
 	if (!processed)
@@ -3448,33 +3407,29 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessInspections( bool& rProcessed )
+bool SVPPQObject::processInspections( )
 /// Does nothing if there is at least one trigger in the trigger queue.
 /// Otherwise, extracts all the GUIDs from m_ProcessInspectionsSet and starts the 
 /// corresponding inspections via StartInspection().
 /// They will be completed asynchronously in the class SVInspectionProcess.
 {
-	HRESULT l_Status = S_OK;
+	bool processed = ( 0 < m_oTriggerQueue.size() );
 
-	rProcessed = ( 0 < m_oTriggerQueue.size() );
-
-	if( ! rProcessed )
+	if( !processed)
 	{
-		rProcessed = ( 0 < m_ProcessInspectionsSet.size() );
+		processed = ( 0 < m_ProcessInspectionsSet.size() );
 
-		if( rProcessed )
+		if(processed)
 		{
-			SVGuidSet::iterator l_Iter(m_ProcessInspectionsSet.begin());
-
-			while (l_Iter != m_ProcessInspectionsSet.end())
+			for (const auto& rGuid : m_ProcessInspectionsSet)
 			{
-				StartInspection(*l_Iter);
-				m_ProcessInspectionsSet.erase(l_Iter++);
+				StartInspection(rGuid);
 			}
+			m_ProcessInspectionsSet.clear();
 		}
 	}
 
-	return l_Status;
+	return processed;
 }
 
 HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
@@ -3739,9 +3694,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 
 			if (!(m_ProcessInspectionsSet.empty()))
 			{
-				bool l_Processed = false;
-
-				ProcessInspections(l_Processed);
+				processInspections();
 			}
 
 			while (0 < m_oInspectionQueue.GetCount() && nullptr == l_pPPQProduct)
@@ -3787,8 +3740,9 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 					m_PPQTracking.IncrementCount(l_Title, l_PPQIndex);
 #endif
 
+					m_lastPPQPosition = l_PPQIndex;
 					// Inspection Process is done, let everyone know.
-					if (!SetInspectionComplete(l_PPQIndex))
+					if (!SetInspectionComplete(*l_pPPQProduct, l_rInspectInfo.m_pInspection->GetUniqueObjectID()))
 					{
 						l_Status = E_FAIL;
 					}
@@ -4222,7 +4176,7 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 		}
 		try
 		{
-			SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(inspectionPosVec, GetPPQLength(), m_rejectCount);
+			SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -4253,22 +4207,17 @@ bool SVPPQObject::SetupProductInfoStructs()
 	BuildCameraInfos(cameraInfos);
 	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
 
-	std::vector<int> inspPosVec;
-	for (auto pInspection : m_arInspections)
-	{
-		inspPosVec.push_back(pInspection->getTrcPos());
-	}
 	for (int j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
 		m_pMasterProductInfos[j].m_pPPQ = this;
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
 
-		for (int i = 0; i < m_arInspections.size(); i++)
+		for (auto* pInsp : m_arInspections)
 		{
-			SVInspectionInfoStruct& rInspectionStruct = m_pMasterProductInfos[j].m_svInspectionInfos[m_arInspections[i]->GetUniqueObjectID()];
-			rInspectionStruct.m_pInspection = m_arInspections[i];
-			rInspectionStruct.m_inspectionPosInTrc = inspPosVec[i];
+			SVInspectionInfoStruct& rInspectionStruct = m_pMasterProductInfos[j].m_svInspectionInfos[pInsp->GetUniqueObjectID()];
+			rInspectionStruct.m_pInspection = pInsp;
+			rInspectionStruct.m_inspectionPosInTrc = pInsp->getTrcPos();
 		}// end for
 
 		m_qAvailableProductInfos.AddTail(&m_pMasterProductInfos[j]);
@@ -4295,7 +4244,7 @@ bool SVPPQObject::setInspections2TRC()
 		assert(pInspList->end() != pInspPB);
 		if (pInspList->end() != pInspPB)
 		{
-			pInspPB->set_numberofrecords(GetPPQLength());
+			pInspPB->set_numberofrecords(getNeededRecords());
 			pInspPB->set_numberrecordsofinterest(m_rejectCount);
 			pInspection->setTrcPos(static_cast<int>(std::distance(pInspList->begin(), pInspPB)));
 		}
@@ -4310,4 +4259,135 @@ bool SVPPQObject::setInspections2TRC()
 		pConfig->UpdateInspectionList4TRC();
 	}
 	return result;
+}
+
+void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct)
+{
+	std::vector<SvTrc::ITriggerRecordRPtr> trVec;
+	for (const auto& rIpInfo : rProduct.m_svInspectionInfos)
+	{
+		if (!m_useGap4Interest)
+		{
+			if (nullptr != rIpInfo.second.m_triggerRecordComplete)
+			{
+				trVec.push_back(rIpInfo.second.m_triggerRecordComplete);
+			}
+		}
+		else
+		{
+			if (nullptr != rIpInfo.second.m_triggerRecordComplete)
+			{
+				trVec.push_back(rIpInfo.second.m_triggerRecordComplete);
+			}
+			else
+			{
+				auto& rIpQueue = m_storeForInterestMap[rIpInfo.first];
+				long triggerCount = rProduct.m_triggerInfo.lTriggerCount;
+				auto iter = find_if(rIpQueue.begin(), rIpQueue.end(), [triggerCount] (auto& rEntry)
+				{ 
+					return nullptr != rEntry.m_triggerRecordComplete && triggerCount == rEntry.m_triggerRecordComplete->getTriggerData().m_TriggerCount; 
+				});
+				if (rIpQueue.end() != iter)
+				{
+					if (nullptr != iter->m_triggerRecordComplete)
+					{
+						trVec.push_back(iter->m_triggerRecordComplete);
+					}
+					rIpQueue.erase(iter);
+				}
+			}
+		}
+	}
+
+	try
+	{
+		bool isReject = SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec);
+		long slotindex = rProduct.m_monitorListSMSlot;
+		if (rProduct.ProcessCount() > 0 && slotindex >= 0)
+		{
+			if (isReject)
+			{
+				GetSlotmanager()->SetToReject(slotindex);
+			}
+		}
+		else
+		{
+			assert("Error in getting next Slot");
+			SvDef::StringVector msgList;
+			msgList.push_back("Error in getting next Slot");
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
+	}
+	catch (const std::exception& e)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(e.what());
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
+	catch (...)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
+}
+
+void SVPPQObject::setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfoStruct &rProduct)
+{
+	auto& rIpQueue = m_storeForInterestMap[rInspGuid];
+	long triggerCount = rProduct.m_triggerInfo.lTriggerCount;
+	if (rIpQueue.size() >= m_maxGap4Interest)
+	{
+		if (rProduct.m_svInspectionInfos[rInspGuid].m_bReject)
+		{
+			auto& rIter = rIpQueue.front();
+			auto trHandle = rIpQueue.front().m_triggerRecordComplete;
+			if (nullptr != trHandle)
+			{
+				try
+				{
+					SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest({trHandle});
+				}
+				catch (...)
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+				}
+			}
+		}
+		else
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RejectTRBeforeInterestDecision, SvStl::SourceFileParams(StdMessageParams));
+		}
+
+		rIpQueue.pop_front();
+	}
+	rIpQueue.emplace_back(rProduct.m_svInspectionInfos[rInspGuid]);
+}
+
+void SVPPQObject::calcUseGap4InterestFlag()
+{
+	m_useGap4Interest = 1 < m_arInspections.size() && 1 < m_maxGap4Interest && m_maxGap4Interest < GetPPQLength() && SvDef::SVPPQNextTriggerMode == m_oOutputMode;
+}
+
+long SVPPQObject::getNeededRecords() const
+{
+	if (1 == m_arInspections.size() || SvDef::SVPPQNextTriggerMode != m_oOutputMode)
+	{
+		return 2l;
+	}
+	else if (2 > m_maxGap4Interest || GetPPQLength() < m_maxGap4Interest)
+	{
+		return GetPPQLength();
+	}
+	else
+	{
+		return m_maxGap4Interest;
+	}
 }

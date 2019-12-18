@@ -28,7 +28,7 @@ namespace SvTh
 	typedef HRESULT(WINAPI *SVDigitizerGetBufferWidthPtr)(SVHANDLE, unsigned long *);
 	typedef HRESULT(WINAPI *SVDigitizerGetBufferHeightPtr)(SVHANDLE, unsigned long *);
 	typedef HRESULT(WINAPI *SVDigitizerGetBufferFormatPtr)(SVHANDLE, int *);
-	typedef HRESULT(WINAPI *SVDigitizerCreateBuffersPtr)(SVHANDLE, unsigned long);
+	typedef HRESULT(WINAPI *SVDigitizerCreateBuffersPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerRegisterBufferInterfacePtr)(SVHANDLE, class SVAcquisitionBufferInterface *);
 	typedef HRESULT(WINAPI *SVDigitizerStartPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerStopPtr)(SVHANDLE);
@@ -72,7 +72,7 @@ namespace SvTh
 		HRESULT GetBufferWidth(SVHANDLE p_hHandle, unsigned long *p_pulWidth);
 		HRESULT GetBufferHeight(SVHANDLE p_hHandle, unsigned long *p_pulHeight);
 		HRESULT GetBufferFormat(SVHANDLE p_hHandle, int *p_piFormat);
-		HRESULT CreateBuffers(SVHANDLE p_hHandle, unsigned long p_ulCount);
+		HRESULT CreateBuffers(SVHANDLE p_hHandle);
 		HRESULT RegisterBufferInterface(SVHANDLE p_hHandle, class SVAcquisitionBufferInterface* p_pInterface);
 		HRESULT Start(SVHANDLE p_hHandle);
 		HRESULT Stop(SVHANDLE p_hHandle);

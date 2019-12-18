@@ -610,7 +610,7 @@ HRESULT SVMatroxGige::CameraGetFormat( unsigned long channel, int &p_riFormat )
 	return hr;
 }
 
-HRESULT SVMatroxGige::CameraBufferCreateAll( unsigned long channel, unsigned long p_ulCount )
+HRESULT SVMatroxGige::CameraBufferCreateAll( unsigned long channel )
 {
 	HRESULT hr = S_FALSE;
 

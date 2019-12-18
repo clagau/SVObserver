@@ -136,6 +136,7 @@ namespace SvStl
 		{Tid_ErrorNotAllDataItemsFound, _T("Not All Data List items found")},
 		{Tid_ErrorNotAllImageItemsFound, _T("Not All Image List items found")},
 		{Tid_ErrorProcessNotifyLastInspected, _T("ProcessNotifyWithLastInspected - %s")},
+		{Tid_RejectTRBeforeInterestDecision, _T("Reject TriggerRecord data for one inspection before final PPQ-decision is finished.")},
 		{Tid_Unknown, _T("Unknown")},
 		{Tid_ErrorLockingInputRequests, _T( "Error locking input requests." )},
 		{Tid_ErrorRemovingAllInputRequests, _T( "Error removing all input requests." )},

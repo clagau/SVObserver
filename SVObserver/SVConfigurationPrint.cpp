@@ -1849,6 +1849,9 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			
 			Value = SvUl::Format( _T("%ld"), lDelayTime );
 			PrintValueObject(pDC, ptCurPos, _T("PPQOutputDelayTime"), Value.c_str() );
+
+			Value = SvUl::Format(_T("%ld"), pPPQ->getMaxGap4Interest());
+			PrintValueObject(pDC, ptCurPos, _T("PPQMaxGap4Interest"), Value.c_str());
 			
 			ptCurPos.x  = (nIndentLevel + 1) * m_shortTabPixels;
 			ptTemp      = ptCurPos;

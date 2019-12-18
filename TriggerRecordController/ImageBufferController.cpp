@@ -20,6 +20,7 @@
 #include "SVUtilityLibrary\StringHelper.h"
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #pragma endregion Includes
+//#define TRACE_TRC
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -65,11 +66,13 @@ ImageBufferController::~ImageBufferController()
 #pragma region Public Methods
 std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructList&& rImageStructList, bool isGlobalInit)
 {
-	int completeNumberOfRequiredBuffer = 0;
-	for (const auto& rImageStruct : rImageStructList.list())
-	{
-		completeNumberOfRequiredBuffer += rImageStruct.numberofbuffersrequired();
+	const auto& rImageList = rImageStructList.list();
+	int completeNumberOfRequiredBuffer = std::accumulate(rImageList.begin(), rImageList.end(), 0, 
+		[](int sum, const auto& rEntry) { return std::plus<int>()(sum, rEntry.numberofbuffersrequired()); });
+
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+	for (const auto& rImageStruct : rImageList)
+	{
 		std::string DebugString = SvUl::Format(_T("Required image %d for ImageType %d"), rImageStruct.numberofbuffersrequired(), rImageStruct.structid());
 		if (0 < rImageStruct.imageprops().size())
 		{
@@ -87,9 +90,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 		}
 		
 		::OutputDebugString((DebugString+_T("\n")).c_str());
-#endif
 	}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
 	std::string DebugString = SvUl::Format(_T("Complete required image %d\n\n"), completeNumberOfRequiredBuffer);
 	::OutputDebugString(DebugString.c_str());
 #endif
@@ -111,11 +112,6 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 		assert(0 == newImageStructList.list_size() || rImageStructList.list(newImageStructList.list_size() - 1).structid() == newImageStructList.list(newImageStructList.list_size() - 1).structid());
 
 		fitBufferToNewStruct(rImageStructList, newImageStructList, m_rDataController.getBufferVectorRef());
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("Required memory size %lld\n"), neededBufferSpace / 1024 / 1024);
-		::OutputDebugString(DebugString.c_str());
-#endif
 
 		//update structId to fit to the position in newImageStructList
 		moveVec = updateImageStructListAndGetMoveVec(*newImageStructList.mutable_list());
@@ -319,7 +315,7 @@ void ImageBufferController::addRequiredMemory(SvPb::ImageStructData& rStructData
 	if (rNeededBufferSpace > m_rDataController.getMaxBufferSizeInBytes())
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("Failed because required memory size %lld\n"), neededBufferSpace / 1024 / 1024);
+		std::string DebugString = SvUl::Format(_T("Failed because required memory size %lld\n"), rNeededBufferSpace / 1024 / 1024);
 		::OutputDebugString(DebugString.c_str());
 #endif
 		m_rDataController.clearImageBuffer(true);

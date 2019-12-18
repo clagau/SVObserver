@@ -45,6 +45,7 @@ namespace  SvXml
 	constexpr char* CTAG_PPQ_OUTPUT_RESET_DELAY_TIME    = (_T("PPQOutputResetDelayTime"));
 	constexpr char* CTAG_PPQ_CONDITIONAL_OUTPUT         = (_T("PPQConditonalOutput"));
 	constexpr char* CTAG_PPQ_OUTPUT_DELAY_TIME          = (_T("PPQOutputDelayTime"));
+	constexpr char* CTAG_PPQ_MAX_GAP_4INTEREST			= (_T("PPQMaxGap4Interest"));
 	constexpr char* CTAG_INSPECTION_FILE_NAME           = (_T("InspectionFileName"));
 	constexpr char* CTAG_INSPECTION_TOOLSET_IMAGE       = (_T("ToolsetImage"));
 	constexpr char* CTAG_INSPECTION_NEW_DISABLE_METHOD  = (_T("NewDisableMethod"));

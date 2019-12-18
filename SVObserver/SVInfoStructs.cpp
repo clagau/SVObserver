@@ -35,8 +35,7 @@ void SVInspectionInfoStruct::Init()
 	m_ToolSetEndTime = 0.0;
 	m_ToolSetAvgTime = 0.0;
 
-	m_triggerRecordWrite = nullptr;
-	m_triggerRecordComplete = nullptr;
+	clearTRCs();
 	m_lastInspectedSlot = -1;
 	m_ObjectID = 0;
 	m_bReject = false;
@@ -46,6 +45,12 @@ void SVInspectionInfoStruct::ClearIndexes()
 {
 	m_CanProcess = false;
 	m_InProcess = false;
+}
+
+void SVInspectionInfoStruct::clearTRCs()
+{
+	m_triggerRecordWrite = nullptr;
+	m_triggerRecordComplete = nullptr;
 }
 
 bool SVInspectionInfoStruct::setNextAvailableTR( )
@@ -275,6 +280,14 @@ void SVProductInfoStruct::ClearIndexes()
 	for(auto& rInspection : m_svInspectionInfos)
 	{
 		rInspection.second.ClearIndexes();
+	}
+}
+
+void SVProductInfoStruct::clearTRCs()
+{
+	for (auto& rInspection : m_svInspectionInfos)
+	{
+		rInspection.second.clearTRCs();
 	}
 }
 

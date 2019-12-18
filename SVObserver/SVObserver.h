@@ -225,7 +225,6 @@ public:
 	void OnRCOpenCurrentSVX();
 	void UpdateAllMenuExtrasUtilities();
 
-	long GetSourceImageDepth() const;
 	long GetMaxPPQLength() const;
 
 	long GetLogDataManager() const;

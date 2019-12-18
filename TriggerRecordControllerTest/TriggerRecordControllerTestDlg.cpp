@@ -394,14 +394,14 @@ namespace SvTrcT
 		{
 			if (!m_isReader)
 			{
-				auto imageGuid = m_mainGuid;
+				int imagePos = 0;
 
 				if (0 < comboPos && m_toolList.size() >= comboPos)
 				{
-					imageGuid = m_toolList[comboPos - 1]->getGuid();
+					imagePos = m_toolList[comboPos - 1]->getImagePos();
 				}
 
-				image = triggerRecord->getImage(imageGuid);
+				image = triggerRecord->getImage(imagePos);
 			}
 			else
 			{
@@ -541,10 +541,12 @@ namespace SvTrcT
 
 			rRecordControllerRW.startResetTriggerRecordStructure(m_inspectionPos);
 			rRecordControllerRW.addOrChangeImage(m_mainGuid, bufferStruct);
+			int sourcePos = 0;
 			GUID sourceImage = m_mainGuid;
 			for (const auto& tool : m_toolList)
 			{
-				tool->reset(sourceImage, bufferStruct, rRecordControllerRW);
+				tool->reset(sourceImage, sourcePos, bufferStruct, rRecordControllerRW);
+				sourcePos = tool->getImagePos();
 				sourceImage = tool->getGuid();
 				bufferStruct = tool->getBufferOut();
 			}

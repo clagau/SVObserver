@@ -26,11 +26,11 @@ namespace SvTrcT
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void DeactivedTool::reset(const GUID& sourceGuid, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
+void DeactivedTool::reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
 {
-	ToolObject::reset(sourceGuid, bufferStructIn, recordController);
+	ToolObject::reset(sourceGuid, sourcePos, bufferStructIn, recordController);
 	m_bufferStructOut = m_bufferStructIn;
-	recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
+	m_trPos = recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
 };
 
 bool DeactivedTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
@@ -39,8 +39,8 @@ bool DeactivedTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 	m_isActive = !m_isActive;
 	if (m_isActive)
 	{
-		const auto pSourceImage = pTriggerRecord->getImage(m_sourceGuid);
-		auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_guid);
+		const auto pSourceImage = pTriggerRecord->getImage(m_sourcePos);
+		auto pDestinationImage = pTriggerRecord->createNewImageHandle(m_trPos);
 
 		if (nullptr != pSourceImage && nullptr != pSourceImage->getHandle() && nullptr != pDestinationImage && nullptr != pDestinationImage->getHandle())
 		{

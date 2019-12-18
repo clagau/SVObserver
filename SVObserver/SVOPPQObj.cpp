@@ -24,25 +24,6 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVOPPQObj::SVOPPQObj()
-: m_PPQName(_T(""))
-, m_AttachedTrigger(_T(""))
-, m_iPPQMode(0)
-, m_lPPQLength(2)
-, m_lPPQOutputResetDelay(0)
-, m_lPPQOutputDelayTime(100)
-, m_bMaintainSrcImg(false)
-, m_lInspectionTimeout(0)
-, m_conditionalOutputName(PPQ_CONDITIONAL_OUTPUT_ALWAYS)
-{
-}
-
-SVOPPQObj::~SVOPPQObj()
-{
-	m_AttachedCameraList.clear();
-	m_AttachedCameraList.clear();
-}
-
 void SVOPPQObj::SetPPQName(LPCTSTR PPQName)
 {
 	m_PPQName = PPQName;
@@ -208,37 +189,24 @@ long SVOPPQObj::GetPPQOutputDelayTime() const
 	return m_lPPQOutputDelayTime;
 }
 
-SVOPPQObj &SVOPPQObj::operator =(const SVOPPQObj &rRhs)
-{
-	if (this != &rRhs)
-	{
-		m_PPQName = rRhs.m_PPQName;
-		m_AttachedTrigger = rRhs.m_AttachedTrigger;
-		m_AttachedCameraList.clear();
-		m_AttachedCameraList = rRhs.m_AttachedCameraList;
-		m_AttachedInspectList.clear();
-		m_AttachedInspectList = rRhs.m_AttachedInspectList;
-		m_iPPQMode = rRhs.m_iPPQMode;
-		m_lPPQLength = rRhs.m_lPPQLength;
-		m_lPPQOutputResetDelay = rRhs.m_lPPQOutputResetDelay;
-		m_lPPQOutputDelayTime = rRhs.m_lPPQOutputDelayTime;
-		m_bMaintainSrcImg = rRhs.m_bMaintainSrcImg;
-		m_lInspectionTimeout = rRhs.m_lInspectionTimeout;
-		m_conditionalOutputName = rRhs.m_conditionalOutputName;
-		m_availableInputs = rRhs.m_availableInputs;
-		m_importedInputList = rRhs.m_importedInputList;
-	}
-	return (*this);
-}
-
 void SVOPPQObj::SetMaintainSourceImageProperty(bool bValue)
 {
 	m_bMaintainSrcImg = bValue;
 }
 
+void SVOPPQObj::SetMaxTriggerGapProperty(int value)
+{
+	m_MaxTriggerGapFlag = value;
+}
+
 bool SVOPPQObj::GetMaintainSourceImageProperty() const
 {
 	return m_bMaintainSrcImg;
+}
+
+int SVOPPQObj::GetMaxTriggerGapProperty() const
+{
+	return m_MaxTriggerGapFlag;
 }
 
 void SVOPPQObj::SetInspectionTimeout( long lTimeoutMillisec )

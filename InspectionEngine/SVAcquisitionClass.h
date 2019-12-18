@@ -67,7 +67,7 @@ public:
 	virtual HRESULT Stop() override;  // SVODataDeviceClass Override
 	virtual HRESULT Reset() override;  // SVODataDeviceClass Override
 
-	HRESULT CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize );
+	HRESULT CreateBuffers( SVImageInfoClass IInfo);
 	HRESULT DestroyBuffers();
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
@@ -136,6 +136,7 @@ public:
 
 	virtual SvTrc::IImagePtr GetNextBuffer() override;
 	virtual HRESULT UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick) override;
+	virtual void setNeededBuffers(int neededBuffers) override;
 
 	SVHANDLE m_hDigitizer;
 	BSTR m_LastImage;
@@ -182,11 +183,11 @@ protected:
 private:
 	SVAcquisitionClass();
 
-	unsigned long mulSize;
 	bool m_LUTAndLRSet;
 	SvTrc::ITriggerRecordControllerRW& m_rTRController;
 	SVMatroxBufferCreateStruct m_bufferStruct;
 	SVGUID m_guid = GUID_NULL;
+	int m_neededBuffer = 10;
 };
 
 typedef std::shared_ptr< SVAcquisitionClass > SVAcquisitionClassPtr;
