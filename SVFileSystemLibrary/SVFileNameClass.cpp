@@ -558,7 +558,16 @@ bool SVFileNameClass::SelectFile()
 		Path = GetDefaultPathName();
 	}
 
-	if (IDOK == SvOi::OpenSVFileDialog(true, GetDefaultFileExtension().c_str(), FileName, GetFileSelectFlags(), GetFileExtensionFilterList().c_str(), Path, GetFileSelectDialogTitle().c_str()))
+	//The dot is removed from the defaultFileExtension, because that can lead too two dots after the filename in specific use cases
+	std::string defaultFileExtension = GetDefaultFileExtension();
+	size_t positionOfDot = defaultFileExtension.find(".");
+
+	if (0 == positionOfDot)
+	{
+		defaultFileExtension = defaultFileExtension.substr(positionOfDot + 1);
+	}
+
+	if (IDOK == SvOi::OpenSVFileDialog(true, defaultFileExtension.c_str(), FileName, GetFileSelectFlags(), GetFileExtensionFilterList().c_str(), Path, GetFileSelectDialogTitle().c_str()))
 	{
 		SetFullFileName(Path.c_str());
 		

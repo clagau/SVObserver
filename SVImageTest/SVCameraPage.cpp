@@ -134,6 +134,13 @@ void SVCameraPage::OnCameraFileBrowseButtonClick()
 		cameraFileDefaultExt = cGigeCameraFileDefExt;
 	}
 
+	//Any leading dot will be removed from the default extension because otherwise two consecutive dots after the filename may occur in certain cases
+	size_t positionOfDot = cameraFileDefaultExt.find(".");
+	if (0 == positionOfDot)
+	{
+		cameraFileDefaultExt = cameraFileDefaultExt.substr(positionOfDot + 1);
+	}
+
 	CFileDialog dlg( true, 
 						cameraFileDefaultExt.c_str(),
 						m_FileName.c_str(), 

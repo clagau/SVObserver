@@ -198,7 +198,8 @@ bool SVOFileConfigDlg::GetDirectoryRemoveLevel( std::string& rFileName, int p_le
 
 void SVOFileConfigDlg::OnButtonloadSvx() 
 {
-	CFileDialog dlg( TRUE, SvDef::cConfigExtension, NULL, 
+	//The dot is removed from cConfigExtension, because that can lead too two dots after the filename in specific use cases
+	CFileDialog dlg( TRUE, &SvDef::cConfigExtension[1], NULL,
 										OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 										OFN_ENABLESIZING | OFN_EXPLORER,
 										_T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
@@ -233,8 +234,8 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 
 void SVOFileConfigDlg::OnButtonsaveSvx() 
 {
-	
-	CFileDialog dlg( TRUE, SvDef::cConfigExtension, NULL, 
+	//The dot is removed from cConfigExtension, because that can lead too two dots after the filename in specific use cases
+	CFileDialog dlg( TRUE, &SvDef::cConfigExtension[1], NULL, 
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 		OFN_ENABLESIZING | OFN_EXPLORER,
 		_T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
