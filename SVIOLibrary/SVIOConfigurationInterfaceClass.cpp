@@ -211,7 +211,18 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long cha
 	{
 		bool l_bValue = false;
 
-		Result = m_DigitalBoard.GetInputValue( channel, &l_bValue );
+		if (m_isBatchInputRead)
+		{
+			if (8 > channel)
+			{
+				l_bValue = (static_cast<long>(m_batchDigitalInputValue) & (1 << channel)) ? true : false;
+				Result = S_OK;
+			}
+		}
+		else
+		{
+			Result = m_DigitalBoard.GetInputValue(channel, &l_bValue);
+		}
 
 		if ( S_OK == Result )
 		{
@@ -232,6 +243,17 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long cha
 	}
 
 	return Result;
+}
+
+void SVIOConfigurationInterfaceClass::readDigitalInputBatch()
+{
+	m_DigitalBoard.GetInputValues(&m_batchDigitalInputValue);
+	m_isBatchInputRead = true;
+}
+
+void SVIOConfigurationInterfaceClass::clearDigitalInputBatch()
+{
+	m_isBatchInputRead = false;
 }
 
 HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputCount( unsigned long& rCount )
@@ -401,21 +423,18 @@ HRESULT SVIOConfigurationInterfaceClass::ClearDigitalOutputs()
 
 HRESULT SVIOConfigurationInterfaceClass::TestDigitalOutputs()
 {
-	unsigned long i = 0;
-	unsigned long j = 0;
-	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
-	unsigned long l_ulPortCount = 2;
+	const unsigned long l_ulPortCount = 2;
 
-	for( i = 0; i < 10; ++ i )
+	for(unsigned long i = 0; i < 10; ++ i )
 	{
-		for ( j = 0; j < l_ulPortCount; j++)
+		for (unsigned long j = 0; j < l_ulPortCount; j++)
 		{
 			SetDigitalOutputPortValue( j, 0x00000000 );
 		}
 
 		Sleep( 100 );
 
-		for ( j = 0; j < l_ulPortCount; j++)
+		for (unsigned long j = 0; j < l_ulPortCount; j++)
 		{
 			SetDigitalOutputPortValue( j, 0xFFFFFFFF );
 		}
@@ -423,9 +442,10 @@ HRESULT SVIOConfigurationInterfaceClass::TestDigitalOutputs()
 		Sleep( 100 );
 	}
 
-	for( i = 0; i < Count; ++ i )
+	unsigned long Count = static_cast<unsigned long> (m_DigitalOutputs.size());
+	for(unsigned long i = 0; i < Count; ++ i )
 	{
-		for( j = 0; j < 20; ++ j )
+		for(unsigned long j = 0; j < 20; ++ j )
 		{
 
 			SetDigitalOutputValue( i, true );

@@ -94,7 +94,6 @@ public:
 	HRESULT GetInputBit(unsigned long bitNum, bool& bitVal);
 	HRESULT SetOutputBit(unsigned long bitNum, bool bitVal);
 	
-	HRESULT GetPortInputValue(unsigned portNo, unsigned long* pVal);
 	HRESULT SetPortOutputValue(unsigned portNo, unsigned long val);
 	HRESULT GetBoardVersion(long& p_rlVer);
 

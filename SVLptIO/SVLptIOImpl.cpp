@@ -284,11 +284,6 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 	return hr;
 }
 
-HRESULT SVLptIOImpl::GetPortInputValue(unsigned portNo, unsigned long* pVal)
-{
-	return GetInputValue(pVal);
-}
-
 HRESULT SVLptIOImpl::SetPortOutputValue(unsigned portNo, unsigned long val)
 {
 	return SetOutputValue(val);

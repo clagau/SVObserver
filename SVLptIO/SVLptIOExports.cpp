@@ -105,41 +105,20 @@ HRESULT WINAPI SVInputSetValue(unsigned long ulChannel, bool bValue)
 	return hr;
 }
 
-HRESULT WINAPI SVInputGetPortCount(unsigned long* pulCount)
-{
-	HRESULT hr = S_FALSE;
-
-	if (nullptr != pulCount)
-	{
-		*pulCount = g_Lpt.GetPortCount();
-		hr = S_OK;
-	}
-	return hr;
-}
-
 // ulPort represents the physical port number (LPT 1/2/3/4)
-HRESULT WINAPI SVInputGetPortValue(unsigned long ulPort, unsigned long* pulValue)
+HRESULT WINAPI SVInputGetValues( unsigned long* pulValue)
 {
 	HRESULT hr = S_FALSE;
 
 	if (nullptr != pulValue)
 	{
-		if (0 <= ulPort && ulPort < g_Lpt.GetNumPorts())
+		unsigned long lState = 0;
+		hr = g_Lpt.GetInputValue(&lState);
+		if (S_OK == hr)
 		{
-			unsigned long lState = 0;
-			hr = g_Lpt.GetPortInputValue(ulPort, &lState);
-			if (S_OK == hr)
-			{
-				*pulValue = lState;
-			}
+			*pulValue = lState;
 		}
 	}
-	return hr;
-}
-
-HRESULT WINAPI SVInputSetPortValue(unsigned long ulPort, unsigned long ulValue)
-{
-	HRESULT hr = S_FALSE;
 	return hr;
 }
 
@@ -169,7 +148,7 @@ HRESULT WINAPI SVOutputSetValue(unsigned long ulChannel, bool bValue)
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 <= ulChannel && ulChannel < g_Lpt.GetOutputCount())
+	if (ulChannel < g_Lpt.GetOutputCount())
 	{
 		hr = g_Lpt.SetOutputBit(ulChannel, bValue);
 	}
@@ -192,7 +171,7 @@ HRESULT WINAPI SVOutputGetPortValue( unsigned long ulPort, unsigned long* pulVal
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 <= ulPort && ulPort < g_Lpt.GetNumPorts())
+	if (ulPort < g_Lpt.GetNumPorts())
 	{
 		*pulValue = g_Lpt.m_nPreviousOutputs[0] | 
 			(g_Lpt.m_nPreviousOutputs[1] << 8) | 
@@ -205,7 +184,7 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long ulPort, unsigned long ulValue)
 {
 	HRESULT hr = S_FALSE;
 
-	if (0 <= ulPort && ulPort < g_Lpt.GetPortCount())
+	if (ulPort < g_Lpt.GetPortCount())
 	{
 		hr = g_Lpt.SetPortOutputValue(ulPort, ulValue);
 	}

@@ -72,35 +72,15 @@ HRESULT WINAPI SVInputSetValue(unsigned long ulChannel, bool bValue)
 	return E_FAIL;
 }
 
-HRESULT WINAPI SVInputGetPortCount(unsigned long* pulCount)
-{
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pulCount)
-	{
-		*pulCount = g_Plc.GetPortCount();
-		result = S_OK;
-	}
-	return result;
-}
-
-HRESULT WINAPI SVInputGetPortValue(unsigned long port, unsigned long* pValue)
+HRESULT WINAPI SVInputGetValues(unsigned long* pValue)
 {
 	HRESULT result {E_FAIL};
 
 	if (nullptr != pValue)
 	{
-		if (port < g_Plc.GetNumPorts())
-		{
-			result = g_Plc.GetInputValue(pValue);
-		}
+		result = g_Plc.GetInputValue(pValue);
 	}
 	return result;
-}
-
-HRESULT WINAPI SVInputSetPortValue(unsigned long port, unsigned long value)
-{
-	return E_FAIL;
 }
 
 HRESULT WINAPI SVOutputGetCount(unsigned long* pCount)

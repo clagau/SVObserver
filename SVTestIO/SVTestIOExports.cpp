@@ -76,23 +76,7 @@ HRESULT WINAPI SVInputSetValue( unsigned long p_ulChannel, bool p_bValue )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVInputGetPortCount( unsigned long *p_pulCount )
-{
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 1;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue )
+HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
@@ -100,19 +84,10 @@ HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pul
 
 	if ( nullptr != p_pulValue )
 	{
-		*p_pulValue = 0;
+		*p_pulValue = theApp.m_pTestIODlg->m_lInputs;
 
 		l_hrOk = S_OK;
 	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVInputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
-{
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
 
 	return l_hrOk;
 }

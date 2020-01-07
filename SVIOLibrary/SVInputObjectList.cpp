@@ -16,6 +16,7 @@
 #include "SVCameraDataInputObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
+#include "SVIOConfigurationInterfaceClass.h"
 #pragma endregion Includes
 
 SVInputObjectList::SVInputObjectList( LPCSTR ObjectName )
@@ -249,6 +250,8 @@ bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, 
 	{
 		rInputValues.resize( inputSize );
 
+		bool isFirstDIO = true;
+
 		for(size_t i = 0; i < inputSize; i++ )
 		{
 			SVIOEntryHostStructPtr pIOEntry = rInputs[i];
@@ -267,6 +270,11 @@ bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, 
 
 				if( nullptr != pInput )
 				{
+					if (isFirstDIO && SvPb::SVDigitalInputObjectType == pInput->GetObjectSubType())
+					{
+						isFirstDIO = false;
+						SVIOConfigurationInterfaceClass::Instance().readDigitalInputBatch();
+					}
 					pInput->Read(rInputValues[i]);
 				}
 				else
@@ -275,6 +283,8 @@ bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, 
 				}
 			}// end if
 		}// end for
+
+		SVIOConfigurationInterfaceClass::Instance().clearDigitalInputBatch();		
 
 		Unlock();
 		return true;

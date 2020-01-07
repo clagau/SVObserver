@@ -18,9 +18,7 @@ HRESULT WINAPI SVDestroy();
 HRESULT WINAPI SVInputGetCount(unsigned long *pCount);
 HRESULT WINAPI SVInputGetValue(unsigned long channel, bool *pValue);
 HRESULT WINAPI SVInputSetValue(unsigned long channel, bool bValue);
-HRESULT WINAPI SVInputGetPortCount(unsigned long *pCount );
-HRESULT WINAPI SVInputGetPortValue(unsigned long port, unsigned long *pValue);
-HRESULT WINAPI SVInputSetPortValue(unsigned long port, unsigned long value);
+HRESULT WINAPI SVInputGetValues(unsigned long *pValue);
 
 HRESULT WINAPI SVOutputGetCount(unsigned long *pCount);
 HRESULT WINAPI SVOutputGetValue(unsigned long channel, bool *pValue);

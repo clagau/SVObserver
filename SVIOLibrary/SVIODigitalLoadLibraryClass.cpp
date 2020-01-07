@@ -36,9 +36,7 @@ HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR libraryPath)
 			m_pGetInputCount = (SVInputGetCountPtr)::GetProcAddress( m_Handle, "SVInputGetCount" );
 			m_pGetInputValue = (SVInputGetValuePtr)::GetProcAddress( m_Handle, "SVInputGetValue" );
 			m_pSetInputValue = (SVInputSetValuePtr)::GetProcAddress( m_Handle, "SVInputSetValue" );
-			m_pGetInputPortCount = (SVInputGetPortCountPtr)::GetProcAddress( m_Handle, "SVInputGetPortCount" );
-			m_pGetInputPortValue = (SVInputGetPortValuePtr)::GetProcAddress( m_Handle, "SVInputGetPortValue" );
-			m_pSetInputPortValue = (SVInputSetPortValuePtr)::GetProcAddress( m_Handle, "SVInputSetPortValue" );
+			m_pGetInputValues = (SVInputGetValuesPtr)::GetProcAddress( m_Handle, "SVInputGetValues" );
 			m_pGetOutputCount = (SVOutputGetCountPtr)::GetProcAddress( m_Handle, "SVOutputGetCount" );
 			m_pGetOutputValue = (SVOutputGetValuePtr)::GetProcAddress( m_Handle, "SVOutputGetValue" );
 			m_pSetOutputValue = (SVOutputSetValuePtr)::GetProcAddress( m_Handle, "SVOutputSetValue" );
@@ -60,9 +58,7 @@ HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR libraryPath)
 			     nullptr != m_pGetInputCount &&
 			     nullptr != m_pGetInputValue &&
 			     nullptr != m_pSetInputValue &&
-			     nullptr != m_pGetInputPortCount &&
-			     nullptr != m_pGetInputPortValue &&
-			     nullptr != m_pSetInputPortValue &&
+			     nullptr != m_pGetInputValues &&
 			     nullptr != m_pGetOutputCount &&
 			     nullptr != m_pGetOutputValue &&
 			     nullptr != m_pSetOutputValue &&
@@ -115,9 +111,7 @@ HRESULT SVIODigitalLoadLibraryClass::Close()
 	m_pGetInputCount = nullptr;
 	m_pGetInputValue = nullptr;
 	m_pSetInputValue = nullptr;
-	m_pGetInputPortCount = nullptr;
-	m_pGetInputPortValue = nullptr;
-	m_pSetInputPortValue = nullptr;
+	m_pGetInputValues = nullptr;
 	m_pGetOutputCount = nullptr;
 	m_pGetOutputValue = nullptr;
 	m_pSetOutputValue = nullptr;
@@ -166,37 +160,13 @@ HRESULT SVIODigitalLoadLibraryClass::SetInputValue( unsigned long channel, bool 
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetInputPortCount( unsigned long* pCount )
+HRESULT SVIODigitalLoadLibraryClass::GetInputValues( unsigned long* pValue )
 {
 	HRESULT result {E_FAIL};
 
-	if ( nullptr != m_pGetInputPortCount )
+	if ( nullptr != m_pGetInputValues )
 	{
-		result = m_pGetInputPortCount( pCount );
-	}
-
-	return result;
-}
-
-HRESULT SVIODigitalLoadLibraryClass::GetInputPortValue( unsigned long port, unsigned long* pValue )
-{
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != m_pGetInputPortValue )
-	{
-		result = m_pGetInputPortValue( port, pValue );
-	}
-
-	return result;
-}
-
-HRESULT SVIODigitalLoadLibraryClass::SetInputPortValue( unsigned long port, unsigned long value )
-{
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != m_pSetInputPortValue )
-	{
-		result = m_pSetInputPortValue( port, value );
+		result = m_pGetInputValues( pValue );
 	}
 
 	return result;

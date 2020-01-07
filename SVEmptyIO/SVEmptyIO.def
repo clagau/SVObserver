@@ -8,9 +8,7 @@ EXPORTS
 	SVInputGetCount @20
 	SVInputGetValue @21
 	SVInputSetValue @22
-	SVInputGetPortCount @30
-	SVInputGetPortValue @31
-	SVInputSetPortValue @32
+	SVInputGetValues @31
 	SVOutputGetCount @40
 	SVOutputGetValue @41
 	SVOutputSetValue @42

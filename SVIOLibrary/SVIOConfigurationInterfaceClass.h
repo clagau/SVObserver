@@ -39,6 +39,10 @@ public:
 	HRESULT GetDigitalInputForcedValue( unsigned long channel, bool& rbValue );
 	HRESULT SetDigitalInputForcedValue( unsigned long channel, bool rbValue );
 	HRESULT GetDigitalInputValue( unsigned long channel, bool& rbValue );
+	
+	/// Read the DIO and set it intern. If used GetDigitalInputValue is used then, this values will used until clearDigitalInput is called.
+	void readDigitalInputBatch();
+	void clearDigitalInputBatch();
 
 	HRESULT GetDigitalOutputCount( unsigned long& rCount );
 	HRESULT GetDigitalOutputIsInverted( unsigned long channel, bool& rbValue );
@@ -84,6 +88,9 @@ private:
 	bool m_pbSVIMTriggerRising[4];
 	bool m_pbSVIMStrobeRising[4];
 	bool m_abSVIMStrobeStartFrame[4];
+
+	bool m_isBatchInputRead {false};
+	unsigned long m_batchDigitalInputValue {0ul};
 
 	SVIODigitalStructVector m_DigitalInputs;
 	SVIODigitalStructVector m_DigitalOutputs;

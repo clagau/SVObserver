@@ -64,21 +64,7 @@ HRESULT WINAPI SVInputSetValue( unsigned long p_ulChannel, bool p_bValue )
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVInputGetPortCount( unsigned long *p_pulCount )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 0;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue )
+HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -90,11 +76,6 @@ HRESULT WINAPI SVInputGetPortValue( unsigned long p_ulPort, unsigned long *p_pul
 	}
 
 	return l_hrOk;
-}
-
-HRESULT WINAPI SVInputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
-{
-	return S_FALSE;
 }
 
 HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
