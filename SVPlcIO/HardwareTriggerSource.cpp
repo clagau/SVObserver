@@ -130,25 +130,6 @@ bool HardwareTriggerSource::analyzeTelegramData()
 	return result;
 }
 
-
-uint32_t  HardwareTriggerSource::getObjectID(uint8_t channel)
-{
-	const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
-	m_OldSequenceCode[channel] = m_NewSequenceCode[channel];
-	m_NewSequenceCode[channel] = rInsCmd.m_channels[channel].m_sequence;
-
-	if (m_OldSequenceCode[channel] != m_NewSequenceCode[channel]) //sequence number has changed: generate a new trigger
-	{
-		// only if a trigger is present which is when SequenceCode is odd
-		if (m_NewSequenceCode[channel] % 2)
-		{
-			return rInsCmd.m_channels[channel].m_currentObjectID;
-		}
-	}
-	return 0;
-}
-
-
 double HardwareTriggerSource::getExecutionTime(uint8_t channel)
 {
 	const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();

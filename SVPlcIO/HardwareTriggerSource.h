@@ -19,20 +19,19 @@ namespace SvPlc
 class HardwareTriggerSource : public TriggerSource
 {
 public:
-	HardwareTriggerSource(uint16_t plcTransferTime);
+	explicit HardwareTriggerSource(uint16_t plcTransferTime);
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
 	virtual bool initialize() override;
 	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
 	virtual bool analyzeTelegramData() override;
-	virtual void setReady(bool ready) { m_cifXCard.setReady(ready); }
+	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
 
 protected: 	
 	uint64_t getCurrentInterruptCount();
 
 private:
-	uint32_t getObjectID(uint8_t channel);
 	virtual  void createTriggerReport(uint8_t channel) override;
 
 	/// Calculates the trigger offset time from the relative SOC and time stamp

@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include "PlcDataTypes.h"
-
 namespace SvPlc
 {
+
+struct ResultReport;
+struct TriggerReport;
 
 namespace Tec
 {

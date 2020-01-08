@@ -7,13 +7,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <fstream>
-//Moved to precompiled header: #include <time.h>
-//Moved to precompiled header: #include <functional>
-//Moved to precompiled header: #include <future>
-//Moved to precompiled header: #include <algorithm>
-//Moved to precompiled header: #include <string>
 #include "SVPlcIOImpl.h"
+#include "PlcDataTypes.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "TriggerEngineConnection.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -119,27 +114,27 @@ void ReadWriteLPT(uint8_t controlPort, uint8_t value, int8_t bitNr = -1)
 	{
 		return;
 	}
-	HRESULT hResult = ::WriteControlPort(SVControlEnableInterrupt);
+	::WriteControlPort(SVControlEnableInterrupt);
 
 	uint8_t& rOutput = (SVControlWriteDigital1_110 == controlPort) ? currentOutput[1] : currentOutput[0];
-	hResult = ::WriteControlPort(SVControlEnableInterrupt | controlPort);
+	::WriteControlPort(SVControlEnableInterrupt | controlPort);
 	double Start = SvTl::GetTimeStamp();
 	unsigned char status;
-	hResult = ReadStatusPort(status);
+	HRESULT hResult = ReadStatusPort(status);
 	while (S_OK == hResult && 0 == (status & 128))
 	{
 		double Check = SvTl::GetTimeStamp();
 
 		if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > 16000)
 		{
-			hResult = ReadStatusPort(status);
+			hResult = ::ReadStatusPort(status);
 			if (0 == (status & 128))
 			{
 				hResult = S_FALSE;
 			}
 			break;
 		}
-		hResult = ReadStatusPort(status);
+		hResult = ::ReadStatusPort(status);
 	}
 	uint8_t dataValue{0};
 	if(-1 == bitNr)
@@ -152,35 +147,35 @@ void ReadWriteLPT(uint8_t controlPort, uint8_t value, int8_t bitNr = -1)
 		dataValue = (1 == value) ? dataValue | (1 << bitNr) : dataValue & ~(1 << bitNr);
 	}
 
-	hResult = WriteDataPort(dataValue);
+	hResult = ::WriteDataPort(dataValue);
 	if(S_OK == hResult)
 	{
 		rOutput = dataValue;
 	}
 
-	hResult = WriteControlPort(SVControlEnableInterrupt | controlPort | SVControlSelectMode);
+	hResult = ::WriteControlPort(SVControlEnableInterrupt | controlPort | SVControlSelectMode);
 
 	if (S_OK == hResult)
 	{
 		Start = SvTl::GetTimeStamp();
-		hResult = ReadStatusPort(status);
+		hResult = ::ReadStatusPort(status);
 		while (S_OK == hResult && 0 != (status & 128))
 		{
 			double Check = SvTl::GetTimeStamp();
 			if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > 16000)
 			{
-				hResult = ReadStatusPort(status);
+				hResult = ::ReadStatusPort(status);
 				if (S_OK == hResult && 0 != (status & 128))
 				{
 					hResult = S_FALSE;
 				}
 				break;
 			}
-			hResult = ReadStatusPort(status);
+			hResult = ::ReadStatusPort(status);
 		}
-		hResult = WriteControlPort(SVControlEnableInterrupt | controlPort);
+		::WriteControlPort(SVControlEnableInterrupt | controlPort);
 	}
-	hResult = WriteControlPort(SVControlEnableInterrupt);
+	::WriteControlPort(SVControlEnableInterrupt);
 }
 
 void LptInterruptHandler()
@@ -341,7 +336,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 							ReadWriteLPT(SVControlCommand, NO_CMD);
 							// Get the Rabbit ready to receive a string of bytes for RTC set
 							ReadWriteLPT(SVControlCommand, WRITE_RTC);
-							for (int i = 0; i < sizeof(uint32_t); i++)
+							for (int j = 0; j < sizeof(uint32_t); j++)
 							{
 								ReadWriteLPT(SVControlCommand, *pTimeByte);	// Write 4 Bytes to fill a long in the Rabbit.
 								pTimeByte++;
@@ -647,11 +642,6 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 				}
 			}
 #endif
-
-
-
-
-
 		}
 	}
 	m_TriggerDispatchers.ContainsNoActiveTriggers();

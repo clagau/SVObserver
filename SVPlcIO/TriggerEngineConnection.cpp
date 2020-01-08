@@ -6,6 +6,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TriggerEngineConnection.h"
+#include "PlcDataTypes.h"
 #include "PowerLinkConnection.h" 
 #pragma endregion Includes
 
