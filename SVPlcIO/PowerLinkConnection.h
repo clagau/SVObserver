@@ -11,6 +11,8 @@
 #pragma endregion Includes
 
 
+namespace SvPlc
+{
 struct TriggerReport;
 struct ResultReport;
 
@@ -20,11 +22,12 @@ extern HANDLE g_hStopEvent;
 class PowerlinkConnection
 {
 public:
-	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t simulateTriggers);
+	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcTransferTime, uint16_t simulateTriggers);
 	~PowerlinkConnection();
 
-	void SetTriggerChannel(uint8_t channel, bool active, uint32_t period);
-	void writeResult(const ResultReport& rResult);
+	void setReady(bool ready);
+	void setTriggerChannel(uint8_t channel, bool active, uint32_t period);
+	void writeResult(const ResultReport& rResultReport);
 
 	void StartEventSignalThread();
 
@@ -46,3 +49,4 @@ private:
 
 };
 
+} //namespace SvPlc

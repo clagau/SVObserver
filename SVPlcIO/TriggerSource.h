@@ -8,18 +8,18 @@
 
 #pragma region Includes
 #include "PlcDataTypes.h"
-#include "TriggerInformation.h"
 #pragma endregion Includes
 
+namespace SvPlc
+{
 struct ChannelOut;
 
 struct TriggerChannel
 {
-	TriggerChannel() = default;
 	bool m_newTrigger {false};
 	bool m_active {false};
 	uint32_t m_period {0UL};
-	TriggerInformation m_currentTriggerInfo;
+	TriggerReport m_report;
 };
 
 class TriggerSource
@@ -34,21 +34,24 @@ public:
 
 	virtual bool initialize() {return false;}
 	virtual bool isReady() { return true; }
-	virtual void queueResult(uint8_t channel, ChannelOut& rChannelOut) {}
+	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) {}
 	virtual bool analyzeTelegramData() = 0;
+	virtual void setReady(bool ready) {}
 
 
-	TriggerInformation getNewTriggerInfo(uint8_t channel);
+	TriggerReport getNewTriggerReport(uint8_t channel);
 	const TriggerChannel& getChannel(uint8_t channel) const { return m_triggerChannels[channel]; }
 
 protected:
-	virtual void createTriggerInfo(uint8_t channel) = 0;
-	void addTriggerInfo(const TriggerInformation& rTriggerInfo);
+	virtual void createTriggerReport(uint8_t channel) = 0;
+	void addTriggerReport(TriggerReport&& triggerReport);
 
-	std::mutex m_triggerChannelMutex;
+	std::mutex m_triggerSourceMutex;
 
 private:
 
 	TriggerChannel m_triggerChannels[c_NumberOfChannels];
 };
+
+} //namespace SvPlc
 

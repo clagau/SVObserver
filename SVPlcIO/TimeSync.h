@@ -11,6 +11,8 @@
 #include <stdint.h>
 #pragma endregion Includes
 
+namespace SvPlc
+{
 #pragma pack(push, 1)
 struct TimeSync
 {
@@ -27,5 +29,5 @@ public:
 	uint8_t m_plcBusCycles {0UL};				//The number of PLC bus cycles
 #pragma endregion Member Variables
 };
-
 #pragma pack(pop)
+} //namespace SvPlc

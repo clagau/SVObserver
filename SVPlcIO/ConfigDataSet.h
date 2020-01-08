@@ -11,6 +11,8 @@
 #include <stdint.h>
 #pragma endregion Includes
 
+namespace SvPlc
+{
 #pragma pack(push, 1)
 struct ConfigDataSet
 {
@@ -33,5 +35,5 @@ public:
 
 #pragma endregion Member Variables
 };
-
 #pragma pack(pop)
+} //namespace SvPlc

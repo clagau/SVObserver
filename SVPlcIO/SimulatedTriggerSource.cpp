@@ -12,6 +12,8 @@
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
+namespace SvPlc
+{
 constexpr uint32_t c_TimeBetweenTriggerChannels_ms = 2;
 
 struct SimulatedTriggerData
@@ -103,7 +105,7 @@ bool SimulatedTriggerSource::analyzeTelegramData()
 	return false;
 }
 
-void SimulatedTriggerSource::createTriggerInfo(uint8_t channel)
+void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 {
 	SimulatedTriggerData triggerData;
 
@@ -116,10 +118,16 @@ void SimulatedTriggerSource::createTriggerInfo(uint8_t channel)
 	if(triggerData.m_newTrigger)
 	{
 		//currently: simulated triggers always have one trigger per product
-		TriggerInformation TriggerInfo(channel, triggerData.m_objectID, triggerData.m_sequenceID, 1, 1, triggerData.m_triggerTimestamp);
-		addTriggerInfo(TriggerInfo);
+		TriggerReport report;
+		report.m_channel = channel;
+		report.m_objectID = triggerData.m_objectID;
+		report.m_sequence = triggerData.m_sequenceID;
+		report.m_triggerIndex = 1;
+		report.m_triggersPerProduct = 1;
+		report.m_triggerTimestamp = triggerData.m_triggerTimestamp;
+		report.m_isValid = true;
+		addTriggerReport(std::move(report));
 	}
 }
 
-
-
+} //namespace SvPlc

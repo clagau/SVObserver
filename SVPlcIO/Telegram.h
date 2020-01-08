@@ -12,6 +12,8 @@
 #include <stdint.h>
 #pragma endregion Includes
 
+namespace SvPlc
+{
 #pragma region Declarations
 constexpr uint8_t c_ReservedTelegram = 7;
 #pragma endregion Declarations
@@ -72,8 +74,8 @@ public:
 	uint16_t m_errorInfoA;									//Addition info A to error
 	uint16_t m_errorInfoB;									//Addition info B to error
 	SystemStatus m_systemStatus {SystemStatus::SystemDown};	//System status
-	uint8_t m_reserved[c_ReservedTelegram] {0, 0, 0, 0, 0, 0, 0};	//Reserved data
+	std::array<uint8_t, c_ReservedTelegram> m_reserved{0, 0, 0, 0, 0, 0, 0};	//Reserved data
 #pragma endregion Member Variables
 };
-
 #pragma pack(pop)
+} //namespace SvPlc

@@ -11,6 +11,8 @@
 #include <stdint.h>
 #pragma endregion Includes
 
+namespace SvPlc
+{
 constexpr uint8_t c_majorVersion = 1;
 constexpr uint8_t c_minorVersion = 2;
 
@@ -20,66 +22,28 @@ constexpr uint8_t c_ResultSize = 8;
 constexpr uint8_t c_HeaderSize = 8;
 constexpr uint8_t c_modeSingleDirect = 1;
 
-#pragma pack(push, 1)
-struct TypeSocTime
+struct TriggerReport
 {
-public:
-	TypeSocTime() = default;
-	~TypeSocTime() = default;
-	explicit TypeSocTime(const TypeSocTime& rRhs) = default;
-	explicit TypeSocTime(TypeSocTime&& rRhs) = default;
-	TypeSocTime& operator=(const TypeSocTime& rRhs) = default;
-	TypeSocTime& operator=(TypeSocTime&& rRhs) = default;
-
-#pragma region Member Variables
-public:
-	uint32_t m_socSeconds {0UL};			//SOC time seconds
-	uint32_t m_socNanoseconds {0UL};		//SOC time nano seconds
-#pragma endregion Member Variables
+	bool isValid() const { return m_isValid; }
+	uint8_t m_channel {0};
+	uint32_t m_objectID {0UL};
+	int8_t m_sequence {0};
+	uint32_t m_triggerIndex {0UL};
+	uint8_t m_triggersPerProduct {0};  /// the number of triggers for one product (objectID)
+	double m_triggerTimestamp {0.0};
+	bool m_isComplete {false};
+	int32_t m_syncSoc {0L};
+	int32_t m_relativeSoc {0L};
+	int32_t m_timeStampSoc {0L};
+	bool m_isValid{false};
 };
 
-struct TypeObjectDt
+struct ResultReport
 {
-public:
-	TypeObjectDt() = default;
-	~TypeObjectDt() = default;
-	explicit TypeObjectDt(const TypeObjectDt& rRhs) = default;
-	explicit TypeObjectDt(TypeObjectDt&& rRhs) = default;
-	TypeObjectDt& operator=(const TypeObjectDt& rRhs) = default;
-	TypeObjectDt& operator=(TypeObjectDt&& rRhs) = default;
-	bool operator!=(const TypeObjectDt& rRhs)
-	{
-		if (m_ID != rRhs.m_ID ||
-			m_type != rRhs.m_type)
-		{
-			return true;
-		}
-		return false;
-	}
-
-#pragma region Member Variables
-public:
-	uint32_t m_ID {0};						//Object ID
-	uint8_t m_type {0};						//Object type
-#pragma endregion Member Variables
+	uint8_t m_channel = 0;
+	uint32_t m_objectID = 0;
+	std::array<uint8_t, c_ResultSize> m_results {0, 0, 0, 0, 0, 0, 0, 0};
 };
-
-struct TypeResults
-{
-public:
-	TypeResults() = default;
-	~TypeResults() = default;
-	explicit TypeResults(const TypeResults& rRhs) = default;
-	explicit TypeResults(TypeResults&& rRhs) = default;
-	TypeResults& operator=(const TypeResults& rRhs) = default;
-	TypeResults& operator=(TypeResults&& rRhs) = default;
-
-#pragma region Member Variables
-public:
-	uint8_t m_value[c_ResultSize] {0, 0, 0, 0, 0, 0, 0, 0};
-#pragma endregion Member Variables
-};
-#pragma pack(pop)
 
 enum PlcDataType : uint16_t
 {
@@ -98,10 +62,6 @@ enum PlcDataType : uint16_t
 	TimeIndex = 12,
 	DateIndex = 13,
 	DoubleIndex = 14,
-	SocTimeIndex = 51,
-	ObjectDtIndex = 52,
-	ResultsIndex = 53,
 };
 
-
-
+} //namespace SvPlc

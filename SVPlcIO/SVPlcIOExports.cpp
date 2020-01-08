@@ -8,6 +8,7 @@
 #include "StdAfx.h"
 #include "SVPlcIOExports.h"
 #include "SVPlcIOImpl.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
 
 std::atomic_long g_RefCount = 0;
 
@@ -18,7 +19,7 @@ HRESULT WINAPI SVCreate()
 	g_RefCount++;
 	if (1 == g_RefCount)
 	{
-		result = g_Plc.Initialize(true);
+		result = SvPlc::g_Plc.Initialize(true);
 	}
 	return result;
 }
@@ -30,7 +31,7 @@ HRESULT WINAPI SVDestroy()
 	g_RefCount--;
 	if (0 >= g_RefCount)
 	{
-		result = g_Plc.Initialize(false);
+		result = SvPlc::g_Plc.Initialize(false);
 	}
 	return result;
 }
@@ -41,7 +42,7 @@ HRESULT WINAPI SVInputGetCount(unsigned long* pulCount)
 
 	if (nullptr != pulCount)
 	{
-		*pulCount = g_Plc.GetInputCount();
+		*pulCount = SvPlc::g_Plc.GetInputCount();
 		result = S_OK;
 	}
 	return result;
@@ -53,10 +54,10 @@ HRESULT WINAPI SVInputGetValue( unsigned long ulChannel, bool* pbValue )
 
 	if (nullptr != pbValue)
 	{
-		if (ulChannel < g_Plc.GetInputCount())
+		if (ulChannel < SvPlc::g_Plc.GetInputCount())
 		{
 			bool bState;
-			result = g_Plc.GetInputBit(ulChannel, bState);
+			result = SvPlc::g_Plc.GetInputBit(ulChannel, bState);
 
 			if (S_OK == result)
 			{
@@ -78,7 +79,7 @@ HRESULT WINAPI SVInputGetValues(unsigned long* pValue)
 
 	if (nullptr != pValue)
 	{
-		result = g_Plc.GetInputValue(pValue);
+		result = SvPlc::g_Plc.GetInputValue(pValue);
 	}
 	return result;
 }
@@ -89,7 +90,7 @@ HRESULT WINAPI SVOutputGetCount(unsigned long* pCount)
 
 	if (nullptr != pCount)
 	{
-		*pCount = g_Plc.GetOutputCount();
+		*pCount = SvPlc::g_Plc.GetOutputCount();
 		result = S_OK;
 	}
 	return result;
@@ -107,9 +108,9 @@ HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool bValue)
 {
 	HRESULT result {E_FAIL};
 
-	if (channel < g_Plc.GetOutputCount())
+	if (channel < SvPlc::g_Plc.GetOutputCount())
 	{
-		result = g_Plc.SetOutputBit(channel, bValue);
+		result = SvPlc::g_Plc.SetOutputBit(channel, bValue);
 	}
 	return result;
 }
@@ -120,7 +121,7 @@ HRESULT WINAPI SVOutputGetPortCount(unsigned long* pCount)
 
 	if (nullptr != pCount)
 	{
-		*pCount = g_Plc.GetPortCount();
+		*pCount = SvPlc::g_Plc.GetPortCount();
 		result = S_OK;
 	}
 	return result;
@@ -130,7 +131,7 @@ HRESULT WINAPI SVOutputGetPortValue( unsigned long port, unsigned long* pValue )
 {
 	HRESULT result {E_FAIL};
 
-	if (port < g_Plc.GetNumPorts())
+	if (port < SvPlc::g_Plc.GetNumPorts())
 	{
 		
 		result = S_OK;
@@ -142,9 +143,9 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value)
 {
 	HRESULT result {E_FAIL};
 
-	if (port < g_Plc.GetPortCount())
+	if (port < SvPlc::g_Plc.GetPortCount())
 	{
-		result = g_Plc.SetOutputValue(value);
+		result = SvPlc::g_Plc.SetOutputValue(value);
 	}
 	return result;
 }
@@ -153,9 +154,9 @@ HRESULT WINAPI SVOutputSetData(unsigned long triggerchannel, const SvTh::IntVari
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.SetOutputData(triggerchannel, rData);
+		result = SvPlc::g_Plc.SetOutputData(triggerchannel, rData);
 	}
 	return result;
 }
@@ -166,7 +167,7 @@ HRESULT WINAPI SVTriggerGetCount(unsigned long* pCount)
 
 	if (nullptr != pCount)
 	{
-		*pCount = g_Plc.GetTriggerCount();
+		*pCount = SvPlc::g_Plc.GetTriggerCount();
 		result = S_OK;
 	}
 	return result;
@@ -178,7 +179,7 @@ HRESULT WINAPI SVTriggerGetHandle(unsigned long* pTriggerchannel, unsigned long 
 
 	if (nullptr != pTriggerchannel)
 	{
-		*pTriggerchannel = g_Plc.GetTriggerHandle(index);
+		*pTriggerchannel = SvPlc::g_Plc.GetTriggerHandle(index);
 		result = S_OK;
 	}
 	return result;
@@ -188,7 +189,7 @@ HRESULT WINAPI SVTriggerGetName(unsigned long triggerchannel, BSTR* pName)
 {
 	HRESULT result {E_FAIL};
 
-	if (nullptr != pName && 0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (nullptr != pName && 0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
 		// free any data on input...
 		if (nullptr != *pName)
@@ -196,7 +197,7 @@ HRESULT WINAPI SVTriggerGetName(unsigned long triggerchannel, BSTR* pName)
 			::SysFreeString(*pName);
 		}
 
-		*pName = g_Plc.GetTriggerName(triggerchannel);
+		*pName = SvPlc::g_Plc.GetTriggerName(triggerchannel);
 		
 		if (nullptr != *pName)
 		{
@@ -210,11 +211,11 @@ HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, const SvTh::Trigg
 {
 	HRESULT result {E_FAIL};
 
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if ( rDispatcher.hasCallback() && 0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
 		result = S_OK;
 
-		g_Plc.AddDispatcher(triggerchannel, rDispatcher);
+		SvPlc::g_Plc.AddDispatcher(triggerchannel, rDispatcher);
 	} 
 	return result;
 }
@@ -223,9 +224,9 @@ HRESULT WINAPI SVTriggerUnregister(unsigned long triggerchannel, const SvTh::Tri
 {
 	HRESULT result {E_FAIL};
 
-	if (rDispatcher.hasCallback() && 0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (rDispatcher.hasCallback() && 0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.RemoveDispatcher(triggerchannel, rDispatcher);
+		result = SvPlc::g_Plc.RemoveDispatcher(triggerchannel, rDispatcher);
 	} 
 	return result;
 }
@@ -234,9 +235,9 @@ HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerchannel)
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.RemoveAllDispatchers(triggerchannel);
+		result = SvPlc::g_Plc.RemoveAllDispatchers(triggerchannel);
 	} 
 	return result;
 }
@@ -245,9 +246,9 @@ HRESULT WINAPI SVTriggerStart(unsigned long triggerchannel)
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.StartTrigger(triggerchannel);
+		result = SvPlc::g_Plc.StartTrigger(triggerchannel);
 	}
 	return result;
 }
@@ -256,9 +257,9 @@ HRESULT WINAPI SVTriggerStop(unsigned long triggerchannel)
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.StopTrigger(triggerchannel);
+		result = SvPlc::g_Plc.StopTrigger(triggerchannel);
 	} 
 	return result;
 }
@@ -270,9 +271,9 @@ HRESULT WINAPI SVTriggerGetParameterCount(unsigned long triggerchannel, unsigned
 {
 	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel && cNumberTriggers >= triggerchannel)
+	if (0 < triggerchannel && SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.TriggerGetParameterCount(triggerchannel, pCount);
+		result = SvPlc::g_Plc.TriggerGetParameterCount(triggerchannel, pCount);
 	}
 	return result;
 }
@@ -284,9 +285,9 @@ HRESULT WINAPI SVTriggerGetParameterName(unsigned long triggerchannel, unsigned 
 {
 	HRESULT result {E_FAIL};
 
-	if (cNumberTriggers >= triggerchannel)
+	if (SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.TriggerGetParameterName(triggerchannel, index, pName);
+		result = SvPlc::g_Plc.TriggerGetParameterName(triggerchannel, index, pName);
 	}
 	return result;
 }
@@ -298,9 +299,9 @@ HRESULT WINAPI SVTriggerGetParameterValue(unsigned long triggerchannel, unsigned
 {
 	HRESULT result {E_FAIL};
 
-	if (cNumberTriggers >= triggerchannel)
+	if (SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.TriggerGetParameterValue(triggerchannel, ulIndex, pValue);
+		result = SvPlc::g_Plc.TriggerGetParameterValue(triggerchannel, ulIndex, pValue);
 	}
 	return result;
 }
@@ -312,9 +313,9 @@ HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerchannel, unsigned
 {
 	HRESULT result {E_FAIL};
 
-	if (cNumberTriggers >= triggerchannel)
+	if (SvPlc::cNumberTriggers >= triggerchannel)
 	{
-		result = g_Plc.TriggerSetParameterValue(triggerchannel, ulIndex, pValue);
+		result = SvPlc::g_Plc.TriggerSetParameterValue(triggerchannel, ulIndex, pValue);
 	}
 	return result;
 }
@@ -325,7 +326,7 @@ HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerchannel, unsigned
 // This function returns the number of available parameters.
 HRESULT WINAPI SVGetParameterCount(unsigned long* pCount)
 {
-	return g_Plc.GetParameterCount(pCount);
+	return SvPlc::g_Plc.GetParameterCount(pCount);
 }
 
 // SVGetParameterName
@@ -333,20 +334,20 @@ HRESULT WINAPI SVGetParameterCount(unsigned long* pCount)
 // It is the responsibility of the caller to free the BSTR.
 HRESULT WINAPI SVGetParameterName(unsigned long index, BSTR* pName)
 {
-	return g_Plc.GetParameterName(index, pName);
+	return SvPlc::g_Plc.GetParameterName(index, pName);
 }
 
 // SVGetParameterValue
 // This function Gets the parameter value specified by ulIndex.
 HRESULT WINAPI SVGetParameterValue(unsigned long index, VARIANT* pValue)
 {
-	return g_Plc.GetParameterValue(index, pValue);
+	return SvPlc::g_Plc.GetParameterValue(index, pValue);
 }
 
 // SVSetParameterValue
 // This function sets the value specified by ulIndex.
 HRESULT WINAPI SVSetParameterValue(unsigned long index, VARIANT* pValue)
 {
-	return g_Plc.SetParameterValue(index, pValue);
+	return SvPlc::g_Plc.SetParameterValue(index, pValue);
 }
 

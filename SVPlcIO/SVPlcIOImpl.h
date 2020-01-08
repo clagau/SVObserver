@@ -11,6 +11,9 @@
 //Moved to precompiled header: #include <vector>
 #include "TriggerInformation/IODeviceBase.h"
 
+namespace SvPlc
+{
+
 #pragma region Declarations
 constexpr unsigned long cNumberTriggers = 4;
 
@@ -21,11 +24,17 @@ extern SVPlcIOImpl g_Plc;
 
 struct TriggerData
 {
-	TriggerData(uint8_t channel, uint32_t count, double timestamp) : m_Channel{channel}, m_Count{count}, m_TimeStamp{timestamp}{}
+	TriggerData(uint8_t channel, uint32_t count, double timestamp, uint32_t objectID, int32_t syncSoc, int32_t relativeSoc, int32_t timeStampSoc) :
+		m_Channel{channel}, m_Count{count}, m_TimeStamp{timestamp}, m_objectID{objectID},
+		m_syncSoc{syncSoc}, m_relativeSoc{relativeSoc}, m_timeStampSoc{timeStampSoc} {}
 
 	uint8_t m_Channel{0};
 	uint32_t m_Count{0UL};
+	uint32_t m_objectID {0UL};
 	double m_TimeStamp{0.0};
+	int32_t m_syncSoc {0L};
+	int32_t m_relativeSoc {0L};
+	int32_t m_timeStampSoc{0L};
 };
 
 struct TriggerParameter
@@ -104,7 +113,10 @@ private:
 	uint16_t m_Input {0};
 	uint16_t m_Output {0};
 	bool m_isInitialized {false};
+	bool m_delayedReportTrigger {false};
 	uint16_t m_plcSimulation {0};
+	uint16_t m_plcTransferTime {0};
+	int m_readyBit {0};
 	long m_PlcVersion {0L};
 	bool m_triggerSimulation {false};
 	bool m_engineStarted {false};
@@ -121,3 +133,4 @@ private:
 #pragma endregion Member Variables
 };
 
+} //namespace SvPlc

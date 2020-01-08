@@ -18,6 +18,8 @@
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
+namespace SvPlc
+{
 constexpr TLR_UINT32 c_cifxChannel = 0;
 constexpr uint32_t c_timeout = 2;
 #ifdef UNDER_RTSS
@@ -310,11 +312,8 @@ void CifXCard::readProcessData()
 			case TelegramContent::OperationData:
 			{
 				memcpy(&m_inspectionCmd, pData, sizeof(InspectionCommand));
-				if (m_syncSocRelative > m_inspectionCmd.m_socRelative)
-				{
-					m_syncSocRelative = m_inspectionCmd.m_socRelative;
-					m_syncTime = m_TelegramReceiveTime;
-				}
+				m_syncSocRelative = m_inspectionCmd.m_socRelative;
+				m_syncTime = m_TelegramReceiveTime;
 				break;
 			}
 			default:
@@ -439,9 +438,6 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 		{typeid(uint32_t), PlcDataType::Uint32Index},
 		{typeid(float), PlcDataType::FloatIndex},
 		{typeid(double), PlcDataType::DoubleIndex},
-		{typeid(TypeSocTime), PlcDataType::SocTimeIndex},
-		{typeid(TypeObjectDt), PlcDataType::ObjectDtIndex},
-		{typeid(TypeResults), PlcDataType::ResultsIndex},
 	};
 
 	std::vector<ConfigDataSet> result;
@@ -460,7 +456,11 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 			startByte += result[configIndex].m_byteSize;
 			configIndex++;
 
-			result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsolute)], startByte, sizeof(insCmd.m_socAbsolute)};
+			result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsSeconds)], startByte, sizeof(insCmd.m_socAbsSeconds)};
+			startByte += result[configIndex].m_byteSize;
+			configIndex++;
+
+			result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsNanoseconds)], startByte, sizeof(insCmd.m_socAbsNanoseconds)};
 			startByte += result[configIndex].m_byteSize;
 			configIndex++;
 
@@ -468,14 +468,15 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 			startByte += result[configIndex].m_byteSize;
 			configIndex++;
 
-			//Reserved bytes are of type 0 and byte size is the number of bytes reserved
-			result[configIndex] = ConfigDataSet {c_modeSingleDirect, 0, startByte, c_ReservedInsCmd};
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
-			for (int i = 0; i < c_NumberOfChannels; ++i)
+			for(const auto& rReserved : insCmd.m_reserved)
 			{
-				const ChannelIn& rChannel = insCmd.m_channels[i];
+				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(rReserved)], startByte, sizeof(rReserved)};
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
+			}
+
+			for(const auto& rChannel : insCmd.m_channels)
+			{
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_unitControl)], startByte, sizeof(rChannel.m_unitControl)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
@@ -488,10 +489,16 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_timeStamp2)], startByte, sizeof(rChannel.m_timeStamp2)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObject)], startByte, sizeof(rChannel.m_currentObject)};
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObjectType)], startByte, sizeof(rChannel.m_currentObjectType)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_originalObject)], startByte, sizeof(rChannel.m_originalObject)};
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObjectID)], startByte, sizeof(rChannel.m_currentObjectID)};
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_originalObjectType)], startByte, sizeof(rChannel.m_originalObjectType)};
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_originalObjectID)], startByte, sizeof(rChannel.m_originalObjectID)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_triggerIndex)], startByte, sizeof(rChannel.m_triggerIndex)};
@@ -516,21 +523,28 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 		{
 			InspectionState insState;
 			
-			//Reserved bytes are of type 0 and byte size is the number of bytes reserved
-			result[configIndex] = ConfigDataSet {c_modeSingleDirect, 0, startByte, c_HeaderSize};
-			//Do startByte always before configIndex
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
-			for (int i = 0; i < c_NumberOfChannels; ++i)
+			for (const auto& rHeader : insState.m_header)
 			{
-				const ChannelOut& rChannel = insState.m_channels[i];
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObject)], startByte, sizeof(rChannel.m_currentObject)};
+				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(rHeader)], startByte, sizeof(rHeader)};
+				//Do startByte always before configIndex
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_results)], startByte, sizeof(rChannel.m_results)};
+			}
+
+			for (const auto& rChannel : insState.m_channels)
+			{
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObjectType)], startByte, sizeof(rChannel.m_currentObjectType)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObjectID)], startByte, sizeof(rChannel.m_currentObjectID)};
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
+				for (const auto& rResult : rChannel.m_results)
+				{
+					result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rResult)], startByte, sizeof(rResult)};
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_generalValue)], startByte, sizeof(rChannel.m_generalValue)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
@@ -569,7 +583,7 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 	outputTelegram.m_type = TelegramType::Response;
 	outputTelegram.m_content = m_inputTelegram.m_content;
 	outputTelegram.m_layout = m_inputTelegram.m_layout;
-	outputTelegram.m_systemStatus = m_inputTelegram.m_systemStatus;
+	outputTelegram.m_systemStatus = m_ready ? SystemStatus::AppReady : SystemStatus::ComReady;
 
 	{
 		std::lock_guard<std::mutex> guard {m_cifxMutex};
@@ -595,3 +609,4 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 	}
 
 }
+} //namespace SvPlc

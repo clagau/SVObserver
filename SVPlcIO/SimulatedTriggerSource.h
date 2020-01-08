@@ -10,6 +10,8 @@
 #include "TriggerSource.h"
 #pragma endregion Includes
 
+namespace SvPlc
+{
 /// a simplified simulation of HardwareTriggerSource
 class SimulatedTriggerSource : public TriggerSource
 {
@@ -19,10 +21,11 @@ public:
 
 	bool initialize() override;
 	bool analyzeTelegramData() override;
-	void createTriggerInfo(uint8_t channel) override;
+	void createTriggerReport(uint8_t channel) override;
 
 private:
 	std::thread m_timerThread[c_NumberOfChannels];
 	std::atomic_bool m_runThread[c_NumberOfChannels];
 };
 
+} //namespace SvPlc

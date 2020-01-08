@@ -12,9 +12,8 @@
 #include "PlcDataTypes.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-#pragma endregion Declarations
-
+namespace SvPlc
+{
 #pragma pack(push, 1)
 
 struct ChannelOut
@@ -29,8 +28,9 @@ public:
 
 #pragma region Member Variables
 public:
-	TypeObjectDt m_currentObject;			//Current object
-	TypeResults m_results;					//Results array
+	uint8_t m_currentObjectType {0};		//Current object type
+	uint32_t m_currentObjectID {0};			//Current object ID
+	std::array<uint8_t, c_ResultSize> m_results{0, 0, 0, 0, 0, 0, 0, 0};	//Results array
 	float m_generalValue{0.0};				//General value
 #pragma endregion Member Variables
 };
@@ -47,9 +47,10 @@ public:
 
 #pragma region Member Variables
 public:
-	uint8_t m_header[c_HeaderSize] {0, 0, 0, 0, 0, 0, 0, 0};
-	ChannelOut m_channels[c_NumberOfChannels];	//Out data for each of the 4 separate channels
+	std::array<uint8_t, c_HeaderSize> m_header {0, 0, 0, 0, 0, 0, 0, 0};
+	std::array<ChannelOut, c_NumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
 #pragma endregion Member Variables
 };
 
 #pragma pack(pop)
+} //namespace SvPlc

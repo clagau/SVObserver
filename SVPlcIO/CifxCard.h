@@ -15,6 +15,8 @@
 #include "TimeSync.h"
 #pragma endregion Includes
 
+namespace SvPlc
+{
 struct InspectionState;
 
 ///controls access to process memory (input and output buffers) of the CifX card 
@@ -56,6 +58,7 @@ public:
 	const Telegram& getInputTelegram() { return m_inputTelegram; }
 	const InspectionCommand& getInspectionCmd() { return m_inspectionCmd; }
 	bool isProtocolInitialized() { return m_protocolInitialized; }
+	void setReady(bool ready) { m_ready = ready; } 
 
 private:
 
@@ -74,6 +77,7 @@ private:
 	double m_syncTime {0.0};
 	int32_t m_syncSocRelative {INT_MAX};
 	bool m_protocolInitialized {false};
+	bool m_ready {false};
 	uint16_t m_contentID {0};
 
 	uint32_t m_plcSendTime {0UL};
@@ -88,3 +92,4 @@ private:
 	InspectionCommand m_inspectionCmd;
 };
 
+} //namespace SvPlc

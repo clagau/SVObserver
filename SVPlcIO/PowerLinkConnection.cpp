@@ -14,11 +14,13 @@
 #include "TriggerEngineConnection.h"
 #pragma endregion Includes
 
+namespace SvPlc
+{
 HANDLE g_hTelegramEvent {nullptr};
 HANDLE g_hStopEvent {nullptr};
 
 PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger,
-										 uint16_t simulateTriggers) :
+										 uint16_t plcTransferTime, uint16_t simulateTriggers) :
 	m_pReportTrigger(pReportTrigger)
 {
 	g_hTelegramEvent = ::CreateEvent(nullptr, false, false, _T("PL New Telegram Event"));
@@ -30,7 +32,7 @@ PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&
 	}
 	else
 	{
-		m_pTriggersource = std::make_unique<HardwareTriggerSource>();
+		m_pTriggersource = std::make_unique<HardwareTriggerSource>(plcTransferTime);
 	}
 
 	m_pTriggersource->initialize();
@@ -50,8 +52,12 @@ PowerlinkConnection::~PowerlinkConnection()
 	}
 }
 
+void PowerlinkConnection::setReady(bool ready)
+{
+	m_pTriggersource->setReady(ready);
+}
 
-void PowerlinkConnection::SetTriggerChannel(uint8_t channel, bool active, uint32_t period)
+void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
 	if (channel >= 0 && channel < c_NumberOfChannels)
 	{
@@ -72,12 +78,12 @@ void PowerlinkConnection::SetTriggerChannel(uint8_t channel, bool active, uint32
 	}
 }
 
-void PowerlinkConnection::writeResult(const ResultReport& rResult)
+void PowerlinkConnection::writeResult(const ResultReport& rResultReport)
 {
 	ChannelOut channelOut;
-	channelOut.m_currentObject.m_ID = rResult.m_objectID;
-	channelOut.m_results = rResult.m_results;
-	m_pTriggersource->queueResult(rResult.m_channel, channelOut);
+	channelOut.m_currentObjectID = rResultReport.m_objectID;
+	channelOut.m_results = rResultReport.m_results;
+	m_pTriggersource->queueResult(rResultReport.m_channel, std::move(channelOut));
 }
 
 void PowerlinkConnection::StartEventSignalThread()
@@ -126,13 +132,14 @@ void PowerlinkConnection::EventHandler()
 		{
 			if(nullptr != m_pReportTrigger)
 			{
-				TriggerInformation triggerInfo = m_pTriggersource->getNewTriggerInfo(i);
-				if(triggerInfo.isValid() && m_pTriggersource->getChannel(i).m_active)
+				const TriggerReport& rReport = m_pTriggersource->getNewTriggerReport(i);
+				if (rReport.isValid() && m_pTriggersource->getChannel(i).m_active)
 				{
-					bool isComplete = triggerInfo.m_triggerIndex == triggerInfo.m_triggersPerProduct;
-					m_pReportTrigger(TriggerReport(triggerInfo.m_Channel, triggerInfo.m_ObjectId, triggerInfo.m_triggerIndex, triggerInfo.m_triggerTimestamp, isComplete));
+					m_pReportTrigger(rReport);
 				}
 			}
 		}
 	}
 }
+
+} //namespace SvPlc

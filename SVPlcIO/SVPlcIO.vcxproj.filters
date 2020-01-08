@@ -90,9 +90,6 @@
     <ClInclude Include="TriggerSource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerInformation.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="PowerLinkConnection.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

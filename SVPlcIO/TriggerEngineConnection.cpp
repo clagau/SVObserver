@@ -9,12 +9,16 @@
 #include "PowerLinkConnection.h" 
 #pragma endregion Includes
 
+namespace SvPlc
+{
 std::unique_ptr<PowerlinkConnection> g_pPowerLink;
 
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger,
-	uint16_t simulateTriggers)
+namespace Tec
 {
-	g_pPowerLink = std::make_unique<PowerlinkConnection>(reportTrigger, simulateTriggers);
+void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger,
+	uint16_t plcTransferTime, uint16_t simulateTriggers)
+{
+	g_pPowerLink = std::make_unique<PowerlinkConnection>(reportTrigger, plcTransferTime, simulateTriggers);
 	if(nullptr != g_pPowerLink)
 	{
 		::OutputDebugString("Start Trigger Engine!\n");
@@ -34,20 +38,29 @@ void stopTriggerEngine()
 	}
 }
 
-
-void SetTriggerChannel(uint8_t channel, bool active, uint32_t period)
+void setReady(bool ready)
 {
-	if(nullptr != g_pPowerLink)
+	if (nullptr != g_pPowerLink)
 	{
-		g_pPowerLink->SetTriggerChannel(channel, active, period);
+		g_pPowerLink->setReady(ready);
 	}
 }
 
-void writeResult(const ResultReport& rResult)
+void setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
 	if(nullptr != g_pPowerLink)
 	{
-		g_pPowerLink->writeResult(rResult);
+		g_pPowerLink->setTriggerChannel(channel, active, period);
 	}
 }
 
+void writeResult(const ResultReport& rResultReport)
+{
+	if(nullptr != g_pPowerLink)
+	{
+		g_pPowerLink->writeResult(rResultReport);
+	}
+}
+} //namespace Tec
+
+} //namespace SvPlc

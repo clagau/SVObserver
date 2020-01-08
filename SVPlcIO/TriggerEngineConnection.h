@@ -7,40 +7,20 @@
 
 #include "PlcDataTypes.h"
 
-struct TriggerReport
+namespace SvPlc
 {
-	TriggerReport(uint8_t channel, uint32_t objectID, uint32_t triggerIndex, double triggerTimestamp, bool isComplete)
-		: m_channel {channel}
-		, m_objectID {objectID}
-		, m_triggerIndex {triggerIndex}
-		, m_triggerTimestamp {triggerTimestamp}
-		, m_isComplete {isComplete}
-	{
-	}
-	uint8_t m_channel = 0;
-	uint32_t m_objectID = 0;
-	uint32_t m_triggerIndex = 0;
-	double m_triggerTimestamp = 0.0;
-	bool m_isComplete = false;
-};
 
-struct ResultReport
+namespace Tec
 {
-	ResultReport() = default;
-	ResultReport(const ResultReport& rRhs) = default;
-	uint8_t m_channel = 0;
-	uint32_t m_objectID = 0;
-	TypeResults m_results;
-};
-
-
-void SetTriggerChannel(uint8_t channel, bool active, uint32_t period=0UL);
-
-void writeResult(const ResultReport& rRr);
-
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger,
-	uint16_t simulateTriggers);
+void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcTransferTime, uint16_t simulateTriggers);
 void stopTriggerEngine();
 
+void setReady(bool ready);
+void setTriggerChannel(uint8_t channel, bool active, uint32_t period=0UL);
+
+void writeResult(const ResultReport& rReportResult);
+} //namespace Tec
+
+} //namespace SvPlc
 
 

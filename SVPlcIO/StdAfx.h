@@ -46,6 +46,7 @@
 #include <windows.h>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
