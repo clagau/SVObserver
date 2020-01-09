@@ -519,7 +519,7 @@ bool SVFileNameClass::SelectPath()
 	if (IDOK == SvOi::OpenSVFolderDialog( Path, _T("Select Folder")))
 	{
 		SetPathName(Path.c_str());
-		SetDefaultPathName(Path.c_str());
+		SetDefaultPathName(Path);
 		Result = true;
 	}
 
@@ -564,7 +564,7 @@ bool SVFileNameClass::SelectFile()
 
 	if (0 == positionOfDot)
 	{
-		defaultFileExtension = defaultFileExtension.substr(positionOfDot + 1);
+		defaultFileExtension = defaultFileExtension.substr(1);
 	}
 
 	if (IDOK == SvOi::OpenSVFileDialog(true, defaultFileExtension.c_str(), FileName, GetFileSelectFlags(), GetFileExtensionFilterList().c_str(), Path, GetFileSelectDialogTitle().c_str()))

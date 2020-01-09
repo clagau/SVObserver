@@ -138,7 +138,7 @@ void SVCameraPage::OnCameraFileBrowseButtonClick()
 	size_t positionOfDot = cameraFileDefaultExt.find(".");
 	if (0 == positionOfDot)
 	{
-		cameraFileDefaultExt = cameraFileDefaultExt.substr(positionOfDot + 1);
+		cameraFileDefaultExt = cameraFileDefaultExt.substr(1);
 	}
 
 	CFileDialog dlg( true, 
