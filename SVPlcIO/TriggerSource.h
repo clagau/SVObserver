@@ -25,6 +25,8 @@ struct TriggerChannel
 class TriggerSource
 {
 public:
+	virtual ~TriggerSource() = default;
+
 	void setTriggerChannel(uint8_t channel, bool active, uint32_t period);
 	bool checkForNewTriggers();
 
