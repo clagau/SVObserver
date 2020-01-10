@@ -992,10 +992,6 @@ HRESULT SVXMLEncryptionClass::DecryptString(const _bstr_t& rEncryptedString, _bs
 {
 	HRESULT	result{S_OK};
 
-	SVValue64Union valueUnion;
-
-	valueUnion.int64Value = 0ULL;
-
 	rDecryptedString = _bstr_t{};
 
 	long encryptedLength = rEncryptedString.length() - 5;
@@ -1042,6 +1038,7 @@ HRESULT SVXMLEncryptionClass::DecryptString(const _bstr_t& rEncryptedString, _bs
 	long destinationIndex{0L};
 	bool fillerUsed{false};
 	long firstTrackingUnused{0L};
+	SVValue64Union valueUnion;
 	while (firstTrackingUnused < maxTrackingLength)
 	{
 		valueUnion.int64Value = 0;
@@ -1389,7 +1386,7 @@ HRESULT SVXMLEncryptionClass::SetFiller(bool filler, long option, SVValue64Union
 
 	if (filler)
 	{
-		if ((rand1 % option) == 0)
+		if ((rand1 % static_cast<unsigned long>(option)) == 0)
 		{
 			pValueUnion->wcharValue[2] = pValueUnion->wcharValue[2] | 0x1200;
 		}
@@ -1400,7 +1397,7 @@ HRESULT SVXMLEncryptionClass::SetFiller(bool filler, long option, SVValue64Union
 	}
 	else
 	{
-		if ((rand1 % option) == 0)
+		if ((rand1 % static_cast<unsigned long>(option)) == 0)
 		{
 			pValueUnion->wcharValue[2] = pValueUnion->wcharValue[2] | 0x1000;
 			pValueUnion->wcharValue[2] = pValueUnion->wcharValue[2] & 0xfdff;

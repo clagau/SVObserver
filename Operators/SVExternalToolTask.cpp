@@ -291,7 +291,7 @@ void SVExternalToolTask::SetAllAttributes()
 
 SVExternalToolTask::~SVExternalToolTask()
 {
-	CloseObject();
+	SVExternalToolTask::CloseObject();
 	// remove embeddeds so that invalid objects won't be Closed
 	m_embeddedList.clear();
 }
@@ -755,7 +755,6 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			InputValueDefinitionStructEx* paInputValueDefsEx = nullptr;
 			InputValueDefinitionStruct* paInputValueDefs = nullptr;
 			long ArraySize {0};
-			HRESULT hr {S_OK};
 			if (m_dll.UseInputEx())
 			{
 				hr = m_dll.GetInputValueDefinitions(&ArraySize, &paInputValueDefsEx);
@@ -928,20 +927,15 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 
 			SetAllAttributes();
 		}// end try
-		catch (HRESULT l_hr)
+		catch (HRESULT)
 		{
-			l_hr;	// remove compiler warning
-			// logging ???
 		}
-		catch (int l_iErrorCode)
+		catch (int)
 		{
-			l_iErrorCode;	// remove compiler warning
-			// logging ???
 			hr = S_FALSE;// Error Initializing Tool
 		}
 		catch (std::exception&)
 		{
-
 			hr = S_FALSE;
 		}
 
@@ -1091,9 +1085,6 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 		}
 		catch (HRESULT hr)
 		{
-			hr;	// remove compiler warning
-			// log hresult??
-
 			ok = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -1928,7 +1919,7 @@ bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], SV
 		{
 			aDIBHandles[i] = m_aInspectionInputHBMImages.at(i).hbm;
 		}
-		hr = m_dll.SetHBITMAPInputImages(guid, m_Data.m_lNumInputImages ? &(aDIBHandles[0]) : nullptr);
+		/*hr = */m_dll.SetHBITMAPInputImages(guid, m_Data.m_lNumInputImages ? &(aDIBHandles[0]) : nullptr);
 	}
 
 	for (int i = 0; i < m_Data.m_lNumResultImages; i++)

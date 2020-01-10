@@ -107,7 +107,7 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 
 SVImageTransformClass::~SVImageTransformClass()
 {
-	CloseObject();
+	SVImageTransformClass::CloseObject();
 }
 #pragma endregion
 

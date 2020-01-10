@@ -53,6 +53,7 @@ bool SVXMLCTreeCtrl::isRoot( const SVBranchHandle pBranch ) const
 	return pBranch == m_Root;
 }
 
+// cppcheck-suppress unusedFunction
 bool SVXMLCTreeCtrl::hasBranches( const SVBranchHandle pBranch )
 {
 	SVBranchHandle pChild( nullptr );
@@ -62,6 +63,7 @@ bool SVXMLCTreeCtrl::hasBranches( const SVBranchHandle pBranch )
 	return (nullptr != pChild);
 }
 
+// cppcheck-suppress unusedFunction
 SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getParentBranch( const SVBranchHandle pChild )
 {
 	SVBranchHandle pResult( nullptr );
@@ -133,6 +135,7 @@ bool SVXMLCTreeCtrl::isValidBranch( const SVBranchHandle pParent )
 	return (nullptr != pParent);
 }
 
+// cppcheck-suppress unusedFunction
 HRESULT SVXMLCTreeCtrl::createBranch( const SVBranchHandle pParent, LPCTSTR Name, SVBranchHandle* ppBranch )
 {
 	HRESULT Result( S_OK );
@@ -209,6 +212,7 @@ std::string SVXMLCTreeCtrl::getBranchName( const SVBranchHandle pBranch ) const
 	return Result;
 }
 
+// cppcheck-suppress unusedFunction
 bool SVXMLCTreeCtrl::hasLeaves( const SVBranchHandle pBranch )
 {
 	SVLeafHandle pChild( nullptr );
@@ -292,6 +296,7 @@ bool SVXMLCTreeCtrl::isValidLeaf( const SVBranchHandle pParent, const SVLeafHand
 	return Result;
 }
 
+// cppcheck-suppress unusedFunction
 HRESULT SVXMLCTreeCtrl::createLeaf( const SVBranchHandle pParent, LPCTSTR Name, const _variant_t& rData, SVLeafHandle* ppLeaf )
 {
 	HRESULT Result( S_OK );
@@ -404,6 +409,7 @@ HRESULT SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name,
 	return 	getLeafData( findLeaf( pParent, Name ), rData );
 }
 
+// cppcheck-suppress unusedFunction
 HRESULT SVXMLCTreeCtrl::setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData )
 {
 	HRESULT l_Status( S_OK );

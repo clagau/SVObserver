@@ -79,7 +79,7 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 
 SVDoubleResultClass::~SVDoubleResultClass()
 {
-	CloseObject();
+	SVDoubleResultClass::CloseObject();
 }
 
 bool SVDoubleResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

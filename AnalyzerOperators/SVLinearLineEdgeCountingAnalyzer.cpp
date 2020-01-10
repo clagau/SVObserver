@@ -67,7 +67,7 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 
 SVLinearEdgeCountingLineAnalyzerClass::~SVLinearEdgeCountingLineAnalyzerClass()
 {
-	CloseObject();
+	SVLinearEdgeCountingLineAnalyzerClass::CloseObject();
 }
 
 bool SVLinearEdgeCountingLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

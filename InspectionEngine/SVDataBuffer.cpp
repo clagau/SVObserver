@@ -69,7 +69,7 @@ void SVDataBufferClass::init()
 
 SVDataBufferClass::~SVDataBufferClass()
 {
-	CloseObject();
+	SVDataBufferClass::CloseObject();
 }
 
 bool SVDataBufferClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

@@ -21,13 +21,10 @@ typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
 typedef HRESULT (WINAPI *SVInputGetCountPtr)( unsigned long* );
 typedef HRESULT (WINAPI *SVInputGetValuePtr)( unsigned long, bool* );
-typedef HRESULT (WINAPI *SVInputSetValuePtr)( unsigned long, bool );
 typedef HRESULT (WINAPI *SVInputGetValuesPtr)( unsigned long* );
 typedef HRESULT (WINAPI *SVOutputGetCountPtr)( unsigned long* );
-typedef HRESULT (WINAPI *SVOutputGetValuePtr)( unsigned long, bool* );
 typedef HRESULT (WINAPI *SVOutputSetValuePtr)( unsigned long, bool );
 typedef HRESULT (WINAPI *SVOutputGetPortCountPtr)( unsigned long * );
-typedef HRESULT (WINAPI *SVOutputGetPortValuePtr)( unsigned long, unsigned long* );
 typedef HRESULT(WINAPI *SVOutputSetPortValuePtr)(unsigned long, unsigned long);
 typedef HRESULT(WINAPI *SVOutputSetDataPtr)(unsigned long, const IntVariantMap&);
 
@@ -47,15 +44,12 @@ public:
 	
 	HRESULT GetInputCount( unsigned long* pCount );
 	HRESULT GetInputValue( unsigned long channel, bool* pValue );
-	HRESULT SetInputValue( unsigned long channel, bool value );
 	HRESULT GetInputValues( unsigned long* pValue );
 
 	HRESULT GetOutputCount( unsigned long* pCount );
-	HRESULT GetOutputValue( unsigned long channel, bool* pValue );
 	HRESULT SetOutputValue( unsigned long channel, bool value );
 
 	HRESULT GetOutputPortCount( unsigned long* pCount );
-	HRESULT GetOutputPortValue( unsigned long port, unsigned long* pValue );
 	HRESULT SetOutputPortValue( unsigned long port, unsigned long value );
 
 	HRESULT SetOutputData(unsigned long channel, const IntVariantMap& rData);
@@ -72,13 +66,10 @@ private:
 	SVDestroyPtr m_pDestroy {nullptr};
 	SVInputGetCountPtr m_pGetInputCount {nullptr};
 	SVInputGetValuePtr m_pGetInputValue {nullptr};
-	SVInputSetValuePtr m_pSetInputValue {nullptr};
 	SVInputGetValuesPtr m_pGetInputValues {nullptr};
 	SVOutputGetCountPtr m_pGetOutputCount {nullptr};
-	SVOutputGetValuePtr m_pGetOutputValue {nullptr};
 	SVOutputSetValuePtr m_pSetOutputValue {nullptr};
 	SVOutputGetPortCountPtr m_pGetOutputPortCount {nullptr};
-	SVOutputGetPortValuePtr m_pGetOutputPortValue {nullptr};
 	SVOutputSetPortValuePtr m_pSetOutputPortValue {nullptr};
 	SVOutputSetDataPtr m_pSetOutputData {nullptr};
 

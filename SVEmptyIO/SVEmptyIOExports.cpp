@@ -23,6 +23,7 @@ constexpr char* c_digitizer = ".Dig_";
 
 static std::string g_boardName{c_ioBoardName};
 
+
 HRESULT WINAPI SVCreate()
 {
 	return S_OK;
@@ -59,11 +60,6 @@ HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVInputSetValue( unsigned long p_ulChannel, bool p_bValue )
-{
-	return S_FALSE;
-}
-
 HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue )
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -92,11 +88,6 @@ HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVOutputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
-{
-	return S_FALSE;
-}
-
 HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue )
 {
 	return S_OK;
@@ -114,11 +105,6 @@ HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
 	}
 
 	return l_hrOk;
-}
-
-HRESULT WINAPI SVOutputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue )
-{
-	return S_FALSE;
 }
 
 HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
@@ -325,7 +311,6 @@ HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigne
 }
 
 // Digitizer Export Functions
-
 HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -417,48 +402,6 @@ HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel )
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerGetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY p_saData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerGetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT p_saData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerGetLut( unsigned long triggerchannel, SAFEARRAY *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLut( unsigned long triggerchannel, SAFEARRAY p_saData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerGetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY *p_psaData )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVDigitizerSetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY p_saData )
-{
-	return S_FALSE;
-}
-
 HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface )
 {
 	return S_FALSE;
@@ -497,23 +440,6 @@ HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
 HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel )
 {
 	return S_OK;
-}
-
-HRESULT WINAPI SVDigitizerGetRawParameter( unsigned long triggerchannel, unsigned long p_ulParameter, VARIANT *p_pvarValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pvarValue )
-	{
-		::VariantClear( p_pvarValue );
-	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVDigitizerSetRawParameter( unsigned long triggerchannel, unsigned long p_ulParameter, VARIANT *p_pvarValue )
-{
-	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters )

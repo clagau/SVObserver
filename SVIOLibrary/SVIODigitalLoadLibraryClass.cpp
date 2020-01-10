@@ -35,13 +35,10 @@ HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR libraryPath)
 			m_pDestroy = (SVDestroyPtr)::GetProcAddress( m_Handle, "SVDestroy" );
 			m_pGetInputCount = (SVInputGetCountPtr)::GetProcAddress( m_Handle, "SVInputGetCount" );
 			m_pGetInputValue = (SVInputGetValuePtr)::GetProcAddress( m_Handle, "SVInputGetValue" );
-			m_pSetInputValue = (SVInputSetValuePtr)::GetProcAddress( m_Handle, "SVInputSetValue" );
 			m_pGetInputValues = (SVInputGetValuesPtr)::GetProcAddress( m_Handle, "SVInputGetValues" );
 			m_pGetOutputCount = (SVOutputGetCountPtr)::GetProcAddress( m_Handle, "SVOutputGetCount" );
-			m_pGetOutputValue = (SVOutputGetValuePtr)::GetProcAddress( m_Handle, "SVOutputGetValue" );
 			m_pSetOutputValue = (SVOutputSetValuePtr)::GetProcAddress( m_Handle, "SVOutputSetValue" );
 			m_pGetOutputPortCount = (SVOutputGetPortCountPtr)::GetProcAddress( m_Handle, "SVOutputGetPortCount" );
-			m_pGetOutputPortValue = (SVOutputGetPortValuePtr)::GetProcAddress( m_Handle, "SVOutputGetPortValue" );
 			m_pSetOutputPortValue = (SVOutputSetPortValuePtr)::GetProcAddress(m_Handle, "SVOutputSetPortValue");
 			m_pSetOutputData = (SVOutputSetDataPtr)::GetProcAddress(m_Handle, "SVOutputSetData");
 
@@ -57,13 +54,10 @@ HRESULT SVIODigitalLoadLibraryClass::Open(LPCTSTR libraryPath)
 			     nullptr != m_pDestroy &&
 			     nullptr != m_pGetInputCount &&
 			     nullptr != m_pGetInputValue &&
-			     nullptr != m_pSetInputValue &&
 			     nullptr != m_pGetInputValues &&
 			     nullptr != m_pGetOutputCount &&
-			     nullptr != m_pGetOutputValue &&
 			     nullptr != m_pSetOutputValue &&
 			     nullptr != m_pGetOutputPortCount &&
-			     nullptr != m_pGetOutputPortValue &&
 			     nullptr != m_pSetOutputPortValue )
 			{
 				result = m_pCreate();
@@ -110,13 +104,10 @@ HRESULT SVIODigitalLoadLibraryClass::Close()
 	m_pDestroy = nullptr;
 	m_pGetInputCount = nullptr;
 	m_pGetInputValue = nullptr;
-	m_pSetInputValue = nullptr;
 	m_pGetInputValues = nullptr;
 	m_pGetOutputCount = nullptr;
-	m_pGetOutputValue = nullptr;
 	m_pSetOutputValue = nullptr;
 	m_pGetOutputPortCount = nullptr;
-	m_pGetOutputPortValue = nullptr;
 	m_pSetOutputPortValue = nullptr;
 	m_pSetOutputData = nullptr;
 	m_pSetParameterValue = nullptr;
@@ -148,18 +139,6 @@ HRESULT SVIODigitalLoadLibraryClass::GetInputValue( unsigned long channel, bool*
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::SetInputValue( unsigned long channel, bool value )
-{
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != m_pSetInputValue )
-	{
-		result = m_pSetInputValue( channel, value );
-	}
-
-	return result;
-}
-
 HRESULT SVIODigitalLoadLibraryClass::GetInputValues( unsigned long* pValue )
 {
 	HRESULT result {E_FAIL};
@@ -184,18 +163,6 @@ HRESULT SVIODigitalLoadLibraryClass::GetOutputCount( unsigned long* pCount )
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetOutputValue( unsigned long channel, bool* pValue )
-{
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != m_pGetOutputValue )
-	{
-		result = m_pGetOutputValue( channel, pValue );
-	}
-
-	return result;
-}
-
 HRESULT SVIODigitalLoadLibraryClass::SetOutputValue( unsigned long channel, bool value )
 {
 	HRESULT result {E_FAIL};
@@ -208,6 +175,7 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputValue( unsigned long channel, bool
 	return result;
 }
 
+// cppcheck-suppress unusedFunction
 HRESULT SVIODigitalLoadLibraryClass::GetOutputPortCount( unsigned long* pCount )
 {
 	HRESULT result {E_FAIL};
@@ -215,18 +183,6 @@ HRESULT SVIODigitalLoadLibraryClass::GetOutputPortCount( unsigned long* pCount )
 	if ( nullptr != m_pGetOutputPortCount )
 	{
 		result = m_pGetOutputPortCount( pCount );
-	}
-
-	return result;
-}
-
-HRESULT SVIODigitalLoadLibraryClass::GetOutputPortValue( unsigned long port, unsigned long* pValue )
-{
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != m_pGetOutputPortValue )
-	{
-		result = m_pGetOutputPortValue( port, pValue );
 	}
 
 	return result;

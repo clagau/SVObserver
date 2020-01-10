@@ -48,7 +48,7 @@ SVEvaluateClass::SVEvaluateClass( SVObjectClass* POwner, int StringResourceID )
 
 SVEvaluateClass::~SVEvaluateClass()
 {
-	CloseObject();
+	SVEvaluateClass::CloseObject();
 }
 
 bool SVEvaluateClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

@@ -65,8 +65,6 @@ public:
 public:
 	HRESULT Initialize(bool bInit);
 	
-	unsigned long GetNumPorts();
-
 	// Digital I/O
 	unsigned long GetInputCount();
 	unsigned long GetOutputCount();

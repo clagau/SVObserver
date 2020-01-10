@@ -141,7 +141,7 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 
 SVImagePolarTransformClass::~SVImagePolarTransformClass()
 {
-	CloseObject();
+	SVImagePolarTransformClass::CloseObject();
 }
 
 bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

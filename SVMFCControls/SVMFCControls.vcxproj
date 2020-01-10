@@ -148,7 +148,6 @@
     <ClCompile Include="SVSliderCtrl.cpp" />
     <ClCompile Include="SVStatusBar.cpp" />
     <ClCompile Include="SVToolBar.cpp" />
-    <ClCompile Include="SVTreeCtrl.cpp" />
     <ClCompile Include="SVUpDownButton.cpp" />
     <ClCompile Include="SVUtilityArgumentDialog.cpp" />
     <ClCompile Include="SVWindowBar.cpp" />
@@ -189,7 +188,6 @@
     <ClInclude Include="SVSliderCtrl.h" />
     <ClInclude Include="SVStatusBar.h" />
     <ClInclude Include="SVToolBar.h" />
-    <ClInclude Include="SVTreeCtrl.h" />
     <ClInclude Include="SVUpDownButton.h" />
     <ClInclude Include="SVUtilityArgumentDialog.h" />
     <ClInclude Include="SVWindowBar.h" />

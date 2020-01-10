@@ -50,7 +50,7 @@ SVUserMaskOperatorClass::SVUserMaskOperatorClass( SVObjectClass* POwner, int Str
 
 SVUserMaskOperatorClass::~SVUserMaskOperatorClass()
 {
-	CloseObject();
+	SVUserMaskOperatorClass::CloseObject();
 }
 
 void SVUserMaskOperatorClass::init()

@@ -73,6 +73,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> res
 				ObjectRef.SetArrayIndex(i);
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
 				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+				// cppcheck-suppress unreadVariable symbolName=result
 				result = insertItem;
 			}
 		}
@@ -80,6 +81,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> res
 		{
 			insertItem.set_location(ObjectRef.GetCompleteName(true));
 			insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+			// cppcheck-suppress unreadVariable symbolName=result
 			result = insertItem;
 		}
 	}
@@ -1143,7 +1145,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SvIe::SVImageClass* p_psvImage
 
 				l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer((void*)p_rbstrValue,
 					l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr, l_ImageInfo);
-
+				// cppcheck-suppress knownConditionTrueFalse
 				l_pInRequest->m_bUsingCameraName = nullptr != l_psvMainImage;
 
 				if (l_pInRequest->m_bUsingCameraName)
@@ -1196,7 +1198,7 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SvIe::SVImageClass* pI
 			SvIe::SVCameraImageTemplate* pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pImage);
 
 			l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer(rImageFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
-
+			// cppcheck-suppress knownConditionTrueFalse
 			l_pInRequest->m_bUsingCameraName = nullptr != pMainImage;
 
 			if (l_pInRequest->m_bUsingCameraName)
@@ -1748,7 +1750,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 							{
 								std::string PrevValue;
 
-								hrSet = pFileNameObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
+								/*hrSet =*/ pFileNameObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 								bResetObject = (PrevValue != Value);
 							}
@@ -1769,7 +1771,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						{
 							std::string PrevValue;
 
-							hrSet = pStringValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
+							/*hrSet =*/ pStringValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 							bResetObject = (PrevValue != Value);
 						}
@@ -1795,7 +1797,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 					{
 						BOOL PrevValue(false);
 
-						hrSet = pBoolValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
+						/*hrSet =*/ pBoolValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 						// eventually use CompareWithCurrentValueImpl
 						bResetObject = NewValue != PrevValue;
@@ -1863,7 +1865,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						{
 							double PrevValue;
 
-							hrSet = pDoubleValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
+							/*hrSet = */pDoubleValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 							// eventually use CompareWithCurrentValueImpl
 							bResetObject = PrevValue != NewValue;
@@ -1878,7 +1880,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 					{
 						_variant_t PrevValue;
 
-						hrSet = ObjectRef.getValueObject()->getValue(PrevValue, ObjectRef.ArrayIndex());
+						/*hrSet = */ObjectRef.getValueObject()->getValue(PrevValue, ObjectRef.ArrayIndex());
 
 						std::string strNewValue(Value);
 						SvUl::MakeLower(strNewValue);
@@ -3615,7 +3617,7 @@ bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
 	if (nullptr != pChild)
 	{
 		SvIe::SVTaskObjectClass* pTaskObject = dynamic_cast<SvIe::SVTaskObjectClass*>(pChild);
-
+		// cppcheck-suppress knownConditionTrueFalse
 		if (nullptr != pTaskObject)
 		{
 			// Notify the Owner of our inputs that they are not needed anymore

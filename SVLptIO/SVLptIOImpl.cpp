@@ -210,11 +210,6 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 	return hr;
 }
 
-unsigned long SVLptIOImpl::GetNumPorts()
-{
-	return m_numPorts;
-}
-
 unsigned long SVLptIOImpl::GetNumInputs()
 {
 	return m_numInputs;

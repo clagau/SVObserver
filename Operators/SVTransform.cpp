@@ -84,7 +84,7 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 
 SVTransformClass::~SVTransformClass()
 {
-	CloseObject();
+	SVTransformClass::CloseObject();
 }
 
 bool SVTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

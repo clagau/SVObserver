@@ -171,7 +171,7 @@ std::string SVOInspectionList::GetInspectionName( LPCTSTR InspectLabel )
 SVOInspectionObjPtr SVOInspectionList::GetInspectionByLabel( LPCTSTR InspectLabel )
 {
 	SVOInspectionObjPtr pResult(nullptr);
-	auto& iter = std::find_if(m_InspectionList.begin(), m_InspectionList.end(), [&InspectLabel](auto& rEntry)
+	const auto& iter = std::find_if(m_InspectionList.begin(), m_InspectionList.end(), [&InspectLabel](auto& rEntry)
 	{
 		return (nullptr != rEntry && rEntry->GetInspectionLabelName() == InspectLabel);
 	});

@@ -25,14 +25,11 @@ HRESULT WINAPI SVDestroy();
 
 HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue );
-HRESULT WINAPI SVInputSetValue( unsigned long p_ulChannel, bool p_bValue );
 HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue );
 
 HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputGetValue( unsigned long p_ulChannel, bool *p_pbValue );
 HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue );
 HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue );
 HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
 
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
@@ -68,9 +65,6 @@ HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel );
 
 HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel );
-
-HRESULT WINAPI SVDigitizerGetRawParameter( unsigned long triggerchannel, unsigned long p_ulParameter, VARIANT *p_pvarValue );
-HRESULT WINAPI SVDigitizerSetRawParameter( unsigned long triggerchannel, unsigned long p_ulParameter, VARIANT *p_pvarValue );
 
 HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters );
 HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDeviceParamWrapper* p_pParameter );

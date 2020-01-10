@@ -472,7 +472,7 @@ bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 
 SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()
 {
-   CloseObject();
+	SVHistogramAnalyzerClass::CloseObject();
 }
 
 bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

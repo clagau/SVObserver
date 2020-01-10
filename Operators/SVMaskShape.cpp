@@ -188,14 +188,11 @@ HRESULT SVMaskShape::ValidateProperties(MapType& rProperties) const
 		}
 		if ( S_OK == hr )
 		{
-			if ( S_OK == hr )
-			{
-				hr = rProperties[ SVShapeMaskPropertyHeightGuid ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			}
-			if ( S_OK == hr )
-			{
-				hr = rProperties[ SVShapeMaskPropertyWidthGuid  ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
-			}
+			hr = rProperties[ SVShapeMaskPropertyHeightGuid ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
+		}
+		if ( S_OK == hr )
+		{
+			hr = rProperties[ SVShapeMaskPropertyWidthGuid  ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
 		}
 	}
 

@@ -5,14 +5,11 @@ EXPORTS
 	SVDestroy @2
 	SVInputGetCount @20
 	SVInputGetValue @21
-	SVInputSetValue @22
 	SVInputGetValues @31
 	SVOutputGetCount @40
-	SVOutputGetValue @41
 	SVOutputSetValue @42
 	SVOutputSetData @43
 	SVOutputGetPortCount @50
-	SVOutputGetPortValue @51
 	SVOutputSetPortValue @52
 	
 	SVTriggerGetCount @60

@@ -114,9 +114,6 @@
     <ClCompile Include="SVToolBar.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTreeCtrl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVUpDownButton.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -231,9 +228,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVToolBar.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTreeCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVUpDownButton.h">

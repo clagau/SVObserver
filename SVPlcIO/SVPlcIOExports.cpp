@@ -67,11 +67,6 @@ HRESULT WINAPI SVInputGetValue( unsigned long ulChannel, bool* pbValue )
 	return result;
 }
 
-HRESULT WINAPI SVInputSetValue(unsigned long ulChannel, bool bValue)
-{
-	return E_FAIL;
-}
-
 HRESULT WINAPI SVInputGetValues(unsigned long* pValue)
 {
 	HRESULT result {E_FAIL};
@@ -95,14 +90,6 @@ HRESULT WINAPI SVOutputGetCount(unsigned long* pCount)
 	return result;
 }
 
-HRESULT WINAPI SVOutputGetValue(unsigned long channel, bool* pValue)
-{
-	if (nullptr != pValue)
-	{
-	}
-	return S_OK;
-}
-
 HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool bValue)
 {
 	HRESULT result {E_FAIL};
@@ -121,18 +108,6 @@ HRESULT WINAPI SVOutputGetPortCount(unsigned long* pCount)
 	if (nullptr != pCount)
 	{
 		*pCount = SvPlc::g_Plc.GetPortCount();
-		result = S_OK;
-	}
-	return result;
-}
-
-HRESULT WINAPI SVOutputGetPortValue( unsigned long port, unsigned long* pValue )
-{
-	HRESULT result {E_FAIL};
-
-	if (port < SvPlc::g_Plc.GetNumPorts())
-	{
-		
 		result = S_OK;
 	}
 	return result;

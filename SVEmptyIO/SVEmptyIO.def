@@ -7,13 +7,10 @@ EXPORTS
 	SVDestroy @2
 	SVInputGetCount @20
 	SVInputGetValue @21
-	SVInputSetValue @22
 	SVInputGetValues @31
 	SVOutputGetCount @40
-	SVOutputGetValue @41
 	SVOutputSetValue @42
 	SVOutputGetPortCount @50
-	SVOutputGetPortValue @51
 	SVOutputSetPortValue @52
 	
 	SVTriggerGetCount @60
@@ -47,8 +44,6 @@ EXPORTS
 	SVDigitizerInternalTriggerEnable @132
 	SVDigitizerInternalTrigger @133
 	
-	SVDigitizerGetRawParameter @140
-	SVDigitizerSetRawParameter @141
 	SVDigitizerSetParameters @150
 	SVDigitizerSetParameter @151
 	SVDigitizerGetParameter @155

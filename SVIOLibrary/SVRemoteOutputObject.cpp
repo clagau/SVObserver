@@ -97,37 +97,34 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 		}
 	}
 
-	if( bOk )
+	if (bOk)
 	{
-		if ( bOk )
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant);
+		if (!bOk)
 		{
-			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant );
-			if ( bOk )
-			{
-				m_InputObjectId = SVGUID( svVariant );
-			}
+			return false;
 		}
-
-		if ( bOk )
-		{
-			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
-			if ( bOk )
-			{
-				m_strGroupID = SvUl::createStdString(svVariant);
-			}
-		}
-
-		if ( bOk )
-		{
-			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
-			if ( bOk )
-			{
-				m_strObjectName = SvUl::createStdString(svVariant);
-			}
-		}
-
+		
+		m_InputObjectId = SVGUID(svVariant);
 	}
-	return bOk;
+
+	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_GROUP_ID, htiParent, svVariant);
+	if (!bOk)
+	{
+		return false;
+	}
+	
+	m_strGroupID = SvUl::createStdString(svVariant);
+
+	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant);
+	if (!bOk)
+	{
+		return false;
+	}
+	
+	m_strObjectName = SvUl::createStdString(svVariant);
+	
+	return true;
 }
 
 HRESULT SVRemoteOutputObject::SetInputObject(SVObjectClass* pObject )

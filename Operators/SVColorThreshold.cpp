@@ -41,7 +41,7 @@ SVColorThresholdClass::SVColorThresholdClass(SVObjectClass* POwner, int StringRe
 
 SVColorThresholdClass::~SVColorThresholdClass()
 {
-	CloseObject();
+	SVColorThresholdClass::CloseObject();
 }
 #pragma endregion Constructor
 

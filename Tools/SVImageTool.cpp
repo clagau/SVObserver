@@ -136,7 +136,7 @@ void SVImageToolClass::init()
 ////////////////////////////////////////////////////////////////////////////////
 SVImageToolClass::~SVImageToolClass()
 { 
-	CloseObject();
+	SVImageToolClass::CloseObject();
 }
 
 bool SVImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

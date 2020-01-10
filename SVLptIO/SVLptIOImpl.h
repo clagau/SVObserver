@@ -80,7 +80,6 @@ public:
 
 	HRESULT Initialize(bool bInit);
 	
-	unsigned long GetNumPorts();
 	unsigned long GetNumInputs();
 	unsigned long GetNumOutputs();
 

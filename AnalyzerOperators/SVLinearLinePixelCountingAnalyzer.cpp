@@ -81,7 +81,7 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 
 SVLinearPixelCountingLineAnalyzerClass::~SVLinearPixelCountingLineAnalyzerClass()
 {
-	CloseObject();
+	SVLinearPixelCountingLineAnalyzerClass::CloseObject();
 }
 
 

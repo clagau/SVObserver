@@ -98,7 +98,7 @@ SVTaskObjectClass::~SVTaskObjectClass()
 	}
 	m_embeddedList.clear();
 
-	CloseObject();
+	SVTaskObjectClass::CloseObject();
 }
 
 bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
@@ -177,10 +177,8 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjec
 
 	GetOutputList(l_OutputList);
 
-	int iSize = l_OutputList.GetSize();
-	for (int i = 0; i < iSize; ++i)
+	for (auto pInfoItem : l_OutputList)
 	{
-		SVOutObjectInfoStruct* pInfoItem = l_OutputList.GetAt(i);
 		if (pInfoItem)
 		{
 			SVObjectReference ObjectRef = pInfoItem->GetObjectReference();
@@ -198,9 +196,9 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjec
 				else
 				{
 					int iArraySize = ObjectRef.getValueObject()->getArraySize();
-					for (int i = 0; i < iArraySize; i++)
+					for (int j = 0; j < iArraySize; j++)
 					{
-						ObjectRef.SetArrayIndex(i);
+						ObjectRef.SetArrayIndex(j);
 						bool bAttributesOK = bAND ? (ObjectRef.ObjectAttributesSet() & uiAttributes) == uiAttributes // AND
 							: (ObjectRef.ObjectAttributesSet() & uiAttributes) > 0;            // OR
 						if (bAttributesOK)
@@ -495,6 +493,7 @@ void SVTaskObjectClass::GetInputImages(SvUl::InputNameGuidPairList& rList, int m
 
 	while (!psvImageInfo && S_OK == FindNextInputImageInfo(psvImageInfo, psvLastImageInfo))
 	{
+		// cppcheck-suppress oppositeInnerCondition
 		if (psvImageInfo)
 		{
 			SvOi::ISVImage* pImage = nullptr;
@@ -731,13 +730,8 @@ SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
 
 SVGuidVector SVTaskObjectClass::getEmbeddedList() const
 {
-	SVGuidVector Result;
-
-	for (auto const& rEntry : m_embeddedList)
-	{
-		Result.push_back(rEntry->GetUniqueObjectID());
-	}
-
+	SVGuidVector Result(m_embeddedList.size());
+	std::transform(m_embeddedList.begin(), m_embeddedList.end(), Result.begin(), [](const auto& rEntry) { return rEntry->GetUniqueObjectID(); });
 	return Result;
 }
 #pragma endregion virtual method (ITaskObject)
@@ -777,10 +771,7 @@ void SVTaskObjectClass::GetInputInterface(SvOl::SVInputInfoListClass& rInputList
 	// Local input list...
 	SvOl::SVInputInfoListClass localInputList;
 	GetPrivateInputList(localInputList);
-	for (auto rInputInfo : localInputList)
-	{
-		rInputList.push_back(rInputInfo);
-	}
+	std::copy(localInputList.begin(), localInputList.end(), std::back_inserter(rInputList));
 }
 
 void SVTaskObjectClass::DestroyFriend(SVObjectClass* pObject)

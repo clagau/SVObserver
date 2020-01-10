@@ -72,7 +72,7 @@ SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringR
 
 SVPolarTransformClass::~SVPolarTransformClass()
 {
-	CloseObject();
+	SVPolarTransformClass::CloseObject();
 }
 
 bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

@@ -17,14 +17,11 @@ HRESULT WINAPI SVDestroy();
 
 HRESULT WINAPI SVInputGetCount(unsigned long *pCount);
 HRESULT WINAPI SVInputGetValue(unsigned long channel, bool *pValue);
-HRESULT WINAPI SVInputSetValue(unsigned long channel, bool bValue);
 HRESULT WINAPI SVInputGetValues(unsigned long *pValue);
 
 HRESULT WINAPI SVOutputGetCount(unsigned long *pCount);
-HRESULT WINAPI SVOutputGetValue(unsigned long channel, bool *pValue);
 HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
 HRESULT WINAPI SVOutputGetPortCount(unsigned long *pCount);
-HRESULT WINAPI SVOutputGetPortValue(unsigned long port, unsigned long *pValue);
 HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
 HRESULT WINAPI SVOutputSetData(unsigned long channel, const SvTh::IntVariantMap& rData);
 

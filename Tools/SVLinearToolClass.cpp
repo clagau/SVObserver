@@ -45,7 +45,7 @@ SVLinearToolClass::SVLinearToolClass( SVObjectClass* POwner, int StringResourceI
 
 SVLinearToolClass::~SVLinearToolClass()
 {
-	CloseObject();
+	SVLinearToolClass::CloseObject();
 }
 #pragma endregion Constructor
 

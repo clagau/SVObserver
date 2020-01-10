@@ -24,14 +24,11 @@ HRESULT WINAPI SVDestroy();
 
 HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue );
-HRESULT WINAPI SVInputSetValue( unsigned long p_ulChannel, bool p_bValue );
 HRESULT WINAPI SVInputGetValues(unsigned long *p_pulValue );
 
 HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputGetValue( unsigned long p_ulChannel, bool *p_pbValue );
 HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue );
 HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputGetPortValue( unsigned long p_ulPort, unsigned long *p_pulValue );
 HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
 
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );

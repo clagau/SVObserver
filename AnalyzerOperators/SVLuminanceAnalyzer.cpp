@@ -151,7 +151,7 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 
 SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
 {
-	CloseObject ();
+	SVLuminanceAnalyzerClass::CloseObject();
 }
 
 bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

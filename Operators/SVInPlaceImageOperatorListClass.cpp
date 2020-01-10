@@ -50,7 +50,7 @@ void SVInPlaceImageOperatorListClass::init()
 
 SVInPlaceImageOperatorListClass::~SVInPlaceImageOperatorListClass() 
 { 
-	CloseObject();
+	SVInPlaceImageOperatorListClass::CloseObject();
 }
 
 bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

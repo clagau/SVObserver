@@ -119,7 +119,7 @@ void SVLUTOperatorClass::init()
 
 SVLUTOperatorClass::~SVLUTOperatorClass()
 {
-	CloseObject();
+	SVLUTOperatorClass::CloseObject();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

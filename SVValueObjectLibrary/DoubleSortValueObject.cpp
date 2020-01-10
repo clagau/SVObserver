@@ -63,10 +63,7 @@ HRESULT DoubleSortValueObject::setSortContainerPtr(spValueObjectSortContainer so
 	if (m_isCreated)
 	{
 		m_DummySortContainer.bIsActive = false;
-		if (m_spSortContainer != sortMap)
-		{
-			m_spSortContainer = sortMap;
-		}
+		m_spSortContainer.swap(sortMap);
 		result = S_OK;
 	}
 	return result;

@@ -632,7 +632,7 @@ HRESULT SVFileAcquisitionDevice::InternalTrigger( unsigned long index )
 HRESULT SVFileAcquisitionDevice::FireOneShot( unsigned long index )
 {
 	HRESULT hr = S_FALSE;
-	if( index >= 0 && index < MaxFileCameras)
+	if(index < MaxFileCameras)
 	{
 		hr = m_cameras[index].DoOneShot();
 	}

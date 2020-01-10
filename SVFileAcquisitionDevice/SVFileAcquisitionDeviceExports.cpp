@@ -139,46 +139,6 @@ HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerGetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLightReference( unsigned long triggerchannel, int p_iType, SAFEARRAY p_saData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerGetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLightReferenceBand( unsigned long triggerchannel, unsigned long p_ulBand, int p_iType, VARIANT p_saData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerGetLut( unsigned long triggerchannel, SAFEARRAY *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLut( unsigned long triggerchannel, SAFEARRAY p_saData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerGetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY *p_psaData )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerSetLutBand( unsigned long triggerchannel, unsigned long p_ulBand, SAFEARRAY p_saData )
-{
-	return S_FALSE;
-}
-
 HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface )
 {
 	HRESULT l_hrOk = S_FALSE;

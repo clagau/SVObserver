@@ -61,7 +61,7 @@ void SVStdImageOperatorListClass::init()
 
 SVStdImageOperatorListClass::~SVStdImageOperatorListClass()
 {
-	CloseObject();
+	SVStdImageOperatorListClass::CloseObject();
 }
 
 bool SVStdImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)

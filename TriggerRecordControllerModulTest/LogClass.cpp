@@ -66,6 +66,7 @@ bool LogClass::Open()
 	return nullptr != m_File;
 }
 
+// cppcheck-suppress unusedFunction
 bool LogClass::IsOpen()
 {
 	return m_File == nullptr ? false : true;

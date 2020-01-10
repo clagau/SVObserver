@@ -155,7 +155,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
 SVPatternAnalyzerClass::~SVPatternAnalyzerClass()
 {
 	CloseMIL();
-	CloseObject();
+	SVPatternAnalyzerClass::CloseObject();
 }
 
 SVObjectClass* SVPatternAnalyzerClass::CreateResult()

@@ -123,7 +123,7 @@ void SVLinearMaximumObjectLineAnalyzerClass::init()
 
 SVLinearMaximumObjectLineAnalyzerClass::~SVLinearMaximumObjectLineAnalyzerClass()
 {
-	CloseObject();
+	SVLinearMaximumObjectLineAnalyzerClass::CloseObject();
 }
 
 bool SVLinearMaximumObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

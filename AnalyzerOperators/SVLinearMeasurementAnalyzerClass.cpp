@@ -117,7 +117,7 @@ void SVLinearMeasurementAnalyzerClass::init()
 
 SVLinearMeasurementAnalyzerClass::~SVLinearMeasurementAnalyzerClass()
 {
-	CloseObject();
+	SVLinearMeasurementAnalyzerClass::CloseObject();
 }
 
 bool SVLinearMeasurementAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

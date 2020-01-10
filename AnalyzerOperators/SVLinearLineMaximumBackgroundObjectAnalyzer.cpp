@@ -124,7 +124,7 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 
 SVLinearMaximumBackgroundObjectLineAnalyzerClass::~SVLinearMaximumBackgroundObjectLineAnalyzerClass()
 {
-	CloseObject();
+	SVLinearMaximumBackgroundObjectLineAnalyzerClass::CloseObject();
 }
 
 bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

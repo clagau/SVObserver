@@ -80,7 +80,7 @@ void SVPixelAnalyzerClass::init()
 
 SVPixelAnalyzerClass::~SVPixelAnalyzerClass()
 {
-	CloseObject();
+	SVPixelAnalyzerClass::CloseObject();
 }
 
 bool SVPixelAnalyzerClass::CloseObject()

@@ -56,7 +56,7 @@ private:
 	std::vector<int> m_trOfInterestVec; //this a list of TR-pos with TrOfInterest, the last current tr is defined in m_basicData.m_TrOfInterestCurrentPos
 };
 
-class DataControllerLocal : public DataControllerBase
+class DataControllerLocal final : public DataControllerBase
 {
 #pragma region Constructor
 public:

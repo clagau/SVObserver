@@ -308,22 +308,22 @@ void DataControllerReader::setPauseTrsOfInterest(bool flag, int inspectionPos)
 	{
 		if (flag)
 		{
-			m_pCommonData->m_pauseTRofInterest[0] |= (1ll << inspectionPos);
+			m_pCommonData->m_pauseTRofInterest[0] |= (1ull << inspectionPos);
 		}
 		else
 		{
-			m_pCommonData->m_pauseTRofInterest[0] &= (~(1ll << inspectionPos));
+			m_pCommonData->m_pauseTRofInterest[0] &= (~(1ull << inspectionPos));
 		}
 	}
 	else if (64 <= inspectionPos && 128 > inspectionPos)
 	{
 		if (flag)
 		{
-			m_pCommonData->m_pauseTRofInterest[1] |= (1ll << (inspectionPos - 64));
+			m_pCommonData->m_pauseTRofInterest[1] |= (1ull << (inspectionPos - 64));
 		}
 		else
 		{
-			m_pCommonData->m_pauseTRofInterest[1] &= (~(1ll << (inspectionPos - 64)));
+			m_pCommonData->m_pauseTRofInterest[1] &= (~(1ull << (inspectionPos - 64)));
 		}
 	}
 	else
@@ -337,11 +337,11 @@ bool DataControllerReader::getPauseTrsOfInterest(int inspectionPos) const
 {
 	if (0 <= inspectionPos && 64 > inspectionPos)
 	{
-		return ((1ll << inspectionPos) & m_pCommonData->m_pauseTRofInterest[0]) > 0;
+		return ((1ull << inspectionPos) & m_pCommonData->m_pauseTRofInterest[0]) > 0;
 	}
 	else if (64 <= inspectionPos && 128 > inspectionPos)
 	{
-		return ((1ll << (inspectionPos - 64)) & m_pCommonData->m_pauseTRofInterest[1]) > 0;
+		return ((1ull << (inspectionPos - 64)) & m_pCommonData->m_pauseTRofInterest[1]) > 0;
 	}
 
 	return (1 & m_pCommonData->m_pauseTRofInterest[0]) > 0;

@@ -74,7 +74,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 
 SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
 {
-	CloseObject();
+	SVLinearEdgePositionLineAnalyzerClass::CloseObject();
 }
 
 bool SVLinearEdgePositionLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

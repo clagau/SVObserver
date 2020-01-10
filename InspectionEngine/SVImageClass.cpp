@@ -202,7 +202,7 @@ void SVImageClass::init()
 
 SVImageClass::~SVImageClass()
 {
-	CloseObject();
+	SVImageClass::CloseObject();
 
 	ClearParentConnection();
 

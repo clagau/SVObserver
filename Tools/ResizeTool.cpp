@@ -138,7 +138,7 @@ void ResizeTool::BuildEmbeddedObjectList()
 
 ResizeTool::~ResizeTool(void)
 {
-	CloseObject();
+	ResizeTool::CloseObject();
 }
 
 

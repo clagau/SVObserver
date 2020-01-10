@@ -119,7 +119,7 @@ void SVThresholdClass::init()
 
 SVThresholdClass::~SVThresholdClass()
 {
-	CloseObject();
+	SVThresholdClass::CloseObject();
 }
 
 bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

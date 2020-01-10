@@ -75,7 +75,7 @@ private:
 };
 
 
-class DataControllerWriter : public DataControllerBase
+class DataControllerWriter final : public DataControllerBase
 {
 #pragma region Constructor
 public:

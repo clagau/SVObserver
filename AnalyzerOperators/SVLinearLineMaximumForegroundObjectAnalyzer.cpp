@@ -125,7 +125,7 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::init()
 
 SVLinearMaximumForegroundObjectLineAnalyzerClass::~SVLinearMaximumForegroundObjectLineAnalyzerClass()
 {
-	CloseObject();
+	SVLinearMaximumForegroundObjectLineAnalyzerClass::CloseObject();
 }
 
 bool SVLinearMaximumForegroundObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

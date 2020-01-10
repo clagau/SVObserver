@@ -37,7 +37,7 @@ void SVMaxMinusMinFilterClass::init()
 
 SVMaxMinusMinFilterClass::~SVMaxMinusMinFilterClass()
 {
-	CloseObject();
+	SVMaxMinusMinFilterClass::CloseObject();
 }
 
 bool SVMaxMinusMinFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

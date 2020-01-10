@@ -97,7 +97,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 
 SVImageArithmeticClass::~SVImageArithmeticClass()
 {
-	CloseObject();
+	SVImageArithmeticClass::CloseObject();
 }
 
 bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

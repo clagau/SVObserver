@@ -56,7 +56,7 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 
 SVMathContainerClass::~SVMathContainerClass()
 {
-	CloseObject();
+	SVMathContainerClass::CloseObject();
 }
 
 bool SVMathContainerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

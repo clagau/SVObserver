@@ -376,11 +376,6 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 	return hr;
 }
 
-unsigned long SVPlcIOImpl::GetNumPorts()
-{
-	return cNumberPorts;
-}
-
 unsigned long SVPlcIOImpl::GetInputCount()
 {
 	return cInputCount;
@@ -897,6 +892,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 
 void SVPlcIOImpl::WriteResult(int triggerIndex)
 {
+#ifndef TRIGGER_SIMULATE
 	ResultReport reportResult;
 	const TriggerParameter& rTrigger = m_trigger[triggerIndex];
 	//Reduce mutex scope
@@ -907,10 +903,9 @@ void SVPlcIOImpl::WriteResult(int triggerIndex)
 		reportResult.m_results[0] = (0 != (m_Output & bitMask)) ? c_InspectionGood : c_InspectionBad;
 		///The PLC requires that the second result always is set to good!
 		reportResult.m_results[1] = c_InspectionGood;
-#ifndef TRIGGER_SIMULATE
 		Tec::writeResult(reportResult);
-#endif
 	}
+#endif
 }
 
 } //namespace SvPlc

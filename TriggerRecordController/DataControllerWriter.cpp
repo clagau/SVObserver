@@ -208,11 +208,20 @@ void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 	if (nullptr != m_pBasicData && nullptr != m_pTRofInterestArray)
 	{
 		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
-		if (number != m_pBasicData->m_TrOfInterestNumber && 0 <= number && TriggerRecordController::cMaxTriggerRecordsOfInterest + 1 >= number)
+		if (nullptr != locker)
 		{
-			m_pBasicData->m_TrOfInterestNumber = number;
+			if (number != m_pBasicData->m_TrOfInterestNumber && 0 <= number && TriggerRecordController::cMaxTriggerRecordsOfInterest + 1 >= number)
+			{
+				m_pBasicData->m_TrOfInterestNumber = number;
+			}
+			std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
 		}
-		std::fill(m_pTRofInterestArray, m_pTRofInterestArray + TriggerRecordController::cMaxTriggerRecordsOfInterest + 1, -1);
+		else
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_setTrOfInterestNumberLockFailed, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
+		}
 	}
 }
 
@@ -293,12 +302,15 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 	{
 		m_SMHandle->CreateDataStore(newSMName.c_str(), getNeedSMSize(rSmData), 1, smParam);
 		byte* pTemp = m_SMHandle->GetPtr(0, 0);
+		if (nullptr == pTemp)
+		{
+			throw;
+		}
 		m_pBasicData = reinterpret_cast<BasicData*>(pTemp);
 		*m_pBasicData = rBasicData;
 		int offset = sizeof(BasicData);
 		m_pSmData = reinterpret_cast<SMData*>(pTemp + offset);
 		*m_pSmData = rSmData;
-		assert(nullptr != pTemp && nullptr != m_pSmData && nullptr != m_pBasicData);
 		offset += sizeof(SMData);
 		m_pTRofInterestArray = reinterpret_cast<int*>(pTemp + offset);
 		offset += sizeof(int) *(TriggerRecordController::cMaxTriggerRecordsOfInterest + 1);
@@ -315,6 +327,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 		smHandleOld.reset();
 
 		m_smDataCBFunc(newSMName, m_SMHandle->GetSlotSize());
+		assert(nullptr != m_pSmData && nullptr != m_pBasicData);
 	}
 	catch (...)
 	{
@@ -324,6 +337,7 @@ void TRControllerWriterDataPerIP::createSMBuffer(const BasicData& rBasicData, co
 		m_pImageListInSM = nullptr;
 		m_pDataDefListInSM = nullptr;
 		m_pTriggerRecords = nullptr;
+		assert(false);
 		throw;
 	}
 	
@@ -429,17 +443,17 @@ void DataControllerWriter::clearAll()
 
 bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList)
 {
-	for (const auto& rInspection : rInspectionList.list())
+	auto isNumbersValid = [](const auto& rEntry)
 	{
-		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rInspection.numberrecordsofinterest())
-		{
-			assert(false);
-			return false;
-		}
+		return ITriggerRecordControllerRW::cMaxTriggerRecords < rEntry.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rEntry.numberrecordsofinterest();
+	};
+	if (std::any_of(rInspectionList.list().begin(), rInspectionList.list().end(), isNumbersValid))
+	{
+		assert(false);
+		return false;
 	}
 
 	bool isReset = false;
-
 	if (rInspectionList.list_size() != m_inspectionList.list_size())
 	{
 		prepareReset();
@@ -842,22 +856,22 @@ void DataControllerWriter::setPauseTrsOfInterest(bool flag, int inspectionPos)
 	{
 		if (flag)
 		{
-			m_pCommonData->m_pauseTRofInterest[0] |= (1ll << inspectionPos);
+			m_pCommonData->m_pauseTRofInterest[0] |= (1ull << inspectionPos);
 		}
 		else
 		{
-			m_pCommonData->m_pauseTRofInterest[0] &= (~(1ll << inspectionPos));
+			m_pCommonData->m_pauseTRofInterest[0] &= (~(1ull << inspectionPos));
 		}
 	}
 	else if (64 <= inspectionPos && 128 > inspectionPos)
 	{
 		if (flag)
 		{
-			m_pCommonData->m_pauseTRofInterest[1] |= (1ll << (inspectionPos - 64));
+			m_pCommonData->m_pauseTRofInterest[1] |= (1ull << (inspectionPos - 64));
 		}
 		else
 		{
-			m_pCommonData->m_pauseTRofInterest[1] &= (~(1ll << (inspectionPos - 64)));
+			m_pCommonData->m_pauseTRofInterest[1] &= (~(1ull << (inspectionPos - 64)));
 		}
 	}
 	else
@@ -871,11 +885,11 @@ bool DataControllerWriter::getPauseTrsOfInterest(int inspectionPos) const
 {
 	if (0 <= inspectionPos && 64 > inspectionPos)
 	{
-		return ((1ll << inspectionPos) & m_pCommonData->m_pauseTRofInterest[0]) > 0;
+		return ((1ull << inspectionPos) & m_pCommonData->m_pauseTRofInterest[0]) > 0;
 	}
 	else if (64 <= inspectionPos && 128 > inspectionPos)
 	{
-		return ((1ll << (inspectionPos - 64)) & m_pCommonData->m_pauseTRofInterest[1]) > 0;
+		return ((1ull << (inspectionPos - 64)) & m_pCommonData->m_pauseTRofInterest[1]) > 0;
 	}
 
 	return (1 & m_pCommonData->m_pauseTRofInterest[0]) > 0;

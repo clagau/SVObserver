@@ -338,7 +338,7 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	return bOk;
 }
 
-SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass ()
+SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
 {
 	if ( m_bHasLicenseError )
 	{
@@ -346,7 +346,7 @@ SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass ()
 		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(GetUniqueObjectID());
 	}
 
-	CloseObject();
+	SVBarCodeAnalyzerClass::CloseObject();
 }
 
 bool SVBarCodeAnalyzerClass::CloseObject()

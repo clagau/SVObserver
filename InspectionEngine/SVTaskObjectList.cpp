@@ -417,9 +417,8 @@ const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 	std::string newName( ToolName );
 
 	int ToolIndex( 0 );
-	for( int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++ )
+	for( auto* pObject : m_TaskObjectVector)
 	{
-		SVObjectClass* pObject = m_TaskObjectVector[i];
 		if( nullptr != pObject )
 		{
 			objectName = pObject->GetName();

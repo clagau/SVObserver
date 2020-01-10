@@ -178,8 +178,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 		//
 		// Try using the 'THE' image for the HDC allocation.
 		//
-		long l_lValue = SVValueDefault;
-		HRESULT l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCAlloc, static_cast<long long>(l_lValue));
+		HRESULT l_Code = SVMatroxBufferInterface::Set(rHandle->GetBuffer(), SVBufWindowDCAlloc, static_cast<long long>(SVValueDefault));
 
 		//
 		// Check for an error - most likely an 'invalid parameter' since
@@ -214,8 +213,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 				//
 				// Now request the HDC from the new image with M_DIB attribute.
 				//
-				long l_lValue = SVValueDefault;
-				SVMatroxBufferInterface::Set(imageDIB_MIL, SVBufWindowDCAlloc, static_cast<long long>(l_lValue));
+				SVMatroxBufferInterface::Set(imageDIB_MIL, SVBufWindowDCAlloc, static_cast<long long>(SVValueDefault));
 
 				LONGLONG Handle;
 				SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, Handle);
@@ -394,8 +392,6 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 	pbmhInfo = (BITMAPINFOHEADER*)&pbmInfo->bmiHeader;
 
 	long l_lBitmapHeaderSize = sizeof(BITMAPINFOHEADER);
-	long l_lDIBSize = pbmhInfo->biSizeImage;
-
 	long l_lColorTableSize = 0;
 
 	if (0 < pbmhInfo->biClrUsed)
@@ -579,10 +575,7 @@ HRESULT SVImageProcessingClass::CreateDataBuffer(SVDataBufferInfoClass* pDataInf
 
 		// Allocate result buffer...
 
-		HRESULT l_Code;
-
-		l_Code = SVMatroxImageInterface::Create(pDataInfo->HBuffer.milResult, pDataInfo->Length, l_eType);
-
+		/*HRESULT l_Code = */SVMatroxImageInterface::Create(pDataInfo->HBuffer.milResult, pDataInfo->Length, l_eType);
 
 		Result = (M_NULL != pDataInfo->HBuffer.milResult) ? S_OK : S_FALSE;
 	}
@@ -810,10 +803,6 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 				if (S_OK == Result)
 				{
 					svChildExtents = rChildInfo.GetExtents();
-				}
-
-				if (S_OK == Result)
-				{
 					Result = svChildExtents.GetRectangle(ChildRect);
 				}
 			}

@@ -45,7 +45,7 @@ SVOCVCharacterResultClass::SVOCVCharacterResultClass(SVObjectClass* POwner, int 
 
 SVOCVCharacterResultClass::~SVOCVCharacterResultClass()
 {
-	CloseObject();
+	SVOCVCharacterResultClass::CloseObject();
 }
 
 void SVOCVCharacterResultClass::init()

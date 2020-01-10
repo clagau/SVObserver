@@ -236,7 +236,7 @@ void SVBlobAnalyzerClass::init()
 //
 SVBlobAnalyzerClass::~SVBlobAnalyzerClass()
 {
-	CloseObject ();
+	SVBlobAnalyzerClass::CloseObject();
 }
 
 #pragma region IBlobAnalyzer
@@ -618,7 +618,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		
 		HRESULT MatroxCode = SVMatroxBlobInterface::CreateResult(m_ResultBufferID);
 
-		if (M_NULL == m_ResultBufferID)
+		if (S_OK != MatroxCode || M_NULL == m_ResultBufferID)
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
 			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, GetUniqueObjectID());
@@ -636,7 +636,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			break;
 		}
 
-		MatroxCode = SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobIdentifier, static_cast<long>(SVValueBinary));
+		/*MatroxCode = */SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobIdentifier, static_cast<long>(SVValueBinary));
 
 		BOOL l_bUseFillBlob;
 		m_bvoFillBlobs.GetValue(l_bUseFillBlob);
@@ -837,9 +837,6 @@ void SVBlobAnalyzerClass::EnableFeature(int Feature)
 bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = true;
-	long lSortFeature;
-	bool l_bCenterXSet = false;
-	bool l_bCenterYSet = false;
 	SvIe::SVImageClass* pInputImage(nullptr);
 
 	do
@@ -966,7 +963,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						dLow = 0;
 						dHigh = 0;
 						// To exclude all blobs, also exclude any blobs which are in the range.
-						MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID, 
+						/*MatroxCode = */SVMatroxBlobInterface::BlobSelect( m_ResultBufferID, 
 							SVEBlobExclude, 
 							BlobFeatureConstants[i].MILFeatureDef, 
 							SVECondInRange, 
@@ -1226,6 +1223,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			}//for number of blobs
 		}//if the feature SV_CENTER_X(Y)_SOURCE is set
 
+		long lSortFeature;
 		m_SortFeature.GetValue( lSortFeature );
 		m_SortVector.resize( m_lNumberOfBlobsFound );
 		// Check for Sort Feature

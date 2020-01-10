@@ -45,7 +45,7 @@ SVLinearImageOperatorListClass::SVLinearImageOperatorListClass(SVObjectClass* PO
 
 SVLinearImageOperatorListClass::~SVLinearImageOperatorListClass()
 {
-	CloseObject();
+	SVLinearImageOperatorListClass::CloseObject();
 }
 
 bool SVLinearImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)

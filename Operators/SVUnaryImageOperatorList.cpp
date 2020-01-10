@@ -38,7 +38,7 @@ SVUnaryImageOperatorListClass::SVUnaryImageOperatorListClass( SVObjectClass* POw
 
 SVUnaryImageOperatorListClass::~SVUnaryImageOperatorListClass() 
 { 
-	CloseObject();
+	SVUnaryImageOperatorListClass::CloseObject();
 }
 
 bool SVUnaryImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
