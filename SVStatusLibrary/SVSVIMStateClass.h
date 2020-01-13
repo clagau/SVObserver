@@ -64,18 +64,23 @@ public:
 	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
 	//the existing value.
-	static bool AddState( DWORD dwState );
+	static void AddState( DWORD dwState );
 
 	//This operation removes a particular sub-state from the 
 	//existing state value.  This process takes the sub-state 
 	//value and inverts it and ANDs it to the existing state 
 	//value.
-	static bool RemoveState( DWORD dwState );
+	static void RemoveState( DWORD dwState );
 
 	//This operation checks the parameter state value against 
 	//the internal value and outputs in the result parameter 
 	//whether there is at least one bit (state) matching.
 	static bool CheckState( DWORD dwState );
+
+	/// This method do RemoveState and CheckState at once to avoid to send two notification
+	/// \param addStates [in] States which should be added.
+	/// \param removeStates [in] States which should be removed.
+	static void changeState(DWORD addStates, DWORD removeStates);
 
 	static SvPb::DeviceModeType getCurrentMode() { return m_CurrentMode; }
 

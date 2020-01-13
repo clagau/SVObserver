@@ -1113,8 +1113,7 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 
 	// Indicate to the world that a configuration is loaded, parsed,
 	// and is ready to run.
-	SVSVIMStateClass::AddState( SV_STATE_READY );
-	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
+	SVSVIMStateClass::changeState(SV_STATE_READY, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 
 	//
 	// If the configuration is required to start immediately after loading

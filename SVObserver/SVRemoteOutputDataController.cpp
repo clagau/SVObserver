@@ -560,29 +560,29 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		}
 
 		// Add New Output Groups
-		for( size_t i = 0; i < NewItems.size() ; i++ )
+		for( const auto& rItemName : NewItems)
 		{
-			for( size_t j = 0 ; j < l_dlg.m_SetupGroup.size() ; j++ )
+			const auto iter = find_if(l_dlg.m_SetupGroup.begin(), l_dlg.m_SetupGroup.end(), [rItemName](const auto& rItem) { return rItem.m_Name == rItemName; });
+			if (l_dlg.m_SetupGroup.end() != iter)
 			{
-				if( l_dlg.m_SetupGroup[j].m_Name == NewItems[i] )
+				SVPPQObject* pPPQ(nullptr);
+				bool l_bTmp = pConfig->GetChildObjectByName(iter->m_PPQName.c_str(), &pPPQ);
+				if (l_bTmp)
 				{
-					SVPPQObject* pPPQ( nullptr );
-					bool l_bTmp = pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_PPQName.c_str(), &pPPQ );
-					if( l_bTmp )
-					{
-						AddDefaultOutputs(NewItems[i], pPPQ );
-					}
+					AddDefaultOutputs(rItemName, pPPQ);
 				}
 			}
-			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		}
 
 		// Remove Items
-		for( size_t i = 0; i < RemovedItems.size() ; i++ )
+		for( const auto& rItemName : RemovedItems )
 		{
-			DeleteRemoteOutput( RemovedItems[i] );
-
-			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+			DeleteRemoteOutput(rItemName);
+		}
+		
+		if (0 < NewItems.size() || 0 < RemovedItems.size())
+		{
+			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);

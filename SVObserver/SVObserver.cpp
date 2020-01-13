@@ -715,9 +715,8 @@ void SVObserverApp::OnStop()
 		SVYieldPaintMessages();
 	}
 
-	SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING);
+	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
 	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
-	SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
 
 	SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
 
@@ -773,8 +772,7 @@ void SVObserverApp::OnStop()
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
-	SVSVIMStateClass::AddState(SV_STATE_READY | SV_STATE_STOP);
-	SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
+	SVSVIMStateClass::changeState(SV_STATE_READY | SV_STATE_STOP, SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
 	{
@@ -2353,7 +2351,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	double l_StartLoading;
 	double l_FinishLoad;
 
-	bool bOk = false;
+	bool bOk = true;
 
 	hr = S_OK;
 
@@ -2361,19 +2359,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	{
 		SVOLicenseManager::Instance().ClearLicenseErrors();
 
-		bOk = SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
-
-		if (!bOk)
-		{
-			break;
-		}
-
-		bOk = SVSVIMStateClass::RemoveState(SV_STATE_AVAILABLE);
-
-		if (!bOk)
-		{
-			break;
-		}
+		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING, SV_STATE_AVAILABLE);
 
 		try
 		{
@@ -2555,8 +2541,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 			if (hr & SvDef::svErrorCondition)
 			{
 				// If there was an error during configuration loading...
-				SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
-				SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+				SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 
 				//Use E_FAIL to stop the loading but do not show any error messages
 				if (E_FAIL != hr)
@@ -2577,7 +2562,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 		{
 			delete pUE;
 
-			bOk = FALSE;
+			bOk = false;
 
 			SVSVIMStateClass::RemoveState(SV_STATE_LOADING);
 
@@ -2585,8 +2570,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 			setConfigFullFileName(nullptr, true);
 
-			SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
-			SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE);
+			SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE);
 		}  // catch
 
 		break;
@@ -2595,9 +2579,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 	if (!bOk)
 	{
 		setConfigFullFileName(nullptr, true);
-
-		SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
-		SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
 	}
 
 	if (S_OK == hr)
@@ -2875,12 +2857,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 		{
 			SVOLicenseManager::Instance().ClearLicenseErrors();
 
-			bOk = SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING);
-
-			if (bOk)
-			{
-				bOk = SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
-			}
+			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
 
 			if (bOk)
 			{
@@ -2913,9 +2890,8 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 				wait.Restore();
 
-				bOk = SVSVIMStateClass::AddState(SV_STATE_AVAILABLE) && bOk;
-				bOk = SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING) && bOk;
-				bOk = setConfigFullFileName(nullptr, true) && bOk;
+				SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING);
+				bOk = setConfigFullFileName(nullptr, true);
 
 				wait.Restore();
 
@@ -4095,8 +4071,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 		if (bFileNewConfiguration)
 		{
 			UpdateAllMenuExtrasUtilities();
-			SVSVIMStateClass::AddState(SV_STATE_READY);
-			SVSVIMStateClass::RemoveState(SV_STATE_AVAILABLE);
+			SVSVIMStateClass::changeState(SV_STATE_READY, SV_STATE_AVAILABLE);
 		}
 
 		// Rebuild PPQBar Buttons
@@ -4111,14 +4086,9 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 		}
 	}// end if DoModal == IDOK
 
-	if (!bOk)
+	if (!bOk && bFileNewConfiguration)
 	{
-		if (bFileNewConfiguration)
-		{
-			SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
-			SVSVIMStateClass::RemoveState(SV_STATE_READY);
-			SVSVIMStateClass::RemoveState(SV_STATE_MODIFIED);
-		}
+		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_READY| SV_STATE_MODIFIED);
 	}
 
 	return bOk;
@@ -4426,13 +4396,12 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 	HRESULT l_hr = S_OK;
 	if (p_bState)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDIT);
-		SVSVIMStateClass::RemoveState(SV_STATE_STOP);
+		SVSVIMStateClass::changeState(SV_STATE_EDIT, SV_STATE_STOP);
 	}
 	else
 	{
-		SVSVIMStateClass::AddState(SV_STATE_STOP);
-		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+		SVSVIMStateClass::changeState(SV_STATE_STOP, SV_STATE_EDIT);
+
 		//
 		// We need to deselect any tool that might be set for operator move.
 		//
@@ -4557,8 +4526,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 
 				SetAllIPDocumentsOnline();
 
-				SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
- 				SVSVIMStateClass::AddState(SV_STATE_TEST);
+				SVSVIMStateClass::changeState(SV_STATE_TEST, SV_STATE_EDIT | SV_STATE_STOP);
 
 				//Now that we are in the test state we allow trigger processing!
 				try
@@ -4979,7 +4947,6 @@ void SVObserverApp::Start()
 	if (SVSVIMStateClass::CheckState(SV_STATE_LOADING | SV_STATE_STOPING))
 	{
 		SVSVIMStateClass::AddState(SV_STATE_START_PENDING);
-
 		return;
 	}
 
@@ -5149,8 +5116,7 @@ void SVObserverApp::Start()
 
 		SetAllIPDocumentsOnline();
 
-		SVSVIMStateClass::AddState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
-		SVSVIMStateClass::RemoveState(SV_STATE_READY | SV_STATE_START_PENDING);
+		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, SV_STATE_READY | SV_STATE_START_PENDING);
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 		SvTrc::getTriggerRecordControllerRWInstance().lockReset();
@@ -5185,8 +5151,8 @@ void SVObserverApp::Start()
 			}
 		}
 
-		SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
-		SVSVIMStateClass::AddState(SV_STATE_RUNNING);
+		SVSVIMStateClass::changeState(SV_STATE_RUNNING, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
+
 		//Now that we are in the running state we allow trigger processing!
 		StartTrigger(pConfig);
 

@@ -31,7 +31,7 @@ SVSVIMStateClass::~SVSVIMStateClass()
 {
 }
 
-bool SVSVIMStateClass::AddState( DWORD dwState )
+void SVSVIMStateClass::AddState( DWORD dwState )
 {
 	m_SVIMState |= dwState;
 
@@ -41,15 +41,26 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 		SetAutoSaveRequired(true);
 	}
 	CheckModeNotify();
-	return true;
 }
 
-bool SVSVIMStateClass::RemoveState( DWORD dwState )
+void SVSVIMStateClass::RemoveState( DWORD dwState )
 {
 	m_SVIMState &= ~dwState;
 	CheckModeNotify();
+}
 
-	return true;
+void SVSVIMStateClass::changeState(DWORD addStates, DWORD removeStates)
+{
+	m_SVIMState |= addStates;
+	m_SVIMState &= ~removeStates;
+
+	if (addStates & SV_STATE_MODIFIED)
+	{
+		SetLastModifiedTime();
+		SetAutoSaveRequired(true);
+	}
+
+	CheckModeNotify();
 }
 
 bool SVSVIMStateClass::CheckState( DWORD dwState )

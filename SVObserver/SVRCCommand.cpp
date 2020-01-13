@@ -53,8 +53,8 @@ void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& rRequest, SvRp
 {
 	SvPb::GetDeviceModeResponse Response;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	Response.set_mode(SVSVIMStateClass::getCurrentMode());
+	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	task.finish(std::move(Response));
 }
 

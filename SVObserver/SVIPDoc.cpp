@@ -2101,11 +2101,9 @@ void SVIPDoc::RunRegressionTest()
 
 		if (l_bAllowAccess)
 		{
-			SVSVIMStateClass::RemoveState(SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
+			SVSVIMStateClass::changeState(SV_STATE_REGRESSION, SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
 
 			TheSVObserverApp.DeselectTool();
-
-			SVSVIMStateClass::AddState(SV_STATE_REGRESSION);
 
 			m_oDisplay.CanGoOnline();
 			// check to see if it is able to go into Regression mode
