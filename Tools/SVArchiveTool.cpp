@@ -66,10 +66,6 @@ SVArchiveTool::~SVArchiveTool()
 
 void SVArchiveTool::initializeArchiveTool()
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	m_ArchiveImagePathUsingKW = false;
 	m_ImageTranslatedPath = "";
 

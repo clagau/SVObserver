@@ -272,10 +272,6 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 #pragma region Private Methods
 void RingBufferTool::LocalInitialize ()
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	BuildInputObjectList ();
 	BuildEmbeddedObjectList ();
 

@@ -231,10 +231,6 @@ bool TableAnalyzerTool::ValidateLocal(SvStl::MessageContainerVector * pErrorMess
 
 void TableAnalyzerTool::LocalInitialize()
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	BuildInputObjectList();
 	RegisterEmbeddedObject(&m_Index, TableAnalyzerIndexObjectGuid, IDS_OBJECTNAME_INDEXVARIABLE, false, SvOi::SVResetItemNone);
 	m_Index.setSaveValueFlag(false);

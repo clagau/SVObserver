@@ -45,10 +45,6 @@ SVStatisticsToolClass::SVStatisticsToolClass( SVObjectClass* POwner, int StringR
 
 void SVStatisticsToolClass::init(void)
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVStatisticsToolObjectType;
 	

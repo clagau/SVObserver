@@ -49,7 +49,6 @@ SVToolClass::SVToolClass(SVObjectClass* POwner, int StringResourceID /*= IDS_CLA
 
 void SVToolClass::init()
 {
-	m_canResizeToParent = false;
 	// Indentify our type in the Output List
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
 
@@ -819,17 +818,14 @@ HRESULT SVToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 	return m_toolExtent.SetImageExtent(rImageExtent);
 }
 
-void SVToolClass::removeEmbeddedExtents(bool p_DisconnectExtents)
+void SVToolClass::removeEmbeddedExtents()
 {
-	if (p_DisconnectExtents)
-	{
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, nullptr);
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, nullptr);
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthScaleFactor, nullptr);
-		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightScaleFactor, nullptr);
-	}
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthScaleFactor, nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightScaleFactor, nullptr);
 
 	RemoveEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
 	RemoveEmbeddedObject(&m_ExtentTop);

@@ -40,10 +40,6 @@ SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
 
 void SVMathToolClass::init(void)
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVMathToolObjectType;

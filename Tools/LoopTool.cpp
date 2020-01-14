@@ -41,10 +41,6 @@ LoopTool::~LoopTool()
 
 void LoopTool::Initialize()
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	m_canResizeToParent = false;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::LoopToolObjectType;

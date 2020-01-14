@@ -74,7 +74,7 @@ void SVExternalTool::Initialize()
 		Add( l_pTask );
 	}
 
-
+	removeEmbeddedExtents();
 	addDefaultInputObjects();
 }
 

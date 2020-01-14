@@ -178,7 +178,7 @@ protected:
 	inline  virtual void  UpdateStateAndCounter(SVRunStatusClass& rRunStatus);
 
 	// Remove Embedded Extents
-	void removeEmbeddedExtents(bool p_DisconnectExtents = true);
+	void removeEmbeddedExtents();
 
 	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
@@ -253,8 +253,7 @@ protected:
 
 	SVToolExtentClass m_toolExtent;
 
-	bool m_canResizeToParent;
-	bool m_hasToolExtents{true};
+	bool m_canResizeToParent {false};
 };
 
 

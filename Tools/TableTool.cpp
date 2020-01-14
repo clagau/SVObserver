@@ -224,10 +224,6 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 
 void TableTool::LocalInitialize ()
 {
-	// Override base class exposure of the auxiliary extent variables
-	// These values will not be exposed for this Tool.
-	m_hasToolExtents = false;
-
 	BuildInputObjectList ();
 	BuildEmbeddedObjectList ();
 
