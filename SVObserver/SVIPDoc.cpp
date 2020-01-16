@@ -223,34 +223,36 @@ const GUID& SVIPDoc::GetInspectionID() const
 
 void SVIPDoc::UpdateAllData()
 {
-	SVIPProductStruct l_ProductData;
-
-	if (S_OK == m_NewProductData.PopHead(l_ProductData))
+	if (!m_isDestroying)
 	{
-		SVIPImageDataElementMap::const_iterator l_Iter = l_ProductData.m_ImageData.begin();
-
-		while (l_Iter != l_ProductData.m_ImageData.end())
+		SVIPProductStruct l_ProductData;
+		if (S_OK == m_NewProductData.PopHead(l_ProductData))
 		{
-			SetImageData(l_Iter->first, l_Iter->second.m_ImageDIB, l_Iter->second.m_OverlayData);
+			SVIPImageDataElementMap::const_iterator l_Iter = l_ProductData.m_ImageData.begin();
 
-			++l_Iter;
+			while (l_Iter != l_ProductData.m_ImageData.end())
+			{
+				SetImageData(l_Iter->first, l_Iter->second.m_ImageDIB, l_Iter->second.m_OverlayData);
+
+				++l_Iter;
+			}
+
+			m_Results = l_ProductData.m_ResultData;
+			m_triggerRecord = l_ProductData.m_triggerRecord;
+
+			if (!(l_ProductData.m_ImageData.empty()))
+			{
+				::InterlockedExchange(&m_AllViewsUpdated, 0);
+			}
+			else
+			{
+				::InterlockedExchange(&m_AllViewsUpdated, 1);
+
+				m_oDisplay.SetIPDocDisplayComplete();
+			}
+
+			UpdateAllViews(nullptr);
 		}
-
-		m_Results = l_ProductData.m_ResultData;
-		m_triggerRecord = l_ProductData.m_triggerRecord;
-
-		if (!(l_ProductData.m_ImageData.empty()))
-		{
-			::InterlockedExchange(&m_AllViewsUpdated, 0);
-		}
-		else
-		{
-			::InterlockedExchange(&m_AllViewsUpdated, 1);
-
-			m_oDisplay.SetIPDocDisplayComplete();
-		}
-
-		UpdateAllViews(nullptr);
 	}
 }
 
@@ -284,6 +286,7 @@ void SVIPDoc::init()
 //******************************************************************************
 SVIPDoc::~SVIPDoc()
 {
+	m_isDestroying = true;
 	::InterlockedExchange(&m_AllViewsUpdated, 1);
 	m_oDisplay.SetIPDocDisplayComplete();
 

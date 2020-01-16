@@ -2606,18 +2606,21 @@ bool SVConfigurationObject::DestroyConfiguration()
 	m_bConfigurationValid = false;
 
 	//destroy inspections...
-	for (auto pEntry : m_arInspectionArray)
+	while (0 < m_arInspectionArray.size())
 	{
-		delete pEntry;
+		//it need to be removed from vector before deleting object, because the destructor can lead to action (GUI-Update) which call methods using m_arInspectionArray.
+		auto* pIP = m_arInspectionArray[0];
+		m_arInspectionArray.erase(m_arInspectionArray.begin());
+		delete pIP;
 	}
-	m_arInspectionArray.clear();
 
 	//destroy camera's
-	for (auto pEntry : m_arCameraArray)
+	while (0 < m_arCameraArray.size())
 	{
-		delete pEntry;
+		auto* pCamera = m_arCameraArray[0];
+		m_arCameraArray.erase(m_arCameraArray.begin());
+		delete pCamera;
 	}
-	m_arCameraArray.clear();
 
 	SvIe::SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 

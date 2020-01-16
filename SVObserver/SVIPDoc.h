@@ -382,5 +382,6 @@ private:
 
 	CMDIChildWnd* m_pMDIChildWnd;
 	SVToolGrouping m_toolGroupings;
+	bool m_isDestroying = false;
 };
 
