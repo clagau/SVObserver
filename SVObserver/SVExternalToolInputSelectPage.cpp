@@ -308,7 +308,7 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 	if (!isTable)
 	{
 		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
+		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
 			m_InspectionID, SvPb::archivable, GUID_NULL, true);
 		SvCmd::InspectionCommands(m_InspectionID, request, &response);
 	}
