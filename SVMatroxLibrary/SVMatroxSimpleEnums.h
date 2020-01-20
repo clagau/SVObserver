@@ -504,7 +504,6 @@ enum SVDisplayCntrlEnum
 	SVDispUpdate					= 0x00001L, // 3199L, // M_UPDATE
 	SVDispWindowMove				= 0x00002L, // 3061L, // M_WINDOW_MOVE
 	SVDispWindowResize				= 0x00004L, // 3052L, // M_WINDOW_RESIZE
-	SVDispWindowScrollbar			= 0x00008L, // 3054L, // M_WINDOW_SCROLLBAR
 	SVDispWindowZoom				= 0x00010L, // 3051L, // M_WINDOW_ZOOM
 	SVDispSelected					= 0x00020L, // 3006L, // M_SELECTED
 	SVDispZoomFactorX				= 0x10040L, // 3002L, // M_ZOOM_FACTOR_X

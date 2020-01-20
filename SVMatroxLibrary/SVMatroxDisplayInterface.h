@@ -61,8 +61,6 @@ public:
 
 	// This function replaces MdispLut
 	static HRESULT Lut( const __int64& p_rDispId, const SVMatroxBuffer& p_rLutBufId);
-	// This function clears the LUT
-	static HRESULT LutClear( const __int64& p_rDispId);
 
 	// This function replaces MdispPan
 	static HRESULT Pan( const __int64& p_rDispId, const double& p_dXOffset, const double& p_dYOffset);

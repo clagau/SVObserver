@@ -20,6 +20,8 @@
 #define IDC_ZOOM_IN_BUTTON              252
 #define IDC_ZOOM_OUT_BUTTON             253
 #define IDC_ZOOM_VALUES_STATIC          254
+#define IDC_UNDO_BUTTON                 255
+#define IDC_REDO_BUTTON                 256
 #define IDB_PEN_BITMAP                  257
 #define IDB_POLYGON_BITMAP              258
 #define IDB_ELLIPSE_BITMAP              260

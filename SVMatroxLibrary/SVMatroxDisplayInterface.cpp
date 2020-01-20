@@ -239,11 +239,6 @@ long SVMatroxDisplayInterface::Convert2MatroxType(SVDisplayCntrlEnum p_eDisp)
 			l_lMatroxType = M_WINDOW_RESIZE;
 			break;
 		}
-		case SVDispWindowScrollbar:
-		{
-			l_lMatroxType = M_WINDOW_SCROLLBAR;
-			break;
-		}
 		case SVDispWindowZoom:
 		{
 			l_lMatroxType = M_WINDOW_ZOOM;
@@ -513,12 +508,8 @@ HRESULT SVMatroxDisplayInterface::GetHostAddress(LPVOID p_rpHostAddress, const S
 	{
 		if (!p_rBuffer.empty())
 		{
-			MIL_ID l_NewBuf = MbufInquire(p_rBuffer.GetIdentifier(),
-				M_HOST_ADDRESS,
-				p_rpHostAddress);
-
+			MbufInquire(p_rBuffer.GetIdentifier(), M_HOST_ADDRESS, p_rpHostAddress);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
 		}
 		else
 		{
@@ -553,41 +544,6 @@ HRESULT SVMatroxDisplayInterface::Lut(const __int64& p_rDispId, const SVMatroxBu
 		if (M_NULL != p_rDispId)
 		{
 			MdispLut(p_rDispId, p_rLutBufId.GetIdentifier());
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(l_Code == S_OK);
-	return l_Code;
-}
-
-/**
-@SVOperationName Clear Lut Display
-
-@SVOperationDescription This function dis-associates or clears any LUT that was associated with the specified display
-
-*/
-HRESULT SVMatroxDisplayInterface::LutClear(const __int64& p_rDispId)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-
-	{
-		if (M_NULL != p_rDispId)
-		{
-			MdispLut(p_rDispId, M_DEFAULT);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else

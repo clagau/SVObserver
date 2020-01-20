@@ -418,6 +418,11 @@ public:
 	// If FALSE is returned, you have to free the memory!
 	bool SetGraphixData( HGLOBAL hGlobalMem );
 
+	void undoOnStep();
+	bool canUndoSteps() const { return 0 < m_drawObjectVector.size(); };
+	void redoOnStep();
+	bool canRedoSteps() const { return 0 < m_redoObjectVector.size(); };
+
 protected:
 
     // dwROP: Refer to BitBlt for a list of common raster operation codes...
@@ -454,6 +459,7 @@ protected:
 
 	// Contains the graphix draw objects
 	std::vector<SVGraphixDrawObjectClass*> m_drawObjectVector;
+	std::vector<SVGraphixDrawObjectClass*> m_redoObjectVector;
 };
 
 

@@ -60,6 +60,8 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	virtual void OnCancel() override;
 	virtual void OnOK() override;
+	afx_msg void OnUndoButton();
+	afx_msg void OnRedoButton();
 	afx_msg void OnZoomInButton();
 	afx_msg void OnZoomOutButton();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -87,6 +89,7 @@ protected:
     void evaluateMask();
     void zoom( int ZoomOperand );
 	SVGraphixDrawObjectClass* getDrawObject();
+	void enableButtons();
 
 public:
 

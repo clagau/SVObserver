@@ -315,13 +315,19 @@ void SVGraphixClass::load(const std::string& rData, bool convertFromHex /*= fals
 
 void SVGraphixClass::FlushDrawObjects()
 {
-	for(auto pDrawObject : m_drawObjectVector)
+	for(auto& rpDrawObject : m_drawObjectVector)
 	{
-		delete pDrawObject;
-		pDrawObject = nullptr;
+		delete rpDrawObject;
+		rpDrawObject = nullptr;
 	}
-
 	m_drawObjectVector.clear();
+
+	for (auto& rpDrawObject : m_redoObjectVector)
+	{
+		delete rpDrawObject;
+		rpDrawObject = nullptr;
+	}
+	m_redoObjectVector.clear();
 }
 
 void SVGraphixClass::InsertDrawObject(SVGraphixDrawObjectClass* pNewDrawObject)
@@ -329,6 +335,12 @@ void SVGraphixClass::InsertDrawObject(SVGraphixDrawObjectClass* pNewDrawObject)
 	if (nullptr != pNewDrawObject)
 	{
 		m_drawObjectVector.emplace_back(pNewDrawObject);
+		for (auto& rpDrawObject : m_redoObjectVector)
+		{
+			delete rpDrawObject;
+			rpDrawObject = nullptr;
+		}
+		m_redoObjectVector.clear();
 	}
 }
 
@@ -563,3 +575,22 @@ bool SVGraphixClass::SetGraphixData( HGLOBAL hGlobalMem )
 	return result;
 }
 
+void SVGraphixClass::undoOnStep()
+{
+	if (0 < m_drawObjectVector.size())
+	{
+		auto pUndoObject = m_drawObjectVector.back();
+		m_drawObjectVector.pop_back();
+		m_redoObjectVector.push_back(pUndoObject);
+	}
+}
+
+void SVGraphixClass::redoOnStep()
+{
+	if (0 < m_redoObjectVector.size())
+	{
+		auto pRedoObject = m_redoObjectVector.back();
+		m_redoObjectVector.pop_back();
+		m_drawObjectVector.push_back(pRedoObject);
+	}
+}
