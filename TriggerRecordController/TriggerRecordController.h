@@ -53,7 +53,7 @@ public:
 	virtual void unregisterReadyCallback(int handleId) override;
 	virtual int registerNewTrCallback(std::function<void(TrEventData)> pCallback) override;
 	virtual void unregisterNewTrCallback(int handleId) override;
-	virtual int registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback) override;
+	virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrEventData>&)> pCallback) override;
 	virtual void unregisterNewInterestTrCallback(int handleId) override;
 
 	virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector) override;
@@ -134,7 +134,7 @@ private:
 	void sendResetCall();
 	void sendReadyCall();
 	void sendTrIdCall(TrEventData data);
-	void sendInterestTrIdCall(std::vector<TrEventData> data);
+	void sendInterestTrIdCall(std::vector<TrEventData>&& data);
 
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 #pragma endregion Private Methods

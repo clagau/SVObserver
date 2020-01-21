@@ -32,32 +32,58 @@ namespace SvTrc
 class Locker
 {
 public:
-	explicit Locker(volatile long& rLocker)
+	explicit Locker(volatile long& rLocker, bool uniqueLock, int maxCount)
 		: m_rLocker(rLocker)
+		, m_uniqueLock(uniqueLock)
 	{
-		int count = 0;
-		while (InterlockedCompareExchange(&rLocker, 1, 0) != 0)
+		if (uniqueLock)
 		{
-			std::this_thread::yield();
-			count++;
-			if (100 < count)
+			int count = 0;
+			while (InterlockedCompareExchange(&rLocker, -1, 0) != 0)
 			{
-				throw 0;
+				count++;
+				if (maxCount < count)
+				{
+					throw 0;
+				}
+				std::this_thread::sleep_for(std::chrono::nanoseconds(200));
+			}
+		}
+		else
+		{
+			int count = 0;
+			int value = rLocker;
+			while (0 > value || InterlockedCompareExchange(&rLocker, value+1, value) != value)
+			{	//Do loop if value unique locked (value < 0) or not possible to increase the lockValue to a positive value
+				count++;
+				if (maxCount < count)
+				{
+					throw 0;
+				}
+				std::this_thread::sleep_for(std::chrono::nanoseconds(200));
+				value = rLocker;
 			}
 		}
 	}
 
 	~Locker()
 	{
-		InterlockedExchange(&m_rLocker, 0l);
+		if (m_uniqueLock)
+		{
+			InterlockedExchange(&m_rLocker, 0l);
+		}
+		else
+		{
+			InterlockedDecrement(&m_rLocker);
+		}
 	}
 
 	typedef std::unique_ptr<Locker> LockerPtr;
-	static LockerPtr lockReset(volatile long& rLocker)
+	static LockerPtr lockReset(volatile long& rLocker, bool uniqueLock = true, int maxCount = 100)
 	{
 		try
 		{
-			return std::make_unique<Locker>(rLocker);
+			return std::make_unique<Locker>(rLocker, uniqueLock, maxCount);
 		}
 		catch (...)
 		{
@@ -67,6 +93,7 @@ public:
 
 private:
 	volatile long& m_rLocker;
+	bool m_uniqueLock;
 };
 
 class TRControllerBaseDataPerIP
@@ -173,7 +200,7 @@ public:
 	void setResetCallback(std::function<void()>&& reloadCallback) { m_reloadCallback = reloadCallback; };
 	void setReadyCallback(std::function<void()>&& readyCallback) { m_readyCallback = readyCallback; };
 	void setNewTrIdCallback(std::function<void(TrEventData)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
-	void setNewInterestTrIdsCallback(std::function<void(std::vector<TrEventData>)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
+	void setNewInterestTrIdsCallback(std::function<void(std::vector<TrEventData>&&)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
@@ -221,7 +248,7 @@ protected:
 	std::function<void()> m_reloadCallback;
 	std::function<void()> m_readyCallback;
 	std::function<void(TrEventData)> m_newTrIdCallback;
-	std::function<void(std::vector<TrEventData>)> m_newInterestTrIdsCallback;
+	std::function<void(std::vector<TrEventData>&&)> m_newInterestTrIdsCallback;
 	HANDLE m_hResetEvent {nullptr};
 	HANDLE m_hReadyEvent {nullptr};
 	HANDLE m_hInterestTridEvent {nullptr};

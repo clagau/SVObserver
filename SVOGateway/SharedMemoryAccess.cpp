@@ -680,14 +680,14 @@ void SharedMemoryAccess::subscribe_to_trc()
 
 		on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, false);
 	});
-	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](std::vector<SvTrc::TrEventData> events)
+	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](const std::vector<SvTrc::TrEventData>& rEvents)
 	{
 		if (!m_trc_ready)
 		{
 			return;
 		}
 
-		for (const auto& eventData : events)
+		for (const auto& eventData : rEvents)
 		{
 			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, true);
 		}

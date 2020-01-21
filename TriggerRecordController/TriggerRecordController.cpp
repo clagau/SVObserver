@@ -189,7 +189,7 @@ void TriggerRecordController::unregisterNewTrCallback(int handleId)
 	}
 }
 
-int TriggerRecordController::registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback)
+int TriggerRecordController::registerNewInterestTrCallback(std::function<void(const std::vector<TrEventData>&)> pCallback)
 {
 	assert(pCallback);
 	if (nullptr != pCallback)
@@ -197,7 +197,7 @@ int TriggerRecordController::registerNewInterestTrCallback(std::function<void(st
 		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
-		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(std::vector<TrEventData>)>>(handle, pCallback));
+		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(const std::vector<TrEventData>&)>>(handle, pCallback));
 		return handle;
 	}
 	return -1;
@@ -234,7 +234,7 @@ bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordR
 		pLock.reset();
 		if (retValue)
 		{
-			sendInterestTrIdCall(trEventVec);
+			sendInterestTrIdCall(std::move(trEventVec));
 		}
 	}
 	return retValue;
@@ -242,7 +242,15 @@ bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordR
 
 std::vector<ITriggerRecordRPtr> TriggerRecordController::getTrsOfInterest(int inspectionPos, int n)
 {
-	return m_pDataController->getTRsOfInterest(inspectionPos, n);
+	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
+	if (nullptr != pLock)
+	{
+		return m_pDataController->getTRsOfInterest(inspectionPos, n);
+	}
+	else
+	{
+		return {};
+	}
 }
 
 void TriggerRecordController::pauseTrsOfInterest(bool pauseFlag, int inspectionPos)
@@ -414,7 +422,7 @@ ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordOb
 		static int last_triggerId = id - 1;
 		if (last_triggerId + 1 != id)
 		{
-			std::string DebugString = SvUl::Format(_T("\n\nsome trigger missing\n\n"));
+			DebugString = SvUl::Format(_T("\n\nsome trigger missing\n\n"));
 			::OutputDebugString(DebugString.c_str());
 		}
 		last_triggerId = id;
@@ -885,6 +893,7 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 	return;
 }
 
+// cppcheck-suppress unusedFunction
 bool TriggerRecordController::removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct)
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)
@@ -1082,7 +1091,7 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 			::OutputDebugString(DebugString.c_str());
 			for (auto& rPair : rMap.second)
 			{
-				std::string DebugString = SvUl::Format(_T("%d/%d\n"), rPair.first, rPair.second);
+				DebugString = SvUl::Format(_T("%d/%d\n"), rPair.first, rPair.second);
 				::OutputDebugString(DebugString.c_str());
 			}
 		}
@@ -1220,7 +1229,7 @@ void TriggerRecordController::sendTrIdCall(TrEventData data)
 	}
 }
 
-void TriggerRecordController::sendInterestTrIdCall(std::vector<TrEventData> data)
+void TriggerRecordController::sendInterestTrIdCall(std::vector<TrEventData>&& data)
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
 	for (auto& newTrIdCallback : m_newInterestTrCallbacks)

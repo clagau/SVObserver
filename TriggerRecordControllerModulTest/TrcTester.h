@@ -37,6 +37,7 @@ private:
 	bool setAndReadImage();
 	bool setAndReadValues();
 	bool testWithMoreThreads();
+	template <int readerSize>
 	bool testWithReaderApps();
 #pragma endregion test methods
 

@@ -177,13 +177,13 @@ void TRControllerReaderDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
-	Locker::LockerPtr locker = (nullptr != m_pBasicData) ? Locker::lockReset(m_pBasicData->m_mutexTrOfInterest) : nullptr;
-	if (nullptr != locker)
+	int vecSize = m_pBasicData->m_TrOfInterestNumber;
+	if (0 < vecSize)
 	{
-		int vecSize = m_pBasicData->m_TrOfInterestNumber;
-		if (0 < vecSize)
+		int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
+		Locker::LockerPtr locker = (nullptr != m_pBasicData) ? Locker::lockReset(m_pBasicData->m_mutexTrOfInterest, false) : nullptr;
+		if (nullptr != locker)
 		{
-			int number = std::min(n, vecSize - 1); //the vecSize is one more than required to avoid overwriting value during reading.
 			int nextPos = std::min(static_cast<int>(m_pBasicData->m_TrOfInterestCurrentPos), vecSize - 1);
 			for (int i = 0; i < number; i++)
 			{
@@ -195,11 +195,11 @@ std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 				nextPos--;
 			}
 		}
-	}
-	else
-	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetInterestFailedLockFailed, SvStl::SourceFileParams(StdMessageParams));
+		else
+		{
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetInterestFailedLockFailed, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 	return retVec;
 }
@@ -515,14 +515,16 @@ void DataControllerReader::initAndreloadData()
 
 void DataControllerReader::newTrIdThread()
 {
+	auto sleepTime = std::chrono::system_clock::now();
 	while (true)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_until(sleepTime);
 		if (m_stopThread)
 		{
 			return;
 		}
 
+		sleepTime = std::chrono::system_clock::now() + std::chrono::milliseconds(1);
 		sendNewTrId();
 	}
 }
@@ -618,7 +620,7 @@ void DataControllerReader::sendNewTrId()
 			std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
 			for (int i = 0; i < m_dataVector.size(); i++)
 			{
-				auto pIpData = m_dataVector[i];
+				const auto& pIpData = m_dataVector[i];
 				if (nullptr != pIpData)
 				{
 					int trId = pIpData->getTrId2Send();
@@ -627,10 +629,13 @@ void DataControllerReader::sendNewTrId()
 						newTrIdList.emplace_back(i, trId);
 					}
 
-					trId = pIpData->getInterestTrId2Send();
-					if (0 < trId)
+					if (0 < pIpData->getBasicData().m_TrOfInterestNumber)
 					{
-						newInterestTrIdList.emplace_back(i, trId);
+						trId = pIpData->getInterestTrId2Send();
+						if (0 < trId)
+						{
+							newInterestTrIdList.emplace_back(i, trId);
+						}
 					}
 				}
 			}
@@ -648,7 +653,7 @@ void DataControllerReader::sendNewTrId()
 	{
 		if (0 < newInterestTrIdList.size())
 		{
-			m_newInterestTrIdsCallback(newInterestTrIdList);
+			m_newInterestTrIdsCallback(std::move(newInterestTrIdList));
 		}
 	}
 }

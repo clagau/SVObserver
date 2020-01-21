@@ -32,6 +32,8 @@ HANDLE g_readyEvent = nullptr;
 HANDLE g_newTrEvent = nullptr;
 constexpr int triggerIdOffset = 100'000;
 LPTSTR strTestWithMoreThreads = _T("testWithMoreThreads");
+
+using namespace std::chrono_literals;
 #pragma endregion Declarations
 
 #pragma region Local Function
@@ -162,14 +164,14 @@ void OnNewTr(SvTrc::TrEventData data)
 
 std::mutex g_newInterestTrIpMutex;
 std::map<int,std::vector<int>> g_newInterestTrMap;
-void OnNewInterestTr(std::vector<SvTrc::TrEventData> dataVec)
+void OnNewInterestTr(const std::vector<SvTrc::TrEventData>& rDataVec)
 {
 	std::lock_guard<std::mutex> lock(g_newInterestTrIpMutex);
-	for (auto data : dataVec)
+	for (const auto& rData : rDataVec)
 	{
-		if (0 <= data.m_inspectionPos)
+		if (0 <= rData.m_inspectionPos)
 		{
-			g_newInterestTrMap[data.m_inspectionPos].push_back(data.m_trId);
+			g_newInterestTrMap[rData.m_inspectionPos].emplace_back(rData.m_trId);
 		}
 	}
 }
@@ -220,7 +222,7 @@ bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvTrc
 	return rTrController.setInspections(std::move(inspList));
 }
 
-bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
+bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, int sleepBetweenTrigger)
 {
 	bool retValue = true;
 	GUID guid = GUID_NULL;
@@ -302,7 +304,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 			break;
 		}
 
-		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(1000));
+		std::this_thread::sleep_for(1s);
 
 		{
 			std::lock_guard<std::mutex> lock(g_newInterestTrIpMutex);
@@ -427,13 +429,13 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				}
 			}
 
-			std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(5500));
+			std::this_thread::sleep_for(std::chrono::duration<int, std::micro>(sleepBetweenTrigger));
 		}
 
 		logStr = SvUl::Format(_T("Writer Tests for run %d finished"), testDataId);
 		rLogClass.LogText(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS);
 
-		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(10));
+		std::this_thread::sleep_for(10ms);
 	}
 
 	return retValue;
@@ -520,25 +522,30 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					break;
 				}
 
-				std::lock_guard<std::mutex> lock(g_newTrInfoVecMutex);
-				if (0 == g_newTrInfoVec.size())
+				std::vector<SvTrc::TrEventData> newTrInfoVec;
 				{
-					if (runId+1 < numberOfRuns*inspectionSize)
+					std::lock_guard<std::mutex> lock(g_newTrInfoVecMutex);
+					if (0 == g_newTrInfoVec.size())
 					{
-						std::string logStr = SvUl::Format(_T("Reader Tests: No new TR after runId %d"), runId);
-						rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						if (runId + 1 < numberOfRuns*inspectionSize)
+						{
+							std::string logStr = SvUl::Format(_T("Reader Tests: No new TR after runId %d"), runId);
+							rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
+						}
+						else
+						{
+							std::string logStr = SvUl::Format(_T("Reader Tests: Finished run after runId %d"), runId);
+							rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
+						}
+						break;
 					}
-					else
-					{
-						std::string logStr = SvUl::Format(_T("Reader Tests: Finished run after runId %d"), runId);
-						rLogClass.Log(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS, __LINE__, strTestWithMoreThreads);
-					}
-					break;
+					//only for delete old events
+					WaitForMultipleObjects(1, &g_newTrEvent, false, 0);
+					newTrInfoVec.swap(g_newTrInfoVec);
+					g_newTrInfoVec.clear();
 				}
-				//only for delete old events
-				WaitForMultipleObjects(1, &g_newTrEvent, false, 0);
 
-				for (const auto newTrInfo : g_newTrInfoVec)
+				for (const auto newTrInfo : newTrInfoVec)
 				{
 					runId++;
 					int trIdLast = rTrController.getLastTrId(newTrInfo.m_inspectionPos);
@@ -562,8 +569,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						std::string errorStr = SvUl::Format(_T("Reader Tests: createTriggerRecordObject(%d, %d) return nullptr by run %d!"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, runId);
 						rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						retValue = false;
-						std::chrono::duration<int, std::micro> t(2);
-						std::this_thread::sleep_for(t);
+						std::this_thread::sleep_for(2us);
 						continue;
 					}
 					int triggerCount = tr2R->getTriggerData().m_TriggerCount;
@@ -574,8 +580,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						std::string errorStr = SvUl::Format(_T("Reader Tests: (%d) triggerCount (%d) do not fit: , called testDataId %d, max testDataId %d by run %d"), newTrInfo.m_inspectionPos, triggerCount, testDataId, static_cast<int>(rTestData.size()) - 1, runId);
 						rLogClass.Log(errorStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						retValue = false;
-						std::chrono::duration<int, std::micro> t(1);
-						std::this_thread::sleep_for(t);
+						std::this_thread::sleep_for(1us);
 						continue;
 					}
 					else
@@ -606,7 +611,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						int interestNumber = dist(rd);
 						if (0 == runId)
 						{	//at the first run, give writer time to set tr of interest.
-							std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(1));
+							std::this_thread::sleep_for(1ms);
 						}
 						auto interestTRVec = rTrController.getTrsOfInterest(newTrInfo.m_inspectionPos, interestNumber);
 						if (0 < interestTRVec.size())
@@ -669,7 +674,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						}
 					}
 				}
-				g_newTrInfoVec.clear();
+				newTrInfoVec.clear();
 			}
 
 			//check newInterestEvents

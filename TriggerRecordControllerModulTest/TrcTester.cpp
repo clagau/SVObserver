@@ -73,7 +73,8 @@ bool TrcTester::fullTest()
 	isRunOk = testWithMoreThreads() && isRunOk;
 	if (!m_config.isLocal())
 	{
-		isRunOk = testWithReaderApps() && isRunOk;
+		isRunOk = testWithReaderApps<1>() && isRunOk;
+		isRunOk = testWithReaderApps<2>() && isRunOk;
 	}
 	return isRunOk;
 }
@@ -556,12 +557,13 @@ bool TrcTester::testWithMoreThreads()
 	return retValue;
 }
 
+template <int readerSize>
 bool TrcTester::testWithReaderApps()
 {
 	bool retValue = true;
 	int timeoutInS = 10;
 
-	std::array<std::pair<bool, ReaderProcessData>, 2> readerArray;
+	std::array<std::pair<bool, ReaderProcessData>, readerSize> readerArray;
 	std::string tmpStr = SvUl::Format("Start testWithReaderApps with %d reader", static_cast<int>(readerArray.size()));
 	m_rLogClass.LogText(tmpStr.c_str(), LogLevel::Information_Level3, LogType::BLANK);
 	for (int i = 0; i < readerArray.size(); i++)
@@ -575,7 +577,7 @@ bool TrcTester::testWithReaderApps()
 		}
 	}
 
-	bool retWriterTest = writerTest(m_rLogClass, 100, m_config.getTestData());
+	bool retWriterTest = writerTest(m_rLogClass, 100, m_config.getTestData(), 1 < readerSize ? 5500 : 3000);
 	retValue = retValue && retWriterTest;
 	m_rLogClass.Log("Finished writerTest", retWriterTest ? LogLevel::Information_Level1 : LogLevel::Error, retWriterTest ? LogType::PASS : LogType::FAIL, __LINE__, strTestWithReaderApps);
 
@@ -839,7 +841,6 @@ int TrcTester::createDataDefContainer(std::vector<std::vector<BYTE>>& rDataMemVe
 	{
 		long memSize = valueObject.getByteSize();
 		auto* pValueObjectDef = pList->Add();
-		std::string uniqueIdBytes;
 		GUID guid = GUID_NULL;
 		UuidCreateSequential(&guid);
 		SvPb::SetGuidInProtoBytes(pValueObjectDef->mutable_guidid(), guid);

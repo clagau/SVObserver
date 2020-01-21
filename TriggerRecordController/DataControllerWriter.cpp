@@ -262,6 +262,9 @@ void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 			m_pTRofInterestArray[nextPos] = -1; //unsuccessfully set
 		}
 	}
+	
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_setTrOfInterestFailed, SvStl::SourceFileParams(StdMessageParams));
 }
 
 std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
@@ -270,7 +273,7 @@ std::vector<int> TRControllerWriterDataPerIP::getTRofInterestPos(int n)
 	assert(m_pBasicData);
 	if (nullptr != m_pBasicData)
 	{
-		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest);
+		Locker::LockerPtr locker = Locker::lockReset(m_pBasicData->m_mutexTrOfInterest, false);
 		int vecSize = m_pBasicData->m_TrOfInterestNumber;
 		if (nullptr != locker && 0 < vecSize)
 		{

@@ -111,7 +111,7 @@ namespace SvTrc
 		/// Register a Callback function to call if a trigger record is set to interest.
 		/// \param pCallback [in] Pointer of the callback-function. A vector of pairs: First parameter is inspection and second is trId.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback.
-		virtual int registerNewInterestTrCallback(std::function<void(std::vector<TrEventData>)> pCallback) = 0;
+		virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrEventData>&)> pCallback) = 0;
 
 		/// Unregister a Callback function to call if a trigger record is set to interest.
 		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)

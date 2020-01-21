@@ -268,6 +268,7 @@ bool LogClass::convertAndLogString(std::string line)
 		}
 
 		LogText0(line.c_str(), level);
+		CountResults(type);
 		return type != LogType::FAIL && type != LogType::ABORT;
 	}
 	return true;

@@ -99,7 +99,7 @@ void TRControllerLocalDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 std::vector<int> TRControllerLocalDataPerIP::getTRofInterestPos(int n)
 {
 	std::vector<int> retVec;
-	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
+	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest, false);
 	int vecSize = static_cast<int>(m_trOfInterestVec.size());
 	if (nullptr != locker && 0 < vecSize)
 	{
