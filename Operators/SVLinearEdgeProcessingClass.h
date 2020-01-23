@@ -95,6 +95,7 @@ protected:
 	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 	SvOl::SVInObjectInfoStruct m_InputMinThreshold;
 	SvOl::SVInObjectInfoStruct m_InputMaxThreshold;
+	SvOl::SVInObjectInfoStruct m_InputDelta;
 	SvOl::SVInObjectInfoStruct m_InputLinearData;
 
 	long m_lPixelDepth;

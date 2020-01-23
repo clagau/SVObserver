@@ -18,9 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Custom2Filter_ImportExport.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="ExtrasEngine.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -506,6 +503,9 @@
     </ClCompile>
     <ClCompile Include="ZoomToolBar.cpp">
       <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom2Filter_ImportExport.cpp">
+      <Filter>Help Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

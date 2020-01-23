@@ -48,8 +48,12 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	RegisterInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
 
 	m_InputMaxThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdMaxObjectGuid);
-	m_InputMaxThreshold.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputMaxThreshold, _T( "LinearEdgeProcessingMaxThreshold" ) );
+	m_InputMaxThreshold.SetObject(GetObjectInfo());
+	RegisterInputObject(&m_InputMaxThreshold, _T("LinearEdgeProcessingMaxThreshold"));
+
+	m_InputDelta.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdDeltaObjectGuid);
+	m_InputDelta.SetObject(GetObjectInfo());
+	RegisterInputObject(&m_InputDelta, _T("LinearEdgeProcessingDeltaThreshold"));
 
 	m_InputLinearData.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearDataClassGuid);
 	m_InputLinearData.SetObject( GetObjectInfo() );
@@ -162,6 +166,7 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 		&m_InputImageObjectInfo,
 		&m_InputMinThreshold,
 		&m_InputMaxThreshold,
+		&m_InputDelta,
 		&m_InputLinearData
 	};
 

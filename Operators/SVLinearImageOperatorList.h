@@ -45,6 +45,8 @@ protected:
 
 	SvVol::SVDoubleValueObjectClass m_svMinThreshold;
 	SvVol::SVDoubleValueObjectClass m_svMaxThreshold;
+	SvVol::SVDoubleValueObjectClass m_svDeltaMaxMin;
+
 
 	SvIe::SVDataBufferClass m_svProfileResultData;
 

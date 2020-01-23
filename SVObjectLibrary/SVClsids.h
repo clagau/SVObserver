@@ -835,6 +835,7 @@ extern const GUID SVUpperThresholdMinPlusOffsetBObjectGuid;
 
 extern const GUID SVLinearThresholdMaxObjectGuid;
 extern const GUID SVLinearThresholdMinObjectGuid;
+extern const GUID SVLinearThresholdDeltaObjectGuid;
 
 // GUID for the SVTransformationToolClass
 extern const GUID SVTransformationToolClassGuid;

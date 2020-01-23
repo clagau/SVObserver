@@ -62,6 +62,8 @@ bool SVLinearImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruc
 
 	m_svMaxThreshold.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_svMinThreshold.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_svDeltaMaxMin.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	
 
 
 	return l_bOk;
@@ -140,7 +142,8 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 	if (result)
 	{
-		if (UseRotation)
+		// cppcheck-suppress knownConditionTrueFalse //UseRotation can in fact be changed by getUseRotationAngle()
+		if (UseRotation) 
 		{
 			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
 			pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
@@ -217,7 +220,8 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 			result = (S_OK == m_svMinThreshold.SetValue(dMin)) && result;
 			result = (S_OK == m_svMaxThreshold.SetValue(dMax)) && result;
-
+			result = (S_OK == m_svDeltaMaxMin.SetValue(dMax-dMin)) && result;
+			
 			result = (S_OK == m_svLinearData.SetArrayValues(m_svArray)) && result;
 			assert(result);
 			if (!result)
@@ -298,11 +302,15 @@ void SVLinearImageOperatorListClass::init()
 	m_svLinearData.setSaveValueFlag(false);
 	RegisterEmbeddedObject(&m_svMinThreshold, SVLinearThresholdMinObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MINVALUE, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_svMaxThreshold, SVLinearThresholdMaxObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MAXVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_svDeltaMaxMin, SVLinearThresholdDeltaObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_DELTAVALUE, false, SvOi::SVResetItemNone);
+	
 
 	m_svMinThreshold.SetDefaultValue(0.0);
 	m_svMinThreshold.setSaveValueFlag(false);
 	m_svMaxThreshold.SetDefaultValue(0.0);
 	m_svMaxThreshold.setSaveValueFlag(false);
+	m_svDeltaMaxMin.SetDefaultValue(0.0);
+	m_svDeltaMaxMin.setSaveValueFlag(false);
 
 	m_ulLineLength = 0;
 
