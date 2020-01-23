@@ -307,6 +307,7 @@ void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Over
 	setValueObject(m_ExtentTop, *pRect->mutable_y());
 	setValueObject(m_ExtentWidth, *pRect->mutable_w());
 	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	setStateValueToOverlay(*pOverlay);
 	if (isRotation)
 	{
 		setValueObject(m_svRotationAngle, *pRect->mutable_angle());

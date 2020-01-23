@@ -188,6 +188,8 @@ protected:
 
 	virtual void connectChildObject(SVTaskObjectClass& rChildObject) override;
 
+	void setStateValueToOverlay(SvPb::Overlay& rOverlay) const;
+
 private:
 	void init();
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
@@ -256,6 +258,6 @@ protected:
 	bool m_canResizeToParent {false};
 };
 
-
-void setValueObject(const SvVol::SVDoubleValueObjectClass& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos = false);
+template <class T>
+void setValueObject(const T& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos = false);
 } //namespace SvTo

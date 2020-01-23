@@ -73,7 +73,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> res
 				ObjectRef.SetArrayIndex(i);
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
 				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-				// cppcheck-suppress unreadVariable symbolName=result
+				// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 				result = insertItem;
 			}
 		}
@@ -81,7 +81,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> res
 		{
 			insertItem.set_location(ObjectRef.GetCompleteName(true));
 			insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
-			// cppcheck-suppress unreadVariable symbolName=result
+			// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 			result = insertItem;
 		}
 	}

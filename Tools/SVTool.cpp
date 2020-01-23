@@ -910,6 +910,7 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 			setValueObject(m_ExtentTop, *pRect->mutable_y());
 			setValueObject(m_ExtentWidth, *pRect->mutable_w());
 			setValueObject(m_ExtentHeight, *pRect->mutable_h());
+			setStateValueToOverlay(*pOverlay);
 			collectOverlays(pImage, *pOverlay);
 			break;
 		}
@@ -923,14 +924,12 @@ HRESULT SVToolClass::GetSourceImages(SvIe::SVImageClassPtrVector* pImageList) co
 {
 	HRESULT l_hr = S_OK;
 
-	SvIe::SVImageClass* pImageParent = nullptr;
-	const SVToolClass* pTool = this;
 	if (m_toolExtent.GetToolImage())
 	{
-		pImageParent = m_toolExtent.GetToolImage()->GetParentImage();
+		SvIe::SVImageClass* pImageParent = m_toolExtent.GetToolImage()->GetParentImage();
 		if (nullptr != pImageParent)
 		{
-			pTool = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
+			const SVToolClass* pTool = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
 			if (nullptr != pTool && pTool != this)
 			{
@@ -1149,6 +1148,13 @@ void SVToolClass::connectChildObject(SVTaskObjectClass& rChildObject)
 	rChildObject.ConnectObject(createStruct);
 }
 
+void SVToolClass::setStateValueToOverlay(SvPb::Overlay& rOverlay) const
+{
+	setValueObject(m_Passed, *rOverlay.mutable_passed(), true);
+	setValueObject(m_Failed, *rOverlay.mutable_failed(), true);
+	setValueObject(m_Warned, *rOverlay.mutable_warned(), true);
+}
+
 bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction) const
 {
 	SvIe::SVExtentPropertyInfoStruct info;
@@ -1263,8 +1269,8 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 	}
 }
 
-
-void setValueObject(const SvVol::SVDoubleValueObjectClass& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos)
+template <class T>
+void setValueObject(const T& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos)
 {
 	SvPb::SetGuidInProtoBytes(rPbValueObject.mutable_guid(), rSVOValueObject.GetUniqueObjectID());
 	double var = 0;

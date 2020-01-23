@@ -392,6 +392,7 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	setValueObject(m_TopResult, *pRect->mutable_y(), true);
 	setValueObject(m_ExtentWidth, *pRect->mutable_w());
 	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
 }
 #pragma endregion Protected Methods

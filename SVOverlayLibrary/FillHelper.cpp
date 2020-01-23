@@ -125,6 +125,11 @@ void fillOverlay(SvPb::OverlayDesc& overlayDesc, const SvTrc::ITriggerRecordR& r
 		//set overlay color
 		fillValue(rTr, pOverlay->color().trpos(), pOverlay->mutable_color());
 
+		//set overlay state values
+		fillValue(rTr, pOverlay->passed().trpos(), pOverlay->mutable_passed());
+		fillValue(rTr, pOverlay->failed().trpos(), pOverlay->mutable_failed());
+		fillValue(rTr, pOverlay->warned().trpos(), pOverlay->mutable_warned());
+
 		auto* pBoundingBox = pOverlay->mutable_boundingshape();
 		if (nullptr == pBoundingBox) { continue; }
 		switch (pBoundingBox->shape_case())

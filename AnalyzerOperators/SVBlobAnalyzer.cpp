@@ -1675,6 +1675,7 @@ void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvP
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Blobs");
+	pGroup->set_detaillevel(1);
 	auto* pShape = pGroup->add_shapes();
 	pShape->mutable_color()->set_value(SvDef::DefaultSubFunctionColor1);
 	auto* pRectArray = pShape->mutable_rectarray()->mutable_x12data();

@@ -314,6 +314,7 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 	pRect->mutable_y()->set_value(0);
 	setValueObject(m_ExtentWidth, *pRect->mutable_w());
 	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
 }
 

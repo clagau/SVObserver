@@ -39,6 +39,11 @@ message Overlay
 	bool displayBounding = 5;
 
 	repeated OverlayShapeGroup shapeGroups = 6;
+
+	//Value if this overlay is from a passed/failed/warned tool. The values are 0(false) or 1 (true)
+	ValueObject passed = 7;
+	ValueObject failed = 8;
+	ValueObject warned = 9;
 }
 
 message OverlayBoundingShape
@@ -53,6 +58,7 @@ message OverlayShapeGroup
 {
 	string name = 1;
 	repeated OverlayShape shapes = 2;
+	int32 detailLevel = 3;
 }
 
 // Message encapsulating the actual shape in an oneof.
