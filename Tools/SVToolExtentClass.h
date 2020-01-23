@@ -137,6 +137,8 @@ private:
 	SVImageExtentClass& m_rImageExtent;			//NOTE! This accesses the variable m_imageExtent directly in SVTaskObject
 
 	static SVTranslationFilterSet m_LinearToolTranslations;
+
+	mutable bool m_CircularReference = false;					//! Use this flag during UpdateOffsetDataToImage to make sure no circular references are present
 };
 
 } //namespace SvIe

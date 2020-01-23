@@ -529,6 +529,7 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 {
 	if (nullptr == m_pToolImage)
 	{
+		m_CircularReference = false;
 		return E_FAIL;
 	}
 
@@ -539,10 +540,17 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 	if (nullptr == pImageParent)
 	{
 		rOffsetData = offsetData;
+		m_CircularReference = false;
 		return S_OK;
 	}
 	HRESULT l_svOk{S_OK};
+	if (m_CircularReference)
+	{
+		m_CircularReference = false;
+		return E_FAIL;
+	}
 	
+	m_CircularReference = true;
 	offsetData.m_dRotationAngle = rOffsetData.m_dRotationAngle;
 	offsetData.m_svRotationPoint = rOffsetData.m_svRotationPoint;;
 	offsetData.m_svOffset = rOffsetData.m_svOffset;
@@ -599,6 +607,7 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 	}
 
 	rOffsetData = offsetData;
+	m_CircularReference = false;
 
 	return l_svOk;
 }
