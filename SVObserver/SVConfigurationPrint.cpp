@@ -1540,17 +1540,12 @@ void SVConfigurationPrint::PrintPage()
 	
     CString  strPage;
 	
-    std::string PageName = SvUl::Format( _T("%s %u %s %u"), SvUl::LoadStdString(IDS_PAGE_STRING).c_str(), m_printInfo.m_nCurPage, 
-						SvUl::LoadStdString(IDS_OF_STRING).c_str(), m_printInfo.GetMaxPage() );
-	
 	CFont*   pcfontOldFont;
 	
 	// Exchange font and store old one
 	pcfontOldFont = pDC->SelectObject(&m_fontPageNbr);
 	
 	UINT uOldTextAlign = pDC->SetTextAlign(TA_CENTER | TA_NOUPDATECP);
-	
-	pDC->TextOut( m_pageCenter, pDC->GetDeviceCaps(VERTRES) - m_heightPageNumberPixels, PageName.c_str() );
 	
 	pDC->SetTextAlign(uOldTextAlign);
 	
