@@ -24,9 +24,14 @@ int main(int argc, char* argv[])
 	_set_error_mode(_OUT_TO_MSGBOX);
 
 	std::string testName;
+	LogLevel logLevel = LogLevel::Always;
 	if (1 < argc)
 	{
 		testName = argv[1];
+	}
+	if (2 < argc)
+	{
+		logLevel = LogLevel(atoi(argv[2]));
 	}
 	bool isLogFileOpen = false;
 	if (!testName.empty())
@@ -43,6 +48,7 @@ int main(int argc, char* argv[])
 
 	if (isLogFileOpen)
 	{
+		g_logClass.SetLogLevel(logLevel);
 		MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
 		if (M_NULL != appId)
 		{

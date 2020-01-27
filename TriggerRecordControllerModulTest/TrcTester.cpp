@@ -45,7 +45,7 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData);
 SVMatroxBufferCreateStruct specifyBuffer(int sizeFactor);
 SVMatroxBufferCreateStruct specifyBufferRandom();
-bool startReaderApp(ReaderProcessData& data);
+bool startReaderApp(ReaderProcessData& data, int logLevel);
 bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogClass);
 
 TrcTester::TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
@@ -569,7 +569,7 @@ bool TrcTester::testWithReaderApps()
 	for (int i = 0; i < readerArray.size(); i++)
 	{
 		readerArray[i].second.m_name = "reader"+ std::to_string(i+1);
-		readerArray[i].first = startReaderApp(readerArray[i].second);
+		readerArray[i].first = startReaderApp(readerArray[i].second, static_cast<int>(m_rLogClass.GetLogLevel()));
 		if (!readerArray[i].first)
 		{
 			tmpStr = SvUl::Format("Create Reader-Process %s", readerArray[i].second.m_name.c_str());
@@ -732,9 +732,9 @@ SVMatroxBufferCreateStruct specifyBufferRandom()
 	return bufferStruct;
 }
 
-bool startReaderApp(ReaderProcessData& data)
+bool startReaderApp(ReaderProcessData& data, int logLevel)
 {
-	std::string commandStr = SvUl::Format(R"(TriggerRecordControllerReaderModulTest.exe %s)", data.m_name.c_str());
+	std::string commandStr = SvUl::Format(R"(TriggerRecordControllerReaderModulTest.exe %s %d)", data.m_name.c_str(), logLevel);
 	if (!CreateProcess(R"(TriggerRecordControllerReaderModulTest.exe)", const_cast<char*> (commandStr.c_str()), NULL, NULL, TRUE, 0, NULL, NULL, &data.m_info, &data.m_processInfo))
 	{
 		return false;

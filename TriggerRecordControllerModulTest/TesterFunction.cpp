@@ -32,6 +32,7 @@ HANDLE g_readyEvent = nullptr;
 HANDLE g_newTrEvent = nullptr;
 constexpr int triggerIdOffset = 100'000;
 LPTSTR strTestWithMoreThreads = _T("testWithMoreThreads");
+constexpr int divFac = 3;
 
 using namespace std::chrono_literals;
 #pragma endregion Declarations
@@ -162,11 +163,11 @@ void OnNewTr(SvTrc::TrEventData data)
 	::SetEvent(g_newTrEvent);
 }
 
-std::mutex g_newInterestTrIpMutex;
+std::mutex g_newInterestTrMapMutex;
 std::map<int,std::vector<int>> g_newInterestTrMap;
 void OnNewInterestTr(const std::vector<SvTrc::TrEventData>& rDataVec)
 {
-	std::lock_guard<std::mutex> lock(g_newInterestTrIpMutex);
+	std::lock_guard<std::mutex> lock(g_newInterestTrMapMutex);
 	for (const auto& rData : rDataVec)
 	{
 		if (0 <= rData.m_inspectionPos)
@@ -250,7 +251,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 		if (0 < numbersOfRecords[0].second)
 		{
 			isInterestTest = true;
-			getInterestPausePoints(numbersOfRecords[0].first, numberOfRuns, 3, startInterestPause, stopInterestPause);
+			getInterestPausePoints(numbersOfRecords[0].first, numberOfRuns, divFac, startInterestPause, stopInterestPause);
 		}
 
 		if (!retValue)
@@ -307,7 +308,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 		std::this_thread::sleep_for(1s);
 
 		{
-			std::lock_guard<std::mutex> lock(g_newInterestTrIpMutex);
+			std::lock_guard<std::mutex> lock(g_newInterestTrMapMutex);
 			g_newInterestTrMap.clear();
 		}
 
@@ -423,7 +424,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				}
 				lastTRList[ipId] = rTrController.closeWriteAndOpenReadTriggerRecordObject(tr2W);
 
-				if (0 == runId % 3 && nullptr != lastTRList[ipId])
+				if (0 == runId % divFac && nullptr != lastTRList[ipId])
 				{
 					rTrController.setTrsOfInterest({lastTRList[ipId]});
 				}
@@ -435,7 +436,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 		logStr = SvUl::Format(_T("Writer Tests for run %d finished"), testDataId);
 		rLogClass.LogText(logStr.c_str(), LogLevel::Information_Level2, LogType::PASS);
 
-		std::this_thread::sleep_for(10ms);
+		std::this_thread::sleep_for(15ms);
 	}
 
 	return retValue;
@@ -609,6 +610,8 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						std::random_device rd;
 						std::uniform_int_distribution<int> dist(1, maxInterestSize);
 						int interestNumber = dist(rd);
+						std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Requested Number of Interest %d"), testDataId, interestNumber);
+						rLogClass.Log(logStr.c_str(), LogLevel::Debug, LogType::BLANK, __LINE__, strTestWithMoreThreads);
 						if (0 == runId)
 						{	//at the first run, give writer time to set tr of interest.
 							std::this_thread::sleep_for(1ms);
@@ -616,16 +619,16 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						auto interestTRVec = rTrController.getTrsOfInterest(newTrInfo.m_inspectionPos, interestNumber);
 						if (0 < interestTRVec.size())
 						{
-							std::vector<int> interestList = getInterestList(isOtherProcess? inspectionList.list(newTrInfo.m_inspectionPos).numberofrecords():rTestData[testDataId][newTrInfo.m_inspectionPos].m_recordSize, numberOfRuns, 3);
+							std::vector<int> interestList = getInterestList(isOtherProcess? inspectionList.list(newTrInfo.m_inspectionPos).numberofrecords():rTestData[testDataId][newTrInfo.m_inspectionPos].m_recordSize, numberOfRuns, divFac);
 							int currentPos = -1;
-							for (auto pTr : interestTRVec)
+							for (const auto& pTrInterest : interestTRVec)
 							{
-								if (nullptr != pTr)
+								if (nullptr != pTrInterest)
 								{
-									int triggerCount = pTr->getTriggerData().m_TriggerCount;
+									int triggerCountInterest = pTrInterest->getTriggerData().m_TriggerCount;
 									if (-1 == currentPos)
 									{
-										auto findIter = std::find(interestList.begin(), interestList.end(), triggerCount);
+										auto findIter = std::find(interestList.begin(), interestList.end(), triggerCountInterest);
 										if (interestList.end() != findIter)
 										{
 											currentPos = static_cast<int>(std::distance(interestList.begin(), findIter));
@@ -633,7 +636,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 											if (interestTRVec.size() != expectedNumber)
 											{
 												retValue = false;
-												std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Number of TRs %d, but expected %d (first triggerCount %d) for ip %d with run %d"), testDataId, interestTRVec.size(), expectedNumber, triggerCount, newTrInfo.m_inspectionPos, runId);
+												logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Number of TRs %d, but expected %d (last triggerCount %d, requested interest %d) for ip %d with run %d"), testDataId, interestTRVec.size(), expectedNumber, triggerCountInterest, interestNumber, newTrInfo.m_inspectionPos, runId);
 												rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 												break;
 											}
@@ -642,16 +645,16 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 										else
 										{
 											retValue = false;
-											std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: First TR (%d) should not be an interest TR for ip %d with run %d"), testDataId, triggerCount, newTrInfo.m_inspectionPos, runId);
+											logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: First TR (%d) should not be an interest TR for ip %d with run %d"), testDataId, triggerCountInterest, newTrInfo.m_inspectionPos, runId);
 											rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 											break;
 										}
 									}
 
-									if (interestList[currentPos] != triggerCount)
+									if (interestList[currentPos] != triggerCountInterest)
 									{
 										retValue = false;
-										std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: TR %d, but TR %d expected for ip %d with run %d"), testDataId, triggerCount, interestList[currentPos], newTrInfo.m_inspectionPos, runId);
+										logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: TR %d, but TR %d expected for ip %d with run %d"), testDataId, triggerCountInterest, interestList[currentPos], newTrInfo.m_inspectionPos, runId);
 										rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 										break;
 									}
@@ -660,7 +663,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 								else
 								{
 									retValue = false;
-									std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: One of the TR is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
+									logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: One of the TR is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
 									rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 									break;
 								}
@@ -669,7 +672,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						else
 						{
 							retValue = false;
-							std::string logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Return list is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
+							logStr = SvUl::Format(_T("Reader Tests(%d): getTRsOfInterest: Return list is empty for ip %d with run %d"), testDataId, newTrInfo.m_inspectionPos, runId);
 							rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 						}
 					}
@@ -678,15 +681,21 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 			}
 
 			//check newInterestEvents
-			std::lock_guard<std::mutex> lock(g_newInterestTrIpMutex);
-			if (0 < g_newInterestTrMap.size())
+			std::map<int, std::vector<int>> newInterestTrMap;
 			{
-				for (auto iter : g_newInterestTrMap)
+				std::lock_guard<std::mutex> lock(g_newInterestTrMapMutex);
+				newInterestTrMap.swap(g_newInterestTrMap);
+				g_newInterestTrMap.clear();
+			}
+
+			if (0 < newInterestTrMap.size())
+			{
+				for (auto iter : newInterestTrMap)
 				{
-					size_t expectedSize = (numberOfRuns+2) / 3;
+					size_t expectedSize = (numberOfRuns+2) / divFac;
 					if (0 < inspectionList.list(iter.first).numberrecordsofinterest())
 					{
-						std::vector<int> interestList = getInterestList(isOtherProcess ? inspectionList.list(iter.first).numberofrecords() : rTestData[testDataPos][iter.first].m_recordSize, numberOfRuns, 3);
+						std::vector<int> interestList = getInterestList(isOtherProcess ? inspectionList.list(iter.first).numberofrecords() : rTestData[testDataPos][iter.first].m_recordSize, numberOfRuns, divFac);
 						expectedSize = interestList.size();
 					}
 					
@@ -722,7 +731,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 				}
 			}
-			g_newInterestTrMap.clear();
+			newInterestTrMap.clear();
 		}
 
 		rTrController.unregisterResetCallback(resetCallbackHandle);

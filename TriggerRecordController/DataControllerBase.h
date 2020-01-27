@@ -60,7 +60,7 @@ public:
 				{
 					throw 0;
 				}
-				std::this_thread::sleep_for(std::chrono::nanoseconds(200));
+				std::this_thread::yield();
 				value = rLocker;
 			}
 		}

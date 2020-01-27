@@ -13,8 +13,9 @@ namespace SvTrc
 {
 	struct TriggerData
 	{
-		explicit TriggerData(int triggerCount = 0) : m_TriggerCount(triggerCount) {};
-		int m_TriggerCount {0};
+		TriggerData() = default;
+		explicit TriggerData(int triggerCount) : m_TriggerCount(triggerCount) {};
+		int m_TriggerCount {-1};
 	};
 
 	class ITriggerRecordR
