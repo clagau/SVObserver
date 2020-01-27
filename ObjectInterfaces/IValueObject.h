@@ -98,11 +98,11 @@ namespace SvOi
 
 		//! Gets the size of the value object array
 		//! \returns size 0 if not an array
-		virtual int getArraySize() const = 0;
+		virtual int32_t getArraySize() const = 0;
 
 		//! Gets the result size of the value object
 		//! \returns size
-		virtual int getResultSize() const = 0;
+		virtual int32_t getResultSize() const = 0;
 
 		//! Gets the reset item type
 		//! \returns the reset item enum type
@@ -112,26 +112,40 @@ namespace SvOi
 		//! \returns true if reset always
 		virtual bool ResetAlways() const = 0;
 
-		//! Returns he value object byte size
+		//! Returns the value object byte size requirement
+		//! \param useResultSize true for result bytes otherwise array bytes
+		//! \param memBlockData true for block data memory size
 		//! \returns the number of bytes for the data
-		virtual long GetByteSize(bool useResultSize = true) const = 0;
+		virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const = 0;
 
 		//! Returns the variant type of the value object
 		//! \returns the VT type
 		virtual DWORD GetType() const = 0;
 
-		//! Copies the value object to memory
-		//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
-		//! \param MemByteSize [in] The memory block byte size
-		//! \returns the size copied to memory
-		virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const = 0;
-
 		//! Sets the save flag for the value object
 		//! \param shouldSaveValue [in] flag determining if value saved
 		virtual void setSaveValueFlag(bool shouldSaveValue) = 0;
 
-		virtual void setTrData(long memOffset, int pos) const = 0;
-		virtual int getTrPos() const = 0;
+		//! Sets the Trigger Record data
+		//! \param memOffset, the memory offset from the memory block base
+		//! \param memSize, the memory size reserved
+		//! \param pos, TR position
+		virtual void setTrData(int32_t memOffset, int32_t memSize, int32_t pos) = 0;
+
+		//! Gets the Trigger Record position
+		//! \returns the position
+		virtual int32_t getTrPos() const = 0;
+
+		//! Gets the memory block offset is -1 if not set
+		//! \returns the offset
+		virtual int32_t getMemOffset() const = 0;
+
+		//! Sets the memory block pointer
+		//! \param pMemBlockBase, this is the memory block base pointer
+		virtual void setMemBlockPointer(uint8_t* pMemBlockBase) = 0;
+
+		//! Update the memory block data
+		virtual void updateMemBlockData() const = 0;
 	};
 
 	struct SetValueStruct 

@@ -232,7 +232,7 @@ public:
 
 	bool getInitialAuxiliaryExtents() {return m_initialAuxiliaryExtents;}
 
-	void buildValueObjectDefList() const;
+	void buildValueObjectData();
 
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
@@ -436,8 +436,8 @@ private:
 	SvOp::SVEquationClass m_RegressionTestPlayEquation;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 	int m_trcPos = -1;
-	mutable long m_memTrcDataBytes{0L};		//Is the memory block size required for the TRC data
-	mutable std::unique_ptr<BYTE[]> m_pValueData{nullptr}; //Is the memory block pointer required for the TRC data
+	long m_memValueDataOffset{0L};			///Is the current memory data offset 
+	std::vector<uint8_t> m_valueData;		///The memory block used to store all value objects of the inspection
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

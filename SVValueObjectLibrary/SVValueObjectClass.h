@@ -23,6 +23,10 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+class IInspectionProcess;
+}
 
 namespace SvVol //<SvValueObjectlibrary
 {
@@ -39,12 +43,12 @@ template <typename T>
 class SVValueObjectClass : public SVObjectClass, public SvOi::IValueObject
 {
 protected:
-	typedef typename T					ValueType;
-	typedef std::vector<ValueType>		ValueVector;
+	using ValueType = typename T;
+	using ValueVector = std::vector<ValueType>;
 
 #pragma region Constructor
-	SVValueObjectClass( LPCTSTR ObjectName );
-	SVValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVALUEOBJECT );
+	explicit SVValueObjectClass( LPCTSTR ObjectName );
+	explicit SVValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVALUEOBJECT );
 
 	virtual ~SVValueObjectClass();
 
@@ -55,7 +59,7 @@ protected:
 public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject() override;
-	virtual HRESULT SetArraySize(int iSize);
+	virtual HRESULT SetArraySize(int32_t iSize);
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) { return E_NOTIMPL; };
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetValue( const T& rValue, int Index = -1 );
@@ -63,12 +67,11 @@ public:
 	virtual HRESULT SetDefaultValue( const T& rValue, bool bResetAll = true );
 	const ValueType& GetDefaultValue() const { return m_DefaultValue; };
 
-	HRESULT SetArrayValues(typename ValueVector::const_iterator BeginIter, typename ValueVector::const_iterator EndIter);
-	HRESULT SetArrayValues(const ValueVector& rValues);
+	virtual HRESULT SetArrayValues(const ValueVector& rValues);
 	virtual HRESULT GetArrayValues(ValueVector& rValues) const;
 
-	HRESULT SetResultSize(int  ResultSize) { m_ResultSize = (ResultSize <= m_ArraySize) ? ResultSize : 0; return S_OK; };
-	HRESULT SetTypeName( LPCTSTR TypeName );
+	void SetResultSize(int32_t  ResultSize);
+	void SetTypeName( LPCTSTR TypeName ) { m_TypeName = TypeName; }
 	bool CompareWithCurrentValue( const std::string& rCompare ) const;
 	
 #pragma region virtual method (IObjectClass/IValueObject)
@@ -78,7 +81,7 @@ public:
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
-	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(m_DefaultValue); };
+	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(&m_DefaultValue); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1,bool fixArrasize = false) override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
@@ -88,16 +91,20 @@ public:
 	virtual void validateValue(const _variant_t& rValue) const override;
 	virtual std::string getTypeName() const override { return m_TypeName; };
 	virtual bool isArray() const override { return 1 < m_ArraySize; };
-	virtual int getArraySize() const override { return m_ArraySize; };
-	virtual int getResultSize() const override { return m_ResultSize; };
+	virtual int32_t getArraySize() const override { return m_ArraySize; };
+	virtual int32_t getResultSize() const override { return m_ResultSize; };
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return m_eResetItem; };
 	virtual bool ResetAlways() const override {	return m_ResetAlways; };
-	virtual long GetByteSize(bool useResultSize = true) const override;
-	virtual DWORD GetType() const override { return ValueType2Variant(m_Value).vt; };
-	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
+	virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const override;
+	virtual DWORD GetType() const override { return ValueType2Variant(valuePtr()).vt; };
 	virtual void setSaveValueFlag(bool shouldSaveValue) override { m_shouldSaveValue = shouldSaveValue; };
-	virtual void setTrData(long memOffset, int pos) const override  { m_memOffset = memOffset; m_trPos = pos; }
-	virtual int getTrPos() const override { return m_trPos; }
+	virtual void setTrData(int32_t memOffset, int32_t memSize, int32_t pos) override;
+	virtual int32_t getTrPos() const override { return m_trPos; }
+	virtual int32_t getMemOffset() const override { return m_memOffset; }
+	///Note that setMemBlockPointer has specialized versions for DoubleSortValue, SVStringValue and SVVariantValue 
+	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
+	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
+	virtual void updateMemBlockData() const override {}
 #pragma endregion virtual method (IObjectClass/IValueObject)
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
@@ -113,12 +120,17 @@ public:
 #pragma region Protected Methods
 protected:
 	void Initialize();
-
-	virtual double ValueType2Double(const T& rValue) const = 0;
-	virtual _variant_t ValueType2Variant(const T& rValue) const = 0;
-	virtual T Variant2ValueType(const _variant_t& rValue) const = 0;
-
 	void init();
+
+	virtual ValueType* reserveLocalMemory();
+	virtual void clearMemoryBlockPointer() {m_pValue = nullptr; }
+
+	///Note these virtual functions cannot be defined here, only in the defined classes until
+	///if constexpr is available due to different types
+	virtual double ValueType2Double(const ValueType& rValue) const = 0;
+	virtual _variant_t ValueType2Variant(const ValueType* pValue) const = 0;
+	virtual ValueType Variant2ValueType(const _variant_t& rValue) const = 0;
+
 
 	//! Convert String to template type !!can throw Exception!!
 	//! If value invalid an exception message will be thrown.
@@ -134,18 +146,13 @@ protected:
 	HRESULT ValidateIndex(int ArrayIndex) const;
 
 	ValueType& DefaultValue() { return m_DefaultValue; };
-	ValueType& Value() { return m_Value; };
-	const ValueType& Value() const { return m_Value; };
-	ValueVector& ValueArray() { return m_ValueArray; };
-
-	ValueType* getValuePointer(int Index);
+	ValueType* valuePtr() { return m_pValue; }
+	const ValueType* valuePtr() const { return m_pValue; }
 
 	std::string FormatOutput(const T& rValue) const;
 	void setOutputFormat( LPCTSTR OutFormat ) { m_OutFormat = OutFormat; };
 	LPCTSTR getOutputFormat() const { return m_OutFormat.c_str(); };
 	bool isLegacyVectorObjectCompatibility() const { return m_LegacyVectorObjectCompatibility; };
-
-	void swap( SVValueObjectClass& rRhs );
 
 	/// Write the Values of this object to the IObjectWriter
 	/// \param rWriter [in,out] The IObjectWriter
@@ -159,32 +166,43 @@ protected:
 	T convertVariantValue(const _variant_t& rValue) const;
 	/// !!can throw Exception!!
 	ValueVector variant2VectorType(const _variant_t& rValue) const;
-	/// Uses move semantics
+
 	_variant_t vectorType2SafeArray(long arraySize) const;
 
-	long GetMemOffset() const { return m_memOffset; }
+	void setResultSizePointer(int32_t* pResultSize);
+	int32_t getMemSizeReserved() const { return m_memSizeReserved; }
+	void setHasChanged(bool hasChanged) const { m_hasChanged = hasChanged; }
+	bool hasChanged() const { return m_hasChanged; }
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
 private:
 	std::string m_TypeName;					//The data type name
-	bool m_shouldSaveValue;					//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
-	bool m_shouldSaveDefaultValue;			//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
-	bool m_ResetAlways;
-	bool m_LegacyVectorObjectCompatibility;
+	bool m_shouldSaveValue{true};			//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
+	bool m_shouldSaveDefaultValue{false};	//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
+	bool m_ResetAlways{false};
+	bool m_LegacyVectorObjectCompatibility{false};
 	std::string m_OutFormat;				//This is used to format the value object to a string
 
-	mutable long m_memOffset {-1L};			//The trigger record memory offset
-	mutable int m_trPos {-1};				//The trigger record position
 	SvOi::SVResetItemEnum m_eResetItem;
 
 	//NOTE! Never access these variables directly as getResultSize and getArraySize are overloaded
-	int m_ArraySize;
-	int m_ResultSize;
+	//>Use int_32_t to make sure it stays constant in size for Shared Memory
+	int32_t m_ArraySize {0L};
+	int32_t m_ResultSize {0L};
+	int32_t* m_pResultSize{nullptr};
 
 	ValueType m_DefaultValue;
-	ValueType m_Value;
-	ValueVector m_ValueArray;
+	///This value object pointer is always a pointer to the template type, for SVStringValueObjectClass and SVVariantValueObjectClass
+	///the memory block pointer is stored in the derived class
+	ValueType* m_pValue{nullptr};
+
+	std::vector<uint8_t> m_valueData;	///Local memory when value object not part of inspection or during startup
+
+	int32_t m_memOffset {-1L};		///The memory offset in the inspection data
+	int32_t m_memSizeReserved{0L};	///The block memory size reserved
+	int32_t m_trPos {-1L};			///The trigger record position
+	mutable bool m_hasChanged{true};///Flag if value has changed since last update
 #pragma endregion Member Variables
 };
 

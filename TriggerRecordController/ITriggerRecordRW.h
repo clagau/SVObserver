@@ -54,7 +54,7 @@ namespace SvTrc
 		/// Write inspection value data 
 		/// \param pMemSource [in] pointer to memory containing the value data 
 		/// \param memBytes [in] The number of bytes to copy
-		virtual void writeValueData(const BYTE* pMemSource, long memBytes) = 0;
+		virtual void writeValueData(const uint8_t* pMemSource, int32_t memBytes) = 0;
 	};
 
 	typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;

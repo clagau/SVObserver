@@ -62,7 +62,7 @@ public:
 	virtual IImagePtr createNewImageHandle(int pos) override;
 
 	virtual void initValueData() override;
-	virtual void writeValueData(const BYTE* pMemSource, long memBytes) override;
+	virtual void writeValueData(const uint8_t* pMemSource, int32_t memBytes) override;
 #pragma endregion ITriggerRecordRW Methods
 
 	void blockUpdateLastTrId() { m_blockUpdateLastId = true; };

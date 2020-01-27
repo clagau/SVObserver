@@ -564,5 +564,7 @@ enum MessageTextEnum
 
 	Tid_ProtBuf_ConvertToGUID_WrongSize,
 	Tid_CircularReference,
+
+	Tid_ErrorMemoryAllocation,
 };
 } //namespace SvStl

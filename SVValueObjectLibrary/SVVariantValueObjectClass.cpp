@@ -72,7 +72,9 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	// new-style: store all array elements:
 	if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
 	{
-		for (size_t i = 0; i < ValueArray.size(); i++)
+		int32_t arraySize = static_cast<int32_t> (ValueArray.size());
+		SetArraySize(arraySize);
+		for (int32_t i = 0; i < arraySize; i++)
 		{
 			_variant_t& rValue = ValueArray[i];
 			if( rValue.vt == VT_BSTR )
@@ -83,16 +85,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 					rValue.SetString( Temp.c_str() );
 				}
 			}
-		}
-
-		SetArraySize( static_cast<int> (ValueArray.size()));
-		if ( 1 == getArraySize() )
-		{
-			Value() = ValueArray[0];
-		}
-		else
-		{
-			std::swap(__super::ValueArray(), ValueArray);
+			SetValue(rValue, i);
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ValueArray) )
@@ -104,7 +97,9 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue() ) )
 	{
-		for( size_t i = 0 ; i < BucketArray.size(); i++ )
+		int32_t arraySize = static_cast<int32_t> (ValueArray.size());
+		SetArraySize(arraySize);
+		for(int32_t i = 0 ; i < BucketArray.size(); i++ )
 		{
 			_variant_t& rValue = BucketArray[i][0];
 			if( rValue.vt == VT_BSTR )
@@ -115,17 +110,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 					rValue.SetString( Temp.c_str() );
 				}
 			}
-		}
-
-		if ( 1 == getArraySize() )
-		{
-			// In configurations the value are placed in bucket 1
-			Value() = BucketArray[1][0];
-		}
-		else
-		{
-			// In configurations the values are placed in bucket 1
-			std::swap(__super::ValueArray(), BucketArray[1] );
+			SetValue(rValue, i);
 		}
 	}
 	else
@@ -138,11 +123,123 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	return Result;
 }
 
-VARTYPE SVVariantValueObjectClass::GetDefaultType( ) const
+HRESULT SVVariantValueObjectClass::SetArrayValues(const ValueVector& rValues)
 {
-	return GetDefaultValue().vt;
+	HRESULT Result(E_FAIL);
+
+	int32_t Size = static_cast<int32_t> (rValues.size());
+	assert(Size <= getArraySize());
+	if (Size <= m_variantData.size())
+	{
+		SetResultSize(Size);
+		if(0 < Size)
+		{
+			std::copy(rValues.begin(), rValues.end(), m_variantData.begin());
+		}
+		Result = S_OK;
+	}
+	else
+	{
+		Result = SVMSG_SVO_33_OBJECT_INDEX_INVALID;
+	}
+	return Result;
 }
 
+void SVVariantValueObjectClass::setMemBlockPointer(uint8_t* pMemBlockBase)
+{
+	int32_t memOffset = getMemOffset();
+	if (nullptr != pMemBlockBase && -1 != memOffset)
+	{
+		if (isArray())
+		{
+			setResultSizePointer(reinterpret_cast<int32_t*> (pMemBlockBase + memOffset));
+			m_pMemBlockData = (pMemBlockBase + memOffset + sizeof(int32_t));
+		}
+		else
+		{
+			setResultSizePointer(nullptr);
+			m_pMemBlockData = pMemBlockBase + memOffset;
+		}
+		updateMemBlockData();
+	}
+}
+
+void SVVariantValueObjectClass::updateMemBlockData() const
+{
+	///Here we only want the data byte size
+	int32_t dataByteSize = getByteSize(true, false);
+	///This is to make sure that enough space has been reserved for memory block data
+	if (0 < dataByteSize && dataByteSize <= getMemSizeReserved() && nullptr != m_pMemBlockData)
+	{
+		if (hasChanged())
+		{
+			uint8_t* pMemoryLocation = m_pMemBlockData;
+			int32_t byteSize = dataByteSize / getArraySize();
+			int resultSize = isArray() ? getResultSize() : 1;
+			for (int i = 0; i < resultSize; ++i)
+			{
+				_variant_t value;
+				//!Note this calls the virtual function important for Linked values
+				GetValue(value, i);
+				const void* pValue(nullptr);
+
+				switch (value.vt)
+				{
+					case VT_BOOL:
+					case VT_I1:
+					case VT_UI1:
+					case VT_I2:
+					case VT_UI2:
+					case VT_I4:
+					case VT_UI4:
+					case VT_I8:
+					case VT_UI8:
+					case VT_INT:
+					case VT_UINT:
+					case VT_R4:
+					case VT_R8:
+					{
+						///we take the address of any type in the union as all have the same address!
+						pValue = &value.boolVal;
+						break;
+					}
+					case VT_BSTR:
+					{
+						std::string tempString = SvUl::createStdString(value.bstrVal);
+						pValue = nullptr;
+						///Make sure string fits to the reserved size
+						if(SvDef::cMaxStringByteSize < tempString.size())
+						{
+							//Copy also the ending \0 of the string
+							memcpy(pMemoryLocation, tempString.c_str(), tempString.size() + 1);
+							pMemoryLocation += tempString.size() + 1;
+						}
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+				//This is for all types except VT_BSTR
+				if (nullptr != pValue)
+				{
+					memcpy(pMemoryLocation, pValue, byteSize);
+					pMemoryLocation += byteSize;
+				}
+			}
+			setHasChanged(false);
+		}
+	}
+	else
+	{
+		if (0 < getMemSizeReserved() && nullptr != m_pMemBlockData)
+		{
+			///Clear the memory block data
+			memset(m_pMemBlockData, 0, getMemSizeReserved());
+		}
+	}
+}
 
 HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 {
@@ -237,6 +334,21 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 	return Result;
 }
 
+_variant_t* SVVariantValueObjectClass::reserveLocalMemory()
+{
+	_variant_t* pResult{nullptr};
+
+	if (m_variantData.size() != static_cast<size_t> (getArraySize()))
+	{
+		m_variantData.resize(getArraySize(), GetDefaultValue());
+	}
+	if (0 < m_variantData.size())
+	{
+		pResult = &m_variantData.at(0);
+	}
+	return pResult;
+}
+
 double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) const
 {
 	double Result(0.0);
@@ -314,153 +426,73 @@ std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rVa
 	return Result;
 }
 
-long SVVariantValueObjectClass::GetByteSize(bool useResultSize) const
+int32_t SVVariantValueObjectClass::getByteSize(bool useResultSize, bool memBlockData) const
 {
-	long result(0L);
+	int32_t result(0L);
 
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed())
+	///When for memory block and has no attributes then no memory requirements and return 0
+	if (memBlockData && 0 == ObjectAttributesAllowed())
 	{
-		_variant_t value;
-		GetValue(value, 0);
-		switch (value.vt)
-		{
-		case VT_BOOL:
-			result = sizeof(VARIANT::boolVal);
-			break;
-		case VT_I1:
-			result = sizeof(VARIANT::cVal);
-			break;
-		case VT_UI1:
-			result = sizeof(VARIANT::bVal);
-			break;
-		case VT_I2:
-			result = sizeof(VARIANT::iVal);
-			break;
-		case VT_UI2:
-			result = sizeof(VARIANT::uiVal);
-			break;
-		case VT_I4:
-			result = sizeof(VARIANT::lVal);
-			break;
-		case VT_UI4:
-			result = sizeof(VARIANT::ulVal);
-			break;
-		case VT_I8:
-			result = sizeof(VARIANT::llVal);
-			break;
-		case VT_UI8:
-			result = sizeof(VARIANT::ullVal);
-			break;
-		case VT_INT:
-			result = sizeof(VARIANT::intVal);
-			break;
-		case VT_UINT:
-			result = sizeof(VARIANT::uintVal);
-			break;
-		case VT_R4:
-			result = sizeof(VARIANT::fltVal);
-			break;
-		case VT_R8:
-			result = sizeof(VARIANT::dblVal);
-			break;
-		case VT_BSTR:
-			result = SvDef::cMaxStringByteSize;
-			break;
-		default:
-			break;
-		}
-
-		long numberOfElements = useResultSize ? getResultSize() : getArraySize();
-		result *= numberOfElements;
+		return result;
 	}
 
-	return result;
-}
-
-long SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
-{
-	long result{0L};
-
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
+	_variant_t value;
+	GetValue(value, 0);
+	switch (value.vt)
 	{
-		result = GetByteSize(false);
-		if (result <= MemByteSize)
-		{
-			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
-			long byteSize = result / getArraySize();
-			for (int i = 0; i < getResultSize(); ++i)
-			{
-				_variant_t Value;
-				//!Note this calls the virtual function important for Linked values
-				GetValue(Value);
-				const void* pValue(nullptr);
+	case VT_BOOL:
+		result = sizeof(VARIANT::boolVal);
+		break;
+	case VT_I1:
+		result = sizeof(VARIANT::cVal);
+		break;
+	case VT_UI1:
+		result = sizeof(VARIANT::bVal);
+		break;
+	case VT_I2:
+		result = sizeof(VARIANT::iVal);
+		break;
+	case VT_UI2:
+		result = sizeof(VARIANT::uiVal);
+		break;
+	case VT_I4:
+		result = sizeof(VARIANT::lVal);
+		break;
+	case VT_UI4:
+		result = sizeof(VARIANT::ulVal);
+		break;
+	case VT_I8:
+		result = sizeof(VARIANT::llVal);
+		break;
+	case VT_UI8:
+		result = sizeof(VARIANT::ullVal);
+		break;
+	case VT_INT:
+		result = sizeof(VARIANT::intVal);
+		break;
+	case VT_UINT:
+		result = sizeof(VARIANT::uintVal);
+		break;
+	case VT_R4:
+		result = sizeof(VARIANT::fltVal);
+		break;
+	case VT_R8:
+		result = sizeof(VARIANT::dblVal);
+		break;
+	case VT_BSTR:
+		result = SvDef::cMaxStringByteSize;
+		break;
+	default:
+		break;
+	}
 
-				switch (Value.vt)
-				{
-				case VT_BOOL:
-					pValue = &Value.boolVal;
-					break;
-				case VT_I1:
-					pValue = &Value.cVal;
-					break;
-				case VT_UI1:
-					pValue = &Value.bVal;
-					break;
-				case VT_I2:
-					pValue = &Value.iVal;
-					break;
-				case VT_UI2:
-					pValue = &Value.uiVal;
-					break;
-				case VT_I4:
-					pValue = &Value.lVal;
-					break;
-				case VT_UI4:
-					pValue = &Value.ulVal;
-					break;
-				case VT_I8:
-					pValue = &Value.llVal;
-					break;
-				case VT_UI8:
-					pValue = &Value.ullVal;
-					break;
-				case VT_INT:
-					pValue = &Value.intVal;
-					break;
-				case VT_UINT:
-					pValue = &Value.uintVal;
-					break;
-				case VT_R4:
-					pValue = &Value.fltVal;
-					break;
-				case VT_R8:
-					pValue = &Value.dblVal;
-					break;
-				case VT_BSTR:
-					{
-						std::string tempString = SvUl::createStdString(Value.bstrVal);
-						pValue = nullptr;
-						memcpy(pMemoryLocation, tempString.c_str(), tempString.size());
-						pMemoryLocation += tempString.size();
-					}
-					break;
-				default:
-					break;
-				}
-				//This is for all types except VT_BSTR
-				if (nullptr != pValue)
-				{
-					memcpy(pMemoryLocation, pValue, byteSize);
-					pMemoryLocation += byteSize;
-				}
-			}
-		}
-		else
-		{
-			result = -1L;
-		}
+	int32_t numberOfElements = useResultSize ? getResultSize() : getArraySize();
+	result *= numberOfElements;
+
+	//For memory block data that is an array the first value shall contain the result size which can be variable
+	if (memBlockData && isArray())
+	{
+		result += sizeof(int32_t);
 	}
 
 	return result;
@@ -475,7 +507,7 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	_variant_t Value;
 
 	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
 		SVVariantValueObjectClass::GetValue(Value, i);

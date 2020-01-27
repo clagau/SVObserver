@@ -30,9 +30,9 @@ public:
 	virtual ~SVInt64ValueObjectClass();
 
 protected:
-	virtual double ValueType2Double(const __int64& rValue) const override { return static_cast<double> (rValue); };
-	virtual _variant_t ValueType2Variant( const __int64& rValue ) const override { return _variant_t( rValue ); };
-	virtual __int64 Variant2ValueType( const _variant_t& rValue ) const override { return __int64( rValue ); };
+	virtual double ValueType2Double(const __int64& rValue) const override { return static_cast<double> (rValue); }
+	virtual _variant_t ValueType2Variant(const __int64* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }
+	virtual __int64 Variant2ValueType(const _variant_t& rValue) const override { return __int64(rValue); }
 
 	//! Convert a string in a __int64. Throw an exception if the string isn't convertible into a __int64.
 	//! \param rValue [in] The input string

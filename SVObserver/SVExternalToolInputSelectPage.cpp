@@ -488,7 +488,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 			SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
 			if (pVariant)
 			{
-				type |= pVariant->GetValueTypeEx();
+				type |= pVariant->GetValueType();
 				type |= pVariant->GetDefaultType();
 			}
 

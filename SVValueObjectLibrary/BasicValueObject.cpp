@@ -36,7 +36,6 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, bool Node, SvPb::SVObjectSubTypeEnum ObjectSubType )
 : SVObjectClass(ObjectName)
-	, m_Created(false)
 	, m_Node(Node)
 
 {
@@ -93,18 +92,17 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ 
 			if( VT_BSTR == TempValue.vt )
 			{
 				std::string Temp = SvUl::createStdString( TempValue );
-				Lock();
+				std::lock_guard<std::mutex> guard(m_valueMutex);
 				m_Value.Clear();
 				m_Value.vt = VT_BSTR;
 				m_Value.bstrVal = _bstr_t(Temp.c_str()).copy();
-				Unlock();
 			}
 			else
 			{
-				Lock();
+				std::lock_guard<std::mutex> guard(m_valueMutex);
 				m_Value = TempValue;
-				Unlock();
 			}
+			m_hasChanged = true;
 		}
 	}
 
@@ -116,10 +114,12 @@ HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*
 {
 	HRESULT Result( S_FALSE );
 
-	Lock();
-	m_Value.Clear();
-	m_Value.SetString( rValue.c_str() );
-	Unlock();
+	{
+		std::lock_guard<std::mutex> guard(m_valueMutex);
+		m_Value.Clear();
+		m_Value.SetString( rValue.c_str() );
+		m_hasChanged = true;
+	}
 
 	RefreshOwner( SVObjectClass::PostRefresh );
 	return Result;
@@ -189,114 +189,115 @@ HRESULT BasicValueObject::getValue(std::string& rValue, int Index /*= -1*/) cons
 	return Result;
 }
 
-long BasicValueObject::GetByteSize(bool useResultSize) const
+int32_t BasicValueObject::getByteSize(bool useResultSize, bool memBlockData) const
 {
-	long result(0L);
+	int32_t result(0L);
+
+	///When for memory block and has no attributes then no memory requirements and return 0
+	if (memBlockData && 0 == ObjectAttributesAllowed())
+	{
+		return result;
+	}
 
 	//Note: BasicValueObject cannot be an array so memory size only for one element
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed())
+	switch (GetType())
 	{
-		switch (GetType())
+	case VT_BOOL:
+		result = sizeof(VARIANT::boolVal);
+		break;
+	case VT_I4:
+		result = sizeof(VARIANT::lVal);
+		break;
+	case VT_I8:
+		result = sizeof(VARIANT::llVal);
+		break;
+	case VT_INT:
+		result = sizeof(VARIANT::intVal);
+		break;
+	case VT_R4:
+		result = sizeof(VARIANT::fltVal);
+		break;
+	case VT_R8:
+		result = sizeof(VARIANT::dblVal);
+		break;
+	case VT_BSTR:
 		{
-		case VT_BOOL:
-			result = sizeof(VARIANT::boolVal);
-			break;
-		case VT_I4:
-			result = sizeof(VARIANT::lVal);
-			break;
-		case VT_I8:
-			result = sizeof(VARIANT::llVal);
-			break;
-		case VT_INT:
-			result = sizeof(VARIANT::intVal);
-			break;
-		case VT_R4:
-			result = sizeof(VARIANT::fltVal);
-			break;
-		case VT_R8:
-			result = sizeof(VARIANT::dblVal);
-			break;
-		case VT_BSTR:
-			{
-				std::string tempString = SvUl::createStdString(m_Value.bstrVal);
-				//Add place for the ending \0 of the string
-				result = static_cast<long> (tempString.size() + 1);
-				break;
-			}
-		default:
+			std::string tempString = SvUl::createStdString(m_Value.bstrVal);
+			//Add place for the ending \0 of the string
+			result = static_cast<long> (tempString.size() + 1);
 			break;
 		}
+	default:
+		break;
 	}
+
 	return result;
 }
 
-long BasicValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
-{
-	long result {0L};
-
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed() && -1 != m_memOffset)
+void BasicValueObject::setTrData(int32_t memOffset, int32_t memSize, int32_t pos)
+{ 
+	m_trPos = pos;
+	///When memOffset and memSize are -1 then only the trigger record position is changed
+	if (-1 == memOffset && -1 == memSize)
 	{
-		result = GetByteSize(false);
-		if (result <= MemByteSize)
+		return;
+	}
+	m_memOffset = memOffset;
+	m_memSizeReserved = memSize;
+}
+
+void BasicValueObject::setMemBlockPointer(uint8_t* pMemBlockBase)
+{
+	if(nullptr != pMemBlockBase && -1 != m_memOffset)
+	{
+		m_pMemBlock = pMemBlockBase + m_memOffset;
+		///Initialize the memory block value
+		updateMemBlockData();
+	}
+}
+
+void BasicValueObject::updateMemBlockData() const
+{
+	///Copy only if it has changed since last update
+	if(m_hasChanged && nullptr != m_pMemBlock)
+	{
+		int32_t dataByteSize = getByteSize(true, false);
+		///This is to make sure that enough space has been reserved for memory block data
+		if (dataByteSize <= m_memSizeReserved)
 		{
-			BYTE* pMemoryLocation = pMemoryBlock + m_memOffset;
 			//Note: BasicValueObject cannot be an array so copy only one element
-			const void* pValue(nullptr);
+			const void* pValue{nullptr};
 
 			switch (m_Value.vt)
 			{
-			case VT_BOOL:
-				pValue = &m_Value.boolVal;
-				break;
-			case VT_I4:
-				pValue = &m_Value.lVal;
-				break;
-			case VT_I8:
-				pValue = &m_Value.llVal;
-				break;
-			case VT_INT:
-				pValue = &m_Value.intVal;
-				break;
-			case VT_R4:
-				pValue = &m_Value.fltVal;
-				break;
-			case VT_R8:
-				pValue = &m_Value.dblVal;
-				break;
-			case VT_BSTR:
+				case VT_BOOL:
+				case VT_I4:
+				case VT_I8:
+				case VT_INT:
+				case VT_R4:
+				case VT_R8:
+					pValue = &m_Value;
+					break;
+				case VT_BSTR:
 				{
 					std::string tempString = SvUl::createStdString(m_Value.bstrVal);
-					pValue = nullptr;
 					//Copy also the ending \0 of the string
-					memcpy(pMemoryBlock, tempString.c_str(), tempString.size() + 1);
+					memcpy(m_pMemBlock, tempString.c_str(), tempString.size() + 1);
 					break;
 				}
-			default:
-				break;
+				default:
+					break;
 			}
 			//This is for all types except VT_BSTR
 			if (nullptr != pValue)
 			{
-				memcpy(pMemoryLocation, pValue, result);
+				memcpy(m_pMemBlock, pValue, dataByteSize);
 			}
 		}
-		else
-		{
-			result = -1L;
-		}
 	}
-	else
-	{
-		result = 0L;
-	}
-
-
-	return result;
 }
 
-HRESULT BasicValueObject::getValue( BOOL& rValue ) const
+HRESULT BasicValueObject::getValue(BOOL& rValue) const
 {
 	HRESULT Result = S_OK;
 
@@ -487,7 +488,6 @@ void BasicValueObject::Create( SVObjectClass* pOwner )
 		CreateObject( CreateStruct );
 
 	}
-	::InitializeCriticalSection( &m_CriticalSection );
 	m_Created = true;
 }
 
@@ -496,19 +496,8 @@ void BasicValueObject::Destroy()
 	if( m_Created )
 	{
 		m_Value.Clear();
-		::DeleteCriticalSection( &m_CriticalSection );
 		m_Created = false;
 	}
-}
-
-void BasicValueObject::Lock()
-{
-	::EnterCriticalSection( &m_CriticalSection );
-}
-
-void BasicValueObject::Unlock()
-{
-	::LeaveCriticalSection( &m_CriticalSection );
 }
 
 HRESULT BasicValueObject::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )

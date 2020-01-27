@@ -417,12 +417,12 @@ void TriggerRecord::initValueData()
 	}
 }
 
-void TriggerRecord::writeValueData(const BYTE* pMemSource, long memBytes)
+void TriggerRecord::writeValueData(const uint8_t* pMemSource, int32_t memBytes)
 {
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
-		BYTE* pData = m_rData.getValueData();
+		uint8_t* pData = m_rData.getValueData();
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
 		std::string DebugString = SvUl::Format(_T("writeValueData; %d\n"), getId());
 		::OutputDebugString(DebugString.c_str());
@@ -432,7 +432,7 @@ void TriggerRecord::writeValueData(const BYTE* pMemSource, long memBytes)
 			//The destination start is the size 
 			std::atomic_long* pDataSize = reinterpret_cast<std::atomic_long*> (pData);
 			//The next position is where the value data list is streamed
-			pData = reinterpret_cast<BYTE*> (pDataSize + 1);
+			pData = reinterpret_cast<uint8_t*> (pDataSize + 1);
 			memcpy(pData, pMemSource, memBytes);
 			//The data size needs to be set after the memcpy as only when this is not 0 is the TR valid
 			*pDataSize = memBytes;

@@ -98,6 +98,7 @@ void SVBarCodeAnalyzerClass::init()
 	// Set default values
 	msv_szBarCodeValue.SetDefaultValue (_T(""));
 	msv_szBarCodeValue.setSaveValueFlag(false);
+	msv_szBarCodeValue.SetMaxByteSize(SvDef::cMaxStringByteSize);
 	msv_szRegExpressionValue.SetDefaultValue (_T(""));
 	msv_lBarCodeType.SetDefaultValue(SVDataMatrix);
 	msv_dOrientation.SetDefaultValue(SVValueDefault);
@@ -445,7 +446,8 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						BarCodeValue.resize(BarCodeString.size() );
 						//Convert string character to byte vector
 						std::copy( BarCodeString.begin(), BarCodeString.end(), BarCodeValue.begin() );
-						if ( S_OK != msv_RawData.SetResultSize( static_cast<int> ( BarCodeString.size() ) ) || S_OK != msv_RawData.SetArrayValues( BarCodeValue.begin(), BarCodeValue.end()))
+						msv_RawData.SetResultSize(static_cast<int32_t> (BarCodeString.size()));
+						if(S_OK != msv_RawData.SetArrayValues(BarCodeValue))
 						{
 							Result = false;
 							if (nullptr != pErrorMessages)

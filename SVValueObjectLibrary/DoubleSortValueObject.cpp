@@ -50,10 +50,6 @@ const DoubleSortValueObject& DoubleSortValueObject::operator = (const DoubleSort
 	__super::operator = (rhs);
 	return *this;
 }
-
-DoubleSortValueObject::~DoubleSortValueObject()
-{
-}
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -64,6 +60,8 @@ HRESULT DoubleSortValueObject::setSortContainerPtr(spValueObjectSortContainer so
 	{
 		m_DummySortContainer.bIsActive = false;
 		m_spSortContainer.swap(sortMap);
+		SetResultSize(static_cast<int32_t> (getSortContainerSize()));
+		setHasChanged(true);
 		result = S_OK;
 	}
 	return result;
@@ -74,7 +72,8 @@ HRESULT DoubleSortValueObject::setSortContainerDummy(const DummySortContainer& r
 	if (m_isCreated)
 	{
 		m_DummySortContainer = rDummy;
-		
+		SetResultSize(static_cast<int32_t> (getSortContainerSize()));
+		setHasChanged(true);
 		result = S_OK;
 	}
 	return result;
@@ -90,11 +89,13 @@ HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
 
 	if (0 <= Index && m_DummySortContainer.bIsActive && m_DummySortContainer.SimpleSize > Index)
 	{
+		setHasChanged(true);
 		return SVValueObjectClass<double>::SetValue(rValue, Index);
 	}
 
 	if (0 <= Index && m_spSortContainer.get()&& m_spSortContainer->size() > Index)
 	{
+		setHasChanged(true);
 		return SVValueObjectClass<double>::SetValue( rValue, m_spSortContainer->at(Index));
 	}
 	return E_FAIL;
@@ -129,42 +130,36 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 	return E_FAIL;
 }
 
-
-long DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
+HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 {
-	long result{0L};
+	HRESULT Result(E_FAIL);
 
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
+	int32_t Size = static_cast<int32_t> (rValues.size());
+	assert(Size <= getArraySize());
+ 	if (Size <= m_doubleData.size())
 	{
-		result = GetByteSize(false);
-		if (result <= MemByteSize)
+
+		SetResultSize(Size);
+		if (0 < Size && m_DummySortContainer.bIsActive)
 		{
-			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
-			//Note for double sort value always use array!
-			//For arrays we need to write the result size at the start of the memory as an int
-			*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
-			pMemoryLocation += sizeof(int);
-			for(int i=0; i < getResultSize(); ++i)
-			{
-				int index = i;
-				if(!m_DummySortContainer.bIsActive)
-				{
-					index = m_spSortContainer->at(i);
-				}
-				double value{0.0};
-				SVValueObjectClass<double>::GetValue(value, index);
-				memcpy(pMemoryLocation, &value, sizeof(double));
-				pMemoryLocation += sizeof(double);
-			}
+			std::copy(rValues.begin(), rValues.end(), m_doubleData.begin());
 		}
 		else
 		{
-			result = -1L;
+			double value = 0;
+			for (int i = 0; i < Size && S_OK == Result; i++)
+			{
+				//must get one by one, because values can be disordered
+				Result = SetValue(value, i);
+			}
 		}
+		Result = S_OK;
 	}
-
-	return result;
+	else
+	{
+		Result = SVMSG_SVO_33_OBJECT_INDEX_INVALID;
+	}
+	return Result;
 }
 
 HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues) const
@@ -185,23 +180,85 @@ HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues) con
 	return Result;
 }
 
+void DoubleSortValueObject::setMemBlockPointer(uint8_t* pMemBlockBase)
+{
+	int32_t memOffset = getMemOffset();
+	if (nullptr != pMemBlockBase && -1 != memOffset)
+	{
+		///This is always an array
+		setResultSizePointer(reinterpret_cast<int32_t*> (pMemBlockBase + memOffset));
+		m_pMemBlockData = (pMemBlockBase + memOffset + sizeof(int32_t));
+		updateMemBlockData();
+	}
+}
+
+void DoubleSortValueObject::updateMemBlockData() const
+{
+	///Here we only want the data byte size
+	int32_t dataByteSize = getByteSize(true, false);
+	///This is to make sure that enough space has been reserved for memory block data and the object has attributes
+	if (0 < dataByteSize && dataByteSize <= getMemSizeReserved() && nullptr != m_pMemBlockData)
+	{
+		if (hasChanged())
+		{
+			uint8_t* pMemoryLocation = m_pMemBlockData;
+			std::vector<double> sortedResult;
+			if(S_OK == GetArrayValues(sortedResult) && dataByteSize == static_cast<int32_t> (sortedResult.size() * sizeof(double)))
+			{
+				memcpy(pMemoryLocation, &sortedResult.at(0), dataByteSize);
+			}
+			setHasChanged(false);
+		}
+	}
+	else
+	{
+		if (0 < getMemSizeReserved() && nullptr != m_pMemBlockData)
+		{
+			///Clear the memory block data
+			memset(m_pMemBlockData, 0, getMemSizeReserved());
+		}
+	}
+}
+
 HRESULT DoubleSortValueObject::GetArrayValues(std::vector<double>& rValues) const
 {
 	HRESULT Result(S_OK);
 
-	int iResultSize = getResultSize();
-	assert( iResultSize <= getArraySize() );
-	rValues.resize( iResultSize );
-	double value = 0;
-	for (int i=0; i<iResultSize && S_OK==Result; i++)
+	int resultSize = getResultSize();
+	assert( resultSize <= getArraySize() );
+	rValues.resize( resultSize );
+	if (m_DummySortContainer.bIsActive && m_doubleData.size())
 	{
-		//must be get once by once, because values can be disorder and not in a row.
-		Result = GetValue(value, i);
-		rValues[i] = value;
+		std::copy(m_doubleData.begin(), m_doubleData.begin() + resultSize, rValues.begin());
+	}
+	else
+	{
+		double value = 0;
+		for (int i=0; i < resultSize && S_OK==Result; i++)
+		{
+			//must get one by one, because values can be disordered
+			Result = GetValue(value, i);
+			rValues[i] = value;
+		}
 	}
 
 	return Result;
 }
+
+double* DoubleSortValueObject::reserveLocalMemory()
+{
+	double* pResult {nullptr};
+	if (m_doubleData.size() != static_cast<size_t> (getArraySize()))
+	{
+		m_doubleData.resize(getArraySize(), GetDefaultValue());
+	}
+	if (0 < m_doubleData.size())
+	{
+		pResult = &m_doubleData.at(0);
+	}
+	return pResult;
+}
+
 
 size_t DoubleSortValueObject::getSortContainerSize() const 
 { 
@@ -233,9 +290,9 @@ size_t  DoubleSortValueObject::getSortContainerCapacity() const
 		return 0;
 	}
 }
-int  DoubleSortValueObject::getResultSize() const  
+int32_t  DoubleSortValueObject::getResultSize() const
 { 
-	return static_cast<int> (getSortContainerSize());
+	return static_cast<int32_t> (getSortContainerSize());
 
 }
 

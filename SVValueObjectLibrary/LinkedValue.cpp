@@ -97,7 +97,7 @@ HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 			long lBound(0), uBound(0);
 			SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
 			SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
-			long cnt_elements = uBound - lBound + 1;
+			int32_t cnt_elements = uBound - lBound + 1;
 			if (getArraySize() != cnt_elements)
 			{
 				SetArraySize(cnt_elements);
@@ -117,7 +117,7 @@ HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool
 		long lBound(0), uBound(0);
 		SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
 		SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
-		long cnt_elements = uBound - lBound + 1;
+		int32_t cnt_elements = uBound - lBound + 1;
 		if (getArraySize() != cnt_elements && !fixArraysize)
 		{
 			SetArraySize(cnt_elements);
@@ -130,13 +130,23 @@ HRESULT LinkedValue::setValue(const std::string& rValue, int Index /*= -1*/)
 	return __super::setValue(rValue, Index);
 }
 
+void LinkedValue::updateMemBlockData() const
+{
+	///When the linked value is an indirect value we need to always update it
+	if(isIndirectValue())
+	{
+		setHasChanged(true);
+	}
+	__super::updateMemBlockData();
+}
+
 HRESULT  LinkedValue::SetValue(const _variant_t& rValue, int Index)
 {
 	///enabling setting Linked Value
 	if ((Index == -1) && isArray())
 	{
 		Index = 0;
-		SetArraySize(0);
+		SetArraySize(0L);
 	}
 	return __super::SetValue(rValue, Index);
 }

@@ -1863,7 +1863,7 @@ void SVExternalToolTaskData::InitializeInputs()
 			if (rInputValue.GetDefaultType() == VT_EMPTY)
 			{
 				bool bSetVal {true};
-				if (VT_BSTR == rInputValue.GetValueType() || (rInputDef.getDefaultValue().vt & ~VT_ARRAY) == rInputValue.GetValueTypeEx())
+				if (VT_BSTR == rInputValue.GetValueType() || (rInputDef.getDefaultValue().vt & ~VT_ARRAY) == rInputValue.GetValueType())
 				{
 					bSetVal = false;
 				}

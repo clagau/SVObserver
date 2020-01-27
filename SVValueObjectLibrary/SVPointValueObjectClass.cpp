@@ -61,16 +61,19 @@ SVPointValueObjectClass::~SVPointValueObjectClass()
 {
 }
 
-_variant_t SVPointValueObjectClass::ValueType2Variant( const SVPoint<long>& rValue ) const
+_variant_t SVPointValueObjectClass::ValueType2Variant(const SVPoint<long>* pValue) const
 {
 	_variant_t Result;
 
-	Result.SetString( ConvertType2String(rValue).c_str() );
+	if(nullptr != pValue)
+	{
+		Result.SetString( ConvertType2String(*pValue).c_str() );
+	}
 
 	return Result;
 }
 
-SVPoint<long> SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
+SVPoint<long> SVPointValueObjectClass::Variant2ValueType( const _variant_t& rValue) const
 {
 	SVPoint<long> Result;
 
@@ -112,67 +115,6 @@ SVPoint<long> SVPointValueObjectClass::ConvertString2Type( const std::string& rV
 	return SVPoint<long>(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
-long SVPointValueObjectClass::GetByteSize(bool useResultSize) const
-{
-	long result(0L);
-
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed())
-	{
-		//SVPointValueObject has 2 long values for each point
-		long numberOfElements = useResultSize ? getResultSize() : getArraySize();
-		result = 2 * sizeof(double) * numberOfElements;
-		//If the value object is an array the first value shall contain the result size which is variable
-		if (isArray())
-		{
-			result += sizeof(int);
-		}
-	}
-
-	return result;
-}
-
-
-long SVPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
-{
-	long result {GetByteSize(false)};
-
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
-	{
-		result = GetByteSize(false);
-		if (result <= MemByteSize)
-		{
-			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
-			if (isArray())
-			{
-				//For arrays we need to write the result size at the start of the memory as an int
-				*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
-				pMemoryLocation += sizeof(int);
-			}
-			for (int i = 0; i < getResultSize(); ++i)
-			{
-				SVPoint<long> Value;
-				SVPointValueObjectClass::GetValue(Value, i);
-				memcpy(pMemoryLocation, &Value.m_x, sizeof(Value.m_x));
-				pMemoryLocation += sizeof(Value.m_x);
-				memcpy(pMemoryLocation, &Value.m_y, sizeof(Value.m_y));
-				pMemoryLocation += sizeof(Value.m_y);
-			}
-		}
-		else
-		{
-			result = -1L;
-		}
-	}
-	else
-	{
-		result = 0L;
-	}
-
-	return result;
-}
-
 void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
@@ -185,7 +127,7 @@ void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	Value.Clear();
 
 	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		SVPoint<long> PointValue;
 		//Make sure this is not a derived virtual method which is called

@@ -35,9 +35,9 @@ public:
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
 protected:
-	virtual double ValueType2Double(const double& rValue) const override { return rValue; };
-	virtual _variant_t ValueType2Variant( const double& rValue ) const override { return _variant_t( rValue ); };
-	virtual double Variant2ValueType( const _variant_t& rValue ) const override { return double( rValue ); };
+	virtual double ValueType2Double(const double& rValue) const override { return rValue; }
+	virtual _variant_t ValueType2Variant(const double* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }
+	virtual double Variant2ValueType(const _variant_t& rValue) const override { return double(rValue); }
 
 	//! Convert a string in a double. Throw an exception if the string isn't convertible into a double
 	//! \param rValue [in] The input string

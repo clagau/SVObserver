@@ -43,8 +43,8 @@ private:
 
 	bool setInspectionBuffers(LPCSTR testAreaStr);
 	bool setIndependentBuffers(LPCSTR testAreaStr);
-	bool writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<BYTE>>& rDataVector);
-	int createDataDefContainer(std::vector<std::vector<BYTE>>& rDataMemVector, SvPb::DataDefinitionList& rDataDefList);
+	bool writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<uint8_t>>& rDataVector);
+	int createDataDefContainer(std::vector<std::vector<uint8_t>>& rDataMemVector, SvPb::DataDefinitionList& rDataDefList);
 	
 	SvTrc::ITriggerRecordControllerRW &m_TRController;
 	TrcTesterConfiguration& m_config;

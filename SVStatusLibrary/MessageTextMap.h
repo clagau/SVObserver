@@ -599,5 +599,7 @@ namespace SvStl
 		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")},
 		{Tid_ProtBuf_ConvertToGUID_WrongSize, _T("Convert of ProtoBuf-Guid to Guid failed because size of the string is wrong.") },
 		{Tid_CircularReference, _T("A circular reference has been generated")},
+
+		{Tid_ErrorMemoryAllocation, _T("Memory allocation failed")},
 };
 } //namespace SvStl

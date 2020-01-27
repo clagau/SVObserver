@@ -37,12 +37,12 @@ class DoubleSortValueObject : public SVDoubleValueObjectClass
 	SV_DECLARE_CLASS( DoubleSortValueObject );
 #pragma region Constructor
 public:
-	DoubleSortValueObject( LPCTSTR ObjectName );
-	DoubleSortValueObject( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVDOUBLEVALUEOBJECT );
-	DoubleSortValueObject( const DoubleSortValueObject& rhs );
+	explicit DoubleSortValueObject( LPCTSTR ObjectName );
+	explicit DoubleSortValueObject( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVDOUBLEVALUEOBJECT );
+	explicit DoubleSortValueObject( const DoubleSortValueObject& rhs );
 	const DoubleSortValueObject& operator = (const DoubleSortValueObject& rhs);
 
-	virtual ~DoubleSortValueObject();
+	virtual ~DoubleSortValueObject() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -54,23 +54,24 @@ public:
 	HRESULT setSortContainerDummy(const DummySortContainer& rDummy);
 	virtual HRESULT SetValue(const double& rValue, int Index) override;
 	virtual HRESULT GetValue(double& rValue, int Index = -1) const override;
+	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
 	virtual bool isArray() const override { return true; };
+
+	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
+	virtual void updateMemBlockData() const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
 	/// Return the result size. 
-	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
+	/// ATTENTION: Do not use m_ResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
 	/// \returns int Result size
-	virtual int getResultSize() const override;
+	virtual int32_t getResultSize() const override;
 	virtual HRESULT GetArrayValues( std::vector<double>& rValues) const override;
 
-	//! Copies the value object to the memory block
-	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
-	//! \param MemByteSize [in] The memory block byte size
-	//! \returns the number of bytes copied
-	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
+	virtual double* reserveLocalMemory() override;
+	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -83,6 +84,12 @@ private:
 
 	spValueObjectSortContainer m_spSortContainer {nullptr};
 	DummySortContainer m_DummySortContainer;
+
+	///DoubleSortValue value objects have specialized data and the allocateDataMemory points to this vector
+	std::vector<double> m_doubleData;
+
+	///The memory block pointer where the sorted double are to be copied too
+	uint8_t* m_pMemBlockData {nullptr};
 #pragma endregion Member Variables
 };
 

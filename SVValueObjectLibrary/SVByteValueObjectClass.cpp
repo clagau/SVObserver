@@ -74,8 +74,8 @@ HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObj
 		if (   pDataObject->GetAttributeData( _T("pArray"), svArray )
 			|| pDataObject->GetAttributeData( SvDef::cBucketTag, svArray ) )
 		{
-			SetArraySize( static_cast< int >( svArray.size() ) );
-			Result = SetArrayValues( svArray.begin(), svArray.end());
+			SetArraySize( static_cast<int32_t> (svArray.size()) );
+			Result = SetArrayValues(svArray);
 			return Result;
 		}
 	}
@@ -140,7 +140,7 @@ void SVByteValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	std::vector<_variant_t> list;
 
 	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
 		_variant_t Value;

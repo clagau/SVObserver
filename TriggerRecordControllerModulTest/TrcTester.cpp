@@ -492,7 +492,7 @@ bool TrcTester::setAndReadValues()
 
 	//create ValueList
 	SvPb::DataDefinitionList dataDefList;
-	std::vector<std::vector<BYTE>> dataMemVector;
+	std::vector<std::vector<uint8_t>> dataMemVector;
 	long memOffset = createDataDefContainer(dataMemVector, dataDefList);
 
 	//init triggerRecord
@@ -782,7 +782,7 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 	return retValue;
 }
 
-bool TrcTester::writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<BYTE>>& rDataVector)
+bool TrcTester::writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<uint8_t>>& rDataVector)
 {
 	const auto& rRunData = m_config.getValueSet()[index%m_config.getValueSet().size()];
 	const auto& rMemData = rDataVector[index%rDataVector.size()];
@@ -797,7 +797,7 @@ bool TrcTester::writeAndReadSingleValue(int index, int listSize, const std::vect
 		try
 		{
 			auto tmpData = rMemData;
-			tr2W->writeValueData(&tmpData[0], static_cast<long>(tmpData.size()));
+			tr2W->writeValueData(&tmpData[0], static_cast<int32_t>(tmpData.size()));
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{

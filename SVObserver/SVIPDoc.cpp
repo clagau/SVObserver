@@ -539,7 +539,7 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 		SVInspectionProcess* pInspection{GetInspectionProcess()};
 		if(nullptr != pInspection)
 		{
-			pInspection->buildValueObjectDefList();
+			pInspection->buildValueObjectData();
 		}
 		
 		return true;

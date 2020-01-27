@@ -1463,7 +1463,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 
 		if(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION))
 		{
-			buildValueObjectDefList();
+			buildValueObjectData();
 		}
 
 		if (shouldResetTRC)
@@ -2659,31 +2659,18 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStat
 		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord; %d\n"), rRunStatus.m_triggerRecord->getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
-		if(nullptr != m_pValueData)
+		for (const auto& pValue : m_ValueObjectSet)
 		{
-			long memBytesUsed {0L};
-			for (const auto pValue : m_ValueObjectSet)
+			if (nullptr != pValue)
 			{
-				if (nullptr != pValue)
-				{
-					long sizeCopied = pValue->CopyToMemoryBlock(m_pValueData.get(), m_memTrcDataBytes - memBytesUsed);
-					if (-1 == sizeCopied)
-					{
-						SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-						e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
-						break;
-					}
-					memBytesUsed += sizeCopied;
-				}
+				pValue->updateMemBlockData();
 			}
-			rRunStatus.m_triggerRecord->writeValueData(m_pValueData.get(), m_memTrcDataBytes);
 		}
-		else
+		int32_t byteSize = static_cast<int32_t> (m_valueData.size());
+		if(0 < byteSize)
 		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
-			e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
+			rRunStatus.m_triggerRecord->writeValueData(&m_valueData.at(0), byteSize);
 		}
-
 		return S_OK;
 	}
 	else
@@ -3791,15 +3778,14 @@ void SVInspectionProcess::SetSlotmanager(const SvSml::RingBufferPointer& Slotman
 	m_SlotManager = Slotmanager;
 }
 
-void SVInspectionProcess::buildValueObjectDefList() const
+void SVInspectionProcess::buildValueObjectData()
 {
 	SvPb::DataDefinitionList dataDefList;
 
-	long memOffset{0};
 	auto* pList = dataDefList.mutable_list();
-	for (const auto* const pValueObject : m_ValueObjectSet)
+	for (auto* pValueObject : m_ValueObjectSet)
 	{
-		long memSize = pValueObject->GetByteSize(false);
+		long memSize = pValueObject->getByteSize(false, true);
 		if (nullptr != pValueObject && 0 != memSize)
 		{
 			auto* pValueObjectDef = pList->Add();
@@ -3810,17 +3796,41 @@ void SVInspectionProcess::buildValueObjectDefList() const
 			pValueObjectDef->set_typestring(pValueObject->getTypeName());
 			pValueObjectDef->set_vttype(pValueObject->GetType());
 			pValueObjectDef->set_arraysize(pValueObject->getArraySize());
-			pValueObjectDef->set_memoffset(memOffset);
-			pValueObject->setTrData(memOffset, pList->size() - 1);
-			memOffset += memSize;
+			int valueObjectMemOffset = pValueObject->getMemOffset();
+			if (-1 == valueObjectMemOffset)
+			{
+				///This value object has not yet been allocated in inspection memory block
+				pValueObjectDef->set_memoffset(m_memValueDataOffset);
+				pValueObject->setTrData(m_memValueDataOffset, memSize, pList->size() - 1);
+				m_memValueDataOffset += memSize;
+			}
+			else
+			{
+				///When the memory offset has already been set then it must match the calculated offset
+				pValueObjectDef->set_memoffset(valueObjectMemOffset);
+				///Only update the trigger record position
+				pValueObject->setTrData(-1, -1, pList->size() - 1);
+			}
 		}
 	}
-	m_memTrcDataBytes = memOffset;
-	m_pValueData.reset();
-	//this is the value data pointer used to copy the value data to TRC
-	m_pValueData = std::make_unique<BYTE[]>(m_memTrcDataBytes);
 
-	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), memOffset, m_trcPos);
+	///We need to reallocate the memory block if the size not the same
+	if(m_memValueDataOffset != static_cast<long> (m_valueData.size()))
+	{
+		m_valueData.resize(m_memValueDataOffset);
+	}
+
+	///We now need to set the value object pointer to the correct address
+	for (auto* pValueObject : m_ValueObjectSet)
+	{
+		long memSize = pValueObject->getByteSize(false, true);
+		if (nullptr != pValueObject && 0 != memSize && 0 < m_valueData.size())
+		{
+			pValueObject->setMemBlockPointer(&m_valueData.at(0));
+		}
+	}
+
+	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), m_memValueDataOffset, m_trcPos);
 }
 
 SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()

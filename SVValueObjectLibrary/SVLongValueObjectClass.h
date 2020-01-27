@@ -31,9 +31,9 @@ public:
 	virtual ~SVLongValueObjectClass();
 
 protected:
-	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); };
-	virtual _variant_t ValueType2Variant( const long& rValue ) const override { return _variant_t( rValue ); };
-	virtual long Variant2ValueType( const _variant_t& rValue ) const override { return long( rValue ); };
+	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); }
+	virtual _variant_t ValueType2Variant(const long* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }
+	virtual long Variant2ValueType(const _variant_t& rValue) const override { return long(rValue); }
 
 	/// Convert a string in a long. Throw an exception if the string isn't convertible into a long.
 	/// \param strValue [in] The input string

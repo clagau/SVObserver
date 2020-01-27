@@ -36,9 +36,9 @@ struct TriggerRecordData
 		return reinterpret_cast<const int*const>(reinterpret_cast<const char*>(this) + sizeof(TriggerRecordData));
 	}
 
-	BYTE* getValueData()
+	uint8_t* getValueData()
 	{
-		BYTE* pResult = reinterpret_cast<BYTE*>(this) + sizeof(TriggerRecordData);
+		uint8_t* pResult = reinterpret_cast<uint8_t*>(this) + sizeof(TriggerRecordData);
 		pResult += sizeof(int) * m_ImageCount;
 		return pResult;
 	}

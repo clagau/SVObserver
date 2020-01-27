@@ -43,9 +43,9 @@ public:
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
 protected:
-	virtual double ValueType2Double(const BYTE& rValue) const override { return static_cast<double> (rValue); };
-	virtual _variant_t ValueType2Variant( const BYTE& rValue ) const override { return _variant_t( rValue ); };
-	virtual BYTE Variant2ValueType( const _variant_t& rValue ) const override { return BYTE( rValue ); };
+	virtual double ValueType2Double(const BYTE& rValue) const override { return static_cast<double> (rValue); }
+	virtual _variant_t ValueType2Variant(const BYTE* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }
+	virtual BYTE Variant2ValueType(const _variant_t& rValue) const override { return BYTE(rValue); }
 
 	/// Convert a string in a byte. Throw an exception if the string isn't convertible into a byte
 	/// \param strValue [in] The input string

@@ -119,7 +119,7 @@ void SVDWordValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	Value.ChangeType(VT_UI4);
 
 	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		DWORD Temp(0);
 		//Make sure this is not a derived virtual method which is called

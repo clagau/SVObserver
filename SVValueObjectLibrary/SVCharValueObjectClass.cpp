@@ -109,7 +109,7 @@ void SVCharValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	// for all elements in the array
 	_variant_t Value;
 	Value.ChangeType(VT_I1);
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
 		SVCharValueObjectClass::GetValue(Value.cVal, i);

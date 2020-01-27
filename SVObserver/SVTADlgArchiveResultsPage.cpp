@@ -415,8 +415,8 @@ bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector&
 		}
 		m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
 		m_pTool->m_HeaderObjectGUIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-		m_pTool->m_HeaderLabelNames.SetArrayValues( HeaderLabelNames.begin(), HeaderLabelNames.end() );
-		m_pTool->m_HeaderObjectGUIDs.SetArrayValues( HeaderObjectGUIDs.begin(), HeaderObjectGUIDs.end() );
+		m_pTool->m_HeaderLabelNames.SetArrayValues(HeaderLabelNames);
+		m_pTool->m_HeaderObjectGUIDs.SetArrayValues( HeaderObjectGUIDs);
 		bRet = true;
 	}
 	return bRet;

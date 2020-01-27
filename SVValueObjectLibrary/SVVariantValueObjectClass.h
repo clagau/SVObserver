@@ -32,21 +32,26 @@ public:
 	virtual ~SVVariantValueObjectClass();
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
+	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
+
+	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
+	virtual void updateMemBlockData() const override;
 
 	HRESULT SetValueKeepType(LPCTSTR Value) {return SetValueKeepType(Value, 0);}
 	HRESULT SetValueKeepType(LPCTSTR Value, int Index);
-	VARTYPE GetDefaultType() const;
-	VARTYPE GetValueType() const { return Value().vt; };
-	//GetType  for arrays too
-	VARTYPE  GetValueTypeEx() { return getValuePointer(0)->vt; };
+	VARTYPE GetDefaultType() const { return GetDefaultValue().vt; }
+	VARTYPE GetValueType() const { return (nullptr !=  valuePtr()) ? valuePtr()->vt : VT_NULL; };
 	
 
 protected:
 	static std::string ToString(const VARIANT& rvt, bool bScript = false );
 
+	virtual _variant_t* reserveLocalMemory() override;
+	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }
+
 	virtual double ValueType2Double(const _variant_t& rValue) const override;
-	virtual _variant_t ValueType2Variant( const _variant_t& rValue ) const override { return rValue; };
-	virtual _variant_t Variant2ValueType( const _variant_t& rValue ) const override { return rValue; };
+	virtual _variant_t ValueType2Variant( const _variant_t* pValue ) const override { return (nullptr != pValue) ? *pValue : _variant_t(); }
+	virtual _variant_t Variant2ValueType( const _variant_t& rValue) const override { return rValue; }
 
 	//! Convert a string in a variant. Throw an exception if the string isn't convertible into a variant
 	//! \param rValue [in] The input string
@@ -57,18 +62,18 @@ protected:
 
 	//! Returns the value object byte size
 	//! \returns the number of bytes for the data
-	virtual long GetByteSize(bool useResultSize = true) const override;
-
-	//! Copies the value object to the memory block
-	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
-	//! \param MemByteSize [in] The memory block byte size
-	//! \returns S_OK if successful
-	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
+	virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const override;
 
 	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
 	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
+
+	///Variant value objects have specialized data and the allocateDataMemory points to this vector
+	std::vector<_variant_t> m_variantData;
+
+	///The memory block pointer where the variant values are to be copied too
+	uint8_t* m_pMemBlockData {nullptr};
 };
 
 } //namespace SvVol

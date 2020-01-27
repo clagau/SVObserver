@@ -66,16 +66,18 @@ public:
 	virtual void setResetOptions( bool bResetAlways, SvOi::SVResetItemEnum eResetItem ) override {};
 	virtual void validateValue( const _variant_t& rValue ) const override {};
 	virtual bool isArray() const override { return false; };
-	virtual int getArraySize() const override { return 1; };
-	virtual int getResultSize() const override { return 1; };
+	virtual int32_t getArraySize() const override { return 1; };
+	virtual int32_t getResultSize() const override { return 1; };
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return SvOi::SVResetItemNone; };
 	virtual bool ResetAlways() const override { return false; };
-	virtual long GetByteSize(bool useResultSize = true) const override;
+	virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const override;
 	virtual DWORD GetType() const override { return m_Value.vt; };
-	virtual long CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const override;
 	virtual void setSaveValueFlag(bool shouldSaveValue) override { };
-	virtual void setTrData(long memOffset, int pos) const override { m_memOffset = memOffset; m_trPos = pos; }
-	virtual int getTrPos() const override { return m_trPos; }
+	virtual void setTrData(int32_t memOffset, int32_t memSize, int32_t pos) override;
+	virtual int32_t getTrPos() const override { return m_trPos; }
+	virtual int32_t getMemOffset() const override { return 0L; }
+	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
+	virtual void updateMemBlockData() const override;
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
 	//************************************
@@ -155,16 +157,6 @@ private:
 	void Destroy();
 
 	//************************************
-	//! The method locks the value object for writing
-	//************************************
-	void Lock();
-
-	//************************************
-	//! The method unlocks the value object
-	//************************************
-	void Unlock();
-
-	//************************************
 	//! The method refreshes the object and sends its parent a RefreshObject
 	//! \param pSender <in> pointer to the original sender of the notification
 	//! \param Type <in> what type of refresh pre or post
@@ -189,12 +181,15 @@ private:
 private:
 #pragma region Member Variables
 	_variant_t			m_Value;			//The value object container
-	CRITICAL_SECTION	m_CriticalSection;	//The critical section object
+	std::mutex			m_valueMutex;		//Mutex to protect the value
 	std::string			m_Description;		//The description text for the object
-	bool				m_Created;			//Object is created
-	bool				m_Node;				//Object is only a node in the tree structure
-	mutable long		m_memOffset {0L};	//The trigger record memory offset
-	mutable int			m_trPos {-1};		//The trigger record position
+	uint8_t*			m_pMemBlock {nullptr}; //The memory block pointer to copy the data too
+	bool				m_Created {false};	//Object is created
+	bool				m_Node {false};		//Object is only a node in the tree structure
+	bool				m_hasChanged {true};//Flag to determine data has changed since last update
+	int32_t				m_memOffset {-1L};	//The trigger record memory offset
+	int32_t				m_memSizeReserved {0L};///The block memory size reserved
+	int32_t				m_trPos {-1L};		//The trigger record position
 #pragma endregion Member Variables
 };
 

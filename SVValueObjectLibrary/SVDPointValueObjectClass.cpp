@@ -54,16 +54,19 @@ SVDPointValueObjectClass::~SVDPointValueObjectClass()
 {
 }
 
-_variant_t SVDPointValueObjectClass::ValueType2Variant( const SVPoint<double>& rValue ) const
+_variant_t SVDPointValueObjectClass::ValueType2Variant(const SVPoint<double>* pValue) const
 {
 	_variant_t Result;
 
-	Result.SetString( ConvertType2String(rValue).c_str() );
+	if (nullptr != pValue)
+	{
+		Result.SetString(ConvertType2String(*pValue).c_str());
+	}
 
 	return Result;
 }
 
-SVPoint<double> SVDPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
+SVPoint<double> SVDPointValueObjectClass::Variant2ValueType(const _variant_t& rValue) const
 {
 	SVPoint<double> Result;
 
@@ -105,66 +108,6 @@ SVPoint<double> SVDPointValueObjectClass::ConvertString2Type( const std::string&
 	return SVPoint<double>(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
-long SVDPointValueObjectClass::GetByteSize(bool useResultSize) const
-{
-	long result(0L);
-
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed())
-	{
-		//SVDPointValueObject has 2 double values for each point
-		long numberOfElements = useResultSize ? getResultSize() : getArraySize();
-		result = 2* sizeof(double) * numberOfElements;
-		//If the value object is an array the first value shall contain the result size which is variable
-		if (isArray())
-		{
-			result += sizeof(int);
-		}
-	}
-
-	return result;
-}
-
-long SVDPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, long MemByteSize) const
-{
-	long result {GetByteSize(false)};
-
-	//Attribute must be set otherwise do not consider for memory requirements
-	if (0 != ObjectAttributesAllowed() && -1 != GetMemOffset())
-	{
-		result = GetByteSize(false);
-		if (result <= MemByteSize)
-		{
-			BYTE* pMemoryLocation = pMemoryBlock + GetMemOffset();
-			if (isArray())
-			{
-				//For arrays we need to write the result size at the start of the memory as an int
-				*(reinterpret_cast<int*> (pMemoryLocation)) = getResultSize();
-				pMemoryLocation += sizeof(int);
-			}
-			for (int i = 0; i < getResultSize(); ++i)
-			{
-				SVPoint<double> Value;
-				SVDPointValueObjectClass::GetValue(Value, i);
-				memcpy(pMemoryLocation, &Value.m_x, sizeof(Value.m_x));
-				pMemoryLocation += sizeof(Value.m_x);
-				memcpy(pMemoryLocation, &Value.m_y, sizeof(Value.m_y));
-				pMemoryLocation += sizeof(Value.m_y);
-			}
-		}
-		else
-		{
-			result = -1L;
-		}
-	}
-	else
-	{
-		result = 0L;
-	}
-
-	return result;
-}
-
 void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 {
 	// Get the Data Values (Member Info, Values)
@@ -176,7 +119,7 @@ void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	std::vector<_variant_t> list;
 
 	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		SVPoint<double> Value;
 		//Make sure this is not a derived virtual method which is called

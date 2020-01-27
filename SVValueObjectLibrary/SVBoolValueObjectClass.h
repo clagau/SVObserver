@@ -36,9 +36,9 @@ public:
 	HRESULT GetValidTypes( SvDef::StringVector& rTypes ) const;
 
 protected:
-	virtual double ValueType2Double(const BOOL& rValue) const override { return static_cast<double> (rValue); };
-	virtual _variant_t ValueType2Variant( const BOOL& rValue ) const override { return _variant_t( rValue ? true : false ); };
-	virtual BOOL Variant2ValueType( const _variant_t& rValue ) const override { return BOOL( rValue ? true : false ); };
+	virtual double ValueType2Double(const BOOL& rValue) const override { return static_cast<double> (rValue); }
+	virtual _variant_t ValueType2Variant(const BOOL* pValue) const override { return (nullptr != pValue) ? _variant_t( *pValue ? true : false ) : _variant_t{};}
+	virtual BOOL Variant2ValueType(const _variant_t& rValue) const override { return BOOL( rValue ? true : false ); };
 
 	/// Convert a string in a bool. Throw an exception if the string isn't convertible into a bool
 	/// \param rValue [in] The input string: "True", 1 or -1 is true, "false" and 0 is false.

@@ -35,9 +35,9 @@ public:
 	virtual ~SVCharValueObjectClass();
 
 protected:
-	virtual double ValueType2Double(const TCHAR& rValue) const override { return static_cast<double> (rValue); };
-	virtual _variant_t ValueType2Variant( const TCHAR& rValue ) const override { return _variant_t( rValue ); };
-	virtual TCHAR Variant2ValueType( const _variant_t& rValue ) const override { return TCHAR( rValue ); };
+	virtual double ValueType2Double(const TCHAR& rValue) const override { return static_cast<double> (rValue); }
+	virtual _variant_t ValueType2Variant(const TCHAR* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }
+	virtual TCHAR Variant2ValueType(const _variant_t& rValue) const override { return TCHAR(rValue); }
 
 	/// Convert a string in a char. Throw an exception if the string isn't convertible into a char
 	/// \param rValue [in] The input string

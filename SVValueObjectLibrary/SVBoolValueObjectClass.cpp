@@ -107,7 +107,7 @@ void SVBoolValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	Value.ChangeType(VT_BOOL);
 
 	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		BOOL Temp(false);
 		//Make sure this is not a derived virtual method which is called
