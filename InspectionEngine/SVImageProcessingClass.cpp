@@ -119,7 +119,7 @@ HRESULT SVImageProcessingClass::convertToMILBuffer(HBITMAP hBmp, SvOi::SVImageBu
 	}
 	else
 	{
-		return S_OK;
+		return result;
 	}
 }
 

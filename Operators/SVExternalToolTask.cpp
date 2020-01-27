@@ -707,17 +707,30 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 
 					if (!m_dll.UseMil())
 					{
+						m_aInputImagesCopy[i] = nullptr;
 						if (nullptr != m_aInspectionInputHBMImages[i].hbm)
 						{
 							::DeleteObject(m_aInspectionInputHBMImages[i].hbm);
 							m_aInspectionInputHBMImages[i].FreeBitmapInfo();
 							m_aInspectionInputHBMImages[i].Clear();
 						}
-						HRESULT hrInitialCopy = SVIHBitmapUtilities::SVImageInfoToNewDIB(imageInfo, m_aInspectionInputHBMImages[i]);
-						if (S_OK == hrInitialCopy)
+						hr = SVIHBitmapUtilities::SVImageInfoToNewDIB(imageInfo, m_aInspectionInputHBMImages[i]);
+						if (S_OK == hr)
 						{
 							SvIe::SVImageProcessingClass::convertToMILBuffer(m_aInspectionInputHBMImages[i].hbm, m_aInputImagesCopy[i]);
-							MbufClear(m_aInputImagesCopy[i]->GetBuffer().GetIdentifier(), 0);
+							SvOi::SVImageBufferHandlePtr l_ImageBufferCopy = m_aInputImagesCopy[i];
+							if (nullptr != l_ImageBufferCopy && !l_ImageBufferCopy->empty())
+							{
+								MbufClear(l_ImageBufferCopy->GetBuffer().GetIdentifier(), 0);
+							}
+							else
+							{
+								hr = E_FAIL;
+							}
+						}
+						if (S_OK != hr)
+						{
+							throw hr;
 						}
 					}
 					else

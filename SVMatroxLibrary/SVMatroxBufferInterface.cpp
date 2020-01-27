@@ -1100,7 +1100,7 @@ HRESULT SVMatroxBufferInterface::createToHBitmap(SVMatroxBuffer& rNewMilId, cons
 		bufInternalFormat = M_BGR32;
 	}
 
-	MbufCreateColor(M_DEFAULT_HOST, (0 == bufInternalFormat) ? 1 : 3, bmpObj.bmWidth, bmpObj.bmHeight, 8, M_IMAGE + M_DIB + bufInternalFormat, M_HOST_ADDRESS + M_PITCH, M_DEFAULT, (void **)&bmpObj.bmBits/*bmpBuffer*/, &milImage);
+	MbufCreateColor(M_DEFAULT_HOST, (0 == bufInternalFormat) ? 1 : 3, bmpObj.bmWidth, bmpObj.bmHeight, 8, M_IMAGE + M_DIB + bufInternalFormat, M_HOST_ADDRESS + M_PITCH_BYTE, bmpObj.bmWidthBytes, (void **)&bmpObj.bmBits/*bmpBuffer*/, &milImage);
 	if (M_NULL != milImage)
 	{
 		createImageBufferPtr(rNewMilId, milImage, std::string(_T("SVMatroxBufferInterface::CreateToHBITMAP")));
