@@ -294,7 +294,9 @@ bool LoopTool::RunAllChildren(SVRunStatusClass& rRunStatus, SvStl::MessageContai
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-				bRetVal = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages) & bRetVal;
+				
+				bool bRet = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages);
+				bRetVal = (bRet || ChildRunStatus.IsDisabled())&& bRetVal;
 
 				if (ChildRunStatus.IsWarned()) { rRunStatus.SetWarned(); }
 
