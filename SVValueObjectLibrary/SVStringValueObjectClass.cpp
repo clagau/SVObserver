@@ -51,7 +51,7 @@ SVStringValueObjectClass::SVStringValueObjectClass( const SVStringValueObjectCla
 	*this = rhs;
 }
 
-const SVStringValueObjectClass& SVStringValueObjectClass::operator = (const SVStringValueObjectClass& rhs)
+SVStringValueObjectClass& SVStringValueObjectClass::operator = (const SVStringValueObjectClass& rhs)
 {
 	__super::operator = (rhs);
 	return *this;

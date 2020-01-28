@@ -49,7 +49,7 @@ SVFileNameValueObjectClass::SVFileNameValueObjectClass( const SVFileNameValueObj
 	*this = rhs;
 }
 
-const SVFileNameValueObjectClass& SVFileNameValueObjectClass::operator = ( const SVFileNameValueObjectClass& rhs )
+SVFileNameValueObjectClass& SVFileNameValueObjectClass::operator = ( const SVFileNameValueObjectClass& rhs )
 {
 	__super::operator = (rhs);
 	return *this;

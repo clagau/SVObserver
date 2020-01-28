@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVInputObjectList.h"
-#include "SVIOEntryStruct.h"
 #include "SVCameraDataInputObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"

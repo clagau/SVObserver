@@ -52,7 +52,7 @@ protected:
 
 	virtual ~SVValueObjectClass();
 
-	const  SVValueObjectClass<T>& operator= (const  SVValueObjectClass<T>& rRhs);
+	SVValueObjectClass<T>& operator= (const  SVValueObjectClass<T>& rRhs);
 #pragma endregion Constructor
 
 #pragma region Public Methods

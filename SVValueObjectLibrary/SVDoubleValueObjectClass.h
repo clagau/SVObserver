@@ -23,9 +23,9 @@ class SVDoubleValueObjectClass : public SVValueObjectClass<double>
 	SV_DECLARE_CLASS( SVDoubleValueObjectClass );
 
 public:
-	SVDoubleValueObjectClass( LPCTSTR ObjectName );
-	SVDoubleValueObjectClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVDOUBLEVALUEOBJECT );
-	SVDoubleValueObjectClass( const SVDoubleValueObjectClass& rhs );
+	explicit SVDoubleValueObjectClass( LPCTSTR ObjectName );
+	explicit SVDoubleValueObjectClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVDOUBLEVALUEOBJECT );
+	explicit SVDoubleValueObjectClass( const SVDoubleValueObjectClass& rhs );
 	const SVDoubleValueObjectClass& operator = (const SVDoubleValueObjectClass& rhs);
 
 	virtual ~SVDoubleValueObjectClass();

@@ -1833,7 +1833,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 					break;
 			}
 			
-			ptTemp       = ptCurPos;
+			ptCurPos;
 			PrintValueObject( pDC, ptCurPos, _T("PPQMode"), Value.c_str() );
 			
 			Value = SvUl::Format( _T("%ld"), lPPQLength );
@@ -2226,10 +2226,10 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 			SVIOEntryHostStructPtr l_pModuleReady = pConfig->GetModuleReady();
 
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( l_pModuleReady->m_IOId );
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( l_pModuleReady->m_IOId );
 
 			// Check Module Ready first
-			SVDigitalOutputObject* pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
+			SVDigitalOutputObject* pDigOutput = dynamic_cast< SVDigitalOutputObject* >( pObject );
 			if (pDigOutput)
 			{
 				if (i == pDigOutput->GetChannel())
@@ -2260,9 +2260,9 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				{
 					if ( ppIOEntries[ k ]->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
 
-					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId );
+					pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId );
 
-					pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
+					pDigOutput = dynamic_cast< SVDigitalOutputObject* >( pObject );
 
 					if ( !pDigOutput ) { continue; }
 

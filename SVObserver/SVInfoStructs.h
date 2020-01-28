@@ -26,7 +26,6 @@
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
-#include "SVIOLibrary/SVIOEntryStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
 #include "TriggerInformation/SVTriggerObject.h"

@@ -24,10 +24,10 @@ class SVVariantValueObjectClass : public SVValueObjectClass<_variant_t>
 	SV_DECLARE_CLASS( SVVariantValueObjectClass );
 
 public:
-	SVVariantValueObjectClass( LPCTSTR ObjectName );
-	SVVariantValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVARIANTVALUEOBJECT );
-	SVVariantValueObjectClass( const SVVariantValueObjectClass& rhs );
-	const SVVariantValueObjectClass& operator = ( const SVVariantValueObjectClass& rhs );
+	explicit SVVariantValueObjectClass( LPCTSTR ObjectName );
+	explicit SVVariantValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVARIANTVALUEOBJECT );
+	explicit SVVariantValueObjectClass( const SVVariantValueObjectClass& rhs );
+	SVVariantValueObjectClass& operator = ( const SVVariantValueObjectClass& rhs );
 
 	virtual ~SVVariantValueObjectClass();
 

@@ -2143,11 +2143,35 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
 	pNewProduct->m_lastPPQPosition = m_lastPPQPosition;
-	
-	// ************************************************************************
-	// Now we need to get the IO ready for this Product. Make sure that all locks are set
-	// and that all indexes are set correctly
-	// Set all IO input objects for this product to use the new input data index
+
+	///The inputs need to be sorted to their PPQ position
+	std::vector<_variant_t> inputValues;
+	inputValues.resize(pNewProduct->m_triggerInfo.m_Inputs.size());
+	inputValues.swap(pNewProduct->m_triggerInfo.m_Inputs);
+
+	///Set the inputs to the required PPQ position
+	for (size_t i = 0; i < m_UsedInputs.size(); i++)
+	{
+		auto& rpInputEntry = m_UsedInputs[i];
+
+		if (nullptr != rpInputEntry && rpInputEntry->m_Enabled)
+		{
+			///When input is connected to the standard PPQ position 1 (index 0)
+			if(0 == rpInputEntry->m_PPQIndex)
+			{
+				pNewProduct->m_triggerInfo.m_Inputs[i] = inputValues[i];
+			}
+			else if (0 < rpInputEntry->m_PPQIndex && rpInputEntry->m_PPQIndex < static_cast<long> (m_ppPPQPositions.size()))
+			{
+				SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(rpInputEntry->m_PPQIndex);
+				if(nullptr != pProduct && pProduct->m_triggered && i < pProduct->m_triggerInfo.m_Inputs.size())
+				{
+					pProduct->m_triggerInfo.m_Inputs[i] = inputValues[i];
+				}
+			}
+		}
+	}
+
 
 	// Reset all IO output objects for this product to use the new output data index
 	ResetOutputValueObjects();

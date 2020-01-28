@@ -25,10 +25,10 @@ class SVFileNameValueObjectClass : public SVStringValueObjectClass
 	SV_DECLARE_CLASS( SVFileNameValueObjectClass );
 
 public:
-	SVFileNameValueObjectClass( LPCTSTR ObjectName );
-	SVFileNameValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVFILENAMEVALUEOBJECT );
-	SVFileNameValueObjectClass( const SVFileNameValueObjectClass& rhs);
-	const SVFileNameValueObjectClass& operator = ( const SVFileNameValueObjectClass& rhs );
+	explicit SVFileNameValueObjectClass( LPCTSTR ObjectName );
+	explicit SVFileNameValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVFILENAMEVALUEOBJECT );
+	explicit SVFileNameValueObjectClass( const SVFileNameValueObjectClass& rhs);
+	SVFileNameValueObjectClass& operator= ( const SVFileNameValueObjectClass& rhs );
 
 	virtual ~SVFileNameValueObjectClass();
 

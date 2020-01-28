@@ -28,7 +28,7 @@ public:
 	explicit SVStringValueObjectClass( LPCTSTR ObjectName );
 	explicit SVStringValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTRINGVALUEOBJECT );
 	explicit SVStringValueObjectClass( const SVStringValueObjectClass& rhs);
-	const SVStringValueObjectClass& operator = (const SVStringValueObjectClass& rhs);
+	SVStringValueObjectClass& operator = (const SVStringValueObjectClass& rhs);
 
 	virtual ~SVStringValueObjectClass() = default;
 

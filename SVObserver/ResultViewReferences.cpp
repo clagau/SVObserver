@@ -367,11 +367,9 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 	size_t PpqInputSize = 0;
 	if( nullptr != pInspection )
 	{
-		PpqInputSize = pInspection->m_PPQInputs.size();
-		for( size_t l = 0; pInspection && l < PpqInputSize; ++l )
+		for(const auto& rpInputEntry : pInspection->m_PPQInputs)
 		{
-			SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
-			SVObjectClass* pObject  = pIOEntry.m_IOEntryPtr->getObject();
+			SVObjectClass* pObject  = rpInputEntry->getObject();
 			if( nullptr != pObject && pObject->ObjectAttributesSet() & SvPb::viewable )
 			{
 				SVObjectReference ObjectRef(pObject);

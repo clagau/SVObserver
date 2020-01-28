@@ -51,7 +51,7 @@ SVVariantValueObjectClass::SVVariantValueObjectClass( const SVVariantValueObject
 	*this = rhs;
 }
 
-const SVVariantValueObjectClass& SVVariantValueObjectClass::operator = (const SVVariantValueObjectClass& rhs )
+SVVariantValueObjectClass& SVVariantValueObjectClass::operator = (const SVVariantValueObjectClass& rhs )
 {
 	__super::operator = (rhs);
 	return *this;
@@ -524,7 +524,10 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 			if (dim > 0)
 			{
 				HRESULT hr = ::SafeArrayGetLBound(Value.parray, 1, &lBound);
-				hr = ::SafeArrayGetUBound(Value.parray, 1, &uBound);
+				if(S_OK == hr)
+				{
+					hr = ::SafeArrayGetUBound(Value.parray, 1, &uBound);
+				}
 				long lSize = uBound - lBound + 1;
 				if (S_OK == hr && lSize > 0)
 				{

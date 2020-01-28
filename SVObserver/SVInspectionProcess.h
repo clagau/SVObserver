@@ -245,7 +245,7 @@ public:
 	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
 #pragma endregion Methods to replace processMessage
 
-	SVIOEntryStructVector m_PPQInputs;
+	SVIOEntryHostStructPtrVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 

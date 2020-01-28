@@ -15,7 +15,6 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVDigitalOutputObject.h"
 #include "SVRemoteOutputObject.h"
-#include "SVIOEntryStruct.h"
 #include "SVInputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage\SVMessage.h"

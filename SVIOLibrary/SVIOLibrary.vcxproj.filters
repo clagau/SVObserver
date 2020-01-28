@@ -39,9 +39,6 @@
     <ClCompile Include="SVIOEntryHostStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOEntryStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVOutputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVIOEntryHostStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIOEntryStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVIOParameterEnum.h">

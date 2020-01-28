@@ -46,7 +46,7 @@ SVValueObjectClass<T>::~SVValueObjectClass()
 }
 
 template <typename T>
-const SVValueObjectClass<T>& SVValueObjectClass<T>::operator= (const SVValueObjectClass<T>& rRhs)
+SVValueObjectClass<T>& SVValueObjectClass<T>::operator= (const SVValueObjectClass<T>& rRhs)
 {
 	if (this != &rRhs)
 	{
