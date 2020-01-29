@@ -95,6 +95,8 @@ IDR_MATH_CONDITIONAL_TOOLBAR BITMAP                  "res\\ToolbarConditional.bm
 
 IDR_MATH_LOGICAL_TOOLBAR BITMAP                  "res\\ToolbarLogical.bmp"
 
+IDR_MATH_FUNCTION_TOOLBAR BITMAP                  "res\\ToolbarFunction.bmp"
+
 IDR_MATH_BASIC_TOOLBAR  BITMAP                  "res\\ToolbarBasic.bmp"
 
 IDR_MATH_TRIGONOMETRIC_TOOLBAR BITMAP                  "res\\ToolbarTrig.bmp"
@@ -3576,6 +3578,11 @@ BEGIN
     BUTTON      ID_ORBUTTON
     BUTTON      ID_NOTBUTTON
     BUTTON      ID_XORBUTTON
+END
+
+IDR_MATH_FUNCTION_TOOLBAR TOOLBAR 28, 28
+BEGIN
+BUTTON      ID_IFBUTTON
 END
 
 IDR_MATH_BASIC_TOOLBAR TOOLBAR 28, 28

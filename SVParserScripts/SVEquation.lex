@@ -105,42 +105,48 @@ identifier      {delimiter}{name}("."{name})*{delimiter}
 				}
 				
 "EQ"	| 
-"eq"			{
+"eq"	|
+"="		{
 					position = currentPos;
 					currentPos += 2;
 					return(SV_EQ);
 				}
 
 "NE"	| 
-"ne"			{
+"ne"	|
+"<>"			{
 					position = currentPos;
 					currentPos += 2;
 					return(SV_NE);
 				}
 
 "LT"	| 
-"lt"			{
+"lt"	|
+"<"			{
 					position = currentPos;
 					currentPos += 2;
 					return(SV_LT);
 				}
 
 "LTE"	| 
-"lte"			{
+"lte"	|
+"<="		{
 					position = currentPos;
 					currentPos += 2;
 					return(SV_LTE);
 				}
 
 "GT"	| 
-"gt"			{
+"gt"	|
+">"			{
 					position = currentPos;
 					currentPos += 2;
 					return(SV_GT);
 				}
 
 "GTE"	| 
-"gte"			{
+"gte"	|
+">="			{
 					position = currentPos;
 					currentPos += 2;
 					return(SV_GTE);
@@ -291,6 +297,27 @@ identifier      {delimiter}{name}("."{name})*{delimiter}
 					position = currentPos;
 					currentPos += 3;
 					return(SV_SUM);
+				}
+
+"IF"	|
+"if"			{
+					position = currentPos;
+					currentPos += 2;
+					return(SV_IF);
+				}
+
+"THEN"	|
+"then"			{
+					position = currentPos;
+					currentPos += 4;
+					return(SV_THEN);
+				}
+
+"ELSE"	|
+"else"			{
+					position = currentPos;
+					currentPos += 4;
+					return(SV_ELSE);
 				}
 
 "STDDEV"	|

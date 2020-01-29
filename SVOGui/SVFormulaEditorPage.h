@@ -90,6 +90,7 @@ namespace SvOg
 
 	protected:
 		SvMc::SVToolBarClass m_logicalOperatorBar;
+		SvMc::SVToolBarClass m_functionOperatorBar;
 		SvMc::SVToolBarClass m_conditionalOperatorBar;
 		SvMc::SVToolBarClass m_trigOperatorBar;
 		SvMc::SVToolBarClass m_miscOperatorBar;

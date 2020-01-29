@@ -270,5 +270,8 @@
     <Image Include="res\ExpandLoop.ico">
       <Filter>Ressourcendateien</Filter>
     </Image>
+    <Image Include="res\ToolbarFunction.bmp">
+      <Filter>Ressourcendateien</Filter>
+    </Image>
   </ItemGroup>
 </Project>
