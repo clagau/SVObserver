@@ -601,5 +601,6 @@ namespace SvStl
 		{Tid_CircularReference, _T("A circular reference has been generated")},
 
 		{Tid_ErrorMemoryAllocation, _T("Memory allocation failed")},
+		{Tid_ErrorMemoryBlockDataReservedSize, _T("Size of reserved memory block data to small")},
 };
 } //namespace SvStl

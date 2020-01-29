@@ -143,6 +143,7 @@ HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 		if (0 < Size && m_DummySortContainer.bIsActive)
 		{
 			std::copy(rValues.begin(), rValues.end(), m_doubleData.begin());
+			setHasChanged(true);
 		}
 		else
 		{

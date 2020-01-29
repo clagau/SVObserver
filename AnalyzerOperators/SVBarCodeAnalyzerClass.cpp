@@ -98,7 +98,7 @@ void SVBarCodeAnalyzerClass::init()
 	// Set default values
 	msv_szBarCodeValue.SetDefaultValue (_T(""));
 	msv_szBarCodeValue.setSaveValueFlag(false);
-	msv_szBarCodeValue.SetMaxByteSize(SvDef::cMaxStringByteSize);
+	msv_szBarCodeValue.SetMaxByteSize();
 	msv_szRegExpressionValue.SetDefaultValue (_T(""));
 	msv_lBarCodeType.SetDefaultValue(SVDataMatrix);
 	msv_dOrientation.SetDefaultValue(SVValueDefault);

@@ -73,7 +73,10 @@ public:
 	void SetResultSize(int32_t  ResultSize);
 	void SetTypeName( LPCTSTR TypeName ) { m_TypeName = TypeName; }
 	bool CompareWithCurrentValue( const std::string& rCompare ) const;
-	
+
+	static void setMaxTextSize(int32_t maxSize) { m_maxTextSize = maxSize; }
+	static int32_t getMaxTextSize() { return m_maxTextSize; }
+
 #pragma region virtual method (IObjectClass/IValueObject)
 	//! For these methods see IObject documentation
 	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
@@ -203,6 +206,8 @@ private:
 	int32_t m_memSizeReserved{0L};	///The block memory size reserved
 	int32_t m_trPos {-1L};			///The trigger record position
 	mutable bool m_hasChanged{true};///Flag if value has changed since last update
+
+	static int32_t m_maxTextSize;		///This is a global size for all text values
 #pragma endregion Member Variables
 };
 

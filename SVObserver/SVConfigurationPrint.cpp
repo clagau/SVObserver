@@ -1833,7 +1833,6 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 					break;
 			}
 			
-			ptCurPos;
 			PrintValueObject( pDC, ptCurPos, _T("PPQMode"), Value.c_str() );
 			
 			Value = SvUl::Format( _T("%ld"), lPPQLength );

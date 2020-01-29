@@ -435,8 +435,10 @@ private:
 	//For RegressionTest
 	SvOp::SVEquationClass m_RegressionTestPlayEquation;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
+	///TRC and Memory block data
 	int m_trcPos = -1;
 	long m_memValueDataOffset{0L};			///Is the current memory data offset 
+	SvOi::IValueObjectPtrSet m_updateValueObjectSet; //The value objects which need updating
 	std::vector<uint8_t> m_valueData;		///The memory block used to store all value objects of the inspection
 };
 

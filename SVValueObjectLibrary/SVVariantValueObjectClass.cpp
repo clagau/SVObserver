@@ -135,6 +135,7 @@ HRESULT SVVariantValueObjectClass::SetArrayValues(const ValueVector& rValues)
 		if(0 < Size)
 		{
 			std::copy(rValues.begin(), rValues.end(), m_variantData.begin());
+			setHasChanged(true);
 		}
 		Result = S_OK;
 	}
@@ -208,11 +209,19 @@ void SVVariantValueObjectClass::updateMemBlockData() const
 						std::string tempString = SvUl::createStdString(value.bstrVal);
 						pValue = nullptr;
 						///Make sure string fits to the reserved size
-						if(SvDef::cMaxStringByteSize < tempString.size())
+						if(getMemSizeReserved() > static_cast<int32_t> (tempString.size()))
 						{
 							//Copy also the ending \0 of the string
 							memcpy(pMemoryLocation, tempString.c_str(), tempString.size() + 1);
 							pMemoryLocation += tempString.size() + 1;
+						}
+						else
+						{
+							assert(false);
+							///Clear the memory block data
+							memset(m_pMemBlockData, 0, getMemSizeReserved());
+							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+							Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 						}
 						break;
 					}
@@ -480,7 +489,7 @@ int32_t SVVariantValueObjectClass::getByteSize(bool useResultSize, bool memBlock
 		result = sizeof(VARIANT::dblVal);
 		break;
 	case VT_BSTR:
-		result = SvDef::cMaxStringByteSize;
+		result = getMaxTextSize();
 		break;
 	default:
 		break;

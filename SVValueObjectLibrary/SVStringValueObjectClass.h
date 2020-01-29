@@ -38,7 +38,7 @@ public:
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	virtual void updateMemBlockData() const override;
 
-	void SetMaxByteSize(int maxSize) { m_maxByteSize = maxSize; }
+	void SetMaxByteSize(int maxSize = getMaxTextSize()) { m_maxByteSize = maxSize; }
 
 protected:
 	virtual std::string* reserveLocalMemory() override;

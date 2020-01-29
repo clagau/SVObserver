@@ -23,6 +23,9 @@
 
 namespace SvVol
 {
+///Initialize static member variable
+template <typename T>
+int32_t SVValueObjectClass<T>::m_maxTextSize = SvDef::cMaxStringByteSize;
 
 #pragma region Constructor
 template <typename T>

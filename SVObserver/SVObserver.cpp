@@ -2049,6 +2049,10 @@ BOOL SVObserverApp::InitInstance()
 
 	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
 
+	///This sets the reserved text size for text value objects which can change in size
+	int maxTextSize = SvimIni.GetValueInt(_T("Settings"), _T("MaxTextSize"), SvDef::cMaxStringByteSize);
+	SvVol::SVStringValueObjectClass::setMaxTextSize(maxTextSize);
+
 	SvLog::bootstrap_logging();
 
 	WebSocketSettings Settings;

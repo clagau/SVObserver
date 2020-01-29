@@ -566,5 +566,6 @@ enum MessageTextEnum
 	Tid_CircularReference,
 
 	Tid_ErrorMemoryAllocation,
+	Tid_ErrorMemoryBlockDataReservedSize,
 };
 } //namespace SvStl

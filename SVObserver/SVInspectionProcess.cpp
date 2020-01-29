@@ -1425,15 +1425,6 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 			SvTrc::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(m_trcPos);
 		}
 
-		for (const auto& rpInputEntry : m_PPQInputs)
-		{
-			if (nullptr != rpInputEntry && nullptr != rpInputEntry->getObject())
-			{
-				rpInputEntry->getObject()->resetAllObjects(&ErrorMessages);
-				break;
-			}
-		}// end for
-
 		if (nullptr != m_pCurrentToolset)
 		{
 			Result = m_pCurrentToolset->resetAllObjects(&ErrorMessages) && Result;
@@ -2645,7 +2636,7 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStat
 		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord; %d\n"), rRunStatus.m_triggerRecord->getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
-		for (const auto& pValue : m_ValueObjectSet)
+		for (const auto& pValue : m_updateValueObjectSet)
 		{
 			if (nullptr != pValue)
 			{
@@ -3753,6 +3744,7 @@ void SVInspectionProcess::buildValueObjectData()
 {
 	SvPb::DataDefinitionList dataDefList;
 
+	m_updateValueObjectSet.clear();
 	auto* pList = dataDefList.mutable_list();
 	for (auto* pValueObject : m_ValueObjectSet)
 	{
@@ -3774,6 +3766,21 @@ void SVInspectionProcess::buildValueObjectData()
 				pValueObjectDef->set_memoffset(m_memValueDataOffset);
 				pValueObject->setTrData(m_memValueDataOffset, memSize, pList->size() - 1);
 				m_memValueDataOffset += memSize;
+
+				switch(pObject->GetObjectSubType())
+				{
+					case SvPb::DoubleSortValueObjectType:
+					case SvPb::SVStringValueObjectType:
+					case SvPb::SVVariantValueObjectType:
+					{
+						m_updateValueObjectSet.insert(pValueObject);
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
 			}
 			else
 			{

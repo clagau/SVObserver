@@ -46,7 +46,7 @@ SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResou
 	// Set Embedded defaults
 	m_Value.SetDefaultValue (_T(""));
 	m_Value.setSaveValueFlag(false);
-	m_Value.SetMaxByteSize(SvDef::cMaxStringByteSize);
+	m_Value.SetMaxByteSize();
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

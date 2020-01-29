@@ -169,7 +169,7 @@ void SVOCVAnalyzeResultClass::clearAll()
 	m_svoFoundString.SetDefaultValue( _T( "" ), true);
 	m_svoFoundString.setSaveValueFlag(false);
 	m_svoFoundString.setSaveValueFlag(false);
-	m_svoFoundString.SetMaxByteSize(SvDef::cMaxStringByteSize);
+	m_svoFoundString.SetMaxByteSize();
 
 	m_lvoMatchLineNumber.SetDefaultValue ( -1l);
 	m_lvoMatchLineNumber.setSaveValueFlag(false);

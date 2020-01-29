@@ -135,6 +135,7 @@ HRESULT SVStringValueObjectClass::SetArrayValues(const ValueVector& rValues)
 		if (0 < Size)
 		{
 			std::copy(rValues.begin(), rValues.end(), m_stringData.begin());
+			setHasChanged(true);
 		}
 		Result = S_OK;
 	}
@@ -191,8 +192,12 @@ void SVStringValueObjectClass::updateMemBlockData() const
 	{
 		if(0 < getMemSizeReserved() && nullptr != m_pMemBlockData)
 		{
+			assert(false);
 			///Clear the memory block data
 			memset(m_pMemBlockData, 0, getMemSizeReserved());
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			setHasChanged(false);
 		}
 	}
 }
@@ -227,14 +232,15 @@ int32_t SVStringValueObjectClass::getByteSize(bool useResultSize, bool memBlockD
 		for (int i = 0; i < numberOfElements; ++i)
 		{
 			std::string valueString;
-			SVStringValueObjectClass::GetValue(valueString, i);
+			GetValue(valueString, i);
 			//Add place for the ending \0 of the string
-			result += static_cast<long> (valueString.size() + 1);
+			result +=  (0 == valueString.size()) ? 0 : static_cast<long> (valueString.size() + 1);
 		}
 	}
 	else
 	{
-		result = m_maxByteSize;
+		//Add place for the ending \0 of the string
+		result = m_maxByteSize + 1;
 		result *= numberOfElements;
 	}
 	//For memory block data that is an array the first value shall contain the result size which can be variable
