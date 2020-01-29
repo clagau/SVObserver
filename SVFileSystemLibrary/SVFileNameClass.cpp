@@ -636,7 +636,10 @@ bool SVFileNameClass::SaveFile()
 				bDone = (0 == SvUl::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
 				        ( 0 != _access( GetFullFileName().c_str(), 0 ) );
 
-				if ( ! bDone )
+				
+				//If the name of the file changed, because specific special chracters were removed, check if the file with the new name already exists
+				//and ask if the user wants to overwrite it, if it does
+				if ( ! bDone && PathName != Path)
 				{
 					csNewFullFileName += _T( "\\" );
 					csNewFullFileName += GetFileName();
@@ -652,6 +655,10 @@ bool SVFileNameClass::SaveFile()
 						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GUID_NULL, MB_YESNO);
 					}
+				}
+				else
+				{
+					bDone = true;
 				}
 			}
 		}
