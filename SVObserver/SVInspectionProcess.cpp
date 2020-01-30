@@ -963,18 +963,19 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rNewEntry->m_IOId);
 
-		for (const auto& rpInputEntry : oldPPQInputs)
+		auto itInputEntry = std::find_if(oldPPQInputs.begin(), oldPPQInputs.end(), 	[&pObject](const auto& rpInputEntry)->bool
 		{
-			if (nullptr != rpInputEntry && 0 == strcmp(rpInputEntry->getObject()->GetName(), pObject->GetName()))
-			{
-				// We found it
-				bFound = true;
-				m_PPQInputs[iList] = rpInputEntry;
-				m_PPQInputs[iList]->m_PPQIndex = rNewEntry->m_PPQIndex;
-				m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
-				m_PPQInputs[iList]->getObject()->ResetObject();
-				break;
-			}
+			return nullptr != rpInputEntry && 0 == strcmp(rpInputEntry->getObject()->GetName(), pObject->GetName());
+		});
+		if (itInputEntry != oldPPQInputs.end())
+		{
+			// We found it
+			bFound = true;
+			m_PPQInputs[iList] = *itInputEntry;
+			m_PPQInputs[iList]->m_PPQIndex = rNewEntry->m_PPQIndex;
+			m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
+			m_PPQInputs[iList]->getObject()->ResetObject();
+			break;
 		}
 
 		if (!bFound)

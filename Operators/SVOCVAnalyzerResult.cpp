@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVOCVAnalyzerResult.h"
 #include "Definitions/Color.h"
-#include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
