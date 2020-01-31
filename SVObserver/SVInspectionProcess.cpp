@@ -3767,21 +3767,6 @@ void SVInspectionProcess::buildValueObjectData()
 				pValueObjectDef->set_memoffset(m_memValueDataOffset);
 				pValueObject->setTrData(m_memValueDataOffset, memSize, pList->size() - 1);
 				m_memValueDataOffset += memSize;
-
-				switch(pObject->GetObjectSubType())
-				{
-					case SvPb::DoubleSortValueObjectType:
-					case SvPb::SVStringValueObjectType:
-					case SvPb::SVVariantValueObjectType:
-					{
-						m_updateValueObjectSet.insert(pValueObject);
-						break;
-					}
-					default:
-					{
-						break;
-					}
-				}
 			}
 			else
 			{
@@ -3789,6 +3774,20 @@ void SVInspectionProcess::buildValueObjectData()
 				pValueObjectDef->set_memoffset(valueObjectMemOffset);
 				///Only update the trigger record position
 				pValueObject->setTrData(-1, -1, pList->size() - 1);
+			}
+			switch (pObject->GetObjectSubType())
+			{
+				case SvPb::DoubleSortValueObjectType:
+				case SvPb::SVStringValueObjectType:
+				case SvPb::SVVariantValueObjectType:
+				{
+					m_updateValueObjectSet.insert(pValueObject);
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
 		}
 	}

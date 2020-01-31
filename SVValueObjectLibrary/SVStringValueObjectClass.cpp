@@ -170,7 +170,7 @@ void SVStringValueObjectClass::updateMemBlockData() const
 	///Here we only want the data byte size
 	int32_t dataByteSize = getByteSize(true, false);
 	///This is to make sure that enough space has been reserved for memory block data
-	if (0 < dataByteSize &&  dataByteSize <= getMemSizeReserved() && nullptr != m_pMemBlockData)
+	if (0 <= dataByteSize &&  dataByteSize <= getMemSizeReserved() && nullptr != m_pMemBlockData)
 	{
 		if(hasChanged())
 		{
