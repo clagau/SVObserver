@@ -199,6 +199,7 @@ private:
 	SvVol::SVDoubleValueObjectClass m_ObjectID;		//! The object ID, which has been received by the PLC, to be inspected
 	SvVol::SVDWordValueObjectClass m_TriggerIndex;	//! The trigger index, which has been received by the PLC
 	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
+	SvVol::SVStringValueObjectClass m_ToolComment;
 #pragma endregion Member Variables
 };
 

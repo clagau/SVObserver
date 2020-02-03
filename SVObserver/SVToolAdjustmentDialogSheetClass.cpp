@@ -376,6 +376,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			{
 				delete pConditionalDlg;
 				pConditionalDlg = nullptr;
+				return;
 			}
 			break;
 
@@ -384,13 +385,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CannotOpenTADlg, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10218);
 			delete pConditionalDlg;
 			pConditionalDlg = nullptr;
-			break;
+			return;
 	}
 
-	if (SvPb::SVObjectTypeEnum::SVToolObjectType == GetTaskObject()->GetObjectType())
-	{
-		AddPage(new SvOg::SVToolAdjustmentDialogCommentPage(m_InspectionID, m_TaskObjectID));
-	}
+	AddPage(new SvOg::SVToolAdjustmentDialogCommentPage(m_InspectionID, m_TaskObjectID));
 }
 
 BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()

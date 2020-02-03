@@ -82,6 +82,9 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject(&m_TriggerIndex, TriggerIndexGuid, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_InspectedObjectID, InspectedObjectIDGuid, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
 	RegisterEmbeddedObject(&m_InspectedObjectID.getLinkedName(), InspectedObjectIDLinkGuid, SvDef::c_InspectedObjectIDLink, false, SvOi::SVResetItemIP);
+
+	RegisterEmbeddedObject(&m_ToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
+
 	//Link inspected object ID with incoming object ID as default
 	m_InspectedObjectID.setValue(m_ObjectID.GetUniqueObjectID().ToString());
 	//Display them as integers
@@ -220,6 +223,10 @@ bool SVToolSetClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruct
 
 	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_MainImageObject.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+
+	// Tool Comment attributes...
+	m_ToolComment.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_ToolComment.SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);	// We do not want this to show up in the results picker.
 
 	//This is only required to be able to read old configurations with auxiliary extents set in the old format
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
@@ -461,8 +468,6 @@ bool SVToolSetClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 bool SVToolSetClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
-	BOOL bIsValid = FALSE;
-	BOOL bDisabled = FALSE;
 	clearRunErrorMessages();
 
 	double l_Timer = SvTl::GetTimeStamp();
