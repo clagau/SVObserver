@@ -29,7 +29,6 @@ SVOCameraObj::SVOCameraObj() :
 , m_IsColor( false )
 , m_CameraFileSet( false )
 , m_CameraFileChanged( false )
-, m_CameraObjOk( false )
 , m_FileAcquisition( false )
 , m_imageSizeEditModeFileBased( true )
 , m_fileMode( ContinuousMode )
@@ -84,9 +83,9 @@ void SVOCameraObj::SetCameraFile(const std::string& rFileName)
     {
         m_CameraFileSet = false;
     }
-    //check to see if Camera is ok...
 
-    IsCameraObjOk();
+    //check to see if Camera is ok...
+	assert(IsCameraObjOk());
 }
 
 void SVOCameraObj::SetCameraFileChanged()
@@ -104,24 +103,14 @@ const std::string& SVOCameraObj::GetCameraFile() const
     return m_CameraFile;
 }
 
-bool SVOCameraObj::IsCameraObjOk()
+bool SVOCameraObj::IsCameraObjOk() const
 {
-	if (IsFileAcquisition())
+	bool ok = true;
+	if (!IsFileAcquisition())
 	{
-		m_CameraObjOk = true;
+		ok = m_CameraFileSet;
 	}
-	else
-	{
-		if (m_CameraFileSet)
-		{
-			m_CameraObjOk = true;
-		}
-		else
-		{
-			m_CameraObjOk = false;
-		}
-	}
-    return m_CameraObjOk;
+    return ok;
 }
 
 void SVOCameraObj::SetBandNumber(int iBandNumber)
@@ -176,7 +165,6 @@ SVOCameraObj& SVOCameraObj::operator =(const SVOCameraObj& rRhs)
     m_CameraFile = rRhs.m_CameraFile;
     m_CameraFileSet = rRhs.m_CameraFileSet;
     m_CameraFileChanged = rRhs.m_CameraFileChanged;
-    m_CameraObjOk = rRhs.m_CameraObjOk;
 	m_CameraFileParams = rRhs.m_CameraFileParams;
 	m_CameraDeviceParams = rRhs.m_CameraDeviceParams;
 
@@ -200,7 +188,6 @@ SVOCameraObj* SVOCameraObj::operator =(const SVOCameraObj* pRhs)
     m_CameraFile = pRhs->m_CameraFile;
     m_CameraFileSet = pRhs->m_CameraFileSet;
     m_CameraFileChanged = pRhs->m_CameraFileChanged;
-    m_CameraObjOk = pRhs->m_CameraObjOk;
 	m_CameraFileParams = pRhs->m_CameraFileParams;
 	m_CameraDeviceParams = pRhs->m_CameraDeviceParams;
 

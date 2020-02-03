@@ -43,7 +43,7 @@ public:
     void SetBandNumber(int BandNumber);
 	void SetCameraFileParams(const SVDeviceParamCollection& rParams);
 	void SetCameraDeviceParams(const SVDeviceParamCollection& rParams);
-    bool IsCameraObjOk();
+    bool IsCameraObjOk() const;
 
 	bool IsFileAcquisition() const;
 	void SetFileAcquisitionMode(bool FileAcquisition);
@@ -76,7 +76,6 @@ private:  //data members
     std::string m_CameraFile;
     bool m_CameraFileSet;
 	bool m_CameraFileChanged;
-    bool m_CameraObjOk;
 	SVDeviceParamCollection m_CameraDeviceParams;
 	SVDeviceParamCollection m_CameraFileParams;
 

@@ -88,10 +88,10 @@ bool SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, value_type>::
 	if (IsValidHandle(handle))
 	{
 		HRESULT hr = S_OK;
-		value_type value = Get(handle, hr);
+		const value_type& rValue = Get(handle, hr);
 		if (S_OK == hr)
 		{
-			if (value.IsValidHandle(componentHandle))
+			if (rValue.IsValidHandle(componentHandle))
 			{
 				bRetVal = true;
 			}
