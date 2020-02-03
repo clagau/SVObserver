@@ -421,7 +421,7 @@ bool SVPPQObject::Create()
 
 	m_oNotifyInspectionsSet.clear();
 	m_ProcessInspectionsSet.clear();
-	calcUseGap4InterestFlag();
+	calcUseProcessingOffset4InterestFlag();
 
 	if (m_isCreated)
 	{
@@ -457,7 +457,7 @@ bool SVPPQObject::Rebuild()
 
 	bool result = SetupProductInfoStructs();
 
-	calcUseGap4InterestFlag();
+	calcUseProcessingOffset4InterestFlag();
 
 	// Force the Inspections to rebuild as well
 	for (auto pInspection : m_arInspections)
@@ -893,7 +893,7 @@ void SVPPQObject::PrepareGoOnline()
 {
 	SvSml::SharedMemWriter::Instance().clearInspectionIdsVector(GetName());
 
-	calcUseGap4InterestFlag();
+	calcUseProcessingOffset4InterestFlag();
 
 	if (!m_pTrigger->CanGoOnline())
 	{
@@ -2613,7 +2613,7 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, const GUI
 	}
 	else
 	{
-		if (m_useGap4Interest && nullptr != rProduct.m_svInspectionInfos[rInspGuid].m_triggerRecordComplete)
+		if (m_useProcessingOffset4Interest && nullptr != rProduct.m_svInspectionInfos[rInspGuid].m_triggerRecordComplete)
 		{
 			setTR2StoreForInterestMap(rInspGuid, rProduct);
 			rProduct.m_svInspectionInfos[rInspGuid].clearTRCs();
@@ -4290,7 +4290,7 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct)
 	std::vector<SvTrc::ITriggerRecordRPtr> trVec;
 	for (const auto& rIpInfo : rProduct.m_svInspectionInfos)
 	{
-		if (!m_useGap4Interest)
+		if (!m_useProcessingOffset4Interest)
 		{
 			if (nullptr != rIpInfo.second.m_triggerRecordComplete)
 			{
@@ -4363,7 +4363,7 @@ void SVPPQObject::setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfo
 {
 	auto& rIpQueue = m_storeForInterestMap[rInspGuid];
 	long triggerCount = rProduct.m_triggerInfo.lTriggerCount;
-	if (rIpQueue.size() >= m_maxGap4Interest)
+	if (rIpQueue.size() >= m_maxProcessingOffset4Interest)
 	{
 		if (rProduct.m_svInspectionInfos[rInspGuid].m_bReject)
 		{
@@ -4395,9 +4395,9 @@ void SVPPQObject::setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfo
 	rIpQueue.emplace_back(rProduct.m_svInspectionInfos[rInspGuid]);
 }
 
-void SVPPQObject::calcUseGap4InterestFlag()
+void SVPPQObject::calcUseProcessingOffset4InterestFlag()
 {
-	m_useGap4Interest = 1 < m_arInspections.size() && 1 < m_maxGap4Interest && m_maxGap4Interest < GetPPQLength() && SvDef::SVPPQNextTriggerMode == m_oOutputMode;
+	m_useProcessingOffset4Interest = 1 < m_arInspections.size() && 1 < m_maxProcessingOffset4Interest && m_maxProcessingOffset4Interest < GetPPQLength() && SvDef::SVPPQNextTriggerMode == m_oOutputMode;
 }
 
 long SVPPQObject::getNeededRecords() const
@@ -4406,12 +4406,12 @@ long SVPPQObject::getNeededRecords() const
 	{
 		return 2l;
 	}
-	else if (2 > m_maxGap4Interest || GetPPQLength() < m_maxGap4Interest)
+	else if (2 > m_maxProcessingOffset4Interest || GetPPQLength() < m_maxProcessingOffset4Interest)
 	{
 		return GetPPQLength();
 	}
 	else
 	{
-		return m_maxGap4Interest;
+		return m_maxProcessingOffset4Interest;
 	}
 }

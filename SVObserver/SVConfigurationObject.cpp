@@ -2057,13 +2057,13 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 			pPPQ->SetOutputDelay(lDelay);
 		}// end if
 
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_MAX_GAP_4INTEREST, hSubChild, Value);
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_MAX_PROCESSINGOFFSET_4INTEREST, hSubChild, Value);
 
 		if (bOk)
 		{
 			lDelay = Value;
 
-			pPPQ->setMaxGap4Interest(lDelay);
+			pPPQ->setMaxProcessingOffset4Interest(lDelay);
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_MAINTAIN_SRC_IMAGE, hSubChild, Value);
@@ -3359,8 +3359,8 @@ void SVConfigurationObject::SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, con
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAINTAIN_SRC_IMAGE, svValue);
 	svValue.Clear();
 
-	svValue = rPPQ.getMaxGap4Interest();
-	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAX_GAP_4INTEREST, svValue);
+	svValue = rPPQ.getMaxProcessingOffset4Interest();
+	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAX_PROCESSINGOFFSET_4INTEREST, svValue);
 	svValue.Clear();
 
 	long lInspectionTimeout = 0;

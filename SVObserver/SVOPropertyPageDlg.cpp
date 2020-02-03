@@ -999,11 +999,11 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
 		if (nullptr != pEdit)
 		{
-			pEdit->SetCtrlID(PROP_PPQ_MAXGAP4INTEREST);
-			pEdit->SetLabelText(_T("Max. Trigger Gap for Interest"));
-			pEdit->SetInfoText(_T("The maximum gap of trigger between the finishing of two inspections should be. "
-				"If the gap higher of this, interest data of an inspection can be lost, but if value to high too many buffer are required. 0 means full ppqLength, else must between 2 and ppqLength."));
-			pEdit->SetItemValue(m_PPQObj.GetMaxTriggerGapProperty());
+			pEdit->SetCtrlID(PROP_PPQ_MAX_PROCESSING_OFFSET);
+			pEdit->SetLabelText(_T("Max. processing offset"));
+			pEdit->SetInfoText(_T("Maximal processing offset between inspections to keep all reject data. It applies only if there are several inspections in this PPQ and a reject condition is set. "
+				"Range(2 … PPQ length), 0 = use the full PPQ, Warning: A high offset increases the RAM usage."));
+			pEdit->SetItemValue(m_PPQObj.GetMaxProcessingOffsetProperty());
 		}
 		
 		// add "Inspection Timeout" property
@@ -1643,7 +1643,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 							iLen = getMaxPpqLength();
 							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetItemValue(iLen);
 						}
-						checkAndSetMaxGap4Interest(iLen);
+						checkAndSetMaxProcessingOffset(iLen);
 					}
 					if ( (lPPQMode == 1) || (lPPQMode == 2) )
 					{
@@ -1705,11 +1705,11 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					break;
 				}
 
-				case PROP_PPQ_MAXGAP4INTEREST:
+				case PROP_PPQ_MAX_PROCESSING_OFFSET:
 				{
 					int iLen;
 					m_Tree.FindItem(PROP_PPQ_LENGTH)->GetItemValue(iLen);
-					checkAndSetMaxGap4Interest(iLen);
+					checkAndSetMaxProcessingOffset(iLen);
 					break;
 				}
 
@@ -2101,7 +2101,7 @@ void CSVOPropertyPageDlg::PPQHideItems()
             //NextTrigger mode - hide OutputDelay
             m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem();
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem();
-			m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->HideItem(false);
+			m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->HideItem(false);
             break;
         }
         case SvDef::SVPPQTimeDelayMode:
@@ -2109,7 +2109,7 @@ void CSVOPropertyPageDlg::PPQHideItems()
 		{
 			m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem();
-			m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->HideItem();
+			m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->HideItem();
 			break;
 		}
 
@@ -2117,7 +2117,7 @@ void CSVOPropertyPageDlg::PPQHideItems()
         {
             m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem(FALSE);
-			m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->HideItem();
+			m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->HideItem();
             break;
         }
         default:
@@ -2162,21 +2162,21 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR) ? true : false;
 }
 
-void CSVOPropertyPageDlg::checkAndSetMaxGap4Interest(int ppqLen)
+void CSVOPropertyPageDlg::checkAndSetMaxProcessingOffset(int ppqLen)
 {
 	long iVal;
-	m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->GetItemValue(iVal);
+	m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->GetItemValue(iVal);
 
 	if (iVal < 2 && 0 != iVal)  //0 == iVal means PPQLength
 	{
 		iVal = 2;
-		m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->SetItemValue(iVal);
+		m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->SetItemValue(iVal);
 	}
 	else if (iVal > ppqLen)
 	{
 		iVal = ppqLen;
-		m_Tree.FindItem(PROP_PPQ_MAXGAP4INTEREST)->SetItemValue(iVal);
+		m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->SetItemValue(iVal);
 	}
-	m_PPQObj.SetMaxTriggerGapProperty(iVal);
+	m_PPQObj.SetMaxProcessingOffsetProperty(iVal);
 }
 

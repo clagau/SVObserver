@@ -92,7 +92,7 @@ public:
 	void SetResetDelay( long lResetTime );
 	void SetPPQLength( long lPPQLength );
 	void SetMaintainSourceImages( bool bMaintainImages );
-	void setMaxGap4Interest(int maxGap4Interest) { m_maxGap4Interest = maxGap4Interest; };
+	void setMaxProcessingOffset4Interest(int maxProcessingOffset4Interest) { m_maxProcessingOffset4Interest = maxProcessingOffset4Interest; };
 	void SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const std::string& conditionName );
 
@@ -102,7 +102,7 @@ public:
 	void GetPPQLength( long& rlPPQLength ) const;
 	long GetPPQLength() const;
 	void GetMaintainSourceImages( bool& rbMaintainImages ) const;
-	int getMaxGap4Interest() const { return m_maxGap4Interest; };
+	int getMaxProcessingOffset4Interest() const { return m_maxProcessingOffset4Interest; };
 	void GetInspectionTimeout( long& rlTimeoutMillisec ) const;
 	const std::string& GetConditionalOutputName() const;
 
@@ -494,7 +494,7 @@ private:
 
 	void setTRofInterest(const SVProductInfoStruct& rProduct);
 	void setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfoStruct &rProduct);
-	void calcUseGap4InterestFlag();
+	void calcUseProcessingOffset4InterestFlag();
 	long getNeededRecords() const;
 
 	SvVol::BasicValueObjects	m_PpqValues;
@@ -515,8 +515,8 @@ private:
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
 	long m_lastPPQPosition {0L};		/// This is the PPQ position of the last SetInspectionComplete call
-	int m_maxGap4Interest {0};  
-	bool m_useGap4Interest {false};	///Flag if Gap will used. It should only used if m_maxGap4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.
+	int m_maxProcessingOffset4Interest {0};  
+	bool m_useProcessingOffset4Interest {false};	///Flag if processing offset will used. It should only used if m_maxProcessingOffset4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.
 
 	using IpInfoDeque = std::deque<SVInspectionInfoStruct>;
 	std::unordered_map<GUID, IpInfoDeque> m_storeForInterestMap;

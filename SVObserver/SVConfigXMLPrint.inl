@@ -373,7 +373,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteAttributeString(nullptr, L"Length", nullptr, _itow(lPPQLength, buff, 10));
 		writer->WriteAttributeString(nullptr, L"OutputResetDelay", nullptr, _itow(lResetDelay, buff, 10));
 		writer->WriteAttributeString(nullptr, L"OutputDelayTime", nullptr, _itow(lDelayTime, buff, 10));
-		writer->WriteAttributeString(nullptr, L"MaxTriggerGap4Interest", nullptr, _itow(pPPQ->getMaxGap4Interest(), buff, 10));
+		writer->WriteAttributeString(nullptr, L"MaxTriggerGap4Interest", nullptr, _itow(pPPQ->getMaxProcessingOffset4Interest(), buff, 10));
 
 		if (nullptr != pPPQ->GetTrigger())
 		{

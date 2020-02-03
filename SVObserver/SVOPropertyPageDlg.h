@@ -59,7 +59,7 @@ enum PROPERTY_PAGE_PROPERTY
 	PROP_FILECAMERA_DIRECTORY,
 	PROP_FILECAMERA_MODE,
 	PROP_PPQ_CONDITIONAL_OUTPUT,
-	PROP_PPQ_MAXGAP4INTEREST,
+	PROP_PPQ_MAX_PROCESSING_OFFSET,
 	PROP_CAMERA_COLOR,
 
 	//defines for advanced properties
@@ -172,7 +172,7 @@ private: //data members
 
 	bool IsGigeSystem() const;
 
-	void checkAndSetMaxGap4Interest(int iLen);
+	void checkAndSetMaxProcessingOffset(int iLen);
 };
 
 

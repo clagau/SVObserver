@@ -2197,7 +2197,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay());
 				pPPQ->SetOutputDelay(pPPQObj->GetPPQOutputDelayTime());
 				pPPQ->SetMaintainSourceImages( pPPQObj->GetMaintainSourceImageProperty() );
-				pPPQ->setMaxGap4Interest(pPPQObj->GetMaxTriggerGapProperty());
+				pPPQ->setMaxProcessingOffset4Interest(pPPQObj->GetMaxProcessingOffsetProperty());
 				pPPQ->SetInspectionTimeout( pPPQObj->GetInspectionTimeout() );
 				pPPQ->SetConditionalOutputName( pPPQObj->GetConditionalOutputName() );
 
@@ -2737,7 +2737,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPPQObj->SetPPQOutputDelayTime((int)lPPQDelayTime);
 				pPPQObj->SetPPQOutputResetDelay((int)lPPQResetDelay);
 				pPPQObj->SetMaintainSourceImageProperty(bPPQMaintainSrcImg);
-				pPPQObj->SetMaxTriggerGapProperty(pcfgPPQ->getMaxGap4Interest());
+				pPPQObj->SetMaxProcessingOffsetProperty(pcfgPPQ->getMaxProcessingOffset4Interest());
 				pPPQObj->SetInspectionTimeout( lInspectionTimeout );
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
 

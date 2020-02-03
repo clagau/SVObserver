@@ -194,9 +194,9 @@ void SVOPPQObj::SetMaintainSourceImageProperty(bool bValue)
 	m_bMaintainSrcImg = bValue;
 }
 
-void SVOPPQObj::SetMaxTriggerGapProperty(int value)
+void SVOPPQObj::SetMaxProcessingOffsetProperty(int value)
 {
-	m_MaxTriggerGapFlag = value;
+	m_MaxProcessingOffset = value;
 }
 
 bool SVOPPQObj::GetMaintainSourceImageProperty() const
@@ -204,9 +204,9 @@ bool SVOPPQObj::GetMaintainSourceImageProperty() const
 	return m_bMaintainSrcImg;
 }
 
-int SVOPPQObj::GetMaxTriggerGapProperty() const
+int SVOPPQObj::GetMaxProcessingOffsetProperty() const
 {
-	return m_MaxTriggerGapFlag;
+	return m_MaxProcessingOffset;
 }
 
 void SVOPPQObj::SetInspectionTimeout( long lTimeoutMillisec )

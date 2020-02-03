@@ -51,7 +51,7 @@ public:
 	void SetPPQOutputResetDelay(long lResetDelay);
 	void SetPPQOutputDelayTime(long lDelayTime);
 	void SetMaintainSourceImageProperty(bool bValue);
-	void SetMaxTriggerGapProperty(int value);
+	void SetMaxProcessingOffsetProperty(int value);
 	void SetInspectionTimeout( long lTimeoutMillisec );
 
 	int GetPPQMode() const;
@@ -59,7 +59,7 @@ public:
 	long GetPPQOutputResetDelay() const;
 	long GetPPQOutputDelayTime() const;
 	bool GetMaintainSourceImageProperty() const;
-	int GetMaxTriggerGapProperty() const;
+	int GetMaxProcessingOffsetProperty() const;
 	long GetInspectionTimeout() const;
 
 	void SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list);
@@ -86,7 +86,7 @@ private:
 	long m_lPPQOutputResetDelay {0};
 	long m_lPPQOutputDelayTime {100};
 	bool m_bMaintainSrcImg {false};
-	int m_MaxTriggerGapFlag {0};
+	int m_MaxProcessingOffset {0};
 	long m_lInspectionTimeout {0};
 	std::string m_conditionalOutputName {PPQ_CONDITIONAL_OUTPUT_ALWAYS};
 	SVNameGuidPairList m_availableInputs;
