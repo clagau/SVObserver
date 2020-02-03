@@ -123,6 +123,19 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	return Result;
 }
 
+HRESULT SVStringValueObjectClass::SetValue(const std::string& rValue, int Index /*= -1*/)
+{
+	///Note that the call to SetValue must be the SetValue(const T& rValue, int Index) version
+	///otherwise it becomes an endless recursive call!
+	HRESULT result = __super::SetValue(rValue, Index);
+	///If the memory block size is to small then we need to reset the TR data
+	if (-1 != getMemOffset() && getMemSizeReserved() < getByteSize(false, false))
+	{
+		setTrData(-1L, -1L, -1L);
+	}
+	return result;
+}
+
 HRESULT SVStringValueObjectClass::SetArrayValues(const ValueVector& rValues)
 {
 	HRESULT Result(E_FAIL);
@@ -136,6 +149,11 @@ HRESULT SVStringValueObjectClass::SetArrayValues(const ValueVector& rValues)
 		{
 			std::copy(rValues.begin(), rValues.end(), m_stringData.begin());
 			setHasChanged(true);
+			///If the memory block size is to small then we need to reset the TR data
+			if (-1 != getMemOffset() && getMemSizeReserved() < getByteSize(false, false))
+			{
+				setTrData(-1L, -1L, -1L);
+			}
 		}
 		Result = S_OK;
 	}

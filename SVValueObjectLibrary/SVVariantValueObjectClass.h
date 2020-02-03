@@ -32,6 +32,7 @@ public:
 	virtual ~SVVariantValueObjectClass();
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
+	virtual HRESULT SetValue(const _variant_t& rValue, int Index = -1) override;
 	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;

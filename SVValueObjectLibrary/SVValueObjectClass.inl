@@ -611,6 +611,14 @@ void SVValueObjectClass<T>::setTrData(int32_t memOffset, int32_t memSize, int32_
 {
 	///This is required to make sure that if memory data block needs to be reallocated the pointer is not invalid
 	clearMemoryBlockPointer();
+	///Reset all parameters when pos is -1
+	if(-1 == pos)
+	{
+		m_trPos = -1L;
+		m_memOffset = -1L;
+		m_memSizeReserved = 0L;
+		return;
+	}
 	m_trPos = pos;
 	///When memOffset and memSize are -1 then only the trigger record position is changed
 	if(-1 == memOffset && -1 == memSize)

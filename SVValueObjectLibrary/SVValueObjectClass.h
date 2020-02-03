@@ -126,7 +126,7 @@ protected:
 	void init();
 
 	virtual ValueType* reserveLocalMemory();
-	virtual void clearMemoryBlockPointer() {m_pValue = nullptr; }
+	virtual void clearMemoryBlockPointer() {m_pValue = (-1 == m_memOffset) ? m_pValue : nullptr; }
 
 	///Note these virtual functions cannot be defined here, only in the defined classes until
 	///if constexpr is available due to different types
