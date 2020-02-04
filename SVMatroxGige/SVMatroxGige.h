@@ -47,7 +47,7 @@ public:
 	HRESULT CameraLoadFiles(unsigned long p_Handle, SAFEARRAY* p_psaFileNames);
 
 	HRESULT InternalTriggerEnable(unsigned long p_Handle);
-	HRESULT InternalTrigger(unsigned long p_Handle);
+	HRESULT InternalTrigger(unsigned long p_Handle, const VARIANT& rTriggerTime);
 
 	void ScanForCameras();
 
@@ -80,8 +80,6 @@ private:
 	
 	HRESULT StartDigitizer(unsigned long p_Handle, SVMatroxGigeDigitizer& p_rCamera);
 	HRESULT StopDigitizer(SVMatroxGigeDigitizer& p_rCamera);
-
-	HRESULT FireOneShot( unsigned long p_Handle );
 
 	bool IsValidDigitizerHandle(unsigned long p_Handle) const;
 	bool IsValidDigitizer(unsigned long p_Handle) const;

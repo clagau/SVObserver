@@ -34,7 +34,7 @@ namespace SvTh
 	typedef HRESULT(WINAPI *SVDigitizerStopPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterBufferInterfacePtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerEnablePtr)(SVHANDLE);
-	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerPtr)(SVHANDLE);
+	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerPtr)(SVHANDLE, const VARIANT&);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterStartAcquirePtr)(SVHANDLE, unsigned long, const TriggerDispatcher &rDispatcher);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterStopAcquirePtr)(SVHANDLE, unsigned long, const TriggerDispatcher &rDispatcher);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterAllAcquirePtr)(SVHANDLE, unsigned long);
@@ -79,7 +79,7 @@ namespace SvTh
 		HRESULT UnregisterBufferInterface(SVHANDLE p_hHandle);
 
 		HRESULT InternalTriggerEnable(SVHANDLE p_hHandle);
-		HRESULT InternalTrigger(SVHANDLE p_hHandle) const;
+		HRESULT InternalTrigger(SVHANDLE p_hHandle, const VARIANT& rTriggerTime) const;
 
 		HRESULT DestroyBuffers(SVHANDLE p_hHandle);
 		HRESULT UnloadCameraFile(SVHANDLE p_hHandle);

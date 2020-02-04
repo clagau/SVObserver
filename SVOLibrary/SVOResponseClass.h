@@ -36,7 +36,7 @@ public:
 		m_Data.clear();
 	}
 
-	const IntVariantMap& getData() {return m_Data;}
+	const IntVariantMap& getData() const {return m_Data;}
 	void setData( const IntVariantMap& rData ) {m_Data = rData;}
 
 private:

@@ -70,9 +70,9 @@ public:
 	TelegramType m_type {TelegramType::NoneType};			//Telegram type
 	TelegramContent m_content {TelegramContent::NoneContent};//Telegram content
 	TelegramLayout m_layout {TelegramLayout::NoneLayout};	//Telegram layout
-	uint8_t m_error;										//Error number
-	uint16_t m_errorInfoA;									//Addition info A to error
-	uint16_t m_errorInfoB;									//Addition info B to error
+	uint8_t m_error{0};										//Error number
+	uint16_t m_errorInfoA{0};								//Addition info A to error
+	uint16_t m_errorInfoB{0};								//Addition info B to error
 	SystemStatus m_systemStatus {SystemStatus::SystemDown};	//System status
 	std::array<uint8_t, c_ReservedTelegram> m_reserved{0, 0, 0, 0, 0, 0, 0};	//Reserved data
 #pragma endregion Member Variables

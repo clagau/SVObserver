@@ -113,6 +113,8 @@ TLR_RESULT CifXCard::OpenCifX(char* pBoardName)
 			}
 		} while (tResult == CIFX_DEV_NOT_READY);
 	}
+	m_configDataSetsMap[TelegramLayout::Layout1] = createConfigList(TelegramLayout::Layout1);
+	m_configDataSetsMap[TelegramLayout::Layout2] = createConfigList(TelegramLayout::Layout2);
 
 	return tResult;
 }
@@ -405,11 +407,11 @@ void CifXCard::setPlcLoopSyncTime()
 void CifXCard::sendConfigList()
 {
 	m_protocolInitialized = false;
-	std::vector<ConfigDataSet> configList = createConfigList();
-	if(0 < configList.size())
+	const std::vector<ConfigDataSet>& rConfigList =  m_configDataSetsMap[m_inputTelegram.m_layout];
+	if(0 < rConfigList.size())
 	{
-		const uint8_t* pData = reinterpret_cast<const uint8_t*> (&configList[0]);
-		writeResponseData(pData, sizeof(ConfigDataSet) * configList.size());
+		const uint8_t* pData = reinterpret_cast<const uint8_t*> (&rConfigList[0]);
+		writeResponseData(pData, sizeof(ConfigDataSet) * rConfigList.size());
 	}
 }
 
@@ -425,7 +427,7 @@ void CifXCard::sendDefaultResponse()
 	writeResponseData(nullptr, 0);
 }
 
-std::vector<ConfigDataSet> CifXCard::createConfigList()
+std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 {
 	static std::unordered_map<std::type_index, PlcDataType> dataTypeList
 	{
@@ -445,7 +447,7 @@ std::vector<ConfigDataSet> CifXCard::createConfigList()
 	size_t configIndex {0ULL};
 	uint16_t startByte {1};
 
-	switch(m_inputTelegram.m_layout)
+	switch(layout)
 	{
 		case TelegramLayout::Layout1:
 		{

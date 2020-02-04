@@ -62,7 +62,7 @@ public:
 
 private:
 
-	std::vector<ConfigDataSet> createConfigList();
+	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
 	void writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
 
 	uint32_t m_currentResult {0UL};
@@ -90,6 +90,8 @@ private:
 	Telegram m_inputTelegram;
 	TimeSync m_timeSync;
 	InspectionCommand m_inspectionCmd;
+
+	std::map<TelegramLayout, std::vector<ConfigDataSet>> m_configDataSetsMap;
 };
 
 } //namespace SvPlc

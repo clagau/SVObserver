@@ -1028,24 +1028,18 @@ HRESULT SVMatroxGige::InternalTriggerEnable(unsigned long channel)
 	return hr;
 }
 
-HRESULT SVMatroxGige::InternalTrigger( unsigned long channel )
+HRESULT SVMatroxGige::InternalTrigger( unsigned long channel, const VARIANT& rTriggerTime)
 {
 	HRESULT hr = S_FALSE;
-	if (IsValidDigitizer(channel))
-	{
-		hr = FireOneShot(channel);
-	}
-	return hr;
-}
-
-HRESULT SVMatroxGige::FireOneShot( unsigned long channel )
-{
-	HRESULT hr = S_FALSE;
-
 	if ( IsValidDigitizer(channel) )
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(channel);
 		
+		if(VT_R8 == rTriggerTime.vt)
+		{
+			variant_t triggerDelay = (rTriggerTime.dblVal - SvTl::GetTimeStamp()) * SvTl::c_MicrosecondsPerMillisecond;
+			SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerDelay", SVMatroxDigitizerFeature::SVTypeDouble, triggerDelay);
+		}
 		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVMatroxDigitizerFeature::SVTypeCommand, _variant_t(0L));
 	}
 	return hr;

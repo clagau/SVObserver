@@ -176,6 +176,6 @@ void SVTestAcquisitionClass::StopAcquire( )
 
 void SVTestAcquisitionClass::FireSoftwareTrigger()
 {
-	m_rSubsystem.m_svDigitizers.InternalTrigger(m_hDigitizer);
+	m_rSubsystem.m_svDigitizers.InternalTrigger(m_hDigitizer, variant_t());
 }
 

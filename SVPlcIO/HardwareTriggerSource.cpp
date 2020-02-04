@@ -15,6 +15,7 @@
 
 namespace SvPlc
 {
+constexpr uint8_t c_UnitControlActive = 1;
 constexpr int32_t c_MicrosecondsPerMillisecond = 1000;
 constexpr uint32_t c_cifXProblemReportFrequency = 1000;
 constexpr uint32_t c_SecondsToNanoSeconds = 1000000000;
@@ -163,8 +164,8 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 
 	double triggerTimeStamp = getExecutionTime(channel);
 
-	//When sequence number has changed and is odd generate new trigger
-	if (m_OldSequenceCode[channel] != m_NewSequenceCode[channel] && (m_NewSequenceCode[channel] % 2))
+	//When unit control is 1, sequence number has changed and is odd generate new trigger
+	if (c_UnitControlActive == rChannel.m_unitControl && m_OldSequenceCode[channel] != m_NewSequenceCode[channel] && (m_NewSequenceCode[channel] % 2))
 	{
 		TriggerReport report;
 		report.m_channel = channel;

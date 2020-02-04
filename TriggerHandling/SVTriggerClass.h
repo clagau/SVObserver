@@ -23,16 +23,9 @@ namespace SvTh
 
 	struct AcquisitionParameter
 	{
-		//AcquisitionParameter(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel) :
-		//	m_pDllDigitizer{pDllDigitizer}, m_triggerChannel{triggerChannel}
-		//{
-		//}
-
 		bool operator==(const AcquisitionParameter& rRhs)
 		{
-			bool result = (m_pDllDigitizer == rRhs.m_pDllDigitizer);
-			result &= (m_triggerChannel == rRhs.m_triggerChannel);
-			return result;
+			return (m_pDllDigitizer == rRhs.m_pDllDigitizer) && (m_triggerChannel == rRhs.m_triggerChannel);
 		}
 
 		SVDigitizerLoadLibraryClass* m_pDllDigitizer {nullptr};
@@ -42,7 +35,7 @@ namespace SvTh
 	class SVTriggerClass : public SVODeviceClass  
 	{
 	public:
-		SVTriggerClass(LPCTSTR deviceName);
+		explicit SVTriggerClass(LPCTSTR deviceName);
 		virtual ~SVTriggerClass();
 
 		void addAcquisitionTrigger(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel);

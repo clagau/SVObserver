@@ -183,9 +183,9 @@ HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel )
 	return l_hr;
 }
 
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel, const VARIANT& rTriggerTime)
 {
-	HRESULT l_hr = g_matroxAcqDevice.InternalTrigger( triggerchannel );
+	HRESULT l_hr = g_matroxAcqDevice.InternalTrigger( triggerchannel, rTriggerTime);
 	
 	return l_hr;
 }

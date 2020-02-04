@@ -92,10 +92,7 @@ namespace SvTi
 		///This needs to be done before the cameras are started
 		if (nullptr != m_pTriggerDevice)
 		{
-			if (SvDef::TriggerType::SoftwareTrigger == getType())
-			{
-				m_pTriggerDevice->enableInternalTrigger();
-			}
+			m_pTriggerDevice->enableInternalTrigger();
 		}
 		return nullptr != m_pTriggerDevice && m_pTriggerDevice->IsValid();
 	}
@@ -192,13 +189,13 @@ namespace SvTi
 			//If in the input data it has a valid time stamp value then it is more accurate then use it
 			SvTh::IntVariantMap::const_iterator iterData {triggerInfo.m_Data.end()};
 			iterData = triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
-			if (triggerInfo.m_Data.end() != iterData && 0.0 < static_cast<double> (iterData->second))
+			if (triggerInfo.m_Data.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
 			{
-				triggerInfo.m_triggerTimeStamp = static_cast<double> (iterData->second);
+				triggerInfo.m_triggerTimeStamp = iterData->second.dblVal;
 			}
 			else
 			{
-				///This is the fallback triiger time stamp
+				///This is the fallback trigger time stamp
 				triggerInfo.m_triggerTimeStamp = pResponse->getStartTime();
 			}
 

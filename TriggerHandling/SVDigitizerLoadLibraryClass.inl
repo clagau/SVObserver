@@ -445,13 +445,13 @@ namespace SvTh
 	/*
 	This method uses the m_psvInternalTrigger attribute to call the DLL SVDigitizerInternalTrigger function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
 	*/
-	inline HRESULT SVDigitizerLoadLibraryClass::InternalTrigger(SVHANDLE p_hHandle) const
+	inline HRESULT SVDigitizerLoadLibraryClass::InternalTrigger(SVHANDLE p_hHandle, const VARIANT& rTriggerTime) const
 	{
 		HRESULT l_hrOk = S_FALSE;
 
 		if (nullptr != m_psvInternalTrigger)
 		{
-			l_hrOk = m_psvInternalTrigger(p_hHandle);
+			l_hrOk = m_psvInternalTrigger(p_hHandle, rTriggerTime);
 		}
 
 		return l_hrOk;

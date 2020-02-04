@@ -51,7 +51,7 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDevicePa
 HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDeviceParamWrapper* p_pParameter );
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel );
+HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel, const VARIANT& rTriggerTime);
 
 HRESULT WINAPI SVDigitizerScanForCameras();
 

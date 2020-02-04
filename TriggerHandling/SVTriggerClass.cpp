@@ -242,7 +242,22 @@ namespace SvTh
 		{
 			if(nullptr != rAcquisitionParameter.m_pDllDigitizer)
 			{
-				rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel);
+				const IntVariantMap& rData = rResponse.getData();
+				SvTh::IntVariantMap::const_iterator iterData {rData.end()};
+				iterData = rData.find(SvTh::TriggerDataEnum::ObjectID);
+				///If Object ID is present then it is a PLC IO connection
+				if(rData.end() != iterData)
+				{
+					iterData = rData.find(SvTh::TriggerDataEnum::TimeStamp);
+					if (rData.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
+					{
+						rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel, iterData->second);
+					}
+				}
+				else
+				{
+					rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel, variant_t());
+				}
 			}
 		}
 		return S_OK;
