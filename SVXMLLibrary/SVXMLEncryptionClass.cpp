@@ -281,13 +281,12 @@ HRESULT SVXMLEncryptionClass::EncryptNameAttribute(const _bstr_t& rsourceString,
 {
 	HRESULT	result{S_OK};
 
-	rEncryptedString = _bstr_t {};
+	rEncryptedString = L"";
 
 	long sourceLength = rsourceString.length();
 
 	if(0 == sourceLength)
 	{
-		rEncryptedString.Assign(L"");
 		return result;
 	}
 
@@ -296,10 +295,10 @@ HRESULT SVXMLEncryptionClass::EncryptNameAttribute(const _bstr_t& rsourceString,
 	{
 		case 0:
 		{
-			char* pStartSource  = reinterpret_cast<char*> (static_cast<wchar_t*> (rsourceString));
+			unsigned char* pStartSource  = reinterpret_cast<unsigned char*> (static_cast<wchar_t*> (rsourceString));
 			long partialLength = (sourceLength + 2) / 3 * 3;
 
-			std::vector<char> partialEncryption2;
+			std::vector<unsigned char> partialEncryption2;
 			partialEncryption2.resize(partialLength);
 
 			//-			The + 2 should force it to round up.
@@ -310,15 +309,15 @@ HRESULT SVXMLEncryptionClass::EncryptNameAttribute(const _bstr_t& rsourceString,
 				char singleChar = (i < sourceLength) ? pStartSource[i*2] : '\0';
 
 				//-				Look up the individual byte values in the lookup table.
-				char partialEncryption1 = static_cast<char> (c_lookUpTable1[(singleChar + i) & 0x000000ff]);
+				unsigned char partialEncryption1 = static_cast<unsigned char> (c_lookUpTable1[(singleChar + i) & 0x000000ff]);
 
 				//-				Shift the word (part of the encryption).
 				long leftShift = (i + 3) % 8;
 				long rightShift = 8 - leftShift;
-				char leftShiftValue = partialEncryption1 << leftShift;
-				char rightShiftValue = partialEncryption1 >> rightShift;
+				unsigned char leftShiftValue = partialEncryption1 << leftShift;
+				unsigned char rightShiftValue = partialEncryption1 >> rightShift;
 
-				partialEncryption2[i] = static_cast<char> ((leftShiftValue + rightShiftValue + i + m_ulNameSeed) & 0x000000ff);
+				partialEncryption2[i] = static_cast<unsigned char> ((leftShiftValue + rightShiftValue + i + m_ulNameSeed) & 0x000000ff);
 			}
 
 
@@ -352,14 +351,13 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute(const _bstr_t& rEncryptedStri
 {
 	HRESULT result{S_OK};
 
-	rDecryptedString = _bstr_t {};
+	rDecryptedString = L"";
 
 	long encryptedLength = rEncryptedString.length();
 
 	//-	If the input encrypted string is empty.
 	if (0 == encryptedLength)
 	{
-		rDecryptedString.Assign(L"");
 		return result;
 	}
 
@@ -424,7 +422,7 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 {
 	HRESULT	result{S_OK};
 
-	rEncryptedString = _bstr_t {};
+	rEncryptedString = L"";
 
 	long lengthString = rSourceString.length();
 
@@ -437,7 +435,7 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 	long maxTrackingLength{0L};
 	std::vector<long> trackJumping;
 	long checksumSeed{0L};
-	long	embeddedSeed {0L};
+	unsigned long	embeddedSeed {0L};
 
 	//-   This switch statement is to initialize only.
 	switch (encryptionMethod)
@@ -458,7 +456,7 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 
 			embeddedSeed = CreateRandomLong();
 			//-			16777215 is the max 24 bit number.
-			embeddedSeed = static_cast<long> (((double) embeddedSeed / (double) 0xffffffff) * 0x00ffffff);
+			embeddedSeed = static_cast<unsigned long> (((double) embeddedSeed / (double) 0xffffffff) * 0x00ffffff);
 
 			checksumSeed = CalculateEncryptionChecksum (rSourceString, 0x0000000f);
 
@@ -498,7 +496,8 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 	wchar_t* pSource = rSourceString;
 	SVValue64Union	valueUnion;
 	std::vector<wchar_t>  encryptedVector;
-	encryptedVector.resize(lengthString + 1, L'\0');
+	constexpr long c_MaxEncryptSize = 512;
+	encryptedVector.resize(c_MaxEncryptSize, L'\0');
 
 	//-   OK, in theory this architecture allows for the encryption method to be 
 	//-	changed during the encryption. Great care should be used when doing 
@@ -594,11 +593,11 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 	}
 	for (int i = 0; i < 4; ++i)
 	{
-		long index = static_cast<long> ((embeddedSeed >> (i * 6)) & 0x0000003f);
+		unsigned long index = static_cast<unsigned long> ((embeddedSeed >> (i * 6)) & 0x0000003f);
 		encryptedVector[(currentLength + i)] = c_CharTable[index];
 	}
 
-	_bstr_t checksumString = encryptedVector[0];
+	_bstr_t checksumString = &encryptedVector[0];
 	long checksumParity = FindChecksumParity(checksumString, checksumSeed);
 	//-   Checksum parity must be a 4 bit value at most (0-15).
 	checksumParity += (checksumParity < 4) ? 'p' : ('d' - 4);
@@ -992,14 +991,13 @@ HRESULT SVXMLEncryptionClass::DecryptString(const _bstr_t& rEncryptedString, _bs
 {
 	HRESULT	result{S_OK};
 
-	rDecryptedString = _bstr_t{};
+	rDecryptedString = L"";
 
 	long encryptedLength = rEncryptedString.length() - 5;
 
 	//-	If the input encrypted string is empty.
 	if (encryptedLength == -5)
 	{
-		rDecryptedString.Assign(L"");
 		return result;
 	}
 		
