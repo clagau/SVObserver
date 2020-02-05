@@ -369,13 +369,16 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 	{
 		for(const auto& rpInputEntry : pInspection->m_PPQInputs)
 		{
-			SVObjectClass* pObject  = rpInputEntry->getObject();
-			if( nullptr != pObject && pObject->ObjectAttributesSet() & SvPb::viewable )
+			if(nullptr != rpInputEntry)
 			{
-				SVObjectReference ObjectRef(pObject);
-				SvIe::ResultViewItemDef item(ObjectRef);
-				m_ReferenceVector.push_back(ObjectRef);
-				m_ResultViewItemDefList.push_back(item);
+				SVObjectClass* pObject  = rpInputEntry->getObject();
+				if( nullptr != pObject && pObject->ObjectAttributesSet() & SvPb::viewable )
+				{
+					SVObjectReference ObjectRef(pObject);
+					SvIe::ResultViewItemDef item(ObjectRef);
+					m_ReferenceVector.push_back(ObjectRef);
+					m_ResultViewItemDefList.push_back(item);
+				}
 			}
 		}
 	}

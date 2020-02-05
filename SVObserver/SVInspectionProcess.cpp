@@ -193,7 +193,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 					}
 				}
 			}
-			else if (false == rInputEntry->m_Enabled)
+			else if (nullptr == rInputEntry)
 			{
 				++l_InputXferCount;
 			}
@@ -829,7 +829,7 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 		assert(m_PPQInputs.size() == pProduct->m_triggerInfo.m_Inputs.size());
 		for (size_t i = 0; bReady && i < m_PPQInputs.size(); i++)
 		{
-			if(m_PPQInputs[i]->m_Enabled)
+			if(nullptr != m_PPQInputs[i] && m_PPQInputs[i]->m_Enabled)
 			{
 				//Is input value valid
 				bReady &= (VT_EMPTY != pProduct->m_triggerInfo.m_Inputs.at(i).vt);
@@ -954,11 +954,16 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 	long lListSize = static_cast<long>(rUsedInputs.size());
 
 	// Make new list
-	m_PPQInputs.resize(lListSize);
+	m_PPQInputs.resize(lListSize, nullptr);
 
 	for (int iList = 0; iList < lListSize; ++iList)
 	{
 		const SVIOEntryHostStructPtr& rNewEntry = rUsedInputs[iList];
+		if(nullptr == rNewEntry || false == rNewEntry->m_Enabled)
+		{
+			continue;
+		}
+
 		bool bFound = false;
 
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rNewEntry->m_IOId);
@@ -1026,8 +1031,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
 		}// end if
 
-		SvOi::SetAttributeType AddRemoveType = m_PPQInputs[iList]->m_Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvPb::selectableForEquation | SvPb::viewable, AddRemoveType);
+		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvPb::selectableForEquation | SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
 	}// end for
 
 	SVResultListClass* pResultlist = GetResultList();
