@@ -2996,9 +2996,13 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 	//! Object is a Value Object
 	else if (nullptr != (pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject)))
 	{
-		if (!(m_ValueObjectSet.empty()))
+		if (!m_ValueObjectSet.empty())
 		{
 			m_ValueObjectSet.erase(pValueObject);
+		}
+		if (!m_updateValueObjectSet.empty())
+		{
+			m_updateValueObjectSet.erase(pValueObject);
 		}
 		SVValueObjectMap::iterator iter =  m_mapValueObjects.find(pObject->GetCompleteName());
 		if(m_mapValueObjects.end() != iter)
