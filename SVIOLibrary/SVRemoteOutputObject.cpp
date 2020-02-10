@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -22,7 +21,7 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SVRemoteOutputObjectGUID );
+SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SvPb::RemoteOutputObjectId);
 
 SVRemoteOutputObject::SVRemoteOutputObject()
 {

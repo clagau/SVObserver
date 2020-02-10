@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVStringValueObjectClass.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -30,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVStringValueObjectClass, SVStringValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVStringValueObjectClass, SvPb::StringValueClassId);
 
 SVStringValueObjectClass::SVStringValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<std::string>( ObjectName )

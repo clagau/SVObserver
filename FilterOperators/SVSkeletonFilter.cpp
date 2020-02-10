@@ -14,7 +14,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
@@ -24,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-SV_IMPLEMENT_CLASS(SVSkeletonFilterClass, SVSkeletonFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVSkeletonFilterClass, SvPb::SkeletonFilterClassId)
 
 SVSkeletonFilterClass::SVSkeletonFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )

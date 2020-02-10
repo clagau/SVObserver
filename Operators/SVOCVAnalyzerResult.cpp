@@ -45,7 +45,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVOCVAnalyzeResultClass, SVOCVAnalyzerResultClassGuid );
+SV_IMPLEMENT_CLASS( SVOCVAnalyzeResultClass, SvPb::OCVAnalyzerResultClassId);
 
 SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int StringResourceID  )
 						:SVResultClass(POwner, StringResourceID )

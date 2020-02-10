@@ -47,7 +47,7 @@ double SVImagePolarTransformClass::g_dMaxAngularDistance  = 720.0;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVImagePolarTransformClass, SVImagePolarTransformClassGuid )
+SV_IMPLEMENT_CLASS( SVImagePolarTransformClass, SvPb::ImagePolarTransformClassId)
 
 SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, int StringResourceID )
 						   :SVPolarTransformClass( POwner, StringResourceID ) 

@@ -16,7 +16,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #pragma endregion Includes
 
@@ -30,7 +29,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVObjectAppClass, SVObjectAppClassGuid )
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVObjectAppClass, SVObjectAppClassGuid )
 
 SVObjectAppClass::SVObjectAppClass(LPCSTR ObjectName) : SVObjectClass(ObjectName) 
 , m_pInspection(nullptr)

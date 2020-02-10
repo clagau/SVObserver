@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVConditionalClass, SVConditionalClassGuid );
+SV_IMPLEMENT_CLASS( SVConditionalClass, SvPb::ConditionalClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 

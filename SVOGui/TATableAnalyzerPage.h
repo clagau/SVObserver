@@ -111,8 +111,8 @@ namespace SvOg
 #pragma region Member Variables
 	private:
 		SvMc::ObjectsListBox m_analyzerListBox;
-		SvMc::AvailableObjectListComboBox m_availableAnaylzerCB;
-		SvMc::AvailableObjectListComboBox m_columnSelectionCB;
+		SvMc::AvailableObjectListComboBox<SvPb::ClassIdEnum> m_availableAnaylzerCB;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_columnSelectionCB;
 		CEdit m_EditExcludeHigh;
 		CEdit m_EditExcludeLow;
 		CEdit m_EditLimitValue;

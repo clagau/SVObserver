@@ -52,6 +52,7 @@ SVExtentMultiLineStruct::SVExtentMultiLineStruct( const SVExtentMultiLineStruct 
 , m_StringPoint( rValue.m_StringPoint )
 , m_csString( rValue.m_csString )
 , m_svLineArray( rValue.m_svLineArray )
+, m_bDrawFigureHatched( rValue.m_bDrawFigureHatched )
 {
 }
 
@@ -84,6 +85,7 @@ const SVExtentMultiLineStruct &SVExtentMultiLineStruct::operator=( const SVExten
 		m_csString = p_rsvValue.m_csString;
 
 		m_svLineArray = p_rsvValue.m_svLineArray;
+		m_bDrawFigureHatched = p_rsvValue.m_bDrawFigureHatched;
 	}	
 	return *this;
 }
@@ -474,8 +476,6 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 
 			m_svLineArray.push_back( svLine );
 
-			double l_dMinAngle = ( l_dStartAngle < l_dEndAngle ) ? l_dStartAngle : l_dEndAngle;
-			double l_dMaxAngle = ( l_dStartAngle < l_dEndAngle ) ? l_dEndAngle : l_dStartAngle;
 			double l_dLoopAngle = l_dStartAngle;
 
 			svLine.m_PointVector.clear();
@@ -514,8 +514,6 @@ void SVExtentMultiLineStruct::AssignExtentFigure(const SVExtentFigureStruct &rVa
 				}
 			}
 			
-			l_dMinAngle = ( l_dStartAngle < l_dEndAngle ) ? l_dStartAngle : l_dEndAngle;
-			l_dMaxAngle = ( l_dStartAngle < l_dEndAngle ) ? l_dEndAngle : l_dStartAngle;
 			l_dLoopAngle = l_dEndAngle;
 
 			svLine.m_PointVector.clear();
@@ -574,6 +572,7 @@ void SVExtentMultiLineStruct::Initialize()
 	m_Passed = false;
 	m_Warned = false;
 	m_Failed = false;
+	m_bDrawFigureHatched = false;
 
 	m_Color = 0;
 

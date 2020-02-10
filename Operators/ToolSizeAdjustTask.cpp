@@ -37,7 +37,7 @@ const long ToolSizeAdjustTask::MinToolSize = 1; //< Minimum  allowed WindowSize
 const long ToolSizeAdjustTask::MaxToolSize = 100000; //< Maximum allowed WindowSize 
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( ToolSizeAdjustTask, ToolSizeAdjustTaskGuid )
+SV_IMPLEMENT_CLASS( ToolSizeAdjustTask, SvPb::ToolSizeAdjustTaskId)
 
 ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize, bool AllowAdjustPosition , SVObjectClass* POwner , int StringResourceID )  
 : SVTaskObjectClass(POwner, StringResourceID)
@@ -71,14 +71,14 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 
 	//Add Evaluation Objects 
 	bool ok(false);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSWidth], EQAdjustSizeWidthGuid, _T("ToolSizeAdjustWidth"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::EQAdjustSizeWidthClassId, _T("ToolSizeAdjustWidth"));
 	assert(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSHeight], EQAdjustSizeHeightGuid , _T("ToolSizeAdjustHeight"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::EQAdjustSizeHeightClassId, _T("ToolSizeAdjustHeight"));
 	assert(ok);
 
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionX], EQAdjustSizePositionXGuid, _T("ToolSizeAdjustPositionX"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::EQAdjustSizePositionXClassId, _T("ToolSizeAdjustPositionX"));
 	assert(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionY], EQAdjustSizePositionYGuid,  _T("ToolSizeAdjustPositionY"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::EQAdjustSizePositionYClassId,  _T("ToolSizeAdjustPositionY"));
 	assert(ok);
 
 	addDefaultInputObjects();
@@ -88,10 +88,10 @@ ToolSizeAdjustTask::~ToolSizeAdjustTask()
 {
 }
 
-bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name)
+bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, SvPb::ClassIdEnum classId, LPCTSTR Name)
 {
 	SVObjectClass* pObject(nullptr);
-	SVObjectManagerClass::Instance().ConstructObject( GuidClass, pObject );
+	SVObjectManagerClass::Instance().ConstructObject( classId, pObject );
 	if( nullptr != pObject )
 	{
 		pObject->SetObjectOwner( this );

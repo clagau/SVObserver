@@ -172,7 +172,7 @@ namespace helper
 #define Err_SetValleyDefault	(JH_ErrorBase+137)
 #define Err_GetResult			(JH_ErrorBase+138)
 
-SV_IMPLEMENT_CLASS( SVHistogramAnalyzerClass, SVHistogramAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVHistogramAnalyzerClass, SvPb::HistogramAnalyzerClassId);
 
 SVHistogramAnalyzerClass::SVHistogramAnalyzerClass( LPCSTR ObjectName )
 						  :SVImageAnalyzerClass( ObjectName )
@@ -432,7 +432,7 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	l_resultInfo.m_DesiredInputVector.push_back( l_ifceInfo );
 	l_resultInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	l_resultInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
-	l_resultInfo.m_ClassId = SVLongResultClassGuid;
+	l_resultInfo.m_ClassId = SvPb::LongResultClassId;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
 	SvOp::SVLongResultClass* pAnalyzerResult = dynamic_cast<SvOp::SVLongResultClass*> (l_resultInfo.Construct());

@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVDPointYResultClass, SVDPointYResultClassGuid );
+SV_IMPLEMENT_CLASS( SVDPointYResultClass, SvPb::DPointYResultClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -69,7 +69,7 @@ SVDPointYResultClass::SVDPointYResultClass( SVObjectClass* POwner, int StringRes
 	// Describe the SVRangeClass ...
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVNotSetSubObjectType;
-	rangeClassInfo.m_ClassId = SVRangeClassGuid;
+	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it

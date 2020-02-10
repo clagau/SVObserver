@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLUTOperatorClass, SVLUTOperatorClassGuid )
+SV_IMPLEMENT_CLASS( SVLUTOperatorClass, SvPb::LUTOperatorClassId)
 
 SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourceID )
 				   :SVUnaryImageOperatorClass( POwner, StringResourceID ) 

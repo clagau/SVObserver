@@ -26,7 +26,8 @@ namespace SvIe
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass
 {
-	SV_DECLARE_CLASS( SVTaskObjectListClass )
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVTaskObjectListClass )
 
 public:
 	typedef std::vector<SVTaskObjectClass*> SVTaskObjectPtrVector;
@@ -92,7 +93,7 @@ public:
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int Count = 1) override;
 	virtual void InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
-	virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
+	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 	virtual void moveTaskObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;
 	virtual void GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)

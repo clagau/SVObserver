@@ -2,51 +2,49 @@
 // \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 // All Rights Reserved
 //*****************************************************************************
-
 // This is the AvailableObjectListComboBox class for use by the GUI.
 //******************************************************************************
 #pragma once
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
 namespace SvMc
 {
+	template <class value>
 	class AvailableObjectListComboBox : public CComboBox
 	{
 	public:
-		AvailableObjectListComboBox();
-		virtual ~AvailableObjectListComboBox();
+		using PairClass = std::pair<std::string, value>;
+		using Container = std::vector<PairClass>;
+		AvailableObjectListComboBox() = default;
+		virtual ~AvailableObjectListComboBox() = default;
 
 		//************************************
 		/// Initialized Combobox
-		/// \param List [in] Name-guid list to add to the combobox
+		/// \param List [in] Name-value list to add to the combobox
 		/// \param rSelectedItem [in] Name of selected Item, if "" no selection.
 		/// \param rEmptyListText [in] Text in the combobox if list is empty.
 		/// \param rFirstListText [in] First entry in the combobox for an non selection (e.g. No Analyzer), if "" non selection will added.
 		//************************************
-		void Init(const SvUl::NameGuidList& List, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText = _T(""));
+		void Init(const Container& rList, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText = _T(""));
 
 		//************************************
-		/// Return the guid of the selected item. If no item selected or an error it return GUID_NULL.
-		/// \returns SVGUID
+		/// Return the value of the selected item. If no item selected or an error it return the default value e.g. for SVGUID = GUID_NULL and for an enum value 0.
+		/// \returns value
 		//************************************
-		SVGUID getSelectedGUID() const;
+		value getSelectedValue() const;
 
 		void remove(const std::string& rItemName);
 
 	protected:
-		//{{AFX_MSG(AvailableObjectListComboBox)
-		//}}AFX_MSG
-
-		DECLARE_MESSAGE_MAP()
-
-		//{{AFX_VIRTUAL(AvailableObjectListComboBox)
-		//}}AFX_VIRTUAL
 
 	private:
-		SvUl::NameGuidList m_List;
+		Container m_List;
 	};
 } //namespace SvMc
+
+#include "AvailableObjectListComboBox.inl"
+
+

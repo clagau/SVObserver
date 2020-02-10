@@ -35,7 +35,7 @@ constexpr long cDefaultIndexValue[] = {1, 2};
 constexpr VARTYPE cVarType_imageIndex = VT_I4;
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( RingBufferTool, RingBufferToolGuid );
+SV_IMPLEMENT_CLASS( RingBufferTool, SvPb::RingBufferToolClassId );
 
 #pragma region Constructor
 RingBufferTool::RingBufferTool( SVObjectClass* pOwner, int stringResourceID )

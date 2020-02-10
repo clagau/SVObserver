@@ -90,12 +90,13 @@ struct SVFindPredicate
 
 class SVConfigurationObject : public SVObjectClass
 {
-	SV_DECLARE_CLASS( SVConfigurationObject );
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVConfigurationObject );
 
 public:
 	typedef std::map<std::string, SvIe::SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
 
-	SVConfigurationObject( LPCSTR ObjectName );
+	explicit SVConfigurationObject( LPCSTR ObjectName );
 	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
 	virtual ~SVConfigurationObject();
 
@@ -194,11 +195,11 @@ public:
 	SVOutputObjectList* GetOutputObjectList( ) const;
 	HRESULT RebuildOutputObjectList();
 
-	bool AddAcquisitionDevice( LPCTSTR szName, SVFileNameArrayClass& rsvFiles,
-                               SVLightReference& rsvLight,
-							   SVLut& rLut,
+	bool AddAcquisitionDevice( LPCTSTR szName, const SVFileNameArrayClass& rsvFiles,
+                               const SVLightReference& rsvLight,
+							   const SVLut& rLut,
 							   const SVDeviceParamCollection* rpDeviceParams );
-	bool ModifyAcquisitionDevice( LPCTSTR szName, SVLightReference& rsvLight );
+	bool ModifyAcquisitionDevice( LPCTSTR szName, const SVLightReference& rsvLight );
 	bool ModifyAcquisitionDevice( LPCTSTR szName, const SVLut& lut );
 	bool ModifyAcquisitionDevice( LPCTSTR szName, const SVDeviceParamCollection* pParams );
 
@@ -256,7 +257,7 @@ public:
 	void SetProductType( SVIMProductEnum eProductType );
 	bool IsConfigurationLoaded() const;
 	void SetConfigurationLoaded();
-	bool RenameOutputListInspectionNames(LPCTSTR NewInspectionName, LPCTSTR OldInspectionName);
+	bool RenameOutputListInspectionNames(LPCTSTR OldInspectionName, LPCTSTR NewInspectionName);
 	
 	unsigned long GetFileVersion() const;
 
@@ -309,11 +310,6 @@ public:
 	//! \param bActivate [in]
 	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const std::string& listName, bool bActivate);
-	
-	//! Activates the default monitorlists, when no monitorlist is active and default monitorlist exist  
-	//! \returns true if at least one default monitorlist was activated 
-	bool ActivateDefaultMonitorList();
-	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 	
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const;
@@ -393,8 +389,8 @@ protected:
 
 	SVIOController* m_pIOController;
 
-	SVInputObjectList* m_pInputObjectList;
-	SVOutputObjectList* m_pOutputObjectList;
+	SVInputObjectList* m_pInputObjectList = nullptr;
+	SVOutputObjectList* m_pOutputObjectList = nullptr;
 
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
@@ -495,8 +491,8 @@ private:
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
 	SVIMProductEnum             m_eProductType;
-	unsigned long				m_ulVersion;
-	volatile bool               m_bConfigurationValid;
+	unsigned long				m_ulVersion = 0;
+	volatile bool               m_bConfigurationValid = false;
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 	SvPb::InspectionList m_inspList4TRC;

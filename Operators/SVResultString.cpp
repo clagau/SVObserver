@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVStringResultClass, SVStringResultClassGuid );
+SV_IMPLEMENT_CLASS( SVStringResultClass, SvPb::StringResultClassId);
 
 SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResourceID )
 				  :SVResultClass( POwner, StringResourceID )

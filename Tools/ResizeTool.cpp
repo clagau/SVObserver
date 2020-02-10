@@ -29,7 +29,7 @@ const long ResizeTool::MinScaleFactorThreshold = 0; // Scale Factor may not be l
 const long ResizeTool::MaxScaleFactor = 1000;       // Maximum allowed Scale Factor. 
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(ResizeTool, SVResizeToolGuid);
+SV_IMPLEMENT_CLASS(ResizeTool, SvPb::ResizeToolId);
 
 
 

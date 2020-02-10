@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 constexpr char* g_strShiftToolEnum = _T( "None=0,Absolute=1,Reference=2" );
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVShiftTool, SVShiftToolClassGuid);
+SV_IMPLEMENT_CLASS(SVShiftTool, SvPb::ShiftToolClassId);
 
 #pragma region Constructor
 SVShiftTool::SVShiftTool( SVObjectClass* POwner, int StringResourceID )
@@ -406,7 +406,7 @@ void SVShiftTool::LocalInitialize()
 
 	SVObjectClass* l_pObject = nullptr;
 
-	SVObjectManagerClass::Instance().ConstructObject( SVEvaluateTranslationXClassGuid, l_pObject );
+	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationXClassId, l_pObject );
 
 	if( nullptr != l_pObject )
 	{
@@ -415,7 +415,7 @@ void SVShiftTool::LocalInitialize()
 		AddFriend( l_pObject->GetUniqueObjectID() );
 	}
 
-	SVObjectManagerClass::Instance().ConstructObject( SVEvaluateTranslationYClassGuid, l_pObject );
+	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationYClassId, l_pObject );
 
 	if( nullptr != l_pObject )
 	{

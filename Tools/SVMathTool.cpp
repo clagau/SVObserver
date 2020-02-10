@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVMathToolClass, SVMathToolClassGuid );
+SV_IMPLEMENT_CLASS( SVMathToolClass, SvPb::MathToolClassId );
 
 SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
 : SVToolClass( POwner, StringResourceID )
@@ -61,7 +61,7 @@ void SVMathToolClass::init(void)
 
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string strTitle = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_DOUBLE );
 	resultClassInfo.m_ClassName += _T(" ") + strTitle;

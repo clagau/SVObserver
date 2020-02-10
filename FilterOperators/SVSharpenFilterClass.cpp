@@ -13,12 +13,11 @@
 #include "SVSharpenFilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVSharpenFilterClass, SVSharpenFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVSharpenFilterClass, SvPb::SharpenFilterClassId)
 
 SVSharpenFilterClass::SVSharpenFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 

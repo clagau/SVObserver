@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 
 #define SV_OC_ERROR 0xc0000000   //SV Operator Class Error.
 
-SV_IMPLEMENT_CLASS( SVThresholdClass, SVThresholdClassGuid )
+SV_IMPLEMENT_CLASS(SVThresholdClass, SvPb::ThresholdClassId)
 
 SVThresholdClass::SVThresholdClass( SVObjectClass* POwner, int StringResourceID )
 				 :SVUnaryImageOperatorClass( POwner, StringResourceID ) 

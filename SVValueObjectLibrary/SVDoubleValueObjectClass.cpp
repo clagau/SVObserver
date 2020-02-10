@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVDoubleValueObjectClass.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/TextDefineSVDef.h"
@@ -31,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVDoubleValueObjectClass, SVDoubleValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVDoubleValueObjectClass, SvPb::DoubleValueClassId);
 
 SVDoubleValueObjectClass::SVDoubleValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<double>( ObjectName )

@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableObject, TableObjectGuid);
+SV_IMPLEMENT_CLASS(TableObject, SvPb::TableClassId);
 
 
 #pragma region Constructor
@@ -235,7 +235,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 	if (isColumnValue)
 	{
 		// Construct new object...
-		SvVol::DoubleSortValueObject* pObject = dynamic_cast<SvVol::DoubleSortValueObject*>(SvOi::ConstructObject(DoubleSortValueObjectGuid));
+		SvVol::DoubleSortValueObject* pObject = dynamic_cast<SvVol::DoubleSortValueObject*>(SvOi::ConstructObject(SvPb::DoubleSortValueClassId));
 		RegisterEmbeddedObject(pObject, rEmbeddedID, IDS_OBJECTNAME_TABLEOBJECT_COLUMN, true, SvOi::SVResetItemTool);
 		m_ValueList.push_back(SvVol::DoubleSortValuePtr {pObject});
 	}
@@ -250,7 +250,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SVGUID embeddedID, LPC
 	SvVol::DoubleSortValueObject* pObject = nullptr;
 	SvVol::DoubleSortValuePtr pRetObject = nullptr;
 	// Construct new object...
-	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
+	SVObjectManagerClass::Instance().ConstructObject(SvPb::DoubleSortValueClassId, pObject);
 
 	if (CreateChildObject(pObject))
 	{

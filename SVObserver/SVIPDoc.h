@@ -289,7 +289,7 @@ protected:
 	CMDIChildWnd* GetMDIChild();
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
-	bool AddTool(const SVGUID& rClassId);
+	bool AddTool(SvPb::ClassIdEnum classId);
 	bool deleteTool(NavigatorElement* pNaviElement);
 
 	bool AddToolGrouping(bool bStartGroup = true);

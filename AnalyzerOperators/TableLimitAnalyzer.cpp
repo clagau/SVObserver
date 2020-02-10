@@ -27,7 +27,7 @@ constexpr int cDefaultLimitValue = 50;
 constexpr VARTYPE cVarType_Value = VT_I4;
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableLimitAnalyzer, TableAnaylzerLimitGuid);
+SV_IMPLEMENT_CLASS(TableLimitAnalyzer, SvPb::TableAnaylzerLimitClassId);
 
 #pragma region Constructor
 TableLimitAnalyzer::TableLimitAnalyzer( LPCTSTR ObjectName )

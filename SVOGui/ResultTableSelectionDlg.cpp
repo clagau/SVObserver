@@ -66,7 +66,7 @@ namespace SvOg
 	{
 		if( UpdateData( true ) )
 		{
-			m_selectedGuid = m_availableTableCB.getSelectedGUID();
+			m_selectedGuid = m_availableTableCB.getSelectedValue();
 			CDialog::OnOK();
 		}
 	}

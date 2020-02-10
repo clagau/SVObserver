@@ -109,7 +109,7 @@ namespace SvOg
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 		}
-		else  if ( S_OK != SvOi::SetupDialogManager(SVLongResultClassGuid, SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid()), GetSafeHwnd()))
+		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid()), GetSafeHwnd()))
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);

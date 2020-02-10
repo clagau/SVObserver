@@ -84,7 +84,7 @@ protected:
 	CEdit m_ebFillColor;
 	SvMc::SVEnumerateComboClass m_cbFillOptions;
 	CButton	m_btnFillColorMore;
-	SvMc::AvailableObjectListComboBox m_cbAvailableSourceImageList;
+	SvMc::AvailableObjectListComboBox<SVGUID> m_cbAvailableSourceImageList;
 	SvMc::SVEnumerateComboClass m_cbMaskOperator;
 	SvOg::PictureDisplay m_dialogImage;
 	BOOL m_bActivateMask;

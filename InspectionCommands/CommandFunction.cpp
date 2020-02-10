@@ -731,14 +731,13 @@ InspectionCmdResult constructAndInsert(SvPb::ConstructAndInsertRequest request)
 	InspectionCmdResult result;
 
 	SVGUID ownerId = SvPb::GetGuidFromProtoBytes(request.ownerid());
-	SVGUID classId = SvPb::GetGuidFromProtoBytes(request.classid());
 
 	SvOi::IObjectClass* pObject = nullptr;
 	switch (request.message_case())
 	{
 		case SvPb::ConstructAndInsertRequest::kFriend:
 		{
-			pObject = SVObjectBuilder::CreateFriendObject(classId, GUID_NULL, request.friend_().name(), ownerId, SvPb::GetGuidFromProtoBytes(request.friend_().preguid()));
+			pObject = SVObjectBuilder::CreateFriendObject(request.classid(), GUID_NULL, request.friend_().name(), ownerId, SvPb::GetGuidFromProtoBytes(request.friend_().preguid()));
 			break;
 		}
 		case SvPb::ConstructAndInsertRequest::kTaskObjectPos:
@@ -747,7 +746,7 @@ InspectionCmdResult constructAndInsert(SvPb::ConstructAndInsertRequest request)
 			SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(ownerId));
 			SvOi::IObjectAppClass* pObjectApp = dynamic_cast<SvOi::IObjectAppClass*>(pTaskObjectList);
 
-			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::ConstructObject(classId));
+			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::ConstructObject(request.classid()));
 			pObject = dynamic_cast<SvOi::IObjectClass*>(pTaskObject);
 
 			if (nullptr != pTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
@@ -826,7 +825,7 @@ InspectionCmdResult getCreatableObjects(SvPb::GetCreatableObjectsRequest request
 		{
 			auto* pEntry = pResponse->add_list();
 			pEntry->set_objectname(item.first.c_str());
-			SvPb::SetGuidInProtoBytes(pEntry->mutable_objectid(), item.second);
+			pEntry->set_classid(item.second);
 		}
 	}
 	else

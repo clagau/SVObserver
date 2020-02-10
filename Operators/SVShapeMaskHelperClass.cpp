@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVShapeMaskHelperClass, SVShapeMaskHelperClassGuid )
+SV_IMPLEMENT_CLASS( SVShapeMaskHelperClass, SvPb::ShapeMaskHelperClassId)
 
 SVShapeMaskHelperClass::SVShapeMaskHelperClass( SVObjectClass* POwner, int StringResourceID )
 : SVTaskObjectClass ( POwner, StringResourceID )

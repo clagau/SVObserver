@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableAddColumnEquation.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
@@ -24,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableAddColumnEquation, TableAddColumnEquationGuid);
+SV_IMPLEMENT_CLASS(TableAddColumnEquation, SvPb::TableAddColumnEquationId);
 
 TableAddColumnEquation::TableAddColumnEquation(SVObjectClass* pOwner, int StringResourceID)
 	: SVEquationClass(pOwner, StringResourceID)

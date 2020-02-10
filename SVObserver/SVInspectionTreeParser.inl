@@ -123,13 +123,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 	if (scAttributesSetTag != name)
 	{
 		_variant_t objectName;
-		_variant_t classID;
+		_variant_t classIDVariant;
 		_variant_t uniqueID;
 		
 		SvXml::SVNavigateTree::GetItem(m_rTree, scObjectNameTag, hItem, objectName);
 		m_count++;
-
-		SvXml::SVNavigateTree::GetItem(m_rTree, scClassIDTag, hItem, classID);
+		SvXml::SVNavigateTree::GetItem(m_rTree, scClassIDTag, hItem, classIDVariant);
+		SvPb::ClassIdEnum classId = calcClassId(classIDVariant);
 		m_count++;
 
 		if( m_ReplaceUniqueID )
@@ -152,7 +152,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		}
 		else
 		{
-			hr = SVObjectBuilder::CreateObject(SVGUID(classID), objectID, name, SvUl::createStdString(objectName), ownerID);
+			hr = SVObjectBuilder::CreateObject(classId, objectID, name, SvUl::createStdString(objectName), ownerID);
 		}
 		if (S_OK == hr)
 		{
@@ -255,7 +255,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	HRESULT hr = S_OK;
 
 	_variant_t objectName;
-	_variant_t classID;
+	_variant_t classIDVariant;
 	_variant_t uniqueID;
 	_variant_t attributesAllowed;
 
@@ -264,14 +264,15 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	Name = m_rTree.getBranchName(hItem);
 	
 	GetItemValue(scObjectNameTag, hItem, objectName);
-	GetItemValue(scClassIDTag, hItem, classID);
+	GetItemValue(scClassIDTag, hItem, classIDVariant);
+	SvPb::ClassIdEnum classId = calcClassId(classIDVariant);
 	GetItemValue(scUniqueReferenceIDTag, hItem, uniqueID);
 
 	UpdateProgress(m_count, m_totalSize);
 
 	// Build the Object
 	GUID objectID = SVGUID(uniqueID);
-	hr = (nullptr != SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl::createStdString(objectName), ownerID)) ? S_OK : E_FAIL;
+	hr = (nullptr != SVObjectBuilder::CreateFriendObject(classId, objectID, SvUl::createStdString(objectName), ownerID)) ? S_OK : E_FAIL;
 	if (S_OK == hr)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
@@ -603,7 +604,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	
 	GUID ownerGuid = GUID_NULL;
 	_variant_t objectName;
-	_variant_t classID;
+	_variant_t classIDVariant;
 	_variant_t uniqueID;
 	_variant_t newDisableMethod;
 	_variant_t enableAuxiliaryExtent;
@@ -611,12 +612,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 
 	name = p_rTree.getBranchName(hItem);
 	SvXml::SVNavigateTree::GetItem(p_rTree, scObjectNameTag, hItem, objectName);
-	SvXml::SVNavigateTree::GetItem(p_rTree, scClassIDTag, hItem, classID);
+	SvXml::SVNavigateTree::GetItem(p_rTree, scClassIDTag, hItem, classIDVariant);
+	SvPb::ClassIdEnum classId = calcClassId(classIDVariant);
 	SvXml::SVNavigateTree::GetItem(p_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
 	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
 	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
 
-	hr = SVObjectBuilder::CreateObject(SVGUID(classID), SVGUID(uniqueID), name, SvUl::createStdString(objectName), ownerGuid);
+	hr = SVObjectBuilder::CreateObject(classId, SVGUID(uniqueID), name, SvUl::createStdString(objectName), ownerGuid);
 	if (S_OK == hr)
 	{
 		inspectionGuid = SVGUID(uniqueID);
@@ -645,4 +647,3 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	}
 	return hr;
 }
-

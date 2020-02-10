@@ -40,7 +40,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVUserMaskOperatorClass, SVUserMaskOperatorClassGuid )
+SV_IMPLEMENT_CLASS( SVUserMaskOperatorClass, SvPb::UserMaskOperatorClassId)
 
 SVUserMaskOperatorClass::SVUserMaskOperatorClass( SVObjectClass* POwner, int StringResourceID )
 						:SVUnaryImageOperatorClass( POwner, StringResourceID ) 
@@ -351,7 +351,7 @@ HRESULT SVUserMaskOperatorClass::onCollectOverlays(SvIe::SVImageClass *pImage, S
 
 		BuildMaskLines( l_MultiLine );
 		l_MultiLine.m_Color = RGB( 0, 255, 255 );
-		l_MultiLine.m_ObjectID = SVUserMaskOperatorClassGuid;
+		l_MultiLine.m_bDrawFigureHatched = true;
 		p_MultiLineArray.push_back( l_MultiLine );
 		l_hr = S_OK;
 	}

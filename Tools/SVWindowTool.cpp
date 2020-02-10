@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVWindowToolClass, SVWindowToolClassGuid );
+SV_IMPLEMENT_CLASS( SVWindowToolClass, SvPb::WindowToolClassId );
 
 SVWindowToolClass::SVWindowToolClass( SVObjectClass* POwner, int StringResourceID )
 	:SVToolClass( POwner, StringResourceID )
@@ -79,28 +79,28 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 	// Add the Blob analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVBlobAnalyzerObjectType;
-	analyzerClassInfo.m_ClassId = SVBlobAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassId = SvPb::BlobAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVBLOBANALYZER );
 	m_availableChildren.push_back( analyzerClassInfo );
 
 	// Add the White Pixel Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVPixelAnalyzerObjectType;
-	analyzerClassInfo.m_ClassId = SVPixelAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassId = SvPb::PixelAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVPIXELANALYZER );
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Luminance Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVLuminanceAnalyzerObjectType;
-	analyzerClassInfo.m_ClassId = SVLuminanceAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassId = SvPb::LuminanceAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLUMINANCEANALYZER );
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Histogram Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVHistogramAnalyzerObjectType;
-	analyzerClassInfo.m_ClassId = SVHistogramAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassId = SvPb::HistogramAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 	m_availableChildren.push_back(analyzerClassInfo);
 
@@ -108,7 +108,7 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 	// Add the Pattern Analyzer	
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVPatternAnalyzerObjectType;
-	analyzerClassInfo.m_ClassId = SVPatternAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassId = SvPb::PatternAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVPATTERNANALYZER );
 	m_availableChildren.push_back(analyzerClassInfo);
 
@@ -117,14 +117,14 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 		// Add the BarCode Analyzer
 		analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 		analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVBarCodeAnalyzerObjectType;
-		analyzerClassInfo.m_ClassId = SVBarCodeAnalyzerClassGuid;
+		analyzerClassInfo.m_ClassId = SvPb::BarCodeAnalyzerClassId;
 		analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVBARCODEANALYZER );
 		m_availableChildren.push_back(analyzerClassInfo);
 
 		// Add the Matrox OCV Analyzer	
 		analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
 		analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVOCVAnalyzerObjectType;
-		analyzerClassInfo.m_ClassId = SVOCVAnalyzerClassGuid;
+		analyzerClassInfo.m_ClassId = SvPb::OCVAnalyzerClassId;
 		analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVOCVANALYZER );
 		m_availableChildren.push_back(analyzerClassInfo);
 	}

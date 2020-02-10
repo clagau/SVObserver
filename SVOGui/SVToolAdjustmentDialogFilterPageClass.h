@@ -79,7 +79,7 @@ namespace SvOg
 		CButton	insertFilter;
 		SvMc::ObjectsListBox m_filterListBox;
 		PictureDisplay	dialogImage;
-		SvMc::AvailableObjectListComboBox m_availableFilterCB;
+		SvMc::AvailableObjectListComboBox<SvPb::ClassIdEnum> m_availableFilterCB;
 		//}}AFX_DATA
 
 		//******************************************************************************

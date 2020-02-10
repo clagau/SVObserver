@@ -15,7 +15,6 @@
 #include "SVUnaryImageOperatorList.h"
 #include "SVStdImageOperatorListClass.h"
 #include "SVInplaceImageOperatorListClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma region Includes
 
@@ -28,8 +27,8 @@ namespace SvOp
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
-SV_IMPLEMENT_CLASS( SVUnaryImageOperatorClass, SVUnaryImageOperatorClassGuid )
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVUnaryImageOperatorClass, SVUnaryImageOperatorClassGuid )
 
 SVUnaryImageOperatorClass::SVUnaryImageOperatorClass( SVObjectClass* POwner, int StringResourceID )
 						  :SVOperatorClass( POwner, StringResourceID )

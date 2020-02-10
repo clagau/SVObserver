@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVTransformationToolClass, SVTransformationToolClassGuid );
+SV_IMPLEMENT_CLASS( SVTransformationToolClass, SvPb::TransformationToolClassId);
 
 SVTransformationToolClass::SVTransformationToolClass( SVObjectClass* POwner, int StringResourceID )
 						  :SVToolClass( POwner, StringResourceID )

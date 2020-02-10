@@ -16,8 +16,14 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVProtobuf/SVO-Enum.h"
 #pragma endregion Includes
+
+namespace SvPb
+{
+	enum ClassIdEnum;
+}
+class SVGUID;
 
 class SVSetupDialogManager
 {
@@ -26,15 +32,14 @@ public:
 
 	virtual ~SVSetupDialogManager();
 
-	HRESULT SetupDialog( const SVGUID& rClassId, const SVGUID& rObjectId, CWnd* pParentWnd );
+	HRESULT SetupDialog(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, CWnd* pParentWnd );
 
 protected:
 	typedef boost::function<HRESULT (const SVGUID&, CWnd*)> SVSetupDialogFunction;
-	typedef std::map< SVGUID, SVSetupDialogFunction > SVSetupDialogMap;
+	typedef std::map< SvPb::ClassIdEnum, SVSetupDialogFunction > SVSetupDialogMap;
 
 	SVSetupDialogManager();
 
-	static HRESULT SVNotImplemented( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
 	static HRESULT SVColorToolClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );

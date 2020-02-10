@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
 #include "SVDataBuffer.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -54,7 +53,7 @@ SVDataBufferInfoClass SVDataBufferInfoClass::operator=( SVDataBufferInfoClass& r
 	return ( *this );
 }
 
-SV_IMPLEMENT_CLASS( SVDataBufferClass, SVDataBufferClassGuid );
+SV_IMPLEMENT_CLASS( SVDataBufferClass, SvPb::DataBufferClassId);
 
 SVDataBufferClass::SVDataBufferClass( SVObjectClass* pOwner, int StringResourceID )
 : SVObjectAppClass( pOwner, StringResourceID )

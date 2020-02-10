@@ -13,11 +13,10 @@
 #include "SVErosionFilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS(SVErosionFilterClass, SVErosionFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVErosionFilterClass, SvPb::ErosionFilterClassId)
 
 SVErosionFilterClass::SVErosionFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 

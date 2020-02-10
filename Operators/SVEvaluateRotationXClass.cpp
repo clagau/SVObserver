@@ -15,7 +15,7 @@
 namespace SvOp
 {
 
-SV_IMPLEMENT_CLASS( SVEvaluateRotationXClass, SVEvaluateRotationXClassGuid )
+SV_IMPLEMENT_CLASS( SVEvaluateRotationXClass, SvPb::EvaluateRotationXClassId)
 
 SVEvaluateRotationXClass::SVEvaluateRotationXClass( SVObjectClass* POwner, int StringResourceID )
 : SVEvaluateClass( POwner, StringResourceID ) 

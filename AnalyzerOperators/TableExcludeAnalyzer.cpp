@@ -29,7 +29,7 @@ constexpr double cDefaultLowValue = -999999;
 constexpr VARTYPE cVarType_Value = VT_R8;
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableExcludeAnalyzer, TableAnaylzerExcludeGuid);
+SV_IMPLEMENT_CLASS(TableExcludeAnalyzer, SvPb::TableAnaylzerExcludeClassId);
 
 #pragma region Constructor
 TableExcludeAnalyzer::TableExcludeAnalyzer( LPCTSTR ObjectName )

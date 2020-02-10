@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableCopyObject, TableCopyObjectGuid);
+SV_IMPLEMENT_CLASS(TableCopyObject, SvPb::TableCopyObjectId);
 
 
 #pragma region Constructor
@@ -91,7 +91,7 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 SvVol::DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR name, int pos)
 {
 	SvVol::DoubleSortValueObject* pObject = nullptr;
-	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
+	SVObjectManagerClass::Instance().ConstructObject(SvPb::DoubleSortValueClassId, pObject);
 	SvVol::DoubleSortValuePtr pSharedObject = SvVol::DoubleSortValuePtr {pObject};
 
 	if (CreateChildObject(pObject))

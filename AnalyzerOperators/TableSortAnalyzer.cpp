@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableSortAnalyzer, TableAnaylzerSortGuid);
+SV_IMPLEMENT_CLASS(TableSortAnalyzer, SvPb::TableAnaylzerSortClassId);
 
 #pragma region Constructor
 TableSortAnalyzer::TableSortAnalyzer( LPCTSTR ObjectName )

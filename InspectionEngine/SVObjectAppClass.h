@@ -28,7 +28,8 @@ namespace SvIe
 
 class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
 {
-	SV_DECLARE_CLASS( SVObjectAppClass )
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVObjectAppClass )
 
 public:
 	virtual ~SVObjectAppClass();

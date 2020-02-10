@@ -8,7 +8,6 @@
 
 #include "stdafx.h"
 #include "TableColumnEquation.h"
-#include "SVObjectLibrary/SVClsids.h"
 
 namespace SvOp
 {
@@ -20,7 +19,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( TableColumnEquation, TableColumnEquationGuid );
+SV_IMPLEMENT_CLASS( TableColumnEquation, SvPb::TableColumnEquationId);
 
 TableColumnEquation::TableColumnEquation( SVObjectClass* pOwner, int StringResourceID ) 
 : SVEquationClass( pOwner, StringResourceID )

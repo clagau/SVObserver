@@ -23,93 +23,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 // NOTE: Add new GUIDs at the bottom.
 ////////////////////////////////////////////////////////////////////////////////
-// GUID for the SVObjectImageClass
-extern const GUID SVObjectImageClassGuid;
-
-// GUID for the SVValueObjectClass
-extern const GUID SVValueObjectClassGuid;
-
-// GUID for the SVBoolValueObjectClass
-extern const GUID SVBoolValueObjectClassGuid;
-
-// GUID for the SVDWordValueObjectClass
-extern const GUID SVDWordValueObjectClassGuid;
-
-// GUID for the SVDoubleValueObjectClass
-extern const GUID SVDoubleValueObjectClassGuid;
-
-// GUID for the DoubleSortValueObject
-extern const GUID DoubleSortValueObjectGuid;
-
-// GUID for the SVLongValueObjectClass
-extern const GUID SVLongValueObjectClassGuid;
-
-// GUID for the SVPointValueObjectClass
-extern const GUID SVPointValueObjectClassGuid;
-
-// GUID for the SVDPointValueObjectClass
-extern const GUID SVDPointValueObjectClassGuid;
-
-// GUID for the SVByteValueObjectClass
-extern const GUID SVByteValueObjectClassGuid;
-
-// GUID for the SVStringValueObjectClass
+/*******************************************************************************/
+//classID
 extern const GUID SVStringValueObjectClassGuid;
 
-// GUID for the SVStringValueObjectClass
-extern const GUID SVStaticStringValueObjectClassGuid;
 
-// GUID for the SVFileNameValueObjectClass
-extern const GUID SVFileNameValueObjectClassGuid;
-
-//GUID for the SVInt64ValueObjectClass
-extern const GUID SVInt64ValueObjectClassGuid;
-
-//GUID for the SVCharValueObjectClass
-extern const GUID SVCharValueObjectClassGuid;
-
-extern const GUID SVTimerValueObjectClassGuid;
-
-extern const GUID SVVariantValueObjectClassGuid;
-
-// GUID for the SVImageClass
-extern const GUID SVImageClassGuid;
-
-// GUID for the SVMainImageClass
-extern const GUID SVMainImageClassGuid;
-
-// GUID for the SVTaskObjectClass
-extern const GUID SVTaskObjectClassGuid;
-
-// GUID for the SVObjectAppClass
-extern const GUID SVObjectAppClassGuid;
+/*******************************************************************************/
+//Embedded
 
 // GUID for the Embedded Objects of the SVTaskObjectClass
 extern const GUID SVTaskObjectClassIsObjectValidGuid;
 
-// GUID for the SVTaskObjectClass
-extern const GUID SVTaskObjectListClassGuid;
-
-// GUID for the SVInspectionProcess
-extern const GUID SVInspectionProcessGuid;
-
-// GUID for the SVConfigurationObject
-extern const GUID SVConfigurationObjectGuid;
-
-// GUID for the RootObject
-extern const GUID RootObjectGuid;
-
-// GUID for the SVIOController
-extern const GUID SVIOControllerGuid;
-
-// GUID for the SVToolSetClass
-extern const GUID SVToolSetClassGuid;
-
 // GUID for the SVToolSetEnabled
 extern const GUID SVToolSetEnabledObjectGuid;
-
-// GUID for the SVToolClass
-extern const GUID SVToolClassGuid;
 
 // GUID for the Embedded Objects of the SVTooClass
 extern const GUID SVToolEnabledObjectGuid;
@@ -120,6 +46,8 @@ extern const GUID SVToolSelectedForOperatorMoveObjectGuid;
 //GUID for the Embedded object for SVToolClass
 extern const GUID SVToolPositionGuid;
 extern const GUID SVToolTimeGuid;
+
+extern const GUID FilterKernelGuid;
 
 //GUID for the Embedded object for SVToolsetClass
 extern const GUID SVMinToolSetTimeGuid;
@@ -140,31 +68,7 @@ extern const GUID TriggerIndexGuid;
 extern const GUID InspectedObjectIDGuid;
 extern const GUID InspectedObjectIDLinkGuid;
 
-// GUID for the SVWindowToolClass
-extern const GUID SVWindowToolClassGuid;
-
-// GUID for the SVMathToolClass
-extern const GUID SVMathToolClassGuid;
-
-extern const GUID SVStatisticsToolClassGuid;
-
-// GUID for the SVAnalyzerClass
-extern const GUID SVAnalyzerClassGuid;
-
-// GUID for the SVImageAnalyzerClass
-extern const GUID SVImageAnalyzerClassGuid;
-
-// GUID for the SVBlobAnalyzerClass
-extern const GUID SVBlobAnalyzerClassGuid;
-
-// GUID for the SVWhitePixelAnalyzerClass
-extern const GUID SVPixelAnalyzerClassGuid;
-
-// GUID for the SVLuminanceAnalyzerClass
-extern const GUID SVLuminanceAnalyzerClassGuid;
-
 // GUIDs for the SVHistogramAnalyzerClass/value objects
-extern const GUID SVHistogramAnalyzerClassGuid;
 extern const GUID SVHistogramValueObjectGuid;
 extern const GUID SVHistogramMeanObjectGuid;
 extern const GUID SVHistogramStdDevObjectGuid;
@@ -228,21 +132,6 @@ extern const GUID	SVStatEnabledFeaturesObjectGuid;
 extern const GUID SVStatVariableToMonitorObjectGuid;
 extern const GUID SVStatVariableNameToMonitorObjectGuid;
 
-// GUID for the SVOperatorClass
-extern const GUID SVOperatorClassGuid;
-
-// GUID for the SVBinaryOperatorClass
-extern const GUID SVBinaryOperatorClassGuid;
-
-// GUID for the SVUnaryImageOperatorClass
-extern const GUID SVUnaryImageOperatorClassGuid;
-
-// GUID for the SVFilterClass
-extern const GUID SVFilterClassGuid;
-
-// GUID for the SVThresholdClass
-extern const GUID SVThresholdClassGuid;
-
 // GUIDs for the Embedded Objects in the SVThresholdClass
 extern const GUID  SVUpperThresholdObjectGuid;
 extern const GUID  SVLowerThresholdObjectGuid;
@@ -252,57 +141,6 @@ extern const GUID  SVLowerThresholdActivateObjectGuid;
 extern const GUID SVAutoThresholdObjectGuid;
 extern const GUID SVBlackBackgroundObjectGuid;
 extern const GUID SVAutoThresholdMultiplierObjectGuid;
-
-// GUID for the SVSmoothFilterClass
-extern const GUID SVSmoothFilterClassGuid;
-
-// GUID for the SVSharpenFilterClass
-extern const GUID SVSharpenFilterClassGuid;
-
-// GUID for the SVSharpen2FilterClass
-extern const GUID SVSharpen2FilterClassGuid;
-
-// GUID for the SVHorizEdgeFilterClass
-extern const GUID SVHorizEdgeFilterClassGuid;
-
-// GUID for the SVVertEdgeFilterClass
-extern const GUID SVVertEdgeFilterClassGuid;
-
-// GUID for the SVEdgeDetectFilterClass
-extern const GUID SVEdgeDetectFilterClassGuid;
-
-// GUID for the SVEdgeDetect2FilterClass
-extern const GUID SVEdgeDetect2FilterClassGuid;
-
-// GUID for the SVLaplacianEdgeFilterClass
-extern const GUID SVLaplacianEdgeFilterClassGuid;
-
-// GUID for the SVLaplacianEdge2FilterClass
-extern const GUID SVLaplacianEdge2FilterClassGuid;
-
-// GUID for the SVMaxMinusMinFilterClass
-extern const GUID SVMaxMinusMinFilterClassGuid;
-
-// GUID for the SVErosionFilterClass
-extern const GUID SVErosionFilterClassGuid;
-
-// GUID for the SVDilationFilterClass
-extern const GUID SVDilationFilterClassGuid;
-
-// GUID for the SVOpeningFilterClass
-extern const GUID SVOpeningFilterClassGuid;
-
-// GUID for the SVClosingFilterClass
-extern const GUID SVClosingFilterClassGuid;
-
-// GUID for the SVCustomFilterClassGuid
-extern const GUID SVCustomFilterClassGuid;
-
-// GUID for the Custom2FilterClassGuid
-extern const GUID Custom2FilterClassGuid;
-
-// GUID for the Custom2FilterKernel
-extern const GUID FilterKernelGuid;
 
 // GUIDs for the Embedded Objects of the SVCustomFilterClass
 extern const GUID SVCustomFilterCell01Guid;
@@ -361,10 +199,6 @@ extern const GUID SVCustomFilterClippingGuid;
 extern const GUID SVCustomFilterAbsoluteGuid;
 extern const GUID SVCustomFilterTransformGuid;
 
-// GUID for the SVRankingFilterClassGuid
-extern const GUID SVRankingFilterClassGuid;
-extern const GUID Ranking2FilterClassGuid;
-
 // GUIDs for the Embedded Objects of the SVRankingFilterClass
 extern const GUID SVRankingFilterCell01Guid;
 extern const GUID SVRankingFilterCell02Guid;
@@ -420,28 +254,13 @@ extern const GUID SVRankingFilterRankingWidthGuid;
 extern const GUID SVRankingFilterRankingHeightGuid;
 extern const GUID SVRankingFilterRankingRankGuid;
 
-// GUID for the SVUserMaskOperatorClass
-extern const GUID SVUserMaskOperatorClassGuid;
-
-// GUIDs for the Unary Image Operator Lists...
-// NOTE:
-extern const GUID SVStdImageOperatorListClassGuid;
-extern const GUID SVInPlaceImageOperatorListClassGuid;
-extern const GUID SVLinearImageOperatorListClassGuid;
-
 // GUIDs for the Embedded Objects in the SVUnaryImageOperatorListClass
 extern const GUID SVOutputImageObjectGuid;
 
-// GUID for the SVResultClass
-extern const GUID SVResultClassGuid;
-
-// GUID for the SVRangeClass
-extern const GUID SVRangeClassGuid;
 
 ///////////////////////////////////////////////////
 // GUIDs for the RingBuffer-Tool
 ///////////////////////////////////////////////////
-extern const GUID RingBufferToolGuid;
 extern const GUID RingBuffer_DepthGuid;
 extern const GUID RingBufferLink_DepthGuid;
 extern const GUID RingBuffer_IndexGuid[];
@@ -459,8 +278,6 @@ extern const GUID SVRangeClassWarnHighIndirectObjectGuid;
 extern const GUID SVRangeClassWarnLowIndirectObjectGuid;
 
 // GUIDs for the Embedded Objects in the SVOCVAnalyzeResultClass
-extern const GUID SVOCVAnalyzerClassGuid;
-extern const GUID SVOCVAnalyzerResultClassGuid;
 extern const GUID SVOCVPerformOCRGuid;
 extern const GUID SVOCVMatchLineNumberGuid;
 
@@ -479,7 +296,6 @@ extern const GUID SVOCVUseMatchFileGuid;
 // GUIDs for the Exposed OCV Results of the SVOCVAnalyzeResultClass
 extern const GUID SVOCVMatchStringGuid;
 extern const GUID SVOCVFoundStringGuid;
-extern const GUID SVOCVCharacterResultClassGuid;
 extern const GUID SVOCVCharacterValueGuid;
 extern const GUID SVOCVExtentLeftGuid;
 extern const GUID SVOCVExtentTopGuid;
@@ -498,7 +314,6 @@ extern const GUID SVEdgeParameters8ObjectGuid;
 extern const GUID SVEdgeParameters9ObjectGuid;
 extern const GUID SVEdgeParameters10ObjectGuid;
 
-extern const GUID SVArchiveToolClassGuid;
 extern const GUID SVArchiveFilePathObjectGuid;
 extern const GUID SVArchiveImageGuidsObjectGuid;
 extern const GUID SVArchiveImageFileRootPathGuid;
@@ -514,44 +329,14 @@ extern const GUID SVArchiveHeaderObjectGUID;
 extern const GUID SVArchiveResultNamesObjectGuid;
 extern const GUID SVArchiveImageNamesObjectGuid;
 
-// GUID for the SVEquationClass
-extern const GUID SVEquationClassGuid;
-
 // GUID for the Embedded Objects in the SVEquationClass
 extern const GUID SVEquationEnabledObjectGuid;
-
-// GUID for the SVConditionalClass
-extern const GUID SVConditionalClassGuid;
 
 // GUID for the Embedded Objects in the SVConditionalClass
 extern const GUID SVConditionalResultObjectGuid;
 
-// GUID for the SVMathEquationClass
-extern const GUID SVMathEquationClassGuid;
-
 // GUID for the Embedded Objects in the SVMathEquationClass
 extern const GUID SVMathEquationResultObjectGuid;
-
-//GUID for the SVLinearPixelCountingLineAnalyzerClass
-extern const GUID SVLinearPixelCountingLineAnalyzerClassGuid;
-
-// GUID for the SVLinearEdgeCountingLineAnalyzerClass
-extern const GUID SVLinearEdgeCountingLineAnalyzerClassGuid;
-
-// GUID for the SVLinearEdgePositionLineAnalyzerClass
-extern const GUID SVLinearEdgePositionLineAnalyzerClassGuid;
-
-// GUID for the SVLinearMeasurmentAnalyzerClassGuid
-extern const GUID SVLinearMeasurementAnalyzerClassGuid;
-
-//GUID for the SVLinearEdgeProcessingClassGuid
-extern const GUID SVLinearEdgeProcessingClassGuid;
-
-//GUID for the SVLinearEdgeAProcessingClassGuid
-extern const GUID SVLinearEdgeAProcessingClassGuid;
-
-//GUID for the SVLinearEdgeBProcessingClassGuid
-extern const GUID SVLinearEdgeBProcessingClassGuid;
 
 //GUID for the SVLinearEdgesClassGuid
 extern const GUID SVLinearEdgesClassGuid;
@@ -569,27 +354,6 @@ extern const GUID SVDWidthObjectGuid;
 
 extern const GUID SVLinearDistanceEdgeAObjectGuid;
 extern const GUID SVLinearDistanceEdgeBObjectGuid;
-
-// GUID for the SVPointXResultClass
-extern const GUID SVPointXResultClassGuid;
-
-// GUID for the SVPointYResultClass
-extern const GUID SVPointYResultClassGuid;
-
-// GUID for the SVDPointXResultClass
-extern const GUID SVDPointXResultClassGuid;
-
-// GUID for the SVDPointYResultClass
-extern const GUID SVDPointYResultClassGuid;
-
-// GUID for the SVLongResultClass
-extern const GUID SVLongResultClassGuid;
-
-// GUID for the SVDoubleResultClass
-extern const GUID SVDoubleResultClassGuid;
-
-// GUID for the SVVariantResultClass
-extern const GUID SVVariantResultClassGuid;
 
 // GUIDs for the Embedded Objects
 extern const GUID SVXObjectGuid;
@@ -609,15 +373,6 @@ extern const GUID SVWarnedCountObjectGuid;
 extern const GUID SVEnabledCountObjectGuid;
 extern const GUID SVProcessedCountObjectGuid;
 
-// GUID for the SVLinearMaximumBackgroundObjectLineAnalzerClass
-extern const GUID SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid;
-
-// GUID for the SVLinearMaximumForegroundObjectLineAnalyzerClass
-extern const GUID SVLinearMaximumForegroundObjectLineAnalyzerClassGuid;
-
-// GUID for the SVLinearMaximumObjectLineAnalyzerClass
-extern const GUID SVLinearMaximumObjectLineAnalyzerClassGuid;
-
 // GUIDs for the Embedded Objects
 extern const GUID SVBlackPixelObjectGuid;
 extern const GUID SVWhitePixelObjectGuid;
@@ -626,9 +381,6 @@ extern const GUID SVEdgeCountObjectGuid;
 // GUIDs for the Embedded Objects
 extern const GUID SVColorObjectGuid;
 extern const GUID SVStatusObjectGuid;
-
-// GUID for the SVLinearImageToLineProjectClassGuid
-extern const GUID SVLinearImageToLineProjectClassGuid;
 
 // GUID for Embedded Object
 extern const GUID SVProjectAngleObjectGuid;
@@ -644,15 +396,6 @@ extern const GUID SVProfileOrientationGuid;
 //GUID for Linear Tool Use Profile Rotation
 extern const GUID SVLinearToolUseRotationGuid;
 
-// GUID for the SVDataBufferClass
-extern const GUID SVDataBufferClassGuid;
-
-// GUID for the SVCylindricalWarpToolClass
-extern const GUID SVCylindricalWarpToolClassGuid;
-
-// GUID for the SVPerspectiveToolClass
-extern const GUID SVPerspectiveToolClassGuid;
-
 // Perspective Tool TranslationX
 extern const GUID SVTranslationXOffsetObjectGuid;
 
@@ -665,46 +408,12 @@ extern const GUID SVWarpTypeObjectGuid;
 // GUID for SVWarpAngle double value object
 extern const GUID SVWarpAngleObjectGuid;
 
-// GUID for the SVImageToolClass
-extern const GUID SVImageToolClassGuid;
-
-// GUID for the SVImageArithmeticClass
-extern const GUID SVImageArithmeticClassGuid;
-
 // GUID for Embedded Objects of Image Tool
 extern const GUID SVEnableOffsetAObjectGuid;
 extern const GUID SVOffsetAPointObjectGuid;
 extern const GUID SVEnableOffsetBObjectGuid;
 extern const GUID SVOffsetBPointObjectGuid;
 extern const GUID SVArithmeticOperatorObjectGuid;
-
-// GUID for the SVMathContainerClass
-extern const GUID SVMathContainerClassGuid;
-
-// GUID for the SVEvaluateXClass
-extern const GUID SVEvaluateXClassGuid;
-// GUID for Embedded Objects of SVEvaluateXClass
-extern const GUID SVOutputEvaluateXEnabledObjectGuid;
-extern const GUID SVOutputEvaluateXResultObjectGuid;
-
-// GUID for the SVEvaluateYClass
-extern const GUID SVEvaluateYClassGuid;
-// GUID for Embedded Objects of SVEvaluateYClass
-extern const GUID SVOutputEvaluateYEnabledObjectGuid;
-extern const GUID SVOutputEvaluateYResultObjectGuid;
-
-// GUID for the SVEvaluateBetaClass
-extern const GUID SVEvaluateBetaClassGuid;
-// GUID for Embedded Objects of SVEvaluateBetaClass
-extern const GUID SVOutputEvaluateBetaEnabledObjectGuid;
-extern const GUID SVOutputEvaluateBetaResultObjectGuid;
-
-// GUID for the SVRotateReferenceClass
-extern const GUID SVRotateReferenceClassGuid;
-// GUID for Embedded Objects of SVRotateReferenceClass
-extern const GUID SVOutputLearnedXObjectGuid;
-extern const GUID SVOutputLearnedYObjectGuid;
-extern const GUID SVOutputLearnedBetaObjectGuid;
 
 // GUID for Embedded Objects of SVUserMaskOperatorClass
 extern const GUID SVMaskEnabledObjectGuid;
@@ -713,7 +422,6 @@ extern const GUID SVMaskOperatorGuid;
 extern const GUID SVMaskFillAreaGuid;
 extern const GUID SVMaskFillColorGuid;
 
-extern const GUID SVShapeMaskHelperClassGuid;
 extern const GUID SVShapeMaskTypeGuid;
 extern const GUID SVShapeMaskMaskAreaGuid;
 extern const GUID SVShapeMaskPropertyCenterXGuid;
@@ -726,17 +434,13 @@ extern const GUID SVShapeMaskPropertyOffsetGuid;
 extern const GUID SVShapeMaskPropertySymmetryOrientationGuid;
 extern const GUID SVShapeMaskAutoResizeGuid;
 
-// GUID for the SVLoadImageToolClass
-extern const GUID SVLoadImageToolClassGuid;
 // GUID for Embedded Objects of SVLoadImageToolClass
 extern const GUID SVPathNameObjectGuid;
 extern const GUID SVContinuousReloadObjectGuid;
 
-extern const GUID SVBarCodeAnalyzerClassGuid;
 extern const GUID SVBarCodeObjectGuid;
-extern const GUID SVStringResultClassGuid;
 extern const GUID SVRegExpressionObjectGuid;
-extern const GUID SVBarCodeResultClassGuid;
+
 extern const GUID SVBCTypeObjectGuid;
 extern const GUID SVBCOrientationObjectGuid;
 extern const GUID SVBCSkewNegativeObjectGuid;
@@ -760,35 +464,21 @@ extern const GUID SVBCMatchStringLineGuid;
 extern const GUID SVBCWarnOnFailedReadObjectGuid;
 extern const GUID SVBCMatchScoreGuid;
 extern const GUID SVBCTimeoutGuid;
-extern const GUID SVSkeletonFilterClassGuid;
 extern const GUID SVWatershedFilterMinVariationGuid;
 extern const GUID SVWatershedFilterControlFlagGuid;
-extern const GUID SVWatershedFilterClassGuid;
 extern const GUID SVWatershedFilterUseMarkerGuid;
-extern const GUID SVThickeningFilterClassGuid;
 extern const GUID SVThickeningFilterItterationsGuid;
 extern const GUID SVThickeningFilterGrayOnGuid;
-extern const GUID SVThinningFilterClassGuid;
 extern const GUID SVThinningFilterItterationsGuid;
 extern const GUID SVGrayOnGuid;
 extern const GUID SVBCUnevenGridGuid;
-extern const GUID SVEraseBorderBlobsFilterClassGuid;
-extern const GUID SVExtractHolesFilterClassGuid;
-extern const GUID SVFillHolesFilterClassGuid;
-extern const GUID SVReconstructFilterClassGuid;
 
-// GUID for the SVUpperThresholdEquationClass
-extern const GUID SVUpperThresholdEquationClassGuid;
 // GUID for Embedded Objects of SVUpperThresholdEquationClass
 extern const GUID SVUpperThresholdEquationResultObjectGuid;
 
-// GUID for the SVLowerThresholdEquationClass
-extern const GUID SVLowerThresholdEquationClassGuid;
 // GUID for Embedded Objects of SVLowerThresholdEquationClass
 extern const GUID SVLowerThresholdEquationResultObjectGuid;
 
-// GUID for the SVAutoThresholdEquationClass
-extern const GUID SVAutoThresholdEquationClassGuid;
 // GUID for Embedded Objects of SVAutoThresholdEquationClass
 extern const GUID SVAutoThresholdEquationResultObjectGuid;
 
@@ -798,7 +488,6 @@ extern const GUID SVUseExternalLTObjectGuid;
 extern const GUID SVUseExternalUTObjectGuid;
 extern const GUID SVRegressionTestModeGuid;
 
-extern const GUID SVAcquisitionToolClassGuid;
 
 // GUIDs for Embedded Objects - Profile Tool Threshold flags and data variables
 extern const GUID SVUseLowerThresholdSelectableObjectGuid;
@@ -837,41 +526,12 @@ extern const GUID SVLinearThresholdMaxObjectGuid;
 extern const GUID SVLinearThresholdMinObjectGuid;
 extern const GUID SVLinearThresholdDeltaObjectGuid;
 
-// GUID for the SVTransformationToolClass
-extern const GUID SVTransformationToolClassGuid;
-
-// GUID for the SVTransformationToolClass
-extern const GUID SVShiftToolClassGuid;
-
 //GUID for the ShiftTool Mode
 extern const GUID SVShiftToolModeGuid;
 extern const GUID SVShiftToolReferenceXObjectGuid;
 extern const GUID SVShiftToolReferenceYObjectGuid;
 extern const GUID SVShiftToolEnableSourceImageExtentsGuid;
 
-// GUID for the SVExternalTool
-extern const GUID SVExternalToolGuid;
-
-// GUID for the SVExternalToolTask
-extern const GUID SVExternalToolTaskGuid;
-
-// GUID for the SVEvaluateClass
-extern const GUID SVEvaluateClassGuid;
-
-// GUID for the SVEvaluateTranslationXClass
-extern const GUID SVEvaluateTranslationXClassGuid;
-
-// GUID for the SVEvaluateTranslationYClass
-extern const GUID SVEvaluateTranslationYClassGuid;
-
-// GUID for the SVEvaluateRotationXClass
-extern const GUID SVEvaluateRotationXClassGuid;
-
-// GUID for the SVEvaluateRotationYClass
-extern const GUID SVEvaluateRotationYClassGuid;
-
-// GUID for the SVEvaluateRotationAngleClass
-extern const GUID SVEvaluateRotationAngleClassGuid;
 
 // GUID for Embedded Objects of SVEvaluateTranslationXClass
 extern const GUID SVOutputEvaluateTranslationXResultObjectGuid;
@@ -888,9 +548,6 @@ extern const GUID SVOutputEvaluateRotationYResultObjectGuid;
 // GUID for Embedded Objects of SVEvaluateRotationAngleClass
 extern const GUID SVOutputEvaluateRotationAngleResultObjectGuid;
 
-// GUID for the SVTransformClass
-extern const GUID SVTransformClassGuid;
-
 // GUIDs for the Embeddeds of the SVTransformClass
 extern const GUID SVPerformTranslationObjectGuid;
 extern const GUID SVTranslationXObjectGuid;
@@ -901,9 +558,6 @@ extern const GUID SVLearnedTranslationYObjectGuid;
 extern const GUID SVLearnedRotationXObjectGuid;
 extern const GUID SVLearnedRotationYObjectGuid;
 extern const GUID SVLearnedRotationAngleObjectGuid;
-
-// GUID for the SVImageTransformClass
-extern const GUID SVImageTransformClassGuid;
 
 //GUID for the Transform Tool DisplacementX
 extern const GUID SVImageTransformDisplacementXGuid;
@@ -926,23 +580,13 @@ extern const GUID SVImageTransformSourceYGuid;
 // GUIDs for the Embeddeds of the SVImageTransformClass
 extern const GUID SVUseExtentsOnlyObjectGuid;
 
-// GUID for the SVEnumerateValueObjectClass
-extern const GUID SVEnumerateValueObjectClassGuid;
-
 // GUID for the SVConditionalToolSetDrawFlagObject
 extern const GUID SVConditionalToolSetDrawFlagObjectGuid;
 
 // GUID for the SVDrawToolFlagObject
 extern const GUID SVConditionalToolDrawFlagObjectGuid;
 
-// GUID for the SVPolarTransformClass
-extern const GUID SVPolarTransformClassGuid;
-
-// GUID for the SVPolarTransformToolClass
-extern const GUID SVPolarTransformationToolClassGuid;
-
 // GUIDs for the SVImagePolarTransformClass and its Output Objects...
-extern const GUID SVImagePolarTransformClassGuid;
 extern const GUID SVOutputCenterXObjectGuid;
 extern const GUID SVOutputCenterYObjectGuid;
 extern const GUID SVOutputStartRadiusObjectGuid;
@@ -953,13 +597,6 @@ extern const GUID SVOutputInterpolationModeObjectGuid;
 extern const GUID SVOutputUseFormulaObjectGuid;
 extern const GUID SVOutputAngularMethodObjectGuid;
 
-// GUIDs for more Evaluation Classes and their Output Objects...
-extern const GUID SVEvaluateCenterXClassGuid;
-extern const GUID SVEvaluateCenterYClassGuid;
-extern const GUID SVEvaluateStartRadiusClassGuid;
-extern const GUID SVEvaluateEndRadiusClassGuid;
-extern const GUID SVEvaluateStartAngleClassGuid;
-extern const GUID SVEvaluateEndAngleClassGuid;
 // Output Objects...
 extern const GUID SVOutputEvaluateCenterXResultObjectGuid;
 extern const GUID SVOutputEvaluateCenterYResultObjectGuid;
@@ -986,21 +623,12 @@ extern const GUID SVAuxiliarySourceAngleObjectGuid;
 extern const GUID SVAuxiliarySourceImageNameObjectGuid;
 extern const GUID SVAuxiliaryDrawTypeObjectGuid;
 
-// GUIDs for Exposed Extents (primarily Lines)
-extern const GUID SVExtentRelativeX1PositionObjectGuid;
-extern const GUID SVExtentRelativeY1PositionObjectGuid;
-extern const GUID SVExtentRelativeX2PositionObjectGuid;
-extern const GUID SVExtentRelativeY2PositionObjectGuid;
-extern const GUID SVExtentLengthObjectGuid;
-
 // GUIDs for SVLUTEquationClass and its outputs...
-extern const GUID SVLUTEquationClassGuid;
 extern const GUID SVLUTIndexVariableObjectGuid;
 extern const GUID SVLUTEquationResultObjectGuid;
 extern const GUID SVLUTEquationClipFlagObjectGuid;
 
 // GUIDs for SVLUTOperatorClass and its outputs...
-extern const GUID SVLUTOperatorClassGuid;
 extern const GUID SVOutputLUTVectorObjectGuid;
 extern const GUID SVUseLUTObjectGuid;
 extern const GUID SVContinuousRecalcLUTObjectGuid;
@@ -1011,9 +639,6 @@ extern const GUID SVLUTMinInputObjectGuid;
 extern const GUID SVLUTMaxInputObjectGuid;
 extern const GUID SVLUTMaxOutputObjectGuid;
 extern const GUID SVLUTMinOutputObjectGuid;
-
-// GUID for the SVPatternAnalyzerClass
-extern const GUID SVPatternAnalyzerClassGuid;
 
 // GUIDs for the Embeddeds of the SVPatternAnalyzerClass
 extern const GUID SVpatAcceptThresholdObjectGuid;
@@ -1056,14 +681,6 @@ extern const GUID SVpatResultAngleObjectGuid;
 
 extern const GUID SVpatResultNumFoundOccurancesObjectGuid;
 
-// GUIDs for Linear   Tool 
-extern const GUID SVLinearToolClassGuid;
-
-// GUIDs for the Embeddeds of the SVOCRAnalyzeResultClass
-extern const GUID SVOCRMatchLineNumberGuid;
-
-// GUIDs for Color Tool
-extern const GUID SVColorToolClassGuid;
 
 // GUIDs for the Embeddeds of the SVColorToolClass
 extern const GUID SVBand0ImageObjectGuid;
@@ -1072,8 +689,6 @@ extern const GUID SVBand2ImageObjectGuid;
 extern const GUID SVConvertToHSIObjectGuid;
 extern const GUID SVHasROIObjectGuid;
 
-// GUIDs for Color Threshold
-extern const GUID SVColorThresholdClassGuid;
 extern const GUID SVColorThresholdEnabledObjectGuid;
 
 // GUIDs for the Embeddeds of the SVColorThresholdClass
@@ -1120,7 +735,6 @@ extern const GUID SVDrawCriteriaObjectGuid;
 ///////////////////////////////////////////////////
 // GUIDs for the ResizeTool
 ///////////////////////////////////////////////////
-extern const GUID SVResizeToolGuid;
 extern const GUID SVResizeInterpolationModeGuid;
 extern const GUID SVResizeOverscanGuid;
 extern const GUID SVResizePerformanceGuid;
@@ -1138,7 +752,6 @@ extern const GUID SVDllToolNameGuid;
 extern const GUID SVDllToolVersionGuid;
 
 extern const GUID SVLinearDataClassGuid;
-extern const GUID SVLinearAnalyzerClassGuid;
 
 // Show All Overlays
 extern const GUID SVShowAllEdgeAOverlaysGuid;
@@ -1152,42 +765,25 @@ extern const GUID SVBCRawDataGuid;
 extern const GUID SVBCStringFormatGuid;
 extern const GUID SVBCThresholdTypeGuid;
 
-extern const GUID SVRemoteInputToolGuid;
-
-
-extern const GUID SVRemoteOutputObjectGUID;
-extern const GUID SVRemoteOutputGroupGUID;
-extern const GUID SVRemoteOutputDataControllerGUID;
-
 extern const GUID SVToolCommentTypeObjectGuid;
 
 extern const GUID SVCameraTriggerTimestampGuid;
 extern const GUID SVCameraTriggerLineInStateGuid;
 extern const GUID SVStringHeaderGuid;
 // GUIDs for ToolSizeAdjustTask ...
-extern const GUID ToolSizeAdjustTaskGuid;
 extern const GUID  ToolSizeAdjustSizeWidthModeGuid;		
 extern const GUID  ToolSizeAdjustSizeHeightModeGuid;
 extern const GUID  ToolSizeAdjustSizePositionXModeGuid;
 extern const GUID  ToolSizeAdjustSizePositionYModeGuid;
-extern const GUID EQAdjustSizeWidthGuid;						
-extern const GUID  EQAdjustSizeWidthResultGuid;	
-extern const GUID  EQAdjustSizeHeightGuid;					
+extern const GUID EQAdjustSizeWidthResultGuid;	
 extern const GUID EQAdjustSizeHeightResultGuid;	
-extern const GUID EQAdjustSizePositionXGuid;						
 extern const GUID EQAdjustSizePositionXResultGuid;	
-extern const GUID EQAdjustSizePositionYGuid;						
 extern const GUID EQAdjustSizePositionYResultGuid;	
 
 ///////////////////////////////////////////////////
 // GUIDs for the TableTool
 ///////////////////////////////////////////////////
-extern const GUID TableToolGuid;
 extern const GUID TableTool_MaxRowGuid;
-extern const GUID TableColumnEquationGuid;
-extern const GUID TableAddColumnEquationGuid;
-extern const GUID TableObjectGuid;
-extern const GUID TableFillObjectGuid;
 extern const GUID TableObject_NumberOfRowsGuid;
 const int c_maxTableColumn = 50;
 extern const GUID TableColumnValueObjectGuid[c_maxTableColumn];
@@ -1228,15 +824,8 @@ extern const GUID RemoteInputUidGuid;
 ///////////////////////////////////////////////////
 // GUIDs for the TableAnalyzerTool
 ///////////////////////////////////////////////////
-extern const GUID TableAnalyzerToolGuid;
-extern const GUID TableCopyObjectGuid;
 extern const GUID TableAnalyzerIndexObjectGuid;
-
-extern const GUID TableAnaylzerSortGuid;
-extern const GUID TableAnaylzerExcludeGuid;
-extern const GUID TableAnaylzerLimitGuid;
 extern const GUID TableAnaylzerSortIsASCGuid;
-extern const GUID TableAnaylzerAddColumnGuid;
 extern const GUID TableAnaylzerExcludeHighGuid;
 extern const GUID TableAnaylzerExcludeHigh_LinkGuid;
 extern const GUID TableAnaylzerExcludeLowGuid;
@@ -1244,7 +833,6 @@ extern const GUID TableAnaylzerExcludeLow_LinkGuid;
 extern const GUID TableAnaylzerLimitValueGuid;
 extern const GUID TableAnaylzerLimitValue_LinkGuid;
 // GUID for the LoopToolClass
-extern const GUID LoopToolClassGuid;
 extern const GUID MaxLoopsGuid; 
 extern const GUID LoopCounterGuid;
 extern const GUID LinkedLoopsGuid;
@@ -1252,10 +840,6 @@ extern const GUID  LinkedLoops_LinkedGuid;
 extern const GUID  LoopBreakGuid;
 extern const GUID LoopBreak_LinkedGuid;
 
-namespace Svol
-{
-bool IsIgnorableTool(GUID toolGuid);
-}
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////

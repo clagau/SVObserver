@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVImageTransformClass, SVImageTransformClassGuid )
+SV_IMPLEMENT_CLASS( SVImageTransformClass, SvPb::ImageTransformClassId)
 
 #pragma region Constructor
 SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringResourceID )

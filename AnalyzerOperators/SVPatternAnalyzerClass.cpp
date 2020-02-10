@@ -74,7 +74,7 @@ enum
 #define ERR_SRI15		(SRI_ErrorBase+15)
 #define ERR_SRI16		(SRI_ErrorBase+16)
 
-SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SVPatternAnalyzerClassGuid);
+SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SvPb::PatternAnalyzerClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -169,7 +169,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
-	resultClassInfo.m_ClassId = SVLongResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::LongResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
 	resultClassInfo.m_ClassName += _T(" ") + Title;

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVTaskObjectList.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
@@ -37,7 +36,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVTaskObjectListClass, SVTaskObjectListClassGuid)
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS(SVTaskObjectListClass, SVTaskObjectListClassGuid)
 
 #pragma region Constructor
 SVTaskObjectListClass::SVTaskObjectListClass(LPCSTR ObjectName)
@@ -599,9 +599,9 @@ bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD conte
 	return DestroyChildObject(pTaskObject, context);
 }
 
-SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const
+SvUl::NameClassIdList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const
 {
-	SvUl::NameGuidList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
+	SvUl::NameClassIdList list = SVTaskObjectClass::GetCreatableObjects(pObjectTypeInfo);
 
 	for (int i = 0; i < static_cast<int> (m_availableChildren.size()); i++)
 	{

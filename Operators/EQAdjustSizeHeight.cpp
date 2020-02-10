@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( EQAdjustSizeHeight, EQAdjustSizeHeightGuid );
+SV_IMPLEMENT_CLASS( EQAdjustSizeHeight, SvPb::EQAdjustSizeHeightClassId);
 
 EQAdjustSizeHeight::EQAdjustSizeHeight( SVObjectClass* POwner, int StringResourceID )
 : EQAdjustSize(SvPb::EQSizeHeightType, EQAdjustSizeHeightResultGuid, POwner, StringResourceID )

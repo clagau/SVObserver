@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVEvaluateStartAngleClass, SVEvaluateStartAngleClassGuid )
+SV_IMPLEMENT_CLASS( SVEvaluateStartAngleClass, SvPb::EvaluateStartAngleClassId)
 
 SVEvaluateStartAngleClass::SVEvaluateStartAngleClass( SVObjectClass* pOwner, int StringResourceID )
 : SVEvaluateClass( pOwner, StringResourceID )

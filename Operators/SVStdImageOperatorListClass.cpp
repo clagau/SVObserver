@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVStdImageOperatorListClass, SVStdImageOperatorListClassGuid)
+SV_IMPLEMENT_CLASS(SVStdImageOperatorListClass, SvPb::StdImageOperatorListClassId)
 
 SVStdImageOperatorListClass::SVStdImageOperatorListClass(SVObjectClass* POwner, int StringResourceID)
 	:SVUnaryImageOperatorListClass(POwner, StringResourceID)

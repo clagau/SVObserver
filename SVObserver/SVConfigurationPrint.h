@@ -114,7 +114,6 @@ protected:
 protected:
 	CDWordArray m_virtualPrintPageInfoList; 
 
-	int m_NPArraySize;
 	int m_toolNumber;
 
 	int m_shortTabPixels;

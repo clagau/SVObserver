@@ -35,7 +35,6 @@
 #include "SVMFCControls/ModelessMessageBox.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVObjectScriptParserSVX.h"
 #include "SVInspectionTreeParser.h"
 #include "RemoteCommand.h"
 #include "RootObject.h"
@@ -981,24 +980,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 				if (nullptr == hItemToolset)
 				{
-					SVObjectScriptParserClass* pParser = nullptr;
-					if ( ulVersion < 0x00042800 )	// SVO 4.40 minimum for new parser
-					{
-						pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
-					}
-					else
-					{
-						pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
-					}
-					if( nullptr != pParser )
-					{
-						// Set the Parser Object
-						l_ParserProgressDialog.AddParser(parserHandle, pParser);
-					}
-					else
-					{
-						l_Status = E_FAIL;
-					}
+					l_Status = E_FAIL;
 				}
 				else // new parsing
 				{

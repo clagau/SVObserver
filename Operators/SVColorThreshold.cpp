@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVColorThresholdClass, SVColorThresholdClassGuid)
+SV_IMPLEMENT_CLASS(SVColorThresholdClass, SvPb::ColorThresholdClassId)
 
 #pragma region Constructor
 SVColorThresholdClass::SVColorThresholdClass(SVObjectClass* POwner, int StringResourceID)

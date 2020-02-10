@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVEvaluateRotationAngleClass, SVEvaluateRotationAngleClassGuid )
+SV_IMPLEMENT_CLASS( SVEvaluateRotationAngleClass, SvPb::EvaluateRotationAngleClassId)
 
 //////////////////////////////////////////////////////////////////////
 // Construction

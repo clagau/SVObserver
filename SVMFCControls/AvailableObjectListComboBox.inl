@@ -6,28 +6,10 @@
 // This is the AvailableObjectListComboBox class for use by the GUI.
 //******************************************************************************
 
-#pragma region Includes
-#include "Stdafx.h"
-//Moved to precompiled header: #include <algorithm>
-#include "AvailableObjectListComboBox.h"
-#pragma endregion Includes
-
 namespace SvMc
 {
-	BEGIN_MESSAGE_MAP(AvailableObjectListComboBox, CComboBox)
-		//{{AFX_MSG_MAP(AvailableObjectListComboBox)
-		//}}AFX_MSG_MAP
-	END_MESSAGE_MAP()
-
-	AvailableObjectListComboBox::AvailableObjectListComboBox()
-	{
-	}
-
-	AvailableObjectListComboBox::~AvailableObjectListComboBox()
-	{
-	}
-
-	void AvailableObjectListComboBox::Init(const SvUl::NameGuidList& rList, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText)
+	template <class value>
+	void AvailableObjectListComboBox<value>::Init(const Container& rList, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText)
 	{
 		// Clear list...
 		ResetContent();
@@ -35,7 +17,7 @@ namespace SvMc
 		m_List = rList;
 
 		// Generate new list...
-		for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end(); ++it)
+		for (auto it = rList.begin(); it != rList.end(); ++it)
 		{
 			if (!it->first.empty())
 			{
@@ -63,16 +45,17 @@ namespace SvMc
 		}
 	}
 
-	SVGUID AvailableObjectListComboBox::getSelectedGUID() const
+	template <class value>
+	value AvailableObjectListComboBox<value>::getSelectedValue() const
 	{
-		SVGUID Result = GUID_NULL;
+		value Result {};
 		int index = GetCurSel();
 
 		if (CB_ERR != index)
 		{
 			CString name;
 			GetLBText(index, name);
-			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool
+			Container::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const auto& rVal)->bool
 			{
 				return (!rVal.first.empty() && 0 == rVal.first.compare(name));
 			});
@@ -86,14 +69,15 @@ namespace SvMc
 		return Result;
 	}
 
-	void AvailableObjectListComboBox::remove(const std::string& rItemName)
+	template <class value>
+	void AvailableObjectListComboBox<value>::remove(const std::string& rItemName)
 	{
 		int iIndex = FindString(0, rItemName.c_str());
 
 		if (iIndex != LB_ERR)
 		{
 			DeleteString(iIndex);
-			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool
+			auto iter = std::find_if(m_List.begin(), m_List.end(), [&](const auto& rVal)->bool
 			{
 				return (!rVal.first.empty() && 0 == rVal.first.compare(rItemName));
 			});

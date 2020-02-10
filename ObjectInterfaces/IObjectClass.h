@@ -116,11 +116,11 @@ namespace SvOi
 		virtual bool is_Created() const = 0;
 
 		//************************************
-		/// This method return a list of name/GUID(classID) pairs of classes which are creatable form this object.
+		/// This method return a list of name/classID pairs of classes which are creatable form this object.
 		/// \param pObjectTypeInfo [in] A object type info to filter the result list.
-		/// \returns SvUl::NameGuidList A list of Name and ClassID pairs
+		/// \returns SvUl::NameClassIdList A list of Name and ClassID pairs
 		//************************************
-		virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
+		virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const = 0;
 
 		/*
 		Set user changeable name.
@@ -145,7 +145,7 @@ namespace SvOi
 		virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages=nullptr) = 0;
 
 		/// Get the object class ID
-		virtual SVGUID GetClassID() const = 0;
+		virtual SvPb::ClassIdEnum GetClassID() const = 0;
 			
 		//! Gets the value for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
 		//! \param rValue [out] The reference to write the value to

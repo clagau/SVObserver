@@ -13,11 +13,16 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 class SVObjectClass;
 class SVClassRegisterClass;
+namespace SvPb
+{
+	enum ClassIdEnum;
+}
+
+SvPb::ClassIdEnum calcClassId(const _variant_t& rClassIdVariant);
 
 class SVClassRegisterListClass
 {
@@ -26,7 +31,7 @@ public:
 
 	virtual ~SVClassRegisterListClass();
 
-	SVObjectClass* ConstructNewObject( const SVGUID& rUniqueClassID );
+	SVObjectClass* ConstructNewObject(SvPb::ClassIdEnum classId);
 
 	void Add( SVClassRegisterClass* pClass);
 
@@ -36,12 +41,10 @@ public:
 	void Shutdown();	// This method is only meant to be called by the main application class
 
 protected:
-	typedef std::map< SVGUID, SVClassRegisterClass* > SVClassRegisterMap;
-	typedef std::map<SVGUID, SVGUID>  ExchangeClassMap;
-
+	typedef std::unordered_map< SvPb::ClassIdEnum, SVClassRegisterClass* > SVClassRegisterMap;
+	
 	SVClassRegisterListClass();
 
-	ExchangeClassMap m_ExchangeClassID;			//This map is used to exchange a class ID with another, can construct another object when read from a confguration
 	SVClassRegisterMap m_Registers;
 
 private:

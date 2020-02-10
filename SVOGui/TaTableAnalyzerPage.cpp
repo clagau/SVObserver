@@ -107,19 +107,17 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	SvUl::NameGuidList availableList;
+	SvUl::NameClassIdList availableList;
 	SvPb::InspectionCmdMsgs request, response;
 	SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 	SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
 	pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableAnalyzerType);
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	SvUl::InputNameGuidPairList connectedList;
 	if (S_OK == hr && response.has_getcreatableobjectsresponse())
 	{
-		for (auto item : response.getcreatableobjectsresponse().list())
-		{
-			availableList.push_back({item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())});
-		}
+		const auto& rList = response.getcreatableobjectsresponse().list();
+		std::transform(rList.begin(), rList.end(), std::back_inserter(availableList),
+			[](const auto& rEntry) -> SvUl::NameClassIdPair { return{ rEntry.objectname(), rEntry.classid() }; });
 	}
 
 	m_availableAnaylzerCB.Init(availableList, _T(""), Analyzer_NoAnalyzerAvailable);
@@ -193,9 +191,9 @@ void TaTableAnalyzerPage::OnButtonInsertNewAnalyzer()
 		return;
 	}
 
-	const SVGUID classID = m_availableAnaylzerCB.getSelectedGUID();
+	auto classID = m_availableAnaylzerCB.getSelectedValue();
 
-	if (GUID_NULL != classID)
+	if (SvPb::NoObjectClassId != classID)
 	{
 		int destinyIndex = m_analyzerListBox.GetCurSel();
 
@@ -208,7 +206,7 @@ void TaTableAnalyzerPage::OnButtonInsertNewAnalyzer()
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), classID);
+		pRequest->set_classid(classID);
 		pRequest->set_taskobjectpos(destinyIndex);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
@@ -241,7 +239,7 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 {
 	UpdateData(TRUE); // get data from dialog
 
-	SVGUID columnGuid = m_columnSelectionCB.getSelectedGUID();
+	SVGUID columnGuid = m_columnSelectionCB.getSelectedValue();
 	if (GUID_NULL != columnGuid && GUID_NULL != m_selectedAnalyzerID)
 	{
 		SvPb::InspectionCmdMsgs Request, Response;
@@ -702,8 +700,6 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 
 					if (0 == rErrorMessageList.size())
 					{	//if error found, but no name error with this analyzer, check if this analyzer have an error
-
-						SvPb::InspectionCmdMsgs Request, Response;
 						SvPb::GetMessageListRequest* pGetMessageListRequest = Request.mutable_getmessagelistrequest();
 						SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), m_selectedAnalyzerID);
 						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);

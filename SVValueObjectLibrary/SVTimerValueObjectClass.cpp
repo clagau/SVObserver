@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTimerValueObjectClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -26,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVTimerValueObjectClass, SVTimerValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVTimerValueObjectClass, SvPb::TimerValueClassId);
 
 SVTimerValueObjectClass::SVTimerValueObjectClass(LPCTSTR ObjectName)
 						:SVInt64ValueObjectClass(ObjectName)

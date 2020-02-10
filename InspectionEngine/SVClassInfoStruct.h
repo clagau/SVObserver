@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVProtobuf/SVO-Enum.h"
 #pragma endregion Includes
 
 class SVObjectClass;
@@ -25,17 +25,17 @@ namespace SvIe
 
 struct SVClassInfoStruct
 {
-	SVClassInfoStruct();
-	SVClassInfoStruct( const SVClassInfoStruct& rRhs );
-	virtual ~SVClassInfoStruct();
-	SVClassInfoStruct operator=( const SVClassInfoStruct& rRhs );
+	SVClassInfoStruct() = default;
+	SVClassInfoStruct( const SVClassInfoStruct& rRhs ) = default;
+	virtual ~SVClassInfoStruct() = default;
+	SVClassInfoStruct& operator=( const SVClassInfoStruct& rRhs ) = default;
 
 	// Construct Object and set given ClassName...
 	SVObjectClass* Construct();
 
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;
 	std::string m_ClassName;
-	SVGUID m_ClassId;
+	SvPb::ClassIdEnum m_ClassId = SvPb::NoObjectClassId;
 
 	// Must be in the same order, like the class defines its input interface!!!
 	SvDef::SVObjectTypeInfoVector m_DesiredInputVector;

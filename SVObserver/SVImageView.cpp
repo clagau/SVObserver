@@ -1468,11 +1468,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 		SVDrawObjectListClass drawObjectList;
 
 		drawObjectList.AddExtentMultiLineData( p_rMultiLine, l_PenStyle );
-		if( p_rMultiLine.m_ObjectID == SVUserMaskOperatorClassGuid)
-		{
-			drawObjectList.m_bDrawFigureHatched = true;
-		}
-
+		drawObjectList.m_bDrawFigureHatched = p_rMultiLine.m_bDrawFigureHatched;
 		drawObjectList.Draw( PDrawContext );
 
 		SelectObject( PDrawContext->DC, hPenOld );
@@ -1728,10 +1724,6 @@ bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
-	}
-
-	if( l_bOk )
-	{
 		bZoomExOK = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
 		if(bZoomExOK)
 		{
@@ -1777,10 +1769,7 @@ bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 			if( 0 < l_String.length() )
 			{
-				if( l_bOk )
-				{
-					AttachToImage( static_cast< LPCTSTR >( l_String ) );
-				}
+				AttachToImage( static_cast< LPCTSTR >( l_String ) );
 			}
 			else
 			{
@@ -1804,10 +1793,6 @@ bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
-	}
-
-	if( l_bOk )
-	{
 		bZoomExOK = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
 		if(bZoomExOK)
 		{
@@ -1860,12 +1845,9 @@ bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 			if( 0 < l_String.length() )
 			{
-				if( l_bOk )
+				if( m_imageName != static_cast< LPCTSTR >( l_String ) )
 				{
-					if( m_imageName != static_cast< LPCTSTR >( l_String ) )
-					{
-						AttachToImage( static_cast< LPCTSTR >( l_String ) );
-					}
+					AttachToImage( static_cast< LPCTSTR >( l_String ) );
 				}
 			}
 			else

@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(Ranking2Filter, Ranking2FilterClassGuid)
+SV_IMPLEMENT_CLASS(Ranking2Filter, SvPb::Ranking2FilterClassId)
 
 #pragma region Constructor
 Ranking2Filter::Ranking2Filter(SVObjectClass* pOwner, int StringResourceID)

@@ -275,7 +275,6 @@ echo %time%
     <ClCompile Include="SVOApp_Helper.cpp" />
     <ClCompile Include="SVObjectScriptParser.cpp" />
     <ClCompile Include="SVObjectScriptParserBase.cpp" />
-    <ClCompile Include="SVObjectScriptParserSVX.cpp" />
     <ClCompile Include="SVObserver.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
@@ -465,7 +464,6 @@ echo %time%
     <ClInclude Include="SVMultiDocTemplate.h" />
     <ClInclude Include="SVObjectScriptParser.h" />
     <ClInclude Include="SVObjectScriptParserBase.h" />
-    <ClInclude Include="SVObjectScriptParserSVX.h" />
     <ClInclude Include="SVObserver.h" />
     <ClInclude Include="SVObserverCP.h" />
     <ClInclude Include="SVOCameraDlg.h" />

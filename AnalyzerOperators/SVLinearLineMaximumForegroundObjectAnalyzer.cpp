@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearMaximumForegroundObjectLineAnalyzerClass, SVLinearMaximumForegroundObjectLineAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVLinearMaximumForegroundObjectLineAnalyzerClass, SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId);
 
 SVLinearMaximumForegroundObjectLineAnalyzerClass::SVLinearMaximumForegroundObjectLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 										   :SVLinearAnalyzerClass( POwner, StringResourceID ) 

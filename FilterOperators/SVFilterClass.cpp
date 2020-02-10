@@ -11,10 +11,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFilterClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS( SVFilterClass, SVFilterClassGuid )
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVFilterClass, SVFilterClassGuid )
 
 
 

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVDWordValueObjectClass.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
@@ -30,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVDWordValueObjectClass, SVDWordValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVDWordValueObjectClass, SvPb::DWordValueClassId);
 
 SVDWordValueObjectClass::SVDWordValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<DWORD>( ObjectName ) 

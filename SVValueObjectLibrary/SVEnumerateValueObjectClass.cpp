@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVEnumerateValueObjectClass.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -28,7 +27,7 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS( SVEnumerateValueObjectClass, SVEnumerateValueObjectClassGuid );
+SV_IMPLEMENT_CLASS( SVEnumerateValueObjectClass, SvPb::EnumerateValueClassId);
 
 SVEnumerateValueObjectClass::SVEnumerateValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<long>( ObjectName )

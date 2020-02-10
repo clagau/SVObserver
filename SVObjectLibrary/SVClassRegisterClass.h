@@ -12,10 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 class SVObjectClass;
+
+namespace SvPb
+{
+	enum ClassIdEnum;
+}
 
 class SVClassRegisterClass
 { 
@@ -23,7 +27,7 @@ public:
 	SVClassRegisterClass();
 	virtual ~SVClassRegisterClass();
 
-	virtual SVGUID GetClassID() const;
+	virtual SvPb::ClassIdEnum GetClassID() const;
 	
 	virtual SVObjectClass* Construct();
 

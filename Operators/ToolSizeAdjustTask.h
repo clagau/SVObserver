@@ -114,11 +114,11 @@ protected:
 	//************************************
 	//! Add SVEquationObject to the Friendlist 
 	//! \param pInfo [in,out] inObjectinfostruct 
-	//! \param GuidClass [in] Guid of the SVEquationObject  
+	//! \param classId [in] ClassId of the SVEquationObject  
 	//! \param Name [in] InputObjectname
 	//! \returns bool true if sucessfull 
 	//************************************
-	bool AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name);
+	bool AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, SvPb::ClassIdEnum classId, LPCTSTR Name);
 	
 	//************************************
 	//! DoNothing in Run

@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS (SVBarCodeAnalyzerClass, SVBarCodeAnalyzerClassGuid);
+SV_IMPLEMENT_CLASS (SVBarCodeAnalyzerClass, SvPb::BarCodeAnalyzerClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

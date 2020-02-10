@@ -34,7 +34,7 @@ constexpr TCHAR* const CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
 constexpr TCHAR* const CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SVCylindricalWarpToolClassGuid )
+SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SvPb::CylindricalWarpToolClassId)
 
 SVCylindricalWarpToolClass::SVCylindricalWarpToolClass( SVObjectClass* p_pOwner, int p_iStringResourceID )
 	: SVToolClass(p_pOwner, p_iStringResourceID)

@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVLinearImageOperatorListClass, SVLinearImageOperatorListClassGuid)
+SV_IMPLEMENT_CLASS(SVLinearImageOperatorListClass, SvPb::LinearImageOperatorListClassId)
 
 
 SVLinearImageOperatorListClass::SVLinearImageOperatorListClass(SVObjectClass* POwner, int StringResourceID)

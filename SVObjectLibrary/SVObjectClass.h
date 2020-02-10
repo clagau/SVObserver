@@ -164,7 +164,7 @@ public:
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual const SVGUID& GetEmbeddedID() const override;
 	virtual bool is_Created() const override;
-	virtual SvUl::NameGuidList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
+	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;

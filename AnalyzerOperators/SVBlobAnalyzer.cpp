@@ -95,7 +95,7 @@ struct SVBlobFeatureConstant BlobFeatureConstants[]=
 };
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SVBlobAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SvPb::BlobAnalyzerClassId );
 
 SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 : SVImageAnalyzerClass(POwner, StringResourceID ) 
@@ -304,7 +304,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string Title = m_Value[FeatureIndex].GetName();
 	resultClassInfo.m_ClassName += _T(" ") + Title;
@@ -395,7 +395,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
-		resultClassInfo.m_ClassId = SVLongResultClassGuid;
+		resultClassInfo.m_ClassId = SvPb::LongResultClassId;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		std::string Title = m_lvoNumberOfBlobsFound.GetName();
 		resultClassInfo.m_ClassName += _T(" ") + Title;

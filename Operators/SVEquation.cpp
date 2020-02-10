@@ -243,7 +243,7 @@ HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, std::vector<double>
 	return Result;
 }
 
-SV_IMPLEMENT_CLASS(SVEquationClass, SVEquationClassGuid);
+SV_IMPLEMENT_CLASS(SVEquationClass, SvPb::EquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 

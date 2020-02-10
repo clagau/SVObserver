@@ -25,8 +25,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-// Wasn't in old implementation, take back out for now. may be needed in future.
-// SV_IMPLEMENT_CLASS( SVMainImageClass, SVMainImageClassGuid );
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVMainImageClass, SVMainImageClassGuid );
 
 SVMainImageClass::SVMainImageClass( LPCSTR ObjectName )
 : SVCameraImageTemplate( ObjectName )

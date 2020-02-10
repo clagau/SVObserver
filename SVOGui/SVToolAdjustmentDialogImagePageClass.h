@@ -46,7 +46,7 @@ namespace SvOg
 
 		//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
 		enum { IDD = IDD_TA_IMAGE_DIALOG };
-		SvMc::AvailableObjectListComboBox m_availableSourceImageListBox;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_availableSourceImageListBox;
 		PictureDisplay m_dialogImage;
 		//}}AFX_DATA
 	

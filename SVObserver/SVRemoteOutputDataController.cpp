@@ -30,7 +30,7 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SVRemoteOutputDataControllerGUID );
+SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SvPb::RemoteOutputDataControllerClassId);
 
 SVRemoteOutputDataController::SVRemoteOutputDataController( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )

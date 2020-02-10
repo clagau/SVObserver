@@ -12,13 +12,12 @@
 #include "stdafx.h"
 #include "SVClosingFilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVClosingFilterClass, SVClosingFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVClosingFilterClass, SvPb::ClosingFilterClassId)
 
 SVClosingFilterClass::SVClosingFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 

@@ -39,7 +39,7 @@ struct SVRangeClassCancelData : public SVCancelData	// this does not need to be 
 const TCHAR* const ToolSetName = _T("Tool Set");
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVRangeClass, SVRangeClassGuid);
+SV_IMPLEMENT_CLASS(SVRangeClass, SvPb::RangeClassId);
 
 #pragma region Constructor
 SVRangeClass::SVRangeClass(SVObjectClass* POwner, int StringResourceID)

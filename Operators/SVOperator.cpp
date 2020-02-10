@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOperator.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -24,8 +23,8 @@ namespace SvOp
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
-SV_IMPLEMENT_CLASS( SVOperatorClass, SVOperatorClassGuid )
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVOperatorClass, SVOperatorClassGuid )
 
 SVOperatorClass::SVOperatorClass( SVObjectClass* POwner, int StringResourceID )
 				:SVTaskObjectClass( POwner, StringResourceID )

@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableAddColumnAnalyzer, TableAnaylzerAddColumnGuid);
+SV_IMPLEMENT_CLASS(TableAddColumnAnalyzer, SvPb::TableAnaylzerAddColumnClassId);
 
 
 #pragma region Constructor

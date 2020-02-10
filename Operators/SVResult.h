@@ -35,7 +35,8 @@ enum
 
 class SVResultClass : public SvIe::SVTaskObjectListClass, public ISVCancel
 {
-	SV_DECLARE_CLASS( SVResultClass );
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVResultClass );
 
 public:
 	SVResultClass ( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRESULT );

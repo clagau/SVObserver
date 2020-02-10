@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVEvaluateEndRadiusClass, SVEvaluateEndRadiusClassGuid )
+SV_IMPLEMENT_CLASS( SVEvaluateEndRadiusClass, SvPb::EvaluateEndRadiusClassId)
 
 SVEvaluateEndRadiusClass::SVEvaluateEndRadiusClass( SVObjectClass* pOwner, int StringResourceID )
 : SVEvaluateClass( pOwner, StringResourceID )

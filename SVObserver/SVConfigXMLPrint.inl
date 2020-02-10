@@ -37,7 +37,8 @@
 #include "TriggerInformation/SVTriggerObject.h"
 #pragma endregion Includes
 
-std::pair<const GUID **, size_t> NonPrintGuids();
+const std::vector<GUID>& NonPrintGuids();
+const std::vector<SvPb::ClassIdEnum>& NonPrintClassIds();
 
 typedef sv_xml::SVConfigXMLPrint SVConfigXMLPrint;
 
@@ -526,10 +527,8 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 		{
 			SVIOEntryHostStructPtr l_pModuleReady = pConfig->GetModuleReady();
 
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(l_pModuleReady->m_IOId);
-
 			// Check Module Ready first
-			SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
+			SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(l_pModuleReady->m_IOId));
 			if (pDigOutput)
 			{
 				if (i == pDigOutput->GetChannel())
@@ -558,14 +557,16 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 					for (int k = 0; k < lIOEntries; k++)
 					{
 						if (ppIOEntries[k]->m_ObjectType != IO_DIGITAL_OUTPUT)
+						{
 							continue;
+						}
 
-						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ppIOEntries[k]->m_IOId);
-
-						pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
+						pDigOutput = dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(ppIOEntries[k]->m_IOId));
 
 						if (!pDigOutput)
+						{
 							continue;
+						}
 
 						if (i == pDigOutput->GetChannel())
 						{
@@ -982,36 +983,31 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 
 inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject) const
 {
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	std::string sLabel, sValue;
-	std::string  strType = pObject->GetObjectName();
-	std::string  strName = pObject->GetName();
-	GUID     guidObjID = pObject->GetClassID();
-
-	BOOL	bWriteToolExtents = FALSE;		// Sri 2/17/00
-
-	// If object is a value object, get embedded ID.
-	if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
-	{
-		guidObjID = pObject->GetEmbeddedID();
-	}
-
-	std::pair<const GUID**, size_t> nPrs = NonPrintGuids();
-	// Check for non-printing object type.
-	for (size_t nIndex = 0; nIndex < nPrs.second; nIndex++)
-	{
-		// If the GUID is for a non-printing object, Skip printing.
-		if (guidObjID == *(nPrs.first[nIndex]))
-		{
-			return;
-		}  // end if ( guidObjID == *pguidNonPrintArray [nIndex] )
-	}  // end for ( int nIndex = 0; nIndex < nNPArraySize; nIndex++ )
-
-	// This is to prevent the comments from being sent to the SVRC thru GetConfigReport
-	if (guidObjID == SVToolCommentTypeObjectGuid)
+	SvPb::ClassIdEnum classID = pObject->GetClassID();
+	const auto& nonPCIds = NonPrintClassIds();
+	auto result = std::find_if(std::begin(nonPCIds), std::end(nonPCIds), [&classID](const auto& rEntry) { return classID == rEntry; });
+	if (result != std::end(nonPCIds))
 	{
 		return;
 	}
+
+	// If object is a value object, get embedded ID which is NonPrintable.
+	if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
+	{
+		const GUID& guidObjID = pObject->GetEmbeddedID();
+		const auto& nPrs = NonPrintGuids();
+		// This is to prevent the comments from being sent to the SVRC thru GetConfigReport
+		if (guidObjID == SVToolCommentTypeObjectGuid)
+		{
+			return;
+		}
+		// Check for non-printing object type.
+		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&guidObjID](const auto& rEntry) { return guidObjID == rEntry; });
+		if (iter != std::end(nPrs))
+		{
+			return;
+		}
+	}	
 
 	// If object is a value object, print name and value.
 	if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
@@ -1020,6 +1016,11 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 	}
 	else
 	{
+		bool	bWriteToolExtents = false;
+		std::string sLabel, sValue;
+		std::string  strType = pObject->GetObjectName();
+		std::string  strName = pObject->GetName();
+
 		do
 		{
 			if (dynamic_cast <SvOp::SVShapeMaskHelperClass*> (pObject))
@@ -1039,7 +1040,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 				// Increment even if disabled, to maintain count.  Starts with zero, so for first
 				//    tool, will increment to 1.
 				nToolNumber++;
-				bWriteToolExtents = TRUE;		// Sri 2/17/00
+				bWriteToolExtents = true;		// Sri 2/17/00
 				wchar_t				buff[64];
 				writer->WriteAttributeString(nullptr, L"ToolNumber", nullptr, _itow(nToolNumber, buff, 10));
 			}
@@ -1053,7 +1054,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 			// Print the tool length, width, extends, etc here.
 			if (bWriteToolExtents && nullptr != pTool)
 			{
-				bWriteToolExtents = FALSE;
+				bWriteToolExtents = false;
 				WriteTool(writer, pTool);
 			}
 

@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzerClass, SVLinearEdgeCountingLineAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzerClass, SvPb::LinearEdgeCountingLineAnalyzerClassId);
 
 SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 								:SVLinearAnalyzerClass( POwner, StringResourceID ) 

@@ -13,12 +13,11 @@
 #include "SVHorizEdgeFilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVHorizEdgeFilterClass, SVHorizEdgeFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVHorizEdgeFilterClass, SvPb::HorizEdgeFilterClassId)
 
 SVHorizEdgeFilterClass::SVHorizEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					   :SVFilterClass( POwner, StringResourceID ) 

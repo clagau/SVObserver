@@ -20,7 +20,8 @@
 
 class SVFilterClass : public SvOi::ISVFilter, public SvOp::SVUnaryImageOperatorClass
 {
-	SV_DECLARE_CLASS( SVFilterClass );
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVFilterClass );
 public:
 	SVFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVFILTER );
 	virtual ~SVFilterClass();

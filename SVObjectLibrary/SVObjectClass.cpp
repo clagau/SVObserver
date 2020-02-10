@@ -34,8 +34,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
-SV_IMPLEMENT_CLASS(SVObjectClass, GUID_NULL)
+SV_IMPLEMENT_CLASS(SVObjectClass, SvPb::NoObjectClassId)
 
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
 SVObjectClass::SVObjectClass()
@@ -351,11 +350,9 @@ bool SVObjectClass::is_Created() const
 	return IsCreated();
 }
 
-SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
+SvUl::NameClassIdList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
 {
-	SvUl::NameGuidList list;
-
-	return list;
+	return {};
 }
 
 void SVObjectClass::SetName(LPCTSTR Name)
@@ -788,7 +785,7 @@ void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scObjectNameTag, value);
 	value.Clear();
 
-	value.SetString(GetClassID().ToString().c_str());
+	value = GetClassID();
 	rWriter.WriteAttribute(scClassIDTag, value);
 	value.Clear();
 

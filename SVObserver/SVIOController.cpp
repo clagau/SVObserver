@@ -25,7 +25,8 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
 
 SVIOController::SVIOController( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )
@@ -550,11 +551,6 @@ void SVIOController::ValidateRemoteMonitorList()
 HRESULT SVIOController::ActivateRemoteMonitorList(const std::string& listName, bool bActivate)
 {
 	return m_RemoteMonitorListController.ActivateRemoteMonitorList(listName, bActivate);
-}
-
-void SVIOController::GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const
-{
-	m_RemoteMonitorListController.GetActiveRemoteMonitorList(rActiveList);
 }
 
 int SVIOController::GetActiveMonitorListCount() const

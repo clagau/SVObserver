@@ -57,7 +57,7 @@ public:
 	template< typename SVObjectTypeName >
 	HRESULT GetConfigurationObject( SVObjectTypeName*& rpObject );
 
-	HRESULT ConstructRootObject( const SVGUID& rClassID );
+	HRESULT ConstructRootObject(SvPb::ClassIdEnum classID);
 	HRESULT DestroyRootObject();
 	void setRootChildID(const std::string& rRootChild, const SVGUID& rUniqueID);
 
@@ -65,11 +65,11 @@ public:
 	//! \param rName [in][out] dotted name to translate is done in place
 	void TranslateDottedName(std::string& rName) const;
 
-	HRESULT ConstructObject( const SVGUID& rClassID, GUID& rObjectID );
-	HRESULT ConstructObject( const SVGUID& rClassID, SVObjectClass*& rpObject );
+	HRESULT ConstructObject(SvPb::ClassIdEnum classID, GUID& rObjectID);
+	HRESULT ConstructObject(SvPb::ClassIdEnum classID, SVObjectClass*& rpObject);
 
 	template< typename SVObjectTypeName >
-	HRESULT ConstructObject( const SVGUID& rClassID, SVObjectTypeName*& rpObject );
+	HRESULT ConstructObject(SvPb::ClassIdEnum classID, SVObjectTypeName*& rpObject);
 
 	HRESULT GetObjectByIdentifier( const SVGUID& rObjectID, SVObjectClass*& rpObject ) const;
 

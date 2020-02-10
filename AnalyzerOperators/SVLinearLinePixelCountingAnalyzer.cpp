@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzerClass, SVLinearPixelCountingLineAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzerClass, SvPb::LinearPixelCountingLineAnalyzerClassId);
 
 
 SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )

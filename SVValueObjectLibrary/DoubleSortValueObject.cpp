@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DoubleSortValueObject.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #pragma endregion Includes
 
@@ -22,7 +21,7 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(DoubleSortValueObject, DoubleSortValueObjectGuid);
+SV_IMPLEMENT_CLASS(DoubleSortValueObject, SvPb::DoubleSortValueClassId);
 #pragma endregion Declarations
 
 #pragma region Constructor

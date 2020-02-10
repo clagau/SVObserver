@@ -25,8 +25,8 @@ namespace SvAo
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
-SV_IMPLEMENT_CLASS( SVLinearAnalyzerClass, SVLinearAnalyzerClassGuid );
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVLinearAnalyzerClass, SVLinearAnalyzerClassGuid );
 
 
 SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
@@ -512,14 +512,14 @@ void SVLinearAnalyzerClass::addDPointResultToAvailableChildren(GUID embeddedID, 
 	// Add the X Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDPointXObjectType;
-	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::DPointXResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_X);
 	m_availableChildren.push_back(resultClassInfo);
 
 	// Add the Y Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDPointYObjectType;
-	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::DPointYResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_Y);
 	m_availableChildren.push_back(resultClassInfo);
 }
@@ -536,7 +536,7 @@ void SVLinearAnalyzerClass::addScalarResultToAvailableChildren(GUID embeddedID, 
 	// Add the Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType = subtype;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(idForClassnamePart2);
 	m_availableChildren.push_back(resultClassInfo);
 }

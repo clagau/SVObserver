@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVVariantResultClass, SVVariantResultClassGuid );
+SV_IMPLEMENT_CLASS( SVVariantResultClass, SvPb::VariantResultClassId);
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	// Describe the SVRangeClass ...
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVNotSetSubObjectType;
-	rangeClassInfo.m_ClassId = SVRangeClassGuid;
+	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it

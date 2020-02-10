@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVImageArithmeticClass, SVImageArithmeticClassGuid )
+SV_IMPLEMENT_CLASS( SVImageArithmeticClass, SvPb::ImageArithmeticClassId)
 
 SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int StringResourceID )
 					   :SVTaskObjectClass( POwner, StringResourceID ) 

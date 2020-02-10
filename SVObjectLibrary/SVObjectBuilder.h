@@ -22,10 +22,15 @@ namespace SvOi
 class IObjectClass;
 }
 
+namespace SvPb
+{
+	enum ClassIdEnum;
+}
+
 class SVObjectBuilder
 {
 public:
-	static HRESULT CreateObject(const GUID& classID, const GUID& uniqueID, const std::string& name, const std::string& objectName, const GUID& ownerUniqueID);
+	static HRESULT CreateObject(SvPb::ClassIdEnum classID, const GUID& uniqueID, const std::string& name, const std::string& objectName, const GUID& ownerUniqueID);
 	/// Create an object and add it to the friend list.
 	/// \param classID [in] The class ID of the new object.
 	/// \param uniqueID [in] The GUID to be set for the new object. If this is GUID_NULL, the created GUID stay valid.
@@ -33,7 +38,7 @@ public:
 	/// \param ownerUniqueID [in] The owner of the friend list. Must not be GUID_NULL.
 	/// \param rAddPreGuid [in] If this a valid GUID of a friend in the list, the new object will be added before this.
 	/// \returns HRESULT
-	static SvOi::IObjectClass* CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid = GUID_NULL);
+	static SvOi::IObjectClass* CreateFriendObject(SvPb::ClassIdEnum classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid = GUID_NULL);
 	static HRESULT DestroyFriends(const GUID& objectID);
 	/// Search embedded object in owner and change Guid and name
 	/// \param embeddedID [in] Embedded Id of the object to overwrite

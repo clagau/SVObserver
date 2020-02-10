@@ -9,7 +9,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <milblob.h>
 #include "ExtractHolesFilter.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -17,7 +16,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(ExtractHolesFilter, SVExtractHolesFilterClassGuid)
+SV_IMPLEMENT_CLASS(ExtractHolesFilter, SvPb::ExtractHolesFilterClassId)
 
 ExtractHolesFilter::ExtractHolesFilter(SVObjectClass* POwner, int StringResourceID)
 	: BlobReconstructBasicFilter(POwner, StringResourceID, M_EXTRACT_HOLES)

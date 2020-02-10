@@ -31,7 +31,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVBarCodeResultClass, SVBarCodeResultClassGuid);
+SV_IMPLEMENT_CLASS(SVBarCodeResultClass, SvPb::BarCodeResultClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -43,6 +43,7 @@ struct SVExtentMultiLineStruct
 	bool m_Passed;
 	bool m_Warned;
 	bool m_Failed;
+	bool m_bDrawFigureHatched = false;
 
 	COLORREF m_Color;
 

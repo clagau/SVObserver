@@ -12,6 +12,11 @@
 //! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
 class SVGUID;
 class SVDeviceParamCollection;
+
+namespace SvPb
+{
+	enum ClassIdEnum;
+}
 #pragma endregion Declarations
 
 namespace SvOi
@@ -42,11 +47,11 @@ namespace SvOi
 	void CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent);
 
 	//! Calls the setup dialog manager
-	//! \param rClassID [in] The class ID to the corresponding dialog
+	//! \param classID [in] The class ID to the corresponding dialog
 	//! \param rObjectId [in] The object id as parameter
 	//! \param pParentWnd [in] Pointer to the parent window
 	/// \returns result
-	HRESULT SetupDialogManager(const SVGUID& rClassId, const SVGUID& rObjectId, HWND hWnd);
+	HRESULT SetupDialogManager(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, HWND hWnd);
 
 	//! Shows the modeless license manager dialog
 	//! \param rMessage [in] the message to display

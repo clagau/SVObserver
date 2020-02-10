@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPolarTransformClass, SVPolarTransformClassGuid )
+SV_IMPLEMENT_CLASS( SVPolarTransformClass, SvPb::PolarTransformClassId)
 
 SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectClass( POwner, StringResourceID ) 

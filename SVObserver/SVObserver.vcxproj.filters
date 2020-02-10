@@ -255,9 +255,6 @@
     <ClCompile Include="SVObjectScriptParserBase.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectScriptParserSVX.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVObserver.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -782,9 +779,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectScriptParserBase.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectScriptParserSVX.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObserver.h">

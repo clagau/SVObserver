@@ -32,7 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS( RootObject, RootObjectGuid );
+SV_IMPLEMENT_CLASS( RootObject, SvPb::RootClassId);
 #pragma endregion Declarations
 
 #pragma region Constructor

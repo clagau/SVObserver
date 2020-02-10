@@ -97,7 +97,7 @@ const SVGUID SVObjectManagerClass::GetChildRootObjectID(const std::string& rRoot
 	return ObjectID;
 }
 
-HRESULT SVObjectManagerClass::ConstructRootObject(const SVGUID& rClassID)
+HRESULT SVObjectManagerClass::ConstructRootObject(SvPb::ClassIdEnum classID)
 {
 	if (m_RootNameChildren.end() != m_RootNameChildren.find(SvDef::FqnRoot) && !m_RootNameChildren[SvDef::FqnRoot].empty())
 	{
@@ -105,7 +105,7 @@ HRESULT SVObjectManagerClass::ConstructRootObject(const SVGUID& rClassID)
 	}
 
 	SVObjectClass* pRootObject;
-	HRESULT Status = ConstructObject(rClassID, pRootObject);
+	HRESULT Status = ConstructObject(classID, pRootObject);
 	if (S_OK == Status)
 	{
 		if (nullptr != pRootObject)
@@ -199,11 +199,11 @@ HRESULT SVObjectManagerClass::disconnectDependency(const SVGUID& rSource, const 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::ConstructObject(const SVGUID& rClassID, GUID& rObjectID)
+HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, GUID& rObjectID)
 {
 	SVObjectClass* l_pObject = nullptr;
 
-	HRESULT Result = ConstructObject(rClassID, l_pObject);
+	HRESULT Result = ConstructObject(classID, l_pObject);
 
 	if (nullptr != l_pObject)
 	{
@@ -212,7 +212,6 @@ HRESULT SVObjectManagerClass::ConstructObject(const SVGUID& rClassID, GUID& rObj
 	else
 	{
 		rObjectID = GUID_NULL;
-
 		if (S_OK == Result)
 		{
 			Result = E_FAIL;
@@ -222,11 +221,11 @@ HRESULT SVObjectManagerClass::ConstructObject(const SVGUID& rClassID, GUID& rObj
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::ConstructObject(const SVGUID& rClassID, SVObjectClass*& rpObject)
+HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, SVObjectClass*& rpObject)
 {
 	HRESULT Result = S_OK;
 
-	rpObject = SVClassRegisterListClass::Instance().ConstructNewObject(rClassID);
+	rpObject = SVClassRegisterListClass::Instance().ConstructNewObject(classID);
 
 	if (nullptr == rpObject)
 	{
@@ -1772,10 +1771,10 @@ SvOi::IObjectClass* SvOi::getObjectByDottedName(const std::string& rFullName)
 	return pObject;
 }
 
-SvOi::IObjectClass* SvOi::ConstructObject(const SVGUID& rClassID)
+SvOi::IObjectClass* SvOi::ConstructObject(SvPb::ClassIdEnum classID)
 {
 	SVObjectClass* pObject = nullptr;
-	SVObjectManagerClass::Instance().ConstructObject(rClassID, pObject);
+	SVObjectManagerClass::Instance().ConstructObject(classID, pObject);
 	return pObject;
 }
 

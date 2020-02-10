@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVMathEquationClass, SVMathEquationClassGuid );
+SV_IMPLEMENT_CLASS( SVMathEquationClass, SvPb::MathEquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 

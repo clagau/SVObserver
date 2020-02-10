@@ -24,10 +24,10 @@ SVClassRegisterClass::~SVClassRegisterClass()
 {
 }
 
-SVGUID SVClassRegisterClass::GetClassID() const 
+SvPb::ClassIdEnum SVClassRegisterClass::GetClassID() const
 { 
 	assert( 0 );
-	return GUID_NULL; 
+	return SvPb::NoObjectClassId;
 }
 
 SVObjectClass* SVClassRegisterClass::Construct() 

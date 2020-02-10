@@ -49,7 +49,7 @@ constexpr int cAsyncDefaultBufferNumber = 5;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS(SVArchiveTool, SVArchiveToolClassGuid);
+SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
               : SVToolClass(POwner, StringResourceID)

@@ -12,13 +12,12 @@
 #include "stdafx.h"
 #include "SVVertEdgeFilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVVertEdgeFilterClass, SVVertEdgeFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVVertEdgeFilterClass, SvPb::VertEdgeFilterClassId)
 
 SVVertEdgeFilterClass::SVVertEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 

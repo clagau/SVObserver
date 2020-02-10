@@ -19,6 +19,7 @@ namespace SvIe
 {
 class SVCameraImageTemplate;
 }
+class SVGUID;
 
 
 class SVToolAdjustmentDialogSheetClass;
@@ -43,6 +44,6 @@ private:
 	SVToolAdjustmentDialogSheetClass* m_pSheet{ nullptr };
 	SvOi::IObjectClass* m_pTaskObject{ nullptr };
 	SvIe::SVCameraImageTemplate* m_pMainImage{ nullptr };
-	SvMc::AvailableObjectListComboBox m_CameraListBox;
+	SvMc::AvailableObjectListComboBox<SVGUID> m_CameraListBox;
 };
 

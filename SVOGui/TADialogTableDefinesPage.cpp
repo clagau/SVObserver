@@ -491,7 +491,7 @@ HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, SVGUID add
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), TableColumnEquationGuid);
+	pRequest->set_classid(SvPb::TableColumnEquationId);
 	pRequest->mutable_friend_()->set_name(rName);
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_friend_()->mutable_preguid(), addPreGuid);
 

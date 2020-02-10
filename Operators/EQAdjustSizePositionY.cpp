@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( EQAdjustSizePositionY, EQAdjustSizePositionYGuid );
+SV_IMPLEMENT_CLASS( EQAdjustSizePositionY, SvPb::EQAdjustSizePositionYClassId);
 
 EQAdjustSizePositionY::EQAdjustSizePositionY( SVObjectClass* POwner, int StringResourceID )
 : EQAdjustSize(SvPb::EQSizePositionYType, EQAdjustSizePositionYResultGuid, POwner, StringResourceID )

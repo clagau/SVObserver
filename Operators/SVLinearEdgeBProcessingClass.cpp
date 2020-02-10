@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SV_IMPLEMENT_CLASS( SVLinearEdgeBProcessingClass, SVLinearEdgeBProcessingClassGuid );
+SV_IMPLEMENT_CLASS( SVLinearEdgeBProcessingClass, SvPb::LinearEdgeBProcessingClassId);
 
 
 SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwner, int StringResourceID )

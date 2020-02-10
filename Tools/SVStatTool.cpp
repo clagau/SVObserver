@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVStatisticsToolClass, SVStatisticsToolClassGuid );
+SV_IMPLEMENT_CLASS( SVStatisticsToolClass, SvPb::StatisticsToolClassId );
 
 
 SVStatisticsToolClass::SVStatisticsToolClass( SVObjectClass* POwner, int StringResourceID )
@@ -316,7 +316,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
-		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+		resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		resultClassInfo.m_ClassName += _T(" ") + std::string(m_Value [aFeatureIndex].GetName());
 

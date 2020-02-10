@@ -9,7 +9,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <milblob.h>
 #include "EraseBorderBlobsFilter.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -17,7 +16,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(EraseBorderBlobsFilter, SVEraseBorderBlobsFilterClassGuid)
+SV_IMPLEMENT_CLASS(EraseBorderBlobsFilter, SvPb::EraseBorderBlobsFilterClassId)
 
 EraseBorderBlobsFilter::EraseBorderBlobsFilter(SVObjectClass* POwner, int StringResourceID)
 	: BlobReconstructBasicFilter(POwner, StringResourceID, M_ERASE_BORDER_BLOBS)

@@ -79,7 +79,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectGuid);
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectGuid);
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -87,10 +88,6 @@ SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName)
 	: SVObjectClass(ObjectName)
 {
 	m_pIOController = new SVIOController;
-	m_pInputObjectList = nullptr;
-	m_pOutputObjectList = nullptr;
-	m_bConfigurationValid = false;
-	m_ulVersion = 0;
 
 	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
@@ -104,9 +101,6 @@ SVConfigurationObject::SVConfigurationObject(SVObjectClass* POwner, int StringRe
 	: SVObjectClass(POwner, StringResourceID)
 {
 	m_pIOController = new SVIOController;
-	m_pInputObjectList = nullptr;
-	m_pOutputObjectList = nullptr;
-	m_bConfigurationValid = false;
 
 	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
@@ -247,9 +241,9 @@ SvTi::SVTriggerObject* SVConfigurationObject::GetTrigger(long lIndex) const
 }// end GetTrigger
 
 bool SVConfigurationObject::AddAcquisitionDevice(LPCTSTR szName,
-	SVFileNameArrayClass& rsvFiles,
-	SVLightReference& rsvLight,
-	SVLut& rLut,
+	const SVFileNameArrayClass& rsvFiles,
+	const SVLightReference& rsvLight,
+	const SVLut& rLut,
 	const SVDeviceParamCollection* pDeviceParams)
 {
 	bool bOk(false);
@@ -279,7 +273,7 @@ bool SVConfigurationObject::AddAcquisitionDevice(LPCTSTR szName,
 	return bOk;
 }// end AddAcquisitionDevice
 
-bool SVConfigurationObject::ModifyAcquisitionDevice(LPCTSTR szName, SVLightReference& rsvLight)
+bool SVConfigurationObject::ModifyAcquisitionDevice(LPCTSTR szName, const SVLightReference& rsvLight)
 {
 	bool bOk = false;
 	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
@@ -773,8 +767,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 	{
 		if (!pIOEntry->m_Enabled)
 		{
-			SVDigitalInputObject* pDigitalInput = nullptr;
-			pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
+			SVDigitalInputObject* pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
@@ -948,13 +941,12 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool &Configuratio
 	bool bThreadOk = true;
 	while (bThreadOk)
 	{
-		long lAffinity;
 		std::string ThreadTag = SvUl::Format(_T("%s_%d"), SvXml::CTAG_THREAD_SETUP, iThreadNum);
 		bThreadOk = SvXml::SVNavigateTree::GetItemBranch(rTree, ThreadTag.c_str(), hChild, hThreadSetup);
 		if (bThreadOk)
 		{
 			bThreadOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_THREAD_AFFINITY, hThreadSetup, Value);
-			lAffinity = Value;
+			long lAffinity = Value;
 			bThreadOk &= SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_THREAD_NAME, hThreadSetup, Value);
 			std::string Name = SvUl::createStdString(Value);
 			if (bThreadOk)
@@ -1040,7 +1032,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		_variant_t Data;
 		std::string IOName;
 		bool	bOutput;
-		DWORD	dwChannel;
+		DWORD	dwChannel = -1;
 		bool	bForced;
 		DWORD	dwForcedValue;
 		bool	bInverted;
@@ -1662,8 +1654,8 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, 
 
 				//! We no longer need the channel information
 				DeviceName = static_cast<LPCTSTR>(l_String);
-				std::string::size_type Pos = std::string::npos;
-				if (std::string::npos != (Pos = DeviceName.find(_T(".Ch_"))))
+				std::string::size_type Pos = DeviceName.find(_T(".Ch_"));
+				if (std::string::npos != Pos)
 				{
 					DeviceName = SvUl::Left(DeviceName, Pos);
 				}
@@ -1857,7 +1849,7 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 
 		SVInspectionProcess* pInspection(nullptr);
 
-		SVObjectManagerClass::Instance().ConstructObject(SVInspectionProcessGuid, pInspection);
+		SVObjectManagerClass::Instance().ConstructObject(SvPb::InspectionProcessClassId, pInspection);
 		if (nullptr == pInspection)
 		{
 			SvStl::MessageContainer MsgCont;
@@ -1994,13 +1986,8 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 		SVTreeType::SVBranchHandle hDeviceChild(nullptr);
 		SVTreeType::SVBranchHandle hDataChild(nullptr);
 		_variant_t Value;
-		long lMode = 0;
-		long lLength = 0;
 		long lDelay = 0;
 		long lCount = 0;
-		long lPosition = 0;
-		bool bMaintainSrcImg = false;
-		long lInspectionTimeout = 0;
 
 		// Set the IO lists
 		pPPQ->m_pInputList = GetInputObjectList();
@@ -2025,8 +2012,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			lMode = Value;
-
+			long lMode = Value;
 			pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)lMode);
 		}// end if
 
@@ -2034,8 +2020,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			lLength = Value;
-
+			long lLength = Value;
 			pPPQ->SetPPQLength(lLength);
 		}// end if
 
@@ -2070,8 +2055,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			bMaintainSrcImg = Value;
-
+			bool bMaintainSrcImg = Value;
 			pPPQ->SetMaintainSourceImages(bMaintainSrcImg);
 		}
 
@@ -2079,8 +2063,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			lInspectionTimeout = Value;
-
+			long lInspectionTimeout = Value;
 			pPPQ->SetInspectionTimeout(lInspectionTimeout);
 		}
 
@@ -2132,7 +2115,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 		if (bOk)
 		{
 			hDataChild = rTree.getFirstBranch(hDeviceChild);
-
+			long lPosition = 0;
 			while (bOk && nullptr != hDataChild)
 			{
 				lCount = GetCameraCount();
@@ -2215,7 +2198,6 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 			std::string DataName = rTree.getBranchName(hDataChild);
 
 			SVRemoteInputObject *pRemoteInput = nullptr;
-			_variant_t Value;
 			long lIndex;
 			long lPPQPosition = 0;
 
@@ -2322,16 +2304,14 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 {
-
 	HRESULT	Result(S_OK);
-
-	std::string BoardName;
-	long lNumBoardDig(0);
-	long lNumCameras(0);
-	bool ConfigurationColor(false);
 
 	try
 	{
+		std::string BoardName;
+		long lNumBoardDig(0);
+		long lNumCameras(0);
+		bool ConfigurationColor(false);
 		LoadEnviroment(rTree, ConfigurationColor);
 		LoadIO(rTree);
 		LoadAcquisitionDevice(rTree, BoardName, lNumBoardDig);
@@ -2345,7 +2325,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		// the better solution is to have the acqs subscribe and the triggers provide
 		HRESULT hrAttach = AttachAcqToTriggers();
 	}
-	catch (const SvStl::MessageContainer& rMsgCont)
+	catch (SvStl::MessageContainer& rMsgCont)
 	{
 		DestroyConfiguration();
 		throw rMsgCont;
@@ -2556,10 +2536,10 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeT
 		case DeviceParamCameraFormats:
 		{
 			SVCameraFormatsDeviceParam* pcf = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
-			int iOption = 0;
 			SVTreeType::SVBranchHandle hParam(nullptr);
 			if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OPTIONS, hParent, hChild))
 			{
+				int iOption = 0;
 				std::string OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
 				while (SvXml::SVNavigateTree::GetItemBranch(rTree, OptionTag.c_str(), hChild, hParam))
 				{
@@ -3457,7 +3437,7 @@ bool SVConfigurationObject::SaveRemoteMonitorList(SvOi::IObjectWriter& rWriter) 
 		bOk = SaveMonitoredObjectList(rWriter, SvXml::CTAG_REJECTCONDITION_LIST, monitorList.GetRejectConditionList()) && bOk;
 		bOk = SaveMonitoredObjectList(rWriter, SvXml::CTAG_FAILSTATUS_LIST, monitorList.GetFailStatusList()) && bOk;
 		rWriter.EndElement(); //strName.c_str()
-		iterMonitorList++;
+		++iterMonitorList;
 	}
 
 	rWriter.EndElement(); //SvXml::CTAG_MONITOR_LISTS
@@ -3484,7 +3464,7 @@ bool SVConfigurationObject::SaveMonitoredObjectList(SvOi::IObjectWriter& rWriter
 		{
 			bOk = false;
 		}
-		iter++;
+		++iter;
 	}
 	rWriter.EndElement();
 	return bOk;
@@ -5392,41 +5372,6 @@ HRESULT SVConfigurationObject::ActivateRemoteMonitorList(const std::string& list
 		hr = m_pIOController->ActivateRemoteMonitorList(listName, bActivate);
 	}
 	return hr;
-}
-
-bool SVConfigurationObject::ActivateDefaultMonitorList()
-{
-	bool activated(false);
-	RemoteMonitorListMap rActiveList;
-	GetActiveRemoteMonitorList(rActiveList);
-	if (rActiveList.size() == 0)
-	{
-		int Size = GetPPQCount();
-		for (int i = 0; i < Size; i++)
-		{
-			std::string Name(RemoteMonitorListController::s_DefaultMonitorListName);
-			SVPPQObject* pPPQ = GetPPQ(i);
-			if (nullptr == pPPQ)
-			{
-				break;
-			}
-			Name += pPPQ->GetName();
-			if (S_OK == ActivateRemoteMonitorList(Name, true))
-			{
-				activated = true;
-			}
-		}
-	}
-	return activated;
-}
-
-void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const
-{
-	rActiveList.clear();
-	if (nullptr != m_pIOController)
-	{
-		m_pIOController->GetActiveRemoteMonitorList(rActiveList);
-	}
 }
 
 int SVConfigurationObject::GetActiveMonitorListCount() const

@@ -30,7 +30,8 @@ class SVIODoc;
 
 class SVIOController : public SVObjectClass
 {
-	SV_DECLARE_CLASS( SVIOController );
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVIOController );
 
 public:
 	SVIOController( LPCTSTR ObjectName );
@@ -94,7 +95,6 @@ public:
 	//! \param bActivate [in]
 	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const std::string& rListName, bool bActivate);
-	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 	
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const; 

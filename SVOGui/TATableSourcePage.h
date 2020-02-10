@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVOResource\resource.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
+#include "SVUtilityLibrary\NameGuidList.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
@@ -64,7 +65,7 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
-		SvMc::AvailableObjectListComboBox m_availableSourceTableCB;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_availableSourceTableCB;
 		
 		const SVGUID m_InspectionID;
 		const SVGUID m_TaskObjectID;

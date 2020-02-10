@@ -27,7 +27,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVClsids.h"
 #pragma warning (pop)
 #pragma endregion Includes
 
@@ -105,7 +104,7 @@ static SVPoint<double> GetDPointFromString(const std::string& rValue)
 	return pointValue;
 }
 
-HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID, const std::string& name, const std::string& objectName, const GUID& ownerUniqueID )
+HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, const GUID& uniqueID, const std::string& name, const std::string& objectName, const GUID& ownerUniqueID )
 {
 	HRESULT hr = S_OK;
 
@@ -167,7 +166,6 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 	else
 	{
 		hr = S_FALSE;
-		assert(Svol::IsIgnorableTool(classID));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		::OutputDebugString( _T("SVObjectBuilder::CreateObject - Creation Failed") );
 #endif
@@ -188,7 +186,7 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 	return hr;
 }
 
-SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
+SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
 {
 	if ( GUID_NULL == ownerUniqueID )
 	{

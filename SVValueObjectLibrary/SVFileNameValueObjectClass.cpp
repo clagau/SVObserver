@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
 #include "SVFileNameValueObjectClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #pragma endregion Includes
 
@@ -28,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 constexpr int c_PathMaxSize = 256;
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVFileNameValueObjectClass, SVFileNameValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVFileNameValueObjectClass, SvPb::FileNameValueClassId);
 
 SVFileNameValueObjectClass::SVFileNameValueObjectClass( LPCTSTR ObjectName )
 : SVStringValueObjectClass( ObjectName )

@@ -172,19 +172,17 @@ namespace SvOg
 
 		setImages();
 
-		SvUl::NameGuidList availableList;
+		SvUl::NameClassIdList availableList;
 		SvPb::InspectionCmdMsgs request, response;
 		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
 		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-		SvUl::InputNameGuidPairList connectedList;
 		if (S_OK == hr && response.has_getcreatableobjectsresponse())
 		{
-			for (auto item : response.getcreatableobjectsresponse().list())
-			{
-				availableList.push_back({item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())});
-			}
+			const auto& rList = response.getcreatableobjectsresponse().list();
+			std::transform(rList.begin(), rList.end(), std::back_inserter(availableList), 
+				[](const auto& rEntry) -> SvUl::NameClassIdPair { return { rEntry.objectname(), rEntry.classid()}; });
 		}
 
 		m_availableFilterCB.Init(availableList, _T(""), Filter_NoFilterAvailable);
@@ -204,9 +202,9 @@ namespace SvOg
 	////////////////////////////////////////////////////////////////////////////////
 	void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter() 
 	{ 
-		const SVGUID classID = m_availableFilterCB.getSelectedGUID();
+		auto classID = m_availableFilterCB.getSelectedValue();
 
-		if( GUID_NULL != classID )
+		if( SvPb::NoObjectClassId != classID )
 		{
 			int destinyIndex	= m_filterListBox.GetCurSel();
 
@@ -219,7 +217,7 @@ namespace SvOg
 			SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 			SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
 			SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_UnaryImageOperatorID);
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), classID);
+			pRequest->set_classid(classID);
 			pRequest->set_taskobjectpos(destinyIndex);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
@@ -264,10 +262,9 @@ namespace SvOg
 			SVGUID filterGUID = availableList[i].second;
 			if( GUID_NULL != filterGUID )
 			{
-				SvPb::InspectionCmdMsgs request, response;
 				SvPb::ShouldInspectionResetRequest* pShouldResetRequest = request.mutable_shouldinspectionresetrequest();
 				SvPb::SetGuidInProtoBytes(pShouldResetRequest->mutable_objectid(), filterGUID);
-				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
+				hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
 				if (S_OK == hr && response.has_shouldinspectionresetresponse())
 				{
 					bReset |= response.shouldinspectionresetresponse().shouldreset();

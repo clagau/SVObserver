@@ -11,7 +11,6 @@
 #include "TableFillByEquationObject.h"
 #include "TableColumnEquation.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -24,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableFillByEquationObject, TableFillObjectGuid);
+SV_IMPLEMENT_CLASS(TableFillByEquationObject, SvPb::TableFillObjectId);
 
 
 #pragma region Constructor

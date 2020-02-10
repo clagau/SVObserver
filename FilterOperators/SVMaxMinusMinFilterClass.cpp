@@ -14,13 +14,12 @@
 #include "SVMaxMinusMinFilterClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVMaxMinusMinFilterClass, SVMaxMinusMinFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVMaxMinusMinFilterClass, SvPb::MaxMinusMinFilterClassId)
 
 SVMaxMinusMinFilterClass::SVMaxMinusMinFilterClass( SVObjectClass* POwner, int StringResourceID )
 							 :SVFilterClass( POwner, StringResourceID ) 

@@ -12,13 +12,12 @@
 #include "stdafx.h"
 #include "SVEdgeDetect2FilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVEdgeDetect2FilterClass, SVEdgeDetect2FilterClassGuid)
+SV_IMPLEMENT_CLASS(SVEdgeDetect2FilterClass, SvPb::EdgeDetect2FilterClassId)
 
 SVEdgeDetect2FilterClass::SVEdgeDetect2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						 :SVFilterClass( POwner, StringResourceID ) 

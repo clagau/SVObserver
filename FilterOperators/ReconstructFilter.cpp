@@ -11,7 +11,6 @@
 #include "ReconstructFilter.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -22,7 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(ReconstructFilter, SVReconstructFilterClassGuid)
+SV_IMPLEMENT_CLASS(ReconstructFilter, SvPb::ReconstructFilterClassId)
 
 ReconstructFilter::ReconstructFilter(SVObjectClass* POwner, int StringResourceID)
 	: BlobReconstructBasicFilter(POwner, StringResourceID, M_FILL_HOLES)

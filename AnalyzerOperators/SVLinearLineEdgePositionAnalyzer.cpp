@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzerClass, SVLinearEdgePositionLineAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzerClass, SvPb::LinearEdgePositionLineAnalyzerClassId);
 
 SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 								:SVLinearAnalyzerClass( POwner, StringResourceID ) 

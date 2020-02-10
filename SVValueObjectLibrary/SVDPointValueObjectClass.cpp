@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVDPointValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
@@ -30,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVDPointValueObjectClass, SVDPointValueObjectClassGuid );
+SV_IMPLEMENT_CLASS( SVDPointValueObjectClass, SvPb::DPointValueClassId);
 
 SVDPointValueObjectClass::SVDPointValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<SVPoint<double>>( ObjectName )

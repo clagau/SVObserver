@@ -20,22 +20,20 @@
 #pragma endregion Includes
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& rClassID, SVObjectTypeName*& rpObject )
+HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, SVObjectTypeName*& rpObject)
 {
 	SVObjectClass* pObject = nullptr;
-
 	rpObject = nullptr;
 
-	HRESULT Result = ConstructObject( rClassID, pObject );
+	HRESULT Result = ConstructObject(classID, pObject);
 
-	if( nullptr != pObject )
+	if (nullptr != pObject)
 	{
-		rpObject = dynamic_cast<SVObjectTypeName*> ( pObject );
+		rpObject = dynamic_cast<SVObjectTypeName*> (pObject);
 
-		if( nullptr == rpObject )
+		if (nullptr == rpObject)
 		{
 			Result = E_FAIL;
-
 			delete pObject;
 		}
 	}
@@ -167,7 +165,6 @@ HRESULT SVObjectManagerClass::UpdateObserver( const SVGUID& rObserverID, const S
 	if( nullptr != pObject )
 	{
 		SVObserverTemplate< SVDataType >* pObserver = dynamic_cast<SVObserverTemplate<SVDataType>*> (pObject);
-
 		if( nullptr != pObserver )
 		{
 			Result = pObserver->ObserverUpdate( rData );
@@ -187,7 +184,7 @@ HRESULT SVObjectManagerClass::UpdateObserver( long Cookie, const SVDataType& rDa
 	if(nullptr != pCookie)
 	{
 		SVObserverTemplate<SVDataType>* pObserver = dynamic_cast< SVObserverTemplate<SVDataType>* > ( pCookie->m_pFunctor.get() );
-
+		// cppcheck-suppress knownConditionTrueFalse //dynamic_cast can change pObserver to nullptr
 		if( nullptr != pObserver )
 		{
 			Result = pObserver->ObserverUpdate( rData );
@@ -210,7 +207,6 @@ HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataNa
 	if( S_OK == Result )
 	{
 		SVSubjectEnabledObserverMap::iterator Iter = Observers.begin();
-
 		for( ; Observers.end() != Iter;  ++Iter )
 		{
 			if( Iter->second == 1 )

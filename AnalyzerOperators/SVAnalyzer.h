@@ -21,7 +21,8 @@ namespace SvAo
 
 class SVAnalyzerClass : public SvIe::SVTaskObjectListClass
 {
-	SV_DECLARE_CLASS( SVAnalyzerClass );
+	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
+	//SV_DECLARE_CLASS( SVAnalyzerClass );
 public:
 	explicit SVAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
 	SVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );

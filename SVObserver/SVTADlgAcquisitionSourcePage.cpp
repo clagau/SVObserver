@@ -104,7 +104,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelchangeCameraCombo()
 {
-	SVGUID SelectedCameraGuid = m_CameraListBox.getSelectedGUID();
+	SVGUID SelectedCameraGuid = m_CameraListBox.getSelectedValue();
 	if( nullptr != m_pTaskObject && nullptr != m_pMainImage && GUID_NULL != SelectedCameraGuid )
 	{
 		// Set new digitizer of main image...

@@ -15,6 +15,7 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
 #include "SVOGui/ImageController.h"
+#include "SVProtoBuf\SVO-Enum.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
@@ -82,7 +83,7 @@ protected:
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogAnalyzerPageClass)
 	enum { IDD = IDD_TA_ANALYZER_DIALOG };
-	SvMc::AvailableObjectListComboBox	m_availableAnalyzerCombobox;
+	SvMc::AvailableObjectListComboBox<SvPb::ClassIdEnum>	m_availableAnalyzerCombobox;
 	SvOg::PictureDisplay	m_dialogImage;
 	//}}AFX_DATA
 
@@ -97,7 +98,7 @@ protected:
 
 	/// If a analyzer additional added to the combobox, because it is normally not available but now selected, it is saved here. 
 	/// If the selection of this get lost it will deleted from the combobox
-	SVGUID m_additionalAnalyzerId; 
+	SvPb::ClassIdEnum m_additionalAnalyzerId = SvPb::NoObjectClassId;
 	const SVGUID m_InspectionID;
 	const SVGUID m_TaskObjectID;
 

@@ -74,77 +74,83 @@ constexpr char* ToolGroupCommentLabel = _T("Tool Comment:");
 
 constexpr int LEFT_MARGIN = 50;
 
-static const GUID* pGuidNonPrintArray[] = 
+static std::vector<GUID> g_GuidNonPrintArray = 
 {
-	&SVTaskObjectClassIsObjectValidGuid,
-	&SVStatusObjectGuid,
-	&SVColorObjectGuid,
-	&SVConditionalResultObjectGuid,
-	&SVFailedObjectGuid,
-	&SVWarnedObjectGuid,
-	&SVPassedObjectGuid,
-	&SVExplicitFailedObjectGuid,
-	&SVPassedCountObjectGuid,
-	&SVFailedCountObjectGuid,
-	&SVWarnedCountObjectGuid,
-	&SVEdgeCountObjectGuid,
-	&SVEnabledCountObjectGuid,
-	&SVProcessedCountObjectGuid,
-	&SVBlobFeatureGuids[SvOi::SV_AREA],
-	&SVBlobFeatureGuids[SvOi::SV_BOXX_MAX],
-	&SVBlobFeatureGuids[SvOi::SV_BOXX_MIN],
-	&SVBlobFeatureGuids[SvOi::SV_BOXY_MAX],
-	&SVBlobFeatureGuids[SvOi::SV_BOXY_MIN],
-	&SVBlobFeatureGuids[SvOi::SV_BREADTH],
-	&SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_X],
-	&SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_Y],
-	&SVBlobFeatureGuids[SvOi::SV_CONVEX_PERIMETER],
-	&SVBlobFeatureGuids[SvOi::SV_FERET_ELONGATION],
-	&SVBlobFeatureGuids[SvOi::SV_FERETMAX_ANGLE],
-	&SVBlobFeatureGuids[SvOi::SV_FERETMAX_DIAMETER],
-	&SVBlobFeatureGuids[SvOi::SV_FERETMEAN_DIAMETER],
-	&SVBlobFeatureGuids[SvOi::SV_FERETMIN_ANGLE],
-	&SVBlobFeatureGuids[SvOi::SV_FERETMIN_DIAMETER],
-	&SVBlobFeatureGuids[SvOi::SV_FERET_X],
-	&SVBlobFeatureGuids[SvOi::SV_FERET_Y],
-	&SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_X],
-	&SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_Y],
-	&SVBlobFeatureGuids[SvOi::SV_LABEL],
-	&SVBlobFeatureGuids[SvOi::SV_LENGTH],
-	&SVBlobFeatureGuids[SvOi::SV_NBROF_HOLES],
-	&SVBlobFeatureGuids[SvOi::SV_PERIMETER],
-	&SVBlobFeatureGuids[SvOi::SV_ROUGHNESS],
-	&SVBlobFeatureGuids[SvOi::SV_SUM_PIXEL],
-	&SVBlobFeatureGuids[SvOi::SV_COMPACTNESS],
-	&SVBlobFeatureGuids[SvOi::SV_NBR_RUNS],
-	&SVBlobFeatureGuids[SvOi::SV_XMINAT_YMIN],
-	&SVBlobFeatureGuids[SvOi::SV_XMAXAT_YMAX],
-	&SVBlobFeatureGuids[SvOi::SV_YMINAT_XMAX],
-	&SVBlobFeatureGuids[SvOi::SV_YMAXAT_XMIN],
-	&SVBlobFeatureGuids[SvOi::SV_ELONGATION],
-	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_0],
-	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_45],
-	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_90],
-	&SVBlobFeatureGuids[SvOi::SV_INTERCEPT_135],
-	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y1],
-	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y0],
-	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y1],
-	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y2],
-	&SVBlobFeatureGuids[SvOi::SV_MOMENT_X2Y0],
-	&SVBlobFeatureGuids[SvOi::SV_CENTRAL_X0Y2],
-	&SVBlobFeatureGuids[SvOi::SV_CENTRAL_X2Y0],
-	&SVBlobFeatureGuids[SvOi::SV_CENTRAL_X1Y1],
-	&SVBlobFeatureGuids[SvOi::SV_AXISPRINCIPAL_ANGLE],
-	&SVBlobFeatureGuids[SvOi::SV_AXISSECONDARY_ANGLE],
-	&SVBlobFeatureGuids[SvOi::SV_EULER_NBR],
-	&SVBlobFeatureGuids[SvOi::SV_CENTER_X_SOURCE],
-	&SVBlobFeatureGuids[SvOi::SV_CENTER_Y_SOURCE],
-	&SVOCVCharacterResultClassGuid
+	SVTaskObjectClassIsObjectValidGuid,
+	SVStatusObjectGuid,
+	SVColorObjectGuid,
+	SVConditionalResultObjectGuid,
+	SVFailedObjectGuid,
+	SVWarnedObjectGuid,
+	SVPassedObjectGuid,
+	SVExplicitFailedObjectGuid,
+	SVPassedCountObjectGuid,
+	SVFailedCountObjectGuid,
+	SVWarnedCountObjectGuid,
+	SVEdgeCountObjectGuid,
+	SVEnabledCountObjectGuid,
+	SVProcessedCountObjectGuid,
+	SVBlobFeatureGuids[SvOi::SV_AREA],
+	SVBlobFeatureGuids[SvOi::SV_BOXX_MAX],
+	SVBlobFeatureGuids[SvOi::SV_BOXX_MIN],
+	SVBlobFeatureGuids[SvOi::SV_BOXY_MAX],
+	SVBlobFeatureGuids[SvOi::SV_BOXY_MIN],
+	SVBlobFeatureGuids[SvOi::SV_BREADTH],
+	SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_X],
+	SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_Y],
+	SVBlobFeatureGuids[SvOi::SV_CONVEX_PERIMETER],
+	SVBlobFeatureGuids[SvOi::SV_FERET_ELONGATION],
+	SVBlobFeatureGuids[SvOi::SV_FERETMAX_ANGLE],
+	SVBlobFeatureGuids[SvOi::SV_FERETMAX_DIAMETER],
+	SVBlobFeatureGuids[SvOi::SV_FERETMEAN_DIAMETER],
+	SVBlobFeatureGuids[SvOi::SV_FERETMIN_ANGLE],
+	SVBlobFeatureGuids[SvOi::SV_FERETMIN_DIAMETER],
+	SVBlobFeatureGuids[SvOi::SV_FERET_X],
+	SVBlobFeatureGuids[SvOi::SV_FERET_Y],
+	SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_X],
+	SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_Y],
+	SVBlobFeatureGuids[SvOi::SV_LABEL],
+	SVBlobFeatureGuids[SvOi::SV_LENGTH],
+	SVBlobFeatureGuids[SvOi::SV_NBROF_HOLES],
+	SVBlobFeatureGuids[SvOi::SV_PERIMETER],
+	SVBlobFeatureGuids[SvOi::SV_ROUGHNESS],
+	SVBlobFeatureGuids[SvOi::SV_SUM_PIXEL],
+	SVBlobFeatureGuids[SvOi::SV_COMPACTNESS],
+	SVBlobFeatureGuids[SvOi::SV_NBR_RUNS],
+	SVBlobFeatureGuids[SvOi::SV_XMINAT_YMIN],
+	SVBlobFeatureGuids[SvOi::SV_XMAXAT_YMAX],
+	SVBlobFeatureGuids[SvOi::SV_YMINAT_XMAX],
+	SVBlobFeatureGuids[SvOi::SV_YMAXAT_XMIN],
+	SVBlobFeatureGuids[SvOi::SV_ELONGATION],
+	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_0],
+	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_45],
+	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_90],
+	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_135],
+	SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y1],
+	SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y0],
+	SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y1],
+	SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y2],
+	SVBlobFeatureGuids[SvOi::SV_MOMENT_X2Y0],
+	SVBlobFeatureGuids[SvOi::SV_CENTRAL_X0Y2],
+	SVBlobFeatureGuids[SvOi::SV_CENTRAL_X2Y0],
+	SVBlobFeatureGuids[SvOi::SV_CENTRAL_X1Y1],
+	SVBlobFeatureGuids[SvOi::SV_AXISPRINCIPAL_ANGLE],
+	SVBlobFeatureGuids[SvOi::SV_AXISSECONDARY_ANGLE],
+	SVBlobFeatureGuids[SvOi::SV_EULER_NBR],
+	SVBlobFeatureGuids[SvOi::SV_CENTER_X_SOURCE],
+	SVBlobFeatureGuids[SvOi::SV_CENTER_Y_SOURCE]
 };
 
-std::pair<const GUID **, size_t> NonPrintGuids()
+const std::vector<GUID>& NonPrintGuids()
 {
-	return std::make_pair(pGuidNonPrintArray, sizeof(pGuidNonPrintArray)/sizeof(GUID *));
+	return g_GuidNonPrintArray;
+}
+
+static std::vector<SvPb::ClassIdEnum> g_classIdNonPrintArray = { SvPb::OCVCharacterResultClassId };
+
+const std::vector<SvPb::ClassIdEnum>& NonPrintClassIds()
+{
+	return g_classIdNonPrintArray;
 }
 
 class SVDeviceParamConfigPrintHelper :
@@ -214,7 +220,6 @@ IMPLEMENT_DYNCREATE(SVConfigurationPrint, CCmdTarget)
 #pragma region Constructor
 SVConfigurationPrint::SVConfigurationPrint()
 {
-	m_NPArraySize            = 0;
 	m_toolNumber             = 0;
 	m_heightPageNumberPixels = 0;
 	m_shortTabPixels         = 50;
@@ -642,38 +647,33 @@ void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& p
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoint& ptCurPos, int nIndentLevel )
 {
-	std::string sLabel, sValue;
-    std::string strType = pObject->GetObjectName();
-    std::string strName = pObject->GetName();
-	
-    CPoint   ptTemp(0, 0);
-	
-    GUID     guidObjID = pObject->GetClassID();
-	
-	BOOL	bPrintToolExtents = FALSE;		// Sri 2/17/00
-	
-	// If object is a value object, get embedded ID.
-	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
-	{
-		guidObjID = pObject->GetEmbeddedID();
-	}
-	
-    // Check for non-printing object type.
-    for (int nIndex = 0; nIndex < m_NPArraySize; nIndex++)
-    {
-        // If the GUID is for a non-printing object, Skip printing.
-        if (guidObjID == *pGuidNonPrintArray[nIndex])
-        {
-            return;
-        }  // end if ( guidObjID == *pguidNonPrintArray [nIndex] )
-    }  // end for ( int nIndex = 0; nIndex < m_nNPArraySize; nIndex++ )
-	
-	// This is to prevent the comments from being sent to the SIAC thru SVGetSVIMConfigPrint
-	if( guidObjID == SVToolCommentTypeObjectGuid && m_isPrintToStringBuffer )
+	SvPb::ClassIdEnum classID = pObject->GetClassID();
+	const auto& nonPCIds = NonPrintClassIds();
+	auto result = std::find_if(std::begin(nonPCIds), std::end(nonPCIds), [&classID](const auto& rEntry) { return classID == rEntry; });
+	if (result != std::end(nonPCIds))
 	{
 		return;
 	}
+
+	// If object is a value object, get embedded ID which is NonPrintable.
+	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
+	{
+		const GUID& guidObjID = pObject->GetEmbeddedID();
+		const auto& nPrs = NonPrintGuids();
+		// This is to prevent the comments from being sent to the SVRC thru GetConfigReport
+		if (guidObjID == SVToolCommentTypeObjectGuid && m_isPrintToStringBuffer)
+		{
+			return;
+		}
+		// Check for non-printing object type.
+		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&guidObjID](const auto& rEntry) { return guidObjID == rEntry; });
+		if (iter != std::end(nPrs))
+		{
+			return;
+		} 
+	}
 	
+	std::string sLabel, sValue;
 	// If object is a value object, print name and value.
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 	if( nullptr != pValueObject )
@@ -703,6 +703,9 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	}  // end if( nullptr != pValueObject )
 	else
 	{
+		std::string strType = pObject->GetObjectName();
+		std::string strName = pObject->GetName();
+		bool	bPrintToolExtents = false;
 		do
 		{
 			if ( nullptr != dynamic_cast <SvOp::SVShapeMaskHelperClass*> (pObject) )
@@ -723,11 +726,11 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				sLabel = SvUl::Format( _T("Tool Number %d:"), m_toolNumber );
 				
 				ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-				ptTemp      = ptCurPos;
+				CPoint ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, sLabel.c_str());
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
 				
-				bPrintToolExtents = TRUE;		// Sri 2/17/00
+				bPrintToolExtents = true;		// Sri 2/17/00
 			}
 			
 			ptCurPos.x   = nIndentLevel * m_shortTabPixels;
@@ -742,7 +745,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			// Print the tool length, width, extends, etc here.
 			if (bPrintToolExtents && nullptr != pTool)
 			{
-				bPrintToolExtents = FALSE;
+				bPrintToolExtents = false;
 				
 				SvIe::SVImageClass*  pCurrentSourceImage = nullptr;
 				SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
@@ -770,7 +773,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			if( nullptr != pArchiveTool )
 			{
 			
-				ptTemp      = ptCurPos;
+				CPoint ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Results"));
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
 				const auto& rRecVec = pArchiveTool->m_arrayResultsInfoObjectsToArchive.getRecordVec();
@@ -1288,13 +1291,9 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	CPoint	ptTemp(0, 0);
 	
     int      nIndentLevel = 0;
-    CFont*   pcfontOldFont;
 	
 	// Exchange font and store old one
-	pcfontOldFont = pDC->SelectObject(&m_fontTitle);
-	
-    // Initialize the Non-Printing GUID pointer array size variable.
-    m_NPArraySize = sizeof(pGuidNonPrintArray) / sizeof(GUID*);
+	pDC->SelectObject(&m_fontTitle);
 	
     // Print config title
 	std::string Label = SvUl::Format(_T("Configuration %s"), pApp->getConfigFileName().c_str() );

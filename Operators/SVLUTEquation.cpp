@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLUTEquationClass, SVLUTEquationClassGuid );
+SV_IMPLEMENT_CLASS( SVLUTEquationClass, SvPb::LUTEquationClassId);
 
 SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourceID )
 				   :SVEquationClass( POwner, StringResourceID )

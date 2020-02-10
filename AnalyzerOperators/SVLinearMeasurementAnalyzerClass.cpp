@@ -31,7 +31,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearMeasurementAnalyzerClass, SVLinearMeasurementAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVLinearMeasurementAnalyzerClass, SvPb::LinearMeasurementAnalyzerClassId);
 
 SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 									 :SVLinearAnalyzerClass( POwner, StringResourceID ) 

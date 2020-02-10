@@ -9,7 +9,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comutil.h>
 #include "SVOResource\resource.h"
-
+#include "SVUtilityLibrary\NameGuidList.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
@@ -53,7 +53,7 @@ namespace SvOg
 	#pragma region Member variables
 	private:
 		SVGUID m_selectedGuid;
-		SvMc::AvailableObjectListComboBox m_availableTableCB;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_availableTableCB;
 		SvUl::NameGuidList m_availableList;
 		std::string m_selectedItem;
 	#pragma endregion Member variables

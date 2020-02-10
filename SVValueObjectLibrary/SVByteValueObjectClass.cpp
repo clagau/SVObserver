@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <assert.h>
 #include "SVByteValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "Definitions/StringTypeDef.h"
@@ -31,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVByteValueObjectClass, SVByteValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVByteValueObjectClass, SvPb::ByteValueClassId);
 
 SVByteValueObjectClass::SVByteValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<BYTE>( ObjectName )

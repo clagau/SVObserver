@@ -71,9 +71,9 @@ void SvOi::CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent)
 	pBox->Create(CModelessMsgBox::IDD, nullptr);
 }
 
-HRESULT SvOi::SetupDialogManager(const SVGUID& rClassId, const SVGUID& rObjectId, HWND hWnd)
+HRESULT SvOi::SetupDialogManager(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, HWND hWnd)
 {
-	return SVSetupDialogManager::Instance().SetupDialog(rClassId, rObjectId, CWnd::FromHandle(hWnd));
+	return SVSetupDialogManager::Instance().SetupDialog(classId, rObjectId, CWnd::FromHandle(hWnd));
 }
 
 void SvOi::showLicenseManagerDialog(const std::string& rMessage, const SVGuidSet& rList, HANDLE hCheckEvent)

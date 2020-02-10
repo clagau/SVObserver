@@ -13,12 +13,11 @@
 #include "SVDilationFilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVDilationFilterClass, SVDilationFilterClassGuid)
+SV_IMPLEMENT_CLASS(SVDilationFilterClass, SvPb::DilationFilterClassId)
 
 SVDilationFilterClass::SVDilationFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 

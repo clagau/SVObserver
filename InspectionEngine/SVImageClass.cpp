@@ -48,7 +48,7 @@ constexpr long cColorBandNumber = 3L;
 constexpr long cMonoBandNumber = 1L;
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVImageClass, SVImageClassGuid);
+SV_IMPLEMENT_CLASS(SVImageClass, SvPb::ImageClassId);
 
 SVImageClass::SVImageClass(LPCSTR ObjectName)
 	: SVObjectAppClass(ObjectName)

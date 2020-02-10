@@ -37,10 +37,10 @@ IObjectClass* getObjectByDottedName(const std::string& rFullName);
 
 //************************************
 //! Construct an object by the guid and return the pointer.
-//! \param rClassID [in]
+//! \param classID [in]
 //! \returns IObjectClass*
 //************************************
-IObjectClass* ConstructObject(const SVGUID& rClassID);
+IObjectClass* ConstructObject(SvPb::ClassIdEnum classID);
 
 //************************************
 //! Return a object defined by it's Object ID.

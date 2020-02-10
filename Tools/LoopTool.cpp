@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(LoopTool, LoopToolClassGuid);
+SV_IMPLEMENT_CLASS(LoopTool, SvPb::LoopToolClassId);
 
 LoopTool::LoopTool(SVObjectClass* POwner, int StringResourceID)
 	:SVToolClass(POwner, StringResourceID)

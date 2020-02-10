@@ -30,32 +30,6 @@ static char THIS_FILE[] = __FILE__;
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVClassInfoStruct
 ////////////////////////////////////////////////////////////////////////////////
-SVClassInfoStruct::SVClassInfoStruct()
-{
-	m_ClassId = GUID_NULL;
-}
-
-SVClassInfoStruct::SVClassInfoStruct( const SVClassInfoStruct& rRhs )
-{
-	m_ClassId					= rRhs.m_ClassId;
-	m_ClassName				= rRhs.m_ClassName;
-	m_ObjectTypeInfo			= rRhs.m_ObjectTypeInfo;
-	m_DesiredInputVector	= rRhs.m_DesiredInputVector;
-}
-
-SVClassInfoStruct::~SVClassInfoStruct()
-{
-}
-
-SVClassInfoStruct SVClassInfoStruct::operator=( const SVClassInfoStruct& rRhs )
-{
-	m_ClassId					= rRhs.m_ClassId;
-	m_ClassName				= rRhs.m_ClassName;
-	m_ObjectTypeInfo			= rRhs.m_ObjectTypeInfo;
-	m_DesiredInputVector	= rRhs.m_DesiredInputVector;
-	return( *this );
-}
-
 SVObjectClass* SVClassInfoStruct::Construct()
 {
 	SVObjectClass* pObject = nullptr;

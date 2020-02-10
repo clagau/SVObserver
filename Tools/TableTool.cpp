@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableTool, TableToolGuid);
+SV_IMPLEMENT_CLASS(TableTool, SvPb::TableToolClassId);
 
 #pragma region Constructor
 TableTool::TableTool( SVObjectClass* pOwner, int stringResourceID )
@@ -228,7 +228,7 @@ void TableTool::LocalInitialize ()
 	BuildEmbeddedObjectList ();
 
 	//Clear Condition Equation
-	SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (SvOi::ConstructObject(SVEquationClassGuid));
+	SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (SvOi::ConstructObject(SvPb::EquationClassId));
 	if( nullptr != pObject )
 	{
 		pObject->SetObjectOwner( this );

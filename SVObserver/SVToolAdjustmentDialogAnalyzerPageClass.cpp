@@ -51,7 +51,6 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 	, m_pCurrentAnalyzer(nullptr)
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
-	, m_additionalAnalyzerId(GUID_NULL)
 	, m_ImageController(rInspectionID, rTaskObjectID)
 {
 	if (m_pParentDialog)
@@ -142,7 +141,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 			analyzerSelection = m_pCurrentAnalyzer->GetObjectName();
 		}
 
-		SvUl::NameGuidList availableList;
+		SvUl::NameClassIdList availableList;
 		SvPb::InspectionCmdMsgs request, response;
 		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
 		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_TaskObjectID);
@@ -153,20 +152,20 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		{
 			for (auto item : response.getcreatableobjectsresponse().list())
 			{
-				availableList.push_back({item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())});
+				availableList.push_back({item.objectname(), item.classid()});
 			}
 		}
 
 		//This is to add the analyzer due to MIL License restrictions.
 		if (m_pCurrentAnalyzer)
 		{
-			SvUl::NameGuidList::const_iterator iter = std::find_if(availableList.begin(), availableList.end(), [&](const SvUl::NameGuidPair& rVal)->bool
+			SvUl::NameClassIdList::const_iterator iter = std::find_if(availableList.begin(), availableList.end(), [&](const SvUl::NameClassIdPair& rVal)->bool
 			{
 				return (!rVal.first.empty() && 0 == rVal.first.compare(m_pCurrentAnalyzer->GetObjectName()));
 			});
 			if (availableList.end() == iter)
 			{
-				availableList.push_back(SvUl::NameGuidPair(m_pCurrentAnalyzer->GetObjectName(), m_pCurrentAnalyzer->GetClassID()));
+				availableList.emplace_back(m_pCurrentAnalyzer->GetObjectName(), m_pCurrentAnalyzer->GetClassID());
 				m_additionalAnalyzerId = m_pCurrentAnalyzer->GetClassID();
 			}
 		}
@@ -229,10 +228,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 	UpdateData(TRUE); // get data from dialog
 
-	SVGUID classGUID = m_availableAnalyzerCombobox.getSelectedGUID();
+	auto classGUID = m_availableAnalyzerCombobox.getSelectedValue();
 
 	// Check for valid selection
-	if (GUID_NULL != classGUID)
+	if (SvPb::NoObjectClassId != classGUID)
 	{
 		// Check if its the same Analyzer
 		if (m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != classGUID)
@@ -317,10 +316,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 	if (m_pCurrentAnalyzer)
 	{
 		//This is to remove the analyzer due to MIL License restrictions.
-		if (GUID_NULL != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId)
+		if (SvPb::NoObjectClassId != m_additionalAnalyzerId && m_pCurrentAnalyzer->GetClassID() == m_additionalAnalyzerId)
 		{
 			m_availableAnalyzerCombobox.remove(m_pCurrentAnalyzer->GetObjectName());
-			m_additionalAnalyzerId = GUID_NULL;
+			m_additionalAnalyzerId = SvPb::NoObjectClassId;
 		}
 
 		m_pCurrentAnalyzer->DisconnectImages();

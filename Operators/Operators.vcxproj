@@ -94,7 +94,6 @@
     </ClCompile>
     <ClCompile Include="SVAutoThresholdEquation.cpp" />
     <ClCompile Include="SVBarCodeResult.cpp" />
-    <ClCompile Include="SVBinaryOperatorClass.cpp" />
     <ClCompile Include="SVColorThreshold.cpp" />
     <ClCompile Include="SVConditional.cpp" />
     <ClCompile Include="SVDLLToolDefinitionStructs.cpp" />
@@ -165,7 +164,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAutoThresholdEquation.h" />
     <ClInclude Include="SVBarCodeResult.h" />
-    <ClInclude Include="SVBinaryOperatorClass.h" />
     <ClInclude Include="SVColorThreshold.h" />
     <ClInclude Include="SVConditional.h" />
     <ClInclude Include="SVDLLToolDefinitionStructs.h" />

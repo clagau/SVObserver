@@ -2075,7 +2075,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					}
 					else
 					{
-						SVObjectManagerClass::Instance().ConstructObject( SVInspectionProcessGuid, pInspection );
+						SVObjectManagerClass::Instance().ConstructObject(SvPb::InspectionProcessClassId, pInspection );
 
 						bRet = (nullptr != pInspection);
 

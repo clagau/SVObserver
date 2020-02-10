@@ -26,7 +26,7 @@
 #include "Definitions/ObjectNames.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS(SVToolSetClass, SVToolSetClassGuid);
+SV_IMPLEMENT_CLASS(SVToolSetClass, SvPb::ToolSetClassId);
 
 SVToolSetClass::SVToolSetClass(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID)

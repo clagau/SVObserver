@@ -11,7 +11,6 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUnaryImageOperatorClass.h"
 #pragma endregion Includes
@@ -26,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVInPlaceImageOperatorListClass, SVInPlaceImageOperatorListClassGuid )
+SV_IMPLEMENT_CLASS( SVInPlaceImageOperatorListClass, SvPb::InPlaceImageOperatorListClassId)
 
 SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
 							    :SVUnaryImageOperatorListClass( POwner, StringResourceID ) 

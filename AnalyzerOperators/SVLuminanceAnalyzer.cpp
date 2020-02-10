@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SVLuminanceAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SvPb::LuminanceAnalyzerClassId);
 
 SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( LPCSTR ObjectName )
 : SVImageAnalyzerClass( ObjectName )

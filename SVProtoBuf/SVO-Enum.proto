@@ -56,7 +56,6 @@ enum SVObjectTypeEnum
 	SVValueObjectType						= 0x00000200;
 
 	SVOperatorObjectType					= 0x00001000;
-	SVBinaryOperatorObjectType				= 0x00002000;
 	SVUnaryOperatorObjectType				= 0x00003000;
 	SVUnaryImageOperatorObjectType			= 0x00004000;
 	SVFilterObjectType						= 0x00005000;
@@ -466,4 +465,165 @@ enum ShutdownOption
 	shutdownSvObserver = 0;
 	shutdownSvObserverAndWindows = 1;
 	shutdownSvObserverAndRestartWindows = 2;
+}
+
+
+enum ClassIdEnum
+{
+	NoObjectClassId = 0;
+
+	BoolValueClassId = 1;
+	DWordValueClassId = 2;
+	DoubleValueClassId = 3;
+	DoubleSortValueClassId = 4;
+	LongValueClassId = 5;
+	PointValueClassId = 6;
+	DPointValueClassId = 7;
+	ByteValueClassId = 8;
+	StringValueClassId = 9;
+	FileNameValueClassId = 10;
+	Int64ValueClassId = 11;
+	CharValueClassId = 12;
+	TimerValueClassId = 13;
+	VariantValueClassId = 14;
+	EnumerateValueClassId = 15;
+	ImageClassId = 16;
+
+	InspectionProcessClassId = 20;
+
+	RootClassId = 21;
+	ToolSetClassId = 22;
+
+	//Tool Class Ids
+	WindowToolClassId = 23;
+	MathToolClassId = 24;
+	StatisticsToolClassId = 25;
+	RingBufferToolClassId = 26;
+	ArchiveToolClassId = 27;
+	AcquisitionToolClassId = 28;
+	TransformationToolClassId = 29;
+	ShiftToolClassId = 30;
+	CylindricalWarpToolClassId = 31;
+	PerspectiveToolClassId = 32;
+	ImageToolClassId = 33;
+	LinearToolClassId = 34;
+	ColorToolClassId = 35;
+	ResizeToolId = 36;
+	LoadImageToolClassId = 37;
+	TableToolClassId = 38;
+	TableAnalyzerToolClassId = 39;
+	PolarTransformationToolClassId = 40;
+	LoopToolClassId = 41;
+	ExternalToolClassId = 42;
+
+	//Analyzer Class Ids
+	BlobAnalyzerClassId = 100;
+	PixelAnalyzerClassId = 101;
+	LuminanceAnalyzerClassId = 102;
+	HistogramAnalyzerClassId = 103;
+	PatternAnalyzerClassId = 104;
+	BarCodeAnalyzerClassId = 105;
+	OCVAnalyzerClassId = 106;
+	LinearPixelCountingLineAnalyzerClassId = 107;
+	LinearEdgeCountingLineAnalyzerClassId = 108;
+	LinearEdgePositionLineAnalyzerClassId = 109;
+	LinearMeasurementAnalyzerClassId = 110;
+	LinearMaximumBackgroundObjectLineAnalyzerClassId = 111;
+	LinearMaximumForegroundObjectLineAnalyzerClassId = 112;
+	LinearMaximumObjectLineAnalyzerClassId = 113;
+	TableAnaylzerSortClassId = 114;
+	TableAnaylzerExcludeClassId = 115;
+	TableAnaylzerLimitClassId = 116;
+	TableAnaylzerAddColumnClassId = 117;
+
+	//Result Class Ids
+	PointXResultClassId = 200;
+	PointYResultClassId = 201;
+	DPointXResultClassId = 202;
+	DPointYResultClassId = 203;
+	LongResultClassId = 204;
+	DoubleResultClassId = 205;
+	VariantResultClassId = 206;
+	StringResultClassId = 207;
+	BarCodeResultClassId = 208;
+	OCVAnalyzerResultClassId = 209;
+	OCVCharacterResultClassId = 210;
+
+	RangeClassId = 220;
+
+	//Filter Class Ids
+	SmoothFilterClassId = 300;
+	SharpenFilterClassId = 301;
+	Sharpen2FilterClassId = 302;
+	HorizEdgeFilterClassId = 303;
+	VertEdgeFilterClassId = 304;
+	EdgeDetectFilterClassId = 305;
+	EdgeDetect2FilterClassId = 306;	
+	LaplacianEdgeFilterClassId = 307;
+	LaplacianEdge2FilterClassId = 308;
+	MaxMinusMinFilterClassId = 309;
+	ErosionFilterClassId = 310;
+	DilationFilterClassId = 311;
+	OpeningFilterClassId = 312;
+	ClosingFilterClassId = 313;
+	CustomFilterClassId = 314;
+	Custom2FilterClassId = 315;
+	RankingFilterClassId = 316;
+	Ranking2FilterClassId = 317;
+	SkeletonFilterClassId = 318;
+	ThinningFilterClassId = 319;
+	ThickeningFilterClassId = 320;
+	WatershedFilterClassId = 321;
+	EraseBorderBlobsFilterClassId = 322;
+	ExtractHolesFilterClassId = 323;
+	FillHolesFilterClassId = 324;
+	ReconstructFilterClassId = 325;
+
+	ThresholdClassId = 400;
+	UserMaskOperatorClassId = 401;
+	StdImageOperatorListClassId = 402;
+	InPlaceImageOperatorListClassId = 403;
+	LinearImageOperatorListClassId = 404;
+	EquationClassId = 405;
+	ConditionalClassId = 406;
+	MathEquationClassId = 407;
+	LinearEdgeAProcessingClassId = 408;
+	LinearEdgeBProcessingClassId = 409;
+	DataBufferClassId = 410;
+	ImageArithmeticClassId = 411;
+	UpperThresholdEquationClassId = 412;
+	LowerThresholdEquationClassId = 413;
+	AutoThresholdEquationClassId = 414;
+	ExternalToolTaskClassId = 415;
+	ImageTransformClassId = 416;
+	PolarTransformClassId = 417;
+	ImagePolarTransformClassId = 418;
+	EvaluateTranslationXClassId = 419;
+	EvaluateTranslationYClassId = 420;
+	EvaluateRotationXClassId = 421;
+	EvaluateRotationYClassId = 422;
+	EvaluateRotationAngleClassId = 423;
+	EvaluateCenterXClassId = 424;
+	EvaluateCenterYClassId = 425;
+	EvaluateStartRadiusClassId = 426;
+	EvaluateEndRadiusClassId = 427;
+	EvaluateStartAngleClassId = 428;
+	EvaluateEndAngleClassId = 429;
+	LUTEquationClassId = 430;
+	LUTOperatorClassId = 431;
+	ColorThresholdClassId = 432;
+	ToolSizeAdjustTaskId = 433;
+	TableColumnEquationId = 434;
+	TableAddColumnEquationId = 435;
+	TableFillObjectId = 436;
+	TableCopyObjectId = 437;
+	RemoteOutputObjectId = 438;
+	EQAdjustSizeWidthClassId = 439;						
+	EQAdjustSizeHeightClassId = 440;
+	EQAdjustSizePositionXClassId = 441;
+	EQAdjustSizePositionYClassId = 442;
+	ShapeMaskHelperClassId = 443;
+	TableClassId = 444;
+	RemoteOutputGroupClassId = 445;
+	RemoteOutputDataControllerClassId = 446;
 }

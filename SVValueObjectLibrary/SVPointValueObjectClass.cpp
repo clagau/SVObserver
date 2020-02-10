@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <assert.h>
 #include "SVPointValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -29,7 +28,7 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(SVPointValueObjectClass, SVPointValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVPointValueObjectClass, SvPb::PointValueClassId);
 
 SVPointValueObjectClass::SVPointValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<SVPoint<long>>( ObjectName )

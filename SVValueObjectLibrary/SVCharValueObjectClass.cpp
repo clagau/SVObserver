@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <assert.h>
 #include "SVCharValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -30,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVCharValueObjectClass, SVCharValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVCharValueObjectClass, SvPb::CharValueClassId);
 
 SVCharValueObjectClass::SVCharValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<TCHAR>( ObjectName )

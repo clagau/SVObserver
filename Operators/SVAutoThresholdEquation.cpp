@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVAutoThresholdEquationClass, SVAutoThresholdEquationClassGuid );
+SV_IMPLEMENT_CLASS( SVAutoThresholdEquationClass, SvPb::AutoThresholdEquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 

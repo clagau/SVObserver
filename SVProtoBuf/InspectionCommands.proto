@@ -31,6 +31,12 @@ message ObjectNameGuidPair
 	bytes objectName = 2; //name of the object.
 }
 
+message NameClassIdPair
+{
+	ClassIdEnum classId = 1; //classId of the object.
+	bytes objectName = 2; //name of the object.
+}
+
 message SVObjectTypeInfoStruct
 {
 	SVObjectTypeEnum objectType = 1;	// Main Type
@@ -414,7 +420,7 @@ message ConstructAndInsertRequest
 	}
 
 	bytes ownerId = 1;
-	bytes classId = 2;
+	ClassIdEnum classId = 2;
 
 	oneof message
 	{
@@ -438,7 +444,7 @@ message GetCreatableObjectsRequest
 
 message GetCreatableObjectsResponse
 {
-	repeated ObjectNameGuidPair list = 1;
+	repeated NameClassIdPair list = 1;
 }
 
 //Return if the inspection should be reset. By now it is only used for the filter, because some filters must be reset the whole inspection after changes.

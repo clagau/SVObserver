@@ -59,7 +59,7 @@ namespace SvOg
 		enum { IDD = IDD_TA_GENERAL_DIALOG };
 
 	protected:
-		SvMc::AvailableObjectListComboBox m_AvailableSourceImageCombo;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_AvailableSourceImageCombo;
 		SvMc::SVEnumerateComboClass m_drawToolCombo;
 		BOOL m_bUpdateAuxiliaryExtents;
 

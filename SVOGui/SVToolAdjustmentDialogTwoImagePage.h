@@ -73,8 +73,8 @@ namespace SvOg
 		CComboBox m_operatorCtrl;
 		SvOg::PictureDisplay m_secondImageCtrl;
 		SvOg::PictureDisplay m_firstImageCtrl;
-		SvMc::AvailableObjectListComboBox m_firstAvailableSourceImageListBoxCtl;
-		SvMc::AvailableObjectListComboBox m_secondAvailableSourceImageListBoxCtl;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_firstAvailableSourceImageListBoxCtl;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_secondAvailableSourceImageListBoxCtl;
 		//}}AFX_DATA
 
 	private:

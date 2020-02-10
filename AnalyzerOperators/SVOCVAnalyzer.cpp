@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOCVAnalyzer.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -28,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVOCVAnalyzerClass, SVOCVAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVOCVAnalyzerClass, SvPb::OCVAnalyzerClassId);
 
 /////////////////////////////////////////////////////////////////////////////
 SVOCVAnalyzerClass::SVOCVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )

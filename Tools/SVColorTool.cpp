@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVColorToolClass, SVColorToolClassGuid );
+SV_IMPLEMENT_CLASS( SVColorToolClass, SvPb::ColorToolClassId);
 
 #pragma region Constructor
 SVColorToolClass::SVColorToolClass( SVObjectClass* POwner, int StringResourceID )

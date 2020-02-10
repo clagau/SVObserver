@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <assert.h>
 #include "SVInt64ValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -28,7 +27,7 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(SVInt64ValueObjectClass, SVInt64ValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVInt64ValueObjectClass, SvPb::Int64ValueClassId);
 
 SVInt64ValueObjectClass::SVInt64ValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<__int64>( ObjectName )

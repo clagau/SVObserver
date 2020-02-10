@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SVPixelAnalyzerClassGuid );
+SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SvPb::PixelAnalyzerClassId);
 
 SVPixelAnalyzerClass::SVPixelAnalyzerClass( LPCSTR ObjectName )
 : SVImageAnalyzerClass( ObjectName )

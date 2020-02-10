@@ -12,7 +12,6 @@
 #include "Stdafx.h"
 #import <msxml3.dll> raw_interfaces_only 
 #include "SVSystemLibrary/SVSAXErrorHandlerImpl.h"
-#include "SVSystemLibrary/SVSAXContentHandlerImpl.h"
 #include "SVGigeCameraDBParser.h"
 #include "SVGigeCameraDBContent.h"
 #pragma endregion Includes

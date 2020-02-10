@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableAnalyzerTool, TableAnalyzerToolGuid);
+SV_IMPLEMENT_CLASS(TableAnalyzerTool, SvPb::TableAnalyzerToolClassId);
 
 #pragma region Constructor
 TableAnalyzerTool::TableAnalyzerTool(SVObjectClass* pOwner, int stringResourceID)
@@ -247,28 +247,28 @@ void TableAnalyzerTool::LocalInitialize()
 	// Add the Sort Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerSortType;
-	analyzerClassInfo.m_ClassId = TableAnaylzerSortGuid;
+	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerSortClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_SORT);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Exclude Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerExcludeType;
-	analyzerClassInfo.m_ClassId = TableAnaylzerExcludeGuid;
+	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerExcludeClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_EXCLUDE);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Limit Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerLimitType;
-	analyzerClassInfo.m_ClassId = TableAnaylzerLimitGuid;
+	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerLimitClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_LIMIT);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Add Column Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerAddColumnType;
-	analyzerClassInfo.m_ClassId = TableAnaylzerAddColumnGuid;
+	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerAddColumnClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_ADDCOLUMN);
 	m_availableChildren.push_back(analyzerClassInfo);
 
@@ -280,7 +280,7 @@ void TableAnalyzerTool::LocalInitialize()
 	interfaceInfo.EmbeddedID = TableObject_NumberOfRowsGuid;
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultLongObjectType;
-	resultClassInfo.m_ClassId = SVLongResultClassGuid;
+	resultClassInfo.m_ClassId = SvPb::LongResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS);
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT);
 	resultClassInfo.m_ClassName += _T(" ") + Title;

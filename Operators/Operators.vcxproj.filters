@@ -39,9 +39,6 @@
     <ClCompile Include="SVBarCodeResult.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVBinaryOperatorClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVColorThreshold.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -246,9 +243,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVBarCodeResult.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBinaryOperatorClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVColorThreshold.h">

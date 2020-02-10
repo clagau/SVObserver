@@ -13,12 +13,11 @@
 #include "SVLaplacianEdge2FilterClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
 
-SV_IMPLEMENT_CLASS(SVLaplacianEdge2FilterClass, SVLaplacianEdge2FilterClassGuid)
+SV_IMPLEMENT_CLASS(SVLaplacianEdge2FilterClass, SvPb::LaplacianEdge2FilterClassId)
 
 SVLaplacianEdge2FilterClass::SVLaplacianEdge2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						    :SVFilterClass( POwner, StringResourceID ) 

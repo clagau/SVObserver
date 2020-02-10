@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVVariantValueObjectClass.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "Definitions/StringTypeDef.h"
@@ -30,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVVariantValueObjectClass, SVVariantValueObjectClassGuid);
+SV_IMPLEMENT_CLASS(SVVariantValueObjectClass, SvPb::VariantValueClassId);
 
 SVVariantValueObjectClass::SVVariantValueObjectClass( LPCTSTR ObjectName )
 : SVValueObjectClass<_variant_t>( ObjectName ) 

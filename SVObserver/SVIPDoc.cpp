@@ -436,7 +436,7 @@ std::string SVIPDoc::CheckName(const std::string& rToolName) const
 //******************************************************************************
 // Operation(s) Of Writing Access:
 //******************************************************************************
-bool SVIPDoc::AddTool(const SVGUID& rClassId)
+bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 {
 	ToolSetView* pView = GetToolSetView();
 	if (nullptr == pView)
@@ -481,7 +481,7 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 		SVToolSetClass* pToolSet = GetToolSet();
 		// A Color Tool must always be first on a RGB Color System.
 		// There can be multiple Color Tools on a RGB Color System, one of them must be first.
-		if (0 == toolListIndex && SVColorToolClassGuid != rClassId)
+		if (0 == toolListIndex && SvPb::ColorToolClassId != classId)
 		{
 			if (nullptr != pToolSet && 0 < pToolSet->GetSize())
 			{
@@ -498,7 +498,7 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), pToolSet->GetUniqueObjectID());
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), rClassId);
+		pRequest->set_classid(classId);
 		pRequest->set_taskobjectpos(toolListIndex);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
@@ -514,7 +514,7 @@ bool SVIPDoc::AddTool(const SVGUID& rClassId)
 		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 		SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), NavElement->m_OwnerGuid);
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_classid(), rClassId);
+		pRequest->set_classid(classId);
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectafterid(), NavElement->m_Guid);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
@@ -1005,97 +1005,96 @@ void SVIPDoc::OnAdjustLut()
 
 void SVIPDoc::OnAddShiftTool()
 {
-	AddTool(SVShiftToolClassGuid);
+	AddTool(SvPb::ShiftToolClassId);
 }
 
 void SVIPDoc::OnAddWindowTool()
 {
-	AddTool(SVWindowToolClassGuid);
+	AddTool(SvPb::WindowToolClassId);
 }
 
 void SVIPDoc::OnAddCylindricalWarpTool()
 {
-	AddTool(SVCylindricalWarpToolClassGuid);
+	AddTool(SvPb::CylindricalWarpToolClassId);
 }
 
 void SVIPDoc::OnAddPerspectiveTool()
 {
-	AddTool(SVPerspectiveToolClassGuid);
+	AddTool(SvPb::PerspectiveToolClassId);
 }
 
 void SVIPDoc::OnAddImageTool()
 {
-	AddTool(SVImageToolClassGuid);
+	AddTool(SvPb::ImageToolClassId);
 }
 
 void SVIPDoc::OnAddAcquisitionTool()
 {
-	AddTool(SVAcquisitionToolClassGuid);
+	AddTool(SvPb::AcquisitionToolClassId);
 }
 
 void SVIPDoc::OnAddArchiveTool()
 {
-	AddTool(SVArchiveToolClassGuid);
+	AddTool(SvPb::ArchiveToolClassId);
 }
 
 void SVIPDoc::OnAddLinearTool()
 {
-	AddTool(SVLinearToolClassGuid);
+	AddTool(SvPb::LinearToolClassId);
 }
 
 void SVIPDoc::OnAddLoadImageTool()
 {
-	AddTool(SVLoadImageToolClassGuid);
+	AddTool(SvPb::LoadImageToolClassId);
 }
 
 void SVIPDoc::OnAddMathTool()
 {
-	AddTool(SVMathToolClassGuid);
+	AddTool(SvPb::MathToolClassId);
 }
 
 void SVIPDoc::OnAddStatisticsTool()
 {
-	AddTool(SVStatisticsToolClassGuid);
+	AddTool(SvPb::StatisticsToolClassId);
 }
 
 void SVIPDoc::OnAddTransformationTool()
 {
-	AddTool(SVTransformationToolClassGuid);
+	AddTool(SvPb::TransformationToolClassId);
 }
-
 
 void SVIPDoc::OnAddResizetool()
 {
-	AddTool(SVResizeToolGuid);
+	AddTool(SvPb::ResizeToolId);
 }
 
 void SVIPDoc::OnAddRingBufferTool()
 {
-	AddTool(RingBufferToolGuid);
+	AddTool(SvPb::RingBufferToolClassId);
 }
 
 void SVIPDoc::OnAddTableTool()
 {
-	AddTool(TableToolGuid);
+	AddTool(SvPb::TableToolClassId);
 }
 
 void SVIPDoc::OnAddTableAnalyzerTool()
 {
-	AddTool(TableAnalyzerToolGuid);
+	AddTool(SvPb::TableAnalyzerToolClassId);
 }
 
 void SVIPDoc::OnAddPolarUnwrapTool()
 {
-	AddTool(SVPolarTransformationToolClassGuid);
+	AddTool(SvPb::PolarTransformationToolClassId);
 }
 
 void SVIPDoc::OnAddColorTool()
 {
-	AddTool(SVColorToolClassGuid);
+	AddTool(SvPb::ColorToolClassId);
 }
 void SVIPDoc::OnAddLoopTool()
 {
-	AddTool(LoopToolClassGuid);
+	AddTool(SvPb::LoopToolClassId);
 }
 
 void SVIPDoc::OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI)
@@ -2665,10 +2664,9 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 		if (bOk)
 		{
 			bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_LENGTH, htiWindow, svVariant);
-			if (bOk) { wndpl.length = svVariant; }
-
 			if (bOk)
 			{
+				wndpl.length = svVariant;
 				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_FLAGS, htiWindow, svVariant);
 				if (bOk) { wndpl.flags = svVariant; }
 			}
@@ -2687,10 +2685,9 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 				if (bOk)
 				{
 					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_X, htiData, svVariant);
-					if (bOk) { wndpl.ptMinPosition.x = svVariant; }
-
 					if (bOk)
 					{
+						wndpl.ptMinPosition.x = svVariant;
 						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_Y, htiData, svVariant);
 						if (bOk) { wndpl.ptMinPosition.y = svVariant; }
 					}
@@ -2705,10 +2702,9 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 				if (bOk)
 				{
 					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_X, htiData, svVariant);
-					if (bOk) { wndpl.ptMaxPosition.x = svVariant; }
-
 					if (bOk)
 					{
+						wndpl.ptMaxPosition.x = svVariant;
 						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_Y, htiData, svVariant);
 						if (bOk) { wndpl.ptMaxPosition.y = svVariant; }
 					}
@@ -2723,10 +2719,9 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 				if (bOk)
 				{
 					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_LEFT, htiData, svVariant);
-					if (bOk) { wndpl.rcNormalPosition.left = svVariant; }
-
 					if (bOk)
 					{
+						wndpl.rcNormalPosition.left = svVariant;
 						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TOP, htiData, svVariant);
 						if (bOk) { wndpl.rcNormalPosition.top = svVariant; }
 					}
@@ -2789,11 +2784,6 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 			mbInitImagesByName = true;
 			POSITION vPos;
 			std::string Name;
-			_variant_t svVariant;
-
-			long lViewNumber = 0;
-			long lNumberOfViews = 0;
-
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
 
 			bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews);
@@ -2811,16 +2801,14 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 					SvUl::searchAndReplace(Name, SvXml::CTAG_SVTOOLSET_TAB_VIEW_CLASS, SvXml::CTAG_TOOLSET_VIEW);
 
 					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant);
-					if (bOk) { lViewNumber = svVariant; }
-
 					if (bOk)
 					{
 						vPos = GetFirstViewPosition();
-
 						if (vPos)
 						{
+							long lViewNumber = svVariant;
 							// get the view specified by 'ViewNumber'
-							for (lNumberOfViews = 0; lNumberOfViews < lViewNumber; lNumberOfViews++)
+							for (long lNumberOfViews = 0; lNumberOfViews < lViewNumber; lNumberOfViews++)
 							{
 								View.pView = GetNextView(vPos);
 								if (!View.pView)
@@ -2874,16 +2862,14 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 					Name = rTree.getBranchName(htiItem);
 
 					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant);
-					if (bOk) { lViewNumber = svVariant; }
-
 					if (bOk)
 					{
 						vPos = GetFirstViewPosition();
-
 						if (vPos)
 						{
+							long lViewNumber = svVariant;
 							// get the view specified by 'ViewNumber'
-							for (lNumberOfViews = 0; lNumberOfViews < lViewNumber; lNumberOfViews++)
+							for (long lNumberOfViews = 0; lNumberOfViews < lViewNumber; lNumberOfViews++)
 							{
 								View.pView = GetNextView(vPos);
 								if (!View.pView)
@@ -3032,7 +3018,7 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 
 void SVIPDoc::OnAddExternalTool()
 {
-	AddTool(SVExternalToolGuid);
+	AddTool(SvPb::ExternalToolClassId);
 }
 
 HRESULT SVIPDoc::RemoveImage(SvIe::SVImageClass* pImage)
@@ -3193,8 +3179,6 @@ void SVIPDoc::OnEditAdjustToolPosition()
 
 	if (nullptr != pTool)
 	{
-		SVObjectInfoStruct info = pTool->GetObjectInfo();
-		SvDef::SVObjectTypeInfoStruct typeInfo = info.m_ObjectTypeInfo;
 		//------ Warp tool hands back a SvDef::SVPolarTransformObjectType. Sub type 1792.
 		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 		if (SVImageViewClass* pImageView = GetImageView())
@@ -4061,8 +4045,6 @@ HRESULT SVIPDoc::GetBitmapInfo(const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmap
 
 	if (nullptr != pImage)
 	{
-		SVImageInfoClass l_svImageInfo = pImage->GetImageInfo();
-
 		BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
 
 		p_rBitmapInfo.Assign(l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable(l_Header.biBitCount));

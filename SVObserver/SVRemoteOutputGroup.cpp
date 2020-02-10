@@ -17,14 +17,13 @@
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS(SVRemoteOutputGroup, SVRemoteOutputGroupGUID);
+SV_IMPLEMENT_CLASS(SVRemoteOutputGroup, SvPb::RemoteOutputGroupClassId);
 
 SVRemoteOutputGroup::SVRemoteOutputGroup(LPCTSTR ObjectName)
 	: SVObjectClass(ObjectName)
@@ -82,27 +81,8 @@ BOOL SVRemoteOutputGroup::Destroy()
 // Parameters >> Tree ( Save )
 BOOL SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 {
-	BOOL bOk = TRUE;
-
-	std::string l_SubjectName;
-	SVGUID l_SubjectID;
-
-	SVObjectManagerClass::Instance().GetObserverSubject("SVRemoteOutputGroup", GetUniqueObjectID(), l_SubjectID);
-
-	if (!(l_SubjectID.empty()))
-	{
-		SVObjectClass* l_pSubject = SVObjectManagerClass::Instance().GetObject(l_SubjectID);
-
-		if (nullptr != l_pSubject)
-		{
-			l_SubjectName = l_pSubject->GetName();
-		}
-	}
-
-	_variant_t svVariant;
-
 	// Unique Id
-	svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
+	 _variant_t svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
 	rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant);
 	svVariant.Clear();
 
@@ -119,7 +99,7 @@ BOOL SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 		m_RemoteOutputs[i]->GetParameters(rWriter);
 		rWriter.EndElement();
 	}
-	return bOk;
+	return true;
 }
 
 // Sets parameters from Tree Control ( Restore )
@@ -367,10 +347,9 @@ HRESULT SVRemoteOutputGroup::SetPPQName(const std::string& p_rPPQ)
 
 	if (nullptr != l_pObject)
 	{
-		HRESULT l_hr;
 		SVGUID l_tmpGUID;
 		m_PPQObjectId = l_pObject->GetUniqueObjectID();
-		l_hr = SVObjectManagerClass::Instance().GetObserverSubject(std::string(SvO::cPPQObjectTag), GetUniqueObjectID(), l_tmpGUID);
+		/*HRESULT l_hr = */SVObjectManagerClass::Instance().GetObserverSubject(std::string(SvO::cPPQObjectTag), GetUniqueObjectID(), l_tmpGUID);
 
 		if (GUID_NULL == l_tmpGUID)
 		{
@@ -382,8 +361,8 @@ HRESULT SVRemoteOutputGroup::SetPPQName(const std::string& p_rPPQ)
 			if (l_tmpGUID != m_PPQObjectId)
 			{
 				// Detach Observer then attach new...
-				l_hr = SVObjectManagerClass::Instance().DetachObserver(std::string(SvO::cPPQObjectTag), l_tmpGUID, GetUniqueObjectID());
-				l_hr = SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, GetUniqueObjectID());
+				/*l_hr = */SVObjectManagerClass::Instance().DetachObserver(std::string(SvO::cPPQObjectTag), l_tmpGUID, GetUniqueObjectID());
+				/*l_hr = */SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, GetUniqueObjectID());
 			}
 			else
 			{

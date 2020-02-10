@@ -24,6 +24,12 @@ namespace  SvOi
 {
 class IObjectWriter;
 }
+
+namespace SvPb
+{
+	enum ClassIdEnum;
+}
+
 namespace SvTo
 {
 class SVToolClass;
@@ -164,10 +170,10 @@ protected:
 	/// \param rPostGuid [in] The Guid of the object currently selected where the new object should be inserted
 	/// \param rOwnerGuid [in] The Guid of the owner of the new object.
 	/// \param rInspectionId [in] The Guid of the inspection
-	/// \param rToolTypeGuid [in] The class Guid of the tool
+	/// \param toolClassId [in] The class Id of the tool
 	/// \param rInputImages [in] The input images of the tool
 	/// \returns HRESULT S_OK on success
-	HRESULT validateGuids(std::string& rXmlData, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, const SVGUID& rInspectionGuid, const SVGUID& rToolTypeGuid, SVGuidSet rInputImages) const;
+	HRESULT validateGuids(std::string& rXmlData, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, const SVGUID& rInspectionGuid, SvPb::ClassIdEnum toolClassId, SVGuidSet rInputImages) const;
 
 	//************************************
 	/// This method replaces the tool name and the dotted name (e.g. in Equation)

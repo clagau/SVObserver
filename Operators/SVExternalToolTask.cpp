@@ -44,7 +44,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVExternalToolTask, SVExternalToolTaskGuid)
+SV_IMPLEMENT_CLASS(SVExternalToolTask, SvPb::ExternalToolTaskClassId)
 
 SVExternalToolTaskData::SVExternalToolTaskData() : m_ResultTableObjects(NUM_RESULT_TABLE_OBJECTS, nullptr)
 {
@@ -1430,7 +1430,7 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultVariantObjectType;
-		resultClassInfo.m_ClassId = SVVariantResultClassGuid;
+		resultClassInfo.m_ClassId = SvPb::VariantResultClassId;
 		resultClassInfo.m_ClassName = _T("Range");
 		std::string strTitle = m_Data.m_aResultObjects[iIndex].GetName();
 		resultClassInfo.m_ClassName += _T(" ") + strTitle;

@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVOCVCharacterResultClass, SVOCVCharacterResultClassGuid );
+SV_IMPLEMENT_CLASS( SVOCVCharacterResultClass, SvPb::OCVCharacterResultClassId);
 
 SVOCVCharacterResultClass::SVOCVCharacterResultClass(LPCSTR ObjectName )
 					: SVTaskObjectClass( ObjectName )

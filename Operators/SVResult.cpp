@@ -35,7 +35,8 @@ struct SVResultClassCancelData : public SVCancelData	// this does not need to be
 	SVCancelData* m_pRangeData;
 };
 
-SV_IMPLEMENT_CLASS( SVResultClass, SVResultClassGuid );
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVResultClass, SvPb::ResultClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       :  SVResultClass

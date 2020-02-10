@@ -1889,7 +1889,7 @@ BOOL SVObserverApp::InitInstance()
 	WriteProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
 
 	// *** // ***
-	SVObjectManagerClass::Instance().ConstructRootObject(RootObjectGuid);
+	SVObjectManagerClass::Instance().ConstructRootObject(SvPb::RootClassId);
 	// *** // ***
 
 	m_IniInfoHandler.LoadIniFilesAndDlls();

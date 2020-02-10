@@ -56,7 +56,7 @@ namespace SvOg
 	protected:
 		enum { IDD = IDD_TA_COLOR_TOOL_DIALOG };
 		SvOg::PictureDisplay	m_dialogImage;
-		SvMc::AvailableObjectListComboBox m_availableSourceImageListBox;
+		SvMc::AvailableObjectListComboBox<SVGUID> m_availableSourceImageListBox;
 
 		BOOL	m_convertToHSI;
 		std::string m_InputName;

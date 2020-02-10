@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AvailableObjectListComboBox.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="CLabel.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -245,6 +242,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHistogram.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="AvailableObjectListComboBox.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

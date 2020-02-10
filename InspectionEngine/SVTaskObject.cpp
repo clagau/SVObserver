@@ -43,7 +43,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
 
 SVTaskObjectClass::SVTaskObjectClass(LPCSTR ObjectName)
 	: SVObjectAppClass(ObjectName)

@@ -9,7 +9,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -22,7 +21,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVImageAnalyzerClass, SVImageAnalyzerClassGuid );
+///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
+//SV_IMPLEMENT_CLASS( SVImageAnalyzerClass, SVImageAnalyzerClassGuid );
 
 SVImageAnalyzerClass::SVImageAnalyzerClass( LPCSTR ObjectName )
 : SVAnalyzerClass( ObjectName ) 

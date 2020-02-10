@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SVLoadImageToolClassGuid );
+SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SvPb::LoadImageToolClassId );
 
 SVLoadImageToolClass::SVLoadImageToolClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVToolClass( POwner, StringResourceID )

@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "SVClassRegisterClass.h"
 #include "SVClassRegisterListClass.h"
 #pragma endregion Includes
@@ -25,7 +25,7 @@ class SVObjectClass;
 // Should be in the class definition...
 #define SV_DECLARE_CLASS( XCLASSNAME )					\
 		public:	\
-			virtual SVGUID GetClassID() const; \
+			virtual SvPb::ClassIdEnum GetClassID() const; \
 			virtual LPCTSTR GetClassName() const;
 
 
@@ -38,14 +38,14 @@ class SVObjectClass;
 				{ \
 				SVClassRegisterListClass::Instance().Add( this ); \
 					OutputDebugString( "SV_IMPLEMENT: " #XCLASSNAME ", " ); \
-					OutputDebugString( SVGUID( XCLASSID ).ToString().c_str() ); \
+					OutputDebugString( std::to_string(XCLASSID).c_str() ); \
 					OutputDebugString( _T( "\n" ) ); \
 				} \
-				virtual SVGUID GetClassID() const override { return XCLASSID; } \
+				virtual SvPb::ClassIdEnum GetClassID() const override { return XCLASSID; } \
 				virtual SVObjectClass* Construct() override { return new ( XCLASSNAME ); } \
 				virtual LPCTSTR GetClassName() const override { return #XCLASSNAME; } \
 		};	\
 		XCLASSNAME##RegisterClass The##XCLASSNAME##Register; \
-		SVGUID XCLASSNAME::GetClassID() const { return XCLASSID; } \
+		SvPb::ClassIdEnum XCLASSNAME::GetClassID() const { return XCLASSID; } \
 		LPCTSTR XCLASSNAME::GetClassName() const { return #XCLASSNAME; }
 
