@@ -83,9 +83,6 @@ void SVOCameraObj::SetCameraFile(const std::string& rFileName)
     {
         m_CameraFileSet = false;
     }
-
-    //check to see if Camera is ok...
-	assert(IsCameraObjOk());
 }
 
 void SVOCameraObj::SetCameraFileChanged()
