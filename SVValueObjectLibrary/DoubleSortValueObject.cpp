@@ -296,6 +296,20 @@ int32_t  DoubleSortValueObject::getResultSize() const
 
 }
 
+HRESULT DoubleSortValueObject::ValidateIndex(int ArrayIndex) const
+{
+	HRESULT result = __super::ValidateIndex(ArrayIndex);
+
+	///The array index for double sort can be out of range as long as it is smaller than the array size
+	///Note the base function already tests that the array index > 0
+	if(SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result && ArrayIndex < getArraySize())
+	{
+		result = S_OK;
+	}
+
+	return result;
+}
+
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

@@ -146,7 +146,7 @@ protected:
 	/// \returns the std::string
 	virtual std::string ConvertType2String( const T& rValue ) const = 0;
 
-	HRESULT ValidateIndex(int ArrayIndex) const;
+	virtual HRESULT ValidateIndex(int ArrayIndex) const;
 
 	ValueType& DefaultValue() { return m_DefaultValue; };
 	ValueType* valuePtr() { return m_pValue; }

@@ -72,6 +72,8 @@ protected:
 
 	virtual double* reserveLocalMemory() override;
 	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }
+
+	virtual HRESULT ValidateIndex(int ArrayIndex) const;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
