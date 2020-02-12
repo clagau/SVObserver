@@ -308,7 +308,9 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 							{_T("BayerRG12"),	_T("BayerRG12")},
 							{_T("BayerGB8"),	_T("BayerGB8")},
 							{_T("BayerGB10"),	_T("BayerGB10")},
-							{_T("BayerGB12"),	_T("BayerGB12")}
+							{_T("BayerGB12"),	_T("BayerGB12")},
+							{_T("RGB8"),		_T("RGB8")},
+							{_T("BGR8"),		_T("BGR8")}
 						}
 					}
 				}

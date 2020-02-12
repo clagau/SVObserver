@@ -120,7 +120,10 @@ HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const std::string& rCameraFo
 		m_eImageType = SvDef::SVImageFormatMono8;
 	}
 	//! Note all Bayer formats will be possible BayerRG8 or 12, BayerGB8 10 or 12
-	else if ( std::string::npos != sType.find(_T("RGB")) || std::string::npos != sType.find(_T("YUV")) || std::string::npos != sType.find(_T("Bayer")) )
+	else if (std::string::npos != sType.find(_T("RGB")) || 
+			 std::string::npos != sType.find(_T("BGR")) ||
+			 std::string::npos != sType.find(_T("YUV")) || 
+			 std::string::npos != sType.find(_T("Bayer")) )
 	{
 		m_eImageType = SvDef::SVImageFormatRGB8888;
 		m_bColor = true;
