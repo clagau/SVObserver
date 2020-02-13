@@ -758,7 +758,7 @@ extern const GUID SVShowAllEdgeAOverlaysGuid;
 extern const GUID SVShowAllEdgeBOverlaysGuid;
 
 // Source Image Names GUID
-extern const GUID SVSourceImageNamesGuid ;
+extern const GUID SVSourceImageNamesGuid;
 
 
 extern const GUID SVBCRawDataGuid;
