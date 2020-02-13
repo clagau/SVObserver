@@ -1,1 +1,0 @@
-define({r:0.5,st:'Stem',n:1,t:[0],m:[],u:['../Content/General structure/General structure.htm'],s:['$','fourni','refer'],p:[['$',40],['are',35],['condition',36],['drag',28],['have',36],['java',36],['no',24],['parameters',20],['retained',36],['technical',36],['toolkit',45],['you',38]]});
