@@ -175,11 +175,8 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		report.m_triggersPerProduct = rChannel.m_triggerCount;
 		report.m_triggerTimestamp = triggerTimeStamp;
 		report.m_isComplete = rChannel.m_triggerIndex == rChannel.m_triggerCount;
-		report.m_syncSoc = m_cifXCard.getSyncSocRel();
 		const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
 		const int16_t& rTimeStamp1 = rInsCmd.m_channels[channel].m_timeStamp1;
-		report.m_relativeSoc = rInsCmd.m_socRelative;
-		report.m_timeStampSoc = getPlcTriggerTime(rInsCmd.m_socRelative, rTimeStamp1);
 		report.m_isValid = (0 != rInsCmd.m_socRelative);
 		addTriggerReport(std::move(report));
 	}

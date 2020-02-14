@@ -133,7 +133,7 @@ void PowerlinkConnection::EventHandler()
 			if(nullptr != m_pReportTrigger)
 			{
 				const TriggerReport& rReport = m_pTriggersource->getNewTriggerReport(i);
-				if (rReport.isValid() && m_pTriggersource->getChannel(i).m_active)
+				if (rReport.m_isValid && m_pTriggersource->getChannel(i).m_active)
 				{
 					m_pReportTrigger(rReport);
 				}

@@ -22,19 +22,18 @@ class SVPlcIOImpl;
 extern SVPlcIOImpl g_Plc;
 #pragma endregion Declarations
 
-struct TriggerData
+struct RecordData
 {
-	TriggerData(uint8_t channel, uint32_t count, double timestamp, uint32_t objectID, int32_t syncSoc, int32_t relativeSoc, int32_t timeStampSoc) :
-		m_Channel{channel}, m_Count{count}, m_TimeStamp{timestamp}, m_objectID{objectID},
-		m_syncSoc{syncSoc}, m_relativeSoc{relativeSoc}, m_timeStampSoc{timeStampSoc} {}
+	RecordData(uint8_t channel, uint32_t count, double timeStamp, uint32_t objectID, bool good) :
+		m_channel {channel}, m_count {count}, m_timeStamp {timeStamp}, m_objectID {objectID}, m_good{good}
+	{
+	}
 
-	uint8_t m_Channel{0};
-	uint32_t m_Count{0UL};
+	uint8_t m_channel {0};
+	uint32_t m_count {0UL};
 	uint32_t m_objectID {0UL};
-	double m_TimeStamp{0.0};
-	int32_t m_syncSoc {0L};
-	int32_t m_relativeSoc {0L};
-	int32_t m_timeStampSoc{0L};
+	double m_timeStamp {0.0};
+	bool m_good {false};
 };
 
 struct TriggerParameter
@@ -46,10 +45,6 @@ struct TriggerParameter
 	long m_objectGoodIndex {-1L};
 	unsigned long m_period {0UL};
 	std::thread m_timer;
-
-	//@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)
-	long m_outputBit {-1L};
-	//@TODO[gra][8.20][08.04.2019]
 };
 
 
@@ -100,7 +95,7 @@ public:
 
 #pragma region Private Methods
 private:
-	void WriteResult(int triggerIndex);
+	void WriteResult(int triggerChannel);
 	void reportTrigger(const TriggerReport&);
 
 
@@ -116,7 +111,6 @@ private:
 	uint16_t m_plcTransferTime {0};
 	int m_readyBit {0};
 	long m_PlcVersion {0L};
-	bool m_triggerSimulation {false};
 	bool m_engineStarted {false};
 	TriggerParameter m_trigger[cNumberTriggers];
 

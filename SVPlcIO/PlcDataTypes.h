@@ -24,7 +24,6 @@ constexpr uint8_t c_modeSingleDirect = 1;
 
 struct TriggerReport
 {
-	bool isValid() const { return m_isValid; }
 	uint8_t m_channel {0};
 	uint32_t m_objectID {0UL};
 	int8_t m_sequence {0};
@@ -32,9 +31,6 @@ struct TriggerReport
 	uint8_t m_triggersPerProduct {0};  /// the number of triggers for one product (objectID)
 	double m_triggerTimestamp {0.0};
 	bool m_isComplete {false};
-	int32_t m_syncSoc {0L};
-	int32_t m_relativeSoc {0L};
-	int32_t m_timeStampSoc {0L};
 	bool m_isValid{false};
 };
 
