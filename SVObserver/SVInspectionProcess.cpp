@@ -964,8 +964,6 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			continue;
 		}
 
-		bool bFound = false;
-
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rNewEntry->m_IOId);
 
 		auto itInputEntry = std::find_if(oldPPQInputs.begin(), oldPPQInputs.end(), 	[&pObject](const auto& rpInputEntry)->bool
@@ -975,15 +973,12 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 		if (itInputEntry != oldPPQInputs.end())
 		{
 			// We found it
-			bFound = true;
 			m_PPQInputs[iList] = *itInputEntry;
 			m_PPQInputs[iList]->m_PPQIndex = rNewEntry->m_PPQIndex;
 			m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
 			m_PPQInputs[iList]->getObject()->ResetObject();
-			break;
 		}
-
-		if (!bFound)
+		else
 		{
 			SVObjectClass* pNewObject{nullptr};
 
