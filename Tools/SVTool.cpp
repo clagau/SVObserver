@@ -23,7 +23,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
