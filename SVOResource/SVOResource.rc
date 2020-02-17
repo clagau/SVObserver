@@ -6242,7 +6242,8 @@ BEGIN
     IDS_TRIGGER_TO_COMPLETION_TIME "Trigger To Completion Time"
     IDS_TRIGGER_TO_START_TIME "Trigger To Start Time"
     IDS_TRIGGER_TO_ACQUISITION_START_TIME "Trigger To Acquisition Start Time"
-    IDS_ACQUISITION_TIME    "Acquisition Time"
+	IDS_ACQUISITION_TIME    "Acquisition Time"
+	IDS_TRIGGER_TIMESTAMP    "Trigger Timestamp"
 END
 
 STRINGTABLE

@@ -60,6 +60,7 @@ extern const GUID SVTriggerToCompletionGuid;
 extern const GUID SVTriggerToStartGuid;
 extern const GUID SVTriggerToAcquisitionStartGuid;
 extern const GUID SVAcquisitionTimeGuid;
+extern const GUID SVTriggerTimeGuid;
 extern const GUID ToolsetWidthGuid;
 extern const GUID ToolsetHeightGuid;
 extern const GUID EnableAuxiliaryExtentsObjectGuid;

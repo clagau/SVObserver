@@ -27,11 +27,13 @@ class SVConditionalClass;
 
 enum ToolSetTimes
 {
-	TriggerDelta,				///The time interval between two triggers
+	TriggerDelta,				///The time interval between the trigger that started the product and the previous trigger
 	TriggerToStart,				///The time interval between the trigger that started the product and the start of the inspection in microseconds
 	TriggerToCompletion,		///The time interval between the trigger that started the product and inspection completion in microseconds
 	TriggerToAcquisitionStart,	///The time interval between the trigger that started the product and the start of tool set image acquisition in microseconds
 	AcquisitionTime,			///The time interval between the tool set image acquisition start and end in microseconds
+	TriggerTimeStamp,			///The time stamp in microseconds for the trigger that started the products
+
 	MaxCount
 };
 

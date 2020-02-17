@@ -2430,6 +2430,7 @@
 #define IDS_TRIGGER_TO_START_TIME       61482
 #define IDS_TRIGGER_TO_ACQUISITION_START_TIME 61483
 #define IDS_ACQUISITION_TIME            61484
+#define IDS_TRIGGER_TIMESTAMP				61485
 
 // Next default values for new objects
 // 

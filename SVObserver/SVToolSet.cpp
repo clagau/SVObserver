@@ -74,6 +74,8 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToStart], SVTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToAcquisitionStart], SVTriggerToAcquisitionStartGuid, IDS_TRIGGER_TO_ACQUISITION_START_TIME, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::AcquisitionTime], SVAcquisitionTimeGuid, IDS_ACQUISITION_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerTimeStamp], SVTriggerTimeGuid, IDS_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
+
 	RegisterEmbeddedObject(&m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, EnableAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
