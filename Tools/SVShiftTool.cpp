@@ -19,6 +19,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -189,10 +190,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 				pErrorMessages->push_back(Msg);
 			}
 		}
-	}
 
-	if (Result)
-	{
 		SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 		if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 		{
@@ -388,10 +386,10 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
 	auto* pRect = pBoundingBox->mutable_rect();
-	setValueObject(m_LeftResult, *pRect->mutable_x(), true);
-	setValueObject(m_TopResult, *pRect->mutable_y(), true);
-	setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	SvPb::setValueObject(m_LeftResult, *pRect->mutable_x(), true);
+	SvPb::setValueObject(m_TopResult, *pRect->mutable_y(), true);
+	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
 	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
 }

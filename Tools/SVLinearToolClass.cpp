@@ -22,6 +22,7 @@
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -303,14 +304,14 @@ void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Over
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
 	auto* pRect = pBoundingBox->mutable_rect();
-	setValueObject(m_ExtentLeft, *pRect->mutable_x());
-	setValueObject(m_ExtentTop, *pRect->mutable_y());
-	setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	SvPb::setValueObject(m_ExtentLeft, *pRect->mutable_x());
+	SvPb::setValueObject(m_ExtentTop, *pRect->mutable_y());
+	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
 	setStateValueToOverlay(*pOverlay);
 	if (isRotation)
 	{
-		setValueObject(m_svRotationAngle, *pRect->mutable_angle());
+		SvPb::setValueObject(m_svRotationAngle, *pRect->mutable_angle());
 	}
 	collectOverlays(pImage, *pOverlay);
 }

@@ -33,6 +33,8 @@ public:
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
+	virtual void addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
+
 	SvVol::SVLongValueObjectClass	blackPixelCount;
 	SvVol::SVLongValueObjectClass  whitePixelCount;
 

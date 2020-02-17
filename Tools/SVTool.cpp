@@ -25,6 +25,7 @@
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -907,10 +908,10 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 			pOverlay->set_displaybounding(true);
 			auto* pBoundingBox = pOverlay->mutable_boundingshape();
 			auto* pRect = pBoundingBox->mutable_rect();
-			setValueObject(m_ExtentLeft, *pRect->mutable_x());
-			setValueObject(m_ExtentTop, *pRect->mutable_y());
-			setValueObject(m_ExtentWidth, *pRect->mutable_w());
-			setValueObject(m_ExtentHeight, *pRect->mutable_h());
+			SvPb::setValueObject(m_ExtentLeft, *pRect->mutable_x());
+			SvPb::setValueObject(m_ExtentTop, *pRect->mutable_y());
+			SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
+			SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
 			setStateValueToOverlay(*pOverlay);
 			collectOverlays(pImage, *pOverlay);
 			break;
@@ -954,24 +955,22 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 
 	if (S_OK == GetSourceImages(&imageList))
 	{
-		SvIe::SVImageClass* pConnectImage = nullptr;
-
 		if (0 < imageList.size())
 		{
-			pConnectImage = imageList[0];
-
-			for (auto* pTmpImage : imageList)
+			auto iter = std::find_if(imageList.begin(), imageList.end(), [&pImage](const auto& rEntry) { return rEntry == pImage; });
+			if (imageList.end() != iter)
 			{
-				if (pTmpImage == pImage)
-				{
-					pConnectImage = pTmpImage;
-					l_hr = S_OK;
-					break;
-				}
+				l_hr = ConnectToObject(&m_AuxSourceImageObjectInfo, *iter);
+			}
+			else
+			{
+				ConnectToObject(&m_AuxSourceImageObjectInfo, imageList[0]);
 			}
 		}
-
-		::KeepPrevError(l_hr, ConnectToObject(&m_AuxSourceImageObjectInfo, pConnectImage));
+		else
+		{
+			ConnectToObject(&m_AuxSourceImageObjectInfo, nullptr);
+		}
 		
 		m_toolExtent.SetSelectedImage(SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo));
 
@@ -1039,10 +1038,8 @@ SvUl::NameGuidList SVToolClass::getAvailableAuxSourceImages() const
 	HRESULT hr = GetSourceImages(&ImageList);
 	if (S_OK == hr)
 	{
-		for (const auto pImage : ImageList)
-		{
-			list.push_back(std::make_pair(pImage->getDisplayedName(), pImage->GetUniqueObjectID()));
-		}
+		std::transform(ImageList.begin(), ImageList.end(), std::back_inserter(list), 
+			[](const auto& rEntry) { return std::make_pair(rEntry->getDisplayedName(), rEntry->GetUniqueObjectID()); });
 	}
 	return list;
 }
@@ -1151,9 +1148,9 @@ void SVToolClass::connectChildObject(SVTaskObjectClass& rChildObject)
 
 void SVToolClass::setStateValueToOverlay(SvPb::Overlay& rOverlay) const
 {
-	setValueObject(m_Passed, *rOverlay.mutable_passed(), true);
-	setValueObject(m_Failed, *rOverlay.mutable_failed(), true);
-	setValueObject(m_Warned, *rOverlay.mutable_warned(), true);
+	SvPb::setValueObject(m_Passed, *rOverlay.mutable_passed(), true);
+	SvPb::setValueObject(m_Failed, *rOverlay.mutable_failed(), true);
+	SvPb::setValueObject(m_Warned, *rOverlay.mutable_warned(), true);
 }
 
 bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction) const
@@ -1267,19 +1264,6 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
-	}
-}
-
-template <class T>
-void setValueObject(const T& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos)
-{
-	SvPb::SetGuidInProtoBytes(rPbValueObject.mutable_guid(), rSVOValueObject.GetUniqueObjectID());
-	double var = 0;
-	rSVOValueObject.getValue(var);
-	rPbValueObject.set_value(var);
-	if (setTrPos)
-	{
-		rPbValueObject.set_trpos(rSVOValueObject.getTrPos() + 1);
 	}
 }
 } //namespace SvTo

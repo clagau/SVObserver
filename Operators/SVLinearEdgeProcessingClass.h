@@ -51,6 +51,13 @@ public:
 	HRESULT GetHistogramOverlay( SVExtentLineStruct &p_rsvLine );
 	HRESULT GetEdgesOverlay( SVExtentMultiLineStruct &p_rsvMiltiLine );
 	HRESULT GetSelectedEdgeOverlay( SVExtentLineStruct &p_rsvLine );
+
+	enum class ResultType
+	{
+		Normal,
+		PixelCounting,
+	};
+	void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay, ResultType resultType = ResultType::Normal ) const;
 	
 	const SVGuidVector& getEdgeEmbeddedGuids() { return m_EdgeEmbeddedGuids; }
 

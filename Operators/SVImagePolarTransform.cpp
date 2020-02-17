@@ -28,6 +28,7 @@
 #include "SVMatroxLibrary/SVMatroxPolarTransformStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVClsIds.h"
+#include "SVProtoBuf/Overlay.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
@@ -313,6 +314,16 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	}
 
 	return bRetVal;
+}
+
+void SVImagePolarTransformClass::setSliceOverlay(SvPb::OverlayShapeSlice& rSlice) const
+{
+	SvPb::setValueObject(m_centerX, *rSlice.mutable_centerx());
+	SvPb::setValueObject(m_centerY, *rSlice.mutable_centery());
+	SvPb::setValueObject(m_startRadius, *rSlice.mutable_outerradius());
+	SvPb::setValueObject(m_endRadius, *rSlice.mutable_innerradius());
+	SvPb::setValueObject(m_startAngle, *rSlice.mutable_startangle());
+	SvPb::setValueObject(m_endAngle, *rSlice.mutable_endangle());
 }
 
 bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages )
@@ -641,6 +652,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					_controlfp( newCw, MCW_EM );
 
 					double l_dAngularDistance = dEndAngle - dStartAngle;
+					// cppcheck-suppress knownConditionTrueFalse ; I don't know why l_dAngularDistance should be always smaller than 720
 					if( l_dAngularDistance > 720.0 )
 					{
 						l_dAngularDistance = 720.0;
@@ -663,8 +675,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 					MatroxCode = SVMatroxImageInterface::PolarTransform(pOutputImageBuffer->getHandle()->GetBuffer(), l_Polar );
 
-
-
+					// cppcheck-suppress knownConditionTrueFalse ; I don't know why l_dAngularDistance should be always smaller than 360
 					if( l_dAngularDistance > 360 )
 					{
 						//  Small Part 

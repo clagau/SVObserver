@@ -21,6 +21,8 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -508,6 +510,19 @@ HRESULT SVPerspectiveToolClass::SetImageExtent(const SVImageExtentClass& rImageE
 	l_hrOk = SVToolClass::SetImageExtent(NewExtent);
 
 	return l_hrOk;
+}
+
+void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	auto* pOverlay = rOverlay.add_overlays();
+	pOverlay->set_name(GetName());
+	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+	pOverlay->set_displaybounding(true);
+	auto* pBoundingBox = pOverlay->mutable_boundingshape();
+	auto* pPerspective = pBoundingBox->mutable_perspective();
+	SvPb::setValueObject(m_svYOffset, *pPerspective->mutable_yoffset());
+	setStateValueToOverlay(*pOverlay);
 }
 
 SvVol::SVStringValueObjectClass* SVPerspectiveToolClass::GetInputImageNames()

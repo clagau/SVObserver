@@ -21,7 +21,9 @@ constexpr int			cTableMaxRowMin = 1;
 constexpr int			cTableMaxRowMax = 10000;
 constexpr int			cMaxStringByteSize = 200;
 
-constexpr long			cDefaultToolUpperThreshold = 255L;
+constexpr long			cMin8BitPixelValue = 0;
+constexpr long			cMax8BitPixelValue = 255;
+constexpr long			cDefaultToolUpperThreshold = cMax8BitPixelValue;
 constexpr long			cDefaultToolLowerThreshold = 40L;
 constexpr bool			cDefaultToolThresholdActivate = true;
 constexpr bool			cDefaultToolUpperThresholdActivate = true;

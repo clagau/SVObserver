@@ -37,6 +37,8 @@ public:
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
+	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
+
 	SvVol::SVEnumerateValueObjectClass m_svAngularMethod;
 
 private:

@@ -62,7 +62,7 @@ public:
 	SvVol::SVDoubleValueObjectClass* GetTranslationXInput(bool bRunMode = false) const;
 	SvVol::SVDoubleValueObjectClass* GetTranslationYInput(bool bRunMode = false) const;
 
-	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const;
+	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const override;
 
 #pragma endregion Public Methods
 

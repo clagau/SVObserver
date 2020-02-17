@@ -44,8 +44,8 @@ public:
 
 	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 
-	SvOp::SVLinearEdgeProcessingClass* GetEdgeA();
-	SvOp::SVLinearEdgeProcessingClass* GetEdgeB();
+	SvOp::SVLinearEdgeProcessingClass* GetEdgeA() const;
+	SvOp::SVLinearEdgeProcessingClass* GetEdgeB() const;
 
 	HRESULT GetPixelDepth();
 
@@ -55,6 +55,8 @@ public:
 protected:
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
+
+	virtual void addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const;
 
 	virtual HRESULT updateImageExtent() override;
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass& rImageExtent );

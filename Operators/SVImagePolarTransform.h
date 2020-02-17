@@ -39,6 +39,8 @@ public:
 
 	bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
+	void setSliceOverlay(SvPb::OverlayShapeSlice& rSlice) const;
+
 protected:
 	void NewCorrectAngles( double& RDStartAngle, double& RDEndAngle );
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );

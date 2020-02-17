@@ -42,7 +42,7 @@ public:
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
-	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const;
+	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const override;
 
 protected:
 	HRESULT UpdateTranslation();

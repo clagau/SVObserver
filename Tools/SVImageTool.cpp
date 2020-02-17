@@ -23,6 +23,7 @@
 #include "Operators/SVUserMaskOperatorClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -312,8 +313,8 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 	auto* pRect = pBoundingBox->mutable_rect();
 	pRect->mutable_x()->set_value(0);
 	pRect->mutable_y()->set_value(0);
-	setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
 	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
 }

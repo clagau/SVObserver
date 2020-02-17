@@ -43,6 +43,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <numeric>
 #include <stdio.h>
 #include <tchar.h>
 #include <vector>

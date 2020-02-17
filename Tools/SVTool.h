@@ -258,7 +258,4 @@ protected:
 
 	bool m_canResizeToParent {false};
 };
-
-template <class T>
-void setValueObject(const T& rSVOValueObject, SvPb::ValueObject& rPbValueObject, bool setTrPos = false);
 } //namespace SvTo

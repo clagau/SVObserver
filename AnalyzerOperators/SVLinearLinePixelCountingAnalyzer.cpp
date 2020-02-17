@@ -98,6 +98,11 @@ bool SVLinearPixelCountingLineAnalyzerClass::CreateObject( const SVObjectLevelCr
 	return bOk;
 }
 
+HRESULT SVLinearPixelCountingLineAnalyzerClass::GetSelectedEdgeOverlays(SVExtentMultiLineStruct &p_MultiLine)
+{
+	return S_OK;
+}
+
 bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::vector<double> Edges;
@@ -153,11 +158,12 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus
 	return Result;
 }
 
-HRESULT SVLinearPixelCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+void SVLinearPixelCountingLineAnalyzerClass::addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
 {
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	auto* pEgde = GetEdgeA();
+	if (nullptr != pEgde)
+	{
+		pEgde->addOverlayGroups(pImage, rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::PixelCounting);
+	}
 }
-
 } //namespace SvAo

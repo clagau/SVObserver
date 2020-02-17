@@ -966,7 +966,7 @@ void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, 
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Pattern");
-	pGroup->set_detaillevel(1);
+	pGroup->set_detaillevel(SvPb::Level1);
 	auto* pShape = pGroup->add_shapes();
 	pShape->mutable_color()->set_value(SvDef::DefaultSubFunctionColor1);
 	auto* pRectArray = pShape->mutable_rectarray()->mutable_patterndata();

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPolarTransformationTool.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVImagePolarTransform.h"
 #include "Operators/SVEvaluateCenterXClass.h"
@@ -188,6 +189,25 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass
 SvVol::SVStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;
+}
+
+void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	SvDef::SVObjectTypeInfoStruct objectInfo;
+	objectInfo.SubType = SvPb::SVImagePolarTransformObjectType;
+	SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*>(getFirstObject(objectInfo));
+	if (nullptr != pImagePolarTransform)
+	{
+		auto* pOverlay = rOverlay.add_overlays();
+		pOverlay->set_name(GetName());
+		SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+		pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+		pOverlay->set_displaybounding(true);
+		auto* pBoundingBox = pOverlay->mutable_boundingshape();
+		auto* pSlice = pBoundingBox->mutable_slice();
+		pImagePolarTransform->setSliceOverlay(*pSlice);
+		setStateValueToOverlay(*pOverlay);
+	}
 }
 
 } //namespace SvTo

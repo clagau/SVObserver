@@ -51,14 +51,23 @@ message OverlayBoundingShape
 	oneof shape
 	{
 		OverlayShapeRect rect = 1;
+		OverlayShapeSlice slice = 2;
+		OverlayShape2PointPerspective perspective = 3;
 	}
+}
+
+enum DetailLevel
+{
+	MainOverlay = 0;
+	Level1 = 1;
+	Level2 = 2;
 }
 
 message OverlayShapeGroup
 {
 	string name = 1;
 	repeated OverlayShape shapes = 2;
-	int32 detailLevel = 3;
+	DetailLevel detailLevel = 3;
 }
 
 // Message encapsulating the actual shape in an oneof.
@@ -78,6 +87,10 @@ message OverlayShape
 		OverlayShapeRect rect = 3;
 		OverlayShapeArrow arrow = 4;
 		OverlayShapeRectArray rectArray = 5;
+		OverlayShapeMarker marker = 6;
+		OverlayShapeMarkerArray markers = 7;
+		OverlayShapeBlockMarker blockMarker = 8;
+		OverlayShapeGraph graph = 9;
 	}
 }
 
@@ -99,6 +112,21 @@ message OverlayShapeRect
 	ValueObject w = 3;
 	ValueObject h = 4;
 	ValueObject angle = 5;
+}
+
+message OverlayShapeSlice
+{
+	ValueObject centerX = 1;
+	ValueObject centerY = 2;
+	ValueObject startAngle = 3;
+	ValueObject endAngle = 4;
+	ValueObject innerRadius = 5;
+	ValueObject outerRadius = 6;
+}
+
+message OverlayShape2PointPerspective
+{
+	ValueObject yOffset = 1;
 }
 
 // Like shape line with an additional arrow placed at second point.
@@ -151,4 +179,69 @@ message OverlayShapeRectArray
 		SVORectArray12Data x12Data = 2;
 		SVORectArrayPatternData patternData = 3;
 	}
+}
+
+message OverlayShapeMarker
+{
+	double minValue = 1;
+	double maxValue = 2;
+	ValueObject value = 3;
+	enum Orientation
+	{
+		x = 0;
+		y = 1;
+	}
+	Orientation orientationType = 4;
+	enum Size
+	{
+		Full = 0;	//Marker is over the whole overlay
+		MidShort = 1; //Marker is a short marker in the middle of the overlay.
+	}
+	Size sizeType = 5;
+}
+
+message OverlayShapeMarkerArray
+{
+	double minValue = 1;
+	double maxValue = 2;
+	repeated double value = 3;
+	enum Orientation
+	{
+		x = 0;
+		y = 1;
+	}
+	Orientation orientationType = 4;
+	enum Size
+	{
+		Full = 0;	//Marker is over the whole overlay
+		MidShort = 1; //Marker is a short marker in the middle of the overlay.
+	}
+	Size sizeType = 5;
+
+	int32 trPos = 6;
+}
+
+message OverlayShapeBlockMarker
+{
+	//This Block maker start with the first pixel with the first color. At the position changePos[0] it changes to the next color and so on.
+	repeated uint32 colors = 1;
+	repeated int32 changePos = 2;	
+	
+	oneof DataType
+	{
+		int32 PixelCountingAnalyzerResultPos = 3;
+	}
+}
+
+message OverlayShapeGraph
+{
+	double minValueX = 1;
+	double maxValueX = 2;
+	repeated double x = 3;
+	double minValueY = 4;
+	double maxValueY = 5;
+	repeated double y = 6;
+
+	int32 trPosX = 7;
+	int32 trPosY = 8;
 }

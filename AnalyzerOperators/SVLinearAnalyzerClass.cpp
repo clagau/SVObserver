@@ -239,14 +239,14 @@ void SVLinearAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVe
 	}
 }
 
-SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
+SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA() const
 {
 	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeAProcessingObjectType};
 	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
 	return pEdge;
 }
 
-SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
+SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB() const
 {
 
 	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeBProcessingObjectType};;
@@ -428,6 +428,7 @@ void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, S
 {
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
+	//Arrow overlay
 	if (rAnalyzerExtents.hasFigure())
 	{
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
@@ -438,7 +439,7 @@ void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, S
 		{
 			auto* pGroup = rOverlay.add_shapegroups();
 			pGroup->set_name("LAnalyzer-Arrow");
-			pGroup->set_detaillevel(1);
+			pGroup->set_detaillevel(SvPb::Level1);
 			auto* pShape = pGroup->add_shapes();
 			auto* pArrow = pShape->mutable_arrow();
 			pArrow->mutable_x1()->set_value(figure.m_svCenterLeft.m_x);
@@ -447,7 +448,22 @@ void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, S
 			pArrow->mutable_y2()->set_value(figure.m_svCenterRight.m_y);
 		}
 	}
-	//@TODO[MZA][8.20][01.08.2019] add graph overlays
+
+	addEdgeOverlays(pImage, rOverlay);
+}
+
+void SVLinearAnalyzerClass::addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+{
+	auto* pEdge = GetEdgeA();
+	if (nullptr != pEdge)
+	{
+		pEdge->addOverlayGroups(pImage, rOverlay);
+	}
+	pEdge = GetEdgeB();
+	if (nullptr != pEdge)
+	{
+		pEdge->addOverlayGroups(pImage, rOverlay);
+	}
 }
 
 bool SVLinearAnalyzerClass::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages)
@@ -540,6 +556,4 @@ void SVLinearAnalyzerClass::addScalarResultToAvailableChildren(GUID embeddedID, 
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(idForClassnamePart2);
 	m_availableChildren.push_back(resultClassInfo);
 }
-
-
 } //namespace SvAo
