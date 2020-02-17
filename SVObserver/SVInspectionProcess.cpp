@@ -136,23 +136,24 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
 		double triggerToAcqTime{ 0.0 };
-		double triggerTimeStamp{ 0.0 };
 		double acqTime {0.0};
+
 		if (nullptr != m_pToolSetCamera)
 		{
 			SvIe::SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
 			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
-				triggerTimeStamp = rProduct.m_triggerInfo.m_triggerTimeStamp * SvTl::c_MicrosecondsPerMillisecond;
 				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.m_triggerInfo.m_triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
 			}
 		}
-		//If tool set camera not found set values to 0.0
+
+		double triggerTimeStamp = rProduct.m_triggerInfo.m_triggerTimeStamp * SvTl::c_MicrosecondsPerMillisecond;
+		m_pCurrentToolset->setTime(triggerTimeStamp, ToolSetTimes::TriggerTimeStamp);
+		//If no tool set camera was found TriggerToAcquisitionStart and AcquisitionTime will be set to 0
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
-		m_pCurrentToolset->setTime(triggerTimeStamp, ToolSetTimes::TriggerTimeStamp);
-
+		
 		SvTh::IntVariantMap::const_iterator iterData{rProduct.m_triggerInfo.m_Data.end()};
 		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::ObjectID);
 		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
