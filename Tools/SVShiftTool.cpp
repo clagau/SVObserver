@@ -178,10 +178,9 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
-	long Mode;
-
 	if( Result )
 	{
+		long Mode;
 		if( S_OK != m_evoShiftMode.GetValue( Mode ) )
 		{
 			if (nullptr != pErrorMessages)
