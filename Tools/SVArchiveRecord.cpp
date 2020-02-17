@@ -77,14 +77,13 @@ void SVArchiveRecord::BuildArchiveImageFilePaths()
 	}
 }
 
-HRESULT SVArchiveRecord::GetNextFileName(std::string& rImageFile)
-{
-	HRESULT	hr = S_OK;
 
+HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths)
+{
 	DWORD		dwMaxImages = 0;
 	DWORD		dwStopAtMaxCount = 0;
 	DWORD		dwUseTriggerCountForImages = 0;
-	
+
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	m_pArchiveTool->m_dwArchiveStopAtMaxImages.GetValue(dwStopAtMaxCount);
 	m_pArchiveTool->m_dwUseTriggerCountForImages.GetValue(dwUseTriggerCountForImages);
@@ -93,10 +92,10 @@ HRESULT SVArchiveRecord::GetNextFileName(std::string& rImageFile)
 	{
 		if (dwStopAtMaxCount)
 		{
-			return -1902;
+			return -1902; //@TODO[Arvid] What does this $%&*! magic number mean?
 		}
 
-		m_lCountImages = 0;        // reset to overwrite existing image file.
+		m_lCountImages = 0; // reset to overwrite existing image file.
 	}
 
 	m_lLastIndex = m_lCountImages;
@@ -104,25 +103,30 @@ HRESULT SVArchiveRecord::GetNextFileName(std::string& rImageFile)
 
 	m_lCountImages++;
 
-	SVFileNameClass svFileName;
-	svFileName.SetPathName(m_ImagePathRoot.c_str());
-
-	if (m_FileNames.size() > m_lLastIndex)
+	if (m_FileNames.size() <= m_lLastIndex)
 	{
-		if (dwUseTriggerCountForImages)
-		{
-			std::string FileName = SvUl::Format(_T("%s__trigger%06ld.bmp"), m_FileNameImage.c_str(), m_pArchiveTool->currentTriggerCount());
-			svFileName.SetFileName(FileName.c_str());
-			m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName());
-		}
-		rImageFile = m_FileNames[m_lLastIndex];
+		return E_FAIL;
+	}
+
+	SVFileNameClass svFileName;
+	if (useAlternativeImagePaths)
+	{
+		svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
+		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
+		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName());
 	}
 	else
 	{
-		hr = E_FAIL;
+		if (dwUseTriggerCountForImages)
+		{
+			svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
+			m_FileNames[m_lLastIndex] = svFileName.GetFullFileName();
+		}
+		//else otherwise the file name already set elsewhere will be used
 	}
+	rImageFile = m_FileNames[m_lLastIndex];
 
-	return hr;
+	return S_OK;
 }
 
 void SVArchiveRecord::ConnectInputObject()
@@ -277,67 +281,62 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 
 HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord)
 {
-	HRESULT hr = S_OK;
-	bool bOk;
-
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject());
-	bOk = nullptr != pImage;
-
-	if (bOk)
+	
+	if (nullptr == pImage)
 	{
-		//
-		// An image in our list is archivable.
-		//
-		//
-		// Create a file and convert the image to a .bmp type 
-		// file.
-		//
-		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
-		bOk = (nullptr != pImageBuffer && !pImageBuffer->isEmpty());
-		if (bOk)
-		{
-			std::string ImageFile;
-
-			//
-			// Write the MIL image to a file in BMP form.
-			//
-			hr = GetNextFileName(ImageFile);
-			if (hr & 0xc000)
-			{
-				bOk = FALSE;
-			}
-			else
-			{
-				bOk = TRUE;
-			}
-
-			if (bOk)
-			{
-				if (m_eArchiveMethod == SVArchiveSynchronous)
-				{
-					try
-					{
-
-						SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFile, SVFileBitmap);
-
-					}
-					catch (...)
-					{
-						hr = E_FAIL;
-					}
-				}
-				else	// SVArchiveGoOffline or SVArchiveAsynchronous
-				{
-					QueueImage(pImageBuffer, ImageFile);
-				}
-			}
-		}
+		return S_OK; //nothing to do
 	}
 
+	//
+	// An image in our list is archivable.
+	//
+	//
+	// Create a file and convert the image to a .bmp type 
+	// file.
+	//
+	SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
+	if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
+	{
+		return S_OK; //nothing to do
+	}
 
-	return hr;
+	std::string ImageFilePath;
+
+	//
+	// Write the MIL image to a file in BMP form.
+	//
+	BOOL useAlternativeImagePaths = FALSE;
+	m_pArchiveTool->m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
+
+	HRESULT hr = GetNextImageFilePath(ImageFilePath, useAlternativeImagePaths==TRUE);
+
+	if (hr & 0xc000) //@TODO[Arvid] What does this $%&*! magic number mean?
+	{
+		return hr;
+	}
+
+	if (m_eArchiveMethod == SVArchiveSynchronous)
+	{
+		try
+		{
+			SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), ImageFilePath, SVFileBitmap);
+		}
+		catch (...)
+		{
+			return E_FAIL;
+		}
+	}
+	else	// SVArchiveGoOffline or SVArchiveAsynchronous
+	{
+		QueueImage(pImageBuffer, ImageFilePath);
+	}
+
+	return S_OK;
 }
-/*static*/HRESULT SVArchiveRecord::WriteImage(const SVMatroxBuffer& milBuffer, const std::string& rFileName)
+
+
+/*static*/ HRESULT SVArchiveRecord::WriteImage(const SVMatroxBuffer& milBuffer, const std::string& rFileName)
 {
 	HRESULT Result = S_OK;
 
@@ -346,7 +345,6 @@ HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord
 		try
 		{
 			Result = SVMatroxBufferInterface::Export(milBuffer, rFileName, SVFileBitmap);
-
 		}
 		catch (...)
 		{

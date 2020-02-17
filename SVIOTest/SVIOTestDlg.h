@@ -54,7 +54,7 @@ class CSVIOTESTDlg : public CDialog
 {
 // Construction
 private:
-	//@TODO[Arvid]: I have removed some code duplication in this Project.
+	//@TODO[Arvid]: I have removed some code duplication in this project.
 	//@TODO[Arvid]: currently the 0-th Array elements are not used and the array sizes are 5 (for just four trigger channels)
 	//@TODO[Arvid]: I have left it like this so the numbers used remain the same.
 	//@TODO[Arvid]: Whoever feels like correcting this is very welcome to tidy up the code further

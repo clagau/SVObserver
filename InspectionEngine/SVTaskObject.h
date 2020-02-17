@@ -28,9 +28,16 @@
 
 namespace SvTo
 {
-class SVToolClass;
-class LoopTool;
+	class SVToolClass;
+	class LoopTool;
 }
+
+
+namespace SvVol
+{
+	class LinkedValue;
+}
+
 
 class SVOutputInfoListClass;
 class SVRunStatusClass;
@@ -160,6 +167,9 @@ protected:
 	/// \param rPOwner [in,out] The method can change the owner if required.
 	/// \returns bool
 	virtual bool hasToAskFriendForConnection(const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner) const { return true; }
+	/// Registers a linked value in one function call
+	void registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, const GUID& rGuidEmbeddedID, const GUID& rGuidEmbeddedLinkID, int StringResourceID, uint32_t defaultValue = 0);
+
 
 public:
 	// Get the local object color...

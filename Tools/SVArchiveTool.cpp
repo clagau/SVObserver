@@ -137,7 +137,13 @@ void SVArchiveTool::initializeArchiveTool()
 		false, SvOi::SVResetItemNone);
 	m_dwUseTriggerCountForImages.SetOutputFormat(SvVol::OutputFormat_int);
 	
-	RegisterEmbeddedObject(	
+	RegisterEmbeddedObject(
+		&m_useAlternativeImagePaths,
+		SVUseAlternativeImagePathsGUID,
+		IDC_USE_ALTERNATIVE_IMAGE_PATHS,
+		false, SvOi::SVResetItemNone);
+
+	RegisterEmbeddedObject(
 		&m_dwArchiveMaxImagesCount,
 		SVArchiveMaxImagesCountGuid,
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
@@ -167,6 +173,44 @@ void SVArchiveTool::initializeArchiveTool()
 		SVArchiveUseHeadersGUID,
 		IDS_OBJECTNAME_ENABLE_HEADERS,
 		false, SvOi::SVResetItemNone);
+
+	RegisterEmbeddedObject(
+		&m_baseFilename,
+		SVBaseFilenameGUID,
+		IDS_BASE_FILENAME,
+		false, SvOi::SVResetItemNone);
+
+	RegisterEmbeddedObject(
+		&m_centerFilename,
+		SVCenterFilenameGUID,
+		IDS_CENTER_FILENAME,
+		false, SvOi::SVResetItemNone);
+
+	RegisterEmbeddedObject(
+		&m_baseDirectoryname,
+		SVBaseDirectorynameGUID,
+		IDS_BASE_DIRECTORYNAME,
+		false, SvOi::SVResetItemNone);
+
+	registerEmbeddedLinkedUnsignedValue(
+		&m_FilenameIndex1,
+		SVFilenameIndex1GUID, SVFilenameIndex1Link_GUID,
+		IDS_OBJECTNAME_FILENAME_INDEX1);
+
+	registerEmbeddedLinkedUnsignedValue(
+		&m_FilenameIndex2,
+		SVFilenameIndex2GUID, SVFilenameIndex2Link_GUID, 
+		IDS_OBJECTNAME_FILENAME_INDEX2);
+
+	registerEmbeddedLinkedUnsignedValue(
+		&m_DirectorynameIndex,
+		SVDirectorynameIndexGUID, SVDirectorynameIndexLink_GUID,
+		IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
+
+	registerEmbeddedLinkedUnsignedValue(
+		&m_SubfolderSelection,
+		SVSubfolderSelectionGUID, SVSubfolderSelectionLink_GUID,
+		IDS_OBJECTNAME_SUBFOLDER_SELECTION);
 
 	// no need to register image buffer
 	
@@ -213,6 +257,7 @@ void SVArchiveTool::initializeArchiveTool()
 	m_uiValidateCount = 0;
 }
 
+
 bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
@@ -225,6 +270,11 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 
 		bOk = true;
 	}
+
+	m_FilenameIndex1.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_FilenameIndex2.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_DirectorynameIndex.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_SubfolderSelection.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
@@ -244,7 +294,7 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoUseHeaders.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 
-	// These values will not be exposed for the this Tool.
+	// These values will not be exposed for this tool.
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
@@ -938,6 +988,71 @@ HRESULT SVArchiveTool::WriteBuffers()
 	}
 	return hr;
 }
+
+
+std::string SVArchiveTool::getNextImageDirectory(const std::string& rImagePathRoot)
+{
+	_variant_t temporaryVariant;
+
+	m_DirectorynameIndex.GetValue(temporaryVariant);
+	uint32_t DirectorynameIndex = static_cast<uint32_t>(temporaryVariant);
+
+	m_SubfolderSelection.GetValue(temporaryVariant);
+	uint32_t SubfolderSelection = static_cast<uint32_t>(temporaryVariant);
+
+	std::string baseDirectoryname;
+	m_baseDirectoryname.GetValue(baseDirectoryname);
+
+	std::string currentImageDirectory = SvUl::Format("%s\\%s%06ld", rImagePathRoot.c_str(),
+		baseDirectoryname.c_str(), DirectorynameIndex);
+
+	_mkdir(currentImageDirectory.c_str()); // fails quietly when the directory already exists - which is what we want here because we do not want to check for existenxe of the directory each time
+
+	if (SubfolderSelection)
+	{
+		std::string subfolderName = "Warn";
+		switch (SubfolderSelection)
+		{
+		case 1:
+			subfolderName = "Pass";
+			break;
+		case 2:
+			subfolderName = "Fail";
+			break;
+		}
+
+		currentImageDirectory += "\\" + subfolderName;
+		_mkdir(currentImageDirectory.c_str()); // fails quietly when the directory already exists - which is what we want here because we do not want to check for existenxe of the directory each time
+	}
+	return currentImageDirectory;
+}
+
+
+std::string SVArchiveTool::getNextImageFileName(const std::string& rFileNameImage, bool useAlternativeImagePaths)
+{
+	if (useAlternativeImagePaths)
+	{
+		std::string baseFilename;
+		m_baseFilename.GetValue(baseFilename);
+
+		_variant_t temporaryVariant; //@TODO[Arvid] this is fairly laborious: would it not be better to have a function LinkedValue::getSafeUINT32() or so?
+		m_FilenameIndex1.GetValue(temporaryVariant);
+		uint32_t Index1 = static_cast<uint32_t>(temporaryVariant);
+
+		std::string centerFilename;
+		m_centerFilename.GetValue(centerFilename);
+
+		m_FilenameIndex2.GetValue(temporaryVariant);
+		uint32_t Index2 = static_cast<uint32_t>(temporaryVariant);
+
+		return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
+	}
+	else
+	{
+		return SvUl::Format(_T("%s__trigger%06ld.bmp"), rFileNameImage.c_str(), currentTriggerCount());
+	}
+}
+
 
 long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 {

@@ -328,6 +328,18 @@ extern const GUID SVArchiveHeaderLabelGUID;
 extern const GUID SVArchiveHeaderObjectGUID;
 extern const GUID SVArchiveResultNamesObjectGuid;
 extern const GUID SVArchiveImageNamesObjectGuid;
+extern const GUID SVBaseFilenameGUID;
+extern const GUID SVFilenameIndex1GUID;
+extern const GUID SVFilenameIndex1Link_GUID;
+extern const GUID SVCenterFilenameGUID;
+extern const GUID SVFilenameIndex2GUID;
+extern const GUID SVFilenameIndex2Link_GUID;
+extern const GUID SVBaseDirectorynameGUID;
+extern const GUID SVDirectorynameIndexGUID;
+extern const GUID SVDirectorynameIndexLink_GUID;
+extern const GUID SVUseAlternativeImagePathsGUID;
+extern const GUID SVSubfolderSelectionGUID;
+extern const GUID SVSubfolderSelectionLink_GUID;
 
 // GUID for the Embedded Objects in the SVEquationClass
 extern const GUID SVEquationEnabledObjectGuid;

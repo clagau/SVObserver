@@ -31,6 +31,7 @@
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVNameVariantList.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -2136,6 +2137,20 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 
 	return l_Status;
 }
+
+
+void SVTaskObjectClass::registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, const GUID& rGuidEmbeddedID, const GUID& rGuidEmbeddedLinkID, int StringResourceID, uint32_t defaultValue)
+{
+	RegisterEmbeddedObject(pEmbeddedObject, rGuidEmbeddedID, StringResourceID, true, SvOi::SVResetItemTool);
+	_variant_t vtTemp = defaultValue;
+	vtTemp.vt = VT_UI4;
+	pEmbeddedObject->SetDefaultValue(vtTemp, true);
+	std::string objectName = SvUl::LoadStdString(StringResourceID);
+	objectName += SvDef::cLinkName;
+	RegisterEmbeddedObject(&(pEmbeddedObject->getLinkedName()), rGuidEmbeddedLinkID, objectName.c_str(), false, SvOi::SVResetItemNone);
+	pEmbeddedObject->getLinkedName().SetDefaultValue(_T(""), false);
+}
+
 
 SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(GUID classguid)
 {

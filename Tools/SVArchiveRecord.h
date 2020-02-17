@@ -46,7 +46,7 @@ public:
 		);
 
 	void BuildArchiveImageFilePaths();
-	HRESULT	GetNextFileName(std::string& rImageFile);  // For images only
+	HRESULT	GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths);
 	void BuildFileName();                 // For images only
 	void ConnectInputObject();
 	void DisconnectInputObject();
@@ -61,8 +61,8 @@ public:
 
 	SvIe::SVImageClass* GetImage();
 
-	const std::string&         GetImageObjectName() const { return m_ImageObjectName; }
-	SVObjectReference&      GetObjectReference() { return m_svObjectReference; }
+	const std::string&  GetImageObjectName() const { return m_ImageObjectName; }
+	SVObjectReference&  GetObjectReference() { return m_svObjectReference; }
 	const SVObjectReference&      GetObjectReference() const { return m_svObjectReference; }
 #pragma endregion Public Methods
 

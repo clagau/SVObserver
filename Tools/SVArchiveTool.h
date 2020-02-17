@@ -21,6 +21,7 @@
 #include "SVArchiveRecordsArray.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -45,6 +46,8 @@ public:
 	bool GetImageArchivePath( std::string& rName );
 	bool SetFileArchive( LPCTSTR lpszName );
 	bool SetImageArchivePath( LPCTSTR lpszName );
+	std::string	getNextImageDirectory(const std::string& imagePathRoot);
+	std::string	getNextImageFileName(const std::string& rFileNameImage, bool useAlternativeImagePaths);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
 	static long CalculateImageMemory( std::vector<SvIe::SVImageClass*> imagePtrVector );
@@ -64,7 +67,7 @@ public:
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
-	//@TODO[MZA][7.50][22.11.2016] The following parameters should be move to private, but now it is needed public because some other classes use it directly
+	//@TODO[MZA][7.50][22.11.2016] The following parameters should be moved to private, but for now they are needed as public because some other classes use them directly
 	//
 	// The arrays for results and images to archive.
 	//
@@ -79,6 +82,8 @@ public:
 
 	SVArchiveMethodEnum m_eArchiveMethod;
 	SvVol::SVBoolValueObjectClass m_bvoUseHeaders;
+	SvVol::SVBoolValueObjectClass m_useAlternativeImagePaths;
+	
 	SvVol::SVStringValueObjectClass	m_HeaderLabelNames;
 	SvVol::SVStringValueObjectClass	m_HeaderObjectGUIDs;
 
@@ -89,11 +94,11 @@ protected:
 
 	HRESULT QueueArchiveString( const std::string& rArchiveString );
 
+
 	//
 	// Data elements.
 	//
 	HRESULT WriteBuffers();
-
 
 private:
 	void initializeArchiveTool();
@@ -103,7 +108,6 @@ private:
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateImageSpace( bool shouldFullCheck, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-
 
 private:
 
@@ -139,6 +143,15 @@ private:
 	DWORD m_lastMaxImages = 0;
 
 	SvOi::IObjectClass* m_pTriggerCountObject = nullptr; //used when the trigger count is incorporated into image filenames
+
+	SvVol::LinkedValue m_FilenameIndex1;
+	SvVol::LinkedValue m_FilenameIndex2;
+	SvVol::LinkedValue m_DirectorynameIndex;
+	SvVol::LinkedValue m_SubfolderSelection;
+
+	SvVol::SVStringValueObjectClass m_baseDirectoryname;
+	SvVol::SVStringValueObjectClass m_baseFilename;
+	SvVol::SVStringValueObjectClass m_centerFilename;
 };
 
 } //namespace SvTo

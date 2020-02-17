@@ -143,7 +143,6 @@ public:
 
 	virtual bool propagateSizeAndPosition();
 	virtual bool usePropagateSizeAndPosition() const;
-
 	
 	 void removeTaskMessages(long MessageCode, SvStl::MessageTextEnum AdditionalTextId);
 
