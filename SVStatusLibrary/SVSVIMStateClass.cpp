@@ -23,12 +23,21 @@ std::atomic<__time32_t> SVSVIMStateClass::m_CurrentModifiedTime{0L};
 std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode{SvPb::DeviceModeType::unknownMode};
 NotifyFunctor SVSVIMStateClass::m_pNotify{nullptr};
 
+std::atomic<int>  SVSVIMStateClass::m_LockCountSvrc {0};
+
+
+
 SVSVIMStateClass::SVSVIMStateClass()
 {
 }
 
 SVSVIMStateClass::~SVSVIMStateClass()
 {
+}
+
+bool SVSVIMStateClass::isSvrcBlocked() 
+{ 
+	return m_LockCountSvrc > 0; 
 }
 
 void SVSVIMStateClass::AddState( DWORD dwState )
@@ -129,6 +138,7 @@ void SVSVIMStateClass::setNotificationFunction(const NotifyFunctor& Notify)
 {
 	m_pNotify = Notify;
 }
+
 
 void SVSVIMStateClass::CheckModeNotify()
 {

@@ -471,8 +471,9 @@ void SVObserverApp::OnEditEnvironment()
 // .Description : OnTestMode calls SetTestMode
 void SVObserverApp::OnTestMode()
 {
+	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
+		return;
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: before entering test mode: perform autosave
-
 	SetTestMode();
 }
 
@@ -512,6 +513,7 @@ void SVObserverApp::OnStopTestMode()
 
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_STOP))
 	{
+		SVSVIMStateClass::SVRCBlocker block;
 		OnStop();
 	}
 }
@@ -680,6 +682,7 @@ void SVObserverApp::OnUpdateFileUpdate(CCmdUI* PCmdUI)
 void SVObserverApp::OnStop()
 {
 	CWaitCursor wait;
+	SVSVIMStateClass::SVRCBlocker block;
 
 	SVArchiveWritingDlg *pArchiveWriteDlg = nullptr;
 
@@ -1100,7 +1103,9 @@ void SVObserverApp::OnGoOffline()
 	if (!SVSVIMStateClass::CheckState(SV_STATE_EDIT
 		| SV_STATE_REGRESSION
 		| SV_STATE_TEST
-		| SV_STATE_RUNNING))
+		| SV_STATE_RUNNING
+		| SV_STATE_REMOTE_CMD
+		))
 	{
 		return;
 	}
@@ -1153,6 +1158,10 @@ void SVObserverApp::OnUpdateGoOffline(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOnline()
 {
+	
+	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
+		return;
+	
 	SvStl::MessageContainer exceptionContainer;
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
 
@@ -1573,7 +1582,7 @@ void SVObserverApp::OnModeEdit()
 {
 	bool l_bAllowAccess = false;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT | SV_STATE_REMOTE_CMD))
 	{
 		return;
 	}
@@ -2771,6 +2780,7 @@ HRESULT SVObserverApp::CanCloseMainFrame()
 HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 	bool CloseWithoutHint /* = false */)
 {
+	SVSVIMStateClass::SVRCBlocker block;
 	bool bCancel = false;
 
 	bool bOk = !SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST);
@@ -3165,7 +3175,7 @@ void SVObserverApp::ResetAllCounts()
 {
 	long l = 0;
 	long lSize = 0;
-
+	SVSVIMStateClass::SVRCBlocker block;
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -4442,6 +4452,9 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 
 	if (l_bAllowAccess)
 	{
+		
+		SVSVIMStateClass::SVRCBlocker block;
+
 		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 		{
 			StopRegression();
@@ -4628,7 +4641,7 @@ void SVObserverApp::RefreshAllIPDocuments()
 void SVObserverApp::RunAllIPDocuments()
 {
 	//get list of IPDoc's.
-
+	SVSVIMStateClass::SVRCBlocker block;
 	POSITION pos = GetFirstDocTemplatePosition();
 	if (pos)
 	{
@@ -4661,7 +4674,7 @@ void SVObserverApp::RunAllIPDocuments()
 void SVObserverApp::SetAllIPDocumentsOnline()
 {
 	//get list of IPDoc's.
-
+	SVSVIMStateClass::SVRCBlocker block;
 	POSITION pos = GetFirstDocTemplatePosition();
 	if (pos)
 	{
@@ -4936,6 +4949,12 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 #pragma region Protected Methods
 void SVObserverApp::Start()
 {
+	
+	//if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
+	//	return;
+
+	SVSVIMStateClass::SVRCBlocker block;
+
 	SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_STARTING))
@@ -5429,6 +5448,7 @@ bool SVObserverApp::DetermineConfigurationSaveName()
 
 void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 {
+	SVSVIMStateClass::SVRCBlocker block;
 	//The pointer is usually checked by the caller
 	if(nullptr != pConfig)
 	{
@@ -5986,7 +6006,7 @@ void SVObserverApp::StopRegression()
 	//get list of IPDoc's.
 	//see if the IPDoc is running regression, if so send command to stop.
 	//since only 1 IPDoc can run regression at a time, as soon as 1 is found, break...
-
+	SVSVIMStateClass::SVRCBlocker block;
 	CDocTemplate* pDocTemplate = nullptr;
 	CString strExt;
 	POSITION pos = GetFirstDocTemplatePosition();

@@ -2048,7 +2048,7 @@ bool SVIPDoc::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
 void SVIPDoc::RunRegressionTest()
 {
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_REMOTE_CMD))
 	{  // already in regression mode, do nothing...
 		return;
 	}
@@ -3693,6 +3693,7 @@ void SVIPDoc::RegressionTestComplete()
 
 void SVIPDoc::RegressionTestModeChanged()
 {
+	
 	// @WARNING:  Pointers should be checked before they are dereferenced.
 	::BringWindowToTop(AfxGetMainWnd()->GetSafeHwnd());
 	m_bRegressionTestRunning = false;

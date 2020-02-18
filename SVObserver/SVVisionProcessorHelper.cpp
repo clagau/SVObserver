@@ -368,7 +368,7 @@ HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVName
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
 
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -518,7 +518,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNam
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
 
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -546,7 +546,7 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems(const SvDef::StringSet& rNa
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
 
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
 	{
 		return SVMSG_SVO_ACCESS_DENIED;
 	}
@@ -651,6 +651,14 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems(const SVNameStorageMap& rIte
 HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
 {
 	HRESULT l_Status = S_OK;
+
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
 
 	SVConfigurationObject* pConfig(nullptr);
 

@@ -61,6 +61,20 @@ class SVSVIMStateClass
 {
 public:
 
+	//RAII helper class  for m_LockCountSvrc
+	class SVRCBlocker
+	{
+	public:
+		SVRCBlocker()
+		{
+			SVSVIMStateClass::m_LockCountSvrc++;
+		}
+		~SVRCBlocker()
+		{
+			SVSVIMStateClass::m_LockCountSvrc--;
+		}
+
+	};
 	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
 	//the existing value.
@@ -95,6 +109,7 @@ public:
 	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
 	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
 
+	static bool isSvrcBlocked();
 private:
 	//************************************
 	// Method: CheckModeNotify
@@ -128,5 +143,8 @@ private:
 	static std::atomic<__time32_t> m_CurrentModifiedTime;
 
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
+	///Lockcount >  0 prevents some  SVRC command to avoid crashes because of mult threading issues 
+	static std::atomic<int>  m_LockCountSvrc; //<  
 };
+
 
