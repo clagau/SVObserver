@@ -61,12 +61,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files\boost_1_55_0;C:\Program Files\tcl_5.3.0;$(IncludePath);..</IncludePath>
+    <IncludePath>$(IncludePath);..</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files\boost_1_55_0;C:\Program Files\tcl_5.3.0;$(IncludePath);..</IncludePath>
+    <IncludePath>$(IncludePath);..</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

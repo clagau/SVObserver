@@ -142,7 +142,7 @@ static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int
 		SvPb::GetImageFromIdRequest Request;
 		*Request.mutable_id() = ImageId;
 		auto resp = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(Request)).get();
-		volume += resp.ByteSize() / (1024.0 * 1024.0);
+		volume += resp.ByteSizeLong() / (1024.0 * 1024.0);
 	}
 	auto finish = std::chrono::steady_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();

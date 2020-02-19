@@ -75,7 +75,7 @@ template<class T>
 T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)
 {
 	T retValue = 0;
-	auto iter = find_if(extents.begin(), extents.end(), [type](auto item) { return type == item.type(); });
+	auto iter = std::find_if(extents.begin(), extents.end(), [type](auto item) { return type == item.type(); });
 	if (extents.end() != iter)
 	{
 		retValue = static_cast<T>(iter->value());
@@ -87,7 +87,7 @@ template<class T>
 bool setValueForProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type, T value)
 {
 	T retValue = 0;
-	auto& iter = find_if(extents.begin(), extents.end(), [type](auto item) { return type == item.type(); });
+	auto& iter = std::find_if(extents.begin(), extents.end(), [type](auto item) { return type == item.type(); });
 	if (extents.end() != iter)
 	{
 		iter->set_value(value);

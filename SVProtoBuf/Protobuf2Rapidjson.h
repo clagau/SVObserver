@@ -458,8 +458,14 @@ inline void encode_field(const google::protobuf::Message* msg,
 			break;
 		}
 		case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
-			encode_to_json_value(ref->GetMessage(*msg, field), value, alloc);
+		{
+///This is required to avoid the Windows GetMessage macro to be used
+#pragma push_macro("GetMessage")
+#undef GetMessage
+			encode_to_json_value(ref->GetMessage(*msg, field, nullptr), value, alloc);
+#pragma pop_macro("GetMessage")
 			break;
+		}
 		case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
 		{
 			const auto* en = ref->GetEnum(*msg, field);

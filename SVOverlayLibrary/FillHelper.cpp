@@ -44,14 +44,14 @@ namespace SvOv
 		fillValue(rTr, rRect.h().trpos(), rRect.mutable_h());
 	}
 
-	std::vector<float> getDataArray(const SvTrc::ITriggerRecordR& rTr, int pos)
+	std::vector<double> getDataArray(const SvTrc::ITriggerRecordR& rTr, int pos)
 	{
 		if (0 < pos)
 		{
 			_variant_t varX1 = rTr.getDataValue(pos - 1);
 			if (VT_ARRAY & varX1.vt)
 			{
-				return SvUl::getVectorFromOneDim<float>(varX1);
+				return SvUl::getVectorFromOneDim<double>(varX1);
 			}
 			else
 			{
@@ -229,7 +229,7 @@ namespace SvOv
 						auto* pMarker = pShape->mutable_markers();
 						if (nullptr != pMarker)
 						{
-							std::vector<float> values = getDataArray(rTr, pMarker->trpos());
+							std::vector<double> values = getDataArray(rTr, pMarker->trpos());
 							if (0 < values.size())
 							{
 								*pMarker->mutable_value() = { values.begin(), values.end() };
@@ -246,7 +246,7 @@ namespace SvOv
 							{
 							case SvPb::OverlayShapeBlockMarker::kPixelCountingAnalyzerResultPos:
 							{
-								std::vector<float> values = getDataArray(rTr, pMarker->pixelcountinganalyzerresultpos());
+								std::vector<double> values = getDataArray(rTr, pMarker->pixelcountinganalyzerresultpos());
 								int lastValue = 0;
 								for (int pos = 0; values.size() > pos; ++pos)
 								{
@@ -273,7 +273,7 @@ namespace SvOv
 						{
 							if (0 < pGraph->trposx())
 							{
-								std::vector<float> values = getDataArray(rTr, pGraph->trposx());
+								std::vector<double> values = getDataArray(rTr, pGraph->trposx());
 								if (0 < values.size())
 								{
 									*pGraph->mutable_x() = { values.begin(), values.end() };
@@ -289,7 +289,7 @@ namespace SvOv
 
 							if (0 < pGraph->trposy())
 							{
-								std::vector<float> values = getDataArray(rTr, pGraph->trposy());
+								std::vector<double> values = getDataArray(rTr, pGraph->trposy());
 								if (0 < values.size())
 								{
 									*pGraph->mutable_y() = { values.begin(), values.end() };

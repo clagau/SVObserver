@@ -32,6 +32,8 @@
 #define VC_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #define _CRT_SECURE_NO_WARNINGS
 
+#pragma warning(disable : 4996) ///Required to be able to copy std::vector to protobuf repeated field
+
 //************************************
 //! Precompiled headers section
 //************************************

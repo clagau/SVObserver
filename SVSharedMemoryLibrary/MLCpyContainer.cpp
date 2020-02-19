@@ -187,7 +187,7 @@ namespace SvSml
 				std::string idBytes;
 				SvPb::SetGuidInProtoBytes(&idBytes, rEntry.second->m_Guid);
 				rEntry.second->data.m_inspectionTRCPos = inspectionTrcPos;
-				auto iter = find_if(rDataDefList.list().begin(), rDataDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				auto iter = std::find_if(rDataDefList.list().begin(), rDataDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
 				if (rDataDefList.list().end() != iter)
 				{
 					int pos = static_cast<int>(std::distance(rDataDefList.list().begin(), iter));
@@ -195,7 +195,7 @@ namespace SvSml
 					continue;
 				}
 
-				auto iterImage = find_if(rImageDefList.list().begin(), rImageDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				auto iterImage = std::find_if(rImageDefList.list().begin(), rImageDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
 				if (rImageDefList.list().end() != iterImage)
 				{
 					int pos = static_cast<int>(std::distance(rImageDefList.list().begin(), iterImage));
@@ -203,7 +203,7 @@ namespace SvSml
 					continue;
 				}
 
-				auto iterChildImage = find_if(rImageDefList.childlist().begin(), rImageDefList.childlist().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				auto iterChildImage = std::find_if(rImageDefList.childlist().begin(), rImageDefList.childlist().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
 				if (rImageDefList.childlist().end() != iterChildImage)
 				{
 					int pos = static_cast<int>(std::distance(rImageDefList.childlist().begin(), iterChildImage));

@@ -241,10 +241,10 @@ SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& r
 		throw ConnectionLostException("Connection lost");
 	}
 
-	auto resSize = rEnvelope.ByteSize();
+	auto resSize = rEnvelope.ByteSizeLong();
 	std::vector<char> buf;
 	buf.resize(resSize);
-	rEnvelope.SerializeToArray(buf.data(), resSize);
+	rEnvelope.SerializeToArray(buf.data(), static_cast<int> (resSize));
 
 	return it->second->sendBinaryMessage(buf);
 }

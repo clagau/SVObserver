@@ -584,7 +584,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 	{
 		if (bAllowFullsize)
 		{
-			auto iter = find_if(m_extents.begin(), m_extents.end(), [p](auto item) { return p == item.type(); });
+			auto iter = std::find_if(m_extents.begin(), m_extents.end(), [p](auto item) { return p == item.type(); });
 			if (m_extents.end() != iter && iter->issetbyreset())
 			{
 				bAllowFullsize = false;

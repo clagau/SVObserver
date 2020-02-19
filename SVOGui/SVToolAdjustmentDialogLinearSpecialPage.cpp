@@ -118,7 +118,7 @@ namespace SvOg
 		if (S_OK == hr && responseMessage.has_getextentparameterresponse())
 		{
 			auto extentParameter = responseMessage.getextentparameterresponse().parameters();
-			auto valuePair = find_if(extentParameter.begin(), extentParameter.end(), [](const auto value) { return value.type() == SvPb::SVExtentPropertyRotationAngle; });
+			auto valuePair = std::find_if(extentParameter.begin(), extentParameter.end(), [](const auto value) { return value.type() == SvPb::SVExtentPropertyRotationAngle; });
 			if (extentParameter.end() != valuePair)
 			{
 				dRotationAngle = valuePair->value();

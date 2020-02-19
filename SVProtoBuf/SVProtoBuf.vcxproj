@@ -74,22 +74,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files\boost_1_55_0;C:\Program Files\tcl_5.3.0;$(IncludePath);..</IncludePath>
+    <IncludePath>$(IncludePath);..</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files\boost_1_55_0;C:\Program Files\tcl_5.3.0;$(IncludePath);..</IncludePath>
+    <IncludePath>$(IncludePath);..</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files\boost_1_55_0;C:\Program Files\tcl_5.3.0;$(IncludePath);..</IncludePath>
+    <IncludePath>$(IncludePath);..</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Program Files\boost_1_55_0;C:\Program Files\tcl_5.3.0;$(IncludePath);..</IncludePath>
+    <IncludePath>$(IncludePath);..</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -264,10 +264,10 @@
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -279,10 +279,10 @@
     </CustomBuild>
     <CustomBuild Include="Envelope.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -294,10 +294,10 @@
     </CustomBuild>
     <CustomBuild Include="InspectionCommands.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -309,10 +309,10 @@
     </CustomBuild>
     <CustomBuild Include="MonitorListStore.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -324,10 +324,10 @@
     </CustomBuild>
     <CustomBuild Include="Overlay.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -339,10 +339,10 @@
     </CustomBuild>
     <CustomBuild Include="SVRC.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -354,10 +354,10 @@
     </CustomBuild>
     <CustomBuild Include="TriggerRecordController.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -369,10 +369,10 @@
     </CustomBuild>
     <CustomBuild Include="Variant.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
@@ -384,10 +384,10 @@
     </CustomBuild>
     <CustomBuild Include="SVRC-Enum.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
@@ -399,10 +399,10 @@
     </CustomBuild>
     <CustomBuild Include="SVRC-SVObserver.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
@@ -414,10 +414,10 @@
     </CustomBuild>
     <CustomBuild Include="SVRC-SVOGateway.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
@@ -429,10 +429,10 @@
     </CustomBuild>
     <CustomBuild Include="SVAuth.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
@@ -446,14 +446,14 @@
   <ItemGroup>
     <CustomBuild Include="SVO-Enum.proto">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
@@ -467,8 +467,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\protobuf-3.5.1\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating c++ code from %(Identity)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>

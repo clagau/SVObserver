@@ -364,7 +364,7 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 		else if (SvDef::TSNone == SelMode)
 		{
 			auto propEnum = m_EQAdjustStruct[vType].m_extentProp;
-			auto valuePair = find_if(extentParameter.begin(), extentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
+			auto valuePair = std::find_if(extentParameter.begin(), extentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
 			if (extentParameter.end() != valuePair)
 			{
 				csResult.Format(_T("%ld"), static_cast<long>(valuePair->value()));
@@ -375,7 +375,7 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 			if (SvDef::ToolSizeAdjustEnum::TSHeight == SvDef::ToolSizeAdjustEnum(vType) || SvDef::ToolSizeAdjustEnum::TSWidth == SvDef::ToolSizeAdjustEnum(vType))
 			{
 				auto propEnum = m_EQAdjustStruct[vType].m_extentProp;
-				auto valuePair = find_if(parentExtentParameter.begin(), parentExtentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
+				auto valuePair = std::find_if(parentExtentParameter.begin(), parentExtentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
 				if (parentExtentParameter.end() != valuePair)
 				{
 					csResult.Format(_T("%ld"), static_cast<long>(valuePair->value()));

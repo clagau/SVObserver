@@ -481,10 +481,10 @@ void RPCClient::ack_stream_response(uint64_t txId, uint64_t seqNr)
 
 void RPCClient::send_envelope(SvPenv::Envelope&& Envelope)
 {
-	auto reqSize = Envelope.ByteSize();
+	auto reqSize = Envelope.ByteSizeLong();
 	std::vector<char> buf;
 	buf.resize(reqSize);
-	Envelope.SerializeToArray(buf.data(), reqSize);
+	Envelope.SerializeToArray(buf.data(), static_cast<int> (reqSize));
 
 	// capture shared_ptr in local copy to avoid races
 	auto client = m_WebsocketClient;

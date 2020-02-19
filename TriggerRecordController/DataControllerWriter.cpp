@@ -77,7 +77,7 @@ void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& data
 		Exception.Throw();
 	}
 
-	int newPBSize = m_DataDefList.ByteSize();
+	int newPBSize = static_cast<int> (m_DataDefList.ByteSizeLong());
 	if (newPBSize > m_pSmData->m_maxDataDefListSize)
 	{
 		SMData smData = *m_pSmData;
@@ -111,7 +111,7 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
-	int newPBSize = m_ImageList.ByteSize();
+	int newPBSize = static_cast<int> (m_ImageList.ByteSizeLong());
 	if (newPBSize > m_pSmData->m_maxImageListSize)
 	{
 		SMData smData = *m_pSmData;
@@ -533,7 +533,7 @@ void DataControllerWriter::setImageStructList(SvPb::ImageStructList&& list)
 {
 	if (!m_isGlobalInit)
 	{
-		if (list.ByteSize() > cMaxImageStructPbSize)
+		if (list.ByteSizeLong() > cMaxImageStructPbSize)
 		{
 			assert(false);
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -541,7 +541,7 @@ void DataControllerWriter::setImageStructList(SvPb::ImageStructList&& list)
 			throw Exception;
 		}
 		m_imageStructList.Swap(&list);
-		m_pCommonData->m_imageStructListPBSize = m_imageStructList.ByteSize();
+		m_pCommonData->m_imageStructListPBSize = static_cast<int> (m_imageStructList.ByteSizeLong());
 		m_imageStructList.SerializePartialToArray(m_pImageStructListInSM, m_pCommonData->m_imageStructListPBSize);
 	}
 	else
@@ -751,7 +751,7 @@ std::vector<std::pair<int, int>> DataControllerWriter::ResetTriggerRecordStructu
 
 void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionList)
 {
-	if (rInspectionList.ByteSize() > cMaxInspectionPbSize)
+	if (rInspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 	{
 		assert(false);
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -768,7 +768,7 @@ void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionL
 	}
 
 	m_inspectionList.Swap(std::move(&rInspectionList));
-	m_pCommonData->m_inspectionListPBSize = m_inspectionList.ByteSize();
+	m_pCommonData->m_inspectionListPBSize = static_cast<int> (m_inspectionList.ByteSizeLong());
 	m_inspectionList.SerializePartialToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
 
 	//fit the m_dataVector to inspectionLsit
@@ -979,7 +979,7 @@ void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSm
 	{
 		m_inspectionList.mutable_list(ipPos)->set_nameofsm(rSmName);
 		m_inspectionList.mutable_list(ipPos)->set_sizeofsm(smSize);
-		if (m_inspectionList.ByteSize() > cMaxInspectionPbSize)
+		if (m_inspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 		{
 			assert(false);
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -987,7 +987,7 @@ void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSm
 		}
 		else
 		{
-			m_pCommonData->m_inspectionListPBSize = m_inspectionList.ByteSize();
+			m_pCommonData->m_inspectionListPBSize = static_cast<int> (m_inspectionList.ByteSizeLong());
 			m_inspectionList.SerializePartialToArray(m_pInspectionListInSM, m_pCommonData->m_inspectionListPBSize);
 		}
 	}
