@@ -37,7 +37,7 @@ WebsocketClient::WebsocketClient(WebsocketClientSettings& rSettings, EventHandle
 	}
 	m_Socket.control_callback(m_ControlCommand);
 	m_Socket.read_message_max(rSettings.MaxMessageSize);
-	m_Socket.write_buffer_size(m_rSettings.WriteBufferSize);
+	m_Socket.write_buffer_bytes(rSettings.WriteBufferSize);
 	m_IoThread = std::thread([this]() { m_IoContext.run(); });
 }
 

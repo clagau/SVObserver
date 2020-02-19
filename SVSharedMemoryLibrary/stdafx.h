@@ -52,6 +52,7 @@
 #include <iostream>
 #include <iomanip>
 #include <intrin.h>
+#include <iterator>			//Used by static library
 #include <limits>
 #include <map>
 #include <memory>

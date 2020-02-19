@@ -56,6 +56,7 @@
 #include <ctime>			//Used by static library
 #include <comdef.h>
 #include <deque>
+#include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>
 #include <memory>

@@ -36,7 +36,7 @@ HttpServerConnection::HttpServerConnection(const HttpServerSettings& rSettings,
 	, m_Socket(m_WsSocket.next_layer())
 {
 	m_WsSocket.read_message_max(rSettings.MaxMessageSize);
-	m_WsSocket.write_buffer_size(rSettings.WriteBufferSize);
+	m_WsSocket.write_buffer_bytes(rSettings.WriteBufferSize);
 }
 
 std::shared_ptr<HttpServerConnection> HttpServerConnection::create(
