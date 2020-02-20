@@ -3779,7 +3779,7 @@ void SVInspectionProcess::buildValueObjectData()
 			{
 				///When the memory offset has already been set then it must match the calculated offset
 				pValueObjectDef->set_memoffset(valueObjectMemOffset);
-				///Only update the trigger record position
+				///Only update the trigger record position and delete the pointer
 				pValueObject->setTrData(-1, -1, pList->size() - 1);
 			}
 			switch (pObject->GetObjectSubType())
@@ -3795,6 +3795,14 @@ void SVInspectionProcess::buildValueObjectData()
 				{
 					break;
 				}
+			}
+		}
+		else
+		{
+			if(nullptr != pValueObject)
+			{
+				///Reset all TR settings including the memory block pointer
+				pValueObject->setTrData(-1, -1, -1);
 			}
 		}
 	}

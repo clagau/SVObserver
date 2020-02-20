@@ -212,10 +212,15 @@ void DoubleSortValueObject::updateMemBlockData() const
 	}
 	else
 	{
+		///Memory block reserved for value object is to small. This should not happen!
 		if (0 < getMemSizeReserved() && nullptr != m_pMemBlockData)
 		{
+			assert(false);
 			///Clear the memory block data
 			memset(m_pMemBlockData, 0, getMemSizeReserved());
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			setHasChanged(false);
 		}
 	}
 }

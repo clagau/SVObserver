@@ -207,6 +207,7 @@ void SVStringValueObjectClass::updateMemBlockData() const
 	}
 	else
 	{
+		///Memory block reserved for value object is to small. This should not happen!
 		if(0 < getMemSizeReserved() && nullptr != m_pMemBlockData)
 		{
 			assert(false);

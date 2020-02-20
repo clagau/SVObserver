@@ -225,21 +225,9 @@ void SVVariantValueObjectClass::updateMemBlockData() const
 					{
 						std::string tempString = SvUl::createStdString(value.bstrVal);
 						pValue = nullptr;
-						///Make sure string fits to the reserved size
-						if(getMemSizeReserved() > static_cast<int32_t> (tempString.size()))
-						{
-							//Copy also the ending \0 of the string
-							memcpy(pMemoryLocation, tempString.c_str(), tempString.size() + 1);
-							pMemoryLocation += tempString.size() + 1;
-						}
-						else
-						{
-							assert(false);
-							///Clear the memory block data
-							memset(m_pMemBlockData, 0, getMemSizeReserved());
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-							Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-						}
+						//Copy also the ending \0 of the string
+						memcpy(pMemoryLocation, tempString.c_str(), tempString.size() + 1);
+						pMemoryLocation += tempString.size() + 1;
 						break;
 					}
 					default:
@@ -259,10 +247,15 @@ void SVVariantValueObjectClass::updateMemBlockData() const
 	}
 	else
 	{
+		///Memory block reserved for value object is to small. This should not happen!
 		if (0 < getMemSizeReserved() && nullptr != m_pMemBlockData)
 		{
+			assert(false);
 			///Clear the memory block data
 			memset(m_pMemBlockData, 0, getMemSizeReserved());
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			setHasChanged(false);
 		}
 	}
 }
