@@ -2156,7 +2156,7 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 		|| m_eProduct == SVIM_PRODUCT_X2_GD4A 
 		|| m_eProduct == SVIM_PRODUCT_X2_GD4A_COLOR
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_PLC
+		|| m_eProduct == SVIM_PRODUCT_NEO1
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_COLOR
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO 
 		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR) ? true : false;

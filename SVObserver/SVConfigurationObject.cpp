@@ -4065,7 +4065,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 					if (nullptr != pCamera)
 					{
 						///File acquisition or PLC Trigger require acquisition trigger
-						if (pCamera->IsFileAcquisition() || SVIMProductEnum::SVIM_PRODUCT_X2_GD8A_PLC == GetProductType())
+						if (pCamera->IsFileAcquisition() || SVIMProductEnum::SVIM_PRODUCT_NEO1 == GetProductType())
 						{
 							pCamera->RegisterTrigger(pTrigger->getDevice());
 						}

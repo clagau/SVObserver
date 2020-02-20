@@ -42,7 +42,7 @@ namespace SvTi
 		{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( false,     8,			3 )},
 		//{SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( true,      8,			3 ) )
 		//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, 8,			3 ) )
-		{ SVIM_PRODUCT_X2_GD8A_PLC,  SVIMTypeInfoStruct( true,      8,			4) }
+		{ SVIM_PRODUCT_NEO1,  SVIMTypeInfoStruct( true,      8,			4) }
 	};
 	
 	SVHardwareManifest& SVHardwareManifest::Instance()
@@ -179,7 +179,7 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD2A,
 			SVIM_PRODUCT_X2_GD4A,
 			SVIM_PRODUCT_X2_GD8A,
-			SVIM_PRODUCT_X2_GD8A_PLC,
+			SVIM_PRODUCT_NEO1,
 		};
 
 		SVIMProductEnumSet::const_iterator it = list.find(productType);
@@ -249,7 +249,7 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD8A_COLOR,
 			SVIM_PRODUCT_X2_GD8A_NONIO,
 			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
-			SVIM_PRODUCT_X2_GD8A_PLC
+			SVIM_PRODUCT_NEO1
 		};
 
 		SVIMProductEnumSet::const_iterator it = GigeList.find(p_ProductType);
@@ -270,7 +270,7 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD8A_COLOR,
 			SVIM_PRODUCT_X2_GD8A_NONIO,
 			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
-			SVIM_PRODUCT_X2_GD8A_PLC
+			SVIM_PRODUCT_NEO1
 		};
 
 		SVIMProductEnumSet::const_iterator it = DigitalList.find(p_ProductType);
@@ -289,7 +289,7 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD8A_COLOR,
 			SVIM_PRODUCT_X2_GD8A_NONIO,
 			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
-			SVIM_PRODUCT_X2_GD8A_PLC
+			SVIM_PRODUCT_NEO1
 		};
 
 		SVIMProductEnumSet::const_iterator it = RaidList.find(p_ProductType);

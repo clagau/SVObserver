@@ -3050,7 +3050,7 @@ bool SVObserverApp::IsMatroxGige() const
 	 bool result = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A_PLC)
+		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO));
 
 	return result;
@@ -3096,14 +3096,14 @@ bool SVObserverApp::CheckSVIMType() const
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_X2_GD8A_PLC:
+			case SVIM_PRODUCT_NEO1:
 			{
 				Result |= ProductType == SVIM_PRODUCT_X2_GD1A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD2A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD4A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_PLC;
+				Result |= ProductType == SVIM_PRODUCT_NEO1;
 				break;
 			}
 
@@ -3141,9 +3141,9 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	{
 		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A_PLC))
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1))
 	{
-		eType = SVIM_PRODUCT_X2_GD8A_PLC;
+		eType = SVIM_PRODUCT_NEO1;
 	}
 	return eType;
 }

@@ -113,7 +113,7 @@ const CSVOConfigAssistantDlg::SVProductStringVector CSVOConfigAssistantDlg::m_Pr
 	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A) + std::string(c_Color)},
 	//{SVIM_PRODUCT_X2_GD8A_NONIO, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO)},
 	//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO) + std::string(c_Color)};
-	{SVIM_PRODUCT_X2_GD8A_PLC, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_PLC)}
+	{SVIM_PRODUCT_NEO1, std::string(SvDef::SVO_PRODUCT_SVIM_NEO1)}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -462,7 +462,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			}
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_PLC:
+			case SVIM_PRODUCT_NEO1:
 			{
 				CreateDefaultForSVIMDigital(2, SvDef::cTriggerFixedName);
 				break;
@@ -788,7 +788,7 @@ std::string CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTri
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_PLC:
+			case SVIM_PRODUCT_NEO1:
 			{
 				Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
 				break;
@@ -818,7 +818,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_X2_GD8A_PLC:
+			case SVIM_PRODUCT_NEO1:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -842,7 +842,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_X2_GD8A_PLC:
+			case SVIM_PRODUCT_NEO1:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
@@ -3571,7 +3571,7 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 		case SVIM_PRODUCT_X2_GD2A:
 		case SVIM_PRODUCT_X2_GD4A:
 		case SVIM_PRODUCT_X2_GD8A:
-		case SVIM_PRODUCT_X2_GD8A_PLC:
+		case SVIM_PRODUCT_NEO1:
 		case SVIM_PRODUCT_X2_GD1A_COLOR:
 		case SVIM_PRODUCT_X2_GD2A_COLOR:
 		case SVIM_PRODUCT_X2_GD4A_COLOR:
