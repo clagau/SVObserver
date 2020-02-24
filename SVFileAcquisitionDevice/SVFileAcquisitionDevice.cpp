@@ -580,14 +580,6 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long index )
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams));
 				}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				else
-				{
-					std::string outputText {"Error In BufferGetAddress\r\n"};
-					::OutputDebugString(outputText.c_str());
-					l_hrOk = E_FAIL;
-				}
-#endif
 			}
 			else
 			{
