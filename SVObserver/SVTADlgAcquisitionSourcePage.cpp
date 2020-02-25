@@ -60,7 +60,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 	{
 		// Try to get main image of the current acquisition tool...
 		SvDef::SVObjectTypeInfoStruct info;
-		info.ObjectType = SvPb::SVImageObjectType;
+		info.m_ObjectType = SvPb::SVImageObjectType;
 		m_pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (m_pTaskObject->getFirstObject(info));
 		if( nullptr != m_pMainImage)
 		{

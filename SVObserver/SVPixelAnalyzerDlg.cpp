@@ -48,7 +48,7 @@ SVPixelAnalyzerDlg::~SVPixelAnalyzerDlg()
 
 void SVPixelAnalyzerDlg::SetInspectionData()
 {
-	m_Values.Set<BYTE>(SVPixelColorIndexObjectGuid, static_cast<BYTE> (m_GrayscaleToCount));
+	m_Values.Set<BYTE>(SvPb::PixelColorIndexEId, static_cast<BYTE> (m_GrayscaleToCount));
 	m_Values.Commit();
 }
 
@@ -105,7 +105,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 		m_HighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
 		m_LowGrayscaleValue.Format (_T("%d"), msvulMinGrayscale);
 
-		BYTE Grayscale = m_Values.Get<BYTE>(SVPixelColorIndexObjectGuid);
+		BYTE Grayscale = m_Values.Get<BYTE>(SvPb::PixelColorIndexEId);
 
 		if (Grayscale == msvulMinGrayscale) //Black
 		{

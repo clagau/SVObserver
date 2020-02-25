@@ -21,7 +21,6 @@
 #include "SVMatroxLibrary/SVMatroxOcrInterface.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -70,8 +69,8 @@ SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int Str
 void SVOCVAnalyzeResultClass::clearAll()
 {	
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultOCVObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultOCVObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
@@ -81,75 +80,75 @@ void SVOCVAnalyzeResultClass::clearAll()
 	// Register Embedded Objects
 	RegisterEmbeddedObject(
 		&m_svoMatchString, 
-		SVOCVMatchStringGuid,
+		SvPb::OCVMatchStringEId,
 		IDS_OBJECTNAME_OCV_MATCH_STRING,
 		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_svoFoundString, 
-		SVOCVFoundStringGuid,
+		SvPb::OCVFoundStringEId,
 		IDS_OBJECTNAME_OCV_FOUND_STRING,
 		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_bvoPerformOCR,
-		SVOCVPerformOCRGuid,
+		SvPb::OCVPerformOCREId,
 		IDS_OBJECTNAME_OCV_PERFORM_OCR,
 		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_lvoMatchLineNumber,
-		SVOCVMatchLineNumberGuid,
+		SvPb::OCVMatchLineNumberEId,
 		IDS_OBJECTNAME_OCV_MATCH_LINE_NUMBER,
 		false, SvOi::SVResetItemNone );
 	
 	// Exposing OCV Match Scores
 	RegisterEmbeddedObject( 
 		&m_dvoHighestMatchScore,
-		SVOCVHighestMatchScoreGuid,
+		SvPb::OCVHighestMatchScoreEId,
 		IDS_OBJECTNAME_OCV_HIGHEST_MATCH_SCORE,
 		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_dvoLowestMatchScore,
-		SVOCVLowestMatchScoreGuid,
+		SvPb::OCVLowestMatchScoreEId,
 		IDS_OBJECTNAME_OCV_LOWEST_MATCH_SCORE,
 		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_dvoAverageMatchScore,
-		SVOCVAverageMatchScoreGuid,
+		SvPb::OCVAverageMatchScoreEId,
 		IDS_OBJECTNAME_OCV_AVERAGE_MATCH_SCORE,
 		false, SvOi::SVResetItemNone );
 	
 	// OCV File Names
 	RegisterEmbeddedObject( 
 		&m_fnvoFontFileName,
-		SVOCVFontFileNameGuid,
+		SvPb::OCVFontFileNameEId,
 		IDS_OBJECTNAME_OCV_FONT_FILE_NAME,
 		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject( 
 		&m_fnvoConstraintsFileName,
-		SVOCVConstraintsFileNameGuid,
+		SvPb::OCVConstraintsFileNameEId,
 		IDS_OBJECTNAME_OCV_CONSTRAINTS_FILE_NAME,
 		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject( 
 		&m_fnvoControlsFileName,
-		SVOCVControlsFileNameGuid,
+		SvPb::OCVControlsFileNameEId,
 		IDS_OBJECTNAME_OCV_CONTROLS_FILE_NAME,
 		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject(
 		&m_fnvoMatchStringFileName,
-		SVOCVMatchStringFileNameGuid,
+		SvPb::OCVMatchStringFileNameEId,
 		IDS_OBJECTNAME_OCV_MATCH_STRING_FILE_NAME,
 		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject( 
 		&m_bvoUseMatchFile,
-		SVOCVUseMatchFileGuid,
+		SvPb::OCVUseMatchFileEId,
 		IDS_OBJECTNAME_OCV_USE_MATCH_FILE,
 		false, SvOi::SVResetItemOwner );
 	

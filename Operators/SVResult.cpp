@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVResult.h"
 #include "SVRange.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
@@ -55,12 +54,12 @@ void SVResultClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_Passed.SetDefaultValue(BOOL(false), true);		// Default for Passed is FALSE !!!
@@ -125,7 +124,7 @@ bool SVResultClass::IsGood()
 SVRangeClass* SVResultClass::GetResultRange()
 {
 	SvDef::SVObjectTypeInfoStruct info;
-	info.ObjectType = SvPb::SVRangeObjectType;
+	info.m_ObjectType = SvPb::SVRangeObjectType;
 	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(getFirstObject(info));
 	return pRange;
 }

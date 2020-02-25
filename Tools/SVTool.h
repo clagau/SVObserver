@@ -133,8 +133,8 @@ public:
 
 	/// Search an object with the embeddedId and add it to the ParameterList for the needed in monitor list.
 	/// \param retList [in,out] The ParameterList
-	/// \param rEmbeddedId [in] The EmbeddedId of the object
-	bool addEntryToMonitorList(SvOi::ParametersForML &retList, const SVGUID& rEmbeddedId) const;
+	/// \param embeddedId [in] The EmbeddedId of the object
+	bool addEntryToMonitorList(SvOi::ParametersForML &retList, SvPb::EmbeddedIdEnum embeddedID) const;
 
 	SVToolExtentClass& getToolExtent() {return m_toolExtent;}
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SvIe::SVImageClass* p_svToolImage);

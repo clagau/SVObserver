@@ -11,7 +11,6 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVConditional.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
@@ -42,8 +41,8 @@ LoopTool::~LoopTool()
 void LoopTool::Initialize()
 {
 	m_canResizeToParent = false;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::LoopToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::LoopToolObjectType;
 	removeEmbeddedExtents();
 	BuildEmbeddedObjectList();
 }
@@ -61,12 +60,12 @@ bool LoopTool::RemoveTool(SVToolClass *pTool)
 
 void LoopTool::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_MaxLoops, MaxLoopsGuid, IDS_OBJECTNAME_LOOPTOOL_MAXLOOPS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MaxLoops, SvPb::MaxLoopsEId, IDS_OBJECTNAME_LOOPTOOL_MAXLOOPS, false, SvOi::SVResetItemNone);
 	m_MaxLoops.SetDefaultValue(DefaultMaxLoops);
-	RegisterEmbeddedObject(&m_LoopCounter, LoopCounterGuid, IDS_OBJECTNAME_LOOPTOOL_LOOPCOUNTER, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LoopCounter, SvPb::LoopCounterEId, IDS_OBJECTNAME_LOOPTOOL_LOOPCOUNTER, false, SvOi::SVResetItemNone);
 	m_LoopCounter.SetDefaultValue(0);
 
-	RegisterEmbeddedObject(&m_LinkedLoops, LinkedLoopsGuid, IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedLoops, SvPb::LinkedLoopsEId, IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS, false, SvOi::SVResetItemNone);
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = VT_I4;
@@ -75,12 +74,12 @@ void LoopTool::BuildEmbeddedObjectList()
 
 	std::string ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS);
 	ObjectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_LinkedLoops.getLinkedName(), LinkedLoops_LinkedGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedLoops.getLinkedName(), SvPb::LinkedLoops_LinkedEId, ObjectName.c_str(), false, SvOi::SVResetItemNone);
 	m_LinkedLoops.getLinkedName().SetDefaultValue(_T(""), false);
 
 
 
-	RegisterEmbeddedObject(&m_LinkedBreak, LoopBreakGuid, IDS_OBJECTNAME_LOOPTOOL_BREAK, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedBreak, SvPb::LoopBreakEId, IDS_OBJECTNAME_LOOPTOOL_BREAK, false, SvOi::SVResetItemNone);
 	::VariantInit(&vtTemp);
 	vtTemp.vt = VT_I4;
 	vtTemp.lVal = DefaultLinkedBreak;
@@ -88,7 +87,7 @@ void LoopTool::BuildEmbeddedObjectList()
 
 	ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_LOOPTOOL_BREAK);
 	ObjectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_LinkedBreak.getLinkedName(), LoopBreak_LinkedGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedBreak.getLinkedName(), SvPb::LoopBreak_LinkedEId, ObjectName.c_str(), false, SvOi::SVResetItemNone);
 	m_LinkedBreak.getLinkedName().SetDefaultValue(_T(""), false);
 
 

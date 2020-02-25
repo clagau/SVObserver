@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogCommentPage.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -45,7 +44,7 @@ namespace SvOg
 
 		m_Values.Init();
 
-		m_strComment = m_Values.Get<CString>(SVToolCommentTypeObjectGuid);
+		m_strComment = m_Values.Get<CString>(SvPb::ToolCommentTypeEId);
 
 		UpdateData(false);
 
@@ -59,7 +58,7 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_Values.Set<CString>(SVToolCommentTypeObjectGuid, m_strComment);
+		m_Values.Set<CString>(SvPb::ToolCommentTypeEId, m_strComment);
 		m_Values.Commit();
 
 		return Result;

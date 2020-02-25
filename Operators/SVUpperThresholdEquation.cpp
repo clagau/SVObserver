@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUpperThresholdEquation.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
@@ -45,15 +44,15 @@ SVUpperThresholdEquationClass::SVUpperThresholdEquationClass( SVObjectClass* POw
 void SVUpperThresholdEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvPb::SVUpperThresholdEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVUpperThresholdEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SVUpperThresholdEquationResultObjectGuid, IDS_OBJECTNAME_UPPER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &result, SvPb::UpperThresholdEquationResultEId, IDS_OBJECTNAME_UPPER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0, true );

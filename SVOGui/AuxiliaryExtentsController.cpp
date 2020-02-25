@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "Stdafx.h"
 #include "AuxiliaryExtentsController.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #pragma endregion Includes
@@ -58,12 +57,12 @@ HRESULT AuxiliaryExtentsController::Commit()
 
 bool AuxiliaryExtentsController::IsUpdateAuxExtentsEnabled() const
 {
-	return m_Values.Get<bool>(SVUpdateAuxiliaryExtentsObjectGuid);
+	return m_Values.Get<bool>(SvPb::UpdateAuxiliaryExtentsEId);
 }
 
 void AuxiliaryExtentsController::EnableAuxExtents(bool bEnable)
 {
-	m_Values.Set<bool>(SVUpdateAuxiliaryExtentsObjectGuid, bEnable);
+	m_Values.Set<bool>(SvPb::UpdateAuxiliaryExtentsEId, bEnable);
 }
 
 const SvUl::NameGuidList& AuxiliaryExtentsController::GetAvailableImageList() const
@@ -100,7 +99,7 @@ class ByName
 {
 	std::string m_name;
 public:
-	ByName(const std::string& rName) : m_name(rName) {}
+	explicit ByName(const std::string& rName) : m_name(rName) {}
 	bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
 };
 

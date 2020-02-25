@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "SVRankingFilterDlg.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -24,28 +23,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static const std::vector<GUID> CellValueGuidList
-	{
-		SVRankingFilterCell01Guid, SVRankingFilterCell02Guid, SVRankingFilterCell03Guid, SVRankingFilterCell04Guid, SVRankingFilterCell05Guid,
-		SVRankingFilterCell06Guid, SVRankingFilterCell07Guid, SVRankingFilterCell08Guid, SVRankingFilterCell09Guid, SVRankingFilterCell10Guid,
-		SVRankingFilterCell11Guid, SVRankingFilterCell12Guid, SVRankingFilterCell13Guid, SVRankingFilterCell14Guid, SVRankingFilterCell15Guid,
-		SVRankingFilterCell16Guid, SVRankingFilterCell17Guid, SVRankingFilterCell18Guid, SVRankingFilterCell19Guid, SVRankingFilterCell20Guid,
-		SVRankingFilterCell21Guid, SVRankingFilterCell22Guid, SVRankingFilterCell23Guid, SVRankingFilterCell24Guid, SVRankingFilterCell25Guid,
-		SVRankingFilterCell26Guid, SVRankingFilterCell27Guid, SVRankingFilterCell28Guid, SVRankingFilterCell29Guid, SVRankingFilterCell30Guid,
-		SVRankingFilterCell31Guid, SVRankingFilterCell32Guid, SVRankingFilterCell33Guid, SVRankingFilterCell34Guid, SVRankingFilterCell35Guid,
-		SVRankingFilterCell36Guid, SVRankingFilterCell37Guid, SVRankingFilterCell38Guid, SVRankingFilterCell39Guid, SVRankingFilterCell40Guid,
-		SVRankingFilterCell41Guid, SVRankingFilterCell42Guid, SVRankingFilterCell43Guid, SVRankingFilterCell44Guid, SVRankingFilterCell45Guid,
-		SVRankingFilterCell46Guid, SVRankingFilterCell47Guid, SVRankingFilterCell48Guid, SVRankingFilterCell49Guid
-	};
-
 	SVRankingFilterDlg::SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
 		,m_filterID(rFilterID)
 		,m_rInspectionID(rInspectionID)
 		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
 	{
 		//{{AFX_DATA_INIT(SVRankingFilterDlg)
-		m_lRankingWidth = 3;
-		m_lRankingHeight = 3;
 		//}}AFX_DATA_INIT
 		for( long l = 0; l < 49; l++ )
 		{
@@ -64,9 +47,9 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<long>(SVRankingFilterRankingWidthGuid, m_lRankingWidth);
-		m_Values.Set<long>(SVRankingFilterRankingHeightGuid, m_lRankingHeight);
-		m_Values.Set<long>(SVRankingFilterRankingRankGuid, m_lRankingRank);
+		m_Values.Set<long>(SvPb::FilterKernelWidthEId, m_lRankingWidth);
+		m_Values.Set<long>(SvPb::FilterKernelHeightEId, m_lRankingHeight);
+		m_Values.Set<long>(SvPb::RankingFilterRankingRankEId, m_lRankingRank);
 
 		for( long j = 0; S_OK == l_hrOk && j < m_lRankingWidth; j++ )
 		{
@@ -75,7 +58,7 @@ namespace SvOg
 				long l_lKernelIndex = k * m_lRankingWidth + j;
 				long l_lDialogIndex = ( k + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( j + ( ( 7 - m_lRankingWidth ) / 2 ) );
 
-				m_Values.Set<long>( CellValueGuidList[l_lKernelIndex], m_lRankingCells[ l_lDialogIndex ] );
+				m_Values.Set<long>(SvPb::FilterCellEId + l_lKernelIndex, m_lRankingCells[ l_lDialogIndex ] );
 			}// end for
 		}// end for
 
@@ -123,15 +106,15 @@ namespace SvOg
 		
 		m_Values.Init();
 		
-		m_lRankingWidth = m_Values.Get<long>(SVRankingFilterRankingWidthGuid);
+		m_lRankingWidth = m_Values.Get<long>(SvPb::FilterKernelWidthEId);
 		Temp = SvUl::Format( "%d", m_lRankingWidth );
 		m_ctlRankingWidth.SelectString( -1, Temp.c_str() );
 
-		m_lRankingHeight = m_Values.Get<long>(SVRankingFilterRankingHeightGuid);
+		m_lRankingHeight = m_Values.Get<long>(SvPb::FilterKernelHeightEId);
 		Temp = SvUl::Format( "%d", m_lRankingHeight );
 		m_ctlRankingHeight.SelectString( -1, Temp.c_str() );
 
-		m_lRankingRank = m_Values.Get<long>(SVRankingFilterRankingRankGuid);
+		m_lRankingRank = m_Values.Get<long>(SvPb::RankingFilterRankingRankEId);
 		m_ctlRankingRank.SetCurSel(m_lRankingRank);
 
 		EnableCells();
@@ -142,7 +125,7 @@ namespace SvOg
 			{
 				long l_lKernelIndex = i * m_lRankingWidth + h;
 				long l_lDialogIndex = ( i + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( h + ( ( 7 - m_lRankingWidth ) / 2 ) );
-				long lValue = m_Values.Get<long>(CellValueGuidList[l_lKernelIndex]);
+				long lValue = m_Values.Get<long>(SvPb::FilterCellEId + l_lKernelIndex);
 				m_lRankingCells[ l_lDialogIndex ] = ( lValue == 1 ? 1 : 0 );
 			}// end for
 		}// end for

@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "EQAdjustSizeHeight.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -25,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( EQAdjustSizeHeight, SvPb::EQAdjustSizeHeightClassId);
 
 EQAdjustSizeHeight::EQAdjustSizeHeight( SVObjectClass* POwner, int StringResourceID )
-: EQAdjustSize(SvPb::EQSizeHeightType, EQAdjustSizeHeightResultGuid, POwner, StringResourceID )
+: EQAdjustSize(SvPb::EQSizeHeightType, SvPb::EQAdjustSizeHeightResultEId, POwner, StringResourceID )
 {
 }
 

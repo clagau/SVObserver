@@ -19,7 +19,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVLibrary\SVOINIClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
@@ -118,7 +117,7 @@ SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalTool
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID), ISVCancel()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVExternalToolTaskObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVExternalToolTaskObjectType;
 
 	size_t i;
 
@@ -139,21 +138,21 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		RegisterInputObject(&m_Data.m_aInputImageInfo[i], l_Name);
 	}
 
-	RegisterEmbeddedObject(&m_Data.m_voDllPath, SVDllFileNameGuid, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool);
 
 	// Initialize Dll Dependencies 
 	m_Data.m_aDllDependencies.resize(SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES);
 	for (i = 0; i < m_Data.m_aDllDependencies.size(); i++)
 	{
-		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], aSVDllDependencyFileNameGuid[i], IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
+		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], SvPb::DllDependencyFileNameEId+i, IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
 	}
 
 	// init Tool Name
-	RegisterEmbeddedObject(&m_Data.m_voToolName, SVDllToolNameGuid, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Data.m_voToolName, SvPb::DllToolNameEId, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone);
 	m_Data.m_voToolName.setSaveValueFlag(false);
 
 	// Init Tool Version
-	RegisterEmbeddedObject(&m_Data.m_voToolVersion, SVDllToolVersionGuid, IDS_OBJECTNAME_DLL_TOOL_VERSION, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Data.m_voToolVersion, SvPb::DllToolVersionEId, IDS_OBJECTNAME_DLL_TOOL_VERSION, false, SvOi::SVResetItemNone);
 	m_Data.m_voToolVersion.setSaveValueFlag(false);
 
 	// Init Input Object Info array
@@ -162,10 +161,10 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 
 	for (i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
-		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i], aInputObjectGUID[i], IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
+		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i], SvPb::ExternalInputEId+i, IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
 		std::string ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i));
 		ObjectName += SvDef::cLinkName;
-		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i].getLinkedName(), aInputObject_LinkedGUID[i], ObjectName.c_str(), false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i].getLinkedName(), SvPb::ExternalInputLinkedEId+i, ObjectName.c_str(), false, SvOi::SVResetItemNone);
 
 
 
@@ -185,7 +184,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	{
 		SVImageInfoClass imageInfo;
 
-		RegisterEmbeddedObject(&m_aResultImages[i], aSVVariantResultImageObjectGuid[i], l_pImageNames[i]);
+		RegisterEmbeddedObject(&m_aResultImages[i], SvPb::OutputImageEId+i, l_pImageNames[i]);
 
 		if (nullptr != GetTool())
 		{
@@ -210,7 +209,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	for (i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		// Register
-		RegisterEmbeddedObject(&m_Data.m_aResultObjects[i], aSVVariantResultObjectGuid[i], IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i), false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_Data.m_aResultObjects[i], SvPb::ExternalResultEId+i, IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i), false, SvOi::SVResetItemNone);
 
 		// Defaults
 		VARIANT vtTemp;
@@ -333,7 +332,7 @@ void SVExternalToolTask::CreateArrayInTable()
 				break;
 			}
 
-			pTab->updateOrCreateColumn(TableColumnValueObjectGuid[i], Columnames[i], nRows);
+			pTab->updateOrCreateColumn(SvPb::TableColumnValueEId+i, Columnames[i], nRows);
 		}
 		SvVol::ValueObjectSortContainer resultTableSortContainer;
 		resultTableSortContainer.resize(nRows);
@@ -473,9 +472,9 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 			if (nullptr != pResult)
 			{
 				SvDef::SVObjectTypeInfoStruct info;
-				info.ObjectType = SvPb::SVValueObjectType;
-				info.SubType = SvPb::SVVariantValueObjectType;
-				info.EmbeddedID = SVValueObjectGuid;
+				info.m_ObjectType = SvPb::SVValueObjectType;
+				info.m_SubType = SvPb::SVVariantValueObjectType;
+				info.m_EmbeddedID = SvPb::ValueEId;
 				SvVol::SVVariantValueObjectClass* pValue = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pResult->getFirstObject(info));
 
 				if (nullptr != pValue)
@@ -869,12 +868,12 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 					//! Check is Feature already in embedded list	
 					SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [i](const SVObjectPtrVector::value_type pEntry)->bool
 					{
-						return (pEntry->GetEmbeddedID() == aSVVariantResultImageObjectGuid[i]);
+						return (pEntry->GetEmbeddedID() == SvPb::OutputImageEId+i);
 					}
 					);
 					if (m_embeddedList.end() == Iter)
 					{
-						RegisterEmbeddedObject(pImage, aSVVariantResultImageObjectGuid[i], l_pImageNames[i]);
+						RegisterEmbeddedObject(pImage, SvPb::OutputImageEId+i, l_pImageNames[i]);
 					}
 
 					// get image info
@@ -1425,11 +1424,11 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 		// Setup the result
 
 		// Declare Input Interface of Result...
-		interfaceInfo.EmbeddedID = m_Data.m_aResultObjects[iIndex].GetEmbeddedID();
+		interfaceInfo.m_EmbeddedID = m_Data.m_aResultObjects[iIndex].GetEmbeddedID();
 		resultClassInfo.m_DesiredInputVector.push_back(interfaceInfo);
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultVariantObjectType;
+		resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultVariantObjectType;
 		resultClassInfo.m_ClassId = SvPb::VariantResultClassId;
 		resultClassInfo.m_ClassName = _T("Range");
 		std::string strTitle = m_Data.m_aResultObjects[iIndex].GetName();
@@ -1446,9 +1445,9 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 		Add(pResult);
 
 		SvDef::SVObjectTypeInfoStruct info;
-		info.ObjectType = SvPb::SVValueObjectType;
-		info.SubType = SvPb::SVVariantValueObjectType;
-		info.EmbeddedID = SVValueObjectGuid;
+		info.m_ObjectType = SvPb::SVValueObjectType;
+		info.m_SubType = SvPb::SVVariantValueObjectType;
+		info.m_EmbeddedID = SvPb::ValueEId;
 
 		SvVol::SVVariantValueObjectClass* pValue = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pResult->getFirstObject(info));
 
@@ -1750,7 +1749,7 @@ bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObje
 					SvOi::IInspectionProcess* pInspectionInterface = GetInspectionInterface();
 					SvOi::IObjectClass* pInspection = dynamic_cast<SvOi::IObjectClass*> (pInspectionInterface);
 					SvDef::SVObjectTypeInfoStruct imageObjectInfo;
-					imageObjectInfo.ObjectType = SvPb::SVImageObjectType;
+					imageObjectInfo.m_ObjectType = SvPb::SVImageObjectType;
 					SvIe::SVImageClass* pToolSetImage = (nullptr != pInspection) ? dynamic_cast <SvIe::SVImageClass*> (pInspection->getFirstObject(imageObjectInfo)) : nullptr;
 
 					rInfo.SetInputObject(pToolSetImage);

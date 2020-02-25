@@ -402,7 +402,7 @@ SVInspectionProcess::SVInspectionProcess(SVObjectClass* POwner, int StringResour
 void SVInspectionProcess::Init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVInspectionObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInspectionObjectType;
 	m_LastRunProductNULL = false;
 	m_pCurrentToolset = nullptr;
 	m_PPQId.clear();
@@ -2952,7 +2952,7 @@ HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)
 	SvOi::IValueObject* pValueObject(nullptr);
 
 	//! Object is an Image
-	if (SvPb::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
+	if (SvPb::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.m_ObjectType)
 	{
 		SvIe::SVCameraImageTemplate* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pObject);
 
@@ -2979,7 +2979,7 @@ HRESULT SVInspectionProcess::UnregisterSubObject(SVObjectClass* pObject)
 	SvOi::IValueObject* pValueObject(nullptr);
 
 	//! Object is an Image
-	if (SvPb::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.ObjectType)
+	if (SvPb::SVImageObjectType == pObject->GetObjectInfo().m_ObjectTypeInfo.m_ObjectType)
 	{
 		SvIe::SVCameraImageTemplate* pCameraImage = dynamic_cast<SvIe::SVCameraImageTemplate*>(pObject);
 
@@ -3046,7 +3046,7 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass
 
 	// Specify that we are looking only for images
 	SvDef::SVObjectTypeInfoStruct imageObjectInfo;
-	imageObjectInfo.ObjectType = SvPb::SVImageObjectType;
+	imageObjectInfo.m_ObjectType = SvPb::SVImageObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor(imageObjectInfo);
 

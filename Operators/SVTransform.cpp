@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVTransform.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary/SVClsIds.h"
 
 namespace SvOp
 {
@@ -31,43 +30,43 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVTransformObjectType;
 
 	// Identify our input type needs...
 	// Translation X
-	m_inputTranslationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateTranslationXResultObjectGuid);
+	m_inputTranslationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);
 	m_inputTranslationXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputTranslationXResult, _T( "TransformTranslationXResult" ) );
 
 	// Translation Y
-	m_inputTranslationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateTranslationYResultObjectGuid);
+	m_inputTranslationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationYResultEId);
 	m_inputTranslationYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputTranslationYResult, _T( "TransformTranslationYResult" ) );
 
 	// Rotation X
-	m_inputRotationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateRotationXResultObjectGuid);
+	m_inputRotationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationXResultEId);
 	m_inputRotationXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputRotationXResult, _T( "TransformRotationXResult" ) );
 
 	// Rotation Y
-	m_inputRotationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateRotationYResultObjectGuid);
+	m_inputRotationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationYResultEId);
 	m_inputRotationYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputRotationYResult, _T( "TransformRotationYResult" ) );
 
 	// Rotation Angle
-	m_inputRotationAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVOutputEvaluateRotationAngleResultObjectGuid);
+	m_inputRotationAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationAngleResultEId);
 	m_inputRotationAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputRotationAngleResult, _T( "TransformRotationAngleResult" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_performTranslation, SVPerformTranslationObjectGuid, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_performRotation, SVPerformRotationObjectGuid, IDS_OBJECTNAME_PERFORM_ROTATION, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_performTranslation, SvPb::PerformTranslationEId, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_performRotation, SvPb::PerformRotationEId, IDS_OBJECTNAME_PERFORM_ROTATION, false, SvOi::SVResetItemTool );
 
-	RegisterEmbeddedObject( &m_learnedTranslationX, SVLearnedTranslationXObjectGuid, IDS_OBJECTNAME_LEARNED_TRANSLATION_X, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedTranslationY, SVLearnedTranslationYObjectGuid, IDS_OBJECTNAME_LEARNED_TRANSLATION_Y, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedRotationX, SVLearnedRotationXObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_X, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedRotationY, SVLearnedRotationYObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_Y, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_learnedRotationAngle, SVLearnedRotationAngleObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_learnedTranslationX, SvPb::LearnedTranslationXEId, IDS_OBJECTNAME_LEARNED_TRANSLATION_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_learnedTranslationY, SvPb::LearnedTranslationYEId, IDS_OBJECTNAME_LEARNED_TRANSLATION_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_learnedRotationX, SvPb::LearnedRotationXEId, IDS_OBJECTNAME_LEARNED_ROTATION_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_learnedRotationY, SvPb::LearnedRotationYEId, IDS_OBJECTNAME_LEARNED_ROTATION_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_learnedRotationAngle, SvPb::LearnedRotationAngleEId, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
 
 	// Set Embedded defaults
 	m_performTranslation.SetDefaultValue( BOOL(false) );

@@ -48,9 +48,9 @@ public:
 	void removeNewColumn(const SvVol::DoubleSortValuePtr pColumn);
 
 	/// Change the embeddedId of a copy column to a new ID.
-	/// \param rOldId [in] Old embeddedID.
-	/// \param rNewId [in] New embeddedID.
-	void changeEmbeddedId(const SVGUID& rOldId, const SVGUID& rNewId);
+	/// \param oldId [in] Old embeddedID.
+	/// \param newId [in] New embeddedID.
+	void changeEmbeddedId(SvPb::EmbeddedIdEnum oldId, SvPb::EmbeddedIdEnum newId);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -77,9 +77,9 @@ private:
 	bool ResetNewColumns(int valueListPos, int arraySize, SvStl::MessageContainerVector * pErrorMessages);
 
 	/// Send to other tool which use this object a message that the embeddedID has changed.
-	/// \param oldEmbeddedGuid [in] old embedded ID.
-	/// \param newEmbeddedGuid [in] new embedded ID.
-	void sendChangedEmbeddedIDToUser(SVGUID oldEmbeddedGuid, SVGUID newEmbeddedGuid);
+	/// \param oldEmbeddedId [in] old embedded ID.
+	/// \param newEmbeddedId [in] new embedded ID.
+	void sendChangedEmbeddedIDToUser(SvPb::EmbeddedIdEnum oldEmbeddedId, SvPb::EmbeddedIdEnum newEmbeddedId);
 
 	/// Add a column to the new value list a the required position.
 	/// \param pos [in] Add position. If pos == -1, add it at the end.

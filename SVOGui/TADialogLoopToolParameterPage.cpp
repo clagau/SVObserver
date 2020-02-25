@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogLoopToolParameterPage.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
@@ -77,18 +76,18 @@ BOOL TADialogLoopToolParameterPage::OnInitDialog()
 
 	m_ButtonBreakConditionLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
 	m_Values.Init();
-	m_MaxLoopCount = m_Values.Get<long>(MaxLoopsGuid);
-	CString valueString = m_Values.Get<CString>(LinkedLoops_LinkedGuid);
+	m_MaxLoopCount = m_Values.Get<long>(SvPb::MaxLoopsEId);
+	CString valueString = m_Values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
 	if (valueString.IsEmpty())
 	{
-		valueString = m_Values.Get<CString>(LinkedLoopsGuid);
+		valueString = m_Values.Get<CString>(SvPb::LinkedLoopsEId);
 	}
 	m_EditLoopsValue.SetWindowText(valueString.GetString());
 
-	valueString = m_Values.Get<CString>(LoopBreak_LinkedGuid);
+	valueString = m_Values.Get<CString>(SvPb::LoopBreak_LinkedEId);
 	if (valueString.IsEmpty())
 	{
-		valueString = m_Values.Get<CString>(LoopBreakGuid);
+		valueString = m_Values.Get<CString>(SvPb::LoopBreakEId);
 	}
 	m_EditBreakCondition.SetWindowText(valueString.GetString());
 	UpdateData(FALSE);
@@ -116,28 +115,28 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 	{
 		CString Value;
 		m_EditLoopsValue.GetWindowText(Value);
-		m_Values.Set<CString>(LinkedLoopsGuid, Value);
-		m_Values.Set<long>(MaxLoopsGuid, m_MaxLoopCount);
+		m_Values.Set<CString>(SvPb::LinkedLoopsEId, Value);
+		m_Values.Set<long>(SvPb::MaxLoopsEId, m_MaxLoopCount);
 
 		m_EditBreakCondition.GetWindowText(Value);
-		m_Values.Set<CString>(LoopBreakGuid, Value);
+		m_Values.Set<CString>(SvPb::LoopBreakEId, Value);
 
 		hResult = m_Values.Commit();
 		if (S_OK == hResult)
 		{
 			//m_Values.Init();
-			CString valueString = m_Values.Get<CString>(LinkedLoops_LinkedGuid);
+			CString valueString = m_Values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
 			if (valueString.IsEmpty())
 			{
-				long MaxLoopCount = m_Values.Get<long>(MaxLoopsGuid);
-				long LoopCount = m_Values.Get<long>(LinkedLoopsGuid);
+				long MaxLoopCount = m_Values.Get<long>(SvPb::MaxLoopsEId);
+				long LoopCount = m_Values.Get<long>(SvPb::LinkedLoopsEId);
 				if (LoopCount > MaxLoopCount)
 				{
 					SvDef::StringVector messageList;
-					std::string Value = m_Values.Get<CString>(MaxLoopsGuid);
-					messageList.push_back(Value);
-					Value = m_Values.Get<CString>(LinkedLoopsGuid);
-					messageList.push_back(Value);
+					std::string valueString = m_Values.Get<CString>(SvPb::MaxLoopsEId);
+					messageList.push_back(valueString);
+					valueString = m_Values.Get<CString>(SvPb::LinkedLoopsEId);
+					messageList.push_back(valueString);
 					
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0);

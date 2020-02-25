@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableExcludeAnalyzer.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -160,8 +159,8 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 void TableExcludeAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::TableAnalyzerExcludeType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerExcludeType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -170,7 +169,7 @@ void TableExcludeAnalyzer::Initialize()
 void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 {
 	//set excludeHigh-Value
-	RegisterEmbeddedObject( &m_excludeHigh, TableAnaylzerExcludeHighGuid, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_excludeHigh, SvPb::TableAnaylzerExcludeHighEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE, true, SvOi::SVResetItemTool );
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_Value;
@@ -179,18 +178,18 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 
 	std::string ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
 	ObjectName +=  SvDef::cLinkName;
-	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), TableAnaylzerExcludeHigh_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), SvPb::TableAnaylzerExcludeHigh_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_excludeHigh.getLinkedName().SetDefaultValue( _T(""), false );
 
 	//set excludeLow-Value
-	RegisterEmbeddedObject( &m_excludeLow, TableAnaylzerExcludeLowGuid, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_excludeLow, SvPb::TableAnaylzerExcludeLowEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SvOi::SVResetItemTool );
 	//vtTemp.vt = cVarType_Value;
 	vtTemp.dblVal = cDefaultLowValue;
 	m_excludeLow.SetDefaultValue( vtTemp, true );
 
 	ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
 	ObjectName +=  SvDef::cLinkName;
-	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), TableAnaylzerExcludeLow_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), SvPb::TableAnaylzerExcludeLow_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_excludeLow.getLinkedName().SetDefaultValue( _T(""), false );
 }
 

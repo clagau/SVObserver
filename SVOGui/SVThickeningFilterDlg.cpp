@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVThickeningFilterDlg.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -44,8 +43,8 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<bool>(SVThickeningFilterGrayOnGuid, m_bGrayScale ? true : false);
-		m_Values.Set<long>(SVThickeningFilterItterationsGuid, m_lIterations);
+		m_Values.Set<bool>(SvPb::ThickeningFilterGrayOnEId, m_bGrayScale ? true : false);
+		m_Values.Set<long>(SvPb::ThickeningFilterItterationsEId, m_lIterations);
 		m_Values.Commit();
 
 		UpdateData( FALSE );
@@ -75,8 +74,8 @@ namespace SvOg
 		CDialog::OnInitDialog();
 
 		m_Values.Init();
-		m_bGrayScale = m_Values.Get<bool>(SVThickeningFilterGrayOnGuid);
-		m_lIterations = m_Values.Get<long>(SVThickeningFilterItterationsGuid);
+		m_bGrayScale = m_Values.Get<bool>(SvPb::ThickeningFilterGrayOnEId);
+		m_lIterations = m_Values.Get<long>(SvPb::ThickeningFilterItterationsEId);
 
 		UpdateData( FALSE );
 

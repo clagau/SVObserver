@@ -19,7 +19,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVObjectLibrary\SVClsIds.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -51,24 +50,24 @@ void SVThresholdClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVThresholdObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThresholdObjectType;
 
 	// Register Embedded Object(s)
-	RegisterEmbeddedObject( &m_upperThresh, SVUpperThresholdObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_lowerThresh, SVLowerThresholdObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_threshActivate, SVThresholdActivateObjectGuid, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_upperThreshActivate, SVUpperThresholdActivateObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_lowerThreshActivate, SVLowerThresholdActivateObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_upperThresh, SvPb::UpperThresholdEId, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lowerThresh, SvPb::LowerThresholdEId, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_threshActivate, SvPb::ThresholdActivateEId, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_upperThreshActivate, SvPb::UpperThresholdActivateEId, IDS_OBJECTNAME_UPPERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lowerThreshActivate, SvPb::LowerThresholdActivateEId, IDS_OBJECTNAME_LOWERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_autoThreshold, SVAutoThresholdObjectGuid, IDS_OBJECTNAME_AUTOTHRESHOLD, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_blackBackground, SVBlackBackgroundObjectGuid, IDS_OBJECTNAME_BLACKBACKGROUND, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_autoThreshold, SvPb::AutoThresholdEId, IDS_OBJECTNAME_AUTOTHRESHOLD, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_blackBackground, SvPb::BlackBackgroundEId, IDS_OBJECTNAME_BLACKBACKGROUND, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_dAutoThresholdMultiplier, SVAutoThresholdMultiplierObjectGuid, IDS_OBJECTNAME_AUTOTHRESHOLDMULTIPLIER, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dAutoThresholdMultiplier, SvPb::AutoThresholdMultiplierEId, IDS_OBJECTNAME_AUTOTHRESHOLDMULTIPLIER, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_useExternalATM, SVUseExternalATMObjectGuid, IDS_OBJECTNAME_USE_EXTERN_ATM, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_useExternalLT, SVUseExternalLTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_LT, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_useExternalUT, SVUseExternalUTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalATM, SvPb::UseExternalATMEId, IDS_OBJECTNAME_USE_EXTERN_ATM, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalLT, SvPb::UseExternalLTEId, IDS_OBJECTNAME_USE_EXTERN_LT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalUT, SvPb::UseExternalUTEId, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner );
 
 	// Set Embedded defaults
 	m_upperThresh.SetDefaultValue( SvDef::cDefaultToolUpperThreshold );
@@ -102,15 +101,15 @@ void SVThresholdClass::init()
 
 	// Identify our input type needs...
 
-	m_inputUT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVUpperThresholdEquationResultObjectGuid);
+	m_inputUT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::UpperThresholdEquationResultEId);
 	m_inputUT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputUT, _T( "UpperThreshold" ) );
 
-	m_inputLT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLowerThresholdEquationResultObjectGuid);
+	m_inputLT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LowerThresholdEquationResultEId);
 	m_inputLT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLT, _T( "LowerThreshold" ) );
 
-	m_inputATM.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVAutoThresholdEquationResultObjectGuid);
+	m_inputATM.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::AutoThresholdEquationResultEId);
 	m_inputATM.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputATM, _T( "AutoThreshold" ) );
 

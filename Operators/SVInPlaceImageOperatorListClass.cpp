@@ -36,8 +36,8 @@ SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( SVObjectClass*
 void SVInPlaceImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SvPb::SVInPlaceImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVInPlaceImageOperatorListObjectType;
 
 	// Register Embedded Objects
 

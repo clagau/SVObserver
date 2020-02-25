@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "TableCopyObject.h"
 #include "Tools/SVTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectManager.h"
@@ -145,11 +144,11 @@ void TableCopyObject::removeNewColumn(const SvVol::DoubleSortValuePtr pColumn)
 	}
 }
 
-void TableCopyObject::changeEmbeddedId(const SVGUID& rOldId, const SVGUID& rNewId)
+void TableCopyObject::changeEmbeddedId(SvPb::EmbeddedIdEnum oldId, SvPb::EmbeddedIdEnum newId)
 {
-	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&rOldId](const SvVol::DoubleSortValuePtr& entry)->bool
+	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&oldId](const SvVol::DoubleSortValuePtr& entry)->bool
 	{
-		return (nullptr != entry.get() && entry->GetEmbeddedID() == rOldId);
+		return (nullptr != entry.get() && entry->GetEmbeddedID() == oldId);
 	});
 	if (m_ValueList.end() != valueIter)
 	{
@@ -165,24 +164,24 @@ void TableCopyObject::changeEmbeddedId(const SVGUID& rOldId, const SVGUID& rNewI
 			}
 
 			//check if newColumn use this embedded ID
-			newIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&rNewId](const SvVol::DoubleSortValuePtr& entry)->bool
+			newIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&newId](const SvVol::DoubleSortValuePtr& entry)->bool
 			{
-				return (nullptr != entry.get() && entry->GetEmbeddedID() == rNewId);
+				return (nullptr != entry.get() && entry->GetEmbeddedID() == newId);
 			});
 			if (m_ValueList.end() != newIter)
 			{	//if new embedded Id already used by a new column object, remove it from the embedded and the valueList. It will be reentered by OnReset.
-				SVObjectPtrVector::iterator Iter = find(m_embeddedList.begin(), m_embeddedList.end(), newIter->get());
-				if (m_embeddedList.end() != Iter)
+				SVObjectPtrVector::iterator emListIter = find(m_embeddedList.begin(), m_embeddedList.end(), newIter->get());
+				if (m_embeddedList.end() != emListIter)
 				{
-					m_embeddedList.erase(Iter);
+					m_embeddedList.erase(emListIter);
 				}
 				m_ValueList.erase(newIter);
 			}
 
 			std::string  name = valueIter->get()->GetName();
-			RegisterEmbeddedObject(valueIter->get(), rNewId, valueIter->get()->GetObjectName(), true, SvOi::SVResetItemTool);
+			RegisterEmbeddedObject(valueIter->get(), newId, valueIter->get()->GetObjectName(), true, SvOi::SVResetItemTool);
 			valueIter->get()->SetName(name.c_str());
-			sendChangedEmbeddedIDToUser(rOldId, rNewId);
+			sendChangedEmbeddedIDToUser(oldId, newId);
 		}
 	}
 }
@@ -265,8 +264,8 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 void TableCopyObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::TableCopyObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableCopyObjectType;
 }
 
 void TableCopyObject::RemoveUnusedColumn()
@@ -335,13 +334,13 @@ int TableCopyObject::ResetCopyColumn()
 				MoveValueColumn(static_cast<int>(m_ValueList.size() - 1), valueListPos);
 
 				//create new embeddedID for newColumn and register it.
-				SVGUID newEmbeddedGuid = getNextFreeEmbeddedColumGUID();
-				if (GUID_NULL != newEmbeddedGuid)
+				SvPb::EmbeddedIdEnum newEmbeddedId = getNextFreeEmbeddedColumGUID();
+				if (SvPb::NoEmbeddedId != newEmbeddedId)
 				{
 					std::string  name = newColumnIter->get()->GetName();
-					RegisterEmbeddedObject(newColumnIter->get(), newEmbeddedGuid, newColumnIter->get()->GetObjectName(), true, SvOi::SVResetItemTool);
+					RegisterEmbeddedObject(newColumnIter->get(), newEmbeddedId, newColumnIter->get()->GetObjectName(), true, SvOi::SVResetItemTool);
 					newColumnIter->get()->SetName(name.c_str());
-					sendChangedEmbeddedIDToUser(pSourceColumn->GetEmbeddedID(), newEmbeddedGuid);
+					sendChangedEmbeddedIDToUser(pSourceColumn->GetEmbeddedID(), newEmbeddedId);
 				}
 				else
 				{
@@ -398,9 +397,9 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 		}
 		else
 		{
-			SVGUID embeddedGuid = getNextFreeEmbeddedColumGUID();
+			SvPb::EmbeddedIdEnum embeddedId = getNextFreeEmbeddedColumGUID();
 			std::string name = pNewColumn.get()->GetName();
-			RegisterEmbeddedObject(pNewColumn.get(), embeddedGuid, pNewColumn.get()->GetObjectName(), true, SvOi::SVResetItemTool);
+			RegisterEmbeddedObject(pNewColumn.get(), embeddedId, pNewColumn.get()->GetObjectName(), true, SvOi::SVResetItemTool);
 			pNewColumn.get()->SetName(name.c_str());
 			m_ValueList.push_back(pNewColumn);
 			//move object from last position to wanted
@@ -410,7 +409,7 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 	return retValue;
 }
 
-void TableCopyObject::sendChangedEmbeddedIDToUser(SVGUID oldEmbeddedGuid, SVGUID newEmbeddedGuid)
+void TableCopyObject::sendChangedEmbeddedIDToUser(SvPb::EmbeddedIdEnum oldEmbeddedId, SvPb::EmbeddedIdEnum newEmbeddedId)
 {
 	SVGuidSet dependencyList;
 	SVGuidSet SourceSet;
@@ -421,7 +420,7 @@ void TableCopyObject::sendChangedEmbeddedIDToUser(SVGUID oldEmbeddedGuid, SVGUID
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SvOi::getObject(rGuid));
 		if(nullptr != pTool)
 		{
-			pTool->OnEmbeddedIDChanged(this, oldEmbeddedGuid, newEmbeddedGuid);
+			pTool->OnEmbeddedIDChanged(this, oldEmbeddedId, newEmbeddedId);
 		}
 	}
 }

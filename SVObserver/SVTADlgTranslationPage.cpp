@@ -59,20 +59,20 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
+		evaluateObjectInfo.m_ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateTranslationXObjectType;
 		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateTranslationYObjectType;
 		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvPb::SVTransformObjectType;
-		objectInfo.SubType = SvPb::SVImageTransformObjectType;
+		objectInfo.m_ObjectType = SvPb::SVTransformObjectType;
+		objectInfo.m_SubType = SvPb::SVImageTransformObjectType;
 
 		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
 		if (nullptr != pImageTransform)
@@ -80,9 +80,9 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 			m_Values.SetTaskID(pImageTransform->GetUniqueObjectID());
 			m_Values.Init();
 
-			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SVOutputInterpolationModeObjectGuid);
+			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 			m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
-			long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
+			long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 			m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 		}
 	}
@@ -90,7 +90,7 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 	// Check...
 	if( nullptr != m_pEvaluateTranslationX && nullptr != m_pEvaluateTranslationY)
 	{
-		m_performTranslation = m_Values.Get<bool>(SVPerformTranslationObjectGuid);
+		m_performTranslation = m_Values.Get<bool>(SvPb::PerformTranslationEId);
 		UpdateData(false);
 		refresh();
 	}
@@ -112,7 +112,7 @@ void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* p
 
 BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 {
-	long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
+	long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 	m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 
 	return CPropertyPage::OnSetActive();
@@ -163,13 +163,13 @@ void SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 {
 	UpdateData( true ); // get data from dialog
 
-	m_Values.Set<bool>(SVPerformTranslationObjectGuid, m_performTranslation ? true : false);
+	m_Values.Set<bool>(SvPb::PerformTranslationEId, m_performTranslation ? true : false);
 
 	int CurrentSelection = m_cbInterpolation.GetCurSel();
 	if(0 <= CurrentSelection)
 	{
 		long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
-		m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
+		m_Values.Set<long>(SvPb::OutputInterpolationModeEId, lValue);
 	}
 	 m_Values.Commit();
 }

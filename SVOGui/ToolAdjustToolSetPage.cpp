@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ToolAdjustToolSetPage.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
@@ -48,7 +47,7 @@ HRESULT ToolAdjustToolSetPage::SetInspectionData()
 	UpdateData(true); // get data from dialog
 
 	//We need to set the main LinkedValue object
-	m_Values.Set<CString>(InspectedObjectIDGuid, m_InspectedObjectID);
+	m_Values.Set<CString>(SvPb::InspectedObjectIDEId, m_InspectedObjectID);
 	m_Values.Commit();
 
 	return Result;
@@ -70,7 +69,7 @@ BOOL ToolAdjustToolSetPage::OnInitDialog()
 	m_Values.Init();
 
 	//We need to get the linked Guid to get the dotted name
-	m_InspectedObjectID = m_Values.Get<CString>(InspectedObjectIDLinkGuid);
+	m_InspectedObjectID = m_Values.Get<CString>(SvPb::InspectedObjectIDLinkEId);
 
 	UpdateData(false);
 

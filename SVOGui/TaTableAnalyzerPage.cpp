@@ -14,7 +14,6 @@
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "FormulaController.h"
@@ -345,7 +344,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 		switch (m_selectedSubType)
 		{
 			case SvPb::TableAnalyzerSortType:
-				m_pValues->Set<bool>(TableAnaylzerSortIsASCGuid, 0 == m_SortDirection);
+				m_pValues->Set<bool>(SvPb::TableAnaylzerSortIsASCEId, 0 == m_SortDirection);
 				hrOk = m_pValues->Commit();
 				errorMessageList = m_pValues->getFailedMessageList();
 				break;
@@ -353,9 +352,9 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 			{
 				CString Value;
 				m_EditExcludeHigh.GetWindowText(Value);
-				m_pValues->Set<CString>(TableAnaylzerExcludeHighGuid, Value);
+				m_pValues->Set<CString>(SvPb::TableAnaylzerExcludeHighEId, Value);
 				m_EditExcludeLow.GetWindowText(Value);
-				m_pValues->Set<CString>(TableAnaylzerExcludeLowGuid, Value);
+				m_pValues->Set<CString>(SvPb::TableAnaylzerExcludeLowEId, Value);
 				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
@@ -364,7 +363,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 			{
 				CString Value;
 				m_EditLimitValue.GetWindowText(Value);
-				m_pValues->Set<CString>(TableAnaylzerLimitValueGuid, Value);
+				m_pValues->Set<CString>(SvPb::TableAnaylzerLimitValueEId, Value);
 				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
@@ -508,7 +507,7 @@ void TaTableAnalyzerPage::setSortProperties()
 		m_pValues->Init();
 	}
 
-	m_SortDirection = m_pValues->Get<bool>(TableAnaylzerSortIsASCGuid) ? 0 : 1;
+	m_SortDirection = m_pValues->Get<bool>(SvPb::TableAnaylzerSortIsASCEId) ? 0 : 1;
 	UpdateData(FALSE);
 }
 
@@ -523,16 +522,16 @@ void TaTableAnalyzerPage::setExcludeProperties()
 		m_pValues->Init();
 	}
 
-	std::string highString = m_pValues->Get<CString>(TableAnaylzerExcludeHigh_LinkGuid);
+	std::string highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHigh_LinkEId);
 	if (highString.empty())
 	{
-		highString = m_pValues->Get<CString>(TableAnaylzerExcludeHighGuid);
+		highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHighEId);
 	}
 	m_EditExcludeHigh.SetWindowText(highString.c_str());
-	std::string lowString = m_pValues->Get<CString>(TableAnaylzerExcludeLow_LinkGuid);
+	std::string lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLow_LinkEId);
 	if (lowString.empty())
 	{
-		lowString = m_pValues->Get<CString>(TableAnaylzerExcludeLowGuid);
+		lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLowEId);
 	}
 	m_EditExcludeLow.SetWindowText(lowString.c_str());
 }
@@ -546,10 +545,10 @@ void TaTableAnalyzerPage::setLimitProperties()
 		m_pValues->Init();
 	}
 
-	std::string valueString = m_pValues->Get<CString>(TableAnaylzerLimitValue_LinkGuid);
+	std::string valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValue_LinkEId);
 	if (valueString.empty())
 	{
-		valueString = m_pValues->Get<CString>(TableAnaylzerLimitValueGuid);
+		valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValueEId);
 	}
 	m_EditLimitValue.SetWindowText(valueString.c_str());
 }

@@ -15,7 +15,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -61,7 +60,7 @@ namespace SvOg
 
 		UpdateData(true);
 
-		m_Values.Set<bool>(SVCalcStdDevObjectGuid, m_calcStdDev ? true : false);
+		m_Values.Set<bool>(SvPb::CalcStdDevEId, m_calcStdDev ? true : false);
 		m_Values.Commit();
 
 		UpdateData(false);
@@ -82,7 +81,7 @@ namespace SvOg
 
 		m_Values.Init();
 
-		m_calcStdDev = m_Values.Get<bool>(SVCalcStdDevObjectGuid);
+		m_calcStdDev = m_Values.Get<bool>(SvPb::CalcStdDevEId);
 
 		UpdateData(false);
 

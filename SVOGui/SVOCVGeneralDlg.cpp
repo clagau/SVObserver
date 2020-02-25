@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOCVGeneralDlg.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVOCVSheet.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMessage/SVMessage.h"
@@ -35,9 +34,6 @@ namespace SvOg
 	, m_rParent(rParent)
 	{
 		//{{AFX_DATA_INIT(SVOCVGeneralDlg)
-		m_fontFilename = _T("");
-		m_constraintsFilename = _T("");
-		m_controlsFilename = _T("");
 		//}}AFX_DATA_INIT
 	}
 
@@ -51,9 +47,9 @@ namespace SvOg
 
 		UpdateData(true);
 
-		m_rParent.GetValues().Set<CString>(SVOCVFontFileNameGuid, m_fontFilename);
-		m_rParent.GetValues().Set<CString>(SVOCVConstraintsFileNameGuid, m_constraintsFilename);
-		m_rParent.GetValues().Set<CString>(SVOCVControlsFileNameGuid, m_controlsFilename);
+		m_rParent.GetValues().Set<CString>(SvPb::OCVFontFileNameEId, m_fontFilename);
+		m_rParent.GetValues().Set<CString>(SvPb::OCVConstraintsFileNameEId, m_constraintsFilename);
+		m_rParent.GetValues().Set<CString>(SvPb::OCVControlsFileNameEId, m_controlsFilename);
 
 		Result = m_rParent.GetValues().Commit();
 
@@ -86,9 +82,9 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_fontFilename = m_rParent.GetValues().Get<CString>(SVOCVFontFileNameGuid);
-		m_constraintsFilename = m_rParent.GetValues().Get<CString>(SVOCVConstraintsFileNameGuid);
-		m_controlsFilename = m_rParent.GetValues().Get<CString>(SVOCVControlsFileNameGuid);
+		m_fontFilename = m_rParent.GetValues().Get<CString>(SvPb::OCVFontFileNameEId);
+		m_constraintsFilename = m_rParent.GetValues().Get<CString>(SvPb::OCVConstraintsFileNameEId);
+		m_controlsFilename = m_rParent.GetValues().Get<CString>(SvPb::OCVControlsFileNameEId);
 	
 		UpdateData(false);
 

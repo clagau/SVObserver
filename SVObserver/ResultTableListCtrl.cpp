@@ -12,6 +12,7 @@
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
 #include "SVMessage/SVMessage.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

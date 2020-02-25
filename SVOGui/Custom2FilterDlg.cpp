@@ -19,7 +19,6 @@
 #include "Definitions\GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "GuiValueHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -94,13 +93,13 @@ namespace SvOg
 	{
 		HRESULT Result = S_OK;
 
-		m_Values.Set<long>(SVCustomFilterKernelWidthGuid, m_KernelWidth);
-		m_Values.Set<long>(SVCustomFilterKernelHeightGuid, m_KernelHeight);
-		m_Values.Set<long>(SVCustomFilterTransformGuid, m_NormalizationFactor);
-		m_Values.Set<bool>(SVCustomFilterAbsoluteGuid, m_AbsoluteValue ? true : false);
-		m_Values.Set<bool>(SVCustomFilterClippingGuid, m_ClippingEnabled ? true : false);
+		m_Values.Set<long>(SvPb::FilterKernelWidthEId, m_KernelWidth);
+		m_Values.Set<long>(SvPb::FilterKernelHeightEId, m_KernelHeight);
+		m_Values.Set<long>(SvPb::CustomFilterTransformEId, m_NormalizationFactor);
+		m_Values.Set<bool>(SvPb::CustomFilterAbsoluteEId, m_AbsoluteValue ? true : false);
+		m_Values.Set<bool>(SvPb::CustomFilterClippingEId, m_ClippingEnabled ? true : false);
 		_variant_t value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
-		m_Values.Set<_variant_t>(FilterKernelGuid, value);
+		m_Values.Set<_variant_t>(SvPb::FilterKernelEId, value);
 		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
@@ -325,21 +324,21 @@ namespace SvOg
 
 			try
 			{
-				HRESULT Result = SvOi::importCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
-				if ( S_OK == Result )
+				HRESULT hResult = SvOi::importCustom2Filter(pathName, m_KernelWidth, m_KernelHeight, m_NormalizationFactor, m_AbsoluteValue, m_ClippingEnabled, m_KernelArray);
+				if ( S_OK == hResult )
 				{
 					isDataValid();
 				}
 				else
 				{
-					if (SvOi::E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
+					if (SvOi::E_CUSTOM_IMPORT_FORMAT_INVALID == hResult)
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
 						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_XmlFormatInvalid));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 					}
-					else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
+					else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == hResult)
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
@@ -416,8 +415,6 @@ namespace SvOg
 
 	void Custom2FilterDlg::OnBnClickedOk()
 	{
-		std::string DataInvalidMessage;
-
 		UpdateData( TRUE );
 
 		try
@@ -436,14 +433,14 @@ namespace SvOg
 	void Custom2FilterDlg::initializeFilter()
 	{
 		m_Values.Init();
-		m_KernelWidth = m_Values.Get<long>(SVCustomFilterKernelWidthGuid);
-		m_KernelHeight = m_Values.Get<long>(SVCustomFilterKernelHeightGuid);
-		m_NormalizationFactor = m_Values.Get<long>(SVCustomFilterTransformGuid);
-		m_AbsoluteValue = m_Values.Get<bool>(SVCustomFilterAbsoluteGuid);
-		m_ClippingEnabled = m_Values.Get<bool>(SVCustomFilterClippingGuid);
+		m_KernelWidth = m_Values.Get<long>(SvPb::FilterKernelWidthEId);
+		m_KernelHeight = m_Values.Get<long>(SvPb::FilterKernelHeightEId);
+		m_NormalizationFactor = m_Values.Get<long>(SvPb::CustomFilterTransformEId);
+		m_AbsoluteValue = m_Values.Get<bool>(SvPb::CustomFilterAbsoluteEId);
+		m_ClippingEnabled = m_Values.Get<bool>(SvPb::CustomFilterClippingEId);
 
 		m_KernelArray.clear();
-		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(FilterKernelGuid));
+		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(SvPb::FilterKernelEId));
 	}
 
 	bool Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )

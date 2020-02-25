@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTransformationTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVEvaluateTranslationXClass.h"
 #include "Operators/SVEvaluateTranslationYClass.h"
 #include "Operators/SVEvaluateRotationXClass.h"
@@ -43,14 +42,14 @@ SVTransformationToolClass::SVTransformationToolClass( SVObjectClass* POwner, int
 void SVTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVTransformationToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVTransformationToolObjectType;
 
 	// Identify our input type needs
 
 	// Register Embedded Objects
 
-	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 		
 	// Set Embedded defaults
 

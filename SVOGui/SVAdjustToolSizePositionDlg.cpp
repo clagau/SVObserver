@@ -20,7 +20,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
@@ -141,7 +140,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	{
 		if (SvPb::SVLinearToolObjectType == responseMessage.getobjectparametersresponse().typeinfo().subtype())
 		{
-			bool rotation = m_Values.Get<bool>(SVLinearToolUseRotationGuid);
+			bool rotation = m_Values.Get<bool>(SvPb::LinearToolUseRotationEId);
 			if (rotation)
 			{
 				bShow = false;

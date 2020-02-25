@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVOCVBlobRecord.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 
@@ -56,12 +55,12 @@ void SVOCVCharacterResultClass::init()
 	m_dvoOverlayLeft.SetTypeName( _T("Extent X") );
 	m_dvoOverlayTop.SetTypeName( _T("Extent Y") );
 
-	RegisterEmbeddedObject( &m_cvoLabelValue, SVOCVCharacterValueGuid, IDS_OBJECTNAME_OCV_CHARACTER_VALUE, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayLeft, SVOCVExtentLeftGuid, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayTop, SVOCVExtentTopGuid, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayWidth, SVOCVExtentWidthGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoOverlayHeight, SVOCVExtentHeightGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_dvoMatchScore, SVOCVMatchScoreGuid, IDS_OBJECTNAME_OCV_MATCH_SCORE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_cvoLabelValue, SvPb::OCVCharacterValueEId, IDS_OBJECTNAME_OCV_CHARACTER_VALUE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dvoOverlayLeft, SvPb::OCVExtentLeftEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dvoOverlayTop, SvPb::OCVExtentTopEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dvoOverlayWidth, SvPb::OCVExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dvoOverlayHeight, SvPb::OCVExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_dvoMatchScore, SvPb::OCVMatchScoreEId, IDS_OBJECTNAME_OCV_MATCH_SCORE, false, SvOi::SVResetItemNone );
 	m_cvoLabelValue.setSaveValueFlag(false);
 	m_dvoOverlayLeft.setSaveValueFlag(false);
 	m_dvoOverlayTop.setSaveValueFlag(false);

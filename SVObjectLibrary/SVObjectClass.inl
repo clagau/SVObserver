@@ -22,7 +22,7 @@ inline const SVGUID& SVObjectClass::GetUniqueObjectID() const
 /*
 This method returns the embedded Global Unique Identifier (GUID) if the object is embedded in another object.
 */
-inline const SVGUID& SVObjectClass::GetEmbeddedID() const
+inline SvPb::EmbeddedIdEnum SVObjectClass::GetEmbeddedID() const
 {
 	return m_embeddedID;
 }
@@ -41,7 +41,7 @@ This method returns the object's type.
 */
 inline const SvPb::SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 {
-	return m_outObjectInfo.m_ObjectTypeInfo.ObjectType;
+	return m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType;
 }
 #pragma endregion virtual method (IObjectClass)
 

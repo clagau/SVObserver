@@ -14,6 +14,10 @@
 #pragma region Includes
 #pragma endregion Includes
 
+namespace SvOi
+{
+	class IObjectClass;
+}
 namespace SvOp
 {
 class SVImageTransformClass;

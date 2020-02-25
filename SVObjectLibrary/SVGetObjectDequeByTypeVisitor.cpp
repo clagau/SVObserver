@@ -33,15 +33,15 @@ HRESULT SVGetObjectDequeByTypeVisitor::VisitElement( SVObjectClass& p_rElement )
 {
 	HRESULT l_Status = S_OK;
 
-	// Find best match....EmbeddedID, Type, SubType...
-	if( ( GUID_NULL          == m_ObjectInfo.EmbeddedID || m_ObjectInfo.EmbeddedID == p_rElement.GetEmbeddedID() ) &&
-		(SvPb::SVNotSetObjectType == m_ObjectInfo.ObjectType || m_ObjectInfo.ObjectType == p_rElement.GetObjectType()) &&
-		(SvPb::SVNotSetSubObjectType == m_ObjectInfo.SubType    || m_ObjectInfo.SubType    == p_rElement.GetObjectSubType() )
+	// Find best match....m_EmbeddedID, Type, SubType...
+	if( (SvPb::NoEmbeddedId == m_ObjectInfo.m_EmbeddedID || m_ObjectInfo.m_EmbeddedID == p_rElement.GetEmbeddedID() ) &&
+		(SvPb::SVNotSetObjectType == m_ObjectInfo.m_ObjectType || m_ObjectInfo.m_ObjectType == p_rElement.GetObjectType()) &&
+		(SvPb::SVNotSetSubObjectType == m_ObjectInfo.m_SubType    || m_ObjectInfo.m_SubType    == p_rElement.GetObjectSubType() )
 	  )
 	{
-		if( GUID_NULL          != m_ObjectInfo.EmbeddedID ||
-			SvPb::SVNotSetObjectType    != m_ObjectInfo.ObjectType ||
-			SvPb::SVNotSetSubObjectType != m_ObjectInfo.SubType
+		if( SvPb::NoEmbeddedId          != m_ObjectInfo.m_EmbeddedID ||
+			SvPb::SVNotSetObjectType    != m_ObjectInfo.m_ObjectType ||
+			SvPb::SVNotSetSubObjectType != m_ObjectInfo.m_SubType
 		  )
 		{
 			m_Objects.push_back( &p_rElement );

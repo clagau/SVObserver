@@ -19,11 +19,11 @@ class EQAdjustSize : public SVEquationClass
 {
 	
 public:
-	EQAdjustSize(SvPb::SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner = nullptr, int StringResourceID = 0);
+	EQAdjustSize(SvPb::SVObjectSubTypeEnum subType, SvPb::EmbeddedIdEnum resultId, SVObjectClass* POwner = nullptr, int StringResourceID = 0);
 	virtual ~EQAdjustSize();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override ;
-	GUID& GetResultGuid();
+	SvPb::EmbeddedIdEnum GetResultId();
 
 	//************************************
 	//! return white color
@@ -38,7 +38,7 @@ protected:
 	
 protected:
 	SvVol::SVDoubleValueObjectClass m_result;// resultant value
-	GUID m_ResultGuid;
+	SvPb::EmbeddedIdEnum m_ResultId;
 	SvPb::SVObjectSubTypeEnum m_SubType;
 };
 

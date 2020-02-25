@@ -15,7 +15,6 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxResourceMonitor.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
@@ -47,14 +46,14 @@ SVPixelAnalyzerClass::SVPixelAnalyzerClass(SVObjectClass* POwner, int StringReso
 void SVPixelAnalyzerClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVPixelAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVPixelAnalyzerObjectType;
 
 	// Identify our input type needs
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_pixelCount, SVPixelCountObjectGuid, IDS_OBJECTNAME_PIXEL_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_pixelCount, SvPb::PixelCountEId, IDS_OBJECTNAME_PIXEL_COUNT, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_pixelCountColor, SVPixelColorIndexObjectGuid,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_pixelCountColor, SvPb::PixelColorIndexEId,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	m_pixelCountColor. SetDefaultValue( 255, true ); // White

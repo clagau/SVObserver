@@ -14,7 +14,6 @@
 #include "SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
 #include "Definitions/ImageOperatorEnums.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -68,7 +67,7 @@ namespace SvOg
 		UpdateData(true); // get data from dialog
 
 		long lOperator = static_cast<long>(m_operatorCtrl.GetItemData(m_operatorCtrl.GetCurSel()));
-		m_Values.Set<long>(SVArithmeticOperatorObjectGuid, lOperator);
+		m_Values.Set<long>(SvPb::ArithmeticOperatorEId, lOperator);
 		m_Values.Commit();
 		
 		if (SvDef::SVImageOperatorDoubleHeight == lOperator || SvDef::SVImageOperatorFlipVertical == lOperator || SvDef::SVImageOperatorFlipHorizontal == lOperator)
@@ -155,7 +154,7 @@ namespace SvOg
 
 		// Get Current Arithmetic Operator...
 	
-		long lOperator = m_Values.Get<long>(SVArithmeticOperatorObjectGuid);
+		long lOperator = m_Values.Get<long>(SvPb::ArithmeticOperatorEId);
 
 		for (int i = 0;i < m_operatorCtrl.GetCount(); ++ i)
 		{

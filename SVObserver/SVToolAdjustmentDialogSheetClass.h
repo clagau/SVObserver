@@ -15,6 +15,10 @@
 #include "SvOGui/FormulaController.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+	class IObjectClass;
+}
 class SVIPDoc;
 
 class SVToolAdjustmentDialogSheetClass : public CPropertySheet

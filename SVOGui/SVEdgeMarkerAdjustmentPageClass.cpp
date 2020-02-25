@@ -23,12 +23,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGuidVector& rEdgeEmbeddedGuids, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
+	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
 	: CPropertyPage(ID, nIDCaption)
 	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	, m_rInspectionID{ rInspectionID }
 	, m_rTaskObjectID{ rTaskObjectID }
-	, m_rEdgeEmbeddedGuids{ rEdgeEmbeddedGuids }
+	, m_rEdgeEmbeddedIds{ rEdgeEmbeddedIds }
 	, StrLower( _T("") )
 	, StrUpper( _T("") )
 	, StrPositionOffset( _T("") )
@@ -47,12 +47,12 @@ namespace SvOg
 		DWORD Upper( 0 );
 		DWORD Lower( 0 );
 
-		Upper = m_Values.Get<DWORD>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeUpperThresholdValueGuid]);
-		Lower = m_Values.Get<DWORD>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeLowerThresholdValueGuid]);
+		Upper = m_Values.Get<DWORD>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeUpperThresholdValue]);
+		Lower = m_Values.Get<DWORD>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeLowerThresholdValue]);
 
 		Result = UpdateSliderData( Lower, Upper );
 
-		bool bIsFixedEdgeMarker = m_Values.Get<bool>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeIsFixedEdgeMarkerGuid]);
+		bool bIsFixedEdgeMarker = m_Values.Get<bool>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeIsFixedEdgeMarker]);
 
 		if( bIsFixedEdgeMarker )
 		{
@@ -63,7 +63,7 @@ namespace SvOg
 			CheckRadioButton( IDC_SEARCHED_EDGE_MARKER_RADIO, IDC_FIXED_EDGE_MARKER_RADIO, IDC_SEARCHED_EDGE_MARKER_RADIO );
 		}
 
-		long Direction = m_Values.Get<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeDirectionGuid]);
+		long Direction = m_Values.Get<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeDirection]);
 		switch( Direction )
 		{
 			case SvDef::SV_HEAD_TO_TAIL_DIRECTION:
@@ -75,7 +75,7 @@ namespace SvOg
 				break;
 		}
 
-		long EdgeSelect = m_Values.Get<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeSelectGuid]);
+		long EdgeSelect = m_Values.Get<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeSelect]);
 		switch( EdgeSelect )
 		{
 			case SvDef::SV_FIRST_EDGE:
@@ -113,10 +113,10 @@ namespace SvOg
 			}
 		}
 
-		double dValue = m_Values.Get<double>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeSelectThisValueGuid]);
+		double dValue = m_Values.Get<double>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeSelectThisValue]);
 		StrEdgeSelectThis.Format( "%.2f", dValue );
 
-		long Polarisation = m_Values.Get<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePolarisationGuid]);
+		long Polarisation = m_Values.Get<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePolarisation]);
 		switch( Polarisation )
 		{
 			case SvDef::SV_POSITIVE_POLARISATION:
@@ -138,7 +138,7 @@ namespace SvOg
 			}
 		}
 
-		long Position = m_Values.Get<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionGuid]);
+		long Position = m_Values.Get<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePosition]);
 		switch(Position)
 		{
 			case SvDef::SV_START_POSITION:
@@ -187,7 +187,7 @@ namespace SvOg
 			}
 		}
 
-		dValue = m_Values.Get<double>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionOffsetGuid]);
+		dValue = m_Values.Get<double>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePositionOffset]);
 		StrPositionOffset.Format( "%.2f", dValue );
 
 		// Acivate controls regarding the analyzer requirements
@@ -276,20 +276,20 @@ namespace SvOg
 		UpdateData(true);
 
 		DWORD Value = static_cast<DWORD> (atol(StrUpper));
-		m_Values.Set<DWORD>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeUpperThresholdValueGuid], Value);
+		m_Values.Set<DWORD>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeUpperThresholdValue], Value);
 		Value = static_cast<DWORD> (atol(StrLower));
-		m_Values.Set<DWORD>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeLowerThresholdValueGuid], Value);
+		m_Values.Set<DWORD>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeLowerThresholdValue], Value);
 
 		switch ( GetCheckedRadioButton( IDC_SEARCHED_EDGE_MARKER_RADIO, IDC_FIXED_EDGE_MARKER_RADIO ) )
 		{
 			case IDC_SEARCHED_EDGE_MARKER_RADIO:
 			{
-				m_Values.Set<bool>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeIsFixedEdgeMarkerGuid], false);
+				m_Values.Set<bool>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeIsFixedEdgeMarker], false);
 				break;
 			}
 			case IDC_FIXED_EDGE_MARKER_RADIO:
 			{
-				m_Values.Set<bool>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeIsFixedEdgeMarkerGuid], true);
+				m_Values.Set<bool>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeIsFixedEdgeMarker], true);
 				break;
 			}
 		}
@@ -298,12 +298,12 @@ namespace SvOg
 		{
 			case IDC_DIRECTION_HEAD_TO_TAIL_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeDirectionGuid], static_cast<long> (SvDef::SV_HEAD_TO_TAIL_DIRECTION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeDirection], static_cast<long> (SvDef::SV_HEAD_TO_TAIL_DIRECTION));
 				break;
 			}
 			case IDC_DIRECTION_TAIL_TO_HEAD_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeDirectionGuid], static_cast<long> (SvDef::SV_TAIL_TO_HEAD_DIRECTION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeDirection], static_cast<long> (SvDef::SV_TAIL_TO_HEAD_DIRECTION));
 				break;
 			}
 		}
@@ -312,18 +312,18 @@ namespace SvOg
 		{
 			case IDC_EDGE_SELECT_FIRST_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeSelectGuid], static_cast<long> (SvDef::SV_FIRST_EDGE));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeSelect], static_cast<long> (SvDef::SV_FIRST_EDGE));
 				break;
 			}
 			case IDC_EDGE_SELECT_LAST_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeSelectGuid], static_cast<long> (SvDef::SV_LAST_EDGE));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeSelect], static_cast<long> (SvDef::SV_LAST_EDGE));
 				break;
 			}
 			case IDC_EDGE_SELECT_THIS_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeSelectGuid], static_cast<long> (SvDef::SV_THIS_EDGE));
-				m_Values.Set<double>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgeSelectThisValueGuid], atof(StrEdgeSelectThis));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeSelect], static_cast<long> (SvDef::SV_THIS_EDGE));
+				m_Values.Set<double>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeSelectThisValue], atof(StrEdgeSelectThis));
 				break;
 			}
 		}
@@ -332,17 +332,17 @@ namespace SvOg
 		{
 			case IDC_POLARISATION_ANY_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePolarisationGuid], static_cast<long> (SvDef::SV_ANY_POLARISATION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePolarisation], static_cast<long> (SvDef::SV_ANY_POLARISATION));
 				break;
 			}
 			case IDC_POLARISATION_NEGATIVE_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePolarisationGuid], static_cast<long> (SvDef::SV_NEGATIVE_POLARISATION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePolarisation], static_cast<long> (SvDef::SV_NEGATIVE_POLARISATION));
 				break;
 			}
 			case IDC_POLARISATION_POSITIVE_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePolarisationGuid], static_cast<long> (SvDef::SV_POSITIVE_POLARISATION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePolarisation], static_cast<long> (SvDef::SV_POSITIVE_POLARISATION));
 				break;
 			}
 		}
@@ -351,23 +351,23 @@ namespace SvOg
 		{
 			case IDC_POSITION_CENTER_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionGuid], static_cast<long> (SvDef::SV_CENTER_POSITION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePosition], static_cast<long> (SvDef::SV_CENTER_POSITION));
 				break;
 			}
 			case IDC_POSITION_START_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionGuid], static_cast<long> (SvDef::SV_START_POSITION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePosition], static_cast<long> (SvDef::SV_START_POSITION));
 				break;
 			}
 			case IDC_POSITION_END_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionGuid], static_cast<long> (SvDef::SV_END_POSITION));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePosition], static_cast<long> (SvDef::SV_END_POSITION));
 				break;
 			}
 			case IDC_POSITION_OFFSET_RADIO:
 			{
-				m_Values.Set<long>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionGuid], static_cast<long> (SvDef::SV_OFFSET_POSITION));
-				m_Values.Set<double>(m_rEdgeEmbeddedGuids[EdgeEmbeddedGuids::EdgePositionOffsetGuid], atof(StrPositionOffset));
+				m_Values.Set<long>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePosition], static_cast<long> (SvDef::SV_OFFSET_POSITION));
+				m_Values.Set<double>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgePositionOffset], atof(StrPositionOffset));
 				break;
 			}
 		}
@@ -477,8 +477,8 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		//Enum and m_rEdgeEmbeddedGuids size must be the same
-		assert(EdgeEmbeddedGuids::EdgeGuidCount == m_rEdgeEmbeddedGuids.size());
+		//Enum and m_rEdgeEmbeddedIds size must be the same
+		assert(EdgeEmbeddedEnum::EdgeGuidCount == m_rEdgeEmbeddedIds.size());
 
 		m_Values.Init();
 

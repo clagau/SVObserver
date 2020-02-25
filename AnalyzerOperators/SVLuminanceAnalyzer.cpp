@@ -18,7 +18,6 @@
 #include "Operators/SVRange.h"
 #include "Operators/SVResultLong.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -66,33 +65,33 @@ void SVLuminanceAnalyzerClass::init()
 
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLuminanceAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLuminanceAnalyzerObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvLuminanceValue, 
-		SVLuminanceValueObjectGuid, 
+		SvPb::LuminanceValueEId,
 		IDS_OBJECTNAME_LUMINANCE,
 		false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvCalcStdDevValue,
-		SVCalcStdDevObjectGuid,
+		SvPb::CalcStdDevEId,
 		IDS_OBJECTNAME_CALCSTDDEV,
 		false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvVarianceValue,
-		SVStatVarianceObjectGuid,
+		SvPb::StatVarianceEId,
 		IDS_OBJECTNAME_STATVARIANCE,
 		false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvStdDevValue,
-		SVStatStdDevObjectGuid,
+		SvPb::StatStdDevEId,
 		IDS_OBJECTNAME_STATSTDDEV,
 		false, SvOi::SVResetItemNone );
 

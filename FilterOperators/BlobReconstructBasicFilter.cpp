@@ -10,7 +10,6 @@
 #include "BlobReconstructBasicFilter.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -44,8 +43,8 @@ BlobReconstructBasicFilter::~BlobReconstructBasicFilter()
 
 void BlobReconstructBasicFilter::init()
 {
-	RegisterEmbeddedObject(&m_blobColor, SVBlobColorGuid, IDS_BLACK_BLOBS, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_isGrayOn, SVGrayOnGuid, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_blobColor, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_isGrayOn, SvPb::GrayOnEId, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone);
 
 	m_blobColor.SetEnumTypes(g_strBlobColorEnums);
 	m_blobColor.SetDefaultValue(SV_BLOB_WHITE, true);

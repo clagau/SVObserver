@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVObserver.h"

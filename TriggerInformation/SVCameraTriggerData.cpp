@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVObjectLibrary\SVClsIds.h"
 #include "SVCameraTriggerData.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerHandling/TriggerDispatcher.h"
@@ -58,12 +57,12 @@ namespace SvTi
 	{
 		// Setup Embedded Objects
 		std::string Name = SvUl::LoadStdString( IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP );
-		m_timestamp.SetObjectEmbedded(SVCameraTriggerTimestampGuid, this, Name.c_str() );
+		m_timestamp.SetObjectEmbedded(SvPb::CameraTriggerTimestampEId, this, Name.c_str() );
 		Name = SvUl::LoadStdString( IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE );
-		m_lineInState.SetObjectEmbedded(SVCameraTriggerLineInStateGuid, this, Name.c_str());
+		m_lineInState.SetObjectEmbedded(SvPb::CameraTriggerLineInStateEId, this, Name.c_str());
 	/* For Camera based Triggering
-		RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
-		RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_timestamp, SvPb::CameraTriggerTimestampEId, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_lineInState, SvPb::CameraTriggerLineInStateEId, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SvOi::SVResetItemNone);
 	*/
 		const UINT cAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable;
 		m_timestamp.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );

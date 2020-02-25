@@ -40,7 +40,7 @@ SVOutputObjectList::~SVOutputObjectList()
 
 bool SVOutputObjectList::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVOutputObjectListType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOutputObjectListType;
 
 	return true;
 }// end Create

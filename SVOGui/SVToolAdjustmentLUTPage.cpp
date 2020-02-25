@@ -13,14 +13,13 @@
 #include "stdafx.h"
 #include "SVToolAdjustmentLUTPage.h"
 #include "SVFormulaEditorSheet.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "GuiValueHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-static const std::array<SVGUID, 4> m_stretchValueGuids {SVLUTMinInputObjectGuid, SVLUTMaxInputObjectGuid, SVLUTMinOutputObjectGuid, SVLUTMaxOutputObjectGuid};
+static const std::array<SvPb::EmbeddedIdEnum, 4> m_stretchValueEIds { SvPb::LUTMinInputEId, SvPb::LUTMaxInputEId, SvPb::LUTMinOutputEId, SvPb::LUTMaxOutputEId };
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,7 +61,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		if(nullptr != pData)
 		{
 			SVToolAdjustmentLUTPage* pDlg = reinterpret_cast <SVToolAdjustmentLUTPage*> (pData);
-			pDlg->GetValues().Set<BYTE>(SVOutputLUTVectorObjectGuid, static_cast<BYTE> (Point.y), Point.x);
+			pDlg->GetValues().Set<BYTE>(SvPb::OutputLUTVectorEId, static_cast<BYTE> (Point.y), Point.x);
 
 			return true;
 		}
@@ -96,29 +95,29 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 
 		UpdateData(true); // get data from dialog
 
-		m_LutEquation.Set<bool>(SVLUTEquationClipFlagObjectGuid, m_isFormulaClip ? true : false);
+		m_LutEquation.Set<bool>(SvPb::LUTEquationClipFlagEId, m_isFormulaClip ? true : false);
 		m_LutEquation.Commit(SvOg::PostAction::doNothing);
 
 		long lUpperClip = static_cast<long> (m_upperSlider.GetPos());
-		m_Values.Set<long>(SVLUTUpperClipObjectGuid, lUpperClip);
+		m_Values.Set<long>(SvPb::LUTUpperClipEId, lUpperClip);
 
 		long lLowerClip = static_cast<long> (m_lowerSlider.GetPos());
-		m_Values.Set<long>(SVLUTLowerClipObjectGuid, lLowerClip);
+		m_Values.Set<long>(SvPb::LUTLowerClipEId, lLowerClip);
 
 		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
 		{
 			long value = static_cast<long> (m_stretchSliders[i].GetPos());
-			m_Values.Set<long>(m_stretchValueGuids[i], value);
+			m_Values.Set<long>(m_stretchValueEIds[i], value);
 		}
 
-		m_Values.Set<bool>(SVContinuousRecalcLUTObjectGuid, m_bContinuousRecalcLUT ? true : false);
-		m_Values.Set<bool>(SVUseLUTObjectGuid, m_bUseLUT ? true : false);
+		m_Values.Set<bool>(SvPb::ContinuousRecalcLUTEId, m_bContinuousRecalcLUT ? true : false);
+		m_Values.Set<bool>(SvPb::UseLUTEId, m_bUseLUT ? true : false);
 
 		int CurrentSelection = m_LUTModeCombo.GetCurSel();
 		if(0 <= CurrentSelection)
 		{
 			long lValue = ( long ) m_LUTModeCombo.GetItemData(CurrentSelection);
-			m_Values.Set<long>(SVLUTModeObjectGuid, lValue);
+			m_Values.Set<long>(SvPb::LUTModeEId, lValue);
 		}
 	
 		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
@@ -179,13 +178,13 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		}
 
 		// Get Use Lut Flag...
-		m_bUseLUT = m_Values.Get<bool>(SVUseLUTObjectGuid);
-		m_bContinuousRecalcLUT = m_Values.Get<bool>(SVContinuousRecalcLUTObjectGuid);
+		m_bUseLUT = m_Values.Get<bool>(SvPb::UseLUTEId);
+		m_bContinuousRecalcLUT = m_Values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
 
-		const SvOi::NameValueVector& rLUTModeList = m_Values.GetEnumTypes(SVLUTModeObjectGuid);
+		const SvOi::NameValueVector& rLUTModeList = m_Values.GetEnumTypes(SvPb::LUTModeEId);
 		m_LUTModeCombo.SetEnumTypes(rLUTModeList);
 
-		m_isFormulaClip = m_LutEquation.Get<bool>(SVLUTEquationClipFlagObjectGuid);
+		m_isFormulaClip = m_LutEquation.Get<bool>(SvPb::LUTEquationClipFlagEId);
 
 		refresh( false );
 
@@ -375,9 +374,9 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		refreshClip();
 		refreshStretch();
 
-		m_bUseLUT = m_Values.Get<bool>(SVUseLUTObjectGuid);
+		m_bUseLUT = m_Values.Get<bool>(SvPb::UseLUTEId);
 
-		long lLUTMode = m_Values.Get<long>(SVLUTModeObjectGuid);
+		long lLUTMode = m_Values.Get<long>(SvPb::LUTModeEId);
 		m_LUTModeCombo.SetCurSelItemData(lLUTMode);
 		switch( lLUTMode )
 		{
@@ -404,7 +403,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 				// Deactivate Mouse Proc Func of SVDlgGraph Control...
 				m_LUTGraph.SetMousePointProcFunc(nullptr, nullptr);
 				showFormulaControls();
-				m_isFormulaClip = m_LutEquation.Get<bool>(SVLUTEquationClipFlagObjectGuid);
+				m_isFormulaClip = m_LutEquation.Get<bool>(SvPb::LUTEquationClipFlagEId);
 				break;
 			}
 
@@ -433,7 +432,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 			}
 		}
 
-		m_bContinuousRecalcLUT = m_Values.Get<bool>(SVContinuousRecalcLUTObjectGuid);
+		m_bContinuousRecalcLUT = m_Values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
 
 		if( !m_bUseLUT )
 		{	// Deactivate Mouse Proc Func of SVDlgGraph Control...
@@ -446,18 +445,18 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 
 	void SVToolAdjustmentLUTPage::refreshLUTGraph()
 	{
-		std::vector<BYTE> byteVector = ConvertVariantSafeArrayToVector<BYTE>(m_Values.Get<_variant_t>(SVOutputLUTVectorObjectGuid));
+		std::vector<BYTE> byteVector = ConvertVariantSafeArrayToVector<BYTE>(m_Values.Get<_variant_t>(SvPb::OutputLUTVectorEId));
 		m_LUTGraph.SetPoints(byteVector);
 	}
 
 	void SVToolAdjustmentLUTPage::refreshClip()
 	{
-		long lUpperClip = m_Values.Get<long>(SVLUTUpperClipObjectGuid);
+		long lUpperClip = m_Values.Get<long>(SvPb::LUTUpperClipEId);
 
 		m_strUpperClipValue.Format( _T("%d"), lUpperClip );
 		m_upperSlider.SetPos(static_cast<int> (lUpperClip));
 
-		long lLowerClip = m_Values.Get<long>(SVLUTLowerClipObjectGuid);
+		long lLowerClip = m_Values.Get<long>(SvPb::LUTLowerClipEId);
 
 		m_strLowerClipValue.Format( _T("%d"), lLowerClip );
 		m_lowerSlider.SetPos(static_cast<int> (lLowerClip));
@@ -467,7 +466,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	{
 		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
 		{
-			long value = m_Values.Get<long>(m_stretchValueGuids[i]);
+			long value = m_Values.Get<long>(m_stretchValueEIds[i]);
 			m_strStretchValues[i].Format(_T("%d"), value);
 			m_stretchSliders[i].SetPos(static_cast<int> (value));
 		}

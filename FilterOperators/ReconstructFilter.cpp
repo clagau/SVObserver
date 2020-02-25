@@ -97,7 +97,7 @@ bool ReconstructFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputIma
 
 void ReconstructFilter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::ReconstructFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::ReconstructFilterObjectType;
 
 	m_SeedImageInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_SeedImageInfo.SetObject(GetObjectInfo());

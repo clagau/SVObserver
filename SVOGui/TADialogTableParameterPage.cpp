@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogTableParameterPage.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "SVFormulaEditorSheet.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "FormulaController.h"
@@ -94,7 +93,7 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 	}
 	setEquationText();
 
-	m_maxRows = m_Values.Get<long>(TableTool_MaxRowGuid);
+	m_maxRows = m_Values.Get<long>(SvPb::TableTool_MaxRowEId);
 
 	UpdateData(FALSE);
 
@@ -136,7 +135,7 @@ HRESULT TADialogTableParameterPage::SetPageData()
 	BOOL updateState = UpdateData(true);
 	if (updateState)
 	{
-		m_Values.Set<long>(TableTool_MaxRowGuid, m_maxRows);
+		m_Values.Set<long>(SvPb::TableTool_MaxRowEId, m_maxRows);
 		hResult = m_Values.Commit();
 
 		if (S_OK != hResult)

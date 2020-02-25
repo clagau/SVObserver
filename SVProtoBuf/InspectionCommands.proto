@@ -41,7 +41,7 @@ message SVObjectTypeInfoStruct
 {
 	SVObjectTypeEnum objectType = 1;	// Main Type
 	SVObjectSubTypeEnum subType = 2;	// Sub Type  
-	bytes embeddedID = 3;
+	EmbeddedIdEnum embeddedID = 3;
 }
 
 //info for one taskobject 
@@ -63,7 +63,7 @@ message NameValuePair
 message ValueObjectValues
 {
 	bytes objectId = 1;
-	bytes embeddedId = 2;
+	EmbeddedIdEnum embeddedId = 2;
 	Variant value = 3;
 	Variant defaultValue = 4;
 }

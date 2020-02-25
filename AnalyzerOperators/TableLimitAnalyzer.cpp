@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableLimitAnalyzer.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -102,8 +101,8 @@ bool TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 void TableLimitAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::TableAnalyzerLimitType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerLimitType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -112,7 +111,7 @@ void TableLimitAnalyzer::Initialize()
 void TableLimitAnalyzer::BuildEmbeddedObjectList()
 {
 	//set excludeHigh-Value
-	RegisterEmbeddedObject( &m_LimitValue, TableAnaylzerLimitValueGuid, IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_LimitValue, SvPb::TableAnaylzerLimitValueEId, IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE, true, SvOi::SVResetItemTool );
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_Value;
@@ -121,7 +120,7 @@ void TableLimitAnalyzer::BuildEmbeddedObjectList()
 
 	std::string ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
 	ObjectName +=  SvDef::cLinkName;
-	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), TableAnaylzerLimitValue_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), SvPb::TableAnaylzerLimitValue_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_LimitValue.getLinkedName().SetDefaultValue( _T(""), false );
 }
 

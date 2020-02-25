@@ -17,6 +17,7 @@
 #include "SVIPDoc.h"
 #include "SVObserver.h"
 #include "SVLibrary/SVWinUtility.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVTimerLibrary/SVClock.h"

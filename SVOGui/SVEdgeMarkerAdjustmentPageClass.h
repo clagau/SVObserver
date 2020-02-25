@@ -21,34 +21,34 @@
 
 namespace SvOg
 {
-	//! Note this enum is sensitive to the order in which the GUID ID's are set
-	//! They must match the GUID list filled 
-	enum EdgeEmbeddedGuids
+	//! Note this enum is sensitive to the order in which the ID's are set
+	//! They must match the embedded list filled 
+	enum EdgeEmbeddedEnum
 	{
-		EdgeDirectionGuid = 0,
-		EdgePolarisationGuid,
-		EdgeSelectGuid,
-		EdgeSelectThisValueGuid,
-		EdgeIsFixedEdgeMarkerGuid,
-		EdgePositionGuid,
-		EdgePositionOffsetGuid,
-		UseLowerThresholdSelectableGuid,
-		UseLowerThresholdMaxMinusPercentDiffGuid,
-		UseLowerThresholdMaxMinusOffsetGuid,
-		UseLowerThresholdMinPlusOffsetGuid,
-		EdgeLowerThresholdValueGuid,
-		LowerThresholdMaxMinusPercentDiffGuid,
-		LowerThresholdMaxMinusOffsetGuid,
-		LowerThresholdMinPlusOffsetGuid,
-		UseUpperThresholdSelectableGuid,
-		UseUpperThresholdMaxMinusPercentDiffGuid,
-		UseUpperThresholdMaxMinusOffsetGuid,
-		UseUpperThresholdMinPlusOffsetGuid,
-		EdgeUpperThresholdValueGuid,
-		UpperThresholdMaxMinusPercentDiffGuid,
-		UpperThresholdMaxMinusOffsetGuid,
-		UpperThresholdMinPlusOffsetGuid,
-		LinearEdgesClassGuid,
+		EdgeDirection = 0,
+		EdgePolarisation,
+		EdgeSelect,
+		EdgeSelectThisValue,
+		EdgeIsFixedEdgeMarker,
+		EdgePosition,
+		EdgePositionOffset,
+		UseLowerThresholdSelectable,
+		UseLowerThresholdMaxMinusPercentDiff,
+		UseLowerThresholdMaxMinusOffset,
+		UseLowerThresholdMinPlusOffset,
+		EdgeLowerThresholdValue,
+		LowerThresholdMaxMinusPercentDiff,
+		LowerThresholdMaxMinusOffset,
+		LowerThresholdMinPlusOffset,
+		UseUpperThresholdSelectable,
+		UseUpperThresholdMaxMinusPercentDiff,
+		UseUpperThresholdMaxMinusOffset,
+		UseUpperThresholdMinPlusOffset,
+		EdgeUpperThresholdValue,
+		UpperThresholdMaxMinusPercentDiff,
+		UpperThresholdMaxMinusOffset,
+		UpperThresholdMinPlusOffset,
+		LinearEdgesClass,
 
 		EdgeGuidCount
 	};
@@ -56,7 +56,7 @@ namespace SvOg
 	class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage
 	{
 	public:
-		SVEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGuidVector& rEdgeEmbeddedGuids, UINT nIDCaption = 0, int ID = IDD);
+		SVEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption = 0, int ID = IDD);
 		virtual ~SVEdgeMarkerAdjustmentPageClass();
 
 		virtual HRESULT GetInspectionData();
@@ -137,8 +137,8 @@ namespace SvOg
 		//}}AFX_VIRTUAL
 
 		//! This list needs to be initialized by the corresponding Linear Edge
-		//! either EdgeA or EdgeB and the size and order must correspond to the enum EdgeEmbeddedGuids list
-		const SVGuidVector& m_rEdgeEmbeddedGuids;
+		//! either EdgeA or EdgeB and the size and order must correspond to the enum EdgeEmbeddedEnum list
+		const std::vector<SvPb::EmbeddedIdEnum>& m_rEdgeEmbeddedIds;
 
 		const SVGUID& m_rInspectionID;
 		const SVGUID& m_rTaskObjectID;

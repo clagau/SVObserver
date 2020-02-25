@@ -78,14 +78,14 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 			else
 			{
 				//new column, add it.
-				SVGUID newGuid = getNextFreeEmbeddedColumGUID();
-				if (GUID_NULL == newGuid)
+				SvPb::EmbeddedIdEnum newId = getNextFreeEmbeddedColumGUID();
+				if (SvPb::NoEmbeddedId == newId)
 				{
 					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					e.Throw();
 				}
-				createColumnObject(newGuid, (*forIter)->GetName(), maxArray);
+				createColumnObject(newId, (*forIter)->GetName(), maxArray);
 				m_equationList.insert(m_equationList.begin()+i, *forIter);
 				//move object from last position to wanted
 				MoveValueColumn(static_cast<int>(m_ValueList.size()-1), i);
@@ -146,8 +146,8 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 void TableFillByEquationObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::TableFillObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableFillObjectType;
 }
 #pragma endregion Private Methods
 

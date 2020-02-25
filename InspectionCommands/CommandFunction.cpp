@@ -491,9 +491,9 @@ InspectionCmdResult getInputs(SvPb::GetInputsRequest request)
 	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
 	if (nullptr != pTaskObject)
 	{
-		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), SvPb::GetGuidFromProtoBytes(request.typeinfo().embeddedid())};
+		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 		SvUl::InputNameGuidPairList list;
-		if (SvPb::SVImageObjectType == typeInfo.ObjectType)
+		if (SvPb::SVImageObjectType == typeInfo.m_ObjectType)
 		{
 			pTaskObject->GetInputImages(list, request.maxrequested());
 		}
@@ -569,7 +569,7 @@ InspectionCmdResult getAvailableObjects(SvPb::GetAvailableObjectsRequest request
 {
 	InspectionCmdResult result;
 
-	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), SvPb::GetGuidFromProtoBytes(request.typeinfo().embeddedid())};
+	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 	SvPb::SVObjectTypeEnum objectTypeToInclude = request.objecttypetoinclude();
 	SVGUID instanceId = SvPb::GetGuidFromProtoBytes(request.objectid());
 	SVGetObjectDequeByTypeVisitor visitor(typeInfo);
@@ -587,7 +587,7 @@ InspectionCmdResult getAvailableObjects(SvPb::GetAvailableObjectsRequest request
 				if (isAllowed(pObject, bStop))
 				{
 					std::string name;
-					switch (typeInfo.ObjectType)
+					switch (typeInfo.m_ObjectType)
 					{
 						case SvPb::SVImageObjectType:
 						{
@@ -708,7 +708,7 @@ InspectionCmdResult getObjectId(SvPb::GetObjectIdRequest request)
 		case SvPb::GetObjectIdRequest::kInfo:
 		{
 			auto& rInfoStruct = request.info().infostruct();
-			SvDef::SVObjectTypeInfoStruct typeInfo {rInfoStruct.objecttype(), rInfoStruct.subtype(), SvPb::GetGuidFromProtoBytes(rInfoStruct.embeddedid())};
+			SvDef::SVObjectTypeInfoStruct typeInfo {rInfoStruct.objecttype(), rInfoStruct.subtype(), rInfoStruct.embeddedid()};
 			pObject = SvOi::FindObject(SvPb::GetGuidFromProtoBytes(request.info().ownerid()) , typeInfo);
 			break;
 		}
@@ -819,7 +819,7 @@ InspectionCmdResult getCreatableObjects(SvPb::GetCreatableObjectsRequest request
 	if (nullptr != pObject)
 	{
 		SvPb::GetCreatableObjectsResponse* pResponse = result.m_response.mutable_getcreatableobjectsresponse();
-		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), SvPb::GetGuidFromProtoBytes(request.typeinfo().embeddedid())};
+		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 		auto list = pObject->GetCreatableObjects(typeInfo);
 		for (auto& item : list)
 		{
@@ -914,7 +914,7 @@ InspectionCmdResult getEmbeddedValues(SvPb::GetEmbeddedValuesRequest request)
 			{
 				auto* pElement = pResponse->add_list();
 				SvPb::SetGuidInProtoBytes(pElement->mutable_objectid(), rEntry);
-				SvPb::SetGuidInProtoBytes(pElement->mutable_embeddedid(), pObject->GetEmbeddedID());
+				pElement->set_embeddedid(pObject->GetEmbeddedID());
 				ConvertVariantToProtobuf(Value, pElement->mutable_value());
 				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
 			}
@@ -923,7 +923,7 @@ InspectionCmdResult getEmbeddedValues(SvPb::GetEmbeddedValuesRequest request)
 				Value.Clear();
 				auto* pElement = pResponse->add_list();
 				SvPb::SetGuidInProtoBytes(pElement->mutable_objectid(), rEntry);
-				SvPb::SetGuidInProtoBytes(pElement->mutable_embeddedid(), pObject->GetEmbeddedID());
+				pElement->set_embeddedid(pObject->GetEmbeddedID());
 				ConvertVariantToProtobuf(Value, pElement->mutable_value());
 				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
 			}

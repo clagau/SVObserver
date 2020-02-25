@@ -88,14 +88,14 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		m_Values.Init();
 
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
+		evaluateObjectInfo.m_ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationXObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateTranslationXObjectType;
 		pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateTranslationYObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateTranslationYObjectType;
 		pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 
 		m_pvoShiftMode = &m_pTool->m_evoShiftMode;
@@ -169,10 +169,10 @@ void SVTADlgTranslationShiftPageClass::refresh()
 
 		FillShiftProperties();
 
-		variant_t Value = m_Values.Get<variant_t>(SVTranslationXObjectGuid);
+		variant_t Value = m_Values.Get<variant_t>(SvPb::TranslationXEId);
 		m_TranslationXValue = static_cast< LPCTSTR >(_bstr_t(Value));
 
-		Value = m_Values.Get<variant_t>(SVTranslationYObjectGuid);
+		Value = m_Values.Get<variant_t>(SvPb::TranslationYEId);
 		m_TranslationYValue = static_cast< LPCTSTR >(_bstr_t(Value));
 
 		UpdateData(false); // set data to dialog
@@ -352,42 +352,42 @@ void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
 void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 {
 	//get each value and put into property tree
-	variant_t Value = m_Values.Get<variant_t>(SVShiftToolReferenceYObjectGuid);
+	variant_t Value = m_Values.Get<variant_t>(SvPb::ShiftToolReferenceYEId);
 	SVRPropertyItemStatic* pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_TRANS_Y));
 	if (nullptr != pPropItem)
 	{
 		pPropItem->SetItemValue(static_cast<LPCTSTR> (_bstr_t(Value)));
 	}
 
-	Value = m_Values.Get<variant_t>(SVShiftToolReferenceXObjectGuid);
+	Value = m_Values.Get<variant_t>(SvPb::ShiftToolReferenceXEId);
 	pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_TRANS_X));
 	if ( nullptr != pPropItem )
 	{
 		pPropItem->SetItemValue(static_cast<LPCTSTR> (_bstr_t(Value)));
 	}
 
-	Value = m_Values.Get<variant_t>(SVImageTransformDisplacementXGuid);
+	Value = m_Values.Get<variant_t>(SvPb::ImageTransformDisplacementXEId);
 	pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_DISP_X));
 	if (nullptr != pPropItem)
 	{
 		pPropItem->SetItemValue(static_cast<LPCTSTR> (_bstr_t(Value)));
 	}
 
-	Value = m_Values.Get<variant_t>(SVImageTransformDisplacementYGuid);
+	Value = m_Values.Get<variant_t>(SvPb::ImageTransformDisplacementYEId);
 	pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_DISP_Y));
 	if (nullptr != pPropItem)
 	{
 		pPropItem->SetItemValue(static_cast<LPCTSTR> (_bstr_t(Value)));
 	}
 
-	Value = m_Values.Get<variant_t>(SVTopResultObjectGuid);
+	Value = m_Values.Get<variant_t>(SvPb::TopResultEId);
 	pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_RESULT_TOP));
 	if (nullptr != pPropItem)
 	{
 		pPropItem->SetItemValue(static_cast<LPCTSTR> (_bstr_t(Value)));
 	}
 
-	Value = m_Values.Get<variant_t>(SVLeftResultObjectGuid);
+	Value = m_Values.Get<variant_t>(SvPb::LeftResultEId);
 	pPropItem = dynamic_cast<SVRPropertyItemStatic*> (m_Tree.FindItem(PROP_SHIFT_RESULT_LEFT));
 	if (nullptr != pPropItem)
 	{

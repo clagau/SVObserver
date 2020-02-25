@@ -40,8 +40,8 @@ void SVShiftToolUtility::SetToolNormalize(SvTo::SVShiftTool* pShiftTool)
 		Controller m_Values{ SvOg::BoundValues{pShiftTool->GetInspection()->GetUniqueObjectID(), pShiftTool->GetUniqueObjectID()} };
 		m_Values.Init();
 
-		m_Values.Set<double>(SVShiftToolReferenceXObjectGuid, static_cast<double> (lTranslationX));
-		m_Values.Set<double>(SVShiftToolReferenceYObjectGuid, static_cast<double> (lTranslationY));
+		m_Values.Set<double>(SvPb::ShiftToolReferenceXEId, static_cast<double> (lTranslationX));
+		m_Values.Set<double>(SvPb::ShiftToolReferenceYEId, static_cast<double> (lTranslationY));
 
 		m_Values.Commit();
 	}
@@ -70,17 +70,17 @@ void SVShiftToolUtility::SetToolSetReference(SvTo::SVShiftTool *pShiftTool)
 		Controller m_Values{ SvOg::BoundValues{ pShiftTool->GetInspection()->GetUniqueObjectID(), pShiftTool->GetUniqueObjectID() } };
 
 		m_Values.Init();
-		long lLeft = static_cast<long> (m_Values.Get<double>(SVExtentRelativeLeftPositionObjectGuid));
-		long lTop = static_cast<long> (m_Values.Get<double>(SVExtentRelativeTopPositionObjectGuid));
-		long lOffset = static_cast<long> (m_Values.Get<double>(SVImageTransformDisplacementXGuid));
+		long lLeft = static_cast<long> (m_Values.Get<double>(SvPb::ExtentRelativeLeftPositionEId));
+		long lTop = static_cast<long> (m_Values.Get<double>(SvPb::ExtentRelativeTopPositionEId));
+		long lOffset = static_cast<long> (m_Values.Get<double>(SvPb::ImageTransformDisplacementXEId));
 		lLeft += lOffset;
-		lOffset = static_cast<long> (m_Values.Get<double>(SVImageTransformDisplacementYGuid));
+		lOffset = static_cast<long> (m_Values.Get<double>(SvPb::ImageTransformDisplacementYEId));
 		lTop += lOffset;
 
-		m_Values.Set<double>(SVExtentRelativeLeftPositionObjectGuid, static_cast<double> (lLeft));
-		m_Values.Set<double>(SVExtentRelativeTopPositionObjectGuid, static_cast<double> (lTop));
-		m_Values.Set<double>(SVShiftToolReferenceXObjectGuid, static_cast<double> (lTranslationX));
-		m_Values.Set<double>(SVShiftToolReferenceYObjectGuid, static_cast<double> (lTranslationY));
+		m_Values.Set<double>(SvPb::ExtentRelativeLeftPositionEId, static_cast<double> (lLeft));
+		m_Values.Set<double>(SvPb::ExtentRelativeTopPositionEId, static_cast<double> (lTop));
+		m_Values.Set<double>(SvPb::ShiftToolReferenceXEId, static_cast<double> (lTranslationX));
+		m_Values.Set<double>(SvPb::ShiftToolReferenceYEId, static_cast<double> (lTranslationY));
 
 		m_Values.Commit();
 	}

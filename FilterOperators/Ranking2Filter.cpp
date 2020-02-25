@@ -15,7 +15,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -69,13 +68,8 @@ void Ranking2Filter::RebuildKernel()
 	// First free old kernel
 	m_milKernel.clear();
 
-
-	long value(0);
-	long Width(0);
-	long Height(0);
-
-	Width = validateKernelSize(m_KernelWidth);
-	Height = validateKernelSize(m_KernelHeight);
+	long Width = validateKernelSize(m_KernelWidth);
+	long Height = validateKernelSize(m_KernelHeight);
 
 	SVMatroxBufferCreateStruct CreateStruct;
 	CreateStruct.m_eAttribute = SVBufAttStructElement;
@@ -86,16 +80,14 @@ void Ranking2Filter::RebuildKernel()
 
 	std::vector<long> KernelArray;
 	m_KernelArray.GetArrayValues(KernelArray);
-	long unsigned Index(0);
-
 	std::vector<long> kernelData;
 	kernelData.resize(Width*Height);
 	for (long i = 0; i < Height; i++)
 	{
 		for (long j = 0; j < Width; j++)
 		{
-			Index = i * Width + j;
-			value = 0;
+			long unsigned Index = i * Width + j;
+			long value = 0;
 			if (Index < KernelArray.size())
 			{
 				value = KernelArray[Index];
@@ -150,13 +142,13 @@ bool Ranking2Filter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 #pragma region Private Methods
 void Ranking2Filter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::Ranking2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::Ranking2FilterObjectType;
 
-	RegisterEmbeddedObject(&m_KernelArray, FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_KernelArray, SvPb::FilterKernelEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner);
 
-	RegisterEmbeddedObject(&m_KernelWidth, SVRankingFilterRankingWidthGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGWIDTH, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_KernelHeight, SVRankingFilterRankingHeightGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGHEIGHT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_RankingRank, SVRankingFilterRankingRankGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGRANK, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_KernelWidth, SvPb::FilterKernelWidthEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGWIDTH, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_KernelHeight, SvPb::FilterKernelHeightEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGHEIGHT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_RankingRank, SvPb::RankingFilterRankingRankEId, IDS_OBJECTNAME_RANKINGFILTER_RANKINGRANK, false, SvOi::SVResetItemOwner);
 
 	m_KernelArray.SetArraySize(SvDef::cStandardKernelSize*SvDef::cStandardKernelSize);
 	m_KernelArray.SetDefaultValue(1);

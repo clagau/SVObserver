@@ -648,11 +648,11 @@ void ToolSetView::EditToolComment(SVGUID& rToolGuid)
 		Values.Init();
 
 		// Get the tool comment...
-		std::string ToolComment = Values.Get<CString>(SVToolCommentTypeObjectGuid);
+		std::string ToolComment = Values.Get<CString>(SvPb::ToolCommentTypeEId);
 		SvOg::SVTextEditDialog Dlg(ToolComment.c_str());
 		if (IDOK == Dlg.DoModal())
 		{
-			Values.Set<CString>(SVToolCommentTypeObjectGuid, Dlg.getText());
+			Values.Set<CString>(SvPb::ToolCommentTypeEId, Dlg.getText());
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 			Values.Commit();
 		}

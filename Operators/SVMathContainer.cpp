@@ -14,7 +14,6 @@
 #include "SVMathContainer.h"
 #include "SVMathEquation.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -34,12 +33,12 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 					 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVMathContainerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVMathContainerObjectType;
 
 	// Identify our input type needs...
 
 	// Input Math Result...
-	m_inputMathResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVMathEquationResultObjectGuid);
+	m_inputMathResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::MathEquationResultEId);
 	m_inputMathResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputMathResult, _T( "MathResult" ) );
 

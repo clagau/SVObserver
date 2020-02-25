@@ -116,8 +116,8 @@ bool TableAddColumnEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageC
 void TableAddColumnEquation::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::TableAddColumnEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAddColumnEquationObjectType;
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

@@ -17,7 +17,6 @@
 #include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -43,21 +42,21 @@ void SVShapeMaskHelperClass::init()
 	m_pShape = nullptr;
 	m_bUseOverlays = false;
 
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVShapeMaskHelperObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVShapeMaskHelperObjectType;
 
 	// do these eventually be changed to ResetItemOwner?
-	RegisterEmbeddedObject( &m_Data.bvoAutoResize, SVShapeMaskAutoResizeGuid, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.evoShapeType, SVShapeMaskTypeGuid, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.evoMaskArea, SVShapeMaskMaskAreaGuid, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoCenterX, SVShapeMaskPropertyCenterXGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoCenterY, SVShapeMaskPropertyCenterYGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoWidth, SVShapeMaskPropertyWidthGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoHeight, SVShapeMaskPropertyHeightGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoSideThickness, SVShapeMaskPropertySideThicknessGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoTopBottomThickness, SVShapeMaskPropertyTopBottomThicknessGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoOffset, SVShapeMaskPropertyOffsetGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.evoXYSymmetry, SVShapeMaskPropertySymmetryOrientationGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.bvoAutoResize, SvPb::ShapeMaskAutoResizeEId, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.evoShapeType, SvPb::ShapeMaskTypeEId, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.evoMaskArea, SvPb::ShapeMaskMaskAreaEId, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoCenterX, SvPb::ShapeMaskPropertyCenterXEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoCenterY, SvPb::ShapeMaskPropertyCenterYEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoWidth, SvPb::ShapeMaskPropertyWidthEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoHeight, SvPb::ShapeMaskPropertyHeightEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoSideThickness, SvPb::ShapeMaskPropertySideThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoTopBottomThickness, SvPb::ShapeMaskPropertyTopBottomThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoOffset, SvPb::ShapeMaskPropertyOffsetEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.evoXYSymmetry, SvPb::ShapeMaskPropertySymmetryOrientationEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SvOi::SVResetItemTool );
 
 	m_Data.bvoAutoResize.SetDefaultValue( false, false );
 
@@ -219,29 +218,29 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& rMapP
 
 	SVMaskShape::MapType mapProperties(rMapProperties);
 
-	m_Data.lvoCenterX.SetValue(mapProperties[SVShapeMaskPropertyCenterXGuid].value);
-	m_Data.lvoCenterY.SetValue(mapProperties[SVShapeMaskPropertyCenterYGuid].value);
-	m_Data.lvoWidth.SetValue  (mapProperties[SVShapeMaskPropertyWidthGuid].value);
-	m_Data.lvoHeight.SetValue (mapProperties[SVShapeMaskPropertyHeightGuid].value);
+	m_Data.lvoCenterX.SetValue(mapProperties[SvPb::ShapeMaskPropertyCenterXEId].value);
+	m_Data.lvoCenterY.SetValue(mapProperties[SvPb::ShapeMaskPropertyCenterYEId].value);
+	m_Data.lvoWidth.SetValue  (mapProperties[SvPb::ShapeMaskPropertyWidthEId].value);
+	m_Data.lvoHeight.SetValue (mapProperties[SvPb::ShapeMaskPropertyHeightEId].value);
 
 	// allow these values to be set regardless of current shape.
 	// This will allow SIAC to to a set on all properties without worrying about order.
 
 	SVMaskShape::MapType::iterator iter;
-	if ( ( iter = mapProperties.find( SVShapeMaskPropertySideThicknessGuid )) != mapProperties.end() )
+	if ( ( iter = mapProperties.find(SvPb::ShapeMaskPropertySideThicknessEId)) != mapProperties.end() )
 	{
 		m_Data.lvoSideThickness.SetValue(iter->second.value);
 	}
-	if ( ( iter = mapProperties.find( SVShapeMaskPropertyTopBottomThicknessGuid )) != mapProperties.end() )
+	if ( ( iter = mapProperties.find(SvPb::ShapeMaskPropertyTopBottomThicknessEId)) != mapProperties.end() )
 	{
 		m_Data.lvoTopBottomThickness.SetValue(iter->second.value);
 	}
 	
-	if ( ( iter = mapProperties.find( SVShapeMaskPropertyOffsetGuid ) ) != mapProperties.end() )
+	if ( ( iter = mapProperties.find(SvPb::ShapeMaskPropertyOffsetEId) ) != mapProperties.end() )
 	{
 		m_Data.lvoOffset.SetValue( iter->second.value);
 	}
-	if ( ( iter = mapProperties.find( SVShapeMaskPropertySymmetryOrientationGuid ) ) != mapProperties.end() )
+	if ( ( iter = mapProperties.find(SvPb::ShapeMaskPropertySymmetryOrientationEId) ) != mapProperties.end() )
 	{
 		m_Data.evoXYSymmetry.SetValue(iter->second.value);
 	}
@@ -262,30 +261,30 @@ HRESULT SVShapeMaskHelperClass::GetProperties(SVMaskShape::MapType& rMapProperti
 
 		long lValue;
 		m_Data.lvoCenterX.GetValue( lValue );
-		rMapProperties[ SVShapeMaskPropertyCenterXGuid ] = lValue;
+		rMapProperties[SvPb::ShapeMaskPropertyCenterXEId] = lValue;
 
 		m_Data.lvoCenterY.GetValue( lValue );
-		rMapProperties[ SVShapeMaskPropertyCenterYGuid ] = lValue;
+		rMapProperties[SvPb::ShapeMaskPropertyCenterYEId] = lValue;
 		
 		m_Data.lvoWidth.GetValue( lValue );
-		rMapProperties[ SVShapeMaskPropertyWidthGuid ] = lValue;
+		rMapProperties[SvPb::ShapeMaskPropertyWidthEId] = lValue;
 		
 		m_Data.lvoHeight.GetValue( lValue );
-		rMapProperties[ SVShapeMaskPropertyHeightGuid ] = lValue;
+		rMapProperties[SvPb::ShapeMaskPropertyHeightEId] = lValue;
 
 		if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut )
 		{
 			m_Data.lvoSideThickness.GetValue( lValue );
-			rMapProperties[ SVShapeMaskPropertySideThicknessGuid ] = lValue;
+			rMapProperties[SvPb::ShapeMaskPropertySideThicknessEId] = lValue;
 			m_Data.lvoTopBottomThickness.GetValue( lValue );
-			rMapProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ] = lValue;
+			rMapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId] = lValue;
 		}
 		else if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid )
 		{
 			m_Data.lvoOffset.GetValue( lValue );
-			rMapProperties[ SVShapeMaskPropertyOffsetGuid ] = lValue;
+			rMapProperties[SvPb::ShapeMaskPropertyOffsetEId] = lValue;
 			m_Data.evoXYSymmetry.GetValue( lValue );
-			rMapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ] = lValue;
+			rMapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId] = lValue;
 		}
 	}
 	return hr;
@@ -327,30 +326,30 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 
 		long lValue;
 		m_Data.lvoCenterX.GetValue( lValue );
-		mapProperties[ SVShapeMaskPropertyCenterXGuid ] = lValue;
+		mapProperties[SvPb::ShapeMaskPropertyCenterXEId] = lValue;
 
 		m_Data.lvoCenterY.GetValue( lValue );
-		mapProperties[ SVShapeMaskPropertyCenterYGuid ] = lValue;
+		mapProperties[SvPb::ShapeMaskPropertyCenterYEId] = lValue;
 		
 		m_Data.lvoWidth.GetValue( lValue );
-		mapProperties[ SVShapeMaskPropertyWidthGuid ] = lValue;
+		mapProperties[SvPb::ShapeMaskPropertyWidthEId] = lValue;
 		
 		m_Data.lvoHeight.GetValue( lValue );
-		mapProperties[ SVShapeMaskPropertyHeightGuid ] = lValue;
+		mapProperties[SvPb::ShapeMaskPropertyHeightEId] = lValue;
 
 		if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut )
 		{
 			m_Data.lvoSideThickness.GetValue( lValue );
-			mapProperties[ SVShapeMaskPropertySideThicknessGuid ] = lValue;
+			mapProperties[SvPb::ShapeMaskPropertySideThicknessEId] = lValue;
 			m_Data.lvoTopBottomThickness.GetValue( lValue );
-			mapProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ] = lValue;
+			mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId] = lValue;
 		}
 		else if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid )
 		{
 			m_Data.lvoOffset.GetValue( lValue );
-			mapProperties[ SVShapeMaskPropertyOffsetGuid ] = lValue;
+			mapProperties[SvPb::ShapeMaskPropertyOffsetEId] = lValue;
 			m_Data.evoXYSymmetry.GetValue( lValue );
-			mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ] = lValue;
+			mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId] = lValue;
 		}
 		
 		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );

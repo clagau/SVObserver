@@ -91,10 +91,10 @@ public:
 
 	virtual void SetDisabled() override;
 
-	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID);
-	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString);
-	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
-	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
+	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID);
+	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newString);
+	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
+	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
 	/// Moved an embedded-object in the embedded-list to a new position.
 	/// \param pToMoveObject [in] This object should moved.
 	/// \param pPosObject [in] The other object will be moved before this object.
@@ -152,7 +152,7 @@ public:
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
-	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
+	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual void DestroyFriend(SVObjectClass* pObject) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
@@ -160,7 +160,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 protected:
-	bool RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName);
+	bool RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newObjectName);
 
 	/// This method return true if method ConnectAllObject has to ask friends to connect this input info
 	/// \param rInfo [in] input info for the connection.
@@ -168,7 +168,7 @@ protected:
 	/// \returns bool
 	virtual bool hasToAskFriendForConnection(const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner) const { return true; }
 	/// Registers a linked value in one function call
-	void registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, const GUID& rGuidEmbeddedID, const GUID& rGuidEmbeddedLinkID, int StringResourceID, uint32_t defaultValue = 0);
+	void registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, uint32_t defaultValue = 0);
 
 
 public:
@@ -196,7 +196,7 @@ public:
 
 	void AddEmbeddedObject(SVObjectClass* pObject);
 	void RemoveEmbeddedObject(SVObjectClass* pObjectToRemove);
-	SVObjectClass* GetEmbeddedValueObject(GUID classguid);
+	SVObjectClass* GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID);
 
 	virtual HRESULT ResetObjectInputs() override;
 
@@ -204,7 +204,7 @@ public:
 	/// \param pOwnerObject [in] The owner of the changed object.
 	/// \param rOldEmbeddedID [in] Old embeddedId
 	/// \param rNewEmbeddedID [in] New embeddedId
-	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, const SVGUID& rOldEmbeddedID, const SVGUID& rNewEmbeddedID) {};
+	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID) {};
 
 protected:
 	// Direct Method Call

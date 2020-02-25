@@ -36,9 +36,9 @@ namespace SvOg
 		CComboBox	m_ctlRankingWidth;
 		CComboBox	m_ctlRankingHeight;
 		CComboBox	m_ctlRankingRank;
-		long	m_lRankingWidth;
-		long	m_lRankingHeight;
-		long	m_lRankingRank;
+		long	m_lRankingWidth { 3 };
+		long	m_lRankingHeight{ 3 };
+		long	m_lRankingRank{ 0 };
 		//}}AFX_DATA
 
 		// Overrides

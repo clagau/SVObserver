@@ -52,11 +52,11 @@ bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ObjectRef, const std:
 
 	bool res = true;
 	bool IsReference = false;
-	const SVGUID& guid = ObjectRef.GetEmbeddedID();
-	if ( guid == SVRangeClassFailHighIndirectObjectGuid ||
-		guid == SVRangeClassFailLowIndirectObjectGuid ||
-		guid == SVRangeClassWarnHighIndirectObjectGuid ||
-		guid == SVRangeClassWarnLowIndirectObjectGuid )
+	SvPb::EmbeddedIdEnum embeddedID = ObjectRef.GetEmbeddedID();
+	if (embeddedID == SvPb::RangeClassFailHighIndirectEId ||
+		embeddedID == SvPb::RangeClassFailLowIndirectEId ||
+		embeddedID == SvPb::RangeClassWarnHighIndirectEId ||
+		embeddedID == SvPb::RangeClassWarnLowIndirectEId)
 	{
 		IsReference = true;
 	}

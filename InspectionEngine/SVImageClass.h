@@ -46,7 +46,6 @@ public:
 	virtual bool CloseObject() override;
 
 	SVImageClass* GetParentImage() const;
-	const SVGUID& GetParentImageID() const;
 	const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
 
 	HRESULT InitializeImage( SvDef::SVImageTypeEnum ImageType );
@@ -69,7 +68,7 @@ public:
 	const SVImageExtentClass& GetImageExtents() const;
 	HRESULT GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass& rOutExtent);
 
-	HRESULT ValidateAgainstParentExtents( SVImageExtentClass& rExtent );
+	HRESULT ValidateAgainstParentExtents( const SVImageExtentClass& rExtent );
 	HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& rExtent );
 
 	bool SafeImageCopyToHandle     ( SvOi::SVImageBufferHandlePtr& p_rHandle, const SvTrc::ITriggerRecordRPtr pTriggerRecord);

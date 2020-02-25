@@ -204,39 +204,39 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 			Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId }};
 			Values.Init();
 
-			Values.Set<long>(SVBCTypeObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType());
-			Values.Set<double>(SVBCSpeedObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed());
-			Values.Set<double>(SVBCOrientationObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetOrientation());
-			Values.Set<double>(SVBCSkewNegativeObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative());
-			Values.Set<double>(SVBCSkewPositiveObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive());
-			Values.Set<double>(SVBCThresholdObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetThreshold());
-			Values.Set<double>(SVBCForegroundColorObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor());
-			Values.Set<double>(SVBCStringSizeObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize());
-			Values.Set<bool>(SVBCWarnOnFailedReadObjectGuid, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() ? true : false);
-			Values.Set<long>(SVBCTimeoutGuid, dlgProp.m_dlgBarCodeGeneral.GetTimeout());
-			Values.Set<CString>(SVBCStringFormatGuid, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat());
-			Values.Set<long>(SVBCThresholdTypeGuid, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType());
-			Values.Set<bool>(SVBCUnevenGridGuid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid() ? true : false);
+			Values.Set<long>(SvPb::BCTypeEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType());
+			Values.Set<double>(SvPb::BCSpeedEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed());
+			Values.Set<double>(SvPb::BCOrientationEId, dlgProp.m_dlgBarCodeGeneral.GetOrientation());
+			Values.Set<double>(SvPb::BCSkewNegativeEId, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative());
+			Values.Set<double>(SvPb::BCSkewPositiveEId, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive());
+			Values.Set<double>(SvPb::BCThresholdEId, dlgProp.m_dlgBarCodeGeneral.GetThreshold());
+			Values.Set<double>(SvPb::BCForegroundColorEId, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor());
+			Values.Set<double>(SvPb::BCStringSizeEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize());
+			Values.Set<bool>(SvPb::BCWarnOnFailedReadEId, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() ? true : false);
+			Values.Set<long>(SvPb::BCTimeoutEId, dlgProp.m_dlgBarCodeGeneral.GetTimeout());
+			Values.Set<CString>(SvPb::BCStringFormatEId, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat());
+			Values.Set<long>(SvPb::BCThresholdTypeEId, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType());
+			Values.Set<bool>(SvPb::BCUnevenGridEId, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid() ? true : false);
 
-			Values.Set<double>(SVBCEncodingObjectGuid, dlgProp.m_dlgBarCodeAttributes.GetEncoding());
-			Values.Set<double>(SVBCErrorCorrectionObjectGuid, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection());
-			Values.Set<CString>(SVRegExpressionObjectGuid, RegExp.c_str());
-			Values.Set<bool>(SVBCSaveStringInFileObjectGuid, bSaveInFile ? true : false);
-			Values.Set<CString>(SVBCStringFileNameObjectGuid, SingleFile.c_str());
+			Values.Set<double>(SvPb::BCEncodingEId, dlgProp.m_dlgBarCodeAttributes.GetEncoding());
+			Values.Set<double>(SvPb::BCErrorCorrectionEId, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection());
+			Values.Set<CString>(SvPb::RegExpressionEId, RegExp.c_str());
+			Values.Set<bool>(SvPb::BCSaveStringInFileEId, bSaveInFile ? true : false);
+			Values.Set<CString>(SvPb::BCStringFileNameEId, SingleFile.c_str());
 
-			Values.Set<double>(SVBCCellNumberXObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellX()));
-			Values.Set<double>(SVBCCellNumberYObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellY()));
-			Values.Set<double>(SVBCCellMinSizeObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize()));
-			Values.Set<double>(SVBCCellMaxSizeObjectGuid, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize()));
+			Values.Set<double>(SvPb::BCCellNumberXEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellX()));
+			Values.Set<double>(SvPb::BCCellNumberYEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellY()));
+			Values.Set<double>(SvPb::BCCellMinSizeEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize()));
+			Values.Set<double>(SvPb::BCCellMaxSizeEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize()));
 
 			Values.Commit();
 
 			Controller Result {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), pResult->GetUniqueObjectID() }};
 			Result.Init();
 
-			Result.Set<bool>(SVBCUseSingleMatchStringGuid, bUseSingle ? true : false);
-			Result.Set<bool>(SVBCUseMatchStringFileGuid, bUseMultiple ? true : false);
-			Result.Set<CString>(SVBCMatchStringFileNameObjectGuid, MultiFile.c_str());
+			Result.Set<bool>(SvPb::BCUseSingleMatchStringEId, bUseSingle ? true : false);
+			Result.Set<bool>(SvPb::BCUseMatchStringFileEId, bUseMultiple ? true : false);
+			Result.Set<CString>(SvPb::BCMatchStringFileNameEId, MultiFile.c_str());
 			Result.Commit();
 		}
 	}
@@ -419,12 +419,12 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 
 		if (nullptr != pEdgeA)
 		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeA->GetUniqueObjectID(), pEdgeA->getEdgeEmbeddedGuids(), IDS_EDGE_A);
+			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeA->GetUniqueObjectID(), pEdgeA->getEdgeEmbeddedIds(), IDS_EDGE_A);
 		}
 
 		if (nullptr != pEdgeB)
 		{
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeB->GetUniqueObjectID(), pEdgeB->getEdgeEmbeddedGuids(), IDS_EDGE_B);
+			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeB->GetUniqueObjectID(), pEdgeB->getEdgeEmbeddedIds(), IDS_EDGE_B);
 		}
 
 		if (nullptr != pIPDoc && (nullptr != pPageA || nullptr != pPageB))
@@ -708,34 +708,34 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rO
 			Values.Init();
 
 			// Save General Page
-			Values.Set<long>(SVpatMaxOccurancesObjectGuid, GeneralPage.m_lOccurances);
-			Values.Set<double>(SVpatAcceptThresholdObjectGuid, static_cast<double> (GeneralPage.m_lAcceptance));
-			Values.Set<double>(SVpatCertainThresholdObjectGuid, static_cast<double> (GeneralPage.m_lCertainty));
-			Values.Set<long>(SVpatAccuracyObjectGuid, lSpeedFactor[GeneralPage.m_nPosAccuracyIndex + 1]);
-			Values.Set<long>(SVpatSpeedObjectGuid, lSpeedFactor[GeneralPage.m_nSpeedIndex]);
-			Values.Set<bool>(SVpatSearchAngleModeObjectGuid, GeneralPage.m_bAngleSearch ? true : false);
+			Values.Set<long>(SvPb::PatMaxOccurancesEId, GeneralPage.m_lOccurances);
+			Values.Set<double>(SvPb::PatAcceptThresholdEId, static_cast<double> (GeneralPage.m_lAcceptance));
+			Values.Set<double>(SvPb::PatCertainThresholdEId, static_cast<double> (GeneralPage.m_lCertainty));
+			Values.Set<long>(SvPb::PatAccuracyEId, lSpeedFactor[GeneralPage.m_nPosAccuracyIndex + 1]);
+			Values.Set<long>(SvPb::PatSpeedEId, lSpeedFactor[GeneralPage.m_nSpeedIndex]);
+			Values.Set<bool>(SvPb::PatSearchAngleModeEId, GeneralPage.m_bAngleSearch ? true : false);
 
 			if (GeneralPage.m_bAngleSearch)
 			{
-				Values.Set<double>(SVpatSearchAngleObjectGuid, GeneralPage.m_dSearchAngle);
-				Values.Set<double>(SVpatAngleDeltaNegObjectGuid, GeneralPage.m_dAngleDeltaNegative);
-				Values.Set<double>(SVpatAngleDeltaPosObjectGuid, GeneralPage.m_dAngleDeltaPositive);
-				Values.Set<double>(SVpatAngleToleranceObjectGuid, GeneralPage.m_dAngleTolerance);
-				Values.Set<double>(SVpatAngleInterpolationObjectGuid, GeneralPage.m_dInterpolationMode);
+				Values.Set<double>(SvPb::PatSearchAngleEId, GeneralPage.m_dSearchAngle);
+				Values.Set<double>(SvPb::PatAngleDeltaNegEId, GeneralPage.m_dAngleDeltaNegative);
+				Values.Set<double>(SvPb::PatAngleDeltaPosEId, GeneralPage.m_dAngleDeltaPositive);
+				Values.Set<double>(SvPb::PatAngleToleranceEId, GeneralPage.m_dAngleTolerance);
+				Values.Set<double>(SvPb::PatAngleInterpolationEId, GeneralPage.m_dInterpolationMode);
 
 				double dAngleAccuracy = l_pAnalyzer->m_bAngleAccuracy ? GeneralPage.m_dAngularAccuracy : static_cast<double> (SVValueDisable);
-				Values.Set<double>(SVpatAngleAccuracyObjectGuid, dAngleAccuracy);
+				Values.Set<double>(SvPb::PatAngleAccuracyEId, dAngleAccuracy);
 			}
 
 			// Save Advanced Page
-			Values.Set<long>(SVpatFastFindObjectGuid, AdvancedPage.m_lFastFind);
-			Values.Set<long>(SVpatAdditionalCandidatesObjectGuid, AdvancedPage.m_lAdditionalCandidates);
-			Values.Set<double>(SVpatCandidateSpacingXMinObjectGuid, AdvancedPage.m_dCandidateSpacingXMin);
-			Values.Set<double>(SVpatCandidateSpacingYMinObjectGuid, AdvancedPage.m_dCandidateSpacingYMin);
-			Values.Set<double>(SVpatPreliminaryAcceptanceThresholdObjectGuid, AdvancedPage.m_dPreliminaryAcceptanceThreshold);
-			Values.Set<long>(SVpatModelStepObjectGuid, AdvancedPage.m_lModelStep);
-			Values.Set<long>(SVpatBeginningResolutionLevelObjectGuid, AdvancedPage.m_lBeginningResolutionLevel);
-			Values.Set<long>(SVpatFinalResolutionLevelObjectGuid, AdvancedPage.m_lFinalResolutionLevel);
+			Values.Set<long>(SvPb::PatFastFindEId, AdvancedPage.m_lFastFind);
+			Values.Set<long>(SvPb::PatAdditionalCandidatesEId, AdvancedPage.m_lAdditionalCandidates);
+			Values.Set<double>(SvPb::PatCandidateSpacingXMinEId, AdvancedPage.m_dCandidateSpacingXMin);
+			Values.Set<double>(SvPb::PatCandidateSpacingYMinEId, AdvancedPage.m_dCandidateSpacingYMin);
+			Values.Set<double>(SvPb::PatPreliminaryAcceptanceThresholdEId, AdvancedPage.m_dPreliminaryAcceptanceThreshold);
+			Values.Set<long>(SvPb::PatModelStepEId, AdvancedPage.m_lModelStep);
+			Values.Set<long>(SvPb::PatBeginningResolutionLevelEId, AdvancedPage.m_lBeginningResolutionLevel);
+			Values.Set<long>(SvPb::PatFinalResolutionLevelEId, AdvancedPage.m_lFinalResolutionLevel);
 
 			Values.Commit();
 		}

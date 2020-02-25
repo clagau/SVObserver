@@ -53,7 +53,7 @@ public:
 				_variant_t value, defaultValue;
 				ConvertProtobufToVariant(rItem.value(), value);
 				ConvertProtobufToVariant(rItem.defaultvalue(), defaultValue);
-				rValues[SvPb::GetGuidFromProtoBytes(rItem.embeddedid())] = {SvPb::GetGuidFromProtoBytes(rItem.objectid()), value, defaultValue};
+				rValues[rItem.embeddedid()] = {SvPb::GetGuidFromProtoBytes(rItem.objectid()), value, defaultValue};
 			}
 		}
 
@@ -77,7 +77,7 @@ public:
 			pEntry->set_isdefaultmodified(rValue.second.isDefaultModified());
 			pEntry->set_arrayindex(rValue.second.GetArrayIndex());
 			SvPb::SetGuidInProtoBytes(pEntry->mutable_values()->mutable_objectid(), rValue.second.GetObjectID());
-			SvPb::SetGuidInProtoBytes(pEntry->mutable_values()->mutable_embeddedid(), rValue.first);
+			pEntry->mutable_values()->set_embeddedid(rValue.first);
 			ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
 			ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
 		}

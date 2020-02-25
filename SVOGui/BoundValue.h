@@ -12,6 +12,7 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <guiddef.h>
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -99,7 +100,7 @@ private:
 class BoundValues
 {
 public:
-	typedef std::map<GUID, BoundValue> Container;
+	typedef std::map<SvPb::EmbeddedIdEnum, BoundValue> Container;
 	typedef Container::iterator iterator;
 	typedef Container::const_iterator const_iterator;
 	typedef Container::value_type value_type;
@@ -127,9 +128,9 @@ public:
 	void SetInspectionID(const GUID& rInspectionID) { m_inspectionID = rInspectionID; };
 	const GUID& GetInspectionID() const { return m_inspectionID; }
 
-	variant_t GetDefaultValue(const GUID& rEmbeddedID) const
+	variant_t GetDefaultValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
-		Container::const_iterator it = m_values.find(rEmbeddedID);
+		Container::const_iterator it = m_values.find(embeddedID);
 		if (m_values.end() != it)
 		{
 			return it->second.GetDefaultValue();
@@ -137,9 +138,9 @@ public:
 		return variant_t();
 	}
 
-	variant_t GetValue(const GUID& rEmbeddedID) const
+	variant_t GetValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
-		Container::const_iterator it = m_values.find(rEmbeddedID);
+		Container::const_iterator it = m_values.find(embeddedID);
 		if (m_values.end() != it)
 		{
 			return it->second.GetValue();
@@ -147,11 +148,11 @@ public:
 		return variant_t();
 	}
 
-	bool SetDefaultValue(const GUID& rEmbeddedID, const variant_t& rDefaultValue)
+	bool SetDefaultValue(SvPb::EmbeddedIdEnum embeddedID, const variant_t& rDefaultValue)
 	{
 		if (!m_ReadOnly)
 		{
-			Container::iterator it = m_values.find(rEmbeddedID);
+			Container::iterator it = m_values.find(embeddedID);
 			if (m_values.end() != it)
 			{
 				it->second.SetDefaultValue(rDefaultValue);
@@ -161,11 +162,11 @@ public:
 		return false;
 	}
 
-	bool SetValue(const GUID& rEmbeddedID, const variant_t& rValue, int ArrayIndex = -1)
+	bool SetValue(SvPb::EmbeddedIdEnum embeddedID, const variant_t& rValue, int ArrayIndex = -1)
 	{
 		if (!m_ReadOnly)
 		{
-			Container::iterator it = m_values.find(rEmbeddedID);
+			Container::iterator it = m_values.find(embeddedID);
 			if (m_values.end() != it)
 			{
 				it->second.SetValue(rValue, ArrayIndex);
@@ -175,10 +176,10 @@ public:
 		return false;
 	}
 
-	GUID GetObjectID(const GUID& rEmbeddedID) const
+	GUID GetObjectID(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		GUID objectID = GUID_NULL;
-		Container::const_iterator it = m_values.find(rEmbeddedID);
+		Container::const_iterator it = m_values.find(embeddedID);
 		if (it != m_values.end())
 		{
 			objectID = it->second.GetObjectID();

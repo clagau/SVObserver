@@ -40,7 +40,7 @@ namespace SvAo
 struct SVBlobFeatureConstant
 {
 	SVBlobSelectionEnum  MILFeatureDef;
-	const GUID&   rEmbeddedID;
+	SvPb::EmbeddedIdEnum   embeddedID;
 	int     NewStringResourceID;
 };
 

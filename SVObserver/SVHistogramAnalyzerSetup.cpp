@@ -197,9 +197,9 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedRadiofixed()
 	Refresh();
 }
 
-inline void SVHistogramAnalyzerSetupClass::SetResultRange(const GUID & resultGuid)
+inline void SVHistogramAnalyzerSetupClass::SetResultRange(SvPb::EmbeddedIdEnum embeddedID)
 {
-	SvOi::IObjectClass* pAnalyzerResult = m_pAnalyzer->GetResultObject(resultGuid);
+	SvOi::IObjectClass* pAnalyzerResult = m_pAnalyzer->GetResultObject(embeddedID);
 	if (pAnalyzerResult)
 	{
 		SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this);

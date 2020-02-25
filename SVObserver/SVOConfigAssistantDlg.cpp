@@ -2757,7 +2757,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 						// check for Camera Input Line State...
 						if (nullptr != rEntry->getObject())
 						{
-							if (rEntry->getObject()->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
+							if (rEntry->getObject()->GetEmbeddedID() == SvPb::CameraTriggerLineInStateEId)
 							{
 								// Only if the camera supports it ?
 								availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));

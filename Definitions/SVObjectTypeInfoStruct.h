@@ -15,18 +15,18 @@ namespace SvDef
 {
 		struct SVObjectTypeInfoStruct
 		{
-			SVObjectTypeInfoStruct( SvPb::SVObjectTypeEnum ObjectType= SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType= SvPb::SVNotSetSubObjectType, const GUID& rEmbeddedID=GUID_NULL)
-				: ObjectType(ObjectType ), SubType(SubType ), EmbeddedID( rEmbeddedID ) {};
+			SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum ObjectType = SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVNotSetSubObjectType, SvPb::EmbeddedIdEnum embeddedID = SvPb::NoEmbeddedId)
+				: m_ObjectType(ObjectType ), m_SubType(SubType ), m_EmbeddedID( embeddedID ) {};
 
 			//******************************************************************************
 			// Data Element(s):
 			//******************************************************************************
 
-			SvPb::SVObjectTypeEnum		ObjectType;			// Main Type
-			SvPb::SVObjectSubTypeEnum		SubType;		// Sub Type  
+			SvPb::SVObjectTypeEnum		m_ObjectType;			// Main Type
+			SvPb::SVObjectSubTypeEnum	m_SubType;		// Sub Type  
 
 			// Embedded ID, if any.
-			GUID				EmbeddedID;
+			SvPb::EmbeddedIdEnum		m_EmbeddedID;
 		};
 
 		typedef std::vector<SVObjectTypeInfoStruct> SVObjectTypeInfoVector;

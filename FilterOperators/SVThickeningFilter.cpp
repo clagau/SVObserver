@@ -13,7 +13,6 @@
 #include "SVThickeningFilter.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
@@ -38,10 +37,10 @@ SVThickeningFilterClass::~SVThickeningFilterClass()
 
 void SVThickeningFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVThickeningFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThickeningFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoItterations, SvPb::ThickeningFilterItterationsEId, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_bvoGrayOn, SvPb::ThickeningFilterGrayOnEId, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone );
 
 	m_lvoItterations.SetDefaultValue( 1L );
 	m_bvoGrayOn.SetDefaultValue(BOOL(false));

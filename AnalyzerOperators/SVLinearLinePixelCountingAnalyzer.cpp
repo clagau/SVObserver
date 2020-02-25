@@ -14,7 +14,6 @@
 #include "SVLinearLinePixelCountingAnalyzer.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
@@ -46,7 +45,7 @@ SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( 
 void SVLinearPixelCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLinearPixelCountingAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearPixelCountingAnalyzerObjectType;
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 
@@ -58,9 +57,9 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	}
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &blackPixelCount, SVBlackPixelObjectGuid, IDS_OBJECTNAME_BLACKPIXELCOUNT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &whitePixelCount, SVWhitePixelObjectGuid, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject( &blackPixelCount, SvPb::BlackPixelEId, IDS_OBJECTNAME_BLACKPIXELCOUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &whitePixelCount, SvPb::WhitePixelEId, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SvPb::ShowAllEdgeAOverlaysEId, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	blackPixelCount.SetDefaultValue( 0, true );
@@ -72,10 +71,10 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	addDefaultInputObjects();
 	
 	// Add the White Pixel Count Result...
-	addScalarResultToAvailableChildren(SVBlackPixelObjectGuid, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_BLACKPIXELCOUNT, IDS_RESULT_STRING);
+	addScalarResultToAvailableChildren(SvPb::BlackPixelEId, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_BLACKPIXELCOUNT, IDS_RESULT_STRING);
 
 	// Add the Black Pixel Count Result...
-	addScalarResultToAvailableChildren(SVWhitePixelObjectGuid, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_WHITEPIXELCOUNT, IDS_RESULT_STRING);
+	addScalarResultToAvailableChildren(SvPb::WhitePixelEId, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_WHITEPIXELCOUNT, IDS_RESULT_STRING);
 }
 
 

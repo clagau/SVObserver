@@ -66,8 +66,8 @@ protected:
 	bool ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	void addDPointResultToAvailableChildren(GUID embeddedID, UINT idForClassnamePart1);
-	void addScalarResultToAvailableChildren(GUID embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2);
+	void addDPointResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, UINT idForClassnamePart1);
+	void addScalarResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2);
 
 	/// Set the parameter to the list, if available and valid.
 	/// \param rName [in] Full dotted name of the parameter.

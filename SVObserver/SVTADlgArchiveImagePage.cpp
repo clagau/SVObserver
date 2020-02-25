@@ -726,21 +726,21 @@ void SVTADlgArchiveImagePage::AlternativeImagePaths::EditboxToTextValue(ValueAnd
 {
 	CString Text;
 	std::get<TupleContent::ValueEdit>(tuple).GetWindowText(Text);
-	m_rValues.Set<CString>(std::get<TupleContent::ValueGuid>(tuple), Text);
+	m_rValues.Set<CString>(std::get<TupleContent::EmbeddedId>(tuple), Text);
 }
 
 void SVTADlgArchiveImagePage::AlternativeImagePaths::TextValueToEditbox(ValueAndGuiInformation& tuple)
 {
 	std::string temp;
 
-	if (std::get<TupleContent::DottedNameGuid>(tuple)) //i.e this is a linked value
+	if (SvPb::NoEmbeddedId != std::get<TupleContent::EmbeddedLinkId>(tuple)) //i.e this is a linked value
 	{
-		temp = m_rValues.Get<CString>(*(std::get<TupleContent::DottedNameGuid>(tuple))); //See whether we can get a dotted name
+		temp = m_rValues.Get<CString>(std::get<TupleContent::EmbeddedLinkId>(tuple)); //See whether we can get a dotted name
 	}
 
 	if (temp.empty()) // because this is not a linked value (or it is, but there is no associated dotted name)
 	{
-		temp = m_rValues.Get<CString>(std::get<TupleContent::ValueGuid>(tuple));
+		temp = m_rValues.Get<CString>(std::get<TupleContent::EmbeddedId>(tuple));
 	}
 
 	std::get<TupleContent::ValueEdit>(tuple).SetWindowText(temp.c_str());

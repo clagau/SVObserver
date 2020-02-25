@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTransformImagePage.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -49,7 +48,7 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_Values.Set<bool>(SVUseExtentsOnlyObjectGuid, m_useExtentsOnly ? true : false);
+		m_Values.Set<bool>(SvPb::UseExtentsOnlyEId, m_useExtentsOnly ? true : false);
 		hr = m_Values.Commit();
 
 		UpdateData(false);
@@ -92,7 +91,7 @@ namespace SvOg
 		if (rc)
 		{
 			m_Values.Init();
-			m_useExtentsOnly = m_Values.Get<bool>(SVUseExtentsOnlyObjectGuid);
+			m_useExtentsOnly = m_Values.Get<bool>(SvPb::UseExtentsOnlyEId);
 			CheckSourceImage();
 			UpdateData(false);
 		}

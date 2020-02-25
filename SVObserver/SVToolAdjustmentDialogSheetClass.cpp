@@ -120,38 +120,38 @@ SVToolAdjustmentDialogSheetClass::~SVToolAdjustmentDialogSheetClass()
 void SVToolAdjustmentDialogSheetClass::addPages()
 {
 	SvDef::SVObjectTypeInfoStruct ObjectInfo;
-	ObjectInfo.ObjectType = SvPb::SVEquationObjectType;
-	ObjectInfo.SubType = SvPb::SVConditionalObjectType;
+	ObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	ObjectInfo.m_SubType = SvPb::SVConditionalObjectType;
 	SvOi::IFormulaControllerPtr pFormularController {new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, ObjectInfo)};
 	UINT disableExtensionID = (SvPb::SVObjectTypeEnum::SVToolSetObjectType == GetTaskObject()->GetObjectType()) ? IDS_CLASSNAME_SVTOOLSET : IDS_TOOL_STRING;
 	SvOg::SVFormulaEditorPageClass* pConditionalDlg = new SvOg::SVFormulaEditorPageClass {pFormularController, true, IDS_CONDITIONAL_STRING, disableExtensionID};
 
 	SvOi::IObjectClass* pLUTEquation {nullptr};
-	ObjectInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	ObjectInfo.SubType = SvPb::SVLUTOperatorObjectType;
+	ObjectInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	ObjectInfo.m_SubType = SvPb::SVLUTOperatorObjectType;
 	SvOi::IObjectClass* pLUTOperator = GetTaskObject()->getFirstObject(ObjectInfo);
 	if (nullptr != pLUTOperator)
 	{
-		ObjectInfo.ObjectType = SvPb::SVEquationObjectType;
-		ObjectInfo.SubType = SvPb::SVLUTEquationObjectType;
+		ObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
+		ObjectInfo.m_SubType = SvPb::SVLUTEquationObjectType;
 		pLUTEquation = pLUTOperator->getFirstObject(ObjectInfo);
 	}
 
-	ObjectInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	ObjectInfo.SubType = SvPb::SVUserMaskOperatorObjectType;
+	ObjectInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	ObjectInfo.m_SubType = SvPb::SVUserMaskOperatorObjectType;
 	SvOi::IObjectClass* pMaskOperator = GetTaskObject()->getFirstObject(ObjectInfo);
 
-	ObjectInfo.ObjectType = SvPb::SVEquationObjectType;
-	ObjectInfo.SubType = SvPb::SVMathEquationObjectType;
+	ObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	ObjectInfo.m_SubType = SvPb::SVMathEquationObjectType;
 	SvOi::IObjectClass* pMathEquation = GetTaskObject()->getFirstObject(ObjectInfo);
 
-	ObjectInfo.ObjectType = SvPb::SVTransformObjectType;
-	ObjectInfo.SubType = SvPb::SVImageTransformObjectType;
+	ObjectInfo.m_ObjectType = SvPb::SVTransformObjectType;
+	ObjectInfo.m_SubType = SvPb::SVImageTransformObjectType;
 	SvOi::IObjectClass* pImageTransform = GetTaskObject()->getFirstObject(ObjectInfo);
 
 	bool bHasSize = false;
-	ObjectInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
-	ObjectInfo.SubType = SvPb::SVNotSetSubObjectType;
+	ObjectInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
+	ObjectInfo.m_SubType = SvPb::SVNotSetSubObjectType;
 
 	if (nullptr != GetTaskObject()->getFirstObject(ObjectInfo))
 	{

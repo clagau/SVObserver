@@ -46,26 +46,26 @@ public:
 	void UpdateNumberOfRows();
 
 	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
-	/// \param rEmbeddedID [in] Emdedded GUID.
+	/// \param embeddedID [in] emdedded Id.
 	/// \param nameId [in] ID of the new name
 	/// \param arraysize [in] New array size.
 	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
-	SvVol::DoubleSortValuePtr updateOrCreateColumn(const GUID& rEmbeddedID, int nameId, int arraysize);
+	SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, int nameId, int arraysize);
 	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
-	/// \param rEmbeddedID [in] Emdedded GUID.
+	/// \param embeddedID [in] emdedded Id.
 	/// \param newname [in]  the new name
 	/// \param arraysize [in] New array size.
 	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
-	SvVol::DoubleSortValuePtr updateOrCreateColumn(const GUID& rEmbeddedId, std::string& newName, int arraysize);
+	SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, std::string& newName, int arraysize);
 
 	/// Remove a column.
-	/// \param rEmbeddedId [in] Emdedded GUID of the value object.
-	void removeColumn(const GUID& rEmbeddedId);
+	/// \param embeddedId [in] emdedded Id of the value object.
+	void removeColumn(SvPb::EmbeddedIdEnum embeddedId);
 
 	/// Clear the table
 	void clearTable();
 
-	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
+	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 
 	/// for rValue  a 2 dim SafeArray of double  is expected, otherwise false is returned
 	bool setTableValues(const _variant_t& rValue);
@@ -83,7 +83,7 @@ protected:
 	/// \param embeddedID [in] The EmbeddedId of the new object.
 	/// \param name [in] The name of the new object.
 	/// \param arraySize [in] The array size of the new object.
-	SvVol::DoubleSortValuePtr createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize);
+	SvVol::DoubleSortValuePtr createColumnObject(SvPb::EmbeddedIdEnum embeddedId, LPCTSTR name, int arraySize);
 
 	/// Updated object-name and max number for the array of a columnValueObject.
 	/// \param pos [in] Position in the m_ValueList.
@@ -96,9 +96,9 @@ protected:
 	/// \param newPos [in] The new position in the m_ValueList.
 	void MoveValueColumn(int oldPos, int newPos);
 
-	/// Return the next unused embedded GUID for the columns
-	/// \returns SVGUID
-	SVGUID getNextFreeEmbeddedColumGUID();
+	/// Return the next unused embedded Id for the columns
+	/// \returns SvPb::EmbeddedIdEnum
+	SvPb::EmbeddedIdEnum getNextFreeEmbeddedColumGUID();
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

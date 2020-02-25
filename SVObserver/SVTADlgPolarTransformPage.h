@@ -21,6 +21,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvOi
+{
+	class IObjectClass;
+}
 namespace SvOp
 {
 class SVEvaluateClass;

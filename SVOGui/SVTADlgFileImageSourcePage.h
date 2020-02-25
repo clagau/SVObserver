@@ -64,7 +64,7 @@ namespace SvOg
 		enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
 		SvOg::PictureDisplay m_imageCtrl;
 		CString	m_PathName;
-		BOOL m_BContinuousReload;
+		BOOL m_BContinuousReload{ false };
 		//}}AFX_DATA
 	#pragma endregion Member variables
 	};

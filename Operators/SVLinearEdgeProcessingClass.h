@@ -59,7 +59,7 @@ public:
 	};
 	void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay, ResultType resultType = ResultType::Normal ) const;
 	
-	const SVGuidVector& getEdgeEmbeddedGuids() { return m_EdgeEmbeddedGuids; }
+	const std::vector<SvPb::EmbeddedIdEnum>& getEdgeEmbeddedIds() { return m_EdgeEmbeddedIds; }
 
 	SvVol::SVEnumerateValueObjectClass m_svDirection;
 	SvVol::SVEnumerateValueObjectClass m_svPolarisation;
@@ -115,7 +115,7 @@ protected:
 	COLORREF m_cfHistogram;
 	COLORREF m_cfEdges;
 
-	SVGuidVector m_EdgeEmbeddedGuids;
+	std::vector<SvPb::EmbeddedIdEnum> m_EdgeEmbeddedIds;
 };
 
 } //namespace SvOp

@@ -14,7 +14,6 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
@@ -38,10 +37,10 @@ SVThinningFilterClass::~SVThinningFilterClass()
 
 void SVThinningFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVThinningFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThinningFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoItterations, SVThinningFilterItterationsGuid, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoGrayOn, SVGrayOnGuid, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoItterations, SvPb::ThinningFilterItterationsEId, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_bvoGrayOn, SvPb::GrayOnEId, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone );
 
 	m_lvoItterations.SetDefaultValue( 1L );
 	m_bvoGrayOn.SetDefaultValue(BOOL(false));

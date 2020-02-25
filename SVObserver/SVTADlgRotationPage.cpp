@@ -67,7 +67,7 @@ void SVToolAdjustmentDialogRotationPageClass::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
 {
-	long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
+	long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 	m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 
 	return CPropertyPage::OnSetActive();
@@ -95,23 +95,23 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-		evaluateObjectInfo.ObjectType = SvPb::SVMathContainerObjectType;
+		evaluateObjectInfo.m_ObjectType = SvPb::SVMathContainerObjectType;
 
 		// Get Evaluate Object for the X coordinate...
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationXObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateRotationXObjectType;
 		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationYObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateRotationYObjectType;
 		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
 
-		evaluateObjectInfo.SubType = SvPb::SVEvaluateRotationAngleObjectType;
+		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateRotationAngleObjectType;
 		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SvPb::SVTransformObjectType;
-		objectInfo.SubType = SvPb::SVImageTransformObjectType;
+		objectInfo.m_ObjectType = SvPb::SVTransformObjectType;
+		objectInfo.m_SubType = SvPb::SVImageTransformObjectType;
 
 		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
 		if (nullptr != pImageTransform)
@@ -119,16 +119,16 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 			m_Values.SetTaskID(pImageTransform->GetUniqueObjectID());
 			m_Values.Init();
 
-			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SVOutputInterpolationModeObjectGuid);
+			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 			m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
-			long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
+			long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 			m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 		}
 	}
 
 	if (nullptr != m_pEvaluateRotationX && nullptr != m_pEvaluateRotationY && nullptr != m_pEvaluateRotationAngle)
 	{
-		m_performRotation = m_Values.Get<bool>(SVPerformRotationObjectGuid);
+		m_performRotation = m_Values.Get<bool>(SvPb::PerformRotationEId);
 		UpdateData(false);
 		refresh();
 	}
@@ -197,13 +197,13 @@ void SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 {
 	UpdateData(true); // get data from dialog
 
-	m_Values.Set<bool>(SVPerformRotationObjectGuid, m_performRotation ? true : false);
+	m_Values.Set<bool>(SvPb::PerformRotationEId, m_performRotation ? true : false);
 
 	int CurrentSelection = m_cbInterpolation.GetCurSel();
 	if(0 <= CurrentSelection)
 	{
 		long lValue = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
-		m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, lValue);
+		m_Values.Set<long>(SvPb::OutputInterpolationModeEId, lValue);
 	}
 
 	m_Values.Commit();

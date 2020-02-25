@@ -33,7 +33,7 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 	const SVObjectInfoStruct& GetInputObjectInfo() const;
 
-	void SetInputObjectType(SvPb::SVObjectTypeEnum ObjectType = SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVNotSetSubObjectType, const SVGUID& rEmbeddedID = GUID_NULL);
+	void SetInputObjectType(SvPb::SVObjectTypeEnum ObjectType = SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVNotSetSubObjectType, SvPb::EmbeddedIdEnum	embeddedID = SvPb::NoEmbeddedId);
 	void SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rTypeInfo );
 
 	void SetInputObject( const SVGUID& p_rObjectID );

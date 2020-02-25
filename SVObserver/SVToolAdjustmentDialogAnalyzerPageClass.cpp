@@ -60,7 +60,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 		if (m_pTool)
 		{
 			SvDef::SVObjectTypeInfoStruct info;
-			info.ObjectType = SvPb::SVAnalyzerObjectType;
+			info.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 			m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (m_pTool->getFirstObject(info));
 		}
@@ -100,7 +100,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		const SvDef::SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().m_ObjectTypeInfo;
 		CWnd* pWnd;
 		// Set Result/Publish button...
-		switch (rToolType.SubType)
+		switch (rToolType.m_SubType)
 		{
 			case SvPb::SVLinearToolObjectType:
 				if (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON))
@@ -373,7 +373,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		// Get Available Results...
 		SvIe::SVClassInfoStructVector	availableResults;
 		SvDef::SVObjectTypeInfoStruct		resultTypeInfo;
-		resultTypeInfo.ObjectType = SvPb::SVResultObjectType;
+		resultTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
 		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the SvCmd::GetAvailableObjects
 		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 

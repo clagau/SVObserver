@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgFileImageSourcePage.h"
-#include "SVObjectLibrary/SVClsids.h"
 
 #pragma endregion Includes
 
@@ -30,8 +29,6 @@ namespace SvOg
 		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
-		m_PathName = _T("");
-		m_BContinuousReload = FALSE;
 		//}}AFX_DATA_INIT
 	}
 
@@ -58,8 +55,8 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::GetData()
 	{
-		m_PathName = m_Values.Get<CString>(SVPathNameObjectGuid);
-		m_BContinuousReload = m_Values.Get<bool>(SVContinuousReloadObjectGuid);
+		m_PathName = m_Values.Get<CString>(SvPb::PathNameEId);
+		m_BContinuousReload = m_Values.Get<bool>(SvPb::ContinuousReloadEId);
 		UpdateData(false); // Set data to dialog
 	}
 
@@ -71,9 +68,9 @@ namespace SvOg
 		CString name = m_svfncImageSourceFile.GetFullFileName().c_str();
 		if (!name.IsEmpty())
 		{
-			m_Values.Set<CString>(SVPathNameObjectGuid, name);
+			m_Values.Set<CString>(SvPb::PathNameEId, name);
 		}
-		m_Values.Set<bool>(SVContinuousReloadObjectGuid, m_BContinuousReload  ? true : false);
+		m_Values.Set<bool>(SvPb::ContinuousReloadEId, m_BContinuousReload  ? true : false);
 	}
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::DoDataExchange(CDataExchange* pDX)

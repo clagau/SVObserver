@@ -15,6 +15,7 @@
 
 #include "SVObserver.h"
 #include "SVIODoc.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "Definitions/GlobalConst.h"
@@ -72,7 +73,7 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 	if (!m_Initialize && PostRefresh == Type)
 	{
 		//When it is of type Global Constant we need to update the IO view
-		if (SvPb::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.SubType)
+		if (SvPb::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.m_SubType)
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
 			if(nullptr != pIODoc )
@@ -201,7 +202,7 @@ void RootObject::destroyConfigurationObject()
 		SVObjectManagerClass::Instance().GetRootChildObject( pRootChild, Name );
 		if( nullptr != pRootChild )
 		{
-			SvPb::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.SubType;
+			SvPb::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.m_SubType;
 			Result = pRoot->m_RootChildren.deleteValue( Name );
 			if( S_OK == Result )
 			{
@@ -220,7 +221,7 @@ bool RootObject::Initialize()
 	bool Result(true);
 
 	m_Initialize = true;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRootObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRootObjectType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, RootUidGuid);
 	//The Root object should have an empty name
 	SetName(_T(""));

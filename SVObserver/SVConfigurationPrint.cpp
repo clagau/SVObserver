@@ -74,76 +74,76 @@ constexpr char* ToolGroupCommentLabel = _T("Tool Comment:");
 
 constexpr int LEFT_MARGIN = 50;
 
-static std::vector<GUID> g_GuidNonPrintArray = 
+static std::vector<SvPb::EmbeddedIdEnum> g_NonPrintEmbeddedArray =
 {
-	SVTaskObjectClassIsObjectValidGuid,
-	SVStatusObjectGuid,
-	SVColorObjectGuid,
-	SVConditionalResultObjectGuid,
-	SVFailedObjectGuid,
-	SVWarnedObjectGuid,
-	SVPassedObjectGuid,
-	SVExplicitFailedObjectGuid,
-	SVPassedCountObjectGuid,
-	SVFailedCountObjectGuid,
-	SVWarnedCountObjectGuid,
-	SVEdgeCountObjectGuid,
-	SVEnabledCountObjectGuid,
-	SVProcessedCountObjectGuid,
-	SVBlobFeatureGuids[SvOi::SV_AREA],
-	SVBlobFeatureGuids[SvOi::SV_BOXX_MAX],
-	SVBlobFeatureGuids[SvOi::SV_BOXX_MIN],
-	SVBlobFeatureGuids[SvOi::SV_BOXY_MAX],
-	SVBlobFeatureGuids[SvOi::SV_BOXY_MIN],
-	SVBlobFeatureGuids[SvOi::SV_BREADTH],
-	SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_X],
-	SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_Y],
-	SVBlobFeatureGuids[SvOi::SV_CONVEX_PERIMETER],
-	SVBlobFeatureGuids[SvOi::SV_FERET_ELONGATION],
-	SVBlobFeatureGuids[SvOi::SV_FERETMAX_ANGLE],
-	SVBlobFeatureGuids[SvOi::SV_FERETMAX_DIAMETER],
-	SVBlobFeatureGuids[SvOi::SV_FERETMEAN_DIAMETER],
-	SVBlobFeatureGuids[SvOi::SV_FERETMIN_ANGLE],
-	SVBlobFeatureGuids[SvOi::SV_FERETMIN_DIAMETER],
-	SVBlobFeatureGuids[SvOi::SV_FERET_X],
-	SVBlobFeatureGuids[SvOi::SV_FERET_Y],
-	SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_X],
-	SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_Y],
-	SVBlobFeatureGuids[SvOi::SV_LABEL],
-	SVBlobFeatureGuids[SvOi::SV_LENGTH],
-	SVBlobFeatureGuids[SvOi::SV_NBROF_HOLES],
-	SVBlobFeatureGuids[SvOi::SV_PERIMETER],
-	SVBlobFeatureGuids[SvOi::SV_ROUGHNESS],
-	SVBlobFeatureGuids[SvOi::SV_SUM_PIXEL],
-	SVBlobFeatureGuids[SvOi::SV_COMPACTNESS],
-	SVBlobFeatureGuids[SvOi::SV_NBR_RUNS],
-	SVBlobFeatureGuids[SvOi::SV_XMINAT_YMIN],
-	SVBlobFeatureGuids[SvOi::SV_XMAXAT_YMAX],
-	SVBlobFeatureGuids[SvOi::SV_YMINAT_XMAX],
-	SVBlobFeatureGuids[SvOi::SV_YMAXAT_XMIN],
-	SVBlobFeatureGuids[SvOi::SV_ELONGATION],
-	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_0],
-	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_45],
-	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_90],
-	SVBlobFeatureGuids[SvOi::SV_INTERCEPT_135],
-	SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y1],
-	SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y0],
-	SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y1],
-	SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y2],
-	SVBlobFeatureGuids[SvOi::SV_MOMENT_X2Y0],
-	SVBlobFeatureGuids[SvOi::SV_CENTRAL_X0Y2],
-	SVBlobFeatureGuids[SvOi::SV_CENTRAL_X2Y0],
-	SVBlobFeatureGuids[SvOi::SV_CENTRAL_X1Y1],
-	SVBlobFeatureGuids[SvOi::SV_AXISPRINCIPAL_ANGLE],
-	SVBlobFeatureGuids[SvOi::SV_AXISSECONDARY_ANGLE],
-	SVBlobFeatureGuids[SvOi::SV_EULER_NBR],
-	SVBlobFeatureGuids[SvOi::SV_CENTER_X_SOURCE],
-	SVBlobFeatureGuids[SvOi::SV_CENTER_Y_SOURCE]
+	SvPb::TaskObjectClassIsObjectValidEId,
+	SvPb::StatusEId,
+	SvPb::ColorEId,
+	SvPb::ConditionalResultEId,
+	SvPb::FailedEId,
+	SvPb::WarnedEId,
+	SvPb::PassedEId,
+	SvPb::ExplicitFailedEId,
+	SvPb::PassedCountEId,
+	SvPb::FailedCountEId,
+	SvPb::WarnedCountEId,
+	SvPb::EdgeCountEId,
+	SvPb::EnabledCountEId,
+	SvPb::ProcessedCountEId,
+	SvPb::BlobFeatureEId+SvOi::SV_AREA,
+	SvPb::BlobFeatureEId+SvOi::SV_BOXX_MAX,
+	SvPb::BlobFeatureEId+SvOi::SV_BOXX_MIN,
+	SvPb::BlobFeatureEId+SvOi::SV_BOXY_MAX,
+	SvPb::BlobFeatureEId+SvOi::SV_BOXY_MIN,
+	SvPb::BlobFeatureEId+SvOi::SV_BREADTH,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTEROFGRAVITY_X,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTEROFGRAVITY_Y,
+	SvPb::BlobFeatureEId+SvOi::SV_CONVEX_PERIMETER,
+	SvPb::BlobFeatureEId+SvOi::SV_FERET_ELONGATION,
+	SvPb::BlobFeatureEId+SvOi::SV_FERETMAX_ANGLE,
+	SvPb::BlobFeatureEId+SvOi::SV_FERETMAX_DIAMETER,
+	SvPb::BlobFeatureEId+SvOi::SV_FERETMEAN_DIAMETER,
+	SvPb::BlobFeatureEId+SvOi::SV_FERETMIN_ANGLE,
+	SvPb::BlobFeatureEId+SvOi::SV_FERETMIN_DIAMETER,
+	SvPb::BlobFeatureEId+SvOi::SV_FERET_X,
+	SvPb::BlobFeatureEId+SvOi::SV_FERET_Y,
+	SvPb::BlobFeatureEId+SvOi::SV_FIRSTPOINT_X,
+	SvPb::BlobFeatureEId+SvOi::SV_FIRSTPOINT_Y,
+	SvPb::BlobFeatureEId+SvOi::SV_LABEL,
+	SvPb::BlobFeatureEId+SvOi::SV_LENGTH,
+	SvPb::BlobFeatureEId+SvOi::SV_NBROF_HOLES,
+	SvPb::BlobFeatureEId+SvOi::SV_PERIMETER,
+	SvPb::BlobFeatureEId+SvOi::SV_ROUGHNESS,
+	SvPb::BlobFeatureEId+SvOi::SV_SUM_PIXEL,
+	SvPb::BlobFeatureEId+SvOi::SV_COMPACTNESS,
+	SvPb::BlobFeatureEId+SvOi::SV_NBR_RUNS,
+	SvPb::BlobFeatureEId+SvOi::SV_XMINAT_YMIN,
+	SvPb::BlobFeatureEId+SvOi::SV_XMAXAT_YMAX,
+	SvPb::BlobFeatureEId+SvOi::SV_YMINAT_XMAX,
+	SvPb::BlobFeatureEId+SvOi::SV_YMAXAT_XMIN,
+	SvPb::BlobFeatureEId+SvOi::SV_ELONGATION,
+	SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_0,
+	SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_45,
+	SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_90,
+	SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_135,
+	SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X0Y1,
+	SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X1Y0,
+	SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X1Y1,
+	SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X0Y2,
+	SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X2Y0,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTRAL_X0Y2,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTRAL_X2Y0,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTRAL_X1Y1,
+	SvPb::BlobFeatureEId+SvOi::SV_AXISPRINCIPAL_ANGLE,
+	SvPb::BlobFeatureEId+SvOi::SV_AXISSECONDARY_ANGLE,
+	SvPb::BlobFeatureEId+SvOi::SV_EULER_NBR,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTER_X_SOURCE,
+	SvPb::BlobFeatureEId+SvOi::SV_CENTER_Y_SOURCE
 };
 
-const std::vector<GUID>& NonPrintGuids()
+const std::vector<SvPb::EmbeddedIdEnum>& NonPrintEmbeddeds()
 {
-	return g_GuidNonPrintArray;
+	return g_NonPrintEmbeddedArray;
 }
 
 static std::vector<SvPb::ClassIdEnum> g_classIdNonPrintArray = { SvPb::OCVCharacterResultClassId };
@@ -658,15 +658,15 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	// If object is a value object, get embedded ID which is NonPrintable.
 	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{
-		const GUID& guidObjID = pObject->GetEmbeddedID();
-		const auto& nPrs = NonPrintGuids();
+		SvPb::EmbeddedIdEnum embeddedID = pObject->GetEmbeddedID();
+		const auto& nPrs = NonPrintEmbeddeds();
 		// This is to prevent the comments from being sent to the SVRC thru GetConfigReport
-		if (guidObjID == SVToolCommentTypeObjectGuid && m_isPrintToStringBuffer)
+		if (embeddedID == SvPb::ToolCommentTypeEId && m_isPrintToStringBuffer)
 		{
 			return;
 		}
 		// Check for non-printing object type.
-		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&guidObjID](const auto& rEntry) { return guidObjID == rEntry; });
+		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&embeddedID](const auto& rEntry) { return embeddedID == rEntry; });
 		if (iter != std::end(nPrs))
 		{
 			return;

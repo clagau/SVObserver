@@ -71,7 +71,7 @@ public:
 
 	virtual bool CloseObject() override;
 
-	SvOi::IObjectClass* GetResultObject(const GUID & guid);
+	SvOi::IObjectClass* GetResultObject(SvPb::EmbeddedIdEnum embeddedID);
    
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -88,8 +88,7 @@ private:
    void init();
    
 	SvUl::SVHistogramBase m_histogram;
-	void AddResult(const std::pair<GUID, DWORD> &);
-	std::map<GUID, GUID> m_resultGuids;
+	void AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD> &);
 
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

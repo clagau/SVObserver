@@ -22,7 +22,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -147,11 +146,6 @@ SVImageClass *SVImageClass::GetParentImage() const
 	return l_pParent;
 }
 
-const SVGUID& SVImageClass::GetParentImageID() const
-{
-	return m_ParentImageInfo.first;
-}
-
 void SVImageClass::init()
 {
 	try
@@ -167,8 +161,8 @@ void SVImageClass::init()
 
 	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageMonoType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
 
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
@@ -189,9 +183,9 @@ void SVImageClass::init()
 	m_height.SetTypeName(_T("Image Height"));
 
 	m_width.setResetOptions(false, SvOi::SVResetItemTool);
-	m_width.SetObjectEmbedded(SVExtentWidthObjectGuid, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_WIDTH).c_str());
+	m_width.SetObjectEmbedded(SvPb::ExtentWidthEId, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_WIDTH).c_str());
 	m_height.setResetOptions(false, SvOi::SVResetItemTool);
-	m_height.SetObjectEmbedded(SVExtentHeightObjectGuid, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_HEIGHT).c_str());
+	m_height.SetObjectEmbedded(SvPb::ExtentHeightEId, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_HEIGHT).c_str());
 
 	m_width.SetDefaultValue(100, true);
 	m_height.SetDefaultValue(100, true);
@@ -1100,7 +1094,7 @@ HRESULT SVImageClass::RemoveChildren()
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::ValidateAgainstParentExtents(SVImageExtentClass& p_rsvExtent)
+HRESULT SVImageClass::ValidateAgainstParentExtents(const SVImageExtentClass& p_rsvExtent)
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -1406,11 +1400,11 @@ void SVImageClass::setImageSubType()
 	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNumber);
 	if (1 == bandNumber)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageMonoType;
+		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
 	}
 	else if (3 == bandNumber)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImageColorType;
+		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageColorType;
 	}
 }
 

@@ -25,7 +25,6 @@
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVLibrary/SVOINIClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -73,8 +72,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
 
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVToolArchiveObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolArchiveObjectType;
 	
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -82,134 +81,134 @@ void SVArchiveTool::initializeArchiveTool()
 	// Register Embedded Objects
 	RegisterEmbeddedObject(	
 		&m_stringFileArchivePath, 
-		SVArchiveFilePathObjectGuid, 
+		SvPb::ArchiveFilePathEId,
 		IDS_OBJECTNAME_ARCHIVE_FILEPATH,
 		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_stringArchiveImageGuids_OBSOLETE, 
-		SVArchiveImageGuidsObjectGuid, 
+		SvPb::ArchiveImageGuidsEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_GUIDS,
 		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_stringArchiveResultGuids_OBSOLETE, 
-		SVArchiveResultGuidsObjectGuid, 
+		SvPb::ArchiveResultGuidsEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULT_GUIDS,
 		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_svoArchiveImageNames, 
-		SVArchiveImageNamesObjectGuid, 
+		SvPb::ArchiveImageNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_NAMES,
 		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_svoArchiveResultNames, 
-		SVArchiveResultNamesObjectGuid, 
+		SvPb::ArchiveResultNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
 		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_stringImageFileRootPath,
-		SVArchiveImageFileRootPathGuid,
+		SvPb::ArchiveImageFileRootPathEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PATH,
 		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject(	
 		&m_dwAppendArchiveFile,
-		SVArchiveAppendArchiveFileGuid,
+		SvPb::ArchiveAppendArchiveFileEId,
 		IDS_OBJECTNAME_ARCHIVE_APPEND_ARCHIVE_FILE,
 		false, SvOi::SVResetItemTool );
 	m_dwAppendArchiveFile.SetOutputFormat(SvVol::OutputFormat_int);
 	
 	RegisterEmbeddedObject(
 		&m_dwArchiveStopAtMaxImages,
-		SVArchiveStopAtMaxImagesGuid,
+		SvPb::ArchiveStopAtMaxImagesEId,
 		IDS_OBJECTNAME_ARCHIVE_STOP_AT_MAX_IMAGES,
 		false, SvOi::SVResetItemNone);
 	m_dwArchiveStopAtMaxImages.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
 		&m_dwUseTriggerCountForImages,
-		SVArchiveUseTriggerCountForImagesGuid,
+		SvPb::ArchiveUseTriggerCountForImagesEId,
 		IDS_OBJECTNAME_ARCHIVE_USE_TRIGGER_COUNT_FOR_IMAGE_NAMES,
 		false, SvOi::SVResetItemNone);
 	m_dwUseTriggerCountForImages.SetOutputFormat(SvVol::OutputFormat_int);
 	
 	RegisterEmbeddedObject(
 		&m_useAlternativeImagePaths,
-		SVUseAlternativeImagePathsGUID,
+		SvPb::UseAlternativeImagePathsEId,
 		IDC_USE_ALTERNATIVE_IMAGE_PATHS,
 		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_dwArchiveMaxImagesCount,
-		SVArchiveMaxImagesCountGuid,
+		SvPb::ArchiveMaxImagesCountEId,
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
 		false, SvOi::SVResetItemNone );
 	m_dwArchiveMaxImagesCount.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(	
 		&m_evoArchiveMethod,
-		SVArchiveMethodGuid,
+		SvPb::ArchiveMethodEId,
 		IDS_OBJECTNAME_ARCHIVE_TOOL_METHOD,
 		false, SvOi::SVResetItemNone  );
 
 	RegisterEmbeddedObject(
 		&m_HeaderLabelNames,
-		SVArchiveHeaderLabelGUID,
+		SvPb::ArchiveHeaderLabelEId,
 		IDS_OBJECTNAME_HEADER_LABELS,
 		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_HeaderObjectGUIDs,
-		SVArchiveHeaderObjectGUID,
+		SvPb::ArchiveHeaderEId,
 		IDS_OBJECTNAME_HEADER_OBJECT_STRINGS,
 		false, SvOi::SVResetItemNone);
 	
 	RegisterEmbeddedObject(
 		&m_bvoUseHeaders,
-		SVArchiveUseHeadersGUID,
+		SvPb::ArchiveUseHeadersEId,
 		IDS_OBJECTNAME_ENABLE_HEADERS,
 		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_baseFilename,
-		SVBaseFilenameGUID,
+		SvPb::BaseFilenameEId,
 		IDS_BASE_FILENAME,
 		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_centerFilename,
-		SVCenterFilenameGUID,
+		SvPb::CenterFilenameEId,
 		IDS_CENTER_FILENAME,
 		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_baseDirectoryname,
-		SVBaseDirectorynameGUID,
+		SvPb::BaseDirectorynameEId,
 		IDS_BASE_DIRECTORYNAME,
 		false, SvOi::SVResetItemNone);
 
 	registerEmbeddedLinkedUnsignedValue(
 		&m_FilenameIndex1,
-		SVFilenameIndex1GUID, SVFilenameIndex1Link_GUID,
+		SvPb::FilenameIndex1EId, SvPb::FilenameIndex1LinkEId,
 		IDS_OBJECTNAME_FILENAME_INDEX1);
 
 	registerEmbeddedLinkedUnsignedValue(
 		&m_FilenameIndex2,
-		SVFilenameIndex2GUID, SVFilenameIndex2Link_GUID, 
+		SvPb::FilenameIndex2EId, SvPb::FilenameIndex2LinkEId,
 		IDS_OBJECTNAME_FILENAME_INDEX2);
 
 	registerEmbeddedLinkedUnsignedValue(
 		&m_DirectorynameIndex,
-		SVDirectorynameIndexGUID, SVDirectorynameIndexLink_GUID,
+		SvPb::DirectorynameIndexEId, SvPb::DirectorynameIndexLinkEId,
 		IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
 
 	registerEmbeddedLinkedUnsignedValue(
 		&m_SubfolderSelection,
-		SVSubfolderSelectionGUID, SVSubfolderSelectionLink_GUID,
+		SvPb::SubfolderSelectionEId, SvPb::SubfolderSelectionLinkEId,
 		IDS_OBJECTNAME_SUBFOLDER_SELECTION);
 
 	// no need to register image buffer
@@ -378,9 +377,9 @@ void SVArchiveTool::InitialiseTriggercountObject()
 	auto pObject = dynamic_cast<SvOi::IObjectClass*>(pInterface);
 
 	SvDef::SVObjectTypeInfoStruct otis;
-	otis.EmbeddedID = SVTriggerCountGuid;
-	otis.ObjectType = SvPb::SVValueObjectType;
-	otis.SubType = SvPb::SVLongValueObjectType;
+	otis.m_EmbeddedID = SvPb::TriggerCountEId;
+	otis.m_ObjectType = SvPb::SVValueObjectType;
+	otis.m_SubType = SvPb::SVLongValueObjectType;
 
 	m_pTriggerCountObject = pObject->getFirstObject(otis);
 }

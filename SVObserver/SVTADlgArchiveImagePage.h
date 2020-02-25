@@ -25,7 +25,7 @@
 #include <tuple>
 
 //this tuple hold hold GUI elements and GUIDs required for (possibly linked) Values that are to be modified using a dialog
-typedef std::tuple<CEdit&, const GUID&, CButton*, const GUID*> ValueAndGuiInformation; //@TODO[Arvid]  it would be better to use std::optional instead of pointers here: but not available in VS2015!
+typedef std::tuple<CEdit&, SvPb::EmbeddedIdEnum, CButton*, SvPb::EmbeddedIdEnum> ValueAndGuiInformation; //@TODO[Arvid]  it would be better to use std::optional instead of pointers here: but not available in VS2015!
 typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
 #pragma region Declarations
@@ -49,18 +49,18 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 
 	class AlternativeImagePaths ///< provides access to widgets and GUIDs for alternative image path configuration
 	{
-		enum TupleContent: size_t { ValueEdit = 0, ValueGuid, DottedNameSelectButton, DottedNameGuid }; //values must start with 0 and be consecutive
+		enum TupleContent: size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
 		explicit AlternativeImagePaths(Controller &rValues):
 			m_rValues(rValues), 
 			m_vecValueAndGuiInfo{
-				{ m_EditBaseDirectoryname, SVBaseDirectorynameGUID, nullptr, nullptr },
-				{ m_EditDirectorynameIndex, SVDirectorynameIndexGUID, &m_ButtonDirectorynameIndex, &SVDirectorynameIndexLink_GUID },
-				{ m_EditBaseFilename, SVBaseFilenameGUID, nullptr, nullptr },
-				{ m_EditFilenameIndex1, SVFilenameIndex1GUID, &m_ButtonFilenameIndex1, &SVFilenameIndex1Link_GUID },
-				{ m_EditCenterFilename, SVCenterFilenameGUID, nullptr, nullptr },
-				{ m_EditFilenameIndex2, SVFilenameIndex2GUID, &m_ButtonFilenameIndex2, &SVFilenameIndex2Link_GUID },
-				{ m_EditSubfolderSelection, SVSubfolderSelectionGUID, &m_ButtonSubfolderSelection, &SVSubfolderSelectionLink_GUID } }
+				{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, nullptr, SvPb::NoEmbeddedId },
+				{ m_EditDirectorynameIndex, SvPb::DirectorynameIndexEId, &m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexLinkEId },
+				{ m_EditBaseFilename, SvPb::BaseFilenameEId, nullptr, SvPb::NoEmbeddedId },
+				{ m_EditFilenameIndex1, SvPb::FilenameIndex1EId, &m_ButtonFilenameIndex1, SvPb::FilenameIndex1LinkEId },
+				{ m_EditCenterFilename, SvPb::CenterFilenameEId, nullptr, SvPb::NoEmbeddedId },
+				{ m_EditFilenameIndex2, SvPb::FilenameIndex2EId, &m_ButtonFilenameIndex2, SvPb::FilenameIndex2LinkEId },
+				{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId } }
 		{
 			m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
 		}

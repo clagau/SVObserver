@@ -135,6 +135,6 @@ void SVDigitalInputObject::updateGuid(int position)
 void SVDigitalInputObject::LocalInitialize()
 {
 	m_isCreated = false;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVDigitalInputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalInputObjectType;
 }

@@ -30,6 +30,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/ImageFileUtilities.h"
 #include "SVMFCControls/SVAnalyzerResultDlg.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/SVAdjustToolSizePositionDlg.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -375,7 +376,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 				if( pTool )
 				{
 					SvDef::SVObjectTypeInfoStruct l_svInfo;
-					l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
+					l_svInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 					SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
 					if(nullptr != pAnalyzer )
@@ -578,7 +579,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 						if( GetObjectAtPoint( l_point ) )
 						{
 							SvDef::SVObjectTypeInfoStruct l_svInfo;
-							l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
+							l_svInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 							pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
 							if (pAnalyzer)
@@ -861,7 +862,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 			{
 				// Try to call SetupDialog for first found Analyzer...
 				SvDef::SVObjectTypeInfoStruct l_svInfo;
-				l_svInfo.ObjectType = SvPb::SVAnalyzerObjectType;
+				l_svInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 				SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
 				if(nullptr != pAnalyzer)

@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "SVEvaluateRotationYClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -28,10 +27,10 @@ SVEvaluateRotationYClass::SVEvaluateRotationYClass( SVObjectClass* pOwner, int S
 : SVEvaluateClass( pOwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateRotationYObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationYObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateRotationYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateRotationYResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

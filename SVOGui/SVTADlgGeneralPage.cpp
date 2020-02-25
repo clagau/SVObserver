@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgGeneralPage.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "ObjectInterfaces\NameValueVector.h"
 #include "SVShowDependentsDialog.h"
 #pragma endregion Includes
@@ -53,7 +52,7 @@ namespace SvOg
 		if (CB_ERR != CurrentSelection)
 		{
 			long Value = static_cast<long> (m_drawToolCombo.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SVConditionalToolDrawFlagObjectGuid, Value);
+			m_Values.Set<long>(SvPb::ConditionalToolDrawFlagEId, Value);
 		}			
 		m_AuxExtentsController.EnableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
 			
@@ -70,7 +69,7 @@ namespace SvOg
 	void SVToolAdjustmentDialogGeneralPageClass::refresh()
 	{
 		// Update dialog with freeze tool attributes...
-		long CurrentSelection = m_Values.Get<long>(SVConditionalToolDrawFlagObjectGuid);
+		long CurrentSelection = m_Values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	
 		// Check, if drawToolCombo must be disabled/enabled...
@@ -95,9 +94,9 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogGeneralPageClass::SetupDrawFlagComboBox()
 	{
-		const SvOi::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SVConditionalToolDrawFlagObjectGuid);
+		const SvOi::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetEnumTypes(rDrawCriteria);
-		long CurrentSelection = m_Values.Get<long>(SVConditionalToolDrawFlagObjectGuid);
+		long CurrentSelection = m_Values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	}
 

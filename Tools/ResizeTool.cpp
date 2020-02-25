@@ -11,7 +11,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -62,8 +61,8 @@ void ResizeTool::LocalInitialize()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Resize Tool.
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVResizeToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResizeToolObjectType;
 }
 
 HRESULT	ResizeTool::InitializeInterpolationModeMember()
@@ -126,13 +125,13 @@ void ResizeTool::BuildInputObjectList()
 
 void ResizeTool::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ResizeInterpolationMode, SVResizeInterpolationModeGuid, IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ResizeOverscan, SVResizeOverscanGuid, IDS_OBJECTNAME_RESIZE_OVERSCAN, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ResizePerformance, SVResizePerformanceGuid, IDS_OBJECTNAME_RESIZE_PERFORMANCE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_ResizeInterpolationMode, SvPb::ResizeInterpolationModeEId, IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_ResizeOverscan, SvPb::ResizeOverscanEId, IDS_OBJECTNAME_RESIZE_OVERSCAN, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_ResizePerformance, SvPb::ResizePerformanceEId, IDS_OBJECTNAME_RESIZE_PERFORMANCE, false, SvOi::SVResetItemTool);
 
-	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
-	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_ROIIMAGE);
+	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedObject(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
 }
 
 

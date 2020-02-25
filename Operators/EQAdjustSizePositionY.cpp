@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "EQAdjustSizePositionY.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -24,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( EQAdjustSizePositionY, SvPb::EQAdjustSizePositionYClassId);
 
 EQAdjustSizePositionY::EQAdjustSizePositionY( SVObjectClass* POwner, int StringResourceID )
-: EQAdjustSize(SvPb::EQSizePositionYType, EQAdjustSizePositionYResultGuid, POwner, StringResourceID )
+: EQAdjustSize(SvPb::EQSizePositionYType, SvPb::EQAdjustSizePositionYResultEId, POwner, StringResourceID )
 {
 }
 

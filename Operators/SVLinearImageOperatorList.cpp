@@ -16,7 +16,6 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -285,24 +284,24 @@ HRESULT SVLinearImageOperatorListClass::getInputProfileOrientation(long& rProfil
 void SVLinearImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLinearImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearImageOperatorListObjectType;
 
-	inputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SVProfileOrientationGuid);
+	inputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
 	inputProfileOrientation.SetObject(GetObjectInfo());
 	RegisterInputObject(&inputProfileOrientation, _T("LinearImageOperatorListProfileOrientation"));
 
-	inputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
+	inputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
 	inputUseRotationAngle.SetObject(GetObjectInfo());
 	RegisterInputObject(&inputUseRotationAngle, _T("LinearImageOperatorListUseRotationAngle"));
 
 	m_svLinearData.SetLegacyVectorObjectCompatibility();
 
-	RegisterEmbeddedObject(&m_svLinearData, SVLinearDataClassGuid, IDS_CLASSNAME_SVLINEARDATACLASS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_svLinearData, SvPb::LinearDataClassEId, IDS_CLASSNAME_SVLINEARDATACLASS, false, SvOi::SVResetItemNone);
 	m_svLinearData.setSaveValueFlag(false);
-	RegisterEmbeddedObject(&m_svMinThreshold, SVLinearThresholdMinObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MINVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svMaxThreshold, SVLinearThresholdMaxObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MAXVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svDeltaMaxMin, SVLinearThresholdDeltaObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_DELTAVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_svMinThreshold, SvPb::LinearThresholdMinEId, IDS_OBJECTNAME_LINEAR_THRESHOLD_MINVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_svMaxThreshold, SvPb::LinearThresholdMaxEId, IDS_OBJECTNAME_LINEAR_THRESHOLD_MAXVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_svDeltaMaxMin, SvPb::LinearThresholdDeltaEId, IDS_OBJECTNAME_LINEAR_THRESHOLD_DELTAVALUE, false, SvOi::SVResetItemNone);
 	
 
 	m_svMinThreshold.SetDefaultValue(0.0);

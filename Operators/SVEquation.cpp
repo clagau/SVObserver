@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <float.h>
 #include "SVEquation.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -266,14 +265,14 @@ void SVEquationClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&enabled, SVEquationEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&enabled, SvPb::EquationEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	enabled.SetDefaultValue(BOOL(true), true);

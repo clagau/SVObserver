@@ -21,7 +21,6 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/SVRunStatus.h"
@@ -56,8 +55,8 @@ SVUserMaskOperatorClass::~SVUserMaskOperatorClass()
 void SVUserMaskOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVUserMaskOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVUserMaskOperatorObjectType;
 
 	m_inObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_inObjectInfo.SetObject( GetObjectInfo() );
@@ -73,12 +72,12 @@ void SVUserMaskOperatorClass::init()
 
 
 
-	RegisterEmbeddedObject( &m_Data.bvoActivated, SVMaskEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP );
-	RegisterEmbeddedObject( &m_Data.dwvoMaskType, SVMaskUseImageMaskGuid, IDS_MASK_TYPE, false, SvOi::SVResetItemIP );
-	RegisterEmbeddedObject( &m_Data.evoCurrentMaskOperator, SVMaskOperatorGuid, IDS_OBJECTNAME_MASK_OPERATOR, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_Data.evoFillArea, SVMaskFillAreaGuid, IDS_OBJECTNAME_MASK_FILL_AREA, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_Data.lvoFillColor, SVMaskFillColorGuid, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_Data.evoDrawCriteria, SVDrawCriteriaObjectGuid, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_Data.bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP );
+	RegisterEmbeddedObject( &m_Data.dwvoMaskType, SvPb::MaskUseImageMaskEId, IDS_MASK_TYPE, false, SvOi::SVResetItemIP );
+	RegisterEmbeddedObject( &m_Data.evoCurrentMaskOperator, SvPb::MaskOperatorEId, IDS_OBJECTNAME_MASK_OPERATOR, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_Data.evoFillArea, SvPb::MaskFillAreaEId, IDS_OBJECTNAME_MASK_FILL_AREA, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_Data.lvoFillColor, SvPb::MaskFillColorEId, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_Data.evoDrawCriteria, SvPb::DrawCriteriaEId, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
 
 	SvOi::NameValueVector EnumVector
 	{
@@ -388,7 +387,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 
 			RECT l_rec;
 
-			HRESULT l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
+			l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
 			// User Mask draw with lines 
 
 			LPVOID pSrcHostBuffer = nullptr;
@@ -472,7 +471,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 	return l_hr;
 }
 
-HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, SVPoint<double>& rStartPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine  )
+HRESULT SVUserMaskOperatorClass::AddLine(int iCol, int iRow, const SVPoint<double>& rStartPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine  )
 {
 	HRESULT l_hr = S_OK;
 
@@ -849,7 +848,7 @@ SvIe::SVImageClass* SVUserMaskOperatorClass::getMaskInputImage(bool bRunMode /*=
 bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const
 {
 	bool Result(true);
-	if (SvPb::SVImageObjectType == rInfo.ObjectType )
+	if (SvPb::SVImageObjectType == rInfo.m_ObjectType )
 	{
 		rPOwner = GetInspection();
 		Result = false;

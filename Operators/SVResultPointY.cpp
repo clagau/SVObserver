@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVResultPointY.h"
 #include "SVRange.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary\SVPointValueObjectClass.h"
@@ -35,8 +34,8 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 					:SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultPointYObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultPointYObjectType;
 
 	// Identify our input type needs
 	
@@ -46,7 +45,7 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Y, SVYObjectGuid, IDS_OBJECTNAME_Y, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Y, SvPb::YEId, IDS_OBJECTNAME_Y, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_Y.SetDefaultValue( 0 );
@@ -59,14 +58,14 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SvPb::SVValueObjectType;
-	interfaceInfo.SubType = SvPb::SVLongValueObjectType;
-	interfaceInfo.EmbeddedID = SVYObjectGuid;
+	interfaceInfo.m_ObjectType = SvPb::SVValueObjectType;
+	interfaceInfo.m_SubType = SvPb::SVLongValueObjectType;
+	interfaceInfo.m_EmbeddedID = SvPb::YEId;
 	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
 	// Describe the SVRangeClass ...
-	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRangeObjectType;
-	rangeClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVNotSetSubObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 

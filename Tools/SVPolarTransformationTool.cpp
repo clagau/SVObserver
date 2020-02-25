@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVPolarTransformationTool.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVImagePolarTransform.h"
 #include "Operators/SVEvaluateCenterXClass.h"
 #include "Operators/SVEvaluateCenterYClass.h"
@@ -39,7 +38,7 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* P
 							   :SVToolClass( POwner, StringResourceID )
 {
 	// BoolValueObject to use new method
-	RegisterEmbeddedObject( &m_svAngularMethod, SVOutputAngularMethodObjectGuid, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAngularMethod, SvPb::OutputAngularMethodEId, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );
 
 	init();
 }
@@ -47,8 +46,8 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* P
 void SVPolarTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVPolarTransformationToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVPolarTransformationToolObjectType;
 
 	// Identify our input type needs
 
@@ -60,7 +59,7 @@ void SVPolarTransformationToolClass::init()
 	removeEmbeddedExtents();
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 		
 
 	// Default taskObjectList items:
@@ -157,7 +156,7 @@ bool SVPolarTransformationToolClass::SetDefaultFormulas(SvStl::MessageContainerV
 {
 	// Find image polar transform child...
 	SvDef::SVObjectTypeInfoStruct objectInfo;
-	objectInfo.SubType = SvPb::SVImagePolarTransformObjectType;
+	objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
 	SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*>(getFirstObject(objectInfo));
 	if(nullptr !=  pImagePolarTransform)
 	{
@@ -194,7 +193,7 @@ SvVol::SVStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNa
 void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
 {
 	SvDef::SVObjectTypeInfoStruct objectInfo;
-	objectInfo.SubType = SvPb::SVImagePolarTransformObjectType;
+	objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
 	SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*>(getFirstObject(objectInfo));
 	if (nullptr != pImagePolarTransform)
 	{

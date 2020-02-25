@@ -63,7 +63,7 @@ public:
 	/// \param pColumn [in] Column object to be removed.
 	void removeNewColumn(const SvVol::DoubleSortValuePtr pColumn);
 
-	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, const SVGUID& rOldEmbeddedID, const SVGUID& rNewEmbeddedID) override;
+	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

@@ -15,7 +15,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -52,12 +51,12 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_Values.Set<bool>(SVLinearToolUseRotationGuid, m_ctlUseRotation.GetCheck() ? true : false);
+		m_Values.Set<bool>(SvPb::LinearToolUseRotationEId, m_ctlUseRotation.GetCheck() ? true : false);
 		int iCurSel = m_ctlProfileOrientation.GetCurSel();
 		if(0 <= iCurSel)
 		{
 			long lValue = static_cast<long> (m_ctlProfileOrientation.GetItemData(iCurSel));
-			m_Values.Set<long>(SVProfileOrientationGuid, lValue);
+			m_Values.Set<long>(SvPb::ProfileOrientationEId, lValue);
 		}
 		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
@@ -77,9 +76,9 @@ namespace SvOg
 
 		m_Values.Init();
 
-		bool bRotate = m_Values.Get<bool>(SVLinearToolUseRotationGuid);
+		bool bRotate = m_Values.Get<bool>(SvPb::LinearToolUseRotationEId);
 
-		const SvOi::NameValueVector& rProfileOrientationList = m_Values.GetEnumTypes(SVProfileOrientationGuid);
+		const SvOi::NameValueVector& rProfileOrientationList = m_Values.GetEnumTypes(SvPb::ProfileOrientationEId);
 		m_ctlProfileOrientation.SetEnumTypes(rProfileOrientationList);
 
 		m_ctlUseRotation.SetCheck(bRotate ? BST_CHECKED : BST_UNCHECKED);
@@ -91,7 +90,7 @@ namespace SvOg
 		}
 		else
 		{	
-			long CurrentSelection = m_Values.Get<long>(SVProfileOrientationGuid);
+			long CurrentSelection = m_Values.Get<long>(SvPb::ProfileOrientationEId);
 			m_ctlProfileOrientation.SetCurSelItemData(CurrentSelection);
 		}
 	
@@ -176,7 +175,7 @@ namespace SvOg
 		else
 		{
 			m_ctlProfileOrientation.EnableWindow(true);
-			long CurrentSelection = m_Values.Get<long>(SVProfileOrientationGuid);
+			long CurrentSelection = m_Values.Get<long>(SvPb::ProfileOrientationEId);
 			m_ctlProfileOrientation.SetCurSelItemData(CurrentSelection);
 		}
 	}

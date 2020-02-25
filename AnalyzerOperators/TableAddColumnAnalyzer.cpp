@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableAddColumnAnalyzer.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "Operators/TableAddColumnEquation.h"
@@ -60,7 +59,7 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	auto* pColumnEquation = dynamic_cast<SvOp::TableAddColumnEquation*>(getFirstObject({SvPb::SVEquationObjectType, SvPb::TableAddColumnEquationObjectType}));
 	if (nullptr != pTool && nullptr != pColumnEquation)
 	{
-		SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, TableAnalyzerIndexObjectGuid);
+		SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::TableAnalyzerIndexEId);
 		IObjectClass* pIndex = pTool->getFirstObject(info);
 		pColumnEquation->setIndexObject(dynamic_cast<SvVol::SVLongValueObjectClass*>(pIndex));
 
@@ -112,8 +111,8 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 void TableAddColumnAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerAddColumnType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 
 	auto* pColumnEquation = new SvOp::TableAddColumnEquation(this);
 	AddFriend(pColumnEquation->GetUniqueObjectID());

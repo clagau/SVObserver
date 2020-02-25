@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <string>
 #include "FormulaController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "BoundValue.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -43,7 +42,7 @@ FormulaController::FormulaController(const SVGUID& rInspectionID, const SVGUID& 
 	: m_InspectionID {rInspectionID}
 	, m_TaskObjectID {rTaskObjectID}
 	, m_EquationID {rEquationID}
-	, m_EnableID {SVToolEnabledObjectGuid}
+	, m_EnableID { SvPb::ToolEnabledEId }
 	, m_isConditional {false}
 	, m_Values {SvOg::BoundValues{rInspectionID, rTaskObjectID}}
 	, m_EquationValues {SvOg::BoundValues{rInspectionID, rEquationID}}
@@ -54,9 +53,9 @@ FormulaController::FormulaController(const SVGUID& rInspectionID, const SVGUID& 
 FormulaController::FormulaController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 	: m_InspectionID {rInspectionID}
 	, m_TaskObjectID {rTaskObjectID}
-	, m_EnableID {SVToolEnabledObjectGuid}
+	, m_EnableID { SvPb::ToolEnabledEId }
 	, m_Info{rInfo}
-	, m_isConditional {SvPb::SVConditionalObjectType == rInfo.SubType}
+	, m_isConditional {SvPb::SVConditionalObjectType == rInfo.m_SubType}
 	, m_Values {SvOg::BoundValues {rInspectionID, rTaskObjectID, !m_isConditional}}
 	, m_EquationValues {SvOg::BoundValues {rInspectionID, GUID_NULL, !m_isConditional}}
 {
@@ -155,7 +154,7 @@ HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& e
 	if (m_isConditional)
 	{
 		ownerEnabled = m_Values.Get<bool>(m_EnableID);
-		equationEnabled = m_EquationValues.Get<bool>(SVEquationEnabledObjectGuid);
+		equationEnabled = m_EquationValues.Get<bool>(SvPb::EquationEnabledEId);
 	}
 	else
 	{
@@ -171,7 +170,7 @@ HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool eq
 	if (m_isConditional)
 	{
 		m_Values.Set<bool>(m_EnableID, ownerEnabled);
-		m_EquationValues.Set<bool>(SVEquationEnabledObjectGuid, equationEnabled);
+		m_EquationValues.Set<bool>(SvPb::EquationEnabledEId, equationEnabled);
 		m_Values.Commit();
 		m_EquationValues.Commit();
 	}
@@ -229,7 +228,7 @@ void FormulaController::Init()
 	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 
 	// check for Math Container...
-	if (SvPb::SVMathContainerObjectType == m_Info.ObjectType)
+	if (SvPb::SVMathContainerObjectType == m_Info.m_ObjectType)
 	{
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
@@ -242,7 +241,7 @@ void FormulaController::Init()
 			SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVMathEquationObjectType);
 			SvCmd::setTypeInfos(info, *pRequest->mutable_infostruct());
 
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
+			hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
 			if (S_OK == hr && responseMessage.has_getobjectidresponse())
 			{
 				m_EquationID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
@@ -257,7 +256,7 @@ void FormulaController::Init()
 			}
 		}
 	}
-	else if (SvPb::SVNotSetObjectType != m_Info.ObjectType)
+	else if (SvPb::SVNotSetObjectType != m_Info.m_ObjectType)
 	{
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
@@ -287,7 +286,7 @@ void FormulaController::Init()
 		{
 			if (SvPb::SVToolSetObjectType == response.getobjectparametersresponse().typeinfo().objecttype())
 			{
-				m_EnableID = SVToolSetEnabledObjectGuid;
+				m_EnableID = SvPb::ToolSetEnabledEId;
 			}
 		}
 		m_EquationValues.SetTaskID(m_EquationID);

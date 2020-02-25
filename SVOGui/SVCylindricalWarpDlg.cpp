@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCylindricalWarpDlg.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -67,15 +66,15 @@ namespace SvOg
 		if (0 <= CurrentSelection)
 		{
 			Value = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SVOutputInterpolationModeObjectGuid, Value);
+			m_Values.Set<long>(SvPb::OutputInterpolationModeEId, Value);
 		}
 		CurrentSelection = m_cbOrientation.GetCurSel();
 		if (0 <= CurrentSelection)
 		{
 			Value = static_cast<long> (m_cbOrientation.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SVWarpTypeObjectGuid, Value);
+			m_Values.Set<long>(SvPb::WarpTypeEId, Value);
 		}
-		m_Values.Set<double>(SVWarpAngleObjectGuid, m_dWarpAngle);
+		m_Values.Set<double>(SvPb::WarpAngleEId, m_dWarpAngle);
 		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
 		commitAction = commitAction | (ResetTool ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
 		Result = m_Values.Commit(commitAction);
@@ -89,17 +88,17 @@ namespace SvOg
 
 		m_Values.Init();
 
-		const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SVOutputInterpolationModeObjectGuid);
+		const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
-		long CurrentSelection = m_Values.Get<long>(SVOutputInterpolationModeObjectGuid);
+		long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 
-		const SvOi::NameValueVector& WarpTypeList = m_Values.GetEnumTypes(SVWarpTypeObjectGuid);
+		const SvOi::NameValueVector& WarpTypeList = m_Values.GetEnumTypes(SvPb::WarpTypeEId);
 		m_cbOrientation.SetEnumTypes(WarpTypeList);
-		CurrentSelection = m_Values.Get<long>(SVWarpTypeObjectGuid);
+		CurrentSelection = m_Values.Get<long>(SvPb::WarpTypeEId);
 		m_cbOrientation.SetCurSelItemData(CurrentSelection);
 
-		m_dWarpAngle = m_Values.Get<double>(SVWarpAngleObjectGuid);
+		m_dWarpAngle = m_Values.Get<double>(SvPb::WarpAngleEId);
 
 		UpdateData(false);
 

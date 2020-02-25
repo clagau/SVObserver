@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVWatershedFilterDlg.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/TextDefineSVDef.h"
 #pragma region Includes
 
@@ -73,9 +72,9 @@ namespace SvOg
 		lControlFlag |= m_iMinFillBasin ? SVImageWSMaximaFill  : 0;
 		lControlFlag |= m_iRegularWatershedLines ? SVImageWSStraight : 0;
 
-		m_Values.Set<long>(SVWatershedFilterControlFlagGuid, lControlFlag);
-		m_Values.Set<long>(SVWatershedFilterMinVariationGuid, m_lMinVariation);
-		m_Values.Set<bool>(SVWatershedFilterUseMarkerGuid, m_bUseMarker ? true : false);
+		m_Values.Set<long>(SvPb::WatershedFilterControlFlagEId, lControlFlag);
+		m_Values.Set<long>(SvPb::WatershedFilterMinVariationEId, m_lMinVariation);
+		m_Values.Set<bool>(SvPb::WatershedFilterUseMarkerEId, m_bUseMarker ? true : false);
 		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
@@ -118,14 +117,14 @@ namespace SvOg
 		CDialog::OnInitDialog();
 		Init(); //ImageController
 		m_Values.Init();
-		long lControlFlag =  m_Values.Get<long>(SVWatershedFilterControlFlagGuid);
-		long lMinVariation =  m_Values.Get<long>(SVWatershedFilterMinVariationGuid);;
+		long lControlFlag =  m_Values.Get<long>(SvPb::WatershedFilterControlFlagEId);
+		long lMinVariation =  m_Values.Get<long>(SvPb::WatershedFilterMinVariationEId);;
 
 		// Check Boxes
 		m_bSkipLastLevel = (lControlFlag & SVImageSkipLastLevel) == SVImageSkipLastLevel;
 		m_bUseBasin = (lControlFlag & SVImageWSBasin) == SVImageWSBasin;
 		m_bUseWatershed = (lControlFlag & SVImageWSWatershed) == SVImageWSWatershed;
-		m_bUseMarker = m_Values.Get<bool>(SVWatershedFilterUseMarkerGuid);
+		m_bUseMarker = m_Values.Get<bool>(SvPb::WatershedFilterUseMarkerEId);
 
 		// Radios
 		m_iEightWatershedLines = (lControlFlag & SVImage8Connected)  == SVImage8Connected ;

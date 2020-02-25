@@ -73,7 +73,7 @@ private:
 
 	bool m_isConditional;		//Note this variable must be above the variables m_Values and m_EquationValues due to initialization
 	SVGUID m_EquationID;		// Instance ID of the Equation
-	SVGUID m_EnableID;
+	SvPb::EmbeddedIdEnum m_EnableID;
 
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;

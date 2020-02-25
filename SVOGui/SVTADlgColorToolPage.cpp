@@ -16,7 +16,6 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
@@ -61,7 +60,7 @@ namespace SvOg
 		HRESULT Result{ E_FAIL };
 		UpdateData( true ); // get data from dialog
 
-		m_Values.Set<bool>(SVConvertToHSIObjectGuid, m_convertToHSI ? true : false);
+		m_Values.Set<bool>(SvPb::ConvertToHSIEId, m_convertToHSI ? true : false);
 		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( false );
@@ -86,7 +85,7 @@ namespace SvOg
 		m_Values.Init();
 		m_ResultImageID = getFirstResultImageId(m_Images);
 
-		m_convertToHSI = m_Values.Get<bool>(SVConvertToHSIObjectGuid);
+		m_convertToHSI = m_Values.Get<bool>(SvPb::ConvertToHSIEId);
 
 		const SvUl::NameGuidList& rAvailableImageList = m_Images.GetAvailableImageList();
 

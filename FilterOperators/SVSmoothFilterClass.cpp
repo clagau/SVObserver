@@ -22,7 +22,7 @@ SV_IMPLEMENT_CLASS(SVSmoothFilterClass, SvPb::SmoothFilterClassId)
 SVSmoothFilterClass::SVSmoothFilterClass( SVObjectClass* POwner, int StringResourceID )
 					:SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVSmoothFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVSmoothFilterObjectType;
 }
 
 SVSmoothFilterClass::~SVSmoothFilterClass()

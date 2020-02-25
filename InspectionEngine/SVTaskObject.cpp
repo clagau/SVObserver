@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVTaskObject.h"
 #include "SVExtentPropertyInfoStruct.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -70,8 +69,8 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	SetObjectAttributesAllowed(SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_statusTag, SVStatusObjectGuid, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_statusColor, SVColorObjectGuid, IDS_OBJECTNAME_COLOR, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_statusTag, SvPb::StatusEId, IDS_OBJECTNAME_STATUS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_statusColor, SvPb::ColorEId, IDS_OBJECTNAME_COLOR, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	m_statusColor.SetDefaultValue(static_cast<DWORD> (SvDef::DefaultInactiveColor), true);
@@ -254,7 +253,7 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p
 		if (l_bFoundLast)
 		{
 			if (nullptr != l_psvInputInfo &&
-				SvPb::SVImageObjectType == l_psvInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.ObjectType)
+				SvPb::SVImageObjectType == l_psvInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.m_ObjectType)
 			{
 				if (S_FALSE == IsAuxInputImage(l_psvInputInfo))
 				{
@@ -541,9 +540,9 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SvDe
 	{
 		SvOl::SVInObjectInfoStruct* pInputInfo = toolInputList[i];
 
-		if (nullptr != pInputInfo && (SvPb::SVNotSetObjectType == typeInfo.ObjectType ||
-			(typeInfo.ObjectType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.ObjectType &&
-			(SvPb::SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.SubType))))
+		if (nullptr != pInputInfo && (SvPb::SVNotSetObjectType == typeInfo.m_ObjectType ||
+			(typeInfo.m_ObjectType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.m_ObjectType &&
+			(SvPb::SVNotSetSubObjectType == typeInfo.m_SubType || typeInfo.m_SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.m_SubType))))
 		{
 			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (pInputInfo->GetInputObjectInfo().getObject());
 			std::string name = "";
@@ -714,9 +713,9 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector
 		const SvDef::SVObjectTypeInfoStruct& info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
 		assert(GUID_NULL != pInInfo->GetInputObjectInfo().getUniqueObjectID() ||
-			GUID_NULL != info.EmbeddedID ||
-			SvPb::SVNotSetObjectType != info.ObjectType ||
-			SvPb::SVNotSetSubObjectType != info.SubType);
+			SvPb::NoEmbeddedId != info.m_EmbeddedID ||
+			SvPb::SVNotSetObjectType != info.m_ObjectType ||
+			SvPb::SVNotSetSubObjectType != info.m_SubType);
 	}
 }
 
@@ -738,7 +737,7 @@ SVGuidVector SVTaskObjectClass::getEmbeddedList() const
 }
 #pragma endregion virtual method (ITaskObject)
 
-SVObjectClass* SVTaskObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
+SVObjectClass* SVTaskObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb::EmbeddedIdEnum embeddedID)
 {
 	// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
 	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
@@ -746,15 +745,13 @@ SVObjectClass* SVTaskObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID,
 		SVObjectClass* pObject = *Iter;
 		if (nullptr != pObject)
 		{
-			const GUID& ObjectID = pObject->GetEmbeddedID();
-
-			if (ObjectID == rEmbeddedID)
+			if (pObject->GetEmbeddedID() == embeddedID)
 			{
-				return pObject->OverwriteEmbeddedObject(rUniqueID, rEmbeddedID);
+				return pObject->OverwriteEmbeddedObject(rUniqueID, embeddedID);
 			}
 		}
 	}
-	return __super::OverwriteEmbeddedObject(rUniqueID, rEmbeddedID);
+	return __super::OverwriteEmbeddedObject(rUniqueID, embeddedID);
 }
 
 void SVTaskObjectClass::GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const
@@ -933,9 +930,9 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			SvDef::SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
 			if (GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
-				GUID_NULL == info.EmbeddedID &&
-				SvPb::SVNotSetObjectType == info.ObjectType &&
-				SvPb::SVNotSetSubObjectType == info.SubType)
+				SvPb::NoEmbeddedId == info.m_EmbeddedID &&
+				SvPb::SVNotSetObjectType == info.m_ObjectType &&
+				SvPb::SVNotSetSubObjectType == info.m_SubType)
 			{
 				//assert( false );
 			}
@@ -945,9 +942,9 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
 			if (GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
-				GUID_NULL == info.EmbeddedID &&
-				SvPb::SVNotSetObjectType == info.ObjectType &&
-				SvPb::SVNotSetSubObjectType == info.SubType)
+				SvPb::NoEmbeddedId == info.m_EmbeddedID &&
+				SvPb::SVNotSetObjectType == info.m_ObjectType &&
+				SvPb::SVNotSetSubObjectType == info.m_SubType)
 			{
 				//assert( false );
 			}
@@ -989,7 +986,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 					// Input Object is not set...Try to get one...
 					SvDef::SVObjectTypeInfoStruct info = pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 					// At least one item from the SvDef::SVObjectTypeInfoStruct is required, but not all
-					if (GUID_NULL != info.EmbeddedID || SvPb::SVNotSetObjectType != info.ObjectType || SvPb::SVNotSetSubObjectType != info.SubType)
+					if (SvPb::NoEmbeddedId != info.m_EmbeddedID || SvPb::SVNotSetObjectType != info.m_ObjectType || SvPb::SVNotSetSubObjectType != info.m_SubType)
 					{
 						SVObjectClass* pOwner = GetParent();
 						SVObjectClass* pRequestor = pInputInfo->getObject();
@@ -1024,7 +1021,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 								pObject = nullptr;
 								// if color system & pOwner == SVToolSetClass
 								const SVObjectInfoStruct& ownerInfo = pOwner->GetObjectInfo();
-								if (isColorInspection && SvPb::SVToolSetObjectType == ownerInfo.m_ObjectTypeInfo.ObjectType && SvPb::SVImageObjectType == info.ObjectType && SvPb::SVImageMonoType == info.SubType)
+								if (isColorInspection && SvPb::SVToolSetObjectType == ownerInfo.m_ObjectTypeInfo.m_ObjectType && SvPb::SVImageObjectType == info.m_ObjectType && SvPb::SVImageMonoType == info.m_SubType)
 								{
 									SvOi::IToolSet* pToolSet(dynamic_cast<SvOi::IToolSet*> (pOwner));
 									if (nullptr != pToolSet)
@@ -1236,9 +1233,9 @@ void SVTaskObjectClass::addDefaultInputObjects(SvOl::SVInputInfoListClass* PInpu
 			SvDef::SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
 			if (GUID_NULL == pInInfo->GetInputObjectInfo().getUniqueObjectID() &&
-				GUID_NULL == info.EmbeddedID &&
-				SvPb::SVNotSetObjectType == info.ObjectType &&
-				SvPb::SVNotSetSubObjectType == info.SubType)
+				SvPb::NoEmbeddedId == info.m_EmbeddedID &&
+				SvPb::SVNotSetObjectType == info.m_ObjectType &&
+				SvPb::SVNotSetSubObjectType == info.m_SubType)
 			{
 				//assert( false );
 			}
@@ -1255,15 +1252,15 @@ void SVTaskObjectClass::addDefaultInputObjects(SvOl::SVInputInfoListClass* PInpu
 	}
 }
 
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID)
+bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID)
 {
 	std::string Name = SvUl::LoadStdString(StringResourceID);
-	return RegisterEmbeddedObject(pEmbeddedObject, rGuidEmbeddedID, Name.c_str());
+	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str());
 }
 
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR newString)
+bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newString)
 {
-	bool l_bOk = nullptr != pEmbeddedObject && RegisterEmbeddedObjectAsClass(pEmbeddedObject, p_rguidEmbeddedID, newString);
+	bool l_bOk = nullptr != pEmbeddedObject && RegisterEmbeddedObjectAsClass(pEmbeddedObject, embeddedID, newString);
 
 	return l_bOk;
 }
@@ -1277,13 +1274,13 @@ bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, co
 // The only place that this is ever set to true is for the color HSI 
 // conversion value (Color Tool) and it is probably not necessary there.
 //
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
+bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
 {
 	std::string Name = SvUl::LoadStdString(StringResourceID);
-	return RegisterEmbeddedObject(pEmbeddedObject, rGuidEmbeddedID, Name.c_str(), ResetAlways, RequiredReset);
+	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str(), ResetAlways, RequiredReset);
 }
 
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
+bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
 {
 	bool Result(false);
 
@@ -1292,13 +1289,13 @@ bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, c
 	{
 		pValueObject->setResetOptions(ResetAlways, RequiredReset);
 
-		Result = RegisterEmbeddedObjectAsClass(pEmbeddedObject, rGuidEmbeddedID, Name);
+		Result = RegisterEmbeddedObjectAsClass(pEmbeddedObject, embeddedID, Name);
 	}
 
 	return Result;
 }
 
-bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR ObjectName)
+bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR ObjectName)
 {
 	assert(nullptr != pEmbeddedObject);
 	if (nullptr != pEmbeddedObject)
@@ -1308,7 +1305,7 @@ bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 			SVObjectClass* pObject = *Iter;
 			if (nullptr != pObject)
 			{
-				if (rGuidEmbeddedID == pObject->GetEmbeddedID())
+				if (embeddedID == pObject->GetEmbeddedID())
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204);
@@ -1318,7 +1315,7 @@ bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 			}
 		}
 		// Set object embedded to Setup the Embedded GUID
-		pEmbeddedObject->SetObjectEmbedded(rGuidEmbeddedID, this, ObjectName);
+		pEmbeddedObject->SetObjectEmbedded(embeddedID, this, ObjectName);
 
 		// Add to embedded object to List of Embedded Objects
 		AddEmbeddedObject(pEmbeddedObject);
@@ -1854,8 +1851,8 @@ HRESULT SVTaskObjectClass::GetImageList(SVImageClassPtrVector& p_rImageList, UIN
 
 	SvDef::SVObjectTypeInfoStruct  info;
 
-	info.ObjectType = SvPb::SVImageObjectType;
-	info.SubType = SvPb::SVNotSetSubObjectType;
+	info.m_ObjectType = SvPb::SVImageObjectType;
+	info.m_SubType = SvPb::SVNotSetSubObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor(info);
 
@@ -2139,20 +2136,20 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 }
 
 
-void SVTaskObjectClass::registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, const GUID& rGuidEmbeddedID, const GUID& rGuidEmbeddedLinkID, int StringResourceID, uint32_t defaultValue)
+void SVTaskObjectClass::registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, uint32_t defaultValue)
 {
-	RegisterEmbeddedObject(pEmbeddedObject, rGuidEmbeddedID, StringResourceID, true, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(pEmbeddedObject, embeddedID, StringResourceID, true, SvOi::SVResetItemTool);
 	_variant_t vtTemp = defaultValue;
 	vtTemp.vt = VT_UI4;
 	pEmbeddedObject->SetDefaultValue(vtTemp, true);
 	std::string objectName = SvUl::LoadStdString(StringResourceID);
 	objectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&(pEmbeddedObject->getLinkedName()), rGuidEmbeddedLinkID, objectName.c_str(), false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&(pEmbeddedObject->getLinkedName()), embeddedLinkID, objectName.c_str(), false, SvOi::SVResetItemNone);
 	pEmbeddedObject->getLinkedName().SetDefaultValue(_T(""), false);
 }
 
 
-SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(GUID classguid)
+SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID)
 {
 	SVObjectClass* pResult = nullptr;
 
@@ -2161,7 +2158,7 @@ SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(GUID classguid)
 		SVObjectClass* pObject = *Iter;
 		if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
 		{
-			if (pObject->GetEmbeddedID() == classguid)
+			if (pObject->GetEmbeddedID() == embeddedID)
 			{
 				pResult = pObject;
 				break;

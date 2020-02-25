@@ -77,8 +77,8 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	SVTADlgColorThresholdBasePage::OnInitDialog();
 
 	SvDef::SVObjectTypeInfoStruct objectInfo;
-	objectInfo.ObjectType = SvPb::SVOperatorObjectType;
-	objectInfo.SubType = SvPb::SVColorThresholdObjectType;
+	objectInfo.m_ObjectType = SvPb::SVOperatorObjectType;
+	objectInfo.m_SubType = SvPb::SVColorThresholdObjectType;
 
 	// Get the color threshold object
 	m_pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
@@ -87,23 +87,23 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	{
 		// Get Train Color Extent Variables
 		SvDef::SVObjectTypeInfoStruct extentObjectInfo;
-		extentObjectInfo.ObjectType = SvPb::SVValueObjectType;
-		extentObjectInfo.SubType = SvPb::SVDoubleValueObjectType;
+		extentObjectInfo.m_ObjectType = SvPb::SVValueObjectType;
+		extentObjectInfo.m_SubType = SvPb::SVDoubleValueObjectType;
 
 		// Get Train Color ROI Extent Left Object...
-		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
+		extentObjectInfo.m_EmbeddedID = SvPb::ExtentRelativeLeftPositionEId;
 		m_pExtentLeft = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Top Object...
-		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
+		extentObjectInfo.m_EmbeddedID = SvPb::ExtentRelativeTopPositionEId;
 		m_pExtentTop = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Width Object...
-		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
+		extentObjectInfo.m_EmbeddedID = SvPb::ExtentWidthEId;
 		m_pExtentWidth = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Height Object...
-		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
+		extentObjectInfo.m_EmbeddedID = SvPb::ExtentHeightEId;
 		m_pExtentHeight = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Initialize Extent

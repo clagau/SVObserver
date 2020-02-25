@@ -19,7 +19,6 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -105,23 +104,23 @@ namespace SvOg
 		//      List of enabled.
 		initFeatureListBox(m_lbSelectedFeatures, true);
 
-		const SvOi::NameValueVector& rBlobColorList = m_Values.GetEnumTypes(SVBlobColorGuid);
+		const SvOi::NameValueVector& rBlobColorList = m_Values.GetEnumTypes(SvPb::BlobColorEId);
 		m_cbBlobColor.SetEnumTypes(rBlobColorList);
-		long CurrentSelection = m_Values.Get<long>(SVBlobColorGuid);
+		long CurrentSelection = m_Values.Get<long>(SvPb::BlobColorEId);
 		m_cbBlobColor.SetCurSelItemData(CurrentSelection);
 
-		m_FeaturesEnabled = std::string(m_Values.Get<CString>(SVBlobEnabledFeaturesObjectGuid));
+		m_FeaturesEnabled = std::string(m_Values.Get<CString>(SvPb::BlobEnabledFeaturesEId));
 		assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == m_FeaturesEnabled.size());
 
-		m_Ascending = m_Values.Get<bool>(SVSortAscendingObjectGuid);
-		m_bExclude = m_Values.Get<bool>(SVExcludeFailedObjectGuid);
-		m_lMaxNumberBlobs = m_Values.Get<long>(SVNbrOfBlobsObjectGuid);
-		m_lMaxBlobDataArraySize = m_Values.Get<long>(SVMaxBlobDataArraySizeObjectGuid);
+		m_Ascending = m_Values.Get<bool>(SvPb::SortAscendingEId);
+		m_bExclude = m_Values.Get<bool>(SvPb::ExcludeFailedEId);
+		m_lMaxNumberBlobs = m_Values.Get<long>(SvPb::NbrOfBlobsEId);
+		m_lMaxBlobDataArraySize = m_Values.Get<long>(SvPb::MaxBlobDataArraySizeEId);
 
-		long SortFeature = m_Values.Get<long>(SVSortFeatureObjectGuid);
+		long SortFeature = m_Values.Get<long>(SvPb::SortFeatureEId);
 		if (0 <= SortFeature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > SortFeature)
 		{
-			m_SortFeatureEdt = m_Values.GetName(SVBlobFeatureGuids[SortFeature]).c_str();
+			m_SortFeatureEdt = m_Values.GetName(SvPb::BlobFeatureEId + SortFeature).c_str();
 		}
 		else
 		{
@@ -130,7 +129,7 @@ namespace SvOg
 
 		EnableButtons();
 
-		bool bFillBlobValue = m_Values.Get<bool>(SVBlobUseFillGuid);
+		bool bFillBlobValue = m_Values.Get<bool>(SvPb::BlobUseFillEId);
 		m_btnFillBlobs.EnableWindow(bFillBlobValue);
 		m_chkFillBlob.SetCheck(bFillBlobValue);
 
@@ -162,16 +161,16 @@ namespace SvOg
 		if (0 <= CurrentSelection)
 		{
 			long Value = static_cast<long> (m_cbBlobColor.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SVBlobColorGuid, Value);
+			m_Values.Set<long>(SvPb::BlobColorEId, Value);
 		}
 
-		m_Values.Set<CString>(SVBlobEnabledFeaturesObjectGuid, m_FeaturesEnabled.c_str());
-		m_Values.Set<bool>(SVSortAscendingObjectGuid, m_Ascending ? true : false);
-		m_Values.Set<bool>(SVExcludeFailedObjectGuid, m_bExclude ? true : false);
+		m_Values.Set<CString>(SvPb::BlobEnabledFeaturesEId, m_FeaturesEnabled.c_str());
+		m_Values.Set<bool>(SvPb::SortAscendingEId, m_Ascending ? true : false);
+		m_Values.Set<bool>(SvPb::ExcludeFailedEId, m_bExclude ? true : false);
 		bool bFillBlobValue = m_chkFillBlob.GetCheck() ? true : false;
-		m_Values.Set<bool>(SVBlobUseFillGuid, bFillBlobValue);
-		m_Values.Set<long>(SVNbrOfBlobsObjectGuid, m_lMaxNumberBlobs);
-		m_Values.Set<long>(SVMaxBlobDataArraySizeObjectGuid, m_lMaxBlobDataArraySize);
+		m_Values.Set<bool>(SvPb::BlobUseFillEId, bFillBlobValue);
+		m_Values.Set<long>(SvPb::NbrOfBlobsEId, m_lMaxNumberBlobs);
+		m_Values.Set<long>(SvPb::MaxBlobDataArraySizeEId, m_lMaxBlobDataArraySize);
 
 		Result = m_Values.Commit();
 
@@ -245,13 +244,13 @@ namespace SvOg
 		{
 			if (LB_ERR == lCurrentIndex)
 			{
-				m_Values.Set(SVSortFeatureObjectGuid, lAvailableIndex);
+				m_Values.Set(SvPb::SortFeatureEId, lAvailableIndex);
 
-				m_SortFeatureEdt = m_Values.GetName(SVBlobFeatureGuids[lAvailableIndex]).c_str();
+				m_SortFeatureEdt = m_Values.GetName(SvPb::BlobFeatureEId + lAvailableIndex).c_str();
 			}
 
 			m_FeaturesEnabled[lAvailableIndex] = _T('1');
-			m_Values.Set<CString>(SVBlobEnabledFeaturesObjectGuid, m_FeaturesEnabled.c_str());
+			m_Values.Set<CString>(SvPb::BlobEnabledFeaturesEId, m_FeaturesEnabled.c_str());
 
 			//! Reset the Blob Analyzer
 			m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
@@ -274,10 +273,10 @@ namespace SvOg
 		if(0 <= index && SvOi::SV_NUMBER_OF_BLOB_FEATURES > index)
 		{
 			m_FeaturesEnabled[index] = _T('0');
-			m_Values.Set<CString>(SVBlobEnabledFeaturesObjectGuid, m_FeaturesEnabled.c_str());
+			m_Values.Set<CString>(SvPb::BlobEnabledFeaturesEId, m_FeaturesEnabled.c_str());
 
 			// need to reset the sort index
-			long sortIndex = m_Values.Get<long>(SVSortFeatureObjectGuid);
+			long sortIndex = m_Values.Get<long>(SvPb::SortFeatureEId);
 			int count = m_lbSelectedFeatures.GetCount();
 
 			if (index == sortIndex)
@@ -288,13 +287,13 @@ namespace SvOg
 					long newIndex = static_cast<long> ( m_lbSelectedFeatures.GetItemData(0) );
 					if( newIndex == LB_ERR)
 					{
-						m_Values.Set<long>(SVSortFeatureObjectGuid, 1L);
+						m_Values.Set<long>(SvPb::SortFeatureEId, 1L);
 						m_SortFeatureEdt.Empty ();
 					}
 					else
 					{
-						m_Values.Set<long>(SVSortFeatureObjectGuid, newIndex);
-						m_SortFeatureEdt = m_Values.GetName(SVBlobFeatureGuids[newIndex]).c_str();
+						m_Values.Set<long>(SvPb::SortFeatureEId, newIndex);
+						m_SortFeatureEdt = m_Values.GetName(SvPb::BlobFeatureEId + newIndex).c_str();
 					}
 				}
 			}
@@ -302,7 +301,7 @@ namespace SvOg
 			{
 				if(0 == count) // truly empty list
 				{
-					m_Values.Set<long>(SVSortFeatureObjectGuid, -1L);
+					m_Values.Set<long>(SvPb::SortFeatureEId, -1L);
 					m_SortFeatureEdt.Empty();
 				}
 				// Only one Entry and it may be the "No Feature" string
@@ -311,7 +310,7 @@ namespace SvOg
 					long newIndex = static_cast<long> ( m_lbSelectedFeatures.GetItemData( 0 ) );
 					if(LB_ERR == newIndex)
 					{
-						m_Values.Set<long>(SVSortFeatureObjectGuid, -1L);
+						m_Values.Set<long>(SvPb::SortFeatureEId, -1L);
 						m_SortFeatureEdt.Empty();
 					}
 				}
@@ -405,12 +404,12 @@ namespace SvOg
 
 		if( lCurrentIndex != LB_ERR && lCurrentIndex >= 0)
 		{
-			m_Values.Set<long>(SVSortFeatureObjectGuid, lCurrentIndex);
-			m_SortFeatureEdt = m_Values.GetName(SVBlobFeatureGuids[lCurrentIndex]).c_str();
+			m_Values.Set<long>(SvPb::SortFeatureEId, lCurrentIndex);
+			m_SortFeatureEdt = m_Values.GetName(SvPb::BlobFeatureEId + lCurrentIndex).c_str();
 		}
 		else
 		{
-			m_Values.Set<long>(SVSortFeatureObjectGuid, -1L);
+			m_Values.Set<long>(SvPb::SortFeatureEId, -1L);
 			m_SortFeatureEdt.Empty();
 		}
 		m_Values.Commit();
@@ -529,13 +528,13 @@ namespace SvOg
 		{
 			int Feature = static_cast<int> (m_lbSelectedFeatures.GetItemData(Index) );
 
-			double DefaultValue = m_Values.GetDefault<double>(SVBlobFeatureGuids[Feature]);
-			std::string FeatureName = m_Values.GetName(SVBlobFeatureGuids[Feature]);
+			double DefaultValue = m_Values.GetDefault<double>(SvPb::BlobFeatureEId + Feature);
+			std::string FeatureName = m_Values.GetName(SvPb::BlobFeatureEId + Feature);
 			
 			SVBlobFeaturePropertiesDlg DlgProperties(FeatureName, DefaultValue);
 			if (DlgProperties.DoModal() == IDOK)
 			{
-				m_Values.SetDefault<double>(SVBlobFeatureGuids[Feature], DlgProperties.getDefaultValue());
+				m_Values.SetDefault<double>(SvPb::BlobFeatureEId + Feature, DlgProperties.getDefaultValue());
 				m_Values.Commit();
 			}
 		}

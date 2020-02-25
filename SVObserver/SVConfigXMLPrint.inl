@@ -37,7 +37,7 @@
 #include "TriggerInformation/SVTriggerObject.h"
 #pragma endregion Includes
 
-const std::vector<GUID>& NonPrintGuids();
+const std::vector<SvPb::EmbeddedIdEnum>& NonPrintEmbeddeds();
 const std::vector<SvPb::ClassIdEnum>& NonPrintClassIds();
 
 typedef sv_xml::SVConfigXMLPrint SVConfigXMLPrint;
@@ -994,15 +994,15 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 	// If object is a value object, get embedded ID which is NonPrintable.
 	if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
 	{
-		const GUID& guidObjID = pObject->GetEmbeddedID();
-		const auto& nPrs = NonPrintGuids();
+		SvPb::EmbeddedIdEnum embeddedID = pObject->GetEmbeddedID();
+		const auto& nPrs = NonPrintEmbeddeds();
 		// This is to prevent the comments from being sent to the SVRC thru GetConfigReport
-		if (guidObjID == SVToolCommentTypeObjectGuid)
+		if (embeddedID == SvPb::ToolCommentTypeEId)
 		{
 			return;
 		}
 		// Check for non-printing object type.
-		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&guidObjID](const auto& rEntry) { return guidObjID == rEntry; });
+		auto iter = std::find_if(std::begin(nPrs), std::end(nPrs), [&embeddedID](const auto& rEntry) { return embeddedID == rEntry; });
 		if (iter != std::end(nPrs))
 		{
 			return;

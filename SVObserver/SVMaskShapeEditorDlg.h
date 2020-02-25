@@ -113,8 +113,8 @@ protected:
 
 #pragma region Private Methods
 private:
-	int GetPropertyID(GUID guidProperty );
-	GUID GetPropertyGuid(int iPropertyID );
+	int GetPropertyID(SvPb::EmbeddedIdEnum propertyId);
+	SvPb::EmbeddedIdEnum GetPropertyEmbeddedId(int iPropertyID);
 	HRESULT BuildPropertyList();
 	HRESULT RefreshProperties();
 
@@ -165,7 +165,7 @@ private:
 	typedef std::map<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum, SvOp::SVMaskShape*> ShapeMap;
 
 	ShapeMap m_mapShapes;
-	std::map<GUID, int> m_mapPropertyIds;
+	std::map<SvPb::EmbeddedIdEnum, int> m_mapPropertyIds;
 	static SVMaskShapeEditorDlg* m_pThis;
 	bool m_isInit;
 	long m_currentTabNumber; //only use until m_isInit is true

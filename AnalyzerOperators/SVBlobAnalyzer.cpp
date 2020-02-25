@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVBlobAnalyzer.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
@@ -43,55 +42,55 @@ static char THIS_FILE[] = __FILE__;
 
 struct SVBlobFeatureConstant BlobFeatureConstants[]=
 {
-	{SVEBlobArea /*M_AREA*/, SVBlobFeatureGuids[SvOi::SV_AREA], IDS_OBJECTNAME_AREA},
-	{SVEBlobBoxXMax /*M_BOX_X_MAX*/, SVBlobFeatureGuids[SvOi::SV_BOXX_MAX], IDS_OBJECTNAME_BOXXMAX},
-	{SVEBlobBoxXMin /*M_BOX_X_MIN*/, SVBlobFeatureGuids[SvOi::SV_BOXX_MIN], IDS_OBJECTNAME_BOXXMIN},
-	{SVEBlobBoxYMax /*M_BOX_Y_MAX*/, SVBlobFeatureGuids[SvOi::SV_BOXY_MAX], IDS_OBJECTNAME_BOXYMAX},
-	{SVEBlobBoxYMin /*M_BOX_Y_MIN*/, SVBlobFeatureGuids[SvOi::SV_BOXY_MIN], IDS_OBJECTNAME_BOXYMIN},
-	{SVEBlobBreadth /*M_BREADTH*/, SVBlobFeatureGuids[SvOi::SV_BREADTH], IDS_OBJECTNAME_BREADTH},
-	{SVEBlobCenterOfGravityX /*M_CENTER_OF_GRAVITY_X*/, SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_X], IDS_OBJECTNAME_CENTEROFGRAVITYX},
-	{SVEBlobCenterOfGravityY /*M_CENTER_OF_GRAVITY_Y*/, SVBlobFeatureGuids[SvOi::SV_CENTEROFGRAVITY_Y], IDS_OBJECTNAME_CENTEROFGRAVITYY},
-	{SVEBlobConvexParameter /*M_CONVEX_PERIMETER*/, SVBlobFeatureGuids[SvOi::SV_CONVEX_PERIMETER], IDS_OBJECTNAME_CONVEXPERIMETER},
-	{SVEBlobFeretElongation /*M_FERET_ELONGATION*/, SVBlobFeatureGuids[SvOi::SV_FERET_ELONGATION], IDS_OBJECTNAME_FERETELONGATION},
-	{SVEBlobFeretMaxAngle /*M_FERET_MAX_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_FERETMAX_ANGLE], IDS_OBJECTNAME_FERETMAXANGLE},
-	{SVEBlobFeretMaxDia /*M_FERET_MAX_DIAMETER*/, SVBlobFeatureGuids[SvOi::SV_FERETMAX_DIAMETER], IDS_OBJECTNAME_FERETMAXDIAMETER},
-	{SVEBlobFeretMeanDia/*M_FERET_MEAN_DIAMETER*/, SVBlobFeatureGuids[SvOi::SV_FERETMEAN_DIAMETER], IDS_OBJECTNAME_FERETMEANDIAMETER},
-	{SVEBlobFeretMinAngle /*M_FERET_MIN_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_FERETMIN_ANGLE], IDS_OBJECTNAME_FERETMINANGLE},
-	{SVEBlobFeretMinDia /*M_FERET_MIN_DIAMETER*/, SVBlobFeatureGuids[SvOi::SV_FERETMIN_DIAMETER], IDS_OBJECTNAME_FERETMINDIAMETER},
-	{SVEBlobFeretX /*M_FERET_X*/, SVBlobFeatureGuids[SvOi::SV_FERET_X], IDS_OBJECTNAME_FERETX},
-	{SVEBlobFeretY /*M_FERET_Y*/, SVBlobFeatureGuids[SvOi::SV_FERET_Y], IDS_OBJECTNAME_FERETY},
-	{SVEBlobFirstPointX /*M_FIRST_POINT_X*/, SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_X], IDS_OBJECTNAME_FIRSTPOINTX},
-	{SVEBlobFirstPointY /*M_FIRST_POINT_Y*/, SVBlobFeatureGuids[SvOi::SV_FIRSTPOINT_Y], IDS_OBJECTNAME_FIRSTPOINTY},
-	{SVEBlobLabelValue /*M_LABEL_VALUE*/, SVBlobFeatureGuids[SvOi::SV_LABEL], IDS_OBJECTNAME_LABEL},
-	{SVEBlobLength /*M_LENGTH*/, SVBlobFeatureGuids[SvOi::SV_LENGTH], IDS_OBJECTNAME_LENGTH},
-	{SVEBlobNumberOfHoles /*M_NUMBER_OF_HOLES*/, SVBlobFeatureGuids[SvOi::SV_NBROF_HOLES], IDS_OBJECTNAME_NBROFHOLES},
-	{SVEBlobPerimeter /*M_PERIMETER*/, SVBlobFeatureGuids[SvOi::SV_PERIMETER], IDS_OBJECTNAME_PERIMETER},
-	{SVEBlobRoughness /*M_ROUGHNESS*/, SVBlobFeatureGuids[SvOi::SV_ROUGHNESS], IDS_OBJECTNAME_ROUGHNESS},
-	{SVEBlobSumPixel /*M_SUM_PIXEL*/, SVBlobFeatureGuids[SvOi::SV_SUM_PIXEL], IDS_OBJECTNAME_SUMPIXEL},
-	{SVEBlobCompactness /*M_COMPACTNESS*/, SVBlobFeatureGuids[SvOi::SV_COMPACTNESS], IDS_OBJECTNAME_BLOB_COMPACTNESS},
-	{SVEBlobNumberOfRuns /*M_NUMBER_OF_RUNS*/, SVBlobFeatureGuids[SvOi::SV_NBR_RUNS], IDS_OBJECTNAME_NUMBER_OF_RUNS},
-	{SVEBlobXMinAtYMin /*M_X_MIN_AT_Y_MIN*/, SVBlobFeatureGuids[SvOi::SV_XMINAT_YMIN], IDS_OBJECTNAME_XMIN_AT_YMIN},
-	{SVEBlobXMaxAtYMax /*M_X_MAX_AT_Y_MAX*/, SVBlobFeatureGuids[SvOi::SV_XMAXAT_YMAX], IDS_OBJECTNAME_XMAX_AT_YMAX},
-	{SVEBlobYMinAtXMax /*M_Y_MIN_AT_X_MAX*/, SVBlobFeatureGuids[SvOi::SV_YMINAT_XMAX], IDS_OBJECTNAME_YMIN_AT_XMAX},
-	{SVEBlobYMaxAtXMin /*M_Y_MAX_AT_X_MIN*/, SVBlobFeatureGuids[SvOi::SV_YMAXAT_XMIN], IDS_OBJECTNAME_YMAX_AT_XMIN},
-	{SVEBlobElongation /*M_ELONGATION*/, SVBlobFeatureGuids[SvOi::SV_ELONGATION], IDS_OBJECTNAME_BLOB_ELONGATION},
-	{SVEBlobIntercept /*M_INTERCEPT_0*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_0], IDS_OBJECTNAME_BLOB_INTERCEPT0},
-	{SVEBlobIntercept45 /*M_INTERCEPT_45*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_45], IDS_OBJECTNAME_BLOB_INTERCEPT45},
-	{SVEBlobIntercept90 /*M_INTERCEPT_90*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_90], IDS_OBJECTNAME_BLOB_INTERCEPT90},
-	{SVEBlobIntercept135 /*M_INTERCEPT_135*/, SVBlobFeatureGuids[SvOi::SV_INTERCEPT_135], IDS_OBJECTNAME_BLOB_INTERCEPT135},
-	{SVEBlobMomentX0Y1 /*M_MOMENT_X0_Y1*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y1], IDS_OBJECTNAME_BLOB_MOMENT_X0Y1},
-	{SVEBlobMomentX1Y0 /*M_MOMENT_X1_Y0*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y0], IDS_OBJECTNAME_BLOB_MOMENT_X1Y0},
-	{SVEBlobMomentX1Y1 /*M_MOMENT_X1_Y1*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X1Y1], IDS_OBJECTNAME_BLOB_MOMENT_X1Y1},
-	{SVEBlobMomentX0Y2 /*M_MOMENT_X0_Y2*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X0Y2], IDS_OBJECTNAME_BLOB_MOMENT_X0Y2},
-	{SVEBlobMomentX2Y0 /*M_MOMENT_X2_Y0*/, SVBlobFeatureGuids[SvOi::SV_MOMENT_X2Y0], IDS_OBJECTNAME_BLOB_MOMENT_X2Y0},
-	{SVEBlobMomentCentralX0Y2 /*M_MOMENT_CENTRAL_X0_Y2*/, SVBlobFeatureGuids[SvOi::SV_CENTRAL_X0Y2], IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X0Y2},
-	{SVEBlobMomentCentralX2Y0 /*M_MOMENT_CENTRAL_X2_Y0*/, SVBlobFeatureGuids[SvOi::SV_CENTRAL_X2Y0], IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X2Y0},
-	{SVEBlobMomentCentralX1Y1 /*M_MOMENT_CENTRAL_X1_Y1*/, SVBlobFeatureGuids[SvOi::SV_CENTRAL_X1Y1], IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X1Y1},
-	{SVEBlobAxisPrincipalAngle /*M_AXIS_PRINCIPAL_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_AXISPRINCIPAL_ANGLE], IDS_OBJECTNAME_BLOB_AXIS_PRINCIPAL_ANGLE},
-	{SVEBlobAxisSecondaryAngle /*M_AXIS_SECONDARY_ANGLE*/, SVBlobFeatureGuids[SvOi::SV_AXISSECONDARY_ANGLE], IDS_OBJECTNAME_BLOB_AXIS_SECONDARY_ANGLE},
-	{SVEBlobEulerNumber /*M_EULER_NUMBER*/, SVBlobFeatureGuids[SvOi::SV_EULER_NBR], IDS_OBJECTNAME_BLOB_EULER_NUMBER},
-	{SV_M_CENTER_BOUNDING_BOX_X, SVBlobFeatureGuids[SvOi::SV_CENTER_X_SOURCE], IDS_OBJECTNAME_CENTER_X_SOURCE},
-	{SV_M_CENTER_BOUNDING_BOX_Y, SVBlobFeatureGuids[SvOi::SV_CENTER_Y_SOURCE], IDS_OBJECTNAME_CENTER_Y_SOURCE}
+	{SVEBlobArea /*M_AREA*/, SvPb::BlobFeatureEId+SvOi::SV_AREA, IDS_OBJECTNAME_AREA},
+	{SVEBlobBoxXMax /*M_BOX_X_MAX*/, SvPb::BlobFeatureEId+SvOi::SV_BOXX_MAX, IDS_OBJECTNAME_BOXXMAX},
+	{SVEBlobBoxXMin /*M_BOX_X_MIN*/, SvPb::BlobFeatureEId+SvOi::SV_BOXX_MIN, IDS_OBJECTNAME_BOXXMIN},
+	{SVEBlobBoxYMax /*M_BOX_Y_MAX*/, SvPb::BlobFeatureEId+SvOi::SV_BOXY_MAX, IDS_OBJECTNAME_BOXYMAX},
+	{SVEBlobBoxYMin /*M_BOX_Y_MIN*/, SvPb::BlobFeatureEId+SvOi::SV_BOXY_MIN, IDS_OBJECTNAME_BOXYMIN},
+	{SVEBlobBreadth /*M_BREADTH*/, SvPb::BlobFeatureEId+SvOi::SV_BREADTH, IDS_OBJECTNAME_BREADTH},
+	{SVEBlobCenterOfGravityX /*M_CENTER_OF_GRAVITY_X*/, SvPb::BlobFeatureEId+SvOi::SV_CENTEROFGRAVITY_X, IDS_OBJECTNAME_CENTEROFGRAVITYX},
+	{SVEBlobCenterOfGravityY /*M_CENTER_OF_GRAVITY_Y*/, SvPb::BlobFeatureEId+SvOi::SV_CENTEROFGRAVITY_Y, IDS_OBJECTNAME_CENTEROFGRAVITYY},
+	{SVEBlobConvexParameter /*M_CONVEX_PERIMETER*/, SvPb::BlobFeatureEId+SvOi::SV_CONVEX_PERIMETER, IDS_OBJECTNAME_CONVEXPERIMETER},
+	{SVEBlobFeretElongation /*M_FERET_ELONGATION*/, SvPb::BlobFeatureEId+SvOi::SV_FERET_ELONGATION, IDS_OBJECTNAME_FERETELONGATION},
+	{SVEBlobFeretMaxAngle /*M_FERET_MAX_ANGLE*/, SvPb::BlobFeatureEId+SvOi::SV_FERETMAX_ANGLE, IDS_OBJECTNAME_FERETMAXANGLE},
+	{SVEBlobFeretMaxDia /*M_FERET_MAX_DIAMETER*/, SvPb::BlobFeatureEId+SvOi::SV_FERETMAX_DIAMETER, IDS_OBJECTNAME_FERETMAXDIAMETER},
+	{SVEBlobFeretMeanDia/*M_FERET_MEAN_DIAMETER*/, SvPb::BlobFeatureEId+SvOi::SV_FERETMEAN_DIAMETER, IDS_OBJECTNAME_FERETMEANDIAMETER},
+	{SVEBlobFeretMinAngle /*M_FERET_MIN_ANGLE*/, SvPb::BlobFeatureEId+SvOi::SV_FERETMIN_ANGLE, IDS_OBJECTNAME_FERETMINANGLE},
+	{SVEBlobFeretMinDia /*M_FERET_MIN_DIAMETER*/, SvPb::BlobFeatureEId+SvOi::SV_FERETMIN_DIAMETER, IDS_OBJECTNAME_FERETMINDIAMETER},
+	{SVEBlobFeretX /*M_FERET_X*/, SvPb::BlobFeatureEId+SvOi::SV_FERET_X, IDS_OBJECTNAME_FERETX},
+	{SVEBlobFeretY /*M_FERET_Y*/, SvPb::BlobFeatureEId+SvOi::SV_FERET_Y, IDS_OBJECTNAME_FERETY},
+	{SVEBlobFirstPointX /*M_FIRST_POINT_X*/, SvPb::BlobFeatureEId+SvOi::SV_FIRSTPOINT_X, IDS_OBJECTNAME_FIRSTPOINTX},
+	{SVEBlobFirstPointY /*M_FIRST_POINT_Y*/, SvPb::BlobFeatureEId+SvOi::SV_FIRSTPOINT_Y, IDS_OBJECTNAME_FIRSTPOINTY},
+	{SVEBlobLabelValue /*M_LABEL_VALUE*/, SvPb::BlobFeatureEId+SvOi::SV_LABEL, IDS_OBJECTNAME_LABEL},
+	{SVEBlobLength /*M_LENGTH*/, SvPb::BlobFeatureEId+SvOi::SV_LENGTH, IDS_OBJECTNAME_LENGTH},
+	{SVEBlobNumberOfHoles /*M_NUMBER_OF_HOLES*/, SvPb::BlobFeatureEId+SvOi::SV_NBROF_HOLES, IDS_OBJECTNAME_NBROFHOLES},
+	{SVEBlobPerimeter /*M_PERIMETER*/, SvPb::BlobFeatureEId+SvOi::SV_PERIMETER, IDS_OBJECTNAME_PERIMETER},
+	{SVEBlobRoughness /*M_ROUGHNESS*/, SvPb::BlobFeatureEId+SvOi::SV_ROUGHNESS, IDS_OBJECTNAME_ROUGHNESS},
+	{SVEBlobSumPixel /*M_SUM_PIXEL*/, SvPb::BlobFeatureEId+SvOi::SV_SUM_PIXEL, IDS_OBJECTNAME_SUMPIXEL},
+	{SVEBlobCompactness /*M_COMPACTNESS*/, SvPb::BlobFeatureEId+SvOi::SV_COMPACTNESS, IDS_OBJECTNAME_BLOB_COMPACTNESS},
+	{SVEBlobNumberOfRuns /*M_NUMBER_OF_RUNS*/, SvPb::BlobFeatureEId+SvOi::SV_NBR_RUNS, IDS_OBJECTNAME_NUMBER_OF_RUNS},
+	{SVEBlobXMinAtYMin /*M_X_MIN_AT_Y_MIN*/, SvPb::BlobFeatureEId+SvOi::SV_XMINAT_YMIN, IDS_OBJECTNAME_XMIN_AT_YMIN},
+	{SVEBlobXMaxAtYMax /*M_X_MAX_AT_Y_MAX*/, SvPb::BlobFeatureEId+SvOi::SV_XMAXAT_YMAX, IDS_OBJECTNAME_XMAX_AT_YMAX},
+	{SVEBlobYMinAtXMax /*M_Y_MIN_AT_X_MAX*/, SvPb::BlobFeatureEId+SvOi::SV_YMINAT_XMAX, IDS_OBJECTNAME_YMIN_AT_XMAX},
+	{SVEBlobYMaxAtXMin /*M_Y_MAX_AT_X_MIN*/, SvPb::BlobFeatureEId+SvOi::SV_YMAXAT_XMIN, IDS_OBJECTNAME_YMAX_AT_XMIN},
+	{SVEBlobElongation /*M_ELONGATION*/, SvPb::BlobFeatureEId+SvOi::SV_ELONGATION, IDS_OBJECTNAME_BLOB_ELONGATION},
+	{SVEBlobIntercept /*M_INTERCEPT_0*/, SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_0, IDS_OBJECTNAME_BLOB_INTERCEPT0},
+	{SVEBlobIntercept45 /*M_INTERCEPT_45*/, SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_45, IDS_OBJECTNAME_BLOB_INTERCEPT45},
+	{SVEBlobIntercept90 /*M_INTERCEPT_90*/, SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_90, IDS_OBJECTNAME_BLOB_INTERCEPT90},
+	{SVEBlobIntercept135 /*M_INTERCEPT_135*/, SvPb::BlobFeatureEId+SvOi::SV_INTERCEPT_135, IDS_OBJECTNAME_BLOB_INTERCEPT135},
+	{SVEBlobMomentX0Y1 /*M_MOMENT_X0_Y1*/, SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X0Y1, IDS_OBJECTNAME_BLOB_MOMENT_X0Y1},
+	{SVEBlobMomentX1Y0 /*M_MOMENT_X1_Y0*/, SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X1Y0, IDS_OBJECTNAME_BLOB_MOMENT_X1Y0},
+	{SVEBlobMomentX1Y1 /*M_MOMENT_X1_Y1*/, SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X1Y1, IDS_OBJECTNAME_BLOB_MOMENT_X1Y1},
+	{SVEBlobMomentX0Y2 /*M_MOMENT_X0_Y2*/, SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X0Y2, IDS_OBJECTNAME_BLOB_MOMENT_X0Y2},
+	{SVEBlobMomentX2Y0 /*M_MOMENT_X2_Y0*/, SvPb::BlobFeatureEId+SvOi::SV_MOMENT_X2Y0, IDS_OBJECTNAME_BLOB_MOMENT_X2Y0},
+	{SVEBlobMomentCentralX0Y2 /*M_MOMENT_CENTRAL_X0_Y2*/, SvPb::BlobFeatureEId+SvOi::SV_CENTRAL_X0Y2, IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X0Y2},
+	{SVEBlobMomentCentralX2Y0 /*M_MOMENT_CENTRAL_X2_Y0*/, SvPb::BlobFeatureEId+SvOi::SV_CENTRAL_X2Y0, IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X2Y0},
+	{SVEBlobMomentCentralX1Y1 /*M_MOMENT_CENTRAL_X1_Y1*/, SvPb::BlobFeatureEId+SvOi::SV_CENTRAL_X1Y1, IDS_OBJECTNAME_BLOB_MOMENT_CENTRAL_X1Y1},
+	{SVEBlobAxisPrincipalAngle /*M_AXIS_PRINCIPAL_ANGLE*/, SvPb::BlobFeatureEId+SvOi::SV_AXISPRINCIPAL_ANGLE, IDS_OBJECTNAME_BLOB_AXIS_PRINCIPAL_ANGLE},
+	{SVEBlobAxisSecondaryAngle /*M_AXIS_SECONDARY_ANGLE*/, SvPb::BlobFeatureEId+SvOi::SV_AXISSECONDARY_ANGLE, IDS_OBJECTNAME_BLOB_AXIS_SECONDARY_ANGLE},
+	{SVEBlobEulerNumber /*M_EULER_NUMBER*/, SvPb::BlobFeatureEId+SvOi::SV_EULER_NBR, IDS_OBJECTNAME_BLOB_EULER_NUMBER},
+	{SV_M_CENTER_BOUNDING_BOX_X, SvPb::BlobFeatureEId+SvOi::SV_CENTER_X_SOURCE, IDS_OBJECTNAME_CENTER_X_SOURCE},
+	{SV_M_CENTER_BOUNDING_BOX_Y, SvPb::BlobFeatureEId+SvOi::SV_CENTER_Y_SOURCE, IDS_OBJECTNAME_CENTER_Y_SOURCE}
 };
 #pragma endregion Declarations
 
@@ -116,73 +115,73 @@ void SVBlobAnalyzerClass::init()
 	m_pResultBlob = nullptr;
 
 	//Indentify our output type.
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVBlobAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVBlobAnalyzerObjectType;
 
 	//Register embedded objects.
 	RegisterEmbeddedObject(
 		&m_PersistantFeaturesEnabled, 
-		SVBlobEnabledFeaturesObjectGuid,
+		SvPb::BlobEnabledFeaturesEId,
 		IDS_OBJECTNAME_ENABLEDFEATURES,
 		false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject(
 		&m_lvoBlobSampleSize, 
-		SVNbrOfBlobsObjectGuid,
+		SvPb::NbrOfBlobsEId,
 		IDS_OBJECTNAME_NBROFBLOBS,
 		false, SvOi::SVResetItemOwner );
 
 	RegisterEmbeddedObject(
 		&m_lvoMaxBlobDataArraySize, 
-		SVMaxBlobDataArraySizeObjectGuid,
+		SvPb::MaxBlobDataArraySizeEId,
 		IDS_OBJECTNAME_MAX_BLOB_DATA_ARRAY_SIZE,
 		false, SvOi::SVResetItemOwner );
 
 	RegisterEmbeddedObject(
 		&m_SortFeature, 
-		SVSortFeatureObjectGuid,
+		SvPb::SortFeatureEId,
 		IDS_OBJECTNAME_SORTFEATURE,
 		false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject(
 		&m_lvoNumberOfBlobsFound, 
-		SVNbrOfBlobsFoundObjectGuid,
+		SvPb::NbrOfBlobsFoundEId,
 		IDS_OBJECTNAME_NBROFBLOBSFOUND,
 		false, SvOi::SVResetItemNone );
 	m_lvoNumberOfBlobsFound.setSaveValueFlag(false);
 
 	RegisterEmbeddedObject(
 		&m_SortAscending, 
-		SVSortAscendingObjectGuid,
+		SvPb::SortAscendingEId,
 		IDS_OBJECTNAME_SORTASCENDING,
 		false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject(
 		&m_bExcludeFailed, 
-		SVExcludeFailedObjectGuid,
+		SvPb::ExcludeFailedEId,
 		IDS_OBJECTNAME_EXCLUDEFAILED,
 		false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject(
 		&m_bvoFillBlobs,
-		SVBlobUseFillGuid,
+		SvPb::BlobUseFillEId,
 		IDS_BLOB_USE_FILL,
 		false, SvOi::SVResetItemOwner );
 
 	RegisterEmbeddedObject(
 		&m_colorBlobEnumValue,
-		SVBlobColorGuid,
+		SvPb::BlobColorEId,
 		IDS_BLACK_BLOBS,
 		false, SvOi::SVResetItemOwner );
 
 	RegisterEmbeddedObject(
 		&m_evoBlobFillColor,
-		SVBlobFillColorGuid,
+		SvPb::BlobFillColorEId,
 		IDS_BLOB_FILL_COLOR,
 		false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject(
 		&m_evoBlobType,
-		SVBlobFillTypeGuid,
+		SvPb::BlobFillTypeEId,
 		IDS_BLOB_FILL_TYPE,
 		false, SvOi::SVResetItemNone );
 
@@ -190,7 +189,7 @@ void SVBlobAnalyzerClass::init()
 	{
 		RegisterEmbeddedObject(
 			&m_Value[i], 
-			BlobFeatureConstants[i].rEmbeddedID,
+			BlobFeatureConstants[i].embeddedID,
 			BlobFeatureConstants[i].NewStringResourceID,
 			false, SvOi::SVResetItemNone );
 
@@ -299,11 +298,11 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	// Setup the result
 
 	// Declare Input Interface of Result...
-	interfaceInfo.EmbeddedID = m_Value[FeatureIndex].GetEmbeddedID();
+	interfaceInfo.m_EmbeddedID = m_Value[FeatureIndex].GetEmbeddedID();
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string Title = m_Value[FeatureIndex].GetName();
@@ -323,9 +322,9 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	Add(pResult);
 
 	SvDef::SVObjectTypeInfoStruct info;
-	info.ObjectType = SvPb::SVValueObjectType;
-	info.SubType = SvPb::SVDoubleValueObjectType;
-	info.EmbeddedID = SVValueObjectGuid;
+	info.m_ObjectType = SvPb::SVValueObjectType;
+	info.m_SubType = SvPb::SVDoubleValueObjectType;
+	info.m_EmbeddedID = SvPb::ValueEId;
 
 	SvVol::SVDoubleValueObjectClass* pValue = dynamic_cast<SvVol::SVDoubleValueObjectClass*>( getFirstObject( info ) );
 
@@ -390,11 +389,11 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		// Setup the result
 		
 		// Declare Input Interface of Result...
-		interfaceInfo.EmbeddedID = m_lvoNumberOfBlobsFound.GetEmbeddedID();
+		interfaceInfo.m_EmbeddedID = m_lvoNumberOfBlobsFound.GetEmbeddedID();
 		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 		
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
+		resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SvPb::LongResultClassId;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		std::string Title = m_lvoNumberOfBlobsFound.GetName();
@@ -414,8 +413,8 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		Add( m_pResultBlob );
 		
 		SvDef::SVObjectTypeInfoStruct info;
-		info.SubType = SvPb::SVLongValueObjectType;
-		info.EmbeddedID = SVValueObjectGuid;
+		info.m_SubType = SvPb::SVLongValueObjectType;
+		info.m_EmbeddedID = SvPb::ValueEId;
 		
 		SvVol::SVLongValueObjectClass* pValue = dynamic_cast<SvVol::SVLongValueObjectClass*>( getFirstObject( info ) );
 
@@ -490,8 +489,8 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 
 	SvDef::SVObjectTypeInfoStruct info;
 
-	info.ObjectType = SvPb::SVResultObjectType;
-	info.SubType = SvPb::SVResultDoubleObjectType;
+	info.m_ObjectType = SvPb::SVResultObjectType;
+	info.m_SubType = SvPb::SVResultDoubleObjectType;
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -823,13 +822,13 @@ void SVBlobAnalyzerClass::EnableFeature(int Feature)
 	//! Check is Feature already in embedded list	
 	SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [Feature](const SVObjectPtrVector::value_type pEntry)->bool
 	{
-		return (pEntry->GetEmbeddedID() == BlobFeatureConstants[Feature].rEmbeddedID);
+		return (pEntry->GetEmbeddedID() == BlobFeatureConstants[Feature].embeddedID);
 	}
 	);
 	if (m_embeddedList.end() == Iter)
 	{
 		m_Value[Feature].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].rEmbeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].embeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
 		AllocateResult(Feature);
 	}
 }
@@ -1544,14 +1543,14 @@ void SVBlobAnalyzerClass::CreateArray()
 		if (_T('1') == FeaturesEnabled[i])
 		{
 			m_Value[i].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
-			m_ResultTableColumnValueObjects[i] = m_pResultTable->updateOrCreateColumn(TableColumnValueObjectGuid[i], BlobFeatureConstants[i].NewStringResourceID, m_lMaxBlobDataArraySize);
+			m_ResultTableColumnValueObjects[i] = m_pResultTable->updateOrCreateColumn(SvPb::TableColumnValueEId+i, BlobFeatureConstants[i].NewStringResourceID, m_lMaxBlobDataArraySize);
 		}
 		else
 		{
 			m_Value[i].SetArraySize( 0 );
 			if (nullptr != m_ResultTableColumnValueObjects[i])
 			{
-				m_pResultTable->removeColumn(TableColumnValueObjectGuid[i]);
+				m_pResultTable->removeColumn(SvPb::TableColumnValueEId+i);
 				m_ResultTableColumnValueObjects[i] = nullptr;
 			}
 		}

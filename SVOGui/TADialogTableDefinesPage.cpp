@@ -15,7 +15,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVClassRegisterListClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

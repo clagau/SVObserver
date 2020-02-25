@@ -5091,7 +5091,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 						SvVol::SVBoolValueObjectClass isLUTFormulaClipped;
 						isLUTFormulaClipped.setResetOptions(false, SvOi::SVResetItemTool);
 						std::string Name = SvUl::LoadStdString(IDS_OBJECTNAME_LUT_EQUATION_CLIP);
-						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, Name.c_str());
+						isLUTFormulaClipped.SetObjectEmbedded(SvPb::LUTEquationClipFlagEId, nullptr, Name.c_str());
 						isLUTFormulaClipped.SetDefaultValue(BOOL(true), true);
 						isLUTFormulaClipped.SetValue(BOOL(false));
 						isLUTFormulaClipped.Persist(writer);

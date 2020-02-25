@@ -22,11 +22,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-EQAdjustSize::EQAdjustSize(SvPb::SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner, int StringResourceID)
+EQAdjustSize::EQAdjustSize(SvPb::SVObjectSubTypeEnum subType, SvPb::EmbeddedIdEnum resultId, SVObjectClass* POwner, int StringResourceID)
 : SVEquationClass( POwner, StringResourceID )
+, m_ResultId(resultId)
+, m_SubType(subType)
 {
-	m_ResultGuid = resultGuid;
-	m_SubType = subType;
 	Init();
 }
 
@@ -34,9 +34,9 @@ EQAdjustSize::~EQAdjustSize()
 {
 }
 
-GUID& EQAdjustSize::GetResultGuid()
+SvPb::EmbeddedIdEnum EQAdjustSize::GetResultId()
 {
-	return m_ResultGuid;
+	return m_ResultId;
 }
 
 DWORD EQAdjustSize::GetObjectColor() const
@@ -49,9 +49,9 @@ void EQAdjustSize::Init()
 	enabled.SetDefaultValue( BOOL(false) );
 	m_bUseOverlays = false;
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = m_SubType;
-	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = m_SubType;
+	RegisterEmbeddedObject( &m_result, m_ResultId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults
 	constexpr double DefaultValue = 100.0;
 	m_result.SetDefaultValue( DefaultValue );

@@ -13,7 +13,6 @@
 #include "TADialogRingBufferParameterPage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -83,20 +82,20 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_ButtonImageIndex1.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 		m_ButtonImageIndex2.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 
-		std::string depthString(m_Values.Get<CString>(RingBufferLink_DepthGuid));
+		std::string depthString(m_Values.Get<CString>(SvPb::RingBufferLink_DepthEId));
 		if (depthString.empty())
 		{
-			depthString = m_Values.Get<CString>(RingBuffer_DepthGuid);
+			depthString = m_Values.Get<CString>(SvPb::RingBuffer_DepthEId);
 		}
-		std::string indexString1( m_Values.Get<CString>(RingBufferLink_IndexGuid[0]) );
+		std::string indexString1( m_Values.Get<CString>(SvPb::RingBufferIndexLinkEId) );
 		if( indexString1.empty() )
 		{
-			indexString1 = m_Values.Get<CString>(RingBuffer_IndexGuid[0]);
+			indexString1 = m_Values.Get<CString>(SvPb::RingBufferIndexEId);
 		}
-		std::string indexString2( m_Values.Get<CString>(RingBufferLink_IndexGuid[1]) );
+		std::string indexString2( m_Values.Get<CString>(SvPb::RingBufferIndexLinkEId + 1) );
 		if( indexString2.empty() )
 		{
-			indexString2 = m_Values.Get<CString>(RingBuffer_IndexGuid[1]);
+			indexString2 = m_Values.Get<CString>(SvPb::RingBufferIndexEId+1);
 		}
 		//set edit controls
 		m_EditRingDepth.SetWindowText( depthString.c_str() );
@@ -190,7 +189,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		bool isNumber = SvUl::Convert2Number( Value, depth, true );
 		if( !isNumber || (SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth) )
 		{
-			m_Values.Set<CString>(RingBuffer_DepthGuid, Text);
+			m_Values.Set<CString>(SvPb::RingBuffer_DepthEId, Text);
 		}
 		else
 		{
@@ -215,7 +214,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 			CString Value;
 			m_EditImageIndex[Index].GetWindowText( Value );
 
-			m_Values.Set<CString>(RingBuffer_IndexGuid[Index], Value);
+			m_Values.Set<CString>(SvPb::RingBufferIndexEId+Index, Value);
 		}
 		return Result;
 	}

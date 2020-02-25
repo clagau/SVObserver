@@ -172,7 +172,6 @@ namespace Gdiplus
 // Global includes that everyone needs
 //@ Not every module needs these includes - fix this - SEJ
 #include "SVOResource\resource.h"
-#include "SVObjectLibrary\SVClsIds.h"
 
 
 

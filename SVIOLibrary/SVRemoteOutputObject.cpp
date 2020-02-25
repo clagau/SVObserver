@@ -169,6 +169,6 @@ HRESULT SVRemoteOutputObject::SetGroupID( const std::string& p_strGroupID )
 
 void SVRemoteOutputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVRemoteOutputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteOutputObjectType;
 }

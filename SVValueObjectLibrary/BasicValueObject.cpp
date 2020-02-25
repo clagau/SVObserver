@@ -39,8 +39,8 @@ BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, 
 	, m_Node(Node)
 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVBasicValueObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType =  ObjectSubType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVBasicValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType =  ObjectSubType;
 	Create( pOwner );
 }
 

@@ -108,7 +108,7 @@ public:
 	virtual void ResetName();
 	virtual void SetObjectName( LPCTSTR ObjectName );
 
-	void SetObjectEmbedded( const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName );
+	void SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName);
 
 	/// Add the object to the friend list.
 	/// \param rFriendGUID [in] Guid of the object
@@ -162,7 +162,7 @@ public:
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
-	virtual const SVGUID& GetEmbeddedID() const override;
+	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override;
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
@@ -193,7 +193,7 @@ public:
 	/// \param rUniqueID [in] New Guid of the object
 	/// \param embeddedID [in] Embedded Id of the object to overwrite
 	/// \returns SVObjectClass* Pointer to the overwritten object, nullptr if not found.
-	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID);
+	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb::EmbeddedIdEnum embeddedID);
 
 	/// Get the input list combined also from children and if required from friends.
 	/// \param inputList [in,out] Add the new input object to the end of the list.
@@ -234,7 +234,7 @@ protected:
 	// Refer to IsCreated()
 	bool m_isCreated;
 	//If object is embedded, set this ID
-	SVGUID m_embeddedID;
+	SvPb::EmbeddedIdEnum m_embeddedID;
 	//Owner Info
 	SVObjectInfoStruct m_ownerObjectInfo;
 	//Contains the object info and could also be used as task out info.

@@ -108,7 +108,7 @@ namespace SvOi
 		virtual const SVGUID& GetUniqueObjectID() const = 0;
 
 		/// This method returns the embedded ID of the object
-		virtual const SVGUID& GetEmbeddedID() const = 0;
+		virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const = 0;
 
 		/*
 		This method returns the creation state of the object.

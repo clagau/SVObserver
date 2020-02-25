@@ -15,7 +15,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVResultDouble.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -45,8 +44,8 @@ SVStatisticsToolClass::SVStatisticsToolClass( SVObjectClass* POwner, int StringR
 
 void SVStatisticsToolClass::init(void)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVStatisticsToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVStatisticsToolObjectType;
 	
 	// Register an empty input object
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -59,67 +58,67 @@ void SVStatisticsToolClass::init(void)
 	//Register embedded objects.
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_MIN_VALUE], 
-			SVStatMinObjectGuid,
+			SvPb::StatMinEId,
 			IDS_OBJECTNAME_STATMIN,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_MAX_VALUE], 
-			SVStatMaxObjectGuid,
+			SvPb::StatMaxEId,
 			IDS_OBJECTNAME_STATMAX,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_AVERAGEOF_VALUES], 
-			SVStatAverageObjectGuid,
+			SvPb::StatAverageEId,
 			IDS_OBJECTNAME_STATAVERAGE,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_STANDARD_DEVIATION], 
-			SVStatStdDevObjectGuid,
+			SvPb::StatStdDevEId,
 			IDS_OBJECTNAME_STATSTDDEV,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_VARIANCEIN_VALUES], 
-			SVStatVarianceObjectGuid,
+			SvPb::StatVarianceEId,
 			IDS_OBJECTNAME_STATVARIANCE,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_NUMBEROF_OCCURANCES], 
-			SVStatNbrOfOccurancesObjectGuid,
+			SvPb::StatNbrOfOccurancesEId,
 			IDS_OBJECTNAME_STATNBROFOCCURANCES,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_Value [SV_STATS_PERCENTOF_OCCURANCES], 
-			SVStatPercentOfOccurancesObjectGuid,
+			SvPb::StatPercentOfOccurancesEId,
 			IDS_OBJECTNAME_STATPERCENTOFOCCURANCES,
 			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
 			&m_OccurenceValue, 
-			SVStatTestValueObjectGuid,
+			SvPb::StatTestValueEId,
 			IDS_OBJECTNAME_STATTESTVALUE,
 			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
 			&m_VariableGUID_OBSOLETE, 
-			SVStatVariableToMonitorObjectGuid,
+			SvPb::StatVariableToMonitorEId,
 			IDS_OBJECTNAME_VARIABLEGUID,
 			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
 			&m_VariableName, 
-			SVStatVariableNameToMonitorObjectGuid,
+			SvPb::StatVariableNameToMonitorEId,
 			IDS_OBJECTNAME_STAT_VARIABLE_NAME,
 			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
 			&m_PersistantFeaturesEnabled, 
-			SVStatEnabledFeaturesObjectGuid,
+			SvPb::StatEnabledFeaturesEId,
 			IDS_OBJECTNAME_ENABLEDFEATURES,
 			false, SvOi::SVResetItemTool );
 
@@ -311,11 +310,11 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
 
 		// Declare Input Interface of Result...
-		interfaceInfo.EmbeddedID = m_Value [aFeatureIndex].GetEmbeddedID();
+		interfaceInfo.m_EmbeddedID = m_Value [aFeatureIndex].GetEmbeddedID();
 		resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
+		resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 		resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 		resultClassInfo.m_ClassName += _T(" ") + std::string(m_Value [aFeatureIndex].GetName());
@@ -332,9 +331,9 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		Add( pResult );
 
 		SvDef::SVObjectTypeInfoStruct info;
-		info.ObjectType = SvPb::SVValueObjectType;
-		info.SubType = SvPb::SVDoubleValueObjectType;
-		info.EmbeddedID = SVValueObjectGuid;
+		info.m_ObjectType = SvPb::SVValueObjectType;
+		info.m_SubType = SvPb::SVDoubleValueObjectType;
+		info.m_EmbeddedID = SvPb::ValueEId;
 
 		// Get the output of the result
 		SvVol::SVDoubleValueObjectClass* pValue = dynamic_cast<SvVol::SVDoubleValueObjectClass*>(pResult->getFirstObject(info));
@@ -409,8 +408,8 @@ SvOp::SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aF
 	
 	bool                    bDone = false;
 	
-	info.ObjectType = SvPb::SVResultObjectType;
-	info.SubType = SvPb::SVResultDoubleObjectType;
+	info.m_ObjectType = SvPb::SVResultObjectType;
+	info.m_SubType = SvPb::SVResultDoubleObjectType;
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 

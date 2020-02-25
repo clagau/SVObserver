@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVRange.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"
@@ -58,17 +57,17 @@ void SVRangeClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVRangeObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh], SVRangeClassFailHighObjectGuid, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh], SVRangeClassWarnHighObjectGuid, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow], SVRangeClassFailLowObjectGuid, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow], SVRangeClassWarnLowObjectGuid, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh].getLinkedName(), SVRangeClassFailHighIndirectObjectGuid, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh].getLinkedName(), SVRangeClassWarnHighIndirectObjectGuid, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow].getLinkedName(), SVRangeClassFailLowIndirectObjectGuid, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow].getLinkedName(), SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh], SvPb::RangeClassFailHighEId, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh].getLinkedName(), SvPb::RangeClassFailHighIndirectEId, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh].getLinkedName(), SvPb::RangeClassWarnHighIndirectEId, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow].getLinkedName(), SvPb::RangeClassFailLowIndirectEId, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow].getLinkedName(), SvPb::RangeClassWarnLowIndirectEId, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
 
 	// Set Embedded defaults
 	_variant_t vtTemp;
@@ -140,8 +139,11 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 void SVRangeClass::addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailLow].GetUniqueObjectID());
+	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailHigh].GetUniqueObjectID());
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnLow].GetUniqueObjectID());
+	// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnHigh].GetUniqueObjectID());
 }
 
@@ -230,7 +232,7 @@ HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAtt
 				GUID uniqueID = pObject->GetUniqueObjectID();
 				if (rAimObjectID == uniqueID)
 				{
-					if (SVRangeClassFailHighIndirectObjectGuid == pObject->GetEmbeddedID())
+					if (SvPb::RangeClassFailHighIndirectEId == pObject->GetEmbeddedID())
 					{
 						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_FailHigh].GetType())
 						{
@@ -238,7 +240,7 @@ HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAtt
 							return S_OK;
 						}
 					}
-					if (SVRangeClassWarnHighIndirectObjectGuid == pObject->GetEmbeddedID())
+					if (SvPb::RangeClassWarnHighIndirectEId == pObject->GetEmbeddedID())
 					{
 						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_WarnHigh].GetType())
 						{
@@ -246,7 +248,7 @@ HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAtt
 							return S_OK;
 						}
 					}
-					if (SVRangeClassFailLowIndirectObjectGuid == pObject->GetEmbeddedID())
+					if (SvPb::RangeClassFailLowIndirectEId == pObject->GetEmbeddedID())
 					{
 						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_FailLow].GetType())
 						{
@@ -254,7 +256,7 @@ HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAtt
 							return S_OK;
 						}
 					}
-					if (SVRangeClassWarnLowIndirectObjectGuid == pObject->GetEmbeddedID())
+					if (SvPb::RangeClassWarnLowIndirectEId == pObject->GetEmbeddedID())
 					{
 						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_WarnLow].GetType())
 						{

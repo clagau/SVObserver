@@ -75,7 +75,7 @@ struct SVMaskShapeProperty
 class SVMaskShape
 {
 public:
-	typedef std::map<GUID, SVMaskShapeProperty> MapType;
+	typedef std::map<SvPb::EmbeddedIdEnum, SVMaskShapeProperty> MapType;
 	typedef MapType::const_iterator MapTypeConstIterator;
 	struct SortedMapCompare {bool operator ()(const MapTypeConstIterator& a, const MapTypeConstIterator& b)
 	{return a->second < b->second;} };

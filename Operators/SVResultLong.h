@@ -30,7 +30,7 @@ public:
 public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	const GUID & GetInputEmbeddedID() const;
+	SvPb::EmbeddedIdEnum GetInputEmbeddedID() const;
 
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

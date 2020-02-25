@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableSortAnalyzer.h"
-#include "SVObjectLibrary\SVClsids.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
 #pragma endregion Includes
@@ -155,8 +154,8 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 void TableSortAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::TableAnalyzerSortType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerSortType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -164,7 +163,7 @@ void TableSortAnalyzer::Initialize()
 
 void TableSortAnalyzer::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject( &m_isASC, TableAnaylzerSortIsASCGuid, IDS_OBJECTNAME_TABLEANALYZER_ISASC, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_isASC, SvPb::TableAnaylzerSortIsASCEId, IDS_OBJECTNAME_TABLEANALYZER_ISASC, true, SvOi::SVResetItemTool );
 	m_isASC.SetDefaultValue( BOOL(true) );
 }
 

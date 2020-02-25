@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableAnalyzerTool.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "Operators/SVResultLong.h"
 #include "Definitions/TextDefineSvDef.h"
@@ -197,12 +196,12 @@ void TableAnalyzerTool::removeNewColumn(const SvVol::DoubleSortValuePtr pColumn)
 	}
 }
 
-void TableAnalyzerTool::OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, const SVGUID& rOldEmbeddedID, const SVGUID& rNewEmbeddedID)
+void TableAnalyzerTool::OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID)
 {
 	SvOp::TableCopyObject* pSourceTableOwn = dynamic_cast<SvOp::TableCopyObject*>(m_sourceTableObjectInfo.GetInputObjectInfo().getObject());
 	if (pOwnerObject == pSourceTableOwn && nullptr != m_pResultTable)
 	{
-		m_pResultTable->changeEmbeddedId(rOldEmbeddedID, rNewEmbeddedID);
+		m_pResultTable->changeEmbeddedId(oldEmbeddedID, newEmbeddedID);
 	}
 }
 #pragma endregion Public Methods
@@ -232,12 +231,12 @@ bool TableAnalyzerTool::ValidateLocal(SvStl::MessageContainerVector * pErrorMess
 void TableAnalyzerTool::LocalInitialize()
 {
 	BuildInputObjectList();
-	RegisterEmbeddedObject(&m_Index, TableAnalyzerIndexObjectGuid, IDS_OBJECTNAME_INDEXVARIABLE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Index, SvPb::TableAnalyzerIndexEId, IDS_OBJECTNAME_INDEXVARIABLE, false, SvOi::SVResetItemNone);
 	m_Index.setSaveValueFlag(false);
 
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVTableAnalyzerToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVTableAnalyzerToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -245,29 +244,29 @@ void TableAnalyzerTool::LocalInitialize()
 	SvIe::SVClassInfoStruct analyzerClassInfo;
 
 	// Add the Sort Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerSortType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerSortType;
 	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerSortClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_SORT);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Exclude Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerExcludeType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerExcludeType;
 	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerExcludeClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_EXCLUDE);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Limit Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerLimitType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerLimitType;
 	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerLimitClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_LIMIT);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Add Column Analyzer
-	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::TableAnalyzerType;
-	analyzerClassInfo.m_ObjectTypeInfo.SubType = SvPb::TableAnalyzerAddColumnType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerAddColumnClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_ADDCOLUMN);
 	m_availableChildren.push_back(analyzerClassInfo);
@@ -277,9 +276,9 @@ void TableAnalyzerTool::LocalInitialize()
 	SvIe::SVClassInfoStruct resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 	// Declare Input Interface
-	interfaceInfo.EmbeddedID = TableObject_NumberOfRowsGuid;
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultLongObjectType;
+	interfaceInfo.m_EmbeddedID = SvPb::TableObject_NumberOfRowsEId;
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SvPb::LongResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS);
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT);

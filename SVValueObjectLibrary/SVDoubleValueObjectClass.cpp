@@ -149,7 +149,7 @@ void SVDoubleValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 
 void SVDoubleValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVDoubleValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDoubleValueObjectType;
 	DefaultValue() = 0.0;
 	SetTypeName( _T("Decimal") );
 	setOutputFormat( _T("%lf") );

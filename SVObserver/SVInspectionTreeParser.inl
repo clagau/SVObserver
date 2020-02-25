@@ -312,17 +312,18 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	HRESULT hr = S_OK;
 	_variant_t objectName;
 	_variant_t uniqueID;
-	_variant_t embeddedID;
+	_variant_t embeddedVariantID;
 	_variant_t attributesAllowed;
 
 	GetItemValue(scObjectNameTag, hItem, objectName);
-	GetItemValue(scEmbeddedIDTag, hItem, embeddedID);
+	GetItemValue(scEmbeddedIDTag, hItem, embeddedVariantID);
+	SvPb::EmbeddedIdEnum embeddedId = calcEmbeddedId(embeddedVariantID, objectName);
 	GetItemValue(scUniqueReferenceIDTag, hItem, uniqueID);
 
 	UpdateProgress(m_count, m_totalSize);
 
 	GUID objectID = SVGUID(uniqueID);
-	hr = SVObjectBuilder::OverwriteEmbeddedObject(SVGUID(embeddedID), objectID, SvUl::createStdString(objectName), ownerID);
+	hr = SVObjectBuilder::OverwriteEmbeddedObject(embeddedId, objectID, SvUl::createStdString(objectName), ownerID);
 	if (S_OK == hr)
 	{
 		SVObjectScriptDataObjectTypeEnum dataType;

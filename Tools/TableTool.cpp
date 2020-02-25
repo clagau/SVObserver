@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "TableTool.h"
 #include "ObjectInterfaces/IObjectManager.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "Operators/SVEquation.h"
 #include "Operators/TableColumnEquation.h"
@@ -237,8 +236,8 @@ void TableTool::LocalInitialize ()
 	}
 
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVTableToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVTableToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -252,7 +251,7 @@ void TableTool::BuildInputObjectList ()
 
 void TableTool::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject( &m_MaxRow, TableTool_MaxRowGuid, IDS_OBJECTNAME_TABLE_MAXROW, true, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_MaxRow, SvPb::TableTool_MaxRowEId, IDS_OBJECTNAME_TABLE_MAXROW, true, SvOi::SVResetItemTool );
 	m_MaxRow.SetDefaultValue( c_defaultMaxRow );
 }
 #pragma endregion Private Methods

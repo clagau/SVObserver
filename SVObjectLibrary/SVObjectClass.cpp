@@ -83,7 +83,7 @@ If this Object is NOT valid, the validationReferenceID refers to the object on t
 void SVObjectClass::init()
 {
 	m_isCreated = false;
-	m_embeddedID = GUID_NULL;
+	m_embeddedID = SvPb::NoEmbeddedId;
 
 	// Set object Info...
 	SVObjectManagerClass::Instance().CreateUniqueObjectID(this);
@@ -342,7 +342,7 @@ const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvPb::SVObjectType
 
 SvPb::SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 {
-	return static_cast<SvPb::SVObjectSubTypeEnum>(m_outObjectInfo.m_ObjectTypeInfo.SubType);
+	return static_cast<SvPb::SVObjectSubTypeEnum>(m_outObjectInfo.m_ObjectTypeInfo.m_SubType);
 }
 
 bool SVObjectClass::is_Created() const
@@ -369,15 +369,15 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 		return nullptr;
 	}
 
-	// Find best match....EmbeddedID, Type, SubType...
-	if ((GUID_NULL == rObjectTypeInfo.EmbeddedID || rObjectTypeInfo.EmbeddedID == GetEmbeddedID()) &&
-		(SvPb::SVNotSetObjectType == rObjectTypeInfo.ObjectType || rObjectTypeInfo.ObjectType == GetObjectType()) &&
-		(SvPb::SVNotSetSubObjectType == rObjectTypeInfo.SubType || rObjectTypeInfo.SubType == GetObjectSubType())
+	// Find best match....m_EmbeddedID, Type, SubType...
+	if ((SvPb::NoEmbeddedId == rObjectTypeInfo.m_EmbeddedID || rObjectTypeInfo.m_EmbeddedID == GetEmbeddedID()) &&
+		(SvPb::SVNotSetObjectType == rObjectTypeInfo.m_ObjectType || rObjectTypeInfo.m_ObjectType == GetObjectType()) &&
+		(SvPb::SVNotSetSubObjectType == rObjectTypeInfo.m_SubType || rObjectTypeInfo.m_SubType == GetObjectSubType())
 		)
 	{
-		if (GUID_NULL != rObjectTypeInfo.EmbeddedID ||
-			SvPb::SVNotSetObjectType != rObjectTypeInfo.ObjectType ||
-			SvPb::SVNotSetSubObjectType != rObjectTypeInfo.SubType
+		if (SvPb::NoEmbeddedId != rObjectTypeInfo.m_EmbeddedID ||
+			SvPb::SVNotSetObjectType != rObjectTypeInfo.m_ObjectType ||
+			SvPb::SVNotSetSubObjectType != rObjectTypeInfo.m_SubType
 			)
 		{
 			// But object must be specified!
@@ -477,10 +477,10 @@ bool SVObjectClass::SetObjectOwner(const GUID& rNewOwnerGUID)
 /*
 Set embedded object info.  Use this only for real embedded objects.
 */
-void SVObjectClass::SetObjectEmbedded(const GUID& rEmbeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName)
+void SVObjectClass::SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName)
 {
-	m_embeddedID = rEmbeddedID;
-	m_outObjectInfo.m_ObjectTypeInfo.EmbeddedID = rEmbeddedID;
+	m_embeddedID = embeddedID;
+	m_outObjectInfo.m_ObjectTypeInfo.m_EmbeddedID = embeddedID;
 	SetObjectName(NewObjectName);
 	SetObjectOwner(pOwner);
 }
@@ -641,9 +641,9 @@ SVObjectClass*  SVObjectClass::GetFriend(const SvDef::SVObjectTypeInfoStruct& rO
 	for (int i = 0; i < static_cast<int>(m_friendList.size()); i++)
 	{
 		const SvDef::SVObjectTypeInfoStruct* pInfoStruct = &(m_friendList[i].m_ObjectTypeInfo);
-		if (pInfoStruct->ObjectType == rObjectType.ObjectType && pInfoStruct->SubType == rObjectType.SubType)
+		if (pInfoStruct->m_ObjectType == rObjectType.m_ObjectType && pInfoStruct->m_SubType == rObjectType.m_SubType)
 		{
-			if (GUID_NULL == pInfoStruct->EmbeddedID || pInfoStruct->EmbeddedID == rObjectType.EmbeddedID)
+			if (SvPb::NoEmbeddedId == pInfoStruct->m_EmbeddedID || pInfoStruct->m_EmbeddedID == rObjectType.m_EmbeddedID)
 			{
 				return 	m_friendList[i].getObject();
 			}
@@ -763,9 +763,10 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 	return true;
 }
 
-SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
+SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb::EmbeddedIdEnum embeddedID)
 {
-	if (GetEmbeddedID() == rEmbeddedID)
+	assert(SvPb::NoEmbeddedId != embeddedID || GetEmbeddedID() != embeddedID);
+	if (GetEmbeddedID() == embeddedID && SvPb::NoEmbeddedId != embeddedID)
 	{
 		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, rUniqueID);
 		return this;
@@ -795,9 +796,9 @@ void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter)
 	value.Clear();
 
 	// Set up object definition...
-	if (GUID_NULL != GetEmbeddedID())
+	if (SvPb::NoEmbeddedId != GetEmbeddedID())
 	{
-		value.SetString(GetEmbeddedID().ToString().c_str());
+		value = GetEmbeddedID();
 		rWriter.WriteAttribute(scEmbeddedIDTag, value);
 		value.Clear();
 	}

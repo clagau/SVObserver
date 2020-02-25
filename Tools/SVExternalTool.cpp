@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVExternalTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVExternalToolTask.h"
 #pragma endregion Includes
 
@@ -62,11 +61,11 @@ HRESULT SVExternalTool::UpdateImageWithExtent()
 
 void SVExternalTool::Initialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVExternalToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVExternalToolObjectType;
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	SvOp::SVExternalToolTask* l_pTask = new SvOp::SVExternalToolTask;
 	if ( nullptr != l_pTask )

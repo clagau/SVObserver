@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVLinearAnalyzerClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
@@ -33,17 +32,17 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 					            :SVAnalyzerClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearAnalyzerImage" ) );
 
-	m_InputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SVProfileOrientationGuid);
+	m_InputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
 	m_InputProfileOrientation.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ) );
 
-	m_InputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVLinearToolUseRotationGuid);
+	m_InputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
 	m_InputUseRotationAngle.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ) );
 
@@ -298,9 +297,6 @@ HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(bool& rUseRotationAngle)
 HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage,SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_hrRet = S_OK;
-	
-	SVExtentMultiLineStruct l_svMultiLine;
-
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 	bool bOk = nullptr != pTool;
 	const SVImageExtentClass& rToolExtents = bOk ? pTool->GetImageExtent() : SVImageExtentClass{};
@@ -313,7 +309,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage,SVEx
 		SVExtentFigureStruct figure = rAnalyzerExtents.GetFigure();
 
 		m_statusColor.GetValue( l_Color );
-
+		SVExtentMultiLineStruct l_svMultiLine;
 		l_svMultiLine.m_Color = l_Color;
 
 		rToolExtents.TranslateFromOutputSpace(figure,figure);
@@ -516,42 +512,42 @@ std::vector<std::string> SVLinearAnalyzerClass::getParameterNamesForML() const
 	return {};
 }
 
-void SVLinearAnalyzerClass::addDPointResultToAvailableChildren(GUID embeddedID, UINT idForClassnamePart1)
+void SVLinearAnalyzerClass::addDPointResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, UINT idForClassnamePart1)
 {
 	SvIe::SVClassInfoStruct resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface ...
-	interfaceInfo.EmbeddedID = embeddedID;
+	interfaceInfo.m_EmbeddedID = embeddedID;
 	resultClassInfo.m_DesiredInputVector.push_back(interfaceInfo);
 
 	// Add the X Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDPointXObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SvPb::DPointXResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_X);
 	m_availableChildren.push_back(resultClassInfo);
 
 	// Add the Y Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType = SvPb::SVResultDPointYObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SvPb::DPointYResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_Y);
 	m_availableChildren.push_back(resultClassInfo);
 }
 
 
-void SVLinearAnalyzerClass::addScalarResultToAvailableChildren(GUID embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2)
+void SVLinearAnalyzerClass::addScalarResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2)
 {
 	SvIe::SVClassInfoStruct resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
-	interfaceInfo.EmbeddedID = embeddedID;
+	interfaceInfo.m_EmbeddedID = embeddedID;
 	resultClassInfo.m_DesiredInputVector.push_back(interfaceInfo);
 
 	// Add the Result...
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType = subtype;
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType = subtype;
 	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString(idForClassnamePart1) + _T(" ") + SvUl::LoadStdString(idForClassnamePart2);
 	m_availableChildren.push_back(resultClassInfo);

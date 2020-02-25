@@ -140,9 +140,9 @@ SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrFiel
 
 void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo)
 {
-	sourceInfo.set_objecttype(destInfo.ObjectType);
-	sourceInfo.set_subtype(destInfo.SubType);
-	SvPb::SetGuidInProtoBytes(sourceInfo.mutable_embeddedid(), destInfo.EmbeddedID);
+	sourceInfo.set_objecttype(destInfo.m_ObjectType);
+	sourceInfo.set_subtype(destInfo.m_SubType);
+	sourceInfo.set_embeddedid(destInfo.m_EmbeddedID);
 }
 
 SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, const GUID& rInspectionID, SvPb::ObjectAttributes attribute, const GUID& rInstanceID /*= GUID_NULL*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/)

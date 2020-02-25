@@ -38,7 +38,7 @@ SVInputObjectList::~SVInputObjectList()
 
 bool SVInputObjectList::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVInputObjectListType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
 
 	try
 	{

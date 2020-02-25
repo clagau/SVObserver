@@ -19,7 +19,6 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
@@ -80,8 +79,8 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 					SetImageExtentToParent();
 					// Converting configuration without ROI has to set all the thresholds to enabled
 					SvDef::SVObjectTypeInfoStruct objectInfo;
-					objectInfo.ObjectType = SvPb::SVOperatorObjectType;
-					objectInfo.SubType = SvPb::SVColorThresholdObjectType;
+					objectInfo.m_ObjectType = SvPb::SVOperatorObjectType;
+					objectInfo.m_SubType = SvPb::SVColorThresholdObjectType;
 					SvOp::SVColorThresholdClass* pColorThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (getFirstObject(objectInfo));
 					if (nullptr != pColorThreshold)
 					{
@@ -290,27 +289,27 @@ void SVColorToolClass::LocalInitialize()
 	m_canResizeToParent = true;
 	m_ConvertTool = false;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVColorToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVColorToolObjectType;
 
 	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
 	m_InputImageObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_InputImageObjectInfo, SvDef::cColorToolInputImage);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
-	RegisterEmbeddedObject(&m_LogicalROIImage, SVLogicalROIImageGuid, IDS_OBJECTNAME_ROIIMAGE);
-	RegisterEmbeddedObject(&m_bandImage[SvDef::Band0], SVBand0ImageObjectGuid, IDS_OBJECTNAME_BAND0_IMAGE);
-	RegisterEmbeddedObject(&m_bandImage[SvDef::Band1], SVBand1ImageObjectGuid, IDS_OBJECTNAME_BAND1_IMAGE);
-	RegisterEmbeddedObject(&m_bandImage[SvDef::Band2], SVBand2ImageObjectGuid, IDS_OBJECTNAME_BAND2_IMAGE);
+	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedObject(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
+	RegisterEmbeddedObject(&m_bandImage[SvDef::Band0], SvPb::Band0ImageEId, IDS_OBJECTNAME_BAND0_IMAGE);
+	RegisterEmbeddedObject(&m_bandImage[SvDef::Band1], SvPb::Band1ImageEId, IDS_OBJECTNAME_BAND1_IMAGE);
+	RegisterEmbeddedObject(&m_bandImage[SvDef::Band2], SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
 
-	RegisterEmbeddedObject(&m_convertToHSI, SVConvertToHSIObjectGuid, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SvOi::SVResetItemIP);
-	RegisterEmbeddedObject(&m_hasROI, SVHasROIObjectGuid, IDS_OBJECTNAME_HAS_ROI, true, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_convertToHSI, SvPb::ConvertToHSIEId, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_hasROI, SvPb::HasROIEId, IDS_OBJECTNAME_HAS_ROI, true, SvOi::SVResetItemIP);
 	m_convertToHSI.SetDefaultValue(BOOL(false), true);
 	m_hasROI.SetDefaultValue(BOOL(false), true);
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject(&m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
 
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color

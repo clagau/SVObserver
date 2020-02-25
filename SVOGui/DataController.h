@@ -36,39 +36,39 @@ namespace SvOg
 		}
 			
 		template<typename DataType>
-		DataType GetDefault(const GUID& rEmbeddedID) const
+		DataType GetDefault(SvPb::EmbeddedIdEnum embeddedID) const
 		{
-			return static_cast<DataType>(m_Data.GetDefaultValue(rEmbeddedID));
+			return static_cast<DataType>(m_Data.GetDefaultValue(embeddedID));
 		}
 
 		template<typename DataType>
-		DataType Get(const GUID& rEmbeddedID) const
+		DataType Get(SvPb::EmbeddedIdEnum embeddedID) const
 		{
-			return static_cast<DataType>(m_Data.GetValue(rEmbeddedID));
+			return static_cast<DataType>(m_Data.GetValue(embeddedID));
 		}
 
 		template<typename DataType>
-		bool SetDefault(const GUID& rEmbeddedID, const DataType& rValue)
+		bool SetDefault(SvPb::EmbeddedIdEnum embeddedID, const DataType& rValue)
 		{
 			_variant_t Value(rValue);
-			return m_Data.SetDefaultValue(rEmbeddedID, Value);
+			return m_Data.SetDefaultValue(embeddedID, Value);
 		}
 
 		template<typename DataType>
-		bool Set(const GUID& rEmbeddedID, const DataType& rValue, int ArrayIndex = -1)
+		bool Set(SvPb::EmbeddedIdEnum embeddedID, const DataType& rValue, int ArrayIndex = -1)
 		{
 			_variant_t Value(rValue);
-			return m_Data.SetValue(rEmbeddedID, Value, ArrayIndex);
+			return m_Data.SetValue(embeddedID, Value, ArrayIndex);
 		}
 
-		SvOi::NameValueVector GetEnumTypes(const GUID& rEmbeddedID) const
+		SvOi::NameValueVector GetEnumTypes(SvPb::EmbeddedIdEnum embeddedID) const
 		{
-			return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(rEmbeddedID));
+			return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID));
 		}
 
-		std::string GetName(const GUID& rEmbeddedID) const
+		std::string GetName(SvPb::EmbeddedIdEnum embeddedID) const
 		{
-			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rEmbeddedID));
+			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID));
 		}
 
 		HRESULT Commit(PostAction doAction = PostAction::doRunOnce, bool shouldDisplayErrors = false)

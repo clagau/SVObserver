@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ToolSizeAdjustTask.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -46,13 +45,13 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 , m_AllowAdjustPosition(AllowAdjustPosition)
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVNotSetSubObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVNotSetSubObjectType;
 
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX], ToolSizeAdjustSizePositionXModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY], ToolSizeAdjustSizePositionYModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::ToolSizeAdjustSizeWidthModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::ToolSizeAdjustSizeHeightModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::ToolSizeAdjustSizePositionXModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::ToolSizeAdjustSizePositionYModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
 
 	SvOi::NameValueVector EnumVector{ {SvDef::SizeAdjustTextNone, SvDef::ToolSizeModes::TSNone} };
 	
@@ -107,7 +106,7 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, 
 		return false;
 	}
 
-	pInfo->SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, pAdjustSize->GetResultGuid());
+	pInfo->SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, pAdjustSize->GetResultId());
 	pInfo->SetObject( GetObjectInfo() );
 	return RegisterInputObject( pInfo, Name );
 }
@@ -571,8 +570,8 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(const SVObjectClas
 	if (nullptr != pObject)
 	{
 		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-		ToolSizeAdjustTaskInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
-		ToolSizeAdjustTaskInfo.SubType = SvPb::SVNotSetSubObjectType;
+		ToolSizeAdjustTaskInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
+		ToolSizeAdjustTaskInfo.m_SubType = SvPb::SVNotSetSubObjectType;
 		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend(ToolSizeAdjustTaskInfo));
 	}
 	return pToolSizeAdjustTask;

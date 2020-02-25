@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "SVEvaluateStartRadiusClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -28,10 +27,10 @@ SVEvaluateStartRadiusClass::SVEvaluateStartRadiusClass( SVObjectClass* POwner, i
 					       :SVEvaluateClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVEvaluateStartRadiusObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateStartRadiusResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateStartRadiusResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

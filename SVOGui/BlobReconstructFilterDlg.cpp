@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "BlobReconstructFilterDlg.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -41,12 +40,12 @@ HRESULT BlobReconstructFilterDlg::SetInspectionData()
 
 	UpdateData(TRUE); // get data from dialog
 
-	m_Values.Set<bool>(SVGrayOnGuid, m_bGrayScale ? true : false);
+	m_Values.Set<bool>(SvPb::GrayOnEId, m_bGrayScale ? true : false);
 	int CurrentSelection = m_cbBlobColor.GetCurSel();
 	if (0 <= CurrentSelection)
 	{
 		long Value = static_cast<long> (m_cbBlobColor.GetItemData(CurrentSelection));
-		m_Values.Set<long>(SVBlobColorGuid, Value);
+		m_Values.Set<long>(SvPb::BlobColorEId, Value);
 	}
 	m_Values.Commit();
 
@@ -77,11 +76,11 @@ BOOL BlobReconstructFilterDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	m_Values.Init();
-	m_bGrayScale = m_Values.Get<bool>(SVGrayOnGuid);
+	m_bGrayScale = m_Values.Get<bool>(SvPb::GrayOnEId);
 
-	const SvOi::NameValueVector& rBlobColorList = m_Values.GetEnumTypes(SVBlobColorGuid);
+	const SvOi::NameValueVector& rBlobColorList = m_Values.GetEnumTypes(SvPb::BlobColorEId);
 	m_cbBlobColor.SetEnumTypes(rBlobColorList);
-	long CurrentSelection = m_Values.Get<long>(SVBlobColorGuid);
+	long CurrentSelection = m_Values.Get<long>(SvPb::BlobColorEId);
 	m_cbBlobColor.SetCurSelItemData(CurrentSelection);
 
 	SetWindowText(SvUl::LoadStdString(m_captionId).c_str());

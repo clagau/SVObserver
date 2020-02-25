@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVThinningFilterDlg.h"
-#include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -44,8 +43,8 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<bool>(SVGrayOnGuid, m_bGrayScale ? true : false);
-		m_Values.Set<long>(SVThinningFilterItterationsGuid, m_lIterations);
+		m_Values.Set<bool>(SvPb::GrayOnEId, m_bGrayScale ? true : false);
+		m_Values.Set<long>(SvPb::ThinningFilterItterationsEId, m_lIterations);
 		m_Values.Commit();
 
 		UpdateData( FALSE );
@@ -75,8 +74,8 @@ namespace SvOg
 		CDialog::OnInitDialog();
 
 		m_Values.Init();
-		m_bGrayScale = m_Values.Get<bool>(SVGrayOnGuid);
-		m_lIterations = m_Values.Get<long>(SVThinningFilterItterationsGuid);
+		m_bGrayScale = m_Values.Get<bool>(SvPb::GrayOnEId);
+		m_lIterations = m_Values.Get<long>(SvPb::ThinningFilterItterationsEId);
 
 		UpdateData( FALSE );
 

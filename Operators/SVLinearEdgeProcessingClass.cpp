@@ -15,7 +15,6 @@
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/LinearEdgeEnums.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
@@ -39,25 +38,25 @@ static char THIS_FILE[] = __FILE__;
 SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner, int StringResourceID )
 					                  :SVTaskObjectClass( POwner, StringResourceID )
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
 
 	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
 
-	m_InputMinThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdMinObjectGuid);
+	m_InputMinThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMinEId);
 	m_InputMinThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
 
-	m_InputMaxThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdMaxObjectGuid);
+	m_InputMaxThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMaxEId);
 	m_InputMaxThreshold.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_InputMaxThreshold, _T("LinearEdgeProcessingMaxThreshold"));
 
-	m_InputDelta.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearThresholdDeltaObjectGuid);
+	m_InputDelta.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdDeltaEId);
 	m_InputDelta.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_InputDelta, _T("LinearEdgeProcessingDeltaThreshold"));
 
-	m_InputLinearData.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SVLinearDataClassGuid);
+	m_InputLinearData.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearDataClassEId);
 	m_InputLinearData.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
 

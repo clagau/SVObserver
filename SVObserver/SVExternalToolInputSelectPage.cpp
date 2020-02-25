@@ -182,7 +182,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 			int Index = rDefinition.getLinkedValueIndex();
 			// display name like: "Input 01 (Translation-X)"
-			std::string  sLabel = m_Values.GetName(aInputObjectGUID[Index]).c_str();
+			std::string  sLabel = m_Values.GetName(SvPb::ExternalInputEId+Index).c_str();
 
 			if (false == rDefinition.UseDisplayNames() )
 			{
@@ -231,10 +231,10 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			Description = _T(" (Type: ") + strType + _T(")  ") + Description;
 			pEdit->SetInfoText(Description.c_str());
 
-			std::string Value(m_Values.Get<CString>(aInputObject_LinkedGUID[Index]));
+			std::string Value(m_Values.Get<CString>(SvPb::ExternalInputLinkedEId+Index));
 			if (Value.empty())
 			{
-				_variant_t temp = m_Values.Get<_variant_t>(aInputObjectGUID[Index]);
+				_variant_t temp = m_Values.Get<_variant_t>(SvPb::ExternalInputEId+Index);
 
 				Value = SvUl::VariantToString(temp);
 
@@ -413,7 +413,7 @@ void SVExternalToolInputSelectPage::OnOK()
 						{
 							if (SvUl::StringToSafeArray<double>(Value, array) > 0)
 							{
-								m_Values.Set<_variant_t>(aInputObjectGUID[iIndex], array);
+								m_Values.Set<_variant_t>(SvPb::ExternalInputEId+iIndex, array);
 								done = true;
 							}
 							break;
@@ -422,7 +422,7 @@ void SVExternalToolInputSelectPage::OnOK()
 						{
 							if (SvUl::StringToSafeArray<long>(Value, array) > 0)
 							{
-								m_Values.Set<_variant_t>(aInputObjectGUID[iIndex], array);
+								m_Values.Set<_variant_t>(SvPb::ExternalInputEId+iIndex, array);
 								done = true;
 							}
 							break;
@@ -430,7 +430,7 @@ void SVExternalToolInputSelectPage::OnOK()
 					}
 					if (!done)
 					{
-						m_Values.Set<CString>(aInputObjectGUID[iIndex], Value.c_str());
+						m_Values.Set<CString>(SvPb::ExternalInputEId+iIndex, Value.c_str());
 					}
 				}
 

@@ -115,7 +115,7 @@ protected:
 	};
 
 private:
-	HRESULT AddLine(int p_iCol, int p_iRow, SVPoint<double>& rPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine );
+	HRESULT AddLine(int p_iCol, int p_iRow, const SVPoint<double>& rPoint, const SVImageExtentClass& rExtent, SVExtentLineStruct& rLine, SVExtentMultiLineStruct& rMultiLine );
 	HRESULT BuildMaskLines( SVExtentMultiLineStruct& p_MultiLine );
 	HRESULT CreateLocalImageBuffer();
 	HRESULT DestroyLocalImageBuffer();

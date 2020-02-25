@@ -17,7 +17,6 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 //Moved to precompiled header: #include <functional>
 #include "SVHistogramAnalyzer.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -214,144 +213,144 @@ void SVHistogramAnalyzerClass::init()
 
 	
 		// Identify our output type
-		m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVHistogramAnalyzerObjectType;
+		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVHistogramAnalyzerObjectType;
 
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
 			&msvHistogramValue, 
-			SVHistogramValueObjectGuid, 
+			SvPb::HistogramValueEId,
 			IDS_OBJECTNAME_HISTOGRAM,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvMeanValue,
-			SVHistogramMeanObjectGuid,
+			SvPb::HistogramMeanEId,
 			IDS_OBJECTNAME_HISTOGRAM_MEAN,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvStdDevValue,
-			SVHistogramStdDevObjectGuid,
+			SvPb::HistogramStdDevEId,
 			IDS_OBJECTNAME_HISTOGRAM_STDDEV,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvRangeStartValue,
-			SVHistogramRangeStartObjectGuid,
+			SvPb::HistogramRangeStartEId,
 			IDS_OBJECTNAME_HISTOGRAM_RANGESTART,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvRangeEndValue,
-			SVHistogramRangeEndObjectGuid,
+			SvPb::HistogramRangeEndEId,
 			IDS_OBJECTNAME_HISTOGRAM_RANGEEND,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvMaxPixelValue,
-			SVHistogramMaxPixelObjectGuid,
+			SvPb::HistogramMaxPixelEId,
 			IDS_OBJECTNAME_HISTOGRAM_MAXPIXEL,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvMinPixelValue,
-			SVHistogramMinPixelObjectGuid,
+			SvPb::HistogramMinPixelEId,
 			IDS_OBJECTNAME_HISTOGRAM_MINPIXEL,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvPixelCountValue,
-			SVHistogramPixelCountObjectGuid,
+			SvPb::HistogramPixelCountEId,
 			IDS_OBJECTNAME_HISTOGRAM_PIXELCOUNT,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvRangeSizeValue,
-			SVHistogramRangeSizeObjectGuid,
+			SvPb::HistogramRangeSizeEId,
 			IDS_OBJECTNAME_HISTOGRAM_RANGESIZE,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvScaleValue,
-			SVHistogramScaleObjectGuid,
+			SvPb::HistogramScaleEId,
 			IDS_OBJECTNAME_HISTOGRAM_SCALE,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvHighPeak,
-			SVHistogramHighPeakObjectGuid,
+			SvPb::HistogramHighPeakEId,
 			IDS_OBJECTNAME_HISTOGRAM_HIGHPEAK,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvLowPeak,
-			SVHistogramLowPeakObjectGuid,
+			SvPb::HistogramLowPeakEId,
 			IDS_OBJECTNAME_HISTOGRAM_LOWPEAK,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvValley,
-			SVHistogramValleyObjectGuid,
+			SvPb::HistogramValleyEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEY,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvPeakThreshold,
-			SVHistogramPeakThresholdObjectGuid,
+			SvPb::HistogramPeakThresholdEId,
 			IDS_OBJECTNAME_HISTOGRAM_PEAKTHRESHOLD,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvDefaultPeak,
-			SVHistogramDefaultPeakObjectGuid,
+			SvPb::HistogramDefaultPeakEId,
 			IDS_OBJECTNAME_HISTOGRAM_DEFAULTPEAK,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvMinPeakHeight,
-			SVHistogramMinPeakHeightObjectGuid,
+			SvPb::HistogramMinPeakHeightEId,
 			IDS_OBJECTNAME_HISTOGRAM_MINPEAKHEIGHT,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvAccumulateCounts,
-			SVHistogramAccumulateObjectGuid,
+			SvPb::HistogramAccumulateEId,
 			IDS_OBJECTNAME_HISTOGRAM_ACCUMULATE,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvValleyLowerBound,
-			SVHistogramValleyLowerBoundObjectGuid,
+			SvPb::HistogramValleyLowerBoundEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYLOW,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvValleyUpperBound,
-			SVHistogramValleyUpperBoundObjectGuid,
+			SvPb::HistogramValleyUpperBoundEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYHIGH,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvValleyDefault,
-			SVHistogramValleyDefaultObjectGuid,
+			SvPb::HistogramValleyDefaultEId,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYDEFAULT,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvDynamicHeight,
-			SVHistogramDynamicHeightObjectGuid,
+			SvPb::HistogramDynamicHeightEId,
 			IDS_OBJECTNAME_HISTOGRAM_DYNAHEIGHT,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&msvFixedHeightValue,
-			SVHistogramFixedHeightValueObjectGuid,
+			SvPb::HistogramFixedHeightValueEId,
 			IDS_OBJECTNAME_HISTOGRAM_FIXEDHEIGHT,
 			false, SvOi::SVResetItemNone );
 
 		RegisterEmbeddedObject( 
 			&m_histogramImage,
-			SVHistogramImageObjectGuid,
+			SvPb::HistogramImageEId,
 			IDS_OBJECTNAME_HISTOGRAMIMAGE
 			);
 
@@ -399,7 +398,7 @@ void SVHistogramAnalyzerClass::init()
 		m_rangeEnd = 255;
 		m_scale = 0;
 
-		typedef std::pair<GUID, DWORD> Param;
+		typedef std::pair<SvPb::EmbeddedIdEnum, DWORD> Param;
 		try
 		{
 			// Add results for first/second peak and valley
@@ -423,15 +422,15 @@ void SVHistogramAnalyzerClass::init()
 		}
 }
 
-void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
+void SVHistogramAnalyzerClass::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD> & p)
 {
 	SvIe::SVClassInfoStruct l_resultInfo;
 	SvDef::SVObjectTypeInfoStruct l_ifceInfo;
 
-	l_ifceInfo.EmbeddedID = p.first;
+	l_ifceInfo.m_EmbeddedID = p.first;
 	l_resultInfo.m_DesiredInputVector.push_back( l_ifceInfo );
-	l_resultInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	l_resultInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultLongObjectType;
+	l_resultInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	l_resultInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVResultLongObjectType;
 	l_resultInfo.m_ClassId = SvPb::LongResultClassId;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
@@ -601,12 +600,12 @@ bool SVHistogramAnalyzerClass::CloseObject()
    return true;
 }
 
-SvOi::IObjectClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
+SvOi::IObjectClass* SVHistogramAnalyzerClass::GetResultObject(SvPb::EmbeddedIdEnum embeddedID)
 {
 	for(int i = 0; i < GetSize(); ++i)
 	{
 		SvOp::SVLongResultClass* pResult = dynamic_cast<SvOp::SVLongResultClass*> (GetAt(i));
-		if (nullptr != pResult && guid == pResult->GetInputEmbeddedID())
+		if (nullptr != pResult && embeddedID == pResult->GetInputEmbeddedID())
 		{
 			return dynamic_cast<SvOi::IObjectClass*> (pResult);
 		}

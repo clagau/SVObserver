@@ -27,7 +27,6 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxPolarTransformStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVProtoBuf/Overlay.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -54,7 +53,7 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 						   :SVPolarTransformClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVImagePolarTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
 
 	// Identify our input type needs...
 	// Image
@@ -63,17 +62,17 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 	RegisterInputObject( &m_inputImageObjectInfo, _T( "ImagePolarTransformImage" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_centerX, SVOutputCenterXObjectGuid, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject( &m_centerY, SVOutputCenterYObjectGuid, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject( &m_startRadius, SVOutputStartRadiusObjectGuid, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject( &m_endRadius, SVOutputEndRadiusObjectGuid, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject( &m_startAngle, SVOutputStartAngleObjectGuid, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_endAngle, SVOutputEndAngleObjectGuid, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject( &m_interpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_centerX, SvPb::OutputCenterXEId, IDS_OBJECTNAME_CENTER_X, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_centerY, SvPb::OutputCenterYEId, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_startRadius, SvPb::OutputStartRadiusEId, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_endRadius, SvPb::OutputEndRadiusEId, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_startAngle, SvPb::OutputStartAngleEId, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_endAngle, SvPb::OutputEndAngleEId, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_interpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_useFormulaInput, SVOutputUseFormulaObjectGuid, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_useFormulaInput, SvPb::OutputUseFormulaEId, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemTool );
 
-	RegisterEmbeddedObject( &m_outputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedObject( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 	
 	// Prepare known interpolation types...
 	std::string Enable = SvUl::LoadStdString( IDS_ENABLE_STRING );
@@ -214,12 +213,12 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	bool bOk;
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	SvDef::SVObjectTypeInfoStruct equationObjectInfo;
-	equationObjectInfo.ObjectType = SvPb::SVEquationObjectType;
-	equationObjectInfo.SubType    = SvPb::SVMathEquationObjectType;
+	equationObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	equationObjectInfo.m_SubType    = SvPb::SVMathEquationObjectType;
 	
 	// Find the evaluation center x object...
 	bOk = false;
-	objectInfo.SubType = SvPb::SVEvaluateCenterXObjectType;
+	objectInfo.m_SubType = SvPb::SVEvaluateCenterXObjectType;
 	SVEvaluateCenterXClass* pEvaluateCenterX = dynamic_cast<SVEvaluateCenterXClass*>( GetTool()->getFirstObject(objectInfo) );
 	if( pEvaluateCenterX )
 	{
@@ -235,7 +234,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation center y object...
 	bOk = false;
-	objectInfo.SubType = SvPb::SVEvaluateCenterYObjectType;
+	objectInfo.m_SubType = SvPb::SVEvaluateCenterYObjectType;
 	SVEvaluateCenterYClass* pEvaluateCenterY = dynamic_cast<SVEvaluateCenterYClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateCenterY )
 	{
@@ -251,7 +250,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation start radius object...
 	bOk = false;
-	objectInfo.SubType = SvPb::SVEvaluateStartRadiusObjectType;
+	objectInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;
 	SVEvaluateStartRadiusClass* pEvaluateStartRadius = dynamic_cast<SVEvaluateStartRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartRadius )
 	{
@@ -267,7 +266,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation end radius object...
 	bOk = false;
-	objectInfo.SubType = SvPb::SVEvaluateEndRadiusObjectType;
+	objectInfo.m_SubType = SvPb::SVEvaluateEndRadiusObjectType;
 	SVEvaluateEndRadiusClass* pEvaluateEndRadius = dynamic_cast<SVEvaluateEndRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndRadius )
 	{
@@ -283,7 +282,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation start angle object...
 	bOk = false;
-	objectInfo.SubType = SvPb::SVEvaluateStartAngleObjectType;
+	objectInfo.m_SubType = SvPb::SVEvaluateStartAngleObjectType;
 	SVEvaluateStartAngleClass* pEvaluateStartAngle = dynamic_cast<SVEvaluateStartAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartAngle )
 	{
@@ -299,7 +298,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 
 	// Find the evaluation end angle object...
 	bOk = false;
-	objectInfo.SubType = SvPb::SVEvaluateEndAngleObjectType;
+	objectInfo.m_SubType = SvPb::SVEvaluateEndAngleObjectType;
 	SVEvaluateEndAngleClass* pEvaluateEndAngle = dynamic_cast<SVEvaluateEndAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndAngle )
 	{

@@ -15,7 +15,6 @@
 #include "SVMaskShape.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVLibrary/Intersect.h"
 #include "Definitions/Color.h"
 #pragma endregion Includes
@@ -34,15 +33,15 @@ static char THIS_FILE[] = __FILE__;
 
 SVMaskShape::SVMaskShape()
 {
-	m_mapProperties[ SVShapeMaskPropertyCenterXGuid ] = 0;
-	m_mapProperties[ SVShapeMaskPropertyCenterYGuid ] = 0;
-	m_mapProperties[ SVShapeMaskPropertyWidthGuid ] = 0;
-	m_mapProperties[ SVShapeMaskPropertyHeightGuid ] = 0;
+	m_mapProperties[SvPb::ShapeMaskPropertyCenterXEId] = 0;
+	m_mapProperties[SvPb::ShapeMaskPropertyCenterYEId] = 0;
+	m_mapProperties[SvPb::ShapeMaskPropertyWidthEId] = 0;
+	m_mapProperties[SvPb::ShapeMaskPropertyHeightEId] = 0;
 
-	m_mapProperties[ SVShapeMaskPropertyCenterXGuid ].order = 1;
-	m_mapProperties[ SVShapeMaskPropertyCenterYGuid ].order = 2;
-	m_mapProperties[ SVShapeMaskPropertyWidthGuid ].order = 3;
-	m_mapProperties[ SVShapeMaskPropertyHeightGuid ].order = 4;
+	m_mapProperties[SvPb::ShapeMaskPropertyCenterXEId].order = 1;
+	m_mapProperties[SvPb::ShapeMaskPropertyCenterYEId].order = 2;
+	m_mapProperties[SvPb::ShapeMaskPropertyWidthEId].order = 3;
+	m_mapProperties[SvPb::ShapeMaskPropertyHeightEId].order = 4;
 }
 
 SVMaskShape::~SVMaskShape()	// this is a base class
@@ -174,10 +173,10 @@ HRESULT SVMaskShape::ValidateProperties(MapType& rProperties) const
 {
 	HRESULT hr = S_OK;
 
-	if (   rProperties.find( SVShapeMaskPropertyWidthGuid ) != rProperties.end()
-		&& rProperties.find( SVShapeMaskPropertyHeightGuid ) != rProperties.end()
-		&& rProperties.find( SVShapeMaskPropertyCenterXGuid ) != rProperties.end()
-		&& rProperties.find( SVShapeMaskPropertyCenterYGuid ) != rProperties.end() )
+	if (   rProperties.find(SvPb::ShapeMaskPropertyWidthEId) != rProperties.end()
+		&& rProperties.find(SvPb::ShapeMaskPropertyHeightEId) != rProperties.end()
+		&& rProperties.find(SvPb::ShapeMaskPropertyCenterXEId) != rProperties.end()
+		&& rProperties.find(SvPb::ShapeMaskPropertyCenterYEId) != rProperties.end() )
 	{
 		SVImageInfoClass info;
 		hr = GetImageInfo( info );
@@ -188,11 +187,11 @@ HRESULT SVMaskShape::ValidateProperties(MapType& rProperties) const
 		}
 		if ( S_OK == hr )
 		{
-			hr = rProperties[ SVShapeMaskPropertyHeightGuid ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
+			hr = rProperties[SvPb::ShapeMaskPropertyHeightEId].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
 		}
 		if ( S_OK == hr )
 		{
-			hr = rProperties[ SVShapeMaskPropertyWidthGuid  ].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
+			hr = rProperties[SvPb::ShapeMaskPropertyWidthEId].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
 		}
 	}
 
@@ -277,10 +276,10 @@ RECT SVMaskShape::GetRect() const
 	else
 	{
 		MapTypeConstIterator iter;
-		long lCenterX = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyCenterXGuid)) ? iter->second.value : 0L;
-		long lCenterY = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyCenterYGuid)) ? iter->second.value : 0L;
-		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyWidthGuid)) ? iter->second.value : 0L;
-		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyHeightGuid)) ? iter->second.value : 0L;
+		long lCenterX = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyCenterXEId)) ? iter->second.value : 0L;
+		long lCenterY = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyCenterYEId)) ? iter->second.value : 0L;
+		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyWidthEId)) ? iter->second.value : 0L;
+		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyHeightEId)) ? iter->second.value : 0L;
 		long lHalfWidth = lWidth / 2;
 		long lHalfHeight = lHeight / 2;
 
@@ -304,8 +303,8 @@ SIZE SVMaskShape::GetSize() const
 	else
 	{
 		MapTypeConstIterator iter;
-		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyWidthGuid)) ? iter->second.value : 0L;
-		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyHeightGuid)) ? iter->second.value : 0L;
+		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyWidthEId)) ? iter->second.value : 0L;
+		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyHeightEId)) ? iter->second.value : 0L;
 		return SIZE{lWidth, lHeight};
 	}
 }
@@ -471,14 +470,14 @@ HRESULT SVMaskShapeOval::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisp
 
 SVMaskShapeSymmetricTrapezoid::SVMaskShapeSymmetricTrapezoid()
 {
-	m_mapProperties[ SVShapeMaskPropertyOffsetGuid ] = 0;
-	m_mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ] = 0;
+	m_mapProperties[SvPb::ShapeMaskPropertyOffsetEId] = 0;
+	m_mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId] = 0;
 
-	m_mapProperties[ SVShapeMaskPropertyOffsetGuid ].order = 5;
-	m_mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ].order = 6;
+	m_mapProperties[SvPb::ShapeMaskPropertyOffsetEId].order = 5;
+	m_mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].order = 6;
 
-	m_mapProperties[ SVShapeMaskPropertyOffsetGuid ].bAvailableWithAutoResize = true;
-	m_mapProperties[ SVShapeMaskPropertySymmetryOrientationGuid ].bAvailableWithAutoResize = true;
+	m_mapProperties[SvPb::ShapeMaskPropertyOffsetEId].bAvailableWithAutoResize = true;
+	m_mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].bAvailableWithAutoResize = true;
 }
 
 HRESULT SVMaskShapeSymmetricTrapezoid::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const
@@ -515,8 +514,8 @@ std::vector<POINT> SVMaskShapeSymmetricTrapezoid::GetPoints() const
 	result.emplace_back(point);
 
 	MapTypeConstIterator iter;
-	long lOffset = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyOffsetGuid)) ? iter->second.value : 0L;
-	long symmetryOrientation = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertySymmetryOrientationGuid)) ? iter->second.value : 0L;
+	long lOffset = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyOffsetEId)) ? iter->second.value : 0L;
+	long symmetryOrientation = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertySymmetryOrientationEId)) ? iter->second.value : 0L;
 	SymmetryOrientation eSymmetryOrientation = static_cast <SymmetryOrientation> (symmetryOrientation);
 
 	// if offset is bigger than half the width, we will get a triangle with the top not really at the top.
@@ -595,25 +594,25 @@ HRESULT SVMaskShapeSymmetricTrapezoid::ValidateProperties(MapType& rProperties) 
 	HRESULT hrRet = S_OK;
 	HRESULT hr = S_OK;
 
-	if (   rProperties.find( SVShapeMaskPropertyOffsetGuid ) != rProperties.end()
-		&& rProperties.find( SVShapeMaskPropertySymmetryOrientationGuid ) != rProperties.end() )
+	if (   rProperties.find(SvPb::ShapeMaskPropertyOffsetEId) != rProperties.end()
+		&& rProperties.find(SvPb::ShapeMaskPropertySymmetryOrientationEId) != rProperties.end() )
 	{
-		rProperties[ SVShapeMaskPropertyOffsetGuid ].value =  std::max< long >( 0, rProperties[ SVShapeMaskPropertyOffsetGuid ].value );
+		rProperties[SvPb::ShapeMaskPropertyOffsetEId].value =  std::max< long >( 0, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value );
 	
-		SymmetryOrientation eSymmetryOrientation = static_cast <SymmetryOrientation> ( rProperties[ SVShapeMaskPropertySymmetryOrientationGuid ].value );
+		SymmetryOrientation eSymmetryOrientation = static_cast <SymmetryOrientation> ( rProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].value );
 		switch ( eSymmetryOrientation )
 		{
 			case VerticalAxisTop:
 			case VerticalAxisBottom:
-				rProperties[ SVShapeMaskPropertyWidthGuid  ].value =  std::max< long >( rProperties[ SVShapeMaskPropertyWidthGuid  ].value, rProperties[ SVShapeMaskPropertyOffsetGuid ].value * 2 );
+				rProperties[SvPb::ShapeMaskPropertyWidthEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyWidthEId].value, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value * 2 );
 				break;
 			case HorizontalAxisLeft:
 			case HorizontalAxisRight:
-				rProperties[ SVShapeMaskPropertyHeightGuid ].value =  std::max< long >( rProperties[ SVShapeMaskPropertyHeightGuid ].value, rProperties[ SVShapeMaskPropertyOffsetGuid ].value * 2 );
+				rProperties[SvPb::ShapeMaskPropertyHeightEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyHeightEId].value, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value * 2 );
 				break;
 		}
-		rProperties[ SVShapeMaskPropertyWidthGuid  ].value =  std::max< long >( 2, rProperties[ SVShapeMaskPropertyWidthGuid  ].value );
-		rProperties[ SVShapeMaskPropertyHeightGuid ].value =  std::max< long >( 2, rProperties[ SVShapeMaskPropertyHeightGuid ].value );
+		rProperties[SvPb::ShapeMaskPropertyWidthEId].value =  std::max< long >( 2, rProperties[SvPb::ShapeMaskPropertyWidthEId].value );
+		rProperties[SvPb::ShapeMaskPropertyHeightEId].value =  std::max< long >( 2, rProperties[SvPb::ShapeMaskPropertyHeightEId].value );
 	}
 
 	hr = SVMaskShape::ValidateProperties( rProperties );
@@ -628,14 +627,14 @@ HRESULT SVMaskShapeSymmetricTrapezoid::ValidateProperties(MapType& rProperties) 
 //////////////////////////////////////////////////////////////////////////////////
 SVMaskShapeDoughnut::SVMaskShapeDoughnut()
 {
-	m_mapProperties[ SVShapeMaskPropertySideThicknessGuid ] = 20;
-	m_mapProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ] = 20;
+	m_mapProperties[SvPb::ShapeMaskPropertySideThicknessEId] = 20;
+	m_mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId] = 20;
 
-	m_mapProperties[ SVShapeMaskPropertySideThicknessGuid ].order = 5;
-	m_mapProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ].order = 6;
+	m_mapProperties[SvPb::ShapeMaskPropertySideThicknessEId].order = 5;
+	m_mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].order = 6;
 
-	m_mapProperties[ SVShapeMaskPropertySideThicknessGuid ].bAvailableWithAutoResize = true;
-	m_mapProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ].bAvailableWithAutoResize = true;
+	m_mapProperties[SvPb::ShapeMaskPropertySideThicknessEId].bAvailableWithAutoResize = true;
+	m_mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].bAvailableWithAutoResize = true;
 }
 
 HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const
@@ -645,8 +644,8 @@ HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBack
 
 	MapTypeConstIterator iter;
 	SIZE sizeThickness;
-	sizeThickness.cx = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertySideThicknessGuid)) ? iter->second.value : 0L;
-	sizeThickness.cy = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyTopBottomThicknessGuid)) ? iter->second.value : 0L;
+	sizeThickness.cx = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertySideThicknessEId)) ? iter->second.value : 0L;
+	sizeThickness.cy = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyTopBottomThicknessEId)) ? iter->second.value : 0L;
 
 	RECT rectDoughnutHole(rect);
 	::InflateRect(&rectDoughnutHole, -sizeThickness.cx, -sizeThickness.cy);
@@ -670,8 +669,8 @@ HRESULT SVMaskShapeDoughnut::RenderOutline(HDC hDC, RECT rectViewport, RECT rect
 
 	MapTypeConstIterator iter;
 	SIZE sizeThickness;
-	sizeThickness.cx = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertySideThicknessGuid)) ? iter->second.value : 0L;
-	sizeThickness.cy = m_mapProperties.end() != (iter = m_mapProperties.find(SVShapeMaskPropertyTopBottomThicknessGuid)) ? iter->second.value : 0L;
+	sizeThickness.cx = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertySideThicknessEId)) ? iter->second.value : 0L;
+	sizeThickness.cy = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyTopBottomThicknessEId)) ? iter->second.value : 0L;
 
 	//Now calculate the dough nut hole rectangle
 	::InflateRect(&rect, -sizeThickness.cx, -sizeThickness.cy);
@@ -688,14 +687,14 @@ HRESULT SVMaskShapeDoughnut::ValidateProperties(MapType& rProperties) const
 {
 	HRESULT hr = S_OK;
 
-	if (   rProperties.find( SVShapeMaskPropertyTopBottomThicknessGuid ) != rProperties.end()
-		&& rProperties.find( SVShapeMaskPropertySideThicknessGuid ) != rProperties.end() )
+	if (   rProperties.find(SvPb::ShapeMaskPropertyTopBottomThicknessEId) != rProperties.end()
+		&& rProperties.find(SvPb::ShapeMaskPropertySideThicknessEId) != rProperties.end() )
 	{
-		rProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ].value =  std::max< long >( rProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ].value, 1 );
-		rProperties[ SVShapeMaskPropertySideThicknessGuid  ].value =  std::max< long >( rProperties[ SVShapeMaskPropertySideThicknessGuid  ].value, 1 );
+		rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value, 1 );
+		rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value, 1 );
 	
-		rProperties[ SVShapeMaskPropertyHeightGuid ].value =  std::max< long >( rProperties[ SVShapeMaskPropertyHeightGuid ].value, rProperties[ SVShapeMaskPropertyTopBottomThicknessGuid ].value * 2 );
-		rProperties[ SVShapeMaskPropertyWidthGuid  ].value =  std::max< long >( rProperties[ SVShapeMaskPropertyWidthGuid  ].value, rProperties[ SVShapeMaskPropertySideThicknessGuid ].value * 2 );
+		rProperties[SvPb::ShapeMaskPropertyHeightEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyHeightEId].value, rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value * 2 );
+		rProperties[SvPb::ShapeMaskPropertyWidthEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyWidthEId].value, rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value * 2 );
 	}
 
 	hr = SVMaskShape::ValidateProperties( rProperties );

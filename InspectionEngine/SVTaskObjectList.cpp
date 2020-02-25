@@ -606,9 +606,9 @@ SvUl::NameClassIdList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SV
 	for (int i = 0; i < static_cast<int> (m_availableChildren.size()); i++)
 	{
 		SVClassInfoStruct classInfo = m_availableChildren[i];
-		if (classInfo.m_ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
-			(pObjectTypeInfo.SubType == SvPb::SVNotSetSubObjectType ||
-			classInfo.m_ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
+		if (classInfo.m_ObjectTypeInfo.m_ObjectType == pObjectTypeInfo.m_ObjectType &&
+			(pObjectTypeInfo.m_SubType == SvPb::SVNotSetSubObjectType ||
+			classInfo.m_ObjectTypeInfo.m_SubType == pObjectTypeInfo.m_SubType) 
 			)
 		{
 			list.push_back(std::make_pair(classInfo.m_ClassName, classInfo.m_ClassId));
@@ -943,9 +943,9 @@ bool SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructVector* pList, 
 	for (int i = 0; i < static_cast<int> (m_availableChildren.size()); i++)
 	{
 		SVClassInfoStruct classInfo = m_availableChildren[i];
-		if (classInfo.m_ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
-			(pObjectTypeInfo->SubType == SvPb::SVNotSetSubObjectType ||
-			classInfo.m_ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
+		if (classInfo.m_ObjectTypeInfo.m_ObjectType == pObjectTypeInfo->m_ObjectType &&
+			(pObjectTypeInfo->m_SubType == SvPb::SVNotSetSubObjectType ||
+			classInfo.m_ObjectTypeInfo.m_SubType == pObjectTypeInfo->m_SubType) 
 			)
 		{
 			pList->push_back(classInfo);

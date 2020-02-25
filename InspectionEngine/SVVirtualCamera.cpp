@@ -125,7 +125,7 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 	{
 		SetBandLink( m_pDevice->Channel() );
 
-		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVVirtualCameraType;
+		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVVirtualCameraType;
 
 		bOk = m_CallbackList.Create() && bOk;
 

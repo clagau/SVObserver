@@ -53,7 +53,7 @@ public:
 protected:
 	
 private:
-	void SetResultRange(const GUID & resultGuid);
+	void SetResultRange(SvPb::EmbeddedIdEnum embeddedID);
 
 public:
 	SVHistogramAnalyzerSetupClass(CWnd* pParent = nullptr);   // standard constructor

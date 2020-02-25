@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVImageTool.h"
 #include "Definitions/ImageOperatorEnums.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
 #include "Operators/SVImageArithmetic.h"
 #include "Operators/SVInplaceImageOperatorListClass.h"
@@ -53,20 +52,20 @@ void SVImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVToolImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolImageObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputEnableOffsetA, SVEnableOffsetAObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETA, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputOffsetAPoint, SVOffsetAPointObjectGuid, IDS_OBJECTNAME_OFFSETAPOINT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputEnableOffsetB, SVEnableOffsetBObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETB, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputOffsetBPoint, SVOffsetBPointObjectGuid, IDS_OBJECTNAME_OFFSETBPOINT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputOperator, SVArithmeticOperatorObjectGuid, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject( &m_outputEnableOffsetA, SvPb::EnableOffsetAEId, IDS_OBJECTNAME_ENABLEOFFSETA, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputOffsetAPoint, SvPb::OffsetAPointEId, IDS_OBJECTNAME_OFFSETAPOINT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputEnableOffsetB, SvPb::EnableOffsetBEId, IDS_OBJECTNAME_ENABLEOFFSETB, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputOffsetBPoint, SvPb::OffsetBPointEId, IDS_OBJECTNAME_OFFSETBPOINT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputOperator, SvPb::ArithmeticOperatorEId, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemOwner);
 
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationFigureShift);
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 	m_SourceImageNames.SetArraySize(2);
 
 	// Set Embedded Defaults...
@@ -215,8 +214,8 @@ bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorM
 
 	// Set Default Formula of LUTEquation, if any...
 	SvDef::SVObjectTypeInfoStruct lutEquationInfo;
-	lutEquationInfo.ObjectType	= SvPb::SVEquationObjectType;
-	lutEquationInfo.SubType		= SvPb::SVLUTEquationObjectType;
+	lutEquationInfo.m_ObjectType	= SvPb::SVEquationObjectType;
+	lutEquationInfo.m_SubType		= SvPb::SVLUTEquationObjectType;
 	SvOp::SVLUTEquationClass* pLUTEquation = dynamic_cast<SvOp::SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{

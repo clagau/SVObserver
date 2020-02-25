@@ -241,7 +241,7 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 	return pObject;
 }
 
-HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID)
+HRESULT SVObjectBuilder::OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID)
 {
 	HRESULT hr = S_OK;
 

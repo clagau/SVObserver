@@ -14,7 +14,6 @@
 #include "SVOCVSheet.h"
 #include "SVOCVMatchDlg.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/GlobalPath.h"
 
 #pragma endregion Includes
@@ -52,10 +51,10 @@ namespace SvOg
 
 		UpdateData(true);
 	
-		m_rParent.GetValues().Set<CString>(SVOCVMatchStringFileNameGuid, m_MatchFilename);
-		m_rParent.GetValues().Set<CString>(SVOCVMatchStringGuid, m_MatchString);
-		m_rParent.GetValues().Set<bool>(SVOCVUseMatchFileGuid, m_useMatchFile ? false : true);
-		m_rParent.GetValues().Set<bool>(SVOCVPerformOCRGuid, m_nRadioOperation ? false : true);
+		m_rParent.GetValues().Set<CString>(SvPb::OCVMatchStringFileNameEId, m_MatchFilename);
+		m_rParent.GetValues().Set<CString>(SvPb::OCVMatchStringEId, m_MatchString);
+		m_rParent.GetValues().Set<bool>(SvPb::OCVUseMatchFileEId, m_useMatchFile ? false : true);
+		m_rParent.GetValues().Set<bool>(SvPb::OCVPerformOCREId, m_nRadioOperation ? false : true);
 
 		Result = m_rParent.GetValues().Commit();
 
@@ -80,10 +79,10 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_MatchFilename = m_rParent.GetValues().Get<CString>(SVOCVMatchStringFileNameGuid);
-		m_MatchString = m_rParent.GetValues().Get<CString>(SVOCVMatchStringGuid);
-		bool bUseMatchFile = m_rParent.GetValues().Get<bool>(SVOCVUseMatchFileGuid);
-		bool bPerformOCR = m_rParent.GetValues().Get<bool>(SVOCVPerformOCRGuid);
+		m_MatchFilename = m_rParent.GetValues().Get<CString>(SvPb::OCVMatchStringFileNameEId);
+		m_MatchString = m_rParent.GetValues().Get<CString>(SvPb::OCVMatchStringEId);
+		bool bUseMatchFile = m_rParent.GetValues().Get<bool>(SvPb::OCVUseMatchFileEId);
+		bool bPerformOCR = m_rParent.GetValues().Get<bool>(SvPb::OCVPerformOCREId);
 		m_nRadioOperation = bPerformOCR ? 0 : 1;
 
 		if (bUseMatchFile)

@@ -14,7 +14,6 @@
 #include "SVConditional.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -45,15 +44,15 @@ SVConditionalClass::SVConditionalClass( SVObjectClass* POwner, int StringResourc
 void SVConditionalClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVConditionalObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVConditionalObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SVConditionalResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &result, SvPb::ConditionalResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	result.SetDefaultValue( BOOL(false), true );

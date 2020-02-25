@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "Definitions/TextDefineSvDef.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "DataController.h"
@@ -80,8 +79,8 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 
 	// Get the Evaluate Objects..
 	SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-	evaluateObjectInfo.ObjectType = SvPb::SVEquationObjectType;
-	evaluateObjectInfo.SubType = SvPb::EQSizePositionXType;
+	evaluateObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	evaluateObjectInfo.m_SubType = SvPb::EQSizePositionXType;
 	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
 	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
@@ -93,7 +92,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_X);
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_subType = SvPb::EQSizePositionXType;
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_extentProp = SvPb::SVExtentPropertyPositionPointX;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_inputModeEmbeddedId = ToolSizeAdjustSizePositionXModeGuid;
+		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizePositionXModeEId;
 	}
 	else
 	{
@@ -101,7 +100,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		assert(false);
 	}
 
-	evaluateObjectInfo.SubType = SvPb::EQSizePositionYType;
+	evaluateObjectInfo.m_SubType = SvPb::EQSizePositionYType;
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
 	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
@@ -111,7 +110,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_Y);
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_subType = SvPb::EQSizePositionYType;
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_extentProp = SvPb::SVExtentPropertyPositionPointY;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_inputModeEmbeddedId = ToolSizeAdjustSizePositionYModeGuid;
+		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizePositionYModeEId;
 	}
 	else
 	{
@@ -119,7 +118,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		assert(false);
 	}
 
-	evaluateObjectInfo.SubType = SvPb::EQSizeWidthType;
+	evaluateObjectInfo.m_SubType = SvPb::EQSizeWidthType;
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
 	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
@@ -129,7 +128,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_WIDTH);
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_subType = SvPb::EQSizeWidthType;
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_extentProp = SvPb::SVExtentPropertyWidth;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_inputModeEmbeddedId = ToolSizeAdjustSizeWidthModeGuid;
+		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizeWidthModeEId;
 	}
 	else
 	{
@@ -137,7 +136,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		assert(false);
 	}
 
-	evaluateObjectInfo.SubType = SvPb::EQSizeHeightType;
+	evaluateObjectInfo.m_SubType = SvPb::EQSizeHeightType;
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_toolId);
 	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
 	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
@@ -147,7 +146,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_HEIGHT);
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_subType = SvPb::EQSizeHeightType;
 		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_extentProp = SvPb::SVExtentPropertyHeight;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_inputModeEmbeddedId = ToolSizeAdjustSizeHeightModeGuid;
+		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizeHeightModeEId;
 	}
 	else
 	{
@@ -157,7 +156,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 
 	// Get ToolSizeAdjustTask 
 	SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-	ToolSizeAdjustTaskInfo.ObjectType = SvPb::SVToolSizeAdjustTaskType;
+	ToolSizeAdjustTaskInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
 	SvCmd::setTypeInfos(ToolSizeAdjustTaskInfo, *pRequest->mutable_infostruct());
 	hr = SvCmd::InspectionCommands(m_ipId, requestMessage, &responseMessage);
 	if (S_OK == hr && responseMessage.has_getobjectidresponse())
@@ -257,7 +256,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 			bool bEnabled = (Value == SvDef::TSFormula);
 			Controller EquationValues {BoundValues{ m_ipId, m_EQAdjustStruct[vType].m_Id }};
 			EquationValues.Init();
-			EquationValues.Set<bool>(SVEquationEnabledObjectGuid, bEnabled);
+			EquationValues.Set<bool>(SvPb::EquationEnabledEId, bEnabled);
 			EquationValues.Commit(PostAction::doNothing);
 		}
 		else

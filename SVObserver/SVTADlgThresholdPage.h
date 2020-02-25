@@ -19,6 +19,10 @@
 #include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
+namespace SvOi
+{
+	class IObjectClass;
+}
 namespace SvOp
 {
 class SVThresholdClass;

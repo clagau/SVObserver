@@ -16,7 +16,6 @@
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
@@ -42,15 +41,15 @@ void SVLoadImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVToolLoadImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolLoadImageObjectType;
 
 	// Identify our input type needs
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_fileImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_currentPathName, SVPathNameObjectGuid, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_continuousReload, SVContinuousReloadObjectGuid, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedObject( &m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_currentPathName.SetDefaultValue( _T( "" ), true );

@@ -42,7 +42,7 @@ bool SVFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 void SVFilterClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVFilterObjectType;
 
 	// Register Embedded Object(s)
 

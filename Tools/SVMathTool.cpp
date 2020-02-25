@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMathTool.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "Operators/SVRange.h"
 #include "Operators/SVConditional.h"
 #include "Operators/SVMathEquation.h"
@@ -41,8 +40,8 @@ SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
 void SVMathToolClass::init(void)
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SvPb::SVMathToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVMathToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -56,11 +55,11 @@ void SVMathToolClass::init(void)
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of Math Equation Result...
-	interfaceInfo.EmbeddedID = SVMathEquationResultObjectGuid;
+	interfaceInfo.m_EmbeddedID = SvPb::MathEquationResultEId;
 	resultClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SvPb::SVResultDoubleObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
 	resultClassInfo.m_ClassName = SvUl::LoadStdString( IDS_OBJECTNAME_RESULT );
 	std::string strTitle = SvUl::LoadStdString( IDS_CLASSNAME_RESULT_DOUBLE );
@@ -107,7 +106,7 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 	{
 		isNoError = false;
 	}
-	isNoError = addEntryToMonitorList(retList, SVValueObjectGuid) && isNoError;
+	isNoError = addEntryToMonitorList(retList, SvPb::ValueEId) && isNoError;
 	SvOp::SVRangeClass* pRangeObject = dynamic_cast<SvOp::SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{

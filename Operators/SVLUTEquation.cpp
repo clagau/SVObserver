@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLUTEquation.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -43,8 +42,8 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 void SVLUTEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVLUTEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLUTEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -52,9 +51,9 @@ void SVLUTEquationClass::init()
 	
 	// Register Embedded Objects
 	m_byteVectorResult.SetLegacyVectorObjectCompatibility();
-	RegisterEmbeddedObject( &m_lutIndex, SVLUTIndexVariableObjectGuid, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SvOi::SVResetItemNone  );
-	RegisterEmbeddedObject( &m_byteVectorResult, SVLUTEquationResultObjectGuid, IDS_OBJECTNAME_LUTRESULT, false, SvOi::SVResetItemNone  );
-	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SVLUTEquationClipFlagObjectGuid, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemTool  );
+	RegisterEmbeddedObject( &m_lutIndex, SvPb::LUTIndexVariableEId, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SvOi::SVResetItemNone  );
+	RegisterEmbeddedObject( &m_byteVectorResult, SvPb::LUTEquationResultEId, IDS_OBJECTNAME_LUTRESULT, false, SvOi::SVResetItemNone  );
+	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SvPb::LUTEquationClipFlagEId, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemTool  );
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0 );

@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
@@ -42,11 +41,11 @@ SVWatershedFilterClass::~SVWatershedFilterClass()
 
 void SVWatershedFilterClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVWatershedFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVWatershedFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoUseMarker,        SVWatershedFilterUseMarkerGuid,    IDS_OBJECTNAME_WATERSHEDFILTER_USEMARKER, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoMinVariation, SvPb::WatershedFilterMinVariationEId, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoControlFlag, SvPb::WatershedFilterControlFlagEId, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_bvoUseMarker, SvPb::WatershedFilterUseMarkerEId,    IDS_OBJECTNAME_WATERSHEDFILTER_USEMARKER, false, SvOi::SVResetItemNone );
 
 
 	// Default Values

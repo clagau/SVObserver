@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFillBlobDlg.h"
-#include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -47,14 +46,14 @@ namespace SvOg
 		if (0 <= CurrentSelection)
 		{
 			Value = static_cast<long> (m_ctlBlobFillType.GetItemData(CurrentSelection));
-			m_rValues.Set<long>(SVBlobFillTypeGuid, Value);
+			m_rValues.Set<long>(SvPb::BlobFillTypeEId, Value);
 		}
 
 		CurrentSelection = m_ctlBlobFillColor.GetCurSel();
 		if (0 <= CurrentSelection)
 		{
 			Value = static_cast<long> (m_ctlBlobFillColor.GetItemData(CurrentSelection));
-			m_rValues.Set<long>(SVBlobFillColorGuid, Value);
+			m_rValues.Set<long>(SvPb::BlobFillColorEId, Value);
 		}
 
 		return m_rValues.Commit();
@@ -81,14 +80,14 @@ namespace SvOg
 
 	void SVFillBlobDlg::FillCombos()
 	{
-		const SvOi::NameValueVector& rBlobFillTypeList = m_rValues.GetEnumTypes(SVBlobFillTypeGuid);
+		const SvOi::NameValueVector& rBlobFillTypeList = m_rValues.GetEnumTypes(SvPb::BlobFillTypeEId);
 		m_ctlBlobFillType.SetEnumTypes(rBlobFillTypeList);
-		long CurrentSelection = m_rValues.Get<long>(SVBlobFillTypeGuid);
+		long CurrentSelection = m_rValues.Get<long>(SvPb::BlobFillTypeEId);
 		m_ctlBlobFillType.SetCurSelItemData(CurrentSelection);
 
-		const SvOi::NameValueVector& rBlobFillColorList = m_rValues.GetEnumTypes(SVBlobFillColorGuid);
+		const SvOi::NameValueVector& rBlobFillColorList = m_rValues.GetEnumTypes(SvPb::BlobFillColorEId);
 		m_ctlBlobFillColor.SetEnumTypes(rBlobFillColorList);
-		CurrentSelection = m_rValues.Get<long>(SVBlobFillColorGuid);
+		CurrentSelection = m_rValues.Get<long>(SvPb::BlobFillColorEId);
 		m_ctlBlobFillColor.SetCurSelItemData(CurrentSelection);
 
 		UpdateData(false);

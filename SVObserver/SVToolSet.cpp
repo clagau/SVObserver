@@ -37,55 +37,54 @@ SVToolSetClass::SVToolSetClass(SVObjectClass* POwner, int StringResourceID)
 void SVToolSetClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVToolSetObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSetObjectType;
 
 	// Identify our input type needs
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_isObjectValid, SVTaskObjectClassIsObjectValidGuid, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Enabled, SVToolSetEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_MainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedObject(&m_isObjectValid, SvPb::TaskObjectClassIsObjectValidEId, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Enabled, SvPb::ToolSetEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MainImageObject, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
 
-	RegisterEmbeddedObject(&m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Warned, SvPb::WarnedEId, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ExplicitFailed, SvPb::ExplicitFailedEId, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone);
 
 
-	RegisterEmbeddedObject(&m_PassedCount, SVPassedCountObjectGuid, IDS_OBJECTNAME_PASSED_COUNT, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_FailedCount, SVFailedCountObjectGuid, IDS_OBJECTNAME_FAILED_COUNT, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_WarnedCount, SVWarnedCountObjectGuid, IDS_OBJECTNAME_WARNED_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_PassedCount, SvPb::PassedCountEId, IDS_OBJECTNAME_PASSED_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_FailedCount, SvPb::FailedCountEId, IDS_OBJECTNAME_FAILED_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_WarnedCount, SvPb::WarnedCountEId, IDS_OBJECTNAME_WARNED_COUNT, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_EnabledCount, SVEnabledCountObjectGuid, IDS_OBJECTNAME_ENABLED_COUNT, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ProcessedCount, SVProcessedCountObjectGuid, IDS_OBJECTNAME_PROCESSED_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_EnabledCount, SvPb::EnabledCountEId, IDS_OBJECTNAME_ENABLED_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ProcessedCount, SvPb::ProcessedCountEId, IDS_OBJECTNAME_PROCESSED_COUNT, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_ToolTime, SVToolTimeGuid, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_MinToolsetTime, SVMinToolSetTimeGuid, IDS_OBJECTNAME_MINTOOLSETTIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_MaxToolsetTime, SVMaxToolSetTimeGuid, IDS_OBJECTNAME_MAXTOOLSETTIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ToolTime, SvPb::ToolTimeEId, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MinToolsetTime, SvPb::MinToolSetTimeEId, IDS_OBJECTNAME_MINTOOLSETTIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MaxToolsetTime, SvPb::MaxToolSetTimeEId, IDS_OBJECTNAME_MAXTOOLSETTIME, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_RegressionTestMode, SVRegressionTestModeGuid, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_RegressionTestMode, SvPb::RegressionTestModeEId, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_DrawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ResetCounts, SVResetInspectionCountsGuid, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP);
-	RegisterEmbeddedObject(&m_TriggerCount, SVTriggerCountGuid, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_PPQIndexAtCompletion, SVPPQIndexGuid, IDS_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerDelta], SVTriggerDeltaGuid, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToCompletion], SVTriggerToCompletionGuid, IDS_TRIGGER_TO_COMPLETION_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToStart], SVTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToAcquisitionStart], SVTriggerToAcquisitionStartGuid, IDS_TRIGGER_TO_ACQUISITION_START_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Times[ToolSetTimes::AcquisitionTime], SVAcquisitionTimeGuid, IDS_ACQUISITION_TIME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerTimeStamp], SVTriggerTimeGuid, IDS_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
-
-	RegisterEmbeddedObject(&m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, EnableAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ObjectID, ObjectIDGuid, SvDef::c_ObjectID, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_DrawFlag, SvPb::ConditionalToolSetDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ResetCounts, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_TriggerCount, SvPb::TriggerCountEId, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_PPQIndexAtCompletion, SvPb::PPQIndexEId, IDS_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerDelta], SvPb::TriggerDeltaEId, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToCompletion], SvPb::TriggerToCompletionEId, IDS_TRIGGER_TO_COMPLETION_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToStart], SvPb::TriggerToStartEId, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerToAcquisitionStart], SvPb::TriggerToAcquisitionStartEId, IDS_TRIGGER_TO_ACQUISITION_START_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::AcquisitionTime], SvPb::AcquisitionTimeEId, IDS_ACQUISITION_TIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerTimeStamp], SvPb::TriggerTimeEId, IDS_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_Width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_Height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, SvPb::EnableAuxiliaryExtentsEId, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ObjectID, SvPb::ObjectIDEId, SvDef::c_ObjectID, false, SvOi::SVResetItemNone);
 	//m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
-	RegisterEmbeddedObject(&m_TriggerIndex, TriggerIndexGuid, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_InspectedObjectID, InspectedObjectIDGuid, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
-	RegisterEmbeddedObject(&m_InspectedObjectID.getLinkedName(), InspectedObjectIDLinkGuid, SvDef::c_InspectedObjectIDLink, false, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_InspectedObjectID.getLinkedName(), SvPb::InspectedObjectIDLinkEId, SvDef::c_InspectedObjectIDLink, false, SvOi::SVResetItemIP);
 
-	RegisterEmbeddedObject(&m_ToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
 
 	//Link inspected object ID with incoming object ID as default
 	m_InspectedObjectID.setValue(m_ObjectID.GetUniqueObjectID().ToString());
@@ -165,7 +164,7 @@ void SVToolSetClass::init()
 	AddFriend(pConditional->GetUniqueObjectID());
 
 	// Identify our input type needs
-	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SVConditionalResultObjectGuid);
+	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
 	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolSetConditionalValue"));
 

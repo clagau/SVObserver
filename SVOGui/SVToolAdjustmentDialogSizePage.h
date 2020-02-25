@@ -67,7 +67,7 @@ private:
 	{
 		SVGUID m_Id = GUID_NULL;
 		SvPb::SVObjectSubTypeEnum m_subType = SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType;
-		SVGUID m_inputModeEmbeddedId = GUID_NULL;
+		SvPb::EmbeddedIdEnum m_inputModeEmbeddedId = SvPb::NoEmbeddedId;
 		SvPb::SVExtentPropertyEnum m_extentProp;
 		std::string m_name;
 	};

@@ -40,6 +40,6 @@ HRESULT SVCameraDataInputObject::Read( _variant_t& rValue )
 
 void SVCameraDataInputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVCameraDataInputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVCameraDataInputObjectType;
 }

@@ -143,6 +143,6 @@ void SVRemoteInputObject::LocalInitialize()
 	m_isCreated = false;
 	m_lIndex = -1;
 	m_vtRemoteCache = 0.0;
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType = SvPb::SVRemoteInputObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteInputObjectType;
 }

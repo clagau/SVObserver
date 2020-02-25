@@ -25,6 +25,7 @@ class IObjectClass;
 namespace SvPb
 {
 	enum ClassIdEnum;
+	enum EmbeddedIdEnum;
 }
 
 class SVObjectBuilder
@@ -46,7 +47,7 @@ public:
 	/// \param objectName [in] New name of the object
 	/// \param ownerUniqueID [in] Guid of the owner
 	/// \returns HRESULT
-	static HRESULT OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID);
+	static HRESULT OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID);
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(const GUID& objectID, const SVGuidList& list);

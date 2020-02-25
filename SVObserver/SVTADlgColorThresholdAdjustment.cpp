@@ -16,7 +16,6 @@
 #include "SVTADlgColorThresholdSheet.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVColorThreshold.h"
-#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -33,10 +32,10 @@ static char THIS_FILE[] = __FILE__;
 
 //This comment is to avoid that the SVColorToolClass include is marked as not required due to forward declaration from a base class
 
-static const GUID upperThresholdID[SvDef::BandEnum::BandNumber] = {SVBand0UpperThresholdObjectGuid, SVBand1UpperThresholdObjectGuid, SVBand2UpperThresholdObjectGuid};
-static const GUID lowerThresholdID[SvDef::BandEnum::BandNumber] = {SVBand0LowerThresholdObjectGuid, SVBand1LowerThresholdObjectGuid, SVBand2LowerThresholdObjectGuid};
-static const GUID thresholdExcludeID[SvDef::BandEnum::BandNumber] = {SVBand0ThresholdExcludeObjectGuid, SVBand1ThresholdExcludeObjectGuid, SVBand2ThresholdExcludeObjectGuid};
-static const GUID thresholdEnabledID[SvDef::BandEnum::BandNumber] = {SVBand0ThresholdEnabledObjectGuid, SVBand1ThresholdEnabledObjectGuid, SVBand2ThresholdEnabledObjectGuid};
+constexpr SvPb::EmbeddedIdEnum upperThresholdID[SvDef::BandEnum::BandNumber] = { SvPb::Band0UpperThresholdEId, SvPb::Band1UpperThresholdEId, SvPb::Band2UpperThresholdEId };
+constexpr SvPb::EmbeddedIdEnum lowerThresholdID[SvDef::BandEnum::BandNumber] = { SvPb::Band0LowerThresholdEId, SvPb::Band1LowerThresholdEId, SvPb::Band2LowerThresholdEId };
+constexpr SvPb::EmbeddedIdEnum thresholdExcludeID[SvDef::BandEnum::BandNumber] = { SvPb::Band0ThresholdExcludeEId, SvPb::Band1ThresholdExcludeEId, SvPb::Band2ThresholdExcludeEId };
+constexpr SvPb::EmbeddedIdEnum thresholdEnabledID[SvDef::BandEnum::BandNumber] = { SvPb::Band0ThresholdEnabledEId, SvPb::Band1ThresholdEnabledEId, SvPb::Band2ThresholdEnabledEId };
 #pragma endregion Declarations
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdAdjustment, SVTADlgColorThresholdBasePage)
@@ -76,10 +75,10 @@ void SVTADlgColorThresholdAdjustment::SetInspectionData()
 	m_Values.Set<long>(upperThresholdID[m_band], static_cast<long> (m_upperThreshold));
 	m_Values.Set<bool>(thresholdExcludeID[m_band], m_exclude ? true : false);
 	m_Values.Set<bool>(thresholdEnabledID[m_band], m_Enabled ? true : false);
-	m_Values.Set<double>(SVExtentRelativeLeftPositionObjectGuid, static_cast<double> (m_pSheet->m_rectROI.left));
-	m_Values.Set<double>(SVExtentRelativeTopPositionObjectGuid, static_cast<double> (m_pSheet->m_rectROI.top));
-	m_Values.Set<double>(SVExtentWidthObjectGuid, static_cast<double> (m_pSheet->m_rectROI.Width()));
-	m_Values.Set<double>(SVExtentHeightObjectGuid, static_cast<double> (m_pSheet->m_rectROI.Height()));
+	m_Values.Set<double>(SvPb::ExtentRelativeLeftPositionEId, static_cast<double> (m_pSheet->m_rectROI.left));
+	m_Values.Set<double>(SvPb::ExtentRelativeTopPositionEId, static_cast<double> (m_pSheet->m_rectROI.top));
+	m_Values.Set<double>(SvPb::ExtentWidthEId, static_cast<double> (m_pSheet->m_rectROI.Width()));
+	m_Values.Set<double>(SvPb::ExtentHeightEId, static_cast<double> (m_pSheet->m_rectROI.Height()));
 	m_Values.Commit();
 }
 
@@ -111,8 +110,8 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 	// Get the color threshold object
 	SvDef::SVObjectTypeInfoStruct objectInfo;
-	objectInfo.ObjectType = SvPb::SVOperatorObjectType;
-	objectInfo.SubType = SvPb::SVColorThresholdObjectType;
+	objectInfo.m_ObjectType = SvPb::SVOperatorObjectType;
+	objectInfo.m_SubType = SvPb::SVColorThresholdObjectType;
 
 	m_pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 
@@ -131,8 +130,8 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		m_Values.Init();
 		// Get Train Color Extent Variables
 		SvDef::SVObjectTypeInfoStruct extentObjectInfo;
-		extentObjectInfo.ObjectType = SvPb::SVValueObjectType;
-		extentObjectInfo.SubType = SvPb::SVDoubleValueObjectType;
+		extentObjectInfo.m_ObjectType = SvPb::SVValueObjectType;
+		extentObjectInfo.m_SubType = SvPb::SVDoubleValueObjectType;
 	}
 
 	SvIe::SVImageClass* pImage(nullptr);

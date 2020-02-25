@@ -19,9 +19,12 @@ namespace SvIe
 {
 class SVCameraImageTemplate;
 }
+namespace SvOi
+{
+class IObjectClass;
+}
+
 class SVGUID;
-
-
 class SVToolAdjustmentDialogSheetClass;
 
 class SVToolAdjustmentDialogAcquisitionSourcePageClass : public CPropertyPage

@@ -20,9 +20,11 @@ class SVClassRegisterClass;
 namespace SvPb
 {
 	enum ClassIdEnum;
+	enum EmbeddedIdEnum;
 }
 
 SvPb::ClassIdEnum calcClassId(const _variant_t& rClassIdVariant);
+SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const _variant_t& rObjectName);
 
 class SVClassRegisterListClass
 {
@@ -55,3 +57,6 @@ private:
 	const SVClassRegisterListClass& operator=( const SVClassRegisterListClass& rObject );
 };
 
+constexpr int c_NumberOfFilterCells = 49;
+constexpr int COUNT_OF_INPUT_OUTPUT_GUIDs = 50;
+constexpr int c_maxTableColumn = 50;

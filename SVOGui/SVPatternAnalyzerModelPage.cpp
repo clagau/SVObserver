@@ -26,7 +26,6 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/GlobalConst.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
@@ -559,34 +558,34 @@ namespace SvOg
 	
 		// Model Selection values
 		m_values.Init();
-		m_lModelWidth = m_values.Get<long>(SVpatModelWidthObjectGuid);
-		m_lModelHeight = m_values.Get<long>(SVpatModelHeightObjectGuid);
-		m_CenterX = m_values.Get<long>(SVpatModelCenterXObjectGuid);
-		m_CenterY = m_values.Get<long>(SVpatModelCenterYObjectGuid);
-		m_strModelName = m_values.Get<CString>(SVpatModelImageFileGuid);
-		m_bCircularOverscan = m_values.Get<bool>(SVpatCircularOverscanObjectGuid);
-		m_strDontCareName = m_values.Get<CString>(SVpatDontCareImageFileGuid);
-		m_bDontCare = m_values.Get<bool>(SVpatDontCareObjectGuid);
-		long resultSize = m_values.Get<long>(SVpatResultNumFoundOccurancesObjectGuid);
+		m_lModelWidth = m_values.Get<long>(SvPb::PatModelWidthEId);
+		m_lModelHeight = m_values.Get<long>(SvPb::PatModelHeightEId);
+		m_CenterX = m_values.Get<long>(SvPb::PatModelCenterXEId);
+		m_CenterY = m_values.Get<long>(SvPb::PatModelCenterYEId);
+		m_strModelName = m_values.Get<CString>(SvPb::PatModelImageFileEId);
+		m_bCircularOverscan = m_values.Get<bool>(SvPb::PatCircularOverscanEId);
+		m_strDontCareName = m_values.Get<CString>(SvPb::PatDontCareImageFileEId);
+		m_bDontCare = m_values.Get<bool>(SvPb::PatDontCareEId);
+		long resultSize = m_values.Get<long>(SvPb::PatResultNumFoundOccurancesEId);
 		m_nXPos = 0;
 		m_nYPos = 0;
 		if (0 < resultSize)
 		{
 			double dPosX = 0;
 			double dPoxY = 0;
-			std::vector<double> ResultXArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SVpatResultXObjectGuid));
+			std::vector<double> ResultXArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultXEId));
 			if (0 < ResultXArray.size())
 			{
 				dPosX = ResultXArray[0];
 			}
 
-			std::vector<double> ResultYArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SVpatResultYObjectGuid));
+			std::vector<double> ResultYArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultYEId));
 			if (0 < ResultYArray.size())
 			{
 				dPoxY = ResultYArray[0];
 			}
 
-			std::vector<double> ResultAngleArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SVpatResultAngleObjectGuid));
+			std::vector<double> ResultAngleArray = ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(SvPb::PatResultAngleEId));
 			if (0 < ResultAngleArray.size())
 			{
 				double angle = ResultAngleArray[0];
@@ -1074,12 +1073,12 @@ namespace SvOg
 
 	HRESULT SVPatternAnalyzerModelPage::SetValuesToAnalyzer(SvStl::MessageContainerVector *pErrorMessages, bool shouldResetTask)
 	{
-		m_values.Set<CString>(SVpatModelImageFileGuid, m_strModelName);
-		m_values.Set<bool>(SVpatCircularOverscanObjectGuid, m_bCircularOverscan ? true : false);
-		m_values.Set<long>(SVpatModelCenterXObjectGuid, m_CenterX);
-		m_values.Set<long>(SVpatModelCenterYObjectGuid, m_CenterY);
-		m_values.Set<CString>(SVpatDontCareImageFileGuid, m_strDontCareName);
-		m_values.Set<bool>(SVpatDontCareObjectGuid, m_bDontCare ? true : false);
+		m_values.Set<CString>(SvPb::PatModelImageFileEId, m_strModelName);
+		m_values.Set<bool>(SvPb::PatCircularOverscanEId, m_bCircularOverscan ? true : false);
+		m_values.Set<long>(SvPb::PatModelCenterXEId, m_CenterX);
+		m_values.Set<long>(SvPb::PatModelCenterYEId, m_CenterY);
+		m_values.Set<CString>(SvPb::PatDontCareImageFileEId, m_strDontCareName);
+		m_values.Set<bool>(SvPb::PatDontCareEId, m_bDontCare ? true : false);
 
 		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
 		commitAction = commitAction | (shouldResetTask ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
