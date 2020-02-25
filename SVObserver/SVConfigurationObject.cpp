@@ -4622,6 +4622,16 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
 						}
+						if (l_AddParameter &&  ObjectRef.getValueObject() &&  ObjectRef.getValueObject()->isIndirectValue())
+						{
+						
+							p_rStatus[l_Iter->first] = SVMSG_OBJECT_CANNOT_BE_SET_INDIRECT_VALUE;
+							l_AddParameter = false;
+							if (S_OK == l_Status)
+							{
+								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+							}
+						}
 
 						bool rangeParameter = RangeClassHelper::IsOwnedByRangeObject(*ObjectRef.getObject());
 

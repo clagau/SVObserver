@@ -146,6 +146,9 @@ namespace SvOi
 
 		//! Update the memory block data
 		virtual void updateMemBlockData() const = 0;
+		
+		//! is true for linkedvalue with indirect value set
+		virtual bool isIndirectValue() const = 0;
 	};
 
 	struct SetValueStruct 

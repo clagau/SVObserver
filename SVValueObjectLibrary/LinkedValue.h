@@ -62,7 +62,7 @@ public:
 
 	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
 
-	bool isIndirectValue() const { return (nullptr != m_LinkedObjectRef.getObject()); };
+	virtual bool isIndirectValue() const override { return (nullptr != m_LinkedObjectRef.getObject()); };
 
 	void setIndirectValueSaveFlag(bool shouldSaveValue);
 

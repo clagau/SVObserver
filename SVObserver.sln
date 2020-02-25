@@ -43,6 +43,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectInterfaces", "ObjectInterfaces\ObjectInterfaces.vcxproj", "{6F248398-89FB-4A74-BEC9-00841804F320}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectSelectorLibrary", "ObjectSelectorLibrary\ObjectSelectorLibrary.vcxproj", "{E0344B2A-C109-4008-ADBD-DDC03F806647}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Operators", "Operators\Operators.vcxproj", "{50475846-91CD-4E01-97CB-31932C546D3D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -566,6 +569,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_ExternalDll", "Test_ExternalDll\Source\ExternalDll.vcxproj", "{F18E13E9-FE92-8282-1B1F-4312951A3D6B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOverlayLibrary", "SVOverlayLibrary\SVOverlayLibrary.vcxproj", "{FD1E7560-CE36-4DE0-95B5-E669768FC0A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPlcIO", "SVPlcIO\SVPlcIO.vcxproj", "{9F63D46B-2B24-4A8C-AB93-05320871467C}"
 	ProjectSection(ProjectDependencies) = postProject

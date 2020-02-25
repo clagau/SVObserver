@@ -108,6 +108,7 @@ public:
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
 	virtual void updateMemBlockData() const override {}
+	virtual bool isIndirectValue() const override { return false; };
 #pragma endregion virtual method (IObjectClass/IValueObject)
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }

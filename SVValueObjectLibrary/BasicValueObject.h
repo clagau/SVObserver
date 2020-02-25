@@ -78,6 +78,7 @@ public:
 	virtual int32_t getMemOffset() const override { return 0L; }
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	virtual void updateMemBlockData() const override;
+	virtual bool isIndirectValue() const override { return false; };
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
 	//************************************
