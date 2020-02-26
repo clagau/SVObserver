@@ -211,6 +211,11 @@ void SVArchiveTool::initializeArchiveTool()
 		SvPb::SubfolderSelectionEId, SvPb::SubfolderSelectionLinkEId,
 		IDS_OBJECTNAME_SUBFOLDER_SELECTION);
 
+	registerEmbeddedLinkedUnsignedValue(
+		&m_SubfolderLocation,
+		SvPb::SubfolderLocationEId, SvPb::SubfolderLocationLinkEId,
+		IDS_OBJECTNAME_SUBFOLDER_LOCATION);
+
 	// no need to register image buffer
 	
 	// Set Embedded defaults
@@ -274,6 +279,7 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_FilenameIndex2.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_DirectorynameIndex.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_SubfolderSelection.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_SubfolderLocation.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
@@ -989,7 +995,15 @@ HRESULT SVArchiveTool::WriteBuffers()
 }
 
 
-std::string SVArchiveTool::getNextImageDirectory(const std::string& rImagePathRoot)
+void SVArchiveTool::addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName)
+{
+	m_currentImagedirectoryName += "\\";
+	m_currentImagedirectoryName += rDirectoryName;
+	_mkdir(m_currentImagedirectoryName.c_str()); // fails quietly when the directory already exists - which is what we want here because we do not want to check for existence of the directory each time
+}
+
+
+const std::string& SVArchiveTool::getNextImageDirectory(const std::string& rImagePathRoot)
 {
 	_variant_t temporaryVariant;
 
@@ -999,31 +1013,48 @@ std::string SVArchiveTool::getNextImageDirectory(const std::string& rImagePathRo
 	m_SubfolderSelection.GetValue(temporaryVariant);
 	uint32_t SubfolderSelection = static_cast<uint32_t>(temporaryVariant);
 
+	m_SubfolderLocation.GetValue(temporaryVariant);
+	uint32_t SubfolderLocation = static_cast<uint32_t>(temporaryVariant);
+
 	std::string baseDirectoryname;
 	m_baseDirectoryname.GetValue(baseDirectoryname);
 
-	std::string currentImageDirectory = SvUl::Format("%s\\%s%06ld", rImagePathRoot.c_str(),
-		baseDirectoryname.c_str(), DirectorynameIndex);
+	m_currentImagedirectoryName = rImagePathRoot;
 
-	_mkdir(currentImageDirectory.c_str()); // fails quietly when the directory already exists - which is what we want here because we do not want to check for existenxe of the directory each time
+	std::string namedDirectoryname = SvUl::Format("%s%06ld", baseDirectoryname.c_str(), DirectorynameIndex);
 
-	if (SubfolderSelection)
+	if (SubfolderSelection != 0)
 	{
-		std::string subfolderName = "Warn";
+		std::string categoryDirectoryName = "Warn";
 		switch (SubfolderSelection)
 		{
 		case 1:
-			subfolderName = "Pass";
+			categoryDirectoryName = "Pass";
 			break;
 		case 2:
-			subfolderName = "Fail";
+			categoryDirectoryName = "Fail";
 			break;
 		}
 
-		currentImageDirectory += "\\" + subfolderName;
-		_mkdir(currentImageDirectory.c_str()); // fails quietly when the directory already exists - which is what we want here because we do not want to check for existenxe of the directory each time
+		bool namedDirectoryInCategoryDirectory = (SubfolderLocation != 0);
+
+		if(namedDirectoryInCategoryDirectory)
+		{
+			addToCurrentImageDirectorypathAndCreateIt(categoryDirectoryName);
+			addToCurrentImageDirectorypathAndCreateIt(namedDirectoryname);
+		}
+		else
+		{
+			addToCurrentImageDirectorypathAndCreateIt(namedDirectoryname);
+			addToCurrentImageDirectorypathAndCreateIt(categoryDirectoryName);
+		}
 	}
-	return currentImageDirectory;
+	else
+	{
+		addToCurrentImageDirectorypathAndCreateIt(namedDirectoryname);
+	}
+
+	 return m_currentImagedirectoryName;
 }
 
 
@@ -1129,7 +1160,7 @@ void SVArchiveTool::goingOffline()
 		WriteBuffers();
 	}
 
-	// Close the text to archive file if necessary, i.e. is open.
+	// Close the text to archive file if necessary
 	if(m_fileArchive.is_open())
 	{
 		m_fileArchive.close();

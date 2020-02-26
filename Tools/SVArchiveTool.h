@@ -46,7 +46,7 @@ public:
 	bool GetImageArchivePath( std::string& rName );
 	bool SetFileArchive( LPCTSTR lpszName );
 	bool SetImageArchivePath( LPCTSTR lpszName );
-	std::string	getNextImageDirectory(const std::string& imagePathRoot);
+	const std::string& getNextImageDirectory(const std::string& imagePathRoot);
 	std::string	getNextImageFileName(const std::string& rFileNameImage, bool useAlternativeImagePaths);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
@@ -108,6 +108,7 @@ private:
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateImageSpace( bool shouldFullCheck, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	void addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName);
 
 private:
 
@@ -139,6 +140,8 @@ private:
 	std::ofstream m_fileArchive;       // The file for archived results.
 	UINT m_uiValidateCount;
 
+	std::string m_currentImagedirectoryName = {};
+
 	BufferStructCountMap m_lastBufferMap;
 	DWORD m_lastMaxImages = 0;
 
@@ -148,6 +151,7 @@ private:
 	SvVol::LinkedValue m_FilenameIndex2;
 	SvVol::LinkedValue m_DirectorynameIndex;
 	SvVol::LinkedValue m_SubfolderSelection;
+	SvVol::LinkedValue m_SubfolderLocation;
 
 	SvVol::SVStringValueObjectClass m_baseDirectoryname;
 	SvVol::SVStringValueObjectClass m_baseFilename;

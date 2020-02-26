@@ -22,10 +22,21 @@
 #include "SVOGui/ValuesAccessor.h"
 #pragma endregion Includes
 
-#include <tuple>
 
-//this tuple hold hold GUI elements and GUIDs required for (possibly linked) Values that are to be modified using a dialog
-typedef std::tuple<CEdit&, SvPb::EmbeddedIdEnum, CButton*, SvPb::EmbeddedIdEnum> ValueAndGuiInformation; //@TODO[Arvid]  it would be better to use std::optional instead of pointers here: but not available in VS2015!
+struct ValueAndGuiInformation ///< holds GUI elements and GUIDs required for (possibly linked) Values that are to be modified using a dialog
+{
+	CEdit& m_valueEdit;
+	SvPb::EmbeddedIdEnum m_embeddedId;
+	CButton* m_pDottedNameSelectButton;
+	SvPb::EmbeddedIdEnum m_embeddedLinkId;
+
+	ValueAndGuiInformation(CEdit& valueEdit, SvPb::EmbeddedIdEnum embeddedId, CButton* pDottedNameSelectButton, SvPb::EmbeddedIdEnum embeddedLinkId) :
+		m_valueEdit(valueEdit),
+		m_embeddedId(embeddedId),
+		m_pDottedNameSelectButton(pDottedNameSelectButton),
+		m_embeddedLinkId(embeddedLinkId) {}
+};
+
 typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
 #pragma region Declarations
@@ -49,10 +60,10 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 
 	class AlternativeImagePaths ///< provides access to widgets and GUIDs for alternative image path configuration
 	{
-		enum TupleContent: size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
+		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
-		explicit AlternativeImagePaths(Controller &rValues):
-			m_rValues(rValues), 
+		explicit AlternativeImagePaths(Controller &rValues) :
+			m_rValues(rValues),
 			m_vecValueAndGuiInfo{
 				{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, nullptr, SvPb::NoEmbeddedId },
 				{ m_EditDirectorynameIndex, SvPb::DirectorynameIndexEId, &m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexLinkEId },
@@ -60,7 +71,8 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 				{ m_EditFilenameIndex1, SvPb::FilenameIndex1EId, &m_ButtonFilenameIndex1, SvPb::FilenameIndex1LinkEId },
 				{ m_EditCenterFilename, SvPb::CenterFilenameEId, nullptr, SvPb::NoEmbeddedId },
 				{ m_EditFilenameIndex2, SvPb::FilenameIndex2EId, &m_ButtonFilenameIndex2, SvPb::FilenameIndex2LinkEId },
-				{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId } }
+				{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId },
+				{ m_EditSubfolderLocation, SvPb::SubfolderLocationEId, &m_ButtonSubfolderLocation, SvPb::SubfolderLocationLinkEId } }
 		{
 			m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
 		}
@@ -69,12 +81,13 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		void TextValuesToEditboxes();
 		
 		void DoDataExchange(CDataExchange* pDX);
-		afx_msg void EnableAlternativeImagePaths(BOOL enable);
+		afx_msg void OnButtonUseAlternativeImagePaths(BOOL enable);
 
 		void SelectFilenameIndex1(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 		void SelectFilenameIndex2(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 		void SelectDirectorynameIndex(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 		void SelectSubfolderSelection(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
+		void SelectSubfolderLocation(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 
 		std::vector<ValueAndGuiInformation> m_vecValueAndGuiInfo; //used to iterate over widgets and GUIDs
 
@@ -98,6 +111,8 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		CButton m_ButtonFilenameIndex2;
 		CEdit	m_EditSubfolderSelection;
 		CButton m_ButtonSubfolderSelection;
+		CEdit	m_EditSubfolderLocation;
+		CButton m_ButtonSubfolderLocation;
 
 	};
 
@@ -127,8 +142,9 @@ protected:
 	afx_msg void OnBrowse();
 	afx_msg void UpdateMaxImageWidgetState();
 	afx_msg void OnSelchangeModeCombo();
+
 	afx_msg void OnChangeEditMaxImages();
-	afx_msg void EnableAlternativeImagePaths(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePaths
+	afx_msg void OnButtonUseAlternativeImagePaths(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePaths
 
 	void MemoryUsage();
 	void ReadSelectedObjects();
@@ -138,7 +154,8 @@ protected:
 	void OnButtonFilenameIndex1() { m_alternativeImagePaths.SelectFilenameIndex1(m_objectSelector, this); }
 	void OnButtonFilenameIndex2() {m_alternativeImagePaths.SelectFilenameIndex2(m_objectSelector, this);}
 	void OnButtonDirectorynameIndex() {m_alternativeImagePaths.SelectDirectorynameIndex(m_objectSelector, this);}
-	void OnButtonSubfolderSelection() {m_alternativeImagePaths.SelectSubfolderSelection(m_objectSelector, this);}
+	void OnButtonSubfolderSelection() { m_alternativeImagePaths.SelectSubfolderSelection(m_objectSelector, this); }
+	void OnButtonSubfolderLocation() { m_alternativeImagePaths.SelectSubfolderLocation(m_objectSelector, this); }
 
 	bool checkImageMemory( SVGUID ImageGuid , bool bNewState );
 	__int64 CalculateToolMemoryUsage();
@@ -148,6 +165,8 @@ protected:
 
 #pragma region Private Members
 private:
+	void forceStopAtMaxIfRequired();
+
 	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
 	SVObjectReferenceVector m_List;				//The selected list
@@ -162,7 +181,7 @@ private:
 	SvMc::CEditNumbers	m_EditMaxImages;
 	CEdit	m_ImageFilesRoot;
 	CButton m_UseTriggerCountButton;
-	BOOL	m_StopAtMaxImages = false;
+	CButton m_StopAtMaxImagesButton;
 	BOOL	m_UseTriggerCount = false;
 	BOOL	m_useAlternativeImagePaths = FALSE;
 
