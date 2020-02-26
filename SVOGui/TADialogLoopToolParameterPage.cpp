@@ -124,9 +124,8 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 		hResult = m_Values.Commit();
 		if (S_OK == hResult)
 		{
-			//m_Values.Init();
-			CString valueString = m_Values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
-			if (valueString.IsEmpty())
+			Value = m_Values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
+			if (Value.IsEmpty())
 			{
 				long MaxLoopCount = m_Values.Get<long>(SvPb::MaxLoopsEId);
 				long LoopCount = m_Values.Get<long>(SvPb::LinkedLoopsEId);
