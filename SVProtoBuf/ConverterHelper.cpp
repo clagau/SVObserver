@@ -426,12 +426,13 @@ void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* p
 	}
 }
 
-void convertVectorToTree(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree)
+template<typename TreeItem>
+void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree)
 {
 	for(const auto& rItem : rItemVector)
 	{
 		std::string location = rItem.location();
-		SvPb::TreeItem* pTreeItem = pTree;
+		TreeItem* pTreeItem = pTree;
 
 		size_t startPos{0LL};
 		size_t endPos = location.find(_T('.'), startPos);
@@ -475,4 +476,8 @@ void convertVectorToTree(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::T
 		}
 	}
 }
+
+///Static library instantiations
+template void convertVectorToTree<SvPb::TreeItem>(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree);
+template void convertVectorToTree<SvPb::ConfigTreeItem>(const std::vector<SvPb::ConfigTreeItem>& rItemVector, SvPb::ConfigTreeItem* pTree);
 } //namespace SvPB

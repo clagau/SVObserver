@@ -15,6 +15,7 @@
 #pragma endregion Includes
 
 struct SVStorageResult;
+class SVGUID;
 
 class SVRCCommand 
 {
@@ -49,6 +50,7 @@ public:
 	void LoadConfig(const SvPb::LoadConfigRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest&, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse>);
 	void ExecuteInspectionCmd(const SvPb::ExecuteInspectionCmdRequest&, SvRpc::Task<SvPb::ExecuteInspectionCmdResponse>);
+	void GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&, SvRpc::Task<SvPb::GetConfigurationTreeResponse>);
 
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
@@ -61,5 +63,7 @@ private:
 	HRESULT AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems);
 	HRESULT AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems);
 	void ConvertTreeNames(SvPb::TreeItem* pTreeItem) const;
+	void addObjectChildren(const SVGUID& rInspectionID, const SVGUID& rParentID, std::back_insert_iterator<std::vector<SVGUID>> inserter) const;
+	void addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObjectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const;
 };
 

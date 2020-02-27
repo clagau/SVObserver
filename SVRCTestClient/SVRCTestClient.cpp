@@ -67,11 +67,12 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	ctx.cancel();
 }
 
-void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const std::string& rSpacing)
+template<typename Tree>
+void PrintTreeItems(const Tree& rTreeItem, std::string& rData, const std::string& rSpacing)
 {
 	for(int i=0; i < rTreeItem.children_size(); i++)
 	{
-		rData += rSpacing + SvUl::to_ansi(rTreeItem.children(i).name()) + (rTreeItem.children(i).selected() ? _T("*\n") :  _T("\n"));
+		rData += rSpacing + SvUl::to_ansi(rTreeItem.children(i).name()) + _T("\n");
 		PrintTreeItems(rTreeItem.children(i), rData, rSpacing + _T("\t"));
 	}
 }
@@ -140,7 +141,8 @@ int main(int argc, char* argv[])
 					<< "  r  rummode" << std::endl
 					<< "  c getconfig" << std::endl
 					<< "  o getobjectselector" << std::endl
-					<< "  i executeInspectionCmd" << std::endl;
+					<< "  i executeInspectionCmd" << std::endl
+					<< "  t getconfigtree" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -265,6 +267,28 @@ int main(int argc, char* argv[])
 
 				client.request(std::move(requestRunonce), Timeout);
 
+			}
+			else if (words[0] == "t")
+			{
+				SvPb::GetConfigurationTreeRequest request;
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigurationTreeRequest, SvPb::GetConfigurationTreeResponse> client(*pRpcClient);
+				auto response = client.request(std::move(request), Timeout).get();
+
+				SV_LOG_GLOBAL(info) << response.DebugString();
+				if (0 != response.tree().children_size())
+				{
+					std::string Data;
+					PrintTreeItems(response.tree(), Data, _T(""));
+
+					std::ofstream FileStream;
+					FileStream.open(_T("D:\\Temp\\ConfigTree.txt"), std::ofstream::out | std::ofstream::trunc);
+					if (FileStream.is_open())
+					{
+
+						FileStream.write(Data.c_str(), Data.length());
+						FileStream.close();
+					}
+				}
 			}
 			else if (words[0] == "cn" )
 			{

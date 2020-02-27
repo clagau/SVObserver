@@ -323,6 +323,17 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	});
 
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetConfigurationTreeRequest,
+		SvPb::GetConfigurationTreeRequest,
+		SvPb::GetConfigurationTreeResponse>(
+		[this, pCommand](SvPb::GetConfigurationTreeRequest&& req, SvRpc::Task<SvPb::GetConfigurationTreeResponse> task)
+	{
+		m_IoRunService.post([req, task, pCommand]() { pCommand->GetConfigurationTree(req, task); });
+
+	});
+
 	registerStreamHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetNotificationStreamRequest,

@@ -100,6 +100,8 @@ message SVRCMessages
 		GetNotificationStreamResponse getNotificationStreamResponse = 2042;
 		ExecuteInspectionCmdRequest executeInspectionCmdRequest = 2043;
 		ExecuteInspectionCmdResponse executeInspectionCmdResponce = 2044;
+		GetConfigurationTreeRequest getConfigurationTreeRequest = 2045;
+		GetConfigurationTreeResponse getConfigurationTreeResponse = 2046;
 	}
 }
 

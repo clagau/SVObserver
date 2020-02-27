@@ -376,3 +376,25 @@ message ExecuteInspectionCmdResponse
 {
 	InspectionCmdMsgs cmdMsg = 1;	//The inspection command message
 }
+
+///This is the recursive structure for the configuration tree
+message ConfigTreeItem
+{
+	string name = 1;						//The name of the item
+	string location = 2;					//The location which is the dotted name of leaf or branch
+	bytes objectID = 3;						//The object ID of the tree item
+	sfixed32 position = 4;					//The position of the item in the tree SVObserver relevant
+	bool isValid = 5;						//The initial valid state
+	SVObjectTypeEnum objectType = 6;		//The major type eg Inspection or tool
+	SVObjectSubTypeEnum objectSubType = 7;	//The minor type eg. Window tool or Math tool
+	repeated ConfigTreeItem children = 8;	//The children of this node
+}
+
+message GetConfigurationTreeRequest
+{
+}
+
+message GetConfigurationTreeResponse
+{
+	ConfigTreeItem tree = 1;				//The configuration tree as recursive structure
+}

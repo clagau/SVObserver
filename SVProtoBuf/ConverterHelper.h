@@ -41,5 +41,6 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
 
 // Converts a flat vector to a recursive tree
-void convertVectorToTree(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree);
+template<typename TreeItem>
+void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree);
 } //namespace SvPb
