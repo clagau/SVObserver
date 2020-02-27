@@ -28,6 +28,7 @@ public:
 	SVDisplayImageSelect(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVDisplayImageSelect();
 
+
 	//{{AFX_DATA(SVDisplayImageSelect)
 	enum { IDD = IDD_SELECT_DISPLAY_IMAGE };
 	CListBox	m_ImageSelectList;
@@ -48,5 +49,10 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+private:
+	/// Add the current inspection's name to the default window's title.
+	/// Title format: "Select Display Image - [Inspection name]"
+	/// \returns void
+	void SetTitle();
 };
 

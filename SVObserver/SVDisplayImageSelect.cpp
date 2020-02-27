@@ -77,9 +77,14 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
+	
     if( m_pDoc )
 	{
-		int index = m_ImageSelectList.AddString( _T("[None]") );
+		constexpr TCHAR* c_NoImage = _T("[None]");
+
+		SetTitle();
+		
+		int index = m_ImageSelectList.AddString( c_NoImage );
 		m_ImageSelectList.SetItemData( index, static_cast<DWORD_PTR>(0) );
 
 		SvDef::SVObjectTypeInfoStruct info;
@@ -93,24 +98,42 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 
 		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
+		// Differenciate between image owned by ToolSet and image owned by a tool
+		auto getImageName = [](SvIe::SVImageClass* pImage) {
+			std::string imageName;
+
+			if (pImage->GetOwnerInfo().CheckExistence() &&
+				(pImage->GetOwnerInfo().getObject() != nullptr) &&
+				(SvPb::SVObjectTypeEnum::SVToolSetObjectType == pImage->GetOwnerInfo().getObject()->GetObjectType())
+				)
+			{
+				imageName = pImage->GetName();
+			}
+			else
+			{
+				imageName = pImage->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
+			}
+			return imageName;
+		};
+
 		for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 		{
 			SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (const_cast< SVObjectClass* >( *l_Iter ));
 
 			if (nullptr != pImage && SvPb::noAttributes != pImage->ObjectAttributesAllowed())
 			{
-				index = m_ImageSelectList.AddString( pImage->GetCompleteName().c_str() );
-				m_ImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
+				index = m_ImageSelectList.AddString(getImageName(pImage).c_str());
+				m_ImageSelectList.SetItemData(index, reinterpret_cast<DWORD_PTR>(pImage));				
 			}
 		}// end while
 
 		if( nullptr != m_pCurrentImage )
 		{
-			m_ImageSelectList.SelectString( -1, m_pCurrentImage->GetCompleteName().c_str() );
+			m_ImageSelectList.SelectString( -1, getImageName(m_pCurrentImage).c_str() );
 		}
 		else
 		{
-            m_ImageSelectList.SelectString( -1, _T("[None]") );
+            m_ImageSelectList.SelectString( -1, c_NoImage);
 		}
 
 		UpdateData( FALSE );
@@ -121,3 +144,23 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 	return FALSE;
 }// end OnInitDialog
 
+
+
+void SVDisplayImageSelect::SetTitle()
+{
+	if (nullptr == m_pDoc)
+	{
+		return;
+	}
+		
+
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_pDoc->GetInspectionID());
+	SVInspectionProcess* pInspection(dynamic_cast<SVInspectionProcess*>(pObject));
+	if (nullptr != pInspection)
+	{
+		CString title;
+		GetWindowText(title);
+		title.Format(_T("%s - [%s]"), title, pInspection->GetName());
+		SetWindowText(title);
+	}
+}
