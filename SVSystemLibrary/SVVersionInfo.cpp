@@ -89,30 +89,7 @@ namespace SvSyl
 			UINT Len = 0;
 			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 			{
-				// Version numbering code:
-				//
-				// DwCurrentVersion, Type DWORD
-				// Meaning:		0x00mmssbb => Version m.s  - Beta b 
-				// EXCEPTION:	if b = 255 is the release indicator 
-				//					No Beta number in released Versions!!!
-				//	e.g.
-				//				0x000100FF => Version 1.0
-				//		        0x00011219 => Version 1.18 Beta 25
-				//				0x00020001 => Version 2.0  Beta 1
-				union SVVersionUnion
-				{
-					struct SVVersionParts
-					{
-						unsigned long m_Beta : 8;
-						unsigned long m_Minor : 8;
-						unsigned long m_Major : 8;
-						unsigned long m_Unused : 8;
-					} m_VersionParts;
-
-					unsigned long m_Version;
-
-				} l_TempVersion;
-
+				SVVersionUnion l_TempVersion;
 				l_TempVersion.m_VersionParts.m_Unused = 0;
 				l_TempVersion.m_VersionParts.m_Major = static_cast< unsigned char >( std::min< WORD >( HIWORD( pFileInfo->dwFileVersionMS ), 255 ) );
 				l_TempVersion.m_VersionParts.m_Minor = static_cast< unsigned char >( std::min< WORD >( LOWORD( pFileInfo->dwFileVersionMS ), 255 ) );

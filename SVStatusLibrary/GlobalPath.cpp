@@ -55,6 +55,7 @@ namespace SvStl
 	constexpr char* SVIMSVObserverSecondPath = _T("ObserverSecondPath");
 	constexpr char* SVIMSVObserverLastValidPath = _T("LastValidPath");
 	constexpr char* SVIMRamDrive = _T("RamDrive");
+	constexpr char* ConfigWarningFilename = _T("ConfigWarningFilename");
 
 
 	GlobalPath::GlobalPath():
@@ -201,7 +202,6 @@ namespace SvStl
 	{
 		return AppendFilename("C:\\TEMP", filename);
 	}
-	
 
 	std::string GetValueString( LPCTSTR p_szSection, LPCTSTR p_szKey, LPCTSTR p_szDefault, LPCTSTR p_szFileName )
 	{
@@ -245,6 +245,8 @@ namespace SvStl
 
 			m_SvimRamDrive = GetValueString(SVIMDirectorySectionTag, SVIMRamDrive, DefaultRamDrive, GetSVIMIniPath());
 			::WritePrivateProfileString(SVIMDirectorySectionTag, SVIMSVObserverLastValidPath, m_LastValidFolder.c_str(), GetSVIMIniPath());
+
+			m_ConfigWarningFilename = GetValueString(SVIMDirectorySectionTag, ConfigWarningFilename, _T(""), GetSVIMIniPath());
 
 			m_IsInitilizedPath = true;
 		}

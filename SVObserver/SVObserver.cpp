@@ -18,6 +18,7 @@
 
 #include "ExtrasEngine.h"
 #include "RootObject.h"
+#include "LoadConfigWarning.h"
 #include "SoftwareTriggerDlg.h"
 #include "SVAboutDialogClass.h"
 #include "SVArchiveWritingDlg.h"
@@ -2088,8 +2089,8 @@ BOOL SVObserverApp::InitInstance()
 	
 	if (!SVOLicenseManager::Instance().HasMatroxLicense())
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_52_NOMATROX_DONGLE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25013_NoMatroxDongle);
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_52_NOMATROX_DONGLE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25013_NoMatroxDongle);
 	}
 
 	if (SVOLicenseManager::Instance().HasMatroxLicense() && !SVOLicenseManager::Instance().HasMatroxGigELicense() && IsMatroxGige())
@@ -2419,6 +2420,8 @@ HRESULT SVObserverApp::OpenSVXFile()
 					Exception.setMessage(SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode);
 					break;
 				}
+
+				checkVersionAndDisplayWarnings(m_CurrentVersion, configVer);
 
 				if (configVer > m_CurrentVersion)
 				{
@@ -3851,15 +3854,12 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			return false;
 		}
 
-		if (bFileNewConfiguration)
-		{
-			RootObject *pRoot = nullptr;
+		RootObject *pRoot = nullptr;
 
-			SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
-			if (nullptr != pRoot)
-			{
-				pRoot->createConfigurationObject();
-			}
+		SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
+		if (nullptr != pRoot)
+		{
+			pRoot->createConfigurationObject();
 		}
 
 		// Clean up Execution Directory...
@@ -5685,8 +5685,6 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 
 			SvXml::SVNavigateTree::GetItemBranch(p_rTree, SvXml::CTAG_INSPECTION_PROCESS, htiSubChild, htiSVInspectionProcess);
 			SvXml::SVNavigateTree::GetItemBranch(p_rTree, SvXml::CTAG_SVIPDOC, htiSubChild, htiSVIPDoc);
-
-			SVGUID docObjectID;
 
 			SVTreeType::SVBranchHandle htiTempItem = htiSVIPDoc;
 

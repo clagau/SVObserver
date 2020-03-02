@@ -36,7 +36,7 @@ namespace SvStl
 		std::string GetAutosaveTemp1FileName(){return m_AutosaveTemp1FileName;}
 		std::string GetAutosaveTemp2FileName(){return m_AutosaveTemp2FileName;}
 		std::string GetAutosaveTemp3FileName(){return m_AutosaveTemp3FileName;}
-
+		std::string GetConfigWarningFilename() { return m_ConfigWarningFilename; }
 #pragma endregion public functions 
 
 	private: 
@@ -76,6 +76,8 @@ namespace SvStl
 		std::string m_AutosaveTemp1FileName;
 		std::string m_AutosaveTemp2FileName;
 		std::string m_AutosaveTemp3FileName;
+
+		std::string m_ConfigWarningFilename;
 #pragma endregion private members
 	};
 } //namespace SvStl

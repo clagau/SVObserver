@@ -238,6 +238,8 @@ enum MessageTextEnum
 	Tid_Error_ScriptParseFailed,
 
 	//SVObserver
+	Tid_Error_ConfigWarnFileError,
+	Tid_Error_ConfigWarnSyntaxError,
 	Tid_SVObserver_CannotRun_WrongModelNumber,
 	Tid_SVObserver_InitializationFailure,
 	Tid_SVObserver_ModelNumberInvalid,

@@ -504,6 +504,9 @@
     <ClCompile Include="Custom2Filter_ImportExport.cpp">
       <Filter>Help Files</Filter>
     </ClCompile>
+    <ClCompile Include="LoadConfigWarning.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1052,6 +1055,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ZoomToolBar.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadConfigWarning.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

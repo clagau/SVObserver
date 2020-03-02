@@ -261,6 +261,8 @@ namespace SvStl
 		{Tid_Error_ScriptParseFailed, _T("%s parse was not successful")},
 		
 		//SVObserver
+		{Tid_Error_ConfigWarnFileError, _T("Loading of the configuration warning file (%s) failed. Either the file is missing or it has a syntax error.") },
+		{Tid_Error_ConfigWarnSyntaxError, _T("Loading of the configuration warning file failed. It has a syntax error.") },
 		{Tid_SVObserver_CannotRun_WrongModelNumber, _T( "Configuration cannot enter Run.  The current configuration hardware does not match system hardware. "
 			"The system's Model Number is ( Model # %s %s %s %s ). Please verify that the shown model number is correct and contact your system administrator.")},
 		{Tid_SVObserver_InitializationFailure, _T("Initialization failure (Model Number %s):\n%s")},
