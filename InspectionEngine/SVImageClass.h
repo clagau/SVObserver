@@ -179,6 +179,8 @@ private:
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;
 	SVObjectPtrVector m_embeddedList;
+
+	bool m_removeChildCircularReference = false;
 };
 
 typedef std::set<SVImageClass*> SVImageClassPtrSet;

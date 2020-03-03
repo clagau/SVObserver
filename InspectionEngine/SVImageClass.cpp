@@ -649,6 +649,11 @@ The Parent Image attribute should not be used unless it is validated first.
 HRESULT SVImageClass::RemoveChild(const SVGUID& rChildID)
 {
 	HRESULT l_hrOk = S_OK;
+	if (m_removeChildCircularReference)
+	{
+		return l_hrOk;
+	}
+	m_removeChildCircularReference = true;
 
 	if (Lock())
 	{
@@ -688,6 +693,8 @@ HRESULT SVImageClass::RemoveChild(const SVGUID& rChildID)
 	{
 		l_hrOk = E_FAIL;
 	}
+
+	m_removeChildCircularReference = false;
 	return l_hrOk;
 }
 
