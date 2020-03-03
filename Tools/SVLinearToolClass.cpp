@@ -407,22 +407,22 @@ void SVLinearToolClass::init()
 
 	// Build an operator list...
 
-	// ...use In Place image operator list, because we already have an output image!
+	// ...use in-place image operator list, because we already have an output image!
 	SvOp::SVUnaryImageOperatorListClass* pOperatorList = new SvOp::SVLinearImageOperatorListClass;
 
 	// Operator list defaults:
 	if(nullptr != pOperatorList)
 	{
-		// Requires a SVThresholdClass Object
+		// Requires a SVThresholdClass object
 		pOperatorList->Add( new SvOp::SVThresholdClass( pOperatorList ) );
 
-		// and Requires a SVUsermaskOperatorClass Object
+		// and Requires a SVUsermaskOperatorClass object
 		pOperatorList->Add( new SvOp::SVUserMaskOperatorClass( pOperatorList ) );
 
-		// Add the UnaruyImageOperatorList to the Tool's List
+		// Add the UnaryImageOperatorList to the tool's list
 		Add( pOperatorList );
 	}
-	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true,true,true);
+	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);
 
 	addDefaultInputObjects();
 }

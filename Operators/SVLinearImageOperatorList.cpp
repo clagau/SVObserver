@@ -59,9 +59,9 @@ bool SVLinearImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruc
 	l_bOk &= S_OK == UpdateLineExtentData();
 	m_svLinearData.SetObjectAttributesAllowed(SvPb::viewable | SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_svMaxThreshold.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	m_svMinThreshold.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	m_svDeltaMaxMin.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_MaxProfile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_MinProfile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_ProfileDelta.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	
 
 
@@ -217,9 +217,9 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 				}
 			}
 
-			result = (S_OK == m_svMinThreshold.SetValue(dMin)) && result;
-			result = (S_OK == m_svMaxThreshold.SetValue(dMax)) && result;
-			result = (S_OK == m_svDeltaMaxMin.SetValue(dMax-dMin)) && result;
+			result = (S_OK == m_MinProfile.SetValue(dMin)) && result;
+			result = (S_OK == m_MaxProfile.SetValue(dMax)) && result;
+			result = (S_OK == m_ProfileDelta.SetValue(dMax-dMin)) && result;
 			
 			result = (S_OK == m_svLinearData.SetArrayValues(m_svArray)) && result;
 			assert(result);
@@ -299,17 +299,17 @@ void SVLinearImageOperatorListClass::init()
 
 	RegisterEmbeddedObject(&m_svLinearData, SvPb::LinearDataClassEId, IDS_CLASSNAME_SVLINEARDATACLASS, false, SvOi::SVResetItemNone);
 	m_svLinearData.setSaveValueFlag(false);
-	RegisterEmbeddedObject(&m_svMinThreshold, SvPb::LinearThresholdMinEId, IDS_OBJECTNAME_LINEAR_THRESHOLD_MINVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svMaxThreshold, SvPb::LinearThresholdMaxEId, IDS_OBJECTNAME_LINEAR_THRESHOLD_MAXVALUE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svDeltaMaxMin, SvPb::LinearThresholdDeltaEId, IDS_OBJECTNAME_LINEAR_THRESHOLD_DELTAVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MinProfile, SvPb::LinearThresholdMinEId, IDS_OBJECTNAME_LINEAR_PROFILE_MINVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_MaxProfile, SvPb::LinearThresholdMaxEId, IDS_OBJECTNAME_LINEAR_PROFILE_MAXVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ProfileDelta, SvPb::LinearThresholdDeltaEId, IDS_OBJECTNAME_LINEAR_PROFILE_DELTA, false, SvOi::SVResetItemNone);
 	
 
-	m_svMinThreshold.SetDefaultValue(0.0);
-	m_svMinThreshold.setSaveValueFlag(false);
-	m_svMaxThreshold.SetDefaultValue(0.0);
-	m_svMaxThreshold.setSaveValueFlag(false);
-	m_svDeltaMaxMin.SetDefaultValue(0.0);
-	m_svDeltaMaxMin.setSaveValueFlag(false);
+	m_MinProfile.SetDefaultValue(0.0);
+	m_MinProfile.setSaveValueFlag(false);
+	m_MaxProfile.SetDefaultValue(0.0);
+	m_MaxProfile.setSaveValueFlag(false);
+	m_ProfileDelta.SetDefaultValue(0.0);
+	m_ProfileDelta.setSaveValueFlag(false);
 
 	m_ulLineLength = 0;
 
