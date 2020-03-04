@@ -16,7 +16,6 @@
 #define IDR_MAINFRAME                   1000
 #define IDR_SVOBSERVER_IPDOCTYPE        1001
 #define IDR_SVOBSERVER_IODOCTYPE        1002
-#define IDR_SVCOMMAND                   1003
 #define IDR_MATH_BASIC_TOOLBAR          1004
 #define IDR_MATH_CONDITIONAL_TOOLBAR    1005
 #define IDR_MATH_LOGICAL_TOOLBAR        1006
@@ -27,13 +26,9 @@
 #define IDR_MATH_STATISTICS_TOOLBAR     1011
 #define IDR_MATH_PUNCTUATION_TOOLBAR    1012
 #define IDR_IMAGE_ADJUST                1013
-#define IDR_SVOBSERVER                  1014
-#define IDR_SVOBSERVER_DEBUG            1015
 #define IDR_IPDOC_MENU                  1016
 #define IDR_IODOC_MENU                  1017
 #define IDR_FORMULA_VALIDATE_TOOLBAR    1018
-#define IDR_SV_REMOTE_COMMAND_DATA      1020
-#define IDR_SV_REMOTE_COMMAND           1021
 #define IDR_TREE_ALL_SUB_NODES_MENU     1022
 #define IDR_TREE_ALL_TREE_MENU          1023
 #define IDR_TREE_ALL_VALUES_MENU        1024

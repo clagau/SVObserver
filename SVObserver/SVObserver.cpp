@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <google\protobuf\stubs\common.h>
+#include "resource.h"
 #include "SVObserver.h"
 #include "SVObserver_i.h"
 
@@ -119,11 +120,7 @@ class CSVObserverModule : public CAtlMfcModule
 {
 public:
 	DECLARE_LIBID(LIBID_SVObserver)
-#ifdef _DEBUG
-	DECLARE_REGISTRY_APPID_RESOURCEID(IDR_SVOBSERVER_DEBUG, "{08B70D3F-F12C-11D4-A927-00106F0309AB}")
-#else
 	DECLARE_REGISTRY_APPID_RESOURCEID(IDR_SVOBSERVER, "{08B70D3F-F12C-11D4-A927-00106F0309AB}")
-#endif
 };
 
 CSVObserverModule _Module;

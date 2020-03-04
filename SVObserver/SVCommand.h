@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
+#include "resource.h"
 #include "ObjectInterfaces\SVImageBufferHandleInterface.h"
 #include "TriggerRecordController\DataControllerBase.h"
 #pragma endregion Includes

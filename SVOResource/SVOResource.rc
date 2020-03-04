@@ -4482,22 +4482,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// REGISTRY
-//
-
-IDR_SVOBSERVER          REGISTRY                "SVObserver.rgs"
-
-IDR_SVOBSERVER_DEBUG    REGISTRY                "SVObserverd.rgs"
-
-IDR_SVCOMMAND           REGISTRY                "SVCommand.rgs"
-
-IDR_SV_REMOTE_COMMAND_DATA REGISTRY                "SVRemoteCommandData.rgs"
-
-IDR_SV_REMOTE_COMMAND   REGISTRY                "SVRemoteCommand.rgs"
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // AFX_DIALOG_LAYOUT
 //
 

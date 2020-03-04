@@ -393,6 +393,7 @@ echo %time%
     <ClInclude Include="RemoteMonitorListController.h" />
     <ClInclude Include="RemoteMonitorListHelper.h" />
     <ClInclude Include="RemoteMonitorNamedList.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResultListCtrl.h" />
     <ClInclude Include="ResultTabbedView.h" />
     <ClInclude Include="ResultTableListCtrl.h" />
@@ -559,6 +560,10 @@ echo %time%
     <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\SVCommand.rgs" />
+    <None Include="res\SVObserver.rgs" />
+    <None Include="res\SVRemoteCommand.rgs" />
+    <None Include="res\SVRemoteCommandData.rgs" />
     <None Include="RootChildren.inl" />
     <None Include="RootObject.inl" />
     <None Include="SVConfigurationTreeWriter.inl" />

@@ -1060,6 +1060,9 @@
     <ClInclude Include="LoadConfigWarning.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVInspectionProcessResetStruct.inl">
@@ -1163,6 +1166,18 @@
     </None>
     <None Include="RootObject.inl">
       <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="res\SVCommand.rgs">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\SVObserver.rgs">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\SVRemoteCommand.rgs">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+    <None Include="res\SVRemoteCommandData.rgs">
+      <Filter>Ressourcendateien</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+#include "resource.h"
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #pragma endregion Includes
 
