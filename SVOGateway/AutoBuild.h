@@ -26,7 +26,7 @@
 //    the application is marked as Released
 //    d is unused
 
-#define FILEVER        10,00,0,010
+#define FILEVER        10,00,0,011
 #define PRODUCTVER FILEVER
 #define STRFILEVER SV_STRINGIZE(FILEVER)
 #define STRPRODUCTVER SV_STRINGIZE(PRODUCTVER)
