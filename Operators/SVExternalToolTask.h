@@ -150,7 +150,7 @@ protected:
 	HRESULT ClearData();
 	HRESULT SetDefaultValues();
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	HRESULT InspectionInputsToVariantArray();
+	void SetIndirectValueSaveFlag();
 
 	SvIe::SVImageClass* GetInputImage(int iIndex, bool bRunMode = false);
 	SvIe::SVImageClass* GetResultImage(int iIndex);
