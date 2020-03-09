@@ -816,17 +816,17 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 		}
 
 		// Special code for Duplicates!!
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rNewGuid);
-		if (pObject)
+		SVObjectClass* pDuplicatedObject = SVObjectManagerClass::Instance().GetObject(rNewGuid);
+		if (pDuplicatedObject)
 		{
 			// Get the Owner
-			SVObjectInfoStruct ownerInfo = pObject->GetOwnerInfo();
+			SVObjectInfoStruct ownerInfo = pDuplicatedObject->GetOwnerInfo();
 			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getUniqueObjectID());
 			if (pOwner)
 			{
 				SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
-				SVTaskObjectListClass* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pObject);
-				if (nullptr == pTaskListOwner || !pTaskList->DestroyChildObject(pTaskList))
+				SVTaskObjectListClass* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pDuplicatedObject);
+				if (nullptr == pTaskListOwner || !pTaskListOwner->DestroyChildObject(pTaskList))
 				{
 					// must be a Friend
 					pOwner->DestroyFriends();
