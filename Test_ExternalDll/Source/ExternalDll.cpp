@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "ExternalDll.h"
+#include <array>
 
 #ifdef _DEBUG
 //#define new DEBUG_NEW
@@ -300,7 +301,9 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
 	/////////////////////////////////////////////////////////////////////////
 	//### Algo Input Parameters
 	*plArraySize = NUM_INPUT_VALUES;
-	CDllTool::getInputValuesDefinitionEx(ppaStructs);
+	using TA = std::array<InputValueDefinitionStructEx, NUM_INPUT_VALUES>;
+
+	CDllTool::getInputValuesDefinitionEx(*(TA*)(*ppaStructs));
 
 #if _DEBUG
 	fdb("      SVGetInputValueDefinitions - Checkpoint1\n");
@@ -382,8 +385,7 @@ TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,
 }
 
 // cppcheck-suppress unusedFunction
-TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID guidTool, long lArraySize,
-	VARIANT* paResultValues)
+TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID guidTool, long lArraySize, VARIANT* paResultValues)
 {
 
 	HRESULT hr = S_FALSE;
@@ -437,18 +439,15 @@ TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID guidTool, long lPara
 // cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitionsEx(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues)
 {
-
 	HRESULT hr = S_OK;
 	*plArraySize = NUM_RESULT_VALUES;
 	*ppaResultValues = new ResultValueDefinitionStructEx[NUM_RESULT_VALUES];
-	if (*ppaResultValues != NULL)
+	if (nullptr == *ppaResultValues)
 	{
-		CDllTool::getResultValueDefinitionEx(ppaResultValues);
+		return S_FALSE;
 	}
-	else
-	{
-		hr = S_FALSE;
-	}
+	using TA = std::array<ResultValueDefinitionStructEx, NUM_RESULT_VALUES>;
+	CDllTool::getResultValueDefinitionEx(*(TA*)(*ppaResultValues));
 	return hr;
 }
 
@@ -591,13 +590,15 @@ TOOLDLL_API HRESULT __stdcall GetResultTableDefinitionsEx(long* pSize, ResultTab
 	{
 		*ppaResultTableDefs = NULL;
 	}
-	if (ppaResultTableDefs == NULL)
+	///@TODO IST das Richtig?
+	if (*ppaResultTableDefs == NULL)
 	{
 
 		return S_FALSE;
 	}
 	*pSize = NUM_RESULT_TABLES;
-	CDllTool::getResultTableDefinitionEx(ppaResultTableDefs);
+	using TA = std::array<ResultTableDefinitionStructEx, NUM_RESULT_TABLES>;
+	CDllTool::getResultTableDefinitionEx(*(TA*)(*ppaResultTableDefs));
 
 	return hr;
 }
@@ -638,11 +639,13 @@ TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID guidTool, long Size
 
 		if (hr == S_OK)
 		{	
-			hr = pTool->getResultTablesMaxRowSize(Size, pRowSizes);
+			
+			hr = pTool->getResultTablesMaxRowSize(*(std::array<int,NUM_RESULT_TABLES>*)pRowSizes);
 		}
 	}
 	return hr;
 }
+
 
 // cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID guidTool, long Size, int Arraysize[])
@@ -655,10 +658,198 @@ TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID guidTool, long Si
 
 		if (hr == S_OK)
 		{
-			hr = pTool->getResultValuesMaxArraySize(Size, Arraysize);
+			hr = pTool->getResultValuesMaxArraySize(*(std::array<int, NUM_RESULT_VALUES>*) Arraysize);
 		}
 	}
 	return hr;
 }
 
+
+
+
+//older Interface previous to Observer 10.0
+
+TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize, InputValueDefinitionStruct** ppaStructs)
+{
+
+	HRESULT hr = S_OK;
+
+	typedef std::basic_string<WCHAR> wstring;
+
+	if (NUM_INPUT_VALUES > 0)
+		*ppaStructs = new InputValueDefinitionStruct[NUM_INPUT_VALUES];
+	else
+		*ppaStructs = NULL;
+	
+	
+
+	//### check alloc failed
+	if (ppaStructs == NULL)
+	{
+		return S_FALSE;
+	}
+
+	int i;
+	for (i = 0; i < NUM_INPUT_VALUES; i++)
+	{
+		::VariantInit(&((*ppaStructs)[i].vDefaultValue));
+	}
+
+	*plArraySize = NUM_INPUT_VALUES;
+
+	std::array<InputValueDefinitionStructEx, NUM_INPUT_VALUES> InputsEx;
+	CDllTool::getInputValuesDefinitionEx(InputsEx);
+	for (int index =0 ; index < NUM_INPUT_VALUES; index++ )
+	{
+		(*ppaStructs)[index].bstrDisplayName = InputsEx[index].Name.copy();
+
+		(*ppaStructs)[index].lVT = InputsEx[index].vt;
+		
+		(*ppaStructs)[index].bstrHelpText = InputsEx[index].HelpText.copy();
+		(*ppaStructs)[index].bstrGroup =  InputsEx[index].Group.copy();
+		(*ppaStructs)[index].vDefaultValue.Attach(InputsEx[index].vDefaultValue.Detach());
+
+	
+	}
+
+	return hr;
+}
+
+TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures( InputValueDefinitionStruct* paStructs)
+{
+
+	HRESULT hr = S_OK;
+	for (int i = 0; i < NUM_INPUT_VALUES; i++)
+	{
+		::SysFreeString(paStructs[i].bstrDisplayName);
+		::SysFreeString(paStructs[i].bstrGroup);
+		::SysFreeString(paStructs[i].bstrHelpText);
+		::VariantClear(&paStructs[i].vDefaultValue);
+	}
+	delete[] paStructs;
+
+	return hr;
+}
+
+TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitions(long* plArraySize, ResultValueDefinitionStruct** ppaResultValues)
+{
+
+	HRESULT hr = S_OK;
+
+	*plArraySize = NUM_RESULT_VALUES;
+	*ppaResultValues = new ResultValueDefinitionStruct[NUM_RESULT_VALUES];
+
+	if (ppaResultValues == NULL)
+	{
+		return S_FALSE;
+	}
+
+
+	std::array<ResultValueDefinitionStructEx, NUM_RESULT_VALUES> ResultsEx;
+	CDllTool::getResultValueDefinitionEx(ResultsEx);
+
+	for (int index = 0; index < NUM_RESULT_VALUES; index++)
+	{
+		(*ppaResultValues)[index].bstrDisplayName = ResultsEx[index].Name.copy();
+
+		(*ppaResultValues)[index].lVT = ResultsEx[index].vt;
+
+	}
+
+	return hr;
+}
+
+
+TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructures( ResultValueDefinitionStruct* paStructs)
+{
+
+	HRESULT hr = S_OK;
+	for (int i = 0; i < NUM_RESULT_VALUES; i++)
+	{
+		::SysFreeString(paStructs[i].bstrDisplayName);
+	}
+	delete[] paStructs;
+	return hr;
+}
+
+
+TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues)
+{
+
+	HRESULT hr = S_OK;
+
+	*plArraySize = NUM_RESULT_VALUES;
+	*ppaResultValues = new ResultValueDefinitionStructAd[NUM_RESULT_VALUES];
+	if (nullptr == *ppaResultValues)
+	{
+		return S_FALSE;
+	}
+
+	std::array<ResultValueDefinitionStructEx, NUM_RESULT_VALUES> ResultsEx;
+	CDllTool::getResultValueDefinitionEx(ResultsEx);
+
+	for (int index = 0; index < NUM_RESULT_VALUES; index++)
+	{
+		(*ppaResultValues)[index].MaxArraylen=  ResultsEx[index].ArraySize;
+	}
+	return hr;
+}
+
+TOOLDLL_API HRESULT __stdcall DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs)
+{
+	HRESULT hr = S_OK;
+
+	delete[] paStructs;
+
+	return hr;
+}
+
+TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTableDefinitionStruct** ppaResultTableDefs)
+{
+	HRESULT hr = S_OK;
+
+	if (NUM_RESULT_TABLES > 0)
+	{
+		*ppaResultTableDefs = new ResultTableDefinitionStruct[NUM_RESULT_TABLES];
+	}
+	else
+	{
+		*ppaResultTableDefs = NULL;
+	}
+
+
+	if (ppaResultTableDefs == NULL)
+	{
+
+		return S_FALSE;
+	}
+
+
+	*pSize = NUM_RESULT_TABLES;
+	std::array<ResultTableDefinitionStructEx, NUM_RESULT_TABLES> ResultsEx;
+	CDllTool::getResultTableDefinitionEx(ResultsEx);
+
+	for (int index = 0; index < NUM_RESULT_TABLES; index++)
+	{
+		(*ppaResultTableDefs)[index].bstrDisplayName = ResultsEx[index].HelpText.copy();
+
+		(*ppaResultTableDefs)[index].lVT = ResultsEx[index].vt;
+		
+		
+		(*ppaResultTableDefs)[index].ColoumnCount = ResultsEx[index].ColoumnCount;
+		(*ppaResultTableDefs)[index].RowCount = ResultsEx[index].RowCount;
+		(*ppaResultTableDefs)[index].ColumnNames.Attach(ResultsEx[index].ColumnNames.Detach());
+		//smart array of bstr with names
+	}
+	
+
+	return hr;
+}
+
+TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs)
+{
+	HRESULT hr = S_OK;
+	delete[] paStructs;
+	return hr;
+}
 

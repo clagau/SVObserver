@@ -30,7 +30,7 @@ struct ResultValueDefinitionStructEx : public DefinitionStructEx
 struct ResultTableDefinitionStructEx : public DefinitionStructEx
 {
 	long ColoumnCount {0};
-	long RowCount {0};
+	long RowCount {10};
 	_variant_t ColumnNames; //smart array of bstr with names
 
 };

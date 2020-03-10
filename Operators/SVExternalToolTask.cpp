@@ -2153,7 +2153,8 @@ void SVExternalToolTask::collectResultValues()
 				GetResultValueObject(i)->SetArraySize(2);
 				assert(false);
 			}
-			if (!GetResultValueObject(i)->GetDefaultType() != type)
+
+			if (GetResultValueObject(i)->GetDefaultType() != type)
 			{
 				_variant_t var(0.0);
 				var.ChangeType(type);

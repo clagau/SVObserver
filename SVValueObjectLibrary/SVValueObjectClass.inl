@@ -87,13 +87,13 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int32_t iSize)
 
 	int32_t newSize = std::max(iSize, 1);	// minimum one array element
 	int32_t oldSize = (0 == iSize) ? 0 : m_ArraySize;
-	if(newSize == oldSize)
+	if (newSize == oldSize)
 	{
 		return hr;
 	}
 	bool tooSmall = newSize > m_ArraySize;
 	m_ArraySize = newSize;
-	if(tooSmall)
+	if (tooSmall)
 	{
 		m_pValue = reserveLocalMemory();
 	}
@@ -140,7 +140,7 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	else if (pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue()))
 	{
 		int32_t arraySize = getArraySize();
-		for(int32_t i=0; i < arraySize; ++i)
+		for (int32_t i = 0; i < arraySize; ++i)
 		{
 			// In configurations the value are placed in bucket 1
 			SetValue(BucketArray[1][i], i);
@@ -281,7 +281,7 @@ HRESULT SVValueObjectClass<T>::GetArrayValues(ValueVector& rValues) const
 	}
 	assert(getResultSize() <= getArraySize());
 	rValues.resize(getResultSize());
-	if(nullptr != m_pValue)
+	if (nullptr != m_pValue)
 	{
 		std::copy(m_pValue, m_pValue + getResultSize(), rValues.begin());
 	}
@@ -292,7 +292,7 @@ template <typename T>
 void SVValueObjectClass<T>::SetResultSize(int32_t ResultSize)
 {
 	m_ResultSize = (ResultSize <= m_ArraySize) ? ResultSize : 0;
-	if(nullptr != m_pResultSize)
+	if (nullptr != m_pResultSize)
 	{
 		*m_pResultSize = m_ResultSize;
 	}
@@ -421,6 +421,13 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 
 			}
 		}
+		//@Todo[MEC][10.0] [10.03.2020]  possible fix  for SVO-2656
+		/*
+		else if (arraySize == 0)
+		{
+			SetResultSize(0);
+		}
+		*/
 		else
 		{
 			result = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
@@ -598,7 +605,7 @@ int32_t SVValueObjectClass<T>::getByteSize(bool useResultSize, bool memBlockData
 	int32_t numberOfElements = useResultSize ? getResultSize() : getArraySize();
 	result *= numberOfElements;
 	//For memory block data that is an array the first value shall contain the result size which can be variable
-	if(memBlockData && isArray())
+	if (memBlockData && isArray())
 	{
 		result += sizeof(int32_t);
 	}
@@ -612,7 +619,7 @@ void SVValueObjectClass<T>::setTrData(int32_t memOffset, int32_t memSize, int32_
 	///This is required to make sure that if memory data block needs to be reallocated the pointer is not invalid
 	clearMemoryBlockPointer();
 	///Reset all parameters when pos is -1
-	if(-1 == pos)
+	if (-1 == pos)
 	{
 		m_trPos = -1L;
 		m_memOffset = -1L;
@@ -621,7 +628,7 @@ void SVValueObjectClass<T>::setTrData(int32_t memOffset, int32_t memSize, int32_
 	}
 	m_trPos = pos;
 	///When memOffset and memSize are -1 then only the trigger record position is changed
-	if(-1 == memOffset && -1 == memSize)
+	if (-1 == memOffset && -1 == memSize)
 	{
 		return;
 	}
@@ -633,9 +640,9 @@ void SVValueObjectClass<T>::setTrData(int32_t memOffset, int32_t memSize, int32_
 template <typename T>
 void SVValueObjectClass<T>::setMemBlockPointer(uint8_t* pMemBlockBase)
 {
-	if(nullptr != pMemBlockBase && -1 != m_memOffset)
+	if (nullptr != pMemBlockBase && -1 != m_memOffset)
 	{
-		if(isArray())
+		if (isArray())
 		{
 			setResultSizePointer(reinterpret_cast<int32_t*> (pMemBlockBase + m_memOffset));
 			m_pValue = reinterpret_cast<ValueType*> (pMemBlockBase + m_memOffset + sizeof(int32_t));
@@ -646,7 +653,7 @@ void SVValueObjectClass<T>::setMemBlockPointer(uint8_t* pMemBlockBase)
 			m_pValue = reinterpret_cast<ValueType*> (pMemBlockBase + m_memOffset);
 		}
 		///If local value data size is not 0 then we need to copy this to the memory block
-		if(0 < m_valueData.size())
+		if (0 < m_valueData.size())
 		{
 			memcpy(m_pValue, &m_valueData.at(0), m_valueData.size());
 			m_valueData.clear();
@@ -664,7 +671,7 @@ void SVValueObjectClass<T>::init()
 template <typename T>
 T* SVValueObjectClass<T>::reserveLocalMemory()
 {
-	ValueType* pResult{nullptr};
+	ValueType* pResult {nullptr};
 
 	bool isBlockMemory = (nullptr != m_pValue) && (0 == m_valueData.size());
 	///Determine old array size
@@ -677,12 +684,12 @@ T* SVValueObjectClass<T>::reserveLocalMemory()
 	{
 		pResult = reinterpret_cast<ValueType*> (&m_valueData.at(0));
 		///Need to copy block memory back to local memory when resizing
-		if(isBlockMemory)
+		if (isBlockMemory)
 		{
 			memcpy(pResult, m_pValue, m_memSizeReserved);
 			m_memSizeReserved = 0L;
 		}
-		if(oldArraySize < getArraySize())
+		if (oldArraySize < getArraySize())
 		{
 			//Set all new elements to the default value
 			std::fill(pResult + oldArraySize, pResult + getArraySize() - 1, DefaultValue());
@@ -780,6 +787,7 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 			Exception.Throw();
 		}
 		result = SvUl::getVectorFromOneDim<T>(rValue);
+		//@Todo[MEC][10.0] [10.03.2020]  fix for SVO-2656 commment out following lines
 		if (0 >= result.size())
 		{
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -904,7 +912,7 @@ template <typename T>
 void SVValueObjectClass<T>::setResultSizePointer(int32_t* pResultSize)
 {
 	m_pResultSize = pResultSize;
-	if(nullptr != m_pResultSize)
+	if (nullptr != m_pResultSize)
 	{
 		*m_pResultSize = getResultSize();
 	}

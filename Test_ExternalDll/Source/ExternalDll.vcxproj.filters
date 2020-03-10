@@ -46,11 +46,9 @@
     <ClInclude Include="ExternalDll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="ExternalDll.def">
-      <Filter>Source Files</Filter>
-    </CustomBuild>
+    <ClInclude Include="OldStructDefinitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExternalDll.rc">

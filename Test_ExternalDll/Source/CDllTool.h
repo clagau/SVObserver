@@ -25,15 +25,16 @@ public:
 	 \param ppaStructs <in/output> the structure must be preallocated with the length NUM_INPUT_VALUES.
 	***********/
 
-	static void getInputValuesDefinitionEx(InputValueDefinitionStructEx** ppaStructs);
+	static void getInputValuesDefinitionEx(std::array<InputValueDefinitionStructEx, NUM_INPUT_VALUES>  &rInputDefEx);
 
 	/**********
 	 Return the result value definition.
 	 \param ppaResultValues <in/output> the structure must be preallocated with the length NUM_RESULT_VALUES.
 	***********/
-
-	static void getResultValueDefinitionEx(ResultValueDefinitionStructEx** ppaResultValues);
-	static  void getResultTableDefinitionEx(ResultTableDefinitionStructEx** ppaResultTables);
+	static void getResultValueDefinitionEx(std::array< ResultValueDefinitionStructEx, NUM_RESULT_VALUES>  &rResultValues);
+	
+	
+	static  void getResultTableDefinitionEx(std::array<ResultTableDefinitionStructEx, NUM_RESULT_TABLES>  &rResultTables);
 	/**********
 	 Check if the value valid and return an error code. S_OK if value valid.
 	 \param lParameterNumber <in> the index of the parameter. Must be at least 0 and less than NUM_INPUT_VALUES.
@@ -109,8 +110,10 @@ public:
 	//Return MaxRowSize respectively Arraysize. 
 	// This Function will be called by SVobserver when reseting the 
 	//external tool 
-	HRESULT getResultTablesMaxRowSize(long Size, int pRowSizes[]) const;
-	HRESULT getResultValuesMaxArraySize(long Size, int pArraySizes[]) const;
+
+	HRESULT getResultTablesMaxRowSize(std::array<int, NUM_RESULT_TABLES>&  rRowSizes) const;
+	HRESULT getResultValuesMaxArraySize(std::array<int, NUM_RESULT_VALUES> &rArraySizes) const;
+
 #pragma endregion
 #pragma endregion
 

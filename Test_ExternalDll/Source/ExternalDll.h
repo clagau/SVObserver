@@ -13,10 +13,10 @@
 #endif
 
 #include <map>
-
 #include "CDllTool.h"
 #include "Guid.h"
 #include "defines.h"
+#include "OldStructDefinitions.h"
 
 HINSTANCE hReporterModule;
 
@@ -45,9 +45,10 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx (long* plArraySize,In
 TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructuresEx (InputValueDefinitionStructEx* paStructs);
 TOOLDLL_API HRESULT __stdcall SVSetInputValues (GUID tool, long lArraySize, VARIANT* paInputValues);
 TOOLDLL_API HRESULT __stdcall SVGetResultValues (GUID tool, long lArraySize, VARIANT* paResultValues);
-TOOLDLL_API HRESULT __stdcall SVGetErrorMessageString (unsigned long ulErrorNumber,BSTR* pbstrErrorMessage);
 TOOLDLL_API HRESULT __stdcall SVValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
+
 TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitionsEx(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues);
+
 TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructuresEx(ResultValueDefinitionStructEx* paStructs);
 TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages (long* plNumberOfInputImages);
 TOOLDLL_API HRESULT __stdcall SVSetMILInputImages (GUID tool, long lArraySize, long* paMILhandles);
@@ -64,3 +65,12 @@ TOOLDLL_API HRESULT __stdcall GetResultTables(GUID tool, long  Size, VARIANT* pR
 TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[]);
 TOOLDLL_API HRESULT __stdcall GetResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[]);
 
+//older Interface previous to Observer 10.0
+TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize, InputValueDefinitionStruct** ppaStructs);
+TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures(InputValueDefinitionStruct* paStructs);
+TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitions(long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
+TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructures(ResultValueDefinitionStruct* paStructs);
+TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTableDefinitionStruct** ppaResultValues);
+TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
+TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
+TOOLDLL_API HRESULT __stdcall DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs);
