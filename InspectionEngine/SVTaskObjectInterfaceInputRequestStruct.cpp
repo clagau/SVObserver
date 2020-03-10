@@ -47,7 +47,7 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 	}
 }
 
-inline bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskObjectInterfaceInputRequestStruct& rhs ) const
+bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskObjectInterfaceInputRequestStruct& rhs ) const
 {
 	if( nullptr != m_ObjectRef.getObject() && nullptr != rhs.m_ObjectRef.getObject() )
 	{

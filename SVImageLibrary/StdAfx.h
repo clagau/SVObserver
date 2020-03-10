@@ -63,7 +63,7 @@
 #include <stdint.h>
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
-#include <typeinfo.h>
+#include <typeinfo>
 #include <vector>
 #include <utility>			//Used by static library
 

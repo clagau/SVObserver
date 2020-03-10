@@ -128,7 +128,7 @@ namespace SvUl
 		return std::string();
 	}
 
-	void Remove(std::string& rStringValue, std::string::traits_type::_Elem ch)
+	void Remove(std::string& rStringValue, std::string::traits_type::char_type ch)
 	{
 		rStringValue.erase(std::remove ( rStringValue.begin(), rStringValue.end(), ch ), rStringValue.end());
 	}

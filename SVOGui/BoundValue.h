@@ -120,7 +120,7 @@ public:
 
 #pragma region Public Methods
 public:
-	Container::_Pairib insert(const key_type& rKey, const mapped_type& rMapped) { return m_values.insert(value_type(rKey, rMapped)); }
+	auto insert(const key_type& rKey, const mapped_type& rMapped) { return m_values.insert(value_type(rKey, rMapped)); }
 	mapped_type& operator[](const key_type& rKey) { return m_values[rKey]; }
 
 	void SetTaskID(const GUID& rTaskID) { m_TaskID = rTaskID; };
