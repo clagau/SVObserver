@@ -791,14 +791,14 @@ void SVLinearEdgeProcessingClass::addOverlayGroups(const SvIe::SVImageClass* pIm
 	pThresholdLowerMarker->set_minvalue(SvDef::cMin8BitPixelValue);
 	pThresholdLowerMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
 	SvPb::setValueObject(m_svLowerThresholdValue, *pThresholdLowerMarker->mutable_value(), true);
-	pThresholdLowerMarker->set_sizetype(SvPb::OverlayShapeMarker_Size_Full);
+	pThresholdLowerMarker->set_sizetype(SvPb::Size::Full);
 	auto* pThesholdUpperShape = pThresholdGroup->add_shapes();
 	pThesholdUpperShape->mutable_color()->set_value(m_cfThresholds);
 	auto* pThresholdUpperMarker = pThesholdUpperShape->mutable_marker();
 	pThresholdUpperMarker->set_minvalue(SvDef::cMin8BitPixelValue);
 	pThresholdUpperMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
 	SvPb::setValueObject(m_svUpperThresholdValue, *pThresholdUpperMarker->mutable_value(), true);
-	pThresholdUpperMarker->set_sizetype(SvPb::OverlayShapeMarker_Size_Full);
+	pThresholdUpperMarker->set_sizetype(SvPb::Size::Full);
 
 	// add result lines
 	auto* pResultGroup = rOverlay.add_shapegroups();
@@ -824,7 +824,7 @@ void SVLinearEdgeProcessingClass::addOverlayGroups(const SvIe::SVImageClass* pIm
 		pResultMarker->set_minvalue(SvDef::cMin8BitPixelValue);
 		pResultMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
 		pResultMarker->set_trpos(m_svLinearEdges.getTrPos()+1);
-		pResultMarker->set_sizetype(SvPb::OverlayShapeMarkerArray_Size_MidShort);
+		pResultMarker->set_sizetype(SvPb::Size::MidShort);
 	}
 	break;
 	}

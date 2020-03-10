@@ -181,23 +181,25 @@ message OverlayShapeRectArray
 	}
 }
 
+enum Orientation
+{
+	x = 0;
+	y = 1;
+}
+
+enum Size
+{
+	Full = 0;	//Marker is over the whole overlay
+	MidShort = 1; //Marker is a short marker in the middle of the overlay.
+}
+
 message OverlayShapeMarker
 {
 	double minValue = 1;
 	double maxValue = 2;
 	ValueObject value = 3;
-	enum Orientation
-	{
-		x = 0;
-		y = 1;
-	}
-	Orientation orientationType = 4;
-	enum Size
-	{
-		Full = 0;	//Marker is over the whole overlay
-		MidShort = 1; //Marker is a short marker in the middle of the overlay.
-	}
 	Size sizeType = 5;
+	Orientation orientationType = 4;
 }
 
 message OverlayShapeMarkerArray
@@ -205,25 +207,14 @@ message OverlayShapeMarkerArray
 	double minValue = 1;
 	double maxValue = 2;
 	repeated double value = 3;
-	enum Orientation
-	{
-		x = 0;
-		y = 1;
-	}
 	Orientation orientationType = 4;
-	enum Size
-	{
-		Full = 0;	//Marker is over the whole overlay
-		MidShort = 1; //Marker is a short marker in the middle of the overlay.
-	}
 	Size sizeType = 5;
-
 	int32 trPos = 6;
 }
 
 message OverlayShapeBlockMarker
 {
-	//This Block maker start with the first pixel with the first color. At the position changePos[0] it changes to the next color and so on.
+	//This Block marker start with the first pixel with the first color. At the position changePos[0] it changes to the next color and so on.
 	repeated uint32 colors = 1;
 	repeated int32 changePos = 2;	
 	
