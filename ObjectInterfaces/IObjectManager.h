@@ -59,5 +59,4 @@ template<typename ObjectVisitor>
 HRESULT visitElements(ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID = GUID_NULL);
 
 IObjectClass* FindObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo);
-ISVImage* FindImageObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo);
 } //namespace SvOi

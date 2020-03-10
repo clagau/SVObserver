@@ -39,13 +39,42 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	SvOl::ValidateInput(m_SeedImageInfo);
 
-	if (nullptr == SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo))
+	auto* pSeedImage = SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo);
+	auto* pOwner = m_ownerObjectInfo.getObject();
+	SvIe::SVImageClass* pSourceImage = nullptr;
+	if (nullptr != pOwner)
+	{
+		pSourceImage = dynamic_cast<SvIe::SVImageClass*>(pOwner->getFirstObject({ SvPb::SVImageObjectType }));
+	}
+	if (nullptr == pSeedImage || nullptr == pSourceImage)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
+		}
+	}
+	else
+	{
+		const auto& rSeedInfo = pSeedImage->GetImageInfo();
+		const auto& rSourceInfo = pSourceImage->GetImageInfo();
+		double seedWidth = 0.0;
+		double sourceWidth = 0.0;
+		rSeedInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputWidth, seedWidth);
+		rSourceInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputWidth, sourceWidth);
+		double seedHeight = 0.0;
+		double sourceHeight = 0.0;
+		rSeedInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputHeight, seedHeight);
+		rSourceInfo.GetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyOutputHeight, sourceHeight);
+		if (seedWidth != sourceWidth || seedHeight != sourceHeight)
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ImagesDifferentSize, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 

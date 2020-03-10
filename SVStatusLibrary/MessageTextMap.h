@@ -205,6 +205,7 @@ namespace SvStl
 		{Tid_Lpt_WrongState, _T("Select Line In wrong State")},
 		{Tid_Sax_ConInitializeExFailed, _T("CoInitializeEx Failed")},
 		{Tid_UnknowThread, _T( "Unknown Thread" )},
+		{Tid_ImagesDifferentSize, _T("Images have different size, but have to be the same size.")},
 
 		//MatroxGigE
 		{Tid_MatroxGigE_Connect_FindCameraError, _T("HandleConnect - FindCamera Error (%s) - Device %s")},

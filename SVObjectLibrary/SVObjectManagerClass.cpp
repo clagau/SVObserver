@@ -15,9 +15,7 @@
 #include "DependencyManager.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/ISVImage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-
 #include "SVClassRegisterListClass.h"
 #include "TextDefinesSvOl.h"
 #include "SVMessage\SVMessage.h"
@@ -1788,13 +1786,6 @@ SvOi::IObjectClass* SvOi::getObject(const SVGUID& rObjectID)
 SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 {
 	return SVObjectManagerClass::Instance().getFirstObject(rParentID, rInfo);
-}
-
-SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
-{
-	SvOi::IObjectClass* pObject = SvOi::FindObject(rParentID, rInfo);
-
-	return dynamic_cast<SvOi::ISVImage*> (pObject);
 }
 #pragma endregion IObjectManager-function
 

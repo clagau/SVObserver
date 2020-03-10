@@ -134,6 +134,24 @@ void ReconstructFilterDlg::OnSelchangeImageCombo()
 	{
 		m_imageController.ConnectToImage(SvDef::SeedImageConnectionName, std::string(currentImageName), m_filterID);
 		m_seedImageName = currentImageName;
+
+		SvPb::InspectionCmdMsgs Request, Response;
+		SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
+		SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_filterID);
+		HRESULT hrOk = SvCmd::InspectionCommands(m_rInspectionID, Request, &Response);
+		if (S_OK != hrOk && Response.has_resetobjectresponse())
+		{
+			SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			if (0 < errorMessageList.size())
+			{
+				Msg.setMessage(errorMessageList[0].getMessage());
+			}
+			else
+			{
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams));
+			}
+		}
 	}
 	setImages();
 }
