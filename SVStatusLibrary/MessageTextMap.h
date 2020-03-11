@@ -195,6 +195,8 @@ namespace SvStl
 		{Tid_False, _T("FALSE")},
 		{Tid_ConditionalValidated, _T("Conditional Equation Validated Successfully\n Condition = %s")},
 		{Tid_FormulaValidated, _T("Formula Validated Successfully\n Value = %s")},
+		{Tid_ConditionalSelectedValidated, _T("Selected Text validated successfully\n Condition = %s") },
+		{Tid_FormulaSelectedValidated, _T("Selected Text validated successfully\n Value = %s") },
 		{Tid_Error_InvalidFormula, _T("An Invalid Formula has been detected.\nThe Formula must be valid to exit this dialog.")},
 		{Tid_Error_CreationFilterFailed, _T("Creation of Filter Failed")},
 		{Tid_Error_ToolPositionError, _T("Changing image source has placed the tool outside of the selected source image.  Please either: "

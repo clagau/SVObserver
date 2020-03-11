@@ -53,6 +53,7 @@ namespace SvOg
 		void advanceInEditor( long Pos );
 		void deleteInEditor( long Pos );
 		std::string getEquationText() const;
+		std::string getSelectedEquationText() const;
 		void setEquationText();
 		bool createToolbars();
 

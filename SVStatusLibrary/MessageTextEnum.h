@@ -173,6 +173,8 @@ enum MessageTextEnum
 	Tid_False,
 	Tid_ConditionalValidated,
 	Tid_FormulaValidated,
+	Tid_ConditionalSelectedValidated,
+	Tid_FormulaSelectedValidated,
 	Tid_Error_InvalidFormula,
 	Tid_Error_CreationFilterFailed,
 	Tid_Error_ToolPositionError,

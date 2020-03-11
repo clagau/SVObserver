@@ -328,6 +328,17 @@ std::string SVFormulaEditorPageClass::getEquationText() const
 	return std::string(&equationText[0]);
 }
 
+std::string SVFormulaEditorPageClass::getSelectedEquationText() const
+{
+	std::vector<TCHAR> equationText;
+	equationText.resize(SV_EQUATION_BUFFER_SIZE, 0);
+	if (nullptr != m_EditWnd.GetSafeHwnd())
+	{
+		m_EditWnd.SendMessage(SCI_GETSELTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>(&equationText[0]));
+	}
+	return std::string(&equationText[0]);
+}
+
 void SVFormulaEditorPageClass::setEquationText()
 {
 	// Get text from EquationStruct and place into Editor
@@ -641,7 +652,9 @@ bool SVFormulaEditorPageClass::validateAndSetEquation()
 
 void SVFormulaEditorPageClass::onValidate()
 {
-	std::string equationText = getEquationText();
+	std::string fullEquationText = getEquationText();
+	std::string selectedEquationText = getSelectedEquationText();
+	std::string& equationText = selectedEquationText.empty() ? fullEquationText : selectedEquationText;
 
 	UpdateData(TRUE); // Update the variables
 	double value = 0;
@@ -659,19 +672,37 @@ void SVFormulaEditorPageClass::onValidate()
 		if (m_isConditionalPage)
 		{
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText((value) ? SvStl::Tid_True : SvStl::Tid_False));
-			id = SvStl::Tid_ConditionalValidated;
+			if (selectedEquationText.empty())
+			{
+				id = SvStl::Tid_ConditionalValidated;
+			}
+			else
+			{
+				id = SvStl::Tid_ConditionalSelectedValidated;
+			}
 		}
 		else
 		{
 			msgList.push_back(SvUl::Format(_T("%lf"), value));
-			id = SvStl::Tid_FormulaValidated;
+			if (selectedEquationText.empty())
+			{
+				id = SvStl::Tid_FormulaValidated;
+			}
+			else
+			{
+				id = SvStl::Tid_FormulaSelectedValidated;
+			}
 		}
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10223);
 	}
 	else // Something is wrong
 	{
-		HandleValidateError(result);
+		//only move cursor if nothing selected.
+		if (selectedEquationText.empty())
+		{
+			HandleValidateError(result);
+		}
 	}
 }
 
