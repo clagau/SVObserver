@@ -3233,7 +3233,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 	if (Tool)
 	{
 		//check to see if the tool has extents
-		if (Tool->DoesObjectHaveExtents())
+		if (Tool->DoesObjectHaveExtents() && SvPb::TransformationToolClassId != Tool->GetClassID())
 		{
 			return pCmdUI->Enable(true);
 		}
