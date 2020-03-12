@@ -170,7 +170,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_ringBuffer.clear();
 			m_ringBuffer.resize(m_ringBufferDepth);
 			m_isBufferFull = false;
-			m_nextBufferPos = 0;
+			m_nextBufferPos = -1;
 		}
 		else
 		{
@@ -212,6 +212,13 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 	bool returnValue = SVToolClass::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
 	{
+		//after reset, the first run is an init run, do not use this image
+		if (m_nextBufferPos == -1)
+		{
+			m_nextBufferPos = 0;
+			return true;
+		}
+
 		//-----	Execute this objects run functionality. -----------------------------
 		int imageOutputFlag = 0;
 		int maxIndexPos = m_ringBufferDepth -1;

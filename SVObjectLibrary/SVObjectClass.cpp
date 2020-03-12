@@ -765,7 +765,6 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 
 SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb::EmbeddedIdEnum embeddedID)
 {
-	assert(SvPb::NoEmbeddedId != embeddedID || GetEmbeddedID() != embeddedID);
 	if (GetEmbeddedID() == embeddedID && SvPb::NoEmbeddedId != embeddedID)
 	{
 		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, rUniqueID);
