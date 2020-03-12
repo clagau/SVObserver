@@ -37,6 +37,7 @@ public:
 
 #pragma region Private Methods
 private:
+	int updateResults(bool bRedrawDefinitions);
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);

@@ -63,6 +63,8 @@ BOOL ResultListCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, U
 
 void ResultListCtrl::updateList()
 {
+	int topIndex = GetTopIndex(); //take note of this so it can be restored when the list is updated
+
 	if (nullptr == m_pDoc)
 	{
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -73,6 +75,7 @@ void ResultListCtrl::updateList()
 	bool Update = true;
 	SVObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentResultUpdateUidGuid, pObject);
+
 	if (nullptr != pObject)
 	{
 		double Value;
@@ -88,7 +91,6 @@ void ResultListCtrl::updateList()
 	{
 		return;
 	}
-
 	SetRedraw( false );
 
 	bool bRedrawDefinitions = false;
@@ -100,91 +102,7 @@ void ResultListCtrl::updateList()
 		bRedrawDefinitions = true;
 	}
 
-	int i = 0;
-	DWORD l_Color = 0x00FFFFFF;
-
-	for( i = 0; i < static_cast<int> (m_ResultDefinitions.size()); ++i )
-	{
-		std::string Name;
-		std::string NameToType;
-		std::string ItemIndex;
-		std::string Value;
-
-		SvIe::SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[ i ];
-
-		SVObjectClass* l_pObject = nullptr;
-		if(bRedrawDefinitions)
-		{
-			l_pObject = SVObjectManagerClass::Instance().GetObject( l_rDef.GetObjectID() );
-		}
-
-		if( nullptr != l_pObject )
-		{
-			if( l_rDef.GetIndexPresent())
-			{
-				if (0 <= l_rDef.GetIndex())
-				{
-					Name = SvUl::Format( _T("%s[%d]"), l_pObject->GetName(),  l_rDef.GetIndex() +1 );
-				}
-				else
-				{
-					Name = SvUl::Format( _T("%s[]"), l_pObject->GetName() );
-				}
-			}
-			else
-			{
-				Name = l_pObject->GetName();
-			}
-			NameToType = l_pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
-		}
-
-		ItemIndex = SvUl::Format( _T( "%d" ), i );
-
-		SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find( l_rDef );
-
-		if( l_Iter != m_ResultData.m_ResultData.end() )
-		{
-			Value = l_Iter->second.GetValue().c_str();
-			l_Color = l_Iter->second.GetColor();
-
-			if( l_Iter->second.IsIOTypePresent() )
-			{
-				ItemIndex.clear();
-
-				if( l_Iter->second.GetIOType() == IO_DIGITAL_INPUT )
-				{
-					NameToType = SvUl::LoadStdString( IDS_OBJECTNAME_DIGITAL_INPUT );
-				}
-				else if( l_Iter->second.GetIOType() == IO_REMOTE_INPUT )
-				{
-					NameToType = SvUl::LoadStdString( IDS_OBJECTNAME_REMOTE_INPUT );
-				}
-			}
-		}
-
-		if(bRedrawDefinitions)
-		{
-			if( GetItemCount() <= i )
-			{
-				InsertItem( i, Name.c_str() );
-				SetItemText( i, 2, NameToType.c_str() );
-				SetItemText( i, 3, ItemIndex.c_str() );
-			}
-			else
-			{
-				std::string TempName = GetItemText( i, 0 );
-
-				if( TempName != Name )
-				{
-					SetItemText( i, 0, Name.c_str() );
-					SetItemText( i, 2, NameToType.c_str()	 );
-				}
-			}
-		}
-
-		SetItemText( i, 1, Value.c_str() );
-		SetItemData( i, l_Color );
-	}
+ 	int i = updateResults(bRedrawDefinitions);
 
 	std::string Temp;
 
@@ -229,7 +147,7 @@ void ResultListCtrl::updateList()
 
 	if(bRedrawDefinitions)
 	{
-		l_Color = 0x00ffffff;
+		DWORD l_Color = 0x00ffffff;
 		SetItemData( i, l_Color );     // toolset time
 		SetItemData( i + 1, l_Color ); // processes/sec
 
@@ -241,16 +159,110 @@ void ResultListCtrl::updateList()
 	m_UpdateTimeStamp = SvTl::GetTimeStamp();
 	SetRedraw( true );
 	RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
+
+	EnsureVisible(topIndex + GetCountPerPage() - 1, FALSE); //this keeps the scrollbar at the same position it had before the update as per SVO-1496
 }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
+
+int ResultListCtrl::updateResults(bool bRedrawDefinitions)
+{
+	int i = 0;
+	
+	DWORD l_Color = 0x00FFFFFF;
+
+	for( i = 0; i < static_cast<int> (m_ResultDefinitions.size()); ++i )
+	{
+		std::string Name;
+		std::string NameToType;
+		std::string ItemIndex;
+		std::string Value;
+
+		SvIe::SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[i];
+
+		SVObjectClass* l_pObject = nullptr;
+		if (bRedrawDefinitions)
+		{
+			l_pObject = SVObjectManagerClass::Instance().GetObject(l_rDef.GetObjectID());
+		}
+
+		if (nullptr != l_pObject)
+		{
+			if (l_rDef.GetIndexPresent())
+			{
+				if (0 <= l_rDef.GetIndex())
+				{
+					Name = SvUl::Format(_T("%s[%d]"), l_pObject->GetName(), l_rDef.GetIndex() + 1);
+				}
+				else
+				{
+					Name = SvUl::Format(_T("%s[]"), l_pObject->GetName());
+				}
+			}
+			else
+			{
+				Name = l_pObject->GetName();
+			}
+			NameToType = l_pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+		}
+
+		ItemIndex = SvUl::Format(_T("%d"), i);
+
+		SvIe::SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find(l_rDef);
+
+		if (l_Iter != m_ResultData.m_ResultData.end())
+		{
+			Value = l_Iter->second.GetValue().c_str();
+			l_Color = l_Iter->second.GetColor();
+
+			if (l_Iter->second.IsIOTypePresent())
+			{
+				ItemIndex.clear();
+
+				if (l_Iter->second.GetIOType() == IO_DIGITAL_INPUT)
+				{
+					NameToType = SvUl::LoadStdString(IDS_OBJECTNAME_DIGITAL_INPUT);
+				}
+				else if (l_Iter->second.GetIOType() == IO_REMOTE_INPUT)
+				{
+					NameToType = SvUl::LoadStdString(IDS_OBJECTNAME_REMOTE_INPUT);
+				}
+			}
+		}
+
+		if (bRedrawDefinitions)
+		{
+			if (GetItemCount() <= i)
+			{
+				InsertItem(i, Name.c_str());
+				SetItemText(i, 2, NameToType.c_str());
+				SetItemText(i, 3, ItemIndex.c_str());
+			}
+			else
+			{
+				std::string TempName = GetItemText(i, 0);
+
+				if (TempName != Name)
+				{
+					SetItemText(i, 0, Name.c_str());
+					SetItemText(i, 2, NameToType.c_str());
+				}
+			}
+		}
+
+		SetItemText(i, 1, Value.c_str());
+		SetItemData(i, l_Color);
+	}
+
+	return i;
+}
+
 void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 {
 	CDC* pDC = CDC::FromHandle( lpDrawItemStruct->hDC );
 	CRect rcItem( lpDrawItemStruct->rcItem );
 	int nItem = lpDrawItemStruct->itemID;
-	CImageList* pImageList( nullptr );
 
 	if( nullptr != pDC )
 	{
@@ -312,6 +324,7 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		rgn.DeleteObject();
 
 		// Draw state icon
+		CImageList* pImageList(nullptr);
 		if( lvi.state & LVIS_STATEIMAGEMASK )
 		{
 			int nImage = ( ( lvi.state & LVIS_STATEIMAGEMASK ) >> 12 ) - 1;
