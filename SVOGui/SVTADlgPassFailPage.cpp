@@ -153,6 +153,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect()
 	{
+		UpdateData();
 		std::string Value( m_FailHigh );
 		if( ShowObjectSelector( Value, RangeEnum::ER_FailHigh) )
 		{
@@ -163,6 +164,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnlHighIndirect()
 	{
+		UpdateData();
 		std::string Value( m_WarnHigh );
 		if( ShowObjectSelector( Value, RangeEnum::ER_WarnHigh) )
 		{
@@ -173,6 +175,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnLowIndirect()
 	{
+		UpdateData();
 		std::string Value( m_WarnLow );
 		if( ShowObjectSelector( Value, RangeEnum::ER_WarnLow) )
 		{
@@ -183,6 +186,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect()
 	{
+		UpdateData();
 		std::string Value( m_FailLow );
 		if( ShowObjectSelector( Value, RangeEnum::ER_FailLow) )
 		{
@@ -195,22 +199,16 @@ namespace SvOg
 	#pragma region Private Methods
 	bool SVToolAdjustmentDialogPassFailPageClass::UpdateRangeValues()
 	{
-		bool bRetVal = true;
-	
-		std::string errorMsg;
-
 		try
 		{
-			bRetVal = (S_OK == SetInspectionData());
+			return (S_OK == SetInspectionData());
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
-			bRetVal = false;
+			return false;
 		}
-		
-		return bRetVal;
 	}
 
 	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum)
