@@ -62,7 +62,7 @@ void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
 {
 	if (sizeof(GUID) != strguid.size())
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
@@ -129,7 +129,7 @@ GUID GetGuidFromString(const std::string& buf)
 			return guid;
 		}
 		default:
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
 			return GUID_NULL;
 	}
