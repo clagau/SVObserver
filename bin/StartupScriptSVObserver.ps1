@@ -20,9 +20,6 @@ C:\Windows\System32\DisplaySwitch.exe /clone
 
 c:\SVObserver\bin\SVRemoveKeyboards.exe
 
-#Endable disk caching for harddrive
-dskcache.exe +w +p
-
 restart-service $MTXsrvName
 
 
@@ -124,5 +121,5 @@ else
 }
 
 D:\Utilities\BGInfo\bginfoIP.bat
-C:\SVObserver\bin\SVObserver.exe
+start-process "C:\SVObserver\bin\SVObserver.exe"
 start-process "C:\SVObserver\bin\SyncSystemTime.bat" -WindowStyle Minimized

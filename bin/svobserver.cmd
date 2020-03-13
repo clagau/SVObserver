@@ -1,1 +1,1 @@
-powershell -WindowStyle Minimized -executionpolicy remotesigned -File "C:\SVObserver\bin\StartupScriptSVObserver.ps1"
+powershell -noprofile -command "&{start-process powershell -WindowStyle Minimized -ArgumentList '-WindowStyle Minimized -noprofile -executionpolicy remotesigned -File C:\SVObserver\bin\StartupScriptSVObserver.ps1' -verb runas}"
