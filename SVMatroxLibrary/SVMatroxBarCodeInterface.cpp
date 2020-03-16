@@ -167,115 +167,6 @@ __int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_
 
 
 /**
-@SVOperationName Convert2MatroxType - SVBarCodeTypesEnum
-
-@SVOperationDescription This function converts the SVObserver SVBarCodeTypesEnumto a matrox Enum.
-
-*/
-// Bar Code Types......
-__int64 SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType)
-{
-	__int64 l_lControlType = M_UNINITIALIZED;
-	switch (p_eType)
-	{
-		case SVBC412:
-		{
-			l_lControlType = M_BC412;
-			break;
-		}
-		case SVCodeABar:
-		{
-			l_lControlType = M_CODABAR;
-			break;
-		}
-		case SVCode39:
-		{
-			l_lControlType = M_CODE39;
-			break;
-		}
-		case SVCode128:
-		{
-			l_lControlType = M_CODE128;
-			break;
-		}
-		case SVDataMatrix:
-		{
-			l_lControlType = M_DATAMATRIX;
-			break;
-		}
-		case SVEan13:
-		{
-			l_lControlType = M_EAN13;
-			break;
-		}
-		case SVInterleaved25:
-		{
-			l_lControlType = M_INTERLEAVED25;
-			break;
-		}
-		case SVMaxiCode:
-		{
-			l_lControlType = M_MAXICODE;
-			break;
-		}
-		case SVPDF417:
-		{
-			l_lControlType = M_PDF417;
-			break;
-		}
-		case SVPharmaCode:
-		{
-			l_lControlType = M_PHARMACODE;
-			break;
-		}
-		case SVPlanet:
-		{
-			l_lControlType = M_PLANET;
-			break;
-		}
-		case SVPostNet:
-		{
-			l_lControlType = M_POSTNET;
-			break;
-		}
-		case SVRssCode:
-		{
-			l_lControlType = M_GS1_DATABAR;
-			break;
-		}
-		case SVUpcA:
-		{
-			l_lControlType = M_UPC_A;
-			break;
-		}
-		case SVUpcE:
-		{
-			l_lControlType = M_UPC_E;
-			break;
-		}
-		case SVQRCode:
-		{
-			l_lControlType = M_QRCODE;
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
-
-	// Combination long data type..
-	if (p_eType & SVBCTypeLong)
-	{
-		l_lControlType |= M_TYPE_LONG;
-	}
-
-	return l_lControlType;
-}
-
-
-
-/**
 @SVOperationName Set double
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
@@ -320,7 +211,7 @@ HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControl
 				}
 				else
 				{
-					Result = SVMEE_INVALID_PARAMETER;
+					return SVMEE_INVALID_PARAMETER;
 				}
 			}
 			Result = SVMatroxApplicationInterface::GetLastStatus();
@@ -705,10 +596,7 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, SVBarCodeTypesEnum 
 	try
 #endif
 	{
-		MIL_ID l_NewID = M_NULL;
-		__int64 l_lCodeType = Convert2MatroxType(p_eType);
-
-		l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lCodeType, M_DEFAULT, M_NULL);
+		MIL_ID l_NewID = McodeAlloc(M_DEFAULT_HOST, p_eType, M_DEFAULT, M_NULL);
 		// Check For errors
 		Result = SVMatroxApplicationInterface::GetLastStatus();
 
@@ -751,14 +639,11 @@ HRESULT SVMatroxBarCodeInterface::Create(__int64& p_rCodeID, const __int64& p_Fr
 #endif
 	{
 		// This function creates a new barcode from an existing barcode.
-		MIL_ID l_NewID = M_NULL;
-
 		if (M_NULL != p_FromCodeID)
 		{
 			long l_lValue;
-
 			McodeInquire(p_FromCodeID, M_CODE_TYPE, &l_lValue);
-			l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lValue, M_DEFAULT, M_NULL);
+			MIL_ID l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lValue, M_DEFAULT, M_NULL);
 
 			// Check For errors
 			Result = SVMatroxApplicationInterface::GetLastStatus();

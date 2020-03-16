@@ -64,6 +64,5 @@ public:
 	static bool Execute( const __int64& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 private:
 	static __int64 Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) ;
-	static __int64 Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
 };
 

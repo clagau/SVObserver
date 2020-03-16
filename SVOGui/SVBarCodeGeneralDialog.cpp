@@ -67,7 +67,7 @@ SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcA, _T("UPC-A"), SVValueEncNum, SVValueEccCheckDigit));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVUpcE, _T("UPC-E"), SVValueEncNum, SVValueEccCheckDigit));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVPharmaCode, _T("Pharmacode"), SVValueEncNum, SVValueEccNone));
-	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVRssCode, _T("RSS"), SVValueEncRss14, SVValueEccCheckDigit));
+	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVGS1Code, _T("GS1"), SVValueENCGS1, SVValueEccCheckDigit));
 	m_aBarCodeInfo.push_back(SVBarCodeInfoStruct(SVQRCode, _T("QR Code"), SVValueAny, SVValueAny)); // 2D
 }
 

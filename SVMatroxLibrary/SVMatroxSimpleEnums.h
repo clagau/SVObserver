@@ -160,7 +160,6 @@ enum SVMatroxBufferValues
 	SVValueEncMode2						= 6,			// M_ENC_MODE2
 	SVValueEncUpcAAddOn					= M_ENC_UPCA_ADDON, 
 	SVValueEncUpcEAddOn					= M_ENC_UPCE_ADDON,
-	SVValueEncRss14						= 0x00000400,	// M_ENC_RSS14
 	SVValueEncStandard					= 11,			// M_ENC_STANDARD
 	SVValueEncQRCodeModel1				= 0x00200000,	// M_ENC_QRCODE_MODEL1
 	SVValueEncQRCodeModel2				= 0x00400000,	// M_ENC_QRCODE_MODEL2
@@ -196,13 +195,13 @@ enum SVMatroxBufferValues
 	SVValueENCMode4						= M_ENC_MODE4,
 	SVValueENCMode5						= M_ENC_MODE5,
 	SVValueENCMode6						= M_ENC_MODE6,
-	SVValueENCRss14						= M_ENC_GS1_DATABAR_OMNI,
-	SVValueENCRss14Trunc				= M_ENC_GS1_DATABAR_TRUNCATED,
-	SVValueENCRssLimited				= M_ENC_GS1_DATABAR_LIMITED,
-	SVValueENCRssExpanded				= M_ENC_GS1_DATABAR_EXPANDED,
-	SVValueENCRss14Stacked				= M_ENC_GS1_DATABAR_STACKED,
-	SVValueENCRss14StackedOmni			= M_ENC_GS1_DATABAR_STACKED_OMNI,
-	SVValueENCRssExpandedStacked		= M_ENC_GS1_DATABAR_EXPANDED_STACKED,
+	SVValueENCGS1						= M_ENC_GS1_DATABAR_OMNI,
+	SVValueENCGS1Trunc					= M_ENC_GS1_DATABAR_TRUNCATED,
+	SVValueENCGS1Limited				= M_ENC_GS1_DATABAR_LIMITED,
+	SVValueENCGS1Expanded				= M_ENC_GS1_DATABAR_EXPANDED,
+	SVValueENCGS1Stacked				= M_ENC_GS1_DATABAR_STACKED,
+	SVValueENCGS1StackedOmni			= M_ENC_GS1_DATABAR_STACKED_OMNI,
+	SVValueENCGS1ExpandedStacked		= M_ENC_GS1_DATABAR_EXPANDED_STACKED,
 };
 
 // Used with MbufInquire / MbufControl "Get / Set"
@@ -455,22 +454,22 @@ enum SVBarCodeControlTypeEnum
 */
 enum SVBarCodeTypesEnum
 {
-	SVCode39					= 0x00000001, // M_CODE39 
-	SVDataMatrix				= 0x00000002, // M_DATAMATRIX 
-	SVEan13						= 0x00000004, // M_EAN13 
-	SVMaxiCode					= 0x00000008, // M_MAXICODE 
-	SVInterleaved25				= 0x00000010, // M_INTERLEAVED25 
-	SVCode128					= 0x00000020, // M_CODE128 
-	SVBC412						= 0x00000040, // M_BC412 
-	SVCodeABar					= 0x00000080, // M_CODABAR 
-	SVPDF417					= 0x00000100, // M_PDF417 
-	SVPostNet					= 0x00000200, // M_POSTNET 
-	SVPlanet					= 0x00000400, // M_PLANET 
-	SVUpcA						= 0x00000800, // M_UPC_A 
-	SVUpcE						= 0x00001000, // M_UPC_E 
-	SVPharmaCode				= 0x00002000, // M_PHARMACODE 
-	SVRssCode					= 0x00004000, // M_RSSCODE 
-	SVQRCode					= 0x04000000, // M_QRCODE
+	SVCode39					= M_CODE39, 
+	SVDataMatrix				= M_DATAMATRIX, 
+	SVEan13						= M_EAN13, 
+	SVMaxiCode					= M_MAXICODE, 
+	SVInterleaved25				= M_INTERLEAVED25, 
+	SVCode128					= M_CODE128, 
+	SVBC412						= M_BC412, 
+	SVCodeABar					= M_CODABAR, 
+	SVPDF417					= M_PDF417, 
+	SVPostNet					= M_POSTNET,
+	SVPlanet					= M_PLANET,
+	SVUpcA						= M_UPC_A, 
+	SVUpcE						= M_UPC_E, 
+	SVPharmaCode				= M_PHARMACODE, 
+	SVGS1Code					= M_GS1_DATABAR,
+	SVQRCode					= M_QRCODE
 };
 
 /**

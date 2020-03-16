@@ -70,13 +70,13 @@ SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=nullptr*/)
 	m_aMilEnc.push_back(SVBarCodeErrorCorrectionEncodingStruct(SVValueENCMode4, _T("Mode 4")));
 	m_aMilEnc.push_back(SVBarCodeErrorCorrectionEncodingStruct(SVValueENCMode5, _T("Mode 5")));
 	m_aMilEnc.push_back(SVBarCodeErrorCorrectionEncodingStruct(SVValueENCMode6, _T("Mode 6")));
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14, _T("RSS-14") ) );
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14Trunc, _T("RSS-14 Truncated") ) );
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssLimited, _T("RSS Limited") ) );
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssExpanded, _T("RSS Expanded") ) );
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14Stacked, _T("RSS-14 Stacked") ) );
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRss14StackedOmni, _T("RSS-14 Stacked Omni") ) );
-	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCRssExpandedStacked, _T("RSS Expanded Stacked") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1, _T("GS1") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1Trunc, _T("GS1 Truncated") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1Limited, _T("GS1 Limited") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1Expanded, _T("GS1 Expanded") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1Stacked, _T("GS1 Stacked") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1StackedOmni, _T("GS1 Stacked Omni") ) );
+	m_aMilEnc.push_back( SVBarCodeErrorCorrectionEncodingStruct( SVValueENCGS1ExpandedStacked, _T("GS1 Expanded Stacked") ) );
 	m_aMilEnc.push_back(SVBarCodeErrorCorrectionEncodingStruct(SVValueEncQRCodeModel1, _T("QRCode Model1")));
 	m_aMilEnc.push_back(SVBarCodeErrorCorrectionEncodingStruct(SVValueEncQRCodeModel2, _T("QRCode Model2")));
 
@@ -157,14 +157,14 @@ SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=nullptr*/)
 	m_mapBarCodeEnc[SVPharmaCode].push_back(SVValueEncNum);
 	m_mapBarCodeEcc[SVPharmaCode].push_back(SVValueEccNone);
 
-	m_mapBarCodeEcc[SVRssCode].push_back(SVValueEccCheckDigit);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRss14);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRss14Trunc);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRssLimited);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRssExpanded);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRss14Stacked);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRss14StackedOmni);
-	m_mapBarCodeEnc[SVRssCode].push_back(SVValueENCRssExpandedStacked);
+	m_mapBarCodeEcc[SVGS1Code].push_back(SVValueEccCheckDigit);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1Trunc);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1Limited);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1Expanded);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1Stacked);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1StackedOmni);
+	m_mapBarCodeEnc[SVGS1Code].push_back(SVValueENCGS1ExpandedStacked);
 
 	m_mapBarCodeEcc[SVQRCode].push_back(SVValueAny);
 	m_mapBarCodeEcc[SVQRCode].push_back(SVValueEccH);
