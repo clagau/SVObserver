@@ -23,6 +23,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
 #include "TriggerRecordController/ITriggerRecordControllerR.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
 #pragma endregion Includes
 
 namespace SvOgw
@@ -438,10 +439,18 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 	}
 
 	std::vector<int> imagePositions;
-	collect_image_pos(imagePositions, trc.getImageDefList(inspectionPos), req.imageids());
-
 	std::vector<int> valuePositions;
-	collect_value_pos(valuePositions, trc.getDataDefList(inspectionPos), req.valueids());
+	try
+	{
+		collect_image_pos(imagePositions, trc.getImageDefList(inspectionPos), req.imageids());
+		collect_value_pos(valuePositions, trc.getDataDefList(inspectionPos), req.valueids());
+	}
+	catch (...)
+	{
+		std::string msgText = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_ErrorInGetProductData);
+		SV_LOG_GLOBAL(error) << msgText;
+		return SvSyl::SVPromise<void>::make_ready();
+	}
 
 	res.set_trigger(trId);
 
@@ -549,33 +558,176 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 		return;
 	}
 
-	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
-	int inspectionPos = get_inspection_pos_for_guid(trc, stream.req.inspectionid());
-	if (inspectionPos >= 0)
+	try
 	{
-		collect_value_pos(stream.valuePositions, trc.getDataDefList(inspectionPos), stream.req.valueids());
-		collect_image_pos(stream.imagePositions, trc.getImageDefList(inspectionPos), stream.req.imageids());
+		auto& trc = SvTrc::getTriggerRecordControllerRInstance();
+		int inspectionPos = get_inspection_pos_for_guid(trc, stream.req.inspectionid());
+		if (inspectionPos >= 0)
+		{
+			collect_value_pos(stream.valuePositions, trc.getDataDefList(inspectionPos), stream.req.valueids());
+			collect_image_pos(stream.imagePositions, trc.getImageDefList(inspectionPos), stream.req.imageids());
+		}
+	}
+	catch (...)
+	{
+		std::string msgText = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_ErrorInRebuildTrcPosCache);
+		SV_LOG_GLOBAL(error) << msgText;
+		return;
 	}
 }
 
 void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const SvPb::DataDefinitionList& dataDefList, const ::google::protobuf::RepeatedPtrField<std::string>& guids)
 {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)	
+	DWORD tick = ::GetTickCount();
+#endif 
 	positions.clear();
-	for (const auto& guid : guids)
+	int dataDefListSize = dataDefList.list().size();
+	int GuidsSize = guids.size();
+	/*
+	In the next section, all entries from the guids list, are searched
+	in the dataDefList. Finding a value in a map is much faster, 
+	then finding a value in an unordered list.
+	Therefore, if the number of entries to be searched is large enough, 
+	the required total time is shorter,
+	when first a map from the dataDefList is generated.
+	Therefore, there are two different algorithms to search for the entries below.
+	Due to a lack of more precise knowledge, the number of guids  from witch, 
+	it is better to sort before, was roughly estimated as
+	0.25 times  the number of element in the dataDeflist.
+	*/
+	if (GuidsSize > 0.25 * dataDefListSize)
 	{
-		const auto pos = SvTrc::findGuidPos(dataDefList.list(), guid);
-		positions.push_back(pos);
+		std::unordered_map<std::string, int> posMap;
+		for (int j = 0; j < dataDefListSize; j++)
+		{
+			posMap[dataDefList.list().at(j).guidid()] = j;
+
+		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+		int notfound = 0;
+#endif 
+		for (int i = 0; i < GuidsSize; i++)
+		{
+			auto it = posMap.find(guids.at(i));
+			if (it != posMap.end())
+			{
+				positions.push_back(it->second);
+			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+			else
+			{
+				if (notfound < 3)
+				{
+					auto Gguid = SvPb::GetGuidFromString(guids.at(i));
+					auto prettyGuid = SvPb::PrettyPrintGuid(Gguid);
+					std::stringstream traceStream;
+					traceStream << "Error collect_value_pos with guid " << prettyGuid << std::endl;
+					OutputDebugString(traceStream.str().c_str());
+					//uncomment the next line to enable error reporting to cmd window
+					//SV_LOG_GLOBAL(info) << traceStream.str();
+				}
+				notfound++;
+			}
+#endif
+		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+		tick = ::GetTickCount() - tick;
+		std::stringstream traceStream;
+		traceStream << "Ticks needed for  collect_value_pos: " << tick << " GuidsSize: " << GuidsSize << " DataDefinitionListSize: " <<
+			dataDefListSize << " notfound: " << notfound << std::endl;
+		
+		OutputDebugString(traceStream.str().c_str());
+		//uncomment the next line to enable error reporting to cmd window
+		//SV_LOG_GLOBAL(info) << traceStream.str();
+#endif 	
+	}
+	else
+	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+		tick = ::GetTickCount();
+		int notfound {0};
+#endif
+		for (const auto& guid : guids)
+		{
+			const auto pos = SvTrc::findGuidPos(dataDefList.list(), guid);
+			if (pos >= 0)
+			{
+				positions.push_back(pos);
+			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+			else
+			{
+
+				if (notfound < 3)
+				{
+
+					auto Gguid = SvPb::GetGuidFromString(guid);
+					auto prettyGuid = SvPb::PrettyPrintGuid(Gguid);
+					std::stringstream traceStream;
+					traceStream << "Error collect_value_pos with guid " << prettyGuid << std::endl;
+					//uncomment the next line to enable error reporting to cmd window
+					//SV_LOG_GLOBAL(info) << traceStream.str();
+					OutputDebugString(traceStream.str().c_str());
+				}
+				notfound++;
+			}
+#endif 
+
+		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+		tick = ::GetTickCount() - tick;
+		std::stringstream traceStream;
+		traceStream << "Ticks needed for  collect_value_pos 2: " << tick << " GuidsSize: " << GuidsSize << " DataDefinitionListSize: " <<
+			dataDefListSize << " notfound: " << notfound << std::endl;
+		OutputDebugString(traceStream.str().c_str());
+		//uncomment the next line to enable error reporting to cmd window
+		//SV_LOG_GLOBAL(info) << traceStream.str();
+#endif 
 	}
 }
 
 void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const SvPb::ImageList& imageList, const ::google::protobuf::RepeatedPtrField<std::string>& guids)
 {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+	DWORD tick = ::GetTickCount();
+	int notfound {0};
+#endif 
 	positions.clear();
 	for (const auto& guid : guids)
 	{
 		const auto pos = SvTrc::findGuidPos(imageList.list(), guid);
-		positions.push_back(pos);
+		if (pos >= 0)
+		{
+			positions.push_back(pos);
+		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+		else
+		{
+			auto Gguid = SvPb::GetGuidFromString(guid);
+			auto prettyGuid = SvPb::PrettyPrintGuid(Gguid);
+			std::stringstream traceStream;
+			traceStream << "Error collect_image_pos with guid " << prettyGuid;
+			OutputDebugString(traceStream.str().c_str());
+			//uncomment the next line to enable error reporting to cmd window
+			//SV_LOG_GLOBAL(error) << traceStream.str();
+			notfound++;
+
+		}
+#endif 
+
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
+	tick = ::GetTickCount() - tick;
+	std::stringstream traceStream;
+
+	traceStream << "Ticks collect_image_pos: " << tick << " GuidsSize: " << guids.size() << " DataDefinitionListSize: " <<
+		imageList.list().size() << " notfound: " << notfound << std::endl;
+	OutputDebugString(traceStream.str().c_str());
+	//uncomment the next line to enable error reporting to cmd window
+	//SV_LOG_GLOBAL(info) << traceStream.str();
+#endif
+
 }
 
 SharedMemoryAccess::notification_stream_t::notification_stream_t(

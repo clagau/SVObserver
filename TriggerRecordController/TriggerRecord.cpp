@@ -178,7 +178,7 @@ _variant_t TriggerRecord::getDataValue(int pos) const
 						{
 							result = readValue(vtType, pMemBlock);
 						}
-						else
+						else if(arraySize >0  )
 						{
 							result = readArrayValue(vtType, pMemBlock);
 						}
@@ -538,7 +538,10 @@ _variant_t TriggerRecord::readValue(VARTYPE vtType, const BYTE* pMemBlock) const
 _variant_t TriggerRecord::readArrayValue(VARTYPE vtType, const BYTE* pMemBlock) const
 {
 	_variant_t result;
-
+	if (vtType == VT_EMPTY)
+	{
+		return result;
+	}
 	//For array values the first value is the result size
 	int resultSize = *(reinterpret_cast<const int*> (pMemBlock));
 	pMemBlock += sizeof(int);

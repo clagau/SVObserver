@@ -70,3 +70,4 @@
 #include <boost/shared_array.hpp> //Used by static library
 #include <boost/utility.hpp>      //Used by static library
 #pragma endregion Precompiled Headers
+//#define TRACE_SHARED_MEMORY_ACCESS

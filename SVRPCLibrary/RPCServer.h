@@ -35,16 +35,6 @@ class Error;
 
 namespace SvRpc
 {
-struct ConnectionLostException : public std::runtime_error
-{
-	explicit ConnectionLostException(const std::string& msg) : std::runtime_error(msg)
-	{
-	}
-	explicit ConnectionLostException(const char* msg) : std::runtime_error(msg)
-	{
-	}
-};
-
 class RPCServer : public SvHttp::EventHandler
 {
 public:

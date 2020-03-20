@@ -272,6 +272,7 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
 
 	typedef std::basic_string<WCHAR> wstring;
 
+	// cppcheck-suppress knownConditionTrueFalse
 	if (NUM_INPUT_VALUES > 0)
 		*ppaStructs = new InputValueDefinitionStructEx[NUM_INPUT_VALUES];
 	else
@@ -582,6 +583,7 @@ TOOLDLL_API HRESULT __stdcall SVDestroyImageDefinitionStructure(ImageDefinitionS
 TOOLDLL_API HRESULT __stdcall GetResultTableDefinitionsEx(long* pSize, ResultTableDefinitionStructEx** ppaResultTableDefs)
 {
 	HRESULT hr = S_OK;
+	// cppcheck-suppress knownConditionTrueFalse
 	if (NUM_RESULT_TABLES > 0)
 	{
 		*ppaResultTableDefs = new ResultTableDefinitionStructEx[NUM_RESULT_TABLES];
@@ -739,7 +741,7 @@ TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitions(long* plArraySize, Res
 	*plArraySize = NUM_RESULT_VALUES;
 	*ppaResultValues = new ResultValueDefinitionStruct[NUM_RESULT_VALUES];
 
-	if (ppaResultValues == NULL)
+	if (*ppaResultValues == NULL)
 	{
 		return S_FALSE;
 	}

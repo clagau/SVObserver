@@ -607,5 +607,7 @@ namespace SvStl
 
 		{Tid_ErrorMemoryAllocation, _T("Memory allocation failed")},
 		{Tid_ErrorMemoryBlockDataReservedSize, _T("Size of reserved memory block data to small")},
+		{Tid_ErrorInRebuildTrcPosCache, _T("Exception in rebuild_trc_pos_cache")},
+		{Tid_ErrorInGetProductData, _T("Exception in  get_product_data")},
 };
 } //namespace SvStl

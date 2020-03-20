@@ -29,7 +29,6 @@
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/SVRC.h"
-#include "SVRPCLibrary/RPCServer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1135,19 +1134,7 @@ void SVVisionProcessorHelper::ProcessNotifications(SvStl::NotificationType notif
 		SvPb::GetNotificationStreamResponse response;
 		if (BuildNotificationStreamResponse(response, notifyType, value, msgNr, msg))
 		{
-			try
-			{
-				it->Observer.onNext(std::move(response));
-			}
-			catch (const SvRpc::ConnectionLostException&)
-			{
-				// should not happen, because all streams of a connection are marked as
-				// cancelled when the client disconnects and therefore catched by the
-				// isCancelled check above. lets keep it here in case we have some
-				// race condition.
-				it = m_Subscriptions.erase(it);
-				continue;
-			}
+			it->Observer.onNext(std::move(response));
 		}
 
 		++it;

@@ -572,5 +572,10 @@ enum MessageTextEnum
 
 	Tid_ErrorMemoryAllocation,
 	Tid_ErrorMemoryBlockDataReservedSize,
+
+	Tid_ErrorInRebuildTrcPosCache,
+	Tid_ErrorInGetProductData,
+
+		
 };
 } //namespace SvStl

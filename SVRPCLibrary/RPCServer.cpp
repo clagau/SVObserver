@@ -10,7 +10,6 @@
 
 #include "stdafx.h"
 
-#include "SVProtobuf/Envelope.h"
 #include "RPCServer.h"
 
 #include "SVHttpLibrary/HttpServerConnection.h"
@@ -238,7 +237,7 @@ SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& r
 	if (it == m_Connections.end())
 	{
 		SV_LOG_GLOBAL(warning) << "Can not send envelope to connection " << id << ". not found. PayloadType: " << rEnvelope.payloadtype();
-		throw ConnectionLostException("Connection lost");
+		return SvSyl::SVFuture<void>::make_ready();
 	}
 
 	auto resSize = rEnvelope.ByteSizeLong();

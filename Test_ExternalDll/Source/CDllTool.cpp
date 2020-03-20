@@ -447,13 +447,13 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 		m_aResultValues[ResultValue_INT_ROWCOUNT] = NY;
 
 		long Index[2];
-		std::stringstream sts;
+		
 		double val {0};
 		
 
 		for (int y = 0; y < NY; y++)
 		{
-			sts = std::stringstream();
+			
 			for (int x = 0; x < NX; x++)
 			{
 				Index[0] = x;
