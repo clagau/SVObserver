@@ -639,13 +639,15 @@ void SVTADlgTranslationResizePage::UpdateOtherInfo()
 HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData()
 {
 	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > extents;
-	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
-	HRESULT hr = SvCmd::InspectionCommands(m_inspectionID, requestMessage, &responseMessage);
-	if (S_OK == hr && responseMessage.has_getextentparameterresponse())
+
+	HRESULT hr = SvCmd::InspectionCommands(m_inspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
 	{
-		extents = responseMessage.getextentparameterresponse().parameters();
+		extents = responseCmd.getextentparameterresponse().parameters();
 	}
 	else
 	{
@@ -689,18 +691,17 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	SVPerformanceOptions::SVPerformanceOptionsEnum oldPerformanceValue = SVPerformanceOptions::PerformanceInitialize;
 	SVPerformanceOptions::SVPerformanceOptionsEnum defaultPerformanceValue = SVPerformanceOptions::PerformanceInitialize;
 
-	SVRPropertyItemEdit*	editItem = nullptr;
-	SVRPropertyItemCombo*	comboItem = nullptr;
-
 	// Retrieve current values --------------------------------------------------
 	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > extents;
-	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-	auto* pRequest = requestMessage.mutable_getextentparameterrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
-	HRESULT hr1 = SvCmd::InspectionCommands(m_inspectionID, requestMessage, &responseMessage);
-	if (S_OK == hr1 && responseMessage.has_getextentparameterresponse())
+
+	HRESULT hr1 = SvCmd::InspectionCommands(m_inspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr1 && responseCmd.has_getextentparameterresponse())
 	{
-		extents = responseMessage.getextentparameterresponse().parameters();
+		extents = responseCmd.getextentparameterresponse().parameters();
 	}
 
 	if (SUCCEEDED(hr1))
@@ -733,8 +734,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	double	newHeightScaleFactor = 0.0;
 	if (SUCCEEDED(hr1))
 	{
-		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
-		editItem->GetItemValue(newHeightScaleFactor);
+		SVRPropertyItemEdit* pEditItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
+		pEditItem->GetItemValue(newHeightScaleFactor);
 		if (!m_pTool->ValidateScaleFactor(newHeightScaleFactor, pErrorMessages))
 		{
 			hr1 = E_FAIL;
@@ -747,7 +748,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				newHeightScaleFactor = SvDef::cDefaultWindowToolHeightScaleFactor;
 			}
 
-			editItem->SetItemValue(newHeightScaleFactor);
+			pEditItem->SetItemValue(newHeightScaleFactor);
 		}
 
 		if (newHeightScaleFactor != oldHeightScaleFactor)
@@ -759,8 +760,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	double	newWidthScaleFactor = 0.0;
 	if (SUCCEEDED(hr1))
 	{
-		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
-		editItem->GetItemValue(newWidthScaleFactor);
+		SVRPropertyItemEdit* pEditItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
+		pEditItem->GetItemValue(newWidthScaleFactor);
 		if (!m_pTool->ValidateScaleFactor(newWidthScaleFactor, pErrorMessages))
 		{
 			hr1 = E_FAIL;
@@ -774,7 +775,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				// invalid value.
 				newWidthScaleFactor = SvDef::cDefaultWindowToolWidthScaleFactor;
 			}
-			editItem->SetItemValue(newWidthScaleFactor);
+			pEditItem->SetItemValue(newWidthScaleFactor);
 		}
 
 		if (newWidthScaleFactor != oldWidthScaleFactor)
@@ -788,8 +789,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	if (SUCCEEDED(hr1))
 	{
-		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
-		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newInterpolationValue)));
+		SVRPropertyItemCombo* pComboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
+		pComboItem->GetItemValue(*(reinterpret_cast <long*> (&newInterpolationValue)));
 
 		if (!m_pTool->ValidateInterpolation(newInterpolationValue, pErrorMessages))
 		{
@@ -802,7 +803,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				// invalid value.
 				newInterpolationValue = defaultInterpolationValue;
 			}
-			comboItem->SetItemValue(newInterpolationValue);
+			pComboItem->SetItemValue(newInterpolationValue);
 		}
 
 		if (newInterpolationValue != oldInterpolationValue)
@@ -815,8 +816,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		SVOverscanOptions::OverscanInitialize;
 	if (SUCCEEDED(hr1))
 	{
-		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
-		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newOverscanValue)));
+		SVRPropertyItemCombo* pComboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
+		pComboItem->GetItemValue(*(reinterpret_cast <long*> (&newOverscanValue)));
 
 		if (!m_pTool->ValidateOverscan(newOverscanValue, pErrorMessages))
 		{
@@ -829,7 +830,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				// invalid value.
 				newOverscanValue = defaultOverscanValue;
 			}
-			comboItem->SetItemValue(newOverscanValue);
+			pComboItem->SetItemValue(newOverscanValue);
 		}
 
 		if (newOverscanValue != oldOverscanValue)
@@ -842,8 +843,8 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 		SVPerformanceOptions::PerformanceInitialize;
 	if (SUCCEEDED(hr1))
 	{
-		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
-		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newPerformanceValue)));
+		SVRPropertyItemCombo* pComboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
+		pComboItem->GetItemValue(*(reinterpret_cast <long*> (&newPerformanceValue)));
 		if (!m_pTool->ValidatePerformance(newPerformanceValue, pErrorMessages))
 		{
 			hr1 = E_FAIL;
@@ -855,7 +856,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 				// invalid value.
 				newPerformanceValue = defaultPerformanceValue;
 			}
-			comboItem->SetItemValue(oldPerformanceValue);
+			pComboItem->SetItemValue(oldPerformanceValue);
 		}
 
 		if (newPerformanceValue != oldPerformanceValue)
@@ -915,11 +916,11 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	if (extentChanged)
 	{
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		auto* pRequest = requestMessage.mutable_setextentparameterrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
-		pRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(extents);
-		SvCmd::InspectionCommands(m_inspectionID, requestMessage, &responseMessage);
+		requestCmd.Clear();
+		auto* pSetExtentRequest = requestCmd.mutable_setextentparameterrequest();
+		SvPb::SetGuidInProtoBytes(pSetExtentRequest->mutable_objectid(), m_toolID);
+		pSetExtentRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(extents);
+		SvCmd::InspectionCommands(m_inspectionID, requestCmd, nullptr);
 	}
 
 	if (extentChanged || embeddedChanged)

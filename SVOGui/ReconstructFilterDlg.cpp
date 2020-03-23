@@ -135,13 +135,15 @@ void ReconstructFilterDlg::OnSelchangeImageCombo()
 		m_imageController.ConnectToImage(SvDef::SeedImageConnectionName, std::string(currentImageName), m_filterID);
 		m_seedImageName = currentImageName;
 
-		SvPb::InspectionCmdMsgs Request, Response;
-		SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
-		SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_filterID);
-		HRESULT hrOk = SvCmd::InspectionCommands(m_rInspectionID, Request, &Response);
-		if (S_OK != hrOk && Response.has_resetobjectresponse())
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_resetobjectrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_filterID);
+
+		HRESULT hrOk = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		if (S_OK != hrOk && responseCmd.has_standardresponse())
 		{
-			SvStl::MessageContainerVector errorMessageList = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
+			SvStl::MessageContainerVector errorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			if (0 < errorMessageList.size())
 			{

@@ -240,16 +240,17 @@ namespace SvOg
 		{
 			HBITMAP hbm = nullptr;
 			CComPtr<IPicture> picture;
-			SvPb::InspectionCmdMsgs request, response;
-			SvPb::GetImageRequest* pGetImageRequest = request.mutable_getimagerequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getimagerequest();
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_imageid(), m_imageId);
 
-			SvPb::SetGuidInProtoBytes(pGetImageRequest->mutable_imageid(), m_imageId);
-			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, request, &response);
-			if (S_OK == hr && response.has_getimageresponse() && 0 == response.getimageresponse().messages().messages().size())
+			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
 			{
 				CComPtr<IPictureDisp> picDisp;
 				long width, height;
-				hr = DisplayHelper::convertPBImageToIPictureDisp(response.getimageresponse().imagedata(), width, height, &picDisp);
+				hr = DisplayHelper::convertPBImageToIPictureDisp(responseCmd.getimageresponse().imagedata(), width, height, &picDisp);
 				
 				if (picDisp)
 				{
@@ -394,17 +395,18 @@ namespace SvOg
 	{
 		CRect rect;
 
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetOutputRectangleRequest* pGetRectRequest = request.mutable_getoutputrectanglerequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getoutputrectanglerequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_imageid(), m_imageId);
 
-		SvPb::SetGuidInProtoBytes(pGetRectRequest->mutable_imageid(), m_imageId);
-		HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, request, &response);
-		if (S_OK == hr && response.has_getoutputrectangleresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getoutputrectangleresponse())
 		{
-			rect.left = response.getoutputrectangleresponse().left();
-			rect.top = response.getoutputrectangleresponse().top();
-			rect.right = response.getoutputrectangleresponse().right();
-			rect.bottom = response.getoutputrectangleresponse().bottom();
+			rect.left = responseCmd.getoutputrectangleresponse().left();
+			rect.top = responseCmd.getoutputrectangleresponse().top();
+			rect.right = responseCmd.getoutputrectangleresponse().right();
+			rect.bottom = responseCmd.getoutputrectangleresponse().bottom();
 		}
 		return rect;
 	}

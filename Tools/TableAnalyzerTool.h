@@ -36,13 +36,6 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	/// The method inserts a task object to this task object list. This method must be override for TableAnalyzer, 
-	/// because if a Analyzer will be insert, the index will increased by one, because the first task is always the ResultTable.
-	/// \param index <in> position where to insert.
-	/// \param rObject <in> object to insert.
-	/// \param count <in> Default value is 1.
-	virtual void InsertAt(int index, ITaskObject& rObject, int count = 1) override;
-
 	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus) {m_pResultTable->setSortContainer(sortMap, rRunStatus);};
 	SvVol::ValueObjectSortContainer&  getSortContainer() { return m_pResultTable->getSortContainer();};
 	void UpdateNumberOfRows() { return m_pResultTable->UpdateNumberOfRows(); };

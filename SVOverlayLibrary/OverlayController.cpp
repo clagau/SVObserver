@@ -66,17 +66,13 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlays(std::shared_pt
 SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::restructOverlayDesc(GUID inspectionId, GUID imageId)
 {
 	auto promise = std::make_shared<SvSyl::SVPromise<SvPb::OverlayDesc>>();
-	SvRpc::Task<SvPb::ExecuteInspectionCmdResponse> task(
-		[promise](SvPb::ExecuteInspectionCmdResponse&& res)
+	SvRpc::Task<SvPb::InspectionCmdResponse> task(
+		[promise](SvPb::InspectionCmdResponse&& responseCmd)
 	{
-		if (res.has_cmdmsg())
+		if (responseCmd.has_getoverlaystructresponse())
 		{
-			auto& rCmdMsg = res.cmdmsg();
-			if (rCmdMsg.has_getoverlaystructresponse())
-			{
-				promise->set_value(rCmdMsg.getoverlaystructresponse().overlays());
-				return;
-			}
+			promise->set_value(responseCmd.getoverlaystructresponse().overlays());
+			return;
 		}
 		SvPenv::Error err;
 		err.set_errorcode(SvPenv::ErrorCode::unknown);
@@ -88,11 +84,11 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::restructOverlayDesc(GUID i
 		promise->set_exception(SvRpc::errorToExceptionPtr(err));
 	});
 
-	SvPb::ExecuteInspectionCmdRequest requestID;
-	SvPb::SetGuidInProtoBytes(requestID.mutable_inspectionid(), inspectionId);
-	SvPb::GetOverlayStructRequest* pGetOverlay = requestID.mutable_cmdmsg()->mutable_getoverlaystructrequest();
-	SvPb::SetGuidInProtoBytes(pGetOverlay->mutable_imageid(), imageId);
-	m_inspectionCmd_client.request(std::move(requestID), task, m_timeout);
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::SetGuidInProtoBytes(requestCmd.mutable_inspectionid(), inspectionId);
+	auto* pRequest = requestCmd.mutable_getoverlaystructrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_imageid(), imageId);
+	m_inspectionCmd_client.request(std::move(requestCmd), task, m_timeout);
 	return promise->get_future();
 }
 

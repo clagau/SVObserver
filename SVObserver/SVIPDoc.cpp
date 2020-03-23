@@ -39,7 +39,6 @@
 #include "ToolClipboard.h"
 #include "ToolSetView.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVUserMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -73,7 +72,6 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "Tools/LoopTool.h"
-#include "Tools/SVColorTool.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -446,84 +444,63 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 	pView->getListCtrl().EnsureOneIsSelected();
 
 	int SelectedListIndex(-1);
-	PtrNavigatorElement  NavElement = pView->GetSelectedNavigatorElement(&SelectedListIndex);
-	if (!NavElement)
+	PtrNavigatorElement  pNavElement = pView->GetSelectedNavigatorElement(&SelectedListIndex);
+	if (nullptr == pNavElement)
 	{
 		return false;
 	}
-	std::string Selection(NavElement->m_DisplayName);
-	bool bAddToLoopTool(false);
-	bool bAddToToolSet(false);
-	switch (NavElement->m_Type)
+	bool bAddToToolSet{false};
+	SVGUID TaskObjectInsertBeforeID;
+	std::string Selection;
+	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
 		case NavElementType::EndDelimiterLoopTool:
 		case NavElementType::SubLoopTool:
-			bAddToLoopTool = true;
+			TaskObjectInsertBeforeID = pNavElement->m_Guid;
 			break;
 		case NavElementType::EndDelimiterToolSet:
 		case NavElementType::Empty:
 			bAddToToolSet = true;
-			Selection.clear();
 			break;
 		case NavElementType::StartGrouping:
 		case NavElementType::EndGrouping:
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
 			bAddToToolSet = true;
+			Selection = pNavElement->m_DisplayName;
+			TaskObjectInsertBeforeID = GetToolToInsertBefore(Selection, SelectedListIndex);
 			break;
 	}
 	bool Success(false);
-	SVGUID newObjectID = GUID_NULL;
-	if (bAddToToolSet)
+	SVGUID newObjectID;
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_createobjectrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), pNavElement->m_OwnerGuid);
+	pRequest->set_classid(classId);
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectinsertbeforeid(), TaskObjectInsertBeforeID);
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_createobjectresponse())
 	{
-		int toolListIndex = GetToolToInsertBefore(Selection, SelectedListIndex);
-		SVToolSetClass* pToolSet = GetToolSet();
-		// A Color Tool must always be first on a RGB Color System.
-		// There can be multiple Color Tools on a RGB Color System, one of them must be first.
-		if (0 == toolListIndex && SvPb::ColorToolClassId != classId)
+		Success = true;
+		newObjectID = SvPb::GetGuidFromProtoBytes(responseCmd.createobjectresponse().objectid());
+		if(bAddToToolSet)
 		{
-			if (nullptr != pToolSet && 0 < pToolSet->GetSize())
-			{
-				SvTo::SVToolClass* pNextTool = dynamic_cast<SvTo::SVToolClass*>(pToolSet->GetAt(0));
-				if (pNextTool && SV_IS_KIND_OF(pNextTool, SvTo::SVColorToolClass))
-				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10055);
-					return false;
-				}
-			}
-		}
-
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), pToolSet->GetUniqueObjectID());
-		pRequest->set_classid(classId);
-		pRequest->set_taskobjectpos(toolListIndex);
-
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_constructandinsertresponse())
-		{
-			Success = true;
-			newObjectID = SvPb::GetGuidFromProtoBytes(responseMessage.constructandinsertresponse().objectid());
-			m_toolGroupings.AddTool(responseMessage.constructandinsertresponse().name(), Selection);
+			m_toolGroupings.AddTool(responseCmd.createobjectresponse().name(), Selection);
 		}
 	}
-	else if (bAddToLoopTool)
+	else if (responseCmd.has_standardresponse())
 	{
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), NavElement->m_OwnerGuid);
-		pRequest->set_classid(classId);
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectafterid(), NavElement->m_Guid);
-
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_constructandinsertresponse())
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		if (errorMsgContainer.size() > 0)
 		{
-			Success = true;
-			newObjectID = SvPb::GetGuidFromProtoBytes(responseMessage.constructandinsertresponse().objectid());
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(errorMsgContainer.at(0).getMessage());
 		}
 	}
+
 	if (Success)
 	{
 		RunOnce();
@@ -552,7 +529,6 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 
 bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 {
-	bool bRetVal = false;
 	ToolSetView* pView = GetToolSetView();
 	if (nullptr == pView)
 	{
@@ -605,9 +581,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 
 	SetModifiedFlag();
 
-	bRetVal = true;
-
-	return bRetVal;
+	return true;
 }
 
 void SVIPDoc::SetTitle(LPCTSTR LPSZTitle)
@@ -918,8 +892,6 @@ void SVIPDoc::OnAdjustLightReference()
 
 void SVIPDoc::OnAdjustLut()
 {
-	int i(0);
-
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
 	assert(GetToolSet());
@@ -930,7 +902,6 @@ void SVIPDoc::OnAdjustLut()
 		return;
 	}
 
-	int iChannel = 0;
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
@@ -1179,25 +1150,6 @@ void SVIPDoc::OnEditDelete()
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 		{
-
-			SvIe::SVTaskObjectClass* pFirstTaskObject = pToolSet->GetAt(0);
-			// If deleting first item in a color IPD first tool must be a color tool
-			if (nullptr != pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == pNavElement->m_Guid && pInspection->IsColorCamera())
-			{
-				if (pToolSet->GetSize() > 1)
-				{
-					SvTo::SVToolClass* pNextTool = dynamic_cast<SvTo::SVToolClass*> (pToolSet->GetAt(1));
-
-					if (pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SvTo::SVColorToolClass) &&
-						pNextTool && !SV_IS_KIND_OF(pNextTool, SvTo::SVColorToolClass))
-					{
-						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10057);
-						return;
-					}
-				}
-			}
-
 			if (deleteTool(pNavElement.get()))
 			{
 				m_toolGroupings.RemoveTool(pNavElement->m_DisplayName);
@@ -1228,20 +1180,15 @@ void SVIPDoc::OnEditCopy()
 		return;
 	}
 
-	SVInspectionProcess* pInspection(GetInspectionProcess());
-
-	if (nullptr != pInspection)
+	ToolSetView* pToolSetView = GetToolSetView();
+	if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
 	{
-		ToolSetView* pToolSetView = GetToolSetView();
-		if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+		const SVGUID& rGuid = pToolSetView->GetSelectedTool();
+		if (!rGuid.empty())
 		{
-			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
-			if (!rGuid.empty())
-			{
-				ToolClipboard Clipboard(*pInspection);
+			ToolClipboard clipboard;
 
-				Clipboard.writeToClipboard(rGuid);
-			}
+			clipboard.writeToClipboard(rGuid);
 		}
 	}
 }
@@ -1335,72 +1282,12 @@ void SVIPDoc::OnEditPaste()
 			break;
 	}
 
-	ToolClipboard Clipboard(*pInspection);
+	ToolClipboard clipboard;
 	SVGUID toolGuid(GUID_NULL);
-	Clipboard.readFromClipboard(postToolGuid, ownerGuid, toolGuid);
-
-	SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(toolGuid));
-
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
-
-	if (nullptr != pTool)
+	if(S_OK == clipboard.readFromClipboard(postToolGuid, ownerGuid, toolGuid))
 	{
-		//Set the time stamp to 0 to force an update of the tool list
-		m_ToolSetListTimestamp = 0;
-		
-		SvPb::InspectionCmdMsgs Request, Response;
-		SvPb::MoveObjectRequest* pMovetaskobjectrequest = Request.mutable_moveobjectrequest();
-		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_parentid(), ownerGuid);
-		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_objectid(), toolGuid);
-		SvPb::SetGuidInProtoBytes(pMovetaskobjectrequest->mutable_movepreid(), postToolGuid);
-		pMovetaskobjectrequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
-
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, Request,&Response);
-		assert(S_OK == hr);
-		
-		bool OwnerIsLooptool {false};
-		SVObjectClass*  pOwnwerObject(SVObjectManagerClass::Instance().GetObject(ownerGuid));
-		if (pOwnwerObject && SvPb::LoopToolObjectType == pOwnwerObject->GetObjectSubType())
-		{
-			OwnerIsLooptool = true;
-		}
-	
-		if (!OwnerIsLooptool)
-		{
-			
-			m_toolGroupings.AddTool(pTool->GetName(), pNavElement->m_DisplayName);
-			
-		}
-
-		//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
-		//This reset is required when pasting an acquisition tool which otherwise adds a non existent camera to the PPQ
-		//The inspection pointer is still nullptr at this stage which avoids adding the camera to the PPQ in SVCameraImageTemplate::RebuildCameraImage
-		if(SvPb::SVToolAcquisitionObjectType == pTool->GetObjectSubType())
-		{
-			pTool->resetAllObjects();
-		}
-
-		SVObjectLevelCreateStruct createStruct;
-		createStruct.OwnerObjectInfo.SetObject(pInspection);
-		createStruct.m_pInspection = pInspection;
-
-		pInspection->ConnectObject(createStruct);
-		pInspection->ConnectAllInputs();
-
-		SVObjectLevelCreateStruct createObjStruct;
-
-		pInspection->createAllObjects(createObjStruct);
-		//Reset only the inserted tool
-		pTool->resetAllObjects();
-		pToolSet->updateToolPosition();
-
-		RunOnce();
-		UpdateAllViews(nullptr);
-		SetSelectedToolID(toolGuid);
-		SetModifiedFlag();
+		updateToolsetView(toolGuid, postToolGuid, ownerGuid);
 	}
-	pToolSet->updateToolPosition();
-
 }
 
 void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
@@ -1418,6 +1305,66 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 		enabled = (nullptr != pNavElement && -1 != SelectedListIndex && ToolClipboard::isClipboardDataValid());
 	}
 	pCmdUI->Enable(enabled);
+}
+
+void SVIPDoc::updateToolsetView(const SVGUID& rToolID, const SVGUID& rPostID, const SVGUID rOwnerID)
+{
+	SVObjectClass* pObject(SVObjectManagerClass::Instance().GetObject(rToolID));
+
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
+	SVInspectionProcess* pInspection(GetInspectionProcess());
+
+	if (nullptr != pTool && nullptr != pInspection)
+	{
+		//Set the time stamp to 0 to force an update of the tool list
+		m_ToolSetListTimestamp = 0;
+
+		SvPb::InspectionCmdRequest requestCmd;
+		auto* pRequest = requestCmd.mutable_moveobjectrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_parentid(), rOwnerID);
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rToolID);
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_movepreid(), rPostID);
+		pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+		assert(S_OK == hr);
+
+		SVObjectClass*  pOwnerObject(SVObjectManagerClass::Instance().GetObject(rOwnerID));
+		if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType())
+		{
+			m_toolGroupings.AddTool(pTool->GetName(), pOwnerObject->GetObjectName());
+		}
+
+		//@TODO[gra][8.10][13.12.2018]: This is a low risk fix to avoid other problems and should be solved in another way
+		//This reset is required when pasting an acquisition tool which otherwise adds a non existent camera to the PPQ
+		//The inspection pointer is still nullptr at this stage which avoids adding the camera to the PPQ in SVCameraImageTemplate::RebuildCameraImage
+		if (SvPb::SVToolAcquisitionObjectType == pTool->GetObjectSubType())
+		{
+			pTool->resetAllObjects();
+		}
+
+		SVObjectLevelCreateStruct createStruct;
+		createStruct.OwnerObjectInfo.SetObject(pInspection);
+		createStruct.m_pInspection = pInspection;
+
+		pInspection->ConnectObject(createStruct);
+		pInspection->ConnectAllInputs();
+
+		SVObjectLevelCreateStruct createObjStruct;
+
+		pInspection->createAllObjects(createObjStruct);
+		//Reset only the inserted tool
+		pTool->resetAllObjects();
+		if(nullptr != pInspection->GetToolSet())
+		{
+			pInspection->GetToolSet()->updateToolPosition();
+		}
+
+		RunOnce();
+		UpdateAllViews(nullptr);
+		SetSelectedToolID(rToolID);
+		SetModifiedFlag();
+	}
 }
 
 void SVIPDoc::OnShowFirstError()
@@ -1620,16 +1567,17 @@ void SVIPDoc::OnResultsPicker()
 		if (nullptr != pInspection && nullptr != pResultList)
 		{
 			std::string InspectionName(pInspection->GetName());
-			SvPb::InspectionCmdMsgs request, response;
-			*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 				{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
 				GetInspectionID(), SvPb::viewable, GUID_NULL, true);
-			SvCmd::InspectionCommands(m_InspectionID, request, &response);
+			SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_RESULTS_PICKER + SvOr::HELPFILE_DLG_IDD_OFFSET);
-			if (response.has_getobjectselectoritemsresponse())
+			if (responseCmd.has_getobjectselectoritemsresponse())
 			{
-				SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+				SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 			}
 
 			const SVObjectReferenceVector& rSelectedObjects(pResultList->GetSelectedObjects());
@@ -1683,16 +1631,17 @@ void SVIPDoc::OnResultsTablePicker()
 			SvUl::NameGuidList availableList;
 			std::string selectedItem = SvOg::Table_NoSelected;
 			SVGUID selectedGuid = pResultList->getTableGuid();
-			SvPb::InspectionCmdMsgs request, response;
-			SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), GetInspectionID());
+			pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
+			pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 
-			SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), GetInspectionID());
-			pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
-			pGetAvailableObjectsRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-			if (S_OK == hr && response.has_getavailableobjectsresponse())
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 			{
-				availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+				availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
 				for (SvUl::NameGuidPair pair : availableList)
 				{
 					if (pair.second == selectedGuid)
@@ -1902,15 +1851,16 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		std::string InspectionName(pInspection->GetName());
 
-		SvPb::InspectionCmdMsgs request, response;
-		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 			{SvPb::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvPb::publishable);
-		SvCmd::InspectionCommands(m_InspectionID, request, &response);
+		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-		if (response.has_getobjectselectoritemsresponse())
+		if (responseCmd.has_getobjectselectoritemsresponse())
 		{
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 		}
 
 		std::string PublishableResults = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULTS);
@@ -1965,15 +1915,16 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		std::string InspectionName(pInspection->GetName());
 
-		SvPb::InspectionCmdMsgs request, response;
-		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 			{SvPb::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvPb::publishResultImage);
-		SvCmd::InspectionCommands(m_InspectionID, request, &response);
+		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET);
-		if (response.has_getobjectselectoritemsresponse())
+		if (responseCmd.has_getobjectselectoritemsresponse())
 		{
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 		}
 
 		std::string PublishableImages = SvUl::LoadStdString(IDS_PUBLISHABLE_RESULT_IMAGES);
@@ -3073,20 +3024,18 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	{
 		return false;
 	}
-	SvTo::LoopTool* pLoopTool(nullptr);
-	SVGUID parentGuid = GUID_NULL;
 	if (NavElementType::SubTool == pNaviElement->m_Type || NavElementType::SubLoopTool == pNaviElement->m_Type)
 	{
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), pNaviElement->m_OwnerGuid);
 
-		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), pNaviElement->m_OwnerGuid);
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-		if (S_OK == hr && response.has_getobjectparametersresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
-			parentGuid = pNaviElement->m_OwnerGuid;
-			if (SvPb::SVToolObjectType != response.getobjectparametersresponse().typeinfo().objecttype() ||
-				SvPb::LoopToolObjectType != response.getobjectparametersresponse().typeinfo().subtype())
+			if (SvPb::SVToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().objecttype() ||
+				SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype())
 			{
 				return false;
 			}
@@ -3096,21 +3045,8 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 			return false;
 		}
 	}
-	else
-	{
-		SVToolSetClass* pToolSet = GetToolSet();
-		if (nullptr != pToolSet)
-		{
-			parentGuid = pToolSet->GetUniqueObjectID();
-		}
-	}
-	if (GUID_NULL == parentGuid)
-	{
-		return false;
-	}
 
-	SVObjectClass* pObject2(SVObjectManagerClass::Instance().GetObject(pNaviElement->m_Guid));
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject2);
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNaviElement->m_Guid));
 	if (nullptr == pTool)
 	{
 		return false;
@@ -3151,23 +3087,27 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 		}
 	}
 
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::DestroyChildRequest* pDestroyChildRequest = Request.mutable_destroychildrequest();
-
-	
-	pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
-	SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), parentGuid);
-	SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), pTool->GetUniqueObjectID());
-
-	SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (nullptr != pConfig)
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_deleteobjectrequest();
+	pRequest->set_flag(SvPb::DeleteObjectRequest::Flag_SetDefaultInputs_And_ResetInspection);
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), pTool->GetUniqueObjectID());
+	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if(S_OK == responseCmd.hresult())
 	{
-		pConfig->ValidateRemoteMonitorList();
-		TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+		TheSVObserverApp.RebuildOutputList();
 	}
-	TheSVObserverApp.RebuildOutputList();
+	else if(responseCmd.has_standardresponse())
+	{
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		if(errorMsgContainer.size() > 0)
+		{
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(errorMsgContainer.at(0).getMessage());
+		}
+	}
+
+
 	return true;
 }
 
@@ -4236,56 +4176,52 @@ bool SVIPDoc::RunOnce()
 }
 
 
-int SVIPDoc::GetToolToInsertBefore(const std::string& rName, int listIndex) const
+SVGUID SVIPDoc::GetToolToInsertBefore(const std::string& rName, int listIndex) const
 {
-	int toolListIndex = 0;
+	SVGUID result;
 
 	const SVToolSetClass* pToolSet = GetToolSet();
-	if (pToolSet)
+	if (nullptr != pToolSet)
 	{
-		toolListIndex = pToolSet->GetSize();
 		if (!rName.empty())
 		{
-			bool bFound = false;
 			std::string ToolName = m_toolGroupings.GetToolToInsertBefore(rName);
 			if (!ToolName.empty())
 			{
+				bool bFound = false;
 				// FindTool by Name in SVTaskObjectList
 				for (int i = 0; i < pToolSet->GetSize() && !bFound; i++)
 				{
 					const SvIe::SVTaskObjectClass* pTool = pToolSet->GetAt(i);
 					if (pTool && pTool->GetName() == ToolName)
 					{
-						toolListIndex = i;
+						result = pTool->GetUniqueObjectID();
 						bFound = true;
 					}
 				}
 			}
-			if (!bFound && 0 == listIndex)
-			{
-				toolListIndex = 0;
-			}
 		}
 	}
-	return toolListIndex;
+	return result;
 }
 
 bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 {
 	bool Result {false};
 
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_InspectionID);
+	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
+	pRequest->mutable_typeinfo()->set_subtype(ImageSubType);
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_isbeforetoolmethod()->mutable_toolid(), GetSelectedToolID());
 
-	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_InspectionID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_subtype(ImageSubType);
-	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_isbeforetoolmethod()->mutable_toolid(), GetSelectedToolID());
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvUl::NameGuidList availableList;
-	if (S_OK == hr && response.has_getavailableobjectsresponse())
+	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		Result = ( 0 < response.getavailableobjectsresponse().list().size());
+		Result = ( 0 < responseCmd.getavailableobjectsresponse().list().size());
 	}
 
 	return Result;

@@ -110,13 +110,15 @@ namespace SvOg
 		BOOL bUpdateRotation = TRUE;
 
 		double dRotationAngle {0.0};
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		auto* pRequest = requestMessage.mutable_getextentparameterrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getextentparameterrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_getextentparameterresponse())
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getextentparameterresponse())
 		{
-			auto extentParameter = responseMessage.getextentparameterresponse().parameters();
+			auto extentParameter = responseCmd.getextentparameterresponse().parameters();
 			auto valuePair = std::find_if(extentParameter.begin(), extentParameter.end(), [](const auto value) { return value.type() == SvPb::SVExtentPropertyRotationAngle; });
 			if (extentParameter.end() != valuePair)
 			{

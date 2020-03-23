@@ -189,11 +189,11 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 	return retVal;
 }// end Run
 
-int LoopTool::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject)
+int LoopTool::InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject)
 {
-	int retValue = __super::InsertAfter(rGuid, pTaskObject);
+	int result = __super::InsertBefore(rObjectBeforeID, pTaskObject);
 	GetInspectionInterface()->SetDefaultInputs();
-	return retValue;
+	return result;
 }
 
 bool LoopTool::propagateSizeAndPosition()

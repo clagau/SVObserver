@@ -3658,6 +3658,7 @@ HRESULT SVObserverApp::RebuildOutputList()
 
 	if (nullptr != pConfig)
 	{
+		pConfig->ValidateRemoteMonitorList();
 		pConfig->RebuildOutputObjectList();
 
 		SVIODoc* pIODoc = GetIODoc();

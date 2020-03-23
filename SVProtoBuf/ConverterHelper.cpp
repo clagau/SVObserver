@@ -426,6 +426,52 @@ void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* p
 	}
 }
 
+MessageContainerVector setMessageVectorToMessagePB(const SvStl::MessageContainerVector& rMessageVec)
+{
+	MessageContainerVector messageVecPB;
+	for (const auto& rMessage : rMessageVec)
+	{
+		setMessageToMessagePB(rMessage, messageVecPB.add_messages());
+	}
+	return messageVecPB;
+}
+
+void setMessageToMessagePB(const SvStl::MessageContainer& rMessage, MessageContainer* pMessagePB)
+{
+	const auto& rMessageData = rMessage.getMessage();
+	pMessagePB->set_messagecode(rMessageData.m_MessageCode);
+	pMessagePB->set_additionaltextid(rMessageData.m_AdditionalTextId);
+	for (auto text : rMessageData.m_AdditionalTextList)
+	{
+		pMessagePB->add_additionaltextlist(text);
+	}
+	pMessagePB->set_compiledate(rMessageData.m_SourceFile.m_CompileDate);
+	pMessagePB->set_compiletime(rMessageData.m_SourceFile.m_CompileTime);
+	pMessagePB->set_filename(rMessageData.m_SourceFile.m_FileName);
+	pMessagePB->set_fileline(rMessageData.m_SourceFile.m_Line);
+	pMessagePB->set_filedatetime(rMessageData.m_SourceFile.m_FileDateTime);
+	SvPb::SetGuidInProtoBytes(pMessagePB->mutable_objectid(), rMessage.getObjectId());
+}
+
+
+SvStl::MessageContainerVector setMessageVectorFromMessagePB(const MessageContainerVector& messagesPB)
+{
+	SvStl::MessageContainerVector messageContainerVector;
+	for (auto messagePB : messagesPB.messages())
+	{
+		SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
+		SvDef::StringVector AdditionalTextList;
+		for (auto text : messagePB.additionaltextlist())
+		{
+			AdditionalTextList.push_back(text);
+		}
+		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
+		messageContainerVector.push_back(messageContainer);
+	}
+	return messageContainerVector;
+}
+
+
 template<typename TreeItem>
 void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree)
 {

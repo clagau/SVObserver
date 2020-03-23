@@ -208,14 +208,15 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	void SVToolAdjustmentLUTPage::OnLUTFormulaButton()
 	{
 		std::string Caption;
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_rTaskObjectID);
 
-		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rTaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, request, &response);
-		if (S_OK == hr && response.has_getobjectparametersresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
-			Caption = response.getobjectparametersresponse().name();
+			Caption = responseCmd.getobjectparametersresponse().name();
 		}
 		
 		Caption += _T(" ") + SvUl::LoadStdString(IDS_FORMULA_STRING);
@@ -453,12 +454,12 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	{
 		long lUpperClip = m_Values.Get<long>(SvPb::LUTUpperClipEId);
 
-		m_strUpperClipValue.Format( _T("%d"), lUpperClip );
+		m_strUpperClipValue.Format( _T("%ld"), lUpperClip );
 		m_upperSlider.SetPos(static_cast<int> (lUpperClip));
 
 		long lLowerClip = m_Values.Get<long>(SvPb::LUTLowerClipEId);
 
-		m_strLowerClipValue.Format( _T("%d"), lLowerClip );
+		m_strLowerClipValue.Format( _T("%ld"), lLowerClip );
 		m_lowerSlider.SetPos(static_cast<int> (lLowerClip));
 	}
 
@@ -467,7 +468,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
 		{
 			long value = m_Values.Get<long>(m_stretchValueEIds[i]);
-			m_strStretchValues[i].Format(_T("%d"), value);
+			m_strStretchValues[i].Format(_T("%ld"), value);
 			m_stretchSliders[i].SetPos(static_cast<int> (value));
 		}
 	}

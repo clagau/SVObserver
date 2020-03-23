@@ -60,7 +60,7 @@ namespace SvStl
 
 	void MessageMgrStd::Throw()
 	{
-		throw m_MessageHandler;
+		throw m_MessageContainer;
 	}
 
 	constexpr uint32_t s_maximumNumberOfCodeRepeats = 4;
@@ -102,7 +102,7 @@ namespace SvStl
 	{
 		INT_PTR Result(IDCANCEL);
 
-		m_MessageHandler.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, ProgramCode, rObjectId);
+		m_MessageContainer.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, ProgramCode, rObjectId);
 
 		Result = Process(MsgBoxType);
 
@@ -114,17 +114,11 @@ namespace SvStl
 	{
 		INT_PTR Result(IDCANCEL);
 
-		m_MessageHandler.setMessage(rData, rObjectId);
+		m_MessageContainer.setMessage(rData, rObjectId);
 
 		Result = Process(MsgBoxType);
 
 		return Result;
-	}
-
-
-	MessageContainer& MessageMgrStd::getMessageContainer()
-	{
-		return m_MessageHandler;
 	}
 	#pragma endregion Public Methods
 
@@ -152,7 +146,7 @@ namespace SvStl
 			static long s_previousLineNumber = 0;
 			static uint32_t s_codeRepeats = 0;
 
-			const auto &currentMessage = m_MessageHandler.getMessage();
+			const auto &currentMessage = m_MessageContainer.getMessage();
 
 			//Since we are only comparing numbers, no synchronisation was considered necessary.
 			//If in the future strings or more complex data are to be compared, a mutex or similar will be necessary
@@ -180,7 +174,7 @@ namespace SvStl
 	{
 		if (MsgType::Log & m_Type)
 		{
-			m_MessageHandler.logMessage();
+			m_MessageContainer.logMessage();
 		}
 	}
 
@@ -191,8 +185,8 @@ namespace SvStl
 		if (nullptr != m_ppNotify && nullptr != *m_ppNotify && doNotify)
 		{
 			std::string Msg;
-			m_MessageHandler.Format(Msg);
-			long MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
+			m_MessageContainer.Format(Msg);
+			long MsgCode = (0 != m_MessageContainer.getMessage().m_ProgramCode) ? m_MessageContainer.getMessage().m_ProgramCode : m_MessageContainer.getMessage().m_MessageCode;
 			long msgNotify {static_cast<long> (NotificationType::message)};
 			long logMsgBox {static_cast<long> (NotificationMsgEnum::MsgLog)};
 			(*m_ppNotify)(msgNotify, logMsgBox, MsgCode, Msg.c_str());
@@ -208,18 +202,18 @@ namespace SvStl
 		//If the message has already been displayed do not display again
 		if (nullptr != m_ppShowDisplay && nullptr != *m_ppShowDisplay && (MsgType::Display & m_Type)
 			&& !SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)
-			&& !m_MessageHandler.getMessage().m_Displayed)
+			&& !m_MessageContainer.getMessage().m_Displayed)
 		{
 			std::string Msg;
 			std::string MsgDetails;
 			UINT Type(MsgBoxType);
 			int MsgCode(0);
 
-			MsgDetails = m_MessageHandler.Format(Msg);
-			MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
+			MsgDetails = m_MessageContainer.Format(Msg);
+			MsgCode = (0 != m_MessageContainer.getMessage().m_ProgramCode) ? m_MessageContainer.getMessage().m_ProgramCode : m_MessageContainer.getMessage().m_MessageCode;
 			//Message box type icon is determined by the severity of the message so set to 0 then get it from the container
 			Type &= ~MB_ICONMASK;
-			Type |= m_MessageHandler.getSeverityIcon();
+			Type |= m_MessageContainer.getSeverityIcon();
 
 			if (nullptr != m_ppNotify && nullptr != *m_ppNotify)
 			{
@@ -229,7 +223,7 @@ namespace SvStl
 			}
 			Result = (*m_ppShowDisplay)(nullptr, Msg.c_str(), MsgDetails.c_str(), Type);
 			//Message has been displayed do not display again
-			m_MessageHandler.getMessage().m_Displayed = true;
+			m_MessageContainer.getMessage().m_Displayed = true;
 			if (nullptr != m_ppNotify && nullptr != *m_ppNotify)
 			{
 				long msgNotify {static_cast<long> (NotificationType::message)};
@@ -238,7 +232,7 @@ namespace SvStl
 			}
 
 			//the message now has been displayed
-			m_MessageHandler.setMessageDisplayed();
+			m_MessageContainer.setMessageDisplayed();
 		}
 
 		return Result;

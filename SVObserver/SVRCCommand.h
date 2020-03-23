@@ -49,21 +49,23 @@ public:
 	void RunOnce(const SvPb::RunOnceRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void LoadConfig(const SvPb::LoadConfigRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest&, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse>);
-	void ExecuteInspectionCmd(const SvPb::ExecuteInspectionCmdRequest&, SvRpc::Task<SvPb::ExecuteInspectionCmdResponse>);
+	void ExecuteInspectionCmd(const SvPb::InspectionCmdRequest&, SvRpc::Task<SvPb::InspectionCmdResponse>);
 	void GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&, SvRpc::Task<SvPb::GetConfigurationTreeResponse>);
+	void ConfigCommand(const SvPb::ConfigCommandRequest&, SvRpc::Task<SvPb::ConfigCommandResponse>);
 
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
 	
 private:
-	std::string GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string());
-	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue);
-	HRESULT ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue);
-	HRESULT AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems);
-	HRESULT AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems);
+	std::string GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string()) const;
+	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;
+	HRESULT ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;
+	HRESULT AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const;
+	HRESULT AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const;
 	void ConvertTreeNames(SvPb::TreeItem* pTreeItem) const;
 	void addObjectChildren(const SVGUID& rInspectionID, const SVGUID& rParentID, std::back_insert_iterator<std::vector<SVGUID>> inserter) const;
 	void addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObjectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const;
+	void clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::StandardResponse* pResponse) const;
 };
 

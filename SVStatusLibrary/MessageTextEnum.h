@@ -359,6 +359,7 @@ enum MessageTextEnum
 	Tid_GetClipboardDataFailed,
 	Tid_ClipboardZipFailed,
 	Tid_ClipboardUnzipFailed,
+	Tid_ClipboardInvalid,
 	Tid_ToolInvalid,
 	Tid_Clipboard_VersionMismatch,
 	Tid_ColorToolInsertFailed,

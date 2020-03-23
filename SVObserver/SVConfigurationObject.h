@@ -483,7 +483,7 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const std::string& listName, MonitoredObjectList& rList );
 
-	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdMsgs &rResponse) const;
+	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdResponse &rResponse) const;
 
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;

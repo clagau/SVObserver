@@ -41,7 +41,6 @@ namespace SvStl
 	constexpr int Err_10022_ConstructTaskObject_Failed = Maz_ErrorBase + 22;
 	constexpr int Err_10023_ConstructTaskObject_InvalidObjectID = Maz_ErrorBase + 23;
 	constexpr int Err_10024_DestroyChildObject_InvalidParameter = Maz_ErrorBase + 24;
-	constexpr int Err_10025_ShouldResetInspection_InvalidParameter = Maz_ErrorBase + 25;
 	//GoOnline
 	constexpr int Err_10026_GoOnline_WrongCameraModel = Maz_ErrorBase + 26;
 	constexpr int Err_10027_GoOnline_WrongCameraVender = Maz_ErrorBase + 27;

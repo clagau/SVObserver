@@ -127,8 +127,10 @@ public:
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
 	
-	//Returns an index of the ToolsetList. The new Tool should be insert after this tool
-	int GetToolToInsertBefore(const std::string& rName, int listIndex) const;
+	//Returns a GUID of the ToolsetList. The new Tool should be inserted before this tool
+	SVGUID GetToolToInsertBefore(const std::string& rName, int listIndex) const;
+
+	void updateToolsetView(const SVGUID& rToolID, const SVGUID& rPostID, const SVGUID rOwnerID);
 
 	std::vector<RegressionTestStruct> m_regCameras; // @WARNING:  bad practice making members public
 

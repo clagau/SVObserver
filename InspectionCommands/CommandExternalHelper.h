@@ -14,12 +14,6 @@
 #pragma region Declarations
 class SVGUID;
 
-namespace SvStl
-{
-class MessageContainer;
-typedef std::vector<MessageContainer> MessageContainerVector;
-}
-
 namespace SvOi
 {
 /// struct  holds data for one TaskObject which are relevant 
@@ -47,21 +41,12 @@ namespace SvCmd
 /// \param rRequest [in] The request message.
 /// \param pResponse [in, out] The response message (must fit to the request message). If request message has no response message, it should be nullptr.
 /// \returns HRESULT ErrorCode.
-HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdMsgs& rRequest, SvPb::InspectionCmdMsgs* pResponse);
+HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse);
 
 HRESULT RunOnceSynchronous(const SVGUID& rInspectionID);
 
-/// Set messages from SVObserver to a protobuf-structure.
-/// \param messageContainers [in] Messages
-/// \returns SvCmd::MessageContainerVector The protobuf-structure.
-SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers);
-/// Convert a protobuf-structure to messages from SVObserver.
-/// \param messagesPB [in] The protobuf-structure.
-/// \returns SvStl::MessageContainerVector The messages
-SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB);
-
 ///convert protobuf message to a vector of objectinfos
-bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos);
+bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos);
 
 SvUl::NameGuidPair convertNameGuidPair(const SvPb::ObjectNameGuidPair& rPbPair);
 

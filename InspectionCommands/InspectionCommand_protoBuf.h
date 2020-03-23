@@ -26,151 +26,151 @@ class InspectionCommands_protoBuf
 public:
 	InspectionCommands_protoBuf(const InspectionCommands_protoBuf&) = delete;
 	InspectionCommands_protoBuf& operator=(const InspectionCommands_protoBuf&) = delete;
-	explicit InspectionCommands_protoBuf(const SvPb::InspectionCmdMsgs& rRequest)
+	explicit InspectionCommands_protoBuf(const SvPb::InspectionCmdRequest& rRequest)
 		: m_rRequest(rRequest)
 	{
 	};
 
 	virtual ~InspectionCommands_protoBuf() {};
 
-	const InspectionCmdResult& getResult() {return m_result;}
+	const SvPb::InspectionCmdResponse& getResponse() { return m_response; }
 
 	HRESULT Execute()
 	{
-		m_result.m_hResult = E_FAIL;
+		m_response.set_hresult(E_FAIL);
 
 		switch (m_rRequest.message_case())
 		{
-			case SvPb::InspectionCmdMsgs::kInspectionRunOnceRequest:
-				m_result = InspectionRunOnce(m_rRequest.inspectionrunoncerequest());
+			case SvPb::InspectionCmdRequest::kInspectionRunOnceRequest:
+				m_response = InspectionRunOnce(m_rRequest.inspectionrunoncerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kDestroyChildRequest:
-				m_result = DestroyChildObject(m_rRequest.destroychildrequest());
+			case SvPb::InspectionCmdRequest::kDeleteObjectRequest:
+				m_response = DeleteObject(m_rRequest.deleteobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetMessageListRequest:
-				m_result = GetMessageList(m_rRequest.getmessagelistrequest());
+			case SvPb::InspectionCmdRequest::kGetMessageListRequest:
+				m_response = GetMessageList(m_rRequest.getmessagelistrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kResetObjectRequest:
-				m_result = ResetObject(m_rRequest.resetobjectrequest());
+			case SvPb::InspectionCmdRequest::kResetObjectRequest:
+				m_response = ResetObject(m_rRequest.resetobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kCreateModelRequest:
-				m_result = CreateModel(m_rRequest.createmodelrequest());
+			case SvPb::InspectionCmdRequest::kCreateModelRequest:
+				m_response = CreateModel(m_rRequest.createmodelrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetObjectParametersRequest:
-				m_result = getObjectParameters(m_rRequest.getobjectparametersrequest());
+			case SvPb::InspectionCmdRequest::kGetObjectParametersRequest:
+				m_response = getObjectParameters(m_rRequest.getobjectparametersrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetEquationRequest:
-				m_result = GetEquation(m_rRequest.getequationrequest());
+			case SvPb::InspectionCmdRequest::kGetEquationRequest:
+				m_response = GetEquation(m_rRequest.getequationrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kValidateAndSetEquationRequest:
-				m_result = ValidateAndSetEquation(m_rRequest.validateandsetequationrequest());
+			case SvPb::InspectionCmdRequest::kValidateAndSetEquationRequest:
+				m_response = ValidateAndSetEquation(m_rRequest.validateandsetequationrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetObjectsForMonitorListRequest:
-				m_result = getObjectsForMonitorList(m_rRequest.getobjectsformonitorlistrequest());
+			case SvPb::InspectionCmdRequest::kGetObjectsForMonitorListRequest:
+				m_response = getObjectsForMonitorList(m_rRequest.getobjectsformonitorlistrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kMoveObjectRequest:
-				m_result = MoveObject(m_rRequest.moveobjectrequest());
+			case SvPb::InspectionCmdRequest::kMoveObjectRequest:
+				m_response = MoveObject(m_rRequest.moveobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kTaskObjectListRequest:
-				m_result = GetTaskObjectsList(m_rRequest.taskobjectlistrequest());
+			case SvPb::InspectionCmdRequest::kTaskObjectListRequest:
+				m_response = GetTaskObjectsList(m_rRequest.taskobjectlistrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetImageRequest:
-				m_result = getImage(m_rRequest.getimagerequest());
+			case SvPb::InspectionCmdRequest::kGetImageRequest:
+				m_response = getImage(m_rRequest.getimagerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kAreAuxiliaryExtentsAvailableRequest:
-				m_result = areAuxiliaryExtentsAvailable(m_rRequest.areauxiliaryextentsavailablerequest());
+			case SvPb::InspectionCmdRequest::kAreAuxiliaryExtentsAvailableRequest:
+				m_response = areAuxiliaryExtentsAvailable(m_rRequest.areauxiliaryextentsavailablerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetAvailableAuxImagesRequest:
-				m_result = getAvailableAuxImages(m_rRequest.getavailableauximagesrequest());
+			case SvPb::InspectionCmdRequest::kGetAvailableAuxImagesRequest:
+				m_response = getAvailableAuxImages(m_rRequest.getavailableauximagesrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetAuxImageObjectRequest:
-				m_result = getAuxImageObject(m_rRequest.getauximageobjectrequest());
+			case SvPb::InspectionCmdRequest::kGetAuxImageObjectRequest:
+				m_response = getAuxImageObject(m_rRequest.getauximageobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kSetAuxImageObjectRequest:
-				m_result = setAuxImageObject(m_rRequest.setauximageobjectrequest());
+			case SvPb::InspectionCmdRequest::kSetAuxImageObjectRequest:
+				m_response = setAuxImageObject(m_rRequest.setauximageobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetInputsRequest:
-				m_result = getInputs(m_rRequest.getinputsrequest());
+			case SvPb::InspectionCmdRequest::kGetInputsRequest:
+				m_response = getInputs(m_rRequest.getinputsrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kConnectToObjectRequest:
-				m_result = connectToObject(m_rRequest.connecttoobjectrequest());
+			case SvPb::InspectionCmdRequest::kConnectToObjectRequest:
+				m_response = connectToObject(m_rRequest.connecttoobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kSaveImageRequest:
-				m_result = saveImage(m_rRequest.saveimagerequest());
+			case SvPb::InspectionCmdRequest::kSaveImageRequest:
+				m_response = saveImage(m_rRequest.saveimagerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kSetObjectNameRequest:
-				m_result = setObjectName(m_rRequest.setobjectnamerequest());
+			case SvPb::InspectionCmdRequest::kSetObjectNameRequest:
+				m_response = setObjectName(m_rRequest.setobjectnamerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetAvailableObjectsRequest:
-				m_result = getAvailableObjects(m_rRequest.getavailableobjectsrequest());
+			case SvPb::InspectionCmdRequest::kGetAvailableObjectsRequest:
+				m_response = getAvailableObjects(m_rRequest.getavailableobjectsrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetSpecialImageListRequest:
-				m_result = getSpecialImageList(m_rRequest.getspecialimagelistrequest());
+			case SvPb::InspectionCmdRequest::kGetSpecialImageListRequest:
+				m_response = getSpecialImageList(m_rRequest.getspecialimagelistrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kExportMaskRequest:
-				m_result = exportMask(m_rRequest.exportmaskrequest());
+			case SvPb::InspectionCmdRequest::kExportMaskRequest:
+				m_response = exportMask(m_rRequest.exportmaskrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kImportMaskRequest:
-				m_result = importMask(m_rRequest.importmaskrequest());
+			case SvPb::InspectionCmdRequest::kImportMaskRequest:
+				m_response = importMask(m_rRequest.importmaskrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetObjectIdRequest:
-				m_result = getObjectId(m_rRequest.getobjectidrequest());
+			case SvPb::InspectionCmdRequest::kGetObjectIdRequest:
+				m_response = getObjectId(m_rRequest.getobjectidrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kConstructAndInsertRequest:
-				m_result = constructAndInsert(m_rRequest.constructandinsertrequest());
+			case SvPb::InspectionCmdRequest::kCreateObjectRequest:
+				m_response = createObject(m_rRequest.createobjectrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetCreatableObjectsRequest:
-				m_result = getCreatableObjects(m_rRequest.getcreatableobjectsrequest());
+			case SvPb::InspectionCmdRequest::kGetCreatableObjectsRequest:
+				m_response = getCreatableObjects(m_rRequest.getcreatableobjectsrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kShouldInspectionResetRequest:
-				m_result = shouldInspectionReset(m_rRequest.shouldinspectionresetrequest());
+			case SvPb::InspectionCmdRequest::kShouldInspectionResetRequest:
+				m_response = shouldInspectionReset(m_rRequest.shouldinspectionresetrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetPPQNameRequest:
-				m_result = getPPQName(m_rRequest.getppqnamerequest());
+			case SvPb::InspectionCmdRequest::kGetPPQNameRequest:
+				m_response = getPPQName(m_rRequest.getppqnamerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetValueObjectEnumsRequest:
-				m_result = getValueObjectEnums(m_rRequest.getvalueobjectenumsrequest());
+			case SvPb::InspectionCmdRequest::kGetValueObjectEnumsRequest:
+				m_response = getValueObjectEnums(m_rRequest.getvalueobjectenumsrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetEmbeddedValuesRequest:
-				m_result = getEmbeddedValues(m_rRequest.getembeddedvaluesrequest());
+			case SvPb::InspectionCmdRequest::kGetEmbeddedValuesRequest:
+				m_response = getEmbeddedValues(m_rRequest.getembeddedvaluesrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kSetEmbeddedValuesRequest:
-				m_result = setEmbeddedValues(m_rRequest.setembeddedvaluesrequest());
+			case SvPb::InspectionCmdRequest::kSetEmbeddedValuesRequest:
+				m_response = setEmbeddedValues(m_rRequest.setembeddedvaluesrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetOutputRectangleRequest:
-				m_result = getOutputRectangle(m_rRequest.getoutputrectanglerequest());
+			case SvPb::InspectionCmdRequest::kGetOutputRectangleRequest:
+				m_response = getOutputRectangle(m_rRequest.getoutputrectanglerequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetToolSizeAdjustParameterRequest:
-				m_result = getToolSizeAdjustParameter(m_rRequest.gettoolsizeadjustparameterrequest());
+			case SvPb::InspectionCmdRequest::kGetToolSizeAdjustParameterRequest:
+				m_response = getToolSizeAdjustParameter(m_rRequest.gettoolsizeadjustparameterrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetExtentParameterRequest:
-				m_result = getExtentParameter(m_rRequest.getextentparameterrequest());
+			case SvPb::InspectionCmdRequest::kGetExtentParameterRequest:
+				m_response = getExtentParameter(m_rRequest.getextentparameterrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kSetExtentParameterRequest:
-				m_result = setExtentParameter(m_rRequest.setextentparameterrequest());
+			case SvPb::InspectionCmdRequest::kSetExtentParameterRequest:
+				m_response = setExtentParameter(m_rRequest.setextentparameterrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kIsAllowedLocationRequest:
-				m_result = isAllowedLocation(m_rRequest.isallowedlocationrequest());
+			case SvPb::InspectionCmdRequest::kIsAllowedLocationRequest:
+				m_response = isAllowedLocation(m_rRequest.isallowedlocationrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kPropagateSizeAndPositionRequest:
-				m_result = propagateSizeAndPosition(m_rRequest.propagatesizeandpositionrequest());
+			case SvPb::InspectionCmdRequest::kPropagateSizeAndPositionRequest:
+				m_response = propagateSizeAndPosition(m_rRequest.propagatesizeandpositionrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kUsePropagateSizeAndPositionRequest:
-				m_result = usePropagateSizeAndPosition(m_rRequest.usepropagatesizeandpositionrequest());
+			case SvPb::InspectionCmdRequest::kUsePropagateSizeAndPositionRequest:
+				m_response = usePropagateSizeAndPosition(m_rRequest.usepropagatesizeandpositionrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetOverlayStructRequest:
-				m_result = getOverlayStruct(m_rRequest.getoverlaystructrequest());
+			case SvPb::InspectionCmdRequest::kGetOverlayStructRequest:
+				m_response = getOverlayStruct(m_rRequest.getoverlaystructrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kGetObjectSelectorItemsRequest:
-				m_result = getObjectSelectorItems(m_rRequest.getobjectselectoritemsrequest());
+			case SvPb::InspectionCmdRequest::kGetObjectSelectorItemsRequest:
+				m_response = getObjectSelectorItems(m_rRequest.getobjectselectoritemsrequest());
 				break;
-			case SvPb::InspectionCmdMsgs::kSetDefaultInputsRequest:
-				m_result = setDefaultInputsRequest(m_rRequest.setdefaultinputsrequest());
+			case SvPb::InspectionCmdRequest::kSetDefaultInputsRequest:
+				m_response = setDefaultInputsRequest(m_rRequest.setdefaultinputsrequest());
 				break;
 			default:;
 		}
 
-		return m_result.m_hResult;
+		return m_response.hresult();
 	}
 
 	bool empty() const
@@ -179,8 +179,8 @@ public:
 	}
 
 private:
-	const SvPb::InspectionCmdMsgs& m_rRequest;
-	InspectionCmdResult m_result;
+	const SvPb::InspectionCmdRequest& m_rRequest;
+	SvPb::InspectionCmdResponse m_response;
 };
 typedef std::shared_ptr<InspectionCommands_protoBuf> InspectionCommands_protoBufPtr;
 } //namespace SvCmd

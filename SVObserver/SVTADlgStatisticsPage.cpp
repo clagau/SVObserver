@@ -263,15 +263,16 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 	if( nullptr == pInspection ) { return; }
 
-	SvPb::InspectionCmdMsgs request, response;
-	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pTool->GetUniqueObjectID());
-	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
-
+	
+	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	if (response.has_getobjectselectoritemsresponse())
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 
 	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
@@ -311,15 +312,16 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SVObjectClass* pInspection( m_pTool->GetInspection() );
 	if( nullptr == pInspection ) { return; }
 
-	SvPb::InspectionCmdMsgs request, response;
-	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::selectableForStatistics);
-	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
 
+	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	if (response.has_getobjectselectoritemsresponse())
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 
 	SVObjectReference objectRef(m_pTool->GetVariableSelected());

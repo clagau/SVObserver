@@ -39,7 +39,7 @@ public:
 	boost::asio::io_context& m_io_context;
 	SvRpc::RPCClient& m_rpc_client;
 	boost::posix_time::seconds m_timeout {2};
-	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ExecuteInspectionCmdRequest, SvPb::ExecuteInspectionCmdResponse> m_inspectionCmd_client;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> m_inspectionCmd_client;
 
 private:
 	/// Request the new structure of the overlay from the SVObserver.

@@ -214,7 +214,10 @@ HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControl
 					return SVMEE_INVALID_PARAMETER;
 				}
 			}
-			Result = SVMatroxApplicationInterface::GetLastStatus();
+			if(S_OK == Result)
+			{
+				Result = SVMatroxApplicationInterface::GetLastStatus();
+			}
 		}
 		else
 		{

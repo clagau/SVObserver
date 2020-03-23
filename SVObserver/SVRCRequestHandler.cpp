@@ -314,10 +314,10 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	registerRequestHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kExecuteInspectionCmdRequest,
-		SvPb::ExecuteInspectionCmdRequest,
-		SvPb::ExecuteInspectionCmdResponse>(
-		[this, pCommand](SvPb::ExecuteInspectionCmdRequest&& req, SvRpc::Task<SvPb::ExecuteInspectionCmdResponse> task)
+		SvPb::SVRCMessages::kInspectionCmdRequest,
+		SvPb::InspectionCmdRequest,
+		SvPb::InspectionCmdResponse>(
+		[this, pCommand](SvPb::InspectionCmdRequest&& req, SvRpc::Task<SvPb::InspectionCmdResponse> task)
 	{
 		m_IoRunService.post([req, task, pCommand]() { pCommand->ExecuteInspectionCmd(req, task); });
 
@@ -331,6 +331,17 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 		[this, pCommand](SvPb::GetConfigurationTreeRequest&& req, SvRpc::Task<SvPb::GetConfigurationTreeResponse> task)
 	{
 		m_IoRunService.post([req, task, pCommand]() { pCommand->GetConfigurationTree(req, task); });
+
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kConfigCommandRequest,
+		SvPb::ConfigCommandRequest,
+		SvPb::ConfigCommandResponse>(
+		[this, pCommand](SvPb::ConfigCommandRequest&& req, SvRpc::Task<SvPb::ConfigCommandResponse> task)
+	{
+		m_IoRunService.post([req, task, pCommand]() { pCommand->ConfigCommand(req, task); });
 
 	});
 

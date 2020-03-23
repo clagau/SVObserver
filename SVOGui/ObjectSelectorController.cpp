@@ -46,16 +46,17 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 	{
 		InstanceGuid = GetToolSetGUID();
 	}
-	SvPb::InspectionCmdMsgs request, response;
-	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
 		m_InspectionID, SvPb::selectableForEquation, m_InstanceID, false, FilterType);
-	SvCmd::InspectionCommands(m_InspectionID, request, &response);
+	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject);
-	if (response.has_getobjectselectoritemsresponse())
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 
 	if (!rName.empty())
@@ -86,15 +87,16 @@ GUID ObjectSelectorController::GetToolSetGUID() const
 {
 	GUID toolsetGUID = GUID_NULL;
 	
-	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
 	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVToolSetObjectType);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-	if (S_OK == hr && responseMessage.has_getobjectidresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectidresponse())
 	{
-		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 	}
 
 	return toolsetGUID;

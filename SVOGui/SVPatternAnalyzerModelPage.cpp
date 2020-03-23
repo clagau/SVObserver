@@ -229,16 +229,17 @@ namespace SvOg
 
 		if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 		{
-			SvPb::InspectionCmdMsgs Request,Response;
-			SvPb::CreateModelRequest* pCreateModelRequest= Request.mutable_createmodelrequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest= requestCmd.mutable_createmodelrequest();
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_patternanalyzerid(), m_rAnalyzerID);
+			pRequest->set_posx(m_nXPos);
+			pRequest->set_posy(m_nYPos);
+			pRequest->set_modelwidth(m_lModelWidth);
+			pRequest->set_modelheight(m_lModelHeight);
+			pRequest->set_filename(m_strModelName);
 
-			SvPb::SetGuidInProtoBytes(pCreateModelRequest->mutable_patternanalyzerid(), m_rAnalyzerID);
-			pCreateModelRequest->set_posx(m_nXPos);
-			pCreateModelRequest->set_posy(m_nYPos);
-			pCreateModelRequest->set_modelwidth(m_lModelWidth);
-			pCreateModelRequest->set_modelheight(m_lModelHeight);
-			pCreateModelRequest->set_filename(m_strModelName);
-			HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, Request, &Response);
+			HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr)
 			{
 				SvStl::MessageContainerVector ErrorMessages;
@@ -249,9 +250,9 @@ namespace SvOg
 					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_rAnalyzerID );
 				}
 			}
-			else if (Response.has_createmodelresponse())
+			else if (responseCmd.has_standardresponse())
 			{
-				SvStl::MessageContainerVector ErrorMessages = SvCmd::setMessageContainerFromMessagePB(Response.createmodelresponse().messages());
+				SvStl::MessageContainerVector ErrorMessages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 				if (!ErrorMessages.empty())
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
@@ -658,9 +659,12 @@ namespace SvOg
 							Msg.setMessage( ErrorMessages[0].getMessage() );
 						}
 					
-						GetDlgItem(nId)->SetFocus();
-						CWnd* tmp = (GetDlgItem(nId));
-						((CEdit*)GetDlgItem(nId))->SetSel(0, -1);
+						CEdit* pEdit = dynamic_cast<CEdit*> (GetDlgItem(nId));
+						if(nullptr != pEdit)
+						{
+							pEdit->SetFocus();
+							pEdit->SetSel(0, -1);
+						}
 						return false;
 					}
 				}
@@ -682,8 +686,12 @@ namespace SvOg
 						Msg.setMessage(ErrorMessages[0].getMessage());
 					}
 
-					GetDlgItem(nId)->SetFocus();
-					((CEdit*)GetDlgItem(nId))->SetSel(0, -1);
+					CEdit* pEdit = dynamic_cast<CEdit*> (GetDlgItem(nId));
+					if (nullptr != pEdit)
+					{
+						pEdit->SetFocus();
+						pEdit->SetSel(0, -1);
+					}
 					return false;
 				}
 				break;

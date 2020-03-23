@@ -121,14 +121,15 @@ void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT At
 		//This is used to retrieve the list which have the attribute set
 		SvPb::SelectorFilter filter {SvPb::SelectorFilter::attributesSet};
 
-		SvPb::InspectionCmdMsgs request, response;
-		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 			{SvPb::ObjectSelectorType::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), GUID_NULL, false, filter);
-		SvCmd::InspectionCommands(m_InspectionID, request, &response);
 
-		if (response.has_getobjectselectoritemsresponse())
+		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (responseCmd.has_getobjectselectoritemsresponse())
 		{
-			insertObjectsToList(response.getobjectselectoritemsresponse().tree(), pList);
+			insertObjectsToList(responseCmd.getobjectselectoritemsresponse().tree(), pList);
 		}
 	}
 }
@@ -136,7 +137,6 @@ void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT At
 bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 {
 	bool Result( false );
-	SvDef::StringVector* pList( nullptr);
 
 	if( nullptr != pPage && nullptr != pPage->GetSafeHwnd() )
 	{
@@ -146,6 +146,7 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 			pPage->OnKillActive();
 		}
 
+		SvDef::StringVector* pList(nullptr);
 		switch( pPage->getAttributeFilter() )
 		{
 		case SvPb::dataDefinitionValue:

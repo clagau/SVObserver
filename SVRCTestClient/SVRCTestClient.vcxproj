@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;libprotobufd.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -160,7 +160,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVProtoBuf.lib;SVRPCLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;libprotobuf.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

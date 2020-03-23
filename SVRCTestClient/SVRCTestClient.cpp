@@ -11,10 +11,12 @@
 
 #include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVProtobuf/ConverterHelper.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "WebsocketLibrary/SVRCClientServiceSettings.h"
 #include "WebsocketLibrary\RunRequest.inl"
@@ -67,12 +69,35 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	ctx.cancel();
 }
 
-template<typename Tree>
-void PrintTreeItems(const Tree& rTreeItem, std::string& rData, const std::string& rSpacing)
+void PrintTreeItems(const SvPb::TreeItem& rTreeItem, std::string& rData, const std::string& rSpacing)
 {
-	for(int i=0; i < rTreeItem.children_size(); i++)
+	for (int i = 0; i < rTreeItem.children_size(); i++)
 	{
-		rData += rSpacing + SvUl::to_ansi(rTreeItem.children(i).name()) + _T("\n");
+		const SvPb::TreeItem& rChildItem = rTreeItem.children(i);
+		std::string selected = rChildItem.selected() ? _T("\tSelected\n") : _T("\tNot selected\n");
+		rData += rSpacing + SvUl::to_ansi(rChildItem.name()) + _T("\n");
+		rData += rSpacing + selected;
+		rData += rSpacing + _T("\t") + rChildItem.type() + _T("\n");
+		rData += rSpacing + _T("\t") + rChildItem.objectidindex() + _T("\n");
+		PrintTreeItems(rChildItem, rData, rSpacing + _T("\t"));
+	}
+}
+
+void PrintTreeItems(const SvPb::ConfigTreeItem& rTreeItem, std::string& rData, const std::string& rSpacing)
+{
+	const google::protobuf::EnumDescriptor* pTypeDescriptor = SvPb::SVObjectTypeEnum_descriptor();
+	const google::protobuf::EnumDescriptor* pSubtypeDescriptor = SvPb::SVObjectSubTypeEnum_descriptor();
+
+	for (int i = 0; i < rTreeItem.children_size(); i++)
+	{
+		const SvPb::ConfigTreeItem& rChildItem = rTreeItem.children(i);
+		SVGUID ObjectID(SvPb::GetGuidFromProtoBytes(rChildItem.objectid()));
+		std::string state = rChildItem.isvalid() ? _T("Valid\n") : _T("Invalid\n");
+		rData += rSpacing + SvUl::to_ansi(rChildItem.name()) + _T("\n");
+		rData += rSpacing + ObjectID.ToString() + _T("\n");
+		rData += rSpacing + std::to_string(rChildItem.position()) + _T("\n");
+		rData += rSpacing + pTypeDescriptor->FindValueByNumber(rChildItem.objecttype())->name() + _T("\n");
+		rData += rSpacing + pSubtypeDescriptor->FindValueByNumber(rChildItem.objectsubtype())->name() + _T("\n");
 		PrintTreeItems(rTreeItem.children(i), rData, rSpacing + _T("\t"));
 	}
 }
@@ -138,11 +163,13 @@ int main(int argc, char* argv[])
 					<< "  m  (GetMode)" << std::endl
 					<< "  n  notification" << std::endl
 					<< "  e  (editmode)" << std::endl
-					<< "  r  rummode" << std::endl
+					<< "  r  runmode" << std::endl
 					<< "  c getconfig" << std::endl
 					<< "  o getobjectselector" << std::endl
 					<< "  i executeInspectionCmd" << std::endl
-					<< "  t getconfigtree" << std::endl;
+					<< "  t getconfigtree" << std::endl
+					<< "  a add tool" << std::endl
+					<< "  d delete tool" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -163,7 +190,7 @@ int main(int argc, char* argv[])
 				{
 					std::ofstream FileStream;
 
-					FileStream.open(_T("D:\\Temp\\Test.pac"), std::ofstream::out | std::ofstream::binary | std::ofstream::ate);
+					FileStream.open(_T("D:\\Temp\\Test.svz"), std::ofstream::out | std::ofstream::binary | std::ofstream::ate);
 					if (FileStream.is_open())
 					{
 						FileStream.write(res.filedata().c_str(), res.filedata().length());
@@ -173,16 +200,16 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "o")
 			{
-				SvPb::ExecuteInspectionCmdRequest requestID;
-				SvPb::GetObjectIdRequest* pGetObjectID = requestID.mutable_cmdmsg()->mutable_getobjectidrequest();
-				pGetObjectID->set_name("Inspections.Inspection_1");
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pRequest = requestCmd.mutable_getobjectidrequest();
+				pRequest->set_name("Inspections.Inspection_1");
 
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ExecuteInspectionCmdRequest, SvPb::ExecuteInspectionCmdResponse> clientInspectionCmd(*pRpcClient);
-				auto responseID = clientInspectionCmd.request(std::move(requestID), Timeout).get();
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> clientInspectionCmd(*pRpcClient);
+				auto responseCmd = clientInspectionCmd.request(std::move(requestCmd), Timeout).get();
 
 				///GetObjectSelector
 				SvPb::GetObjectSelectorItemsRequest request; 
-				request.set_inspectionid(responseID.cmdmsg().getobjectidresponse().objectid());
+				request.set_inspectionid(responseCmd.getobjectidresponse().objectid());
 				request.set_attribute(SvPb::ObjectAttributes::viewable);
 				request.set_wholearray(true);
 				request.set_filter(SvPb::SelectorFilter::attributesAllowed);
@@ -190,12 +217,12 @@ int main(int argc, char* argv[])
 				request.add_types(SvPb::ObjectSelectorType::ppqItems);
 				request.add_types(SvPb::ObjectSelectorType::toolsetItems);
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetObjectSelectorItemsRequest, SvPb::GetObjectSelectorItemsResponse> client(*pRpcClient);
-				auto res = client.request(std::move(request), Timeout).get();
-				SV_LOG_GLOBAL(info) << res.DebugString();
-				if (0 != res.tree().children_size())
+				auto resposeTree = client.request(std::move(request), Timeout).get();
+				SV_LOG_GLOBAL(info) << resposeTree.DebugString();
+				if (0 != resposeTree.tree().children_size())
 				{
 					std::string Data;
-					PrintTreeItems(res.tree(), Data, _T(""));
+					PrintTreeItems(resposeTree.tree(), Data, _T(""));
 
 					std::ofstream FileStream;
 					FileStream.open(_T("D:\\Temp\\ObjectSelector.txt"), std::ofstream::out | std::ofstream::trunc);
@@ -252,20 +279,19 @@ int main(int argc, char* argv[])
 			else if (words[0] == "i")
 			{
 				///GetObjectID
-				SvPb::ExecuteInspectionCmdRequest requestID;
-				SvPb::GetObjectIdRequest* pGetObjectID = requestID.mutable_cmdmsg()->mutable_getobjectidrequest();
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
 				pGetObjectID->set_name("Inspections.Inspection_1");
-
-				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ExecuteInspectionCmdRequest, SvPb::ExecuteInspectionCmdResponse> client(*pRpcClient);
-				auto responseID = client.request(std::move(requestID), Timeout).get();
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
+				auto responseCmd = client.request(std::move(requestCmd), Timeout).get();
 				
 				///Run Once
-				SvPb::ExecuteInspectionCmdRequest requestRunonce;
-				requestRunonce.set_inspectionid(responseID.cmdmsg().getobjectidresponse().objectid());
-				SvPb::InspectionRunOnceRequest* pRunOnce = requestRunonce.mutable_cmdmsg()->mutable_inspectionrunoncerequest();
-				pRunOnce->set_inspectionid(responseID.cmdmsg().getobjectidresponse().objectid());
+				requestCmd = SvPb::InspectionCmdRequest{};
+				requestCmd.set_inspectionid(responseCmd.getobjectidresponse().objectid());
+				SvPb::InspectionRunOnceRequest* pRunOnce = requestCmd.mutable_inspectionrunoncerequest();
+				pRunOnce->set_inspectionid(responseCmd.getobjectidresponse().objectid());
 
-				client.request(std::move(requestRunonce), Timeout);
+				client.request(std::move(requestCmd), Timeout);
 
 			}
 			else if (words[0] == "t")
@@ -289,6 +315,65 @@ int main(int argc, char* argv[])
 						FileStream.close();
 					}
 				}
+			}
+			else if (words[0] == "a")
+			{
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1");
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
+				SvPb::InspectionCmdResponse responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				std::string inspectionID = responseCmd.getobjectidresponse().objectid();
+
+				requestCmd = SvPb::InspectionCmdRequest {};
+				pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set");
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				std::string toolSetID = responseCmd.getobjectidresponse().objectid();
+
+				requestCmd = SvPb::InspectionCmdRequest {};
+				pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set.Math Tool");
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+
+				///Create object
+				requestCmd = SvPb::InspectionCmdRequest {};
+				requestCmd.set_inspectionid(inspectionID);
+				SvPb::CreateObjectRequest* pCreateObj = requestCmd.mutable_createobjectrequest();
+				pCreateObj->set_taskobjectinsertbeforeid(responseCmd.getobjectidresponse().objectid());
+				pCreateObj->set_ownerid(toolSetID);
+				pCreateObj->set_classid(SvPb::WindowToolClassId);
+
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+			}
+			else if (words[0] == "d")
+			{
+				///GetObjectID
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1");
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
+				SvPb::InspectionCmdResponse responseCmd = client.request(std::move(requestCmd), Timeout).get();
+				std::string inspectionID = responseCmd.getobjectidresponse().objectid();
+
+				requestCmd = SvPb::InspectionCmdRequest{};
+				pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set.Math Tool");
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+
+				///Delete object
+				requestCmd = SvPb::InspectionCmdRequest {};
+				requestCmd.set_inspectionid(inspectionID);
+				SvPb::DeleteObjectRequest* pDelObj = requestCmd.mutable_deleteobjectrequest();
+				pDelObj->set_objectid(responseCmd.getobjectidresponse().objectid());
+
+				responseCmd.Clear();
+				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+
 			}
 			else if (words[0] == "cn" )
 			{

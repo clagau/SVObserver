@@ -63,6 +63,9 @@
     <ClCompile Include="Overlay.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ConfigCommands.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
@@ -105,6 +108,9 @@
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="Overlay.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ConfigCommands.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -191,6 +197,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Overlay.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigCommands.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

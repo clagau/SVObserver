@@ -198,15 +198,16 @@ void SelectedObjectsPage::ShowObjectSelector()
 	std::string InspectionName(m_InspectionName);
 	SVGUID InspectionGuid(m_InspectionID);
 
-	SvPb::InspectionCmdMsgs request, response;
-	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, static_cast<SvPb::ObjectAttributes> (AttributeFilters));
-	SvCmd::InspectionCommands(m_InspectionID, request, &response);
+	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, m_helpID);
-	if (response.has_getobjectselectoritemsresponse())
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 
 	SvDef::StringSet CheckItems;

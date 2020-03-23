@@ -223,35 +223,7 @@ const double& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
 	return m_LastListUpdateTimestamp;
 }
 
-void SVTaskObjectListClass::InsertAt(int Index, SVTaskObjectClass* pTaskObject, int Count)
-{
-	if (nullptr == pTaskObject)
-	{
-		assert( false );
-		return;
-	}
-	
-	// Check for Unique names
-	const std::string NewName( checkName( pTaskObject->GetName() ) );
-	if( NewName != pTaskObject->GetName() )
-	{
-		pTaskObject->SetName( NewName.c_str() );
-	}
-	
-	pTaskObject->SetObjectOwner(this);
-
-	SVTaskObjectPtrVector::iterator Iter(m_TaskObjectVector.begin());
-
-	if (0 < Index)
-	{
-		std::advance(Iter, Index);
-	}
-
-	m_TaskObjectVector.insert(Iter, Count, pTaskObject);
-
-	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
-}
-int  SVTaskObjectListClass::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject)
+int  SVTaskObjectListClass::InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject)
 {
 	int Result(-1);
 	if (nullptr == pTaskObject)
@@ -268,7 +240,7 @@ int  SVTaskObjectListClass::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* 
 	}
 
 	pTaskObject->SetObjectOwner(this);
-	if (rGuid.empty())
+	if (rObjectBeforeID.empty())
 	{
 		m_TaskObjectVector.push_back(pTaskObject);
 		Result =  static_cast<int>( m_TaskObjectVector.size()) -1;
@@ -276,9 +248,9 @@ int  SVTaskObjectListClass::InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* 
 	else
 	{
 		auto it = std::find_if(m_TaskObjectVector.begin(), m_TaskObjectVector.end(),
-			[&rGuid](SVTaskObjectClass* pObject)
+			[&rObjectBeforeID](SVTaskObjectClass* pObject)
 		{
-			if (pObject == nullptr || pObject->GetUniqueObjectID() == rGuid)
+			if (pObject == nullptr || pObject->GetUniqueObjectID() == rObjectBeforeID)
 				return true;
 			else
 				return false;
@@ -581,16 +553,10 @@ void SVTaskObjectListClass::Delete(const SVGUID& rObjectID)
 	assert( false );
 }
 
-void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int Count)
+void SVTaskObjectListClass::InsertBefore(const SVGUID& rObjectBeforeID, ITaskObject& rObject)
 {
 	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-	InsertAt(index, pObject, Count);
-}
-
-void SVTaskObjectListClass::InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject)
-{
-	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-	InsertAfter(rPostObjectId, pObject);
+	InsertBefore(rObjectBeforeID, pObject);
 }
 
 bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD context)

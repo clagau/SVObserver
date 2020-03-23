@@ -74,14 +74,15 @@ FormulaController::~FormulaController()
 std::string FormulaController::GetInspectionName() const
 {
 	std::string inspectionName;
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_InspectionID);
 
-	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_InspectionID);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_getobjectparametersresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 	{
-		inspectionName = response.getobjectparametersresponse().name();
+		inspectionName = responseCmd.getobjectparametersresponse().name();
 	}
 
 	return inspectionName;
@@ -90,13 +91,15 @@ std::string FormulaController::GetInspectionName() const
 std::string FormulaController::GetEquationText() const
 {
 	std::string equationText;
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::GetEquationRequest* pEquationRequest = Request.mutable_getequationrequest();
-	SvPb::SetGuidInProtoBytes(pEquationRequest->mutable_objectid(), m_EquationID);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
-	if (S_OK == hr&& Response.has_getequationresponse() )
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getequationrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_EquationID);
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getequationresponse() )
 	{
-		equationText = Response.getequationresponse().equationtext();
+		equationText = responseCmd.getequationresponse().equationtext();
 	}
 	else
 	{
@@ -112,14 +115,15 @@ std::string FormulaController::GetEquationText() const
 std::string FormulaController::GetEquationName() const
 {
 	std::string name;
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_EquationID);
 
-	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_EquationID);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_getobjectparametersresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 	{
-		name = response.getobjectparametersresponse().name();
+		name = responseCmd.getobjectparametersresponse().name();
 	}
 
 	return name;
@@ -127,24 +131,26 @@ std::string FormulaController::GetEquationName() const
 
 HRESULT FormulaController::SetEquationName(const std::string& rNewName)
 {
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::SetObjectNameRequest* pSetObjectNameRequest = request.mutable_setobjectnamerequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_setobjectnamerequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_EquationID);
+	pRequest->set_objectname(rNewName.c_str());
 
-	SvPb::SetGuidInProtoBytes(pSetObjectNameRequest->mutable_objectid(), m_EquationID);
-	pSetObjectNameRequest->set_objectname(rNewName.c_str());
-	return SvCmd::InspectionCommands(m_InspectionID, request, &response);
+	return SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 }
 
 void FormulaController::BuildSelectableItems()
 {
-	SvPb::InspectionCmdMsgs request, response;
-	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
 		m_InspectionID, SvPb::selectableForEquation, GUID_NULL, true);
-	SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (response.has_getobjectselectoritemsresponse())
+
+	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 }
 
@@ -180,27 +186,26 @@ HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool eq
 int FormulaController::ValidateEquation(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const
 {
 	int retValue = validateSuccessful;
-	SvPb::InspectionCmdMsgs requestMessage;
-	SvPb::InspectionCmdMsgs responseMessage;
-	
-	SvPb::ValidateAndSetEquationRequest* pRequest = requestMessage.mutable_validateandsetequationrequest();
-	
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_validateandsetequationrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_EquationID);
 	pRequest->set_equationtext(equationString);
 	pRequest->set_bsetvalue(bSetValue);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-	if (S_OK == hr && responseMessage.has_validateandsetequationresponse())
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_validateandsetequationresponse())
 	{
-		retValue = responseMessage.validateandsetequationresponse().validatestatus();
-		result = responseMessage.validateandsetequationresponse().result();
-		rErrorMessages = SvCmd::setMessageContainerFromMessagePB(responseMessage.validateandsetequationresponse().messages());;
+		retValue = responseCmd.validateandsetequationresponse().validatestatus();
+		result = responseCmd.validateandsetequationresponse().result();
+		rErrorMessages = SvPb::setMessageVectorFromMessagePB(responseCmd.validateandsetequationresponse().messages());;
 
 		if (validateSuccessful == retValue && bSetValue)
 		{
-			SvPb::InspectionCmdMsgs Request, Response;
-			SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
+			requestCmd.Clear();
+			auto* pResetObjectRequest = requestCmd.mutable_resetobjectrequest();
 			SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
-			hr = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
+			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 			if (S_OK != hr)
 			{
 				retValue = resetFailed;
@@ -224,27 +229,28 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 #pragma region Private Methods
 void FormulaController::Init()
 {
-	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
 
 	// check for Math Container...
 	if (SvPb::SVMathContainerObjectType == m_Info.m_ObjectType)
 	{
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_getobjectidresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectidresponse())
 		{
-			GUID containerID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+			GUID containerID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 			SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), containerID);
 			// Get the Equation
 			SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVMathEquationObjectType);
 			SvCmd::setTypeInfos(info, *pRequest->mutable_infostruct());
 
-			hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-			if (S_OK == hr && responseMessage.has_getobjectidresponse())
+			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getobjectidresponse())
 			{
-				m_EquationID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+				m_EquationID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 			}
 			else
 			{
@@ -261,10 +267,10 @@ void FormulaController::Init()
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		SvCmd::setTypeInfos(m_Info, *pRequest->mutable_infostruct());
 
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_getobjectidresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectidresponse())
 		{
-			m_EquationID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+			m_EquationID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 		}
 		else
 		{
@@ -277,14 +283,15 @@ void FormulaController::Init()
 	}
 	if (m_isConditional)
 	{
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+		requestCmd.Clear();
+		responseCmd.Clear();
+		auto* pGetObjParameterRequest = requestCmd.mutable_getobjectparametersrequest();
+		SvPb::SetGuidInProtoBytes(pGetObjParameterRequest->mutable_objectid(), m_TaskObjectID);
 
-		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_TaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-		if (S_OK == hr && response.has_getobjectparametersresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
-			if (SvPb::SVToolSetObjectType == response.getobjectparametersresponse().typeinfo().objecttype())
+			if (SvPb::SVToolSetObjectType == responseCmd.getobjectparametersresponse().typeinfo().objecttype())
 			{
 				m_EnableID = SvPb::ToolSetEnabledEId;
 			}

@@ -160,12 +160,6 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	return Result;
 }
 
-void TableAnalyzerTool::InsertAt(int index, ITaskObject& rObject, int count)
-{
-	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-	SVTaskObjectListClass::InsertAt(index + 1, pObject, count);
-}
-
 SvVol::DoubleSortValuePtr TableAnalyzerTool::addNewColumn(LPCTSTR name, const SVTaskObjectClass* pAnalyzer)
 {
 	SvVol::DoubleSortValuePtr pRet;

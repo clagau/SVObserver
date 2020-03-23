@@ -32,16 +32,17 @@ namespace SvOg
 		m_TaskImageController.Init();
 
 		// Get Instance GUID for the Mask Operator...
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_maskOperatorID);
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorObjectType);
 		pRequest->mutable_infostruct()->set_subtype(SvPb::SVShapeMaskHelperObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_getobjectidresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectidresponse())
 		{
-			m_ShapeMaskHelperID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+			m_ShapeMaskHelperID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 		}
 	}
 
@@ -80,22 +81,22 @@ namespace SvOg
 
 	HRESULT MaskController::ImportMask(const std::string& filename)
 	{
-		SvPb::InspectionCmdMsgs requestCmd, response;
-		SvPb::ImportMaskRequest* pImportMaskRequest = requestCmd.mutable_importmaskrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		auto* pRequest = requestCmd.mutable_importmaskrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_maskOperatorID);
+		pRequest->set_filename(filename);
 
-		SvPb::SetGuidInProtoBytes(pImportMaskRequest->mutable_objectid(), m_maskOperatorID);
-		pImportMaskRequest->set_filename(filename);
-		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, &response);
+		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 	}
 
 	HRESULT MaskController::ExportMask(const std::string& filename)
 	{
-		SvPb::InspectionCmdMsgs requestCmd, response;
-		SvPb::ExportMaskRequest* pExportMaskRequest = requestCmd.mutable_exportmaskrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		auto* pRequest = requestCmd.mutable_exportmaskrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_maskOperatorID);
+		pRequest->set_filename(filename);
 
-		SvPb::SetGuidInProtoBytes(pExportMaskRequest->mutable_objectid(), m_maskOperatorID);
-		pExportMaskRequest->set_filename(filename);
-		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, &response);
+		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 	}
 
 	HGLOBAL MaskController::GetMaskData() const

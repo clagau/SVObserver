@@ -82,7 +82,7 @@ int  MonitorlistSelector::DisplayDialog()
 	}
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_MONITOR_LIST_SELECTOR + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	SvPb::InspectionCmdMsgs response;
+	SvPb::InspectionCmdResponse responseCmd;
 
 	long numInspections(0);
 	pPPQ->GetInspectionCount(numInspections);
@@ -95,30 +95,30 @@ int  MonitorlistSelector::DisplayDialog()
 		{
 			if (m_bImage == TRUE && m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvPb::InspectionCmdMsgs request;
-				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+				SvPb::InspectionCmdRequest requestCmd;
+				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::archivableImage, pInspection->GetUniqueObjectID());
-				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
+				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvPb::InspectionCmdMsgs request;
-				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+				SvPb::InspectionCmdRequest requestCmd;
+				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, pInspection->GetUniqueObjectID());
-				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
+				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
 			}
 			else
 			{
 				SvPb::SelectorFilter filter{SvPb::SelectorFilter::monitorListRejectValue};
-				SvPb::InspectionCmdMsgs request;
-				*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+				SvPb::InspectionCmdRequest requestCmd;
+				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, pInspection->GetUniqueObjectID(), false, filter);
-				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), request, &response);
+				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
 			}
 		}
-		if (response.has_getobjectselectoritemsresponse())
+		if (responseCmd.has_getobjectselectoritemsresponse())
 		{
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 		}
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(BuildCheckItems());

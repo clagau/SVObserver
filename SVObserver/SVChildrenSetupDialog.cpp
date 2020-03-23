@@ -336,16 +336,17 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 {
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
-	SvPb::InspectionCmdMsgs request, response;
-	*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(),
 		SvPb::publishable, m_pParentObject->GetUniqueObjectID());
-	SvCmd::InspectionCommands(m_pDocument->GetInspectionID(), request, &response);
 
+	SvCmd::InspectionCommands(m_pDocument->GetInspectionID(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
-	if (response.has_getobjectselectoritemsresponse())
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 
 	std::string PublishableResults = SvUl::LoadStdString( IDS_PUBLISHABLE_RESULTS );
@@ -373,8 +374,6 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 
 void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = reinterpret_cast< NM_LISTVIEW* >( pNMHDR );
-
 	//
 	// Check for a selection count and if selection is not the
 	// 'Empty' string.

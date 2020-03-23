@@ -16,6 +16,7 @@
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
@@ -36,8 +37,8 @@ class SVToolClass;
 }
 
 class SVGUID;
-class SVInspectionProcess;
 class SVObjectClass;
+class SVInspectionProcess;
 
 class ToolClipboard
 {
@@ -45,19 +46,6 @@ public:
 #pragma region Declarations
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
-
-public:
-#pragma region Constructor
-	//************************************
-	// Description: The class constructor
-	//************************************
-	ToolClipboard( SVInspectionProcess& rInspection );
-
-	//************************************
-	// Description: The class destructor
-	//************************************
-	virtual ~ToolClipboard();
-#pragma endregion Constructor
 
 public:
 #pragma region Public Methods
@@ -70,8 +58,8 @@ public:
 
 	//************************************
 	// Description: Read tool from the clipboard
-	// Parameter: rPostGuid <out> Reference to the tool GUID selected where the tool is to be inserted
-	// Parameter: rOwnerGuid <out> Reference to the owner GUID 
+	// Parameter: rPostGuid <in> Reference to the tool GUID selected where the tool is to be inserted
+	// Parameter: rOwnerGuid <in> Reference to the owner GUID 
 	// Parameter: rToolGuid <out> Reference to the tool GUID generated from reading the clipboard
 	// Return: S_OK on success
 	//************************************
@@ -82,6 +70,8 @@ public:
 	// Return: True when valid
 	//************************************
 	static bool isClipboardDataValid();
+
+	const SvStl::MessageMgrStd& getLastErrorMessage() const { return m_errorMessage; }
 #pragma endregion Public Methods
 
 protected:
@@ -202,7 +192,8 @@ protected:
 
 private:
 #pragma region Member Variables
-	SVInspectionProcess&	 m_rInspection;							//Reference to the corresponding inspection
+	mutable SVInspectionProcess* m_pInspection{nullptr};
+	mutable SvStl::MessageMgrStd m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
 #pragma endregion Member Variables
 };
 

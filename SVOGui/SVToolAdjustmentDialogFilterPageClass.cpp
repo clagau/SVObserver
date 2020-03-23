@@ -54,15 +54,16 @@ namespace SvOg
 	, m_InspectionID(rInspectionID)
 	, m_TaskObjectID(rTaskObjectID)
 	{
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorListObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-		if (S_OK == hr && responseMessage.has_getobjectidresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectidresponse())
 		{
-			m_UnaryImageOperatorID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+			m_UnaryImageOperatorID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 		}
 	}
 
@@ -92,16 +93,17 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogFilterPageClass::refresh()
 	{
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_UnaryImageOperatorID);
+		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
 
-		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
-		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		SvUl::NameGuidList availableList;
-		if (S_OK == hr && response.has_getavailableobjectsresponse())
+		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 		{
-			availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+			availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
 		}
 
 		// Populate filter list box and run filter...
@@ -119,14 +121,15 @@ namespace SvOg
 		SVGUID filterGUID	= m_filterListBox.getGUID(index);
 		if (GUID_NULL != filterGUID)
 		{
-			SvPb::InspectionCmdMsgs request, response;
-			SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), filterGUID);
 
-			SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), filterGUID);
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-			if (S_OK == hr && response.has_getobjectparametersresponse())
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 			{
-				SvPb::SVObjectSubTypeEnum subType = response.getobjectparametersresponse().typeinfo().subtype();
+				SvPb::SVObjectSubTypeEnum subType = responseCmd.getobjectparametersresponse().typeinfo().subtype();
 
 				m_btnProperties.EnableWindow(SvPb::SVCustomFilterObjectType == subType
 				|| SvPb::SVCustom2FilterObjectType == subType
@@ -173,14 +176,16 @@ namespace SvOg
 		setImages();
 
 		SvUl::NameClassIdList availableList;
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetCreatableObjectsRequest* pGetCreatableObjectsRequest = request.mutable_getcreatableobjectsrequest();
-		SvPb::SetGuidInProtoBytes(pGetCreatableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
-		pGetCreatableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-		if (S_OK == hr && response.has_getcreatableobjectsresponse())
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getcreatableobjectsrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_UnaryImageOperatorID);
+		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getcreatableobjectsresponse())
 		{
-			const auto& rList = response.getcreatableobjectsresponse().list();
+			const auto& rList = responseCmd.getcreatableobjectsresponse().list();
 			std::transform(rList.begin(), rList.end(), std::back_inserter(availableList), 
 				[](const auto& rEntry) -> SvUl::NameClassIdPair { return { rEntry.objectname(), rEntry.classid()}; });
 		}
@@ -206,21 +211,16 @@ namespace SvOg
 
 		if( SvPb::NoObjectClassId != classID )
 		{
-			int destinyIndex	= m_filterListBox.GetCurSel();
-
-			if( LB_ERR == destinyIndex  ) // First Entryitem
-			{
-				destinyIndex = 0;
-			}
+			SVGUID FilterInsertBeforeID = m_filterListBox.getGUID(m_filterListBox.GetCurSel());
 
 			// Construct and Create the Filter Class Object
-			SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-			SvPb::ConstructAndInsertRequest* pRequest = requestMessage.mutable_constructandinsertrequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			auto* pRequest = requestCmd.mutable_createobjectrequest();
 			SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_UnaryImageOperatorID);
 			pRequest->set_classid(classID);
-			pRequest->set_taskobjectpos(destinyIndex);
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectinsertbeforeid(), FilterInsertBeforeID);
 
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 			if (S_OK != hr)
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
@@ -239,16 +239,17 @@ namespace SvOg
 	////////////////////////////////////////////////////////////////////////////////
 	void SVToolAdjustmentDialogFilterPageClass::OnButtonClearAll() 
 	{
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_UnaryImageOperatorID);
+		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
 
-		SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_UnaryImageOperatorID);
-		pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVFilterObjectType);
-		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		SvUl::NameGuidList availableList;
-		if (S_OK == hr && response.has_getavailableobjectsresponse())
+		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 		{
-			availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+			availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
 		}
 
 		// Delete them
@@ -262,29 +263,32 @@ namespace SvOg
 			SVGUID filterGUID = availableList[i].second;
 			if( GUID_NULL != filterGUID )
 			{
-				SvPb::ShouldInspectionResetRequest* pShouldResetRequest = request.mutable_shouldinspectionresetrequest();
+				requestCmd.Clear();
+				responseCmd.Clear();
+				SvPb::ShouldInspectionResetRequest* pShouldResetRequest = requestCmd.mutable_shouldinspectionresetrequest();
 				SvPb::SetGuidInProtoBytes(pShouldResetRequest->mutable_objectid(), filterGUID);
-				hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-				if (S_OK == hr && response.has_shouldinspectionresetresponse())
+
+				hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+				if (S_OK == hr && responseCmd.has_shouldinspectionresetresponse())
 				{
-					bReset |= response.shouldinspectionresetresponse().shouldreset();
+					bReset |= responseCmd.shouldinspectionresetresponse().shouldreset();
 				}
 				else
 				{
 					bReset = true;
 				}
 				
+				requestCmd.Clear();
 				// Close, Disconnect and Delete it
-				SvPb::DestroyChildRequest* pDestroyChildRequest = request.mutable_destroychildrequest();
+				SvPb::DeleteObjectRequest* pDeleteObjectRequest = requestCmd.mutable_deleteobjectrequest();
 				//if last object and it should be reset, set flag
 				if (bReset && listSize - 1 == i)
 				{
-					pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+					pDeleteObjectRequest->set_flag(SvPb::DeleteObjectRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
-				
-				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_UnaryImageOperatorID);
-				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), filterGUID);
-				SvCmd::InspectionCommands(m_InspectionID, request, &response);
+				SvPb::SetGuidInProtoBytes(pDeleteObjectRequest->mutable_objectid(), filterGUID);
+
+				SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 			}
 		}
 
@@ -305,23 +309,26 @@ namespace SvOg
 		SVGUID filterGUID = m_filterListBox.getGUID(index);
 		if( GUID_NULL != filterGUID ) 
 		{
-			SvPb::InspectionCmdMsgs request, response;
-			SvPb::ShouldInspectionResetRequest* pShouldResetRequest = request.mutable_shouldinspectionresetrequest();
-			SvPb::SetGuidInProtoBytes(pShouldResetRequest->mutable_objectid(), filterGUID);
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-			if (S_OK == hr && response.has_shouldinspectionresetresponse())
-			{
-				bool bReset = response.shouldinspectionresetresponse().shouldreset();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_shouldinspectionresetrequest();
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), filterGUID);
 
-				SvPb::DestroyChildRequest* pDestroyChildRequest = request.mutable_destroychildrequest(); ;
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_shouldinspectionresetresponse())
+			{
+				bool bReset = responseCmd.shouldinspectionresetresponse().shouldreset();
+
+				requestCmd.Clear();
+				SvPb::DeleteObjectRequest* pDeleteObjectRequest = requestCmd.mutable_deleteobjectrequest();
 				//if last object and it should be reset, set flag
 				if (bReset)
 				{
-					pDestroyChildRequest->set_flag(SvPb::DestroyChildRequest::Flag_SetDefaultInputs_And_ResetInspection);
+					pDeleteObjectRequest->set_flag(SvPb::DeleteObjectRequest::Flag_SetDefaultInputs_And_ResetInspection);
 				}
-				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_taskobjectlistid(), m_UnaryImageOperatorID);
-				SvPb::SetGuidInProtoBytes(pDestroyChildRequest->mutable_objectid(), filterGUID);
-				SvCmd::InspectionCommands(m_InspectionID, request, &response);
+				SvPb::SetGuidInProtoBytes(pDeleteObjectRequest->mutable_objectid(), filterGUID);
+
+				SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 			}
 
 			// Refresh Dialog...
@@ -340,14 +347,15 @@ namespace SvOg
 		SVGUID filterGUID	= m_filterListBox.getGUID(index);
 		if( GUID_NULL != filterGUID ) 
 		{
-			SvPb::InspectionCmdMsgs request, response;
-			SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), filterGUID);
 
-			SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), filterGUID);
-			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-			if (S_OK == hr && response.has_getobjectparametersresponse())
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 			{
-				switch (response.getobjectparametersresponse().typeinfo().subtype())
+				switch (responseCmd.getobjectparametersresponse().typeinfo().subtype())
 				{
 				case SvPb::SVCustomFilterObjectType:
 					{

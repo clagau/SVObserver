@@ -394,6 +394,7 @@ namespace SvStl
 		{Tid_GetClipboardDataFailed, _T( "Failed to retrieve the clipboard data." )},
 		{Tid_ClipboardZipFailed, _T("Failed to zip clipboard data.")},
 		{Tid_ClipboardUnzipFailed, _T("Failed to unzip clipboard data.")},
+		{Tid_ClipboardInvalid, _T("Clipboard data is invalid")},
 		{Tid_ToolInvalid, _T( "The tool to be copied is invalid." )},
 		{Tid_Clipboard_VersionMismatch, _T( "The current SVObserver Version does not match the version coming from the clipboard." )},
 		{Tid_ColorToolInsertFailed, _T( "A color tool cannot be inserted into a non-color system." )},

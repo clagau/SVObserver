@@ -76,15 +76,16 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 {
 	m_pSheet = pSheet;
 
-	SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-	auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_ToolObjectID);
 	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVExternalToolTaskObjectType);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestMessage, &responseMessage);
-	if (S_OK == hr && responseMessage.has_getobjectidresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectidresponse())
 	{
-		m_TaskObjectID = SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid());
+		m_TaskObjectID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
 	}
 
 	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
@@ -182,18 +183,13 @@ void SVExternalToolDlg::OnOK()
 	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
 	SetDependencies();
 
-	HRESULT hr;
 	try
 	{
-		hr = m_pTask->Initialize();
-		if( m_pTask->resetAllObjects() )
-		{
-			hr = S_FALSE;
-		}
+		m_pTask->Initialize();
+		m_pTask->resetAllObjects();
 	}
-	catch ( const SvStl::MessageContainer& e)
+	catch ( const SvStl::MessageContainer&)
 	{
-		hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 	}
 
 	CleanUpOldToolInfo();

@@ -172,15 +172,16 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 
 void TADialogLoopToolParameterPage::resetInspection()
 {
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::ResetObjectRequest* pRequestMessage = Request.mutable_resetobjectrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_resetobjectrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
 
-	SvPb::SetGuidInProtoBytes(pRequestMessage->mutable_objectid(), m_TaskObjectID);
-	SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
+	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvStl::MessageContainerVector messages;
-	if (Response.has_resetobjectresponse())
+	if (responseCmd.has_standardresponse())
 	{
-		messages = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
+		messages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 	}
 
 	if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)

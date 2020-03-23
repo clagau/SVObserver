@@ -151,14 +151,15 @@ namespace SvOg
 	std::string RangeController::GetOwnerName() const
 	{
 		std::string name;
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_rTaskObjectID);
 
-		SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), m_rTaskObjectID);
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, request, &response);
-		if (S_OK == hr && response.has_getobjectparametersresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
-			name = response.getobjectparametersresponse().name();
+			name = responseCmd.getobjectparametersresponse().name();
 		}
 		return name;
 	}

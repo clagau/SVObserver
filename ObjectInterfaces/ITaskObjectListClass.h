@@ -40,11 +40,11 @@ public:
 	/**********
 		The method inserts a task object to this task object list.
 		/param index <in> position where to insert.
+		/param <in> rObjectBeforeID the ID where the new object is to be inserted before
 		/param rObject <in> object to insert.
 		/param count <in> Default value is 1.
-	***********/
-	virtual void InsertAt(int index, ITaskObject& rObject, int count = 1) = 0;
-	virtual void InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject) = 0;
+		***********/
+	virtual void InsertBefore(const SVGUID& rObjectBeforeID, ITaskObject& rObject) = 0;
 
 	/**********
 		The method destroys a child object.

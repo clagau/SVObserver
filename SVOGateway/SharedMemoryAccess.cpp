@@ -34,8 +34,8 @@ SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, cons
 	, m_rWebAppVersionLoader(rWebAppVersionLoader)
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
+	, m_pShareControlInstance{std::make_unique<SvSml::ShareControl>(ControlParameter)}
 {
-	m_pShareControlInstance = std::make_unique<SvSml::ShareControl>(ControlParameter);
 	schedule_trigger_record_pause_state();
 	subscribe_to_trc();
 }

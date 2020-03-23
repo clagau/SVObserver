@@ -41,7 +41,6 @@ public:
 	SVOutObjectInfoStruct* GetAt( int p_iIndex );
 
 	int  Add( SVOutObjectInfoStruct* );
-	void InsertAt( int nIndex, SVOutObjectInfoStruct* POutObjectInfo );
 
 	void RemoveAt( int nIndex );
 	void RemoveAll();

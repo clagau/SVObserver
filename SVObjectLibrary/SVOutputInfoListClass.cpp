@@ -231,29 +231,6 @@ int SVOutputInfoListClass::Add( SVOutObjectInfoStruct* POutObjectInfo )
 	return static_cast<int> (m_svObjectArray.size());
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Override for InsertAt - Do not allow duplicates,
-// never more than one item inserted
-////////////////////////////////////////////////////////////////////////////////
-void SVOutputInfoListClass::InsertAt( int nIndex, SVOutObjectInfoStruct* pOutObjectInfo )
-{
-	std::pair<SVStdSetSVOutObjectInfoStructPtr::iterator, bool> l_oPair;
-
-	l_oPair = m_svObjectSet.insert( pOutObjectInfo );
-
-	if( true == l_oPair.second )
-	{
-		iterator Iter(m_svObjectArray.begin());
-
-		if (0 < nIndex)
-		{
-			std::advance(Iter, nIndex);
-		}
-
-		m_svObjectArray.insert(Iter, 1, pOutObjectInfo);
-	}
-}
-
 void SVOutputInfoListClass::RemoveAt( int nIndex )
 {
 	long l_lSize = static_cast<int> (m_svObjectArray.size());

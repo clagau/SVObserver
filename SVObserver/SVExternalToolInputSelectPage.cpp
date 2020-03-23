@@ -304,26 +304,27 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 		isTable = (pDef->getType() == SvOp::ExDllInterfaceType::TableArray);
 	}
 	
-	SvPb::InspectionCmdMsgs request, response;
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
 	if (!isTable)
 	{
-		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
 			m_InspectionID, SvPb::archivable, GUID_NULL, true);
-		SvCmd::InspectionCommands(m_InspectionID, request, &response);
+		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	}
 	else
 	{
-		*request.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::tableObjects},
 			m_InspectionID, SvPb::archivable, GUID_NULL, true);
-		SvCmd::InspectionCommands(m_InspectionID, request, &response);
+		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	}
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	if (response.has_getobjectselectoritemsresponse())
+	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(response.getobjectselectoritemsresponse().tree());
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 	}
 
 	std::string value;
@@ -612,14 +613,15 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 std::string SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
 {
 	std::string inspectionName;
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetObjectParametersRequest* pGetObjectNameRequest = request.mutable_getobjectparametersrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), guid);
 
-	SvPb::SetGuidInProtoBytes(pGetObjectNameRequest->mutable_objectid(), guid);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_getobjectparametersresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 	{
-		inspectionName = response.getobjectparametersresponse().name();
+		inspectionName = responseCmd.getobjectparametersresponse().name();
 	}
 	return inspectionName;
 }

@@ -38,14 +38,15 @@ bool AuxiliaryExtentsController::AreAuxiliaryExtentsAvailable() const
 {
 	bool bRetVal = false;
 
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::AreAuxiliaryExtentsAvailableRequest* pRequest = request.mutable_areauxiliaryextentsavailablerequest();
-
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_areauxiliaryextentsavailablerequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_areauxiliaryextentsavailableresponse())
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_areauxiliaryextentsavailableresponse())
 	{
-		bRetVal = response.areauxiliaryextentsavailableresponse().areavailable();
+		bRetVal = responseCmd.areauxiliaryextentsavailableresponse().areavailable();
 	}
 	return bRetVal;
 }
@@ -72,15 +73,16 @@ const SvUl::NameGuidList& AuxiliaryExtentsController::GetAvailableImageList() co
 
 HRESULT AuxiliaryExtentsController::FindAuxSourceImages()
 {
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetAvailableAuxImagesRequest* pRequest = request.mutable_getavailableauximagesrequest();
-
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getavailableauximagesrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_getavailableauximagesresponse())
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getavailableauximagesresponse())
 	{
 		m_auxSourceImages.clear();
-		for (auto item : response.getavailableauximagesresponse().list())
+		for (auto item : responseCmd.getavailableauximagesresponse().list())
 		{
 			SvUl::NameGuidPair tmp {item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())};
 			m_auxSourceImages.push_back(tmp);
@@ -114,13 +116,14 @@ HRESULT AuxiliaryExtentsController::SetAuxSourceImage(const std::string& rName)
 	}
 	if (!imageID.empty())
 	{
-		SvPb::InspectionCmdMsgs request, response;
-		SvPb::SetAuxImageObjectRequest* pRequest = request.mutable_setauximageobjectrequest();
-
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_setauximageobjectrequest();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_sourceimageid(), imageID);
-		hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-		if (SUCCEEDED(hr) && response.has_setauximageobjectresponse())
+
+		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (SUCCEEDED(hr) && responseCmd.has_standardresponse())
 		{
 			hr = RunOnce();
 		}
@@ -131,15 +134,16 @@ HRESULT AuxiliaryExtentsController::SetAuxSourceImage(const std::string& rName)
 SvUl::NameGuidPair AuxiliaryExtentsController::GetAuxSourceImage() const
 {
 	SvUl::NameGuidPair retValue;
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetAuxImageObjectRequest* pRequest = request.mutable_getauximageobjectrequest();
-
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getauximageobjectrequest();
 	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_getauximageobjectresponse())
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getauximageobjectresponse())
 	{
-		retValue.first = response.getauximageobjectresponse().auxobject().objectname();
-		retValue.second = SvPb::GetGuidFromProtoBytes(response.getauximageobjectresponse().auxobject().objectid());
+		retValue.first = responseCmd.getauximageobjectresponse().auxobject().objectname();
+		retValue.second = SvPb::GetGuidFromProtoBytes(responseCmd.getauximageobjectresponse().auxobject().objectid());
 	}
 	return retValue;
 }

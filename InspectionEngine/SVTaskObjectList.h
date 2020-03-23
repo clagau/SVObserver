@@ -58,10 +58,9 @@ public:
 	const double& GetLastListUpdateTimestamp() const;
 
 	int GetSize() const;
-	void InsertAt( int nIndex, SVTaskObjectClass* pTaskObject, int Count = 1 );
-	//Add a task Object to the taskObject list after the object with rGuid.
+	//Add a task Object to the taskObject list before the object with rObjectBeforeID.
 	//return the index of the new element 
-	virtual int  InsertAfter(const SVGUID& rGuid, SVTaskObjectClass* pTaskObject);
+	virtual int  InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject);
 	SVTaskObjectClass* GetAt( int nIndex ) const;
 	void RemoveAt( int nIndex);
 	/// Add a task object to the task object list
@@ -90,8 +89,7 @@ public:
 	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const override;
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual void Delete(const SVGUID& rObjectID) override;
-	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int Count = 1) override;
-	virtual void InsertAfter(const SVGUID& rPostObjectId, ITaskObject& rObject) override;
+	virtual void InsertBefore(const SVGUID& rObjectBeforeID, ITaskObject& rObject) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 	virtual void moveTaskObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;

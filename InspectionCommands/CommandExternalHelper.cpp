@@ -19,90 +19,45 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
-
 namespace SvCmd
 {
-
-HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdMsgs& rRequest, SvPb::InspectionCmdMsgs* pResponse)
+HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse)
 {
-	InspectionCmdResult result;
-	result.m_hResult = E_FAIL;
+	SvPb::InspectionCmdResponse response;
+	response.set_hresult(E_FAIL);
 
 	switch (rRequest.message_case())
 	{
 		//GetObjectID does not need to be called synchronously
-		case SvPb::InspectionCmdMsgs::kGetObjectIdRequest:
-			result = getObjectId(rRequest.getobjectidrequest());
+		case SvPb::InspectionCmdRequest::kGetObjectIdRequest:
+			response = getObjectId(rRequest.getobjectidrequest());
 			break;
 		default:
 			InspectionCommands_protoBufPtr CommandPtr = std::make_shared<InspectionCommands_protoBuf>(rRequest);
 			SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
 			Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			result = CommandPtr->getResult();
+			response = CommandPtr->getResponse();
 			break;
 	}
 
 	if (nullptr != pResponse)
 	{
-		*pResponse = result.m_response;
+		*pResponse = response;
 	}
 
 
-	return result.m_hResult;
+	return response.hresult();
 }
 
 HRESULT RunOnceSynchronous(const SVGUID& rInspectionID)
 {
-	SvPb::InspectionCmdMsgs Request;
-	SvPb::InspectionRunOnceRequest* pInspectionRunOnceRequest = Request.mutable_inspectionrunoncerequest();
-
-	SvPb::SetGuidInProtoBytes(pInspectionRunOnceRequest->mutable_inspectionid(), rInspectionID);
-	return SvCmd::InspectionCommands(rInspectionID, Request, nullptr);
-
+	SvPb::InspectionCmdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_inspectionrunoncerequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_inspectionid(), rInspectionID);
+	return SvCmd::InspectionCommands(rInspectionID, requestCmd, nullptr);
 }
 
-
-SvPb::MessageContainerVector setMessageContainerToMessagePB(const SvStl::MessageContainerVector& messageContainers)
-{
-	SvPb::MessageContainerVector messagePB;
-	for (auto messageContainer : messageContainers)
-	{
-		auto messageData = messageContainer.getMessage();
-		SvPb::MessageContainer* pMessageContainerPB = messagePB.add_messages();
-		pMessageContainerPB->set_messagecode(messageData.m_MessageCode);
-		pMessageContainerPB->set_additionaltextid(messageData.m_AdditionalTextId);
-		for (auto text : messageData.m_AdditionalTextList)
-		{
-			pMessageContainerPB->add_additionaltextlist(text);
-		}
-		pMessageContainerPB->set_compiledate(messageData.m_SourceFile.m_CompileDate);
-		pMessageContainerPB->set_compiletime(messageData.m_SourceFile.m_CompileTime);
-		pMessageContainerPB->set_filename(messageData.m_SourceFile.m_FileName);
-		pMessageContainerPB->set_fileline(messageData.m_SourceFile.m_Line);
-		pMessageContainerPB->set_filedatetime(messageData.m_SourceFile.m_FileDateTime);
-		SvPb::SetGuidInProtoBytes(pMessageContainerPB->mutable_objectid(), messageContainer.getObjectId());
-	}
-	return messagePB;
-}
-
-SvStl::MessageContainerVector setMessageContainerFromMessagePB(const SvPb::MessageContainerVector& messagesPB)
-{
-	SvStl::MessageContainerVector messageContainerVector;
-	for (auto messagePB : messagesPB.messages())
-	{
-		SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
-		SvDef::StringVector AdditionalTextList;
-		for (auto text : messagePB.additionaltextlist())
-		{
-			AdditionalTextList.push_back(text);
-		}
-		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
-		messageContainerVector.push_back(messageContainer);
-	}
-	return messageContainerVector;
-}
-
-bool ResponseToObjectInfo(const SvPb::InspectionCmdMsgs& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos)
+bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos)
 {
 	if (false == rResponse.has_taskobjectlistresponse())
 	{

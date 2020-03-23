@@ -96,19 +96,20 @@ namespace SvOg
 
 	void SVLuminanceAnalyzerDlg::OnRange() 
 	{
-		SvPb::InspectionCmdMsgs requestMessage, responseMessage;
-		auto* pRequest = requestMessage.mutable_getobjectidrequest()->mutable_info();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
 		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_rTaskObjectID);
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVResultObjectType);
 		pRequest->mutable_infostruct()->set_subtype(SvPb::SVResultLongObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestMessage, &responseMessage);
-		if (S_OK != hr || !responseMessage.has_getobjectidresponse())
+		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		if (S_OK != hr || !responseCmd.has_getobjectidresponse())
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 		}
-		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, SvPb::GetGuidFromProtoBytes(responseMessage.getobjectidresponse().objectid()), GetSafeHwnd()))
+		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid()), GetSafeHwnd()))
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);

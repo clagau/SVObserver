@@ -43,6 +43,7 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include <set>
 #include <string>
 
 #include <boost/asio/deadline_timer.hpp>

@@ -101,13 +101,14 @@ const ToolSetView* SVToolSetListCtrl::GetView() const
 
 int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, const GUID& rGuidToolId)
 {
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::TaskObjectListRequest*  pTaskObjectListRequest = Request.mutable_taskobjectlistrequest();
-	SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), rGuidToolId);
-	SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
-	SvOi::ObjectInfoVector  ObjectInfos;
-	SvCmd::ResponseToObjectInfo(Response, ObjectInfos);
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_taskobjectlistrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectid(), rGuidToolId);
 
+	SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
+	SvOi::ObjectInfoVector  ObjectInfos;
+	SvCmd::ResponseToObjectInfo(responseCmd, ObjectInfos);
 	for (auto &ObjectInfo : ObjectInfos)
 	{
 		if (ObjectInfo.ObjectType == SvPb::SVToolObjectType)
@@ -140,20 +141,21 @@ void SVToolSetListCtrl::Rebuild()
 		DeleteAllItems();
 		m_NavigatorElementVector.clear();
 
-		SvPb::InspectionCmdMsgs Request, Response;
-		SvPb::TaskObjectListRequest*  pTaskObjectListRequest = Request.mutable_taskobjectlistrequest();
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		SvPb::TaskObjectListRequest*  pTaskObjectListRequest = requestCmd.mutable_taskobjectlistrequest();
 		SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), m_ToolSetId);
-		SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
-		SvOi::ObjectInfoVector  ToolSetInfos;
-		SvCmd::ResponseToObjectInfo(Response, ToolSetInfos);
 
+		SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
+		SvOi::ObjectInfoVector  ToolSetInfos;
+		SvCmd::ResponseToObjectInfo(responseCmd, ToolSetInfos);
 
 		int itemNo {0};
 		bool bGroupingCollapsed {false};
 		int indent {0};
 		std::list<SVToolGrouping::iterator> ToDelete;
 
-		for (SVToolGrouping::iterator GroupingIt = groupings.begin(); GroupingIt != groupings.end(); GroupingIt++)
+		for (SVToolGrouping::iterator GroupingIt = groupings.begin(); GroupingIt != groupings.end(); ++GroupingIt)
 		{
 			auto pNavElement = std::make_shared<NavigatorElement>(GroupingIt->first.c_str());
 			switch (GroupingIt->second.m_type)
@@ -187,9 +189,9 @@ void SVToolSetListCtrl::Rebuild()
 					if (bGroupingCollapsed == true)
 						continue;
 					auto ToolSetIt = std::find_if(ToolSetInfos.begin(), ToolSetInfos.end(),
-						[&](SvOi::ObjectInfo& objInfo)
+						[&](const SvOi::ObjectInfo& rObjInfo)
 					{
-						return objInfo.DisplayName == pNavElement->m_DisplayName;
+						return rObjInfo.DisplayName == pNavElement->m_DisplayName;
 					});
 					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvPb::SVToolObjectType)
 					{
@@ -205,6 +207,7 @@ void SVToolSetListCtrl::Rebuild()
 					else
 					{
 						pNavElement->m_Type = NavElementType::Tool;
+						pNavElement->m_OwnerGuid = m_ToolSetId;
 					}
 					pNavElement->m_Collapsed = GroupingIt->second.m_bCollapsed;
 					pNavElement->m_Valid = ToolSetIt->isValid;
@@ -294,6 +297,7 @@ int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType t
 		case NavElementType::Empty:
 			pNavElement = std::make_shared<NavigatorElement>(Empty.c_str());
 			pNavElement->m_Type = NavElementType::Empty;
+			pNavElement->m_OwnerGuid = rOwnerGuid;
 			Indend = 0;
 			break;
 		case NavElementType::EndDelimiterLoopTool:
@@ -304,6 +308,7 @@ int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType t
 		case NavElementType::EndDelimiterToolSet:
 			pNavElement = std::make_shared<NavigatorElement>(Delimiter.c_str());
 			pNavElement->m_Type = NavElementType::EndDelimiterToolSet;
+			pNavElement->m_OwnerGuid = rOwnerGuid;
 			Indend = 0;
 			break;
 		default:
@@ -333,14 +338,16 @@ int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType t
 bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
 
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::GetMessageListRequest* pGetMessageListRequest = Request.mutable_getmessagelistrequest();
-	SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), rGuid);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getmessagelistrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rGuid);
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
 	SvStl::MessageContainerVector messageList;
-	if (hr == S_OK && Response.has_getmessagelistresponse())
+	if (hr == S_OK && responseCmd.has_standardresponse())
 	{
-		messageList = SvCmd::setMessageContainerFromMessagePB(Response.getmessagelistresponse().messages());
+		messageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 	}
 
 	if (0 < messageList.size())
@@ -355,14 +362,15 @@ bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 {
 	bool isToolValid = false;
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::GetObjectParametersRequest* pIsValidRequest = Request.mutable_getobjectparametersrequest();
-	SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), tool);
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), tool);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, Request, &Response);
-	if (S_OK == hr && Response.has_getobjectparametersresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 	{
-		isToolValid = Response.getobjectparametersresponse().isvalid();
+		isToolValid = responseCmd.getobjectparametersresponse().isvalid();
 	}
 	return isToolValid;
 }
@@ -379,13 +387,15 @@ void SVToolSetListCtrl::RebuildImages()
 	int ItemCount = GetItemCount();
 	std::string ppqName;
 
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetPPQNameRequest* pPPQNameRequest = request.mutable_getppqnamerequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	SvPb::GetPPQNameRequest* pPPQNameRequest = requestCmd.mutable_getppqnamerequest();
 	SvPb::SetGuidInProtoBytes(pPPQNameRequest->mutable_inspectionid(), m_InspectionId);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, request, &response);
-	if (S_OK == hr && response.has_getppqnameresponse())
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getppqnameresponse())
 	{
-		ppqName =  response.getppqnameresponse().ppqname();
+		ppqName =  responseCmd.getppqnameresponse().ppqname();
 	}
 
 	LVITEM item;
@@ -707,7 +717,6 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 		if (GetEditControl() &&
 			(VK_DELETE == pMsg->wParam ||
 			VK_F2 == pMsg->wParam ||
-			VK_RETURN == pMsg->wParam ||
 			VK_ESCAPE == pMsg->wParam ||
 			GetKeyState(VK_CONTROL)))
 		{

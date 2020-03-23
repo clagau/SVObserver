@@ -27,6 +27,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #pragma warning( disable: 4482 )	//! Disables warning with enum name being used
+#pragma warning( disable: 4800 )	//! Disables warning data truncation
 
 //************************************
 //! Precompiled headers section

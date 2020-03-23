@@ -12,6 +12,7 @@
 #include "RemoteCommand.h"
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
+#include "SVIPDoc.h"
 #include "SVObserver.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVRemoteControlConstants.h"
@@ -25,6 +26,7 @@
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVStorageResult.h"
+#include "ToolClipboard.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
@@ -942,21 +944,59 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 {
 	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
 
-	SvPb::InspectionCmdMsgs requestCmd, responseCmd;
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
 	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 
-	SvPb::GetObjectSelectorItemsResponse response{responseCmd.getobjectselectoritemsresponse()};
-	ConvertTreeNames(response.mutable_tree());
-	task.finish(std::move(response));
+	SvPb::GetObjectSelectorItemsResponse selectorResponse {responseCmd.getobjectselectoritemsresponse()};
+	ConvertTreeNames(selectorResponse.mutable_tree());
+	task.finish(std::move(selectorResponse));
 }
 
-void SVRCCommand::ExecuteInspectionCmd(const SvPb::ExecuteInspectionCmdRequest& rRequest, SvRpc::Task<SvPb::ExecuteInspectionCmdResponse> task)
+void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rRequest, SvRpc::Task<SvPb::InspectionCmdResponse> task)
 {
 	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
 
-	SvPb::ExecuteInspectionCmdResponse response;
-	SvCmd::InspectionCommands(inspectionID, rRequest.cmdmsg(), response.mutable_cmdmsg());
+	SvPb::InspectionCmdResponse response;
+	SvCmd::InspectionCommands(inspectionID, rRequest, &response);
+
+	///@WARNING [gra][10.00][23.03.2020] This next section to update SVIPDoc should be done in the inspection commands but only after the Group Tool has been done
+	if(S_OK == response.hresult())
+	{
+		bool isCreate{true};
+		SVIPDoc::SVIPViewUpdateHints refreshHint{SVIPDoc::RefreshView};
+		switch (rRequest.message_case())
+		{
+			case SvPb::InspectionCmdRequest::kDeleteObjectRequest:
+				isCreate = false;
+				///Fall through
+			case SvPb::InspectionCmdRequest::kCreateObjectRequest:
+			{
+				SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
+				if (nullptr != pDoc)
+				{
+					pDoc->RunOnce();
+					pDoc->SetModifiedFlag();
+					if (true == isCreate)
+					{
+						GUID taskObjectBeforeID = SvPb::GetGuidFromProtoBytes(rRequest.createobjectrequest().taskobjectinsertbeforeid());
+						SvOi::IObjectClass* pObject = SvOi::getObject(taskObjectBeforeID);
+						if(nullptr != pObject)
+						{
+							pDoc->GetToolGroupings().AddTool(response.createobjectresponse().name(), pObject->GetName());
+						}
+						pDoc->SetSelectedToolID(SvPb::GetGuidFromProtoBytes(response.createobjectresponse().objectid()));
+					}
+				}
+				break;
+			}
+			default: 
+			{
+				break;
+			}
+		}
+	}
 
 	task.finish(std::move(response));
 }
@@ -997,6 +1037,26 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest& 
 	task.finish(std::move(response));
 }
 
+void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRpc::Task<SvPb::ConfigCommandResponse> task)
+{
+	SvPb::ConfigCommandResponse response;
+
+	switch(rRequest.message_case())
+	{
+		case SvPb::ConfigCommandRequest::kClipboardRequest:
+		{
+			clipboardAction(rRequest.clipboardrequest(), response.mutable_standardresponse());
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+
+	task.finish(std::move(response));
+}
+
 void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 											 SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 											 SvRpc::ServerStreamContext::Ptr ctx)
@@ -1004,7 +1064,7 @@ void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRe
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(rRequest, rObserver, ctx);
 }
 
-std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/)
+std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/) const
 {
 	std::string Result;
 
@@ -1022,7 +1082,7 @@ std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, c
 	return Result;
 }
 
-HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue)
+HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const
 {
 	HRESULT Result {S_OK};
 
@@ -1045,7 +1105,7 @@ HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, con
 	return Result;
 }
 
-HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue)
+HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const
 {
 	HRESULT Result {S_OK};
 
@@ -1085,7 +1145,7 @@ HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, con
 	return Result;
 }
 
-HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems)
+HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const
 {
 	HRESULT Result {S_OK};
 
@@ -1108,7 +1168,7 @@ HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rReque
 	return Result;
 }
 
-HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems)
+HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const
 {
 	HRESULT Result {S_OK};
 
@@ -1185,16 +1245,17 @@ void SVRCCommand::addObjectChildren(const SVGUID& rInspectionID, const SVGUID& r
 		{SvPb::SVToolObjectType, SvPb::LoopToolObjectType},
 	}};
 
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::TaskObjectListRequest*  pTaskObjectListRequest = request.mutable_taskobjectlistrequest();
-	SvPb::SetGuidInProtoBytes(pTaskObjectListRequest->mutable_taskobjectid(), rParentID);
-	SvCmd::InspectionCommands(rInspectionID, request, &response);
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto*  pRequest = requestCmd.mutable_taskobjectlistrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectid(), rParentID);
 
-	if (true == response.has_taskobjectlistresponse())
+	SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+	if (true == responseCmd.has_taskobjectlistresponse())
 	{
-		for (int i = 0; i < response.taskobjectlistresponse().taskobjectinfos_size(); ++i)
+		for (int i = 0; i < responseCmd.taskobjectlistresponse().taskobjectinfos_size(); ++i)
 		{
-			auto rTaskObj = response.taskobjectlistresponse().taskobjectinfos(i);
+			auto rTaskObj = responseCmd.taskobjectlistresponse().taskobjectinfos(i);
 			auto iter = std::find(compatibleTypes.begin(), compatibleTypes.end(), std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>{rTaskObj.objecttype(), rTaskObj.objectsubtype()});
 			if(compatibleTypes.end() != iter)
 			{
@@ -1226,14 +1287,15 @@ void SVRCCommand::addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObje
 				toolPos = pTool->getToolPosition();
 			}
 			isValid = false;
-			SvPb::InspectionCmdMsgs Request, Response;
-			SvPb::GetObjectParametersRequest* pIsValidRequest = Request.mutable_getobjectparametersrequest();
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			SvPb::GetObjectParametersRequest* pIsValidRequest = requestCmd.mutable_getobjectparametersrequest();
 			SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), rObjectID);
 
-			HRESULT hr = SvCmd::InspectionCommands(rInspectionID, Request, &Response);
-			if (S_OK == hr && Response.has_getobjectparametersresponse())
+			HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 			{
-				isValid = Response.getobjectparametersresponse().isvalid();
+				isValid = responseCmd.getobjectparametersresponse().isvalid();
 			}
 		}
 		item.set_name(SvUl::to_utf8(text));
@@ -1249,5 +1311,85 @@ void SVRCCommand::addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObje
 
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = item;
+	}
+}
+
+void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::StandardResponse* pResponse) const
+{
+	if(nullptr == pResponse)
+	{
+		return;
+	}
+
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		pResponse->set_hresult(SVMSG_SVO_ACCESS_DENIED);
+		return;
+	}
+
+	switch(rRequest.action())
+	{
+		case SvPb::ClipboardActionEnum::Copy:
+		{
+			ToolClipboard clipboard;
+			SVGUID objectID{SvPb::GetGuidFromProtoBytes(rRequest.objectid())};
+
+			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			HRESULT result = clipboard.writeToClipboard(objectID);
+			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+			pResponse->set_hresult(result);
+			if(S_OK != result)
+			{
+				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+				setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+			}
+			break;
+		}
+		case SvPb::ClipboardActionEnum::Paste:
+		{
+			if(ToolClipboard::isClipboardDataValid())
+			{
+				ToolClipboard clipboard;
+				SVGUID postID {SvPb::GetGuidFromProtoBytes(rRequest.objectid())};
+				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
+				if(nullptr != pObject)
+				{
+					SVGUID ownerID = pObject->GetParentID();
+					SVGUID toolID;
+					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+					HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
+					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+					pResponse->set_hresult(result);
+					if (S_OK == result)
+					{
+						SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID()) : nullptr;
+						if (nullptr != pDoc)
+						{
+							pDoc->updateToolsetView(toolID, postID, ownerID);
+						}
+					}
+					else
+					{
+						const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+						setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+					}
+				}
+			}
+			else
+			{
+				SvStl::MessageMgrStd message(SvStl::MsgType::Log);
+				message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+				setMessageToMessagePB(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 }

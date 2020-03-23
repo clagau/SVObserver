@@ -72,15 +72,16 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 
 	m_Values.Init();
 
-	SvPb::InspectionCmdMsgs request, response;
-	SvPb::GetAvailableObjectsRequest* pGetAvailableObjectsRequest = request.mutable_getavailableobjectsrequest();
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
 
-	SvPb::SetGuidInProtoBytes(pGetAvailableObjectsRequest->mutable_objectid(), m_TaskObjectID);
-	pGetAvailableObjectsRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, request, &response);
-	if (S_OK == hr && response.has_getavailableobjectsresponse())
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		auto availableList = SvCmd::convertNameGuidList(response.getavailableobjectsresponse().list());
+		auto availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
 		for (auto entry : availableList)
 		{
 			if (SvDef::TableClearEquationName == entry.first)
@@ -174,13 +175,15 @@ void TADialogTableParameterPage::setEquationText()
 
 void TADialogTableParameterPage::resetInspection()
 {
-	SvPb::InspectionCmdMsgs Request, Response;
-	SvPb::ResetObjectRequest* pResetObjectRequest = Request.mutable_resetobjectrequest();
-	SvPb::SetGuidInProtoBytes(pResetObjectRequest->mutable_objectid(), m_TaskObjectID);
-	HRESULT hres = SvCmd::InspectionCommands(m_InspectionID, Request, &Response);
-	if (hres == S_OK && Response.has_resetobjectresponse())
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_resetobjectrequest();
+	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+
+	HRESULT hres = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	if (hres == S_OK && responseCmd.has_standardresponse())
 	{
-		SvStl::MessageContainerVector messages = SvCmd::setMessageContainerFromMessagePB(Response.resetobjectresponse().messages());
+		SvStl::MessageContainerVector messages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -190,10 +193,11 @@ void TADialogTableParameterPage::resetInspection()
 
 	if (hres == S_OK)
 	{
-		SvPb::InspectionCmdMsgs RequestSet, ResponseSet;
-		SvPb::SetDefaultInputsRequest* pSetDefaultInputsRequest = RequestSet.mutable_setdefaultinputsrequest();
-		SvPb::SetGuidInProtoBytes(pSetDefaultInputsRequest->mutable_objectid(), m_InspectionID);
-		SvCmd::InspectionCommands(m_InspectionID, RequestSet, &ResponseSet);
+		requestCmd.Clear();
+		auto* pSetDefaultRequest = requestCmd.mutable_setdefaultinputsrequest();
+		SvPb::SetGuidInProtoBytes(pSetDefaultRequest->mutable_objectid(), m_InspectionID);
+
+		SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 	}
 	
 }
