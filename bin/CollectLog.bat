@@ -39,7 +39,7 @@ Wmic logicaldisk where "DeviceID='D:'" get FreeSpace >> c:\temp\log\diskspace.lo
 Wmic logicaldisk where "DeviceID='E:'" get FreeSpace >> c:\temp\log\diskspace.log
 Wmic logicaldisk where "DeviceID='V:'" get FreeSpace >> c:\temp\log\diskspace.log
 Wmic os get freephysicalmemory >> c:\temp\log\diskspace.log
-copy C:\Users\SVIMRun\AppData\Local\Temp\SysInfo.txt c:\temp\log
+copy C:\Users\SVIMRun\AppData\Local\Temp\SysInfo64.txt c:\temp\log
 echo getting system information ...
 systeminfo > c:\temp\log\systeminfo.log
 echo getting service information ...
