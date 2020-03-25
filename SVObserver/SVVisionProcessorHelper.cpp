@@ -345,10 +345,15 @@ HRESULT SVVisionProcessorHelper::GetItems(const SvDef::StringSet& rNames, SVName
 	return l_Status;
 }
 
-static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemoteInputRequest)
+// Check for Remote Input as it must only be set via "RemoteInputs.Remote N" and Not Inspections.InspectionName.Remote Input N ...
+// Even though Inspections.InspectionName.Remote Input N will find the correct value object to set, 
+// the RemoteInput Object is what really needs to be set because all Inspections can access the Remote Input.
+// Check if value can be converted to VT_R8
+//Check no commas allowed in value
+static HRESULT CheckForRemoteInputProblems(const SVObjectNameInfo& rInfo, const _variant_t &value)
 {
+	HRESULT hres {S_OK};
 	bool bRemoteInput = false;
-	bValidRemoteInputRequest = false;
 
 	if (0 < rInfo.m_NameArray.size())
 	{
@@ -356,11 +361,57 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 		if (0 == pos)
 		{
 			bRemoteInput = true;
-			bValidRemoteInputRequest = (std::string(SvDef::FqnRemoteInputs) == rInfo.m_NameArray[0]);
+			if(std::string(SvDef::FqnRemoteInputs) != rInfo.m_NameArray[0])
+			{
+				hres = SVMSG_OBJECT_WRONG_TYPE;
+			}
 		}
 	}
-	return bRemoteInput;
+	
+	if (bRemoteInput && hres == S_OK )
+	{
+		_variant_t temp;
+		if (value.vt & VT_ARRAY)
+		{
+			SvUl::SVSAFEARRAY SafeArray(value);
+
+			if (1 == SafeArray.size())
+			{
+				hres = SafeArray.GetElement(0, temp);
+			}
+			else
+			{
+				hres = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+			}
+		}
+		else
+		{
+			temp = value;
+		}
+		if (hres == S_OK && temp.vt == VT_BSTR)
+		{
+			_bstr_t bstrtemp(temp);
+			std::string stemp(bstrtemp);
+			if (std::string::npos != stemp.find(','))
+			{
+				hres = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+			}
+		}
+
+		if (hres == S_OK)
+		{
+			if (S_OK != ::VariantChangeTypeEx(&temp, &temp, SvDef::LCID_USA, 0, VT_R8))
+			{
+				hres = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+			}
+		}
+			
+	}
+	return hres;
+
 }
+
+
 
 HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool RunOnce)
 {
@@ -389,13 +440,12 @@ HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVName
 		{
 			if (0 < l_Info.m_NameArray.size())
 			{
-				// Check for Remote Input as it must only be set via "RemoteInputs.Remote N" and Not Inspections.InspectionName.Remote Input N ...
-				// Even though Inspections.InspectionName.Remote Input N will find the correct value object to set, 
-				// the RemoteInput Object is what really needs to be set because all Inspections can access the Remote Input.
-				bool bValidRemoteInputRequest = false;
-				if (IsRemoteInputRequest(l_Info, bValidRemoteInputRequest) && !bValidRemoteInputRequest)
+				
+				HRESULT CheckResult = CheckForRemoteInputProblems(l_Info, l_Iter->second.m_Variant);
+
+				if (S_OK != CheckResult)
 				{
-					rStatusItems[l_Iter->first.c_str()] = SVMSG_OBJECT_WRONG_TYPE;//SVMSG_OBJECT_NOT_PROCESSED;
+					rStatusItems[l_Iter->first.c_str()] = CheckResult;
 				}
 				else
 				{
