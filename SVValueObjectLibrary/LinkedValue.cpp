@@ -532,7 +532,7 @@ bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, Sv
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidLinkedObjectOrSame, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 	}

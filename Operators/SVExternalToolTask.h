@@ -139,7 +139,7 @@ public:
 		FIND_ALL_OBJECTS = FIND_IMAGES | FIND_VALUES
 	};
 	HRESULT FindInvalidatedObjects(SVObjectPtrVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
-	void GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
+	HRESULT GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
 
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;

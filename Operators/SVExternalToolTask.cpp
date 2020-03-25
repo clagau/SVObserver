@@ -1081,7 +1081,7 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 				ok = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_CheckToRunFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_CannotRun, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -1101,20 +1101,22 @@ bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageConta
 			if (nullptr != pErrorMessages)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%X"), hr));
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				_bstr_t bMessage;
+				HRESULT hrError = GetDLLMessageString(hr, bMessage.GetAddress());
+				std::string dllMessageString = (hrError == E_NOTIMPL) ? std::string("<not implemented>") : SvUl::createStdString(bMessage);
+				msgList.push_back(SvUl::Format(_T("%ld: %s"), hr, dllMessageString.c_str()));
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
+		
 #ifndef _DEBUG
 		catch (...)
 		{
 			ok = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvDef::StringVector msgList;
-				msgList.push_back(_T(""));
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1677,9 +1679,9 @@ HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, con
 	return S_OK;
 }
 
-void SVExternalToolTask::GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const
+HRESULT SVExternalToolTask::GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const
 {
-	m_dll.GetMessageString(hr, bstrMessage);
+	return m_dll.GetMessageString(hr, bstrMessage);
 }
 
 bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
