@@ -70,6 +70,29 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 {
 	HRESULT Result = S_OK;
 
+	if (PreRefresh == Type)
+	{
+		if (pSender->GetUniqueObjectID() == EnvironmentCurrentTime)
+		{
+			std::time_t t = std::time(nullptr);
+			std::string currentTime;
+			currentTime.resize(100);
+			std::strftime(&currentTime.at(0), sizeof(currentTime), "%H:%M:%S", std::localtime(&t));
+
+			setRootChildValue(SvDef::FqnEnvironmentCurrentTime, currentTime);
+		}
+
+		if (pSender->GetUniqueObjectID() == EnvironmentCurrentDate)
+		{
+			std::time_t t = std::time(nullptr);
+			std::string currentDate;
+			currentDate.resize(100);
+			std::strftime(&currentDate.at(0), sizeof(currentDate), "%Y-%m-%d", std::localtime(&t));
+
+			setRootChildValue(SvDef::FqnEnvironmentCurrentDate, currentDate);
+		}
+	}
+
 	if (!m_Initialize && PostRefresh == Type)
 	{
 		//When it is of type Global Constant we need to update the IO view
@@ -296,6 +319,12 @@ bool RootObject::createRootChildren()
 			pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
+
+		m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationName, _T(""));
+		m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationFileName, _T(""));
+
+		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentDate, _T(""));
+		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentTime, _T(""));
 
 		Result = createRootChild( SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType );
 	}

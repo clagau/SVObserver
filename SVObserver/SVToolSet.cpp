@@ -86,6 +86,8 @@ void SVToolSetClass::init()
 
 	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
 
+	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
+
 	//Link inspected object ID with incoming object ID as default
 	m_InspectedObjectID.setValue(m_ObjectID.GetUniqueObjectID().ToString());
 	//Display them as integers
@@ -234,6 +236,14 @@ bool SVToolSetClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruct
 	if (nullptr != pInspection)
 	{
 		m_EnableAuxiliaryExtents.SetValue(BOOL(pInspection->getInitialAuxiliaryExtents()));
+	}
+
+
+	SVObjectClass* p_Parent = GetParent();
+	if (nullptr != p_Parent)
+	{
+		std::string inspectionName = p_Parent->GetName();
+		m_InspectionName.SetValue(inspectionName);
 	}
 
 	m_isCreated = bOk;

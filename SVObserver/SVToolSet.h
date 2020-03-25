@@ -101,6 +101,7 @@ public:
 	void setObjectID(double ObjectID) { m_ObjectID.SetValue(ObjectID); }
 	DWORD getInspectedObjectID() { double value; m_InspectedObjectID.getValue(value); return static_cast<DWORD> (value); }
 	void setTriggerIndex(DWORD TriggerIndex) { m_TriggerIndex.SetValue(TriggerIndex); }
+	void setInspectionname(std::string Inspectionname) { m_InspectionName.SetValue(Inspectionname);};
 
 	virtual void goingOffline() override;
 
@@ -202,6 +203,7 @@ private:
 	SvVol::SVDWordValueObjectClass m_TriggerIndex;	//! The trigger index, which has been received by the PLC
 	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
 	SvVol::SVStringValueObjectClass m_ToolComment;
+	SvVol::SVStringValueObjectClass m_InspectionName;
 #pragma endregion Member Variables
 };
 

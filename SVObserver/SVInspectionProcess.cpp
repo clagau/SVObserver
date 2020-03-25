@@ -2944,6 +2944,12 @@ void SVInspectionProcess::SetName(LPCTSTR StrString)
 	SVInspectionNameUpdate l_Data(GetName());
 
 	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+
+	if (nullptr != m_pCurrentToolset)
+	{
+		m_pCurrentToolset->setInspectionname(StrString);
+	}
+
 }
 
 HRESULT SVInspectionProcess::RegisterSubObject(SVObjectClass* pObject)

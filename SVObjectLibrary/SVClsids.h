@@ -39,6 +39,10 @@ extern const GUID EnvironmentModeUidGuid;
 extern const GUID EnvironmentAutoSaveUidGuid;
 extern const GUID EnvironmentDiskProtectionUidGuid;
 extern const GUID EnvironmentStartLastConfigUidGuid;
+extern const GUID EnvironmentConfigurationName;
+extern const GUID EnvironmentConfigurationFileName;
+extern const GUID EnvironmentCurrentDate;
+extern const GUID EnvironmentCurrentTime;
 
 // Unique base ID GUID for Camera variables always have 0x100 GUIDS free after the base GUID
 extern const GUID CameraBaseSerialNumberUidGuid;

@@ -3747,6 +3747,10 @@ bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile
 		}
 	}
 
+	RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationFileName, csFullFileName);
+	RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, m_ConfigFileName.GetFileNameOnly());
+
+
 	return bOk;
 }
 
@@ -3983,6 +3987,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			m_ConfigFileName.SetFileNameOnly(NewName.c_str());
 			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 
+			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, m_ConfigFileName.GetFileNameOnly());
 			SVDigitalInputObject* pInput = nullptr;
 			SVPPQObject* pPPQ = nullptr;
 			unsigned long ulCount = 0;

@@ -44,7 +44,11 @@ const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMa
 	{std::string(SvDef::FqnEnvironmentModeValue),				SVGUID(EnvironmentModeValueUidGuid)},
 	{std::string(SvDef::FqnEnvironmentAutoSave),				SVGUID(EnvironmentAutoSaveUidGuid)},
 	{std::string(SvDef::FqnEnvironmentDiskProtection),			SVGUID(EnvironmentDiskProtectionUidGuid)},
-	{std::string(SvDef::FqnEnvironmentStartLastConfig),			SVGUID(EnvironmentStartLastConfigUidGuid)}
+	{std::string(SvDef::FqnEnvironmentStartLastConfig),			SVGUID(EnvironmentStartLastConfigUidGuid)},
+	{std::string(SvDef::FqnEnvironmentConfigurationName),		SVGUID(EnvironmentConfigurationName)},
+	{std::string(SvDef::FqnEnvironmentConfigurationFileName),	SVGUID(EnvironmentConfigurationFileName)},
+	{std::string(SvDef::FqnEnvironmentCurrentDate),				SVGUID(EnvironmentCurrentDate)},
+	{std::string(SvDef::FqnEnvironmentCurrentTime),				SVGUID(EnvironmentCurrentTime)},
 };
 #pragma endregion Declarations
 

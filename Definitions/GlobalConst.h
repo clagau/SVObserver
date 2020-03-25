@@ -85,6 +85,13 @@ constexpr char* FqnEnvironmentDiskProtection = _T("Environment.Disk Protection")
 constexpr char* FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
 constexpr char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
 constexpr char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
+
+constexpr char* FqnEnvironmentConfigurationName = _T("Environment.Configuration Name");
+constexpr char* FqnEnvironmentConfigurationFileName = _T("Environment.Configuration Filename");
+
+constexpr char* FqnEnvironmentCurrentDate = _T("Environment.Current Date");
+constexpr char* FqnEnvironmentCurrentTime = _T("Environment.Current Time");
+
 constexpr char* FqnEnvironmentMode = _T("Environment.Mode");
 constexpr char* FqnEnvironmentModeIsRun = _T("Environment.Mode.Is Run");
 constexpr char* FqnEnvironmentModeIsStop = _T("Environment.Mode.Is Stop");
