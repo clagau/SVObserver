@@ -51,12 +51,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const TCHAR* const PPQ_NEXT_TRG_STR = _T("NextTrigger");
-const TCHAR* const PPQ_TIME_DELAY_STR = _T("TimeDelay");
-const TCHAR* const PPQ_TIME_DATA_COMPLETE = _T("TimeDelayDataCompletion");
-const TCHAR* const PPQ_EXTENDED_TIME_DELAY =_T("ExtendedTimeDelay");
-const TCHAR* const cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
-
+constexpr char* cPpqNextTriggerMode = _T("Next Trigger");
+constexpr char* cPpqTimeDelayMode = _T("Time Delay");
+constexpr char* cPpqTimeDataCompletionMode = _T("Time Delay Data Completion");
+constexpr char* cPpqExtendedTimeDelayMode =_T("Extended Time Delay");
+constexpr char* cPpqExtendedTimeDelayCompletionMode = _T("Extended Time Delay Data Completion");
+constexpr char* cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
 
 class SVCameraDeviceImageFormatUpdater : public ISVCameraDeviceImageFormatUpdater
 {
@@ -900,16 +900,17 @@ void CSVOPropertyPageDlg::SetupPPQ()
 				}
 			}
 			pCombo->CreateComboBox(CBS_DROPDOWNLIST);
-			nIndex = pCombo->AddString(PPQ_NEXT_TRG_STR);
+			nIndex = pCombo->AddString(cPpqNextTriggerMode);
 			pCombo->SetItemData(nIndex, 0);
-			nIndex = pCombo->AddString(PPQ_TIME_DELAY_STR);
+			nIndex = pCombo->AddString(cPpqTimeDelayMode);
 			pCombo->SetItemData(nIndex, 1);
-			nIndex = pCombo->AddString(PPQ_TIME_DATA_COMPLETE);
+			nIndex = pCombo->AddString(cPpqTimeDataCompletionMode);
 			pCombo->SetItemData(nIndex, 2);
-			nIndex = pCombo->AddString(PPQ_EXTENDED_TIME_DELAY);
-			pCombo->SetItemData(nIndex,3);
+			nIndex = pCombo->AddString(cPpqExtendedTimeDelayMode);
+			pCombo->SetItemData(nIndex, 3);
+			nIndex = pCombo->AddString(cPpqExtendedTimeDelayCompletionMode);
+			pCombo->SetItemData(nIndex, 4);
 			pCombo->SetItemValue(lMode);
-			
 		}
 		//PPQLength
 		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
@@ -2107,16 +2108,17 @@ void CSVOPropertyPageDlg::PPQHideItems()
         case SvDef::SVPPQTimeDelayMode:
         case SvDef::SVPPQTimeDelayAndDataCompleteMode:
 		{
-			m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
+			m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(false);
 			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem();
 			m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->HideItem();
 			break;
 		}
 
-        case SvDef::SVPPQExtendedTimeDelayMode:
-        {
-            m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(FALSE);
-			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem(FALSE);
+		case SvDef::SVPPQExtendedTimeDelayMode:
+		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
+		{
+            m_Tree.FindItem(PROP_PPQ_OUTPUT_DELAY_TIME)->HideItem(false);
+			m_Tree.FindItem(PROP_PPQ_INSPECTION_TIMEOUT)->HideItem(false);
 			m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->HideItem();
             break;
         }

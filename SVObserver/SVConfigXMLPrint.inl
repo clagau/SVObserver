@@ -360,15 +360,10 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteStartElement(nullptr, L"PPQ", nullptr);
 		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str());
 
-		SvDef::SVPPQOutputModeEnum	enumPPQOutputMode;
-		long	lPPQLength = 0;	// PPQLength
-		long	lResetDelay = 0;	// PPQOutputResetDelay
-		long	lDelayTime = 0;	// PPQOutputDelayTime
-
-		pPPQ->GetPPQOutputMode(enumPPQOutputMode);
-		pPPQ->GetPPQLength(lPPQLength);
-		pPPQ->GetResetDelay(lResetDelay);
-		pPPQ->GetOutputDelay(lDelayTime);
+		SvDef::SVPPQOutputModeEnum	enumPPQOutputMode{pPPQ->getPPQOutputMode()};
+		long	lPPQLength{pPPQ->getPPQLength()};	// PPQLength
+		long	lResetDelay{pPPQ->getResetDelay()};	// PPQOutputResetDelay
+		long	lDelayTime{pPPQ->getOutputDelay()};	// PPQOutputDelayTime
 
 		writer->WriteAttributeString(nullptr, L"Mode", nullptr, PPQModeText(enumPPQOutputMode));
 		writer->WriteAttributeString(nullptr, L"Length", nullptr, _itow(lPPQLength, buff, 10));
@@ -813,9 +808,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 		if (nullptr != pPPQ)
 		{
 			writer->WriteStartElement(nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str(), nullptr);
-			long	lPPQLength = 0;
-			pPPQ->GetPPQLength(lPPQLength);
-			for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
+			for (int intPPQPos = 0; intPPQPos < pPPQ->getPPQLength(); intPPQPos++)
 			{
 				bool	bPosPrint = false;
 				SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras(true);

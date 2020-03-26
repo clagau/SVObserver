@@ -1794,19 +1794,10 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp       = ptCurPos;
 			ptCurPos.y  += PrintString(pDC, ptTemp, pPPQ->GetName());
 			
-			SvDef::SVPPQOutputModeEnum	enumPPQOutputMode;
-			long	lPPQLength  = 0;	// PPQLength
-			long	lResetDelay = 0;	// PPQOutputResetDelay
-			long	lDelayTime  = 0;	// PPQOutputDelayTime
-			
 			ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
-			pPPQ->GetPPQOutputMode(enumPPQOutputMode);
-			pPPQ->GetPPQLength(lPPQLength);
-			pPPQ->GetResetDelay(lResetDelay);
-			pPPQ->GetOutputDelay(lDelayTime);
 
 			std::string Value;
-			switch (enumPPQOutputMode)
+			switch (pPPQ->getPPQOutputMode())
 			{
 				case SvDef::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
 					Value = _T("NextTrigger");
@@ -1834,13 +1825,13 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			
 			PrintValueObject( pDC, ptCurPos, _T("PPQMode"), Value.c_str() );
 			
-			Value = SvUl::Format( _T("%ld"), lPPQLength );
+			Value = SvUl::Format( _T("%ld"), pPPQ->getPPQLength());
 			PrintValueObject(pDC, ptCurPos, _T("PPQLength"), Value.c_str() );
 			
-			Value = SvUl::Format( _T("%ld"), lResetDelay );
+			Value = SvUl::Format( _T("%ld"), pPPQ->getResetDelay());
 			PrintValueObject(pDC, ptCurPos, _T("PPQOutputResetDelay"), Value.c_str() );
 			
-			Value = SvUl::Format( _T("%ld"), lDelayTime );
+			Value = SvUl::Format( _T("%ld"), pPPQ->getOutputDelay());
 			PrintValueObject(pDC, ptCurPos, _T("PPQOutputDelayTime"), Value.c_str() );
 
 			Value = SvUl::Format(_T("%ld"), pPPQ->getMaxProcessingOffset4Interest());
@@ -1924,8 +1915,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		ptTemp      = ptCurPos;
 		ptCurPos.y += PrintString(pDC, ptTemp, pPPQ->GetName());
 
-		long lPPQLength = 0;
-		pPPQ->GetPPQLength(lPPQLength);
+		long lPPQLength = pPPQ->getPPQLength();
 		for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 		{
 			bool bPosPrint = false;

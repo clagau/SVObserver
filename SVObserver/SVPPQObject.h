@@ -96,14 +96,13 @@ public:
 	void SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const std::string& conditionName );
 
-	void GetPPQOutputMode( SvDef::SVPPQOutputModeEnum& rePPQOutputMode ) const;
-	void GetOutputDelay( long& rlDelayTime ) const;
-	void GetResetDelay( long& rlResetTime ) const;
-	void GetPPQLength( long& rlPPQLength ) const;
-	long GetPPQLength() const;
-	void GetMaintainSourceImages( bool& rbMaintainImages ) const;
-	int getMaxProcessingOffset4Interest() const { return m_maxProcessingOffset4Interest; };
-	void GetInspectionTimeout( long& rlTimeoutMillisec ) const;
+	SvDef::SVPPQOutputModeEnum getPPQOutputMode() const { return m_outputMode; }
+	long getOutputDelay() const { return m_outputDelay; }
+	long getResetDelay() const { return m_resetDelay; }
+	long getPPQLength() const;
+	bool getMaintainSourceImages() const { return m_maintainSourceImages; }
+	int getMaxProcessingOffset4Interest() const { return m_maxProcessingOffset4Interest; }
+	long getInspectionTimeout() const { return m_inspectionTimeoutMillisec; }
 	const std::string& GetConditionalOutputName() const;
 
 	bool AttachTrigger( SvTi::SVTriggerObject* pTrigger );
@@ -498,12 +497,12 @@ private:
 	long getNeededRecords() const;
 
 	SvVol::BasicValueObjects	m_PpqValues;
-	SvDef::SVPPQOutputModeEnum m_oOutputMode;
-	long m_lOutputDelay;
-	long m_lResetDelay;
+	SvDef::SVPPQOutputModeEnum m_outputMode;
+	long m_outputDelay;
+	long m_resetDelay;
 	long m_DataValidDelay;
-	bool m_bMaintainSourceImages;
-	long m_lInspectionTimeoutMillisec;
+	bool m_maintainSourceImages;
+	long m_inspectionTimeoutMillisec;
 	bool m_bOnline;
 
 	UINT m_uOutputTimer;

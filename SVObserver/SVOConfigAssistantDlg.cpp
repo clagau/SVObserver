@@ -2189,8 +2189,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
 
 				// EB 20050225
-				long lOldPPQLength=0;
-				pPPQ->GetPPQLength( lOldPPQLength );
+				long lOldPPQLength=pPPQ->getPPQLength();
 				bool bPPQLengthChanged = lOldPPQLength != pPPQObj->GetPPQLength();
 
 				pPPQ->SetPPQLength(pPPQObj->GetPPQLength());
@@ -2719,26 +2718,13 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName.c_str()) );
 			if( nullptr != pPPQObj )
 			{
-				long lPPQLength;
-				long lPPQResetDelay;
-				long lPPQDelayTime;
-				bool bPPQMaintainSrcImg;
-				long lInspectionTimeout;
-				SvDef::SVPPQOutputModeEnum ePPQMode;
-				pcfgPPQ->GetPPQLength(lPPQLength);
-				pcfgPPQ->GetPPQOutputMode(ePPQMode);
-				pcfgPPQ->GetOutputDelay(lPPQDelayTime);
-				pcfgPPQ->GetResetDelay(lPPQResetDelay);
-				pcfgPPQ->GetMaintainSourceImages(bPPQMaintainSrcImg);
-				pcfgPPQ->GetInspectionTimeout(lInspectionTimeout);
-
-				pPPQObj->SetPPQLength((int)lPPQLength);
-				pPPQObj->SetPPQMode( (int)ePPQMode);
-				pPPQObj->SetPPQOutputDelayTime((int)lPPQDelayTime);
-				pPPQObj->SetPPQOutputResetDelay((int)lPPQResetDelay);
-				pPPQObj->SetMaintainSourceImageProperty(bPPQMaintainSrcImg);
+				pPPQObj->SetPPQLength(pcfgPPQ->getPPQLength());
+				pPPQObj->SetPPQMode( static_cast<int> (pcfgPPQ->getPPQOutputMode()));
+				pPPQObj->SetPPQOutputDelayTime(pcfgPPQ->getOutputDelay());
+				pPPQObj->SetPPQOutputResetDelay(pcfgPPQ->getResetDelay());
+				pPPQObj->SetMaintainSourceImageProperty(pcfgPPQ->getMaintainSourceImages());
 				pPPQObj->SetMaxProcessingOffsetProperty(pcfgPPQ->getMaxProcessingOffset4Interest());
-				pPPQObj->SetInspectionTimeout( lInspectionTimeout );
+				pPPQObj->SetInspectionTimeout(pcfgPPQ->getInspectionTimeout());
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
 
 				// Get List Of Inputs

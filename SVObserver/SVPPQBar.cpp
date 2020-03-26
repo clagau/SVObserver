@@ -345,10 +345,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 		GetClientRect( &clientRect );
 		dimension = __max( dimension, clientRect.Height() );
 		
-		long lPPQLength;
-		long lPosition;
-		
-		m_pPPQ->GetPPQLength( lPPQLength );
+		long lPPQLength = m_pPPQ->getPPQLength();
 		
 		// Calculate Scroll range
 		int w = lPPQLength * dimension;
@@ -388,6 +385,7 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 		}// end for
 		
 		SvIe::SVVirtualCameraPtrVector cameraVector = m_pPPQ->GetVirtualCameras();
+		long lPosition{0L};
 
 		for(const auto* const pCamera : cameraVector)
 		{

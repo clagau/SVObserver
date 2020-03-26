@@ -170,10 +170,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 
 	if( rProcessed )
 	{
-		SvDef::SVPPQOutputModeEnum oOutputMode = SvDef::SVPPQUnknownMode;
-
-		GetPPQOutputMode(oOutputMode);
-		switch (oOutputMode)
+		switch (getPPQOutputMode())
 		{
 		case SvDef::SVPPQTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayMode:
@@ -209,15 +206,13 @@ HRESULT SVPPQObject::ProcessTimeDelayOutputs(SVProductInfoStruct& rProduct)
 
 	if (WriteOutputs(&rProduct))
 	{
-		long lResetDelay = 0;
+		long lResetDelay{getResetDelay()};
 
-		GetResetDelay(lResetDelay);
-		
 		if (lResetDelay)
 		{
 			rProduct.m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
-			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + m_lResetDelay;
+			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + m_resetDelay;
 
 			m_oOutputsResetQueue.AddTail(rProduct.ProcessCount());
 
@@ -311,13 +306,13 @@ SVPPQObject::~SVPPQObject()
 
 void SVPPQObject::init()
 {
-	m_oOutputMode = SvDef::SVPPQNextTriggerMode;
+	m_outputMode = SvDef::SVPPQNextTriggerMode;
 	m_isCreated = false;
 	m_bOnline = false;
-	m_bMaintainSourceImages = false;
-	m_lInspectionTimeoutMillisec = 0;
-	m_lOutputDelay = 100;
-	m_lResetDelay = 0;
+	m_maintainSourceImages = false;
+	m_inspectionTimeoutMillisec = 0;
+	m_outputDelay = 100;
+	m_resetDelay = 0;
 	m_DataValidDelay = TheSVObserverApp.getDataValidDelay();
 
 	m_ProcessingOutputDelay = 0;
@@ -403,7 +398,7 @@ bool SVPPQObject::Create()
 	}
 
 	// Create buckets for the PPQ positions
-	m_ppPPQPositions.resize(GetPPQLength());
+	m_ppPPQPositions.resize(getPPQLength());
 
 	// Create a set of ProductInfoStructs to use
 	if (!m_qAvailableProductInfos.Create()) { return false; }
@@ -454,7 +449,7 @@ bool SVPPQObject::Rebuild()
 	m_pMasterProductInfos = nullptr;
 
 	// Create buckets for the PPQ positions
-	m_ppPPQPositions.resize(GetPPQLength());
+	m_ppPPQPositions.resize(getPPQLength());
 
 	bool result = SetupProductInfoStructs();
 
@@ -550,22 +545,22 @@ void SVPPQObject::DetachAll()
 
 void SVPPQObject::SetPPQOutputMode(SvDef::SVPPQOutputModeEnum oPPQOutputMode)
 {
-	m_oOutputMode = oPPQOutputMode;
+	m_outputMode = oPPQOutputMode;
 }
 
 void SVPPQObject::SetOutputDelay(long lDelayTime)
 {
-	m_lOutputDelay = lDelayTime;
+	m_outputDelay = lDelayTime;
 }
 
 void SVPPQObject::SetResetDelay(long lResetTime)
 {
-	m_lResetDelay = lResetTime;
+	m_resetDelay = lResetTime;
 }
 
 void SVPPQObject::SetPPQLength(long lPPQLength)
 {
-	long oldPPQLength = GetPPQLength();
+	long oldPPQLength = getPPQLength();
 	if (oldPPQLength != lPPQLength)
 	{
 		if (2 < oldPPQLength && lPPQLength < 3)
@@ -580,12 +575,12 @@ void SVPPQObject::SetPPQLength(long lPPQLength)
 
 	m_PpqValues.setValueObject(SvDef::FqnPpqLength, lPPQLength);
 
-	if (GetPPQLength() != m_ppPPQPositions.size())
+	if (getPPQLength() != m_ppPPQPositions.size())
 	{
 		Rebuild();
 	}
 
-	int ppqLength = GetPPQLength();
+	int ppqLength = getPPQLength();
 	for (auto& cameraPair : m_Cameras)
 	{
 		if (nullptr != cameraPair.first)
@@ -597,35 +592,15 @@ void SVPPQObject::SetPPQLength(long lPPQLength)
 
 void SVPPQObject::SetMaintainSourceImages(bool bMaintainImages)
 {
-	m_bMaintainSourceImages = bMaintainImages;
+	m_maintainSourceImages = bMaintainImages;
 }
 
 void SVPPQObject::SetInspectionTimeout(long lTimeoutMillisec)
 {
-	m_lInspectionTimeoutMillisec = lTimeoutMillisec;
+	m_inspectionTimeoutMillisec = lTimeoutMillisec;
 }
 
-void SVPPQObject::GetPPQOutputMode(SvDef::SVPPQOutputModeEnum &oPPQOutputMode) const
-{
-	oPPQOutputMode = m_oOutputMode;
-}
-
-void SVPPQObject::GetOutputDelay(long &lDelayTime) const
-{
-	lDelayTime = m_lOutputDelay;
-}
-
-void SVPPQObject::GetResetDelay(long &lResetTime) const
-{
-	lResetTime = m_lResetDelay;
-}
-
-void SVPPQObject::GetPPQLength(long &lPPQLength) const
-{
-	lPPQLength = GetPPQLength();
-}
-
-long SVPPQObject::GetPPQLength() const
+long SVPPQObject::getPPQLength() const
 {
 	long length = 0;
 	SvVol::BasicValueObjectPtr pValue = m_PpqValues.getValueObject(SvDef::FqnPpqLength);
@@ -634,16 +609,6 @@ long SVPPQObject::GetPPQLength() const
 		pValue->getValue(length);
 	}
 	return length;
-}
-
-void SVPPQObject::GetMaintainSourceImages(bool& bMaintainImages) const
-{
-	bMaintainImages = m_bMaintainSourceImages;
-}
-
-void SVPPQObject::GetInspectionTimeout(long& rlTimeoutMillisec) const
-{
-	rlTimeoutMillisec = m_lInspectionTimeoutMillisec;
 }
 
 bool SVPPQObject::AttachTrigger(SvTi::SVTriggerObject* pTrigger)
@@ -678,7 +643,7 @@ bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, b
 		RebuildProductCameraInfoStructs();
 
 		l_bOk &= pCamera->RegisterFinishProcess(this, SVFinishCameraCallback);
-		pCamera->addNeededBuffer(GetUniqueObjectID(), GetPPQLength());
+		pCamera->addNeededBuffer(GetUniqueObjectID(), getPPQLength());
 	}
 
 	return l_bOk;
@@ -884,7 +849,7 @@ void SVPPQObject::RebuildProductCameraInfoStructs()
 
 	BuildCameraInfos(cameraInfos);
 
-	for (int j = 0; nullptr != m_pMasterProductInfos && j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
+	for (int j = 0; nullptr != m_pMasterProductInfos && j < getPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 	}// end for
@@ -996,7 +961,7 @@ void SVPPQObject::GoOnline()
 #ifdef EnableTracking
 	m_PPQTracking.clear();
 	m_PPQTracking.m_QueueLength = m_ppPPQPositions.size();
-	m_PPQTracking.m_TimeLength = m_lOutputDelay + 50;
+	m_PPQTracking.m_TimeLength = m_outputDelay + 50;
 #endif
 	RebuildOutputList();
 
@@ -1127,8 +1092,8 @@ void SVPPQObject::GoOnline()
 	}
 
 	//The timer should start when not "Next Trigger Mode" or when reset or data valid delay are not 0
-	bool StartTimer(SvDef::SVPPQNextTriggerMode != m_oOutputMode);
-	StartTimer |= 0 < m_lResetDelay;
+	bool StartTimer(SvDef::SVPPQNextTriggerMode != m_outputMode);
+	StartTimer |= 0 < m_resetDelay;
 	StartTimer |= 0 < m_DataValidDelay;
 	if (StartTimer)
 	{
@@ -1155,7 +1120,7 @@ void SVPPQObject::GoOnline()
 		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>(pObject->GetParent()) : nullptr;
 	}
 
-	if (SvDef::SVPPQNextTriggerMode == m_oOutputMode)
+	if (SvDef::SVPPQNextTriggerMode == m_outputMode)
 	{
 		m_NAKCount = -static_cast<long>(m_ppPPQPositions.size());
 	}
@@ -2100,7 +2065,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 		m_ppPPQPositions.SetProductAt(0, l_pNewProduct);
 	}
 
-	if (SvDef::SVPPQNextTriggerMode == m_oOutputMode)
+	if (SvDef::SVPPQNextTriggerMode == m_outputMode)
 	{
 		l_pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
 	}
@@ -2397,7 +2362,7 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 		p_pProduct->m_outputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
 		p_pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
 
-		switch (m_oOutputMode)
+		switch (m_outputMode)
 		{
 		case SvDef::SVPPQNextTriggerMode:
 		{
@@ -2407,10 +2372,10 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 			p_pProduct->m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
 			// Check if we should fire up the reset outputs thread
-			if (0 < m_lResetDelay)
+			if (0 < m_resetDelay)
 			{
 				// Set output reset expire time
-				p_pProduct->m_outputsInfo.m_EndResetDelay = p_pProduct->m_outputsInfo.m_EndProcess + m_lResetDelay;
+				p_pProduct->m_outputsInfo.m_EndResetDelay = p_pProduct->m_outputsInfo.m_EndProcess + m_resetDelay;
 
 				m_oOutputsResetQueue.AddTail(p_pProduct->ProcessCount());
 			}
@@ -2424,14 +2389,15 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
-			// Set output delay expire time
-			p_pProduct->m_outputsInfo.m_EndOutputDelay = p_pProduct->m_triggerInfo.m_ToggleTimeStamp + m_lOutputDelay;
-
-			if (p_pProduct->m_outputsInfo.m_BeginProcess < p_pProduct->m_outputsInfo.m_EndOutputDelay)
+			if(m_outputDelay > 0)
 			{
-				m_oOutputsDelayQueue.AddTail(p_pProduct->ProcessCount());
-			}
+				p_pProduct->m_outputsInfo.m_EndOutputDelay = p_pProduct->m_triggerInfo.m_ToggleTimeStamp + m_outputDelay;
 
+				if (p_pProduct->m_outputsInfo.m_BeginProcess < p_pProduct->m_outputsInfo.m_EndOutputDelay)
+				{
+					m_oOutputsDelayQueue.AddTail(p_pProduct->ProcessCount());
+				}
+			}
 			break;
 		}
 		default:
@@ -2600,8 +2566,8 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, const GUI
 	rProduct.m_dataComplete = bValid;
 	if (rProduct.m_dataComplete)
 	{
-		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode) ||
-			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode))
+		if ((SvDef::SVPPQTimeDelayAndDataCompleteMode == m_outputMode) ||
+			(SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode == m_outputMode))
 		{
 			NotifyProcessTimerOutputs();
 		}
@@ -2656,14 +2622,11 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
 
-	bool bMaintainImages;
-
 	// if bInspecting is false, this loop will fall through
 	// if we are maintaining source images it will also fall through
 	// we don't want to release all the source images unless all the IPs have started
-	GetMaintainSourceImages(bMaintainImages);
 
-	if (!bMaintainImages)
+	if (false == getMaintainSourceImages())
 	{
 		SvIe::SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
 
@@ -2778,9 +2741,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			// yet) that correlates to this image, based on image time stamp.
 			int cameraID = rElement.m_pCamera->getCameraID();
 
-			bool notPending = (GetPPQLength() == 1);
-			notPending = notPending || (m_oOutputMode == SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode);
-			notPending = notPending || ((m_oOutputMode == SvDef::SVPPQNextTriggerMode) && (GetPPQLength() == 2));
+			bool notPending = (getPPQLength() <= 2);
 
 			long position = m_ppPPQPositions.GetIndexByTriggerTimeStamp(startTime, cameraID);
 
@@ -3001,7 +2962,7 @@ bool SVPPQObject::FinishTrigger(void *pCaller, const SvTi::SVTriggerInfoStruct& 
 
 		GetInputIOValues(triggerInfo.m_Inputs);
 
-		switch (m_oOutputMode)
+		switch (m_outputMode)
 		{
 			case SvDef::SVPPQTimeDelayMode:
 			case SvDef::SVPPQTimeDelayAndDataCompleteMode:
@@ -3217,7 +3178,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	bool l_Process = false;
 
-	if (0 < m_lOutputDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputDelay), 1, 0) == 0)
+	if (0 < m_outputDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputDelay), 1, 0) == 0)
 	{
 		double l_CurrentTime = SvTl::GetTimeStamp();
 
@@ -3231,7 +3192,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 		}
 	}
 
-	if (0 < m_lResetDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputReset), 1, 0) == 0)
+	if (0 < m_resetDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputReset), 1, 0) == 0)
 	{
 		double l_CurrentTime = SvTl::GetTimeStamp();
 
@@ -4230,9 +4191,9 @@ bool SVPPQObject::SetupProductInfoStructs()
 	// Set up all the ProductInfo Structs
 	SvIe::SVGuidSVCameraInfoStructMap cameraInfos;
 	BuildCameraInfos(cameraInfos);
-	m_pMasterProductInfos = new SVProductInfoStruct[GetPPQLength() + g_lPPQExtraBufferSize];
+	m_pMasterProductInfos = new SVProductInfoStruct[getPPQLength() + g_lPPQExtraBufferSize];
 
-	for (int j = 0; j < GetPPQLength() + g_lPPQExtraBufferSize; j++)
+	for (int j = 0; j < getPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
 		m_pMasterProductInfos[j].m_pPPQ = this;
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
@@ -4398,18 +4359,18 @@ void SVPPQObject::setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfo
 
 void SVPPQObject::calcUseProcessingOffset4InterestFlag()
 {
-	m_useProcessingOffset4Interest = 1 < m_arInspections.size() && 1 < m_maxProcessingOffset4Interest && m_maxProcessingOffset4Interest < GetPPQLength() && SvDef::SVPPQNextTriggerMode == m_oOutputMode;
+	m_useProcessingOffset4Interest = 1 < m_arInspections.size() && 1 < m_maxProcessingOffset4Interest && m_maxProcessingOffset4Interest < getPPQLength() && SvDef::SVPPQNextTriggerMode == m_outputMode;
 }
 
 long SVPPQObject::getNeededRecords() const
 {
-	if (1 == m_arInspections.size() || SvDef::SVPPQNextTriggerMode != m_oOutputMode)
+	if (1 == m_arInspections.size() || SvDef::SVPPQNextTriggerMode != m_outputMode)
 	{
 		return 2l;
 	}
-	else if (2 > m_maxProcessingOffset4Interest || GetPPQLength() < m_maxProcessingOffset4Interest)
+	else if (2 > m_maxProcessingOffset4Interest || getPPQLength() < m_maxProcessingOffset4Interest)
 	{
-		return GetPPQLength();
+		return getPPQLength();
 	}
 	else
 	{

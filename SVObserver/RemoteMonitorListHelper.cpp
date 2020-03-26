@@ -150,7 +150,7 @@ SvSml::MonitorListCpyPointer  RemoteMonitorListHelper::CreateMLcopy(const Remote
 		pConfig->GetPPQByName(remoteMonitorNamedlist.GetPPQName().c_str(), &pPPQ);
 		if (pPPQ)
 		{
-			len = pPPQ->GetPPQLength();
+			len = pPPQ->getPPQLength();
 		}
 	}
 	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();

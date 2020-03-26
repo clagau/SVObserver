@@ -3310,32 +3310,23 @@ void SVConfigurationObject::SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, con
 	rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svValue);
 	svValue.Clear();
 
-	SvDef::SVPPQOutputModeEnum lMode;
-	rPPQ.GetPPQOutputMode(lMode);
-	svValue = lMode;
+	svValue = rPPQ.getPPQOutputMode();
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MODE, svValue);
 	svValue.Clear();
 
-	long lLength = 0;
-	rPPQ.GetPPQLength(lLength);
-	svValue = lLength;
+	svValue = rPPQ.getPPQLength();
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_LENGTH, svValue);
 	svValue.Clear();
 
-	long lDelay = 0;
-	rPPQ.GetResetDelay(lDelay);
-	svValue = lDelay;
+	svValue = rPPQ.getResetDelay();
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_OUTPUT_RESET_DELAY_TIME, svValue);
 	svValue.Clear();
 
-	rPPQ.GetOutputDelay(lDelay);
-	svValue = lDelay;
+	svValue = rPPQ.getOutputDelay();
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_OUTPUT_DELAY_TIME, svValue);
 	svValue.Clear();
 
-	bool bMaintainSrcImg = false;
-	rPPQ.GetMaintainSourceImages(bMaintainSrcImg);
-	svValue = bMaintainSrcImg;
+	svValue = rPPQ.getMaintainSourceImages();
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAINTAIN_SRC_IMAGE, svValue);
 	svValue.Clear();
 
@@ -3343,9 +3334,7 @@ void SVConfigurationObject::SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, con
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_MAX_PROCESSINGOFFSET_4INTEREST, svValue);
 	svValue.Clear();
 
-	long lInspectionTimeout = 0;
-	rPPQ.GetInspectionTimeout(lInspectionTimeout);
-	svValue = lInspectionTimeout;
+	svValue = rPPQ.getInspectionTimeout();
 	rWriter.WriteAttribute(SvXml::CTAG_PPQ_INSPECTION_TIMEOUT, svValue);
 	svValue.Clear();
 
