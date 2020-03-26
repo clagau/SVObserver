@@ -7,7 +7,7 @@
 // defined with this macro as being exported.
 
 #ifdef TOOLDLL_EXPORTS
-#define TOOLDLL_API __declspec(dllexport)
+#define TOOLDLL_API extern "C" __declspec(dllexport)
 #else
 #define TOOLDLL_API __declspec(dllimport)
 #endif
