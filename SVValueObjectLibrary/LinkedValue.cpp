@@ -332,6 +332,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	//! Here we need the non linked value (SVGUID as string or constant value)
 	__super::GetValue(Value);
 
+
 	std::string guidAndIndexString;
 	try
 	{
@@ -341,7 +342,6 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	{
 		guidAndIndexString.clear();
 	}
-
 
 	SVObjectReference LinkedObjectRef(guidAndIndexString);
 
@@ -364,7 +364,16 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvDef::StringVector msgList;
+				
+				std::string linkedValueName;
+				getLinkedName().GetValue(linkedValueName);
+				std::string objectName = GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType);
+
+				msgList.push_back(linkedValueName);
+				msgList.push_back(objectName);
+
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}

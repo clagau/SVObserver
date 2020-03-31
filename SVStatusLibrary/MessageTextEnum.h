@@ -412,6 +412,7 @@ enum MessageTextEnum
 	Tid_ConnectTableSourceFailed,
 	Tid_ConnectFailed,
 	Tid_ConnectInputFailed,
+	Tid_ConnectInputFailedLinkedValueNotFound,
 	Tid_NoValidTableConnected,
 	Tid_Error_CreationAnalyzerFailed,
 	Tid_Error_SetTableAnalyzerData,
