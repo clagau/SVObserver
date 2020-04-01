@@ -165,7 +165,7 @@ protected:
 	SvDef::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;
 	
-	typedef std::map< SVGUID, SVImageInfoClass > SVGuidImageChildMap; 
+	typedef std::unordered_map< GUID, SVImageInfoClass > SVGuidImageChildMap; 
 	SVGuidImageChildMap m_ChildArrays;
 
 private:

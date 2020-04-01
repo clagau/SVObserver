@@ -39,5 +39,15 @@ protected:
 	bool m_IndexPresent;
 	int m_Index;
 };
-
 } //namespace SvIe
+
+namespace std
+{
+	template<> struct hash<SvIe::SVIPResultItemDefinition>
+	{
+		std::size_t operator()(SvIe::SVIPResultItemDefinition const& s) const noexcept
+		{
+			return std::hash<GUID> {}(s.GetObjectID());
+		}
+	};
+}

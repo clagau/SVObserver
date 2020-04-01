@@ -74,6 +74,7 @@
 #include <string>
 #include <tchar.h>
 #include <utility>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/algorithm/string.hpp>

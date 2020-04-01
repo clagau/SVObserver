@@ -45,6 +45,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>

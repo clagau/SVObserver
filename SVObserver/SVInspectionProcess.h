@@ -64,7 +64,7 @@ class SVInspectionProcess :
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
-	typedef std::map<std::string, SVObjectClass*> SVValueObjectMap;
+	typedef std::unordered_map<std::string, SVObjectClass*> SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 
 	SVInspectionProcess( LPCSTR ObjectName );

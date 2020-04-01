@@ -30,7 +30,7 @@
 #pragma warning (pop)
 #pragma endregion Includes
 
-typedef std::map<SvPb::SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
+typedef std::unordered_map<SvPb::SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
 static const ObjectTypeTable cTypeTable
 {

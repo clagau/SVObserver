@@ -81,18 +81,19 @@ HRESULT SVObjectManagerClass::SetState(SVObjectManagerStateEnum State)
 
 const SVGUID SVObjectManagerClass::GetChildRootObjectID(const std::string& rRootName) const
 {
-	SVGUID ObjectID;
+	auto iter = m_RootNameChildren.find(rRootName);
+	if (m_RootNameChildren.end() != iter)
+	{
+		return iter->second;
+	}
 
-	if (m_RootNameChildren.end() != m_RootNameChildren.find(rRootName))
-	{
-		ObjectID = m_RootNameChildren.at(rRootName);
-	}
 	//If the root node is not found then return the configuration for backward compatibility
-	else if (m_RootNameChildren.end() != m_RootNameChildren.find(SvDef::FqnConfiguration))
+	iter = m_RootNameChildren.find(SvDef::FqnConfiguration);
+	if (m_RootNameChildren.end() != iter)
 	{
-		ObjectID = m_RootNameChildren.at(SvDef::FqnConfiguration);
+		return iter->second;
 	}
-	return ObjectID;
+	return GUID_NULL;
 }
 
 HRESULT SVObjectManagerClass::ConstructRootObject(SvPb::ClassIdEnum classID)
@@ -145,17 +146,11 @@ void SVObjectManagerClass::setRootChildID(const std::string& rRootChild, const S
 
 void SVObjectManagerClass::TranslateDottedName(std::string& rName) const
 {
-	bool NameReplaced(false);
-	SvDef::TranslateMap::const_iterator Iter(m_TranslationMap.begin());
-	for (; m_TranslationMap.end() != Iter && !NameReplaced; ++Iter)
+	const auto& iter = std::find_if(m_TranslationMap.begin(), m_TranslationMap.end(), 
+		[&rName](auto& rEntry) {return 0 == rName.find(rEntry.first); });
+	if (m_TranslationMap.end() != iter)
 	{
-		size_t Pos = rName.find(Iter->first);
-		//Check only that the start of the dotted name is found
-		if (0 == Pos)
-		{
-			rName.replace(Pos, Iter->first.size(), Iter->second.c_str());
-			NameReplaced = true;
-		}
+		rName.replace(0, iter->first.size(), iter->second.c_str());
 	}
 }
 

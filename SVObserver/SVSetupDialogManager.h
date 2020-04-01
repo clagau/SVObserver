@@ -36,7 +36,7 @@ public:
 
 protected:
 	typedef boost::function<HRESULT (const SVGUID&, CWnd*)> SVSetupDialogFunction;
-	typedef std::map< SvPb::ClassIdEnum, SVSetupDialogFunction > SVSetupDialogMap;
+	typedef std::unordered_map< SvPb::ClassIdEnum, SVSetupDialogFunction > SVSetupDialogMap;
 
 	SVSetupDialogManager();
 

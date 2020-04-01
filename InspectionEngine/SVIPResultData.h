@@ -28,7 +28,7 @@ struct IPResultTableData
 
 struct SVIPResultData
 {
-	typedef std::map< SVIPResultItemDefinition, SVIPResultItemData > SVResultDataMap;
+	typedef std::unordered_map< SVIPResultItemDefinition, SVIPResultItemData > SVResultDataMap;
 
 	SVIPResultData();
 	SVIPResultData( const SVResultDataMap& p_rResultData, const std::vector <IPResultTableData>& rResultTableData, double p_ToolSetEndTime, double p_ToolSetAvgTime, double p_TriggerDistance, double p_ToolSetTime );

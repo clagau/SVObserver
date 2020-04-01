@@ -64,6 +64,7 @@
 #include <shlwapi.h>
 #include <stdlib.h>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <winioctl.h>
 #include <boost/bind.hpp>

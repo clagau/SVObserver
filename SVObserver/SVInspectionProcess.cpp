@@ -853,9 +853,7 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 
 				if (nullptr != pCamera)
 				{
-					SvIe::SVGuidSVCameraInfoStructMap::iterator l_Iter;
-
-					l_Iter = pProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
+					auto l_Iter = pProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
 
 					if (l_Iter != pProduct->m_svCameraInfos.end())
 					{
@@ -907,9 +905,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 
 			if (nullptr != l_pImage && nullptr != l_pImage->GetCamera())
 			{
-				SvIe::SVGuidSVCameraInfoStructMap::iterator l_Iter;
-
-				l_Iter = pProduct->m_svCameraInfos.find(l_pImage->GetCamera()->GetUniqueObjectID());
+				auto l_Iter = pProduct->m_svCameraInfos.find(l_pImage->GetCamera()->GetUniqueObjectID());
 
 				if (l_Iter != pProduct->m_svCameraInfos.end())
 				{
@@ -1635,7 +1631,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 		DebugBreak();
 	}
 
-	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct toolMap;
+	std::unordered_map<SvTo::SVToolClass*, SVInspectionProcessResetStruct> toolMap;
 	while (m_lInputRequestMarkerCount > 0L)
 	{
 		long l_lSize = 0;
@@ -1928,32 +1924,25 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					if (nullptr != pTool)
 					{
-						if (toolMap.find(pTool) != toolMap.end())
+						auto toolIter = toolMap.find(pTool);
+						if (toolMap.end() != toolIter)
 						{
-							if (toolMap[pTool].m_ObjectSet.empty())
+							if (toolIter->second.m_ObjectSet.empty())
 							{
 								bRet &= pTool->resetAllObjects();
 							}
 							else
 							{
-								SVObjectPtrSet::iterator l_oIter;
-
-								l_oIter = toolMap[pTool].m_ObjectSet.begin();
-
-								while (l_oIter != toolMap[pTool].m_ObjectSet.end())
+								for (auto* pObject : toolIter->second.m_ObjectSet)
 								{
-									SVObjectClass *l_psvObject = *l_oIter;
-
-									if (nullptr != l_psvObject)
+									if (nullptr != pObject)
 									{
-										bRet &= l_psvObject->resetAllObjects();
+										bRet &= pObject->resetAllObjects();
 									}
 									else
 									{
 										bRet = false;
 									}
-
-									++l_oIter;
 								}
 							}
 						}

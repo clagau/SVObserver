@@ -80,6 +80,17 @@ protected:
 
 };
 
+namespace std
+{
+	template<> struct hash<SVGUID>
+	{
+		std::size_t operator()(SVGUID const& s) const noexcept
+		{
+			return std::hash<unsigned long> {}(s.ToGUID().Data1);
+		}
+	};
+}
+
 //This needs to be placed the wrong way due to recursive calling of the method
 inline bool operator==( const GUID& p_rLeft, const SVGUID& p_rRight )
 {

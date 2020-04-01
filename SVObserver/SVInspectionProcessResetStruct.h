@@ -35,7 +35,5 @@ struct SVInspectionProcessResetStruct
 	SVObjectPtrSet m_ObjectSet;
 };
 
-typedef std::map<SvTo::SVToolClass*, SVInspectionProcessResetStruct> SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
-
 #include "SVInspectionProcessResetStruct.inl"
 

@@ -21,7 +21,7 @@ class SVDataItemManagerTemplate
 public:
 	typedef boost::function< DWORD_PTR ( SVIndexType ) > SVGetItemDataFunctor;
 	typedef boost::function< BOOL ( SVIndexType, DWORD_PTR ) > SVSetItemDataFunctor;
-	typedef std::map< unsigned long, SVItemData > SVItemDataMap;
+	typedef std::unordered_map< unsigned long, SVItemData > SVItemDataMap;
 	typedef typename SVItemDataMap::iterator iterator;
 	typedef typename SVItemDataMap::const_iterator const_iterator;
 	typedef typename SVItemDataMap::key_type key_type;

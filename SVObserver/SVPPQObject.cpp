@@ -2628,11 +2628,9 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 
 	if (false == getMaintainSourceImages())
 	{
-		SvIe::SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
-
-		for (; p_rProduct.m_svCameraInfos.end() != Iter; ++Iter)
+		for (auto& rValue : p_rProduct.m_svCameraInfos)
 		{
-			Iter->second.ClearCameraInfo();
+			rValue.second.ClearCameraInfo();
 		}
 	}
 	p_rProduct.setInspectionTriggerRecordComplete(GUID_NULL);
@@ -2674,11 +2672,9 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 	// Release from Shared Memory
 	ReleaseSharedMemory(p_rProduct);
 
-	SvIe::SVGuidSVCameraInfoStructMap::iterator Iter(p_rProduct.m_svCameraInfos.begin());
-
-	for (; Iter != p_rProduct.m_svCameraInfos.end(); ++Iter)
+	for (auto& rValue : p_rProduct.m_svCameraInfos)
 	{
-		Iter->second.ClearCameraInfo();
+		rValue.second.ClearCameraInfo();
 	}
 	p_rProduct.setInspectionTriggerRecordComplete(GUID_NULL);
 	if (p_rProduct.IsProductActive())

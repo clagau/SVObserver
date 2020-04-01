@@ -21,7 +21,7 @@ namespace SvTi
 {
 	class SVCameraTriggerData : public SVObjectClass 
 	{
-		typedef  std::map<int, _variant_t> IntVariantMap;
+		typedef  std::unordered_map<int, _variant_t> IntVariantMap;
 	public:
 		SVCameraTriggerData();
 		virtual ~SVCameraTriggerData();

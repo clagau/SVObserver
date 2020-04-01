@@ -58,6 +58,7 @@
 #include <string>
 #include <tchar.h>			//Used by static library
 #include <time.h>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/bind.hpp>		//Used by static library

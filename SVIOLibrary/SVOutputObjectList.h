@@ -53,7 +53,7 @@ public:
 
 	bool OutputIsNotValid( std::string p_strName );
 
-	typedef  std::map<int, _variant_t> IntVariantMap;
+	typedef  std::unordered_map<int, _variant_t> IntVariantMap;
 	///This function returns no error because the IO PLC dll is the only type which supports this functionality
 	void WriteOutputData(unsigned long triggerChannel, const IntVariantMap& rData);
 

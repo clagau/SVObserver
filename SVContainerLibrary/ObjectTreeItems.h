@@ -24,7 +24,7 @@ namespace SvCl
 {
 	class ObjectTreeItems : public SVTree<std::string, ObjectSelectorItem>
 	{
-		typedef std::map<std::string, iterator> BranchIteratorMap;
+		typedef std::unordered_map<std::string, iterator> BranchIteratorMap;
 	public:
 	#pragma region Constructor
 		/**********

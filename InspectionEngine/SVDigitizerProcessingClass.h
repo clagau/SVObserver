@@ -94,7 +94,7 @@ private:
 
 	typedef std::set<SvTh::SVDigitizerLoadLibraryClass*> SVDigitizerSubsystemSet;
 	typedef std::map<std::string, SVAcquisitionClassPtr> SVNameDigitizerMap;
-	typedef std::map<std::string, SvTh::SVDigitizerLoadLibraryClass*> SVNameDigitizerSubsystemMap;
+	typedef std::unordered_map<std::string, SvTh::SVDigitizerLoadLibraryClass*> SVNameDigitizerSubsystemMap;
 
 	HRESULT AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle );
 

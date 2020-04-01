@@ -66,6 +66,7 @@
 #include <mutex>
 #include <set>					//Used by static library
 #include <tchar.h>				//Used by static library
+#include <unordered_map>
 
 #include <boost/any.hpp>
 #include <boost/bind.hpp>

@@ -28,7 +28,7 @@ public:
 	std::string getCameraName( const std::string& rIPAddress ) const;
 
 protected:
-	typedef std::map<std::string, std::string> CameraIP_NameMap;
+	typedef std::unordered_map<std::string, std::string> CameraIP_NameMap;
 
 	SVGigeCameraManager();
 

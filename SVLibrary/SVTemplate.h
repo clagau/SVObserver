@@ -351,97 +351,6 @@ SINGLETON& TBasicSingletonHolder<SINGLETON>::Instance(...)	// the vararg is to p
 }
 
 
-template <typename TYPEID, class FACTORYBASE> class TFactory
-{
-public:
-	typedef FACTORYBASE* (*CreateFn)();
-	bool Register(TYPEID id, CreateFn fn);
-	FACTORYBASE* New(TYPEID id);
-	bool SetDefault(TYPEID id);
-	TFactory();
-private:
-	typedef std::map<TYPEID, CreateFn> CreateFnMap;
-	TYPEID mDefaultType;
-	bool mbSetDefault;
-	CreateFnMap mapCreateFn;
-};
-
-template <typename TYPEID, class FACTORYBASE>
-TFactory<TYPEID, FACTORYBASE>::TFactory()
-{
-	mbSetDefault=false;
-}
-
-template <typename TYPEID, class FACTORYBASE>
-bool TFactory<TYPEID, FACTORYBASE>::Register(TYPEID id, CreateFn fn)
-{
-	mapCreateFn[id] = fn;
-	return true;
-}
-
-template <typename TYPEID, class FACTORYBASE>
-bool TFactory<TYPEID, FACTORYBASE>::SetDefault(TYPEID id)
-{
-	if ( mbSetDefault == false )
-	{
-		mDefaultType = id;
-		mbSetDefault = true;
-		return true;
-	}
-	else
-		return false;
-}
-
-template <typename TYPEID, class FACTORYBASE>
-FACTORYBASE* TFactory<TYPEID, FACTORYBASE>::New(TYPEID id)
-{
-	CreateFnMap::const_iterator iter = mapCreateFn.find(id);
-	if (iter != mapCreateFn.end())
-	{
-		if (nullptr == iter->second)
-		{
-			std::string sError;
-			std::stringstream stream;
-			stream << "Create function for type " << id << " is NULL";
-			sError = stream.str();
-			throw std::runtime_error(sError);
-		}
-	}
-	else	// can't find type
-	{
-		if ( mbSetDefault )
-		{
-			// try default type
-			iter = mapCreateFn.find(mDefaultType);
-		}
-
-		if ( iter != mapCreateFn.end() )	// try test again
-		{
-		}
-		else	// if still not found
-		{
-			// id not found in map; unknown type
-			std::string sError;
-			std::stringstream stream;
-			stream << "Unknown Type: " << id;
-			sError = stream.str();
-			throw std::runtime_error(sError);
-		}
-	}
-	return (iter->second)();	// make call to Create function
-}
-
-
-template<typename TYPEID, class FACTORYBASE>
-class TFactorySingleton
-{
-public:
-	typedef TFactory<TYPEID, FACTORYBASE> factoryclass;
-	typedef TBasicSingletonHolder<factoryclass> factory;
-};
-// example of usage:
-// typedef TFactorySingleton<SVDeviceParamEnum, SVDeviceParam>::factory TheDeviceParamFactory;
-
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE> 
 class TDoubleFactory
 {
@@ -454,14 +363,14 @@ public:
 	TDoubleFactory();
 
 	// give const access to type maps ( the whole point of a 2-type factory )
-	typedef std::map<TYPEID, TYPEID2> TypeMapPrimary;
-	typedef std::map<TYPEID2, TYPEID> TypeMapSecondary;
+	typedef std::unordered_map<TYPEID, TYPEID2> TypeMapPrimary;
+	typedef std::unordered_map<TYPEID2, TYPEID> TypeMapSecondary;
 	typedef typename TypeMapPrimary::const_iterator const_iterator;
 	typedef typename TypeMapSecondary::const_iterator const_iterator2;
 	const TypeMapPrimary& PrimaryMap();
 	const TypeMapSecondary& SecondaryMap();
 private:
-	typedef std::map<TYPEID, CreateFn> CreateFnMap;
+	typedef std::unordered_map<TYPEID, CreateFn> CreateFnMap;
 	TYPEID mDefaultType;
 	bool mbSetDefault;
 	CreateFnMap mapCreateFn;

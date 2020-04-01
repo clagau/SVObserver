@@ -64,6 +64,7 @@
 #include <tchar.h>			//Used by static library
 #include <typeinfo>
 #include <utility>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/algorithm/string.hpp>

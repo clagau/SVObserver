@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <unordered_map>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <utility>
 #pragma endregion Includes
@@ -21,5 +21,5 @@ namespace SvDef
 	typedef std::set<std::string> StringSet;
 	typedef std::vector<std::string> StringVector;
 	typedef std::vector<StringPair> StringPairVector;
-	typedef std::map<std::string, std::string> TranslateMap;
+	typedef std::unordered_map<std::string, std::string> TranslateMap;
 } //namespace SvDef

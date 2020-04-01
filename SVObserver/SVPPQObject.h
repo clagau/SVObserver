@@ -244,9 +244,6 @@ protected:
 
 	};
 
-	typedef std::map<std::string, SVObjectReference> SVNameObjectMap;
-
-	typedef std::map<SVGUID, SVNameObjectMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
 	bool m_bActiveMonitorList;
 	long m_rejectCount = 0;
 	SvSml::RingBufferPointer m_SlotManager;

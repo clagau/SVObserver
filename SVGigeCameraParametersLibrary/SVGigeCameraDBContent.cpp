@@ -43,7 +43,7 @@ enum ElementTagEnums
 };
 
 // Element Map
-typedef std::map<WString, ElementTagEnums> ElementMap;
+typedef std::unordered_map<WString, ElementTagEnums> ElementMap;
 static const ElementMap cElements
 {
 	{L"SVGigeParameterMap",				GigeParameterMap},			// Gige Parameter Map (root tag)
@@ -58,7 +58,7 @@ static const ElementMap cElements
 };
 
 // GigeParameterEnum Map
-typedef std::map<WString, SvDef::SVGigeParameterEnum> GigeParameterEnumMap;
+typedef std::unordered_map<WString, SvDef::SVGigeParameterEnum> GigeParameterEnumMap;
 static const GigeParameterEnumMap cGigeParameterEnums
 {
 	{L"SVGigeParameterExposureMode",			SvDef::SVGigeParameterExposureMode},
@@ -133,7 +133,7 @@ static const GigeParameterEnumMap cGigeParameterEnums
 
 
 // VariantTypeEnum Map
-typedef std::map<WString, VARTYPE> VariantTypeEnumMap;
+typedef std::unordered_map<WString, VARTYPE> VariantTypeEnumMap;
 static const VariantTypeEnumMap cVariantTypeEnum
 {
 	{L"VT_I1",		VT_I1},
@@ -148,7 +148,7 @@ static const VariantTypeEnumMap cVariantTypeEnum
 };
 
 // FeatureTypeStringEnum Map
-typedef std::map<WString, SVMatroxDigitizerFeature::SVFeatureTypeEnum> FeatureTypeStringEnumMap;
+typedef std::unordered_map<WString, SVMatroxDigitizerFeature::SVFeatureTypeEnum> FeatureTypeStringEnumMap;
 static const FeatureTypeStringEnumMap cFeatureTypeStringEnums
 {
 	{L"SVTypeCommand",				SVMatroxDigitizerFeature::SVTypeCommand},
@@ -161,7 +161,7 @@ static const FeatureTypeStringEnumMap cFeatureTypeStringEnums
 };
 
 // FeatureSupportedStringEnum Map
-typedef std::map<WString, SVGigeFeature::FeatureSupportedEnum> FeatureSupportedStringEnumMap;
+typedef std::unordered_map<WString, SVGigeFeature::FeatureSupportedEnum> FeatureSupportedStringEnumMap;
 static const FeatureSupportedStringEnumMap cFeatureSupportedStringEnums
 {
 	{L"NotSupported",	SVGigeFeature::NotSupported},
@@ -169,7 +169,7 @@ static const FeatureSupportedStringEnumMap cFeatureSupportedStringEnums
 };
 
 // FeatureAccessStringEnum Map
-typedef std::map<WString, SVGigeFeature::FeatureAccessEnum> FeatureAccessStringEnumMap;
+typedef std::unordered_map<WString, SVGigeFeature::FeatureAccessEnum> FeatureAccessStringEnumMap;
 static const FeatureAccessStringEnumMap FeatureAccessStringEnums
 {
 	{L"ReadOnly",	SVGigeFeature::ReadOnly},

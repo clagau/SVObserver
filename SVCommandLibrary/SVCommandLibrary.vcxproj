@@ -87,16 +87,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVCommandAbstractFactoryTemplate.cpp" />
     <ClCompile Include="SVCommandDataFacade.cpp" />
     <ClCompile Include="SVCommandDataHolder.cpp" />
     <ClCompile Include="SVCommandFactoryTemplate.cpp" />
-    <ClCompile Include="SVFileSystemCommandFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVCommandAbstractFactorySingleton.h" />
-    <ClInclude Include="SVCommandAbstractFactoryTemplate.h" />
     <ClInclude Include="SVCommandAttributesFacade.h" />
     <ClInclude Include="SVCommandAttributesTemplate.h" />
     <ClInclude Include="SVCommandConcreteFactoryTemplate.h" />
@@ -113,14 +109,12 @@
     <ClInclude Include="SVCommandLibraryEnums.h" />
     <ClInclude Include="SVCommandResultsFacade.h" />
     <ClInclude Include="SVCommandResultsTemplate.h" />
-    <ClInclude Include="SVFileSystemCommandFactory.h" />
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectCommandWrapperTemplate.h" />
     <ClInclude Include="SVObjectSynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectThreadCommandTemplate.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVCommandAbstractFactorySingleton.inl" />
     <None Include="SVCommandAttributesTemplate.inl" />
     <None Include="SVCommandConcreteFactoryTemplate.inl" />
     <None Include="SVCommandConcreteTemplate.inl" />

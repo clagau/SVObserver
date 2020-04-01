@@ -2367,15 +2367,11 @@ SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector
 	{
 		std::string Name {rItem.GetCompleteName(true)};
 
-		for (auto const& rTranslateName : TranslateNames)
+		const auto& iter = std::find_if(TranslateNames.begin(), TranslateNames.end(),
+			[&Name](auto& rEntry) {return 0 == Name.find(rEntry.first); });
+		if (TranslateNames.end() != iter)
 		{
-			size_t Pos = Name.find(rTranslateName.first);
-			//Check only that the start of the dotted name is found
-			if (0 == Pos)
-			{
-				Name.replace(Pos, rTranslateName.first.size(), rTranslateName.second.c_str());
-				break;
-			}
+			Name.replace(0, iter->first.size(), iter->second.c_str());
 		}
 		SelectedObjectNames.insert(Name);
 	}

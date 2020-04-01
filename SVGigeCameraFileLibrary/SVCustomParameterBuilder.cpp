@@ -53,7 +53,7 @@ constexpr double DefaultMultiplier = 1.0;
 constexpr double DefaultDivisor = 1.0;
 constexpr char* cDEFAULTUNIT = _T("Unit");
 
-typedef std::map<std::string, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
+typedef std::unordered_map<std::string, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
 static const DeviceDataTypeEnumNameMap cDeviceDataTypeEnumNameMap
 {
 	{cLongDataType, DeviceDataTypeLong},
@@ -64,7 +64,7 @@ static const DeviceDataTypeEnumNameMap cDeviceDataTypeEnumNameMap
 	{cUnknownDataType, DeviceDataTypeUnknown}
 };
 
-typedef std::map<std::string, SVDeviceParamEnum> DeviceParamEnumNameMap;
+typedef std::unordered_map<std::string, SVDeviceParamEnum> DeviceParamEnumNameMap;
 static const DeviceParamEnumNameMap cDeviceParamEnumNameMap
 {
 	{DeviceParamGigeCustom1_String, DeviceParamGigeCustom1},

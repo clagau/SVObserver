@@ -24,7 +24,7 @@ struct RangeEnum
 	//************************************
 	static std::string ERange2String(ERange range)
 	{
-		static std::map<ERange, std::string> enumNames
+		static std::unordered_map<ERange, std::string> enumNames
 		{
 			{ER_FailHigh, SvUl::LoadStdString(IDS_FAIL_HIGH)},
 			{ER_WarnHigh, SvUl::LoadStdString(IDS_WARN_HIGH)},

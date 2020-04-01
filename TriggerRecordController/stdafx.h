@@ -53,6 +53,7 @@
 #include <ctime>				//Used by static library
 #include <tchar.h>
 #include <thread>
+#include <unordered_map>
 #include <WinBase.h>
 
 #include <boost/algorithm/string/split.hpp>

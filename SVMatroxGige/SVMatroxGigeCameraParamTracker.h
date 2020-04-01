@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <map>
+//Moved to precompiled header: #include <unordered_map>
 
 #include "SVMatroxGigeCameraParamList.h"
 #pragma endregion Includes
@@ -21,7 +21,7 @@ class SVMatroxGigeDigitizer;
 class SVMatroxGigeCameraParamTracker
 {
 // List of Camera Parameters by cameraID (serialNo)
-typedef std::map<std::string, SVMatroxGigeCameraParamList> SVMatroxGigeCameraParamCollection;
+	typedef std::unordered_map<std::string, SVMatroxGigeCameraParamList> SVMatroxGigeCameraParamCollection;
 
 private:
 	SVMatroxGigeCameraParamCollection m_cameraParamCollection;
