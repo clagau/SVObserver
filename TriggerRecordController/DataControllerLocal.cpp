@@ -85,6 +85,7 @@ void TRControllerLocalDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 				{
 					m_trOfInterestVec[nextPos] = pos;
 					m_basicData.m_TrOfInterestCurrentPos = nextPos;
+					rCurrentTR.m_isInterest = true;
 					return;  //successfully set
 				}
 				refTemp = rCurrentTR.m_referenceCount;
@@ -127,7 +128,7 @@ DataControllerLocal::DataControllerLocal()
 
 DataControllerLocal::~DataControllerLocal()
 {
-	clearAll();
+	DataControllerLocal::clearAll();
 }
 
 void DataControllerLocal::clearAll()
@@ -284,6 +285,7 @@ ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int in
 				if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecordData::cWriteBlocked, count) == count)
 				{
 					rCurrentTR.m_trId = m_nextTRID++;
+					rCurrentTR.m_isInterest = false;
 					TRControllerLocalDataPerIP& rIPData = m_dataVector[inspectionPos];
 					rIPData.setLastStartedTRID(rCurrentTR.m_trId);
 					rIPData.setNextPosForFreeCheck((currentPos + 1) % (rIPData.getBasicData().m_TriggerRecordNumber));

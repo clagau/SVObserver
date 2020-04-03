@@ -67,6 +67,14 @@ void TRControllerWriterDataPerIP::setLastFinishedTRID(int id)
 	}
 };
 
+void TRControllerWriterDataPerIP::setLastSetOfInterestFlagPos(int pos)
+{
+	if (nullptr != m_pBasicData)
+	{
+		m_pBasicData->m_lastSetOfInterestFlagPos = pos;
+	}
+}
+
 void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& dataDefList)
 { 
 	m_DataDefList.Swap(&dataDefList); 
@@ -252,6 +260,7 @@ void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 						}
 						m_pTRofInterestArray[nextPos] = pos;
 						m_pBasicData->m_TrOfInterestCurrentPos = nextPos;
+						rCurrentTR.m_isInterest = true;
 						return;  //successfully set
 					}
 					refTemp = rCurrentTR.m_referenceCount;
@@ -400,7 +409,7 @@ DataControllerWriter::DataControllerWriter()
 
 DataControllerWriter::~DataControllerWriter()
 {
-	clearAll();
+	DataControllerWriter::clearAll();
 }
 #pragma endregion Constructor
 
@@ -638,7 +647,7 @@ ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int i
 					if (InterlockedCompareExchange(&(rCurrentTR.m_referenceCount), TriggerRecordData::cWriteBlocked, count) == count)
 					{
 						rCurrentTR.m_trId = m_nextTRID++;
-
+						rCurrentTR.m_isInterest = false;
 						pIPData->decreaseFreeTrNumber();
 						pIPData->setLastStartedTRID(rCurrentTR.m_trId);
 						pIPData->setNextPosForFreeCheck((currentPos + 1) % (pIPData->getBasicData().m_TriggerRecordNumber));

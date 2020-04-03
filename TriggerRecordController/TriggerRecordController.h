@@ -53,10 +53,10 @@ public:
 	virtual void unregisterReadyCallback(int handleId) override;
 	virtual int registerNewTrCallback(std::function<void(TrEventData)> pCallback) override;
 	virtual void unregisterNewTrCallback(int handleId) override;
-	virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrEventData>&)> pCallback) override;
+	virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback) override;
 	virtual void unregisterNewInterestTrCallback(int handleId) override;
 
-	virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector) override;
+	virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector, bool isInterest) override;
 	virtual std::vector<ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
 	virtual void pauseTrsOfInterest(bool pauseFlag, int inspectionPos = -1) override;
 	virtual bool isPauseTrsOfInterest(int inspectionPos = 0) const override { return m_pDataController->getPauseTrsOfInterest(inspectionPos); };
@@ -134,7 +134,7 @@ private:
 	void sendResetCall();
 	void sendReadyCall();
 	void sendTrIdCall(TrEventData data);
-	void sendInterestTrIdCall(std::vector<TrEventData>&& data);
+	void sendInterestTrIdCall(std::vector<TrInterestEventData>&& data);
 
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 #pragma endregion Private Methods
@@ -154,7 +154,7 @@ private:
 	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
 	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;
 	std::vector<std::pair<int, std::function<void(TrEventData)>>> m_newTrCallbacks;
-	std::vector<std::pair<int, std::function<void(std::vector<TrEventData>)>>> m_newInterestTrCallbacks;
+	std::vector<std::pair<int, std::function<void(std::vector<TrInterestEventData>)>>> m_newInterestTrCallbacks;
 	bool m_isResetLocked = false;
 
 	bool m_isGlobalInit = false;

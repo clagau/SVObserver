@@ -30,6 +30,7 @@ public:
 	void setDataListSize(long dataSize);
 	void setInitFlag(bool flag);
 	void setLastFinishedTRID(int id) override;
+	void setLastSetOfInterestFlagPos(int pos) override;
 	void setDataDefList(SvPb::DataDefinitionList&& dataDefList);
 	const SvPb::DataDefinitionList& getDataDefList() const { return m_DataDefList; };
 	int getLastStartedTRID() const { return m_lastStartedTRID; };

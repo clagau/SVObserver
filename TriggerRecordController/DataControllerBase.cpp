@@ -84,17 +84,6 @@ DataControllerBase::DataControllerBase()
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
 	}
-
-	m_hInterestTridEvent = ::CreateEvent(&sa, false, false, GNameInterestTridEvent);
-	if (nullptr == m_hInterestTridEvent)
-	{
-		DWORD errorCode = GetLastError();
-		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
-		assert(false);
-	}
 }
 
 DataControllerBase::~DataControllerBase()
@@ -216,24 +205,21 @@ void DataControllerBase::increaseNumberOfFreeTr(int inspectionPos)
 	}
 }
 
-bool DataControllerBase::setTrOfInterest(const std::vector<std::pair<int, int>>& rTrVec)
+bool DataControllerBase::setTrOfInterest(const std::vector<InterestStruct>& rTrVec)
 {
 	bool isSet = false;
-	for (const auto& rPairVal : rTrVec)
+	for (const auto& rData : rTrVec)
 	{
-		if (!getPauseTrsOfInterest(rPairVal.first))
+		auto* pTrDataIp = getTRControllerData(rData.m_ipPos);
+		if (nullptr != pTrDataIp)
 		{
-			auto* pTrDataIp = getTRControllerData(rPairVal.first);
-			if (nullptr != pTrDataIp && 0 < pTrDataIp->getBasicData().m_TrOfInterestNumber)
+			if (rData.m_isInterest && !getPauseTrsOfInterest(rData.m_ipPos) && 0 < pTrDataIp->getBasicData().m_TrOfInterestNumber)
 			{
-				pTrDataIp->setTrOfInterest(rPairVal.first, rPairVal.second);
+				pTrDataIp->setTrOfInterest(rData.m_ipPos, rData.m_trPos);
 				isSet = true;
 			}
+			pTrDataIp->setLastSetOfInterestFlagPos(rData.m_trPos);
 		}
-	}
-	if (isSet)
-	{
-		SetEvent(m_hInterestTridEvent);
 	}
 	return isSet;
 }

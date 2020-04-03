@@ -189,7 +189,7 @@ void TriggerRecordController::unregisterNewTrCallback(int handleId)
 	}
 }
 
-int TriggerRecordController::registerNewInterestTrCallback(std::function<void(const std::vector<TrEventData>&)> pCallback)
+int TriggerRecordController::registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback)
 {
 	assert(pCallback);
 	if (nullptr != pCallback)
@@ -197,7 +197,7 @@ int TriggerRecordController::registerNewInterestTrCallback(std::function<void(co
 		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
-		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(const std::vector<TrEventData>&)>>(handle, pCallback));
+		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(const std::vector<TrInterestEventData>&)>>(handle, pCallback));
 		return handle;
 	}
 	return -1;
@@ -213,29 +213,34 @@ void TriggerRecordController::unregisterNewInterestTrCallback(int handleId)
 	}
 }
 
-bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector)
+bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector, bool isInterest)
 {
 	bool retValue = false;
 	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
 	if (nullptr != pLock)
 	{
-		std::vector<std::pair<int, int>> trValueVec;
-		std::vector<TrEventData> trEventVec;
+		std::vector<DataControllerBase::InterestStruct> trValueVec;
+		std::vector<TrInterestEventData> trEventVec;
 		for (auto tr : trVector)
 		{
 			auto* pTr = dynamic_cast<TriggerRecord*>(tr.get());
 			if (nullptr != pTr && pTr->isObjectUpToTime())
 			{
-				trValueVec.emplace_back(pTr->getInspectionPos(), pTr->getTrPos());
-				trEventVec.emplace_back(pTr->getInspectionPos(), pTr->getId());
+				trValueVec.emplace_back(pTr->getInspectionPos(), pTr->getTrPos(), isInterest);
+				trEventVec.emplace_back(pTr->getInspectionPos(), pTr->getId(), isInterest);
 			}
 		}
 		retValue = m_pDataController->setTrOfInterest(trValueVec);
 		pLock.reset();
-		if (retValue)
+		if (!retValue && isInterest)
 		{
-			sendInterestTrIdCall(std::move(trEventVec));
+			//if isInterest-Flag set, but retValue is false (possible reason is that interest is paused) and set value to false.
+			for (auto& rEvent : trEventVec)
+			{
+				rEvent.m_isInterest = false;
+			}
 		}
+		sendInterestTrIdCall(std::move(trEventVec));
 	}
 	return retValue;
 }
@@ -1229,7 +1234,7 @@ void TriggerRecordController::sendTrIdCall(TrEventData data)
 	}
 }
 
-void TriggerRecordController::sendInterestTrIdCall(std::vector<TrEventData>&& data)
+void TriggerRecordController::sendInterestTrIdCall(std::vector<TrInterestEventData>&& data)
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
 	for (auto& newTrIdCallback : m_newInterestTrCallbacks)

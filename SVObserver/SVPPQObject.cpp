@@ -2572,10 +2572,7 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, const GUI
 			NotifyProcessTimerOutputs();
 		}
 
-		if (isReject && HasActiveMonitorList())
-		{	
-			setTRofInterest(rProduct);
-		}
+		setTRofInterest(rProduct, isReject);
 		rProduct.clearTRCs();
 	}
 	else
@@ -4243,7 +4240,7 @@ bool SVPPQObject::setInspections2TRC()
 	return result;
 }
 
-void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct)
+void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isInterest)
 {
 	std::vector<SvTrc::ITriggerRecordRPtr> trVec;
 	for (const auto& rIpInfo : rProduct.m_svInspectionInfos)
@@ -4283,22 +4280,25 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct)
 
 	try
 	{
-		bool isReject = SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec);
-		long slotindex = rProduct.m_monitorListSMSlot;
-		if (rProduct.ProcessCount() > 0 && slotindex >= 0)
+		bool isReject = SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec, isInterest);
+		if (HasActiveMonitorList())
 		{
-			if (isReject)
+			long slotindex = rProduct.m_monitorListSMSlot;
+			if (rProduct.ProcessCount() > 0 && slotindex >= 0)
 			{
-				GetSlotmanager()->SetToReject(slotindex);
+				if (isReject)
+				{
+					GetSlotmanager()->SetToReject(slotindex);
+				}
 			}
-		}
-		else
-		{
-			assert("Error in getting next Slot");
-			SvDef::StringVector msgList;
-			msgList.push_back("Error in getting next Slot");
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+			else
+			{
+				assert("Error in getting next Slot");
+				SvDef::StringVector msgList;
+				msgList.push_back("Error in getting next Slot");
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 	}
 	catch (const std::exception& e)
@@ -4323,31 +4323,29 @@ void SVPPQObject::setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfo
 	long triggerCount = rProduct.m_triggerInfo.lTriggerCount;
 	if (rIpQueue.size() >= m_maxProcessingOffset4Interest)
 	{
-		if (rProduct.m_svInspectionInfos[rInspGuid].m_bReject)
-		{
-			auto& rIter = rIpQueue.front();
-			auto trHandle = rIpQueue.front().m_triggerRecordComplete;
-			if (nullptr != trHandle)
-			{
-				try
-				{
-					SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest({trHandle});
-				}
-				catch (...)
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}
-		}
-		else
+		auto& rIter = rIpQueue.front();
+		if (!rIter.m_bReject)
 		{
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RejectTRBeforeInterestDecision, SvStl::SourceFileParams(StdMessageParams));
 		}
-
+		
+		auto trHandle = rIter.m_triggerRecordComplete;
+		if (nullptr != trHandle)
+		{
+			try
+			{
+				SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest({trHandle}, rIter.m_bReject);
+			}
+			catch (...)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
+		}
+		
 		rIpQueue.pop_front();
 	}
 	rIpQueue.emplace_back(rProduct.m_svInspectionInfos[rInspGuid]);

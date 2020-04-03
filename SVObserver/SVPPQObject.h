@@ -488,7 +488,7 @@ private:
 
 	bool setInspections2TRC();
 
-	void setTRofInterest(const SVProductInfoStruct& rProduct);
+	void setTRofInterest(const SVProductInfoStruct& rProduct, bool isInterest);
 	void setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfoStruct &rProduct);
 	void calcUseProcessingOffset4InterestFlag();
 	long getNeededRecords() const;

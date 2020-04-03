@@ -832,7 +832,7 @@ void SharedMemoryAccess::subscribe_to_trc()
 
 		on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, false);
 	});
-	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](const std::vector<SvTrc::TrEventData>& rEvents)
+	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](const std::vector<SvTrc::TrInterestEventData>& rEvents)
 	{
 		if (!m_trc_ready)
 		{
@@ -841,7 +841,7 @@ void SharedMemoryAccess::subscribe_to_trc()
 
 		for (const auto& eventData : rEvents)
 		{
-			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, true);
+			on_new_trigger_record(eventData.m_inspectionPos, eventData.m_trId, eventData.m_isInterest);
 		}
 	});
 }

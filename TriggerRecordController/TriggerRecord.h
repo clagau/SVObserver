@@ -66,6 +66,7 @@ public:
 #pragma endregion ITriggerRecordRW Methods
 
 	void blockUpdateLastTrId() { m_blockUpdateLastId = true; };
+	bool isBlockUpdateLastTrId() { return m_blockUpdateLastId; };
 	int getTrPos() { return m_trPos; };
 #pragma endregion Public Methods
 

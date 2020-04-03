@@ -22,6 +22,7 @@ struct TriggerRecordData
 	{
 		m_trId = cInvalidTrId;
 		m_referenceCount = cInvalidData;
+		m_isInterest = false;
 		m_ImageCount = imageCount;
 		m_triggerData = TriggerData();
 	}
@@ -46,6 +47,7 @@ struct TriggerRecordData
 	int m_trId = cInvalidTrId; //This should be unique ID for the trigger record
 	long m_referenceCount = cInvalidData; //The ReferenceCount for this TriggerRecord. m_InvalidData = invalid; m_WriteBlocked = write blocked; 0 = readable, but can be "deleted"; >0 = readable and blocked 
 	int m_ImageCount {0};
+	bool m_isInterest{ false };
 	TriggerData m_triggerData;
 
 	static const int cInvalidTrId = -1;

@@ -37,8 +37,9 @@ public:
 	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	virtual void setLastFinishedTRID(int id) override { assert(false); throw E_NOTIMPL; };
+	void setLastSetOfInterestFlagPos(int pos) override;
 	int getTrId2Send();
-	int getInterestTrId2Send();
+	TrInterestEventData getInterestTrId2Send();
 	virtual void resetFreeTrNumber() override {	throw E_NOTIMPL; };
 	virtual void increaseFreeTrNumber() override;
 	virtual void decreaseFreeTrNumber() override;
@@ -57,7 +58,7 @@ private:
 	SvPb::DataDefinitionList m_DataDefList;
 	void* m_pDataDefListInSM = nullptr;
 	int m_lastSendTrId = -1;
-	int m_lastSendInterestTrId = -1;
+	int m_lastSendInterestPos = -1;
 
 	void* m_pTriggerRecords = nullptr;
 	std::string m_smName = {};

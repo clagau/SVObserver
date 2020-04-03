@@ -27,6 +27,7 @@ public:
 	BasicData getBasicData() const override { return m_basicData; };
 	BasicData& getMutableBasicData() { return m_basicData; };
 	void setLastFinishedTRID(int id) override { m_basicData.m_lastFinishedTRID = id; };
+	void setLastSetOfInterestFlagPos(int pos) override { m_basicData.m_lastSetOfInterestFlagPos = pos; };
 	void setDataDefList(SvPb::DataDefinitionList&& dataDefList)	{ m_DataDefList.Swap(&dataDefList);	}
 	const SvPb::DataDefinitionList& getDataDefList() const { return m_DataDefList; };
 	int getLastStartedTRID() const { return m_lastStartedTRID; };

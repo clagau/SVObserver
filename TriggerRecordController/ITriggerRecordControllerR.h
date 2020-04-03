@@ -35,8 +35,23 @@ namespace SvTrc
 		{
 		}
 
+		TrEventData() = default;
+
 		int m_inspectionPos = -1;
 		int m_trId = -1;
+	};
+
+	struct TrInterestEventData : public TrEventData
+	{
+		TrInterestEventData(int ipPos, int trId, bool isInterest)
+			: TrEventData(ipPos, trId)
+			, m_isInterest(isInterest)
+		{
+		}
+
+		TrInterestEventData() = default;
+
+		bool m_isInterest = false;
 	};
 
 	class ITriggerRecordControllerR
@@ -111,16 +126,17 @@ namespace SvTrc
 		/// Register a Callback function to call if a trigger record is set to interest.
 		/// \param pCallback [in] Pointer of the callback-function. A vector of pairs: First parameter is inspection and second is trId.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback.
-		virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrEventData>&)> pCallback) = 0;
+		virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback) = 0;
 
 		/// Unregister a Callback function to call if a trigger record is set to interest.
 		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)
 		virtual void unregisterNewInterestTrCallback(int handleId) = 0;
 
-		/// Set a list of trigger record to the list of interest. This means those Trs will be keep for longer. (But this method do nothing if TrOfInterest mode is on pause.)
+		/// Set a list of trigger record the interest flag. If true, it set its to the list of interest. This means those Trs will be keep for longer. (But this method do nothing if TrOfInterest mode is on pause.)
 		/// \param trVector [in] Vector of the Trs.
+		/// \param isInterest [in] Define if the a interest or not.
 		/// \returns bool True, if set done. If pause it returns false.
-		virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector) = 0;
+		virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector, bool isInterest) = 0;
 
 		/// Return a list of interestTr for one IP. The size of the list are between 0 and n.
 		/// \param inspectionPos [in]

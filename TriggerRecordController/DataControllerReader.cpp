@@ -79,6 +79,14 @@ TriggerRecordData& TRControllerReaderDataPerIP::getTRData(int pos) const
 	return *tr;
 }
 
+void TRControllerReaderDataPerIP::setLastSetOfInterestFlagPos(int pos)
+{
+	if (nullptr != m_pBasicData)
+	{
+		m_pBasicData->m_lastSetOfInterestFlagPos = pos;
+	}
+}
+
 int TRControllerReaderDataPerIP::getTrId2Send()
 {
 	if (nullptr != m_pBasicData && m_lastSendTrId != m_pBasicData->m_lastFinishedTRID)
@@ -89,23 +97,15 @@ int TRControllerReaderDataPerIP::getTrId2Send()
 	return -1;
 }
 
-int TRControllerReaderDataPerIP::getInterestTrId2Send()
+TrInterestEventData TRControllerReaderDataPerIP::getInterestTrId2Send()
 {
-	auto list = getTRofInterestPos(1);
-	if (0 < list.size())
+	if (nullptr != m_pBasicData && 0 <= m_pBasicData->m_lastSetOfInterestFlagPos && m_pBasicData->m_lastSetOfInterestFlagPos != m_lastSendInterestPos)
 	{
-		int pos = list[0];
-		if (0 <= pos && getBasicData().m_TriggerRecordNumber > pos)
-		{
-			TriggerRecordData& rCurrentTR = getTRData(pos);
-			if (nullptr != m_pBasicData && m_lastSendInterestTrId != rCurrentTR.m_trId)
-			{
-				m_lastSendInterestTrId = rCurrentTR.m_trId;
-				return m_lastSendInterestTrId;
-			}
-		}
+		m_lastSendInterestPos = m_pBasicData->m_lastSetOfInterestFlagPos;
+		TriggerRecordData& rCurrentTR = getTRData(m_lastSendInterestPos);
+		return{ -1, rCurrentTR.m_trId, rCurrentTR.m_isInterest };
 	}
-	return -1;
+	return {};
 }
 
 void TRControllerReaderDataPerIP::increaseFreeTrNumber()
@@ -163,6 +163,7 @@ void TRControllerReaderDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 					}
 					m_pTRofInterestArray[nextPos] = pos;
 					m_pBasicData->m_TrOfInterestCurrentPos = nextPos;
+					rCurrentTR.m_isInterest = true;
 					return;  //successfully set
 				}
 				refTemp = rCurrentTR.m_referenceCount;
@@ -208,9 +209,9 @@ std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 #pragma region Constructor
 DataControllerReader::DataControllerReader()
 	: DataControllerBase()
+	, m_reloadFuture(std::async(std::launch::async, [&] { initAndreloadData(); }))
+	, m_stopThreads (CreateEvent(NULL, true, false, NULL))
 {
-	m_reloadFuture = std::async(std::launch::async, [&] { initAndreloadData(); });
-	m_stopThreads = CreateEvent(NULL, true, false, NULL);
 }
 
 DataControllerReader::~DataControllerReader()
@@ -612,7 +613,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 void DataControllerReader::sendNewTrId()
 {
 	std::vector<TrEventData> newTrIdList;
-	std::vector<TrEventData> newInterestTrIdList;
+	std::vector<TrInterestEventData> newInterestTrIdList;
 	{
 		auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
 		if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)
@@ -631,10 +632,11 @@ void DataControllerReader::sendNewTrId()
 
 					if (0 < pIpData->getBasicData().m_TrOfInterestNumber)
 					{
-						trId = pIpData->getInterestTrId2Send();
-						if (0 < trId)
+						auto data = pIpData->getInterestTrId2Send();
+						if (0 < data.m_trId)
 						{
-							newInterestTrIdList.emplace_back(i, trId);
+							data.m_inspectionPos = i;
+							newInterestTrIdList.emplace_back(data);
 						}
 					}
 				}

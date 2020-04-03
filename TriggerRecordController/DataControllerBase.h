@@ -20,6 +20,7 @@ struct TriggerRecordData;
 class ITriggerRecordR;
 class ITriggerRecordRW;
 struct TrEventData;
+struct TrInterestEventData;
 typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
 }
@@ -109,6 +110,7 @@ public:
 		volatile int m_TrOfInterestNumber = 0;
 		volatile long m_numberOfFreeTR = 0; // the number of free (unlocked) triggerRecords.
 		volatile int m_lastFinishedTRID {-1};
+		volatile int m_lastSetOfInterestFlagPos{ -1 }; // Position of the last triggerRecord where the decision was made of the interest flag.
 		volatile long m_triggerRecordBufferSize {0}; //This is the size of the buffer reserved for one trigger Record.
 		volatile long m_dataListSize {0}; //data List byte size
 		volatile long m_mutexTrOfInterest {false};
@@ -117,6 +119,7 @@ public:
 
 	virtual BasicData getBasicData() const = 0;
 	virtual void setLastFinishedTRID(int id) = 0;
+	virtual void setLastSetOfInterestFlagPos(int pos) = 0;
 	virtual TriggerRecordData& getTRData(int pos) const = 0;
 	virtual const SvPb::ImageList& getImageList() const = 0;
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
@@ -200,7 +203,7 @@ public:
 	void setResetCallback(std::function<void()>&& reloadCallback) { m_reloadCallback = reloadCallback; };
 	void setReadyCallback(std::function<void()>&& readyCallback) { m_readyCallback = readyCallback; };
 	void setNewTrIdCallback(std::function<void(TrEventData)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
-	void setNewInterestTrIdsCallback(std::function<void(std::vector<TrEventData>&&)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
+	void setNewInterestTrIdsCallback(std::function<void(std::vector<TrInterestEventData>&&)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
@@ -224,9 +227,17 @@ public:
 
 	void increaseNumberOfFreeTr(int inspectionPos);
 
+	struct InterestStruct
+	{
+		InterestStruct() = default;
+		InterestStruct(int ipPos, int trPos, bool isInterest) : m_ipPos(ipPos), m_trPos(trPos), m_isInterest(isInterest) {};
+		int m_ipPos = -1;
+		int m_trPos = -1;
+		bool m_isInterest = false;
+	};
 	/// Set the TRs to the Interest list.
 	/// \param rTrVec [in] The vector of pair<inspectionPos, pos> 
-	bool setTrOfInterest(const std::vector<std::pair<int,int>>& rTrVec);
+	bool setTrOfInterest(const std::vector<InterestStruct>& rTrVec);
 
 	void setIpToInitFlagList(int pos) { m_setInitFlagAfterResetSet.insert(pos); };
 #pragma endregion Public Methods
@@ -248,10 +259,9 @@ protected:
 	std::function<void()> m_reloadCallback;
 	std::function<void()> m_readyCallback;
 	std::function<void(TrEventData)> m_newTrIdCallback;
-	std::function<void(std::vector<TrEventData>&&)> m_newInterestTrIdsCallback;
+	std::function<void(std::vector<TrInterestEventData>&&)> m_newInterestTrIdsCallback;
 	HANDLE m_hResetEvent {nullptr};
 	HANDLE m_hReadyEvent {nullptr};
-	HANDLE m_hInterestTridEvent {nullptr};
 #pragma endregion Member variables
 };
 } //namespace SvTrc

@@ -165,12 +165,12 @@ void OnNewTr(SvTrc::TrEventData data)
 
 std::mutex g_newInterestTrMapMutex;
 std::map<int,std::vector<int>> g_newInterestTrMap;
-void OnNewInterestTr(const std::vector<SvTrc::TrEventData>& rDataVec)
+void OnNewInterestTr(const std::vector<SvTrc::TrInterestEventData>& rDataVec)
 {
 	std::lock_guard<std::mutex> lock(g_newInterestTrMapMutex);
 	for (const auto& rData : rDataVec)
 	{
-		if (0 <= rData.m_inspectionPos)
+		if (0 <= rData.m_inspectionPos && rData.m_isInterest)
 		{
 			g_newInterestTrMap[rData.m_inspectionPos].emplace_back(rData.m_trId);
 		}
@@ -424,9 +424,9 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				}
 				lastTRList[ipId] = rTrController.closeWriteAndOpenReadTriggerRecordObject(tr2W);
 
-				if (0 == runId % divFac && nullptr != lastTRList[ipId])
+				if (nullptr != lastTRList[ipId])
 				{
-					rTrController.setTrsOfInterest({lastTRList[ipId]});
+					rTrController.setTrsOfInterest({lastTRList[ipId]}, 0 == runId % divFac);
 				}
 			}
 
@@ -692,14 +692,20 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 			{
 				for (auto iter : newInterestTrMap)
 				{
+					std::string logStr;
 					size_t expectedSize = (numberOfRuns+2) / divFac;
 					if (0 < inspectionList.list(iter.first).numberrecordsofinterest())
 					{
 						std::vector<int> interestList = getInterestList(isOtherProcess ? inspectionList.list(iter.first).numberofrecords() : rTestData[testDataPos][iter.first].m_recordSize, numberOfRuns, divFac);
 						expectedSize = interestList.size();
+						logStr = _T("Interest-expected: ");
+						for (auto trId : interestList)
+						{
+							logStr = SvUl::Format(_T("%s;%d"), logStr.c_str(), trId);
+						}
+						rLogClass.Log(logStr.c_str(), LogLevel::Debug, LogType::BLANK, __LINE__, strTestWithMoreThreads);
 					}
 					
-					std::string logStr;
 					if (expectedSize == iter.second.size())
 					{
 						logStr = SvUl::Format(_T("Reader Tests(%d): %d TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), iter.first);
@@ -715,10 +721,10 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 						logStr = SvUl::Format(_T("Reader Tests(%d): %zu instead of %zu TRsOfInterest-Events for ip %d"), testDataPos, iter.second.size(), expectedSize, iter.first);
 						rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestWithMoreThreads);
 					}		
-					logStr.clear();
+					logStr = _T("Interest: ");
 					for (auto trId : iter.second)
 					{
-						logStr = SvUl::Format(_T("%s;%d"), logStr, trId);
+						logStr = SvUl::Format(_T("%s;%d"), logStr.c_str(), trId);
 					}
 					rLogClass.Log(logStr.c_str(), LogLevel::Debug, LogType::BLANK, __LINE__, strTestWithMoreThreads);
 				}
