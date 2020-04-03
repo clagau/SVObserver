@@ -387,16 +387,16 @@ void SVObserverApp::OnFileNewConfig()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnFileSaveConfig(bool saveAs /*= false*/)
 {
-	if(saveAs || getConfigPathName().empty())
+	if (saveAs || getConfigPathName().empty())
 	{
-		if(false == DetermineConfigurationSaveName())
+		if (false == DetermineConfigurationSaveName())
 		{
 			return;
 		}
 	}
 	std::string fileName {getConfigFullFileName()};
 
-	if(fileSaveAsSVX(fileName, true))
+	if (fileSaveAsSVX(fileName, true))
 	{
 		setConfigFullFileName(fileName.c_str(), false);
 		if (0 == _access(fileName.c_str(), 0))
@@ -488,7 +488,7 @@ void SVObserverApp::OnRunMode()
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
-		
+
 		SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 		Exception.setMessage(rExp.getMessage());
 	}
@@ -744,7 +744,7 @@ void SVObserverApp::OnStop()
 		if (nullptr != pPPQ) { pPPQ->GoOffline(); }
 	}
 	// Stop the FailStatus Stream PPQ Listeners
-	
+
 
 	SetAllIPDocumentsOffline();
 
@@ -1156,10 +1156,10 @@ void SVObserverApp::OnUpdateGoOffline(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOnline()
 {
-	
+
 	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
 		return;
-	
+
 	SvStl::MessageContainer exceptionContainer;
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
 
@@ -2075,7 +2075,7 @@ BOOL SVObserverApp::InitInstance()
 		SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
 	}
 
-	
+
 	SV_LOG_GLOBAL(info) << "SVObserverIniPath:" << settingsLoader.GetIni();
 	SvSml::ShareEvents::GetInstance().SetParameter(Settings.shareControlSettings);
 	std::unique_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_unique<SvHttp::HttpServerSettings>();
@@ -2083,7 +2083,7 @@ BOOL SVObserverApp::InitInstance()
 
 	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
 	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, std::move(pSettings));
-	
+
 	if (!SVOLicenseManager::Instance().HasMatroxLicense())
 	{
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -2247,7 +2247,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	_tsplitpath(PathName, szDrive, szDir, szFile, szExt);
 	std::string Extension = szExt;
 	std::string OriginalFile {szFile};
-	std::string FileName{PathName};
+	std::string FileName {PathName};
 	std::string loadPath {szDrive};
 	loadPath += szDir;
 
@@ -2271,10 +2271,10 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cPackedConfigExtension)))
 	{
 		SvDef::StringVector RunFiles;
-		if(SvUl::unzipAll(FileName, SVFileNameManagerClass::Instance().GetRunPathName(), RunFiles))
+		if (SvUl::unzipAll(FileName, SVFileNameManagerClass::Instance().GetRunPathName(), RunFiles))
 		{
 			//Find the svx file
-			for(const auto& rFile : RunFiles)
+			for (const auto& rFile : RunFiles)
 			{
 				_tsplitpath(rFile.c_str(), szDrive, szDir, szFile, szExt);
 				Extension = szExt;
@@ -2282,9 +2282,9 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 				{
 					m_SvxFileName.SetFullFileName(rFile.c_str());
 					//When this is set then we need to rename the file to the name of the svx file
-					if(fileType == ConfigFileType::SvzFormatDefaultName)
+					if (fileType == ConfigFileType::SvzFormatDefaultName)
 					{
-						std::string oldFileName{FileName};
+						std::string oldFileName {FileName};
 						SvUl::searchAndReplace(FileName, OriginalFile.c_str(), szFile);
 						::rename(oldFileName.c_str(), FileName.c_str());
 						OriginalFile = m_SvxFileName.GetFileNameOnly();
@@ -2312,7 +2312,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 
 	if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 	{
-		if(ConfigFileType::SvzStandard == fileType)
+		if (ConfigFileType::SvzStandard == fileType)
 		{
 			setConfigFullFileName(FileName.c_str(), true);
 			SVRCSetSVCPathName(getConfigFullFileName().c_str());
@@ -2325,7 +2325,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 		}
 		result = OpenSVXFile();
 		//Only if loaded locally then add to recent list
-		if(editMode && S_OK == result)
+		if (editMode && S_OK == result)
 		{
 			FileName = getConfigFullFileName();
 			if (0 == _access(FileName.c_str(), 0))
@@ -2339,9 +2339,9 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 		result = E_INVALIDARG;
 	}
 
-	if(S_OK == result)
+	if (S_OK == result)
 	{
-		if(editMode && !m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+		if (editMode && !m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 		{
 			SetModeEdit(true);
 		}
@@ -2447,12 +2447,13 @@ HRESULT SVObserverApp::OpenSVXFile()
 				//If no configuration then it needs to be created
 				if (nullptr == pConfig)
 				{
+					
 					RootObject *pRoot = nullptr;
 
 					SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 					if (nullptr != pRoot)
 					{
-						pRoot->createConfigurationObject();
+						pRoot->createConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
 						SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 					}
 				}
@@ -2686,7 +2687,7 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
 {
 	HRESULT l_Status = S_OK;
-	std::string fileName{pFileName};
+	std::string fileName {pFileName};
 
 	if (0 == _access(fileName.c_str(), 0))
 	{
@@ -2699,7 +2700,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType
 
 	if (S_OK == l_Status)
 	{
-		if(ConfigFileType::PackedFormat == fileType)
+		if (ConfigFileType::PackedFormat == fileType)
 		{
 			SVPackedFile PackedFile;
 			if (PackedFile.UnPackFiles(fileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
@@ -2731,7 +2732,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType
 
 HRESULT SVObserverApp::SavePackedConfiguration(LPCTSTR pFileName)
 {
-	HRESULT Result{S_OK};
+	HRESULT Result {S_OK};
 
 	bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
@@ -2742,7 +2743,7 @@ HRESULT SVObserverApp::SavePackedConfiguration(LPCTSTR pFileName)
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 	{
-		if(false == fileSaveAsSVX(pFileName, false))
+		if (false == fileSaveAsSVX(pFileName, false))
 		{
 			Result = E_UNEXPECTED;
 		}
@@ -2878,7 +2879,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 				CWaitCursor wait;
 
 				wait.Restore();
-
+		
 				SVConfigurationObject* pConfig(nullptr);
 				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -2888,7 +2889,9 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 					SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 					if (nullptr != pRoot)
 					{
-						pRoot->destroyConfigurationObject();
+
+						pRoot->destroyConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
+					
 					}
 				}
 
@@ -2925,7 +2928,8 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 			SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 			if (nullptr != pRoot)
 			{
-				pRoot->destroyConfigurationObject();
+			
+				pRoot->destroyConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
 			}
 		}
 
@@ -3047,7 +3051,7 @@ bool SVObserverApp::InitPath(LPCTSTR PathName, bool CreateIfDoesNotExist /*= tru
 
 bool SVObserverApp::IsMatroxGige() const
 {
-	 bool result = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
+	bool result = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1)
@@ -3524,7 +3528,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 				Start();
 			}
 			catch (const SvStl::MessageContainer& rExp)
-			{ 
+			{
 				SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 				Exception.setMessage(rExp.getMessage());
 				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
@@ -3544,8 +3548,8 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 			OnStop();
 		}
 
-			SetModeEdit(false);
-		}
+		SetModeEdit(false);
+	}
 	else if (SvPb::DeviceModeType::testMode == Mode)
 	{
 		// If the previous mode was running then we cannot stop and 
@@ -3861,7 +3865,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 		SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 		if (nullptr != pRoot)
 		{
-			pRoot->createConfigurationObject();
+			pRoot->createConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
 		}
 
 		// Clean up Execution Directory...
@@ -4105,7 +4109,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 
 	if (!bOk && bFileNewConfiguration)
 	{
-		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_READY| SV_STATE_MODIFIED);
+		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_READY | SV_STATE_MODIFIED);
 	}
 
 	return bOk;
@@ -4455,7 +4459,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 
 	if (l_bAllowAccess)
 	{
-		
+
 		SVSVIMStateClass::SVRCBlocker block;
 
 		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
@@ -4501,7 +4505,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 						return;
 					}
 
-					SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
+					SvTi::SVTriggerObject* pTrigger {pPPQ->GetTrigger()};
 					if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 					{
 						l_trgrDlg.AddTrigger(pTrigger);
@@ -4553,7 +4557,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 				{
 					StartTrigger(pConfig);
 				}
-				catch(const SvStl::MessageContainer& rExp)
+				catch (const SvStl::MessageContainer& rExp)
 				{
 					OnStop();
 
@@ -4562,7 +4566,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 					return;
 				}
 
-				 //Module ready should be the last set!
+				//Module ready should be the last set!
 				if (nullptr != pConfig) { pConfig->SetModuleReady(true); }
 
 				SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
@@ -4596,7 +4600,7 @@ HRESULT SVObserverApp::GetTriggersAndCounts(std::string& rTriggerCounts) const
 			if (nullptr != pPPQ)
 			{
 				SvTi::SVTriggerObject* pTrigger(pPPQ->GetTrigger());
-				if(nullptr != pTrigger)
+				if (nullptr != pTrigger)
 				{
 					l_hr = S_OK;
 					std::string Temp = SvUl::Format(_T("\n%s count-%d"), pTrigger->GetName(), pTrigger->getTriggerCount());
@@ -4952,7 +4956,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 #pragma region Protected Methods
 void SVObserverApp::Start()
 {
-	
+
 	//if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
 	//	return;
 
@@ -5065,7 +5069,7 @@ void SVObserverApp::Start()
 				pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
 				pPPQ->PrepareGoOnline();
 
-				SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
+				SvTi::SVTriggerObject* pTrigger {pPPQ->GetTrigger()};
 				if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 				{
 					l_trgrDlg.AddTrigger(pTrigger);
@@ -5360,7 +5364,7 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSa
 	}
 
 	CWaitCursor wait;
-	bool result{true};
+	bool result {true};
 	SVSVIMStateClass::AddState(SV_STATE_SAVING);
 	ResetAllIPDocModifyFlag(false);
 
@@ -5389,7 +5393,7 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSa
 			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
 			if (SvUl::makeZipFile(rFileName, FileNameList, _T(""), false))
 			{
-				if(resetAutoSave)
+				if (resetAutoSave)
 				{
 					ExtrasEngine::Instance().ResetAutoSaveInformation();
 				}
@@ -5453,7 +5457,7 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 {
 	SVSVIMStateClass::SVRCBlocker block;
 	//The pointer is usually checked by the caller
-	if(nullptr != pConfig)
+	if (nullptr != pConfig)
 	{
 		SvStl::MessageContainer Msg;
 		long ppqCount = pConfig->GetPPQCount();
@@ -5462,7 +5466,7 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 			auto* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr != pPPQ)
 			{
-				SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
+				SvTi::SVTriggerObject* pTrigger {pPPQ->GetTrigger()};
 				if (nullptr != pTrigger)
 				{
 					pPPQ->setOnline();
@@ -5475,7 +5479,7 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 				}
 			}
 		}
-		if(0 != Msg.getMessage().m_MessageCode)
+		if (0 != Msg.getMessage().m_MessageCode)
 		{
 			//If an error has occurred need to clean up
 			for (long i = 0; i < ppqCount; i++)
@@ -5744,7 +5748,7 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 							l_Status = E_FAIL;
 						}
 					}
-					
+
 				}
 				else
 				{
@@ -5834,7 +5838,7 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 		l_Status = E_FAIL;
 	}
 
-	
+
 	return l_Status;
 }
 
@@ -6000,7 +6004,7 @@ bool SVObserverApp::InitATL()
 	if (!ProcessShellCommand(cmdInfo)) { return false; }
 
 	return true;
-}
+	}
 
 void SVObserverApp::StopRegression()
 {

@@ -6,11 +6,10 @@
 //******************************************************************************
 #include "stdafx.h"
 #include <string>
-#include "DebugUtilities.h"
 #include "CDllTool.h"
 #include <atlsafe.h>
 #include <iosfwd>
-#include <array>
+
 
 // Implement CDllTool Class
 CDllTool::CDllTool()

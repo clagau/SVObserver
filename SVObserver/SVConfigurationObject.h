@@ -498,5 +498,4 @@ private:
 	SvPb::InspectionList m_inspList4TRC;
 };
 
-typedef std::shared_ptr< SVConfigurationObject > SVConfigurationObjectPtr;
 

@@ -50,13 +50,13 @@ public:
 	//! The method creates the configuration object
 	//! \return true on success
 	//************************************
-	bool createConfigurationObject();
+	bool createConfigurationObject(std::recursive_mutex* pMutex );
 
 	//************************************
 	//! The method destroys the configuration object
 	//! \return true on success
 	//************************************
-	void destroyConfigurationObject();
+	void destroyConfigurationObject(std::recursive_mutex* pMutex);
 
 	//! The method finds the object corresponding to the name
 	//! \param rpObject <out> a reference pointer to the object being searched
@@ -134,6 +134,9 @@ public:
 	//! \return S_OK on success
 	//************************************
 	static HRESULT resetRootChildValue( LPCTSTR Name );
+
+	
+
 #pragma endregion Public Methods
 
 private:
@@ -162,7 +165,7 @@ private:
 private:
 #pragma region Member Variables
 	RootChildren				m_RootChildren;						//The tree for all root children
-	SVConfigurationObjectPtr	m_pConfigurationObject;				//The main node configuration pointer object
+	std::unique_ptr< SVConfigurationObject >	m_pConfigurationObject;				//The main node configuration pointer object
 	bool m_Initialize{false};
 #pragma endregion Member Variables
 };

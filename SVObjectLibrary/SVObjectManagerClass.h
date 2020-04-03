@@ -21,10 +21,13 @@
 #include "SVObserverNotificationFunctor.h"
 #include "SVObjectClass.h"
 #include "JoinType.h"
+
 #pragma endregion Includes
+
 
 #pragma region Declarations
 class SVObjectClass;
+
 #pragma endregion Declarations
 
 class SVObjectManagerClass
@@ -45,6 +48,10 @@ public:
 
 	virtual ~SVObjectManagerClass();
 
+	
+	SVObjectManagerClass(const SVObjectManagerClass& rObject) = delete;
+	const SVObjectManagerClass& operator=(const SVObjectManagerClass& rObject) = delete;
+	
 	SVObjectManagerStateEnum GetState() const;
 	HRESULT SetState( SVObjectManagerStateEnum State );
 
@@ -207,6 +214,10 @@ public:
 	/// \returns bool
 	bool DisconnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
+	///return ptr to Mutex  
+	std::recursive_mutex* GetMutex() { return  &(m_Mutex); };
+
+
 protected:
 	typedef std::map<std::string, SVGUID> SVSubjectDataNameSubjectIDMap;
 
@@ -298,12 +309,8 @@ protected:
 
 	long m_FileSequenceNumber;
 
-private:
-	//Do not implement this method
-	SVObjectManagerClass( const SVObjectManagerClass& rObject );
 
-	//Do not implement this method
-	const SVObjectManagerClass& operator=( const SVObjectManagerClass& rObject );
+	
 };
 
 #include "SVObjectManagerClass.inl"

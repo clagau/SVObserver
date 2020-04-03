@@ -33,20 +33,20 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS( RootObject, SvPb::RootClassId);
+SV_IMPLEMENT_CLASS(RootObject, SvPb::RootClassId);
 #pragma endregion Declarations
 
 #pragma region Constructor
-RootObject::RootObject( LPCSTR ObjectName )
-: SVObjectClass( ObjectName )
-, m_pConfigurationObject(nullptr)
+RootObject::RootObject(LPCSTR ObjectName)
+	: SVObjectClass(ObjectName)
+	, m_pConfigurationObject(nullptr)
 {
 	Initialize();
 }
 
-RootObject::RootObject( SVObjectClass* POwner, int StringResourceID )
-: SVObjectClass( POwner, StringResourceID )
-, m_pConfigurationObject(nullptr)
+RootObject::RootObject(SVObjectClass* POwner, int StringResourceID)
+	: SVObjectClass(POwner, StringResourceID)
+	, m_pConfigurationObject(nullptr)
 {
 	Initialize();
 }
@@ -57,16 +57,16 @@ RootObject::~RootObject()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT RootObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
+HRESULT RootObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index) const
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status =  m_RootChildren.GetChildObject( rpObject, rNameInfo, Index );
+	l_Status = m_RootChildren.GetChildObject(rpObject, rNameInfo, Index);
 
 	return l_Status;
 }
 
-HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
+HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObjectType Type)
 {
 	HRESULT Result = S_OK;
 
@@ -99,7 +99,7 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 		if (SvPb::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.m_SubType)
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
-			if(nullptr != pIODoc )
+			if (nullptr != pIODoc)
 			{
 				pIODoc->updateGlobalConstantsView();
 			}
@@ -122,120 +122,157 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 	return Result;
 }
 
-bool RootObject::createConfigurationObject()
+bool RootObject::createConfigurationObject(std::recursive_mutex *pMutex)
 {
-	m_pConfigurationObject.reset();
-	m_pConfigurationObject = SVConfigurationObjectPtr{ new SVConfigurationObject };
-	m_pConfigurationObject->SetObjectOwner(this);
-	SVObjectManagerClass::Instance().setRootChildID( SvDef::FqnConfiguration, m_pConfigurationObject->GetUniqueObjectID() );
 
-	SvVol::BasicValueObjectPtr pValueObject( nullptr );
-	//Default update views is true
-	bool Update( true );
-	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentImageUpdate, Update );
-	if(nullptr != pValueObject)
+	std::unique_ptr< SVConfigurationObject > ConfigObjectTemp;
+	if (pMutex)
 	{
-		//Need to set the attributes to settable remotely and online but should not be selectable
-		pValueObject->SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
-		pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		auto state = SVObjectManagerClass::Instance().GetState();
+		if (state != SVObjectManagerClass::ReadWrite)
+		{
+			SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
+		}
+		std::unique_lock<std::recursive_mutex>(*pMutex);
+		m_pConfigurationObject.swap(ConfigObjectTemp);
+	}
+	else
+	{
+		m_pConfigurationObject.swap(ConfigObjectTemp);
 	}
 
-	pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentResultUpdate, Update );
-	if(nullptr != pValueObject)
+	ConfigObjectTemp.reset();
+	m_pConfigurationObject.reset();
+	m_pConfigurationObject = std::unique_ptr< SVConfigurationObject > {new SVConfigurationObject};
+	m_pConfigurationObject->SetObjectOwner(this);
+	SVObjectManagerClass::Instance().setRootChildID(SvDef::FqnConfiguration, m_pConfigurationObject->GetUniqueObjectID());
+
+	SvVol::BasicValueObjectPtr pValueObject(nullptr);
+	//Default update views is true
+	bool Update(true);
+	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentImageUpdate, Update);
+	if (nullptr != pValueObject)
 	{
 		//Need to set the attributes to settable remotely and online but should not be selectable
-		pValueObject->SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
-		pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	}
+
+	pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentResultUpdate, Update);
+	if (nullptr != pValueObject)
+	{
+		//Need to set the attributes to settable remotely and online but should not be selectable
+		pValueObject->SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	}
 
 	return true;
 }
 
-void RootObject::destroyConfigurationObject()
+void RootObject::destroyConfigurationObject(std::recursive_mutex *pMutex)
 {
-	if(nullptr != m_pConfigurationObject)
+	if (nullptr != m_pConfigurationObject)
 	{
-		m_pConfigurationObject.reset();
+		std::unique_ptr< SVConfigurationObject > ConfigObjectTemp;
+		if (pMutex)
+		{
+			auto state = SVObjectManagerClass::Instance().GetState();
+			if (state != SVObjectManagerClass::ReadWrite)
+			{
+				SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
+			}
+			std::unique_lock<std::recursive_mutex>(*pMutex);
+			m_pConfigurationObject.swap(ConfigObjectTemp);
+		}
+		else
+		{
+			m_pConfigurationObject.swap(ConfigObjectTemp);
+		}
+
+
+		ConfigObjectTemp.reset();
 	}
 }
 
-/*static*/ SvVol::BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCTSTR DottedName )
+/*static*/ SvVol::BasicValueObjectPtr RootObject::getRootChildObjectValue(LPCTSTR DottedName)
 {
-	RootObject* pRoot( nullptr );
-	SvVol::BasicValueObjectPtr pValue( nullptr );
+	RootObject* pRoot(nullptr);
+	SvVol::BasicValueObjectPtr pValue(nullptr);
 
-	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
+	SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 
-	if(nullptr != pRoot)
+	if (nullptr != pRoot)
 	{
-		pValue = pRoot->getRootChildren().getValueObject( DottedName );
+		pValue = pRoot->getRootChildren().getValueObject(DottedName);
 	}
 
 	return pValue;
 }
 
-/*static*/ void RootObject::getRootChildObjectList(SvVol::BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path, UINT AttributesAllowedFilter )
+/*static*/ void RootObject::getRootChildObjectList(SvVol::BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path, UINT AttributesAllowedFilter)
 {
-	RootObject* pRoot( nullptr );
+	RootObject* pRoot(nullptr);
 
-	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
+	SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 
-	if(nullptr != pRoot)
+	if (nullptr != pRoot)
 	{
-		pRoot->getRootChildren().getObjectList( rObjectList, Path, AttributesAllowedFilter );
+		pRoot->getRootChildren().getObjectList(rObjectList, Path, AttributesAllowedFilter);
 	}
 }
 
-/*static*/ void RootObject::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
+/*static*/ void RootObject::getRootChildNameList(SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter)
 {
 	SvVol::BasicValueObjects::ValueVector ObjectList;
 
-	getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
-	for(SvVol::BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter )
+	getRootChildObjectList(ObjectList, Path, AttributesAllowedFilter);
+	for (SvVol::BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter)
 	{
-		rObjectNameList.push_back( std::string((*Iter)->GetCompleteName()) );
+		rObjectNameList.push_back(std::string((*Iter)->GetCompleteName()));
 	}
 }
 
-/*static*/ HRESULT RootObject::deleteRootChildValue( LPCTSTR DottedName )
+/*static*/ HRESULT RootObject::deleteRootChildValue(LPCTSTR DottedName)
 {
-	HRESULT Result( S_FALSE );
-	RootObject* pRoot( nullptr );
+	HRESULT Result(S_FALSE);
+	RootObject* pRoot(nullptr);
 
-	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
+	SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 
-	if(nullptr != pRoot)
+	if (nullptr != pRoot)
 	{
-		Result = pRoot->getRootChildren().deleteValue( DottedName );
+		Result = pRoot->getRootChildren().deleteValue(DottedName);
 	}
 
 	return Result;
 }
 
-/*static*/ HRESULT RootObject::resetRootChildValue( LPCTSTR Name )
+/*static*/ HRESULT RootObject::resetRootChildValue(LPCTSTR Name)
 {
-	HRESULT Result( S_FALSE );
-	RootObject* pRoot( nullptr );
+	HRESULT Result(S_FALSE);
+	RootObject* pRoot(nullptr);
 
-	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvDef::FqnRoot );
+	SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
 
-	if(nullptr != pRoot)
+	if (nullptr != pRoot)
 	{
-		SVObjectClass *pRootChild( nullptr );
-		SVObjectManagerClass::Instance().GetRootChildObject( pRootChild, Name );
-		if( nullptr != pRootChild )
+		SVObjectClass *pRootChild(nullptr);
+		SVObjectManagerClass::Instance().GetRootChildObject(pRootChild, Name);
+		if (nullptr != pRootChild)
 		{
 			SvPb::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.m_SubType;
-			Result = pRoot->m_RootChildren.deleteValue( Name );
-			if( S_OK == Result )
+			Result = pRoot->m_RootChildren.deleteValue(Name);
+			if (S_OK == Result)
 			{
-				Result = pRoot->createRootChild( Name, ObjectSubType );
+				Result = pRoot->createRootChild(Name, ObjectSubType);
 			}
 		}
 	}
 
 	return Result;
 }
+
+
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -257,10 +294,10 @@ bool RootObject::Initialize()
 
 bool RootObject::createRootChildren()
 {
-	bool Result( false );
+	bool Result(false);
 
-	Result = createRootChild( SvDef::FqnEnvironment, SvPb::SVEnvironmentObjectType );
-	if( Result )
+	Result = createRootChild(SvDef::FqnEnvironment, SvPb::SVEnvironmentObjectType);
+	if (Result)
 	{
 		//Default values for the mode
 		m_RootChildren.setValue(SvDef::FqnEnvironmentModeValue, 0L);
@@ -271,21 +308,21 @@ bool RootObject::createRootChildren()
 		m_RootChildren.setValue(SvDef::FqnEnvironmentModeIsEdit, false);
 
 		//When Environment created then create the following variables to set their attributes
-		SvVol::BasicValueObjectPtr pValueObject( nullptr );
-		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentModelNumber, _T("") );
-		if(nullptr != pValueObject)
-		{
-			pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
-		}
-		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentSerialNumber , _T("") );
+		SvVol::BasicValueObjectPtr pValueObject(nullptr);
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentModelNumber, _T(""));
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
-		pValueObject = m_RootChildren.setValue( SvDef::FqnEnvironmentWinKey, _T("") );
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentSerialNumber, _T(""));
 		if (nullptr != pValueObject)
 		{
-			pValueObject->SetObjectAttributesAllowed( SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute );
+			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		}
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentWinKey, _T(""));
+		if (nullptr != pValueObject)
+		{
+			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentAutoSave, true);
 		if (nullptr != pValueObject)
@@ -326,52 +363,52 @@ bool RootObject::createRootChildren()
 		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentDate, _T(""));
 		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentTime, _T(""));
 
-		Result = createRootChild( SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType );
+		Result = createRootChild(SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType);
 	}
 
 	return Result;
 }
-bool RootObject::createRootChild( LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum ObjectSubType )
+bool RootObject::createRootChild(LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum ObjectSubType)
 {
-	bool Result( false );
+	bool Result(false);
 	_variant_t Node;
 
 	//Setting the variant to VT_EMPTY will cause the value to be a node
 	Node.Clear();
-	SvVol::BasicValueObjectPtr pRootChild( nullptr);
-	pRootChild = m_RootChildren.setValue( ChildName, Node, this, ObjectSubType );
-	if(nullptr != pRootChild)
+	SvVol::BasicValueObjectPtr pRootChild(nullptr);
+	pRootChild = m_RootChildren.setValue(ChildName, Node, this, ObjectSubType);
+	if (nullptr != pRootChild)
 	{
-		SVObjectManagerClass::Instance().setRootChildID( pRootChild->GetName(), pRootChild->GetUniqueObjectID() );
+		SVObjectManagerClass::Instance().setRootChildID(pRootChild->GetName(), pRootChild->GetUniqueObjectID());
 		Result = true;
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
-		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, GetUniqueObjectID() );
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, GetUniqueObjectID());
 	}
-	
+
 	return Result;
 }
 #pragma endregion Private Methods
 
 #pragma region IRootObject-function
-void SvOi::getRootChildNameList( SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
+void SvOi::getRootChildNameList(SvDef::StringVector& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter)
 {
 	//To have the function available without knowing the class RootObject
-	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
+	RootObject::getRootChildNameList(rObjectNameList, Path, AttributesAllowedFilter);
 }
 
 std::vector<SvPb::TreeItem> SvOi::getRootChildSelectorList(LPCTSTR Path, UINT AttributesAllowedFilter)
 {
 	std::vector<SvPb::TreeItem> result;
 	SvVol::BasicValueObjects::ValueVector objectVector;
-	
+
 	//To have the function available without knowing the class RootObject
-	RootObject::getRootChildObjectList( objectVector, Path, AttributesAllowedFilter );
+	RootObject::getRootChildObjectList(objectVector, Path, AttributesAllowedFilter);
 	result.reserve(objectVector.size());
 
-	for(const auto rpObject : objectVector)
+	for (const auto rpObject : objectVector)
 	{
 		SvPb::TreeItem insertItem;
 		insertItem.set_name(rpObject->GetName());

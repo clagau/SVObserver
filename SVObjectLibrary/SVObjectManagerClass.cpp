@@ -20,6 +20,7 @@
 #include "TextDefinesSvOl.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -136,6 +137,7 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 
 void SVObjectManagerClass::setRootChildID(const std::string& rRootChild, const SVGUID& rUniqueID)
 {
+	
 	SVObjectClass* pRootObject(nullptr);
 	GetObjectByIdentifier(rUniqueID, pRootObject);
 	if (nullptr != pRootObject)
@@ -159,6 +161,8 @@ void SVObjectManagerClass::Shutdown()
 	//m_State = ReadWrite;
 	::InterlockedExchange(&m_State, ReadWrite);
 	::Sleep(100);
+
+
 
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
 
@@ -236,7 +240,7 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier(const SVGUID& rObjectID, SVO
 
 	bool Status = !(rObjectID.empty());
 
-	if (Status && ReadWrite == m_State)
+	if (Status && ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -328,7 +332,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 	bool Status = !(rFullName.empty());
 
-	if (Status && ReadWrite == m_State)
+	if (Status && ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -336,7 +340,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 	if (Status)
 	{
 		std::string Name = rFullName;
-		Instance().TranslateDottedName(Name);
+		TranslateDottedName(Name);
 		SVObjectClass* pChildRootObject(nullptr);
 		SVObjectNameInfo NameInfo;
 
@@ -415,7 +419,10 @@ bool SVObjectManagerClass::CreateUniqueObjectID(SVObjectClass* pObject)
 	{
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-		Autolock.lock();
+		if (Autolock.owns_lock() == false)
+		{
+			Autolock.lock();
+		}
 		Result = Result && nullptr != pObject;
 
 		if (Result)
@@ -455,7 +462,10 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 	if (Result)
 	{
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-		Autolock.lock();
+		if (Autolock.owns_lock() == false)
+		{
+			Autolock.lock();
+		}
 		Result = Result && nullptr != pObject;
 
 		if (Result)
@@ -543,7 +553,7 @@ SVObjectClass* SVObjectManagerClass::GetObject(const SVGUID& rGuid) const
 	bool Result = (GUID_NULL != rGuid);
 
 
-	if (Result && ReadWrite == m_State)
+	if ( Result && ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -568,7 +578,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName(LPCTSTR Name)
 
 	bool Status = (nullptr != Name);
 
-	if (Status && ReadWrite == m_State)
+	if (Status && ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -626,7 +636,7 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 {
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -680,7 +690,7 @@ HRESULT SVObjectManagerClass::InsertObserver(SVObserverNotificationFunctorPtr pF
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 		rCookie = ::InterlockedExchangeAdd(&m_ObserverCookie, 1);
@@ -702,7 +712,7 @@ HRESULT SVObjectManagerClass::EraseObserver(long Cookie)
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 		DetachSubjects(Cookie);
@@ -775,7 +785,7 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
@@ -812,7 +822,7 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
@@ -849,7 +859,7 @@ HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -877,7 +887,7 @@ HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -905,7 +915,7 @@ HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataNam
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -933,7 +943,7 @@ HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataNam
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -961,7 +971,7 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(rObserverID);
@@ -992,7 +1002,7 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 		SVCookieEntryStructPtr pObserverObject = GetCookieEntry(Cookie);
@@ -1306,7 +1316,7 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1358,7 +1368,7 @@ SVObjectManagerClass::SVCookieEntryStructPtr SVObjectManagerClass::GetCookieEntr
 
 
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -1385,7 +1395,7 @@ SVGUID SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, S
 
 
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1411,7 +1421,7 @@ SVGUID SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, S
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1437,7 +1447,7 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 
 
 
-	if (ReadWrite == m_State)
+	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
 	}
@@ -1463,7 +1473,7 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1508,7 +1518,7 @@ HRESULT SVObjectManagerClass::GetSubjectDataNames(const SVGUID& rSubjectID, SVSu
 
 
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1542,7 +1552,7 @@ HRESULT SVObjectManagerClass::GetObserverDataNames(long Cookie, SVSubjectDataNam
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1576,7 +1586,7 @@ HRESULT SVObjectManagerClass::GetObserverDataNames(const SVGUID& rObserverID, SV
 	{
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1608,7 +1618,7 @@ HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, 
 	{
 		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1647,7 +1657,7 @@ HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, 
 
 
 
-		if (ReadWrite == m_State)
+		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 		{
 			Autolock.lock();
 		}
@@ -1725,7 +1735,7 @@ HRESULT SVObjectManagerClass::UnregisterSubObject(const SVGUID& rSubObjectID)
 SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
 {
 	SvOi::IObjectClass* pRetObject = nullptr;
-	SvOi::IObjectClass* pSource = SVObjectManagerClass::Instance().GetObject(rSourceId);
+	SvOi::IObjectClass* pSource = GetObject(rSourceId);
 	if (nullptr != pSource)
 	{
 		pRetObject = pSource->getFirstObject(rObjectTypeInfo);
@@ -1736,7 +1746,7 @@ SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId
 bool SVObjectManagerClass::ConnectObjectInput(const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	bool Result = false;
-	SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject(rSourceId);
+	SVObjectClass* pSource =GetObject(rSourceId);
 	if (nullptr != pSource)
 	{
 		Result = pSource->ConnectObjectInput(pObjectInInfo);
@@ -1747,13 +1757,14 @@ bool SVObjectManagerClass::ConnectObjectInput(const SVGUID& rSourceId, SvOl::SVI
 bool SVObjectManagerClass::DisconnectObjectInput(const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	bool Result = false;
-	SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject(rSourceId);
+	SVObjectClass* pSource = GetObject(rSourceId);
 	if (nullptr != pSource)
 	{
 		Result = pSource->DisconnectObjectInput(pObjectInInfo);
 	}
 	return Result;
 }
+
 
 #pragma region IObjectManager-function
 SvOi::IObjectClass* SvOi::getObjectByDottedName(const std::string& rFullName)

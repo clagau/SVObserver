@@ -2,19 +2,33 @@
 //
 
 #include "stdafx.h"
-#include <atlbase.h>
-#include <iostream>
-
 #include "ExternalDll.h"
-#include <array>
+#include "defines.h"
+#include "CDllTool.h"
+#include "OldStructDefinitions.h"
 
 #ifdef _DEBUG
-//#define new DEBUG_NEW
 #include "DebugUtilities.h"
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
+bool operator < (const GUID& guid1, const GUID& guid2)
+{
+	// this does not implement REAL ordering, but enough for our map's purposes
+	const BYTE* pBytes1 = reinterpret_cast<const BYTE*> (&guid1);
+	const BYTE* pBytes2 = reinterpret_cast<const BYTE*> (&guid2);
+	for (int i = 0; i < sizeof(GUID); i++)
+	{
+		if (pBytes1[i] == pBytes2[i])
+			continue;
+		else if (pBytes1[i] < pBytes2[i])
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
 
 extern "C" int APIENTRY
 DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)

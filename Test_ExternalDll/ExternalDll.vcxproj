@@ -181,7 +181,6 @@
     <ClInclude Include="CDllTool.h" />
     <ClInclude Include="DebugUtilities.h" />
     <ClInclude Include="defines.h" />
-    <ClInclude Include="Guid.h" />
     <ClInclude Include="OldStructDefinitions.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="StructDefinitions.h" />

@@ -10,4 +10,8 @@
 // Windows-Headerdateien:
 #include <windows.h>
 #include <comdef.h>
+#include <atlbase.h>
+#include <iostream>
+#include <array>
+#include <map>
 
