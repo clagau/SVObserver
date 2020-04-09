@@ -31,6 +31,6 @@ struct SVGigeDeviceParameterStruct
 	SVGigeDeviceParameterStruct& operator=(const SVGigeDeviceParameterStruct& rParam);
 };
 
-typedef std::unordered_map<SvDef::SVGigeParameterEnum, SVGigeDeviceParameterStruct> SVGigeDeviceParameterMap;
+typedef std::map<SvDef::SVGigeParameterEnum, SVGigeDeviceParameterStruct> SVGigeDeviceParameterMap;
 
 

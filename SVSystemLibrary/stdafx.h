@@ -74,7 +74,6 @@
 #include <string>
 #include <sys/stat.h>
 #include <tchar.h>
-#include <unordered_map>
 #include <vector>			//Used by static library
 
 #include <boost/bind.hpp>

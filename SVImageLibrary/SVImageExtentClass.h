@@ -32,9 +32,9 @@ extern double SVGetFlippedRotationAngle(const SVPoint<double>& rCenter, const SV
 extern SVPoint<double> SVRotateAndFlipPoint(const SVPoint<double>& rCenter, double dRadius, double dAngle);
 extern SVPoint<double> SVRotateAndFlipPoint(const SVPoint<double>& rCenter, const SVPoint<double>& rStartPoint, double dAngle);
 
-typedef std::unordered_map<SvPb::SVExtentPropertyEnum, std::string> SVExtentPropertyStringMap;
-typedef std::unordered_map<SvPb::SVExtentPropertyEnum, double> SVExtentPropertyValueMap;
-typedef std::unordered_map<SvPb::SVExtentPropertyEnum, std::pair<SvPb::SVExtentPropertyEnum, SvPb::SVExtentPropertyEnum>> SVExtentPropertyPointMap;
+typedef std::map<SvPb::SVExtentPropertyEnum, std::string> SVExtentPropertyStringMap;
+typedef std::map<SvPb::SVExtentPropertyEnum, double> SVExtentPropertyValueMap;
+typedef std::map<SvPb::SVExtentPropertyEnum, std::pair<SvPb::SVExtentPropertyEnum, SvPb::SVExtentPropertyEnum>> SVExtentPropertyPointMap;
 
 struct SVExtentOffsetStruct;
 

@@ -71,7 +71,7 @@ class IGraphNameLookup;
 
 		typename typedef std::vector<EdgeData> EdgeVector;
 	
-		typedef std::unordered_map<VertexName, VertexData> VertexNameDataMap;
+		typedef std::map<VertexName, VertexData> VertexNameDataMap;
 	#pragma endregion Declarations
 
 	#pragma region Constructor

@@ -69,6 +69,6 @@ private:
 };
 
 typedef std::vector<SVCameraInfoStruct> SVCameraInfoStructVector;
-typedef std::unordered_map<GUID, SVCameraInfoStruct> SVGuidSVCameraInfoStructMap;
+typedef std::map<SVGUID, SVCameraInfoStruct> SVGuidSVCameraInfoStructMap;
 
 } //namespace SvIe

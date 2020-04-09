@@ -17,7 +17,7 @@
 
 class SVOResponseClass : public EventTime
 {
-	typedef  std::unordered_map<int, _variant_t> IntVariantMap;
+	typedef  std::map<int, _variant_t> IntVariantMap;
 public:
 	SVOResponseClass() {}
 	SVOResponseClass(const SVOResponseClass &rRhs) : EventTime(rRhs)

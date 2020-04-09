@@ -75,7 +75,6 @@
 #include <sstream>			//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
-#include <unordered_map>
 #include <vector>
 #include <winuser.h>
 

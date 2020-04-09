@@ -12,7 +12,7 @@ namespace SvTi
 {
 	struct SVTriggerInfoStruct 
 	{
-		typedef  std::unordered_map<int, _variant_t> IntVariantMap;
+		typedef  std::map<int, _variant_t> IntVariantMap;
 
 		SVTriggerInfoStruct() = default;
 		SVTriggerInfoStruct(const SVTriggerInfoStruct& rRhs) = default;

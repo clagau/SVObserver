@@ -10,11 +10,12 @@
 // ******************************************************************************
 
 #pragma once
+
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #pragma endregion Includes
 
-typedef  std::unordered_map<int, _variant_t> IntVariantMap;
+typedef  std::map<int, _variant_t> IntVariantMap;
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );

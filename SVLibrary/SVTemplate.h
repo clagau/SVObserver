@@ -363,14 +363,14 @@ public:
 	TDoubleFactory();
 
 	// give const access to type maps ( the whole point of a 2-type factory )
-	typedef std::unordered_map<TYPEID, TYPEID2> TypeMapPrimary;
-	typedef std::unordered_map<TYPEID2, TYPEID> TypeMapSecondary;
+	typedef std::map<TYPEID, TYPEID2> TypeMapPrimary;
+	typedef std::map<TYPEID2, TYPEID> TypeMapSecondary;
 	typedef typename TypeMapPrimary::const_iterator const_iterator;
 	typedef typename TypeMapSecondary::const_iterator const_iterator2;
 	const TypeMapPrimary& PrimaryMap();
 	const TypeMapSecondary& SecondaryMap();
 private:
-	typedef std::unordered_map<TYPEID, CreateFn> CreateFnMap;
+	typedef std::map<TYPEID, CreateFn> CreateFnMap;
 	TYPEID mDefaultType;
 	bool mbSetDefault;
 	CreateFnMap mapCreateFn;

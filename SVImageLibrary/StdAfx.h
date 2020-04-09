@@ -64,10 +64,8 @@
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <typeinfo>
-#include <utility>			//Used by static library
-#include <unordered_map>
 #include <vector>
-
+#include <utility>			//Used by static library
 
 #include <boost/function.hpp>							//Used by static library
 #pragma endregion Precompiled Headers

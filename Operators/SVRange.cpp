@@ -318,7 +318,7 @@ HRESULT SVRangeClass::getValue(RangeEnum::ERange ra, double &rValue)
 
 bool SVRangeClass::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange secondType, SvStl::MessageContainerVector* pErrorMessages)
 {
-	static std::unordered_map<RangeEnum::ERange, SvStl::MessageTextEnum> enumTids
+	static std::map<RangeEnum::ERange, SvStl::MessageTextEnum> enumTids
 	{
 		{RangeEnum::ERange::ER_FailHigh, SvStl::Tid_FailHigh},
 		{RangeEnum::ERange::ER_WarnHigh, SvStl::Tid_WarnHigh},

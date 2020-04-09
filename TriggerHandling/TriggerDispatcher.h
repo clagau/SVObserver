@@ -22,7 +22,7 @@ enum TriggerDataEnum
 };
 //! This struct was introduced to facilitate the passing of further parameters 
 //! (beyond 'Owner' and 'Data') - in particular in preparation for the SVPLCIO.dll.
-typedef  std::unordered_map<int, _variant_t> IntVariantMap;
+typedef  std::map<int, _variant_t> IntVariantMap;
 
 struct TriggerParameters
 {

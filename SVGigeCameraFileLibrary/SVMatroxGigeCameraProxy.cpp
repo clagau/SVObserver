@@ -34,7 +34,7 @@
 #pragma warning (pop)
 #pragma region Includes
 
-typedef std::unordered_map<SVDeviceParamEnum, SvDef::SVGigeParameterEnum> DeviceParamToGigeParamAssoc;
+typedef std::map<SVDeviceParamEnum, SvDef::SVGigeParameterEnum> DeviceParamToGigeParamAssoc;
 static DeviceParamToGigeParamAssoc cDeviceParamEnumToGigeParamEnum
 {
 	// Device parameter enum			Gige parameter enum

@@ -13,12 +13,10 @@
 #include <iostream>
 #include <set>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include <comdef.h>
 #include <tchar.h>
-
 
 // ptime and posix time_duration use different types (uint32 vs int64) for storing the hours
 #pragma warning(push)
@@ -39,7 +37,6 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 
 #include "SVMessage/SVMessage.h"
-
 
 using namespace boost::log;
 using namespace boost::log::sinks;
@@ -236,9 +233,9 @@ private:
 };
 }
 
-static std::unordered_map<std::string, trivial::severity_level> severity_level_name_map()
+static std::map<std::string, trivial::severity_level> severity_level_name_map()
 {
-	std::unordered_map<std::string, trivial::severity_level> map;
+	std::map<std::string, trivial::severity_level> map;
 	map[trivial::to_string(trivial::trace)] = trivial::trace;
 	map[trivial::to_string(trivial::debug)] = trivial::debug;
 	map[trivial::to_string(trivial::info)] = trivial::info;

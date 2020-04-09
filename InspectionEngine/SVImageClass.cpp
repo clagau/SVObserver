@@ -789,7 +789,7 @@ const SVImageClass*const SVImageClass::GetRootImage() const
 //Moved to precompiled header: #include <map>
 namespace
 {
-std::unordered_map<DWORD, long> f_mapCritSec;
+std::map<DWORD, long> f_mapCritSec;
 };
 #endif
 
