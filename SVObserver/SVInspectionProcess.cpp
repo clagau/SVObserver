@@ -1631,7 +1631,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 		DebugBreak();
 	}
 
-	std::unordered_map<SvTo::SVToolClass*, SVInspectionProcessResetStruct> toolMap;
+	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct toolMap;
 	while (m_lInputRequestMarkerCount > 0L)
 	{
 		long l_lSize = 0;
@@ -1924,25 +1924,32 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 					if (nullptr != pTool)
 					{
-						auto toolIter = toolMap.find(pTool);
-						if (toolMap.end() != toolIter)
+						if (toolMap.find(pTool) != toolMap.end())
 						{
-							if (toolIter->second.m_ObjectSet.empty())
+							if (toolMap[pTool].m_ObjectSet.empty())
 							{
 								bRet &= pTool->resetAllObjects();
 							}
 							else
 							{
-								for (auto* pObject : toolIter->second.m_ObjectSet)
+								SVObjectPtrSet::iterator l_oIter;
+
+								l_oIter = toolMap[pTool].m_ObjectSet.begin();
+
+								while (l_oIter != toolMap[pTool].m_ObjectSet.end())
 								{
-									if (nullptr != pObject)
+									SVObjectClass *l_psvObject = *l_oIter;
+
+									if (nullptr != l_psvObject)
 									{
-										bRet &= pObject->resetAllObjects();
+										bRet &= l_psvObject->resetAllObjects();
 									}
 									else
 									{
 										bRet = false;
 									}
+
+									++l_oIter;
 								}
 							}
 						}

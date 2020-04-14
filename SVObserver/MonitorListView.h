@@ -64,7 +64,7 @@ protected:
 		}
 	};
 
-	typedef std::unordered_map<std::string, ExpandCollapseState> CollapseExpandMap;
+	typedef std::map<std::string, ExpandCollapseState> CollapseExpandMap;
 
 	MonitorListView();           // protected constructor used by dynamic creation
 	virtual ~MonitorListView();

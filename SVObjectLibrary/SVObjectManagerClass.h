@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <unordered_map>
+//Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <memory>
 
@@ -40,7 +40,7 @@ public:
 		ReadWrite = 2,
 	};
 
-	typedef std::unordered_map<std::string, SVGUID> RootNameChildMap;
+	typedef std::map<std::string, SVGUID> RootNameChildMap;
 
 	typedef std::deque<std::string> SVSubjectDataNameDeque;
 
@@ -236,7 +236,7 @@ protected:
 	};
 
 	typedef std::shared_ptr< SVCookieEntryStruct > SVCookieEntryStructPtr;
-	typedef std::unordered_map< long, SVCookieEntryStructPtr > SVCookieEntryMap;
+	typedef std::map< long, SVCookieEntryStructPtr > SVCookieEntryMap;
 
 	typedef std::set< long > SVSubjectCookieSet;
 

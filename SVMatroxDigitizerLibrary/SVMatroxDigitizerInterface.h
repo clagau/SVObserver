@@ -27,7 +27,7 @@ class SVMatroxBufferArray;
 class SVMatroxDigitizer;
 class SVMatroxSystem;
 
-typedef std::unordered_map<std::string, long> SVGigeEventList;
+typedef std::map<std::string, long> SVGigeEventList;
 
 class SVMatroxDigitizerInterface
 {

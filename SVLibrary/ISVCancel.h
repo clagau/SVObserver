@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <unordered_map>
+//Moved to precompiled header: #include <map>
 #pragma endregion Includes
 
 struct SVCancelData
@@ -32,7 +32,7 @@ public:
 
 struct SVMultiCancelData : public SVCancelData
 {
-	typedef std::unordered_map<ISVCancel*, SVCancelData*> MapType;
+	typedef std::map<ISVCancel*, SVCancelData*> MapType;
 	MapType mapData;
 
 	SVMultiCancelData() {}
