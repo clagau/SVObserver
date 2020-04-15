@@ -31,11 +31,17 @@ message ObjectNameGuidPair
 	bytes objectName = 2; //name of the object.
 }
 
+message NameClassIdPair
+{
+	ClassIdEnum classId = 1; //classId of the object.
+	bytes objectName = 2; //name of the object.
+}
+
 message SVObjectTypeInfoStruct
 {
 	SVObjectTypeEnum objectType = 1;	// Main Type
 	SVObjectSubTypeEnum subType = 2;	// Sub Type  
-	bytes embeddedID = 3;
+	EmbeddedIdEnum embeddedID = 3;
 }
 
 //info for one taskobject 
@@ -57,7 +63,7 @@ message NameValuePair
 message ValueObjectValues
 {
 	bytes objectId = 1;
-	bytes embeddedId = 2;
+	EmbeddedIdEnum embeddedId = 2;
 	Variant value = 3;
 	Variant defaultValue = 4;
 }
@@ -114,11 +120,10 @@ message InspectionRunOnceRequest
 	bytes inspectionID = 1; //GUID of the inspection.
 }
 
-// This is the message for Destroy child object.
-message DestroyChildRequest
+// This is the message to delete an object.
+message DeleteObjectRequest
 {
-	bytes taskObjectListID = 1; //GUID of the task-object-list-object.
-	bytes objectID = 2; //GUID of the object which should be destroyed.
+	bytes objectID = 1; //GUID of the object which should be deleted.
 
 	enum FlagEnum
 	{
@@ -128,9 +133,8 @@ message DestroyChildRequest
 		Flag_SetDefaultInputs_And_ResetInspection = 3;
 	}
 
-	FlagEnum flag = 3; //Define if after destroying object the default inputs are set and/or inspection are reset.
+	FlagEnum flag = 2; //Define if after destroying object the default inputs are set and/or inspection are reset.
 }
-
 
 // This is the message to get the last (Error)MessageList from an taskObject
 message GetMessageListRequest
@@ -138,23 +142,10 @@ message GetMessageListRequest
 	bytes objectId = 1; //GUID of the task-object.
 }
 
-// This is the message response-message from GetMessageListRequest
-message GetMessageListResponse
-{
-	MessageContainerVector Messages = 1; //list of messages
-}
-
-
 // This is the message to reset an object
 message ResetObjectRequest
 {
 	bytes objectId = 1; //GUID of the task-object.
-}
-
-// This is the message response-message from ResetObjectRequest
-message ResetObjectResponse
-{
-	MessageContainerVector Messages = 1; //list of messages
 }
 
 //This is the message to create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
@@ -166,12 +157,6 @@ message CreateModelRequest
 	sint32 modelWidth = 4; //wanted model width.
 	sint32 modelHeight = 5; //wanted model height.
 	string FileName = 6; //filename where the model should be saved.
-}
-
-// This is the message response-message from CreateModelRequest
-message CreateModelResponse
-{
-	MessageContainerVector Messages = 1; //list of messages
 }
 
 message GetObjectParametersRequest
@@ -227,6 +212,7 @@ message GetObjectsForMonitorListResponse
 	repeated ObjectNameGuidPair list = 1;
 	MessageContainerVector Messages = 2; //list of messages
 }
+
 // This message moved an object in a taskObject- or friend-list to another position.
 message MoveObjectRequest
 {
@@ -302,11 +288,6 @@ message SetAuxImageObjectRequest
 {
 	bytes objectId = 1;  //GUID of the tool
 	bytes sourceImageId = 2;  //GUID of the source image
-}
-
-message SetAuxImageObjectResponse
-{
-	MessageContainerVector Messages = 1; //list of error messages
 }
 
 message GetInputsRequest
@@ -405,7 +386,7 @@ message GetObjectIdResponse
 	bytes objectId = 1;
 }
 
-message ConstructAndInsertRequest
+message CreateObjectRequest
 {
 	message FriendTask
 	{
@@ -414,17 +395,16 @@ message ConstructAndInsertRequest
 	}
 
 	bytes ownerId = 1;
-	bytes classId = 2;
+	ClassIdEnum classId = 2;
 
 	oneof message
 	{
 		FriendTask friend = 3;	//Add the new object to the friend list.
-		int32 taskObjectPos = 4; //Add the new object to the taskObject list at the pos. 
-		bytes taskObjectAfterId = 5; //Add the new object to the taskObject-list after the object with this GUID. if GUID_NULL, add at the end.
+		bytes taskObjectInsertBeforeId = 4; //Add the new object to the taskObject-list before the object with this GUID. if GUID_NULL, add at the end.
 	}
 }
 
-message ConstructAndInsertResponse
+message CreateObjectResponse
 {
 	bytes objectId = 1;
 	bytes name = 2;
@@ -438,7 +418,7 @@ message GetCreatableObjectsRequest
 
 message GetCreatableObjectsResponse
 {
-	repeated ObjectNameGuidPair list = 1;
+	repeated NameClassIdPair list = 1;
 }
 
 //Return if the inspection should be reset. By now it is only used for the filter, because some filters must be reset the whole inspection after changes.
@@ -488,11 +468,6 @@ message SetEmbeddedValuesRequest
 {
 	bytes objectId = 1;
 	repeated SetValueObjectValues list = 2;
-}
-
-message SetEmbeddedValuesResponse
-{
-	MessageContainerVector messages = 1; //list of messages
 }
 
 message GetOutputRectangleRequest
@@ -588,84 +563,96 @@ message GetOverlayStructResponse
 {
 	OverlayDesc overlays = 1;
 }
-
-message InspectionCmdMsgs
+message SetDefaultInputsRequest
 {
+	bytes objectId = 1; //GUID of the inspection object.
+}
+
+
+message InspectionCmdRequest
+{
+	bytes inspectionID = 1;			//The inspection GUID to perform the command on
+
 	oneof message
 	{
-		InspectionRunOnceRequest inspectionRunOnceRequest=1;
-		DestroyChildRequest destroyChildRequest =2;
-		GetMessageListRequest  getMessageListRequest =3;
-		GetMessageListResponse getMessageListResponse =4;
-		ResetObjectRequest  resetObjectRequest =5;
-		ResetObjectResponse resetObjectResponse =6;
-		CreateModelRequest  createModelRequest =7;
-		CreateModelResponse createModelResponse =8;
-		GetObjectParametersRequest getObjectParametersRequest = 9;
-		GetObjectParametersResponse getObjectParametersResponse = 10;
-		GetEquationRequest getEquationRequest = 11;
-		GetEquationResponse  getEquationResponse=12; 
-		ValidateAndSetEquationRequest  validateAndSetEquationRequest =13;
-		ValidateAndSetEquationResponse  validateAndSetEquationResponse =14;
-		GetObjectsForMonitorListRequest getObjectsForMonitorListRequest =15;
-		GetObjectsForMonitorListResponse getObjectsForMonitorListResponse = 16;
-		MoveObjectRequest moveObjectRequest =17;
-		TaskObjectListRequest taskObjectListRequest = 18;
-		TaskObjectListResponse taskObjectListResponse = 19;
-		GetImageRequest getImageRequest = 20;
-		GetImageResponse getImageResponse = 21;
-		AreAuxiliaryExtentsAvailableRequest areAuxiliaryExtentsAvailableRequest = 22;
-		AreAuxiliaryExtentsAvailableResponse areAuxiliaryExtentsAvailableResponse = 23;
-		GetAvailableAuxImagesRequest getAvailableAuxImagesRequest = 24;
-		GetAvailableAuxImagesResponse getAvailableAuxImagesResponse = 25;
-		GetAuxImageObjectRequest getAuxImageObjectRequest = 26;
-		GetAuxImageObjectResponse getAuxImageObjectResponse = 27;
-		SetAuxImageObjectRequest setAuxImageObjectRequest = 28;
-		SetAuxImageObjectResponse setAuxImageObjectResponse = 29;
-		GetInputsRequest getInputsRequest = 30;
-		GetInputsResponse getInputsResponse = 31;
-		ConnectToObjectRequest connectToObjectRequest = 32;
-		SaveImageRequest saveImageRequest = 33;
-		SetObjectNameRequest setObjectNameRequest = 34;
-		GetAvailableObjectsRequest getAvailableObjectsRequest = 35;
-		GetAvailableObjectsResponse getAvailableObjectsResponse = 36;
-		GetSpecialImageListRequest getSpecialImageListRequest = 37;
-		GetSpecialImageListResponse getSpecialImageListResponse = 38;
-		ExportMaskRequest exportMaskRequest = 39;
-		ImportMaskRequest importMaskRequest = 40;
-		GetObjectIdRequest getObjectIdRequest = 41;
-		GetObjectIdResponse getObjectIdResponse = 42;
-		ConstructAndInsertRequest constructAndInsertRequest = 43;
-		ConstructAndInsertResponse constructAndInsertResponse = 44;
-		GetCreatableObjectsRequest getCreatableObjectsRequest = 45;
-		GetCreatableObjectsResponse getCreatableObjectsResponse = 46;
-		ShouldInspectionResetRequest shouldInspectionResetRequest = 47;
-		ShouldInspectionResetResponse shouldInspectionResetResponse = 48;
-		GetPPQNameRequest getPPQNameRequest = 49;
-		GetPPQNameResponse getPPQNameResponse = 50;
-		GetValueObjectEnumsRequest getValueObjectEnumsRequest = 51;
-		GetValueObjectEnumsResponse getValueObjectEnumsResponse = 52;
-		GetEmbeddedValuesRequest getEmbeddedValuesRequest = 53;
-		GetEmbeddedValuesResponse getEmbeddedValuesResponse = 54;
-		SetEmbeddedValuesRequest setEmbeddedValuesRequest = 55;
-		SetEmbeddedValuesResponse setEmbeddedValuesResponse = 56;
-		GetOutputRectangleRequest getOutputRectangleRequest = 57;
-		GetOutputRectangleResponse getOutputRectangleResponse = 58;
-		GetObjectSelectorItemsRequest getObjectSelectorItemsRequest = 59;
-		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 60;
-		GetToolSizeAdjustParameterRequest getToolSizeAdjustParameterRequest = 61;
-		GetToolSizeAdjustParameterResponse getToolSizeAdjustParameterResponse = 62;
-		GetExtentParameterRequest getExtentParameterRequest = 63;
-		GetExtentParameterResponse getExtentParameterResponse = 64;
-		SetExtentParameterRequest setExtentParameterRequest = 65;
-		SetExtentParameterResponse setExtentParameterResponse = 66;
-		IsAllowedLocationRequest isAllowedLocationRequest = 67;
-		IsAllowedLocationResponse isAllowedLocationResponse = 68;
-		PropagateSizeAndPositionRequest propagateSizeAndPositionRequest = 69;
-		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 70;
-		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 71;
-		GetOverlayStructRequest getOverlayStructRequest = 72;
-		GetOverlayStructResponse getOverlayStructResponse = 73;
+		InspectionRunOnceRequest inspectionRunOnceRequest = 2;
+		DeleteObjectRequest deleteObjectRequest = 3;
+		GetMessageListRequest  getMessageListRequest = 4;
+		ResetObjectRequest  resetObjectRequest = 5;
+		CreateModelRequest  createModelRequest = 6;
+		GetObjectParametersRequest getObjectParametersRequest = 7;
+		GetEquationRequest getEquationRequest = 8;
+		ValidateAndSetEquationRequest  validateAndSetEquationRequest = 9;
+		GetObjectsForMonitorListRequest getObjectsForMonitorListRequest = 10;
+		MoveObjectRequest moveObjectRequest = 11;
+		TaskObjectListRequest taskObjectListRequest = 12;
+		GetImageRequest getImageRequest = 13;
+		AreAuxiliaryExtentsAvailableRequest areAuxiliaryExtentsAvailableRequest = 14;
+		GetAvailableAuxImagesRequest getAvailableAuxImagesRequest = 15;
+		GetAuxImageObjectRequest getAuxImageObjectRequest = 16;
+		SetAuxImageObjectRequest setAuxImageObjectRequest = 17;
+		GetInputsRequest getInputsRequest = 18;
+		ConnectToObjectRequest connectToObjectRequest = 19;
+		SaveImageRequest saveImageRequest = 20;
+		SetObjectNameRequest setObjectNameRequest = 21;
+		GetAvailableObjectsRequest getAvailableObjectsRequest = 22;
+		GetSpecialImageListRequest getSpecialImageListRequest = 23;
+		ExportMaskRequest exportMaskRequest = 24;
+		ImportMaskRequest importMaskRequest = 25;
+		GetObjectIdRequest getObjectIdRequest = 26;
+		CreateObjectRequest createObjectRequest = 27;
+		GetCreatableObjectsRequest getCreatableObjectsRequest = 28;
+		ShouldInspectionResetRequest shouldInspectionResetRequest = 29;
+		GetPPQNameRequest getPPQNameRequest = 30;
+		GetValueObjectEnumsRequest getValueObjectEnumsRequest = 31;
+		GetEmbeddedValuesRequest getEmbeddedValuesRequest = 32;
+		SetEmbeddedValuesRequest setEmbeddedValuesRequest = 33;
+		GetOutputRectangleRequest getOutputRectangleRequest = 34;
+		GetObjectSelectorItemsRequest getObjectSelectorItemsRequest = 35;
+		GetToolSizeAdjustParameterRequest getToolSizeAdjustParameterRequest = 36;
+		GetExtentParameterRequest getExtentParameterRequest = 37;
+		SetExtentParameterRequest setExtentParameterRequest = 38;
+		IsAllowedLocationRequest isAllowedLocationRequest = 39;
+		PropagateSizeAndPositionRequest propagateSizeAndPositionRequest = 40;
+		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 41;
+		GetOverlayStructRequest getOverlayStructRequest = 42;
+		SetDefaultInputsRequest  setDefaultInputsRequest = 43;
 	}
 }
 
+message InspectionCmdResponse
+{
+	sfixed32 hResult = 1;				//The request result (0 = no error)
+		
+	oneof message
+	{
+		StandardResponse standardResponse = 2;
+		GetObjectParametersResponse getObjectParametersResponse = 3;
+		GetEquationResponse  getEquationResponse = 4;
+		ValidateAndSetEquationResponse  validateAndSetEquationResponse = 5;
+		GetObjectsForMonitorListResponse getObjectsForMonitorListResponse = 6;
+		TaskObjectListResponse taskObjectListResponse = 7;
+		GetImageResponse getImageResponse = 8;
+		AreAuxiliaryExtentsAvailableResponse areAuxiliaryExtentsAvailableResponse = 9;
+		GetAvailableAuxImagesResponse getAvailableAuxImagesResponse = 10;
+		GetAuxImageObjectResponse getAuxImageObjectResponse = 11;
+		GetInputsResponse getInputsResponse = 12;
+		GetAvailableObjectsResponse getAvailableObjectsResponse = 13;
+		GetSpecialImageListResponse getSpecialImageListResponse = 14;
+		GetObjectIdResponse getObjectIdResponse = 15;
+		CreateObjectResponse createObjectResponse = 16;
+		GetCreatableObjectsResponse getCreatableObjectsResponse = 17;
+		ShouldInspectionResetResponse shouldInspectionResetResponse = 18;
+		GetPPQNameResponse getPPQNameResponse = 19;
+		GetValueObjectEnumsResponse getValueObjectEnumsResponse = 20;
+		GetEmbeddedValuesResponse getEmbeddedValuesResponse = 21;
+		GetOutputRectangleResponse getOutputRectangleResponse = 22;
+		GetObjectSelectorItemsResponse getObjectSelectorItemsResponse = 23;
+		GetToolSizeAdjustParameterResponse getToolSizeAdjustParameterResponse = 24;
+		GetExtentParameterResponse getExtentParameterResponse = 25;
+		SetExtentParameterResponse setExtentParameterResponse = 26;
+		IsAllowedLocationResponse isAllowedLocationResponse = 27;
+		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 28;
+		GetOverlayStructResponse getOverlayStructResponse = 29;
+	}
+}

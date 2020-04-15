@@ -126,7 +126,8 @@ message OverlayShapeSlice
 
 message OverlayShape2PointPerspective
 {
-	ValueObject yOffset = 1;
+	ValueObject offset = 1;
+	Orientation orientation = 2;
 }
 
 // Like shape line with an additional arrow placed at second point.

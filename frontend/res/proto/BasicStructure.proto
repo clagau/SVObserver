@@ -25,3 +25,10 @@ message Image
 	uint32 width = 2;				//The width of the image
 	uint32 height = 3;				//The height of the image
 }
+
+///Standard responce for requests that only return an hResult and MessageContainer
+message StandardResponse
+{
+	sfixed32 hResult = 1;				//The request result (0 = no error)
+	MessageContainerVector errorMessages = 2;
+}

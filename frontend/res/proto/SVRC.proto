@@ -11,7 +11,10 @@ package SvPb;
 
 import "SVRC-SVOGateway.proto";
 import "SVRC-SVObserver.proto";
+import "BasicStructure.proto";
+import "ConfigCommands.proto";
 import "GetObjectSelector.proto";
+import "InspectionCommands.proto";
 
 /// This is the list of all request and response messages for SVRC
 message SVRCMessages
@@ -98,8 +101,12 @@ message SVRCMessages
 		GetTriggerStreamResponse getTriggerStreamResponse = 2040;
 		GetNotificationStreamRequest getNotificationStreamRequest = 2041;
 		GetNotificationStreamResponse getNotificationStreamResponse = 2042;
-		ExecuteInspectionCmdRequest executeInspectionCmdRequest = 2043;
-		ExecuteInspectionCmdResponse executeInspectionCmdResponce = 2044;
+		InspectionCmdRequest inspectionCmdRequest = 2043;
+		InspectionCmdResponse inspectionCmdResponse = 2044;
+		GetConfigurationTreeRequest getConfigurationTreeRequest = 2045;
+		GetConfigurationTreeResponse getConfigurationTreeResponse = 2046;
+		ConfigCommandRequest configCommandRequest = 2047;
+		ConfigCommandResponse configCommandResponse = 2048;
 	}
 }
 
