@@ -457,7 +457,7 @@ namespace SvStl
 		{Tid_ValueObject_ValidateStringFailed, _T("Set value \"%s\" to parameter \"%s\" failed: Invalid string.")},
 		{Tid_SetEmbeddedValueFailed, _T("Setting of an embedded parameter failed: [%s]")},
 		{Tid_ValidateValue_InvalidElementInVariantArray, _T("Validate Value failed: Invalid element in VariantArray: %s")},
-		{Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must greater than zero.")},
+		{Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must be greater than zero.")},
 		{Tid_UnexpectedError, _T("An unexpected error ocurred.")},
 
 		{Tid_FailedtoStart, _T("Failed to start %s")},

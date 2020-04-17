@@ -421,13 +421,12 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 
 			}
 		}
-		//@Todo[MEC][10.0] [10.03.2020]  possible fix  for SVO-2656
-		/*
+		
 		else if (arraySize == 0)
 		{
 			SetResultSize(0);
 		}
-		*/
+		
 		else
 		{
 			result = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
@@ -572,7 +571,13 @@ template <typename T>
 void SVValueObjectClass<T>::validateValue(const _variant_t& rValue) const
 {
 	//This function throws an exception if not valid
-	variant2VectorType(rValue);
+	std::vector<T> valueVector =  variant2VectorType(rValue);
+	if(valueVector.size() == 0)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());
+		Exception.Throw();
+	}
 }
 
 #pragma endregion virtual method
@@ -787,8 +792,8 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 			Exception.Throw();
 		}
 		result = SvUl::getVectorFromOneDim<T>(rValue);
-		//@Todo[MEC][10.0] [10.03.2020]  fix for SVO-2656 commment out following lines
-		if (0 >= result.size())
+		//Allow arraysize 0
+		if (0 > result.size())
 		{
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());

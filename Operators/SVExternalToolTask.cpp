@@ -2148,21 +2148,40 @@ void SVExternalToolTask::collectResultValues()
 	{
 		if (m_InspectionResultValues[i].vt & VT_ARRAY)
 		{
-			VARTYPE type = (m_InspectionResultValues[i].vt & (~VT_ARRAY));
-			if (!GetResultValueObject(i)->isArray())
+			try
 			{
-				//if the value object is an array the correct size will be set in setValue
-				GetResultValueObject(i)->SetArraySize(2);
-				assert(false);
+				VARTYPE type = (m_InspectionResultValues[i].vt & (~VT_ARRAY));
+				if (!GetResultValueObject(i)->isArray())
+				{
+					//if the value object is an array the correct size will be set in setValue
+					GetResultValueObject(i)->SetArraySize(2);
+					assert(false);
+				}
+
+				if (GetResultValueObject(i)->GetDefaultType() != type)
+				{
+					_variant_t var(0.0);
+					var.ChangeType(type);
+					GetResultValueObject(i)->SetDefaultValue(var);
+				}
+				GetResultValueObject(i)->setValue(m_InspectionResultValues[i], -1, true);
+			}
+			catch (const SvStl::MessageContainer& rSvE)
+			{
+				m_InspectionResultValues[i].Clear();
+				GetResultValueObject(i)->SetResultSize(0);
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				e.setMessage(rSvE.getMessage());
+			}
+			
+			catch (...)
+			{
+				m_InspectionResultValues[i].Clear();
+				GetResultValueObject(i)->SetResultSize(0);
+				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
 			}
 
-			if (GetResultValueObject(i)->GetDefaultType() != type)
-			{
-				_variant_t var(0.0);
-				var.ChangeType(type);
-				GetResultValueObject(i)->SetDefaultValue(var);
-			}
-			GetResultValueObject(i)->setValue(m_InspectionResultValues[i], -1, true);
 		}
 		else if (m_InspectionResultValues[i].vt == VT_EMPTY && GetResultValueObject(i)->isArray())
 		{
