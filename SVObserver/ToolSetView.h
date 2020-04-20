@@ -45,8 +45,8 @@ public:
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	void SetViewSize(CSize &Size);
 	bool IsLabelEditing() const;
-	void SetSelectedTool(const SVGUID& rGuid);
-	SVGUID GetSelectedTool() const;
+	void SetSelectedTool(uint32_t toolId);
+	uint32_t GetSelectedTool() const;
 	
 	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
 	//pSelectedIndex gets the selected Index
@@ -84,7 +84,7 @@ public:
 	/// \param ppqName [in] PPQ-name.
 	/// \param rToolId [in] Tool ID.
 	/// \returns bool
-	bool areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const;
+	bool areParametersInMonitorList(LPCTSTR ppqName, uint32_t toolId) const;
 	void addParameter2MonitorList(LPCTSTR ppqName);
 	void removeParameter2MonitorList(LPCTSTR ppqName);
 
@@ -92,7 +92,7 @@ public:
 	bool IsLoopToolSelected() const;
 protected:
 	/// opens a dialog for the selected Tool 
-	void EditToolComment(SVGUID& rguid);
+	void EditToolComment(uint32_t toolId);
 	DECLARE_DYNCREATE(ToolSetView)
 	enum { IDD = IDD_TOOLSET_VIEW };
 

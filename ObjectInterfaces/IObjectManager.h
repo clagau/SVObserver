@@ -21,8 +21,6 @@ namespace SvOi
 class IObjectClass;
 class ISVImage;
 }
-
-class SVGUID;
 #pragma endregion Declarations
 
 
@@ -36,7 +34,7 @@ namespace SvOi
 IObjectClass* getObjectByDottedName(const std::string& rFullName);
 
 //************************************
-//! Construct an object by the guid and return the pointer.
+//! Construct an object by the classId and return the pointer.
 //! \param classID [in]
 //! \returns IObjectClass*
 //************************************
@@ -44,19 +42,19 @@ IObjectClass* ConstructObject(SvPb::ClassIdEnum classID);
 
 //************************************
 //! Return a object defined by it's Object ID.
-//! \param rObjectId [in] Instance GUID of the object.
+//! \param objectId [in] Id of the object.
 //! \returns IObjectClass*
 //************************************
-IObjectClass* getObject(const SVGUID& rObjectID);
+IObjectClass* getObject(uint32_t objectID);
 
 //************************************
 //! Traverses the Object DataStore, starting at a certain Object.
 //! \param ObjectVisitor [in] The visitor.
-//! \param SVGUID [in] starting Object.
+//! \param startingObjectID [in] starting Object.
 //! \returns HRESULT
 //************************************
 template<typename ObjectVisitor>
-HRESULT visitElements(ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID = GUID_NULL);
+HRESULT visitElements(ObjectVisitor& rVisitor, uint32_t startingObjectID = SvDef::InvalidObjectId);
 
-IObjectClass* FindObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo);
+IObjectClass* FindObject(uint32_t parentID, const SvDef::SVObjectTypeInfoStruct& rInfo);
 } //namespace SvOi

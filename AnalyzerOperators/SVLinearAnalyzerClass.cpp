@@ -115,7 +115,7 @@ bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -233,7 +233,7 @@ void SVLinearAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVe
 		{
 			msgData[0] += "\n" + name;
 		}
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetResultParameterToMonitorListFailed, msgData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 }
@@ -480,7 +480,7 @@ bool SVLinearAnalyzerClass::ValidateEdgeA(SvStl::MessageContainerVector *pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -494,7 +494,7 @@ bool SVLinearAnalyzerClass::ValidateEdgeB(SvStl::MessageContainerVector *pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -510,7 +510,7 @@ bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::ba
 	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() &  SvPb::viewable))
 	{
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck don't know back_insert_iterator
-		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->GetUniqueObjectID());
+		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->getObjectId());
 		return true;
 	}
 	else

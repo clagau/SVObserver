@@ -18,7 +18,7 @@ namespace SvOg
 class ToolAdjustToolSetPage : public CPropertyPage
 {
 public:
-	ToolAdjustToolSetPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+	ToolAdjustToolSetPage(uint32_t inspectionId, uint32_t taskObjectId);
 	virtual ~ToolAdjustToolSetPage() = default;
 
 	HRESULT SetInspectionData();
@@ -35,8 +35,8 @@ private:
 	enum { IDD = IDD_TA_TOOL_SET_DIALOG };
 	CString     m_InspectedObjectID;
 
-	SVGUID m_InspectionID;
-	SVGUID m_TaskObjectID;
+	uint32_t m_InspectionID;
+	uint32_t m_TaskObjectID;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 };

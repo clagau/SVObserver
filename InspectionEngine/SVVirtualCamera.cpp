@@ -21,7 +21,6 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #pragma endregion Includes
 
@@ -315,15 +314,15 @@ void SVVirtualCamera::FinishProcess( SVODataResponseClass *pResponse )
 	}
 }
 
-void SVVirtualCamera::addNeededBuffer(const GUID& rGuid, int neededBufferSize)
+void SVVirtualCamera::addNeededBuffer(uint32_t id, int neededBufferSize)
 {
-	m_neededBufferMap[rGuid] = neededBufferSize;
+	m_neededBufferMap[id] = neededBufferSize;
 	setNeededBuffer();
 }
 
-void SVVirtualCamera::removeNeededBufferEntry(const GUID& rGuid)
+void SVVirtualCamera::removeNeededBufferEntry(uint32_t id)
 {
-	auto iter = m_neededBufferMap.find(rGuid);
+	auto iter = m_neededBufferMap.find(id);
 	if (m_neededBufferMap.end() != iter)
 	{
 		m_neededBufferMap.erase(iter);
@@ -597,32 +596,21 @@ void SVVirtualCamera::RegisterTrigger(SvTh::SVTriggerClass* pTrigger)
 void SVVirtualCamera::createCameraParameters()
 {
 	SvVol::BasicValueObjectPtr pValue;
-	SVGUID ParameterUID( GUID_NULL );
-	//Initialize the parameters and set their unique GUID
+	//Initialize the parameters and set their unique ID
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, _T(""), this, SvPb::SVCameraObjectType );
-	ParameterUID = CameraBaseSerialNumberUidGuid;
-	ParameterUID.ToGUID().Data1 += m_CameraID;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ObjectIdEnum::CameraBaseSerialNumberUidId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraGain, 0L, this, SvPb::SVCameraObjectType );
-	ParameterUID = CameraBaseGainUidGuid;
-	ParameterUID.ToGUID().Data1 += m_CameraID;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ObjectIdEnum::CameraBaseGainUidId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraShutter, 0L, this, SvPb::SVCameraObjectType );
-	ParameterUID = CameraBaseShutterUidGuid;
-	ParameterUID.ToGUID().Data1 += m_CameraID;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ParameterUID );
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseShutterUidId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraRegPath, _T(""), this, SvPb::SVCameraObjectType);
-	ParameterUID = CameraBaseRegPathUidGuid;
-	ParameterUID.ToGUID().Data1 += m_CameraID;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ParameterUID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseRegPathUidId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraRegFile, _T(""), this, SvPb::SVCameraObjectType);
-	ParameterUID = CameraBaseRegFileUidGuid;
-	ParameterUID.ToGUID().Data1 += m_CameraID;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ParameterUID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseRegFileUidId + m_CameraID);
 }
 
 HRESULT SVVirtualCamera::updateCameraParameters()

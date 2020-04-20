@@ -27,10 +27,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id)
+SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int id)
 	: CPropertyPage(SVExternalToolResultPage::IDD)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
 {
 	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 
@@ -305,7 +305,7 @@ int SVExternalToolResultPage::SelectObject(int iIndex)
 
 	if (pResult)
 	{
-		SVSetupDialogManager::Instance().SetupDialog(pResult->GetClassID(), pResult->GetUniqueObjectID(), this);
+		SVSetupDialogManager::Instance().SetupDialog(pResult->GetClassID(), pResult->getObjectId(), this);
 	}
 
 	return 0;

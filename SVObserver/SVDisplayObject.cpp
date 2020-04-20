@@ -103,7 +103,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveImages& p_rData )
 
 	if( nullptr != l_pIPDoc )
 	{
-		SVGuidSet::const_iterator l_Iter = p_rData.m_Images.begin();
+		auto l_Iter = p_rData.m_Images.begin();
 
 		while( l_Iter != p_rData.m_Images.end() )
 		{
@@ -144,20 +144,20 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveSubjectStruct& p_rData )
 	return l_Status;
 }
 
-void SVDisplayObject::SetInspectionID( const SVGUID& p_rInspectionID, SVIPDoc* pDoc )
+void SVDisplayObject::SetInspectionID(uint32_t inspectionID, SVIPDoc* pDoc)
 {
 	m_pDoc = pDoc;
 
-	if( !( m_InspectionID.empty() ) )
+	if( SvDef::InvalidObjectId != m_InspectionID )
 	{
-		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, GetUniqueObjectID() );
+		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, getObjectId() );
 	}
 
-	m_InspectionID = p_rInspectionID;
+	m_InspectionID = inspectionID;
 
-	if( !( m_InspectionID.empty() ) )
+	if(SvDef::InvalidObjectId != m_InspectionID )
 	{
-		SVObjectManagerClass::Instance().AttachObserver( "SVInspectionProcess", m_InspectionID, GetUniqueObjectID() );
+		SVObjectManagerClass::Instance().AttachObserver( "SVInspectionProcess", m_InspectionID, getObjectId() );
 	}
 }
 
@@ -188,11 +188,11 @@ BOOL SVDisplayObject::Create()
 
 BOOL SVDisplayObject::Destroy()
 {
-	if( !( m_InspectionID.empty() ) )
+	if(SvDef::InvalidObjectId != m_InspectionID )
 	{
-		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, GetUniqueObjectID() );
+		SVObjectManagerClass::Instance().DetachObserver( "SVInspectionProcess", m_InspectionID, getObjectId() );
 
-		m_InspectionID.clear();
+		m_InspectionID = SvDef::InvalidObjectId;
 	}
 
 	if (m_hStopEvent && m_hDisplayThread)
@@ -435,7 +435,7 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruc
 
 	SVObjectClass* pObject(nullptr);
 	double Value;
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentImageUpdateUidGuid, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentImageUpdateUidId, pObject);
 	if (nullptr != pObject)
 	{
 		//Use the getValue with double as it is faster (no dynamic casting)
@@ -443,7 +443,7 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruc
 		ImageUpdate = 0.0 < Value ? true : false;
 	}
 	pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentResultUpdateUidGuid, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentResultUpdateUidId, pObject);
 	if (nullptr != pObject)
 	{
 		//Use the getValue with double as it is faster (no dynamic casting)

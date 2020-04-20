@@ -25,7 +25,6 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/ArchiveToolHelper.h"
 #pragma endregion Includes
@@ -54,7 +53,7 @@ constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent) 
+SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveResultsPage::IDD)
 , m_pParent(Parent)
 , m_pTool(nullptr)
@@ -266,14 +265,14 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 
 void SVTADlgArchiveResultsPage::ShowObjectSelector()
 {
-	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
+	uint32_t InspectionId(m_pTool->GetInspection()->getObjectId());
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, SvPb::archivable);
+		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::toolsetItems}, InspectionId, SvPb::archivable);
 
-	SvCmd::InspectionCommands(InspectionGuid, requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(InspectionId, requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
@@ -347,18 +346,18 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVect
 	if( m_pTool )
 	{
 		// Inputs:
-		// Collect and build string pair vector from header Guid and Header Label from the archive tool.
-		// but only add if Guids match the selected object Guids
+		// Collect and build string pair vector from header id and Header Label from the archive tool.
+		// but only add if ids match the selected object ids
 		// output a vector of Object Name / Label pairs filtered by the selected objects..
 
 		// Get Lists....
 		SvDef::StringVector HeaderLabelNames;
-		SvDef::StringVector HeaderObjectGUIDs;
+		SvDef::StringVector HeaderObjectIDs;
 		m_pTool->m_HeaderLabelNames.GetArrayValues( HeaderLabelNames );
-		m_pTool->m_HeaderObjectGUIDs.GetArrayValues( HeaderObjectGUIDs );
+		m_pTool->m_HeaderObjectIDs.GetArrayValues( HeaderObjectIDs );
 
 		// Collect Object and Label into pairs.
-		for( SvDef::StringVector::const_iterator it = HeaderObjectGUIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectGUIDs.end() ;++it1, ++it)
+		for( SvDef::StringVector::const_iterator it = HeaderObjectIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectIDs.end() ;++it1, ++it)
 		{
 			SvDef::StringPair l_Pair(*it, *it1 );
 			HeaderPairs.push_back(l_Pair);
@@ -368,10 +367,10 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVect
 		SvDef::StringPairVector SelectedHeaderPairs;
 		for(auto const& rEntry : m_List)
 		{
-			SVGUID GuidValue{ rEntry.Guid() };
+			uint32_t objectId{ rEntry.getObjectId() };
 
-			SvDef::StringPair NewPair( GuidValue.ToString().c_str(),
-			SVObjectManagerClass::Instance().GetObject(GuidValue)->GetCompleteName() );
+			SvDef::StringPair NewPair(std::to_string(objectId),
+			SVObjectManagerClass::Instance().GetObject(objectId)->GetCompleteName() );
 			SelectedHeaderPairs.push_back(NewPair);
 		}
 
@@ -382,7 +381,7 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVect
 			SvDef::StringPairVector::const_iterator it2 = HeaderPairs.begin();
 			for( ; it2 != HeaderPairs.end() ; ++it2)
 			{
-				if( it->first == it2->first ) // GUIDs match
+				if( it->first == it2->first ) // IDs match
 				{
 					// Found Stop looking...
 					bFound = true;
@@ -408,16 +407,16 @@ bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector&
 	if( m_pTool )
 	{
 		SvDef::StringVector HeaderLabelNames;
-		SvDef::StringVector HeaderObjectGUIDs;
+		SvDef::StringVector HeaderObjectIDs;
 		for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
 		{
-			HeaderObjectGUIDs.push_back( it->first );
+			HeaderObjectIDs.push_back( it->first );
 			HeaderLabelNames.push_back( it->second );
 		}
 		m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-		m_pTool->m_HeaderObjectGUIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
+		m_pTool->m_HeaderObjectIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
 		m_pTool->m_HeaderLabelNames.SetArrayValues(HeaderLabelNames);
-		m_pTool->m_HeaderObjectGUIDs.SetArrayValues( HeaderObjectGUIDs);
+		m_pTool->m_HeaderObjectIDs.SetArrayValues( HeaderObjectIDs);
 		bRet = true;
 	}
 	return bRet;

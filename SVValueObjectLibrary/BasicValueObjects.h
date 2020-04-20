@@ -18,7 +18,6 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <sequential_tree.h>
 #include "BasicValueObject.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -34,7 +33,7 @@ public:
 	typedef ValueTree::pre_order_iterator vt_pre_order_iterator;
 	typedef ValueTree::const_pre_order_iterator vt_const_pre_order_iterator;
 	typedef std::vector<BasicValueObjectPtr> ValueVector;
-	typedef std::map<std::string, SVGUID > DottedNameGuidMap;
+	typedef std::map<std::string, uint32_t > DottedNameObjectIdMap;
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -141,7 +140,7 @@ private:
 private:
 #pragma region Member Variables
 	ValueTree m_Tree;				//! The tree of BasicValueObjects
-	static const DottedNameGuidMap m_StaticUniqueIDMap; //! The list of dotted names with static unique ids
+	static const DottedNameObjectIdMap m_StaticUniqueIDMap; //! The list of dotted names with static unique ids
 #pragma endregion Member Variables
 };
 

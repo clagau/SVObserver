@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>
-
+#include "Definitions/ObjectDefines.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
 #include "SVProtobuf/MonitorListStore.h"
 #include "SVProtobuf/SVRC.h"
@@ -108,7 +108,7 @@ namespace SvSml
 
 
 	public:
-		GUID m_Guid;   //Object Guid 
+		uint32_t m_objectId = SvDef::InvalidObjectId;
 		std::string name; //<Full name 
 		MonitorEntryData data;
 	};

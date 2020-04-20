@@ -19,11 +19,11 @@ class SVObjectClass;
 class SVObjectScriptParserBase
 {
 public:
-	SVObjectScriptParserBase(unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
+	SVObjectScriptParserBase(unsigned long parserHandle, uint32_t ownerId, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	
 	virtual ~SVObjectScriptParserBase();
 	
-	const GUID& GetOwnerGuid() const;
+	uint32_t GetOwnerId() const;
 	SVObjectClass* GetOwnerObject();
 
 	virtual size_t GetTotal() const = 0;
@@ -33,7 +33,7 @@ public:
 	void UpdateProgress( size_t amtProcessed, size_t amtTotal );
 
 protected:
-	GUID m_OwnerGuid;
+	uint32_t m_OwnerId;
 	SVObjectClass* m_pOwnerObject;
 	CWnd* m_pWnd;
 

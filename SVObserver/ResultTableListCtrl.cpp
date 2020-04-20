@@ -62,7 +62,7 @@ void ResultTableListCtrl::updateList()
 {
 	bool Update = true;
 	SVObjectClass* pObject(nullptr);
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentResultUpdateUidGuid, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentResultUpdateUidId, pObject);
 	if (nullptr != pObject)
 	{
 		double Value;

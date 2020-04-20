@@ -192,7 +192,7 @@ bool GlobalConstantView::editItem( int Item )
 			if( nullptr != pObject )
 			{
 				pObject->getValue( GlobalData.m_Value );
-				GlobalData.m_Guid = pObject->GetUniqueObjectID();
+				GlobalData.m_objectId = pObject->getObjectId();
 				GlobalData.m_DottedName = pObject->GetCompleteName();
 				GlobalData.m_Description = pObject->getDescription();
 			}
@@ -206,7 +206,7 @@ bool GlobalConstantView::editItem( int Item )
 		Result = true;
 
 		//New or editing Global value ?
-		if( GUID_NULL == GlobalData.m_Guid )
+		if(SvDef::InvalidObjectId == GlobalData.m_objectId )
 		{
 			insertGlobalConstant( GlobalData );
 			updateView();
@@ -333,7 +333,7 @@ void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& 
 
 void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
 {
-	SvVol::BasicValueObject* pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_Guid ) );
+	SvVol::BasicValueObject* pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_objectId ) );
 
 	if( nullptr != pGlobalObject )
 	{
@@ -381,7 +381,7 @@ void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 		for (auto pInspection : rInspections)
 		{
-			SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
+			SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc( pInspection->getObjectId() );
 			if( nullptr != pDoc )
 			{
 				if (RunOnce)
@@ -423,11 +423,11 @@ bool GlobalConstantView::checkAllDependencies(SvVol::BasicValueObject* pObject, 
 	{
 		std::string DisplayText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
 		std::string Name( pObject->GetName() );
-		SVGuidSet ObjectCheckList;
+		std::set<uint32_t> ObjectCheckList;
 
 		DisplayText = SvUl::Format( DisplayText.c_str(), Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
-		ObjectCheckList.insert( pObject->GetUniqueObjectID() );
+		ObjectCheckList.insert( pObject->getObjectId() );
 		
 		SvOg::SVShowDependentsDialog::DialogType Type( SvOg::SVShowDependentsDialog::Show );
 		if( ConfirmDelete )

@@ -29,7 +29,7 @@ class SVExternalToolInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVExternalToolInputSelectPage( LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, int id = IDD );
+	SVExternalToolInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id = IDD);
 	virtual ~SVExternalToolInputSelectPage();
 
 // Dialog Data
@@ -73,16 +73,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	std::string GetName(const SVGUID& guid) const;
+	std::string GetName(uint32_t id) const;
 
 private:
 	SvOp::SVExternalToolTask* m_pTask;
 	SVRPropTree	m_Tree;
 	int m_inputValueCount;
 
-	const SVGUID m_InspectionID;
-	const SVGUID m_ToolObjectID;
-	const SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_ToolObjectID;
+	const uint32_t m_TaskObjectID;
 
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;

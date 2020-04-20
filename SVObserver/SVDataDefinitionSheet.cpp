@@ -32,10 +32,10 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVDataDefinitionSheet::SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const std::string& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd, UINT iSelectPage)
+SVDataDefinitionSheet::SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const std::string& rInspectionName, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
 : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 , m_InspectionName( rInspectionName )
-, m_InspectionID( rInspectionID )
+, m_InspectionID( inspectionID )
 , m_pDoc(pDoc) 
 {
 	CreatePages();
@@ -124,7 +124,7 @@ void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT At
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-			{SvPb::ObjectSelectorType::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), GUID_NULL, false, filter);
+		{ SvPb::ObjectSelectorType::toolsetItems }, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), SvDef::InvalidObjectId, false, filter);
 
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_getobjectselectoritemsresponse())

@@ -46,12 +46,12 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 	#pragma region Constructor
-	SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
+	SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass(uint32_t inspectionId, uint32_t taskObjectId) 
 	: CPropertyPage(SVToolAdjustmentDialogTwoImagePageClass::IDD)
-	, SvOg::ImageController(rInspectionID, rTaskObjectID, SvPb::SVImageMonoType, false)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, SvOg::ImageController(inspectionId, taskObjectId, SvPb::SVImageMonoType, false)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -115,7 +115,7 @@ namespace SvOg
 		Init();
 		m_Values.Init();
 
-		const SvUl::NameGuidList& rAvailableImageList = GetAvailableImageList();
+		const SvUl::NameObjectIdList& rAvailableImageList = GetAvailableImageList();
 		RetreiveCurrentlySelectedImageNames();
 		RetreiveResultImageNames();
 	
@@ -214,7 +214,7 @@ namespace SvOg
 		m_secondImageCtrl.setImage(pFirstImage, FirstImageTab);
 		m_secondImageCtrl.setImage(pSecondImage, SecondImageTab);
 	
-		IPictureDisp* pResultImage = GetImage(m_resultImageID.ToGUID());
+		IPictureDisp* pResultImage = GetImage(m_resultImageID);
 		if (pResultImage)
 		{
 			m_firstImageCtrl.setImage(pResultImage, ResultImageTab);
@@ -236,13 +236,13 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogTwoImagePageClass::RetreiveCurrentlySelectedImageNames()
 	{
-		const SvUl::InputNameGuidPairList& rImageList = GetInputImageList(GUID_NULL, NumberOfImagesRequired);
+		const SvUl::InputNameObjectIdPairList& rImageList = GetInputImageList(SvDef::InvalidObjectId, NumberOfImagesRequired);
 
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
 		if (rImageList.size() && rImageList.size() > 1)
 		{
-			SvUl::InputNameGuidPairList::const_iterator it = rImageList.begin();
+			SvUl::InputNameObjectIdPairList::const_iterator it = rImageList.begin();
 			m_firstInputName = it->first;
 			m_firstImageName = it->second.first;
 			++it;
@@ -253,9 +253,9 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogTwoImagePageClass::RetreiveResultImageNames()
 	{
-		const SvUl::NameGuidList& rImageList = GetResultImages();
+		const SvUl::NameObjectIdList& rImageList = GetResultImages();
 
-		SvUl::NameGuidList::const_iterator it = rImageList.begin();
+		SvUl::NameObjectIdList::const_iterator it = rImageList.begin();
 		if (it != rImageList.end())
 		{
 			m_resultImageName = it->first;

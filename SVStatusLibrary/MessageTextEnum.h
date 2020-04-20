@@ -212,7 +212,6 @@ enum MessageTextEnum
 	Tid_ParseError_NameExpressionExpected,
 	Tid_ParseError_OwnerNotExist,
 	Tid_ParseError_UnexpectedMember,
-	Tid_ParseError_CannotReadGuid,
 	Tid_ParseError_ExpressionExpected,
 	Tid_ParseError_UnknownExpression,
 	Tid_ParseError_UnexpectedEndOfCommand,
@@ -220,7 +219,6 @@ enum MessageTextEnum
 	Tid_ParseError_UnexpectedEndOfParse,
 	Tid_ParseError_UnexpectedEndOfName,
 	Tid_ParseError_EmptyToken,
-	Tid_ParseError_GuidCannotEvaluated,
 	Tid_ParseError_NameOperandExpected,
 	Tid_ParseError_OperatorExpected,
 	Tid_ParseError_OperandExpected,
@@ -401,7 +399,7 @@ enum MessageTextEnum
 	Tid_TableObject_CreateFailed,
 	Tid_TableObject_Nullptr,
 	Tid_TableObject_columnValueMapInvalid,
-	Tid_TableObject_columnValue_NoFreeGUID,
+	Tid_TableObject_columnValue_NoFreeID,
 	Tid_TableObject_createColumnValueObjectFailed,
 	Tid_TableObject_MaxRowWrongValue,
 	Tid_TableCopy_Nullptr,
@@ -570,7 +568,6 @@ enum MessageTextEnum
 
 	Tid_ErrorPpqTriggerCount,
 
-	Tid_ProtBuf_ConvertToGUID_WrongSize,
 	Tid_CircularReference,
 
 	Tid_ErrorMemoryAllocation,

@@ -80,13 +80,13 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 		SVImageInfoClass ImageInfo = m_fileImage.GetImageInfo();
 
 		// Setup...
-		ImageInfo.SetOwner( GetUniqueObjectID() );
+		ImageInfo.SetOwner( getObjectId() );
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
 
-		bOk = ( S_OK == m_fileImage.UpdateImage(GUID_NULL, ImageInfo) );
+		bOk = (S_OK == m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo));
 	}
 
 	// Set / Reset Printable Flags
@@ -125,7 +125,7 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -138,7 +138,7 @@ bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
@@ -172,20 +172,20 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	return Result && ValidateLocal(pErrorMessages);
 }
 
-bool SVLoadImageToolClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVLoadImageToolClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 	//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
 	SvIe::SVImageClass* pImage = static_cast<SvIe::SVImageClass*> (m_pCurrentToolSet->getCurrentImageInterface());
-	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
 	}
 	else
 	{
-		Result = SVToolClass::isInputImage(rImageGuid);
+		Result = SVToolClass::isInputImage(imageId);
 	}
 
 	return Result;
@@ -274,7 +274,7 @@ bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 
 	if (nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 		pErrorMessages->push_back(message);
 	}
 	return false;

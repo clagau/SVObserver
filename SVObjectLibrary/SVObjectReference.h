@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
+#include "Definitions/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVObjectNameInfo.h"
 //! Do not include SVObjectClass.h this causes circular includes with SVOutObjectInfoStruct and SVInObjectInfoStruct
@@ -44,14 +45,14 @@ public:
 	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue = std::string() );
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	SVObjectReference( SVObjectClass* pObject );
-	SVObjectReference( GUID guid );
-	/// This constructor create an object depending of a GUID and if required an index. 
-	/// \param guidAndIndexString [in] A string with a GUID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
-	SVObjectReference(const std::string& guidAndIndexString);
+	SVObjectReference( int32_t objectId );
+	/// This constructor create an object depending of a ID and if required an index. 
+	/// \param objectIdAndIndexString [in] A string with a ID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
+	SVObjectReference(const std::string& objectIdAndIndexString);
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 
-	void setGuid(const SVGUID& rGuid) { m_Guid = rGuid; };
+	void setObjectId(int32_t objectId) { m_objectId = objectId; };
 	void clear();
 
 	SVObjectClass* getObject() const;
@@ -83,7 +84,8 @@ public:
 	//! \returns bool
 	//************************************
 	bool isEntireArray() const;
-	const SVGUID& Guid() const;
+	uint32_t getObjectId() const { return m_objectId; }
+	std::string objectIdToString() const;
 
 	void SetEntireArray();
 	void SetArrayIndex( long lArrayIndex );
@@ -92,9 +94,9 @@ public:
 	std::string GetCompleteName(bool OneBased = false) const;
 	std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType, bool OneBased = false, bool arrayGroupName = false) const;
 	std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeBefore = SvPb::SVInspectionObjectType, bool OneBased = false) const;
-	/// Get a string first with the GUID and if array and index this attached. (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
+	/// Get a string first with the ID and if array and index this attached. (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
 	/// \returns std::string
-	std::string GetGuidAndIndexOneBased() const;
+	std::string GetObjectIdAndIndexOneBased() const;
 
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 
@@ -124,11 +126,11 @@ protected:
 	const std::string& GetIndex() const;
 	
 	void init();
-	SVObjectClass* m_pObject;
-	mutable SvOi::IValueObject* m_pValueObject;
-	SVGUID m_Guid;
+	SVObjectClass* m_pObject = nullptr;
+	mutable SvOi::IValueObject* m_pValueObject = nullptr;
+	uint32_t m_objectId = SvDef::InvalidObjectId;
 	SVObjectNameInfo m_NameInfo;
-	long m_ArrayIndex; // zero based Array index.   -1 and true for isArray indicates reference to whole array
+	long m_ArrayIndex = -1; // zero based Array index.   -1 and true for isArray indicates reference to whole array
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;

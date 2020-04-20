@@ -8,16 +8,17 @@
 //******************************************************************************
 #pragma once
 #include "SVProtobuf/SVO-Enum.h"
+#include "Definitions/ObjectDefines.h"
 namespace SvOi
 {
 /// struct  holds data for one TaskObject which are relevant 
 /// for displaying the object in the navigator
 struct ObjectInfo
 {
-	ObjectInfo(LPCSTR pName, const GUID& rGuid, SvPb::SVObjectTypeEnum type,
+	ObjectInfo(LPCSTR pName, uint32_t objectId, SvPb::SVObjectTypeEnum type,
 		SvPb::SVObjectSubTypeEnum subtype, bool valid):
 		DisplayName(pName),
-		guid(rGuid),
+		m_objectId(objectId),
 		ObjectType(type),
 		ObjectSubType(subtype),
 		isValid(valid)
@@ -30,7 +31,7 @@ struct ObjectInfo
 	}
 	SvPb::SVObjectTypeEnum ObjectType = SvPb::SVNotSetObjectType;
 	SvPb::SVObjectSubTypeEnum ObjectSubType = SvPb::SVNotSetSubObjectType;
-	GUID guid = GUID_NULL;
+	uint32_t m_objectId = SvDef::InvalidObjectId;
 	bool isValid = false;
 	std::string DisplayName;
 };

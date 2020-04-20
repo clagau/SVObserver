@@ -265,7 +265,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 	while( GlobalObjects.end() != Iter && nullptr != *Iter )
 	{
 		SvDef::GlobalConstantData GlobalData;
-		//Important here we intensionally do not fill the m_Guid value
+		//Important here we intensionally do not fill the m_objectId value
 		GlobalData.m_DottedName = (*Iter)->GetCompleteName();
 		(*Iter)->getValue( GlobalData.m_Value );
 		GlobalData.m_Description = (*Iter)->getDescription();
@@ -301,7 +301,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 		{
 			SvDef::GlobalConstantData GlobalData;
 
-			GlobalData.m_Guid = pGlobalConstant->GetUniqueObjectID();
+			GlobalData.m_objectId = pGlobalConstant->getObjectId();
 			GlobalData.m_DottedName = pGlobalConstant->GetCompleteName();
 			pGlobalConstant->getValue( GlobalData.m_Value );
 			//Default is that the current Global Constant is selected
@@ -366,14 +366,14 @@ HRESULT LoadInspectionXml(const std::string& filename, const std::string& zipFil
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
 				// Create Inspection process - leave unattached for now
-				hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionGuid, XmlTree, hItem);
+				hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionId, XmlTree, hItem);
 				if (S_OK == hr)
 				{
 					rProgress.UpdateText(_T("Creating Toolset objects..."));
 					rProgress.UpdateProgress(++currentOp, numOperations);
 
 					SVObjectClass* pObject = nullptr;
-					SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionInfo.m_inspectionGuid, pObject);
+					SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionInfo.m_inspectionId, pObject);
 					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
 					if ( nullptr != pInspection )
 					{
@@ -386,7 +386,7 @@ HRESULT LoadInspectionXml(const std::string& filename, const std::string& zipFil
 						SVConfigurationObject::updateConfTreeToNewestVersion(XmlTree, hItemToolset);
 
 						// Launch parser progress
-						SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(XmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionGuid, pInspection, &l_ParserProgressDialog));
+						SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(XmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionId, pInspection, &l_ParserProgressDialog));
 						if ( nullptr != pParser )
 						{
 							// Set the Parser Object

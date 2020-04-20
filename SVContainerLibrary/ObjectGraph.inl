@@ -224,7 +224,7 @@ namespace SvCl
 	bool ObjectGraph<VertexName, EdgeType>::saveGraphDot( LPCTSTR FileName, IGraphNameLookup& nameLookup )
 	{
 		bool bRetVal = true;
-		VertexNameFunc NameLookupFunc = boost::bind<LPCTSTR, IGraphNameLookup, const VertexName&> ( &IGraphNameLookup::getVertexName, &nameLookup, _1 );
+		VertexNameFunc NameLookupFunc = boost::bind<LPCTSTR, IGraphNameLookup, VertexName> ( &IGraphNameLookup::getVertexName, &nameLookup, _1 );
 		m_DotGraph = OutputGraphviz<VertexName, EdgeType, DependencyGraph, VertexNameFunc> ( FileName, m_Graph, NameLookupFunc );
 		return bRetVal;
 	}

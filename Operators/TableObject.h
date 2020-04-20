@@ -65,7 +65,7 @@ public:
 	/// Clear the table
 	void clearTable();
 
-	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
+	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 
 	/// for rValue  a 2 dim SafeArray of double  is expected, otherwise false is returned
 	bool setTableValues(const _variant_t& rValue);
@@ -98,7 +98,7 @@ protected:
 
 	/// Return the next unused embedded Id for the columns
 	/// \returns SvPb::EmbeddedIdEnum
-	SvPb::EmbeddedIdEnum getNextFreeEmbeddedColumGUID();
+	SvPb::EmbeddedIdEnum getNextFreeEmbeddedColumID();
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

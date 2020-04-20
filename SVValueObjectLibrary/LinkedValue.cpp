@@ -273,7 +273,7 @@ _variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 
 	SVObjectReference LinkedObjectRef(rValue);
 
-	//If string is not GUID then check if it is a dotted name
+	//If string is not object ID then check if it is a dotted name
 	if(nullptr == LinkedObjectRef.getObject())
 	{
 		LinkedObjectRef = ConvertStringInObject(rValue);
@@ -284,7 +284,7 @@ _variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 		if (CheckLinkedObject(LinkedObjectRef.getObject()))
 		{
 			//Change the value directly as the default value may have a different variant type
-			Result = _variant_t(LinkedObjectRef.GetGuidAndIndexOneBased().c_str());
+			Result = _variant_t(LinkedObjectRef.GetObjectIdAndIndexOneBased().c_str());
 		}
 		else
 		{
@@ -292,7 +292,7 @@ _variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			Exception.Throw();
 		}
 	}
@@ -308,7 +308,7 @@ _variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 				SvDef::StringVector msgList;
 				msgList.push_back(GetName());
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				Exception.Throw();
 			}
 			Result = vtTemp;
@@ -326,26 +326,26 @@ _variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
-	bool ConvertDottedName(false);
+	bool convertOldName(false);
 	_variant_t Value;
 
-	//! Here we need the non linked value (SVGUID as string or constant value)
+	//! Here we need the non linked value (objectId as string or constant value)
 	__super::GetValue(Value);
 
 
-	std::string guidAndIndexString;
+	std::string objectIdAndIndexString;
 	try
 	{
-		guidAndIndexString = SvUl::createStdString(Value);
+		objectIdAndIndexString = SvUl::createStdString(Value);
 	}
 	catch (...)
 	{
-		guidAndIndexString.clear();
+		objectIdAndIndexString.clear();
 	}
 
-	SVObjectReference LinkedObjectRef(guidAndIndexString);
+	SVObjectReference LinkedObjectRef(objectIdAndIndexString);
 
-	//If valid GUID then should be able to get the linked value from the object manager
+	//If valid objectId then should be able to get the linked value from the object manager
 	if (nullptr != LinkedObjectRef.getObject())
 	{
 		Result = CheckLinkedObject(LinkedObjectRef.getObject(), pErrorMessages);
@@ -353,13 +353,21 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		{
 			LinkedObjectRef = SVObjectReference();
 		}
+		else
+		{
+			//check if objectIdString is from old style (GUID) with more than 30, instead of new style ({#123456}) with less than 15 
+			if (15 < objectIdAndIndexString.size())
+			{
+				convertOldName = true;
+			}
+		}
 	}
 	else
 	{
-		//Check if current value is a GUID, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
-		std::string::size_type Pos = guidAndIndexString.find_first_of(_T("["));
-		std::string guidString = guidAndIndexString.substr(0, Pos);
-		if (GUID_NULL != SVGUID(_bstr_t(guidString.c_str())))
+		//Check if current value is a objectId, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
+		std::string::size_type Pos = objectIdAndIndexString.find_first_of(_T("["));
+		std::string idString = objectIdAndIndexString.substr(0, Pos);
+		if (SvDef::InvalidObjectId != calcObjectId(idString))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -373,15 +381,15 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 				msgList.push_back(linkedValueName);
 				msgList.push_back(objectName);
 
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
 		else
 		{
-			//this part is only for backward compatibility, because in older version the name was saved and not the GUID.
+			//this part is only for backward compatibility, because in older version the name was saved and not the ID.
 			std::string ToolSetName;
-			std::string ObjectName = guidAndIndexString;
+			std::string ObjectName = objectIdAndIndexString;
 
 			ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 
@@ -395,13 +403,13 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 				{
 					ObjectName = pInspection->GetName();
 					ObjectName += _T(".");
-					ObjectName += guidAndIndexString;
+					ObjectName += objectIdAndIndexString;
 		
 				}
 			}
 			if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject())
 			{
-				ConvertDottedName = true;
+				convertOldName = true;
 			}
 		}
 	}
@@ -414,8 +422,8 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			DisconnectInput();
 			m_LinkedObjectRef = LinkedObjectRef;
 
-			//Convert old dotted name format to Unique GUID
-			if (ConvertDottedName)
+			//Convert old dotted name format to Unique ID
+			if (convertOldName)
 			{
 				SVVariantValueObjectClass::setValue(m_LinkedObjectRef.GetCompleteName(true));
 			}
@@ -426,7 +434,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -448,7 +456,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -496,7 +504,7 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -541,13 +549,13 @@ bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, Sv
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
 	else
 	{
-		//! This is important when copying tools that the value of another inspection is not used due to the GUID being valid
+		//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
 		//! That is why check that the linked value of an object is in the same inspection
 		const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
 		bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
@@ -557,7 +565,7 @@ bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, Sv
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}

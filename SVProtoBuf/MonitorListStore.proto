@@ -29,7 +29,7 @@ message MesMonitorEntryData
 ///for Serialization class MonitorEntry
 message MesMonitorEntry
 {
-	bytes GUID = 1;
+	uint32 objectID = 1;
 	string name = 2;
 	MesMonitorEntryData EntryData = 3;
 }

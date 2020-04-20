@@ -98,7 +98,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 	return hr;
 }
 
-void SVArchiveRecordsArray::ConvertStringToGuids(SVArchiveTool * pToolArchive, LPCTSTR Value)
+void SVArchiveRecordsArray::setRecordsFromString(SVArchiveTool * pToolArchive, LPCTSTR Value)
 {
 	ClearArray();
 
@@ -107,15 +107,15 @@ void SVArchiveRecordsArray::ConvertStringToGuids(SVArchiveTool * pToolArchive, L
 	bool bDone = false;
 	while (!bDone)
 	{
-		std::string GuidText;
+		std::string idText;
 		size_t Pos = Text.find(_T('\n'));
 		if (std::string::npos != Pos)
 		{
-			GuidText = SvUl::Left(Text, Pos);
+			idText = SvUl::Left(Text, Pos);
 		}
 		else
 		{
-			GuidText = Text;
+			idText = Text;
 			bDone = true;             // we are done 
 		}
 		//
@@ -124,17 +124,17 @@ void SVArchiveRecordsArray::ConvertStringToGuids(SVArchiveTool * pToolArchive, L
 		Text = SvUl::Right(Text, Text.size() - Pos - 1);
 
 		//
-		// Convert string guid to guid structure
+		// Convert string id to id structure
 		//
-		SVGUID objectGuid(_bstr_t(GuidText.c_str()));
+		uint32_t objectId(calcObjectId(idText));
 
 		//
 		// The image record has a dotted name that needs to be 
 		// associated with a pointer to an image later.
 		//
-		if (GUID_NULL != objectGuid && !GuidText.empty())
+		if (SvDef::InvalidObjectId != objectId)
 		{
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectGuid);
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectId);
 			m_vecRecords.emplace_back();
 			m_vecRecords.at(m_vecRecords.size() - 1).InitArchiveRecord(pToolArchive, SVObjectReference(pObject));
 
@@ -147,7 +147,7 @@ SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject(const SVObje
 	SvDef::StringVector Result;
 	auto func = [&Result, &p_rInfoObject](const auto& entry)
 	{
-		if (p_rInfoObject.getUniqueObjectID() == entry.m_svObjectReference.Guid())
+		if (p_rInfoObject.getObjectId() == entry.m_svObjectReference.getObjectId())
 		{
 			Result.emplace_back(entry.m_svObjectReference.GetCompleteName());
 			return true;
@@ -227,8 +227,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	auto func = [](auto& entry)
 	{
 		entry.DisconnectInputObject();
-		GUID guid = entry.m_svObjectReference.Guid();
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(entry.m_svObjectReference.getObjectId());
 
 		bool bRecordOK = false;
 		if (nullptr != pObject)

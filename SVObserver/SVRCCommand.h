@@ -15,7 +15,6 @@
 #pragma endregion Includes
 
 struct SVStorageResult;
-class SVGUID;
 
 class SVRCCommand 
 {
@@ -64,8 +63,8 @@ private:
 	HRESULT AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const;
 	HRESULT AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const;
 	void ConvertTreeNames(SvPb::TreeItem* pTreeItem) const;
-	void addObjectChildren(const SVGUID& rInspectionID, const SVGUID& rParentID, std::back_insert_iterator<std::vector<SVGUID>> inserter) const;
-	void addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObjectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const;
+	void addObjectChildren(uint32_t inspectionID, uint32_t parentID, std::back_insert_iterator<std::vector<uint32_t>> inserter) const;
+	void addConfigItem(uint32_t inspectionID, uint32_t objectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const;
 	void clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::StandardResponse* pResponse) const;
 };
 

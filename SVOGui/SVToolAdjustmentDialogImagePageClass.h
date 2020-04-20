@@ -16,8 +16,6 @@
 #include "PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "ImageController.h"
-#include "SVUtilityLibrary\SVGUID.h"
-
 #pragma endregion Includes
 
 namespace SvOg
@@ -25,7 +23,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogImagePageClass : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD );
+		SVToolAdjustmentDialogImagePageClass(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD );
 		virtual ~SVToolAdjustmentDialogImagePageClass();
 		HRESULT SetInspectionData();
 
@@ -46,13 +44,11 @@ namespace SvOg
 
 		//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
 		enum { IDD = IDD_TA_IMAGE_DIALOG };
-		SvMc::AvailableObjectListComboBox<SVGUID> m_availableSourceImageListBox;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_availableSourceImageListBox;
 		PictureDisplay m_dialogImage;
 		//}}AFX_DATA
 	
 	private:
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
 		std::string m_inputName;
 		
 		ImageController m_ImageController;

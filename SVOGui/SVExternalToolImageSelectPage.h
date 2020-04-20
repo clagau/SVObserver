@@ -28,7 +28,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		SVExternalToolImageSelectPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id = IDD );
+		SVExternalToolImageSelectPage( uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id = IDD );
 		virtual ~SVExternalToolImageSelectPage() {}
 	#pragma endregion Constructor
 
@@ -78,8 +78,8 @@ namespace SvOg
 		std::vector<SvOp::InputImageInformationStruct> m_Infostructs;
 
 		SVRPropTree	m_Tree;
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		size_t m_numImages;
 		ImageInputList m_imageInputList;
 	#pragma endregion Member variables

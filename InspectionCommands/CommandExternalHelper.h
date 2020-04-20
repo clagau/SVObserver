@@ -9,10 +9,11 @@
 
 #pragma region Includes
 #include "SVProtoBuf/InspectionCommands.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
+
 #pragma region Declarations
-class SVGUID;
 
 namespace SvOi
 {
@@ -24,8 +25,8 @@ typedef std::vector<ObjectInfo> ObjectInfoVector;
 
 namespace SvUl
 {
-typedef std::pair<std::string, SVGUID> NameGuidPair;
-typedef std::vector<NameGuidPair> NameGuidList;
+typedef std::pair<std::string, uint32_t> NameObjectIdPair;
+typedef std::vector<NameObjectIdPair> NameObjectIdList;
 }
 
 namespace SvDef
@@ -37,24 +38,22 @@ struct SVObjectTypeInfoStruct;
 namespace SvCmd
 {
 /// Call an inspection command synchronous if required. (Send it to the inspection thread.)
-/// \param rInspectionID [in] Guid for the inspection to find the inspection thread.
+/// \param inspectionID [in] id for the inspection to find the inspection thread.
 /// \param rRequest [in] The request message.
 /// \param pResponse [in, out] The response message (must fit to the request message). If request message has no response message, it should be nullptr.
 /// \returns HRESULT ErrorCode.
-HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse);
+HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse);
 
-HRESULT RunOnceSynchronous(const SVGUID& rInspectionID);
+HRESULT RunOnceSynchronous(uint32_t inspectionID);
 
 ///convert protobuf message to a vector of objectinfos
 bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos);
 
-SvUl::NameGuidPair convertNameGuidPair(const SvPb::ObjectNameGuidPair& rPbPair);
-
-SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameGuidPair >& rPbList);
+SvUl::NameObjectIdList convertNameObjectIdList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameIdPair >& rPbList);
 
 void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo);
 
-SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, const GUID& rInspectionID, SvPb::ObjectAttributes attribute, const GUID& rInstanceID = GUID_NULL, bool wholeArray = false, SvPb::SelectorFilter filter = SvPb::SelectorFilter::attributesAllowed);
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID = SvDef::InvalidObjectId, bool wholeArray = false, SvPb::SelectorFilter filter = SvPb::SelectorFilter::attributesAllowed);
 
 template<class T>
 T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)

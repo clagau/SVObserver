@@ -15,6 +15,8 @@
 
 namespace SvDef
 {
+	constexpr uint32_t InvalidObjectId = 0;
+
 	enum SVMessageFlags
 	{
 		SVMFUnknown = 0x00000000,

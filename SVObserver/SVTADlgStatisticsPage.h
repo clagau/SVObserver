@@ -19,14 +19,13 @@ namespace SvTo
 class SVStatisticsToolClass;
 }
 
-class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 class SVToolSetClass;
 
 class SVToolAdjustmentDialogStatisticsPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
+	SVToolAdjustmentDialogStatisticsPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent);
 	virtual ~SVToolAdjustmentDialogStatisticsPageClass();
 
 	void UpdateStatisticsParameters();

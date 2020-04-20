@@ -174,7 +174,7 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -184,7 +184,7 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTransformDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTransformDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -206,12 +206,12 @@ SvIe::SVImageClass* SVImageTransformClass::getOutputImage()
 #pragma endregion
 
 #pragma region Protected Methods
-bool SVImageTransformClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVImageTransformClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);
-	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
 	}
@@ -242,7 +242,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -252,7 +252,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -263,7 +263,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -290,7 +290,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 		if (!bRetVal && nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -303,7 +303,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -335,7 +335,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			bRetVal = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -364,7 +364,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 				bRetVal = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunRotateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunRotateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}

@@ -904,7 +904,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 			if(nullptr != pInspection)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			else
@@ -942,12 +942,10 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsRequest& rRequest, SvRpc::Task<SvPb::GetObjectSelectorItemsResponse> task)
 {
-	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
-
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
-	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
 
 	SvPb::GetObjectSelectorItemsResponse selectorResponse {responseCmd.getobjectselectoritemsresponse()};
 	ConvertTreeNames(selectorResponse.mutable_tree());
@@ -956,8 +954,7 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 
 void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rRequest, SvRpc::Task<SvPb::InspectionCmdResponse> task)
 {
-	GUID inspectionID = SvPb::GetGuidFromProtoBytes(rRequest.inspectionid());
-
+	uint32_t inspectionID = rRequest.inspectionid();
 	SvPb::InspectionCmdResponse response;
 	SvCmd::InspectionCommands(inspectionID, rRequest, &response);
 
@@ -980,13 +977,12 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 					pDoc->SetModifiedFlag();
 					if (true == isCreate)
 					{
-						GUID taskObjectBeforeID = SvPb::GetGuidFromProtoBytes(rRequest.createobjectrequest().taskobjectinsertbeforeid());
-						SvOi::IObjectClass* pObject = SvOi::getObject(taskObjectBeforeID);
+						SvOi::IObjectClass* pObject = SvOi::getObject(rRequest.createobjectrequest().taskobjectinsertbeforeid());
 						if(nullptr != pObject)
 						{
 							pDoc->GetToolGroupings().AddTool(response.createobjectresponse().name(), pObject->GetName());
 						}
-						pDoc->SetSelectedToolID(SvPb::GetGuidFromProtoBytes(response.createobjectresponse().objectid()));
+						pDoc->SetSelectedToolID(response.createobjectresponse().objectid());
 					}
 				}
 				break;
@@ -1015,13 +1011,13 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest& 
 		{
 			if(nullptr != pInspection)
 			{
-				SVGUID inspectionID{pInspection->GetUniqueObjectID()};
-				std::vector<SVGUID> objectVector;
+				uint32_t inspectionID{pInspection->getObjectId()};
+				std::vector<uint32_t> objectVector;
 				objectVector.emplace_back(inspectionID);
 				SVToolSetClass* pToolSet = pInspection->GetToolSet();
 				if(nullptr != pToolSet)
 				{
-					SVGUID toolsetID{pToolSet->GetUniqueObjectID()};
+					uint32_t toolsetID{pToolSet->getObjectId()};
 					addObjectChildren(inspectionID, toolsetID, std::back_inserter(objectVector));
 
 					for(const auto& rObjectID : objectVector)
@@ -1218,7 +1214,7 @@ void SVRCCommand::ConvertTreeNames(SvPb::TreeItem* pTreeItem) const
 	}
 }
 
-void SVRCCommand::addObjectChildren(const SVGUID& rInspectionID, const SVGUID& rParentID, std::back_insert_iterator<std::vector<SVGUID>> inserter) const
+void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, std::back_insert_iterator<std::vector<uint32_t>> inserter) const
 {
 	constexpr std::array<std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>, 21> compatibleTypes = 
 	{{
@@ -1248,9 +1244,9 @@ void SVRCCommand::addObjectChildren(const SVGUID& rInspectionID, const SVGUID& r
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto*  pRequest = requestCmd.mutable_taskobjectlistrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectid(), rParentID);
+	pRequest->set_taskobjectid(parentID);
 
-	SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 	if (true == responseCmd.has_taskobjectlistresponse())
 	{
 		for (int i = 0; i < responseCmd.taskobjectlistresponse().taskobjectinfos_size(); ++i)
@@ -1259,20 +1255,18 @@ void SVRCCommand::addObjectChildren(const SVGUID& rInspectionID, const SVGUID& r
 			auto iter = std::find(compatibleTypes.begin(), compatibleTypes.end(), std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>{rTaskObj.objecttype(), rTaskObj.objectsubtype()});
 			if(compatibleTypes.end() != iter)
 			{
-				SVGUID objectID;
-				SvPb::GetGuidFromProtoBytes(rTaskObj.taskobjectid(), objectID);
-				inserter = objectID;
-				addObjectChildren(rInspectionID, objectID, inserter);
+				inserter = rTaskObj.taskobjectid();
+				addObjectChildren(inspectionID, rTaskObj.taskobjectid(), inserter);
 			}
 		}
 	}
 }
 
-void SVRCCommand::addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObjectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const
+void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const
 {
 	SvPb::ConfigTreeItem item;
 	
-	SvOi::IObjectClass* pObject = SvOi::getObject(rObjectID);
+	SvOi::IObjectClass* pObject = SvOi::getObject(objectID);
 
 	if(nullptr != pObject)
 	{
@@ -1290,9 +1284,9 @@ void SVRCCommand::addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObje
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			SvPb::GetObjectParametersRequest* pIsValidRequest = requestCmd.mutable_getobjectparametersrequest();
-			SvPb::SetGuidInProtoBytes(pIsValidRequest->mutable_objectid(), rObjectID);
+			pIsValidRequest->set_objectid(objectID);
 
-			HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+			HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 			{
 				isValid = responseCmd.getobjectparametersresponse().isvalid();
@@ -1303,7 +1297,7 @@ void SVRCCommand::addConfigItem(const SVGUID& rInspectionID, const SVGUID& rObje
 		///Tool Set should be removed from the location name
 		SvUl::searchAndReplace(text, _T("Tool Set."), _T(""));
 		item.set_location(SvUl::to_utf8(text));
-		SvPb::SetGuidInProtoBytes(item.mutable_objectid(), rObjectID);
+		item.set_objectid(objectID);
 		item.set_isvalid(isValid);
 		item.set_position(toolPos);
 		item.set_objecttype(pObject->GetObjectType());
@@ -1335,10 +1329,8 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		case SvPb::ClipboardActionEnum::Copy:
 		{
 			ToolClipboard clipboard;
-			SVGUID objectID{SvPb::GetGuidFromProtoBytes(rRequest.objectid())};
-
 			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			HRESULT result = clipboard.writeToClipboard(objectID);
+			HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
 			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			pResponse->set_hresult(result);
 			if(S_OK != result)
@@ -1353,12 +1345,12 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 			if(ToolClipboard::isClipboardDataValid())
 			{
 				ToolClipboard clipboard;
-				SVGUID postID {SvPb::GetGuidFromProtoBytes(rRequest.objectid())};
+				uint32_t postID{ rRequest.objectid() };
 				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
 				if(nullptr != pObject)
 				{
-					SVGUID ownerID = pObject->GetParentID();
-					SVGUID toolID;
+					uint32_t ownerID = pObject->GetParentID();
+					uint32_t toolID;
 					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 					HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
 					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
@@ -1366,7 +1358,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					if (S_OK == result)
 					{
 						SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID()) : nullptr;
+						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
 						if (nullptr != pDoc)
 						{
 							pDoc->updateToolsetView(toolID, postID, ownerID);

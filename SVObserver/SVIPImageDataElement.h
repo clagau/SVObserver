@@ -13,7 +13,6 @@
 //Moved to precompiled header: #include <map>
 
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 struct SVIPImageDataElement
@@ -24,5 +23,5 @@ struct SVIPImageDataElement
 	SVIPImageDataElement() : m_ImageDIB(), m_OverlayData() {}
 };
 
-typedef std::map< SVGUID, SVIPImageDataElement > SVIPImageDataElementMap;
+typedef std::map< uint32_t, SVIPImageDataElement > SVIPImageDataElementMap;
 

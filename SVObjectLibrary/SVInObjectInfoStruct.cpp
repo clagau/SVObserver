@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVInObjectInfoStruct.h"
 #include "SVObjectClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -73,12 +72,12 @@ void SVInObjectInfoStruct::SetInputObjectType( const SvDef::SVObjectTypeInfoStru
 	m_InputObjectInfo.SetObject( rTypeInfo );
 }
 
-void SVInObjectInfoStruct::SetInputObject( const SVGUID& rObjectID )
+void SVInObjectInfoStruct::SetInputObject(uint32_t objectID )
 {
-	if( rObjectID != m_InputObjectInfo.getUniqueObjectID() )
+	if( objectID != m_InputObjectInfo.getObjectId() )
 	{
 		m_IsConnected = false;
-		m_InputObjectInfo.SetObject( rObjectID );
+		m_InputObjectInfo.SetObject( objectID );
 	}
 }
 
@@ -121,7 +120,7 @@ void ValidateInput(SVInObjectInfoStruct& rInputObject)
 		SVObjectClass* pInputInspection = pInputObject->GetAncestor(SvPb::SVInspectionObjectType);
 		if (nullptr != pOwnerInspection && nullptr != pInputInspection)
 		{
-			if (pOwnerInspection->GetUniqueObjectID() != pInputInspection->GetUniqueObjectID())
+			if (pOwnerInspection->getObjectId() != pInputInspection->getObjectId())
 			{
 				rInputObject.SetInputObject(nullptr);
 			}
@@ -129,7 +128,7 @@ void ValidateInput(SVInObjectInfoStruct& rInputObject)
 	}
 }
 
-void ValidateInputList(SVInObjectInfoStructPtrVector& rInputObjectList)
+void ValidateInputList(const SVInObjectInfoStructPtrVector& rInputObjectList)
 {
 	for(auto pEntry : rInputObjectList)
 	{

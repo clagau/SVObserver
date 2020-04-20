@@ -24,7 +24,7 @@ namespace SvOg
 	{
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	public:
-		SVOCVSheet(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
+		SVOCVSheet(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVOCVSheet();
 
 		Controller& GetValues() { return m_Values; }
@@ -40,8 +40,8 @@ namespace SvOg
 		SVOCVGeneralDlg	m_GeneralParamsDlg;
 		SVOCVMatchDlg	m_MatchStringParamsDlg;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		Controller m_Values;
 	};
 } //namespace SvOg

@@ -23,7 +23,7 @@ public:
 	HRESULT Parse();
 	void Complete();
 
-	const GUID& GetOwnerGuid() const;
+	uint32_t GetOwnerId() const;
 	SVObjectClass* GetOwnerObject();
 
 	unsigned long GetTotal() const;

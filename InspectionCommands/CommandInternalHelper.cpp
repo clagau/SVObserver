@@ -10,11 +10,9 @@
 #include "CommandInternalHelper.h"
 #include "ObjectSelectorFilter.h"
 #include "Definitions\ObjectDefines.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "ObjectInterfaces\ITool.h"
 #include "ObjectInterfaces\IObjectClass.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
@@ -50,8 +48,8 @@ private:
 class IsObjectFromPriorTool
 {
 public:
-	explicit IsObjectFromPriorTool(const SVGUID& rTaskObjectID)
-		: m_TaskObjectID(rTaskObjectID)
+	explicit IsObjectFromPriorTool(uint32_t taskObjectID)
+		: m_TaskObjectID(taskObjectID)
 	{
 		const SvOi::ITool* pTool = dynamic_cast<const SvOi::ITool*> (SvOi::getObject(m_TaskObjectID));
 		if (nullptr != pTool)
@@ -84,7 +82,7 @@ private:
 	}
 
 private:
-	SVGUID m_TaskObjectID;
+	uint32_t m_TaskObjectID;
 	int m_ToolPos {-1};
 };
 }
@@ -95,8 +93,7 @@ IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
 	{
 		case SvPb::GetAvailableObjectsRequest::kIsBeforeToolMethod:
 		{
-			SVGUID toolId = SvPb::GetGuidFromProtoBytes(rMessage.isbeforetoolmethod().toolid());
-			return AllowedFunctionHelper::IsObjectFromPriorTool(toolId);
+			return AllowedFunctionHelper::IsObjectFromPriorTool(rMessage.isbeforetoolmethod().toolid());
 		}
 		case SvPb::GetAvailableObjectsRequest::kDefaultPlusHidden:
 			return AllowedFunctionHelper::IsValidObject(true);

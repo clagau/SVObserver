@@ -45,7 +45,7 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 private:
 	// Who are my users...
 	//	If you have to send messages to the user objects ( especially in SETUP MODE ),
-	//  you should use their object GUID! In RUN MODE you should normally not send 
+	//  you should use their object ID In RUN MODE you should normally not send 
 	//  messages, but you can use the validated object pointer!
 	SvOl::SVInObjectInfoStructVector m_UserInfoList;
 

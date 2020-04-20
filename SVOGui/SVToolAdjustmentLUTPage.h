@@ -30,7 +30,7 @@ namespace SvOg
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	#pragma region Constructor
 	public:
-		SVToolAdjustmentLUTPage(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rLutEquationID);
+		SVToolAdjustmentLUTPage(uint32_t inspectionID, uint32_t taskObjectID, uint32_t lutEquationID);
 		virtual ~SVToolAdjustmentLUTPage();
 	#pragma endregion Constructor
 
@@ -156,8 +156,8 @@ namespace SvOg
 		BOOL m_isFormulaClip;
 		//}}AFX_DATA
 
-		const GUID& m_rInspectionID;
-		const GUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		Controller m_Values;
 		Controller m_LutEquation;
 	#pragma endregion Member variables

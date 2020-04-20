@@ -48,7 +48,7 @@ enum
 };
 #pragma endregion Properry Tree Items Enum
 
-SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
+SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
 	: CPropertyPage(id)
 	, m_pTool(nullptr)
 	, m_ParentDialog(Parent)
@@ -61,9 +61,9 @@ SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(const SVGUID& rInspec
 	, m_SourceTabHandle(0)
 	, m_ROITabHandle(0)
 	, m_OutputTabHandle(0)
-	, m_ImageController(rInspectionID, rTaskObjectID)
-	, m_inspectionID(rInspectionID)
-	, m_toolID(rTaskObjectID)
+	, m_ImageController(inspectionID, taskObjectID)
+	, m_inspectionID(inspectionID)
+	, m_toolID(taskObjectID)
 {
 }
 
@@ -144,12 +144,12 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	}
 	else
 	{
-		const SvUl::NameGuidList& rImageList = m_ImageController.GetResultImages();
+		const SvUl::NameObjectIdList& rImageList = m_ImageController.GetResultImages();
 		std::string toolName = m_pTool->GetName();
 		std::string tmpString = toolName + _T(".") + SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE);
-		m_ROIImageID = SvUl::FindGUID(rImageList, tmpString);
+		m_ROIImageID = SvUl::FindObjectId(rImageList, tmpString);
 		tmpString = toolName + _T(".") + SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1);
-		m_OutputImageID = SvUl::FindGUID(rImageList, tmpString);
+		m_OutputImageID = SvUl::FindObjectId(rImageList, tmpString);
 	}
 
 	UpdateData(FALSE); // dialog being initialized.
@@ -642,7 +642,7 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
+	pRequest->set_objectid(m_toolID);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
@@ -696,7 +696,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolID);
+	pRequest->set_objectid(m_toolID);
 
 	HRESULT hr1 = SvCmd::InspectionCommands(m_inspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr1 && responseCmd.has_getextentparameterresponse())
@@ -918,7 +918,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	{
 		requestCmd.Clear();
 		auto* pSetExtentRequest = requestCmd.mutable_setextentparameterrequest();
-		SvPb::SetGuidInProtoBytes(pSetExtentRequest->mutable_objectid(), m_toolID);
+		pSetExtentRequest->set_objectid(m_toolID);
 		pSetExtentRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(extents);
 		SvCmd::InspectionCommands(m_inspectionID, requestCmd, nullptr);
 	}
@@ -1014,10 +1014,10 @@ HRESULT SVTADlgTranslationResizePage::SetupResizeImageControl()
 
 void SVTADlgTranslationResizePage::UpdateImages()
 {
-	if (GUID_NULL != m_ROIImageID && GUID_NULL != m_OutputImageID)
+	if (SvDef::InvalidObjectId != m_ROIImageID && SvDef::InvalidObjectId != m_OutputImageID)
 	{
-		IPictureDisp* pROIImage = m_ImageController.GetImage(m_ROIImageID.ToGUID());
-		IPictureDisp* pOutputImage = m_ImageController.GetImage(m_OutputImageID.ToGUID());
+		IPictureDisp* pROIImage = m_ImageController.GetImage(m_ROIImageID);
+		IPictureDisp* pOutputImage = m_ImageController.GetImage(m_OutputImageID);
 		m_DialogImage.setImage(pROIImage, m_ROITabHandle);
 		m_DialogImage.setImage(pOutputImage, m_OutputTabHandle);
 	}

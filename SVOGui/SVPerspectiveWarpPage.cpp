@@ -32,11 +32,11 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVPerspectiveWarpPage::SVPerspectiveWarpPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int ID ) 
+	SVPerspectiveWarpPage::SVPerspectiveWarpPage( uint32_t inspectionId, uint32_t taskObjectId, int ID ) 
 	: CPropertyPage( ID )
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -118,7 +118,7 @@ namespace SvOg
 		long lType = m_Values.Get<long>(SvPb::WarpTypeEId);
 		if( lType != m_lLastWarpType )
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SvOi::getObject(m_rTaskObjectID));
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SvOi::getObject(m_TaskObjectID));
 			if (nullptr != pTool)
 			{
 				SVImageExtentClass imageExtents = pTool->GetImageExtent();

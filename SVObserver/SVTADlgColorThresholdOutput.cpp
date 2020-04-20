@@ -79,7 +79,7 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 	{
 		SvIe::SVImageClass& rImage = m_pThreshold->GetOutputImage();
 
-		m_svDlgImage.UpdateImageInfo( rImage.GetInspection()->GetUniqueObjectID(), rImage.GetUniqueObjectID() );
+		m_svDlgImage.UpdateImageInfo( rImage.GetInspection()->getObjectId(), rImage.getObjectId() );
 		m_svDlgImage.refresh();
 		m_pEnabled = m_pThreshold->GetOutputThresholdEnabled();
 		m_pEnabled->GetValue(m_Enabled);
@@ -98,7 +98,7 @@ void SVTADlgColorThresholdOutput::OnEnabledThreshold()
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->GetUniqueObjectID(), m_pThreshold->GetUniqueObjectID() } };
+		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->getObjectId(), m_pThreshold->getObjectId() } };
 		Values.Init();
 		Values.Set<bool>(m_pEnabled->GetEmbeddedID(), m_Enabled ? true : false);
 		Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);

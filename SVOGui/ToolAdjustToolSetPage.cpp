@@ -32,11 +32,11 @@ BEGIN_MESSAGE_MAP(ToolAdjustToolSetPage, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-ToolAdjustToolSetPage::ToolAdjustToolSetPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+ToolAdjustToolSetPage::ToolAdjustToolSetPage(uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(ToolAdjustToolSetPage::IDD)
-	, m_Values {SvOg::BoundValues {rInspectionID, rTaskObjectID}}
-	, m_InspectionID {rInspectionID}
-	, m_TaskObjectID {rTaskObjectID}
+	, m_Values {SvOg::BoundValues {inspectionId, taskObjectId}}
+	, m_InspectionID {inspectionId}
+	, m_TaskObjectID {taskObjectId}
 {
 }
 
@@ -68,7 +68,7 @@ BOOL ToolAdjustToolSetPage::OnInitDialog()
 
 	m_Values.Init();
 
-	//We need to get the linked Guid to get the dotted name
+	//We need to get the linked object Id to get the dotted name
 	m_InspectedObjectID = m_Values.Get<CString>(SvPb::InspectedObjectIDLinkEId);
 
 	UpdateData(false);

@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <memory>
 
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVClsids.h"
 #include "SVObjectReference.h"
 #include "SVObserverNotificationFunctor.h"
 #include "SVObjectClass.h"
@@ -40,7 +40,7 @@ public:
 		ReadWrite = 2,
 	};
 
-	typedef std::map<std::string, SVGUID> RootNameChildMap;
+	typedef std::map<std::string, uint32_t> RootNameChildMap;
 
 	typedef std::deque<std::string> SVSubjectDataNameDeque;
 
@@ -55,7 +55,7 @@ public:
 	SVObjectManagerStateEnum GetState() const;
 	HRESULT SetState( SVObjectManagerStateEnum State );
 
-	const SVGUID GetChildRootObjectID( const std::string& rRootChild ) const;
+	uint32_t GetChildRootObjectID( const std::string& rRootChild ) const;
 
 	template< typename SVObjectTypeName >
 	HRESULT GetRootChildObject( SVObjectTypeName*& rpObject, const std::string& rRootChild );
@@ -66,81 +66,93 @@ public:
 
 	HRESULT ConstructRootObject(SvPb::ClassIdEnum classID);
 	HRESULT DestroyRootObject();
-	void setRootChildID(const std::string& rRootChild, const SVGUID& rUniqueID);
+	void setRootChildID(const std::string& rRootChild, uint32_t objectID);
 
 	//! Translates the dotted name if the name start needs to be replaced
 	//! \param rName [in][out] dotted name to translate is done in place
 	void TranslateDottedName(std::string& rName) const;
 
-	HRESULT ConstructObject(SvPb::ClassIdEnum classID, GUID& rObjectID);
+	HRESULT ConstructObject(SvPb::ClassIdEnum classID, uint32_t& rObjectID);
 	HRESULT ConstructObject(SvPb::ClassIdEnum classID, SVObjectClass*& rpObject);
 
 	template< typename SVObjectTypeName >
 	HRESULT ConstructObject(SvPb::ClassIdEnum classID, SVObjectTypeName*& rpObject);
 
-	HRESULT GetObjectByIdentifier( const SVGUID& rObjectID, SVObjectClass*& rpObject ) const;
+	HRESULT GetObjectByIdentifier(uint32_t objectID, SVObjectClass*& rpObject ) const;
 
-	HRESULT GetObjectByDottedName( const std::string& rFullName, GUID& rObjectID ) const;
+	HRESULT GetObjectByDottedName( const std::string& rFullName, uint32_t& rObjectID ) const;
 	HRESULT GetObjectByDottedName( const std::string& rFullName, SVObjectClass*& rpObject ) const;
 	HRESULT GetObjectByDottedName( const std::string& rFullName, SVObjectReference& rObjectRef ) const;
 
 	template< typename SVObjectTypeName >
 	HRESULT GetObjectByDottedName( const std::string& rFullName, SVObjectTypeName*& rpObject );
 
-	bool CreateUniqueObjectID( SVObjectClass* pObject );
+	bool CreateObjectID( SVObjectClass* pObject );
+	uint32_t getNextObjectId();
+
+	/// Return the current next objectId without increase the number.
+	/// \returns uint32_t
+	uint32_t getCurrentNextObjectId() { return m_nextObjectId; };
+	void fitFirstObjectId() { m_firstObjectId = m_nextObjectId + 1; }
+	void fitNextObjectId(uint32_t usedObjectId);
+	/// If the removedObjectId the highest used objectId, reduce NextObjectId.
+	/// \param removedObjectId [in]
+	void reduceNextObjectId(uint32_t removedObjectId);
+	void setDeletedFlag(bool flag) { m_addToDeletedList = flag; };
+	void resetNextObjectId();
 	bool OpenUniqueObjectID( SVObjectClass* pObject );
 	bool CloseUniqueObjectID( SVObjectClass* pObject );
-	bool ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid );
+	bool ChangeUniqueObjectID( SVObjectClass* pObject, uint32_t newObjectId );
 
-	SVObjectClass* GetObject( const SVGUID& rGuid ) const;
+	SVObjectClass* GetObject(uint32_t objectId) const;
 	SVObjectClass* GetObjectCompleteName( LPCTSTR Name );
 	SVObjectReference GetObjectReference( LPCTSTR Name );
 
-	SVGUID GetObjectIdFromCompleteName( LPCTSTR Name );
+	uint32_t GetObjectIdFromCompleteName( LPCTSTR Name );
 
 	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SvPb::SVObjectTypeEnum ObjectType, SvPb::SVObjectSubTypeEnum ObjectSubType= SvPb::SVNotSetSubObjectType) const;
 
-	std::string GetCompleteObjectName( const SVGUID& rGuid );
+	std::string GetCompleteObjectName(uint32_t objectId);
 
 	template< typename ObjectVisitor >
-	HRESULT VisitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID=GUID_NULL );
+	HRESULT VisitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID=InvalidObjectId );
 
 	HRESULT InsertObserver( SVObserverNotificationFunctorPtr pFunctor, long& rCookie );
 	HRESULT EraseObserver( long p_Cookie );
 
 	HRESULT GetObserverDataNames( long Cookie, SVSubjectDataNameDeque& rSubjectDataNames ) const;
-	HRESULT GetObserverDataNames( const SVGUID& rObserverID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
+	HRESULT GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 
-	HRESULT GetObserverSubject( const std::string& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID ) const;
-	HRESULT GetObserverSubject( const std::string& rSubjectDataName, long Cookie, GUID& rSubjectID ) const;
+	uint32_t getObserverSubject( const std::string& rSubjectDataName, uint32_t observerID ) const;
+	uint32_t getObserverSubject( const std::string& rSubjectDataName, long Cookie ) const;
 
-	HRESULT GetObserverIds( const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVGuidSet& rObserverIds );
+	HRESULT GetObserverIds( const std::string& rSubjectDataName, uint32_t subjectID, std::set<uint32_t>& rObserverIds );
 
-	HRESULT AttachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT AttachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
+	HRESULT AttachObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
+	HRESULT AttachObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
 
-	HRESULT EnableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT EnableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
+	HRESULT EnableObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
+	HRESULT EnableObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
 
-	HRESULT DisableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT DisableObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
+	HRESULT DisableObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
+	HRESULT DisableObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
 
-	HRESULT DetachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
-	HRESULT DetachObserver( const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie );
-	HRESULT DetachObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID );
+	HRESULT DetachObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
+	HRESULT DetachObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
+	HRESULT DetachObservers( const std::string& rSubjectDataName, uint32_t subjectID );
 
-	HRESULT DetachSubjectsAndObservers( const SVGUID& rObjectID );
+	HRESULT DetachSubjectsAndObservers( uint32_t objectID );
 
 	template< typename SVDataType >
-	HRESULT UpdateObserver( const SVGUID& rObserverID, const SVDataType& rData );
+	HRESULT UpdateObserver( uint32_t observerID, const SVDataType& rData );
 
 	template< typename SVDataType >
 	HRESULT UpdateObserver( long Cookie, const SVDataType& rData );
 
 	template< typename SVDataType >
-	HRESULT UpdateObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVDataType& rData );
+	HRESULT UpdateObservers( const std::string& rSubjectDataName, uint32_t subjectID, const SVDataType& rData );
 
-	HRESULT DisconnectObjects( const SVGUID& rSource, const SVGUID& rDestination );
+	HRESULT DisconnectObjects( uint32_t source, uint32_t destination );
 
 	///Resets all the indicators, which are used to determine if the display should be updated
 	void ClearAllIndicator();
@@ -184,42 +196,42 @@ public:
 	//! \param rDestination [in] reference to the destination object ID
 	//! \param Type [in] the dependency type
 	//! \returns S_OK on success
-	HRESULT connectDependency( const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type );
+	HRESULT connectDependency( uint32_t source, uint32_t destination, SvOl::JoinType Type );
 
 	//! Disconnects two objects with a certain join type
 	//! \param rSource [in] reference to the source object ID
 	//! \param rDestination [in] reference to the destination object ID
 	//! \param Type [in] the dependency type
 	//! \returns S_OK on success
-	HRESULT disconnectDependency( const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type );
+	HRESULT disconnectDependency( uint32_t source, uint32_t destination, SvOl::JoinType Type );
 
-	HRESULT RegisterSubObject( const SVGUID& rSubObjectID );
-	HRESULT UnregisterSubObject( const SVGUID& rSubObjectID );
+	HRESULT RegisterSubObject(uint32_t subObjectID );
+	HRESULT UnregisterSubObject(uint32_t subObjectID);
 
 	// Return the first object which the required object type.
 	//! \param rSourceId [in] reference to the source object ID
 	/// \param rObjectTypeInfo [in] The required object type.
 	/// \returns IObjectClass* Pointer to the object, if not found nullptr.
-	SvOi::IObjectClass* getFirstObject(const SVGUID& rSourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const;
+	SvOi::IObjectClass* getFirstObject(uint32_t sourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const;
 
 	/// Connect inputs to a object
 	/// \param rSourceId [in] reference to the source object ID
 	/// \param pObjectInInfo [in] object input info
 	/// \returns bool
-	bool ConnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
+	bool ConnectObjectInput( uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
 	/// Disconnect input from a object
 	/// \param rSourceId [in] reference to the source object ID
 	/// \param pObjectInInfo [in] object input info
 	/// \returns bool
-	bool DisconnectObjectInput( const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
+	bool DisconnectObjectInput( uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
 	///return ptr to Mutex  
 	std::recursive_mutex* GetMutex() { return  &(m_Mutex); };
 
 
 protected:
-	typedef std::map<std::string, SVGUID> SVSubjectDataNameSubjectIDMap;
+	typedef std::map<std::string, uint32_t> SVSubjectDataNameSubjectIDMap;
 
 	struct SVCookieEntryStruct
 	{
@@ -240,7 +252,7 @@ protected:
 
 	typedef std::set< long > SVSubjectCookieSet;
 
-	typedef std::map< SVGUID, long > SVSubjectEnabledObserverMap;
+	typedef std::map< uint32_t, long > SVSubjectEnabledObserverMap;
 	typedef std::map< long, long > SVSubjectEnabledCookieMap;
 
 	struct SVSubjectObserverStruct
@@ -256,38 +268,38 @@ protected:
 
 	struct SVUniqueObjectEntryStruct
 	{
-		SVGUID m_ObjectUID;
+		int32_t m_ObjectID = 0;
 		SVObjectClass* m_pObject;
 
 		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
 		SVSubjectDataNameObserverMap m_DataNameSubjectObservers;
 
 		SVUniqueObjectEntryStruct()
-		: m_ObjectUID(), m_pObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
+		: m_pObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
 	};
 
 	typedef std::shared_ptr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;
-	typedef std::unordered_map< GUID, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
+	typedef std::unordered_map< uint32_t, SVUniqueObjectEntryStructPtr > SVUniqueObjectEntryMap;
 
 	SVObjectManagerClass();
 
-	HRESULT GetSubjectDataNames( const SVGUID& rSubjectID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
+	HRESULT GetSubjectDataNames( uint32_t subjectID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 
-	HRESULT GetObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers );
-	HRESULT GetObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies );
+	HRESULT GetObservers( const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers );
+	HRESULT GetObservers( const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies );
 
 	SVCookieEntryStructPtr GetCookieEntry( long Cookie ) const;
 
-	SVGUID GetSubjectID( const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const;
-	SVGUID GetSubjectID( const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const;
+	uint32_t GetSubjectID( const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const;
+	uint32_t GetSubjectID( const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const;
 
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const SVGUID& rGuid ) const;
+	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( uint32_t objectId ) const;
 	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const std::string& rName ) const;
 
 	HRESULT DetachSubjects( long Cookie );
-	HRESULT DetachSubjects( const SVGUID& rObserverID );
+	HRESULT DetachSubjects( uint32_t observerID );
 
-	HRESULT DetachObservers( const SVGUID& rSubjectID );
+	HRESULT DetachObservers( uint32_t subjectID );
 
 	long m_State;
 
@@ -295,8 +307,10 @@ protected:
 	mutable std::recursive_mutex m_Mutex;
 	SVCookieEntryMap		m_CookieEntries;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
+	std::set<uint32_t>		m_deletedObjectId;
+	bool					m_addToDeletedList = true;
 	RootNameChildMap		m_RootNameChildren;
-	SvDef::TranslateMap			m_TranslationMap;
+	SvDef::TranslateMap		m_TranslationMap;
 
 	long m_ShortPPQIndicator;
 	long m_ProductIndicator;
@@ -308,9 +322,8 @@ protected:
 	long m_ObserverCookie;
 
 	long m_FileSequenceNumber;
-
-
-	
+	uint32_t m_nextObjectId = ObjectIdEnum::FirstPossibleObjectId;	
+	uint32_t m_firstObjectId = ObjectIdEnum::FirstPossibleObjectId;
 };
 
 #include "SVObjectManagerClass.inl"

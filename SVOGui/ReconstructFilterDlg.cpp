@@ -19,12 +19,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-ReconstructFilterDlg::ReconstructFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectId, const SVGUID& rFilterID, CWnd* pParent) :
+ReconstructFilterDlg::ReconstructFilterDlg(uint32_t inspectionID, uint32_t taskObjectId, uint32_t filterID, CWnd* pParent) :
 	CDialog(ReconstructFilterDlg::IDD, pParent)
-	, m_filterID(rFilterID)
-	, m_rInspectionID(rInspectionID)
-	, m_Values {SvOg::BoundValues {rInspectionID, rFilterID}}
-	, m_imageController(rInspectionID, rTaskObjectId)
+	, m_filterID(filterID)
+	, m_InspectionID(inspectionID)
+	, m_Values {SvOg::BoundValues {inspectionID, filterID}}
+	, m_imageController(inspectionID, taskObjectId)
 {
 	//{{AFX_DATA_INIT(ReconstructFilterDlg)
 	m_bGrayScale = false;
@@ -88,13 +88,13 @@ BOOL ReconstructFilterDlg::OnInitDialog()
 	long CurrentSelection = m_Values.Get<long>(SvPb::BlobColorEId);
 	m_cbBlobColor.SetCurSelItemData(CurrentSelection);
 
-	const SvUl::NameGuidList& availImages = m_imageController.GetAvailableImageList();
-	for (SvUl::NameGuidList::const_iterator it = availImages.begin(); availImages.end() != it; ++it)
+	const SvUl::NameObjectIdList& availImages = m_imageController.GetAvailableImageList();
+	for (SvUl::NameObjectIdList::const_iterator it = availImages.begin(); availImages.end() != it; ++it)
 	{
 		m_SeedImageCombo.AddString(it->first.c_str());
 	}
 
-	const SvUl::InputNameGuidPairList& connectedImageList = m_imageController.GetInputImageList(m_filterID);
+	const SvUl::InputNameObjectIdPairList& connectedImageList = m_imageController.GetInputImageList(m_filterID);
 	if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::SeedImageConnectionName)
 	{
 		m_seedImageName = connectedImageList.begin()->second.first;
@@ -138,9 +138,9 @@ void ReconstructFilterDlg::OnSelchangeImageCombo()
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_resetobjectrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_filterID);
+		pRequest->set_objectid(m_filterID);
 
-		HRESULT hrOk = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		HRESULT hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK != hrOk && responseCmd.has_standardresponse())
 		{
 			SvStl::MessageContainerVector errorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());

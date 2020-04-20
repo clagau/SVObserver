@@ -23,7 +23,6 @@ namespace SvTo
 class SVArchiveTool;
 }
 
-class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 #pragma endregion Declarations
 
@@ -33,7 +32,7 @@ class SVTADlgArchiveResultsPage : public CPropertyPage, public SvOg::ISVProperty
 
 #pragma region Constructor
 public:
-	SVTADlgArchiveResultsPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent );
+	SVTADlgArchiveResultsPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent );
 	virtual ~SVTADlgArchiveResultsPage();
 #pragma endregion Constructor
 

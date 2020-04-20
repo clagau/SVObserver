@@ -21,11 +21,11 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVThinningFilterDlg::SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : 
+	SVThinningFilterDlg::SVThinningFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) :
 		CDialog(SVThinningFilterDlg::IDD, pParent)
-		,m_filterID(rFilterID)
-		,m_rInspectionID(rInspectionID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
+		,m_filterID(filterId)
+		,m_InspectionID(inspectionId)
+		,m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVThinningFilterDlg)
 		m_bGrayScale = FALSE;

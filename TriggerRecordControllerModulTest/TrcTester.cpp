@@ -13,7 +13,6 @@
 #include "TesterFunction.h"
 #include "LogClass.h"
 #include "TrcTesterConfiguration.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\MessageContainer.h"
@@ -150,7 +149,6 @@ bool TrcTester::checkBufferMaximum()
 		return false;
 	}
 
-	GUID guid = GUID_NULL;
 	const int maxBuffer = calcMaxBuffer();
 	const int numberOfRecordsAddOne = numberOfRecords + m_config.getNumberOfRecordsAddOne();
 	const int numberOfImages = maxBuffer / numberOfRecordsAddOne;
@@ -163,10 +161,9 @@ bool TrcTester::checkBufferMaximum()
 		bool independentOk = m_TRController.removeAllImageBuffer();
 		for (int i = 0; i < numberOfImages; i++)
 		{
-			UuidCreateSequential(&guid);
-			independentOk &= ( 0 <= m_TRController.addOrChangeImage(guid, specifyBuffer(i / m_config.getSpecifyBufferDiv())));
+			independentOk &= ( 0 <= m_TRController.addOrChangeImage(getNextObjectId(), specifyBuffer(i / m_config.getSpecifyBufferDiv())));
 		}
-		m_TRController.addImageBuffer(guid, specifyBuffer(1), numberOfAddBuffer);
+		m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(1), numberOfAddBuffer);
 		m_TRController.finishResetTriggerRecordStructure();
 		double end = SvTl::GetTimeStamp();
 		double elapsed_ms = end - start;
@@ -194,8 +191,7 @@ bool TrcTester::checkBufferMaximum()
 	{
 		m_TRController.startResetTriggerRecordStructure();
 		//m_TRController.removeAllImageBuffer();
-		UuidCreateSequential(&guid);
-		m_TRController.addImageBuffer(guid, specifyBuffer(3), 1);
+		m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(3), 1);
 		m_TRController.finishResetTriggerRecordStructure();
 
 		m_rLogClass.Log(_T("set images too many buffers, but no exception"), LogLevel::Error, LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
@@ -238,9 +234,7 @@ bool TrcTester::createTR2WriteAndRead()
 		for (int i = 0; i < numberOfInspection; i++)
 		{
 			m_TRController.startResetTriggerRecordStructure(i);
-			GUID guid = GUID_NULL;
-			UuidCreateSequential(&guid);
-			retValue = (0 <= m_TRController.addOrChangeImage(guid, specifyBufferRandom()));
+			retValue = (0 <= m_TRController.addOrChangeImage(getNextObjectId(), specifyBufferRandom()));
 			m_TRController.finishResetTriggerRecordStructure();
 			if (!retValue)
 			{
@@ -369,17 +363,13 @@ bool TrcTester::setAndReadImage()
 	//init triggerRecord
 	const auto& imageIds = m_config.getImageLists()[0];
 	auto bufferStruct = specifyBufferFromImage(imageIds[0]);
-	GUID imageGuid = GUID_NULL;
-	UuidCreateSequential(&imageGuid);
 	try
 	{
 		m_TRController.startResetTriggerRecordStructure(0);
 		m_TRController.removeAllImageBuffer();
-		GUID guid = GUID_NULL;
-		UuidCreateSequential(&guid);
-		m_TRController.addImageBuffer(guid, bufferStruct, 1);
+		m_TRController.addImageBuffer(getNextObjectId(), bufferStruct, 1);
 		
-		retValue = (0 <= m_TRController.addOrChangeImage(imageGuid, bufferStruct));
+		retValue = (0 <= m_TRController.addOrChangeImage(getNextObjectId(), bufferStruct));
 		m_TRController.finishResetTriggerRecordStructure();
 		if (!retValue)
 		{
@@ -599,8 +589,6 @@ bool TrcTester::testWithReaderApps()
 
 bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 {
-	GUID guid = GUID_NULL;
-
 	for (int i = 0; i < m_config.getNumberOfInspections(); i++)
 	{
 		try
@@ -609,9 +597,7 @@ bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 
 			for (int j = 0; j < m_config.getNumberOfBuffersPerInspection(); j++)
 			{
-				UuidCreateSequential(&guid);
-
-				m_TRController.addOrChangeImage(guid, specifyBuffer(1 + j));
+				m_TRController.addOrChangeImage(getNextObjectId(), specifyBuffer(1 + j));
 			}
 
 			m_TRController.finishResetTriggerRecordStructure(); // i.e the current inspection will be completed
@@ -636,17 +622,14 @@ bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 
 bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 {
-	GUID guid = GUID_NULL;
-
 	try
 	{
 		m_TRController.startResetTriggerRecordStructure();
 		bool independentOk = true;
 		for (int i = 0; i < m_config.getNumberOfBuffersPerInspection(); i++)
 		{
-			UuidCreateSequential(&guid);
 			independentOk &= m_TRController.removeAllImageBuffer();
-			m_TRController.addImageBuffer(guid, specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
+			m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
 		}
 		m_TRController.finishResetTriggerRecordStructure();
 
@@ -841,9 +824,7 @@ int TrcTester::createDataDefContainer(std::vector<std::vector<BYTE>>& rDataMemVe
 	{
 		long memSize = valueObject.getByteSize();
 		auto* pValueObjectDef = pList->Add();
-		GUID guid = GUID_NULL;
-		UuidCreateSequential(&guid);
-		SvPb::SetGuidInProtoBytes(pValueObjectDef->mutable_guidid(), guid);
+		pValueObjectDef->set_objectid(getNextObjectId());
 		pValueObjectDef->set_name(valueObject.m_name);
 		pValueObjectDef->set_arraysize(1);
 		pValueObjectDef->set_vttype(valueObject.getVarType());

@@ -89,7 +89,7 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
 
 	//Link inspected object ID with incoming object ID as default
-	m_InspectedObjectID.setValue(m_ObjectID.GetUniqueObjectID().ToString());
+	m_InspectedObjectID.setValue(convertObjectIdToString(m_ObjectID.getObjectId()));
 	//Display them as integers
 	m_ObjectID.SetOutputFormat(SvVol::OutputFormat_int);
 	m_TriggerIndex.SetOutputFormat(SvVol::OutputFormat_int);
@@ -163,7 +163,7 @@ void SVToolSetClass::init()
 	m_isCreated = false;
 
 	SvOp::SVConditionalClass* pConditional = new SvOp::SVConditionalClass(this);
-	AddFriend(pConditional->GetUniqueObjectID());
+	AddFriend(pConditional->getObjectId());
 
 	// Identify our input type needs
 	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
@@ -404,7 +404,7 @@ SvPb::OverlayDesc SVToolSetClass::getOverlayStruct(const SvOi::ISVImage& rImage)
 		for (auto* pTask : m_TaskObjectVector)
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
-			if (nullptr != pTool && pTool->isInputImage(pImage->GetUniqueObjectID()))
+			if (nullptr != pTool && pTool->isInputImage(pImage->getObjectId()))
 			{
 				pTool->addOverlays(pImage, overlayDesc);
 			}
@@ -414,16 +414,16 @@ SvPb::OverlayDesc SVToolSetClass::getOverlayStruct(const SvOi::ISVImage& rImage)
 }
 
 #pragma region virtual method (IToolSet)
-bool SVToolSetClass::IsToolPreviousToSelected(const SVGUID& p_rToolID) const
+bool SVToolSetClass::IsToolPreviousToSelected(uint32_t toolID) const
 {
 	bool Result(false);
 
-	SVGuidVector ToolIds;
+	std::vector<uint32_t> ToolIds;
 	GetToolIds(std::back_inserter(ToolIds));
 
-	for (SVGuidVector::const_iterator l_Iter = ToolIds.begin(); !Result && l_Iter != ToolIds.end(); ++l_Iter)
+	for (auto l_Iter = ToolIds.begin(); !Result && l_Iter != ToolIds.end(); ++l_Iter)
 	{
-		Result = (p_rToolID == (*l_Iter));
+		Result = (toolID == (*l_Iter));
 	}
 
 	return Result;
@@ -739,7 +739,7 @@ bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

@@ -29,8 +29,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /* = 0 */ )
-: SVEdgeMarkerAdjustmentPageClass(rInspectionID, rTaskObjectID, rEdgeEmbeddedIds, nIDCaption, SVProfileEdgeMarkerAdjustmentPageClass::IDD )
+SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /* = 0 */ )
+: SVEdgeMarkerAdjustmentPageClass(inspectionID, taskObjectID, rEdgeEmbeddedIds, nIDCaption, SVProfileEdgeMarkerAdjustmentPageClass::IDD )
 , m_lowerThresholdMaxOffset( 0 )
 , m_lowerThresholdMinOffset( 0 )
 , m_lowerThresholdMaxPercentDiff( 0 )
@@ -100,12 +100,12 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 {
 	SVEdgeMarkerAdjustmentPageClass::OnInitDialog();
 
-	m_pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass*> (SvOi::getObject(m_rTaskObjectID));
+	m_pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass*> (SvOi::getObject(m_TaskObjectID));
 	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SvTo::SVToolClass*> (m_pEdge->GetAncestorInterface(SvPb::SVToolObjectType));
 	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SvAo::SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvPb::SVAnalyzerObjectType));
 	if (nullptr != m_pAnalyzer)
 	{
-		m_pAnalyzerValues = std::shared_ptr<Controller> {new Controller {SvOg::BoundValues {m_rInspectionID, m_pAnalyzer->GetUniqueObjectID()}}};
+		m_pAnalyzerValues = std::shared_ptr<Controller> {new Controller {SvOg::BoundValues {m_InspectionID, m_pAnalyzer->getObjectId()}}};
 		m_pAnalyzerValues->Init();
 	}
 

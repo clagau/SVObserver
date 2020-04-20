@@ -23,7 +23,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 static const SvDef::StringSet cObjectAttributeFilter
@@ -44,8 +43,8 @@ static const SVObjectAttributeTypeMap cObjectAttributeType
 };
 
 template< typename SVTreeType >
-SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
-: SVObjectScriptParserBase(parserHandle, OwnerGuid, pOwnerObject, pWnd)
+SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, uint32_t ownerId, SVObjectClass* pOwnerObject, CWnd* pWnd)
+: SVObjectScriptParserBase(parserHandle, ownerId, pOwnerObject, pWnd)
 , m_rTree(rTreeCtrl)
 , m_rootItem(hItem)
 , m_count(0)
@@ -65,7 +64,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::DoParse()
 {
 	HRESULT hr = S_OK;
 	m_count = 0;
-	hr = Process(m_rootItem, m_OwnerGuid);
+	hr = Process(m_rootItem, m_OwnerId);
 	return hr;
 }
 
@@ -113,7 +112,7 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID)
+HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
@@ -139,12 +138,12 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		m_count++;
 		
 	
-		GUID objectID( GUID_NULL );
+		uint32_t objectID(SvDef::InvalidObjectId);
 		if( m_ReplaceUniqueID )
 		{
-			objectID = SVGUID(uniqueID);
+			objectID = calcObjectId(uniqueID);
 		}
-		//Create this object only if it is not the same as the owner GUID
+		//Create this object only if it is not the same as the owner ID
 		if( ownerID == objectID )
 		{
 			//If the owner and object ID are the same the
@@ -172,7 +171,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeType::SVBranchHandle hParentItem, const GUID& ownerID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeType::SVBranchHandle hParentItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
@@ -229,7 +228,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType::SVBranchHandle hFriends, const GUID& ownerID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType::SVBranchHandle hFriends, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	// Destroy Friends
@@ -250,7 +249,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 
@@ -271,7 +270,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	UpdateProgress(m_count, m_totalSize);
 
 	// Build the Object
-	GUID objectID = SVGUID(uniqueID);
+	uint32_t objectID = calcObjectId(uniqueID);;
 	hr = (nullptr != SVObjectBuilder::CreateFriendObject(classId, objectID, SvUl::createStdString(objectName), ownerID)) ? S_OK : E_FAIL;
 	if (S_OK == hr)
 	{
@@ -289,7 +288,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hEmbeddeds, const GUID& ownerID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hEmbeddeds, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	SVTreeType::SVBranchHandle hItem( nullptr );
@@ -307,7 +306,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeTy
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	_variant_t objectName;
@@ -321,8 +320,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	GetItemValue(scUniqueReferenceIDTag, hItem, uniqueID);
 
 	UpdateProgress(m_count, m_totalSize);
-
-	GUID objectID = SVGUID(uniqueID);
+	uint32_t objectID = calcObjectId(uniqueID);
 	hr = SVObjectBuilder::OverwriteEmbeddedObject(embeddedId, objectID, SvUl::createStdString(objectName), ownerID);
 	if (S_OK == hr)
 	{
@@ -363,7 +361,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum dataType)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum dataType)
 {
 	HRESULT hr = S_OK;
 
@@ -387,7 +385,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID)
 {
 	HRESULT hr = S_OK;
 
@@ -455,7 +453,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID)
 {
 	HRESULT hr = S_OK;
 
@@ -506,7 +504,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(uint32_t ownerID, uint32_t objectID, typename SVTreeType::SVBranchHandle hItem)
 {
 	HRESULT hr = S_OK;
 
@@ -521,7 +519,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(const GUID& owne
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEquation(const GUID& ownerID, const _variant_t& equation)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEquation(uint32_t ownerID, const _variant_t& equation)
 {
 	// process Equation Buffer
 	HRESULT hr = SVObjectBuilder::SetObjectValue(ownerID, ownerID, scEquationBufferTag, equation, SV_STRING_Type);
@@ -529,7 +527,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEquation(const GUID& ownerI
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessMaskData(const GUID& ownerID, const _variant_t& maskData)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessMaskData(uint32_t ownerID, const _variant_t& maskData)
 {
 	// process Mask Data Buffer
 	HRESULT hr = SVObjectBuilder::SetObjectValue(ownerID, ownerID, scMaskDataTag, maskData, SV_STRING_Type);
@@ -537,7 +535,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessMaskData(const GUID& ownerI
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType::SVBranchHandle hInputs, const GUID& objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType::SVBranchHandle hInputs, uint32_t objectID)
 {
 	HRESULT hr = S_OK;
 	SvDef::StringPairVector InputPairVector;
@@ -599,11 +597,11 @@ bool SVInspectionTreeParser< SVTreeType >::HasTag(typename SVTreeType::SVBranchH
 
 // This will need to change if/when SVInspectionprocess is converted to inhert from SVTaskObjectList
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspectionGuid, SVTreeType& p_rTree, typename SVTreeType::SVBranchHandle hItem)
+HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(uint32_t& rInspectionId, SVTreeType& p_rTree, typename SVTreeType::SVBranchHandle hItem)
 {
 	HRESULT hr = S_OK;
 	
-	GUID ownerGuid = GUID_NULL;
+	uint32_t ownerId = SvDef::InvalidObjectId;
 	_variant_t objectName;
 	_variant_t classIDVariant;
 	_variant_t uniqueID;
@@ -618,15 +616,13 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	SvXml::SVNavigateTree::GetItem(p_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
 	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
 	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
-
-	hr = SVObjectBuilder::CreateObject(classId, SVGUID(uniqueID), name, SvUl::createStdString(objectName), ownerGuid);
+	rInspectionId = calcObjectId(uniqueID);
+	hr = SVObjectBuilder::CreateObject(classId, rInspectionId, name, SvUl::createStdString(objectName), ownerId);
 	if (S_OK == hr)
 	{
-		inspectionGuid = SVGUID(uniqueID);
-
 		// Get Inspection Object
 		SVObjectClass* pObject = nullptr;
-		SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionGuid, pObject);
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(rInspectionId, pObject);
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
 		if ( nullptr != pInspection )
 		{
@@ -645,6 +641,10 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10010_TreeParser_InspectionCreateFailed );
 			hr = -SvStl::Err_10010_TreeParser_InspectionCreateFailed;
 		}
+	}
+	if (S_OK != hr)
+	{
+		rInspectionId = SvDef::InvalidObjectId;
 	}
 	return hr;
 }

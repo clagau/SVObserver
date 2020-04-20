@@ -90,17 +90,16 @@ HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObjec
 }
 
 template< typename ObjectVisitor>
-HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID )
+HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID )
 {
 	HRESULT Result = S_OK;
 
-	GUID StartingObjectID = rStartingObjectID;
-	if( GUID_NULL == StartingObjectID )
+	if( SvDef::InvalidObjectId == startingObjectID )
 	{
 		//Set to configuration as this used to be the start.
-		StartingObjectID = GetChildRootObjectID( SvDef::FqnConfiguration );
+		startingObjectID = GetChildRootObjectID( SvDef::FqnConfiguration );
 	}
-	SVObjectClass* pObject = GetObject( StartingObjectID );
+	SVObjectClass* pObject = GetObject( startingObjectID );
 
 	if( nullptr != pObject )
 	{
@@ -116,7 +115,7 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, const SVGU
 
 			if( nullptr != pPreObject )
 			{
-				Temp = VisitElements( rVisitor, pPreObject->GetUniqueObjectID() );
+				Temp = VisitElements( rVisitor, pPreObject->getObjectId() );
 
 				if( S_OK == Result )
 				{
@@ -142,7 +141,7 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, const SVGU
 
 			if( nullptr != pPostObject )
 			{
-				Temp = VisitElements( rVisitor, pPostObject->GetUniqueObjectID() );
+				Temp = VisitElements( rVisitor, pPostObject->getObjectId() );
 
 				if( S_OK == Result )
 				{
@@ -156,11 +155,11 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, const SVGU
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObserver( const SVGUID& rObserverID, const SVDataType& rData )
+HRESULT SVObjectManagerClass::UpdateObserver( uint32_t observerID, const SVDataType& rData )
 {
 	HRESULT Result = E_FAIL;
 
-	SVObjectClass* pObject = GetObject( rObserverID );
+	SVObjectClass* pObject = GetObject( observerID );
 
 	if( nullptr != pObject )
 	{
@@ -195,14 +194,14 @@ HRESULT SVObjectManagerClass::UpdateObserver( long Cookie, const SVDataType& rDa
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVDataType& rData )
+HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataName, uint32_t subjectID, const SVDataType& rData )
 {
 	HRESULT Result = S_OK;
 
 	SVSubjectEnabledObserverMap Observers;
 	SVSubjectEnabledCookieMap Cookies;
 
-	Result = GetObservers( rSubjectDataName, rSubjectID, Observers, Cookies );
+	Result = GetObservers( rSubjectDataName, subjectID, Observers, Cookies );
 
 	if( S_OK == Result )
 	{
@@ -240,8 +239,8 @@ HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataNa
 }
 
 template<typename ObjectVisitor>
-HRESULT SvOi::visitElements( ObjectVisitor& rVisitor, const SVGUID& rStartingObjectID )
+HRESULT SvOi::visitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID )
 {
-	return SVObjectManagerClass::Instance().VisitElements(rVisitor, rStartingObjectID );
+	return SVObjectManagerClass::Instance().VisitElements(rVisitor, startingObjectID );
 }
 

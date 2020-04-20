@@ -85,7 +85,7 @@ public:
 	SvVol::SVBoolValueObjectClass m_useAlternativeImagePaths;
 	
 	SvVol::SVStringValueObjectClass	m_HeaderLabelNames;
-	SvVol::SVStringValueObjectClass	m_HeaderObjectGUIDs;
+	SvVol::SVStringValueObjectClass	m_HeaderObjectIDs;
 
 protected:
 	SV_DECLARE_CLASS( SVArchiveTool )
@@ -113,12 +113,12 @@ private:
 private:
 
 	//
-	// A string value to represent all the Guids for the
+	// A string value to represent all the ids for the
 	// images so they can
 	// be stored and retrieved from storage.
 	//
-	SvVol::SVStringValueObjectClass m_stringArchiveImageGuids_OBSOLETE;
-	SvVol::SVStringValueObjectClass m_stringArchiveResultGuids_OBSOLETE;
+	SvVol::SVStringValueObjectClass m_stringArchiveImageIds_OBSOLETE;
+	SvVol::SVStringValueObjectClass m_stringArchiveResultIds_OBSOLETE;
 	SvVol::SVStringValueObjectClass m_svoArchiveImageNames;
 	/// This variable holds an array of result names with an Zero based Index (In the svx  files these names have also a zero based index). 
 	SvVol::SVStringValueObjectClass m_svoArchiveResultNames;

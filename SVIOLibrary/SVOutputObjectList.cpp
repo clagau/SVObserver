@@ -58,13 +58,13 @@ void SVOutputObjectList::Destroy()
 	}
 }// end Destroy
 
-SVOutputObject* SVOutputObjectList::GetOutput(const SVGUID& rOutputID ) const
+SVOutputObject* SVOutputObjectList::GetOutput(uint32_t outputID) const
 {
 	SVOutputObject* pResult(nullptr);
 
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
 
-	SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find(rOutputID);
+	ObjectIdSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find(outputID);
 
 	if (l_Iter != m_OutputObjects.end())
 	{
@@ -80,7 +80,7 @@ SVOutputObject* SVOutputObjectList::GetOutput(const std::string& rName) const
 
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
 
-	SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
+	ObjectIdSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
 
 	while (nullptr == pResult && l_Iter != m_OutputObjects.end())
 	{
@@ -97,7 +97,7 @@ SVOutputObject* SVOutputObjectList::GetOutput(const std::string& rName) const
 	return pResult;
 }
 
-SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
+SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int idIndex)
 {
 	SVOutputObject* pResult(nullptr);
 
@@ -110,7 +110,7 @@ SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const std::string& rName,
 		case SvPb::SVDigitalOutputObjectType:
 		{
 			SVDigitalOutputObject* pDigOutput = new SVDigitalOutputObject;
-			pDigOutput->updateGuid(GuidIndex);
+			pDigOutput->updateObjectId(idIndex);
 			pResult = pDigOutput;
 			break;
 		}
@@ -142,11 +142,11 @@ HRESULT SVOutputObjectList::AttachOutput( SVOutputObject *pOutput )
 	{
 		std::lock_guard<std::mutex> guard(m_protectOutputList);
 
-		SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find( pOutput->GetUniqueObjectID() );
+		ObjectIdSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find( pOutput->getObjectId() );
 
 		if( l_Iter == m_OutputObjects.end() )
 		{
-			m_OutputObjects[ pOutput->GetUniqueObjectID() ] = pOutput;
+			m_OutputObjects[ pOutput->getObjectId() ] = pOutput;
 		}
 	}
 	else
@@ -157,13 +157,13 @@ HRESULT SVOutputObjectList::AttachOutput( SVOutputObject *pOutput )
 	return l_Status;
 }
 
-HRESULT SVOutputObjectList::DetachOutput( const SVGUID& rOutputID )
+HRESULT SVOutputObjectList::DetachOutput(uint32_t outputID)
 {
 	HRESULT l_Status = S_OK;
 
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
 
-	SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( rOutputID );
+	ObjectIdSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( outputID );
 
 	if( l_Iter != m_OutputObjects.end() )
 	{
@@ -180,16 +180,16 @@ HRESULT SVOutputObjectList::DetachOutput( const SVGUID& rOutputID )
 	return l_Status;
 }
 
-GuidVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool ACK, bool NAK)
+ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool ACK, bool NAK)
 {
-	GuidVariantPairVector Result;
+	ObjectIdVariantPairVector Result;
 
 	for(const auto& pIOEntry :rIOEntries)
 	{
 		// Check if output is enabled for this call (This is to filter outputs which are set later eg. Data Valid and Output toggle
 		if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 		{
-			std::pair<GUID, _variant_t> OutputValue;
+			std::pair<uint32_t, _variant_t> OutputValue;
 
 			if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 			{
@@ -211,7 +211,7 @@ GuidVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHostStr
 				}
 			}
 
-			if(GUID_NULL != OutputValue.first && VT_EMPTY != OutputValue.second.vt)
+			if (SvDef::InvalidObjectId != OutputValue.first && VT_EMPTY != OutputValue.second.vt)
 			{
 				Result.push_back(OutputValue);
 			}
@@ -242,7 +242,7 @@ bool SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries 
 
 }// end ResetOutputs
 
-bool SVOutputObjectList::WriteOutputs(const GuidVariantPairVector& rOutputValues)
+bool SVOutputObjectList::WriteOutputs(const ObjectIdVariantPairVector& rOutputValues)
 {
 	bool Result(false);
 
@@ -268,7 +268,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool ACK,
 	{
 		if( pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 		{
-			std::pair<GUID, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, false, ACK, NAK);
+			std::pair<uint32_t, _variant_t> ValueOutput = getDigitalOutputValue(pIOEntry, false, ACK, NAK);
 
 			SVOutputObject* pOutput = GetOutput(ValueOutput.first);
 			if (nullptr != pOutput)
@@ -280,7 +280,7 @@ bool SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool ACK,
 		{
 			SVOutputObject* pOutput = nullptr;
 
-			SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
+			ObjectIdSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry->m_IOId );
 
 			if( l_Iter != m_OutputObjects.end() )
 			{
@@ -359,7 +359,7 @@ bool SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 		{
 			SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 
-			pIOEntry->m_IOId = Iter->second->GetUniqueObjectID();
+			pIOEntry->m_IOId = Iter->second->getObjectId();
 
 			switch (Iter->second->GetObjectSubType())
 			{
@@ -424,7 +424,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 		// if found
 		const std::string& rInspection = rInspectionNames[l_lIndex];
 
-		SVGuidSVOutputObjectPtrMap::const_iterator Iter = m_OutputObjects.begin();
+		ObjectIdSVOutputObjectPtrMap::const_iterator Iter = m_OutputObjects.begin();
 
 		while( m_OutputObjects.end() != Iter  )
 		{
@@ -453,7 +453,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 	// but make sure it is not a ppq object.
 	if( !( m_OutputObjects.empty() ) )
 	{
-		SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
+		ObjectIdSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
 
 		while( l_Iter != m_OutputObjects.end() )
 		{
@@ -594,7 +594,7 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 	std::lock_guard<std::mutex> guard(m_protectOutputList);
 
 	// Search the list of outputs
-	SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
+	ObjectIdSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
 
 	while( l_Iter != m_OutputObjects.end() )
 	{
@@ -619,9 +619,9 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 	}// end for
 }
 
-std::pair<GUID, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool ACK, bool NAK )
+std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool ACK, bool NAK )
 {
-	std::pair<GUID, _variant_t> Result{GUID_NULL, _variant_t{}};
+	std::pair<uint32_t, _variant_t> Result{ SvDef::InvalidObjectId, _variant_t{} };
 	SVOutputObject* pOutput = GetOutput(pIOEntry->m_IOId);
 
 	if( nullptr != pOutput )
@@ -682,7 +682,7 @@ void SVOutputObjectList::ClearOutputList()
 {
 	if( !( m_OutputObjects.empty() ) )
 	{
-		SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
+		ObjectIdSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
 
 		while( l_Iter != m_OutputObjects.end() )
 		{

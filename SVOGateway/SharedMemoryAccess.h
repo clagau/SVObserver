@@ -82,14 +82,14 @@ private:
 	void add_new_trigger_to_queue(std::shared_ptr<new_trigger_t>);
 	std::shared_ptr<new_trigger_t> pop_new_trigger_from_queue(bool is_reject);
 	void check_queue_for_new_trigger_record(bool is_reject);
-	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, GUID inspectionId, int trId, bool is_reject);
+	void handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject);
 	SvSyl::SVFuture<void> get_product_data(SvPb::GetProductDataResponse&, const SvPb::GetProductDataRequest& rRequest);
-	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids, const std::vector<int>& imagePositions, int inspectionPos, GUID inspectionId, bool includeOverlays);
-	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids, const std::vector<int>& valuePositions);
+	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedField<uint32_t>& imageIds, const std::vector<int>& imagePositions, int inspectionPos, uint32_t inspectionId, bool includeOverlays);
+	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedField<uint32_t>& valueIds, const std::vector<int>& valuePositions);
 	void rebuild_trc_pos_caches();
 	void rebuild_trc_pos_cache(product_stream_t&);
-	void collect_value_pos(std::vector<int>&, const SvPb::DataDefinitionList&, const ::google::protobuf::RepeatedPtrField<std::string>& guids);
-	void collect_image_pos(std::vector<int>&, const SvPb::ImageList&, const ::google::protobuf::RepeatedPtrField<std::string>& guids);
+	void collect_value_pos(std::vector<int>&, const SvPb::DataDefinitionList&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
+	void collect_image_pos(std::vector<int>&, const SvPb::ImageList&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
 
 private:
 	struct notification_stream_t
@@ -108,7 +108,7 @@ private:
 private:
 	void subscribe_to_trc();
 	void unsubscribe_from_trc();
-	int get_inspection_pos_for_guid(SvTrc::ITriggerRecordControllerR&, const std::string& guid);
+	int get_inspection_pos_for_id(SvTrc::ITriggerRecordControllerR&, uint32_t id);
 
 private:
 	boost::asio::io_service& m_io_service;

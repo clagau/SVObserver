@@ -98,8 +98,6 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	SvOl::ValidateInputList(InputList);
 
-	SVGUID ParentGuid;
-
 	SetAttributeData();
 
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput);
@@ -108,18 +106,16 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	if(inputImageAvailable)
 	{
-		ParentGuid = pInputImage->GetUniqueObjectID();
-
 		//Set input name to source image name to display it in result picker
 		m_SourceImageName.SetValue( pInputImage->GetCompleteName() );
 
-		m_OutputImage.UpdateImage(ParentGuid, pInputImage->GetImageInfo());
+		m_OutputImage.UpdateImage(pInputImage->getObjectId(), pInputImage->GetImageInfo());
 	}
 	else
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -161,12 +157,12 @@ bool SVShiftTool::DoesObjectHaveExtents() const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool SVShiftTool::isInputImage(const SVGUID& rImageGuid) const
+bool SVShiftTool::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput);
-	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
 	}
@@ -184,7 +180,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -199,7 +195,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -212,7 +208,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -244,7 +240,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 				{
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -337,7 +333,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 					Result = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -346,7 +342,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -379,7 +375,7 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
-	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->set_objectid(getObjectId());
 	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
@@ -408,7 +404,7 @@ void SVShiftTool::LocalInitialize()
 	{
 		l_pObject->SetObjectOwner( this );
 
-		AddFriend( l_pObject->GetUniqueObjectID() );
+		AddFriend( l_pObject->getObjectId() );
 	}
 
 	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationYClassId, l_pObject );
@@ -417,7 +413,7 @@ void SVShiftTool::LocalInitialize()
 	{
 		l_pObject->SetObjectOwner( this );
 
-		AddFriend( l_pObject->GetUniqueObjectID() );
+		AddFriend( l_pObject->getObjectId() );
 	}
 
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, false, true, true);
@@ -594,7 +590,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -603,7 +599,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

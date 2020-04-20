@@ -38,9 +38,9 @@ public:
 	void SetChannel( long Channel );
 	long GetChannel() const;
 
-	/// Update the GUID to a fix GUID depend of a position (must between 0 and 0x100).
+	/// Update the objectId to a fix ID depend of a position (must between 0 and 0x100).
 	/// \param position [in]
-	void updateGuid(int position);
+	void updateObjectId(int position);
 #pragma endregion Public Methods
 
 #pragma region Private Methods

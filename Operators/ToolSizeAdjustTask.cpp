@@ -94,7 +94,7 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, 
 	if( nullptr != pObject )
 	{
 		pObject->SetObjectOwner( this );
-		AddFriend( pObject->GetUniqueObjectID() );
+		AddFriend( pObject->getObjectId() );
 	}
 	else
 	{
@@ -239,7 +239,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -396,7 +396,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			msgList.push_back(GetTool()->GetName());
 		}
 		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult, GetUniqueObjectID() );
+		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult, getObjectId() );
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 		Exception.setMessage( message.getMessage() );
 		if (nullptr != pErrorMessages)
@@ -530,7 +530,7 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::AddToFriendlist(SvTo::SVToolClass* pTool
 	if (nullptr != pToolSizeAdjustTask)
 	{
 		pToolSizeAdjustTask->SetObjectOwner( pTool );
-		pTool->AddFriend( pToolSizeAdjustTask->GetUniqueObjectID() );
+		pTool->AddFriend( pToolSizeAdjustTask->getObjectId() );
 	}
 	return pToolSizeAdjustTask;
 }

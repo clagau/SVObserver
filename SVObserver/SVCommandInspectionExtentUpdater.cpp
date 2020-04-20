@@ -24,8 +24,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent)
-: m_InspectionId( rInspectionId ), m_ToolId( rToolId ), m_mode( mode )
+SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(uint32_t inspectionId, uint32_t toolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent)
+: m_InspectionId( inspectionId ), m_ToolId( toolId ), m_mode( mode )
 {
 	if(nullptr != pImageExtent )
 	{
@@ -101,8 +101,8 @@ bool SVCommandInspectionExtentUpdater::empty() const
 {
 	bool bRet = true;
 
-	bRet = bRet && ( m_InspectionId.empty() );
-	bRet = bRet && ( m_ToolId.empty() );
+	bRet = bRet && (SvDef::InvalidObjectId == m_InspectionId);
+	bRet = bRet && (SvDef::InvalidObjectId == m_ToolId );
 	bRet = bRet && ( m_mode == ExtentUpdaterMode_Undefined );
 
 	return bRet;

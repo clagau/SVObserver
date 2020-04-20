@@ -39,8 +39,6 @@ protected:
 	SVGroupStateMap m_GroupStates;
 
 public:
-	typedef std::vector<GUID> PPQGuidList;
-	PPQGuidList m_aPPQGUIDs;
 	CMenu m_ContextMenuProp;
 	CMenu m_ContextMenuItem;
 	CMenu m_ContextMenuItemNoDelete;

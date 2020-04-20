@@ -123,7 +123,7 @@ bool SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 			// Check only this entry...
 			if( nullptr != pObjectInfo )
 			{
-				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getObjectId());
 				Result = ( nullptr != pObject ) ? true : false;
 			}
 		}
@@ -138,7 +138,7 @@ bool SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 
 				if( nullptr != pObjectInfo )
 				{
-					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getUniqueObjectID());
+					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pObjectInfo->getObjectId());
 					Result = ( ( nullptr != pObject) ? true : false ) && Result;
 				}
 				else

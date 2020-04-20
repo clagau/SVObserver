@@ -52,7 +52,7 @@ END_MESSAGE_MAP()
 SVTADlgColorThresholdAdjustment::SVTADlgColorThresholdAdjustment() 
 : SVTADlgColorThresholdBasePage(SVTADlgColorThresholdAdjustment::IDD)
 //InspectionID and TaskID are set later
-, m_Values {SvOg::BoundValues{GUID_NULL, GUID_NULL}} 
+, m_Values {SvOg::BoundValues{ SvDef::InvalidObjectId, SvDef::InvalidObjectId }}
 {
 	//{{AFX_DATA_INIT(SVTADlgColorThresholdAdjustment)
 	StrUpper = _T("");
@@ -125,8 +125,8 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 		m_graphFigure.SetDrawPen(true, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1);
 
-		m_Values.SetInspectionID(m_pThreshold->GetInspection()->GetUniqueObjectID());
-		m_Values.SetTaskID(m_pThreshold->GetUniqueObjectID());
+		m_Values.SetInspectionID(m_pThreshold->GetInspection()->getObjectId());
+		m_Values.SetTaskID(m_pThreshold->getObjectId());
 		m_Values.Init();
 		// Get Train Color Extent Variables
 		SvDef::SVObjectTypeInfoStruct extentObjectInfo;
@@ -145,7 +145,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 	if( pImage )
 	{
-		m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->GetUniqueObjectID(), pImage->GetUniqueObjectID() );
+		m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->getObjectId(), pImage->getObjectId() );
 
 		SVDlgImageOverlayOptions options;
 		options.sizeROI = CSize(255,255);
@@ -232,7 +232,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 	{
 		m_pTool->resetAllObjects();
 
-		m_Values.RunOnce(m_pTool->GetInspection()->GetUniqueObjectID());
+		m_Values.RunOnce(m_pTool->GetInspection()->getObjectId());
 
 		m_svDlgImage.ClearOverlayPoints();
 

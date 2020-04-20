@@ -247,7 +247,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 									pValueObject->SetName( RemoteInputName.c_str() );
 									pValueObject->SetObjectOwner(GetIOController());
 									pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
-									pIOEntry->m_IOId = pRemoteInput->GetUniqueObjectID();
+									pIOEntry->m_IOId = pRemoteInput->getObjectId();
 									pIOEntry->m_Enabled = FALSE;
 									pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
 									pIOEntry->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
@@ -287,7 +287,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							bFound = true;
 							pRemoteInput = dynamic_cast< SVRemoteInputObject* >( pObject );
 
-							if( S_OK != pInputList->DetachInput( pRemoteInput->GetUniqueObjectID() ) )
+							if( S_OK != pInputList->DetachInput( pRemoteInput->getObjectId() ) )
 							{
 								SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorDetachingInput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17033_ErrorDetachingInput );

@@ -11,18 +11,17 @@
 #include "InspectionCommands\SetMaskData.h"
 #include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "Definitions\TextDefineSvDef.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
 
-	MaskController::MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& maskOperatorID)
-	: m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
+	MaskController::MaskController(uint32_t inspectionID, uint32_t taskObjectID, uint32_t maskOperatorID)
+	: m_InspectionID(inspectionID)
+	, m_TaskObjectID(taskObjectID)
 	, m_maskOperatorID(maskOperatorID)
-	, m_MaskImageController(rInspectionID, maskOperatorID)
-	, m_TaskImageController(rInspectionID, rTaskObjectID)
+	, m_MaskImageController(inspectionID, maskOperatorID)
+	, m_TaskImageController(inspectionID, taskObjectID)
 	{
 	}
 
@@ -31,29 +30,29 @@ namespace SvOg
 		m_MaskImageController.Init();
 		m_TaskImageController.Init();
 
-		// Get Instance GUID for the Mask Operator...
+		// Get Instance Id for the Mask Operator...
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_maskOperatorID);
+		pRequest->set_ownerid(m_maskOperatorID);
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVUnaryImageOperatorObjectType);
 		pRequest->mutable_infostruct()->set_subtype(SvPb::SVShapeMaskHelperObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getobjectidresponse())
 		{
-			m_ShapeMaskHelperID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
+			m_ShapeMaskHelperID = responseCmd.getobjectidresponse().objectid();
 		}
 	}
 
 	// must call init before calling this method
-	const GUID& MaskController::GetInstanceID() const
+	uint32_t MaskController::GetInstanceID() const
 	{
 		return m_maskOperatorID;
 	}
 
 	// must call init before calling this method
-	const GUID& MaskController::GetShapeMaskHelperID() const
+	uint32_t MaskController::GetShapeMaskHelperID() const
 	{
 		return m_ShapeMaskHelperID;
 	}
@@ -70,11 +69,11 @@ namespace SvOg
 
 	IPictureDisp* MaskController::GetResultImage() const
 	{
-		const SvUl::NameGuidList& rImageList = m_TaskImageController.GetResultImages();
-		SvUl::NameGuidList::const_iterator it = rImageList.begin();
+		const SvUl::NameObjectIdList& rImageList = m_TaskImageController.GetResultImages();
+		SvUl::NameObjectIdList::const_iterator it = rImageList.begin();
 		if (it != rImageList.end())
 		{
-			return m_TaskImageController.GetImage(it->second.ToGUID());
+			return m_TaskImageController.GetImage(it->second);
 		}
 		return nullptr;
 	}
@@ -83,7 +82,7 @@ namespace SvOg
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_importmaskrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_maskOperatorID);
+		pRequest->set_objectid(m_maskOperatorID);
 		pRequest->set_filename(filename);
 
 		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
@@ -93,7 +92,7 @@ namespace SvOg
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_exportmaskrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_maskOperatorID);
+		pRequest->set_objectid(m_maskOperatorID);
 		pRequest->set_filename(filename);
 
 		return SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);

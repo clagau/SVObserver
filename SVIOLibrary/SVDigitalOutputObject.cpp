@@ -135,13 +135,11 @@ long SVDigitalOutputObject::GetChannel() const
 	return m_Channel;
 }
 
-void SVDigitalOutputObject::updateGuid(int position)
+void SVDigitalOutputObject::updateObjectId(int position)
 {
 	if (0 <= position && 0x100 > position)
 	{
-		SVGUID ParameterUID(DigitalOutputUidGuid);
-		ParameterUID.ToGUID().Data1 += position;
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ParameterUID);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::DigitalOutputUidId + position);
 	}
 }
 

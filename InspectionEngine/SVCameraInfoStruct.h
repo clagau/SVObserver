@@ -13,8 +13,8 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/function.hpp>
-#include "SVUtilityLibrary/SVGUID.h"
 #include "TriggerRecordController/IImage.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -44,8 +44,8 @@ public:
 	void ClearCameraInfo();
 
 	const SvTrc::IImagePtr GetNextImage();
-	const void setCamera( const SVGUID& rCameraGuid, NextImageHandleFunctor NextImageHandleFunctor );
-	const SVGUID& getCameraGuid() const { return m_CameraGuid; };
+	const void setCamera(uint32_t cameraId, NextImageHandleFunctor NextImageHandleFunctor);
+	uint32_t getCameraId() const { return m_CameraId; };
 	const SvTrc::IImagePtr getImage() const { return m_pImage; };
 	bool setImage(SvTrc::IImagePtr pImage);
 
@@ -63,12 +63,12 @@ private:
 #pragma region Member Variables
 private:
 	NextImageHandleFunctor m_NextImageFunctor;
-	SVGUID m_CameraGuid {GUID_NULL};
+	uint32_t m_CameraId{ SvDef::InvalidObjectId };
 	SvTrc::IImagePtr m_pImage {nullptr};
 #pragma endregion Member Variables
 };
 
 typedef std::vector<SVCameraInfoStruct> SVCameraInfoStructVector;
-typedef std::map<SVGUID, SVCameraInfoStruct> SVGuidSVCameraInfoStructMap;
+typedef std::map<uint32_t, SVCameraInfoStruct> SVObjectIdSVCameraInfoStructMap;
 
 } //namespace SvIe

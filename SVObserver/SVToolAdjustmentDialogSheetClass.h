@@ -40,15 +40,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, const GUID& rInspectionID, const GUID& rTaskObjectID, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, const GUID& rInspectionID, const GUID& rTaskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVToolAdjustmentDialogSheetClass(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVToolAdjustmentDialogSheetClass(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
 	SVIPDoc* GetIPDoc() const;
 	SvOi::IObjectClass* GetTaskObject() const;
-	const GUID& GetInspectionID() const {return m_InspectionID; }
-	const GUID& GetTaskObjectID() const {return m_TaskObjectID; }
+	uint32_t GetInspectionID() const {return m_InspectionID; }
+	uint32_t GetTaskObjectID() const {return m_TaskObjectID; }
 	
 protected:
 	void init();
@@ -56,8 +56,8 @@ protected:
 
 private:
 	SVIPDoc* m_pIPDoc;
-	GUID m_InspectionID;
-	GUID m_TaskObjectID;
+	uint32_t m_InspectionID;
+	uint32_t m_TaskObjectID;
 
 	typedef std::shared_ptr<SvOg::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;

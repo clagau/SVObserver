@@ -60,7 +60,7 @@ bool SVInputObjectList::Destroy()
 		{
 			Lock();
 
-			SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
+			ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
 
 			while( l_Iter != m_InputObjects.end() )
 			{
@@ -89,13 +89,13 @@ bool SVInputObjectList::Destroy()
 	return true;
 }// end Destroy
 
-SVInputObject* SVInputObjectList::GetInput(const SVGUID& rInputID) const
+SVInputObject* SVInputObjectList::GetInput(uint32_t inputID) const
 {
 	SVInputObject* pResult(nullptr);
 
 	if (Lock())
 	{
-		SVGuidSVInputObjectPtrMap::const_iterator l_Iter = m_InputObjects.find(rInputID);
+		ObjectIdSVInputObjectPtrMap::const_iterator l_Iter = m_InputObjects.find(inputID);
 
 		if (l_Iter != m_InputObjects.end())
 		{
@@ -113,7 +113,7 @@ SVInputObject* SVInputObjectList::GetInput(const std::string& rInputName) const
 
 	if (Lock())
 	{
-		SVGuidSVInputObjectPtrMap::const_iterator	l_Iter;
+		ObjectIdSVInputObjectPtrMap::const_iterator	l_Iter;
 
 		for (l_Iter = m_InputObjects.begin(); nullptr == pResult && l_Iter != m_InputObjects.end(); ++l_Iter)
 		{
@@ -130,13 +130,13 @@ SVInputObject* SVInputObjectList::GetInput(const std::string& rInputName) const
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
+SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int index)
 {
 	SVInputObject* pResult(nullptr);
 
 	if (Lock())
 	{
-		SVGuidSVInputObjectPtrMap::const_iterator	l_Iter;
+		ObjectIdSVInputObjectPtrMap::const_iterator	l_Iter;
 
 		for (l_Iter = m_InputObjects.begin(); nullptr == pResult && l_Iter != m_InputObjects.end(); ++l_Iter)
 		{
@@ -155,14 +155,14 @@ SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputNam
 			case SvPb::SVDigitalInputObjectType:
 			{
 				SVDigitalInputObject* pDigInput = new SVDigitalInputObject;
-				pDigInput->updateGuid(GuidIndex);
+				pDigInput->updateObjectId(index);
 				pResult = pDigInput;
 				break;
 			}
 			case SvPb::SVRemoteInputObjectType:
 			{
 				SVRemoteInputObject* pInput = new SVRemoteInputObject;
-				pInput->updateGuid(GuidIndex);
+				pInput->updateObjectId(index);
 				pResult = pInput;
 				break;
 			}
@@ -196,11 +196,11 @@ HRESULT SVInputObjectList::AttachInput( SVInputObject* pInput )
 	{
 		if( Lock() )
 		{
-			SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pInput->GetUniqueObjectID() );
+			ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pInput->getObjectId() );
 
 			if( l_Iter == m_InputObjects.end() )
 			{
-				m_InputObjects[ pInput->GetUniqueObjectID() ] = pInput;
+				m_InputObjects[ pInput->getObjectId() ] = pInput;
 			}
 
 			Unlock();
@@ -218,13 +218,13 @@ HRESULT SVInputObjectList::AttachInput( SVInputObject* pInput )
 	return l_Status;
 }
 
-HRESULT SVInputObjectList::DetachInput( const SVGUID& p_rOutputID )
+HRESULT SVInputObjectList::DetachInput(uint32_t outputID)
 {
 	HRESULT l_Status = S_OK;
 
 	if( Lock() )
 	{
-		SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( p_rOutputID );
+		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( outputID );
 
 		if( l_Iter != m_InputObjects.end() )
 		{
@@ -260,7 +260,7 @@ bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, 
 			{
 				SVInputObject *pInput = nullptr;
 
-				SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pIOEntry->m_IOId );
+				ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pIOEntry->m_IOId );
 
 				if( l_Iter != m_InputObjects.end() )
 				{
@@ -299,7 +299,7 @@ bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 
 	if( Lock() )
 	{
-		SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
+		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
 		Result = true;
 		while( l_Iter != m_InputObjects.end() )
 		{
@@ -307,7 +307,7 @@ bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 
 			SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
 
-			pIOEntry->m_IOId = pInput->GetUniqueObjectID();
+			pIOEntry->m_IOId = pInput->getObjectId();
 
 			switch (pInput->GetObjectSubType())
 			{
@@ -345,7 +345,7 @@ bool SVInputObjectList::GetRemoteInputCount( long &lCount )
 
 	if( Lock() )
 	{
-		SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
+		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
 
 		while( l_Iter != m_InputObjects.end() )
 		{
@@ -374,7 +374,7 @@ bool SVInputObjectList::SetRemoteInput( long lIndex, const _variant_t& rValue)
 	{
 		bool bFound = false;
 
-		SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
+		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
 
 		while( l_Iter != m_InputObjects.end() )
 		{

@@ -104,7 +104,7 @@ static SVPoint<double> GetDPointFromString(const std::string& rValue)
 	return pointValue;
 }
 
-HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, const GUID& uniqueID, const std::string& name, const std::string& objectName, const GUID& ownerUniqueID )
+HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t uniqueID, const std::string& name, const std::string& objectName, uint32_t ownerUniqueID )
 {
 	HRESULT hr = S_OK;
 
@@ -114,7 +114,7 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, const GUID& uni
 
 	if (pObject)
 	{
-		if (ownerUniqueID != GUID_NULL)
+		if (ownerUniqueID != SvDef::InvalidObjectId)
 		{
 			SVObjectClass* pOwnerObject = nullptr;
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
@@ -173,7 +173,7 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, const GUID& uni
 	return hr;
 }
 
-HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
+HRESULT SVObjectBuilder::DestroyFriends(uint32_t objectID)
 {
 	HRESULT hr = S_OK;
 
@@ -186,9 +186,9 @@ HRESULT SVObjectBuilder::DestroyFriends(const GUID& objectID)
 	return hr;
 }
 
-SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid)
+SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classID, uint32_t uniqueID, const std::string& objectName, uint32_t ownerUniqueID, uint32_t addPreId)
 {
-	if ( GUID_NULL == ownerUniqueID )
+	if (SvDef::InvalidObjectId == ownerUniqueID)
 	{
 		assert(false);
 		return nullptr;
@@ -209,8 +209,8 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 	{
 		pObject->SetName(objectName.c_str());
 		pObject->SetObjectOwner(ownerUniqueID);
-		GUID friendId = GUID_NULL;
-		if (GUID_NULL != uniqueID)
+		uint32_t friendId = SvDef::InvalidObjectId;
+		if (SvDef::InvalidObjectId != uniqueID)
 		{
 			if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pObject, uniqueID ) )
 			{
@@ -219,11 +219,11 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 		}
 		else
 		{
-			friendId = pObject->GetUniqueObjectID();
+			friendId = pObject->getObjectId();
 		}
-		if( GUID_NULL != friendId )
+		if (SvDef::InvalidObjectId != friendId)
 		{
-			bool Result = pOwnerObject->AddFriend(friendId, rAddPreGuid);
+			bool Result = pOwnerObject->AddFriend(friendId, addPreId);
 			if (Result)
 			{
 				pOwnerObject->CreateChildObject(pObject);
@@ -241,11 +241,11 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 	return pObject;
 }
 
-HRESULT SVObjectBuilder::OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID, const GUID& uniqueID, const std::string& objectName, const GUID& ownerUniqueID)
+HRESULT SVObjectBuilder::OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t ownerUniqueID)
 {
 	HRESULT hr = S_OK;
 
-	if (ownerUniqueID != GUID_NULL)
+	if (ownerUniqueID != SvDef::InvalidObjectId)
 	{
 		SVObjectClass* pOwnerObject = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
@@ -341,14 +341,14 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string
 	}
 }
 
-HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType)
+HRESULT SVObjectBuilder::SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	std::vector<_variant_t> values;
 	values.push_back(value);
 	return SetObjectValue(ownerID, objectID, itemName, values, dstDataType);
 }
 
-HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType)
+HRESULT SVObjectBuilder::SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType)
 {
 	HRESULT hr = S_OK;
 
@@ -378,7 +378,7 @@ HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectI
 	return hr;
 }
 
-HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPairVector& rInputPairVector)
+HRESULT SVObjectBuilder::SetInputs(uint32_t objectID, const SvDef::StringPairVector& rInputPairVector)
 {
 	HRESULT hr = S_OK;
 
@@ -406,7 +406,7 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPair
 					SVObjectReference ObjectRef{ Iter->second };
 					pInInfo->SetInputObject(ObjectRef);
 					//Connect the dependency
-					SVObjectManagerClass::Instance().ConnectObjectInput(pInInfo->GetInputObjectInfo().getUniqueObjectID(), pInInfo);
+					SVObjectManagerClass::Instance().ConnectObjectInput(pInInfo->GetInputObjectInfo().getObjectId(), pInInfo);
 				}
 			}
 			else
@@ -428,7 +428,7 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SvDef::StringPair
 	return hr;
 }
 
-HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum& dataType)
+HRESULT SVObjectBuilder::GetObjectDataType(uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum& dataType)
 {
 	HRESULT hr = S_OK;
 	

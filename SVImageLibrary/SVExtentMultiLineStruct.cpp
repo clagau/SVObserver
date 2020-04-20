@@ -22,11 +22,7 @@
 //////////////////////////////////////////////////////////////////////
 
 SVExtentMultiLineStruct::SVExtentMultiLineStruct()
-: m_InspectionID()
-, m_ToolID()
-, m_AnalyzerID()
-, m_ObjectID()
-, m_ToolSetDrawFlag( 0 )
+: m_ToolSetDrawFlag( 0 )
 , m_ToolDrawFlag( 0 )
 , m_Passed( false )
 , m_Warned( false )
@@ -561,10 +557,10 @@ void SVExtentMultiLineStruct::Initialize()
 {
 	m_StringPoint.clear();
 	
-	m_InspectionID.clear();
-	m_ToolID.clear();
-	m_AnalyzerID.clear();
-	m_ObjectID.clear();
+	m_InspectionID = SvDef::InvalidObjectId;
+	m_ToolID = SvDef::InvalidObjectId;
+	m_AnalyzerID = SvDef::InvalidObjectId;
+	m_ObjectID = SvDef::InvalidObjectId;
 
 	m_ToolSetDrawFlag = 0;
 	m_ToolDrawFlag = 0;

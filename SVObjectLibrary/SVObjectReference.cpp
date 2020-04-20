@@ -16,6 +16,7 @@
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
@@ -23,7 +24,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 , m_pValueObject(nullptr)
 {
 	m_pObject = pObject;
-	m_Guid = (nullptr != m_pObject) ? m_pObject->GetUniqueObjectID() : GUID_NULL;
+	m_objectId = (nullptr != m_pObject) ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	(nullptr != m_pObject) ? m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str()) : m_NameInfo.clear();
 }
 
@@ -32,7 +33,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 , m_pValueObject(nullptr)
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : GUID_NULL;
+	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	if( nullptr != m_pObject )
 	{
 		m_NameInfo.ParseObjectName( m_NameInfo, m_pObject->GetCompleteName().c_str() );
@@ -47,24 +48,25 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectName
 	: m_pValueObject (nullptr)
 {
 	m_pObject = pObject;
-	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : GUID_NULL;
+	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	m_NameInfo = p_rNameInfo;
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();
 }
 
-SVObjectReference::SVObjectReference(const std::string& guidAndIndexString)
+SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
 	: m_pValueObject(nullptr)
 {
-	std::string::size_type Pos = guidAndIndexString.find_first_of(_T("["));
-	std::string guidString = guidAndIndexString.substr(0, Pos);
-	m_Guid = SVGUID(_bstr_t(guidString.c_str()));
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_Guid, m_pObject);
+	std::string::size_type Pos = objectIdAndIndexString.find_first_of(_T("["));
+	std::string objectIdString = objectIdAndIndexString.substr(0, Pos);
+	m_objectId = calcObjectId(objectIdString);
+
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_objectId, m_pObject);
 	if (nullptr != m_pObject)
 	{
 		std::string tmpName = m_pObject->GetCompleteName();
 		if (std::string::npos != Pos)
 		{
-			tmpName += guidAndIndexString.substr(Pos, std::string::npos);
+			tmpName += objectIdAndIndexString.substr(Pos, std::string::npos);
 		}
 		m_NameInfo.ParseObjectName(m_NameInfo, tmpName);
 		m_ArrayIndex = m_NameInfo.GetIndexValue();
@@ -80,7 +82,7 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 {
 	m_pObject = rhs.m_pObject;
 	m_pValueObject = nullptr;
-	m_Guid = rhs.m_Guid != GUID_NULL ? rhs.m_Guid : (nullptr != m_pObject ? m_pObject->GetUniqueObjectID() : GUID_NULL);
+	m_objectId = rhs.m_objectId != SvDef::InvalidObjectId ? rhs.m_objectId : (nullptr != m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId);
 	m_NameInfo = rhs.m_NameInfo;
 	m_ArrayIndex = rhs.m_ArrayIndex;
 	return *this;
@@ -99,6 +101,15 @@ SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
 		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
 	}
 	return m_pValueObject;
+}
+
+std::string SVObjectReference::objectIdToString() const
+{
+	if (nullptr != m_pObject)
+	{
+		return convertObjectIdToString(m_pObject->getObjectId());
+	}
+	return {};
 }
 
 void SVObjectReference::SetEntireArray()
@@ -169,13 +180,13 @@ std::string SVObjectReference::GetObjectNameBeforeObjectType(SvPb::SVObjectTypeE
 	return Result;
 }
 
-std::string SVObjectReference::GetGuidAndIndexOneBased() const
+std::string SVObjectReference::GetObjectIdAndIndexOneBased() const
 {
 	std::string Result;
 
 	if (nullptr != m_pObject)
 	{
-		Result = m_pObject->GetUniqueObjectID().ToString();
+		Result = objectIdToString();
 		Result += GetIndexString(true);
 	}
 	return Result;

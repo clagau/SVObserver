@@ -33,11 +33,11 @@ namespace SvOg
 	constexpr long cRotationAngle_0	= 0;
 	constexpr long cRotationAngle_90 = 90;
 
-	SVToolAdjustmentDialogLinearSpecialPage::SVToolAdjustmentDialogLinearSpecialPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+	SVToolAdjustmentDialogLinearSpecialPage::SVToolAdjustmentDialogLinearSpecialPage( uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(SVToolAdjustmentDialogLinearSpecialPage::IDD)
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
-	, m_InspectionID{ rInspectionID }
-	, m_TaskObjectID{ rTaskObjectID }
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
 	{
 	}
 
@@ -113,7 +113,7 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getextentparameterresponse())
@@ -136,7 +136,7 @@ namespace SvOg
 			if (cRotationAngle_90 == Angle)
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10213, GUID_NULL, MB_YESNO );
+				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10213, SvDef::InvalidObjectId, MB_YESNO);
 				bUpdateRotation = (IDYES == result);
 
 				if(!bUpdateRotation)
@@ -152,7 +152,7 @@ namespace SvOg
 				if (bIsRotated)
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10214, GUID_NULL, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10214, SvDef::InvalidObjectId, MB_YESNO );
 					bUpdateRotation = (IDYES == result);
 					if(!bUpdateRotation)
 					{

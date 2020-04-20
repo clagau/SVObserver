@@ -124,7 +124,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 	{
 		auto& rImageController = getImageBufferControllerInstance();
 		const auto& rChildDef = m_rImageList.childlist(childPos);
-		int pos = findGuidPos(m_rImageList.list(), rChildDef.parentimageid());
+		int pos = findObjectIdPos(m_rImageList.list(), rChildDef.parentimageid());
 
 		MatroxBufferChildDataStruct bufferDataStruct;
 		memcpy(&bufferDataStruct, rChildDef.type().c_str(), sizeof(MatroxBufferChildDataStruct));
@@ -139,7 +139,7 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 		}
 		else
 		{
-			int childPos2 = findGuidPos(m_rImageList.childlist(), rChildDef.parentimageid());
+			int childPos2 = findObjectIdPos(m_rImageList.childlist(), rChildDef.parentimageid());
 			IImagePtr pChildImage = getChildImage(childPos2, lockImage);
 			if (nullptr != pChildImage && !pChildImage->isEmpty())
 			{

@@ -31,11 +31,11 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVLuminanceAnalyzerDlg::SVLuminanceAnalyzerDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
+	SVLuminanceAnalyzerDlg::SVLuminanceAnalyzerDlg(uint32_t inspectionID, uint32_t taskObjectID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVLuminanceAnalyzerDlg::IDD, pParent)
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_InspectionID{ inspectionID }
+	, m_TaskObjectID{ taskObjectID }
+	, m_Values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVLuminanceAnalyzerDlg)
 		m_calcStdDev = FALSE;
@@ -99,17 +99,17 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_rTaskObjectID);
+		pRequest->set_ownerid(m_TaskObjectID);
 		pRequest->mutable_infostruct()->set_objecttype(SvPb::SVResultObjectType);
 		pRequest->mutable_infostruct()->set_subtype(SvPb::SVResultLongObjectType);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK != hr || !responseCmd.has_getobjectidresponse())
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 		}
-		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid()), GetSafeHwnd()))
+		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, responseCmd.getobjectidresponse().objectid(), GetSafeHwnd()))
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);

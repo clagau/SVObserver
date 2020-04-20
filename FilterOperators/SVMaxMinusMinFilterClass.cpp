@@ -70,15 +70,15 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 	{
 		mProcBufferInfo = getOutputImage()->GetImageInfo();
 
-		mProcBufferInfo.SetOwnerImage( GUID_NULL );
-		mProcBufferInfo.SetOwner( GUID_NULL );
+		mProcBufferInfo.SetOwnerImage(SvDef::InvalidObjectId);
+		mProcBufferInfo.SetOwner(SvDef::InvalidObjectId);
 
 		if ( S_OK != SvIe::SVImageProcessingClass::CreateImageBuffer( mProcBufferInfo, m_ProcBufferHandlePtr ) )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -111,7 +111,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 
@@ -131,7 +131,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 
@@ -151,7 +151,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 
@@ -167,7 +167,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr r
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

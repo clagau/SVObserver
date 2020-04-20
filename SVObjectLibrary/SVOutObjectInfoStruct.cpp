@@ -55,7 +55,7 @@ const SVOutObjectInfoStruct& SVOutObjectInfoStruct::operator=( const SVOutObject
 HRESULT SVOutObjectInfoStruct::AddInput(SvOl::SVInObjectInfoStruct& p_rsvInput )
 {
 	// Update Pointer...
-	p_rsvInput.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rsvInput.GetInputObjectInfo().getUniqueObjectID() ) );
+	p_rsvInput.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rsvInput.GetInputObjectInfo().getObjectId() ) );
 
 	m_UserInfoList.push_back( p_rsvInput );	
 
@@ -72,7 +72,7 @@ HRESULT SVOutObjectInfoStruct::RemoveInput(SvOl::SVInObjectInfoStruct& rInputInf
 	{
 		SvOl::SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[ l ];
 
-		l_bFound = inObjectInfo.getUniqueObjectID() == rInputInfo.getUniqueObjectID();
+		l_bFound = inObjectInfo.getObjectId() == rInputInfo.getObjectId();
 
 		if ( l_bFound )
 		{
@@ -99,12 +99,12 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 	{
 		SvOl::SVInObjectInfoStruct& inObjectInfo = m_UserInfoList[l];
 
-		inObjectInfo.SetInputObject( getUniqueObjectID() );
+		inObjectInfo.SetInputObject( getObjectId() );
 
-		if( GUID_NULL != inObjectInfo.getUniqueObjectID() )
+		if (SvDef::InvalidObjectId != inObjectInfo.getObjectId())
 		{
 			// Send to the Object that is using this output
-			SVObjectManagerClass::Instance().DisconnectObjectInput(inObjectInfo.getUniqueObjectID(), &inObjectInfo);
+			SVObjectManagerClass::Instance().DisconnectObjectInput(inObjectInfo.getObjectId(), &inObjectInfo);
 		}
 	}
 

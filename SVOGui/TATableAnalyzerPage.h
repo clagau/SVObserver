@@ -11,7 +11,7 @@
 #include "SVOResource/resource.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\ObjectsListBox.h"
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary\NameObjectIdList.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ObjectSelectorController.h"
@@ -32,7 +32,7 @@ namespace SvOg
 
 #pragma region Constructor
 	public:
-		TaTableAnalyzerPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		TaTableAnalyzerPage(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~TaTableAnalyzerPage();
 #pragma endregion Constructor
 
@@ -105,14 +105,14 @@ namespace SvOg
 		/// \returns HRESULT S_OK, if setting correct.
 		HRESULT SetAddAnalyzerData(SvStl::MessageContainerVector &rErrorMessageList);
 
-		SvUl::NameGuidList getTableAnalyzer();
+		SvUl::NameObjectIdList getTableAnalyzer();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 	private:
 		SvMc::ObjectsListBox m_analyzerListBox;
 		SvMc::AvailableObjectListComboBox<SvPb::ClassIdEnum> m_availableAnaylzerCB;
-		SvMc::AvailableObjectListComboBox<SVGUID> m_columnSelectionCB;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_columnSelectionCB;
 		CEdit m_EditExcludeHigh;
 		CEdit m_EditExcludeLow;
 		CEdit m_EditLimitValue;
@@ -125,11 +125,11 @@ namespace SvOg
 		CString m_AddFormulaString;
 
 		int m_SortDirection;
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
-		SVGUID m_selectedAnalyzerID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
+		uint32_t m_selectedAnalyzerID = SvDef::InvalidObjectId;
 		long m_selectedSubType;
-		SvUl::NameGuidList m_availableColumn;
+		SvUl::NameObjectIdList m_availableColumn;
 		std::string m_inputName; 
 
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;

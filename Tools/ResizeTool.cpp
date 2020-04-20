@@ -275,7 +275,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5047_GETINPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5047_GETINPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -290,7 +290,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -305,7 +305,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -371,7 +371,7 @@ bool	ResizeTool::ValidateInterpolation(SVInterpolationModeOptions::SVInterpolati
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -398,7 +398,7 @@ bool	ResizeTool::ValidateOverscan(const SVOverscanOptions::SVOverscanOptionsEnum
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5045_INVALIDOVERSCAN, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5045_INVALIDOVERSCAN, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -425,7 +425,7 @@ bool	ResizeTool::ValidatePerformance(const SVPerformanceOptions::SVPerformanceOp
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5046_INVALIDPERFORMANCE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5046_INVALIDPERFORMANCE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -448,7 +448,7 @@ bool ResizeTool::ValidateScaleFactor(const double value, SvStl::MessageContainer
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), value));
-			SvStl::MessageContainer Msg(SVMSG_SVO_5061_SFOUTSIDERANGE, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5061_SFOUTSIDERANGE, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -482,12 +482,12 @@ HRESULT	ResizeTool::GetBackupInspectionParameters(double*	oldHeightScaleFactor,
 	return hr;
 }
 
-bool ResizeTool::isInputImage(const SVGUID& rImageGuid) const
+bool ResizeTool::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	const SvIe::SVImageClass* pImage = getInputImage();
-	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
 	}
@@ -505,7 +505,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5030_GETHEIGHTSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5030_GETHEIGHTSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -516,7 +516,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5031_GETWIDTHSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5031_GETWIDTHSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -527,7 +527,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -538,7 +538,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5033_GETOVERSCANFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5033_GETOVERSCANFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -549,7 +549,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5034_GETPERFORMANCEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5034_GETPERFORMANCEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -560,7 +560,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5023_ROIGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5023_ROIGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -571,7 +571,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5026_OUTPUTGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5026_OUTPUTGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -591,7 +591,7 @@ bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}

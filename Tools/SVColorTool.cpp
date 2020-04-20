@@ -144,7 +144,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -153,7 +153,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -165,7 +165,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -218,12 +218,12 @@ SVToolClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool SVColorToolClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVColorToolClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
-	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
 	}
@@ -260,7 +260,7 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 					Result = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -271,7 +271,7 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -313,13 +313,13 @@ void SVColorToolClass::LocalInitialize()
 
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color
-	ImageInfo.SetOwner(GetUniqueObjectID());
+	ImageInfo.SetOwner(getObjectId());
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
-	m_LogicalROIImage.UpdateImage(GUID_NULL, ImageInfo);
+	m_LogicalROIImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
 	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
-	m_OutputImage.UpdateImage(GUID_NULL, ImageInfo);
+	m_OutputImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
 	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
 
 	for (SvDef::BandEnum Band : SvDef::BandList)
@@ -339,20 +339,17 @@ void SVColorToolClass::LocalInitialize()
 
 bool SVColorToolClass::createBandChildLayer(SvDef::BandEnum Band)
 {
-	bool l_bOk = false;
-
-	SVGUID InputID = m_OutputImage.GetUniqueObjectID();
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 
 	// Setup...
-	ImageInfo.SetOwner(GetUniqueObjectID());
+	ImageInfo.SetOwner(getObjectId());
 	//The single bands do not need the offset position only width and size!
 	ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPoint, {0.0, 0.0});
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, static_cast<long> (Band));
 
-	l_bOk = (S_OK == m_bandImage[Band].UpdateImage(InputID, ImageInfo));
+	bool l_bOk = (S_OK == m_bandImage[Band].UpdateImage(m_OutputImage.getObjectId(), ImageInfo));
 
 	return l_bOk;
 }

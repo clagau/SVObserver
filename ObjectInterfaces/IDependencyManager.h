@@ -8,7 +8,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <iterator>
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVProtobuf/SVO-Enum.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
@@ -19,7 +18,7 @@
 namespace SvOi
 {
 	typedef std::back_insert_iterator<SvDef::StringPairVector> StringPairInserter;
-	typedef std::insert_iterator<SVGuidSet> SvGuidInserter;
+	typedef std::insert_iterator<std::set<uint32_t>> SvObjectIdSetInserter;
 
 	enum ToolDependencyEnum
 	{
@@ -30,13 +29,13 @@ namespace SvOi
 
 	//! Return the dependency list of the given sources
 	//! \param Inserter [in] Iterator to insert the named dependency pairs
-	//! \param rSourceSet [in] reference to the source set of GUIDs
+	//! \param rSourceSet [in] reference to the source set of IDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param rFileName [in] Optional file name to save the graph file 
-	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const std::string& rFileName = std::string());
+	void getToolDependency( StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const std::string& rFileName = std::string());
 
 	//! Return the tool dependency of the given sources
-	//! \param Inserter [in] Iterator to insert the tool GUID
-	//! \param rSourceSet [in] reference to the source set of GUIDs
-	void getToolDependency(SvOi::SvGuidInserter Inserter, const SVGuidSet& rSourceSet);
+	//! \param Inserter [in] Iterator to insert the tool ID
+	//! \param rSourceSet [in] reference to the source set of IDs
+	void getToolDependency(SvOi::SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet);
 } //namespace SvOi

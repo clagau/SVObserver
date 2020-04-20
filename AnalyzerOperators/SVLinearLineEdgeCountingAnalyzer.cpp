@@ -47,7 +47,7 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 
-	AddFriend( pEdge->GetUniqueObjectID() );
+	AddFriend( pEdge->getObjectId() );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_svEdgeCount, SvPb::EdgeCountEId, IDS_OBJECTNAME_EDGE_COUNT, false, SvOi::SVResetItemNone );
@@ -103,7 +103,7 @@ bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -113,7 +113,7 @@ bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

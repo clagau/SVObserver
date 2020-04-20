@@ -60,7 +60,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 

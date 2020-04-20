@@ -25,7 +25,7 @@ namespace SvOg
 	public:
 		long m_lLastWarpType;
 
-		SVCylindricalWarpDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		SVCylindricalWarpDlg(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~SVCylindricalWarpDlg();
 
 		//{{AFX_DATA(SVCylindricalWarpDlg)
@@ -51,8 +51,8 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

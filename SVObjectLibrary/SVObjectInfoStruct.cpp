@@ -14,7 +14,6 @@
 #include "SVObjectInfoStruct.h"
 #include "SVObjectClass.h"
 #include "SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -60,13 +59,13 @@ void SVObjectInfoStruct::clear()
 	m_ObjectTypeInfo = SvDef::SVObjectTypeInfoStruct();
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVGUID& rObjectID )
+HRESULT SVObjectInfoStruct::SetObject(uint32_t objectID)
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( rObjectID != m_ObjectRef.Guid() )
+	if( objectID != m_ObjectRef.getObjectId() )
 	{
-		m_ObjectRef = SVObjectReference(rObjectID);
+		m_ObjectRef = SVObjectReference(objectID);
 	}
 	return l_hrOk;
 }
@@ -125,11 +124,11 @@ bool SVObjectInfoStruct::operator == ( const SVObjectReference& rRhs ) const
 
 bool SVObjectInfoStruct::CheckExistence() const
 {
-	bool Result = (GUID_NULL != m_ObjectRef.Guid());
+	bool Result = (SvDef::InvalidObjectId != m_ObjectRef.getObjectId());
 
 	if(Result)
 	{
-		const SVObjectClass* const pObject = SVObjectManagerClass::Instance().GetObject(m_ObjectRef.Guid());
+		const SVObjectClass* const pObject = SVObjectManagerClass::Instance().GetObject(m_ObjectRef.getObjectId());
 
 		Result = (pObject == m_ObjectRef.getObject());
 	}

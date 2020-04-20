@@ -20,13 +20,12 @@
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
+//SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerId );
 
 SVIOController::SVIOController( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )
@@ -151,12 +150,8 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIODoc, svVariant );
 		if ( bOk )
 		{
-			SVGUID ObjectID( svVariant );
-
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
-
-			m_outObjectInfo.GetObjectReference().setGuid(ObjectID);
-
+			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
 
@@ -186,9 +181,7 @@ bool SVIOController::GetParameters(SvOi::IObjectWriter& rWriter) const
 {
 	bool bOk = true;
 
-	_variant_t svVariant;
-
-	svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
+	_variant_t svVariant = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 	if( nullptr != m_pRemoteOutputController )
@@ -228,7 +221,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidModuleReadyPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidModuleReadyPointer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 	}
 	}
@@ -241,7 +234,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidRaidBitPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidRaidBitPointer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -257,7 +250,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 	{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 	}
 	}
@@ -269,7 +262,7 @@ HRESULT SVIOController::SetModuleReady( bool Value )
 	HRESULT l_Status( S_OK );
 
 	// Don't set Module Ready if it isn't in the output list
-	if( !( m_pModuleReady->m_IOId.empty() ) )
+	if (SvDef::InvalidObjectId != m_pModuleReady->m_IOId)
 	{
 		SVOutputObjectList* pOutputList( nullptr );
 		if(nullptr != m_pModuleReady->getValueObject())
@@ -296,7 +289,7 @@ bool SVIOController::SetRaidErrorBit( bool Value )
 	bool Result( true );
 
 	// Don't set Module Ready if it isn't in the output list
-	if( !( m_pRaidErrorBit->m_IOId.empty() ) )
+	if(SvDef::InvalidObjectId != m_pRaidErrorBit->m_IOId)
 	{
 		SVOutputObjectList *pOutputList( nullptr );
 		if(nullptr != m_pRaidErrorBit->getValueObject())
@@ -328,13 +321,13 @@ SVIOEntryHostStructPtr SVIOController::GetRaidErrorBit()
 	return m_pRaidErrorBit;
 }
 
-SVGUID SVIOController::GetRemoteOutputController() const
+uint32_t SVIOController::GetRemoteOutputController() const
 {
-	SVGUID l_ObjectId;
+	uint32_t l_ObjectId = SvDef::InvalidObjectId;
 
 	if( nullptr != m_pRemoteOutputController )
 	{
-		l_ObjectId = m_pRemoteOutputController->GetUniqueObjectID();
+		l_ObjectId = m_pRemoteOutputController->getObjectId();
 	}
 
 	return l_ObjectId;
@@ -449,7 +442,7 @@ SVRemoteOutputObject* SVIOController::GetFirstRemoteOutputObject( const std::str
 	return l_pObject;
 }
 
-HRESULT SVIOController::AddRemoteOutputItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ )
+HRESULT SVIOController::AddRemoteOutputItem(const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, uint32_t p_InputObjectID, const std::string& rPPQ)
 {
 	HRESULT l_Status = S_OK;
 

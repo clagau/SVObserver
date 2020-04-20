@@ -21,8 +21,8 @@
 #pragma endregion Includes
 
 #pragma region Constructor
-SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVGuidSet& p_rImageIds)
-: m_InspectionId( p_rInspectionId )
+SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(uint32_t inspectionId, const std::set<uint32_t>& p_rImageIds)
+: m_InspectionId( inspectionId )
 , m_ImageIds( p_rImageIds )
 , m_Product()
 {
@@ -66,9 +66,9 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 		m_Product.m_ResultData.m_ToolSetTime = l_ToolSetTime;
 		m_Product.m_ResultData.m_TriggerDistance = l_TriggerDistance;
 
-		const SVGuidSet& rImageIds = GetImageIds();
+		const std::set<uint32_t>& rImageIds = GetImageIds();
 
-		for (SVGUID imageId : rImageIds)
+		for (auto imageId : rImageIds)
 		{
 			SVIPImageDataElement l_ImageData;
 
@@ -94,7 +94,7 @@ bool SVCommandInspectionCollectImageData::empty() const
 {
 	bool l_Status = true;
 
-	l_Status = l_Status && ( m_InspectionId.empty() );
+	l_Status = l_Status && ( SvDef::InvalidObjectId == m_InspectionId );
 	l_Status = l_Status && ( m_ImageIds.empty() );
 	l_Status = l_Status && ( m_Product.m_ImageData.empty() );
 	l_Status = l_Status && ( m_Product.m_ResultData.m_ResultData.empty() );
@@ -102,12 +102,12 @@ bool SVCommandInspectionCollectImageData::empty() const
 	return l_Status;
 }
 
-const SVGUID& SVCommandInspectionCollectImageData::GetInspectionId() const
+uint32_t SVCommandInspectionCollectImageData::GetInspectionId() const
 {
 	return m_InspectionId;
 }
 
-const SVGuidSet& SVCommandInspectionCollectImageData::GetImageIds() const
+const std::set<uint32_t>& SVCommandInspectionCollectImageData::GetImageIds() const
 {
 	return m_ImageIds;
 }
@@ -138,11 +138,11 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* 
 	return hRet;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID() ) );
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( imageId ) );
 
 	if( nullptr != pImage && nullptr != pTriggerRecord )
 	{

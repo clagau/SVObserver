@@ -12,6 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
+#include "Definitions/ObjectDefines.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVImportedInputList.h"
 #pragma endregion Includes
@@ -19,7 +20,7 @@
 class SVImportedInspectionInfo
 {
 public:
-	GUID m_inspectionGuid;
+	uint32_t m_inspectionId = SvDef::InvalidObjectId;
 	SVImportedInputList m_inputList;
 	SVMaterialsTree m_materialsTree;
 

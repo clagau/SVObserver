@@ -44,7 +44,7 @@ void SVIOEntryHostStruct::clear()
 	m_Enabled = false;
 	m_PPQIndex = -1;
 	m_ObjectType = IO_INVALID_OBJECT;
-	m_IOId.clear();
+	m_IOId = SvDef::InvalidObjectId;
 	m_DeleteValueObject = true;
 	m_pObject = nullptr;
 	m_pValueObject = nullptr;

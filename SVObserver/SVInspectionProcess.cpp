@@ -72,7 +72,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> res
 			{
 				ObjectRef.SetArrayIndex(i);
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
-				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
 				// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 				result = insertItem;
 			}
@@ -80,7 +80,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> res
 		else
 		{
 			insertItem.set_location(ObjectRef.GetCompleteName(true));
-			insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+			insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
 			// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 			result = insertItem;
 		}
@@ -120,7 +120,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		m_bInspecting = true;	// do this before RemoveHead
 
 		// Get the info struct for this inspection
-		SVInspectionInfoStruct& rIPInfo = rProduct.m_svInspectionInfos[GetUniqueObjectID()];
+		SVInspectionInfoStruct& rIPInfo = rProduct.m_svInspectionInfos[getObjectId()];
 		rIPInfo.m_BeginInspection = SvTl::GetTimeStamp();
 
 		/// Note this is the PPQ position of the previous trigger
@@ -140,7 +140,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 
 		if (nullptr != m_pToolSetCamera)
 		{
-			SvIe::SVGuidSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->GetUniqueObjectID()));
+			SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator iterCamera(rProduct.m_svCameraInfos.find(m_pToolSetCamera->getObjectId()));
 			if (rProduct.m_svCameraInfos.cend() != iterCamera)
 			{
 				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - rProduct.m_triggerInfo.m_triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
@@ -344,10 +344,10 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 
 		if (GetPPQ()->HasActiveMonitorList() && p_rProduct.m_triggered)
 		{
-			p_rProduct.m_svInspectionInfos[GetUniqueObjectID()].m_bReject = isReject();
+			p_rProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject();
 		}
-		std::pair<SVInspectionInfoStruct, long> data {p_rProduct.m_svInspectionInfos[GetUniqueObjectID()], p_rProduct.ProcessCount()};
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), data);
+		std::pair<SVInspectionInfoStruct, long> data {p_rProduct.m_svInspectionInfos[getObjectId()], p_rProduct.ProcessCount()};
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
 
 		p_rProcessed = true;
 
@@ -405,7 +405,7 @@ void SVInspectionProcess::Init()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInspectionObjectType;
 	m_LastRunProductNULL = false;
 	m_pCurrentToolset = nullptr;
-	m_PPQId.clear();
+	m_PPQId = SvDef::InvalidObjectId;
 	m_bNewDisableMethod = false;
 	m_lInputRequestMarkerCount = 0L;
 	m_bInspecting = false;
@@ -420,7 +420,7 @@ void SVInspectionProcess::Init()
 SVInspectionProcess::~SVInspectionProcess()
 {
 	DestroyInspection();
-	m_PPQId.clear();
+	m_PPQId = SvDef::InvalidObjectId;
 	m_WatchListDatas.clear();
 	m_SlotManager.reset();
 }
@@ -512,9 +512,9 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 
 	ProcessCommandQueue(l_Processed);
 
-	if (!(l_Product.empty()) && !(m_PPQId.empty()))
+	if (!(l_Product.empty()) && SvDef::InvalidObjectId != m_PPQId)
 	{
-		std::pair<SVInspectionInfoStruct, long> data {l_Product.m_svInspectionInfos[GetUniqueObjectID()], l_Product.ProcessCount()};
+		std::pair<SVInspectionInfoStruct, long> data {l_Product.m_svInspectionInfos[getObjectId()], l_Product.ProcessCount()};
 		SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, data);
 	}
 
@@ -523,12 +523,12 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 
 void SVInspectionProcess::DestroyInspection()
 {
-	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), SVRemoveSubjectStruct());
+	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), SVRemoveSubjectStruct());
 	::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 	::Sleep(0);
 	m_AsyncProcedure.Destroy();
 	resetLastProcduct();
-	if (!(m_PPQId.empty()))
+	if (SvDef::InvalidObjectId != m_PPQId)
 	{
 		// Release all published outputs before we destroy the toolset
 		m_publishList.Release(m_pCurrentToolset);
@@ -544,7 +544,7 @@ void SVInspectionProcess::DestroyInspection()
 	SVObjectManagerClass::Instance().AdjustInspectionIndicator(-(m_qInspectionsQueue.GetCount()));
 	m_qInspectionsQueue.Destroy();
 	m_PPQInputs.clear();
-	m_PPQId.clear();
+	m_PPQId = SvDef::InvalidObjectId;
 	SVResultListClass* pResultlist = GetResultList();
 	if (pResultlist)
 	{
@@ -629,7 +629,7 @@ bool SVInspectionProcess::CanGoOnline()
 	{
 		if (0 > m_trcPos)
 		{
-			m_trcPos = SvTrc::getInspectionPos(GetUniqueObjectID());
+			m_trcPos = SvTrc::getInspectionPos(getObjectId());
 		}
 		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, m_trcPos);
 		const SvPb::DataDefinitionList& rDataDefList = SvTrc::getTriggerRecordControllerRInstance().getDataDefList(m_trcPos);
@@ -853,7 +853,7 @@ bool SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
 
 				if (nullptr != pCamera)
 				{
-					auto l_Iter = pProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
+					auto l_Iter = pProduct->m_svCameraInfos.find(pCamera->getObjectId());
 
 					if (l_Iter != pProduct->m_svCameraInfos.end())
 					{
@@ -882,7 +882,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 		return E_FAIL;
 	}
 
-	SVInspectionInfoStruct* pIPInfo = &(pProduct->m_svInspectionInfos[GetUniqueObjectID()]);
+	SVInspectionInfoStruct* pIPInfo = &(pProduct->m_svInspectionInfos[getObjectId()]);
 	bool isTriggerRecordValid = nullptr != pIPInfo;
 	// Make sure that the lists are the same size
 	if (!isTriggerRecordValid || m_PPQInputs.size() != pProduct->m_triggerInfo.m_Inputs.size())
@@ -896,7 +896,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 		pIPInfo->m_CanProcess = false;
 		pIPInfo->m_InProcess = true;
 
-		SVProductInfoStruct tempProduct = moveInspectionToNewProduct(*pProduct, GetUniqueObjectID());
+		SVProductInfoStruct tempProduct = moveInspectionToNewProduct(*pProduct, getObjectId());
 		SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while (l_ImageIter != m_CameraImages.end())
@@ -905,7 +905,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 
 			if (nullptr != l_pImage && nullptr != l_pImage->GetCamera())
 			{
-				auto l_Iter = pProduct->m_svCameraInfos.find(l_pImage->GetCamera()->GetUniqueObjectID());
+				auto l_Iter = pProduct->m_svCameraInfos.find(l_pImage->GetCamera()->getObjectId());
 
 				if (l_Iter != pProduct->m_svCameraInfos.end())
 				{
@@ -921,7 +921,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 
 		// Set the flag in the Temp product because it gets reset when copying from the
 		// pProduct->m_svInspectionInfos to the Temp product. And that get put in the m_qInspectionsQueue.
-		tempProduct.m_svInspectionInfos[GetUniqueObjectID()].m_HasBeenQueued = true;
+		tempProduct.m_svInspectionInfos[getObjectId()].m_HasBeenQueued = true;
 
 		if (S_OK == hr && m_qInspectionsQueue.AddTail(tempProduct))
 		{
@@ -1247,7 +1247,7 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 	SVProductInfoStruct l_Product = LastProductGet();
 	if (l_Product.empty())
 	{
-		l_Product.setInspectionTriggerRecordComplete(GetUniqueObjectID());
+		l_Product.setInspectionTriggerRecordComplete(getObjectId());
 		LastProductUpdate(&l_Product);
 	}
 
@@ -1390,13 +1390,13 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 
 	if (nullptr != pPPQ)
 	{
-		l_svProduct = pPPQ->getProductReadyForRunOnce(GetUniqueObjectID());
+		l_svProduct = pPPQ->getProductReadyForRunOnce(getObjectId());
 	}
 
 	LastProductCopySourceImagesTo(&l_svProduct);
 
-	RunInspection(l_svProduct.m_svInspectionInfos[GetUniqueObjectID()], l_svProduct.m_svCameraInfos, l_svProduct.m_triggerInfo.lTriggerCount);
-	l_svProduct.setInspectionTriggerRecordComplete(GetUniqueObjectID());
+	RunInspection(l_svProduct.m_svInspectionInfos[getObjectId()], l_svProduct.m_svCameraInfos, l_svProduct.m_triggerInfo.lTriggerCount);
+	l_svProduct.setInspectionTriggerRecordComplete(getObjectId());
 
 	LastProductUpdate(&l_svProduct);
 
@@ -1405,9 +1405,9 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 		// Result View, Display Image and Overlay Update
 		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
-			std::pair<SVInspectionInfoStruct, long> data {l_svProduct.m_svInspectionInfos[GetUniqueObjectID()], l_svProduct.ProcessCount()};
+			std::pair<SVInspectionInfoStruct, long> data {l_svProduct.m_svInspectionInfos[getObjectId()], l_svProduct.ProcessCount()};
 
-			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), data);
+			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
 		}
 	}
 }
@@ -1432,7 +1432,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 		else
 		{
 			Result = false;
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			ErrorMessages.push_back(Msg);
 		}
 
@@ -1537,18 +1537,18 @@ HRESULT SVInspectionProcess::GetChildObject(SVObjectClass*& rpObject, const SVOb
 	return l_Status;
 }
 
-void SVInspectionProcess::SetPPQIdentifier(const SVGUID& p_rPPQId)
+void SVInspectionProcess::SetPPQIdentifier(uint32_t PPQId)
 {
-	if (!(m_PPQId.empty()) && (m_PPQId != p_rPPQId))
+	if (SvDef::InvalidObjectId != m_PPQId && (m_PPQId != PPQId))
 	{
 		// Release all published outputs before we destroy the toolset
 		m_publishList.Release(m_pCurrentToolset);
 	}
 
-	m_PPQId = p_rPPQId;
+	m_PPQId = PPQId;
 }
 
-const SVGUID& SVInspectionProcess::GetPPQIdentifier() const
+uint32_t SVInspectionProcess::GetPPQIdentifier() const
 {
 	return m_PPQId;
 }
@@ -1557,7 +1557,7 @@ SVPPQObject* SVInspectionProcess::GetPPQ() const
 {
 	SVPPQObject* pPPQ(nullptr);
 
-	if (!(m_PPQId.empty()))
+	if (SvDef::InvalidObjectId != m_PPQId)
 	{
 		pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(m_PPQId));
 	}
@@ -1578,20 +1578,20 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 
 	if (nullptr != pPPQ)
 	{
-		SVProductInfoStruct product = pPPQ->getProductReadyForRunOnce(GetUniqueObjectID());
+		SVProductInfoStruct product = pPPQ->getProductReadyForRunOnce(getObjectId());
 
 		if (0 >= product.m_svInspectionInfos.size())
 		{
 			l_Status = E_FAIL;
 		}
 
-		if (!(RunInspection(product.m_svInspectionInfos[GetUniqueObjectID()], product.m_svCameraInfos, product.m_triggerInfo.lTriggerCount, false)) && S_OK == l_Status)
+		if (!(RunInspection(product.m_svInspectionInfos[getObjectId()], product.m_svCameraInfos, product.m_triggerInfo.lTriggerCount, false)) && S_OK == l_Status)
 		{
 			l_Status = E_FAIL;
 		}
-		//GUID_NULL reset all inspection-TR and do not mark the TR as new TR. 
+		//SvDef::InvalidObjectId reset all inspection-TR and do not mark the TR as new TR. 
 		//And this is important, because else an event is sent and leads to wrong image updates in webApp.
-		product.setInspectionTriggerRecordComplete(GUID_NULL);
+		product.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 
 		HRESULT l_Temp = LastProductUpdate(&product);
 
@@ -1961,7 +1961,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 			{
 				SVRemoveValues l_Data;
 
-				SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+				SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
 			}
 		}// end if ( nullptr != m_pCurrentToolset )
 	}// end while( m_lInputRequestMarkerCount > 0L )
@@ -1976,7 +1976,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 	return bRet;
 }
 
-bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos)
+bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos)
 {
 	bool bRet = true;
 
@@ -2022,7 +2022,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 			SvIe::SVVirtualCamera* pVirtualCamera = nullptr;
 			if (SvIe::SVMainImageClass* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
 			{
-				SvIe::SVGuidSVCameraInfoStructMap::iterator l_svIter = rCameraInfos.find(l_psvMainImage->GetCamera()->GetUniqueObjectID());
+				SvIe::SVObjectIdSVCameraInfoStructMap::iterator l_svIter = rCameraInfos.find(l_psvMainImage->GetCamera()->getObjectId());
 				if (l_svIter != rCameraInfos.end())
 				{
 					pImageBuffer = l_psvMainImage->getTempImageBuffer();
@@ -2224,7 +2224,7 @@ std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess
 	if (!m_LastRunProductNULL)
 	{
 		std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
-		auto ipInfoIter = m_svLastRunProduct.m_svInspectionInfos.find(GetUniqueObjectID());
+		auto ipInfoIter = m_svLastRunProduct.m_svInspectionInfos.find(getObjectId());
 		if (m_svLastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
 		{
 			return {m_svLastRunProduct.m_triggerInfo, ipInfoIter->second};
@@ -2252,7 +2252,7 @@ HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *
 			if (nullptr != pCamera)
 			{
 				bool Copied(false);
-				const SvIe::SVGuidSVCameraInfoStructMap::iterator LastIter(l_Product.m_svCameraInfos.find(rCameraInfoPair.first));
+				const SvIe::SVObjectIdSVCameraInfoStructMap::iterator LastIter(l_Product.m_svCameraInfos.find(rCameraInfoPair.first));
 
 				if (LastIter != l_Product.m_svCameraInfos.end() && nullptr != LastIter->second.getImage() && !LastIter->second.getImage()->isEmpty())
 				{
@@ -2489,9 +2489,9 @@ HRESULT SVInspectionProcess::RemoveImage(SvIe::SVImageClass* pImage)
 	{
 		SVRemoveImages l_Data;
 
-		l_Data.m_Images.insert(pImage->GetUniqueObjectID());
+		l_Data.m_Images.insert(pImage->getObjectId());
 
-		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
 	}
 	else
 	{
@@ -2533,7 +2533,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -2547,7 +2547,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	return Result;
 }
 
-void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos)
+void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos)
 {
 	SvIe::SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
@@ -2561,16 +2561,16 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 
 			if (nullptr != pCamera)
 			{
-				SvIe::SVGuidSVCameraInfoStructMap::const_iterator Iter;
+				SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator Iter;
 
-				Iter = rCameraInfos.find(pCamera->GetUniqueObjectID());
+				Iter = rCameraInfos.find(pCamera->getObjectId());
 
 				if (Iter != rCameraInfos.end())
 				{
 					if (nullptr == Iter->second.getImage())
 					{
 						SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-						Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImageBuffer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImageBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						Exception.Throw();
 					}
 					else
@@ -2589,7 +2589,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 							SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 							SvStl::MessageData Msg(rExp.getMessage());
 							Msg.m_MessageCode = SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED;
-							Exception.setMessage(Msg, GetUniqueObjectID());
+							Exception.setMessage(Msg, getObjectId());
 							Exception.Throw();
 						}
 					}
@@ -2606,21 +2606,21 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 					}
 
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-					Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_CameraNotFound, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_CameraNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					Exception.Throw();
 				}
 			}
 			else
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-				Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidCamera, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidCamera, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				Exception.Throw();
 			}
 		}
 		else
 		{
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			Exception.Throw();
 		}
 
@@ -2701,7 +2701,7 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 	return retVal;
 }
 
-bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts)
+bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts)
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 	double del = SvTl::setReferenceTime();
@@ -2907,7 +2907,7 @@ SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects
 	return l_Objects;
 }
 
-SVObjectClass *SVInspectionProcess::UpdateObject(const GUID &p_oFriendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner)
+SVObjectClass *SVInspectionProcess::UpdateObject(uint32_t friendId, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner)
 {
 	p_psvObject->SetObjectOwner(p_psvNewOwner);
 
@@ -2930,7 +2930,7 @@ void SVInspectionProcess::ResetName()
 
 	SVInspectionNameUpdate l_Data(GetName());
 
-	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
 }
 
 void SVInspectionProcess::SetName(LPCTSTR StrString)
@@ -2939,7 +2939,7 @@ void SVInspectionProcess::SetName(LPCTSTR StrString)
 
 	SVInspectionNameUpdate l_Data(GetName());
 
-	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), GetUniqueObjectID(), l_Data);
+	SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), l_Data);
 
 	if (nullptr != m_pCurrentToolset)
 	{
@@ -3052,7 +3052,7 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass
 
 	SVGetObjectDequeByTypeVisitor l_Visitor(imageObjectInfo);
 
-	SVObjectManagerClass::Instance().VisitElements(l_Visitor, GetUniqueObjectID());
+	SVObjectManagerClass::Instance().VisitElements(l_Visitor, getObjectId());
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
@@ -3239,7 +3239,7 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT a
 				// Only DIO and Remote Input, but is all that is in this list?
 				SvUl::searchAndReplace(location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				insertItem.set_location(location);
-				insertItem.set_objectidindex(ObjectRef.GetGuidAndIndexOneBased());
+				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
 				result.emplace_back(insertItem);
 			}
 		}
@@ -3317,26 +3317,26 @@ void SVInspectionProcess::BuildValueObjectMap()
 	}
 }// end BuildValueObjectMap
 
-GUID SVInspectionProcess::getFirstCamera() const
+uint32_t SVInspectionProcess::getFirstCamera() const
 {
-	GUID cameraGuid(GUID_NULL);
+	uint32_t cameraId{ SvDef::InvalidObjectId };
 
 	if (!(m_ToolSetCameraName.empty()))
 	{
 		SvOi::IObjectClass* pCamera = SvOi::getObjectByDottedName(m_ToolSetCameraName.c_str());
-		cameraGuid = (nullptr != pCamera) ? pCamera->GetUniqueObjectID() : GUID_NULL;
+		cameraId = (nullptr != pCamera) ? pCamera->getObjectId() : SvDef::InvalidObjectId;
 	}
 
-	if (GUID_NULL == cameraGuid)
+	if (SvDef::InvalidObjectId == cameraId)
 	{
 		SvOi::IObjectClass* pCamera = getFirstPPQCamera();
-		cameraGuid = (nullptr != pCamera) ? pCamera->GetUniqueObjectID() : GUID_NULL;
+		cameraId = (nullptr != pCamera) ? pCamera->getObjectId() : SvDef::InvalidObjectId;
 	}
 
-	return cameraGuid;
+	return cameraId;
 }
 
-HRESULT SVInspectionProcess::addSharedCamera(GUID cameraID)
+HRESULT SVInspectionProcess::addSharedCamera(uint32_t cameraID)
 {
 	HRESULT result = S_OK;
 
@@ -3424,7 +3424,7 @@ SvPb::OverlayDesc SVInspectionProcess::getOverlayStruct(const SvOi::ISVImage& rI
 	{
 		return pToolSet->getOverlayStruct(rImage);
 	}
-	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 	throw msg;
 }
 #pragma endregion IInspectionProcess methods
@@ -3502,7 +3502,7 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 
 bool SVInspectionProcess::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
-	bool Result = m_publishList.RemovePublishedEntry(pObjectInInfo->GetInputObjectInfo().getUniqueObjectID());
+	bool Result = m_publishList.RemovePublishedEntry(pObjectInInfo->GetInputObjectInfo().getObjectId());
 
 	if (nullptr != GetToolSet())
 	{
@@ -3627,7 +3627,7 @@ bool SVInspectionProcess::ConnectAllInputs()
 	return false;
 }
 
-bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNewGuid)
+bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 {
 	if (nullptr != pObject)
 	{
@@ -3636,7 +3636,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 		pObject->DestroyFriends();
 
 		// Special code for Duplicates!!
-		SVObjectClass* pDuplicateObject = SVObjectManagerClass::Instance().GetObject(rNewGuid);
+		SVObjectClass* pDuplicateObject = SVObjectManagerClass::Instance().GetObject(newId);
 		if (pDuplicateObject)
 		{
 			if (pDuplicateObject == m_pCurrentToolset)
@@ -3647,7 +3647,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 			// Get the Owner
 			SVObjectInfoStruct ownerInfo = pDuplicateObject->GetOwnerInfo();
 
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getUniqueObjectID());
+			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getObjectId());
 			if (pOwner)
 			{
 				// Ask the owner to kill the imposter!
@@ -3676,7 +3676,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 		// Special code for Objects that allocate Friends on SetOwner()
 		pObject->DestroyFriends();
 
-		if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pObject, rNewGuid))
+		if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pObject, newId))
 		{
 			SVToolSetClass* l_pToolSet(nullptr);
 
@@ -3697,7 +3697,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 
 				if (nullptr != m_pToolSetConditional)
 				{
-					m_pCurrentToolset->AddFriend(m_pToolSetConditional->GetUniqueObjectID());
+					m_pCurrentToolset->AddFriend(m_pToolSetConditional->getObjectId());
 
 					m_pCurrentToolset->CreateChildObject(m_pToolSetConditional);
 
@@ -3725,7 +3725,7 @@ SvOi::IFormulaControllerPtr SVInspectionProcess::getRegressionTestPlayConditionC
 {
 	if (nullptr == m_pRegressionTestPlayEquationController)
 	{
-		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr {new SvOg::FormulaController(GetUniqueObjectID(), GetUniqueObjectID(), static_cast<GUID>(m_RegressionTestPlayEquation.GetUniqueObjectID()))};
+		m_pRegressionTestPlayEquationController = SvOi::IFormulaControllerPtr {new SvOg::FormulaController(getObjectId(), getObjectId(), m_RegressionTestPlayEquation.getObjectId())};
 	}
 	return m_pRegressionTestPlayEquationController;
 }
@@ -3763,7 +3763,7 @@ void SVInspectionProcess::buildValueObjectData()
 		{
 			auto* pValueObjectDef = pList->Add();
 			const SvOi::IObjectClass* const pObject = dynamic_cast<const SvOi::IObjectClass* const> (pValueObject);
-			SvPb::SetGuidInProtoBytes(pValueObjectDef->mutable_guidid(), pObject->GetUniqueObjectID().ToGUID());
+			pValueObjectDef->set_objectid(pObject->getObjectId());
 			pValueObjectDef->set_name(pObject->GetCompleteName());
 			pValueObjectDef->set_type(pObject->GetObjectSubType());
 			pValueObjectDef->set_typestring(pValueObject->getTypeName());

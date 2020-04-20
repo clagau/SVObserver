@@ -136,7 +136,7 @@ void SVRegressionFileSelectSheet::OnOK()
 		case SvStl::Tid_RegressionTest_EmptyDirectory:
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage( rExp.getMessage(), GUID_NULL, MB_YESNO);
+			INT_PTR result = Msg.setMessage(rExp.getMessage(), SvDef::InvalidObjectId, MB_YESNO);
 			if (IDYES == result)
 			{
 				return;

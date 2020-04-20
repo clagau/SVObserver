@@ -8,7 +8,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
 
@@ -30,7 +29,7 @@ class SVCommandInspectionExtentUpdater
 public:
 	SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject) = delete;
 	/// a pointer to SVImageExtentClass is used to avoid unnecessary copies in case of default arguments 
-	SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent = nullptr );
+	SVCommandInspectionExtentUpdater(uint32_t inspectionId, uint32_t toolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent = nullptr);
 
 	virtual ~SVCommandInspectionExtentUpdater();
 #pragma endregion Constructor
@@ -53,8 +52,8 @@ private:
 
 #pragma region Member Variables
 private:
-	SVGUID m_InspectionId;
-	SVGUID m_ToolId;
+	uint32_t m_InspectionId;
+	uint32_t m_ToolId;
 	SVImageExtentClass m_ImageExtent;
 	SVCommandExtentUpdaterModeEnum m_mode;
 #pragma endregion Member Variables

@@ -55,7 +55,7 @@ bool SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo)
 	m_ImageInfo = p_rImageInfo;
 
 	// Set up necessary main image info...
-	m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
+	m_ImageInfo.SetOwnerImage( getObjectId() );
 
 	m_LastUpdate = SvTl::GetTimeStamp();
      

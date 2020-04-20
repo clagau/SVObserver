@@ -50,7 +50,7 @@ public:
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
 	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
-	virtual HRESULT SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject) override;
+	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject) override;
 
 	void setHighValues(double failHigh, double warnHigh);
 	void setLowValues(double failLow, double warnLow);

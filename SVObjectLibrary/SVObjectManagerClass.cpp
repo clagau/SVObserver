@@ -80,7 +80,7 @@ HRESULT SVObjectManagerClass::SetState(SVObjectManagerStateEnum State)
 	return S_OK;
 }
 
-const SVGUID SVObjectManagerClass::GetChildRootObjectID(const std::string& rRootName) const
+uint32_t SVObjectManagerClass::GetChildRootObjectID(const std::string& rRootName) const
 {
 	auto iter = m_RootNameChildren.find(rRootName);
 	if (m_RootNameChildren.end() != iter)
@@ -94,12 +94,12 @@ const SVGUID SVObjectManagerClass::GetChildRootObjectID(const std::string& rRoot
 	{
 		return iter->second;
 	}
-	return GUID_NULL;
+	return SvDef::InvalidObjectId;
 }
 
 HRESULT SVObjectManagerClass::ConstructRootObject(SvPb::ClassIdEnum classID)
 {
-	if (m_RootNameChildren.end() != m_RootNameChildren.find(SvDef::FqnRoot) && !m_RootNameChildren[SvDef::FqnRoot].empty())
+	if (m_RootNameChildren.end() != m_RootNameChildren.find(SvDef::FqnRoot) && SvDef::InvalidObjectId != m_RootNameChildren[SvDef::FqnRoot])
 	{
 		DestroyRootObject();
 	}
@@ -110,7 +110,7 @@ HRESULT SVObjectManagerClass::ConstructRootObject(SvPb::ClassIdEnum classID)
 	{
 		if (nullptr != pRootObject)
 		{
-			m_RootNameChildren[SvDef::FqnRoot] = pRootObject->GetUniqueObjectID();
+			m_RootNameChildren[SvDef::FqnRoot] = pRootObject->getObjectId();
 		}
 	}
 
@@ -121,8 +121,8 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 {
 	HRESULT Result = S_OK;
 
-	SVGUID RootID = GetChildRootObjectID(SvDef::FqnRoot);
-	if (!RootID.empty())
+	uint32_t RootID = GetChildRootObjectID(SvDef::FqnRoot);
+	if (SvDef::InvalidObjectId != RootID)
 	{
 		SVObjectClass* pObject = GetObject(RootID);
 
@@ -135,14 +135,14 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 	return Result;
 }
 
-void SVObjectManagerClass::setRootChildID(const std::string& rRootChild, const SVGUID& rUniqueID)
+void SVObjectManagerClass::setRootChildID(const std::string& rRootChild, uint32_t objectID)
 {
 	
 	SVObjectClass* pRootObject(nullptr);
-	GetObjectByIdentifier(rUniqueID, pRootObject);
+	GetObjectByIdentifier(objectID, pRootObject);
 	if (nullptr != pRootObject)
 	{
-		m_RootNameChildren[rRootChild] = rUniqueID;
+		m_RootNameChildren[rRootChild] = objectID;
 	}
 }
 
@@ -178,25 +178,25 @@ void SVObjectManagerClass::Shutdown()
 	}
 }
 
-HRESULT SVObjectManagerClass::connectDependency(const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type)
+HRESULT SVObjectManagerClass::connectDependency(uint32_t source, uint32_t destination, SvOl::JoinType Type)
 {
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
 
-	HRESULT Result = SvOl::DependencyManager::Instance().Connect(rSource, rDestination, Type);
+	HRESULT Result = SvOl::DependencyManager::Instance().Connect(source, destination, Type);
 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::disconnectDependency(const SVGUID& rSource, const SVGUID& rDestination, SvOl::JoinType Type)
+HRESULT SVObjectManagerClass::disconnectDependency(uint32_t source, uint32_t destination, SvOl::JoinType Type)
 {
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
 
-	HRESULT Result = SvOl::DependencyManager::Instance().Disconnect(rSource, rDestination, Type);
+	HRESULT Result = SvOl::DependencyManager::Instance().Disconnect(source, destination, Type);
 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, GUID& rObjectID)
+HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, uint32_t& rObjectID)
 {
 	SVObjectClass* l_pObject = nullptr;
 
@@ -204,11 +204,11 @@ HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, GUID& r
 
 	if (nullptr != l_pObject)
 	{
-		rObjectID = l_pObject->GetUniqueObjectID();
+		rObjectID = l_pObject->getObjectId();
 	}
 	else
 	{
-		rObjectID = GUID_NULL;
+		rObjectID = SvDef::InvalidObjectId;
 		if (S_OK == Result)
 		{
 			Result = E_FAIL;
@@ -232,13 +232,13 @@ HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, SVObjec
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObjectByIdentifier(const SVGUID& rObjectID, SVObjectClass*& rpObject) const
+HRESULT SVObjectManagerClass::GetObjectByIdentifier(uint32_t objectID, SVObjectClass*& rpObject) const
 {
 	HRESULT Result = S_OK;
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	bool Status = !(rObjectID.empty());
+	bool Status = (SvDef::InvalidObjectId != objectID);
 
 	if (Status && ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
@@ -247,7 +247,7 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier(const SVGUID& rObjectID, SVO
 
 	if (Status)
 	{
-		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rObjectID);
+		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(objectID);
 
 		if (nullptr != pUniqueObject)
 		{
@@ -271,14 +271,14 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier(const SVGUID& rObjectID, SVO
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, GUID& rObjectID) const
+HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, uint32_t& rObjectID) const
 {
 	SVObjectReference ObjectRef;
 	HRESULT Status = GetObjectByDottedName(rFullName, ObjectRef);
 
 	if (nullptr != ObjectRef.getObject())
 	{
-		rObjectID = ObjectRef.getObject()->GetUniqueObjectID();
+		rObjectID = ObjectRef.getObject()->getObjectId();
 	}
 	else
 	{
@@ -287,7 +287,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 			Status = E_FAIL;
 		}
 
-		rObjectID = GUID_NULL;
+		rObjectID = SvDef::InvalidObjectId;
 	}
 
 	return Status;
@@ -346,8 +346,8 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 
 		NameInfo.ParseObjectName(Name);
 
-		SVGUID ChildRootID = GetChildRootObjectID(NameInfo.m_NameArray[0]);
-		SVGUID ConfigID = GetChildRootObjectID(SvDef::FqnConfiguration);
+		uint32_t ChildRootID = GetChildRootObjectID(NameInfo.m_NameArray[0]);
+		uint32_t ConfigID = GetChildRootObjectID(SvDef::FqnConfiguration);
 		Result = GetObjectByIdentifier(ChildRootID, pChildRootObject);
 
 		if (nullptr != pChildRootObject)
@@ -375,7 +375,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 				}
 				else
 				{
-					SVGUID RootObjetctID = GetChildRootObjectID(SvDef::FqnRoot);
+					uint32_t RootObjetctID = GetChildRootObjectID(SvDef::FqnRoot);
 					Result = GetObjectByIdentifier(RootObjetctID, pParent);
 				}
 				if (nullptr != pParent)
@@ -411,7 +411,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 	return Result;
 }
 
-bool SVObjectManagerClass::CreateUniqueObjectID(SVObjectClass* pObject)
+bool SVObjectManagerClass::CreateObjectID(SVObjectClass* pObject)
 {
 	bool Result = (ReadWrite == m_State);
 
@@ -433,26 +433,72 @@ bool SVObjectManagerClass::CreateUniqueObjectID(SVObjectClass* pObject)
 
 			if (Result)
 			{
-				Result = (S_OK == CoCreateGuid(&(pUniqueObject->m_ObjectUID.ToGUID())));
+				pUniqueObject->m_ObjectID = getNextObjectId();
 
-				if (Result)
+				pUniqueObject->m_pObject = pObject;
+				pObject->m_outObjectInfo.GetObjectReference().setObjectId(pUniqueObject->m_ObjectID);
+				m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
+
+				SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
+				uint32_t OwnerId = pObject->GetParentID();
+				if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
 				{
-					pUniqueObject->m_pObject = pObject;
-					pObject->m_outObjectInfo.GetObjectReference().setGuid(pUniqueObject->m_ObjectUID);
-					m_UniqueObjectEntries[pUniqueObject->m_ObjectUID] = pUniqueObject;
-
-					SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectUID);
-					SVGUID OwnerGuid = pObject->GetParentID();
-					if (GUID_NULL != OwnerGuid && OwnerGuid != pUniqueObject->m_ObjectUID)
-					{
-						SvOl::DependencyManager::Instance().Connect(OwnerGuid, pUniqueObject->m_ObjectUID, SvOl::JoinType::Owner);
-					}
+					SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType::Owner);
 				}
 			}
 		}
 	}
 
 	return Result;
+}
+
+uint32_t SVObjectManagerClass::getNextObjectId() 
+{
+	auto iter = m_deletedObjectId.begin();
+	if (m_deletedObjectId.end() != iter)
+	{
+		auto retValue = *iter;
+		m_deletedObjectId.erase(retValue);
+		return retValue;
+	}
+	return m_nextObjectId++; 
+}
+
+void SVObjectManagerClass::fitNextObjectId(uint32_t usedObjectId)
+{
+	if (m_nextObjectId <= usedObjectId)
+	{
+		m_nextObjectId = usedObjectId;
+	}
+}
+
+void SVObjectManagerClass::reduceNextObjectId(uint32_t removedObjectId)
+{
+	if (removedObjectId > m_firstObjectId)
+	{
+		if (m_nextObjectId - 1 == removedObjectId)
+		{
+			m_nextObjectId--;
+			auto iter = m_deletedObjectId.find(m_nextObjectId - 1);
+			while (m_deletedObjectId.end() != iter)
+			{
+				m_deletedObjectId.erase(iter);
+				m_nextObjectId--;
+				iter = m_deletedObjectId.find(m_nextObjectId - 1);
+			}
+		}
+		else
+		{
+			m_deletedObjectId.emplace(removedObjectId);
+		}
+	}
+}
+
+void SVObjectManagerClass::resetNextObjectId()
+{
+	m_nextObjectId = m_firstObjectId; 
+	m_deletedObjectId.clear();
+	resetExchangeObjectIdMap();
 }
 
 bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
@@ -470,8 +516,8 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 
 		if (Result)
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->m_outObjectInfo.getUniqueObjectID());
-
+			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->m_outObjectInfo.getObjectId());
+			assert(nullptr == pUniqueObject);
 			Result = (nullptr == pUniqueObject);
 
 			if (Result)
@@ -483,14 +529,14 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 				if (Result)
 				{
 					pUniqueObject->m_pObject = pObject;
-					pUniqueObject->m_ObjectUID = pObject->m_outObjectInfo.getUniqueObjectID();
-					m_UniqueObjectEntries[pUniqueObject->m_ObjectUID] = pUniqueObject;
+					pUniqueObject->m_ObjectID = pObject->m_outObjectInfo.getObjectId();
+					m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
 
-					SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectUID);
-					SVGUID OwnerGuid = pObject->GetParentID();
-					if (GUID_NULL != OwnerGuid && OwnerGuid != pUniqueObject->m_ObjectUID)
+					SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
+					uint32_t OwnerId = pObject->GetParentID();
+					if (SvDef::InvalidObjectId != OwnerId && OwnerId != pUniqueObject->m_ObjectID)
 					{
-						SvOl::DependencyManager::Instance().Connect(OwnerGuid, pUniqueObject->m_ObjectUID, SvOl::JoinType::Owner);
+						SvOl::DependencyManager::Instance().Connect(OwnerId, pUniqueObject->m_ObjectID, SvOl::JoinType::Owner);
 					}
 				}
 			}
@@ -511,7 +557,7 @@ bool SVObjectManagerClass::CloseUniqueObjectID(SVObjectClass* pObject)
 
 		if (Result)
 		{
-			SVGUID ObjectID(pObject->GetUniqueObjectID());
+			uint32_t ObjectID(pObject->getObjectId());
 			DetachObservers(ObjectID);
 			DetachSubjects(ObjectID);
 
@@ -529,11 +575,11 @@ bool SVObjectManagerClass::CloseUniqueObjectID(SVObjectClass* pObject)
 	return Result;
 }
 
-bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, const SVGUID& rNewGuid)
+bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, uint32_t newId)
 {
-	if (GUID_NULL != rNewGuid && CloseUniqueObjectID(pObject))
+	if (SvDef::InvalidObjectId != newId && CloseUniqueObjectID(pObject))
 	{
-		pObject->m_outObjectInfo.GetObjectReference().setGuid(rNewGuid);
+		pObject->m_outObjectInfo.GetObjectReference().setObjectId(newId);
 		bool bRetVal = OpenUniqueObjectID(pObject);
 
 		// Change ObjectID setting in private input interface...
@@ -544,13 +590,13 @@ bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, const SV
 	return false;
 }
 
-SVObjectClass* SVObjectManagerClass::GetObject(const SVGUID& rGuid) const
+SVObjectClass* SVObjectManagerClass::GetObject(uint32_t objectId) const
 {
 	SVObjectClass* pObject = nullptr;
 
 	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
 
-	bool Result = (GUID_NULL != rGuid);
+	bool Result = (SvDef::InvalidObjectId != objectId);
 
 
 	if ( Result && ReadWrite == m_State && (Autolock.owns_lock() == false))
@@ -560,7 +606,7 @@ SVObjectClass* SVObjectManagerClass::GetObject(const SVGUID& rGuid) const
 
 	if (Result)
 	{
-		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rGuid);
+		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(objectId);
 
 		if (nullptr != pUniqueObject)
 		{
@@ -619,15 +665,15 @@ SVObjectReference SVObjectManagerClass::GetObjectReference(LPCTSTR Name)
 	return Result;
 }
 
-SVGUID SVObjectManagerClass::GetObjectIdFromCompleteName(LPCTSTR Name)
+uint32_t SVObjectManagerClass::GetObjectIdFromCompleteName(LPCTSTR Name)
 {
-	SVGUID Result;
+	uint32_t Result = SvDef::InvalidObjectId;
 
 	SVObjectClass* pObject = GetObjectCompleteName(Name);
 
 	if (nullptr != pObject)
 	{
-		Result = pObject->GetUniqueObjectID();
+		Result = pObject->getObjectId();
 	}
 
 	return Result;
@@ -670,11 +716,11 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 }
 
 
-std::string SVObjectManagerClass::GetCompleteObjectName(const SVGUID& rGuid)
+std::string SVObjectManagerClass::GetCompleteObjectName(uint32_t objectId)
 {
 	std::string Result;
 
-	SVObjectClass* pObject = GetObject(rGuid);
+	SVObjectClass* pObject = GetObject(objectId);
 
 	if (nullptr != pObject)
 	{
@@ -727,41 +773,23 @@ HRESULT SVObjectManagerClass::EraseObserver(long Cookie)
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverSubject(const std::string& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID) const
+uint32_t SVObjectManagerClass::getObserverSubject(const std::string& rSubjectDataName, uint32_t observerID) const
 {
-	HRESULT Result = S_OK;
-
-	rSubjectID = GetSubjectID(rSubjectDataName, getUniqueObjectEntry(rObserverID));
-
-	if (SVGUID(rSubjectID).empty())
-	{
-		Result = S_FALSE;
-	}
-
-	return Result;
+	return GetSubjectID(rSubjectDataName, getUniqueObjectEntry(observerID));
 }
 
-HRESULT SVObjectManagerClass::GetObserverSubject(const std::string& rSubjectDataName, long Cookie, GUID& rSubjectID) const
+uint32_t SVObjectManagerClass::getObserverSubject(const std::string& rSubjectDataName, long Cookie) const
 {
-	HRESULT Result = S_OK;
-
-	rSubjectID = GetSubjectID(rSubjectDataName, GetCookieEntry(Cookie));
-
-	if (SVGUID(rSubjectID).empty())
-	{
-		Result = S_FALSE;
-	}
-
-	return Result;
+	return GetSubjectID(rSubjectDataName, GetCookieEntry(Cookie));
 }
 
-HRESULT SVObjectManagerClass::GetObserverIds(const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVGuidSet& rObserverIds)
+HRESULT SVObjectManagerClass::GetObserverIds(const std::string& rSubjectDataName, uint32_t subjectID, std::set<uint32_t>& rObserverIds)
 {
 	rObserverIds.clear();
 
 	SVSubjectEnabledObserverMap Observers;
 
-	HRESULT Result = GetObservers(rSubjectDataName, rSubjectID, Observers);
+	HRESULT Result = GetObservers(rSubjectDataName, subjectID, Observers);
 
 	if (S_OK == Result)
 	{
@@ -779,7 +807,7 @@ HRESULT SVObjectManagerClass::GetObserverIds(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID)
+HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
 {
 	HRESULT Result = S_OK;
 
@@ -788,20 +816,20 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
-		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(rObserverID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
+		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(observerID);
 
 		if (nullptr != pSubjectObject && nullptr != pObserverObject)
 		{
-			SVGUID SubjectID = GetSubjectID(rSubjectDataName, pObserverObject);
+			uint32_t oldSubjectId = GetSubjectID(rSubjectDataName, pObserverObject);
 
-			if (!SubjectID.empty())
+			if (SvDef::InvalidObjectId != oldSubjectId)
 			{
-				DetachObserver(rSubjectDataName, SubjectID, rObserverID);
+				DetachObserver(rSubjectDataName, oldSubjectId, observerID);
 			}
 
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[rObserverID] = 1;
-			pObserverObject->m_SubjectIDs[rSubjectDataName] = rSubjectID;
+			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[observerID] = 1;
+			pObserverObject->m_SubjectIDs[rSubjectDataName] = subjectID;
 		}
 		else
 		{
@@ -816,7 +844,7 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, long p_Cookie)
+HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, uint32_t subjectID, long p_Cookie)
 {
 	HRESULT Result = S_OK;
 
@@ -825,20 +853,20 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 		SVCookieEntryStructPtr pObserverObject = GetCookieEntry(p_Cookie);
 
 		if (nullptr != pSubjectObject && nullptr != pObserverObject)
 		{
-			SVGUID l_SubjectID = GetSubjectID(rSubjectDataName, pObserverObject);
+			uint32_t l_SubjectID = GetSubjectID(rSubjectDataName, pObserverObject);
 
-			if (!l_SubjectID.empty() && l_SubjectID == rSubjectID)
+			if (SvDef::InvalidObjectId != l_SubjectID && l_SubjectID == subjectID)
 			{
 				DetachObserver(rSubjectDataName, l_SubjectID, p_Cookie);
 			}
 
 			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectCookies[p_Cookie] = 1;
-			pObserverObject->m_SubjectIDs[rSubjectDataName] = rSubjectID;
+			pObserverObject->m_SubjectIDs[rSubjectDataName] = subjectID;
 		}
 		else
 		{
@@ -853,7 +881,7 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID)
+HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
 {
 	HRESULT Result = S_OK;
 
@@ -866,11 +894,11 @@ HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName
 
 	if (S_OK == Result)
 	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 
 		if (nullptr != pSubjectObject)
 		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[rObserverID] = 1;
+			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[observerID] = 1;
 		}
 		else
 		{
@@ -881,7 +909,7 @@ HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie)
+HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName, uint32_t subjectID, long Cookie)
 {
 	HRESULT Result = S_OK;
 
@@ -894,7 +922,7 @@ HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName
 
 	if (S_OK == Result)
 	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 
 		if (nullptr != pSubjectObject)
 		{
@@ -909,7 +937,7 @@ HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID)
+HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
 {
 	HRESULT Result = S_OK;
 
@@ -922,11 +950,11 @@ HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataNam
 
 	if (S_OK == Result)
 	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 
 		if (nullptr != pSubjectObject)
 		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[rObserverID] = 0;
+			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[observerID] = 0;
 		}
 		else
 		{
@@ -937,7 +965,7 @@ HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataNam
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie)
+HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataName, uint32_t subjectID, long Cookie)
 {
 	HRESULT Result = S_OK;
 
@@ -950,7 +978,7 @@ HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataNam
 
 	if (S_OK == Result)
 	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 
 		if (nullptr != pSubjectObject)
 		{
@@ -965,7 +993,7 @@ HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataNam
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID)
+HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
 {
 	HRESULT Result = S_OK;
 
@@ -974,18 +1002,18 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
 	{
 		Autolock.lock();
-		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(rObserverID);
+		SVUniqueObjectEntryStructPtr pObserverObject = getUniqueObjectEntry(observerID);
 
 		if (nullptr != pObserverObject)
 		{
 			pObserverObject->m_SubjectIDs.erase(rSubjectDataName);
 		}
 
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 
 		if (nullptr != pSubjectObject)
 		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers.erase(rObserverID);
+			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers.erase(observerID);
 		}
 	}
 	else
@@ -996,7 +1024,7 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName, const SVGUID& rSubjectID, long Cookie)
+HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName, uint32_t subjectID, long Cookie)
 {
 	HRESULT Result = S_OK;
 
@@ -1012,7 +1040,7 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 			pObserverObject->m_SubjectIDs.erase(rSubjectDataName);
 		}
 
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(rSubjectID);
+		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
 
 		if (nullptr != pSubjectObject)
 		{
@@ -1027,12 +1055,12 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataName, const SVGUID& rSubjectID)
+HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataName, uint32_t subjectID)
 {
 	SVSubjectEnabledObserverMap Observers;
 	SVSubjectEnabledCookieMap CookieObservers;
 
-	HRESULT Result = GetObservers(rSubjectDataName, rSubjectID, Observers, CookieObservers);
+	HRESULT Result = GetObservers(rSubjectDataName, subjectID, Observers, CookieObservers);
 
 	if (S_OK == Result)
 	{
@@ -1040,7 +1068,7 @@ HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataNam
 
 		while (Iter != Observers.end())
 		{
-			HRESULT l_Temp = DetachObserver(rSubjectDataName, rSubjectID, Iter->first);
+			HRESULT l_Temp = DetachObserver(rSubjectDataName, subjectID, Iter->first);
 
 			if (S_OK == Result)
 			{
@@ -1054,7 +1082,7 @@ HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataNam
 
 		while (CookieIter != CookieObservers.end())
 		{
-			HRESULT l_Temp = DetachObserver(rSubjectDataName, rSubjectID, CookieIter->first);
+			HRESULT l_Temp = DetachObserver(rSubjectDataName, subjectID, CookieIter->first);
 
 			if (S_OK == Result)
 			{
@@ -1068,10 +1096,10 @@ HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataNam
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachSubjectsAndObservers(const SVGUID& rObjectID)
+HRESULT SVObjectManagerClass::DetachSubjectsAndObservers(uint32_t objectID)
 {
-	HRESULT Result = DetachObservers(rObjectID);
-	HRESULT SubjectStatus = DetachSubjects(rObjectID);
+	HRESULT Result = DetachObservers(objectID);
+	HRESULT SubjectStatus = DetachSubjects(objectID);
 
 	if (S_OK == Result)
 	{
@@ -1092,22 +1120,19 @@ HRESULT SVObjectManagerClass::DetachSubjects(long Cookie)
 
 		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)
 		{
-			SVGUID SubjectId;
-
-			GetObserverSubject(*Iter, Cookie, SubjectId);
-
-			DetachObserver(*Iter, SubjectId, Cookie);
+			uint32_t subjectId = getObserverSubject(*Iter, Cookie);
+			DetachObserver(*Iter, subjectId, Cookie);
 		}
 	}
 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachSubjects(const SVGUID& rObserverID)
+HRESULT SVObjectManagerClass::DetachSubjects(uint32_t observerID)
 {
 	SVSubjectDataNameDeque SubjectDataNames;
 
-	HRESULT Result = GetObserverDataNames(rObserverID, SubjectDataNames);
+	HRESULT Result = GetObserverDataNames(observerID, SubjectDataNames);
 
 	if (S_OK == Result)
 	{
@@ -1115,30 +1140,31 @@ HRESULT SVObjectManagerClass::DetachSubjects(const SVGUID& rObserverID)
 
 		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)
 		{
-			SVGUID SubjectId;
-
-			GetObserverSubject(*Iter, rObserverID, SubjectId);
-
-			DetachObserver(*Iter, SubjectId, rObserverID);
+			uint32_t subjectId = getObserverSubject(*Iter, observerID);
+			DetachObserver(*Iter, subjectId, observerID);
 		}
 	}
 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DetachObservers(const SVGUID& rSubjectID)
+HRESULT SVObjectManagerClass::DetachObservers(uint32_t subjectID)
 {
 	SVSubjectDataNameDeque SubjectDataNames;
 
-	HRESULT Result = GetSubjectDataNames(rSubjectID, SubjectDataNames);
+	HRESULT Result = GetSubjectDataNames(subjectID, SubjectDataNames);
 
 	if (S_OK == Result)
 	{
+		if (m_addToDeletedList)
+		{
+			reduceNextObjectId(subjectID);
+		}
 		SVSubjectDataNameDeque::iterator Iter;
 
 		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)
 		{
-			HRESULT Temp = DetachObservers(*Iter, rSubjectID);
+			HRESULT Temp = DetachObservers(*Iter, subjectID);
 
 			if (S_OK == Result)
 			{
@@ -1150,22 +1176,22 @@ HRESULT SVObjectManagerClass::DetachObservers(const SVGUID& rSubjectID)
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::DisconnectObjects(const SVGUID& rObjectID, const SVGUID& rRemoteID)
+HRESULT SVObjectManagerClass::DisconnectObjects(uint32_t objectID, uint32_t remoteID)
 {
 	HRESULT Result = S_OK;
 
-	SVObjectClass* pObject = GetObject(rObjectID);
+	SVObjectClass* pObject = GetObject(objectID);
 
 	if (nullptr != pObject)
 	{
-		Result = pObject->RemoveObjectConnection(rRemoteID);
+		Result = pObject->RemoveObjectConnection(remoteID);
 	}
 
-	pObject = GetObject(rRemoteID);
+	pObject = GetObject(remoteID);
 
 	if (nullptr != pObject)
 	{
-		HRESULT Temp = pObject->RemoveObjectConnection(rObjectID);
+		HRESULT Temp = pObject->RemoveObjectConnection(objectID);
 
 		if (S_OK == Result)
 		{
@@ -1299,7 +1325,7 @@ long SVObjectManagerClass::GetFileSequenceNumber() const
 HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const
 {
 	HRESULT Result = S_OK;
-	SVGuidSet GuidObjectList;
+	std::set<uint32_t> objectIdSet;
 
 	SVObjectClass* pStartObject(nullptr);
 	GetObjectByDottedName(rPath, pStartObject);
@@ -1309,7 +1335,7 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 		std::string InternalPath = pStartObject->GetCompleteName();
 		if ((pStartObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter)
 		{
-			GuidObjectList.insert(pStartObject->GetUniqueObjectID());
+			objectIdSet.insert(pStartObject->getObjectId());
 		}
 
 		SVUniqueObjectEntryStructPtr pUniqueObjectEntry;
@@ -1339,7 +1365,7 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 					{
 						if (ObjectPath.size() == Pos + InternalPath.size() || ObjectPath[Pos + InternalPath.size()] == '.')
 						{
-							GuidObjectList.insert(pUniqueObjectEntry->m_pObject->GetUniqueObjectID());
+							objectIdSet.insert(pUniqueObjectEntry->m_pObject->getObjectId());
 						}
 					}
 				}
@@ -1349,8 +1375,8 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 
 	}
 
-	SVGuidSet::iterator Iter(GuidObjectList.begin());
-	while (Iter != GuidObjectList.end())
+	auto Iter(objectIdSet.begin());
+	while (Iter != objectIdSet.end())
 	{
 		SVObjectReference ObjectRef(GetObject(*Iter));
 		rObjectList.push_back(ObjectRef);
@@ -1385,9 +1411,9 @@ SVObjectManagerClass::SVCookieEntryStructPtr SVObjectManagerClass::GetCookieEntr
 	return pResult;
 }
 
-SVGUID SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry) const
+uint32_t SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry) const
 {
-	SVGUID Result;
+	uint32_t Result = SvDef::InvalidObjectId;
 
 	if (nullptr != pObjectEntry)
 	{
@@ -1412,9 +1438,9 @@ SVGUID SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, S
 	return Result;
 }
 
-SVGUID SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry) const
+uint32_t SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry) const
 {
-	SVGUID Result;
+	uint32_t Result = SvDef::InvalidObjectId;
 
 	if (nullptr != pCookieEntry)
 	{
@@ -1439,7 +1465,7 @@ SVGUID SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, S
 	return Result;
 }
 
-SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry(const SVGUID& rGuid) const
+SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry(uint32_t objectId) const
 {
 	SVUniqueObjectEntryStructPtr pUniqueObjectEntry(nullptr);
 
@@ -1453,7 +1479,7 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 	}
 
 
-	SVUniqueObjectEntryMap::const_iterator Iter(m_UniqueObjectEntries.find(rGuid));
+	SVUniqueObjectEntryMap::const_iterator Iter(m_UniqueObjectEntries.find(objectId));
 
 	if (Iter != m_UniqueObjectEntries.end())
 	{
@@ -1504,13 +1530,13 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 	return pUniqueObjectEntry;
 }
 
-HRESULT SVObjectManagerClass::GetSubjectDataNames(const SVGUID& rSubjectID, SVSubjectDataNameDeque& rSubjectDataNames) const
+HRESULT SVObjectManagerClass::GetSubjectDataNames(uint32_t subjectID, SVSubjectDataNameDeque& rSubjectDataNames) const
 {
 	HRESULT Result = S_OK;
 
 	rSubjectDataNames.clear();
 
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rSubjectID);
+	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(subjectID);
 
 	if (nullptr != pUniqueObject)
 	{
@@ -1574,13 +1600,13 @@ HRESULT SVObjectManagerClass::GetObserverDataNames(long Cookie, SVSubjectDataNam
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverDataNames(const SVGUID& rObserverID, SVSubjectDataNameDeque& rSubjectDataNames) const
+HRESULT SVObjectManagerClass::GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames) const
 {
 	HRESULT Result = S_OK;
 
 	rSubjectDataNames.clear();
 
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rObserverID);
+	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(observerID);
 
 	if (nullptr != pUniqueObject)
 	{
@@ -1606,13 +1632,13 @@ HRESULT SVObjectManagerClass::GetObserverDataNames(const SVGUID& rObserverID, SV
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers)
+HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers)
 {
 	HRESULT Result = S_OK;
 
 	rObservers.clear();
 
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rSubjectID);
+	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(subjectID);
 
 	if (nullptr != pUniqueObject)
 	{
@@ -1643,13 +1669,13 @@ HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, 
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, const SVGUID& rSubjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies)
+HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies)
 {
 	HRESULT l_Status = S_OK;
 
 	rObservers.clear();
 
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(rSubjectID);
+	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(subjectID);
 
 	if (nullptr != pUniqueObject)
 	{
@@ -1684,12 +1710,12 @@ HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, 
 	return l_Status;
 }
 
-HRESULT SVObjectManagerClass::RegisterSubObject(const SVGUID& rSubObjectID)
+HRESULT SVObjectManagerClass::RegisterSubObject(uint32_t subObjectID)
 {
 	HRESULT hr = S_FALSE;
 
 	// get Tool and InspectionProcess
-	SVObjectClass* pObject = GetObject(rSubObjectID);
+	SVObjectClass* pObject = GetObject(subObjectID);
 	if (pObject)
 	{
 		SVObjectClass* pTool = pObject->GetAncestor(SvPb::SVToolObjectType);
@@ -1708,12 +1734,12 @@ HRESULT SVObjectManagerClass::RegisterSubObject(const SVGUID& rSubObjectID)
 	return hr;
 }
 
-HRESULT SVObjectManagerClass::UnregisterSubObject(const SVGUID& rSubObjectID)
+HRESULT SVObjectManagerClass::UnregisterSubObject(uint32_t subObjectID)
 {
 	HRESULT hr = S_FALSE;
 
 	// get Tool and InspectionProcess
-	SVObjectClass* pObject = GetObject(rSubObjectID);
+	SVObjectClass* pObject = GetObject(subObjectID);
 	if (pObject)
 	{
 		SVObjectClass* pTool = pObject->GetAncestor(SvPb::SVToolObjectType);
@@ -1732,10 +1758,10 @@ HRESULT SVObjectManagerClass::UnregisterSubObject(const SVGUID& rSubObjectID)
 	return hr;
 }
 
-SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
+SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(uint32_t sourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
 {
 	SvOi::IObjectClass* pRetObject = nullptr;
-	SvOi::IObjectClass* pSource = GetObject(rSourceId);
+	SvOi::IObjectClass* pSource = GetObject(sourceId);
 	if (nullptr != pSource)
 	{
 		pRetObject = pSource->getFirstObject(rObjectTypeInfo);
@@ -1743,10 +1769,10 @@ SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId
 	return pRetObject;
 }
 
-bool SVObjectManagerClass::ConnectObjectInput(const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
+bool SVObjectManagerClass::ConnectObjectInput(uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	bool Result = false;
-	SVObjectClass* pSource =GetObject(rSourceId);
+	SVObjectClass* pSource =GetObject(sourceId);
 	if (nullptr != pSource)
 	{
 		Result = pSource->ConnectObjectInput(pObjectInInfo);
@@ -1754,10 +1780,10 @@ bool SVObjectManagerClass::ConnectObjectInput(const SVGUID& rSourceId, SvOl::SVI
 	return Result;
 }
 
-bool SVObjectManagerClass::DisconnectObjectInput(const SVGUID& rSourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
+bool SVObjectManagerClass::DisconnectObjectInput(uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	bool Result = false;
-	SVObjectClass* pSource = GetObject(rSourceId);
+	SVObjectClass* pSource = GetObject(sourceId);
 	if (nullptr != pSource)
 	{
 		Result = pSource->DisconnectObjectInput(pObjectInInfo);
@@ -1782,16 +1808,16 @@ SvOi::IObjectClass* SvOi::ConstructObject(SvPb::ClassIdEnum classID)
 	return pObject;
 }
 
-SvOi::IObjectClass* SvOi::getObject(const SVGUID& rObjectID)
+SvOi::IObjectClass* SvOi::getObject(uint32_t objectID)
 {
 	SVObjectClass* pObject(nullptr);
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(rObjectID, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(objectID, pObject);
 	return pObject;
 }
 
-SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
+SvOi::IObjectClass* SvOi::FindObject(uint32_t parentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 {
-	return SVObjectManagerClass::Instance().getFirstObject(rParentID, rInfo);
+	return SVObjectManagerClass::Instance().getFirstObject(parentID, rInfo);
 }
 #pragma endregion IObjectManager-function
 

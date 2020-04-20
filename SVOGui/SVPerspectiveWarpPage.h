@@ -24,7 +24,7 @@ namespace SvOg
 	{
 	// Construction
 	public:
-		SVPerspectiveWarpPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
+		SVPerspectiveWarpPage( uint32_t inspectionId, uint32_t taskObjectId, int id = IDD );
 		virtual ~SVPerspectiveWarpPage();
 
 		void SetInspectionData();
@@ -44,8 +44,8 @@ namespace SvOg
 	private:
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		Controller m_Values;
 		long m_lLastWarpType;
 	};

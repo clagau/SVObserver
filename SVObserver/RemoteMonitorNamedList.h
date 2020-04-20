@@ -12,32 +12,31 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
-#include "SVUtilityLibrary/SVGUID.h"
-
+#include "Definitions/ObjectDefines.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #pragma endregion Includes
 
 ///struct holds information for one entry in Monitorlist 
 struct MonitoredObject
 {
-	SVGUID guid{GUID_NULL};
+	uint32_t m_objectId{ SvDef::InvalidObjectId };
 	bool isArray{false};
 	bool wholeArray{false};
 	long arrayIndex{-1};
 
 	MonitoredObject() = default;
-	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
+	bool operator==(const MonitoredObject& rhs) { return (m_objectId == rhs.m_objectId && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
 
 	bool isSimilar(const MonitoredObject& rhs) const
 	{
-		return (guid == rhs.guid && (!isArray || (wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex)));
+		return (m_objectId == rhs.m_objectId && (!isArray || (wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex)));
 	}
 };
 
 /// deque of MonitorObjects 
 typedef std::deque<MonitoredObject> MonitoredObjectList; 
 /// class encapsulate 4 MonitoredObjectList  reject product productImage and failstatus 
-/// MonitorobjectList are basicly  lists with GUIDS 
+/// MonitorobjectList are basicly  lists with IDS 
 class RemoteMonitorNamedList
 {
 #pragma region PublicMethods
@@ -46,7 +45,7 @@ public:
 	RemoteMonitorNamedList(const std::string& PPQName, const std::string& name);
 	RemoteMonitorNamedList(const std::string& PPQName, const std::string& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImagesList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth);
 
-	const SVGUID& GetPPQObjectID() const;
+	uint32_t GetPPQObjectID() const;
 	const std::string& GetPPQName() const;
 	void SetPPQName(const std::string& PPQName); // is a blank name allowed?
 
@@ -79,7 +78,7 @@ public:
 
 #pragma region PrivateMethods
 private:
-	void ResolveGuidForPPQName();
+	void ResolveObjectIdForPPQName();
 #pragma endregion PrivateMethods
 
 #pragma region PublicData
@@ -90,7 +89,7 @@ public:
 private:
 	std::string m_name; // List Name
 	std::string m_PPQName; // PPQ Name
-	SVGUID m_PPQObjectID; // PPQ instance Guid
+	uint32_t m_PPQObjectID = SvDef::InvalidObjectId; // PPQ instance id
 	int m_rejectQueueDepth;
 	MonitoredObjectList m_productValuesList;
 	MonitoredObjectList m_productImagesList;

@@ -59,7 +59,7 @@ namespace SvTrc
 	public:
 		virtual ~ITriggerRecordControllerR() = default;
 
-		/// Get the list of GUID of the available inspections.
+		/// Get the list of ID of the available inspections.
 		/// \returns SvPb::InspectionList
 		virtual const SvPb::InspectionList& getInspections() const = 0;
 
@@ -169,7 +169,7 @@ namespace SvTrc
 	ITriggerRecordControllerR& getTriggerRecordControllerRInstance();
 
 	/// Return the position of the inspection. If not available, it return -1.
-	/// \param inspectionGuid [in] Guid of the inspection.
+	/// \param inspectionId [in] Id of the inspection.
 	/// \returns int
-	int getInspectionPos(const GUID& inspectionGuid);
+	int getInspectionPos(uint32_t inspectionId);
 } // namespace SvTrc

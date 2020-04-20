@@ -34,11 +34,11 @@ BEGIN_MESSAGE_MAP(SVPixelAnalyzerDlg, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVPixelAnalyzerDlg::SVPixelAnalyzerDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
+SVPixelAnalyzerDlg::SVPixelAnalyzerDlg(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent /*=nullptr*/)
 : CDialog(SVPixelAnalyzerDlg::IDD, pParent)
-, m_InspectionID{ rInspectionID }
-, m_TaskObjectID{ rTaskObjectID }
-, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+, m_InspectionID{ inspectionId }
+, m_TaskObjectID{ taskObjectId }
+, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 {
 }
 
@@ -79,7 +79,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 
 	m_Values.Init();
 
-	if (GUID_NULL == m_TaskObjectID)
+	if (SvDef::InvalidObjectId == m_TaskObjectID)
 	{
 		SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16080);
@@ -236,7 +236,7 @@ void SVPixelAnalyzerDlg::OnPixelSetRange()
 
 		if (nullptr != pAnalyzerResult)
 		{
-			SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this);
+			SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->getObjectId(), this);
 		}
 		else
 		{

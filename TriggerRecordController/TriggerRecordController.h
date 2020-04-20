@@ -83,12 +83,12 @@ public:
 	virtual void setGlobalInit() override;
 	virtual void finishGlobalInit() override;
 
-	virtual int addOrChangeImage(const GUID& rImageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
-	virtual int addOrChangeChildImage(const GUID& rImageId, const GUID& rParentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;
+	virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
+	virtual int addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;
 
-	virtual void addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer = false) override;
-	virtual bool removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
-	virtual bool removeAllImageBuffer(const GUID& ownerID) override;
+	virtual void addImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer = false) override;
+	virtual bool removeImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct) override;
+	virtual bool removeAllImageBuffer(uint32_t ownerID) override;
 	virtual bool removeAllImageBuffer() override;
 
 	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos = -1) override;
@@ -143,7 +143,7 @@ private:
 private:
 	//This Map contains per (non image- (e.g. AcqusitionObject))object a map of required buffers.
 	//First parameter of the second map is the structID of the buffer and the second parameter is the required number.
-	std::map<GUID, std::map<int, int>> m_additionalBufferMap;
+	std::map<uint32_t, std::map<int, int>> m_additionalBufferMap;
 
 	int m_resetStarted4IP = -1; //Position of IP with is in reset state. If m_resetStarted4IP == -1, no reset started.
 	bool m_mustRecalcRequiredBuffers = false;

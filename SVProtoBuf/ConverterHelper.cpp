@@ -11,141 +11,12 @@
 #include <locale>
 #include "ConverterHelper.h"
 #include "Definitions/GlobalConst.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 namespace SvPb
 {
-
-// TODO handle big-endian case as well
-void SetGuidInProtoBytes(std::string  *pString, const GUID& guid)
-{
-	if (nullptr != pString)
-	{
-		const char* buf = reinterpret_cast<const char*>(&guid);
-		char arr[16];
-		// unsigned long  Data1;
-		arr[0] = buf[3];
-		arr[1] = buf[2];
-		arr[2] = buf[1];
-		arr[3] = buf[0];
-		// unsigned short Data2;
-		arr[4] = buf[5];
-		arr[5] = buf[4];
-		// unsigned short Data3;
-		arr[6] = buf[7];
-		arr[7] = buf[6];
-		// unsigned char  Data4[8];
-		arr[8] = buf[8];
-		arr[9] = buf[9];
-		arr[10] = buf[10];
-		arr[11] = buf[11];
-		arr[12] = buf[12];
-		arr[13] = buf[13];
-		arr[14] = buf[14];
-		arr[15] = buf[15];
-		*pString = std::string(&arr[0], &arr[0] + 16);
-	}
-}
-
-std::string SetGuidInProtoBytes(const GUID& guid)
-{
-	std::string result;
-	SetGuidInProtoBytes(&result, guid);
-	return result;
-}
-
-// TODO handle big-endian case as well
-void GetGuidFromProtoBytes(const std::string& strguid, GUID& rGuid)
-{
-	if (sizeof(GUID) != strguid.size())
-	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
-		return;
-	}
-
-	const char* buf = strguid.c_str();
-	char arr[16];
-	// unsigned long  Data1;
-	arr[0] = buf[3];
-	arr[1] = buf[2];
-	arr[2] = buf[1];
-	arr[3] = buf[0];
-	// unsigned short Data2;
-	arr[4] = buf[5];
-	arr[5] = buf[4];
-	// unsigned short Data3;
-	arr[6] = buf[7];
-	arr[7] = buf[6];
-	// unsigned char  Data4[8];
-	arr[8] = buf[8];
-	arr[9] = buf[9];
-	arr[10] = buf[10];
-	arr[11] = buf[11];
-	arr[12] = buf[12];
-	arr[13] = buf[13];
-	arr[14] = buf[14];
-	arr[15] = buf[15];
-	memcpy(&rGuid, arr, sizeof(GUID));
-}
-
-GUID GetGuidFromProtoBytes(const std::string& strguid)
-{
-	GUID guid = GUID_NULL;
-	GetGuidFromProtoBytes(strguid, guid);
-	return guid;
-}
-
-GUID GetGuidFromString(const std::string& buf)
-{
-	const auto len = buf.size();
-	switch (len)
-	{
-		case 16:
-		{
-			return GetGuidFromProtoBytes(buf);
-		}
-		case 36:
-		{
-			GUID guid;
-			sscanf(buf.c_str(),
-				"%8x-%4hx-%4hx-%2hhx%2hhx-%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx",
-				&guid.Data1, &guid.Data2, &guid.Data3,
-				&guid.Data4[0], &guid.Data4[1], &guid.Data4[2], &guid.Data4[3],
-				&guid.Data4[4], &guid.Data4[5], &guid.Data4[6], &guid.Data4[7]);
-			return guid;
-		}
-		case 38:
-		{
-			GUID guid;
-			sscanf(buf.c_str(),
-				"{%8x-%4hx-%4hx-%2hhx%2hhx-%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx}",
-				&guid.Data1, &guid.Data2, &guid.Data3,
-				&guid.Data4[0], &guid.Data4[1], &guid.Data4[2], &guid.Data4[3],
-				&guid.Data4[4], &guid.Data4[5], &guid.Data4[6], &guid.Data4[7]);
-			return guid;
-		}
-		default:
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVProtoBuf_GENERAL_ERROR, SvStl::Tid_ProtBuf_ConvertToGUID_WrongSize, SvStl::SourceFileParams(StdMessageParams));
-			return GUID_NULL;
-	}
-}
-
-std::string PrettyPrintGuid(const GUID& guid)
-{
-	wchar_t szGuidW[40] = {0};
-	char szGuidA[40] = {0};
-	StringFromGUID2(guid, szGuidW, 40);
-	WideCharToMultiByte(CP_ACP, 0, szGuidW, -1, szGuidA, 40, NULL, NULL);
-	// the indexes make sure we are not copying the curly braces, as
-	// StringFromGUID2 generates string with the following format:
-	// {7096126C-A089-45E2-9EA9-94B3A23CA236}
-	return std::string(&szGuidA[1], &szGuidA[37]);
-}
 
 HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbVariant)
 {
@@ -450,7 +321,7 @@ void setMessageToMessagePB(const SvStl::MessageContainer& rMessage, MessageConta
 	pMessagePB->set_filename(rMessageData.m_SourceFile.m_FileName);
 	pMessagePB->set_fileline(rMessageData.m_SourceFile.m_Line);
 	pMessagePB->set_filedatetime(rMessageData.m_SourceFile.m_FileDateTime);
-	SvPb::SetGuidInProtoBytes(pMessagePB->mutable_objectid(), rMessage.getObjectId());
+	pMessagePB->set_objectid(rMessage.getObjectId());
 }
 
 
@@ -465,7 +336,7 @@ SvStl::MessageContainerVector setMessageVectorFromMessagePB(const MessageContain
 		{
 			AdditionalTextList.push_back(text);
 		}
-		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, SvPb::GetGuidFromProtoBytes(messagePB.objectid()));
+		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, messagePB.objectid());
 		messageContainerVector.push_back(messageContainer);
 	}
 	return messageContainerVector;

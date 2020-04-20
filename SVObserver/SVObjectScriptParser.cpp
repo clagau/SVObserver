@@ -41,9 +41,9 @@ SVObjectScriptParserClass::~SVObjectScriptParserClass()
 	}
 }
 
-const GUID& SVObjectScriptParserClass::GetOwnerGuid() const
+uint32_t SVObjectScriptParserClass::GetOwnerId() const
 {
-	return m_pParser->GetOwnerGuid();
+	return m_pParser->GetOwnerId();
 }
 
 SVObjectClass* SVObjectScriptParserClass::GetOwnerObject()

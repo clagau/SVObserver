@@ -26,7 +26,7 @@ class SVPixelAnalyzerDlg : public CDialog
 {
 // Construction
 public:
-	SVPixelAnalyzerDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);
+	SVPixelAnalyzerDlg(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent = nullptr);
 	virtual ~SVPixelAnalyzerDlg();
 	void SetInspectionData();
 
@@ -77,8 +77,8 @@ protected:
 	int		m_GrayscaleSliderValue{ 0 };
 
 private:
-	const SVGUID m_InspectionID;
-	const SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_TaskObjectID;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 };

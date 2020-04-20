@@ -51,7 +51,7 @@ bool SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 			if( nullptr != pInfoObject)
 			{
 				SVObjectClass* pObject = pInfoObject->getObject();
-				pObject = SVObjectManagerClass::Instance().GetObject(pInfoObject->getUniqueObjectID());
+				pObject = SVObjectManagerClass::Instance().GetObject(pInfoObject->getObjectId());
 				Result = (nullptr != pObject) ? true : false;
 			}
 		}
@@ -64,9 +64,7 @@ bool SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 				SVInObjectInfoStruct* pInfoObject = m_InObjectInfoVector[i];
 				if(nullptr != pInfoObject)
 				{
-					SVObjectClass* pObject = pInfoObject->getObject();
-					const SVGUID& rGuid = pInfoObject->getUniqueObjectID();
-					Result = ( nullptr != (pObject = SVObjectManagerClass::Instance().GetObject(rGuid) ) ? true : false ) && Result;
+					Result = ( nullptr != SVObjectManagerClass::Instance().GetObject(pInfoObject->getObjectId()) ? true : false ) && Result;
 				}
 				else
 				{

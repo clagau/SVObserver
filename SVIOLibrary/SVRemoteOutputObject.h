@@ -41,8 +41,7 @@ public:
 
 	// Get Functions
 	std::string GetInputValueObjectName();
-	HRESULT GetInputValueObjectGUID( GUID& p_rGUID ) const;
-	SVGUID GetInputValueObjectGUID() const;
+	uint32_t GetInputValueObjectID() const;
 
 	std::string GetGroupID( ) const ;
 
@@ -52,7 +51,7 @@ public:
 
 	// Set Functions
 	HRESULT SetInputObject( SVObjectClass* p_pObject );
-	HRESULT SetInputObjectId( GUID p_ObjectId );
+	HRESULT SetInputObjectId(uint32_t objectId);
 	HRESULT SetGroupID( const std::string& p_strGroupID );
 
 	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
@@ -69,8 +68,8 @@ private:
 	// The Value Objects name.
 	std::string m_strObjectName;
 
-	// Guid of the value object used to output
-	SVGUID m_InputObjectId;	
+	// id of the value object used to output
+	uint32_t m_InputObjectId = SvDef::InvalidObjectId;
 
 	std::string m_strGroupID;	// Which Output Group this output belongs to.
 #pragma endregion Member Variables

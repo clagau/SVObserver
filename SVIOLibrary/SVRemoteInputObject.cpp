@@ -128,13 +128,11 @@ HRESULT SVRemoteInputObject::GetCache( _variant_t& p_rValue )
 	return l_Status;
 }
 
-void SVRemoteInputObject::updateGuid(int position)
+void SVRemoteInputObject::updateObjectId(int position)
 {
 	if (0 <= position && 0x100 > position)
 	{
-		SVGUID ParameterUID(RemoteInputUidGuid);
-		ParameterUID.ToGUID().Data1 += position;
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ParameterUID);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RemoteInputUidId + position);
 	}
 }
 

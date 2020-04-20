@@ -133,7 +133,7 @@ public:
 	SvVol::SVStringValueObjectClass     m_PersistantFeaturesEnabled;
 
 	SvVol::SVDoubleValueObjectClass     m_Value[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
-	GUID                         m_guidResults[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
+	uint32_t                         m_ResultIds[SvOi::SV_NUMBER_OF_BLOB_FEATURES];
 
 /*- msvPersistantNbrOfBlobs ---------------------------------------------------*/
 /*- This value is for persistant storage only.  The "working" counterpart is   */

@@ -21,7 +21,6 @@
 #include "SVIOTabbedView.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVStatusLibrary/MessageContainer.h"
@@ -110,9 +109,9 @@ bool RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorListMa
 	GetActiveRemoteMonitorList(newActiveList);
 	for (auto oldActive : oldActiveList)
 	{
-		auto ppqGuid = oldActive.second.GetPPQObjectID();
-		SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(ppqGuid));
-		auto newActiveIter = find_if(newActiveList.begin(), newActiveList.end(), [ppqGuid](auto value) { return value.second.GetPPQObjectID() == ppqGuid; });
+		auto ppqId = oldActive.second.GetPPQObjectID();
+		SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(ppqId));
+		auto newActiveIter = find_if(newActiveList.begin(), newActiveList.end(), [ppqId](auto value) { return value.second.GetPPQObjectID() == ppqId; });
 		if (newActiveIter != newActiveList.end())
 		{
 			if (oldActive.second.GetRejectDepthQueue() != newActiveIter->second.GetRejectDepthQueue() || nullptr != pPPQ)
@@ -192,8 +191,7 @@ bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& r
 
 	for (MonitoredObjectList::iterator it = rList.begin(); it != rList.end();)
 	{
-		const SVGUID& guid = (*it).guid;
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(it->m_objectId);
 		if (!IsValidMonitoredObject(pObject))
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
@@ -216,10 +214,10 @@ void RemoteMonitorListController::ValidateInputs()
 	{
 		RemoteMonitorNamedList& namedList = it->second;
 		const std::string& ppqName = namedList.GetPPQName();
-		const SVGUID& ppqGuid = namedList.GetPPQObjectID();
+		uint32_t ppqId = namedList.GetPPQObjectID();
 		// Check that the PPQ still exists
-		const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(ppqName.c_str());
-		if (guid.empty() || guid != ppqGuid)
+		uint32_t id = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(ppqName.c_str());
+		if (SvDef::InvalidObjectId == id || id != ppqId)
 		{
 			// remove this list
 			it = m_list.erase(it);
@@ -352,16 +350,16 @@ HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorLis
 		if (true == bActivate)
 		{
 			long rejectDepth = it->second.GetRejectDepthQueue();
-			SVGUID PPQ_GUID = it->second.GetPPQObjectID();
+			uint32_t PPQ_ID = it->second.GetPPQObjectID();
 			for (RemoteMonitorListMap::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end(); it_S++)
 			{
-				if (it_S->second.GetPPQObjectID() == PPQ_GUID && it_S != it)
+				if (it_S->second.GetPPQObjectID() == PPQ_ID && it_S != it)
 				{
 					if (it_S->second.IsActive())
 					{
 						if (it_S->second.GetRejectDepthQueue() != rejectDepth)
 						{
-							SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(PPQ_GUID));
+							SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(SVObjectManagerClass::Instance().GetObject(PPQ_ID));
 							if (nullptr != pPPQ)
 							{
 								pPPQ->setRejectDepth(rejectDepth);

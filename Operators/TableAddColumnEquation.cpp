@@ -45,7 +45,7 @@ bool TableAddColumnEquation::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}
@@ -100,7 +100,7 @@ bool TableAddColumnEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageC
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(message);
 		}
 	}

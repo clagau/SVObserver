@@ -148,7 +148,7 @@ public:
 
 	HRESULT GetProduct( SVProductInfoStruct& p_rProduct, long lProcessCount ) const;
 
-	SVProductInfoStruct getProductReadyForRunOnce( const SVGUID& ipGuid  );
+	SVProductInfoStruct getProductReadyForRunOnce(uint32_t ipId  );
 
 	void AddInput( SVIOEntryHostStructPtr pInput );
 	bool RemoveInput( SVIOEntryHostStructPtr pInput );
@@ -345,10 +345,10 @@ protected:
 	void InitializeProduct( SVProductInfoStruct* pNewProduct);
 	bool StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );
-	HRESULT StartInspection( const SVGUID& p_rInspectionID );
+	HRESULT StartInspection(uint32_t inspectionID );
 
 	void AddResultsToPPQ(SVProductInfoStruct& rProduct);
-	bool SetInspectionComplete(SVProductInfoStruct& rProduct, const GUID& rInspGuid);
+	bool SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId);
 
 	bool SetProductComplete(long p_PPQIndex);
 	bool SetProductComplete( SVProductInfoStruct& p_rProduct );
@@ -367,7 +367,7 @@ protected:
 	//************************************
 	HRESULT ProcessCameraResponse( const SVCameraQueueElement& p_rElement );
 
-	HRESULT BuildCameraInfos(SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos) const;
+	HRESULT BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos) const;
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
@@ -392,7 +392,7 @@ protected:
 	SVPendingCameraResponseMap m_PendingCameraResponses;
 
 	SVProcessCountSet m_oNotifyInspectionsSet;
-	SVGuidSet m_ProcessInspectionsSet;
+	std::set<uint32_t> m_ProcessInspectionsSet;
 
 	// Pointers to the PPQ's I/O Lists
 	SVIOEntryHostStructPtrVector m_AllInputs;
@@ -427,7 +427,7 @@ protected:
 
 private:
 	std::string m_conditionalOutputName; // persist this
-	SVGUID m_conditionalOutputValueID; // do not persist this
+	uint32_t m_conditionalOutputValueID; // do not persist this
 
 	bool ResolveConditionalOutput();
 	bool AlwaysWriteOutputs() const;
@@ -489,7 +489,7 @@ private:
 	bool setInspections2TRC();
 
 	void setTRofInterest(const SVProductInfoStruct& rProduct, bool isInterest);
-	void setTR2StoreForInterestMap(const GUID& rInspGuid, SVProductInfoStruct &rProduct);
+	void setTR2StoreForInterestMap(uint32_t inspId, SVProductInfoStruct &rProduct);
 	void calcUseProcessingOffset4InterestFlag();
 	long getNeededRecords() const;
 
@@ -515,7 +515,7 @@ private:
 	bool m_useProcessingOffset4Interest {false};	///Flag if processing offset will used. It should only used if m_maxProcessingOffset4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.
 
 	using IpInfoDeque = std::deque<SVInspectionInfoStruct>;
-	std::unordered_map<GUID, IpInfoDeque> m_storeForInterestMap;
+	std::unordered_map<uint32_t, IpInfoDeque> m_storeForInterestMap;
 
 	SVObjectPtrVector m_childObjects;
 };

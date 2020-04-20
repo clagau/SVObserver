@@ -68,8 +68,7 @@ SvPb::StandardResponse canDeleteObject(const SvOi::IObjectClass* const pObject)
 				if (0 < taskObjectSize)
 				{
 					///If first tool is color tool then can only be deleted if second is also color tool
-					SVGUID firstTaskID = SvPb::GetGuidFromProtoBytes(taskObjListResponse.taskobjectinfos(0).taskobjectid());
-					if(pObject->GetUniqueObjectID() == firstTaskID)
+					if(pObject->getObjectId() == taskObjListResponse.taskobjectinfos(0).taskobjectid())
 					{
 						if(1 < taskObjectSize && SvPb::SVColorToolObjectType != taskObjListResponse.taskobjectinfos(1).objectsubtype())
 						{
@@ -85,7 +84,7 @@ SvPb::StandardResponse canDeleteObject(const SvOi::IObjectClass* const pObject)
 	return response;
 }
 
-SvPb::StandardResponse canCreateObject(const SvOi::IObjectClass* const pParent, const SvOi::IObjectClass* const pObject, const GUID& rTaskObjectBeforeID)
+SvPb::StandardResponse canCreateObject(const SvOi::IObjectClass* const pParent, const SvOi::IObjectClass* const pObject, uint32_t taskObjectBeforeID)
 {
 	/// Do not need to check for nullptr from function parameters
 	SvPb::StandardResponse response;
@@ -110,8 +109,7 @@ SvPb::StandardResponse canCreateObject(const SvOi::IObjectClass* const pParent, 
 				else
 				{
 					///We are only interested to see if the new task object is to be inserted in the first position
-					SVGUID firstTaskID = SvPb::GetGuidFromProtoBytes(taskObjListResponse.taskobjectinfos(0).taskobjectid());
-					if (rTaskObjectBeforeID == firstTaskID)
+					if (taskObjectBeforeID == taskObjListResponse.taskobjectinfos(0).taskobjectid())
 					{
 						canCreate = SvPb::SVColorToolObjectType == pObject->GetObjectSubType();
 					}
@@ -131,10 +129,7 @@ SvPb::StandardResponse canCreateObject(const SvOi::IObjectClass* const pParent, 
 SvPb::InspectionCmdResponse InspectionRunOnce(SvPb::InspectionRunOnceRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
-
-	SVGUID InspectionID = SvPb::GetGuidFromProtoBytes(request.inspectionid());
-
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(InspectionID));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(request.inspectionid()));
 	if (nullptr != pInspection)
 	{
 		cmdResponse.set_hresult(pInspection->RunOnce());
@@ -150,7 +145,7 @@ SvPb::InspectionCmdResponse DeleteObject(SvPb::DeleteObjectRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	if (nullptr != pObject)
 	{
 		SvPb::StandardResponse stdResponse = canDeleteObject(pObject);
@@ -194,7 +189,7 @@ SvPb::InspectionCmdResponse GetMessageList(SvPb::GetMessageListRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(request.objectid()));
 	if (pTask)
 	{
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
@@ -211,7 +206,7 @@ SvPb::InspectionCmdResponse ResetObject(SvPb::ResetObjectRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 
 	if (nullptr != pObject)
 	{
@@ -233,8 +228,7 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 	SvPb::InspectionCmdResponse cmdResponse;
 
 	SvStl::MessageContainer message;
-	SVGUID patternID = SvPb::GetGuidFromProtoBytes(request.patternanalyzerid());
-	SvOi::IPatternAnalyzer* pPatAnalyzer = dynamic_cast<SvOi::IPatternAnalyzer*>(SvOi::getObject(patternID));
+	SvOi::IPatternAnalyzer* pPatAnalyzer = dynamic_cast<SvOi::IPatternAnalyzer*>(SvOi::getObject(request.patternanalyzerid()));
 
 	if (nullptr != pPatAnalyzer && pPatAnalyzer->UpdateModelFromInputImage(request.posx(), request.posy(), request.modelwidth(), request.modelheight()))
 	{
@@ -261,19 +255,19 @@ SvPb::InspectionCmdResponse CreateModel(SvPb::CreateModelRequest request)
 			if (S_OK != result)
 			{
 				cmdResponse.set_hresult(E_FAIL);
-				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, patternID);
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
 			}
 		}
 		else
 		{
 			cmdResponse.set_hresult(E_FAIL);
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, patternID);
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
 		}
 	}
 	else
 	{
 		cmdResponse.set_hresult(E_FAIL);
-		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, patternID);
+		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, request.patternanalyzerid());
 	}
 
 	if(S_OK != cmdResponse.hresult())
@@ -288,7 +282,7 @@ SvPb::InspectionCmdResponse getObjectParameters(SvPb::GetObjectParametersRequest
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	if(nullptr != pObject)
 	{
 		SvPb::GetObjectParametersResponse* pObjParamResponse = cmdResponse.mutable_getobjectparametersresponse();
@@ -314,7 +308,7 @@ SvPb::InspectionCmdResponse GetEquation(SvPb::GetEquationRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation*> (SvOi::getObject(request.objectid()));
 	if (pEquation)
 	{
 		SvPb::GetEquationResponse* pResponse = cmdResponse.mutable_getequationresponse();
@@ -331,7 +325,7 @@ SvPb::InspectionCmdResponse ValidateAndSetEquation(SvPb::ValidateAndSetEquationR
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *> (SvOi::getObject(request.objectid()));
 	if (nullptr != pEquation)
 	{
 		std::string oldString;
@@ -370,7 +364,7 @@ SvPb::InspectionCmdResponse getObjectsForMonitorList(SvPb::GetObjectsForMonitorL
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
 		SvStl::MessageContainerVector messages;
@@ -381,7 +375,7 @@ SvPb::InspectionCmdResponse getObjectsForMonitorList(SvPb::GetObjectsForMonitorL
 		{
 			auto* pEntry = pResponse->add_list();
 			pEntry->set_objectname(item.first.c_str());
-			SvPb::SetGuidInProtoBytes(pEntry->mutable_objectid(), item.second);
+			pEntry->set_objectid(item.second);
 		}
 	}
 	else
@@ -396,7 +390,7 @@ SvPb::InspectionCmdResponse MoveObject(SvPb::MoveObjectRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.parentid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.parentid());
 	if (nullptr != pObject)
 	{
 		switch (request.listmode())
@@ -406,7 +400,7 @@ SvPb::InspectionCmdResponse MoveObject(SvPb::MoveObjectRequest request)
 				SvOi::ITaskObjectListClass* pTaskObject = dynamic_cast<SvOi::ITaskObjectListClass*>(pObject);
 				if (nullptr != pTaskObject)
 				{
-					pTaskObject->moveTaskObject(SvPb::GetGuidFromProtoBytes(request.objectid()), SvPb::GetGuidFromProtoBytes(request.movepreid()));
+					pTaskObject->moveTaskObject(request.objectid(), request.movepreid());
 				}
 				else
 				{
@@ -415,7 +409,7 @@ SvPb::InspectionCmdResponse MoveObject(SvPb::MoveObjectRequest request)
 				break;
 			}
 			case SvPb::MoveObjectRequest::FriendList:
-				pObject->moveFriendObject(SvPb::GetGuidFromProtoBytes(request.objectid()), SvPb::GetGuidFromProtoBytes(request.movepreid()));
+				pObject->moveFriendObject(request.objectid(), request.movepreid());
 				break;
 			default:
 				cmdResponse.set_hresult(E_FAIL);
@@ -434,7 +428,7 @@ SvPb::InspectionCmdResponse GetTaskObjectsList(SvPb::TaskObjectListRequest reque
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.taskobjectid())));
+	SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(request.taskobjectid()));
 	if (nullptr != pTaskObjectList)
 	{
 		SvPb::TaskObjectListResponse* pResponse = cmdResponse.mutable_taskobjectlistresponse(); 
@@ -453,17 +447,17 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 	SvOi::SVImageBufferHandlePtr data;
 
 	SvPb::GetImageResponse* pResponse = cmdResponse.mutable_getimageresponse();
-	if (0 < request.imageid().size())
+	if (SvDef::InvalidObjectId != request.imageid())
 	{
-		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.imageid())));
+		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.imageid()));
 		if (pImage)
 		{
 			data = pImage->getImageData();
 		}
 	}
-	else if (!request.imagename().empty() && 0 < request.parentid().size())
+	else if (!request.imagename().empty() && SvDef::InvalidObjectId != request.parentid())
 	{
-		SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.parentid())));
+		SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(request.parentid()));
 		if (nullptr != pObject)
 		{
 			if (!pObject->getSpecialImage(request.imagename(), data))
@@ -499,7 +493,7 @@ SvPb::InspectionCmdResponse areAuxiliaryExtentsAvailable(SvPb::AreAuxiliaryExten
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
 	if(nullptr != pTool)
 	{
 		SvPb::AreAuxiliaryExtentsAvailableResponse* pResponse = cmdResponse.mutable_areauxiliaryextentsavailableresponse();
@@ -516,7 +510,7 @@ SvPb::InspectionCmdResponse getAvailableAuxImages(SvPb::GetAvailableAuxImagesReq
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
 		SvPb::GetAvailableAuxImagesResponse* pResponse = cmdResponse.mutable_getavailableauximagesresponse();
@@ -525,7 +519,7 @@ SvPb::InspectionCmdResponse getAvailableAuxImages(SvPb::GetAvailableAuxImagesReq
 		{
 			auto* pEntry = pResponse->add_list();
 			pEntry->set_objectname(item.first.c_str());
-			SvPb::SetGuidInProtoBytes(pEntry->mutable_objectid(), item.second);
+			pEntry->set_objectid(item.second);
 		}
 	}
 	else
@@ -539,13 +533,13 @@ SvPb::InspectionCmdResponse getAuxImageObject(SvPb::GetAuxImageObjectRequest req
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
 	if(nullptr != pTool)
 	{
 		auto sourceImage = pTool->getAuxSourceImage();
 		SvPb::GetAuxImageObjectResponse* pResponse = cmdResponse.mutable_getauximageobjectresponse();
 		pResponse->mutable_auxobject()->set_objectname(sourceImage.first.c_str());
-		SvPb::SetGuidInProtoBytes(pResponse->mutable_auxobject()->mutable_objectid(), sourceImage.second);
+		pResponse->mutable_auxobject()->set_objectid(sourceImage.second);
 	}
 	else
 	{
@@ -558,10 +552,10 @@ SvPb::InspectionCmdResponse setAuxImageObject(SvPb::SetAuxImageObjectRequest req
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
-		HRESULT result = pTool->setAuxSourceImage(SvPb::GetGuidFromProtoBytes(request.sourceimageid()));
+		HRESULT result = pTool->setAuxSourceImage(request.sourceimageid());
 		if (S_OK != result)
 		{
 			cmdResponse.set_hresult(result);
@@ -581,11 +575,11 @@ SvPb::InspectionCmdResponse getInputs(SvPb::GetInputsRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pTaskObject)
 	{
 		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
-		SvUl::InputNameGuidPairList list;
+		SvUl::InputNameObjectIdPairList list;
 		if (SvPb::SVImageObjectType == typeInfo.m_ObjectType)
 		{
 			pTaskObject->GetInputImages(list, request.maxrequested());
@@ -600,7 +594,7 @@ SvPb::InspectionCmdResponse getInputs(SvPb::GetInputsRequest request)
 			auto* pEntry = pResponse->add_list();
 			pEntry->set_inputname(item.first.c_str());
 			pEntry->set_objectname(item.second.first);
-			SvPb::SetGuidInProtoBytes(pEntry->mutable_objectid(), item.second.second);
+			pEntry->set_objectid(item.second.second);
 		}
 	}
 	else
@@ -614,10 +608,10 @@ SvPb::InspectionCmdResponse connectToObject(SvPb::ConnectToObjectRequest request
 {
 	SvPb::InspectionCmdResponse result;
 
-	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
 	if(nullptr != pObject)
 	{
-		result.set_hresult(pObject->ConnectToObject(request.inputname(), SvPb::GetGuidFromProtoBytes(request.newconnectedid()), request.objecttype()));
+		result.set_hresult(pObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype()));
 	}
 	else
 	{
@@ -630,7 +624,7 @@ SvPb::InspectionCmdResponse saveImage(SvPb::SaveImageRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ISVImage * pObject = dynamic_cast<SvOi::ISVImage *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ISVImage * pObject = dynamic_cast<SvOi::ISVImage *>(SvOi::getObject(request.objectid()));
 	if (pObject)
 	{
 		cmdResponse.set_hresult(pObject->Save(request.imagename()));
@@ -646,7 +640,7 @@ SvPb::InspectionCmdResponse setObjectName(SvPb::SetObjectNameRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	if (nullptr != pObject)
 	{
 		pObject->SetName(request.objectname().c_str());
@@ -664,9 +658,8 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 
 	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 	SvPb::SVObjectTypeEnum objectTypeToInclude = request.objecttypetoinclude();
-	SVGUID instanceId = SvPb::GetGuidFromProtoBytes(request.objectid());
 	SVGetObjectDequeByTypeVisitor visitor(typeInfo);
-	SvOi::visitElements(visitor, instanceId);
+	SvOi::visitElements(visitor, request.objectid());
 
 	IsAllowedFunc isAllowed = getAllowedFunc(request);
 	if (isAllowed)// required, even if it does nothing...
@@ -716,7 +709,7 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 					{
 						auto* pEntry = pResponse->add_list();
 						pEntry->set_objectname(name.c_str());
-						SvPb::SetGuidInProtoBytes(pEntry->mutable_objectid(), pObject->GetUniqueObjectID());
+						pEntry->set_objectid(pObject->getObjectId());
 					}
 				}
 			}
@@ -737,7 +730,7 @@ SvPb::InspectionCmdResponse getSpecialImageList(SvPb::GetSpecialImageListRequest
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	const SvOi::ITaskObject* pObject = dynamic_cast<const SvOi::ITaskObject*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.taskobjectid())));
+	const SvOi::ITaskObject* pObject = dynamic_cast<const SvOi::ITaskObject*>(SvOi::getObject(request.taskobjectid()));
 	if (nullptr != pObject)
 	{
 		SvDef::StringVector specialImageList = pObject->getSpecialImageList();
@@ -758,7 +751,7 @@ SvPb::InspectionCmdResponse exportMask(SvPb::ExportMaskRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(request.objectid()));
 	if (nullptr != pObject)
 	{
 		cmdResponse.set_hresult(pObject->Export(request.filename()));
@@ -774,7 +767,7 @@ SvPb::InspectionCmdResponse importMask(SvPb::ImportMaskRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(request.objectid()));
 	if (pObject)
 	{
 		cmdResponse.set_hresult(pObject->Import(request.filename()));
@@ -802,7 +795,7 @@ SvPb::InspectionCmdResponse getObjectId(SvPb::GetObjectIdRequest request)
 		{
 			auto& rInfoStruct = request.info().infostruct();
 			SvDef::SVObjectTypeInfoStruct typeInfo {rInfoStruct.objecttype(), rInfoStruct.subtype(), rInfoStruct.embeddedid()};
-			pObject = SvOi::FindObject(SvPb::GetGuidFromProtoBytes(request.info().ownerid()) , typeInfo);
+			pObject = SvOi::FindObject(request.info().ownerid() , typeInfo);
 			break;
 		}
 		default:break;
@@ -810,7 +803,7 @@ SvPb::InspectionCmdResponse getObjectId(SvPb::GetObjectIdRequest request)
 	if (pObject)
 	{
 		SvPb::GetObjectIdResponse* pResponse = cmdResponse.mutable_getobjectidresponse();
-		SvPb::SetGuidInProtoBytes(pResponse->mutable_objectid(), pObject->GetUniqueObjectID());
+		pResponse->set_objectid(pObject->getObjectId());
 	}
 	else
 	{
@@ -823,19 +816,17 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SVGUID ownerId = SvPb::GetGuidFromProtoBytes(request.ownerid());
-
 	SvOi::IObjectClass* pObject{nullptr};
 	switch (request.message_case())
 	{
 		case SvPb::CreateObjectRequest::kFriend:
 		{
-			pObject = SVObjectBuilder::CreateFriendObject(request.classid(), GUID_NULL, request.friend_().name(), ownerId, SvPb::GetGuidFromProtoBytes(request.friend_().preguid()));
+			pObject = SVObjectBuilder::CreateFriendObject(request.classid(), SvDef::InvalidObjectId, request.friend_().name(), request.ownerid(), request.friend_().preid());
 			break;
 		}
 		case SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId:
 		{
-			SvOi::IObjectClass* pParent = SvOi::getObject(ownerId);
+			SvOi::IObjectClass* pParent = SvOi::getObject(request.ownerid());
 			SvOi::ITaskObjectListClass* pParentTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(pParent);
 			SvOi::IObjectAppClass* pObjectApp = dynamic_cast<SvOi::IObjectAppClass*>(pParentTaskObjectList);
 
@@ -844,8 +835,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 
 			if (nullptr != pParentTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
 			{
-				GUID taskObjectBeforeID = SvPb::GetGuidFromProtoBytes(request.taskobjectinsertbeforeid());
-				SvPb::StandardResponse stdResponse = canCreateObject(pParent, pObject, taskObjectBeforeID);
+				SvPb::StandardResponse stdResponse = canCreateObject(pParent, pObject, request.taskobjectinsertbeforeid());
 
 				if(S_OK != stdResponse.hresult())
 				{
@@ -857,7 +847,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 				}
 				else
 				{
-					pParentTaskObjectList->InsertBefore(taskObjectBeforeID, *pTaskObject);
+					pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
 
 					// And last - Create (initialize) it
 					if (!pObject->is_Created())
@@ -868,10 +858,10 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 							cmdResponse.set_hresult(SvStl::Err_10021_InsertTaskObject_CreateObjectFailed);
 
 							// Remove it from the Tool TaskObjectList ( Destruct it )
-							const SVGUID& rObjectID = pObject->GetUniqueObjectID();
-							if (GUID_NULL != rObjectID)
+							uint32_t objectID = pObject->getObjectId();
+							if (SvDef::InvalidObjectId != objectID)
 							{
-								pParentTaskObjectList->Delete(rObjectID.ToGUID());
+								pParentTaskObjectList->Delete(objectID);
 							}
 							else
 							{
@@ -900,7 +890,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 		if (nullptr != pObject)
 		{
 			SvPb::CreateObjectResponse* pResponse = cmdResponse.mutable_createobjectresponse();
-			SvPb::SetGuidInProtoBytes(pResponse->mutable_objectid(), pObject->GetUniqueObjectID());
+			pResponse->set_objectid(pObject->getObjectId());
 			pResponse->set_name(pObject->GetName());
 		}
 		else
@@ -915,7 +905,7 @@ SvPb::InspectionCmdResponse getCreatableObjects(SvPb::GetCreatableObjectsRequest
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	if (nullptr != pObject)
 	{
 		SvPb::GetCreatableObjectsResponse* pResponse = cmdResponse.mutable_getcreatableobjectsresponse();
@@ -939,7 +929,7 @@ SvPb::InspectionCmdResponse shouldInspectionReset(SvPb::ShouldInspectionResetReq
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ISVFilter* pFilter = dynamic_cast<SvOi::ISVFilter*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ISVFilter* pFilter = dynamic_cast<SvOi::ISVFilter*>(SvOi::getObject(request.objectid()));
 	if (nullptr != pFilter)
 	{
 		SvPb::ShouldInspectionResetResponse* pResponse = cmdResponse.mutable_shouldinspectionresetresponse();
@@ -956,7 +946,7 @@ SvPb::InspectionCmdResponse getPPQName(SvPb::GetPPQNameRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.inspectionid())));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(request.inspectionid()));
 	if (nullptr != pInspection)
 	{
 		SvOi::IObjectClass* pPPQ = pInspection->GetPPQInterface();
@@ -977,7 +967,7 @@ SvPb::InspectionCmdResponse getValueObjectEnums(SvPb::GetValueObjectEnumsRequest
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IEnumerateValueObject* pValueObject = dynamic_cast<SvOi::IEnumerateValueObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IEnumerateValueObject* pValueObject = dynamic_cast<SvOi::IEnumerateValueObject*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pValueObject)
 	{
 		SvPb::GetValueObjectEnumsResponse* pResponse = cmdResponse.mutable_getvalueobjectenumsresponse();
@@ -999,8 +989,8 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITaskObject* pTaskObj = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
-	SVGuidVector EmbeddedVector = pTaskObj->getEmbeddedList();
+	SvOi::ITaskObject* pTaskObj = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
+	auto EmbeddedVector = pTaskObj->getEmbeddedList();
 
 	SvPb::GetEmbeddedValuesResponse* pResponse = cmdResponse.mutable_getembeddedvaluesresponse();
 	for (auto const& rEntry : EmbeddedVector)
@@ -1015,7 +1005,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 			if (S_OK == result)
 			{
 				auto* pElement = pResponse->add_list();
-				SvPb::SetGuidInProtoBytes(pElement->mutable_objectid(), rEntry);
+				pElement->set_objectid(rEntry);
 				pElement->set_embeddedid(pObject->GetEmbeddedID());
 				ConvertVariantToProtobuf(Value, pElement->mutable_value());
 				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
@@ -1024,7 +1014,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 			{
 				Value.Clear();
 				auto* pElement = pResponse->add_list();
-				SvPb::SetGuidInProtoBytes(pElement->mutable_objectid(), rEntry);
+				pElement->set_objectid(rEntry);
 				pElement->set_embeddedid(pObject->GetEmbeddedID());
 				ConvertVariantToProtobuf(Value, pElement->mutable_value());
 				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
@@ -1047,7 +1037,7 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 	SvOi::SetValueStructVector ChangedDefaultValues;
 	for (const auto& rItem : request.list())
 	{
-		SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(rItem.values().objectid()));
+		SvOi::IObjectClass* pObject = SvOi::getObject(rItem.values().objectid());
 		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 		if (nullptr != pValueObject)
 		{
@@ -1071,7 +1061,7 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 		}
 	}
 
-	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pTaskObject)
 	{
 		SvStl::MessageContainerVector messages = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true);
@@ -1098,7 +1088,7 @@ SvPb::InspectionCmdResponse getOutputRectangle(SvPb::GetOutputRectangleRequest r
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.imageid())));
+	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*> (SvOi::getObject(request.imageid()));
 	if (nullptr != pImage)
 	{
 		SvPb::GetOutputRectangleResponse* pResponse = cmdResponse.mutable_getoutputrectangleresponse();
@@ -1119,7 +1109,7 @@ SvPb::InspectionCmdResponse getToolSizeAdjustParameter(SvPb::GetToolSizeAdjustPa
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	auto pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	auto pObject = SvOi::getObject(request.objectid());
 	SvOi::IToolSizeAdjustTask* pTask = dynamic_cast<SvOi::IToolSizeAdjustTask*> (pObject);
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(pObject);
 	if (nullptr != pTask && nullptr == pTool)
@@ -1137,7 +1127,7 @@ SvPb::InspectionCmdResponse getToolSizeAdjustParameter(SvPb::GetToolSizeAdjustPa
 		const SvPb::GetAvailableObjectsResponse& rObjectResponse = cmdResponse.getavailableobjectsresponse();
 		if (S_OK == cmdResponse.hresult() && 0 < rObjectResponse.list_size())
 		{
-			pTask = dynamic_cast<SvOi::IToolSizeAdjustTask*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(rObjectResponse.list(0).objectid())));
+			pTask = dynamic_cast<SvOi::IToolSizeAdjustTask*>(SvOi::getObject(rObjectResponse.list(0).objectid()));
 		}
 	}
 
@@ -1168,7 +1158,7 @@ SvPb::InspectionCmdResponse getExtentParameter(SvPb::GetExtentParameterRequest r
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (SvOi::getObject(request.objectid()));
 	SvPb::GetExtentParameterResponse* pResponse = cmdResponse.mutable_getextentparameterresponse();
 	auto* pParameter = pResponse->mutable_parameters();
 	if (nullptr != pTool && nullptr != pParameter)
@@ -1195,7 +1185,7 @@ SvPb::InspectionCmdResponse setExtentParameter(SvPb::SetExtentParameterRequest r
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
 	SvPb::SetExtentParameterResponse* pResponse = cmdResponse.mutable_setextentparameterresponse();
 	auto* pParameter = pResponse->mutable_parameters();
 	if (nullptr != pTool && nullptr != pParameter)
@@ -1236,7 +1226,7 @@ SvPb::InspectionCmdResponse isAllowedLocation(SvPb::IsAllowedLocationRequest req
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
 		SvPb::IsAllowedLocationResponse* pResponse = cmdResponse.mutable_isallowedlocationresponse();
@@ -1253,7 +1243,7 @@ SvPb::InspectionCmdResponse propagateSizeAndPosition(SvPb::PropagateSizeAndPosit
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(request.objectid()));
 	if (nullptr != pInspection)
 	{
 		pInspection->propagateSizeAndPosition();
@@ -1269,7 +1259,7 @@ SvPb::InspectionCmdResponse usePropagateSizeAndPosition(SvPb::UsePropagateSizeAn
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid())));
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(SvOi::getObject(request.objectid()));
 	if (nullptr != pInspection)
 	{
 		SvPb::UsePropagateSizeAndPositionResponse* pResponse = cmdResponse.mutable_usepropagatesizeandpositionresponse();
@@ -1286,7 +1276,7 @@ SvPb::InspectionCmdResponse getOverlayStruct(SvPb::GetOverlayStructRequest reque
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.imageid())));
+	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.imageid()));
 	if (nullptr != pImage)
 	{
 		try
@@ -1355,12 +1345,9 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 {
 	std::vector<SvPb::TreeItem> result;
 
-	GUID inspectionID = SvPb::GetGuidFromProtoBytes(request.inspectionid());
-	GUID instanceID = SvPb::GetGuidFromProtoBytes(request.instanceid());
-
 	if (SvPb::ObjectSelectorType::ppqItems == selectorType)
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(inspectionID));
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
 		if (nullptr != pInspection)
 		{
 			result = pInspection->GetPPQSelectorList(request.attribute());
@@ -1370,7 +1357,7 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 
 	if (SvPb::ObjectSelectorType::cameraObject == selectorType)
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(inspectionID));
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
 		if (nullptr != pInspection)
 		{
 			result = pInspection->GetCameraSelectorList(request.attribute());
@@ -1381,8 +1368,8 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 	if (SvPb::ObjectSelectorType::tableObjects == selectorType)
 	{
 
-		const GUID& rGuid = (GUID_NULL != instanceID) ? instanceID : inspectionID;
-		SvOi::IObjectClass* pObject = SvOi::getObject(rGuid);
+		uint32_t id = (SvDef::InvalidObjectId != request.instanceid()) ? request.instanceid() : request.inspectionid();
+		SvOi::IObjectClass* pObject = SvOi::getObject(id);
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
 		SvOi::ITaskObject* pTaskObject(nullptr);
 		if (pInspection)
@@ -1399,8 +1386,8 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 		}
 	}
 
-	const GUID& rGuid = (GUID_NULL != instanceID) ? instanceID : inspectionID;
-	SvOi::IObjectClass* pObject = SvOi::getObject(rGuid);
+	uint32_t id = (SvDef::InvalidObjectId != request.instanceid()) ? request.instanceid() : request.inspectionid();
+	SvOi::IObjectClass* pObject = SvOi::getObject(id);
 	if (nullptr != pObject)
 	{
 		SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
@@ -1446,7 +1433,7 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(SvPb::GetGuidFromProtoBytes(request.objectid()));
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
 
 	if (nullptr != pInspection)

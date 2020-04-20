@@ -34,11 +34,11 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVCylindricalWarpDlg::SVCylindricalWarpDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+	SVCylindricalWarpDlg::SVCylindricalWarpDlg(uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(IDD)
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID  }
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID} }
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 

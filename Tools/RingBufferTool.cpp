@@ -115,7 +115,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMin));
 			msgList.push_back(SvUl::Format("%d", SvDef::cRingBufferDepthMax));
 			msgList.push_back(SvUl::Format("%d", depthVariant.lVal));
-			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10013_RingBuffer_DepthValueInvalid, GetUniqueObjectID() );
+			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvStl::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10013_RingBuffer_DepthValueInvalid, getObjectId() );
 			pErrorMessages->push_back(message);
 		}
 	}
@@ -133,7 +133,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 			for (int i = 0; i < SvDef::cRingBufferNumberOutputImages; i++)
 			{
-				m_OutputImages[i].UpdateImage(pInputImage->GetUniqueObjectID(), ImageInfo);
+				m_OutputImages[i].UpdateImage(pInputImage->getObjectId(), ImageInfo);
 			}
 
 			//Set input name to source image name to display it in result picker
@@ -146,7 +146,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				try
 				{
-					SvTrc::getTriggerRecordControllerRWInstance().addImageBuffer(GetUniqueObjectID(), bufferStruct, m_ringBufferDepth);
+					SvTrc::getTriggerRecordControllerRWInstance().addImageBuffer(getObjectId(), bufferStruct, m_ringBufferDepth);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
@@ -163,7 +163,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{ 
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -177,7 +177,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -198,7 +198,7 @@ SvIe::SVImageClass* RingBufferTool::getOutputImage(int index)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool RingBufferTool::isInputImage(const SVGUID& rImageGuid) const
+bool RingBufferTool::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 	//@Hack: [MZA][24.04.15] This method is only used by CollectOverlays and the recursive functionality of IsInputImage. 

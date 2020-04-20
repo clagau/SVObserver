@@ -27,7 +27,7 @@ protected:
 	enum { IDD = IDD_TA_LOOPTOOL_PARAMETER_DIALOG };
 	//}}AFX_DATA
 public:
-	TADialogLoopToolParameterPage(const GUID& rInspectionID, const GUID& rTaskObjectID);
+	TADialogLoopToolParameterPage(uint32_t inspectionID, uint32_t taskObjectID);
 	virtual ~TADialogLoopToolParameterPage();
 public:
 	virtual bool QueryAllowExit() override; //from ISVPropertyPageDialog
@@ -59,8 +59,8 @@ private:
 
 
 	long m_MaxLoopCount;
-	GUID m_InspectionID;
-	GUID m_TaskObjectID;
+	uint32_t m_InspectionID;
+	uint32_t m_TaskObjectID;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 	CBitmap m_downArrowBitmap;

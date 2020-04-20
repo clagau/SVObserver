@@ -33,7 +33,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const std::string& PPQName, const
 ,m_filter(SvSml::LastInspectedFilter)
 {
 	 m_rejectQueueDepth = GetDefaultRejectQueueDepth();
-	ResolveGuidForPPQName();
+	ResolveObjectIdForPPQName();
 }
 
 RemoteMonitorNamedList::RemoteMonitorNamedList(const std::string& PPQName, const std::string& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImageList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth)
@@ -47,10 +47,10 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const std::string& PPQName, const
 , m_bActive(false)
 ,m_filter(SvSml::LastInspectedFilter)
 {
-	ResolveGuidForPPQName();
+	ResolveObjectIdForPPQName();
 }
 
-const SVGUID& RemoteMonitorNamedList::GetPPQObjectID() const
+uint32_t RemoteMonitorNamedList::GetPPQObjectID() const
 {
 	return m_PPQObjectID;
 }
@@ -63,7 +63,7 @@ const std::string& RemoteMonitorNamedList::GetPPQName() const
 void RemoteMonitorNamedList::SetPPQName(const std::string& PPQName)
 {
 	m_PPQName = PPQName;
-	ResolveGuidForPPQName();
+	ResolveObjectIdForPPQName();
 }
 
 const std::string& RemoteMonitorNamedList::GetName() const
@@ -146,7 +146,7 @@ SvSml::SVProductFilterEnum RemoteMonitorNamedList::GetProductFilter() const
 	return m_filter;
 }
 
-void RemoteMonitorNamedList::ResolveGuidForPPQName()
+void RemoteMonitorNamedList::ResolveObjectIdForPPQName()
 {
 	m_PPQObjectID = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(m_PPQName.c_str());
 }

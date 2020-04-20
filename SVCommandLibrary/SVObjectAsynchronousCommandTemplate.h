@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVObjectCommandWrapperTemplate.h"
 #include "SVObjectAsynchronousCommandTemplate.h"
 #pragma endregion Includes
@@ -22,7 +21,7 @@ class SVObjectAsynchronousCommandTemplate
 {
 public:
 	SVObjectAsynchronousCommandTemplate(const SVObjectAsynchronousCommandTemplate& rObject);
-	SVObjectAsynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand);
+	SVObjectAsynchronousCommandTemplate(uint32_t objectID, const CommandPtr& rpCommand);
 
 	virtual ~SVObjectAsynchronousCommandTemplate();
 
@@ -35,7 +34,7 @@ public:
 private:
 	typedef typename SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
 
-	SVGUID m_ObjectID;
+	uint32_t m_ObjectID;
 	CommandPtr m_pCommand;
 	SVObjectCommandWrapperPtr m_pWrapper;
 

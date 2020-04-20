@@ -32,13 +32,12 @@ BEGIN_MESSAGE_MAP(TADialogTableParameterPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-TADialogTableParameterPage::TADialogTableParameterPage(const GUID& rInspectionID, const GUID& rTaskObjectID)
+TADialogTableParameterPage::TADialogTableParameterPage(uint32_t inspectionID, uint32_t taskID)
 	: CPropertyPage(TADialogTableParameterPage::IDD)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_ClearEquationID(GUID_NULL)
+	, m_InspectionID(inspectionID)
+	, m_TaskObjectID(taskID)
 	, m_pFormulaController(nullptr)
-	, m_Values {SvOg::BoundValues{ rInspectionID, rTaskObjectID }}
+	, m_Values {SvOg::BoundValues{ inspectionID, taskID }}
 {
 }
 
@@ -75,13 +74,13 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		auto availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+		auto availableList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 		for (auto entry : availableList)
 		{
 			if (SvDef::TableClearEquationName == entry.first)
@@ -178,7 +177,7 @@ void TADialogTableParameterPage::resetInspection()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_resetobjectrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 
 	HRESULT hres = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (hres == S_OK && responseCmd.has_standardresponse())
@@ -195,7 +194,7 @@ void TADialogTableParameterPage::resetInspection()
 	{
 		requestCmd.Clear();
 		auto* pSetDefaultRequest = requestCmd.mutable_setdefaultinputsrequest();
-		SvPb::SetGuidInProtoBytes(pSetDefaultRequest->mutable_objectid(), m_InspectionID);
+		pSetDefaultRequest->set_objectid(m_InspectionID);
 
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 	}

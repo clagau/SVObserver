@@ -97,7 +97,7 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateLineExtentDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateLineExtentDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -124,7 +124,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 	if (!result)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		m_RunErrorMessages.push_back(Msg);
 	}
 
@@ -133,7 +133,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 	{
 		// Signal something is wrong...
 		result = false;
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		m_RunErrorMessages.push_back(Msg);
 	}
 
@@ -165,7 +165,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 		if (0 == m_aulLineData.size() || S_OK != getInputProfileOrientation(ProjectAngle))
 		{
 			result = false;
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			m_RunErrorMessages.push_back(Msg);
 		}
 
@@ -225,7 +225,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 			assert(result);
 			if (!result)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				m_RunErrorMessages.push_back(Msg);
 			}
 		}
@@ -428,7 +428,7 @@ bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStat
 			else
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				m_RunErrorMessages.push_back(Msg);
 			}
 

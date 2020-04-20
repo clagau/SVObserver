@@ -28,7 +28,7 @@ public:
 
 public:
 #pragma region Constructor
-	Ranking2FilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);
+	Ranking2FilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent = nullptr);
 
 	virtual ~Ranking2FilterDlg();
 #pragma endregion Constructor
@@ -111,8 +111,8 @@ private:
 	long m_RankingRank;
 	CString m_GridStatus;							//Grid status string
 
-	const SVGUID& m_rInspectionID;
-	const SVGUID& m_filterID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_filterID;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 #pragma endregion Member Variables

@@ -77,8 +77,10 @@ constexpr char* FqnPPQVariables = _T("PPQ Variables");
 constexpr char* FqnRemoteInputs = _T("RemoteInputs");
 //! Environment FQN names
 constexpr char* FqnEnvironment = _T("Environment");
+constexpr char* FqnEnvironmentView = _T("Environment.View");
 constexpr char* FqnEnvironmentModelNumber = _T("Environment.Model Number");
 constexpr char* FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
+constexpr char* FqnEnvironmentWin = _T("Environment.Windows");
 constexpr char* FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
 constexpr char* FqnEnvironmentAutoSave = _T("Environment.Auto Save");
 constexpr char* FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");

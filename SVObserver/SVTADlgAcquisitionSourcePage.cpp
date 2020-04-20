@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogAcquisitionSourcePageClass, CPropertyPag
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pSheet ) 
+SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
 : CPropertyPage(SVToolAdjustmentDialogAcquisitionSourcePageClass::IDD)
 , m_pSheet(pSheet)
 {
@@ -68,18 +68,18 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 			if( nullptr != pInspection && nullptr != pInspection->GetPPQ())
 			{
-				SvUl::NameGuidList CameraGuidList;
+				SvUl::NameObjectIdList CameraObjectIDList;
 				SvIe::SVVirtualCameraPtrVector cameraVector = pInspection->GetPPQ()->GetVirtualCameras(true);
 
 				for (auto const* pCamera : cameraVector)
 				{
 					if( nullptr != pCamera && nullptr != pCamera->GetAcquisitionDevice())
 					{
-						CameraGuidList.push_back(SvUl::NameGuidPair(pCamera->GetCompleteName(), pCamera->GetUniqueObjectID()));
+						CameraObjectIDList.push_back(SvUl::NameObjectIdPair(pCamera->GetCompleteName(), pCamera->getObjectId()));
 					}
 				}
 
-				m_CameraListBox.Init( CameraGuidList, m_pMainImage->GetCamera()->GetCompleteName(), std::string());
+				m_CameraListBox.Init( CameraObjectIDList, m_pMainImage->GetCamera()->GetCompleteName(), std::string());
 			}
 
 			// Success...
@@ -104,11 +104,11 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelchangeCameraCombo()
 {
-	SVGUID SelectedCameraGuid = m_CameraListBox.getSelectedValue();
-	if( nullptr != m_pTaskObject && nullptr != m_pMainImage && GUID_NULL != SelectedCameraGuid )
+	uint32_t SelectedCameraId = m_CameraListBox.getSelectedValue();
+	if (nullptr != m_pTaskObject && nullptr != m_pMainImage && SvDef::InvalidObjectId != SelectedCameraId)
 	{
 		// Set new digitizer of main image...
-		m_pMainImage->UpdateCameraImage(SelectedCameraGuid);
+		m_pMainImage->UpdateCameraImage(SelectedCameraId);
 
 		// Reset all objects...
 		m_pTaskObject->resetAllObjects();

@@ -34,7 +34,7 @@ SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModeless
 {
 }
 
-void SVLicenseMgrModelessDlg::Init(const std::string& rMsg,const SVGuidSet& rList, HANDLE hEvent)
+void SVLicenseMgrModelessDlg::Init(const std::string& rMsg,const std::set<uint32_t>& rList, HANDLE hEvent)
 {
 	m_Msg = rMsg;
 	m_sList = rList;
@@ -42,7 +42,7 @@ void SVLicenseMgrModelessDlg::Init(const std::string& rMsg,const SVGuidSet& rLis
 	DuplicateHandle( GetCurrentProcess(), hEvent, GetCurrentProcess(), &m_hEvent, 0, FALSE, DUPLICATE_SAME_ACCESS );
 }
 
-void SVLicenseMgrModelessDlg::Show(const std::string& rMsg,const SVGuidSet& rList, HANDLE hEvent)
+void SVLicenseMgrModelessDlg::Show(const std::string& rMsg,const std::set<uint32_t>& rList, HANDLE hEvent)
 {
 	SVLicenseMgrModelessDlg& rDlg = SVLicenseMgrModelessDlg::Instance();
 	rDlg.Init( rMsg, rList, hEvent);
@@ -110,7 +110,7 @@ BOOL SVLicenseMgrModelessDlg::OnInitDialog()
 	GetDlgItem(IDC_STATIC_TITLE)->SetWindowText(m_Msg.c_str());
 
 	//fill ListControl with items in m_dList
-	SVGuidSet::iterator l_Iter = m_sList.begin();
+	auto l_Iter = m_sList.begin();
 
 	while ( l_Iter != m_sList.end() )
 	{

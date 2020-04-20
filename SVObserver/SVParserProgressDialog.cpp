@@ -153,7 +153,7 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		}
 		
 		// Popluate parser progress control
-		parserControl.OwnerGuid			= pParser->GetOwnerGuid();
+		parserControl.m_OwnerId			= pParser->GetOwnerId();
 		parserControl.pParser			= pParser;
 		parserControl.pProgressCtrl		= pProgressCtrl;
 		parserControl.pStaticTextCtrl	= pStaticTextCtrl;
@@ -300,11 +300,6 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lPara
 		// Update Progress Control
 		pProgressCtrl->SetPos( 100 );
 
-		// Update Text
-
-		// Get Owner Object GUID
-		const GUID& OwnerGuid = parserControl.pParser->GetOwnerGuid();
-
 		// Delete the Parser
 		delete parserControl.pParser;
 		parserControl.pParser = nullptr;
@@ -322,14 +317,14 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lPara
 				for( SVParserControlList::iterator it = m_parserControlList.begin();it != m_parserControlList.end();++it )
 				{
 					SVParserProgressControlStruct& parserControl = it->second;
-					parserControl.bValidate = static_cast<BOOL>(pWnd->SendMessage( SV_PARSE_OBJECT_SCRIPT_END, 0, ( LPARAM )&parserControl.OwnerGuid ));
+					parserControl.bValidate = static_cast<BOOL>(pWnd->SendMessage( SV_PARSE_OBJECT_SCRIPT_END, 0, ( LPARAM )&parserControl.m_OwnerId ));
 				}
 
 				// Validate and init all objects
 				for( SVParserControlList::iterator it = m_parserControlList.begin();it != m_parserControlList.end();++it )
 				{
 					SVParserProgressControlStruct& parserControl = it->second;
-					parserControl.bValidate = static_cast<int>(pWnd->SendMessage( SV_PARSE_OBJECT_CREATE_DONE, 0, ( LPARAM )&parserControl.OwnerGuid ));
+					parserControl.bValidate = static_cast<int>(pWnd->SendMessage( SV_PARSE_OBJECT_CREATE_DONE, 0, ( LPARAM )&parserControl.m_OwnerId ));
 				}
 			}
 			EndDialog( IDOK );

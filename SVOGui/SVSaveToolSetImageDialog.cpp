@@ -26,9 +26,9 @@ static char THIS_FILE[]=__FILE__;
 
 namespace SvOg
 {
-	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
+	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSaveToolSetImageDialogClass::IDD, pParent)
-	, m_ImageController(rInspectionID, rTaskObjectID, SvPb::SVNotSetSubObjectType, false)
+	, m_ImageController(inspectionId, taskObjectId, SvPb::SVNotSetSubObjectType, false)
 	{
 		//{{AFX_DATA_INIT(SVSaveToolSetImageDialogClass)
 			// NOTE: the ClassWizard will add member initialization here
@@ -59,8 +59,8 @@ namespace SvOg
 		CDialog::OnInitDialog();
 		m_ImageController.Init();
 
-		const SvUl::NameGuidList& availImages = m_ImageController.GetAvailableImageList();
-		for (SvUl::NameGuidList::const_iterator it = availImages.begin();it != availImages.end();++it)
+		const SvUl::NameObjectIdList& availImages = m_ImageController.GetAvailableImageList();
+		for (SvUl::NameObjectIdList::const_iterator it = availImages.begin();it != availImages.end();++it)
 		{
 			m_availableImagesComboCtrl.AddString(it->first.c_str());
 		}

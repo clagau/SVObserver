@@ -38,7 +38,7 @@ END_MESSAGE_MAP()
 const int DependentColumnNumber = 2;
 const TCHAR* const ColumnHeadings[] = {_T("Client"), _T("Supplier")};
 
-SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
+SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_rSourceSet(rSourceSet)
 	, m_objectType(objectType)
@@ -48,17 +48,17 @@ SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SvPb
 	RetreiveList();
 }
 
-/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog(const std::string& rName, const SVGUID rTaskObjectID)
+/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog(const std::string& rName, uint32_t taskObjectID)
 {
 	INT_PTR Result(IDOK);
 
-	if (!rTaskObjectID.empty())
+	if (SvDef::InvalidObjectId != taskObjectID)
 	{
 		std::string FormatText = SvUl::LoadStdString(IDS_DELETE_CHECK_DEPENDENCIES);
 		std::string DisplayText = SvUl::Format(FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str());
 
-		SVGuidSet SourceSet;
-		SourceSet.insert(rTaskObjectID);
+		std::set<uint32_t> SourceSet;
+		SourceSet.insert(taskObjectID);
 		SVShowDependentsDialog Dlg(SourceSet, SvPb::SVToolObjectType, DisplayText.c_str());
 
 		Result = Dlg.DoModal();
@@ -220,8 +220,7 @@ void SVShowDependentsDialog::setResizeControls()
 
 void SVShowDependentsDialog::RetreiveList()
 {
-	SVGuidSet::const_iterator Iter(m_rSourceSet.begin());
-	for (; m_rSourceSet.end() != Iter; ++Iter)
+	for (auto Iter = m_rSourceSet.begin(); m_rSourceSet.end() != Iter; ++Iter)
 	{
 		SvOi::IObjectClass* pSourceObject = SvOi::getObject(*Iter);
 		if (nullptr != pSourceObject)

@@ -251,7 +251,7 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 			// McodeAlloc failed
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeInitFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeInitFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -262,7 +262,7 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 		// getInputImage failed
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -332,7 +332,7 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 
 	if ( m_bHasLicenseError )
 	{
-		SVOLicenseManager::Instance().AddLicenseErrorToList(GetUniqueObjectID());
+		SVOLicenseManager::Instance().AddLicenseErrorToList(getObjectId());
 	}
 
 	return bOk;
@@ -343,7 +343,7 @@ SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
 	if ( m_bHasLicenseError )
 	{
 		m_bHasLicenseError = false;
-		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(GetUniqueObjectID());
+		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(getObjectId());
 	}
 
 	SVBarCodeAnalyzerClass::CloseObject();
@@ -366,7 +366,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetInvalid ();
@@ -380,7 +380,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -410,9 +410,9 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 					{
 						for (SvStl::MessageContainer& rMessage : *pErrorMessages)
 						{
-							if (GUID_NULL == rMessage.getObjectId())
+							if (SvDef::InvalidObjectId == rMessage.getObjectId())
 							{
-								rMessage.setObjectId(GetUniqueObjectID());
+								rMessage.setObjectId(getObjectId());
 							}
 						}
 					}
@@ -451,7 +451,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 							Result = false;
 							if (nullptr != pErrorMessages)
 							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 								pErrorMessages->push_back(Msg);
 							}
 						}
@@ -526,12 +526,12 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						if (!Result)
 						{
 							if (nullptr != pErrorMessages)
-							{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
+							{	//set Id of this object to the error message without a ID. (should be error message from the matrox interface)
 								for (SvStl::MessageContainer& rMessage : *pErrorMessages)
 								{
-									if (GUID_NULL == rMessage.getObjectId())
+									if (SvDef::InvalidObjectId == rMessage.getObjectId())
 									{
-										rMessage.setObjectId(GetUniqueObjectID());
+										rMessage.setObjectId(getObjectId());
 									}
 								}
 							}
@@ -565,7 +565,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}// end catch
@@ -606,7 +606,7 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
 		catch (...)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToRead, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10038, GetUniqueObjectID());
+			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToRead, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10038, getObjectId());
 			if (nullptr != pErrorMessages)
 			{
 				pErrorMessages->push_back(message);
@@ -652,7 +652,7 @@ bool SVBarCodeAnalyzerClass::SaveRegExpression( SvStl::MessageContainerVector *p
 		{
 			if (nullptr != pErrorMessage)
 			{
-				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToSave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10039, GetUniqueObjectID());
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BarCode_UnableToSave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10039, getObjectId());
 				pErrorMessage->push_back(message);
 			}
 			return false;
@@ -672,7 +672,7 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -698,7 +698,7 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

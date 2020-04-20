@@ -24,7 +24,6 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -61,7 +60,7 @@ void SVRemoteOutputDataController::Destroy()
 }
 
 // AddItem creates a new RemoteOutputObject and adds it to the remote group parameters
-HRESULT SVRemoteOutputDataController::AddItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, GUID InputObjectID, const std::string& rPPQ )
+HRESULT SVRemoteOutputDataController::AddItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, uint32_t InputObjectID, const std::string& rPPQ )
 {
 	HRESULT l_hr = E_FAIL;
 	SVRemoteOutputObject* l_pEntry = new SVRemoteOutputObject;
@@ -145,15 +144,12 @@ HRESULT SVRemoteOutputDataController::GetItem( const std::string& rRemoteGroupId
 // Parameters >> Tree ( Save )
 bool SVRemoteOutputDataController::GetParameters(SvOi::IObjectWriter& rWriter)
 {
-	_variant_t svVariant;
-
 	ClearUnUsedData();	// clears unused remote data
 
 	if( m_RemoteGroupParameters.size() > 0 )
 	{
 		rWriter.StartElement( SvXml::CTAG_REMOTE_OUTPUT_PARAMETERS );
-		
-		svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
+		_variant_t svVariant = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
 		rWriter.WriteAttribute(  SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 		// Remote Output Parameters
@@ -190,13 +186,8 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 		bOk = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
 		if ( bOk )
 		{
-
-			SVGUID UniqueID( svVariant );
-
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
-
-			m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
+			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
 
@@ -365,7 +356,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 	if( nullptr != pConfig )
 	{
 		long l_lCount = pConfig->GetPPQCount();
-		typedef std::pair<std::string, SVGUID> PPQInfo;
+		typedef std::pair<std::string, uint32_t> PPQInfo;
 		typedef std::deque<PPQInfo> PPQInfoList;
 		PPQInfoList l_PPQInfos;
 		for( long l_lIndex = 0 ; l_lIndex < l_lCount ; l_lIndex++ )
@@ -373,14 +364,14 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 			SVPPQObject* pPPQ = pConfig->GetPPQ(l_lIndex);
 			if( nullptr != pPPQ )
 			{
-				l_PPQInfos.push_back( std::make_pair(pPPQ->GetName(), pPPQ->GetUniqueObjectID()) );
+				l_PPQInfos.push_back( std::make_pair(pPPQ->GetName(), pPPQ->getObjectId()) );
 			}
 		}
 	
 		// Find dead PPQs...
 		for( SVRemoteOutputGroupMap::iterator l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end(); )
 		{
-			// match PPQ name and GUID, because it could have been deleted and re-added...
+			// match PPQ name and ID, because it could have been deleted and re-added...
 			PPQInfo ppqInfo(std::make_pair(l_it->second->GetPPQName(), l_it->second->GetPPQObjectId()));
 			PPQInfoList::const_iterator l_ppqIt = std::find_if( l_PPQInfos.begin(), l_PPQInfos.end(), [&ppqInfo](const PPQInfo& rInfo)->bool
 			{
@@ -427,7 +418,7 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs( const std::string& rRem
 			SvVol::BasicValueObjectPtr pPpqTriggerCount =  pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);
 			if(nullptr != pPpqTriggerCount)
 			{
-				AddItem( rRemoteGroupID, pNewOutput, pPpqTriggerCount->GetUniqueObjectID(), pPPQ->GetName() );
+				AddItem( rRemoteGroupID, pNewOutput, pPpqTriggerCount->getObjectId(), pPPQ->GetName() );
 			}
 		}
 		l_hr = S_OK;
@@ -435,8 +426,8 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs( const std::string& rRem
 	return l_hr;
 }
 
-// This function walks the input list and attempts to validate each input GUID 
-// by getting a pointer from the Object Manager for each GUID.
+// This function walks the input list and attempts to validate each input ID 
+// by getting a pointer from the Object Manager for each ID.
 // If an input fails then it is deleted.
 HRESULT SVRemoteOutputDataController::ValidateInputs()
 {
@@ -450,9 +441,7 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 			SVRemoteOutputObject* l_pOutput = l_pGroup->GetItem( i );
 			if( l_pOutput )
 			{
-				GUID l_GUID;
-				::KeepPrevError( l_hr, l_pOutput->GetInputValueObjectGUID( l_GUID ));
-				SVObjectClass* l_pInputVO = SVObjectManagerClass::Instance().GetObject( l_GUID );
+				SVObjectClass* l_pInputVO = SVObjectManagerClass::Instance().GetObject(l_pOutput->GetInputValueObjectID());
 				if( nullptr == l_pInputVO )
 				{
 					l_pInputVO = SVObjectManagerClass::Instance().GetObjectCompleteName(l_pOutput->GetInputValueObjectName().c_str());

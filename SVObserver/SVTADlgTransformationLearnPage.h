@@ -29,14 +29,13 @@ class SVBoolValueObjectClass;
 class SVDoubleValueObjectClass;
 }
 
-class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 
 class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage
 {
 // Construction
 public:
-	SVToolAdjustmentDialogTransformationLearnPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogTransformationLearnPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVToolAdjustmentDialogTransformationLearnPageClass();
 	HRESULT SetInspectionData();
 

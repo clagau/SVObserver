@@ -26,13 +26,13 @@ namespace SvOl
 	#pragma region Public Methods
 	public:
 		//! Gets the name of the graph vertex
-		//! \param rGuid [in] reference to the Graph vertex Guid
+		//! \param id [in] reference to the Graph vertex id
 		//! \returns the name of the vertex
-		virtual LPCTSTR getVertexName( const SVGUID& rGuid ) const override
+		virtual LPCTSTR getVertexName(uint32_t id) const override
 		{
 			LPCTSTR pResult( nullptr );
 
-			SVObjectClass* pObject( SVObjectManagerClass::Instance().GetObject(rGuid) );
+			SVObjectClass* pObject( SVObjectManagerClass::Instance().GetObject(id) );
 			if( nullptr != pObject )
 			{
 				pResult = pObject->GetName();

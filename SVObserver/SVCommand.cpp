@@ -694,13 +694,13 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BS
 struct SVGetImageListImageInfo
 {
 	_bstr_t m_ImageName;
-	SVGUID m_ImageId;
+	uint32_t m_ImageId;
 	SVInspectionProcess* m_pInspection;
 
 	SVGetImageListImageInfo() : m_ImageName(), m_ImageId(), m_pInspection(nullptr) {}
 
-	SVGetImageListImageInfo(const _bstr_t& p_rImageName, const SVGUID& p_rImageId, SVInspectionProcess* p_pInspection)
-		: m_ImageName(p_rImageName), m_ImageId(p_rImageId), m_pInspection(p_pInspection)
+	SVGetImageListImageInfo(const _bstr_t& p_rImageName, uint32_t imageId, SVInspectionProcess* p_pInspection)
+		: m_ImageName(p_rImageName), m_ImageId(imageId), m_pInspection(p_pInspection)
 	{
 	}
 };
@@ -711,7 +711,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 {
 	HRESULT hrResult = S_OK;
 
-	typedef std::map< SVInspectionProcess*, SVGuidSet > SVInspectionImageIdMap;
+	typedef std::map< SVInspectionProcess*, std::set<uint32_t> > SVInspectionImageIdMap;
 	typedef std::map< SVInspectionProcess*, SVCommandInspectionCollectImageDataPtr > SVInspectionImageDataMap;
 	typedef std::deque< SVGetImageListImageInfo > SVImageNameIdDeque;
 
@@ -775,13 +775,13 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				SVObjectManagerClass::Instance().GetObjectByDottedName(l_Name, pImage);
 				if (pImage)
 				{
-					l_InspectionImageIds[pInspection].insert(pImage->GetUniqueObjectID());
+					l_InspectionImageIds[pInspection].insert(pImage->getObjectId());
 
-					l_ImageNameIds.push_back(SVGetImageListImageInfo(bstrName, pImage->GetUniqueObjectID(), pInspection));
+					l_ImageNameIds.emplace_back(bstrName, pImage->getObjectId(), pInspection);
 				}
 				else	// couldn't find object
 				{
-					l_ImageNameIds.push_back(SVGetImageListImageInfo(bstrName, SVGUID(), pInspection));
+					l_ImageNameIds.emplace_back(bstrName, SvDef::InvalidObjectId, pInspection);
 
 					hrOK = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 
@@ -792,7 +792,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			}
 			else	// couldn't find inspection
 			{
-				l_ImageNameIds.push_back(SVGetImageListImageInfo(bstrName, SVGUID(), nullptr));
+				l_ImageNameIds.emplace_back(bstrName, SvDef::InvalidObjectId, nullptr);
 
 				hrOK = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
@@ -816,8 +816,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		{
 			if (nullptr != l_InspectionIter->first)
 			{
-				SVCommandInspectionCollectImageDataPtr l_DataPtr {new SVCommandInspectionCollectImageData(l_InspectionIter->first->GetUniqueObjectID(), l_InspectionIter->second)};
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command(l_InspectionIter->first->GetUniqueObjectID(), l_DataPtr);
+				SVCommandInspectionCollectImageDataPtr l_DataPtr {new SVCommandInspectionCollectImageData(l_InspectionIter->first->getObjectId(), l_InspectionIter->second)};
+				SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command(l_InspectionIter->first->getObjectId(), l_DataPtr);
 
 				if (S_OK == l_Command.Execute(120000))
 				{
@@ -1026,7 +1026,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	// 2) Requested data item exists
 	// 3) all data items are on the same PPQ
 	HRESULT hrOK = S_OK;
-	SVGUID l_PPQId;
+	uint32_t l_PPQId = SvDef::InvalidObjectId;
 
 	for (long i = 0; i < lNumberOfElements && SUCCEEDED(hrOK); i++)
 	{
@@ -1042,7 +1042,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 			{
 				aValueObjects.push_back(ObjectRef);	// add data object pointer to the list
 
-				if (l_PPQId.empty()) //set the first PPQ name as the comparison standard
+				if (SvDef::InvalidObjectId == l_PPQId) //set the first PPQ name as the comparison standard
 				{
 					l_PPQId = pInspection->GetPPQIdentifier();
 				}
@@ -1257,7 +1257,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		// 3) all data items are on the same PPQ
 		SVInspectionProcess* pInspection(nullptr);
 		HRESULT hrOK = S_OK;
-		SVGUID l_PPQId;
+		uint32_t l_PPQId = SvDef::InvalidObjectId;
 
 		for (l = 0; l < lNumberOfElements && SUCCEEDED(hrOK); l++)
 		{
@@ -1293,7 +1293,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 					// if image is OK, check PPQ
 					if (bImageOK)
 					{
-						if (l_PPQId.empty()) //set the first PPQ name as the comparison standard
+						if (SvDef::InvalidObjectId == l_PPQId) //set the first PPQ name as the comparison standard
 						{
 							l_PPQId = pInspection->GetPPQIdentifier();
 						}
@@ -1363,7 +1363,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						{
 							// put image in return array
 							BSTR bstrTemp = nullptr;
-							HRESULT hr = SafeImageToBSTR(pImage, ProductInfo.m_svInspectionInfos[aInspections[l]->GetUniqueObjectID()].m_triggerRecordComplete, &bstrTemp);
+							HRESULT hr = SafeImageToBSTR(pImage, ProductInfo.m_svInspectionInfos[aInspections[l]->getObjectId()].m_triggerRecordComplete, &bstrTemp);
 
 							if (SUCCEEDED(hr))
 							{
@@ -1927,7 +1927,7 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 		SVInspectionProcess* pInspection(nullptr);
 		if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
 		{
-			hrResult =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+			hrResult =  SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
 	}// end if
 	else

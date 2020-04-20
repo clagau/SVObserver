@@ -12,6 +12,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateChildStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "TriggerRecordControllerTestDlg.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -24,17 +25,17 @@ static char THIS_FILE[] = __FILE__;
 namespace SvTrcT
 {
 #pragma region Constructor
-WindowTool::WindowTool(GUID guid)
-	: ToolObject(guid)
+WindowTool::WindowTool(uint32_t id)
+	: ToolObject(id)
 {
-	UuidCreateSequential(&m_childGuid);
+	m_childId = getNextObjectId();
 };
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void WindowTool::reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
+void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
 {
-	ToolObject::reset(sourceGuid, sourcePos, bufferStructIn, recordController);
+	ToolObject::reset(sourceId, sourcePos, bufferStructIn, recordController);
 	m_bufferStructOut = m_bufferStructIn;
 	MatroxBufferChildDataStruct childStruct;
 	childStruct.m_lBand = 1;
@@ -43,12 +44,12 @@ void WindowTool::reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBuff
 	childStruct.m_lOffY = m_offsetY;
 	childStruct.m_lSizeX = m_bufferStructIn.m_lSizeX - 2 * m_offsetX;
 	childStruct.m_lSizeY = m_bufferStructIn.m_lSizeY - 2 * m_offsetY;
-	recordController.addOrChangeChildImage(m_childGuid, sourceGuid, childStruct);
+	recordController.addOrChangeChildImage(m_childId, sourceId, childStruct);
 
 	m_bufferStructOut = m_bufferStructIn;
 	m_bufferStructOut.m_lSizeX = childStruct.m_lSizeX;
 	m_bufferStructOut.m_lSizeY = childStruct.m_lSizeY;
-	m_trPos = recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
+	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
 };
 
 bool WindowTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)

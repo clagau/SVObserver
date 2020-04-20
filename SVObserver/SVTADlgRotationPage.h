@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVUtilityLibrary/SVGuid.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #pragma endregion
@@ -27,7 +26,7 @@ class SVEvaluateClass;
 class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+	SVToolAdjustmentDialogRotationPageClass( uint32_t inspectionId, uint32_t taskObjectId);
 	virtual ~SVToolAdjustmentDialogRotationPageClass();
 
 #pragma region Protected Methods
@@ -76,8 +75,8 @@ protected:
 	SvOp::SVEvaluateClass*	m_pEvaluateRotationY{ nullptr };
 	SvOp::SVEvaluateClass*	m_pEvaluateRotationAngle{ nullptr };
 
-	const SVGUID m_InspectionID;
-	const SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_TaskObjectID;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 #pragma endregion

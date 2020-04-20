@@ -9,8 +9,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-//! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
-class SVGUID;
 class SVDeviceParamCollection;
 
 namespace SvPb
@@ -51,13 +49,13 @@ namespace SvOi
 	//! \param rObjectId [in] The object id as parameter
 	//! \param pParentWnd [in] Pointer to the parent window
 	/// \returns result
-	HRESULT SetupDialogManager(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, HWND hWnd);
+	HRESULT SetupDialogManager(SvPb::ClassIdEnum classId, uint32_t objectId, HWND hWnd);
 
 	//! Shows the modeless license manager dialog
 	//! \param rMessage [in] the message to display
-	//! \param rList [in] the list of object GUIDs which has no license
+	//! \param rList [in] the list of object IDs which has no license
 	//! \param hCheckEvent [in] Handle to event which will close the dialog
-	void showLicenseManagerDialog(const std::string& rMessage, const std::set<SVGUID>& rList, HANDLE hCheckEvent);
+	void showLicenseManagerDialog(const std::string& rMessage, const std::set<uint32_t>& rList, HANDLE hCheckEvent);
 
 	//! Destroys the modeless license manager dialog
 	void destroyLicenseManagerDialog();

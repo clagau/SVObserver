@@ -25,7 +25,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "Tools/SVStatTool.h"
 #pragma endregion Includes
 
@@ -59,7 +58,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::DoDataExchange(CDataExchange* pD
 	//}}AFX_DATA_MAP
 }
 
-SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent) 
+SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent) 
 : CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
 , m_pParent(pParent)
 , m_pTool(nullptr)
@@ -69,7 +68,7 @@ SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageC
 	m_strVariableToMonitor = _T("");
 	//}}AFX_DATA_INIT
 
-	 m_pTool = dynamic_cast <SvTo::SVStatisticsToolClass*> (SvOi::getObject(rTaskObjectID));
+	 m_pTool = dynamic_cast <SvTo::SVStatisticsToolClass*> (SvOi::getObject(taskObjectId));
 }
 
 SVToolAdjustmentDialogStatisticsPageClass::~SVToolAdjustmentDialogStatisticsPageClass()
@@ -246,7 +245,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
 		}
-		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
+		else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->getObjectId(), this ))
 		{
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
@@ -266,9 +265,9 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pTool->GetUniqueObjectID());
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::publishable, m_pTool->getObjectId());
 	
-	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (responseCmd.has_getobjectselectoritemsresponse())
 	{
@@ -315,9 +314,9 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::selectableForStatistics);
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::selectableForStatistics);
 
-	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	if (responseCmd.has_getobjectselectoritemsresponse())
 	{

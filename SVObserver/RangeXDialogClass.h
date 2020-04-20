@@ -22,7 +22,7 @@ class RangeXDialogClass : public CDialog
 	DECLARE_DYNAMIC(RangeXDialogClass)
 
 public:
-	RangeXDialogClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID, CWnd* parent = nullptr);
+	RangeXDialogClass(uint32_t inspectionID, uint32_t taskID, uint32_t rangeID, CWnd* parent = nullptr);
 	virtual ~RangeXDialogClass();
 
 	//************************************

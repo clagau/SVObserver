@@ -82,7 +82,7 @@ long SVLongValueObjectClass::ConvertString2Type( const std::string& rValue ) con
 	msgList.push_back( rValue );
 	msgList.push_back( GetName() );
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
-	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 	Exception.Throw();
 	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
 }

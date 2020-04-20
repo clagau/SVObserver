@@ -56,10 +56,10 @@ static char THIS_FILE[] = __FILE__;
 	}
 
 	#pragma region Constructor
-	SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id )
+	SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id )
 	: CPropertyPage(id)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
 	, m_numImages(rInfostructVector.size())
 	, m_Infostructs(rInfostructVector)
 	{
@@ -114,12 +114,12 @@ static char THIS_FILE[] = __FILE__;
 				{
 					ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(m_Infostructs[ctrlID]));
 					ImgCtrl.Init();
-					const SvUl::NameGuidList& availImages = ImgCtrl.GetAvailableImageList();
+					const SvUl::NameObjectIdList& availImages = ImgCtrl.GetAvailableImageList();
 					long dist = -1;
 					pItem->GetItemValue(dist);
 					if (dist >= 0 && dist < static_cast<int>(availImages.size()))
 					{
-						SvUl::NameGuidList::const_iterator it = availImages.begin();
+						SvUl::NameObjectIdList::const_iterator it = availImages.begin();
 						std::advance(it, dist);
 						if (it != availImages.end())
 						{
@@ -185,14 +185,14 @@ static char THIS_FILE[] = __FILE__;
 		//to obtain such a list
 		ImageController justForInputImageListGeneration(m_InspectionID, m_TaskObjectID, SvPb::SVNotSetSubObjectType);
 		justForInputImageListGeneration.Init();
-		const SvUl::InputNameGuidPairList NameGuidPairs = justForInputImageListGeneration.GetInputImageList(GUID_NULL, m_numImages);
+		const SvUl::InputNameObjectIdPairList NameObjectIdPairs = justForInputImageListGeneration.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
 
 		int i = 0;
-		for (SvUl::InputNameGuidPairList::const_iterator it = NameGuidPairs.begin();it != NameGuidPairs.end();++it)
+		for (SvUl::InputNameObjectIdPairList::const_iterator it = NameObjectIdPairs.begin();it != NameObjectIdPairs.end();++it)
 		{
 			ImageController ImgCtrl(m_InspectionID, m_TaskObjectID, GetImageSubtype(m_Infostructs[i]));
 			ImgCtrl.Init();
-			const SvUl::NameGuidList& availImages = ImgCtrl.GetAvailableImageList();
+			const SvUl::NameObjectIdList& availImages = ImgCtrl.GetAvailableImageList();
 			std::string Temp = m_Infostructs[i].DisplayName;
 
 			SVRPropertyItemCombo* pCombo = static_cast<SVRPropertyItemCombo *>(m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot));
@@ -204,7 +204,7 @@ static char THIS_FILE[] = __FILE__;
 				pCombo->SetLabelText( Temp.c_str() );
 				pCombo->CreateComboBox();
 				int curSel = 0;
-				for (SvUl::NameGuidList::const_iterator availIt = availImages.begin();availIt != availImages.end();++availIt)
+				for (SvUl::NameObjectIdList::const_iterator availIt = availImages.begin();availIt != availImages.end();++availIt)
 				{
 					int index = pCombo->AddString(availIt->first.c_str());
 					size_t imageIndex = std::distance(availImages.begin(), availIt);
@@ -227,11 +227,11 @@ static char THIS_FILE[] = __FILE__;
 	void SVExternalToolImageSelectPage::setImages(ImageController &imgCtrl)
 	{
 		imgCtrl.ToolRunOnce();
-		const SvUl::InputNameGuidPairList& NameGuidPairs = imgCtrl.GetInputImageList(GUID_NULL, m_numImages);
+		const SvUl::InputNameObjectIdPairList& NameObjectIdPairs = imgCtrl.GetInputImageList(SvDef::InvalidObjectId, m_numImages);
 		int imageIndex = 0;
-		for (auto& rNameGuidPair : NameGuidPairs)
+		for (auto& rNameObjectIdPair : NameObjectIdPairs)
 		{
-			m_ImageDisplay.setImage(imgCtrl.GetImage(rNameGuidPair.second.second.ToGUID()), imageIndex);
+			m_ImageDisplay.setImage(imgCtrl.GetImage(rNameObjectIdPair.second.second), imageIndex);
 			m_ImageDisplay.SetZoom(imageIndex++, -1.0);
 		}
 		m_ImageDisplay.Refresh();

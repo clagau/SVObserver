@@ -105,12 +105,6 @@ void SVStatisticsToolClass::init(void)
 			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
-			&m_VariableGUID_OBSOLETE, 
-			SvPb::StatVariableToMonitorEId,
-			IDS_OBJECTNAME_VARIABLEGUID,
-			false, SvOi::SVResetItemTool );
-		
-		RegisterEmbeddedObject(
 			&m_VariableName, 
 			SvPb::StatVariableNameToMonitorEId,
 			IDS_OBJECTNAME_STAT_VARIABLE_NAME,
@@ -168,26 +162,9 @@ bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	// These values will not be exposed for the this Tool.
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
-	m_VariableGUID_OBSOLETE.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	std::string Name;
 	m_VariableName.GetValue( Name );
-
-	if ( Name.empty() )
-	{
-		// check for backwards compatibility
-		std::string GuidString;
-		m_VariableGUID_OBSOLETE.GetValue( GuidString );
-		if ( !GuidString.empty() )
-		{
-			SVGUID guid{GuidString};
-			IObjectClass* pObject = SvOi::getObject(guid);
-			if( nullptr != pObject )
-			{
-				Name = pObject->GetCompleteName();
-			}
-		}
-	}
 
 	SetVariableSelected( Name );
 
@@ -324,7 +301,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 
 		if( nullptr == pResult)
 		{
-			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16207, GetUniqueObjectID() );
+			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16207, getObjectId() );
 			throw Exception;
 		}
 
@@ -340,7 +317,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 
 		if(nullptr == pValue)
 		{
-			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16208, GetUniqueObjectID() );
+			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16208, getObjectId() );
 			throw Exception;
 		}
 
@@ -358,8 +335,8 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 			if( !CreateChildObject(pResult) )
 			{
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-				GUID objectID = pResult->GetUniqueObjectID();
-				if( GUID_NULL != objectID )
+				uint32_t objectID = pResult->getObjectId();
+				if (SvDef::InvalidObjectId != objectID)
 				{
 					Delete( objectID );
 				}
@@ -368,7 +345,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 					delete pResult;
 				}
 
-				SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10200, GetUniqueObjectID() );
+				SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10200, getObjectId() );
 				throw Exception;
 			}
 		}
@@ -413,7 +390,7 @@ SvOp::SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aF
 	
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, GetUniqueObjectID() );
+	SVObjectManagerClass::Instance().VisitElements( l_Visitor, getObjectId() );
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
@@ -487,7 +464,6 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 			// Connect to the input
 			m_inputObjectInfo.SetObject( GetObjectInfo() );
 
-			//m_inputObjectInfo.InputObjectInfo.UniqueObjectID = selectedVarGuid;
 			m_inputObjectInfo.SetInputObject( refObject );
 			
 			refObject.getObject()->ConnectObjectInput(&m_inputObjectInfo);
@@ -496,7 +472,6 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 	}
 	else
 	{
-		//msvVariableGUID_OBSOLETE.SetValue( guidStr );
 		m_VariableName.SetValue(std::string());
 
 		// Clear the Object Info
@@ -506,7 +481,7 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 
 bool SVStatisticsToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
-	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getUniqueObjectID() == m_inputObjectInfo.GetInputObjectInfo().getUniqueObjectID() )
+	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObjectId() == m_inputObjectInfo.GetInputObjectInfo().getObjectId() )
 	{
 		m_inputObjectInfo.SetInputObject( nullptr );
 
@@ -742,7 +717,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	// verify that the object is really valid
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().getUniqueObjectID() );
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().getObjectId() );
 	if ( nullptr != pObject )
 	{
 		SVObjectReference ObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
@@ -762,7 +737,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 					SvDef::StringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;
-					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10201, GetUniqueObjectID());
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10201, getObjectId());
 					pErrorMessages->push_back( message );
 				}
 				return false;
@@ -773,7 +748,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 	//Test failed, if reach this point.
 	if (nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_StatToolTestFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_StatToolTestFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 		pErrorMessages->push_back(Msg);
 	}
 
@@ -788,7 +763,7 @@ bool SVStatisticsToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorM
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			return false;

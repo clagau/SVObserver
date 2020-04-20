@@ -62,7 +62,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogThresholdPageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent ) 
+SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent ) 
 : CPropertyPage(SVToolAdjustmentDialogThresholdPageClass::IDD)
 , m_pUseExternATM(nullptr)
 , m_pUseExternLT(nullptr)
@@ -79,7 +79,7 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 , m_dAutoThreshold(1.0)
 , m_histState(0)
 , m_isEdit(false)
-, m_ImageController(rInspectionID, rTaskObjectID)
+, m_ImageController(inspectionId, taskObjectId)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogThresholdPageClass)
 	m_bUseExternATM = false;
@@ -136,7 +136,7 @@ HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pCurrentThreshold->GetInspection()->GetUniqueObjectID(), m_pCurrentThreshold->GetUniqueObjectID() } };
+		Controller Values{ SvOg::BoundValues{ m_pCurrentThreshold->GetInspection()->getObjectId(), m_pCurrentThreshold->getObjectId() } };
 		Values.Init();
 
 		Values.Set<long>(m_pCurrentThreshold->m_upperThresh.GetEmbeddedID(), m_upperThreshold.GetPos());
@@ -942,9 +942,9 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 		std::string Caption = pEquation->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pCurrentThreshold->GetUniqueObjectID();
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pCurrentThreshold->getObjectId();
+		SvOg::SVFormulaEditorSheetClass dlg(inspectionID, objectID, info, Caption.c_str());
 		dlg.DoModal();
 
 		long l_lResult = static_cast<long>(pEquation->GetYACCResult());
@@ -993,9 +993,9 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 		std::string Caption = pEquation->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pCurrentThreshold->GetUniqueObjectID();
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pCurrentThreshold->getObjectId();
+		SvOg::SVFormulaEditorSheetClass dlg(inspectionID, objectID, info, Caption.c_str());
 		dlg.DoModal();
 
 		initThreshold();
@@ -1013,9 +1013,9 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 		std::string Caption = pEquation->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pCurrentThreshold->GetUniqueObjectID();
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pCurrentThreshold->getObjectId();
+		SvOg::SVFormulaEditorSheetClass dlg(inspectionID, objectID, info, Caption.c_str());
 		dlg.DoModal();
 
 		long l_lResult = static_cast<long>(pEquation->GetYACCResult());
@@ -1084,7 +1084,7 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnMouseWheel(UINT nFlags, short z
 
 void SVToolAdjustmentDialogThresholdPageClass::setImages()
 {
-	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID.ToGUID());
+	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID);
 	m_dialogImage.setImage(pResultImage);
 	m_dialogImage.Refresh();
 }

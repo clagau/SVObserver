@@ -10,8 +10,6 @@
 #pragma region Includes
 #pragma endregion Includes
 
-class SVGUID;
-
 namespace SvCl
 {
 	class IGraphNameLookup
@@ -21,8 +19,8 @@ namespace SvCl
 		virtual ~IGraphNameLookup() {}
 
 		//! Gets the name of the graph vertex
-		//! \param rGuid [in] reference to the Graph vertex Guid
+		//! \param id [in] reference to the Graph vertex id
 		//! \returns the name of the vertex
-		virtual LPCTSTR getVertexName( const SVGUID& rGuid ) const = 0;
+		virtual LPCTSTR getVertexName(uint32_t id) const = 0;
 	};
 } //namespace SvCl

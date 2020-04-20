@@ -97,7 +97,7 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(message);
 		}
 		Result = false;
@@ -115,7 +115,7 @@ void TableAddColumnAnalyzer::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 
 	auto* pColumnEquation = new SvOp::TableAddColumnEquation(this);
-	AddFriend(pColumnEquation->GetUniqueObjectID());
+	AddFriend(pColumnEquation->getObjectId());
 
 	// New Column Input.
 	m_newColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);

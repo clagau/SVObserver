@@ -4,14 +4,13 @@
 
 #include "stdafx.h"
 #include "TriggerRecordControllerTestDlg.h"
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary\NameObjectIdList.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "CopyTool.h"
 #include "WindowTool.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "RotationTool.h"
 #include "DeactivedTool.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #include "SVStatusLibrary/MessageContainer.h"
 
@@ -65,7 +64,7 @@ namespace SvTrcT
 		, m_isReader(isReader)
 	{
 		m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-		UuidCreateSequential(&m_mainGuid);
+		m_mainId = getNextObjectId();
 	}
 
 	CTriggerRecordControllerTestDlg::~CTriggerRecordControllerTestDlg()
@@ -263,23 +262,21 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::OnBnClickedButtonAdd()
 	{
-		GUID guid;
-		UuidCreateSequential(&guid);
 		ToolObjectPtr pTool = nullptr;
 
 		switch (m_ToolSelectCombo.GetCurSel())
 		{
 		case 0:
-			pTool = ToolObjectPtr(new CopyTool(guid));
+			pTool = ToolObjectPtr(new CopyTool(getNextObjectId()));
 			break;
 		case 1:
-			pTool = ToolObjectPtr(new WindowTool(guid));
+			pTool = ToolObjectPtr(new WindowTool(getNextObjectId()));
 			break;
 		case 2:
-			pTool = ToolObjectPtr(new RotationTool(guid));
+			pTool = ToolObjectPtr(new RotationTool(getNextObjectId()));
 			break;
 		case 3:
-			pTool = ToolObjectPtr(new DeactivedTool(guid));
+			pTool = ToolObjectPtr(new DeactivedTool(getNextObjectId()));
 			break;
 		default:
 			MessageBoxA("Invalid Tool-type selected");
@@ -535,19 +532,19 @@ namespace SvTrcT
 			bufferStruct.m_eAttribute = SVBufAttImageProc;
 			bufferStruct.m_eType = SV8BitUnsigned;
 			rRecordControllerRW.startResetTriggerRecordStructure();
-			rRecordControllerRW.removeAllImageBuffer(m_mainGuid);
-			rRecordControllerRW.addImageBuffer(m_mainGuid, bufferStruct, 1);
+			rRecordControllerRW.removeAllImageBuffer(m_mainId);
+			rRecordControllerRW.addImageBuffer(m_mainId, bufferStruct, 1);
 			rRecordControllerRW.finishResetTriggerRecordStructure();
 
 			rRecordControllerRW.startResetTriggerRecordStructure(m_inspectionPos);
-			rRecordControllerRW.addOrChangeImage(m_mainGuid, bufferStruct);
+			rRecordControllerRW.addOrChangeImage(m_mainId, bufferStruct);
 			int sourcePos = 0;
-			GUID sourceImage = m_mainGuid;
+			uint32_t sourceImage = m_mainId;
 			for (const auto& tool : m_toolList)
 			{
 				tool->reset(sourceImage, sourcePos, bufferStruct, rRecordControllerRW);
 				sourcePos = tool->getImagePos();
-				sourceImage = tool->getGuid();
+				sourceImage = tool->getObjectId();
 				bufferStruct = tool->getBufferOut();
 			}
 			rRecordControllerRW.finishResetTriggerRecordStructure();
@@ -557,10 +554,10 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::updateToolList()
 	{
-		SvUl::NameGuidList availableList;
+		SvUl::NameObjectIdList availableList;
 		for (const auto& tool : m_toolList)
 		{
-			availableList.push_back(SvUl::NameGuidPair(tool->getName(), tool->getGuid()));
+			availableList.push_back(SvUl::NameObjectIdPair(tool->getName(), tool->getObjectId()));
 		}
 		m_toolListBox.init(availableList, "<No Tool>");
 	}
@@ -588,8 +585,7 @@ namespace SvTrcT
 				for (auto imageDef : imageDefList.list())
 				{
 					CString text;
-					SVGUID guid = SvPb::GetGuidFromProtoBytes(imageDef.guidid());
-					text.Format("%d - %s", i++, guid.ToString().c_str());
+					text.Format("%d - %us", i++, imageDef.objectid());
 					m_ImageCombo.AddString(text);
 				}
 			}

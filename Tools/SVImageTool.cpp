@@ -234,7 +234,7 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -305,7 +305,7 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
-	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->set_objectid(getObjectId());
 	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();

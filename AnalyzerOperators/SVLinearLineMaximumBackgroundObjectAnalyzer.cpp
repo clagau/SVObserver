@@ -54,7 +54,7 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 
 	if( nullptr != pEdgeA )
 	{
-		AddFriend(pEdgeA->GetUniqueObjectID());
+		AddFriend(pEdgeA->getObjectId());
 
 		pEdgeA->m_svPolarisation.SetDefaultValue(SvDef::SV_NEGATIVE_POLARISATION, true);
 
@@ -64,7 +64,7 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 
 	if( nullptr != pEdgeB )
 	{
-		AddFriend(pEdgeB->GetUniqueObjectID());
+		AddFriend(pEdgeB->getObjectId());
 
 		pEdgeB->m_svPolarisation.SetDefaultValue(SvDef::SV_POSITIVE_POLARISATION, true);
 
@@ -237,7 +237,7 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -324,7 +324,7 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

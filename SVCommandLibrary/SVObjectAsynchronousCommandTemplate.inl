@@ -22,8 +22,8 @@ SVObjectAsynchronousCommandTemplate<CommandPtr>::SVObjectAsynchronousCommandTemp
 }
 
 template<typename CommandPtr>
-SVObjectAsynchronousCommandTemplate<CommandPtr>::SVObjectAsynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand)
-: m_ObjectID(rObjectID), m_pCommand(rpCommand), m_pWrapper()
+SVObjectAsynchronousCommandTemplate<CommandPtr>::SVObjectAsynchronousCommandTemplate(uint32_t objectID, const CommandPtr& rpCommand)
+: m_ObjectID(objectID), m_pCommand(rpCommand), m_pWrapper()
 {
 }
 

@@ -32,12 +32,12 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTranslationPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(uint32_t inspectionId, uint32_t taskObjectId)
 : CPropertyPage(SVToolAdjustmentDialogTranslationPageClass::IDD)
-, m_InspectionID{ rInspectionID }
-, m_TaskObjectID{ rTaskObjectID }
+, m_InspectionID{ inspectionId }
+, m_TaskObjectID{ taskObjectId }
 //TaskID is set later
-, m_Values {SvOg::BoundValues {rInspectionID, GUID_NULL}}
+, m_Values{ SvOg::BoundValues {inspectionId, SvDef::InvalidObjectId} }
 {
 }
 #pragma endregion
@@ -77,7 +77,7 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		SvOi::IObjectClass* pImageTransform = pTool->getFirstObject(objectInfo);
 		if (nullptr != pImageTransform)
 		{
-			m_Values.SetTaskID(pImageTransform->GetUniqueObjectID());
+			m_Values.SetTaskID(pImageTransform->getObjectId());
 			m_Values.Init();
 
 			const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);

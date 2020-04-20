@@ -28,14 +28,12 @@ class SVUserMaskOperatorClass;
 class SVMaskShape;
 }
 
-class SVGUID;
-
 class SVMaskShapeEditorDlg : public CDialog
 {
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 #pragma region Construction
 public:
-	SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, const SVGUID& rShapeMaskHelperID, CWnd* pParent = nullptr);   // standard constructor
+	SVMaskShapeEditorDlg(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId, uint32_t shapeMaskHelperId, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVMaskShapeEditorDlg();
 #pragma endregion Construction
 
@@ -175,8 +173,8 @@ private:
 	SvOp::SVUserMaskOperatorClass* m_pMask;
 	SvIe::SVInputRequestStructMap m_cancelData;
 
-	const SVGUID& m_rInspectionID;
-	const SVGUID& m_rTaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_TaskObjectID;
 	Controller m_Values;
 	Controller m_ShapeHelperValues;
 #pragma endregion Member Variables

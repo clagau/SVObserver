@@ -248,8 +248,8 @@ bool SVChildrenSetupDialogClass::CreateSelectedResults(SvIe::SVClassInfoStruct& 
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10043);
 
 			// Remove it from the Tool TaskObjectList ( Destruct it )
-			GUID objectID = pObject->GetUniqueObjectID();
-			if (GUID_NULL != objectID)
+			uint32_t objectID = pObject->getObjectId();
+			if (SvDef::InvalidObjectId != objectID)
 			{
 				m_pParentObject->Delete(objectID);
 			}
@@ -323,7 +323,7 @@ void SVChildrenSetupDialogClass::OnSetupButton()
 			SVObjectClass* pObject = reinterpret_cast< SVObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
 			if( nullptr != pObject )
 			{
-				SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->GetUniqueObjectID(), this );
+				SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->getObjectId(), this );
 			}
 		}
 
@@ -340,7 +340,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(),
-		SvPb::publishable, m_pParentObject->GetUniqueObjectID());
+		SvPb::publishable, m_pParentObject->getObjectId());
 
 	SvCmd::InspectionCommands(m_pDocument->GetInspectionID(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
@@ -437,8 +437,7 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskO
 	// show dependents dialog
 	if (pTaskObject)
 	{
-		SVGUID taskObjectID = pTaskObject->GetUniqueObjectID();
-		INT_PTR rc = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), taskObjectID );
+		INT_PTR rc = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), pTaskObject->getObjectId());
 
 		bRetVal = ( IDCANCEL == rc ) ? false : true;
 	}

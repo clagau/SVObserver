@@ -54,11 +54,6 @@ public:
 
 	GUID* operator&();
 	
-	const GUID& ToGUID() const;
-	GUID& ToGUID();
-
-	_variant_t ToVARIANT() const;
-	_bstr_t ToBSTR() const;
 	std::string ToString() const;
 
 	const SVGUID& operator=(const SVGUID& rGuid);
@@ -95,6 +90,3 @@ inline bool operator>( const GUID& p_rLeft, const SVGUID& p_rRight )
 {
 	return ( p_rRight < p_rLeft );
 }
-
-typedef std::set<SVGUID> SVGuidSet;
-typedef std::vector<SVGUID> SVGuidVector;

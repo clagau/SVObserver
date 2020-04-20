@@ -23,7 +23,7 @@ namespace SvOg
 	{
 		// Construction
 	public:
-		SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+		SVRankingFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVRankingFilterDlg();
 
 		HRESULT SetInspectionData();
@@ -61,8 +61,8 @@ namespace SvOg
 
 	private:
 		long m_lRankingCells[49];
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_filterID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_filterID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

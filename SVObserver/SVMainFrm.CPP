@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVMainFrm.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVGlobal.h"
 #include "SVIOController.h"
 #include "SVIODoc.h"
@@ -873,7 +872,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 		while( S_OK == l_Status && nullptr != htiSubChild )
 		{
 			std::shared_ptr<std::string> pToolsetScript{ new std::string };
-			SVGUID ownerGuid;
+			uint32_t ownerId = SvDef::InvalidObjectId;
 
 			SVInspectionProcess* pInspect( nullptr );
 			SVTreeType::SVBranchHandle htiSVIPDoc = nullptr;
@@ -891,7 +890,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 						if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
 						{
-							ownerGuid = svVariant;
+							ownerId = calcObjectId(svVariant);
 						}
 					}
 				}
@@ -907,11 +906,11 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			{
 				_variant_t svVariant;
 
-				if( ownerGuid.empty() )
+				if (SvDef::InvalidObjectId == ownerId)
 				{
 					if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
 					{
-						ownerGuid = svVariant;
+						ownerId = calcObjectId(svVariant);
 					}
 					else
 					{
@@ -954,9 +953,9 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 			if( S_OK == l_Status )
 			{
-				if( !( ownerGuid.empty() ) )
+				if (SvDef::InvalidObjectId != ownerId)
 				{
-					pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( ownerGuid ) );
+					pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( ownerId ) );
 
 					if( nullptr == pInspect )
 					{
@@ -985,7 +984,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				else // new parsing
 				{
 					SVConfigurationObject::updateConfTreeToNewestVersion(p_rTree, hItemToolset);
-					SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerGuid, pInspect, &l_ParserProgressDialog));
+					SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerId, pInspect, &l_ParserProgressDialog));
 					if( nullptr != pParser )
 					{
 						// Set the Parser Object

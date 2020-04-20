@@ -26,7 +26,7 @@ class SVAdjustToolSizePositionDlg : public CDialog
 	DECLARE_DYNCREATE(SVAdjustToolSizePositionDlg)
 #pragma region Constructor
 public:
-	SVAdjustToolSizePositionDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr);
+	SVAdjustToolSizePositionDlg(uint32_t inspectionId, uint32_t taskObjectId, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr);
 	virtual ~SVAdjustToolSizePositionDlg();
 #pragma endregion Constructor
 
@@ -143,8 +143,8 @@ private:
 	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > m_extents;
 	SvPb::SVExtentTranslationEnum m_translationType = SvPb::SVExtentTranslationNone;
 
-	SVGUID m_ipId;
-	SVGUID m_toolTaskId;
+	uint32_t m_ipId;
+	uint32_t m_toolTaskId;
 	SVRPropTree m_Tree;
 	const static int m_iPropertyFilter = SvPb::SVExtentPropertyPositionsInput | SvPb::SVExtentPropertyDimensionsInput;
 	const static int ID_BASE = 1000;

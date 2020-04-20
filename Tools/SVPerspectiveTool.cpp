@@ -118,17 +118,17 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 
 	/*l_hrOk = */OutputExtents.UpdateData();
 
-	SVGUID l_InputID;
+	uint32_t inputID = SvDef::InvalidObjectId;
 	if(nullptr != pInputImage)
 	{
-		l_InputID = pInputImage->GetUniqueObjectID();
+		inputID = pInputImage->getObjectId();
 	}
 
 	SVImageInfoClass l_ImageInfo = m_OutputImage.GetImageInfo();
 
 	l_ImageInfo.SetExtents( OutputExtents );
 
-	HRESULT l_hrOk = m_OutputImage.UpdateImage( l_InputID, l_ImageInfo);
+	HRESULT l_hrOk = m_OutputImage.UpdateImage(inputID, l_ImageInfo);
 
 	// Enable / Disable Extent Properties..
 	SvIe::SVExtentPropertyInfoStruct info;
@@ -233,7 +233,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateLutFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateLutFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -255,7 +255,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -280,12 +280,12 @@ bool SVPerspectiveToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-bool SVPerspectiveToolClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVPerspectiveToolClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	SvIe::SVImageClass *pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
-	if ( nullptr != pInputImage && rImageGuid == pInputImage->GetUniqueObjectID() )
+	if ( nullptr != pInputImage && imageId == pInputImage->getObjectId() )
 	{
 		Result = true;
 	}
@@ -320,7 +320,7 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 				l_bOk = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -515,7 +515,7 @@ void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb:
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
-	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->set_objectid(getObjectId());
 	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();

@@ -78,7 +78,7 @@ namespace SvTrcT
 		CString m_valueText;
 		std::vector<ToolObjectPtr> m_toolList;
 		CString m_toolDescription = _T("<No description>");
-		GUID m_mainGuid = GUID_NULL;
+		uint32_t m_mainId = SvDef::InvalidObjectId;
 		SvMc::ObjectsListBox m_toolListBox;
 		CComboBox	m_ToolSelectCombo;
 		CComboBox	m_ImageCombo;
@@ -91,4 +91,10 @@ namespace SvTrcT
 		int m_newTrIdCallbackId = -1;
 		std::atomic_bool m_isTRCValid = true;
 	};
+
+	static uint32_t getNextObjectId()
+	{
+		static uint32_t nextId = 1;
+		return nextId++;
+	}
 } // namespace SvTrcT

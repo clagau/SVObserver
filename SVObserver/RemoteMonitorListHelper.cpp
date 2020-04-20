@@ -28,7 +28,7 @@
 std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject, bool completeName /*=true*/)
 {
 	std::string Result;
-	SVObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid) );
+	SVObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId) );
 	if( nullptr != ObjectRef.getObject() )
 	{
 		if( ObjectRef.getValueObject() )
@@ -59,14 +59,14 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 
 DWORD RemoteMonitorListHelper::GetTypeFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
-	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId));
 	return  objectRef.getObject()->GetObjectType();
 }
 
 
 void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data)
 {
-	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId));
 	data.wholeArray = rMonitoredObject.wholeArray;
 	data.isArray= rMonitoredObject.isArray;
 	data.arrayIndex = rMonitoredObject.arrayIndex;
@@ -106,7 +106,7 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const std::s
 	{
 		SVObjectReference ObjectRef;
 		SVObjectManagerClass::Instance().GetObjectByDottedName(nameInfo.GetObjectArrayName(0), ObjectRef);
-		Result.guid = (nullptr != ObjectRef.getObject()) ? ObjectRef.getObject()->GetUniqueObjectID() : GUID_NULL;
+		Result.m_objectId = (nullptr != ObjectRef.getObject()) ? ObjectRef.getObject()->getObjectId() : SvDef::InvalidObjectId;
 		if (nullptr != ObjectRef.getValueObject())
 		{
 			Result.isArray = ObjectRef.getValueObject()->isArray();
@@ -129,7 +129,7 @@ void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObj
 		std::string name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		SvSml::MonitorEntryPointer MeP = molcpy.AddEntry(listtype, name);
 		RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(*it, MeP->data);
-		MeP->m_Guid = it->guid;
+		MeP->m_objectId = it->m_objectId;
 		if(listtype == SvSml::ListType::productItemsImage)
 		{
 			assert(MeP->data.ObjectType== SvPb::SVObjectTypeEnum::SVImageObjectType );

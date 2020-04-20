@@ -488,7 +488,7 @@ void SVPatGeneralPageClass::OnSetRangeClicked()
 
 		if (pAnalyzerResult)
 		{
-			SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this );
+			SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->getObjectId(), this );
 		}
 	}
 }

@@ -18,7 +18,7 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
+typedef std::vector<std::pair<uint32_t, _variant_t>> ObjectIdVariantPairVector;
 
 class SVOutputObjectList : public SVObjectClass
 {
@@ -31,18 +31,18 @@ public:
 	bool Create();
 	void Destroy();
 
-	SVOutputObject* GetOutput(const SVGUID& rOutputID) const;
+	SVOutputObject* GetOutput(uint32_t outputID) const;
 
 	SVOutputObject* GetOutput(const std::string& rName) const;
 
-	SVOutputObject* GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
+	SVOutputObject* GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int idIndex = -1);
 
 	HRESULT AttachOutput( SVOutputObject *pOutput );
-	HRESULT DetachOutput( const SVGUID& rOutputID );
+	HRESULT DetachOutput(uint32_t outputID );
 
-	GuidVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool p_ACK, bool p_NAK);
+	ObjectIdVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool p_ACK, bool p_NAK);
 	bool ResetOutputs(SVIOEntryHostStructPtrVector& rIOEntries);
-	bool WriteOutputs(const GuidVariantPairVector& rOutputValues);
+	bool WriteOutputs(const ObjectIdVariantPairVector& rOutputValues);
 	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool p_ACK, bool p_NAK );
 	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
 	bool ResetOutput( SVIOEntryHostStructPtr pIOEntry );
@@ -62,13 +62,13 @@ public:
 #pragma endregion Methods to replace processMessage
 
 private:
-	std::pair<GUID, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool p_ACK, bool p_NAK );
+	std::pair<uint32_t, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool p_ACK, bool p_NAK );
 
 	void ClearOutputList();
 
 	mutable std::mutex m_protectOutputList;
 
-	SVGuidSVOutputObjectPtrMap m_OutputObjects;
+	ObjectIdSVOutputObjectPtrMap m_OutputObjects;
 };
 
 

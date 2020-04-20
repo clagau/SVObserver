@@ -8,7 +8,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <guiddef.h>
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
 #include "DataController.h"
@@ -23,7 +22,7 @@ namespace SvOg
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
 	public:
-		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID = GUID_NULL);
+		RangeController(uint32_t inspectionID, uint32_t taskID, uint32_t rangeID = SvDef::InvalidObjectId);
 		virtual ~RangeController();
 
 		void Init();
@@ -44,9 +43,9 @@ namespace SvOg
 		std::string GetIndirectValue(SvPb::EmbeddedIdEnum embeddedID) const;
 		std::string GetDirectValue(SvPb::EmbeddedIdEnum embeddedID) const;
 
-		const GUID& m_rInspectionID;
-		const GUID& m_rTaskObjectID;
-		GUID m_RangeID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
+		uint32_t m_RangeID;
 		Controller m_RangeValues;
 	};
 } //namespace SvOg

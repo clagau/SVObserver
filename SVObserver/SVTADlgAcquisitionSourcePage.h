@@ -24,13 +24,12 @@ namespace SvOi
 class IObjectClass;
 }
 
-class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 
 class SVToolAdjustmentDialogAcquisitionSourcePageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogAcquisitionSourcePageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* PSheet );
+	SVToolAdjustmentDialogAcquisitionSourcePageClass(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* PSheet);
 
 	virtual ~SVToolAdjustmentDialogAcquisitionSourcePageClass();
 
@@ -47,6 +46,6 @@ private:
 	SVToolAdjustmentDialogSheetClass* m_pSheet{ nullptr };
 	SvOi::IObjectClass* m_pTaskObject{ nullptr };
 	SvIe::SVCameraImageTemplate* m_pMainImage{ nullptr };
-	SvMc::AvailableObjectListComboBox<SVGUID> m_CameraListBox;
+	SvMc::AvailableObjectListComboBox<uint32_t> m_CameraListBox;
 };
 

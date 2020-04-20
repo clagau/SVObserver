@@ -63,7 +63,6 @@ public:
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
-	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	SVShapeMaskHelperClass* GetShapeHelper();
@@ -92,7 +91,7 @@ public:
 	};
 
 protected:
-	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	virtual bool hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
@@ -105,7 +104,7 @@ protected:
 
 	SvOl::SVInObjectInfoStruct m_inObjectInfo;
 	SVExtentMultiLineStruct	   m_MultiLine;
-	GUID                       m_guidShapeHelper;
+	uint32_t                   m_idShapeHelper;
 
 	enum
 	{

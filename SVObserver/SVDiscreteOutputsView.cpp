@@ -340,15 +340,13 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			}
 			else
 			{
-				SVGUID ParameterUID(DigitalOutputUidGuid);
-				ParameterUID.ToGUID().Data1 += item;
 				if (nullptr != pOutputList)
 				{
-					pOutputList->DetachOutput(ParameterUID);
+					pOutputList->DetachOutput(ObjectIdEnum::DigitalOutputUidId + item);
 				}
 
 				pDigOutput = new SVDigitalOutputObject;
-				pDigOutput->updateGuid(item);
+				pDigOutput->updateObjectId(item);
 
 				pDigOutput->SetChannel( item );
 				pDigOutput->SetName( _T("") );
@@ -389,26 +387,26 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 								}// end if
 
 								pIOEntry->m_Enabled = FALSE;
-								pIOEntry->m_IOId.clear();
+								pIOEntry->m_IOId = SvDef::InvalidObjectId;
 							}// end if
 
 							if(nullptr == dlg.m_pIOEntry)
 							{
 								if( nullptr != pOutputList )
 								{
-									pOutputList->DetachOutput( pDigOutput->GetUniqueObjectID() );
+									pOutputList->DetachOutput( pDigOutput->getObjectId() );
 								}
 								pDigOutput = nullptr;
 
 								if( pIOEntry == l_pIOController->GetModuleReady() )
 								{
 									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
-									pIOEntry->m_IOId.clear();
+									pIOEntry->m_IOId = SvDef::InvalidObjectId;
 								}// end if
 								if( pIOEntry == l_pIOController->GetRaidErrorBit())
 								{
 									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
-									pIOEntry->m_IOId.clear();
+									pIOEntry->m_IOId = SvDef::InvalidObjectId;
 								}// end if
 
 							}// end if
@@ -424,13 +422,13 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 								if( dlg.m_pIOEntry == l_pIOController->GetModuleReady() )
 								{
 									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-									dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->GetUniqueObjectID();
+									dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->getObjectId();
 								}// end if
 
 								if( dlg.m_pIOEntry == l_pIOController->GetRaidErrorBit() )
 								{
 									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-									dlg.m_pIOEntry->m_IOId	= dlg.m_pDigOutput->GetUniqueObjectID();
+									dlg.m_pIOEntry->m_IOId	= dlg.m_pDigOutput->getObjectId();
 								}// end if
 							}// end else
 

@@ -90,8 +90,8 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 					Node = true;
 				}
 				pValue = BasicValueObjectPtr{ new BasicValueObject(Name.c_str(), pParent, Node, ObjectSubType) };
-				//Check if this is a dotted name with static unique GUID
-				DottedNameGuidMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( BranchName ) );
+				//Check if this is a dotted name with static unique ID
+				DottedNameObjectIdMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( BranchName ) );
 				if( m_StaticUniqueIDMap.end() != StaticUidIter )
 				{
 					SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), StaticUidIter->second );

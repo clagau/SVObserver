@@ -29,35 +29,35 @@ private:
 	bool m_ReplaceUniqueID;
 
 public:
-	SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
+	SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, uint32_t OwnerId, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	virtual ~SVInspectionTreeParser();
 	virtual HRESULT DoParse();
 	virtual size_t GetTotal() const;
 
-	static HRESULT CreateInspectionObject(GUID& inspectionGuid, SVTreeType& p_rTree, typename SVTreeType::SVBranchHandle hItem);
+	static HRESULT CreateInspectionObject(uint32_t& rInspectionId, SVTreeType& p_rTree, typename SVTreeType::SVBranchHandle hItem);
 
 private:
-	HRESULT Process(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
+	HRESULT Process(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
 	
-	HRESULT ProcessChildren(typename SVTreeType::SVBranchHandle hParentItem, const GUID& ownerID);
+	HRESULT ProcessChildren(typename SVTreeType::SVBranchHandle hParentItem, uint32_t ownerID);
 
-	HRESULT ProcessFriend(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
-	HRESULT ProcessFriends(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
+	HRESULT ProcessFriend(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
+	HRESULT ProcessFriends(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
 	
-	HRESULT ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
-	HRESULT ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
-	HRESULT ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum dataType);
+	HRESULT ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
+	HRESULT ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
+	HRESULT ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum dataType);
 
-	HRESULT ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID);
-	HRESULT ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID);
+	HRESULT ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID);
+	HRESULT ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID);
 
-	HRESULT ProcessEquation(const GUID& ownerID, const _variant_t& equation);
+	HRESULT ProcessEquation(uint32_t ownerID, const _variant_t& equation);
 
-	HRESULT ProcessMaskData(const GUID& ownerID, const _variant_t& maskData);
+	HRESULT ProcessMaskData(uint32_t ownerID, const _variant_t& maskData);
 
-	HRESULT ProcessInputs(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
+	HRESULT ProcessInputs(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
 	
-	HRESULT ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem);
+	HRESULT ProcessAttributes(uint32_t ownerID, uint32_t objectID, typename SVTreeType::SVBranchHandle hItem);
 
 	bool GetItemValue(const std::string& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue);
 	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const std::string& tag, std::vector<_variant_t>& rValueList);

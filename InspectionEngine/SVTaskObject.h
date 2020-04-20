@@ -64,7 +64,7 @@ public:
 
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+	virtual bool isInputImage(uint32_t imageId) const override;
 
 	virtual bool DoesObjectHaveExtents() const;
 	const SVImageExtentClass& GetImageExtent() const { return m_imageExtent; }
@@ -122,7 +122,7 @@ public:
 	/// Preparing to go offline. Is used e.g. by the Archive Tool.
 	virtual void goingOffline() {};
 
-	virtual HRESULT SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject) override;
+	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject) override;
 
 	/// Set the flag, that the first friend (is normally the conditional task, if it is a tool) should be skipped in runFriends.
 	void setSkipFirstFriendFromRun() { m_bSkipFirstFriend = true; };
@@ -131,9 +131,9 @@ public:
 #pragma region virtual method (ITaskObject)
 	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems ) const override;
 	virtual std::vector<SvPb::TreeItem> GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const override;
-	virtual void GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
-	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;
-	virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) override;
+	virtual void GetInputImages(SvUl::InputNameObjectIdPairList& rList, int maxEntries) override;
+	virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;
+	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) override;
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override { return m_ResetErrorMessages; };
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override { return m_RunErrorMessages; };
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
@@ -147,12 +147,12 @@ public:
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
 	virtual SvDef::StringVector getSpecialImageList() const override { return {}; };
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override { return false; };
-	virtual SVGuidVector getEmbeddedList() const override;
+	virtual std::vector<uint32_t> getEmbeddedList() const override;
 	virtual bool isErrorMessageEmpty() const override { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
-	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
+	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual void DestroyFriend(SVObjectClass* pObject) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;

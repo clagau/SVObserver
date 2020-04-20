@@ -50,13 +50,13 @@ namespace SvOg
 		UpperThresholdMinPlusOffset,
 		LinearEdgesClass,
 
-		EdgeGuidCount
+		EdgeIdCount
 	};
 
 	class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage
 	{
 	public:
-		SVEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption = 0, int ID = IDD);
+		SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption = 0, int ID = IDD);
 		virtual ~SVEdgeMarkerAdjustmentPageClass();
 
 		virtual HRESULT GetInspectionData();
@@ -140,8 +140,8 @@ namespace SvOg
 		//! either EdgeA or EdgeB and the size and order must correspond to the enum EdgeEmbeddedEnum list
 		const std::vector<SvPb::EmbeddedIdEnum>& m_rEdgeEmbeddedIds;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

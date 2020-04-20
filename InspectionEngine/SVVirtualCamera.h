@@ -135,8 +135,8 @@ public:
 
 	void FinishProcess( SVODataResponseClass *pResponse );
 
-	void addNeededBuffer(const GUID& rGuid, int neededBufferSize);
-	void removeNeededBufferEntry(const GUID& rGuid);
+	void addNeededBuffer(uint32_t id, int neededBufferSize);
+	void removeNeededBufferEntry(uint32_t id);
 #pragma endregion Public Methods
 
 private:
@@ -165,7 +165,7 @@ private:
 
 	std::mutex m_tmpImage_mutex;
 	SVMatroxBuffer m_tmpImage;
-	std::unordered_map<GUID, int> m_neededBufferMap;
+	std::unordered_map<uint32_t, int> m_neededBufferMap;
 #pragma endregion Member Variables
 };
 

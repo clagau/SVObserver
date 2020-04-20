@@ -26,7 +26,6 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/ArchiveToolHelper.h"
@@ -69,11 +68,11 @@ constexpr long MaxImagesWarningLimit = 100L;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent) 
+SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveImagePage::IDD)
 , m_pParent(Parent)
-, m_objectSelector(rInspectionID)
-, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+, m_objectSelector(inspectionId)
+, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 , m_alternativeImagePaths(m_Values)
 {
 	if( m_pParent )
@@ -376,10 +375,8 @@ void SVTADlgArchiveImagePage::MemoryUsage()
 
 	for (auto const& rEntry : m_List )
 	{
-		SVGUID ObjectGuid{rEntry.Guid()};
-
 		SVObjectClass* pObject( nullptr );
-		SVObjectManagerClass::Instance().GetObjectByIdentifier( ObjectGuid, pObject );
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(rEntry.getObjectId(), pObject );
 
 		if( nullptr != pObject )
 		{
@@ -425,13 +422,13 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 
 void SVTADlgArchiveImagePage::ShowObjectSelector()
 {
-	SVGUID InspectionGuid( m_pTool->GetInspection()->GetUniqueObjectID() );
+	uint32_t inspectionId(m_pTool->GetInspection()->getObjectId());
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, InspectionGuid, SvPb::archivableImage);
-	SvCmd::InspectionCommands(InspectionGuid, requestCmd, &responseCmd);
+		{SvPb::ObjectSelectorType::toolsetItems}, inspectionId, SvPb::archivableImage);
+	SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (responseCmd.has_getobjectselectoritemsresponse())
@@ -456,9 +453,17 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		//We need to check the memory requirements for the images
 		for(auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getModifiedObjects())
 		{
-			SVGUID ImageGuid(rEntry);
-			bool isSelected = rSelectedList.end() != std::find(rSelectedList.begin(), rSelectedList.end(), rEntry);
-			if( !checkImageMemory( ImageGuid, isSelected))
+			try
+			{
+				uint32_t ImageId = std::stoul(rEntry);
+				bool isSelected = rSelectedList.end() != std::find(rSelectedList.begin(), rSelectedList.end(), rEntry);
+				if (!checkImageMemory(ImageId, isSelected))
+				{
+					//If memory check failed then the original image selection remains
+					return;
+				}
+			}
+			catch (...)
 			{
 				//If memory check failed then the original image selection remains
 				return;
@@ -624,13 +629,13 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 	}
 }
 
-bool SVTADlgArchiveImagePage::checkImageMemory( SVGUID ImageGuid , bool bNewState )
+bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 {
 	UpdateData();
 	bool bOk = true;
 
 	SVObjectClass* pObject( nullptr );
-	SVObjectManagerClass::Instance().GetObjectByIdentifier( ImageGuid, pObject );
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(imageId, pObject );
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pObject );
 	ASSERT(pImage);
 

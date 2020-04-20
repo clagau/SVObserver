@@ -11,8 +11,9 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
+
 
 namespace SvIe
 {
@@ -21,20 +22,20 @@ class SVIPResultItemDefinition
 {
 public:
 	SVIPResultItemDefinition();
-	SVIPResultItemDefinition( const SVGUID& p_rObjectID );
-	SVIPResultItemDefinition( const SVGUID& p_rObjectID, int Index );
+	explicit SVIPResultItemDefinition(uint32_t objectID );
+	SVIPResultItemDefinition(uint32_t objectID, int Index );
 	SVIPResultItemDefinition( const SVIPResultItemDefinition& p_rObject );
 
 	bool operator<( const SVIPResultItemDefinition& p_rObject ) const;
 	bool operator==( const SVIPResultItemDefinition& p_rObject ) const;
 
-	const SVGUID& GetObjectID() const;
+	uint32_t GetObjectID() const;
 	bool GetIndexPresent() const;
 	
 	int GetIndex() const;
 
 protected:
-	SVGUID m_ObjectID;
+	uint32_t m_ObjectID = SvDef::InvalidObjectId;
 
 	bool m_IndexPresent;
 	int m_Index;
@@ -47,7 +48,7 @@ namespace std
 	{
 		std::size_t operator()(SvIe::SVIPResultItemDefinition const& s) const noexcept
 		{
-			return std::hash<GUID> {}(s.GetObjectID());
+			return std::hash<uint32_t> {}(s.GetObjectID());
 		}
 	};
 }

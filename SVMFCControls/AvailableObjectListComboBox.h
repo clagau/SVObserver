@@ -31,7 +31,7 @@ namespace SvMc
 		void Init(const Container& rList, const std::string& rSelectedItem, const std::string& rEmptyListText, const std::string& rFirstListText = _T(""));
 
 		//************************************
-		/// Return the value of the selected item. If no item selected or an error it return the default value e.g. for SVGUID = GUID_NULL and for an enum value 0.
+		/// Return the value of the selected item. If no item selected or an error it return the default value e.g. for uint32_t(objectId) = SvDef::InvalidObjectId and for an enum value 0.
 		/// \returns value
 		//************************************
 		value getSelectedValue() const;

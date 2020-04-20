@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2016 by Seidenader, Markt Schwaben
 //* All Rights Reserved
 //******************************************************************************
-// This is the ObjectsListBox class for use by the GUI. It is a list box which is initialized by a name/GUID list.
+// This is the ObjectsListBox class for use by the GUI. It is a list box which is initialized by a name/objectId list.
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -25,7 +25,7 @@ namespace SvMc
 	{
 	}
 
-	void ObjectsListBox::init(const SvUl::NameGuidList& rList, const std::string& rEmptyListText)
+	void ObjectsListBox::init(const SvUl::NameObjectIdList& rList, const std::string& rEmptyListText)
 	{
 		int index;
 
@@ -34,7 +34,7 @@ namespace SvMc
 		m_List = rList;
 
 		// Generate new list...
-		for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end(); ++it)
+		for (SvUl::NameObjectIdList::const_iterator it = rList.begin(); it != rList.end(); ++it)
 		{
 			if (!it->first.empty())
 			{
@@ -65,9 +65,9 @@ namespace SvMc
 		SetCurSel(index);
 	}
 
-	SVGUID ObjectsListBox::getGUID(int index) const
+	uint32_t ObjectsListBox::getObjectId(int index) const
 	{
-		SVGUID Result = GUID_NULL;
+		uint32_t Result = SvDef::InvalidObjectId;
 		if (0 <= index && m_List.size() > index)
 		{
 			Result = m_List[index].second;

@@ -1037,8 +1037,8 @@ void CSVOPropertyPageDlg::SetupPPQ()
 
 			// iterate thru the inputs....
 			// if the current conditional output value is not in the list, set it to always
-			const SVNameGuidPairList& list = m_PPQObj.GetAvailableInputsForConditionalOutput();
-			for (SVNameGuidPairList::const_iterator it = list.begin();it != list.end();++it)
+			const SVNameObjectIdPairList& list = m_PPQObj.GetAvailableInputsForConditionalOutput();
+			for (SVNameObjectIdPairList::const_iterator it = list.begin();it != list.end();++it)
 			{
 				std::string name = it->first;
 				nIndex = pCombo->AddString(name.c_str());

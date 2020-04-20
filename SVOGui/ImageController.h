@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary\NameObjectIdList.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageEnums.h"
 #include "SVProtoBuf/SVO-Enum.h"
@@ -19,18 +19,18 @@ namespace SvOg
 {
 	class ImageController
 	{
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
+		uint32_t m_InspectionID;
+		uint32_t m_TaskObjectID;
 		SvPb::SVObjectSubTypeEnum m_ImageSubType;
 		bool m_OnlyAboveImages; //When true only returns images which are above the m_TaskObjectID
 
-		mutable SvUl::NameGuidList m_availableList;
+		mutable SvUl::NameObjectIdList m_availableList;
 		mutable SvDef::StringVector m_specialImageList;;
-		mutable SvUl::InputNameGuidPairList m_connectedList;
+		mutable SvUl::InputNameObjectIdPairList m_connectedList;
 		mutable CComPtr<IPictureDisp> m_picture;
 
 	public:
-		ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType, bool OnlyAboveImages = true);
+		ImageController(uint32_t inspectionID, uint32_t taskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType, bool OnlyAboveImages = true);
 		~ImageController() {}
 
 		ImageController(const ImageController&) = delete;
@@ -38,30 +38,30 @@ namespace SvOg
 
 		HRESULT Init();
 
-		const SvUl::NameGuidList& GetAvailableImageList() const;
+		const SvUl::NameObjectIdList& GetAvailableImageList() const;
 		const SvDef::StringVector& GetSpecialImageList() const;
-		const SvUl::InputNameGuidPairList& GetInputImageList(const GUID& rChildObjectID = GUID_NULL, size_t maxImages=0) const;
-		SvUl::NameGuidList GetResultImages() const;
+		const SvUl::InputNameObjectIdPairList& GetInputImageList(uint32_t childObjectID = SvDef::InvalidObjectId, size_t maxImages = 0) const;
+		SvUl::NameObjectIdList GetResultImages() const;
 
 		IPictureDisp* GetImage(const std::string& name) const;
 		IPictureDisp* GetImage(const std::string& name, long& rWidth, long& rHeight) const;
-		IPictureDisp* GetImage(const GUID& rImageID) const;
-		IPictureDisp* GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const;
+		IPictureDisp* GetImage(uint32_t imageID) const;
+		IPictureDisp* GetImage(uint32_t imageID, long& rWidth, long& rHeight) const;
 
-		HRESULT ConnectToImage(const std::string& inputName, const std::string& name, const GUID& rInstanceID = GUID_NULL) const;
+		HRESULT ConnectToImage(const std::string& inputName, const std::string& name, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		HRESULT SaveImage(const std::string& rImageName, const std::string& rFilename);
 		bool IsToolValid() const;
 		HRESULT ResetTask(SvStl::MessageContainerVector& messages) const;
 		HRESULT ToolRunOnce();
 			
-		SvDef::SVImageTypeEnum GetImageType(const GUID& rImageID) const;
+		SvDef::SVImageTypeEnum GetImageType(uint32_t imageID) const;
 
 	private:
 		HRESULT RetrieveAvailableImageList();
 	};
 
-	/// Return the GUID of the first result image. If no result image, it return GUID_NULL.
+	/// Return the ID of the first result image. If no result image, it return SvDef::InvalidObjectId.
 	/// \param rController [in]
-	/// \returns SVGUID
-	SVGUID getFirstResultImageId(const ImageController& rController);
+	/// \returns uint32_t
+	uint32_t getFirstResultImageId(const ImageController& rController);
 } //namespace SvOg

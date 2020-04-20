@@ -58,7 +58,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary\SVThreadManager.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
@@ -80,7 +79,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectGuid);
+//SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectId);
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -618,7 +617,7 @@ bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
 			return (data == pInspection);
 		}));
 		auto inspId = m_inspList4TRC.add_list();
-		SvPb::SetGuidInProtoBytes(inspId->mutable_id(), pInspection->GetUniqueObjectID());
+		inspId->set_id(pInspection->getObjectId());
 		*inspId->mutable_name() = pInspection->GetName();
 
 		Result = true;
@@ -815,7 +814,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 		pRemoteInput->Create();
 		pRemoteInput->WriteCache(rValue);
 
-		pIOEntry->m_IOId = pRemoteInput->GetUniqueObjectID();
+		pIOEntry->m_IOId = pRemoteInput->getObjectId();
 	}
 
 	pPPQ->AddInput(pIOEntry);
@@ -850,7 +849,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 
 	if (nullptr != pDigitalInput)
 	{
-		pIOEntry->m_IOId = pDigitalInput->GetUniqueObjectID();
+		pIOEntry->m_IOId = pDigitalInput->getObjectId();
 	}
 
 	pPPQ->AddInput(pIOEntry);
@@ -873,7 +872,7 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	if (nullptr != pInput)
 	{
 		pInput->Create();
-		pIOEntry->m_IOId = pInput->GetUniqueObjectID();
+		pIOEntry->m_IOId = pInput->getObjectId();
 	}
 
 	pPPQ->AddInput(pIOEntry);
@@ -968,6 +967,11 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool &Configuratio
 		bThreadMgrEnable = Value;
 	}
 	SVThreadManager::Instance().SetThreadAffinityEnabled(bThreadMgrEnable);
+
+	if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NEXT_OBJECT_ID, hChild, Value))
+	{
+		SVObjectManagerClass::Instance().fitNextObjectId(Value);
+	}
 }
 
 bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
@@ -1015,8 +1019,8 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 
 	lIOSize = Value;
 
-	SVGUID l_ModuleReadyId;
-	SVGUID l_RaidErrorId;
+	uint32_t l_ModuleReadyId = SvDef::InvalidObjectId;
+	uint32_t l_RaidErrorId = SvDef::InvalidObjectId;
 
 	// Loop through all the "IO EntryXXX"
 	for (i = 0; i < lIOSize; i++)
@@ -1125,11 +1129,11 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 
 					if (SvDef::cModuleReady == IOName)
 					{
-						l_ModuleReadyId = pOutput->GetUniqueObjectID();
+						l_ModuleReadyId = pOutput->getObjectId();
 					}
 					else if (SvDef::cRaidErrorIndicator == IOName)
 					{
-						l_RaidErrorId = pOutput->GetUniqueObjectID();
+						l_RaidErrorId = pOutput->getObjectId();
 					}
 				}
 			}// end if
@@ -1181,14 +1185,14 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		m_pIOController->SetParameters(rTree, hChild);
 	}
 
-	if (l_ModuleReadyId.empty())
+	if (SvDef::InvalidObjectId == l_ModuleReadyId)
 	{
 		SVDigitalOutputObject* pOutput(nullptr);
 		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType));
 
 		if (nullptr != pOutput)
 		{
-			l_ModuleReadyId = pOutput->GetUniqueObjectID();
+			l_ModuleReadyId = pOutput->getObjectId();
 		}
 	}
 	m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
@@ -1681,12 +1685,8 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, 
 
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hSubChild, Value))
 			{
-				SVGUID UniqueID(Value);
-
 				SVObjectManagerClass::Instance().CloseUniqueObjectID(pCamera);
-
-				pCamera->m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
+				pCamera->m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(Value));
 				SVObjectManagerClass::Instance().OpenUniqueObjectID(pCamera);
 			}
 
@@ -1913,12 +1913,8 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 			bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hTempIPObjectItem, Value);
 			if (bOk)
 			{
-				SVGUID UniqueID(Value);
-
 				SVObjectManagerClass::Instance().CloseUniqueObjectID(pInspection);
-
-				pInspection->m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
+				pInspection->m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(Value));
 				SVObjectManagerClass::Instance().OpenUniqueObjectID(pInspection);
 			}
 		}
@@ -1999,12 +1995,8 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			SVGUID UniqueID(Value);
-
 			SVObjectManagerClass::Instance().CloseUniqueObjectID(pPPQ);
-
-			pPPQ->m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
+			pPPQ->m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(Value));
 			SVObjectManagerClass::Instance().OpenUniqueObjectID(pPPQ);
 		}// end if
 
@@ -2683,6 +2675,8 @@ bool SVConfigurationObject::DestroyConfiguration()
 		SVFileNameManagerClass::Instance().RemoveItem(&rFile);
 	}
 
+	SVObjectManagerClass::Instance().resetNextObjectId();
+	
 	return bOk;
 }
 
@@ -2816,6 +2810,8 @@ void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 		rWriter.EndElement();
 		iCount++;
 	}
+
+	rWriter.WriteAttribute(SvXml::CTAG_NEXT_OBJECT_ID, SVObjectManagerClass::Instance().getCurrentNextObjectId());
 
 	rWriter.EndElement(); //End of Enviroment
 }
@@ -3134,7 +3130,7 @@ void SVConfigurationObject::SaveCamera(SvOi::IObjectWriter& rWriter) const
 				rWriter.WriteAttribute(SvXml::CTAG_ACQUISITION_DEVICE, svVariant);
 				svVariant.Clear();
 
-				svVariant = pCamera->GetUniqueObjectID().ToVARIANT();
+				svVariant = convertObjectIdToVariant(pCamera->getObjectId());
 				rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant);
 				svVariant.Clear();
 
@@ -3248,7 +3244,7 @@ void SVConfigurationObject::SaveInspection(SvOi::IObjectWriter& rWriter, Attribu
 			pInspection->Persist(rWriter);
 
 			//SVIPDoc
-			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
+			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 			if (pDoc)
 			{
 				rWriter.StartElement(SvXml::CTAG_SVIPDOC);
@@ -3305,8 +3301,7 @@ void SVConfigurationObject::SavePPQ(SvOi::IObjectWriter& rWriter) const
 
 void SVConfigurationObject::SavePPQ_Attributes(SvOi::IObjectWriter& rWriter, const SVPPQObject& rPPQ) const
 {
-	SVGUID ObjectGuid = rPPQ.GetUniqueObjectID();
-	_variant_t svValue = ObjectGuid.ToVARIANT();
+	_variant_t svValue = convertObjectIdToVariant(rPPQ.getObjectId());
 	rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svValue);
 	svValue.Clear();
 
@@ -3476,8 +3471,8 @@ void SVConfigurationObject::SaveGlobalConstants(SvOi::IObjectWriter& rWriter) co
 		rWriter.WriteAttribute(SvXml::CTAG_VALUE, Value);
 		Value.Clear();
 
-		//Save the global constant unique GUID id to have the same id when loading the configuration
-		Value = (*Iter)->GetUniqueObjectID().ToBSTR();
+		//Save the global constant unique ID id to have the same id when loading the configuration
+		Value = convertObjectIdToVariant((*Iter)->getObjectId());
 		rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 		Value.Clear();
 
@@ -3512,20 +3507,20 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 		if (AttributeSetTypes.end() != Iter)
 		{
 			rWriter.StartElement(Iter->second.c_str());
-			SVGUID ArrayGuid {GUID_NULL};
+			uint32_t arrayId{ SvDef::InvalidObjectId };
 			std::string ArrayIndexList;
 			int StartIndex {-1};
 			int EndIndex {-1};
 			for (auto const& rObjectRef : rEntry.second)
 			{
 				//!If previous object is an array and new object is different then we need to save the array values
-				if (GUID_NULL != ArrayGuid && rObjectRef.Guid() != ArrayGuid)
+				if (SvDef::InvalidObjectId != arrayId && rObjectRef.getObjectId() != arrayId)
 				{
 					ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
 					_variant_t Value {ArrayIndexList.c_str()};
 					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 
-					ArrayGuid = GUID_NULL;
+					arrayId = SvDef::InvalidObjectId;
 					StartIndex = -1;
 					EndIndex = -1;
 					ArrayIndexList.clear();
@@ -3533,20 +3528,20 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 				if (!rObjectRef.isArray())
 				{
 					//Not an array element is saved directly
-					_variant_t Value {rObjectRef.GetGuidAndIndexOneBased().c_str()};
+					_variant_t Value {rObjectRef.GetObjectIdAndIndexOneBased().c_str()};
 					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 				}
 				else
 				{
 					//If an array element then bundle the zero based indexes in the format 2-15,20,25-30 etc..
-					if (GUID_NULL == ArrayGuid)
+					if (SvDef::InvalidObjectId == arrayId)
 					{
-						ArrayGuid = rObjectRef.Guid();
-						ArrayIndexList = ArrayGuid.ToString();
+						arrayId = rObjectRef.getObjectId();
+						ArrayIndexList = convertObjectIdToString(arrayId);
 						StartIndex = rObjectRef.ArrayIndex();
 						EndIndex = rObjectRef.ArrayIndex();
 					}
-					else if (ArrayGuid == rObjectRef.Guid())
+					else if (arrayId == rObjectRef.getObjectId())
 					{
 						if (EndIndex + 1 == rObjectRef.ArrayIndex())
 						{
@@ -3562,7 +3557,7 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 				}
 			}
 			//! Last object is of array then we need to save the object
-			if (GUID_NULL != ArrayGuid)
+			if (SvDef::InvalidObjectId != arrayId)
 			{
 				ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
 				_variant_t Value {ArrayIndexList.c_str()};
@@ -3803,7 +3798,7 @@ bool SVConfigurationObject::Activate()
 	for (long l = lSize - 1; -1 < l; l--)
 	{
 		SVInspectionProcess* pInspection = m_arInspectionArray[l];
-		SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+		SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 	}
 
 	return bOk;
@@ -4131,13 +4126,13 @@ SVIOController* SVConfigurationObject::GetIOController() const
 	return m_pIOController;
 }
 
-SVGUID SVConfigurationObject::GetIOControllerID() const
+uint32_t SVConfigurationObject::GetIOControllerID() const
 {
-	SVGUID l_ObjectId;
+	uint32_t l_ObjectId = SvDef::InvalidObjectId;
 
 	if (nullptr != m_pIOController)
 	{
-		l_ObjectId = m_pIOController->GetUniqueObjectID();
+		l_ObjectId = m_pIOController->getObjectId();
 	}
 
 	return l_ObjectId;
@@ -4145,9 +4140,9 @@ SVGUID SVConfigurationObject::GetIOControllerID() const
 
 
 
-SVGUID SVConfigurationObject::GetRemoteOutputController() const
+uint32_t SVConfigurationObject::GetRemoteOutputController() const
 {
-	SVGUID l_ObjectId;
+	uint32_t l_ObjectId = SvDef::InvalidObjectId;
 
 	if (nullptr != m_pIOController)
 	{
@@ -4263,7 +4258,7 @@ SVRemoteOutputObject* SVConfigurationObject::GetFirstRemoteOutputObject(const st
 	return l_pObject;
 }
 
-HRESULT SVConfigurationObject::AddRemoteOutputItem(const std::string& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ)
+HRESULT SVConfigurationObject::AddRemoteOutputItem(const std::string& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, uint32_t p_InputObjectID, const std::string& rPPQ)
 {
 	HRESULT l_Status = S_OK;
 
@@ -4411,7 +4406,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 			if (l_ProcessIter != l_Inspections.end() && nullptr != l_ProcessIter->second)
 			{
 				SVCommandInspectionGetItemsPtr l_DataPtr {new SVCommandInspectionGetItems(*l_ProcessIter->second, l_InspectionIter->second)};
-				SVObjectAsynchronousCommandTemplate<SVCommandInspectionGetItemsPtr> l_Command(l_ProcessIter->second->GetUniqueObjectID(), l_DataPtr);
+				SVObjectAsynchronousCommandTemplate<SVCommandInspectionGetItemsPtr> l_Command(l_ProcessIter->second->getObjectId(), l_DataPtr);
 
 				HRESULT l_CommandStatus = l_Command.SubmitCommand();
 
@@ -4763,7 +4758,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 
 				if (nullptr != pInspection)
 				{
-					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+					SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 				}
 			}
 		}
@@ -4894,7 +4889,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems(const SVNameStorageMap& p_rIt
 
 				if (nullptr != pInspection)
 				{
-					SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+					SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 				}
 			}
 		}
@@ -5085,6 +5080,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 					//check if clip for LUT equation is existing.
 					if (!SvXml::SVNavigateTree::FindBranch(rTree, lutEquationEmbeddedsBranch, SVFindPredicate(rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP), lutEquationClipBranch))
 					{
+						SVObjectManagerClass::Instance().setDeletedFlag(false);
 						//add clip value to tree, with value FALSE
 						SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
 						SvVol::SVBoolValueObjectClass isLUTFormulaClipped;
@@ -5095,6 +5091,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 						isLUTFormulaClipped.SetValue(BOOL(false));
 						isLUTFormulaClipped.Persist(writer);
 					}
+					SVObjectManagerClass::Instance().setDeletedFlag(true);
 				}
 			}
 
@@ -5103,7 +5100,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 	}
 }
 
-bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const
+bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, uint32_t toolId) const
 {
 	bool retVal = false;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
@@ -5114,7 +5111,7 @@ bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, 
 	if (iter != monitorList.end())
 	{
 		SvPb::InspectionCmdResponse response;
-		retVal = getObjectsForMonitorList(rToolId, response);
+		retVal = getObjectsForMonitorList(toolId, response);
 		retVal = retVal && response.has_getobjectsformonitorlistresponse();
 		retVal = retVal && (response.getobjectsformonitorlistresponse().list_size() > 0);
 		
@@ -5122,7 +5119,7 @@ bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, 
 	return retVal;
 }
 
-bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const
+bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqName, uint32_t toolId) const
 {
 	bool retVal = false;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
@@ -5133,7 +5130,7 @@ bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqNam
 	if (iter != monitorList.end())
 	{
 		SvPb::InspectionCmdResponse response;
-		retVal = getObjectsForMonitorList(rToolId, response);
+		retVal = getObjectsForMonitorList(toolId, response);
 		retVal = retVal && response.has_getobjectsformonitorlistresponse();
 		retVal = retVal && (response.getobjectsformonitorlistresponse().list_size() > 0);
 
@@ -5141,7 +5138,7 @@ bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqNam
 	return retVal;
 }
 
-bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const
+bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t toolId) const
 {
 	bool retVal = false;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
@@ -5152,7 +5149,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SV
 	if (iter != monitorList.end())
 	{
 		SvPb::InspectionCmdResponse response;
-		retVal = getObjectsForMonitorList(rToolId, response);
+		retVal = getObjectsForMonitorList(toolId, response);
 		retVal  = retVal && response.has_getobjectsformonitorlistresponse();
 		retVal = retVal && (response.getobjectsformonitorlistresponse().list_size() > 0);
 		
@@ -5164,7 +5161,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SV
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-				if (monitoredObj.guid.empty())
+				if (SvDef::InvalidObjectId == monitoredObj.m_objectId)
 				{
 					retVal = false;
 				}
@@ -5193,7 +5190,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, const SV
 	return retVal;
 }
 
-SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId)
+SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LPCTSTR ppqName, uint32_t toolId)
 {
 	SvStl::MessageContainerVector messages;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
@@ -5205,7 +5202,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 	{
 		
 		SvPb::InspectionCmdResponse response;
-		bool isOk =  getObjectsForMonitorList(rToolId, response);
+		bool isOk =  getObjectsForMonitorList(toolId, response);
 		isOk = isOk && response.has_getobjectsformonitorlistresponse();
 
 		if (isOk)
@@ -5216,7 +5213,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-				if (!monitoredObj.guid.empty())
+				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 				{
 					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 					{
@@ -5234,14 +5231,14 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 		}
 		else
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			messages.push_back(Msg);
 		}
 	}
 	return messages;
 }
 
-SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId)
+SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList(LPCTSTR ppqName, uint32_t toolId)
 {
 	SvStl::MessageContainerVector messages;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
@@ -5253,7 +5250,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 	{
 		
 		SvPb::InspectionCmdResponse response;
-		bool isOk = getObjectsForMonitorList(rToolId, response);
+		bool isOk = getObjectsForMonitorList(toolId, response);
 		isOk = isOk && response.has_getobjectsformonitorlistresponse();
 
 		if (isOk)
@@ -5264,7 +5261,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 				std::string ObjectName(SvDef::FqnInspections);
 				ObjectName += _T(".") + rEntry.objectname();
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
-				if (!monitoredObj.guid.empty())
+				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 				{
 					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 					{
@@ -5282,7 +5279,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 		}
 		else
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			messages.push_back(Msg);
 		}
 	}
@@ -5514,7 +5511,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			}
 
 			const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(Name);
-			if (!rObj.guid.empty())
+			if (SvDef::InvalidObjectId != rObj.m_objectId)
 			{
 				// add object for this leaf to the list
 				rList.push_back(rObj);
@@ -5525,7 +5522,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);
-				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GUID_NULL, MB_YESNO);
+				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SvDef::InvalidObjectId, MB_YESNO);
 				if (IDNO == DlgResult)
 				{
 					rList.clear();
@@ -5561,55 +5558,53 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 			std::string GlobalConstantName(rTree.getBranchName(hChild));
 
 			_variant_t Value;
-			SVGUID UniqueID(GUID_NULL);
+			uint32_t UniqueID(SvDef::InvalidObjectId);
 			std::string Description;
+
+			if (SvXml::SVNavigateTree::GetItem(rTree, scUniqueReferenceIDTag, hChild, Value))
+			{
+				UniqueID = calcObjectId(Value);
+			}
+			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_DESCRIPTION, hChild, Value))
+			{
+				Description = SvUl::createStdString(Value);
+				//This is needed to insert any CR LF in the description which were replaced while saving
+				SvUl::RemoveEscapedSpecialCharacters(Description, true);
+			}
+			else
+			{
+				Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
+			}
+
+			Value.Clear();
+			if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VALUE, hChild, Value))
+			{
+				Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
+			}
 
 			if (S_OK == Result)
 			{
-				if (SvXml::SVNavigateTree::GetItem(rTree, scUniqueReferenceIDTag, hChild, Value))
+				SvVol::BasicValueObjectPtr pValue(nullptr);
+				pValue = RootObject::setRootChildValue(GlobalConstantName.c_str(), Value);
+				if (nullptr == pValue)
 				{
-					UniqueID = Value.bstrVal;
-				}
-				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_DESCRIPTION, hChild, Value))
-				{
-					Description = SvUl::createStdString(Value);
-					//This is needed to insert any CR LF in the description which were replaced while saving
-					SvUl::RemoveEscapedSpecialCharacters(Description, true);
+					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
 				}
 				else
 				{
-					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
-				}
-
-				Value.Clear();
-				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VALUE, hChild, Value))
-				{
-					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
-				}
-
-				if (S_OK == Result)
-				{
-					SvVol::BasicValueObjectPtr pValue(nullptr);
-					pValue = RootObject::setRootChildValue(GlobalConstantName.c_str(), Value);
-					if (nullptr == pValue)
+					//Set the unique id for the global constant that was saved
+					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), UniqueID);
+					pValue->setDescription(Description.c_str());
+					//All Global constants can be remotely settable
+					pValue->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+					// If type string then remove Selectable for Equation flag.
+					if (VT_BSTR == Value.vt)
 					{
-						Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
-					}
-					else
-					{
-						//Set the unique GUID id for the global constant that was saved
-						SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), UniqueID);
-						pValue->setDescription(Description.c_str());
-						//All Global constants can be remotely settable
-						pValue->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-						// If type string then remove Selectable for Equation flag.
-						if (VT_BSTR == Value.vt)
-						{
-							pValue->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
-						}
+						pValue->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
 					}
 				}
 			}
+
 			hChild = rTree.getNextBranch(hBranch, hChild);
 		}
 	}
@@ -5651,17 +5646,17 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 						if (S_OK == rTree.getLeafData(hLeaf, Value))
 						{
 							std::string ValueText {SvUl::createStdString(Value.bstrVal)};
-							std::string GuidString;
+							std::string objectIdString;
 							auto Pos = ValueText.find('}');
 							if (std::string::npos != Pos)
 							{
 								Pos++;
-								GuidString = SvUl::Left(ValueText, Pos);
+								objectIdString = SvUl::Left(ValueText, Pos);
 								ValueText = SvUl::Mid(ValueText, Pos);
 							}
 
-							SVGUID UniqueID {GuidString};
-							SVObjectReference ObjectRef {SVObjectManagerClass::Instance().GetObject(UniqueID)};
+							uint32_t uniqueID = calcObjectId(objectIdString);
+							SVObjectReference ObjectRef {SVObjectManagerClass::Instance().GetObject(uniqueID)};
 							if (nullptr != ObjectRef.getObject())
 							{
 								if (ValueText.empty())
@@ -5758,10 +5753,10 @@ HRESULT SVConfigurationObject::LoadAdditionalFiles(SVTreeType& rTree)
 	return Result;
 }
 
-bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdResponse& rResponse) const
+bool SVConfigurationObject::getObjectsForMonitorList(uint32_t toolId, SvPb::InspectionCmdResponse& rResponse) const
 {
 	SVObjectClass* pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(rToolId, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(toolId, pObject);
 	if (nullptr == pObject)
 	{
 		return false;
@@ -5774,8 +5769,8 @@ bool SVConfigurationObject::getObjectsForMonitorList(const SVGUID& rToolId, SvPb
 
 	SvPb::InspectionCmdRequest requestCmd;
 	auto* pRequest = requestCmd.mutable_getobjectsformonitorlistrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rToolId);
+	pRequest->set_objectid(toolId);
 
-	return S_OK == SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &rResponse);
+	return S_OK == SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &rResponse);
 }
 

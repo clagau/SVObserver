@@ -27,9 +27,6 @@
     <ClCompile Include="SVClassRegisterListClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVClsids.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

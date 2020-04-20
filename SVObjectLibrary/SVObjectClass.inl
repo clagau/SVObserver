@@ -12,15 +12,15 @@
 #pragma once
 
 /*
-This method returns the object's Global Unique Identifier (GUID) of this object instance.
+This method returns the object's Global Unique Identifier of this object instance.
 */
-inline const SVGUID& SVObjectClass::GetUniqueObjectID() const
+inline uint32_t SVObjectClass::getObjectId() const
 {
-	return m_outObjectInfo.getUniqueObjectID();
+	return m_outObjectInfo.getObjectId();
 }
 
 /*
-This method returns the embedded Global Unique Identifier (GUID) if the object is embedded in another object.
+This method returns the embedded Identifier if the object is embedded in another object.
 */
 inline SvPb::EmbeddedIdEnum SVObjectClass::GetEmbeddedID() const
 {
@@ -28,11 +28,11 @@ inline SvPb::EmbeddedIdEnum SVObjectClass::GetEmbeddedID() const
 }
 
 /*
-This method returns the object's Global Unique Identifier (GUID) of this object's parent
+This method returns the object's Global Unique Identifier of this object's parent
 */
-inline const SVGUID& SVObjectClass::GetParentID() const
+inline uint32_t SVObjectClass::GetParentID() const
 {
-	return m_ownerObjectInfo.getUniqueObjectID();
+	return m_ownerObjectInfo.getObjectId();
 }
 
 #pragma region virtual method (IObjectClass)

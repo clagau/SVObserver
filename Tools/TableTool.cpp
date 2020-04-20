@@ -68,7 +68,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 		}
 	}
 
-	m_pTable = dynamic_cast<SvOp::TableFillByEquationObject*>(SvOi::FindObject(GetUniqueObjectID(), SvDef::SVObjectTypeInfoStruct(SvPb::TableObjectType, SvPb::TableFillObjectType)));
+	m_pTable = dynamic_cast<SvOp::TableFillByEquationObject*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::TableObjectType, SvPb::TableFillObjectType)));
 	if (nullptr == m_pTable)
 	{
 		m_pTable = new SvOp::TableFillByEquationObject(this);
@@ -77,7 +77,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log );
 			Msg.setMessage( message.getMessage() );
 		}
@@ -142,7 +142,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 						SvDef::StringVector msgList;
 						msgList.push_back(SvUl::Format(_T("%d"), c_maxTableColumn));
 						SvStl::MessageContainer message;
-						message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 						pErrorMessages->push_back( message );
 					}
 				}
@@ -197,7 +197,7 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back( message );
 		}
 	}
@@ -214,7 +214,7 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 			messageList.push_back(SvUl::Format(_T("%d"), SvDef::cTableMaxRowMax));
 			messageList.push_back(SvUl::Format(_T("%d"), maxRow));
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back( message );
 		}
 	}	
@@ -232,7 +232,7 @@ void TableTool::LocalInitialize ()
 	{
 		pObject->SetObjectOwner( this );
 		pObject->SetName(SvDef::TableClearEquationName);
-		AddFriend( pObject->GetUniqueObjectID() );
+		AddFriend( pObject->getObjectId() );
 	}
 
 	// Set up your type

@@ -23,10 +23,10 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVRankingFilterDlg::SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
-		,m_filterID(rFilterID)
-		,m_rInspectionID(rInspectionID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
+	SVRankingFilterDlg::SVRankingFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
+		,m_filterID(filterId)
+		,m_InspectionID(inspectionId)
+		,m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVRankingFilterDlg)
 		//}}AFX_DATA_INIT

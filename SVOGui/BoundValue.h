@@ -11,9 +11,10 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <guiddef.h>
 #include "SVProtoBuf/SVO-Enum.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
+
 
 namespace SvOg
 {
@@ -39,8 +40,8 @@ class BoundValue
 #pragma region Constructor
 public:
 	BoundValue() {};
-	BoundValue(const GUID& rInstanceID, const variant_t& rValue, const variant_t& rDefaultValue)
-		: m_instanceID(rInstanceID), m_Value(rValue), m_DefaultValue(rDefaultValue)
+	BoundValue(uint32_t instanceID, const variant_t& rValue, const variant_t& rDefaultValue)
+		: m_instanceID(instanceID), m_Value(rValue), m_DefaultValue(rDefaultValue)
 	{
 	}
 
@@ -76,7 +77,7 @@ public:
 		}
 	}
 
-	const GUID& GetObjectID() const { return m_instanceID; }
+	uint32_t GetObjectID() const { return m_instanceID; }
 
 	bool isModified() const { return m_bModified; }
 	bool isDefaultModified() const { return m_bDefaultModified; }
@@ -88,7 +89,7 @@ public:
 
 #pragma region Member Variables
 private:
-	GUID m_instanceID {GUID_NULL};
+	uint32_t m_instanceID{ SvDef::InvalidObjectId };
 	variant_t m_DefaultValue;
 	variant_t m_Value;
 	mutable bool m_bModified {false};
@@ -109,8 +110,8 @@ public:
 
 #pragma region Constructor
 public:
-	BoundValues(const GUID& rInspectionID, const GUID& rTaskID, bool ReadOnly = false)
-		: m_inspectionID(rInspectionID), m_TaskID(rTaskID), m_ReadOnly {ReadOnly}
+	BoundValues(uint32_t inspectionID, uint32_t taskID, bool ReadOnly = false)
+		: m_inspectionID(inspectionID), m_TaskID(taskID), m_ReadOnly {ReadOnly}
 	{
 	}
 	~BoundValues() {}
@@ -123,10 +124,10 @@ public:
 	auto insert(const key_type& rKey, const mapped_type& rMapped) { return m_values.insert(value_type(rKey, rMapped)); }
 	mapped_type& operator[](const key_type& rKey) { return m_values[rKey]; }
 
-	void SetTaskID(const GUID& rTaskID) { m_TaskID = rTaskID; };
-	const GUID& GetTaskID() const { return m_TaskID; };
-	void SetInspectionID(const GUID& rInspectionID) { m_inspectionID = rInspectionID; };
-	const GUID& GetInspectionID() const { return m_inspectionID; }
+	void SetTaskID(uint32_t taskID) { m_TaskID = taskID; };
+	uint32_t GetTaskID() const { return m_TaskID; };
+	void SetInspectionID(uint32_t inspectionID) { m_inspectionID = inspectionID; };
+	uint32_t GetInspectionID() const { return m_inspectionID; }
 
 	variant_t GetDefaultValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
@@ -176,9 +177,9 @@ public:
 		return false;
 	}
 
-	GUID GetObjectID(SvPb::EmbeddedIdEnum embeddedID) const
+	uint32_t GetObjectID(SvPb::EmbeddedIdEnum embeddedID) const
 	{
-		GUID objectID = GUID_NULL;
+		uint32_t objectID = SvDef::InvalidObjectId;
 		Container::const_iterator it = m_values.find(embeddedID);
 		if (it != m_values.end())
 		{
@@ -201,8 +202,8 @@ public:
 #pragma region Member Variables
 private:
 	Container m_values;
-	GUID m_inspectionID {GUID_NULL};
-	GUID m_TaskID {GUID_NULL};
+	uint32_t m_inspectionID{ SvDef::InvalidObjectId };
+	uint32_t m_TaskID { SvDef::InvalidObjectId };
 	bool m_ReadOnly {false};
 #pragma endregion Member Variables
 };

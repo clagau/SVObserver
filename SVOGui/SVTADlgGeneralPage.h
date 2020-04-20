@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "BoundValue.h"
 #include "ValuesAccessor.h"
 #include "DataController.h"
@@ -28,7 +27,7 @@ namespace SvOg
 	{
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 	public:
-		SVToolAdjustmentDialogGeneralPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		SVToolAdjustmentDialogGeneralPageClass(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~SVToolAdjustmentDialogGeneralPageClass();
 
 	protected:
@@ -59,14 +58,14 @@ namespace SvOg
 		enum { IDD = IDD_TA_GENERAL_DIALOG };
 
 	protected:
-		SvMc::AvailableObjectListComboBox<SVGUID> m_AvailableSourceImageCombo;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableSourceImageCombo;
 		SvMc::SVEnumerateComboClass m_drawToolCombo;
 		BOOL m_bUpdateAuxiliaryExtents;
 
 		bool m_bAuxExtentsAvailable;
 		bool m_bIsImageTool;
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 
 		SvOg::AuxiliaryExtentsController m_AuxExtentsController;
 		ValuesController m_Values;

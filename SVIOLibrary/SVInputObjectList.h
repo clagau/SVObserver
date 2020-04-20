@@ -27,14 +27,14 @@ public:
 	bool Create();
 	bool Destroy();
 
-	SVInputObject* GetInput( const SVGUID& rInputID ) const;
+	SVInputObject* GetInput( uint32_t inputID ) const;
 
 	SVInputObject* GetInput( const std::string& rInputName ) const;
 
-	SVInputObject* GetInputFlyweight( const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
+	SVInputObject* GetInputFlyweight( const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int index = -1);
 
 	HRESULT AttachInput( SVInputObject *pInput );
-	HRESULT DetachInput( const SVGUID& p_rOutputID );
+	HRESULT DetachInput(uint32_t outputID );
 
 	bool ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues);
 
@@ -50,6 +50,6 @@ private:
 	CRITICAL_SECTION m_hCriticalSection;
 	bool m_bCreated;
 
-	SVGuidSVInputObjectPtrMap m_InputObjects;
+	ObjectIdSVInputObjectPtrMap m_InputObjects;
 };
 

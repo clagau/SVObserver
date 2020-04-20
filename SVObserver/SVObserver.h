@@ -27,7 +27,6 @@
 
 #pragma region Declarations
 class SVConfigurationObject;
-class SVGUID;
 class SVInspectionProcess;
 class SVIOController;
 class SVIODoc;
@@ -206,7 +205,7 @@ public:
 	bool RemoveMenu(HMENU hTargetMenu,  const std::string& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
 
-	HRESULT OnObjectRenamed( const std::string& p_rOldName, const SVGUID& p_rObjectId );
+	HRESULT OnObjectRenamed(const std::string& p_rOldName, uint32_t objectId);
 	HRESULT RebuildOutputList();
 	bool SetStatusText( LPCTSTR PStrStatusText );
 
@@ -215,7 +214,7 @@ public:
 	const std::string getConfigFullFileName() const;
 	bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile);
 
-	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;
+	SVIPDoc* GetIPDoc(uint32_t inspectionID) const;
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	bool AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
 

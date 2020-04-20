@@ -16,7 +16,6 @@
 #include "SVObjectInfoStruct.h"
 #pragma endregion Includes
 
-class SVGUID;
 
 namespace SvOl
 {
@@ -36,7 +35,7 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 	void SetInputObjectType(SvPb::SVObjectTypeEnum ObjectType = SvPb::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVNotSetSubObjectType, SvPb::EmbeddedIdEnum	embeddedID = SvPb::NoEmbeddedId);
 	void SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rTypeInfo );
 
-	void SetInputObject( const SVGUID& p_rObjectID );
+	void SetInputObject(uint32_t objectID);
 	void SetInputObject( SVObjectClass* p_pObject );
 	void SetInputObject( const SVObjectReference& p_rObject );
 
@@ -46,7 +45,7 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 protected:
 	// Who is my input object...
 	//	To connect ( hook ) on input, the method ConnectObjectInput to
-	//  the object that needs the input GUID! And use a pointer of this structure 
+	//  the object that needs the input ID! And use a pointer of this structure 
 	//	( of the input ) as a message parameter.
 	SVObjectInfoStruct m_InputObjectInfo;	// this is the Object, this Object is using
 
@@ -60,7 +59,7 @@ typedef std::vector<SVInObjectInfoStruct> SVInObjectInfoStructVector;
 typedef std::vector<SVInObjectInfoStruct*> SVInObjectInfoStructPtrVector;
 
 void ValidateInput(SVInObjectInfoStruct& rInputObject);
-void ValidateInputList(SVInObjectInfoStructPtrVector& rInputObjectList);
+void ValidateInputList(const SVInObjectInfoStructPtrVector& rInputObjectList);
 
 template <typename T>
 T* getInput(const SVInObjectInfoStruct& rInputObject, bool bRunMode=false)

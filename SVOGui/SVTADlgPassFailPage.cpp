@@ -38,10 +38,10 @@ namespace SvOg
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID, UINT captionID)
+	SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass(uint32_t inspectionID, uint32_t taskID, UINT captionID)
 	: CPropertyPage( SVToolAdjustmentDialogPassFailPageClass::IDD, captionID )
-	, RangeController(rInspectionID, rTaskObjectID)
-	, m_objectSelector (rInspectionID, rTaskObjectID)
+	, RangeController(inspectionID, taskID)
+	, m_objectSelector (inspectionID, taskID)
 	{
 		Init();
 	}
@@ -217,7 +217,7 @@ namespace SvOg
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum);
 
-		return m_objectSelector.Show( rName, Title, this, GUID_NULL, SvPb::SelectorFilter::rangeValue);
+		return m_objectSelector.Show( rName, Title, this, SvPb::SelectorFilter::rangeValue);
 	}
 
 	#pragma endregion Private Methods

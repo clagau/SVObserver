@@ -46,7 +46,7 @@ namespace SvTrc
 		/// \returns SvTrc::IImagePtr
 		virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const = 0;
 
-		/// Return the data corresponding to the GUID
+		/// Return the data corresponding to the ID
 		/// \param pos [in] Position of the value object in definition list.
 		/// \returns _variant_t
 		virtual _variant_t getDataValue(int pos) const = 0;
@@ -67,12 +67,12 @@ namespace SvTrc
 	typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 
 	template<typename Container>
-	int findGuidPos(const Container& rContainer, const std::string& rGuidIdBytes)
+	int findObjectIdPos(const Container& rContainer, uint32_t objectId)
 	{
 		int pos = -1;
-		auto imageIter = std::find_if(rContainer.begin(), rContainer.end(), [&rGuidIdBytes](const auto& rData)->bool
+		auto imageIter = std::find_if(rContainer.begin(), rContainer.end(), [&objectId](const auto& rData)->bool
 		{
-			return (0 == rData.guidid().compare(rGuidIdBytes));
+			return (rData.objectid() == objectId);
 		});
 		if (rContainer.end() != imageIter)
 		{

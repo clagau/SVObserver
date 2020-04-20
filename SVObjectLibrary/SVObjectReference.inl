@@ -14,20 +14,18 @@
 
 inline SVObjectReference::SVObjectReference()
 {
-	init();
 }
 
-inline SVObjectReference::SVObjectReference( GUID guid )
+inline SVObjectReference::SVObjectReference( int32_t objectId )
+	: m_objectId(objectId)
 {
-	init();
-	m_Guid = guid;
 }
 
 inline void SVObjectReference::init()
 {
 	m_pObject = nullptr;
 	m_pValueObject = nullptr;
-	m_Guid = GUID_NULL;
+	m_objectId = SvDef::InvalidObjectId;
 	m_NameInfo.clear();
 	m_ArrayIndex = -1;
 }
@@ -83,11 +81,6 @@ inline bool SVObjectReference::isEntireArray() const
 {
 	return isArray() && m_ArrayIndex == -1 && m_NameInfo.IsIndexPresent();
 
-}
-
-inline const SVGUID& SVObjectReference::Guid() const
-{
-	return m_Guid;
 }
 
 inline bool SVObjectReference::operator < ( const SVObjectReference& rhs ) const

@@ -18,16 +18,16 @@ import "Overlay.proto";
 //***************************************************************************
 // Help Structs
 //***************************************************************************
-message InputNameObjectNameGuidPair
+message InputNameObjectNameIdPair
 {
-	bytes objectId = 1; //GUID of the object.
+	uint32 objectId = 1; //ID of the object.
 	bytes objectName = 2; //name of the object.
 	bytes inputName = 3; //input name.
 }
 
-message ObjectNameGuidPair
+message ObjectNameIdPair
 {
-	bytes objectId = 1; //GUID of the object.
+	uint32 objectId = 1; //ID of the object.
 	bytes objectName = 2; //name of the object.
 }
 
@@ -48,7 +48,7 @@ message SVObjectTypeInfoStruct
 message TaskObjectInfo
 {
 	string displayname =1;
-	bytes  taskObjectId = 2;  //GUID of the object
+	uint32  taskObjectId = 2;  //ID of the object
 	SVObjectTypeEnum objecttype = 3; 
 	SVObjectSubTypeEnum objectsubtype = 4;
 	bool isvalid = 5; 
@@ -62,7 +62,7 @@ message NameValuePair
 
 message ValueObjectValues
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	EmbeddedIdEnum embeddedId = 2;
 	Variant value = 3;
 	Variant defaultValue = 4;
@@ -87,7 +87,7 @@ message ExtentParameter
 
 message IsBeforeToolMethod
 { 
-	bytes toolId = 1;
+	uint32 toolId = 1;
 }
 
 message DefaultPlusHidden
@@ -117,13 +117,13 @@ message SetExtentList
 // This message do a runOnce for an inspection or taskObject
 message InspectionRunOnceRequest
 {
-	bytes inspectionID = 1; //GUID of the inspection.
+	uint32 inspectionID = 1; //ID of the inspection.
 }
 
 // This is the message to delete an object.
 message DeleteObjectRequest
 {
-	bytes objectID = 1; //GUID of the object which should be deleted.
+	uint32 objectID = 1; //ID of the object which should be deleted.
 
 	enum FlagEnum
 	{
@@ -139,19 +139,19 @@ message DeleteObjectRequest
 // This is the message to get the last (Error)MessageList from an taskObject
 message GetMessageListRequest
 {
-	bytes objectId = 1; //GUID of the task-object.
+	uint32 objectId = 1; //ID of the task-object.
 }
 
 // This is the message to reset an object
 message ResetObjectRequest
 {
-	bytes objectId = 1; //GUID of the task-object.
+	uint32 objectId = 1; //ID of the task-object.
 }
 
 //This is the message to create a model for the pattern-analyzer. The model will copy from the current source image of the analyzer.
 message CreateModelRequest
 {
-	bytes patternAnalyzerID = 1; //GUID of the pattern-analyzer
+	uint32 patternAnalyzerID = 1; //ID of the pattern-analyzer
 	sint32 posX = 2; //x-Pos in the source image.
 	sint32 posY = 3; //y-Pos in the source image.
 	sint32 modelWidth = 4; //wanted model width.
@@ -161,7 +161,7 @@ message CreateModelRequest
 
 message GetObjectParametersRequest
 {
-	bytes objectId = 1; //GUID of the object.
+	uint32 objectId = 1; //ID of the object.
 }
 
 message GetObjectParametersResponse
@@ -175,7 +175,7 @@ message GetObjectParametersResponse
 // This is the message to return the equation string
 message GetEquationRequest
 {
-	bytes objectId = 1; //GUID of the equation-object.
+	uint32 objectId = 1; //ID of the equation-object.
 }
 
 // This is the message response-message from GetEquationRequest
@@ -187,7 +187,7 @@ message GetEquationResponse
 //This message validate and if required set an equation
 message ValidateAndSetEquationRequest
 {
-	bytes objectId = 1; //GUID of the equation-object.
+	uint32 objectId = 1; //ID of the equation-object.
 	string equationText = 2; //string of the equation.
 	bool bSetValue = 3; //flag if value should be set.
 }
@@ -203,13 +203,13 @@ message ValidateAndSetEquationResponse
 // This is the message to get a list of object which should be added to the monitorlist.
 message GetObjectsForMonitorListRequest
 {
-	bytes objectId = 1; //GUID of the tool.
+	uint32 objectId = 1; //ID of the tool.
 }
 
 // This is the message response-message from GetObjectsForMonitorListRequest
 message GetObjectsForMonitorListResponse
 {
-	repeated ObjectNameGuidPair list = 1;
+	repeated ObjectNameIdPair list = 1;
 	MessageContainerVector Messages = 2; //list of messages
 }
 
@@ -222,16 +222,16 @@ message MoveObjectRequest
 		FriendList = 1;
 	}
 
-	bytes parentId = 1; //GUID of the parent object, which contain the list (for taskObjectList it must be a ITaskObjectList-Object)
-	bytes objectId = 2; //GUID of the object, which should be moved (must be a taskObject)
-	bytes movePreId = 3; //GUID of the object, before which the other object should be moved. If it is GUID_NULL, the object will be moved to the end.
+	uint32 parentId = 1; //ID of the parent object, which contain the list (for taskObjectList it must be a ITaskObjectList-Object)
+	uint32 objectId = 2; //ID of the object, which should be moved (must be a taskObject)
+	uint32 movePreId = 3; //ID of the object, before which the other object should be moved. If it is SvDef::InvalidObjectId, the object will be moved to the end.
 	ListEnum listMode = 4;
 }
 
 // Request TaskObjectInfo for all taskobject in the taskobjectlist
 message TaskObjectListRequest
 {
-	bytes taskObjectId = 1;  //GUID of the object
+	uint32 taskObjectId = 1;  //ID of the object
 }
 
 message TaskObjectListResponse
@@ -242,9 +242,9 @@ message TaskObjectListResponse
 //get an image(if imageId is set, return this, else try to get image with name and parent)
 message GetImageRequest
 {
-	bytes imageId = 1;  //GUID of the image
+	uint32 imageId = 1;  //ID of the image
 	bytes imageName = 2; //Name of the image at parent object
-	bytes parentId = 3; //GUID of the parent
+	uint32 parentId = 3; //ID of the parent
 } 
 
 message GetImageResponse
@@ -256,7 +256,7 @@ message GetImageResponse
 //get an image(if imageId is set, return this, else try to get image with name and parent)
 message AreAuxiliaryExtentsAvailableRequest
 {
-	bytes objectId = 1;  //GUID of the tool
+	uint32 objectId = 1;  //ID of the tool
 } 
 
 message AreAuxiliaryExtentsAvailableResponse
@@ -266,33 +266,33 @@ message AreAuxiliaryExtentsAvailableResponse
 
 message GetAvailableAuxImagesRequest
 {
-	bytes objectId = 1;  //GUID of the tool
+	uint32 objectId = 1;  //ID of the tool
 }
 
 message GetAvailableAuxImagesResponse
 {
-	repeated ObjectNameGuidPair list = 1;
+	repeated ObjectNameIdPair list = 1;
 }
 
 message GetAuxImageObjectRequest
 {
-	bytes objectId = 1;  //GUID of the tool
+	uint32 objectId = 1;  //ID of the tool
 }
 
 message GetAuxImageObjectResponse
 {
-	ObjectNameGuidPair auxObject = 1;
+	ObjectNameIdPair auxObject = 1;
 }
 
 message SetAuxImageObjectRequest
 {
-	bytes objectId = 1;  //GUID of the tool
-	bytes sourceImageId = 2;  //GUID of the source image
+	uint32 objectId = 1;  //ID of the tool
+	uint32 sourceImageId = 2;  //ID of the source image
 }
 
 message GetInputsRequest
 {
-	bytes objectId = 1;  //GUID of the tool
+	uint32 objectId = 1;  //ID of the tool
 	SVObjectTypeInfoStruct typeInfo = 2;
 	SVObjectTypeEnum objectTypeToInclude = 3; //define until which type the name should displayed (not used for image objects, it has the own name conventions)
 	bool shouldExcludeFirstObjectName = 4; //Is true it remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". (not used for image objects, it has the own name conventions)
@@ -301,32 +301,32 @@ message GetInputsRequest
 
 message GetInputsResponse
 {
-	repeated InputNameObjectNameGuidPair list = 1;
+	repeated InputNameObjectNameIdPair list = 1;
 }
 
 message ConnectToObjectRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	bytes inputName = 2;
-	bytes newConnectedId = 3;
+	uint32 newConnectedId = 3;
 	SVObjectTypeEnum objectType = 4;
 }
 
 message SaveImageRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	bytes imageName = 2;
 }
 
 message SetObjectNameRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	bytes objectName = 2;
 }
 
 message GetAvailableObjectsRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	SVObjectTypeInfoStruct typeInfo = 2;
 	SVObjectTypeEnum objectTypeToInclude = 3; //default = SVNotSetObjectType
 	bool shouldExcludeFirstObjectName = 4;
@@ -340,13 +340,13 @@ message GetAvailableObjectsRequest
 
 message GetAvailableObjectsResponse
 {
-	repeated ObjectNameGuidPair list = 1;
+	repeated ObjectNameIdPair list = 1;
 	MessageContainerVector Messages = 2; //list of messages
 }
 
 message GetSpecialImageListRequest
 {
-	bytes taskObjectId = 1;
+	uint32 taskObjectId = 1;
 }
 
 message GetSpecialImageListResponse
@@ -356,13 +356,13 @@ message GetSpecialImageListResponse
 
 message ExportMaskRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	bytes fileName = 2;
 }
 
 message ImportMaskRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	bytes fileName = 2;
 }
 
@@ -370,7 +370,7 @@ message GetObjectIdRequest
 {
 	message InfoStruct
 	{
-		bytes ownerId = 1;
+		uint32 ownerId = 1;
 		SVObjectTypeInfoStruct infoStruct = 2;
 	}
 
@@ -383,7 +383,7 @@ message GetObjectIdRequest
 
 message GetObjectIdResponse
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 }
 
 message CreateObjectRequest
@@ -391,28 +391,28 @@ message CreateObjectRequest
 	message FriendTask
 	{
 		bytes name = 1; //the name of the new object
-		bytes preGuid = 2; //Add new object before the object with this GUID. If object not found (e.g. GUID_NULL), it will be added at the end.
+		uint32 preId = 2; //Add new object before the object with this ID. If object not found (e.g. SvDef::InvalidObjectId), it will be added at the end.
 	}
 
-	bytes ownerId = 1;
+	uint32 ownerId = 1;
 	ClassIdEnum classId = 2;
 
 	oneof message
 	{
 		FriendTask friend = 3;	//Add the new object to the friend list.
-		bytes taskObjectInsertBeforeId = 4; //Add the new object to the taskObject-list before the object with this GUID. if GUID_NULL, add at the end.
+		uint32 taskObjectInsertBeforeId = 4; //Add the new object to the taskObject-list before the object with this ID. if SvDef::InvalidObjectId, add at the end.
 	}
 }
 
 message CreateObjectResponse
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	bytes name = 2;
 }
 
 message GetCreatableObjectsRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	SVObjectTypeInfoStruct typeInfo = 2;
 }
 
@@ -424,7 +424,7 @@ message GetCreatableObjectsResponse
 //Return if the inspection should be reset. By now it is only used for the filter, because some filters must be reset the whole inspection after changes.
 message ShouldInspectionResetRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 }
 
 message ShouldInspectionResetResponse
@@ -435,7 +435,7 @@ message ShouldInspectionResetResponse
 //Get the ppq-name of the inspection
 message GetPPQNameRequest
 {
-	bytes inspectionId = 1;
+	uint32 inspectionId = 1;
 }
 
 message GetPPQNameResponse
@@ -446,7 +446,7 @@ message GetPPQNameResponse
 //Request the Enumerations(name/value) from a SVEnumerateValueObject
 message GetValueObjectEnumsRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 }
 
 message GetValueObjectEnumsResponse
@@ -456,7 +456,7 @@ message GetValueObjectEnumsResponse
 
 message GetEmbeddedValuesRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 }
 
 message GetEmbeddedValuesResponse
@@ -466,13 +466,13 @@ message GetEmbeddedValuesResponse
 
 message SetEmbeddedValuesRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 	repeated SetValueObjectValues list = 2;
 }
 
 message GetOutputRectangleRequest
 {
-	bytes imageId = 1;
+	uint32 imageId = 1;
 }
 
 message GetOutputRectangleResponse
@@ -485,7 +485,7 @@ message GetOutputRectangleResponse
 
 message GetToolSizeAdjustParameterRequest
 {
-	bytes objectId = 1;
+	uint32 objectId = 1;
 }
 
 message GetToolSizeAdjustParameterResponse
@@ -499,7 +499,7 @@ message GetToolSizeAdjustParameterResponse
 
 message GetExtentParameterRequest
 {
-	bytes objectId = 1; //Guid of the tool
+	uint32 objectId = 1; //id of the tool
 	bool shouldFromParent = 2; 
 }
 
@@ -511,7 +511,7 @@ message GetExtentParameterResponse
 
 message SetExtentParameterRequest
 {
-	bytes objectId = 1; //Guid of the tool
+	uint32 objectId = 1; //id of the tool
 	oneof message
 	{
 		UpdateFromOutpuSpace updateFromOutputSpace = 2;
@@ -529,7 +529,7 @@ message SetExtentParameterResponse
 
 message IsAllowedLocationRequest
 {
-	bytes objectId = 1; //Guid of the tool
+	uint32 objectId = 1; //id of the tool
 	SVExtentLocationPropertyEnum location = 2;
 	SVExtentDirectionsEnum direction = 3;
 }
@@ -541,12 +541,12 @@ message IsAllowedLocationResponse
 
 message PropagateSizeAndPositionRequest
 {
-	bytes objectId = 1; //Guid of the inspection
+	uint32 objectId = 1; //id of the inspection
 }
 
 message UsePropagateSizeAndPositionRequest
 {
-	bytes objectId = 1; //Guid of the inspection
+	uint32 objectId = 1; //id of the inspection
 }
 
 message UsePropagateSizeAndPositionResponse
@@ -556,7 +556,7 @@ message UsePropagateSizeAndPositionResponse
 
 message GetOverlayStructRequest
 {
-	bytes imageId = 1; //Guid of the image
+	uint32 imageId = 1; //id of the image
 }
 
 message GetOverlayStructResponse
@@ -565,13 +565,13 @@ message GetOverlayStructResponse
 }
 message SetDefaultInputsRequest
 {
-	bytes objectId = 1; //GUID of the inspection object.
+	uint32 objectId = 1; //ID of the inspection object.
 }
 
 
 message InspectionCmdRequest
 {
-	bytes inspectionID = 1;			//The inspection GUID to perform the command on
+	uint32 inspectionID = 1;			//The inspection ID to perform the command on
 
 	oneof message
 	{

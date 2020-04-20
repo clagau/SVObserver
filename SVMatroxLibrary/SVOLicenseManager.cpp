@@ -72,20 +72,18 @@ bool SVOLicenseManager::HasMatroxLicense()  const
 	return m_bMatroxImageLicense;
 }
 
-void SVOLicenseManager::AddLicenseErrorToList(const SVGUID& svGuid)
+void SVOLicenseManager::AddLicenseErrorToList(uint32_t objectId)
 {
-	m_svErrorList.insert(svGuid);
+	m_svErrorList.insert(objectId);
 }
 
-void SVOLicenseManager::RemoveLicenseErrorFromList(const SVGUID& svGuid)
+void SVOLicenseManager::RemoveLicenseErrorFromList(uint32_t objectId)
 {
-	SVGuidSet::iterator iter;
-
-	iter = m_svErrorList.find(svGuid);
+	auto iter = m_svErrorList.find(objectId);
 
 	if ( iter != m_svErrorList.end() )
 	{
-		m_svErrorList.erase(svGuid);
+		m_svErrorList.erase(objectId);
 	}
 
 	//update the dialog

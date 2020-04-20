@@ -29,7 +29,7 @@ namespace SvOg
 		
 	#pragma region Constructor
 	public:
-		SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		SVToolAdjustmentDialogFileImageSourcePageClass(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~SVToolAdjustmentDialogFileImageSourcePageClass();
 	#pragma endregion Constructor
 

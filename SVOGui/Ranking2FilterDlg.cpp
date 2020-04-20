@@ -53,14 +53,14 @@ BEGIN_MESSAGE_MAP(Ranking2FilterDlg, CDialog)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-Ranking2FilterDlg::Ranking2FilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent)
+Ranking2FilterDlg::Ranking2FilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent)
 	: CDialog(Ranking2FilterDlg::IDD, pParent)
 	, m_KernelWidth(0)
 	, m_KernelHeight(0)
 	, m_GridStatus(_T(""))
-	, m_filterID(rFilterID)
-	, m_rInspectionID(rInspectionID)
-	, m_Values(SvOg::BoundValues(rInspectionID, rFilterID))
+	, m_filterID(filterId)
+	, m_InspectionID(inspectionId)
+	, m_Values(SvOg::BoundValues(inspectionId, filterId))
 {
 }
 

@@ -33,7 +33,6 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary\ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -52,7 +51,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Public Methods
-HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
+HRESULT ToolClipboard::writeToClipboard(uint32_t toolId) const
 {
 	HRESULT result( S_OK);
 
@@ -68,7 +67,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 
 				FileName += _T("\\");
 				FileName += SvO::ClipboardFileName;
-				result = streamToolToZip( FileName, rToolGuid );
+				result = streamToolToZip( FileName, toolId);
 
 				if( S_OK == result)
 				{
@@ -116,7 +115,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 	return result;
 }
 
-HRESULT ToolClipboard::readFromClipboard( const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, SVGUID& rToolGuid )
+HRESULT ToolClipboard::readFromClipboard(uint32_t postId, uint32_t ownerId, uint32_t& rToolId)
 {
 	HRESULT Result( S_OK );
 
@@ -154,7 +153,7 @@ HRESULT ToolClipboard::readFromClipboard( const SVGUID& rPostGuid, const SVGUID&
 		}
 
 		SVObjectClass* pOwner = nullptr;
-		SVObjectManagerClass::Instance().GetObjectByIdentifier(rOwnerGuid, pOwner);
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerId, pOwner);
 		if(nullptr != pOwner)
 		{
 			m_pInspection = dynamic_cast<SVInspectionProcess*> (pOwner->GetAncestor(SvPb::SVInspectionObjectType));
@@ -173,7 +172,7 @@ HRESULT ToolClipboard::readFromClipboard( const SVGUID& rPostGuid, const SVGUID&
 
 		if( S_OK == Result )
 		{
-			Result = readTool( XmlData, Tree, rPostGuid, rOwnerGuid);
+			Result = readTool( XmlData, Tree, postId, ownerId);
 		}
 		if( S_OK == Result )
 		{
@@ -181,7 +180,7 @@ HRESULT ToolClipboard::readFromClipboard( const SVGUID& rPostGuid, const SVGUID&
 		}
 		if( S_OK == Result )
 		{
-			Result = replaceUniqueGuids( XmlData, Tree );
+			Result = replaceUniqueIds( XmlData, Tree );
 		}
 		if( S_OK == Result )
 		{
@@ -190,7 +189,7 @@ HRESULT ToolClipboard::readFromClipboard( const SVGUID& rPostGuid, const SVGUID&
 		}
 		if( S_OK == Result )
 		{
-			Result = parseTreeToTool( Tree, pOwner, rToolGuid );
+			Result = parseTreeToTool( Tree, pOwner, rToolId);
 		}
 	}
 	catch( const SvStl::MessageContainer& rSvE )
@@ -223,11 +222,11 @@ bool ToolClipboard::isClipboardDataValid()
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT ToolClipboard::streamToolToZip( const std::string& rFileName, const SVGUID& rToolGuid ) const
+HRESULT ToolClipboard::streamToolToZip( const std::string& rFileName, uint32_t toolId) const
 {
 	HRESULT Result{S_OK};
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( rToolGuid ));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(toolId));
 
 	if( nullptr == pTool)
 	{
@@ -249,7 +248,7 @@ HRESULT ToolClipboard::streamToolToZip( const std::string& rFileName, const SVGU
 		writeBaseAndEnvironmentNodes( XmlWriter );
 
 		XmlWriter.StartElement(SvXml::ToolsTag );
-		writeSourceGuids( XmlWriter, *pTool );
+		writeSourceIds( XmlWriter, *pTool );
 		pTool->Persist( XmlWriter );
 
 		XmlWriter.EndAllElements();
@@ -299,14 +298,14 @@ void ToolClipboard::writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) c
 	rWriter.EndElement();
 }
 
-void ToolClipboard::writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const
+void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const
 {
 	_variant_t Value;
 
 	Value.Clear();
 	if(nullptr != m_pInspection)
 	{
-		Value = SVGUID(m_pInspection->GetUniqueObjectID()).ToVARIANT();
+		Value = convertObjectIdToVariant(m_pInspection->getObjectId());
 		rWriter.WriteAttribute(m_pInspection->GetObjectName(), Value);
 	}
 
@@ -319,7 +318,7 @@ void ToolClipboard::writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolC
 	Value = tmpString.c_str();
 	rWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
 
-	std::set<SVGUID> imageGuidVector;
+	std::set<uint32_t> imageIdVector;
 	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
 	SvOl::SVInObjectInfoStruct* pLastImageInfo = nullptr;
 	while( nullptr == pImageInfo && S_OK ==  rTool.FindNextInputImageInfo( pImageInfo, pLastImageInfo ) )
@@ -331,9 +330,9 @@ void ToolClipboard::writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolC
 			{
 				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
 				//Add input image only if not from the tool being copied
-				if(nullptr == pTool || pTool->GetUniqueObjectID() != rTool.GetUniqueObjectID())
+				if(nullptr == pTool || pTool->getObjectId() != rTool.getObjectId())
 				{
-					imageGuidVector.insert(pImageInfo->GetInputObjectInfo().getUniqueObjectID());
+					imageIdVector.insert(pImageInfo->GetInputObjectInfo().getObjectId());
 				}
 			}
 		}
@@ -342,10 +341,10 @@ void ToolClipboard::writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolC
 	}
 
 	int imageIndex {0};
-	for(const auto& rImageGuid : imageGuidVector)
+	for(auto imageId : imageIdVector)
 	{
 		std::string inputImageName {SvUl::Format(SvXml::InputImageTag, imageIndex)};
-		rWriter.WriteAttribute(inputImageName.c_str(), rImageGuid.ToVARIANT());
+		rWriter.WriteAttribute(inputImageName.c_str(), convertObjectIdToVariant(imageId));
 		imageIndex++;
 	}
 }
@@ -517,40 +516,38 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 	return Result;
 }
 
-HRESULT ToolClipboard::readTool( std::string& rXmlData, SVTreeType& rTree, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid ) const
+HRESULT ToolClipboard::readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t postId, uint32_t ownerId) const
 {
 	HRESULT Result( S_OK );
 
 	SVTreeType::SVBranchHandle ToolsItem = nullptr;
 
-	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
 		_variant_t Inspection;
 		_variant_t ToolType;
 		_variant_t inputImage;
-		SVGuidSet InputImages;
-		if(nullptr != m_pInspection)
+		std::set<uint32_t> InputImages;
+		if (nullptr != m_pInspection)
 		{
 			SvXml::SVNavigateTree::GetItem(rTree, m_pInspection->GetObjectName(), ToolsItem, Inspection);
 		}
-		SvXml::SVNavigateTree::GetItem( rTree, SvXml::ToolTypeTag, ToolsItem, ToolType );
+		SvXml::SVNavigateTree::GetItem(rTree, SvXml::ToolTypeTag, ToolsItem, ToolType);
 		SvPb::ClassIdEnum classId = calcClassId(ToolType);
 
-		int imageIndex{0};
-		std::string inputImageName {SvUl::Format(SvXml::InputImageTag, imageIndex)};
+		int imageIndex{ 0 };
+		std::string inputImageName{ SvUl::Format(SvXml::InputImageTag, imageIndex) };
 		SVTreeType::SVLeafHandle inputImageHandle;
 		SvXml::SVNavigateTree::GetItemLeaf(rTree, inputImageName.c_str(), ToolsItem, inputImageHandle);
-		while(rTree.isValidLeaf(ToolsItem, inputImageHandle))
+		while (rTree.isValidLeaf(ToolsItem, inputImageHandle))
 		{
 			rTree.getLeafData(inputImageHandle, inputImage);
-			InputImages.insert(SVGUID(inputImage));
+			InputImages.insert(calcObjectId(inputImage));
 			imageIndex++;
 			inputImageName = SvUl::Format(SvXml::InputImageTag, imageIndex);
 			SvXml::SVNavigateTree::GetItemLeaf(rTree, inputImageName.c_str(), ToolsItem, inputImageHandle);
 		}
-
-		SVGUID InspectionGuid( Inspection );
-		Result = validateGuids(rXmlData, rPostGuid, rOwnerGuid, InspectionGuid, classId, InputImages);
+		Result = validateIds(rXmlData, postId, ownerId, calcObjectId(Inspection), classId, InputImages);
 	}
 	else
 	{
@@ -563,7 +560,7 @@ HRESULT ToolClipboard::readTool( std::string& rXmlData, SVTreeType& rTree, const
 	return Result;
 }
 
-HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, const SVGUID& rInspectionId, SvPb::ClassIdEnum toolClassId, SVGuidSet rInputImages) const
+HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint32_t ownerId, uint32_t inspectionId, SvPb::ClassIdEnum toolClassId, std::set<uint32_t> rInputImages) const
 {
 	HRESULT result{S_OK};
 
@@ -572,7 +569,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 		return E_POINTER;
 	}
 
-	SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(rOwnerGuid);
+	SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerId);
 	if (nullptr != pOwner && SvPb::SVColorToolObjectType == pOwner->GetObjectSubType() && SvPb::LoopToolClassId == toolClassId)
 	{
 		result = E_FAIL;
@@ -581,10 +578,10 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 		e.Throw();
 	}
 
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_pInspection->GetUniqueObjectID());
+	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_pInspection->getObjectId());
 	SVToolSetClass* pToolSet = m_pInspection->GetToolSet();
 	bool isColorCamera = m_pInspection->IsColorCamera();
-	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(rPostGuid));
+	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(postId));
 	if (nullptr != pDoc && nullptr != pToolSet)
 	{
 		//Color tool can not be inserted into a IPD without color images
@@ -605,12 +602,12 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 		}
 		else
 		{
-			for (const auto& rInputImageGuid : rInputImages)
+			for (auto inputImageId : rInputImages)
 			{
-				if (GUID_NULL != rInputImageGuid)
+				if (SvDef::InvalidObjectId != inputImageId)
 				{
 					bool useStandardImage = true;
-					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject(rInputImageGuid);
+					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject(inputImageId);
 					if (nullptr != pImage)
 					{
 						SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pImage->GetAncestor(SvPb::SVToolObjectType));
@@ -618,7 +615,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 						{
 							int toolPositionOfImage = pTool->getToolPosition();
 
-							if ((nullptr == pPostTool || toolPositionOfImage < pPostTool->getToolPosition()) && rInspectionId == m_pInspection->GetUniqueObjectID())
+							if ((nullptr == pPostTool || toolPositionOfImage < pPostTool->getToolPosition()) && inspectionId == m_pInspection->getObjectId())
 							{
 								useStandardImage = false;
 							}
@@ -627,7 +624,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 
 					if (useStandardImage)
 					{
-						SVGUID DefaultImageGuid(GUID_NULL);
+						uint32_t DefaultImageId{ SvDef::InvalidObjectId };
 						bool useToolSetImage {false};
 						if (isColorCamera)
 						{
@@ -640,7 +637,7 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 								SVObjectClass* pBand0Image = dynamic_cast<SVObjectClass*> (pToolSet->getBand0Image());
 								if (nullptr != pBand0Image)
 								{
-									DefaultImageGuid = pBand0Image->GetUniqueObjectID();
+									DefaultImageId = pBand0Image->getObjectId();
 								}
 							}
 						}
@@ -655,9 +652,9 @@ HRESULT ToolClipboard::validateGuids(std::string& rXmlData, const SVGUID& rPostG
 
 						if (useToolSetImage)
 						{
-							DefaultImageGuid = m_pInspection->GetToolSetMainImage()->GetUniqueObjectID();
+							DefaultImageId = m_pInspection->GetToolSetMainImage()->getObjectId();
 						}
-						SvUl::searchAndReplace(rXmlData, rInputImageGuid.ToString().c_str(), DefaultImageGuid.ToString().c_str());
+						SvUl::searchAndReplace(rXmlData, convertObjectIdToString(inputImageId).c_str(), convertObjectIdToString(DefaultImageId).c_str());
 					}
 				}
 			}
@@ -695,7 +692,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 			}
 			else
 			{
-				SVIPDoc* pDoc = (nullptr != m_pInspection) ? TheSVObserverApp.GetIPDoc(m_pInspection->GetUniqueObjectID()) : nullptr;
+				SVIPDoc* pDoc = (nullptr != m_pInspection) ? TheSVObserverApp.GetIPDoc(m_pInspection->getObjectId()) : nullptr;
 				if (nullptr != pDoc)
 				{
 					// Check to make sure the tool name is unique
@@ -741,7 +738,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 	return Result;
 }
 
-HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rTree ) const
+HRESULT ToolClipboard::replaceUniqueIds( std::string& rXmlData, SVTreeType& rTree ) const
 {
 	HRESULT Result( E_FAIL );
 
@@ -754,12 +751,12 @@ HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rT
 		rTree.getLeafValues( ToolsItem, std::string( scUniqueReferenceIDTag ), UniqueIDList);
 
 		SvDef::StringSet::iterator Iter( UniqueIDList.begin() );
-		//Replace each uniqueID with a new GUID
-		SVGUID newUniqueID( GUID_NULL );
+		//Replace each uniqueID with a new ID
 		while( UniqueIDList.end() != Iter )
 		{
-			CoCreateGuid( &newUniqueID );
-			SvUl::searchAndReplace( rXmlData, Iter->c_str(), newUniqueID.ToString().c_str() );
+			uint32_t newId = SVObjectManagerClass::Instance().getNextObjectId();
+			std::string newIdString = convertObjectIdToString(newId);
+			SvUl::searchAndReplace( rXmlData, Iter->c_str(), newIdString.c_str() );
 			++Iter;
 		}
 
@@ -776,7 +773,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( std::string& rXmlData, SVTreeType& rT
 	return Result;
 }
 
-HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVObjectClass* pOwner, SVGUID& rToolGuid)
+HRESULT ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner, uint32_t& rToolId)
 {
 	HRESULT Result( E_FAIL );
 
@@ -806,13 +803,13 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVObjectClass* pOwner
 				SVParserProgressDialog ParserProgressDialog( SvO::InsertingTool, AfxGetMainWnd() );
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
-				SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pOwnerTmp->GetUniqueObjectID(), pOwnerTmp, &ParserProgressDialog));
+				SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pOwnerTmp->getObjectId(), pOwnerTmp, &ParserProgressDialog));
 				if( nullptr != pParser )
 				{
 					// Set the Parser Object
 					ParserProgressDialog.AddParser(parserHandle, pParser);
 					ParserProgressDialog.DoModal();
-					rToolGuid = SVGUID{UniqueID};
+					rToolId = calcObjectId(UniqueID);
 					Result = S_OK;
 				}
 			}

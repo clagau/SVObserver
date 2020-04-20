@@ -69,7 +69,7 @@ bool SVObjectAppClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStru
 ////////////////////////////////////////////////////////////////////////////////////////
 void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if( rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getUniqueObjectID() != GetUniqueObjectID() )
+	if( rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getObjectId() != getObjectId() )
 	{
 		UpdateConnections( rCreateStructure );
 

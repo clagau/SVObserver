@@ -21,14 +21,14 @@ namespace SvTrcT
 	{
 #pragma region Constructor
 	public:
-		DeactivedTool(GUID guid) : ToolObject(guid) {};
+		DeactivedTool(uint32_t id) : ToolObject(id) {};
 		virtual ~DeactivedTool() = default;
 
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	public:
-		virtual void reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
+		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) override;
 		virtual CString getName() const override { return _T("(De)actived Tool"); };
 		static CString getDescription() { return _T("Copy the whole input image every second time."); };
 		virtual bool run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) override;

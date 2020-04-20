@@ -46,7 +46,7 @@ namespace SvOg
 		/// \param rFilterClass [in] the interface to the filter class.
 		/// \param pParent [in]
 		//************************************
-		Custom2FilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr );
+		Custom2FilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent = nullptr );
 
 		//************************************
 		// Description: The class destructor
@@ -182,8 +182,8 @@ namespace SvOg
 		CString m_EditCell;								//Edit cell value
 		CString m_GridStatus;							//Grid status string
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_filterID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_filterID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 #pragma endregion Member Variables

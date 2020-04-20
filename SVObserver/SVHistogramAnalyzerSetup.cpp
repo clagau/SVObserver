@@ -123,11 +123,7 @@ END_MESSAGE_MAP()
 
 HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 {
-	const SVGUID& rInspectionID = m_pAnalyzer->GetInspection()->GetUniqueObjectID();
-	
-	HRESULT Result = SvCmd::RunOnceSynchronous(rInspectionID);
-
-	return Result;
+	return SvCmd::RunOnceSynchronous(m_pAnalyzer->GetInspection()->getObjectId());
 }
 
 int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -202,7 +198,7 @@ inline void SVHistogramAnalyzerSetupClass::SetResultRange(SvPb::EmbeddedIdEnum e
 	SvOi::IObjectClass* pAnalyzerResult = m_pAnalyzer->GetResultObject(embeddedID);
 	if (pAnalyzerResult)
 	{
-		SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this);
+		SVSetupDialogManager::Instance().SetupDialog(pAnalyzerResult->GetClassID(), pAnalyzerResult->getObjectId(), this);
 	}
 	else
 	{

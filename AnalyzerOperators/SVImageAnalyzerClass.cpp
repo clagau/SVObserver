@@ -76,7 +76,7 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 	if (!pImage)
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::MsgType::Data);
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16110, GetUniqueObjectID());
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16110, getObjectId());
 		MesMan.Throw();
 	}
 	else
@@ -93,7 +93,7 @@ bool SVImageAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

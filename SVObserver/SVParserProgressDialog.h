@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <memory>
 #include "SVProgressDialog.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVSystemLibrary/SVLockableClass.h"
 #pragma endregion Includes
 
@@ -25,7 +26,7 @@ typedef std::shared_ptr<CStatic> StaticSharedPtr;
 struct SVParserProgressControlStruct
 {
 	BOOL bValidate;
-	GUID OwnerGuid;
+	uint32_t m_OwnerId;
 	SVObjectScriptParserClass* pParser;
 	ProgressCtrlSharedPtr pProgressCtrl;
 	StaticSharedPtr pStaticTextCtrl;
@@ -35,7 +36,7 @@ struct SVParserProgressControlStruct
 	SVParserProgressControlStruct()
 	{
 		bValidate = FALSE;
-		OwnerGuid = GUID_NULL;
+		m_OwnerId = SvDef::InvalidObjectId;
 		pParser = nullptr;
 		pProgressCtrl = nullptr;
 		pStaticTextCtrl = nullptr;

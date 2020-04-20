@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "InspectionEngine/SVAcquisitionClass.h"
 #pragma endregion Includes
 
 class SVLightReference;
@@ -85,8 +84,6 @@ protected:
 	void SetCurrentValue(DWORD dw);
 	DWORD CurrentType() {return m_AttributeType;}
 	CString CurrentName() {return m_AttributeName;}
-
-	SvIe::SVAcquisitionClass* m_pAcquisition;
 
 	int m_NumBands;
 	int m_BandSize;

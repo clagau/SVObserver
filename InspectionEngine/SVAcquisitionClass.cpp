@@ -26,6 +26,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -44,7 +45,7 @@ SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams&
 	, m_rTRController{SvTrc::getTriggerRecordControllerRWInstance()}
 	, m_rDigitizerProc(SVDigitizerProcessingClass::Instance())
 {
-	UuidCreateSequential(&m_guid);
+	m_objectId = getNextAcquisitionId();
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
 	m_LastImage = nullptr;
@@ -215,7 +216,7 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo)
 		Result = DestroyBuffers();
 		try
 		{
-			m_rTRController.addImageBuffer(m_guid, m_bufferStruct, m_neededBuffer, true);
+			m_rTRController.addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
@@ -269,24 +270,18 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 
 HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 {
-	HRESULT Result = S_OK;
-	bool LogOnly(false);
-
-	long l(0);
-
-	for (l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
+	for (long l = static_cast<long> (mFiles.size() - 1); -1 < l; l--)
 	{
 		SVFileNameManagerClass::Instance().RemoveItem(&(mFiles[l]));
 	}
 
 	mFiles = rArray;
 	m_CameraFileDeviceParams.Clear();
-
-	for (l = 0; S_OK == Result && l < static_cast<long> (mFiles.size()); l++)
+	bool LogOnly(SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD));
+	for (long l = 0; l < static_cast<long> (mFiles.size()); l++)
 	{
 		if (!SVFileNameManagerClass::Instance().AddItem(&(mFiles[l])))
 		{
-			LogOnly = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD);
 			if (LogOnly)
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
@@ -295,7 +290,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			else
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				if (IDYES == Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, GUID_NULL, MB_YESNO))
+				if (IDYES == Exception.setMessage(SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, SvDef::InvalidObjectId, MB_YESNO))
 				{
 					//All other missing files will only be logged
 					LogOnly = true;
@@ -310,7 +305,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	}
 
 	rArray = mFiles;
-	return Result;
+	return S_OK;
 }
 
 HRESULT SVAcquisitionClass::CreateLightReference(int iBands)
@@ -511,7 +506,7 @@ HRESULT SVAcquisitionClass::SetLut(const SVLut& lut, int iBand)
 	bool bSuccess = true;
 
 	const SVLutTransformOperation* pTransform = lut.GetTransformOperation();
-	if (bSuccess && pTransform)
+	if (pTransform)
 	{
 		bSuccess &= Lut().SetTransformOperation(*pTransform);
 	}// end if
@@ -772,7 +767,7 @@ void SVAcquisitionClass::setNeededBuffers(int neededBuffers)
 	m_neededBuffer = neededBuffers;
 	try
 	{
-		m_rTRController.addImageBuffer(m_guid, m_bufferStruct, m_neededBuffer, true);
+		m_rTRController.addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{

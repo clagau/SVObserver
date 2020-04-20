@@ -23,7 +23,6 @@ namespace SvPb
 {
 	enum ClassIdEnum;
 }
-class SVGUID;
 
 class SVSetupDialogManager
 {
@@ -32,24 +31,24 @@ public:
 
 	virtual ~SVSetupDialogManager();
 
-	HRESULT SetupDialog(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, CWnd* pParentWnd );
+	HRESULT SetupDialog(SvPb::ClassIdEnum classId, uint32_t objectId, CWnd* pParentWnd );
 
 protected:
-	typedef boost::function<HRESULT (const SVGUID&, CWnd*)> SVSetupDialogFunction;
+	typedef boost::function<HRESULT (uint32_t, CWnd*)> SVSetupDialogFunction;
 	typedef std::unordered_map< SvPb::ClassIdEnum, SVSetupDialogFunction > SVSetupDialogMap;
 
 	SVSetupDialogManager();
 
-	static HRESULT SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVColorToolClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVHistogramAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVLinearAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVLuminanceAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVPatternAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* pParentWnd );
-	static HRESULT SVPixelAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
-	static HRESULT SVResultClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd );
+	static HRESULT SVBarCodeAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVBlobAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVColorToolClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVHistogramAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVLinearAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVLuminanceAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVOCVAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVPatternAnalyzerClassSetupDialog( uint32_t objectId, CWnd* pParentWnd );
+	static HRESULT SVPixelAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVResultClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 
 	SVSetupDialogMap m_SetupDialogs;
 

@@ -44,14 +44,14 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogAnalyzerPageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent)
+SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* pParent)
 	: CPropertyPage(SVToolAdjustmentDialogAnalyzerPageClass::IDD)
 	, m_pParentDialog(pParent)
 	, m_pTool(nullptr)
 	, m_pCurrentAnalyzer(nullptr)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_ImageController(rInspectionID, rTaskObjectID)
+	, m_InspectionID(inspectionID)
+	, m_TaskObjectID(taskObjectID)
+	, m_ImageController(inspectionID, taskObjectID)
 {
 	if (m_pParentDialog)
 	{
@@ -145,11 +145,11 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getcreatableobjectsrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVAnalyzerObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		SvUl::InputNameGuidPairList connectedList;
+		SvUl::InputNameObjectIdPairList connectedList;
 		if (S_OK == hr && responseCmd.has_getcreatableobjectsresponse())
 		{
 			for (auto item : responseCmd.getcreatableobjectsresponse().list())
@@ -196,14 +196,14 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 {
 	if (m_pCurrentAnalyzer)
 	{
-		// Save GUID
-		GUID analyzerGuid = m_pCurrentAnalyzer->GetUniqueObjectID();
+		// Save ID
+		uint32_t analyzerId = m_pCurrentAnalyzer->getObjectId();
 
 		// Show Dialog
-		SVSetupDialogManager::Instance().SetupDialog(m_pCurrentAnalyzer->GetClassID(), m_pCurrentAnalyzer->GetUniqueObjectID(), this);
+		SVSetupDialogManager::Instance().SetupDialog(m_pCurrentAnalyzer->GetClassID(), m_pCurrentAnalyzer->getObjectId(), this);
 
 		// Restore the pointer (in case of Cancel)
-		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerGuid));
+		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
 
 		if (nullptr != m_pTool)
 		{
@@ -212,7 +212,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 
 			if (nullptr != pInspection)
 			{
-				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 			}
 
 		}
@@ -230,13 +230,13 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 	UpdateData(TRUE); // get data from dialog
 
-	auto classGUID = m_availableAnalyzerCombobox.getSelectedValue();
+	auto classID = m_availableAnalyzerCombobox.getSelectedValue();
 
 	// Check for valid selection
-	if (SvPb::NoObjectClassId != classGUID)
+	if (SvPb::NoObjectClassId != classID)
 	{
 		// Check if its the same Analyzer
-		if (m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != classGUID)
+		if (m_pCurrentAnalyzer && m_pCurrentAnalyzer->GetClassID() != classID)
 		{
 			// if the Tool has an Analyzer - Close it and Delete it
 			// Why? because this dialog is currently only used for selection of a single analyzer
@@ -250,7 +250,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 		if (!m_pCurrentAnalyzer)
 		{
 			// and now Instantiate a new Object
-			SVObjectManagerClass::Instance().ConstructObject(classGUID, m_pCurrentAnalyzer);
+			SVObjectManagerClass::Instance().ConstructObject(classID, m_pCurrentAnalyzer);
 
 			if (m_pCurrentAnalyzer)
 			{
@@ -271,8 +271,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10211);
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
-						GUID objectID = m_pCurrentAnalyzer->GetUniqueObjectID();
-						if (GUID_NULL != objectID)
+						uint32_t objectID = m_pCurrentAnalyzer->getObjectId();
+						if (SvDef::InvalidObjectId != objectID)
 						{
 							m_pTool->Delete(objectID);
 						}
@@ -305,7 +305,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 		if (nullptr != pInspection)
 		{
-			SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+			SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
 	}
 
@@ -335,7 +335,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 
 void SVToolAdjustmentDialogAnalyzerPageClass::setImages()
 {
-	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID.ToGUID());
+	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID);
 	m_dialogImage.setImage(pResultImage);
 	m_dialogImage.Refresh();
 }
@@ -399,14 +399,14 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		dlg.m_pAvailableChildrenList = &availableResults;
 		dlg.m_Title = Title;
 
-		// Save Guid
-		GUID analyzerGuid = m_pCurrentAnalyzer->GetUniqueObjectID();
+		// Save id
+		uint32_t analyzerId = m_pCurrentAnalyzer->getObjectId();
 
 		// Call dialog...
 		dlg.DoModal();
 
 		// Restore the pointer (in case of Cancel)
-		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerGuid));
+		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
 	}
 }
 
@@ -421,9 +421,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::publishable, m_pCurrentAnalyzer->GetUniqueObjectID());
+		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::publishable, m_pCurrentAnalyzer->getObjectId());
 
-	SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
 	if (responseCmd.has_getobjectselectoritemsresponse())
 	{

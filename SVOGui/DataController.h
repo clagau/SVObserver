@@ -105,11 +105,11 @@ namespace SvOg
 
 		}
 
-		void SetTaskID(const GUID& rTaskID) { return m_Data.SetTaskID(rTaskID); }
-		const GUID& GetTaskID() const { return m_Data.GetTaskID(); }
-		void SetInspectionID(const GUID& rInspectionID) { return m_Data.SetInspectionID(rInspectionID); }
-		const GUID& GetInspectionID() const { return m_Data.GetInspectionID(); }
-		GUID GetObjectID(const GUID& rEmbeddedID) const { return m_Data.GetObjectID(rEmbeddedID); }
+		void SetTaskID(uint32_t taskID) { return m_Data.SetTaskID(taskID); }
+		uint32_t GetTaskID() const { return m_Data.GetTaskID(); }
+		void SetInspectionID(uint32_t inspectionID) { return m_Data.SetInspectionID(inspectionID); }
+		uint32_t GetInspectionID() const { return m_Data.GetInspectionID(); }
+		uint32_t GetObjectID(uint32_t rEmbeddedID) const { return m_Data.GetObjectID(rEmbeddedID); }
 	#pragma endregion Public Methods
 
 	#pragma region Member Variables

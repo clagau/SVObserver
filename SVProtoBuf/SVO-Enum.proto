@@ -701,7 +701,6 @@ enum EmbeddedIdEnum
 	StatNbrOfOccurancesEId = 70;
 	StatPercentOfOccurancesEId = 71;
 	StatEnabledFeaturesEId = 72;
-	StatVariableToMonitorEId = 73;
 	StatVariableNameToMonitorEId = 74;
 	UpperThresholdEId = 76;
 	LowerThresholdEId = 77;

@@ -191,7 +191,6 @@ public:
 	bool IsEnabled();
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
-	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

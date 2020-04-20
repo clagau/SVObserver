@@ -45,7 +45,7 @@ SVValueObjectClass<T>::SVValueObjectClass(SVObjectClass* POwner, int StringResou
 template <typename T>
 SVValueObjectClass<T>::~SVValueObjectClass()
 {
-	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
+	SVObjectManagerClass::Instance().UnregisterSubObject(getObjectId());
 }
 
 template <typename T>
@@ -67,7 +67,7 @@ bool SVValueObjectClass<T>::CreateObject(const SVObjectLevelCreateStruct& rCreat
 {
 	bool l_bOk = SVObjectClass::CreateObject(rCreateStructure);
 
-	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
+	SVObjectManagerClass::Instance().RegisterSubObject(getObjectId());
 	SetObjectAttributesAllowed(SvPb::dataDefinitionValue, SvOi::SetAttributeType::AddAttribute);	// derived classes need to reset this
 
 	return l_bOk;
@@ -76,7 +76,7 @@ bool SVValueObjectClass<T>::CreateObject(const SVObjectLevelCreateStruct& rCreat
 template <typename T>
 bool SVValueObjectClass<T>::CloseObject()
 {
-	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
+	SVObjectManagerClass::Instance().UnregisterSubObject(getObjectId());
 	return SVObjectClass::CloseObject();
 }
 
@@ -575,7 +575,7 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue) const
 	if(valueVector.size() == 0)
 	{
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 		Exception.Throw();
 	}
 }
@@ -763,7 +763,7 @@ T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
 		//This happens if the variant to convert is of a different type then this value object!
 		assert(false);
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		Exception.Throw();
 	}
 	return result;
@@ -788,7 +788,7 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 			//This happens if the variant to convert is of a different type then this value object!
 			assert(false);
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			Exception.Throw();
 		}
 		result = SvUl::getVectorFromOneDim<T>(rValue);
@@ -796,7 +796,7 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 		if (0 > result.size())
 		{
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 			Exception.Throw();
 		}
 	}

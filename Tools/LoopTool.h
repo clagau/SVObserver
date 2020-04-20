@@ -28,7 +28,7 @@ public:
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual long  setToolPosition(long ToolPosition) override;
 	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages) override;
-	virtual int InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject) override;
+	virtual int InsertBefore(uint32_t objectBeforeID, SVTaskObjectClass* pTaskObject) override;
 	virtual bool propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
 	virtual void goingOffline() override;

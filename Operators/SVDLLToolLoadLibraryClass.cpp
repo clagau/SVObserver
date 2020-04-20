@@ -549,7 +549,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetToolVersion(long* plVersionNumber)
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::RunTool(GUID tool, long* plStatus)
+HRESULT SVDLLToolLoadLibraryClass::RunTool(uint32_t toolId, long* plStatus)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -557,7 +557,7 @@ HRESULT SVDLLToolLoadLibraryClass::RunTool(GUID tool, long* plStatus)
 	{
 		try
 		{
-			l_hrOk = m_pfnRunTool(tool, plStatus);
+			l_hrOk = m_pfnRunTool(GUID{ toolId }, plStatus);
 		}
 		catch (...)
 		{
@@ -616,7 +616,7 @@ HRESULT SVDLLToolLoadLibraryClass::ShutDown()
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::InitializeRun(GUID tool, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavImputValues)
+HRESULT SVDLLToolLoadLibraryClass::InitializeRun(uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavImputValues)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -624,7 +624,7 @@ HRESULT SVDLLToolLoadLibraryClass::InitializeRun(GUID tool, long lImageArraySize
 	{
 		try
 		{
-			l_hrOk = m_pfnInitializeRun(tool, lImageArraySize, paStructs, lValueArraySize, pavImputValues);
+			l_hrOk = m_pfnInitializeRun(GUID{ toolId }, lImageArraySize, paStructs, lValueArraySize, pavImputValues);
 		}
 		catch (...)
 		{
@@ -644,7 +644,7 @@ HRESULT SVDLLToolLoadLibraryClass::InitializeRun(GUID tool, long lImageArraySize
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(GUID tool)
+HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(uint32_t toolId)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -652,7 +652,7 @@ HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(GUID tool)
 	{
 		try
 		{
-			l_hrOk = m_pfnUninitializeRun(tool);
+			l_hrOk = m_pfnUninitializeRun(GUID{ toolId });
 		}
 		catch (...)
 		{
@@ -779,7 +779,7 @@ HRESULT SVDLLToolLoadLibraryClass::DestroyResultValueDefinitionStructures(Result
 }
 
 
-HRESULT SVDLLToolLoadLibraryClass::SetInputValues(GUID tool, long lArraySize, VARIANT* paInputValues)
+HRESULT SVDLLToolLoadLibraryClass::SetInputValues(uint32_t toolId, long lArraySize, VARIANT* paInputValues)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -787,7 +787,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetInputValues(GUID tool, long lArraySize, VA
 	{
 		try
 		{
-			l_hrOk = m_pfnSetInputValues(tool, lArraySize, paInputValues);
+			l_hrOk = m_pfnSetInputValues(GUID{ toolId }, lArraySize, paInputValues);
 		}
 		catch (...)
 		{
@@ -840,7 +840,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetInputImageInformation(std::vector<InputIma
 
 
 
-HRESULT SVDLLToolLoadLibraryClass::GetResultValues(GUID tool, long lArraySize, VARIANT* paResultValues)
+HRESULT SVDLLToolLoadLibraryClass::GetResultValues(uint32_t toolId, long lArraySize, VARIANT* paResultValues)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -848,7 +848,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetResultValues(GUID tool, long lArraySize, V
 	{
 		try
 		{
-			l_hrOk = m_pfnGetResultValues(tool, lArraySize, paResultValues);
+			l_hrOk = m_pfnGetResultValues(GUID{ toolId }, lArraySize, paResultValues);
 		}
 		catch (...)
 		{
@@ -878,7 +878,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetMessageString(unsigned long ulErrorNumber,
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::ValidateValueParameter(GUID tool, long lParameterNumber, VARIANT vParameterValue)
+HRESULT SVDLLToolLoadLibraryClass::ValidateValueParameter(uint32_t toolId, long lParameterNumber, VARIANT vParameterValue)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -886,7 +886,7 @@ HRESULT SVDLLToolLoadLibraryClass::ValidateValueParameter(GUID tool, long lParam
 	{
 		try
 		{
-			l_hrOk = m_pfnValidateValueParameter(tool, lParameterNumber, vParameterValue);
+			l_hrOk = m_pfnValidateValueParameter(GUID{ toolId }, lParameterNumber, vParameterValue);
 		}
 		catch (...)
 		{
@@ -954,7 +954,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetNumberOfInputImages(long* plNumberOfInputI
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::SetMILInputImages(GUID tool, long lArraySize, long* paMILhandles)
+HRESULT SVDLLToolLoadLibraryClass::SetMILInputImages(uint32_t toolId, long lArraySize, long* paMILhandles)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -962,7 +962,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetMILInputImages(GUID tool, long lArraySize,
 	{
 		try
 		{
-			l_hrOk = m_pfnSetMILInputImages(tool, lArraySize, paMILhandles);
+			l_hrOk = m_pfnSetMILInputImages(GUID{ toolId }, lArraySize, paMILhandles);
 		}
 		catch (...)
 		{
@@ -973,7 +973,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetMILInputImages(GUID tool, long lArraySize,
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::SetHBITMAPInputImages(GUID tool, HBITMAP* paHandles)
+HRESULT SVDLLToolLoadLibraryClass::SetHBITMAPInputImages(uint32_t toolId, HBITMAP* paHandles)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -981,7 +981,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetHBITMAPInputImages(GUID tool, HBITMAP* paH
 	{
 		try
 		{
-			l_hrOk = m_pfnSetHBITMAPInputImages(tool, paHandles);
+			l_hrOk = m_pfnSetHBITMAPInputImages(GUID{ toolId }, paHandles);
 		}
 		catch (...)
 		{
@@ -992,7 +992,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetHBITMAPInputImages(GUID tool, HBITMAP* paH
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::GetHBITMAPResultImages(GUID tool, long lArraySize, HBITMAP* paHandles)
+HRESULT SVDLLToolLoadLibraryClass::GetHBITMAPResultImages(uint32_t toolId, long lArraySize, HBITMAP* paHandles)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1000,7 +1000,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetHBITMAPResultImages(GUID tool, long lArray
 	{
 		try
 		{
-			l_hrOk = m_pfnGetHBITMAPResultImages(tool, lArraySize, paHandles);
+			l_hrOk = m_pfnGetHBITMAPResultImages(GUID{ toolId }, lArraySize, paHandles);
 		}
 		catch (...)
 		{
@@ -1010,7 +1010,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetHBITMAPResultImages(GUID tool, long lArray
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::SetMILResultImages(GUID tool, long lArraySize, long* paMILhandles)
+HRESULT SVDLLToolLoadLibraryClass::SetMILResultImages(uint32_t toolId, long lArraySize, long* paMILhandles)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1018,7 +1018,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetMILResultImages(GUID tool, long lArraySize
 	{
 		try
 		{
-			l_hrOk = m_pfnSetMILResultImages(tool, lArraySize, paMILhandles);
+			l_hrOk = m_pfnSetMILResultImages(GUID{ toolId }, lArraySize, paMILhandles);
 		}
 		catch (...)
 		{
@@ -1029,7 +1029,7 @@ HRESULT SVDLLToolLoadLibraryClass::SetMILResultImages(GUID tool, long lArraySize
 	return l_hrOk;
 }
 
-HRESULT SVDLLToolLoadLibraryClass::GetResultImageDefinitions(GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions)
+HRESULT SVDLLToolLoadLibraryClass::GetResultImageDefinitions(uint32_t toolId, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1037,7 +1037,7 @@ HRESULT SVDLLToolLoadLibraryClass::GetResultImageDefinitions(GUID tool, long* pl
 	{
 		try
 		{
-			l_hrOk = m_pfnGetResultImageDefinitions(tool, plArraySize, ppaImageDefinitions);
+			l_hrOk = m_pfnGetResultImageDefinitions(GUID{ toolId }, plArraySize, ppaImageDefinitions);
 		}
 		catch (...)
 		{
@@ -1173,7 +1173,7 @@ HRESULT SVDLLToolLoadLibraryClass::destroyResultTableDefinitionStructures(Result
 
 
 
-HRESULT SVDLLToolLoadLibraryClass::getResultTables(GUID tool, long lArraySize, VARIANT* paResultValues)
+HRESULT SVDLLToolLoadLibraryClass::getResultTables(uint32_t toolId, long lArraySize, VARIANT* paResultValues)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1181,7 +1181,7 @@ HRESULT SVDLLToolLoadLibraryClass::getResultTables(GUID tool, long lArraySize, V
 	{
 		try
 		{
-			l_hrOk = m_pfnGetResultTables(tool, lArraySize, paResultValues);
+			l_hrOk = m_pfnGetResultTables(GUID{ toolId }, lArraySize, paResultValues);
 		}
 		catch (...)
 		{
@@ -1193,7 +1193,7 @@ HRESULT SVDLLToolLoadLibraryClass::getResultTables(GUID tool, long lArraySize, V
 }
 
 
-HRESULT SVDLLToolLoadLibraryClass::getResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[])
+HRESULT SVDLLToolLoadLibraryClass::getResultTablesMaxRowSize(uint32_t toolId, long  Size, int pRowSizes[])
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1201,7 +1201,7 @@ HRESULT SVDLLToolLoadLibraryClass::getResultTablesMaxRowSize(GUID tool, long  Si
 	{
 		try
 		{
-			l_hrOk = m_pfnGetResultTablesMaxRowSize(tool, Size, pRowSizes);
+			l_hrOk = m_pfnGetResultTablesMaxRowSize(GUID{ toolId }, Size, pRowSizes);
 		}
 		catch (...)
 		{
@@ -1214,7 +1214,7 @@ HRESULT SVDLLToolLoadLibraryClass::getResultTablesMaxRowSize(GUID tool, long  Si
 
 
 
-HRESULT SVDLLToolLoadLibraryClass::getResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[])
+HRESULT SVDLLToolLoadLibraryClass::getResultValuesMaxArraySize(uint32_t toolId, long  Size, int pArraySizes[])
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1222,7 +1222,7 @@ HRESULT SVDLLToolLoadLibraryClass::getResultValuesMaxArraySize(GUID tool, long  
 	{
 		try
 		{
-			l_hrOk = m_pfnGetResultValuesMaxArraySize(tool, Size, pArraySizes);
+			l_hrOk = m_pfnGetResultValuesMaxArraySize(GUID{ toolId }, Size, pArraySizes);
 		}
 		catch (...)
 		{
@@ -1232,6 +1232,4 @@ HRESULT SVDLLToolLoadLibraryClass::getResultValuesMaxArraySize(GUID tool, long  
 
 	return l_hrOk;
 }
-
-
 } //namespace SvOp

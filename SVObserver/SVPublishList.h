@@ -32,7 +32,7 @@ public:
 
 	void Refresh(SvIe::SVTaskObjectClass* pRootObject);
 	void Release(SvIe::SVTaskObjectClass* pRootObject);
-	bool RemovePublishedEntry( const SVGUID& RGuid );
+	bool RemovePublishedEntry(uint32_t id);
 
 	SVInspectionProcess* m_pInspection;
 

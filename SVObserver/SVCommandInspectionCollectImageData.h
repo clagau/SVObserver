@@ -25,7 +25,7 @@ struct SVCommandInspectionCollectImageData
 {
 #pragma region Constructor
 	SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject) = delete;
-	SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVGuidSet& p_rImageIds);
+	SVCommandInspectionCollectImageData(uint32_t inspectionId, const std::set<uint32_t>& p_rImageIds);
 
 	virtual ~SVCommandInspectionCollectImageData();
 #pragma endregion Constructor
@@ -34,19 +34,19 @@ struct SVCommandInspectionCollectImageData
 
 	bool empty() const;
 
-	const SVGUID& GetInspectionId() const;
-	const SVGuidSet& GetImageIds() const;
+	uint32_t GetInspectionId() const;
+	const std::set<uint32_t>& GetImageIds() const;
 
 	const SVIPProductStruct& GetProduct() const;
 
 protected:
 	HRESULT UpdateResults( SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData );
 
-	HRESULT UpdateBuffer(const SVGUID& rImageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
+	HRESULT UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
 
 private:
-	SVGUID m_InspectionId;
-	SVGuidSet m_ImageIds;
+	uint32_t m_InspectionId;
+	std::set<uint32_t> m_ImageIds;
 	SVIPProductStruct m_Product;
 };
 

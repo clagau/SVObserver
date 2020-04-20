@@ -21,9 +21,9 @@
 
 namespace SvOg
 {
-	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType, bool OnlyAboveImages)
-	: m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
+	ImageController::ImageController(uint32_t inspectionID, uint32_t taskObjectID, SvPb::SVObjectSubTypeEnum ImageSubType, bool OnlyAboveImages)
+	: m_InspectionID(inspectionID)
+	, m_TaskObjectID(taskObjectID)
 	, m_ImageSubType(ImageSubType)
 	, m_OnlyAboveImages(OnlyAboveImages)
 	{
@@ -39,18 +39,18 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_InspectionID);
+		pRequest->set_objectid(m_InspectionID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->mutable_typeinfo()->set_subtype(m_ImageSubType);
 		if (m_OnlyAboveImages)
 		{
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_isbeforetoolmethod()->mutable_toolid(), m_TaskObjectID);
+			pRequest->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
 		}
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 		{
-			m_availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+			m_availableList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 		}
 
 		if (S_OK == hr)
@@ -58,7 +58,7 @@ namespace SvOg
 			requestCmd.Clear();
 			responseCmd.Clear();
 			auto* pGetSpecialImageListRequest = requestCmd.mutable_getspecialimagelistrequest();
-			SvPb::SetGuidInProtoBytes(pGetSpecialImageListRequest->mutable_taskobjectid(), m_TaskObjectID);
+			pGetSpecialImageListRequest->set_taskobjectid(m_TaskObjectID);
 
 			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr && responseCmd.has_getspecialimagelistresponse())
@@ -74,7 +74,7 @@ namespace SvOg
 		return hr;
 	}
 
-	const SvUl::NameGuidList& ImageController::GetAvailableImageList() const 
+	const SvUl::NameObjectIdList& ImageController::GetAvailableImageList() const 
 	{ 
 		return m_availableList; 
 	}
@@ -84,35 +84,35 @@ namespace SvOg
 		return m_specialImageList;
 	}
 
-	SvUl::NameGuidList ImageController::GetResultImages() const
+	SvUl::NameObjectIdList ImageController::GetResultImages() const
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->mutable_defaultplushidden();
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 		{
-			return SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+			return SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 		}
 
 		return {};
 	}
 
-	const SvUl::InputNameGuidPairList& ImageController::GetInputImageList(const GUID& rInstanceID, size_t maxImages) const
+	const SvUl::InputNameObjectIdPairList& ImageController::GetInputImageList(uint32_t instanceID, size_t maxImages) const
 	{
-		GUID objectID = m_TaskObjectID;
-		if (GUID_NULL != rInstanceID)
+		uint32_t objectID = m_TaskObjectID;
+		if (SvDef::InvalidObjectId != instanceID)
 		{
-			objectID = rInstanceID;
+			objectID = instanceID;
 		}
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getinputsrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), objectID);
+		pRequest->set_objectid(objectID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->set_maxrequested(static_cast<int32_t>(maxImages));
 
@@ -122,7 +122,7 @@ namespace SvOg
 			m_connectedList.clear();
 			for (auto item : responseCmd.getinputsresponse().list())
 			{
-				SvUl::NameGuidPair tmp {item.objectname(), SvPb::GetGuidFromProtoBytes(item.objectid())};
+				SvUl::NameObjectIdPair tmp {item.objectname(), item.objectid()};
 				m_connectedList[item.inputname()] = tmp;
 			}
 		}
@@ -135,7 +135,7 @@ namespace SvOg
 		std::string m_name;
 	public:
 		explicit ByName(const std::string& rName) : m_name(rName) {}
-		bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
+		bool operator()(const SvUl::NameObjectIdPair& rVal) const { return rVal.first == m_name; }
 		bool operator()(const std::string& rVal) const { return rVal == m_name; }
 	};
 
@@ -147,10 +147,10 @@ namespace SvOg
 
 	IPictureDisp* ImageController::GetImage(const std::string& name, long& rWidth, long& rHeight) const
 	{ 
-		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
+		SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
-			return GetImage(it->second.ToGUID(), rWidth, rHeight);
+			return GetImage(it->second, rWidth, rHeight);
 		}
 		else
 		{
@@ -162,7 +162,7 @@ namespace SvOg
 				SvPb::InspectionCmdResponse responseCmd;
 				auto* pRequest = requestCmd.mutable_getimagerequest();
 				pRequest->set_imagename(*itVector);
-				SvPb::SetGuidInProtoBytes(pRequest->mutable_parentid(), m_TaskObjectID);
+				pRequest->set_parentid(m_TaskObjectID);
 
 				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 				if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
@@ -189,19 +189,19 @@ namespace SvOg
 		}
 	}
 
-	IPictureDisp* ImageController::GetImage(const GUID& rImageID) const 
+	IPictureDisp* ImageController::GetImage(uint32_t imageID) const
 	{
 		long Width, Height;
-		return GetImage(rImageID, Width, Height);
+		return GetImage(imageID, Width, Height);
 	}
 
-	IPictureDisp* ImageController::GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const 
+	IPictureDisp* ImageController::GetImage(uint32_t imageID, long& rWidth, long& rHeight) const
 	{
 		IPictureDisp* idisp {nullptr};
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getimagerequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_imageid(), rImageID);
+		pRequest->set_imageid(imageID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
@@ -227,22 +227,22 @@ namespace SvOg
 		return idisp;
 	}
 
-	HRESULT ImageController::ConnectToImage(const std::string& inputName, const std::string& name, const GUID& rInstanceID) const 
+	HRESULT ImageController::ConnectToImage(const std::string& inputName, const std::string& name, uint32_t instanceID) const
 	{ 
 		HRESULT hr = E_INVALIDARG;
-		GUID objectID = m_TaskObjectID;
-		if (GUID_NULL != rInstanceID)
+		uint32_t objectID = m_TaskObjectID;
+		if (SvDef::InvalidObjectId != instanceID)
 		{
-			objectID = rInstanceID;
+			objectID = instanceID;
 		}
-		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
+		SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
 			SvPb::InspectionCmdRequest requestCmd;
 			auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), objectID);
+			pRequest->set_objectid( objectID);
 			pRequest->set_inputname(inputName);
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_newconnectedid(), it->second);
+			pRequest->set_newconnectedid(it->second);
 			pRequest->set_objecttype(SvPb::SVImageObjectType);
 
 			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
@@ -253,12 +253,12 @@ namespace SvOg
 	HRESULT ImageController::SaveImage(const std::string& rImageName, const std::string& rFilename)
 	{
 		HRESULT hr = E_INVALIDARG;
-		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(rImageName));
+		SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(rImageName));
 		if (it != m_availableList.end())
 		{
 			SvPb::InspectionCmdRequest requestCmd;
 			auto* pRequest = requestCmd.mutable_saveimagerequest();
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), it->second);
+			pRequest->set_objectid(it->second);
 			pRequest->set_imagename(rFilename);
 
 			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
@@ -272,7 +272,7 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
@@ -287,7 +287,7 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_resetobjectrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (hr == S_OK && responseCmd.standardresponse().has_errormessages())
@@ -302,10 +302,10 @@ namespace SvOg
 		return SvCmd::RunOnceSynchronous(m_InspectionID);
 	}
 
-	SvDef::SVImageTypeEnum ImageController::GetImageType(const GUID& rImageID) const
+	SvDef::SVImageTypeEnum ImageController::GetImageType(uint32_t imageID) const
 	{
 		SvDef::SVImageTypeEnum Result{ SvDef::SVImageTypeEnum::SVImageTypeUnknown };
-		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*> (SvOi::getObject(rImageID));
+		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*> (SvOi::getObject(imageID));
 		if (nullptr != pImage)
 		{
 			Result = pImage->GetImageType();
@@ -313,10 +313,10 @@ namespace SvOg
 		return Result;
 	}
 
-	SVGUID getFirstResultImageId(const ImageController& rController)
+	uint32_t getFirstResultImageId(const ImageController& rController)
 	{
-		SVGUID retID = GUID_NULL;
-		const SvUl::NameGuidList& rImageList = rController.GetResultImages();
+		uint32_t retID = SvDef::InvalidObjectId;
+		const SvUl::NameObjectIdList& rImageList = rController.GetResultImages();
 		if (0 < rImageList.size())
 		{
 			retID = rImageList[0].second;

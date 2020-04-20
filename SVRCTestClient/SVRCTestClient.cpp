@@ -11,12 +11,10 @@
 
 #include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVProtobuf/ConverterHelper.h"
 #include "SVProtobuf/SVRC.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "WebsocketLibrary/SVRCClientServiceSettings.h"
 #include "WebsocketLibrary\RunRequest.inl"
@@ -91,10 +89,9 @@ void PrintTreeItems(const SvPb::ConfigTreeItem& rTreeItem, std::string& rData, c
 	for (int i = 0; i < rTreeItem.children_size(); i++)
 	{
 		const SvPb::ConfigTreeItem& rChildItem = rTreeItem.children(i);
-		SVGUID ObjectID(SvPb::GetGuidFromProtoBytes(rChildItem.objectid()));
 		std::string state = rChildItem.isvalid() ? _T("Valid\n") : _T("Invalid\n");
 		rData += rSpacing + SvUl::to_ansi(rChildItem.name()) + _T("\n");
-		rData += rSpacing + ObjectID.ToString() + _T("\n");
+		rData += rSpacing + std::to_string(rChildItem.objectid()) + _T("\n");
 		rData += rSpacing + std::to_string(rChildItem.position()) + _T("\n");
 		rData += rSpacing + pTypeDescriptor->FindValueByNumber(rChildItem.objecttype())->name() + _T("\n");
 		rData += rSpacing + pSubtypeDescriptor->FindValueByNumber(rChildItem.objectsubtype())->name() + _T("\n");
@@ -323,14 +320,14 @@ int main(int argc, char* argv[])
 				pGetObjectID->set_name("Inspections.Inspection_1");
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
 				SvPb::InspectionCmdResponse responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				std::string inspectionID = responseCmd.getobjectidresponse().objectid();
+				uint32_t inspectionID = responseCmd.getobjectidresponse().objectid();
 
 				requestCmd = SvPb::InspectionCmdRequest {};
 				pGetObjectID = requestCmd.mutable_getobjectidrequest();
 				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set");
 				responseCmd.Clear();
 				responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				std::string toolSetID = responseCmd.getobjectidresponse().objectid();
+				uint32_t toolSetID = responseCmd.getobjectidresponse().objectid();
 
 				requestCmd = SvPb::InspectionCmdRequest {};
 				pGetObjectID = requestCmd.mutable_getobjectidrequest();
@@ -357,7 +354,7 @@ int main(int argc, char* argv[])
 				pGetObjectID->set_name("Inspections.Inspection_1");
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> client(*pRpcClient);
 				SvPb::InspectionCmdResponse responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				std::string inspectionID = responseCmd.getobjectidresponse().objectid();
+				uint32_t inspectionID = responseCmd.getobjectidresponse().objectid();
 
 				requestCmd = SvPb::InspectionCmdRequest{};
 				pGetObjectID = requestCmd.mutable_getobjectidrequest();

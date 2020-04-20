@@ -60,22 +60,22 @@ SVCameraImageTemplate::~SVCameraImageTemplate()
 HRESULT SVCameraImageTemplate::UpdateCameraImage(LPCTSTR p_szCameraName)
 {
 	m_pCamera = nullptr;
-	m_digitizerObjectID.clear();
+	m_digitizerObjectID = SvDef::InvalidObjectId;
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName(p_szCameraName);
 
 	if (nullptr != l_pObject)
 	{
-		m_digitizerObjectID = l_pObject->GetUniqueObjectID();
+		m_digitizerObjectID = l_pObject->getObjectId();
 	}
 
 	return RebuildCameraImage();
 }
 
-HRESULT SVCameraImageTemplate::UpdateCameraImage(const SVGUID& p_CameraID)
+HRESULT SVCameraImageTemplate::UpdateCameraImage(uint32_t cameraID)
 {
 	m_pCamera = nullptr;
-	m_digitizerObjectID = p_CameraID;
+	m_digitizerObjectID = cameraID;
 
 	return RebuildCameraImage();
 }
@@ -83,7 +83,7 @@ HRESULT SVCameraImageTemplate::UpdateCameraImage(const SVGUID& p_CameraID)
 bool SVCameraImageTemplate::DestroyImage()
 {
 	m_pCamera = nullptr;
-	m_digitizerObjectID.clear();
+	m_digitizerObjectID = SvDef::InvalidObjectId;
 
 	bool bOk = SVImageClass::DestroyImage();
 
@@ -130,25 +130,6 @@ std::string SVCameraImageTemplate::GetCameraName() const
 	return l_String;
 }
 
-HRESULT SVCameraImageTemplate::GetObjectValue(const std::string& rValueName, _variant_t& rValue) const
-{
-	HRESULT hr = S_OK;
-
-	if (scDigitizerIDTag == rValueName)
-	{
-
-
-		rValue = m_digitizerObjectID.ToVARIANT();
-
-	}
-	else
-	{
-		hr = SVImageClass::GetObjectValue(rValueName, rValue);
-	}
-
-	return hr;
-}
-
 HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* PDataObject)
 {
 	HRESULT hr = S_FALSE;
@@ -160,7 +141,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* PDataObjec
 	{
 		for (int i = 0; i < static_cast<int> (ClassIDList.size()); i++)
 		{
-			m_digitizerObjectID = SVGUID{ClassIDList[i]};
+			m_digitizerObjectID = calcObjectId(ClassIDList[i]);
 		}
 	}
 	else
@@ -185,8 +166,7 @@ void SVCameraImageTemplate::Persist(SvOi::IObjectWriter& rWriter)
 	SVObjectAppClass::Persist(rWriter);
 	SVImageClass::PersistImageAttributes(rWriter);
 
-	_variant_t value;
-	value.SetString(m_digitizerObjectID.ToString().c_str());
+	_variant_t value = convertObjectIdToVariant(m_digitizerObjectID);
 	rWriter.WriteAttribute(scDigitizerIDTag, value);
 	value.Clear();
 
@@ -206,7 +186,7 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 	{
 		m_pCamera->GetImageInfo(&m_ImageInfo);
 
-		m_ImageInfo.SetOwnerImage(GetUniqueObjectID());
+		m_ImageInfo.SetOwnerImage(getObjectId());
 
 		m_LastUpdate = SvTl::GetTimeStamp();
 
@@ -226,9 +206,9 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 	SVVirtualCamera* pCamera(nullptr);
 	SVObjectClass* pOwner = GetParent();
 
-	if (!m_digitizerObjectID.empty())
+	if (SvDef::InvalidObjectId != m_digitizerObjectID)
 	{
-		pCamera = dynamic_cast<SVVirtualCamera*> (SvOi::getObject(m_digitizerObjectID.ToGUID()));
+		pCamera = dynamic_cast<SVVirtualCamera*> (SvOi::getObject(m_digitizerObjectID));
 	}
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
@@ -237,8 +217,8 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 	{
 		if (nullptr != pInspection)
 		{
-			GUID cameraGuid = pInspection->getFirstCamera();
-			SVVirtualCamera* pTempCamera = dynamic_cast<SVVirtualCamera*> (SvOi::getObject(cameraGuid));
+			uint32_t cameraId = pInspection->getFirstCamera();
+			SVVirtualCamera* pTempCamera = dynamic_cast<SVVirtualCamera*> (SvOi::getObject(cameraId));
 
 			if (nullptr != pTempCamera)
 			{
@@ -256,7 +236,7 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 			if (CreateBuffers(CameraImageInfo))
 			{
 				m_pCamera = pCamera;
-				m_digitizerObjectID = m_pCamera->GetUniqueObjectID();
+				m_digitizerObjectID = m_pCamera->getObjectId();
 			}
 
 			if (nullptr != pInspection)

@@ -53,10 +53,10 @@ BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-TADialogTableDefinesPage::TADialogTableDefinesPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+TADialogTableDefinesPage::TADialogTableDefinesPage(uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(TADialogTableDefinesPage::IDD)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
 {
 }
 
@@ -113,7 +113,7 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 				SvPb::InspectionCmdRequest requestCmd;
 				auto* pRequest= requestCmd.mutable_deleteobjectrequest();
 				pRequest->set_flag(SvPb::DeleteObjectRequest::Flag_ResetInspection);
-				SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_gridList[i - 1].second);
+				pRequest->set_objectid(m_gridList[i - 1].second);
 
 				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 				if (S_OK != hr)
@@ -132,14 +132,12 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 
 void TADialogTableDefinesPage::OnBnClickedMoveUp()
 {
-	SVGUID moveGuid = GUID_NULL;
-	SVGUID preGuid = GUID_NULL;
 	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 	if (Selection.GetMinRow() == Selection.GetMaxRow() && 1 < Selection.GetMinRow())
 	{
-		moveGuid = m_gridList[Selection.GetMinRow() - 1].second;
-		preGuid = m_gridList[Selection.GetMinRow() - 2].second;
-		MoveColumn(moveGuid, preGuid);
+		uint32_t moveId = m_gridList[Selection.GetMinRow() - 1].second;
+		uint32_t preId = m_gridList[Selection.GetMinRow() - 2].second;
+		MoveColumn(moveId, preId);
 		Selection.SetMinRow(Selection.GetMinRow() - 1);
 		Selection.SetMaxRow(Selection.GetMaxRow() - 1);
 		m_Grid.SetSelectedRange(Selection, true);
@@ -153,14 +151,14 @@ void TADialogTableDefinesPage::OnBnClickedMoveDown()
 	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 	if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && Selection.GetMinRow() + 1 < m_Grid.GetRowCount())
 	{
-		SVGUID moveGuid = m_gridList[Selection.GetMinRow() - 1].second;
-		SVGUID preGuid{GUID_NULL};
+		uint32_t moveIid = m_gridList[Selection.GetMinRow() - 1].second;
+		uint32_t preId{ SvDef::InvalidObjectId };
 		if (Selection.GetMinRow() + 3 < m_Grid.GetRowCount()) //3 because minRow is zero-based and last line in this grid is a empty line and should not be chosen
 		{
-			preGuid = m_gridList[Selection.GetMinRow() + 1].second;
+			preId = m_gridList[Selection.GetMinRow() + 1].second;
 		}
 
-		MoveColumn(moveGuid, preGuid);
+		MoveColumn(moveIid, preId);
 		Selection.SetMinRow(Selection.GetMinRow() + 1);
 		Selection.SetMaxRow(Selection.GetMaxRow() + 1);
 		m_Grid.SetSelectedRange(Selection, true);
@@ -171,11 +169,11 @@ void TADialogTableDefinesPage::OnBnClickedMoveDown()
 
 void TADialogTableDefinesPage::OnBnClickedButtonAdd()
 {
-	SVGUID addPreGuid = GUID_NULL;
+	uint32_t addPreId = SvDef::InvalidObjectId;
 	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 	if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && m_gridList.size() >= Selection.GetMaxRow())
 	{
-		addPreGuid = m_gridList[Selection.GetMinRow() - 1].second;
+		addPreId = m_gridList[Selection.GetMinRow() - 1].second;
 	}
 	int number = static_cast<int>(m_gridList.size()) + 1;
 	std::string name = SvUl::Format(_T("%s %d"), cEquationName, number);
@@ -186,7 +184,7 @@ void TADialogTableDefinesPage::OnBnClickedButtonAdd()
 		number++;
 		name = SvUl::Format(_T("%s %d"), cEquationName, number);
 	}
-	AddColumn(name, addPreGuid);
+	AddColumn(name, addPreId);
 
 	ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
 	FillGridControl();
@@ -249,7 +247,7 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 					{
 						SvPb::InspectionCmdRequest requestCmd;
 						auto* pRequest = requestCmd.mutable_setobjectnamerequest();
-						SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_gridList[pItem->iRow - 1].second.ToGUID());
+						pRequest->set_objectid(m_gridList[pItem->iRow - 1].second);
 						pRequest->set_objectname(newName.c_str());
 
 						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
@@ -320,7 +318,7 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_resetobjectrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 
 	HRESULT hResult = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (hResult == S_OK && responseCmd.has_standardresponse())
@@ -337,7 +335,7 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	{
 		requestCmd.Clear();
 		auto* pSetDefaultRequest = requestCmd.mutable_setdefaultinputsrequest();
-		SvPb::SetGuidInProtoBytes(pSetDefaultRequest->mutable_objectid(), m_InspectionID);
+		pSetDefaultRequest->set_objectid(m_InspectionID);
 
 		hResult = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 	}
@@ -377,14 +375,14 @@ void TADialogTableDefinesPage::FillGridControl()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVEquationObjectType);
 	pRequest->mutable_typeinfo()->set_subtype(SvPb::TableColumnEquationObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		m_gridList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+		m_gridList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 		m_Grid.SetRowCount(cHeaderSize + static_cast<int>(m_gridList.size()) + 1); //the last one is the empty line "----"
 		SvGcl::GV_ITEM Item;
 		Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
@@ -398,7 +396,7 @@ void TADialogTableDefinesPage::FillGridControl()
 			m_Grid.SetItem(&Item);
 
 			Item.col = cFormulaColumn;
-			FormulaController formulaController(m_InspectionID, m_TaskObjectID, m_gridList[i].second.ToGUID());
+			FormulaController formulaController(m_InspectionID, m_TaskObjectID, m_gridList[i].second);
 			Item.strText = formulaController.GetEquationText().c_str();
 			m_Grid.SetItem(&Item);
 			m_Grid.SetItemState(Item.row, cFormulaColumn, m_Grid.GetItemState(Item.row, cFormulaColumn) | GVIS_READONLY);
@@ -444,13 +442,13 @@ void TADialogTableDefinesPage::showContextMenu(CPoint point)
 	}
 }
 
-void TADialogTableDefinesPage::MoveColumn(SVGUID moveGuid, SVGUID preGuid)
+void TADialogTableDefinesPage::MoveColumn(uint32_t moveId, uint32_t preId)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	auto* pRequest = requestCmd.mutable_moveobjectrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_parentid(), m_TaskObjectID);
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), moveGuid);
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_movepreid(), preGuid);
+	pRequest->set_parentid(m_TaskObjectID);
+	pRequest->set_objectid(moveId);
+	pRequest->set_movepreid(preId);
 	pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_FriendList);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
@@ -488,14 +486,14 @@ void TADialogTableDefinesPage::UpdateEnableButtons()
 	}
 }
 
-HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, SVGUID addPreGuid)
+HRESULT TADialogTableDefinesPage::AddColumn(const std::string& rName, uint32_t addPreId)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	auto* pRequest = requestCmd.mutable_createobjectrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
+	pRequest->set_ownerid(m_TaskObjectID);
 	pRequest->set_classid(SvPb::TableColumnEquationId);
 	pRequest->mutable_friend_()->set_name(rName);
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_friend_()->mutable_preguid(), addPreGuid);
+	pRequest->mutable_friend_()->set_preid(addPreId);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 	if (S_OK != hr)

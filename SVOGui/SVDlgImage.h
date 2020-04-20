@@ -10,8 +10,7 @@
 //******************************************************************************
 
 #pragma once
-
-#include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions\ObjectDefines.h"
 
 namespace SvOg
 {
@@ -31,7 +30,7 @@ namespace SvOg
 		SVDlgImageClass();
 		virtual ~SVDlgImageClass();
 
-		void UpdateImageInfo( const SVGUID& inspectionId, const SVGUID& imageId);
+		void UpdateImageInfo(uint32_t inspectionId, uint32_t imageId);
 		void refresh();
 
 		CSize   GetDisplaySize();
@@ -61,8 +60,8 @@ namespace SvOg
 		double m_dFullSizeZoomFactorScrollX;
 		double m_dFullSizeZoomFactorScrollY;
 
-		SVGUID m_inspectionId;
-		SVGUID m_imageId;
+		uint32_t m_inspectionId = SvDef::InvalidObjectId;
+		uint32_t m_imageId = SvDef::InvalidObjectId;
 		bool mbInit;
 
 		SVDlgImageScrollBar m_sbHorizontal;

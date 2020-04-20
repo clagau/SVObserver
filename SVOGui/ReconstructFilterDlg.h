@@ -25,7 +25,7 @@ class ReconstructFilterDlg : public CDialog
 {
 	// Construction
 public:
-	ReconstructFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectId, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+	ReconstructFilterDlg(uint32_t inspectionID, uint32_t taskObjectId, uint32_t filterID, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~ReconstructFilterDlg();
 
 	HRESULT SetInspectionData();
@@ -60,8 +60,8 @@ protected:
 	void setImages();
 
 private:
-	const SVGUID& m_rInspectionID;
-	const SVGUID& m_filterID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_filterID;
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	Controller m_Values;
 	std::string m_seedImageName;

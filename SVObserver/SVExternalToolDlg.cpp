@@ -68,24 +68,23 @@ BEGIN_MESSAGE_MAP(SVExternalToolDlg, CPropertyPage)
     ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID& rToolObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
+SVExternalToolDlg::SVExternalToolDlg(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
 : CPropertyPage(IDD)
-, m_InspectionID(rInspectionID)
-, m_ToolObjectID(rToolObjectID)
-, m_TaskObjectID(GUID_NULL)
+, m_InspectionID(inspectionID)
+, m_ToolObjectID(toolObjectID)
 {
 	m_pSheet = pSheet;
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_ToolObjectID);
+	pRequest->set_ownerid(m_ToolObjectID);
 	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVExternalToolTaskObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getobjectidresponse())
 	{
-		m_TaskObjectID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
+		m_TaskObjectID = responseCmd.getobjectidresponse().objectid();
 	}
 
 	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
@@ -471,11 +470,11 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 		std::string Name( m_pTask->GetName() );
 		DisplayText = SvUl::Format( DisplayText.c_str() , Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
-		SVGuidSet ObjectCheckList;
+		std::set<uint32_t> ObjectCheckList;
 		SVObjectPtrVector::const_iterator Iter(list.begin());
 		for (; list.end() != Iter; ++Iter)
 		{
-			ObjectCheckList.insert( (*Iter)->GetUniqueObjectID());
+			ObjectCheckList.insert( (*Iter)->getObjectId());
 		}
 
 		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SvPb::SVToolObjectType, DisplayText.c_str() );

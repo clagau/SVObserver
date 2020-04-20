@@ -35,12 +35,12 @@ namespace SvOg
 #pragma endregion Declarations
 
 #pragma region Constructor
-	TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID ) 
+	TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( uint32_t inspectionID, uint32_t taskID ) 
 		: CPropertyPage(TADialogRingBufferParameterPage::IDD)
-		, m_InspectionID(rInspectionID)
-		, m_TaskObjectID(rTaskObjectID)
-		, m_objectSelector(rInspectionID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+		, m_InspectionID(inspectionID)
+		, m_TaskObjectID(taskID)
+		, m_objectSelector(inspectionID)
+		, m_Values{ SvOg::BoundValues{ inspectionID, taskID } }
 	{
 	}
 

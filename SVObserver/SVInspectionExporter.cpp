@@ -102,7 +102,7 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pO
 				SVObjectClass* pGlobalConstantObject = dynamic_cast<SVObjectClass*> ((*Iter).get());
 				if (nullptr != pGlobalConstantObject)
 				{
-					GlobalConstantSet.insert(pGlobalConstantObject->GetUniqueObjectID());
+					GlobalConstantSet.insert(pGlobalConstantObject->getObjectId());
 				}
 			}
 		}
@@ -243,9 +243,9 @@ static std::string RemovePath(const std::string& fname)
 	return  name;
 }
 
-static void PersistDocument(const SVGUID& inspectionGuid, SvOi::IObjectWriter& rWriter)
+static void PersistDocument(uint32_t inspectionId, SvOi::IObjectWriter& rWriter)
 {
-	SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc(inspectionGuid);
+	SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc(inspectionId);
 	if (pDoc)
 	{
 		rWriter.StartElement(SvXml::CTAG_SVIPDOC);
@@ -302,7 +302,7 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 				pObject->Persist(writer);
 
 				// Persist Document Views, Conditional History...
-				PersistDocument(pObject->GetUniqueObjectID(), writer);
+				PersistDocument(pObject->getObjectId(), writer);
 
 				writer.EndElement(); // end of BaseNode
 				writer.EndElement(); // end of Root Element

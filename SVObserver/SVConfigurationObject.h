@@ -268,10 +268,10 @@ public:
 	SVIOEntryHostStructPtr GetRaidErrorBit();
 
 	SVIOController* GetIOController() const;
-	SVGUID GetIOControllerID() const;
+	uint32_t GetIOControllerID() const;
 
 
-	SVGUID GetRemoteOutputController() const;
+	uint32_t GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput();
 	HRESULT ClearRemoteOutputUnUsedData();
@@ -280,7 +280,7 @@ public:
 	size_t GetRemoteOutputGroupItemCount( const std::string& rRemoteGroupID ) const;
 	HRESULT GetRemoteOutputItem( const std::string& rRemoteGroupID, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
 	SVRemoteOutputObject* GetFirstRemoteOutputObject( const std::string& rRemoteGroupID ) const;
-	HRESULT AddRemoteOutputItem( const std::string& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ );
+	HRESULT AddRemoteOutputItem(const std::string& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, uint32_t p_InputObjectID, const std::string& rPPQ);
 	HRESULT DeleteRemoteOutput( const std::string& rRemoteGroupID );
 	HRESULT DeleteRemoteOutputEntry( const std::string& rRemoteGroupID, SVRemoteOutputObject* p_pOutputObject);
 	HRESULT RemoteOutputValidateInputs();
@@ -362,23 +362,23 @@ public:
 
 	/// Return true, if adding of parameters of a tool from the active monitor list possible.
 	/// \param ppqName [in] PPQ-name.
-	/// \param rToolId [in] Tool ID.
+	/// \param toolId [in] Tool ID.
 	/// \returns bool
-	bool isAddParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const;
+	bool isAddParameter2MonitorListPossible(LPCTSTR ppqName, uint32_t toolId) const;
 	/// Return true, if removing of parameters of a tool from the active monitor list possible.
 	/// \param ppqName [in] PPQ-name.
-	/// \param rToolId [in] Tool ID.
+	/// \param toolId [in] Tool ID.
 	/// \returns bool
-	bool isRemoveParameter2MonitorListPossible(LPCTSTR ppqName, const SVGUID& rToolId) const;
+	bool isRemoveParameter2MonitorListPossible(LPCTSTR ppqName, uint32_t toolId) const;
 
 	/// Return true, if all requested parameter of a tool in the active monitor list.
 	/// \param ppqName [in] PPQ-name.
-	/// \param rToolId [in] Tool ID.
+	/// \param toolId [in] Tool ID.
 	/// \returns bool
-	bool areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const;
+	bool areParametersInMonitorList(LPCTSTR ppqName, uint32_t toolId) const;
 
-	SvStl::MessageContainerVector addParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId);
-	SvStl::MessageContainerVector removeParameter2MonitorList(LPCTSTR ppqName, const SVGUID& rToolId);
+	SvStl::MessageContainerVector addParameter2MonitorList(LPCTSTR ppqName, uint32_t toolId);
+	SvStl::MessageContainerVector removeParameter2MonitorList(LPCTSTR ppqName, uint32_t toolId);
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
@@ -483,7 +483,7 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const std::string& listName, MonitoredObjectList& rList );
 
-	bool getObjectsForMonitorList(const SVGUID& rToolId, SvPb::InspectionCmdResponse &rResponse) const;
+	bool getObjectsForMonitorList(uint32_t toolId, SvPb::InspectionCmdResponse &rResponse) const;
 
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;

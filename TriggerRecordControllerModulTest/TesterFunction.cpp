@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TesterFunction.h"
+#include "TrcTester.h"
 #include "LogClass.h"
 #include "TrcTesterConfiguration.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
@@ -226,7 +227,6 @@ bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvTrc
 bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, int sleepBetweenTrigger)
 {
 	bool retValue = true;
-	GUID guid = GUID_NULL;
 	auto& rTrController = SvTrc::getTriggerRecordControllerRWInstance();
 
 	for (int testDataId = 0; testDataId < rTestData.size(); testDataId++)
@@ -275,13 +275,10 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 
 				for (const auto& rImageList : rInspectionsData[i].m_imageFilesList)
 				{
-					UuidCreateSequential(&guid);
-
-					rTrController.addOrChangeImage(guid, specifyBufferFromImage(rImageList[0]));
+					rTrController.addOrChangeImage(getNextObjectId(), specifyBufferFromImage(rImageList[0]));
 				}
 				//add a special buffer which will be set only once and then should all the run the same.
-				UuidCreateSequential(&guid);
-				rTrController.addOrChangeImage(guid, specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0][0]));
+				rTrController.addOrChangeImage(getNextObjectId(), specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0][0]));
 
 				rTrController.finishResetTriggerRecordStructure();
 			}

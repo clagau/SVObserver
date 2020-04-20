@@ -186,7 +186,7 @@ private:
 	bool m_LUTAndLRSet;
 	SvTrc::ITriggerRecordControllerRW& m_rTRController;
 	SVMatroxBufferCreateStruct m_bufferStruct;
-	SVGUID m_guid = GUID_NULL;
+	uint32_t m_objectId = SvDef::InvalidObjectId;
 	int m_neededBuffer = 10;
 };
 

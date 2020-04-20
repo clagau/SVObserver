@@ -12,7 +12,7 @@ package SvPb;
 message ValueObject
 {
 	double value = 1;
-	bytes guid = 2;
+	uint32 objectid = 2;
 	int32 trPos = 3;	//The position in triggerRecord, but one-based (that mean trPos-1 is the pos in TR) because 0 = default and means not set.
 }
 
@@ -26,7 +26,7 @@ message Overlay
 	// Name of the overlay that is also displayed.
 	string name = 1;
 
-	bytes guid = 2;
+	uint32 objectid = 2;
 
 	// Hex color as abgr (a = alpha will not used yet)
 	ValueObject color = 3;

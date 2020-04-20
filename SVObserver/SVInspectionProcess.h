@@ -24,7 +24,6 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVStatusLibrary/SVRunStatus.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
 #include "InspectionEngine/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
@@ -67,7 +66,7 @@ public:
 	typedef std::unordered_map<std::string, SVObjectClass*> SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 
-	SVInspectionProcess( LPCSTR ObjectName );
+	explicit SVInspectionProcess( LPCSTR ObjectName );
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
 	virtual ~SVInspectionProcess();
 
@@ -86,8 +85,8 @@ public:
 
 	bool Run( SVRunStatusClass& rRunStatus );
 
-	void SetPPQIdentifier( const SVGUID& p_rPPQId );
-	const SVGUID& GetPPQIdentifier() const;
+	void SetPPQIdentifier(uint32_t PPQId);
+	uint32_t GetPPQIdentifier() const;
 	SVPPQObject* GetPPQ() const;
 
 	///Set sharedPointer for m_SlotManager
@@ -104,8 +103,8 @@ public:
 	virtual HRESULT RunOnce() override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;
 	virtual void BuildValueObjectMap() override;
-	GUID getFirstCamera() const override;
-	HRESULT addSharedCamera(GUID cameraID) override;
+	uint32_t getFirstCamera() const override;
+	HRESULT addSharedCamera(uint32_t cameraID) override;
 	HRESULT resetTool(SvOi::IObjectClass& rTool) override;
 	virtual HRESULT propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
@@ -183,7 +182,7 @@ public:
 
 	/// Update the main image of this product.
 	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-	void UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos);
+	void UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
 	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
@@ -242,7 +241,7 @@ public:
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual bool ConnectAllInputs() override;
-	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
+	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
 #pragma endregion Methods to replace processMessage
 
 	SVIOEntryHostStructPtrVector m_PPQInputs;
@@ -264,10 +263,10 @@ protected:
 	
 	struct WatchListElement 
 	{
-		WatchListElement(SVObjectReference& object, const SvSml::MonitorEntryPointer& mEntryPtr)
+		WatchListElement(const SVObjectReference& object, const SvSml::MonitorEntryPointer& mEntryPtr)
+			: ObjRef(object)
+			, MonEntryPtr(mEntryPtr)
 		{
-			ObjRef = object;
-			MonEntryPtr = mEntryPtr;
 		}
 		SVObjectReference  ObjRef;
 		SvSml::MonitorEntryPointer MonEntryPtr;
@@ -327,9 +326,9 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
-	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
+	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	bool RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );
+	bool RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );
 
 	void DestroyInspection();
 
@@ -341,7 +340,7 @@ protected:
 
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
 	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem );
-	bool ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVGuidSVCameraInfoStructMap& rCameraInfos);
+	bool ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
 
 	HRESULT LastProductCopySourceImagesTo( SVProductInfoStruct *p_psvProduct );
 
@@ -365,7 +364,7 @@ protected:
 	
 	void BuildWatchlist();
 
-	SVGUID m_PPQId;
+	uint32_t m_PPQId;
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 	long m_NotifyWithLastInspected;

@@ -145,7 +145,7 @@ bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -156,13 +156,13 @@ bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-bool SVImageArithmeticClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVImageArithmeticClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	const SvIe::SVImageClass* pImageA = SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo);
 	const SvIe::SVImageClass* pImageB = SvOl::getInput<SvIe::SVImageClass>(m_InputImageBInfo);
-	if ((nullptr != pImageA && rImageGuid == pImageA->GetUniqueObjectID()) || (nullptr != pImageB && rImageGuid == pImageB->GetUniqueObjectID()))
+	if ((nullptr != pImageA && imageId == pImageA->getObjectId()) || (nullptr != pImageB && imageId == pImageB->getObjectId()))
 	{
 		Result = true;
 	}
@@ -200,7 +200,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -212,7 +212,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -224,7 +224,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -236,7 +236,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -248,7 +248,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -326,7 +326,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -464,7 +464,7 @@ bool SVImageArithmeticClass::ValidateLocal(SvStl::MessageContainerVector *pError
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

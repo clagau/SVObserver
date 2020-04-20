@@ -2,13 +2,13 @@
 //* COPYRIGHT (c) 2016 by Seidenader, Markt Schwaben
 //* All Rights Reserved
 //******************************************************************************
- // This is the ObjectsListBox class for use by the GUI. It is a list box which is initialized by a name/GUID list.
+ // This is the ObjectsListBox class for use by the GUI. It is a list box which is initialized by a name/objectId list.
 //******************************************************************************
 
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary\NameObjectIdList.h"
 
 #pragma endregion Includes
 
@@ -20,14 +20,14 @@ namespace SvMc
 		ObjectsListBox();
 		virtual ~ObjectsListBox();
 
-		void init( const SvUl::NameGuidList& rList, const std::string& rEmptyListText );
+		void init( const SvUl::NameObjectIdList& rList, const std::string& rEmptyListText );
 
 		//************************************
-		/// Return the guid of an entry. If invalid index of the selected item has on GUID it return GUID_NULL.
+		/// Return the id of an entry. If invalid index of the selected item has on ID it return SvDef::InvalidObjectId.
 		/// \param index [in] Index of the entry
-		/// \returns SVGUID
+		/// \returns uint32_t
 		//************************************
-		SVGUID getGUID(int index) const;
+		uint32_t getObjectId(int index) const;
 
 		//{{AFX_VIRTUAL(ObjectsListBox)
 	protected:
@@ -41,6 +41,6 @@ namespace SvMc
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		SvUl::NameGuidList m_List;
+		SvUl::NameObjectIdList m_List;
 	};
 } //namespace SvMc

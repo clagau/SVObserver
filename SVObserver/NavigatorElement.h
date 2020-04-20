@@ -6,7 +6,7 @@
 //NavigatorElement holds information for one element in the navigator
 //******************************************************************************
 #pragma once
-#include <guiddef.h>
+#include "Definitions\ObjectDefines.h"
 
 enum class NavElementType
 {
@@ -28,8 +28,8 @@ struct NavigatorElement
 
 	std::string m_DisplayName;
 	std::string m_Comment; //< for non tool element
-	GUID m_Guid {GUID_NULL};
-	GUID m_OwnerGuid {GUID_NULL};
+	uint32_t m_objectId{ SvDef::InvalidObjectId };
+	uint32_t m_OwnerId {SvDef::InvalidObjectId};
 	NavElementType m_Type {NavElementType::Tool};
 	bool m_Collapsed {false};
 	bool m_Valid {true};

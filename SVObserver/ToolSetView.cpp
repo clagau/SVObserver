@@ -71,12 +71,12 @@ ToolSetView::~ToolSetView()
 }
 #pragma endregion Constructor
 
-void ToolSetView::SetSelectedTool(const SVGUID& rGuid)
+void ToolSetView::SetSelectedTool(uint32_t toolId)
 {
-	m_toolSetListCtrl.SetSelectedTool(rGuid);
+	m_toolSetListCtrl.SetSelectedTool(toolId);
 }
 
-SVGUID ToolSetView::GetSelectedTool() const
+uint32_t ToolSetView::GetSelectedTool() const
 {
 	return m_toolSetListCtrl.GetSelectedTool();
 }
@@ -205,10 +205,8 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			}
 			else if ((SVIPDoc::RefreshView == lHint) || (S_OK == pCurrentDocument->IsToolSetListUpdated()))
 			{
-			
-
-				SVGUID selectedToolID = GetSelectedTool();
-				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->GetUniqueObjectID(), pCurrentDocument->GetToolSet()->GetInspection()->GetUniqueObjectID());
+				uint32_t selectedToolID = GetSelectedTool();
+				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->getObjectId(), pCurrentDocument->GetToolSet()->GetInspection()->getObjectId());
 				SetSelectedTool(selectedToolID);
 				m_toolSetListCtrl.RebuildImages();
 			}
@@ -331,7 +329,7 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 			hasComment = false;
 			break;
 	}
-	SVGUID  SelectedGuid(NavElement->m_Guid);
+	uint32_t  SelectedId(NavElement->m_objectId);
 	POINT l_Point;
 	BOOL l_bMenuLoaded = false;
 	m_toolSetListCtrl.GetSelectedItemScreenPosition(l_Point);
@@ -339,9 +337,9 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	bool bRemoveAdjustToolPos = false;
 
 	// Get the tool comment...
-	if (!SelectedGuid.empty())
+	if (SvDef::InvalidObjectId != SelectedId)
 	{
-		SvTo::SVToolClass* pSelectedTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedGuid));
+		SvTo::SVToolClass* pSelectedTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedId));
 		if (nullptr != pSelectedTool)
 		{
 			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool*> (pSelectedTool);
@@ -406,8 +404,8 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	//check if on black icon clicked and if display the error message instead of TA-dialog
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-	if (!rGuid.empty())
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
+	if (SvDef::InvalidObjectId != toolId)
 	{
 		NMITEMACTIVATE* pActivate = reinterpret_cast<NMITEMACTIVATE *>(pNMHDR);
 		UINT uFlags;
@@ -415,7 +413,7 @@ void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		if ((uFlags & LVHT_ONITEMICON))
 		{
 			//display error box and return else go further with TA dialog.
-			if (m_toolSetListCtrl.displayErrorBox(rGuid))
+			if (m_toolSetListCtrl.displayErrorBox(toolId))
 			{
 				*pResult = 0;
 				return;
@@ -487,14 +485,14 @@ void ToolSetView::RenameItem()
 	{
 		return;
 	}
-	SVGUID toolId(NavElement->m_Guid);
+	uint32_t toolId(NavElement->m_objectId);
 	bool renameGrouping(false);
 	switch (NavElement->m_Type)
 	{
 
 		case NavElementType::SubTool:
 		case NavElementType::SubLoopTool:
-			if (GUID_NULL != toolId) // it's a Tool
+			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
 				renameGrouping = false;
@@ -502,7 +500,7 @@ void ToolSetView::RenameItem()
 			break;
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
-			if (GUID_NULL != toolId) // it's a Tool
+			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
 				renameGrouping = true;
@@ -610,7 +608,7 @@ void ToolSetView::OnSelectComment()
 	{
 		return;
 	}
-	SVGUID toolId(NavElement->m_Guid);
+	uint32_t toolId(NavElement->m_objectId);
 	switch (NavElement->m_Type)
 	{
 		case NavElementType::SubLoopTool:
@@ -627,7 +625,7 @@ void ToolSetView::OnSelectComment()
 
 }
 
-void ToolSetView::EditToolComment(SVGUID& rToolGuid)
+void ToolSetView::EditToolComment(uint32_t toolId)
 {
 	SVIPDoc* pCurrentDocument = GetIPDoc();
 	if (nullptr == pCurrentDocument)
@@ -639,12 +637,12 @@ void ToolSetView::EditToolComment(SVGUID& rToolGuid)
 	{
 		return;
 	}
-	if (!rToolGuid.empty())
+	if (SvDef::InvalidObjectId != toolId)
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
 
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rToolGuid }};
+		Controller Values {SvOg::BoundValues{ pInspection->getObjectId(), toolId }};
 		Values.Init();
 
 		// Get the tool comment...
@@ -662,8 +660,7 @@ void ToolSetView::EditToolComment(SVGUID& rToolGuid)
 
 void ToolSetView::OnSelectToolSetReference()
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(m_toolSetListCtrl.GetSelectedTool()));
 
 	if (nullptr != pTool)
 	{
@@ -678,10 +675,10 @@ void ToolSetView::OnSelectToolSetReference()
 
 void ToolSetView::OnSelectToolNormalize()
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-	if (!rGuid.empty())
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
+	if (SvDef::InvalidObjectId != toolId)
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass *>(SVObjectManagerClass::Instance().GetObject(toolId));
 		if (nullptr != pTool)
 		{
 			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool *>(pTool);
@@ -719,7 +716,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const std::string& rName) const
 	SvDef::StringVector msgList;
 	msgList.push_back(rName);
 	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-	INT_PTR res = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, GUID_NULL, MB_RETRYCANCEL);
+	INT_PTR res = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, SvDef::InvalidObjectId, MB_RETRYCANCEL);
 	return (IDRETRY == res);
 }
 
@@ -753,8 +750,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 	}
 	std::string Selection(NavElement->m_DisplayName);
-	SVGUID  SelectedTool(NavElement->m_Guid);
-	SVGUID  SelectedLoopTool(NavElement->m_OwnerGuid);
 	bool RenameSubTool(false);
 	CString Text;
 	pEdit->GetWindowText(Text);
@@ -785,10 +780,10 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 			case NavElementType::SubTool:
 			case NavElementType::SubLoopTool:
 				IsSubTool = true;
-				pLoopTool = dynamic_cast<SvTo::LoopTool*> (SVObjectManagerClass::Instance().GetObject(SelectedLoopTool));
+				pLoopTool = dynamic_cast<SvTo::LoopTool*> (SVObjectManagerClass::Instance().GetObject(NavElement->m_OwnerId));
 			case NavElementType::LoopTool:
 			case NavElementType::Tool:
-				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(SelectedTool));
+				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(NavElement->m_objectId));
 				if (nullptr == pTool)
 				{
 					return;
@@ -1076,7 +1071,7 @@ bool ToolSetView::enterSelectedEntry()
 	{
 		return false;
 	}
-	SVGUID toolId(NavElement->m_Guid);
+	uint32_t toolId(NavElement->m_objectId);
 
 	switch (NavElement->m_Type)
 	{
@@ -1085,7 +1080,7 @@ bool ToolSetView::enterSelectedEntry()
 		case NavElementType::SubTool:
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
-			if (!toolId.empty())
+			if (SvDef::InvalidObjectId != toolId)
 			{
 				pCurrentDocument->OnEditTool();
 				SetSelectedTool(toolId);
@@ -1097,7 +1092,7 @@ bool ToolSetView::enterSelectedEntry()
 			break;
 		default:
 			// Deselect all...
-			m_toolSetListCtrl.SetSelectedTool(SVGUID());
+			m_toolSetListCtrl.SetSelectedTool(SvDef::InvalidObjectId);
 			break;
 	}
 	return true;
@@ -1105,70 +1100,70 @@ bool ToolSetView::enterSelectedEntry()
 
 bool ToolSetView::hasCurrentToolErrors()
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-	if (!rGuid.empty())
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
+	if (SvDef::InvalidObjectId != toolId)
 	{
-		return !m_toolSetListCtrl.isToolValid(rGuid);
+		return !m_toolSetListCtrl.isToolValid(toolId);
 	}
 	return false;
 }
 
 void ToolSetView::displayFirstCurrentToolError()
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-	if (!rGuid.empty())
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
+	if (SvDef::InvalidObjectId != toolId)
 	{
-		m_toolSetListCtrl.displayErrorBox(rGuid);
+		m_toolSetListCtrl.displayErrorBox(toolId);
 	}
 }
 
 bool ToolSetView::isAddParameter2MonitorListPossible(LPCTSTR ppqName) const
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	if (nullptr != pConfig && !rGuid.empty())
+	if (nullptr != pConfig && SvDef::InvalidObjectId != toolId)
 	{
-		return pConfig->isAddParameter2MonitorListPossible(ppqName, rGuid);
+		return pConfig->isAddParameter2MonitorListPossible(ppqName, toolId);
 	}
 	return false;
 }
 
 bool ToolSetView::isRemoveParameter2MonitorListPossible(LPCTSTR ppqName) const
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	if (nullptr != pConfig && !rGuid.empty())
+	if (nullptr != pConfig && SvDef::InvalidObjectId != toolId)
 	{
-		return pConfig->isRemoveParameter2MonitorListPossible(ppqName, rGuid);
+		return pConfig->isRemoveParameter2MonitorListPossible(ppqName, toolId);
 	}
 	return false;
 }
 
-bool ToolSetView::areParametersInMonitorList(LPCTSTR ppqName, const SVGUID& rToolId) const
+bool ToolSetView::areParametersInMonitorList(LPCTSTR ppqName, uint32_t toolId) const
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	if (nullptr != pConfig && !rToolId.empty())
+	if (nullptr != pConfig && SvDef::InvalidObjectId != toolId)
 	{
-		return pConfig->areParametersInMonitorList(ppqName, rToolId);
+		return pConfig->areParametersInMonitorList(ppqName, toolId);
 	}
 	return false;
 }
 
 void ToolSetView::addParameter2MonitorList(LPCTSTR ppqName)
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	if (nullptr != pConfig && !rGuid.empty())
+	if (nullptr != pConfig && SvDef::InvalidObjectId != toolId)
 	{
-		SvStl::MessageContainerVector messages = pConfig->addParameter2MonitorList(ppqName, rGuid);
+		SvStl::MessageContainerVector messages = pConfig->addParameter2MonitorList(ppqName, toolId);
 		if (messages.size())
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -1179,13 +1174,13 @@ void ToolSetView::addParameter2MonitorList(LPCTSTR ppqName)
 
 void ToolSetView::removeParameter2MonitorList(LPCTSTR ppqName)
 {
-	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	uint32_t toolId = m_toolSetListCtrl.GetSelectedTool();
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	if (nullptr != pConfig && !rGuid.empty())
+	if (nullptr != pConfig && SvDef::InvalidObjectId != toolId)
 	{
-		pConfig->removeParameter2MonitorList(ppqName, rGuid);
+		pConfig->removeParameter2MonitorList(ppqName, toolId);
 	}
 }
 

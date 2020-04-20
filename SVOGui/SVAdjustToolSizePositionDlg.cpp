@@ -19,7 +19,6 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
@@ -62,17 +61,17 @@ inline bool ApproxEqual(double d1, double d2)
 }
 
 #pragma region Constructor
-SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, LPCTSTR Caption, CWnd* pParentWnd)
+SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(uint32_t inspectionId, uint32_t taskObjectId, LPCTSTR Caption, CWnd* pParentWnd)
 	: CDialog(SVAdjustToolSizePositionDlg::IDD, pParentWnd)
-	, m_toolTaskId(rTaskObjectID)
-	, m_ipId(rInspectionID)
+	, m_toolTaskId(taskObjectId)
+	, m_ipId(inspectionId)
 	, m_Title(Caption)
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
@@ -122,7 +121,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_gettoolsizeadjustparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_gettoolsizeadjustparameterresponse())
 	{
@@ -139,7 +138,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	responseCmd.Clear();
 	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
 	auto* pParamRequest = requestCmd.mutable_getobjectparametersrequest();
-	SvPb::SetGuidInProtoBytes(pParamRequest->mutable_objectid(), m_toolTaskId);
+	pParamRequest->set_objectid(m_toolTaskId);
 
 	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
@@ -262,7 +261,7 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+			pRequest->set_objectid(m_toolTaskId);
 			pRequest->mutable_setproperty()->set_propertyflag(eProperty);
 			pRequest->mutable_setproperty()->set_value(dValue);
 
@@ -314,7 +313,7 @@ void SVAdjustToolSizePositionDlg::OnCancel()
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	pRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(m_originalExtents);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr);
@@ -329,7 +328,7 @@ void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	pRequest->set_settoparent(true);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
@@ -346,7 +345,7 @@ void SVAdjustToolSizePositionDlg::OnBnClickedPropagate()
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::PropagateSizeAndPositionRequest* pRequest = requestCmd.mutable_propagatesizeandpositionrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_ipId);
+	pRequest->set_objectid(m_ipId);
 
 	SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr);
 }
@@ -409,7 +408,7 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_isallowedlocationrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	pRequest->set_location(eAction);
 	pRequest->set_direction(Direction);
 	
@@ -437,7 +436,7 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustTool(SvPb::SVExtentLocationPropertyEn
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	auto* pUpdateParam = pRequest->mutable_updatefromoutputspace();
 	pUpdateParam->set_action(eAction);
 	pUpdateParam->set_dx(dx);
@@ -469,7 +468,7 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	pRequest->mutable_setproperty()->set_propertyflag(SvPb::SVExtentPropertyRotationAngle);
 	pRequest->mutable_setproperty()->set_value(dCurrentAngle);
 
@@ -578,7 +577,7 @@ bool SVAdjustToolSizePositionDlg::UsePropagate()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_usepropagatesizeandpositionrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_ipId);
+	pRequest->set_objectid(m_ipId);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_usepropagatesizeandpositionresponse())
@@ -625,7 +624,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_toolTaskId);
+	pRequest->set_objectid(m_toolTaskId);
 	pRequest->set_shouldfromparent(true);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);

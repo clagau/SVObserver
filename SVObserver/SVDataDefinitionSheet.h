@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVGUID.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -30,7 +29,7 @@ class SVDataDefinitionSheet : public CPropertySheet
 
 #pragma region Constructor
 public:
-	SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const std::string& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0 );
+	SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const std::string& rInspectionName, uint32_t inspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVDataDefinitionSheet();
 #pragma endregion Constructor
 
@@ -56,7 +55,7 @@ private:
 private:
 	SVIPDoc* m_pDoc;
 	std::string m_InspectionName;		//Name of the Inspection
-	SVGUID m_InspectionID;				//UniqueID of the Inspection
+	uint32_t m_InspectionID;				//UniqueID of the Inspection
 	SvDef::StringVector m_ValueList;	//The selected value list 
 	SvDef::StringVector m_ImageList;	//The selected image list
 #pragma endregion Member variables

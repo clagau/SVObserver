@@ -48,7 +48,7 @@ void SVMathToolClass::init(void)
 
 	// Set up the friend
 	m_pMathEquation = new SvOp::SVMathEquationClass( this );
-	AddFriend( m_pMathEquation->GetUniqueObjectID() );
+	AddFriend( m_pMathEquation->getObjectId() );
 
 	// Setup the result
 	SvIe::SVClassInfoStruct resultClassInfo;
@@ -97,7 +97,7 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 {
 	bool isNoError = true;
 	SvOi::ParametersForML retList;
-	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.GetUniqueObjectID()));
+	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.getObjectId()));
 	if (nullptr != m_pToolConditional)
 	{
 		retList.push_back(m_pToolConditional->getResultData());
@@ -119,7 +119,7 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 
 	if (!isNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 

@@ -37,7 +37,6 @@ namespace SvOi
 	class IObjectWriter;
 }
 
-class SVGUID;
 class SVIPDoc;
 class SVDrawContext;
 class SVImageExtentClass;
@@ -52,11 +51,11 @@ public:
 
 	SVIPDoc* GetIPDoc() const;
 
-	void AttachToImage( const SVGUID& p_rImageId );
+	void AttachToImage(uint32_t imageId);
 	void AttachToImage( LPCTSTR p_imageName );
 	void DetachFromImage();
 
-	const SVGUID& GetImageID() const;
+	uint32_t GetImageID() const;
 
 	SvIe::SVImageClass* GetImage();
 	void GetImageRect( CRect &p_rect );
@@ -221,7 +220,7 @@ private:
 
 	ZoomHelper m_ZoomHelper;
 
-	SVGUID m_ImageId;
+	uint32_t m_ImageId = SvDef::InvalidObjectId;
 	std::string m_imageName;
 
 	IDirectDrawSurface7* m_pDDImageSurface;

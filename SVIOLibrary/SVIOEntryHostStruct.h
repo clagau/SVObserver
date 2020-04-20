@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -46,7 +45,7 @@ struct SVIOEntryHostStruct
 
 	SVIOObjectType m_ObjectType;
 
-	SVGUID m_IOId;
+	uint32_t m_IOId;
 
 	void setObject(SVObjectClass* pObject);
 	SVObjectClass* getObject() { return m_pObject; };

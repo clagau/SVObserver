@@ -64,7 +64,7 @@ SVSetupDialogManager::~SVSetupDialogManager()
 {
 }
 
-HRESULT SVSetupDialogManager::SetupDialog(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SetupDialog(SvPb::ClassIdEnum classId, uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
@@ -72,7 +72,7 @@ HRESULT SVSetupDialogManager::SetupDialog(SvPb::ClassIdEnum classId, const SVGUI
 
 	if (l_Iter != m_SetupDialogs.end())
 	{
-		l_Status = (l_Iter->second)(rObjectId, pParentWnd);
+		l_Status = (l_Iter->second)(objectId, pParentWnd);
 	}
 	else
 	{
@@ -91,7 +91,6 @@ SVSetupDialogManager::SVSetupDialogManager()
 		{SvPb::DPointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
 		{SvPb::DPointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
 		{SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog},
-		//{SVLinearAnalyzerClassGuid, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
 		{SvPb::LinearEdgeCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
 		{SvPb::LinearEdgePositionLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
 		{SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
@@ -112,17 +111,17 @@ SVSetupDialogManager::SVSetupDialogManager()
 {
 }
 
-HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
 	if (nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())))
 	{
-		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
+		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 
 		if (nullptr != pIPDoc)
 		{
@@ -201,7 +200,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
 			typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-			Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId }};
+			Controller Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
 			Values.Init();
 
 			Values.Set<long>(SvPb::BCTypeEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType());
@@ -231,7 +230,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 
 			Values.Commit();
 
-			Controller Result {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), pResult->GetUniqueObjectID() }};
+			Controller Result {SvOg::BoundValues{ pInspection->getObjectId(), pResult->getObjectId() }};
 			Result.Init();
 
 			Result.Set<bool>(SvPb::BCUseSingleMatchStringEId, bUseSingle ? true : false);
@@ -248,24 +247,24 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(const SVGUID& rO
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVBlobAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBlobAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVBlobAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBlobAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
 		if (nullptr != pAnalyzer->GetInspection())
 		{
-			SVGUID InspectionID(pAnalyzer->GetInspection()->GetUniqueObjectID());
+			uint32_t InspectionID(pAnalyzer->GetInspection()->getObjectId());
 			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(InspectionID);
 
 			if (nullptr != pIPDoc)
 			{
 				pIPDoc->SetModifiedFlag();
 
-				SvOg::SVBlobAnalyzeFeatureDialogClass dlg(InspectionID, rObjectId, pParentWnd);
+				SvOg::SVBlobAnalyzeFeatureDialogClass dlg(InspectionID, objectId, pParentWnd);
 
 				if (IDOK == dlg.DoModal())
 				{
@@ -294,11 +293,11 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(const SVGUID& rObje
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
 {
 	HRESULT l_Status = E_FAIL;
 
-	SvTo::SVColorToolClass* pTool = dynamic_cast<SvTo::SVColorToolClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
+	SvTo::SVColorToolClass* pTool = dynamic_cast<SvTo::SVColorToolClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pTool)
 	{
@@ -311,7 +310,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 
 		if (nullptr != pInspection)
 		{
-			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
+			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 			ASSERT(nullptr != pIPDoc);
 
 			if (nullptr != pIPDoc)
@@ -334,11 +333,11 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(const SVGUID& p_rObjec
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(const SVGUID& p_rObjectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVHistogramAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVHistogramAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
+	SvAo::SVHistogramAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVHistogramAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pAnalyzer)
 	{
@@ -391,11 +390,11 @@ HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(const SVGUID& 
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVLinearAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVLinearAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVLinearAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVLinearAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
@@ -405,7 +404,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 		// Get Complete Name up to the tool level...
 		Title = pAnalyzer->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
 
-		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
+		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 
 		SvOp::SVLinearEdgeProcessingClass *pEdgeA = pAnalyzer->GetEdgeA();
 		SvOp::SVLinearEdgeProcessingClass *pEdgeB = pAnalyzer->GetEdgeB();
@@ -419,12 +418,12 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 
 		if (nullptr != pEdgeA)
 		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeA->GetUniqueObjectID(), pEdgeA->getEdgeEmbeddedIds(), IDS_EDGE_A);
+			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeA->getObjectId(), pEdgeA->getEdgeEmbeddedIds(), IDS_EDGE_A);
 		}
 
 		if (nullptr != pEdgeB)
 		{
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->GetUniqueObjectID(), pEdgeB->GetUniqueObjectID(), pEdgeB->getEdgeEmbeddedIds(), IDS_EDGE_B);
+			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeB->getObjectId(), pEdgeB->getEdgeEmbeddedIds(), IDS_EDGE_B);
 		}
 
 		if (nullptr != pIPDoc && (nullptr != pPageA || nullptr != pPageB))
@@ -491,15 +490,15 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(const SVGUID& rOb
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer && SvPb::SVLuminanceAnalyzerObjectType == pAnalyzer->GetObjectSubType())
 	{
-		SvOg::SVLuminanceAnalyzerDlg dlg {pAnalyzer->GetInspection()->GetUniqueObjectID(), rObjectId};
+		SvOg::SVLuminanceAnalyzerDlg dlg {pAnalyzer->GetInspection()->getObjectId(), objectId};
 		dlg.DoModal();
 	}
 	else
@@ -510,11 +509,11 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(const SVGUID& 
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVOCVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVOCVAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVOCVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVOCVAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -523,11 +522,11 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 
 		if (nullptr != pOCVResult && nullptr != pInspection)
 		{
-			SvOg::SVOCVSheet dlg(pInspection->GetUniqueObjectID(), pOCVResult->GetUniqueObjectID());
+			SvOg::SVOCVSheet dlg(pInspection->getObjectId(), pOCVResult->getObjectId());
 
 			if (IDOK == dlg.DoModal())
 			{
-				SVIPDoc*pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->GetUniqueObjectID());
+				SVIPDoc*pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 
 				if (nullptr != pIPDoc)
 				{
@@ -554,7 +553,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 						bool bOk = pInspection->GetToolSet()->resetAllObjects();
 						if (bOk)
 						{
-							l_Status =  SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+							l_Status =  SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 						}
 						else
 						{
@@ -589,24 +588,24 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(const SVGUID& rObjec
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_FALSE;
 
-	SvAo::SVPixelAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVPixelAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
 		if (nullptr != pAnalyzer->GetInspection())
 		{
-			const SVGUID& rInspectionID = pAnalyzer->GetInspection()->GetUniqueObjectID();
-			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(rInspectionID);
+			uint32_t inspectionID = pAnalyzer->GetInspection()->getObjectId();
+			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(inspectionID);
 
 			if (nullptr != pIPDoc)
 			{
 				pIPDoc->SetModifiedFlag();
 
-				SVPixelAnalyzerDlg Dlg(rInspectionID, rObjectId);
+				SVPixelAnalyzerDlg Dlg(inspectionID, objectId);
 				Dlg.DoModal();
 				l_Status = S_OK;
 			}
@@ -615,10 +614,10 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(const SVGUID& rObj
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
-	SvAo::SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvAo::SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
@@ -633,7 +632,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rO
 
 		SetupDlgSheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		// Pages on this sheet
-		SvOg::SVPatternAnalyzerModelPage ModelPage(l_pAnalyzer->GetInspection()->GetUniqueObjectID(), l_pAnalyzer->GetUniqueObjectID());
+		SvOg::SVPatternAnalyzerModelPage ModelPage(l_pAnalyzer->GetInspection()->getObjectId(), l_pAnalyzer->getObjectId());
 		SVPatGeneralPageClass GeneralPage;
 		SVPatAdvancedPageClass AdvancedPage;
 
@@ -704,7 +703,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rO
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
 			typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-			Controller Values {SvOg::BoundValues{ pInspection->GetUniqueObjectID(), rObjectId }};
+			Controller Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
 			Values.Init();
 
 			// Save General Page
@@ -752,18 +751,18 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(const SVGUID& rO
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVResultClassSetupDialog(const SVGUID& rObjectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVResultClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SvOp::SVResultClass* l_pResult = dynamic_cast<SvOp::SVResultClass*> (SVObjectManagerClass::Instance().GetObject(rObjectId));
+	SvOp::SVResultClass* l_pResult = dynamic_cast<SvOp::SVResultClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pResult)
 	{
 		SvOp::SVRangeClass* pRange = l_pResult->GetResultRange();
 		if (pRange)
 		{
-			RangeXDialogClass dlg(pRange->GetInspection()->GetUniqueObjectID(), pRange->GetParent()->GetUniqueObjectID(), pRange->GetUniqueObjectID(), pParentWnd);
+			RangeXDialogClass dlg(pRange->GetInspection()->getObjectId(), pRange->GetParent()->getObjectId(), pRange->getObjectId(), pParentWnd);
 			if (IDOK != dlg.DoModal())
 			{
 				l_Status = S_FALSE;

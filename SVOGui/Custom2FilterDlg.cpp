@@ -65,7 +65,7 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	Custom2FilterDlg::Custom2FilterDlg( const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent )
+	Custom2FilterDlg::Custom2FilterDlg( uint32_t inspectionId, uint32_t filterId, CWnd* pParent )
 		: CDialog( Custom2FilterDlg::IDD, pParent )
 		, m_KernelWidth( 0 )
 		, m_KernelHeight( 0 )
@@ -77,9 +77,9 @@ namespace SvOg
 		, m_ClippingEnabled( false )
 		, m_EditCell( _T("") )
 		, m_GridStatus( _T("") )
-		,m_filterID(rFilterID)
-		,m_rInspectionID(rInspectionID)
-		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID))
+		,m_filterID(filterId)
+		,m_InspectionID(inspectionId)
+		,m_Values(SvOg::BoundValues(inspectionId, filterId))
 	{
 	}
 

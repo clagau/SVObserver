@@ -157,7 +157,6 @@ SVLightReferenceDialogPropertyPageClass::SVLightReferenceDialogPropertyPageClass
 
 	m_AttributeType=-1;
 	miCurrentBand = 0;
-	m_pAcquisition = nullptr;
 	m_strCaption = lpszTitle;
 	m_psp.pszTitle = m_strCaption;
 	m_psp.dwFlags |= PSP_USETITLE;

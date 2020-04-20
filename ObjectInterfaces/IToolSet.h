@@ -18,8 +18,6 @@ class ISVImage;
 class IValueObject;
 
 }
-//! Declaration is in #include "SVUtilityLibrary/SVGUID.h"
-class SVGUID;
 #pragma endregion Declarations
 
 
@@ -33,9 +31,9 @@ namespace SvOi
 
 		/**********
 			The method determines if it is previous to another in the list.
-			\param rToolID <in>: tool id
+			\param toolID <in>: tool id
 		***********/
-		virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const = 0;
+		virtual bool IsToolPreviousToSelected(uint32_t toolID ) const = 0;
 
 		/**********
 			The method retrieves the band 0 of a color tool else nullptr

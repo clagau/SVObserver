@@ -21,13 +21,13 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVOCVSheet::SVOCVSheet(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
+	SVOCVSheet::SVOCVSheet(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent /*=nullptr*/)
 	: CPropertySheet(IDS_OCV_PARAMETERS, pParent)
 	, m_GeneralParamsDlg{ *this }
 	, m_MatchStringParamsDlg{ *this }
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
 

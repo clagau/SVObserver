@@ -44,12 +44,12 @@ BEGIN_MESSAGE_MAP(SVExternalToolDetailsSheet, CPropertySheet)
 END_MESSAGE_MAP()
 
 
-SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd, UINT iSelectPage)
+SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( uint32_t inspectionId, uint32_t toolObjectId, uint32_t taskObjectId, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd, UINT iSelectPage)
 : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 , ISVCancel()
-, m_InspectionID(rInspectionID)
-, m_ToolObjectID(rToolObjectID)
-, m_TaskObjectID(rTaskObjectID)
+, m_InspectionID(inspectionId)
+, m_ToolObjectID(toolObjectId)
+, m_TaskObjectID(taskObjectId)
 , m_numImages(numImages)
 {
 	m_pSVExternalToolDlgParent = pParentWnd;

@@ -24,7 +24,7 @@ namespace SvOg
 	{
 	public:
 #pragma region Constructor
-		SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID, UINT captionID = 0);
+		SVToolAdjustmentDialogPassFailPageClass(uint32_t inspectionID, uint32_t taskID, UINT captionID = 0);
 		SVToolAdjustmentDialogPassFailPageClass();
 		virtual ~SVToolAdjustmentDialogPassFailPageClass();
 #pragma endregion Constructor

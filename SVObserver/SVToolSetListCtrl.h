@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #include "NavigatorElement.h"
 #pragma endregion Includes
 
@@ -49,7 +48,7 @@ public:
 	void RebuildImages();
 
 	void SetSingleSelect();
-	void setObjectIds(const SVGUID& toolsetId, const SVGUID& inspectionId);
+	void setObjectIds(uint32_t toolsetId, uint32_t inspectionId);
 
 	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
 	//pSelectedIndex gets the selected Index
@@ -58,8 +57,8 @@ public:
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
 
-	SVGUID GetSelectedTool() const;
-	void SetSelectedTool(const SVGUID& rGuid);
+	uint32_t GetSelectedTool() const;
+	void SetSelectedTool(uint32_t toolId);
 	
 	///Select the last element in the list if no Element was selected.
 	void EnsureOneIsSelected();
@@ -72,11 +71,11 @@ public:
 	bool AllowedToEdit() const;
 
 	/// Display an error message box with the first error, if the tool has errors.
-	/// \param rGuid [in] Guid of the tool.
+	/// \param toolId [in] Id of the tool.
 	/// \returns bool Return true, if this method has displayed an message box, else false.
-	bool displayErrorBox(const SVGUID& rGuid) const;
+	bool displayErrorBox(uint32_t toolId) const;
 
-	bool isToolValid(const SVGUID& tool) const;
+	bool isToolValid(uint32_t tool) const;
 protected:
 	ToolSetView* GetView();
 	const ToolSetView* GetView() const;
@@ -87,13 +86,13 @@ protected:
 
 	///Insert Delimiter ItemNo is firstIndex in Listcontrol
 	/// indent is indentation 
-	///rOwnerGuid is Guid for the ownwer 
-	int  InsertDelimiter(int itemNo, int Indend, NavElementType type, const GUID& rOwnerGuid);
+	///ownerId is Id for the ownwer 
+	int  InsertDelimiter(int itemNo, int Indend, NavElementType type, uint32_t ownerId);
 
 	///Insert all Subtools ItemNo is firstIndex in Listcontrol
 	/// indent is indentation 
-	///rGuid is Guid for the LoopTool
-	int InsertSubTools(int itemNo, int indent, const GUID& rGuid);
+	///id is id for the LoopTool
+	int InsertSubTools(int itemNo, int indent, uint32_t id);
 
 	void CollapseItem(int item);
 	void ExpandItem(int item);
@@ -110,8 +109,8 @@ protected:
 	int m_expandStateLoopToolInvalid = 0;
 	int m_collapseStateLoopToolInvalid = 0;
 
-	SVGUID m_ToolSetId;
-	SVGUID m_InspectionId;
+	uint32_t m_ToolSetId{ SvDef::InvalidObjectId };
+	uint32_t m_InspectionId{ SvDef::InvalidObjectId };
 	std::vector<std::shared_ptr<NavigatorElement>> m_NavigatorElementVector;
 };
 

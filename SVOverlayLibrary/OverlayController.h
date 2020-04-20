@@ -30,10 +30,10 @@ public:
 
 	/// Return the overlay depending of the image and filled with the live-data from the triggerRecord.
 	/// \param pTr [in] TriggerRecord.
-	/// \param inspectionId [in] Guid of the inspection.
-	/// \param imageId [in] Guid of the image.
+	/// \param inspectionId [in] Id of the inspection.
+	/// \param imageId [in] Id of the image.
 	/// \returns SvSyl::SVFuture<SvPb::OverlayDesc>
-	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlays(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, GUID inspectionId, GUID imageId);
+	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlays(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId);
 
 public:
 	boost::asio::io_context& m_io_context;
@@ -43,17 +43,17 @@ public:
 
 private:
 	/// Request the new structure of the overlay from the SVObserver.
-	/// \param inspectionId [in] Guid of the inspection.
-	/// \param imageId [in] Guid of the image.
+	/// \param inspectionId [in] id of the inspection.
+	/// \param imageId [in] id of the image.
 	/// \returns SvSyl::SVFuture<SvPb::OverlayDesc>
-	SvSyl::SVFuture<SvPb::OverlayDesc> restructOverlayDesc(GUID inspectionId, GUID imageId);
+	SvSyl::SVFuture<SvPb::OverlayDesc> restructOverlayDesc(uint32_t inspectionId, uint32_t imageId);
 
 	/// Return the overlay structure.
 	/// \param pTr [in] TriggerRecord.
-	/// \param inspectionId [in] Guid of the inspection.
-	/// \param imageId [in] Guid of the image.
+	/// \param inspectionId [in] id of the inspection.
+	/// \param imageId [in] id of the image.
 	/// \returns SvSyl::SVFuture<SvPb::OverlayDesc>
-	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlayStruct(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, GUID inspectionId, GUID imageId);
+	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlayStruct(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId);
 
 	struct OverlayDefStruct 
 	{
@@ -63,14 +63,7 @@ private:
 		SvPb::OverlayDesc m_overlayDesc;
 	};
 
-	struct GUIDHash
-	{
-		std::size_t operator()(const GUID& k) const
-		{
-			return k.Data1;
-		}
-	};
-	std::unordered_map <GUID, OverlayDefStruct, GUIDHash> m_overlayMap;
+	std::unordered_map <uint32_t, OverlayDefStruct> m_overlayMap;
 	std::mutex m_overlayMapMutex;
 };
 

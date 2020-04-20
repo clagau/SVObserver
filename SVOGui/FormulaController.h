@@ -27,8 +27,8 @@ class FormulaController : public SvOi::IFormulaController
 {
 #pragma region Constructor
 public:
-	FormulaController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectId, const SVGUID& rEquationObjectId);
-	FormulaController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo);
+	FormulaController(uint32_t rInspectionID, uint32_t rTaskObjectId, uint32_t rEquationObjectId);
+	FormulaController(uint32_t rInspectionID, uint32_t rTaskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo);
 #pragma endregion Constructor
 
 #pragma region Destructor
@@ -42,7 +42,7 @@ public:
 	virtual std::string GetEquationText() const override;
 	virtual std::string GetEquationName() const override;
 	virtual HRESULT SetEquationName(const std::string& rNewName) override;
-	virtual GUID GetTaskId() const override { return m_TaskObjectID; };
+	virtual uint32_t GetTaskId() const override { return m_TaskObjectID; };
 
 	virtual void BuildSelectableItems() override;
 
@@ -67,12 +67,12 @@ private:
 
 #pragma region Member Variables
 private:
-	const SVGUID m_InspectionID; // Instance ID of the Inspection
-	const SVGUID m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
+	const uint32_t m_InspectionID; // Instance ID of the Inspection
+	const uint32_t m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
 	const SvDef::SVObjectTypeInfoStruct m_Info;
 
 	bool m_isConditional;		//Note this variable must be above the variables m_Values and m_EquationValues due to initialization
-	SVGUID m_EquationID;		// Instance ID of the Equation
+	uint32_t m_EquationID;		// Instance ID of the Equation
 	SvPb::EmbeddedIdEnum m_EnableID;
 
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;

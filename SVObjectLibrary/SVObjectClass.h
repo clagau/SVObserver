@@ -16,13 +16,12 @@
 //Moved to precompiled header: #include <iterator>
 
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVOutObjectInfoStruct.h"
 #include "SVObjectInfoArrayClass.h"
-#include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
@@ -59,11 +58,11 @@ class SVObjectClass : public SvOi::IObjectClass
 public:
 	typedef std::deque< SVObjectClass* > SVObjectPtrDeque;
 
-	friend class SVObjectManagerClass;	// @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
-	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
+	friend class SVObjectManagerClass;	// @TODO - This needs to go - For access to m_outObjectInfo to assignUnique id on loading
+	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique id on loading
 
 	SVObjectClass();
-	SVObjectClass( LPCTSTR ObjectName );
+	explicit SVObjectClass( LPCTSTR ObjectName );
 	SVObjectClass( SVObjectClass* pOwner, int StringResourceID );
 
 	virtual ~SVObjectClass();
@@ -81,11 +80,10 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
-	virtual bool SetObjectOwner( SVObjectClass* pNewOwner );
-	virtual bool SetObjectOwner( const GUID& rNewOwnerGUID );
+	bool SetObjectOwner( SVObjectClass* pNewOwner );
+	bool SetObjectOwner(uint32_t newOwnerID );
 
-	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const;
-	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
+	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject);
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	/// Set status color to disabled (in SVTaskObjectClass), but also for all children
 	virtual void SetDisabled();
@@ -103,7 +101,7 @@ public:
 	bool ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
-	virtual bool isInputImage(const SVGUID& rImageGuid) const { return false; };
+	virtual bool isInputImage(uint32_t imageId) const { return false; };
 
 	virtual void ResetName();
 	virtual void SetObjectName( LPCTSTR ObjectName );
@@ -111,10 +109,10 @@ public:
 	void SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName);
 
 	/// Add the object to the friend list.
-	/// \param rFriendGUID [in] Guid of the object
-	/// \param rAddPreGuid [in] The new object will be added before this object. Default: GUID_NULL This means: it will be added at the end.
+	/// \param rFriendID [in] id of the object
+	/// \param rAddPreid [in] The new object will be added before this object. Default: SvDef::InvalidObjectId This means: it will be added at the end.
 	/// \returns bool
-	bool AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = GUID_NULL );
+	bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId);
 	void DestroyFriends();
 
 	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 
@@ -154,20 +152,20 @@ public:
 	virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const override;
 	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override;
 	virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const override;
-	virtual const SVGUID& GetParentID() const override;
+	virtual uint32_t GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
-	virtual const SVGUID& GetUniqueObjectID() const override;
+	virtual uint32_t getObjectId() const override;
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override;
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;
+	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& rValue, int Index = -1) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& rValues) const override { return E_NOTIMPL; };
@@ -189,11 +187,11 @@ public:
 	/// \returns bool
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) { return false; };
 
-	/// Overwrite GUID of an embedded object.
-	/// \param rUniqueID [in] New Guid of the object
+	/// Overwrite ID of an embedded object.
+	/// \param rUniqueID [in] New id of the object
 	/// \param embeddedID [in] Embedded Id of the object to overwrite
 	/// \returns SVObjectClass* Pointer to the overwritten object, nullptr if not found.
-	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb::EmbeddedIdEnum embeddedID);
+	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID);
 
 	/// Get the input list combined also from children and if required from friends.
 	/// \param inputList [in,out] Add the new input object to the end of the list.
@@ -205,20 +203,20 @@ public:
 	/// \param rOldName [in] Old name of the object.
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) {};
 
-	/// Replace the current object with new guids etc.
+	/// Replace the current object with new ids etc.
 	/// \param pObject [in,out] Object t be removed.
-	/// \param rNewGuid [in] The mew GUID of the object
+	/// \param rNewid [in] The mew ID of the object
 	/// \returns bool
-	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) { return false; };
+	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) { return false; };
 #pragma endregion Methods to replace processMessage
 
 protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
-	virtual SVObjectClass* UpdateObject( const GUID& rFriendGuid, SVObjectClass* pObject, SVObjectClass* pNewOwner );
+	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner );
 
-	virtual HRESULT RemoveObjectConnection( const GUID& rObjectID );
+	virtual HRESULT RemoveObjectConnection(uint32_t objectID );
 
 	/// Call method createAllObjects for the child object with the right create struct.
 	/// \param rChildObject [in]

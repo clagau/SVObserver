@@ -24,7 +24,6 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVCameraInfoStruct.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
@@ -50,7 +49,7 @@ enum SVProductInspectedState
 class SVPPQObject;
 class SVInspectionProcess;
 
-typedef std::vector<std::pair<GUID, _variant_t>> GuidVariantPairVector;
+typedef std::vector<std::pair<uint32_t, _variant_t>> ObjectIdVariantPairVector;
 
 struct SVOutputsInfoStruct 
 {
@@ -69,7 +68,7 @@ struct SVOutputsInfoStruct
 	double m_EndDataValidDelay {0.0};
 	double m_BeginProcess {0.0};
 	double m_EndProcess {0.0};
-	GuidVariantPairVector m_Outputs;
+	ObjectIdVariantPairVector m_Outputs;
 };
 
 
@@ -117,7 +116,7 @@ struct SVInspectionInfoStruct
 	bool m_bReject = false;
 };
 
-typedef std::map< SVGUID, SVInspectionInfoStruct > SVGUIDSVInspectionInfoStructMap;
+typedef std::map< uint32_t, SVInspectionInfoStruct > ObjectIdSVInspectionInfoStructMap;
 
 
 struct SVProductInfoStruct 
@@ -154,8 +153,8 @@ struct SVProductInfoStruct
 	void SetProductComplete();
 	
 	/// Set the TriggerRecord from write to readOnly for the required IP.
-	/// \param rIPGuid [in] Guid of the IP. If GUID_NULL then for inspection will done the action.
-	void setInspectionTriggerRecordComplete(const SVGUID& rIPGuid);
+	/// \param iPId [in] id of the IP. If SvDef::InvalidObjectId then for inspection will done the action.
+	void setInspectionTriggerRecordComplete(uint32_t iPId);
 
 	mutable std::string m_ProductState;
 	bool m_triggered;
@@ -167,8 +166,8 @@ struct SVProductInfoStruct
 	SVOutputsInfoStruct m_outputsInfo;
 	SVPPQObject* m_pPPQ = nullptr;
 
-	SvIe::SVGuidSVCameraInfoStructMap m_svCameraInfos;
-	SVGUIDSVInspectionInfoStructMap	m_svInspectionInfos;
+	SvIe::SVObjectIdSVCameraInfoStructMap m_svCameraInfos;
+	ObjectIdSVInspectionInfoStructMap	m_svInspectionInfos;
 	long m_monitorListSMSlot; // Shared Memory
 
 protected:
@@ -177,9 +176,9 @@ protected:
 
 /// This function copy a productInfo to another except from the IP-Info. It will only one IPInfo copied and the triggerRecordWriter will be moved.
 /// \param sourceProduct [in] Source data.
-/// \param rIPGuid [in] GUID of the inspection 
+/// \param iPId [in] ID of the inspection 
 /// \returns SVProductInfoStruct
-SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, const SVGUID& rIPGuid);
+SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, uint32_t iPId);
 
 struct SVInspectionNameUpdate
 {
@@ -195,24 +194,24 @@ struct SVInspectionNameUpdate
 struct SVRemoveImages
 {
 	SVRemoveImages();
-	explicit SVRemoveImages( const SVGuidSet& p_rImages );
+	explicit SVRemoveImages( const std::set<uint32_t>& p_rImages );
 	explicit SVRemoveImages( const SVRemoveImages& p_rObject );
 
 	virtual ~SVRemoveImages();
 
-	SVGuidSet m_Images;
+	std::set<uint32_t> m_Images;
 
 };
 
 struct SVRemoveValues
 {
 	SVRemoveValues();
-	explicit SVRemoveValues( const SVGuidSet& p_rValues );
+	explicit SVRemoveValues( const std::set<uint32_t>& p_rValues );
 	explicit SVRemoveValues( const SVRemoveValues& p_rObject );
 
 	virtual ~SVRemoveValues();
 
-	SVGuidSet m_Values;
+	std::set<uint32_t> m_Values;
 
 };
 

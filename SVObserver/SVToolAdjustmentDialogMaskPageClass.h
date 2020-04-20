@@ -22,7 +22,6 @@
 #include "SVOGui\ValuesAccessor.h"
 #include "SVOGui\DataController.h"
 #include "SVOGui\MaskController.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 namespace SvMc
@@ -35,7 +34,7 @@ class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
 
 public:
-	SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID);
+	SVToolAdjustmentDialogMaskPageClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId);
 	virtual ~SVToolAdjustmentDialogMaskPageClass();
 
 protected:
@@ -84,7 +83,7 @@ protected:
 	CEdit m_ebFillColor;
 	SvMc::SVEnumerateComboClass m_cbFillOptions;
 	CButton	m_btnFillColorMore;
-	SvMc::AvailableObjectListComboBox<SVGUID> m_cbAvailableSourceImageList;
+	SvMc::AvailableObjectListComboBox<uint32_t> m_cbAvailableSourceImageList;
 	SvMc::SVEnumerateComboClass m_cbMaskOperator;
 	SvOg::PictureDisplay m_dialogImage;
 	BOOL m_bActivateMask;
@@ -110,8 +109,8 @@ private:
 	void RetreiveCurrentlySelectedImageNames();
 
 	static SVToolAdjustmentDialogMaskPageClass* m_pThis;
-	const SVGUID m_InspectionID;
-	const SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_TaskObjectID;
 	SvOg::ImageController m_ImageController;
 	ValueController m_Values;
 	SvOg::MaskController m_maskController;

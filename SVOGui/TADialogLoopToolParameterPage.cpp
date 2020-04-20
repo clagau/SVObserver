@@ -30,12 +30,12 @@ BEGIN_MESSAGE_MAP(TADialogLoopToolParameterPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-TADialogLoopToolParameterPage::TADialogLoopToolParameterPage(const GUID& rInspectionID, const GUID& rTaskObjectID)
+TADialogLoopToolParameterPage::TADialogLoopToolParameterPage(uint32_t inspectionID, uint32_t taskObjectID)
 	: CPropertyPage(TADialogLoopToolParameterPage::IDD)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_Values {SvOg::BoundValues{ rInspectionID, rTaskObjectID }}
-	, m_objectSelector(rInspectionID)
+	, m_InspectionID(inspectionID)
+	, m_TaskObjectID(taskObjectID)
+	, m_Values {SvOg::BoundValues{ inspectionID, taskObjectID }}
+	, m_objectSelector(inspectionID)
 {
 }
 
@@ -175,7 +175,7 @@ void TADialogLoopToolParameterPage::resetInspection()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_resetobjectrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvStl::MessageContainerVector messages;

@@ -30,5 +30,5 @@ public:
 	virtual HRESULT Read( _variant_t& p_rValue ) = 0;
 };
 
-typedef std::map< SVGUID, SVInputObject* > SVGuidSVInputObjectPtrMap;
+typedef std::map< uint32_t, SVInputObject* > ObjectIdSVInputObjectPtrMap;
 

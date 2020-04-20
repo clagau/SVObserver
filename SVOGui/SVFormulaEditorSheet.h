@@ -22,15 +22,14 @@ namespace SvDef
 struct SVObjectTypeInfoStruct;
 }
 
-class SVGUID;
 
 namespace SvOg
 {
 	class SVFormulaEditorSheetClass : public CPropertySheet
 	{
 	public:
-		SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-		SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+		SVFormulaEditorSheetClass(uint32_t inspectionId, uint32_t taskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+		SVFormulaEditorSheetClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t equationId, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 		SVFormulaEditorSheetClass(SvOi::IFormulaControllerPtr formulaController, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 		virtual ~SVFormulaEditorSheetClass();

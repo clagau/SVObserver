@@ -12,7 +12,7 @@
 #include "SVProtobuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
@@ -29,8 +29,6 @@ namespace SvStl
 }
 //! Declaration is in #include SVObjectLibrary/SVOutputInfoListClass.h
 class SVOutputInfoListClass;
-//! Declaration is in #include "SVUtilityLibrary/SVGUID.h"
-class SVGUID;
 #pragma endregion Declarations
 
 namespace SvOi
@@ -59,21 +57,21 @@ namespace SvOi
 		/// Get the List of Input Images to this Task Object.
 		/// \param rList <in> The List to be populated.
 		/// \param maxEntries <in> maximum number of entries requested.
-		virtual void GetInputImages(SvUl::InputNameGuidPairList& rList, int maxEntries) = 0;
+		virtual void GetInputImages(SvUl::InputNameObjectIdPairList& rList, int maxEntries) = 0;
 
 		/// Get the List of inputs (and connected object) to this Task Object.
 		/// \param rList [in,out] The List to be populated.
 		/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs.
 		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
-		virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) = 0;
+		virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) = 0;
 
 		/// Connects an input to an object.
 		/// \param rInputName [in] Name of the input.
-		/// \param rNewID [in] Guid of the new object connected to the input
+		/// \param newID [in] id of the new object connected to the input
 		/// \param objectType [in] Type of the new object (this type will be checked if it fit), if not set, it will not check and also tried to connected.
 		/// \returns HRESULT
-		virtual HRESULT ConnectToObject(const std::string& rInputName, const SVGUID& rNewID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) = 0;
+		virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) = 0;
 
 		/// Gets the list of error messages happen in offline modus and will be reset if object is reset.
 		/// \return a const reference to the message list
@@ -105,12 +103,12 @@ namespace SvOi
 		virtual SvStl::MessageContainer getFirstTaskMessage() const = 0;
 
 		/// Get a list of special images from this task. If this task has no special images this list is empty.
-		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
+		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no ID. An example for special image is the model in the pattern analyzer.
 		/// \returns a list of names of available special image of this task.
 		virtual SvDef::StringVector getSpecialImageList() const = 0;
 
 		/// Get a special image from this task. A list of available images can be get by getSpecialImageList.
-		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
+		/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no ID. An example for special image is the model in the pattern analyzer.
 		/// \param rName [in] The name of the special image of this task.
 		/// \param rImagePtr [out] Pointer to the image.
 		/// \returns bool return true if setting of this image was succeeded.
@@ -119,8 +117,8 @@ namespace SvOi
 		virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const = 0;
 
 		// Get the embedded list of the task object
-		/// \returns a list of embedded GUIDs
-		virtual SVGuidVector getEmbeddedList() const = 0;
+		/// \returns a list of embedded IDs
+		virtual std::vector<uint32_t> getEmbeddedList() const = 0;
 
 		virtual bool isErrorMessageEmpty() const = 0;
 	};

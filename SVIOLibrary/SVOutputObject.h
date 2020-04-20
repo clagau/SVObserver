@@ -34,5 +34,5 @@ public:
 	virtual bool GetCombinedValue() const = 0;
 };
 
-typedef std::map< SVGUID, SVOutputObject* > SVGuidSVOutputObjectPtrMap;
+typedef std::map< uint32_t, SVOutputObject* > ObjectIdSVOutputObjectPtrMap;
 

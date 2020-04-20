@@ -43,10 +43,10 @@ constexpr int DontCareImageTab = 2;
 namespace SvOg
 {
 	#pragma region Constructor
-	SVPatternAnalyzerModelPage::SVPatternAnalyzerModelPage(const SVGUID& rInspectionID, const SVGUID& rAnalyzerID)
+	SVPatternAnalyzerModelPage::SVPatternAnalyzerModelPage(uint32_t inspectionID, uint32_t analyzerID)
 	: CPropertyPage(SVPatternAnalyzerModelPage::IDD)
-	, m_rInspectionID(rInspectionID)
-	, m_rAnalyzerID(rAnalyzerID)
+	, m_InspectionID(inspectionID)
+	, m_AnalyzerID(analyzerID)
 	, m_strModelName( _T("") )
 	, m_strDontCareName( _T("") )
 	, m_sourceImageWidth( 100 )
@@ -61,9 +61,8 @@ namespace SvOg
 	, m_nYPos( 0 )
 	, m_lModelWidth( m_sourceImageWidth/2 )
 	, m_lModelHeight( m_sourceImageHeight/2 )
-	, m_AnalyzerImageGUID( GUID_NULL )
-	, SvOg::ImageController(rInspectionID, rAnalyzerID)
-	, m_values{ SvOg::BoundValues{ rInspectionID, rAnalyzerID } }
+	, SvOg::ImageController(inspectionID, analyzerID)
+	, m_values{ SvOg::BoundValues{ inspectionID, analyzerID } }
 	{
 	}
 
@@ -93,7 +92,7 @@ namespace SvOg
 			//Now that we have caught the exception we would like to display it
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10184, GUID_NULL, MB_YESNO ); 
+			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10184, SvDef::InvalidObjectId, MB_YESNO);
 			if (IDYES == result)
 			{
 				m_bAllowExit = false;
@@ -232,14 +231,14 @@ namespace SvOg
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest= requestCmd.mutable_createmodelrequest();
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_patternanalyzerid(), m_rAnalyzerID);
+			pRequest->set_patternanalyzerid(m_AnalyzerID);
 			pRequest->set_posx(m_nXPos);
 			pRequest->set_posy(m_nYPos);
 			pRequest->set_modelwidth(m_lModelWidth);
 			pRequest->set_modelheight(m_lModelHeight);
 			pRequest->set_filename(m_strModelName);
 
-			HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK == hr)
 			{
 				SvStl::MessageContainerVector ErrorMessages;
@@ -247,7 +246,7 @@ namespace SvOg
 				if (!ErrorMessages.empty())
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_rAnalyzerID );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_AnalyzerID );
 				}
 			}
 			else if (responseCmd.has_standardresponse())
@@ -549,12 +548,12 @@ namespace SvOg
 	// SVPatternAnalyzerModelPage message handlers
 	void SVPatternAnalyzerModelPage::InitializeData()
 	{
-		const SvUl::InputNameGuidPairList& rImageList = GetInputImageList();
-		const SvUl::InputNameGuidPairList::const_iterator Iter = rImageList.find(SvDef::ImageAnalyzerImageName);
+		const SvUl::InputNameObjectIdPairList& rImageList = GetInputImageList();
+		const SvUl::InputNameObjectIdPairList::const_iterator Iter = rImageList.find(SvDef::ImageAnalyzerImageName);
 		if (rImageList.cend() != Iter)
 		{
-			m_AnalyzerImageGUID = Iter->second.second;
-			GetImage(m_AnalyzerImageGUID, m_sourceImageWidth, m_sourceImageHeight);
+			m_AnalyzerImageID = Iter->second.second;
+			GetImage(m_AnalyzerImageID, m_sourceImageWidth, m_sourceImageHeight);
 		}	
 	
 		// Model Selection values
@@ -864,9 +863,9 @@ namespace SvOg
 
 	void SVPatternAnalyzerModelPage::setImages()
 	{
-		if ( GUID_NULL != m_AnalyzerImageGUID )
+		if (SvDef::InvalidObjectId != m_AnalyzerImageID)
 		{
-			IPictureDisp* pFirstImage = GetImage(m_AnalyzerImageGUID);
+			IPictureDisp* pFirstImage = GetImage(m_AnalyzerImageID);
 			m_dialogImage.setImage( pFirstImage, ToolImageTab );
 		}
 

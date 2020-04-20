@@ -71,12 +71,12 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	#pragma endregion callback functions
 
 	#pragma region Constructor
-	SVToolAdjustmentLUTPage::SVToolAdjustmentLUTPage(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rLutEquationID)
+	SVToolAdjustmentLUTPage::SVToolAdjustmentLUTPage(uint32_t inspectionID, uint32_t taskObjectID, uint32_t lutEquationID)
 	: CPropertyPage(SVToolAdjustmentLUTPage::IDD)
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
-	, m_LutEquation{ SvOg::BoundValues{ rInspectionID, rLutEquationID } }
+	, m_InspectionID{ inspectionID }
+	, m_TaskObjectID{ taskObjectID }
+	, m_Values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
+	, m_LutEquation{ SvOg::BoundValues{ inspectionID, lutEquationID } }
 	, m_bUseLUT{ false }
 	, m_bContinuousRecalcLUT{ false }
 	, m_isFormulaClip{true}
@@ -211,16 +211,16 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_rTaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
 			Caption = responseCmd.getobjectparametersresponse().name();
 		}
 		
 		Caption += _T(" ") + SvUl::LoadStdString(IDS_FORMULA_STRING);
-		SVFormulaEditorSheetClass dlg(m_rInspectionID, m_rTaskObjectID, {SvPb::SVEquationObjectType, SvPb::SVLUTEquationObjectType}, Caption.c_str());
+		SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, {SvPb::SVEquationObjectType, SvPb::SVLUTEquationObjectType}, Caption.c_str());
 		dlg.DoModal();
 		refresh();
 	}

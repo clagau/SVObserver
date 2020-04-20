@@ -18,8 +18,8 @@
 #pragma endregion Includes
 
 template<typename CommandPtr>
-SVObjectSynchronousCommandTemplate<CommandPtr>::SVObjectSynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand)
-	: m_ObjectID(rObjectID), m_pCommand(rpCommand)
+SVObjectSynchronousCommandTemplate<CommandPtr>::SVObjectSynchronousCommandTemplate(uint32_t objectID, const CommandPtr& rpCommand)
+	: m_ObjectID(objectID), m_pCommand(rpCommand)
 {
 }
 
@@ -33,7 +33,7 @@ HRESULT SVObjectSynchronousCommandTemplate<CommandPtr>::Execute(DWORD TimeoutInM
 {
 	HRESULT Result {S_OK};
 
-	if (GUID_NULL != m_ObjectID && nullptr != m_pCommand)
+	if (SvDef::InvalidObjectId != m_ObjectID && nullptr != m_pCommand)
 	{
 		typedef SVObjectCommandWrapperTemplate<CommandPtr>::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
 

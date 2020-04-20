@@ -14,8 +14,6 @@
 
 
 #pragma region Declarations
-//! Declaration is in SVUtilityLibrary\SVGUID.h
-class SVGUID;
 #pragma endregion Declarations
 
 namespace SvCmd

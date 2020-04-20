@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -24,7 +23,7 @@ class SVExternalToolTask;
 class SVExternalToolResultPage : public CPropertyPage
 {
 public:
-	SVExternalToolResultPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
+	SVExternalToolResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int id = IDD );
 	virtual ~SVExternalToolResultPage();
 
 	//{{AFX_DATA(SVExternalToolResultPage)
@@ -46,8 +45,8 @@ protected:
 	int GetItemIndex(SVRPropertyItem* pItem);
 
 	SvOp::SVExternalToolTask* m_pTask;
-	const SVGUID m_InspectionID;
-	const SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_TaskObjectID;
 	std::string						m_sTitle;
 	
 	enum

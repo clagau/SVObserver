@@ -97,23 +97,23 @@ int  MonitorlistSelector::DisplayDialog()
 			{
 				SvPb::InspectionCmdRequest requestCmd;
 				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::archivableImage, pInspection->GetUniqueObjectID());
-				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::archivableImage, pInspection->getObjectId());
+				SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
 				SvPb::InspectionCmdRequest requestCmd;
 				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, pInspection->GetUniqueObjectID());
-				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::viewable, pInspection->getObjectId());
+				SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 			}
 			else
 			{
 				SvPb::SelectorFilter filter{SvPb::SelectorFilter::monitorListRejectValue};
 				SvPb::InspectionCmdRequest requestCmd;
 				*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->GetUniqueObjectID(), SvPb::viewable, pInspection->GetUniqueObjectID(), false, filter);
-				SvCmd::InspectionCommands(pInspection->GetUniqueObjectID(), requestCmd, &responseCmd);
+					{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::viewable, pInspection->getObjectId(), false, filter);
+				SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 			}
 		}
 		if (responseCmd.has_getobjectselectoritemsresponse())
@@ -221,7 +221,7 @@ MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvDef::Str
 	{
 		SVObjectReference objectRef{rEntry};
 		MonitoredObject monitoredObj;
-		monitoredObj.guid = (nullptr != objectRef.getObject()) ? objectRef.getObject()->GetUniqueObjectID() : GUID_NULL;
+		monitoredObj.m_objectId = (nullptr != objectRef.getObject()) ? objectRef.getObject()->getObjectId() : SvDef::InvalidObjectId;
 		if(nullptr != objectRef.getValueObject())
 		{
 			monitoredObj.isArray = objectRef.getValueObject()->isArray();
@@ -231,7 +231,7 @@ MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvDef::Str
 				monitoredObj.arrayIndex = objectRef.ArrayIndex();
 			}
 		}
-		if (!monitoredObj.guid.empty())
+		if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 		{
 			monitoredObjectList.push_back(monitoredObj);
 		}

@@ -21,10 +21,10 @@ namespace SvOg
 		ON_EN_SETFOCUS(IDC_EDIT_COMMENT, &SVToolAdjustmentDialogCommentPage::OnSetFocusToEditComment)
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogCommentPage::SVToolAdjustmentDialogCommentPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) : CPropertyPage(SVToolAdjustmentDialogCommentPage::IDD)
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
+	SVToolAdjustmentDialogCommentPage::SVToolAdjustmentDialogCommentPage(uint32_t inspectionId, uint32_t taskObjectId) : CPropertyPage(SVToolAdjustmentDialogCommentPage::IDD)
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
 	{
 	}
 

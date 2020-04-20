@@ -20,7 +20,7 @@
 class SVLutDlg : public CPropertySheet
 {
 public:
-	typedef std::map< SVGUID, SVLut > SVLutMap;
+	typedef std::map< uint32_t, SVLut > SVLutMap;
 
 //	DECLARE_DYNAMIC(SVLutDlg)
 	SVLutDlg(LPCTSTR Caption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);

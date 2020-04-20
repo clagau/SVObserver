@@ -67,7 +67,7 @@ void SVResultListClass::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, pRootObject->GetUniqueObjectID() );
+	SVObjectManagerClass::Instance().VisitElements( l_Visitor, pRootObject->getObjectId() );
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 

@@ -16,8 +16,6 @@
 //This comment is to avoid that the IObjectClass include is marked as not required due to a function return value
 
 #pragma region Declarations
-//! Declaration is in SVUtilityLibrary\SVGUID.h
-class SVGUID;
 #pragma endregion Declarations
 
 namespace SvCmd
@@ -28,8 +26,8 @@ namespace SvCmd
 		SetMaskData(const SetMaskData&) = delete;
 		SetMaskData& operator=(const SetMaskData&) = delete;
 
-		SetMaskData(const SVGUID& rObjectID, HGLOBAL hGlobal)
-			: m_InstanceID(rObjectID), m_hGlobal(hGlobal) {};
+		SetMaskData(uint32_t objectID, HGLOBAL hGlobal)
+			: m_InstanceID(objectID), m_hGlobal(hGlobal) {};
 
 		virtual ~SetMaskData() {};
 
@@ -54,7 +52,7 @@ namespace SvCmd
 		bool empty() const { return false; }
 
 	private:
-		SVGUID m_InstanceID;
+		uint32_t m_InstanceID;
 		HGLOBAL m_hGlobal;
 	};
 } //namespace SvCmd

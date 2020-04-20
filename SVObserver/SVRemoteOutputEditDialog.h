@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
-
+#include "Definitions/ObjectDefines.h"
 #include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 
@@ -44,7 +44,7 @@ public:
 	SVRemoteOutputEditDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRemoteOutputEditDialog();
 
-	GUID m_InputObjectGUID;
+	uint32_t m_InputObjectID = SvDef::InvalidObjectId;
 	SVIOEntryHostStructPtr m_TriggerCount;
 
 protected:

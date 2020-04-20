@@ -53,13 +53,13 @@ bool SVLutDlg::Create(SvIe::SVVirtualCameraPtrVector& rCameraVector, SVLutMap& r
 		{
 			SvIe::SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 
-			if(nullptr != pAcqDevice && raLut.find( pCamera->GetUniqueObjectID() ) != raLut.end() && 0 < raLut[pCamera->GetUniqueObjectID()].NumBands() )
+			if(nullptr != pAcqDevice && raLut.find( pCamera->getObjectId() ) != raLut.end() && 0 < raLut[pCamera->getObjectId()].NumBands() )
 			{
 				std::string Caption = SvUl::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
 
 				SVLutDlgPage* pPage;
 				pPage = new SVLutDlgPage( this, Caption.c_str() );
-				pPage->m_Lut = raLut[ pCamera->GetUniqueObjectID() ];
+				pPage->m_Lut = raLut[ pCamera->getObjectId() ];
 				pPage->m_pCamera = pCamera;
 				AddPage(pPage);
 			}
@@ -923,7 +923,7 @@ void SVLutDlgPage::OnColorBandSync()
 {
 	// we will have to adjust this once we implement the "All" option... All -> Sync??? disable Sync if all is selected
 	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-	INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LUT_ShouldOverwriteAllBands, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10235, GUID_NULL, MB_YESNO );
+	INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LUT_ShouldOverwriteAllBands, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10235, SvDef::InvalidObjectId, MB_YESNO);
 	if (IDYES == result )
 	{
 		// copy current band data to all other bands

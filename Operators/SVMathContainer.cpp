@@ -48,7 +48,7 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 
 	// Make a friend
 	SVMathEquationClass* pMathEquation = new SVMathEquationClass( this );
-	AddFriend( pMathEquation->GetUniqueObjectID() );
+	AddFriend( pMathEquation->getObjectId() );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -76,7 +76,7 @@ bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;

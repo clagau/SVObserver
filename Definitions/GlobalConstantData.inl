@@ -39,14 +39,14 @@ namespace SvDef
 		default:
 			break;
 		}
-		Result = std::tie(m_Guid, m_DottedName, m_Value.vt, LhsValue, m_Description, m_Selected) < 
-					std::tie(Rhs.m_Guid, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_Description, Rhs.m_Selected);
+		Result = std::tie(m_objectId, m_DottedName, m_Value.vt, LhsValue, m_Description, m_Selected) < 
+					std::tie(Rhs.m_objectId, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_Description, Rhs.m_Selected);
 		return Result;
 	}
 
 	const GlobalConstantData& GlobalConstantData::operator=( const GlobalConstantData& Rhs )
 	{
-		m_Guid = Rhs.m_Guid;
+		m_objectId = Rhs.m_objectId;
 		m_DottedName = Rhs.m_DottedName;
 		m_Value = Rhs.m_Value;
 		m_Description = Rhs.m_Description;
@@ -58,7 +58,7 @@ namespace SvDef
 	{
 		bool Result( false );
 
-		if( m_Guid == Rhs.m_Guid &&
+		if( m_objectId == Rhs.m_objectId &&
 			m_DottedName == Rhs.m_DottedName &&
 			m_Value == Rhs.m_Value &&
 			m_Description == Rhs.m_Description &&

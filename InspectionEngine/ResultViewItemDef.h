@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions\ObjectDefines.h"
 #pragma endregion Includes
 
 class SVObjectReference;
@@ -30,20 +30,20 @@ public:
 	//************************************
 	// Description:  Default constructor for the ResultViewItemDef class.
 	//************************************
-	ResultViewItemDef();
+	ResultViewItemDef() = default;
 
 	//************************************
 	// Description:  Constructor for the ResultViewItemDef class.
-	// Parameter:  guid <in>:  Initial value for the object ID.
+	// Parameter:  objectId <in>:  Initial value for the object ID.
 	//************************************
-	ResultViewItemDef(const SVGUID& guid);
+	ResultViewItemDef(uint32_t objectId);
 
 	//************************************
 	// Description:  Constructor for the ResultViewItemDef class.
-	// Parameter:  guid <in>:  Initial value for the object ID.
+	// Parameter:  objectId <in>:  Initial value for the object ID.
 	// Parameter:  index <in>:  Initial value for the index.
 	//************************************
-	ResultViewItemDef(const SVGUID& guid, int index);
+	ResultViewItemDef(uint32_t objectId, int index);
 
 	//************************************
 	// Description:  Constructor for the ResultViewItemDef class.
@@ -72,16 +72,16 @@ public:
 
 	//************************************
 	// Description:  Gets the value of the member variable m_ObjectID
-	// Returns:  const SVGUID&:  the value of the member variable m_ObjectID
+	// Returns:  uint32_t objectId:  the value of the member variable m_ObjectID
 	//************************************
-	const SVGUID& getGuid() const;
+	uint32_t getObjectId() const { return m_ObjectID; };
 #pragma endregion Public Methods
 
 protected:
 #pragma region Member Variables
-	SVGUID m_ObjectID;
-	bool m_hasIndex;
-	int m_Index;
+	uint32_t m_ObjectID = SvDef::InvalidObjectId;
+	bool m_hasIndex = false;
+	int m_Index = 0;
 #pragma endregion Member Variables
 };
 

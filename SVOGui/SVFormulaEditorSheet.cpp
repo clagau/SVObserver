@@ -17,7 +17,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,16 +29,16 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
+	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(uint32_t inspectionId, uint32_t taskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
-		init(SvOi::IFormulaControllerPtr {new FormulaController(rInspectionID, rTaskObjectID, rInfo)});
+		init(SvOi::IFormulaControllerPtr {new FormulaController(inspectionId, taskObjectId, rInfo)});
 	}
 
-	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
+	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t equationId, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 		: CPropertySheet(pCaption, pParentWnd, iSelectPage)
 	{
-		init(SvOi::IFormulaControllerPtr {new FormulaController(rInspectionID, rTaskObjectID, rEquationID)});
+		init(SvOi::IFormulaControllerPtr {new FormulaController(inspectionId, taskObjectId, equationId)});
 	}
 
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(SvOi::IFormulaControllerPtr formulaController, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)

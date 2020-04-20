@@ -562,7 +562,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				else
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10195, GUID_NULL, MB_YESNO ); 
+					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10195, SvDef::InvalidObjectId, MB_YESNO);
 					if( IDYES == result )
 					{
 						pConfig->DeleteRemoteOutputEntry( RemoteGroup, pRemoteOutput );
@@ -589,7 +589,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					SvDef::StringVector msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, GUID_NULL, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, SvDef::InvalidObjectId, MB_YESNO );
 					if( IDYES == result )
 					{
 						// Delete all DLL entries
@@ -643,7 +643,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 			if( nullptr != pPPQ )
 			{ 
 				SvVol::BasicValueObjectPtr pPpqTriggerCount = pPPQ->getPpqVaraible(SvDef::FqnPpqTriggerCount);
-				dlg.m_InputObjectGUID = (nullptr != pPpqTriggerCount) ? pPpqTriggerCount->GetUniqueObjectID() : GUID_NULL;
+				dlg.m_InputObjectID = (nullptr != pPpqTriggerCount) ? pPpqTriggerCount->getObjectId() : SvDef::InvalidObjectId;
 				dlg.m_GroupName = RemoteGroup;
 
 				if( dlg.DoModal() == IDOK )
@@ -651,7 +651,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 					SVRemoteOutputObject* l_pNewOutput = nullptr;
 					pConfig->AddRemoteOutputItem(RemoteGroup, 
 						l_pNewOutput, 
-						dlg.m_InputObjectGUID,
+						dlg.m_InputObjectID,
 						PPQName.c_str());
 					OnUpdate( nullptr, 0, nullptr );
 					l_bRet = true;
@@ -685,7 +685,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 		// The User clicked on the Item
 		dlg.m_GroupName = pRemoteOutput->GetGroupID();
 		dlg.m_ValueObjectSourceName = pRemoteOutput->GetInputValueObjectName();
-		pRemoteOutput->GetInputValueObjectGUID( dlg.m_InputObjectGUID ); 
+		dlg.m_InputObjectID = pRemoteOutput->GetInputValueObjectID(  );
 
 		// if this is the first (Trigger Count) item in the list then gray out the object.
 		if(nullptr != pConfig && pConfig->GetFirstRemoteOutputObject( dlg.m_GroupName ) == pRemoteOutput )
@@ -698,7 +698,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 	{
 		case IDOK:
 		{
-			pRemoteOutput->SetInputObjectId( dlg.m_InputObjectGUID );
+			pRemoteOutput->SetInputObjectId( dlg.m_InputObjectID );
 			pRemoteOutput->SetGroupID( dlg.m_GroupName );
 			l_bRet = true;
 			break;

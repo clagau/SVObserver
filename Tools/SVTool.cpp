@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS(SVToolClass, SVToolClassGuid);
+//SV_IMPLEMENT_CLASS(SVToolClass, SVToolClassId);
 
 SVToolClass::SVToolClass(SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
 	: SVTaskObjectListClass(POwner, StringResourceID)
@@ -182,7 +182,7 @@ void SVToolClass::init()
 
 	// instantiate the Conditional class
 	SvOp::SVConditionalClass* pCondition = new SvOp::SVConditionalClass(this);
-	AddFriend(pCondition->GetUniqueObjectID());
+	AddFriend(pCondition->getObjectId());
 
 	// Identify our input type needs
 	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
@@ -871,9 +871,9 @@ HRESULT SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
 
 	if (S_OK == l_Status)
 	{
-		if (p_rMultiLine.m_ToolID.empty())
+		if (SvDef::InvalidObjectId == p_rMultiLine.m_ToolID)
 		{
-			p_rMultiLine.m_ToolID = GetUniqueObjectID();
+			p_rMultiLine.m_ToolID = getObjectId();
 		}
 	}
 
@@ -884,7 +884,7 @@ HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLi
 {
 	HRESULT l_Status = S_OK;
 
-	if (nullptr != pImage && isInputImage(pImage->GetUniqueObjectID()))
+	if (nullptr != pImage && isInputImage(pImage->getObjectId()))
 	{
 		l_Status = SVTaskObjectListClass::CollectOverlays(pImage, rMultiLineArray);
 	}
@@ -901,7 +901,7 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 		{
 			auto* pOverlay = rOverlay.add_overlays();
 			pOverlay->set_name(GetName());
-			SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+			pOverlay->set_objectid(getObjectId());
 			pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 			pOverlay->set_displaybounding(true);
 			auto* pBoundingBox = pOverlay->mutable_boundingshape();
@@ -1016,7 +1016,7 @@ bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, SvPb::Em
 	{
 		if (SvPb::noAttributes != (pResultObject->ObjectAttributesAllowed()))
 		{
-			retList.push_back(SvOi::ParameterPairForML(pResultObject->GetCompleteName(), pResultObject->GetUniqueObjectID()));
+			retList.push_back(SvOi::ParameterPairForML(pResultObject->GetCompleteName(), pResultObject->getObjectId()));
 			return true;
 		}
 	}
@@ -1029,34 +1029,34 @@ bool SVToolClass::areAuxExtentsAvailable() const
 	return (nullptr != GetToolImage()) ? GetInspectionInterface()->getEnableAuxiliaryExtent() : false;
 }
 
-SvUl::NameGuidList SVToolClass::getAvailableAuxSourceImages() const
+SvUl::NameObjectIdList SVToolClass::getAvailableAuxSourceImages() const
 {
-	SvUl::NameGuidList list;
+	SvUl::NameObjectIdList list;
 	SvIe::SVImageClassPtrVector ImageList;
 	HRESULT hr = GetSourceImages(&ImageList);
 	if (S_OK == hr)
 	{
 		std::transform(ImageList.begin(), ImageList.end(), std::back_inserter(list), 
-			[](const auto& rEntry) { return std::make_pair(rEntry->getDisplayedName(), rEntry->GetUniqueObjectID()); });
+			[](const auto& rEntry) { return std::make_pair(rEntry->getDisplayedName(), rEntry->getObjectId()); });
 	}
 	return list;
 }
 
-SvUl::NameGuidPair SVToolClass::getAuxSourceImage() const
+SvUl::NameObjectIdPair SVToolClass::getAuxSourceImage() const
 {
-	SvUl::NameGuidPair result;
+	SvUl::NameObjectIdPair result;
 	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo);
 	if (pImage)
 	{
-		result = std::make_pair(pImage->getDisplayedName(), pImage->GetUniqueObjectID());
+		result = std::make_pair(pImage->getDisplayedName(), pImage->getObjectId());
 	}
 	return result;
 }
 
-HRESULT SVToolClass::setAuxSourceImage(const SVGUID& rObjectID)
+HRESULT SVToolClass::setAuxSourceImage(uint32_t objectID)
 {
 	HRESULT hr = E_POINTER;
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(rObjectID));
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(objectID));
 	if (nullptr != pImage)
 	{
 		hr = SetAuxSourceImage(pImage);
@@ -1064,9 +1064,9 @@ HRESULT SVToolClass::setAuxSourceImage(const SVGUID& rObjectID)
 	return hr;
 }
 
-void SVToolClass::SetToolImage(const SVGUID& rObjectID)
+void SVToolClass::SetToolImage(uint32_t objectID)
 {
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(rObjectID));
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(objectID));
 	m_toolExtent.SetToolImage(pImage);
 }
 
@@ -1259,7 +1259,7 @@ bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

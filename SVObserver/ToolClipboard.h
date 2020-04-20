@@ -17,7 +17,6 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 //Forward declarations
@@ -36,7 +35,6 @@ namespace SvTo
 class SVToolClass;
 }
 
-class SVGUID;
 class SVObjectClass;
 class SVInspectionProcess;
 
@@ -51,19 +49,19 @@ public:
 #pragma region Public Methods
 	//************************************
 	// Description: Write tool to the clipboard
-	// Parameter: rToolGuid <in> Reference to the selected tool GUID to write to the clipboard
+	// Parameter: toolId <in> Reference to the selected tool Id to write to the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT writeToClipboard( const SVGUID& rToolGuid ) const;
+	HRESULT writeToClipboard(uint32_t toolId) const;
 
 	//************************************
 	// Description: Read tool from the clipboard
-	// Parameter: rPostGuid <in> Reference to the tool GUID selected where the tool is to be inserted
-	// Parameter: rOwnerGuid <in> Reference to the owner GUID 
-	// Parameter: rToolGuid <out> Reference to the tool GUID generated from reading the clipboard
+	// Parameter: postId <in> Reference to the tool ID selected where the tool is to be inserted
+	// Parameter: ownerId <in> Reference to the owner ID 
+	// Parameter: rToolId <out> Reference to the tool ID generated from reading the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT readFromClipboard(const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, SVGUID& rToolGuid );
+	HRESULT readFromClipboard(uint32_t postId, uint32_t ownerId, uint32_t& rToolId);
 
 	//************************************
 	// Description: Checks to see if the clipboard data is valid
@@ -79,10 +77,10 @@ protected:
 	//************************************
 	// Description: This method writes the tool to a zip file
 	// Parameter: rFileName <in> Reference to the file name for the zip file
-	// Parameter: rToolGuid <in> Reference to the selected tool GUID to write to the clipboard
+	// Parameter: toolId <in> Reference to the selected tool ID to write to the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT streamToolToZip( const std::string& rFileName, const SVGUID& rToolGuid ) const;
+	HRESULT streamToolToZip(const std::string& rFileName, uint32_t toolId) const;
 
 	//************************************
 	// Description: This method writes the Base and Environment nodes
@@ -91,11 +89,11 @@ protected:
 	void writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) const;
 
 	//************************************
-	// Description: This method writes the Guids of sources like Inspection and Image
+	// Description: This method writes the ids of sources like Inspection and Image
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	// Parameter: rTool <in> Reference to the tool to save
 	//************************************
-	void writeSourceGuids(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const;
+	void writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolClass& rTool ) const;
 
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string
@@ -150,20 +148,20 @@ protected:
 	/// This method reads the tools data
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
 	/// \param rTree [in] Reference to the tree generated from the clipboard
-	/// \param rPostGuid [in] The Guid of the object currently selected where the new object should be inserted
-	/// \param rOwnerGuid [in] The Guid of the owner of the new object.
+	/// \param postId [in] The id of the object currently selected where the new object should be inserted
+	/// \param ownerId [in] The id of the owner of the new object.
 	/// \returns HRESULT S_OK on success
-	HRESULT readTool( std::string& rXmlData, SVTreeType& rTree, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid) const;
+	HRESULT readTool(std::string& rXmlData, SVTreeType& rTree, uint32_t postId, uint32_t ownerId) const;
 
-	/// This method validates the tools GUIDs
+	/// This method validates the tools IDs
 	/// \param rXmlData [in,out] Reference to the XML data to search and replace
-	/// \param rPostGuid [in] The Guid of the object currently selected where the new object should be inserted
-	/// \param rOwnerGuid [in] The Guid of the owner of the new object.
-	/// \param rInspectionId [in] The Guid of the inspection
+	/// \param postId [in] The id of the object currently selected where the new object should be inserted
+	/// \param ownerId [in] The id of the owner of the new object.
+	/// \param inspectionId [in] The id of the inspection
 	/// \param toolClassId [in] The class Id of the tool
 	/// \param rInputImages [in] The input images of the tool
 	/// \returns HRESULT S_OK on success
-	HRESULT validateGuids(std::string& rXmlData, const SVGUID& rPostGuid, const SVGUID& rOwnerGuid, const SVGUID& rInspectionGuid, SvPb::ClassIdEnum toolClassId, SVGuidSet rInputImages) const;
+	HRESULT validateIds(std::string& rXmlData, uint32_t postId, uint32_t ownerId, uint32_t inspectionId, SvPb::ClassIdEnum toolClassId, std::set<uint32_t> rInputImages) const;
 
 	//************************************
 	/// This method replaces the tool name and the dotted name (e.g. in Equation)
@@ -174,20 +172,20 @@ protected:
 	HRESULT replaceToolName( std::string& rXmlData, SVTreeType& rTree, const SVObjectClass* pOwner ) const;
 
 	//************************************
-	// Description: This method replaces all the unique Guids
+	// Description: This method replaces all the unique ids
 	// Parameter: rXmlData <in, out> Reference to the XML data to search and replace
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT replaceUniqueGuids( std::string& rXmlData, SVTreeType& rTree ) const;
+	HRESULT replaceUniqueIds( std::string& rXmlData, SVTreeType& rTree ) const;
 
 	//************************************
 	// Description: This method parses the tree and generates the tool
 	// Parameter: rTree <in> Reference to the tree to parse
-	// Parameter: rToolGuid <out> Reference to the tool GUID generated
+	// Parameter: rToolId <out> Reference to the tool ID generated
 	// Return: S_OK on success
 	//************************************
-	HRESULT parseTreeToTool( SVTreeType& rTree, SVObjectClass* pOwner, SVGUID& rToolGuid);
+	HRESULT parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner, uint32_t& rToolId);
 #pragma endregion Protected Methods
 
 private:

@@ -28,7 +28,7 @@ class SVTADlgTranslationResizePage :
 	public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVTADlgTranslationResizePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	SVTADlgTranslationResizePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD);
 	virtual ~SVTADlgTranslationResizePage();
 
 	HRESULT SetInspectionData(SvStl::MessageContainerVector *pErrorMessages=nullptr);
@@ -86,11 +86,11 @@ protected:
 
 	SVRPropTree	m_Tree;
 	SvOg::ImageController m_ImageController;
-	SVGUID m_ROIImageID = GUID_NULL;
-	SVGUID m_OutputImageID = GUID_NULL;
+	uint32_t m_ROIImageID = SvDef::InvalidObjectId;
+	uint32_t m_OutputImageID = SvDef::InvalidObjectId;
 
-	const SVGUID m_inspectionID;
-	const SVGUID m_toolID;
+	const uint32_t m_inspectionID;
+	const uint32_t m_toolID;
 
 	//{{AFX_DATA(SVTADlgTranslationResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };

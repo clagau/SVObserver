@@ -31,7 +31,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		SVToolAdjustmentDialogTwoImagePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		SVToolAdjustmentDialogTwoImagePageClass(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~SVToolAdjustmentDialogTwoImagePageClass();
 	#pragma endregion Constructor
 
@@ -73,8 +73,8 @@ namespace SvOg
 		CComboBox m_operatorCtrl;
 		SvOg::PictureDisplay m_secondImageCtrl;
 		SvOg::PictureDisplay m_firstImageCtrl;
-		SvMc::AvailableObjectListComboBox<SVGUID> m_firstAvailableSourceImageListBoxCtl;
-		SvMc::AvailableObjectListComboBox<SVGUID> m_secondAvailableSourceImageListBoxCtl;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_firstAvailableSourceImageListBoxCtl;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_secondAvailableSourceImageListBoxCtl;
 		//}}AFX_DATA
 
 	private:
@@ -83,10 +83,10 @@ namespace SvOg
 		std::string m_secondInputName;
 		std::string m_secondImageName;
 		std::string m_resultImageName;
-		SVGUID m_resultImageID;
+		uint32_t m_resultImageID;
 
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 
 		ValueController m_Values;
 	#pragma endregion Member variables

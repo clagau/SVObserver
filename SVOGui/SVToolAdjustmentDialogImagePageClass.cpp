@@ -34,9 +34,9 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType /*= SvPb::SVImageMonoType*/, int id /*=IDD*/ )
+	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvPb::SVImageMonoType*/, int id /*=IDD*/)
 	: CPropertyPage( id )
-		, m_ImageController{rInspectionID, rTaskObjectID, SubType}
+		, m_ImageController{inspectionId, taskObjectId, SubType}
 	{
 	}
 
@@ -74,12 +74,12 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 		m_ImageController.Init();
-		const SvUl::NameGuidList& rAvailableImageList = m_ImageController.GetAvailableImageList();
+		const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
 	
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
 		std::string selectedImageName;
-		const SvUl::InputNameGuidPairList& rImageList = m_ImageController.GetInputImageList(GUID_NULL, 1);
+		const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
 		if (rImageList.size())
 		{
 			m_inputName = rImageList.begin()->first;

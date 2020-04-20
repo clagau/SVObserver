@@ -187,10 +187,10 @@ private:
 	int m_nIndentLevel;
 };
 
-static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
+static SVToolGrouping GetToolGroupings(uint32_t inspectionId)
 {
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(rInspectionGuid);
+	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionId);
 	if (pDoc)
 	{
 		return pDoc->GetToolGroupings();
@@ -907,7 +907,7 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
     {
 		if (SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>(pObj))
 		{
-			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->GetUniqueObjectID());
+			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
 			if (rToolGroupings.size())
 			{
 				bool bToolGroupActive = false;

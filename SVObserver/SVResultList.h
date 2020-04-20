@@ -57,11 +57,11 @@ public:
 	void  GetResultData(SvIe::SVIPResultData& rResultData) const;
 	std::vector <SvIe::IPResultTableData> getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord);
 
-	const SVGUID& getTableGuid() const { return m_ResultViewReferences.getTableGuid(); }
-	void setTableGuid(const SVGUID& guid) { m_ResultViewReferences.setTableGuid(guid); }
+	uint32_t getTableId() const { return m_ResultViewReferences.getTableId(); }
+	void setTableId(uint32_t id) { m_ResultViewReferences.setTableId(id); }
 
 	//************************************
-	//! Description:  Rebuild the reference vector from the list of GUIDs.
+	//! Description:  Rebuild the reference vector from the list of IDs.
 	//! \param pInspection [in] if not null the References will be checked if the are  a Disabled PPQVariables
 	//! \returns void
 	//************************************

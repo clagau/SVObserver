@@ -241,7 +241,7 @@ SvOi::ParametersForML SVWindowToolClass::getParameterForMonitorList(SvStl::Messa
 	bool isNoError = true;
 	bool isAuxNoError = true;
 	SvOi::ParametersForML retList;
-	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.GetUniqueObjectID()));
+	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.getObjectId()));
 	if (nullptr != m_pToolConditional)
 	{
 		retList.push_back(m_pToolConditional->getResultData());
@@ -257,12 +257,12 @@ SvOi::ParametersForML SVWindowToolClass::getParameterForMonitorList(SvStl::Messa
 
 	if (!isAuxNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetAuxiliaryParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetAuxiliaryParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 	else if (!isNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 

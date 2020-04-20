@@ -28,7 +28,7 @@ namespace SvOg
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
 
 	public:
-		SVTADlgColorToolPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID );
+		SVTADlgColorToolPage( uint32_t inspectionId, uint32_t taskObjectId );
 		virtual ~SVTADlgColorToolPage();
 
 		HRESULT SetInspectionData();
@@ -56,14 +56,14 @@ namespace SvOg
 	protected:
 		enum { IDD = IDD_TA_COLOR_TOOL_DIALOG };
 		SvOg::PictureDisplay	m_dialogImage;
-		SvMc::AvailableObjectListComboBox<SVGUID> m_availableSourceImageListBox;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_availableSourceImageListBox;
 
 		BOOL	m_convertToHSI;
 		std::string m_InputName;
 
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
-		SVGUID m_ResultImageID = GUID_NULL;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
+		uint32_t m_ResultImageID = SvDef::InvalidObjectId;
 		
 		ImageController m_Images;
 		ValueController m_Values;

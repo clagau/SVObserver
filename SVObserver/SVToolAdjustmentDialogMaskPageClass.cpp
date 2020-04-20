@@ -59,14 +59,14 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogMaskPageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID) 
+SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId)
 : CPropertyPage(SVToolAdjustmentDialogMaskPageClass::IDD)
-, m_InspectionID(rInspectionID)
-, m_TaskObjectID(rTaskObjectID)
+, m_InspectionID(inspectionId)
+, m_TaskObjectID(taskObjectId)
 , m_pMaskEditorCtl(nullptr)
-, m_ImageController(rInspectionID, rTaskObjectID)
-, m_Values{ SvOg::BoundValues{ rInspectionID, rMaskOperatorID } }
-, m_maskController{ rInspectionID, rTaskObjectID, rMaskOperatorID }
+, m_ImageController(inspectionId, taskObjectId)
+, m_Values{ SvOg::BoundValues{ inspectionId, maskOperatorId } }
+, m_maskController{ inspectionId, taskObjectId, maskOperatorId }
 {
 	m_pThis = this;
 
@@ -490,7 +490,7 @@ void SVToolAdjustmentDialogMaskPageClass::ShowControls(int p_iMaskType)
 
 void SVToolAdjustmentDialogMaskPageClass::SetupImageMaskCombo()
 {
-	const SvUl::NameGuidList& rAvailableImageList = m_ImageController.GetAvailableImageList();
+	const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
 	m_cbAvailableSourceImageList.Init(rAvailableImageList, m_imageName, NoImageTag);
 }
 
@@ -631,9 +631,9 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 
 void SVToolAdjustmentDialogMaskPageClass::RetreiveCurrentlySelectedImageNames()
 {
-	const SvUl::InputNameGuidPairList& rImageList = m_ImageController.GetInputImageList(m_maskController.GetInstanceID(), 1);
+	const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(m_maskController.GetInstanceID(), 1);
 
-	SvUl::InputNameGuidPairList::const_iterator it = rImageList.begin();
+	SvUl::InputNameObjectIdPairList::const_iterator it = rImageList.begin();
 	if (it != rImageList.end())
 	{
 		m_imageInputName = it->first;

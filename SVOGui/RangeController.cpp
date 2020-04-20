@@ -14,7 +14,6 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -26,12 +25,12 @@ namespace SvOg
 	const std::string RangeController::WarnLow = "WarnLow";
 #pragma endregion Declarations
 
-	RangeController::RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rRangeID)
-		: m_rInspectionID(rInspectionID)
-		, m_rTaskObjectID(rTaskObjectID)
-		, m_RangeID(rRangeID)
+	RangeController::RangeController(uint32_t inspectionID, uint32_t taskID, uint32_t rangeID)
+		: m_InspectionID(inspectionID)
+		, m_TaskObjectID(taskID)
+		, m_RangeID(rangeID)
 		//TaskID is set later
-		, m_RangeValues{SvOg::BoundValues{rInspectionID, GUID_NULL}}
+		, m_RangeValues{ SvOg::BoundValues{inspectionID, SvDef::InvalidObjectId} }
 	{
 	}
 
@@ -41,18 +40,18 @@ namespace SvOg
 
 	void RangeController::Init()
 	{
-		if (GUID_NULL == m_RangeID)
+		if (SvDef::InvalidObjectId == m_RangeID)
 		{
 			SvDef::SVObjectTypeInfoStruct ObjectInfo;
 			ObjectInfo.m_ObjectType = SvPb::SVRangeObjectType;
 			ObjectInfo.m_SubType = SvPb::SVNotSetSubObjectType;
-			SvOi::IObjectClass* pTool = SvOi::getObject(m_rTaskObjectID);
+			SvOi::IObjectClass* pTool = SvOi::getObject(m_TaskObjectID);
 			if (nullptr != pTool)
 			{
 				SvOi::IObjectClass* pRange = pTool->getFirstObject(ObjectInfo);
 				if (nullptr != pRange)
 				{
-					m_RangeID = pRange->GetUniqueObjectID();
+					m_RangeID = pRange->getObjectId();
 				}
 			}
 		}
@@ -154,9 +153,9 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_rTaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 
-		HRESULT hr = SvCmd::InspectionCommands(m_rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
 			name = responseCmd.getobjectparametersresponse().name();

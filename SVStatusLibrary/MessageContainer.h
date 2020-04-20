@@ -12,7 +12,6 @@
 //Moved to precompiled header: #include <iterator>
 //Moved to precompiled header: #include <vector>
 #include "MessageData.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -39,9 +38,9 @@ namespace SvStl
 		//! \param AdditionalTextId <in> the Id for the additional text to the code (without AdditionalTextList)
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
+		//! \param objectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, uint32_t objectId = 0 );
 
 		//************************************
 		//! This is the constructor to set the data on construction
@@ -50,9 +49,9 @@ namespace SvStl
 		//! \param rAdditionalTextList <in> reference t list of strings for the additional text to the code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
+		//! \param objectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, uint32_t objectId = 0 );
 
 		//************************************
 		//! This is the assignment operator
@@ -83,9 +82,9 @@ namespace SvStl
 		//! \param AdditionalTextId <in> the Id for the additional text to the code (without AdditionalTextList)
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
+		//! \param objectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, uint32_t ojectId=0 );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -94,17 +93,17 @@ namespace SvStl
 		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text to the code
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
+		//! \param objectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, uint32_t objectId=0 );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
 		//! \param rMessage <in> reference to the message data structure
-		//! \param rObjectId <in> reference to the unique object ID of the message owner
+		//! \param objectId <in> reference to the unique object ID of the message owner
 		//! \param clearData <in> flag to determine if data should be cleared prior to setting the data
 		//************************************
-		void setMessage( const MessageData& rMessage, const GUID& rObjectId=GUID_NULL, bool clearData = true );
+		void setMessage( const MessageData& rMessage, uint32_t objectId=0, bool clearData = true );
 
 		//************************************
 		//! This method first adds the current main message to the m_AdditionalMessage list 
@@ -157,11 +156,11 @@ namespace SvStl
 		//! This is the method to get the object id of the message owner
 		//! \returns const reference to the object id
 		//************************************
-		const SVGUID& getObjectId( ) const { return m_ObjectId; };
+		uint32_t getObjectId( ) const { return m_ObjectId; };
 
 		/// This is the method to set the object id of the message owner
-		/// \param rGuid [in] reference to the object id
-		void setObjectId( const SVGUID& rGuid ) { m_ObjectId = rGuid; };
+		/// \param objectId [in]  object id
+		void setObjectId(uint32_t objectId) { m_ObjectId = objectId; };
 
 		//************************************
 		//! Sets the functor objects for display and notify
@@ -225,7 +224,7 @@ namespace SvStl
 	private:
 		MessageData m_Message;				//! The main message
 		Messages m_AdditionalMessages;		//! List of additional messages
-		SVGUID m_ObjectId;					//! The object GUID 
+		uint32_t m_ObjectId;					//! The object Id 
 		std::string m_What;					//! The what formatted message
 		static HINSTANCE m_MessageDll;		//! The message dll instance as a static variable
 	#pragma endregion Member variables

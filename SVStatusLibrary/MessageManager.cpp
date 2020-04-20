@@ -78,7 +78,7 @@ namespace SvStl
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		SvDef::StringVector textList;
 		MessageTextEnum id = SvStl::Tid_Empty;
@@ -88,21 +88,21 @@ namespace SvStl
 			id = SvStl::Tid_Default;
 		}
 
-		return setMessage(MessageCode, id, textList, rSourceFile, ProgramCode, rObjectId, MsgBoxType);
+		return setMessage(MessageCode, id, textList, rSourceFile, ProgramCode, objectId, MsgBoxType);
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
-		return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), rSourceFile, ProgramCode, rObjectId, MsgBoxType);
+		return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), rSourceFile, ProgramCode, objectId, MsgBoxType);
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		INT_PTR Result(IDCANCEL);
 
-		m_MessageContainer.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, ProgramCode, rObjectId);
+		m_MessageContainer.setMessage(MessageCode, AdditionalTextId, rAdditionalTextList, rSourceFile, ProgramCode, objectId);
 
 		Result = Process(MsgBoxType);
 
@@ -110,11 +110,11 @@ namespace SvStl
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(const MessageData& rData, const GUID& rObjectId /*= GUID_NULL*/, UINT MsgBoxType /*= MB_OK */)
+	INT_PTR MessageMgrStd::setMessage(const MessageData& rData, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK */)
 	{
 		INT_PTR Result(IDCANCEL);
 
-		m_MessageContainer.setMessage(rData, rObjectId);
+		m_MessageContainer.setMessage(rData, objectId);
 
 		Result = Process(MsgBoxType);
 

@@ -56,7 +56,7 @@ void SVEquationSymbolTableClass::ClearAll()
 	for (int i = static_cast<int> (m_toolsetSymbolTable.size() - 1); i >= 0; i--)
 	{
 		SvOl::SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable[i];
-		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().getUniqueObjectID(), pInObjectInfo);
+		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().getObjectId(), pInObjectInfo);
 	}
 	// Empty the ToolSet Symbol table 
 	m_toolsetSymbolTable.clear();
@@ -157,9 +157,9 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	pSymbolStruct->InObjectInfo.SetObject(pRequestor->GetObjectInfo());
 	// Set the variable to be used
 	pSymbolStruct->InObjectInfo.SetInputObjectType(ObjectReference.getObject()->GetObjectOutputInfo().m_ObjectTypeInfo);
-	pSymbolStruct->InObjectInfo.SetInputObject(ObjectReference.getObject()->GetObjectOutputInfo().getUniqueObjectID());
+	pSymbolStruct->InObjectInfo.SetInputObject(ObjectReference.getObject()->GetObjectOutputInfo().getObjectId());
 	// Try to Connect at this point
-	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference.getObject()->GetObjectOutputInfo().getUniqueObjectID(), &pSymbolStruct->InObjectInfo);
+	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference.getObject()->GetObjectOutputInfo().getObjectId(), &pSymbolStruct->InObjectInfo);
 	assert(rc);
 	if (rc)
 	{
@@ -344,22 +344,6 @@ void SVEquationClass::SetEquationText(const std::string& rText)
 	}
 }
 
-HRESULT SVEquationClass::GetObjectValue(const std::string& rValueName, _variant_t& rValue) const
-{
-	HRESULT hr = S_OK;
-
-	if (_T("EquationBuffer") == rValueName)
-	{
-		rValue.SetString(m_equationStruct.GetEquationText().c_str());
-	}
-	else
-	{
-		hr = SVTaskObjectClass::GetObjectValue(rValueName, rValue);
-	}
-
-	return hr;
-}
-
 void SVEquationClass::Persist(SvOi::IObjectWriter& rWriter)
 {
 	SVTaskObjectClass::Persist(rWriter);
@@ -453,13 +437,13 @@ SvOi::EquationTestResult SVEquationClass::Test(SvStl::MessageContainerVector *pE
 				msgList.push_back(fullObjectName);
 				if (S_OK != m_Yacc.m_StatusCode)
 				{
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, GetUniqueObjectID());
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, getObjectId());
 				}
 				else
 				{
 					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex - 1].position + 1;
 					msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, GetUniqueObjectID());
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, getObjectId());
 				}
 				m_isDataValid = false;
 			}
@@ -545,7 +529,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 		SvDef::StringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
-		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, GetUniqueObjectID());
+		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, getObjectId());
 
 		m_isDataValid = false;
 	}
@@ -596,7 +580,7 @@ bool SVEquationClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjec
 
 			if (pSymbolInputObjectInfo)
 			{
-				if (pInObjectInfo->GetInputObjectInfo().getUniqueObjectID() == pSymbolInputObjectInfo->GetInputObjectInfo().getUniqueObjectID())
+				if (pInObjectInfo->GetInputObjectInfo().getObjectId() == pSymbolInputObjectInfo->GetInputObjectInfo().getObjectId())
 				{
 					pSymbolInputObjectInfo->SetInputObject(nullptr);
 					break;
@@ -634,7 +618,7 @@ bool SVEquationClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 			retVal = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();

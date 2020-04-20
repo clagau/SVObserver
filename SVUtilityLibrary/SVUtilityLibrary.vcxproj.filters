@@ -140,9 +140,6 @@
     <ClInclude Include="SVGUID.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVGuidList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVHandleManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -179,7 +176,7 @@
     <ClInclude Include="SafeArrayHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="NameGuidList.h">
+    <ClInclude Include="NameObjectIdList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

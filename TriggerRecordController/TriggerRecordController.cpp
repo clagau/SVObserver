@@ -15,11 +15,9 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMessage\SVMessage.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "DataControllerLocal.h"
 #include "DataControllerWriter.h"
@@ -654,7 +652,7 @@ void TriggerRecordController::finishGlobalInit()
 	ResetTriggerRecordStructure();
 }
 
-int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos /*= -1*/)
+int TriggerRecordController::addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos /*= -1*/)
 {
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
@@ -672,8 +670,11 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 		if (0 >= TriggerRecordSize || cMaxTriggerRecords < TriggerRecordSize)
 		{
 			assert(false);
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), TriggerRecordSize));
+			msgList.push_back(SvUl::Format(_T("%d"), cMaxTriggerRecords));
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TriggerRecordSize2Big, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
 
@@ -707,13 +708,11 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 		pStructData = &(*bufferStructIter);
 	}
 
-	std::string ImageIdBytes;
-	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
 	auto* pList = m_imageListResetTmp.mutable_list();
-	//check if image with this GUID already in list
-	auto pImageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](const auto& rData)->bool
+	//check if image with this ID already in list
+	auto pImageIter = std::find_if(pList->begin(), pList->end(), [&imageId](const auto& rData)->bool
 	{
-		return (0 == rData.guidid().compare(ImageIdBytes));
+		return (rData.objectid() == imageId);
 	});
 	int imagePos = -1;
 	SvPb::ImageDefinition* pImageDefinition = nullptr;
@@ -741,7 +740,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	{
 		pImageDefinition = m_imageListResetTmp.add_list();
 		imagePos = pList->size() - 1;
-		pImageDefinition->set_guidid(ImageIdBytes);
+		pImageDefinition->set_objectid(imageId);
 	}
 
 	setStructData(pStructData, pImageDefinition, typeStr);
@@ -752,7 +751,7 @@ int TriggerRecordController::addOrChangeImage(const GUID& rImageId, const SVMatr
 	return imagePos;
 }
 
-int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const GUID& rParentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos /* = -1*/)
+int TriggerRecordController::addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos /* = -1*/)
 {
 	ResetEnum resetEnum = calcResetEnum(inspectionPos);
 	if (ResetEnum::Invalid == resetEnum)
@@ -776,13 +775,11 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 		}
 	}
 
-	std::string ImageIdBytes;
-	SvPb::SetGuidInProtoBytes(&ImageIdBytes, rImageId);
 	auto* pList = m_imageListResetTmp.mutable_childlist();
-	//check if image with this GUID already in list (this is not allowed.)
-	auto imageIter = std::find_if(pList->begin(), pList->end(), [&ImageIdBytes](const auto& rData)->bool
+	//check if image with this ID already in list (this is not allowed.)
+	auto imageIter = std::find_if(pList->begin(), pList->end(), [&imageId](const auto& rData)->bool
 	{
-		return (0 == rData.guidid().compare(ImageIdBytes));
+		return (rData.objectid() == imageId);
 	});
 
 	int imagePos = -1;
@@ -797,8 +794,8 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 		pImageDefinition = m_imageListResetTmp.add_childlist();
 		imagePos = pList->size() - 1;
 	}
-	pImageDefinition->set_guidid(ImageIdBytes);
-	SvPb::SetGuidInProtoBytes(pImageDefinition->mutable_parentimageid(), rParentId);
+	pImageDefinition->set_objectid(imageId);
+	pImageDefinition->set_parentimageid(parentId);
 	std::string typeStr(reinterpret_cast<const char*>(&rBufferStruct), sizeof(rBufferStruct));
 	pImageDefinition->set_type(typeStr);
 
@@ -809,7 +806,7 @@ int TriggerRecordController::addOrChangeChildImage(const GUID& rImageId, const G
 	return imagePos;
 }
 
-void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer)
+void TriggerRecordController::addImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct, int numberOfBuffers, bool clearBuffer)
 {
 	bool isNewReset = -1 == m_resetStarted4IP;
 
@@ -858,7 +855,7 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 		if (bufferMap.end() != iter)
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-			std::string DebugString = SvUl::Format(_T("addImageBuffer(%s): change from %d + (-%d + %d) for ImageType %d\n"), SVGUID(ownerID).ToString().c_str(), imageIter->numberofbuffersrequired(), iter->second, numberOfBuffers, imageIter->structid());
+			std::string DebugString = SvUl::Format(_T("addImageBuffer(%s): change from %d + (-%d + %d) for ImageType %d\n"), std::to_string(ownerID).c_str(), imageIter->numberofbuffersrequired(), iter->second, numberOfBuffers, imageIter->structid());
 			::OutputDebugString(DebugString.c_str());
 #endif
 			int number = std::max(imageIter->numberofbuffersrequired() - iter->second + numberOfBuffers, numberOfBuffers);
@@ -868,7 +865,7 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 		else
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-			std::string DebugString = SvUl::Format(_T("addImageBuffer(%s): %d + %d for ImageType %d\n"), SVGUID(ownerID).ToString().c_str(), imageIter->numberofbuffersrequired(), numberOfBuffers, imageIter->structid());
+			std::string DebugString = SvUl::Format(_T("addImageBuffer(%s): %d + %d for ImageType %d\n"), std::to_string(ownerID).c_str(), imageIter->numberofbuffersrequired(), numberOfBuffers, imageIter->structid());
 			::OutputDebugString(DebugString.c_str());
 #endif
 			imageIter->set_numberofbuffersrequired(imageIter->numberofbuffersrequired() + numberOfBuffers);
@@ -885,7 +882,7 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 		pImageStructData->set_structid(m_imageStructListResetTmp.list_size() - 1);
 		bufferMap[pImageStructData->structid()] = numberOfBuffers;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		std::string DebugString = SvUl::Format(_T("addImageBuffer(%s): new %d for ImageType %d\n"), SVGUID(ownerID).ToString().c_str(), numberOfBuffers, pImageStructData->structid());
+		std::string DebugString = SvUl::Format(_T("addImageBuffer(%s): new %d for ImageType %d\n"), std::to_string(ownerID).c_str(), numberOfBuffers, pImageStructData->structid());
 		::OutputDebugString(DebugString.c_str());
 #endif
 	}
@@ -899,14 +896,14 @@ void TriggerRecordController::addImageBuffer(const GUID& ownerID, const SVMatrox
 }
 
 // cppcheck-suppress unusedFunction
-bool TriggerRecordController::removeImageBuffer(const GUID& ownerID, const SVMatroxBufferCreateStruct& bufferStruct)
+bool TriggerRecordController::removeImageBuffer(uint32_t ownerID, const SVMatroxBufferCreateStruct& bufferStruct)
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)
 	{   //removeImageBuffer is not allowed if reset is not started.
 		assert(false);
 		return false;
 	}
-	auto& bufferMapIter = m_additionalBufferMap.find(SVGUID(ownerID));
+	auto& bufferMapIter = m_additionalBufferMap.find(ownerID);
 	if (m_additionalBufferMap.end() != bufferMapIter)
 	{
 		std::string typeString(reinterpret_cast<const char*>(&bufferStruct), sizeof(bufferStruct));
@@ -922,7 +919,7 @@ bool TriggerRecordController::removeImageBuffer(const GUID& ownerID, const SVMat
 			if (bufferMapIter->second.end() != iter)
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-				std::string DebugString = SvUl::Format(_T("removeImageBuffer(%s) numbers %d -  %d for ImageType %d\n"), SVGUID(ownerID).ToString().c_str(), imageIter->numberofbuffersrequired(), iter->second, imageIter->structid());
+				std::string DebugString = SvUl::Format(_T("removeImageBuffer(%s) numbers %d -  %d for ImageType %d\n"), std::to_string(ownerID).c_str(), imageIter->numberofbuffersrequired(), iter->second, imageIter->structid());
 				::OutputDebugString(DebugString.c_str());
 #endif
 				int number = std::max(imageIter->numberofbuffersrequired() - iter->second, 0);
@@ -939,7 +936,7 @@ bool TriggerRecordController::removeImageBuffer(const GUID& ownerID, const SVMat
 	return false;
 }
 
-bool TriggerRecordController::removeAllImageBuffer(const GUID& ownerID)
+bool TriggerRecordController::removeAllImageBuffer(uint32_t ownerID)
 {
 	if (-1 == m_resetStarted4IP || m_isResetLocked)
 	{   //removeAllImageBuffer is not allowed if reset is not started.
@@ -948,11 +945,11 @@ bool TriggerRecordController::removeAllImageBuffer(const GUID& ownerID)
 	}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-	std::string DebugString = SvUl::Format(_T("removeAllImageBuffer(%s)\n"), SVGUID(ownerID).ToString().c_str());
+	std::string DebugString = SvUl::Format(_T("removeAllImageBuffer(%s)\n"), std::to_string(ownerID).c_str());
 	::OutputDebugString(DebugString.c_str());
 #endif
 
-	auto& bufferMapIter = m_additionalBufferMap.find(SVGUID(ownerID));
+	auto& bufferMapIter = m_additionalBufferMap.find(ownerID);
 	if (m_additionalBufferMap.end() != bufferMapIter)
 	{
 		reduceRequiredImageBuffer(bufferMapIter->second);
@@ -1092,7 +1089,7 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 		::OutputDebugString("\n\nResetTriggerRecordStructure:\nAdditional Buffer:\n");
 		for (auto& rMap : m_additionalBufferMap)
 		{
-			std::string DebugString = SVGUID(rMap.first).ToString() + "\n";
+			std::string DebugString = std::to_string(rMap.first) + "\n";
 			::OutputDebugString(DebugString.c_str());
 			for (auto& rPair : rMap.second)
 			{
@@ -1116,7 +1113,7 @@ void TriggerRecordController::ResetTriggerRecordStructure()
 			for (auto imageData : rImageDef.list())
 			{
 				imageMap[imageData.structid()]++;
-				DebugString = SvUl::Format(_T("structId: %d, Guid: %s\n"), imageData.structid(), SVGUID(SvPb::GetGuidFromProtoBytes(imageData.guidid())).ToString().c_str());
+				DebugString = SvUl::Format(_T("structId: %d, objectId: %u\n"), imageData.structid(), imageData.objectid());
 				::OutputDebugString(DebugString.c_str());
 			}
 			::OutputDebugString("Collected:\n");
@@ -1283,15 +1280,13 @@ ITriggerRecordControllerR& getTriggerRecordControllerRInstance()
 	return getTriggerRecordControllerInstance();
 }
 
-int getInspectionPos(const GUID& inspectionGuid)
+int getInspectionPos(uint32_t inspectionId)
 {
 	int Return = -1;
-	std::string inspectionIdBytes;
-	SvPb::SetGuidInProtoBytes(&inspectionIdBytes, inspectionGuid);
 	const auto& rInspectionList = getTriggerRecordControllerInstance().getInspections();
-	const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionIdBytes](const auto& rItem)-> bool
+	const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionId](const auto& rItem)-> bool
 	{
-		return (0 == rItem.id().compare(inspectionIdBytes));
+		return rItem.id() == inspectionId;
 	});
 	if (rInspectionList.list().end() != Iter)
 	{

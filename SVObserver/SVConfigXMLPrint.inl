@@ -67,10 +67,10 @@ const static wchar_t*   XML_FailStatusItem = L"FailStatusItem";
 
 
 
-static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
+static SVToolGrouping GetToolGroupings(uint32_t inspectionId)
 {
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(rInspectionGuid);
+	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionId);
 	if (pDoc)
 	{
 		return pDoc->GetToolGroupings();
@@ -1143,7 +1143,7 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 		writer->WriteStartElement(nullptr, L"Children", nullptr);
 		if (SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass *>(pObj))
 		{
-			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->GetUniqueObjectID());
+			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
 			if (rToolGroupings.size())
 			{
 				bool bToolGroupActive = false;

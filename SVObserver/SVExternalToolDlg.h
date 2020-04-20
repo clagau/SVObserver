@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls/SVActiveDisableButton.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -27,7 +26,7 @@ struct SVCancelData;
 class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVExternalToolDlg(const SVGUID& rInspectionID, const SVGUID& rToolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
+	SVExternalToolDlg(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
 	virtual ~SVExternalToolDlg();
 
 	// ISVPropertyPageDialog
@@ -75,9 +74,9 @@ protected:
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
 	SVCancelData* m_pCancelData;
-	const SVGUID m_InspectionID;
-	const SVGUID m_ToolObjectID;
-	SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_ToolObjectID;
+	uint32_t m_TaskObjectID = SvDef::InvalidObjectId;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolDlg)

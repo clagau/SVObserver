@@ -25,24 +25,20 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct()
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, uint32_t objectId, const std::string& rName )
+	: m_ObjectRef(rObjectRef)
+	, m_objectId(objectId)
+	, m_Name(rName)
 {
-	m_Guid = GUID_NULL;
-}
 
-SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const std::string& rName )
-{
-	m_ObjectRef = rObjectRef;
-	m_Guid = rGuid;
-	m_Name = rName;
 }
 
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef )
+	: m_ObjectRef(rObjectRef)
 {
-	m_ObjectRef = rObjectRef;
 	if( nullptr != m_ObjectRef.getObject() )
 	{
-		m_Guid = m_ObjectRef.Guid();
+		m_objectId = m_ObjectRef.getObjectId();
 		m_Name = m_ObjectRef.GetCompleteName();
 	}
 }
@@ -53,9 +49,9 @@ bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskObjectInt
 	{
 		return m_ObjectRef < rhs.m_ObjectRef;
 	}
-	else if ( GUID_NULL != m_Guid && GUID_NULL != rhs.m_Guid )
+	else if (SvDef::InvalidObjectId != m_objectId && SvDef::InvalidObjectId != rhs.m_objectId )
 	{
-		return m_Guid < rhs.m_Guid;
+		return m_objectId < rhs.m_objectId;
 	}
 	else
 	{
@@ -63,18 +59,18 @@ bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskObjectInt
 	}
 }
 
-SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVGUID& rGuid )
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct(uint32_t objectId)
+	: m_objectId(objectId)
 {
-	m_Guid = rGuid;
-	m_ObjectRef = SVObjectReference( SVObjectManagerClass::Instance().GetObject( m_Guid ) );
+	m_ObjectRef = SVObjectReference( SVObjectManagerClass::Instance().GetObject( m_objectId ) );
 	m_Name = m_ObjectRef.GetCompleteName();
 }
 
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const std::string& rName )
+	: m_Name(rName)
 {
-	m_Name = rName;
 	m_ObjectRef = SVObjectManagerClass::Instance().GetObjectReference( m_Name.c_str() );
-	m_Guid = m_ObjectRef.Guid();
+	m_objectId = m_ObjectRef.getObjectId();
 }
 
 HRESULT SVInputRequestStructMap::Add( SVObjectClass* pObject )

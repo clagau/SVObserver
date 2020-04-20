@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <guiddef.h>
 #include "BoundValue.h"
 #include "ObjectInterfaces/NameValueVector.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -37,16 +36,16 @@ public:
 public:
 	HRESULT GetValues(BoundValues& rValues)
 	{
-		const GUID& rInspectionID = rValues.GetInspectionID();
-		const GUID& rTaskID = rValues.GetTaskID();
+		uint32_t inspectionID = rValues.GetInspectionID();
+		uint32_t taskID = rValues.GetTaskID();
 		rValues.clear();
 
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getembeddedvaluesrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rTaskID);
+		pRequest->set_objectid(taskID);
 
-		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_getembeddedvaluesresponse())
 		{
 			for (auto& rItem : responseCmd.getembeddedvaluesresponse().list())
@@ -54,7 +53,7 @@ public:
 				_variant_t value, defaultValue;
 				ConvertProtobufToVariant(rItem.value(), value);
 				ConvertProtobufToVariant(rItem.defaultvalue(), defaultValue);
-				rValues[rItem.embeddedid()] = {SvPb::GetGuidFromProtoBytes(rItem.objectid()), value, defaultValue};
+				rValues[rItem.embeddedid()] = {rItem.objectid(), value, defaultValue};
 			}
 		}
 
@@ -64,26 +63,26 @@ public:
 	void SetValues(const SvOg::BoundValues& rValues, PostAction doAction)
 	{
 		m_MessageFailList.clear();
-		const GUID& rTaskID = rValues.GetTaskID();
-		const GUID& rInspectionID = rValues.GetInspectionID();
+		uint32_t inspectionID = rValues.GetInspectionID();
+		uint32_t taskID = rValues.GetTaskID();
 
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_setembeddedvaluesrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rTaskID);
+		pRequest->set_objectid(taskID);
 		for (const auto& rValue : rValues)
 		{
 			auto* pEntry = pRequest->add_list();
 			pEntry->set_ismodified(rValue.second.isModified());
 			pEntry->set_isdefaultmodified(rValue.second.isDefaultModified());
 			pEntry->set_arrayindex(rValue.second.GetArrayIndex());
-			SvPb::SetGuidInProtoBytes(pEntry->mutable_values()->mutable_objectid(), rValue.second.GetObjectID());
+			pEntry->mutable_values()->set_objectid(rValue.second.GetObjectID());
 			pEntry->mutable_values()->set_embeddedid(rValue.first);
 			ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
 			ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
 		}
 
-		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_standardresponse())
 		{
 			m_MessageFailList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
@@ -105,14 +104,14 @@ public:
 			if (bReset)
 			{
 				// Do a reset of the Tool
-				ResetObject(rInspectionID, rTaskID);
+				ResetObject(inspectionID, taskID);
 			}
 			if (S_OK == hr && bRunOnce)
 			{
-				hr = RunOnce(rInspectionID);
+				hr = RunOnce(inspectionID);
 				if(S_OK != hr)
 				{
-					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), 0, rTaskID);
+					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), 0, taskID);
 					m_MessageFailList.push_back(message);
 				}
 			}
@@ -121,7 +120,7 @@ public:
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"),hr));
-			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams), 0, rTaskID);
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams), 0, taskID);
 			m_MessageFailList.push_back(message);
 		}
 		if (0 < m_MessageFailList.size())
@@ -130,14 +129,14 @@ public:
 		}
 	}
 
-	SvOi::NameValueVector GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
+	SvOi::NameValueVector GetEnums(uint32_t inspectionID, uint32_t objectID) const
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse response;
 		SvPb::GetValueObjectEnumsRequest* pGetObjectEnumsRequest = requestCmd.mutable_getvalueobjectenumsrequest();
 
-		SvPb::SetGuidInProtoBytes(pGetObjectEnumsRequest->mutable_objectid(), rObjectID);
-		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &response);
+		pGetObjectEnumsRequest->set_objectid(objectID);
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &response);
 		if (S_OK == hr && response.has_getvalueobjectenumsresponse())
 		{
 			SvOi::NameValueVector retValue;
@@ -151,14 +150,14 @@ public:
 		return SvOi::NameValueVector();
 	}
 
-	std::string GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
+	std::string GetObjectName(uint32_t inspectionID, uint32_t objectID) const
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rObjectID);
+		pRequest->set_objectid(objectID);
 
-		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
 			return responseCmd.getobjectparametersresponse().name();
@@ -166,22 +165,22 @@ public:
 		return std::string();
 	}
 
-	void ResetObject(const GUID& rInspectionID, const GUID& rObjectID)
+	void ResetObject(uint32_t inspectionID, uint32_t objectID)
 	{
 		m_MessageFailList.clear();
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_resetobjectrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), rObjectID);
+		pRequest->set_objectid(objectID);
 
-		HRESULT hr = SvCmd::InspectionCommands(rInspectionID, requestCmd, &responseCmd);
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_standardresponse() && responseCmd.standardresponse().has_errormessages())
 		{
 			m_MessageFailList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 		}
 		if (S_OK != hr && 0 < m_MessageFailList.size())
 		{
-			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, rObjectID);
+			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, objectID);
 			m_MessageFailList.push_back(message);
 		}
 		if (0 < m_MessageFailList.size())
@@ -190,10 +189,10 @@ public:
 		}
 	}
 
-	HRESULT RunOnce(const GUID& rInspectionID)
+	HRESULT RunOnce(uint32_t inspectionID)
 	{
 		// Do a run once of the whole Inspection
-		return SvCmd::RunOnceSynchronous(rInspectionID);
+		return SvCmd::RunOnceSynchronous(inspectionID);
 	}
 
 	const SvStl::MessageContainerVector& getFailedMessageList() { return m_MessageFailList; };

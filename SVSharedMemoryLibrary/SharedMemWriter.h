@@ -12,7 +12,6 @@
 #include "MonitorListCpy.h"
 #include "SVSharedMemorySettings.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVUtilityLibrary/SVGUID.h"
 
 #include "SharedDataContainer.h"
 #include "MonitorListStore.h"

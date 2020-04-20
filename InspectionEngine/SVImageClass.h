@@ -56,7 +56,7 @@ public:
 	//-  UpdateFromParentInformation() which overwrites the extents I just 
 	//-  sent in anyhow????
 	HRESULT UpdateImage( const SVImageExtentClass& rExtent, bool doNotRebuildStorage = false );
-	HRESULT UpdateImage( const SVGUID& rParentID, const SVImageInfoClass& rImageInfo );
+	HRESULT UpdateImage(uint32_t parentID, const SVImageInfoClass& rImageInfo);
 	HRESULT UpdateImage( SvDef::SVImageTypeEnum ImageType );
 
 	virtual const double& GetLastResetTimeStamp() const;
@@ -75,7 +75,6 @@ public:
 
 	HRESULT LoadImage( LPCTSTR p_szFileName, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
 
-	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual void Persist( SvOi::IObjectWriter& rWriter ) override;
@@ -127,7 +126,7 @@ public:
 #pragma region virtual method (ISVImage)
 
 protected:
-	typedef std::pair< SVGUID, SVImageClass* > SVParentObjectPair;
+	typedef std::pair< uint32_t, SVImageClass* > SVParentObjectPair;
 
 	virtual bool DestroyImage();
 
@@ -138,10 +137,10 @@ protected:
 
 	HRESULT ClearParentConnection();
 
-	virtual HRESULT RemoveObjectConnection( const GUID& rObjectID ) override;
+	virtual HRESULT RemoveObjectConnection(uint32_t objectID ) override;
 
-	HRESULT UpdateChild( const SVGUID& rChildID, const SVImageInfoClass& rImageInfo);
-	HRESULT RemoveChild( const SVGUID& rChildID );
+	HRESULT UpdateChild(uint32_t childID, const SVImageInfoClass& rImageInfo);
+	HRESULT RemoveChild(uint32_t childID );
 
 	HRESULT UpdatePosition( );
 
@@ -165,8 +164,8 @@ protected:
 	SvDef::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;
 	
-	typedef std::unordered_map< GUID, SVImageInfoClass > SVGuidImageChildMap; 
-	SVGuidImageChildMap m_ChildArrays;
+	typedef std::unordered_map< uint32_t, SVImageInfoClass > ImageIdInfoMap;
+	ImageIdInfoMap m_ChildArrays;
 
 private:
 	int m_inspectionPosInTRC = -1; //inspection position in TriggerRecordController

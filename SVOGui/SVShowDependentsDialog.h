@@ -15,7 +15,6 @@
 #include "SVMFCControls/DlgItemResizer.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/SVO-Enum.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -35,11 +34,11 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		SVShowDependentsDialog( const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
+		explicit SVShowDependentsDialog( const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
 	#pragma endregion Constructor
 
 	public:
-		static INT_PTR StandardDialog(const std::string& rName, const SVGUID rTaskObjectID);
+		static INT_PTR StandardDialog(const std::string& rName, uint32_t taskObjectID);
 	
 	protected:
 		virtual BOOL OnInitDialog() override;
@@ -64,7 +63,7 @@ namespace SvOg
 		CRect m_OrginalClient;
 		CRect m_Gripper;
 		CListCtrl m_ListCtrl;
-		const SVGuidSet& m_rSourceSet;
+		const std::set<uint32_t>& m_rSourceSet;
 		SvPb::SVObjectTypeEnum m_objectType;
 		SvDef::StringPairVector m_dependencyList;
 		std::string m_DisplayText;

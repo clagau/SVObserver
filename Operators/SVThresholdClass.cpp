@@ -91,13 +91,13 @@ void SVThresholdClass::init()
 	// Add equation friends...
 	SVUpperThresholdEquationClass* pUTFriend = new SVUpperThresholdEquationClass( this );
 	if( pUTFriend )
-		AddFriend( pUTFriend->GetUniqueObjectID() );
+		AddFriend( pUTFriend->getObjectId() );
 	SVLowerThresholdEquationClass* pLTFriend = new SVLowerThresholdEquationClass( this );
 	if( pLTFriend )
-		AddFriend( pLTFriend->GetUniqueObjectID() );
+		AddFriend( pLTFriend->getObjectId() );
 	SVAutoThresholdEquationClass* pATFriend = new SVAutoThresholdEquationClass( this );
 	if( pATFriend )
-		AddFriend( pATFriend->GetUniqueObjectID() );
+		AddFriend( pATFriend->getObjectId() );
 
 	// Identify our input type needs...
 
@@ -179,7 +179,7 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -191,7 +191,7 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -441,7 +441,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 		
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvStl::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvStl::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetCriticalFailure();

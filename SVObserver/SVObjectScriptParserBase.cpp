@@ -16,9 +16,9 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #pragma endregion Includes
 
-SVObjectScriptParserBase::SVObjectScriptParserBase(unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
+SVObjectScriptParserBase::SVObjectScriptParserBase(unsigned long parserHandle, uint32_t ownerId, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : m_parserHandle(parserHandle)
-, m_OwnerGuid(OwnerGuid)
+, m_OwnerId(ownerId)
 , m_pOwnerObject(pOwnerObject)
 , m_pWnd(pWnd)
 {
@@ -28,9 +28,9 @@ SVObjectScriptParserBase::~SVObjectScriptParserBase()
 {
 }
 
-const GUID& SVObjectScriptParserBase::GetOwnerGuid() const
+uint32_t SVObjectScriptParserBase::GetOwnerId() const
 {
-	return m_OwnerGuid;
+	return m_OwnerId;
 }
 
 SVObjectClass* SVObjectScriptParserBase::GetOwnerObject()

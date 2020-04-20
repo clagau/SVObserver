@@ -120,7 +120,7 @@ bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -185,7 +185,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -208,7 +208,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BinarizeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BinarizeFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -357,12 +357,12 @@ bool SVColorThresholdClass::createOutputImage(SvIe::SVImageClass* pInputImage, S
 {
 	bool Result(false);
 
-	SVGUID InputID;
+	uint32_t InputID = SvDef::InvalidObjectId;
 	SVImageInfoClass ImageInfo;
 
 	if (nullptr != pInputImage)
 	{
-		InputID = pInputImage->GetUniqueObjectID();
+		InputID = pInputImage->getObjectId();
 		ImageInfo = pInputImage->GetImageInfo();
 	}
 	else

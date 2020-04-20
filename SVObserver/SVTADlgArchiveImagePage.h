@@ -23,7 +23,7 @@
 #pragma endregion Includes
 
 
-struct ValueAndGuiInformation ///< holds GUI elements and GUIDs required for (possibly linked) Values that are to be modified using a dialog
+struct ValueAndGuiInformation ///< holds GUI elements and IDs required for (possibly linked) Values that are to be modified using a dialog
 {
 	CEdit& m_valueEdit;
 	SvPb::EmbeddedIdEnum m_embeddedId;
@@ -50,7 +50,6 @@ namespace SvTo
 class SVArchiveTool;
 }
 
-class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 #pragma endregion Declarations
 
@@ -58,7 +57,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 {
 	enum { IDD = IDD_TA_ARCHIVE_IMAGE_PAGE };
 
-	class AlternativeImagePaths ///< provides access to widgets and GUIDs for alternative image path configuration
+	class AlternativeImagePaths ///< provides access to widgets and IDs for alternative image path configuration
 	{
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
@@ -89,7 +88,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		void SelectSubfolderSelection(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 		void SelectSubfolderLocation(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 
-		std::vector<ValueAndGuiInformation> m_vecValueAndGuiInfo; //used to iterate over widgets and GUIDs
+		std::vector<ValueAndGuiInformation> m_vecValueAndGuiInfo; //used to iterate over widgets and IDs
 
 	protected:
 		void EditboxToTextValue(ValueAndGuiInformation&);
@@ -118,7 +117,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 
 #pragma region Constructor
 public:
-	SVTADlgArchiveImagePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent );
+	SVTADlgArchiveImagePage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent );
 	virtual ~SVTADlgArchiveImagePage();
 #pragma endregion Constructor
 
@@ -157,7 +156,7 @@ protected:
 	void OnButtonSubfolderSelection() { m_alternativeImagePaths.SelectSubfolderSelection(m_objectSelector, this); }
 	void OnButtonSubfolderLocation() { m_alternativeImagePaths.SelectSubfolderLocation(m_objectSelector, this); }
 
-	bool checkImageMemory( SVGUID ImageGuid , bool bNewState );
+	bool checkImageMemory(uint32_t imageId, bool bNewState);
 	__int64 CalculateToolMemoryUsage();
 	__int64 CalculateFreeMem();
 

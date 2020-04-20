@@ -49,7 +49,7 @@ public:
 	virtual void GetAllInputObjects() override;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
-	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+	virtual bool isInputImage(uint32_t imageId) const override;
 
 	virtual bool CloseObject() override;
 
@@ -60,7 +60,7 @@ public:
 	int GetSize() const;
 	//Add a task Object to the taskObject list before the object with rObjectBeforeID.
 	//return the index of the new element 
-	virtual int  InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject);
+	virtual int  InsertBefore(uint32_t rObjectBeforeID, SVTaskObjectClass* pTaskObject);
 	SVTaskObjectClass* GetAt( int nIndex ) const;
 	void RemoveAt( int nIndex);
 	/// Add a task object to the task object list
@@ -88,11 +88,11 @@ public:
 	
 	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const override;
 #pragma region virtual methods (ITaskObjectListClass)
-	virtual void Delete(const SVGUID& rObjectID) override;
-	virtual void InsertBefore(const SVGUID& rObjectBeforeID, ITaskObject& rObject) override;
+	virtual void Delete(uint32_t objectID) override;
+	virtual void InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
-	virtual void moveTaskObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) override;
+	virtual void moveTaskObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual void GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 
@@ -103,7 +103,7 @@ public:
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 	virtual bool ConnectAllInputs() override;
-	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
+	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
 
 	bool getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
@@ -115,7 +115,7 @@ protected:
 	void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
 
-	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner ) override;
+	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner) override;
 
 	// Direct Method Call
 	// NOTE:
@@ -139,14 +139,14 @@ private:
 	SvOi::IObjectClass* getFirstObjectWithRequestor( const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const;
 
 	/// Remove the object from the friend-List (don't delete the object itself)
-	/// \param rFriendGUID [in] GUID of the friend to be removed.
+	/// \param friendID [in] ID of the friend to be removed.
 	/// \returns bool true if object in the list found and removed. False if object is not in the list.
-	bool RemoveFriend(const GUID& rFriendGUID);
+	bool RemoveFriend(uint32_t friendID);
 
 	/// Remove the object from the TaskObjectVector (don't delete the object itself)
-	/// \param rObjectID [in] GUID of the task to be removed.
+	/// \param objectID [in] ID of the task to be removed.
 	/// \returns bool true if object in the list found and removed. False if object is not in the list.
-	bool RemoveFromTaskObjectVector(const SVGUID& rObjectID);
+	bool RemoveFromTaskObjectVector(uint32_t objectID);
 #pragma endregion Private Methods
 	
 #pragma region Member Variables

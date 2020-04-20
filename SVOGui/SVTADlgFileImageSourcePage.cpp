@@ -23,10 +23,10 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+	SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass(uint32_t inspectionId, uint32_t taskObjectId)
 		: CPropertyPage(SVToolAdjustmentDialogFileImageSourcePageClass::IDD)
-		, m_ImageController(rInspectionID, rTaskObjectID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+		, m_ImageController(inspectionId, taskObjectId)
+		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
 		//}}AFX_DATA_INIT
@@ -141,8 +141,7 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::setImages()
 	{
-		SVGUID imageId = getFirstResultImageId(m_ImageController);
-		IPictureDisp* pImage = m_ImageController.GetImage(imageId);
+		IPictureDisp* pImage = m_ImageController.GetImage(getFirstResultImageId(m_ImageController));
 		m_imageCtrl.setImage(pImage, 0);
 		m_imageCtrl.Refresh();
 	}

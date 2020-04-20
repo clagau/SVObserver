@@ -29,7 +29,7 @@ namespace SvOg
 	{
 	#pragma region Constructor
 	public:
-		SVPatternAnalyzerModelPage(const SVGUID& rInspectionID, const SVGUID& rAnalyzerID);
+		SVPatternAnalyzerModelPage(uint32_t rInspectionID, uint32_t rAnalyzerID);
 		virtual ~SVPatternAnalyzerModelPage();
 	#pragma endregion Constructor
 
@@ -146,7 +146,7 @@ namespace SvOg
 		long	m_lModelHeight;
 		long m_CenterX = 0;
 		long m_CenterY = 0;
-		SVGUID m_AnalyzerImageGUID;
+		uint32_t m_AnalyzerImageID = SvDef::InvalidObjectId;
 
 		long m_sourceImageWidth;
 		long m_sourceImageHeight;
@@ -159,8 +159,8 @@ namespace SvOg
 		long m_handleToSquareOverlayObject2;
 		long m_handleToModelCenterOverlay;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rAnalyzerID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_AnalyzerID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_values;
 	#pragma endregion Member Variables

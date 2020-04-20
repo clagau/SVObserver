@@ -26,22 +26,14 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-ResultViewItemDef::ResultViewItemDef()
-: m_ObjectID( GUID_NULL )
-, m_hasIndex(false)
-,m_Index(0)
+
+ResultViewItemDef::ResultViewItemDef(uint32_t objectId)
+: m_ObjectID(objectId)
 {
 }
 
-ResultViewItemDef::ResultViewItemDef(const SVGUID& guid)
-: m_ObjectID(guid)
-, m_hasIndex(false)
-,m_Index(0)
-{
-}
-
-ResultViewItemDef::ResultViewItemDef(const SVGUID& guid, int index)
-: m_ObjectID(guid)
+ResultViewItemDef::ResultViewItemDef(uint32_t objectId, int index)
+: m_ObjectID(objectId)
 , m_hasIndex(true)
 , m_Index(index)
 {
@@ -49,7 +41,7 @@ ResultViewItemDef::ResultViewItemDef(const SVGUID& guid, int index)
 
 ResultViewItemDef::ResultViewItemDef(const SVObjectReference& objRef)
 {
-	m_ObjectID = objRef.Guid();
+	m_ObjectID = objRef.getObjectId();
 	m_hasIndex = objRef.isArray();
 	m_Index = objRef.ArrayIndex();
 }
@@ -60,11 +52,6 @@ ResultViewItemDef::~ResultViewItemDef()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-const SVGUID& ResultViewItemDef::getGuid() const
-{
-	return m_ObjectID;
-}
-
 long ResultViewItemDef::getIndexValue() const
 {
 	long ret = 0;

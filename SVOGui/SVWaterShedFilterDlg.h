@@ -24,7 +24,7 @@ namespace SvOg
 	{
 		// Construction
 	public:
-		SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+		SVWatershedFilterDlg(uint32_t inspectionId, uint32_t taskObjectId, uint32_t rFilterId, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVWatershedFilterDlg();
 
 		HRESULT SetInspectionData();
@@ -65,9 +65,9 @@ namespace SvOg
 	private:
 		std::vector<std::string*>    m_AvailableImages;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
-		const SVGUID& m_filterID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
+		const uint32_t m_filterID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

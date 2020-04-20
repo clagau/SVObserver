@@ -29,8 +29,8 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SvIe::SVTaskObjectClass* pTaskObject,
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr{ new SVCommandInspectionExtentUpdater(pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtent, &rExtents) };
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
+			SVCommandInspectionSetImageExtentPtr commandPtr{ new SVCommandInspectionExtentUpdater(pInspection->getObjectId(), pTaskObject->getObjectId(), ExtentUpdaterMode_SetImageExtent, &rExtents) };
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->getObjectId(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
 	}
@@ -48,8 +48,8 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SvIe::SVTaskObjectClass* pTaskOb
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr{ new SVCommandInspectionExtentUpdater(pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents) };
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
+			SVCommandInspectionSetImageExtentPtr commandPtr{ new SVCommandInspectionExtentUpdater(pInspection->getObjectId(), pTaskObject->getObjectId(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents) };
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->getObjectId(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
 	}

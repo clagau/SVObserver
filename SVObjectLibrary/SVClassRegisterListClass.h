@@ -25,6 +25,12 @@ namespace SvPb
 
 SvPb::ClassIdEnum calcClassId(const _variant_t& rClassIdVariant);
 SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const _variant_t& rObjectName);
+uint32_t calcObjectId(const std::string& objectIdString);
+uint32_t calcObjectId(const _variant_t& rObjectIdVariant);
+std::string convertObjectIdToString(uint32_t objectId);
+_variant_t convertObjectIdToVariant(uint32_t objectId);
+uint32_t getNextAcquisitionId();
+void resetExchangeObjectIdMap();
 
 class SVClassRegisterListClass
 {
@@ -58,5 +64,5 @@ private:
 };
 
 constexpr int c_NumberOfFilterCells = 49;
-constexpr int COUNT_OF_INPUT_OUTPUT_GUIDs = 50;
+constexpr int COUNT_OF_INPUT_OUTPUT_IDs = 50;
 constexpr int c_maxTableColumn = 50;

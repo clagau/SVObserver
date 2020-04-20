@@ -11,7 +11,8 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
 #include "SVProtobuf/SVO-Enum.h"
-#include "SVUtilityLibrary/NameGuidList.h"
+#include "Definitions/ObjectDefines.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -79,9 +80,9 @@ namespace SvOi
 		virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const = 0;
 
 		/**********
-			The method gets the parent or nullptr if no parent.
+			The method gets the objectId parent or 0 if no parent.
 		***********/
-		virtual const SVGUID& GetParentID() const = 0;
+		virtual uint32_t GetParentID() const = 0;
 
 		/**********
 			The method gets the ancestor with a special type or nullptr if not found.
@@ -103,9 +104,9 @@ namespace SvOi
 		virtual UINT SetObjectAttributesSet( UINT Attributes, SetAttributeType Type, int Index=0 ) = 0;
 
 		/*
-		This method returns the object's Global Unique Identifier (GUID) of this object instance.
+		This method returns the object's Global Unique Identifier (uint32_t) of this object instance.
 		*/
-		virtual const SVGUID& GetUniqueObjectID() const = 0;
+		virtual uint32_t getObjectId() const = 0;
 
 		/// This method returns the embedded ID of the object
 		virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const = 0;
@@ -135,9 +136,9 @@ namespace SvOi
 		virtual IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const IObjectClass* pRequestor = nullptr) const = 0;
 
 		/// Move an object in the friend-list to a position in front of another object.
-		/// \param objectToMoveId [in] GUID of the object to move.
-		/// \param preObjectId [in] GUID of the object in front of the other object should moved. If this GUID is GUID_NULL, the other object will be moved to the end of the list.
-		virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = GUID_NULL) = 0;
+		/// \param objectToMoveId [in] ID of the object to move.
+		/// \param preObjectId [in] ID of the object in front of the other object should moved. If this ID is SvDef::InvalidObjectId, the other object will be moved to the end of the list.
+		virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) = 0;
 
 		/// Reset this object and all children and required all friends.
 		/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.

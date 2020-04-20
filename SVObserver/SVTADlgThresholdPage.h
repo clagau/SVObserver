@@ -16,7 +16,6 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui/ImageController.h"
-#include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -72,7 +71,7 @@ class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage
 	void UpdateUpperThresholdFromFoumula();
 
 public:
-	SVToolAdjustmentDialogThresholdPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
+	SVToolAdjustmentDialogThresholdPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent);
 	virtual ~SVToolAdjustmentDialogThresholdPageClass();
 
 	HRESULT SetInspectionData();
@@ -146,7 +145,7 @@ private:
 	long m_lowerThres;	// current slider pos...
 	long m_histState;
 	SvOg::ImageController m_ImageController;
-	SVGUID m_resultImageID = GUID_NULL;
+	uint32_t m_resultImageID = SvDef::InvalidObjectId;
 
 public:
 	SvMc::SVHistogram m_histogram;

@@ -31,7 +31,6 @@ namespace SvVol
 class SVEnumerateValueObjectClass;
 }
 
-class SVGUID;
 class SVToolAdjustmentDialogSheetClass;
 
 enum SVShiftResultEnum
@@ -49,7 +48,7 @@ class SVTADlgTranslationShiftPageClass : public CPropertyPage
 //	DECLARE_DYNAMIC(SVTADlgTranslationShiftPage)
 
 public:
-	SVTADlgTranslationShiftPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	SVTADlgTranslationShiftPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVTADlgTranslationShiftPageClass();
 
 	HRESULT SetInspectionData();

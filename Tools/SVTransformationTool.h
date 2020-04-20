@@ -35,7 +35,7 @@ public:
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual bool isInputImage(const SVGUID& rImageGuid) const override { return false; };
+	virtual bool isInputImage(uint32_t imageId) const override { return false; };
 	virtual HRESULT UpdateImageWithExtent() override;
 
 private:

@@ -72,8 +72,8 @@ public:
 	virtual ~SVIPDoc();
 #pragma endregion Constructor
 
-	const GUID& GetInspectionID() const;
-	void SetInspectionID( const SVGUID& p_InspectionID );
+	uint32_t GetInspectionID() const;
+	void SetInspectionID( uint32_t inspectionID );
 
 	void RebuildResultsList();
 
@@ -98,7 +98,7 @@ public:
 	bool GoOffline();
 
 	HRESULT RemoveImage(SvIe::SVImageClass* pImage);
-	HRESULT RemoveImage(const SVGUID& p_rImageId);
+	HRESULT RemoveImage(uint32_t imageId);
 
 	void RefreshPublishedList();
 
@@ -116,10 +116,10 @@ public:
 	RegressionRunModeEnum GetRegressionRunMode();
 	void SetRegressionTimeoutPeriod(int p_TimeoutMS);
 
-	SVGUID GetSelectedToolID() const;
-	void SetSelectedToolID( const SVGUID& p_rToolID );
+	uint32_t GetSelectedToolID() const;
+	void SetSelectedToolID(uint32_t toolID );
 
-	bool IsToolPreviousToSelected( const SVGUID& p_rToolID ) const;
+	bool IsToolPreviousToSelected(uint32_t toolID ) const;
 
 	std::string GetCompleteToolSetName() const;
 	std::string CheckName( const std::string& rToolName ) const;
@@ -127,10 +127,10 @@ public:
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
 	
-	//Returns a GUID of the ToolsetList. The new Tool should be inserted before this tool
-	SVGUID GetToolToInsertBefore(const std::string& rName, int listIndex) const;
+	//Returns a Id of the ToolsetList. The new Tool should be inserted before this tool
+	uint32_t GetToolToInsertBefore(const std::string& rName, int listIndex) const;
 
-	void updateToolsetView(const SVGUID& rToolID, const SVGUID& rPostID, const SVGUID rOwnerID);
+	void updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t ownerID);
 
 	std::vector<RegressionTestStruct> m_regCameras; // @WARNING:  bad practice making members public
 
@@ -272,7 +272,7 @@ protected:
 	};
 
 	typedef std::set< SVImageViewClass* > SVImageViewPtrSet;
-	typedef std::map< SVGUID, SVImageViewPtrSet > SVMasterImageRegisterMap;
+	typedef std::map< uint32_t, SVImageViewPtrSet > SVMasterImageRegisterMap;
 	typedef std::map< SVImageViewClass*, SVImageViewStatusStruct > SVImageViewPtrImageViewStatusMap;
 
 	typedef SVRingBuffer< SVIPProductStruct, SVElementClear > SVProductDataQueue;
@@ -286,7 +286,7 @@ protected:
 		SVImageDataStruct() : m_ImageData(), m_OverlayData(), m_ImageViews() {}
 	};
 
-	typedef std::map< SVGUID, SVImageDataStruct > SVImageIdImageDataStructMap;
+	typedef std::map< uint32_t, SVImageDataStruct > SVImageIdImageDataStructMap;
 
 	CMDIChildWnd* GetMDIChild();
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
@@ -309,15 +309,15 @@ protected:
 	HRESULT RebuildImages();
 	HRESULT CheckImages();
 
-	HRESULT RegisterImage( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
+	HRESULT RegisterImage(uint32_t imageId, SVImageViewClass* p_pImageView );
 	HRESULT UnregisterImageView( SVImageViewClass* p_pImageView );
 
-	HRESULT IsImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
-	HRESULT GetBitmapInfo( const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmapInfo ) const;
-	HRESULT GetImageData( const SVGUID& p_rImageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const;
-	HRESULT SetImageData( const SVGUID& p_rImageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray );
-	HRESULT MarkImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
-	HRESULT MarkImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
+	HRESULT IsImageDataUpdated(uint32_t imageId, SVImageViewClass* p_pImageView ) const;
+	HRESULT GetBitmapInfo(uint32_t imageId, SVBitmapInfo& p_rBitmapInfo) const;
+	HRESULT GetImageData( uint32_t imageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const;
+	HRESULT SetImageData( uint32_t imageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray );
+	HRESULT MarkImageDataUpdated( uint32_t imageId, SVImageViewClass* p_pImageView );
+	HRESULT MarkImageDataDisplayed( uint32_t imageId, SVImageViewClass* p_pImageView );
 
 	HRESULT UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
@@ -379,7 +379,7 @@ private:
 	std::string m_RegressionTestLoadEquationText;
 	bool m_bRegressionTestInitEquationText;
 
-	SVGUID m_InspectionID;
+	uint32_t m_InspectionID;
 	SVDisplayObject m_oDisplay;
 
 	CMDIChildWnd* m_pMDIChildWnd;

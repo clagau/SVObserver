@@ -23,7 +23,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogLinearSpecialPage : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogLinearSpecialPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		SVToolAdjustmentDialogLinearSpecialPage(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~SVToolAdjustmentDialogLinearSpecialPage();
 
 	protected:
@@ -43,8 +43,8 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

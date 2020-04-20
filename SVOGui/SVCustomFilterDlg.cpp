@@ -29,11 +29,11 @@ namespace SvOg
 	constexpr char* TransformationTag = "TransformationFactor";
 	constexpr char* CellValueTag = "CellValue";
 
-	SVCustomFilterDlg::SVCustomFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) :
+	SVCustomFilterDlg::SVCustomFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) :
 		CDialog(SVCustomFilterDlg::IDD, pParent)
-		, m_filterID(rFilterID)
-		, m_rInspectionID(rInspectionID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
+		, m_filterID(filterId)
+		, m_InspectionID(inspectionId)
+		, m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVCustomFilterDlg)
 		m_bAbsoluteValue = TRUE;

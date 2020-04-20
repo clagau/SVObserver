@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <assert.h>
 #include "Definitions/StringTypeDef.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 

@@ -18,7 +18,6 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SvPb::RemoteOutputObjectId);
@@ -34,7 +33,7 @@ SVRemoteOutputObject::~SVRemoteOutputObject()
 
 std::string SVRemoteOutputObject::GetInputValueObjectName()
 {
-	// Use the GUID to get an object.
+	// Use the ID to get an object.
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId);
 	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{	// Get the object name from the object pointer.
@@ -52,14 +51,12 @@ std::string SVRemoteOutputObject::GetGroupID( ) const
 // Parameters >> Tree
 bool SVRemoteOutputObject::GetParameters(SvOi::IObjectWriter& rWriter ) const
 {
-	_variant_t svVariant;
-
-	svVariant = m_outObjectInfo.getUniqueObjectID().ToVARIANT();
+	_variant_t svVariant = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
-	svVariant = m_InputObjectId.ToVARIANT();
-	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
+	svVariant = convertObjectIdToVariant(m_InputObjectId);
+	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_ID, svVariant );
 	svVariant.Clear();
 
 	svVariant = _variant_t(m_strGroupID.c_str());
@@ -80,14 +77,11 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	bool bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
-		SVGUID UniqueID{ svVariant };
-
 		bOk = SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
 		if( bOk )
 		{
-			m_outObjectInfo.GetObjectReference().setGuid(UniqueID);
-
+			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
 		else
@@ -98,13 +92,12 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 	if (bOk)
 	{
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant);
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_ID, htiParent, svVariant);
 		if (!bOk)
 		{
 			return false;
 		}
-		
-		m_InputObjectId = SVGUID(svVariant);
+		m_InputObjectId = calcObjectId(svVariant);
 	}
 
 	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_GROUP_ID, htiParent, svVariant);
@@ -130,17 +123,17 @@ HRESULT SVRemoteOutputObject::SetInputObject(SVObjectClass* pObject )
 {
 	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{
-		m_InputObjectId = pObject->GetUniqueObjectID();
+		m_InputObjectId = pObject->getObjectId();
 	}
 	else
 	{
-		m_InputObjectId.clear();
+		m_InputObjectId = SvDef::InvalidObjectId;
 	}
 
 	return S_OK;
 }
 
-HRESULT SVRemoteOutputObject::SetInputObjectId( GUID ObjectId )
+HRESULT SVRemoteOutputObject::SetInputObjectId(uint32_t ObjectId )
 {
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( ObjectId );
 	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
@@ -150,13 +143,7 @@ HRESULT SVRemoteOutputObject::SetInputObjectId( GUID ObjectId )
 	return S_OK;
 }
 
-HRESULT SVRemoteOutputObject::GetInputValueObjectGUID( GUID& p_rGUID ) const
-{
-	p_rGUID = m_InputObjectId;
-	return S_OK;
-}
-
-SVGUID SVRemoteOutputObject::GetInputValueObjectGUID() const
+uint32_t SVRemoteOutputObject::GetInputValueObjectID() const
 {
 	return m_InputObjectId;
 }

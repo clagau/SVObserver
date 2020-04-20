@@ -88,7 +88,7 @@ namespace SvStl
 {
 #pragma region Constructor
 	MessageContainer::MessageContainer() :
-	 m_ObjectId( GUID_NULL )
+	 m_ObjectId( 0 )
 	{
 	}
 
@@ -100,14 +100,14 @@ namespace SvStl
 	{
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=GUID_NULL*/ )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/ )
 	{
-		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, objectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=GUID_NULL*/  )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, objectId );
 	}
 
 	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
@@ -139,12 +139,12 @@ namespace SvStl
 #endif
 	}
 
-	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, SvDef::StringVector(), SourceFile, ProgramCode, objectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
@@ -153,10 +153,10 @@ namespace SvStl
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
 
-		setMessage( m_Message, rObjectId, false );
+		setMessage( m_Message, objectId, false );
 	}
 
-	void MessageContainer::setMessage( const MessageData& rMessage, const GUID& rObjectId /*=GUID_NULL*/, bool clearData /*= true*/ )
+	void MessageContainer::setMessage( const MessageData& rMessage, uint32_t objectId /*=0*/, bool clearData /*= true*/ )
 	{
 		//! Make sure the dll is loaded
 		setMessageDll();
@@ -168,9 +168,9 @@ namespace SvStl
 		//Note if rMessage is the reference to m_Message then no copy is made
 		m_Message = rMessage;
 		//Set the object id only if it is not null
-		if( GUID_NULL != rObjectId )
+		if( 0 != objectId )
 		{
-			m_ObjectId = rObjectId;
+			m_ObjectId = objectId;
 		}
 		//Set the date time when this is being set
 		m_Message.m_DateTime = std::time( 0 );
@@ -197,7 +197,7 @@ namespace SvStl
 		m_Message.m_SourceFile = SourceFile;
 		m_Message.m_ProgramCode = ProgramCode;
 
-		setMessage( m_Message, GUID_NULL, false );
+		setMessage( m_Message, 0, false );
 	}
 
 	void MessageContainer::addMessage( const MessageData& rMessage, bool replaceMainMessage )
@@ -206,7 +206,7 @@ namespace SvStl
 		{
 			//Save the current message to the additional messages and make the new message the main message
 			m_AdditionalMessages.push_back( m_Message );
-			setMessage( rMessage, GUID_NULL, false );
+			setMessage( rMessage, 0, false );
 		}
 		else
 		{

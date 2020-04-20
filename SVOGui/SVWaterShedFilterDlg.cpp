@@ -31,13 +31,13 @@ enum
 
 namespace SvOg
 {
-	SVWatershedFilterDlg::SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent): 
+	SVWatershedFilterDlg::SVWatershedFilterDlg(uint32_t inspectionId, uint32_t taskObjectId, uint32_t filterId, CWnd* pParent) :
 		CDialog(SVWatershedFilterDlg::IDD, pParent)
-		,m_filterID(rFilterID)
-		,m_rInspectionID(rInspectionID)
-		,m_rTaskObjectID(rTaskObjectID)
-		, SvOg::ImageController(rInspectionID, rTaskObjectID)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rFilterID } }
+		,m_filterID(filterId)
+		,m_InspectionID(inspectionId)
+		,m_TaskObjectID(taskObjectId)
+		, SvOg::ImageController(inspectionId, taskObjectId)
+		, m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 
 		//{{AFX_DATA_INIT(SVWatershedFilterDlg)
@@ -138,13 +138,13 @@ namespace SvOg
 
 		GetDlgItem( IDC_VARIATION_EDIT )->EnableWindow( OffVarRadioEnum_Varation == m_iVariationType );
 
-		const SvUl::NameGuidList& availImages = GetAvailableImageList();
-		for (SvUl::NameGuidList::const_iterator it = availImages.begin(); availImages.end() != it; ++it)
+		const SvUl::NameObjectIdList& availImages = GetAvailableImageList();
+		for (SvUl::NameObjectIdList::const_iterator it = availImages.begin(); availImages.end() != it; ++it)
 		{
 			m_SVSourceImageCombo.AddString(it->first.c_str());
 		}
 		
-		const SvUl::InputNameGuidPairList& connectedImageList = GetInputImageList(m_filterID);
+		const SvUl::InputNameObjectIdPairList& connectedImageList = GetInputImageList(m_filterID);
 		std::string currentMarkerImageName; 
 		if (0 < connectedImageList.size() && connectedImageList.begin()->first == SvDef::WatershedMarkerImageConnectionName)
 		{

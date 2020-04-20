@@ -14,7 +14,6 @@
 #include "SVDlgImage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "DisplayHelper.h"
-#include "SVProtoBuf/ConverterHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -51,8 +50,6 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 	SVDlgImageClass::SVDlgImageClass()
-		: m_inspectionId(GUID_NULL)
-		, m_imageId(GUID_NULL)
 	{
 		mbInit = false;
 		m_dZoomX = 1.0;
@@ -69,9 +66,9 @@ namespace SvOg
 
 	}
 
-	void SVDlgImageClass::UpdateImageInfo(const SVGUID& inspectionId, const SVGUID& imageId)
+	void SVDlgImageClass::UpdateImageInfo(uint32_t inspectionId, uint32_t imageId)
 	{
-		ASSERT(GUID_NULL != inspectionId || GUID_NULL != imageId);	// if no source image, must supply info & handle
+		ASSERT(SvDef::InvalidObjectId != inspectionId || SvDef::InvalidObjectId != imageId);	// if no source image, must supply info & handle
 
 		m_inspectionId = inspectionId;
 		m_imageId = imageId;
@@ -243,7 +240,7 @@ namespace SvOg
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest = requestCmd.mutable_getimagerequest();
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_imageid(), m_imageId);
+			pRequest->set_imageid(m_imageId);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 			if (S_OK == hr && responseCmd.has_getimageresponse() && 0 == responseCmd.getimageresponse().messages().messages().size())
@@ -398,7 +395,7 @@ namespace SvOg
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getoutputrectanglerequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_imageid(), m_imageId);
+		pRequest->set_imageid(m_imageId);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getoutputrectangleresponse())

@@ -22,7 +22,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogCommentPage : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogCommentPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);   // standard constructor
+		SVToolAdjustmentDialogCommentPage(uint32_t inspectionId, uint32_t taskObjectId);   // standard constructor
 
 	public:
 		virtual ~SVToolAdjustmentDialogCommentPage();
@@ -44,8 +44,8 @@ namespace SvOg
 	private:
 		CString m_strComment;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

@@ -12,7 +12,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtobuf/Envelope.h"
 #pragma endregion Includes
 
@@ -184,10 +183,9 @@ namespace SvSml
 				{
 					continue;
 				}
-				std::string idBytes;
-				SvPb::SetGuidInProtoBytes(&idBytes, rEntry.second->m_Guid);
+				uint32_t objectId = rEntry.second->m_objectId;
 				rEntry.second->data.m_inspectionTRCPos = inspectionTrcPos;
-				auto iter = std::find_if(rDataDefList.list().begin(), rDataDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				auto iter = std::find_if(rDataDefList.list().begin(), rDataDefList.list().end(), [objectId](auto data)->bool { return data.objectid() == objectId; });
 				if (rDataDefList.list().end() != iter)
 				{
 					int pos = static_cast<int>(std::distance(rDataDefList.list().begin(), iter));
@@ -195,7 +193,7 @@ namespace SvSml
 					continue;
 				}
 
-				auto iterImage = std::find_if(rImageDefList.list().begin(), rImageDefList.list().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				auto iterImage = std::find_if(rImageDefList.list().begin(), rImageDefList.list().end(), [objectId](auto data)->bool { return data.objectid() == objectId; });
 				if (rImageDefList.list().end() != iterImage)
 				{
 					int pos = static_cast<int>(std::distance(rImageDefList.list().begin(), iterImage));
@@ -203,7 +201,7 @@ namespace SvSml
 					continue;
 				}
 
-				auto iterChildImage = std::find_if(rImageDefList.childlist().begin(), rImageDefList.childlist().end(), [idBytes](auto data)->bool { return data.guidid() == idBytes; });
+				auto iterChildImage = std::find_if(rImageDefList.childlist().begin(), rImageDefList.childlist().end(), [objectId](auto data)->bool { return data.objectid() == objectId; });
 				if (rImageDefList.childlist().end() != iterChildImage)
 				{
 					int pos = static_cast<int>(std::distance(rImageDefList.childlist().begin(), iterChildImage));

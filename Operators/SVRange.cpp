@@ -120,7 +120,7 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -138,13 +138,13 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 void SVRangeClass::addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
-	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailLow].GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailLow].getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
-	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailHigh].GetUniqueObjectID());
-	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnLow].GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailHigh].getObjectId());
+	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnLow].getObjectId());
 	// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
-	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnHigh].GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnHigh].getObjectId());
 }
 
 bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
@@ -217,7 +217,7 @@ HRESULT SVRangeClass::SetCancelData(SVCancelData* pCancelData)
 	}
 }
 
-HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject)
+HRESULT SVRangeClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
 {
 	//This method in this class is only for backward compatibility (configuration older then 8.10), to set the indirect values correct to the linkedValues
 	SvCl::SVObjectStdStringArrayClass valueStringArray;
@@ -229,8 +229,7 @@ HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAtt
 			if (nullptr != pObject)
 			{
 				// check if it's this object
-				GUID uniqueID = pObject->GetUniqueObjectID();
-				if (rAimObjectID == uniqueID)
+				if (aimObjectID == pObject->getObjectId())
 				{
 					if (SvPb::RangeClassFailHighIndirectEId == pObject->GetEmbeddedID())
 					{
@@ -270,7 +269,7 @@ HRESULT SVRangeClass::SetValuesForAnObject(const GUID& rAimObjectID, SVObjectAtt
 		}
 	}
 
-	return __super::SetValuesForAnObject(rAimObjectID, pDataObject);
+	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 
 void SVRangeClass::setHighValues(double failHigh, double warnHigh)
@@ -343,7 +342,7 @@ bool SVRangeClass::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERa
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(enumTids[firstType]));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(enumTids[secondType]));
 				SvStl::MessageContainer message;
-				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(message);
 			}
 		}

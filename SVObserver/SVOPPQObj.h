@@ -20,8 +20,8 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-typedef std::pair<std::string, GUID> SVNameGuidPair;
-typedef std::deque<SVNameGuidPair> SVNameGuidPairList;
+typedef std::pair<std::string, uint32_t> SVNameObjectIdPair;
+typedef std::deque<SVNameObjectIdPair> SVNameObjectIdPairList;
 
 class SVOPPQObj  
 {
@@ -62,8 +62,8 @@ public:
 	int GetMaxProcessingOffsetProperty() const;
 	long GetInspectionTimeout() const;
 
-	void SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list);
-	const SVNameGuidPairList& GetAvailableInputsForConditionalOutput() const;
+	void SetAvailableInputsForConditionalOutput(const SVNameObjectIdPairList& list);
+	const SVNameObjectIdPairList& GetAvailableInputsForConditionalOutput() const;
 
 	void SetConditionalOutputName(const std::string& name);
 	const std::string& GetConditionalOutputName() const;
@@ -89,7 +89,7 @@ private:
 	int m_MaxProcessingOffset {0};
 	long m_lInspectionTimeout {0};
 	std::string m_conditionalOutputName {PPQ_CONDITIONAL_OUTPUT_ALWAYS};
-	SVNameGuidPairList m_availableInputs;
+	SVNameObjectIdPairList m_availableInputs;
 	SVImportedInputList m_importedInputList;
 };
 

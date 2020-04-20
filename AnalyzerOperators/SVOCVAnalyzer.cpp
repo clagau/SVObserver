@@ -67,7 +67,7 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 	if ( m_bHasLicenseError )
 	{
 		m_bHasLicenseError = false;
-		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(GetUniqueObjectID());
+		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(getObjectId());
 	}
 }
 
@@ -80,7 +80,7 @@ bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	
 	if ( m_bHasLicenseError )
 	{
-		SVOLicenseManager::Instance().AddLicenseErrorToList(GetUniqueObjectID());
+		SVOLicenseManager::Instance().AddLicenseErrorToList(getObjectId());
 	}
 
 	return m_isCreated;
@@ -94,7 +94,7 @@ bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16151, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16151, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -120,7 +120,7 @@ bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16151, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16151, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

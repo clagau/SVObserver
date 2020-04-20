@@ -110,41 +110,41 @@ public:
 
 	HRESULT GetToolName (BSTR* pbstrToolName);
 	HRESULT GetToolVersion (long* plVersionNumber);
-	HRESULT RunTool (GUID tool, long* plStatus);
+	HRESULT RunTool (uint32_t toolId, long* plStatus);
 	HRESULT Startup ();
 	HRESULT ShutDown ();
-	HRESULT InitializeRun ( GUID tool, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavInputValues);
-	HRESULT UninitializeRun ( GUID tool );
+	HRESULT InitializeRun (uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavInputValues);
+	HRESULT UninitializeRun (uint32_t toolId);
 	HRESULT GetInputValueDefinitions (long* plArraySize,InputValueDefinitionStruct** ppaStructs);
 	HRESULT DestroyInputValueDefinitionStructures (InputValueDefinitionStruct* paStructs);
 	HRESULT GetInputValueDefinitions(long* plArraySize, InputValueDefinitionStructEx** ppaStructs);
 	HRESULT DestroyInputValueDefinitionStructures(InputValueDefinitionStructEx* paStructs);
 
-	HRESULT SetInputValues (GUID tool, long lArraySize, VARIANT* paInputValues);
+	HRESULT SetInputValues (uint32_t toolId, long lArraySize, VARIANT* paInputValues);
 	HRESULT GetInputImageInformation(std::vector<SvOp::InputImageInformationStruct> *pVector);
-	HRESULT GetResultValues (GUID tool, long lArraySize, VARIANT* paResultValues);
+	HRESULT GetResultValues (uint32_t toolId, long lArraySize, VARIANT* paResultValues);
 	HRESULT GetMessageString (unsigned long ulErrorNumber, BSTR* pbstrErrorMessage) const;
-	HRESULT ValidateValueParameter (GUID tool, long lParameterNumber, VARIANT vParameterValue);
+	HRESULT ValidateValueParameter(uint32_t toolId, long lParameterNumber, VARIANT vParameterValue);
 	HRESULT GetResultValueDefinitions (long* plArraySize, ResultValueDefinitionStruct** ppaResultValues);
 	HRESULT GetResultValueDefinitions(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues);
 	HRESULT DestroyResultValueDefinitionStructures (ResultValueDefinitionStruct* paStructs);
 	HRESULT DestroyResultValueDefinitionStructures(ResultValueDefinitionStructEx* paStructs);
 	HRESULT GetNumberOfInputImages (long* plNumberOfInputImages);
-	HRESULT SetMILInputImages (GUID tool, long lArraySize, long* paMILhandles);
-	HRESULT SetHBITMAPInputImages (GUID tool, HBITMAP* paHandles);
-	HRESULT GetHBITMAPResultImages (GUID tool, long lArraySize, HBITMAP* paHandles);
-	HRESULT SetMILResultImages (GUID tool, long lArraySize, long* paMILhandles);
-	HRESULT GetResultImageDefinitions (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
+	HRESULT SetMILInputImages (uint32_t toolId, long lArraySize, long* paMILhandles);
+	HRESULT SetHBITMAPInputImages (uint32_t toolId, HBITMAP* paHandles);
+	HRESULT GetHBITMAPResultImages (uint32_t toolId, long lArraySize, HBITMAP* paHandles);
+	HRESULT SetMILResultImages (uint32_t toolId, long lArraySize, long* paMILhandles);
+	HRESULT GetResultImageDefinitions (uint32_t toolId, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 	HRESULT DestroyImageDefinitionStructure ( SVImageDefinitionStruct* paStructs);
 
 	HRESULT getResultTableDefinitions(long* Size, ResultTableDefinitionStruct** ppaResultTableDefs);
 	HRESULT getResultTableDefinitions(long* Size, ResultTableDefinitionStructEx** ppaResultTableDefs);
 	HRESULT destroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
 	HRESULT destroyResultTableDefinitionStructures(ResultTableDefinitionStructEx* paStructs);
-	HRESULT getResultTables(GUID tool, long lArraySize, VARIANT* paResultValues);
+	HRESULT getResultTables(uint32_t toolId, long lArraySize, VARIANT* paResultValues);
 
-	HRESULT getResultTablesMaxRowSize(GUID tool, long  Size, int pRowSizes[]);
-	HRESULT getResultValuesMaxArraySize(GUID tool, long  Size, int pArraySizes[]);
+	HRESULT getResultTablesMaxRowSize(uint32_t toolId, long  Size, int pRowSizes[]);
+	HRESULT getResultValuesMaxArraySize(uint32_t toolId, long  Size, int pArraySizes[]);
 
 	
 	bool UseResultTablesMaxRowSize() const;

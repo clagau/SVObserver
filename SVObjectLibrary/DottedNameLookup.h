@@ -26,13 +26,13 @@ namespace SvOl
 	#pragma region Public Methods
 	public:
 		//! Gets the dotted name of the graph vertex
-		//! \param rGuid [in] reference to the Graph vertex Guid
+		//! \param id [in] reference to the Graph vertex id
 		//! \returns the name of the vertex
-		virtual LPCTSTR getVertexName( const SVGUID& rGuid ) const override
+		virtual LPCTSTR getVertexName( uint32_t id ) const override
 		{
 			LPCTSTR pResult( nullptr );
 
-			SvOi::IObjectClass* pObject(SvOi::getObject(rGuid));
+			SvOi::IObjectClass* pObject(SvOi::getObject(id));
 			if( nullptr != pObject )
 			{
 				m_LabelName = pObject->GetCompleteName();

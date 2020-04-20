@@ -26,29 +26,32 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMap
+const BasicValueObjects::DottedNameObjectIdMap BasicValueObjects::m_StaticUniqueIDMap
 {
 	// Dotted name,												static unique ID
-	{std::string(SvDef::FqnGlobal),								SVGUID(GlobalUidGuid)},
-	{std::string(SvDef::FqnEnvironment),						SVGUID(EnvironmentUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModelNumber),				SVGUID(EnvironmentModelNumberUidGuid)},
-	{std::string(SvDef::FqnEnvironmentWinKey),					SVGUID(EnvironmentWinKeyUidGuid)},
-	{std::string(SvDef::FqnEnvironmentImageUpdate),				SVGUID(EnvironmentImageUpdateUidGuid)},
-	{std::string(SvDef::FqnEnvironmentResultUpdate),			SVGUID(EnvironmentResultUpdateUidGuid)},
-	{std::string(SvDef::FqnEnvironmentMode),					SVGUID(EnvironmentModeUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsRun),				SVGUID(EnvironmentModeIsRunUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsStop),				SVGUID(EnvironmentModeIsStopUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsRegressionTest),	SVGUID(EnvironmentModeIsRegressionTestUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsTest),				SVGUID(EnvironmentModeIsTestUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeIsEdit),				SVGUID(EnvironmentModeIsEditUidGuid)},
-	{std::string(SvDef::FqnEnvironmentModeValue),				SVGUID(EnvironmentModeValueUidGuid)},
-	{std::string(SvDef::FqnEnvironmentAutoSave),				SVGUID(EnvironmentAutoSaveUidGuid)},
-	{std::string(SvDef::FqnEnvironmentDiskProtection),			SVGUID(EnvironmentDiskProtectionUidGuid)},
-	{std::string(SvDef::FqnEnvironmentStartLastConfig),			SVGUID(EnvironmentStartLastConfigUidGuid)},
-	{std::string(SvDef::FqnEnvironmentConfigurationName),		SVGUID(EnvironmentConfigurationName)},
-	{std::string(SvDef::FqnEnvironmentConfigurationFileName),	SVGUID(EnvironmentConfigurationFileName)},
-	{std::string(SvDef::FqnEnvironmentCurrentDate),				SVGUID(EnvironmentCurrentDate)},
-	{std::string(SvDef::FqnEnvironmentCurrentTime),				SVGUID(EnvironmentCurrentTime)},
+	{std::string(SvDef::FqnGlobal),								ObjectIdEnum::GlobalUidId},
+	{std::string(SvDef::FqnEnvironment),						ObjectIdEnum::EnvironmentUidId},
+	{std::string(SvDef::FqnEnvironmentView),					ObjectIdEnum::ViewId},
+	{std::string(SvDef::FqnEnvironmentModelNumber),				ObjectIdEnum::EnvironmentModelNumberUidId},
+	{std::string(SvDef::FqnEnvironmentSerialNumber),			ObjectIdEnum::EnvironmentSerialNumber },
+	{std::string(SvDef::FqnEnvironmentWin),						ObjectIdEnum::EnvironmentWin },
+	{std::string(SvDef::FqnEnvironmentWinKey),					ObjectIdEnum::EnvironmentWinKeyUidId},
+	{std::string(SvDef::FqnEnvironmentImageUpdate),				ObjectIdEnum::EnvironmentImageUpdateUidId},
+	{std::string(SvDef::FqnEnvironmentResultUpdate),			ObjectIdEnum::EnvironmentResultUpdateUidId},
+	{std::string(SvDef::FqnEnvironmentMode),					ObjectIdEnum::EnvironmentModeUidId},
+	{std::string(SvDef::FqnEnvironmentModeIsRun),				ObjectIdEnum::EnvironmentModeIsRunUidId},
+	{std::string(SvDef::FqnEnvironmentModeIsStop),				ObjectIdEnum::EnvironmentModeIsStopUidId},
+	{std::string(SvDef::FqnEnvironmentModeIsRegressionTest),	ObjectIdEnum::EnvironmentModeIsRegressionTestUidId},
+	{std::string(SvDef::FqnEnvironmentModeIsTest),				ObjectIdEnum::EnvironmentModeIsTestUidId},
+	{std::string(SvDef::FqnEnvironmentModeIsEdit),				ObjectIdEnum::EnvironmentModeIsEditUidId},
+	{std::string(SvDef::FqnEnvironmentModeValue),				ObjectIdEnum::EnvironmentModeValueUidId},
+	{std::string(SvDef::FqnEnvironmentAutoSave),				ObjectIdEnum::EnvironmentAutoSaveUidId},
+	{std::string(SvDef::FqnEnvironmentDiskProtection),			ObjectIdEnum::EnvironmentDiskProtectionUidId},
+	{std::string(SvDef::FqnEnvironmentStartLastConfig),			ObjectIdEnum::EnvironmentStartLastConfigUidId},
+	{std::string(SvDef::FqnEnvironmentConfigurationName),		ObjectIdEnum::EnvironmentConfigurationName},
+	{std::string(SvDef::FqnEnvironmentConfigurationFileName),	ObjectIdEnum::EnvironmentConfigurationFileName},
+	{std::string(SvDef::FqnEnvironmentCurrentDate),				ObjectIdEnum::EnvironmentCurrentDate},
+	{std::string(SvDef::FqnEnvironmentCurrentTime),				ObjectIdEnum::EnvironmentCurrentTime},
 };
 #pragma endregion Declarations
 

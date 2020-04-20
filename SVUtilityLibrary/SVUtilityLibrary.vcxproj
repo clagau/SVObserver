@@ -185,7 +185,7 @@
     <ClInclude Include="IProgress.h" />
     <ClInclude Include="IStream.h" />
     <ClInclude Include="LoadDll.h" />
-    <ClInclude Include="NameGuidList.h" />
+    <ClInclude Include="NameObjectIdList.h" />
     <ClInclude Include="NaturalStringCompare.h" />
     <ClInclude Include="OutStreamWrapper.h" />
     <ClInclude Include="ProgressCallback.h" />
@@ -198,7 +198,6 @@
     <ClInclude Include="StringToEnum.h" />
     <ClInclude Include="SVBitmapInfo.h" />
     <ClInclude Include="SVGUID.h" />
-    <ClInclude Include="SVGuidList.h" />
     <ClInclude Include="SVHandleManager.h" />
     <ClInclude Include="SVHistogramBase.h" />
     <ClInclude Include="SVHistogramStats.h" />

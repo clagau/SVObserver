@@ -36,7 +36,7 @@ public:
 	void ClearArray();
 	void ResetImageCounts();
 
-	void ConvertStringToGuids( SVArchiveTool* pToolArchive, LPCTSTR pszStrValue );	// FOR BACKWARD COMPATIBILITY
+	void setRecordsFromString( SVArchiveTool* pToolArchive, LPCTSTR pszStrValue );	// FOR BACKWARD COMPATIBILITY
 	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, SvVol::SVStringValueObjectClass& svoObjects );	// use array capability of string vo
 
 	SvDef::StringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);

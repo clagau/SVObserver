@@ -40,7 +40,7 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	public:
-		SVToolAdjustmentDialogFilterPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		SVToolAdjustmentDialogFilterPageClass(uint32_t inspectionID, uint32_t taskObjectID);
 		virtual ~SVToolAdjustmentDialogFilterPageClass();
 
 		//************************************
@@ -86,9 +86,9 @@ namespace SvOg
 		// Data Element(s):
 		//******************************************************************************
 	protected:
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
-		SVGUID m_UnaryImageOperatorID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
+		uint32_t m_UnaryImageOperatorID;
 		ImageController m_ImageController;
 	};
 } //namespace SvOg

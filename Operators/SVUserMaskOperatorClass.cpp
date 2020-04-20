@@ -65,9 +65,9 @@ void SVUserMaskOperatorClass::init()
 
 	// RRRRGGGGHHHHHH who created this stupid object structure????
 	SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
-	m_guidShapeHelper = pShapeHelper->GetUniqueObjectID();
+	m_idShapeHelper = pShapeHelper->getObjectId();
 
-	bool bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
+	bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
 	assert( bAddFriend );
 
 
@@ -116,8 +116,8 @@ void SVUserMaskOperatorClass::init()
 	m_Data.bvoActivated.SetDefaultValue( BOOL(false), true);
 	m_Data.dwvoMaskType.SetDefaultValue(MASK_TYPE_STATIC, true);
 
-	m_MaskBufferInfo.SetOwnerImage( GUID_NULL );
-	m_MaskBufferInfo.SetOwner( GUID_NULL );
+	m_MaskBufferInfo.SetOwnerImage(SvDef::InvalidObjectId);
+	m_MaskBufferInfo.SetOwner(SvDef::InvalidObjectId);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -184,7 +184,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -202,7 +202,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -236,7 +236,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
 		if( pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject()) )
 		{
-			m_guidShapeHelper = pMaskHelper->GetUniqueObjectID();
+			m_idShapeHelper = pMaskHelper->getObjectId();
 			break;
 		}
 	}
@@ -245,9 +245,9 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	if ( nullptr == pMaskHelper )
 	{
 		SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
-		m_guidShapeHelper = pShapeHelper->GetUniqueObjectID();
+		m_idShapeHelper = pShapeHelper->getObjectId();
 
-		bool bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
+		bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
 		assert( bAddFriend );
 
 		if( CreateChildObject(pShapeHelper) )
@@ -311,7 +311,7 @@ HRESULT SVUserMaskOperatorClass::GetCancelData(SvIe::SVInputRequestStructMap& rM
 	return hr;
 }
 
-bool SVUserMaskOperatorClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVUserMaskOperatorClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
@@ -321,7 +321,7 @@ bool SVUserMaskOperatorClass::isInputImage(const SVGUID& rImageGuid) const
 	if (MASK_TYPE_IMAGE == dwMaskType)
 	{
 		SvIe::SVImageClass* pImage = getMaskInputImage();
-		if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+		if (nullptr != pImage && imageId == pImage->getObjectId())
 		{
 			Result = true;
 		}
@@ -331,7 +331,7 @@ bool SVUserMaskOperatorClass::isInputImage(const SVGUID& rImageGuid) const
 		if (nullptr != m_pCurrentUIOPL)
 		{
 			SvIe::SVImageClass* pImage = m_pCurrentUIOPL->getInputImage();
-			if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+			if (nullptr != pImage && imageId == pImage->getObjectId())
 			{
 				Result = true;
 			}
@@ -603,32 +603,6 @@ void SVUserMaskOperatorClass::Persist( SvOi::IObjectWriter& rWriter )
 	value.Clear();
 }
 
-HRESULT SVUserMaskOperatorClass::GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const
-{
-	HRESULT hr = S_OK;
-
-	if( _T("MaskData") == rValueName )
-	{
-		std::string data = m_graphixObject.store(true);
-
-		SvUl::SVSAFEARRAY l_SafeArray;
-		for(const auto& rChar : data)
-		{
-			_variant_t value = rChar;
-
-			l_SafeArray.Add( value );
-		}
-
-		rValue = l_SafeArray;
-	}
-	else
-	{
-		hr = SVUnaryImageOperatorClass::GetObjectValue( rValueName, rValue );
-	}
-
-	return hr;
-}
-
 // Restoration of trivial members
 HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
@@ -707,7 +681,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 							{
 								if (nullptr != pErrorMessages)
 								{
-									SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+									SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 									pErrorMessages->push_back(Msg);
 								}
 								// Signal that something was wrong...
@@ -722,7 +696,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 						{
 							if (nullptr != pErrorMessages)
 							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 								pErrorMessages->push_back(Msg);
 							}
 							// Signal that something was wrong...
@@ -734,7 +708,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 					{
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 							pErrorMessages->push_back(Msg);
 						}
 						// Signal that something was wrong...
@@ -762,7 +736,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunArithmeticFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunArithmeticFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 					pErrorMessages->push_back(Msg);
 				}
 				// Signal that something was wrong...
@@ -813,7 +787,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

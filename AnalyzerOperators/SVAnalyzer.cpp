@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVAnalyzerClass, SVAnalyzerClassGuid );
+//SV_IMPLEMENT_CLASS( SVAnalyzerClass, SVAnalyzerClassId );
 
 SVAnalyzerClass::SVAnalyzerClass( LPCSTR ObjectName )
 : SVTaskObjectListClass( ObjectName ) 

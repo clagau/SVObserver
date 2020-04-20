@@ -58,7 +58,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	
 	int iCurrentSel = 0;
 
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( m_InputObjectGUID );
+	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( m_InputObjectID );
 	if( l_pObject )
 	{
 		m_ValueObjectSourceName = l_pObject->GetCompleteName().c_str();
@@ -108,7 +108,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 			}
 
-			SVObjectClass* pCurrentObject = SVObjectManagerClass::Instance().GetObject(m_InputObjectGUID);
+			SVObjectClass* pCurrentObject = SVObjectManagerClass::Instance().GetObject(m_InputObjectID);
 			// Init IO combo from m_ppIOEntries;
 			for( int i = 0; i < lSize; i++ )
 			{
@@ -200,7 +200,7 @@ void SVRemoteOutputEditDialog::UpdateValueObjectFromCombo()
 			CString Name;
 			m_ValueObjectNameCombo.GetLBText( l_iSel, Name  );
 			m_ValueObjectSourceName = Name;
-			m_InputObjectGUID = l_pIOEntry->getObject()->GetUniqueObjectID();
+			m_InputObjectID = l_pIOEntry->getObject()->getObjectId();
 		}
 	}
 }

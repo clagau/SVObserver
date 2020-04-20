@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <set>
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 class SVOLicenseManager
@@ -28,11 +27,11 @@ public:
 	bool HasMatroxLicense()  const;
 	bool HasMatroxGigELicense()  const;
 	bool HasMatroxIdentificationLicense()  const;
-	void AddLicenseErrorToList(const SVGUID& svGuid);
+	void AddLicenseErrorToList(uint32_t objectId);
 	void ShowLicenseManagerErrors();
 	bool HasToolErrors()  const;
 	void ClearLicenseErrors();
-	void RemoveLicenseErrorFromList(const SVGUID& svGuid);
+	void RemoveLicenseErrorFromList(uint32_t objectId);
 	
 //private member variables
 private:
@@ -40,7 +39,7 @@ private:
 	bool m_bMatroxIdentificationLicense;
 	bool m_bMatroxGigELicense;
 
-	SVGuidSet m_svErrorList;
+	std::set<uint32_t> m_svErrorList;
 
 protected:
 	HANDLE m_hCheckEvent;

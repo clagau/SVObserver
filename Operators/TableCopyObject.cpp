@@ -77,7 +77,7 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeID, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			return false;
@@ -240,7 +240,7 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 				returnValue = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyValueList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyValueList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -250,7 +250,7 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 			returnValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableCopy_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableCopy_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -334,7 +334,7 @@ int TableCopyObject::ResetCopyColumn()
 				MoveValueColumn(static_cast<int>(m_ValueList.size() - 1), valueListPos);
 
 				//create new embeddedID for newColumn and register it.
-				SvPb::EmbeddedIdEnum newEmbeddedId = getNextFreeEmbeddedColumGUID();
+				SvPb::EmbeddedIdEnum newEmbeddedId = getNextFreeEmbeddedColumID();
 				if (SvPb::NoEmbeddedId != newEmbeddedId)
 				{
 					std::string  name = newColumnIter->get()->GetName();
@@ -377,7 +377,7 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(pNewColumn->GetName());
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 			retValue = false;
@@ -397,7 +397,7 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 		}
 		else
 		{
-			SvPb::EmbeddedIdEnum embeddedId = getNextFreeEmbeddedColumGUID();
+			SvPb::EmbeddedIdEnum embeddedId = getNextFreeEmbeddedColumID();
 			std::string name = pNewColumn.get()->GetName();
 			RegisterEmbeddedObject(pNewColumn.get(), embeddedId, pNewColumn.get()->GetObjectName(), true, SvOi::SVResetItemTool);
 			pNewColumn.get()->SetName(name.c_str());
@@ -411,13 +411,13 @@ bool TableCopyObject::ResetNewColumns(int valueListPos, int arraySize, SvStl::Me
 
 void TableCopyObject::sendChangedEmbeddedIDToUser(SvPb::EmbeddedIdEnum oldEmbeddedId, SvPb::EmbeddedIdEnum newEmbeddedId)
 {
-	SVGuidSet dependencyList;
-	SVGuidSet SourceSet;
-	SourceSet.insert(GetUniqueObjectID());
+	std::set<uint32_t> dependencyList;
+	std::set<uint32_t> SourceSet;
+	SourceSet.insert(getObjectId());
 	SvOi::getToolDependency(std::inserter(dependencyList, dependencyList.begin()), SourceSet);
-	for (const auto& rGuid : dependencyList)
+	for (auto id : dependencyList)
 	{
-		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SvOi::getObject(rGuid));
+		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SvOi::getObject(id));
 		if(nullptr != pTool)
 		{
 			pTool->OnEmbeddedIDChanged(this, oldEmbeddedId, newEmbeddedId);

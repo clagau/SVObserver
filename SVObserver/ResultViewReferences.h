@@ -39,7 +39,7 @@ class ITriggerRecordR;
 class SVInspectionProcess;
 
 /**
-	Class contains a list of GUIDS of and references to variables which are selected to be shown in the result view.
+	Class contains a list of IDS of and references to variables which are selected to be shown in the result view.
 **/
 class ResultViewReferences
 {
@@ -70,7 +70,7 @@ public:
 	bool Save(SvOi::IObjectWriter& rWriter);
 
 	//************************************
-	// Description:  Load GUIDs and references from the configuration file.
+	// Description:  Load IDs and references from the configuration file.
 	// Parameter:  rTree:  
 	// Parameter:  hParent:  
 	// Parameter:  tagname tagname in cfgfile 
@@ -80,7 +80,7 @@ public:
 
 	
 	//************************************
-	//! Description:  Rebuild the reference vector from the list of GUIDs.
+	//! Description:  Rebuild the reference vector from the list of IDs.
 	//! \param pInspection [in] if not null the References will be checked if the are  a Disabled PPQVariables
 	//! \returns void
 	//************************************
@@ -93,8 +93,8 @@ public:
 	//************************************
 	HRESULT GetResultDefinitions( SVResultDefinitionVector& rDefinitions ) const; 
 
-	const SVGUID& getTableGuid() const { return m_resultTableGuid; }
-	void setTableGuid(const SVGUID& guid) { m_resultTableGuid = guid; }
+	uint32_t getTableId() const { return m_resultTableId; }
+	void setTableId(uint32_t id) { m_resultTableId = id; }
 
 	//************************************
 	// Description:  Build SVIPResultData from the reference vector.  (Get the values of the variables.)
@@ -167,7 +167,7 @@ protected:
 
 #pragma region Member Variables
 	std::string m_TagName; // Branch name in the config file
-	SVGUID m_resultTableGuid; //The Guid of the table to display in result table view (if no table should displayed it is set to GUID_NULL)
+	uint32_t m_resultTableId = SvDef::InvalidObjectId; //The Id of the table to display in result table view (if no table should displayed it is set to SvDef::InvalidObjectId)
 	SvOp::TableObject* m_resultTable;
 	SVObjectReferenceVector m_ReferenceVector;
 	std::list<SvIe::ResultViewItemDef> m_ResultViewItemDefList;

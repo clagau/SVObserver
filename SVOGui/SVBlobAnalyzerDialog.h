@@ -50,7 +50,7 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	public:
-		SVBlobAnalyzeFeatureDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr );
+		SVBlobAnalyzeFeatureDialogClass(uint32_t inspectionID, uint32_t taskObjectID, CWnd* pParent = nullptr);
 		virtual ~SVBlobAnalyzeFeatureDialogClass();
 
 	private:
@@ -77,8 +77,8 @@ namespace SvOg
 	
 		std::string m_FeaturesEnabled;
 
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

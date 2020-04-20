@@ -26,11 +26,11 @@ namespace SvTrcT
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void CopyTool::reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
+void CopyTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
 {
-	ToolObject::reset(sourceGuid, sourcePos, bufferStructIn, recordController);
+	ToolObject::reset(sourceId, sourcePos, bufferStructIn, recordController);
 	m_bufferStructOut = m_bufferStructIn;
-	m_trPos = recordController.addOrChangeImage(getGuid(), m_bufferStructOut);
+	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
 };
 
 bool CopyTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)

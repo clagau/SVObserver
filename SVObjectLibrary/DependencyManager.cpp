@@ -42,7 +42,7 @@ namespace SvOl
 		return DependencyMgr;
 	}
 
-	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/) const
+	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/) const
 	{
 		//! Note before calling this method the graph index must be updated this is done in the interface!
 		std::vector<Dependency> DependencyVector;
@@ -84,7 +84,7 @@ namespace SvOl
 				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
 					//One of the dependency tools must be in the source set
-					if (rSourceSet.end() != rSourceSet.find(pToolSupplier->GetUniqueObjectID()) || rSourceSet.end() != rSourceSet.find(pToolClient->GetUniqueObjectID()))
+					if (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
 					{
 					CopyItem = true;
 				}
@@ -128,20 +128,20 @@ namespace SvOl
 					SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 					if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 					{
-						ObjectDependencies.insert(Dependency(pToolSupplier->GetUniqueObjectID(), pToolClient->GetUniqueObjectID()));
+						ObjectDependencies.insert(Dependency(pToolSupplier->getObjectId(), pToolClient->getObjectId()));
 					}
 				}
 			}
 		}
 		if (!rFileName.empty())
 		{
-			SvCl::ObjectGraph<SVGUID, SvOl::JoinType> OutputGraph(ObjectDependencies, SvOl::JoinType::Owner);
+			SvCl::ObjectGraph<uint32_t, SvOl::JoinType> OutputGraph(ObjectDependencies, SvOl::JoinType::Owner);
 			SvOl::ObjectNameLookup NameLookup;
 			OutputGraph.saveGraphDot(rFileName.c_str(), NameLookup);
 		}
 	}
 
-	void DependencyManager::getToolDependency(SvOi::SvGuidInserter Inserter, const SVGuidSet& rSourceSet) const
+	void DependencyManager::getToolDependency(SvOi::SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet) const
 	{
 		//! Note before calling this method the graph index must be updated this is done in the interface!
 		Dependencies ObjectDependencies;
@@ -156,11 +156,10 @@ namespace SvOl
 				SvOi::IObjectClass* pTool = (SvPb::SVToolObjectType == pClient->GetObjectType()) ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 				if (nullptr != pTool)
 				{
-					const SVGUID& rToolID = pTool->GetUniqueObjectID();
 					// If tool not in Source add it
-					if (rSourceSet.end() == rSourceSet.find(rToolID))
+					if (rSourceSet.end() == rSourceSet.find(pTool->getObjectId()))
 					{
-						Inserter = rToolID;
+						Inserter = pTool->getObjectId();
 					}
 				}
 			}
@@ -171,10 +170,10 @@ namespace SvOl
 	bool DependencyManager::DependencySort::operator()(const Dependency &rLhs, const Dependency &rRhs)
 	{
 		bool isSmaller = false;
-		SVGUID GuidLhs = m_SortRight ? rLhs.second : rLhs.first;
-		SVGUID GuidRhs = m_SortRight ? rRhs.second : rRhs.first;
-		SvOi::IObjectClass* pLhs = SvOi::getObject(GuidLhs);
-		SvOi::IObjectClass* pRhs = SvOi::getObject(GuidRhs);
+		uint32_t idLhs = m_SortRight ? rLhs.second : rLhs.first;
+		uint32_t idRhs = m_SortRight ? rRhs.second : rRhs.first;
+		SvOi::IObjectClass* pLhs = SvOi::getObject(idLhs);
+		SvOi::IObjectClass* pRhs = SvOi::getObject(idRhs);
 		if (nullptr != pLhs && nullptr != pRhs)
 		{
 			bool isSupplier = pLhs->GetObjectType() == SvPb::SVToolObjectType;
@@ -200,13 +199,13 @@ namespace SvOl
 } //namespace SvOl
 
 #pragma region IDependencyManager
-void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/)
+void SvOi::getToolDependency( StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const std::string& rFileName /*= std::string()*/)
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet, nameToObjectType, ToolDependency, rFileName);
 }
 
-void SvOi::getToolDependency(SvGuidInserter Inserter, const SVGuidSet& rSourceSet)
+void SvOi::getToolDependency(SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet)
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet);

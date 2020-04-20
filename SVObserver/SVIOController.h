@@ -61,7 +61,7 @@ public:
 	SVIOEntryHostStructPtr GetModuleReady();
 	SVIOEntryHostStructPtr GetRaidErrorBit();
 
-	SVGUID GetRemoteOutputController() const;
+	uint32_t GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput( SVConfigurationObject* p_pConfig );
 	HRESULT ClearRemoteOutputUnUsedData( );
@@ -70,7 +70,7 @@ public:
 	size_t GetRemoteOutputGroupItemCount( const std::string& rRemoteGroupId ) const;
 	HRESULT GetRemoteOutputItem( const std::string& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
 	SVRemoteOutputObject* GetFirstRemoteOutputObject( const std::string& rRemoteGroupId );
-	HRESULT AddRemoteOutputItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const std::string& rPPQ );
+	HRESULT AddRemoteOutputItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, uint32_t p_InputObjectID, const std::string& rPPQ );
 	HRESULT DeleteRemoteOutput( const std::string& rRemoteGroupId );
 	HRESULT DeleteRemoteOutputEntry( const std::string& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject );
 	HRESULT RemoteOutputValidateInputs();

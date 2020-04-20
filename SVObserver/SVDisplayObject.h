@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVInfoStructs.h"
 #pragma endregion Includes
 
@@ -38,7 +37,7 @@ public:
 	virtual HRESULT ObserverUpdate( const SVRemoveValues& p_rData ) override;
 	virtual HRESULT ObserverUpdate( const SVRemoveSubjectStruct& p_rData ) override;
 
-	void SetInspectionID( const SVGUID& p_rInspectionID, SVIPDoc* pDoc );
+	void SetInspectionID(uint32_t inspectionID, SVIPDoc* pDoc );
 
 	SVIPDoc* GetIPDoc() const;
 
@@ -62,7 +61,7 @@ protected:
 
 	void UpdateNextDisplayEvent();
 
-	SVGUID m_InspectionID;
+	uint32_t m_InspectionID = SvDef::InvalidObjectId;
 
 	// HANDLEs to the Display events that may be needed by the threads
 	HANDLE m_hStartEvent;

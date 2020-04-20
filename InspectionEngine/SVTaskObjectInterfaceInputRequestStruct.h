@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -20,16 +19,16 @@ namespace SvIe
 
 struct SVTaskObjectInterfaceInputRequestStruct
 {
-	SVTaskObjectInterfaceInputRequestStruct();
-	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const std::string& rName );
+	SVTaskObjectInterfaceInputRequestStruct() = default;
+	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, uint32_t objectId, const std::string& rName );
 	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef );
-	SVTaskObjectInterfaceInputRequestStruct( const SVGUID& rGuid );
+	explicit SVTaskObjectInterfaceInputRequestStruct(uint32_t objectId );
 	SVTaskObjectInterfaceInputRequestStruct( const std::string& rName );
 
 	bool operator < ( const SVTaskObjectInterfaceInputRequestStruct& rRhs ) const;
 
 	SVObjectReference m_ObjectRef;
-	SVGUID m_Guid;
+	uint32_t m_objectId = SvDef::InvalidObjectId;
 	std::string m_Name;
 };
 

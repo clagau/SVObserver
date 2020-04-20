@@ -6,17 +6,17 @@ import "SVO-Enum.proto";
 
 message ImageDefinition
 {
-	bytes guidID = 1;				//GUID of the image.
+	uint32 objectID = 1;				//ID of the image.
 	bytes type = 2;					//should from struct SVMatroxBufferCreateStruct
 	int32 structID = 3;
 }
 
 message ChildImageDefinition
 {
-	bytes guidID = 1;				//GUID of the image.
+	uint32 objectID = 1;			//ID of the image.
 	bytes type = 2;					//should from struct SVMatroxBufferCreateChildStruct
 	int32 structID = 3;				//not used yet
-	bytes parentImageID = 4;		//GUID of the parent image.
+	uint32 parentImageID = 4;		//ID of the parent image.
 }
 
 message ImageList
@@ -43,7 +43,7 @@ message ImageStructList
 
 message ValueObjectDefinition
 {
-	bytes guidID = 1;				//GUID of the value object
+	uint32 objectID = 1;				//ID of the value object
 	string name = 2;				//Value object name
 	SVObjectSubTypeEnum type = 3;	//Value object type
 	string typeString = 4;			//Value object type string
@@ -69,7 +69,7 @@ message InspectionList
 
 message Inspection
 {
-	bytes id = 1;
+	uint32 id = 1;
 	int32 numberOfRecords = 2;
 	uint32 sizeOfSM = 3;
 	bytes nameOfSM = 4;

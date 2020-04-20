@@ -17,7 +17,6 @@
 #include "Operators/SVImageTransform.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
-#include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -26,7 +25,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
+SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent )
 : CPropertyPage(SVToolAdjustmentDialogTransformationLearnPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformationLearnPageClass)
@@ -86,7 +85,7 @@ HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()
 
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pImageTransform->GetInspection()->GetUniqueObjectID(), m_pImageTransform->GetUniqueObjectID() } };
+		Controller Values{ SvOg::BoundValues{ m_pImageTransform->GetInspection()->getObjectId(), m_pImageTransform->getObjectId() } };
 		Values.Init();
 
 		Values.Set<double>(m_pLearnedTranslationX->GetEmbeddedID(), m_translationXValue);

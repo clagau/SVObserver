@@ -102,7 +102,7 @@ SvPb::InspectionCmdResponse exportMask(SvPb::ExportMaskRequest request);
 //Import the mask from a file.
 SvPb::InspectionCmdResponse importMask(SvPb::ImportMaskRequest request);
 
-//Get GUID of a object
+//Get ID of a object
 SvPb::InspectionCmdResponse getObjectId(SvPb::GetObjectIdRequest request);
 
 //Create a new object and insert it in the friend- or taskObject-list.

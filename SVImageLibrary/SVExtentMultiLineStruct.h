@@ -13,9 +13,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary/SVGUID.h"
+#include "Definitions\ObjectDefines.h"
 #include "SVExtentLineStruct.h"
 #pragma endregion Includes
+
 
 struct SVExtentFigureStruct;
 
@@ -32,10 +33,10 @@ struct SVExtentMultiLineStruct
 
 	void Initialize();
 
-	SVGUID m_InspectionID;
-	SVGUID m_ToolID;
-	SVGUID m_AnalyzerID;
-	SVGUID m_ObjectID;
+	uint32_t m_InspectionID = SvDef::InvalidObjectId;
+	uint32_t m_ToolID = SvDef::InvalidObjectId;
+	uint32_t m_AnalyzerID = SvDef::InvalidObjectId;
+	uint32_t m_ObjectID = SvDef::InvalidObjectId;
 
 	long m_ToolSetDrawFlag;
 	long m_ToolDrawFlag;

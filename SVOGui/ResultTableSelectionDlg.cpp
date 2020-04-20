@@ -27,11 +27,10 @@ namespace SvOg
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	ResultTableSelectionDlg::ResultTableSelectionDlg( const SvUl::NameGuidList& availableList, const std::string& selectedItem, CWnd* pParent /*nullptr*/ )
+	ResultTableSelectionDlg::ResultTableSelectionDlg( const SvUl::NameObjectIdList& availableList, const std::string& selectedItem, CWnd* pParent /*nullptr*/ )
 	  : CDialog(ResultTableSelectionDlg::IDD, pParent)
 		, m_availableList(availableList)
 		, m_selectedItem(selectedItem)
-		, m_selectedGuid(GUID_NULL)
 	{
 
 	}
@@ -66,7 +65,7 @@ namespace SvOg
 	{
 		if( UpdateData( true ) )
 		{
-			m_selectedGuid = m_availableTableCB.getSelectedValue();
+			m_selectedId = m_availableTableCB.getSelectedValue();
 			CDialog::OnOK();
 		}
 	}

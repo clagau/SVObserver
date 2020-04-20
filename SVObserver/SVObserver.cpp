@@ -92,7 +92,6 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/LoadConfiguration.h"
 #include "SVXMLLibrary/ObsoleteItemChecker.h"
@@ -1690,7 +1689,7 @@ void SVObserverApp::OnEditPublishedResults(UINT nID)
 		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 		if (uiInspection < rInspections.size())
 		{
-			SVIPDoc* pDoc = GetIPDoc(rInspections[uiInspection]->GetUniqueObjectID());
+			SVIPDoc* pDoc = GetIPDoc(rInspections[uiInspection]->getObjectId());
 			if (nullptr != pDoc)
 			{
 				pDoc->OnPublishedResultsPicker();
@@ -2096,6 +2095,8 @@ BOOL SVObserverApp::InitInstance()
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_MatroxGigELicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10127);
 	}
 
+	SVObjectManagerClass::Instance().fitFirstObjectId();
+
 	return true;
 }
 
@@ -2431,7 +2432,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 					msgList.push_back(App);
 
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, GUID_NULL, MB_YESNO);
+					INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, SvDef::InvalidObjectId, MB_YESNO);
 					if (IDNO == result)
 					{
 						hr = E_FAIL;
@@ -2672,7 +2673,7 @@ SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspect
 
 			if (nullptr != pDoc)
 			{
-				pDoc->SetInspectionID(Inspection.GetUniqueObjectID());
+				pDoc->SetInspectionID(Inspection.getObjectId());
 				pDoc->SetRegressionTestPlayEquationController(Inspection.getRegressionTestPlayConditionController());
 
 				pDoc->SetTitle(DocName);
@@ -2800,7 +2801,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 			SvDef::StringVector msgList;
 			msgList.push_back(getConfigFileName());
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, GUID_NULL, MB_YESNO);
+			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, SvDef::InvalidObjectId, MB_YESNO);
 			bClose = IDYES == result;
 			if (!bClose)
 			{
@@ -2823,7 +2824,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 					SvDef::StringVector msgList;
 					msgList.push_back(getConfigFileName());
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, GUID_NULL, MB_YESNOCANCEL);
+					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, SvDef::InvalidObjectId, MB_YESNOCANCEL);
 					switch (result)
 					{
 						case IDNO:
@@ -3199,7 +3200,7 @@ void SVObserverApp::ResetAllCounts()
 			SVInspectionProcess* pInspection = pConfig->GetInspection(l);
 			if (nullptr != pInspection)
 			{
-				SvCmd::RunOnceSynchronous(pInspection->GetUniqueObjectID());
+				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 			}
 
 		}
@@ -3609,11 +3610,11 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 }
 
 
-HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, const SVGUID& p_rObjectId)
+HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, uint32_t objectId)
 {
 	HRESULT l_Status = S_OK;
 
-	SvIe::SVObjectAppClass* l_pObject = dynamic_cast<SvIe::SVObjectAppClass*>(SVObjectManagerClass::Instance().GetObject(p_rObjectId));
+	SvIe::SVObjectAppClass* l_pObject = dynamic_cast<SvIe::SVObjectAppClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pObject)
 	{
@@ -3758,7 +3759,7 @@ bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile
 	return bOk;
 }
 
-SVIPDoc* SVObserverApp::GetIPDoc(const SVGUID& rInspectionID) const
+SVIPDoc* SVObserverApp::GetIPDoc(uint32_t inspectionID) const
 {
 	SVIPDoc* pIPDoc(nullptr);
 	POSITION pos = GetFirstDocTemplatePosition();
@@ -3773,7 +3774,7 @@ SVIPDoc* SVObserverApp::GetIPDoc(const SVGUID& rInspectionID) const
 				SVIPDoc* pDoc = dynamic_cast <SVIPDoc*>(pDocTemplate->GetNextDoc(posDoc));
 				if (nullptr != pDoc)
 				{
-					if (pDoc->GetInspectionID() == rInspectionID)
+					if (pDoc->GetInspectionID() == inspectionID)
 					{
 						pIPDoc = pDoc;
 					}
@@ -4041,7 +4042,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 					{
 						pOutput->SetChannel(moduleReadyChannel);
 
-						pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
+						pConfig->GetModuleReady()->m_IOId = pOutput->getObjectId();
 
 						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(moduleReadyChannel, pOutput->IsInverted());
 						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(moduleReadyChannel, pOutput->IsForced());
@@ -4062,7 +4063,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			for (SVImportedInspectionInfoList::const_iterator it = infoList.begin(); it != infoList.end(); ++it)
 			{
 				const SVImportedInspectionInfo& info = (*it);
-				SVIPDoc* pDoc = GetIPDoc(info.m_inspectionGuid);
+				SVIPDoc* pDoc = GetIPDoc(info.m_inspectionId);
 				if (pDoc)
 				{
 					SVIPDocInfoImporter::Import(pDoc, info);
@@ -5632,9 +5633,7 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 
 		if (SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiChild, svVariant))
 		{
-			SVGUID ObjectID(svVariant);
-
-			pIOController = dynamic_cast<SVIOController*>(SVObjectManagerClass::Instance().GetObject(ObjectID));
+			pIOController = dynamic_cast<SVIOController*>(SVObjectManagerClass::Instance().GetObject(calcObjectId(svVariant)));
 		}
 		else
 		{
@@ -5706,9 +5705,7 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 
 				if (SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiTempItem, svVariant))
 				{
-					SVGUID docObjectID = svVariant;
-
-					pInspection = dynamic_cast<SVInspectionProcess*>(SVObjectManagerClass::Instance().GetObject(docObjectID));
+					pInspection = dynamic_cast<SVInspectionProcess*>(SVObjectManagerClass::Instance().GetObject(calcObjectId(svVariant)));
 
 					if (nullptr == pInspection)
 					{
@@ -5809,7 +5806,7 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 
 			if (nullptr != pInspection)
 			{
-				if (nullptr == GetIPDoc(pInspection->GetUniqueObjectID()))
+				if (nullptr == GetIPDoc(pInspection->getObjectId()))
 				{
 					SVIPDoc* l_pIPDoc(TheSVObserverApp.NewSVIPDoc(pInspection->GetName(), *pInspection));
 
@@ -5950,7 +5947,7 @@ bool SVObserverApp::InitATL()
 		if (!l_AppRegister && !l_AppUnregister)
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed_Question, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10135, GUID_NULL, MB_YESNO);
+			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed_Question, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10135, SvDef::InvalidObjectId, MB_YESNO);
 			if (IDYES == result)
 			{
 				return false;

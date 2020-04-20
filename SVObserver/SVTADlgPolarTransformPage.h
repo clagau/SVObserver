@@ -16,8 +16,8 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/ObjectDefines.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVUtilityLibrary/SVGuid.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,7 +41,7 @@ class SVToolAdjustmentDialogSheetClass;
 class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogPolarTransformPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogPolarTransformPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVToolAdjustmentDialogPolarTransformPageClass();
 	void SetInspectionData();
 
@@ -90,7 +90,7 @@ protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 	SvOi::IObjectClass* m_pTaskObject;
 
-	SVGUID m_ImagePolarTransformID;
+	uint32_t m_ImagePolarTransformID = SvDef::InvalidObjectId;
 
 	SvOp::SVEvaluateClass* m_pEvaluateCenterX;
 	SvVol::SVDoubleValueObjectClass* m_pCenterXResult;

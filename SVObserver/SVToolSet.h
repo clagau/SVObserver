@@ -80,8 +80,8 @@ public:
 	bool getEnableAuxiliaryExtents() { BOOL Enabled{false}; m_EnableAuxiliaryExtents.GetValue(Enabled); return Enabled ? true : false; }
 	void setEnableAuxiliaryExtents(bool Enabled) { m_EnableAuxiliaryExtents.SetValue(BOOL(Enabled));}
 
-	template<typename SvGuidInserter>
-	void GetToolIds(SvGuidInserter Inserter) const
+	template<typename ObjectIdInserter>
+	void GetToolIds(ObjectIdInserter Inserter) const
 	{
 		for (SVTaskObjectPtrVector::const_iterator Iter = m_TaskObjectVector.begin(); Iter != m_TaskObjectVector.end(); ++Iter)
 		{
@@ -89,7 +89,7 @@ public:
 
 			if (nullptr != pTask)
 			{
-				Inserter = pTask->GetUniqueObjectID();
+				Inserter = pTask->getObjectId();
 			}
 		}
 	};
@@ -109,7 +109,7 @@ public:
 	SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const;
 
 #pragma region virtual method (IToolSet)
-	virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const override;
+	virtual bool IsToolPreviousToSelected(uint32_t toolID) const override;
 	/// Return the first band 0 image from the first color tool. If there are no color Tool it return nullptr.
 	/// \returns SvOi::IObjectClass*
 	virtual SvOi::IObjectClass* getBand0Image() const override;

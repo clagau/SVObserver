@@ -9,13 +9,11 @@
 #pragma region Includes
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
 #pragma endregion Includes
 
 
 #pragma region Declarations
-//! Declaration is in #include "SVUtilityLibrary\SVGUID.h"
-class SVGUID;
 namespace SvStl
 {
 class MessageContainer;
@@ -25,7 +23,7 @@ typedef std::vector<MessageContainer> MessageContainerVector;
 
 namespace SvOi
 {
-typedef std::pair<std::string, SVGUID> ParameterPairForML;
+typedef std::pair<std::string, uint32_t> ParameterPairForML;
 typedef std::vector<ParameterPairForML> ParametersForML;
 
 	//this class is a interface. It should only have pure virtual public method and no member variables
@@ -35,10 +33,10 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual ~ITool() {}
 
 		virtual bool areAuxExtentsAvailable() const = 0;
-		virtual SvUl::NameGuidList getAvailableAuxSourceImages() const = 0;
-		virtual SvUl::NameGuidPair getAuxSourceImage() const = 0;
-		virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) = 0;
-		virtual void SetToolImage( const SVGUID& rObjectID ) = 0;
+		virtual SvUl::NameObjectIdList getAvailableAuxSourceImages() const = 0;
+		virtual SvUl::NameObjectIdPair getAuxSourceImage() const = 0;
+		virtual HRESULT setAuxSourceImage(uint32_t objectID) = 0;
+		virtual void SetToolImage(uint32_t objectID ) = 0;
 		virtual HRESULT UpdateImageWithExtent() = 0;
 		virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
 		virtual long getToolPosition() const = 0;

@@ -39,7 +39,7 @@ public:
 
 	virtual ~SVRemoteOutputDataController();
 
-	HRESULT AddItem( const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, GUID InputObjectID, const std::string& rPPQ );
+	HRESULT AddItem(const std::string& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, uint32_t InputObjectID, const std::string& rPPQ);
 
 	size_t GetItemCount( const std::string& rRemoteGroupId );
 	HRESULT GetItem( const std::string& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem );
@@ -88,8 +88,8 @@ public:
 
 	void SetupRemoteOutputGroup(SVConfigurationObject* p_pConfig, SVGroupDefVect& p_rOriginalList );
 
-	// This function walks the input list and attempts to validate each input GUID 
-	// by getting a pointer from the Object Manager for each GUID.
+	// This function walks the input list and attempts to validate each input ID 
+	// by getting a pointer from the Object Manager for each ID.
 	// If an input fails then it is deleted.
 	HRESULT ValidateInputs();
 

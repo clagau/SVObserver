@@ -42,7 +42,7 @@ namespace SvOg
 		void CheckSourceImage();
 
 	public:
-		SVToolAdjustmentDialogTransformImagePageClass(const SVGUID& rInspectionID, const SVGUID& rToolID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD);
+		SVToolAdjustmentDialogTransformImagePageClass(uint32_t inspectionId, uint32_t toolID, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD);
 		virtual ~SVToolAdjustmentDialogTransformImagePageClass();
 		HRESULT SetInspectionData();
 

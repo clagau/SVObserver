@@ -235,15 +235,15 @@ HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& rToolExtents )
 	return l_hrOk;
 }
 
-void SVImageViewClass::AttachToImage( const SVGUID& rImageId )
+void SVImageViewClass::AttachToImage(uint32_t imageId)
 {
-	if( !( rImageId.empty() ) )
+	if( SvDef::InvalidObjectId != imageId )
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID()));
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(imageId));
 
 		if( nullptr != pImage )
 		{
-			m_ImageId = pImage->GetUniqueObjectID();
+			m_ImageId = pImage->getObjectId();
 			m_imageName = pImage->GetCompleteName();
 
 			GetIPDoc()->RegisterImage( m_ImageId, this );
@@ -256,11 +256,11 @@ void SVImageViewClass::AttachToImage( const SVGUID& rImageId )
 	}
 	else
 	{
-		m_ImageId.clear();
+		m_ImageId = imageId;
 	}
 
 
-	if( m_ImageId.empty() )
+	if(SvDef::InvalidObjectId == m_ImageId)
 	{
 		GetIPDoc()->UnregisterImageView( this );
 
@@ -270,7 +270,7 @@ void SVImageViewClass::AttachToImage( const SVGUID& rImageId )
 
 void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 {
-	SVGUID l_ImageId;
+	uint32_t l_ImageId = SvDef::InvalidObjectId;
 	bool Attach( false );
 
 	std::string l_imageName = p_imageName;
@@ -286,7 +286,7 @@ void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 
 		if( nullptr != pImage )
 		{
-			l_ImageId = pImage->GetUniqueObjectID();
+			l_ImageId = pImage->getObjectId();
 			Attach = true;
 		}
 
@@ -315,7 +315,7 @@ void SVImageViewClass::DetachFromImage()
 	SetImageRect( CRect( 0, 0, 0, 0 ) );
 
 	m_imageName.clear();
-	m_ImageId.clear();
+	m_ImageId = SvDef::InvalidObjectId;
 	m_ImageDIB.clear();
 	m_OverlayData.clear();
 }
@@ -400,7 +400,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 		case ID_ADJUST_POSITION:
 		{
 			long l_err = 0;
-			if( m_ImageId.empty() ||
+			if(SvDef::InvalidObjectId == m_ImageId ||
 				!TheSVObserverApp.OkToEdit() )
 			{
 				l_err = -1269;
@@ -423,7 +423,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			if (nullptr != m_pTool)
 			{
 				std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), m_pTool->GetName());
-				SvOg::SVAdjustToolSizePositionDlg dlg(m_pTool->GetInspection()->GetUniqueObjectID(), m_pTool->GetUniqueObjectID(), DlgName.c_str(), this);
+				SvOg::SVAdjustToolSizePositionDlg dlg(m_pTool->GetInspection()->getObjectId(), m_pTool->getObjectId(), DlgName.c_str(), this);
 				dlg.DoModal();
 			}
 			else
@@ -626,14 +626,14 @@ void SVImageViewClass::SelectDisplayImage()
 
 	if( nullptr != l_svDlg.m_pDoc )
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
 		l_svDlg.m_pCurrentImage = pImage;
 
 		if( IDOK == l_svDlg.DoModal() )
 		{
 			if( l_svDlg.m_pCurrentImage )
 			{
-				AttachToImage( l_svDlg.m_pCurrentImage->GetUniqueObjectID() );
+				AttachToImage( l_svDlg.m_pCurrentImage->getObjectId() );
 			}
 			else
 			{
@@ -643,14 +643,14 @@ void SVImageViewClass::SelectDisplayImage()
 	}
 }
 
-const SVGUID& SVImageViewClass::GetImageID() const
+uint32_t SVImageViewClass::GetImageID() const
 {
 	return m_ImageId;
 }
 
 SvIe::SVImageClass* SVImageViewClass::GetImage()
 {
-	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
+	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
 }
 
 SvIe::SVImageClass* SVImageViewClass::GetImageByName( LPCTSTR ImageName ) const
@@ -720,7 +720,7 @@ void SVImageViewClass::ShowExtremeLUT( bool p_show /* = true */ )
 
 void SVImageViewClass::OnDraw( CDC* p_pDC )
 {
-	if( m_ImageId.empty() || SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
+	if (SvDef::InvalidObjectId == m_ImageId || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
 	{
 		ReleaseImageSurface();
 	}
@@ -777,7 +777,7 @@ void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pH
 	bool Update = true;
 
 	SVObjectClass* pObject(nullptr);
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentImageUpdateUidGuid, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentImageUpdateUidId, pObject);
 	if (nullptr != pObject)
 	{
 		double Value;
@@ -825,7 +825,7 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 
-		if( !( m_ImageId.empty() ) && nullptr != l_psvIPDoc )
+		if (SvDef::InvalidObjectId != m_ImageId && nullptr != l_psvIPDoc)
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID()));
 
@@ -855,7 +855,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 		
-		if( nullptr != l_psvIPDoc && !( m_ImageId.empty() ) )
+		if( nullptr != l_psvIPDoc && SvDef::InvalidObjectId != m_ImageId )
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->GetSelectedToolID()));
 			if(nullptr !=  pTool)
@@ -867,7 +867,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 				SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
 				if(nullptr != pAnalyzer)
 				{
-					SVSetupDialogManager::Instance().SetupDialog( pAnalyzer->GetClassID(), pAnalyzer->GetUniqueObjectID(), this );
+					SVSetupDialogManager::Instance().SetupDialog( pAnalyzer->GetClassID(), pAnalyzer->getObjectId(), this );
 
 					l_psvIPDoc->RunOnce();
 				}
@@ -883,7 +883,7 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
 	{
-		if( !( m_ImageId.empty() ) )
+		if(SvDef::InvalidObjectId != m_ImageId)
 		{
 			std::string Text;
 			CPoint l_point = p_point;
@@ -1160,7 +1160,7 @@ bool SVImageViewClass::SetScrollPosition( CPoint& p_point )
 
 bool SVImageViewClass::ImageIsEmpty() const
 {
-	return m_ImageId.empty();
+	return SvDef::InvalidObjectId == m_ImageId;
 }
 
 bool SVImageViewClass::CalculateZoomFit(ZoomEnum ZoomType)
@@ -1318,7 +1318,7 @@ HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLin
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVGUID l_SelectedID;
+	uint32_t l_SelectedID = SvDef::InvalidObjectId;
 
 	if( nullptr != GetIPDoc() )
 	{
@@ -1332,7 +1332,7 @@ HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLin
 			return l_hrOk;
 
 		case 1: // "Current Tool"
-			if( !( l_SelectedID.empty() ) && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
+			if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1386,7 +1386,7 @@ HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLin
 			break;
 
 		case 1: // "If Current"
-			if( !( l_SelectedID.empty() ) && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
+			if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1440,7 +1440,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 		POINT titlePoint = static_cast<POINT> (p_rMultiLine.m_StringPoint);
 		std::string Title = p_rMultiLine.m_csString;
 
-		SVGUID l_SelectedID;
+		uint32_t l_SelectedID = SvDef::InvalidObjectId;
 
 		if( nullptr != GetIPDoc() )
 		{
@@ -1457,7 +1457,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 		int l_PenStyle = PS_SOLID;
 
 		// Check for current selection...
-		if( !( l_SelectedID.empty() ) && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
+		if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
 		{
 			l_PenStyle = PS_DOT;
 		}
@@ -1694,7 +1694,7 @@ void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t l_svVariant;
 
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId.ToGUID()));
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
 
 	l_svVariant = ( nullptr != pImage );
 	rWriter.WriteAttribute(SvXml::CTAG_VIEW_INITIALIZED, l_svVariant);
@@ -1883,7 +1883,7 @@ SVBitmapInfo SVImageViewClass::GetBitmapInfo() const
 			l_Info.Assign( *l_pBitmapInfo );
 		}
 	}
-	else if( !( m_ImageId.empty() ) )
+	else if(SvDef::InvalidObjectId != m_ImageId)
 	{
 		SVIPDoc* l_pIPDoc = GetIPDoc();
 

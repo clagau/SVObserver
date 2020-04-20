@@ -8,6 +8,7 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions\ObjectDefines.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "TriggerRecordController\ITriggerRecordRW.h"
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
@@ -21,7 +22,7 @@ namespace SvTrcT
 	{
 #pragma region Constructor
 	public:
-		ToolObject(GUID guid) : m_guid(guid) {};
+		explicit ToolObject(uint32_t objectId) : m_objectId(objectId) {};
 		virtual ~ToolObject() = default;
 
 #pragma endregion Constructor
@@ -31,8 +32,8 @@ namespace SvTrcT
 		/// This method reset the tool to the new condition. It set the position and the input buffer struct and reset the output buffer struct.
 		/// \param pos [in] Position of the tool in the tool set.
 		/// \param bufferStructIn [in] Input buffer struct.
-		virtual void reset(const GUID& sourceGuid, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) { m_sourcePos = sourcePos; m_bufferStructIn = bufferStructIn; };
-		const GUID& getGuid() const { return m_guid; };
+		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) { m_sourcePos = sourcePos; m_bufferStructIn = bufferStructIn; };
+		uint32_t getObjectId() const { return m_objectId; };
 		int getImagePos() const { return m_trPos; };
 		const SVMatroxBufferCreateStruct& getBufferIn() const { return m_bufferStructIn; };
 		const SVMatroxBufferCreateStruct& getBufferOut() const { return m_bufferStructOut; };
@@ -57,7 +58,7 @@ namespace SvTrcT
 #pragma region Member Variables
 	protected:
 		int m_trPos {-1};
-		GUID m_guid;
+		uint32_t m_objectId = SvDef::InvalidObjectId;
 		int m_sourcePos {-1};
 		SVMatroxBufferCreateStruct m_bufferStructIn;
 		SVMatroxBufferCreateStruct m_bufferStructOut;

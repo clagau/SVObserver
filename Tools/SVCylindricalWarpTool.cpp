@@ -145,35 +145,10 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 	HRESULT l_hrOk = S_OK;
 	if ( S_OK == LocalDestroy() )
 	{
-		SVGUID l_InputID;
-		SVImageInfoClass l_ImageInfo;
-		SVImageExtentClass imageExtents;
-
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
-
-		if( nullptr != pInputImage )
-		{
-			// Image input must already exist, and must be created!!!
-			// Embedded Image output must already exist!!!
-
-			// Get reference to new blank image info...
-			l_ImageInfo = pInputImage->GetImageInfo();
-
-			// Size of Output is same as the Input when rotation is not enabled
-			// Copy source image info into blank image info...
-			l_InputID = pInputImage->GetUniqueObjectID();
-
-			// Input Extents..
-			imageExtents = pInputImage->GetImageExtents();
-		}
-		else
-		{
-			l_ImageInfo = m_OutputImage.GetImageInfo();
-
-			l_InputID = m_OutputImage.GetUniqueObjectID();
-
-			imageExtents = m_OutputImage.GetImageExtents();
-		}
+		uint32_t inputID = nullptr != pInputImage ? pInputImage->getObjectId() : m_OutputImage.getObjectId();
+		SVImageInfoClass l_ImageInfo = nullptr != pInputImage ? pInputImage->GetImageInfo() : m_OutputImage.GetImageInfo();
+		SVImageExtentClass imageExtents = nullptr != pInputImage ? pInputImage->GetImageExtents() : m_OutputImage.GetImageExtents();
 
 		// Warp Type..
 		long lWarpType = SvPb::SVExtentTranslationCylindricalWarpH;	// default
@@ -202,12 +177,12 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 		}
 
 		// Output Image..
-		l_ImageInfo.SetOwner( GetUniqueObjectID() );
+		l_ImageInfo.SetOwner( getObjectId() );
 		l_ImageInfo.SetExtents(imageExtents);
 
 		m_OutputImage.SetObjectOwner( this );
 
-		l_hrOk = m_OutputImage.UpdateImage( l_InputID, l_ImageInfo );
+		l_hrOk = m_OutputImage.UpdateImage( inputID, l_ImageInfo );
 
 		if( S_OK != l_hrOk )
 		{
@@ -263,18 +238,18 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 
 	/*l_hrOk = */SetImageExtent( OutputExtents );
 
-	SVGUID l_InputID;
+	uint32_t inputID = SvDef::InvalidObjectId;
 
 	if(nullptr != pInputImage)
 	{
-		l_InputID = pInputImage->GetUniqueObjectID();
+		inputID = pInputImage->getObjectId();
 	}
 
 	SVImageInfoClass l_ImageInfo = m_OutputImage.GetImageInfo();
 
 	l_ImageInfo.SetExtents( OutputExtents );
 
-	l_hrOk = m_OutputImage.UpdateImage( l_InputID, l_ImageInfo );
+	l_hrOk = m_OutputImage.UpdateImage(inputID, l_ImageInfo );
 
 	return l_hrOk;
 }
@@ -291,7 +266,7 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateOutputImageExtentsFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateOutputImageExtentsFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -306,7 +281,7 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -323,7 +298,7 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -362,7 +337,7 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -392,7 +367,7 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 					l_bOk = false;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunWarpFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunWarpFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 						pErrorMessages->push_back(Msg);
 					}
 				}

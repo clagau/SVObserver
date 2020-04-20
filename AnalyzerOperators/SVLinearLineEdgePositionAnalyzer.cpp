@@ -43,7 +43,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 
-	AddFriend( pEdge->GetUniqueObjectID() );
+	AddFriend( pEdge->getObjectId() );
 
 	RegisterEmbeddedObject( &dpEdge, SvPb::DPEdgeAEId, IDS_OBJECTNAME_DPEDGE, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svLinearDistance, SvPb::LinearDistanceEdgeAEId, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
@@ -125,7 +125,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -149,7 +149,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 
 		if (!Result && nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -159,7 +159,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

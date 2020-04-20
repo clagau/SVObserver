@@ -131,7 +131,7 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 			m_pSheet->m_pFigureEditor->SetImageInfo( l_ImageInfo );
 			m_pSheet->m_pFigureEditor->SetRect( m_pSheet->m_rectROI );
 
-			m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->GetUniqueObjectID(), pImage->GetUniqueObjectID() );
+			m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->getObjectId(), pImage->getObjectId() );
 			m_svDlgImage.refresh();
 		}
 
@@ -212,7 +212,7 @@ void SVTADlgColorThresholdROI::SetInspectionData()
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->GetUniqueObjectID(), m_pThreshold->GetUniqueObjectID() } };
+		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->getObjectId(), m_pThreshold->getObjectId() } };
 		Values.Init();
 
 		Values.Set<double>(m_pExtentLeft->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.left));

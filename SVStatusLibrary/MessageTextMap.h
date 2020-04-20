@@ -235,7 +235,6 @@ namespace SvStl
 		{Tid_ParseError_NameExpressionExpected, _T("Parser Error:\nName expression expected!")},
 		{Tid_ParseError_OwnerNotExist, _T("Parser Error:\nOwner doesn't exist, cannot access member!")},
 		{Tid_ParseError_UnexpectedMember, _T("Parser Error:\nUnexpected member access operator!")},
-		{Tid_ParseError_CannotReadGuid, _T("Parser Error:\nCannot read GUID!")},
 		{Tid_ParseError_ExpressionExpected, _T("Parser Error:\nExpression expected!")},
 		{Tid_ParseError_UnknownExpression, _T("Parser Error:\nUnknown expression!")},
 		{Tid_ParseError_UnexpectedEndOfCommand, _T("Parser Error:\nUnexpected end of command!")},
@@ -243,7 +242,6 @@ namespace SvStl
 		{Tid_ParseError_UnexpectedEndOfParse, _T("ParserState: READ_STRING\nParser Error, unexpected end of parse string while reading string...")},
 		{Tid_ParseError_UnexpectedEndOfName, _T("ParserState: READ_NAME_STRING\nParser Error, unexpected end of name string while parsing ...")},
 		{Tid_ParseError_EmptyToken, _T("ParserState: READ_GUID_STRING\nParser Error, empty token found...")},
-		{Tid_ParseError_GuidCannotEvaluated, _T("ParserState: READ_GUID_STRING\nParser Error, GUID expression cannot be evaluated...")},
 		{Tid_ParseError_NameOperandExpected, _T("Parser Error:\nName operand expected!")},
 		{Tid_ParseError_OperatorExpected, _T("Parser Error:\nOperator, expected!")},
 		{Tid_ParseError_OperandExpected, _T("Parser Error:\nObject operand, class operand or embedded operand expected!")},
@@ -436,7 +434,7 @@ namespace SvStl
 		{Tid_TableObject_CreateFailed, _T("Creating the table object in the table tool failed.")},
 		{Tid_TableObject_Nullptr, _T("Table object in the table tool is a nullptr.")},
 		{Tid_TableObject_columnValueMapInvalid, _T("The columnValueMap in the table object has invalid entries.")},
-		{Tid_TableObject_columnValue_NoFreeGUID, _T("Too many column equation, no free GUID for the column value objects.")},
+		{Tid_TableObject_columnValue_NoFreeID, _T("Too many column equation, no free ID for the column value objects.")},
 		{Tid_TableObject_createColumnValueObjectFailed, _T("Creating a value object in the table object failed.")},
 		{Tid_TableObject_MaxRowWrongValue, _T("Maximum rows must be between %s and %s, current = %s.")},
 		{Tid_TableCopy_Nullptr, _T("No Source Table object is selected.")},
@@ -604,7 +602,6 @@ namespace SvStl
 		{Tid_InvalidMatroxAttribute, _T("Invalid Matrox Attribute")},
 		
 		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")},
-		{Tid_ProtBuf_ConvertToGUID_WrongSize, _T("Convert of ProtoBuf-Guid to Guid failed because size of the string is wrong.") },
 		{Tid_CircularReference, _T("A circular reference has been generated")},
 
 		{Tid_ErrorMemoryAllocation, _T("Memory allocation failed")},

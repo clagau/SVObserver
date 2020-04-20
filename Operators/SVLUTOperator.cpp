@@ -101,7 +101,7 @@ void SVLUTOperatorClass::init()
 	// Add equation friends...
 	SVLUTEquationClass* pLUTEquationFriend = new SVLUTEquationClass( this );
 	if( pLUTEquationFriend )
-		AddFriend( pLUTEquationFriend->GetUniqueObjectID() );
+		AddFriend( pLUTEquationFriend->getObjectId() );
 
 
 	// Identify our input type needs...
@@ -426,7 +426,7 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
@@ -442,7 +442,7 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
@@ -469,7 +469,7 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...
@@ -484,7 +484,7 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RecalcLUTFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RecalcLUTFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
@@ -502,7 +502,7 @@ bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputI
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLutFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLutFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		// Signal that something was wrong...

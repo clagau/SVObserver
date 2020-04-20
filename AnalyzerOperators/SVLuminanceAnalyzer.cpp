@@ -130,7 +130,7 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16094, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16094, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -139,7 +139,7 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 		Result = false;
@@ -243,7 +243,7 @@ void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContaine
 {
 	bool isNoError = true;
 
-	inserter = SvOi::ParameterPairForML(msvLuminanceValue.GetCompleteName(), msvLuminanceValue.GetUniqueObjectID());
+	inserter = SvOi::ParameterPairForML(msvLuminanceValue.GetCompleteName(), msvLuminanceValue.getObjectId());
 	SvOp::SVRangeClass* pRangeObject = dynamic_cast<SvOp::SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
@@ -256,7 +256,7 @@ void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContaine
 
 	if (!isNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 }
@@ -290,7 +290,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16099, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16099, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -302,7 +302,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16100, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16100, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -317,7 +317,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16102, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16102, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -331,7 +331,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16103, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16103, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -349,7 +349,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16104, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16104, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -360,7 +360,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16105, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16105, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -376,7 +376,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			LastError = true;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16106, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16106, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 			break;
@@ -416,7 +416,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 					LastError = true;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16107, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16107, getObjectId() );
 						pErrorMessages->push_back(Msg);
 					}
 					break;
@@ -433,7 +433,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 						LastError = true;
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16108, GetUniqueObjectID() );
+							SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16108, getObjectId() );
 							pErrorMessages->push_back(Msg);
 						}
 						break;
@@ -449,7 +449,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 					LastError = true;
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16109, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16109, getObjectId() );
 						pErrorMessages->push_back(Msg);
 					}
 					break;

@@ -10,8 +10,7 @@
 #pragma region Includes
 #include "SVOResource\resource.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "SVUtilityLibrary\NameGuidList.h"
-#include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary\NameObjectIdList.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -27,7 +26,7 @@ namespace SvOg
 
 #pragma region Constructor
 	public:
-		TATableSourcePage(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
+		TATableSourcePage(uint32_t inspectionId, uint32_t taskObjectId, int id = IDD);
 		virtual ~TATableSourcePage();
 #pragma endregion Constructor
 
@@ -65,12 +64,12 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
-		SvMc::AvailableObjectListComboBox<SVGUID> m_availableSourceTableCB;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_availableSourceTableCB;
 		
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		std::string m_inputName;
-		SvUl::NameGuidList m_availableList;
+		SvUl::NameObjectIdList m_availableList;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

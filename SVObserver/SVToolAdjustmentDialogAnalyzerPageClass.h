@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "Definitions\ObjectDefines.h"
 #include "SVOGui\PictureDisplay.h"
 #include "SVOGui/ImageController.h"
 #include "SVProtoBuf\SVO-Enum.h"
@@ -50,7 +51,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVToolAdjustmentDialogAnalyzerPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent );
+	SVToolAdjustmentDialogAnalyzerPageClass(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* pParent );
 	virtual ~SVToolAdjustmentDialogAnalyzerPageClass();
 
 protected:
@@ -99,11 +100,11 @@ protected:
 	/// If a analyzer additional added to the combobox, because it is normally not available but now selected, it is saved here. 
 	/// If the selection of this get lost it will deleted from the combobox
 	SvPb::ClassIdEnum m_additionalAnalyzerId = SvPb::NoObjectClassId;
-	const SVGUID m_InspectionID;
-	const SVGUID m_TaskObjectID;
+	const uint32_t m_InspectionID;
+	const uint32_t m_TaskObjectID;
 
 	SvOg::ImageController m_ImageController;
-	SVGUID m_resultImageID = GUID_NULL;
+	uint32_t m_resultImageID = SvDef::InvalidObjectId;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -23,17 +23,17 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 SVIPResultItemDefinition::SVIPResultItemDefinition()
-: m_ObjectID(), m_IndexPresent( false ), m_Index(0)
+: m_IndexPresent( false ), m_Index(0)
 {
 }
 
-SVIPResultItemDefinition::SVIPResultItemDefinition( const SVGUID& p_rObjectID )
-: m_ObjectID( p_rObjectID ), m_IndexPresent( false ), m_Index(0)
+SVIPResultItemDefinition::SVIPResultItemDefinition(uint32_t objectID)
+: m_ObjectID( objectID ), m_IndexPresent( false ), m_Index(0)
 {
 }
 
-SVIPResultItemDefinition::SVIPResultItemDefinition( const SVGUID& p_rObjectID, int index )
-: m_ObjectID( p_rObjectID ), m_IndexPresent( true ), m_Index( index )
+SVIPResultItemDefinition::SVIPResultItemDefinition(uint32_t objectID, int index )
+: m_ObjectID( objectID ), m_IndexPresent( true ), m_Index( index )
 {
 }
 
@@ -79,7 +79,7 @@ bool SVIPResultItemDefinition::operator==( const SVIPResultItemDefinition& p_rOb
 	return l_Status;
 }
 
-const SVGUID& SVIPResultItemDefinition::GetObjectID() const
+uint32_t SVIPResultItemDefinition::GetObjectID() const
 {
 	return m_ObjectID;
 }

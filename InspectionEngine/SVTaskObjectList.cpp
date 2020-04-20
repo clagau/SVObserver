@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS(SVTaskObjectListClass, SVTaskObjectListClassGuid)
+//SV_IMPLEMENT_CLASS(SVTaskObjectListClass, SVTaskObjectListClassId)
 
 #pragma region Constructor
 SVTaskObjectListClass::SVTaskObjectListClass(LPCSTR ObjectName)
@@ -223,7 +223,7 @@ const double& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
 	return m_LastListUpdateTimestamp;
 }
 
-int  SVTaskObjectListClass::InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject)
+int  SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, SVTaskObjectClass* pTaskObject)
 {
 	int Result(-1);
 	if (nullptr == pTaskObject)
@@ -240,7 +240,7 @@ int  SVTaskObjectListClass::InsertBefore(const SVGUID& rObjectBeforeID, SVTaskOb
 	}
 
 	pTaskObject->SetObjectOwner(this);
-	if (rObjectBeforeID.empty())
+	if (SvDef::InvalidObjectId == objectBeforeID)
 	{
 		m_TaskObjectVector.push_back(pTaskObject);
 		Result =  static_cast<int>( m_TaskObjectVector.size()) -1;
@@ -248,9 +248,9 @@ int  SVTaskObjectListClass::InsertBefore(const SVGUID& rObjectBeforeID, SVTaskOb
 	else
 	{
 		auto it = std::find_if(m_TaskObjectVector.begin(), m_TaskObjectVector.end(),
-			[&rObjectBeforeID](SVTaskObjectClass* pObject)
+			[&objectBeforeID](SVTaskObjectClass* pObject)
 		{
-			if (pObject == nullptr || pObject->GetUniqueObjectID() == rObjectBeforeID)
+			if (pObject == nullptr || pObject->getObjectId() == objectBeforeID)
 				return true;
 			else
 				return false;
@@ -480,7 +480,7 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 	if (nullptr != pTaskObject)
 	{
 		// Get the object's uniqueID
-		GUID objectID = pTaskObject->GetUniqueObjectID();
+		uint32_t objectID = pTaskObject->getObjectId();
 		if (RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID))
 		{
 			// Notify the Owner of our inputs that they are not needed anymore
@@ -532,18 +532,18 @@ void   SVTaskObjectListClass::GetTaskObjectListInfo(SvPb::TaskObjectListResponse
 			pInfo->set_isvalid(pTaskObj->isErrorMessageEmpty());
 			pInfo->set_objectsubtype(pTaskObj->GetObjectSubType());
 			pInfo->set_objecttype(pTaskObj->GetObjectType());
-			SvPb::SetGuidInProtoBytes(pInfo->mutable_taskobjectid(), pTaskObj->GetUniqueObjectID());
+			pInfo->set_taskobjectid(pTaskObj->getObjectId());
 		}
 	}
 }
 
-void SVTaskObjectListClass::Delete(const SVGUID& rObjectID)
+void SVTaskObjectListClass::Delete(uint32_t objectID)
 {
-	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(rObjectID));
+	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(objectID));
 	if (nullptr != pTaskObject)
 	{
 		// look in friend list
-		if (RemoveFromTaskObjectVector(rObjectID) || RemoveFriend(rObjectID))
+		if (RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID))
 		{
 			delete(pTaskObject);
 			return;
@@ -553,10 +553,10 @@ void SVTaskObjectListClass::Delete(const SVGUID& rObjectID)
 	assert( false );
 }
 
-void SVTaskObjectListClass::InsertBefore(const SVGUID& rObjectBeforeID, ITaskObject& rObject)
+void SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject)
 {
 	SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(&rObject);
-	InsertBefore(rObjectBeforeID, pObject);
+	InsertBefore(objectBeforeID, pObject);
 }
 
 bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD context)
@@ -583,27 +583,27 @@ SvUl::NameClassIdList SVTaskObjectListClass::GetCreatableObjects(const SvDef::SV
 	return list;
 }
 
-void SVTaskObjectListClass::moveTaskObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId)
+void SVTaskObjectListClass::moveTaskObject(uint32_t objectToMoveId, uint32_t preObjectId)
 {
 	int currentPos = -1;
 	int newPos = -1;
-	SVGUID currentGuid = GUID_NULL;
+	uint32_t currentId = SvDef::InvalidObjectId;
 	for (int i = 0; i < m_TaskObjectVector.size(); i++)
 	{
 		if (nullptr != m_TaskObjectVector[i])
 		{
-			currentGuid = m_TaskObjectVector[i]->GetUniqueObjectID();
+			currentId = m_TaskObjectVector[i]->getObjectId();
 		}
 		else
 		{
 			continue;
 		}
 
-		if (currentGuid == objectToMoveId)
+		if (currentId == objectToMoveId)
 		{
 			currentPos = i;
 		}
-		if (currentGuid == preObjectId)
+		if (currentId == preObjectId)
 		{
 			newPos = i;
 		}
@@ -739,7 +739,7 @@ bool SVTaskObjectListClass::ConnectAllInputs()
 	return Result;
 }
 
-bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rNewGuid)
+bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId)
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pObject);
 	if (nullptr != pTaskObject)
@@ -760,7 +760,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 		// Check task list members...
 		for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
 		{
-			if (m_TaskObjectVector[i] && m_TaskObjectVector[i]->GetUniqueObjectID() == rNewGuid)
+			if (m_TaskObjectVector[i] && m_TaskObjectVector[i]->getObjectId() == newId)
 			{
 				// Delete this list member... the destructor will send SVM_OBJECT_CLOSED!
 				SVObjectClass* pDuplicateObject = m_TaskObjectVector[i];
@@ -771,7 +771,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 				m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 
 				// Set unique object ID...
-				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, rNewGuid))
+				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, newId))
 				{
 					connectChildObject(*pTaskObject);
 					return true;
@@ -782,12 +782,12 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 		}
 
 		// Special code for Duplicates!!
-		SVObjectClass* pDuplicatedObject = SVObjectManagerClass::Instance().GetObject(rNewGuid);
+		SVObjectClass* pDuplicatedObject = SVObjectManagerClass::Instance().GetObject(newId);
 		if (pDuplicatedObject)
 		{
 			// Get the Owner
 			SVObjectInfoStruct ownerInfo = pDuplicatedObject->GetOwnerInfo();
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getUniqueObjectID());
+			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getObjectId());
 			if (pOwner)
 			{
 				SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
@@ -806,7 +806,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 		// Special code for Objects that allocate Friends on SetOwner()
 		pTaskObject->DestroyFriends();
 
-		if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, rNewGuid))
+		if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, newId))
 		{
 			connectChildObject(*pTaskObject);
 			return true;
@@ -871,7 +871,7 @@ void SVTaskObjectListClass::DeleteAll()
 	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
 
-SVObjectClass* SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )
+SVObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )
 {
 	SVObjectClass* l_psvObject = nullptr;
 
@@ -882,7 +882,7 @@ SVObjectClass* SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 	{
 		l_psvObject = m_TaskObjectVector[i];
 
-		if ( nullptr != l_psvObject && p_oFriendGuid == l_psvObject->GetUniqueObjectID() )
+		if ( nullptr != l_psvObject && friendId == l_psvObject->getObjectId() )
 		{
 			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + i);
 
@@ -939,18 +939,18 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVe
 	return Result;
 }
 
-bool SVTaskObjectListClass::isInputImage(const SVGUID& rImageGuid) const
+bool SVTaskObjectListClass::isInputImage(uint32_t imageId) const
 {
-	bool Result = SVTaskObjectClass::isInputImage(rImageGuid);
+	bool Result = SVTaskObjectClass::isInputImage(imageId);
 
-	if (GUID_NULL != rImageGuid)
+	if (SvDef::InvalidObjectId != imageId)
 	{
 		// Get Object from our children
 		for (int i = 0; !Result && i < static_cast<int> (m_TaskObjectVector.size()); i++)
 		{
 			if (nullptr != m_TaskObjectVector[i])
 			{
-				Result = m_TaskObjectVector[i]->isInputImage(rImageGuid);
+				Result = m_TaskObjectVector[i]->isInputImage(imageId);
 			}
 		}
 	}
@@ -1105,7 +1105,7 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 
 			if (nullptr == pObject)
 			{
-				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->getUniqueObjectID());
+				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->getObjectId());
 			}
 
 			if (nullptr != pObject && pObject->GetParent() != pRequestor && pObject != pRequestor)
@@ -1143,17 +1143,17 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 /*
 This method is used to remove an object from the friends list via the object's unique object identifier.
 */
-bool SVTaskObjectListClass::RemoveFriend(const GUID& rFriendGUID)
+bool SVTaskObjectListClass::RemoveFriend(uint32_t friendID)
 {
-	// Check GUID...
-	if (GUID_NULL != rFriendGUID)
+	// Check ID...
+	if (SvDef::InvalidObjectId != friendID)
 	{
 		// Check if friend is applied...
 		if (m_friendList.size())
 		{
 			for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
 			{
-				if (m_friendList[i].getUniqueObjectID() == rFriendGUID)
+				if (m_friendList[i].getObjectId() == friendID)
 				{
 					// Remove Friend...
 					m_friendList.RemoveAt(i);
@@ -1167,13 +1167,13 @@ bool SVTaskObjectListClass::RemoveFriend(const GUID& rFriendGUID)
 	return false;
 }
 
-bool SVTaskObjectListClass::RemoveFromTaskObjectVector(const SVGUID& rObjectID)
+bool SVTaskObjectListClass::RemoveFromTaskObjectVector(uint32_t objectID)
 {
 	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
 	{
 		SVTaskObjectClass* pTaskObject = m_TaskObjectVector[i];
 
-		if (pTaskObject && pTaskObject->GetUniqueObjectID() == rObjectID)
+		if (pTaskObject && pTaskObject->getObjectId() == objectID)
 		{
 			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 

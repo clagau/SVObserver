@@ -22,7 +22,7 @@ namespace SvOg
 	class SVSaveToolSetImageDialogClass : public CDialog
 	{
 	public:
-		SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
+		SVSaveToolSetImageDialogClass(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent = nullptr);   // standard constructor
 
 		//{{AFX_VIRTUAL(SVSaveToolSetImageDialogClass)
 		protected:

@@ -82,26 +82,6 @@ GUID* SVGUID::operator&()
 	return &m_Guid;
 }
 	
-const GUID& SVGUID::ToGUID() const
-{
-	return m_Guid;
-}
-
-GUID& SVGUID::ToGUID()
-{
-	return m_Guid;
-}
-
-_variant_t SVGUID::ToVARIANT() const
-{
-	return _variant_t( ToString().c_str());
-}
-
-_bstr_t SVGUID::ToBSTR() const
-{
-	return _bstr_t( ToString().c_str() );
-}
-
 std::string SVGUID::ToString() const
 {
 	// Make the String Representation have Enclosing Braces and All Hex Upper case

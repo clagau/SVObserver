@@ -2,7 +2,6 @@
 #include "StdAfx.h"
 #include "MonitorEntry.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -79,11 +78,11 @@ namespace SvSml
 		m_inspectionTRCPos = rProtoMessage.inspectiontrcpos();
 	}
 
-	MonitorEntry::MonitorEntry() :data(), m_Guid(GUID_NULL)
+	MonitorEntry::MonitorEntry() :data()
 	{
 	};
 
-	MonitorEntry::MonitorEntry(const std::string& na) :data(), name(na), m_Guid(GUID_NULL)
+	MonitorEntry::MonitorEntry(const std::string& na) :data(), name(na)
 	{
 	};
 
@@ -99,7 +98,7 @@ namespace SvSml
 
 	void  MonitorEntry::BuildProtoMessage(SvPml::MesMonitorEntry& rMesMonitorEntry) const
 	{
-		SvPb::SetGuidInProtoBytes(rMesMonitorEntry.mutable_guid(), m_Guid);
+		rMesMonitorEntry.set_objectid(m_objectId);
 		rMesMonitorEntry.set_name(SvUl::to_utf8(name));
 		auto pEntryDataMessage = rMesMonitorEntry.mutable_entrydata();
 		data.BuildProtoMessage(*pEntryDataMessage);
@@ -108,7 +107,7 @@ namespace SvSml
 	
 	void MonitorEntry::BuildFromProtoMessage(const SvPml::MesMonitorEntry& rMesMonitorEntry)
 	{
-		SvPb::GetGuidFromProtoBytes(rMesMonitorEntry.guid(), m_Guid);
+		m_objectId = rMesMonitorEntry.objectid();
 		name = SvUl::to_ansi(rMesMonitorEntry.name());
 		data.BuildFromProtoMessage(rMesMonitorEntry.entrydata());
 	}

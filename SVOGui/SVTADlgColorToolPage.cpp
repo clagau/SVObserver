@@ -40,12 +40,12 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVTADlgColorToolPage::SVTADlgColorToolPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID ) 
+	SVTADlgColorToolPage::SVTADlgColorToolPage( uint32_t inspectionId, uint32_t taskObjectId ) 
 	: CPropertyPage(SVTADlgColorToolPage::IDD)
-	, m_Images(rInspectionID, rTaskObjectID, SvPb::SVImageColorType)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_Images(inspectionId, taskObjectId, SvPb::SVImageColorType)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	, m_convertToHSI{ false }
 	, m_InputName{ SvDef::cColorToolInputImage }
 	{
@@ -87,13 +87,13 @@ namespace SvOg
 
 		m_convertToHSI = m_Values.Get<bool>(SvPb::ConvertToHSIEId);
 
-		const SvUl::NameGuidList& rAvailableImageList = m_Images.GetAvailableImageList();
+		const SvUl::NameObjectIdList& rAvailableImageList = m_Images.GetAvailableImageList();
 
 		// This requires that the input name sorts in descending natural order
 		// and that the images we are concerned with are first in the list
 		std::string SelectedImageName;
-		const SvUl::InputNameGuidPairList& rImageList = m_Images.GetInputImageList();
-		const SvUl::InputNameGuidPairList::const_iterator iter = rImageList.find(m_InputName);
+		const SvUl::InputNameObjectIdPairList& rImageList = m_Images.GetInputImageList();
+		const SvUl::InputNameObjectIdPairList::const_iterator iter = rImageList.find(m_InputName);
 		if (rImageList.cend() != iter)
 		{
 			SelectedImageName = iter->second.first;

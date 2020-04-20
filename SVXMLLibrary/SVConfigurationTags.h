@@ -148,7 +148,7 @@ namespace  SvXml
 	constexpr char* CTAG_IODOC                          = _T("IODoc");
 
 	constexpr char* CTAG_REMOTE_OUTPUT_PARAMETERS       = _T("RemoteOutputParameters");
-	constexpr char* CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID = _T("RemoteOutputObjectId");
+	constexpr char* CTAG_REMOTE_OUTPUT_INPUT_OBJECT_ID = _T("RemoteOutputObjectId");
 	constexpr char* CTAG_REMOTE_OUTPUT_NAME             = _T("RemoteOutputInputName");
 	constexpr char* CTAG_REMOTE_GROUP_ID                = _T("RemoteOutputGroupID");
 	constexpr char* CTAG_REMOTE_OUTPUT_PAR_NUM          = _T("RemoteOutputParNumber");
@@ -175,6 +175,8 @@ namespace  SvXml
 	constexpr char* CTAG_THREAD_NAME                    = _T("Thread Name");
 	constexpr char* CTAG_THREAD_AFFINITY                = _T("Thread Affinity");
 	constexpr char* CTAG_THREAD_MGR_ENABLE              = _T("Thread Mgr Enable");
+
+	constexpr char* CTAG_NEXT_OBJECT_ID					= _T("Next ObjectId");
 
 	constexpr char* CTAG_VIEWEDVARIABLES                = _T("ViewedVariables");
 	constexpr char* CTAG_VIEWEDENVARIABLES              = _T("ViewedEnvVariables");

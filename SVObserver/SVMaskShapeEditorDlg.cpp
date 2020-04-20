@@ -21,7 +21,6 @@
 #include "SVOGui/DisplayHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -64,12 +63,12 @@ namespace	// file local
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rMaskOperatorID, const SVGUID& rShapeMaskHelperID, CWnd* pParent /*=nullptr*/)
+SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId, uint32_t shapeMaskHelperId, CWnd* pParent /*=nullptr*/)
 : CDialog(SVMaskShapeEditorDlg::IDD, pParent)
-, m_rInspectionID{ rInspectionID }
-, m_rTaskObjectID{ rTaskObjectID }
-, m_Values{ SvOg::BoundValues{ rInspectionID, rMaskOperatorID } }
-, m_ShapeHelperValues{ SvOg::BoundValues{ rInspectionID, rShapeMaskHelperID } }
+, m_InspectionID{ inspectionId }
+, m_TaskObjectID{ taskObjectId }
+, m_Values{ SvOg::BoundValues{ inspectionId, maskOperatorId } }
+, m_ShapeHelperValues{ SvOg::BoundValues{ inspectionId, shapeMaskHelperId } }
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
 , m_bAutoResize( FALSE )
@@ -77,11 +76,11 @@ SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(const SVGUID& rInspectionID, const SV
 , m_isInit( false )
 , m_currentTabNumber( 2 ) // BRW - Why is this 2?
 , m_eShapeType(SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid )
-, m_maskController {rInspectionID, rTaskObjectID, rMaskOperatorID}
+, m_maskController {inspectionId, taskObjectId, maskOperatorId}
 {
 	m_pThis = this;
 
-	m_pMask = dynamic_cast<SvOp::SVUserMaskOperatorClass*> (SvOi::getObject(rMaskOperatorID));
+	m_pMask = dynamic_cast<SvOp::SVUserMaskOperatorClass*> (SvOi::getObject(maskOperatorId));
 	
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
@@ -121,11 +120,11 @@ void SVMaskShapeEditorDlg::Revert()
 			SVObjectClass* pParent = pObject->GetParent();
 			if(nullptr != pParent)
 			{
-				if (m_Values.GetTaskID() == pParent->GetUniqueObjectID())
+				if (m_Values.GetTaskID() == pParent->getObjectId())
 				{
 					m_Values.Set<_variant_t>(embeddedID, rEntry.second);
 				}
-				else if (m_ShapeHelperValues.GetTaskID() == pParent->GetUniqueObjectID())
+				else if (m_ShapeHelperValues.GetTaskID() == pParent->getObjectId())
 				{
 					m_ShapeHelperValues.Set<_variant_t>(embeddedID, rEntry.second);
 				}

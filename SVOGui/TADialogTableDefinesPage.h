@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
-#include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
@@ -29,7 +29,7 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		TADialogTableDefinesPage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID );
+		TADialogTableDefinesPage( uint32_t inspectionId, uint32_t taskObjectId );
 
 		// Standard destructor
 		virtual ~TADialogTableDefinesPage();
@@ -88,23 +88,23 @@ namespace SvOg
 		void showContextMenu( CPoint point );
 
 		/// Move Column in front of other column.
-		/// \param moveGuid [in] GUID of the object to move.
-		/// \param preGuid [in] GUID of the object in front of the other object should be moved.
-		void MoveColumn(SVGUID moveGuid, SVGUID preGuid);
+		/// \param moveId [in] ID of the object to move.
+		/// \param preId [in] ID of the object in front of the other object should be moved.
+		void MoveColumn(uint32_t moveId, uint32_t preId);
 		
 		/// Update the state of the buttons, which are enabled and disabled.
 		void UpdateEnableButtons();
 
-		HRESULT AddColumn(const std::string& rName, SVGUID addPreGuid = GUID_NULL);
+		HRESULT AddColumn(const std::string& rName, uint32_t addPreId = SvDef::InvalidObjectId);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 	private:
-		const SVGUID m_InspectionID;
-		const SVGUID m_TaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 
 		SvGcl::CGridCtrl m_Grid;						//The grid displaying the name and the formulas
-		SvUl::NameGuidList m_gridList;
+		SvUl::NameObjectIdList m_gridList;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

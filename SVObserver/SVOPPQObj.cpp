@@ -219,12 +219,12 @@ long SVOPPQObj::GetInspectionTimeout() const
 	return m_lInspectionTimeout;
 }
 
-void SVOPPQObj::SetAvailableInputsForConditionalOutput(const SVNameGuidPairList& list)
+void SVOPPQObj::SetAvailableInputsForConditionalOutput(const SVNameObjectIdPairList& list)
 {
 	m_availableInputs = list;
 }
 
-const SVNameGuidPairList& SVOPPQObj::GetAvailableInputsForConditionalOutput() const
+const SVNameObjectIdPairList& SVOPPQObj::GetAvailableInputsForConditionalOutput() const
 {
 	return m_availableInputs;
 }

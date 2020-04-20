@@ -21,6 +21,7 @@
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 SVFileNameClass::SVFileNameClass()
@@ -64,12 +65,12 @@ const SVFileNameClass& SVFileNameClass::operator=(const SVFileNameClass& rhs)
 	SetExtension( rhs.m_Extension.c_str() );
 	SetFileSelectDialogTitle( rhs.m_FileSelectDialogTitle.c_str() );
 	SetFileSaveDialogTitle( rhs.m_FileSaveDialogTitle.c_str() );
-	SetDefaultPathName( rhs.m_DefaultPathName.c_str() );
-	SetDefaultFileName( rhs.m_DefaultFileName.c_str() );
-	SetDefaultFileExtension( rhs.m_DefaultFileExtension.c_str() );
+	SetDefaultPathName( rhs.m_DefaultPathName );
+	SetDefaultFileName( rhs.m_DefaultFileName );
+	SetDefaultFileExtension( rhs.m_DefaultFileExtension );
 	SetFileSelectFlags( rhs.m_FileSelectFlags );
 	SetFileSaveFlags( rhs.m_FileSaveFlags );
-	SetFileExtensionFilterList( rhs.m_FileExtensionFilterList.c_str() );
+	SetFileExtensionFilterList( rhs.m_FileExtensionFilterList );
 	setExcludeCharacters( rhs.m_ExcludeChar.c_str() );
 
 	return *this;
@@ -653,7 +654,7 @@ bool SVFileNameClass::SaveFile()
 						SvDef::StringVector msgList;
 						msgList.push_back(GetFullFileName());
 						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GUID_NULL, MB_YESNO);
+						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SvDef::InvalidObjectId, MB_YESNO);
 					}
 				}
 				else

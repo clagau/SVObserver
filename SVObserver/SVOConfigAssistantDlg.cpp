@@ -340,7 +340,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 				(!SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, GUID_NULL, MB_YESNO);
+				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -351,7 +351,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			else
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, GUID_NULL, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -2036,12 +2036,12 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						HRESULT hr = progress.GetStatus();
 						if (S_OK == hr)
 						{
-							if (GUID_NULL != importer.info.m_inspectionGuid)
+							if (SvDef::InvalidObjectId != importer.info.m_inspectionId)
 							{
 								// Add info to list
 								m_ImportedInspectionInfoList.push_back(importer.info);
 								SVObjectClass* pObject(nullptr);
-								SVObjectManagerClass::Instance().GetObjectByIdentifier(importer.info.m_inspectionGuid, pObject);
+								SVObjectManagerClass::Instance().GetObjectByIdentifier(importer.info.m_inspectionId, pObject);
 
 								bRet = (nullptr != pObject);
 
@@ -2728,7 +2728,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
 
 				// Get List Of Inputs
-				SVNameGuidPairList availableInputs;
+				SVNameObjectIdPairList availableInputs;
 				for (const auto rEntry : pcfgPPQ->GetUsedInputs())
 				{
 					if (IO_DIGITAL_INPUT == rEntry->m_ObjectType)
@@ -2751,7 +2751,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 						}
 					}
 				}
-				// make list of Name/Guid pairs
+				// make list of Name/objectId pairs
 				pPPQObj->SetAvailableInputsForConditionalOutput(availableInputs);
 			}
 		}//end if nullptr != pcfgPPQ
@@ -4147,7 +4147,7 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvDef::GlobalConflictPairVe
 				{
 					SvVol::BasicValueObject* pGlobalObject(nullptr);
 
-					pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject(  Iter->first.m_Guid ) );
+					pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject(  Iter->first.m_objectId ) );
 					if( nullptr != pGlobalObject )
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );

@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 template<typename CommandPtr>
@@ -20,14 +19,14 @@ class SVObjectSynchronousCommandTemplate
 {
 public:
 	SVObjectSynchronousCommandTemplate() = delete;
-	SVObjectSynchronousCommandTemplate(const SVGUID& rObjectID, const CommandPtr& rpCommand);
+	SVObjectSynchronousCommandTemplate(uint32_t rObjectID, const CommandPtr& rpCommand);
 
 	virtual ~SVObjectSynchronousCommandTemplate();
 
 	HRESULT Execute( DWORD p_TimeoutInMilliseconds );
 
 private:
-	SVGUID m_ObjectID;
+	uint32_t m_ObjectID;
 	CommandPtr m_pCommand;
 };
 

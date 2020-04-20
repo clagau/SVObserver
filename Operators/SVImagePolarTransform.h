@@ -48,7 +48,7 @@ protected:
 
 	bool SetDefaultEquation( SVEquationClass* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	SvIe::SVImageClass	m_outputImage;

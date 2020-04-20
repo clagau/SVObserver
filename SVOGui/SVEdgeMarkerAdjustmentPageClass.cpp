@@ -23,11 +23,11 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
+	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
 	: CPropertyPage(ID, nIDCaption)
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
+	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
 	, m_rEdgeEmbeddedIds{ rEdgeEmbeddedIds }
 	, StrLower( _T("") )
 	, StrUpper( _T("") )
@@ -478,11 +478,11 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 
 		//Enum and m_rEdgeEmbeddedIds size must be the same
-		assert(EdgeEmbeddedEnum::EdgeGuidCount == m_rEdgeEmbeddedIds.size());
+		assert(EdgeEmbeddedEnum::EdgeIdCount == m_rEdgeEmbeddedIds.size());
 
 		m_Values.Init();
 
-		if( GUID_NULL == m_rTaskObjectID )
+		if (SvDef::InvalidObjectId == m_TaskObjectID)
 		{
 			GetParent()->SendMessage(WM_CLOSE);
 		}

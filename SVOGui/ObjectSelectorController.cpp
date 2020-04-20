@@ -11,7 +11,6 @@
 #include "ObjectSelectorController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #pragma endregion Includes
@@ -26,9 +25,9 @@ namespace SvOg
 {
 
 #pragma region Constructor
-ObjectSelectorController::ObjectSelectorController(const SVGUID& rInspectionID, const SVGUID& rInstanceID)
-	: m_InspectionID(rInspectionID)
-	, m_InstanceID(rInstanceID)
+ObjectSelectorController::ObjectSelectorController(uint32_t inspectionID, uint32_t instanceID)
+	: m_InspectionID(inspectionID)
+	, m_InstanceID(instanceID)
 {
 }
 
@@ -37,15 +36,10 @@ ObjectSelectorController::~ObjectSelectorController()
 }
 #pragma endregion Constructor
 
-bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId, SvPb::SelectorFilter FilterType)
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::SelectorFilter FilterType)
 {
 	bool result = false;
 
-	SVGUID InstanceGuid = m_InstanceID;
-	if (GUID_NULL == InstanceGuid)
-	{
-		InstanceGuid = GetToolSetGUID();
-	}
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
@@ -83,23 +77,5 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 }
 
 #pragma endregion Private Methods
-GUID ObjectSelectorController::GetToolSetGUID() const
-{
-	GUID toolsetGUID = GUID_NULL;
-	
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_InspectionID);
-	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVToolSetObjectType);
-
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
-	{
-		toolsetGUID = SvPb::GetGuidFromProtoBytes(responseCmd.getobjectidresponse().objectid());
-	}
-
-	return toolsetGUID;
-}
 #pragma endregion Private Methods
 } //namespace SvOg

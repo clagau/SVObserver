@@ -74,7 +74,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoValidColumnConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoValidColumnConnected, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back( message );
 		}
 	}
@@ -94,7 +94,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeHighMustBeHigher, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeHighMustBeHigher, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back( message );
 			}
 		}
@@ -145,7 +145,7 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			returnValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

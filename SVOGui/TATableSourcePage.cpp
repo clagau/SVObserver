@@ -14,7 +14,6 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -34,10 +33,10 @@ BEGIN_MESSAGE_MAP(TATableSourcePage, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-TATableSourcePage::TATableSourcePage(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id)
+TATableSourcePage::TATableSourcePage(uint32_t inspectionId, uint32_t taskObjectId, int id)
 	: CPropertyPage(id)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
 {
 }
 
@@ -65,13 +64,13 @@ BOOL TATableSourcePage::OnInitDialog()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getinputsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
 	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pRequest->set_shouldexcludefirstobjectname(true);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::InputNameGuidPairList connectedList;
+	SvUl::InputNameObjectIdPairList connectedList;
 	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
 	{
 		m_inputName = responseCmd.getinputsresponse().list(0).inputname();
@@ -121,17 +120,17 @@ HRESULT TATableSourcePage::RetrieveAvailableList()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_InspectionID);
+	pRequest->set_objectid(m_InspectionID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
 	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pRequest->set_shouldexcludefirstobjectname(true);
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_isbeforetoolmethod()->mutable_toolid(), m_TaskObjectID);
+	pRequest->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::NameGuidList availableList;
+	SvUl::NameObjectIdList availableList;
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		m_availableList = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+		m_availableList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 	}
 	return hr;
 }
@@ -141,20 +140,20 @@ class ByName
 	std::string m_name;
 public:
 	explicit ByName(const std::string& rName) : m_name(rName) {}
-	bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
+	bool operator()(const SvUl::NameObjectIdPair& rVal) const { return rVal.first == m_name; }
 };
 
 HRESULT TATableSourcePage::ConnectToObject(const std::string& inputName, const std::string& name)
 {
 	HRESULT hr = E_INVALIDARG;
-	SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
+	SvUl::NameObjectIdList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 	if (it != m_availableList.end())
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+		pRequest->set_objectid(m_TaskObjectID);
 		pRequest->set_inputname(inputName);
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_newconnectedid(), it->second);
+		pRequest->set_newconnectedid(it->second);
 		pRequest->set_objecttype(SvPb::TableObjectType);
 
 		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);

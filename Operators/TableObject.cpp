@@ -220,7 +220,7 @@ void TableObject::clearTable()
 	m_NumberOfRows.SetValue(0L);
 }
 
-SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb::EmbeddedIdEnum embeddedID)
+SVObjectClass* TableObject::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
 {
 	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
 	bool isColumnValue = false;
@@ -239,7 +239,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, SvPb:
 		m_ValueList.push_back(SvVol::DoubleSortValuePtr {pObject});
 	}
 
-	return __super::OverwriteEmbeddedObject(rUniqueID, embeddedID);
+	return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
 }
 #pragma endregion Public Methods
 
@@ -265,7 +265,7 @@ SvVol::DoubleSortValuePtr TableObject::createColumnObject(SvPb::EmbeddedIdEnum e
 		pObject = nullptr;
 		assert(false);
 		SvStl::MessageMgrStd e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		e.Throw();
 	}
 	return pRetObject;
@@ -289,7 +289,7 @@ void TableObject::UpdateColumnValueObject(int pos, std::string objectName, int m
 	else
 	{
 		SvStl::MessageMgrStd e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		e.Throw();
 	}
 }
@@ -306,7 +306,7 @@ void TableObject::MoveValueColumn(int oldPos, int newPos)
 	}
 }
 
-SvPb::EmbeddedIdEnum TableObject::getNextFreeEmbeddedColumGUID()
+SvPb::EmbeddedIdEnum TableObject::getNextFreeEmbeddedColumID()
 {
 	for (int i = c_maxTableColumn - 1; i >= 0; --i)
 	{
@@ -316,7 +316,7 @@ SvPb::EmbeddedIdEnum TableObject::getNextFreeEmbeddedColumGUID()
 		}
 		);
 		if (m_embeddedList.end() == it)
-		{	//GUID not used yet
+		{	//ID not used yet
 			return SvPb::TableColumnValueEId+i;
 		}
 	}

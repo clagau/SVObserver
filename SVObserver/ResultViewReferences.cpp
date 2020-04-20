@@ -32,7 +32,6 @@
 ResultViewReferences::ResultViewReferences(LPCTSTR tagname)
 	: m_LastUpdateTimeStamp(0),
 	  m_TagName(tagname)
-	, m_resultTableGuid( GUID_NULL )
 	, m_resultTable(nullptr)
 {
 }
@@ -98,12 +97,11 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 		}
 		else if (0 == Name.compare(SvXml::CTAG_VIEWEDTABLE))
 		{
-			SVObjectReference objRef;
-			SVGUID tableGuid(Value);
-			SvOp::TableObject* table = dynamic_cast<SvOp::TableObject*> (SVObjectManagerClass::Instance().GetObject(Value));
+			uint32_t tableId = calcObjectId(Value);
+			SvOp::TableObject* table = dynamic_cast<SvOp::TableObject*> (SVObjectManagerClass::Instance().GetObject(tableId));
 			if (nullptr != table)
 			{
-				m_resultTableGuid = tableGuid;
+				m_resultTableId = tableId;
 				m_resultTable = table;
 			}
 			else
@@ -147,10 +145,9 @@ bool ResultViewReferences::Save(SvOi::IObjectWriter& rWriter)
 			rWriter.WriteAttribute(SvXml::CTAG_COMPLETENAME, Value);
 		}
 	}
-	if (GUID_NULL != m_resultTableGuid)
+	if (SvDef::InvalidObjectId != m_resultTableId)
 	{
-		_variant_t Value;
-		Value.SetString(m_resultTableGuid.ToBSTR());
+		_variant_t Value = convertObjectIdToVariant(m_resultTableId);
 		rWriter.WriteAttribute(SvXml::CTAG_VIEWEDTABLE, Value);
 	}
 	rWriter.EndElement();
@@ -177,7 +174,7 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 	while( it != m_ResultViewItemDefList.end() )
 	{
 		bool bInsert(false);
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( it->getGuid() );
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( it->getObjectId() );
 		if( nullptr != pObject )
 		{
 			bInsert = true;
@@ -205,7 +202,7 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 		}
 	}
 
-	m_resultTable = dynamic_cast<SvOp::TableObject*>(SVObjectManagerClass::Instance().GetObject(m_resultTableGuid));
+	m_resultTable = dynamic_cast<SvOp::TableObject*>(SVObjectManagerClass::Instance().GetObject(m_resultTableId));
 
 	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
@@ -222,11 +219,11 @@ void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) con
 
 		if( it->isArray() && -1 != it->ArrayIndex() )
 		{
-			itemDef = SvIe::SVIPResultItemDefinition( it->Guid(), it->ArrayIndex() );
+			itemDef = SvIe::SVIPResultItemDefinition( it->getObjectId(), it->ArrayIndex() );
 		}
 		else
 		{
-			itemDef = SvIe::SVIPResultItemDefinition( it->Guid() );
+			itemDef = SvIe::SVIPResultItemDefinition( it->getObjectId() );
 		}
 
 		unsigned long Color = SvDef::DefaultWhiteColor;
@@ -306,11 +303,11 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionVector &r
 
 			if( ObjectRef.isArray() && -1 != ObjectRef.ArrayIndex() )
 			{
-				Def = SvIe::SVIPResultItemDefinition( ObjectRef.Guid(), ObjectRef.ArrayIndex() );
+				Def = SvIe::SVIPResultItemDefinition( ObjectRef.getObjectId(), ObjectRef.ArrayIndex() );
 			}
 			else
 			{
-				Def = SvIe::SVIPResultItemDefinition( ObjectRef.Guid() );
+				Def = SvIe::SVIPResultItemDefinition( ObjectRef.getObjectId() );
 			}
 
 			rDefinitions.push_back( Def );

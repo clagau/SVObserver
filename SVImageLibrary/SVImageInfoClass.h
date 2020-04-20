@@ -11,9 +11,9 @@
 
 #pragma once
 
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVImagePropertiesClass.h"
 #include "SVImageExtentClass.h"
+#include "Definitions/ObjectDefines.h"
 
 class SVObjectClass;
 
@@ -63,11 +63,11 @@ public:
 	HRESULT GetOwnerImage( SV_OBJECT_TYPE*& p_rpObject ) const;
 
 	HRESULT GetOwnerImage( SVObjectClass*& p_rpObject ) const;
-	void SetOwnerImage( const GUID& p_rObjectID );
+	void SetOwnerImage(uint32_t objectID );
 
 	SVObjectClass* GetOwner() const;
-	const SVGUID& GetOwnerID() const;
-	void SetOwner( const GUID& p_rObjectID );
+	uint32_t GetOwnerID() const;
+	void SetOwner(uint32_t objectID);
 
 	HRESULT ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const;
 
@@ -81,8 +81,8 @@ public:
 	bool getDibBufferFlag() const { return m_isDibBuffer; };
 
 private:
-	SVGUID m_OwnerImageID;
-	SVGUID m_OwnerObjectID;
+	uint32_t m_OwnerImageID{ SvDef::InvalidObjectId };
+	uint32_t m_OwnerObjectID{ SvDef::InvalidObjectId };
 
 	SVImageExtentClass m_svExtents;
 	SVImagePropertiesClass m_svProperties;

@@ -53,15 +53,15 @@ BEGIN_MESSAGE_MAP(TaTableAnalyzerPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-TaTableAnalyzerPage::TaTableAnalyzerPage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID)
+TaTableAnalyzerPage::TaTableAnalyzerPage(uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(TaTableAnalyzerPage::IDD)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_selectedAnalyzerID(GUID_NULL)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
+	, m_selectedAnalyzerID(SvDef::InvalidObjectId)
 	, m_SortDirection(-1)
 	, m_selectedSubType(SvPb::SVNotSetSubObjectType)
 	, m_inputName(_T(""))
-	, m_objectSelector(rInspectionID)
+	, m_objectSelector(inspectionId)
 {
 }
 
@@ -110,7 +110,7 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getcreatableobjectsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableAnalyzerType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
@@ -142,20 +142,20 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 void TaTableAnalyzerPage::OnButtonClearAll()
 {
 	// For all Items in the Selected (Instantiated) Analyzer list
-	SvUl::NameGuidList availableList = getTableAnalyzer();
+	SvUl::NameObjectIdList availableList = getTableAnalyzer();
 	
 	// remove all Analyzer items (instantiated)
 	size_t listSize = availableList.size();
 	for (int i = 0; i < listSize; ++i)
 	{
-		SVGUID analyzerGUID = availableList[i].second;
-		if (GUID_NULL != analyzerGUID)
+		uint32_t analyzerID = availableList[i].second;
+		if (SvDef::InvalidObjectId != analyzerID)
 		{
 			// Close, Disconnect and Delete it
 			SvPb::InspectionCmdRequest requestCmd;
 			auto* pRequest = requestCmd.mutable_deleteobjectrequest(); ;
 			pRequest->set_flag(SvPb::DeleteObjectRequest::Flag_None);
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), analyzerGUID);
+			pRequest->set_objectid(analyzerID);
 
 			SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 		}
@@ -169,15 +169,15 @@ void TaTableAnalyzerPage::OnButtonClearAll()
 
 void TaTableAnalyzerPage::OnButtonDeleteCurrentAnalyzer()
 {
-	if (GUID_NULL != m_selectedAnalyzerID)
+	if (SvDef::InvalidObjectId != m_selectedAnalyzerID)
 	{
 		// Close, Disconnect and Delete it
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_deleteobjectrequest(); ;
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_selectedAnalyzerID);
+		pRequest->set_objectid(m_selectedAnalyzerID);
 
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-		m_selectedAnalyzerID = GUID_NULL;
+		m_selectedAnalyzerID = SvDef::InvalidObjectId;
 		m_selectedSubType = SvPb::SVNotSetSubObjectType;
 		// Refresh Dialog...
 		refresh();
@@ -195,15 +195,15 @@ void TaTableAnalyzerPage::OnButtonInsertNewAnalyzer()
 
 	if (SvPb::NoObjectClassId != classID)
 	{
-		SVGUID AnalyzerInsertBeforeID = m_analyzerListBox.getGUID(m_analyzerListBox.GetCurSel());
+		uint32_t AnalyzerInsertBeforeID = m_analyzerListBox.getObjectId(m_analyzerListBox.GetCurSel());
 
 		// Construct and Create the Analyzer Class Object
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_createobjectrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_ownerid(), m_TaskObjectID);
+		pRequest->set_ownerid(m_TaskObjectID);
 		pRequest->set_classid(classID);
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_taskobjectinsertbeforeid(), AnalyzerInsertBeforeID);
+		pRequest->set_taskobjectinsertbeforeid(AnalyzerInsertBeforeID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK != hr)
@@ -225,7 +225,7 @@ void TaTableAnalyzerPage::OnSelchangeAnalyzerList()
 	}
 
 	int index = m_analyzerListBox.GetCurSel();
-	m_selectedAnalyzerID = m_analyzerListBox.getGUID(index);
+	m_selectedAnalyzerID = m_analyzerListBox.getObjectId(index);
 
 	SetPropertyControls();
 }// end OnSelchangeAnalyzerList
@@ -235,14 +235,14 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 {
 	UpdateData(TRUE); // get data from dialog
 
-	SVGUID columnGuid = m_columnSelectionCB.getSelectedValue();
-	if (GUID_NULL != columnGuid && GUID_NULL != m_selectedAnalyzerID)
+	uint32_t columnId = m_columnSelectionCB.getSelectedValue();
+	if (SvDef::InvalidObjectId != columnId && SvDef::InvalidObjectId != m_selectedAnalyzerID)
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_selectedAnalyzerID);
+		pRequest->set_objectid(m_selectedAnalyzerID);
 		pRequest->set_inputname(m_inputName);
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_newconnectedid(), columnGuid);
+		pRequest->set_newconnectedid(columnId);
 		pRequest->set_objecttype(SvPb::SVValueObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
@@ -401,11 +401,11 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 #pragma region Private Methods
 void TaTableAnalyzerPage::refresh()
 {
-	SvUl::NameGuidList availableList = getTableAnalyzer();
+	SvUl::NameObjectIdList availableList = getTableAnalyzer();
 	// Populate Analyzer list box and run Analyzer...
 	m_analyzerListBox.init(availableList, Analyzer_NoAnalyzer);
 	int index = m_analyzerListBox.GetCurSel();
-	m_selectedAnalyzerID = m_analyzerListBox.getGUID(index);
+	m_selectedAnalyzerID = m_analyzerListBox.getObjectId(index);
 
 	SetPropertyControls();
 }
@@ -413,12 +413,12 @@ void TaTableAnalyzerPage::refresh()
 void TaTableAnalyzerPage::SetPropertyControls()
 {
 	m_selectedSubType = SvPb::SVNotSetSubObjectType;
-	if (GUID_NULL != m_selectedAnalyzerID)
+	if (SvDef::InvalidObjectId != m_selectedAnalyzerID)
 	{
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-		SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_selectedAnalyzerID);
+		pRequest->set_objectid(m_selectedAnalyzerID);
 		
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
@@ -453,15 +453,15 @@ HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVValueObjectType);
 	pRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::NameGuidList availableList;
+	SvUl::NameObjectIdList availableList;
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		m_availableColumn = SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+		m_availableColumn = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 	}
 	return hr;
 }
@@ -575,12 +575,12 @@ void TaTableAnalyzerPage::setColumnSelectionCB()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getinputsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_selectedAnalyzerID);
+	pRequest->set_objectid(m_selectedAnalyzerID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVValueObjectType);
 	pRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
 	
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::InputNameGuidPairList connectedList;
+	SvUl::InputNameObjectIdPairList connectedList;
 	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
 	{
 		m_inputName = responseCmd.getinputsresponse().list(0).inputname();
@@ -599,7 +599,7 @@ HRESULT TaTableAnalyzerPage::prepareSwitchOfAnalyzerSelection()
 		int index = LB_ERR;
 		for (int i = 0; i < m_analyzerListBox.GetCount(); i++)
 		{
-			if (m_analyzerListBox.getGUID(i) == m_selectedAnalyzerID)
+			if (m_analyzerListBox.getObjectId(i) == m_selectedAnalyzerID)
 			{
 				index = i;
 				break;
@@ -616,14 +616,14 @@ HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
 	//reset all analyzer to check if they correct
 	for (int i = 0; S_OK == hrOk && i < m_analyzerListBox.GetCount(); i++)
 	{
-		SVGUID analyzerGUID = m_analyzerListBox.getGUID(i);
-		if (GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
+		uint32_t analyzerID = m_analyzerListBox.getObjectId(i);
+		if (SvDef::InvalidObjectId != analyzerID && analyzerID != m_selectedAnalyzerID)
 		{
 			// Do a reset of the analyzer
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			auto* pRequest = requestCmd.mutable_resetobjectrequest();
-			SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), analyzerGUID);
+			pRequest->set_objectid(analyzerID);
 
 			hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK != hrOk && responseCmd.has_standardresponse())
@@ -640,7 +640,7 @@ HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
 				}
 
 				m_analyzerListBox.SetCurSel(i);
-				m_selectedAnalyzerID = analyzerGUID;
+				m_selectedAnalyzerID = analyzerID;
 				SetPropertyControls();
 			}
 		}
@@ -686,7 +686,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 				SvPb::InspectionCmdRequest requestCmd;
 				SvPb::InspectionCmdResponse responseCmd;
 				auto* pRequest = requestCmd.mutable_resetobjectrequest();
-				SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+				pRequest->set_objectid(m_TaskObjectID);
 
 				hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 				if (S_OK != hrOk && responseCmd.has_standardresponse())
@@ -708,7 +708,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 						responseCmd.Clear();
 						//if error found, but no name error with this analyzer, check if this analyzer have an error
 						auto* pGetMessageListRequest = requestCmd.mutable_getmessagelistrequest();
-						SvPb::SetGuidInProtoBytes(pGetMessageListRequest->mutable_objectid(), m_selectedAnalyzerID);
+						pGetMessageListRequest->set_objectid(m_selectedAnalyzerID);
 
 						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 						if (hr == S_OK && responseCmd.has_standardresponse())
@@ -738,20 +738,20 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 	return hrOk;
 }
 
-SvUl::NameGuidList TaTableAnalyzerPage::getTableAnalyzer()
+SvUl::NameObjectIdList TaTableAnalyzerPage::getTableAnalyzer()
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), m_TaskObjectID);
+	pRequest->set_objectid(m_TaskObjectID);
 	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableAnalyzerType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
-		return SvCmd::convertNameGuidList(responseCmd.getavailableobjectsresponse().list());
+		return SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
 	}	
-	return SvUl::NameGuidList();
+	return SvUl::NameObjectIdList();
 }
 
 #pragma endregion Private Methods

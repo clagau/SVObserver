@@ -54,12 +54,12 @@ BEGIN_MESSAGE_MAP(SVExternalToolInputSelectPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, int id)
+SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id)
 	: CPropertyPage(id)
-	, m_InspectionID(rInspectionID)
-	, m_ToolObjectID(rToolObjectID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_Values {SvOg::BoundValues{ rInspectionID, rTaskObjectID }}
+	, m_InspectionID(inspectionID)
+	, m_ToolObjectID(toolObjectID)
+	, m_TaskObjectID(taskObjectID)
+	, m_Values {SvOg::BoundValues{ inspectionID, taskObjectID }}
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
@@ -68,9 +68,9 @@ SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, cons
 	m_psp.pszTitle = Title;
 	m_psp.dwFlags |= PSP_USETITLE;
 	m_inputValueCount = m_pTask->m_Data.m_lNumInputValues;
-	if (m_inputValueCount > COUNT_OF_INPUT_OUTPUT_GUIDs)
+	if (m_inputValueCount > COUNT_OF_INPUT_OUTPUT_IDs)
 	{
-		m_inputValueCount = COUNT_OF_INPUT_OUTPUT_GUIDs;
+		m_inputValueCount = COUNT_OF_INPUT_OUTPUT_IDs;
 	}
 
 	//{{AFX_DATA_INIT(SVExternalToolInputSelectPage)
@@ -310,14 +310,14 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 	{
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
-			m_InspectionID, SvPb::archivable, GUID_NULL, true);
+			m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	}
 	else
 	{
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::tableObjects},
-			m_InspectionID, SvPb::archivable, GUID_NULL, true);
+			m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	}
 
@@ -610,13 +610,13 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 	return pItem->GetCtrlID() - ID_BASE;
 }
 
-std::string SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
+std::string SVExternalToolInputSelectPage::GetName(uint32_t id) const
 {
 	std::string inspectionName;
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_objectid(), guid);
+	pRequest->set_objectid(id);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())

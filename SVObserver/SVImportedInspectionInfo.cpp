@@ -12,7 +12,7 @@
 #include "SVImportedInspectionInfo.h"
 
 SVImportedInspectionInfo::SVImportedInspectionInfo()
-: m_inspectionGuid(GUID_NULL)
+	: m_inspectionId(SvDef::InvalidObjectId)
 {
 }
 
@@ -30,7 +30,7 @@ SVImportedInspectionInfo::SVImportedInspectionInfo(const SVImportedInspectionInf
 
 SVImportedInspectionInfo& SVImportedInspectionInfo::operator=(const SVImportedInspectionInfo& rInfo)
 {
-	m_inspectionGuid = rInfo.m_inspectionGuid;
+	m_inspectionId = rInfo.m_inspectionId;
 	m_inputList = rInfo.m_inputList;
 	m_materialsTree = rInfo.m_materialsTree;
 	return *this;

@@ -24,14 +24,14 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVToolAdjustmentDialogGeneralPageClass::SVToolAdjustmentDialogGeneralPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID) 
+	SVToolAdjustmentDialogGeneralPageClass::SVToolAdjustmentDialogGeneralPageClass(uint32_t inspectionId, uint32_t taskObjectId) 
 	: CPropertyPage(SVToolAdjustmentDialogGeneralPageClass::IDD)
 	, m_bIsImageTool(false)
 	, m_bAuxExtentsAvailable(false)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
-	, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID))
-	, m_AuxExtentsController(rInspectionID, rTaskObjectID)
+	, m_InspectionID(inspectionId)
+	, m_TaskObjectID(taskObjectId)
+	, m_Values(SvOg::BoundValues(inspectionId, taskObjectId))
+	, m_AuxExtentsController(inspectionId, taskObjectId)
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogGeneralPageClass)
 		m_bUpdateAuxiliaryExtents = false;
@@ -105,8 +105,8 @@ namespace SvOg
 		m_AvailableSourceImageCombo.ResetContent();
 		if (m_bAuxExtentsAvailable)
 		{
-			const SvUl::NameGuidList& availImages = m_AuxExtentsController.GetAvailableImageList();
-			for (SvUl::NameGuidList::const_iterator it = availImages.begin();it != availImages.end();++it)
+			const SvUl::NameObjectIdList& availImages = m_AuxExtentsController.GetAvailableImageList();
+			for (SvUl::NameObjectIdList::const_iterator it = availImages.begin();it != availImages.end();++it)
 			{
 				m_AvailableSourceImageCombo.AddString(it->first.c_str());
 			}
@@ -199,7 +199,7 @@ namespace SvOg
 	{
 		SetInspectionData();
 
-		const SvUl::NameGuidPair& source = m_AuxExtentsController.GetAuxSourceImage();
+		const SvUl::NameObjectIdPair& source = m_AuxExtentsController.GetAuxSourceImage();
 		if (!source.first.empty())
 		{
 			m_AuxExtentsController.SetAuxSourceImage(source.first);
@@ -228,7 +228,7 @@ namespace SvOg
 	
 	void SVToolAdjustmentDialogGeneralPageClass::OnShowRelations() 
 	{
-		SVGuidSet DependencySet;
+		std::set<uint32_t> DependencySet;
 		DependencySet.insert(m_TaskObjectID);
 		SVShowDependentsDialog Dlg( DependencySet, SvPb::SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
 		Dlg.DoModal();

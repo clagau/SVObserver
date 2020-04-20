@@ -16,7 +16,6 @@
 #include "SVObjectReference.h"
 #pragma endregion
 
-class SVGUID;
 class SVObjectClass;
 
 struct SVObjectInfoStruct
@@ -31,7 +30,7 @@ struct SVObjectInfoStruct
 
 	void clear();
 
-	HRESULT SetObject(const SVGUID& rObjectID);
+	HRESULT SetObject(uint32_t objectID);
 	HRESULT SetObject(SVObjectClass* pObject);
 	HRESULT SetObject(const SvDef::SVObjectTypeInfoStruct& rTypeInfo);
 	HRESULT SetObject(const SVObjectReference& rObjectRef);
@@ -43,7 +42,7 @@ struct SVObjectInfoStruct
 	SVObjectClass* getObject() { return m_ObjectRef.getObject(); };
 	//The method is const however the returned pointer not, because of other const methods returning a non const pointer!
 	SVObjectClass* getObject() const { return m_ObjectRef.getObject(); };
-	const SVGUID&  getUniqueObjectID() const { return m_ObjectRef.Guid(); };
+	uint32_t  getObjectId() const { return m_ObjectRef.getObjectId(); };
 
 	SVObjectReference& GetObjectReference() { return m_ObjectRef; };
 	const SVObjectReference& GetObjectReference() const { return m_ObjectRef; };

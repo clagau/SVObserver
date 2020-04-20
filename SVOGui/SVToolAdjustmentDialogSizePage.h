@@ -22,7 +22,7 @@ class SVToolAdjustmentDialogSizePage : public CPropertyPage, public ISVPropertyP
 	DECLARE_DYNAMIC(SVToolAdjustmentDialogSizePage)
 
 public:
-	SVToolAdjustmentDialogSizePage(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+	SVToolAdjustmentDialogSizePage(uint32_t inspectionId, uint32_t taskObjectId);
 	virtual ~SVToolAdjustmentDialogSizePage();
 	HRESULT SetInspectionData();
 	virtual BOOL OnInitDialog() override;
@@ -60,12 +60,12 @@ private:
 	typedef DataController<ValuesAccessor, ValuesAccessor::value_type> Controller;
 	std::unique_ptr<Controller> m_pTaskValueController;
 
-	SVGUID m_ipId;
-	SVGUID m_toolId;
-	SVGUID m_taskId;
+	uint32_t m_ipId;
+	uint32_t m_toolId;
+	uint32_t m_taskId = SvDef::InvalidObjectId;
 	struct EQAdjustStruct
 	{
-		SVGUID m_Id = GUID_NULL;
+		uint32_t m_Id = SvDef::InvalidObjectId;
 		SvPb::SVObjectSubTypeEnum m_subType = SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType;
 		SvPb::EmbeddedIdEnum m_inputModeEmbeddedId = SvPb::NoEmbeddedId;
 		SvPb::SVExtentPropertyEnum m_extentProp;

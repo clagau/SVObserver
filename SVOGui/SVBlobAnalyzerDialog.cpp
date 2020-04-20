@@ -50,11 +50,11 @@ namespace SvOg
 	////////////////////////////////////////////////////////////////////////////
 	//
 	//
-	SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent )
+	SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(uint32_t InspectionID, uint32_t TaskObjectID, CWnd* pParent)
 	: CDialog( SVBlobAnalyzeFeatureDialogClass::IDD, pParent )
-	, m_rInspectionID{ rInspectionID }
-	, m_rTaskObjectID{ rTaskObjectID }
-	, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	, m_InspectionID{ InspectionID }
+	, m_TaskObjectID{ TaskObjectID }
+	, m_Values{ SvOg::BoundValues{ InspectionID, TaskObjectID } }
 	{
 	}
 
@@ -341,13 +341,13 @@ namespace SvOg
 
 		if (0 <= Feature)
 		{
-			SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_rTaskObjectID));
+			SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_TaskObjectID));
 			if (nullptr != pBlobAnalyzer)
 			{
 				SvOi::IObjectClass* pResult = pBlobAnalyzer->getResultObject(Feature);
 				if (nullptr != pResult)
 				{
-					SvOi::SetupDialogManager(pResult->GetClassID(), pResult->GetUniqueObjectID(), GetSafeHwnd());
+					SvOi::SetupDialogManager(pResult->GetClassID(), pResult->getObjectId(), GetSafeHwnd());
 				}
 				else
 				{
@@ -371,7 +371,7 @@ namespace SvOg
 		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		try
 		{
-			m_Values.ResetObject(m_rInspectionID, m_rTaskObjectID);
+			m_Values.ResetObject(m_InspectionID, m_TaskObjectID);
 			const SvStl::MessageContainerVector& rMessages = m_Values.getFailedMessageList();
 			if (rMessages.size() > 0 && 0 != rMessages[0].getMessage().m_MessageCode)
 			{
@@ -469,13 +469,13 @@ namespace SvOg
 
 	void SVBlobAnalyzeFeatureDialogClass::OnNbrOfBlobs() 
 	{
-		SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_rTaskObjectID));
+		SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_TaskObjectID));
 		if (nullptr != pBlobAnalyzer)
 		{
 			SvOi::IObjectClass* pResultBlob = pBlobAnalyzer->getResultBlob();
 			if (nullptr != pResultBlob)
 			{
-				SvOi::SetupDialogManager(pResultBlob->GetClassID(), pResultBlob->GetUniqueObjectID(), GetSafeHwnd());
+				SvOi::SetupDialogManager(pResultBlob->GetClassID(), pResultBlob->getObjectId(), GetSafeHwnd());
 			}
 		}
 	}
@@ -544,7 +544,7 @@ namespace SvOg
 	{
 		listBox.ResetContent();
 
-		SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_rTaskObjectID));
+		SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_TaskObjectID));
 		if (nullptr != pBlobAnalyzer)
 		{
 			const SvOi::NameValueVector& rList = pBlobAnalyzer->getFeatureList(EnabledFeatures);

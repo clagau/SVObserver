@@ -32,7 +32,7 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		TADialogRingBufferParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID );
+		TADialogRingBufferParameterPage( uint32_t inspectionID, uint32_t taskID );
 
 		// Standard destructor
 		virtual ~TADialogRingBufferParameterPage();
@@ -76,8 +76,8 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
+		uint32_t m_InspectionID;
+		uint32_t m_TaskObjectID;
 
 		CEdit m_EditRingDepth;
 		CButton m_ButtonRingDepth;

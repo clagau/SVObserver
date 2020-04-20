@@ -148,10 +148,10 @@ public:
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
-	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;
-	virtual SvUl::NameGuidPair getAuxSourceImage() const override;
-	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
-	virtual void SetToolImage(const SVGUID& rObjectID) override;
+	virtual SvUl::NameObjectIdList getAvailableAuxSourceImages() const override;
+	virtual SvUl::NameObjectIdPair getAuxSourceImage() const override;
+	virtual HRESULT setAuxSourceImage(uint32_t objectID) override;
+	virtual void SetToolImage(uint32_t objectID) override;
 	virtual long getToolPosition() const override;
 	virtual void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const override;
 	virtual HRESULT getParentExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const override;

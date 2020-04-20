@@ -72,7 +72,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 
 	if (PreRefresh == Type)
 	{
-		if (pSender->GetUniqueObjectID() == EnvironmentCurrentTime)
+		if (pSender->getObjectId() == ObjectIdEnum::EnvironmentCurrentTime)
 		{
 			std::time_t t = std::time(nullptr);
 			std::string currentTime;
@@ -82,7 +82,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 			setRootChildValue(SvDef::FqnEnvironmentCurrentTime, currentTime);
 		}
 
-		if (pSender->GetUniqueObjectID() == EnvironmentCurrentDate)
+		if (pSender->getObjectId() == ObjectIdEnum::EnvironmentCurrentDate)
 		{
 			std::time_t t = std::time(nullptr);
 			std::string currentDate;
@@ -106,11 +106,11 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 		}
 
 		//When certain objects are changed need to do post processing
-		if (EnvironmentDiskProtectionUidGuid == pSender->GetUniqueObjectID())
+		if (ObjectIdEnum::EnvironmentDiskProtectionUidId == pSender->getObjectId())
 		{
 			ExtrasEngine::Instance().ChangeFbwfState();
 		}
-		else if (EnvironmentStartLastConfigUidGuid == pSender->GetUniqueObjectID())
+		else if (ObjectIdEnum::EnvironmentStartLastConfigUidId == pSender->getObjectId())
 		{
 			//Save Start Last Configuration in registry
 			double Value {0.0};
@@ -145,7 +145,7 @@ bool RootObject::createConfigurationObject(std::recursive_mutex *pMutex)
 	m_pConfigurationObject.reset();
 	m_pConfigurationObject = std::unique_ptr< SVConfigurationObject > {new SVConfigurationObject};
 	m_pConfigurationObject->SetObjectOwner(this);
-	SVObjectManagerClass::Instance().setRootChildID(SvDef::FqnConfiguration, m_pConfigurationObject->GetUniqueObjectID());
+	SVObjectManagerClass::Instance().setRootChildID( SvDef::FqnConfiguration, m_pConfigurationObject->getObjectId() );
 
 	SvVol::BasicValueObjectPtr pValueObject(nullptr);
 	//Default update views is true
@@ -282,7 +282,7 @@ bool RootObject::Initialize()
 
 	m_Initialize = true;
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRootObjectType;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, RootUidGuid);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RootUidId);
 	//The Root object should have an empty name
 	SetName(_T(""));
 
@@ -379,13 +379,13 @@ bool RootObject::createRootChild(LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum Ob
 	pRootChild = m_RootChildren.setValue(ChildName, Node, this, ObjectSubType);
 	if (nullptr != pRootChild)
 	{
-		SVObjectManagerClass::Instance().setRootChildID(pRootChild->GetName(), pRootChild->GetUniqueObjectID());
+		SVObjectManagerClass::Instance().setRootChildID( pRootChild->GetName(), pRootChild->getObjectId() );
 		Result = true;
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, GetUniqueObjectID());
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, getObjectId() );
 	}
 
 	return Result;
@@ -413,7 +413,7 @@ std::vector<SvPb::TreeItem> SvOi::getRootChildSelectorList(LPCTSTR Path, UINT At
 		SvPb::TreeItem insertItem;
 		insertItem.set_name(rpObject->GetName());
 		insertItem.set_location(rpObject->GetCompleteName());
-		insertItem.set_objectidindex(rpObject->GetUniqueObjectID().ToString());
+		insertItem.set_objectidindex(convertObjectIdToString(rpObject->getObjectId()));
 		insertItem.set_type(rpObject->getTypeName());
 		result.emplace_back(insertItem);
 	}

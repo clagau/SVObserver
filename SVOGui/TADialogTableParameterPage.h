@@ -30,7 +30,7 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		TADialogTableParameterPage(const GUID& rInspectionID, const GUID& rTaskObjectID);
+		TADialogTableParameterPage(uint32_t inspectionID, uint32_t taskID);
 
 		// Standard destructor
 		virtual ~TADialogTableParameterPage();
@@ -72,9 +72,9 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
-		GUID m_ClearEquationID;
+		uint32_t m_InspectionID;
+		uint32_t m_TaskObjectID;
+		uint32_t m_ClearEquationID = SvDef::InvalidObjectId;
 		long m_maxRows;
 
 		SvOi::IFormulaControllerPtr m_pFormulaController;

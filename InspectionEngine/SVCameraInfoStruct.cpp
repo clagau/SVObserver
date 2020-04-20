@@ -70,9 +70,9 @@ const SvTrc::IImagePtr SVCameraInfoStruct::GetNextImage()
 	return m_pImage;
 }
 
-const void SVCameraInfoStruct::setCamera( const SVGUID& rCameraGuid, NextImageHandleFunctor NextImageHandleFunctor )
+const void SVCameraInfoStruct::setCamera(uint32_t cameraId, NextImageHandleFunctor NextImageHandleFunctor)
 {
-	m_CameraGuid = rCameraGuid;
+	m_CameraId = cameraId;
 	m_NextImageFunctor = NextImageHandleFunctor;
 }
 

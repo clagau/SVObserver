@@ -71,12 +71,12 @@ void SvOi::CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent)
 	pBox->Create(CModelessMsgBox::IDD, nullptr);
 }
 
-HRESULT SvOi::SetupDialogManager(SvPb::ClassIdEnum classId, const SVGUID& rObjectId, HWND hWnd)
+HRESULT SvOi::SetupDialogManager(SvPb::ClassIdEnum classId, uint32_t objectId, HWND hWnd)
 {
-	return SVSetupDialogManager::Instance().SetupDialog(classId, rObjectId, CWnd::FromHandle(hWnd));
+	return SVSetupDialogManager::Instance().SetupDialog(classId, objectId, CWnd::FromHandle(hWnd));
 }
 
-void SvOi::showLicenseManagerDialog(const std::string& rMessage, const SVGuidSet& rList, HANDLE hCheckEvent)
+void SvOi::showLicenseManagerDialog(const std::string& rMessage, const std::set<uint32_t>& rList, HANDLE hCheckEvent)
 {
 	SVLicenseMgrModelessDlg::Show(rMessage, rList, hCheckEvent);
 }

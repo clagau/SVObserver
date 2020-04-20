@@ -22,7 +22,7 @@ namespace SvOg
 	{
 		// Construction
 	public:
-		SVThickeningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+		SVThickeningFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVThickeningFilterDlg();
 
 		HRESULT SetInspectionData();
@@ -53,8 +53,8 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_filterID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_filterID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 		Controller m_Values;
 	};

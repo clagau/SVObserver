@@ -18,12 +18,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-BlobReconstructFilterDlg::BlobReconstructFilterDlg(UINT caption, const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) :
+BlobReconstructFilterDlg::BlobReconstructFilterDlg(UINT caption, uint32_t inspectionId, uint32_t filterId, CWnd* pParent) :
 	CDialog(BlobReconstructFilterDlg::IDD, pParent)
-	, m_filterID(rFilterID)
-	, m_rInspectionID(rInspectionID)
+	, m_filterID(filterId)
+	, m_InspectionID(inspectionId)
 	, m_captionId(caption)
-	, m_Values {SvOg::BoundValues {rInspectionID, rFilterID}}
+	, m_Values {SvOg::BoundValues {inspectionId, filterId}}
 {
 	//{{AFX_DATA_INIT(BlobReconstructFilterDlg)
 	m_bGrayScale = false;

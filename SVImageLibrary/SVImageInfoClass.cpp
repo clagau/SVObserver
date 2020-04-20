@@ -103,9 +103,8 @@ HRESULT SVImageInfoClass::Initialize()
 	HRESULT l_hrOk = S_OK;
 	m_isDibBuffer = false;
 
-	m_OwnerImageID.clear();
-
-	m_OwnerObjectID.clear();
+	m_OwnerImageID = SvDef::InvalidObjectId;
+	m_OwnerObjectID = SvDef::InvalidObjectId;
 
 	m_svExtents.Initialize();
 
@@ -400,9 +399,9 @@ HRESULT SVImageInfoClass::GetOwnerImage(SVObjectClass*& rpObject) const
 	return result;
 }
 
-void SVImageInfoClass::SetOwnerImage(const GUID& p_rObjectID)
+void SVImageInfoClass::SetOwnerImage(uint32_t objectID)
 {
-	m_OwnerImageID = p_rObjectID;
+	m_OwnerImageID = objectID;
 }
 
 SVObjectClass* SVImageInfoClass::GetOwner() const
@@ -412,14 +411,14 @@ SVObjectClass* SVImageInfoClass::GetOwner() const
 	return pObject;
 }
 
-const SVGUID& SVImageInfoClass::GetOwnerID() const
+uint32_t SVImageInfoClass::GetOwnerID() const
 {
 	return m_OwnerObjectID;
 }
 
-void SVImageInfoClass::SetOwner(const GUID& p_rObjectID)
+void SVImageInfoClass::SetOwner(uint32_t objectID)
 {
-	m_OwnerObjectID = p_rObjectID;
+	m_OwnerObjectID = objectID;
 }
 
 HRESULT SVImageInfoClass::ValidateAgainstOutputSpace(const SVImageExtentClass &p_rsvValue) const

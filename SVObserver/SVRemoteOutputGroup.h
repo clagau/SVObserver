@@ -14,7 +14,6 @@
 #pragma region Includes
 
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVUtilityLibrary/SVGUID.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"
 #pragma endregion Includes
 
@@ -51,7 +50,7 @@ public:
 	SVRemoteOutputObject* GetLastObject( ) const;
 	SVRemoteOutputObject* GetFirstObject( ) const;
 
-	const SVGUID& GetPPQObjectId() const;
+	uint32_t GetPPQObjectId() const;
 	std::string GetPPQName() const;
 	HRESULT SetPPQName( const std::string& p_rPPQ );
 
@@ -69,7 +68,7 @@ protected:
 
 	BOOL m_bCreated;
 
-	SVGUID m_PPQObjectId;
+	uint32_t m_PPQObjectId = SvDef::InvalidObjectId;
 
 	SVRemoteOutputObjectList m_RemoteOutputs;
 

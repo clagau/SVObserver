@@ -11,17 +11,15 @@
 #include "InspectionCommand_protoBuf.h"
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "SVProtoBuf\ConverterHelper.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVUtilityLibrary/NameGuidList.h"
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/NameObjectIdList.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #pragma endregion Includes
 
 namespace SvCmd
 {
-HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse)
+HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse)
 {
 	SvPb::InspectionCmdResponse response;
 	response.set_hresult(E_FAIL);
@@ -34,7 +32,7 @@ HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCm
 			break;
 		default:
 			InspectionCommands_protoBufPtr CommandPtr = std::make_shared<InspectionCommands_protoBuf>(rRequest);
-			SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(rInspectionID, CommandPtr);
+			SVObjectSynchronousCommandTemplate<InspectionCommands_protoBufPtr> Command(inspectionID, CommandPtr);
 			Command.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			response = CommandPtr->getResponse();
 			break;
@@ -49,12 +47,12 @@ HRESULT InspectionCommands(const SVGUID& rInspectionID, const SvPb::InspectionCm
 	return response.hresult();
 }
 
-HRESULT RunOnceSynchronous(const SVGUID& rInspectionID)
+HRESULT RunOnceSynchronous(uint32_t inspectionID)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	auto* pRequest = requestCmd.mutable_inspectionrunoncerequest();
-	SvPb::SetGuidInProtoBytes(pRequest->mutable_inspectionid(), rInspectionID);
-	return SvCmd::InspectionCommands(rInspectionID, requestCmd, nullptr);
+	pRequest->set_inspectionid(inspectionID);
+	return SvCmd::InspectionCommands(inspectionID, requestCmd, nullptr);
 }
 
 bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos)
@@ -69,7 +67,7 @@ bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::Ob
 		auto rTOI = rResponse.taskobjectlistresponse().taskobjectinfos(t);
 		SvOi::ObjectInfo objectInfo;
 		objectInfo.DisplayName = rTOI.displayname().c_str();
-		SvPb::GetGuidFromProtoBytes(rTOI.taskobjectid(), objectInfo.guid);
+		objectInfo.m_objectId = rTOI.taskobjectid();
 		objectInfo.isValid = rTOI.isvalid();
 		objectInfo.ObjectSubType = rTOI.objectsubtype();
 		objectInfo.ObjectType = rTOI.objecttype();
@@ -78,17 +76,12 @@ bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::Ob
 	return true;
 }
 
-SvUl::NameGuidPair convertNameGuidPair(const SvPb::ObjectNameGuidPair& rPbPair)
+SvUl::NameObjectIdList convertNameObjectIdList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameIdPair >& rPbList)
 {
-	return {rPbPair.objectname(), SvPb::GetGuidFromProtoBytes(rPbPair.objectid())};
-}
-
-SvUl::NameGuidList convertNameGuidList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameGuidPair >& rPbList)
-{
-	SvUl::NameGuidList list;
-	for (auto& rEntry : rPbList)
+	SvUl::NameObjectIdList list;
+	for (const auto& rEntry : rPbList)
 	{
-		list.push_back(convertNameGuidPair(rEntry));
+		list.emplace_back(rEntry.objectname(), rEntry.objectid());
 	}
 	return list;
 }
@@ -100,7 +93,7 @@ void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectT
 	sourceInfo.set_embeddedid(destInfo.m_EmbeddedID);
 }
 
-SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, const GUID& rInspectionID, SvPb::ObjectAttributes attribute, const GUID& rInstanceID /*= GUID_NULL*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/)
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/)
 {
 	SvPb::GetObjectSelectorItemsRequest result;
 
@@ -108,8 +101,8 @@ SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vecto
 	{
 		result.add_types(rType);
 	}
-	SvPb::SetGuidInProtoBytes(result.mutable_inspectionid(), rInspectionID);
-	SvPb::SetGuidInProtoBytes(result.mutable_instanceid(), rInstanceID);
+	result.set_inspectionid(inspectionID);
+	result.set_instanceid(instanceID);
 	result.set_attribute(attribute);
 	result.set_wholearray(wholeArray);
 	result.set_filter(filter);

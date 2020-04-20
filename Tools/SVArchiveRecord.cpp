@@ -131,16 +131,16 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 
 void SVArchiveRecord::ConnectInputObject()
 {
-	if (GUID_NULL != m_svObjectReference.Guid())
+	if (SvDef::InvalidObjectId != m_svObjectReference.getObjectId())
 	{
 		//
-		// Get a pointer to the object based on the guid.
+		// Get a pointer to the object based on the id.
 		//
 		SVObjectClass* pObject = nullptr;
 
 		try
 		{
-			pObject = SVObjectManagerClass::Instance().GetObject(m_svObjectReference.Guid());
+			pObject = SVObjectManagerClass::Instance().GetObject(m_svObjectReference.getObjectId());
 
 			if (nullptr != pObject)
 			{
@@ -164,7 +164,7 @@ void SVArchiveRecord::ConnectInputObject()
 		}
 	}
 
-	if (GUID_NULL != m_svObjectReference.Guid())
+	if (SvDef::InvalidObjectId != m_svObjectReference.getObjectId())
 	{
 		assert(m_pArchiveTool);
 
@@ -173,7 +173,7 @@ void SVArchiveRecord::ConnectInputObject()
 		InObjectInfo.SetObject(m_pArchiveTool);
 		InObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 
-		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(m_svObjectReference.Guid(), &InObjectInfo);
+		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(m_svObjectReference.getObjectId(), &InObjectInfo);
 
 		assert(rc);
 	}
@@ -181,14 +181,14 @@ void SVArchiveRecord::ConnectInputObject()
 
 void SVArchiveRecord::DisconnectInputObject()
 {
-	if (GUID_NULL != m_svObjectReference.Guid())
+	if (SvDef::InvalidObjectId != m_svObjectReference.getObjectId())
 	{
 		SvOl::SVInObjectInfoStruct InObjectInfo;
 
 		InObjectInfo.SetObject(m_pArchiveTool);
 		InObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 
-		SVObjectManagerClass::Instance().DisconnectObjectInput(m_svObjectReference.Guid(), &InObjectInfo);
+		SVObjectManagerClass::Instance().DisconnectObjectInput(m_svObjectReference.getObjectId(), &InObjectInfo);
 	}
 }
 
@@ -368,9 +368,7 @@ SvIe::SVImageClass* SVArchiveRecord::GetImage()
 
 	if (nullptr != m_svObjectReference.getObject())
 	{
-		GUID guid = m_svObjectReference.Guid();
-
-		pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(guid));
+		pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(m_svObjectReference.getObjectId()));
 	}
 
 	return pImage;

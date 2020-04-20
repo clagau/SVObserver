@@ -184,7 +184,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		{
 			pIOEntry = pConfig->GetModuleReady();
 
-			if( ( pIOEntry->m_IOId.empty() ) &&  SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) )
+			if (SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF(pIOEntry->getObject(), SvVol::SVBoolValueObjectClass) )
 			{
 				nIndex = IOCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 				m_Items.SetItemData( nIndex, pIOEntry );
@@ -196,7 +196,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			if ( SvTi::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
 			{
 				pIOEntry = pConfig->GetRaidErrorBit();
-				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) )
+				if(SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) )
 				{
 					nIndex = IOCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 					m_Items.SetItemData( nIndex, pIOEntry );
@@ -227,7 +227,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			for( i = 0; i < lSize; i++ )
 			{
 				pIOEntry = ppIOEntries[i];
-				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) &&
+				if(SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) &&
 					pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
 					nIndex = IOCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );

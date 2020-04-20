@@ -273,29 +273,9 @@ SharedMemoryAccess::product_stream_t::product_stream_t(
 	this->req.CopyFrom(streamReq);
 }
 
-static bool is_guid_equal(const GUID& guid1, const GUID& guid2)
-{
-	return IsEqualGUID(guid1, guid2) != 0;
-}
-
-static bool is_guid_equal(const std::string& guid1, const std::string& guid2)
-{
-	return is_guid_equal(SvPb::GetGuidFromString(guid1), SvPb::GetGuidFromString(guid2));
-}
-
-static bool is_guid_equal(const GUID& guid1, const std::string& guid2)
-{
-	return is_guid_equal(guid1, SvPb::GetGuidFromString(guid2));
-}
-
-static bool is_guid_equal(const std::string& guid1, const GUID& guid2)
-{
-	return is_guid_equal(SvPb::GetGuidFromString(guid1), guid2);
-}
-
 static bool is_subscribed_to(const SvPb::GetProductStreamRequest& req, const SvPb::Inspection& inspection)
 {
-	return is_guid_equal(req.inspectionid(), inspection.id());
+	return req.inspectionid() == inspection.id();
 }
 
 void SharedMemoryAccess::on_new_trigger_record(int inspectionPos, int trId, bool is_reject)
@@ -354,7 +334,7 @@ void SharedMemoryAccess::check_queue_for_new_trigger_record(bool is_reject)
 
 	const auto& inspections = trc.getInspections();
 	const auto& inspection = inspections.list(new_trigger.inspectionPos);
-	const auto inspectionId = SvPb::GetGuidFromString(inspection.id());
+
 
 	for (auto it = m_ProductStreams.begin(); it != m_ProductStreams.end();)
 	{
@@ -367,7 +347,7 @@ void SharedMemoryAccess::check_queue_for_new_trigger_record(bool is_reject)
 
 		if (is_subscribed_to(ptr->req, inspection) && is_reject == ptr->req.rejectsonly())
 		{
-			handle_new_trigger_record(ptr, tro, new_trigger.inspectionPos, inspectionId, new_trigger.trId, is_reject);
+			handle_new_trigger_record(ptr, tro, new_trigger.inspectionPos, inspection.id(), new_trigger.trId, is_reject);
 		}
 
 		++it;
@@ -393,7 +373,7 @@ static bool read_variant(SvPb::Variant& resVar, const _variant_t& variant)
 	return SvPb::ConvertVariantToProtobuf(variant, &resVar) == S_OK;
 }
 
-void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, SvTrc::ITriggerRecordRPtr pTro, int inspectionPos, GUID inspectionId, int trId, bool is_reject)
+void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, SvTrc::ITriggerRecordRPtr pTro, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject)
 {
 	auto res = std::make_shared<SvPb::GetProductStreamResponse>();
 
@@ -416,9 +396,8 @@ void SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_strea
 SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataResponse& res, const SvPb::GetProductDataRequest& req)
 {
 	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
-	const auto& inspectionIdStr = req.inspectionid();
-	const auto inspectionId = SvPb::GetGuidFromString(inspectionIdStr);
-	const auto inspectionPos = get_inspection_pos_for_guid(trc, inspectionIdStr);
+	const auto inspectionId = req.inspectionid();
+	const auto inspectionPos = get_inspection_pos_for_id(trc, inspectionId);
 	if (inspectionPos < 0)
 	{
 		// TODO;
@@ -465,10 +444,10 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 	::google::protobuf::RepeatedPtrField<SvPb::Image>& images,
 	::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>& overlays,
 	SvTrc::ITriggerRecordRPtr pTro,
-	const ::google::protobuf::RepeatedPtrField<std::string>& imageGuids,
+	const ::google::protobuf::RepeatedField<uint32_t>& imageIds,
 	const std::vector<int>& imagePositions,
 	int inspectionPos,
-	GUID inspectionId,
+	uint32_t inspectionId,
 	bool includeoverlays
 )
 {
@@ -477,8 +456,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 	for (auto i = 0ULL, len = imagePositions.size(); i < len; ++i)
 	{
 		const auto imagePos = imagePositions[i];
-		const auto imageGiud = imageGuids.Get(static_cast<int>(i));
-		const auto guid = SvPb::GetGuidFromString(imageGiud);
+		const auto imageGiud = imageIds.Get(static_cast<int>(i));
 
 		auto& img = *images.Add();
 		auto overlayDesc = static_cast<SvPb::OverlayDesc*>(nullptr);
@@ -490,7 +468,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 		SvTrc::IImagePtr imgPtr = (nullptr != pTro) ? pTro->getImage(imagePos) : nullptr;
 		if (!imgPtr)
 		{
-			SV_LOG_GLOBAL(debug) << "  > image " << SvPb::PrettyPrintGuid(guid) << " not found";
+			SV_LOG_GLOBAL(debug) << "  > image " << imageGiud << " not found";
 			continue;
 		}
 
@@ -498,13 +476,13 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 		//stream.req.imageformat()
 		if (!read_image(img, imgPtr))
 		{
-			SV_LOG_GLOBAL(warning) << "Error reading image with guid " << SvPb::PrettyPrintGuid(guid) << " for " << inspectionPos;
+			SV_LOG_GLOBAL(warning) << "Error reading image with id " << imageGiud << " for " << inspectionPos;
 			continue;
 		}
 
 		if (includeoverlays && overlayDesc)
 		{
-			auto future = m_overlay_controller.getOverlays(pTro, inspectionId, guid)
+			auto future = m_overlay_controller.getOverlays(pTro, inspectionId, imageGiud)
 				.then<void>(m_io_service, [overlayDesc](SvSyl::SVFuture<SvPb::OverlayDesc> future)
 			{
 				const auto& desc = future.get();
@@ -520,7 +498,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 void SharedMemoryAccess::collect_values(
 	::google::protobuf::RepeatedPtrField<SvPb::Variant>& values,
 	SvTrc::ITriggerRecordR& tro,
-	const ::google::protobuf::RepeatedPtrField<std::string>& valueGuids,
+	const ::google::protobuf::RepeatedField<uint32_t>& valueIds,
 	const std::vector<int>& valuePositions
 )
 {
@@ -530,10 +508,8 @@ void SharedMemoryAccess::collect_values(
 		auto variant = tro.getDataValue(valuePositions[i]);
 		if (!read_variant(value, variant))
 		{
-			const auto valueGuid = valueGuids.Get(static_cast<int>(i));
-			const auto guid = SvPb::GetGuidFromString(valueGuid);
-			const auto prettyGuid = SvPb::PrettyPrintGuid(guid);
-			SV_LOG_GLOBAL(warning) << "Error reading value with guid " << prettyGuid;
+			const auto valueId = valueIds.Get(static_cast<int>(i));
+			SV_LOG_GLOBAL(warning) << "Error reading value with id " << valueId;
 		}
 	}
 }
@@ -561,7 +537,7 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 	try
 	{
 		auto& trc = SvTrc::getTriggerRecordControllerRInstance();
-		int inspectionPos = get_inspection_pos_for_guid(trc, stream.req.inspectionid());
+		int inspectionPos = get_inspection_pos_for_id(trc, stream.req.inspectionid());
 		if (inspectionPos >= 0)
 		{
 			collect_value_pos(stream.valuePositions, trc.getDataDefList(inspectionPos), stream.req.valueids());
@@ -576,40 +552,40 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 	}
 }
 
-void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const SvPb::DataDefinitionList& dataDefList, const ::google::protobuf::RepeatedPtrField<std::string>& guids)
+void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const SvPb::DataDefinitionList& dataDefList, const ::google::protobuf::RepeatedField<uint32_t>& ids)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)	
 	DWORD tick = ::GetTickCount();
 #endif 
 	positions.clear();
 	int dataDefListSize = dataDefList.list().size();
-	int GuidsSize = guids.size();
+	int idsSize = ids.size();
 	/*
-	In the next section, all entries from the guids list, are searched
+	In the next section, all entries from the ids list, are searched
 	in the dataDefList. Finding a value in a map is much faster, 
 	then finding a value in an unordered list.
 	Therefore, if the number of entries to be searched is large enough, 
 	the required total time is shorter,
 	when first a map from the dataDefList is generated.
 	Therefore, there are two different algorithms to search for the entries below.
-	Due to a lack of more precise knowledge, the number of guids  from witch, 
+	Due to a lack of more precise knowledge, the number of ids  from witch, 
 	it is better to sort before, was roughly estimated as
 	0.25 times  the number of element in the dataDeflist.
 	*/
-	if (GuidsSize > 0.25 * dataDefListSize)
+	if (idsSize > 0.25 * dataDefListSize)
 	{
-		std::unordered_map<std::string, int> posMap;
+		std::unordered_map<uint32_t, int> posMap;
 		for (int j = 0; j < dataDefListSize; j++)
 		{
-			posMap[dataDefList.list().at(j).guidid()] = j;
+			posMap[dataDefList.list().at(j).objectid()] = j;
 
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 		int notfound = 0;
 #endif 
-		for (int i = 0; i < GuidsSize; i++)
+		for (int i = 0; i < idsSize; i++)
 		{
-			auto it = posMap.find(guids.at(i));
+			auto it = posMap.find(ids.at(i));
 			if (it != posMap.end())
 			{
 				positions.push_back(it->second);
@@ -619,10 +595,8 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const Sv
 			{
 				if (notfound < 3)
 				{
-					auto Gguid = SvPb::GetGuidFromString(guids.at(i));
-					auto prettyGuid = SvPb::PrettyPrintGuid(Gguid);
 					std::stringstream traceStream;
-					traceStream << "Error collect_value_pos with guid " << prettyGuid << std::endl;
+					traceStream << "Error collect_value_pos with id " << ids.at(i) << std::endl;
 					OutputDebugString(traceStream.str().c_str());
 					//uncomment the next line to enable error reporting to cmd window
 					//SV_LOG_GLOBAL(info) << traceStream.str();
@@ -634,7 +608,7 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const Sv
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 		tick = ::GetTickCount() - tick;
 		std::stringstream traceStream;
-		traceStream << "Ticks needed for  collect_value_pos: " << tick << " GuidsSize: " << GuidsSize << " DataDefinitionListSize: " <<
+		traceStream << "Ticks needed for  collect_value_pos: " << tick << " idsSize: " << idsSize << " DataDefinitionListSize: " <<
 			dataDefListSize << " notfound: " << notfound << std::endl;
 		
 		OutputDebugString(traceStream.str().c_str());
@@ -648,9 +622,9 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const Sv
 		tick = ::GetTickCount();
 		int notfound {0};
 #endif
-		for (const auto& guid : guids)
+		for (const auto& id : ids)
 		{
-			const auto pos = SvTrc::findGuidPos(dataDefList.list(), guid);
+			const auto pos = SvTrc::findObjectIdPos(dataDefList.list(), id);
 			if (pos >= 0)
 			{
 				positions.push_back(pos);
@@ -662,10 +636,8 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const Sv
 				if (notfound < 3)
 				{
 
-					auto Gguid = SvPb::GetGuidFromString(guid);
-					auto prettyGuid = SvPb::PrettyPrintGuid(Gguid);
 					std::stringstream traceStream;
-					traceStream << "Error collect_value_pos with guid " << prettyGuid << std::endl;
+					traceStream << "Error collect_value_pos with id " << id << std::endl;
 					//uncomment the next line to enable error reporting to cmd window
 					//SV_LOG_GLOBAL(info) << traceStream.str();
 					OutputDebugString(traceStream.str().c_str());
@@ -678,7 +650,7 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const Sv
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 		tick = ::GetTickCount() - tick;
 		std::stringstream traceStream;
-		traceStream << "Ticks needed for  collect_value_pos 2: " << tick << " GuidsSize: " << GuidsSize << " DataDefinitionListSize: " <<
+		traceStream << "Ticks needed for  collect_value_pos 2: " << tick << " idsSize: " << idsSize << " DataDefinitionListSize: " <<
 			dataDefListSize << " notfound: " << notfound << std::endl;
 		OutputDebugString(traceStream.str().c_str());
 		//uncomment the next line to enable error reporting to cmd window
@@ -687,16 +659,16 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const Sv
 	}
 }
 
-void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const SvPb::ImageList& imageList, const ::google::protobuf::RepeatedPtrField<std::string>& guids)
+void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const SvPb::ImageList& imageList, const ::google::protobuf::RepeatedField<uint32_t>& ids)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 	DWORD tick = ::GetTickCount();
 	int notfound {0};
 #endif 
 	positions.clear();
-	for (const auto& guid : guids)
+	for (const auto& id : ids)
 	{
-		const auto pos = SvTrc::findGuidPos(imageList.list(), guid);
+		const auto pos = SvTrc::findObjectIdPos(imageList.list(), id);
 		if (pos >= 0)
 		{
 			positions.push_back(pos);
@@ -704,10 +676,8 @@ void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const Sv
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 		else
 		{
-			auto Gguid = SvPb::GetGuidFromString(guid);
-			auto prettyGuid = SvPb::PrettyPrintGuid(Gguid);
 			std::stringstream traceStream;
-			traceStream << "Error collect_image_pos with guid " << prettyGuid;
+			traceStream << "Error collect_image_pos with id " << id;
 			OutputDebugString(traceStream.str().c_str());
 			//uncomment the next line to enable error reporting to cmd window
 			//SV_LOG_GLOBAL(error) << traceStream.str();
@@ -721,7 +691,7 @@ void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const Sv
 	tick = ::GetTickCount() - tick;
 	std::stringstream traceStream;
 
-	traceStream << "Ticks collect_image_pos: " << tick << " GuidsSize: " << guids.size() << " DataDefinitionListSize: " <<
+	traceStream << "Ticks collect_image_pos: " << tick << " idsSize: " << ids.size() << " DataDefinitionListSize: " <<
 		imageList.list().size() << " notfound: " << notfound << std::endl;
 	OutputDebugString(traceStream.str().c_str());
 	//uncomment the next line to enable error reporting to cmd window
@@ -855,13 +825,13 @@ void SharedMemoryAccess::unsubscribe_from_trc()
 	trc.unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
 }
 
-int SharedMemoryAccess::get_inspection_pos_for_guid(SvTrc::ITriggerRecordControllerR& trc, const std::string& guid)
+int SharedMemoryAccess::get_inspection_pos_for_id(SvTrc::ITriggerRecordControllerR& trc, uint32_t id)
 {
 	const auto& inspections = trc.getInspections();
 	for (int i = 0; i < inspections.list_size(); ++i)
 	{
 		const auto& inspection = inspections.list(i);
-		if (guid.compare(inspection.id()) == 0)
+		if (inspection.id() == id)
 		{
 			return i;
 		}

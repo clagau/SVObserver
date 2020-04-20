@@ -118,15 +118,13 @@ BOOL SVArchiveHeaderEditDlg::OnInitDialog()
 	m_HeaderListCtrl.InsertColumn(1, _T("Header Label"));
 
 	int iItem = 0;
-	for(SvDef::StringPairVector::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
+	for(const auto& pairValue : m_Strings)
 	{
-		_bstr_t bstGUID( l_it->first.c_str() );
-		SVGUID ObjGUID( bstGUID );
-		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ObjGUID);
+		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(calcObjectId(pairValue.first));
 		if( l_pObject )
 		{
 			m_HeaderListCtrl.InsertItem(iItem, l_pObject->GetCompleteName().c_str() );
-			m_HeaderListCtrl.SetItemText( iItem++, 1, l_it->second.c_str());
+			m_HeaderListCtrl.SetItemText( iItem++, 1, pairValue.second.c_str());
 		}
 	}
 

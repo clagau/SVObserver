@@ -28,7 +28,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransformPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
+SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransformPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent )
 : CPropertyPage(SVToolAdjustmentDialogPolarTransformPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogPolarTransformPageClass)
@@ -90,7 +90,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 		if (0 <= sel)
 		{
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-			Controller Values {SvOg::BoundValues {m_pParentDialog->GetInspectionID(), m_pTaskObject->GetUniqueObjectID()}};
+			Controller Values {SvOg::BoundValues {m_pParentDialog->GetInspectionID(), m_pTaskObject->getObjectId()}};
 			Values.Init();
 
 			long lValue = static_cast<long>  (m_AngularMethodCombo.GetItemData(sel));
@@ -360,7 +360,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*> (m_pTaskObject->getFirstObject(objectInfo));
 		if(nullptr != pImagePolarTransform)
 		{
-			m_ImagePolarTransformID = pImagePolarTransform->GetUniqueObjectID();
+			m_ImagePolarTransformID = pImagePolarTransform->getObjectId();
 		}
 
 
@@ -398,10 +398,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterXFormulaButton()
 		std::string Caption = m_pEvaluateCenterX->GetName();
 		Caption += _T( " " ) +Text;
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateCenterXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( inspectionID, objectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -416,10 +416,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterYFormulaButton()
 		std::string Caption = m_pEvaluateCenterY->GetName();
 		Caption += _T( " " ) +Text;
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateCenterYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( inspectionID, objectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -434,10 +434,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartRadiusFormulaButton()
 		std::string Caption = m_pEvaluateStartRadius->GetName();
 		Caption += _T( " " ) +Text;
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateStartRadiusObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( inspectionID, objectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -452,10 +452,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndRadiusFormulaButton()
 		std::string Caption = m_pEvaluateEndRadius->GetName();
 		Caption += _T( " " ) +Text;
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateEndRadiusObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( inspectionID, objectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -470,10 +470,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartAngleFormulaButton()
 		std::string Caption = m_pEvaluateStartAngle->GetName();
 		Caption += _T( " " ) +Text;
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateStartAngleObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( inspectionID, objectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -488,10 +488,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndAngleFormulaButton()
 		std::string Caption = m_pEvaluateEndAngle->GetName();
 		Caption += _T( " " ) +Text;
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateEndAngleObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
+		SvOg::SVFormulaEditorSheetClass dlg( inspectionID, objectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();

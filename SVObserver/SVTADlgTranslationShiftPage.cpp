@@ -18,7 +18,6 @@
 #include "Operators/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVRPropertyTree/SVRPropTreeItemStatic.h"
-#include "SVUtilityLibrary/SVGuid.h"
 #include "Tools/SVShiftTool.h"
 #pragma endregion Includes
 
@@ -32,7 +31,7 @@ enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent)
+SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
 , m_TranslationXValue(_T(""))
 , m_TranslationYValue(_T(""))
@@ -41,7 +40,7 @@ SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(const SVGUID&
 , pEvaluateTranslationY( nullptr ) // This needs to change
 , m_lShiftType( 0 )
 //TaskID is set later
-, m_Values {SvOg::BoundValues{rInspectionID, GUID_NULL}}
+, m_Values{ SvOg::BoundValues{inspectionId, SvDef::InvalidObjectId} }
 {
 	if(nullptr != m_pParentDialog)
 	{
@@ -84,7 +83,7 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 	
 	if (nullptr != m_pTool)
 	{
-		m_Values.SetTaskID(m_pTool->GetUniqueObjectID());
+		m_Values.SetTaskID(m_pTool->getObjectId());
 		m_Values.Init();
 
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
@@ -205,10 +204,10 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 		std::string Caption = pEvaluateTranslationX->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		SvOg::SVFormulaEditorSheetClass dlg(inspectionID, objectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -222,10 +221,10 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 		std::string Caption = pEvaluateTranslationY->GetName();
 		Caption += _T(" Formula");
 
-		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		const GUID& rObjectID = m_pParentDialog->GetTaskObjectID();
+		uint32_t inspectionID = m_pParentDialog->GetInspectionID();
+		uint32_t objectID = m_pParentDialog->GetTaskObjectID();
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVMathContainerObjectType, SvPb::SVEvaluateTranslationYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
+		SvOg::SVFormulaEditorSheetClass dlg(inspectionID, objectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();

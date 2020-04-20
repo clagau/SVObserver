@@ -85,9 +85,9 @@ namespace SvOi
 
 		virtual void BuildValueObjectMap() = 0;
 
-		virtual GUID getFirstCamera() const = 0;
+		virtual uint32_t getFirstCamera() const = 0;
 
-		virtual HRESULT addSharedCamera(GUID cameraID) = 0;
+		virtual HRESULT addSharedCamera(uint32_t cameraID) = 0;
 
 		virtual HRESULT resetTool(IObjectClass& rTool) = 0;
 

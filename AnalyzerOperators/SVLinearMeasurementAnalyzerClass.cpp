@@ -70,12 +70,12 @@ void SVLinearMeasurementAnalyzerClass::init()
 
 	if( nullptr != pEdgeA )
 	{
-		AddFriend(pEdgeA->GetUniqueObjectID());
+		AddFriend(pEdgeA->getObjectId());
 	}
 
 	if( nullptr != pEdgeB )
 	{
-		AddFriend(pEdgeB->GetUniqueObjectID());
+		AddFriend(pEdgeB->getObjectId());
 
 		pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_LAST_EDGE, true);
 	}
@@ -168,7 +168,7 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -231,7 +231,7 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

@@ -193,7 +193,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 
 		if (!shouldSkipIPInfo)
 		{
-			SVGUIDSVInspectionInfoStructMap::const_iterator l_InspectIter = rData.m_svInspectionInfos.begin();
+			ObjectIdSVInspectionInfoStructMap::const_iterator l_InspectIter = rData.m_svInspectionInfos.begin();
 
 			while (l_InspectIter != rData.m_svInspectionInfos.end())
 			{
@@ -311,7 +311,7 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 
 	for(const auto& rCamera : m_svCameraInfos)
 	{
-		if(GUID_NULL != rCamera.first)
+		if(SvDef::InvalidObjectId != rCamera.first)
 		{
 			std::string CameraName( _T( "(null)" ) );
 
@@ -366,11 +366,11 @@ void SVProductInfoStruct::SetProductComplete()
 	}
 }
 
-void SVProductInfoStruct::setInspectionTriggerRecordComplete(const SVGUID& rIPGuid)
+void SVProductInfoStruct::setInspectionTriggerRecordComplete(uint32_t iPId)
 {
-	if (GUID_NULL != rIPGuid)
+	if (SvDef::InvalidObjectId != iPId)
 	{
-		auto iter = m_svInspectionInfos.find(rIPGuid);
+		auto iter = m_svInspectionInfos.find(iPId);
 		if (m_svInspectionInfos.end() != iter)
 		{
 			iter->second.setTriggerRecordCompleted();
@@ -385,11 +385,11 @@ void SVProductInfoStruct::setInspectionTriggerRecordComplete(const SVGUID& rIPGu
 	}
 }
 
-SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, const SVGUID& rIPGuid)
+SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, uint32_t iPId)
 {
 	SVProductInfoStruct newProduct;
 	newProduct.Assign(sourceProduct, true);
-	auto ipIter = sourceProduct.m_svInspectionInfos.find(rIPGuid);
+	auto ipIter = sourceProduct.m_svInspectionInfos.find(iPId);
 	if (sourceProduct.m_svInspectionInfos.end() != ipIter)
 	{
 		newProduct.m_svInspectionInfos[ipIter->first] = ipIter->second;
@@ -422,7 +422,7 @@ SVRemoveImages::SVRemoveImages()
 {
 }
 
-SVRemoveImages::SVRemoveImages( const SVGuidSet& p_rImages )
+SVRemoveImages::SVRemoveImages( const std::set<uint32_t>& p_rImages )
 : m_Images( p_rImages )
 {
 }
@@ -441,7 +441,7 @@ SVRemoveValues::SVRemoveValues()
 {
 }
 
-SVRemoveValues::SVRemoveValues( const SVGuidSet& p_rValues )
+SVRemoveValues::SVRemoveValues( const std::set<uint32_t>& p_rValues )
 : m_Values( p_rValues )
 {
 }

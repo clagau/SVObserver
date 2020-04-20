@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary\SVGUID.h"
+#include "Definitions/ObjectDefines.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
@@ -18,7 +18,7 @@ namespace SvOg
 	{
 #pragma region Constructor
 	public:
-		ObjectSelectorController(const SVGUID& rInspectionID, const SVGUID& rInstanceID = GUID_NULL);
+		ObjectSelectorController(uint32_t inspectionID, uint32_t instanceID = SvDef::InvalidObjectId);
 		virtual ~ObjectSelectorController();
 #pragma endregion Constructor
 
@@ -29,20 +29,17 @@ namespace SvOg
 		///                     Out: If selector closed with OK-button, the selection will returned.
 		/// \param Title [in] The title of the object selector.
 		/// \param pParent [in] The parent control
-		/// \param rInstanceId [in] 
-		/// \param rInstanceId [in] 
 		/// \returns bool True if selector was closed by OK-button.
-		bool Show( std::string& rName, const std::string& rTitle, CWnd* pParent, const SVGUID& rInstanceId = GUID_NULL, SvPb::SelectorFilter FilterType = SvPb::SelectorFilter::attributesAllowed);
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::SelectorFilter FilterType = SvPb::SelectorFilter::attributesAllowed);
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods
-		GUID GetToolSetGUID() const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 	private:
-		SVGUID m_InspectionID;
-		SVGUID m_InstanceID;
+		uint32_t m_InspectionID;
+		uint32_t m_InstanceID;
 #pragma region Member Variables
 	};
 } //namespace SvOg

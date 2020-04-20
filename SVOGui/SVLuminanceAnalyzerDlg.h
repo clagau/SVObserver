@@ -22,7 +22,7 @@ namespace SvOg
 	class SVLuminanceAnalyzerDlg : public CDialog
 	{
 	public:
-		SVLuminanceAnalyzerDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
+		SVLuminanceAnalyzerDlg(uint32_t inspectionID, uint32_t taskObjectID, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVLuminanceAnalyzerDlg();
 
 	// Dialog Data
@@ -52,8 +52,8 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		const SVGUID& m_rInspectionID;
-		const SVGUID& m_rTaskObjectID;
+		const uint32_t m_InspectionID;
+		const uint32_t m_TaskObjectID;
 		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller; 
 		Controller m_Values;
 	};

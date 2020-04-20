@@ -189,9 +189,9 @@ bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *
 	return retVal;
 }// end Run
 
-int LoopTool::InsertBefore(const SVGUID& rObjectBeforeID, SVTaskObjectClass* pTaskObject)
+int LoopTool::InsertBefore(uint32_t objectBeforeID, SVTaskObjectClass* pTaskObject)
 {
-	int result = __super::InsertBefore(rObjectBeforeID, pTaskObject);
+	int result = __super::InsertBefore(objectBeforeID, pTaskObject);
 	GetInspectionInterface()->SetDefaultInputs();
 	return result;
 }

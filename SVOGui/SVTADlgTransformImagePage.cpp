@@ -29,9 +29,9 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(const SVGUID& rInspectionID, const SVGUID& rToolID, const SVGUID& rTaskObjectID, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
-	: SVToolAdjustmentDialogImagePageClass(rInspectionID, rToolID, SubType, id)
-		, m_Values{ SvOg::BoundValues{ rInspectionID, rTaskObjectID } }
+	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
+	: SVToolAdjustmentDialogImagePageClass(inspectionId, toolId, SubType, id)
+		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformImagePageClass)
 		m_useExtentsOnly = FALSE;
@@ -58,11 +58,11 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogTransformImagePageClass::CheckSourceImage()
 	{
-		const SvUl::InputNameGuidPairList& images = getImageController().GetInputImageList();
+		const SvUl::InputNameObjectIdPairList& images = getImageController().GetInputImageList();
 		if (images.size())
 		{
 			// Check if Main Image Type
-			const SvDef::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->second.second.ToGUID());
+			const SvDef::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->second.second);
 			if (SvDef::SVImageTypeMain == rImageType)
 			{
 				m_useExtentsOnly = false;

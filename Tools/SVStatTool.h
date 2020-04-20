@@ -97,7 +97,6 @@ protected:
 	SvVol::SVDoubleValueObjectClass m_Value[SV_NUMBER_OF_STAT_FEATURES];
 	SvVol::SVStringValueObjectClass m_OccurenceValue;
 	SvVol::SVStringValueObjectClass m_PersistantFeaturesEnabled;
-	SvVol::SVStringValueObjectClass	m_VariableGUID_OBSOLETE;
 	SvVol::SVStringValueObjectClass m_VariableName;
 
 	UINT                        m_DefaultAttributes; 

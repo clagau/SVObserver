@@ -9,7 +9,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comutil.h>
 #include "SVOResource\resource.h"
-#include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary\NameObjectIdList.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
@@ -31,14 +31,14 @@ namespace SvOg
 		/// \param availableList [in] List of available table objects.
 		/// \param selectedItem [in] Name-string of the selected item.
 		/// \param pParent [in] the parent window for the dialog
-		ResultTableSelectionDlg( const SvUl::NameGuidList& availableList, const std::string& selectedItem, CWnd* pParent = nullptr );
+		ResultTableSelectionDlg( const SvUl::NameObjectIdList& availableList, const std::string& selectedItem, CWnd* pParent = nullptr );
 
 		virtual ~ResultTableSelectionDlg();
 	#pragma endregion Constructor
 
 	public:
 	#pragma region Public Methods
-		const SVGUID& getSelectedGuid() const { return m_selectedGuid; }
+		uint32_t getSelectedId() const { return m_selectedId; }
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
@@ -52,9 +52,9 @@ namespace SvOg
 
 	#pragma region Member variables
 	private:
-		SVGUID m_selectedGuid;
-		SvMc::AvailableObjectListComboBox<SVGUID> m_availableTableCB;
-		SvUl::NameGuidList m_availableList;
+		uint32_t m_selectedId = SvDef::InvalidObjectId;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_availableTableCB;
+		SvUl::NameObjectIdList m_availableList;
 		std::string m_selectedItem;
 	#pragma endregion Member variables
 	};

@@ -65,9 +65,9 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 {
 	bool l_bOk = SVObjectAppClass::CreateObject(rCreateStructure);
 
-	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
-	SVObjectManagerClass::Instance().RegisterSubObject(m_width.GetUniqueObjectID());
-	SVObjectManagerClass::Instance().RegisterSubObject(m_height.GetUniqueObjectID());
+	SVObjectManagerClass::Instance().RegisterSubObject(getObjectId());
+	SVObjectManagerClass::Instance().RegisterSubObject(m_width.getObjectId());
+	SVObjectManagerClass::Instance().RegisterSubObject(m_height.getObjectId());
 
 	l_bOk &= (S_OK == UpdateFromToolInformation());
 
@@ -85,7 +85,7 @@ bool SVImageClass::CloseObject()
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (GetTool());
 	if (nullptr != pTool)
 	{
-		pTool->SetToolImage(GUID_NULL);
+		pTool->SetToolImage(SvDef::InvalidObjectId);
 	}
 
 	if (m_isCreated)
@@ -93,9 +93,9 @@ bool SVImageClass::CloseObject()
 		rc = DestroyImage();
 	}
 
-	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
-	SVObjectManagerClass::Instance().UnregisterSubObject(m_width.GetUniqueObjectID());
-	SVObjectManagerClass::Instance().UnregisterSubObject(m_height.GetUniqueObjectID());
+	SVObjectManagerClass::Instance().UnregisterSubObject(getObjectId());
+	SVObjectManagerClass::Instance().UnregisterSubObject(m_width.getObjectId());
+	SVObjectManagerClass::Instance().UnregisterSubObject(m_height.getObjectId());
 
 	rc = SVObjectAppClass::CloseObject() && rc;
 
@@ -111,7 +111,7 @@ SVImageClass *SVImageClass::GetParentImage() const
 {
 	SVImageClass* l_pParent = nullptr;
 
-	if (!m_ParentImageInfo.first.empty())
+	if (SvDef::InvalidObjectId != m_ParentImageInfo.first)
 	{
 		if (SVObjectManagerClass::Instance().GetState() == SVObjectManagerClass::ReadOnly)
 		{
@@ -170,7 +170,7 @@ void SVImageClass::init()
 
 	m_ParentImageInfo.second = nullptr;
 
-	m_ImageInfo.SetOwnerImage(GetUniqueObjectID());
+	m_ImageInfo.SetOwnerImage(getObjectId());
 
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, SvDef::cDefaultWindowToolLeft);
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, SvDef::cDefaultWindowToolTop);
@@ -267,7 +267,7 @@ HRESULT SVImageClass::InitializeImage(SVImageClass* pParentImage)
 
 	if (nullptr != pParentImage)
 	{
-		SVGUID ImageID = pParentImage->GetUniqueObjectID();
+		uint32_t ImageID = pParentImage->getObjectId();
 		if (m_ParentImageInfo.first != ImageID)
 		{
 			ClearParentConnection();
@@ -314,24 +314,24 @@ HRESULT SVImageClass::UpdateImage(const SVImageExtentClass& rExtent, bool doNotR
 	return Result;
 }
 
-HRESULT SVImageClass::UpdateImage(const SVGUID& rParentID, const SVImageInfoClass& rImageInfo)
+HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rImageInfo)
 {
 	HRESULT Result {S_OK};
 
-	if (m_ParentImageInfo.first != rParentID || m_ImageInfo != rImageInfo)
+	if (m_ParentImageInfo.first != parentID || m_ImageInfo != rImageInfo)
 	{
-		if (m_ParentImageInfo.first != rParentID)
+		if (m_ParentImageInfo.first != parentID)
 		{
 			ClearParentConnection();
 
-			m_ParentImageInfo.first = rParentID;
+			m_ParentImageInfo.first = parentID;
 			m_ParentImageInfo.second = nullptr;
 		}
 
 		if (m_ImageInfo != rImageInfo)
 		{
 			m_ImageInfo = rImageInfo;
-			m_ImageInfo.SetOwnerImage(GetUniqueObjectID());
+			m_ImageInfo.SetOwnerImage(getObjectId());
 			setImageSubType();
 		}
 
@@ -418,7 +418,7 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 	//later should be ignored here S_OK != S_FALSE  &&
 	if ( S_OK != hr  && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		pErrorMessages->push_back(Msg);
 	}
 	
@@ -451,7 +451,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 			SVImagePropertiesClass l_ImageProperties = m_ImageInfo.GetImageProperties();
 			SVImageInfoClass l_ImageInfo = l_pParentImage->GetImageInfo();
 
-			l_ImageInfo.SetOwnerImage(GetUniqueObjectID());
+			l_ImageInfo.SetOwnerImage(getObjectId());
 
 			l_ImageInfo.SetImageProperties(l_ImageProperties);
 
@@ -489,7 +489,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 
 	if (S_OK != Result && nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateFromParentInformationFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateFromParentInformationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		pErrorMessages->push_back(Msg);
 	}
 
@@ -500,7 +500,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 {
 	HRESULT l_Status = S_OK;
 
-	SVGUID ToolID;
+	uint32_t ToolID = SvDef::InvalidObjectId;
 	SVImageExtentClass toolExtent = m_ImageInfo.GetExtents();
 
 	// When initialized from CreateObject(), tool is nullptr.
@@ -548,11 +548,11 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			SvOi::ITool* pTool = GetToolInterface();
 			if (nullptr != pTool)
 			{
-				pTool->SetToolImage(GetUniqueObjectID());
+				pTool->SetToolImage(getObjectId());
 			}
 		}
 
-		ToolID = nullptr != GetTool() ? GetTool()->GetUniqueObjectID() : GUID_NULL;
+		ToolID = nullptr != GetTool() ? GetTool()->getObjectId() : SvDef::InvalidObjectId;
 	}
 
 	if (m_ImageInfo.GetOwnerID() != ToolID)
@@ -579,9 +579,9 @@ HRESULT SVImageClass::ClearParentConnection()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (!m_ParentImageInfo.first.empty())
+	if (SvDef::InvalidObjectId != m_ParentImageInfo.first)
 	{
-		l_hrOk = SVObjectManagerClass::Instance().DisconnectObjects(m_ParentImageInfo.first, GetUniqueObjectID());
+		l_hrOk = SVObjectManagerClass::Instance().DisconnectObjects(m_ParentImageInfo.first, getObjectId());
 	}
 
 	m_LastUpdate = SvTl::GetTimeStamp();
@@ -593,7 +593,7 @@ HRESULT SVImageClass::ClearParentConnection()
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::UpdateChild(const SVGUID& rChildID, const SVImageInfoClass& rImageInfo)
+HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rImageInfo)
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -613,7 +613,7 @@ HRESULT SVImageClass::UpdateChild(const SVGUID& rChildID, const SVImageInfoClass
 
 				l_svImageInfo.SetImageProperties(l_svImageProperties);
 
-				l_hrOk = l_pParentImage->UpdateChild(rChildID, l_svImageInfo);
+				l_hrOk = l_pParentImage->UpdateChild(childID, l_svImageInfo);
 			}
 			else
 			{
@@ -622,7 +622,7 @@ HRESULT SVImageClass::UpdateChild(const SVGUID& rChildID, const SVImageInfoClass
 		}
 		else
 		{
-			SVImageInfoClass& rChildInfo = m_ChildArrays[rChildID];
+			SVImageInfoClass& rChildInfo = m_ChildArrays[childID];
 
 			rChildInfo = rImageInfo;
 
@@ -646,7 +646,7 @@ HRESULT SVImageClass::UpdateChild(const SVGUID& rChildID, const SVImageInfoClass
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::RemoveChild(const SVGUID& rChildID)
+HRESULT SVImageClass::RemoveChild(uint32_t childID)
 {
 	HRESULT l_hrOk = S_OK;
 	if (m_removeChildCircularReference)
@@ -657,7 +657,7 @@ HRESULT SVImageClass::RemoveChild(const SVGUID& rChildID)
 
 	if (Lock())
 	{
-		SVGuidImageChildMap::iterator l_Iter = m_ChildArrays.find(rChildID);
+		auto l_Iter = m_ChildArrays.find(childID);
 
 		if (l_Iter != m_ChildArrays.end())
 		{
@@ -667,7 +667,7 @@ HRESULT SVImageClass::RemoveChild(const SVGUID& rChildID)
 
 			if (nullptr != l_pImage)
 			{
-				l_hrOk = l_pImage->RemoveObjectConnection(GetUniqueObjectID());
+				l_hrOk = l_pImage->RemoveObjectConnection(getObjectId());
 			}
 
 			l_Iter->second.Initialize();
@@ -681,7 +681,7 @@ HRESULT SVImageClass::RemoveChild(const SVGUID& rChildID)
 
 		if (nullptr != l_pParentImage && l_pParentImage != this)
 		{
-			l_hrOk = l_pParentImage->RemoveChild(rChildID);
+			l_hrOk = l_pParentImage->RemoveChild(childID);
 		}
 
 		if (!Unlock())
@@ -860,22 +860,20 @@ bool SVImageClass::Unlock() const
 	return l_bOk;
 }
 
-HRESULT SVImageClass::RemoveObjectConnection(const GUID& rObjectID)
+HRESULT SVImageClass::RemoveObjectConnection(uint32_t objectID)
 {
-	HRESULT l_Status = SVObjectAppClass::RemoveObjectConnection(rObjectID);
+	HRESULT l_Status = SVObjectAppClass::RemoveObjectConnection(objectID);
 
-	SVGUID ObjectID = rObjectID;
-
-	if (m_ParentImageInfo.first == ObjectID)
+	if (m_ParentImageInfo.first == objectID)
 	{
-		m_ParentImageInfo.first.clear();
+		m_ParentImageInfo.first = SvDef::InvalidObjectId;
 		m_ParentImageInfo.second = nullptr;
 
 		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 	else
 	{
-		l_Status = RemoveChild(rObjectID);
+		l_Status = RemoveChild(objectID);
 	}
 	return l_Status;
 }
@@ -909,42 +907,6 @@ void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter)
 	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, TempValue);
 	Value = TempValue;
 	rWriter.WriteAttribute(scBandLinkTag, Value);
-}
-
-HRESULT SVImageClass::GetObjectValue(const std::string& rValueName, _variant_t& rValue) const
-{
-	HRESULT hr = S_OK;
-
-	if (_T("PixelDepth") == rValueName)
-	{
-		long Value = 0;
-
-		m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, Value);
-
-		rValue = Value;
-	}
-	else if (_T("BandNumber") == rValueName)
-	{
-		long Value = 0;
-
-		m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, Value);
-
-		rValue = Value;
-	}
-	else if (_T("BandLink") == rValueName)
-	{
-		long Value = 0;
-
-		m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, Value);
-
-		rValue = Value;
-	}
-	else
-	{
-		hr = SVObjectAppClass::GetObjectValue(rValueName, rValue);
-	}
-
-	return hr;
 }
 
 HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* PDataObject)
@@ -1025,7 +987,7 @@ HRESULT SVImageClass::UpdatePosition()
 	{
 		if (nullptr != m_ParentImageInfo.second)
 		{
-			l_Status = m_ParentImageInfo.second->UpdateChild(GetUniqueObjectID(), m_ImageInfo);
+			l_Status = m_ParentImageInfo.second->UpdateChild(getObjectId(), m_ImageInfo);
 		}
 		else
 		{
@@ -1043,7 +1005,7 @@ HRESULT SVImageClass::UpdateChildren()
 
 	if (Lock())
 	{
-		SVGuidImageChildMap::iterator l_Iter = m_ChildArrays.begin();
+		auto l_Iter = m_ChildArrays.begin();
 
 		while (l_Iter != m_ChildArrays.end())
 		{
@@ -1073,7 +1035,7 @@ HRESULT SVImageClass::RemoveChildren()
 
 	if (Lock())
 	{
-		SVGuidImageChildMap::iterator l_Iter = m_ChildArrays.begin();
+		auto l_Iter = m_ChildArrays.begin();
 
 		while (l_Iter != m_ChildArrays.end())
 		{
@@ -1396,7 +1358,7 @@ SvPb::OverlayDesc SVImageClass::getOverlayStruct() const
 	{
 		return pInsp->getOverlayStruct(*this);
 	}
-	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 	throw msg;
 }
 #pragma endregion virtual method (ISVImage)
@@ -1420,7 +1382,7 @@ void SVImageClass::setInspectionPosForTrc()
 	auto* pInsp = GetInspection();
 	if (nullptr != pInsp)
 	{
-		m_inspectionPosInTRC = SvTrc::getInspectionPos(pInsp->GetUniqueObjectID());
+		m_inspectionPosInTRC = SvTrc::getInspectionPos(pInsp->getObjectId());
 	}
 	else
 	{
@@ -1452,14 +1414,14 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 					try
 					{
 						m_isChildImageInTRC = true;
-						m_imagePosInTRC = SvTrc::getTriggerRecordControllerRWInstance().addOrChangeChildImage(GetUniqueObjectID(), m_ParentImageInfo.first, bufferStruct, m_inspectionPosInTRC);
+						m_imagePosInTRC = SvTrc::getTriggerRecordControllerRWInstance().addOrChangeChildImage(getObjectId(), m_ParentImageInfo.first, bufferStruct, m_inspectionPosInTRC);
 					}
 					catch (const SvStl::MessageContainer& rExp)
 					{
 						//This is the topmost catch for MessageContainer exceptions
 						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 						SvStl::MessageData Msg(rExp.getMessage());
-						Exception.setMessage(rExp.getMessage(), GetUniqueObjectID());
+						Exception.setMessage(rExp.getMessage(), getObjectId());
 						if (nullptr != pErrorMessages)
 						{
 							pErrorMessages->push_back(Exception.getMessageContainer());
@@ -1471,7 +1433,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 				else
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					assert(false);
 					if (nullptr != pErrorMessages)
 					{
@@ -1486,7 +1448,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 				retValue = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -1500,14 +1462,14 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 				try
 				{
 					m_isChildImageInTRC = false;
-					m_imagePosInTRC = SvTrc::getTriggerRecordControllerRWInstance().addOrChangeImage(GetUniqueObjectID(), bufferStruct, m_inspectionPosInTRC);
+					m_imagePosInTRC = SvTrc::getTriggerRecordControllerRWInstance().addOrChangeImage(getObjectId(), bufferStruct, m_inspectionPosInTRC);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
 					//This is the topmost catch for MessageContainer exceptions
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 					SvStl::MessageData Msg(rExp.getMessage());
-					Exception.setMessage(rExp.getMessage(), GetUniqueObjectID());
+					Exception.setMessage(rExp.getMessage(), getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Exception.getMessageContainer());
@@ -1519,7 +1481,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 			else
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				assert(false);
 				if (nullptr != pErrorMessages)
 				{

@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <set>
-#include "SVUtilityLibrary/SVGUID.h"
 #include "InspectionEngine/SVImageClass.h"
 #pragma endregion Includes
 
@@ -31,7 +30,7 @@ public:
 	virtual ~SVCameraImageTemplate();
 
 	HRESULT UpdateCameraImage( LPCTSTR p_szCameraName );
-	HRESULT UpdateCameraImage( const SVGUID& p_CameraID );
+	HRESULT UpdateCameraImage(uint32_t cameraID);
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
@@ -43,7 +42,6 @@ public:
 	HRESULT DisconnectBuffers();
 	HRESULT ReconnectBuffers();
 
-	virtual HRESULT GetObjectValue( const std::string& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
@@ -56,7 +54,7 @@ protected:
 	HRESULT RebuildCameraImage();
 
 	SVVirtualCamera* m_pCamera;
-	SVGUID m_digitizerObjectID;
+	uint32_t m_digitizerObjectID;
 };
 
 typedef std::set< SVCameraImageTemplate* > SVCameraImagePtrSet;

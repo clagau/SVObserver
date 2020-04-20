@@ -140,7 +140,7 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateLinearToolDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateLinearToolDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -171,7 +171,7 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetImageExtentFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetImageExtentFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -239,7 +239,7 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 	bool isNoError = true;
 	bool isAuxNoError = true;
 	SvOi::ParametersForML retList;
-	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.GetUniqueObjectID()));
+	retList.push_back(SvOi::ParameterPairForML(m_statusColor.GetCompleteName(), m_statusColor.getObjectId()));
 	if (nullptr != m_pToolConditional)
 	{
 		retList.push_back(m_pToolConditional->getResultData());
@@ -273,12 +273,12 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 
 	if (!isAuxNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetAuxiliaryParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetAuxiliaryParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 	else if (!isNoError)
 	{
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetParameterToMonitorListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		rMessages.push_back(Msg);
 	}
 
@@ -298,7 +298,7 @@ void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Over
 
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
-	SvPb::SetGuidInProtoBytes(pOverlay->mutable_guid(), GetUniqueObjectID());
+	pOverlay->set_objectid(getObjectId());
 	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
