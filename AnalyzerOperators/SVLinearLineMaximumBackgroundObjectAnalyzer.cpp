@@ -17,6 +17,7 @@
 #include "Operators/SVLinearEdgeBProcessingClass.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -176,6 +177,38 @@ HRESULT SVLinearMaximumBackgroundObjectLineAnalyzerClass::GetSelectedEdgeOverlay
 	}
 
 	return S_OK;
+}
+
+void SVLinearMaximumBackgroundObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+{
+	auto* pGroup = rOverlay.add_shapegroups();
+	pGroup->set_detaillevel(SvPb::Level1);
+	pGroup->set_name("LAnalyzer-Result");
+	RECT rect{};
+	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	if (nullptr != pAnalyzer)
+	{
+		pAnalyzer->GetImageExtent().GetOutputRectangle(rect);
+	}
+	
+	//edgeA
+	auto* pResultAShape = pGroup->add_shapes();
+	pResultAShape->mutable_color()->set_trpos(m_statusColor.getTrPos()+1);
+	auto* pResultMarker = pResultAShape->mutable_marker();
+	pResultMarker->set_minvalue(rect.left);
+	pResultMarker->set_maxvalue(rect.right);
+	pResultMarker->mutable_value()->set_trpos(m_svLinearDistanceA.getTrPos()+1);
+	pResultMarker->set_sizetype(SvPb::Size::MidShort);
+	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	//edgeB
+	auto* pResultBShape = pGroup->add_shapes();
+	pResultBShape->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+	pResultMarker = pResultBShape->mutable_marker();
+	pResultMarker->set_minvalue(rect.left);
+	pResultMarker->set_maxvalue(rect.right);
+	pResultMarker->mutable_value()->set_trpos(m_svLinearDistanceB.getTrPos()+1);
+	pResultMarker->set_sizetype(SvPb::Size::MidShort);
+	pResultMarker->set_orientationtype(SvPb::Orientation::y);
 }
 
 std::vector<std::string> SVLinearMaximumBackgroundObjectLineAnalyzerClass::getParameterNamesForML() const

@@ -93,6 +93,18 @@ bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
+void SVLinearEdgePositionLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+{
+	auto* pGroup = rOverlay.add_shapegroups();
+	pGroup->set_detaillevel(SvPb::Level1);
+	pGroup->set_name("LAnalyzer-Result");
+
+	if (nullptr != GetEdgeA() && nullptr != pGroup)
+	{
+		GetEdgeA()->addOverlayResultMarker(*pGroup);
+	}
+}
+
 std::vector<std::string> SVLinearEdgePositionLineAnalyzerClass::getParameterNamesForML() const
 {
 	return {

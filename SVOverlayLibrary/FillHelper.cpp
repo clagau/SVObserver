@@ -10,6 +10,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <math.h>
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
 #include "FillHelper.h"
@@ -20,6 +21,8 @@
 
 namespace SvOv
 {
+	const double g_pi = std::acos(-1);
+
 	bool fillValue(const SvTrc::ITriggerRecordR& rTr, long trPos, SvPb::ValueObject* pValue)
 	{
 		bool isSet = false;
@@ -96,14 +99,25 @@ namespace SvOv
 		bool retValue = false;
 		for (int i = 0; i < xArray.size(); i++)
 		{
-			//@TODO[MZA][8.20][07.08.2019] by now rotated pattern removed and needed code uncomment. For use rotated add this code and fit it.
-			//SVPoint<double> moveVector = SVRotatePoint(SVPoint<double>(0, 0), SVPoint<double>(rRectArrayData.centerx(), rRectArrayData.centery()), -angleArray[i]);
-			//double xPos = xArray[i] - moveVector.m_x;
-			//double yPos = yArray[i] - moveVector.m_y;
-			//if (xPos < 0.0 || yPos < 0.0 || angleArray[i] < 0.0)
-			double xPos = xArray[i] - rRectArrayData.centerx();
-			double yPos = yArray[i] - rRectArrayData.centery();
-			if (xPos < 0.0 || yPos < 0.0 || angleArray[i] != 0.0)
+			double xPos;
+			double yPos;
+			if (angleArray[i] == 0.0)
+			{
+				xPos = xArray[i] - rRectArrayData.centerx();
+				yPos = yArray[i] - rRectArrayData.centery();
+			}
+			else
+			{				
+				double angleTmp = rRectArrayData.centerangle()-angleArray[i];
+				//The fmod check is to make sure that exactly 0.0 is returned
+				bool callCos = (std::fmod(angleTmp, 90.0) != 0.0) || fmod(angleTmp, 180.0) == 0.0;
+				double dXCos = callCos ? std::cos(g_pi * angleTmp / 180.0) : 0.0;
+				double dYSin = (std::fmod(angleTmp, 180.0) != 0.0) ? std::sin(g_pi * angleTmp / 180.0) : 0.0;
+				xPos = xArray[i] - rRectArrayData.centerradius() * dXCos;
+				yPos = yArray[i] - rRectArrayData.centerradius() * dYSin;
+			}
+			
+			if (xPos < 0.0 || yPos < 0.0)
 			{
 				continue; //error, not set rect.
 			}
@@ -111,7 +125,7 @@ namespace SvOv
 			auto* pRect = rRectArray.add_rectarray();
 			pRect->set_x(xPos);
 			pRect->set_y(yPos);
-			//pRect->set_angle(angleArray[i]);
+			pRect->set_angle(angleArray[i]);
 			pRect->set_w(rRectArrayData.width());
 			pRect->set_h(rRectArrayData.height());
 			retValue = true;
@@ -161,7 +175,7 @@ namespace SvOv
 			{
 				auto* pPerspective = pBoundingBox->mutable_perspective();
 				if (nullptr == pPerspective) { continue; }
-				fillValue(rTr, pPerspective->yoffset().trpos(), pPerspective->mutable_yoffset());
+				fillValue(rTr, pPerspective->offset().trpos(), pPerspective->mutable_offset());
 			}
 			break;
 			}
@@ -220,7 +234,14 @@ namespace SvOv
 						auto* pMarker = pShape->mutable_marker();
 						if (nullptr != pMarker)
 						{
-							fillValue(rTr, pMarker->value().trpos(), pMarker->mutable_value());
+							if (!pMarker->has_selectedmarkerdata())
+							{
+								fillValue(rTr, pMarker->value().trpos(), pMarker->mutable_value());
+							}
+							else
+							{
+								fillSelectedMarker(pMarker->selectedmarkerdata(), rTr, pMarker->minvalue(), pMarker->maxvalue(), pMarker->mutable_value());
+							}
 						}
 					}
 					break;
@@ -320,4 +341,36 @@ namespace SvOv
 			}
 		}
 	}
+
+	void fillSelectedMarker(const SvPb::SVOSelectedMarker& rSelectedData, const SvTrc::ITriggerRecordR& rTr, double startPos, double stopPos, SvPb::ValueObject* pValue)
+	{
+		auto x1Array = getDataArray(rTr, rSelectedData.trpos_edgedata());
+		if (0 < x1Array.size())
+		{
+			switch (rSelectedData.type())
+			{
+			case SvPb::SVOSelectedMarker_PosType_First:
+				pValue->set_value(x1Array[0]);
+				break;
+			case SvPb::SVOSelectedMarker_PosType_Last:
+				pValue->set_value(x1Array[x1Array.size() - 1]);
+				break;
+			case SvPb::SVOSelectedMarker_PosType_This:
+				auto pos = rSelectedData.pos();
+				long posLong = static_cast<long>(pos);
+				double dPercent = pos - posLong;
+				if (pos - 1 < static_cast<long>(x1Array.size()))
+				{
+					bool fromLast = rSelectedData.fromlast();
+					double l_dFirstEdge = 0 <= posLong - 1 ? x1Array[posLong - 1] : (fromLast ? stopPos : startPos);
+					double l_dSecondEdge = (0 <= posLong && posLong < static_cast<long>(x1Array.size())) ? x1Array[posLong] : (fromLast ? startPos : stopPos);
+					double value = l_dFirstEdge + (l_dSecondEdge - l_dFirstEdge) * dPercent;
+					value = (0.0 < value) ? value : 0.0;
+					pValue->set_value(value);
+				}
+				break;
+			}
+		}
+	}
+
 }

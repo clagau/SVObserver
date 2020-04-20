@@ -444,21 +444,33 @@ void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, S
 			pArrow->mutable_y2()->set_value(figure.m_svCenterRight.m_y);
 		}
 	}
+	bool isGraphSet = false;
+	auto* pEdge = GetEdgeA();
+	if (nullptr != pEdge)
+	{
+		isGraphSet = pEdge->addGraphOverlay(rOverlay);
+	}
 
-	addEdgeOverlays(pImage, rOverlay);
+	pEdge = GetEdgeB();
+	if (!isGraphSet && nullptr != pEdge)
+	{
+		pEdge->addGraphOverlay(rOverlay);
+	}
+	addOverlayResults(rOverlay);
+	addOverlayResultDetails(rOverlay);
 }
 
-void SVLinearAnalyzerClass::addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+void SVLinearAnalyzerClass::addOverlayResultDetails(SvPb::Overlay& rOverlay) const
 {
 	auto* pEdge = GetEdgeA();
 	if (nullptr != pEdge)
 	{
-		pEdge->addOverlayGroups(pImage, rOverlay);
+		pEdge->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::EdgeA);
 	}
 	pEdge = GetEdgeB();
 	if (nullptr != pEdge)
 	{
-		pEdge->addOverlayGroups(pImage, rOverlay);
+		pEdge->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::EdgeB);
 	}
 }
 

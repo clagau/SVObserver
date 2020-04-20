@@ -764,7 +764,180 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	return l_hrOk;
 }
 
-void SVLinearEdgeProcessingClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay, ResultType resultType) const
+void SVLinearEdgeProcessingClass::addOverlayFullResult(SvPb::Overlay& rOverlay) const
+{
+	auto* pGroup = rOverlay.add_shapegroups();
+	pGroup->set_detaillevel(SvPb::Level1);
+	pGroup->set_name("LAnalyzer-Result");
+	auto* pResultShape = pGroup->add_shapes();
+	pResultShape->mutable_color()->set_value(m_cfEdges);
+	auto* pResultMarker = pResultShape->mutable_markers();
+	RECT rect{};
+	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	if (nullptr != pAnalyzer)
+	{
+		pAnalyzer->GetImageExtent().GetOutputRectangle(rect);
+		pResultMarker->set_minvalue(rect.left);
+		pResultMarker->set_maxvalue(rect.right);
+	}
+	pResultMarker->set_trpos(m_svLinearEdges.getTrPos() + 1);
+	pResultMarker->set_sizetype(SvPb::Size::MidShort);
+	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+}
+
+void SVLinearEdgeProcessingClass::addOverlayResultMarker(SvPb::OverlayShapeGroup& rGroup) const
+{
+	auto* pResultShape = rGroup.add_shapes();
+	pResultShape->mutable_color()->set_value(m_cfEdges);
+	auto* pResultMarker = pResultShape->mutable_marker();
+	RECT rect{};
+	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	if (nullptr != pAnalyzer)
+	{
+		pAnalyzer->GetImageExtent().GetOutputRectangle(rect);
+		pResultMarker->set_minvalue(rect.left);
+		pResultMarker->set_maxvalue(rect.right);
+	}
+
+	BOOL IsFixedEdgeMarker = false;
+	if ((S_OK == m_svIsFixedEdgeMarker.GetValue(IsFixedEdgeMarker)) && IsFixedEdgeMarker)
+	{
+		long Position(0L);
+		m_svPosition.GetValue(Position);
+		// Get the selected fixed position...
+		switch (Position)
+		{
+		case SvDef::SV_START_POSITION:
+		{
+			pResultMarker->mutable_value()->set_value(rect.left);
+			break;
+		}
+		case SvDef::SV_END_POSITION:
+		{
+			pResultMarker->mutable_value()->set_value(rect.right);
+			break;
+		}
+
+		case SvDef::SV_CENTER_POSITION:
+		{
+			pResultMarker->mutable_value()->set_value((rect.right - rect.left) / 2.0);
+			break;
+		}
+		case SvDef::SV_OFFSET_POSITION:
+		{
+			double offset = 0.0;
+			if ((S_OK == m_svPositionOffsetValue.GetValue(offset)) &&
+				offset <= rect.right)
+			{
+				pResultMarker->mutable_value()->set_value(offset);
+			}
+
+			break;
+		}
+		}
+	}
+	else
+	{
+		auto* pSelectedPos = pResultMarker->mutable_selectedmarkerdata();
+		long EdgeSelect(0);
+		m_svEdgeSelect.GetValue(EdgeSelect);
+		pSelectedPos->set_trpos_edgedata(m_svLinearEdges.getTrPos() + 1);
+		switch (EdgeSelect)
+		{
+		case SvDef::SV_FIRST_EDGE:
+			pSelectedPos->set_type(SvPb::SVOSelectedMarker_PosType_First);
+			break;
+		case SvDef::SV_LAST_EDGE:
+			pSelectedPos->set_type(SvPb::SVOSelectedMarker_PosType_Last);
+			break;
+		case SvDef::SV_THIS_EDGE:
+			pSelectedPos->set_type(SvPb::SVOSelectedMarker_PosType_This);
+			double dEdgeSelect(0.0);
+			m_svEdgeSelectThisValue.GetValue(dEdgeSelect);
+			pSelectedPos->set_pos(dEdgeSelect);
+			long direction(0);
+			m_svDirection.GetValue(direction);
+			pSelectedPos->set_fromlast(SvDef::SV_TAIL_TO_HEAD_DIRECTION == direction);
+			break;
+		}
+	}
+
+	pResultMarker->set_sizetype(SvPb::Size::MidShort);
+	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+}
+
+void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverlay, ResultType resultType) const
+{
+	//add thresholdBar
+	auto* pGroup = rOverlay.add_shapegroups();
+	double color = 0;
+	switch (resultType)
+	{
+	case ResultType::PixelCounting:
+		pGroup->set_name("LAnalyzer-ResultsDetails-PixelCounting");
+		color = SvDef::DefaultSubFunctionColor1;
+		break;
+	case ResultType::EdgeA:
+		pGroup->set_name("LAnalyzer-ResultsDetails-EdgeA");
+		color = SvDef::DefaultSubFunctionColor1;
+		break;
+	case ResultType::EdgeB:
+		pGroup->set_name("LAnalyzer-ResultsDetails-EdgeB");
+		color = SvDef::DefaultSubFunctionColor2;
+		break;
+	}
+	pGroup->set_detaillevel(SvPb::Level2);
+	auto* pThesholdLowerShape = pGroup->add_shapes();
+	pThesholdLowerShape->mutable_color()->set_value(color);
+	auto* pThresholdLowerMarker = pThesholdLowerShape->mutable_marker();
+	pThresholdLowerMarker->set_minvalue(SvDef::cMin8BitPixelValue);
+	pThresholdLowerMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
+	SvPb::setValueObject(m_svLowerThresholdValue, *pThresholdLowerMarker->mutable_value(), true);
+	pThresholdLowerMarker->set_sizetype(SvPb::Size::Full);
+	auto* pThesholdUpperShape = pGroup->add_shapes();
+	pThesholdUpperShape->mutable_color()->set_value(color);
+	auto* pThresholdUpperMarker = pThesholdUpperShape->mutable_marker();
+	pThresholdUpperMarker->set_minvalue(SvDef::cMin8BitPixelValue);
+	pThresholdUpperMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
+	SvPb::setValueObject(m_svUpperThresholdValue, *pThresholdUpperMarker->mutable_value(), true);
+	pThresholdUpperMarker->set_sizetype(SvPb::Size::Full);
+
+	// add result lines
+	auto* pResultShape = pGroup->add_shapes();
+	switch (resultType)
+	{
+	case ResultType::PixelCounting:
+	{
+		auto* pResultMarker = pResultShape->mutable_blockmarker();
+		pResultMarker->set_pixelcountinganalyzerresultpos(m_svLinearEdges.getTrPos()+1);
+		pResultMarker->add_colors(SvDef::DefaultBlackColor);
+		pResultMarker->add_colors(SvDef::DefaultWhiteColor);
+	}
+	break;
+	case ResultType::EdgeA:
+	case ResultType::EdgeB:
+	default:
+	{
+		pResultShape->mutable_color()->set_value(color);
+		auto* pResultMarker = pResultShape->mutable_markers();
+
+		RECT rect{};
+		SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+		if (nullptr != pAnalyzer ||	S_OK == pAnalyzer->GetImageExtent().GetOutputRectangle(rect))
+		{
+			pResultMarker->set_minvalue(rect.left);
+			pResultMarker->set_maxvalue(rect.right);
+		}
+
+		pResultMarker->set_trpos(m_svLinearEdges.getTrPos()+1);
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+		pResultMarker->set_sizetype(SvPb::Size::MidShort);
+	}
+	break;
+	}
+}
+
+bool SVLinearEdgeProcessingClass::addGraphOverlay(SvPb::Overlay& rOverlay)
 {
 	//add graph overlays
 	auto* pValueObject = dynamic_cast<SvOi::IValueObject*>(m_InputLinearData.GetInputObjectInfo().getObject());
@@ -779,55 +952,9 @@ void SVLinearEdgeProcessingClass::addOverlayGroups(const SvIe::SVImageClass* pIm
 		pGraph->set_minvaluey(SvDef::cMin8BitPixelValue);
 		pGraph->set_maxvaluey(SvDef::cMax8BitPixelValue);
 		pGraph->set_trposy(pValueObject->getTrPos() + 1);
+		return true;
 	}
-
-	//add thresholdBar
-	auto* pThresholdGroup = rOverlay.add_shapegroups();
-	pThresholdGroup->set_name("LAnalyzer-ThresholdMarker");
-	pThresholdGroup->set_detaillevel(SvPb::Level2);
-	auto* pThesholdLowerShape = pThresholdGroup->add_shapes();
-	pThesholdLowerShape->mutable_color()->set_value(m_cfThresholds);
-	auto* pThresholdLowerMarker = pThesholdLowerShape->mutable_marker();
-	pThresholdLowerMarker->set_minvalue(SvDef::cMin8BitPixelValue);
-	pThresholdLowerMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
-	SvPb::setValueObject(m_svLowerThresholdValue, *pThresholdLowerMarker->mutable_value(), true);
-	pThresholdLowerMarker->set_sizetype(SvPb::Size::Full);
-	auto* pThesholdUpperShape = pThresholdGroup->add_shapes();
-	pThesholdUpperShape->mutable_color()->set_value(m_cfThresholds);
-	auto* pThresholdUpperMarker = pThesholdUpperShape->mutable_marker();
-	pThresholdUpperMarker->set_minvalue(SvDef::cMin8BitPixelValue);
-	pThresholdUpperMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
-	SvPb::setValueObject(m_svUpperThresholdValue, *pThresholdUpperMarker->mutable_value(), true);
-	pThresholdUpperMarker->set_sizetype(SvPb::Size::Full);
-
-	// add result lines
-	auto* pResultGroup = rOverlay.add_shapegroups();
-	pResultGroup->set_name("LAnalyzer-ResultMarker");
-	auto* pResultShape = pResultGroup->add_shapes();
-	switch (resultType)
-	{
-	case ResultType::PixelCounting:
-	{
-		pResultGroup->set_detaillevel(SvPb::Level2);
-		auto* pResultMarker = pResultShape->mutable_blockmarker();
-		pResultMarker->set_pixelcountinganalyzerresultpos(m_svLinearEdges.getTrPos()+1);
-		pResultMarker->add_colors(SvDef::DefaultBlackColor);
-		pResultMarker->add_colors(SvDef::DefaultWhiteColor);
-	}
-	break;
-	case ResultType::Normal:
-	default:
-	{
-		pResultGroup->set_detaillevel(SvPb::Level1);
-		pResultShape->mutable_color()->set_value(m_cfEdges);
-		auto* pResultMarker = pResultShape->mutable_markers();
-		pResultMarker->set_minvalue(SvDef::cMin8BitPixelValue);
-		pResultMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
-		pResultMarker->set_trpos(m_svLinearEdges.getTrPos()+1);
-		pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	}
-	break;
-	}
+	return false;
 }
 
 HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues()

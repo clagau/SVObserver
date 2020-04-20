@@ -56,7 +56,8 @@ protected:
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
 
-	virtual void addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const;
+	virtual void addOverlayResults(SvPb::Overlay& rOverlay) const {};
+	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay) const;
 
 	virtual HRESULT updateImageExtent() override;
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass& rImageExtent );

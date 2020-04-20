@@ -984,8 +984,8 @@ void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, 
 	msv_bpatCircularOverscan.GetValue(bCircularScan);
 	if (bCircularScan)
 	{
-		POINT pos = {0, 0};
-		SIZE size = {width, height};
+		POINT pos = { 0, 0 };
+		SIZE size = { width, height };
 
 		RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
 		width = rect.right - rect.left;
@@ -1000,7 +1000,9 @@ void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, 
 	m_lpatModelCenterY.GetValue(centerY);
 	pRectArray->set_centerx(centerX);
 	pRectArray->set_centery(centerY);
-
+	SVPoint<double> startPos{ 0., 0. }, centerPos{ static_cast<double>(centerX), static_cast<double>(centerY) };
+	pRectArray->set_centerradius(SVGetRadius(startPos, centerPos));
+	pRectArray->set_centerangle(SVGetRotationAngle(startPos, centerPos));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

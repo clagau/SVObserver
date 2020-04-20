@@ -520,7 +520,21 @@ void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb:
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
 	auto* pPerspective = pBoundingBox->mutable_perspective();
-	SvPb::setValueObject(m_svYOffset, *pPerspective->mutable_yoffset());
+
+	long l_lType;
+	m_svWarpType.GetValue(l_lType);
+	WarpType l_eType = (WarpType)l_lType;
+	if (l_eType == WarpTypeHorizontal)
+	{
+		pPerspective->set_orientation(SvPb::Orientation::x);
+		SvPb::setValueObject(m_svXOffset, *pPerspective->mutable_offset());
+	}
+	else
+	{
+		pPerspective->set_orientation(SvPb::Orientation::y);
+		SvPb::setValueObject(m_svYOffset, *pPerspective->mutable_offset());
+	}
+	
 	setStateValueToOverlay(*pOverlay);
 }
 

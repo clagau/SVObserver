@@ -47,4 +47,13 @@ bool fillRectArray(const SvTrc::ITriggerRecordR& rTr, const SvPb::SVORectArrayPa
 /// \param overlayDesc [in,out] Protobuf message
 /// \param rTr [in] triggerReocrd
 void fillOverlay(SvPb::OverlayDesc& overlayDesc, const SvTrc::ITriggerRecordR& rTr);
+
+/// Fill live data for a selected Marker
+/// \param rSelectedData [in] Protobuf message for the selected data.
+/// \param rTr [in] triggerRecord
+/// \param startPos [in] start position of the marker area.
+/// \param stopPos [in] stop position of the marker area.
+/// \param pValue [in,out] Value to be filled.
+void fillSelectedMarker(const ::SvPb::SVOSelectedMarker& rSelectedData, const SvTrc::ITriggerRecordR& rTr, double startPos, double stopPos, SvPb::ValueObject* pValue);
+
 }

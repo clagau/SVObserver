@@ -157,12 +157,12 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus
 	return Result;
 }
 
-void SVLinearPixelCountingLineAnalyzerClass::addEdgeOverlays(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+void SVLinearPixelCountingLineAnalyzerClass::addOverlayResultDetails(SvPb::Overlay& rOverlay) const
 {
 	auto* pEgde = GetEdgeA();
 	if (nullptr != pEgde)
 	{
-		pEgde->addOverlayGroups(pImage, rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::PixelCounting);
+		pEgde->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::PixelCounting);
 	}
 }
 } //namespace SvAo
