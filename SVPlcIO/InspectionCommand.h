@@ -31,14 +31,15 @@ public:
 	ChannelIn& operator=(ChannelIn&& rRhs) = default;
 	bool operator!=(const ChannelIn& rRhs)
 	{
+		///At the moment ignore comparing m_socTriggerTime
 		if(m_unitControl != rRhs.m_unitControl ||
 		   m_sequence != rRhs.m_sequence ||
 		   m_timeStamp1 != rRhs.m_timeStamp1 ||
 		   m_timeStamp2 != rRhs.m_timeStamp2 ||
 		   m_currentObjectType != rRhs.m_currentObjectType ||
 		   m_currentObjectID != rRhs.m_currentObjectID ||
-		   m_originalObjectType != rRhs.m_originalObjectType ||
-		   m_originalObjectID != rRhs.m_originalObjectID ||
+		   m_previousObjectType != rRhs.m_previousObjectType ||
+		   m_previousObjectID != rRhs.m_previousObjectID ||
 		   m_triggerIndex != rRhs.m_triggerIndex ||
 		   m_triggerCount != rRhs.m_triggerCount)
 		{
@@ -55,11 +56,11 @@ public:
 	int16_t m_timeStamp2 {0};				//Time stamp 2
 	uint8_t m_currentObjectType {0};		//Current object type
 	uint32_t m_currentObjectID {0};			//Current object ID
-	uint8_t m_originalObjectType {0};		//Original object type
-	uint32_t m_originalObjectID {0};		//Original object ID
-	uint16_t m_triggerIndex {0};			//Trigger index
+	uint8_t m_previousObjectType {0};		//Previous object type
+	uint32_t m_previousObjectID {0};		//Previous object ID
+	uint8_t m_triggerIndex {0};				//Trigger index
 	uint8_t m_triggerCount {0};				//Trigger count per object
-	float m_generalValue{0.0};				//General value
+	int32_t m_socTriggerTime {0L};			//SOC trigger time
 #pragma endregion Member Variables
 };
 

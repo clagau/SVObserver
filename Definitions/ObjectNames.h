@@ -13,6 +13,7 @@ namespace SvDef
 #pragma region Declarations
 constexpr TCHAR* const c_ObjectID = _T("Object ID");
 constexpr TCHAR* const c_TriggerIndex = _T("Trigger Index");
+constexpr TCHAR* const c_TriggerPerObjectID = _T("Trigger per Object ID");
 constexpr TCHAR* const c_InspectedObjectID = _T("Inspected Object ID");
 constexpr TCHAR* const c_InspectedObjectIDLink = _T("Inspected Object ID Link");
 constexpr TCHAR* const c_InspectionName = _T("Inspection Name");

@@ -470,9 +470,9 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 			startByte += result[configIndex].m_byteSize;
 			configIndex++;
 
-			for(const auto& rReserved : insCmd.m_reserved)
+			if(insCmd.m_reserved.size() > 0)
 			{
-				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(rReserved)], startByte, sizeof(rReserved)};
+				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(insCmd.m_reserved[0])], startByte, sizeof(insCmd.m_reserved)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
 			}
@@ -497,10 +497,10 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObjectID)], startByte, sizeof(rChannel.m_currentObjectID)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_originalObjectType)], startByte, sizeof(rChannel.m_originalObjectType)};
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_previousObjectType)], startByte, sizeof(rChannel.m_previousObjectType)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_originalObjectID)], startByte, sizeof(rChannel.m_originalObjectID)};
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_previousObjectID)], startByte, sizeof(rChannel.m_previousObjectID)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_triggerIndex)], startByte, sizeof(rChannel.m_triggerIndex)};
@@ -509,7 +509,7 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_triggerCount)], startByte, sizeof(rChannel.m_triggerCount)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_generalValue)], startByte, sizeof(rChannel.m_generalValue)};
+				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_socTriggerTime)], startByte, sizeof(rChannel.m_socTriggerTime)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
 			}
@@ -525,9 +525,9 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 		{
 			InspectionState insState;
 			
-			for (const auto& rHeader : insState.m_header)
+			if (insState.m_header.size() > 0)
 			{
-				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(rHeader)], startByte, sizeof(rHeader)};
+				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(insState.m_header[0])], startByte, sizeof(insState.m_header)};
 				//Do startByte always before configIndex
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
@@ -541,15 +541,12 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_currentObjectID)], startByte, sizeof(rChannel.m_currentObjectID)};
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				for (const auto& rResult : rChannel.m_results)
+				if (rChannel.m_results.size() > 0)
 				{
-					result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rResult)], startByte, sizeof(rResult)};
+					result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_results[0])], startByte, sizeof(rChannel.m_results)};
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}
-				result[configIndex] = ConfigDataSet {c_modeSingleDirect, dataTypeList[typeid(rChannel.m_generalValue)], startByte, sizeof(rChannel.m_generalValue)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
 			}
 			///This is the way the PLC sets the not used configuration sets
 			while (configIndex < c_ConfigListSize)

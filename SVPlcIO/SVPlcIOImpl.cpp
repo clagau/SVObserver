@@ -319,10 +319,10 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 				fileName += "_PlcInput.txt";
 				::DeleteFile(fileName.c_str());
 
-				std::string fileData = _T("Channel; Count; Timestamp; ObjectID\r\n");
+				std::string fileData = _T("Channel; Count; Timestamp; ObjectID; calc Timestamp; SOC TriggerTime\r\n");
 				for (const auto& rData : g_PlcListInput)
 				{
-					fileData += SvUl::Format(_T("%d; %d; %f; %d\r\n"), rData.m_channel, rData.m_count, rData.m_timeStamp, rData.m_objectID);
+					fileData += SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), rData.m_channel, rData.m_count, rData.m_timeStamp, rData.m_objectID, rData.m_text.c_str());
 				}
 				std::ofstream outputFile {fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::app};
 				if(outputFile.is_open())
@@ -336,7 +336,7 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 				::DeleteFile(fileName.c_str());
 
 				fileData = _T("Channel; Count; Timestamp; ObjectID;Good\r\n");
-				for (const auto& rData : g_PlcListInput)
+				for (const auto& rData : g_PlcListOutput)
 				{
 					fileData += SvUl::Format(_T("%d; %d; %f; %d; %d\r\n"), rData.m_channel, rData.m_count, rData.m_timeStamp, rData.m_objectID, rData.m_good ? 1 : 0);
 				}
@@ -560,8 +560,9 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 	
 	SvTh::IntVariantMap triggerData;
 	triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
-	triggerData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_objectID);
+	triggerData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
 	triggerData[SvTh::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
+	triggerData[SvTh::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
 
 	//PLC channel is zero based while SVObserver is one based!
 	int triggerIndex = rTriggerReport.m_channel + 1;
@@ -570,7 +571,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 	{
 		g_PlcTriggerCount[rTriggerReport.m_channel]++;
 	
-		g_PlcListInput.emplace_back(RecordData {static_cast<uint8_t> (triggerIndex), g_PlcTriggerCount[rTriggerReport.m_channel], rTriggerReport.m_triggerTimestamp, rTriggerReport.m_objectID, false});
+		g_PlcListInput.emplace_back(RecordData {static_cast<uint8_t> (triggerIndex), g_PlcTriggerCount[rTriggerReport.m_channel], rTriggerReport.m_triggerTimestamp, rTriggerReport.m_currentObjectID, false, rTriggerReport.m_text});
 	}
 
 	// call trigger callbacks
@@ -594,17 +595,15 @@ void SVPlcIOImpl::WriteResult(int triggerChannel)
 	{
 		std::lock_guard<std::mutex> guard(m_protectPlc);
 		reportResult.m_channel = triggerChannel;
-		reportResult.m_objectID = rTrigger.m_ObjectID;
+		reportResult.m_currentObjectID = rTrigger.m_ObjectID;
 		uint16_t bitMask = 1 << rTrigger.m_objectGoodIndex;
 		reportResult.m_results[0] = (0 != (m_Output & bitMask)) ? c_InspectionGood : c_InspectionBad;
-		///The PLC requires that the second result always is set to good!
-		reportResult.m_results[1] = c_InspectionGood;
 		Tec::writeResult(reportResult);
 		if (false == m_OutputFileName.empty())
 		{
 			g_PlcResultCount[triggerChannel]++;
 
-			g_PlcListOutput.emplace_back(RecordData{reportResult.m_channel,g_PlcResultCount[triggerChannel], SvTl::GetTimeStamp(), reportResult.m_objectID, reportResult.m_results[0] == c_InspectionGood});
+			g_PlcListOutput.emplace_back(RecordData{reportResult.m_channel,g_PlcResultCount[triggerChannel], SvTl::GetTimeStamp(), reportResult.m_currentObjectID, reportResult.m_results[0] == c_InspectionGood, std::string{}});
 		}
 	}
 }

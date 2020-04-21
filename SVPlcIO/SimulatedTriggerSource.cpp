@@ -120,10 +120,10 @@ void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 		//currently: simulated triggers always have one trigger per product
 		TriggerReport report;
 		report.m_channel = channel;
-		report.m_objectID = triggerData.m_objectID;
+		report.m_currentObjectID = triggerData.m_objectID;
 		report.m_sequence = triggerData.m_sequenceID;
 		report.m_triggerIndex = 1;
-		report.m_triggersPerProduct = 1;
+		report.m_triggerPerObjectID = 1;
 		report.m_triggerTimestamp = triggerData.m_triggerTimestamp;
 		report.m_isValid = true;
 		addTriggerReport(std::move(report));

@@ -30,8 +30,8 @@ public:
 public:
 	uint8_t m_currentObjectType {0};		//Current object type
 	uint32_t m_currentObjectID {0};			//Current object ID
-	std::array<uint8_t, c_ResultSize> m_results{0, 0, 0, 0, 0, 0, 0, 0};	//Results array
-	float m_generalValue{0.0};				//General value
+	std::array<uint8_t, c_ResultSize> m_results
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};	//Results array
 #pragma endregion Member Variables
 };
 

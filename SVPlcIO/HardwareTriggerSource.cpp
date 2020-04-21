@@ -169,15 +169,18 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 	{
 		TriggerReport report;
 		report.m_channel = channel;
-		report.m_objectID = rChannel.m_currentObjectID;
+		report.m_currentObjectID = rChannel.m_currentObjectID;
+		report.m_previousObjectID = rChannel.m_previousObjectID;
 		report.m_sequence = rChannel.m_sequence;
-		report.m_triggerIndex = rChannel.m_triggerIndex;
-		report.m_triggersPerProduct = rChannel.m_triggerCount;
+		report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
+		report.m_triggerPerObjectID = rChannel.m_triggerCount;
 		report.m_triggerTimestamp = triggerTimeStamp;
 		report.m_isComplete = rChannel.m_triggerIndex == rChannel.m_triggerCount;
 		const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
-		const int16_t& rTimeStamp1 = rInsCmd.m_channels[channel].m_timeStamp1;
 		report.m_isValid = (0 != rInsCmd.m_socRelative);
+		//@TODO[gra][10.00][27.02.2020]: This is only for test purposes
+		int32_t triggerTime = getPlcTriggerTime(rInsCmd.m_socRelative, rChannel.m_timeStamp1);
+		report.m_text = std::to_string(triggerTime) + "; " + std::to_string(rChannel.m_socTriggerTime);
 		addTriggerReport(std::move(report));
 	}
 }

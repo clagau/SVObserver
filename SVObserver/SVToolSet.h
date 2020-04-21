@@ -98,9 +98,10 @@ public:
 
 	void setTime(double time, ToolSetTimes timeType) { m_Times[timeType].SetValue(static_cast<__int64> (time)); }
 	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
-	void setObjectID(double ObjectID) { m_ObjectID.SetValue(ObjectID); }
+	void setObjectID(double objectID) { m_ObjectID.SetValue(objectID); }
 	DWORD getInspectedObjectID() { double value; m_InspectedObjectID.getValue(value); return static_cast<DWORD> (value); }
-	void setTriggerIndex(DWORD TriggerIndex) { m_TriggerIndex.SetValue(TriggerIndex); }
+	void setTriggerIndex(DWORD triggerIndex) { m_TriggerIndex.SetValue(triggerIndex); }
+	void setTriggerPerObjectID(DWORD triggerPerObjectID) { m_TriggerPerObjectID.SetValue(triggerPerObjectID); }
 	void setInspectionname(std::string Inspectionname) { m_InspectionName.SetValue(Inspectionname);};
 
 	virtual void goingOffline() override;
@@ -201,6 +202,7 @@ private:
 	SvVol::SVDoubleValueObjectClass m_Height;		//! The toolset image height
 	SvVol::SVDoubleValueObjectClass m_ObjectID;		//! The object ID, which has been received by the PLC, to be inspected
 	SvVol::SVDWordValueObjectClass m_TriggerIndex;	//! The trigger index, which has been received by the PLC
+	SvVol::SVDWordValueObjectClass m_TriggerPerObjectID;//! The trigger total for this ObjectID
 	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
 	SvVol::SVStringValueObjectClass m_ToolComment;
 	SvVol::SVStringValueObjectClass m_InspectionName;

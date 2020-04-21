@@ -81,7 +81,9 @@ void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active, uint32
 void PowerlinkConnection::writeResult(const ResultReport& rResultReport)
 {
 	ChannelOut channelOut;
-	channelOut.m_currentObjectID = rResultReport.m_objectID;
+	//Type = 1 single product
+	channelOut.m_currentObjectType = 1;
+	channelOut.m_currentObjectID = rResultReport.m_currentObjectID;
 	channelOut.m_results = rResultReport.m_results;
 	m_pTriggersource->queueResult(rResultReport.m_channel, std::move(channelOut));
 }

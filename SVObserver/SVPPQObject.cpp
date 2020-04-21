@@ -142,7 +142,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 					l_pNextProduct = GetProductInfoStruct(l_ProcessCount);
 				}
 
-				if (nullptr != l_pNextProduct && l_pNextProduct->m_outputsInfo.m_EndOutputDelay <= l_CurrentTime)
+				if (0 < m_outputDelay && nullptr != l_pNextProduct && l_pNextProduct->m_outputsInfo.m_EndOutputDelay <= l_CurrentTime)
 				{
 					l_pProduct = nullptr;
 				}
@@ -175,7 +175,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 		case SvDef::SVPPQTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		{
-			l_Status = ProcessTimeDelayOutputs(*l_pProduct);
+			l_Status = ProcessOutputs(*l_pProduct);
 
 			break;
 		}
@@ -200,18 +200,16 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessTimeDelayOutputs(SVProductInfoStruct& rProduct)
+HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 {
 	HRESULT l_Status = S_OK;
 
 	if (WriteOutputs(&rProduct))
 	{
-		long lResetDelay{getResetDelay()};
+		rProduct.m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
-		if (lResetDelay)
+		if (0 < m_resetDelay)
 		{
-			rProduct.m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
-
 			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + m_resetDelay;
 
 			m_oOutputsResetQueue.AddTail(rProduct.ProcessCount());
@@ -233,7 +231,7 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 
 	if (p_rProduct.m_dataComplete)
 	{
-		l_Status = ProcessTimeDelayOutputs(p_rProduct);
+		l_Status = ProcessOutputs(p_rProduct);
 	}
 	else
 	{
@@ -2349,35 +2347,20 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 	return l_Status;
 }
 
-bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
+void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
 {
-	if (p_pProduct)
+	if (nullptr != pProduct)
 	{
-		p_pProduct->m_outputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
-		p_pProduct->m_outputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
-		p_pProduct->m_outputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
-		p_pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
+		pProduct->m_outputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
+		pProduct->m_outputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
+		pProduct->m_outputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
+		pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
 
 		switch (m_outputMode)
 		{
 		case SvDef::SVPPQNextTriggerMode:
 		{
-			// The trigger has come, time to write the outputs
-			WriteOutputs(p_pProduct);
-
-			p_pProduct->m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
-
-			// Check if we should fire up the reset outputs thread
-			if (0 < m_resetDelay)
-			{
-				// Set output reset expire time
-				p_pProduct->m_outputsInfo.m_EndResetDelay = p_pProduct->m_outputsInfo.m_EndProcess + m_resetDelay;
-
-				m_oOutputsResetQueue.AddTail(p_pProduct->ProcessCount());
-			}
-
-			SetProductComplete(*p_pProduct);
-
+			ProcessOutputs(*pProduct);
 			break;
 		}
 		case SvDef::SVPPQTimeDelayMode:
@@ -2385,28 +2368,25 @@ bool SVPPQObject::StartOutputs(SVProductInfoStruct* p_pProduct)
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 		{
-			if(m_outputDelay > 0)
+			if(0 == m_outputDelay)
 			{
-				p_pProduct->m_outputsInfo.m_EndOutputDelay = p_pProduct->m_triggerInfo.m_ToggleTimeStamp + m_outputDelay;
-
-				if (p_pProduct->m_outputsInfo.m_BeginProcess < p_pProduct->m_outputsInfo.m_EndOutputDelay)
+				m_oOutputsDelayQueue.AddTail(pProduct->ProcessCount());
+			}
+			else if(0 < m_outputDelay)
+			{
+				pProduct->m_outputsInfo.m_EndOutputDelay = pProduct->m_triggerInfo.m_ToggleTimeStamp + m_outputDelay;
+				if (pProduct->m_outputsInfo.m_BeginProcess < pProduct->m_outputsInfo.m_EndOutputDelay)
 				{
-					m_oOutputsDelayQueue.AddTail(p_pProduct->ProcessCount());
+					m_oOutputsDelayQueue.AddTail(pProduct->ProcessCount());
 				}
 			}
 			break;
 		}
 		default:
-			return false;
+			break;
 		}// end switch
-
-		// Now we need to write the inputs. Make sure that we record the timestamps
-		// ************************************************************************
-		// End writing the outputs
 	}
-
-	return true;
-}// end StartOutputs
+}
 
 void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 {

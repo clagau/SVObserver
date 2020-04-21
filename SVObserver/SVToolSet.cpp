@@ -78,15 +78,16 @@ void SVToolSetClass::init()
 	RegisterEmbeddedObject(&m_Width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_Height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, SvPb::EnableAuxiliaryExtentsEId, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
+	///m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
 	RegisterEmbeddedObject(&m_ObjectID, SvPb::ObjectIDEId, SvDef::c_ObjectID, false, SvOi::SVResetItemNone);
-	//m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
 	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::c_TriggerPerObjectID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
 	RegisterEmbeddedObject(&m_InspectedObjectID.getLinkedName(), SvPb::InspectedObjectIDLinkEId, SvDef::c_InspectedObjectIDLink, false, SvOi::SVResetItemIP);
 
 	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameEId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
 
 	//Link inspected object ID with incoming object ID as default
 	m_InspectedObjectID.setValue(convertObjectIdToString(m_ObjectID.getObjectId()));

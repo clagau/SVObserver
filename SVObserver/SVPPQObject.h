@@ -336,14 +336,14 @@ protected:
 	//************************************
 	HRESULT ProcessProductRequests( bool& rProcessed );
 
-	HRESULT ProcessTimeDelayOutputs( SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& rProcessed );
+	HRESULT ProcessOutputs(SVProductInfoStruct& rProduct);
+	HRESULT ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct& rProduct, bool& rProcessed);
 
 	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
 	SVProductInfoStruct* IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerInfo);
 	void InitializeProduct( SVProductInfoStruct* pNewProduct);
-	bool StartOutputs( SVProductInfoStruct* p_pProduct );
+	void StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );
 	HRESULT StartInspection(uint32_t inspectionID );
 

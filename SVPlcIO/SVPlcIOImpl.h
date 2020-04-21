@@ -24,8 +24,8 @@ extern SVPlcIOImpl g_Plc;
 
 struct RecordData
 {
-	RecordData(uint8_t channel, uint32_t count, double timeStamp, uint32_t objectID, bool good) :
-		m_channel {channel}, m_count {count}, m_timeStamp {timeStamp}, m_objectID {objectID}, m_good{good}
+	RecordData(uint8_t channel, uint32_t count, double timeStamp, uint32_t objectID, bool good, const std::string& rText) :
+		m_channel {channel}, m_count {count}, m_timeStamp {timeStamp}, m_objectID {objectID}, m_good{good}, m_text{rText}
 	{
 	}
 
@@ -34,6 +34,7 @@ struct RecordData
 	uint32_t m_objectID {0UL};
 	double m_timeStamp {0.0};
 	bool m_good {false};
+	std::string m_text;
 };
 
 struct TriggerParameter

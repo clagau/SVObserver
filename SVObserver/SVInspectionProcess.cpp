@@ -165,6 +165,11 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		{
 			m_pCurrentToolset->setTriggerIndex(iterData->second);
 		}
+		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerPerObjectID);
+		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
+		{
+			m_pCurrentToolset->setTriggerPerObjectID(iterData->second);
+		}
 
 
 		assert(m_PPQInputs.size() == rProduct.m_triggerInfo.m_Inputs.size());
