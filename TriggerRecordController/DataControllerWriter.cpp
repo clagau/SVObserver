@@ -99,6 +99,12 @@ void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& data
 		m_pSmData->m_dataDefListSize = newPBSize;
 	}
 	m_DataDefList.SerializePartialToArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
+	m_DataDefMap.clear();
+	int pos = 0;
+	for(const auto& rTmp: m_DataDefList.list())
+	{
+		m_DataDefMap[rTmp.objectid()] = pos++;
+	}
 }
 
 TriggerRecordData& TRControllerWriterDataPerIP::getTRData(int pos) const
@@ -133,6 +139,18 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 		m_pSmData->m_imageListSize = newPBSize;
 	}
 	m_ImageList.SerializePartialToArray(m_pImageListInSM, m_pSmData->m_imageListSize);
+	m_ImageDefMap.clear();
+	int pos = 0;
+	for (const auto& rTmp : m_ImageList.list())
+	{
+		m_ImageDefMap[rTmp.objectid()] = pos++;
+	}
+	m_ChildImageDefMap.clear();
+	pos = 0;
+	for (const auto& rTmp : m_ImageList.childlist())
+	{
+		m_ChildImageDefMap[rTmp.objectid()] = pos++;
+	}
 }
 
 void TRControllerWriterDataPerIP::createTriggerRecordsBuffer(int trNumbers)

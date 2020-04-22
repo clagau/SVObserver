@@ -41,8 +41,11 @@ public:
 	virtual int getLastTrId(int inspectionPos) const override { return m_pDataController->getLastTrId(inspectionPos); };
 
 	virtual const SvPb::ImageList& getImageDefList(int inspectionPos) override;
+	virtual const std::unordered_map<uint32_t, int>& getImageDefMap(int inspectionPos) override;
+	virtual const std::unordered_map<uint32_t, int>& getChildImageDefMap(int inspectionPos) override;
 
 	virtual const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) override;
+	virtual const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) override;
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
 	virtual ITriggerRecordRPtr createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount) override;

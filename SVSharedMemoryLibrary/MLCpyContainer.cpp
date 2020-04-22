@@ -167,7 +167,7 @@ namespace SvSml
 		}
 	}
 
-	void MLCpyContainer::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const SvPb::DataDefinitionList& rDataDefList, const SvPb::ImageList& rImageDefList)
+	void MLCpyContainer::setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap)
 	{
 		MonitorListCpyMap::iterator  MLCPyIt;
 		for (auto& rMLCPy : m_MonitorListCpyMap)
@@ -185,27 +185,24 @@ namespace SvSml
 				}
 				uint32_t objectId = rEntry.second->m_objectId;
 				rEntry.second->data.m_inspectionTRCPos = inspectionTrcPos;
-				auto iter = std::find_if(rDataDefList.list().begin(), rDataDefList.list().end(), [objectId](auto data)->bool { return data.objectid() == objectId; });
-				if (rDataDefList.list().end() != iter)
+				auto iter = rDataDefMap.find(objectId);
+				if (rDataDefMap.end() != iter)
 				{
-					int pos = static_cast<int>(std::distance(rDataDefList.list().begin(), iter));
-					rEntry.second->data.m_triggerRecordPos = pos;
+					rEntry.second->data.m_triggerRecordPos = iter->second;
 					continue;
 				}
 
-				auto iterImage = std::find_if(rImageDefList.list().begin(), rImageDefList.list().end(), [objectId](auto data)->bool { return data.objectid() == objectId; });
-				if (rImageDefList.list().end() != iterImage)
+				auto iterImage = rImageMap.find(objectId);
+				if (rImageMap.end() != iterImage)
 				{
-					int pos = static_cast<int>(std::distance(rImageDefList.list().begin(), iterImage));
-					rEntry.second->data.m_triggerRecordPos = pos;
+					rEntry.second->data.m_triggerRecordPos = iterImage->second;
 					continue;
 				}
 
-				auto iterChildImage = std::find_if(rImageDefList.childlist().begin(), rImageDefList.childlist().end(), [objectId](auto data)->bool { return data.objectid() == objectId; });
-				if (rImageDefList.childlist().end() != iterChildImage)
+				auto iterChildImage = rChildImageMap.find(objectId);
+				if (rChildImageMap.end() != iterChildImage)
 				{
-					int pos = static_cast<int>(std::distance(rImageDefList.childlist().begin(), iterChildImage));
-					rEntry.second->data.m_triggerRecordPos = pos| MonitorEntryData::c_childFlagForTrPos;
+					rEntry.second->data.m_triggerRecordPos = iterChildImage->second| MonitorEntryData::c_childFlagForTrPos;
 					continue;
 				}
 			}
@@ -271,7 +268,6 @@ namespace SvSml
 			}
 			else
 			{
-				SvPenv::Error err;
 				err.set_errorcode(SvPenv::ErrorCode::notFound);
 				err.set_message("MonitorList with given name does not exist or is not active");
 				result = false;

@@ -67,7 +67,25 @@ void TRControllerReaderDataPerIP::init(const std::string& smName)
 void TRControllerReaderDataPerIP::reloadData()
 {
 	m_ImageList.ParsePartialFromArray(m_pImageListInSM, m_pSmData->m_imageListSize);
+	m_ImageDefMap.clear();
+	int pos = 0;
+	for (const auto& rTmp : m_ImageList.list())
+	{
+		m_ImageDefMap[rTmp.objectid()] = pos++;
+	}
+	m_ChildImageDefMap.clear();
+	pos = 0;
+	for (const auto& rTmp : m_ImageList.childlist())
+	{
+		m_ChildImageDefMap[rTmp.objectid()] = pos++;
+	}
 	m_DataDefList.ParsePartialFromArray(m_pDataDefListInSM, m_pSmData->m_dataDefListSize);
+	m_DataDefMap.clear();
+	pos = 0;
+	for (const auto& rTmp : m_DataDefList.list())
+	{
+		m_DataDefMap[rTmp.objectid()] = pos++;
+	}
 }
 
 TriggerRecordData& TRControllerReaderDataPerIP::getTRData(int pos) const

@@ -60,7 +60,7 @@ namespace SvSml
 		///Calculates the Storindex, offset and itemindex for all images 
 		void CalculateStoreIds();
 
-		void setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const SvPb::DataDefinitionList& rDataDefList, const SvPb::ImageList& rImageDefList);
+		void setDataTrcPos(const std::string& rPPQName, int inspectionStoreId, int inspectionTrcPos, const std::unordered_map<uint32_t, int>& rDataDefMap, const std::unordered_map<uint32_t, int>& rImageMap, const std::unordered_map<uint32_t, int>& rChildImageMap);
 
 		///Serialize to ProtoBufMessage
 		void BuildProtoMessage(SvPml::MesMLCpyContainer& rMesMLCpyContainer) const;

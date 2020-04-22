@@ -26,6 +26,34 @@ TRControllerLocalDataPerIP::~TRControllerLocalDataPerIP()
 	}
 };
 
+void TRControllerLocalDataPerIP::setDataDefList(SvPb::DataDefinitionList&& dataDefList)
+{ 
+	m_DataDefList.Swap(&dataDefList); 
+	m_DataDefMap.clear();
+	int pos = 0;
+	for (const auto& rTmp : m_DataDefList.list())
+	{
+		m_DataDefMap[rTmp.objectid()] = pos++;
+	}
+}
+
+void TRControllerLocalDataPerIP::setImageList(SvPb::ImageList&& imageList) 
+{ 
+	m_ImageList = imageList; 
+	m_ImageDefMap.clear();
+	int pos = 0;
+	for (const auto& rTmp : m_ImageList.list())
+	{
+		m_ImageDefMap[rTmp.objectid()] = pos++;
+	}
+	m_ChildImageDefMap.clear();
+	pos = 0;
+	for (const auto& rTmp : m_ImageList.childlist())
+	{
+		m_ChildImageDefMap[rTmp.objectid()] = pos++;
+	}
+}
+
 void TRControllerLocalDataPerIP::createTriggerRecordsBuffer(int trNumbers)
 {
 	getMutableBasicData().m_TriggerRecordNumber = trNumbers;
@@ -57,7 +85,7 @@ TriggerRecordData& TRControllerLocalDataPerIP::getTRData(int pos) const
 void TRControllerLocalDataPerIP::setTrOfInterestNumber(int number)
 {
 	Locker::LockerPtr locker = Locker::lockReset(m_basicData.m_mutexTrOfInterest);
-	if (number != m_basicData.m_TrOfInterestNumber)
+	if (locker && number != m_basicData.m_TrOfInterestNumber)
 	{
 		m_basicData.m_TrOfInterestNumber = number;
 		m_trOfInterestVec.resize(number);

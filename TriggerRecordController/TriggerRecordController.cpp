@@ -59,7 +59,7 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 TriggerRecordController::~TriggerRecordController()
 {
 	m_isResetLocked = false;
-	clearAll();
+	TriggerRecordController::clearAll();
 }
 #pragma endregion Constructor
 
@@ -84,11 +84,50 @@ const SvPb::ImageList& TriggerRecordController::getImageDefList(int inspectionPo
 	Exception.Throw();
 }
 
+const std::unordered_map<uint32_t, int>& TriggerRecordController::getImageDefMap(int inspectionPos)
+{
+	if (-1 == m_resetStarted4IP)
+	{
+		return m_pDataController->getImageMap(inspectionPos);
+	}
+
+	assert(false);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
+const std::unordered_map<uint32_t, int>& TriggerRecordController::getChildImageDefMap(int inspectionPos)
+{
+	if (-1 == m_resetStarted4IP)
+	{
+		return m_pDataController->getChildImageMap(inspectionPos);
+	}
+
+	assert(false);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
 const SvPb::DataDefinitionList& TriggerRecordController::getDataDefList(int inspectionPos)
 {
 	if (-1 == m_resetStarted4IP)
 	{
 		return m_pDataController->getDataDefList(inspectionPos);
+	}
+
+	assert(false);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
+const std::unordered_map<uint32_t, int>& TriggerRecordController::getDataDefMap(int inspectionPos)
+{
+	if (-1 == m_resetStarted4IP)
+	{
+		return m_pDataController->getDataDefMap(inspectionPos);
 	}
 
 	assert(false);

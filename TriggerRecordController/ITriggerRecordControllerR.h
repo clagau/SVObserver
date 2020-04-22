@@ -74,15 +74,30 @@ namespace SvTrc
 
 		/// Return a list of the image definitions.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		/// \param inspectionPos [in] ID of the inspection.
+		/// \param inspectionPos [in] Position of the inspection.
 		/// \returns const SvPb::ImageList&
 		virtual const SvPb::ImageList& getImageDefList(int inspectionPos) = 0;
 
+		/// Return a list of objectId -> position of image.
+		/// \param inspectionPos [in] Position of the inspection
+		/// \returns const std::unordered_map<uint32_t, int>&
+		virtual const std::unordered_map<uint32_t, int>& getImageDefMap(int inspectionPos) = 0;
+
+		/// Return a list of objectId -> position of childimage.
+		/// \param inspectionPos [in] Position of the inspection
+		/// \returns const std::unordered_map<uint32_t, int>&
+		virtual const std::unordered_map<uint32_t, int>& getChildImageDefMap(int inspectionPos) = 0;
+
 		/// Return a list of the data definitions.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		/// \param inspectionPos [in] ID of the inspection.
+		/// \param inspectionPos [in] Position of the inspection.
 		/// \returns const SvPb::DataDefinitionList&
 		virtual const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) = 0;
+
+		/// Return a list of objectId -> position of the data.
+		/// \param inspectionPos [in] Position of the inspection.
+		/// \returns const std::unordered_map<uint32_t, int>&
+		virtual const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) = 0;
 
 		/// Create a trigger record instance from trigger record with trigger record ID, if it exist.
 		/// \param inspectionPos [in] ID of the inspection.

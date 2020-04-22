@@ -143,6 +143,34 @@ const SvPb::ImageList& DataControllerBase::getImageDefList(int inspectionPos, bo
 	Exception.Throw();
 }
 
+const std::unordered_map<uint32_t, int>& DataControllerBase::getImageMap(int inspectionPos) const
+{
+	auto* pData = getTRControllerData(inspectionPos);
+	assert(nullptr != pData);
+	if (nullptr != pData && pData->getBasicData().m_bInit)
+	{
+		return pData->getImageMap();
+	}
+
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
+const std::unordered_map<uint32_t, int>& DataControllerBase::getChildImageMap(int inspectionPos) const
+{
+	auto* pData = getTRControllerData(inspectionPos);
+	assert(nullptr != pData);
+	if (nullptr != pData && pData->getBasicData().m_bInit)
+	{
+		return pData->getChildImageMap();
+	}
+
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
 int DataControllerBase::getTriggerRecordNumber(int inspectionPos) const
 {
 	auto* pData = getTRControllerData(inspectionPos);
@@ -160,6 +188,20 @@ const SvPb::DataDefinitionList& DataControllerBase::getDataDefList(int inspectio
 	if (nullptr != pData && pData->getBasicData().m_bInit)
 	{
 		return pData->getDataList();
+	}
+
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
+}
+
+const std::unordered_map<uint32_t, int>& DataControllerBase::getDataDefMap(int inspectionPos) const
+{
+	auto* pData = getTRControllerData(inspectionPos);
+	assert(nullptr != pData);
+	if (nullptr != pData && pData->getBasicData().m_bInit)
+	{
+		return pData->getDataMap();
 	}
 
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);

@@ -122,7 +122,10 @@ public:
 	virtual void setLastSetOfInterestFlagPos(int pos) = 0;
 	virtual TriggerRecordData& getTRData(int pos) const = 0;
 	virtual const SvPb::ImageList& getImageList() const = 0;
+	const std::unordered_map<uint32_t, int>& getImageMap() const { return m_ImageDefMap; };
+	const std::unordered_map<uint32_t, int>& getChildImageMap() const { return m_ChildImageDefMap; };
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
+	const std::unordered_map<uint32_t, int>& getDataMap() const { return m_DataDefMap; };
 	virtual void createTriggerRecordsBuffer(int trNumbers) { assert(false); throw E_NOTIMPL; };
 	virtual void resetFreeTrNumber() {};
 	virtual void increaseFreeTrNumber() {};
@@ -133,7 +136,11 @@ public:
 
 protected:
 	int getNumberOfTRKeepFreeForWrite() const;
-private:
+
+protected:
+	std::unordered_map<uint32_t, int> m_ImageDefMap;
+	std::unordered_map<uint32_t, int> m_ChildImageDefMap;
+	std::unordered_map<uint32_t, int> m_DataDefMap;
 };
 
 class DataControllerBase
@@ -167,6 +174,8 @@ public:
 	/// \param onlyIfInit [in] If true it checked if inspection is initialized and not initialized throw an exception. If false not check if initialized.
 	/// \returns const SvPb::ImageList&
 	const SvPb::ImageList& getImageDefList(int inspectionPos, bool onlyIfInit = true) const;
+	const std::unordered_map<uint32_t, int>& getImageMap(int inspectionPos) const;
+	const std::unordered_map<uint32_t, int>& getChildImageMap(int inspectionPos) const;
 	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) { assert(false); throw E_NOTIMPL; };
 
 	virtual const SvPb::ImageStructList& getImageStructList() const = 0;
@@ -180,6 +189,7 @@ public:
 	int getTriggerRecordNumber(int inspectionPos) const;
 
 	const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) const;
+	const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) const;
 	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos) { assert(false); throw E_NOTIMPL; };
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;

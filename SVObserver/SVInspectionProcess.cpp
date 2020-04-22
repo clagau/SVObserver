@@ -637,9 +637,10 @@ bool SVInspectionProcess::CanGoOnline()
 			m_trcPos = SvTrc::getInspectionPos(getObjectId());
 		}
 		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, m_trcPos);
-		const SvPb::DataDefinitionList& rDataDefList = SvTrc::getTriggerRecordControllerRInstance().getDataDefList(m_trcPos);
-		const SvPb::ImageList& rImageDefList = SvTrc::getTriggerRecordControllerRInstance().getImageDefList(m_trcPos);
-		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefList, rImageDefList);
+		const auto& rDataDefMap = SvTrc::getTriggerRecordControllerRInstance().getDataDefMap(m_trcPos);
+		const auto& rImageMap = SvTrc::getTriggerRecordControllerRInstance().getImageDefMap(m_trcPos);
+		const auto& rChildImageMap = SvTrc::getTriggerRecordControllerRInstance().getChildImageDefMap(m_trcPos);
+		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefMap, rImageMap, rChildImageMap);
 	}
 
 	return l_bOk;

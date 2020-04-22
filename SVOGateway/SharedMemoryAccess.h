@@ -88,8 +88,8 @@ private:
 	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedField<uint32_t>& valueIds, const std::vector<int>& valuePositions);
 	void rebuild_trc_pos_caches();
 	void rebuild_trc_pos_cache(product_stream_t&);
-	void collect_value_pos(std::vector<int>&, const SvPb::DataDefinitionList&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
-	void collect_image_pos(std::vector<int>&, const SvPb::ImageList&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
+	void collect_value_pos(std::vector<int>&, const std::unordered_map<uint32_t, int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
+	void collect_image_pos(std::vector<int>&, const std::unordered_map<uint32_t,int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
 
 private:
 	struct notification_stream_t

@@ -28,7 +28,7 @@ public:
 	BasicData& getMutableBasicData() { return m_basicData; };
 	void setLastFinishedTRID(int id) override { m_basicData.m_lastFinishedTRID = id; };
 	void setLastSetOfInterestFlagPos(int pos) override { m_basicData.m_lastSetOfInterestFlagPos = pos; };
-	void setDataDefList(SvPb::DataDefinitionList&& dataDefList)	{ m_DataDefList.Swap(&dataDefList);	}
+	void setDataDefList(SvPb::DataDefinitionList&& dataDefList);
 	const SvPb::DataDefinitionList& getDataDefList() const { return m_DataDefList; };
 	int getLastStartedTRID() const { return m_lastStartedTRID; };
 	void setLastStartedTRID(int id) { m_lastStartedTRID = id; };
@@ -38,7 +38,7 @@ public:
 	const SvPb::ImageList& getImageList() const override { return m_ImageList; };
 	const SvPb::DataDefinitionList& getDataList() const override { return m_DataDefList; };
 	SvPb::ImageList& getMutableImageList() { return m_ImageList; };
-	void setImageList(SvPb::ImageList&& imageList) { m_ImageList = imageList; };
+	void setImageList(SvPb::ImageList&& imageList);
 	void* getTriggerRecords() { return m_pTriggerRecords; };
 	virtual void createTriggerRecordsBuffer(int trNumbers) override;
 	void setTriggerRecords(void* pTR);

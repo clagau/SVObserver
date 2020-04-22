@@ -421,8 +421,8 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 	std::vector<int> valuePositions;
 	try
 	{
-		collect_image_pos(imagePositions, trc.getImageDefList(inspectionPos), req.imageids());
-		collect_value_pos(valuePositions, trc.getDataDefList(inspectionPos), req.valueids());
+		collect_image_pos(imagePositions, trc.getImageDefMap(inspectionPos), req.imageids());
+		collect_value_pos(valuePositions, trc.getDataDefMap(inspectionPos), req.valueids());
 	}
 	catch (...)
 	{
@@ -540,8 +540,8 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 		int inspectionPos = get_inspection_pos_for_id(trc, stream.req.inspectionid());
 		if (inspectionPos >= 0)
 		{
-			collect_value_pos(stream.valuePositions, trc.getDataDefList(inspectionPos), stream.req.valueids());
-			collect_image_pos(stream.imagePositions, trc.getImageDefList(inspectionPos), stream.req.imageids());
+			collect_value_pos(stream.valuePositions, trc.getDataDefMap(inspectionPos), stream.req.valueids());
+			collect_image_pos(stream.imagePositions, trc.getImageDefMap(inspectionPos), stream.req.imageids());
 		}
 	}
 	catch (...)
@@ -552,114 +552,49 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 	}
 }
 
-void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const SvPb::DataDefinitionList& dataDefList, const ::google::protobuf::RepeatedField<uint32_t>& ids)
+void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const std::unordered_map<uint32_t, int>& dataDefMap, const ::google::protobuf::RepeatedField<uint32_t>& ids)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)	
 	DWORD tick = ::GetTickCount();
+	int notfound = 0;
 #endif 
 	positions.clear();
-	int dataDefListSize = dataDefList.list().size();
-	int idsSize = ids.size();
-	/*
-	In the next section, all entries from the ids list, are searched
-	in the dataDefList. Finding a value in a map is much faster, 
-	then finding a value in an unordered list.
-	Therefore, if the number of entries to be searched is large enough, 
-	the required total time is shorter,
-	when first a map from the dataDefList is generated.
-	Therefore, there are two different algorithms to search for the entries below.
-	Due to a lack of more precise knowledge, the number of ids  from witch, 
-	it is better to sort before, was roughly estimated as
-	0.25 times  the number of element in the dataDeflist.
-	*/
-	if (idsSize > 0.25 * dataDefListSize)
+	
+	for (auto id : ids)
 	{
-		std::unordered_map<uint32_t, int> posMap;
-		for (int j = 0; j < dataDefListSize; j++)
+		auto it = dataDefMap.find(id);
+		if (it != dataDefMap.end())
 		{
-			posMap[dataDefList.list().at(j).objectid()] = j;
-
+			positions.push_back(it->second);
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
-		int notfound = 0;
-#endif 
-		for (int i = 0; i < idsSize; i++)
+		else
 		{
-			auto it = posMap.find(ids.at(i));
-			if (it != posMap.end())
+			if (notfound < 3)
 			{
-				positions.push_back(it->second);
+				std::stringstream traceStream;
+				traceStream << "Error collect_value_pos with id " << id << std::endl;
+				OutputDebugString(traceStream.str().c_str());
+				//uncomment the next line to enable error reporting to cmd window
+				//SV_LOG_GLOBAL(info) << traceStream.str();
 			}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
-			else
-			{
-				if (notfound < 3)
-				{
-					std::stringstream traceStream;
-					traceStream << "Error collect_value_pos with id " << ids.at(i) << std::endl;
-					OutputDebugString(traceStream.str().c_str());
-					//uncomment the next line to enable error reporting to cmd window
-					//SV_LOG_GLOBAL(info) << traceStream.str();
-				}
-				notfound++;
-			}
+			notfound++;
+		}
 #endif
-		}
+	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
-		tick = ::GetTickCount() - tick;
-		std::stringstream traceStream;
-		traceStream << "Ticks needed for  collect_value_pos: " << tick << " idsSize: " << idsSize << " DataDefinitionListSize: " <<
-			dataDefListSize << " notfound: " << notfound << std::endl;
-		
-		OutputDebugString(traceStream.str().c_str());
-		//uncomment the next line to enable error reporting to cmd window
-		//SV_LOG_GLOBAL(info) << traceStream.str();
+	tick = ::GetTickCount() - tick;
+	std::stringstream traceStream;
+	traceStream << "Ticks needed for  collect_value_pos: " << tick << " idsSize: " << ids.size() << " dataDefMap: " <<
+		dataDefMap.size() << " notfound: " << notfound << std::endl;
+
+	OutputDebugString(traceStream.str().c_str());
+	//uncomment the next line to enable error reporting to cmd window
+	//SV_LOG_GLOBAL(info) << traceStream.str();
 #endif 	
-	}
-	else
-	{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
-		tick = ::GetTickCount();
-		int notfound {0};
-#endif
-		for (const auto& id : ids)
-		{
-			const auto pos = SvTrc::findObjectIdPos(dataDefList.list(), id);
-			if (pos >= 0)
-			{
-				positions.push_back(pos);
-			}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
-			else
-			{
-
-				if (notfound < 3)
-				{
-
-					std::stringstream traceStream;
-					traceStream << "Error collect_value_pos with id " << id << std::endl;
-					//uncomment the next line to enable error reporting to cmd window
-					//SV_LOG_GLOBAL(info) << traceStream.str();
-					OutputDebugString(traceStream.str().c_str());
-				}
-				notfound++;
-			}
-#endif 
-
-		}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
-		tick = ::GetTickCount() - tick;
-		std::stringstream traceStream;
-		traceStream << "Ticks needed for  collect_value_pos 2: " << tick << " idsSize: " << idsSize << " DataDefinitionListSize: " <<
-			dataDefListSize << " notfound: " << notfound << std::endl;
-		OutputDebugString(traceStream.str().c_str());
-		//uncomment the next line to enable error reporting to cmd window
-		//SV_LOG_GLOBAL(info) << traceStream.str();
-#endif 
-	}
 }
 
-void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const SvPb::ImageList& imageList, const ::google::protobuf::RepeatedField<uint32_t>& ids)
+void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const std::unordered_map<uint32_t, int>& imageMap, const ::google::protobuf::RepeatedField<uint32_t>& ids)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 	DWORD tick = ::GetTickCount();
@@ -668,10 +603,10 @@ void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const Sv
 	positions.clear();
 	for (const auto& id : ids)
 	{
-		const auto pos = SvTrc::findObjectIdPos(imageList.list(), id);
-		if (pos >= 0)
+		auto iter = imageMap.find(id);
+		if (imageMap.end() != iter)
 		{
-			positions.push_back(pos);
+			positions.push_back(iter->second);
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 		else
@@ -691,8 +626,8 @@ void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const Sv
 	tick = ::GetTickCount() - tick;
 	std::stringstream traceStream;
 
-	traceStream << "Ticks collect_image_pos: " << tick << " idsSize: " << ids.size() << " DataDefinitionListSize: " <<
-		imageList.list().size() << " notfound: " << notfound << std::endl;
+	traceStream << "Ticks collect_image_pos: " << tick << " idsSize: " << ids.size() << " ImageMap: " <<
+		imageMap.size() << " notfound: " << notfound << std::endl;
 	OutputDebugString(traceStream.str().c_str());
 	//uncomment the next line to enable error reporting to cmd window
 	//SV_LOG_GLOBAL(info) << traceStream.str();
