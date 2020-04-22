@@ -97,7 +97,7 @@ BOOL ProductDlg::AppendProduct(SvSml::MLProduct* pProduct, int& line)
 	CString csobj, csvar, csize;
 
 	for (int item = 0; item < pProduct->m_dataEntries.size() &&
-		item < pProduct->m_data.size(); item++)
+		item < pProduct->m_dataV.size(); item++)
 	{
 		csobj.Format("%i", pProduct->m_dataEntries[item].get()->data.ObjectType);
 		csvar.Format("%i", pProduct->m_dataEntries[item].get()->data.variant_type);
@@ -108,7 +108,8 @@ BOOL ProductDlg::AppendProduct(SvSml::MLProduct* pProduct, int& line)
 		m_ListCtrl.SetItemText(line, obj, csobj.GetString());
 		m_ListCtrl.SetItemText(line, var, csvar.GetString());
 		m_ListCtrl.SetItemText(line, size, csize.GetString());
-		m_ListCtrl.SetItemText(line++, data, pProduct->m_data[item].get()->c_str());
+		_bstr_t bstrTemp(pProduct->m_dataV[item].get());
+		m_ListCtrl.SetItemText(line++, data, LPCSTR(bstrTemp));
 	}
 	auto Nimage = pProduct->m_ImageEntries.size();
 	if (Nimage > 0)

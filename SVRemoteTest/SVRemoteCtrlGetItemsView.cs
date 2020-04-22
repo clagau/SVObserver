@@ -77,9 +77,21 @@ namespace SVRemoteTest
 
 				foreach (object o in val)
 				{
-					valueObj.Array.Add(o.ToString());
-				}
-				valueList.Add(valueObj);
+                   
+                    IEnumerable myList = o as IEnumerable;
+                    if (myList != null)
+                    {
+                        foreach (object element in myList)
+                        {
+                            valueObj.Array.Add(element.ToString());
+                        }
+                    }
+                    else
+                    {
+                        valueObj.Array.Add(o.ToString());
+                    }
+                }
+                valueList.Add(valueObj);
 			}
 			m_returnValue.Values = valueList;
 

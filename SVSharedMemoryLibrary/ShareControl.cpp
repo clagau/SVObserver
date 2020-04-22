@@ -17,6 +17,7 @@
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVProtoBuf/ConverterHelper.h"
 
 namespace SvSml
 {
@@ -334,12 +335,12 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 	pProductMsg->set_trigger((int)pProduct->m_trigger);
 	pProductMsg->set_status(SvPb::State::isValid);
 
-	for (int i = 0; i < pProduct->m_data.size(); i++)
+	for (int i = 0; i < pProduct->m_dataV.size(); i++)
 	{
 		auto pValue = pProductMsg->add_values();
-		//@Todo[MEC][8.00] [19.10.2017] use variant 
-		pValue->set_strval(pProduct->m_data[i]->c_str());
-		pValue->set_type(VT_BSTR);
+	
+		SvPb::ConvertVariantToProtobuf(pProduct->m_dataV[i].get(), pValue);
+	
 		if (nameInResponse)
 		{
 			*pProductMsg->add_valuenames() = SvUl::to_utf8(pProduct->m_dataEntries[i]->name);

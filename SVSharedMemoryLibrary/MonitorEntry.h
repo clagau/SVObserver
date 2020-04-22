@@ -69,12 +69,6 @@ namespace SvSml
 		void AddListItem(SvPb::QueryListItemResponse& rResp) const;
 		bool IsImage() const { return (data.ObjectType == SvPb::SVImageObjectType); };
 
-		/// Convert value to string.
-		/// \param value [in] Variant of the value.
-		/// \param arrayIndex [in] If variant not a safeArray, this must be -1, else it define the position of the value to return.
-		/// \returns std::string
-		static std::string convertValue(variant_t value, int arrayIndex = -1);
-
 	private:
 		template<class T>
 		static std::string convertValue(bool isArray, int arrayIndex, variant_t value)

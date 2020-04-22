@@ -480,6 +480,12 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -491,6 +497,12 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating c++ code from %(Identity)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(PATH_3RDPARTY)\protobuf\$(PROTOBUF_VER)\bin\protoc.exe -I="$(MSBuildProjectDirectory)"  --cpp_out="$(MSBuildProjectDirectory)"  "$(MSBuildProjectDirectory)\%(Identity)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating c++ code from %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating c++ code from %(Identity)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).pb.cc;%(Filename).pb.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -13,7 +13,7 @@
 
 namespace SvSml
 {
-	typedef std::unique_ptr<std::string>  stringpointer;
+	
 	/// struct holds result data for getProduct or getReject values 
 	struct MLProduct
 	{
@@ -27,7 +27,7 @@ namespace SvSml
 		
 		std::vector<MonitorEntryPointer> m_dataEntries;
 		std::vector<MonitorEntryPointer> m_ImageEntries;
-		std::vector<stringpointer> m_data; //< data values as string 
+		std::vector<std::unique_ptr<_variant_t>> m_dataV; //< data values as Variant 
 		std::map<int, SvTrc::ITriggerRecordRPtr> m_triggerRecordMap; //first is monitorId for inspection
 	};
 	typedef std::unique_ptr<MLProduct> pProd;

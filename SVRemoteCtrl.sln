@@ -32,6 +32,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVStatusLibrary", "SVStatusLibrary\SVStatusLibrary.vcxproj", "{AA20BDB8-15C0-43EB-83B5-6FC716849F13}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVUtilityLibrary", "SVUtilityLibrary\SVUtilityLibrary.vcxproj", "{B022279A-59CD-41C3-9EA5-F9721FECAFDD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

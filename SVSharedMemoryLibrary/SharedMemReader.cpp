@@ -159,9 +159,19 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	{
 		auto pTr = pProduct->m_triggerRecordMap[mep->data.InspectionStoreId];
 		variant_t valueV = (nullptr != pTr) ? pTr->getDataValue(mep->data.m_triggerRecordPos) : variant_t();
-		std::string value = MonitorEntry::convertValue(valueV, mep->data.arrayIndex);
-		pProduct->m_data.push_back(stringpointer(new std::string(value)));
-		pProduct->m_dataEntries.push_back(mep);
+		bool isArray = (VT_ARRAY == (valueV.vt & VT_ARRAY));
+		if (isArray && mep->data.arrayIndex >= 0)
+		{
+			std::unique_ptr<_variant_t> TempVariant(new _variant_t);
+			SvUl::getSingleVariantFromArrayOneDim<_variant_t>(valueV, mep->data.arrayIndex, *TempVariant.get());
+			pProduct->m_dataV.push_back( std::move(TempVariant) );
+			pProduct->m_dataEntries.push_back(mep);
+		}
+		else
+		{
+			pProduct->m_dataV.push_back(std::make_unique<_variant_t>(valueV));
+			pProduct->m_dataEntries.push_back(mep);
+		}
 	}
 	const MonitorEntries& ProdImageEntries = pML->GetMonitorEntries(ListType::productItemsImage);
 	if (!par.failstatus)

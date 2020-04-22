@@ -408,6 +408,7 @@ HRESULT SVControlCommands::GetItems(CComVariant ItemNames, ISVProductItems** ppI
 		SvPb::GetItemsResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
 			&SvWsl::SVRCClientService::GetItems,
 			std::move(Request)).get();
+		
 
 		GetItemsPtr(Response)->QueryInterface(IID_ISVProductItems, reinterpret_cast<void**>(ppItems));
 
@@ -923,6 +924,7 @@ HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCoun
 		Request.set_nameinresponse(true);
 		SvPb::GetProductResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(), &SvWsl::SVRCClientService::GetProduct, std::move(Request)).get();
 
+		
 		Result = static_cast<HRESULT> (Response.productitem().status());
 		if (Response.productitem().status() == SvPb::State::isValid)
 		{
