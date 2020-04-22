@@ -455,7 +455,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 		{
 			try
 			{
-				uint32_t ImageId = std::stoul(rEntry);
+				uint32_t ImageId = calcObjectId(rEntry);
 				bool isSelected = rSelectedList.end() != std::find(rSelectedList.begin(), rSelectedList.end(), rEntry);
 				if (!checkImageMemory(ImageId, isSelected))
 				{
