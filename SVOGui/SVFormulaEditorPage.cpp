@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_LOCAL_VARIABLE_SELECT, OnLocalVariableSelect)
 	ON_BN_CLICKED(IDC_DISABLE_EQUATION, OnDisable)
 	ON_BN_CLICKED(IDC_DISABLE_TOOL, OnDisable)
+	ON_BN_CLICKED(IDC_EDITMODE_FREEZE, OnEditFreezeFlag)
 	ON_NOTIFY(SCN_UPDATEUI, IDC_MATHCOND_EDITOR, OnEquationFieldChanged)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -67,8 +68,6 @@ SVFormulaEditorPageClass::SVFormulaEditorPageClass(SvOi::IFormulaControllerPtr c
 	, m_ConstantValue(_T(""))
 	, m_constantType(0)
 	, m_ToolsetOutputVariable(_T(""))
-	, m_equationDisabled(false)
-	, m_ownerDisabled(false)
 {
 }
 
@@ -90,11 +89,13 @@ void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BINARY, m_binaryRadioButton);
 	DDX_Control(pDX, IDC_DISABLE_EQUATION, m_DisableEquationCtrl);
 	DDX_Control(pDX, IDC_DISABLE_TOOL, m_DisableToolCtrl);
+	DDX_Control(pDX, IDC_EDITMODE_FREEZE, m_EditModeFreezeCtrl);
 	DDX_Text(pDX, IDC_CONSTANT_EDIT, m_ConstantValue);
 	DDX_Radio(pDX, IDC_DECIMAL, m_constantType);
 	DDX_Text(pDX, IDC_LOCAL_VARIABLE_EDIT_CTRL, m_ToolsetOutputVariable);
 	DDX_Check(pDX, IDC_DISABLE_EQUATION, m_equationDisabled);
 	DDX_Check(pDX, IDC_DISABLE_TOOL, m_ownerDisabled);
+	DDX_Check(pDX, IDC_EDITMODE_FREEZE, m_editModeFreezeFlag);
 	//}}AFX_DATA_MAP
 }
 
@@ -124,7 +125,7 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	createToolbars();
 
 	std::string DisableText = SvUl::LoadStdString(IDS_DISABLE_STRING) + _T(" ") + SvUl::LoadStdString(m_disableExtentionID);
-	GetDlgItem(IDC_DISABLE_TOOL)->SetWindowText(DisableText.c_str());
+	m_DisableToolCtrl.SetWindowText(DisableText.c_str());
 
 	setEquationText();
 
@@ -132,6 +133,7 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	{
 		m_DisableEquationCtrl.ShowWindow(SW_HIDE);
 		m_DisableToolCtrl.ShowWindow(SW_HIDE);
+		m_EditModeFreezeCtrl.ShowWindow(SW_HIDE);
 		SetHelpID(IDD_FORMULA_DIALOG);
 	}
 	else
@@ -140,10 +142,13 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 		m_DisableToolCtrl.ShowWindow(SW_SHOW);
 		if (IDS_CLASSNAME_SVTOOLSET == m_disableExtentionID)
 		{
+			m_EditModeFreezeCtrl.ShowWindow(SW_HIDE);
 			SetHelpID(IDD_CONDITIONAL_TOOLSET_PAGE);
 		}
 		else
 		{
+			m_EditModeFreezeCtrl.ShowWindow(SW_SHOW);
+			m_editModeFreezeFlag = m_FormulaController->getEditModeFreezeFlag();
 			SetHelpID(IDD_CONDITIONAL_PAGE);
 		}
 	}
@@ -454,6 +459,12 @@ void SVFormulaEditorPageClass::OnDisable()
 		m_FormulaController->SetOwnerAndEquationEnabled(enableOwner, enableEquation);
 		enableControls();
 	}
+}
+
+void SVFormulaEditorPageClass::OnEditFreezeFlag()
+{
+	UpdateData(TRUE);
+	m_FormulaController->setEditModeFreezeFlag(TRUE == m_editModeFreezeFlag);
 }
 
 //The function length breaks the programming guidelines, but it is only one switch statement.

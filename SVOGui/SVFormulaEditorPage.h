@@ -43,8 +43,10 @@ namespace SvOg
 		CButton	m_ToolsetOutputSelectButton;
 		CButton m_DisableEquationCtrl;
 		CButton m_DisableToolCtrl;
-		BOOL	m_equationDisabled;
-		BOOL	m_ownerDisabled;
+		CButton m_EditModeFreezeCtrl;
+		BOOL	m_equationDisabled{ false };
+		BOOL	m_ownerDisabled{ false };
+		BOOL	m_editModeFreezeFlag{ false };
 		//}}AFX_DATA
 
 	protected:
@@ -80,6 +82,7 @@ namespace SvOg
 		virtual BOOL OnInitDialog() override;
 		afx_msg void OnLocalVariableSelect();
 		afx_msg void OnDisable();
+		afx_msg void OnEditFreezeFlag();
 		afx_msg void OnEquationFieldChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
 		virtual BOOL OnKillActive( ) override;
 		//}}AFX_MSG

@@ -381,14 +381,6 @@ HRESULT SVToolSetClass::getResetCounts(bool& rResetCounts)  const
 	return Result;
 }
 
-void SVToolSetClass::goingOffline()
-{
-	for (SVTaskObjectPtrVector::const_iterator l_Iter = m_TaskObjectVector.begin(); l_Iter != m_TaskObjectVector.end(); ++l_Iter)
-	{
-		(*l_Iter)->goingOffline();
-	}
-}
-
 long SVToolSetClass::getTriggerCount() const
 {
 	long count = 0;

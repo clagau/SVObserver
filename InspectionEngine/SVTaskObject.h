@@ -119,9 +119,6 @@ public:
 
 	bool IsRunErrorMessageEmpty() { return m_RunErrorMessages.empty(); };
 
-	/// Preparing to go offline. Is used e.g. by the Archive Tool.
-	virtual void goingOffline() {};
-
 	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject) override;
 
 	/// Set the flag, that the first friend (is normally the conditional task, if it is a tool) should be skipped in runFriends.
@@ -187,6 +184,9 @@ public:
 
 	virtual HRESULT RegisterSubObject(SVObjectClass* pObject) override;
 	virtual HRESULT UnregisterSubObject(SVObjectClass* pObject) override;
+	virtual void setEditModeFreezeFlag(bool flag) override;
+	virtual void copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr) override;
+	virtual void goingOffline() override;
 
 	virtual HRESULT CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray);
 	/// Collect all ShapeGroups for this overlay in the protoBuf-message and return it.

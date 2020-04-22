@@ -776,6 +776,7 @@ enum EmbeddedIdEnum
 	ConditionalResultEId = 149;
 	MathEquationResultEId = 150;
 	LinearEdgesEId = 151;
+	ConditionalEditFreezeFlagEId = 152;
 	DPEdgeAEId = 156;
 	DPEdgeBEId = 157;
 	DPCenterEId = 158;

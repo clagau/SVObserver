@@ -31,7 +31,6 @@ public:
 	virtual int InsertBefore(uint32_t objectBeforeID, SVTaskObjectClass* pTaskObject) override;
 	virtual bool propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
-	virtual void goingOffline() override;
 
 private:
 	void BuildEmbeddedObjectList();

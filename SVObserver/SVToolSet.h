@@ -104,8 +104,6 @@ public:
 	void setTriggerPerObjectID(DWORD triggerPerObjectID) { m_TriggerPerObjectID.SetValue(triggerPerObjectID); }
 	void setInspectionname(std::string Inspectionname) { m_InspectionName.SetValue(Inspectionname);};
 
-	virtual void goingOffline() override;
-
 	long getTriggerCount() const;
 	SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const;
 

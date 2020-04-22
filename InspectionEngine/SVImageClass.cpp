@@ -1122,10 +1122,13 @@ SvTrc::IImagePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
 	if (nullptr == lastTriggerRecord && newIfNotAvailable)
 	{
 		return getTempImageBuffer();
-
 	}
-	assert(nullptr != lastTriggerRecord);
-	return getImageReadOnly(lastTriggerRecord.get());
+
+	if (nullptr != lastTriggerRecord)
+	{
+		return getImageReadOnly(lastTriggerRecord.get());
+	}
+	return nullptr;
 }
 
 SvTrc::IImagePtr SVImageClass::getTempImageBuffer(bool createBufferExternIfNecessary) const
@@ -1222,6 +1225,44 @@ HRESULT SVImageClass::GetChildObject(SVObjectClass*& rpObject, const SVObjectNam
 	}
 
 	return l_Status;
+}
+void SVImageClass::setEditModeFreezeFlag(bool flag)
+{
+	__super::setEditModeFreezeFlag(flag);
+	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
+	{
+		if (nullptr == m_savedBuffer)
+		{
+			copyCurrent2SaveImage();
+		}
+	}
+	else
+	{
+		m_savedBuffer = nullptr;
+		m_ImageInfoOfSavedBuffer = SVImageInfoClass();
+	}
+}
+
+void SVImageClass::goingOffline()
+{
+	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
+	{
+		copyCurrent2SaveImage();
+	}
+}
+
+void SVImageClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
+{
+	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
+	{
+		auto image = getImageToWrite(pTr);
+		assert(nullptr != m_savedBuffer && nullptr != image && !image->isEmpty());
+		if (nullptr != m_savedBuffer && nullptr != image && !image->isEmpty())
+		{
+			HRESULT result = SVMatroxBufferInterface::CopyBuffer(image->getHandle()->GetBuffer(), m_savedBuffer->GetBuffer());
+			assert(S_OK == result);
+		}
+	}
 }
 
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
@@ -1493,6 +1534,23 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 		}
 	}
 	return retValue;
+}
+
+void SVImageClass::copyCurrent2SaveImage()
+{
+	if (m_ImageInfoOfSavedBuffer != m_ImageInfo)
+	{
+		m_ImageInfoOfSavedBuffer = m_ImageInfo;
+		SVImageProcessingClass::CreateImageBuffer(m_ImageInfoOfSavedBuffer, m_savedBuffer);
+	}
+
+	auto image = getImageData();
+	assert(nullptr != m_savedBuffer);
+	if (nullptr != m_savedBuffer && nullptr != image)
+	{
+		HRESULT result = SVMatroxBufferInterface::CopyBuffer(m_savedBuffer->GetBuffer(), image->GetBuffer());
+		assert(S_OK == result);
+	}
 }
 
 } //namespace SvIe

@@ -229,6 +229,7 @@ protected:
 	SvVol::SVLongValueObjectClass m_ProcessedCount;
 
 	SvVol::SVLongValueObjectClass m_ToolPosition;
+	SvVol::SVBoolValueObjectClass m_editFreezeFlag;
 
 	// Embedded Objects for Extents
 	SvVol::SVDoubleValueObjectClass m_ExtentLeft;

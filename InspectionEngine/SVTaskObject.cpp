@@ -1903,6 +1903,66 @@ HRESULT SVTaskObjectClass::UnregisterSubObject(SVObjectClass* pObject)
 	return Result;
 }
 
+void SVTaskObjectClass::setEditModeFreezeFlag(bool flag)
+{
+	__super::setEditModeFreezeFlag(flag);
+	for (size_t i = 0; i < m_friendList.size(); ++i)
+	{
+		const SVObjectInfoStruct& rfriend = m_friendList[i];
+		if (nullptr != rfriend.getObject())
+		{
+			rfriend.getObject()->setEditModeFreezeFlag(flag);
+		}
+	}
+	for (auto* pEmbedded : m_embeddedList)
+	{
+		if (nullptr != pEmbedded)
+		{
+			pEmbedded->setEditModeFreezeFlag(flag);
+		}
+	}
+}
+
+void SVTaskObjectClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
+{
+	__super::copiedSavedImage(pTr);
+	for (size_t i = 0; i < m_friendList.size(); ++i)
+	{
+		const SVObjectInfoStruct& rfriend = m_friendList[i];
+		if (nullptr != rfriend.getObject())
+		{
+			rfriend.getObject()->copiedSavedImage(pTr);
+		}
+	}
+	for (auto* pEmbedded : m_embeddedList)
+	{
+		if (nullptr != pEmbedded)
+		{
+			pEmbedded->copiedSavedImage(pTr);
+		}
+	}
+}
+
+void SVTaskObjectClass::goingOffline()
+{
+	__super::goingOffline();
+	for (size_t i = 0; i < m_friendList.size(); ++i)
+	{
+		const SVObjectInfoStruct& rfriend = m_friendList[i];
+		if (nullptr != rfriend.getObject())
+		{
+			rfriend.getObject()->goingOffline();
+		}
+	}
+	for (auto* pEmbedded : m_embeddedList)
+	{
+		if (nullptr != pEmbedded)
+		{
+			pEmbedded->goingOffline();
+		}
+	}
+}
+
 //namespace
 //{
 struct local

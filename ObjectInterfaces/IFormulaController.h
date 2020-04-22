@@ -55,9 +55,11 @@ namespace SvOi
 		Set the state of the enable flags for owner and equation.
 		\param ownerEnabled [in] flag if owner (toolset/tool) is enabled.
 		\param equationEnabled [in] flag if equation is enabled.
-		\return HRESULT return S_OK if values a set.
 		**********/
-		virtual HRESULT SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) = 0;
+		virtual void SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) = 0;
+
+		virtual bool getEditModeFreezeFlag() const = 0;
+		virtual void setEditModeFreezeFlag(bool flag) = 0;
 
 		/// Validate a string and set the value if bSetValue is true.
 		/// \param equationString [in] the equation string.

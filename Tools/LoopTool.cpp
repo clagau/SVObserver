@@ -227,14 +227,6 @@ bool LoopTool::usePropagateSizeAndPosition() const
 	return false;
 }
 
-void LoopTool::goingOffline()
-{
-	for (auto ptaskObj : m_TaskObjectVector)
-	{
-		ptaskObj->goingOffline();
-	}
-}
-
 long  LoopTool::setToolPosition(long ToolPosition)
 {
 	long pos(ToolPosition);

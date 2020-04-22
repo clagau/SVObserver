@@ -111,6 +111,10 @@ public:
 	void GetOutputList(SVOutputInfoListClass& p_rOutputInfoList);
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
+	virtual void setEditModeFreezeFlag(bool flag) override;
+	virtual void goingOffline() override;
+
+	virtual void copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr) override;
 
 	bool isChildImageInTRC() const { return m_isChildImageInTRC; };
 
@@ -156,6 +160,7 @@ private:
 
 	void setInspectionPosForTrc();
 	bool UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages);
+	void copyCurrent2SaveImage();
 
 protected:
 	mutable double m_LastUpdate;
@@ -174,6 +179,8 @@ private:
 	mutable SVParentObjectPair m_ParentImageInfo;
 	SvVol::SVDoubleValueObjectClass m_width;
 	SvVol::SVDoubleValueObjectClass m_height;
+	SvOi::SVImageBufferHandlePtr m_savedBuffer;
+	SVImageInfoClass m_ImageInfoOfSavedBuffer;
 
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;

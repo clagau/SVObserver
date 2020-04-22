@@ -23,6 +23,7 @@
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVStatusLibrary/MessageContainer.h"
+#include "TriggerRecordController/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -143,6 +144,11 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
 
+	virtual void setEditModeFreezeFlag(bool flag) { m_editModeFreezeFlag = flag; };
+	/// Preparing to go offline. Is used e.g. by the Archive Tool and to save images if they are not done in edit mode.
+	virtual void goingOffline() {};
+	virtual void copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr) {};
+
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
 	virtual std::string GetCompleteName() const override;
@@ -239,6 +245,7 @@ protected:
 	SVOutObjectInfoStruct m_outObjectInfo;
 	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
 	SVObjectInfoArrayClass m_friendList;
+	bool m_editModeFreezeFlag = false;
 
 private:
 	void init();

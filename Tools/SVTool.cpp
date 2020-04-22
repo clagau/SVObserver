@@ -69,6 +69,7 @@ void SVToolClass::init()
 	RegisterEmbeddedObject(&m_ToolPosition, SvPb::ToolPositionEId, IDS_OBJECTNAME_TOOL_POSITION, false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(&m_ToolTime, SvPb::ToolTimeEId, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_editFreezeFlag, SvPb::ConditionalEditFreezeFlagEId, IDS_OBJECTNAME_EDITMODE_FREEZEFLAG, false, SvOi::SVResetItemNone);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Extents - These are shadows of the extents in the SVImageInfoClass,
@@ -147,6 +148,7 @@ void SVToolClass::init()
 	m_ToolPosition.setSaveValueFlag(false);
 	m_ToolTime.SetDefaultValue(0LL, true);
 	m_ToolTime.setSaveValueFlag(false);
+	m_editFreezeFlag.SetDefaultValue(BOOL(false), false);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Set Default values for Shadowed Extents
@@ -294,6 +296,10 @@ bool SVToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInf
 
 bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
 {
+	BOOL freezeFlag(false);
+	m_editFreezeFlag.GetValue(freezeFlag);
+	setEditModeFreezeFlag(TRUE == freezeFlag);
+
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
 	return result;
@@ -466,7 +472,23 @@ bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVecto
 	bool retVal = true;
 	clearRunErrorMessages();
 	m_ToolTime.Start();
-	if (IsEnabled())
+	bool isEnabled = IsEnabled();
+	BOOL freezeFlag(false);
+	m_editFreezeFlag.GetValue(freezeFlag);
+	if (TRUE == freezeFlag && isEnabled)
+	{
+		if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+		{
+			assert(rRunStatus.m_triggerRecord);
+			if (nullptr != rRunStatus.m_triggerRecord)
+			{
+				copiedSavedImage(rRunStatus.m_triggerRecord);
+			}
+			isEnabled = false;
+		}
+	}
+	
+	if (isEnabled)
 	{
 		if (rRunStatus.m_UpdateCounters)
 		{

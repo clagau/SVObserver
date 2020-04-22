@@ -170,9 +170,8 @@ HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& e
 	return S_OK;
 }
 
-HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled)
+void FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled)
 {
-	HRESULT hr = S_OK;
 	if (m_isConditional)
 	{
 		m_Values.Set<bool>(m_EnableID, ownerEnabled);
@@ -180,7 +179,24 @@ HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool eq
 		m_Values.Commit();
 		m_EquationValues.Commit();
 	}
-	return hr;
+}
+
+bool FormulaController::getEditModeFreezeFlag() const
+{
+	if (m_isConditional)
+	{
+		return m_Values.Get<bool>(SvPb::ConditionalEditFreezeFlagEId);
+	}
+	return false;
+}
+
+void FormulaController::setEditModeFreezeFlag(bool flag)
+{
+	if (m_isConditional)
+	{
+		m_Values.Set<bool>(SvPb::ConditionalEditFreezeFlagEId, flag);
+		m_Values.Commit();
+	}
 }
 
 int FormulaController::ValidateEquation(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const

@@ -439,6 +439,42 @@ const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 	return newName;
 }
 
+void SVTaskObjectListClass::setEditModeFreezeFlag(bool flag)
+{
+	__super::setEditModeFreezeFlag(flag);
+	for (auto* pTasks : m_TaskObjectVector)
+	{
+		if (nullptr != pTasks)
+		{
+			pTasks->setEditModeFreezeFlag(flag);
+		}
+	}
+}
+
+void SVTaskObjectListClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
+{
+	__super::copiedSavedImage(pTr);
+	for (auto* pTasks : m_TaskObjectVector)
+	{
+		if (nullptr != pTasks)
+		{
+			pTasks->copiedSavedImage(pTr);
+		}
+	}
+}
+
+void SVTaskObjectListClass::goingOffline()
+{
+	__super::goingOffline();
+	for (auto* pTasks : m_TaskObjectVector)
+	{
+		if (nullptr != pTasks)
+		{
+			pTasks->goingOffline();
+		}
+	}
+}
+
 HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
 {
 	HRESULT hrRet = SVTaskObjectClass::CollectOverlays(p_Image,p_MultiLineArray);

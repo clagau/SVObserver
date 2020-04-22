@@ -47,7 +47,9 @@ public:
 	virtual void BuildSelectableItems() override;
 
 	virtual HRESULT IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const override;
-	virtual HRESULT SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) override;
+	virtual void SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) override;
+	virtual bool getEditModeFreezeFlag() const override;
+	virtual void setEditModeFreezeFlag(bool flag) override;
 
 	//**********
 	/// Validate an equationstring
