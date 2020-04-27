@@ -587,15 +587,10 @@ HRESULT SVMatroxGige::CameraGetFormat( unsigned long channel, int &p_riFormat )
 
 		switch( l_rCamera.m_params.Format )
 		{
-			case SvDef::SVImageFormatMono16:
-			case SvDef::SVImageFormatRGB888:
-			case SvDef::SVImageFormatRGB8888:
-			case SvDef::SVImageFormatRGB161616:
-			case SvDef::SVImageFormatY411:
-			case SvDef::SVImageFormatY422:
-			case SvDef::SVImageFormatY444:
+			case SvDef::SVImageFormatBGR888:
+			case SvDef::SVImageFormatBGR888X:
 			{
-				p_riFormat = SvDef::SVImageFormatRGB8888;
+				p_riFormat = SvDef::SVImageFormatBGR888X;
 				break;
 			}
 			default:
@@ -991,7 +986,7 @@ HRESULT SVMatroxGige::ReadCameraFormat(SVMatroxGigeDigitizer& p_rCamera)
 				break;
 
 			case 32:
-				p_rCamera.m_params.Format = SvDef::SVImageFormatRGB8888;
+				p_rCamera.m_params.Format = SvDef::SVImageFormatBGR888X;
 				break;
 		}
 		hr = S_OK;

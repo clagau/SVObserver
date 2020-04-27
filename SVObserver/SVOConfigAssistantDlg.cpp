@@ -1484,7 +1484,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					_variant_t heightVar = pCameraObj->GetFileImageHeight();
 
 					// Only 2 formats supported 32Bit color and 8Bit grayscale
-					long format = (pCameraObj->IsColor()) ? SvDef::SVImageFormatRGB8888 : SvDef::SVImageFormatMono8;
+					long format = (pCameraObj->IsColor()) ? SvDef::SVImageFormatBGR888X : SvDef::SVImageFormatMono8;
 					_variant_t formatVar = format;
 
 					deviceParams.CreateParameter(DeviceParamFileAcqImageFileName, fileNameVar);

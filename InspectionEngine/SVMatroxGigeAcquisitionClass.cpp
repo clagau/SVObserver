@@ -637,7 +637,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 
 	// Band number depends on video type...
 	unsigned long uiBandNumber = 1;
-	if ( iFormat == SvDef::SVImageFormatRGB888 || iFormat == SvDef::SVImageFormatRGB8888 )
+	if ( iFormat == SvDef::SVImageFormatBGR888 || iFormat == SvDef::SVImageFormatBGR888X )
 	{
 		uiBandNumber = 3; // Only RGB uses more than 1 band.
 	}

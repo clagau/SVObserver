@@ -145,15 +145,10 @@ HRESULT SVFileAcquisitionDevice::CameraGetFormat( unsigned long index, int &p_ri
 	{
 		switch( m_cameras[index].GetImageFormat() )
 		{
-			case SvDef::SVImageFormatMono16:
-			case SvDef::SVImageFormatRGB888:
-			case SvDef::SVImageFormatRGB8888:
-			case SvDef::SVImageFormatRGB161616:
-			case SvDef::SVImageFormatY411:
-			case SvDef::SVImageFormatY422:
-			case SvDef::SVImageFormatY444:
+			case SvDef::SVImageFormatBGR888:
+			case SvDef::SVImageFormatBGR888X:
 			{
-				p_riFormat = SvDef::SVImageFormatRGB8888;
+				p_riFormat = SvDef::SVImageFormatBGR888X;
 
 				break;
 			}

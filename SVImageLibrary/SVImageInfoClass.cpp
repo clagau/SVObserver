@@ -73,12 +73,12 @@ const SVImageInfoClass &SVImageInfoClass::operator=(const BITMAPINFOHEADER& p_rB
 	else
 		if (p_rBitmapHeader.biBitCount == 24)
 		{
-			l_iFormat = SvDef::SVImageFormatRGB888;
+			l_iFormat = SvDef::SVImageFormatBGR888;
 		}
 		else
 			if (p_rBitmapHeader.biBitCount == 32)
 			{
-				l_iFormat = SvDef::SVImageFormatRGB8888;
+				l_iFormat = SvDef::SVImageFormatBGR888X;
 			}
 	SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat);
 
@@ -459,12 +459,12 @@ long SVImageInfoClass::GetBufferSize()
 		{
 			break;
 		}
-		case SvDef::SVImageFormatRGB888:   // RGB
+		case SvDef::SVImageFormatBGR888:   // RGB
 		{
 			lDepth = 3;
 			break;
 		}
-		case SvDef::SVImageFormatRGB8888:  // RGB
+		case SvDef::SVImageFormatBGR888X:  // RGB
 		{
 			lDepth = 4;
 			break;
@@ -494,11 +494,11 @@ BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const
 	l_info.biBitCount = pixelDepth;
 
 	WORD wClrBits = 8;
-	if (format == SvDef::SVImageFormatRGB888)
+	if (format == SvDef::SVImageFormatBGR888)
 	{
 		wClrBits = 24;
 	}
-	else if (format == SvDef::SVImageFormatRGB8888)
+	else if (format == SvDef::SVImageFormatBGR888X)
 	{
 		wClrBits = 32;
 	}

@@ -112,14 +112,14 @@ struct SVColorTable <SvDef::SVImageFormatMono8>
 
 
 /**
-@SVObjectName SVColorTable<SvDef::SVImageFormatRGB888>
+@SVObjectName SVColorTable<SvDef::SVImageFormatBGR888>
 
 @SVObjectOverview This structure is used hold a non-existent RGB888 color table.  It is non-existant because all the color information is stored with each pixel.
 
 @SVObjectOperations There are no operations.
 */
 template <>
-struct SVColorTable <SvDef::SVImageFormatRGB888>
+struct SVColorTable <SvDef::SVImageFormatBGR888>
 {
 	enum { table_size = 0};
 
@@ -127,14 +127,14 @@ struct SVColorTable <SvDef::SVImageFormatRGB888>
 };
 
 /**
-@SVObjectName SVColorTable<SvDef::SVImageFormatRGB8888>
+@SVObjectName SVColorTable<SvDef::SVImageFormatBGR888X>
 
 @SVObjectOverview This structure is used hold a non-existent RGB8888 color table.  It is non-existant because all the color information is stored with each pixel.
 
 @SVObjectOperations There are no operations.
 */
 template <>
-struct SVColorTable <SvDef::SVImageFormatRGB8888>
+struct SVColorTable <SvDef::SVImageFormatBGR888X>
 {
 	enum { table_size = 0};
 

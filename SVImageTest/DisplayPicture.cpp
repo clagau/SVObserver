@@ -60,8 +60,8 @@ bool CDisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, in
 			break;
 		}
 
-		case SvDef::SVImageFormatRGB888:
-		case SvDef::SVImageFormatRGB8888:
+		case SvDef::SVImageFormatBGR888:
+		case SvDef::SVImageFormatBGR888X:
 		{
 			create.m_eAttribute = SVBufAttImageProcPackedOffBoardDibPagedBgr32;
 			SetImageDepth(create, 8);

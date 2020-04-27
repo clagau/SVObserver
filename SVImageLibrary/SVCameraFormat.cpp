@@ -125,7 +125,7 @@ HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const std::string& rCameraFo
 			 std::string::npos != sType.find(_T("YUV")) || 
 			 std::string::npos != sType.find(_T("Bayer")) )
 	{
-		m_eImageType = SvDef::SVImageFormatRGB8888;
+		m_eImageType = SvDef::SVImageFormatBGR888X;
 		m_bColor = true;
 	}
 	else if ( std::string::npos != sType.find(_T("Y_FORMAT_7"))  )

@@ -343,11 +343,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(LPCTSTR tstrImagePathName, SVIma
 
 				if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR24, l_DataFormat))
 				{
-					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB888);
+					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888);
 				}
 				else if (M_EQUIVALENT_INTERNAL_FORMAT(M_BGR32, l_DataFormat))
 				{
-					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
+					rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
 				}
 
 				rInfo.SetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, SVPoint<double>(0.0, 0.0));
@@ -441,11 +441,11 @@ HRESULT SVImageProcessingClass::LoadImageBuffer(void* pBuffer,
 		// and the pBits will fit.
 		if (pbmInfo->bmiHeader.biBitCount == 32)
 		{
-			rBufferInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
+			rBufferInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
 		}
 		if (pbmInfo->bmiHeader.biBitCount == 24)
 		{
-			rBufferInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB888);
+			rBufferInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888);
 		}
 
 		if (S_OK != CreateImageBuffer(rBufferInfo, rBufferHandle))
@@ -639,17 +639,12 @@ HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass&
 	{
 		switch (l_eFormat)
 		{
-			case SvDef::SVImageFormatRGB565:
-			{
-				format = rInfo.getDibBufferFlag() ? SVBuffAttImageProcPackedOffBoardDibPagedRgb16 : SVBuffAttImageProcPackedOffBoardPagedRgb16;
-				break;
-			}
-			case SvDef::SVImageFormatRGB888:
+			case SvDef::SVImageFormatBGR888:
 			{
 				format = rInfo.getDibBufferFlag() ? SVBuffAttImageProcPackedOffBoardDibPagedBgr24 : SVBuffAttImageProcPackedOffBoardPagedBgr24;
 				break;
 			}
-			case SvDef::SVImageFormatRGB8888:
+			case SvDef::SVImageFormatBGR888X:
 			{
 				format = rInfo.getDibBufferFlag() ? SVBufAttImageProcPackedOffBoardDibPagedBgr32 : SVBufAttImageProcPackedOffBoardPagedBgr32;
 				break;

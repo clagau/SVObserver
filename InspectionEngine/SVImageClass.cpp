@@ -935,7 +935,7 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* PDataObject)
 		long formatValue {0L};
 		m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, formatValue);
 		SvDef::SVImageFormatEnum imageFormat{static_cast<SvDef::SVImageFormatEnum> (formatValue)};
-		if(SvDef::SVImageFormatEnum::SVImageFormatRGB888 ==  imageFormat || SvDef::SVImageFormatEnum::SVImageFormatRGB8888 == imageFormat)
+		if(SvDef::SVImageFormatEnum::SVImageFormatBGR888 ==  imageFormat || SvDef::SVImageFormatEnum::SVImageFormatBGR888X == imageFormat)
 		{
 			if(cMonoBandNumber == BandNumber)
 			{

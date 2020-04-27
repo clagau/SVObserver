@@ -126,14 +126,8 @@ HRESULT SVImagePropertiesClass::GetImageProperty( SvDef::SVImagePropertyEnum p_e
 			{
 				case SvDef::SVImageFormatUnknown:
 				case SvDef::SVImageFormatMono8:
-				case SvDef::SVImageFormatMono16:
-				case SvDef::SVImageFormatMono32:
-				case SvDef::SVImageFormatRGB5551:
-				case SvDef::SVImageFormatRGB565:
-				case SvDef::SVImageFormatRGB888:
-				case SvDef::SVImageFormatRGB8888:
-				case SvDef::SVImageFormatRGB101010:
-				case SvDef::SVImageFormatRGB161616:
+				case SvDef::SVImageFormatBGR888:
+				case SvDef::SVImageFormatBGR888X:
 				{
 					p_rlValue = m_iFormat;
 
@@ -190,14 +184,8 @@ HRESULT SVImagePropertiesClass::SetImageProperty( SvDef::SVImagePropertyEnum p_e
 			{
 				case SvDef::SVImageFormatUnknown:
 				case SvDef::SVImageFormatMono8:
-				case SvDef::SVImageFormatMono16:
-				case SvDef::SVImageFormatMono32:
-				case SvDef::SVImageFormatRGB5551:
-				case SvDef::SVImageFormatRGB565:
-				case SvDef::SVImageFormatRGB888:
-				case SvDef::SVImageFormatRGB8888:
-				case SvDef::SVImageFormatRGB101010:
-				case SvDef::SVImageFormatRGB161616:
+				case SvDef::SVImageFormatBGR888:
+				case SvDef::SVImageFormatBGR888X:
 				{
 					m_iFormat = (int)p_lValue;
 

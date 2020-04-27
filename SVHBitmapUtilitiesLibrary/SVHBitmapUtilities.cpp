@@ -52,9 +52,9 @@ BITMAPINFO* SVIHBitmapUtilities::CreateBitmapInfoStruct( SVImageDefinitionStruct
 	BITMAPINFO* pbmi; 
 	WORD wClrBits = 8;
 	
-	if ( rImageDef.eImageFormat == SvDef::SVImageFormatRGB888 )
+	if ( rImageDef.eImageFormat == SvDef::SVImageFormatBGR888 )
 		wClrBits = 24;
-	else if ( rImageDef.eImageFormat == SvDef::SVImageFormatRGB8888 )
+	else if ( rImageDef.eImageFormat == SvDef::SVImageFormatBGR888X )
 		wClrBits = 32;
 	
 	// Allocate memory for the BITMAPINFO structure. (This structure 
@@ -120,7 +120,7 @@ HRESULT SVIHBitmapUtilities::SVImageInfoToImageDefinitionStruct( const BITMAPINF
 	else
 	if( rInfo.biBitCount == 32 )
 	{
-		rImageDef.eImageFormat = SvDef::SVImageFormatRGB8888;
+		rImageDef.eImageFormat = SvDef::SVImageFormatBGR888X;
 	}
 	else
 	{
@@ -148,9 +148,9 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 			memcpy(&(pbmInfo->bmiColors[0]), pColorTable, sizeof(RGBQUAD) * 256);
 			break;
 		}
-		case SvDef::SVImageFormatRGB888:
+		case SvDef::SVImageFormatBGR888:
 			break;
-		case SvDef::SVImageFormatRGB8888:
+		case SvDef::SVImageFormatBGR888X:
 			break;
 		case SvDef::SVImageFormatUnknown:
 			break;

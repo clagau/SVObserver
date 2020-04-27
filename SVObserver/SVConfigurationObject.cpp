@@ -1457,7 +1457,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 						// Band number depends on video type...
 						switch (cf.m_eImageType)
 						{
-							case SvDef::SVImageFormatRGB8888:  // RGB
+							case SvDef::SVImageFormatBGR888X:  // RGB
 							{
 								l_BandCount = 3;
 								break;

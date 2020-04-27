@@ -61,25 +61,8 @@ HRESULT SVMatroxGigeBufferCreator<Attribute>::BuildCreateStruct(unsigned long p_
 			rCreateStruct.m_eType = SV8BitUnsigned;
 			break;
 
-		case SvDef::SVImageFormatMono16:
-			rCreateStruct.m_lSizeBand = 1;
-			rCreateStruct.m_eType = SV16BitUnsigned;
-			break;
-
-		case SvDef::SVImageFormatRGB888:
-		case SvDef::SVImageFormatRGB8888:
-			rCreateStruct.m_lSizeBand = 3;
-			rCreateStruct.m_eType = SV8BitUnsigned;
-			break;
-
-		case SvDef::SVImageFormatRGB161616:
-			rCreateStruct.m_lSizeBand = 3;
-			rCreateStruct.m_eType = SV16BitUnsigned;
-			break;
-
-		case SvDef::SVImageFormatY411:
-		case SvDef::SVImageFormatY422:
-		case SvDef::SVImageFormatY444:
+		case SvDef::SVImageFormatBGR888:
+		case SvDef::SVImageFormatBGR888X:
 			rCreateStruct.m_lSizeBand = 3;
 			rCreateStruct.m_eType = SV8BitUnsigned;
 			break;

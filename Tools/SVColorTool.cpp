@@ -314,7 +314,7 @@ void SVColorToolClass::LocalInitialize()
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();
 	//! Set Output image to color
 	ImageInfo.SetOwner(getObjectId());
-	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatRGB8888);
+	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
 	m_LogicalROIImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);

@@ -2,7 +2,7 @@
 /// \copyright (c) 2016,2016 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
 //*****************************************************************************
-//Enums used in SVMatroxlibrrary moved from SVMatroxEnum.h to reduce dependends between header files 
+//Enums used in SVMatroxlibrary moved from SVMatroxEnum.h to reduce dependends between header files 
 //******************************************************************************
 #pragma once
 
@@ -34,8 +34,6 @@ enum SVMatroxBufferTypeEnum
 
 	SV32BitUnsigned			= 0x000000020,
 	SV32BitSigned			= SV32BitUnsigned | SVBufferSigned,
-
-	SV32BitFloat			= SV32BitUnsigned | SVBufferFloat,
 
 };
 
@@ -100,9 +98,6 @@ enum SVMatroxBufferAttributeEnum
 
 	// Mono8
 	//SVBuffAttImageProcPackedOffBoardDibPaged = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttNoFlip,
-	// RGB565
-	SVBuffAttImageProcPackedOffBoardPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
-	SVBuffAttImageProcPackedOffBoardDibPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttDib | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
 	// RGB888
 	SVBuffAttImageProcPackedOffBoardPagedBgr24 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttBgr24 | SVBufAttNoFlip,
 	SVBuffAttImageProcPackedOffBoardDibPagedBgr24 = SVBufAttImage | SVBufAttProc | SVBufAttDib | SVBufAttPacked | SVBufAttOffBoard | SVBufAttPaged | SVBufAttBgr24 | SVBufAttNoFlip,

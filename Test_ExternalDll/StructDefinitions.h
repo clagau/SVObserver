@@ -39,7 +39,7 @@ enum SVImageFormatEnum
 {
 	SVImageFormatUnknown = 0,
 	SVImageFormatMono8	 = 10,
-	SVImageFormatRGB8888 = 35
+	SVImageFormatBGR888X = 35
 };
 
 struct ImageDefinitionStruct

@@ -1321,8 +1321,8 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 
 	switch (pDefinitionStruct->eImageFormat)
 	{
-		case SvDef::SVImageFormatRGB888:
-		case SvDef::SVImageFormatRGB8888:
+		case SvDef::SVImageFormatBGR888:
+		case SvDef::SVImageFormatBGR888X:
 			rInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3);
 			break;
 		default:
@@ -1343,8 +1343,8 @@ HRESULT SVExternalToolTask::GetImageDefinitionStruct(SVImageDefinitionStruct& rI
 	rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, l_lFormat);
 	rInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber);
 
-	if ((rImageDef.eImageFormat == SvDef::SVImageFormatRGB888 ||
-		rImageDef.eImageFormat == SvDef::SVImageFormatRGB8888) &&
+	if ((rImageDef.eImageFormat == SvDef::SVImageFormatBGR888 ||
+		rImageDef.eImageFormat == SvDef::SVImageFormatBGR888X) &&
 		l_lBandNumber == 1)
 	{
 		rImageDef.eImageFormat = SvDef::SVImageFormatMono8;

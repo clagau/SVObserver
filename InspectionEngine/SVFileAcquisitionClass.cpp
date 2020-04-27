@@ -234,7 +234,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 			uiBandNumber = 1;
 			break;
 		}
-		case SvDef::SVImageFormatRGB8888:  // RGB
+		case SvDef::SVImageFormatBGR888X:  // RGB
 		{
 			uiBandNumber = 3;
 			break;
