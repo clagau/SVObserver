@@ -55,11 +55,19 @@ bool SVTimerValueObjectClass::Stop()
 	return S_OK == SetValue(static_cast<__int64> (Value));
 }
 
+
+void SVTimerValueObjectClass::setStandardFormatString()
+{
+	setOutputFormat(_T("%I64d (µs)"));
+}
+
+
 void SVTimerValueObjectClass::LocalInitialize()
 {
 	m_Start = SvTl::GetTimeStamp();
 	SetTypeName(_T("Timer"));
-	setOutputFormat(_T("%I64d (µs)"));
+	setStandardFormatString();
 }
+
 
 } //namespace SvVol

@@ -78,7 +78,7 @@ public:
 	virtual int32_t getMemOffset() const override { return 0L; }
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	virtual void updateMemBlockData() const override;
-	virtual bool isIndirectValue() const override { return false; };
+
 #pragma endregion virtual method (IObjectClass/IValueObject)
 
 	//************************************
@@ -141,7 +141,14 @@ public:
 	//************************************
 	inline LPCTSTR getDescription();
 
+	virtual bool isIndirectValue() const override { return false; };
+
 	virtual DWORD GetObjectColor() const override;
+
+	virtual void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+
+	void setStandardFormatString() override {} //not currently used in this class
+
 #pragma endregion Public Methods
 
 private:

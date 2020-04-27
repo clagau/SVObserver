@@ -123,12 +123,18 @@ void SVCharValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scDefaultTag, Value);
 }
 
+
+void SVCharValueObjectClass::setStandardFormatString()
+{
+	setOutputFormat(_T("%c"));
+}
+
 void SVCharValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVCharValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Char") );
-	setOutputFormat( _T("%c") );
+	setStandardFormatString();
 	init();
 }
 

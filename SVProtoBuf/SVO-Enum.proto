@@ -747,9 +747,9 @@ enum EmbeddedIdEnum
 	OCVExtentHeightEId = 120;
 	OCVMatchScoreEId = 121;
 	ArchiveFilePathEId = 122;
-	ArchiveImageGuidsEId = 123;
+	ArchiveImageGuids_OBSOLETE_EId = 123;
 	ArchiveImageFileRootPathEId = 124;
-	ArchiveResultGuidsEId = 125;
+	ArchiveResultGuids_OBSOLETE_EId = 125;
 	ArchiveAppendArchiveFileEId = 126;
 	ArchiveStopAtMaxImagesEId = 127;
 	ArchiveUseTriggerCountForImagesEId = 128;
@@ -1109,6 +1109,9 @@ enum EmbeddedIdEnum
     SubfolderLocationEId = 488;
     SubfolderLocationLinkEId = 489;
 	InspectionNameEId = 490;
+	FormatArchiveToolResultsEId = 491;
+	ArchiveResultsMinimumNumberOfCharactersEId = 492;
+	ArchiveResultsNumberOfDecimalsEId = 493;
 	TriggerPerObjectIDEId = 500;
 
 

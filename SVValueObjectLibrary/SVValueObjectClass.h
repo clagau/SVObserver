@@ -109,6 +109,9 @@ public:
 	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
 	virtual void updateMemBlockData() const override {}
 	virtual bool isIndirectValue() const override { return false; };
+	virtual void setStandardFormatString() = 0;
+	virtual void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+
 #pragma endregion virtual method (IObjectClass/IValueObject)
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }

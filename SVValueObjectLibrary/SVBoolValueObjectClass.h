@@ -35,6 +35,8 @@ public:
 
 	HRESULT GetValidTypes( SvDef::StringVector& rTypes ) const;
 
+	void setStandardFormatString() override {} //not currently used in this class
+
 protected:
 	virtual double ValueType2Double(const BOOL& rValue) const override { return static_cast<double> (rValue); }
 	virtual _variant_t ValueType2Variant(const BOOL* pValue) const override { return (nullptr != pValue) ? _variant_t( *pValue ? true : false ) : _variant_t{};}

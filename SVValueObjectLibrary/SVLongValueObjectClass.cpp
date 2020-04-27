@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <sstream>
 #include "SVLongValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -84,7 +85,7 @@ long SVLongValueObjectClass::ConvertString2Type( const std::string& rValue ) con
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 	Exception.Throw();
-	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
+	return 0; //will never reached, because the exception will throw before. But this line avoids a warning
 }
 
 void SVLongValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
@@ -117,8 +118,23 @@ void SVLongValueObjectClass::LocalInitialize()
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer32") );
 
-	setOutputFormat( _T("%d") );
+	setStandardFormatString();
 	init();
+}
+
+
+void SVLongValueObjectClass::setStandardFormatString()
+{
+	setOutputFormat(_T("%d"));
+}
+
+
+void SVLongValueObjectClass::setFixedWidthFormatString(uint32_t totalWidth, uint32_t /*decimals: ignored*/)
+{
+	std::basic_ostringstream<TCHAR> formatStream;
+	formatStream << "%" << totalWidth << "ld";
+
+	setOutputFormat(formatStream.str().c_str());
 }
 
 } //namespace SvVol

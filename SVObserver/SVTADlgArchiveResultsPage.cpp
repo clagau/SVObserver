@@ -17,7 +17,6 @@
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVToolSet.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
@@ -42,6 +41,7 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveResultsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
 	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
+	ON_BN_CLICKED(IDC_FORMAT_RESULTS, OnFormatResults)
 	ON_BN_CLICKED(IDC_HEADER_BTN, &SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn)
 	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck)
 END_MESSAGE_MAP()
@@ -58,7 +58,10 @@ SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint
 , m_pParent(Parent)
 , m_pTool(nullptr)
 , m_ColumnHeaders(false)
-, m_AppendArchive( 0 )
+, m_AppendArchive(false)
+, m_FormatResults(false)
+, m_TotalWidth(8)
+, m_Decimals(2)
 {
 	m_strCaption = m_psp.pszTitle;
 	if( nullptr != m_pParent )
@@ -83,30 +86,41 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	std::string ArchiveFileName = Text;
 
 	//check for valid drive for text archive
-	std::string TmpArchiveFileName = ArchiveFileName;
 	SvTo::ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFileName );
+
+	SvStl::MessageTextEnum pathErrorDescriptionId = SvStl::Tid_Empty;
 
 	if (athArchivePathAndName.isUsingKeywords())
 	{
 		if (athArchivePathAndName.isTokensValid())
 		{
-			TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFileName );
-			SVCheckPathDir( TmpArchiveFileName.c_str(), true );
+			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFileName );
+			if (false == SVCheckPathDir(TmpArchiveFileName.c_str(), true))
+			{
+				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInFilePath;
+			}
 		}
 		else
 		{
-			//don't allow to exit with invalid path
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
-			return false;
+			pathErrorDescriptionId = SvStl::Tid_InvalidFilePath;
 		}
 	}
 	else
-	{
-		//not using Keywords 
-		SVCheckPathDir( ArchiveFileName.c_str(), true );
+	{	//not using Keywords 
+		if (false == SVCheckPathDir(ArchiveFileName.c_str(), true))
+		{
+			pathErrorDescriptionId = SvStl::Tid_InvalidFilePath;
+		}
 	}
+
+	if(SvStl::Tid_Empty != pathErrorDescriptionId)
+	{   //do not allow exiting with invalid path
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, pathErrorDescriptionId, SvStl::SourceFileParams(StdMessageParams));
+		return false;
+	}
+
 	std::string Drive;
 	if(!SvTo::ArchiveToolHelper::ValidateDrive(ArchiveFileName.c_str(), Drive) || ArchiveFileName.empty())
 	{
@@ -121,6 +135,9 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	m_pTool->SetFileArchive( ArchiveFileName.c_str() );
 
 	m_pTool->m_dwAppendArchiveFile.SetValue(static_cast<DWORD> (m_AppendArchive));
+	m_pTool->m_bvoFormatResults.SetValue(m_FormatResults);
+	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.SetValue(m_TotalWidth);
+	m_pTool->m_dwArchiveResultsNumberOfDecimals.SetValue(m_Decimals);
 
 	m_pTool->setResultArchiveList(m_List);
 
@@ -157,8 +174,17 @@ void SVTADlgArchiveResultsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SELECT_BUTTON, m_Select);
 	DDX_Control(pDX, IDC_ARCHIVE_FILENAME, m_ArchiveFileName);
 	DDX_Check(pDX, IDC_CHECK_APPEND, m_AppendArchive);
-	DDX_Check(pDX, IDC_HEADER_CHECK, m_ColumnHeaders);
+	DDX_Check(pDX, IDC_FORMAT_RESULTS, m_FormatResults);
+	DDX_Text(pDX, IDC_TOTAL_WIDTH, m_TotalWidth);
+	DDX_Text(pDX, IDC_DECIMAL, m_Decimals);
+	DDX_Check(pDX, IDC_HEADER_CHECK, m_ColumnHeaders);                  
+	DDX_Control(pDX, IDC_TOTAL_WIDTH, m_TotalWidthEdit);
+	DDX_Control(pDX, IDC_DECIMAL, m_DecimalsEdit);
+
+	m_DecimalsEdit.EnableWindow(m_FormatResults);
+	m_TotalWidthEdit.EnableWindow(m_FormatResults);
 }
+
 
 BOOL SVTADlgArchiveResultsPage::OnInitDialog() 
 {
@@ -179,17 +205,22 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );
 
 	CDWordArray dwaIndex;
-	int iIndex=0;
 	
-	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection())->GetToolSet();
-
 	std::string ArchiveFileName; 
 	m_pTool->GetFileArchive( ArchiveFileName );
 	m_ArchiveFileName.SetWindowText( ArchiveFileName.c_str() );
 
-	DWORD dwTemp=0;
-	m_pTool->m_dwAppendArchiveFile.GetValue( dwTemp );
+	DWORD dwTemp = 0;
+	m_pTool->m_dwAppendArchiveFile.GetValue(dwTemp);
 	m_AppendArchive = (int)dwTemp;
+
+	dwTemp = 0;
+	m_pTool->m_bvoFormatResults.GetValue(dwTemp);
+	m_FormatResults = (BOOL)dwTemp;
+
+	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(m_TotalWidth);
+
+	m_pTool->m_dwArchiveResultsNumberOfDecimals.GetValue(m_Decimals);
 
 	m_pTool->m_bvoUseHeaders.GetValue(m_ColumnHeaders);
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
@@ -311,25 +342,6 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	m_ArchiveFileName.GetWindowText( Text );
 	std::string ArchiveFullName = Text;
 
-	SvTo::ArchiveToolHelper athArchivePathAndName;
-	athArchivePathAndName.Init( ArchiveFullName ); 
-
-	bool bUsingKeywords = athArchivePathAndName.isUsingKeywords();
-	if (bUsingKeywords)
-	{
-		if (athArchivePathAndName.isTokensValid())
-		{
-			ArchiveFullName = athArchivePathAndName.TranslatePath(ArchiveFullName);
-		}
-		else
-		{
-			//don't allow to exit with invalid path
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
-			return;
-		}
-	}
-
 	SVCheckPathDir( ArchiveFullName.c_str(), TRUE );
 
 	svfncArchiveFileName.SetFileType(SV_DEFAULT_FILE_TYPE);
@@ -338,6 +350,11 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	{
 		m_ArchiveFileName.SetWindowText(svfncArchiveFileName.GetFullFileName().c_str());
 	}
+}
+
+void SVTADlgArchiveResultsPage::OnFormatResults()
+{
+	UpdateData(TRUE);
 }
 
 bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs)

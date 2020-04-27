@@ -82,11 +82,11 @@ namespace SvOi
 		//! Set the reset options for the value object
 		//! \param bResetAlways [in] 
 		//! \param eResetItem [in] Which item to reset
-		virtual void setResetOptions( bool bResetAlways, SVResetItemEnum eResetItem ) = 0;
+		virtual void setResetOptions(bool bResetAlways, SVResetItemEnum eResetItem) = 0;
 
 		//! Validate the value. If value invalid an exception message will be thrown.
 		//! \param rValue [in] The value to validate
-		virtual void validateValue( const _variant_t& rValue ) const = 0;
+		virtual void validateValue(const _variant_t& rValue) const = 0;
 
 		//! Gets the type name for the Value object
 		//! \returns the type name
@@ -146,9 +146,15 @@ namespace SvOi
 
 		//! Update the memory block data
 		virtual void updateMemBlockData() const = 0;
-		
+
 		//! is true for linkedvalue with indirect value set
 		virtual bool isIndirectValue() const = 0;
+
+		//! Sets a 'standard' format string to be used when the value of the object value needs to be output
+		virtual void setStandardFormatString() = 0;
+
+		// Sets a format string yielding a fixed length output string to be used when the value of the object value needs to be output
+		virtual void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) = 0;
 	};
 
 	struct SetValueStruct 

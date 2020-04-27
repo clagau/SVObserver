@@ -567,6 +567,7 @@ namespace SvStl
 	//Arvid Breitenbach error base
 	constexpr int Abc_ErrorBase = 30000;
 	constexpr int Err_30000_NullImageOnSave = Abc_ErrorBase + 0;
+	constexpr int Err_30001_FormatFunctionMissing = Abc_ErrorBase + 1;
 
 	//Robert Yoho error base
 	constexpr int Rpy_ErrorBase = 45000;

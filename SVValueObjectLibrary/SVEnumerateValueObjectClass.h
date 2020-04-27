@@ -32,6 +32,8 @@ public:
 
 	virtual ~SVEnumerateValueObjectClass();
 
+	void setStandardFormatString() override {} //not currently used in this class
+
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
 	bool GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;

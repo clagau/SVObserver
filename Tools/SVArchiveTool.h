@@ -75,6 +75,10 @@ public:
 	SVArchiveRecordsArray  m_arrayImagesInfoObjectsToArchive;
 
 	SvVol::SVDWordValueObjectClass m_dwAppendArchiveFile;
+	SvVol::SVDWordValueObjectClass m_bvoFormatResults;
+	SvVol::SVDWordValueObjectClass m_dwArchiveResultsMinimumNumberOfCharacters;
+	SvVol::SVDWordValueObjectClass m_dwArchiveResultsNumberOfDecimals;
+
 	SvVol::SVDWordValueObjectClass m_dwArchiveStopAtMaxImages;
 	SvVol::SVDWordValueObjectClass m_dwUseTriggerCountForImages;
 	SvVol::SVDWordValueObjectClass m_dwArchiveMaxImagesCount;
@@ -117,10 +121,8 @@ private:
 	// images so they can
 	// be stored and retrieved from storage.
 	//
-	SvVol::SVStringValueObjectClass m_stringArchiveImageIds_OBSOLETE;
-	SvVol::SVStringValueObjectClass m_stringArchiveResultIds_OBSOLETE;
 	SvVol::SVStringValueObjectClass m_svoArchiveImageNames;
-	/// This variable holds an array of result names with an Zero based Index (In the svx  files these names have also a zero based index). 
+	/// This variable holds an array of result names with an Zero based Index (In the svx files these names have also a zero based index). 
 	SvVol::SVStringValueObjectClass m_svoArchiveResultNames;
 	
 	SvDef::StringVector m_ArchiveStringBuffer;

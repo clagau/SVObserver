@@ -86,18 +86,6 @@ void SVArchiveTool::initializeArchiveTool()
 		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
-		&m_stringArchiveImageIds_OBSOLETE, 
-		SvPb::ArchiveImageGuidsEId,
-		IDS_OBJECTNAME_ARCHIVE_IMAGE_GUIDS,
-		false, SvOi::SVResetItemTool );
-	
-	RegisterEmbeddedObject(	
-		&m_stringArchiveResultIds_OBSOLETE, 
-		SvPb::ArchiveResultGuidsEId,
-		IDS_OBJECTNAME_ARCHIVE_RESULT_GUIDS,
-		false, SvOi::SVResetItemTool );
-	
-	RegisterEmbeddedObject(	
 		&m_svoArchiveImageNames, 
 		SvPb::ArchiveImageNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_NAMES,
@@ -115,13 +103,34 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PATH,
 		false, SvOi::SVResetItemNone );
 	
-	RegisterEmbeddedObject(	
+	RegisterEmbeddedObject(
 		&m_dwAppendArchiveFile,
 		SvPb::ArchiveAppendArchiveFileEId,
 		IDS_OBJECTNAME_ARCHIVE_APPEND_ARCHIVE_FILE,
-		false, SvOi::SVResetItemTool );
+		false, SvOi::SVResetItemTool);
 	m_dwAppendArchiveFile.SetOutputFormat(SvVol::OutputFormat_int);
-	
+
+	RegisterEmbeddedObject(
+		&m_bvoFormatResults,
+		SvPb::FormatArchiveToolResultsEId,
+		IDS_OBJECTNAME_FORMAT_ARCHIVE_TOOLS_RESULTS,
+		false, SvOi::SVResetItemTool);
+	m_bvoFormatResults.SetOutputFormat(SvVol::OutputFormat_int);
+
+	RegisterEmbeddedObject(
+		&m_dwArchiveResultsMinimumNumberOfCharacters,
+		SvPb::ArchiveResultsMinimumNumberOfCharactersEId,
+		IDS_OBJECTNAME_ARCHIVE_RESULTS_MIN_CHARACTERS,
+		false, SvOi::SVResetItemTool);
+	m_dwArchiveResultsMinimumNumberOfCharacters.SetOutputFormat(SvVol::OutputFormat_int);
+
+	RegisterEmbeddedObject(
+		&m_dwArchiveResultsNumberOfDecimals,
+		SvPb::ArchiveResultsNumberOfDecimalsEId,
+		IDS_OBJECTNAME_ARCHIVE_RESULTS_NUMBER_OF_DECIMALS,
+		false, SvOi::SVResetItemTool);
+	m_dwArchiveResultsNumberOfDecimals.SetOutputFormat(SvVol::OutputFormat_int);
+
 	RegisterEmbeddedObject(
 		&m_dwArchiveStopAtMaxImages,
 		SvPb::ArchiveStopAtMaxImagesEId,
@@ -231,12 +240,13 @@ void SVArchiveTool::initializeArchiveTool()
 	FileClass.SetFileNameOnly( FileName.c_str() );
 
 	m_stringFileArchivePath.SetDefaultValue( FileClass.GetFullFileName(), true );
-	m_stringArchiveImageIds_OBSOLETE.SetDefaultValue( _T( "" ), true);
-	m_stringArchiveResultIds_OBSOLETE.SetDefaultValue( _T( "" ), true);
 	m_svoArchiveImageNames.SetDefaultValue( _T( "" ), true);
 	m_svoArchiveResultNames.SetDefaultValue( _T( "" ), true);
 	m_stringImageFileRootPath.SetDefaultValue( _T( "D:\\TEMP" ), true);
 	m_dwAppendArchiveFile.SetDefaultValue(0, true);
+	m_bvoFormatResults.SetDefaultValue(0, true);
+	m_dwArchiveResultsMinimumNumberOfCharacters.SetDefaultValue(8, true);
+	m_dwArchiveResultsNumberOfDecimals.SetDefaultValue(2, true);
 	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
 	m_dwUseTriggerCountForImages.SetDefaultValue(0, true);
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
@@ -251,8 +261,6 @@ void SVArchiveTool::initializeArchiveTool()
 	};
 	m_evoArchiveMethod.SetEnumTypes(EnumVector);
 	
-	m_stringArchiveImageIds_OBSOLETE.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
-	m_stringArchiveResultIds_OBSOLETE.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
 	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
 	m_HeaderObjectIDs.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
@@ -283,14 +291,16 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
 	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
-	m_stringArchiveImageIds_OBSOLETE.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_stringArchiveResultIds_OBSOLETE.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	m_stringImageFileRootPath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_bvoFormatResults.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveResultsMinimumNumberOfCharacters.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveResultsNumberOfDecimals.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+
 	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_dwUseTriggerCountForImages.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
@@ -329,30 +339,13 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
-	std::string Temp;
-	m_stringArchiveImageIds_OBSOLETE.GetValue(Temp);
-	if ( Temp.empty() )
-	{
-		m_arrayImagesInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveImageNames );
-		m_arrayImagesInfoObjectsToArchive.ValidateImageObjects();	// makes sure the images are connected as inputs
-	}
-	else	// pre array value object way
-	{
-		m_arrayImagesInfoObjectsToArchive.setRecordsFromString( this, Temp.c_str() );
-	}
+	m_arrayImagesInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveImageNames );
+	m_arrayImagesInfoObjectsToArchive.ValidateImageObjects();	// makes sure the images are connected as inputs
 	
-	m_stringArchiveResultIds_OBSOLETE.GetValue(Temp);
-	if ( Temp.empty() )
-	{
-		m_arrayResultsInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveResultNames );
-		//next line it needed to reset the names if object have be changed because e.g. array become a single value.
-		setResultArchiveList(getResultArchiveList());
-		m_arrayResultsInfoObjectsToArchive.ValidateResultsObjects();	// makes sure the results are connected as inputs
-	}
-	else	// pre array value object way
-	{
-		m_arrayResultsInfoObjectsToArchive.setRecordsFromString( this, Temp.c_str() );
-	}
+	m_arrayResultsInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveResultNames );
+	//next line it needed to reset the names if object have be changed because e.g. array become a single value.
+	setResultArchiveList(getResultArchiveList());
+	m_arrayResultsInfoObjectsToArchive.ValidateResultsObjects();	// makes sure the results are connected as inputs
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if ( pInspection && pInspection->IsResetStateSet( SvDef::SVResetStateArchiveToolCreateFiles ) )
@@ -901,8 +894,6 @@ void SVArchiveTool::setResultArchiveList(const SVObjectReferenceVector& rObjectR
 
 		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(true), i );
 	}
-
-	m_stringArchiveResultIds_OBSOLETE.SetValue( std::string() );
 }
 
 void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector)
@@ -918,8 +909,6 @@ void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRe
 
 		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), i  );
 	}
-
-	m_stringArchiveImageIds_OBSOLETE.SetValue( std::string() );
 }
 
 SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
@@ -1159,6 +1148,8 @@ void SVArchiveTool::goingOffline()
 	{
 		WriteBuffers();
 	}
+
+	m_arrayResultsInfoObjectsToArchive.resetStandardFormatStringsOfValueObjects();
 
 	// Close the text to archive file if necessary
 	if(m_fileArchive.is_open())

@@ -6321,7 +6321,7 @@ namespace SvGcl
 				if(m_AllowReorderColumn && m_LeftClickDownCell.col >=  GetFixedColumnCount())
 				{
 					ResetSelectedRange(); // TODO : This is not the better solution, as we do not see why clicking in column header should reset selection
-												//but the state of selection is instable after drag (at least until someone debugs it), so better clear it allways.
+												//but the state of selection is instable after drag (at least until someone debugs it), so better clear it always.
 	#ifndef GRIDCONTROL_NO_DRAGDROP
 					m_MouseMode = MOUSE_PREPARE_DRAG;
 	#endif

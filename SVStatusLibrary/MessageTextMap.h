@@ -318,6 +318,7 @@ namespace SvStl
 		{Tid_Load, _T("load")},
 		{Tid_Save, _T("save")},
 		{Tid_GoOnlineTime, _T("%s\nGoOnline time %s ms")},
+		{Tid_FunctionNotImplemented, _T("Implementation of function '%s' for %s is missing")},
 
 		{Tid_Camera_UseQuestion, _T("Would you like to use this camera file for all camera choices?")},
 		{Tid_Config_SwitchResetQuestion, _T("By switching the system (product) the camera, trigger, inspection and ppq data will be reset, do you wish to continue?")},
@@ -360,7 +361,9 @@ namespace SvStl
 
 		{Tid_InvalidImagePath, _T("Invalid Keywords in Archive Image Path.")},
 		{Tid_InvalidDrive, _T("Invalid drive: %s")},
-		{Tid_InvalidFileName, _T("Invalid Keywords in Archive Filename/Path.")},
+		{Tid_InvalidFilePath, _T("Invalid Archive Filename/Path.") },
+		{Tid_InvalidKeywordsInFilePath, _T("Invalid Keywords in Archive Filename/Path.") },
+			
 		{Tid_FileName_Exists, _T("%s already exists.\nDo you want to replace it?")},
 		{Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected %s for the Max Images count. The image count must be less then %s")},
 		{Tid_ArchiveTool_WarningMaxImages, _T("WARNING: You have selected %s for the Max Images count")},

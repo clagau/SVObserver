@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <sstream>
 #include "SVInt64ValueObjectClass.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
@@ -100,8 +101,23 @@ void SVInt64ValueObjectClass::LocalInitialize()
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer64") );
 
-	setOutputFormat( _T("%I64d") );
+	setStandardFormatString();
 	init();
 }
+
+void SVInt64ValueObjectClass::setFixedWidthFormatString(uint32_t totalWidth, uint32_t /*decimals: ignored*/)
+{
+	std::basic_ostringstream<TCHAR> formatStream;
+	formatStream << "%" << totalWidth << "I64d";
+
+	setOutputFormat(formatStream.str().c_str());
+}
+
+
+void SVInt64ValueObjectClass::setStandardFormatString()
+{
+	setOutputFormat(_T("%I64d"));
+}
+
 
 } //namespace SvVol

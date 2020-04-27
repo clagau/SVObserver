@@ -11,7 +11,6 @@
 #include "SVObjectLibrary/SVObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -55,6 +54,14 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 
 	assert(m_pArchiveTool->GetInspectionInterface());
 
+	DWORD setDisplayWidths;
+	m_pArchiveTool->m_bvoFormatResults.GetValue(setDisplayWidths);
+
+	DWORD totalWidth;
+	m_pArchiveTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(totalWidth);
+	DWORD decimals;
+	m_pArchiveTool->m_dwArchiveResultsNumberOfDecimals.GetValue(decimals);
+
 	int iSize = rObject.getResultSize();
 	for (int i = 0; i < iSize; i++)
 	{
@@ -83,6 +90,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 			}
 
 			m_vecRecords.emplace_back();
+
 			if (nullptr == ObjectRef.getObject())
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
@@ -91,56 +99,40 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 			}
 			else
 			{
-				m_vecRecords.at(m_vecRecords.size() - 1).InitArchiveRecord(pToolArchive, ObjectRef);
+				auto pValueObject = ObjectRef.getValueObject();
+				m_vecRecords.back().InitArchiveRecord(pToolArchive, ObjectRef);
+
+				if (nullptr != pValueObject)
+				{
+					if (setDisplayWidths)
+					{
+						pValueObject->setFixedWidthFormatString(totalWidth, decimals);
+					}
+					else
+					{
+						pValueObject->setStandardFormatString();
+					}
+				}
 			}
 		}
 	}
 	return hr;
 }
 
-void SVArchiveRecordsArray::setRecordsFromString(SVArchiveTool * pToolArchive, LPCTSTR Value)
+
+void SVArchiveRecordsArray::resetStandardFormatStringsOfValueObjects()
 {
-	ClearArray();
-
-	std::string Text = Value;
-
-	bool bDone = false;
-	while (!bDone)
+	for (auto& record : m_vecRecords)
 	{
-		std::string idText;
-		size_t Pos = Text.find(_T('\n'));
-		if (std::string::npos != Pos)
-		{
-			idText = SvUl::Left(Text, Pos);
-		}
-		else
-		{
-			idText = Text;
-			bDone = true;             // we are done 
-		}
-		//
-		// Adjust for next iteration.
-		//
-		Text = SvUl::Right(Text, Text.size() - Pos - 1);
+		auto pValueObject = record.GetObjectReference().getValueObject();
 
-		//
-		// Convert string id to id structure
-		//
-		uint32_t objectId(calcObjectId(idText));
-
-		//
-		// The image record has a dotted name that needs to be 
-		// associated with a pointer to an image later.
-		//
-		if (SvDef::InvalidObjectId != objectId)
+		if (nullptr != pValueObject)
 		{
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectId);
-			m_vecRecords.emplace_back();
-			m_vecRecords.at(m_vecRecords.size() - 1).InitArchiveRecord(pToolArchive, SVObjectReference(pObject));
-
+			pValueObject->setStandardFormatString();
 		}
 	}
 }
+
 
 SvDef::StringVector SVArchiveRecordsArray::RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject)
 {

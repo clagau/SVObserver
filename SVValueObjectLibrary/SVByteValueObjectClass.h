@@ -42,6 +42,8 @@ public:
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
+	void setStandardFormatString() override {} //not currently used in this class
+
 protected:
 	virtual double ValueType2Double(const BYTE& rValue) const override { return static_cast<double> (rValue); }
 	virtual _variant_t ValueType2Variant(const BYTE* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }

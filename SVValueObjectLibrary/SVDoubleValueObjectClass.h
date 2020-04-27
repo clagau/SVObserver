@@ -34,6 +34,10 @@ public:
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
+	void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+	void setStandardFormatString();
+
+
 protected:
 	virtual double ValueType2Double(const double& rValue) const override { return rValue; }
 	virtual _variant_t ValueType2Variant(const double* pValue) const override { return (nullptr != pValue) ? _variant_t(*pValue) : _variant_t(); }

@@ -29,9 +29,11 @@ public:
 	SVPointValueObjectClass( LPCTSTR ObjectName );
 	SVPointValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOINTVALUEOBJECT );
 	SVPointValueObjectClass( const SVPointValueObjectClass& rhs );
-	const SVPointValueObjectClass& operator = (const SVPointValueObjectClass& rhs);
 
+	const SVPointValueObjectClass& operator = (const SVPointValueObjectClass& rhs);
 	virtual ~SVPointValueObjectClass();
+
+	void setStandardFormatString() override {} //not currently used in this class
 
 protected:
 	virtual double ValueType2Double(const SVPoint<long>& rValue) const override { return 0.0; };

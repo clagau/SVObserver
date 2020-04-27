@@ -923,6 +923,21 @@ void SVValueObjectClass<T>::setResultSizePointer(int32_t* pResultSize)
 	}
 }
 
+
+
+template <typename T>
+void SVValueObjectClass<T>::setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+{
+	//@TODO[Arvid][10.00][21.04.2020] for some kinds of value objects this function has not been implemented yet. This may or may not be necessary in the future.
+
+	SvDef::StringVector msgList;
+	msgList.push_back(SvUl::Format(_T("%s"), _T("setFixedWidthFormatString()")));
+	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
+	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
+}
+
+
 #pragma endregion Protected Methods
 
 } //namespace SvVol

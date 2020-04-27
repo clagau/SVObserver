@@ -16,12 +16,15 @@
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVSafeArray.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
 #include "CameraLibrary\SVStringValueDeviceParam.h"
 #include "Definitions/Color.h"
 #include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
+
 
 namespace SvVol
 {
@@ -469,6 +472,20 @@ DWORD BasicValueObject::GetObjectColor() const
 {
 	return SvDef::DefaultWhiteColor;
 }
+
+
+void BasicValueObject::setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+{
+	//@TODO[Arvid][10.00][21.04.2020] for the BasicValueObject this function has not been implemented yet. This may or may not be necessary in the future.
+
+	SvDef::StringVector msgList;
+	msgList.push_back(SvUl::Format(_T("%s"), _T("setFixedWidthFormatString()")));
+	msgList.push_back(SvUl::Format(_T("BasicValueObject")));
+	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
+}
+
+
 #pragma endregion Public Methods
 
 

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <assert.h>
+//Moved to precompiled header: #include <sstream>
 #include "SVDoubleValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -108,6 +109,20 @@ HRESULT SVDoubleValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 	return Result;
 }
 
+
+void SVDoubleValueObjectClass::setStandardFormatString()
+{
+	setOutputFormat(_T("%lf"));
+}
+
+void SVDoubleValueObjectClass::setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+{
+	std::ostringstream formatStream;
+	formatStream << "%" << totalWidth<< "." << decimals << "lf";
+
+	setOutputFormat(formatStream.str().c_str());
+}
+
 double SVDoubleValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	std::string Digits = SvUl::ValidateString( rValue, _T("-0123456789. ") );
@@ -152,7 +167,7 @@ void SVDoubleValueObjectClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDoubleValueObjectType;
 	DefaultValue() = 0.0;
 	SetTypeName( _T("Decimal") );
-	setOutputFormat( _T("%lf") );
+	setStandardFormatString();
 	init();
 }
 

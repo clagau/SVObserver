@@ -42,7 +42,9 @@ public:
 	HRESULT SetValueKeepType(LPCTSTR Value, int Index);
 	VARTYPE GetDefaultType() const { return GetDefaultValue().vt; }
 	VARTYPE GetValueType() const { return (nullptr !=  valuePtr()) ? valuePtr()->vt : VT_NULL; };
-	
+
+	void setStandardFormatString() override {} //not currently used in this class
+
 
 protected:
 	static std::string ToString(const VARIANT& rvt, bool bScript = false );

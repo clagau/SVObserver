@@ -27,6 +27,8 @@ public:
 	SVTimerValueObjectClass( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	virtual ~SVTimerValueObjectClass();
 
+	void setStandardFormatString();
+
 	void Start();
 	bool Stop();
 

@@ -45,6 +45,7 @@
 #include <memory>
 #include <ppl.h>
 #include <set>
+#include <sstream>
 #include <string>
 #include <sequential_tree.h>
 #include <tchar.h>

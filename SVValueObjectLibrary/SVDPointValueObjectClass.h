@@ -31,6 +31,9 @@ public:
 
 	virtual ~SVDPointValueObjectClass();
 
+	void setStandardFormatString() override {} //not currently used in this class
+
+
 protected:
 	virtual double ValueType2Double(const SVPoint<double>& rValue) const override { return 0.0; }
 	virtual _variant_t ValueType2Variant(const SVPoint<double>* pValue) const override;

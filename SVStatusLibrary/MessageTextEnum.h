@@ -282,6 +282,7 @@ enum MessageTextEnum
 	Tid_Load,
 	Tid_Save,
 	Tid_GoOnlineTime,
+	Tid_FunctionNotImplemented,
 
 	Tid_Camera_UseQuestion,
 	Tid_Config_SwitchResetQuestion,
@@ -324,7 +325,8 @@ enum MessageTextEnum
 
 	Tid_InvalidImagePath,
 	Tid_InvalidDrive,
-	Tid_InvalidFileName,
+	Tid_InvalidFilePath,
+	Tid_InvalidKeywordsInFilePath,
 	Tid_FileName_Exists,
 	Tid_Error_you_have_Selected_X_Must_less_then_Y,
 	Tid_ArchiveTool_WarningMaxImages,
