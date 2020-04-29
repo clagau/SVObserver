@@ -63,6 +63,13 @@ public:
 		m_maxPendingAcks = v;
 	}
 
+	size_t freeSlotsUntilThrottling()
+	{
+		return m_bThrottlingEnabled
+			? m_maxPendingAcks - m_PendingAcks.size()
+			: std::numeric_limits<size_t>::max();
+	}
+
 private:
 	friend class RPCServer;
 	std::tuple<bool, uint64_t, SvSyl::SVFuture<void>> new_throttled_response()

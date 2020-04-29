@@ -206,7 +206,7 @@ message GetGatewayNotificationStreamResponse
 
 message RejectStreamPauseNotification
 {
-	bool paused = 1;
+	repeated uint32 pausedInspectionIds = 1;
 }
 
 //Similar to GetProductRequest for rejects
@@ -357,4 +357,7 @@ message SetRejectStreamPauseStateRequest
 {
 	// set to false to continue the stream
 	bool pause = 1;
+
+	// Inspection that should be paused. If empty, all inspections are paused.
+	uint32 inspectionId = 2;
 }
