@@ -51,11 +51,32 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cPpqNextTriggerMode = _T("Next Trigger");
-constexpr char* cPpqTimeDelayMode = _T("Time Delay");
-constexpr char* cPpqTimeDataCompletionMode = _T("Time Delay Data Completion");
-constexpr char* cPpqExtendedTimeDelayMode =_T("Extended Time Delay");
-constexpr char* cPpqExtendedTimeDelayCompletionMode = _T("Extended Time Delay Data Completion");
+constexpr std::array<char*, 5> cTriggerMode
+{
+	_T("Next Trigger"),
+	_T("Time Delay"),
+	_T("Time Delay Data Completion"),
+	_T("Extended Time Delay"),
+	_T("Extended Time Delay Data Completion")
+};
+constexpr std::array<char*, 5> cPpqLengthInfo
+{
+	_T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater."),
+	_T("Time Delay Mode - in this mode the PPQ length must be 1."),
+	_T("Time Delay && Data Completion Mode - in this mode the PPQ length must be 1."),
+	_T("Extended Time Delay Mode - in this mode the PPQ length must be 1 or greater."),
+	_T("Extended Time Delay && Data Completion Mode - in this mode the PPQ length must be 1 or greater.")
+};
+
+constexpr std::array<char*, 5> cTriggerModeInfo
+{
+	_T("Next Trigger Mode - in this mode outputs are written on each trigger."),
+	_T("Time Delay Mode - in this mode outputs are written after the specified Output Delay Time."),
+	_T("Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time."),
+	_T("Extended Time Delay Mode - in this mode outputs are written after the specified Output Delay Time. This Output Delay Time can exceed the time distance between triggers."),
+	_T("Extended Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time. This Output Delay Time can exceed the time between triggers.")
+};
+
 constexpr char* cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
 
 class SVCameraDeviceImageFormatUpdater : public ISVCameraDeviceImageFormatUpdater
@@ -860,95 +881,38 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		pRoot->SetLabelText(_T("PPQ"));
 		pRoot->SetInfoText(_T("Define a PPQ"));
 
+		int iMode = m_PPQObj.GetPPQMode();
 		// PPQMode
 		SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if (pCombo)
 		{
-			long lMode = (long)m_PPQObj.GetPPQMode();
 			int	nIndex;
 			pCombo->SetCtrlID(PROP_PPQ_MODE);
 			pCombo->SetLabelText(_T("Output Mode"));
-			switch (lMode)
-			{//InfoText needs to be set here as well as in OnItemChanged
-			case 0:
-				{//next trigger
-					pCombo->SetInfoText(_T("Next Trigger Mode - in this mode outputs are written on each trigger." ));
-					break;
-				}
-			case 1:
-				{//time delay
-					pCombo->SetInfoText(_T("Time Delay Mode - in this mode outputs are written after the specified "
-						"Output Delay Time."));
-					break;
-				}
-			case 2:
-				{//time data complete
-					pCombo->SetInfoText(_T("Time Delay && Data Completion Mode - in this mode outputs are written "
-						"after the specified Output Delay Time and completion of the Inspection."));
-					break;
-				}
-			case 3:
-				{//extended time delay
-					pCombo->SetInfoText(_T("Extended Time Delay Mode - in this mode outputs are written after the "
-						"specified Output Delay Time. This Output Delay Time can exceed the time "
-						"distance between triggers."));
-					break;
-				}
-			default:
-				{
-					break;
-				}
+			if (0 <= iMode && cTriggerModeInfo.size() > iMode)
+			{
+				pCombo->SetInfoText(cTriggerModeInfo.at(iMode));
 			}
 			pCombo->CreateComboBox(CBS_DROPDOWNLIST);
-			nIndex = pCombo->AddString(cPpqNextTriggerMode);
-			pCombo->SetItemData(nIndex, 0);
-			nIndex = pCombo->AddString(cPpqTimeDelayMode);
-			pCombo->SetItemData(nIndex, 1);
-			nIndex = pCombo->AddString(cPpqTimeDataCompletionMode);
-			pCombo->SetItemData(nIndex, 2);
-			nIndex = pCombo->AddString(cPpqExtendedTimeDelayMode);
-			pCombo->SetItemData(nIndex, 3);
-			nIndex = pCombo->AddString(cPpqExtendedTimeDelayCompletionMode);
-			pCombo->SetItemData(nIndex, 4);
-			pCombo->SetItemValue(lMode);
+
+			for(int i=0; i < cTriggerMode.size(); ++i)
+			{
+				nIndex = pCombo->AddString(cTriggerMode.at(i));
+				pCombo->SetItemData(nIndex, i);
+			}
+			pCombo->SetItemValue(iMode);
 		}
 		//PPQLength
 		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
-		int iMode = m_PPQObj.GetPPQMode();
-		std::string InfoTxt;
-		switch (iMode)
-		{
-		case 0: //next trigger
-			{   
-				InfoTxt = _T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater.");
-				break;
-			}
-		case 1: //time delay
-			{
-				InfoTxt = _T("Time Delay Mode - in this mode the PPQ length must be 1.");
-				break;
-			}
-		case 2: //time delay data complete
-			{
-				InfoTxt = _T("Time Delay && Data Completion Mode - in this mode the PPQ length must be 1.");
-				break;
-			}
-		case 3: //extended time delay
-			{
-				InfoTxt = _T("Extended Time Delay Mode - in this mode the PPQ length must be 1 or greater.");
-				break;
-			}
-		default:
-			{
-				break;
-			}
-		}
 
 		if (pEdit)
 		{
 			pEdit->SetCtrlID(PROP_PPQ_LENGTH);
 			pEdit->SetLabelText(_T("Length"));
-			pEdit->SetInfoText( InfoTxt.c_str() );
+			if(0 <= iMode && cPpqLengthInfo.size() > iMode )
+			{
+				pEdit->SetInfoText( cPpqLengthInfo.at(iMode));
+			}
 			if (m_PPQObj.GetPPQMode() == 0)
 			{
 				if (m_PPQObj.GetPPQLength() < 2)
@@ -1553,41 +1517,11 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					long iVal;
 					m_Tree.FindItem(PROP_PPQ_MODE)->GetItemValue(iVal);
 					m_PPQObj.SetPPQMode(iVal);
-					switch (iVal)
-					{// InfoTxt for PPQ_MODE and Length needs to be the same
-					 // as it is in the OnInitDlg
-						case 0:
-						{//next trigger
-							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetInfoText(_T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater."));
-        					m_Tree.FindItem(PROP_PPQ_MODE)->SetInfoText(_T("Next Trigger Mode - in this mode outputs are written on each trigger." ));
-							break;
-						}
-						case 1:
-						{//time delay
-							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetInfoText(_T("Time Delay Mode - in this mode the PPQ length must be 1."));
-        					m_Tree.FindItem(PROP_PPQ_MODE)->SetInfoText(_T("Time Delay Mode - in this mode outputs are written after the specified "
-																		   "Output Delay Time." ));
-							break;
-						}
-						case 2:
-						{//time data complete
-							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetInfoText(_T("Time Delay && Data Completion Mode - in this mode the PPQ length must be 1."));
-        					m_Tree.FindItem(PROP_PPQ_MODE)->SetInfoText(_T("Time Delay && Data Completion Mode - in this mode outputs are written "
-																		   "after the specified Output Delay Time and completion of the Inspection." ));
-							break;
-						}
-						case 3:
-						{//extended time delay
-							m_Tree.FindItem(PROP_PPQ_LENGTH)->SetInfoText(_T("Extended Time Delay Mode - in this mode the PPQ length must be 1 or greater."));
-        					m_Tree.FindItem(PROP_PPQ_MODE)->SetInfoText(_T("Extended Time Delay Mode - in this mode outputs are written after the "
-																		   "specified Output Delay Time. This Output Delay Time can exceed the time "
-																		   "distance between triggers." ));
-							break;
-						}
-						default:
-						{
-							break;
-						}
+					///cTriggerModeInfo and cPpqLengthInfo are the same size
+					if (0 <= iVal && cTriggerModeInfo.size() > iVal)
+					{
+						m_Tree.FindItem(PROP_PPQ_LENGTH)->SetInfoText(cPpqLengthInfo.at(iVal));
+       					m_Tree.FindItem(PROP_PPQ_MODE)->SetInfoText(cTriggerModeInfo.at(iVal));
 					}
 					//get the PPQLength
 					int iPPQLength;
