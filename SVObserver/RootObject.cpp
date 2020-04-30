@@ -133,7 +133,7 @@ bool RootObject::createConfigurationObject(std::recursive_mutex *pMutex)
 		{
 			SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
 		}
-		std::unique_lock<std::recursive_mutex>(*pMutex);
+		std::unique_lock<std::recursive_mutex> AutoLock(*pMutex);
 		m_pConfigurationObject.swap(ConfigObjectTemp);
 	}
 	else
@@ -181,7 +181,7 @@ void RootObject::destroyConfigurationObject(std::recursive_mutex *pMutex)
 			{
 				SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
 			}
-			std::unique_lock<std::recursive_mutex>(*pMutex);
+			std::unique_lock<std::recursive_mutex> Autolock(*pMutex);
 			m_pConfigurationObject.swap(ConfigObjectTemp);
 		}
 		else
