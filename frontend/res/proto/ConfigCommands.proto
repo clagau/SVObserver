@@ -22,7 +22,7 @@ enum ClipboardActionEnum
 message ClipboardRequest
 {
 	ClipboardActionEnum action  = 1;
-	bytes objectID = 2;					//The object GUID to perform the command on
+	uint32 objectID = 2;					//The object ID to perform the command on
 }
 
 message ConfigCommandRequest

@@ -11,7 +11,7 @@ message MessageContainer //structure for a (error/warning/info-)message
 	string fileName = 6;
 	sint32 fileLine = 7;
 	string fileDateTime = 8;
-	bytes objectId = 9;
+	uint32 objectId = 9;
 }
 
 message MessageContainerVector

@@ -701,7 +701,6 @@ enum EmbeddedIdEnum
 	StatNbrOfOccurancesEId = 70;
 	StatPercentOfOccurancesEId = 71;
 	StatEnabledFeaturesEId = 72;
-	StatVariableToMonitorEId = 73;
 	StatVariableNameToMonitorEId = 74;
 	UpperThresholdEId = 76;
 	LowerThresholdEId = 77;
@@ -777,6 +776,7 @@ enum EmbeddedIdEnum
 	ConditionalResultEId = 149;
 	MathEquationResultEId = 150;
 	LinearEdgesEId = 151;
+	ConditionalEditFreezeFlagEId = 152;
 	DPEdgeAEId = 156;
 	DPEdgeBEId = 157;
 	DPCenterEId = 158;
@@ -1108,9 +1108,11 @@ enum EmbeddedIdEnum
 	TriggerTimeEId = 487;
     SubfolderLocationEId = 488;
     SubfolderLocationLinkEId = 489;
-	InspectionNameId = 490;
+	InspectionNameEId = 490;
+	TriggerPerObjectIDEId = 500;
 
-	//The next Ids are the first of an array, the next must be free.
+
+	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
 	RingBufferIndexLinkEId = 1150; //For link of ringBuffer index of output images (by now 2 indexes)

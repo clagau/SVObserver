@@ -70,20 +70,6 @@ message Product
 	State status = 6;				//The status of the product (error number)
 }
 
-message InspectionResult
-{
-	string id = 1;
-	uint32 trigger = 2;
-	string name = 3;
-	bool isReject = 4;
-	repeated Variant values = 5;
-	repeated bytes valueIds = 6;
-	repeated string valueNames = 7;
-	repeated bytes imageIds = 8;
-	repeated string imageNames = 9;
-	repeated Image images = 10;
-}
-
 //Retrieves the inspection details of the currently loaded configuration on the SVIM
 message GetInspectionsRequest
 {
@@ -91,7 +77,7 @@ message GetInspectionsRequest
 
 message InspectionDetails
 {
-	bytes id = 1;
+	uint32 id = 1;
 	string name = 2;
 }
 
@@ -206,7 +192,7 @@ message GetGatewayNotificationStreamResponse
 
 message RejectStreamPauseNotification
 {
-	bool paused = 1;
+	repeated uint32 pausedInspectionIds = 1;
 }
 
 //Similar to GetProductRequest for rejects
@@ -250,17 +236,17 @@ message GetProductDataRequest
 	// The inspection id in which context the stream is running.
 	// When requesting values or images that don't belong to this
 	// inspection, the stream will fail.
-	bytes inspectionId = 1;
+	uint32 inspectionId = 1;
 
 	sint32 trigger = 2;
 
 	// List of ObjectIds of values the client is subscribing to.
 	// The very first response will contain the names as well.
-	repeated bytes valueIds = 3;
+	repeated uint32 valueIds = 3;
 
 	// List of ObjectIds of images the client is subscribing to.
 	// The very first response will contain the names as well.
-	repeated bytes imageIds = 4;
+	repeated uint32 imageIds = 4;
 
 	// Format the images should be encoded with. Stream will fail
 	// and close if the requested format is not available.
@@ -293,7 +279,7 @@ message GetProductStreamRequest
 	// The inspection id in which context the stream is running.
 	// When requesting values or images that don't belong to this
 	// inspection, the stream will fail.
-	bytes inspectionId = 1;
+	uint32 inspectionId = 1;
 
 	// The trigger count at which this stream should start.
 	// In case a stream is running, but the subscriber is interested
@@ -315,11 +301,11 @@ message GetProductStreamRequest
 
 	// List of ObjectIds of values the client is subscribing to.
 	// The very first response will contain the names as well.
-	repeated bytes valueIds = 5;
+	repeated uint32 valueIds = 5;
 
 	// List of ObjectIds of images the client is subscribing to.
 	// The very first response will contain the names as well.
-	repeated bytes imageIds = 6;
+	repeated uint32 imageIds = 6;
 
 	// Format the images should be encoded with. Stream will fail
 	// and close if the requested format is not available.
@@ -357,4 +343,7 @@ message SetRejectStreamPauseStateRequest
 {
 	// set to false to continue the stream
 	bool pause = 1;
+
+	// Inspection that should be paused. If empty, all inspections are paused.
+	uint32 inspectionId = 2;
 }

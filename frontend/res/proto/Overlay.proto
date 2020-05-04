@@ -12,7 +12,7 @@ package SvPb;
 message ValueObject
 {
 	double value = 1;
-	bytes guid = 2;
+	uint32 objectid = 2;
 	int32 trPos = 3;	//The position in triggerRecord, but one-based (that mean trPos-1 is the pos in TR) because 0 = default and means not set.
 }
 
@@ -26,7 +26,7 @@ message Overlay
 	// Name of the overlay that is also displayed.
 	string name = 1;
 
-	bytes guid = 2;
+	uint32 objectid = 2;
 
 	// Hex color as abgr (a = alpha will not used yet)
 	ValueObject color = 3;
@@ -145,6 +145,7 @@ message RectData
 	double y = 2;
 	double w = 3;
 	double h = 4;
+	double angle = 5;
 }
 
 //This message is for rectArray data from SVObserver for x1/y1 x2/y2 without rotation (needed e.g. for blob boxes)
@@ -168,6 +169,8 @@ message SVORectArrayPatternData
 	int32 height = 5; //only single value
 	int32 centerX = 6; //only single value
 	int32 centerY = 7; //only single value
+	double centerAngle = 8; //only single value
+	double centerRadius = 9; //only single value
 }
 
 // An Array of rectangular shape.
@@ -194,13 +197,33 @@ enum Size
 	MidShort = 1; //Marker is a short marker in the middle of the overlay.
 }
 
+message SVOSelectedMarker
+{
+enum  PosType
+{
+First = 0;
+Last = 1;
+This = 2;
+}
+
+PosType type = 1;
+double pos = 2;
+bool fromLast = 3;
+int32 trPos_EdgeData = 6; //position of the edgeData
+}
+
 message OverlayShapeMarker
 {
 	double minValue = 1;
 	double maxValue = 2;
 	ValueObject value = 3;
-	Size sizeType = 5;
 	Orientation orientationType = 4;
+	Size sizeType = 5;
+	
+	oneof SVOData
+	{
+		SVOSelectedMarker selectedMarkerData = 6;
+	}
 }
 
 message OverlayShapeMarkerArray
