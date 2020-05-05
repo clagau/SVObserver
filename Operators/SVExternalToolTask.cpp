@@ -31,7 +31,11 @@
 #include "SVVariantResultClass.h"
 #include "Tools/SVTool.h"
 #include "TableObject.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
+
+
 #pragma endregion Includes
+
 
 namespace SvOp
 {
@@ -58,6 +62,7 @@ SVExternalToolTaskData::~SVExternalToolTaskData()
 {
 }
 
+	
 SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalToolTaskData& rhs)
 {
 	if (this != &rhs)
@@ -231,6 +236,10 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	m_Data.m_NumResultTables = 0;
 
 	SetAllAttributes();
+}
+bool SVExternalToolTask::NoExFktInLoadVersion()
+{
+	return  SvOi::getLoadingVersion() < 0xA0000;
 }
 
 void SVExternalToolTask::SetAllAttributes()
@@ -489,11 +498,18 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 
 		if (m_Data.m_ResultDefinitions[i].UseDisplayNames())
 		{
+		
+			std::string oldName = m_Data.m_aResultObjects[i].GetName();
 			std::string resPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_RESULT_PREFIX);
-
 			std::stringstream str;
 			str << resPrefix << std::setfill('0') << std::setw(2) << i + 1 << "_" << m_Data.m_ResultDefinitions[i].getDisplayName();
 			m_Data.m_aResultObjects[i].SetName(str.str().c_str());
+			
+			if (NoExFktInLoadVersion() && GetInspection())
+			{
+				GetInspection()->OnObjectRenamed(m_Data.m_aResultObjects[i], oldName);
+			}
+		
 		}
 
 		///Set Arraysize 
@@ -565,7 +581,14 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 				std::string name = str.str();
 				if (GetResultTableObject(j))
 				{
+				
+					std::string oldName = GetResultTableObject(j)->GetName();
 					GetResultTableObject(j)->SetName(name.c_str());
+					if (NoExFktInLoadVersion() && GetInspection())
+					{
+						GetInspection()->OnObjectRenamed(*GetResultTableObject(j), oldName);
+
+					}
 				}
 			}
 		}
@@ -785,7 +808,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			}
 			m_InspectionInputValues.resize(ArraySize);
 
-			m_Data.InitializeInputs();
+			m_Data.InitializeInputs(this);
 			for (int i = 0; i < ArraySize; i++)
 			{
 				HRESULT hres = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
@@ -1796,7 +1819,7 @@ void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValue
 
 
 }
-void SVExternalToolTaskData::InitializeInputs()
+void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalToolTask)
 {
 
 	for (int i = 0; i < m_InputDefinitions.size(); i++)
@@ -1833,11 +1856,18 @@ void SVExternalToolTaskData::InitializeInputs()
 
 		if (rInputDef.UseDisplayNames())
 		{
+			
+			std::string oldname = m_aInputObjects[i].GetName();
 			std::string InputPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_INPUT_PREFIX);
 			std::stringstream str;
-			str << InputPrefix << std::setfill('0') << std::setw(2) << i << "_" << rInputDef.getDisplayName();
+			str << InputPrefix << std::setfill('0') << std::setw(2) << i +1 << "_" << rInputDef.getDisplayName();
 			std::string name = str.str();
 			m_aInputObjects[i].SetName(name.c_str());
+			if (nullptr != pExternalToolTask &&  pExternalToolTask->NoExFktInLoadVersion() && pExternalToolTask->GetInspection())
+			{
+				pExternalToolTask->GetInspection()->OnObjectRenamed(m_aInputObjects[i], oldname);
+			}
+			
 		}
 
 

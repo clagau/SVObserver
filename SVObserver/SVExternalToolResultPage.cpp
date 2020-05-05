@@ -137,13 +137,13 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			iID++;
 			pEdit->SetCtrlID(iID);
 
-			std::string sLabel = rValue.GetName();
-			if (false == rDefinition.UseDisplayNames())
-			{
-				sLabel += " (";
-				sLabel += rDefinition.getDisplayName();
-				sLabel += ")";
-			}
+			std::string  ObjectName = rValue.GetName();
+			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i));
+			///use the same displayname as in 8.20
+			sLabel += " (";
+			sLabel += rDefinition.getDisplayName();
+			sLabel += ")";
+			
 
 
 			pEdit->SetLabelText(sLabel.c_str());
@@ -213,9 +213,14 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			}
 			iID++;
 			pEdit->SetCtrlID(iID);
-			std::string sLabel = pTable->GetName();
-			// display name like: "Result 01 ( )"
-			if (false == rDefinition.UseDisplayNames())
+			std::string objectname = pTable->GetName();
+			///use the same displayname as in 8.20
+			std::string  sLabel = "Table Object";
+			if (i > 0)
+			{
+				sLabel = SvUl::Format(_T("%s%i"), "Table Object", i);
+			}
+
 			{
 				sLabel += " (";
 				sLabel += rDefinition.getDisplayName();

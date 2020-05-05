@@ -191,13 +191,33 @@ void CDllTool::getResultTableDefinitionEx(std::array<ResultTableDefinitionStruct
 	}
 
 	ResultTables[FirstResultTable].vt = VT_R8;
-	ResultTables[FirstResultTable].Name = "First_table";
+	ResultTables[FirstResultTable].Name = "Ftable";
 	ResultTables[FirstResultTable].HelpText = "Erstes Table Objekt";
 	ResultTables[FirstResultTable].ColoumnCount = ColumnCountA;
 	ResultTables[FirstResultTable].ColumnNames.vt = VT_ARRAY | VT_BSTR;
 	ResultTables[FirstResultTable].ColumnNames.parray = saStr.Detach();
 	ResultTables[FirstResultTable].RowCount = RowCountA;
 	ResultTables[FirstResultTable].Group = "TableGroup";
+
+	////////////////////////
+	_bstr_t ColumnNamesB[ColumnCountA] = {"A", "B", "C", "D","E","F"};
+	CComSafeArray<BSTR> saStrB(ColumnCountA);
+	for (int i = 0; i < ColumnCountA; i++)
+	{
+		saStrB.SetAt(i, ColumnNamesB[i]);
+	}
+
+	ResultTables[SecondResultTable].vt = VT_R8;
+	ResultTables[SecondResultTable].Name = "Stable";
+	ResultTables[SecondResultTable].HelpText = "Zweites Table Objekt";
+	ResultTables[SecondResultTable].ColoumnCount = ColumnCountA;
+	ResultTables[SecondResultTable].ColumnNames.vt = VT_ARRAY | VT_BSTR;
+	ResultTables[SecondResultTable].ColumnNames.parray = saStrB.Detach();
+	ResultTables[SecondResultTable].RowCount = RowCountA;
+	ResultTables[SecondResultTable].Group = "TableGroup";
+
+
+
 
 }
 HRESULT CDllTool::validateInputValues(long lParameterNumber, const	VARIANT vParameterValue)
@@ -374,9 +394,14 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 			ATLASSERT(hr == S_OK);
 		}
 	}
+	CComSafeArray<double> tdimsb(tdimsa);
 	m_ResultTables.resize(NUM_RESULT_TABLES);
 	m_ResultTables[FirstResultTable].vt = VT_ARRAY | VT_R8;
 	m_ResultTables[FirstResultTable].parray = tdimsa.Detach();
+	
+	
+	m_ResultTables[SecondResultTable].vt = VT_ARRAY | VT_R8;
+	m_ResultTables[SecondResultTable].parray = tdimsb.Detach();
 
 
 

@@ -51,8 +51,9 @@ enum ResultImagesEnum
 };
 enum ResultTablesEnum
 {
-	FirstResultTable =0,
-	NUM_RESULT_TABLES
+	FirstResultTable ,
+	SecondResultTable ,
+	NUM_RESULT_TABLES 
 };
 
 #define ColumnCountA 6

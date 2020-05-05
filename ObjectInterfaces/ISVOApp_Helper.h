@@ -23,6 +23,11 @@ namespace SvOi
 	/// \returns bool
 	bool isOkToEdit();
 
+	DWORD  getLoadingVersion();
+	DWORD  getCurrentVersion();
+	
+
+
 	//! Open the File dialog
 	//! \param bOpenFileDialog [in] flag for open or save dialog
 	//! \param Extension [in] default extension for the file

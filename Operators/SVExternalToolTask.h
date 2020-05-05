@@ -29,11 +29,12 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
+
 namespace SvOp
 {
 class TableObject;
 class SVResultClass;
-	
+class SVExternalToolTask;
 struct SVExternalToolTaskData : public SVCancelData
 {
 	enum
@@ -54,7 +55,7 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStruct  InputValueDefs[]);
 	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[]);
-	void  InitializeInputs();
+	void  InitializeInputs(SVExternalToolTask*  pExternalToolTask);
 	long  getNumInputs() const { return static_cast<long>(m_InputDefinitions.size()); };
 	long  getNumResults() const { return static_cast<long>(m_ResultDefinitions.size()); };
 	long  getNumTableResults() const { return static_cast<long>(m_TableResultDefinitions.size()); };
@@ -145,6 +146,10 @@ public:
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
 #pragma endregion Methods to replace processMessage
 
+	/// Returns true if the External dll Ex functions are not supported in the Version of the loaded config.
+	// i.e. loaded version is older than  10.0  
+	bool NoExFktInLoadVersion();
+
 protected:
 	HRESULT Uninitialize();
 	HRESULT ClearData();
@@ -161,6 +166,8 @@ protected:
 	std::vector<SVResultClass*> GetResultRangeObjects();
 
 	HRESULT AllocateResult (int iIndex);
+
+	
 
 private:
 	HRESULT InitializeResultObjects();
@@ -200,7 +207,8 @@ private:
 	
 private:
 	HRESULT collectInputImageNames( );
-
+	
+	
 public:
 	friend class SVExternalToolDlg;
 	friend class SVExternalToolInputSelectPage;

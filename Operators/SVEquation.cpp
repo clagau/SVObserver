@@ -721,7 +721,7 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	}
 	else if (SvPb::SVValueObjectType == type)
 	{
-		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVValueObjectType, false);
+		std::string dottedNameWithoutObjectname = rRenamedObject.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, false);
 		newPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rRenamedObject.GetName() + _T("\"");
 		oldPrefix = _T("\"") + dottedNameWithoutObjectname + _T(".") + rOldName + _T("\"");
 	}

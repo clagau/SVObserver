@@ -181,16 +181,15 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			pEdit->SetCtrlID(iID);
 
 			int Index = rDefinition.getLinkedValueIndex();
-			// display name like: "Input 01 (Translation-X)"
-			std::string  sLabel = m_Values.GetName(SvPb::ExternalInputEId+Index).c_str();
 
-			if (false == rDefinition.UseDisplayNames() )
-			{
-				sLabel += " (";
-				sLabel += rDefinition.getDisplayName();
-				sLabel += ")";
-			}
-			
+
+			std::string  ObjectName = m_Values.GetName(SvPb::ExternalInputEId + Index).c_str();
+			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(Index));
+			sLabel += " (";
+			sLabel += rDefinition.getDisplayName();
+			sLabel += ")";
+
+
 			pEdit->SetLabelText(sLabel.c_str());
 
 			std::string strType;
@@ -231,10 +230,10 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			Description = _T(" (Type: ") + strType + _T(")  ") + Description;
 			pEdit->SetInfoText(Description.c_str());
 
-			std::string Value(m_Values.Get<CString>(SvPb::ExternalInputLinkedEId+Index));
+			std::string Value(m_Values.Get<CString>(SvPb::ExternalInputLinkedEId + Index));
 			if (Value.empty())
 			{
-				_variant_t temp = m_Values.Get<_variant_t>(SvPb::ExternalInputEId+Index);
+				_variant_t temp = m_Values.Get<_variant_t>(SvPb::ExternalInputEId + Index);
 
 				Value = SvUl::VariantToString(temp);
 
@@ -296,14 +295,14 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
 {
-	
+
 	const  SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
 	bool isTable(false);
 	if (pDef)
 	{
 		isTable = (pDef->getType() == SvOp::ExDllInterfaceType::TableArray);
 	}
-	
+
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	if (!isTable)
@@ -414,7 +413,7 @@ void SVExternalToolInputSelectPage::OnOK()
 						{
 							if (SvUl::StringToSafeArray<double>(Value, array) > 0)
 							{
-								m_Values.Set<_variant_t>(SvPb::ExternalInputEId+iIndex, array);
+								m_Values.Set<_variant_t>(SvPb::ExternalInputEId + iIndex, array);
 								done = true;
 							}
 							break;
@@ -423,7 +422,7 @@ void SVExternalToolInputSelectPage::OnOK()
 						{
 							if (SvUl::StringToSafeArray<long>(Value, array) > 0)
 							{
-								m_Values.Set<_variant_t>(SvPb::ExternalInputEId+iIndex, array);
+								m_Values.Set<_variant_t>(SvPb::ExternalInputEId + iIndex, array);
 								done = true;
 							}
 							break;
@@ -431,7 +430,7 @@ void SVExternalToolInputSelectPage::OnOK()
 					}
 					if (!done)
 					{
-						m_Values.Set<CString>(SvPb::ExternalInputEId+iIndex, Value.c_str());
+						m_Values.Set<CString>(SvPb::ExternalInputEId + iIndex, Value.c_str());
 					}
 				}
 
@@ -485,7 +484,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 		if (res)
 		{
 			DWORD type = pValueObject->GetType();
-		
+
 			SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
 			if (pVariant)
 			{
@@ -502,7 +501,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 					}
 					break;
 				case VT_ARRAY | VT_I4:
-					if( type != VT_I4)
+					if (type != VT_I4)
 					{
 						res = false;
 					}

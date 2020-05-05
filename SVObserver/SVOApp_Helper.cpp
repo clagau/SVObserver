@@ -24,6 +24,16 @@ bool SvOi::isOkToEdit()
 	return TheSVObserverApp.OkToEdit();
 }
 
+DWORD  SvOi::getLoadingVersion()
+{
+	return TheSVObserverApp.getLoadingVersion();
+}
+
+DWORD  SvOi::getCurrentVersion()
+{
+	return TheSVObserverApp.getCurrentVersion();
+}
+
 INT_PTR SvOi::OpenSVFileDialog(bool bOpenFileDialog, LPCTSTR Extention, std::string& FileName, DWORD Flags, LPCTSTR Filter, std::string& Path, LPCTSTR Title)
 {
 	bool FullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
