@@ -11,35 +11,26 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
+class PlcOutputObject;
 class SVDigitalInputObject;
 class SVDigitalOutputObject;
 class SVIODoc;
 
 class SVIOAdjustDialogClass : public CDialog
 {
-	protected:
-	//{{AFX_MSG(SVIOAdjustDialogClass)
-	afx_msg void OnForce0Radio();
-	afx_msg void OnForce1Radio();
-	afx_msg void OnForceCheck();
-	afx_msg void OnInvertCheck();
-	afx_msg void OnCombineACKRadio();
-	afx_msg void OnCombineNAKRadio();
-	afx_msg void OnCombineCheck();
+	DECLARE_MESSAGE_MAP()
+
+protected:
 	virtual void OnOK() override;
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelChangeIOCombo();
-	//}}AFX_MSG
 	
-	DECLARE_MESSAGE_MAP()	
-
 public:
-	SVIOAdjustDialogClass( CWnd* pParent = nullptr );   // Standardkonstruktor
-	virtual ~SVIOAdjustDialogClass();
+	SVIOAdjustDialogClass( CWnd* pParent = nullptr );
+	virtual ~SVIOAdjustDialogClass() = default;
 
 	//{{AFX_VIRTUAL(SVIOAdjustDialogClass)
 	protected:
@@ -47,29 +38,29 @@ public:
 	//}}AFX_VIRTUAL
 
 public:
-	SVIODoc					*m_pIODoc;
 	SVIOEntryHostStructPtr m_pIOEntry;
-	SVDigitalInputObject	*m_pDigInput;
-	SVDigitalOutputObject	*m_pDigOutput;
-	BOOL m_bInputMode;
+	SVDigitalInputObject* m_pDigInput {nullptr};
+	SVDigitalOutputObject* m_pDigOutput {nullptr};
+	PlcOutputObject* m_pPlcOutput {nullptr};
 
 	//{{AFX_DATA(SVIOAdjustDialogClass)
 	enum { IDD = IDD_IOADJUST_DIALOG };
 	CComboBox	IOCombo;
 	CString		IOName;
 	CString		IOValue;
-	BOOL		IsForced;
-	BOOL		IsInverted;
-	BOOL		IsForcedTrue;
-	BOOL		IsForcedFalse;
-	BOOL		IsCombined;
-	BOOL		IsCombinedACK;
-	BOOL		IsCombinedNAK;
+	BOOL		IsForced {false};
+	BOOL		IsInverted {false};
+	BOOL		IsForcedTrue {false};
+	BOOL		IsForcedFalse {false};
+	BOOL		IsCombined {false};
+	BOOL		IsCombinedACK {false};
+	BOOL		IsCombinedNAK {false};
 	//}}AFX_DATA
 
 private:
-	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
-
-	SVDataItemManager m_Items;
+	void showForcedGroup(int showState);
+	void showInvertGroup(int showState);
+	void showCombinedGroup(int showState);
+	std::map<std::string, SVIOEntryHostStructPtr> m_Items;
 };
 

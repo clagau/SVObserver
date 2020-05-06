@@ -71,9 +71,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVDataItemManagerTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVGraphix.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -101,9 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVOINIClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVDataItemManagerTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

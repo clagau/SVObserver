@@ -37,18 +37,6 @@ struct RecordData
 	std::string m_text;
 };
 
-struct TriggerParameter
-{
-	uint32_t m_ObjectID {0};
-	std::atomic_bool m_started{false};
-	long m_conditionIndex {-1L};
-	long m_dataValidIndex {-1L};
-	long m_objectGoodIndex {-1L};
-	unsigned long m_period {0UL};
-	std::thread m_timer;
-};
-
-
 class SVPlcIOImpl : public SvTi::IODeviceBase
 {
 #pragma region Constructor
@@ -80,6 +68,7 @@ public:
 	BSTR GetTriggerName(unsigned long triggerChannel);
 
 	void beforeStartTrigger(unsigned long) override;
+	HRESULT afterStartTrigger(HRESULT hr) override;
 	void beforeStopTrigger(unsigned long) override;
 
 	HRESULT TriggerGetParameterCount(unsigned long triggerChannel, unsigned long *pCount);
@@ -96,33 +85,25 @@ public:
 
 #pragma region Private Methods
 private:
-	void WriteResult(int triggerChannel);
 	void reportTrigger(const TriggerReport&);
-
-
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
-	uint16_t m_Input {0};
-	uint16_t m_Output {0};
 	bool m_isInitialized {false};
 	bool m_delayedReportTrigger {false};
+	bool m_moduleReady{false};
 	uint16_t m_plcSimulation {0};
 	uint16_t m_plcTransferTime {0};
-	int m_readyBit {0};
 	long m_PlcVersion {0L};
-	bool m_engineStarted {false};
-	TriggerParameter m_trigger[cNumberTriggers];
+	std::atomic_bool m_engineStarted {false};
+	std::atomic_bool m_triggerStarted[cNumberTriggers]{false, false, false, false};
+	std::atomic_int8_t m_currentTriggerIndex{-1};
 
-	std::mutex m_protectPlc;
+	std::mutex m_protectPlc;		///Note do not call any Tec functions when this is set, can cause deadlock!
 
-	//@TODO[gra][8.20][08.04.2019]: Needs to be removed after LPT functionality no longer in PLC required (for timing purposes)
-	bool m_isLptActive {false};
-	long m_resetOutputTime{0L};
 	std::string m_OutputFileName;
 	std::vector<std::string> m_OutputData;
-	//@TODO[gra][8.20][08.04.2019]
 #pragma endregion Member Variables
 };
 

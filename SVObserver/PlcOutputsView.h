@@ -1,12 +1,7 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVRemoteInputsView
-//* .File Name       : $Workfile:   SVRemoteInputsView.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:31:24  $
+//*****************************************************************************
+/// \copyright (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+/// \file PlcOutputsView
+/// This class is a list view for the PLC connected outputs
 //******************************************************************************
 #pragma once
 
@@ -16,22 +11,25 @@
 
 class SVIODoc;
 
-class SVRemoteInputsView : public CListView
+class PlcOutputsView : public CListView
 {
-	DECLARE_DYNCREATE(SVRemoteInputsView)
+	DECLARE_DYNCREATE(PlcOutputsView)
 	DECLARE_MESSAGE_MAP()
 
-	SVRemoteInputsView();
-	virtual ~SVRemoteInputsView() = default;
+	PlcOutputsView();
+	virtual ~PlcOutputsView() = default;
 
 protected:
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+
+#pragma region Member variables
 private:
 	CListCtrl& m_rCtrl;
 	CImageList m_ImageList;
 	CImageList m_StateImageList;
 	std::map<unsigned long, SVIOEntryHostStructPtr> m_Items;
+#pragma endregion Member variables
 };

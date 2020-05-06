@@ -777,7 +777,7 @@ void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pH
 	bool Update = true;
 
 	SVObjectClass* pObject(nullptr);
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentImageUpdateUidId, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentImageUpdateId, pObject);
 	if (nullptr != pObject)
 	{
 		double Value;

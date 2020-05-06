@@ -19,38 +19,33 @@ class SVRemoteInputObject : public SVInputObject
 #pragma region Constructor
 public:
 	explicit SVRemoteInputObject( LPCSTR strObjectName );
-	SVRemoteInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
+	explicit SVRemoteInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
 
-	virtual ~SVRemoteInputObject();
+	virtual ~SVRemoteInputObject() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	virtual bool Create() override;
-	virtual bool Destroy() override;
 
-	virtual HRESULT Read( _variant_t& p_rValue ) override;
+	virtual HRESULT Read(_variant_t& rValue) const override;
+	virtual long GetChannel() const override { return m_channel; }
 
-	void Lock();
-	void Unlock();
+	HRESULT writeCache(const _variant_t& rValue);
 
-	HRESULT WriteCache( const _variant_t& p_rValue );
-	HRESULT GetCache( _variant_t& p_rValue );
-	/// Update the objectId to a fix ID depend of a position (must between 0 and 0x100).
-	/// \param position [in]
-	void updateObjectId(int position);
-
-	long m_lIndex;
+	void SetChannel(long channel) { m_channel = channel; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
 private:
+	_variant_t getCache() const;
 	void LocalInitialize();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
-	CRITICAL_SECTION m_hCriticalSection;
-	_variant_t m_vtRemoteCache;
+	mutable std::mutex m_protectRemoteInput;
+
+	_variant_t m_remoteCache{0.0};
+	long m_channel{-1};
 #pragma endregion Member Variables
 };

@@ -24,12 +24,7 @@ SVCameraDataInputObject::SVCameraDataInputObject(SVObjectClass *pOwner, int Stri
 	LocalInitialize();
 }
 
-SVCameraDataInputObject::~SVCameraDataInputObject()
-{
-	Destroy();
-}
-
-HRESULT SVCameraDataInputObject::Read( _variant_t& rValue )
+HRESULT SVCameraDataInputObject::Read(_variant_t& rValue) const
 {
 	HRESULT l_Status = S_OK;
 

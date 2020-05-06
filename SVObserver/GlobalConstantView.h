@@ -43,7 +43,7 @@ private:
 #pragma region Public
 public:
 	//************************************
-	//! The method updates obnly this view
+	//! The method updates only this view
 	//************************************
 	void updateView();
 
@@ -71,11 +71,6 @@ protected:
 
 #pragma region Private
 private:
-#ifdef _DEBUG
-	virtual void AssertValid() const override;
-	virtual void Dump( CDumpContext& dc ) const override;
-#endif
-
 	//************************************
 	//! The method is called to add or edit an item
 	//! \param Item <in> the index of the item to edit if -1 it will add an item
@@ -110,12 +105,6 @@ private:
 	//************************************
 	void editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const;
  
-	//************************************
-	//! This method retrieves the corresponding IO document
-	//! \returns a pointer to the document
-	//************************************
-	SVIODoc* GetDocument();
-
 	//************************************
 	//! The method is called to update all the inspection documents
 	//! \param RunOnce <in> when true a runonce is called

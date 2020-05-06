@@ -32,18 +32,7 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(SVPPQEntryDialogDigInPageClass, CPropertyPage)
 
-SVPPQEntryDialogDigInPageClass::SVPPQEntryDialogDigInPageClass()
-: CPropertyPage(SVPPQEntryDialogDigInPageClass::IDD)
-, m_AvailableItems( boost::bind( &( CListBox::GetItemData ), &m_AvailableInputCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &m_AvailableInputCtrl, _1, _2 ) )
-, m_SelectedItems( boost::bind( &( CListBox::GetItemData ), &m_SelectedInputCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &m_SelectedInputCtrl, _1, _2 ) )
-{
-	//{{AFX_DATA_INIT(SVPPQEntryDialogDigInPageClass)
-	m_CurrentPos = _T("");
-	//}}AFX_DATA_INIT
-	m_bIsTaken = FALSE;
-}
-
-SVPPQEntryDialogDigInPageClass::~SVPPQEntryDialogDigInPageClass()
+SVPPQEntryDialogDigInPageClass::SVPPQEntryDialogDigInPageClass() : CPropertyPage(SVPPQEntryDialogDigInPageClass::IDD)
 {
 }
 
@@ -86,10 +75,10 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 		// Fill selected input list box...
 		if(pEntry->m_PPQIndex == m_pSheet->m_lCurrentPosition )
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
-			nIndex = m_SelectedInputCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems.SetItemData(nIndex, pEntry);
+			nIndex = m_SelectedInputCtrl.AddString( pObject->GetName() );
+			m_SelectedItems[nIndex] = pEntry;
 		}// end if
 
 		// Fill available input list box...
@@ -98,7 +87,7 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
 			nIndex = m_AvailableInputCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems.SetItemData(nIndex, pEntry);
+			m_AvailableItems[nIndex] = pEntry;
 		}// end if
 
 	}// end for
@@ -122,14 +111,12 @@ void SVPPQEntryDialogDigInPageClass::OnAddButton()
 	if( m_pSheet && index >= 0 )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_AvailableItems.GetItemData( index );
-
-		if( l_Iter != m_AvailableItems.end() )
+		const auto iter = m_AvailableItems.find(index);
+		if (m_AvailableItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_AvailableItems.erase(iter);
 		}
-
-		m_AvailableItems.ClearItemData( index );
 		m_AvailableInputCtrl.DeleteString( index );
 
 		if(nullptr != pIOEntry)
@@ -137,7 +124,7 @@ void SVPPQEntryDialogDigInPageClass::OnAddButton()
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
 			index = m_SelectedInputCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems.SetItemData( index, pIOEntry );
+			m_SelectedItems[index] = pIOEntry;
 		}
 	}
 
@@ -153,22 +140,20 @@ void SVPPQEntryDialogDigInPageClass::OnRemoveButton()
 	if( m_pSheet && index >= 0 )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_SelectedItems.GetItemData( index );
-
-		if( l_Iter != m_SelectedItems.end() )
+		const auto iter = m_SelectedItems.find(index);
+		if (m_SelectedItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_SelectedItems.erase(iter);
 		}
-
-		m_SelectedItems.ClearItemData( index );
-		m_SelectedInputCtrl.DeleteString( index );
+		m_SelectedInputCtrl.DeleteString(index);
 
 		if(nullptr != pIOEntry)
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
 			index = m_AvailableInputCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems.SetItemData( index, pIOEntry );
+			m_AvailableItems[index] = pIOEntry;
 		}
 	}
 
@@ -186,14 +171,12 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 	for( int k = m_SelectedInputCtrl.GetCount() - 1; k >= 0; -- k )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_SelectedItems.GetItemData( k );
-
-		if( l_Iter != m_SelectedItems.end() )
+		const auto iter = m_SelectedItems.find(k);
+		if (m_SelectedItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_SelectedItems.erase(iter);
 		}
-
-		m_SelectedItems.ClearItemData( k );
 		m_SelectedInputCtrl.DeleteString( k );
 
 		if(nullptr != pIOEntry)
@@ -207,14 +190,12 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 	for( int i = m_AvailableInputCtrl.GetCount() - 1; i >= 0;  -- i )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_AvailableItems.GetItemData( i );
-
-		if( l_Iter != m_AvailableItems.end() )
+		const auto iter = m_AvailableItems.find(i);
+		if (m_AvailableItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_AvailableItems.erase(iter);
 		}
-
-		m_AvailableItems.ClearItemData( i );
 		m_AvailableInputCtrl.DeleteString( i );
 
 		if(nullptr != pIOEntry)

@@ -107,6 +107,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PlcOutputObject.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -114,18 +115,17 @@
     <ClCompile Include="SVCameraDataInputObject.cpp" />
     <ClCompile Include="SVDigitalInputObject.cpp" />
     <ClCompile Include="SVDigitalOutputObject.cpp" />
-    <ClCompile Include="SVInputObject.cpp" />
     <ClCompile Include="SVInputObjectList.cpp" />
     <ClCompile Include="SVIOConfigurationInterfaceClass.cpp" />
     <ClCompile Include="SVIODigitalLoadLibraryClass.cpp" />
     <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp" />
-    <ClCompile Include="SVOutputObject.cpp" />
     <ClCompile Include="SVOutputObjectList.cpp" />
     <ClCompile Include="SVRemoteInputObject.cpp" />
     <ClCompile Include="SVRemoteOutputObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlcOutputObject.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVCameraDataInputObject.h" />
     <ClInclude Include="SVDigitalInputObject.h" />

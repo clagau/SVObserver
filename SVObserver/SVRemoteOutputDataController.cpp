@@ -17,6 +17,7 @@
 #include "SVRemoteOutputDataController.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
+#include "SVIOTabbedView.h"
 #include "SVPPQObject.h"
 #include "SVObserver.h"
 #include "Definitions/GlobalConst.h"
@@ -31,14 +32,14 @@
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SvPb::RemoteOutputDataControllerClassId);
 
-SVRemoteOutputDataController::SVRemoteOutputDataController( LPCTSTR ObjectName )
-: SVObjectClass( ObjectName )
+SVRemoteOutputDataController::SVRemoteOutputDataController( LPCTSTR ObjectName ) : SVObjectClass( ObjectName )
 {
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RemoteDataControllerObjectId);
 }
 
-SVRemoteOutputDataController::SVRemoteOutputDataController( SVObjectClass *pOwner, int StringResourceID )
-: SVObjectClass( pOwner, StringResourceID )
+SVRemoteOutputDataController::SVRemoteOutputDataController( SVObjectClass *pOwner, int StringResourceID ) : SVObjectClass( pOwner, StringResourceID )
 {
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RemoteDataControllerObjectId);
 }
 
 SVRemoteOutputDataController::~SVRemoteOutputDataController()
@@ -171,20 +172,20 @@ bool SVRemoteOutputDataController::GetParameters(SvOi::IObjectWriter& rWriter)
 }
 
 // Tree >> Parameters ( Restore from archive )
-BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent )
+bool SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent )
 {
-	BOOL bOk = TRUE;
+	bool result{true};
 
 	_variant_t svVariant;
 
 	SVTreeType::SVBranchHandle htiIORemoteOutput = nullptr;
 
-	BOOL l_bTmp = SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
+	bool tmpResult = SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
 
-	if( l_bTmp )
+	if(tmpResult)
 	{
-		bOk = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
-		if ( bOk )
+		result = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
+		if (result)
 		{
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
@@ -192,28 +193,28 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 		}
 
 		// Remote Output Parameters
-		if( bOk )
+		if(result)
 		{
-			BOOL l_bTmp = TRUE;
+			tmpResult = true;
 			long l_lEntryNum = 0;
-			while( l_bTmp )
+			while(tmpResult)
 			{
 				SVTreeType::SVBranchHandle htiBranch = nullptr;
 				std::string GroupID;
 
 				std::string Entry = SvUl::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
-				l_bTmp = SvXml::SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiIORemoteOutput, htiBranch );
+				tmpResult = SvXml::SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiIORemoteOutput, htiBranch );
 
-				if ( l_bTmp )
+				if (tmpResult)
 				{
 					SVRemoteOutputGroup* l_ControlParameter = new SVRemoteOutputGroup;
-					l_bTmp = l_ControlParameter->SetParameters( p_rTree, htiBranch );
+					tmpResult = l_ControlParameter->SetParameters( p_rTree, htiBranch );
 					SVRemoteOutputObject* pRemoteOutput = l_ControlParameter->GetFirstObject();
 					if( nullptr != pRemoteOutput )
 					{
 						GroupID = pRemoteOutput->GetGroupID();
 					}
-					if( l_bTmp && nullptr != pRemoteOutput )
+					if(tmpResult && nullptr != pRemoteOutput )
 					{
 						m_RemoteGroupParameters[ GroupID ] = l_ControlParameter;
 					}
@@ -222,7 +223,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 		}
 	}
 
-	return bOk;
+	return result;
 }
 
 // Gets the last remote output object with in this group.
@@ -337,7 +338,7 @@ HRESULT SVRemoteOutputDataController::DeleteRemoteOutput( const std::string& rRe
 	if( m_RemoteGroupParameters.empty() )
 	{
 		// Hide the Remote Output Tab if no outputs exist.
-		TheSVObserverApp.HideRemoteOutputTab( );
+		TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
 	}
 	return l_hr;
 }
@@ -393,7 +394,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 		if( m_RemoteGroupParameters.empty() )
 		{
 			// Hide the Remote Output Tab if no outputs exist.
-			TheSVObserverApp.HideRemoteOutputTab( );
+			TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
 		}
 		TheSVObserverApp.OnUpdateAllIOViews(); // updates the view after clearing unused.
 	}
@@ -497,8 +498,6 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 			else
 			{
 				TheSVObserverApp.ShowIOTab( SVRemoteOutputsViewID );
-				// Set Active IO Tabbed view to the Remote Outputs Tab
-				TheSVObserverApp.SetActiveIOTabView( SVRemoteOutputsViewID );
 			}
 			TheSVObserverApp.OnUpdateAllIOViews();
 		}

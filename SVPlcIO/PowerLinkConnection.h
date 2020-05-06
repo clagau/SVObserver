@@ -16,8 +16,7 @@ namespace SvPlc
 struct TriggerReport;
 struct ResultReport;
 
-extern HANDLE g_hTelegramEvent;
-extern HANDLE g_hStopEvent;
+extern HANDLE g_hSignalEvent;
 
 class PowerlinkConnection
 {
@@ -28,10 +27,11 @@ public:
 	void setReady(bool ready);
 	void setTriggerChannel(uint8_t channel, bool active, uint32_t period);
 	void writeResult(const ResultReport& rResultReport);
-
-	void StartEventSignalThread();
+	HRESULT initialize();
 
 private:
+	void StartEventSignalThread();
+	void StopEventSignalThread();
 	void EventSignalThread(std::function<void()> pCallback);
 	void EventHandler();
 

@@ -66,7 +66,7 @@ public:
 
 	HRESULT ConstructRootObject(SvPb::ClassIdEnum classID);
 	HRESULT DestroyRootObject();
-	void setRootChildID(const std::string& rRootChild, uint32_t objectID);
+	void setRootChildID(const SVObjectClass* pObject);
 
 	//! Translates the dotted name if the name start needs to be replaced
 	//! \param rName [in][out] dotted name to translate is done in place
@@ -226,8 +226,8 @@ public:
 	/// \returns bool
 	bool DisconnectObjectInput( uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
-	///return ptr to Mutex  
-	std::recursive_mutex* GetMutex() { return  &(m_Mutex); };
+	///return Mutex  
+	std::recursive_mutex* GetMutex() { return  &m_Mutex; }
 
 
 protected:
@@ -307,8 +307,9 @@ protected:
 	mutable std::recursive_mutex m_Mutex;
 	SVCookieEntryMap		m_CookieEntries;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
-	std::set<uint32_t>		m_deletedObjectId;
-	bool					m_addToDeletedList = true;
+	std::set<uint32_t>		m_deletedObjectIdSet;
+	//@TODO[gra][10.00][06,05,2020]: Needed to set this to false as it caused problems with certain tests
+	bool					m_addToDeletedList = false;
 	RootNameChildMap		m_RootNameChildren;
 	SvDef::TranslateMap		m_TranslationMap;
 

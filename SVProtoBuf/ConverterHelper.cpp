@@ -139,7 +139,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 			break;
 
 		case VT_I1:
-			rVariant.bVal = static_cast<byte> (rPbVariant.lval());
+			rVariant.cVal = static_cast<char> (rPbVariant.lval());
 			break;
 
 		case VT_I2:
@@ -155,7 +155,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 			break;
 
 		case VT_UI1:
-			rVariant.cVal = static_cast<char> (rPbVariant.ulval());
+			rVariant.bVal = static_cast<BYTE> (rPbVariant.ulval());
 			break;
 
 		case VT_UI2:

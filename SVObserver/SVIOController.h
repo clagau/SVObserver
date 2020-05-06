@@ -51,7 +51,7 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
 	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
 
@@ -76,7 +76,6 @@ public:
 	HRESULT RemoteOutputValidateInputs();
 
 	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig);
-	void ClearRemoteMonitorList();
 	const RemoteMonitorListMap& GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);
 
@@ -103,18 +102,17 @@ public:
 	HRESULT GetRemoteMonitorListProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum& rFilter) const;
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
-protected:
-	SVIOEntryHostStructPtr m_pModuleReady;
-	SVIOEntryHostStructPtr m_pRaidErrorBit;
-
-	SVRemoteOutputDataController* m_pRemoteOutputController;
-	RemoteMonitorListController m_RemoteMonitorListController;
-
 private:
 	void LocalIntialize();
 	void LocalDestroy();
 
-	SVIODoc* m_pIODoc;
+	SVIOEntryHostStructPtr m_pModuleReady;
+	SVIOEntryHostStructPtr m_pRaidErrorBit;
+
+	std::unique_ptr<SVRemoteOutputDataController> m_pRemoteOutputController;
+	RemoteMonitorListController m_RemoteMonitorListController;
+	SVIODoc* m_pIODoc{nullptr};
+	bool m_discreteIO{false};
 };
 
 

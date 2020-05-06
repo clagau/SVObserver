@@ -49,12 +49,6 @@ long g_CallbackCount = 0;
 #endif
 
 SVLptIOImpl::SVLptIOImpl() 
-: m_numPorts(2)
-, m_numInputs(12)
-, m_numOutputs(24)
-, m_numTriggers(3)
-, m_lBoardVersion(0)
-, m_TriggerActive( false )
 {
 	try
 	{
@@ -1115,40 +1109,52 @@ HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 // SetParameterValue
 // This function sets the value specified by ulIndex.
 // if the index is not supported for setting, then an error is returned.
-HRESULT SVLptIOImpl::SetParameterValue(unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT SVLptIOImpl::SetParameterValue(unsigned long ulIndex, VARIANT* pValue)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pvarValue)
+	if (nullptr != pValue)
 	{
-		// Set Board Type
-		if (SVBoardType == ulIndex) 
+		switch(ulIndex)
 		{
-			if (VT_I4 == pvarValue->vt)
+			case SVBoardType:
 			{
-				long lBoardType = pvarValue->lVal;
-				if (S_OK == TranslateBoardType(lBoardType))
+				if (VT_I4 == pValue->vt)
 				{
-					hr = SetBoardType(lBoardType);
+					long lBoardType = pValue->lVal;
+					if (S_OK == TranslateBoardType(lBoardType))
+					{
+						hr = SetBoardType(lBoardType);
+					}
+					else
+					{
+						hr = SetBoardType(pValue->lVal);
+					}
 				}
-				else
-				{
-					hr = SetBoardType(pvarValue->lVal);
-				}
+				break;
 			}
-		}
-		else if (SVRabbitRTC == ulIndex)
-		{
-			long lRTC = pvarValue->lVal;
-			if (VT_I4 == pvarValue->vt)
+			case SVRabbitRTC:
 			{
-				hr = SetRTC(lRTC);
+				if (VT_I4 == pValue->vt)
+				{
+					hr = SetRTC(pValue->lVal);
+				}
+				break;
 			}
-		}
-		else if (SVRabbitWriteLog == ulIndex)
-		{
-			long lValue = pvarValue->lVal;
-			hr = SetLogValue(lValue);
+			case SVRabbitWriteLog:
+			{
+				hr = SetLogValue(pValue->lVal);
+			}
+			case SVModuleReady:
+			{
+				if(VT_BOOL == pValue->vt)
+				{
+					m_moduleReady = pValue->boolVal ? true : false;
+				}
+				break;
+			}
+			default:
+				break;
 		}
 	}
 	return hr;
@@ -1603,7 +1609,8 @@ LPCTSTR SVLptIOImpl::GetControlText(long lControl)
 
 void SVLptIOImpl::HandleIRQ()
 {
-	if( !m_TriggerActive )
+	/// Only handle irq if the module ready is set this avoids problems with the PPQ Object not being ready
+	if(false == m_TriggerActive || false == m_moduleReady)
 	{
 		return;
 	}

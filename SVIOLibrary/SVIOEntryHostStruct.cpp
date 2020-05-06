@@ -18,43 +18,31 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-SVIOEntryHostStruct::SVIOEntryHostStruct()
-: m_Enabled( false )
-, m_PPQIndex( -1 )
-, m_ObjectType( IO_INVALID_OBJECT )
-, m_IOId()
-, m_DeleteValueObject( true )
-, m_pObject(nullptr)
-, m_pValueObject(nullptr)
-{
-}
-
-SVIOEntryHostStruct::~SVIOEntryHostStruct()
-{
-	clear();
-}
-
 void SVIOEntryHostStruct::clear()
 {
-	if( m_DeleteValueObject && ( nullptr != m_pObject ) )
-	{
-		delete m_pObject;
-	}
-
 	m_Enabled = false;
 	m_PPQIndex = -1;
 	m_ObjectType = IO_INVALID_OBJECT;
 	m_IOId = SvDef::InvalidObjectId;
-	m_DeleteValueObject = true;
 	m_pObject = nullptr;
 	m_pValueObject = nullptr;
 }
 
-void SVIOEntryHostStruct::setObject(SVObjectClass* pObject)
+void SVIOEntryHostStruct::setValueObject(std::shared_ptr<SvOi::IValueObject> pValueObject)
+{
+	//Required to avoid dynamic cast at run time
+	m_pValueObject = pValueObject;
+	if(nullptr != m_pValueObject)
+	{
+		m_pObject = dynamic_cast<SVObjectClass*> (m_pValueObject.get());
+	}
+}
+
+void SVIOEntryHostStruct::setLinkedObject(SVObjectClass* pObject)
 {
 	//Required to avoid dynamic cast at run time
 	m_pObject = pObject;
-	m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
+	m_pLinkedValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
 }
 
 bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2)

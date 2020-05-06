@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
@@ -50,16 +49,14 @@ class SVPPQEntryDialogRemotePageClass : public CPropertyPage
 public:
 	SVPPQEntryDialogRemotePageClass();
 
-	virtual ~SVPPQEntryDialogRemotePageClass();
+	virtual ~SVPPQEntryDialogRemotePageClass() = default;
 
 protected:
-	SVPPQEntryDialogPropertySheetClass* m_pSheet;
-	BOOL m_bIsTaken;
+	SVPPQEntryDialogPropertySheetClass* m_pSheet{nullptr};
+	bool m_bIsTaken{false};
 
 private:
-	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
-
-	SVDataItemManager m_AvailableItems;
-	SVDataItemManager m_SelectedItems;
+	std::map<unsigned long, SVIOEntryHostStructPtr> m_AvailableItems;
+	std::map<unsigned long, SVIOEntryHostStructPtr> m_SelectedItems;
 };
 

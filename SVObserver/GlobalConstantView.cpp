@@ -64,7 +64,7 @@ END_MESSAGE_MAP()
 GlobalConstantView::GlobalConstantView() :
 	m_rCtrl( GetListCtrl() )
 {
-	m_pDocument = dynamic_cast<SVIODoc *> ( CListView::GetDocument() );
+	m_pDocument = dynamic_cast<SVIODoc*> (CListView::GetDocument());
 	VERIFY(m_ContextMenuItem.LoadMenu( IDR_GLOBAL_CONSTANT_CONTEXT_MENU ));
 }
 
@@ -85,10 +85,9 @@ void GlobalConstantView::OnAddItem()
 {
 	if( editItem( -1 ) )
 	{
-		SVIODoc* pIODoc = GetDocument();
-		if( nullptr != pIODoc )
+		if(nullptr != m_pDocument)
 		{
-			pIODoc->SetModifiedFlag();
+			m_pDocument->SetModifiedFlag();
 		}
 	}
 }
@@ -154,18 +153,6 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 
 #pragma region Private Methods
-#ifdef _DEBUG
-void GlobalConstantView::AssertValid() const
-{
-	CListView::AssertValid();
-}
-
-void GlobalConstantView::Dump(CDumpContext& dc) const
-{
-	CListView::Dump(dc);
-}
-#endif
-
 bool GlobalConstantView::editItem( int Item )
 {
 	bool Result( false );
@@ -362,15 +349,6 @@ void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rG
 	}
 }
 
-SVIODoc* GlobalConstantView::GetDocument()
-{
-	if( nullptr == m_pDocument )
-	{
-		m_pDocument = dynamic_cast<SVIODoc *> (CListView::GetDocument());
-	}
-	return m_pDocument;
-}
-
 void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 {
 	SVConfigurationObject* pConfig( nullptr );
@@ -537,10 +515,9 @@ void GlobalConstantView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		{
 			if( editItem(item) )
 			{
-				SVIODoc* pIODoc = GetDocument();
-				if (pIODoc)
+				if (nullptr != m_pDocument)
 				{
-					pIODoc->SetModifiedFlag();
+					m_pDocument->SetModifiedFlag();
 				}
 			}
 			m_rCtrl.SetItemState( item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -570,10 +547,9 @@ void GlobalConstantView::OnEditItem()
 	{
 		if( editItem( Item ) )
 		{
-			SVIODoc* pIODoc = GetDocument();
-			if( nullptr != pIODoc )
+			if(nullptr != m_pDocument)
 			{
-				pIODoc->SetModifiedFlag();
+				m_pDocument->SetModifiedFlag();
 			}
 		}
 	}
@@ -597,10 +573,9 @@ void GlobalConstantView::OnDeleteItem()
 	{
 		if ( deleteItem( Item ) )
 		{
-			SVIODoc* pIODoc = GetDocument();
-			if( nullptr != pIODoc )
+			if(nullptr != m_pDocument)
 			{
-				pIODoc->SetModifiedFlag();
+				m_pDocument->SetModifiedFlag();
 			}
 		}
 	}

@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVDataItemManagerTemplate.h"
 #pragma endregion Includes
 
 #define INTERNAL_INSPECTION_NAME "Inspection_"
@@ -28,7 +27,7 @@ class CSVOInspectionSourceDlg : public CPropertyPage
 // Construction
 public:
 	CSVOInspectionSourceDlg();
-	virtual ~CSVOInspectionSourceDlg();
+	virtual ~CSVOInspectionSourceDlg() = default;
     
     void SetupList();
 // Dialog Data  
@@ -79,20 +78,15 @@ private:
 	void ClearList();
     std::string GetNextInspectionDisplayName( const std::string& rLabeName );
 
-    void LoadInspectionFileNameList(); 
-    void LoadVInspectionList();
 	void EnableDisableExport();
 
-    int m_iVIHorzScroll;
-    int m_iIPDHorzScroll;
+	int m_iVIHorzScroll{0};
+	int m_iIPDHorzScroll{0};
     CSVOConfigAssistantDlg *m_pParent;
-    int m_iInspectionNextCount;
-    int m_iCursel;
-    int m_iEditingSel;
+	int m_iInspectionNextCount{1};
+	int m_iCursel{-1};
 
-	typedef SVDataItemManagerTemplate<std::string> SVDataItemManager;
-
-	SVDataItemManager m_Items;
+	std::map<unsigned long, std::string> m_Items;
 };
 
 //{{AFX_INSERT_LOCATION}}

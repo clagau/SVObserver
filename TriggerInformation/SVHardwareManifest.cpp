@@ -169,7 +169,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType )
 	{
-		static SVIMProductEnumSet list
+		static const SVIMProductEnumSet list
 		{
  			SVIM_PRODUCT_X2_GD1A_COLOR,
 			SVIM_PRODUCT_X2_GD2A_COLOR,
@@ -188,7 +188,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType )
 	{
-		static SVIMProductCompatibilityList CompatibleList
+		static const SVIMProductCompatibilityList CompatibleList
 		{
 			{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 			{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
@@ -222,7 +222,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsColorSystem(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet ColorList
+		static const SVIMProductEnumSet ColorList
 		{
 			SVIM_PRODUCT_X2_GD1A_COLOR,
 			SVIM_PRODUCT_X2_GD2A_COLOR,
@@ -235,9 +235,23 @@ namespace SvTi
 		return (it != ColorList.end());
 	}
 
+	bool SVHardwareManifest::isDiscreteIOSystem(SVIMProductEnum p_ProductType)
+	{
+		static const SVIMProductEnumSet ColorList
+		{
+			SVIM_PRODUCT_X2_GD1A,
+			SVIM_PRODUCT_X2_GD2A,
+			SVIM_PRODUCT_X2_GD4A,
+			SVIM_PRODUCT_X2_GD8A,
+		};
+
+		SVIMProductEnumSet::const_iterator it = ColorList.find(p_ProductType);
+		return (it != ColorList.end());
+	}
+
 	bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet GigeList
+		static const SVIMProductEnumSet GigeList
 		{
 			SVIM_PRODUCT_X2_GD1A,
 			SVIM_PRODUCT_X2_GD1A_COLOR,
@@ -258,7 +272,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet DigitalList
+		static const SVIMProductEnumSet DigitalList
 		{
 			SVIM_PRODUCT_X2_GD1A,
 			SVIM_PRODUCT_X2_GD1A_COLOR,
@@ -279,7 +293,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsProductTypeRAID(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet RaidList
+		static const SVIMProductEnumSet RaidList
 		{
 			SVIM_PRODUCT_X2_GD1A,
 			SVIM_PRODUCT_X2_GD1A_COLOR,
@@ -298,7 +312,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::IsNonIOSVIM(SVIMProductEnum p_ProductType)
 	{
-		static SVIMProductEnumSet NonIOList = SVIMProductEnumSet
+		static const SVIMProductEnumSet NonIOList = SVIMProductEnumSet
 		{
 			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
 			SVIM_PRODUCT_X2_GD8A_NONIO

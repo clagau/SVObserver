@@ -12,57 +12,26 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
-class SVIODoc;
-
 class SVDiscreteInputsView : public CListView
 {
-	DECLARE_DYNCREATE( SVDiscreteInputsView )
-
-	//{{AFX_MSG(SVDiscreteInputsView)
-protected:
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnDestroy();
-	//}}AFX_MSG
+	DECLARE_DYNCREATE(SVDiscreteInputsView)
 	DECLARE_MESSAGE_MAP()
 
-	//{{AFX_VIRTUAL(SVDiscreteInputsView)
-public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
-protected:
-	virtual void OnInitialUpdate() override; // das erste mal nach der Konstruktion aufgerufen
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	//}}AFX_VIRTUAL
-
-#ifdef _DEBUG
-public:
-	virtual void AssertValid() const override;
-	virtual void Dump(CDumpContext& dc) const override;
-#endif
-
-public:
-	virtual ~SVDiscreteInputsView();
-
-	SVIODoc* GetDocument();
-
-protected:
 	SVDiscreteInputsView();
+	virtual ~SVDiscreteInputsView() = default;
 
-	CImageList ImageList;
-	CImageList StateImageList;
+protected:
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 private:
-	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
-
-	SVDataItemManager m_Items;
+	CListCtrl& m_rCtrl;
+	CImageList m_ImageList;
+	CImageList m_StateImageList;
+	std::map<unsigned long, SVIOEntryHostStructPtr> m_Items;
 };
-
-#ifndef _DEBUG  // Testversion in SVDiscreteInputsView.cpp
-inline SVIODoc* SVDiscreteInputsView::GetDocument()
-   { return (SVIODoc*)m_pDocument; }
-#endif
 

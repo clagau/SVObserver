@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
@@ -20,6 +19,9 @@ class SVPPQEntryDialogPropertySheetClass;
 class SVPPQEntryDialogDigInPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(SVPPQEntryDialogDigInPageClass)
+
+	SVPPQEntryDialogDigInPageClass();
+	virtual ~SVPPQEntryDialogDigInPageClass() = default;
 
 	//{{AFX_MSG(SVPPQEntryDialogDigInPageClass)
 	protected:
@@ -47,18 +49,11 @@ class SVPPQEntryDialogDigInPageClass : public CPropertyPage
 
 	friend class SVPPQEntryDialogPropertySheetClass;
 
-public:
-	SVPPQEntryDialogDigInPageClass();
-	virtual ~SVPPQEntryDialogDigInPageClass();
-
-protected:
-	SVPPQEntryDialogPropertySheetClass* m_pSheet;
-	BOOL m_bIsTaken;
-
 private:
-	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
+	SVPPQEntryDialogPropertySheetClass* m_pSheet {nullptr};
+	BOOL m_bIsTaken {false};
 
-	SVDataItemManager m_AvailableItems;
-	SVDataItemManager m_SelectedItems;
+	std::map<unsigned long, SVIOEntryHostStructPtr> m_AvailableItems;
+	std::map<unsigned long, SVIOEntryHostStructPtr> m_SelectedItems;
 };
 

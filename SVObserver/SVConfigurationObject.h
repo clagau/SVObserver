@@ -186,13 +186,13 @@ public:
 
 	bool DestroyConfiguration();
 
-	void SetInputObjectList( SVInputObjectList* pInputObjectList );
-	SVInputObjectList* GetInputObjectList( ) const;
+	void SetInputObjectList(std::unique_ptr<SVInputObjectList>&& pInputObjectList) {m_pInputObjectList.swap(pInputObjectList);}
+	SVInputObjectList* GetInputObjectList() const { return (nullptr != m_pInputObjectList) ? m_pInputObjectList.get() : nullptr; }
+	void SetOutputObjectList(std::unique_ptr<SVOutputObjectList>&& pOutputObjectList) { m_pOutputObjectList.swap(pOutputObjectList); }
+	SVOutputObjectList* GetOutputObjectList( ) const { return (nullptr != m_pOutputObjectList) ? m_pOutputObjectList.get() : nullptr; }
 
 	std::list<SVFileNameClass>& getAdditionalFiles() {return m_AdditionalFiles;}
 
-	void SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
-	SVOutputObjectList* GetOutputObjectList( ) const;
 	HRESULT RebuildOutputObjectList();
 
 	bool AddAcquisitionDevice( LPCTSTR szName, const SVFileNameArrayClass& rsvFiles,
@@ -267,9 +267,7 @@ public:
 	SVIOEntryHostStructPtr GetModuleReady();
 	SVIOEntryHostStructPtr GetRaidErrorBit();
 
-	SVIOController* GetIOController() const;
-	uint32_t GetIOControllerID() const;
-
+	SVIOController* GetIOController() const { return (nullptr != m_pIOController) ? m_pIOController.get() : nullptr; }
 
 	uint32_t GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
@@ -292,7 +290,6 @@ public:
 	HRESULT AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry);
 
 	bool SetupRemoteMonitorList();
-	void ClearRemoteMonitorList();
 	RemoteMonitorListMap GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);
 
@@ -384,18 +381,12 @@ public:
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
-protected:
-	bool FinishIPDoc( SVInspectionProcess* pInspection, bool isLoad = false);
-
-	SVIOController* m_pIOController;
-
-	SVInputObjectList* m_pInputObjectList = nullptr;
-	SVOutputObjectList* m_pOutputObjectList = nullptr;
 
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
 
+	bool FinishIPDoc( SVInspectionProcess* pInspection, bool isLoad = false);
 	void SaveEnvironment(SvOi::IObjectWriter& rWriter) const;
 	void SaveIO(SvOi::IObjectWriter& rWriter) const;
 	void SaveAcquisitionDevice(SvOi::IObjectWriter& rWriter) const;
@@ -486,6 +477,9 @@ private:
 	bool getObjectsForMonitorList(uint32_t toolId, SvPb::InspectionCmdResponse &rResponse) const;
 
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
+	std::unique_ptr<SVIOController> m_pIOController;
+	std::unique_ptr<SVInputObjectList> m_pInputObjectList;
+	std::unique_ptr<SVOutputObjectList> m_pOutputObjectList;
 	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;

@@ -48,7 +48,7 @@ public:
 
 	bool GetParameters(SvOi::IObjectWriter& rWriter);
 
-	BOOL SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
+	bool SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
 
 	void Destroy();
 

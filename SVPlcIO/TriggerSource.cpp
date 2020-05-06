@@ -13,8 +13,9 @@
 namespace SvPlc
 {
 
-void TriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
+bool TriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
+	bool result{false};
 	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 	//Channel range already checked so no need to check it again
 	m_triggerChannels[channel].m_active = active;
@@ -26,9 +27,11 @@ void TriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t per
 	printOutput("Trigger channel use:");
 	for (uint8_t channel = 0; channel < c_NumberOfChannels; channel++)
 	{
+		result |= m_triggerChannels[channel].m_active;
 		printOutput(m_triggerChannels[channel].m_active ? "I" : "_");
 	}
 	printOutput("\n");
+	return result;
 }
 
 

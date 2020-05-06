@@ -27,10 +27,11 @@ class TriggerSource
 public:
 	virtual ~TriggerSource() = default;
 
-	void setTriggerChannel(uint8_t channel, bool active, uint32_t period);
+	///Returns if any trigger channels active
 	bool checkForNewTriggers();
 
-	virtual bool initialize() {return false;}
+	virtual bool setTriggerChannel(uint8_t channel, bool active, uint32_t period);
+	virtual HRESULT initialize() = 0;
 	virtual bool isReady() { return true; }
 	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) {}
 	virtual bool analyzeTelegramData() = 0;

@@ -23,12 +23,13 @@ public:
 	explicit SVCameraDataInputObject(LPCSTR strObjectName);
 	SVCameraDataInputObject(SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT);
 
-	virtual ~SVCameraDataInputObject();
+	virtual ~SVCameraDataInputObject() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	virtual HRESULT Read(_variant_t& p_rValue) override;
+	virtual HRESULT Read(_variant_t& p_rValue) const override;
+	virtual long GetChannel() const override { return -1; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods

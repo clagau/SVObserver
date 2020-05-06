@@ -72,7 +72,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 
 	if (PreRefresh == Type)
 	{
-		if (pSender->getObjectId() == ObjectIdEnum::EnvironmentCurrentTime)
+		if (pSender->getObjectId() == ObjectIdEnum::EnvironmentCurrentTimeId)
 		{
 			std::time_t t = std::time(nullptr);
 			std::string currentTime;
@@ -82,7 +82,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 			setRootChildValue(SvDef::FqnEnvironmentCurrentTime, currentTime);
 		}
 
-		if (pSender->getObjectId() == ObjectIdEnum::EnvironmentCurrentDate)
+		if (pSender->getObjectId() == ObjectIdEnum::EnvironmentCurrentDateId)
 		{
 			std::time_t t = std::time(nullptr);
 			std::string currentDate;
@@ -106,11 +106,11 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 		}
 
 		//When certain objects are changed need to do post processing
-		if (ObjectIdEnum::EnvironmentDiskProtectionUidId == pSender->getObjectId())
+		if (ObjectIdEnum::EnvironmentDiskProtectionId == pSender->getObjectId())
 		{
 			ExtrasEngine::Instance().ChangeFbwfState();
 		}
-		else if (ObjectIdEnum::EnvironmentStartLastConfigUidId == pSender->getObjectId())
+		else if (ObjectIdEnum::EnvironmentStartLastConfigId == pSender->getObjectId())
 		{
 			//Save Start Last Configuration in registry
 			double Value {0.0};
@@ -122,9 +122,8 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 	return Result;
 }
 
-bool RootObject::createConfigurationObject(std::recursive_mutex *pMutex)
+bool RootObject::createConfigurationObject(std::recursive_mutex* pMutex)
 {
-
 	std::unique_ptr< SVConfigurationObject > ConfigObjectTemp;
 	if (pMutex)
 	{
@@ -143,9 +142,12 @@ bool RootObject::createConfigurationObject(std::recursive_mutex *pMutex)
 
 	ConfigObjectTemp.reset();
 	m_pConfigurationObject.reset();
-	m_pConfigurationObject = std::unique_ptr< SVConfigurationObject > {new SVConfigurationObject};
-	m_pConfigurationObject->SetObjectOwner(this);
-	SVObjectManagerClass::Instance().setRootChildID( SvDef::FqnConfiguration, m_pConfigurationObject->getObjectId() );
+	m_pConfigurationObject = std::make_unique<SVConfigurationObject>();
+	if(nullptr != m_pConfigurationObject)
+	{
+		m_pConfigurationObject->SetObjectOwner(this);
+		SVObjectManagerClass::Instance().setRootChildID(m_pConfigurationObject.get());
+	}
 
 	SvVol::BasicValueObjectPtr pValueObject(nullptr);
 	//Default update views is true
@@ -188,7 +190,6 @@ void RootObject::destroyConfigurationObject(std::recursive_mutex *pMutex)
 		{
 			m_pConfigurationObject.swap(ConfigObjectTemp);
 		}
-
 
 		ConfigObjectTemp.reset();
 	}
@@ -282,7 +283,7 @@ bool RootObject::Initialize()
 
 	m_Initialize = true;
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRootObjectType;
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RootUidId);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RootId);
 	//The Root object should have an empty name
 	SetName(_T(""));
 
@@ -379,7 +380,7 @@ bool RootObject::createRootChild(LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum Ob
 	pRootChild = m_RootChildren.setValue(ChildName, Node, this, ObjectSubType);
 	if (nullptr != pRootChild)
 	{
-		SVObjectManagerClass::Instance().setRootChildID( pRootChild->GetName(), pRootChild->getObjectId() );
+		SVObjectManagerClass::Instance().setRootChildID(pRootChild.get());
 		Result = true;
 	}
 	else

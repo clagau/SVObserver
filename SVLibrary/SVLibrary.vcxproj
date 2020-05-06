@@ -127,7 +127,6 @@
     <ClInclude Include="Intersect.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVDataItemManagerTemplate.h" />
     <ClInclude Include="SVGraphix.h" />
     <ClInclude Include="SVOINIClass.h" />
     <ClInclude Include="SVOIniLoader.h" />
@@ -138,7 +137,6 @@
     <ClInclude Include="SVWinUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVDataItemManagerTemplate.inl" />
     <None Include="SVOINIClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

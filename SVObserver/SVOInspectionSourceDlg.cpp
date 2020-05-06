@@ -53,18 +53,6 @@ static LPCTSTR AllInspectionExportFileExt = _T("bxp;cxp");
 IMPLEMENT_DYNCREATE(CSVOInspectionSourceDlg, CPropertyPage)
 
 CSVOInspectionSourceDlg::CSVOInspectionSourceDlg() : CPropertyPage(CSVOInspectionSourceDlg::IDD)
-, m_Items( boost::bind( &( CListBox::GetItemData ), &m_ctlIPDlist, _1 ) , boost::bind( &( CListBox::SetItemData ), &m_ctlIPDlist, _1, _2 ) )
-{
-	//{{AFX_DATA_INIT(CSVOInspectionSourceDlg)
-	m_sDeviceName = _T("");
-	//}}AFX_DATA_INIT
-
-	m_iIPDHorzScroll = 0;
-	m_iVIHorzScroll = 0;
-	m_iInspectionNextCount = 1;
-}
-
-CSVOInspectionSourceDlg::~CSVOInspectionSourceDlg()
 {
 }
 
@@ -107,7 +95,7 @@ void CSVOInspectionSourceDlg::OnBtnAddIpd()
 	m_pParent->AddToInspectList( NewDisplayName.c_str(), NewInspection.c_str(), true);
 	
 	int iPos = m_ctlIPDlist.AddString( NewDisplayName.c_str() );
-	m_Items.SetItemData(iPos, NewInspection.c_str() );
+	m_Items[iPos] = NewInspection;
 	m_ctlIPDlist.SetCurSel(iPos); 
 	m_pParent->SetModified(true);
 	m_pParent->ItemChanged(INSPECT_DLG, NewInspection.c_str(), ITEM_ACTION_NEW);
@@ -116,25 +104,26 @@ void CSVOInspectionSourceDlg::OnBtnAddIpd()
 
 void CSVOInspectionSourceDlg::OnBtnDeleteVi() 
 {
-	int iCursel = m_ctlIPDlist.GetCurSel();
+	int iCurSel = m_ctlIPDlist.GetCurSel();
 
-	if (iCursel != LB_ERR)
+	if (iCurSel != LB_ERR)
 	{
-		std::string Label;
+		std::string Name;
 		CString InspectionName;
-		m_ctlIPDlist.GetText(iCursel, InspectionName);
-		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCursel);
-		if( l_Iter != m_Items.end() )
+		m_ctlIPDlist.GetText(iCurSel, InspectionName);
+
+		const auto iter = m_Items.find(iCurSel);
+		if(m_Items.end() != iter)
 		{
-			Label = l_Iter->second;
+			Name = iter->second;
 		}
 
-		m_ctlIPDlist.DeleteString(iCursel);
-		m_pParent->RemoveInspectionFromList( Label.c_str() );
+		m_ctlIPDlist.DeleteString(iCurSel);
+		m_pParent->RemoveInspectionFromList( Name.c_str() );
 
-		if (iCursel > 0)
+		if (iCurSel > 0)
 		{
-			m_ctlIPDlist.SetCurSel(iCursel-1);
+			m_ctlIPDlist.SetCurSel(iCurSel-1);
 		}
 		else
 		{
@@ -142,7 +131,7 @@ void CSVOInspectionSourceDlg::OnBtnDeleteVi()
 		}
 		m_pParent->SetModified( true );
 		m_pParent->ItemChanged( INSPECT_DLG, InspectionName, ITEM_ACTION_DELETE);
-		m_pParent->LastInspectionLabelDeleted( Label.c_str() );
+		m_pParent->LastInspectionLabelDeleted( Name.c_str() );
 
 		EnableDisableExport();
 	}
@@ -153,14 +142,14 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 	if ( !m_pParent->IsNewConfiguration() )
 	{
 		//check to see if the current inspection exists in the configuration
-		int iCurInsp = m_ctlIPDlist.GetCurSel();
-		if ( iCurInsp != LB_ERR )
+		int iCurSel = m_ctlIPDlist.GetCurSel();
+		if ( iCurSel != LB_ERR )
 		{
 			std::string Name;
-			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurInsp);
-			if (l_Iter != m_Items.end() )
+			const auto iter = m_Items.find(iCurSel);
+			if (m_Items.end() != iter)
 			{
-				Name = l_Iter->second;
+				Name = iter->second;
 			}
 			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel( Name.c_str() );
 			if( nullptr != pInspectionObj )
@@ -186,35 +175,26 @@ void CSVOInspectionSourceDlg::OnBtnPropVi()
 
 	if ( iCurSel != LB_ERR )
 	{
-		std::string Label;
-
-		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);
-
-		if( l_Iter != m_Items.end() )
+		std::string Name;
+		const auto iter = m_Items.find(iCurSel);
+		if (m_Items.end() != iter)
 		{
-			Label = l_Iter->second;
+			Name = iter->second;
 		}
 
-		SVOInspectionObjPtr pInpectionObj = m_pParent->GetInspectionObjectByLabel( Label.c_str() );
+		SVOInspectionObjPtr pInpectionObj = m_pParent->GetInspectionObjectByLabel( Name.c_str() );
 		if( nullptr != pInpectionObj )
 		{
 			// Get the PPQ that this inspection is attached to
 			SVOPPQObjPtr pTempPPQ( nullptr );
-			BOOL bFound;
-			long hSize;
-			long h;
-			long lSize;
-			long l;
-		
-			bFound = false;
-			hSize = m_pParent->GetPPQListCount();
-			for( h = 0; !bFound && h < hSize; h++ )
+			bool bFound{false};
+			for(long i = 0; !bFound && i < m_pParent->GetPPQListCount(); ++i)
 			{
-				pTempPPQ = m_pParent->GetPPQObject( h );
-				lSize = pTempPPQ->GetAttachedInspectionCount();
-				for( l = 0; !bFound && l < lSize; l++ )
+				pTempPPQ = m_pParent->GetPPQObject(i);
+				long lSize = pTempPPQ->GetAttachedInspectionCount();
+				for(long l = 0; !bFound && l < lSize; l++ )
 				{
-					if( Label == pTempPPQ->GetAttachedInspection( l ) )
+					if( Name == pTempPPQ->GetAttachedInspection( l ) )
 					{
 						bFound = true;
 					}
@@ -235,7 +215,7 @@ void CSVOInspectionSourceDlg::OnBtnPropVi()
 			{
 				*pInpectionObj = rTmpObj;
 				m_pParent->SetModified(TRUE);
-				m_pParent->ItemChanged( INSPECT_DLG, Label.c_str(), ITEM_ACTION_PROP);
+				m_pParent->ItemChanged( INSPECT_DLG, Name.c_str(), ITEM_ACTION_PROP);
 			}
 		}
 	}		
@@ -268,18 +248,17 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
    
 		// Create new IP
 		OnBtnAddIpd();
-		int iCursel = m_ctlIPDlist.GetCurSel();
-		if (iCursel != LB_ERR)
+		int iCurSel = m_ctlIPDlist.GetCurSel();
+		if (iCurSel != LB_ERR)
 		{
-			std::string Label;
-			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCursel);
-
-			if( l_Iter != m_Items.end() )
+			std::string Name;
+			const auto iter = m_Items.find(iCurSel);
+			if (m_Items.end() != iter)
 			{
-				Label = l_Iter->second;
+				Name = iter->second;
 			}
-			
-			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel(Label.c_str());
+
+			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel(Name.c_str());
 			
 			// Update EnableAuxillaryExtents and NewDisableMethod from Import file
 			long l_NewDisableMethod = 0;
@@ -321,22 +300,21 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 void CSVOInspectionSourceDlg::OnBtnExportIpd() 
 {
 	// Get Selected IP
-	int iCursel = m_ctlIPDlist.GetCurSel();
-	if (iCursel != LB_ERR)
+	int iCurSel = m_ctlIPDlist.GetCurSel();
+	if (iCurSel != LB_ERR)
 	{
-		std::string Label;
-		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCursel);
-
-		if( l_Iter != m_Items.end() )
+		std::string Name;
+		const auto iter = m_Items.find(iCurSel);
+		if (m_Items.end() != iter)
 		{
-			Label = l_Iter->second;
+			Name = iter->second;
 		}
 
-		SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel(Label.c_str());
+		SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByLabel(Name.c_str());
 		if( nullptr != pInspectionObj )
 		{
 			SVObjectClass* pObject( nullptr );
-			HRESULT hr =  SVObjectManagerClass::Instance().GetObjectByDottedName(Label, pObject);
+			HRESULT hr =  SVObjectManagerClass::Instance().GetObjectByDottedName(Name, pObject);
 			SVInspectionProcess* pInspectionProcess = dynamic_cast<SVInspectionProcess*> (pObject);
 
 			if (S_OK == hr && nullptr != pInspectionProcess)
@@ -348,13 +326,13 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 				// prompt for path and file name
 				DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 				bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, Label.c_str(), dwFlags, fileFilters, this);
+				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, Name.c_str(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
 					std::string pathName = dlg.GetPathName();
 			   
 					// Create XML file
-					hr = SVInspectionExporter::Export( pathName, Label, TheSVObserverApp.getCurrentVersion(), IsColor );
+					SVInspectionExporter::Export( pathName, Name, TheSVObserverApp.getCurrentVersion(), IsColor );
 				}
 			}
 		}
@@ -374,7 +352,7 @@ BOOL CSVOInspectionSourceDlg::OnSetActive()
 BOOL CSVOInspectionSourceDlg::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-	m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
+	m_pParent = dynamic_cast<CSVOConfigAssistantDlg*> (GetParent()->GetParent());
 
 	if ( m_pParent->IsNewConfiguration() )
 	{
@@ -406,7 +384,7 @@ void CSVOInspectionSourceDlg::SetupList()
 		if( nullptr != pInspectionObj )
 		{
 			int iPos = m_ctlIPDlist.AddString(pInspectionObj->GetInspectionName().c_str());
-			m_Items.SetItemData( iPos, pInspectionObj->GetInspectionLabelName() );
+			m_Items[iPos] =  pInspectionObj->GetInspectionLabelName();
 		}
 	}
 	m_ctlIPDlist.SetCurSel(0);
@@ -419,17 +397,15 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 	if (m_iCursel == iCurSel)
 	{
 		CString sCurrentTxt;
-		m_iEditingSel = iCurSel;
 		m_ctlIPDlist.GetText(iCurSel, sCurrentTxt);
 		SvMc::CSVOEditorWnd *pEditor = new SvMc::CSVOEditorWnd( m_ctlIPDlist, SvDef::cExcludeCharsToolIpName );
 		pEditor->Edit(iCurSel);
 		pEditor->WaitForDoneEditing();
-		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);
-
-		std::string Label;
-		if( l_Iter != m_Items.end() )
+		std::string Name;
+		const auto iter = m_Items.find(iCurSel);
+		if (m_Items.end() != iter)
 		{
-			Label = l_Iter->second;
+			Name = iter->second;
 		}
 
 		CString sNewTxt;
@@ -438,12 +414,12 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 		{
 			//Place MessageBox with error...
 			m_ctlIPDlist.InsertString(m_iCursel, sCurrentTxt);
-			m_Items.SetItemData( m_iCursel, Label );
+			m_Items[m_iCursel] = Name;
 			m_ctlIPDlist.DeleteString(m_iCursel+1);
 		}
 		else
 		{
-			m_pParent->RenameInspection( Label.c_str(), sNewTxt);
+			m_pParent->RenameInspection(Name.c_str(), sNewTxt);
 			m_pParent->SetModified(TRUE);
 		}
 	}

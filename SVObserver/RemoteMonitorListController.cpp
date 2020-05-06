@@ -150,13 +150,11 @@ void RemoteMonitorListController::HideShowViewTab()
 {
 	if (IsEmpty())
 	{
-		TheSVObserverApp.HideRemoteMonitorListTab();
+		TheSVObserverApp.HideIOTab(SVRemoteMonitorListViewID);
 	}
 	else
 	{
 		TheSVObserverApp.ShowIOTab(SVRemoteMonitorListViewID);
-		// Set Active IO Tabbed view to the RemoteMonitorListView Tab
-		TheSVObserverApp.SetActiveIOTabView(SVRemoteMonitorListViewID);
 	}
 	TheSVObserverApp.OnUpdateAllIOViews();
 }
@@ -253,7 +251,7 @@ void RemoteMonitorListController::ValidateInputs()
 	}
 	if (IsEmpty())
 	{
-		TheSVObserverApp.HideRemoteMonitorListTab();
+		TheSVObserverApp.HideIOTab(SVRemoteMonitorListViewID);
 	}
 }
 

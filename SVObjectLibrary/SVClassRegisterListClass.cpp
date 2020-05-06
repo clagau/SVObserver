@@ -1435,27 +1435,27 @@ const GUID RemoteInputUidGuid = { 0x6ce19300, 0xce64, 0x4b64,{ 0x90, 0xf1, 0x2a,
 #pragma endregion ObjectIdGuids
 
 std::unordered_map<GUID, uint32_t> g_ExchangeObjectID = {
-	{ RootUidGuid, ObjectIdEnum::RootUidId },
-	{ GlobalUidGuid, ObjectIdEnum::GlobalUidId },
-	{ EnvironmentUidGuid, ObjectIdEnum::EnvironmentUidId },
-	{ EnvironmentModelNumberUidGuid, ObjectIdEnum::EnvironmentModelNumberUidId },
-	{ EnvironmentWinKeyUidGuid, ObjectIdEnum::EnvironmentWinKeyUidId },
-	{ EnvironmentImageUpdateUidGuid, ObjectIdEnum::EnvironmentImageUpdateUidId },
-	{ EnvironmentResultUpdateUidGuid, ObjectIdEnum::EnvironmentResultUpdateUidId },
-	{ EnvironmentModeIsRunUidGuid, ObjectIdEnum::EnvironmentModeIsRunUidId },
-	{ EnvironmentModeIsStopUidGuid, ObjectIdEnum::EnvironmentModeIsStopUidId },
-	{ EnvironmentModeIsRegressionTestUidGuid, ObjectIdEnum::EnvironmentModeIsRegressionTestUidId },
-	{ EnvironmentModeIsTestUidGuid, ObjectIdEnum::EnvironmentModeIsTestUidId },
-	{ EnvironmentModeIsEditUidGuid, ObjectIdEnum::EnvironmentModeIsEditUidId },
-	{ EnvironmentModeValueUidGuid, ObjectIdEnum::EnvironmentModeValueUidId },
-	{ EnvironmentModeUidGuid, ObjectIdEnum::EnvironmentModeUidId },
-	{ EnvironmentAutoSaveUidGuid, ObjectIdEnum::EnvironmentAutoSaveUidId },
-	{ EnvironmentDiskProtectionUidGuid, ObjectIdEnum::EnvironmentDiskProtectionUidId },
-	{ EnvironmentStartLastConfigUidGuid, ObjectIdEnum::EnvironmentStartLastConfigUidId },
-	{ EnvironmentConfigurationName, ObjectIdEnum::EnvironmentConfigurationName },
-	{ EnvironmentConfigurationFileName, ObjectIdEnum::EnvironmentConfigurationFileName },
-	{ EnvironmentCurrentDate, ObjectIdEnum::EnvironmentCurrentDate },
-	{ EnvironmentCurrentTime, ObjectIdEnum::EnvironmentCurrentTime },
+	{ RootUidGuid, ObjectIdEnum::RootId },
+	{ GlobalUidGuid, ObjectIdEnum::GlobalId },
+	{ EnvironmentUidGuid, ObjectIdEnum::EnvironmentId },
+	{ EnvironmentModelNumberUidGuid, ObjectIdEnum::EnvironmentModelNumberId },
+	{ EnvironmentWinKeyUidGuid, ObjectIdEnum::EnvironmentWinKeyId },
+	{ EnvironmentImageUpdateUidGuid, ObjectIdEnum::EnvironmentImageUpdateId },
+	{ EnvironmentResultUpdateUidGuid, ObjectIdEnum::EnvironmentResultUpdateId },
+	{ EnvironmentModeIsRunUidGuid, ObjectIdEnum::EnvironmentModeIsRunId },
+	{ EnvironmentModeIsStopUidGuid, ObjectIdEnum::EnvironmentModeIsStopId },
+	{ EnvironmentModeIsRegressionTestUidGuid, ObjectIdEnum::EnvironmentModeIsRegressionTestId },
+	{ EnvironmentModeIsTestUidGuid, ObjectIdEnum::EnvironmentModeIsTestId },
+	{ EnvironmentModeIsEditUidGuid, ObjectIdEnum::EnvironmentModeIsEditId },
+	{ EnvironmentModeValueUidGuid, ObjectIdEnum::EnvironmentModeValueId },
+	{ EnvironmentModeUidGuid, ObjectIdEnum::EnvironmentModeId },
+	{ EnvironmentAutoSaveUidGuid, ObjectIdEnum::EnvironmentAutoSaveId },
+	{ EnvironmentDiskProtectionUidGuid, ObjectIdEnum::EnvironmentDiskProtectionId },
+	{ EnvironmentStartLastConfigUidGuid, ObjectIdEnum::EnvironmentStartLastConfigId },
+	{ EnvironmentConfigurationName, ObjectIdEnum::EnvironmentConfigurationNameId },
+	{ EnvironmentConfigurationFileName, ObjectIdEnum::EnvironmentConfigurationFileNameId },
+	{ EnvironmentCurrentDate, ObjectIdEnum::EnvironmentCurrentDateId },
+	{ EnvironmentCurrentTime, ObjectIdEnum::EnvironmentCurrentTimeId },
 };
 
 void fillExchangeObjectId(GUID guid, uint32_t id, int numbers = 0x100)
@@ -1469,16 +1469,16 @@ void fillExchangeObjectId(GUID guid, uint32_t id, int numbers = 0x100)
 
 void fillExchangeObjectId()
 {
-	fillExchangeObjectId(CameraBaseSerialNumberUidGuid, ObjectIdEnum::CameraBaseSerialNumberUidId);
-	fillExchangeObjectId(CameraBaseGainUidGuid, ObjectIdEnum::CameraBaseGainUidId);
-	fillExchangeObjectId(CameraBaseShutterUidGuid, ObjectIdEnum::CameraBaseShutterUidId);
-	fillExchangeObjectId(CameraBaseRegPathUidGuid, ObjectIdEnum::CameraBaseRegPathUidId);
-	fillExchangeObjectId(CameraBaseRegFileUidGuid, ObjectIdEnum::CameraBaseRegFileUidId);
-	fillExchangeObjectId(PpqBaseLengthUidGuid, ObjectIdEnum::PpqBaseLengthUidId);
-	fillExchangeObjectId(PpqBaseTriggerCountUidGuid, ObjectIdEnum::PpqBaseTriggerCountUidId);
-	fillExchangeObjectId(DigitalInputUidGuid, ObjectIdEnum::DigitalInputUidId);
-	fillExchangeObjectId(DigitalOutputUidGuid, ObjectIdEnum::DigitalOutputUidId);
-	fillExchangeObjectId(RemoteInputUidGuid, ObjectIdEnum::RemoteInputUidId);
+	fillExchangeObjectId(CameraBaseSerialNumberUidGuid, ObjectIdEnum::CameraBaseSerialNumberId);
+	fillExchangeObjectId(CameraBaseGainUidGuid, ObjectIdEnum::CameraBaseGainId);
+	fillExchangeObjectId(CameraBaseShutterUidGuid, ObjectIdEnum::CameraBaseShutterId);
+	fillExchangeObjectId(CameraBaseRegPathUidGuid, ObjectIdEnum::CameraBaseRegPathId);
+	fillExchangeObjectId(CameraBaseRegFileUidGuid, ObjectIdEnum::CameraBaseRegFileId);
+	fillExchangeObjectId(PpqBaseLengthUidGuid, ObjectIdEnum::PpqBaseLengthId);
+	fillExchangeObjectId(PpqBaseTriggerCountUidGuid, ObjectIdEnum::PpqBaseTriggerCountId);
+	fillExchangeObjectId(DigitalInputUidGuid, ObjectIdEnum::DigitalInputId);
+	fillExchangeObjectId(DigitalOutputUidGuid, ObjectIdEnum::DigitalOutputId);
+	fillExchangeObjectId(RemoteInputUidGuid, ObjectIdEnum::RemoteInputId);
 }
 
 uint32_t calcObjectId(const std::string& objectIdString)

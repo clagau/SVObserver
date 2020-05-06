@@ -257,7 +257,6 @@ void SharedMemoryAccess::GetGatewayNotificationStream(
 	m_notification_streams.push_back(state);
 
 	// send initial pause state to client
-	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
 	send_trigger_record_pause_state_to_client(*state, m_pause_state);
 }
 
@@ -695,14 +694,11 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 	auto triggersOfInterest = trc.getTrsOfInterest(inspectionPos, static_cast<int>(stream.historicalTriggerQueue.size()));
 	for (auto& entry : stream.historicalTriggerQueue)
 	{
-		for (const auto& tr : triggersOfInterest)
+		auto iter = std::find_if(triggersOfInterest.begin(), triggersOfInterest.end(), [&entry](const auto& tr)->bool
 		{
-			if (tr->getId() == entry.m_trId)
-			{
-				entry.m_isInterest = true;
-				break;
-			}
-		}
+			return tr->getId() == entry.m_trId;
+		});
+		entry.m_isInterest = triggersOfInterest.end() != iter;
 	}
 }
 

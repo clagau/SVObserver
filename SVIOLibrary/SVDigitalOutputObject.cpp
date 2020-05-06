@@ -11,85 +11,50 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
-SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName )
-:SVOutputObject( strObjectName )
-, m_Channel( -1 )
-, m_bCombined( false )
-, m_bLastValue( false )
-, m_bDefaultValue( false )
-, m_bCombinedACK( true )
+SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName ) : SVOutputObject( strObjectName )
 {
 	LocalInitialize();
 }
 
-SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringResourceID )
-:SVOutputObject( pOwner, StringResourceID )
-, m_Channel( -1 )
-, m_bCombined( false )
-, m_bLastValue( false )
-, m_bDefaultValue( false )
-, m_bCombinedACK( true )
+SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringResourceID ) : SVOutputObject( pOwner, StringResourceID )
 {
 	LocalInitialize();
-}
-
-SVDigitalOutputObject::~SVDigitalOutputObject()
-{
-	if( m_isCreated )
-	{
-		Destroy();
-		m_isCreated = false;
-	}
-}
-
-bool SVDigitalOutputObject::Create()
-{
-	m_isCreated = true;
-	
-	return m_isCreated;
-}
-
-bool SVDigitalOutputObject::Destroy()
-{
-	m_isCreated = false;
-
-	return !m_isCreated;
 }
 
 HRESULT SVDigitalOutputObject::Write( const _variant_t& rValue )
 {
 	m_bLastValue = rValue;
-	return SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bLastValue );
+	return SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(m_channel, m_bLastValue);
 }
 
 HRESULT SVDigitalOutputObject::Reset()
 {
-	return SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_Channel, m_bDefaultValue );
+	return SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue(m_channel, m_bDefaultValue);
 }
 
 bool SVDigitalOutputObject::Force(bool bForced, bool bForcedValue)
 {
-	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(m_Channel, bForced);
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(m_Channel, bForcedValue) && l_bOk;
+	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(m_channel, bForced);
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(m_channel, bForcedValue) && l_bOk;
 
 	return l_bOk;
 }
 
 bool SVDigitalOutputObject::Invert(bool bInverted)
 {
-	return S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_Channel, bInverted );
+	return S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_channel, bInverted );
 }
 
-void SVDigitalOutputObject::Combine( bool bCombine, bool bCombineACK )
+void SVDigitalOutputObject::Combine( bool bCombine, bool isAndACK )
 {
 	m_bCombined = bCombine;
-	m_bCombinedACK = bCombineACK;
+	m_isAndACK = isAndACK;
 }
 
 bool SVDigitalOutputObject::IsForced() const
 {
 	bool bIsForced {false};
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputIsForced(m_Channel, bIsForced);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputIsForced(m_channel, bIsForced);
 
 	return bIsForced;
 }
@@ -97,7 +62,7 @@ bool SVDigitalOutputObject::IsForced() const
 bool SVDigitalOutputObject::GetForcedValue() const
 {
 	bool bForcedValue {false};
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputForcedValue(m_Channel, bForcedValue);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputForcedValue(m_channel, bForcedValue);
 
 	return bForcedValue;
 }
@@ -105,19 +70,19 @@ bool SVDigitalOutputObject::GetForcedValue() const
 bool SVDigitalOutputObject::IsInverted() const
 {
 	bool bIsInverted {false};
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputIsInverted(m_Channel, bIsInverted);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputIsInverted(m_channel, bIsInverted);
 
 	return bIsInverted;
 }
 
-bool SVDigitalOutputObject::IsCombined() const
+bool SVDigitalOutputObject::isCombined() const
 {
 	return m_bCombined;
 }
 
-bool SVDigitalOutputObject::GetCombinedValue() const
+bool SVDigitalOutputObject::isAndACK() const
 {
-	return m_bCombinedACK;
+	return m_isAndACK;
 }
 
 bool SVDigitalOutputObject::GetValue() const
@@ -125,28 +90,10 @@ bool SVDigitalOutputObject::GetValue() const
 	return m_bLastValue;
 }
 
-void SVDigitalOutputObject::SetChannel( long lChannel )
-{
-	m_Channel = lChannel;
-}
-
-long SVDigitalOutputObject::GetChannel() const
-{
-	return m_Channel;
-}
-
-void SVDigitalOutputObject::updateObjectId(int position)
-{
-	if (0 <= position && 0x100 > position)
-	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::DigitalOutputUidId + position);
-	}
-}
-
 void SVDigitalOutputObject::LocalInitialize()
 {
-	m_isCreated = false;
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalOutputObjectType;
+	m_startID = ObjectIdEnum::DigitalOutputId;
 }
 

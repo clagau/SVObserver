@@ -23,13 +23,10 @@ public:
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
-	virtual bool initialize() override;
+	virtual HRESULT initialize() override;
 	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
 	virtual bool analyzeTelegramData() override;
 	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
-
-protected: 	
-	uint64_t getCurrentInterruptCount();
 
 private:
 	virtual  void createTriggerReport(uint8_t channel) override;

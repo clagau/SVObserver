@@ -16,16 +16,13 @@
 
 namespace SvPlc
 {
-HANDLE g_hTelegramEvent {nullptr};
-HANDLE g_hStopEvent {nullptr};
+HANDLE g_hSignalEvent {nullptr};
+std::atomic_bool g_runThread{false};
 
 PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger,
 										 uint16_t plcTransferTime, uint16_t simulateTriggers) :
 	m_pReportTrigger(pReportTrigger)
 {
-	g_hTelegramEvent = ::CreateEvent(nullptr, false, false, _T("PL New Telegram Event"));
-	g_hStopEvent = ::CreateEvent(nullptr, true, false, _T("PL Stop Event"));
-
 	if (simulateTriggers > 0)
 	{
 		m_pTriggersource = std::make_unique<SimulatedTriggerSource>();
@@ -34,21 +31,14 @@ PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&
 	{
 		m_pTriggersource = std::make_unique<HardwareTriggerSource>(plcTransferTime);
 	}
-
-	m_pTriggersource->initialize();
 }
 
 PowerlinkConnection::~PowerlinkConnection()
 {
-	if (nullptr != g_hTelegramEvent)
+	if (nullptr != g_hSignalEvent)
 	{
-		::CloseHandle(g_hTelegramEvent);
-		g_hTelegramEvent = nullptr;
-	}
-	if (nullptr != g_hStopEvent)
-	{
-		::CloseHandle(g_hStopEvent);
-		g_hStopEvent = nullptr;
+		::CloseHandle(g_hSignalEvent);
+		g_hSignalEvent = nullptr;
 	}
 }
 
@@ -59,21 +49,16 @@ void PowerlinkConnection::setReady(bool ready)
 
 void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
-	if (channel >= 0 && channel < c_NumberOfChannels)
+	if(channel < c_NumberOfChannels)
 	{
-		m_pTriggersource->setTriggerChannel(channel, active, period);
 		//If no active channel then stop event thread
-		if(m_pTriggersource->initialize() == false)
+		if(m_pTriggersource->setTriggerChannel(channel, active, period))
 		{
-			//The thread needs to be closed here because for some reason at a later stage the events no longer function!
-			::SetEvent(g_hStopEvent);
-			::OutputDebugString("Set Stop Event\n");
-			if (m_eventSignalThread.joinable())
-			{
-				m_eventSignalThread.join();
-				::OutputDebugString("Reset Stop Event\n");
-				::ResetEvent(g_hStopEvent);
-			}
+			StartEventSignalThread();
+		}
+		else
+		{
+			StopEventSignalThread();
 		}
 	}
 }
@@ -88,39 +73,45 @@ void PowerlinkConnection::writeResult(const ResultReport& rResultReport)
 	m_pTriggersource->queueResult(rResultReport.m_channel, std::move(channelOut));
 }
 
+HRESULT PowerlinkConnection::initialize()
+{
+	return m_pTriggersource->initialize();
+}
+
 void PowerlinkConnection::StartEventSignalThread()
 {
 	if (!m_eventSignalThread.joinable())
 	{
-		m_eventSignalThread = std::thread(&PowerlinkConnection::EventSignalThread, this, 
+		if (nullptr == g_hSignalEvent)
+		{
+			g_hSignalEvent = ::CreateEvent(nullptr, false, false, nullptr);
+		}
+		g_runThread = true;
+		m_eventSignalThread = std::thread(&PowerlinkConnection::EventSignalThread, this,
 											std::bind(&PowerlinkConnection::EventHandler, this));
+	}
+}
+
+void PowerlinkConnection::StopEventSignalThread()
+{
+	g_runThread = false;
+	::SetEvent(g_hSignalEvent);
+	if (m_eventSignalThread.joinable())
+	{
+		m_eventSignalThread.join();
 	}
 }
 
 void PowerlinkConnection::EventSignalThread(std::function<void()> pCallback)
 {
-	HANDLE checkHandles[2];
-
-	checkHandles[0] = g_hStopEvent;
-	checkHandles[1] = g_hTelegramEvent;
-
-	bool run{true};
-
-	while (run)
+	while (g_runThread)
 	{
 		// wait for Client to signal
-		DWORD Event = WaitForMultipleObjects(2, checkHandles, false, INFINITE);
-		switch (Event)
+		if(WAIT_OBJECT_0 == WaitForSingleObject(g_hSignalEvent, INFINITE))
 		{
-			case WAIT_OBJECT_0:
-			{
-				run = false;
-				break;
-			}
-			case 	WAIT_OBJECT_0 + 1:
+			if(g_runThread)
 			{
 				pCallback();
-				break;
 			}
 		}
 	}

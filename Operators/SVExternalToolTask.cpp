@@ -1707,14 +1707,14 @@ bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObje
 	bool Result(false);
 	if (nullptr != pObjectInInfo)
 	{
-		SVObjectClass* pObject = pObjectInInfo->GetInputObjectInfo().getObject();
-		if (SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (pObject))
+		if (SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (pObjectInInfo->GetInputObjectInfo().getObject()))
 		{
 			// find object
 			for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++)
 			{
 				SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-				if (rInfo.GetInputObjectInfo().getObject() == pImage)
+				SVObjectClass* pObject = rInfo.GetInputObjectInfo().getObject();
+				if (pObject == pImage)
 				{
 					// replace with tool set image
 					SvOi::IInspectionProcess* pInspectionInterface = GetInspectionInterface();
@@ -1726,7 +1726,7 @@ bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObje
 					rInfo.SetInputObject(pToolSetImage);
 					//@Todo[MEC][8.20] [17.07.2019] EXTERNAL TOOL Check for null pointer!
 					//See svb 290
-					rInfo.GetInputObjectInfo().getObject()->ConnectObjectInput(&rInfo);
+					pObject->ConnectObjectInput(&rInfo);
 					break;
 				}
 			}

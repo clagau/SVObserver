@@ -12,9 +12,6 @@
 #include "stdafx.h"
 #include "SVIOConfigurationInterfaceClass.h"
 
-constexpr size_t InputsDefaultNr = 8;
-constexpr size_t OutputsDefaultNr = 16;
-
 SVIOConfigurationInterfaceClass::SVIOConfigurationInterfaceClass()
 {
 	Init();
@@ -44,8 +41,6 @@ void SVIOConfigurationInterfaceClass::Init()
 
 	m_DigitalInputs.clear();
 	m_DigitalOutputs.clear();
-	m_DigitalInputs.resize(InputsDefaultNr);
-	m_DigitalOutputs.resize(OutputsDefaultNr);
 }
 
 HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR pName )
@@ -56,27 +51,19 @@ HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR pName )
 
 	if ( S_OK == Result )
 	{
-		unsigned long l_ulSize = 0;
-
-		if ( S_OK == ( Result = m_DigitalBoard.GetInputCount( &l_ulSize ) ) )
+		unsigned long size{0UL};
+		if ( S_OK == ( Result = m_DigitalBoard.GetInputCount( &size ) ) )
 		{
-			if ( l_ulSize < static_cast< unsigned long >( m_DigitalInputs.size() ) )
-			{
-				Result = E_FAIL;
-			}
+			m_DigitalInputs.resize(size);
 		}
 	}
 
 	if ( S_OK == Result )
 	{
-		unsigned long l_ulSize = 0;
-
-		if ( S_OK == ( Result = m_DigitalBoard.GetOutputCount( &l_ulSize ) ) )
+		unsigned long size {0UL};
+		if ( S_OK == ( Result = m_DigitalBoard.GetOutputCount( &size ) ) )
 		{
-			if ( l_ulSize < static_cast< unsigned long >( m_DigitalOutputs.size() ) )
-			{
-				Result = E_FAIL;
-			}
+			m_DigitalOutputs.resize(size);
 		}
 	}
 
@@ -335,7 +322,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalOutputForcedValue( unsigned l
 
 	if ( channel < Count )
 	{
-		rValue = m_DigitalOutputs[ channel ].m_bForcedValue;
+		rValue = m_DigitalOutputs[channel].m_bForcedValue;
 
 		Result = S_OK;
 	}
@@ -351,7 +338,7 @@ HRESULT SVIOConfigurationInterfaceClass::SetDigitalOutputForcedValue( unsigned l
 
 	if ( channel < Count )
 	{
-		m_DigitalOutputs[ channel ].m_bForcedValue = Value;
+		m_DigitalOutputs[channel].m_bForcedValue = Value;
 
 		Result = S_OK;
 	}

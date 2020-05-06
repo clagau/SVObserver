@@ -75,16 +75,11 @@ public:
 	afx_msg void OnViewPPQBar();
 	//}}AFX_MSG
 
-	// DDE Server Connect Confirm Message...
-	afx_msg LRESULT OnDDEServerConnect( WPARAM wParam, LPARAM lParam );
-
 	// End Object Script Parsing
 	afx_msg LRESULT OnEndObjectScriptParse( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnEndObjectCreation( WPARAM wParam, LPARAM lParam );
 
 	afx_msg LRESULT OnUserChanged( WPARAM wParam, LPARAM lParam );
-
-	afx_msg LRESULT OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam );
 
 	afx_msg LRESULT RemoteRegisterMonitorList(WPARAM wParam, LPARAM lParam);
 
@@ -113,16 +108,6 @@ public:
 
 	void SetStatusInfoText( LPCTSTR SIText );
 
-
-	//************************************
-	// Method:    ShowToolBars
-	// Description:  Show or Hide the tool bars.  
-	// Parameter: BOOL Show (True is show False is hide)
-	// Parameter: BOOL RememberOldState if true remember or restore the old state 
-	// Parameter: DWORD dwBars Flag_Standard | Flag_Zoom
-	// Returns:   void
-	//************************************
-	void ShowToolBars(BOOL Show, BOOL RememberOldState , DWORD dwBars );
 
 	//************************************
 	// Method:    RefreshAllSplitters

@@ -17,15 +17,13 @@ public:
 	explicit SVDigitalInputObject( LPCSTR strObjectName );
 	SVDigitalInputObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALINPUTOBJECT );
 
-	virtual ~SVDigitalInputObject();
+	virtual ~SVDigitalInputObject() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	virtual bool Create() override;
-	virtual bool Destroy() override;
-
-	virtual HRESULT Read( _variant_t& rValue ) override;
+	virtual HRESULT Read( _variant_t& rValue ) const override;
+	virtual long GetChannel() const override { return m_Channel; }
 
 	bool Force( bool bForce, bool bForcedValue );
 	bool Invert( bool bInvert );
@@ -35,12 +33,7 @@ public:
 	bool IsInverted() const;
 	bool GetValue() const;
 
-	void SetChannel( long Channel );
-	long GetChannel() const;
-
-	/// Update the objectId to a fix ID depend of a position (must between 0 and 0x100).
-	/// \param position [in]
-	void updateObjectId(int position);
+	void SetChannel( long channel ) { m_Channel = channel; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -50,6 +43,6 @@ private:
 
 #pragma region Member Variables
 private:
-	long m_Channel;
+	long m_Channel{-1L};
 #pragma endregion Member Variables
 };

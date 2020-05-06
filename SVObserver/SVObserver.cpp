@@ -36,6 +36,7 @@
 #include "SVIOBoardCapabilities.h"
 #include "SVIOController.h"
 #include "SVIODoc.h"
+#include "SVIOTabbedView.h"
 #include "SVIPChildFrm.h"
 #include "SVIPDoc.h"
 #include "SVIPDocInfoImporter.h"
@@ -362,7 +363,6 @@ void SVObserverApp::OnFileNewConfig()
 				{
 					HideIOTab(SVRemoteOutputsViewID);
 				}
-				pConfig->ClearRemoteMonitorList();
 			}
 			else
 			{
@@ -370,7 +370,7 @@ void SVObserverApp::OnFileNewConfig()
 			}
 
 			// Never any Remotely Monitored Items on a New Configuration...
-			HideRemoteMonitorListTab();
+			HideIOTab(SVRemoteMonitorListViewID);
 
 			// Update Remote Inputs Tab
 			UpdateRemoteInputTabs();
@@ -808,30 +808,24 @@ void SVObserverApp::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
 		OkToEdit());
-	SVInputObjectList* l_pInputs(nullptr);
+	SVInputObjectList* pInputs(nullptr);
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
 	if (nullptr != pConfig)
 	{
-		l_pInputs = pConfig->GetInputObjectList();
+		pInputs = pConfig->GetInputObjectList();
 	}
 
-	bool l_bRemoteInputsExits = false;
-	if (nullptr != l_pInputs)
+	bool remoteInputsExist = false;
+	if (nullptr != pInputs)
 	{
-		long lSize = 0;
-		l_pInputs->GetRemoteInputCount(lSize);
-		if (lSize > 0)
+		if (pInputs->getRemoteInputCount() > 0)
 		{
-			l_bRemoteInputsExits = true;
-			PCmdUI->SetText("Edit Remote Inputs");
+			remoteInputsExist = true;
 		}
 	}
-	if (l_bRemoteInputsExits)
-		PCmdUI->SetText("Edit Remote Inputs");
-	else
-		PCmdUI->SetText("Add Remote Inputs");
+	PCmdUI->SetText(remoteInputsExist ? "Edit Remote Inputs" : "Add Remote Inputs");
 
 	//@HACK
 	// This code to add menu items for the Published Results does not belong here
@@ -1162,13 +1156,6 @@ void SVObserverApp::OnGoOnline()
 	SvStl::MessageContainer exceptionContainer;
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
 
-	long l_lPrevState = 0;
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-	{
-		l_lPrevState = SV_STATE_EDIT;
-	}
-
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING)) { return; }
 
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_RUN))
@@ -1182,9 +1169,11 @@ void SVObserverApp::OnGoOnline()
 		{
 			OnStop();
 		}
+		
+		//After Regression and test both going to stop this should only be either Stop or Edit mode
+		long prevState = SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SV_STATE_EDIT : SVSVIMStateClass::CheckState(SV_STATE_STOP) ? SV_STATE_STOP : 0L;
 
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY) &&
-			!SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
+		if (SVSVIMStateClass::CheckState(SV_STATE_READY) && false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
 			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 			DeselectTool();
@@ -1208,7 +1197,7 @@ void SVObserverApp::OnGoOnline()
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, m_rInitialInfo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
-					SVSVIMStateClass::AddState(l_lPrevState);
+					SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
 				}
 			}
 			else
@@ -1220,7 +1209,7 @@ void SVObserverApp::OnGoOnline()
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
 
-				SVSVIMStateClass::AddState(l_lPrevState);
+				SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
 			}
 
 			if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
@@ -1231,7 +1220,7 @@ void SVObserverApp::OnGoOnline()
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(exceptionContainer.getMessage());
-				SVSVIMStateClass::AddState(l_lPrevState);
+				SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
 			}
 		}
 	}
@@ -2617,7 +2606,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
 		if (!rList.size())
 		{
-			HideRemoteMonitorListTab();
+			HideIOTab(SVRemoteMonitorListViewID);
 		}
 	}
 	else
@@ -2649,8 +2638,25 @@ SVIODoc *SVObserverApp::NewSVIODoc(LPCTSTR DocName, SVIOController& IOController
 				if (nullptr != pDoc)
 				{
 					pDoc->SetIOController(&IOController);
-
 					pDoc->SetTitle(DocName);
+
+					SVConfigurationObject* pConfig(nullptr);
+					SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+					if (nullptr != pConfig)
+					{
+						//Now that IO constructed check which tabs to hide
+						if (SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+						{
+							HideIOTab(SVIOPlcOutputsViewID);
+						}
+						else
+						{
+							HideIOTab(SVIODiscreteInputsViewID);
+							HideIOTab(SVIODiscreteOutputsViewID);
+						}
+					}
+
 				}
 			}
 		}
@@ -3993,8 +3999,6 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 
 			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, m_ConfigFileName.GetFileNameOnly());
-			SVDigitalInputObject* pInput = nullptr;
-			SVPPQObject* pPPQ = nullptr;
 			unsigned long ulCount = 0;
 
 			SVIOConfigurationInterfaceClass::Instance().Init();
@@ -4010,7 +4014,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 					{
 						std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
 
-						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l));
+						SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
 
 						if (nullptr != pInput)
 						{
@@ -4023,22 +4027,20 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 				long lPPQCount = pConfig->GetPPQCount();
 				for (long lPPQ = 0; lPPQ < lPPQCount; lPPQ++)
 				{
-					pPPQ = pConfig->GetPPQ(lPPQ);
-					ASSERT(nullptr != pPPQ);
+					SVPPQObject* pPPQ = pConfig->GetPPQ(lPPQ);
+					assert(nullptr != pPPQ);
 					pPPQ->RebuildInputList(pConfig->HasCameraTrigger(pPPQ));
 					pPPQ->RebuildOutputList();
 				}// end for
 
 				// Create all the default outputs
 				SVOutputObjectList *pOutputObjectList = pConfig->GetOutputObjectList();
-				if (nullptr != pOutputObjectList)
+				if (nullptr != pOutputObjectList && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 				{
-					SVDigitalOutputObject* pOutput(nullptr);
 					const int moduleReadyChannel = 15;
-					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, moduleReadyChannel));
+					SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, moduleReadyChannel).get());
 
-					// @HACK:  JAB082212 HACK!!!!!
-					if (nullptr != pOutput)
+					if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
 					{
 						pOutput->SetChannel(moduleReadyChannel);
 
@@ -4785,47 +4787,6 @@ void SVObserverApp::ResetAllIPDocModifyFlag(BOOL bModified)
 	}
 }
 
-bool SVObserverApp::SetActiveIOTabView(SVTabbedViewSplitterIDEnum p_eTabbedID)
-{
-	bool l_bRet = false;
-
-	SVIODoc* l_pIODoc = GetIODoc();
-
-	if (nullptr != l_pIODoc)
-	{
-		// Get the active MDI child window.             
-		POSITION pos = l_pIODoc->GetFirstViewPosition();
-		CView *pView = l_pIODoc->GetNextView(pos);
-
-		CMDIChildWnd *pFrame = (CMDIChildWnd*)pView->GetParentFrame();
-		SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pFrame);
-		if (pIOView)
-		{
-			TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_eTabbedID);
-			pIOView->m_Framework.SetActiveTab(l_VisObj);
-
-			l_bRet = true;
-		}
-	}// end if( PIODoc
-	return l_bRet;
-}
-
-void SVObserverApp::HideRemoteOutputTab()
-{
-	SVMainFrame* pWndMain = static_cast<SVMainFrame*>(GetMainWnd());
-	SetActiveIOTabView(SVIODiscreteInputsViewID);
-
-	pWndMain->PostMessage(SV_IOVIEW_HIDE_TAB, SVRemoteOutputsViewID);
-}
-
-void SVObserverApp::HideRemoteMonitorListTab()
-{
-	SVMainFrame* pWndMain = static_cast<SVMainFrame*>(GetMainWnd());
-	SetActiveIOTabView(SVIODiscreteInputsViewID);
-
-	pWndMain->PostMessage(SV_IOVIEW_HIDE_TAB, SVRemoteMonitorListViewID);
-}
-
 void SVObserverApp::HideIOTab(DWORD p_dwID)
 {
 	SVIODoc* l_pIODoc = GetIODoc();
@@ -4838,10 +4799,26 @@ void SVObserverApp::HideIOTab(DWORD p_dwID)
 			CView* pView = l_pIODoc->GetNextView(lViewPos);
 
 			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
-			if (pIOView)
+			if (nullptr != pIOView)
 			{
-				TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_dwID);
-				l_VisObj->ShowTab(false);
+				TVisualObject* pCurrentTab = pIOView->m_Framework.GetActivePane();
+				TVisualObject* pHideTab = pIOView->m_Framework.Get(p_dwID);
+				//If tab to be hidden is active tab then select first visible tab
+				if (pCurrentTab == pHideTab)
+				{
+					for (const auto tabID : IOTabViews)
+					{
+						TVisualObject* pTab = pIOView->m_Framework.Get(tabID);
+						BOOL isVisible(false);
+						if (nullptr != pTab && pHideTab != pTab && pTab->IsTabVisible(isVisible) && isVisible)
+						{
+							pIOView->m_Framework.SetActiveTab(pTab);
+							pTab->SetActivePane();
+							break;
+						}
+					}
+				}
+				pHideTab->ShowTab(false);
 				break;
 			}
 		} while (lViewPos);
@@ -4860,13 +4837,14 @@ void SVObserverApp::ShowIOTab(DWORD p_dwID)
 			CView* pView = l_pIODoc->GetNextView(lViewPos);
 
 			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
-			if (pIOView)
+			if (nullptr != pIOView)
 			{
-				TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_dwID);
-				if (l_VisObj)
+				TVisualObject* pShowTab = pIOView->m_Framework.Get(p_dwID);
+				if (nullptr != pShowTab)
 				{
-					l_VisObj->ShowTab(true);
-
+					pShowTab->ShowTab(true);
+					pIOView->m_Framework.SetActiveTab(pShowTab);
+					pShowTab->SetActivePane();
 				}
 				break;
 			}
@@ -4886,9 +4864,7 @@ void SVObserverApp::UpdateRemoteInputTabs()
 		SVInputObjectList* pList = pConfig->GetInputObjectList();
 		if (nullptr != pList)
 		{
-			long lSize;
-			pList->GetRemoteInputCount(lSize);
-			if (lSize > 0)
+			if (pList->getRemoteInputCount() > 0)
 			{
 				l_bHideIOTab = false;
 			}
@@ -4957,13 +4933,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 #pragma region Protected Methods
 void SVObserverApp::Start()
 {
-
-	//if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
-	//	return;
-
 	SVSVIMStateClass::SVRCBlocker block;
-
-	SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_STARTING))
 	{
@@ -4980,6 +4950,8 @@ void SVObserverApp::Start()
 		SVSVIMStateClass::AddState(SV_STATE_START_PENDING);
 		return;
 	}
+
+	SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
 
 	UpdateAndGetLogDataManager();
 

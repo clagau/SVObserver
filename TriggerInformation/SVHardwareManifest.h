@@ -91,6 +91,13 @@ namespace SvTi
 		static bool IsColorSystem(SVIMProductEnum ProductType);
 
 		//************************************
+		//! This is a static method to check if the product type is a discrete IO system
+		//! \param ProductType <in> the SVIM product type
+		//! \returns true if it is a discrete system
+		//************************************
+		static bool isDiscreteIOSystem(SVIMProductEnum ProductType);
+
+		//************************************
 		//! This is a static method to check if the product type is a GigE system
 		//! \param ProductType <in> the SVIM product type
 		//! \returns true if it is a GigE type

@@ -135,14 +135,12 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 	return Result;
 }
 
-void SVObjectManagerClass::setRootChildID(const std::string& rRootChild, uint32_t objectID)
+void SVObjectManagerClass::setRootChildID(const SVObjectClass* pObject)
 {
 	
-	SVObjectClass* pRootObject(nullptr);
-	GetObjectByIdentifier(objectID, pRootObject);
-	if (nullptr != pRootObject)
+	if (nullptr != pObject)
 	{
-		m_RootNameChildren[rRootChild] = objectID;
+		m_RootNameChildren[pObject->GetName()] = pObject->getObjectId();
 	}
 }
 
@@ -162,10 +160,7 @@ void SVObjectManagerClass::Shutdown()
 	::InterlockedExchange(&m_State, ReadWrite);
 	::Sleep(100);
 
-
-
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
-
 
 	if (!(m_CookieEntries.empty()))
 	{
@@ -454,11 +449,11 @@ bool SVObjectManagerClass::CreateObjectID(SVObjectClass* pObject)
 
 uint32_t SVObjectManagerClass::getNextObjectId() 
 {
-	auto iter = m_deletedObjectId.begin();
-	if (m_deletedObjectId.end() != iter)
+	auto iter = m_deletedObjectIdSet.begin();
+	if (m_deletedObjectIdSet.end() != iter)
 	{
 		auto retValue = *iter;
-		m_deletedObjectId.erase(retValue);
+		m_deletedObjectIdSet.erase(iter);
 		return retValue;
 	}
 	return m_nextObjectId++; 
@@ -479,17 +474,17 @@ void SVObjectManagerClass::reduceNextObjectId(uint32_t removedObjectId)
 		if (m_nextObjectId - 1 == removedObjectId)
 		{
 			m_nextObjectId--;
-			auto iter = m_deletedObjectId.find(m_nextObjectId - 1);
-			while (m_deletedObjectId.end() != iter)
+			auto iter = m_deletedObjectIdSet.find(m_nextObjectId - 1);
+			while (m_deletedObjectIdSet.end() != iter)
 			{
-				m_deletedObjectId.erase(iter);
+				m_deletedObjectIdSet.erase(iter);
 				m_nextObjectId--;
-				iter = m_deletedObjectId.find(m_nextObjectId - 1);
+				iter = m_deletedObjectIdSet.find(m_nextObjectId - 1);
 			}
 		}
 		else
 		{
-			m_deletedObjectId.emplace(removedObjectId);
+			m_deletedObjectIdSet.emplace(removedObjectId);
 		}
 	}
 }
@@ -497,7 +492,7 @@ void SVObjectManagerClass::reduceNextObjectId(uint32_t removedObjectId)
 void SVObjectManagerClass::resetNextObjectId()
 {
 	m_nextObjectId = m_firstObjectId; 
-	m_deletedObjectId.clear();
+	m_deletedObjectIdSet.clear();
 	resetExchangeObjectIdMap();
 }
 
@@ -594,24 +589,15 @@ SVObjectClass* SVObjectManagerClass::GetObject(uint32_t objectId) const
 {
 	SVObjectClass* pObject = nullptr;
 
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	bool Result = (SvDef::InvalidObjectId != objectId);
-
-
-	if ( Result && ReadWrite == m_State && (Autolock.owns_lock() == false))
+	if(SvDef::InvalidObjectId == objectId)
 	{
-		Autolock.lock();
+		return pObject;
 	}
 
-	if (Result)
+	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(objectId);
+	if (nullptr != pUniqueObject)
 	{
-		SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(objectId);
-
-		if (nullptr != pUniqueObject)
-		{
-			pObject = pUniqueObject->m_pObject;
-		}
+		pObject = pUniqueObject->m_pObject;
 	}
 
 	return pObject;

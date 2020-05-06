@@ -21,7 +21,6 @@
 #include "SVGlobal.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
 #include "SVLibrary/SVUtilityIniClass.h"
-#include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 
@@ -251,9 +250,6 @@ public:
 	void SetAllIPDocumentsOffline();
 	void ResetAllIPDocModifyFlag(BOOL bModified);
 
-	bool SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID );
-	void HideRemoteOutputTab();
-	void HideRemoteMonitorListTab();
 	void HideIOTab( DWORD p_dwID );
 	void ShowIOTab( DWORD p_dwID );
 	void UpdateRemoteInputTabs();

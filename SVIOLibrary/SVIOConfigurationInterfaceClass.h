@@ -79,7 +79,6 @@ public:
 private:
 	SVIOConfigurationInterfaceClass();
 	SVIOConfigurationInterfaceClass( const SVIOConfigurationInterfaceClass& p_rObject );
-	const SVIOConfigurationInterfaceClass& operator=( const SVIOConfigurationInterfaceClass& p_rObject );
 
 	SVIODigitalLoadLibraryClass m_DigitalBoard;
 

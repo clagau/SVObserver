@@ -11,24 +11,19 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
-
-#include "SVDiscreteInputsView.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVOResource\ConstGlobalSvOr.h"
-#include "SVObserver.h"
-#include "SVIODoc.h"
-#include "SVIOAdjustDialog.h"
-#include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVDigitalInputObject.h"
-#include "SVInfoStructs.h"
 #include "SVConfigurationObject.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVMessage\SVMessage.h"
+#include "SVDiscreteInputsView.h"
+#include "SVIOAdjustDialog.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
+#include "SVIOLibrary/SVDigitalInputObject.h"
+#include "SVIOLibrary/SVInputObjectList.h"
+#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -38,51 +33,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr char* cDigitalInputName = ("Digital Input %d");
+
 IMPLEMENT_DYNCREATE(SVDiscreteInputsView, CListView)
 
 BEGIN_MESSAGE_MAP(SVDiscreteInputsView, CListView)
-	//{{AFX_MSG_MAP(SVDiscreteInputsView)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_DESTROY( )
-	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVDiscreteInputsView::SVDiscreteInputsView()
-: m_Items( boost::bind( &( CListCtrl::GetItemData ), &( GetListCtrl() ), _1 ) , boost::bind( &( CListCtrl::SetItemData ), &( GetListCtrl() ), _1, _2 ) )
+SVDiscreteInputsView::SVDiscreteInputsView() :
+	m_rCtrl(GetListCtrl())
 {
 }
-
-SVDiscreteInputsView::~SVDiscreteInputsView()
-{
-}
-
-BOOL SVDiscreteInputsView::PreCreateWindow(CREATESTRUCT& cs)
-{
-	return CListView::PreCreateWindow(cs);
-}
-
-void SVDiscreteInputsView::OnInitialUpdate()
-{
-	CListView::OnInitialUpdate();
-}
-
-#ifdef _DEBUG
-void SVDiscreteInputsView::AssertValid() const
-{
-	CListView::AssertValid();
-}
-
-void SVDiscreteInputsView::Dump(CDumpContext& dc) const
-{
-	CListView::Dump(dc);
-}
-
-SVIODoc* SVDiscreteInputsView::GetDocument()
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(SVIODoc)));
-	return (SVIODoc*)m_pDocument;
-}
-#endif //_DEBUG
 
 BOOL SVDiscreteInputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
@@ -90,54 +53,44 @@ BOOL SVDiscreteInputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
 
 	BOOL RetVal = CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 
-	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
+	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
 
-	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_INPUT_ICON ) );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_OUTPUT_ICON ) );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 1, 1 );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_INPUT_ICON ) );
 
-	GetListCtrl().SetImageList( &StateImageList, LVSIL_STATE );
-	GetListCtrl().SetImageList( &ImageList, LVSIL_SMALL );
+	m_rCtrl.SetImageList( &m_StateImageList, LVSIL_STATE );
+	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
-	GetListCtrl().InsertColumn( 0, _T( "Inputs" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 0, _T( "Inputs" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
 
-	GetListCtrl().SetColumnWidth( 0, 125 );
-	GetListCtrl().SetColumnWidth( 1, 500 );
-	GetListCtrl().SetColumnWidth( 2,  50 );
-	GetListCtrl().SetColumnWidth( 3,  55 );
+	m_rCtrl.SetColumnWidth( 0, 125 );
+	m_rCtrl.SetColumnWidth( 1, 500 );
+	m_rCtrl.SetColumnWidth( 2,  50 );
+	m_rCtrl.SetColumnWidth( 3,  55 );
 
 	return RetVal;
 }
 
 void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 {
-	SVIODoc* pIODoc = (SVIODoc*) GetDocument();
-
-	if( pIODoc && ::IsWindow( m_hWnd ) )
+	if(::IsWindow( m_hWnd ) )
 	{
-		GetListCtrl().SetRedraw(false);
+		m_rCtrl.SetRedraw(false);
 
 		// First clean up list view
-		GetListCtrl().DeleteAllItems();
+		m_rCtrl.DeleteAllItems();
 
 		m_Items.clear();
-
-		long lSize;
-		int j;
-		int i;
-		SVInputObjectList* pInputList = nullptr;
-		SVDigitalInputObject* pDigInput;
-		SVIOEntryHostStructPtrVector ppIOEntries;
-		SVIOEntryHostStructPtr pIOEntry;
 
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+		SVInputObjectList* pInputList = nullptr;
 		// Get list of available inputs
 		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
 		if ( nullptr == pInputList )
@@ -148,67 +101,64 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 			return; 
 		}
 
-		if( !pInputList->FillInputs( ppIOEntries ) )
-		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17007_ErrorFillingInputs );
-			DebugBreak();
-		}
-
-		lSize = static_cast< long >( ppIOEntries.size() );
+		SVIOEntryHostStructPtrVector inputEntryVector = pInputList->getInputList();
 
 		// Module Inputs
-		DWORD maxInput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( maxInput );
-		for( i = 0; i < static_cast<long>(maxInput); ++i )
+		unsigned long maxInput{0UL};
+		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(maxInput);
+		for(int  i = 0; i < static_cast<int>(maxInput); ++i )
 		{
 			// First column: Module I/O
-			std::string Item = SvUl::Format( _T( "Digital Input %d" ), i + 1 );
-			GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
+			std::string Item = SvUl::Format(cDigitalInputName, i + 1 );
+			m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
 									  i, Item.c_str(),
-									  INDEXTOSTATEIMAGEMASK( 1 ),	// state
-									  LVIS_STATEIMAGEMASK,			// stateMask
-									  1, 0 );						// Set item data to nothing
+									  INDEXTOSTATEIMAGEMASK(1),
+									  LVIS_STATEIMAGEMASK,
+									  1, 0 );
 
-			// Find each digital input
-			for( j = 0; j < lSize; j++ )
+			for(const auto& pIOEntry : inputEntryVector)
 			{
-				pIOEntry = ppIOEntries[j];
-				if( pIOEntry->m_ObjectType != IO_DIGITAL_INPUT ) { continue; }
+				if(pIOEntry->m_ObjectType != IO_DIGITAL_INPUT)
+				{
+					continue;
+				}
 
-				pDigInput = dynamic_cast< SVDigitalInputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
+				SVDigitalInputObject* pDigInput = dynamic_cast<SVDigitalInputObject*> (SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ));
 
-				if( !pDigInput ) { continue; }
+				if(nullptr == pDigInput)
+				{
+					continue;
+				}
 
 				if( i == pDigInput->GetChannel() )
 				{
-					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
+					m_rCtrl.SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
-					m_Items.SetItemData( i, pIOEntry );
+					m_Items[i] = pIOEntry;
 
 					// Column: Description
-					GetListCtrl().SetItemText( i, 1, pDigInput->GetName() );
+					m_rCtrl.SetItemText( i, 1, pDigInput->GetName() );
 
 					// Column: Force
 					if( pDigInput->IsForced() )
 					{
 						Item = SvUl::Format( _T( "%d" ), pDigInput->GetForcedValue() ? 1 : 0 );
-						GetListCtrl().SetItemText( i, 2, Item.c_str() );
+						m_rCtrl.SetItemText( i, 2, Item.c_str() );
 					}// end if
 
 					// Column: Inverted
 					Item = pDigInput->IsInverted() ? _T( "1" ) : _T( "" );
-					GetListCtrl().SetItemText( i, 3, Item.c_str() );
+					m_rCtrl.SetItemText( i, 3, Item.c_str() );
 
 					break;
-				}// end if
-			}// end for
-		}// end for
-		GetListCtrl().SetRedraw(true);
-	}// end if
+				}
+			}
+		}
+		m_rCtrl.SetRedraw(true);
+	}
 
 	//CListView::OnUpdate( pSender, lHint, pHint );   //This call will cause flicker
-}// end OnUpdate
+}
 
 void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
@@ -216,81 +166,37 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 	SVIOEntryHostStructPtrVector ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	UINT flags;
-	long lSize;
 
-	int item = GetListCtrl().HitTest( point, &flags );
-	SVIODoc* pIODoc = ( SVIODoc* ) GetDocument();
-
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		TheSVObserverApp.OkToEdit() &&
-		pIODoc )
+	int item = m_rCtrl.HitTest( point, &flags );
+	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit())
 	{
-		if( item >= 0 && item < GetListCtrl().GetItemCount() &&
-			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
+		if( item >= 0 && item < m_rCtrl.GetItemCount() && flags & LVHT_ONITEM)
 		{
-			SVIOAdjustDialogClass dlg;
-			SVConfigurationObject* pConfig( nullptr );
-			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-			// Get list of available inputs
-			SVInputObjectList *pInputList = nullptr;
-			if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
-			if ( nullptr == pInputList )
+			const auto iter = m_Items.find(item);
+			if (m_Items.end() != iter)
 			{
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17008_ErrorGettingInputObjectList );
-				DebugBreak();
-			}
-
-			if( !pInputList->FillInputs( ppIOEntries ) )
-			{
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17009_ErrorFillingInputs );
-				DebugBreak();
-			}
-
-			lSize = static_cast< long >( ppIOEntries.size() );
-
-			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData( item );
-
-			if( l_Iter != m_Items.end() )
-			{
-				pIOEntry = l_Iter->second;
+				pIOEntry = iter->second;
 			}
 
 			pDigInput = dynamic_cast< SVDigitalInputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 			if( pDigInput )
 			{
-				dlg.IOName = _T( "Module " ) + GetListCtrl().GetItemText( item, 0 );
-				dlg.IOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
+				SVIOAdjustDialogClass dlg;
+				dlg.IOName = _T( "Module " ) + m_rCtrl.GetItemText( item, 0 );
+				dlg.IOName += _T( ", " ) + m_rCtrl.GetItemText( item, 1 );
 				dlg.IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
 				dlg.m_pDigInput = pDigInput;
 				dlg.m_pIOEntry  = pIOEntry;
-				dlg.m_bInputMode = TRUE;
 
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-
-				switch( dlg.DoModal() )
+				if(ID_OK == dlg.DoModal())
 				{
-				case IDOK:
 					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-					break;
-
-				case IDCANCEL:
-				default:
-					break;
-				}// end switch
+				}
 
 				OnUpdate( nullptr, 0, nullptr );
-
 				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-			}// end if
-		}// end if
-	}// end if
-}// end OnLButtonDblClk
-
-void SVDiscreteInputsView::OnDestroy()
-{
-	CListView::OnDestroy();
+			}
+		}
+	}
 }
-

@@ -2256,7 +2256,7 @@ HRESULT CSVCommand::SVUnlockAllImages()
 	return E_FAIL;
 }
 
-STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
+STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long* pCount)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -2266,11 +2266,12 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-		if (nullptr != pConfig)
+		if (nullptr != pConfig && nullptr != pCount)
 		{
 			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
-			if (nullptr != pInputObjectList && pInputObjectList->GetRemoteInputCount(*lCount))
+			if (nullptr != pInputObjectList)
 			{
+				*pCount = pInputObjectList->getRemoteInputCount();
 				bSuccess = true;
 			}
 		}
@@ -2411,7 +2412,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 		SAFEARRAY* l_psaData;	//( VT_VARIANT, l_saBounds);
 		l_psaData = ::SafeArrayCreate(VT_VARIANT, 2, &l_saBounds[0]);
 		long  l_Index[2];
-		for (size_t i = 0; i < SelectedObjects.size(); i++)
+		for (size_t i = 0; i < SelectedObjects.size(); ++i)
 		{
 			l_Index[0] = static_cast<long>(i);
 			// Name
@@ -2451,10 +2452,10 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 					l_rgsabound[0].cElements = static_cast<ULONG>(pEnumVO->GetEnumVector().size());
 					l_rgsabound[0].lLbound = 0;
 					SAFEARRAY *l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
-					for (long i = 0; i < static_cast<long>(pEnumVO->GetEnumVector().size()); i++)
+					for (long j = 0; j < static_cast<long>(pEnumVO->GetEnumVector().size()); ++j)
 					{
 						_bstr_t bstTmp = pEnumVO->GetEnumVector()[i].first.c_str();
-						SafeArrayPutElement(l_psaTemp, &i, bstTmp.Detach());
+						SafeArrayPutElement(l_psaTemp, &j, bstTmp.Detach());
 					}
 					// Put the Safearray in the Variant.
 					Value.vt = VT_ARRAY | VT_BSTR;
@@ -2473,10 +2474,10 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 					l_rgsabound[0].cElements = static_cast<ULONG>(ValidTypes.size());
 					l_rgsabound[0].lLbound = 0;
 					SAFEARRAY *l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
-					for (long i = 0; i < static_cast<long>(ValidTypes.size()); i++)
+					for (long j = 0; j < static_cast<long>(ValidTypes.size()); ++j)
 					{
-						_bstr_t bstTmp = ValidTypes[i].c_str();
-						SafeArrayPutElement(l_psaTemp, &i, bstTmp.GetBSTR());
+						_bstr_t bstTmp = ValidTypes[j].c_str();
+						SafeArrayPutElement(l_psaTemp, &j, bstTmp.GetBSTR());
 					}
 					// Put the Safearray in the Variant.
 					Value.vt = VT_ARRAY | VT_BSTR;

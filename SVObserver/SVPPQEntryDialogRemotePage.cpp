@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVPPQEntryDialogRemotePage.h"
 #include "SVPPQEntryDialog.h"
 #include "SVPPQObject.h"
@@ -32,21 +30,10 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(SVPPQEntryDialogRemotePageClass, CPropertyPage)
 
-SVPPQEntryDialogRemotePageClass::SVPPQEntryDialogRemotePageClass()
-: CPropertyPage(SVPPQEntryDialogRemotePageClass::IDD)
-, m_AvailableItems( boost::bind( &( CListBox::GetItemData ), &availableInputListCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &availableInputListCtrl, _1, _2 ) )
-, m_SelectedItems( boost::bind( &( CListBox::GetItemData ), &selectedInputListCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &selectedInputListCtrl, _1, _2 ) )
-{
-	//{{AFX_DATA_INIT(SVPPQEntryDialogRemotePageClass)
-	StrCurPos = _T("");
-	//}}AFX_DATA_INIT
-    m_bIsTaken = FALSE;
-}
-
-SVPPQEntryDialogRemotePageClass::~SVPPQEntryDialogRemotePageClass()
+SVPPQEntryDialogRemotePageClass::SVPPQEntryDialogRemotePageClass() : CPropertyPage(SVPPQEntryDialogRemotePageClass::IDD)
 {
 }
-
+	
 void SVPPQEntryDialogRemotePageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
@@ -83,7 +70,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
 			int nIndex = selectedInputListCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems.SetItemData(nIndex, pEntry);
+			m_SelectedItems[nIndex] = pEntry;
 		}// end if
 
 		// Fill available input list box...
@@ -92,7 +79,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 
 			int nIndex = availableInputListCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems.SetItemData( nIndex, pEntry);
+			m_AvailableItems[nIndex] = pEntry;
 		}// end if
 	}// end for
 
@@ -107,21 +94,19 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 
 void SVPPQEntryDialogRemotePageClass::OnAddButton()
 {
-	ASSERT( m_pSheet );
+	assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = availableInputListCtrl.GetCurSel();
 	if( m_pSheet && index >= 0 )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_AvailableItems.GetItemData( index );
-
-		if( l_Iter != m_AvailableItems.end() )
+		const auto iter = m_AvailableItems.find(index);
+		if (m_AvailableItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_AvailableItems.erase(iter);
 		}
-
-		m_AvailableItems.ClearItemData( index );
 		availableInputListCtrl.DeleteString( index );
 
 		if(nullptr != pIOEntry)
@@ -129,7 +114,7 @@ void SVPPQEntryDialogRemotePageClass::OnAddButton()
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
 			index = selectedInputListCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems.SetItemData( index, pIOEntry );
+			m_SelectedItems[index] = pIOEntry;
 		}
 	}// end if
 
@@ -138,21 +123,19 @@ void SVPPQEntryDialogRemotePageClass::OnAddButton()
 
 void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 {
-	ASSERT( m_pSheet );
+	assert( m_pSheet );
 	UpdateData( TRUE );
 
 	int index = selectedInputListCtrl.GetCurSel();
 	if( m_pSheet && index >= 0 )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_SelectedItems.GetItemData( index );
-
-		if( l_Iter != m_SelectedItems.end() )
+		const auto iter = m_SelectedItems.find(index);
+		if (m_SelectedItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_SelectedItems.erase(iter);
 		}
-
-		m_SelectedItems.ClearItemData( index );
 		selectedInputListCtrl.DeleteString( index );
 
 		if(nullptr != pIOEntry)
@@ -160,7 +143,7 @@ void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
 			index = availableInputListCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems.SetItemData( index, pIOEntry );
+			m_AvailableItems[index] = pIOEntry;
 		}
 	}// end if
 
@@ -170,7 +153,7 @@ void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 void SVPPQEntryDialogRemotePageClass::OnOK()
 {
 	UpdateData( TRUE );
-	ASSERT( m_pSheet );
+	assert( m_pSheet );
 
 	m_bIsTaken = ( selectedInputListCtrl.GetCount() > 0 );
 
@@ -178,14 +161,12 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 	for( int k = selectedInputListCtrl.GetCount() - 1; k >= 0; -- k )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_SelectedItems.GetItemData( k );
-
-		if( l_Iter != m_SelectedItems.end() )
+		const auto iter = m_SelectedItems.find(k);
+		if (m_SelectedItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_SelectedItems.erase(iter);
 		}
-
-		m_SelectedItems.ClearItemData( k );
 		selectedInputListCtrl.DeleteString( k );
 
 		if(nullptr != pIOEntry)
@@ -199,14 +180,12 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 	for( int i = availableInputListCtrl.GetCount() - 1; i >= 0;  -- i )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_AvailableItems.GetItemData( i );
-
-		if( l_Iter != m_AvailableItems.end() )
+		const auto iter = m_AvailableItems.find(i);
+		if (m_AvailableItems.end() != iter)
 		{
-			pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
+			m_AvailableItems.erase(iter);
 		}
-
-		m_AvailableItems.ClearItemData( i );
 		availableInputListCtrl.DeleteString( i );
 
 		if(nullptr != pIOEntry)

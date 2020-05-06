@@ -14,7 +14,6 @@
 #include "SVRemoteInputObject.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 SVRemoteInputObject::SVRemoteInputObject( LPCSTR strObjectName )
@@ -29,63 +28,21 @@ SVRemoteInputObject::SVRemoteInputObject( SVObjectClass* POwner, int StringResou
 	LocalInitialize();
 }
 
-SVRemoteInputObject::~SVRemoteInputObject()
+HRESULT SVRemoteInputObject::Read( _variant_t& rValue ) const
 {
-	if( m_isCreated )
-	{
-		Destroy();
-	}
+	rValue = getCache();
+	return S_OK;
 }
 
-bool SVRemoteInputObject::Create()
-{
-	if( !m_isCreated )
-	{
-		m_isCreated = true;
-
-		::InitializeCriticalSection( &m_hCriticalSection );
-	}
-
-	return true;
-}// end Create
-
-bool SVRemoteInputObject::Destroy()
-{
-	m_vtRemoteCache.Clear();
-
-	::DeleteCriticalSection( &m_hCriticalSection );
-
-	m_isCreated = false;
-
-	return true;
-}// end Destroy
-
-void SVRemoteInputObject::Lock()
-{
-	::EnterCriticalSection( &m_hCriticalSection );
-}// end Lock
-
-void SVRemoteInputObject::Unlock()
-{
-	::LeaveCriticalSection( &m_hCriticalSection );
-}// end Unlock
-
-HRESULT SVRemoteInputObject::Read( _variant_t& p_rValue )
-{
-	HRESULT l_Status = GetCache( p_rValue );
-
-	return l_Status;
-}// end Read
-
-HRESULT SVRemoteInputObject::WriteCache( const _variant_t& p_rValue )
+HRESULT SVRemoteInputObject::writeCache( const _variant_t& rValue )
 {
 	HRESULT l_Status = S_OK;
 
 	_variant_t l_Temp = 0.0;
 
-	if( p_rValue.vt & VT_ARRAY )
+	if( rValue.vt & VT_ARRAY )
 	{
-		SvUl::SVSAFEARRAY l_SafeArray( p_rValue );
+		SvUl::SVSAFEARRAY l_SafeArray( rValue );
 
 		if ( 1 == l_SafeArray.size() )
 		{
@@ -98,49 +55,27 @@ HRESULT SVRemoteInputObject::WriteCache( const _variant_t& p_rValue )
 	}
 	else
 	{
-		l_Temp = p_rValue;
+		l_Temp = rValue;
 	}
 
 	if( S_OK == l_Status )
 	{
-		::EnterCriticalSection( &m_hCriticalSection );
-
-		m_vtRemoteCache = l_Temp;
-
-		::LeaveCriticalSection( &m_hCriticalSection );
+		std::lock_guard<std::mutex> guard(m_protectRemoteInput);
+		m_remoteCache = l_Temp;
 	}
-
-	return l_Status;
-}// end ReadCache
-
-HRESULT SVRemoteInputObject::GetCache( _variant_t& p_rValue )
-{
-	HRESULT l_Status = S_OK;
-
-	p_rValue.Clear();
-
-	::EnterCriticalSection( &m_hCriticalSection );
-
-	p_rValue = m_vtRemoteCache;
-
-	::LeaveCriticalSection( &m_hCriticalSection );
 
 	return l_Status;
 }
 
-void SVRemoteInputObject::updateObjectId(int position)
+_variant_t SVRemoteInputObject::getCache() const
 {
-	if (0 <= position && 0x100 > position)
-	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RemoteInputUidId + position);
-	}
+	std::lock_guard<std::mutex> guard(m_protectRemoteInput);
+	return m_remoteCache;
 }
 
 void SVRemoteInputObject::LocalInitialize()
 {
-	m_isCreated = false;
-	m_lIndex = -1;
-	m_vtRemoteCache = 0.0;
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteInputObjectType;
+	m_startID = ObjectIdEnum::RemoteInputId;
 }

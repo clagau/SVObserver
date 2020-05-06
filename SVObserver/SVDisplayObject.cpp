@@ -435,7 +435,7 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruc
 
 	SVObjectClass* pObject(nullptr);
 	double Value;
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentImageUpdateUidId, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentImageUpdateId, pObject);
 	if (nullptr != pObject)
 	{
 		//Use the getValue with double as it is faster (no dynamic casting)
@@ -443,7 +443,7 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruc
 		ImageUpdate = 0.0 < Value ? true : false;
 	}
 	pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentResultUpdateUidId, pObject);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ObjectIdEnum::EnvironmentResultUpdateId, pObject);
 	if (nullptr != pObject)
 	{
 		//Use the getValue with double as it is faster (no dynamic casting)

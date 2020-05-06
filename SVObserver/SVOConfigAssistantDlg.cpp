@@ -2417,24 +2417,21 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 		Attach PPQs to new objects
 */
 
-	SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
-	if( nullptr == pInputObjectList )
+	if(nullptr == pConfig->GetInputObjectList())
 	{
-		pInputObjectList = new SVInputObjectList;
+		std::unique_ptr<SVInputObjectList> pInputObjectList = std::make_unique<SVInputObjectList>();
 		pInputObjectList->SetName( _T( "Input Object List" ) );
-		bRet &= nullptr != pInputObjectList && pInputObjectList->Create() && bRet;
+		bRet &= nullptr != pInputObjectList && bRet;
+		pConfig->SetInputObjectList(std::move(pInputObjectList));
 	}
 
-	SVOutputObjectList* pOutputObjectList = pConfig->GetOutputObjectList();
-	if( nullptr == pOutputObjectList )
+	if(nullptr == pConfig->GetOutputObjectList())
 	{
-		pOutputObjectList = new SVOutputObjectList;
+		std::unique_ptr<SVOutputObjectList> pOutputObjectList = std::make_unique<SVOutputObjectList>();
 		pOutputObjectList->SetName( _T( "Output Object List" ) );
-		bRet &= nullptr != pOutputObjectList && pOutputObjectList->Create() && bRet;
+		bRet &= nullptr != pOutputObjectList && bRet;
+		pConfig->SetOutputObjectList(std::move(pOutputObjectList));
 	}
-
-	pConfig->SetInputObjectList(pInputObjectList);
-	pConfig->SetOutputObjectList(pOutputObjectList);
 
 	bRet = SendPPQDataToConfiguration(aPPQsToDelete);
 

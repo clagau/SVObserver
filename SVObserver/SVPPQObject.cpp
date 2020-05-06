@@ -34,7 +34,6 @@
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
-#include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage/SVMessage.h"
@@ -47,6 +46,7 @@
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
@@ -1387,21 +1387,21 @@ HRESULT SVPPQObject::GetInputIOValues(std::vector<_variant_t>& rInputValues) con
 
 bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 {
-	SVIOEntryHostStructPtrVector ppNewInputs;
 	SVIOEntryHostStructPtr pOldInput;
 	SVIOEntryHostStructPtr pNewInput;
 
 	// Make sure all the defaults are here for old configurations
 	AddDefaultInputs();
 
-	if (m_pInputList && m_pInputList->FillInputs(ppNewInputs))
+	if (nullptr != m_pInputList)
 	{
-		RemoveCameraDataInputs(ppNewInputs);
+		SVIOEntryHostStructPtrVector inputEntryVector = m_pInputList->getInputList();
+		RemoveCameraDataInputs(inputEntryVector);
 		if (bHasCameraTrigger)
 		{
-			AddCameraDataInputs(ppNewInputs);
+			AddCameraDataInputs(inputEntryVector);
 		}
-		size_t lNewSize = ppNewInputs.size();
+		size_t lNewSize = inputEntryVector.size();
 
 		for (size_t iOld = 0; iOld < m_AllInputs.size(); iOld++)
 		{
@@ -1409,15 +1409,14 @@ bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 
 			for (size_t iNew = 0; iNew < lNewSize; iNew++)
 			{
-				pNewInput = ppNewInputs[iNew];
+				pNewInput = inputEntryVector[iNew];
 
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pNewInput->m_IOId);
 
 				if ((0 == strcmp(l_pObject->GetName(), pOldInput->getObject()->GetName())) &&
 					(pNewInput->m_ObjectType == pOldInput->m_ObjectType))
 				{
-					pNewInput->m_DeleteValueObject = false;
-					pNewInput->setObject(pOldInput->getObject());
+					pNewInput->setLinkedObject(pOldInput->getObject());
 					pNewInput->m_PPQIndex = pOldInput->m_PPQIndex;
 					pNewInput->m_Enabled = pOldInput->m_Enabled;
 					pOldInput->m_ObjectType = pNewInput->m_ObjectType;
@@ -1428,7 +1427,7 @@ bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 			}// end for
 		}// end for
 
-		m_UsedInputs = ppNewInputs;
+		m_UsedInputs = inputEntryVector;
 
 		std::sort(m_UsedInputs.begin(), m_UsedInputs.end(), &SVIOEntryHostStruct::PtrGreater);
 
@@ -1534,37 +1533,50 @@ bool SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const std::string& 
 
 	if (!bFound)
 	{
-		SVObjectClass* pObject = nullptr;
+		SVObjectClass* pObject{nullptr};
+		std::shared_ptr<SvOi::IValueObject> pInputValueObject;
 		if (eType == IO_REMOTE_INPUT)
 		{
 			// new variant value object for Remote Inputs.
-			SvVol::SVVariantValueObjectClass* pRemoteObject = new SvVol::SVVariantValueObjectClass();
+			pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
 			_variant_t defaultValue;
 			defaultValue.ChangeType(VT_R8);
-			pRemoteObject->SetDefaultValue(defaultValue, false);
-			pObject = dynamic_cast<SVObjectClass*> (pRemoteObject);
+			if(nullptr != pInputValueObject)
+			{
+				pInputValueObject->setDefaultValue(defaultValue);
+				pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+			}
 		}
 		else
 		{
 			// new Bool Value Object for Digital Inputs.
-			SvVol::SVBoolValueObjectClass* pDigitalObject = new SvVol::SVBoolValueObjectClass();
-			pObject = dynamic_cast<SVObjectClass*> (pDigitalObject);
+			pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
+			if (nullptr != pInputValueObject)
+			{
+				pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+			}
 		}
 
-		pObject->SetName(rName.c_str());
-		pObject->SetObjectOwner(this);
-		pObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		pObject->ResetObject();
+		if(nullptr != pObject)
+		{
+			pObject->SetName(rName.c_str());
+			pObject->SetObjectOwner(this);
+			pObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+			pObject->ResetObject();
+		}
 
-		SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
-		pIOEntry->setObject(pObject);
-		pIOEntry->m_ObjectType = eType;
-		pIOEntry->m_PPQIndex = -1;
-		pIOEntry->m_Enabled = false;
+		if(nullptr != pInputValueObject)
+		{
+			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+			pIOEntry->setValueObject(pInputValueObject);
+			pIOEntry->m_ObjectType = eType;
+			pIOEntry->m_PPQIndex = -1;
+			pIOEntry->m_Enabled = false;
 
-		// Add input to PPQ.
-		AddInput(pIOEntry);
-		return true;
+			// Add input to PPQ.
+			AddInput(pIOEntry);
+			return true;
+		}
 	}// end if
 	return false;
 }
@@ -1589,12 +1601,11 @@ void SVPPQObject::AddDefaultInputs()
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	SVInputObjectList* pInputObjectList(nullptr);
 	if (nullptr != pConfig) { pInputObjectList = pConfig->GetInputObjectList(); }
-	long lCount = 0;
-	//If pointer is a nullptr then count is 0
-	if (nullptr != pInputObjectList) { pInputObjectList->GetRemoteInputCount(lCount); }
+	
+	long count =  (nullptr != pInputObjectList) ? pInputObjectList->getRemoteInputCount() : 0;
 
 	// Create all the default Remote Inputs
-	for (l = 0; l < static_cast<unsigned long>(lCount); l++)
+	for (l = 0; l < static_cast<unsigned long>(count); l++)
 	{
 		std::string Name = SvUl::Format(SvO::cRemoteInputNumberLabel, l + 1 );
 		AddToAvailableInputs(IO_REMOTE_INPUT, Name);
@@ -1730,7 +1741,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 	if (nullptr != pProduct)
 	{
-		if (!pProduct->m_dataComplete)
+		if (false == pProduct->m_dataComplete)
 		{
 			SetProductIncomplete(*pProduct);
 			//Data index with -1 will return the default output values which is required in this case
@@ -1778,11 +1789,12 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		{
 			//Trigger channel needs to  be one based
 			long triggerChannel = (nullptr != m_pTrigger->getDevice()) ? m_pTrigger->getDevice()->getDigitizerNumber() + 1 : -1;
-
-			if(triggerChannel >= 0)
+			
+			if(triggerChannel >= 0 && rOutputValues.size() > 0)
 			{
 				SvTh::IntVariantMap outputData;
 				outputData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
+				outputData[SvTh::TriggerDataEnum::OutputData] = rOutputValues[0].second;
 				m_pOutputList->WriteOutputData(triggerChannel, outputData);
 			}
 		}
@@ -1859,14 +1871,13 @@ bool SVPPQObject::ResetOutputs()
 
 bool SVPPQObject::RebuildOutputList()
 {
-	SVIOEntryHostStructPtrVector ppNewOutputs;
-
 	// Make sure all the defaults are here for old configurations
 	AddDefaultOutputs();
 
-	if (m_pOutputList && m_pOutputList->FillOutputs(ppNewOutputs))
+	if (nullptr != m_pOutputList)
 	{
-		size_t lNewSize = ppNewOutputs.size();
+		SVIOEntryHostStructPtrVector newOutputs = m_pOutputList->getOutputList();
+		size_t lNewSize = newOutputs.size();
 
 		m_pTriggerToggle.reset();
 		m_pOutputToggle.reset();
@@ -1879,7 +1890,7 @@ bool SVPPQObject::RebuildOutputList()
 
 			for (size_t iNew = 0; iNew < lNewSize; iNew++)
 			{
-				SVIOEntryHostStructPtr pNewOutput = ppNewOutputs[iNew];
+				SVIOEntryHostStructPtr pNewOutput = newOutputs[iNew];
 
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pNewOutput->m_IOId);
 
@@ -1892,17 +1903,16 @@ bool SVPPQObject::RebuildOutputList()
 					{
 						//IO object types require the complete name
 						pObject->SetName(pOldOutput->getObject()->GetCompleteName().c_str());
-						pNewOutput->setObject(pOldOutput->getObject());
+						pNewOutput->setLinkedObject(pOldOutput->getObject());
 					}
 					else
 					{
 						//Normal object types require the name and set the owner
 						pObject->SetName(pOldOutput->getObject()->GetName());
-						pNewOutput->setObject(pOldOutput->getObject());
+						pNewOutput->setLinkedObject(pOldOutput->getObject());
 						pNewOutput->getObject()->SetObjectOwner(pOldOutput->getObject()->GetParent());
 					}
 
-					pNewOutput->m_DeleteValueObject = false;
 					pNewOutput->m_Enabled = pOldOutput->m_Enabled;
 					pOldOutput->m_ObjectType = pNewOutput->m_ObjectType;
 					pOldOutput->m_IOId = pNewOutput->m_IOId;
@@ -1937,7 +1947,7 @@ bool SVPPQObject::RebuildOutputList()
 			}// end for
 		}// end for
 
-		m_UsedOutputs = ppNewOutputs;
+		m_UsedOutputs = newOutputs;
 
 		return true;
 	}// end if
@@ -1972,6 +1982,14 @@ void SVPPQObject::AddDefaultOutputs()
 		false		//Data Valid
 	};
 
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	assert(nullptr != pConfig);
+	if(nullptr == pConfig)
+	{
+		return;
+	}
+
 	//This checks if the default outputs are already in the list by checking if the first default output is found
 	bool	bFound {false};
 	std::string Name = cPpqOutputNames[PpqOutputEnums::TriggerToggle];
@@ -1996,9 +2014,8 @@ void SVPPQObject::AddDefaultOutputs()
 		if (!bFound)
 		{
 			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-			pIOEntry->m_DeleteValueObject = false;
-			pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&rOutput));
-			pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
+			pIOEntry->setLinkedObject(dynamic_cast<SVObjectClass*> (&rOutput));
+			pIOEntry->m_ObjectType = SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()) ? IO_DIGITAL_OUTPUT : IO_PLC_OUTPUT;
 			pIOEntry->m_Enabled = true;
 
 			AddOutput(pIOEntry);
@@ -2019,8 +2036,8 @@ void SVPPQObject::AddDefaultOutputs()
 	//Make sure it is above 0
 	if (0 <= PpqID && nullptr != pPpqLength)
 	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPpqTriggerCount.get(), ObjectIdEnum::PpqBaseTriggerCountUidId + PpqID);
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPpqLength.get(), ObjectIdEnum::PpqBaseLengthUidId + PpqID);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPpqTriggerCount.get(), ObjectIdEnum::PpqBaseTriggerCountId + PpqID);
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPpqLength.get(), ObjectIdEnum::PpqBaseLengthId + PpqID);
 		pPpqTriggerCount->SetObjectOwner(this);
 		pPpqLength->SetObjectOwner(this);
 	}
@@ -3875,11 +3892,10 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 				rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 				l_svValue.Clear();
 
-				SVRemoteInputObject* pRemote = dynamic_cast<SVRemoteInputObject*> (m_pInputList->GetInput(pEntry->m_IOId));
-
-				if (nullptr != pRemote)
+				SVInputObjectPtr pInput = m_pInputList->GetInput(pEntry->m_IOId);
+				if (nullptr != pInput)
 				{
-					l_svValue = pRemote->m_lIndex;
+					l_svValue = pInput->GetChannel();
 					rWriter.WriteAttribute(SvXml::CTAG_REMOTE_INDEX, l_svValue);
 					l_svValue.Clear();
 				}
@@ -3888,9 +3904,9 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 				rWriter.WriteAttribute(SvXml::CTAG_PPQ_POSITION, l_svValue);
 				l_svValue.Clear();
 
-				if (nullptr != pRemote)
+				if (nullptr != pInput)
 				{
-					pRemote->GetCache(l_svValue);
+					pInput->Read(l_svValue);
 
 					if (l_svValue.vt != VT_EMPTY)
 					{

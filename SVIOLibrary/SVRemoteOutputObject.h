@@ -28,16 +28,18 @@ public:
 	SV_DECLARE_CLASS( SVRemoteOutputObject );
 
 	SVRemoteOutputObject();
-	virtual ~SVRemoteOutputObject();
+	virtual ~SVRemoteOutputObject() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
 	//For Remote Outputs these virtual methods don't do anything
-	virtual HRESULT Write(const _variant_t& p_rValue) override { return S_OK; };
-	virtual HRESULT Reset() override { return S_OK; };
-	virtual bool IsCombined() const override { return false; };
-	virtual bool GetCombinedValue() const override { return false; };
+	virtual HRESULT Write(const _variant_t& p_rValue) override { return S_OK; }
+	virtual HRESULT Reset() override { return S_OK; }
+	virtual bool isCombined() const override { return false; }
+	virtual bool isAndACK() const override { return false; }
+	virtual long GetChannel() const override { return -1; }
+
 
 	// Get Functions
 	std::string GetInputValueObjectName();
@@ -69,11 +71,11 @@ private:
 	std::string m_strObjectName;
 
 	// id of the value object used to output
-	uint32_t m_InputObjectId = SvDef::InvalidObjectId;
+	uint32_t m_InputObjectId{SvDef::InvalidObjectId};
 
 	std::string m_strGroupID;	// Which Output Group this output belongs to.
 #pragma endregion Member Variables
 };
 
-typedef std::vector<SVRemoteOutputObject*> SVRemoteOutputObjectList;
+using  SVRemoteOutputObjectList = std::vector<SVRemoteOutputObject*>;
 

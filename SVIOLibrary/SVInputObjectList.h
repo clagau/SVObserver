@@ -22,34 +22,29 @@ class SVInputObjectList : public SVObjectClass
 public:
 	explicit SVInputObjectList( LPCSTR ObjectName );
 	SVInputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECTLIST );
-	virtual ~SVInputObjectList();
+	virtual ~SVInputObjectList() = default;
 
-	bool Create();
-	bool Destroy();
+	SVInputObjectPtr GetInput(uint32_t inputID) const;
 
-	SVInputObject* GetInput( uint32_t inputID ) const;
+	SVInputObjectPtr GetInput(const std::string& rInputName) const;
 
-	SVInputObject* GetInput( const std::string& rInputName ) const;
+	SVInputObjectPtr GetInputFlyweight( const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
 
-	SVInputObject* GetInputFlyweight( const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int index = -1);
-
-	HRESULT AttachInput( SVInputObject *pInput );
-	HRESULT DetachInput(uint32_t outputID );
+	HRESULT AttachInput(SVInputObjectPtr pInput);
+	HRESULT DetachInput(uint32_t inputID);
 
 	bool ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues);
 
-	bool FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries );
+	SVIOEntryHostStructPtrVector getInputList() const;
 
-	bool GetRemoteInputCount( long &lSize );
+	long getRemoteInputCount() const;
 	bool SetRemoteInput( long lIndex, const _variant_t& rValue );
 
 private:
-	bool Lock() const;
-	bool Unlock() const;
+	SVInputObjectPtr findInputName(const std::string& rInputName) const;
 
-	CRITICAL_SECTION m_hCriticalSection;
-	bool m_bCreated;
+	mutable std::mutex m_protectInputObjectList;
 
-	ObjectIdSVInputObjectPtrMap m_InputObjects;
+	ObjectIdSVInputObjectPtrMap m_inputObjectMap;
 };
 

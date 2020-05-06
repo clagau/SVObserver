@@ -124,7 +124,6 @@ namespace SvStl
 		{Tid_ErrorMIL, _T("%s - An error has occurred, MIL error code = %s, MIL error Text = %s")},
 		{Tid_ErrorGettingPPQ, _T( "Error getting PPQ." )},
 		{Tid_ErrorGettingInputObjectList, _T( "Error getting input object list." )},
-		{Tid_ErrorFillingInputs, _T( "Error filling inputs." )},
 		{Tid_ErrorGettingPPQCount, _T( "Error getting PPQ count." )},
 		{Tid_Acquisition_SourceInformationFailed, _T("Failed to get acquisition source information!")},
 		{Tid_TooManyVariables, _T("%s\nToo many variables.")},

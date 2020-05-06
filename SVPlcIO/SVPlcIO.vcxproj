@@ -75,11 +75,11 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cifX32DLL64.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVPlcIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(RTX64SDKDir3)lib\amd64;.\Lpt\x64;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -118,7 +118,7 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cifX32DLL64.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Advapi32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVPlcIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -129,7 +129,7 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalLibraryDirectories>$(RTX64SDKDir3)lib\amd64;.\Lpt\x64;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -141,7 +141,7 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CifxCard.cpp" />
-    <ClCompile Include="CifxCommonData.cpp" />
+    <ClCompile Include="CifxLoadLibrary.cpp" />
     <ClCompile Include="HardwareTriggerSource.cpp" />
     <ClCompile Include="PowerLinkConnection.cpp" />
     <ClCompile Include="SimulatedTriggerSource.cpp" />
@@ -161,8 +161,8 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="CifxCard.h" />
-    <ClInclude Include="CifxCommonData.h" />
     <ClInclude Include="cifXErrors.h" />
+    <ClInclude Include="CifxLoadLibrary.h" />
     <ClInclude Include="cifXUser.h" />
     <ClInclude Include="ConfigDataSet.h" />
     <ClInclude Include="EplCn_If_Public.h" />

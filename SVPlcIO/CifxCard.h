@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "CifxCommonData.h"
+#include "CifxLoadLibrary.h"
 #include "ConfigDataSet.h"
 #include "InspectionCommand.h"
 #include "Telegram.h"
@@ -26,17 +26,14 @@ public:
 	CifXCard(uint32_t CifXNodeId, uint32_t MaxRtdSize);
 	~CifXCard() = default;
 
-	bool OpenAndInitializeCifX(); ///< starts the Powerlink connection to the PLC-CPU
+	HRESULT OpenAndInitializeCifX(); ///< starts the Powerlink connection to the PLC-CPU
 	void closeCifX(); ///< ends the Powerlink connection to the PLC-CPU
 
-	uint32_t OpenCifX(char* pBoardName);
-	uint32_t closeDriver(bool showDetails);
-	uint32_t SendConfigurationToCifX();
-	uint32_t WarmstartAndInitializeCifX();
+	int32_t OpenCifX();
+	int32_t SendConfigurationToCifX();
+	int32_t WarmstartAndInitializeCifX();
 
 	void readProcessData();
-	void writeProcessData();
-	void sendSyncCommand();
 
 	uint32_t currentResult() { return m_currentResult; }
 
@@ -53,7 +50,6 @@ public:
 	void setPlcLoopSyncTime();
 	void sendConfigList();
 	void sendOperationData(const InspectionState& rState);
-	void sendDefaultResponse();
 
 	const Telegram& getInputTelegram() { return m_inputTelegram; }
 	const InspectionCommand& getInspectionCmd() { return m_inspectionCmd; }
@@ -61,6 +57,9 @@ public:
 	void setReady(bool ready) { m_ready = ready; } 
 
 private:
+	uint32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt);
+	uint32_t SendRecvEmptyPkt(uint32_t ulCmd);
+	void BuildConfigurationReq(CIFX_PACKET* ptPacket, uint8_t NodeId, uint16_t DataLength);
 
 	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
 	void writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
@@ -69,6 +68,11 @@ private:
 
 	const uint32_t m_CifXNodeId {0UL}; //< The powerlink node ID used for the Hilscher CifX card
 	const uint32_t m_maxPlcDataSize {0UL}; // the size of the PLC data in bytes
+
+	CIFXHANDLE m_hDriver {nullptr};				/// Cifx driver handle
+	CIFXHANDLE m_hChannel {nullptr};			/// Cifx channel handle
+	std::unique_ptr<uint8_t> m_pReadBuffer;		///Receive buffer
+	std::unique_ptr<uint8_t> m_pWriteBuffer;	///Send buffer
 
 	bool m_processDataCanBeRead {false};
 	uint64_t m_processDataReadCount {0ULL}; ///< running count of process data reads. This is also the number of interrupts 
@@ -86,7 +90,7 @@ private:
 
 	std::mutex m_cifxMutex;
 
-	CommonData m_commonData;
+	CifxLoadLibrary m_cifxLoadLib;
 	Telegram m_inputTelegram;
 	TimeSync m_timeSync;
 	InspectionCommand m_inspectionCmd;

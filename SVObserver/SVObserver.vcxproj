@@ -188,6 +188,7 @@ echo %time%
     <ClCompile Include="MonitorListPropertyDlg.cpp" />
     <ClCompile Include="MonitorListSelector.cpp" />
     <ClCompile Include="MonitorListView.cpp" />
+    <ClCompile Include="PlcOutputsView.cpp" />
     <ClCompile Include="RangeClassHelper.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
@@ -386,6 +387,7 @@ echo %time%
     <ClInclude Include="MonitorListSelector.h" />
     <ClInclude Include="MonitorListView.h" />
     <ClInclude Include="NavigatorElement.h" />
+    <ClInclude Include="PlcOutputsView.h" />
     <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RemoteCommand.h" />

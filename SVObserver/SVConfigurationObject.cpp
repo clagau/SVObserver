@@ -22,7 +22,6 @@
 #include "SVConfigurationTreeWriter.h"
 #include "SVGlobal.h"
 #include "SVMainFrm.h"
-#include "SVIODoc.h"
 #include "SVIOController.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
@@ -40,6 +39,7 @@
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVCameraDataInputObject.h"
+#include "SVIOLibrary/PlcOutputObject.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
@@ -83,11 +83,11 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName)
-	: SVObjectClass(ObjectName)
+SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName) 
+	,m_pIOController{std::make_unique<SVIOController>()}
 {
-	m_pIOController = new SVIOController;
 
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
 	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
 	m_arTriggerArray.clear();
@@ -96,11 +96,10 @@ SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName)
 	m_arInspectionArray.clear();
 }
 
-SVConfigurationObject::SVConfigurationObject(SVObjectClass* POwner, int StringResourceID)
-	: SVObjectClass(POwner, StringResourceID)
+SVConfigurationObject::SVConfigurationObject(SVObjectClass* pOwner, int StringResourceID) : SVObjectClass(pOwner, StringResourceID)
+, m_pIOController {std::make_unique<SVIOController>()}
 {
-	m_pIOController = new SVIOController;
-
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
 	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
 	m_arTriggerArray.clear();
@@ -114,36 +113,6 @@ SVConfigurationObject::~SVConfigurationObject()
 	DestroyConfiguration();
 }
 #pragma endregion Constructor
-
-void SVConfigurationObject::SetInputObjectList(SVInputObjectList *pInputObjectList)
-{
-	if (nullptr != m_pInputObjectList && m_pInputObjectList != pInputObjectList)
-	{
-		delete m_pInputObjectList;
-	}
-
-	m_pInputObjectList = pInputObjectList;
-}// end SetInputObjectList
-
-SVInputObjectList* SVConfigurationObject::GetInputObjectList() const
-{
-	return m_pInputObjectList;
-}// end GetInputObjectList
-
-void SVConfigurationObject::SetOutputObjectList(SVOutputObjectList *pOutputObjectList)
-{
-	if (nullptr != m_pOutputObjectList && m_pOutputObjectList != pOutputObjectList)
-	{
-		delete m_pOutputObjectList;
-	}
-
-	m_pOutputObjectList = pOutputObjectList;
-}// end SetOutputObjectList
-
-SVOutputObjectList* SVConfigurationObject::GetOutputObjectList() const
-{
-	return m_pOutputObjectList;
-}// end GetOutputObjectList
 
 HRESULT SVConfigurationObject::RebuildOutputObjectList()
 {
@@ -736,12 +705,11 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const s
 			SVRemoteInputObject* pRemoteInput = nullptr;
 			int number = -1;
 			sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1));
+			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1).get());
 			if (nullptr != pRemoteInput)
 			{
-				pRemoteInput->m_lIndex = index;
-				pRemoteInput->Create();
-				pRemoteInput->WriteCache(p_Value);
+				pRemoteInput->SetChannel(index);
+				pRemoteInput->writeCache(p_Value);
 			}
 		}
 	}
@@ -766,7 +734,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 	{
 		if (!pIOEntry->m_Enabled)
 		{
-			SVDigitalInputObject* pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
+			m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType);
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
@@ -778,83 +746,97 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 
 HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& rValue)
 {
-	HRESULT hr = S_OK;
+	HRESULT result{S_OK};
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pPPQ);
-
+	assert(nullptr != pPPQ);
 
 	// Add Remote Inputs to the InputObjectList
 	//first check to see if remote input is there, check by name...
 	SVRemoteInputObject* pRemoteInput = nullptr;
 	int number = -1;
 	sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
-	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1));
+	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVRemoteInputObjectType, number - 1).get());
 
 	// Add Remote Input to the PPQ
-	SvVol::SVVariantValueObjectClass* pValueObject = new SvVol::SVVariantValueObjectClass();
-	pValueObject->SetName(name.c_str());
-	pValueObject->SetObjectOwner(pPPQ);
-	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-	pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	variant_t defaultValue;
-	defaultValue.ChangeType(rValue.vt);
-	pValueObject->SetDefaultValue(defaultValue, false);
-	pValueObject->ResetObject();
-
-	SVIOEntryHostStructPtr pIOEntry {new SVIOEntryHostStruct};
-	pIOEntry->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
-	pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-	pIOEntry->m_PPQIndex = ppqPosition;
-	pIOEntry->m_Enabled = ppqPosition != -1;
-
-	if (nullptr != pRemoteInput)
+	std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
+	if(nullptr != pInputValueObject)
 	{
-		pRemoteInput->m_lIndex = index;
-		pRemoteInput->Create();
-		pRemoteInput->WriteCache(rValue);
+		SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> (pInputValueObject.get());
+		pValueObject->SetName(name.c_str());
+		pValueObject->SetObjectOwner(pPPQ);
+		pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		variant_t defaultValue;
+		defaultValue.ChangeType(rValue.vt);
+		pValueObject->SetDefaultValue(defaultValue, false);
+		pValueObject->ResetObject();
 
-		pIOEntry->m_IOId = pRemoteInput->getObjectId();
+		SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+		pIOEntry->setValueObject(pInputValueObject);
+		pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
+		pIOEntry->m_PPQIndex = ppqPosition;
+		pIOEntry->m_Enabled = ppqPosition != -1;
+
+		if (nullptr != pRemoteInput)
+		{
+			pRemoteInput->SetChannel(index);
+			pRemoteInput->writeCache(rValue);
+
+			pIOEntry->m_IOId = pRemoteInput->getObjectId();
+		}
+
+		pPPQ->AddInput(pIOEntry);
+	}
+	else
+	{
+		result = E_POINTER;
 	}
 
-	pPPQ->AddInput(pIOEntry);
-
-	return hr;
+	return result;
 }
 
 HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition)
 {
-	HRESULT hr = S_OK;
+	HRESULT result{S_OK};
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pPPQ);
+	assert(nullptr != pPPQ);
 
 	SVDigitalInputObject* pDigitalInput = nullptr;
 
-	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType));
+	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVDigitalInputObjectType).get());
 
 	// Add Digital Input to the PPQ
-	SvVol::SVBoolValueObjectClass* pValueObject = new SvVol::SVBoolValueObjectClass();
-	pValueObject->SetName(name.c_str());
-	pValueObject->SetObjectOwner(pPPQ);
-	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
-	pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	pValueObject->ResetObject();
-
-	SVIOEntryHostStructPtr pIOEntry {new SVIOEntryHostStruct};
-	pIOEntry->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
-	pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
-	pIOEntry->m_PPQIndex = ppqPosition;
-	pIOEntry->m_Enabled = ppqPosition != -1;
-
-	if (nullptr != pDigitalInput)
+	std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
+	if (nullptr != pInputValueObject)
 	{
-		pIOEntry->m_IOId = pDigitalInput->getObjectId();
+		SvVol::SVBoolValueObjectClass* pValueObject = dynamic_cast<SvVol::SVBoolValueObjectClass*> (pInputValueObject.get());
+		pValueObject->SetName(name.c_str());
+		pValueObject->SetObjectOwner(pPPQ);
+		pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+		pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		pValueObject->ResetObject();
+
+		SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+		pIOEntry->setValueObject(pInputValueObject);
+		pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
+		pIOEntry->m_PPQIndex = ppqPosition;
+		pIOEntry->m_Enabled = ppqPosition != -1;
+
+		if (nullptr != pDigitalInput)
+		{
+			pIOEntry->m_IOId = pDigitalInput->getObjectId();
+		}
+
+		pPPQ->AddInput(pIOEntry);
+	}
+	else
+	{
+		result = E_POINTER;
 	}
 
-	pPPQ->AddInput(pIOEntry);
-
-	return hr;
+	return result;
 }
 
 HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry)
@@ -864,14 +846,12 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	//Only do an assert check so that in release mode no check is made
 	ASSERT(nullptr != pPPQ);
 
-	SVCameraDataInputObject* pInput = nullptr;
 	std::string name = pIOEntry->getObject()->GetName();
-	pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVCameraDataInputObjectType));
+	SVCameraDataInputObject* pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVCameraDataInputObjectType).get());
 
 	// Add Input to the PPQ
 	if (nullptr != pInput)
 	{
-		pInput->Create();
 		pIOEntry->m_IOId = pInput->getObjectId();
 	}
 
@@ -982,14 +962,13 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	{
 		return false;
 	}
+	bool isDiscreteIO = SvTi::SVHardwareManifest::isDiscreteIOSystem(GetProductType());
 
 	_variant_t Value;
 
-	SVInputObjectList *pInputsList = new SVInputObjectList;
-	SVOutputObjectList *pOutputsList = new SVOutputObjectList;
-	pInputsList->SetName(SvO::InputObjectList);
-	pOutputsList->SetName(SvO::OutputObjectList);
-	if (nullptr == pInputsList || !pInputsList->Create())
+	m_pInputObjectList = std::make_unique<SVInputObjectList>();
+	m_pOutputObjectList = std::make_unique<SVOutputObjectList>();
+	if (nullptr == m_pInputObjectList)
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvO::InputObjectList);
@@ -997,7 +976,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED, SvStl::Tid_CreateSFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16044_CreateInputList);
 		throw MsgCont;
 	}
-	if (nullptr == pOutputsList || !pOutputsList->Create())
+	if (nullptr == m_pOutputObjectList)
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvO::OutputObjectList);
@@ -1005,6 +984,8 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED, SvStl::Tid_CreateSFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16047_CreateOutputList);
 		throw MsgCont;
 	}
+	m_pInputObjectList->SetName(SvO::InputObjectList);
+	m_pOutputObjectList->SetName(SvO::OutputObjectList);
 
 	SVTreeType::SVBranchHandle hSubChild;
 	long lIOSize = 0;
@@ -1035,73 +1016,77 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 
 		_variant_t Data;
 		std::string IOName;
-		bool	bOutput;
-		DWORD	dwChannel = -1;
-		bool	bForced;
-		DWORD	dwForcedValue;
-		bool	bInverted;
-		bool	bCombined;
-		bool	bCombinedACK;
+		bool	bOutput{false};
+		long	channel{-1L};
+		bool	bForced{false};
+		DWORD	dwForcedValue{0};
+		bool	bInverted{false};
+		bool	bCombined{false};
+		bool	bCombinedACK{false};
+		SvPb::SVObjectSubTypeEnum ioType;
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_ENTRY_NAME, hSubChild, Data);
-
 		if (bOk && VT_BSTR == Data.vt)
 		{
 			IOName = SvUl::createStdString(Data);
-		}// end if
+		}
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_OUTPUT, hSubChild, Data);
-
 		if (bOk)
 		{
 			bOutput = Data;
-		}// end if
+		}
+
+		//Default output type is Digital Output Object
+		if(bOutput)
+		{
+			ioType = SvPb::SVDigitalOutputObjectType;
+		}
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TYPE, hSubChild, Data);
+		if (bOk)
+		{
+			ioType = static_cast<SvPb::SVObjectSubTypeEnum> (Data.lVal);
+		}
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CHANNEL, hSubChild, Data);
-
 		if (bOk)
 		{
-			dwChannel = Data;
-		}// end if
+			channel = Data;
+		}
 
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_FORCED, hSubChild, Data);
-
-		if (bOk)
+		bool bCheck = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_FORCED, hSubChild, Data);
+		if (bCheck)
 		{
 			bForced = Data;
-		}// end if
+		}
 
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_FORCED_VALUE, hSubChild, Data);
-
-		if (bOk)
+		bCheck = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_FORCED_VALUE, hSubChild, Data);
+		if (bCheck)
 		{
 			dwForcedValue = static_cast<bool>(Data);
-		}// end if
+		}
 
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_INVERTED, hSubChild, Data);
-
-		if (bOk)
+		bCheck = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_INVERTED, hSubChild, Data);
+		if (bCheck)
 		{
 			bInverted = Data;
-		}// end if
+		}
 
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_FORCED, hSubChild, Data);
-
-		if (bOk)
+		bCheck = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_FORCED, hSubChild, Data);
+		if (bCheck)
 		{
 			bForced = Data;
 		}// end if
 
-		bool bCheck;
 		bCheck = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_COMBINED, hSubChild, Data);
 		if (bCheck)
 		{
 			bCombined = Data;
-		}// end if
+		}
 		else
 		{
 			bCombined = false;
-		}// end else
+		}
 
 		bCheck = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_COMBINED_ACK, hSubChild, Data);
 		if (bCheck)
@@ -1113,38 +1098,46 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 			bCombinedACK = false;
 		}// end else
 
-		if ((long)dwChannel > (long)-1)
+		if (channel > -1L)
 		{
 			if (bOutput)
 			{
-				SVDigitalOutputObject* pOutput(nullptr);
-				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SvPb::SVDigitalOutputObjectType, dwChannel));
-
-				if (nullptr != pOutput)
+				if(SvPb::SVDigitalOutputObjectType == ioType)
 				{
-					pOutput->SetChannel(dwChannel);
-					pOutput->Force(bForced, (dwForcedValue != FALSE));
-					pOutput->Invert(bInverted);
-					pOutput->Combine(bCombined, bCombinedACK);
+					SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
+					if (nullptr != pOutput)
+					{
+						pOutput->SetChannel(channel);
+						pOutput->Force(bForced, (dwForcedValue != FALSE));
+						pOutput->Invert(bInverted);
+						pOutput->Combine(bCombined, bCombinedACK);
 
-					if (SvDef::cModuleReady == IOName)
-					{
-						l_ModuleReadyId = pOutput->getObjectId();
-					}
-					else if (SvDef::cRaidErrorIndicator == IOName)
-					{
-						l_RaidErrorId = pOutput->getObjectId();
+						if (SvDef::cModuleReady == IOName)
+						{
+							l_ModuleReadyId = pOutput->getObjectId();
+						}
+						else if (SvDef::cRaidErrorIndicator == IOName)
+						{
+							l_RaidErrorId = pOutput->getObjectId();
+						}
 					}
 				}
-			}// end if
+				else if (SvPb::PlcOutputObjectType == ioType)
+				{
+					PlcOutputObject* pOutput = dynamic_cast<PlcOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
+					if (nullptr != pOutput)
+					{
+						pOutput->SetChannel(channel);
+						pOutput->Combine(bCombined, bCombinedACK);
+					}
+				}
+			}
 			else
 			{
-				SVDigitalInputObject* pInput = nullptr;
-				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight(IOName, SvPb::SVDigitalInputObjectType, dwChannel));
-
+				SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight(IOName, SvPb::SVDigitalInputObjectType, channel).get());
 				if (nullptr != pInput)
 				{
-					pInput->SetChannel(dwChannel);
+					pInput->SetChannel(channel);
 					pInput->Force(bForced, dwForcedValue != FALSE);
 					pInput->Invert(bInverted);
 				}
@@ -1159,44 +1152,31 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		}
 	}// end for
 
-	if (nullptr != m_pInputObjectList)
-	{
-		delete m_pInputObjectList;
-	}
+	m_pIOController.reset();
 
-	m_pInputObjectList = pInputsList;
-
-	if (nullptr != m_pOutputObjectList)
-	{
-		delete m_pOutputObjectList;
-	}
-
-	m_pOutputObjectList = pOutputsList;
-
-	if (nullptr != m_pIOController)
-	{
-		delete m_pIOController;
-		m_pIOController = nullptr;
-	}
-
-	m_pIOController = new SVIOController;
+	m_pIOController = std::make_unique<SVIOController>();
 	if (nullptr != m_pIOController)
 	{
 		m_pIOController->SetParameters(rTree, hChild);
 	}
 
-	if (SvDef::InvalidObjectId == l_ModuleReadyId)
+	if (isDiscreteIO && SvDef::InvalidObjectId == l_ModuleReadyId)
 	{
-		SVDigitalOutputObject* pOutput(nullptr);
-		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType));
+		SVOutputObjectPtr pOutput = m_pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType);
 
-		if (nullptr != pOutput)
+		if (nullptr != pOutput && SvPb::SVDigitalOutputObjectType == pOutput->GetObjectSubType())
 		{
 			l_ModuleReadyId = pOutput->getObjectId();
 		}
 	}
-	m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
-	m_pIOController->GetRaidErrorBit()->m_IOId = l_RaidErrorId;
+	if(nullptr != m_pIOController->GetModuleReady())
+	{
+		m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
+	}
+	if (nullptr != m_pIOController->GetRaidErrorBit())
+	{
+		m_pIOController->GetRaidErrorBit()->m_IOId = l_RaidErrorId;
+	}
 
 	return true;
 }
@@ -1483,11 +1463,11 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 
 						//! If the IP address is saved in the configuration then determine which acquisition device has this address
 						//! Important when skipping cameras in the camera manager
-						SVStringValueDeviceParam* pParam(nullptr);
-						svDeviceParams.GetParameter(DeviceParamIPAddress, pParam);
-						if (nullptr != pParam)
+						SVStringValueDeviceParam* pIpValue(nullptr);
+						svDeviceParams.GetParameter(DeviceParamIPAddress, pIpValue);
+						if (nullptr != pIpValue)
 						{
-							DigitizerName = SvIe::SVDigitizerProcessingClass::Instance().GetReOrderedCamera(pParam->strValue.c_str());
+							DigitizerName = SvIe::SVDigitizerProcessingClass::Instance().GetReOrderedCamera(pIpValue->strValue.c_str());
 						}
 						//! If no name available then generate it the way it use to be
 						if (DigitizerName.empty() && !DigName.empty())
@@ -1593,16 +1573,16 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 							if (params.ParameterExists(DeviceParamAcquisitionTriggerEdge))
 							{
 								int iDigNum = psvDevice->DigNumber();
-								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pParam);
-								SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pParam->bValue);
+								const SVBoolValueDeviceParam* pTriggerEdge = params.Parameter(DeviceParamAcquisitionTriggerEdge).DerivedValue(pTriggerEdge);
+								SVIOConfigurationInterfaceClass::Instance().SetCameraTriggerValue(iDigNum, pTriggerEdge->bValue);
 							}
 
 							// strobe
 							if (params.ParameterExists(DeviceParamAcquisitionStrobeEdge))
 							{
 								int iDigNum = psvDevice->DigNumber();
-								const SVBoolValueDeviceParam* pParam = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pParam);
-								SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
+								const SVBoolValueDeviceParam* pStrobeEdge = params.Parameter(DeviceParamAcquisitionStrobeEdge).DerivedValue(pStrobeEdge);
+								SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pStrobeEdge->bValue);
 							}
 							// Get Combined parameters
 							psvDevice->GetDeviceParameters(svDeviceParams);
@@ -2317,10 +2297,10 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		// the better solution is to have the acqs subscribe and the triggers provide
 		HRESULT hrAttach = AttachAcqToTriggers();
 	}
-	catch (SvStl::MessageContainer& rMsgCont)
+	catch (SvStl::MessageContainer&)
 	{
 		DestroyConfiguration();
-		throw rMsgCont;
+		throw;
 	}
 	m_bConfigurationValid = true;
 
@@ -2637,27 +2617,6 @@ bool SVConfigurationObject::DestroyConfiguration()
 	}
 	m_arPPQArray.clear();
 
-	//destroy Input Object List
-	if (nullptr != m_pInputObjectList)
-	{
-		delete m_pInputObjectList;
-		m_pInputObjectList = nullptr;
-	}
-
-	//destroy Output Object List    
-	if (nullptr != m_pOutputObjectList)
-	{
-		delete m_pOutputObjectList;
-		m_pOutputObjectList = nullptr;
-	}
-
-	if (nullptr != m_pIOController)
-	{
-		ClearRemoteMonitorList();
-		delete m_pIOController;
-		m_pIOController = nullptr;
-	}
-
 	//Delete all Global Constants
 	RootObject::resetRootChildValue(SvDef::FqnGlobal);
 
@@ -2692,7 +2651,7 @@ HRESULT SVConfigurationObject::GetChildObject(SVObjectClass*& rpObject, const SV
 		{
 			if (nullptr != m_pInputObjectList)
 			{
-				rpObject = m_pInputObjectList->GetInput(rNameInfo.GetObjectName(1));
+				rpObject = m_pInputObjectList->GetInput(rNameInfo.GetObjectName(1)).get();
 			}
 			else
 			{
@@ -2820,32 +2779,36 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_IO);
 
-	SVIOEntryHostStructPtrVector ppInList;
+	SVIOEntryHostStructPtrVector inputEntryVector;
 
 	if (nullptr != m_pInputObjectList)
 	{
-		m_pInputObjectList->FillInputs(ppInList);
+		inputEntryVector = m_pInputObjectList->getInputList();
 	}
 
-	long lInSize = static_cast<long>(ppInList.size());
+	long lInSize = static_cast<long>(inputEntryVector.size());
 	long lCount = 0;
 
 	for (long lIn = 0; lIn < lInSize; lIn++)
 	{
 		std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, lCount);
 
-		if (ppInList[lIn]->m_ObjectType == IO_DIGITAL_INPUT)
+		if (inputEntryVector[lIn]->m_ObjectType == IO_DIGITAL_INPUT)
 		{
 			rWriter.StartElement(IOEntry.c_str());
 
 			_variant_t svVariant;
 
-			SVDigitalInputObject* pInput = nullptr;
-			pInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInput(ppInList[lIn]->m_IOId));
+			SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInput(inputEntryVector[lIn]->m_IOId).get());
+			if(nullptr == pInput) { continue; }
 
 			std::string EntryName = pInput->GetName();
 			svVariant.SetString(EntryName.c_str());
 			rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
+			svVariant.Clear();
+
+			svVariant = static_cast<int> (pInput->GetObjectSubType());
+			rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
 			svVariant.Clear();
 
 			svVariant = pInput->GetChannel();
@@ -2874,31 +2837,32 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 		}
 	}// end for
 
-	SVIOEntryHostStructPtrVector ppOutList;
+	SVIOEntryHostStructPtrVector outputEntryVector;
 	long lOutSize = 0;
 	if (nullptr != m_pOutputObjectList)
 	{
-		m_pOutputObjectList->FillOutputs(ppOutList);
-
-		lOutSize = static_cast<long>(ppOutList.size());
+		outputEntryVector = m_pOutputObjectList->getOutputList();
+		lOutSize = static_cast<long>(outputEntryVector.size());
 	}
 
 	for (long lOut = 0; lOut < lOutSize; lOut++)
 	{
 		std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, lCount);
 
-		if (ppOutList[lOut]->m_ObjectType == IO_DIGITAL_OUTPUT)
+		if (outputEntryVector[lOut]->m_ObjectType == IO_DIGITAL_OUTPUT)
 		{
 			rWriter.StartElement(IOEntry.c_str());
 
 			_variant_t svVariant;
-
-			SVDigitalOutputObject* pOutput = nullptr;
-
-			pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutput(ppOutList[lOut]->m_IOId));
+			SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId).get());
+			if (nullptr == pOutput) { continue; }
 
 			svVariant.SetString(pOutput->GetName());
 			rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
+			svVariant.Clear();
+
+			svVariant = static_cast<int> (pOutput->GetObjectSubType());
+			rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
 			svVariant.Clear();
 
 			svVariant = pOutput->GetChannel();
@@ -2921,11 +2885,11 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 			rWriter.WriteAttribute(SvXml::CTAG_FORCED_VALUE, svVariant);
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = (pOutput->IsCombined());
+			svVariant = (pOutput->isCombined());
 			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED, svVariant);
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = pOutput->GetCombinedValue();
+			svVariant = pOutput->isAndACK();
 			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
@@ -2933,6 +2897,44 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 
 			lCount++;
 		}
+		else if(outputEntryVector[lOut]->m_ObjectType == IO_PLC_OUTPUT)
+		{
+			rWriter.StartElement(IOEntry.c_str());
+
+			_variant_t svVariant;
+
+			PlcOutputObject* pOutput = dynamic_cast<PlcOutputObject*> (m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId).get());
+			if (nullptr == pOutput) { continue; }
+
+			svVariant.SetString(pOutput->GetName());
+			rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
+			svVariant.Clear();
+
+			svVariant = static_cast<int> (pOutput->GetObjectSubType());
+			rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
+			svVariant.Clear();
+
+			svVariant = pOutput->GetChannel();
+			rWriter.WriteAttribute(SvXml::CTAG_CHANNEL, svVariant);
+			svVariant.Clear();
+
+			svVariant = true;
+			rWriter.WriteAttribute(SvXml::CTAG_IS_OUTPUT, svVariant);
+			svVariant.Clear(); //Must clear VT_BOOL Type after use
+
+			svVariant = (pOutput->isCombined());
+			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED, svVariant);
+			svVariant.Clear(); //Must clear VT_BOOL Type after use
+
+			svVariant = pOutput->isAndACK();
+			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
+			svVariant.Clear(); //Must clear VT_BOOL Type after use
+
+			rWriter.EndElement();
+
+			lCount++;
+		}
+
 	}// end for ( long lOut = 0; lOut < lOutSize; lOut++ )
 
 	_variant_t svVariant = lCount;
@@ -3875,9 +3877,8 @@ unsigned long SVConfigurationObject::GetFileVersion() const
 
 unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
 {
-	bool bOk = true;
 	SVTreeType::SVBranchHandle hChild = nullptr;
-	unsigned long ulVersion;
+	unsigned long ulVersion{0UL};
 
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_ENVIRONMENT, nullptr, hChild))
 	{
@@ -3889,22 +3890,13 @@ unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
 			SetProductType((SVIMProductEnum)iType);
 		}
 
-		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VERSION_NUMBER, hChild, svValue);
-
-		if (bOk)
+		if(SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VERSION_NUMBER, hChild, svValue))
 		{
 			ulVersion = svValue;
 		}
 	}
 
-	if (bOk)
-	{
-		return ulVersion;
-	}
-	else
-	{
-		return 0;
-	}
+	return ulVersion;
 }
 
 void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
@@ -4120,25 +4112,6 @@ SVIOEntryHostStructPtr SVConfigurationObject::GetRaidErrorBit()
 
 	return l_IOEntryPtr;
 }
-
-SVIOController* SVConfigurationObject::GetIOController() const
-{
-	return m_pIOController;
-}
-
-uint32_t SVConfigurationObject::GetIOControllerID() const
-{
-	uint32_t l_ObjectId = SvDef::InvalidObjectId;
-
-	if (nullptr != m_pIOController)
-	{
-		l_ObjectId = m_pIOController->getObjectId();
-	}
-
-	return l_ObjectId;
-}
-
-
 
 uint32_t SVConfigurationObject::GetRemoteOutputController() const
 {
@@ -4797,7 +4770,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems(const SVNameStorageMap& p_rIt
 
 				if (nullptr != l_pInput)
 				{
-					HRESULT l_LoopStatus = l_pInput->WriteCache(l_Iter->second.m_Variant);
+					HRESULT l_LoopStatus = l_pInput->writeCache(l_Iter->second.m_Variant);
 
 					p_rStatus[l_Iter->first] = l_LoopStatus;
 
@@ -5316,14 +5289,6 @@ bool SVConfigurationObject::SetupRemoteMonitorList()
 		bRetVal = m_pIOController->SetupRemoteMonitorList(this);
 	}
 	return bRetVal;
-}
-
-void SVConfigurationObject::ClearRemoteMonitorList()
-{
-	if (nullptr != m_pIOController)
-	{
-		m_pIOController->ClearRemoteMonitorList();
-	}
 }
 
 RemoteMonitorListMap SVConfigurationObject::GetRemoteMonitorList() const

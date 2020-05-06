@@ -15,36 +15,30 @@ class SVDigitalOutputObject : public SVOutputObject
 #pragma region Constructor
 public:
 	explicit SVDigitalOutputObject( LPCSTR strObjectName );
-	SVDigitalOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
+	explicit SVDigitalOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
 
-	virtual ~SVDigitalOutputObject();
+	virtual ~SVDigitalOutputObject() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	virtual bool Create() override;
-	virtual bool Destroy() override;
-
 	virtual HRESULT Write( const _variant_t& rValue ) override;
 	virtual HRESULT Reset() override;
-	virtual bool IsCombined() const override;
-	virtual bool GetCombinedValue() const override;
+	virtual bool isCombined() const override;
+	virtual bool isAndACK() const override;
+	virtual long GetChannel() const override { return m_channel;}
 
 	bool Force( bool bForce, bool bForcedValue );
 	bool Invert( bool bInvert );
-	void Combine( bool bCombine, bool bCombineACK );
+	void Combine( bool combined, bool isAndACK );
 
 	bool IsForced() const;
 	bool GetForcedValue() const;
 	bool IsInverted() const;
 	bool GetValue() const;
 
-	void SetChannel( long lChannel );
-	long GetChannel() const;
+	void SetChannel( long channel ) { m_channel = channel; }
 
-	/// Update the objectId to a fix ID depend of a position (must between 0 and 0x100).
-	/// \param position [in]
-	void updateObjectId(int position);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -54,11 +48,10 @@ private:
 
 #pragma region Member Variables
 private:
-	// Values for this digital output
-	long m_Channel;
-	bool m_bCombined;
-	bool m_bLastValue;
-	bool m_bDefaultValue;
-	bool m_bCombinedACK;
+	long m_channel {-1L};
+	bool m_bCombined {false};
+	bool m_bLastValue {false};
+	bool m_bDefaultValue {false};
+	bool m_isAndACK {true};
 #pragma endregion Member Variables
 };

@@ -598,19 +598,19 @@ void SVVirtualCamera::createCameraParameters()
 	SvVol::BasicValueObjectPtr pValue;
 	//Initialize the parameters and set their unique ID
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, _T(""), this, SvPb::SVCameraObjectType );
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ObjectIdEnum::CameraBaseSerialNumberUidId + m_CameraID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ObjectIdEnum::CameraBaseSerialNumberId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraGain, 0L, this, SvPb::SVCameraObjectType );
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ObjectIdEnum::CameraBaseGainUidId + m_CameraID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), ObjectIdEnum::CameraBaseGainId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject( SvDef::FqnCameraShutter, 0L, this, SvPb::SVCameraObjectType );
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseShutterUidId + m_CameraID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseShutterId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraRegPath, _T(""), this, SvPb::SVCameraObjectType);
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseRegPathUidId + m_CameraID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseRegPathId + m_CameraID);
 
 	pValue = m_CameraValues.setValueObject(SvDef::FqnCameraRegFile, _T(""), this, SvPb::SVCameraObjectType);
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseRegFileUidId + m_CameraID);
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(pValue.get(), ObjectIdEnum::CameraBaseRegFileId + m_CameraID);
 }
 
 HRESULT SVVirtualCamera::updateCameraParameters()

@@ -23,19 +23,29 @@ void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger,
 	if(nullptr != g_pPowerLink)
 	{
 		::OutputDebugString("Start Trigger Engine!\n");
-		g_pPowerLink->StartEventSignalThread();
 	}
 }
 
-
 void stopTriggerEngine()
 {
-
-	if(nullptr != g_pPowerLink)
+	if (nullptr != g_pPowerLink)
 	{
 		::OutputDebugString("Stop Trigger Engine!\n");
 		g_pPowerLink.reset();
 		g_pPowerLink = nullptr;
+	}
+}
+
+HRESULT initTriggerEngine()
+{
+	if (nullptr != g_pPowerLink)
+	{
+		::OutputDebugString("Initialize Trigger Engine!\n");
+		return g_pPowerLink->initialize();
+	}
+	else
+	{
+		return E_POINTER;
 	}
 }
 

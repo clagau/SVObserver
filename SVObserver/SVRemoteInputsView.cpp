@@ -11,111 +11,78 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost\config.hpp>
-//Moved to precompiled header: #include <boost\bind.hpp>
+#include "SVConfigurationObject.h"
 #include "SVRemoteInputsView.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVOResource\ConstGlobalSvOr.h"
-#include "SVObserver.h"
-#include "SVIODoc.h"
 #include "SVRemoteIOAdjustDialog.h"
+#include "TextDefinesSvO.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
-#include "SVConfigurationObject.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "TextDefinesSvO.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteInputsView, CListView)
 
-SVRemoteInputsView::SVRemoteInputsView()
-: m_Items( boost::bind( &( CListCtrl::GetItemData ), &( GetListCtrl() ), _1 ) , boost::bind( &( CListCtrl::SetItemData ), &( GetListCtrl() ), _1, _2 ) )
-{
-}
-
-SVRemoteInputsView::~SVRemoteInputsView()
-{
-}
-
 BEGIN_MESSAGE_MAP(SVRemoteInputsView, CListView)
 	ON_WM_LBUTTONDBLCLK()
-	ON_WM_DESTROY( )
 END_MESSAGE_MAP()
 
-#ifdef _DEBUG
-void SVRemoteInputsView::AssertValid() const
+SVRemoteInputsView::SVRemoteInputsView() :
+	m_rCtrl(GetListCtrl())
 {
-	CListView::AssertValid();
 }
-
-void SVRemoteInputsView::Dump(CDumpContext& dc) const
-{
-	CListView::Dump(dc);
-}
-SVIODoc* SVRemoteInputsView::GetDocument() // Die endgültige (nicht zur Fehlersuche kompilierte) Version ist Inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(SVIODoc)));
-	return (SVIODoc*)m_pDocument;
-}
-#endif //_DEBUG
 
 BOOL SVRemoteInputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
-	dwStyle |= LVS_REPORT; //LVS_ICON; //LVS_REPORT;
+	dwStyle |= LVS_REPORT;
 
 	BOOL RetVal = CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 
-	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
+	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
 
-	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_INPUT_ICON ) );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_OUTPUT_ICON ) );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_INPUT_ICON ) );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_OUTPUT_ICON ) );
 
-	GetListCtrl().SetImageList( &StateImageList, LVSIL_STATE );
-	GetListCtrl().SetImageList( &ImageList, LVSIL_SMALL );
+	m_rCtrl.SetImageList( &m_StateImageList, LVSIL_STATE );
+	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
-	GetListCtrl().InsertColumn( 0, _T( "Inputs" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 0, _T( "Inputs" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
 
-	GetListCtrl().SetColumnWidth( 0, 125 );
-	GetListCtrl().SetColumnWidth( 1, 500 );
-	GetListCtrl().SetColumnWidth( 2,  50 );
-	GetListCtrl().SetColumnWidth( 3,  55 );
+	m_rCtrl.SetColumnWidth( 0, 125 );
+	m_rCtrl.SetColumnWidth( 1, 500 );
+	m_rCtrl.SetColumnWidth( 2,  50 );
+	m_rCtrl.SetColumnWidth( 3,  55 );
 
 	return RetVal;
 }
 
 void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 {
-	SVIODoc* pIODoc = (SVIODoc*) GetDocument();
-
-	if( pIODoc && ::IsWindow( m_hWnd ) )
+	if(::IsWindow( m_hWnd ) )
 	{
-		GetListCtrl().SetRedraw(false);
+		m_rCtrl.SetRedraw(false);
 
 		// First clean up list view
-		GetListCtrl().DeleteAllItems();
+		m_rCtrl.DeleteAllItems();
 
 		m_Items.clear();
-
-		long lSize;
-		int j;
-		SVInputObjectList* pInputList = nullptr;
-		SVRemoteInputObject* pRemInput;
-		SVIOEntryHostStructPtrVector ppIOEntries;
-		SVIOEntryHostStructPtr pIOEntry;
 
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+		SVInputObjectList* pInputList = nullptr;
 		// Get list of available inputs
 		if( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
 		if( nullptr == pInputList )
@@ -126,165 +93,109 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 			return;
 		}
 
-		if( !pInputList->FillInputs( ppIOEntries ) )
-		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17045_ErrorFillingInputs );
-			DebugBreak();
-		}
+		SVIOEntryHostStructPtrVector inputEntryVector = pInputList->getInputList();
 
-		lSize = static_cast<long>(ppIOEntries.size());
-
-		int h = 0;
+		int itemIndex {0};
 		// Find each remote input
-		for( j = 0; j < lSize; j++ )
+		for(int i = 0; i < static_cast<int>(inputEntryVector.size()); ++i)
 		{
-			std::string Item = SvUl::Format(SvO::cRemoteInputNumberLabel, h + 1 );
+			std::string Item = SvUl::Format(SvO::cRemoteInputNumberLabel, itemIndex + 1 );
 
 			bool bFound = false;
-
-			//items are in a map, so they are not ordered.  loop thru each item to find correct remote input
-			for ( int i = 0; (i < lSize && !bFound); i++ )
+			SVIOEntryHostStructPtr pIOEntryFound;
+			std::string name;
+			for(const auto& pIOEntry : inputEntryVector)
 			{
-				pIOEntry = ppIOEntries[i];
+				if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT )
+				{
+					continue;
+				}
 
-				if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT ) { continue; }
-
-				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
-
-				pRemInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
-
-				if( !pRemInput ) { continue; }
-
-				if ( Item == pRemInput->GetName() ) { bFound = true; }
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId);
+				if(nullptr == pObject || SvPb::SVRemoteInputObjectType != pObject->GetObjectSubType())
+				{
+					continue;
+				}
+				if (Item == pObject->GetName())
+				{
+					pIOEntryFound = pIOEntry;
+					name = pObject->GetName();
+					bFound = true;
+					break;
+				}
 			}
 
 			if ( bFound )
 			{
-				// First column: Result I/O
-				//strItem.Format( SvO::cRemoteInputNumberLabel, h + 1 );
-				GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
-					h , Item.c_str(),
+				m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, itemIndex, Item.c_str(),
 					INDEXTOSTATEIMAGEMASK( 1 ),	// state
 					LVIS_STATEIMAGEMASK,		// stateMask
 					1, 0 );						// Set item data to Nothing
 
-				GetListCtrl().SetItem( h , 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
+				m_rCtrl.SetItem(itemIndex, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
 
-				m_Items.SetItemData( h, pIOEntry );
+				m_Items[itemIndex] = pIOEntryFound;
 
 				// Column: Description
-				GetListCtrl().SetItemText( h , 1, pRemInput->GetName() );
-
-				// Increment the number of remote outputs
-				h++;
-			}// if bFound
-		}// end for
-		GetListCtrl().SetRedraw(true);
-	}// end if
-
-	//CListView::OnUpdate( pSender, lHint, pHint );   //This call will cause flicker
-}// end OnUpdate
+				m_rCtrl.SetItemText(itemIndex, 1, name.c_str());
+				++itemIndex;
+			}
+		}
+		m_rCtrl.SetRedraw(true);
+	}
+}
 
 void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
-	SVIOEntryHostStructPtrVector ppIOEntries;
-	SVIOEntryHostStructPtr pIOEntry;
 	UINT flags;
-	long lSize;
 
-	int item = GetListCtrl().HitTest( point, &flags );
-	SVIODoc* pIODoc = ( SVIODoc* ) GetDocument();
-
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		TheSVObserverApp.OkToEdit() &&
-	     pIODoc )
+	int item = m_rCtrl.HitTest( point, &flags );
+	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) && SvOi::isOkToEdit())
 	{
-		SVConfigurationObject* pConfig( nullptr );
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		if( item >= 0 && item < GetListCtrl().GetItemCount() &&
-			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
+		if( item >= 0 && item < m_rCtrl.GetItemCount() && flags & LVHT_ONITEM)
 		{
-			// Get list of available inputs
-			SVInputObjectList* pInputList = nullptr;
-			if( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList( ); }
-			if( nullptr == pInputList )
+			SVIOEntryHostStructPtr pIOEntry;
+			const auto iter = m_Items.find(item);
+			if (m_Items.end() != iter)
 			{
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17046_ErrorGettingInputObjectList );
-				DebugBreak();
-			}
-
-			if( !pInputList->FillInputs( ppIOEntries ) )
-			{
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17047_ErrorFillingInputs );
-				DebugBreak();
-			}
-
-			lSize = static_cast<long>(ppIOEntries.size());
-
-			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData( item );
-
-			if( l_Iter != m_Items.end() )
-			{
-				pIOEntry = l_Iter->second;
+				pIOEntry = iter->second;
 			}
 
 			if(nullptr != pIOEntry)
 			{
-				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
-
-				SVRemoteInputObject* pRemoteInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
+				SVRemoteInputObject* pRemoteInput = dynamic_cast< SVRemoteInputObject* >(SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
 				if( pRemoteInput )
 				{
-					_variant_t l_Value;
+					_variant_t value;
 					SVRemoteIOAdjustDialog dlg;
 
-					std::string Name = GetListCtrl().GetItemText( item, 1 );
+					std::string Name = m_rCtrl.GetItemText( item, 1 );
 
-					pRemoteInput->GetCache( l_Value );
+					pRemoteInput->Read(value);
 
 					dlg.SetIOName( Name.c_str() );
-					dlg.SetIOValue( l_Value );
+					dlg.SetIOValue( value );
 
 					SVSVIMStateClass::AddState( SV_STATE_EDITING );
-
-					switch( dlg.DoModal() )
+					if(IDOK ==  dlg.DoModal())
 					{
-					case IDOK:
+						dlg.GetIOValue( value );
+
+						pRemoteInput->writeCache( value );
+
+						SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> ( pIOEntry->getObject() );
+						if( nullptr != pValueObject )
 						{
-							dlg.GetIOValue( l_Value );
-
-							pRemoteInput->WriteCache( l_Value );
-
-							SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> ( pIOEntry->getObject() );
-							if( nullptr != pValueObject )
-							{
-								pValueObject->SetDefaultValue( l_Value, true );
-							}
-
-							SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-							break;
+							pValueObject->SetDefaultValue( value, true );
 						}
 
-					case IDCANCEL:
-					default:
-						break;
-					}// end switch
-
+						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+					}
 					OnUpdate( nullptr, 0, nullptr );
 
 					SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				}
-			}// end else if
-		}// end if
-	}// end if
-}// end OnLButtonDblClk
-
-void SVRemoteInputsView::OnDestroy()
-{
-	CListView::OnDestroy();
+			}
+		}
+	}
 }
-

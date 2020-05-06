@@ -25,10 +25,10 @@
     <ClCompile Include="CifxCard.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="CifxCommonData.cpp">
+    <ClCompile Include="HardwareTriggerSource.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="HardwareTriggerSource.cpp">
+    <ClCompile Include="CifxLoadLibrary.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -52,9 +52,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CifxCard.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="CifxCommonData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="cifXErrors.h">
@@ -106,6 +103,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PlcDataTypes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CifxLoadLibrary.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -520,17 +520,17 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 		// Result Outputs
 		for (long i = 0; i < (long)dwMaxOutput; ++i)
 		{
-			SVIOEntryHostStructPtr l_pModuleReady = pConfig->GetModuleReady();
+			SVIOEntryHostStructPtr pModuleReady = pConfig->GetModuleReady();
 
 			// Check Module Ready first
-			SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(l_pModuleReady->m_IOId));
+			SVDigitalOutputObject* pDigOutput = (nullptr == pModuleReady) ? nullptr : dynamic_cast<SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(pModuleReady->m_IOId));
 			if (pDigOutput)
 			{
 				if (i == pDigOutput->GetChannel())
 				{
 					writer->WriteStartElement(nullptr, L"DigitalOutput", nullptr);
 					writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-					WriteIOEntryObject(writer, l_pModuleReady);
+					WriteIOEntryObject(writer, pModuleReady);
 					//writer->WriteComment(L"First");
 					writer->WriteEndElement();
 					continue;
@@ -591,13 +591,12 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 	if (pApp->GetIODoc())
 	{
 		SVInputObjectList* pInputList = nullptr;
-		SVIOEntryHostStructPtrVector ppIOEntries;
-
 		// Get list of available inputs
 		if (nullptr != pConfig) { pInputList = pConfig->GetInputObjectList(); }
-		if (nullptr != pInputList && pInputList->FillInputs(ppIOEntries))
+		if (nullptr != pInputList)
 		{
-			long lSize = static_cast<long>(ppIOEntries.size());
+			SVIOEntryHostStructPtrVector inputEntryVector = pInputList->getInputList();
+			long lSize = static_cast<long>(inputEntryVector.size());
 
 			// Print module input title...
 			DWORD dwMaxInput = 0;
@@ -615,10 +614,10 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 				// Find each digital input
 				for (int j = 0; j < lSize; j++)
 				{
-					if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT)
+					if (inputEntryVector[j]->m_ObjectType != IO_DIGITAL_INPUT)
 						continue;
 
-					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ppIOEntries[j]->m_IOId);
+					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(inputEntryVector[j]->m_IOId);
 
 					SVDigitalInputObject* pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
 
@@ -627,7 +626,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 
 					if (i == pDigInput->GetChannel())
 					{
-						WriteIOEntryObject(writer, ppIOEntries[j]);
+						WriteIOEntryObject(writer, inputEntryVector[j]);
 						break;
 					}
 				}
@@ -640,8 +639,10 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 			int j = 0;
 			for (int i = 0; i < lSize; i++)
 			{
-				if (ppIOEntries[i]->m_ObjectType == IO_REMOTE_INPUT)
+				if (inputEntryVector[i]->m_ObjectType == IO_REMOTE_INPUT)
+				{
 					++j;
+				}
 			}
 			writer->WriteStartElement(nullptr, L"RemoteInputs", nullptr);
 			writer->WriteAttributeString(nullptr, L"NumberOfInputs", nullptr, _itow(j, buff, 10));
@@ -650,12 +651,14 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 			{
 				for (int k = 0, l = 0; k < lSize; k++)
 				{
-					if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT)
+					if (inputEntryVector[k]->m_ObjectType != IO_REMOTE_INPUT)
+					{
 						continue;
+					}
 
 					writer->WriteStartElement(nullptr, L"RemoteInput", nullptr);
 					writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow((l++) + 1, buff, 10));
-					WriteIOEntryObject(writer, ppIOEntries[k]);
+					WriteIOEntryObject(writer, inputEntryVector[k]);
 					writer->WriteEndElement();
 				}
 			}
@@ -1285,10 +1288,10 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 			sValue = pDigOutput->IsInverted() ? L"1" : L" ";
 			WriteValueObject(writer, L"Property", L"Inverted", sValue.c_str());
 
-			sValue = pDigOutput->IsCombined() ? L"1" : L" ";
+			sValue = pDigOutput->isCombined() ? L"1" : L" ";
 			WriteValueObject(writer, L"Property", L"Combined", sValue.c_str());
 
-			sValue = pDigOutput->GetCombinedValue() ? L"AND w ACK" : L"OR w NAK";
+			sValue = pDigOutput->isAndACK() ? L"AND w ACK" : L"OR w NAK";
 			WriteValueObject(writer, L"Property", L"Combined using", sValue.c_str());
 			break;
 		}

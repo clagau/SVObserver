@@ -79,7 +79,7 @@ BOOL SVRemoteOutputGroup::Destroy()
 }
 
 // Parameters >> Tree ( Save )
-BOOL SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
+bool SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 {
 	// Unique Id
 	_variant_t svVariant = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
@@ -103,19 +103,19 @@ BOOL SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 }
 
 // Sets parameters from Tree Control ( Restore )
-BOOL SVRemoteOutputGroup::SetParameters(SVTreeType& p_rTree, SVTreeType::SVBranchHandle htiParent)
+bool SVRemoteOutputGroup::SetParameters(SVTreeType& p_rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	BOOL bOk = TRUE;
+	bool result{true};
 	_variant_t svVariant;
 
-	bOk = SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant);
-	if (bOk)
+	result = SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant);
+	if (result)
 	{
-		bOk = SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
-		if (bOk)
+		result = SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
+		if (result)
 		{
 			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
-			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID(this);
+			result = SVObjectManagerClass::Instance().OpenUniqueObjectID(this);
 		}
 		else
 		{
@@ -123,32 +123,32 @@ BOOL SVRemoteOutputGroup::SetParameters(SVTreeType& p_rTree, SVTreeType::SVBranc
 		}
 	}
 
-	if (bOk)
+	if (result)
 	{
 		// Remote Output PPQ ID..
-		bOk = SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_REMOTE_GROUP_PPQ, htiParent, svVariant);
-		if (bOk)
+		result = SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_REMOTE_GROUP_PPQ, htiParent, svVariant);
+		if (result)
 		{
 			m_PPQObjectId = calcObjectId(svVariant);
 		}
 	}
 
 	// Remote Output List
-	if (bOk)
+	if (result)
 	{
-		BOOL l_bTmp = TRUE;
+		bool tmp{true};;
 		SVRemoteOutputObject* l_TmpOutput = nullptr;
 		long l_lEntryNum = 0;
-		while (l_bTmp)
+		while (tmp)
 		{
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
 			std::string Entry = SvUl::Format(_T("%s_%d"), SvXml::CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum);
-			l_bTmp = SvXml::SVNavigateTree::GetItemBranch(p_rTree, Entry.c_str(), htiParent, htiBranch);
-			if (l_bTmp)
+			tmp = SvXml::SVNavigateTree::GetItemBranch(p_rTree, Entry.c_str(), htiParent, htiBranch);
+			if (tmp)
 			{
 				l_TmpOutput = new SVRemoteOutputObject;
-				l_bTmp = l_TmpOutput->SetParameters(p_rTree, htiBranch);
-				if (l_bTmp)
+				tmp = l_TmpOutput->SetParameters(p_rTree, htiBranch);
+				if (tmp)
 				{
 					m_RemoteOutputs.push_back(l_TmpOutput);
 				}
@@ -161,7 +161,7 @@ BOOL SVRemoteOutputGroup::SetParameters(SVTreeType& p_rTree, SVTreeType::SVBranc
 			}
 		}
 	}
-	return bOk;
+	return result;
 }
 
 // Remote Identifier and new output object will be managed by SVRemoteOutputGroup

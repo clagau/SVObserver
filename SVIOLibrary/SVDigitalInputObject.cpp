@@ -8,47 +8,21 @@
 #include "SVDigitalInputObject.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 SVDigitalInputObject::SVDigitalInputObject( LPCSTR strObjectName )
 :SVInputObject( strObjectName )
-, m_Channel( -1 )
 {
 	LocalInitialize();
 }
 
 SVDigitalInputObject::SVDigitalInputObject( SVObjectClass *pOwner, int StringResourceID )
 :SVInputObject( pOwner, StringResourceID )
-, m_Channel( -1 )
 {
 	LocalInitialize();
 }
 
-SVDigitalInputObject::~SVDigitalInputObject()
-{
-	if( m_isCreated )
-	{
-		Destroy();
-	}
-	m_isCreated	= false;
-}
-
-bool SVDigitalInputObject::Create()
-{
-	m_isCreated = true;
-
-	return true;
-}
-
-bool SVDigitalInputObject::Destroy()
-{
-	m_isCreated = false;
-
-	return true;
-}
-
-HRESULT SVDigitalInputObject::Read( _variant_t& rValue )
+HRESULT SVDigitalInputObject::Read( _variant_t& rValue ) const
 {
 	HRESULT result{S_OK};
 	bool Value = false;
@@ -112,27 +86,9 @@ bool SVDigitalInputObject::IsInverted() const
 	return bIsInverted;
 }// end IsInverted
 
-void SVDigitalInputObject::SetChannel( long lChannel )
-{
-	m_Channel = lChannel;
-}
-
-long SVDigitalInputObject::GetChannel() const
-{
-	return m_Channel;
-}
-
-void SVDigitalInputObject::updateObjectId(int position)
-{
-	if (0 <= position && 0x100 > position)
-	{
-		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::DigitalInputUidId + position);
-	}
-}
-
 void SVDigitalInputObject::LocalInitialize()
 {
-	m_isCreated = false;
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalInputObjectType;
+	m_startID = ObjectIdEnum::DigitalInputId;
 }

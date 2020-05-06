@@ -17,6 +17,7 @@ enum SVIOParameterEnum
 	SVSignalEdge = 0,
 	SVSingleTriggerEdge = 1,
 	SVBoardName = 2,
+	SVModuleReady = 3,
 	SVBoardVersion = 100,
 	SVFanState=101,
 	SVBoardType=102,

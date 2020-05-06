@@ -72,8 +72,4 @@
 #include <boost/function.hpp>	//Used by static library
 #pragma endregion Precompiled Headers
 
-#ifdef UNDER_RTSS
-inline void printOutput(LPCTSTR text){ RtPrintf(text);}
-#else
 inline void printOutput(LPCTSTR text) { ::OutputDebugString(text); }
-#endif

@@ -43,18 +43,19 @@ HardwareTriggerSource::~HardwareTriggerSource()
 	m_cifXCard.closeCifX();
 }
 
-bool HardwareTriggerSource::initialize()
+HRESULT HardwareTriggerSource::initialize()
 {
-	bool result{false};
+	HRESULT result{E_FAIL};
 
 	if(m_initialized == false)
 	{
-		m_cifXCard.setHandleForTelegramReceptionEvent(g_hTelegramEvent);
-		if (!m_cifXCard.OpenAndInitializeCifX())
+		m_cifXCard.setHandleForTelegramReceptionEvent(g_hSignalEvent);
+		result = m_cifXCard.OpenAndInitializeCifX();
+		if (S_OK != result)
 		{
 			::OutputDebugString("Could not open and initialize PLC connection!\n");
+			return result;
 		}
-		m_initialized = true;
 	}
 
 	for (uint8_t i = 0; i < c_NumberOfChannels; ++i)
@@ -72,7 +73,7 @@ bool HardwareTriggerSource::initialize()
 
 void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut)
 {
-	if(0 <= channel && c_NumberOfChannels > channel)
+	if(c_NumberOfChannels > channel)
 	{
 		std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 		m_inspectionState.m_channels[channel] = channelOut;
@@ -114,10 +115,6 @@ bool HardwareTriggerSource::analyzeTelegramData()
 			if (m_triggerDataChanged)
 			{
 				m_previousTriggerData = rInsCmd;
-			}
-
-			if (m_triggerDataChanged)
-			{
 				result = checkForNewTriggers();
 			}
 			break;
@@ -184,11 +181,4 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		addTriggerReport(std::move(report));
 	}
 }
-
-
-uint64_t HardwareTriggerSource::getCurrentInterruptCount()
-{
-	return m_cifXCard.getProcessDataReadCount();
-}
-
 } //namespace SvPlc

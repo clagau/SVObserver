@@ -18,411 +18,238 @@
 #include "SVIOConfigurationInterfaceClass.h"
 #pragma endregion Includes
 
-SVInputObjectList::SVInputObjectList( LPCSTR ObjectName )
-: SVObjectClass( ObjectName ), m_bCreated( false )
+SVInputObjectList::SVInputObjectList( LPCSTR ObjectName ) : SVObjectClass( ObjectName )
 {
-}
-
-SVInputObjectList::SVInputObjectList( SVObjectClass* POwner, int StringResourceID )
-: SVObjectClass( POwner, StringResourceID ), m_bCreated( false )
-{
-}
-
-SVInputObjectList::~SVInputObjectList()
-{
-	if( m_bCreated )
-	{
-		Destroy();
-	}
-}
-
-bool SVInputObjectList::Create()
-{
+	m_isCreated = true;
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::InputObjectListId);
+}
 
-	try
-	{
-		m_bCreated = ::InitializeCriticalSectionAndSpinCount(&m_hCriticalSection, 4000) ? true : false;
-	}
-	catch(...)
-	{
-		m_bCreated = false;
-	}
-
-	return m_bCreated;
-}// end Create
-
-bool SVInputObjectList::Destroy()
+SVInputObjectList::SVInputObjectList( SVObjectClass* POwner, int StringResourceID ) : SVObjectClass( POwner, StringResourceID )
 {
-	try
-	{
-		if( m_bCreated )
-		{
-			Lock();
+	m_isCreated = true;
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::InputObjectListId);
+}
 
-			ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
-
-			while( l_Iter != m_InputObjects.end() )
-			{
-				SVInputObject *pInput = l_Iter->second;
-
-				l_Iter = m_InputObjects.erase( l_Iter );
-
-				if( nullptr != pInput )
-				{
-					delete pInput;
-				}
-			}
-
-			Unlock();
-
-			::DeleteCriticalSection( &m_hCriticalSection );
-
-		}// end if
-	}
-	catch(...)
-	{
-		return false;
-	}
-
-	m_bCreated = false;
-	return true;
-}// end Destroy
-
-SVInputObject* SVInputObjectList::GetInput(uint32_t inputID) const
+SVInputObjectPtr SVInputObjectList::GetInput(uint32_t inputID) const
 {
-	SVInputObject* pResult(nullptr);
+	SVInputObjectPtr pResult;
 
-	if (Lock())
+	std::lock_guard<std::mutex> guard(m_protectInputObjectList);
+
+	const auto iter = m_inputObjectMap.find(inputID);
+	if (iter != m_inputObjectMap.end())
 	{
-		ObjectIdSVInputObjectPtrMap::const_iterator l_Iter = m_InputObjects.find(inputID);
-
-		if (l_Iter != m_InputObjects.end())
-		{
-			pResult = l_Iter->second;
-		}
-		Unlock();
+		pResult = iter->second;
 	}
 
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInput(const std::string& rInputName) const
+SVInputObjectPtr SVInputObjectList::GetInput(const std::string& rInputName) const
 {
-	SVInputObject* pResult(nullptr);
+	return findInputName(rInputName);
+}
 
-	if (Lock())
+SVInputObjectPtr SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int index)
+{
+	SVInputObjectPtr pResult = findInputName(rInputName);
+
+	if (nullptr == pResult)
 	{
-		ObjectIdSVInputObjectPtrMap::const_iterator	l_Iter;
-
-		for (l_Iter = m_InputObjects.begin(); nullptr == pResult && l_Iter != m_InputObjects.end(); ++l_Iter)
+		switch (ObjectSubType)
 		{
-			SVInputObject* pInput = l_Iter->second;
+		case SvPb::SVDigitalInputObjectType:
+		{
+			pResult = std::make_shared<SVDigitalInputObject>();
+			pResult->updateObjectId(index);
+			break;
+		}
+		case SvPb::SVRemoteInputObjectType:
+		{
+			pResult = std::make_shared<SVRemoteInputObject>();
+			pResult->updateObjectId(index);
+			break;
+		}
+		case SvPb::SVCameraDataInputObjectType:
+			pResult = std::make_shared<SVCameraDataInputObject>();
+			break;
+		}
 
-			if (nullptr != pInput && rInputName == pInput->GetName())
+		if (nullptr != pResult)
+		{
+			pResult->SetName(rInputName.c_str());
+
+			if (S_OK != AttachInput(pResult))
 			{
-				pResult = pInput;
+				pResult.reset();
 			}
 		}
-		Unlock();
 	}
 
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInputFlyweight(const std::string& rInputName, SvPb::SVObjectSubTypeEnum ObjectSubType, int index)
-{
-	SVInputObject* pResult(nullptr);
-
-	if (Lock())
-	{
-		ObjectIdSVInputObjectPtrMap::const_iterator	l_Iter;
-
-		for (l_Iter = m_InputObjects.begin(); nullptr == pResult && l_Iter != m_InputObjects.end(); ++l_Iter)
-		{
-			SVInputObject* pInput = l_Iter->second;
-
-			if (nullptr != pInput && rInputName == pInput->GetName())
-			{
-				pResult = pInput;
-			}
-		}
-
-		if (nullptr == pResult)
-		{
-			switch (ObjectSubType)
-			{
-			case SvPb::SVDigitalInputObjectType:
-			{
-				SVDigitalInputObject* pDigInput = new SVDigitalInputObject;
-				pDigInput->updateObjectId(index);
-				pResult = pDigInput;
-				break;
-			}
-			case SvPb::SVRemoteInputObjectType:
-			{
-				SVRemoteInputObject* pInput = new SVRemoteInputObject;
-				pInput->updateObjectId(index);
-				pResult = pInput;
-				break;
-			}
-			case SvPb::SVCameraDataInputObjectType:
-				pResult = new SVCameraDataInputObject;
-				break;
-			}
-
-			if (nullptr != pResult)
-			{
-				pResult->SetName(rInputName.c_str());
-
-				if (S_OK != AttachInput(pResult))
-				{
-					delete pResult;
-					pResult = nullptr;
-				}
-			}
-		}
-		Unlock();
-	}
-
-	return pResult;
-}
-
-HRESULT SVInputObjectList::AttachInput( SVInputObject* pInput )
+HRESULT SVInputObjectList::AttachInput(SVInputObjectPtr pInput)
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != pInput )
+	if( nullptr != pInput)
 	{
-		if( Lock() )
-		{
-			ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pInput->getObjectId() );
+		std::lock_guard<std::mutex> guard(m_protectInputObjectList);
 
-			if( l_Iter == m_InputObjects.end() )
-			{
-				m_InputObjects[ pInput->getObjectId() ] = pInput;
-			}
+		auto iter = m_inputObjectMap.find( pInput->getObjectId() );
 
-			Unlock();
-		}
-		else
+		if(iter == m_inputObjectMap.end())
 		{
-			l_Status = E_FAIL;
+			m_inputObjectMap[pInput->getObjectId()] = pInput;
 		}
 	}
 	else
 	{
-		l_Status = E_INVALIDARG;
+		l_Status = E_POINTER;
 	}
 
 	return l_Status;
 }
 
-HRESULT SVInputObjectList::DetachInput(uint32_t outputID)
+HRESULT SVInputObjectList::DetachInput(uint32_t inputID)
 {
-	HRESULT l_Status = S_OK;
+	std::lock_guard<std::mutex> guard(m_protectInputObjectList);
 
-	if( Lock() )
+	auto iter = m_inputObjectMap.find(inputID);
+	if(iter != m_inputObjectMap.end())
 	{
-		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( outputID );
-
-		if( l_Iter != m_InputObjects.end() )
-		{
-			m_InputObjects.erase( l_Iter );
-		}
-
-		Unlock();
-	}
-	else
-	{
-		l_Status = E_FAIL;
+		m_inputObjectMap.erase(iter);
 	}
 
-	return l_Status;
-}// end RemoveInput
+	return S_OK;
+}
 
 bool SVInputObjectList::ReadInputs(const SVIOEntryHostStructPtrVector& rInputs, std::vector<_variant_t>& rInputValues)
 {
 	size_t inputSize( rInputs.size() );
 
-	if( Lock() )
+	rInputValues.resize(inputSize);
+
+	bool isFirstDIO = true;
+
+	for(size_t i = 0; i < inputSize; ++i)
 	{
-		rInputValues.resize( inputSize );
+		const SVIOEntryHostStructPtr& pIOEntry = rInputs[i];
 
-		bool isFirstDIO = true;
-
-		for(size_t i = 0; i < inputSize; i++ )
+		// Check if output is enabled for this call
+		if(nullptr != pIOEntry && pIOEntry->m_Enabled )
 		{
-			SVIOEntryHostStructPtr pIOEntry = rInputs[i];
-
-			// Check if output is enabled for this call
-			if(nullptr != pIOEntry && pIOEntry->m_Enabled )
+			SVInputObjectPtr pInput;
+		
 			{
-				SVInputObject *pInput = nullptr;
-
-				ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.find( pIOEntry->m_IOId );
-
-				if( l_Iter != m_InputObjects.end() )
+				std::lock_guard<std::mutex> guard(m_protectInputObjectList);
+				auto iter = m_inputObjectMap.find(pIOEntry->m_IOId);
+				if(iter != m_inputObjectMap.end())
 				{
-					pInput = l_Iter->second;
-				}
-
-				if( nullptr != pInput )
-				{
-					if (isFirstDIO && SvPb::SVDigitalInputObjectType == pInput->GetObjectSubType())
-					{
-						isFirstDIO = false;
-						SVIOConfigurationInterfaceClass::Instance().readDigitalInputBatch();
-					}
-					pInput->Read(rInputValues[i]);
-				}
-				else
-				{
-					rInputValues[ i ].Clear();
-				}
-			}// end if
-		}// end for
-
-		SVIOConfigurationInterfaceClass::Instance().clearDigitalInputBatch();		
-
-		Unlock();
-		return true;
-	}// end if
-
-	return false;
-}// end ReadInputs
-
-bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
-{
-	bool Result(false);
-	p_IOEntries.clear();
-
-	if( Lock() )
-	{
-		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
-		Result = true;
-		while( l_Iter != m_InputObjects.end() )
-		{
-			SVInputObject *pInput = l_Iter->second;
-
-			SVIOEntryHostStructPtr pIOEntry{ new SVIOEntryHostStruct };
-
-			pIOEntry->m_IOId = pInput->getObjectId();
-
-			switch (pInput->GetObjectSubType())
-			{
-			case SvPb::SVDigitalInputObjectType:
-				pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
-				break;
-			case SvPb::SVRemoteInputObjectType:
-				pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-				break;
-			case SvPb::SVCameraDataInputObjectType:
-				pIOEntry->m_ObjectType = IO_CAMERA_DATA_INPUT;
-				break;
-			default:
-				Result = false;
-				break;
-			}
-			p_IOEntries.push_back( pIOEntry );
-
-			++l_Iter;
-		}
-
-		Unlock();
-	}
-
-	return Result;
-}
-
-bool SVInputObjectList::GetRemoteInputCount( long &lCount )
-{
-	long lTempCount;
-
-	// Set to default of 0
-	lCount = 0;
-	lTempCount = 0;
-
-	if( Lock() )
-	{
-		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
-
-		while( l_Iter != m_InputObjects.end() )
-		{
-			SVInputObject *pInput = l_Iter->second;
-
-			if (SvPb::SVRemoteInputObjectType == pInput->GetObjectSubType())
-			{
-				lTempCount++;
-			}
-
-			++l_Iter;
-		}
-
-		lCount = lTempCount;
-
-		Unlock();
-		return true;
-	}
-
-	return false;
-}
-
-bool SVInputObjectList::SetRemoteInput( long lIndex, const _variant_t& rValue)
-{
-	if( Lock() )
-	{
-		bool bFound = false;
-
-		ObjectIdSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
-
-		while( l_Iter != m_InputObjects.end() )
-		{
-			SVRemoteInputObject* pInput = dynamic_cast< SVRemoteInputObject* >( l_Iter->second );
-
-			if( nullptr != pInput )
-			{
-				bFound = ( lIndex == pInput->m_lIndex );
-
-				if( bFound )
-				{
-					pInput->WriteCache( rValue );
-
-					break;
+					pInput = iter->second;
 				}
 			}
 
-			++l_Iter;
+			if(nullptr != pInput)
+			{
+				if (isFirstDIO && SvPb::SVDigitalInputObjectType == pInput->GetObjectSubType())
+				{
+					isFirstDIO = false;
+					SVIOConfigurationInterfaceClass::Instance().readDigitalInputBatch();
+				}
+				pInput->Read(rInputValues[i]);
+			}
+			else
+			{
+				rInputValues[i].Clear();
+			}
 		}
-
-		Unlock();
-
-		return bFound;
 	}
 
-	return false;
+	SVIOConfigurationInterfaceClass::Instance().clearDigitalInputBatch();		
+
+	return true;
 }
 
-bool SVInputObjectList::Lock() const
+SVIOEntryHostStructPtrVector SVInputObjectList::getInputList() const
 {
-	if (m_bCreated)
-	{
-		::EnterCriticalSection(const_cast<LPCRITICAL_SECTION>(&m_hCriticalSection));
+	SVIOEntryHostStructPtrVector result;
 
-		return TRUE;
+	result.reserve(m_inputObjectMap.size());
+	std::lock_guard<std::mutex> guard(m_protectInputObjectList);
+	for (const auto& rInput : m_inputObjectMap)
+	{
+		SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+
+		pIOEntry->m_IOId = rInput.second->getObjectId();
+
+		switch (rInput.second->GetObjectSubType())
+		{
+		case SvPb::SVDigitalInputObjectType:
+			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
+			break;
+		case SvPb::SVRemoteInputObjectType:
+			pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
+			break;
+		case SvPb::SVCameraDataInputObjectType:
+			pIOEntry->m_ObjectType = IO_CAMERA_DATA_INPUT;
+			break;
+		default:
+			break;
+		}
+		result.emplace_back(pIOEntry);
 	}
 
-	return false;
+	return result;
 }
 
-bool SVInputObjectList::Unlock() const
+long SVInputObjectList::getRemoteInputCount() const
 {
-	if (m_bCreated)
+	return static_cast<long> (std::count_if(m_inputObjectMap.begin(), m_inputObjectMap.end(), [](const auto& rEntry)->bool
 	{
-		::LeaveCriticalSection(const_cast<LPCRITICAL_SECTION>(&m_hCriticalSection));
+		return (nullptr != rEntry.second) && SvPb::SVRemoteInputObjectType == rEntry.second->GetObjectSubType();
+	}));
+}
 
-		return true;
+bool SVInputObjectList::SetRemoteInput( long index, const _variant_t& rValue)
+{
+	bool result{false};
+
+
+	SVRemoteInputObject* pInput{nullptr};
+
+	std::lock_guard<std::mutex> guard(m_protectInputObjectList);
+	const auto iter = std::find_if(m_inputObjectMap.begin(), m_inputObjectMap.end(), [&](const auto& rEntry)->bool
+	{
+		pInput = dynamic_cast<SVRemoteInputObject*> (nullptr != rEntry.second ? rEntry.second.get() : nullptr);
+
+		return (nullptr != pInput) && (index == pInput->GetChannel());
+	});
+
+	if(iter != m_inputObjectMap.end() && nullptr != pInput)
+	{
+		result = (S_OK == pInput->writeCache(rValue));
 	}
 
-	return FALSE;
+	return result;
+}
+
+SVInputObjectPtr SVInputObjectList::findInputName(const std::string& rInputName) const
+{
+	SVInputObjectPtr pResult;
+
+	std::lock_guard<std::mutex> guard(m_protectInputObjectList);
+	const auto iter = std::find_if(m_inputObjectMap.begin(), m_inputObjectMap.end(), [&rInputName](const auto& rEntry)->bool
+	{
+		return (nullptr != rEntry.second) && (rInputName == rEntry.second->GetName());
+	});
+
+	if (iter != m_inputObjectMap.end())
+	{
+		pResult = iter->second;
+	}
+	return pResult;
 }

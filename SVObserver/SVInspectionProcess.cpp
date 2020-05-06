@@ -346,8 +346,8 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 #endif
 		::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 
-
-		if (GetPPQ()->HasActiveMonitorList() && p_rProduct.m_triggered)
+		SVPPQObject* pPPQ{GetPPQ()};
+		if (nullptr != pPPQ && pPPQ->HasActiveMonitorList() && p_rProduct.m_triggered)
 		{
 			p_rProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject();
 		}
@@ -987,49 +987,64 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 		else
 		{
 			SVObjectClass* pNewObject{nullptr};
+			std::shared_ptr<SvOi::IValueObject> pInputValueObject;
 
 			switch (rNewEntry->m_ObjectType)
 			{
 				case IO_DIGITAL_INPUT:
 				{
-					SvVol::SVBoolValueObjectClass* pIOObject = new SvVol::SVBoolValueObjectClass(this);
-					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
-					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
-					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+					pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
+					if(nullptr != pInputValueObject)
+					{
+						pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+						pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+						pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+					}
 					break;
 				}
 				case IO_REMOTE_INPUT:
 				{
-					SvVol::SVVariantValueObjectClass* pIOObject = new SvVol::SVVariantValueObjectClass(this);
-					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
-					variant_t defaultValue;
-					defaultValue.ChangeType(VT_R8);
-					pIOObject->SetDefaultValue(defaultValue, false);
-					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
-					pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+					pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
+					if (nullptr != pInputValueObject)
+					{
+						pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+						variant_t defaultValue;
+						defaultValue.ChangeType(VT_R8);
+						pInputValueObject->setDefaultValue(defaultValue);
+						pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+						pNewObject->SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+					}
 					break;
 				}
 				default:
 				{
-					SvVol::SVVariantValueObjectClass* pIOObject = new SvVol::SVVariantValueObjectClass(this);
-					pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
-					pNewObject = dynamic_cast<SVObjectClass*> (pIOObject);
+					pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
+					if (nullptr != pInputValueObject)
+					{
+						pInputValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+						pNewObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+					}
 					break;
 				}
 			}
+			
+			if(nullptr != pNewObject)
+			{
+				pNewObject->SetName(pObject->GetName());
+				pNewObject->SetObjectOwner(this);
+				pNewObject->SetObjectAttributesSet(pNewObject->ObjectAttributesSet() & SvPb::publishable, SvOi::SetAttributeType::OverwriteAttribute);
+				pNewObject->ResetObject();
+				CreateChildObject(pNewObject);
+			}
 
-			pNewObject->SetName(pObject->GetName());
-			pNewObject->SetObjectOwner(this);
-			pNewObject->SetObjectAttributesSet(pNewObject->ObjectAttributesSet() & SvPb::publishable, SvOi::SetAttributeType::OverwriteAttribute);
-			pNewObject->ResetObject();
-
-			CreateChildObject(pNewObject);
-
-			m_PPQInputs[iList] = std::make_shared<SVIOEntryHostStruct>();
-			m_PPQInputs[iList]->setObject(pNewObject);
-			m_PPQInputs[iList]->m_ObjectType = rNewEntry->m_ObjectType;
-			m_PPQInputs[iList]->m_IOId = rNewEntry->m_IOId;
-			m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
+			if(nullptr != pInputValueObject)
+			{
+				m_PPQInputs[iList] = std::make_shared<SVIOEntryHostStruct>();
+				m_PPQInputs[iList]->setValueObject(pInputValueObject);
+				m_PPQInputs[iList]->m_ObjectType = rNewEntry->m_ObjectType;
+				m_PPQInputs[iList]->m_IOId = rNewEntry->m_IOId;
+				m_PPQInputs[iList]->m_Enabled = rNewEntry->m_Enabled;
+			}
 		}// end if
 
 		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvPb::selectableForEquation | SvPb::viewable, SvOi::SetAttributeType::AddAttribute);

@@ -886,7 +886,6 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if (pCombo)
 		{
-			int	nIndex;
 			pCombo->SetCtrlID(PROP_PPQ_MODE);
 			pCombo->SetLabelText(_T("Output Mode"));
 			if (0 <= iMode && cTriggerModeInfo.size() > iMode)
@@ -897,7 +896,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 
 			for(int i=0; i < cTriggerMode.size(); ++i)
 			{
-				nIndex = pCombo->AddString(cTriggerMode.at(i));
+				int nIndex = pCombo->AddString(cTriggerMode.at(i));
 				pCombo->SetItemData(nIndex, i);
 			}
 			pCombo->SetItemValue(iMode);

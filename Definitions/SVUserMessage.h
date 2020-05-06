@@ -41,8 +41,6 @@
 // 	Message to call OnRunMostRecentMRU()
 #define SV_AUTO_RUN_LAST_MRU                        WM_USER + 14
 
-#define SV_IOVIEW_HIDE_TAB   WM_USER + 24
-
 #define SV_MDICHILDFRAME_UPDATE_ALL_DATA    WM_USER + 32
 #define SV_SET_MODE WM_USER + 33
 #define SV_LOAD_PACKED_CONFIGURATION WM_USER + 34

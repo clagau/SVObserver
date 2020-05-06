@@ -19,7 +19,8 @@ public:
 	SimulatedTriggerSource() = default;
 	virtual ~SimulatedTriggerSource() = default;
 
-	bool initialize() override;
+	HRESULT initialize() override {return S_OK;};
+	bool setTriggerChannel(uint8_t channel, bool active, uint32_t period) override;
 	bool analyzeTelegramData() override;
 	void createTriggerReport(uint8_t channel) override;
 

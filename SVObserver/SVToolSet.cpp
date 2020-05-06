@@ -94,6 +94,7 @@ void SVToolSetClass::init()
 	//Display them as integers
 	m_ObjectID.SetOutputFormat(SvVol::OutputFormat_int);
 	m_TriggerIndex.SetOutputFormat(SvVol::OutputFormat_int);
+	m_TriggerPerObjectID.SetOutputFormat(SvVol::OutputFormat_int);
 
 
 	// Set Embedded defaults

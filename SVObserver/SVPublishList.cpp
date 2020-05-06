@@ -14,7 +14,6 @@
 #include "SVPublishList.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVInfoStructs.h"
@@ -23,6 +22,7 @@
 #include "SVPPQObject.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "TriggerInformation/SVHardwareManifest.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -177,13 +177,13 @@ void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->getObjectId() );
 				if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 				{
-					SVDigitalOutputObject* pDigital( nullptr );
+					SVOutputObjectPtr pOutput;
 
 					if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
 					if( nullptr != pOutputList )
 					{ 
-						pDigital = dynamic_cast<SVDigitalOutputObject*> (pOutputList->GetOutput( pObject->GetCompleteName().c_str())); 
+						pOutput = pOutputList->GetOutput( pObject->GetCompleteName().c_str()); 
 					}
 
 					// Add Outputs to the PPQ
@@ -193,26 +193,24 @@ void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 
 					if(SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
 					{
-						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
-						pIOEntry->m_DeleteValueObject = false;
-						pIOEntry->setObject(pObject);
+						pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+						pIOEntry->setLinkedObject(pObject);
 						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
-						pIOEntry->m_ObjectType		= IO_DIGITAL_OUTPUT;
+						pIOEntry->m_ObjectType		= SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()) ? IO_DIGITAL_OUTPUT : IO_PLC_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
-						pIOEntry->m_Enabled			= ( nullptr != pDigital );
+						pIOEntry->m_Enabled			= ( nullptr != pOutput);
 
 						if( pIOEntry->m_Enabled )
 						{
-							pIOEntry->m_IOId = pDigital->getObjectId();
+							pIOEntry->m_IOId = pOutput->getObjectId();
 						}
 
 						if( nullptr != pPPQ ){ pPPQ->AddOutput( pIOEntry ); }
 					}
 					else
 					{
-						pIOEntry = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
-						pIOEntry->m_DeleteValueObject = false;
-						pIOEntry->setObject(pObject);
+						pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+						pIOEntry->setLinkedObject(pObject);
 						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 						pIOEntry->m_ObjectType		= IO_REMOTE_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;

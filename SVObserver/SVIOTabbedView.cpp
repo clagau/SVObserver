@@ -11,10 +11,10 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "PlcOutputsView.h"
 #include "SVIOTabbedView.h"
-#include "SVDiscreteOutputsView.h"
 #include "SVDiscreteInputsView.h"
-
+#include "SVDiscreteOutputsView.h"
 #include "SVRemoteInputsView.h"
 #include "SVRemoteOutputsView.h"
 #include "MonitorListView.h"
@@ -37,48 +37,31 @@ END_MESSAGE_MAP()
 
 BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
-	TVisualObject *pIOTab = new TVisualObject( SVIOViewID, _T("IO"), pContext, RUNTIME_CLASS(TTabWnd) ); //
+	TVisualObject *pIOTab = new TVisualObject(SVIOViewID, _T("IO"), pContext, RUNTIME_CLASS(TTabWnd));
 
-	TVisualObject *pInputsView = new TVisualObject( SVIODiscreteInputsViewID, _T("Discrete Inputs"), pContext, RUNTIME_CLASS( SVDiscreteInputsView ) );
-	TVisualObject *pRemoteInputsView = new TVisualObject( SVIORemoteInputsViewID, _T("Remote Inputs"), pContext, RUNTIME_CLASS( SVRemoteInputsView ) );
+	TVisualObject* pDiscreteInputsView = new TVisualObject(SVIODiscreteInputsViewID, _T("Discrete Inputs"), pContext, RUNTIME_CLASS(SVDiscreteInputsView));
+	TVisualObject* pDiscreteOutputsView = new TVisualObject(SVIODiscreteOutputsViewID, _T("Discrete Outputs"), pContext, RUNTIME_CLASS(SVDiscreteOutputsView));
+	TVisualObject* pPlcOutputsView = new TVisualObject(SVIOPlcOutputsViewID, _T("PLC Outputs"), pContext, RUNTIME_CLASS(PlcOutputsView));
 
-	TVisualObject *pOutputsView = new TVisualObject( SVIODiscreteOutputsViewID, _T("Discrete Outputs"), pContext, RUNTIME_CLASS( SVDiscreteOutputsView ) );
+	TVisualObject* pRemoteInputsView = new TVisualObject(SVIORemoteInputsViewID, _T("Remote Inputs"), pContext, RUNTIME_CLASS(SVRemoteInputsView));
+	TVisualObject* pRemoteOutputsView = new TVisualObject(SVRemoteOutputsViewID, _T("Remote Outputs"), pContext, RUNTIME_CLASS(SVRemoteOutputsView));
+	TVisualObject* pRemoteMonitorListView = new TVisualObject(SVRemoteMonitorListViewID, _T("Monitor List"), pContext, RUNTIME_CLASS(MonitorListView));
+	TVisualObject* pGlobalConstantView = new TVisualObject(SVGlobalConstantViewID, _T("Global Constants"), pContext, RUNTIME_CLASS(GlobalConstantView));
 
-	TVisualObject *pRemoteOutputsView = new TVisualObject( SVRemoteOutputsViewID, _T("Remote Outputs"), pContext, RUNTIME_CLASS( SVRemoteOutputsView ) );
-	TVisualObject *pRemoteMonitorListView = new TVisualObject( SVRemoteMonitorListViewID, _T("Monitor List"), pContext, RUNTIME_CLASS( MonitorListView ) );
-	TVisualObject *pGlobalConstantView = new TVisualObject( SVGlobalConstantViewID, _T("Global Constants"), pContext, RUNTIME_CLASS( GlobalConstantView ) );
+	m_Framework.Add(pIOTab);
+	m_Framework.Add(pIOTab, pDiscreteInputsView);
+	m_Framework.Add(pIOTab, pRemoteInputsView);
 
-	m_Framework.Add( pIOTab );
-	m_Framework.Add( pIOTab, pInputsView );
-	m_Framework.Add( pIOTab, pRemoteInputsView );
+	m_Framework.Add(pIOTab, pDiscreteOutputsView);
+	m_Framework.Add(pIOTab, pPlcOutputsView);
+	m_Framework.Add(pIOTab, pRemoteOutputsView);
 
-	m_Framework.Add( pIOTab, pOutputsView );
-
-	m_Framework.Add( pIOTab, pRemoteOutputsView );
-	m_Framework.Add( pIOTab, pRemoteMonitorListView );
-	m_Framework.Add( pIOTab, pGlobalConstantView );
+	m_Framework.Add(pIOTab, pRemoteMonitorListView);
+	m_Framework.Add(pIOTab, pGlobalConstantView);
 
 	BOOL l_bRet = m_Framework.Create(this);
 
 	return l_bRet;
-}
-
-CWnd* SVIOTabbedView::GetActivePane(int* /*pRow*/, int* /*pCol*/)
-{
-	ASSERT_VALID(this);
-
-	// attempt to use active view of frame window
-	CWnd* pView = nullptr;
-	CFrameWnd* pFrameWnd = GetParentFrame();
-	ASSERT_VALID(pFrameWnd);
-	pView = pFrameWnd->GetActiveView();
-
-	// failing that, use the current focus
-	if (nullptr == pView)
-	{
-		pView = GetFocus();
-	}
-	return pView;
 }
 
 // SVIOTabbedView message handlers

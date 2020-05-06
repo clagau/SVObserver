@@ -26,9 +26,7 @@ IMPLEMENT_DYNAMIC(SVRemoteOutputEditDialog, CDialog)
 SVRemoteOutputEditDialog::SVRemoteOutputEditDialog(CWnd* pParent /*=nullptr*/)
 : CDialog(SVRemoteOutputEditDialog::IDD, pParent)
 , m_ValueObjectSourceName(_T("Invalid"))
-, m_Items( boost::bind( &( CComboBox::GetItemData ), &m_ValueObjectNameCombo, _1 ) , boost::bind( &( CComboBox::SetItemData ), &m_ValueObjectNameCombo, _1, _2 ) )
 {
-	m_TriggerCount = SVIOEntryHostStructPtr{ new SVIOEntryHostStruct };
 }
 
 SVRemoteOutputEditDialog::~SVRemoteOutputEditDialog()
@@ -53,6 +51,8 @@ END_MESSAGE_MAP()
 BOOL SVRemoteOutputEditDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
+	m_TriggerCount = std::make_shared<SVIOEntryHostStruct>();
 	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrVector ppIOEntries;
 	
@@ -102,10 +102,8 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			{
 				SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pPpqTriggerCount.get());
 				int iIndex = m_ValueObjectNameCombo.AddString(pObject->GetCompleteName().c_str() );
-				m_TriggerCount->setObject(pObject);
-				m_TriggerCount->m_DeleteValueObject = false;
-				m_Items.SetItemData( iIndex, m_TriggerCount );
-
+				m_TriggerCount->setLinkedObject(pObject);
+				m_Items[iIndex] = m_TriggerCount;
 			}
 
 			SVObjectClass* pCurrentObject = SVObjectManagerClass::Instance().GetObject(m_InputObjectID);
@@ -122,7 +120,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 					if( nullptr != pIOEntry->getObject() && std::string::npos == pIOEntry->getObject()->GetCompleteName().find( _T( "PPQ" ) ) )
 					{
 						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
-						m_Items.SetItemData( iIndex, pIOEntry );
+						m_Items[iIndex] = pIOEntry;
 					}
 
 					// Set current selection if object matches.
@@ -165,42 +163,39 @@ void SVRemoteOutputEditDialog::OnCancel()
 
 void SVRemoteOutputEditDialog::OnCbnSelchangeValueObjectNameCombo()
 {
-	int l_iSel = m_ValueObjectNameCombo.GetCurSel();
+	int curSel = m_ValueObjectNameCombo.GetCurSel();
 
-	SVIOEntryHostStructPtr l_pIOEntry;
-	SVDataItemManager::iterator l_Iter = m_Items.GetItemData( l_iSel );
-
-	if( l_Iter != m_Items.end() )
+	SVIOEntryHostStructPtr pIOEntry;
+	const auto iter = m_Items.find(curSel);
+	if (m_Items.end() != iter)
 	{
-		l_pIOEntry = l_Iter->second;
+		pIOEntry = iter->second;
 	}
 
-	if(nullptr != l_pIOEntry)
+	if(nullptr != pIOEntry)
 	{
-		SvPb::SVObjectTypeEnum l_PCDataType = l_pIOEntry->getObject()->GetObjectType();
 		UpdateData(FALSE);
 	}
 }
 
 void SVRemoteOutputEditDialog::UpdateValueObjectFromCombo()
 {
-	int l_iSel = m_ValueObjectNameCombo.GetCurSel();
-	if( l_iSel >= 0 )
+	int curSel = m_ValueObjectNameCombo.GetCurSel();
+	if(curSel >= 0 )
 	{
-		SVIOEntryHostStructPtr l_pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_Items.GetItemData( l_iSel );
-
-		if( l_Iter != m_Items.end() )
+		SVIOEntryHostStructPtr pIOEntry;
+		const auto iter = m_Items.find(curSel);
+		if (m_Items.end() != iter)
 		{
-			l_pIOEntry = l_Iter->second;
+			pIOEntry = iter->second;
 		}
 
-		if(nullptr != l_pIOEntry && ( nullptr != l_pIOEntry->getObject() ) )
+		if(nullptr != pIOEntry && ( nullptr != pIOEntry->getObject() ) )
 		{
 			CString Name;
-			m_ValueObjectNameCombo.GetLBText( l_iSel, Name  );
+			m_ValueObjectNameCombo.GetLBText(curSel, Name);
 			m_ValueObjectSourceName = Name;
-			m_InputObjectID = l_pIOEntry->getObject()->getObjectId();
+			m_InputObjectID = pIOEntry->getObject()->getObjectId();
 		}
 	}
 }

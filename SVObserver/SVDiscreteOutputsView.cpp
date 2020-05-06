@@ -11,23 +11,22 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVConfigurationObject.h"
 #include "SVDiscreteOutputsView.h"
+#include "SVIOAdjustDialog.h"
+#include "SVIOController.h"
+#include "SVIODoc.h"
+#include "SVPPQObject.h"
+#include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOResource\ConstGlobalSvOr.h"
-#include "SVObserver.h"
-#include "SVIODoc.h"
-#include "SVIOAdjustDialog.h"
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVPPQObject.h"
-#include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
-#include "SVIOController.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -37,58 +36,21 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr char* cDigitalOutputName = ("Digital Output %d");
+
 IMPLEMENT_DYNCREATE(SVDiscreteOutputsView, CListView)
 
 BEGIN_MESSAGE_MAP(SVDiscreteOutputsView, CListView)
-	//{{AFX_MSG_MAP(SVDiscreteOutputsView)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CListView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CListView::OnFilePrintPreview)
 END_MESSAGE_MAP()
 
-SVDiscreteOutputsView::SVDiscreteOutputsView()
-: m_Items( boost::bind( &( CListCtrl::GetItemData ), &( GetListCtrl() ), _1 ) , boost::bind( &( CListCtrl::SetItemData ), &( GetListCtrl() ), _1, _2 ) )
+SVDiscreteOutputsView::SVDiscreteOutputsView() :
+	m_rCtrl(GetListCtrl())
 {
 }
-
-SVDiscreteOutputsView::~SVDiscreteOutputsView()
-{
-}
-
-BOOL SVDiscreteOutputsView::PreCreateWindow(CREATESTRUCT& cs)
-{
-	return CListView::PreCreateWindow(cs);
-}
-
-void SVDiscreteOutputsView::OnDestroy()
-{
-	CListView::OnDestroy();
-}
-
-void SVDiscreteOutputsView::OnInitialUpdate()
-{
-	CListView::OnInitialUpdate();
-}
-
-#ifdef _DEBUG
-void SVDiscreteOutputsView::AssertValid() const
-{
-	CListView::AssertValid();
-}
-
-void SVDiscreteOutputsView::Dump(CDumpContext& dc) const
-{
-	CListView::Dump(dc);
-}
-
-SVIODoc* SVDiscreteOutputsView::GetDocument() // Die endgültige (nicht zur Fehlersuche kompilierte) Version ist Inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(SVIODoc)));
-	return (SVIODoc*)m_pDocument;
-}
-#endif //_DEBUG
 
 BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext) 
 {
@@ -96,60 +58,49 @@ BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName
 	
 	BOOL RetVal = CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 
-	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
+	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
 
-	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_INPUT_ICON ) );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_OUTPUT_ICON ) );
-
-
-	GetListCtrl().SetImageList( &StateImageList, LVSIL_STATE );
-	GetListCtrl().SetImageList( &ImageList, LVSIL_SMALL );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 1, 1 );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_OUTPUT_ICON ) );
 
 
-	GetListCtrl().InsertColumn( 0, _T( "Outputs" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
-	GetListCtrl().InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.SetImageList( &m_StateImageList, LVSIL_STATE );
+	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
+
+
+	m_rCtrl.InsertColumn( 0, _T( "Outputs" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 1, _T( "Description" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 2, _T( "Forced" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 3, _T( "Inverted" ), LVCFMT_LEFT, -1, -1 );
 	
-	GetListCtrl().SetColumnWidth( 0, 125 );
-	GetListCtrl().SetColumnWidth( 1, 500 );
-	GetListCtrl().SetColumnWidth( 2,  50 );
-	GetListCtrl().SetColumnWidth( 3,  55 );
+	m_rCtrl.SetColumnWidth( 0, 125 );
+	m_rCtrl.SetColumnWidth( 1, 500 );
+	m_rCtrl.SetColumnWidth( 2,  50 );
+	m_rCtrl.SetColumnWidth( 3,  55 );
 
+	m_pDocument = dynamic_cast<SVIODoc*> (CListView::GetDocument());
 	return RetVal;
 }
 
 void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) 
 {
-	SVIODoc* pIODoc = (SVIODoc*) GetDocument();
-	SVIOController* l_pIOController = nullptr;
+	SVIOController* pIOController{nullptr};
 
-	if( nullptr != pIODoc )
+	if( nullptr != m_pDocument)
 	{
-		l_pIOController = pIODoc->GetIOController();
+		pIOController = m_pDocument->GetIOController();
 	}
 
-	if( nullptr != l_pIOController && ::IsWindow( m_hWnd ) )
+	if( nullptr != pIOController && ::IsWindow( m_hWnd ) )
 	{
-		GetListCtrl().SetRedraw(false);
+		m_rCtrl.SetRedraw(false);
 
 		// First clean up list view
-		GetListCtrl().DeleteAllItems();
+		m_rCtrl.DeleteAllItems();
 
 		m_Items.clear();
-
-		long lSize;
-		int j;
-		int i;
-		int k;
-		SVPPQObject* pPPQ( nullptr );
-		SVDigitalOutputObject *pDigOutput( nullptr );
-		SVIOEntryHostStructPtrVector ppIOEntries;
-		SVIOEntryHostStructPtr pIOEntry;
-
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -172,77 +123,25 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		// Result Outputs
 		DWORD maxOutput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( maxOutput );
-		for( i = 0; i < static_cast<int>(maxOutput); ++i )
+		for(int i = 0; i < static_cast<int>(maxOutput); ++i)
 		{
 			// First column: Result I/O
-			std::string Item = SvUl::Format( _T( "Digital Output %d" ), i + 1 );
-			GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
+			std::string Item = SvUl::Format(cDigitalOutputName, i + 1);
+			m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
 				i, Item.c_str(), 
-				INDEXTOSTATEIMAGEMASK( 2 ),	// state
-				LVIS_STATEIMAGEMASK,		// stateMask
-				1, 0 );						// Set item data to nothing
+				INDEXTOSTATEIMAGEMASK(1),
+				LVIS_STATEIMAGEMASK,
+				1, 0 );
 
 			// Check Module Ready first
-			pIOEntry = l_pIOController->GetModuleReady();
-			pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
-			if( pDigOutput )
+			if(setListItem(i, pIOController->GetModuleReady())) {continue;}
+
+			 // Check GetRaidErrorBit() first
+			if (setListItem(i, pIOController->GetRaidErrorBit())) { continue; }
+
+			for(int j = 0; j < lPPQSize; ++j)
 			{
-				if( i == pDigOutput->GetChannel() )
-				{
-					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
-
-					m_Items.SetItemData( i, pIOEntry );
-
-					// Column: Description
-					GetListCtrl().SetItemText( i, 1, pDigOutput->GetName() );
-
-					// Column: Force
-					if( pDigOutput->IsForced() )
-					{
-						Item = SvUl::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
-						GetListCtrl().SetItemText( i, 2, Item.c_str() );
-					}// end if
-
-					// Column: Inverted
-					Item = pDigOutput->IsInverted() ? _T( "1" ) : _T( "" );
-					GetListCtrl().SetItemText( i, 3, Item.c_str() );
-
-					continue;
-				}// end if
-			}// end if
-
-			// Check GetRaidErrorBit() first
-			pIOEntry = l_pIOController->GetRaidErrorBit();
-			pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
-			if( pDigOutput )
-			{
-				if( i == pDigOutput->GetChannel() )
-				{
-					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
-
-					m_Items.SetItemData( i, pIOEntry );
-
-					// Column: Description
-					GetListCtrl().SetItemText( i, 1, pDigOutput->GetName() );
-
-					// Column: Force
-					if( pDigOutput->IsForced() )
-					{
-						Item = SvUl::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
-						GetListCtrl().SetItemText( i, 2, Item.c_str() );
-					}// end if
-
-					// Column: Inverted
-					Item = pDigOutput->IsInverted() ? _T( "1" ) : _T( "" );
-					GetListCtrl().SetItemText( i, 3, Item.c_str() );
-
-					continue;
-				}// end if
-			}// end if
-
-			for( k = 0; k < lPPQSize; k++ )
-			{
-				pPPQ = pConfig->GetPPQ( k );
+				SVPPQObject* pPPQ = pConfig->GetPPQ(j);
 				if( nullptr == pPPQ )
 				{
 					SvStl::MessageMgrStd e(SvStl::MsgType::Log );
@@ -250,71 +149,45 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 					DebugBreak();
 				}
 
+				SVIOEntryHostStructPtrVector IOEntriesVector;
 				// Get list of available outputs
-				pPPQ->GetAllOutputs(ppIOEntries);
-				lSize = static_cast< long >( ppIOEntries.size() );
+				pPPQ->GetAllOutputs(IOEntriesVector);
 
 				// Find each digital output
-				for( j = 0; j < lSize; j++ )
+				for(const auto& pIOEntry : IOEntriesVector)
 				{
-					pIOEntry = ppIOEntries[j];
-					if( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
-
-					pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
-
-					if( !pDigOutput ) { continue; }
-
-					if( i == pDigOutput->GetChannel() )
+					if( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT )
 					{
-						GetListCtrl().SetItem( i, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
+						continue;
+					}
 
-						m_Items.SetItemData( i, pIOEntry );
-
-						// Column: Description
-						GetListCtrl().SetItemText( i, 1, pDigOutput->GetName() );
-
-						// Column: Force
-						if( pDigOutput->IsForced() )
-						{
-							Item = SvUl::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
-							GetListCtrl().SetItemText( i, 2, Item.c_str() );
-						}// end if
-
-						// Column: Inverted
-						Item = pDigOutput->IsInverted() ? _T( "1" ) : _T( "" );
-						GetListCtrl().SetItemText( i, 3, Item.c_str() );
-
+					if (setListItem(i, pIOEntry))
+					{ 
 						break;
-					}// end if
-				}// end for
-			}// end for
-		}// end for
-		GetListCtrl().SetRedraw(true);
-	}// end if
-
-	//CListView::OnUpdate( pSender, lHint, pHint );   //This call will cause flicker
-}// end OnUpdate
+					}
+				}
+			}
+		}
+		m_rCtrl.SetRedraw(true);
+	}
+}
 
 void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point ) 
 {
 	SVIOEntryHostStructPtr pIOEntry;
-	SVDigitalOutputObject *pDigOutput ( nullptr );
+	SVOutputObjectPtr pOutput;
 	UINT flags;
 
-	int item = GetListCtrl().HitTest( point, &flags );
-	SVIODoc* pIODoc = ( SVIODoc* ) GetDocument();
+	int item = m_rCtrl.HitTest( point, &flags );
+	SVIOController* pIOController{nullptr};
 
-	SVIOController* l_pIOController = nullptr;
-
-	if( nullptr != pIODoc )
+	if( nullptr != m_pDocument)
 	{
-		l_pIOController = pIODoc->GetIOController();
+		pIOController = m_pDocument->GetIOController();
 	}
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		 TheSVObserverApp.OkToEdit() &&
-	     nullptr != l_pIOController )
+	if (false == SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SvOi::isOkToEdit() && nullptr != pIOController )
 	{
-		if( item >= 0 && item < GetListCtrl().GetItemCount() && 
+		if( item >= 0 && item < m_rCtrl.GetItemCount() && 
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
 			SVIOAdjustDialogClass dlg;
@@ -328,42 +201,43 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			}
 
 			// Search for In or Out
-			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(item);
-			if( l_Iter != m_Items.end() )
+			const auto iter = m_Items.find(item);
+			if(m_Items.end() !=  iter)
 			{
-				pIOEntry = l_Iter->second;
+				pIOEntry = iter->second;
 			}
-
-			if(nullptr != pIOEntry)
+			SVDigitalOutputObject* pDigitalOutput{nullptr};
+			if(nullptr != pOutputList)
 			{
-				pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
-			}
-			else
-			{
-				if (nullptr != pOutputList)
+				if(nullptr != pIOEntry)
 				{
-					pOutputList->DetachOutput(ObjectIdEnum::DigitalOutputUidId + item);
+					pOutput = pOutputList->GetOutput(pIOEntry->m_IOId);
+					pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput.get());
 				}
+				else
+				{
+					pOutputList->DetachOutput(ObjectIdEnum::DigitalOutputId + item);
 
-				pDigOutput = new SVDigitalOutputObject;
-				pDigOutput->updateObjectId(item);
+					pOutput = std::make_shared<SVDigitalOutputObject>();
+					pOutput->updateObjectId(item);
+					pDigitalOutput = dynamic_cast<SVDigitalOutputObject*> (pOutput.get());
+					if(nullptr != pDigitalOutput)
+					{
+						pDigitalOutput->SetChannel(item);
+						pDigitalOutput->SetName(_T(""));
+						pDigitalOutput->Force(false, false);
+						pDigitalOutput->Invert(true);
+					}
+				}
+			}
 
-				pDigOutput->SetChannel( item );
-				pDigOutput->SetName( _T("") );
-				pDigOutput->Force( FALSE, FALSE );
-				pDigOutput->Invert( TRUE );
-
-			}// end else
-
-			if( nullptr != pDigOutput )
+			if( nullptr != pDigitalOutput )
 			{
-				dlg.IOName = _T( "Result " ) + GetListCtrl().GetItemText( item, 0 );
-				dlg.IOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
-				dlg.IOValue.Format( "%d", pDigOutput->GetValue() ? 1 : 0 );
+				dlg.IOName = _T( "Result " ) + m_rCtrl.GetItemText( item, 0 );
+				dlg.IOName += _T( ", " ) + m_rCtrl.GetItemText( item, 1 );
+				dlg.IOValue.Format( "%d", pDigitalOutput->GetValue() ? 1 : 0 );
 				dlg.m_pIOEntry   = pIOEntry;
-				dlg.m_pDigOutput = pDigOutput;
-				dlg.m_bInputMode = FALSE;
-				dlg.m_pIODoc	 = GetDocument();
+				dlg.m_pDigOutput = pDigitalOutput;
 
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
 				switch( dlg.DoModal() )
@@ -375,9 +249,6 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 						// Check if they picked a new output
 						if( dlg.m_pIOEntry != pIOEntry )
 						{
-							SVPPQObject* pPPQ( nullptr );
-							long k = 0;
-
 							if(nullptr != pIOEntry)
 							{									
 								// Make sure that we first reset the old output
@@ -394,16 +265,16 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							{
 								if( nullptr != pOutputList )
 								{
-									pOutputList->DetachOutput( pDigOutput->getObjectId() );
+									pOutputList->DetachOutput( pOutput->getObjectId() );
 								}
-								pDigOutput = nullptr;
+								pOutput = nullptr;
 
-								if( pIOEntry == l_pIOController->GetModuleReady() )
+								if( pIOEntry == pIOController->GetModuleReady() )
 								{
 									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
 									pIOEntry->m_IOId = SvDef::InvalidObjectId;
 								}// end if
-								if( pIOEntry == l_pIOController->GetRaidErrorBit())
+								if( pIOEntry == pIOController->GetRaidErrorBit())
 								{
 									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
 									pIOEntry->m_IOId = SvDef::InvalidObjectId;
@@ -416,16 +287,16 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->getObject()->GetCompleteName().c_str() );
 								if(nullptr == pIOEntry && nullptr != pOutputList )
 								{
-									pOutputList->AttachOutput( pDigOutput );
+									pOutputList->AttachOutput( pOutput );
 								}// end if
 
-								if( dlg.m_pIOEntry == l_pIOController->GetModuleReady() )
+								if( dlg.m_pIOEntry == pIOController->GetModuleReady() )
 								{
 									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
 									dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->getObjectId();
 								}// end if
 
-								if( dlg.m_pIOEntry == l_pIOController->GetRaidErrorBit() )
+								if( dlg.m_pIOEntry == pIOController->GetRaidErrorBit() )
 								{
 									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
 									dlg.m_pIOEntry->m_IOId	= dlg.m_pDigOutput->getObjectId();
@@ -437,9 +308,9 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
 
 							// Rebuild Outputs
-							for( k = 0; k < lPPQSize; k++ )
+							for(long k = 0; k < lPPQSize; k++ )
 							{
-								pPPQ = pConfig->GetPPQ( k );
+								SVPPQObject* pPPQ = pConfig->GetPPQ( k );
 
 								if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
 							}// end for
@@ -470,20 +341,38 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 				dlg.IOName	= _T( "" );
 				dlg.IOValue.Format( "%d", 0 );
 
-				switch( dlg.DoModal() )
+				if(IDOK == dlg.DoModal())
 				{
-				case IDOK:
 					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-					break;
-
-				case IDCANCEL:
-				default:
-					break;
-				}// end switch
-
+				}
 				OnUpdate( nullptr, 0, nullptr );
-			}// end else
-		}// end if
-	}// end if
-}// end OnLButtonDblClk
+			}
+		}
+	}
+}
 
+bool SVDiscreteOutputsView::setListItem(int rowIndex, SVIOEntryHostStructPtr pIOEntry)
+{
+	if(nullptr != pIOEntry)
+	{
+		const SVDigitalOutputObject* pDigOutput = dynamic_cast<const SVDigitalOutputObject*>(SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
+		if (pDigOutput)
+		{
+			if (rowIndex == pDigOutput->GetChannel())
+			{
+				m_rCtrl.SetItem(rowIndex, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
+				m_Items[rowIndex] = pIOEntry;
+				m_rCtrl.SetItemText(rowIndex, 1, pDigOutput->GetName());
+
+				if (pDigOutput->IsForced())
+				{
+					m_rCtrl.SetItemText(rowIndex, 2, pDigOutput->GetForcedValue() ? "1" : "0");
+				}
+
+				m_rCtrl.SetItemText(rowIndex, 3, pDigOutput->IsInverted() ? "1" : "");
+				return true;
+			}
+		}
+	}
+	return false;
+}

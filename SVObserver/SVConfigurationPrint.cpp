@@ -1256,10 +1256,10 @@ void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nI
 			sValue = pDigOutput->IsInverted() ? _T("1") : _T(" ");
 			PrintValueObject(pDC, ptCurPos, _T("Inverted"), sValue.c_str());
 
-			sValue = pDigOutput->IsCombined() ? _T("1") : _T(" ");
+			sValue = pDigOutput->isCombined() ? _T("1") : _T(" ");
 			PrintValueObject(pDC, ptCurPos, _T("Combined"), sValue.c_str());
 			
-			sValue = pDigOutput->GetCombinedValue() ? _T("AND w/ ACK") : _T("OR w/ NAK");
+			sValue = pDigOutput->isAndACK() ? _T("AND w/ ACK") : _T("OR w/ NAK");
 			PrintValueObject(pDC, ptCurPos, _T("Combined using"), sValue.c_str());
 			break;
 
@@ -2067,24 +2067,22 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	{
 		SVInputObjectList* pInputList = nullptr;
 		SVDigitalInputObject* pDigInput;
-		SVIOEntryHostStructPtrVector ppIOEntries;
+		SVIOEntryHostStructPtrVector inputEntryVector;
 
 		// Get list of available inputs
 		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
-		if ( nullptr == pInputList )
+		if (nullptr != pInputList)
+		{
+			inputEntryVector = pInputList->getInputList();
+		}
+		else
 		{
 			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
-		else if (!pInputList->FillInputs( ppIOEntries ))
-		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17002_ErrorFillingInputs );
-			DebugBreak();
-		}
 
-		long lSize = static_cast< long >( ppIOEntries.size() );
+		long lSize = static_cast< long >(inputEntryVector.size() );
 
 		// Print module input title...
 		DWORD dwMaxInput = 0;
@@ -2100,19 +2098,22 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 			std::string Label = SvUl::Format( _T("Digital Input %d:"), i+1 );
 
 			// Find each digital input
-			for (int j = 0; j < lSize; j++)
+			for (const auto& pIOEntry : inputEntryVector)
 			{
-				if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT) { continue; }
+				if (pIOEntry->m_ObjectType != IO_DIGITAL_INPUT)
+				{
+					continue;
+				}
 
-				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[j]->m_IOId );
-
-				pDigInput = dynamic_cast< SVDigitalInputObject* >( l_pObject );
-
-				if (!pDigInput) { continue; }
+				pDigInput = dynamic_cast< SVDigitalInputObject* >(SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
+				if (!pDigInput)
+				{
+					continue;
+				}
 
 				if (i == pDigInput->GetChannel())
 				{
-					PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, Label.c_str(), ppIOEntries[j]);
+					PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, Label.c_str(), pIOEntry);
 					break;
 				}
 			}
@@ -2122,7 +2123,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		int j = 0;
 		for (int i = 0; i < lSize; i++)
 		{
-			if (ppIOEntries[i]->m_ObjectType == IO_REMOTE_INPUT)
+			if (inputEntryVector[i]->m_ObjectType == IO_REMOTE_INPUT)
 			{
 				++j;
 			}
@@ -2135,10 +2136,10 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		{
 			for( int k = 0, l = 0; k < lSize; k++ )
 			{
-				if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT) { continue; }
+				if (inputEntryVector[k]->m_ObjectType != IO_REMOTE_INPUT) { continue; }
 
 				std::string Label = SvUl::Format(SvO::cRemoteInputNumberLabel, (l++) +1 );
-				PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, Label.c_str(), ppIOEntries[k]);
+				PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, Label.c_str(), inputEntryVector[k]);
 			}
 		}
 	}
@@ -2212,17 +2213,15 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		{
 			std::string Label = SvUl::Format( _T("Digital Output %d"), i+1 );
 
-			SVIOEntryHostStructPtr l_pModuleReady = pConfig->GetModuleReady();
-
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( l_pModuleReady->m_IOId );
+			SVIOEntryHostStructPtr pModuleReady = pConfig->GetModuleReady();
 
 			// Check Module Ready first
-			SVDigitalOutputObject* pDigOutput = dynamic_cast< SVDigitalOutputObject* >( pObject );
+			SVDigitalOutputObject* pDigOutput = (nullptr == pModuleReady) ? nullptr : dynamic_cast< SVDigitalOutputObject* >(SVObjectManagerClass::Instance().GetObject(pModuleReady->m_IOId));
 			if (pDigOutput)
 			{
 				if (i == pDigOutput->GetChannel())
 				{
-					PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, Label.c_str(), l_pModuleReady);
+					PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, Label.c_str(), pModuleReady);
 					continue;
 				}// end if
 			}// end if
@@ -2248,11 +2247,9 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				{
 					if ( ppIOEntries[ k ]->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
 
-					pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId );
+					pDigOutput = dynamic_cast<SVDigitalOutputObject*> (SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId ));
 
-					pDigOutput = dynamic_cast< SVDigitalOutputObject* >( pObject );
-
-					if ( !pDigOutput ) { continue; }
+					if (nullptr == pDigOutput ) { continue; }
 
 					if (i == pDigOutput->GetChannel())
 					{

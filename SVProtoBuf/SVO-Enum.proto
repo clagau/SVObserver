@@ -184,6 +184,7 @@ enum SVObjectSubTypeEnum
 	SVRemoteInputObjectType						= 0x00000502;
 	SVRemoteOutputObjectType					= 0x00000503;
 	SVCameraDataInputObjectType					= 0x00000504;
+	PlcOutputObjectType							= 0x00000505;
 
 	// Transform Subtypes:
 	SVImageTransformObjectType					= 0x00000600;

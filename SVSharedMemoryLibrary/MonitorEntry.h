@@ -58,7 +58,7 @@ namespace SvSml
 	{	
 	public:
 		MonitorEntry();
-		MonitorEntry(const std::string &name);
+		explicit MonitorEntry(const std::string &name);
 		
 		bool GetMatroxImageProps(MatroxImageProps &rImageProps) const;
 		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
@@ -68,38 +68,6 @@ namespace SvSml
 		void BuildFromProtoMessage(const SvPml::MesMonitorEntry &rMesMonitorEntry);
 		void AddListItem(SvPb::QueryListItemResponse& rResp) const;
 		bool IsImage() const { return (data.ObjectType == SvPb::SVImageObjectType); };
-
-	private:
-		template<class T>
-		static std::string convertValue(bool isArray, int arrayIndex, variant_t value)
-		{
-			T tmp = 0;
-			if (!isArray)
-			{
-				tmp = static_cast<T>(value);
-			}
-			else
-			{
-				SvUl::getSingleVariantFromArrayOneDim<T>(value, arrayIndex, tmp);
-			}
-			return std::to_string(tmp);
-		}
-
-		template<class T>
-		static std::string convertValue(bool isArray, int arrayIndex, variant_t value, LPCTSTR formatString)
-		{
-			T tmp = 0;
-			if (!isArray)
-			{
-				tmp = static_cast<T>(value);
-			}
-			else
-			{
-				SvUl::getSingleVariantFromArrayOneDim<T>(value, arrayIndex, tmp);
-			}
-			return SvUl::Format(formatString, tmp);
-		}
-
 
 	public:
 		uint32_t m_objectId = SvDef::InvalidObjectId;

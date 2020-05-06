@@ -507,6 +507,9 @@
     <ClCompile Include="LoadConfigWarning.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="PlcOutputsView.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1061,6 +1064,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="PlcOutputsView.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

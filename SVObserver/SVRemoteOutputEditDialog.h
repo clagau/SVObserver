@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "Definitions/ObjectDefines.h"
-#include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 
 #pragma endregion Includes
@@ -51,9 +50,7 @@ protected:
 	void UpdateValueObjectFromCombo();
 
 private:
-	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
-
 	CComboBox m_ValueObjectNameCombo;
-	SVDataItemManager m_Items;
+	std::map<unsigned long, SVIOEntryHostStructPtr> m_Items;
 };
 

@@ -48,38 +48,35 @@ void ChannelTimer(uint8_t channel, std::atomic_bool& rRun, uint32_t initialDelay
 			g_triggerData[channel].m_triggerTimestamp = SvTl::GetTimeStamp();
 			g_triggerData[channel].m_newTrigger = true;
 		}
-		::SetEvent(g_hTelegramEvent);
+		::SetEvent(g_hSignalEvent);
 	}
 }
 
-bool SimulatedTriggerSource::initialize()
+bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
-	bool result{false};
-
-	for (uint8_t i = 0; i < c_NumberOfChannels; ++i)
+	if(channel < c_NumberOfChannels)
 	{
-		const TriggerChannel& rTriggerChannel = getChannel(i);
-		if(rTriggerChannel.m_active && rTriggerChannel.m_period > 0)
+		if(active && period > 0)
 		{
 			//Restart trigger channel
-			result = true;
-			if(m_runThread[i] == false)
+			if(m_runThread[channel] == false)
 			{
-				m_runThread[i] = true;
-				uint32_t initialDelay = c_TimeBetweenTriggerChannels_ms * i;
-				m_timerThread[i] = std::thread(&ChannelTimer, i, std::ref(m_runThread[i]), initialDelay, rTriggerChannel.m_period);
+				m_runThread[channel] = true;
+				uint32_t initialDelay = c_TimeBetweenTriggerChannels_ms * channel;
+				m_timerThread[channel] = std::thread(&ChannelTimer, channel, std::ref(m_runThread[channel]), initialDelay, period);
 			}
 		}
 		else
 		{
-			if (m_timerThread[i].joinable())
+			if (m_timerThread[channel].joinable())
 			{
-				m_runThread[i] = false;
-				m_timerThread[i].join();
+				m_runThread[channel] = false;
+				m_timerThread[channel].join();
 			}
 		}
 	}
-	return result;
+
+	return __super::setTriggerChannel(channel, active, period);
 }
 
 bool SimulatedTriggerSource::analyzeTelegramData()

@@ -32,9 +32,20 @@
 
 IMPLEMENT_DYNCREATE(SVRemoteOutputsView, CListView )
 
-SVRemoteOutputsView::SVRemoteOutputsView()
+BEGIN_MESSAGE_MAP(SVRemoteOutputsView, CListView)
+	ON_WM_CREATE()
+	ON_WM_LBUTTONDBLCLK()
+	ON_COMMAND(ID_REMOTE_OUTPUT_PROPERTIES, &SVRemoteOutputsView::OnRemoteOutputProperties)
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_REMOTE_OUTPUT_ADD, &SVRemoteOutputsView::OnRemoteOutputAdd)
+	ON_COMMAND(ID_REMOTE_OUTPUT_DELETE, &SVRemoteOutputsView::OnRemoteOutputDelete)
+	ON_COMMAND(ID_REMOTE_OUTPUT_EDIT, &SVRemoteOutputsView::OnRemoteOutputEdit)
+	ON_WM_LBUTTONDOWN()
+END_MESSAGE_MAP()
+
+SVRemoteOutputsView::SVRemoteOutputsView() :
+	m_rCtrl(GetListCtrl())
 {
-	m_pDocument=dynamic_cast<SVIODoc*>(CListView::GetDocument());
 	VERIFY(m_ContextMenuProp.LoadMenu(IDR_REMOTE_OUTPUT_CONTEXT_MENU_PROP));
 	VERIFY(m_ContextMenuItem.LoadMenu(IDR_REMOTE_OUTPUT_CONTEXT_MENU_ITEM));
 	VERIFY(m_ContextMenuItemNoDelete.LoadMenu(IDR_REMOTE_OUTPUT_CONTEXT_MENU_ITEM_NO_DELETE));
@@ -47,68 +58,37 @@ SVRemoteOutputsView::~SVRemoteOutputsView()
 	m_ContextMenuItemNoDelete.DestroyMenu();
 }
 
-BEGIN_MESSAGE_MAP(SVRemoteOutputsView, CListView)
-	ON_WM_CREATE()
-	ON_WM_LBUTTONDBLCLK()
-	ON_COMMAND(ID_REMOTE_OUTPUT_PROPERTIES, &SVRemoteOutputsView::OnRemoteOutputProperties)
-	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_REMOTE_OUTPUT_ADD, &SVRemoteOutputsView::OnRemoteOutputAdd)
-	ON_COMMAND(ID_REMOTE_OUTPUT_DELETE, &SVRemoteOutputsView::OnRemoteOutputDelete)
-	ON_COMMAND(ID_REMOTE_OUTPUT_EDIT, &SVRemoteOutputsView::OnRemoteOutputEdit)
-	ON_WM_LBUTTONDOWN()
-END_MESSAGE_MAP()
-
-
-#ifdef _DEBUG
-void SVRemoteOutputsView::AssertValid() const
-{
-	CListView::AssertValid();
-}
-
-void SVRemoteOutputsView::Dump(CDumpContext& dc) const
-{
-	CListView::Dump(dc);
-}
-#endif //_DEBUG
-
-SVIODoc* SVRemoteOutputsView::GetDocument() // Die endgültige (nicht zur Fehlersuche kompilierte) Version ist Inline
-{
-	if( nullptr == m_pDocument )
-	{
-		m_pDocument = dynamic_cast<SVIODoc*>(CListView::GetDocument());
-	}
-	return m_pDocument;
-}
-
 int SVRemoteOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	lpCreateStruct->style |= LVS_SINGLESEL ;
 	if (CListView::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
+	}
 
-	CListCtrl& lc = GetListCtrl();
+	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1 );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_COLLAPSE ) );
+	m_ImageList.Add( AfxGetApp()->LoadIcon( IDI_EXPAND ) );
 
-	ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 4, 1 );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_COLLAPSE ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_EXPAND ) );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
+	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_REMOTE_OUTPUT_ICON ) );
 
-	StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_REMOTE_OUTPUT_ICON ) );
-
-	lc.SetImageList( &StateImageList, LVSIL_STATE );
-	lc.SetImageList( &ImageList, LVSIL_SMALL );
+	m_rCtrl.SetImageList( &m_StateImageList, LVSIL_STATE );
+	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
 	// insert columns
-	lc.InsertColumn( 0, _T( "Remote Output" ), LVCFMT_LEFT, -1, -1 );
-	lc.InsertColumn( 1, _T( "PPQ" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 0, _T( "Remote Output" ), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( 1, _T( "PPQ" ), LVCFMT_LEFT, -1, -1 );
 		
-	lc.SetColumnWidth( 0, 500 );
-	lc.SetColumnWidth( 1, 125 );
+	m_rCtrl.SetColumnWidth( 0, 500 );
+	m_rCtrl.SetColumnWidth( 1, 125 );
 	
-	lc.SetExtendedStyle( lc.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
+	m_rCtrl.SetExtendedStyle( m_rCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
+
+	m_pDocument = dynamic_cast<SVIODoc*>(CListView::GetDocument());
 	return 0;
 }
 
@@ -126,17 +106,15 @@ BOOL SVRemoteOutputsView::PreCreateWindow(CREATESTRUCT& cs)
 
 void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	SVIODoc* pIODoc = GetDocument();
-
 	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( pIODoc && ::IsWindow( m_hWnd ) )
+	if(nullptr != m_pDocument && ::IsWindow( m_hWnd ) )
 	{
-		GetListCtrl().SetRedraw(false);
+		m_rCtrl.SetRedraw(false);
 
 		// First clean up list view
-		GetListCtrl().DeleteAllItems();
+		m_rCtrl.DeleteAllItems();
 		
 		long lPPQSize = 0;
 		int j = 0;
@@ -188,20 +166,20 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				continue;
 			}
 
-			SVGroupStateMap::const_iterator l_Iter = m_GroupStates.find( rGroupName );
+			const auto l_Iter = m_GroupStates.find( rGroupName );
 
 			bool l_bCollapse = ( l_Iter != m_GroupStates.end() ) && ( l_Iter->second );
 
-			int ipos = GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
+			int ipos = m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
 				k, rGroupName.c_str(), 
 				INDEXTOSTATEIMAGEMASK( 1 ),	// state
 				LVIS_STATEIMAGEMASK,		// stateMask
 				2 + l_bCollapse,			// Image
 				0 );	// Set item data
 
-			GetListCtrl().SetItemData( ipos, reinterpret_cast<DWORD_PTR>(l_pControl) );
+			m_rCtrl.SetItemData( ipos, reinterpret_cast<DWORD_PTR>(l_pControl) );
 
-			GetListCtrl().SetItemText( ipos, 1, l_pControl->GetPPQName().c_str() );
+			m_rCtrl.SetItemText( ipos, 1, l_pControl->GetPPQName().c_str() );
 
 			int lInsertedEntry = 0;
 
@@ -222,17 +200,17 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					std::string Name = l_pOutput->GetInputValueObjectName();
 
 					// Column: Description "Value Object Name"
-					GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
+					m_rCtrl.InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
 						lInsertedEntry + iCurrentPPQ + k, Name.c_str(), 
 						INDEXTOSTATEIMAGEMASK( 2 ),	// state
 						LVIS_STATEIMAGEMASK,		// stateMask
 						1,
 						0);	// Set item data
 
-					GetListCtrl().SetItem( lInsertedEntry + iCurrentPPQ + k, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
+					m_rCtrl.SetItem( lInsertedEntry + iCurrentPPQ + k, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0 );
 
 					// Store SVDLLOutputObject pointer in item data for editing
-					GetListCtrl().SetItemData( lInsertedEntry + iCurrentPPQ + k, reinterpret_cast<DWORD_PTR>(l_pOutput) );
+					m_rCtrl.SetItemData( lInsertedEntry + iCurrentPPQ + k, reinterpret_cast<DWORD_PTR>(l_pOutput) );
 					
 					lInsertedEntry++;
 				}// end for
@@ -243,7 +221,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			k += lInsertedEntry ;
 			
 		}// end for
-		GetListCtrl().SetRedraw(true);
+		m_rCtrl.SetRedraw(true);
 	}// end if
 	
 	//CListView::OnUpdate( pSender, lHint, pHint );   // This call will cause flicker
@@ -255,14 +233,14 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	SVRemoteOutputObject* pRemoteOutput = nullptr;
 	UINT flags;
 
-	int l_item = GetListCtrl().HitTest( point, &flags );
+	int l_item = m_rCtrl.HitTest( point, &flags );
 
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp.OkToEdit() )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
-		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
+		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));
 		if( pRemoteOutput )
 		{
 			// The User clicked on the Item
@@ -275,7 +253,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		{	// The user clicked on the PPQ which means a new object.
 
 			// Edit DLL Properties.
-			SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
+			SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));
 			if( pOutputGroup )
 			{
 				OnRemoteOutputProperties();
@@ -284,20 +262,20 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( nullptr, 0, nullptr );
-		GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+		m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 	} // if ( item >= 0 && ! SVSVIMStateClass::CheckState
-}// OnLButtonDblClk(
+}// OnLButtonDbm_rCtrllk(
 
 BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 {
 	BOOL l_bRet = FALSE;
 	if(pMsg->message==WM_KEYDOWN && TheSVObserverApp.OkToEdit() )
 	{
-		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
+		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if( nullptr != l_Pos )
 		{
-			int l_item = GetListCtrl().GetNextSelectedItem( l_Pos );
-			DWORD_PTR l_pdwItemData = GetListCtrl().GetItemData( l_item );
+			int l_item = m_rCtrl.GetNextSelectedItem( l_Pos );
+			DWORD_PTR l_pdwItemData = m_rCtrl.GetItemData( l_item );
 			if( l_item >= 0 )
 			{
 				if( VK_DELETE == pMsg->wParam )
@@ -320,7 +298,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 						}
 						SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 						OnUpdate( nullptr, 0, nullptr );
-						GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						l_bRet = TRUE;
 					}
 				}
@@ -347,7 +325,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 						}
 						SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 						OnUpdate( nullptr, 0, nullptr );
-						GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						l_bRet = TRUE;
 					}
 				}
@@ -364,10 +342,10 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 						LVFINDINFOA l_fi;
 						l_fi.flags = LVFI_PARTIAL | LVFI_STRING;
 						l_fi.psz = pOutputGroup->GetGroupName().c_str();
-						int l_iPos = GetListCtrl().FindItem(&l_fi );
+						int l_iPos = m_rCtrl.FindItem(&l_fi );
 						if( l_iPos > -1 )
 						{
-							GetListCtrl().SetItemState( l_iPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+							m_rCtrl.SetItemState( l_iPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						}
 						l_bRet = TRUE;
 					}
@@ -385,10 +363,10 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 						LVFINDINFOA l_fi;
 						l_fi.flags = LVFI_PARTIAL | LVFI_STRING;
 						l_fi.psz = pOutputGroup->GetGroupName().c_str();
-						int l_iPos = GetListCtrl().FindItem(&l_fi );
+						int l_iPos = m_rCtrl.FindItem(&l_fi );
 						if( l_iPos > -1 )
 						{
-							GetListCtrl().SetItemState( l_iPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+							m_rCtrl.SetItemState( l_iPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						}
 						l_bRet = TRUE;
 					}
@@ -409,7 +387,7 @@ HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( std::string& rGroupNam
 	for( int i = p_iItem ; i > -1 ; i-- )
 	{
 		DWORD_PTR pdwItemData;
-		pdwItemData = GetListCtrl().GetItemData( i );
+		pdwItemData = m_rCtrl.GetItemData( i );
 		SVRemoteOutputObject* l_pOutput = dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
 		if( nullptr != l_pOutput )
 		{
@@ -435,11 +413,11 @@ void SVRemoteOutputsView::OnRemoteOutputAdd()
 {
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
+		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		int l_item = -1;
 		if( l_Pos )
 		{
-			l_item = GetListCtrl().GetNextSelectedItem(l_Pos);
+			l_item = m_rCtrl.GetNextSelectedItem(l_Pos);
 		}
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
@@ -452,7 +430,7 @@ void SVRemoteOutputsView::OnRemoteOutputAdd()
 		OnUpdate( nullptr, 0, nullptr );
 		if( l_item > -1 )
 		{
-			GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+			m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 		}
 	}
 }
@@ -473,13 +451,13 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 	UINT nFlags = 0;
 	CPoint ListPoint = point;
 
-	GetListCtrl().ScreenToClient( &ListPoint);
+	m_rCtrl.ScreenToClient( &ListPoint);
 	// store the item in this class
-	m_CurrentItem = GetListCtrl().HitTest( ListPoint, &nFlags );
+	m_CurrentItem = m_rCtrl.HitTest( ListPoint, &nFlags );
 
 	if ( m_CurrentItem >= 0 )
 	{
-		SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem )));
+		SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( m_CurrentItem )));
 
 		if( pOutputGroup )
 		{
@@ -501,7 +479,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 		else
 		{
 			// Context Menu...Add and Properties
-			SVRemoteOutputObject* l_pOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem )));
+			SVRemoteOutputObject* l_pOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( m_CurrentItem )));
 			if( l_pOutput )
 			{
 				SVRemoteOutputObject* l_pPrevOutput = nullptr;
@@ -509,7 +487,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 				CWnd* pWndPopupOwner = this;
 				if( m_CurrentItem > 1 )
 				{
-					l_pPrevOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem-1 )));
+					l_pPrevOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( m_CurrentItem-1 )));
 				}
 				size_t pos = l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") );
 				if( pos != std::string::npos && (nullptr == l_pPrevOutput) ) // If the name is trigger count
@@ -540,14 +518,14 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 {
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
+		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if( nullptr != l_Pos )
 		{
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-			int l_item = GetListCtrl().GetNextSelectedItem( l_Pos );
-			SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
+			int l_item = m_rCtrl.GetNextSelectedItem( l_Pos );
+			SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));
 			if( nullptr != pRemoteOutput && nullptr != pConfig )
 			{
 				std::string RemoteGroup = pRemoteOutput->GetGroupID();
@@ -568,13 +546,13 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 						pConfig->DeleteRemoteOutputEntry( RemoteGroup, pRemoteOutput );
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 						OnUpdate( nullptr, 0, nullptr );
-						if( l_item >= GetListCtrl().GetItemCount() )
+						if( l_item >= m_rCtrl.GetItemCount() )
 						{
 							l_item--;
 							if( l_item < 0 )
 								l_item = 0;
 						}
-						GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 					}
 				}
 			}
@@ -582,7 +560,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 			{
 				// The user clicked on a DLL
 				// Check which DLL to delete.
-				SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));;
+				SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));;
 				if( pOutputGroup )
 				{
 					std::string strGroup = pOutputGroup->GetGroupName();
@@ -656,12 +634,6 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 					OnUpdate( nullptr, 0, nullptr );
 					l_bRet = true;
 				}
-				if( p_iWhere >= GetListCtrl().GetItemCount() )
-				{
-					p_iWhere--;
-					if( p_iWhere < 0 )
-						p_iWhere = 0;
-				}
 			}
 		}
 	}
@@ -676,7 +648,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 
 
 	SVRemoteOutputObject* pRemoteOutput = nullptr;
-	pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( p_iWhere )));
+	pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( p_iWhere )));
 	if( pRemoteOutput )
 	{
 		SVConfigurationObject* pConfig( nullptr );
@@ -717,17 +689,17 @@ void SVRemoteOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	UINT uFlags;
 
-	int l_item = GetListCtrl().HitTest( point, &uFlags);
+	int l_item = m_rCtrl.HitTest( point, &uFlags);
 	if( (uFlags & LVHT_ONITEMSTATEICON) || (uFlags & LVHT_ONITEMICON) )
 	{
 		// Toggle Collapse.
 		if( l_item > -1 )
 		{
-			DWORD_PTR l_pdwItemData = GetListCtrl().GetItemData( l_item );
+			DWORD_PTR l_pdwItemData = m_rCtrl.GetItemData( l_item );
 			SVRemoteOutputGroup* pOutputGroup = dynamic_cast<SVRemoteOutputGroup*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));;
 			if( pOutputGroup )
 			{
-				SVGroupStateMap::const_iterator l_Iter = m_GroupStates.find( pOutputGroup->GetGroupName().c_str() );
+				const auto l_Iter = m_GroupStates.find( pOutputGroup->GetGroupName().c_str() );
 				bool l_bCollapse = ( l_Iter != m_GroupStates.end() ) && ( l_Iter->second );
 
 				m_GroupStates[ pOutputGroup->GetGroupName().c_str() ] = !l_bCollapse;
@@ -736,10 +708,10 @@ void SVRemoteOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 				LVFINDINFOA l_fi;
 				l_fi.flags = LVFI_PARTIAL | LVFI_STRING;		
 				l_fi.psz = pOutputGroup->GetGroupName().c_str();
-				int l_iPos = GetListCtrl().FindItem(&l_fi );
+				int l_iPos = m_rCtrl.FindItem(&l_fi );
 				if( l_iPos > -1 )
 				{
-					GetListCtrl().SetItemState( l_iPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+					m_rCtrl.SetItemState( l_iPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				}
 			}
 		}

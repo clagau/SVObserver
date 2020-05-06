@@ -26,18 +26,15 @@ public:
 	explicit SVOutputObjectList( LPCSTR ObjectName );
 	SVOutputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECTLIST );
 
-	virtual ~SVOutputObjectList();
+	virtual ~SVOutputObjectList() = default;
 
-	bool Create();
-	void Destroy();
+	SVOutputObjectPtr GetOutput(uint32_t outputID) const;
 
-	SVOutputObject* GetOutput(uint32_t outputID) const;
+	SVOutputObjectPtr GetOutput(const std::string& rName) const;
 
-	SVOutputObject* GetOutput(const std::string& rName) const;
+	SVOutputObjectPtr GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int GuidIndex = -1);
 
-	SVOutputObject* GetOutputFlyweight(const std::string& rName, SvPb::SVObjectSubTypeEnum ObjectSubType, int idIndex = -1);
-
-	HRESULT AttachOutput( SVOutputObject *pOutput );
+	HRESULT AttachOutput(SVOutputObjectPtr pOutput);
 	HRESULT DetachOutput(uint32_t outputID );
 
 	ObjectIdVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool p_ACK, bool p_NAK);
@@ -49,13 +46,14 @@ public:
 	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
 	HRESULT RemoveUnusedOutputs( const SvDef::StringVector& rInspectionNames, const SvDef::StringVector& rPPQNames );
 
-	bool FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
+	SVIOEntryHostStructPtrVector getOutputList() const;
 
 	bool OutputIsNotValid( std::string p_strName );
 
 	typedef  std::map<int, _variant_t> IntVariantMap;
 	///This function returns no error because the IO PLC dll is the only type which supports this functionality
 	void WriteOutputData(unsigned long triggerChannel, const IntVariantMap& rData);
+	void setModuleReady(bool value);
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
@@ -63,12 +61,11 @@ public:
 
 private:
 	std::pair<uint32_t, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool p_ACK, bool p_NAK );
-
-	void ClearOutputList();
+	SVOutputObjectPtr findOutputName(const std::string& rOutputName) const;
 
 	mutable std::mutex m_protectOutputList;
 
-	ObjectIdSVOutputObjectPtrMap m_OutputObjects;
+	ObjectIdSVOutputObjectPtrMap m_outputObjectMap;
 };
 
 

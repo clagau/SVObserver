@@ -108,7 +108,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_PARSE_OBJECT_SCRIPT_END, OnEndObjectScriptParse)
 	ON_MESSAGE(SV_PARSE_OBJECT_CREATE_DONE, OnEndObjectCreation)
 	ON_MESSAGE(SV_LOGGED_ON_USER_CHANGED,OnUserChanged)
-	ON_MESSAGE( SV_IOVIEW_HIDE_TAB, OnHideIOViewTab )
 	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
 	ON_WM_ACTIVATEAPP()
 	ON_MESSAGE(SV_SET_MODE, OnSetMode)
@@ -1493,12 +1492,6 @@ void SVMainFrame::OnSizing(UINT fwSide, LPRECT pRect)
 	m_bSizeChanged = TRUE;
 
 	CMDIFrameWnd::OnSizing(fwSide, pRect);
-}
-
-LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
-{
-	TheSVObserverApp.HideIOTab( (DWORD)p_wParam);
-	return 0;
 }
 
 double SVMainFrame::GetZoomToolbarValue() const

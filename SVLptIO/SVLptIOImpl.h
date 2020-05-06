@@ -15,6 +15,11 @@
 #include "SVLptIO.h"
 #include "TriggerInformation/IODeviceBase.h"
 
+constexpr int cPortNumber = 2;
+constexpr int cInputCount = 8;
+constexpr int cOutputCount = 16;
+constexpr int cTriggerMax = 3;
+
 
 enum ParallelBoardInterfaceType
 {
@@ -136,11 +141,11 @@ protected:
 		SVStatusDeque m_StatusLog;
 	#endif
 
-	int m_numPorts;
-	int m_numInputs;
-	int m_numOutputs;
-	int m_numTriggers;
-	long m_lBoardVersion;
+	int m_numPorts{cPortNumber};
+	int m_numInputs{cInputCount};
+	int m_numOutputs{cOutputCount};
+	int m_numTriggers{cTriggerMax};
+	long m_lBoardVersion{0L};
 	ParallelBoardInterfaceType m_lParallelBoardInterfaceBehavior;
 
 	short GetPreviousOutputs(long lControl);
@@ -172,8 +177,9 @@ private:
 	//! The thread is started only once and uses this active flag in the callback function to control going online and offline
 	//! It should be solved in the dll however changes could cause the driver signature to become invalid
 	//! The thread is closed on destruction causing the one thread handle to leak
-	bool m_TriggerActive;
+	bool m_TriggerActive{false};
 	bool m_isFirstTimeToReadOrWrite = true; //this variable introduced in SVO-1692 to suppress spurious "invalid line state" warning
+	bool m_moduleReady{false};
 #pragma endregion Member Variables
 };
 

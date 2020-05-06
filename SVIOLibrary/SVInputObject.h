@@ -14,21 +14,38 @@
 //Moved to precompiled header: #include <map>
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 class SVInputObject : public SVObjectClass
 {
 public:
-	explicit SVInputObject( LPCSTR strObjectName );
-	SVInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT );
+	explicit SVInputObject( LPCSTR strObjectName ) { m_isCreated = true; }
+	explicit SVInputObject(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT)
+	{
+		m_isCreated = true;
+	}
 
-	virtual ~SVInputObject();
 
-	virtual bool Create();
-	virtual bool Destroy();
+	virtual ~SVInputObject() = default;
 
-	virtual HRESULT Read( _variant_t& p_rValue ) = 0;
+	virtual HRESULT Read(_variant_t& rValue) const = 0;
+	virtual long GetChannel() const = 0;
+
+	/// Update the objectId to a fix ID depend of a position (must between 0 and 0x100).
+	/// \param position [in]
+	void updateObjectId(int position)
+	{
+		if (0 <= position && 0x100 > position && SvDef::InvalidObjectId != m_startID)
+		{
+			SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, m_startID + position);
+		}
+	}
+
+protected:
+	uint32_t m_startID{SvDef::InvalidObjectId};
 };
 
-typedef std::map< uint32_t, SVInputObject* > ObjectIdSVInputObjectPtrMap;
+typedef std::shared_ptr<SVInputObject> SVInputObjectPtr;
+typedef std::map<uint32_t, SVInputObjectPtr> ObjectIdSVInputObjectPtrMap;
 

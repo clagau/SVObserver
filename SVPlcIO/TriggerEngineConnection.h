@@ -16,6 +16,8 @@ namespace Tec
 void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcTransferTime, uint16_t simulateTriggers);
 void stopTriggerEngine();
 
+HRESULT initTriggerEngine();
+
 void setReady(bool ready);
 void setTriggerChannel(uint8_t channel, bool active, uint32_t period=0UL);
 

@@ -14,6 +14,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#pragma endregion Includes
 
 namespace SvPlc
 {
@@ -23,25 +24,14 @@ std::vector<RecordData> g_PlcListOutput;
 
 uint32_t g_PlcTriggerCount[cNumberTriggers] {0, 0, 0, 0};
 uint32_t g_PlcResultCount[cNumberTriggers] {0, 0, 0, 0};
-std::atomic_bool g_enableInterrupt{false};
-
-#pragma endregion Includes
 
 #pragma region Declarations
 SVPlcIOImpl g_Plc;
 
-constexpr uint8_t c_InspectionBad = 5;
-constexpr uint8_t c_InspectionGood = 6;
-constexpr unsigned long cNumberPorts = 2;
-constexpr unsigned long cInputCount = 16;
-constexpr unsigned long cOutputCount = 16;
+constexpr unsigned long cInputCount = 0;
+constexpr unsigned long cOutputCount = 14;
 constexpr LPCTSTR c_IniFile = "SVPLCIO.ini";
 constexpr LPCTSTR c_SettingsGroup = "Settings";
-constexpr LPCTSTR c_TriggerGroup = "Trigger%d";
-constexpr LPCTSTR c_DataValidIndex = "DataValidIndex";
-constexpr LPCTSTR c_ObjectGoodIndex = "ObjectGoodIndex";
-constexpr LPCTSTR c_ConditionIndex = "ConditionIndex";
-constexpr LPCTSTR c_SVO_ReadyIndex = "SVO-ReadyIndex";
 constexpr LPCTSTR c_PLCSimulation = "PLCSimulation";
 constexpr LPCTSTR c_PLC_Transfer = "PLC-TransferTime";
 constexpr LPCTSTR c_DelayedReportTrigger = "DelayedReportTrigger";
@@ -78,8 +68,6 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 	if (bInit)
 	{
 		std::lock_guard<std::mutex> guard(m_protectPlc);
-		m_Output = 0;
-		m_Input = 0;
 		char buffer[255];
 		memset(buffer, 0, 255);
 		std::string iniFile = SvStl::GlobalPath::Inst().GetBinPath(c_IniFile);
@@ -87,25 +75,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		m_OutputFileName = buffer;
 		m_plcSimulation = static_cast<uint16_t> (::GetPrivateProfileInt(c_SettingsGroup, c_PLCSimulation, 0, iniFile.c_str()));
 		m_plcTransferTime =::GetPrivateProfileInt(c_SettingsGroup, c_PLC_Transfer, 0, iniFile.c_str());
-		m_readyBit =::GetPrivateProfileInt(c_SettingsGroup, c_SVO_ReadyIndex, 0, iniFile.c_str());
-		m_readyBit = (0 < m_readyBit) ? m_readyBit - 1 : -1;
 		m_delayedReportTrigger = (1 == ::GetPrivateProfileInt(c_SettingsGroup, c_DelayedReportTrigger, 0, iniFile.c_str())) ? true : false;
-		for(int i=0; i < cNumberTriggers; i++)
-		{
-			TriggerParameter& rTrigger = m_trigger[i];
-			rTrigger.m_ObjectID = 0;
-			std::string triggerGroup = SvUl::Format(c_TriggerGroup, i + 1);
-			rTrigger.m_conditionIndex = static_cast<long> (::GetPrivateProfileInt(triggerGroup.c_str(), c_ConditionIndex, -1, iniFile.c_str()));
-			rTrigger.m_dataValidIndex = static_cast<long> (::GetPrivateProfileInt(triggerGroup.c_str(), c_DataValidIndex, -1, iniFile.c_str()));
-			rTrigger.m_objectGoodIndex = static_cast<long> (::GetPrivateProfileInt(triggerGroup.c_str(), c_ObjectGoodIndex, -1, iniFile.c_str()));
-			//Make it a zero based index
-			rTrigger.m_dataValidIndex = (0 < rTrigger.m_dataValidIndex) ? rTrigger.m_dataValidIndex - 1 : -1;
-			rTrigger.m_conditionIndex = (0 < rTrigger.m_conditionIndex) ? rTrigger.m_conditionIndex - 1 : -1;
-			rTrigger.m_objectGoodIndex = (0 < rTrigger.m_objectGoodIndex) ? rTrigger.m_objectGoodIndex - 1 : -1;
-
-			rTrigger.m_period = static_cast<long> (::GetPrivateProfileInt(triggerGroup.c_str(), "TriggerPeriod", 0, iniFile.c_str()));
-		}
-
 		m_isInitialized = true;
 	}
 	else
@@ -118,17 +88,19 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 
 unsigned long SVPlcIOImpl::GetInputCount()
 {
+	///Required by SVObserver to initialize IO
 	return cInputCount;
 }
 
 unsigned long SVPlcIOImpl::GetOutputCount()
 {
+	///Required by SVObserver to initialize IO
 	return cOutputCount;
 }
 
 unsigned long SVPlcIOImpl::GetPortCount()
 {
-	return cNumberPorts;
+	return 0L;
 }
 
 HRESULT SVPlcIOImpl::GetInputValue(unsigned long* pValue)
@@ -138,9 +110,7 @@ HRESULT SVPlcIOImpl::GetInputValue(unsigned long* pValue)
 	if(nullptr != pValue)
 	{
 		//Note we are inverting the signal because discrete IO uses inverted IOs
-		std::lock_guard<std::mutex> guard(m_protectPlc);
-		WORD inputValue = ~m_Input;
-		*pValue = static_cast<unsigned long> (inputValue);
+		*pValue = 0L;
 		result = S_OK;
 	}
 
@@ -149,32 +119,40 @@ HRESULT SVPlcIOImpl::GetInputValue(unsigned long* pValue)
 
 HRESULT SVPlcIOImpl::SetOutputValue(unsigned long value)
 {
-	//Note we are inverting the signal because discrete IO uses inverted IOs
-	WORD outputValue = ~static_cast<WORD> (value);
-	std::lock_guard<std::mutex> guard(m_protectPlc);
-	m_Output = outputValue;
 	return S_OK;
 }
 
 HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerChannel, const SvTh::IntVariantMap& rData)
 {
 	HRESULT result {E_FAIL};
+	ResultReport reportResult;
 
-	SvTh::IntVariantMap::const_iterator iterData {rData.end()};
-	iterData = rData.find(SvTh::TriggerDataEnum::ObjectID);
+	reportResult.m_channel = static_cast<uint8_t> (triggerChannel);
+	auto iterData = rData.find(SvTh::TriggerDataEnum::ObjectID);
 	if (rData.end() != iterData)
 	{
-		m_trigger[triggerChannel - 1].m_ObjectID = iterData->second;
-		result = S_OK;
+		reportResult.m_currentObjectID = iterData->second;
+	}
+	iterData = rData.find(SvTh::TriggerDataEnum::OutputData);
+	if (rData.end() != iterData)
+	{
+		const _variant_t& rResult{iterData->second};
+		if((VT_UI1 | VT_ARRAY) ==  rResult.vt && rResult.parray->rgsabound[0].cElements == c_ResultSize)
+		{
+			memcpy(&reportResult.m_results[0], rResult.parray->pvData, c_ResultSize * sizeof(uint8_t));
+		}
+	}
+	Tec::writeResult(reportResult);
+	result = S_OK;
+	if (false == m_OutputFileName.empty())
+	{
+		g_PlcResultCount[triggerChannel]++;
+
+		g_PlcListOutput.emplace_back(RecordData {reportResult.m_channel,g_PlcResultCount[triggerChannel], SvTl::GetTimeStamp(), reportResult.m_currentObjectID, reportResult.m_results[0] == 6, std::string{}});
 	}
 	return result;
 }
 
-// GetBoardVersion
-// Get Board Version sends a Sub Command value of 0x56 (GET_BOARD_VERSION)
-// This puts the parallel board in a mode that will send the 
-// Board version on the next four ControlReadCommands.
-//  
 HRESULT SVPlcIOImpl::GetBoardVersion(long& rlVer)
 {
 	return S_OK;
@@ -182,50 +160,12 @@ HRESULT SVPlcIOImpl::GetBoardVersion(long& rlVer)
 
 HRESULT SVPlcIOImpl::GetInputBit(unsigned long bitNum, bool& rBitVal)
 {
-	HRESULT result {E_FAIL};
-
-	if (bitNum < cInputCount)
-	{
-		WORD bitMask = 1 << bitNum;
-		std::lock_guard<std::mutex> guard(m_protectPlc);
-		//Note we are inverting the signal because discrete IO uses inverted IOs
-		rBitVal = 0 == (m_Input & bitMask) ? true : false;
-		result = S_OK;
-	}
-	return result;
+	return S_OK;
 }
 
 HRESULT SVPlcIOImpl::SetOutputBit(unsigned long bitNum, bool bitVal)
 {
-	HRESULT result {E_FAIL};
-
-	if(bitNum < cOutputCount)
-	{
-		WORD bitMask = 1 << bitNum;
-		{
-			std::lock_guard<std::mutex> guard(m_protectPlc);
-			//Note we are inverting the signal because discrete IO uses inverted IOs
-			m_Output = bitVal ? m_Output & ~bitMask : m_Output | bitMask;
-		}
-		int triggerIndex{-1};
-		//Check if a data valid signal has been triggered
-		for(int i=0; i < cNumberTriggers && -1 == triggerIndex; ++i)
-		{
-			triggerIndex = (bitNum == m_trigger[i].m_dataValidIndex) ? i : -1;
-		}
-		//Check only when Data valid is set (bitVal = false due to Inverted signal)
-		if(-1 != triggerIndex && false == bitVal && 0 != m_trigger[triggerIndex].m_ObjectID)
-		{
-			WriteResult(triggerIndex);
-		}
-		if(bitNum == m_readyBit)
-		{
-			//bitVal = false due to Inverted signal
-			Tec::setReady(false == bitVal);
-		}
-		result = S_OK;
-	}
-	return result;
+	return S_OK;
 }
 
 unsigned long SVPlcIOImpl::GetTriggerCount()
@@ -249,68 +189,85 @@ BSTR SVPlcIOImpl::GetTriggerName(unsigned long triggerChannel)
 
 void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerChannel)
 {
-	std::lock_guard<std::mutex> guard(m_protectPlc);
-	int triggerIndex = triggerChannel - 1;
-	if (0 <= triggerIndex && cNumberTriggers > triggerIndex)
+	m_currentTriggerIndex = static_cast<int8_t> (triggerChannel - 1);
+
+	if (false == m_engineStarted)
 	{
-		TriggerParameter& rTrigger = m_trigger[triggerIndex];
-		if (!m_engineStarted)
+		for(int i=0; i < cNumberTriggers; ++i)
 		{
-			for(int i=0; i < cNumberTriggers; ++i)
-			{
-				g_PlcTriggerCount[i] = 0;
-				g_PlcResultCount[i] = 0;
-			}
-			g_PlcListInput.clear();
-			g_PlcListOutput.clear();
-			m_OutputData.clear();
-			if(false == m_OutputFileName.empty())
-			{
-				g_PlcListInput.reserve(20000);
-				g_PlcListOutput.reserve(20000);
-			}
-			Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcTransferTime, m_plcSimulation);
-			//Set the ready bit
-			WORD bitMask = 1 << m_readyBit;
-			Tec::setReady(0 != (bitMask & m_Output));
-			m_engineStarted = true;
-			g_enableInterrupt = true;
-			::OutputDebugString("Irq Enabled set\n");
+			g_PlcTriggerCount[i] = 0;
+			g_PlcResultCount[i] = 0;
 		}
-		if (!rTrigger.m_started)
+		g_PlcListInput.clear();
+		g_PlcListOutput.clear();
+		m_OutputData.clear();
+		if(false == m_OutputFileName.empty())
 		{
-			//Trigger Engine trigger channel is zero based while SVObserver is one based!
-			Tec::setTriggerChannel(static_cast<uint8_t> (triggerIndex), true, rTrigger.m_period);
-			rTrigger.m_started = true;
+			g_PlcListInput.reserve(20000);
+			g_PlcListOutput.reserve(20000);
 		}
+		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcTransferTime, m_plcSimulation);
+		Tec::setReady(m_moduleReady);
+		m_engineStarted = true;
 	}
 }
 
+HRESULT SVPlcIOImpl::afterStartTrigger(HRESULT result)
+{
+	if (S_OK == result)
+	{
+		result = Tec::initTriggerEngine();
+		if(S_OK ==result)
+		{
+			if(0 <= m_currentTriggerIndex && c_NumberOfChannels > m_currentTriggerIndex)
+			{
+				if (false == m_triggerStarted[m_currentTriggerIndex])
+				{
+					Tec::setTriggerChannel(static_cast<uint8_t> (m_currentTriggerIndex), true, m_plcSimulation);
+					m_triggerStarted[m_currentTriggerIndex] = true;
+				}
+			}
+		}
+		else
+		{
+			///Clean up all triggers and engine
+			for(uint8_t i=0; i < cNumberTriggers; ++i)
+			{
+				if (m_triggerStarted[i])
+				{
+					m_triggerStarted[i] = false;
+					//Trigger Engine trigger channel is zero based while SVObserver is one based!
+					Tec::setTriggerChannel(i, false, 0);
+				}
+			}
+			Tec::stopTriggerEngine();
+			m_engineStarted = false;
+		}
+	}
+	return result;
+}
 
 void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 {
-	std::lock_guard<std::mutex> guard(m_protectPlc);
 	int triggerIndex = triggerChannel - 1;
 	if (0 <= triggerIndex && cNumberTriggers > triggerIndex)
 	{
-		TriggerParameter& rTrigger = m_trigger[triggerIndex];
-		if (rTrigger.m_started)
+		if (m_triggerStarted[triggerIndex])
 		{
-			rTrigger.m_started = false;
+			m_triggerStarted[triggerIndex] = false;
 			//Trigger Engine trigger channel is zero based while SVObserver is one based!
-			Tec::setTriggerChannel(static_cast<uint8_t> (triggerIndex), false, rTrigger.m_period);
+			Tec::setTriggerChannel(static_cast<uint8_t> (triggerIndex), false, 0);
 		}
 		//Still some active trigger
 		bool activeTrigger{false};
-		for (const auto& rEntry : m_trigger)
+		for (const auto& rStarted : m_triggerStarted)
 		{
-			activeTrigger |= rEntry.m_started;
+			activeTrigger |= rStarted;
 		}
 		if(!activeTrigger)
 		{
 			Tec::stopTriggerEngine();
 			m_engineStarted = false;
-			g_enableInterrupt = false;
 			::OutputDebugString("Irq Enabled reset\n");
 
 			if(false == m_OutputFileName.empty())
@@ -349,7 +306,10 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerChannel)
 			}
 		}
 	}
-	m_TriggerDispatchers.ContainsNoActiveTriggers();
+	{
+		std::lock_guard<std::mutex> guard(m_protectPlc);
+		m_TriggerDispatchers.ContainsNoActiveTriggers();
+	}
 }
 
 
@@ -410,7 +370,6 @@ HRESULT SVPlcIOImpl::TriggerGetParameterValue(unsigned long triggerChannel, unsi
 	{
 		if (S_OK == ::VariantClear(pValue))
 		{
-			std::lock_guard<std::mutex> guard(m_protectPlc);
 			switch(index)
 			{
 				case SVBoardVersion:
@@ -533,28 +492,26 @@ HRESULT SVPlcIOImpl::GetParameterValue(unsigned long index, VARIANT* pValue)
 // if the index is not supported for setting, then an error is returned.
 HRESULT SVPlcIOImpl::SetParameterValue(unsigned long index, VARIANT* pValue)
 {
-	return E_FAIL;
+	HRESULT result{E_FAIL};
+
+	if(SVModuleReady == index && nullptr != pValue && VT_BOOL == pValue->vt)
+	{
+		m_moduleReady = pValue->boolVal ? true : false;
+		Tec::setReady(m_moduleReady);
+	}
+
+	return result;
 }
 
 void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 {
 	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
-	std::lock_guard<std::mutex> guard(m_protectPlc);
 	if(cNumberTriggers > rTriggerReport.m_channel)
 	{
-		const TriggerParameter& rTrigger = m_trigger[rTriggerReport.m_channel];
-
-		if(!rTrigger.m_started)
+		if(false == m_triggerStarted[rTriggerReport.m_channel])
 		{
 			return;
-		}
-
-		//If condition index is set then set the corresponding input
-		if (-1 != rTrigger.m_conditionIndex)
-		{
-			WORD bitMask = 1 << rTrigger.m_conditionIndex;
-			m_Input = rTriggerReport.m_isComplete ? m_Input |= bitMask : m_Input & ~bitMask;
 		}
 	}
 	
@@ -574,38 +531,20 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		g_PlcListInput.emplace_back(RecordData {static_cast<uint8_t> (triggerIndex), g_PlcTriggerCount[rTriggerReport.m_channel], rTriggerReport.m_triggerTimestamp, rTriggerReport.m_currentObjectID, false, rTriggerReport.m_text});
 	}
 
-	// call trigger callbacks
-	for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
-	{
-		//Trigger channel is one based
-		if(triggerIndex == ChannelAndDispatcherList.first)
-		{
-			SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
-			std::async(std::launch::async, [&] { triggerWait(std::move(triggerData), std::move(dispatchVector), m_delayedReportTrigger); });
-			break;
-		}
-	}
-}
-
-void SVPlcIOImpl::WriteResult(int triggerChannel)
-{
-	ResultReport reportResult;
-	const TriggerParameter& rTrigger = m_trigger[triggerChannel];
-	//Reduce mutex scope
+	/// Only call trigger callbacks if the module ready is set this avoids problems with the PPQ Object not being ready
+	if(m_moduleReady)
 	{
 		std::lock_guard<std::mutex> guard(m_protectPlc);
-		reportResult.m_channel = triggerChannel;
-		reportResult.m_currentObjectID = rTrigger.m_ObjectID;
-		uint16_t bitMask = 1 << rTrigger.m_objectGoodIndex;
-		reportResult.m_results[0] = (0 != (m_Output & bitMask)) ? c_InspectionGood : c_InspectionBad;
-		Tec::writeResult(reportResult);
-		if (false == m_OutputFileName.empty())
+		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
 		{
-			g_PlcResultCount[triggerChannel]++;
-
-			g_PlcListOutput.emplace_back(RecordData{reportResult.m_channel,g_PlcResultCount[triggerChannel], SvTl::GetTimeStamp(), reportResult.m_currentObjectID, reportResult.m_results[0] == c_InspectionGood, std::string{}});
+			//Trigger channel is one based
+			if(triggerIndex == ChannelAndDispatcherList.first)
+			{
+				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
+				std::async(std::launch::async, [&] { triggerWait(std::move(triggerData), std::move(dispatchVector), m_delayedReportTrigger); });
+				break;
+			}
 		}
 	}
 }
-
 } //namespace SvPlc

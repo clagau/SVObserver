@@ -38,9 +38,9 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL GetParameters(SvOi::IObjectWriter& rWriter) const;
+	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
 
 	// RemoteOutput Identifier and new output object will be managed by SVRemoteOutputGroup
 	HRESULT AddOutput( SVRemoteOutputObject* p_pOutputEntry );

@@ -27,10 +27,6 @@ SVRemoteOutputObject::SVRemoteOutputObject()
 	LocalInitialize();
 }
 
-SVRemoteOutputObject::~SVRemoteOutputObject()
-{
-}
-
 std::string SVRemoteOutputObject::GetInputValueObjectName()
 {
 	// Use the ID to get an object.
