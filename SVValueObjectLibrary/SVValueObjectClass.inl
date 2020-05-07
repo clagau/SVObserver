@@ -96,6 +96,8 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int32_t iSize)
 	if (tooSmall)
 	{
 		m_pValue = reserveLocalMemory();
+		///Setting memory offset to -1 insures that the values will be redirected to block memory if necessary
+		m_memOffset = -1;
 	}
 
 	if (getArraySize() <= 1)
@@ -700,8 +702,6 @@ T* SVValueObjectClass<T>::reserveLocalMemory()
 			std::fill(pResult + oldArraySize, pResult + getArraySize() - 1, DefaultValue());
 		}
 	}
-	///Setting memory offset to -1 insures that the values will be redirected to block memory if necessary
-	m_memOffset = -1;
 
 	return pResult;
 }
