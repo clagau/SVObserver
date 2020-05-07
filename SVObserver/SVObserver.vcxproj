@@ -238,10 +238,9 @@ echo %time%
     <ClCompile Include="SVDisplayObject.cpp" />
     <ClCompile Include="SVDlgImageEditor.cpp" />
     <ClCompile Include="SVDrawObject.cpp" />
-    <ClCompile Include="SVExternalToolDetailsSheet.cpp" />
-    <ClCompile Include="SVExternalToolDlg.cpp" />
     <ClCompile Include="SVExternalToolInputSelectPage.cpp" />
     <ClCompile Include="SVExternalToolResultPage.cpp" />
+    <ClCompile Include="SVExternalToolSelectDllPage.cpp" />
     <ClCompile Include="SVFigureEditor.cpp" />
     <ClCompile Include="SVGigeCameraManagerDlg.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
@@ -427,10 +426,9 @@ echo %time%
     <ClInclude Include="SVDisplayObject.h" />
     <ClInclude Include="SVDlgImageEditor.h" />
     <ClInclude Include="SVDrawObject.h" />
-    <ClInclude Include="SVExternalToolDetailsSheet.h" />
-    <ClInclude Include="SVExternalToolDlg.h" />
     <ClInclude Include="SVExternalToolInputSelectPage.h" />
     <ClInclude Include="SVExternalToolResultPage.h" />
+    <ClInclude Include="SVExternalToolSelectDllPage.h" />
     <ClInclude Include="SVFigureEditor.h" />
     <ClInclude Include="SVGigeCameraManagerDlg.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />

@@ -14,7 +14,8 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "SVExternalToolDlg.h"
+#include "SVExternalToolSelectDllPage.h"
+#include "SVExternalToolInputSelectPage.h"
 #include "SVOGui/SVPerspectiveWarpPage.h"
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVTADlgArchiveImagePage.h"
@@ -31,6 +32,7 @@
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IDependencyManager.h"
+#include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVOGui/SVToolAdjustmentDialogCommentPage.h"
 #include "SVOGui/SVToolAdjustmentDialogSizePage.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
@@ -249,8 +251,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		{
 			if (nullptr != pMathEquation)
 			{
-				SvOi::IFormulaControllerPtr pFormularController {new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, pMathEquation->getObjectId())};
-				AddPage(new SvOg::SVFormulaEditorPageClass(pFormularController, false));
+				SvOi::IFormulaControllerPtr pFormularController2 {new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, pMathEquation->getObjectId())};
+				AddPage(new SvOg::SVFormulaEditorPageClass(pFormularController2, false));
 			}
 			AddPage(new SvOg::SVToolAdjustmentDialogPassFailPageClass(m_InspectionID, m_TaskObjectID));
 			AddPage(pConditionalDlg);
@@ -334,11 +336,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SvPb::SVObjectSubTypeEnum::SVExternalToolObjectType:
-			AddPage(new SVExternalToolDlg(m_InspectionID, m_TaskObjectID, this));
+			AddPage(new SVSelectExternalDllPage(m_InspectionID, m_TaskObjectID, this));
 			AddPage(pConditionalDlg);
 			AddPage(new SvOg::SVToolAdjustmentDialogGeneralPageClass(m_InspectionID, m_TaskObjectID));
 			break;
-
 
 		case SvPb::SVObjectSubTypeEnum::SVRingBufferToolObjectType:
 			// When the Object sub type is not set, then both mono and color images are placed into the selection list
@@ -390,6 +391,16 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 	AddPage(new SvOg::SVToolAdjustmentDialogCommentPage(m_InspectionID, m_TaskObjectID));
 }
+
+
+void SVToolAdjustmentDialogSheetClass::RemovePagesForTestedExternalTool()
+{
+	while (GetPageCount() > c_minimumNumberOfExternalToolPages) //pages with these indices should not be displayed if the external DLL is uninitialized
+	{
+		RemovePage(c_minimumNumberOfExternalToolPages);
+	}
+}
+
 
 BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 {

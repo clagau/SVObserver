@@ -131,7 +131,7 @@
 #define IDD_OCV_GENERAL_DIALOG          5106
 #define IDD_RANKING_FILTER              5107
 #define IDD_DLG_FILL_BLOBS              5109
-#define IDD_TA_EXTERNAL_TOOL_DLG        5111
+#define IDD_TA_EXTERNAL_DLL_SELECT      5111
 #define IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG 5112
 #define IDD_CHOOSEGRAYCOLOR             5114
 #define IDD_GIGE_CAMERA_MANAGER_DLG     5115
@@ -1869,7 +1869,6 @@
 #define IDC_DELETE_ALL                  15764
 #define IDC_DLL_STATUS                  15765
 #define IDC_INPUT_LIST                  15766
-#define IDC_DETAILS                     15767
 #define IDC_RESULT_LIST                 15768
 #define IDC_CANCEL                      15769
 #define IDC_WARN_ON_FAIL_CHECK          15770
@@ -2219,7 +2218,7 @@
 #define IDC_BUTTON_SUBFOLDER_SELECTION  16151
 #define IDC_EDIT_SUBFOLDER_LOCATION     16152
 #define IDC_BUTTON_SUBFOLDER_LOCATION   16153
-#define ID_TEST                         20000
+#define ID_UNDO_CHANGES            20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
 #define ID_MINUSBUTTON                  20003

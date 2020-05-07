@@ -89,7 +89,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		m_Tree.SetColumn(m_Tree.GetColumn() * 2);
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		ASSERT(pRoot);
+		assert(pRoot);
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("Results"));
 		pRoot->SetInfoText(_T(""));
@@ -326,7 +326,7 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
-		ASSERT(iIndex >= 0);
+		assert(iIndex >= 0);
 
 		// do validation
 		bool bValidated = true;
@@ -357,7 +357,7 @@ void SVExternalToolResultPage::OnOK()
 			while (pItem)
 			{
 				int iIndex = GetItemIndex(pItem);
-				ASSERT(iIndex >= 0);
+				assert(iIndex >= 0);
 				SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[iIndex];
 
 				pItem = pItem->GetSibling();
@@ -371,7 +371,7 @@ void SVExternalToolResultPage::OnOK()
 
 int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)
 {
-	ASSERT(pItem);
+	assert(pItem);
 	return pItem->GetCtrlID() - ID_BASE;
 }
 

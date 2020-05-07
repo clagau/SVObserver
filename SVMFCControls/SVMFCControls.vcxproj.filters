@@ -33,9 +33,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVActiveDisableButton.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVAnalyzerResultDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -144,9 +141,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVActiveDisableButton.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVAnalyzerResultDlg.h">

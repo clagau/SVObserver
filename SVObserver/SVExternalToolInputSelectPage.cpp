@@ -64,7 +64,7 @@ SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, uint
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
 	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*> (pObject);
-	ASSERT(m_pTask);
+	assert(m_pTask);
 	m_psp.pszTitle = Title;
 	m_psp.dwFlags |= PSP_USETITLE;
 	m_inputValueCount = m_pTask->m_Data.m_lNumInputValues;
@@ -116,7 +116,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 		m_Tree.SetColumn(m_Tree.GetColumn() * 2);
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		ASSERT(pRoot);
+		assert(pRoot);
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T(""));
 		pRoot->SetInfoText(_T(""));
@@ -170,7 +170,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 			iItemCount++;
 
-			ASSERT(pGroupItem);
+			assert(pGroupItem);
 
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem);
 			if (nullptr == pEdit)
@@ -360,7 +360,7 @@ void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
-		ASSERT(iIndex >= 0);
+		assert(iIndex >= 0);
 
 		// do validation
 		bool bValidated = true;
@@ -400,7 +400,7 @@ void SVExternalToolInputSelectPage::OnOK()
 			while (pItem)
 			{
 				int iIndex = GetItemIndex(pItem);
-				ASSERT(iIndex >= 0 && iIndex < m_inputValueCount);
+				assert(iIndex >= 0 && iIndex < m_inputValueCount);
 				if (iIndex >= 0 && iIndex < m_inputValueCount)
 				{
 					std::string Value;
@@ -605,7 +605,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 
 int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 {
-	ASSERT(pItem);
+	assert(pItem);
 	return pItem->GetCtrlID() - ID_BASE;
 }
 

@@ -175,7 +175,7 @@ static char THIS_FILE[] = __FILE__;
 		m_Tree.ShowInfoText(false);
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		ASSERT(pRoot);
+		assert(pRoot);
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("Input Source Images"));
 		pRoot->SetInfoText(_T(""));

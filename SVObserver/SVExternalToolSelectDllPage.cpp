@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolDlg
-//* .File Name       : $Workfile:   SVExternalToolDlg.cpp  $
+//* .Module Name     : SVSelectExternalDllPage.cpp
+//* .File Name       : $Workfile:   SVSelectExternalDllPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.5  $
 //* .Check In Date   : $Date:   18 Sep 2014 13:39:12  $
@@ -14,19 +14,22 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVInspectionProcess.h"
-#include "SVExternalToolDlg.h"
-#include "SVExternalToolDetailsSheet.h"
+#include "SVExternalToolSelectDllPage.h"
+#include "SVExternalToolInputSelectPage.h"
+#include "SVExternalToolResultPage.h"
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "Operators/SVExternalToolTask.h"
 #include "SVLibrary/ISVCancel.h"
 #include "SVMFCControls\SVFileDialog.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVOGui/SVShowDependentsDialog.h"
+#include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -39,7 +42,7 @@ constexpr char* cCRLF (_T("\r\n"));
 enum {WM_UPDATE_STATUS = WM_APP + 100};
 
 /////////////////////////////////////////////////////////////////////////////
-// SVExternalToolDlg dialog
+// SVSelectExternalDllPage dialog
 
 namespace	// file scope
 {
@@ -56,22 +59,21 @@ namespace	// file scope
 	}
 }
 
-BEGIN_MESSAGE_MAP(SVExternalToolDlg, CPropertyPage)
-	//{{AFX_MSG_MAP(SVExternalToolDlg)
-	ON_BN_CLICKED(IDC_DETAILS, OnDetails)
+BEGIN_MESSAGE_MAP(SVSelectExternalDllPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVSelectExternalDllPage)
 	ON_BN_CLICKED(IDC_DELETE_ALL, OnDeleteAll)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_ADD, OnAdd)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_BN_CLICKED(ID_TEST, OnTest)
+	ON_BN_CLICKED(ID_UNDO_CHANGES, OnUndoChanges)
 	//}}AFX_MSG_MAP
     ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVExternalToolDlg::SVExternalToolDlg(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
+SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
 : CPropertyPage(IDD)
 , m_InspectionID(inspectionID)
-, m_ToolObjectID(toolObjectID)
+, m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
 {
 	m_pSheet = pSheet;
 
@@ -88,7 +90,7 @@ SVExternalToolDlg::SVExternalToolDlg(uint32_t inspectionID, uint32_t toolObjectI
 	}
 
 	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
-	ASSERT( m_pTask );
+	assert( m_pTask );
 
 	m_pCancelData = nullptr;
 	if ( m_pTask->CanCancel() )
@@ -96,14 +98,13 @@ SVExternalToolDlg::SVExternalToolDlg(uint32_t inspectionID, uint32_t toolObjectI
 		m_pTask->GetCancelData( m_pCancelData );
 	}
 
-	m_bToolTipEnabled = false;
-	//{{AFX_DATA_INIT(SVExternalToolDlg)
+	//{{AFX_DATA_INIT(SVSelectExternalDllPage)
 	m_strDLLPath = _T("");
 	m_strStatus = _T("");
 	//}}AFX_DATA_INIT
 }
 
-SVExternalToolDlg::~SVExternalToolDlg()
+SVSelectExternalDllPage::~SVSelectExternalDllPage()
 {
 	if ( m_pCancelData )
 	{
@@ -112,17 +113,16 @@ SVExternalToolDlg::~SVExternalToolDlg()
 }
 
 
-void SVExternalToolDlg::DoDataExchange(CDataExchange* pDX)
+void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVExternalToolDlg)
+	//{{AFX_DATA_MAP(SVSelectExternalDllPage)
 	DDX_Control(pDX, IDC_DLL_STATUS, m_StatusEdit);
 	DDX_Control(pDX, IDC_DELETE_ALL, m_btnDeleteAll);
 	DDX_Control(pDX, IDC_DELETE, m_btnDelete);
 	DDX_Control(pDX, IDC_BROWSE, m_btnBrowse);
 	DDX_Control(pDX, IDC_ADD, m_btnAdd);
-	DDX_Control(pDX, ID_TEST, m_btnTest);
-	DDX_Control(pDX, IDC_DETAILS, m_btnDetails);
+	DDX_Control(pDX, ID_UNDO_CHANGES, m_btnUndoChanges);
 	DDX_Control(pDX, IDC_DEPENDENT_LIST, m_lbDependentList);
 	DDX_Text(pDX, IDC_DLL_PATH, m_strDLLPath);
 	DDX_Text(pDX, IDC_DLL_STATUS, m_strStatus);
@@ -131,13 +131,14 @@ void SVExternalToolDlg::DoDataExchange(CDataExchange* pDX)
 
 
 /////////////////////////////////////////////////////////////////////////////
-// SVExternalToolDlg message handlers
+// SVSelectExternalDllPage message handlers
 
-BOOL SVExternalToolDlg::OnInitDialog() 
+BOOL SVSelectExternalDllPage::OnInitDialog() 
 {
 	std::string Value;
 	// stuff the value before base OnInitDialog
 	m_pTask->m_Data.m_voDllPath.GetValue( Value );
+	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
 	m_strDLLPath = Value.c_str();
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows
@@ -149,8 +150,7 @@ BOOL SVExternalToolDlg::OnInitDialog()
 	m_ToolTip.SetDelayTime( 32000, TTDT_AUTOPOP );
 	m_ToolTip.SetDelayTime( 10,    TTDT_INITIAL );
 	m_ToolTip.SetDelayTime( 250,   TTDT_RESHOW );
-	EnableDetailTip( true, _T("Dll needs to be tested before Details can be selected"));
-
+	
 	InitializeDll();
 
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
@@ -171,7 +171,7 @@ BOOL SVExternalToolDlg::OnInitDialog()
 
 }
 
-void SVExternalToolDlg::OnOK() 
+void SVSelectExternalDllPage::OnOK() 
 {
 	UpdateData();
 
@@ -196,51 +196,25 @@ void SVExternalToolDlg::OnOK()
 	CPropertyPage::OnOK();
 }
 
-void SVExternalToolDlg::OnDetails() 
-{
-	// Add new property sheet to adjust Input Images, Input Value Objects..
-	SVExternalToolDetailsSheet sheet(m_InspectionID, m_ToolObjectID, m_TaskObjectID, m_pTask->m_Data.m_lNumInputImages, _T("External Tool Details"), this, 0);
-
-	SVCancelData* pCancelData = nullptr;
-
-	if ( sheet.CanCancel() )
-		sheet.GetCancelData(pCancelData);
-
-	sheet.CreatePages(m_pTask->m_aInputImageInformationStructs);
-
-	if( sheet.DoModal() == IDOK )
-	{	// sheet modifies tool; no need to do anything
-	}
-	else
-	{	// Set original data back to tool 
-		sheet.SetCancelData(pCancelData);
-	}
-
-	if ( pCancelData )
-	{
-		delete pCancelData;
-	}
-
-	
-}
-
-void SVExternalToolDlg::OnDeleteAll() 
+void SVSelectExternalDllPage::OnDeleteAll() 
 {
 	// Clear List Box
 	m_lbDependentList.ResetContent();
+	testExternalDll();
 }
 
-void SVExternalToolDlg::OnDelete() 
+void SVSelectExternalDllPage::OnDelete() 
 {
 	int iCurrentPos = m_lbDependentList.GetCurSel();
 	if ( iCurrentPos > -1 && iCurrentPos < m_lbDependentList.GetCount() )
 	{
 		m_lbDependentList.DeleteString(iCurrentPos);
+		testExternalDll();
 	}
 	
 }
 
-void SVExternalToolDlg::OnAdd() 
+void SVSelectExternalDllPage::OnAdd() 
 {
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
@@ -268,11 +242,12 @@ void SVExternalToolDlg::OnAdd()
 		{
 			m_lbDependentList.AddString( cfd.GetPathName() );
 		}
+		testExternalDll();
 	}
 	
 }
 
-void SVExternalToolDlg::OnBrowse() 
+void SVSelectExternalDllPage::OnBrowse() 
 {
 	UpdateData();
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
@@ -300,22 +275,21 @@ void SVExternalToolDlg::OnBrowse()
 
 		m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
 
-		HRESULT hr;
-		hr = m_pTask->ClearData();
-		hr = m_pTask->SetDefaultValues();
+		m_pTask->ClearData();
+		m_pTask->SetDefaultValues();
 
 		m_strStatus = _T("Dll needs to be tested.");
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 
-		m_btnDetails.EnableWindow(FALSE);	// force the user to press Test which will call Initialize
-		EnableDetailTip( true, _T("Dll needs to be tested before Details can be selected"));
+		m_pSheet->RemovePagesForTestedExternalTool();
+
+		testExternalDll();
 	}
-}// end void SVExternalToolDlg::OnBrowse() 
+}// end void SVSelectExternalDllPage::OnBrowse() 
 
-void SVExternalToolDlg::OnTest() 
+void SVSelectExternalDllPage::testExternalDll() 
 {
-
 	UpdateData();
 
 	SetDependencies();
@@ -324,18 +298,18 @@ void SVExternalToolDlg::OnTest()
 	m_pTask->m_Data.m_voDllPath.SetDefaultValue( std::string(m_strDLLPath), true );
 
 	InitializeDll();
-
-	bool bResult = ShowDependentsDlg();
-
-	if ( !bResult )
-	{
-		// reload previous info
-		RestoreOriginalData();
-	}
 }
 
 
-void SVExternalToolDlg::SetDependencies() 
+void SVSelectExternalDllPage::OnUndoChanges()
+{
+	// reload previous info
+	RestoreOriginalData();
+}
+
+
+
+void SVSelectExternalDllPage::SetDependencies() 
 {
 	int i( 0 );
 
@@ -359,48 +333,35 @@ void SVExternalToolDlg::SetDependencies()
 	m_pTask->SetAllAttributes();	// update dependency attributes
 }
 
-bool SVExternalToolDlg::EnableDetailTip(  bool bEnable, LPCTSTR Tip)
-{
-	bool bLastState = m_bToolTipEnabled;
 
-	if( m_bToolTipEnabled && bEnable )
-	{
-		m_ToolTip.UpdateTipText( Tip, &m_btnDetails );
-	}
-	else if( !m_bToolTipEnabled && bEnable )
-	{
-		m_ToolTip.AddTool( &m_btnDetails, Tip ); 
-	}
-	else if( m_bToolTipEnabled && !bEnable )
-	{
-		m_ToolTip.DelTool( &m_btnDetails );
-	}
-	else
-	{
-	}
-	m_bToolTipEnabled = bEnable;
-	return bLastState;
+void SVSelectExternalDllPage::AddPagesForTestedExternalTool()
+{
+	m_pSheet->AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, m_pTask->m_aInputImageInformationStructs));
+	m_pSheet->AddPage(new SVExternalToolInputSelectPage(_T("External Tool Inputs"), m_InspectionID, m_ToolObjectID, m_TaskObjectID));
+	m_pSheet->AddPage(new SVExternalToolResultPage(_T("External Tool Results"), m_InspectionID, m_TaskObjectID));
+
+	m_pSheet->PostMessage(PSM_SETCURSEL, c_minimumNumberOfExternalToolPages + 1, 0);
 }
 
-void SVExternalToolDlg::InitializeDll()
+
+void SVSelectExternalDllPage::InitializeDll()
 {
 	try
 	{
+		m_pSheet->RemovePagesForTestedExternalTool();
+
 		m_strStatus.Empty();
 		UpdateData(FALSE);
-		m_pTask->Initialize(boost::bind(&SVExternalToolDlg::NotifyProgress, this, _1));
+		m_pTask->Initialize(boost::bind(&SVSelectExternalDllPage::NotifyProgress, this, _1));
 
 		m_pTask->resetAllObjects();
-
 
 		m_strStatus += _T("DLL passes the tests.");
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 		m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
 
-		EnableDetailTip( false );
-
-		m_btnDetails.EnableWindow();
+		AddPagesForTestedExternalTool();//if we arrive here, Initialization has been successful
 	}
 	catch ( const SvStl::MessageContainer& e)
 	{
@@ -422,23 +383,20 @@ void SVExternalToolDlg::InitializeDll()
 			m_strStatus += cCRLF;
 		}
 		UpdateData(FALSE);
-
-		m_btnDetails.EnableWindow(FALSE);
-		EnableDetailTip(true, _T("Dll did not pass tests so no details available."));
 	}
 }
 
 // Override PreTranslateMessage() so RelayEvent() can be 
 // called to pass a mouse message to the 
 // tooltip control for processing.
-BOOL SVExternalToolDlg::PreTranslateMessage(MSG* pMsg) 
+BOOL SVSelectExternalDllPage::PreTranslateMessage(MSG* pMsg) 
 {
 	m_ToolTip.RelayEvent(pMsg);
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void SVExternalToolDlg::NotifyProgress( LPCTSTR Message )
+void SVSelectExternalDllPage::NotifyProgress( LPCTSTR Message )
 {
 	UpdateData();
 
@@ -449,7 +407,7 @@ void SVExternalToolDlg::NotifyProgress( LPCTSTR Message )
 	YieldPaintMessages(GetSafeHwnd());
 }
 
-LRESULT SVExternalToolDlg::OnUpdateStatus(WPARAM, LPARAM)
+LRESULT SVSelectExternalDllPage::OnUpdateStatus(WPARAM, LPARAM)
 {
 	UpdateData();
 	m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
@@ -457,40 +415,13 @@ LRESULT SVExternalToolDlg::OnUpdateStatus(WPARAM, LPARAM)
 }
 
 
-bool SVExternalToolDlg::ShowDependentsDlg()
+bool SVSelectExternalDllPage::QueryAllowExit()
 {
-	bool Result( true );
-
-	if( nullptr != m_pTask )
-	{
-		SVObjectPtrVector list;
-		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_ALL_OBJECTS_EXP_INPUT_IMAGES);
-
-		std::string DisplayText = SvUl::LoadStdString( IDS_CHANGE_DLL_EXTERNAL_TOOL );
-		std::string Name( m_pTask->GetName() );
-		DisplayText = SvUl::Format( DisplayText.c_str() , Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
-
-		std::set<uint32_t> ObjectCheckList;
-		SVObjectPtrVector::const_iterator Iter(list.begin());
-		for (; list.end() != Iter; ++Iter)
-		{
-			ObjectCheckList.insert( (*Iter)->getObjectId());
-		}
-
-		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SvPb::SVToolObjectType, DisplayText.c_str() );
-
-		Result = (IDOK == Dlg.DoModal());
-	}
-	return Result;
+	return true;
 }
 
-bool SVExternalToolDlg::QueryAllowExit()
-{
-	bool bAllow = ShowDependentsDlg();
-	return bAllow;
-}
 
-SVIPDoc* SVExternalToolDlg::GetIPDoc() const
+SVIPDoc* SVSelectExternalDllPage::GetIPDoc() const
 {
 	SVIPDoc* l_pIPDoc = nullptr;
 
@@ -502,7 +433,7 @@ SVIPDoc* SVExternalToolDlg::GetIPDoc() const
 	return l_pIPDoc;
 }
 
-HRESULT SVExternalToolDlg::RestoreOriginalData()
+HRESULT SVSelectExternalDllPage::RestoreOriginalData()
 {
 	int i( 0 );
 
@@ -533,6 +464,7 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 	// update display
 	std::string Value;
 	m_pTask->m_Data.m_voDllPath.GetValue( Value );
+	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
 	m_strDLLPath = Value.c_str();
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( i = 0 ; i < iDependentsSize ; i++)
@@ -552,7 +484,7 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 }
 
 
-HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
+HRESULT SVSelectExternalDllPage::CleanUpOldToolInfo()
 {
 	SVObjectPtrVector list;
 	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_IMAGES );

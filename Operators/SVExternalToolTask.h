@@ -108,7 +108,6 @@ public:
 	virtual bool CloseObject() override;
 	virtual bool ConnectAllInputs() override;
 	
-	
 	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {});
 	
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
@@ -118,6 +117,8 @@ public:
 	HRESULT SetDependencies( const SvDef::StringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
 	HRESULT GetResultValueDefinitions ( std::vector<ResultValueDefinition>& raResultValueDefinitions );
+
+	const std::vector<InputImageInformationStruct>& getInformationStructs() { return m_aInputImageInformationStructs; }
 	
 	// ISVCancel interface
 	virtual bool CanCancel() override;
@@ -167,8 +168,6 @@ protected:
 
 	HRESULT AllocateResult (int iIndex);
 
-	
-
 private:
 	HRESULT InitializeResultObjects();
 
@@ -197,6 +196,7 @@ private:
 
 	std::vector<RECT> m_aPreviousInputImageRect;
 
+
 	// Result Images
 	SvIe::SVImageClass m_aResultImages[SVExternalToolTaskData::NUM_RESULT_IMAGES];
 
@@ -210,7 +210,7 @@ private:
 	
 	
 public:
-	friend class SVExternalToolDlg;
+	friend class SVSelectExternalDllPage;
 	friend class SVExternalToolInputSelectPage;
 	friend class SVExternalToolResultPage;
 };

@@ -19,6 +19,19 @@ namespace SvOi
 {
 	class IObjectClass;
 }
+
+
+namespace SvOg
+{
+	class SVExternalToolImageSelectPage;
+}
+
+namespace SvOp
+{
+	struct InputImageInformationStruct;
+}
+
+
 class SVIPDoc;
 
 class SVToolAdjustmentDialogSheetClass : public CPropertySheet
@@ -49,7 +62,9 @@ public:
 	SvOi::IObjectClass* GetTaskObject() const;
 	uint32_t GetInspectionID() const {return m_InspectionID; }
 	uint32_t GetTaskObjectID() const {return m_TaskObjectID; }
-	
+
+	void RemovePagesForTestedExternalTool();
+
 protected:
 	void init();
 	void addPages();
@@ -62,6 +77,12 @@ private:
 	typedef std::shared_ptr<SvOg::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
 };
+
+/// this is the number of pages in the External Tool Adjustment Dialog for an uninitialized DLL.
+/// in principle it would be preferable to calculate it dynamically, but in this case problems and inconsistencies may arise in special cases
+constexpr int c_minimumNumberOfExternalToolPages = 4;
+
+
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
