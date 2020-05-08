@@ -83,11 +83,11 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	CString Text;
 	// Update the file path to the archive file for associated archive tool.
 	m_ArchiveFileName.GetWindowText( Text );
-	std::string ArchiveFileName = Text;
+	std::string ArchiveFilepath = Text;
 
 	//check for valid drive for text archive
 	SvTo::ArchiveToolHelper athArchivePathAndName;
-	athArchivePathAndName.Init( ArchiveFileName );
+	athArchivePathAndName.Init( ArchiveFilepath );
 
 	SvStl::MessageTextEnum pathErrorDescriptionId = SvStl::Tid_Empty;
 
@@ -95,7 +95,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	{
 		if (athArchivePathAndName.isTokensValid())
 		{
-			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFileName );
+			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFilepath );
 			if (false == SVCheckPathDir(TmpArchiveFileName.c_str(), true))
 			{
 				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInFilePath;
@@ -108,7 +108,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	}
 	else
 	{	//not using Keywords 
-		if (false == SVCheckPathDir(ArchiveFileName.c_str(), true))
+		if (false == SVCheckPathDir(ArchiveFilepath.c_str(), true))
 		{
 			pathErrorDescriptionId = SvStl::Tid_InvalidFilePath;
 		}
@@ -122,7 +122,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	}
 
 	std::string Drive;
-	if(!SvTo::ArchiveToolHelper::ValidateDrive(ArchiveFileName.c_str(), Drive) || ArchiveFileName.empty())
+	if(!SvTo::ArchiveToolHelper::ValidateDrive(ArchiveFilepath.c_str(), Drive) || ArchiveFilepath.empty())
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back( Drive );
@@ -132,7 +132,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		return false; 
 	}
 
-	m_pTool->SetFileArchive( ArchiveFileName.c_str() );
+	m_pTool->SetFileArchive( ArchiveFilepath.c_str() );
 
 	m_pTool->m_dwAppendArchiveFile.SetValue(static_cast<DWORD> (m_AppendArchive));
 	m_pTool->m_bvoFormatResults.SetValue(m_FormatResults);
@@ -206,9 +206,9 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 
 	CDWordArray dwaIndex;
 	
-	std::string ArchiveFileName; 
-	m_pTool->GetFileArchive( ArchiveFileName );
-	m_ArchiveFileName.SetWindowText( ArchiveFileName.c_str() );
+	std::string ArchiveFilepath; 
+	m_pTool->GetArchiveFilepath( ArchiveFilepath );
+	m_ArchiveFileName.SetWindowText( ArchiveFilepath.c_str() );
 
 	DWORD dwTemp = 0;
 	m_pTool->m_dwAppendArchiveFile.GetValue(dwTemp);

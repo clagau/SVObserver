@@ -113,12 +113,13 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	{
 		svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
 		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
-		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName());
+		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName()); 
 	}
 	else
 	{
 		if (dwUseTriggerCountForImages)
 		{
+			svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
 			svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
 			m_FileNames[m_lLastIndex] = svFileName.GetFullFileName();
 		}

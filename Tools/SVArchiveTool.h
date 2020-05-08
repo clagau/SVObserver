@@ -42,7 +42,7 @@ public:
 	SVObjectReferenceVector getImageArchiveList();
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 
-	bool GetFileArchive( std::string& rName );
+	bool GetArchiveFilepath( std::string& rName );
 	bool GetImageArchivePath( std::string& rName );
 	bool SetFileArchive( LPCTSTR lpszName );
 	bool SetImageArchivePath( LPCTSTR lpszName );

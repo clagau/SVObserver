@@ -391,7 +391,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	// CFile object.
 	//
 	std::string FileArchivePath;
-	GetFileArchive( FileArchivePath );
+	GetArchiveFilepath( FileArchivePath );
 
 	if( FileArchivePath.empty() )
 	{
@@ -930,7 +930,7 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 	return Result;
 }
 
-bool SVArchiveTool::GetFileArchive( std::string& rName )
+bool SVArchiveTool::GetArchiveFilepath( std::string& rName )
 {
 	bool Result = (S_OK == m_stringFileArchivePath.GetValue( rName ));
 	return Result;
