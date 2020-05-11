@@ -381,7 +381,7 @@ int  SVTaskObjectClass::GetObjectSelectorList(SvOi::IsObjectInfoAllowed  pFuncto
 		insertItem.set_type("Object");
 		insertItem.set_name( GetName());
 		insertItem.set_location(GetCompleteName());
-		insertItem.set_objectidindex(SvUl::Format("{#%u}", getObjectId()));
+		insertItem.set_objectidindex(convertObjectIdToString(getObjectId()));
 		insertItem.set_selected(false);
 		rTreeItems.emplace_back(insertItem);
 		result++;

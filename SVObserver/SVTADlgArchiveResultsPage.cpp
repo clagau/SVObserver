@@ -386,7 +386,7 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVect
 		{
 			uint32_t objectId{ rEntry.getObjectId() };
 
-			SvDef::StringPair NewPair(std::to_string(objectId),
+			SvDef::StringPair NewPair(convertObjectIdToString(objectId),
 			SVObjectManagerClass::Instance().GetObject(objectId)->GetCompleteName() );
 			SelectedHeaderPairs.push_back(NewPair);
 		}
