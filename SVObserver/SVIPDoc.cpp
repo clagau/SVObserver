@@ -2587,7 +2587,7 @@ void SVIPDoc::correctToolGrouping()
 		std::string name = pToolSet->GetAt(i)->GetName();
 		auto it = m_toolGroupings.find(name);
 		__int64 newPosition = std::distance(m_toolGroupings.begin(), it);
-		if (m_toolGroupings.find(name) == m_toolGroupings.end()|| newPosition < position)
+		if (it == m_toolGroupings.end()|| newPosition < position)
 		{
 			m_toolGroupings.clear();
 			break;
