@@ -308,8 +308,7 @@ protected:
 	SVCookieEntryMap		m_CookieEntries;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
 	std::set<uint32_t>		m_deletedObjectIdSet;
-	//@TODO[gra][10.00][06,05,2020]: Needed to set this to false as it caused problems with certain tests
-	bool					m_addToDeletedList = false;
+	bool					m_addToDeletedList = true;
 	RootNameChildMap		m_RootNameChildren;
 	SvDef::TranslateMap		m_TranslationMap;
 

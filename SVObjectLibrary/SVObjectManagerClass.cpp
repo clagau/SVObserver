@@ -491,8 +491,24 @@ void SVObjectManagerClass::reduceNextObjectId(uint32_t removedObjectId)
 
 void SVObjectManagerClass::resetNextObjectId()
 {
-	m_nextObjectId = m_firstObjectId; 
 	m_deletedObjectIdSet.clear();
+	auto maxIter = std::max_element(m_UniqueObjectEntries.begin(), m_UniqueObjectEntries.end());
+	if (m_UniqueObjectEntries.end() != maxIter && m_firstObjectId < maxIter->first - 1)
+	{
+		m_nextObjectId = maxIter->first + 1;
+		for (uint32_t i = maxIter->first - 1; i >= m_firstObjectId; --i)
+		{
+			auto findIter = m_UniqueObjectEntries.find(i);
+			if (m_UniqueObjectEntries.end() == findIter)
+			{
+				m_deletedObjectIdSet.emplace(i);
+			}
+		}
+	}
+	else
+	{
+		m_nextObjectId = m_firstObjectId;
+	}
 	resetExchangeObjectIdMap();
 }
 
