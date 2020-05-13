@@ -227,6 +227,11 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 	HRESULT hr = S_FALSE;
 	m_lMaxIndex = 0;
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject());
+	//It must more add-on buffer for the parent image not for the child image.
+	while (nullptr != pImage && pImage->isChildImageInTRC())
+	{
+		pImage = pImage->GetParentImage();
+	}
 	assert(pImage);
 	if (pImage)
 	{
