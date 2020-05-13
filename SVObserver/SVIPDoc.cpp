@@ -2975,13 +2975,14 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 	SVToolSetClass* pToolSet = GetToolSet();
 	if (pToolSet)
 	{
-		if (pToolSet->GetLastListUpdateTimestamp() < m_ToolSetListTimestamp)
+		auto lastTime = pToolSet->GetLastListUpdateTimestamp();
+		if (lastTime < m_ToolSetListTimestamp)
 		{
 			l_Status = S_FALSE;
 		}
 		else
 		{
-			m_ToolSetListTimestamp = SvTl::GetTimeStamp();
+			m_ToolSetListTimestamp = lastTime;
 		}
 	}
 	else
