@@ -65,7 +65,6 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
