@@ -25,7 +25,7 @@ struct SimulatedTriggerData
 };
 
 std::mutex g_TriggerDataMutex;
-SimulatedTriggerData g_triggerData[c_NumberOfChannels];
+SimulatedTriggerData g_triggerData[cNumberOfChannels];
 
 void ChannelTimer(uint8_t channel, std::atomic_bool& rRun, uint32_t initialDelay, uint32_t period)
 {
@@ -54,7 +54,7 @@ void ChannelTimer(uint8_t channel, std::atomic_bool& rRun, uint32_t initialDelay
 
 bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
-	if(channel < c_NumberOfChannels)
+	if(channel < cNumberOfChannels)
 	{
 		if(active && period > 0)
 		{
@@ -84,7 +84,7 @@ bool SimulatedTriggerSource::analyzeTelegramData()
 	bool dataChanged{false};
 	{
 		std::lock_guard<std::mutex> guard {g_TriggerDataMutex};
-		for (uint8_t i = 0; i < c_NumberOfChannels; ++i)
+		for (uint8_t i = 0; i < cNumberOfChannels; ++i)
 		{
 			if(g_triggerData[i].m_newTrigger)
 			{

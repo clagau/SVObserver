@@ -25,7 +25,7 @@ bool TriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t per
 		m_triggerChannels[channel].m_newTrigger = false;
 	}
 	printOutput("Trigger channel use:");
-	for (uint8_t channel = 0; channel < c_NumberOfChannels; channel++)
+	for (uint8_t channel = 0; channel < cNumberOfChannels; channel++)
 	{
 		result |= m_triggerChannels[channel].m_active;
 		printOutput(m_triggerChannels[channel].m_active ? "I" : "_");
@@ -46,7 +46,7 @@ void TriggerSource::addTriggerReport(TriggerReport&& triggerReport)
 
 bool TriggerSource::checkForNewTriggers()
 {
-	for (uint8_t channel = 0; channel < c_NumberOfChannels; channel++)
+	for (uint8_t channel = 0; channel < cNumberOfChannels; channel++)
 	{
 		if (m_triggerChannels[channel].m_active)
 		{

@@ -25,8 +25,8 @@ public:
 	void createTriggerReport(uint8_t channel) override;
 
 private:
-	std::thread m_timerThread[c_NumberOfChannels];
-	std::atomic_bool m_runThread[c_NumberOfChannels];
+	std::thread m_timerThread[cNumberOfChannels];
+	std::atomic_bool m_runThread[cNumberOfChannels];
 };
 
 } //namespace SvPlc

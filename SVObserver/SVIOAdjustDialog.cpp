@@ -175,10 +175,10 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			}// end if
 		}
 
-		for(int k = 0; k <  pConfig->GetPPQCount(); k++ )
+		for(int i = 0; i <  pConfig->GetPPQCount(); ++i )
 		{
-			SVIOEntryHostStructPtrVector ppIOEntries;
-			SVPPQObject* pPPQ = pConfig->GetPPQ(k);
+			SVIOEntryHostStructPtrVector IOEntryVector;
+			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if( nullptr == pPPQ )
 			{
 				SvStl::MessageMgrStd e(SvStl::MsgType::Log );
@@ -188,14 +188,18 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			else
 			{
 				// Get list of available outputs
-				pPPQ->GetAllOutputs(ppIOEntries);
+				pPPQ->GetAllOutputs(IOEntryVector);
 			}
 
 
 			// Init IO combo from m_ppIOEntries;
-			for(int i = 0; i < static_cast<int> (ppIOEntries.size()); i++ )
+			for(const auto& pIOEntry : IOEntryVector)
 			{
-				pIOEntry = ppIOEntries[i];
+				///For PLC Output only insert items from the same PPQ
+				if(nullptr != m_pPlcOutput && i != m_PpqIndex)
+				{
+					continue;
+				}
 				///Note entries with IO_INVALID_OBJECT have not yet been set and shall either become IO_DIGITAL_OUPUT or IO_PLC_OUTPUT
 				if(SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) &&
 					(pIOEntry->m_ObjectType == outputType))

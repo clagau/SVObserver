@@ -165,7 +165,8 @@ ObjectIdVariantPairVector SVOutputObjectList::getOutputValues(const SVIOEntryHos
 					std::pair<uint32_t, _variant_t> OutputValue = getDigitalOutputValue(pIOEntry, useDefaults, ACK, NAK);
 					if (VT_UI1 == OutputValue.second.vt)
 					{
-						long index = OutputValue.first;
+						///This is to get the correct index for the respective PPQ
+						long index = OutputValue.first % cMaxPlcOutputs;
 						if(Result.size() > 0)
 						{
 							if(cMaxPlcOutputs > index)

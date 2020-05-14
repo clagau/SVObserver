@@ -13,7 +13,7 @@ struct TriggerReport;
 
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcTransferTime, uint16_t simulateTriggers);
+void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, uint16_t simulateTriggers);
 void stopTriggerEngine();
 
 HRESULT initTriggerEngine();

@@ -55,7 +55,9 @@ SVDiscreteOutputsView::SVDiscreteOutputsView() :
 BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext) 
 {
 	dwStyle |= LVS_REPORT;
-	
+	dwStyle &= ~LVS_SORTASCENDING;
+	dwStyle &= ~LVS_SORTDESCENDING;
+
 	BOOL RetVal = CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 
 	m_ImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1 );

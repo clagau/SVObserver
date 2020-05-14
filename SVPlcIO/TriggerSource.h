@@ -49,7 +49,7 @@ protected:
 
 private:
 
-	TriggerChannel m_triggerChannels[c_NumberOfChannels];
+	TriggerChannel m_triggerChannels[cNumberOfChannels];
 };
 
 } //namespace SvPlc

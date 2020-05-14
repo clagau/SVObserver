@@ -48,8 +48,12 @@ PlcOutputsView::PlcOutputsView() :
 BOOL PlcOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
 {
 	dwStyle |= LVS_REPORT;
+	dwStyle &= ~LVS_SORTASCENDING;
+	dwStyle &= ~LVS_SORTDESCENDING;
 
 	BOOL RetVal = CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+
+	m_rCtrl.SetExtendedStyle(m_rCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
 
 	m_ImageList.Create(SvOr::IconSize, SvOr::IconSize, ILC_COLOR | ILC_MASK, 2, 1);
 	m_ImageList.Add(AfxGetApp()->LoadIcon(IDI_IOITEM_ICON));
@@ -68,6 +72,7 @@ BOOL PlcOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD
 	m_rCtrl.SetColumnWidth(0, 125);
 	m_rCtrl.SetColumnWidth(1, 125);
 	m_rCtrl.SetColumnWidth(2, 500);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(m_maxOutputNumber);
 	return RetVal;
 }
 
@@ -101,9 +106,6 @@ void PlcOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		// Check if any PPQs are here yet
 		if (0 == lPPQSize) { return; }
 
-		// Result Outputs
-		DWORD maxOutput = 0;
-		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(maxOutput);
 		for (int i = 0; i < lPPQSize; ++i)
 		{
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
@@ -115,16 +117,17 @@ void PlcOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			}
 			else
 			{
-				for (int j=0; j < static_cast<int> (maxOutput); ++j)
+				for (unsigned long j=0; j < m_maxOutputNumber; ++j)
 				{
+					int indexRow = j + m_maxOutputNumber * i;
 					std::string Item = SvUl::Format(_T("PLC Output %d"), j + 1);
 					m_rCtrl.InsertItem(LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
-									   j, Item.c_str(),
+									   indexRow, Item.c_str(),
 									   INDEXTOSTATEIMAGEMASK(1),
 									   LVIS_STATEIMAGEMASK,
 									   1, 0);
 
-					m_rCtrl.SetItemText(j, 1, pPPQ->GetName());
+					m_rCtrl.SetItemText(indexRow, 1, pPPQ->GetName());
 					// Get list of available outputs
 					SVIOEntryHostStructPtrVector IOEntriesVector;
 					pPPQ->GetAllOutputs(IOEntriesVector);
@@ -137,13 +140,13 @@ void PlcOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 						if (!pPlcOutput) { continue; }
 
-						if (j == pPlcOutput->GetChannel())
+						if (indexRow == pPlcOutput->GetChannel())
 						{
-							m_rCtrl.SetItem(j, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
+							m_rCtrl.SetItem(indexRow, 0, LVIF_IMAGE, nullptr, 0, 0, 0, 0);
 
-							m_Items[j] = pIOEntry;
+							m_Items[indexRow] = pIOEntry;
 
-							m_rCtrl.SetItemText(j, 2, pPlcOutput->GetName());
+							m_rCtrl.SetItemText(indexRow, 2, pPlcOutput->GetName());
 							break;
 						}
 					}
@@ -209,6 +212,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 				dlg.IOName += _T(", ") + m_rCtrl.GetItemText(item, 1);
 				dlg.m_pIOEntry = pIOEntry;
 				dlg.m_pPlcOutput = pPlcOutput;
+				dlg.m_PpqIndex = item / m_maxOutputNumber;
 
 				SVSVIMStateClass::AddState(SV_STATE_EDITING);
 				if(IDOK == dlg.DoModal())
@@ -248,27 +252,13 @@ void PlcOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 							}// end if
 						}// end else
 
-						long lPPQSize = 0;
-						// Force the PPQs to rebuild
-						if (nullptr != pConfig) { lPPQSize = pConfig->GetPPQCount(); }
-
 						// Rebuild Outputs
-						for (long k = 0; k < lPPQSize; k++)
-						{
-							SVPPQObject* pPPQ = pConfig->GetPPQ(k);
+						SVPPQObject* pPPQ = pConfig->GetPPQ(dlg.m_PpqIndex);
+						if (nullptr != pPPQ)
+						{ 
+							pPPQ->RebuildOutputList();
+						}
 
-							if (nullptr != pPPQ) { pPPQ->RebuildOutputList(); }
-						}// end for
-
-					}// end if
-
-						// Force IO board to update if they still have one selected
-					if (nullptr != dlg.m_pIOEntry)
-					{
-						if (nullptr != pOutputList)
-						{
-							pOutputList->ResetOutput(dlg.m_pIOEntry);
-						}// end if
 					}// end if
 				}
 				SVSVIMStateClass::RemoveState(SV_STATE_EDITING);

@@ -30,7 +30,7 @@ public:
 public:
 	uint8_t m_currentObjectType {0};		//Current object type
 	uint32_t m_currentObjectID {0};			//Current object ID
-	std::array<uint8_t, c_ResultSize> m_results
+	std::array<uint8_t, cResultSize> m_results
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};	//Results array
 #pragma endregion Member Variables
 };
@@ -47,8 +47,8 @@ public:
 
 #pragma region Member Variables
 public:
-	std::array<uint8_t, c_HeaderSize> m_header {0, 0, 0, 0, 0, 0, 0, 0};
-	std::array<ChannelOut, c_NumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
+	std::array<uint8_t, cHeaderSize> m_header {0, 0, 0, 0, 0, 0, 0, 0};
+	std::array<ChannelOut, cNumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
 #pragma endregion Member Variables
 };
 

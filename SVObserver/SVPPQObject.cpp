@@ -1729,6 +1729,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 	bool result{true};
 	bool bNak{true};
 	bool dataValidResult{false};
+	bool writeOutputData{false};
 	DWORD inspectedObjectID{0};
 
 #ifdef _DEBUG
@@ -1747,7 +1748,8 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			//Data index with -1 will return the default output values which is required in this case
 			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
 		}
-		
+
+		SvTh::IntVariantMap::const_iterator iterData{pProduct->m_triggerInfo.m_Data.end()};
 		//As all inspections have been tested to have the same object ID we will set it to the first inspection
 		ObjectIdSVInspectionInfoStructMap::const_iterator iter{pProduct->m_svInspectionInfos.begin()};
 		if(pProduct->m_svInspectionInfos.end() != iter)
@@ -1757,13 +1759,27 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		else
 		{
 			//Set the default inspected object ID which would be the input object ID
-			SvTh::IntVariantMap::const_iterator iterData {pProduct->m_triggerInfo.m_Data.end()};
 			iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::ObjectID);
 			if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 			{
 				inspectedObjectID = static_cast<DWORD> (iterData->second);
 			}
 		}
+		DWORD triggerIndex{0};
+		DWORD triggerPerObjectID{0};
+		iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerIndex);
+		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+		{
+			triggerIndex = static_cast<DWORD> (iterData->second);
+		}
+		iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerPerObjectID);
+		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+		{
+			triggerPerObjectID = static_cast<DWORD> (iterData->second);
+		}
+		//Only when both triggerIndex and triggerPerObjectID are valid and the same write data
+		writeOutputData = (0 != triggerIndex && 0 != triggerPerObjectID) ? (triggerIndex == triggerPerObjectID) : false;
+
 		pProduct->m_outputsInfo.m_OutputToggleResult = m_OutputToggle;
 		bNak = pProduct->m_outputsInfo.m_NakResult;
 		dataValidResult = pProduct->m_outputsInfo.m_DataValidResult;
@@ -1785,7 +1801,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 	if (bWriteOutputs)
 	{
-		if(nullptr != m_pTrigger)
+		if(nullptr != m_pTrigger && writeOutputData)
 		{
 			//Trigger channel needs to  be one based
 			long triggerChannel = (nullptr != m_pTrigger->getDevice()) ? m_pTrigger->getDevice()->getDigitizerNumber() + 1 : -1;

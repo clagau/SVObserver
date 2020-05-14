@@ -13,14 +13,14 @@
 
 namespace SvPlc
 {
-constexpr uint8_t c_majorVersion = 1;
-constexpr uint8_t c_minorVersion = 2;
+constexpr uint8_t cMajorVersion = 1;
+constexpr uint8_t cMinorVersion = 2;
 
-constexpr unsigned int c_NumberOfChannels = 4; /// the number of trigger channels
-constexpr unsigned int c_ConfigListSize = 62; /// The config list size
-constexpr uint8_t c_ResultSize = 14;
-constexpr uint8_t c_HeaderSize = 8;
-constexpr uint8_t c_modeSingleDirect = 1;
+constexpr unsigned int cNumberOfChannels = 4; /// the number of trigger channels
+constexpr unsigned int cConfigListSize = 62; /// The config list size
+constexpr uint8_t cResultSize = 14;
+constexpr uint8_t cHeaderSize = 8;
+constexpr uint8_t cModeSingleDirect = 1;
 
 struct TriggerReport
 {
@@ -33,14 +33,14 @@ struct TriggerReport
 	double m_triggerTimestamp {0.0};
 	bool m_isComplete {false};
 	bool m_isValid{false};
-	std::string m_text;
 };
 
 struct ResultReport
 {
 	uint8_t m_channel = 0;
 	uint32_t m_currentObjectID = 0;
-	std::array<uint8_t, c_ResultSize> m_results {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0};
+	double m_timestamp {0.0};
+	std::array<uint8_t, cResultSize> m_results {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0};
 };
 
 enum PlcDataType : uint16_t

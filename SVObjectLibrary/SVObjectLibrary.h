@@ -37,9 +37,6 @@ class SVObjectClass;
 				XCLASSNAME##RegisterClass() \
 				{ \
 				SVClassRegisterListClass::Instance().Add( this ); \
-					OutputDebugString( "SV_IMPLEMENT: " #XCLASSNAME ", " ); \
-					OutputDebugString( std::to_string(XCLASSID).c_str() ); \
-					OutputDebugString( _T( "\n" ) ); \
 				} \
 				virtual SvPb::ClassIdEnum GetClassID() const override { return XCLASSID; } \
 				virtual SVObjectClass* Construct() override { return new ( XCLASSNAME ); } \

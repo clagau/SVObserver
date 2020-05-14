@@ -949,7 +949,7 @@ void SVObserverApp::OnUpdateModeStopTest(CCmdUI* PCmdUI)
 
 void SVObserverApp::OnUpdateModeTest(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY | SV_STATE_RUNNING)) &&
+	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
 		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
 
 	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_TEST) &&
@@ -1133,13 +1133,12 @@ void SVObserverApp::OnGoOffline()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnUpdateGoOffline(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY)) &&
+	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
 		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
 		(m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE) ||
 		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_STOP)));
 
-	PCmdUI->SetCheck(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION)
-		&& SVSVIMStateClass::CheckState(SV_STATE_READY));
+	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_STOP));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1172,6 +1171,7 @@ void SVObserverApp::OnGoOnline()
 		
 		//After Regression and test both going to stop this should only be either Stop or Edit mode
 		long prevState = SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SV_STATE_EDIT : SVSVIMStateClass::CheckState(SV_STATE_STOP) ? SV_STATE_STOP : 0L;
+		prevState |= SVSVIMStateClass::CheckState(SV_STATE_READY) ? SV_STATE_READY : 0L;
 
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY) && false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
@@ -1233,7 +1233,7 @@ void SVObserverApp::OnGoOnline()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnUpdateGoOnline(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY) &&
+	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP) &&
 		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
 		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
 

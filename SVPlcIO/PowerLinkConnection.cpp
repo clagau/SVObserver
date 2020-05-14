@@ -20,16 +20,18 @@ HANDLE g_hSignalEvent {nullptr};
 std::atomic_bool g_runThread{false};
 
 PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger,
-										 uint16_t plcTransferTime, uint16_t simulateTriggers) :
+										 uint16_t plcNodeID, uint16_t plcTransferTime, uint16_t simulateTriggers) :
 	m_pReportTrigger(pReportTrigger)
 {
+	g_hSignalEvent = ::CreateEvent(nullptr, false, false, nullptr);
+
 	if (simulateTriggers > 0)
 	{
 		m_pTriggersource = std::make_unique<SimulatedTriggerSource>();
 	}
 	else
 	{
-		m_pTriggersource = std::make_unique<HardwareTriggerSource>(plcTransferTime);
+		m_pTriggersource = std::make_unique<HardwareTriggerSource>(plcNodeID, plcTransferTime);
 	}
 }
 
@@ -49,7 +51,7 @@ void PowerlinkConnection::setReady(bool ready)
 
 void PowerlinkConnection::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
 {
-	if(channel < c_NumberOfChannels)
+	if(channel < cNumberOfChannels)
 	{
 		//If no active channel then stop event thread
 		if(m_pTriggersource->setTriggerChannel(channel, active, period))
@@ -82,13 +84,11 @@ void PowerlinkConnection::StartEventSignalThread()
 {
 	if (!m_eventSignalThread.joinable())
 	{
-		if (nullptr == g_hSignalEvent)
-		{
-			g_hSignalEvent = ::CreateEvent(nullptr, false, false, nullptr);
-		}
 		g_runThread = true;
 		m_eventSignalThread = std::thread(&PowerlinkConnection::EventSignalThread, this,
 											std::bind(&PowerlinkConnection::EventHandler, this));
+		
+		::OutputDebugString("Event signal thread started\n");
 	}
 }
 
@@ -99,6 +99,7 @@ void PowerlinkConnection::StopEventSignalThread()
 	if (m_eventSignalThread.joinable())
 	{
 		m_eventSignalThread.join();
+		::OutputDebugString("Event signal thread stopped\n");
 	}
 }
 
@@ -121,7 +122,7 @@ void PowerlinkConnection::EventHandler()
 {
 	if(m_pTriggersource->analyzeTelegramData())
 	{
-		for(int i=0; i < c_NumberOfChannels; ++i)
+		for(int i=0; i < cNumberOfChannels; ++i)
 		{
 			if(nullptr != m_pReportTrigger)
 			{

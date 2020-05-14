@@ -15,24 +15,22 @@
 
 namespace SvPlc
 {
-constexpr uint8_t c_UnitControlActive = 1;
-constexpr int32_t c_MicrosecondsPerMillisecond = 1000;
-constexpr uint32_t c_cifXProblemReportFrequency = 1000;
-constexpr uint32_t c_SecondsToNanoSeconds = 1000000000;
-constexpr uint32_t c_TimeWrap = 65536;		//Constant when time offset negative need to wrap it by 16 bits
+constexpr uint8_t cUnitControlActive = 1;
+constexpr int32_t cMicrosecondsPerMillisecond = 1000;
+constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need to wrap it by 16 bits
 
 const size_t m_numberOfEntriesPerChannel = 25;
 
-const uint32_t c_CifXNodeId = 23; //< The Powerlink Node Id used for the Hilscher CifX card
-const uint32_t c_maxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
+const uint32_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
+const uint32_t cmaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
 //Make sure that the telegram in structure is smaller than the Hilscher card incoming buffer size
-static_assert(sizeof(Telegram) + sizeof(InspectionCommand) <= c_maxPLC_DataSize, "Read buffer size is to small");
-static_assert(sizeof(Telegram) + sizeof(InspectionState) <= c_maxPLC_DataSize, "Write buffer size is to small");
-static_assert(sizeof(Telegram) + c_ConfigListSize * sizeof(ConfigDataSet) <= c_maxPLC_DataSize, "Write buffer size is to small");
+static_assert(sizeof(Telegram) + sizeof(InspectionCommand) <= cmaxPLC_DataSize, "Read buffer size is to small");
+static_assert(sizeof(Telegram) + sizeof(InspectionState) <= cmaxPLC_DataSize, "Write buffer size is to small");
+static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
 
-HardwareTriggerSource::HardwareTriggerSource(uint16_t plcTransferTime) : TriggerSource()
+HardwareTriggerSource::HardwareTriggerSource(uint16_t plcNodeID, uint16_t plcTransferTime) : TriggerSource()
 , m_plcTransferTime {plcTransferTime}
-, m_cifXCard(c_CifXNodeId, c_maxPLC_DataSize)
+, m_cifXCard((0 != plcNodeID) ? plcNodeID : cCifXNodeId, cmaxPLC_DataSize)
 {
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
 }
@@ -58,22 +56,12 @@ HRESULT HardwareTriggerSource::initialize()
 		}
 	}
 
-	for (uint8_t i = 0; i < c_NumberOfChannels; ++i)
-	{
-		const TriggerChannel& rTriggerChannel = getChannel(i);
-		if (rTriggerChannel.m_active)
-		{
-			result = true;
-			break;
-		}
-	}
-
 	return result;
 }
 
 void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut)
 {
-	if(c_NumberOfChannels > channel)
+	if(cNumberOfChannels > channel)
 	{
 		std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 		m_inspectionState.m_channels[channel] = channelOut;
@@ -133,7 +121,7 @@ double HardwareTriggerSource::getExecutionTime(uint8_t channel)
 	const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
 	const int16_t& rTimeStamp1 = rInsCmd.m_channels[channel].m_timeStamp1;
 	int32_t triggerTimeOffset = getPlcTriggerTime(rInsCmd.m_socRelative, rTimeStamp1) - m_cifXCard.getSyncSocRel();
-	return m_cifXCard.getSyncTime() + static_cast<double> (triggerTimeOffset - m_plcTransferTime) / c_MicrosecondsPerMillisecond;
+	return m_cifXCard.getSyncTime() + static_cast<double> (triggerTimeOffset - m_plcTransferTime) / cMicrosecondsPerMillisecond;
 }
 
 int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t timeStamp)
@@ -146,7 +134,7 @@ int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t ti
 	//When offset is in the past we need to wrap it by 16 bits
 	if (triggerTimeOffset < socRelative)
 	{
-		triggerTimeOffset += c_TimeWrap;
+		triggerTimeOffset += cTimeWrap;
 	}
 
 	return triggerTimeOffset;
@@ -162,7 +150,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 	double triggerTimeStamp = getExecutionTime(channel);
 
 	//When unit control is 1, sequence number has changed and is odd generate new trigger
-	if (c_UnitControlActive == rChannel.m_unitControl && m_OldSequenceCode[channel] != m_NewSequenceCode[channel] && (m_NewSequenceCode[channel] % 2))
+	if (cUnitControlActive == rChannel.m_unitControl && m_OldSequenceCode[channel] != m_NewSequenceCode[channel] && (m_NewSequenceCode[channel] % 2))
 	{
 		TriggerReport report;
 		report.m_channel = channel;
@@ -175,9 +163,6 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		report.m_isComplete = rChannel.m_triggerIndex == rChannel.m_triggerCount;
 		const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
 		report.m_isValid = (0 != rInsCmd.m_socRelative);
-		//@TODO[gra][10.00][27.02.2020]: This is only for test purposes
-		int32_t triggerTime = getPlcTriggerTime(rInsCmd.m_socRelative, rChannel.m_timeStamp1);
-		report.m_text = std::to_string(triggerTime) + "; " + std::to_string(rChannel.m_socTriggerTime);
 		addTriggerReport(std::move(report));
 	}
 }

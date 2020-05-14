@@ -76,7 +76,7 @@ public:
 
 	bool hasTriggerDataChanged(const InspectionCommand& rRhs)
 	{
-		for(int i=0; i < c_NumberOfChannels; ++i)
+		for(int i=0; i < cNumberOfChannels; ++i)
 		{
 			if(m_channels[i] != rRhs.m_channels[i])
 			{
@@ -93,7 +93,7 @@ public:
 	uint32_t m_socAbsNanoseconds {0UL};		//SOC time nano seconds
 	int32_t m_socRelative {0L};				//Relative SOC time
 	std::array<uint8_t, c_ReservedInsCmd>  m_reserved {0, 0, 0, 0, 0, 0, 0};	//Reserved data
-	std::array<ChannelIn, c_NumberOfChannels> m_channels;	//In data for each of the 4 separate channels
+	std::array<ChannelIn, cNumberOfChannels> m_channels;	//In data for each of the 4 separate channels
 #pragma endregion Member Variables
 };
 #pragma pack(pop)

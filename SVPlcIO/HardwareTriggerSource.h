@@ -19,7 +19,7 @@ namespace SvPlc
 class HardwareTriggerSource : public TriggerSource
 {
 public:
-	explicit HardwareTriggerSource(uint16_t plcTransferTime);
+	explicit HardwareTriggerSource(uint16_t plcNodeID, uint16_t plcTransferTime);
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
@@ -42,8 +42,8 @@ private:
 
 	uint32_t m_ProcessDataChanges {0UL};
 
-	int8_t m_NewSequenceCode[c_NumberOfChannels] = {0, 0, 0, 0};
-	int8_t m_OldSequenceCode[c_NumberOfChannels] = {0, 0, 0, 0};
+	int8_t m_NewSequenceCode[cNumberOfChannels] = {0, 0, 0, 0};
+	int8_t m_OldSequenceCode[cNumberOfChannels] = {0, 0, 0, 0};
 
 	bool m_triggerDataChanged {false};
 	InspectionCommand m_previousTriggerData;

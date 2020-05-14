@@ -54,7 +54,7 @@ public:
 	const Telegram& getInputTelegram() { return m_inputTelegram; }
 	const InspectionCommand& getInspectionCmd() { return m_inspectionCmd; }
 	bool isProtocolInitialized() { return m_protocolInitialized; }
-	void setReady(bool ready) { m_ready = ready; } 
+	void setReady(bool ready);
 
 private:
 	uint32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt);
@@ -71,8 +71,8 @@ private:
 
 	CIFXHANDLE m_hDriver {nullptr};				/// Cifx driver handle
 	CIFXHANDLE m_hChannel {nullptr};			/// Cifx channel handle
-	std::unique_ptr<uint8_t> m_pReadBuffer;		///Receive buffer
-	std::unique_ptr<uint8_t> m_pWriteBuffer;	///Send buffer
+	std::unique_ptr<uint8_t[]> m_pReadBuffer;	///Receive buffer
+	std::unique_ptr<uint8_t[]> m_pWriteBuffer;	///Send buffer
 
 	bool m_processDataCanBeRead {false};
 	uint64_t m_processDataReadCount {0ULL}; ///< running count of process data reads. This is also the number of interrupts 

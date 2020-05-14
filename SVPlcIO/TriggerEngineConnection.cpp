@@ -17,9 +17,9 @@ std::unique_ptr<PowerlinkConnection> g_pPowerLink;
 namespace Tec
 {
 void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger,
-	uint16_t plcTransferTime, uint16_t simulateTriggers)
+	uint16_t plcNodeID, uint16_t plcTransferTime, uint16_t simulateTriggers)
 {
-	g_pPowerLink = std::make_unique<PowerlinkConnection>(reportTrigger, plcTransferTime, simulateTriggers);
+	g_pPowerLink = std::make_unique<PowerlinkConnection>(reportTrigger, plcNodeID, plcTransferTime, simulateTriggers);
 	if(nullptr != g_pPowerLink)
 	{
 		::OutputDebugString("Start Trigger Engine!\n");
