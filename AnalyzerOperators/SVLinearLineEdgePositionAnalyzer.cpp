@@ -93,7 +93,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-void SVLinearEdgePositionLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+void SVLinearEdgePositionLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -101,7 +101,7 @@ void SVLinearEdgePositionLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOv
 
 	if (nullptr != GetEdgeA() && nullptr != pGroup)
 	{
-		GetEdgeA()->addOverlayResultMarker(*pGroup);
+		GetEdgeA()->addOverlayResultMarker(*pGroup, isVertical);
 	}
 }
 

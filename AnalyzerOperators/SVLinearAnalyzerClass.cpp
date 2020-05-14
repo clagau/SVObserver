@@ -268,7 +268,7 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 	return l_hrOk;
 }
 
-HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientation)
+HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientation) const
 {
 	HRESULT Result(E_FAIL);
 	if( m_InputProfileOrientation.IsConnected() && nullptr != m_InputProfileOrientation.GetInputObjectInfo().getObject() )
@@ -444,33 +444,37 @@ void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, S
 			pArrow->mutable_y2()->set_value(figure.m_svCenterRight.m_y);
 		}
 	}
+	long profileOrientation = 0;
+	GetInputProfileOrientation(profileOrientation);
+	bool isVertical = (0 != profileOrientation);
+
 	bool isGraphSet = false;
 	auto* pEdge = GetEdgeA();
 	if (nullptr != pEdge)
 	{
-		isGraphSet = pEdge->addGraphOverlay(rOverlay);
+		isGraphSet = pEdge->addGraphOverlay(rOverlay, isVertical);
 	}
 
 	pEdge = GetEdgeB();
 	if (!isGraphSet && nullptr != pEdge)
 	{
-		pEdge->addGraphOverlay(rOverlay);
+		pEdge->addGraphOverlay(rOverlay, isVertical);
 	}
-	addOverlayResults(rOverlay);
-	addOverlayResultDetails(rOverlay);
+	addOverlayResults(rOverlay, isVertical);
+	addOverlayResultDetails(rOverlay, isVertical);
 }
 
-void SVLinearAnalyzerClass::addOverlayResultDetails(SvPb::Overlay& rOverlay) const
+void SVLinearAnalyzerClass::addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pEdge = GetEdgeA();
 	if (nullptr != pEdge)
 	{
-		pEdge->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::EdgeA);
+		pEdge->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::EdgeA, isVertical);
 	}
 	pEdge = GetEdgeB();
 	if (nullptr != pEdge)
 	{
-		pEdge->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::EdgeB);
+		pEdge->addOverlayResultDetails(rOverlay, SvOp::SVLinearEdgeProcessingClass::ResultType::EdgeB, isVertical);
 	}
 }
 

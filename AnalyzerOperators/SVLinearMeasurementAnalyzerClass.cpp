@@ -142,7 +142,7 @@ bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -150,12 +150,12 @@ void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay
 
 	if (nullptr != GetEdgeA() && nullptr != pGroup)
 	{
-		GetEdgeA()->addOverlayResultMarker(*pGroup);
+		GetEdgeA()->addOverlayResultMarker(*pGroup, isVertical);
 	}
 
 	if (nullptr != GetEdgeB() && nullptr != pGroup)
 	{
-		GetEdgeB()->addOverlayResultMarker(*pGroup);
+		GetEdgeB()->addOverlayResultMarker(*pGroup, isVertical);
 	}
 }
 

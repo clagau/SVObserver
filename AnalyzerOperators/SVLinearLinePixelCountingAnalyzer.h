@@ -33,7 +33,7 @@ public:
 protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay) const override;
+	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 
 	SvVol::SVLongValueObjectClass	blackPixelCount;
 	SvVol::SVLongValueObjectClass  whitePixelCount;

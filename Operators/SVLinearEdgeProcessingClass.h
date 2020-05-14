@@ -52,17 +52,17 @@ public:
 	HRESULT GetEdgesOverlay( SVExtentMultiLineStruct &p_rsvMiltiLine );
 	HRESULT GetSelectedEdgeOverlay( SVExtentLineStruct &p_rsvLine );
 
-	void addOverlayFullResult(SvPb::Overlay& rOverlay) const;
-	void addOverlayResultMarker(SvPb::OverlayShapeGroup& rGroup) const;
+	void addOverlayFullResult(SvPb::Overlay& rOverlay, bool isVertical = false) const;
+	void addOverlayResultMarker(SvPb::OverlayShapeGroup& rGroup, bool isVertical = false) const;
 	enum class ResultType
 	{
 		EdgeA,
 		EdgeB,
 		PixelCounting,
 	};
-	void addOverlayResultDetails(SvPb::Overlay& rOverlay, ResultType resultType) const;
+	void addOverlayResultDetails(SvPb::Overlay& rOverlay, ResultType resultType, bool isVertical) const;
 	/// Add Graph overlay and return true if done.
-	bool addGraphOverlay(SvPb::Overlay& rOverlay);
+	bool addGraphOverlay(SvPb::Overlay& rOverlay, bool isVertical = false);
 	
 	const std::vector<SvPb::EmbeddedIdEnum>& getEdgeEmbeddedIds() { return m_EdgeEmbeddedIds; }
 

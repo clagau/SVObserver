@@ -56,13 +56,13 @@ protected:
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
 
-	virtual void addOverlayResults(SvPb::Overlay& rOverlay) const {};
-	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay) const;
+	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const {};
+	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical = false) const;
 
 	virtual HRESULT updateImageExtent() override;
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass& rImageExtent );
 
-	HRESULT GetInputProfileOrientation(long& rProfileOrientation);
+	HRESULT GetInputProfileOrientation(long& rProfileOrientation) const;
 	HRESULT GetInputUseRotationAngle(bool& rUseRotationAngle);
 	bool ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages=nullptr);

@@ -178,7 +178,7 @@ HRESULT SVLinearMaximumForegroundObjectLineAnalyzerClass::GetSelectedEdgeOverlay
 	return S_OK;
 }
 
-void SVLinearMaximumForegroundObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+void SVLinearMaximumForegroundObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -198,7 +198,14 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::addOverlayResults(SvPb::O
 	pResultMarker->set_maxvalue(rect.right);
 	pResultMarker->mutable_value()->set_trpos(m_svLinearDistanceA.getTrPos() + 1);
 	pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	if (isVertical)
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::x);
+	}
+	else
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	}
 	//edgeB
 	auto* pResultBShape = pGroup->add_shapes();
 	pResultBShape->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
@@ -207,7 +214,14 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::addOverlayResults(SvPb::O
 	pResultMarker->set_maxvalue(rect.right);
 	pResultMarker->mutable_value()->set_trpos(m_svLinearDistanceB.getTrPos() + 1);
 	pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	if (isVertical)
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::x);
+	}
+	else
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	}
 }
 
 bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

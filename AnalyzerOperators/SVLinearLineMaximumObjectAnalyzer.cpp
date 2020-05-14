@@ -177,7 +177,7 @@ HRESULT SVLinearMaximumObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExten
 	return S_OK;
 }
 
-void SVLinearMaximumObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+void SVLinearMaximumObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -197,7 +197,14 @@ void SVLinearMaximumObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rO
 	pResultMarker->set_maxvalue(rect.right);
 	pResultMarker->mutable_value()->set_trpos(m_svLinearDistanceA.getTrPos() + 1);
 	pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	if (isVertical)
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::x);
+	}
+	else
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	}
 	//edgeB
 	auto* pResultBShape = pGroup->add_shapes();
 	pResultBShape->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
@@ -206,7 +213,14 @@ void SVLinearMaximumObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rO
 	pResultMarker->set_maxvalue(rect.right);
 	pResultMarker->mutable_value()->set_trpos(m_svLinearDistanceB.getTrPos() + 1);
 	pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	if (isVertical)
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::x);
+	}
+	else
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	}
 }
 
 bool SVLinearMaximumObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

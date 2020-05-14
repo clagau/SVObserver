@@ -30,7 +30,7 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual void addOverlayResults(SvPb::Overlay& rOverlay) const override;
+	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 
 protected:
 	virtual std::vector<std::string> getParameterNamesForML() const override;

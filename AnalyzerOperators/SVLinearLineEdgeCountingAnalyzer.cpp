@@ -142,11 +142,11 @@ HRESULT SVLinearEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtent
 	return E_FAIL;
 }
 
-void SVLinearEdgeCountingLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay) const
+void SVLinearEdgeCountingLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	if (nullptr != GetEdgeA())
 	{
-		GetEdgeA()->addOverlayFullResult(rOverlay);
+		GetEdgeA()->addOverlayFullResult(rOverlay, isVertical);
 	}
 }
 

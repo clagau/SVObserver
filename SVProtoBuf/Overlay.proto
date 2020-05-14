@@ -241,6 +241,7 @@ message OverlayShapeBlockMarker
 	//This Block marker start with the first pixel with the first color. At the position changePos[0] it changes to the next color and so on.
 	repeated uint32 colors = 1;
 	repeated int32 changePos = 2;	
+	Orientation orientationType = 4;
 	
 	oneof DataType
 	{

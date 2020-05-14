@@ -764,7 +764,7 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	return l_hrOk;
 }
 
-void SVLinearEdgeProcessingClass::addOverlayFullResult(SvPb::Overlay& rOverlay) const
+void SVLinearEdgeProcessingClass::addOverlayFullResult(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -782,10 +782,18 @@ void SVLinearEdgeProcessingClass::addOverlayFullResult(SvPb::Overlay& rOverlay) 
 	}
 	pResultMarker->set_trpos(m_svLinearEdges.getTrPos() + 1);
 	pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+
+	if (isVertical)
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::x);
+	}
+	else
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	}
 }
 
-void SVLinearEdgeProcessingClass::addOverlayResultMarker(SvPb::OverlayShapeGroup& rGroup) const
+void SVLinearEdgeProcessingClass::addOverlayResultMarker(SvPb::OverlayShapeGroup& rGroup, bool isVertical) const
 {
 	auto* pResultShape = rGroup.add_shapes();
 	pResultShape->mutable_color()->set_value(m_cfEdges);
@@ -863,10 +871,17 @@ void SVLinearEdgeProcessingClass::addOverlayResultMarker(SvPb::OverlayShapeGroup
 	}
 
 	pResultMarker->set_sizetype(SvPb::Size::MidShort);
-	pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	if (isVertical)
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::x);
+	}
+	else
+	{
+		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+	}
 }
 
-void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverlay, ResultType resultType) const
+void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverlay, ResultType resultType, bool isVertical) const
 {
 	//add thresholdBar
 	auto* pGroup = rOverlay.add_shapegroups();
@@ -894,6 +909,14 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 	pThresholdLowerMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
 	SvPb::setValueObject(m_svLowerThresholdValue, *pThresholdLowerMarker->mutable_value(), true);
 	pThresholdLowerMarker->set_sizetype(SvPb::Size::Full);
+	if (isVertical)
+	{
+		pThresholdLowerMarker->set_orientationtype(SvPb::Orientation::y);
+	}
+	else
+	{
+		pThresholdLowerMarker->set_orientationtype(SvPb::Orientation::x);
+	}
 	auto* pThesholdUpperShape = pGroup->add_shapes();
 	pThesholdUpperShape->mutable_color()->set_value(color);
 	auto* pThresholdUpperMarker = pThesholdUpperShape->mutable_marker();
@@ -901,6 +924,14 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 	pThresholdUpperMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
 	SvPb::setValueObject(m_svUpperThresholdValue, *pThresholdUpperMarker->mutable_value(), true);
 	pThresholdUpperMarker->set_sizetype(SvPb::Size::Full);
+	if (isVertical)
+	{
+		pThresholdUpperMarker->set_orientationtype(SvPb::Orientation::y);
+	}
+	else
+	{
+		pThresholdUpperMarker->set_orientationtype(SvPb::Orientation::x);
+	}
 
 	// add result lines
 	auto* pResultShape = pGroup->add_shapes();
@@ -912,6 +943,14 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 		pResultMarker->set_pixelcountinganalyzerresultpos(m_svLinearEdges.getTrPos()+1);
 		pResultMarker->add_colors(SvDef::DefaultBlackColor);
 		pResultMarker->add_colors(SvDef::DefaultWhiteColor);
+		if (isVertical)
+		{
+			pResultMarker->set_orientationtype(SvPb::Orientation::x);
+		}
+		else
+		{
+			pResultMarker->set_orientationtype(SvPb::Orientation::y);
+		}
 	}
 	break;
 	case ResultType::EdgeA:
@@ -930,14 +969,21 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 		}
 
 		pResultMarker->set_trpos(m_svLinearEdges.getTrPos()+1);
-		pResultMarker->set_orientationtype(SvPb::Orientation::y);
+		if (isVertical)
+		{
+			pResultMarker->set_orientationtype(SvPb::Orientation::x);
+		}
+		else
+		{
+			pResultMarker->set_orientationtype(SvPb::Orientation::y);
+		}
 		pResultMarker->set_sizetype(SvPb::Size::MidShort);
 	}
 	break;
 	}
 }
 
-bool SVLinearEdgeProcessingClass::addGraphOverlay(SvPb::Overlay& rOverlay)
+bool SVLinearEdgeProcessingClass::addGraphOverlay(SvPb::Overlay& rOverlay, bool isVertical)
 {
 	//add graph overlays
 	auto* pValueObject = dynamic_cast<SvOi::IValueObject*>(m_InputLinearData.GetInputObjectInfo().getObject());
@@ -949,9 +995,18 @@ bool SVLinearEdgeProcessingClass::addGraphOverlay(SvPb::Overlay& rOverlay)
 		auto* pShape = pGroup->add_shapes();
 		pShape->mutable_color()->set_value(m_cfHistogram);
 		auto* pGraph = pShape->mutable_graph();
-		pGraph->set_minvaluey(SvDef::cMin8BitPixelValue);
-		pGraph->set_maxvaluey(SvDef::cMax8BitPixelValue);
-		pGraph->set_trposy(pValueObject->getTrPos() + 1);
+		if (isVertical)
+		{
+			pGraph->set_minvaluex(SvDef::cMin8BitPixelValue);
+			pGraph->set_maxvaluex(SvDef::cMax8BitPixelValue);
+			pGraph->set_trposx(pValueObject->getTrPos() + 1);
+		}
+		else
+		{
+			pGraph->set_minvaluey(SvDef::cMin8BitPixelValue);
+			pGraph->set_maxvaluey(SvDef::cMax8BitPixelValue);
+			pGraph->set_trposy(pValueObject->getTrPos() + 1);
+		}
 		return true;
 	}
 	return false;
