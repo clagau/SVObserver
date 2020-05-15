@@ -214,8 +214,8 @@ HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 
 			m_oOutputsResetQueue.AddTail(rProduct.ProcessCount());
 
-			SetProductComplete(rProduct);
 		}
+		SetProductComplete(rProduct);
 	}
 	else
 	{
