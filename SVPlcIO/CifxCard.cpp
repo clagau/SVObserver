@@ -16,7 +16,6 @@
 #include "EplCn_If_Public.h"
 #include "InspectionState.h"
 #include "PlcDataVersion.h"
-#include "TLR_Results.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 

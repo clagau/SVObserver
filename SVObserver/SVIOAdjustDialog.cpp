@@ -155,23 +155,23 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		}
 
 		// Check Module Ready first
-		SVIOEntryHostStructPtr pIOEntry = pConfig->GetModuleReady();
+		SVIOEntryHostStructPtr pIOModuleReady = pConfig->GetModuleReady();
 
-		if (nullptr != pIOEntry && SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF(pIOEntry->getObject(), SvVol::SVBoolValueObjectClass) )
+		if (nullptr != pIOModuleReady && SvDef::InvalidObjectId == pIOModuleReady->m_IOId && SV_IS_KIND_OF(pIOModuleReady->getObject(), SvVol::SVBoolValueObjectClass) )
 		{
-			std::string name{pIOEntry->getObject()->GetCompleteName()};
+			std::string name{pIOModuleReady->getObject()->GetCompleteName()};
 			IOCombo.AddString(name.c_str());
-			m_Items[name] = pIOEntry;
+			m_Items[name] = pIOModuleReady;
 		}// end if
 
 		if ( SvTi::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
 		{
-			pIOEntry = pConfig->GetRaidErrorBit();
-			if(nullptr != pIOEntry && SvDef::InvalidObjectId == pIOEntry->m_IOId && SV_IS_KIND_OF( pIOEntry->getObject(), SvVol::SVBoolValueObjectClass ) )
+			SVIOEntryHostStructPtr pIORaid = pConfig->GetRaidErrorBit();
+			if(nullptr != pIORaid && SvDef::InvalidObjectId == pIORaid->m_IOId && SV_IS_KIND_OF(pIORaid->getObject(), SvVol::SVBoolValueObjectClass ) )
 			{
-				std::string name{pIOEntry->getObject()->GetCompleteName()};
+				std::string name{pIORaid->getObject()->GetCompleteName()};
 				IOCombo.AddString(name.c_str());
-				m_Items[name] = pIOEntry;
+				m_Items[name] = pIORaid;
 			}// end if
 		}
 
