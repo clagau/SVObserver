@@ -2312,6 +2312,10 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 			m_ConfigFileName.SetFileName(OriginalFile.c_str());
 			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 			m_ConfigFileName.SetPathName(nullptr);
+
+			std::string filenameWithExtension = OriginalFile + SvDef::cPackedConfigExtension;
+			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationFileName, filenameWithExtension);
+			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, OriginalFile);
 		}
 		result = OpenSVXFile();
 		//Only if loaded locally then add to recent list
