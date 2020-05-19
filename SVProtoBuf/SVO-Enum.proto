@@ -749,7 +749,7 @@ enum EmbeddedIdEnum
 	OCVMatchScoreEId = 121;
 	ArchiveFilePathEId = 122;
 	ArchiveImageGuids_OBSOLETE_EId = 123;
-	ArchiveImageFileRootPathEId = 124;
+	ArchiveImageFileRootPart1EId = 124;
 	ArchiveResultGuids_OBSOLETE_EId = 125;
 	ArchiveAppendArchiveFileEId = 126;
 	ArchiveStopAtMaxImagesEId = 127;
@@ -1113,6 +1113,12 @@ enum EmbeddedIdEnum
 	FormatArchiveToolResultsEId = 491;
 	ArchiveResultsMinimumNumberOfCharactersEId = 492;
 	ArchiveResultsNumberOfDecimalsEId = 493;
+	ArchiveImageFileRootPart2EId = 494;
+	ArchiveImageFileRootPart3EId = 495;
+	ArchiveImageFileRootPart1LinkEId = 496;
+	ArchiveImageFileRootPart2LinkEId = 497;
+	ArchiveImageFileRootPart3LinkEId = 498;
+
 	TriggerPerObjectIDEId = 500;
 
 

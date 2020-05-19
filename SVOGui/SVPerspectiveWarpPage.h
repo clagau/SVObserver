@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
@@ -42,11 +41,9 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		Controller m_Values;
+		ValueController m_values;
 		long m_lLastWarpType;
 	};
 } //namespace SvOg

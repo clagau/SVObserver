@@ -30,7 +30,7 @@ namespace SvOg
 	, m_bAuxExtentsAvailable(false)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
-	, m_Values(SvOg::BoundValues(inspectionId, taskObjectId))
+	, m_values(SvOg::BoundValues(inspectionId, taskObjectId))
 	, m_AuxExtentsController(inspectionId, taskObjectId)
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogGeneralPageClass)
@@ -52,11 +52,11 @@ namespace SvOg
 		if (CB_ERR != CurrentSelection)
 		{
 			long Value = static_cast<long> (m_drawToolCombo.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SvPb::ConditionalToolDrawFlagEId, Value);
+			m_values.Set<long>(SvPb::ConditionalToolDrawFlagEId, Value);
 		}			
 		m_AuxExtentsController.EnableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
 			
-		hr = m_Values.Commit();
+		hr = m_values.Commit();
 		if (S_OK == hr)
 		{
 			hr = m_AuxExtentsController.Commit();
@@ -69,7 +69,7 @@ namespace SvOg
 	void SVToolAdjustmentDialogGeneralPageClass::refresh()
 	{
 		// Update dialog with freeze tool attributes...
-		long CurrentSelection = m_Values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
+		long CurrentSelection = m_values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	
 		// Check, if drawToolCombo must be disabled/enabled...
@@ -94,9 +94,9 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogGeneralPageClass::SetupDrawFlagComboBox()
 	{
-		const SvOi::NameValueVector& rDrawCriteria = m_Values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
+		const SvOi::NameValueVector& rDrawCriteria = m_values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetEnumTypes(rDrawCriteria);
-		long CurrentSelection = m_Values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
+		long CurrentSelection = m_values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	}
 
@@ -152,7 +152,7 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 
 		m_AuxExtentsController.Init();
-		m_Values.Init();
+		m_values.Init();
 
 		SetupDrawFlagComboBox();
 		m_bAuxExtentsAvailable = CheckAuxiliaryExtentsAvailable();

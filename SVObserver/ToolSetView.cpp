@@ -35,7 +35,6 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
@@ -641,8 +640,7 @@ void ToolSetView::EditToolComment(uint32_t toolId)
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
 
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values {SvOg::BoundValues{ pInspection->getObjectId(), toolId }};
+		SvOg::ValueController Values {SvOg::BoundValues{ pInspection->getObjectId(), toolId }};
 		Values.Init();
 
 		// Get the tool comment...

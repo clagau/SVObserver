@@ -22,7 +22,7 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 	SVToolAdjustmentDialogCommentPage::SVToolAdjustmentDialogCommentPage(uint32_t inspectionId, uint32_t taskObjectId) : CPropertyPage(SVToolAdjustmentDialogCommentPage::IDD)
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
 	{
@@ -42,9 +42,9 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 
-		m_strComment = m_Values.Get<CString>(SvPb::ToolCommentTypeEId);
+		m_strComment = m_values.Get<CString>(SvPb::ToolCommentTypeEId);
 
 		UpdateData(false);
 
@@ -58,8 +58,8 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_Values.Set<CString>(SvPb::ToolCommentTypeEId, m_strComment);
-		m_Values.Commit();
+		m_values.Set<CString>(SvPb::ToolCommentTypeEId, m_strComment);
+		m_values.Commit();
 
 		return Result;
 	}

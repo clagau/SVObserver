@@ -48,7 +48,7 @@ bool ArchiveToolHelper::isUsingKeywords()
 	return m_IsUsingKeyWords;
 }
 
-bool ArchiveToolHelper::isTokensValid()
+bool ArchiveToolHelper::areTokensValid()
 {
 	return m_ValidTokens;
 }

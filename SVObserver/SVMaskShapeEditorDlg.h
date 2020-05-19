@@ -17,7 +17,6 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/MaskController.h"
 #pragma endregion Includes
@@ -30,7 +29,6 @@ class SVMaskShape;
 
 class SVMaskShapeEditorDlg : public CDialog
 {
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 #pragma region Construction
 public:
 	SVMaskShapeEditorDlg(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId, uint32_t shapeMaskHelperId, CWnd* pParent = nullptr);   // standard constructor
@@ -59,7 +57,7 @@ public:
 
 	SvOp::SVMaskShape* GetCurrentShape(); // holds the properties and does the rendering
 
-	Controller& GetValues() { return m_Values; }
+	SvOg::ValueController& GetValues() { return m_Values; }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -175,7 +173,7 @@ private:
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
-	Controller m_Values;
-	Controller m_ShapeHelperValues;
+	SvOg::ValueController m_Values;
+	SvOg::ValueController m_ShapeHelperValues;
 #pragma endregion Member Variables
 };

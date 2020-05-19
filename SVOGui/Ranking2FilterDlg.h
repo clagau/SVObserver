@@ -12,7 +12,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -113,8 +112,7 @@ private:
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_filterID;
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller m_Values;
+	ValueController m_values;
 #pragma endregion Member Variables
 };
 }  //namespace SvOg

@@ -56,14 +56,7 @@ void SVArchiveRecord::BuildArchiveImageFilePaths()
 	DWORD		dwMaxImages;
 	m_FileNames.clear();
 
-	if (m_pArchiveTool->isImagePathUsingKeywords())
-	{
-		m_pArchiveTool->getTranslatedImagePath(m_ImagePathRoot);
-	}
-	else
-	{
-		m_pArchiveTool->GetImageArchivePath(m_ImagePathRoot);
-	}
+	m_ImagePathRoot = m_pArchiveTool->getCurrentImagePathRoot();
 
 	SVFileNameClass svFileName;
 	svFileName.SetPathName(m_ImagePathRoot.c_str());
@@ -76,7 +69,6 @@ void SVArchiveRecord::BuildArchiveImageFilePaths()
 		m_FileNames.push_back(svFileName.GetFullFileName());
 	}
 }
-
 
 HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths)
 {
@@ -92,7 +84,7 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	{
 		if (dwStopAtMaxCount)
 		{
-			return -1902; //@TODO[Arvid] What does this $%&*! magic number mean?
+			return -1902; //@TODO[Arvid] What does this magic number mean?
 		}
 
 		m_lCountImages = 0; // reset to overwrite existing image file.
@@ -123,7 +115,7 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 			svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
 			m_FileNames[m_lLastIndex] = svFileName.GetFullFileName();
 		}
-		//else otherwise the file name already set elsewhere will be used
+		//otherwise the file name already set elsewhere will be used
 	}
 	rImageFile = m_FileNames[m_lLastIndex];
 

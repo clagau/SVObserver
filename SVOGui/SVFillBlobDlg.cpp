@@ -29,7 +29,7 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVFillBlobDlg::SVFillBlobDlg(Controller& rValues, CWnd* pParent /*=nullptr*/)
+	SVFillBlobDlg::SVFillBlobDlg(ValueController& rValues, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVFillBlobDlg::IDD, pParent)
 	, m_rValues(rValues)
 	{

@@ -19,25 +19,10 @@
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGui/ObjectSelectorController.h"
 #include "SVOGui/DataController.h"
-#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/ValueEditWidgetHelper.h"
+
 #pragma endregion Includes
 
-
-struct ValueAndGuiInformation ///< holds GUI elements and IDs required for (possibly linked) Values that are to be modified using a dialog
-{
-	CEdit& m_valueEdit;
-	SvPb::EmbeddedIdEnum m_embeddedId;
-	CButton* m_pDottedNameSelectButton;
-	SvPb::EmbeddedIdEnum m_embeddedLinkId;
-
-	ValueAndGuiInformation(CEdit& valueEdit, SvPb::EmbeddedIdEnum embeddedId, CButton* pDottedNameSelectButton, SvPb::EmbeddedIdEnum embeddedLinkId) :
-		m_valueEdit(valueEdit),
-		m_embeddedId(embeddedId),
-		m_pDottedNameSelectButton(pDottedNameSelectButton),
-		m_embeddedLinkId(embeddedLinkId) {}
-};
-
-typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 
 #pragma region Declarations
 namespace SvIe
@@ -61,20 +46,19 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 	{
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
-		explicit AlternativeImagePaths(Controller &rValues) :
-			m_rValues(rValues),
-			m_vecValueAndGuiInfo{
-				{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, nullptr, SvPb::NoEmbeddedId },
-				{ m_EditDirectorynameIndex, SvPb::DirectorynameIndexEId, &m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexLinkEId },
-				{ m_EditBaseFilename, SvPb::BaseFilenameEId, nullptr, SvPb::NoEmbeddedId },
-				{ m_EditFilenameIndex1, SvPb::FilenameIndex1EId, &m_ButtonFilenameIndex1, SvPb::FilenameIndex1LinkEId },
-				{ m_EditCenterFilename, SvPb::CenterFilenameEId, nullptr, SvPb::NoEmbeddedId },
-				{ m_EditFilenameIndex2, SvPb::FilenameIndex2EId, &m_ButtonFilenameIndex2, SvPb::FilenameIndex2LinkEId },
-				{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId },
-				{ m_EditSubfolderLocation, SvPb::SubfolderLocationEId, &m_ButtonSubfolderLocation, SvPb::SubfolderLocationLinkEId } }
-		{
-			m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-		}
+		explicit AlternativeImagePaths(SvOg::ValueController &rValueController) :
+			m_rValueController(rValueController),
+			m_vecValueAndGuiInfo
+		    {
+				{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
+				{ m_EditDirectorynameIndex, SvPb::DirectorynameIndexEId, &m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexLinkEId, rValueController},
+				{ m_EditBaseFilename, SvPb::BaseFilenameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
+				{ m_EditFilenameIndex1, SvPb::FilenameIndex1EId, &m_ButtonFilenameIndex1, SvPb::FilenameIndex1LinkEId, rValueController},
+				{ m_EditCenterFilename, SvPb::CenterFilenameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
+				{ m_EditFilenameIndex2, SvPb::FilenameIndex2EId, &m_ButtonFilenameIndex2, SvPb::FilenameIndex2LinkEId, rValueController},
+				{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId, rValueController},
+				{ m_EditSubfolderLocation, SvPb::SubfolderLocationEId, &m_ButtonSubfolderLocation, SvPb::SubfolderLocationLinkEId, rValueController } 
+			}{}
 
 		void EditboxesToTextValues();
 		void TextValuesToEditboxes();
@@ -88,16 +72,11 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 		void SelectSubfolderSelection(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 		void SelectSubfolderLocation(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent);
 
-		std::vector<ValueAndGuiInformation> m_vecValueAndGuiInfo; //used to iterate over widgets and IDs
-
-	protected:
-		void EditboxToTextValue(ValueAndGuiInformation&);
-		void TextValueToEditbox(ValueAndGuiInformation&);
+		std::vector<SvOg::ValueEditWidgetHelper> m_vecValueAndGuiInfo; //used to iterate over widgets and IDs
 
 	private:
 
-		CBitmap m_downArrowBitmap;
-		Controller& m_rValues;
+		SvOg::ValueController& m_rValueController;
 
 		CEdit	m_EditBaseDirectoryname;
 		CEdit	m_EditDirectorynameIndex;
@@ -138,23 +117,28 @@ protected:
 	afx_msg void OnSelectObjects();
 	afx_msg void OnRemoveItem();
 	afx_msg void OnRemoveAllItems();
-	afx_msg void OnBrowse();
+	afx_msg void OnBrowseImageFilepathroot1();
 	afx_msg void UpdateMaxImageWidgetState();
 	afx_msg void OnSelchangeModeCombo();
 
 	afx_msg void OnChangeEditMaxImages();
 	afx_msg void OnButtonUseAlternativeImagePaths(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePaths
 
+	afx_msg void OnButtonImageFilepathroot1();
+	afx_msg void OnButtonImageFilepathroot2();
+	afx_msg void OnButtonImageFilepathroot3();
+
 	void MemoryUsage();
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
+	bool validateImageFilpathRoot();
 	void EnableMaxImagesAccordingToOtherSettings();
 
-	void OnButtonFilenameIndex1() { m_alternativeImagePaths.SelectFilenameIndex1(m_objectSelector, this); }
-	void OnButtonFilenameIndex2() {m_alternativeImagePaths.SelectFilenameIndex2(m_objectSelector, this);}
-	void OnButtonDirectorynameIndex() {m_alternativeImagePaths.SelectDirectorynameIndex(m_objectSelector, this);}
-	void OnButtonSubfolderSelection() { m_alternativeImagePaths.SelectSubfolderSelection(m_objectSelector, this); }
-	void OnButtonSubfolderLocation() { m_alternativeImagePaths.SelectSubfolderLocation(m_objectSelector, this); }
+	void OnButtonFilenameIndex1()		{m_alternativeImagePaths.SelectFilenameIndex1(m_objectSelector, this);}
+	void OnButtonFilenameIndex2()		{m_alternativeImagePaths.SelectFilenameIndex2(m_objectSelector, this);}
+	void OnButtonDirectorynameIndex()	{m_alternativeImagePaths.SelectDirectorynameIndex(m_objectSelector, this);}
+	void OnButtonSubfolderSelection()	{m_alternativeImagePaths.SelectSubfolderSelection(m_objectSelector, this);}
+	void OnButtonSubfolderLocation()	{m_alternativeImagePaths.SelectSubfolderLocation(m_objectSelector, this);}
 
 	bool checkImageMemory(uint32_t imageId, bool bNewState);
 	__int64 CalculateToolMemoryUsage();
@@ -178,7 +162,12 @@ private:
 	CStatic	m_wndAvailableArchiveImageMemory;
 	CComboBox	m_Mode;
 	SvMc::CEditNumbers	m_EditMaxImages;
-	CEdit	m_ImageFilesRoot;
+	CEdit	m_ImageFilepathroot1;
+	CEdit	m_ImageFilepathroot2;
+	CButton m_ImageFilepathroot1Button;
+	CButton m_ImageFilepathroot2Button;
+	CButton m_ImageFilepathroot3Button;
+	CEdit	m_ImageFilepathroot3;
 	CButton m_UseTriggerCountButton;
 	CButton m_StopAtMaxImagesButton;
 	BOOL	m_UseTriggerCount = false;
@@ -196,7 +185,10 @@ private:
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 
-	Controller m_Values;
+	SvOg::ValueController m_ValueController;
+	SvOg::ValueEditWidgetHelper m_ImageFilepathroot1WidgetHelper;
+	SvOg::ValueEditWidgetHelper m_ImageFilepathroot2WidgetHelper;
+	SvOg::ValueEditWidgetHelper m_ImageFilepathroot3WidgetHelper;
 
 	bool m_Init = false;
 

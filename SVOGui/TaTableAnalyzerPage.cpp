@@ -502,7 +502,7 @@ void TaTableAnalyzerPage::setSortProperties()
 	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
 	{
 		m_pValues.reset();
-		m_pValues = std::shared_ptr<Controller> {new Controller{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
+		m_pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
 		m_pValues->Init();
 	}
 
@@ -517,7 +517,7 @@ void TaTableAnalyzerPage::setExcludeProperties()
 	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
 	{
 		m_pValues.reset();
-		m_pValues = std::shared_ptr<Controller> {new Controller{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
+		m_pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
 		m_pValues->Init();
 	}
 
@@ -540,7 +540,7 @@ void TaTableAnalyzerPage::setLimitProperties()
 	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
 	{
 		m_pValues.reset();
-		m_pValues = std::shared_ptr<Controller> {new Controller{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
+		m_pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
 		m_pValues->Init();
 	}
 

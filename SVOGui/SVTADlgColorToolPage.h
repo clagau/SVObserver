@@ -16,8 +16,6 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "PictureDisplay.h"
 #include "ImageController.h"
-#include "BoundValue.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -25,8 +23,6 @@ namespace SvOg
 {
 	class SVTADlgColorToolPage : public CPropertyPage
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
-
 	public:
 		SVTADlgColorToolPage( uint32_t inspectionId, uint32_t taskObjectId );
 		virtual ~SVTADlgColorToolPage();
@@ -66,7 +62,7 @@ namespace SvOg
 		uint32_t m_ResultImageID = SvDef::InvalidObjectId;
 		
 		ImageController m_Images;
-		ValueController m_Values;
+		ValueController m_values;
 	};
 } //namespace SvOg
 

@@ -18,7 +18,6 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVRPropertyTree/SVRPropTree.h"
@@ -867,8 +866,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 	}
 
 	//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller Values {SvOg::BoundValues{ m_inspectionID, m_toolID }};
+	SvOg::ValueController Values {SvOg::BoundValues{ m_inspectionID, m_toolID }};
 	Values.Init();
 
 	// Set new values -------------------------------------------------------

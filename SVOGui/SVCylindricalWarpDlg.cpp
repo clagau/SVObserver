@@ -38,7 +38,7 @@ namespace SvOg
 	: CPropertyPage(IDD)
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -66,18 +66,18 @@ namespace SvOg
 		if (0 <= CurrentSelection)
 		{
 			Value = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SvPb::OutputInterpolationModeEId, Value);
+			m_values.Set<long>(SvPb::OutputInterpolationModeEId, Value);
 		}
 		CurrentSelection = m_cbOrientation.GetCurSel();
 		if (0 <= CurrentSelection)
 		{
 			Value = static_cast<long> (m_cbOrientation.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SvPb::WarpTypeEId, Value);
+			m_values.Set<long>(SvPb::WarpTypeEId, Value);
 		}
-		m_Values.Set<double>(SvPb::WarpAngleEId, m_dWarpAngle);
+		m_values.Set<double>(SvPb::WarpAngleEId, m_dWarpAngle);
 		SvOg::PostAction commitAction {SvOg::PostAction::doRunOnce};
 		commitAction = commitAction | (ResetTool ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
-		Result = m_Values.Commit(commitAction);
+		Result = m_values.Commit(commitAction);
 
 		return Result;
 	}
@@ -86,19 +86,19 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 
-		const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
+		const SvOi::NameValueVector& rInterpolationModeList = m_values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
-		long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
+		long CurrentSelection = m_values.Get<long>(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 
-		const SvOi::NameValueVector& WarpTypeList = m_Values.GetEnumTypes(SvPb::WarpTypeEId);
+		const SvOi::NameValueVector& WarpTypeList = m_values.GetEnumTypes(SvPb::WarpTypeEId);
 		m_cbOrientation.SetEnumTypes(WarpTypeList);
-		CurrentSelection = m_Values.Get<long>(SvPb::WarpTypeEId);
+		CurrentSelection = m_values.Get<long>(SvPb::WarpTypeEId);
 		m_cbOrientation.SetCurSelItemData(CurrentSelection);
 
-		m_dWarpAngle = m_Values.Get<double>(SvPb::WarpAngleEId);
+		m_dWarpAngle = m_values.Get<double>(SvPb::WarpAngleEId);
 
 		UpdateData(false);
 

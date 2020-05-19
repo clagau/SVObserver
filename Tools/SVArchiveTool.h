@@ -42,25 +42,23 @@ public:
 	SVObjectReferenceVector getImageArchiveList();
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 
-	bool GetArchiveFilepath( std::string& rName );
-	bool GetImageArchivePath( std::string& rName );
+	bool GetArchiveResultFilepath( std::string& rName );
+	const std::string GetImageArchivePathPart1() const;
+	const std::string GetImageArchivePathPart2() const;
+	const std::string GetImageArchivePathPart3() const;
 	bool SetFileArchive( LPCTSTR lpszName );
-	bool SetImageArchivePath( LPCTSTR lpszName );
 	const std::string& getNextImageDirectory(const std::string& imagePathRoot);
 	std::string	getNextImageFileName(const std::string& rFileNameImage, bool useAlternativeImagePaths);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
 	static long CalculateImageMemory( std::vector<SvIe::SVImageClass*> imagePtrVector );
 
-	//--IsImagePathUsingKeywords - Called from SVArchiveRecord::BuildArchiveImageFilePath
-	//--when archiving images it needs to know if the images has keywords in it
-	bool isImagePathUsingKeywords();
-
-	//--GetTranslatedImagePath -Called from SVArchiveRecord::BuildArchiveImageFilePath
-	//--to get the already translated path.
-	void getTranslatedImagePath(std::string& rImagePath);
+	std::string getUntranslatedImagePathRoot() const;
+	/// used by SVArchiveRecord::BuildArchiveImageFilePath
+	const std::string getCurrentImagePathRoot() const;
+	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false, bool ensureDirectoryExists=false);
 	long currentTriggerCount();
-
+	
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 	virtual void goingOffline() override;
@@ -110,7 +108,7 @@ private:
 	bool initializeOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateImageSpace( bool shouldFullCheck, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool ValidateImageSpace(SvStl::MessageContainerVector *pErrorMessages=nullptr );///< Checks the available space for storing image archive files.
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	void addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName);
 
@@ -133,11 +131,12 @@ private:
 	//
 	bool m_bInitializedForRun;
 
-	SvVol::SVStringValueObjectClass	m_stringImageFileRootPath;
+	SvVol::LinkedValue m_imageFileRootPath1; 
+	SvVol::LinkedValue m_imageFileRootPath2;
+	SvVol::LinkedValue m_imageFileRootPath3;
 	SvVol::SVStringValueObjectClass	m_stringFileArchivePath;
 
-	std::string m_ImageTranslatedPath;
-	bool m_ArchiveImagePathUsingKW;
+	std::string m_currentImagePathRoot; // needed by SVArchiveRecord
 
 	std::ofstream m_fileArchive;       // The file for archived results.
 	UINT m_uiValidateCount;

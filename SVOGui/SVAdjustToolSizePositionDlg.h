@@ -16,7 +16,6 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
 #include "DataController.h"
-#include "ValuesAccessor.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -161,8 +160,7 @@ private:
 	//bool m_isFullSizeAllowed = false;
 	SvPb::EAutoSize m_autoSizeEnabled = SvPb::EAutoSize::EnableNone;
 
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller m_Values;
+	ValueController m_values;
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg
 } //namespace SvOg

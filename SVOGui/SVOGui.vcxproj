@@ -181,6 +181,7 @@
     <ClCompile Include="TATableAnalyzerPage.cpp" />
     <ClCompile Include="TATableSourcePage.cpp" />
     <ClCompile Include="ToolAdjustToolSetPage.cpp" />
+    <ClCompile Include="ValueEditWidgetHelper.cpp" />
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -258,6 +259,7 @@
     <ClInclude Include="TATableSourcePage.h" />
     <ClInclude Include="ToolAdjustToolSetPage.h" />
     <ClInclude Include="TextDefinesSvOg.h" />
+    <ClInclude Include="ValueEditWidgetHelper.h" />
     <ClInclude Include="ValuesAccessor.h" />
     <ClInclude Include="ZoomHelper.h" />
   </ItemGroup>

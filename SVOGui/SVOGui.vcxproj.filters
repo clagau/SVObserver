@@ -216,6 +216,9 @@
     <ClCompile Include="ZoomHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ValueEditWidgetHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -444,6 +447,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ToolAdjustToolSetPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueEditWidgetHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

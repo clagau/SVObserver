@@ -26,7 +26,7 @@ namespace SvOg
 	SVRankingFilterDlg::SVRankingFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
 		,m_filterID(filterId)
 		,m_InspectionID(inspectionId)
-		,m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
+		,m_values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVRankingFilterDlg)
 		//}}AFX_DATA_INIT
@@ -47,9 +47,9 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<long>(SvPb::FilterKernelWidthEId, m_lRankingWidth);
-		m_Values.Set<long>(SvPb::FilterKernelHeightEId, m_lRankingHeight);
-		m_Values.Set<long>(SvPb::RankingFilterRankingRankEId, m_lRankingRank);
+		m_values.Set<long>(SvPb::FilterKernelWidthEId, m_lRankingWidth);
+		m_values.Set<long>(SvPb::FilterKernelHeightEId, m_lRankingHeight);
+		m_values.Set<long>(SvPb::RankingFilterRankingRankEId, m_lRankingRank);
 
 		for( long j = 0; S_OK == l_hrOk && j < m_lRankingWidth; j++ )
 		{
@@ -58,11 +58,11 @@ namespace SvOg
 				long l_lKernelIndex = k * m_lRankingWidth + j;
 				long l_lDialogIndex = ( k + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( j + ( ( 7 - m_lRankingWidth ) / 2 ) );
 
-				m_Values.Set<long>(SvPb::FilterCellEId + l_lKernelIndex, m_lRankingCells[ l_lDialogIndex ] );
+				m_values.Set<long>(SvPb::FilterCellEId + l_lKernelIndex, m_lRankingCells[ l_lDialogIndex ] );
 			}// end for
 		}// end for
 
-		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 
@@ -104,17 +104,17 @@ namespace SvOg
 		
 		std::string Temp;
 		
-		m_Values.Init();
+		m_values.Init();
 		
-		m_lRankingWidth = m_Values.Get<long>(SvPb::FilterKernelWidthEId);
+		m_lRankingWidth = m_values.Get<long>(SvPb::FilterKernelWidthEId);
 		Temp = SvUl::Format( "%d", m_lRankingWidth );
 		m_ctlRankingWidth.SelectString( -1, Temp.c_str() );
 
-		m_lRankingHeight = m_Values.Get<long>(SvPb::FilterKernelHeightEId);
+		m_lRankingHeight = m_values.Get<long>(SvPb::FilterKernelHeightEId);
 		Temp = SvUl::Format( "%d", m_lRankingHeight );
 		m_ctlRankingHeight.SelectString( -1, Temp.c_str() );
 
-		m_lRankingRank = m_Values.Get<long>(SvPb::RankingFilterRankingRankEId);
+		m_lRankingRank = m_values.Get<long>(SvPb::RankingFilterRankingRankEId);
 		m_ctlRankingRank.SetCurSel(m_lRankingRank);
 
 		EnableCells();
@@ -125,7 +125,7 @@ namespace SvOg
 			{
 				long l_lKernelIndex = i * m_lRankingWidth + h;
 				long l_lDialogIndex = ( i + ( ( 7 - m_lRankingHeight ) / 2 ) ) * 7 + ( h + ( ( 7 - m_lRankingWidth ) / 2 ) );
-				long lValue = m_Values.Get<long>(SvPb::FilterCellEId + l_lKernelIndex);
+				long lValue = m_values.Get<long>(SvPb::FilterCellEId + l_lKernelIndex);
 				m_lRankingCells[ l_lDialogIndex ] = ( lValue == 1 ? 1 : 0 );
 			}// end for
 		}// end for

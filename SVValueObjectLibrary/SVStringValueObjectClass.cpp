@@ -279,19 +279,16 @@ void SVStringValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	// Object Depth is implicit (it's the count of the values)
 	std::vector<_variant_t> list;
 
-	// Get the Data Values (Member Info, Values)
-	// Check for DoubleQuotes in variable
 	std::string TempValue(_T(""));
-	SvUl::AddEscapeSpecialCharacters(TempValue, true);
 
 	_variant_t Value;
 	Value.Clear();
 
-	// for all elements in the array
 	for (int32_t i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
 		SVStringValueObjectClass::GetValue(TempValue, i);
+		// Check for DoubleQuotes in variable
 		SvUl::AddEscapeSpecialCharacters(TempValue, true);
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);

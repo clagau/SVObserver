@@ -51,7 +51,7 @@ namespace SvOg
 	, SvOg::ImageController(inspectionId, taskObjectId, SvPb::SVImageMonoType, false)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -67,8 +67,8 @@ namespace SvOg
 		UpdateData(true); // get data from dialog
 
 		long lOperator = static_cast<long>(m_operatorCtrl.GetItemData(m_operatorCtrl.GetCurSel()));
-		m_Values.Set<long>(SvPb::ArithmeticOperatorEId, lOperator);
-		m_Values.Commit();
+		m_values.Set<long>(SvPb::ArithmeticOperatorEId, lOperator);
+		m_values.Commit();
 		
 		if (SvDef::SVImageOperatorDoubleHeight == lOperator || SvDef::SVImageOperatorFlipVertical == lOperator || SvDef::SVImageOperatorFlipHorizontal == lOperator)
 		{
@@ -113,7 +113,7 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 	
 		Init();
-		m_Values.Init();
+		m_values.Init();
 
 		const SvUl::NameObjectIdList& rAvailableImageList = GetAvailableImageList();
 		RetreiveCurrentlySelectedImageNames();
@@ -154,7 +154,7 @@ namespace SvOg
 
 		// Get Current Arithmetic Operator...
 	
-		long lOperator = m_Values.Get<long>(SvPb::ArithmeticOperatorEId);
+		long lOperator = m_values.Get<long>(SvPb::ArithmeticOperatorEId);
 
 		for (int i = 0;i < m_operatorCtrl.GetCount(); ++ i)
 		{

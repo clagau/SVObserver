@@ -33,8 +33,6 @@ public:
 #pragma region Public Methods
 public:
 
-	
-
 	//************************************
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
 	/// \param rValue [out] reference to the value to write to
@@ -69,6 +67,13 @@ public:
 	virtual DWORD GetType() const override;
 
 	bool isCircularReference() const;
+
+	template <typename T> T getValueAs() const  //this function may throw an exception if incompatible types are used, so use it with care!
+	{
+		_variant_t temporaryVariant;
+		this->GetValue(temporaryVariant);
+		return static_cast<T>(temporaryVariant);
+	}
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override { UpdateLinkedName(); };
@@ -123,6 +128,8 @@ private:
 	SVObjectReference m_LinkedObjectRef;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 #pragma endregion Member Variables
+
+
 };
 
 } //namespace SvVol

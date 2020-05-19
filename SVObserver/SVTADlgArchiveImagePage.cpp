@@ -1,4 +1,4 @@
-	//******************************************************************************
+//******************************************************************************
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
@@ -44,7 +44,7 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_SELECT_BUTTON, OnSelectObjects)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
 	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
-	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
+	ON_BN_CLICKED(IDC_BROWSE_IMAGE_FILEPATHROOT1, OnBrowseImageFilepathroot1)
 	ON_CBN_SELCHANGE(IDC_MODE_COMBO, OnSelchangeModeCombo)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
 	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, UpdateMaxImageWidgetState)
@@ -55,8 +55,9 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_SELECTION, OnButtonSubfolderSelection)
 	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION, OnButtonSubfolderLocation)
 	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATHS, OnButtonUseAlternativeImagePaths)
-
-
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT1, OnButtonImageFilepathroot1)
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT2, OnButtonImageFilepathroot2)
+	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT3, OnButtonImageFilepathroot3)
 END_MESSAGE_MAP()
 
 constexpr int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
@@ -65,16 +66,23 @@ constexpr int ItemsSelectedWidth = 500;
 constexpr int IconNumber = 1;
 constexpr int IconGrowBy = 1;
 constexpr long MaxImagesWarningLimit = 100L;
+
 #pragma endregion Declarations
 
 #pragma region Constructor
 SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveImagePage::IDD)
 , m_pParent(Parent)
-, m_objectSelector(inspectionId)
-, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
-, m_alternativeImagePaths(m_Values)
+, m_objectSelector(inspectionId, SvDef::InvalidObjectId, SvPb::viewable)
+, m_ValueController{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+, m_alternativeImagePaths(m_ValueController)
+, m_ImageFilepathroot1WidgetHelper(m_ImageFilepathroot1, SvPb::ArchiveImageFileRootPart1EId, &m_ImageFilepathroot1Button, SvPb::ArchiveImageFileRootPart1LinkEId, m_ValueController)
+, m_ImageFilepathroot2WidgetHelper(m_ImageFilepathroot2, SvPb::ArchiveImageFileRootPart2EId, &m_ImageFilepathroot2Button, SvPb::ArchiveImageFileRootPart2LinkEId, m_ValueController)
+, m_ImageFilepathroot3WidgetHelper(m_ImageFilepathroot3, SvPb::ArchiveImageFileRootPart3EId, &m_ImageFilepathroot3Button, SvPb::ArchiveImageFileRootPart3LinkEId, m_ValueController)
 {
+
+	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
+
 	if( m_pParent )
 	{
 		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
@@ -113,47 +121,18 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_alternativeImagePaths.EditboxesToTextValues();
 
+	m_ImageFilepathroot1WidgetHelper.EditboxToTextValue();
+	m_ImageFilepathroot2WidgetHelper.EditboxToTextValue();
+	m_ImageFilepathroot3WidgetHelper.EditboxToTextValue();
+
+	m_ValueController.Commit(); //changed need to be committed before validateImageFilpathRoot() is called
+
 	//update the image path
-	CString Text;
-	m_ImageFilesRoot.GetWindowText( Text );
-	std::string ImageFolder = Text;
 
-	SvTo::ArchiveToolHelper athImagePath;
-	athImagePath.Init(ImageFolder);
-
-	if (athImagePath.isUsingKeywords())
+	if (!validateImageFilpathRoot())
 	{
-		if (athImagePath.isTokensValid())
-		{
-			std::string TmpArchiveImagePath = athImagePath.TranslatePath(ImageFolder);
-			SVCheckPathDir( TmpArchiveImagePath.c_str(), TRUE );
-		}
-		else
-		{
-			//don't allow to exit with invalid path
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidImagePath, SvStl::SourceFileParams(StdMessageParams) );
-			return false;
-		}
+		return false; //don't allow to exit with invalid path
 	}
-	else
-	{
-		//not using Keywords 
-		SVCheckPathDir( ImageFolder.c_str(), TRUE );
-	}
-
-	std::string Drive;
-	//check for valid drive for image archive
-	if(!SvTo::ArchiveToolHelper::ValidateDrive(ImageFolder.c_str(), Drive ) || ImageFolder.empty())
-	{
-		SvDef::StringVector msgList;
-		msgList.push_back(Drive);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
-		return false; 
-	}
-
-	m_pTool->SetImageArchivePath( ImageFolder.c_str() );
 
 	m_pTool->m_dwArchiveStopAtMaxImages.SetValue(static_cast<DWORD> (m_StopAtMaxImagesButton.GetCheck()));
 	m_pTool->m_dwUseTriggerCountForImages.SetValue(static_cast<DWORD> (m_UseTriggerCount));
@@ -163,8 +142,9 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
 	m_pTool->m_evoArchiveMethod.SetValue(static_cast<long> (m_eSelectedArchiveMethod));
 
-	m_EditMaxImages.GetWindowText(Text);
-	m_ImagesToArchive = atol(Text);
+	CString Temp;
+	m_EditMaxImages.GetWindowText(Temp);
+	m_ImagesToArchive = atol(Temp);
 	if( UpperLimitImageNumbers < m_ImagesToArchive)
 	{
 		SvDef::StringVector msgList;
@@ -173,7 +153,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16075_ImageNrToBig  );
 		return false;
-
 	}
 
 	if( MaxImagesWarningLimit < m_ImagesToArchive)
@@ -205,8 +184,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		}
 	}
 
-	m_Values.Commit();
-
 	m_pTool->resetAllObjects();
 
 	return true;
@@ -226,7 +203,13 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_wndAvailableArchiveImageMemory);
 	DDX_Control(pDX, IDC_MODE_COMBO, m_Mode);
 	DDX_Control(pDX, IDC_EDIT_MAX_IMAGES, m_EditMaxImages);
-	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEROOT, m_ImageFilesRoot);
+	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT1, m_ImageFilepathroot1);
+	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT1, m_ImageFilepathroot1Button);
+	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT2, m_ImageFilepathroot2);
+	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT2, m_ImageFilepathroot2Button);
+	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3);
+	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3Button);
+
 	DDX_Control(pDX, IDC_USE_TRIGGER_COUNT, m_UseTriggerCountButton);
 	DDX_Control(pDX, IDC_CHECK_STOP_AT_MAX, m_StopAtMaxImagesButton);
 	DDX_Check(pDX, IDC_USE_TRIGGER_COUNT, m_UseTriggerCount);
@@ -234,6 +217,33 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
 
 	EnableMaxImagesAccordingToOtherSettings();
+}
+
+
+bool SVTADlgArchiveImagePage::validateImageFilpathRoot()
+{
+	if (!m_pTool->updateCurrentImagePathRoot(true, true))
+	{
+		return false;
+	}
+
+	std::string fullImageFolder = m_pTool->getCurrentImagePathRoot();
+
+	SvTo::ArchiveToolHelper athImagePath;
+	athImagePath.Init(fullImageFolder);
+
+	std::string Drive;
+	//check for valid drive for image archive
+	if (!SvTo::ArchiveToolHelper::ValidateDrive(fullImageFolder.c_str(), Drive) || fullImageFolder.empty())
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(Drive);
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams));
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -250,7 +260,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	CPropertyPage::OnInitDialog();
 
-	m_Values.Init();
+	m_ValueController.Init();
 
 	GetWindowText( m_strCaption );
 
@@ -279,12 +289,12 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	DWORD dwTemp=0;
     m_pTool->m_dwArchiveMaxImagesCount.GetValue( dwTemp );
 	m_ImagesToArchive = dwTemp;
-	std::string Text = SvUl::Format(_T("%ld"),dwTemp);
-	m_EditMaxImages.SetWindowText( Text.c_str() );
+	std::string Temp = SvUl::Format(_T("%ld"), dwTemp);
+	m_EditMaxImages.SetWindowText( Temp.c_str() );
 
 	//store the MaxImageNumber
-	// cppcheck-suppress danglingLifetime //the pointer is immediately converted to a CString and does not "dangle"
-	m_sMaxImageNumber = Text.c_str(); 
+	// cppcheck-suppress danglingLifetime //this pointer is immediately converted to a CString and does not "dangle"
+	m_sMaxImageNumber = Temp.c_str(); 
 
 	__int64 MemUsed = TheSVMemoryManager().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
  	m_ToolImageMemoryUsage = 0;
@@ -292,10 +302,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SvTo::SVArchiveGoOffline );
 
-	std::string ImageFolder; 
-	
-	m_pTool->GetImageArchivePath( ImageFolder );
-	m_ImageFilesRoot.SetWindowText( ImageFolder.c_str() );
+	m_ImageFilepathroot1.SetWindowText(m_pTool->GetImageArchivePathPart1().c_str());
+	m_ImageFilepathroot2.SetWindowText(m_pTool->GetImageArchivePathPart2().c_str());
+	m_ImageFilepathroot3.SetWindowText(m_pTool->GetImageArchivePathPart3().c_str());
 
 	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
 	m_StopAtMaxImagesButton.SetCheck(static_cast<BOOL>(dwTemp));
@@ -320,6 +329,10 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	}
 
 	m_alternativeImagePaths.TextValuesToEditboxes();
+
+	m_ImageFilepathroot1WidgetHelper.TextValueToEditbox();
+	m_ImageFilepathroot2WidgetHelper.TextValueToEditbox();
+	m_ImageFilepathroot3WidgetHelper.TextValueToEditbox();
 
 	ReadSelectedObjects();
 
@@ -489,54 +502,44 @@ void SVTADlgArchiveImagePage::UpdateMaxImageWidgetState()
 }
 
 
-void SVTADlgArchiveImagePage::OnBrowse() 
+void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 {
 	SVFileNameClass	svfncImageFolder;
 
-	// Set the default folder to start with.
-	CString csInitialPath(SvStl::GlobalPath::Inst().GetTempPath(_T("\\")).c_str());
+	CString firstPartOfImageArchivePathRoot;
+	m_ImageFilepathroot1.GetWindowText(firstPartOfImageArchivePathRoot);
 
-	m_ImageFilesRoot.GetWindowText(csInitialPath);
-	if (!csInitialPath.IsEmpty())
+	if (!firstPartOfImageArchivePathRoot.IsEmpty())
 	{
-		svfncImageFolder.SetPathName(csInitialPath);
+		svfncImageFolder.SetPathName(firstPartOfImageArchivePathRoot);
+	}
+	else
+	{
+		// Set the default folder to start with.
+		CString csDefaultInitialPath(SvStl::GlobalPath::Inst().GetTempPath(_T("\\")).c_str());
+		svfncImageFolder.SetPathName(csDefaultInitialPath);
 	}
 
-	SvTo::ArchiveToolHelper athImagePath;
-	athImagePath.Init(std::string(csInitialPath)); 
-
-	bool bUsingKeywords = athImagePath.isUsingKeywords();
-	if (bUsingKeywords)
-	{
-		if (athImagePath.isTokensValid())
-		{
-			csInitialPath = athImagePath.TranslatePath(std::string(csInitialPath)).c_str();
-		}
-		else
-		{
-			//don't allow to exit with invalid path
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidImagePath, SvStl::SourceFileParams(StdMessageParams) );
-			return;
-		}
-	}
     //
     // Select the folder to copy to..
     //
 	svfncImageFolder.SetFileType(SV_DEFAULT_FILE_TYPE);
 	if (svfncImageFolder.SelectPath())
     {
-		csInitialPath = svfncImageFolder.GetPathName().c_str();
-		int len = csInitialPath.GetLength();
+		firstPartOfImageArchivePathRoot = svfncImageFolder.GetPathName().c_str();
+		int len = firstPartOfImageArchivePathRoot.GetLength();
 		if (len)
 		{
-			if (csInitialPath.GetAt(len - 1) != _T('\\'))
+			if (firstPartOfImageArchivePathRoot.GetAt(len - 1) != _T('\\'))
 			{
-				csInitialPath += _T('\\');
+				firstPartOfImageArchivePathRoot += _T('\\');
 			}
 		}
     }
-	m_ImageFilesRoot.SetWindowText (csInitialPath);
+
+	m_ImageFilepathroot1.SetWindowText(firstPartOfImageArchivePathRoot);
+
+
 }
 
 void SVTADlgArchiveImagePage::OnSelchangeModeCombo() 
@@ -746,36 +749,47 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePaths()
 	forceStopAtMaxIfRequired();
 }
 
-
-void SVTADlgArchiveImagePage::AlternativeImagePaths::EditboxToTextValue(ValueAndGuiInformation& uiInfo)
+afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
 {
-	CString Text;
-	uiInfo.m_valueEdit.GetWindowText(Text);
-	m_rValues.Set<CString>(uiInfo.m_embeddedId, Text);
+	CString Temp;
+
+	m_ImageFilepathroot1.GetWindowText(Temp);
+	std::string Value = Temp;
+	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT1);
+	if (m_objectSelector.Show(Value, Title, this))
+	{
+		m_ImageFilepathroot1.SetWindowText(Value.c_str());
+	}
+
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::TextValueToEditbox(ValueAndGuiInformation& uiInfo)
+afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot2()
 {
-	std::string temp;
-	
-	if (SvPb::NoEmbeddedId != uiInfo.m_embeddedLinkId) //i.e. this is a linked value
+	CString Temp;
+
+	m_ImageFilepathroot2.GetWindowText(Temp);
+	std::string Value = Temp;
+	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT2);
+	if (m_objectSelector.Show(Value, Title, this))
 	{
-		temp = m_rValues.Get<CString>(uiInfo.m_embeddedLinkId); //See whether we can get a dotted name
+		m_ImageFilepathroot2.SetWindowText(Value.c_str());
 	}
 
-	if (temp.empty()) // because this is not a linked value (or it is, but there is no associated dotted name)
-	{
-		temp = m_rValues.Get<CString>(uiInfo.m_embeddedId);
-	}
-
-	uiInfo.m_valueEdit.SetWindowText(temp.c_str());
-	
-	if (uiInfo.m_pDottedNameSelectButton) //We have an associated button that should contain a down arrow
-	{
-		uiInfo.m_pDottedNameSelectButton->SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap)); // Put the Down Arrow on the Button
-	}
 }
 
+afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot3()
+{
+	CString Temp;
+
+	m_ImageFilepathroot3.GetWindowText(Temp);
+	std::string Value = Temp;
+	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT3);
+	if (m_objectSelector.Show(Value, Title, this))
+	{
+		m_ImageFilepathroot3.SetWindowText(Value.c_str());
+	}
+
+}
 
 void SVTADlgArchiveImagePage::AlternativeImagePaths::DoDataExchange(CDataExchange* pDX)
 {
@@ -792,7 +806,6 @@ void SVTADlgArchiveImagePage::AlternativeImagePaths::DoDataExchange(CDataExchang
 	DDX_Control(pDX, IDC_EDIT_FILENAME_CENTER, m_EditCenterFilename);
 	DDX_Control(pDX, IDC_EDIT_DIRECTORYNAME_INDEX, m_EditDirectorynameIndex);
 	DDX_Control(pDX, IDC_BUTTON_DIRECTORYNAME_INDEX, m_ButtonDirectorynameIndex);
-
 }
 
 void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectFilenameIndex1(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent)
@@ -860,15 +873,11 @@ void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectSubfolderLocation(SvO
 }
 
 
-afx_msg void SVTADlgArchiveImagePage::AlternativeImagePaths::OnButtonUseAlternativeImagePaths(BOOL enable)
+afx_msg void SVTADlgArchiveImagePage::AlternativeImagePaths::OnButtonUseAlternativeImagePaths(BOOL enable) 
 {
 	for (auto & uiInfo : m_vecValueAndGuiInfo)
 	{
-		uiInfo.m_valueEdit.EnableWindow(enable);
-		if (uiInfo.m_pDottedNameSelectButton) //i.e. this is a linked value
-		{
-			uiInfo.m_pDottedNameSelectButton->EnableWindow(enable);
-		}
+		uiInfo.EnableGuiElements(enable);
 	}
 }
 
@@ -876,19 +885,16 @@ void SVTADlgArchiveImagePage::AlternativeImagePaths::EditboxesToTextValues()
 {
 	for (auto & uiInfo : m_vecValueAndGuiInfo)
 	{
-		EditboxToTextValue(uiInfo);
+		uiInfo.EditboxToTextValue();
 	}
-
 }
-
 
 void SVTADlgArchiveImagePage::AlternativeImagePaths::TextValuesToEditboxes()
 {
 	for (auto & uiInfo : m_vecValueAndGuiInfo)
 	{
-		TextValueToEditbox(uiInfo);
+		uiInfo.TextValueToEditbox();
 	}
 }
-
 
 

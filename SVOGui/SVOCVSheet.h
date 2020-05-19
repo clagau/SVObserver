@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "SVOCVMatchDlg.h"
 #include "SVOCVGeneralDlg.h"
@@ -22,12 +21,11 @@ namespace SvOg
 {
 	class SVOCVSheet : public CPropertySheet
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	public:
 		SVOCVSheet(uint32_t inspectionId, uint32_t taskObjectId, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVOCVSheet();
 
-		Controller& GetValues() { return m_Values; }
+		ValueController& GetValues() { return m_values; }
 
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
@@ -42,6 +40,6 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		Controller m_Values;
+		ValueController m_values;
 	};
 } //namespace SvOg

@@ -66,7 +66,7 @@ SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(uint32_t inspectionId, 
 	, m_toolTaskId(taskObjectId)
 	, m_ipId(inspectionId)
 	, m_Title(Caption)
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -110,7 +110,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 {
 	m_iMode = MODE_MOVE;	// Default action: Move
 	CDialog::OnInitDialog();
-	m_Values.Init();
+	m_values.Init();
 
 	SetWindowText(m_Title.c_str());
 
@@ -145,7 +145,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	{
 		if (SvPb::SVLinearToolObjectType == responseCmd.getobjectparametersresponse().typeinfo().subtype())
 		{
-			bool rotation = m_Values.Get<bool>(SvPb::LinearToolUseRotationEId);
+			bool rotation = m_values.Get<bool>(SvPb::LinearToolUseRotationEId);
 			if (rotation)
 			{
 				bShow = false;

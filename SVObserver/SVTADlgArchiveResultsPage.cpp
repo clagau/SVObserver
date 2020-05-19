@@ -93,7 +93,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 
 	if (athArchivePathAndName.isUsingKeywords())
 	{
-		if (athArchivePathAndName.isTokensValid())
+		if (athArchivePathAndName.areTokensValid())
 		{
 			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFilepath );
 			if (false == SVCheckPathDir(TmpArchiveFileName.c_str(), true))
@@ -207,7 +207,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	CDWordArray dwaIndex;
 	
 	std::string ArchiveFilepath; 
-	m_pTool->GetArchiveFilepath( ArchiveFilepath );
+	m_pTool->GetArchiveResultFilepath( ArchiveFilepath );
 	m_ArchiveFileName.SetWindowText( ArchiveFilepath.c_str() );
 
 	DWORD dwTemp = 0;

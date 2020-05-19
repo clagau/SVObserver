@@ -25,9 +25,10 @@ namespace SvOg
 {
 
 #pragma region Constructor
-ObjectSelectorController::ObjectSelectorController(uint32_t inspectionID, uint32_t instanceID)
+ObjectSelectorController::ObjectSelectorController(uint32_t inspectionID, uint32_t instanceID, SvPb::ObjectAttributes objectAttributes)
 	: m_InspectionID(inspectionID)
 	, m_InstanceID(instanceID)
+	, m_objectAttributes(objectAttributes)
 {
 }
 
@@ -44,7 +45,7 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
 		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
-		m_InspectionID, SvPb::selectableForEquation, m_InstanceID, false, FilterType);
+		m_InspectionID, m_objectAttributes, m_InstanceID, false, FilterType);
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject);

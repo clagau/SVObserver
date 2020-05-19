@@ -16,8 +16,6 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "PictureDisplay.h"
 #include "ImageController.h"
-#include "BoundValue.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -26,8 +24,6 @@ namespace SvOg
 	class SVToolAdjustmentDialogTwoImagePageClass : public CPropertyPage, protected SvOg::ImageController
 	{
 		DECLARE_MESSAGE_MAP()
-
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
 
 	#pragma region Constructor
 	public:
@@ -88,7 +84,7 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 
-		ValueController m_Values;
+		ValueController m_values;
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
@@ -102,8 +101,7 @@ public:
 	CStatic m_ShiftValueStatic;
 
 private:
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller m_Values;
+	SvOg::ValueController m_Values;
 
 	long m_lShiftType;
 };

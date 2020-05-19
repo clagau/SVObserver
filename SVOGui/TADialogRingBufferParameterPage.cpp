@@ -40,7 +40,7 @@ namespace SvOg
 		, m_InspectionID(inspectionID)
 		, m_TaskObjectID(taskID)
 		, m_objectSelector(inspectionID)
-		, m_Values{ SvOg::BoundValues{ inspectionID, taskID } }
+		, m_values{ SvOg::BoundValues{ inspectionID, taskID } }
 	{
 	}
 
@@ -73,7 +73,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 
 		// Put the Down Arrow on the Button
 		m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
@@ -82,20 +82,20 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_ButtonImageIndex1.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 		m_ButtonImageIndex2.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
 
-		std::string depthString(m_Values.Get<CString>(SvPb::RingBufferLink_DepthEId));
+		std::string depthString(m_values.Get<CString>(SvPb::RingBufferLink_DepthEId));
 		if (depthString.empty())
 		{
-			depthString = m_Values.Get<CString>(SvPb::RingBuffer_DepthEId);
+			depthString = m_values.Get<CString>(SvPb::RingBuffer_DepthEId);
 		}
-		std::string indexString1( m_Values.Get<CString>(SvPb::RingBufferIndexLinkEId) );
+		std::string indexString1( m_values.Get<CString>(SvPb::RingBufferIndexLinkEId) );
 		if( indexString1.empty() )
 		{
-			indexString1 = m_Values.Get<CString>(SvPb::RingBufferIndexEId);
+			indexString1 = m_values.Get<CString>(SvPb::RingBufferIndexEId);
 		}
-		std::string indexString2( m_Values.Get<CString>(SvPb::RingBufferIndexLinkEId + 1) );
+		std::string indexString2( m_values.Get<CString>(SvPb::RingBufferIndexLinkEId + 1) );
 		if( indexString2.empty() )
 		{
-			indexString2 = m_Values.Get<CString>(SvPb::RingBufferIndexEId+1);
+			indexString2 = m_values.Get<CString>(SvPb::RingBufferIndexEId+1);
 		}
 		//set edit controls
 		m_EditRingDepth.SetWindowText( depthString.c_str() );
@@ -161,12 +161,12 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		if( S_OK == Result )
 		{
-			Result = m_Values.Commit();
+			Result = m_values.Commit();
 
 			if( S_OK != Result )
 			{
 				SvStl::MessageContainerVector errorMessageList;
-				errorMessageList = m_Values.getFailedMessageList();
+				errorMessageList = m_values.getFailedMessageList();
 				if (0 < errorMessageList.size())
 				{
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
@@ -189,7 +189,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		bool isNumber = SvUl::Convert2Number( Value, depth, true );
 		if( !isNumber || (SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth) )
 		{
-			m_Values.Set<CString>(SvPb::RingBuffer_DepthEId, Text);
+			m_values.Set<CString>(SvPb::RingBuffer_DepthEId, Text);
 		}
 		else
 		{
@@ -214,7 +214,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 			CString Value;
 			m_EditImageIndex[Index].GetWindowText( Value );
 
-			m_Values.Set<CString>(SvPb::RingBufferIndexEId+Index, Value);
+			m_values.Set<CString>(SvPb::RingBufferIndexEId+Index, Value);
 		}
 		return Result;
 	}

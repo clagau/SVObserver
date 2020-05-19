@@ -35,7 +35,7 @@ namespace SvOg
 
 	SVToolAdjustmentDialogLinearSpecialPage::SVToolAdjustmentDialogLinearSpecialPage( uint32_t inspectionId, uint32_t taskObjectId)
 	: CPropertyPage(SVToolAdjustmentDialogLinearSpecialPage::IDD)
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
 	{
@@ -51,14 +51,14 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_Values.Set<bool>(SvPb::LinearToolUseRotationEId, m_ctlUseRotation.GetCheck() ? true : false);
+		m_values.Set<bool>(SvPb::LinearToolUseRotationEId, m_ctlUseRotation.GetCheck() ? true : false);
 		int iCurSel = m_ctlProfileOrientation.GetCurSel();
 		if(0 <= iCurSel)
 		{
 			long lValue = static_cast<long> (m_ctlProfileOrientation.GetItemData(iCurSel));
-			m_Values.Set<long>(SvPb::ProfileOrientationEId, lValue);
+			m_values.Set<long>(SvPb::ProfileOrientationEId, lValue);
 		}
-		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		Result = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
 	}
@@ -74,11 +74,11 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 
-		bool bRotate = m_Values.Get<bool>(SvPb::LinearToolUseRotationEId);
+		bool bRotate = m_values.Get<bool>(SvPb::LinearToolUseRotationEId);
 
-		const SvOi::NameValueVector& rProfileOrientationList = m_Values.GetEnumTypes(SvPb::ProfileOrientationEId);
+		const SvOi::NameValueVector& rProfileOrientationList = m_values.GetEnumTypes(SvPb::ProfileOrientationEId);
 		m_ctlProfileOrientation.SetEnumTypes(rProfileOrientationList);
 
 		m_ctlUseRotation.SetCheck(bRotate ? BST_CHECKED : BST_UNCHECKED);
@@ -90,7 +90,7 @@ namespace SvOg
 		}
 		else
 		{	
-			long CurrentSelection = m_Values.Get<long>(SvPb::ProfileOrientationEId);
+			long CurrentSelection = m_values.Get<long>(SvPb::ProfileOrientationEId);
 			m_ctlProfileOrientation.SetCurSelItemData(CurrentSelection);
 		}
 	
@@ -177,7 +177,7 @@ namespace SvOg
 		else
 		{
 			m_ctlProfileOrientation.EnableWindow(true);
-			long CurrentSelection = m_Values.Get<long>(SvPb::ProfileOrientationEId);
+			long CurrentSelection = m_values.Get<long>(SvPb::ProfileOrientationEId);
 			m_ctlProfileOrientation.SetCurSelItemData(CurrentSelection);
 		}
 	}

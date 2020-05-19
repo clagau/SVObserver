@@ -63,7 +63,7 @@ public:
 	/// Returns if the tokens are valid
 	/// \returns bool – true if parsed path is valid
 	//************************************
-	bool isTokensValid();
+	bool areTokensValid();
 
 	//************************************
 	/// this function will check the existence of the drive

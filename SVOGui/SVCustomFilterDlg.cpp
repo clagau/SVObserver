@@ -33,7 +33,7 @@ namespace SvOg
 		CDialog(SVCustomFilterDlg::IDD, pParent)
 		, m_filterID(filterId)
 		, m_InspectionID(inspectionId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
+		, m_values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVCustomFilterDlg)
 		m_bAbsoluteValue = TRUE;
@@ -58,11 +58,11 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<long>(SvPb::FilterKernelWidthEId, m_lKernelWidth);
-		m_Values.Set<long>(SvPb::FilterKernelHeightEId, m_lKernelHeight);
-		m_Values.Set<bool>(SvPb::CustomFilterClippingEId, m_bClippingOn ? true : false);
-		m_Values.Set<bool>(SvPb::CustomFilterAbsoluteEId, m_bAbsoluteValue ? true : false);
-		m_Values.Set<long>(SvPb::CustomFilterTransformEId, m_lTransformationFactor);
+		m_values.Set<long>(SvPb::FilterKernelWidthEId, m_lKernelWidth);
+		m_values.Set<long>(SvPb::FilterKernelHeightEId, m_lKernelHeight);
+		m_values.Set<bool>(SvPb::CustomFilterClippingEId, m_bClippingOn ? true : false);
+		m_values.Set<bool>(SvPb::CustomFilterAbsoluteEId, m_bAbsoluteValue ? true : false);
+		m_values.Set<long>(SvPb::CustomFilterTransformEId, m_lTransformationFactor);
 
 		for( long j = 0; S_OK == l_hrOk && j < m_lKernelWidth; j++ )
 		{
@@ -71,12 +71,12 @@ namespace SvOg
 				long l_lKernelIndex = k * m_lKernelWidth + j;
 				long l_lDialogIndex = (k + ((7 - m_lKernelHeight) / 2)) * 7 + (j + ((7 - m_lKernelWidth) / 2));
 
-				m_Values.Set<long>(SvPb::FilterCellEId + l_lKernelIndex, m_lKernelCells[l_lDialogIndex]);
+				m_values.Set<long>(SvPb::FilterCellEId + l_lKernelIndex, m_lKernelCells[l_lDialogIndex]);
 			}// end for
 
 		}// end for
 
-		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 
@@ -120,20 +120,20 @@ namespace SvOg
 
 		std::string Temp;
 
-		m_Values.Init();
-		m_lKernelWidth = m_Values.Get<long>(SvPb::FilterKernelWidthEId);
+		m_values.Init();
+		m_lKernelWidth = m_values.Get<long>(SvPb::FilterKernelWidthEId);
 		Temp = SvUl::Format( "%d", m_lKernelWidth );
 		m_ctlKernelWidth.SelectString( -1, Temp.c_str() );
 
-		m_lKernelHeight = m_Values.Get<long>(SvPb::FilterKernelHeightEId);
+		m_lKernelHeight = m_values.Get<long>(SvPb::FilterKernelHeightEId);
 		Temp = SvUl::Format( "%d", m_lKernelHeight );
 		m_ctlKernelHeight.SelectString( -1, Temp.c_str() );
 
 		EnableCells();
 
-		m_bClippingOn = m_Values.Get<bool>(SvPb::CustomFilterClippingEId);
-		m_bAbsoluteValue = m_Values.Get<bool>(SvPb::CustomFilterAbsoluteEId);
-		m_lTransformationFactor = m_Values.Get<long>(SvPb::CustomFilterTransformEId);
+		m_bClippingOn = m_values.Get<bool>(SvPb::CustomFilterClippingEId);
+		m_bAbsoluteValue = m_values.Get<bool>(SvPb::CustomFilterAbsoluteEId);
+		m_lTransformationFactor = m_values.Get<long>(SvPb::CustomFilterTransformEId);
 
 		for( long h = 0; h < m_lKernelWidth; h++ )
 		{
@@ -142,7 +142,7 @@ namespace SvOg
 				long l_lKernelIndex = i * m_lKernelWidth + h;
 				long l_lDialogIndex = ( i + ( ( 7 - m_lKernelHeight ) / 2 ) ) * 7 + ( h + ( ( 7 - m_lKernelWidth ) / 2 ) );
 
-				m_lKernelCells[ l_lDialogIndex ] = m_Values.Get<long>(SvPb::FilterCellEId + l_lKernelIndex);
+				m_lKernelCells[ l_lDialogIndex ] = m_values.Get<long>(SvPb::FilterCellEId + l_lKernelIndex);
 			}// end for
 		}// end for
 

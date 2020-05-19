@@ -17,7 +17,6 @@
 #include "ObjectInterfaces/IFormulaController.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "DataController.h"
-#include "ValuesAccessor.h"
 #include "BoundValue.h"
 #pragma endregion
 
@@ -73,13 +72,12 @@ private:
 	const uint32_t m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
 	const SvDef::SVObjectTypeInfoStruct m_Info;
 
-	bool m_isConditional;		//Note this variable must be above the variables m_Values and m_EquationValues due to initialization
+	bool m_isConditional;		//Note this variable must be above the variables m_values and m_EquationValues due to initialization
 	uint32_t m_EquationID;		// Instance ID of the Equation
 	SvPb::EmbeddedIdEnum m_EnableID;
 
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller m_Values;
-	Controller m_EquationValues;
+	ValueController m_values;
+	ValueController m_EquationValues;
 #pragma endregion Member Variables
 
 };

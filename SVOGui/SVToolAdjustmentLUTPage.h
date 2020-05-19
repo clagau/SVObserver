@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "SVMFCControls/SVDlgGraph.h"
@@ -27,7 +26,6 @@ namespace SvOg
 {
 	class SVToolAdjustmentLUTPage : public CPropertyPage
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
 	#pragma region Constructor
 	public:
 		SVToolAdjustmentLUTPage(uint32_t inspectionID, uint32_t taskObjectID, uint32_t lutEquationID);
@@ -37,7 +35,7 @@ namespace SvOg
 	#pragma region Public Methods
 	public:
 		HRESULT SetInspectionData();
-		Controller& GetValues() { return m_Values; }
+		ValueController& GetValues() { return m_values; }
 	#pragma endregion Public Methods
 
 	#pragma region Protected Methods
@@ -158,8 +156,8 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		Controller m_Values;
-		Controller m_LutEquation;
+		ValueController m_values;
+		ValueController m_LutEquation;
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

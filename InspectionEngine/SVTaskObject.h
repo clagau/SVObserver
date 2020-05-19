@@ -164,9 +164,10 @@ protected:
 	/// \param rPOwner [in,out] The method can change the owner if required.
 	/// \returns bool
 	virtual bool hasToAskFriendForConnection(const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner) const { return true; }
-	/// Registers a linked value in one function call
-	void registerEmbeddedLinkedUnsignedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, uint32_t defaultValue = 0);
 
+	/// calls RegisterEmbeddedObject(() twice to register a linked value referring to 'T' in one function call
+	template<typename T>
+	void registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, T defaultValue = 0);
 
 public:
 	// Get the local object color...

@@ -19,7 +19,6 @@
 #include "FormulaController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "BoundValue.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/StringTypeDef.h"
@@ -44,7 +43,7 @@ FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectI
 	, m_EquationID { equationID }
 	, m_EnableID { SvPb::ToolEnabledEId }
 	, m_isConditional {false}
-	, m_Values {SvOg::BoundValues{ inspectionID, taskObjectID }}
+	, m_values {SvOg::BoundValues{ inspectionID, taskObjectID }}
 	, m_EquationValues {SvOg::BoundValues{ inspectionID, equationID }}
 {
 	Init();
@@ -56,7 +55,7 @@ FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectI
 	, m_EnableID { SvPb::ToolEnabledEId }
 	, m_Info{rInfo}
 	, m_isConditional {SvPb::SVConditionalObjectType == rInfo.m_SubType}
-	, m_Values {SvOg::BoundValues { inspectionID, taskObjectID, !m_isConditional}}
+	, m_values {SvOg::BoundValues { inspectionID, taskObjectID, !m_isConditional}}
 	, m_EquationValues {SvOg::BoundValues { inspectionID, SvDef::InvalidObjectId, !m_isConditional}}
 {
 	Init();
@@ -159,7 +158,7 @@ HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& e
 	//Only when the controller is of type SvDef::SVConditionalObjectType
 	if (m_isConditional)
 	{
-		ownerEnabled = m_Values.Get<bool>(m_EnableID);
+		ownerEnabled = m_values.Get<bool>(m_EnableID);
 		equationEnabled = m_EquationValues.Get<bool>(SvPb::EquationEnabledEId);
 	}
 	else
@@ -174,9 +173,9 @@ void FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool equat
 {
 	if (m_isConditional)
 	{
-		m_Values.Set<bool>(m_EnableID, ownerEnabled);
+		m_values.Set<bool>(m_EnableID, ownerEnabled);
 		m_EquationValues.Set<bool>(SvPb::EquationEnabledEId, equationEnabled);
-		m_Values.Commit();
+		m_values.Commit();
 		m_EquationValues.Commit();
 	}
 }
@@ -185,7 +184,7 @@ bool FormulaController::getEditModeFreezeFlag() const
 {
 	if (m_isConditional)
 	{
-		return m_Values.Get<bool>(SvPb::ConditionalEditFreezeFlagEId);
+		return m_values.Get<bool>(SvPb::ConditionalEditFreezeFlagEId);
 	}
 	return false;
 }
@@ -194,8 +193,8 @@ void FormulaController::setEditModeFreezeFlag(bool flag)
 {
 	if (m_isConditional)
 	{
-		m_Values.Set<bool>(SvPb::ConditionalEditFreezeFlagEId, flag);
-		m_Values.Commit();
+		m_values.Set<bool>(SvPb::ConditionalEditFreezeFlagEId, flag);
+		m_values.Commit();
 	}
 }
 
@@ -313,7 +312,7 @@ void FormulaController::Init()
 		}
 		m_EquationValues.SetTaskID(m_EquationID);
 
-		m_Values.Init();
+		m_values.Init();
 		m_EquationValues.Init();
 	}
 }

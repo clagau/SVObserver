@@ -31,7 +31,7 @@ namespace SvOg
 
 	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
 	: SVToolAdjustmentDialogImagePageClass(inspectionId, toolId, SubType, id)
-		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+		, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformImagePageClass)
 		m_useExtentsOnly = FALSE;
@@ -48,8 +48,8 @@ namespace SvOg
 
 		UpdateData(true); // get data from dialog
 
-		m_Values.Set<bool>(SvPb::UseExtentsOnlyEId, m_useExtentsOnly ? true : false);
-		hr = m_Values.Commit();
+		m_values.Set<bool>(SvPb::UseExtentsOnlyEId, m_useExtentsOnly ? true : false);
+		hr = m_values.Commit();
 
 		UpdateData(false);
 	
@@ -90,8 +90,8 @@ namespace SvOg
 		BOOL rc = SVToolAdjustmentDialogImagePageClass::OnInitDialog();
 		if (rc)
 		{
-			m_Values.Init();
-			m_useExtentsOnly = m_Values.Get<bool>(SvPb::UseExtentsOnlyEId);
+			m_values.Init();
+			m_useExtentsOnly = m_values.Get<bool>(SvPb::UseExtentsOnlyEId);
 			CheckSourceImage();
 			UpdateData(false);
 		}

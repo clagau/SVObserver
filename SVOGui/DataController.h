@@ -12,6 +12,7 @@
 #include "ObjectInterfaces\NameValueVector.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "ValuesAccessor.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -117,4 +118,7 @@ namespace SvOg
 		Model m_Data;
 	#pragma endregion Member Variables
 	};
+
+	typedef DataController<ValuesAccessor, ValuesAccessor::value_type> ValueController;
+
 } //namespace SvOg

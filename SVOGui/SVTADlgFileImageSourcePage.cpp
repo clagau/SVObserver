@@ -26,7 +26,7 @@ namespace SvOg
 	SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass(uint32_t inspectionId, uint32_t taskObjectId)
 		: CPropertyPage(SVToolAdjustmentDialogFileImageSourcePageClass::IDD)
 		, m_ImageController(inspectionId, taskObjectId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+		, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
 		//}}AFX_DATA_INIT
@@ -41,7 +41,7 @@ namespace SvOg
 		HRESULT hr = S_OK;
 
 		SetData();
-		hr = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		hr = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 		GetData();
 
 		return hr;
@@ -55,8 +55,8 @@ namespace SvOg
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::GetData()
 	{
-		m_PathName = m_Values.Get<CString>(SvPb::PathNameEId);
-		m_BContinuousReload = m_Values.Get<bool>(SvPb::ContinuousReloadEId);
+		m_PathName = m_values.Get<CString>(SvPb::PathNameEId);
+		m_BContinuousReload = m_values.Get<bool>(SvPb::ContinuousReloadEId);
 		UpdateData(false); // Set data to dialog
 	}
 
@@ -68,9 +68,9 @@ namespace SvOg
 		CString name = m_svfncImageSourceFile.GetFullFileName().c_str();
 		if (!name.IsEmpty())
 		{
-			m_Values.Set<CString>(SvPb::PathNameEId, name);
+			m_values.Set<CString>(SvPb::PathNameEId, name);
 		}
-		m_Values.Set<bool>(SvPb::ContinuousReloadEId, m_BContinuousReload  ? true : false);
+		m_values.Set<bool>(SvPb::ContinuousReloadEId, m_BContinuousReload  ? true : false);
 	}
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::DoDataExchange(CDataExchange* pDX)
@@ -102,7 +102,7 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 		m_ImageController.Init();
-		m_Values.Init();
+		m_values.Init();
 		GetData();
 
 		m_imageCtrl.AddTab(_T("Tool Input")); 

@@ -18,8 +18,6 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\SVEnumerateCombo.h"
 #include "SVOGui\ImageController.h"
-#include "SVOGui\BoundValue.h"
-#include "SVOGui\ValuesAccessor.h"
 #include "SVOGui\DataController.h"
 #include "SVOGui\MaskController.h"
 #pragma endregion Includes
@@ -31,8 +29,6 @@ class SVMaskEditor;
 
 class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 {
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
-
 public:
 	SVToolAdjustmentDialogMaskPageClass(uint32_t inspectionId, uint32_t taskObjectId, uint32_t maskOperatorId);
 	virtual ~SVToolAdjustmentDialogMaskPageClass();
@@ -112,7 +108,7 @@ private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 	SvOg::ImageController m_ImageController;
-	ValueController m_Values;
+	SvOg::ValueController m_Values;
 	SvOg::MaskController m_maskController;
 	std::string m_imageInputName;
 	std::string m_imageName;

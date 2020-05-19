@@ -19,13 +19,13 @@ AuxiliaryExtentsController::AuxiliaryExtentsController(uint32_t inspectionID, ui
 	: m_InspectionID {inspectionID}
 	, m_TaskObjectID {taskObjectID}
 	, m_ImageController {inspectionID, taskObjectID}
-	, m_Values {BoundValues{ inspectionID, taskObjectID }}
+	, m_values {BoundValues{ inspectionID, taskObjectID }}
 {
 }
 
 HRESULT AuxiliaryExtentsController::Init()
 {
-	HRESULT hr = m_Values.Init();
+	HRESULT hr = m_values.Init();
 	if (S_OK == hr)
 	{
 		hr = FindAuxSourceImages();
@@ -52,17 +52,17 @@ bool AuxiliaryExtentsController::AreAuxiliaryExtentsAvailable() const
 
 HRESULT AuxiliaryExtentsController::Commit()
 {
-	return m_Values.Commit();
+	return m_values.Commit();
 }
 
 bool AuxiliaryExtentsController::IsUpdateAuxExtentsEnabled() const
 {
-	return m_Values.Get<bool>(SvPb::UpdateAuxiliaryExtentsEId);
+	return m_values.Get<bool>(SvPb::UpdateAuxiliaryExtentsEId);
 }
 
 void AuxiliaryExtentsController::EnableAuxExtents(bool bEnable)
 {
-	m_Values.Set<bool>(SvPb::UpdateAuxiliaryExtentsEId, bEnable);
+	m_values.Set<bool>(SvPb::UpdateAuxiliaryExtentsEId, bEnable);
 }
 
 const SvUl::NameObjectIdList& AuxiliaryExtentsController::GetAvailableImageList() const

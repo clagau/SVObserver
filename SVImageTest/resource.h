@@ -31,7 +31,6 @@
 #define IDC_CAMERA_PROP                 1006
 #define IDC_FILE_NAME                   1007
 #define IDC_BUTTON1                     1008
-#define IDC_BROWSECAMFILE               1008
 #define IDC_CAMERA_FILE_BROWSE          1008
 #define IDC_STOP_ALL_CAMERAS            1008
 #define IDC_MODELNO                     1009

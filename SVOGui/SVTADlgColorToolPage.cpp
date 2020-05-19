@@ -45,7 +45,7 @@ namespace SvOg
 	, m_Images(inspectionId, taskObjectId, SvPb::SVImageColorType)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	, m_convertToHSI{ false }
 	, m_InputName{ SvDef::cColorToolInputImage }
 	{
@@ -60,8 +60,8 @@ namespace SvOg
 		HRESULT Result{ E_FAIL };
 		UpdateData( true ); // get data from dialog
 
-		m_Values.Set<bool>(SvPb::ConvertToHSIEId, m_convertToHSI ? true : false);
-		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Set<bool>(SvPb::ConvertToHSIEId, m_convertToHSI ? true : false);
+		Result = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( false );
 		return Result;
@@ -82,10 +82,10 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 
 		m_Images.Init();
-		m_Values.Init();
+		m_values.Init();
 		m_ResultImageID = getFirstResultImageId(m_Images);
 
-		m_convertToHSI = m_Values.Get<bool>(SvPb::ConvertToHSIEId);
+		m_convertToHSI = m_values.Get<bool>(SvPb::ConvertToHSIEId);
 
 		const SvUl::NameObjectIdList& rAvailableImageList = m_Images.GetAvailableImageList();
 

@@ -16,7 +16,6 @@
 #include "SVTADlgColorThresholdROI.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "Operators/SVColorThreshold.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "Tools/SVColorTool.h"
 #pragma endregion Includes
@@ -211,8 +210,7 @@ void SVTADlgColorThresholdROI::SetInspectionData()
 	if (nullptr != m_pThreshold)
 	{
 		//@TODO[gra][8.00][15.01.2018]: The data controller should be used like the rest of SVOGui
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->getObjectId(), m_pThreshold->getObjectId() } };
+		SvOg::ValueController Values{ SvOg::BoundValues{ m_pThreshold->GetInspection()->getObjectId(), m_pThreshold->getObjectId() } };
 		Values.Init();
 
 		Values.Set<double>(m_pExtentLeft->GetEmbeddedID(), static_cast<double> (m_pSheet->m_rectROI.left));

@@ -75,7 +75,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	: CPropertyPage(SVToolAdjustmentLUTPage::IDD)
 	, m_InspectionID{ inspectionID }
 	, m_TaskObjectID{ taskObjectID }
-	, m_Values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
+	, m_values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
 	, m_LutEquation{ SvOg::BoundValues{ inspectionID, lutEquationID } }
 	, m_bUseLUT{ false }
 	, m_bContinuousRecalcLUT{ false }
@@ -99,28 +99,28 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		m_LutEquation.Commit(SvOg::PostAction::doNothing);
 
 		long lUpperClip = static_cast<long> (m_upperSlider.GetPos());
-		m_Values.Set<long>(SvPb::LUTUpperClipEId, lUpperClip);
+		m_values.Set<long>(SvPb::LUTUpperClipEId, lUpperClip);
 
 		long lLowerClip = static_cast<long> (m_lowerSlider.GetPos());
-		m_Values.Set<long>(SvPb::LUTLowerClipEId, lLowerClip);
+		m_values.Set<long>(SvPb::LUTLowerClipEId, lLowerClip);
 
 		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
 		{
 			long value = static_cast<long> (m_stretchSliders[i].GetPos());
-			m_Values.Set<long>(m_stretchValueEIds[i], value);
+			m_values.Set<long>(m_stretchValueEIds[i], value);
 		}
 
-		m_Values.Set<bool>(SvPb::ContinuousRecalcLUTEId, m_bContinuousRecalcLUT ? true : false);
-		m_Values.Set<bool>(SvPb::UseLUTEId, m_bUseLUT ? true : false);
+		m_values.Set<bool>(SvPb::ContinuousRecalcLUTEId, m_bContinuousRecalcLUT ? true : false);
+		m_values.Set<bool>(SvPb::UseLUTEId, m_bUseLUT ? true : false);
 
 		int CurrentSelection = m_LUTModeCombo.GetCurSel();
 		if(0 <= CurrentSelection)
 		{
 			long lValue = ( long ) m_LUTModeCombo.GetItemData(CurrentSelection);
-			m_Values.Set<long>(SvPb::LUTModeEId, lValue);
+			m_values.Set<long>(SvPb::LUTModeEId, lValue);
 		}
 	
-		Result = m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		Result = m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
 	}
@@ -158,7 +158,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 		m_LutEquation.Init();
 
 		// Rotate the text for the vertical axis.
@@ -178,10 +178,10 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		}
 
 		// Get Use Lut Flag...
-		m_bUseLUT = m_Values.Get<bool>(SvPb::UseLUTEId);
-		m_bContinuousRecalcLUT = m_Values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
+		m_bUseLUT = m_values.Get<bool>(SvPb::UseLUTEId);
+		m_bContinuousRecalcLUT = m_values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
 
-		const SvOi::NameValueVector& rLUTModeList = m_Values.GetEnumTypes(SvPb::LUTModeEId);
+		const SvOi::NameValueVector& rLUTModeList = m_values.GetEnumTypes(SvPb::LUTModeEId);
 		m_LUTModeCombo.SetEnumTypes(rLUTModeList);
 
 		m_isFormulaClip = m_LutEquation.Get<bool>(SvPb::LUTEquationClipFlagEId);
@@ -375,9 +375,9 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		refreshClip();
 		refreshStretch();
 
-		m_bUseLUT = m_Values.Get<bool>(SvPb::UseLUTEId);
+		m_bUseLUT = m_values.Get<bool>(SvPb::UseLUTEId);
 
-		long lLUTMode = m_Values.Get<long>(SvPb::LUTModeEId);
+		long lLUTMode = m_values.Get<long>(SvPb::LUTModeEId);
 		m_LUTModeCombo.SetCurSelItemData(lLUTMode);
 		switch( lLUTMode )
 		{
@@ -433,7 +433,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 			}
 		}
 
-		m_bContinuousRecalcLUT = m_Values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
+		m_bContinuousRecalcLUT = m_values.Get<bool>(SvPb::ContinuousRecalcLUTEId);
 
 		if( !m_bUseLUT )
 		{	// Deactivate Mouse Proc Func of SVDlgGraph Control...
@@ -446,18 +446,18 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 
 	void SVToolAdjustmentLUTPage::refreshLUTGraph()
 	{
-		std::vector<BYTE> byteVector = ConvertVariantSafeArrayToVector<BYTE>(m_Values.Get<_variant_t>(SvPb::OutputLUTVectorEId));
+		std::vector<BYTE> byteVector = ConvertVariantSafeArrayToVector<BYTE>(m_values.Get<_variant_t>(SvPb::OutputLUTVectorEId));
 		m_LUTGraph.SetPoints(byteVector);
 	}
 
 	void SVToolAdjustmentLUTPage::refreshClip()
 	{
-		long lUpperClip = m_Values.Get<long>(SvPb::LUTUpperClipEId);
+		long lUpperClip = m_values.Get<long>(SvPb::LUTUpperClipEId);
 
 		m_strUpperClipValue.Format( _T("%ld"), lUpperClip );
 		m_upperSlider.SetPos(static_cast<int> (lUpperClip));
 
-		long lLowerClip = m_Values.Get<long>(SvPb::LUTLowerClipEId);
+		long lLowerClip = m_values.Get<long>(SvPb::LUTLowerClipEId);
 
 		m_strLowerClipValue.Format( _T("%ld"), lLowerClip );
 		m_lowerSlider.SetPos(static_cast<int> (lLowerClip));
@@ -467,7 +467,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 	{
 		for (int i = 0; i < MAX_STRETCH_CONTROLS; i++)
 		{
-			long value = m_Values.Get<long>(m_stretchValueEIds[i]);
+			long value = m_values.Get<long>(m_stretchValueEIds[i]);
 			m_strStretchValues[i].Format(_T("%ld"), value);
 			m_stretchSliders[i].SetPos(static_cast<int> (value));
 		}

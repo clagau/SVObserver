@@ -534,6 +534,13 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 		//Make sure this is not a derived virtual method which is called
 		SVVariantValueObjectClass::GetValue(Value, i);
 
+		if (VT_BSTR == Value.vt)
+		{
+			std::string temp = static_cast<_bstr_t>(Value);
+			SvUl::AddEscapeSpecialCharacters(temp, true);
+			Value = static_cast<_bstr_t>(temp.c_str());
+		}
+			
 		// The parser does not like reading in empty safe array.
 		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.
 		// 

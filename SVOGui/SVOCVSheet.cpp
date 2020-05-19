@@ -27,14 +27,14 @@ namespace SvOg
 	, m_MatchStringParamsDlg{ *this }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 		AddPage(&m_GeneralParamsDlg);
 		AddPage(&m_MatchStringParamsDlg);
 
-		m_Values.Init();
+		m_values.Init();
 	}
 
 	SVOCVSheet::~SVOCVSheet()

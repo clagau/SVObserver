@@ -25,7 +25,7 @@ namespace SvOg
 		CDialog(SVThickeningFilterDlg::IDD)
 		, m_filterID(filterId)
 		, m_InspectionID(inspectionId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
+		, m_values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVThickeningFilterDlg)
 		m_bGrayScale = FALSE;
@@ -43,9 +43,9 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<bool>(SvPb::ThickeningFilterGrayOnEId, m_bGrayScale ? true : false);
-		m_Values.Set<long>(SvPb::ThickeningFilterItterationsEId, m_lIterations);
-		m_Values.Commit();
+		m_values.Set<bool>(SvPb::ThickeningFilterGrayOnEId, m_bGrayScale ? true : false);
+		m_values.Set<long>(SvPb::ThickeningFilterItterationsEId, m_lIterations);
+		m_values.Commit();
 
 		UpdateData( FALSE );
 
@@ -73,9 +73,9 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 
-		m_Values.Init();
-		m_bGrayScale = m_Values.Get<bool>(SvPb::ThickeningFilterGrayOnEId);
-		m_lIterations = m_Values.Get<long>(SvPb::ThickeningFilterItterationsEId);
+		m_values.Init();
+		m_bGrayScale = m_values.Get<bool>(SvPb::ThickeningFilterGrayOnEId);
+		m_lIterations = m_values.Get<long>(SvPb::ThickeningFilterItterationsEId);
 
 		UpdateData( FALSE );
 

@@ -79,7 +79,7 @@ namespace SvOg
 		, m_GridStatus( _T("") )
 		,m_filterID(filterId)
 		,m_InspectionID(inspectionId)
-		,m_Values(SvOg::BoundValues(inspectionId, filterId))
+		,m_values(SvOg::BoundValues(inspectionId, filterId))
 	{
 	}
 
@@ -93,14 +93,14 @@ namespace SvOg
 	{
 		HRESULT Result = S_OK;
 
-		m_Values.Set<long>(SvPb::FilterKernelWidthEId, m_KernelWidth);
-		m_Values.Set<long>(SvPb::FilterKernelHeightEId, m_KernelHeight);
-		m_Values.Set<long>(SvPb::CustomFilterTransformEId, m_NormalizationFactor);
-		m_Values.Set<bool>(SvPb::CustomFilterAbsoluteEId, m_AbsoluteValue ? true : false);
-		m_Values.Set<bool>(SvPb::CustomFilterClippingEId, m_ClippingEnabled ? true : false);
+		m_values.Set<long>(SvPb::FilterKernelWidthEId, m_KernelWidth);
+		m_values.Set<long>(SvPb::FilterKernelHeightEId, m_KernelHeight);
+		m_values.Set<long>(SvPb::CustomFilterTransformEId, m_NormalizationFactor);
+		m_values.Set<bool>(SvPb::CustomFilterAbsoluteEId, m_AbsoluteValue ? true : false);
+		m_values.Set<bool>(SvPb::CustomFilterClippingEId, m_ClippingEnabled ? true : false);
 		_variant_t value = ConvertVectorToVariantSafeArray<std::vector<long>>(m_KernelArray);
-		m_Values.Set<_variant_t>(SvPb::FilterKernelEId, value);
-		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Set<_variant_t>(SvPb::FilterKernelEId, value);
+		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		return Result;
 	}
@@ -432,15 +432,15 @@ namespace SvOg
 
 	void Custom2FilterDlg::initializeFilter()
 	{
-		m_Values.Init();
-		m_KernelWidth = m_Values.Get<long>(SvPb::FilterKernelWidthEId);
-		m_KernelHeight = m_Values.Get<long>(SvPb::FilterKernelHeightEId);
-		m_NormalizationFactor = m_Values.Get<long>(SvPb::CustomFilterTransformEId);
-		m_AbsoluteValue = m_Values.Get<bool>(SvPb::CustomFilterAbsoluteEId);
-		m_ClippingEnabled = m_Values.Get<bool>(SvPb::CustomFilterClippingEId);
+		m_values.Init();
+		m_KernelWidth = m_values.Get<long>(SvPb::FilterKernelWidthEId);
+		m_KernelHeight = m_values.Get<long>(SvPb::FilterKernelHeightEId);
+		m_NormalizationFactor = m_values.Get<long>(SvPb::CustomFilterTransformEId);
+		m_AbsoluteValue = m_values.Get<bool>(SvPb::CustomFilterAbsoluteEId);
+		m_ClippingEnabled = m_values.Get<bool>(SvPb::CustomFilterClippingEId);
 
 		m_KernelArray.clear();
-		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(SvPb::FilterKernelEId));
+		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_values.Get<_variant_t>(SvPb::FilterKernelEId));
 	}
 
 	bool Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )

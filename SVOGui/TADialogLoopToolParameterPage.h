@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
@@ -61,8 +60,7 @@ private:
 	long m_MaxLoopCount;
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller m_Values;
+	ValueController m_values;
 	CBitmap m_downArrowBitmap;
 };
 } //namespace SvOg

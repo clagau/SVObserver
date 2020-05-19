@@ -16,7 +16,6 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "PictureDisplay.h"
 #include "ImageController.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -161,8 +160,7 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_AnalyzerID;
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller m_values;
+		ValueController m_values;
 	#pragma endregion Member Variables
 	};
 } //namespace SvOg

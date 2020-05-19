@@ -9,8 +9,6 @@
 
 #pragma region Includes
 #include "ImageController.h"
-#include "BoundValue.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -18,11 +16,10 @@ namespace SvOg
 {
 	class AuxiliaryExtentsController
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		ImageController m_ImageController;
-		ValuesController m_Values;
+		ValueController m_values;
 		SvUl::NameObjectIdList m_auxSourceImages;
 
 		public:

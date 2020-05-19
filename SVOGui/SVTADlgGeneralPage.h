@@ -13,8 +13,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "BoundValue.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "AuxiliaryExtentsController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
@@ -25,7 +23,6 @@ namespace SvOg
 {
 	class SVToolAdjustmentDialogGeneralPageClass : public CPropertyPage
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
 	public:
 		SVToolAdjustmentDialogGeneralPageClass(uint32_t inspectionId, uint32_t taskObjectId);
 		virtual ~SVToolAdjustmentDialogGeneralPageClass();
@@ -68,6 +65,6 @@ namespace SvOg
 		const uint32_t m_TaskObjectID;
 
 		SvOg::AuxiliaryExtentsController m_AuxExtentsController;
-		ValuesController m_Values;
+		ValueController m_values;
 	};
 } //namespace SvOg

@@ -34,7 +34,7 @@ TADialogLoopToolParameterPage::TADialogLoopToolParameterPage(uint32_t inspection
 	: CPropertyPage(TADialogLoopToolParameterPage::IDD)
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
-	, m_Values {SvOg::BoundValues{ inspectionID, taskObjectID }}
+	, m_values {SvOg::BoundValues{ inspectionID, taskObjectID }}
 	, m_objectSelector(inspectionID)
 {
 }
@@ -75,19 +75,19 @@ BOOL TADialogLoopToolParameterPage::OnInitDialog()
 	m_ButtonLoopsLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
 
 	m_ButtonBreakConditionLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-	m_Values.Init();
-	m_MaxLoopCount = m_Values.Get<long>(SvPb::MaxLoopsEId);
-	CString valueString = m_Values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
+	m_values.Init();
+	m_MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
+	CString valueString = m_values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
 	if (valueString.IsEmpty())
 	{
-		valueString = m_Values.Get<CString>(SvPb::LinkedLoopsEId);
+		valueString = m_values.Get<CString>(SvPb::LinkedLoopsEId);
 	}
 	m_EditLoopsValue.SetWindowText(valueString.GetString());
 
-	valueString = m_Values.Get<CString>(SvPb::LoopBreak_LinkedEId);
+	valueString = m_values.Get<CString>(SvPb::LoopBreak_LinkedEId);
 	if (valueString.IsEmpty())
 	{
-		valueString = m_Values.Get<CString>(SvPb::LoopBreakEId);
+		valueString = m_values.Get<CString>(SvPb::LoopBreakEId);
 	}
 	m_EditBreakCondition.SetWindowText(valueString.GetString());
 	UpdateData(FALSE);
@@ -115,26 +115,26 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 	{
 		CString Value;
 		m_EditLoopsValue.GetWindowText(Value);
-		m_Values.Set<CString>(SvPb::LinkedLoopsEId, Value);
-		m_Values.Set<long>(SvPb::MaxLoopsEId, m_MaxLoopCount);
+		m_values.Set<CString>(SvPb::LinkedLoopsEId, Value);
+		m_values.Set<long>(SvPb::MaxLoopsEId, m_MaxLoopCount);
 
 		m_EditBreakCondition.GetWindowText(Value);
-		m_Values.Set<CString>(SvPb::LoopBreakEId, Value);
+		m_values.Set<CString>(SvPb::LoopBreakEId, Value);
 
-		hResult = m_Values.Commit();
+		hResult = m_values.Commit();
 		if (S_OK == hResult)
 		{
-			Value = m_Values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
+			Value = m_values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
 			if (Value.IsEmpty())
 			{
-				long MaxLoopCount = m_Values.Get<long>(SvPb::MaxLoopsEId);
-				long LoopCount = m_Values.Get<long>(SvPb::LinkedLoopsEId);
+				long MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
+				long LoopCount = m_values.Get<long>(SvPb::LinkedLoopsEId);
 				if (LoopCount > MaxLoopCount)
 				{
 					SvDef::StringVector messageList;
-					std::string valueString = m_Values.Get<CString>(SvPb::MaxLoopsEId);
+					std::string valueString = m_values.Get<CString>(SvPb::MaxLoopsEId);
 					messageList.push_back(valueString);
-					valueString = m_Values.Get<CString>(SvPb::LinkedLoopsEId);
+					valueString = m_values.Get<CString>(SvPb::LinkedLoopsEId);
 					messageList.push_back(valueString);
 					
 					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -149,7 +149,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 
 		if (S_OK != hResult)
 		{
-			SvStl::MessageContainerVector messages = m_Values.getFailedMessageList();
+			SvStl::MessageContainerVector messages = m_values.getFailedMessageList();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

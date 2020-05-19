@@ -37,7 +37,7 @@ namespace SvOg
 		,m_InspectionID(inspectionId)
 		,m_TaskObjectID(taskObjectId)
 		, SvOg::ImageController(inspectionId, taskObjectId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
+		, m_values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 
 		//{{AFX_DATA_INIT(SVWatershedFilterDlg)
@@ -72,10 +72,10 @@ namespace SvOg
 		lControlFlag |= m_iMinFillBasin ? SVImageWSMaximaFill  : 0;
 		lControlFlag |= m_iRegularWatershedLines ? SVImageWSStraight : 0;
 
-		m_Values.Set<long>(SvPb::WatershedFilterControlFlagEId, lControlFlag);
-		m_Values.Set<long>(SvPb::WatershedFilterMinVariationEId, m_lMinVariation);
-		m_Values.Set<bool>(SvPb::WatershedFilterUseMarkerEId, m_bUseMarker ? true : false);
-		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_values.Set<long>(SvPb::WatershedFilterControlFlagEId, lControlFlag);
+		m_values.Set<long>(SvPb::WatershedFilterMinVariationEId, m_lMinVariation);
+		m_values.Set<bool>(SvPb::WatershedFilterUseMarkerEId, m_bUseMarker ? true : false);
+		m_values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
 		UpdateData( FALSE );
 
@@ -116,15 +116,15 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 		Init(); //ImageController
-		m_Values.Init();
-		long lControlFlag =  m_Values.Get<long>(SvPb::WatershedFilterControlFlagEId);
-		long lMinVariation =  m_Values.Get<long>(SvPb::WatershedFilterMinVariationEId);;
+		m_values.Init();
+		long lControlFlag =  m_values.Get<long>(SvPb::WatershedFilterControlFlagEId);
+		long lMinVariation =  m_values.Get<long>(SvPb::WatershedFilterMinVariationEId);;
 
 		// Check Boxes
 		m_bSkipLastLevel = (lControlFlag & SVImageSkipLastLevel) == SVImageSkipLastLevel;
 		m_bUseBasin = (lControlFlag & SVImageWSBasin) == SVImageWSBasin;
 		m_bUseWatershed = (lControlFlag & SVImageWSWatershed) == SVImageWSWatershed;
-		m_bUseMarker = m_Values.Get<bool>(SvPb::WatershedFilterUseMarkerEId);
+		m_bUseMarker = m_values.Get<bool>(SvPb::WatershedFilterUseMarkerEId);
 
 		// Radios
 		m_iEightWatershedLines = (lControlFlag & SVImage8Connected)  == SVImage8Connected ;

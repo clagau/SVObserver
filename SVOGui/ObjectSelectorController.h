@@ -18,7 +18,7 @@ namespace SvOg
 	{
 #pragma region Constructor
 	public:
-		ObjectSelectorController(uint32_t inspectionID, uint32_t instanceID = SvDef::InvalidObjectId);
+		ObjectSelectorController(uint32_t inspectionID, uint32_t instanceID = SvDef::InvalidObjectId, SvPb::ObjectAttributes objectattributes = SvPb::selectableForEquation);
 		virtual ~ObjectSelectorController();
 #pragma endregion Constructor
 
@@ -38,6 +38,7 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
+		SvPb::ObjectAttributes m_objectAttributes;
 		uint32_t m_InspectionID;
 		uint32_t m_InstanceID;
 #pragma region Member Variables

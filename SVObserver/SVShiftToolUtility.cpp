@@ -13,7 +13,6 @@
 #include "StdAfx.h"
 #include "SVShiftToolUtility.h"
 #include "Tools/SVShiftTool.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
@@ -36,8 +35,7 @@ void SVShiftToolUtility::SetToolNormalize(SvTo::SVShiftTool* pShiftTool)
 			lTranslationY = static_cast<long> (Value);
 		}
 
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller m_Values{ SvOg::BoundValues{pShiftTool->GetInspection()->getObjectId(), pShiftTool->getObjectId()} };
+		SvOg::ValueController m_Values{ SvOg::BoundValues{pShiftTool->GetInspection()->getObjectId(), pShiftTool->getObjectId()} };
 		m_Values.Init();
 
 		m_Values.Set<double>(SvPb::ShiftToolReferenceXEId, static_cast<double> (lTranslationX));
@@ -66,8 +64,7 @@ void SVShiftToolUtility::SetToolSetReference(SvTo::SVShiftTool *pShiftTool)
 			lTranslationY = static_cast<long> (Value);
 		}
 
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller m_Values{ SvOg::BoundValues{ pShiftTool->GetInspection()->getObjectId(), pShiftTool->getObjectId() } };
+		SvOg::ValueController m_Values{ SvOg::BoundValues{ pShiftTool->GetInspection()->getObjectId(), pShiftTool->getObjectId() } };
 
 		m_Values.Init();
 		long lLeft = static_cast<long> (m_Values.Get<double>(SvPb::ExtentRelativeLeftPositionEId));

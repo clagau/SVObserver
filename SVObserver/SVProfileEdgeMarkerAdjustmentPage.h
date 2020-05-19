@@ -128,6 +128,6 @@ private:
 	SvTo::SVToolClass* m_pTool{ nullptr };
 	SvAo::SVAnalyzerClass* m_pAnalyzer {nullptr};
 	SvOp::SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
-	std::shared_ptr<Controller> m_pAnalyzerValues;
+	std::shared_ptr<SvOg::ValueController> m_pAnalyzerValues;
 #pragma endregion Member variables
 };

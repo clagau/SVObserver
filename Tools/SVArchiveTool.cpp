@@ -32,6 +32,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
@@ -50,6 +51,7 @@ constexpr int cAsyncDefaultBufferNumber = 5;
 
 SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
+
 SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
               : SVToolClass(POwner, StringResourceID)
 {
@@ -65,8 +67,7 @@ SVArchiveTool::~SVArchiveTool()
 
 void SVArchiveTool::initializeArchiveTool()
 {
-	m_ArchiveImagePathUsingKW = false;
-	m_ImageTranslatedPath = "";
+	m_currentImagePathRoot = "";
 
 	m_arrayResultsInfoObjectsToArchive.SetArchiveTool( this );
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
@@ -97,12 +98,21 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
 		false, SvOi::SVResetItemTool );
 	
-	RegisterEmbeddedObject(	
-		&m_stringImageFileRootPath,
-		SvPb::ArchiveImageFileRootPathEId,
-		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PATH,
-		false, SvOi::SVResetItemNone );
-	
+	registerEmbeddedLinkedValue<_variant_t>(
+		&m_imageFileRootPath1,
+		SvPb::ArchiveImageFileRootPart1EId, SvPb::ArchiveImageFileRootPart1LinkEId,
+		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, _variant_t(""));
+
+	registerEmbeddedLinkedValue<_variant_t>(
+		&m_imageFileRootPath2,
+		SvPb::ArchiveImageFileRootPart2EId, SvPb::ArchiveImageFileRootPart2LinkEId,
+		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, _variant_t(""));
+
+	registerEmbeddedLinkedValue<_variant_t>(
+		&m_imageFileRootPath3,
+		SvPb::ArchiveImageFileRootPart3EId, SvPb::ArchiveImageFileRootPart3LinkEId,
+		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, _variant_t(""));
+
 	RegisterEmbeddedObject(
 		&m_dwAppendArchiveFile,
 		SvPb::ArchiveAppendArchiveFileEId,
@@ -200,27 +210,27 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_BASE_DIRECTORYNAME,
 		false, SvOi::SVResetItemNone);
 
-	registerEmbeddedLinkedUnsignedValue(
+	registerEmbeddedLinkedValue<uint32_t>(
 		&m_FilenameIndex1,
 		SvPb::FilenameIndex1EId, SvPb::FilenameIndex1LinkEId,
 		IDS_OBJECTNAME_FILENAME_INDEX1);
 
-	registerEmbeddedLinkedUnsignedValue(
+	registerEmbeddedLinkedValue<uint32_t>(
 		&m_FilenameIndex2,
 		SvPb::FilenameIndex2EId, SvPb::FilenameIndex2LinkEId,
 		IDS_OBJECTNAME_FILENAME_INDEX2);
 
-	registerEmbeddedLinkedUnsignedValue(
+	registerEmbeddedLinkedValue<uint32_t>(
 		&m_DirectorynameIndex,
 		SvPb::DirectorynameIndexEId, SvPb::DirectorynameIndexLinkEId,
 		IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
 
-	registerEmbeddedLinkedUnsignedValue(
+	registerEmbeddedLinkedValue<uint32_t>(
 		&m_SubfolderSelection,
 		SvPb::SubfolderSelectionEId, SvPb::SubfolderSelectionLinkEId,
 		IDS_OBJECTNAME_SUBFOLDER_SELECTION);
 
-	registerEmbeddedLinkedUnsignedValue(
+	registerEmbeddedLinkedValue<uint32_t>(
 		&m_SubfolderLocation,
 		SvPb::SubfolderLocationEId, SvPb::SubfolderLocationLinkEId,
 		IDS_OBJECTNAME_SUBFOLDER_LOCATION);
@@ -240,9 +250,11 @@ void SVArchiveTool::initializeArchiveTool()
 	FileClass.SetFileNameOnly( FileName.c_str() );
 
 	m_stringFileArchivePath.SetDefaultValue( FileClass.GetFullFileName(), true );
-	m_svoArchiveImageNames.SetDefaultValue( _T( "" ), true);
-	m_svoArchiveResultNames.SetDefaultValue( _T( "" ), true);
-	m_stringImageFileRootPath.SetDefaultValue( _T( "D:\\TEMP" ), true);
+	m_svoArchiveImageNames.SetDefaultValue( _T(""), true);
+	m_svoArchiveResultNames.SetDefaultValue( _T(""), true);
+	m_imageFileRootPath1.SetDefaultValue(_bstr_t("D:\\TEMP"), true);
+	m_imageFileRootPath2.SetDefaultValue(_bstr_t(""), true);
+	m_imageFileRootPath3.SetDefaultValue(_bstr_t(""), true);
 	m_dwAppendArchiveFile.SetDefaultValue(0, true);
 	m_bvoFormatResults.SetDefaultValue(0, true);
 	m_dwArchiveResultsMinimumNumberOfCharacters.SetDefaultValue(8, true);
@@ -295,7 +307,9 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
-	m_stringImageFileRootPath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_imageFileRootPath1.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_imageFileRootPath2.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_imageFileRootPath3.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 	m_bvoFormatResults.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveResultsMinimumNumberOfCharacters.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
@@ -361,12 +375,18 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		result = AllocateImageBuffers(pErrorMessages) && result;
 	}
 
-
 	InitialiseTriggercountObject();
 
 	m_uiValidateCount = 0;
 
-	return ValidateImageSpace(true, pErrorMessages) && result;
+	if (m_arrayImagesInfoObjectsToArchive.GetSize() > 0)
+	{//Only need to verify space if there are images to be archived.  If no images are checked we do not need to run through the checking of disk space.
+		
+		updateCurrentImagePathRoot();
+		result = ValidateImageSpace(pErrorMessages) && result;
+	}
+
+	return result;
 }
 
 
@@ -391,7 +411,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	// CFile object.
 	//
 	std::string FileArchivePath;
-	GetArchiveFilepath( FileArchivePath );
+	GetArchiveResultFilepath( FileArchivePath );
 
 	if( FileArchivePath.empty() )
 	{
@@ -408,7 +428,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 
 	if (athFile.isUsingKeywords())
 	{
-		if(athFile.isTokensValid())
+		if(athFile.areTokensValid())
 		{
 			FileArchivePath = athFile.TranslatePath( FileArchivePath);
 		}
@@ -552,28 +572,19 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	m_evoArchiveMethod.GetValue( Method );
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
-	std::string Temp;
-	GetImageArchivePath( Temp );
-	ArchiveToolHelper athImage;
-	athImage.Init( Temp );
-	
-	if (athImage.isUsingKeywords() && athImage.isTokensValid())
-	{
-		Temp = athImage.TranslatePath( Temp );
-	}
-	
+	updateCurrentImagePathRoot();
 
-	if ( !Temp.empty() )
+	if (!m_currentImagePathRoot.empty())
 	{
-		if ( _access( Temp.c_str(), 0 ) != 0 )
+		if (_access(m_currentImagePathRoot.c_str(), 0) != 0)
 		{
-			if (!SVFileNameManagerClass::Instance().CreatePath( Temp.c_str() ))
+			if (!SVFileNameManagerClass::Instance().CreatePath(m_currentImagePathRoot.c_str()))
 			{
 				if (nullptr != pErrorMessages)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back( Temp );
-					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() ); 
+					msgList.push_back(m_currentImagePathRoot);
+					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId()); 
 					pErrorMessages->push_back(Msg);
 				}
 				return false;
@@ -930,27 +941,31 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 	return Result;
 }
 
-bool SVArchiveTool::GetArchiveFilepath( std::string& rName )
+bool SVArchiveTool::GetArchiveResultFilepath( std::string& rName )
 {
 	bool Result = (S_OK == m_stringFileArchivePath.GetValue( rName ));
 	return Result;
 }
 
-bool SVArchiveTool::GetImageArchivePath( std::string& rName )
+const std::string SVArchiveTool::GetImageArchivePathPart1() const
 {
-	return S_OK == m_stringImageFileRootPath.GetValue( rName );
+	return std::string(m_imageFileRootPath1.getValueAs<_bstr_t>());
+}
+
+const std::string SVArchiveTool::GetImageArchivePathPart2() const
+{
+	return std::string(m_imageFileRootPath2.getValueAs<_bstr_t>());
+}
+
+const std::string SVArchiveTool::GetImageArchivePathPart3() const
+{
+	return std::string(m_imageFileRootPath3.getValueAs<_bstr_t>());
 }
 
 bool SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
 {
 	return S_OK == m_stringFileArchivePath.SetValue( std::string( lpszName ) );
 }
-
-bool SVArchiveTool::SetImageArchivePath( LPCTSTR lpszName )
-{
-	return S_OK == m_stringImageFileRootPath.SetValue( std::string( lpszName ) );
-}
-
 
 HRESULT SVArchiveTool::WriteBuffers()
 {
@@ -1054,15 +1069,12 @@ std::string SVArchiveTool::getNextImageFileName(const std::string& rFileNameImag
 		std::string baseFilename;
 		m_baseFilename.GetValue(baseFilename);
 
-		_variant_t temporaryVariant; //@TODO[Arvid] this is fairly laborious: would it not be better to have a function LinkedValue::getSafeUINT32() or so?
-		m_FilenameIndex1.GetValue(temporaryVariant);
-		uint32_t Index1 = static_cast<uint32_t>(temporaryVariant);
+		uint32_t Index1 = m_FilenameIndex1.getValueAs<uint32_t>();
 
 		std::string centerFilename;
 		m_centerFilename.GetValue(centerFilename);
 
-		m_FilenameIndex2.GetValue(temporaryVariant);
-		uint32_t Index2 = static_cast<uint32_t>(temporaryVariant);
+		uint32_t Index2 = m_FilenameIndex2.getValueAs<uint32_t>();
 
 		return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
 	}
@@ -1097,14 +1109,14 @@ long SVArchiveTool::CalculateImageMemory( std::vector<SvIe::SVImageClass*> image
 	return lTotalMemory;
 }
 
-bool SVArchiveTool::isImagePathUsingKeywords()
+std::string SVArchiveTool::getUntranslatedImagePathRoot() const
 {
-	return m_ArchiveImagePathUsingKW;
+	return GetImageArchivePathPart1() + GetImageArchivePathPart2() + GetImageArchivePathPart3();
 }
 
-void SVArchiveTool::getTranslatedImagePath(std::string &rImagePath)
+const std::string SVArchiveTool::getCurrentImagePathRoot() const
 {
-	rImagePath = m_ImageTranslatedPath;
+	return m_currentImagePathRoot;
 }
 
 long SVArchiveTool::currentTriggerCount()
@@ -1122,7 +1134,7 @@ long SVArchiveTool::currentTriggerCount()
 	return static_cast<long>(floor(triggerCount + 0.05)); //add 0.05 before floor just to be on the safe side
 }
 
-bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
+bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	if (nullptr != pObjectInInfo)
 	{
@@ -1221,7 +1233,7 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 				{	//if array ("[x]") in the name, remove it for the check
 					indirectTmp = indirectTmp.substr(0, pos);
 				}
-				//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
+				//only replace the name if it is the full name. Do NOT replace parts of the name, because then it is another object with a similar name.
 				if (oldPrefix == indirectTmp)
 				{
 					SvUl::searchAndReplace(Name, oldPrefix.c_str(), newPrefix.c_str());
@@ -1235,90 +1247,93 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
-bool SVArchiveTool::ValidateImageSpace( bool shouldFullCheck, SvStl::MessageContainerVector *pErrorMessages )
+
+bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords, bool ensureDirectoryExists)
 {
-	int iSize = m_arrayImagesInfoObjectsToArchive.GetSize();
+	m_currentImagePathRoot = getUntranslatedImagePathRoot();
 
-	//Only need to verify space if there are images to be archived.  If no images are checked we do not need to 
-	//run through the checking of disk space.
-	if (iSize > 0)
+	ArchiveToolHelper athImagePath;
+	athImagePath.Init(m_currentImagePathRoot);
+
+	if (athImagePath.isUsingKeywords())
 	{
-		std::string ImagePath;
-		GetImageArchivePath( ImagePath );
-
-		if ( shouldFullCheck )
+		if (athImagePath.areTokensValid())
 		{
-			ArchiveToolHelper athImage;
-			athImage.Init( ImagePath );
-			m_ImageTranslatedPath = ImagePath;
-			if (athImage.isUsingKeywords() && athImage.isTokensValid())
-			{
-				ImagePath = athImage.TranslatePath( ImagePath.c_str() );
-				m_ImageTranslatedPath = ImagePath;
-				m_ArchiveImagePathUsingKW = true;
-				m_arrayImagesInfoObjectsToArchive.BuildArchiveImageFilePaths();
-			}
-			if ( _access( ImagePath.c_str(), 0 ) != 0 )
-			{
-				//create the new path
-				SVFileNameManagerClass::Instance().CreatePath( ImagePath.c_str() );
-			}
+			m_currentImagePathRoot = athImagePath.TranslatePath(m_currentImagePathRoot);
 		}
 		else
 		{
-			if (m_ArchiveImagePathUsingKW)
+			if (displayMessageOnInvalidKeywords)
 			{
-				ImagePath = m_ImageTranslatedPath;
-			}
-		}
-
-		//
-		// Check the available space for storing image archive files.
-		//
-
-		ULARGE_INTEGER lFreeBytesAvailableToCaller;
-		ULARGE_INTEGER lTotalNumberOfBytes;
-		ULARGE_INTEGER lTotalNumberOfFreeBytes;
-
-		BOOL bOk = ::GetDiskFreeSpaceEx( ImagePath.c_str(),         // pointer to the directory name
-			&lFreeBytesAvailableToCaller, // receives the number of bytes on
-			// disk available to the caller
-			&lTotalNumberOfBytes,         // receives the number of bytes on disk
-			&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
-
-		if(!bOk)
-		{
-			if (nullptr != pErrorMessages)  
-			{
-				DWORD  ErrorCd =  GetLastError();
-				if ( ErrorCd == ERROR_PATH_NOT_FOUND )
-				{ //should not ever get here since the path is validated above
-					SvDef::StringVector msgList;
-					msgList.push_back( ImagePath );
-					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, getObjectId() ); 
-					pErrorMessages->push_back(Msg);
-				}
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidImagePath, SvStl::SourceFileParams(StdMessageParams));
 			}
 			return false;
 		}
+	}
 
-		//
-		// Make sure we have at least 100 Meg bytes space on the drive.
-		//
-		//For systems wtih 16GB of memory the amount of memory will be 300Meg
-		if (((__int64)100000000) > lFreeBytesAvailableToCaller.QuadPart)
+	if (ensureDirectoryExists)
+	{
+		TCHAR lastCharacter = m_currentImagePathRoot.back();
+		if (lastCharacter != _T('\\') && lastCharacter != _T('/'))
 		{
-			if (nullptr != pErrorMessages)  
-			{
+			m_currentImagePathRoot += _T("\\"); //ensure that SVCheckPathDir() can recognize this as a directory
+		}
+
+		if (!SVCheckPathDir(m_currentImagePathRoot.c_str(), TRUE)) //create this directory if it does not exist yet
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+bool SVArchiveTool::ValidateImageSpace(SvStl::MessageContainerVector *pErrorMessages )
+{
+	ULARGE_INTEGER lFreeBytesAvailableToCaller;
+	ULARGE_INTEGER lTotalNumberOfBytes;
+	ULARGE_INTEGER lTotalNumberOfFreeBytes;
+
+	BOOL bOk = ::GetDiskFreeSpaceEx(m_currentImagePathRoot.c_str(),         // pointer to the directory name
+		&lFreeBytesAvailableToCaller, // receives the number of bytes on
+		// disk available to the caller
+		&lTotalNumberOfBytes,         // receives the number of bytes on disk
+		&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
+
+	if(!bOk)
+	{
+		if (nullptr != pErrorMessages)  
+		{
+			DWORD  ErrorCd =  GetLastError();
+			if ( ErrorCd == ERROR_PATH_NOT_FOUND )
+			{ //should not ever get here since the path is validated above
 				SvDef::StringVector msgList;
-				msgList.push_back( std::string( m_ImageTranslatedPath ) );
-				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				msgList.push_back(m_currentImagePathRoot);
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, getObjectId() ); 
 				pErrorMessages->push_back(Msg);
 			}
-			return false;
 		}
-		
-	}	
+		return false;
+	}
+
+	//
+	// Make sure we have at least 100 Meg bytes space on the drive.
+	//
+	//For systems with 16GB of memory the amount of memory will be 300Meg
+	if (((__int64)100000000) > lFreeBytesAvailableToCaller.QuadPart)
+	{
+		if (nullptr != pErrorMessages)  
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back( std::string(m_currentImagePathRoot) );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+
 	return true;
 }
 
@@ -1328,8 +1343,19 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)
 
 	if ( (0 == m_uiValidateCount % 10))
 	{
-		bool shouldFullCheck = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-		bOk = ValidateImageSpace(shouldFullCheck, pErrorMessages);
+		if (m_arrayImagesInfoObjectsToArchive.GetSize() > 0)
+		{//Only need to verify space if there are images to be archived.  If no images are checked we do not need to run through the checking of disk space.
+			
+			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+			if (setCurrentImagePathRoot)
+			{
+				bOk = updateCurrentImagePathRoot();
+			}
+			if (bOk)
+			{
+				bOk = ValidateImageSpace(pErrorMessages);
+			}
+		}
 	}
 	m_uiValidateCount++;
 

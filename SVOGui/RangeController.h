@@ -8,8 +8,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <string>
-#include "ValuesAccessor.h"
-#include "BoundValue.h"
 #include "DataController.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 
@@ -19,8 +17,6 @@ namespace SvOg
 {
 	class RangeController
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-
 	public:
 		RangeController(uint32_t inspectionID, uint32_t taskID, uint32_t rangeID = SvDef::InvalidObjectId);
 		virtual ~RangeController();
@@ -46,6 +42,6 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		uint32_t m_RangeID;
-		Controller m_RangeValues;
+		ValueController m_RangeValues;
 	};
 } //namespace SvOg

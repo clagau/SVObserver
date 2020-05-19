@@ -11,8 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "BoundValue.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #pragma endregion Includes
@@ -47,7 +45,6 @@ namespace SvOg
 		HRESULT SetInspectionData();
 
 	private:
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValuesController;
-		ValuesController m_Values;
+		ValueController m_values;
 	};
 } //namespace SvOg

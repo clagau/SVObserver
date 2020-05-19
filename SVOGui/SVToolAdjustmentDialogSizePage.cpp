@@ -10,10 +10,9 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "DataController.h"
 #include "FormulaController.h"
 #include "SVFormulaEditorSheet.h"
-#include "ValuesAccessor.h"
+#include "DataController.h"
 #include "SVToolAdjustmentDialogSizePage.h"
 #pragma endregion Includes
 
@@ -172,7 +171,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	if (S_OK == hr && responseCmd.has_getobjectidresponse())
 	{
 		m_taskId = responseCmd.getobjectidresponse().objectid();
-		m_pTaskValueController = std::make_unique<Controller>(BoundValues {m_ipId, m_taskId});
+		m_pTaskValueController = std::make_unique<ValueController>(BoundValues {m_ipId, m_taskId});
 		if (nullptr != m_pTaskValueController)
 		{
 			m_pTaskValueController->Init();
@@ -267,7 +266,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 
 			m_pTaskValueController->Set<long>(m_EQAdjustStruct[vType].m_inputModeEmbeddedId, Value);
 			bool bEnabled = (Value == SvDef::TSFormula);
-			Controller EquationValues {BoundValues{ m_ipId, m_EQAdjustStruct[vType].m_Id }};
+			ValueController EquationValues {BoundValues{ m_ipId, m_EQAdjustStruct[vType].m_Id }};
 			EquationValues.Init();
 			EquationValues.Set<bool>(SvPb::EquationEnabledEId, bEnabled);
 			EquationValues.Commit(PostAction::doNothing);

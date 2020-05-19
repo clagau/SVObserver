@@ -9,7 +9,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -37,8 +36,7 @@ private:
 
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
-	typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-	Controller m_Values;
+	ValueController m_values;
 };
 
 } //namespace SvOg

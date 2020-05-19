@@ -25,7 +25,7 @@ namespace SvOg
 		CDialog(SVThinningFilterDlg::IDD, pParent)
 		,m_filterID(filterId)
 		,m_InspectionID(inspectionId)
-		,m_Values{ SvOg::BoundValues{ inspectionId, filterId } }
+		,m_values{ SvOg::BoundValues{ inspectionId, filterId } }
 	{
 		//{{AFX_DATA_INIT(SVThinningFilterDlg)
 		m_bGrayScale = FALSE;
@@ -43,9 +43,9 @@ namespace SvOg
 
 		UpdateData( TRUE ); // get data from dialog
 
-		m_Values.Set<bool>(SvPb::GrayOnEId, m_bGrayScale ? true : false);
-		m_Values.Set<long>(SvPb::ThinningFilterItterationsEId, m_lIterations);
-		m_Values.Commit();
+		m_values.Set<bool>(SvPb::GrayOnEId, m_bGrayScale ? true : false);
+		m_values.Set<long>(SvPb::ThinningFilterItterationsEId, m_lIterations);
+		m_values.Commit();
 
 		UpdateData( FALSE );
 
@@ -73,9 +73,9 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 
-		m_Values.Init();
-		m_bGrayScale = m_Values.Get<bool>(SvPb::GrayOnEId);
-		m_lIterations = m_Values.Get<long>(SvPb::ThinningFilterItterationsEId);
+		m_values.Init();
+		m_bGrayScale = m_values.Get<bool>(SvPb::GrayOnEId);
+		m_lIterations = m_values.Get<long>(SvPb::ThinningFilterItterationsEId);
 
 		UpdateData( FALSE );
 

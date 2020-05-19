@@ -16,7 +16,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
-#include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/SVLuminanceAnalyzerDlg.h"
 #include "SVOGui/SVBarCodeProperties.h"
@@ -199,8 +198,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 			MultiFile = dlgProp.m_dlgBarCodeStringMatch.GetMultiFileName();
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
-			typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-			Controller Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
+			SvOg::ValueController Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
 			Values.Init();
 
 			Values.Set<long>(SvPb::BCTypeEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType());
@@ -230,7 +228,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 
 			Values.Commit();
 
-			Controller Result {SvOg::BoundValues{ pInspection->getObjectId(), pResult->getObjectId() }};
+			SvOg::ValueController Result {SvOg::BoundValues{ pInspection->getObjectId(), pResult->getObjectId() }};
 			Result.Init();
 
 			Result.Set<bool>(SvPb::BCUseSingleMatchStringEId, bUseSingle ? true : false);
@@ -702,8 +700,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(uint32_t objectI
 			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy ? true : false;
 
 			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
-			typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-			Controller Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
+			SvOg::ValueController Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
 			Values.Init();
 
 			// Save General Page

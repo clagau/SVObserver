@@ -12,7 +12,6 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVUtilityLibrary\NameObjectIdList.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ObjectSelectorController.h"
 #include "ISVPropertyPageDialog.h"
@@ -132,8 +131,7 @@ namespace SvOg
 		SvUl::NameObjectIdList m_availableColumn;
 		std::string m_inputName; 
 
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		std::shared_ptr<Controller> m_pValues;
+		std::shared_ptr<ValueController> m_pValues;
 
 		SvOi::IFormulaControllerPtr m_pSelectedAddEquationFormula;
 #pragma endregion Member Variables

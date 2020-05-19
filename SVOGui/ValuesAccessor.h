@@ -203,4 +203,5 @@ private:
 	SvStl::MessageContainerVector m_MessageFailList;
 #pragma endregion Member Variables
 };
+
 } //namespace SvOg

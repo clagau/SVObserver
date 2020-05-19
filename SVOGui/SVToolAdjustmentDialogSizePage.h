@@ -11,7 +11,6 @@
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "ISVPropertyPageDialog.h"
 #include "DataController.h"
-#include "ValuesAccessor.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -58,7 +57,7 @@ public:
 private:
 	SvMc::SVEnumerateComboClass m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
 	typedef DataController<ValuesAccessor, ValuesAccessor::value_type> Controller;
-	std::unique_ptr<Controller> m_pTaskValueController;
+	std::unique_ptr<ValueController> m_pTaskValueController;
 
 	uint32_t m_ipId;
 	uint32_t m_toolId;

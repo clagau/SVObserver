@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ImageController.h"
 
@@ -68,7 +67,6 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		const uint32_t m_filterID;
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller m_Values;
+		ValueController m_values;
 	};
 } //namespace SvOg

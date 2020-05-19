@@ -13,7 +13,6 @@
 #include "SVOResource/resource.h"
 #include "Definitions/GlobalConst.h"
 #include "ISVPropertyPageDialog.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
@@ -85,8 +84,7 @@ namespace SvOg
 		CButton m_ButtonImageIndex1;
 		CButton m_ButtonImageIndex2;
 		CBitmap m_downArrowBitmap;
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller m_Values;
+		ValueController m_values;
 		ObjectSelectorController m_objectSelector;
 #pragma endregion Member Variables
 	};

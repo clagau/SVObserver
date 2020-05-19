@@ -15,7 +15,6 @@
 #include "SVOResource/resource.h"
 #include "SVMFCControls/SVEditNumbers.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
-#include "ValuesAccessor.h"
 #include "DataController.h"
 #pragma endregion Includes
 
@@ -142,7 +141,6 @@ namespace SvOg
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> Controller;
-		Controller m_Values;
+		ValueController m_values;
 	};
 } //namespace SvOg

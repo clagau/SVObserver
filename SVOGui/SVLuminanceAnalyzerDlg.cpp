@@ -35,7 +35,7 @@ namespace SvOg
 	: CDialog(SVLuminanceAnalyzerDlg::IDD, pParent)
 	, m_InspectionID{ inspectionID }
 	, m_TaskObjectID{ taskObjectID }
-	, m_Values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
+	, m_values{ SvOg::BoundValues{ inspectionID, taskObjectID } }
 	{
 		//{{AFX_DATA_INIT(SVLuminanceAnalyzerDlg)
 		m_calcStdDev = FALSE;
@@ -60,8 +60,8 @@ namespace SvOg
 
 		UpdateData(true);
 
-		m_Values.Set<bool>(SvPb::CalcStdDevEId, m_calcStdDev ? true : false);
-		m_Values.Commit();
+		m_values.Set<bool>(SvPb::CalcStdDevEId, m_calcStdDev ? true : false);
+		m_values.Commit();
 
 		UpdateData(false);
 
@@ -79,9 +79,9 @@ namespace SvOg
 	{
 		CDialog::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 
-		m_calcStdDev = m_Values.Get<bool>(SvPb::CalcStdDevEId);
+		m_calcStdDev = m_values.Get<bool>(SvPb::CalcStdDevEId);
 
 		UpdateData(false);
 

@@ -36,7 +36,7 @@ namespace SvOg
 	: CPropertyPage( ID )
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
-	, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -52,17 +52,17 @@ namespace SvOg
 		if( 0 <= CurrentSelection)
 		{
 			long Value = static_cast<long> (m_FunctionCombo.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SvPb::WarpTypeEId, Value);
+			m_values.Set<long>(SvPb::WarpTypeEId, Value);
 		}
 
 		CurrentSelection = m_cbInterpolation.GetCurSel();
 		if( CurrentSelection >= 0 )
 		{
 			long Value = static_cast<long> (m_cbInterpolation.GetItemData(CurrentSelection));
-			m_Values.Set<long>(SvPb::OutputInterpolationModeEId, Value);
+			m_values.Set<long>(SvPb::OutputInterpolationModeEId, Value);
 		}
 
-		m_Values.Commit();
+		m_values.Commit();
 	}
 
 
@@ -80,16 +80,16 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		m_Values.Init();
+		m_values.Init();
 
-		const SvOi::NameValueVector& rWarpTypeList = m_Values.GetEnumTypes(SvPb::WarpTypeEId);
+		const SvOi::NameValueVector& rWarpTypeList = m_values.GetEnumTypes(SvPb::WarpTypeEId);
 		m_FunctionCombo.SetEnumTypes(rWarpTypeList);
-		m_lLastWarpType = m_Values.Get<long>(SvPb::WarpTypeEId);
+		m_lLastWarpType = m_values.Get<long>(SvPb::WarpTypeEId);
 		m_FunctionCombo.SetCurSelItemData(m_lLastWarpType);
 
-		const SvOi::NameValueVector& rInterpolationModeList = m_Values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
+		const SvOi::NameValueVector& rInterpolationModeList = m_values.GetEnumTypes(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetEnumTypes(rInterpolationModeList);
-		long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
+		long CurrentSelection = m_values.Get<long>(SvPb::OutputInterpolationModeEId);
 		m_cbInterpolation.SetCurSelItemData(CurrentSelection);
 
 		UpdateData(false);
@@ -115,7 +115,7 @@ namespace SvOg
 			WarpTypeVertical = 2,
 		};
 
-		long lType = m_Values.Get<long>(SvPb::WarpTypeEId);
+		long lType = m_values.Get<long>(SvPb::WarpTypeEId);
 		if( lType != m_lLastWarpType )
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SvOi::getObject(m_TaskObjectID));

@@ -23,7 +23,7 @@ ReconstructFilterDlg::ReconstructFilterDlg(uint32_t inspectionID, uint32_t taskO
 	CDialog(ReconstructFilterDlg::IDD, pParent)
 	, m_filterID(filterID)
 	, m_InspectionID(inspectionID)
-	, m_Values {SvOg::BoundValues {inspectionID, filterID}}
+	, m_values {SvOg::BoundValues {inspectionID, filterID}}
 	, m_imageController(inspectionID, taskObjectId)
 {
 	//{{AFX_DATA_INIT(ReconstructFilterDlg)
@@ -41,14 +41,14 @@ HRESULT ReconstructFilterDlg::SetInspectionData()
 
 	UpdateData(TRUE); // get data from dialog
 
-	m_Values.Set<bool>(SvPb::GrayOnEId, m_bGrayScale ? true : false);
+	m_values.Set<bool>(SvPb::GrayOnEId, m_bGrayScale ? true : false);
 	int CurrentSelection = m_cbBlobColor.GetCurSel();
 	if (0 <= CurrentSelection)
 	{
 		long Value = static_cast<long> (m_cbBlobColor.GetItemData(CurrentSelection));
-		m_Values.Set<long>(SvPb::BlobColorEId, Value);
+		m_values.Set<long>(SvPb::BlobColorEId, Value);
 	}
-	m_Values.Commit();
+	m_values.Commit();
 
 	UpdateData(FALSE);
 
@@ -80,12 +80,12 @@ BOOL ReconstructFilterDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	m_imageController.Init();
-	m_Values.Init();
-	m_bGrayScale = m_Values.Get<bool>(SvPb::GrayOnEId);
+	m_values.Init();
+	m_bGrayScale = m_values.Get<bool>(SvPb::GrayOnEId);
 
-	const SvOi::NameValueVector& rBlobColorList = m_Values.GetEnumTypes(SvPb::BlobColorEId);
+	const SvOi::NameValueVector& rBlobColorList = m_values.GetEnumTypes(SvPb::BlobColorEId);
 	m_cbBlobColor.SetEnumTypes(rBlobColorList);
-	long CurrentSelection = m_Values.Get<long>(SvPb::BlobColorEId);
+	long CurrentSelection = m_values.Get<long>(SvPb::BlobColorEId);
 	m_cbBlobColor.SetCurSelItemData(CurrentSelection);
 
 	const SvUl::NameObjectIdList& availImages = m_imageController.GetAvailableImageList();

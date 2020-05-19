@@ -17,16 +17,12 @@
 #include "PictureDisplay.h"
 #include "ImageController.h"
 #include "DataController.h"
-#include "ValuesAccessor.h"
-#include "BoundValue.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
 	class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage
 	{
-		typedef SvOg::DataController<SvOg::ValuesAccessor, SvOg::ValuesAccessor::value_type> ValueController;
-		
 	#pragma region Constructor
 	public:
 		SVToolAdjustmentDialogFileImageSourcePageClass(uint32_t inspectionId, uint32_t taskObjectId);
@@ -59,7 +55,7 @@ namespace SvOg
 	private:
 		SVFileNameClass m_svfncImageSourceFile;
 		SvOg::ImageController m_ImageController;
-		ValueController m_Values;
+		ValueController m_values;
 		//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
 		enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
 		SvOg::PictureDisplay m_imageCtrl;

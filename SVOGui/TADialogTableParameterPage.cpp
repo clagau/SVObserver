@@ -37,7 +37,7 @@ TADialogTableParameterPage::TADialogTableParameterPage(uint32_t inspectionID, ui
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskID)
 	, m_pFormulaController(nullptr)
-	, m_Values {SvOg::BoundValues{ inspectionID, taskID }}
+	, m_values {SvOg::BoundValues{ inspectionID, taskID }}
 {
 }
 
@@ -69,7 +69,7 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_Values.Init();
+	m_values.Init();
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -93,7 +93,7 @@ BOOL TADialogTableParameterPage::OnInitDialog()
 	}
 	setEquationText();
 
-	m_maxRows = m_Values.Get<long>(SvPb::TableTool_MaxRowEId);
+	m_maxRows = m_values.Get<long>(SvPb::TableTool_MaxRowEId);
 
 	UpdateData(FALSE);
 
@@ -135,12 +135,12 @@ HRESULT TADialogTableParameterPage::SetPageData()
 	BOOL updateState = UpdateData(true);
 	if (updateState)
 	{
-		m_Values.Set<long>(SvPb::TableTool_MaxRowEId, m_maxRows);
-		hResult = m_Values.Commit();
+		m_values.Set<long>(SvPb::TableTool_MaxRowEId, m_maxRows);
+		hResult = m_values.Commit();
 
 		if (S_OK != hResult)
 		{
-			SvStl::MessageContainerVector messages = m_Values.getFailedMessageList();
+			SvStl::MessageContainerVector messages = m_values.getFailedMessageList();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
