@@ -134,14 +134,14 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		return false; //don't allow to exit with invalid path
 	}
 
-	m_pTool->m_dwArchiveStopAtMaxImages.SetValue(static_cast<DWORD> (m_StopAtMaxImagesButton.GetCheck()));
-	m_pTool->m_dwUseTriggerCountForImages.SetValue(static_cast<DWORD> (m_UseTriggerCount));
-	m_pTool->m_useAlternativeImagePaths.SetValue(m_useAlternativeImagePaths);
+	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck());
+	m_ValueController.Set<DWORD>(SvPb::ArchiveUseTriggerCountForImagesEId, m_UseTriggerCount);
+	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 
 	int iCurSel = m_Mode.GetCurSel();
 	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
-	m_pTool->m_evoArchiveMethod.SetValue(static_cast<long> (m_eSelectedArchiveMethod));
-
+	m_ValueController.Set<long>(SvPb::ArchiveMethodEId, static_cast<long> (m_eSelectedArchiveMethod));
+	
 	CString Temp;
 	m_EditMaxImages.GetWindowText(Temp);
 	m_ImagesToArchive = atol(Temp);
@@ -168,9 +168,10 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		m_ImagesToArchive= 1L;
 	}
 
-	m_pTool->m_dwArchiveMaxImagesCount.SetValue(m_ImagesToArchive);
+	m_ValueController.Set<DWORD>(SvPb::ArchiveMaxImagesCountEId, static_cast<DWORD> (m_ImagesToArchive));
 
 	m_pTool->setImageArchiveList(m_List);
+	m_ValueController.Commit(SvOg::PostAction::doReset);
 
 	// Mark the document as 'dirty' so user will be prompted to save
 	// this configuration on program exit.
@@ -183,8 +184,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 			pIPDoc->SetModifiedFlag();
 		}
 	}
-
-	m_pTool->resetAllObjects();
 
 	return true;
 }
@@ -274,22 +273,19 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	CDWordArray dwaIndex;
 	
-	for (auto const& rEntry : m_pTool->m_evoArchiveMethod.GetEnumVector())
+	for (auto const& rEntry : m_ValueController.GetEnumTypes(SvPb::ArchiveMethodEId))
 	{
 		int iIndex = m_Mode.AddString(rEntry.first.c_str());
 		m_Mode.SetItemData( iIndex, static_cast<DWORD_PTR> (rEntry.second) );
 		dwaIndex.SetAtGrow( rEntry.second, iIndex );
 	}
 
-	long lMode;
-	m_pTool->m_evoArchiveMethod.GetValue( lMode );
+	long lMode = m_ValueController.Get<long>(SvPb::ArchiveMethodEId);
 	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum>( lMode );
 	m_iModeIndex = dwaIndex.GetAt( lMode );
 
-	DWORD dwTemp=0;
-    m_pTool->m_dwArchiveMaxImagesCount.GetValue( dwTemp );
-	m_ImagesToArchive = dwTemp;
-	std::string Temp = SvUl::Format(_T("%ld"), dwTemp);
+	m_ImagesToArchive = m_ValueController.Get<DWORD>(SvPb::ArchiveMaxImagesCountEId);
+	std::string Temp = SvUl::Format(_T("%ld"), m_ImagesToArchive);
 	m_EditMaxImages.SetWindowText( Temp.c_str() );
 
 	//store the MaxImageNumber
@@ -297,7 +293,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_sMaxImageNumber = Temp.c_str(); 
 
 	__int64 MemUsed = TheSVMemoryManager().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
- 	m_ToolImageMemoryUsage = 0;
+	m_ToolImageMemoryUsage = 0;
 	m_TotalArchiveImageMemoryAvailable = TheSVMemoryManager().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
 
 	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SvTo::SVArchiveGoOffline );
@@ -306,13 +302,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_ImageFilepathroot2.SetWindowText(m_pTool->GetImageArchivePathPart2().c_str());
 	m_ImageFilepathroot3.SetWindowText(m_pTool->GetImageArchivePathPart3().c_str());
 
-	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
-	m_StopAtMaxImagesButton.SetCheck(static_cast<BOOL>(dwTemp));
-
-	m_pTool->m_dwUseTriggerCountForImages.GetValue(dwTemp);
-	m_UseTriggerCount = static_cast<BOOL>(dwTemp);
-
-	m_pTool->m_useAlternativeImagePaths.GetValue(m_useAlternativeImagePaths);
+	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
+	m_UseTriggerCount = m_ValueController.Get<bool>(SvPb::ArchiveUseTriggerCountForImagesEId);
+	m_useAlternativeImagePaths = m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId);
 
 	m_List.swap(m_pTool->getImageArchiveList());
 
@@ -520,12 +512,12 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 		svfncImageFolder.SetPathName(csDefaultInitialPath);
 	}
 
-    //
-    // Select the folder to copy to..
-    //
+	//
+	// Select the folder to copy to..
+	//
 	svfncImageFolder.SetFileType(SV_DEFAULT_FILE_TYPE);
 	if (svfncImageFolder.SelectPath())
-    {
+	{
 		firstPartOfImageArchivePathRoot = svfncImageFolder.GetPathName().c_str();
 		int len = firstPartOfImageArchivePathRoot.GetLength();
 		if (len)
@@ -535,7 +527,7 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 				firstPartOfImageArchivePathRoot += _T('\\');
 			}
 		}
-    }
+	}
 
 	m_ImageFilepathroot1.SetWindowText(firstPartOfImageArchivePathRoot);
 
