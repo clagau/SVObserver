@@ -2562,6 +2562,12 @@ HRESULT SVObserverApp::OpenSVXFile()
 				return S_FALSE;
 			} // if (hr & 0xc000)
 
+			auto fileName = saveObjectIdMapping();
+			if (!fileName.empty())
+			{
+				AddAdditionalFile(fileName.c_str());
+			}
+
 			//Finished loading notify load
 			long loadConfigNotify {static_cast<long> (SvStl::NotificationType::loadConfig)};
 			SVVisionProcessorHelper::Instance().FireNotification(loadConfigNotify, 0L, 0L, getConfigFullFileName().c_str());

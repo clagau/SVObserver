@@ -20,6 +20,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVClsids.h"
 #include "SVObjectManagerClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1549,6 +1550,42 @@ uint32_t getNextAcquisitionId()
 		return ObjectIdEnum::AcquisitionId + (nextPos++);
 	}
 	return SvDef::InvalidObjectId;
+}
+
+std::string saveObjectIdMapping()
+{
+	FILE* file = nullptr;
+	fopen_s(&file, SvStl::GlobalPath::Inst().GetRunPath("WebApp.json").c_str(), _T("r"));
+	if (nullptr != file)
+	{	//only save IdMapping if WebApp exist.
+		fclose(file);
+		file = nullptr;
+
+		auto maxIter = std::max_element(g_ExchangeObjectID.begin(), g_ExchangeObjectID.end(), [](auto a, auto b) { return a.second < b.second; });
+		if (g_ExchangeObjectID.end() != maxIter && ObjectIdEnum::FirstPossibleObjectId < maxIter->second)
+		{
+			auto name = SvStl::GlobalPath::Inst().GetRunPath("WebAppIds.json");
+			fopen_s(&file, name.c_str(), _T("w"));
+			if (nullptr != file)
+			{
+				_ftprintf(file, _T("{\n\"guidToObjectIdMapping\": {\n"));
+				bool notFirst = false;
+				for (auto& rEntry : g_ExchangeObjectID)
+				{
+					if (notFirst)
+					{
+						_ftprintf(file, ",\n");
+					}
+					notFirst = true;
+					_ftprintf(file, _T("\"%s\" : %u"), SVGUID(rEntry.first).ToString().c_str(), rEntry.second);
+				}
+				_ftprintf(file, _T("\n}\n}\n"));
+				fclose(file);
+			}
+			return name;
+		}
+	}
+	return "";
 }
 
 void resetExchangeObjectIdMap()

@@ -30,6 +30,7 @@ uint32_t calcObjectId(const _variant_t& rObjectIdVariant);
 std::string convertObjectIdToString(uint32_t objectId);
 _variant_t convertObjectIdToVariant(uint32_t objectId);
 uint32_t getNextAcquisitionId();
+std::string saveObjectIdMapping();
 void resetExchangeObjectIdMap();
 
 class SVClassRegisterListClass
