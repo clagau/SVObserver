@@ -232,7 +232,10 @@ void SVToolSetListCtrl::Rebuild()
 		{
 			itemNo = InsertDelimiter(itemNo, 0, NavElementType::EndDelimiterToolSet, m_ToolSetId);
 		}
+
+		pView->RefreshTimestamp();
 	}
+
 }
 
 int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement& rpNaviElement)
@@ -393,7 +396,7 @@ void SVToolSetListCtrl::RebuildImages()
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
 	if (S_OK == hr && responseCmd.has_getppqnameresponse())
 	{
-		ppqName =  responseCmd.getppqnameresponse().ppqname();
+		ppqName = responseCmd.getppqnameresponse().ppqname();
 	}
 
 	LVITEM item;
@@ -573,9 +576,10 @@ PtrNavigatorElement SVToolSetListCtrl::GetSelectedNavigatorElement(int* pSelecte
 	return GetNavigatorElement(index);
 }
 
-uint32_t SVToolSetListCtrl::GetSelectedTool() const
+
+uint32_t SVToolSetListCtrl::GetSelectedTool(int* pSelectedIndex) const
 {
-	auto element = GetSelectedNavigatorElement();
+	auto element = GetSelectedNavigatorElement(pSelectedIndex);
 	if (!element)
 	{
 		return SvDef::InvalidObjectId;

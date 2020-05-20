@@ -37,6 +37,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/DataController.h"
 #include "SVInspectionProcess.h"
+#include "SVTimerLibrary/SVclock.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -75,9 +76,9 @@ void ToolSetView::SetSelectedTool(uint32_t toolId)
 	m_toolSetListCtrl.SetSelectedTool(toolId);
 }
 
-uint32_t ToolSetView::GetSelectedTool() const
+uint32_t ToolSetView::GetSelectedTool(int* pSelectedIndex) const
 {
-	return m_toolSetListCtrl.GetSelectedTool();
+	return m_toolSetListCtrl.GetSelectedTool(pSelectedIndex);
 }
 
 
@@ -179,6 +180,35 @@ int ToolSetView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+bool ToolSetView::ToolSetListHasChanged()
+{
+	
+	SVIPDoc* pCurrentDocument = GetIPDoc();
+	if (!pCurrentDocument)
+	{
+		return false;
+	}
+
+	SVToolSetClass* pToolSet = pCurrentDocument ->GetToolSet();
+	if (!pToolSet)
+	{
+		return false;
+	}
+	if (pToolSet->GetLastListUpdateTimestamp() > GetTimeStamp())
+	{
+		return true;
+	}	
+
+	int toolgroupSize = static_cast<int>(GetToolGroupings().size());
+	int listctrlSize = static_cast<int> (m_toolSetListCtrl.GetItemCount());
+	
+	if (toolgroupSize > listctrlSize - 1)
+	{
+		return true;
+	}
+
+	return false;
+}
 void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
@@ -202,11 +232,24 @@ void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					getListCtrl().EnsureVisible(index, true);
 				}
 			}
-			else if ((SVIPDoc::RefreshView == lHint) || (S_OK == pCurrentDocument->IsToolSetListUpdated()))
+			else if ((SVIPDoc::RefreshView == lHint) || ToolSetListHasChanged()) 
 			{
-				uint32_t selectedToolID = GetSelectedTool();
+				
+				int selectedPos = 0;
+				uint32_t selectedToolID = GetSelectedTool(&selectedPos);
+				
+				if (pCurrentDocument->GetToolSet() == 0 || pCurrentDocument->GetToolSet()->GetInspection() == 0)
+				{
+					return;
+				}
 				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->getObjectId(), pCurrentDocument->GetToolSet()->GetInspection()->getObjectId());
 				SetSelectedTool(selectedToolID);
+				if (selectedToolID == 0 && m_toolSetListCtrl.GetItemCount() > selectedPos)
+				{
+					//no tool selected but grouping or end of looptool
+					m_toolSetListCtrl.SetItemState(selectedPos, LVIS_SELECTED, LVIS_SELECTED);
+				}
+				
 				m_toolSetListCtrl.RebuildImages();
 			}
 			else if (ExpandCollapseHint == lHint)
@@ -1194,3 +1237,8 @@ bool ToolSetView::CheckName(const std::string& rName, LPCTSTR pExclude) const
 	return bNameOk;
 }
 
+void ToolSetView::RefreshTimestamp()
+{
+	m_timestamp = SvTl::GetTimeStamp();
+				  
+}

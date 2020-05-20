@@ -57,7 +57,7 @@ public:
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
 
-	uint32_t GetSelectedTool() const;
+	uint32_t GetSelectedTool(int* pSelectedListpos= nullptr ) const;
 	void SetSelectedTool(uint32_t toolId);
 	
 	///Select the last element in the list if no Element was selected.

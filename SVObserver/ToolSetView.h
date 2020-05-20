@@ -46,7 +46,8 @@ public:
 	void SetViewSize(CSize &Size);
 	bool IsLabelEditing() const;
 	void SetSelectedTool(uint32_t toolId);
-	uint32_t GetSelectedTool() const;
+	//pSelectedIndex gets the selected Index
+	uint32_t GetSelectedTool(int* pSelectedIndex = nullptr) const;
 	
 	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
 	//pSelectedIndex gets the selected Index
@@ -90,6 +91,9 @@ public:
 
 	///return true if a subtool or subtoolDeleimiter is selected
 	bool IsLoopToolSelected() const;
+	void RefreshTimestamp();
+	double GetTimeStamp() const { return m_timestamp; } ;
+
 protected:
 	/// opens a dialog for the selected Tool 
 	void EditToolComment(uint32_t toolId);
@@ -136,9 +140,13 @@ protected:
 	bool CheckName(const std::string& rName, LPCTSTR lpExclude = nullptr) const;
 	/// Editing the comment of grouping start or grouping end
 	bool EditToolGroupingComment(const std::string& groupingName);
-
+	
+	
+	///returns true if the list in the view   is to old or too small
+	bool ToolSetListHasChanged();
 
 private:
+
 #pragma region Private Methods
 	bool ShowDuplicateNameMessage(const std::string& rName) const;
 #pragma endregion Private Methods
@@ -152,6 +160,8 @@ private:
 
 	std::string m_duplicateName;			//Store Name for DuplicatenameMessage
 	bool m_showDuplicateNameMessage; //DuplictaNameMessage is shown after edeting the name 
+	double m_timestamp {0.0}; //< tick when the view  was rebuild
+	
 
 };
 
