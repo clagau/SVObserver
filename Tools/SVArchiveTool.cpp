@@ -149,13 +149,6 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveStopAtMaxImages.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(
-		&m_dwUseTriggerCountForImages,
-		SvPb::ArchiveUseTriggerCountForImagesEId,
-		IDS_OBJECTNAME_ARCHIVE_USE_TRIGGER_COUNT_FOR_IMAGE_NAMES,
-		false, SvOi::SVResetItemNone);
-	m_dwUseTriggerCountForImages.SetOutputFormat(SvVol::OutputFormat_int);
-	
-	RegisterEmbeddedObject(
 		&m_useAlternativeImagePaths,
 		SvPb::UseAlternativeImagePathsEId,
 		IDC_USE_ALTERNATIVE_IMAGE_PATHS,
@@ -260,7 +253,6 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveResultsMinimumNumberOfCharacters.SetDefaultValue(8, true);
 	m_dwArchiveResultsNumberOfDecimals.SetDefaultValue(2, true);
 	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
-	m_dwUseTriggerCountForImages.SetDefaultValue(0, true);
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
 	m_evoArchiveMethod.SetDefaultValue( SVArchiveAsynchronous, true);
@@ -316,7 +308,6 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_dwArchiveResultsNumberOfDecimals.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 
 	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_dwUseTriggerCountForImages.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_evoArchiveMethod.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_HeaderLabelNames.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );

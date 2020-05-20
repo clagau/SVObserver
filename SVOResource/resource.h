@@ -1472,7 +1472,6 @@
 #define IDC_CHECK_STOP_AT_MAX           15253
 #define IDC_PROGRESS1                   15254
 #define IDC_CHECK_STOP_AT_MAX2          15254
-#define IDC_USE_TRIGGER_COUNT           15254
 #define IDC_BARCODETYPE                 15255
 #define IDC_SEARCH_SPEED                15256
 #define IDC_BARCODE_COLOR               15257

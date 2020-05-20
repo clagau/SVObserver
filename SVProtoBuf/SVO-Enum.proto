@@ -753,7 +753,7 @@ enum EmbeddedIdEnum
 	ArchiveResultGuids_OBSOLETE_EId = 125;
 	ArchiveAppendArchiveFileEId = 126;
 	ArchiveStopAtMaxImagesEId = 127;
-	ArchiveUseTriggerCountForImagesEId = 128;
+	ArchiveUseTriggerCountForImages_obsolete_EId = 128;
 	ArchiveMaxImagesCountEId = 129;
 	ArchiveMethodEId = 130;
 	ArchiveUseHeadersEId = 131;

@@ -168,9 +168,7 @@ private:
 	CButton m_ImageFilepathroot2Button;
 	CButton m_ImageFilepathroot3Button;
 	CEdit	m_ImageFilepathroot3;
-	CButton m_UseTriggerCountButton;
 	CButton m_StopAtMaxImagesButton;
-	BOOL	m_UseTriggerCount = false;
 	BOOL	m_useAlternativeImagePaths = FALSE;
 
 	int		m_iModeIndex = -1;

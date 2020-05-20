@@ -48,7 +48,6 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_MODE_COMBO, OnSelchangeModeCombo)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
 	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, UpdateMaxImageWidgetState)
-	ON_BN_CLICKED(IDC_USE_TRIGGER_COUNT, UpdateMaxImageWidgetState)
 	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX1, OnButtonFilenameIndex1)
 	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX2, OnButtonFilenameIndex2)
 	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX, OnButtonDirectorynameIndex)
@@ -134,8 +133,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		return false; //don't allow to exit with invalid path
 	}
 
-	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck());
-	m_ValueController.Set<DWORD>(SvPb::ArchiveUseTriggerCountForImagesEId, m_UseTriggerCount);
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 
 	int iCurSel = m_Mode.GetCurSel();
@@ -209,9 +206,7 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3);
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT3, m_ImageFilepathroot3Button);
 
-	DDX_Control(pDX, IDC_USE_TRIGGER_COUNT, m_UseTriggerCountButton);
 	DDX_Control(pDX, IDC_CHECK_STOP_AT_MAX, m_StopAtMaxImagesButton);
-	DDX_Check(pDX, IDC_USE_TRIGGER_COUNT, m_UseTriggerCount);
 	DDX_Check(pDX, IDC_USE_ALTERNATIVE_IMAGE_PATHS, m_useAlternativeImagePaths);
 	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
 
@@ -248,7 +243,7 @@ bool SVTADlgArchiveImagePage::validateImageFilpathRoot()
 
 void SVTADlgArchiveImagePage::EnableMaxImagesAccordingToOtherSettings()
 {
-	m_EditMaxImages.EnableWindow((!(m_UseTriggerCount|| m_useAlternativeImagePaths) || m_StopAtMaxImagesButton.GetCheck()));
+	m_EditMaxImages.EnableWindow((!m_useAlternativeImagePaths || m_StopAtMaxImagesButton.GetCheck()));
 }
 
 
@@ -303,7 +298,6 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_ImageFilepathroot3.SetWindowText(m_pTool->GetImageArchivePathPart3().c_str());
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
-	m_UseTriggerCount = m_ValueController.Get<bool>(SvPb::ArchiveUseTriggerCountForImagesEId);
 	m_useAlternativeImagePaths = m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId);
 
 	m_List.swap(m_pTool->getImageArchiveList());
@@ -736,7 +730,6 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePaths()
 	UpdateData(TRUE);
 	
 	m_alternativeImagePaths.OnButtonUseAlternativeImagePaths(m_useAlternativeImagePaths);
-	m_UseTriggerCountButton.EnableWindow(!m_useAlternativeImagePaths);
 
 	forceStopAtMaxIfRequired();
 }

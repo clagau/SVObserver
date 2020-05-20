@@ -78,7 +78,6 @@ public:
 	SvVol::SVDWordValueObjectClass m_dwArchiveResultsNumberOfDecimals;
 
 	SvVol::SVDWordValueObjectClass m_dwArchiveStopAtMaxImages;
-	SvVol::SVDWordValueObjectClass m_dwUseTriggerCountForImages;
 	SvVol::SVDWordValueObjectClass m_dwArchiveMaxImagesCount;
 	SvVol::SVEnumerateValueObjectClass m_evoArchiveMethod;
 

@@ -74,11 +74,9 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 {
 	DWORD		dwMaxImages = 0;
 	DWORD		dwStopAtMaxCount = 0;
-	DWORD		dwUseTriggerCountForImages = 0;
 
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	m_pArchiveTool->m_dwArchiveStopAtMaxImages.GetValue(dwStopAtMaxCount);
-	m_pArchiveTool->m_dwUseTriggerCountForImages.GetValue(dwUseTriggerCountForImages);
 
 	if (m_lCountImages >= (long)dwMaxImages)
 	{
@@ -107,16 +105,8 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
 		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName()); 
 	}
-	else
-	{
-		if (dwUseTriggerCountForImages)
-		{
-			svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
-			svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
-			m_FileNames[m_lLastIndex] = svFileName.GetFullFileName();
-		}
-		//otherwise the file name already set elsewhere will be used
-	}
+	//otherwise the file name already set elsewhere will be used
+
 	rImageFile = m_FileNames[m_lLastIndex];
 
 	return S_OK;
