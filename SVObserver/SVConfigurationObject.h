@@ -484,7 +484,7 @@ private:
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
-	SVIMProductEnum             m_eProductType;
+	SVIMProductEnum             m_eProductType{SVIM_PRODUCT_TYPE_UNKNOWN};
 	unsigned long				m_ulVersion = 0;
 	volatile bool               m_bConfigurationValid = false;
 

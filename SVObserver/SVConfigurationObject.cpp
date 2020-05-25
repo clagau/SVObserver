@@ -84,11 +84,10 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName) 
-	,m_pIOController{std::make_unique<SVIOController>()}
+	,m_pIOController{std::make_unique<SVIOController>(this)}
 {
 
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
-	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
 	m_arTriggerArray.clear();
 	m_arPPQArray.clear();
@@ -97,10 +96,9 @@ SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(
 }
 
 SVConfigurationObject::SVConfigurationObject(SVObjectClass* pOwner, int StringResourceID) : SVObjectClass(pOwner, StringResourceID)
-, m_pIOController {std::make_unique<SVIOController>()}
+, m_pIOController {std::make_unique<SVIOController>(this)}
 {
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
-	SetProductType(SVIM_PRODUCT_TYPE_UNKNOWN);
 
 	m_arTriggerArray.clear();
 	m_arPPQArray.clear();
@@ -1152,9 +1150,6 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		}
 	}// end for
 
-	m_pIOController.reset();
-
-	m_pIOController = std::make_unique<SVIOController>();
 	if (nullptr != m_pIOController)
 	{
 		m_pIOController->SetParameters(rTree, hChild);
@@ -3858,6 +3853,8 @@ SVIMProductEnum SVConfigurationObject::GetProductType() const
 void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType)
 {
 	m_eProductType = eProductType;
+	///When the product type is changed the IO controller needs to initialize outputs
+	m_pIOController->initializeOutputs();
 }
 
 bool SVConfigurationObject::IsConfigurationLoaded() const

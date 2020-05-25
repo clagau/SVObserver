@@ -41,6 +41,16 @@ void SVIOConfigurationInterfaceClass::Init()
 
 	m_DigitalInputs.clear();
 	m_DigitalOutputs.clear();
+
+	unsigned long size {0UL};
+	if (S_OK == m_DigitalBoard.GetInputCount(&size))
+	{
+		m_DigitalInputs.resize(size);
+	}
+	if (S_OK == m_DigitalBoard.GetOutputCount(&size))
+	{
+		m_DigitalOutputs.resize(size);
+	}
 }
 
 HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR pName )

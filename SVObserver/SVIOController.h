@@ -47,6 +47,8 @@ public:
 	void SetIODoc(SVIODoc* pDoc); 
 	SVIODoc* GetIODoc() const;
 
+	void initializeOutputs();
+
 	bool RebuildOutputList();
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;

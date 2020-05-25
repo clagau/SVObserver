@@ -38,23 +38,41 @@ SVIOController::SVIOController( SVObjectClass *pOwner, int StringResourceID ) : 
 	LocalIntialize();
 }
 
-void SVIOController::LocalIntialize()
+SVIOController::~SVIOController()
 {
-	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::IOControllerId);
+	if ( nullptr != m_pIODoc )
+	{
+		m_pIODoc->OnCloseDocument();
+		m_pIODoc = nullptr;
+	}
 
-	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIOControllerType;
+	LocalDestroy();
+}
 
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+void SVIOController::SetIODoc(SVIODoc* pDoc)
+{
+	m_pIODoc = pDoc;
+}
 
-	if(nullptr != pConfig && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+SVIODoc* SVIOController::GetIODoc() const
+{
+	return m_pIODoc;
+}
+
+void SVIOController::initializeOutputs()
+{
+	m_pModuleReady.reset();
+	m_pRaidErrorBit.reset();
+
+	SVConfigurationObject* pConfig = dynamic_cast<SVConfigurationObject*> (GetParent());
+
+	if (nullptr != pConfig && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 	{
 		m_discreteIO = true;
 		m_pModuleReady = std::make_shared<SVIOEntryHostStruct>();
 		m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
 		std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-		if(nullptr != pInputValueObject)
+		if (nullptr != pInputValueObject)
 		{
 			m_pModuleReady->setValueObject(pInputValueObject);
 			SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pModuleReady->getObject(), ObjectIdEnum::ModuleReadyId);
@@ -81,35 +99,6 @@ void SVIOController::LocalIntialize()
 			pInputValueObject->setValue(_variant_t(false));
 		}
 	}
-}
-
-SVIOController::~SVIOController()
-{
-	if ( nullptr != m_pIODoc )
-	{
-		m_pIODoc->OnCloseDocument();
-		m_pIODoc = nullptr;
-	}
-
-	LocalDestroy();
-}
-
-void SVIOController::LocalDestroy()
-{
-	m_RemoteMonitorListController.Clear();
-
-	m_pModuleReady.reset();
-	m_pRaidErrorBit.reset();
-}
-
-void SVIOController::SetIODoc(SVIODoc* pDoc)
-{
-	m_pIODoc = pDoc;
-}
-
-SVIODoc* SVIOController::GetIODoc() const
-{
-	return m_pIODoc;
 }
 
 bool SVIOController::RebuildOutputList()
@@ -565,3 +554,20 @@ HRESULT SVIOController::GetRemoteMonitorListProductFilter(const std::string& rLi
 	return m_RemoteMonitorListController.GetRemoteMonitorListProductFilter( rListName, rFilter );
 }
 
+void SVIOController::LocalIntialize()
+{
+	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::IOControllerId);
+
+	// Set up your type...
+	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIOControllerType;
+
+	initializeOutputs();
+}
+
+void SVIOController::LocalDestroy()
+{
+	m_RemoteMonitorListController.Clear();
+
+	m_pModuleReady.reset();
+	m_pRaidErrorBit.reset();
+}
