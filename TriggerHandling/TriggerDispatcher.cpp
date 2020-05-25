@@ -18,12 +18,28 @@
 
 namespace SvTh
 {
-	TriggerDispatcher::TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp):
-			m_pCallback(callback), m_TriggerParameters(tp),
-				m_IsStarted(false)
+	TriggerDispatcher::TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp) :
+		m_pCallback(callback), 
+		m_TriggerParameters(tp)
 	{
-		//m_TriggerParameters is initialized by default
 	}
+
+	TriggerDispatcher::TriggerDispatcher(const TriggerDispatcher& rRhs)
+	{
+		*this = rRhs;
+	}
+
+	TriggerDispatcher& TriggerDispatcher::operator=(const TriggerDispatcher& rRhs)
+	{
+		if (this != &rRhs)
+		{
+			m_pCallback = rRhs.m_pCallback;
+			m_TriggerParameters = rRhs.m_TriggerParameters;
+			m_IsStarted = rRhs.m_IsStarted ? true : false;
+		}
+		return *this;
+	}
+
 
 	bool TriggerDispatcher::operator==(const TriggerDispatcher& rDispatcher) const 
 	{

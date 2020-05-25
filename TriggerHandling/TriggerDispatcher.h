@@ -45,9 +45,9 @@ class TriggerDispatcher
 {
 public:
 	explicit TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp);
-	explicit TriggerDispatcher(const TriggerDispatcher& rRhs) = default;
+	explicit TriggerDispatcher(const TriggerDispatcher& rRhs);
 
-	TriggerDispatcher& operator=(const TriggerDispatcher& rRhs) = default;
+	TriggerDispatcher& operator=(const TriggerDispatcher& rRhs);
 
 	bool operator==(const TriggerDispatcher &rRhs) const;
 
@@ -64,7 +64,7 @@ public:
 
 	void SetData(const IntVariantMap& rData) { m_TriggerParameters.m_Data = rData; }
 
-	bool m_IsStarted;
+	std::atomic_bool m_IsStarted {false};
 
 private:
 

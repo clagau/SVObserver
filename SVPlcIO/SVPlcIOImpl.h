@@ -15,11 +15,9 @@ namespace SvPlc
 {
 
 #pragma region Declarations
-constexpr unsigned long cNumberTriggers = 4;
+constexpr unsigned long cMaxPlcTriggers = 4;
 
 struct TriggerReport;
-class SVPlcIOImpl;
-extern SVPlcIOImpl g_Plc;
 #pragma endregion Declarations
 
 class SVPlcIOImpl : public SvTi::IODeviceBase
@@ -52,10 +50,6 @@ public:
 	unsigned long GetTriggerHandle(unsigned long triggerIndex);
 	BSTR GetTriggerName(unsigned long triggerIndex);
 
-	void beforeStartTrigger(unsigned long triggerIndex) override;
-	HRESULT afterStartTrigger(HRESULT hr) override;
-	void beforeStopTrigger(unsigned long triggerIndex) override;
-
 	HRESULT TriggerGetParameterCount(unsigned long triggerIndex, unsigned long *pCount);
 	HRESULT TriggerGetParameterName(unsigned long triggerIndex, unsigned long ulIndex, BSTR *pName);
 	HRESULT TriggerGetParameterValue(unsigned long triggerIndex, unsigned long ulIndex, VARIANT *pValue);
@@ -70,24 +64,23 @@ public:
 
 #pragma region Private Methods
 private:
+	void beforeStartTrigger(unsigned long triggerIndex) override;
+	HRESULT afterStartTrigger(HRESULT hr) override;
+	void beforeStopTrigger(unsigned long triggerIndex) override;
+
 	void reportTrigger(const TriggerReport&);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
-	bool m_isInitialized {false};
-	bool m_delayedReportTrigger {false};
-	bool m_moduleReady{false};
 	uint16_t m_plcSimulation {0};
 	uint16_t m_plcTransferTime {0};
 	uint16_t m_plcNodeID {0};
 	long m_PlcVersion {0L};
 	std::atomic_bool m_engineStarted {false};
 	std::atomic_bool m_engineInitialized {false};
-	std::atomic_bool m_triggerStarted[cNumberTriggers]{false, false, false, false};
-	std::atomic_int8_t m_currentTriggerIndex{-1};
-
-	std::mutex m_protectPlc;		///Note do not call any Tec functions when this is set, can cause deadlock!
+	std::atomic_bool m_triggerStarted[cMaxPlcTriggers]{false, false, false, false};
+	std::atomic_int8_t m_currentTriggerChannel{-1};
 
 	std::string m_OutputFileName;
 #pragma endregion Member Variables

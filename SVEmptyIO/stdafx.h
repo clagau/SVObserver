@@ -47,6 +47,7 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <atomic>			//Used by static library
 #include <algorithm>		//Used by static library
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library

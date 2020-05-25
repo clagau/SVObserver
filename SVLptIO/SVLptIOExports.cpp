@@ -12,319 +12,294 @@
 #include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
-long g_lRefCount = 0;
-SVLptIOImpl g_Lpt;
-
-static HRESULT WINAPI SVLPTDestroy(bool bClose)
-{
-	HRESULT hr = S_OK;
-
-	if (bClose || ::InterlockedDecrement(&g_lRefCount) <= 0)
-	{
-		::InterlockedExchange(&g_lRefCount, 0);
-		hr = g_Lpt.Initialize(false);
-	}
-	return hr;
-}
+std::atomic_ulong gRefCount{0UL};
+SVLptIOImpl gLpt;
 
 HRESULT WINAPI SVCreate()
 {
-	HRESULT hr = S_OK;
+	HRESULT result {S_OK};
 
-	if (1 == ::InterlockedIncrement( &g_lRefCount))
+	gRefCount++;
+	if (1 == gRefCount)
 	{
-		hr = g_Lpt.Initialize(true);
-
-		g_Lpt.m_lLptTriggerEdge = 0;
-		g_Lpt.m_lIOBrdTriggerEdge = 0;
-		if (S_OK == hr)
-		{
-			// Trigger Section
-
-			// Input Section
-			if (S_OK == hr)
-			{
-			}
-
-			// Output Section
-			if (S_OK == hr)
-			{
-			}
-
-			if (S_OK != hr)
-			{
-				SVLPTDestroy(true);
-			}
-		}
+		result = gLpt.Initialize(true);
+		gLpt.m_lLptTriggerEdge = 0;
+		gLpt.m_lIOBrdTriggerEdge = 0;
 	}
-	return hr;
+	return result;
 }
 
 HRESULT WINAPI SVDestroy()
 {
-	HRESULT hr = S_OK;
-	SVLPTDestroy(false);
-	return hr;
-}
+	HRESULT result {S_OK};
 
-HRESULT WINAPI SVInputGetCount(unsigned long* pulCount)
-{
-	HRESULT hr = S_FALSE;
-
-	if (nullptr != pulCount)
+	gRefCount--;
+	if (0 == gRefCount)
 	{
-		*pulCount = g_Lpt.GetInputCount();
-		hr = S_OK;
+		result = gLpt.Initialize(false);
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVInputGetValue( unsigned long ulChannel, bool* pbValue )
-{ 
-	HRESULT hr = S_FALSE;
+HRESULT WINAPI SVInputGetCount(unsigned long* pCount)
+{
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pbValue)
+	if (nullptr != pCount)
 	{
-		if (0 <= ulChannel && ulChannel < g_Lpt.GetInputCount())
+		*pCount = gLpt.GetInputCount();
+		result = S_OK;
+	}
+	return result;
+}
+
+HRESULT WINAPI SVInputGetValue( unsigned long channel, bool* pValue )
+{ 
+	HRESULT result {E_FAIL};
+
+	if (nullptr != pValue)
+	{
+		if (channel < gLpt.GetInputCount())
 		{
 			bool bState;
-			hr = g_Lpt.GetInputBit(ulChannel, bState);
+			result = gLpt.GetInputBit(channel, bState);
 
-			if (S_OK == hr)
+			if (S_OK == result)
 			{
-				*pbValue = bState;
+				*pValue = bState;
 			}
 		}
 	}
-	return hr;
+	return result;
 }
 
 // ulPort represents the physical port number (LPT 1/2/3/4)
-HRESULT WINAPI SVInputGetValues( unsigned long* pulValue)
+HRESULT WINAPI SVInputGetValues( unsigned long* pValue)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pulValue)
+	if (nullptr != pValue)
 	{
 		unsigned long lState = 0;
-		hr = g_Lpt.GetInputValue(&lState);
-		if (S_OK == hr)
+		result = gLpt.GetInputValue(&lState);
+		if (S_OK == result)
 		{
-			*pulValue = lState;
+			*pValue = lState;
 		}
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVOutputGetCount(unsigned long* pulCount)
+HRESULT WINAPI SVOutputGetCount(unsigned long* pCount)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pulCount)
+	if (nullptr != pCount)
 	{
-		*pulCount = g_Lpt.GetOutputCount();
-		hr = S_OK;
+		*pCount = gLpt.GetOutputCount();
+		result = S_OK;
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVOutputSetValue(unsigned long ulChannel, bool bValue)
+HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool Value)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (ulChannel < g_Lpt.GetOutputCount())
+	if (channel < gLpt.GetOutputCount())
 	{
-		hr = g_Lpt.SetOutputBit(ulChannel, bValue);
+		result = gLpt.SetOutputBit(channel, Value);
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVOutputGetPortCount(unsigned long* pulCount)
+HRESULT WINAPI SVOutputGetPortCount(unsigned long* pCount)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pulCount)
+	if (nullptr != pCount)
 	{
-		*pulCount = g_Lpt.GetPortCount();
-		hr = S_OK;
+		*pCount = gLpt.GetPortCount();
+		result = S_OK;
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVOutputSetPortValue(unsigned long ulPort, unsigned long ulValue)
+HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long Value)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (ulPort < g_Lpt.GetPortCount())
+	if (port < gLpt.GetPortCount())
 	{
-		hr = g_Lpt.SetPortOutputValue(ulPort, ulValue);
+		result = gLpt.SetPortOutputValue(port, Value);
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetCount(unsigned long* pulCount)
+HRESULT WINAPI SVTriggerGetCount(unsigned long* pCount)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pulCount)
+	if (nullptr != pCount)
 	{
-		*pulCount = g_Lpt.GetTriggerCount();
-		hr = S_OK;
+		*pCount = gLpt.GetTriggerCount();
+		result = S_OK;
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetHandle(unsigned long* pTriggerchannel, unsigned long ulIndex)
+HRESULT WINAPI SVTriggerGetHandle(unsigned long* pTriggerIndex, unsigned long Index)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pTriggerchannel)
+	if (nullptr != pTriggerIndex)
 	{
-		*pTriggerchannel = g_Lpt.GetTriggerHandle(ulIndex);
-		hr = S_OK;
+		*pTriggerIndex = gLpt.GetTriggerHandle(Index);
+		result = S_OK;
 	}
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetName(unsigned long triggerchannel, BSTR* pbstrName)
+HRESULT WINAPI SVTriggerGetName(unsigned long triggerIndex, BSTR* pName)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (nullptr != pbstrName && 0 < triggerchannel)
+	if (nullptr != pName && 0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
 		// free any data on input...
-		if (nullptr != *pbstrName)
+		if (nullptr != *pName)
 		{
-			::SysFreeString(*pbstrName);
+			::SysFreeString(*pName);
 		}
 
-		*pbstrName = g_Lpt.GetTriggerName(triggerchannel);
+		*pName = gLpt.GetTriggerName(triggerIndex);
 		
-		if (nullptr != *pbstrName)
+		if (nullptr != *pName)
 		{
-			hr = S_OK;
+			result = S_OK;
 		}
 	} 
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, const SvTh::TriggerDispatcher& rDispatcher)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel)
+	if ( rDispatcher.hasCallback() && 0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		hr = S_OK;
+		result = S_OK;
 
-		g_Lpt.AddDispatcher(triggerchannel, rDispatcher);
+		gLpt.AddDispatcher(triggerIndex, rDispatcher);
 	} 
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerUnregister(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex, const SvTh::TriggerDispatcher& rDispatcher)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (rDispatcher.hasCallback() && 0 < triggerchannel)
+	if (rDispatcher.hasCallback() && 0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		hr = g_Lpt.RemoveDispatcher(triggerchannel, rDispatcher);
+		result = gLpt.RemoveDispatcher(triggerIndex, rDispatcher);
 	} 
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerchannel)
+HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerIndex)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel)
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		hr = g_Lpt.RemoveAllDispatchers(triggerchannel);
+		result = gLpt.RemoveAllDispatchers(triggerIndex);
 	} 
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerStart(unsigned long triggerchannel)
+HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel)
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		hr = g_Lpt.StartTrigger(triggerchannel);
+		result = gLpt.StartTrigger(triggerIndex);
 	} 
-	return hr;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerStop(unsigned long triggerchannel)
+HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if (0 < triggerchannel)
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		hr = g_Lpt.StopTrigger(triggerchannel);
+		result = gLpt.StopTrigger(triggerIndex);
 	} 
-	return hr;
+	return result;
 }
 
-// SVTriggerGetParameterCount
-// Gets the number of parameters
-// for the trigger represented by triggerchannel
-HRESULT WINAPI SVTriggerGetParameterCount(unsigned long triggerchannel, unsigned long *pulCount)
+HRESULT WINAPI SVTriggerGetParameterCount(unsigned long triggerIndex, unsigned long *pCount)
 {
-	return g_Lpt.TriggerGetParameterCount(triggerchannel, pulCount);
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerGetParameterCount(triggerIndex, pCount);
+	}
+	return result;
 }
 
-// SVTriggerGetParameterName
-// Gets the parameter name.
-// The caller is responsible for freeing the BSTR.
-HRESULT WINAPI SVTriggerGetParameterName(unsigned long triggerchannel, unsigned long ulIndex, BSTR* pbstrName)
+HRESULT WINAPI SVTriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName)
 {
-	return g_Lpt.TriggerGetParameterName( triggerchannel, ulIndex, pbstrName);
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerGetParameterName(triggerIndex, Index, pName);
+	}
+	return result;
 }
 
-// SVTriggerGetParameterValue
-// Gets the parameter value for
-// the trigger represented by triggerchannel.
-HRESULT WINAPI SVTriggerGetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT WINAPI SVTriggerGetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue)
 {
-	return g_Lpt.TriggerGetParameterValue(triggerchannel, ulIndex, pvarValue);
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerGetParameterValue(triggerIndex, Index, pValue);
+	}
+	return result;
 }
 
-// SVTriggerSetParameterValue
-// Sets the parameter value for
-// the trigger represented by triggerchannel.
-HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue)
 {
-	return g_Lpt.TriggerSetParameterValue(triggerchannel, ulIndex, pvarValue);
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerSetParameterValue(triggerIndex, Index, pValue);
+	}
+	return result;
 }
 
-// Digital I/O Parameters..No handles...
-
-// SVGetParameterCount
-// This function returns the number of available parameters.
-HRESULT WINAPI SVGetParameterCount(unsigned long* pulCount)
+HRESULT WINAPI SVGetParameterCount(unsigned long* pCount)
 {
-	return g_Lpt.GetParameterCount(pulCount);
+	return gLpt.GetParameterCount(pCount);
 }
 
-// SVGetParameterName
-// This function creates a BSTR with the name of the parameter
-// It is the responsibility of the caller to free the BSTR.
-HRESULT WINAPI SVGetParameterName(unsigned long ulIndex, BSTR* pbstrName)
+HRESULT WINAPI SVGetParameterName(unsigned long Index, BSTR* pName)
 {
-	return g_Lpt.GetParameterName(ulIndex, pbstrName);
+	return gLpt.GetParameterName(Index, pName);
 }
 
-// SVGetParameterValue
-// This function Gets the parameter value specified by ulIndex.
-HRESULT WINAPI SVGetParameterValue(unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT WINAPI SVGetParameterValue(unsigned long Index, VARIANT* pValue)
 {
-	return g_Lpt.GetParameterValue(ulIndex, pvarValue);
+	return gLpt.GetParameterValue(Index, pValue);
 }
 
-// SVSetParameterValue
-// This function sets the value specified by ulIndex.
-HRESULT WINAPI SVSetParameterValue(unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT WINAPI SVSetParameterValue(unsigned long Index, VARIANT* pValue)
 {
-	return g_Lpt.SetParameterValue(ulIndex, pvarValue);
+	return gLpt.SetParameterValue(Index, pValue);
 }
 

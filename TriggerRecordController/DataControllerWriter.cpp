@@ -473,11 +473,11 @@ void DataControllerWriter::clearAll()
 
 bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList)
 {
-	auto isNumbersValid = [](const auto& rEntry)
+	auto isRecordNumberInvalid = [](const auto& rEntry)
 	{
 		return ITriggerRecordControllerRW::cMaxTriggerRecords < rEntry.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rEntry.numberrecordsofinterest();
 	};
-	if (std::any_of(rInspectionList.list().begin(), rInspectionList.list().end(), isNumbersValid))
+	if (std::any_of(rInspectionList.list().begin(), rInspectionList.list().end(), isRecordNumberInvalid))
 	{
 		assert(false);
 		return false;

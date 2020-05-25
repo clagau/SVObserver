@@ -51,11 +51,13 @@
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>
 
+#include <atomic>			//Used by static library
 #include <algorithm>
 #include <assert.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <map>
+#include <mutex>			//Used by static library
 #include <functional>
 #include <set>				//Used by static library
 #include <string>			//Used by static library

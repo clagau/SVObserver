@@ -21,9 +21,6 @@
     <ClCompile Include="SVClock.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMMTimer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVProfiler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -38,19 +35,7 @@
     <ClInclude Include="SVFunctionProfiler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMMTimer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMMTimerEventHandler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVProfiler.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTimerCallback.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTimerCallbackImpl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

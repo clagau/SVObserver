@@ -15,10 +15,7 @@
 #include "SVLptIO.h"
 #include "TriggerInformation/IODeviceBase.h"
 
-constexpr int cPortNumber = 2;
-constexpr int cInputCount = 8;
-constexpr int cOutputCount = 16;
-constexpr int cTriggerMax = 3;
+constexpr unsigned long cMaxLptTriggers = 3;
 
 
 enum ParallelBoardInterfaceType
@@ -57,7 +54,7 @@ class SVLptIOImpl : public SVLptIO, public SvTi::IODeviceBase
 		SVNumOutputPorts = 3,
 	};
 
-	enum SVTriggerChannel
+	enum SVtriggerIndex
 	{
 		SVTriggerNone = 0,
 		SVTrigger1    = 0x08,	// S3- Error
@@ -85,9 +82,6 @@ public:
 
 	HRESULT Initialize(bool bInit);
 	
-	unsigned long GetNumInputs();
-	unsigned long GetNumOutputs();
-
 	// Digital I/O
 	unsigned long GetInputCount();
 	unsigned long GetOutputCount();
@@ -117,22 +111,22 @@ public:
 	// Triggers
 	unsigned long GetTriggerCount();
 	unsigned long GetTriggerHandle(unsigned long index);
-	BSTR GetTriggerName(unsigned long handle);
+	BSTR GetTriggerName(unsigned long triggerIndex);
 
 	void beforeStartTrigger(unsigned long) override;
 	HRESULT afterStartTrigger(HRESULT hr) override;
 	HRESULT afterStopTrigger(HRESULT hr) override;
 
-	HRESULT TriggerGetParameterCount(unsigned long triggerchannel, unsigned long *pulCount);
-	HRESULT TriggerGetParameterName(unsigned long triggerchannel, unsigned long ulIndex, BSTR *pbstrName);
-	HRESULT TriggerGetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT *pvarValue);
-	HRESULT TriggerSetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT *pvarValue);
+	HRESULT TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount);
+	HRESULT TriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName);
+	HRESULT TriggerGetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue);
+	HRESULT TriggerSetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue);
 
 	// Non-Trigger Parameter Functions
-	HRESULT GetParameterCount(unsigned long *pulCount);
-	HRESULT GetParameterName(unsigned long ulIndex, BSTR *p_pbstrName);
-	HRESULT GetParameterValue(unsigned long ulIndex, VARIANT *pvarValue);
-	HRESULT SetParameterValue(unsigned long ulIndex, VARIANT *pvarValue);
+	HRESULT GetParameterCount(unsigned long* pCount);
+	HRESULT GetParameterName(unsigned long Index, BSTR* pName);
+	HRESULT GetParameterValue(unsigned long Index, VARIANT* pValue);
+	HRESULT SetParameterValue(unsigned long Index, VARIANT* pValue);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -141,18 +135,12 @@ protected:
 		SVStatusDeque m_StatusLog;
 	#endif
 
-	int m_numPorts{cPortNumber};
-	int m_numInputs{cInputCount};
-	int m_numOutputs{cOutputCount};
-	int m_numTriggers{cTriggerMax};
 	long m_lBoardVersion{0L};
 	ParallelBoardInterfaceType m_lParallelBoardInterfaceBehavior;
 
 	short GetPreviousOutputs(long lControl);
 	void SetPreviousOutputs(long lControl, short sValue);
 
-	HRESULT Lock();
-	HRESULT UnLock();
 	HRESULT GetLockState(bool& bLocked);
 	HRESULT WriteUnlockString();
 	HRESULT WriteLockString();
@@ -171,15 +159,7 @@ private:
 
 #pragma region Member Variables
 private:
-	CRITICAL_SECTION m_hCriticalSection;
-	BOOL m_bCriticalSectionCreated;
-	//! Trigger active is used as a work around because the thread handle in SVLpt.dll is not being closed in when calling DisableInterrupt
-	//! The thread is started only once and uses this active flag in the callback function to control going online and offline
-	//! It should be solved in the dll however changes could cause the driver signature to become invalid
-	//! The thread is closed on destruction causing the one thread handle to leak
-	bool m_TriggerActive{false};
 	bool m_isFirstTimeToReadOrWrite = true; //this variable introduced in SVO-1692 to suppress spurious "invalid line state" warning
-	bool m_moduleReady{false};
 #pragma endregion Member Variables
 };
 

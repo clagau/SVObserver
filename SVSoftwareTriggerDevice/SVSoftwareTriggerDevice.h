@@ -12,28 +12,20 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <utility>
-//Moved to precompiled header: #include <vector>
-#include "SVTimerLibrary/SVTimerCallbackImpl.h"
 #include "TriggerInformation/IODeviceBase.h"
 #pragma endregion Includes
 
-///////////////////////////////////////////////////////////////////////
-//
-///////////////////////////////////////////////////////////////////////
+constexpr unsigned long cMaxSoftwareTriggers = 4;
+
 class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
 {
-	///////////////////////////////////////////////////////////////////////
-	//
-	///////////////////////////////////////////////////////////////////////
-	struct SVSoftwareTimerStruct
+	struct TimerInfo
 	{
-		long timerPeriod;
-		SvTl::SVTimerCallbackImpl<SVSoftwareTriggerDevice, void> timerCallback;
+		std::atomic_uint16_t m_timerID {0};
+		std::atomic_ulong m_triggerIndex {0UL};
+		std::atomic_uint16_t m_period {0};
+		std::atomic_bool m_newPeriod {false};
 	};
-	typedef std::map<unsigned long, SVSoftwareTimerStruct> TimerList;
 
 	enum ParameterEnum
 	{
@@ -41,15 +33,9 @@ class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
 		SVBoardVersion	= 1
 	};
 
-protected:
-	typedef std::vector<std::pair<std::string, unsigned long>> NameHandleList;
-	NameHandleList m_nameHandleList;
-	TimerList m_timerList;
-	int m_numTriggers;
-
 public:
-	SVSoftwareTriggerDevice();
-	virtual ~SVSoftwareTriggerDevice();
+	SVSoftwareTriggerDevice() = default;
+	virtual ~SVSoftwareTriggerDevice() = default;
 
 	HRESULT Initialize(bool bInit);
 
@@ -57,27 +43,21 @@ public:
 	unsigned long GetTriggerHandle(unsigned long index);
 	BSTR GetTriggerName(unsigned long handle);
 
-	HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
-	HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerGetParameterCount( unsigned long triggerIndex, unsigned long *pCount );
+	HRESULT TriggerGetParameterName( unsigned long triggerIndex, unsigned long Index, BSTR *pName );
+	HRESULT TriggerGetParameterValue( unsigned long triggerIndex, unsigned long Index, VARIANT *pValue );
+	HRESULT TriggerSetParameterValue( unsigned long triggerIndex, unsigned long Index, VARIANT *pValue );
+	
+	void dispatchTrigger(unsigned long triggerIndex);
 
-protected:
-	void lockIfRequired() override { m_Mutex.lock();}
-	void unlockIfRequired() override { m_Mutex.unlock();}
-	void beforeStartTrigger(unsigned long handle) override {SetTimerCallback(handle);	m_Mutex.lock();}
-	HRESULT afterStartTrigger(HRESULT hr) override { m_Mutex.unlock();return hr;}
-	virtual void beforeStopTrigger(unsigned long handle) override {RemoveTimerCallback(handle); m_Mutex.lock();}
-	HRESULT afterStopTrigger(HRESULT hr) override { m_Mutex.unlock();return hr;}
-
-
+	std::array<TimerInfo, cMaxSoftwareTriggers>& getTimerList() { return m_timerList; }
 private:
-	HRESULT GetTriggerPeriod( unsigned long handle, long* p_lPeriod ) const;
-	HRESULT SetTriggerPeriod( unsigned long handle, long p_lPeriod );
+	void beforeStartTrigger(unsigned long triggerIndex) override;
+	void beforeStopTrigger(unsigned long triggerIndex) override;
 
-	HRESULT SetTimerCallback(unsigned long handle);
-	HRESULT RemoveTimerCallback(unsigned long handle);
-	void OnSoftwareTimer(const std::string& tag);
-	std::mutex	 m_Mutex;
+	long GetTriggerPeriod(unsigned long triggerIndex) const;
+	HRESULT SetTriggerPeriod(unsigned long triggerIndex, long period);
+
+	std::array<TimerInfo, cMaxSoftwareTriggers> m_timerList;
 };
 

@@ -88,18 +88,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVClock.cpp" />
-    <ClCompile Include="SVMMTimer.cpp" />
     <ClCompile Include="SVProfiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClock.h" />
     <ClInclude Include="SVFunctionProfiler.h" />
-    <ClInclude Include="SVMMTimer.h" />
-    <ClInclude Include="SVMMTimerEventHandler.h" />
     <ClInclude Include="SVProfiler.h" />
-    <ClInclude Include="SVTimerCallback.h" />
-    <ClInclude Include="SVTimerCallbackImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

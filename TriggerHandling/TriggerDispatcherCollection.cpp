@@ -26,26 +26,26 @@ namespace SvTh
 	}
 
 
-	void TriggerDispatcherCollection::DispatchIfPossible(unsigned long channel)
+	void TriggerDispatcherCollection::DispatchIfPossible(unsigned long triggerIndex)
 	{
 		try
 		{
-			for (auto &dispatcher : m_dispatchers.at(channel))
+			for (auto &dispatcher : m_dispatchers.at(triggerIndex))
 			{
 				dispatcher.DispatchIfPossible();
 			}
 		}
 		catch (std::out_of_range&)
 		{
-			//unknown channel: do nothing (this should not normally happen)
+			//unknown triggerIndex: do nothing (this should not normally happen)
 		}
 	}
 
 
-	bool TriggerDispatcherCollection::Dispatch(unsigned long channel)
+	bool TriggerDispatcherCollection::Dispatch(unsigned long triggerIndex)
 	{
 		bool found = false;
-		auto it = m_dispatchers.find(channel);
+		auto it = m_dispatchers.find(triggerIndex);
 		if (it != m_dispatchers.end())
 		{
 			found = true;
@@ -61,15 +61,15 @@ namespace SvTh
 	}
 
 
-	bool TriggerDispatcherCollection::AddDispatcher(unsigned long channel, const SvTh::TriggerDispatcher &rDispatcher)
+	bool TriggerDispatcherCollection::AddDispatcher(unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher)
 	{
-		auto it = m_dispatchers.find(channel);
+		auto it = m_dispatchers.find(triggerIndex);
 		if (it != m_dispatchers.end())
 		{
 			SvTh::DispatcherVector& list = it->second;
 
 			// check for duplicates
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type& rEntry)->bool
+			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [&rDispatcher](const DispatcherVector::value_type& rEntry)->bool
 			{
 				return (rEntry.getCallback() == rDispatcher.getCallback() && rEntry.GetTriggerParameters().m_pOwner == rDispatcher.GetTriggerParameters().m_pOwner);
 			}
@@ -93,20 +93,20 @@ namespace SvTh
 			SvTh::DispatcherVector list;
 
 			list.push_back(rDispatcher);
-			m_dispatchers.insert(std::make_pair(channel, list));
+			m_dispatchers.insert(std::make_pair(triggerIndex, list));
 			return true;
 		}
 	}
 
-	bool TriggerDispatcherCollection::RemoveDispatcher(unsigned long channel, const SvTh::TriggerDispatcher &rDispatcher)
+	bool TriggerDispatcherCollection::RemoveDispatcher(unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher)
 	{
-		auto it = m_dispatchers.find(channel);
+		auto it = m_dispatchers.find(triggerIndex);
 		if (it != m_dispatchers.end())
 		{
 			// check if it is in the list
 			SvTh::DispatcherVector& list = it->second;
 
-			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [rDispatcher](const DispatcherVector::value_type& rEntry)->bool
+			SvTh::DispatcherVector::iterator callbackIt = std::find_if(list.begin(), list.end(), [&rDispatcher](const DispatcherVector::value_type& rEntry)->bool
 			{
 				return (rEntry.getCallback() == rDispatcher.getCallback() && rEntry.GetTriggerParameters().m_pOwner == rDispatcher.GetTriggerParameters().m_pOwner);
 			}
@@ -123,9 +123,9 @@ namespace SvTh
 	}
 
 
-	void TriggerDispatcherCollection::RemoveAllDispatchers(unsigned long channel)
+	void TriggerDispatcherCollection::RemoveAllDispatchers(unsigned long triggerIndex)
 	{
-		auto it = m_dispatchers.find(channel);
+		auto it = m_dispatchers.find(triggerIndex);
 		if (it != m_dispatchers.end())
 		{
 			SvTh::DispatcherVector& list = it->second;
@@ -138,9 +138,9 @@ namespace SvTh
 	}
 
 
-	bool TriggerDispatcherCollection::StartTrigger(unsigned long channel)
+	bool TriggerDispatcherCollection::StartTrigger(unsigned long triggerIndex)
 	{
-		auto it = m_dispatchers.find(channel);
+		auto it = m_dispatchers.find(triggerIndex);
 		if (it != m_dispatchers.end())
 		{
 			SvTh::DispatcherVector& list = it->second;
@@ -155,9 +155,9 @@ namespace SvTh
 		return false;
 	}
 
-	bool TriggerDispatcherCollection::StopTrigger(unsigned long channel)
+	bool TriggerDispatcherCollection::StopTrigger(unsigned long triggerIndex)
 	{
-		auto it = m_dispatchers.find(channel);
+		auto it = m_dispatchers.find(triggerIndex);
 
 		if (it != m_dispatchers.end())
 		{

@@ -60,6 +60,7 @@
 #pragma region Precompiled Headers
 #include <Windows.h>
 
+#include <atomic>
 #include <comdef.h>
 #include <concrt.h>
 #include <cstdlib>

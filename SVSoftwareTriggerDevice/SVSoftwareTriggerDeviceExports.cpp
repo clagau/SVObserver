@@ -13,176 +13,177 @@
 #include "SVSoftwareTriggerDevice.h"
 #include "SVSoftwareTriggerDeviceExports.h"
 
-long g_lRefCount = 0;
-
-SVSoftwareTriggerDevice g_softwareTrigger;
-
-HRESULT WINAPI SVSoftwareTriggerDestroy(bool p_bClose)
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( p_bClose || ::InterlockedDecrement( &g_lRefCount ) <= 0 )
-	{
-		::InterlockedExchange( &g_lRefCount, 0 );
-
-		l_hrOk = g_softwareTrigger.Initialize( false );
-	}
-
-	return l_hrOk;
-}
+std::atomic_long gRefCount = 0;
+SVSoftwareTriggerDevice gSoftwareTrigger;
 
 HRESULT WINAPI SVCreate()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT result {S_OK};
 
-	if ( ::InterlockedIncrement( &g_lRefCount ) == 1 )
+	gRefCount++;
+	if (1 == gRefCount)
 	{
-		l_hrOk = g_softwareTrigger.Initialize( true );
-
-		if ( S_OK == l_hrOk )
-		{
-			if ( S_OK != l_hrOk )
-			{
-				SVSoftwareTriggerDestroy( true );
-			}
-		}
+		result = gSoftwareTrigger.Initialize(true);
 	}
-	return l_hrOk;
+	return result;
 }
 
 HRESULT WINAPI SVDestroy()
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT result {S_OK};
 
-	SVSoftwareTriggerDestroy(false);
-
-	return l_hrOk;
+	gRefCount--;
+	if (0 >= gRefCount)
+	{
+		result = gSoftwareTrigger.Initialize(false);
+	}
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
+HRESULT WINAPI SVTriggerGetCount( unsigned long *pCount )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( nullptr != p_pulCount )
+	if ( nullptr != pCount )
 	{
-		*p_pulCount = g_softwareTrigger.GetTriggerCount();
+		*pCount = gSoftwareTrigger.GetTriggerCount();
 
-		l_hrOk = S_OK;
+		result = S_OK;
 	}
 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
+HRESULT WINAPI SVTriggerGetHandle( unsigned long* pTriggerIndex, unsigned long Index )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( nullptr != pTriggerchannel )
+	if (nullptr != pTriggerIndex)
 	{
-		*pTriggerchannel = g_softwareTrigger.GetTriggerHandle(p_ulIndex);
-		l_hrOk = S_OK;
+		*pTriggerIndex = gSoftwareTrigger.GetTriggerHandle(Index);
+		result = S_OK;
 	}
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
+HRESULT WINAPI SVTriggerGetName( unsigned long triggerIndex, BSTR *pName )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( nullptr != p_pbstrName && 0 < triggerchannel)
+	if ( nullptr != pName && 0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		if (nullptr != *p_pbstrName)
+		if (nullptr != *pName)
 		{
-			::SysFreeString(*p_pbstrName);
+			::SysFreeString(*pName);
 		}
-		*p_pbstrName = g_softwareTrigger.GetTriggerName(triggerchannel);
+		*pName = gSoftwareTrigger.GetTriggerName(triggerIndex);
 		
-		if (nullptr != *p_pbstrName)
+		if (nullptr != *pName)
 		{
-			l_hrOk = S_OK;
+			result = S_OK;
 		}
 	} 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher )
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel)
+	if (rDispatcher.hasCallback() && 0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		l_hrOk = S_OK;
+		result = S_OK;
 
-		g_softwareTrigger.AddDispatcher(triggerchannel, rDispatcher);
+		gSoftwareTrigger.AddDispatcher(triggerIndex, rDispatcher);
 	} 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerUnregister( unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher)
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel )
+	if (rDispatcher.hasCallback() && 0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		l_hrOk = g_softwareTrigger.RemoveDispatcher(triggerchannel, rDispatcher);
+		result = gSoftwareTrigger.RemoveDispatcher(triggerIndex, rDispatcher);
 	} 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel )
+HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerIndex )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( 0 < triggerchannel )
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		l_hrOk = g_softwareTrigger.RemoveAllDispatchers(triggerchannel);
+		result = gSoftwareTrigger.RemoveAllDispatchers(triggerIndex);
 	} 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
+HRESULT WINAPI SVTriggerStart( unsigned long triggerIndex )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( 0 < triggerchannel)
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		l_hrOk = g_softwareTrigger.StartTrigger(triggerchannel);
+		result = gSoftwareTrigger.StartTrigger(triggerIndex);
 	} 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel )
+HRESULT WINAPI SVTriggerStop( unsigned long triggerIndex )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result {E_FAIL};
 
-	if ( 0 < triggerchannel )
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		l_hrOk = g_softwareTrigger.StopTrigger(triggerchannel);
+		result = gSoftwareTrigger.StopTrigger(triggerIndex);
 	} 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
+HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerIndex, unsigned long *pCount )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterCount(triggerchannel, p_pulCount);
-	return l_hrOk;
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
+	{
+		result = gSoftwareTrigger.TriggerGetParameterCount(triggerIndex, pCount);
+	}
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
+HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerIndex, unsigned long p_ulIndex, BSTR *pName )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterName(triggerchannel, p_ulIndex, p_pbstrName);
-	return l_hrOk;
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
+	{
+		result = gSoftwareTrigger.TriggerGetParameterName(triggerIndex, p_ulIndex, pName);
+	}
+	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerIndex, unsigned long p_ulIndex, VARIANT *pValue )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerGetParameterValue(triggerchannel, p_ulIndex, p_pvarValue);
-	return l_hrOk;
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
+	{
+		result = gSoftwareTrigger.TriggerGetParameterValue(triggerIndex, p_ulIndex, pValue);
+	}
+	return result;
 }
 
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerIndex, unsigned long p_ulIndex, VARIANT *pValue )
 {
-	HRESULT l_hrOk = g_softwareTrigger.TriggerSetParameterValue(triggerchannel, p_ulIndex, p_pvarValue);
-	return l_hrOk;
+	HRESULT result {E_FAIL};
+
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
+	{
+		result = gSoftwareTrigger.TriggerSetParameterValue(triggerIndex, p_ulIndex, pValue);
+	}
+	return result;
 }
 

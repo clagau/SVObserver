@@ -14,51 +14,51 @@ namespace SvTi
 {
 	HRESULT IODeviceBase::AddDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
 	{
-		HRESULT hr = S_FALSE;
-
-		lockIfRequired();
-
-		if(m_TriggerDispatchers.AddDispatcher(handle, rDispatcher))
+		///When module ready is true we are in run mode no changes to dispatcher!
+		if(false == m_moduleReady)
 		{
-			hr = S_OK;
+			std::lock_guard<std::mutex> guard(m_protectIO);
+			return m_TriggerDispatchers.AddDispatcher(handle, rDispatcher);
 		}
 
-		unlockIfRequired();
-		return hr;
+		return E_FAIL;
 	}
 
 
 	HRESULT IODeviceBase::RemoveDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
 	{
-		lockIfRequired();
-		HRESULT hr = S_FALSE;
-
-		if (m_TriggerDispatchers.RemoveDispatcher(handle, rDispatcher))
+		///When module ready is true we are in run mode no changes to dispatcher!
+		if (false == m_moduleReady)
 		{
-			hr = S_OK;
+			std::lock_guard<std::mutex> guard(m_protectIO);
+			return m_TriggerDispatchers.RemoveDispatcher(handle, rDispatcher);
 		}
-		unlockIfRequired();
-		return hr;
+
+		return E_FAIL;
 	}
 
 
 	HRESULT IODeviceBase::RemoveAllDispatchers(unsigned long handle)
 	{
-		lockIfRequired();
-
-		m_TriggerDispatchers.RemoveAllDispatchers(handle);
-		unlockIfRequired();
-		return S_OK;
+		///When module ready is true we are in run mode no changes to dispatcher!
+		if (false == m_moduleReady)
+		{
+			std::lock_guard<std::mutex> guard(m_protectIO);
+			m_TriggerDispatchers.RemoveAllDispatchers(handle);
+			return S_OK;
+		}
+		return E_FAIL;
 	}
 
 
-	HRESULT IODeviceBase::StartTrigger(unsigned long handle)
+	HRESULT IODeviceBase::StartTrigger(unsigned long triggerIndex)
 	{
-		HRESULT hr = S_FALSE;
+		HRESULT hr = E_FAIL;
 
-		beforeStartTrigger(handle);
+		beforeStartTrigger(triggerIndex);
 
-		if (m_TriggerDispatchers.StartTrigger(handle))
+		///Note here the bool value is atomic so no need to use a mutex
+		if (m_TriggerDispatchers.StartTrigger(triggerIndex))
 		{
 			hr = S_OK;
 		}
@@ -69,13 +69,14 @@ namespace SvTi
 	}
 
 
-	HRESULT IODeviceBase::StopTrigger(unsigned long handle)
+	HRESULT IODeviceBase::StopTrigger(unsigned long triggerIndex)
 	{
 		HRESULT hr = S_FALSE;
 
-		beforeStopTrigger(handle);
+		beforeStopTrigger(triggerIndex);
 
-		if (m_TriggerDispatchers.StopTrigger(handle))
+		///Note here the bool value is atomic so no need to use a mutex
+		if (m_TriggerDispatchers.StopTrigger(triggerIndex))
 		{
 			hr = S_OK;
 		}

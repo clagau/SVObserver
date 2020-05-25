@@ -21,8 +21,13 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+constexpr int cPortNumber = 2;
+constexpr int cInputCount = 8;
+constexpr int cOutputCount = 16;
 constexpr int RETRY = 2;
 constexpr int cOneSecond = 1000;
+constexpr LPCTSTR cTriggerName = "IO_Board_1.Dig_";			///This name must match the name in the SVHardwareManifest
+
 
 // ******* Timeout for I/O board Acknowledge microseconds.
 constexpr int BOARD_SELECT_ACK_TIMEOUT  = 16000; // 16 millisecs
@@ -48,17 +53,20 @@ TriggerDebugData g_TDebugData[MaxDebugData];
 long g_CallbackCount = 0;
 #endif
 
+void triggerDispatcher(SvTh::IntVariantMap&& triggerData, SvTh::DispatcherVector&& dispatchVector)
+{
+	for (auto& rDispatcher : dispatchVector)
+	{
+		if (rDispatcher.m_IsStarted)
+		{
+			rDispatcher.SetData(triggerData);
+			rDispatcher.Dispatch();
+		}
+	}
+}
+
 SVLptIOImpl::SVLptIOImpl() 
 {
-	try
-	{
-		::InitializeCriticalSectionAndSpinCount(&m_hCriticalSection, BOARD_SELECT_ACK_TIMEOUT + 100);
-		m_bCriticalSectionCreated = true;
-	}
-	catch (...)
-	{
-		m_bCriticalSectionCreated = false;
-	}
 	m_bUseSingleTrigger = false;
 	m_lParallelBoardInterfaceBehavior = Function00ForWrite1;
 
@@ -70,16 +78,6 @@ SVLptIOImpl::SVLptIOImpl()
 SVLptIOImpl::~SVLptIOImpl()
 {
 	DisableAckInterrupt();
-	if (m_bCriticalSectionCreated)
-	{
-		try
-		{
-		  ::DeleteCriticalSection(&m_hCriticalSection);
-		}
-		catch (...)
-		{
-		}
-	}
 }
 
 HRESULT SVLptIOImpl::Initialize(bool bInit)
@@ -204,29 +202,19 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 	return hr;
 }
 
-unsigned long SVLptIOImpl::GetNumInputs()
-{
-	return m_numInputs;
-}
-
-unsigned long SVLptIOImpl::GetNumOutputs()
-{
-	return m_numOutputs;
-}
-
 unsigned long SVLptIOImpl::GetInputCount()
 {
-	return m_numInputs;
+	return cInputCount;
 }
 
 unsigned long SVLptIOImpl::GetOutputCount()
 {
-	return m_numOutputs;
+	return cOutputCount;
 }
 
 unsigned long SVLptIOImpl::GetPortCount()
 {
-	return m_numPorts;
+	return cPortNumber;
 }
 
 HRESULT SVLptIOImpl::GetInputValue(unsigned long* pVal)
@@ -453,10 +441,9 @@ HRESULT SVLptIOImpl::GetFanState(unsigned long& rFanState)
 HRESULT SVLptIOImpl::GetFanFreq(long* plFanFreq)
 {
 	HRESULT hr = S_OK;
-	unsigned long lTmp = 0;
 
 	unsigned long lCommand = NO_CMD;
-	hr = SVReadWriteLpt(lCommand, SVControlCommand);
+	SVReadWriteLpt(lCommand, SVControlCommand);
 
 	lCommand = READ_FAN_FREQ;
 	hr = SVReadWriteLpt(lCommand, SVControlCommand);
@@ -464,6 +451,7 @@ HRESULT SVLptIOImpl::GetFanFreq(long* plFanFreq)
 	{
 		for (int i = 0; i < 4; i++)
 		{
+			unsigned long lTmp{0L};
 			hr = SVReadWriteLpt(lTmp, SVControlReadCommand);
 			if (S_OK == hr)
 			{
@@ -483,10 +471,9 @@ HRESULT SVLptIOImpl::GetFanFreq(long* plFanFreq)
 HRESULT SVLptIOImpl::GetLog(unsigned long* pulTS, unsigned long* pucLog, long& lSize)
 {
 	HRESULT hr = S_OK;
-	unsigned long lTmp = 0;
 
 	unsigned long lCommand = NO_CMD;
-	hr = SVReadWriteLpt(lCommand, SVControlCommand);
+	SVReadWriteLpt(lCommand, SVControlCommand);
 
 	lCommand = READ_LOG;
 	hr = SVReadWriteLpt(lCommand, SVControlCommand);
@@ -495,7 +482,8 @@ HRESULT SVLptIOImpl::GetLog(unsigned long* pulTS, unsigned long* pucLog, long& l
 		for (int i = 0;i < lSize && S_OK  == hr;i++)
 		{
 			// Logged time stamp.
-			unsigned long lTimeStamp = 0;
+			unsigned long lTimeStamp{0L};
+			unsigned long lTmp{0L};
 			for (int k = 0;S_OK == hr && k < 4; k++)
 			{
 				hr = SVReadWriteLpt(lTmp, SVControlReadCommand);
@@ -533,10 +521,9 @@ HRESULT SVLptIOImpl::GetLog(unsigned long* pulTS, unsigned long* pucLog, long& l
 HRESULT SVLptIOImpl::GetRTC(unsigned long& rValue)
 {
 	HRESULT hr = S_OK;
-	unsigned long lTmp = 0;
 
 	unsigned long lCommand = NO_CMD;
-	hr = SVReadWriteLpt(lCommand, SVControlCommand);
+	SVReadWriteLpt(lCommand, SVControlCommand);
 
 	lCommand = READ_RTC;
 	hr = SVReadWriteLpt(lCommand, SVControlCommand);
@@ -544,6 +531,7 @@ HRESULT SVLptIOImpl::GetRTC(unsigned long& rValue)
 	{
 		for (int i = 0;i < 4; i++)
 		{
+			unsigned long lTmp{0L};
 			hr = SVReadWriteLpt(lTmp, SVControlReadCommand);
 			if (S_OK == hr)
 			{
@@ -569,10 +557,9 @@ HRESULT SVLptIOImpl::GetRTC(unsigned long& rValue)
 HRESULT SVLptIOImpl::SetRTC(unsigned long lValue)
 {
 	HRESULT hr = S_OK;
-	unsigned long lTmp = 0;
 
 	unsigned long lCommand = NO_CMD;
-	hr = SVReadWriteLpt(lCommand, SVControlCommand);
+	SVReadWriteLpt(lCommand, SVControlCommand);
 
 	lCommand = WRITE_RTC;	// Get the Rabbit ready to receive a string of bytes for RTC set
 	hr = SVReadWriteLpt(lCommand, SVControlCommand);
@@ -580,7 +567,7 @@ HRESULT SVLptIOImpl::SetRTC(unsigned long lValue)
 	{
 		for (int i = 0;i < 4;i++)
 		{
-			lTmp = lValue >> (i * 8);
+			unsigned long lTmp = lValue >> (i * 8);
 			hr = SVReadWriteLpt(lTmp, SVControlCommand);	// Write 4 Bytes to fill a long in the Rabbit.
 			if (S_OK != hr)
 			{
@@ -611,7 +598,7 @@ HRESULT SVLptIOImpl::SetLogValue(unsigned long lValue)
 
 unsigned long SVLptIOImpl::GetTriggerCount()
 {
-	return m_numTriggers;
+	return cMaxLptTriggers;
 }
 
 unsigned long SVLptIOImpl::GetTriggerHandle(unsigned long index)
@@ -619,20 +606,12 @@ unsigned long SVLptIOImpl::GetTriggerHandle(unsigned long index)
 	return (index + 1);
 }
 
-BSTR SVLptIOImpl::GetTriggerName(unsigned long handle)
+BSTR SVLptIOImpl::GetTriggerName(unsigned long triggerIndex)
 {
-	char szTmp[128];
-	szTmp[0] = 0;
+	std::string triggerName {cTriggerName};
 
-	int iIndex = (int) handle - 1;
-	if (iIndex >= 0 && iIndex < m_numTriggers)
-	{
-		strcpy(&szTmp[0], "IO_Board_1.Dig_");
-		size_t iStrLen = strlen(&szTmp[0]);
-		char* sz = _itoa(iIndex, &szTmp[iStrLen], 10);
-		szTmp[iStrLen + 1] = 0;
-	}
-	BSTR name = _com_util::ConvertStringToBSTR(szTmp);
+	triggerName += std::to_string(triggerIndex - 1);
+	BSTR name = _bstr_t(triggerName.c_str()).Detach();
 	return name;
 }
 
@@ -654,16 +633,10 @@ HRESULT SVLptIOImpl::afterStartTrigger(HRESULT hr)
 		if (S_OK == hr)
 		{
 			m_lLastTriggerState = status;
-			if( !m_TriggerActive )
+			if( !isIrqHandlerEnabled() )
 			{
-				if( !isIrqHandlerEnabled() )
-				{
-					hr = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
-				}
-				if( S_OK == hr )
-				{
-					m_TriggerActive = true;
-				}
+				::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+				hr = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
 			}
 		}
 	}
@@ -687,7 +660,8 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 	{
 		if (m_TriggerDispatchers.ContainsNoActiveTriggers()) // Make sure all triggers are stopped before Masking the IRQ
 		{
-			m_TriggerActive = false;
+			DisableAckInterrupt();
+			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 		}
 	}
 
@@ -714,277 +688,46 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 
 
 
-HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long triggerchannel, unsigned long* pulCount)
+HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pulCount)
+	if (nullptr != pCount)
 	{
-		if (0 < triggerchannel)
-		{
-			*pulCount = 3;
-			hr = S_OK;
-		}
-		else
-		{
-			*pulCount = 0;
-		}
-	}
-	return hr;
-}
-
-HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long triggerchannel, unsigned long ulIndex, BSTR* pbstrName)
-{
-	HRESULT hr = S_FALSE;
-
-	if (nullptr != pbstrName)
-	{
-		if (nullptr != *pbstrName)
-		{
-			::SysFreeString(*pbstrName);
-			*pbstrName = nullptr;
-		}
-
-		if (0 < triggerchannel)
-		{
-			// SVSignalEdge and SVBoardVersion enums are used here to make the code more clear.
-			// however at some time in the future the Dll parameters may be implemented
-			// as an array and therefore this enum may not apply.
-			if (SVSignalEdge == ulIndex)
-			{
-				*pbstrName = ::SysAllocString(L"Edge");
-			}
-			else if (SVSingleTriggerEdge == ulIndex)
-			{
-				*pbstrName = ::SysAllocString(L"Single Trigger Edge");
-			}
-			else if (SVBoardVersion == ulIndex)
-			{
-				*pbstrName = ::SysAllocString(L"Board Version");
-			}
-			if (nullptr != *pbstrName)
-			{
-				hr = S_OK;
-			}
-		}
-	}
-	return hr;
-}
-
-HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
-{
-	HRESULT hr = S_FALSE;
-
-	if (nullptr != pvarValue)
-	{
-		if (S_OK == ::VariantClear(pvarValue))
-		{
-			if (0 < triggerchannel)
-			{
-				// SVSignalEdge enum is used here to make the code more clear.
-				// however at some time in the future the Dll parameters may be implemented
-				// as an array and therefore this enum may not apply.
-				if (SVSignalEdge == ulIndex)
-				{
-					long lMask;
-					switch (triggerchannel)
-					{
-						case 1: 
-						{
-							lMask = SVLptIOImpl::SVTrigger1;
-							break;
-						}
-						case 2:
-						{
-							lMask = SVLptIOImpl::SVTrigger2;
-							break;
-						}
-						case 3:
-						{
-							lMask = SVLptIOImpl::SVTrigger3;
-							break;
-						}
-						case 4:
-						{
-							lMask = SVLptIOImpl::SVTrigger4;
-							break;
-						}
-					}
-
-					pvarValue->vt = VT_I4;
-
-					if ((m_lLptTriggerEdge & lMask) == lMask)
-					{
-						pvarValue->lVal = 1;
-					}
-					else
-					{
-						pvarValue->lVal = -1;
-					}
-
-					hr = S_OK;
-				}
-				// SVBoardVersion enum is used here to make the code more clear.
-				// however at some time in the future the Dll parameters may be implemented
-				// as an array and therefore this enum may not apply.
-				if (SVBoardVersion == ulIndex)
-				{
-					long lVer;
-					WCHAR wbuf[256];
-					pvarValue->vt = VT_BSTR;
-					hr = GetBoardVersion(lVer);
-					swprintf(wbuf, L"Dedicated I/O Processor board %d.%02d firmware %d.%02d",
-						lVer >> 24 & 0xff,
-						lVer >> 16 & 0xff,
-						lVer >> 8 & 0xff,
-						lVer & 0xff);
-					pvarValue->bstrVal = ::SysAllocString(wbuf);
-				}
-			}
-		}
-	}
-	return hr;
-}
-
-HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long triggerchannel, unsigned long ulIndex, VARIANT* pvarValue)
-{
-	HRESULT hr = S_FALSE;
-
-	if (0 < triggerchannel)
-	{
-		if (nullptr != pvarValue)
-		{
-			// SVSignalEdge enum is used here to make the code more clear.
-			// however at some time in the future the Dll parameters may be implemented
-			// as an array and therefore this enum may not apply.
-			if (SVSignalEdge == ulIndex)
-			{
-				if (VT_I4 == pvarValue->vt)
-				{
-					long lMask = 0; //1 << (triggerchannel - 1);
-
-					switch (triggerchannel)
-					{
-						case 1: 
-						{
-							lMask = SVLptIOImpl::SVTrigger1;
-							break;
-						}
-						case 2:
-						{
-							lMask = SVLptIOImpl::SVTrigger2;
-							break;
-						}
-						case 3:
-						{
-							lMask = SVLptIOImpl::SVTrigger3;
-							break;
-						}
-						case 4:
-						{
-							lMask = SVLptIOImpl::SVTrigger4;
-							break;
-						}
-					}
-
-					switch (pvarValue->lVal)
-					{
-						case 1:
-						{
-							m_lLptTriggerEdge |= lMask;
-							m_lIOBrdTriggerEdge |= 1 << (triggerchannel -1);
-
-							hr = S_OK;
-							break;
-						}
-						case -1:
-						{
-							m_lLptTriggerEdge &= ~lMask;
-							m_lIOBrdTriggerEdge &= ~(1 << (triggerchannel -1));
-
-							hr = S_OK;
-							break;
-						}
-						default:
-						{
-							break;
-						}
-					}
-					hr = SetTriggerEdge(m_lIOBrdTriggerEdge);
-				}
-			}
-			if (SVSingleTriggerEdge == ulIndex) // Use Single Trigger Methodology
-			{
-				if (VT_I4 == pvarValue->vt)
-				{
-					if (0 == pvarValue->lVal)
-					{
-						m_bUseSingleTrigger = false;
-					}
-					else
-					{
-						m_bUseSingleTrigger = true;
-					}
-				}
-				if (VT_BOOL == pvarValue->vt)
-				{
-					m_bUseSingleTrigger = pvarValue->bVal == TRUE;
-				}
-			}
-		}
-	}
-	return hr;
-}
-
-// Non-Trigger Parameter Functions
-
-// GetParameterCount
-// This function returns the number of available parameters.
-HRESULT SVLptIOImpl::GetParameterCount(unsigned long* pulCount)
-{
-	HRESULT hr = S_FALSE;
-
-	if (nullptr != pulCount)
-	{
-		*pulCount = 3;
+		*pCount = 3;
 		hr = S_OK;
 	}
 	return hr;
 }
 
-// GetParameterName
-// This function creates a BSTR with the name of the parameter
-// It is the responsibility of the caller to free the BSTR.
-HRESULT SVLptIOImpl::GetParameterName(unsigned long ulIndex, BSTR* pbstrName)
+HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pbstrName)
+	if (nullptr != pName)
 	{
-		if (nullptr != *pbstrName)
+		if (nullptr != *pName)
 		{
-			::SysFreeString(*pbstrName);
-			*pbstrName = nullptr;
+			::SysFreeString(*pName);
+			*pName = nullptr;
 		}
 
-		if (SVBoardVersion == ulIndex)
+		// SVSignalEdge and SVBoardVersion enums are used here to make the code more clear.
+		// however at some time in the future the Dll parameters may be implemented
+		// as an array and therefore this enum may not apply.
+		if (SVSignalEdge == Index)
 		{
-			*pbstrName = ::SysAllocString(L"Board Version(R)");
+			*pName = ::SysAllocString(L"Edge");
 		}
-		else if (SVFanState == ulIndex)
+		else if (SVSingleTriggerEdge == Index)
 		{
-			*pbstrName = ::SysAllocString(L"Fan State(R)");
+			*pName = ::SysAllocString(L"Single Trigger Edge");
 		}
-		else if (SVBoardType == ulIndex)
+		else if (SVBoardVersion == Index)
 		{
-			*pbstrName = ::SysAllocString(L"Board Type(R/W)");
+			*pName = ::SysAllocString(L"Board Version");
 		}
-		else if (SVFanFreq == ulIndex)
-		{
-			*pbstrName = ::SysAllocString(L"Fan Frequency");
-		}
-			
-		if (nullptr != *pbstrName)
+		if (nullptr != *pName)
 		{
 			hr = S_OK;
 		}
@@ -992,48 +735,247 @@ HRESULT SVLptIOImpl::GetParameterName(unsigned long ulIndex, BSTR* pbstrName)
 	return hr;
 }
 
-// GetParameterValue
-// This function Gets the parameter value specified by ulIndex.
-HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue)
+HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue)
 {
 	HRESULT hr = S_FALSE;
 
-	if (nullptr != pvarValue)
+	if (nullptr != pValue && S_OK == ::VariantClear(pValue))
 	{
-		if (S_OK == ::VariantClear(pvarValue))
+		// SVSignalEdge enum is used here to make the code more clear.
+		// however at some time in the future the Dll parameters may be implemented
+		// as an array and therefore this enum may not apply.
+		if (SVSignalEdge == Index)
+		{
+			long lMask;
+			switch (triggerIndex)
+			{
+				case 1: 
+				{
+					lMask = SVLptIOImpl::SVTrigger1;
+					break;
+				}
+				case 2:
+				{
+					lMask = SVLptIOImpl::SVTrigger2;
+					break;
+				}
+				case 3:
+				{
+					lMask = SVLptIOImpl::SVTrigger3;
+					break;
+				}
+				case 4:
+				{
+					lMask = SVLptIOImpl::SVTrigger4;
+					break;
+				}
+			}
+
+			pValue->vt = VT_I4;
+
+			if ((m_lLptTriggerEdge & lMask) == lMask)
+			{
+				pValue->lVal = 1;
+			}
+			else
+			{
+				pValue->lVal = -1;
+			}
+			hr = S_OK;
+		}
+		else if (SVBoardVersion == Index)
+		{
+			long lVer;
+			WCHAR wbuf[256];
+			pValue->vt = VT_BSTR;
+			hr = GetBoardVersion(lVer);
+			swprintf(wbuf, L"Dedicated I/O Processor board %ld.%02ld firmware %ld.%02ld",
+					 lVer >> 24 & 0xff,
+					 lVer >> 16 & 0xff,
+					 lVer >> 8 & 0xff,
+					 lVer & 0xff);
+			pValue->bstrVal = ::SysAllocString(wbuf);
+		}
+	}
+	return hr;
+}
+
+HRESULT SVLptIOImpl::TriggerSetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue)
+{
+	HRESULT hr = S_FALSE;
+
+	if (nullptr != pValue)
+	{
+		// SVSignalEdge enum is used here to make the code more clear.
+		// however at some time in the future the Dll parameters may be implemented
+		// as an array and therefore this enum may not apply.
+		if (SVSignalEdge == Index)
+		{
+			if (VT_I4 == pValue->vt)
+			{
+				long lMask = 0; //1 << (triggerchannel - 1);
+
+				switch (triggerIndex)
+				{
+					case 1: 
+					{
+						lMask = SVLptIOImpl::SVTrigger1;
+						break;
+					}
+					case 2:
+					{
+						lMask = SVLptIOImpl::SVTrigger2;
+						break;
+					}
+					case 3:
+					{
+						lMask = SVLptIOImpl::SVTrigger3;
+						break;
+					}
+					case 4:
+					{
+						lMask = SVLptIOImpl::SVTrigger4;
+						break;
+					}
+				}
+
+				switch (pValue->lVal)
+				{
+					case 1:
+					{
+						m_lLptTriggerEdge |= lMask;
+						m_lIOBrdTriggerEdge |= 1 << (triggerIndex -1);
+
+						hr = S_OK;
+						break;
+					}
+					case -1:
+					{
+						m_lLptTriggerEdge &= ~lMask;
+						m_lIOBrdTriggerEdge &= ~(1 << (triggerIndex -1));
+
+						hr = S_OK;
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+				hr = SetTriggerEdge(m_lIOBrdTriggerEdge);
+			}
+		}
+		else if (SVSingleTriggerEdge == Index) // Use Single Trigger Methodology
+		{
+			if (VT_I4 == pValue->vt)
+			{
+				if (0 == pValue->lVal)
+				{
+					m_bUseSingleTrigger = false;
+				}
+				else
+				{
+					m_bUseSingleTrigger = true;
+				}
+			}
+			if (VT_BOOL == pValue->vt)
+			{
+				m_bUseSingleTrigger = pValue->bVal == TRUE;
+			}
+		}
+	}
+	return hr;
+}
+
+HRESULT SVLptIOImpl::GetParameterCount(unsigned long* pCount)
+{
+	HRESULT hr = S_FALSE;
+
+	if (nullptr != pCount)
+	{
+		*pCount = 3;
+		hr = S_OK;
+	}
+	return hr;
+}
+
+HRESULT SVLptIOImpl::GetParameterName(unsigned long Index, BSTR* pName)
+{
+	HRESULT hr = S_FALSE;
+
+	if (nullptr != pName)
+	{
+		if (nullptr != *pName)
+		{
+			::SysFreeString(*pName);
+			*pName = nullptr;
+		}
+
+		if (SVBoardVersion == Index)
+		{
+			*pName = ::SysAllocString(L"Board Version(R)");
+		}
+		else if (SVFanState == Index)
+		{
+			*pName = ::SysAllocString(L"Fan State(R)");
+		}
+		else if (SVBoardType == Index)
+		{
+			*pName = ::SysAllocString(L"Board Type(R/W)");
+		}
+		else if (SVFanFreq == Index)
+		{
+			*pName = ::SysAllocString(L"Fan Frequency");
+		}
+			
+		if (nullptr != *pName)
+		{
+			hr = S_OK;
+		}
+	}
+	return hr;
+}
+
+HRESULT SVLptIOImpl::GetParameterValue(unsigned long Index, VARIANT* pValue)
+{
+	HRESULT hr = S_FALSE;
+
+	if (nullptr != pValue)
+	{
+		if (S_OK == ::VariantClear(pValue))
 		{
 			// Board Version
-			if (SVBoardVersion == ulIndex)
+			if (SVBoardVersion == Index)
 			{
 				long lVer;
 				WCHAR wbuf[256];
-				pvarValue->vt = VT_BSTR;
+				pValue->vt = VT_BSTR;
 				hr = GetBoardVersion(lVer);
 				swprintf(wbuf, L"Dedicated I/O Processor board %d.%02d firmware %d.%02d",
 					lVer >> 24 & 0xff,
 					lVer >> 16 & 0xff,
 					lVer >> 8 & 0xff,
 					lVer & 0xff);
-				pvarValue->bstrVal = ::SysAllocString(wbuf);
+				pValue->bstrVal = ::SysAllocString(wbuf);
 			}
-			else if (SVBoardType == ulIndex)			// Board Type : X-Series, D-Series, or A-Series Boards.
+			else if (SVBoardType == Index)			// Board Type : X-Series, D-Series, or A-Series Boards.
 			{
 				unsigned long lType;
 				hr = GetBoardType(lType);
-				pvarValue->vt = VT_I4;
+				pValue->vt = VT_I4;
 				if (S_OK == hr)
 				{
-					pvarValue->lVal = lType;
+					pValue->lVal = lType;
 				}
 			}
-			else if (SVFanState == ulIndex)			// Fan State
+			else if (SVFanState == Index)			// Fan State
 			{
 				unsigned long lFanState;
-				pvarValue->vt = VT_I4;
+				pValue->vt = VT_I4;
 				hr = GetFanState(lFanState);
-				pvarValue->lVal = lFanState;
+				pValue->lVal = lFanState;
 			}
-			else if (SVFanFreq == ulIndex)
+			else if (SVFanFreq == Index)
 			{
 				long lTmp[4];
 				hr = GetFanFreq(lTmp);
@@ -1041,14 +983,14 @@ HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 				{	// The results are only 8 bits each so stuff all 4 into a 32bit long.
 					// This is just for testing.
 					// If this is something we want to support then it should be wrapped up in a safearray of longs.
-					pvarValue->vt = VT_I4;
-					pvarValue->lVal = (lTmp[0] & 0xff) |
+					pValue->vt = VT_I4;
+					pValue->lVal = (lTmp[0] & 0xff) |
 						((lTmp[1] & 0xff) << 8) |
 						((lTmp[2] & 0xff) << 16) | 
 						((lTmp[3] & 0xff) << 24);  
 				}
 			}
-			else if (SVLogDump == ulIndex)
+			else if (SVLogDump == Index)
 			{
 				unsigned long LogCode[1024];
 				unsigned long TimeStamp[1024];
@@ -1090,15 +1032,15 @@ HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 					}
 				}
 			}
-			else if (SVRabbitRTC == ulIndex)
+			else if (SVRabbitRTC == Index)
 			{
 				unsigned long lRTC = 0;
 				hr = GetRTC(lRTC);
 				if (S_OK == hr)
 				{
 					// put data into variant safe array.
-					pvarValue->lVal = lRTC;
-					pvarValue->vt = VT_I4;
+					pValue->lVal = lRTC;
+					pValue->vt = VT_I4;
 				}
 			}
 		}
@@ -1106,16 +1048,13 @@ HRESULT SVLptIOImpl::GetParameterValue(unsigned long ulIndex, VARIANT* pvarValue
 	return hr;
 }
 
-// SetParameterValue
-// This function sets the value specified by ulIndex.
-// if the index is not supported for setting, then an error is returned.
-HRESULT SVLptIOImpl::SetParameterValue(unsigned long ulIndex, VARIANT* pValue)
+HRESULT SVLptIOImpl::SetParameterValue(unsigned long Index, VARIANT* pValue)
 {
 	HRESULT hr = S_FALSE;
 
 	if (nullptr != pValue)
 	{
-		switch(ulIndex)
+		switch(Index)
 		{
 			case SVBoardType:
 			{
@@ -1209,34 +1148,6 @@ void SVLptIOImpl::SetPreviousOutputs(long lControl, short sValue)
 			break;
 		}
 	}
-}
-
-HRESULT SVLptIOImpl::Lock()
-{
-	HRESULT hr = S_OK;
-	try
-	{
-	  ::EnterCriticalSection(&m_hCriticalSection);
-	}
-	catch (...)
-	{
-		hr = S_FALSE;
-	}
-	return hr;
-}
-
-HRESULT SVLptIOImpl::UnLock()
-{
-	HRESULT hr = S_OK;
-	try
-	{
-		::LeaveCriticalSection(&m_hCriticalSection);
-	}
-	catch (...)
-	{
-		hr = S_FALSE;
-	}
-	return hr;
 }
 
 // Reads the lock State
@@ -1364,139 +1275,105 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 {
 	HRESULT hr = S_OK;
 
-	if (S_OK == Lock())
-	{
-		// Reset the Quantum
-		HANDLE hThread = ::GetCurrentThread();
-		DWORD dwPriority = ::GetThreadPriority(hThread);
-		::SetThreadPriority(hThread, dwPriority);
+	std::lock_guard<std::mutex> guard(m_protectIO);
+	// Reset the Quantum
+	HANDLE hThread = ::GetCurrentThread();
+	DWORD dwPriority = ::GetThreadPriority(hThread);
+	::SetThreadPriority(hThread, dwPriority);
 
-		unsigned char nPrevControl;
-		hr = GetControlPort(nPrevControl);
+	unsigned char nPrevControl;
+	hr = GetControlPort(nPrevControl);
+	if (S_OK == hr)
+	{
+		if (0 != (nPrevControl & 0xf))
+		{
+			if (!m_isFirstTimeToReadOrWrite)
+			{
+				// The following warning appeared once (probably spuriously) during SVIM startup.
+				// Suppressing it the first time solved this problem
+				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_INVALID_LINE_STATE, SvStl::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams));
+			}
+		}
+		m_isFirstTimeToReadOrWrite = false;
+		// Get Value of control port interrupt Bit 
+		unsigned char nVal = SVControlEnableInterrupt;
+		hr = SetControlPort(nVal);	// Set Control to known state with select line off...
 		if (S_OK == hr)
 		{
-			if (0 != (nPrevControl & 0xf))
-			{
-				if (!m_isFirstTimeToReadOrWrite)
-				{
-					// The following warning appeared once (probabaly spuriously) during SVIM startup.
-					// Suppressing it the first time solved this problem
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-					Exception.setMessage(SVMSG_INVALID_LINE_STATE, SvStl::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}
-			m_isFirstTimeToReadOrWrite = false;
-			// Get Value of control port interrupt Bit 
-			unsigned char nVal = SVControlEnableInterrupt;
-			hr = SetControlPort(nVal);	// Set Control to known state with select line off...
+			unsigned char n;
+			hr = GetControlPort(n);
 			if (S_OK == hr)
 			{
-				unsigned char n;
-				hr = GetControlPort(n);
+				unsigned char lPort = n & 0x37; // what is with the magic numbers...
+				if (lPort != nVal)
+				{
+					hr = S_FALSE;
+				}
+			}
+		}
+		double Start = SvTl::GetTimeStamp();
+
+		// **** Wait for Acknowledge off...
+		unsigned char status;
+		hr = GetStatusPort(status);
+		while (S_OK == hr && 0 == (status & 128))
+		{
+			double Check = SvTl::GetTimeStamp();
+
+			if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
+			{
+				hr = GetStatusPort(status);
+				if (0 == (status & 128))
+				{
+					hr = S_FALSE;
+				}
+				break;
+			}
+			hr = GetStatusPort(status);
+		}
+
+		long lControl = prevControl;
+		switch (lControl)
+		{
+			case SVControlWriteDigital1:
+			{
+				if (Function00ForWrite1 == m_lParallelBoardInterfaceBehavior)
+				{
+					lControl = SVControlWriteDigital1_110;
+				}
+			}
+			case SVControlCameraSetup:
+			case SVControlWriteDigital0:
+			case SVControlCommand:
+			{
+				hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));	// Move Data to outputs
 				if (S_OK == hr)
 				{
-					unsigned char lPort = n & 0x37; // what is with the magic numbers...
-					if (lPort != nVal)
+					unsigned char nNewOutput;
+					if (lBit < 0) // no bits  -  use entire port.
 					{
-						hr = S_FALSE;
+						nNewOutput = static_cast<unsigned char>(rlValue);
 					}
-				}
-			}
-			double Start = SvTl::GetTimeStamp();
-
-			// **** Wait for Acknowledge off...
-			unsigned char status;
-			hr = GetStatusPort(status);
-			while (S_OK == hr && 0 == (status & 128))
-			{
-				double Check = SvTl::GetTimeStamp();
-
-				if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
-				{
-					hr = GetStatusPort(status);
-					if (0 == (status & 128))
-					{
-						hr = S_FALSE;
-					}
-					break;
-				}
-				hr = GetStatusPort(status);
-			}
-
-			long lControl = prevControl;
-			switch (lControl)
-			{
-				case SVControlWriteDigital1:
-				{
-					if (Function00ForWrite1 == m_lParallelBoardInterfaceBehavior)
-					{
-						lControl = SVControlWriteDigital1_110;
-					}
-				}
-				case SVControlCameraSetup:
-				case SVControlWriteDigital0:
-				case SVControlCommand:
-				{
-					hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));	// Move Data to outputs
-					if (S_OK == hr)
-					{
-						unsigned char nNewOutput;
-						if (lBit < 0) // no bits  -  use entire port.
+					else
+					{			// use bits.
+						if (rlValue)
 						{
-							nNewOutput = static_cast<unsigned char>(rlValue);
+							nNewOutput = GetPreviousOutputs(prevControl) | (1 << lBit);
 						}
 						else
-						{			// use bits.
-							if (rlValue)
-							{
-								nNewOutput = GetPreviousOutputs(prevControl) | (1 << lBit);
-							}
-							else
-							{
-								nNewOutput = GetPreviousOutputs(prevControl) & ~(1 << lBit);
-							}
-						}
-						hr = SetDataPort(nNewOutput);					// Write Data to Data Port
-						if (S_OK == hr)
 						{
-							SetPreviousOutputs(prevControl, nNewOutput); //
-							hr = SetControlPort(static_cast<unsigned char>(nVal | lControl | SVControlSelectMode));
-							if (S_OK == hr)
-							{
-								// **** Wait for Acknowledge...
-								Start = SvTl::GetTimeStamp();
-								unsigned char status;
-								hr = GetStatusPort(status);
-								while (S_OK == hr && 0 != (status & 128))
-								{
-									double Check = SvTl::GetTimeStamp();
-									if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
-									{
-										hr = GetStatusPort(status);
-										if (S_OK == hr && 0 != (status & 128))
-										{
-											hr = S_FALSE;
-										}
-										break;
-									}
-									hr = GetStatusPort(status);
-								}
-								hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));
-							}
+							nNewOutput = GetPreviousOutputs(prevControl) & ~(1 << lBit);
 						}
 					}
-					break;
-				}
-				case SVControlReadDigitalInputs:
-				case SVControlReadCommand:
-				{
-					hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional | prevControl));
+					hr = SetDataPort(nNewOutput);					// Write Data to Data Port
 					if (S_OK == hr)
 					{
-						hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional | prevControl | SVControlSelectMode));
+						SetPreviousOutputs(prevControl, nNewOutput); //
+						hr = SetControlPort(static_cast<unsigned char>(nVal | lControl | SVControlSelectMode));
 						if (S_OK == hr)
 						{
-							// **** Wait for Acknoledge...
+							// **** Wait for Acknowledge...
 							Start = SvTl::GetTimeStamp();
 							unsigned char status;
 							hr = GetStatusPort(status);
@@ -1514,55 +1391,83 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 								}
 								hr = GetStatusPort(status);
 							}
-							if (lBit < 0)
+							hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));
+						}
+					}
+				}
+				break;
+			}
+			case SVControlReadDigitalInputs:
+			case SVControlReadCommand:
+			{
+				hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional | prevControl));
+				if (S_OK == hr)
+				{
+					hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional | prevControl | SVControlSelectMode));
+					if (S_OK == hr)
+					{
+						// **** Wait for Acknoledge...
+						Start = SvTl::GetTimeStamp();
+						unsigned char status;
+						hr = GetStatusPort(status);
+						while (S_OK == hr && 0 != (status & 128))
+						{
+							double Check = SvTl::GetTimeStamp();
+							if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 							{
-								unsigned char value;
-								 hr = GetDataPort(value);
-								 if (S_OK == hr)
-								 {
-									 rlValue = static_cast<long>(value);
-								 }
+								hr = GetStatusPort(status);
+								if (S_OK == hr && 0 != (status & 128))
+								{
+									hr = S_FALSE;
+								}
+								break;
 							}
-							else
-							{
-								unsigned char value;
+							hr = GetStatusPort(status);
+						}
+						if (lBit < 0)
+						{
+							unsigned char value;
 								hr = GetDataPort(value);
 								if (S_OK == hr)
 								{
-									rlValue = (static_cast<long>(value) & (1 << lBit)) ? 1 : 0;
+									rlValue = static_cast<long>(value);
 								}
-							}
+						}
+						else
+						{
+							unsigned char value;
+							hr = GetDataPort(value);
 							if (S_OK == hr)
 							{
-								hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional | prevControl));
-								if (S_OK == hr)
-								{
-									hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional));
-								}
+								rlValue = (static_cast<long>(value) & (1 << lBit)) ? 1 : 0;
+							}
+						}
+						if (S_OK == hr)
+						{
+							hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional | prevControl));
+							if (S_OK == hr)
+							{
+								hr = SetControlPort(static_cast<unsigned char>(nVal | SVControlBidirectional));
 							}
 						}
 					}
-					break;
 				}
-				default:
-				{
-					hr = S_FALSE;
-					break;
-				}
+				break;
 			}
-			// Put control port back in to No Mode 
-			HRESULT hrTmp = SetControlPort(nVal);
-			if (S_OK == hr)
+			default:
 			{
-				hr = hrTmp;
+				hr = S_FALSE;
+				break;
 			}
 		}
-		UnLock();
+		// Put control port back in to No Mode 
+		HRESULT hrTmp = SetControlPort(nVal);
+		if (S_OK == hr)
+		{
+			hr = hrTmp;
+		}
 	}
-	else
-	{
-		hr = S_FALSE;
-	}
+
 	return hr;
 }
 
@@ -1610,12 +1515,10 @@ LPCTSTR SVLptIOImpl::GetControlText(long lControl)
 void SVLptIOImpl::HandleIRQ()
 {
 	/// Only handle irq if the module ready is set this avoids problems with the PPQ Object not being ready
-	if(false == m_TriggerActive || false == m_moduleReady)
+	if(false == m_moduleReady)
 	{
 		return;
 	}
-
-	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 #ifdef LogDebugData
 	g_TDebugData[g_CallbackCount].m_dStatusReg0 = StatusReg;
@@ -1648,7 +1551,7 @@ void SVLptIOImpl::HandleIRQ()
 			m_StatusLog.push_back(String);
 		#endif
 
-		// call trigger callbacks
+		///The trigger dispatcher can not be changed when the module ready flag is set so no mutex is needed
 		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
 		{
 			short nTriggerBit = SVTriggerNone;
@@ -1690,16 +1593,8 @@ void SVLptIOImpl::HandleIRQ()
 				SvTh::IntVariantMap triggerData;
 				triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 					
-				SvTh::DispatcherVector& list = ChannelAndDispatcherList.second;
-
-				for (size_t i = 0;i < list.size();i++)
-				{
-					if (list[i].m_IsStarted)
-					{
-						list[i].SetData(triggerData);
-						list[i].Dispatch();
-					}
-				}
+				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
+				std::async(std::launch::async, [&] { triggerDispatcher(std::move(triggerData), std::move(dispatchVector)); });
 			}
 		}
 		m_lLastTriggerState = StatusReg;

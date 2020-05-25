@@ -48,22 +48,23 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <array>
+#include <atomic>
 #include <algorithm>
 #include <atomic>			//Used by static library
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
+#include <future>
 #include <functional>
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>
+#include <mmsystem.h>
 #include <mutex>
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
 #include <unordered_map>
 #include <vector>
-
-#include <boost/config.hpp>
-#include <boost/function.hpp>							//Used by static library
 #pragma endregion Precompiled Headers

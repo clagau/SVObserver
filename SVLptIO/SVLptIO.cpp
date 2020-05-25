@@ -89,6 +89,7 @@ HRESULT SVLptIO::SetActive(bool bActivate)
 
 HRESULT SVLptIO::DisableAckInterrupt() 
 {
+	g_IrqHandler = nullptr;
 	return DisableInterrupt();
 }
 

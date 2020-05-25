@@ -62,32 +62,25 @@ namespace SvTi
 
 	void SVHardwareManifest::Startup()
 	{
+		///Maximum number of triggers is 4
 		m_TriggerDeviceParams = SVTriggerDeviceParamsVector
 		{
+			{_T("HardwareTrigger.Dig_0"), 0},
+			{_T("HardwareTrigger.Dig_1"), 1},
+			{_T("HardwareTrigger.Dig_2"), 2},
+			{_T("HardwareTrigger.Dig_3"), 3},
 			{_T("IO_Board_1.Dig_0"), 0},
 			{_T("IO_Board_1.Dig_1"), 1},
 			{_T("IO_Board_1.Dig_2"), 2},
 			{_T("IO_Board_1.Dig_3"), 3},
-			{_T("IO_Board_1.Dig_4"), 4},
-			{_T("IO_Board_1.Dig_5"), 5},
-			{_T("IO_Board_1.Dig_6"), 6},
-			{_T("IO_Board_1.Dig_7"), 7},
 			{_T("SoftwareTrigger_1.Dig_0"), 0},
 			{_T("SoftwareTrigger_1.Dig_1"), 1},
 			{_T("SoftwareTrigger_1.Dig_2"), 2},
 			{_T("SoftwareTrigger_1.Dig_3"), 3},
-			{_T("SoftwareTrigger_1.Dig_4"), 4},
-			{_T("SoftwareTrigger_1.Dig_5"), 5},
-			{_T("SoftwareTrigger_1.Dig_6"), 6},
-			{_T("SoftwareTrigger_1.Dig_7"), 7},
 			{_T("CameraTrigger.Dig_0"), 0},
 			{_T("CameraTrigger.Dig_1"), 1},
 			{_T("CameraTrigger.Dig_2"), 2},
 			{_T("CameraTrigger.Dig_3"), 3},
-			{_T("CameraTrigger.Dig_4"), 4},
-			{_T("CameraTrigger.Dig_5"), 5},
-			{_T("CameraTrigger.Dig_6"), 6},
-			{_T("CameraTrigger.Dig_7"), 7},
 		};
 
 		m_AcquisitionDeviceParams = SVAcquisitionConstructParamsVector

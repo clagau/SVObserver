@@ -23,13 +23,13 @@ namespace SvTh
 		const std::map<unsigned long, DispatcherVector>& GetDispatchers() { return m_dispatchers; }
 
 		bool ContainsNoActiveTriggers();
-		void DispatchIfPossible(unsigned long channel);
-		bool Dispatch(unsigned long channel);
-		bool AddDispatcher(unsigned long channel, const TriggerDispatcher &rDispatcher);
-		bool RemoveDispatcher(unsigned long channel, const TriggerDispatcher &rDispatcher);
-		void RemoveAllDispatchers(unsigned long channel);
-		bool StartTrigger(unsigned long channel);
-		bool StopTrigger(unsigned long channel);
+		void DispatchIfPossible(unsigned long triggerIndex);
+		bool Dispatch(unsigned long triggerIndex);
+		bool AddDispatcher(unsigned long triggerIndex, const TriggerDispatcher &rDispatcher);
+		bool RemoveDispatcher(unsigned long triggerIndex, const TriggerDispatcher &rDispatcher);
+		void RemoveAllDispatchers(unsigned long triggerIndex);
+		bool StartTrigger(unsigned long triggerIndex);
+		bool StopTrigger(unsigned long triggerIndex);
 
 	private:
 		std::map<unsigned long, DispatcherVector> m_dispatchers;

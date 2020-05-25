@@ -52,8 +52,10 @@
 #include <ctime>			//Used by static library
 #include <fstream>
 #include <functional>
+#include <future>
 #include <iterator>			//Used by static library
 #include <map>
+#include <mutex>			//Used by static library
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
