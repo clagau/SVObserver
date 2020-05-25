@@ -98,6 +98,8 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int32_t iSize)
 		m_pValue = reserveLocalMemory();
 		///Setting memory offset to -1 insures that the values will be redirected to block memory if necessary
 		m_memOffset = -1;
+		clearMemoryBlockPointer();
+		m_memSizeReserved = 0L;
 	}
 
 	if (getArraySize() <= 1)
