@@ -2967,30 +2967,7 @@ std::vector <SvIe::IPResultTableData> SVIPDoc::getResultTableData() const
 	return {};
 }
 
-HRESULT SVIPDoc::IsToolSetListUpdated() const
-{
-	HRESULT l_Status = S_OK;
 
-	SVToolSetClass* pToolSet = GetToolSet();
-	if (pToolSet)
-	{
-		auto lastTime = pToolSet->GetLastListUpdateTimestamp();
-		if (lastTime < m_ToolSetListTimestamp)
-		{
-			l_Status = S_FALSE;
-		}
-		else
-		{
-			m_ToolSetListTimestamp = lastTime;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
 
 void SVIPDoc::OnAddExternalTool()
 {

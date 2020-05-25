@@ -246,7 +246,7 @@ public:
 	void GetResultData(SvIe::SVIPResultData& p_rResultData) const;
 	std::vector <SvIe::IPResultTableData> getResultTableData() const;
 
-	HRESULT IsToolSetListUpdated() const;
+	
 	ToolSetView* GetToolSetView() const;
 	SVToolSetClass* GetToolSet() const;
 	void SetRegressionTestUsePlayCondition(bool usePlayCondition) { m_bRegressionTestUsePlayCondition = usePlayCondition; };
