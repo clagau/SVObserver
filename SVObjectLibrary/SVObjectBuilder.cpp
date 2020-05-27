@@ -166,6 +166,7 @@ HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t unique
 	else
 	{
 		hr = S_FALSE;
+		assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		::OutputDebugString( _T("SVObjectBuilder::CreateObject - Creation Failed") );
 #endif

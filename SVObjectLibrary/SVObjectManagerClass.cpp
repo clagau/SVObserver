@@ -217,7 +217,14 @@ HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, SVObjec
 {
 	HRESULT Result = S_OK;
 
-	rpObject = SVClassRegisterListClass::Instance().ConstructNewObject(classID);
+	if (SvPb::NoObjectClassId != classID)
+	{
+		rpObject = SVClassRegisterListClass::Instance().ConstructNewObject(classID);
+	}
+	else
+	{
+		rpObject = nullptr;
+	}
 
 	if (nullptr == rpObject)
 	{

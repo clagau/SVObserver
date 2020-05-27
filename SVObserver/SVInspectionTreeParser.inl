@@ -23,6 +23,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 static const SvDef::StringSet cObjectAttributeFilter
@@ -129,6 +130,16 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		m_count++;
 		SvXml::SVNavigateTree::GetItem(m_rTree, scClassIDTag, hItem, classIDVariant);
 		SvPb::ClassIdEnum classId = calcClassId(classIDVariant);
+		if (SvPb::NoObjectClassId == classId)
+		{
+			const GUID SVRemoteInputToolGuid = { 0xef12c6da, 0xc0de, 0x4503,{ 0xac, 0x69, 0xc6, 0x96, 0xc, 0x6b, 0x9e, 0x9f } };
+			SVGUID guid{ classIDVariant };
+			if (guid == SVRemoteInputToolGuid)
+			{
+				//Ignore this classId
+				return S_FALSE;
+			}
+		}
 		m_count++;
 
 		if( m_ReplaceUniqueID )
