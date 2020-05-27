@@ -185,11 +185,11 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 			std::string  ObjectName = m_Values.GetName(SvPb::ExternalInputEId + Index).c_str();
 			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(Index));
-			sLabel += " (";
-			sLabel += rDefinition.getDisplayName();
-			sLabel += ")";
+				sLabel += " (";
+				sLabel += rDefinition.getDisplayName();
+				sLabel += ")";
 
-
+			
 			pEdit->SetLabelText(sLabel.c_str());
 
 			std::string strType;
@@ -295,14 +295,14 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
 {
-
+	
 	const  SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
 	bool isTable(false);
 	if (pDef)
 	{
 		isTable = (pDef->getType() == SvOp::ExDllInterfaceType::TableArray);
 	}
-
+	
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	if (!isTable)
@@ -484,7 +484,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 		if (res)
 		{
 			DWORD type = pValueObject->GetType();
-
+		
 			SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
 			if (pVariant)
 			{
@@ -501,7 +501,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 					}
 					break;
 				case VT_ARRAY | VT_I4:
-					if (type != VT_I4)
+					if( type != VT_I4)
 					{
 						res = false;
 					}

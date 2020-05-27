@@ -62,8 +62,9 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 		rObject.GetValue(Name, i);
 		if (!Name.empty())
 		{
+			std::string NewName = AdaptDottedNameToInspectionName(Name);
 			SVObjectReference ObjectRef;
-			SVObjectManagerClass::Instance().GetObjectByDottedName(Name.c_str(), ObjectRef);
+			SVObjectManagerClass::Instance().GetObjectByDottedName(NewName.c_str(), ObjectRef);
 			size_t Pos = Name.find('[');
 			if (std::string::npos != Pos)
 			{	//Array brackets found
@@ -313,6 +314,30 @@ void SVArchiveRecordsArray::emplaceRecordAtBack(SVArchiveTool* pTool, const SVOb
 	rArchiveRecord.ConnectInputObject();
 }
 
+std::string SVArchiveRecordsArray::AdaptDottedNameToInspectionName(std::string DottedName)
+{
+	auto ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
+
+	//If the tool set name is in the name it should be a name with inspection name.
+	if (std::string::npos != DottedName.find(ToolSetName))
+	{
+		SvOi::IObjectClass* pInspection = m_pArchiveTool->GetAncestorInterface(SvPb::SVInspectionObjectType);
+		if (nullptr != pInspection)
+		{
+			size_t Pos = DottedName.find('.');
+			if (std::string::npos != Pos)	// This assumes that the first part of the dotted name is the inspection.
+			{	// Build the object name with the current inspection name.
+				return pInspection->GetName() + SvUl::Mid(DottedName, Pos);
+			}
+			else
+			{	// We should always find a dotted name here.
+				assert(false);
+			}
+		}
+	}
+
+	return DottedName;
+}
 #pragma endregion Public Methods
 
 } //namespace SvTo

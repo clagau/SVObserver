@@ -57,6 +57,7 @@ public:
 
 private:
 #pragma region Private Methods
+	std::string AdaptDottedNameToInspectionName(std::string DottedName);
 #pragma endregion Private Methods
 
 protected:
