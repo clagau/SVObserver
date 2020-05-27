@@ -87,8 +87,15 @@ std::string VariantToString(_variant_t var)
 	_bstr_t temp;
 	if ((var.vt & VT_ARRAY) == 0)
 	{
-		temp = (_bstr_t)var;
-		return  std::string(temp);
+		if (VT_BOOL == var.vt)
+		{
+			return (0 == var.boolVal) ? "false" : "true";
+		}
+		else
+		{
+			temp = (_bstr_t)var;
+			return  std::string(temp);
+		}		
 	}
 	else if (var.vt == (VT_ARRAY | VT_R8))
 	{

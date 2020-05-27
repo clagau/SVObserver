@@ -16,6 +16,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVSystemLibrary/SVVersionInfo.h"
 
 namespace SvOp
 {
@@ -280,7 +281,10 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 
 				try
 				{
-					long lTest = m_pfnSimpleTest(820, 2); //the first parameter is the version number of the SVOberver (820 means 8.20).This makes it possible for an external DLL to know the (interface) version of the SVObserver calling it
+					long version = SvSyl::SVVersionInfo::GetLongVersion() >> 8;
+					long versionShort = (version >> 8) * 100;
+					versionShort += version & 0xFF;
+					long lTest = m_pfnSimpleTest(versionShort, 2); //the first parameter is the version number of the SVOberver (820 means 8.20).This makes it possible for an external DLL to know the (interface) version of the SVObserver calling it
 					if (lTest != 2)
 					{
 						Result = -12349;

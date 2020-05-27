@@ -17,10 +17,9 @@
 
 namespace SvSyl
 {
-	std::string SVVersionInfo::GetVersion()
+	bool getFileInfo(VS_FIXEDFILEINFO& rFileInfo)
 	{
-		std::string Result;
-
+		bool isValid = false;
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
 
@@ -35,11 +34,28 @@ namespace SvSyl
 			UINT Len = 0;
 			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 			{
+				isValid = true;
+				rFileInfo = *pFileInfo;
+				//memcpy(pFileInfo, *rFileInfo, Len);
+			}
+		}
+		delete[] lpData;
+		return isValid;
+	}
+
+	std::string SVVersionInfo::GetVersion()
+	{
+		std::string Result;
+
+		VS_FIXEDFILEINFO fileInfo;
+		bool isValid = getFileInfo(fileInfo);
+		if (isValid)
+		{
 				std::stringstream buf;
-				buf << HIWORD(pFileInfo->dwFileVersionMS) << _T(".") << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
+			buf << HIWORD(fileInfo.dwFileVersionMS) << _T(".") << std::setfill('0') << std::setw(2) << LOWORD(fileInfo.dwFileVersionMS);
 
 				//Patch number when between 1-99,  SVN revision number when >= 100
-				auto patchOrSvnNumber = HIWORD(pFileInfo->dwFileVersionLS);
+			auto patchOrSvnNumber = HIWORD(fileInfo.dwFileVersionLS);
 				if (patchOrSvnNumber > 0 && patchOrSvnNumber < 100)
 				{
 					buf << _T(".") << patchOrSvnNumber;
@@ -49,7 +65,7 @@ namespace SvSyl
 					buf << _T(", Revision ") << patchOrSvnNumber;
 				}
 
-				auto alphaOrBetaNumber = LOWORD(pFileInfo->dwFileVersionLS);
+			auto alphaOrBetaNumber = LOWORD(fileInfo.dwFileVersionLS);
 				if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 				{
 					buf << _T(" Beta ") << std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
@@ -61,8 +77,7 @@ namespace SvSyl
 
 				Result = buf.str();
 			}
-		}
-		delete [] lpData;
+
 
 		#ifdef _DEBUG
 			Result += _T("d");        // For debug builds.
@@ -75,31 +90,18 @@ namespace SvSyl
 	{
 		unsigned long l_Version = 0;
 
-		TCHAR moduleFilename[512];
-		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
-
-		DWORD dwHandle;
-		DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
-		unsigned char* lpData = new unsigned char[size];
-
-		BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
-		if (rc)
-		{
-			VS_FIXEDFILEINFO* pFileInfo = nullptr;
-			UINT Len = 0;
-			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+		VS_FIXEDFILEINFO fileInfo;
+		bool isValid = getFileInfo(fileInfo);
+		if (isValid)
 			{
 				SVVersionUnion l_TempVersion;
 				l_TempVersion.m_VersionParts.m_Unused = 0;
-				l_TempVersion.m_VersionParts.m_Major = static_cast< unsigned char >( std::min< WORD >( HIWORD( pFileInfo->dwFileVersionMS ), 255 ) );
-				l_TempVersion.m_VersionParts.m_Minor = static_cast< unsigned char >( std::min< WORD >( LOWORD( pFileInfo->dwFileVersionMS ), 255 ) );
-				l_TempVersion.m_VersionParts.m_Beta = static_cast< unsigned char >( std::min< WORD >( LOWORD( pFileInfo->dwFileVersionLS ), 255 ) );
+			l_TempVersion.m_VersionParts.m_Major = static_cast<unsigned char>(std::min< WORD >(HIWORD(fileInfo.dwFileVersionMS), 255));
+			l_TempVersion.m_VersionParts.m_Minor = static_cast<unsigned char>(std::min< WORD >(LOWORD(fileInfo.dwFileVersionMS), 255));
+			l_TempVersion.m_VersionParts.m_Beta = static_cast<unsigned char>(std::min< WORD >(LOWORD(fileInfo.dwFileVersionLS), 255));
 
 				l_Version = l_TempVersion.m_Version;
 			}
-		}
-
-		delete [] lpData;
 
 		return l_Version;
 	}
@@ -108,28 +110,18 @@ namespace SvSyl
 	{
 		std::string Result;
 
-		TCHAR moduleFilename[512];
-		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
-
-		DWORD dwHandle;
-		DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
-		unsigned char* lpData = new unsigned char[size];
-
-		BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
-		if (rc)
-		{
-			VS_FIXEDFILEINFO* pFileInfo = nullptr;
-			UINT Len = 0;
-			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+		VS_FIXEDFILEINFO fileInfo;
+		bool isValid = getFileInfo(fileInfo);
+		if (isValid)
 			{
 				std::stringstream buf;
 
-				buf << HIWORD(pFileInfo->dwFileVersionMS);
+			buf << HIWORD(fileInfo.dwFileVersionMS);
 				buf << _T(".");
-				buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
+			buf << std::setfill('0') << std::setw(2) << LOWORD(fileInfo.dwFileVersionMS);
 
 				//Patch number when between 1-99,  SVN revision number when >= 100
-				auto patchOrSvnNumber = HIWORD(pFileInfo->dwFileVersionLS);
+			auto patchOrSvnNumber = HIWORD(fileInfo.dwFileVersionLS);
 				if (patchOrSvnNumber > 0 && patchOrSvnNumber < 100)
 				{
 					buf << _T(".") << patchOrSvnNumber;
@@ -139,7 +131,7 @@ namespace SvSyl
 					buf << _T("r") << patchOrSvnNumber;
 				}
 
-				auto alphaOrBetaNumber = LOWORD(pFileInfo->dwFileVersionLS);
+			auto alphaOrBetaNumber = LOWORD(fileInfo.dwFileVersionLS);
 				//Arvid this signifies a beta if nonzero and below 255 and an alpha if above 1001
 				if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 				{
@@ -152,9 +144,6 @@ namespace SvSyl
 
 				Result = buf.str();
 			}
-		}
-
-		delete [] lpData;
 
 		#ifdef _DEBUG
 			Result += _T("d");        // For debug builds.
