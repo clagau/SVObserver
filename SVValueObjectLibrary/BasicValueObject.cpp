@@ -137,60 +137,62 @@ HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/) const
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue(std::string& rValue, int Index /*= -1*/) const
+HRESULT BasicValueObject::getValue(std::string& rValueString, int Index, const std::string& rFormatString) const
 {
+	//BasicValueObject currently always ignores rFormatString!
 	HRESULT	Result = S_OK;
 
-	RefreshOwner( SVObjectClass::PreRefresh );
+	RefreshOwner(SVObjectClass::PreRefresh);
 
-	rValue.clear();
-	switch(m_Value.vt)
+	rValueString.clear();
+	switch (m_Value.vt)
 	{
 	case VT_BSTR:
-		{
-			rValue = SvUl::createStdString(m_Value.bstrVal);
-		}
-		break;
+	{
+		rValueString = SvUl::createStdString(m_Value.bstrVal);
+	}
+	break;
 	case VT_BOOL:
-		{
-			rValue =  m_Value.boolVal ? _T( "True") : _T( "False" );
-		}
-		break;
+	{
+		rValueString = m_Value.boolVal ? _T("True") : _T("False");
+	}
+	break;
 	//The old BOOL converts to VT_IINT so this is also of type boolean
 	case VT_INT:
-		{
-			rValue =  m_Value.intVal == 1 ? _T( "True") : _T( "False" );
-		}
-		break;
+	{
+		rValueString = m_Value.intVal == 1 ? _T("True") : _T("False");
+	}
+	break;
 	case VT_I4:
-		{
-			rValue = SvUl::Format( _T("%d"), m_Value.lVal );
-		}
-		break;
+	{
+		rValueString = SvUl::Format(_T("%d"), m_Value.lVal);
+	}
+	break;
 	case VT_I8:
-		{
-			rValue = SvUl::Format( _T("%d"), m_Value.llVal );
-		}
-		break;
+	{
+		rValueString = SvUl::Format(_T("%d"), m_Value.llVal);
+	}
+	break;
 	case VT_R4:
-		{
-			rValue = SvUl::Format( _T("%f"), m_Value.fltVal );
-		}
-		break;
+	{
+		rValueString = SvUl::Format(_T("%f"), m_Value.fltVal);
+	}
+	break;
 	case VT_R8:
-		{
-			rValue = SvUl::Format( _T("%f"), m_Value.dblVal );
-		}
-		break;
+	{
+		rValueString = SvUl::Format(_T("%f"), m_Value.dblVal);
+	}
+	break;
 	default:
-		{
-			Result = S_FALSE;
-		}
-		break;
+	{
+		Result = S_FALSE;
+	}
+	break;
 	}
 
 	return Result;
 }
+
 
 int32_t BasicValueObject::getByteSize(bool useResultSize, bool memBlockData) const
 {
@@ -474,17 +476,16 @@ DWORD BasicValueObject::GetObjectColor() const
 }
 
 
-void BasicValueObject::setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+std::string BasicValueObject::getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
 {
 	//@TODO[Arvid][10.00][21.04.2020] for the BasicValueObject this function has not been implemented yet. This may or may not be necessary in the future.
-
 	SvDef::StringVector msgList;
-	msgList.push_back(SvUl::Format(_T("%s"), _T("setFixedWidthFormatString()")));
-	msgList.push_back(SvUl::Format(_T("BasicValueObject")));
+	msgList.push_back(SvUl::Format(_T("%s"), _T("getFixedWidthFormatString()")));
+	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
 	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
+	return _T("<invalid>");
 }
-
 
 #pragma endregion Public Methods
 

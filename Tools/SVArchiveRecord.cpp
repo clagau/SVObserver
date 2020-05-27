@@ -6,7 +6,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVArchiveRecord.h"
-#include "ArchiveToolHelper.h"
 #include "SVArchiveImageThreadClass.h"
 #include "SVArchiveTool.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
@@ -26,32 +25,56 @@ namespace SvTo
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* p_pToolArchive, SVObjectReference p_refObject)
+void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pToolArchive, SVObjectReference rObject)
 {
-	assert(p_pToolArchive);
+	assert(pToolArchive);
 
-	m_pArchiveTool = p_pToolArchive;
-	m_eArchiveMethod = m_pArchiveTool->m_eArchiveMethod;
+	SetArchiveTool(pToolArchive);
 
-	m_svObjectReference = p_refObject;
+	m_svObjectReference = rObject;
 
-	if(nullptr != dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject()))
+	auto pObject = m_svObjectReference.getObject();
+
+	if(nullptr != dynamic_cast <SvIe::SVImageClass*> (pObject))
 	{
-		BuildFileName();
-		BuildArchiveImageFilePaths();
+		BuildImageFileName();
+		BuildImageFilePaths();
 	}
+	else
+	{
+		auto pValueObject = dynamic_cast <SvOi::IValueObject*> (pObject);
+		if (nullptr != pValueObject)
+		{
+			DWORD setDisplayWidths;
+			m_pArchiveTool->m_bvoFormatResults.GetValue(setDisplayWidths);
+
+			if (setDisplayWidths)
+			{
+				DWORD totalWidth;
+				m_pArchiveTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(totalWidth);
+				DWORD decimals;
+				m_pArchiveTool->m_dwArchiveResultsNumberOfDecimals.GetValue(decimals);
+				m_formatString = pValueObject->getFixedWidthFormatString(totalWidth, decimals);
+			}
+			else
+			{
+				m_formatString = _T("");
+			}
+		}
+	}
+
 }
 
-void SVArchiveRecord::BuildFileName()
+void SVArchiveRecord::BuildImageFileName()
 {
 	assert(m_svObjectReference.getObject());
-	m_FileNameImage = m_ImageObjectName = m_svObjectReference.getObject()->GetCompleteName();
-	SvUl::searchAndReplace(m_FileNameImage, _T("."), _T("_"));
+	m_ImageFileName = m_ImageObjectName = m_svObjectReference.getObject()->GetCompleteName();
+	SvUl::searchAndReplace(m_ImageFileName, _T("."), _T("_"));
 }
 
-void SVArchiveRecord::BuildArchiveImageFilePaths()
+void SVArchiveRecord::BuildImageFilePaths()
 {
-	assert(0 < m_FileNameImage.size());
+	assert(0 < m_ImageFileName.size());
 	assert(m_pArchiveTool);
 	DWORD		dwMaxImages;
 	m_FileNames.clear();
@@ -64,11 +87,12 @@ void SVArchiveRecord::BuildArchiveImageFilePaths()
 	m_pArchiveTool->m_dwArchiveMaxImagesCount.GetValue(dwMaxImages);
 	for (DWORD i = 0; i < dwMaxImages; i++)
 	{
-		std::string FileName = SvUl::Format(_T("%s__%06ld.bmp"), m_FileNameImage.c_str(), i + 1);
+		std::string FileName = SvUl::Format(_T("%s__%06ld.bmp"), m_ImageFileName.c_str(), i + 1);
 		svFileName.SetFileName(FileName.c_str());
 		m_FileNames.push_back(svFileName.GetFullFileName());
 	}
 }
+
 
 HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths)
 {
@@ -102,7 +126,7 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	if (useAlternativeImagePaths)
 	{
 		svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
-		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_FileNameImage, useAlternativeImagePaths).c_str());
+		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_ImageFileName, useAlternativeImagePaths).c_str());
 		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName()); 
 	}
 	//otherwise the file name already set elsewhere will be used
@@ -343,7 +367,7 @@ HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord
 	return Result;
 }
 
-void SVArchiveRecord::Init(SVArchiveTool* pTool)
+void SVArchiveRecord::SetArchiveTool(SVArchiveTool* pTool)
 {
 	m_pArchiveTool = pTool;
 	m_eArchiveMethod = pTool->m_eArchiveMethod;

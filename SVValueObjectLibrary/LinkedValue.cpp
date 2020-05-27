@@ -106,8 +106,6 @@ HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 		}
 		return hres;
 	}
-	
-	
 }
 
 HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArraysize)
@@ -125,9 +123,10 @@ HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool
 	}
 	return __super::setValue(rValue, Index, fixArraysize);
 }
-HRESULT LinkedValue::setValue(const std::string& rValue, int Index /*= -1*/)
+
+HRESULT LinkedValue::setValue(const std::string& rValueString, int Index /*= -1*/)
 {
-	return __super::setValue(rValue, Index);
+	return __super::setValue(rValueString, Index);
 }
 
 void LinkedValue::updateMemBlockData() const

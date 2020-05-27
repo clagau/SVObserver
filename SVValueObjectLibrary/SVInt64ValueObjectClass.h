@@ -27,7 +27,8 @@ public:
 	SVInt64ValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	const SVInt64ValueObjectClass& operator = (const SVInt64ValueObjectClass& rhs );
 
-	void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals);
+	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+
 	void setStandardFormatString();
 
 	virtual ~SVInt64ValueObjectClass();

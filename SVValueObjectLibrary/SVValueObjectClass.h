@@ -88,8 +88,8 @@ public:
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1,bool fixArrasize = false) override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
-	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
+	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
+	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const;
 	virtual void setResetOptions(bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem) override;
 	virtual void validateValue(const _variant_t& rValue) const override;
 	virtual std::string getTypeName() const override { return m_TypeName; };
@@ -110,7 +110,8 @@ public:
 	virtual void updateMemBlockData() const override {}
 	virtual bool isIndirectValue() const override { return false; };
 	virtual void setStandardFormatString() = 0;
-	virtual void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+
 
 #pragma endregion virtual method (IObjectClass/IValueObject)
 	
@@ -156,7 +157,7 @@ protected:
 	ValueType* valuePtr() { return m_pValue; }
 	const ValueType* valuePtr() const { return m_pValue; }
 
-	std::string FormatOutput(const T& rValue) const;
+	std::string FormatOutput(const T& rValue, const std::string& rFormatString=_T("")) const;
 	void setOutputFormat( LPCTSTR OutFormat ) { m_OutFormat = OutFormat; };
 	LPCTSTR getOutputFormat() const { return m_OutFormat.c_str(); };
 	bool isLegacyVectorObjectCompatibility() const { return m_LegacyVectorObjectCompatibility; };

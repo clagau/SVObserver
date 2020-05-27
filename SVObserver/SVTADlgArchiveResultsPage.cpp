@@ -139,7 +139,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.SetValue(m_TotalWidth);
 	m_pTool->m_dwArchiveResultsNumberOfDecimals.SetValue(m_Decimals);
 
-	m_pTool->setResultArchiveList(m_List);
+	m_pTool->refreshResultArchiveList(m_List);
 
 	// Add newly selected values to headers.
 	BOOL bUseHeaders( false );
@@ -225,7 +225,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_bvoUseHeaders.GetValue(m_ColumnHeaders);
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
 
-	m_List.swap(m_pTool->getResultArchiveList());
+	m_List.swap(m_pTool->assembleResultReferenceVector());
 
 	ReadSelectedObjects();
 	UpdateData(FALSE);

@@ -298,8 +298,8 @@ enum ObjectAttributes
 	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
 	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
 	printable					= 0x00000080;	//Object is printed in the configuration report
-	remotelySetable				= 0x00000100;	//Object can be set remotely
-	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online
+	remotelySetable				= 0x00000100;	//Object can be set remotely  //@TODO[Arvid]: this is a typo. 'remotelySettable' would be correct
+	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online //@TODO[Arvid]: this is a typo. 'settableOnline' would be correct
 	extentObject				= 0x00000400;	//Object is an extent value object
 	taskObject					= 0x00000800;	//Object is a task object
 	publishResultImage			= 0x00001000;	//Object result image can be published

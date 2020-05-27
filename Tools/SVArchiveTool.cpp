@@ -69,8 +69,8 @@ void SVArchiveTool::initializeArchiveTool()
 {
 	m_currentImagePathRoot = "";
 
-	m_arrayResultsInfoObjectsToArchive.SetArchiveTool( this );
-	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
+	m_resultsToBeArchived.SetArchiveTool( this );
+	m_imagesToBeArchived.SetArchiveTool( this );
 
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
@@ -344,13 +344,13 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
-	m_arrayImagesInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveImageNames );
-	m_arrayImagesInfoObjectsToArchive.ValidateImageObjects();	// makes sure the images are connected as inputs
+	m_imagesToBeArchived.InitializeObjects( this, m_svoArchiveImageNames );
+	m_imagesToBeArchived.ValidateImageObjects();	// makes sure the images are connected as inputs
 	
-	m_arrayResultsInfoObjectsToArchive.InitializeObjects( this, m_svoArchiveResultNames );
-	//next line it needed to reset the names if object have be changed because e.g. array become a single value.
-	setResultArchiveList(getResultArchiveList());
-	m_arrayResultsInfoObjectsToArchive.ValidateResultsObjects();	// makes sure the results are connected as inputs
+	m_resultsToBeArchived.InitializeObjects( this, m_svoArchiveResultNames );
+	//the next line is needed to reset the names if objects have changed (e.g. because an array has become a single value).
+	refreshResultArchiveList(assembleResultReferenceVector());
+	m_resultsToBeArchived.ValidateResultsObjects();	// makes sure the results are connected as inputs
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if ( pInspection && pInspection->IsResetStateSet( SvDef::SVResetStateArchiveToolCreateFiles ) )
@@ -360,8 +360,8 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 	else
 	{
-		m_arrayImagesInfoObjectsToArchive.ResetImageCounts();
-		m_arrayImagesInfoObjectsToArchive.ValidateImageObjects();
+		m_imagesToBeArchived.ResetImageCounts();
+		m_imagesToBeArchived.ValidateImageObjects();
 
 		result = AllocateImageBuffers(pErrorMessages) && result;
 	}
@@ -370,7 +370,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	m_uiValidateCount = 0;
 
-	if (m_arrayImagesInfoObjectsToArchive.GetSize() > 0)
+	if (m_imagesToBeArchived.GetSize() > 0)
 	{//Only need to verify space if there are images to be archived.  If no images are checked we do not need to run through the checking of disk space.
 		
 		updateCurrentImagePathRoot();
@@ -583,17 +583,17 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 		}
 	}
 
-	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
+	m_imagesToBeArchived.SetArchiveTool( this );
 	//
 	// Make sure the image 'index' for image file creation is reset.
 	// 04 Jan 2000 - frb.
 	//
-	m_arrayImagesInfoObjectsToArchive.ResetImageCounts();
+	m_imagesToBeArchived.ResetImageCounts();
 	
 	//
 	// Validate the image objects to be archived.
 	//
-	m_arrayImagesInfoObjectsToArchive.ValidateImageObjects();
+	m_imagesToBeArchived.ValidateImageObjects();
 	
 	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
@@ -611,7 +611,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	//
 	// Validate the results objects to be archived in text format.
 	//
-	int nCountResults = m_arrayResultsInfoObjectsToArchive.ValidateResultsObjects();
+	int nCountResults = m_resultsToBeArchived.ValidateResultsObjects();
 	
 	m_ArchiveStringBuffer.clear();
 
@@ -662,7 +662,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 		long toolPos = -1;
 		m_ToolPosition.GetValue(toolPos);
 		BufferStructCountMap bufferMap;
-		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers(dwMaxImages, bufferMap, toolPos);
+		HRESULT hrAllocate = m_imagesToBeArchived.AllocateBuffers(dwMaxImages, bufferMap, toolPos);
 
 		if (SVArchiveAsynchronous == m_eArchiveMethod)
 		{
@@ -796,12 +796,11 @@ bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 		//
 		// Iterate the array of objects to archive and build a string.
 		//
-		std::string Archive = m_arrayResultsInfoObjectsToArchive.BuildResultsArchiveString();
+		std::string Archive = m_resultsToBeArchived.BuildResultsArchiveString();
 
 		if (!Archive.empty())
 		{
 			Archive += _T("\r\n");
-
 
 			if (true)	// always do this for now (never buffer text) see FR00100.007.0460.xxx
 			{
@@ -840,7 +839,7 @@ bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 		//
 		// Iterate the list of images to archive.
 		//
-		m_arrayImagesInfoObjectsToArchive.WriteArchiveImageFiles(rRunStatus.m_triggerRecord);
+		m_imagesToBeArchived.WriteArchiveImageFiles(rRunStatus.m_triggerRecord);
 
 		rRunStatus.SetPassed();
 
@@ -860,11 +859,11 @@ HRESULT SVArchiveTool::QueueArchiveString( const std::string& rArchiveString )
 
 // Called by SVToolAdjustmentArchivePage::OnInitDialog().
 //
-SVObjectReferenceVector SVArchiveTool::getResultArchiveList()
+SVObjectReferenceVector SVArchiveTool::assembleResultReferenceVector()
 {
 	SVObjectReferenceVector Result;
 
-	const auto& rRecVec = m_arrayResultsInfoObjectsToArchive.getRecordVec();
+	const auto& rRecVec = m_resultsToBeArchived.getRecordVec();
 	for (const auto& rRecord : rRecVec)
 	{
 		const SVObjectReference& rObjectRef = rRecord.GetObjectReference();
@@ -878,45 +877,42 @@ SVObjectReferenceVector SVArchiveTool::getResultArchiveList()
 
 //  Called by SVToolAdjustmentArchivePage::OnOK().
 //
-void SVArchiveTool::setResultArchiveList(const SVObjectReferenceVector& rObjectRefVector)
+void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObjectRefVector)
 {
-	m_arrayResultsInfoObjectsToArchive.DisconnectAllResultObjects();
-	m_arrayResultsInfoObjectsToArchive.ClearArray();
+	m_resultsToBeArchived.DisconnectAllResultObjects();
+	m_resultsToBeArchived.ClearArray();
 
-	m_svoArchiveResultNames.SetArraySize( static_cast<int> (rObjectRefVector.size()) );
+	m_svoArchiveResultNames.SetArraySize( static_cast<int> (rObjectRefVector.size()));
 
-	for ( int i = 0; i < static_cast<int> (rObjectRefVector.size()); i++ )
+	for (int i = 0; i < static_cast<int> (rObjectRefVector.size()); i++)
 	{
 		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
-		SVArchiveRecord& rArchiveRecord = m_arrayResultsInfoObjectsToArchive.push_back();
-		rArchiveRecord.Init( this );
-		rArchiveRecord.GetObjectReference() = rObjectRef;
-		rArchiveRecord.ConnectInputObject();
+		m_resultsToBeArchived.emplaceRecordAtBack(this, rObjectRef);
 
-		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(true), i );
+		m_svoArchiveResultNames.SetValue(rObjectRef.GetCompleteName(true), i);
 	}
 }
 
 void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector)
 {
-	m_arrayImagesInfoObjectsToArchive.ClearArray();
+	m_imagesToBeArchived.ClearArray();
 	
 	
-	m_svoArchiveImageNames.SetArraySize( static_cast< int >(rObjectRefVector.size() ) );
+	m_svoArchiveImageNames.SetArraySize( static_cast< int >(rObjectRefVector.size()));
 
-	for ( int i = 0; i < static_cast< int >(rObjectRefVector.size() ); i++ )
+	for (int i = 0; i < static_cast< int >(rObjectRefVector.size()); i++)
 	{
 		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
-		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), i  );
+		m_svoArchiveImageNames.SetValue(rObjectRef.GetCompleteName(), i);
 	}
 }
 
 SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 {
 	SVObjectReferenceVector Result;
-	const auto& rRecVec = m_arrayImagesInfoObjectsToArchive.getRecordVec();
+	const auto& rRecVec = m_imagesToBeArchived.getRecordVec();
 	for (const auto& rRecord : rRecVec)
 	{
 		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( rRecord.GetObjectReference().getObject() );
@@ -981,7 +977,7 @@ HRESULT SVArchiveTool::WriteBuffers()
 
 	// write images
 
-	HRESULT hrImages = m_arrayImagesInfoObjectsToArchive.WriteImageQueue();
+	HRESULT hrImages = m_imagesToBeArchived.WriteImageQueue();
 	if ( S_OK == hr )
 	{
 		hr = hrImages;
@@ -1129,8 +1125,8 @@ bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInI
 {
 	if (nullptr != pObjectInInfo)
 	{
-		SvDef::StringVector vecRemovedImage  = m_arrayImagesInfoObjectsToArchive. RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
-		SvDef::StringVector vecRemovedResult = m_arrayResultsInfoObjectsToArchive.RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
+		SvDef::StringVector vecRemovedImage  = m_imagesToBeArchived. RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
+		SvDef::StringVector vecRemovedResult = m_resultsToBeArchived.RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
 
 		local_remove_items ( vecRemovedImage, m_svoArchiveImageNames );
 		local_remove_items ( vecRemovedResult, m_svoArchiveResultNames );
@@ -1151,8 +1147,6 @@ void SVArchiveTool::goingOffline()
 	{
 		WriteBuffers();
 	}
-
-	m_arrayResultsInfoObjectsToArchive.resetStandardFormatStringsOfValueObjects();
 
 	// Close the text to archive file if necessary
 	if(m_fileArchive.is_open())
@@ -1334,7 +1328,7 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)
 
 	if ( (0 == m_uiValidateCount % 10))
 	{
-		if (m_arrayImagesInfoObjectsToArchive.GetSize() > 0)
+		if (m_imagesToBeArchived.GetSize() > 0)
 		{//Only need to verify space if there are images to be archived.  If no images are checked we do not need to run through the checking of disk space.
 			
 			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);

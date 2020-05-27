@@ -512,13 +512,13 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues) cons
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::setValue(const std::string& rValue, int Index /*= -1*/)
+HRESULT SVValueObjectClass<T>::setValue(const std::string& rValueString, int Index /*= -1*/)
 {
 	HRESULT Result(E_FAIL);
 
 	try
 	{
-		T Value = ConvertString2Type(rValue);
+		T Value = ConvertString2Type(rValueString);
 		Result = SetValue(Value, Index);
 	}
 	catch (const SvStl::MessageContainer&)
@@ -530,7 +530,7 @@ HRESULT SVValueObjectClass<T>::setValue(const std::string& rValue, int Index /*=
 }
 
 template <typename T>
-HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/) const
+HRESULT SVValueObjectClass<T>::getValue(std::string& rValueString, int Index /*= -1*/, const std::string& rFormatString) const
 {
 	HRESULT Result(E_FAIL);
 
@@ -544,11 +544,11 @@ HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/)
 			ValueVector::const_iterator Iter(Values.begin());
 			for (; Values.end() != Iter; ++Iter)
 			{
-				if (!rValue.empty())
+				if (!rValueString.empty())
 				{
-					rValue += _T("; ");
+					rValueString += _T("; ");
 				}
-				rValue += ConvertType2String(*Iter);
+				rValueString += ConvertType2String(*Iter);
 			}
 		}
 	}
@@ -558,7 +558,7 @@ HRESULT SVValueObjectClass<T>::getValue(std::string& rValue, int Index /*= -1*/)
 		Result = GetValue(Value, Index);
 		if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result)
 		{
-			rValue = ConvertType2String(Value);
+			rValueString = (rFormatString.size() > 0) ? FormatOutput(Value, rFormatString): ConvertType2String(Value);
 		}
 	}
 	return Result;
@@ -735,12 +735,19 @@ inline HRESULT SVValueObjectClass<T>::ValidateIndex(int ArrayIndex) const
 }
 
 template <typename T>
-std::string SVValueObjectClass<T>::FormatOutput(const T& rValue) const
+std::string SVValueObjectClass<T>::FormatOutput(const T& rValue, const std::string& rFormatString) const
 {
 	std::string Result;
-	if (!m_OutFormat.empty())
+	if (!rFormatString.empty())
 	{
-		Result = SvUl::Format(m_OutFormat.c_str(), rValue);
+		Result = SvUl::Format(rFormatString.c_str(), rValue);
+	}
+	else
+	{
+		if (!m_OutFormat.empty())
+		{
+			Result = SvUl::Format(m_OutFormat.c_str(), rValue);
+		}
 	}
 	return Result;
 }
@@ -928,16 +935,19 @@ void SVValueObjectClass<T>::setResultSizePointer(int32_t* pResultSize)
 
 
 template <typename T>
-void SVValueObjectClass<T>::setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
 {
 	//@TODO[Arvid][10.00][21.04.2020] for some kinds of value objects this function has not been implemented yet. This may or may not be necessary in the future.
-
 	SvDef::StringVector msgList;
-	msgList.push_back(SvUl::Format(_T("%s"), _T("setFixedWidthFormatString()")));
+	msgList.push_back(SvUl::Format(_T("%s"), _T("getFixedWidthFormatString()")));
 	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
 	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
+	return _T("<invalid>");
 }
+
+
+
 
 
 #pragma endregion Protected Methods

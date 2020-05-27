@@ -32,13 +32,11 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	void SetArchiveTool( SVArchiveTool* pTool );
+	void  SetArchiveTool( SVArchiveTool* pTool );
 	void ClearArray();
 	void ResetImageCounts();
 
 	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, SvVol::SVStringValueObjectClass& svoObjects );	// use array capability of string vo
-
-	void SVArchiveRecordsArray::resetStandardFormatStringsOfValueObjects();
 
 	SvDef::StringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
 	void ValidateImageObjects();
@@ -49,13 +47,12 @@ public:
 	HRESULT WriteImageQueue();
 
 	int ValidateResultsObjects();
-	void BuildArchiveImageFilePaths();
 	std::string BuildResultsArchiveString();
 	void DisconnectAllResultObjects();
 
 	const std::vector <SVArchiveRecord>& getRecordVec() const;
 	int GetSize();
-	SVArchiveRecord& push_back();
+	void emplaceRecordAtBack(SVArchiveTool* pTool, const SVObjectReference& rObjectRef);
 #pragma endregion Public Methods
 
 private:

@@ -105,13 +105,13 @@ void SVInt64ValueObjectClass::LocalInitialize()
 	init();
 }
 
-void SVInt64ValueObjectClass::setFixedWidthFormatString(uint32_t totalWidth, uint32_t /*decimals: ignored*/)
+std::string SVInt64ValueObjectClass::getFixedWidthFormatString(uint32_t totalWidth, uint32_t /*decimals: ignored*/)
 {
-	std::basic_ostringstream<TCHAR> formatStream;
+	std::ostringstream formatStream;
 	formatStream << "%" << totalWidth << "I64d";
-
-	setOutputFormat(formatStream.str().c_str());
+	return formatStream.str();
 }
+
 
 
 void SVInt64ValueObjectClass::setStandardFormatString()

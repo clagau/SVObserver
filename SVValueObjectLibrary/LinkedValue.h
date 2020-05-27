@@ -42,14 +42,14 @@ public:
 	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1) const override;
 	
 	/// similar to GetValue but  for safe arrays 
-	HRESULT   GetArrayValue(_variant_t& rValue);
+	HRESULT GetArrayValue(_variant_t& rValue);
 
 	virtual HRESULT SetDefaultValue(const _variant_t& rValue, bool bResetAll = true) override;
 
-	virtual HRESULT  SetValue(const _variant_t& rValue, int Index = -1) override;
+	virtual HRESULT SetValue(const _variant_t& rValue, int Index = -1) override;
 
-	virtual HRESULT  setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false) override;
-	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
+	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false) override;
+	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
 
 	virtual void updateMemBlockData() const override;
 

@@ -950,7 +950,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 		wchar_t buff[64];
 
 		writer->WriteStartElement(nullptr, L"Results", nullptr);
-		const auto& rRecVec = ar->m_arrayResultsInfoObjectsToArchive.getRecordVec();
+		const auto& rRecVec = ar->m_resultsToBeArchived.getRecordVec();
 		for (int i=0; i< rRecVec.size(); ++i)
 		{
 			if (nullptr != rRecVec[i].GetObjectReference().getObject())
@@ -965,7 +965,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 		writer->WriteEndElement();
 		writer->WriteStartElement(nullptr, L"Images", nullptr);
 
-		const auto& rRecImageVec = ar->m_arrayImagesInfoObjectsToArchive.getRecordVec();
+		const auto& rRecImageVec = ar->m_imagesToBeArchived.getRecordVec();
 		for (int i = 0; i< rRecImageVec.size(); ++i)
 		{
 			writer->WriteStartElement(nullptr, L"Result", nullptr);

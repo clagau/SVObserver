@@ -34,7 +34,8 @@ public:
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
-	void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+
 	void setStandardFormatString();
 
 

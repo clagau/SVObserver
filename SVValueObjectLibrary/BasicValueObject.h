@@ -61,8 +61,8 @@ public:
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false ) override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<_variant_t>& rValues) const override { return E_NOTIMPL; }
-	virtual HRESULT setValue(const std::string& rValue, int Index = -1) override;
-	virtual HRESULT getValue(std::string& rValue, int Index = -1) const override;
+	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
+	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")/*currently always ignored*/) const override;
 	virtual void setResetOptions( bool bResetAlways, SvOi::SVResetItemEnum eResetItem ) override {};
 	virtual void validateValue( const _variant_t& rValue ) const override {};
 	virtual bool isArray() const override { return false; };
@@ -145,7 +145,7 @@ public:
 
 	virtual DWORD GetObjectColor() const override;
 
-	virtual void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 
 	void setStandardFormatString() override {} //not currently used in this class
 

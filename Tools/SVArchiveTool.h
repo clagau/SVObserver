@@ -37,8 +37,8 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	SVObjectReferenceVector getResultArchiveList();
-	void setResultArchiveList(const SVObjectReferenceVector& rObjectRefVector);
+	SVObjectReferenceVector assembleResultReferenceVector();
+	void refreshResultArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 	SVObjectReferenceVector getImageArchiveList();
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 
@@ -69,8 +69,8 @@ public:
 	//
 	// The arrays for results and images to archive.
 	//
-	SVArchiveRecordsArray  m_arrayResultsInfoObjectsToArchive;
-	SVArchiveRecordsArray  m_arrayImagesInfoObjectsToArchive;
+	SVArchiveRecordsArray  m_resultsToBeArchived;
+	SVArchiveRecordsArray  m_imagesToBeArchived;
 
 	SvVol::SVDWordValueObjectClass m_dwAppendArchiveFile;
 	SvVol::SVDWordValueObjectClass m_bvoFormatResults;
@@ -94,7 +94,6 @@ protected:
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	HRESULT QueueArchiveString( const std::string& rArchiveString );
-
 
 	//
 	// Data elements.

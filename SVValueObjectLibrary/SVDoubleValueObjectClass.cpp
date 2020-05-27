@@ -115,13 +115,13 @@ void SVDoubleValueObjectClass::setStandardFormatString()
 	setOutputFormat(_T("%lf"));
 }
 
-void SVDoubleValueObjectClass::setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+std::string SVDoubleValueObjectClass::getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
 {
 	std::ostringstream formatStream;
-	formatStream << "%" << totalWidth<< "." << decimals << "lf";
-
-	setOutputFormat(formatStream.str().c_str());
+	formatStream << "%" << totalWidth << "." << decimals << "lf";
+	return formatStream.str();
 }
+
 
 double SVDoubleValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {

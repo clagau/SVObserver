@@ -129,12 +129,13 @@ void SVLongValueObjectClass::setStandardFormatString()
 }
 
 
-void SVLongValueObjectClass::setFixedWidthFormatString(uint32_t totalWidth, uint32_t /*decimals: ignored*/)
+std::string SVLongValueObjectClass::getFixedWidthFormatString(uint32_t totalWidth, uint32_t /*decimals: ignored*/)
 {
-	std::basic_ostringstream<TCHAR> formatStream;
-	formatStream << "%" << totalWidth << "ld";
-
-	setOutputFormat(formatStream.str().c_str());
+	std::ostringstream formatStream;
+	formatStream << "%" << totalWidth << "I64d";
+	return formatStream.str();
 }
+
+
 
 } //namespace SvVol

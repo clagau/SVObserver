@@ -35,7 +35,7 @@ public:
 	void setStandardFormatString() override {} //not currently used in this class
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
-	virtual HRESULT SetValue(const std::string& rValue, int Index = -1) override;
+	virtual HRESULT SetValue(const std::string& rValueString, int Index = -1) override;
 	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;

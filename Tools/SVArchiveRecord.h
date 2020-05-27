@@ -45,9 +45,9 @@ public:
 			SVObjectReference refObject    // a reference to an object required
 		);
 
-	void BuildArchiveImageFilePaths();
+	void BuildImageFilePaths();
 	HRESULT	GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths);
-	void BuildFileName();                 // For images only
+	void BuildImageFileName();            // For images only
 	void ConnectInputObject();
 	void DisconnectInputObject();
 
@@ -57,7 +57,7 @@ public:
 	HRESULT WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord);
 	static HRESULT WriteImage( const SVMatroxBuffer& buf, const std::string& rFileName );
 
-	void Init( SVArchiveTool* pArchiveTool );
+	void SetArchiveTool( SVArchiveTool* pArchiveTool );
 
 	SvIe::SVImageClass* GetImage();
 
@@ -69,16 +69,16 @@ public:
 private:
 #pragma region Private Members
 	SVObjectReference   m_svObjectReference;
-	std::string            m_ImageObjectName;           // images only
-	std::string            m_FileNameImage;             // images only
-	long                m_lCountImages {0L};                // images only
+	std::string         m_ImageObjectName;				// images only
+	std::string         m_ImageFileName;				// images only
+	long                m_lCountImages {0L};			// images only
 	std::vector<std::string> m_FileNames;
 	std::vector<SvTrc::IImagePtr>	m_ImageStoreVector;
-	SVImageInfoClass    m_ImageInfo;                   // images only
+	SVImageInfoClass    m_ImageInfo;					// images only
 	long                m_lLastIndex {0L};
 	long                m_lMaxIndex {0L};
 	std::string			m_ImagePathRoot;
-
+	std::string			m_formatString = _T("");
 
 	//Attributes
 	SVArchiveMethodEnum m_eArchiveMethod {SVArchiveInvalidMethod};

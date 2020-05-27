@@ -776,7 +776,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				CPoint ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Results"));
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				const auto& rRecVec = pArchiveTool->m_arrayResultsInfoObjectsToArchive.getRecordVec();
+				const auto& rRecVec = pArchiveTool->m_resultsToBeArchived.getRecordVec();
 				for (int i = 0; i < rRecVec.size(); ++i)
 				{
 					if (nullptr != rRecVec[i].GetObjectReference().getObject())
@@ -793,7 +793,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Images"));
 				
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				const auto& rRecImageVec = pArchiveTool->m_arrayImagesInfoObjectsToArchive.getRecordVec();
+				const auto& rRecImageVec = pArchiveTool->m_imagesToBeArchived.getRecordVec();
 				for (int i = 0; i < rRecImageVec.size(); ++i)
 				{
 					ptCurPos.x   = nIndentLevel * m_shortTabPixels;

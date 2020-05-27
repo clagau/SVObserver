@@ -54,13 +54,6 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 
 	assert(m_pArchiveTool->GetInspectionInterface());
 
-	DWORD setDisplayWidths;
-	m_pArchiveTool->m_bvoFormatResults.GetValue(setDisplayWidths);
-
-	DWORD totalWidth;
-	m_pArchiveTool->m_dwArchiveResultsMinimumNumberOfCharacters.GetValue(totalWidth);
-	DWORD decimals;
-	m_pArchiveTool->m_dwArchiveResultsNumberOfDecimals.GetValue(decimals);
 
 	int iSize = rObject.getResultSize();
 	for (int i = 0; i < iSize; i++)
@@ -101,36 +94,10 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 			{
 				auto pValueObject = ObjectRef.getValueObject();
 				m_vecRecords.back().InitArchiveRecord(pToolArchive, ObjectRef);
-
-				if (nullptr != pValueObject)
-				{
-					if (setDisplayWidths)
-					{
-						pValueObject->setFixedWidthFormatString(totalWidth, decimals);
-					}
-					else
-					{
-						pValueObject->setStandardFormatString();
-					}
-				}
 			}
 		}
 	}
 	return hr;
-}
-
-
-void SVArchiveRecordsArray::resetStandardFormatStringsOfValueObjects()
-{
-	for (auto& record : m_vecRecords)
-	{
-		auto pValueObject = record.GetObjectReference().getValueObject();
-
-		if (nullptr != pValueObject)
-		{
-			pValueObject->setStandardFormatString();
-		}
-	}
 }
 
 
@@ -165,7 +132,7 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 		if (pImageObject)
 		{
 			entry.m_svObjectReference = pImageObject;
-			entry.BuildFileName();
+			entry.BuildImageFileName();
 			entry.ConnectInputObject();
 
 			return false;
@@ -185,7 +152,7 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pTool )
 	m_pArchiveTool = pTool;
 	for ( auto& rRecord: m_vecRecords )
 	{
-		rRecord.Init(m_pArchiveTool);
+		rRecord.SetArchiveTool(m_pArchiveTool);
 	}
 }
 
@@ -250,14 +217,6 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	return static_cast<int> (m_vecRecords.size());
 }
 
-void SVArchiveRecordsArray::BuildArchiveImageFilePaths()
-{
-	for (auto& rRecord : m_vecRecords)
-	{
-		rRecord.BuildArchiveImageFilePaths();
-	}
-}
-
 std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 {
 	std::string Result;
@@ -274,7 +233,7 @@ std::string SVArchiveRecordsArray::BuildResultsArchiveString()
 		if ( nullptr != pValueObject )
 		{
 			std::string Temp;
-			HRESULT hr = pValueObject->getValue( Temp, rRecord.m_svObjectReference.ArrayIndex());
+			HRESULT hr = pValueObject->getValue( Temp, rRecord.m_svObjectReference.ArrayIndex(), rRecord.m_formatString);
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )
@@ -344,11 +303,16 @@ int SVArchiveRecordsArray::GetSize()
 	return static_cast< int >( m_vecRecords.size() );
 }
 
-SVArchiveRecord& SVArchiveRecordsArray::push_back()
+void SVArchiveRecordsArray::emplaceRecordAtBack(SVArchiveTool* pTool, const SVObjectReference& rObjectRef)
 {
 	m_vecRecords.emplace_back();
-	return m_vecRecords.at( m_vecRecords.size() - 1 );
+	SVArchiveRecord& rArchiveRecord = m_vecRecords.back();
+
+	rArchiveRecord.InitArchiveRecord(pTool, rObjectRef);
+	rArchiveRecord.GetObjectReference() = rObjectRef;
+	rArchiveRecord.ConnectInputObject();
 }
+
 #pragma endregion Public Methods
 
 } //namespace SvTo

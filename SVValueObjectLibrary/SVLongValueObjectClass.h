@@ -28,7 +28,8 @@ public:
 	SVLongValueObjectClass( const SVLongValueObjectClass& rhs );
 	const SVLongValueObjectClass& operator = (const SVLongValueObjectClass& rhs);
 
-	void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals);
+	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
+
 	void setStandardFormatString();
 
 	virtual ~SVLongValueObjectClass();

@@ -67,17 +67,18 @@ namespace SvOi
 		//! \returns S_OK if succeeded
 		virtual HRESULT getValues(std::vector<_variant_t>& rValues) const = 0;
 
-		//! Sets the value for Value object
-		//! \param rValue [in] The value to set the Value object to
+		//! Sets the value for Value object as determined from rValueString
+		//! \param rValueString [in] The value to set the Value object to
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT setValue(const std::string& rValue, int Index = -1) = 0;
+		virtual HRESULT setValue(const std::string& rValueString, int Index = -1) = 0;
 
-		//! Gets the value for Value object
-		//! \param rValue [out] The reference to write the value to
+		//! Writes the contained value into rValueString (using rFormatString if different from _T(""))
+		//! \param rValueString [out] The reference to write the value to
 		//! \param Index [in] The corresponding array index to write to, if required
+		//! \param rFormatString [in] the formatString be used
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue(std::string& rValue, int Index = -1) const = 0;
+		virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const = 0;
 
 		//! Set the reset options for the value object
 		//! \param bResetAlways [in] 
@@ -153,8 +154,9 @@ namespace SvOi
 		//! Sets a 'standard' format string to be used when the value of the object value needs to be output
 		virtual void setStandardFormatString() = 0;
 
-		// Sets a format string yielding a fixed length output string to be used when the value of the object value needs to be output
-		virtual void setFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) = 0;
+		// Creates a format string yielding a fixed length output string to be used when the value of the object value needs to be output
+		virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) = 0;
+
 	};
 
 	struct SetValueStruct 
