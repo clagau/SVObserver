@@ -72,7 +72,9 @@ private:
 		std::vector<SvTrc::TrInterestEventData> newTriggerQueue;
 		SvRpc::ServerStreamContext::Ptr ctx;
 		std::vector<int> valuePositions;
+		std::vector<int> rejectValuePositions;
 		std::vector<int> imagePositions;
+		std::vector<int> rejectImagePositions;
 		bool interestedInRejects;
 	};
 	void on_new_trigger_record(const SvTrc::TrInterestEventData&);

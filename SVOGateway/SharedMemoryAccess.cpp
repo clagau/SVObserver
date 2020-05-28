@@ -280,7 +280,7 @@ SharedMemoryAccess::product_stream_t::product_stream_t(
 	SvRpc::ServerStreamContext::Ptr ctx)
 	: observer(observer)
 	, ctx(ctx)
-	, interestedInRejects(req.rejectsonly())
+	, interestedInRejects(req.rejectsonly() || req.rejectimageids_size() > 0 || req.rejectvalueids_size() > 0)
 {
 	this->req.CopyFrom(streamReq);
 }
@@ -469,12 +469,38 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 	res->set_trigger(trId);
 	res->set_isreject(is_reject);
 
+	std::vector<SvSyl::SVFuture<void>> imageFutures;
 	const auto includeoverlays = stream->req.includeoverlays();
-	auto future = collect_images(*res->mutable_images(), *res->mutable_overlays(), pTro, stream->req.imageids(), stream->imagePositions, inspectionPos, inspectionId, includeoverlays);
+	{ // collect images for live-data stream
+		auto future = collect_images(
+			*res->mutable_images(),
+			*res->mutable_overlays(),
+			pTro,
+			stream->req.imageids(),
+			stream->imagePositions,
+			inspectionPos,
+			inspectionId,
+			includeoverlays);
+		imageFutures.emplace_back(std::move(future));
+	}
+	{ // collect reject images
+		auto future = collect_images(
+			*res->mutable_rejectimages(),
+			*res->mutable_rejectoverlays(),
+			pTro,
+			stream->req.rejectimageids(),
+			stream->rejectImagePositions,
+			inspectionPos,
+			inspectionId,
+			includeoverlays);
+		imageFutures.emplace_back(std::move(future));
+	}
+
 	collect_values(*res->mutable_values(), *pTro, stream->req.valueids(), stream->valuePositions);
+	collect_values(*res->mutable_rejectvalues(), *pTro, stream->req.rejectvalueids(), stream->rejectValuePositions);
 
 	auto promise = std::make_shared<SvSyl::SVPromise<void>>();
-	future.then(m_io_service, [this, stream, res, promise](SvSyl::SVFuture<void> future)
+	SvSyl::SVPromise<void>::all(m_io_service, imageFutures).then(m_io_service, [this, stream, res, promise](SvSyl::SVFuture<void> future)
 	{
 		if (stream->ctx->isCancelled())
 		{
@@ -694,11 +720,14 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 	auto triggersOfInterest = trc.getTrsOfInterest(inspectionPos, static_cast<int>(stream.historicalTriggerQueue.size()));
 	for (auto& entry : stream.historicalTriggerQueue)
 	{
-		auto iter = std::find_if(triggersOfInterest.begin(), triggersOfInterest.end(), [&entry](const auto& tr)->bool
+		for (const auto& tr : triggersOfInterest)
 		{
-			return tr->getId() == entry.m_trId;
-		});
-		entry.m_isInterest = triggersOfInterest.end() != iter;
+			if (tr->getId() == entry.m_trId)
+			{
+				entry.m_isInterest = true;
+				break;
+			}
+		}
 	}
 }
 
@@ -756,7 +785,9 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 		if (inspectionPos >= 0)
 		{
 			collect_value_pos(stream.valuePositions, trc.getDataDefMap(inspectionPos), stream.req.valueids());
+			collect_value_pos(stream.rejectValuePositions, trc.getDataDefMap(inspectionPos), stream.req.rejectvalueids());
 			collect_image_pos(stream.imagePositions, trc.getImageDefMap(inspectionPos), stream.req.imageids());
+			collect_image_pos(stream.rejectImagePositions, trc.getImageDefMap(inspectionPos), stream.req.rejectimageids());
 		}
 	}
 	catch (...)

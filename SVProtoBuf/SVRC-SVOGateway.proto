@@ -316,10 +316,12 @@ message GetProductStreamRequest
 	// List of ObjectIds of values the client is subscribing to.
 	// The very first response will contain the names as well.
 	repeated uint32 valueIds = 5;
+	repeated uint32 rejectValueIds = 9;
 
 	// List of ObjectIds of images the client is subscribing to.
 	// The very first response will contain the names as well.
 	repeated uint32 imageIds = 6;
+	repeated uint32 rejectImageIds = 10;
 
 	// Format the images should be encoded with. Stream will fail
 	// and close if the requested format is not available.
@@ -342,15 +344,18 @@ message GetProductStreamResponse
 
 	// List of values in the same order as specified in the request.
 	repeated Variant values = 3;
+	repeated Variant rejectValues = 7;
 
 	// List of values responsible for the reject.
 	repeated Variant failStatusValues = 4;
 
 	// List of images in the same order as specified in the request.
 	repeated Image images = 5;
+	repeated Image rejectImages = 8;
 
 	// List of overlays. The array corresponds to entries in `images`.
 	repeated OverlayDesc overlays = 6;
+	repeated OverlayDesc rejectOverlays = 9;
 }
 
 message SetRejectStreamPauseStateRequest
