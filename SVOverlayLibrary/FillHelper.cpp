@@ -304,11 +304,7 @@ namespace SvOv
 										pGraph->set_maxvaluey(static_cast<double>(values.size() - 1));
 										//Graph with array from x values is used by now only in vertical linear analyzer,
 										//and here we have to display from top and not as defined from button, so set the values from high to low.
-										double value = static_cast<double>(values.size() - 1);
-										for (auto& rValue : values)
-										{
-											rValue = value--;
-										}
+										std::generate(values.begin(), values.end(), [n = static_cast<double>(values.size() - 1)]() mutable { return n--; });
 										*pGraph->mutable_y() = { values.begin(), values.end() };
 									}
 								}
