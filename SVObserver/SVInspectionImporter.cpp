@@ -461,12 +461,10 @@ HRESULT SVInspectionImporter::GetProperties(const std::string& rFileName, long& 
 	{
 		if(SvUl::unzipAll( inFileName, SvStl::GlobalPath::Inst().GetRunPath(), FileList))
 		{
-			for (const auto rFile : FileList)
+			auto iter = find_if(FileList.rbegin(), FileList.rend(), [](const auto& rFile) { return isXMLFile(rFile); });
+			if (FileList.rend() != iter)
 			{
-				if (isXMLFile(rFile))
-				{
-					inFileName = rFile;
-				}
+				inFileName = *iter;
 			}
 		}
 	}
