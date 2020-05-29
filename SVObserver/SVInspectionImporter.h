@@ -26,6 +26,8 @@ private:
 public:
 	static HRESULT Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress);
 	static HRESULT GetProperties(const std::string& filename, long& rNewDisbaleMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
+private:
+	static HRESULT loadAndReplaceData(const std::string& inFileName, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree);
 };
 
 struct SVInspectionImportHelper

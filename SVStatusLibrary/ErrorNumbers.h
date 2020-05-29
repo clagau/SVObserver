@@ -245,7 +245,6 @@ namespace SvStl
 	constexpr int Err_15014 = Sej_ErrorBase + 14;
 	constexpr int Err_15015 = Sej_ErrorBase + 15;
 	constexpr int Err_15017 = Sej_ErrorBase + 17;
-	constexpr int Err_15018 = Sej_ErrorBase + 18;
 	constexpr int Err_15019 = Sej_ErrorBase + 19;
 	constexpr int Err_15020 = Sej_ErrorBase + 20;
 	constexpr int Err_15021 = Sej_ErrorBase + 21;
