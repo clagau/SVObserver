@@ -570,7 +570,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	}
 
 	SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerId);
-	if (nullptr != pOwner && SvPb::SVColorToolObjectType == pOwner->GetObjectSubType() && SvPb::LoopToolClassId == toolClassId)
+	if (nullptr != pOwner && SvPb::LoopToolObjectType == pOwner->GetObjectSubType() && SvPb::LoopToolClassId == toolClassId)
 	{
 		result = E_FAIL;
 		SvStl::MessageMgrStd e(SvStl::MsgType::Data);
@@ -686,7 +686,8 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 			std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
 			std::string NewName;
 
-			if (nullptr != pOwner && SvPb::SVColorToolObjectType == pOwner->GetObjectSubType())
+			//@Todo[mec] kann ein Colortool owner eines tools sein?
+			if (nullptr != pOwner &&( SvPb::SVColorToolObjectType == pOwner->GetObjectSubType() || SvPb::LoopToolObjectType == pOwner->GetObjectSubType()) )
 			{
 				NewName = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
 			}

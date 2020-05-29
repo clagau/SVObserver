@@ -1388,7 +1388,7 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		}
 
 		RunOnce();
-		UpdateAllViews(nullptr);
+		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
 		SetSelectedToolID(toolID);
 		SetModifiedFlag();
 	}

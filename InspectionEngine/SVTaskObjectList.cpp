@@ -838,6 +838,8 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 
 		// If this object not already exists, add it to the task list...
 		Add(pTaskObject);
+		m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+		//@Todo[nec] should be propagate to the owner?  
 
 		// Special code for Objects that allocate Friends on SetOwner()
 		pTaskObject->DestroyFriends();
