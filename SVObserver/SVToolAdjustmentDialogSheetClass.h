@@ -63,13 +63,16 @@ public:
 	uint32_t GetInspectionID() const {return m_InspectionID; }
 	uint32_t GetTaskObjectID() const {return m_TaskObjectID; }
 
-	void RemovePagesForTestedExternalTool();
+	void AddAdditionalPagesForExternalTool(bool addToolAdjustmentDialogCommentPage);
 
 protected:
 	void init();
 	void addPages();
 
 private:
+	CPropertyPage* createToolAdjustmentDialogCommentPage();
+	void addConditionalDialog();
+
 	SVIPDoc* m_pIPDoc;
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
@@ -78,9 +81,9 @@ private:
 	ControllerPtr m_conditionalController;
 };
 
-/// this is the number of pages in the External Tool Adjustment Dialog for an uninitialized DLL.
+/// this is the number of pages in the External Tool Adjustment Dialog for an uninitialized DLL. ABX anderer Kommentar?
 /// in principle it would be preferable to calculate it dynamically, but in this case problems and inconsistencies may arise in special cases
-constexpr int c_minimumNumberOfExternalToolPages = 4;
+constexpr int c_minimumNumberOfExternalToolPages = 1;
 
 
 

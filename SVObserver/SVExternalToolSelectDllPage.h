@@ -58,10 +58,11 @@ public:
 protected:
 	HRESULT CleanUpOldToolInfo();
 	HRESULT RestoreOriginalData();
-	void InitializeDll();
+	void InitializeDll(bool jumpToInputPage);
 	void SetDependencies();
 	void NotifyProgress(LPCTSTR Message);
-	void AddPagesForTestedExternalTool();
+	void AddPagesForTestedExternalTool(bool jumpToInputPage);
+	void RemovePagesForTestedExternalTool();
 	void testExternalDll();
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;

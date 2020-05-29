@@ -151,7 +151,7 @@ BOOL SVSelectExternalDllPage::OnInitDialog()
 	m_ToolTip.SetDelayTime( 10,    TTDT_INITIAL );
 	m_ToolTip.SetDelayTime( 250,   TTDT_RESHOW );
 	
-	InitializeDll();
+	InitializeDll(true);
 
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( int i = 0 ; i < iDependentsSize ; i++)
@@ -282,7 +282,7 @@ void SVSelectExternalDllPage::OnBrowse()
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 
-		m_pSheet->RemovePagesForTestedExternalTool();
+		RemovePagesForTestedExternalTool();
 
 		testExternalDll();
 	}
@@ -297,7 +297,7 @@ void SVSelectExternalDllPage::testExternalDll()
 	// DLL Path
 	m_pTask->m_Data.m_voDllPath.SetDefaultValue( std::string(m_strDLLPath), true );
 
-	InitializeDll();
+	InitializeDll(false);
 }
 
 
@@ -306,7 +306,6 @@ void SVSelectExternalDllPage::OnUndoChanges()
 	// reload previous info
 	RestoreOriginalData();
 }
-
 
 
 void SVSelectExternalDllPage::SetDependencies() 
@@ -334,21 +333,33 @@ void SVSelectExternalDllPage::SetDependencies()
 }
 
 
-void SVSelectExternalDllPage::AddPagesForTestedExternalTool()
+void SVSelectExternalDllPage::AddPagesForTestedExternalTool(bool jumpToInputPage)
 {
 	m_pSheet->AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, m_pTask->m_aInputImageInformationStructs));
-	m_pSheet->AddPage(new SVExternalToolInputSelectPage(_T("External Tool Inputs"), m_InspectionID, m_ToolObjectID, m_TaskObjectID));
-	m_pSheet->AddPage(new SVExternalToolResultPage(_T("External Tool Results"), m_InspectionID, m_TaskObjectID));
-
-	m_pSheet->PostMessage(PSM_SETCURSEL, c_minimumNumberOfExternalToolPages + 1, 0);
+	m_pSheet->AddPage(new SVExternalToolInputSelectPage(_T("Input Values"), m_InspectionID, m_ToolObjectID, m_TaskObjectID));
+	m_pSheet->AddPage(new SVExternalToolResultPage(_T("Result Values"), m_InspectionID, m_TaskObjectID));
+	
+	if (jumpToInputPage)
+	{
+		m_pSheet->PostMessage(PSM_SETCURSEL, c_minimumNumberOfExternalToolPages + 1, 0);
+	}
 }
 
 
-void SVSelectExternalDllPage::InitializeDll()
+void SVSelectExternalDllPage::RemovePagesForTestedExternalTool()
+{
+	while (m_pSheet->GetPageCount() > c_minimumNumberOfExternalToolPages) //pages with these indices should not be displayed if the external DLL is uninitialized
+	{
+		m_pSheet->RemovePage(c_minimumNumberOfExternalToolPages);
+	}
+}
+
+
+void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 {
 	try
 	{
-		m_pSheet->RemovePagesForTestedExternalTool();
+		RemovePagesForTestedExternalTool();
 
 		m_strStatus.Empty();
 		UpdateData(FALSE);
@@ -361,10 +372,14 @@ void SVSelectExternalDllPage::InitializeDll()
 		UpdateData(FALSE);
 		m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
 
-		AddPagesForTestedExternalTool();//if we arrive here, Initialization has been successful
+		//if we arrive here, Initialization has been successful
+		AddPagesForTestedExternalTool(jumpToInputPage);
+		m_pSheet->AddAdditionalPagesForExternalTool(true);
 	}
 	catch ( const SvStl::MessageContainer& e)
 	{
+		//if we arrive here, Initialization has failed
+		m_pSheet->AddAdditionalPagesForExternalTool(true);
 		// display all sub-errors in box
 		UpdateData(TRUE);
 		m_strStatus += _T("DLL did not pass.");
@@ -459,7 +474,7 @@ HRESULT SVSelectExternalDllPage::RestoreOriginalData()
 
 	m_pTask->SetAllAttributes();	// update dependency attributes
 
-	InitializeDll();
+	InitializeDll(false);
 
 	// update display
 	std::string Value;
