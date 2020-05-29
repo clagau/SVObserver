@@ -114,7 +114,14 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		std::string name{m_pDigInput->GetName()};
 		IOCombo.AddString(name.c_str());
 		m_Items[name] = m_pIOEntry;
-		IOCombo.SelectString(0, name.c_str());
+		if(false == name.empty())
+		{
+			IOCombo.SelectString(0, name.c_str());
+		}
+		else
+		{
+			IOCombo.SetCurSel(0);
+		}
 		OnSelChangeIOCombo();
 	}
 	else if (nullptr != m_pDigOutput)
@@ -123,7 +130,14 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		std::string name {m_pDigOutput->GetName()};
 		IOCombo.AddString(name.c_str());
 		m_Items[name] = m_pIOEntry;
-		IOCombo.SelectString(0, name.c_str());
+		if (false == name.empty())
+		{
+			IOCombo.SelectString(0, name.c_str());
+		}
+		else
+		{
+			IOCombo.SetCurSel(0);
+		}
 		OnSelChangeIOCombo();
 	}
 	else if (nullptr != m_pPlcOutput)
@@ -132,7 +146,14 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		std::string name {m_pPlcOutput->GetName()};
 		IOCombo.AddString(name.c_str());
 		m_Items[name] = m_pIOEntry;
-		IOCombo.SelectString(0, name.c_str());
+		if (false == name.empty())
+		{
+			IOCombo.SelectString(0, name.c_str());
+		}
+		else
+		{
+			IOCombo.SetCurSel(0);
+		}
 		OnSelChangeIOCombo();
 	}
 	else

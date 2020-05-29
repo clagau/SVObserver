@@ -61,42 +61,59 @@ SVIODoc* SVIOController::GetIODoc() const
 
 void SVIOController::initializeOutputs()
 {
-	m_pModuleReady.reset();
-	m_pRaidErrorBit.reset();
-
 	SVConfigurationObject* pConfig = dynamic_cast<SVConfigurationObject*> (GetParent());
 
 	if (nullptr != pConfig && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 	{
-		m_discreteIO = true;
-		m_pModuleReady = std::make_shared<SVIOEntryHostStruct>();
-		m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
-		std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-		if (nullptr != pInputValueObject)
-		{
-			m_pModuleReady->setValueObject(pInputValueObject);
-			SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pModuleReady->getObject(), ObjectIdEnum::ModuleReadyId);
-			SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-			//! For Module Ready do not set the parent owner
-			pObject->SetName(SvDef::cModuleReady);
-			pObject->ResetObject();
-			pInputValueObject->setValue(_variant_t(true));
-		}
-		pInputValueObject.reset();
 
-		m_pRaidErrorBit = std::make_shared<SVIOEntryHostStruct>();
-		m_pRaidErrorBit->m_ObjectType = IO_DIGITAL_OUTPUT;
-		///This object is deleted in the destructor using m_pRaidErrorBit
-		pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-		if (nullptr != pInputValueObject)
+		m_discreteIO = true;
+		if(nullptr == m_pModuleReady)
 		{
-			m_pRaidErrorBit->setValueObject(pInputValueObject);
-			SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pRaidErrorBit->getObject(), ObjectIdEnum::RaidErrorBitId);
-			SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-			//! For Raid Error Indicator do not set the parent owner
-			pObject->SetName(SvDef::cRaidErrorIndicator);
-			pObject->ResetObject();
-			pInputValueObject->setValue(_variant_t(false));
+			m_pModuleReady = std::make_shared<SVIOEntryHostStruct>();
+			m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
+			std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
+			if (nullptr != pInputValueObject)
+			{
+				m_pModuleReady->setValueObject(pInputValueObject);
+				SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pModuleReady->getObject(), ObjectIdEnum::ModuleReadyId);
+				SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+				//! For Module Ready do not set the parent owner
+				pObject->SetName(SvDef::cModuleReady);
+				pObject->ResetObject();
+				pInputValueObject->setValue(_variant_t(true));
+			}
+			pInputValueObject.reset();
+		}
+
+		if (nullptr == m_pRaidErrorBit)
+		{
+			m_pRaidErrorBit = std::make_shared<SVIOEntryHostStruct>();
+			m_pRaidErrorBit->m_ObjectType = IO_DIGITAL_OUTPUT;
+			///This object is deleted in the destructor using m_pRaidErrorBit
+			std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
+			if (nullptr != pInputValueObject)
+			{
+				m_pRaidErrorBit->setValueObject(pInputValueObject);
+				SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pRaidErrorBit->getObject(), ObjectIdEnum::RaidErrorBitId);
+				SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
+				//! For Raid Error Indicator do not set the parent owner
+				pObject->SetName(SvDef::cRaidErrorIndicator);
+				pObject->ResetObject();
+				pInputValueObject->setValue(_variant_t(false));
+			}
+		}
+	}
+	else
+	{
+		if(nullptr != m_pRaidErrorBit)
+		{
+			m_pRaidErrorBit->clear();
+			m_pRaidErrorBit.reset();
+		}
+		if (nullptr != m_pModuleReady)
+		{
+			m_pModuleReady->clear();
+			m_pModuleReady.reset();
 		}
 	}
 }

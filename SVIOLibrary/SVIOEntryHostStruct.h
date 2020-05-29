@@ -56,9 +56,9 @@ struct SVIOEntryHostStruct
 	static bool PtrGreater( std::shared_ptr< SVIOEntryHostStruct > elem1, std::shared_ptr< SVIOEntryHostStruct > elem2 );
 
 private:
-	SVIOEntryHostStruct( const SVIOEntryHostStruct& p_rsvObject );
+	SVIOEntryHostStruct( const SVIOEntryHostStruct& p_rsvObject ) = default;
 
-	const SVIOEntryHostStruct& operator=( const SVIOEntryHostStruct& p_rsvObject );
+	SVIOEntryHostStruct& operator=( const SVIOEntryHostStruct& p_rsvObject ) = default;
 
 	SVObjectClass* m_pObject{nullptr};
 	///m_pLinkedValueObject is not owned while m_pValueObject is owned by IO entry

@@ -16,8 +16,6 @@
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
-#pragma comment( lib, "Winmm" )
-
 constexpr long SVDefaultTimerPeriod = 200;
 constexpr unsigned int cTimerResolution = 1;
 constexpr LPCTSTR cTriggerName = "SoftwareTrigger_1.Dig_";			///This name must match the name in the SVHardwareManifest

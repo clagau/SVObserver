@@ -25,7 +25,7 @@ void SVIOEntryHostStruct::clear()
 	m_ObjectType = IO_INVALID_OBJECT;
 	m_IOId = SvDef::InvalidObjectId;
 	m_pObject = nullptr;
-	m_pValueObject = nullptr;
+	m_pValueObject.reset();
 }
 
 void SVIOEntryHostStruct::setValueObject(std::shared_ptr<SvOi::IValueObject> pValueObject)
