@@ -118,6 +118,9 @@ constexpr char* FqnDioInput = _T(".DIO.Input");
 constexpr char* cConfigExtension = _T(".svx");
 constexpr char* cPackedConfigExtension = _T(".svz");
 
+constexpr char* cWebApp = _T("WebApp.json");
+constexpr char* cWebAppIds = _T("WebAppIds.json");
+
 constexpr LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 
 //Filter constants

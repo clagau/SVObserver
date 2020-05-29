@@ -1552,10 +1552,54 @@ uint32_t getNextAcquisitionId()
 	return SvDef::InvalidObjectId;
 }
 
+bool isSafeToDeleteWebAppIdsJson()
+{
+	const auto& path = SvStl::GlobalPath::Inst().GetRunPath("WebApp.json");
+
+	std::ifstream ifs(path.c_str(), std::fstream::in);
+	if (!ifs.is_open())
+	{
+		// WebApp.json does not even exist
+		return true;
+	}
+
+	rapidjson::Document doc;
+	rapidjson::IStreamWrapper isw(ifs);
+	doc.ParseStream(isw);
+
+	if (!doc.IsObject())
+	{
+		// Unable to parse WebApp.json
+		// Let's keep the ids file in place just to be sure
+		return true;
+	}
+
+	auto it = doc.FindMember("version");
+	if (it == doc.MemberEnd())
+	{
+		// Json does not contain version information, but the files that need
+		// the WebAppIds.json for conversion do contain one. So let's just
+		// delete the file.
+		return true;
+	}
+
+	const auto version = std::string(it->value.GetString());
+	const auto prefix = version.substr(0, 2);
+
+	if (prefix == "1." || prefix == "2." || prefix == "3." || prefix == "4.")
+	{
+		// These are the version where we need the file
+		return false;
+	}
+
+	// All other version should not need the file, so safe to delete it.
+	return true;
+}
+
 std::string saveObjectIdMapping()
 {
 	FILE* file = nullptr;
-	fopen_s(&file, SvStl::GlobalPath::Inst().GetRunPath("WebApp.json").c_str(), _T("r"));
+	fopen_s(&file, SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebApp).c_str(), _T("r"));
 	if (nullptr != file)
 	{	//only save IdMapping if WebApp exist.
 		fclose(file);
@@ -1564,7 +1608,7 @@ std::string saveObjectIdMapping()
 		auto maxIter = std::max_element(g_ExchangeObjectID.begin(), g_ExchangeObjectID.end(), [](auto a, auto b) { return a.second < b.second; });
 		if (g_ExchangeObjectID.end() != maxIter && ObjectIdEnum::FirstPossibleObjectId < maxIter->second)
 		{
-			auto name = SvStl::GlobalPath::Inst().GetRunPath("WebAppIds.json");
+			auto name = SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebAppIds);
 			fopen_s(&file, name.c_str(), _T("w"));
 			if (nullptr != file)
 			{

@@ -80,4 +80,10 @@
 #include <boost/scoped_array.hpp>						//Used by static library
 #include <boost/tokenizer.hpp>
 #include <boost/utility.hpp>
+
+#pragma warning (push)
+#pragma warning (disable : 4003)
+#include <rapidjson/document.h>
+#include <rapidjson/istreamwrapper.h>
+#pragma warning (pop)
 #pragma endregion Precompiled Headers

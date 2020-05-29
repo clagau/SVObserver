@@ -5374,6 +5374,16 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSa
 		if (!rFileName.empty())
 		{
 			SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
+			bool shouldWebAppIdsDeleted = isSafeToDeleteWebAppIdsJson();
+			if (shouldWebAppIdsDeleted)
+			{
+				std::string webAppIdsName = SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebAppIds);
+				auto findIter = std::find(FileNameList.begin(), FileNameList.end(), webAppIdsName);
+				if (FileNameList.end() != findIter)
+				{
+					FileNameList.erase(findIter);
+				}
+			}
 			if (SvUl::makeZipFile(rFileName, FileNameList, _T(""), false))
 			{
 				if (resetAutoSave)
