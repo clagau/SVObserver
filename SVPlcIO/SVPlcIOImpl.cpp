@@ -30,6 +30,7 @@ constexpr LPCTSTR cSettingsGroup = "Settings";
 constexpr LPCTSTR cPLCSimulation = "PLCSimulation";
 constexpr LPCTSTR cPLCTransferTime = "PLC-TransferTime";
 constexpr LPCTSTR cPLCNodeID = "PLC-NodeID";
+constexpr LPCTSTR cOutputFileName = "OutputFileName";
 constexpr LPCTSTR cTriggerName = "HardwareTrigger.Dig_";			///This name must match the name in the SVHardwareManifest
 #pragma endregion Declarations
 
@@ -55,9 +56,11 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		char buffer[255];
 		memset(buffer, 0, 255);
 		std::string iniFile = SvStl::GlobalPath::Inst().GetBinPath(cIniFile);
-		::GetPrivateProfileString(cSettingsGroup, "OutputFileName", "", buffer, 255, iniFile.c_str());
+		::GetPrivateProfileString(cSettingsGroup, cOutputFileName, "", buffer, 255, iniFile.c_str());
 		m_OutputFileName = buffer;
-		m_plcSimulation = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCSimulation, 0, iniFile.c_str()));
+		memset(buffer, 0, 255);
+		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, 255, iniFile.c_str());
+		m_plcSimulateFile = buffer;
 		m_plcTransferTime = ::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str());
 		m_plcNodeID = ::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str());
 	}
@@ -182,7 +185,7 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 			g_PlcListInput.reserve(20000);
 			g_PlcListOutput.reserve(20000);
 		}
-		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcNodeID, m_plcTransferTime, m_plcSimulation);
+		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcNodeID, m_plcTransferTime, m_plcSimulateFile);
 		Tec::setReady(m_moduleReady);
 		m_engineStarted = true;
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
@@ -202,7 +205,7 @@ HRESULT SVPlcIOImpl::afterStartTrigger(HRESULT result)
 		{
 			if (false == m_triggerStarted[m_currentTriggerChannel])
 			{
-				Tec::setTriggerChannel(static_cast<uint8_t> (m_currentTriggerChannel), true, m_plcSimulation);
+				Tec::setTriggerChannel(static_cast<uint8_t> (m_currentTriggerChannel), true);
 				m_triggerStarted[m_currentTriggerChannel] = true;
 			}
 		}
@@ -216,7 +219,7 @@ HRESULT SVPlcIOImpl::afterStartTrigger(HRESULT result)
 			{
 				m_triggerStarted[i] = false;
 				//Trigger Engine trigger channel is zero based while SVObserver is one based!
-				Tec::setTriggerChannel(i, false, 0);
+				Tec::setTriggerChannel(i, false);
 			}
 		}
 		Tec::stopTriggerEngine();
@@ -235,7 +238,7 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerIndex)
 		{
 			m_triggerStarted[triggerChannel] = false;
 			//Trigger Engine trigger channel is zero based while SVObserver is one based!
-			Tec::setTriggerChannel(static_cast<uint8_t> (triggerChannel), false, 0);
+			Tec::setTriggerChannel(static_cast<uint8_t> (triggerChannel), false);
 		}
 		//Still some active trigger
 		bool activeTrigger{false};
@@ -461,7 +464,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 
 	if(cMaxPlcTriggers > rTriggerReport.m_channel)
 	{
-		if(false == m_triggerStarted[rTriggerReport.m_channel])
+		if(false == m_triggerStarted[rTriggerReport.m_channel] || false == rTriggerReport.m_isValid)
 		{
 			return;
 		}

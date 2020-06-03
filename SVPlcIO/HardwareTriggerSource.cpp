@@ -28,7 +28,7 @@ static_assert(sizeof(Telegram) + sizeof(InspectionCommand) <= cmaxPLC_DataSize, 
 static_assert(sizeof(Telegram) + sizeof(InspectionState) <= cmaxPLC_DataSize, "Write buffer size is to small");
 static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
 
-HardwareTriggerSource::HardwareTriggerSource(uint16_t plcNodeID, uint16_t plcTransferTime) : TriggerSource()
+HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime) : TriggerSource(pReportTrigger)
 , m_plcTransferTime {plcTransferTime}
 , m_cifXCard((0 != plcNodeID) ? plcNodeID : cCifXNodeId, cmaxPLC_DataSize)
 {
@@ -61,11 +61,9 @@ HRESULT HardwareTriggerSource::initialize()
 
 void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut)
 {
-	if(cNumberOfChannels > channel)
-	{
-		std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-		m_inspectionState.m_channels[channel] = channelOut;
-	}
+	///Channel has already been checked
+	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
+	m_inspectionState.m_channels[channel] = channelOut;
 }
 
 bool HardwareTriggerSource::analyzeTelegramData()
@@ -156,14 +154,13 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		report.m_channel = channel;
 		report.m_currentObjectID = rChannel.m_currentObjectID;
 		report.m_previousObjectID = rChannel.m_previousObjectID;
-		report.m_sequence = rChannel.m_sequence;
 		report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
 		report.m_triggerPerObjectID = rChannel.m_triggerCount;
 		report.m_triggerTimestamp = triggerTimeStamp;
-		report.m_isComplete = rChannel.m_triggerIndex == rChannel.m_triggerCount;
 		const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
 		report.m_isValid = (0 != rInsCmd.m_socRelative);
-		addTriggerReport(std::move(report));
+		
+		sendTriggerReport(report);
 	}
 }
 } //namespace SvPlc

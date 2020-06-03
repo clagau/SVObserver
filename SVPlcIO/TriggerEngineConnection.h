@@ -13,13 +13,13 @@ struct TriggerReport;
 
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, uint16_t simulateTriggers);
+void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, std::string plcSimulateFile);
 void stopTriggerEngine();
 
 HRESULT initTriggerEngine();
 
 void setReady(bool ready);
-void setTriggerChannel(uint8_t channel, bool active, uint32_t period=0UL);
+void setTriggerChannel(uint8_t channel, bool active);
 
 void writeResult(const ResultReport& rReportResult);
 } //namespace Tec

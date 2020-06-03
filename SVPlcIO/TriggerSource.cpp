@@ -12,62 +12,45 @@
 
 namespace SvPlc
 {
+TriggerSource::TriggerSource(std::function<void(const TriggerReport&)> pReportTrigger) :
+	m_pReportTrigger(pReportTrigger)
+{
+}
 
-bool TriggerSource::setTriggerChannel(uint8_t channel, bool active, uint32_t period)
+bool TriggerSource::setTriggerChannel(uint8_t channel, bool active)
 {
 	bool result{false};
-	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 	//Channel range already checked so no need to check it again
-	m_triggerChannels[channel].m_active = active;
-	m_triggerChannels[channel].m_period = period;
-	if(active == false)
+	m_activeChannel[channel] = active;
+	std::string outputText{"Trigger channel use:"};
+	for (const auto& rActive : m_activeChannel)
 	{
-		m_triggerChannels[channel].m_newTrigger = false;
+		result |= rActive;
+		outputText += rActive ? 'I' : '_';
 	}
-	printOutput("Trigger channel use:");
-	for (uint8_t channel = 0; channel < cNumberOfChannels; channel++)
-	{
-		result |= m_triggerChannels[channel].m_active;
-		printOutput(m_triggerChannels[channel].m_active ? "I" : "_");
-	}
-	printOutput("\n");
+	outputText += '\n';
+	printOutput(outputText.c_str());
 	return result;
 }
 
-
-void TriggerSource::addTriggerReport(TriggerReport&& triggerReport)
+void TriggerSource::sendTriggerReport(const TriggerReport& rTriggerReport)
 {
-	uint8_t channel = triggerReport.m_channel;
-	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-	m_triggerChannels[channel].m_report = std::move(triggerReport);
-	m_triggerChannels[channel].m_newTrigger = true;
+	if(nullptr != m_pReportTrigger)
+	{
+		m_pReportTrigger(rTriggerReport);
+	}
 }
-
 
 bool TriggerSource::checkForNewTriggers()
 {
 	for (uint8_t channel = 0; channel < cNumberOfChannels; channel++)
 	{
-		if (m_triggerChannels[channel].m_active)
+		if (m_activeChannel[channel])
 		{
 			createTriggerReport(channel);
 		}	
 	}
 	return true;
-}
-
-TriggerReport TriggerSource::getNewTriggerReport(uint8_t channel)
-{
-	TriggerReport result;
-
-	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-	if(m_triggerChannels[channel].m_newTrigger)
-	{
-		result = m_triggerChannels[channel].m_report;
-		m_triggerChannels[channel].m_newTrigger = false;
-	}
-
-	return result;
 }
 
 } //namespace SvPlc

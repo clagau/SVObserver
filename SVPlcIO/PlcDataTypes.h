@@ -27,11 +27,9 @@ struct TriggerReport
 	uint8_t m_channel {0};
 	uint32_t m_currentObjectID {0UL};
 	uint32_t m_previousObjectID {0UL};
-	int8_t m_sequence {0};
-	uint32_t m_triggerIndex {0UL};
+	uint8_t m_triggerIndex {0};
 	uint8_t m_triggerPerObjectID {0};
 	double m_triggerTimestamp {0.0};
-	bool m_isComplete {false};
 	bool m_isValid{false};
 };
 

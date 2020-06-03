@@ -19,13 +19,13 @@ namespace SvPlc
 class HardwareTriggerSource : public TriggerSource
 {
 public:
-	explicit HardwareTriggerSource(uint16_t plcNodeID, uint16_t plcTransferTime);
+	explicit HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime);
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
 	virtual HRESULT initialize() override;
-	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
 	virtual bool analyzeTelegramData() override;
+	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
 	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
 
 private:

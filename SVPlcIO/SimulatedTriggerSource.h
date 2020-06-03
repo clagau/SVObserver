@@ -12,21 +12,43 @@
 
 namespace SvPlc
 {
+struct SimulatedTriggerData
+{
+	std::string m_name;
+	uint8_t m_channel {0};
+	uint32_t m_objectNumber {0UL};
+	uint32_t m_objectID {0UL};
+	uint8_t m_triggerPerObjectID {0};
+	uint32_t m_initialDelay {0UL};
+	uint32_t m_period {0UL};
+	uint32_t m_objectDelay {0UL};
+};
+
+struct ChannelData
+{
+	std::thread m_timerThread;
+	std::atomic_bool m_runThread{false};
+	SimulatedTriggerData m_simulatedTriggerData;
+	std::map<uint32_t, double> m_objectIDTimeMap;
+	std::ofstream m_resultFile;
+};
+
 /// a simplified simulation of HardwareTriggerSource
 class SimulatedTriggerSource : public TriggerSource
 {
 public:
-	SimulatedTriggerSource() = default;
+	explicit SimulatedTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, const std::string& rSimulateFile);
 	virtual ~SimulatedTriggerSource() = default;
 
-	HRESULT initialize() override {return S_OK;};
-	bool setTriggerChannel(uint8_t channel, bool active, uint32_t period) override;
-	bool analyzeTelegramData() override;
-	void createTriggerReport(uint8_t channel) override;
+	virtual HRESULT initialize() override;
+	virtual bool setTriggerChannel(uint8_t channel, bool active) override;
+	virtual bool analyzeTelegramData() override;
+	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
+	virtual void createTriggerReport(uint8_t channel) override;
 
 private:
-	std::thread m_timerThread[cNumberOfChannels];
-	std::atomic_bool m_runThread[cNumberOfChannels];
+	std::array<ChannelData, cNumberOfChannels> m_channel;
+	std::string m_plcSimulateFile;
 };
 
 } //namespace SvPlc

@@ -73,7 +73,6 @@ private:
 
 #pragma region Member Variables
 private:
-	uint16_t m_plcSimulation {0};
 	uint16_t m_plcTransferTime {0};
 	uint16_t m_plcNodeID {0};
 	long m_PlcVersion {0L};
@@ -82,6 +81,7 @@ private:
 	std::atomic_bool m_triggerStarted[cMaxPlcTriggers]{false, false, false, false};
 	std::atomic_int8_t m_currentTriggerChannel{-1};
 
+	std::string m_plcSimulateFile;
 	std::string m_OutputFileName;
 #pragma endregion Member Variables
 };

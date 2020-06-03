@@ -21,11 +21,11 @@ extern HANDLE g_hSignalEvent;
 class PowerlinkConnection
 {
 public:
-	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, uint16_t simulateTriggers);
+	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rSimulateFile);
 	~PowerlinkConnection();
 
 	void setReady(bool ready);
-	void setTriggerChannel(uint8_t channel, bool active, uint32_t period);
+	void setTriggerChannel(uint8_t channel, bool active);
 	void writeResult(const ResultReport& rResultReport);
 	HRESULT initialize();
 
@@ -43,7 +43,6 @@ private:
 	std::thread m_eventSignalThread;
 
 	std::unique_ptr<TriggerSource> m_pTriggersource = nullptr;
-	std::function<void(const TriggerReport&)> m_pReportTrigger;
 
 	uint32_t m_mostRecentlyReceivedOid[cNumberOfChannels] = {0,0,0,0};
 

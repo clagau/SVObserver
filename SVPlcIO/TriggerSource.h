@@ -14,42 +14,31 @@ namespace SvPlc
 {
 struct ChannelOut;
 
-struct TriggerChannel
-{
-	bool m_newTrigger {false};
-	bool m_active {false};
-	uint32_t m_period {0UL};
-	TriggerReport m_report;
-};
-
 class TriggerSource
 {
 public:
+	explicit TriggerSource(std::function<void(const TriggerReport&)> pReportTrigger);
 	virtual ~TriggerSource() = default;
 
 	///Returns if any trigger channels active
 	bool checkForNewTriggers();
 
-	virtual bool setTriggerChannel(uint8_t channel, bool active, uint32_t period);
 	virtual HRESULT initialize() = 0;
+	virtual bool setTriggerChannel(uint8_t channel, bool active);
 	virtual bool isReady() { return true; }
-	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) {}
 	virtual bool analyzeTelegramData() = 0;
+	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) {}
 	virtual void setReady(bool ready) {}
-
-
-	TriggerReport getNewTriggerReport(uint8_t channel);
-	const TriggerChannel& getChannel(uint8_t channel) const { return m_triggerChannels[channel]; }
 
 protected:
 	virtual void createTriggerReport(uint8_t channel) = 0;
-	void addTriggerReport(TriggerReport&& triggerReport);
+	void sendTriggerReport(const TriggerReport& rTriggerReport);
 
 	std::mutex m_triggerSourceMutex;
 
 private:
-
-	TriggerChannel m_triggerChannels[cNumberOfChannels];
+	std::function<void(const TriggerReport&)> m_pReportTrigger;
+	std::array<std::atomic_bool, cNumberOfChannels> m_activeChannel {false, false, false, false};
 };
 
 } //namespace SvPlc
