@@ -718,16 +718,9 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 
 	// update reject flag or history trigger queue entries
 	auto triggersOfInterest = trc.getTrsOfInterest(inspectionPos, static_cast<int>(stream.historicalTriggerQueue.size()));
-	for (auto& entry : stream.historicalTriggerQueue)
+	for (auto& rEntry : stream.historicalTriggerQueue)
 	{
-		for (const auto& tr : triggersOfInterest)
-		{
-			if (tr->getId() == entry.m_trId)
-			{
-				entry.m_isInterest = true;
-				break;
-			}
-		}
+		rEntry.m_isInterest = std::any_of(triggersOfInterest.cbegin(), triggersOfInterest.cend(), [&rEntry](const auto& tr) { return tr->getId() == rEntry.m_trId; });
 	}
 }
 
