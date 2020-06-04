@@ -593,7 +593,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
-		else if (SvPb::ColorToolClassId != toolClassId && isColorCamera && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (nullptr == pToolSet && 0 == pToolSet->GetSize())))
+		else if (SvPb::ColorToolClassId != toolClassId && isColorCamera && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (nullptr != pToolSet && 0 == pToolSet->GetSize())))
 		{
 			result = E_FAIL;
 			SvStl::MessageMgrStd e(SvStl::MsgType::Data);
