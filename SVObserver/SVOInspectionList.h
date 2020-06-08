@@ -27,22 +27,22 @@ public:
 	SVOInspectionList();
 	virtual ~SVOInspectionList();
 
-	BOOL AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR InspectName, bool NewInspection );
-	BOOL SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image );
-	BOOL SetColor( LPCTSTR InspectLabel, bool Color );
-	BOOL SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disable );
-	BOOL SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long sEnable );
-	BOOL SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow=true );
-	BOOL ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInspectName );
-	BOOL RemoveInspectionFromList( LPCTSTR InspectLabel);
+	bool AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR InspectName, bool NewInspection );
+	bool SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image );
+	bool SetColor( LPCTSTR InspectLabel, bool Color );
+	bool SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disable );
+	bool SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long sEnable );
+	bool SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow=true );
+	bool ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInspectName );
+	bool RemoveInspectionFromList( LPCTSTR InspectLabel);
 
 	std::string GetInspectionName( LPCTSTR InspectLabel );
 	std::string GetInspectionLabel( LPCTSTR InspectName );
 	SVOInspectionObjPtr GetInspectionByLabel( LPCTSTR InspectLabel );
 	SVOInspectionObjPtr GetInspectionByPosition(int iPos);
-	BOOL IsInspectionInList( LPCTSTR InspectLabel) const;
-	BOOL IsInspectionNameInList( LPCTSTR InspectName) const;
-	BOOL IsInspectionInList( LPCTSTR InspectLabel,  LPCTSTR InspectName ) const;
+	bool IsInspectionInList( LPCTSTR InspectLabel) const;
+	bool IsInspectionNameInList( LPCTSTR InspectName) const;
+	bool IsInspectionInList( LPCTSTR InspectLabel,  LPCTSTR InspectName ) const;
 
 	void ResetContent();
 	int GetInspectionListCount() const;

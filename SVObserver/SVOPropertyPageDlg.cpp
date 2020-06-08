@@ -1292,7 +1292,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 						break;
 				}// end switch ( w->DataType() )
 			}
-			if (IsGigeSystem())
+			if (SvTi::SVHardwareManifest::IsMatroxGige(m_eProduct))
 			{
 				SVGigeCameraParamValidateClass l_svValidate;
 
@@ -1926,7 +1926,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 		// Get image info for single grab buffer
 		pDevice->GetImageInfo(&l_ImageInfo);	//&&& this won't necessarily work with cameras that support color
 
-		if (IsGigeSystem())
+		if (SvTi::SVHardwareManifest::IsMatroxGige(m_eProduct))
 		{
 			// Adjust for Binning
 			long verticalBinning = 1;
@@ -1961,7 +1961,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 		}
 	}
 
-	if (IsGigeSystem())
+	if (SvTi::SVHardwareManifest::IsMatroxGige(m_eProduct))
 	{
 		SVCameraDeviceImageFormatUpdater imageFormatUpdater(rw, format.m_strName, l_WidthMax, l_HeightMax);
 		if (S_OK == ShowGigeROIDlg(imageFormatUpdater, format, l_ImageInfo, pDevice, rCameraDeviceFormat, l_CurrentParams))
@@ -2080,21 +2080,6 @@ void CSVOPropertyPageDlg::SetTitle( LPCTSTR Name )
 void CSVOPropertyPageDlg::SetConfigAssistantDlg(CSVOConfigAssistantDlg* pAssistant)
 {
 	m_pAssistant = pAssistant;
-}
-
-bool CSVOPropertyPageDlg::IsGigeSystem() const
-{
-	return ( m_eProduct == SVIM_PRODUCT_X2_GD1A 
-		|| m_eProduct == SVIM_PRODUCT_X2_GD1A_COLOR
-		|| m_eProduct == SVIM_PRODUCT_X2_GD2A 
-		|| m_eProduct == SVIM_PRODUCT_X2_GD2A_COLOR
-		|| m_eProduct == SVIM_PRODUCT_X2_GD4A 
-		|| m_eProduct == SVIM_PRODUCT_X2_GD4A_COLOR
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A
-		|| m_eProduct == SVIM_PRODUCT_NEO1
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_COLOR
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO 
-		|| m_eProduct == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR) ? true : false;
 }
 
 void CSVOPropertyPageDlg::checkAndSetMaxProcessingOffset(int ppqLen)

@@ -69,6 +69,13 @@ namespace SvTi
 		static std::string BuildIOBoardTriggerDeviceName(int iDig);
 
 		//************************************
+		//! This is a static method to generate the hardware trigger name
+		//! \param iDig <in> the index the digitizer
+		//! \returns the string with the name
+		//************************************
+		static std::string BuildHardwareTriggerDeviceName(int iDig);
+	
+		//************************************
 		//! This is a static method to check if the product type loaded from a configuration is valid
 		//! \param ProductType <in> the SVIM product type
 		//! \returns true if the ProductType is valid
@@ -96,6 +103,13 @@ namespace SvTi
 		//! \returns true if it is a discrete system
 		//************************************
 		static bool isDiscreteIOSystem(SVIMProductEnum ProductType);
+
+		//************************************
+		//! This is a static method to check if the product type is a PLC system
+		//! \param ProductType <in> the SVIM product type
+		//! \returns true if it is a discrete system
+		//************************************
+		static bool isPlcSystem(SVIMProductEnum ProductType);
 
 		//************************************
 		//! This is a static method to check if the product type is a GigE system

@@ -18,10 +18,11 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-constexpr char* SVIM_TRIGGER_SOURCE_IO_BOARD_STRING = _T("IO_Board_1");
-constexpr char* SVIM_SOFTWARE_TRIGGER_SOURCE_STRING = _T("SoftwareTrigger_1");
-constexpr char* SVIM_CAMERA_TRIGGER_SOURCE_STRING = _T("CameraTrigger");
-constexpr char* SVIM_DIG_NAME_STRING = _T(".Dig_");
+constexpr char* cSvimTriggerSourceIoBoard = _T("IO_Board_1");
+constexpr char* cSvimSoftwareTriggerSource = _T("SoftwareTrigger_1");
+constexpr char* cSvimHardwareTriggerSource = _T("HardwareTrigger");
+constexpr char* cSvimCameraTriggerSource = _T("CameraTrigger");
+constexpr char* cSvimDigName = _T(".Dig_");
 
 namespace SvTi
 {
@@ -147,17 +148,22 @@ namespace SvTi
 
 	std::string SVHardwareManifest::BuildSoftwareTriggerDeviceName(int iDig)
 	{
-		return SvUl::Format("%s%s%d", SVIM_SOFTWARE_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
+		return SvUl::Format("%s%s%d", cSvimSoftwareTriggerSource, cSvimDigName, iDig);
 	}
 
 	std::string SVHardwareManifest::BuildAcquisitionTriggerDeviceName(int iDig)
 	{
-		return SvUl::Format("%s%s%d", SVIM_CAMERA_TRIGGER_SOURCE_STRING, SVIM_DIG_NAME_STRING, iDig);
+		return SvUl::Format("%s%s%d", cSvimCameraTriggerSource, cSvimDigName, iDig);
 	}
 
 	std::string SVHardwareManifest::BuildIOBoardTriggerDeviceName(int iDig)
 	{
-		return SvUl::Format("%s%s%d", SVIM_TRIGGER_SOURCE_IO_BOARD_STRING, SVIM_DIG_NAME_STRING, iDig);
+		return SvUl::Format("%s%s%d", cSvimTriggerSourceIoBoard, cSvimDigName, iDig);
+	}
+
+	std::string SVHardwareManifest::BuildHardwareTriggerDeviceName(int iDig)
+	{
+		return SvUl::Format("%s%s%d", cSvimHardwareTriggerSource, cSvimDigName, iDig);
 	}
 
 	bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType )
@@ -183,7 +189,7 @@ namespace SvTi
 	{
 		static const SVIMProductCompatibilityList CompatibleList
 		{
-			{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
+			{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A, SVIM_PRODUCT_X2_GD1A}},
 			{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 			{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
 			{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMProductEnumSet{SVIM_PRODUCT_X2_GD8A}},
@@ -230,7 +236,7 @@ namespace SvTi
 
 	bool SVHardwareManifest::isDiscreteIOSystem(SVIMProductEnum p_ProductType)
 	{
-		static const SVIMProductEnumSet ColorList
+		static const SVIMProductEnumSet DiscreteIOList
 		{
 			SVIM_PRODUCT_X2_GD1A,
 			SVIM_PRODUCT_X2_GD2A,
@@ -238,8 +244,19 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD8A,
 		};
 
-		SVIMProductEnumSet::const_iterator it = ColorList.find(p_ProductType);
-		return (it != ColorList.end());
+		SVIMProductEnumSet::const_iterator it = DiscreteIOList.find(p_ProductType);
+		return (it != DiscreteIOList.end());
+	}
+
+	bool SVHardwareManifest::isPlcSystem(SVIMProductEnum p_ProductType)
+	{
+		static const SVIMProductEnumSet PlcList
+		{
+			SVIM_PRODUCT_NEO1,
+		};
+
+		SVIMProductEnumSet::const_iterator it = PlcList.find(p_ProductType);
+		return (it != PlcList.end());
 	}
 
 	bool SVHardwareManifest::IsMatroxGige(SVIMProductEnum p_ProductType)
@@ -296,7 +313,6 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD8A_COLOR,
 			SVIM_PRODUCT_X2_GD8A_NONIO,
 			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
-			SVIM_PRODUCT_NEO1
 		};
 
 		SVIMProductEnumSet::const_iterator it = RaidList.find(p_ProductType);

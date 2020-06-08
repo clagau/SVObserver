@@ -37,15 +37,6 @@ static char THIS_FILE[] = __FILE__;
 CSVOCameraDlg::CSVOCameraDlg(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(CSVOCameraDlg::IDD)
 {
-	//{{AFX_DATA_INIT(CSVOCameraDlg)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-    m_bNewConfig = FALSE;
-    m_bModified = FALSE;
-}
-
-CSVOCameraDlg::~CSVOCameraDlg()
-{
 }
 
 void CSVOCameraDlg::DoDataExchange(CDataExchange* pDX)
@@ -211,7 +202,6 @@ void CSVOCameraDlg::OnBtnNewVc()
 	int CameraID( Dig );
     
     m_pParent->AddToCameraList( NewCamera.c_str(), Dig, CameraID);
-    SVOCameraObjPtr pObj = m_pParent->GetCameraObjectByName( NewCamera.c_str() );
 
     int iPos = m_ctlCameraList.AddString( NewCamera.c_str() );
     m_ctlCameraList.SetCurSel(iPos);
@@ -373,16 +363,6 @@ void CSVOCameraDlg::OnCameraManager()
 {
 	TheSVObserverApp.DisplayCameraManager(m_pParent->GetProductType());
 	m_pParent->ItemChanged(CAMERA_DLG, _T(""), ITEM_ACTION_REFRESH);
-}
-
-void CSVOCameraDlg::DisableAdvanceBtn()
-{
-	m_btnAdvancedProp.EnableWindow(FALSE);
-}
-
-void CSVOCameraDlg::ShowCameraDlgBtn( int nCmdShow )
-{
-	m_btnCameraManager.ShowWindow( nCmdShow );
 }
 
 

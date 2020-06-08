@@ -476,6 +476,9 @@ private:
 
 	bool getObjectsForMonitorList(uint32_t toolId, SvPb::InspectionCmdResponse &rResponse) const;
 
+	void initializeIO(SVIMProductEnum newConfigType);
+	void changeSystemResetIO(SVIMProductEnum newConfigType);
+
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	std::unique_ptr<SVIOController> m_pIOController;
 	std::unique_ptr<SVInputObjectList> m_pInputObjectList;

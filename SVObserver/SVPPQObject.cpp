@@ -2031,7 +2031,7 @@ void SVPPQObject::AddDefaultOutputs()
 		{
 			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 			pIOEntry->setLinkedObject(dynamic_cast<SVObjectClass*> (&rOutput));
-			pIOEntry->m_ObjectType = SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()) ? IO_DIGITAL_OUTPUT : IO_PLC_OUTPUT;
+			pIOEntry->m_ObjectType = SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
 			pIOEntry->m_Enabled = true;
 
 			AddOutput(pIOEntry);

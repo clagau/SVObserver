@@ -20,7 +20,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
-#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVboolValueDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObserver.h"
@@ -30,8 +30,6 @@
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOCameraObj.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVIOLibrary/SVInputObjectList.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVIPDoc.h"
@@ -65,7 +63,7 @@ constexpr char*  cGigeCameraFileDefExt = _T(".ogc");
 constexpr char* SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
 constexpr char* SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
 
-constexpr char* SVIM_DIG_NAME_STRING    ( _T(".Dig_") );
+constexpr char* cSvimDigName    ( _T(".Dig_") );
 
 constexpr char* ERR_STR                 ( _T( "**ERROR**   " ) );
 constexpr char* WARNING_STR             ( _T( "**WARNING** " ) );
@@ -123,32 +121,8 @@ CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVOConfigAssistantDlg::IDD, pParent)
 	, m_ctlConfigurationName(SvDef::cExcludeCharsConfigName)
 {
-	//{{AFX_DATA_INIT(CSVOConfigAssistantDlg)
-	m_AvailableSystem = _T("");
-	m_CurrentSys = _T("");
-	m_ConfigurationName = _T("");
-	//}}AFX_DATA_INIT
-
-	m_bNewConfiguration = FALSE;
-	m_bModified = FALSE;
-	m_bInspectionDeleted = FALSE;
-	m_iLastInspectionNum = 0;
-
 	SVIMProductEnum eSvimType = TheSVObserverApp.GetSVIMType();
-
 	SetConfigurationSystem( eSvimType );
-}
-
-CSVOConfigAssistantDlg::~CSVOConfigAssistantDlg()
-{
-	m_UsedTriggers.clear();
-	m_UsedInspections.clear();
-	m_InspectionNamesUsed.clear();
-	m_InspectionLabelsUsed.clear();
-	m_CameraList.ResetContent();
-	m_TriggerList.ResetContent();
-	m_InspectList.ResetContent();
-	m_PPQList.ResetContent();
 }
 
 void CSVOConfigAssistantDlg::DoDataExchange(CDataExchange* pDX)
@@ -273,32 +247,32 @@ void CSVOConfigAssistantDlg::SetupSystemComboBox()
 	}
 }
 
-void CSVOConfigAssistantDlg::SetNewConfiguration(BOOL bNewFlag)
+void CSVOConfigAssistantDlg::SetNewConfiguration(bool bNewFlag)
 {
 	m_bNewConfiguration = bNewFlag;
 }
 
 bool CSVOConfigAssistantDlg::IsNewConfiguration()
 {
-	return m_bNewConfiguration == TRUE;
+	return m_bNewConfiguration;
 }
 
-BOOL CSVOConfigAssistantDlg::AddToCameraList(LPCTSTR CameraName, int Dig, int CameraID)
+bool CSVOConfigAssistantDlg::AddToCameraList(LPCTSTR CameraName, int Dig, int CameraID)
 {
 	return m_CameraList.AddCameraToList(CameraName, Dig, CameraID);
 }
 
-BOOL CSVOConfigAssistantDlg::AddToInspectList(LPCTSTR External, LPCTSTR Internal, bool NewInspection)
+bool CSVOConfigAssistantDlg::AddToInspectList(LPCTSTR External, LPCTSTR Internal, bool NewInspection)
 {
 	return m_InspectList.AddInspectionToList( External, Internal, NewInspection );
 }
 
-BOOL CSVOConfigAssistantDlg::AddToTriggerList(LPCTSTR TriggerName, int iDig)
+bool CSVOConfigAssistantDlg::AddToTriggerList(LPCTSTR TriggerName, int iDig)
 {
 	return m_TriggerList.AddTriggerToList( std::string(TriggerName), iDig );
 }
 
-BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection)
+bool CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection)
 {
 	bool bRet = m_PPQList.AddPPQToList( PPQ );
 	bRet = m_PPQList.AttachCameraToPPQ( PPQ, Camera ) && bRet;
@@ -308,7 +282,7 @@ BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR T
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ)
+bool CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ)
 {
 	return m_PPQList.AddPPQToList( PPQ );
 }
@@ -317,94 +291,67 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 {
 	m_ctlAvailableSys.GetWindowText( m_AvailableSystem );
 
-	SVIMProductEnum CurrentSvimType = m_lConfigurationType; 
+	SVIMProductEnum currentConfigType = m_lConfigurationType; 
 
-	SVIMProductEnum l_ConfigurationType = GetProductIDFromName( std::string(m_AvailableSystem) );
+	SVIMProductEnum newConfigType = GetProductIDFromName( std::string(m_AvailableSystem) );
 
-	std::string PrevName = GetNameFromProductID( CurrentSvimType );
-	SVIMProductEnum eType = GetProductIDFromName( PrevName );
-
-	if ( ( !m_bNewConfiguration ) || ( m_bModified ) )
+	if ( false == m_bNewConfiguration || m_bModified )
 	{
-		if ( SvTi::SVHardwareManifest::IsCompatible(l_ConfigurationType, CurrentSvimType) )
+		if ( SvTi::SVHardwareManifest::IsCompatible(newConfigType, currentConfigType) )
 		{
-			m_bModified = TRUE;
+			m_bModified = true;
 
-			m_lConfigurationType = l_ConfigurationType;
-			UpdateAvailableSystems( CurrentSvimType, m_lConfigurationType );
+			m_lConfigurationType = newConfigType;
+			UpdateAvailableSystems( currentConfigType, m_lConfigurationType );
 		}
 		else
 		{
+			bool configTypeConvereted {false};
 			// Check if I/O digital to Non I/O digital or vice versa
-			if ((SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && !SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)) ||
-				(!SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
+			if (SvTi::SVHardwareManifest::IsNonIOSVIM(newConfigType) != SvTi::SVHardwareManifest::IsNonIOSVIM(currentConfigType))
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
-					m_lConfigurationType = l_ConfigurationType;
-					m_bModified = TRUE;
-					UpdateAvailableSystems( CurrentSvimType, m_lConfigurationType );
+					m_lConfigurationType = newConfigType;
+					m_bModified = true;
+					UpdateAvailableSystems( currentConfigType, m_lConfigurationType );
+					configTypeConvereted = true;
 				}
 			}
-			else
+			///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
+			if ((SvTi::SVHardwareManifest::isPlcSystem(newConfigType) != SvTi::SVHardwareManifest::isPlcSystem(currentConfigType)) ||
+				(SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(currentConfigType)))
 			{
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SvDef::InvalidObjectId, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchIOQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
-					m_lConfigurationType = l_ConfigurationType;
+					m_lConfigurationType = newConfigType;
 
 					ClearMessages();
 					CheckAgainstCurrentList();
 					
-					SystemChangeResetCamera( m_lConfigurationType );
-					m_bModified = TRUE;
+					m_bModified = true;
 					IsGood();
 
-					if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
-					{
-						ConvertToDigital(m_lConfigurationType);
-						SetupMessages();
-						if( SvTi::SVHardwareManifest::IsDigitalSVIM( m_lSystemType ))
-						{
-							m_Page2.ShowCameraDlgBtn( SW_SHOW );
-						}
-					}
-					else
-					{
-						if ( SvTi::SVHardwareManifest::IsDigitalSVIM( eType ) )
-						{
-							ConvertToDigital(m_lConfigurationType); //eType);
-							m_Page2.DisableAdvanceBtn();
-							SetupMessages();
-						}
-						m_Page2.ShowCameraDlgBtn( SW_HIDE );
-					}
-					UpdateAvailableSystems( CurrentSvimType, m_lConfigurationType );
+					UpdateAvailableSystems( currentConfigType, m_lConfigurationType );
+					configTypeConvereted = true;
 				}
-				else
-				{
-					UINT l_NextIndex = m_ctlAvailableSys.FindStringExact( 0, PrevName.c_str() );
+			}
+			if(false == configTypeConvereted)
+			{
+				UINT l_NextIndex = m_ctlAvailableSys.FindStringExact(0, GetNameFromProductID(currentConfigType).c_str());
 
-					if ( l_NextIndex != CB_ERR )
-					{
-						m_ctlAvailableSys.SetCurSel( l_NextIndex );
-					}
-					else
-					{
-						// There was a problem.  Set the selection to nothing.
-						m_ctlAvailableSys.SetCurSel( -1 );
-					}
-					IsGood();
-				}
+				m_ctlAvailableSys.SetCurSel(l_NextIndex);
+				IsGood();
 				return;
 			}
 		}
 	}
 
-	m_lConfigurationType = l_ConfigurationType;
+	m_lConfigurationType = newConfigType;
 
 	if ( (m_bNewConfiguration) && (!m_bModified) )
 	{
@@ -569,7 +516,7 @@ int CSVOConfigAssistantDlg::GetNextCameraNumber() const
 std::string CSVOConfigAssistantDlg::GetNextInspectionName() const
 {
 	int iRet = 0;
-	BOOL bFound = TRUE;
+	bool bFound = TRUE;
 	std::string Result;
 
 	if ( m_bInspectionDeleted )
@@ -625,7 +572,7 @@ std::string CSVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR Inspectio
 	return m_InspectList.GetInspectionLabel( InspectionName );
 }
 
-BOOL CSVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName)
+bool CSVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName)
 {
 	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByLabel(InspectLabel) );
 	std::string OldName;
@@ -719,12 +666,12 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByName(LPCTSTR PPQName)
 	return m_PPQList.GetPPQObjectByName( PPQName );
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveCameraFromList(LPCTSTR CameraName)
+bool CSVOConfigAssistantDlg::RemoveCameraFromList(LPCTSTR CameraName)
 {
 	return m_CameraList.RemoveCameraFromList( CameraName );
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveInspectionFromList(LPCTSTR Inspection)
+bool CSVOConfigAssistantDlg::RemoveInspectionFromList(LPCTSTR Inspection)
 {
 	if (IsInspectUsed(Inspection))
 	{
@@ -734,7 +681,7 @@ BOOL CSVOConfigAssistantDlg::RemoveInspectionFromList(LPCTSTR Inspection)
 	return m_InspectList.RemoveInspectionFromList(Inspection);
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveTriggerFromList(LPCTSTR TriggerName)
+bool CSVOConfigAssistantDlg::RemoveTriggerFromList(LPCTSTR TriggerName)
 {
 	if (IsTriggerUsed( TriggerName ) )
 	{
@@ -743,7 +690,7 @@ BOOL CSVOConfigAssistantDlg::RemoveTriggerFromList(LPCTSTR TriggerName)
 	return m_TriggerList.RemoveTriggerFromList(std::string(TriggerName));
 }
 
-BOOL CSVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
+bool CSVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
 {
 	const SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQ );
 	
@@ -788,9 +735,13 @@ std::string CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTri
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_NEO1:
 			{
 				Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
+				break;
+			}
+			case SVIM_PRODUCT_NEO1:
+			{
+				Result = SvTi::SVHardwareManifest::BuildHardwareTriggerDeviceName(iDig);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
@@ -825,7 +776,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber);
+				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, cSvimDigName, iDigNumber);
 				break;
 			}
 
@@ -849,7 +800,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber);
+				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, cSvimDigName, iDigNumber);
 				break;
 			}
 
@@ -860,7 +811,7 @@ std::string CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj)
 	return Result;
 }
 
-BOOL CSVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
+bool CSVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
 {
 	bool Result( false );
 	std::string CameraDig;
@@ -882,17 +833,17 @@ BOOL CSVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
 	return Result;
 }
 
-BOOL CSVOConfigAssistantDlg::IsCameraInList(LPCTSTR CameraName) const
+bool CSVOConfigAssistantDlg::IsCameraInList(LPCTSTR CameraName) const
 {
 	return m_CameraList.IsCameraInList(CameraName);
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectionInList(LPCTSTR InspectionName) const
+bool CSVOConfigAssistantDlg::IsInspectionInList(LPCTSTR InspectionName) const
 {
 	return m_InspectList.IsInspectionInList(InspectionName);
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectionNameInList(LPCTSTR InspectionName) const
+bool CSVOConfigAssistantDlg::IsInspectionNameInList(LPCTSTR InspectionName) const
 {
 	return m_InspectList.IsInspectionNameInList(InspectionName);
 }
@@ -902,7 +853,7 @@ bool CSVOConfigAssistantDlg::IsTriggerInList(LPCTSTR TriggerName) const
 	return m_TriggerList.IsTriggerInList(std::string(TriggerName));
 }
 
-BOOL CSVOConfigAssistantDlg::IsPPQInList(LPCTSTR PPQName) const
+bool CSVOConfigAssistantDlg::IsPPQInList(LPCTSTR PPQName) const
 {
 	return m_PPQList.IsPPQInList(PPQName);
 }
@@ -940,7 +891,7 @@ void CSVOConfigAssistantDlg::SetCurrentSystemDisplay()
 	m_ctlCurrentSys.SetWindowText( SystemName.c_str() );
 }
 
-BOOL CSVOConfigAssistantDlg::IsTriggerUsed(LPCTSTR TriggerName) const
+bool CSVOConfigAssistantDlg::IsTriggerUsed(LPCTSTR TriggerName) const
 {
 	bool Result = false;
 
@@ -1079,7 +1030,7 @@ SVIMProductEnum CSVOConfigAssistantDlg::GetProductType() const
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectUsed(LPCTSTR Inspection)
+bool CSVOConfigAssistantDlg::IsInspectUsed(LPCTSTR Inspection)
 {
 	bool Result = false;
 
@@ -1105,7 +1056,7 @@ void CSVOConfigAssistantDlg::RemoveUsedInspect(LPCTSTR Inspection)
 	}
 }
 
-void CSVOConfigAssistantDlg::SetModified(BOOL bModified)
+void CSVOConfigAssistantDlg::SetModified(bool bModified)
 {
 	m_bModified = bModified;
 }
@@ -1133,9 +1084,9 @@ void CSVOConfigAssistantDlg::OnOK()
 ///               Message area 
 ///
 ////////////////////////////////////////////////////////
-BOOL CSVOConfigAssistantDlg::AddMessageToList(int iDlg, LPCTSTR Message)
+bool CSVOConfigAssistantDlg::AddMessageToList(int iDlg, LPCTSTR Message)
 {
-	BOOL bRet = FALSE;
+	bool bRet = FALSE;
 	if (m_ctlMsgList.FindStringExact(-1, Message) == LB_ERR)
 	{
 		//message not there add it.
@@ -1146,9 +1097,9 @@ BOOL CSVOConfigAssistantDlg::AddMessageToList(int iDlg, LPCTSTR Message)
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveMessageFromList(LPCTSTR Message)
+bool CSVOConfigAssistantDlg::RemoveMessageFromList(LPCTSTR Message)
 {
-	BOOL bRet = FALSE;
+	bool bRet = FALSE;
 	int iPos = m_ctlMsgList.FindStringExact(-1, Message);
 	
 	if (iPos != LB_ERR)
@@ -1298,9 +1249,9 @@ void CSVOConfigAssistantDlg::SetupMessages()
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete)
+bool CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete)
 {
-	BOOL bRet = true;
+	bool bRet = true;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -1339,7 +1290,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 				//if not, delete them from ppqobj
 				for (long lI=0; lI < lInsCnt; ++lI)
 				{
-					BOOL bDetachInspect = FALSE;
+					bool bDetachInspect = FALSE;
 					SVInspectionProcess* pInspection( nullptr );
 					bRet = pPPQ->GetInspection(lI, pInspection);
 					if ( nullptr != pInspection)
@@ -1400,18 +1351,17 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
+bool CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	SVLightReference* psvLight = nullptr;
@@ -1632,7 +1582,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 						SVIOConfigurationInterfaceClass::Instance().SetCameraStrobeValue(iDigNum, pParam->bValue);
 					}
 				}
-				ASSERT ( nullptr != psvLight || nullptr != pLut || nullptr != pDeviceParams ); // something is wrong if we get here.
+				assert ( nullptr != psvLight || nullptr != pLut || nullptr != pDeviceParams ); // something is wrong if we get here.
 
 				if ( nullptr == psvLight )
 				{
@@ -1654,18 +1604,17 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
+bool CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	SvIe::SVVirtualCamera* pCamera( nullptr );
@@ -1722,7 +1671,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					}
 				}
 
-				BOOL bAddCamera = FALSE;
+				bool bAddCamera = FALSE;
 
 				if ( nullptr == pCamera )
 				{
@@ -1766,18 +1715,17 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
+bool CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	long lCfgTrgCnt = pConfig->GetTriggerCount();
@@ -1833,7 +1781,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 					}
 				}
 
-				BOOL bAddTrigger = FALSE;
+				bool bAddTrigger = FALSE;
 
 				if ( nullptr == pTrigger )
 				{
@@ -1871,7 +1819,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(LPCTSTR InspectionName, LPCTSTR NewInspectionName)
+bool CSVOConfigAssistantDlg::RenameInspectionObjects(LPCTSTR InspectionName, LPCTSTR NewInspectionName)
 {
 	bool bRet = true;
 	if( InspectionName != NewInspectionName )
@@ -1925,14 +1873,14 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const std::str
 	return pPPQObj;
 }
 
-BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
+bool CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 {
 	bool bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
 		return false;
@@ -1947,7 +1895,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		{
 			//Inspection has the old name by now
 			const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByLabel( pInspection->GetName()) );
-			BOOL bDeleteInspect = FALSE;
+			bool bDeleteInspect = FALSE;
 
 			if ( nullptr != pInspectionObj )
 			{
@@ -2021,7 +1969,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					}
 				}
 
-				BOOL bAddInspection = FALSE;
+				bool bAddInspection = FALSE;
 
 				if ( nullptr == pInspection )
 				{
@@ -2116,18 +2064,17 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete)
+bool CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& rPPQsToDelete)
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	// delete old PPQs
@@ -2154,7 +2101,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 			}
 
 			Key = pPPQObj->GetPPQName();
-			BOOL bNew = FALSE;
+			bool bNew = FALSE;
 
 			for ( long l = lCPPQCnt -1; -1 < l; l-- )
 			{
@@ -2205,7 +2152,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 				for (int i = 0; i < iAttachedCamCnt; i++)
 				{
-					BOOL bFound = FALSE;
+					bool bFound = FALSE;
 					long lPosition = 0;
 
 					PPQCameraName = pPPQObj->GetAttachedCamera(i);
@@ -2364,19 +2311,18 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 //////////////////////////////////////////////////////////////
 //   area for writing object list back to config obj
 
-BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
+bool CSVOConfigAssistantDlg::SendDataToConfiguration()
 {
-	BOOL bRet = TRUE;
+	bool bRet = TRUE;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	SVPPQObjectPtrVector aPPQsToDelete;
@@ -2405,22 +2351,6 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 		Create PPQs
 		Attach PPQs to new objects
 */
-
-	if(nullptr == pConfig->GetInputObjectList())
-	{
-		std::unique_ptr<SVInputObjectList> pInputObjectList = std::make_unique<SVInputObjectList>();
-		pInputObjectList->SetName( _T( "Input Object List" ) );
-		bRet &= nullptr != pInputObjectList && bRet;
-		pConfig->SetInputObjectList(std::move(pInputObjectList));
-	}
-
-	if(nullptr == pConfig->GetOutputObjectList())
-	{
-		std::unique_ptr<SVOutputObjectList> pOutputObjectList = std::make_unique<SVOutputObjectList>();
-		pOutputObjectList->SetName( _T( "Output Object List" ) );
-		bRet &= nullptr != pOutputObjectList && bRet;
-		pConfig->SetOutputObjectList(std::move(pOutputObjectList));
-	}
 
 	bRet = SendPPQDataToConfiguration(aPPQsToDelete);
 
@@ -2457,18 +2387,17 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
+bool CSVOConfigAssistantDlg::GetConfigurationForExisting()
 {
-	BOOL bRet = TRUE;
+	bool bRet = TRUE;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//Without valid config pointer don't need to go further
-	ASSERT( nullptr != pConfig );
+	assert( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	//make sure list are clean...
@@ -2759,9 +2688,9 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAction)
+bool CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAction)
 {
-	BOOL bRet = FALSE;
+	bool bRet = FALSE;
 	SVOInspectionObjPtr pInspectionObj;
 	SVOPPQObjPtr pPPQObj;
 	int iObjCnt = 0;
@@ -3387,12 +3316,12 @@ void CSVOConfigAssistantDlg::OnChangeEditConfigurationName()
 	IsGood();
 }
 
-BOOL CSVOConfigAssistantDlg::GetNewConfigFlag()
+bool CSVOConfigAssistantDlg::GetNewConfigFlag()
 {
 	return m_bNewConfiguration;
 }
 
-BOOL CSVOConfigAssistantDlg::Modified()
+bool CSVOConfigAssistantDlg::Modified()
 {
 	return m_bModified;
 }
@@ -3400,7 +3329,7 @@ BOOL CSVOConfigAssistantDlg::Modified()
 //
 // If bTrigger is true then this function returns the max number of triggers allowed.
 //
-int CSVOConfigAssistantDlg::GetAllowedNumberOfDigs(BOOL bTrigger/* = FALSE*/)
+int CSVOConfigAssistantDlg::GetAllowedNumberOfDigs(bool bTrigger/* = FALSE*/)
 {
 	int iNumberAllowed = 0;
 
@@ -3457,9 +3386,9 @@ void CSVOConfigAssistantDlg::CheckAgainstCurrentList()
 	m_Page2.SetupList();
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectionOnPPQ(LPCTSTR PPQName, LPCTSTR InspectionLabel)
+bool CSVOConfigAssistantDlg::IsInspectionOnPPQ(LPCTSTR PPQName, LPCTSTR InspectionLabel)
 {
-	BOOL bFound = FALSE;
+	bool bFound = FALSE;
 	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName) );
 
 	if( nullptr != pPPQObj )
@@ -3477,9 +3406,9 @@ BOOL CSVOConfigAssistantDlg::IsInspectionOnPPQ(LPCTSTR PPQName, LPCTSTR Inspecti
 	return bFound;
 }
 
-BOOL CSVOConfigAssistantDlg::IsCameraOnPPQ(LPCTSTR PPQName, LPCTSTR CameraName)
+bool CSVOConfigAssistantDlg::IsCameraOnPPQ(LPCTSTR PPQName, LPCTSTR CameraName)
 {
-	BOOL bFound = FALSE;
+	bool bFound = FALSE;
 	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName) );
 
 	if( nullptr != pPPQObj )
@@ -3497,7 +3426,7 @@ BOOL CSVOConfigAssistantDlg::IsCameraOnPPQ(LPCTSTR PPQName, LPCTSTR CameraName)
 	return bFound;
 }
 
-BOOL CSVOConfigAssistantDlg::IsTriggerOnPPQ(LPCTSTR PPQName, LPCTSTR TriggerName)
+bool CSVOConfigAssistantDlg::IsTriggerOnPPQ(LPCTSTR PPQName, LPCTSTR TriggerName)
 {
 	bool bFound( false );
 	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName) );
@@ -3521,7 +3450,7 @@ void CSVOConfigAssistantDlg::LastInspectionLabelDeleted(LPCTSTR InspectionLabel)
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
+bool CSVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
 {
 	bool Result( false );
 
@@ -3533,120 +3462,11 @@ BOOL CSVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
 	return Result;
 }
 
-BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSystemType )
-{
-	BOOL l_bRet = false;
-
-	switch( p_lNewSystemType )
-	{
-		case SVIM_PRODUCT_X2_GD1A:
-		case SVIM_PRODUCT_X2_GD2A:
-		case SVIM_PRODUCT_X2_GD4A:
-		case SVIM_PRODUCT_X2_GD8A:
-		case SVIM_PRODUCT_NEO1:
-		case SVIM_PRODUCT_X2_GD1A_COLOR:
-		case SVIM_PRODUCT_X2_GD2A_COLOR:
-		case SVIM_PRODUCT_X2_GD4A_COLOR:
-		case SVIM_PRODUCT_X2_GD8A_COLOR:
-		{
-			int iNum = GetCameraListCount();
-			int iCh = 0;
-			int iDig = 0;
-			for ( int i = 0; i < iNum; i++ )
-			{
-				SVOCameraObjPtr pCameraObj( GetCameraObject(i) );
-				if ( nullptr != pCameraObj )
-				{
-					iDig = pCameraObj->GetDigNumber();
-					pCameraObj->SetDigNumber(iDig);
-					pCameraObj->SetBandNumber(0);
-					pCameraObj->SetCameraFile( std::string() );
-					if (!pCameraObj->IsFileAcquisition())
-					{
-						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
-					}
-				}
-			}
-			l_bRet = true;
-			break;
-		}
-		default:
-		{
-			//go thru each camera and remove dig #'s and assign Ch#'s
-			int iNum = GetCameraListCount();
-			int iCh = 0;
-			int iDig = 0;
-			for ( int i = 0; i < iNum; i++ )
-			{
-				SVOCameraObjPtr pCameraObj( GetCameraObject(i) );
-				if ( nullptr != pCameraObj )
-				{
-					iDig = pCameraObj->GetDigNumber();
-					pCameraObj->SetDigNumber(0);
-					pCameraObj->SetBandNumber(iDig);
-					pCameraObj->SetCameraFile( std::string() );
-					if (!pCameraObj->IsFileAcquisition())
-					{
-						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
-					}
-				}
-			}
-			l_bRet = true;
-			break;
-		}
-	}
-	return l_bRet;
-}
-
 void CSVOConfigAssistantDlg::ClearMessages()
 {
 	m_ctlMsgList.ResetContent();
 
 	OnChangeEditConfigurationName();
-}
-
-void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
-{
-	typedef std::map<std::string, int> StringIntMap;
-	//get trigger count...
-	int iTriggerCount = m_TriggerList.GetTriggerListCount();
-	int iCameraCount = m_CameraList.GetCameraListCount();
-
-	//delete all triggers and re add them.
-	StringIntMap l_Triggers;
-	for( int i = 0 ; i < iTriggerCount ; i++ )
-	{
-		const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByPosition(i) );
-		if( nullptr != pTriggerObj )
-		{
-			l_Triggers[pTriggerObj->GetTriggerDisplayName()] = pTriggerObj->GetTriggerDigNumber();
-		}
-	}
-
-	m_TriggerList.ResetContent();
-
-	for ( StringIntMap::iterator it = l_Triggers.begin(); it != l_Triggers.end(); ++it )
-	{
-		m_TriggerList.AddTriggerToList(std::string(it->first), it->second);
-	}
-
-	//delete all cameras and re add them
-	StringIntMap l_Cameras;
-	for( int i = 0 ; i < iCameraCount ; i++ )
-	{
-		const SVOCameraObjPtr pCameraObj( m_CameraList.GetCameraObjectByPosition(i) );
-		if( nullptr != pCameraObj )
-		{
-			l_Cameras[pCameraObj->GetCameraDisplayName()] = pCameraObj->GetCameraID();
-		}
-	}
-
-	m_CameraList.ResetContent();
-
-	for ( StringIntMap::iterator it = l_Cameras.begin(); it != l_Cameras.end() ; ++it )
-	{
-		m_CameraList.AddCameraToList(it->first.c_str(), it->second, it->second);
-	}
 }
 
 void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( LPCTSTR CameraName )
@@ -3900,9 +3720,9 @@ void CSVOConfigAssistantDlg::CheckTriggers()
 	IsGood();
 }
 
-BOOL CSVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj)
+bool CSVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj)
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	std::string TriggerName = rTriggerObj.GetTriggerDisplayName();
 	std::string MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
 
@@ -3977,9 +3797,9 @@ void CSVOConfigAssistantDlg::SetupTriggerStrobeMessage()
 	}
 }
 
-void CSVOConfigAssistantDlg::SetIOBoardCapabilities( SVIOBoardCapabilities& p_svCapable )
+void CSVOConfigAssistantDlg::SetIOBoardCapabilities(const SVIOBoardCapabilities& rCapable)
 {
-	m_svCapabilities = p_svCapable;
+	m_svCapabilities = rCapable;
 }
 
 void CSVOConfigAssistantDlg::OnHelpButton()

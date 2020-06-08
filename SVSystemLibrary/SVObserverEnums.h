@@ -12,15 +12,13 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
 #pragma endregion Includes
 
 
 enum SVIMProductEnum
 {
 	SVIM_PRODUCT_INVALID_TYPE = 0,
-	//SVIM_TEST_BOARD       = 1005, // not used
-	SVIM_PRODUCT_SVPC       = 1006,
 	SVIM_PRODUCT_X2_GD2A	= 1023, // Kontron GIGE Matrox Dongle
 	SVIM_PRODUCT_X2_GD2A_COLOR	= 1024, // Kontron GIGE Matrox Dongle Color
 	SVIM_PRODUCT_X2_GD4A	= 1025,
@@ -35,4 +33,4 @@ enum SVIMProductEnum
 	SVIM_PRODUCT_TYPE_UNKNOWN = 0xFFFF,
 };
 
-typedef std::deque<SVIMProductEnum> SVIMProductEnumList;
+typedef std::vector<SVIMProductEnum> SVIMProductEnumList;

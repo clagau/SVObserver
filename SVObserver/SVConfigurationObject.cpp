@@ -23,6 +23,7 @@
 #include "SVGlobal.h"
 #include "SVMainFrm.h"
 #include "SVIOController.h"
+#include "SVIOTabbedView.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
 #include "SVStorageResult.h"
@@ -78,6 +79,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr int cModuleReadyChannel = 15;
+constexpr int cDiscreteInputCount = 8;
+constexpr int cDiscreteOutputCount = 16;
+constexpr int cPlcInputCount = 0;
+constexpr int cPlcOutputCount = 14;
+
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
 //SV_IMPLEMENT_CLASS(SVConfigurationObject, SVConfigurationObjectId);
 #pragma endregion Declarations
@@ -85,18 +92,30 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName) 
 	,m_pIOController{std::make_unique<SVIOController>(this)}
+	,m_pInputObjectList{std::make_unique<SVInputObjectList>()}
+	,m_pOutputObjectList{std::make_unique<SVOutputObjectList>()}
 {
-
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
 
 	m_arTriggerArray.clear();
 	m_arPPQArray.clear();
 	m_arCameraArray.clear();
 	m_arInspectionArray.clear();
+
+	if (nullptr != m_pInputObjectList)
+	{
+		m_pInputObjectList->SetName(SvO::InputObjectList);
+	}
+	if (nullptr != m_pOutputObjectList)
+	{
+		m_pOutputObjectList->SetName(SvO::OutputObjectList);
+	}
 }
 
 SVConfigurationObject::SVConfigurationObject(SVObjectClass* pOwner, int StringResourceID) : SVObjectClass(pOwner, StringResourceID)
-, m_pIOController {std::make_unique<SVIOController>(this)}
+	, m_pIOController {std::make_unique<SVIOController>(this)}
+	, m_pInputObjectList {std::make_unique<SVInputObjectList>()}
+	, m_pOutputObjectList {std::make_unique<SVOutputObjectList>()}
 {
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
 
@@ -104,6 +123,15 @@ SVConfigurationObject::SVConfigurationObject(SVObjectClass* pOwner, int StringRe
 	m_arPPQArray.clear();
 	m_arCameraArray.clear();
 	m_arInspectionArray.clear();
+
+	if (nullptr != m_pInputObjectList)
+	{
+		m_pInputObjectList->SetName(SvO::InputObjectList);
+	}
+	if (nullptr != m_pOutputObjectList)
+	{
+		m_pOutputObjectList->SetName(SvO::OutputObjectList);
+	}
 }
 
 SVConfigurationObject::~SVConfigurationObject()
@@ -960,12 +988,6 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	{
 		return false;
 	}
-	bool isDiscreteIO = SvTi::SVHardwareManifest::isDiscreteIOSystem(GetProductType());
-
-	_variant_t Value;
-
-	m_pInputObjectList = std::make_unique<SVInputObjectList>();
-	m_pOutputObjectList = std::make_unique<SVOutputObjectList>();
 	if (nullptr == m_pInputObjectList)
 	{
 		SvDef::StringVector msgList;
@@ -982,8 +1004,10 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		MsgCont.setMessage(SVMSG_SVO_78_LOAD_IO_FAILED, SvStl::Tid_CreateSFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16047_CreateOutputList);
 		throw MsgCont;
 	}
-	m_pInputObjectList->SetName(SvO::InputObjectList);
-	m_pOutputObjectList->SetName(SvO::OutputObjectList);
+
+	bool isDiscreteIO = SvTi::SVHardwareManifest::isDiscreteIOSystem(GetProductType());
+
+	_variant_t Value;
 
 	SVTreeType::SVBranchHandle hSubChild;
 	long lIOSize = 0;
@@ -3852,9 +3876,17 @@ SVIMProductEnum SVConfigurationObject::GetProductType() const
 
 void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType)
 {
+	SVIMProductEnum prevType{m_eProductType};
 	m_eProductType = eProductType;
 	///When the product type is changed the IO controller needs to initialize outputs
 	m_pIOController->initializeOutputs();
+
+	///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
+	if ((SvTi::SVHardwareManifest::isPlcSystem(m_eProductType) != SvTi::SVHardwareManifest::isPlcSystem(prevType)) ||
+		(SvTi::SVHardwareManifest::isDiscreteIOSystem(m_eProductType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(prevType)))
+	{
+		changeSystemResetIO(m_eProductType);
+	}
 }
 
 bool SVConfigurationObject::IsConfigurationLoaded() const
@@ -5735,4 +5767,129 @@ bool SVConfigurationObject::getObjectsForMonitorList(uint32_t toolId, SvPb::Insp
 
 	return S_OK == SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &rResponse);
 }
+
+void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
+{
+
+	bool isDiscrete = SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType);
+	bool isPlc = SvTi::SVHardwareManifest::isPlcSystem(newConfigType);
+	int inputCount = isPlc ? cPlcInputCount : isDiscrete ? cDiscreteInputCount : 0;
+	int outputCount = isPlc ? cPlcOutputCount : isDiscrete ? cDiscreteOutputCount : 0;
+	SVIOConfigurationInterfaceClass::Instance().initializeIO(inputCount, outputCount);
+	if (isDiscrete)
+	{
+		SVConfigurationObject* pConfig(nullptr);
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+		if (nullptr != pConfig)
+		{
+			// Create all the default inputs
+			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
+			if (nullptr != pInputObjectList)
+			{
+				for (unsigned long l = 0; l < cDiscreteInputCount; l++)
+				{
+					std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
+
+					SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
+
+					if (nullptr != pInput)
+					{
+						pInput->SetChannel(l);
+					}
+				}
+			}
+			// Create all the default outputs
+			SVOutputObjectList *pOutputObjectList = pConfig->GetOutputObjectList();
+			if (nullptr != pOutputObjectList)
+			{
+				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, cModuleReadyChannel).get());
+
+				if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
+				{
+					pOutput->SetChannel(cModuleReadyChannel);
+
+					pConfig->GetModuleReady()->m_IOId = pOutput->getObjectId();
+
+					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(cModuleReadyChannel, pOutput->IsInverted());
+					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(cModuleReadyChannel, pOutput->IsForced());
+					SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(cModuleReadyChannel, pOutput->GetForcedValue());
+				}
+			}
+		}
+	}
+	///Need to change the output type
+	for(auto& pPPQ : m_arPPQArray)
+	{
+		SVIOEntryHostStructPtrVector IOEntriesVector;
+		pPPQ->GetAllOutputs(IOEntriesVector);
+
+		for(auto& pIoEntry : IOEntriesVector)
+		{
+			pIoEntry->m_ObjectType = SvTi::SVHardwareManifest::isPlcSystem(newConfigType) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
+		}
+	}
+}
+
+void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
+{
+	if (nullptr != m_pInputObjectList)
+	{
+		SVIOEntryHostStructPtrVector inputVector = m_pInputObjectList->getInputList();
+		for (const auto& pInput : inputVector)
+		{
+			switch (pInput->m_ObjectType)
+			{
+				case IO_DIGITAL_INPUT:
+				{
+					m_pInputObjectList->DetachInput(pInput->m_IOId);
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+
+	if (nullptr != m_pOutputObjectList)
+	{
+		SVIOEntryHostStructPtrVector outputVector = m_pOutputObjectList->getOutputList();
+		for (const auto& pOutput : outputVector)
+		{
+			switch (pOutput->m_ObjectType)
+			{
+				case IO_DIGITAL_OUTPUT:
+				case IO_PLC_OUTPUT:
+				{
+					m_pOutputObjectList->DetachOutput(pOutput->m_IOId);
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+
+	initializeIO(newConfigType);
+
+	if (SvTi::SVHardwareManifest::isPlcSystem(newConfigType))
+	{
+		TheSVObserverApp.ShowIOTab(SVIOPlcOutputsViewID);
+	}
+	else
+	{
+		TheSVObserverApp.HideIOTab(SVIOPlcOutputsViewID);
+	}
+	if (SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType))
+	{
+		TheSVObserverApp.ShowIOTab(SVIODiscreteInputsViewID);
+		TheSVObserverApp.ShowIOTab(SVIODiscreteOutputsViewID);
+	}
+	else
+	{
+		TheSVObserverApp.HideIOTab(SVIODiscreteInputsViewID);
+		TheSVObserverApp.HideIOTab(SVIODiscreteOutputsViewID);
+	}
+}
+
 

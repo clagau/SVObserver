@@ -18,11 +18,9 @@ class CSVOCameraDlg : public CPropertyPage
 // Construction
 public:
 	CSVOCameraDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CSVOCameraDlg();
+	virtual ~CSVOCameraDlg() = default;
 
     void SetupList();
-	void DisableAdvanceBtn();
-	void ShowCameraDlgBtn( int iShow );
 // Dialog Data
 	//{{AFX_DATA(CSVOCameraDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_CAMERA };
@@ -62,8 +60,8 @@ protected:
 
 private:
     CSVOConfigAssistantDlg *m_pParent;
-    BOOL m_bModified;
-    BOOL m_bNewConfig;
+	bool m_bModified{false};
+	bool m_bNewConfig{false};
     
     void SetCameraPropForAll( LPCTSTR CurrentCamera );
 };

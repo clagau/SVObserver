@@ -32,9 +32,9 @@ SVOInspectionList::~SVOInspectionList()
 
 }
 
-BOOL SVOInspectionList::AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR InspectName, bool NewInspection)
+bool SVOInspectionList::AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR InspectName, bool NewInspection)
 {
-	BOOL bRet = FALSE;
+	bool bRet = false;
 	if (!IsInspectionInList( InspectLabel,InspectName ))
 	{
 		SVOInspectionObjPtr pObj{ new SVOInspectionObj() };
@@ -52,7 +52,7 @@ BOOL SVOInspectionList::AddInspectionToList( LPCTSTR InspectLabel,  LPCTSTR Insp
 	return bRet;
 }
 
-BOOL SVOInspectionList::SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image)
+bool SVOInspectionList::SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image)
 {
 	bool bRet = false;
 	SVOInspectionObjPtr pObj = GetInspectionByLabel( InspectLabel );
@@ -66,7 +66,7 @@ BOOL SVOInspectionList::SetToolsetImage( LPCTSTR InspectLabel,  LPCTSTR Image)
 	return bRet;
 }
 
-BOOL SVOInspectionList::SetColor( LPCTSTR InspectLabel, bool Color)
+bool SVOInspectionList::SetColor( LPCTSTR InspectLabel, bool Color)
 {
 	bool bRet = false;
 	SVOInspectionObjPtr pObj = GetInspectionByLabel( InspectLabel );
@@ -80,7 +80,7 @@ BOOL SVOInspectionList::SetColor( LPCTSTR InspectLabel, bool Color)
 	return bRet;
 }
 
-BOOL SVOInspectionList::SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disable)
+bool SVOInspectionList::SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disable)
 {
 	bool bRet = false;
 	SVOInspectionObjPtr pObj = GetInspectionByLabel( InspectLabel );
@@ -94,7 +94,7 @@ BOOL SVOInspectionList::SetNewDisableMethod( LPCTSTR InspectLabel,  LPCTSTR Disa
 	return bRet;
 }
 
-BOOL SVOInspectionList::SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow)
+bool SVOInspectionList::SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow)
 {
 	bool bRet = false;
 	SVOInspectionObjPtr pObj = GetInspectionByLabel(InspectLabel);
@@ -108,7 +108,7 @@ BOOL SVOInspectionList::SetShowAuxExtent( LPCTSTR InspectLabel, bool p_bShow)
 	return bRet;
 }
 
-BOOL SVOInspectionList::SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long lEnable)
+bool SVOInspectionList::SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long lEnable)
 {
 	bool bRet = false;
 	SVOInspectionObjPtr pObj = GetInspectionByLabel(InspectLabel);
@@ -123,7 +123,7 @@ BOOL SVOInspectionList::SetEnableAuxiliaryExtent( LPCTSTR InspectLabel, long lEn
 }
 
 
-BOOL SVOInspectionList::ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInspectName)
+bool SVOInspectionList::ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInspectName)
 {
 	bool bRet = false;
 	SVOInspectionObjPtr pObj = GetInspectionByLabel(InspectLabel);
@@ -138,7 +138,7 @@ BOOL SVOInspectionList::ReNameInspection( LPCTSTR InspectLabel,  LPCTSTR NewInsp
 	return bRet;
 }
 
-BOOL SVOInspectionList::RemoveInspectionFromList( LPCTSTR InspectLabel )
+bool SVOInspectionList::RemoveInspectionFromList( LPCTSTR InspectLabel )
 {
 	bool bRet = false;
 	auto& iter = std::find_if(m_InspectionList.begin(), m_InspectionList.end(), [&InspectLabel](auto& rEntry)
@@ -213,7 +213,7 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByPosition( int iPos )
 	return pResult;
 }
 
-BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
+bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
 {
 	const_iterator Iter( m_InspectionList.begin() );
 	bool Found = false;
@@ -235,10 +235,10 @@ BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
 	return Found;
 }
 
-BOOL SVOInspectionList::IsInspectionNameInList( LPCTSTR InspectName) const
+bool SVOInspectionList::IsInspectionNameInList( LPCTSTR InspectName) const
 {
 	const_iterator Iter = m_InspectionList.begin();
-	BOOL bFound = false;
+	bool bFound = false;
 
 	while( Iter != m_InspectionList.end() && !bFound )
 	{
@@ -255,10 +255,10 @@ BOOL SVOInspectionList::IsInspectionNameInList( LPCTSTR InspectName) const
 	}
 	return bFound;    
 }
-BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR InspectName) const
+bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR InspectName) const
 {
 	const_iterator Iter = m_InspectionList.begin();
-	BOOL bFound = FALSE;
+	bool bFound = false;
 
 	while( Iter != m_InspectionList.end() && !bFound )
 	{
@@ -268,7 +268,7 @@ BOOL SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR Inspec
 		{
 			if( InspectName == pInspectionObj->GetInspectionName() )
 			{
-				bFound = TRUE;
+				bFound = true;
 			}
 		}
 		else

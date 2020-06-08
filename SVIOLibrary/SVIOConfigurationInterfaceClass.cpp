@@ -39,9 +39,9 @@ void SVIOConfigurationInterfaceClass::Init()
 		m_abSVIMStrobeStartFrame[i] = false;
 	}
 
+	///Standard IO size is determined depending on the IO dll loaded 
 	m_DigitalInputs.clear();
 	m_DigitalOutputs.clear();
-
 	unsigned long size {0UL};
 	if (S_OK == m_DigitalBoard.GetInputCount(&size))
 	{
@@ -51,6 +51,14 @@ void SVIOConfigurationInterfaceClass::Init()
 	{
 		m_DigitalOutputs.resize(size);
 	}
+}
+
+void SVIOConfigurationInterfaceClass::initializeIO(int inputSize, int outputSize)
+{
+	m_DigitalInputs.clear();
+	m_DigitalOutputs.clear();
+	m_DigitalInputs.resize(inputSize);
+	m_DigitalOutputs.resize(outputSize);
 }
 
 HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR pName )

@@ -170,8 +170,6 @@ private: //data members
 	void SetupAdvancedTrigger();
 	void SetupPPQ();
 
-	bool IsGigeSystem() const;
-
 	void checkAndSetMaxProcessingOffset(int iLen);
 };
 

@@ -65,7 +65,6 @@ void SVIOController::initializeOutputs()
 
 	if (nullptr != pConfig && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 	{
-
 		m_discreteIO = true;
 		if(nullptr == m_pModuleReady)
 		{

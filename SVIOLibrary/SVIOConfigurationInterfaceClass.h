@@ -27,6 +27,7 @@ public:
 
 	void Shutdown();
 	void Init();
+	void initializeIO(int inputSize, int outputSize);
 
 	HRESULT OpenDigital( LPCTSTR p_szName );
 	HRESULT CloseDigital();

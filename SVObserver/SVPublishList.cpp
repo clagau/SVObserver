@@ -196,7 +196,7 @@ void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 						pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 						pIOEntry->setLinkedObject(pObject);
 						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
-						pIOEntry->m_ObjectType		= SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()) ? IO_DIGITAL_OUTPUT : IO_PLC_OUTPUT;
+						pIOEntry->m_ObjectType		= SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
 						pIOEntry->m_Enabled			= ( nullptr != pOutput);
 

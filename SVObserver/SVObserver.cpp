@@ -65,11 +65,8 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVIOLibrary/SVDigitalInputObject.h"
-#include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVLibrary/SVPackedFile.h"
 #include "SVLibrary/DisplayMessageBox.h"
 #include "SVLibrary/SVOINIClass.h"
@@ -2213,13 +2210,11 @@ void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
 
 	if (nullptr != pConfig)
 	{
-		for (const auto& rFile : pConfig->getAdditionalFiles())
+		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
+		if(std::any_of(rAdditionalFiles.cbegin(), rAdditionalFiles.cend(), [&FilePath](const auto& rFile) { return FilePath == rFile.GetFullFileName(); }))
 		{
-			if (FilePath == rFile.GetFullFileName())
-			{
-				//File is already in additional file list
-				return;
-			}
+			//File is already in additional file list
+			return;
 		}
 		pConfig->getAdditionalFiles().emplace_back(SVFileNameClass {FilePath});
 		SVFileNameManagerClass::Instance().AddItem(&pConfig->getAdditionalFiles().back());
@@ -2656,11 +2651,11 @@ SVIODoc *SVObserverApp::NewSVIODoc(LPCTSTR DocName, SVIOController& IOController
 					if (nullptr != pConfig)
 					{
 						//Now that IO constructed check which tabs to hide
-						if (SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+						if (false == SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()))
 						{
 							HideIOTab(SVIOPlcOutputsViewID);
 						}
-						else
+						if (false == SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 						{
 							HideIOTab(SVIODiscreteInputsViewID);
 							HideIOTab(SVIODiscreteOutputsViewID);
@@ -3117,14 +3112,12 @@ bool SVObserverApp::CheckSVIMType() const
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_NEO1:
 			{
 				Result |= ProductType == SVIM_PRODUCT_X2_GD1A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD2A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD4A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
-				Result |= ProductType == SVIM_PRODUCT_NEO1;
 				break;
 			}
 
@@ -4009,30 +4002,9 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 
 			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, m_ConfigFileName.GetFileNameOnly());
-			unsigned long ulCount = 0;
-
-			SVIOConfigurationInterfaceClass::Instance().Init();
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(ulCount);
 
 			if (nullptr != pConfig)
 			{
-				// Create all the default inputs
-				SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
-				if (nullptr != pInputObjectList)
-				{
-					for (unsigned long l = 0; l < ulCount; l++)
-					{
-						std::string Name = SvUl::Format(_T("DIO.Input%d"), l + 1);
-
-						SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SvPb::SVDigitalInputObjectType, l).get());
-
-						if (nullptr != pInput)
-						{
-							pInput->SetChannel(l);
-						}
-					}// end for
-				}
-
 				// Make all the PPQs build their default digital inputs
 				long lPPQCount = pConfig->GetPPQCount();
 				for (long lPPQ = 0; lPPQ < lPPQCount; lPPQ++)
@@ -4042,25 +4014,6 @@ bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
 					pPPQ->RebuildInputList(pConfig->HasCameraTrigger(pPPQ));
 					pPPQ->RebuildOutputList();
 				}// end for
-
-				// Create all the default outputs
-				SVOutputObjectList *pOutputObjectList = pConfig->GetOutputObjectList();
-				if (nullptr != pOutputObjectList && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
-				{
-					const int moduleReadyChannel = 15;
-					SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, moduleReadyChannel).get());
-
-					if (nullptr != pOutput && nullptr != pConfig->GetModuleReady())
-					{
-						pOutput->SetChannel(moduleReadyChannel);
-
-						pConfig->GetModuleReady()->m_IOId = pOutput->getObjectId();
-
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted(moduleReadyChannel, pOutput->IsInverted());
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced(moduleReadyChannel, pOutput->IsForced());
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue(moduleReadyChannel, pOutput->GetForcedValue());
-					}
-				}
 			}
 		}
 
