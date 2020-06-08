@@ -1910,7 +1910,7 @@ const unsigned char* SVImageViewClass::GetBitmapBits() const
 
 HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( !( SVDirectX::Instance().empty() ) && !( p_rBitmapInfo.empty() ) )
 	{
@@ -1923,15 +1923,15 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 			m_sourceImageHeight = ::labs( p_rBitmapInfo.GetHeight() );
 			m_sourceBitCount = p_rBitmapInfo.GetBitCount();
 
-			l_Status = SVDirectX::CreateSurface( p_rBitmapInfo, &m_pDDImageSurface );
+			status = SVDirectX::CreateSurface( p_rBitmapInfo, &m_pDDImageSurface );
 			
-			if( DD_OK == l_Status )
+			if( DD_OK == status )
 			{
 				SIZE l_Size;
 
 				SVDirectX::GetPrimarySurfaceResolution( l_Size );
 
-				l_Status = SVDirectX::CreateSurface( l_Size.cx, l_Size.cy, &m_pDDScaledImageSurface );
+				status = SVDirectX::CreateSurface( l_Size.cx, l_Size.cy, &m_pDDScaledImageSurface );
 			}
 
 			CRect l_rect;
@@ -1942,10 +1942,10 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	if( DD_OK != l_Status )
+	if( DD_OK != status )
 	{
 		ReleaseImageSurface();
 
@@ -1954,12 +1954,12 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 #endif
 	}
 
-	return l_Status;
+	return status;
 }
 
 HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const SVBitmapInfo& p_rBitmapInfo, const unsigned char* p_pBitmapBits )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( !( p_rBitmapInfo.empty() ) && ( nullptr != p_pBitmapBits ) && ( nullptr != m_pDDImageSurface ) )
 	{
@@ -1967,8 +1967,8 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 		memset( &l_ddSurfaceDesc, 0, sizeof( l_ddSurfaceDesc ) );
 		l_ddSurfaceDesc.dwSize = sizeof( l_ddSurfaceDesc );
 
-		l_Status = m_pDDImageSurface->Lock( nullptr, &l_ddSurfaceDesc, DDLOCK_NOSYSLOCK | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr );
-		if( DD_OK == l_Status )
+		status = m_pDDImageSurface->Lock( nullptr, &l_ddSurfaceDesc, DDLOCK_NOSYSLOCK | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr );
+		if( DD_OK == status )
 		{
 			unsigned short l_BitmapBitCount = p_rBitmapInfo.GetBitCount();
 			unsigned long l_BitmapWidth = p_rBitmapInfo.GetWidth();
@@ -2010,25 +2010,25 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 			}
 			else
 			{
-				l_Status = E_INVALIDARG;
+				status = E_INVALIDARG;
 			}
 
 			// preserve the error set if the image widths/pitch are different 
 			// (meaning that we didn't copy the image data)
 			HRESULT l_Temp = m_pDDImageSurface->Unlock( nullptr );
 
-			if( S_OK == l_Status )
+			if( S_OK == status )
 			{
-				l_Status = l_Temp;
+				status = l_Temp;
 			}
 		}
 	}
 	else
 	{
-		l_Status = E_INVALIDARG;
+		status = E_INVALIDARG;
 	}
 
-	return l_Status;
+	return status;
 }
 
 bool SVImageViewClass::IsZoomAllowed() const
@@ -2055,7 +2055,7 @@ void SVImageViewClass::UpdateZoomToolbar()
 
 HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath, bool showOverlays)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( nullptr != m_pDDImageSurface && nullptr != m_pDDScaledImageSurface )
 	{
@@ -2063,15 +2063,15 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 
 		CRect l_ScaledRect( 0, 0, p_rDestRect.Width(), p_rDestRect.Height() );
 
-		l_Status = m_pDDScaledImageSurface->GetDC( &scaledDC );
+		status = m_pDDScaledImageSurface->GetDC( &scaledDC );
 
-		if( DD_OK == l_Status )
+		if( DD_OK == status )
 		{
 			HDC surfaceDC = nullptr;
 
-			l_Status = m_pDDImageSurface->GetDC( &surfaceDC );
+			status = m_pDDImageSurface->GetDC( &surfaceDC );
 
-			if( DD_OK == l_Status )
+			if( DD_OK == status )
 			{
 				int iStretchMode = ::SetStretchBltMode( scaledDC, STRETCH_DELETESCANS );
 
@@ -2107,23 +2107,23 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 		}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		if( DD_OK != l_Status)
+		if( DD_OK != status)
 		{
-			TRACE(_T( "SVImageViewClass::UpdateImage - Surface Blit failed %08lx\n" ), l_Status );
+			TRACE(_T( "SVImageViewClass::UpdateImage - Surface Blit failed %08lx\n" ), status );
 		}
 #endif
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 HRESULT SVImageViewClass::BlitToPrimarySurface( CRect& p_rDestRect )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( nullptr != m_pDDScaledImageSurface )
 	{
@@ -2131,39 +2131,37 @@ HRESULT SVImageViewClass::BlitToPrimarySurface( CRect& p_rDestRect )
 
 		SVDirectX::Instance().SetClipperHWnd( 0, m_hWnd );
 
-		// @Note: the following loop can result in an infinite cycle
-		do
+		status = SVDirectX::Instance().GetBltStatus( DDGBS_CANBLT ); // @Note: a do/while loop around GetBltStatus() was removed in SVO-2746 since it did not seem necessary
+		if (S_OK == status)
 		{
-			l_Status = SVDirectX::Instance().GetBltStatus( DDGBS_CANBLT );
-
-			if( S_OK != l_Status )
-			{
-				Sleep( 0 );
-			}
+			status = SVDirectX::Instance().Blt(
+				&p_rDestRect,            // destination rectangle
+				m_pDDScaledImageSurface, // source surface
+				&l_ScaledRect,           // source rectangle
+				DDBLT_WAIT,              // DDBLT_DONOTWAIT| DDBLT_ASYNC, // Flag <<<<<<<<<<<<<<<<<<<<<<
+				nullptr);               // Pointer to DDBLTFX Structure
 		}
-		while( S_OK != l_Status && E_FAIL != l_Status );
-
-		if( S_OK == l_Status )
+		else
 		{
-			l_Status = SVDirectX::Instance().Blt(
-					&p_rDestRect,            // destination rectangle
-					m_pDDScaledImageSurface, // source surface
-					&l_ScaledRect,           // source rectangle
-					DDBLT_WAIT,              // DDBLT_DONOTWAIT| DDBLT_ASYNC, // Flag <<<<<<<<<<<<<<<<<<<<<<
-					nullptr );                  // Pointer to DDBLTFX Structure
+			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+			SvDef::StringVector msgList;
+			std::ostringstream oss;
+			oss << "GetBltStatus() Failed!! Result = " << status;
+			msgList.push_back(oss.str());
+			Msg.setMessage(SVMSG_SVO_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 HRESULT SVImageViewClass::RecreateLostSurface()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( nullptr != m_pDDImageSurface )
 	{
@@ -2197,15 +2195,15 @@ HRESULT SVImageViewClass::RecreateLostSurface()
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 HRESULT SVImageViewClass::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 	CWnd* l_pParent = GetParent(); // The parent of ImageView window is ImageViewScroll.
@@ -2239,41 +2237,41 @@ HRESULT SVImageViewClass::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect 
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 HRESULT SVImageViewClass::UpdateBufferFromIPDoc()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
 	if( nullptr != l_pIPDoc )
 	{
 		if( S_FALSE == l_pIPDoc->IsImageDataUpdated( m_ImageId, this ) )
 		{
-			l_Status = l_pIPDoc->GetImageData( m_ImageId, m_ImageDIB, m_OverlayData );
+			status = l_pIPDoc->GetImageData( m_ImageId, m_ImageDIB, m_OverlayData );
 
-			if( S_OK == l_Status )
+			if( S_OK == status )
 			{
-				l_Status = l_pIPDoc->MarkImageDataUpdated( m_ImageId, this );
+				status = l_pIPDoc->MarkImageDataUpdated( m_ImageId, this );
 			}
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 // DisplayImage copies an image to the DirectDraw image surface.
 HRESULT SVImageViewClass::UpdateSurface()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( !( SVSVIMStateClass::CheckState( SV_STATE_CLOSING | SV_STATE_CANCELING ) ) )
 	{
@@ -2283,23 +2281,23 @@ HRESULT SVImageViewClass::UpdateSurface()
 
 		if( !( l_BitmapInfo.empty() ) && ( nullptr != l_pBitmapBits ) && ( nullptr != l_pParent ) )
 		{
-			l_Status = UpdateImageSurfaces( l_BitmapInfo );
+			status = UpdateImageSurfaces( l_BitmapInfo );
 
-			if( S_OK == l_Status )
+			if( S_OK == status )
 			{
 				CRect l_SourceRect;
 				CRect l_DestRect;
 
-				l_Status = GetRectInfo( l_SourceRect, l_DestRect );
+				status = GetRectInfo( l_SourceRect, l_DestRect );
 
-				if( S_OK == l_Status )
+				if( S_OK == status )
 				{
-					l_Status = CopyBitsToSurface( l_SourceRect, l_BitmapInfo, l_pBitmapBits );
+					status = CopyBitsToSurface( l_SourceRect, l_BitmapInfo, l_pBitmapBits );
 				}
 			}
 
 			// check for lost surfaces
-			if( DDERR_SURFACELOST == l_Status )
+			if( DDERR_SURFACELOST == status )
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
@@ -2309,21 +2307,21 @@ HRESULT SVImageViewClass::UpdateSurface()
 		}
 		else
 		{
-			l_Status = E_FAIL;
+			status = E_FAIL;
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 // DisplayImage copies an image to the DirectDraw image surface.
 HRESULT SVImageViewClass::DisplaySurface()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 
 	if( !( SVSVIMStateClass::CheckState( SV_STATE_CLOSING | SV_STATE_CANCELING ) ) )
 	{
@@ -2335,20 +2333,20 @@ HRESULT SVImageViewClass::DisplaySurface()
 			CRect l_SourceRect;
 			CRect l_DestRect;
 
-			l_Status = GetRectInfo( l_SourceRect, l_DestRect );
+			status = GetRectInfo( l_SourceRect, l_DestRect );
 
-			if( S_OK == l_Status )
+			if( S_OK == status )
 			{
-				l_Status = BlitToScaledSurface( l_SourceRect, l_DestRect );
+				status = BlitToScaledSurface( l_SourceRect, l_DestRect );
 			}
 
-			if( S_OK == l_Status )
+			if( S_OK == status )
 			{
-				l_Status = BlitToPrimarySurface( l_DestRect );
+				status = BlitToPrimarySurface( l_DestRect );
 			}
 
 			// check for lost surfaces
-			if( DDERR_SURFACELOST == l_Status )
+			if( DDERR_SURFACELOST == status )
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
@@ -2359,32 +2357,32 @@ HRESULT SVImageViewClass::DisplaySurface()
 		}
 		else
 		{
-			l_Status = E_FAIL;
+			status = E_FAIL;
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = S_OK;
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
 	if( nullptr != l_pIPDoc )
 	{
-		l_Status = l_pIPDoc->MarkImageDataDisplayed( m_ImageId, this );
+		status = l_pIPDoc->MarkImageDataDisplayed( m_ImageId, this );
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		status = E_FAIL;
 	}
 
-	return l_Status;
+	return status;
 }
 
 void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
