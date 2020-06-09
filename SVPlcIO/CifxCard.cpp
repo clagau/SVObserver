@@ -353,12 +353,18 @@ void CifXCard::setPlcLoopSyncTime()
 void CifXCard::sendConfigList()
 {
 	m_protocolInitialized = false;
-	const std::vector<ConfigDataSet>& rConfigList =  m_configDataSetsMap[m_inputTelegram.m_layout];
-	if(0 < rConfigList.size())
+	uint8_t layoutIndex = m_inputTelegram.m_layout;
+	if(0 < layoutIndex )
 	{
-		const uint8_t* pData = reinterpret_cast<const uint8_t*> (&rConfigList[0]);
-		writeResponseData(pData, sizeof(ConfigDataSet) * rConfigList.size());
-		printOutput("Send Config Layout\n");
+		///Layout index is always either 1 or 2
+		layoutIndex = (layoutIndex % 2) == 1 ? 1 : 2;
+		const std::vector<ConfigDataSet>& rConfigList =  m_configDataSetsMap[static_cast<TelegramLayout> (layoutIndex)];
+		if(0 < rConfigList.size())
+		{
+			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&rConfigList[0]);
+			writeResponseData(pData, sizeof(ConfigDataSet) * rConfigList.size());
+			printOutput("Send Config Layout\n");
+		}
 	}
 }
 
