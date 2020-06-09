@@ -39,8 +39,8 @@ class SVPPQEntryDialogRemotePageClass : public CPropertyPage
 	//{{AFX_DATA(SVPPQEntryDialogRemotePageClass)
 	public:
 	enum { IDD = IDD_PPQENTRY_REMOTE_INPUT_PAGE };
-	CListBox	selectedInputListCtrl;
-	CListBox	availableInputListCtrl;
+	CListBox	m_selectedInputCtrl;
+	CListBox	m_availableInputCtrl;
 	CString	StrCurPos;
 	//}}AFX_DATA
 
@@ -56,7 +56,7 @@ protected:
 	bool m_bIsTaken{false};
 
 private:
-	std::map<unsigned long, SVIOEntryHostStructPtr> m_AvailableItems;
-	std::map<unsigned long, SVIOEntryHostStructPtr> m_SelectedItems;
+	std::map<std::string, SVIOEntryHostStructPtr> m_AvailableItems;
+	std::map<std::string, SVIOEntryHostStructPtr> m_SelectedItems;
 };
 

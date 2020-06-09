@@ -38,8 +38,8 @@ void SVPPQEntryDialogRemotePageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVPPQEntryDialogRemotePageClass)
-	DDX_Control(pDX, IDC_SELECTED_REMOTE_LIST, selectedInputListCtrl);
-	DDX_Control(pDX, IDC_AVAILABLE_REMOTE_LIST, availableInputListCtrl);
+	DDX_Control(pDX, IDC_SELECTED_REMOTE_LIST, m_selectedInputCtrl);
+	DDX_Control(pDX, IDC_AVAILABLE_REMOTE_LIST, m_availableInputCtrl);
 	DDX_Text(pDX, IDC_CURRENT_POSITION, StrCurPos);
 	//}}AFX_DATA_MAP
 }
@@ -67,19 +67,25 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 		// Fill selected input list box...
 		if(pEntry->m_PPQIndex == m_pSheet->m_lCurrentPosition )
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
-
-			int nIndex = selectedInputListCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems[nIndex] = pEntry;
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
+			if (nullptr != pObject)
+			{
+				std::string name {pObject->GetName()};
+				m_selectedInputCtrl.AddString(name.c_str());
+				m_SelectedItems[name] = pEntry;
+			}
 		}// end if
 
 		// Fill available input list box...
 		if(pEntry->m_PPQIndex == -1 )
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
-
-			int nIndex = availableInputListCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems[nIndex] = pEntry;
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
+			if (nullptr != pObject)
+			{
+				std::string name {pObject->GetName()};
+				m_availableInputCtrl.AddString(name.c_str());
+				m_AvailableItems[name] = pEntry;
+			}
 		}// end if
 	}// end for
 
@@ -97,24 +103,29 @@ void SVPPQEntryDialogRemotePageClass::OnAddButton()
 	assert( m_pSheet );
 	UpdateData( TRUE );
 
-	int index = availableInputListCtrl.GetCurSel();
+	int index = m_availableInputCtrl.GetCurSel();
 	if( m_pSheet && index >= 0 )
 	{
+		CString entryName;
+		m_availableInputCtrl.GetText(index, entryName);
 		SVIOEntryHostStructPtr pIOEntry;
-		const auto iter = m_AvailableItems.find(index);
+		const auto iter = m_AvailableItems.find(std::string(entryName));
 		if (m_AvailableItems.end() != iter)
 		{
 			pIOEntry = iter->second;
 			m_AvailableItems.erase(iter);
 		}
-		availableInputListCtrl.DeleteString( index );
+		m_availableInputCtrl.DeleteString(index);
 
 		if(nullptr != pIOEntry)
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
-
-			index = selectedInputListCtrl.AddString( l_pObject->GetName() );
-			m_SelectedItems[index] = pIOEntry;
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId);
+			if (nullptr != pObject)
+			{
+				std::string name {pObject->GetName()};
+				m_selectedInputCtrl.AddString(name.c_str());
+				m_SelectedItems[name] = pIOEntry;
+			}
 		}
 	}// end if
 
@@ -126,24 +137,29 @@ void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 	assert( m_pSheet );
 	UpdateData( TRUE );
 
-	int index = selectedInputListCtrl.GetCurSel();
+	int index = m_selectedInputCtrl.GetCurSel();
 	if( m_pSheet && index >= 0 )
 	{
+		CString entryName;
+		m_selectedInputCtrl.GetText(index, entryName);
 		SVIOEntryHostStructPtr pIOEntry;
-		const auto iter = m_SelectedItems.find(index);
+		const auto iter = m_SelectedItems.find(std::string(entryName));
 		if (m_SelectedItems.end() != iter)
 		{
 			pIOEntry = iter->second;
 			m_SelectedItems.erase(iter);
 		}
-		selectedInputListCtrl.DeleteString( index );
+		m_selectedInputCtrl.DeleteString(index);
 
 		if(nullptr != pIOEntry)
 		{
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
-
-			index = availableInputListCtrl.AddString( l_pObject->GetName() );
-			m_AvailableItems[index] = pIOEntry;
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId);
+			if (nullptr != pObject)
+			{
+				std::string name {pObject->GetName()};
+				m_availableInputCtrl.AddString(name.c_str());
+				m_AvailableItems[name] = pIOEntry;
+			}
 		}
 	}// end if
 
@@ -155,42 +171,46 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 	UpdateData( TRUE );
 	assert( m_pSheet );
 
-	m_bIsTaken = ( selectedInputListCtrl.GetCount() > 0 );
+	m_bIsTaken = ( m_selectedInputCtrl.GetCount() > 0 );
 
 	// Check selected input list ( remove deselected items )...
-	for( int k = selectedInputListCtrl.GetCount() - 1; k >= 0; -- k )
+	for( int i = m_selectedInputCtrl.GetCount() - 1; i >= 0; -- i )
 	{
+		CString entryName;
+		m_selectedInputCtrl.GetText(i, entryName);
 		SVIOEntryHostStructPtr pIOEntry;
-		const auto iter = m_SelectedItems.find(k);
+		const auto iter = m_SelectedItems.find(std::string(entryName));
 		if (m_SelectedItems.end() != iter)
 		{
 			pIOEntry = iter->second;
 			m_SelectedItems.erase(iter);
 		}
-		selectedInputListCtrl.DeleteString( k );
+		m_selectedInputCtrl.DeleteString(i);
 
 		if(nullptr != pIOEntry)
 		{
-			pIOEntry->m_Enabled = TRUE;
+			pIOEntry->m_Enabled = true;
 			pIOEntry->m_PPQIndex = m_pSheet->m_lCurrentPosition;
 		}
 	}
 
 	// And now add new items...( remainder in selected list box control )
-	for( int i = availableInputListCtrl.GetCount() - 1; i >= 0;  -- i )
+	for( int i = m_availableInputCtrl.GetCount() - 1; i >= 0;  -- i )
 	{
+		CString entryName;
+		m_availableInputCtrl.GetText(i, entryName);
 		SVIOEntryHostStructPtr pIOEntry;
-		const auto iter = m_AvailableItems.find(i);
+		const auto iter = m_AvailableItems.find(std::string(entryName));
 		if (m_AvailableItems.end() != iter)
 		{
 			pIOEntry = iter->second;
 			m_AvailableItems.erase(iter);
 		}
-		availableInputListCtrl.DeleteString( i );
+		m_availableInputCtrl.DeleteString(i);
 
 		if(nullptr != pIOEntry)
 		{
-			pIOEntry->m_Enabled = FALSE;
+			pIOEntry->m_Enabled = false;
 			pIOEntry->m_PPQIndex = -1;
 		}// end if
 	}// end for
@@ -203,7 +223,7 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 BOOL SVPPQEntryDialogRemotePageClass::OnApply()
 {
 	// Set is taken flag...
-	m_bIsTaken = ( selectedInputListCtrl.GetCount() > 0 );
+	m_bIsTaken = ( m_selectedInputCtrl.GetCount() > 0 );
 
 	return CPropertyPage::OnApply();
 }

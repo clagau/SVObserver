@@ -42,8 +42,8 @@ class SVPPQEntryDialogDigInPageClass : public CPropertyPage
 	//{{AFX_DATA(SVPPQEntryDialogDigInPageClass)
 	public:
 	enum { IDD = IDD_PPQENTRY_DIGITAL_INPUT_PAGE };
-	CListBox m_SelectedInputCtrl;
-	CListBox m_AvailableInputCtrl;
+	CListBox m_selectedInputCtrl;
+	CListBox m_availableInputCtrl;
 	CString m_CurrentPos;
 	//}}AFX_DATA
 
@@ -53,7 +53,7 @@ private:
 	SVPPQEntryDialogPropertySheetClass* m_pSheet {nullptr};
 	BOOL m_bIsTaken {false};
 
-	std::map<unsigned long, SVIOEntryHostStructPtr> m_AvailableItems;
-	std::map<unsigned long, SVIOEntryHostStructPtr> m_SelectedItems;
+	std::map<std::string, SVIOEntryHostStructPtr> m_AvailableItems;
+	std::map<std::string, SVIOEntryHostStructPtr> m_SelectedItems;
 };
 
