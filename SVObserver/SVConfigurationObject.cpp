@@ -5842,7 +5842,13 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 			{
 				case IO_DIGITAL_INPUT:
 				{
+					for (auto& pPPQ : m_arPPQArray)
+					{
+						pPPQ->RemoveInput(pInput);
+					}
 					m_pInputObjectList->DetachInput(pInput->m_IOId);
+					pInput->m_Enabled = false;
+					pInput->m_PPQIndex = -1;
 					break;
 				}
 				default:
@@ -5862,6 +5868,7 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 				case IO_PLC_OUTPUT:
 				{
 					m_pOutputObjectList->DetachOutput(pOutput->m_IOId);
+					pOutput->m_Enabled = false;
 					break;
 				}
 				default:
