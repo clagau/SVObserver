@@ -117,6 +117,16 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 	inputDefEx[InputValue_TABLE_NAMES].vDefaultValue.vt = VT_ARRAY | VT_BSTR;
 
 
+	CComSafeArray<double> sa2(50);
+	for (int i = 0; i < 50; i++)
+		sa2[i] = double(i)*1.5;
+
+	inputDefEx[InputValue_Second_Double_Array].vt = VT_ARRAY | VT_R8;
+	inputDefEx[InputValue_Second_Double_Array].Name = "ZDVektor";
+	inputDefEx[InputValue_Second_Double_Array].HelpText = "Double Vektor eingeben";
+	inputDefEx[InputValue_Second_Double_Array].Group = "ZweitesArray";
+	inputDefEx[InputValue_Second_Double_Array].vDefaultValue.parray = sa2.Detach();
+	inputDefEx[InputValue_Second_Double_Array].vDefaultValue.vt = VT_ARRAY | VT_R8;
 	inputDefEx[InputValue_LONG_TABLE_SELECT].vt = VT_I4;
 	inputDefEx[InputValue_LONG_TABLE_SELECT].Name = "tableCol";
 	inputDefEx[InputValue_LONG_TABLE_SELECT].HelpText = "Long selected Colum for table";
@@ -562,11 +572,11 @@ HRESULT CDllTool::run()
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
-		int inputarrayLowerBound = 0;
+		
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_DOUBLE_ARRAY].parray));
 
 		inputarrayLen = saInput.GetCount();
-		inputarrayLowerBound = saInput.GetLowerBound();
+		
 
 		//copy input to output 
 		CComSafeArray<double> saOutput(inputarrayLen);
@@ -586,11 +596,11 @@ HRESULT CDllTool::run()
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
 		int inputarrayLen = 0;
-		int inputarrayLowerBound = 0;
+		
 		CComSafeArray<int> saInput((m_aInputValues[InputValue_INT_ARRAY].parray));
 
 		inputarrayLen = saInput.GetCount();
-		inputarrayLowerBound = saInput.GetLowerBound();
+		
 
 		//copy input to output 
 		CComSafeArray<int> saOutput(inputarrayLen);
@@ -605,6 +615,23 @@ HRESULT CDllTool::run()
 			m_aResultValues[ResultValue_INT_ARRAY].parray = saOutput.Detach();
 		}
 	}
+
+	if (m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8))
+		{
+			double out{ 0 };
+			int inputarrayLen = 0;
+			int inputarrayLowerBound = 0;
+			CComSafeArray<double> saInput((m_aInputValues[InputValue_Second_Double_Array].parray));
+
+			inputarrayLen = saInput.GetCount();
+			
+
+			for (int i = 0; i < inputarrayLen; i++)
+			{
+				out+= saInput[i];
+			}
+			m_aResultValues[ResultValue_DOUBLE].dblVal += out;
+		}
 
 	run_copySelectedTableInput2Output(Select);
 	run_copyTableInput2Output();

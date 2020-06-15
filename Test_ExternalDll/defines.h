@@ -22,6 +22,7 @@ enum InputValuesEnum
 	InputValue_INT_ARRAY,
 	InputValue_TABLE_ARRAY,
 	InputValue_TABLE_NAMES,
+	InputValue_Second_Double_Array,
 	InputValue_LONG_TABLE_SELECT,
 	NUM_INPUT_VALUES
 };

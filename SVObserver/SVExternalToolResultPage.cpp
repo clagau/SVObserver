@@ -94,7 +94,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		pRoot->SetLabelText(_T("Results"));
 		pRoot->SetInfoText(_T(""));
 
-		int iID = ID_BASE - 1;	// the increment happens before using the value, so subtract one here
+		
 		std::map<std::string, SVRPropertyItem*> mapGroupItems;
 		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
 
@@ -134,7 +134,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 				break;
 			}
 
-			iID++;
+			int iID = ID_BASE + i;
 			pEdit->SetCtrlID(iID);
 
 			std::string  ObjectName = rValue.GetName();
@@ -211,7 +211,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			{
 				break;
 			}
-			iID++;
+			int iID = ID_BASE + NumResults + i;
 			pEdit->SetCtrlID(iID);
 			std::string objectname = pTable->GetName();
 			///use the same displayname as in 8.20
@@ -268,15 +268,16 @@ void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESU
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 
-		if (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() == VT_BSTR ||
-			0 != (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() & VT_ARRAY)
-			)
+		*plResult = FALSE;
+
+		if (m_pTask != nullptr &&  m_pTask->m_Data.m_ResultDefinitions.size() > iIndex)
 		{
-			*plResult = FALSE;	// Do not show button for a string, No Range available.
-		}
-		else
-		{
-			*plResult = TRUE;	// Show button for other types.
+			if (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() != VT_BSTR &&
+				(0 == (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() & VT_ARRAY)))
+			{
+				*plResult = TRUE;	// Show button no string no array
+			}
+			
 		}
 	}
 }
@@ -345,28 +346,12 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 void SVExternalToolResultPage::OnOK()
 {
 
-	SVRPropertyItem* pGroup = nullptr;
+	
 
-	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
-	{
-		pGroup = m_Tree.GetRootItem()->GetChild()->GetChild();
-		while (pGroup)
-		{
-			SVRPropertyItem* pItem = nullptr;
-			pItem = pGroup->GetChild();
-			while (pItem)
-			{
-				int iIndex = GetItemIndex(pItem);
-				assert(iIndex >= 0);
-				SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[iIndex];
 
-				pItem = pItem->GetSibling();
-			}
-			pGroup = pGroup->GetSibling();
-		}
 
 		CPropertyPage::OnOK();
-	}
+	
 }
 
 int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)

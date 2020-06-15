@@ -51,7 +51,8 @@ protected:
 	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
 	SVObjectClass* FindObject(SVRPropertyItem* pItem);
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
-	bool ValidateValueObject(SVObjectClass* pObject, int iIndex);
+
+	bool ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef);
 	int GetItemIndex(SVRPropertyItem* pItem);
 	const SvOp::InputValueDefinition*  GetInputValueDefinitionPtr(SVRPropertyItem* pItem);
 

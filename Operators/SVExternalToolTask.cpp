@@ -1473,7 +1473,11 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 {
 	SVVariantResultClass*   pResult = nullptr;
-
+	if (iIndex < 0 || iIndex >= m_Data.m_aResultObjects.size())
+	{
+		return nullptr;
+	}
+	
 	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
 	SVGetObjectDequeByTypeVisitor l_Visitor(info);
 	SVObjectManagerClass::Instance().VisitElements(l_Visitor, getObjectId());
@@ -1825,11 +1829,11 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 	for (int i = 0; i < m_InputDefinitions.size(); i++)
 	{
 		InputValueDefinition& rInputDef = m_InputDefinitions[i];
+		int LinkValueIndex = rInputDef.getLinkedValueIndex();
+		SvVol::LinkedValue& rInputValue = m_aInputObjects[LinkValueIndex];
+
 		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
 		{
-			int LinkValueIndex = rInputDef.getLinkedValueIndex();
-			SvVol::LinkedValue& rInputValue = m_aInputObjects[LinkValueIndex];
-
 			if (rInputValue.GetDefaultType() == VT_EMPTY)
 			{
 				bool bSetVal {true};
@@ -1841,32 +1845,26 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 				rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), bSetVal);
 
 			}
-			//The linkedValues must be reset (to set the object reference correctly), before used them for get values (in InspectionInputsToVariantArray). 
-			//But this method will called also in Create-process and there is not a reset called before.
-			rInputValue.resetAllObjects();
+			
 		}
-		else
-		{
-			int LinkValueIndex = rInputDef.getLinkedValueIndex();
-			SvVol::LinkedValue& rLinkedObject = m_aInputObjects[LinkValueIndex];
-
-
-			rLinkedObject.resetAllObjects();
-		}
+		//The linkedValues must be reset (to set the object reference correctly), before used them for get values (in InspectionInputsToVariantArray). 
+		//But this method will called also in Create-process and there is not a reset called before.
+		rInputValue.resetAllObjects();
 
 		if (rInputDef.UseDisplayNames())
 		{
 			
-			std::string oldname = m_aInputObjects[i].GetName();
+			std::string oldname = m_aInputObjects[LinkValueIndex].GetName();
 			std::string InputPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_INPUT_PREFIX);
 			std::stringstream str;
-			str << InputPrefix << std::setfill('0') << std::setw(2) << i +1 << "_" << rInputDef.getDisplayName();
+			str << InputPrefix << std::setfill('0') << std::setw(2) << LinkValueIndex +1 << "_" << rInputDef.getDisplayName();
 			std::string name = str.str();
-			m_aInputObjects[i].SetName(name.c_str());
+			m_aInputObjects[LinkValueIndex].SetName(name.c_str());
 			if (nullptr != pExternalToolTask &&  pExternalToolTask->NoExFktInLoadVersion() && pExternalToolTask->GetInspection())
 			{
-				pExternalToolTask->GetInspection()->OnObjectRenamed(m_aInputObjects[i], oldname);
+				pExternalToolTask->GetInspection()->OnObjectRenamed(m_aInputObjects[LinkValueIndex], oldname);
 			}
+			//@Todo[mec] rename linked value 
 			
 		}
 
@@ -1874,9 +1872,6 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 	}
 
 }
-
-
-
 
 bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], SVRunStatusClass& rRunStatus)
 {

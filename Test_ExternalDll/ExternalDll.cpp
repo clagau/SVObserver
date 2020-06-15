@@ -274,6 +274,7 @@ TOOLDLL_API HRESULT __stdcall SVUninitializeRun(GUID guidTool)
 	return hr;
 }
 
+#ifdef DEFINE_STRUCTEX 
 // cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
 	InputValueDefinitionStructEx** ppaStructs)
@@ -366,6 +367,7 @@ TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructuresEx(ResultV
 	delete[] paStructs;
 	return S_OK;
 }
+#endif 
 
 // cppcheck-suppress unusedFunction
 TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID guidTool, long lArraySize,

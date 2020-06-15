@@ -12,6 +12,7 @@
 #define TOOLDLL_API __declspec(dllimport)
 #endif
 
+#define DEFINE_STRUCTEX 
 struct InputValueDefinitionStruct;
 struct ResultValueDefinitionStruct;
 struct ResultTableDefinitionStruct;
@@ -46,15 +47,19 @@ TOOLDLL_API HRESULT __stdcall SVStartup();
 TOOLDLL_API HRESULT __stdcall SVShutDown();
 TOOLDLL_API HRESULT __stdcall SVInitializeRun(GUID tool, long lImageArraySize, ImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavInputValues);
 TOOLDLL_API HRESULT __stdcall SVUninitializeRun(GUID tool);
+#ifdef DEFINE_STRUCTEX 
 TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize, InputValueDefinitionStructEx** ppaStructs);
 TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructuresEx(InputValueDefinitionStructEx* paStructs);
+#endif 
 TOOLDLL_API HRESULT __stdcall SVSetInputValues(GUID tool, long lArraySize, VARIANT* paInputValues);
 TOOLDLL_API HRESULT __stdcall SVGetResultValues(GUID tool, long lArraySize, VARIANT* paResultValues);
 TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID tool, long lParameterNumber, VARIANT vParameterValue);
 
+#ifdef DEFINE_STRUCTEX 
 TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitionsEx(long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues);
 
 TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructuresEx(ResultValueDefinitionStructEx* paStructs);
+#endif 
 TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImages);
 TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID tool, long lArraySize, long* paMILhandles);
 TOOLDLL_API HRESULT __stdcall SVSetHBITMAPInputImages(GUID tool, HBITMAP* paHandles);
