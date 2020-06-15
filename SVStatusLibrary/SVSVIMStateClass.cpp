@@ -19,7 +19,7 @@
 std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
 
 bool SVSVIMStateClass::m_AutoSaveRequired{false};
-std::atomic<__time32_t> SVSVIMStateClass::m_CurrentModifiedTime{0L};
+std::atomic<__time32_t> SVSVIMStateClass::m_lastModifiedTime{0L};
 std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode{SvPb::DeviceModeType::unknownMode};
 NotifyFunctor SVSVIMStateClass::m_pNotify{nullptr};
 
@@ -46,8 +46,12 @@ void SVSVIMStateClass::AddState( DWORD dwState )
 
 	if( dwState & SV_STATE_MODIFIED )
 	{
-		SetLastModifiedTime();
+		setLastModifiedTime();
 		SetAutoSaveRequired(true);
+	}
+	if (dwState & SV_STATE_LOADING)
+	{
+		m_lastModifiedTime = 0L;
 	}
 	CheckModeNotify();
 }
@@ -65,8 +69,12 @@ void SVSVIMStateClass::changeState(DWORD addStates, DWORD removeStates)
 
 	if (addStates & SV_STATE_MODIFIED)
 	{
-		SetLastModifiedTime();
+		setLastModifiedTime();
 		SetAutoSaveRequired(true);
+	}
+	if (addStates & SV_STATE_LOADING)
+	{
+		m_lastModifiedTime = 0L;
 	}
 
 	CheckModeNotify();
@@ -155,13 +163,13 @@ void SVSVIMStateClass::CheckModeNotify()
 	}
 }
 
-void SVSVIMStateClass::SetLastModifiedTime()
+void SVSVIMStateClass::setLastModifiedTime()
 {
-	m_CurrentModifiedTime = ::_time32(nullptr);
+	m_lastModifiedTime = ::_time32(nullptr);
 
 	if (nullptr != m_pNotify)
 	{
-		(m_pNotify)(static_cast<long> (SvStl::NotificationType::lastModified), static_cast<long> (SVSVIMStateClass::getCurrentTime()), 0L, nullptr);
+		(m_pNotify)(static_cast<long> (SvStl::NotificationType::lastModified), static_cast<long> (SVSVIMStateClass::getLastModifiedTime()), 0L, nullptr);
 	}
 }
 

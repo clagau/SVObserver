@@ -98,7 +98,7 @@ public:
 
 	static SvPb::DeviceModeType getCurrentMode() { return m_CurrentMode; }
 
-	static __time32_t getCurrentTime() { return m_CurrentModifiedTime; }
+	static __time32_t getLastModifiedTime() { return m_lastModifiedTime; }
 
 	//************************************
 	//! Sets the notification function
@@ -125,7 +125,7 @@ private:
 	//************************************
 	static SvPb::DeviceModeType GetMode();
 
-	static void SetLastModifiedTime();
+	static void setLastModifiedTime();
 
 	//This constructor does nothing.
 	SVSVIMStateClass();
@@ -140,7 +140,7 @@ private:
 
 	static std::atomic<SvPb::DeviceModeType> m_CurrentMode;
 
-	static std::atomic<__time32_t> m_CurrentModifiedTime;
+	static std::atomic<__time32_t> m_lastModifiedTime;
 
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 	///Lockcount >  0 prevents some  SVRC command to avoid crashes because of mult threading issues 

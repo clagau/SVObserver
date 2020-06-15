@@ -166,7 +166,8 @@ int main(int argc, char* argv[])
 					<< "  i executeInspectionCmd" << std::endl
 					<< "  t getconfigtree" << std::endl
 					<< "  a add tool" << std::endl
-					<< "  d delete tool" << std::endl;
+					<< "  d delete tool" << std::endl
+					<< "  g get config data" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -371,6 +372,15 @@ int main(int argc, char* argv[])
 				responseCmd.Clear();
 				responseCmd = client.request(std::move(requestCmd), Timeout).get();
 
+			}
+			else if (words[0] == "g")
+			{
+				SvPb::ConfigCommandRequest requestConfigCmd;
+				requestConfigCmd.mutable_configdatarequest()->GetDescriptor();
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ConfigCommandRequest, SvPb::ConfigCommandResponse> client(*pRpcClient);
+				SvPb::ConfigCommandResponse responseConfigCmd = client.request(std::move(requestConfigCmd), Timeout).get();
+				SV_LOG_GLOBAL(info) << "Config File : " << responseConfigCmd.configdataresponse().configfileloaded().c_str();
+				SV_LOG_GLOBAL(info) << "Last modified: " << responseConfigCmd.configdataresponse().lastmodified();
 			}
 			else if (words[0] == "cn" )
 			{

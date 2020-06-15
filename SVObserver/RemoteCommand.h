@@ -19,7 +19,7 @@ void GlobalRCGoOffline();
 bool GlobalRCGetState( DWORD* pdwSVIMState );
 HRESULT GlobalRCSetMode( unsigned long newMode );
 HRESULT GlobalRCGetMode( unsigned long* plMode );
-std::string GlobalRCGetConfigurationName();
+std::string GlobalRCGetConfigurationName(bool runPath = true);
 HRESULT GlobalRCSaveConfiguration(LPCTSTR pFileName);
 bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
 void GlobalRCCloseAndCleanConfiguration();

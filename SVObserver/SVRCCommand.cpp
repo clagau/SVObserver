@@ -1044,6 +1044,16 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 			clipboardAction(rRequest.clipboardrequest(), response.mutable_standardresponse());
 			break;
 		}
+		case SvPb::ConfigCommandRequest::kConfigDataRequest:
+		{
+			SvPb::ConfigDataResponse* pConfigDataResponse = response.mutable_configdataresponse();
+			if(nullptr != pConfigDataResponse)
+			{
+				pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
+				pConfigDataResponse->set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
+			}
+			break;
+		}
 		default:
 		{
 			break;

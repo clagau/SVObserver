@@ -118,19 +118,24 @@ HRESULT GlobalRCGetMode( unsigned long* pMode )
 }
 
 // Global functions for SVFocusNT Remote Commands
-std::string GlobalRCGetConfigurationName()
+std::string GlobalRCGetConfigurationName(bool runPath)
 {
-	std::string Result;
+	std::string Result = ((SVObserverApp*)AfxGetApp())->getConfigFullFileName();
 
-	SVFileNameClass svFileName;
-
-	svFileName.SetFullFileName( ( ( SVObserverApp* )AfxGetApp() )->getConfigFullFileName().c_str() );
-
-	if ( !svFileName.GetFileNameOnly().empty() )
+	if(runPath)
 	{
-		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
+		SVFileNameClass svFileName;
+		svFileName.SetFullFileName(Result.c_str());
 
-		Result = svFileName.GetFullFileName();
+		if(!svFileName.GetFileNameOnly().empty())
+		{
+			svFileName.SetPathName(SvStl::GlobalPath::Inst().GetRunPath().c_str());
+			Result = svFileName.GetFullFileName();
+		}
+		else
+		{
+			Result.clear();
+		}
 	}
 
 	return Result;
