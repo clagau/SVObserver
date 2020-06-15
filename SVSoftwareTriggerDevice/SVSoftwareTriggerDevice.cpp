@@ -53,6 +53,13 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool init)
 	HRESULT hr = S_OK;
 	if (false == init)
 	{
+		for(auto& rTimer : m_timerList)
+		{
+			::timeKillEvent(rTimer.m_timerID);
+			rTimer.m_timerID = 0;
+		}
+		::timeEndPeriod(cTimerResolution);
+
 		m_TriggerDispatchers.Clear();
 	}
 	return hr;
