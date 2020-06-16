@@ -39,7 +39,7 @@ public:
 	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
-	virtual void updateMemBlockData() const override;
+	virtual void updateMemBlockData() override;
 
 	void SetMaxByteSize(int maxSize = getMaxTextSize()) { m_maxByteSize = maxSize; }
 

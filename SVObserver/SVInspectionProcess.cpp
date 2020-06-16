@@ -2649,7 +2649,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 	}
 }
 
-HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStatus) const
+HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStatus)
 {
 	if(nullptr != rRunStatus.m_triggerRecord)
 	{

@@ -107,7 +107,7 @@ public:
 	///Note that setMemBlockPointer has specialized versions for DoubleSortValue, SVStringValue and SVVariantValue 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
-	virtual void updateMemBlockData() const override {}
+	virtual void updateMemBlockData() override {}
 	virtual bool isIndirectValue() const override { return false; };
 	virtual void setStandardFormatString() = 0;
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;

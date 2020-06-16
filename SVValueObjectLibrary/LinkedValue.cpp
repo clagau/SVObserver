@@ -129,7 +129,7 @@ HRESULT LinkedValue::setValue(const std::string& rValueString, int Index /*= -1*
 	return __super::setValue(rValueString, Index);
 }
 
-void LinkedValue::updateMemBlockData() const
+void LinkedValue::updateMemBlockData()
 {
 	///When the linked value is an indirect value we need to always update it
 	if(isIndirectValue())

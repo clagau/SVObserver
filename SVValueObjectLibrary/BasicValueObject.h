@@ -77,7 +77,7 @@ public:
 	virtual int32_t getTrPos() const override { return m_trPos; }
 	virtual int32_t getMemOffset() const override { return 0L; }
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
-	virtual void updateMemBlockData() const override;
+	virtual void updateMemBlockData() override;
 
 #pragma endregion virtual method (IObjectClass/IValueObject)
 

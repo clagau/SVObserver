@@ -261,7 +261,7 @@ void BasicValueObject::setMemBlockPointer(uint8_t* pMemBlockBase)
 	}
 }
 
-void BasicValueObject::updateMemBlockData() const
+void BasicValueObject::updateMemBlockData()
 {
 	///Copy only if it has changed since last update
 	if(m_hasChanged && nullptr != m_pMemBlock)

@@ -192,8 +192,10 @@ void DoubleSortValueObject::setMemBlockPointer(uint8_t* pMemBlockBase)
 	}
 }
 
-void DoubleSortValueObject::updateMemBlockData() const
+void DoubleSortValueObject::updateMemBlockData()
 {
+	///The result size for the mem block array parameter size needs to be set as it may have changed
+	SetResultSize(getResultSize());
 	///Here we only want the data byte size
 	int32_t dataByteSize = getByteSize(true, false);
 	///This is to make sure that enough space has been reserved for memory block data and the object has attributes
@@ -299,9 +301,9 @@ size_t  DoubleSortValueObject::getSortContainerCapacity() const
 	}
 }
 int32_t  DoubleSortValueObject::getResultSize() const
-{ 
-	return static_cast<int32_t> (getSortContainerSize());
-
+{
+	int32_t result{static_cast<int32_t> (getSortContainerSize())};
+	return result;
 }
 
 HRESULT DoubleSortValueObject::ValidateIndex(int ArrayIndex) const

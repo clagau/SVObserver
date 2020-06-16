@@ -349,7 +349,7 @@ protected:
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
-	HRESULT copyValues2TriggerRecord(SVRunStatusClass& rRunStatus) const;
+	HRESULT copyValues2TriggerRecord(SVRunStatusClass& rRunStatus);
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 

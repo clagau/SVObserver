@@ -51,7 +51,7 @@ public:
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false) override;
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
 
-	virtual void updateMemBlockData() const override;
+	virtual void updateMemBlockData() override;
 
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 

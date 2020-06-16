@@ -182,7 +182,7 @@ void SVVariantValueObjectClass::setMemBlockPointer(uint8_t* pMemBlockBase)
 	}
 }
 
-void SVVariantValueObjectClass::updateMemBlockData() const
+void SVVariantValueObjectClass::updateMemBlockData()
 {
 	///Here we only want the data byte size
 	int32_t dataByteSize = getByteSize(true, false);

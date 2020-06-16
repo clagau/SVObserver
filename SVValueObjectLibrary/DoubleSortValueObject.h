@@ -59,7 +59,7 @@ public:
 	virtual bool isArray() const override { return true; };
 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
-	virtual void updateMemBlockData() const override;
+	virtual void updateMemBlockData() override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

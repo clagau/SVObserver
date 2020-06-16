@@ -146,7 +146,7 @@ namespace SvOi
 		virtual void setMemBlockPointer(uint8_t* pMemBlockBase) = 0;
 
 		//! Update the memory block data
-		virtual void updateMemBlockData() const = 0;
+		virtual void updateMemBlockData() = 0;
 
 		//! is true for linkedvalue with indirect value set
 		virtual bool isIndirectValue() const = 0;
