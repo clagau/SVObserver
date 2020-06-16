@@ -75,6 +75,8 @@ void SVTransformationToolClass::init()
 	SvOp::SVImageTransformClass* pTransform = new SvOp::SVImageTransformClass;
 	if( pTransform ) Add( pTransform );
 
+	removeEmbeddedExtents();
+
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 	
