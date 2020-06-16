@@ -26,7 +26,7 @@ class SVSelectExternalDllPage : public CPropertyPage, public SvOg::ISVPropertyPa
 {
 public:
 	SVSelectExternalDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
-	virtual ~SVSelectExternalDllPage();
+	virtual ~SVSelectExternalDllPage() {};
 
 	// ISVPropertyPageDialog
 	bool QueryAllowExit();
@@ -41,7 +41,6 @@ public:
 	CButton	m_btnDelete;
 	CButton	m_btnBrowse;
 	CButton	m_btnAdd;
-	CButton	m_btnUndoChanges;
 	CListBox m_lbDependentList;
 	CString	m_strDLLPath;
 	CString	m_strStatus;
@@ -56,20 +55,15 @@ public:
 
 // Implementation
 protected:
-	HRESULT CleanUpOldToolInfo();
-	HRESULT RestoreOriginalData();
 	void InitializeDll(bool jumpToInputPage);
 	void SetDependencies();
 	void NotifyProgress(LPCTSTR Message);
-	void AddPagesForTestedExternalTool(bool jumpToInputPage);
-	void RemovePagesForTestedExternalTool();
 	void testExternalDll();
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
 	SvOp::SVExternalToolTask* m_pTask;
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
-	SVCancelData* m_pCancelData;
 	const uint32_t m_ToolObjectID;
 	const uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID = SvDef::InvalidObjectId;
@@ -82,11 +76,11 @@ protected:
 	afx_msg void OnDelete();
 	afx_msg void OnAdd();
 	afx_msg void OnBrowse();
-	afx_msg void OnUndoChanges();
-
+	
 	//}}AFX_MSG
     afx_msg LRESULT OnUpdateStatus(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 };
 
+std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t toolObjectID);

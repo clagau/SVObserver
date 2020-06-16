@@ -71,7 +71,7 @@ namespace SvOg
 	private:
 		// Dialog Data
 		//{{AFX_DATA(SVExternalToolImageSelectPage)
-		enum { IDD = IDD_EXTERNAL_TOOL_IMAGES };
+		enum { IDD = IDD_TA_EXTERNAL_IMAGES };
 		PictureDisplay m_ImageDisplay;
 		//}}AFX_DATA
 

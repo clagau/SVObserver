@@ -151,6 +151,8 @@ public:
 	// i.e. loaded version is older than  10.0  
 	bool NoExFktInLoadVersion();
 
+	const std::vector<InputImageInformationStruct>& InputImageInformationStructs() { return m_aInputImageInformationStructs; }
+
 protected:
 	HRESULT Uninitialize();
 	HRESULT ClearData();

@@ -14,10 +14,14 @@
 #include "SVExternalToolInputSelectPage.h"
 #include "Operators/SVExternalToolTask.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/SVUserMessage.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVPPQObject.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVOGui\SVExternalToolImageSelectPage.h"
+#include "SVExternalToolResultPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/BoundValue.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -51,6 +55,7 @@ BEGIN_MESSAGE_MAP(SVExternalToolInputSelectPage, CPropertyPage)
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_INPUT_LIST_TREE, OnItemChanged)
 	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_INPUT_LIST_TREE, OnItemQueryShowButton)
 	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_INPUT_LIST_TREE, OnItemButtonClick)
+	ON_BN_CLICKED(ID_UNDO_CHANGES, OnUndoChanges)
 END_MESSAGE_MAP()
 
 
@@ -118,7 +123,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 		assert(pRoot);
 		pRoot->SetCanShrink(false);
-		pRoot->SetLabelText(_T(""));
+		pRoot->SetLabelText(_T("External Tool Input"));
 		pRoot->SetInfoText(_T(""));
 
 		
@@ -265,6 +270,19 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void SVExternalToolInputSelectPage::OnUndoChanges()
+{
+	CWnd *pParent = GetParent();
+
+	if (nullptr != pParent)
+	{
+		pParent->PostMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
+
+		pParent->PostMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
+
+		pParent->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
+	}
+}
 
 void SVExternalToolInputSelectPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
@@ -290,7 +308,6 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 		}
 	}// end if ( pNMPropTree->pItem )
 }
-
 
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)

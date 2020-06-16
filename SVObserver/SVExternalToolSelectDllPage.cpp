@@ -15,12 +15,10 @@
 #include "svobserver.h"
 #include "SVInspectionProcess.h"
 #include "SVExternalToolSelectDllPage.h"
-#include "SVExternalToolInputSelectPage.h"
-#include "SVExternalToolResultPage.h"
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "Definitions/SVUserMessage.h"
 #include "Operators/SVExternalToolTask.h"
-#include "SVLibrary/ISVCancel.h"
 #include "SVMFCControls\SVFileDialog.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
@@ -40,6 +38,26 @@ static char THIS_FILE[] = __FILE__;
 constexpr char* cCRLF (_T("\r\n"));
 
 enum {WM_UPDATE_STATUS = WM_APP + 100};
+
+//@TODO [Arvid][10.00][16.6.2020] this helper function should be placed elsewhere and generalized
+std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t ownerID)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
+	pRequest->set_ownerid(ownerID);
+	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVExternalToolTaskObjectType);
+
+	HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
+	if (S_OK == hr && responseCmd.has_getobjectidresponse())
+	{
+		uint32_t taskObjectID = responseCmd.getobjectidresponse().objectid();
+		auto pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(taskObjectID));
+		return std::pair<SvOp::SVExternalToolTask*, uint32_t>(pTask, taskObjectID);
+	}
+
+	return std::pair<SvOp::SVExternalToolTask*, uint32_t> (nullptr,0);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVSelectExternalDllPage dialog
@@ -65,7 +83,6 @@ BEGIN_MESSAGE_MAP(SVSelectExternalDllPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_ADD, OnAdd)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_BN_CLICKED(ID_UNDO_CHANGES, OnUndoChanges)
 	//}}AFX_MSG_MAP
     ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
@@ -74,29 +91,13 @@ SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t
 : CPropertyPage(IDD)
 , m_InspectionID(inspectionID)
 , m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
+, m_pSheet(pSheet)
 {
-	m_pSheet = pSheet;
+	auto taskinfo = getExternalToolTaskInfo(inspectionID, toolObjectID);
 
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
-	pRequest->set_ownerid(m_ToolObjectID);
-	pRequest->mutable_infostruct()->set_objecttype(SvPb::SVExternalToolTaskObjectType);
+	m_pTask = taskinfo.first;
 
-	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
-	{
-		m_TaskObjectID = responseCmd.getobjectidresponse().objectid();
-	}
-
-	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 	assert( m_pTask );
-
-	m_pCancelData = nullptr;
-	if ( m_pTask->CanCancel() )
-	{
-		m_pTask->GetCancelData( m_pCancelData );
-	}
 
 	//{{AFX_DATA_INIT(SVSelectExternalDllPage)
 	m_strDLLPath = _T("");
@@ -104,13 +105,6 @@ SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t
 	//}}AFX_DATA_INIT
 }
 
-SVSelectExternalDllPage::~SVSelectExternalDllPage()
-{
-	if ( m_pCancelData )
-	{
-		delete m_pCancelData;
-	}
-}
 
 
 void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
@@ -122,7 +116,6 @@ void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DELETE, m_btnDelete);
 	DDX_Control(pDX, IDC_BROWSE, m_btnBrowse);
 	DDX_Control(pDX, IDC_ADD, m_btnAdd);
-	DDX_Control(pDX, ID_UNDO_CHANGES, m_btnUndoChanges);
 	DDX_Control(pDX, IDC_DEPENDENT_LIST, m_lbDependentList);
 	DDX_Text(pDX, IDC_DLL_PATH, m_strDLLPath);
 	DDX_Text(pDX, IDC_DLL_STATUS, m_strStatus);
@@ -191,7 +184,12 @@ void SVSelectExternalDllPage::OnOK()
 	{
 	}
 
-	CleanUpOldToolInfo();
+	SVIPDoc* l_pIPDoc = GetIPDoc();
+
+	if (nullptr != l_pIPDoc)
+	{
+		l_pIPDoc->UpdateAllViews(nullptr);
+	}
 
 	CPropertyPage::OnOK();
 }
@@ -282,8 +280,11 @@ void SVSelectExternalDllPage::OnBrowse()
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 
-		RemovePagesForTestedExternalTool();
-
+		CWnd *pParent = GetParent();
+		if (nullptr != pParent)
+		{
+			pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
+		}
 		testExternalDll();
 	}
 }// end void SVSelectExternalDllPage::OnBrowse() 
@@ -300,12 +301,6 @@ void SVSelectExternalDllPage::testExternalDll()
 	InitializeDll(false);
 }
 
-
-void SVSelectExternalDllPage::OnUndoChanges()
-{
-	// reload previous info
-	RestoreOriginalData();
-}
 
 
 void SVSelectExternalDllPage::SetDependencies() 
@@ -333,33 +328,17 @@ void SVSelectExternalDllPage::SetDependencies()
 }
 
 
-void SVSelectExternalDllPage::AddPagesForTestedExternalTool(bool jumpToInputPage)
-{
-	m_pSheet->AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, m_pTask->m_aInputImageInformationStructs));
-	m_pSheet->AddPage(new SVExternalToolInputSelectPage(_T("Input Values"), m_InspectionID, m_ToolObjectID, m_TaskObjectID));
-	m_pSheet->AddPage(new SVExternalToolResultPage(_T("Result Values"), m_InspectionID, m_TaskObjectID));
-	
-	if (jumpToInputPage)
-	{
-		m_pSheet->PostMessage(PSM_SETCURSEL, c_minimumNumberOfExternalToolPages + 1, 0);
-	}
-}
-
-
-void SVSelectExternalDllPage::RemovePagesForTestedExternalTool()
-{
-	while (m_pSheet->GetPageCount() > c_minimumNumberOfExternalToolPages) //pages with these indices should not be displayed if the external DLL is uninitialized
-	{
-		m_pSheet->RemovePage(c_minimumNumberOfExternalToolPages);
-	}
-}
-
-
 void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 {
 	try
 	{
-		RemovePagesForTestedExternalTool();
+		CWnd *pParent = GetParent();
+		if (nullptr == pParent)//this should never happen!
+		{
+			return; 
+		}
+		
+		pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
 
 		m_strStatus.Empty();
 		UpdateData(FALSE);
@@ -373,8 +352,12 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 		m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
 
 		//if we arrive here, Initialization has been successful
-		AddPagesForTestedExternalTool(jumpToInputPage);
-		m_pSheet->AddAdditionalPagesForExternalTool(true);
+		pParent->SendMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
+
+		if (jumpToInputPage)
+		{
+			pParent->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
+		}
 	}
 	catch ( const SvStl::MessageContainer& e)
 	{
@@ -446,75 +429,5 @@ SVIPDoc* SVSelectExternalDllPage::GetIPDoc() const
 	}
 
 	return l_pIPDoc;
-}
-
-HRESULT SVSelectExternalDllPage::RestoreOriginalData()
-{
-	int i( 0 );
-
-	SvOp::SVExternalToolTaskData* pOriginalData = static_cast<SvOp::SVExternalToolTaskData*> (m_pCancelData);
-	// LOAD DLL NAME
-	m_pTask->m_Data.m_voDllPath = pOriginalData->m_voDllPath;
-
-	// LOAD DEPENDENCIES
-
-	// Clear All File Paths
-	int iDepSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
-	for ( i = 0 ; i < iDepSize ; i++)
-	{
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( _T("") , true);
-	}
-
-	// Set all File Paths from listbox
-	int iSize = static_cast< int >( pOriginalData->m_aDllDependencies.size() );
-	for ( i = 0 ; i < iSize ; i++ )
-	{
-		m_pTask->m_Data.m_aDllDependencies[i] = pOriginalData->m_aDllDependencies[i];
-	}
-
-	m_pTask->SetAllAttributes();	// update dependency attributes
-
-	InitializeDll(false);
-
-	// update display
-	std::string Value;
-	m_pTask->m_Data.m_voDllPath.GetValue( Value );
-	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
-	m_strDLLPath = Value.c_str();
-	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
-	for( i = 0 ; i < iDependentsSize ; i++)
-	{
-		std::string Temp;
-		m_pTask->m_Data.m_aDllDependencies[i].GetValue(Temp);
-		if( !Temp.empty() )
-		{
-			m_lbDependentList.AddString( Temp.c_str() );
-		}
-	}
-	UpdateData(FALSE);
-
-	OnUpdateStatus(0,0);
-
-	return S_OK;
-}
-
-
-HRESULT SVSelectExternalDllPage::CleanUpOldToolInfo()
-{
-	SVObjectPtrVector list;
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_IMAGES );
-	m_pTask->DisconnectInputsOutputs(list);
-
-	list.clear();
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SvOp::SVExternalToolTask::FindEnum::FIND_VALUES );
-	m_pTask->HideInputsOutputs(list);
-
-	SVIPDoc* l_pIPDoc = GetIPDoc();
-
-	if( nullptr != l_pIPDoc )
-	{
-		l_pIPDoc->UpdateAllViews( nullptr );
-	}
-	return S_OK;
 }
 

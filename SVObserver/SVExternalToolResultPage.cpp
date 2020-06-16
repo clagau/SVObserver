@@ -91,7 +91,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 		assert(pRoot);
 		pRoot->SetCanShrink(false);
-		pRoot->SetLabelText(_T("Results"));
+		pRoot->SetLabelText(_T("External Tool Results"));
 		pRoot->SetInfoText(_T(""));
 
 		

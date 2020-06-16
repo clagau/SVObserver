@@ -27,7 +27,7 @@ public:
 	virtual ~SVExternalToolResultPage();
 
 	//{{AFX_DATA(SVExternalToolResultPage)
-	enum { IDD = IDD_EXTERNAL_TOOL_RESULTS };
+	enum { IDD = IDD_TA_EXTERNAL_RESULTS };
 		// NOTE - ClassWizard will add data members here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA

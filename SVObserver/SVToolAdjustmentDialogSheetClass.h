@@ -79,11 +79,14 @@ private:
 
 	typedef std::shared_ptr<SvOg::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
+
+	LRESULT AddPagesForTestedExternalTool(WPARAM, LPARAM);
+	LRESULT RemovePagesForTestedExternalTool(WPARAM, LPARAM);
+
 };
 
-/// this is the number of pages in the External Tool Adjustment Dialog for an uninitialized DLL. ABX anderer Kommentar?
-/// in principle it would be preferable to calculate it dynamically, but in this case problems and inconsistencies may arise in special cases
-constexpr int c_minimumNumberOfExternalToolPages = 1;
+/// this is the postion at which the "Input Values" page will be found - if it is present at all, that is!
+constexpr int c_indexOfInputValuePage = 2;
 
 
 

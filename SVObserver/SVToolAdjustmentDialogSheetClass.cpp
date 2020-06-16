@@ -28,10 +28,13 @@
 #include "SVTADlgTranslationPage.h"
 #include "SVTADlgTranslationResizePage.h"
 #include "SVTADlgTranslationShiftPage.h"
+#include "SVExternalToolResultPage.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "Definitions/StringTypeDef.h"
+#include "Definitions/SVUserMessage.h"
 #include "ObjectInterfaces/IDependencyManager.h"
+#include "Operators\SVExternalToolTask.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVOGui/SVToolAdjustmentDialogCommentPage.h"
 #include "SVOGui/SVToolAdjustmentDialogSizePage.h"
@@ -75,6 +78,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 	//{{AFX_MSG_MAP(SVToolAdjustmentDialogSheetClass)
 	ON_WM_DESTROY()
 	ON_COMMAND(IDOK, OnOK)
+	ON_MESSAGE(SV_REMOVE_PAGES_FOR_TESTED_DLL, RemovePagesForTestedExternalTool)
+	ON_MESSAGE(SV_ADD_PAGES_FOR_TESTED_DLL, AddPagesForTestedExternalTool)
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -541,10 +546,12 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 	}
 }
 
+
 void SVToolAdjustmentDialogSheetClass::OnCancel()
 {
 	EndDialog(IDCANCEL);
 }
+
 
 void SVToolAdjustmentDialogSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -557,6 +564,33 @@ void SVToolAdjustmentDialogSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 
 	CPropertySheet::OnSysCommand(nID, lParam);
 }
+
+
+LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, LPARAM)
+{
+	auto taskinfo = getExternalToolTaskInfo(m_InspectionID, m_TaskObjectID);
+
+	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, taskinfo.second, taskinfo.first->InputImageInformationStructs()));
+	AddPage(new SVExternalToolInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID, taskinfo.second));
+	AddPage(new SVExternalToolResultPage(_T("Result Values"), m_InspectionID, taskinfo.second));
+
+	AddAdditionalPagesForExternalTool(true);
+	return S_OK;
+}
+
+
+LRESULT SVToolAdjustmentDialogSheetClass::RemovePagesForTestedExternalTool(WPARAM, LPARAM)
+{
+	while (GetPageCount() > 1) //if the external DLL is uninitialized only the first page ("Select External DLL")
+			// plus "Conditional", "General" and "Comment" (which will be added elsewhere) should be displayed
+	{
+		RemovePage(1);
+	}
+	return S_OK;
+}
+
+
+
 
 SVIPDoc* SVToolAdjustmentDialogSheetClass::GetIPDoc() const
 {

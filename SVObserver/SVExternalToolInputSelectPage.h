@@ -33,7 +33,7 @@ public:
 
 // Dialog Data
 	//{{AFX_DATA(SVExternalToolInputSelectPage)
-	enum { IDD = IDD_EXTERNAL_TOOL_INPUTS };
+	enum { IDD = IDD_TA_EXTERNAL_INPUT };
 	//}}AFX_DATA
 
 
@@ -69,6 +69,8 @@ protected:
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
+	afx_msg void OnUndoChanges();
+
 	
 	DECLARE_MESSAGE_MAP()
 
