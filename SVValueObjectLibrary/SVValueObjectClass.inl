@@ -756,12 +756,13 @@ template <typename T>
 T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
 {
 	T result;
-
+	 
 	//From GUI values are set using VT_BSTR
 	if (VT_BSTR == rValue.vt)
 	{
 		result = ConvertString2Type(SvUl::createStdString(rValue));
 	}
+	///@TODO[mec] for enable array size 1 (~VT_ARRAY & rValue.vt)
 	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
 	else if (ValueType2Variant(&m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == VT_EMPTY)
 	{
@@ -783,7 +784,8 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 {
 	ValueVector result;
 
-	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
+	//@TODO[mec] avoid isArray for enabling array size 1
+	if (!isArray() ||  0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
 		T value = convertVariantValue(rValue);
 		result.emplace_back(value);

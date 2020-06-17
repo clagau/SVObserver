@@ -119,6 +119,9 @@ HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool
 		if (getArraySize() != cnt_elements && !fixArraysize)
 		{
 			SetArraySize(cnt_elements);
+		//@TODO[mec] for enable array size 1 avoid arraysize 1 
+		// use Resultsize 1 
+		
 		}
 	}
 	return __super::setValue(rValue, Index, fixArraysize);
@@ -450,6 +453,8 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			DisconnectInput();
 
 			VARTYPE defaultType = GetDefaultType();
+			//@TODO[mec] enable array size 0 
+			//if (VT_EMPTY != defaultType && Value.vt != defaultType &&  ( ~VT_ARRAY & Value.vt) != defaultType)
 			if (VT_EMPTY != defaultType && Value.vt != defaultType)
 			{
 				Result = false;

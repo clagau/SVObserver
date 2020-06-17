@@ -12,6 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFillBlobDlg.h"
+#include "DataController.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG

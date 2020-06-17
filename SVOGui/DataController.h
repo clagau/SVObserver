@@ -17,25 +17,25 @@
 
 namespace SvOg
 {
-	template <typename Command, typename Model>
-	class DataController : public Command
+
+	class ValueController : public ValuesAccessor
 	{
-	#pragma region Constructor
+#pragma region Constructor
 	public:
-		DataController(const Model& rModel) : m_Data(rModel) {}
-		virtual ~DataController() {}
+		explicit ValueController(const BoundValues& rBoundValue) : m_Data(rBoundValue) {}
+		virtual ~ValueController() {}
 
-		DataController() = delete;
-		DataController& operator=(const DataController&) = delete;
-	#pragma endregion Constructor
+		ValueController() = delete;
+		ValueController& operator=(const ValueController&) = delete;
+#pragma endregion Constructor
 
-	#pragma region Public Methods
+#pragma region Public Methods
 	public:
 		HRESULT Init()
 		{
 			return GetValues(m_Data);
 		}
-			
+
 		template<typename DataType>
 		DataType GetDefault(SvPb::EmbeddedIdEnum embeddedID) const
 		{
@@ -79,14 +79,14 @@ namespace SvOg
 				SetValues(m_Data, doAction);
 
 				//If a runonce is done then read values as they may have changed
-				if(doAction & PostAction::doRunOnce)
+				if (doAction & PostAction::doRunOnce)
 				{
 					GetValues(m_Data);
 				}
 			}
 			catch (const SvStl::MessageContainerVector& rSvE)
 			{
-				if (shouldDisplayErrors && 0<rSvE.size())
+				if (shouldDisplayErrors && 0 < rSvE.size())
 				{
 					SvStl::MessageMgrStd e(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					e.setMessage(rSvE[0].getMessage());
@@ -110,15 +110,14 @@ namespace SvOg
 		uint32_t GetTaskID() const { return m_Data.GetTaskID(); }
 		void SetInspectionID(uint32_t inspectionID) { return m_Data.SetInspectionID(inspectionID); }
 		uint32_t GetInspectionID() const { return m_Data.GetInspectionID(); }
-		uint32_t GetObjectID(uint32_t rEmbeddedID) const { return m_Data.GetObjectID(rEmbeddedID); }
-	#pragma endregion Public Methods
+		uint32_t GetObjectID(uint32_t rEmbeddedID) const { return m_Data.GetObjectID((SvPb::EmbeddedIdEnum) rEmbeddedID); }
+#pragma endregion Public Methods
 
-	#pragma region Member Variables
+#pragma region Member Variables
 	private:
-		Model m_Data;
-	#pragma endregion Member Variables
+		BoundValues m_Data;
+#pragma endregion Member Variables
 	};
 
-	typedef DataController<ValuesAccessor, ValuesAccessor::value_type> ValueController;
 
 } //namespace SvOg

@@ -13,12 +13,12 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "DataController.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
+	class ValueController;
 	class SVFillBlobDlg : public CDialog
 	{
 	public:

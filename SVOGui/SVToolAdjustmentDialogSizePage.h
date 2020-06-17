@@ -56,7 +56,7 @@ public:
 
 private:
 	SvMc::SVEnumerateComboClass m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
-	typedef DataController<ValuesAccessor, ValuesAccessor::value_type> Controller;
+	
 	std::unique_ptr<ValueController> m_pTaskValueController;
 
 	uint32_t m_ipId;

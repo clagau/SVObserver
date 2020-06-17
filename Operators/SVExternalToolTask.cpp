@@ -468,10 +468,11 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 			m_Data.m_ResultDefinitions[i].setMaxArraysize(MaxArraySize[i]);
 		}
 
+		SVResultClass* pResult(nullptr);
 		long vt = m_Data.m_ResultDefinitions[i].getVT();
-		if (vt != VT_BSTR)	// Do not allocate result if already exists....
+		if (vt != VT_BSTR && !( vt & VT_ARRAY ))	// Do not allocate result if already exists....
 		{
-			SVResultClass* pResult = GetResultRangeObject(i);
+			pResult = GetResultRangeObject(i);
 			if (nullptr == pResult)
 			{
 				AllocateResult(i);
@@ -505,9 +506,26 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 			str << resPrefix << std::setfill('0') << std::setw(2) << i + 1 << "_" << m_Data.m_ResultDefinitions[i].getDisplayName();
 			m_Data.m_aResultObjects[i].SetName(str.str().c_str());
 			
+			std::string prevRangeName,rangeName;
+
+			
+			if (nullptr != pResult)
+			{
+				prevRangeName = pResult->GetName();
+				rangeName= _T("Range");
+				rangeName += _T(" ");
+				rangeName += str.str();
+				pResult->SetName(rangeName.c_str());
+			}
+
+
 			if (NoExFktInLoadVersion() && GetInspection())
 			{
 				GetInspection()->OnObjectRenamed(m_Data.m_aResultObjects[i], oldName);
+				if (pResult && prevRangeName != rangeName)
+				{
+					GetInspection()->OnObjectRenamed(*pResult, prevRangeName);
+				}
 			}
 		
 		}

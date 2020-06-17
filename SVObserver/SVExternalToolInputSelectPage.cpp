@@ -570,9 +570,10 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	HRESULT  hr = E_FAIL;
 	if (type == SvOp::ExDllInterfaceType::Array)
 	{
+		//@todo[mec] allow arrays of size 1
 		if (vt == (VT_ARRAY | VT_R8))
 		{
-			if (SvUl::StringToSafeArray<double>(Value, vtNew) > 0)
+			if (SvUl::StringToSafeArray<double>(Value, vtNew) > 1)
 			{
 				hr = S_OK;
 			}
@@ -580,7 +581,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 		}
 		else if (vt == (VT_ARRAY | VT_I4))
 		{
-			if (SvUl::StringToSafeArray<long>(Value, vtNew) > 0)
+			if (SvUl::StringToSafeArray<long>(Value, vtNew) > 1)
 			{
 				hr = S_OK;
 			}
