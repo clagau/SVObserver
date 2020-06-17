@@ -14,6 +14,7 @@
     <ProjectGuid>{2597B19E-B3AB-4286-AB14-6A174097B6A5}</ProjectGuid>
     <RootNamespace>PropTreeTest</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

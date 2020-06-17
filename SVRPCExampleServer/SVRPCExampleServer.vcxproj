@@ -14,7 +14,7 @@
     <ProjectGuid>{9C04BB78-A231-442B-BA7B-3733A3DED4C6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SVRPCExampleServer</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

@@ -22,7 +22,7 @@
     <ProjectGuid>{CC1AD2B6-2FE9-4094-A4DD-2554651E57C3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SVRPCLibrary</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -14,8 +14,8 @@
     <ProjectGuid>{3D8ABEE0-11EB-4D32-88B8-15AEC24B2020}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TRC_UT</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <ProjectName>TriggerRecordControllerReaderModulTest</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

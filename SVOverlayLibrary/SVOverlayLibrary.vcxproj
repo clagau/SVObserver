@@ -22,7 +22,7 @@
     <ProjectGuid>{FD1E7560-CE36-4DE0-95B5-E669768FC0A7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SVOverlayLibrary</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

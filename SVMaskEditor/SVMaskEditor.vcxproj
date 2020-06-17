@@ -14,6 +14,7 @@
     <ProjectGuid>{436A0F9B-8847-46EA-A565-CDF5306DDDE7}</ProjectGuid>
     <RootNamespace>SVMaskEditor</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

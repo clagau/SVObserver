@@ -14,7 +14,7 @@
     <ProjectGuid>{9A69DE2C-345A-4708-B3D8-58171EE85A26}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TRC_UT</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>TriggerRecordControllerModulTest</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

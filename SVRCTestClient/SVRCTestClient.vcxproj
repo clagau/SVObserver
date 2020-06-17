@@ -22,7 +22,7 @@
     <ProjectGuid>{20D135EC-E693-40AE-8923-A7779C492E6A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SVRCTestClient</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>SVRCTestClient</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
