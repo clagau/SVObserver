@@ -73,8 +73,8 @@ private:
 		SvRpc::ServerStreamContext::Ptr ctx;
 		std::vector<int> valuePositions;
 		std::vector<int> rejectValuePositions;
-		std::vector<int> imagePositions;
-		std::vector<int> rejectImagePositions;
+		std::vector<std::pair<bool, int>> imagePositions;
+		std::vector<std::pair<bool, int>> rejectImagePositions;
 		bool interestedInRejects;
 	};
 	void on_new_trigger_record(const SvTrc::TrInterestEventData&);
@@ -87,14 +87,14 @@ private:
 	void clear_cancelled_product_streams();
 	SvSyl::SVFuture<void> handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject);
 	SvSyl::SVFuture<void> get_product_data(SvPb::GetProductDataResponse&, const SvPb::GetProductDataRequest& rRequest);
-	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedField<uint32_t>& imageIds, const std::vector<int>& imagePositions, int inspectionPos, uint32_t inspectionId, bool includeOverlays);
+	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedField<uint32_t>& imageIds, const std::vector<std::pair<bool, int>>& imagePositions, int inspectionPos, uint32_t inspectionId, bool includeOverlays);
 	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedField<uint32_t>& valueIds, const std::vector<int>& valuePositions);
 	void rebuild_trc_pos_caches();
 	void rebuild_trc_pos_cache(product_stream_t&);
 	void collect_historical_triggers(product_stream_t&);
 	void schedule_historical_triggers(std::shared_ptr<product_stream_t>);
 	void collect_value_pos(std::vector<int>&, const std::unordered_map<uint32_t, int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
-	void collect_image_pos(std::vector<int>&, const std::unordered_map<uint32_t,int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
+	void collect_image_pos(std::vector<std::pair<bool, int>>&, const std::unordered_map<uint32_t,int>&, const std::unordered_map<uint32_t, int>&, const ::google::protobuf::RepeatedField<uint32_t>& ids);
 
 private:
 	struct notification_stream_t

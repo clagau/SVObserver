@@ -544,11 +544,11 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 		return SvSyl::SVPromise<void>::make_ready();
 	}
 
-	std::vector<int> imagePositions;
+	std::vector<std::pair<bool, int>> imagePositions;
 	std::vector<int> valuePositions;
 	try
 	{
-		collect_image_pos(imagePositions, trc.getImageDefMap(inspectionPos), req.imageids());
+		collect_image_pos(imagePositions, trc.getImageDefMap(inspectionPos), trc.getChildImageDefMap(inspectionPos), req.imageids());
 		collect_value_pos(valuePositions, trc.getDataDefMap(inspectionPos), req.valueids());
 	}
 	catch (...)
@@ -572,7 +572,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 	::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>& overlays,
 	SvTrc::ITriggerRecordRPtr pTro,
 	const ::google::protobuf::RepeatedField<uint32_t>& imageIds,
-	const std::vector<int>& imagePositions,
+	const std::vector<std::pair<bool, int>>& imagePositions,
 	int inspectionPos,
 	uint32_t inspectionId,
 	bool includeoverlays
@@ -582,7 +582,9 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 
 	for (auto i = 0ULL, len = imagePositions.size(); i < len; ++i)
 	{
-		const auto imagePos = imagePositions[i];
+		const auto imagePosPair = imagePositions[i];
+		const auto isChildImage = std::get<0>(imagePosPair);
+		const auto imagePos = std::get<1>(imagePosPair);
 		const auto imageId = imageIds.Get(static_cast<int>(i));
 
 		// add a value entry to the result list and only fill it if position is valid
@@ -598,7 +600,18 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 			continue;
 		}
 
-		SvTrc::IImagePtr imgPtr = (nullptr != pTro) ? pTro->getImage(imagePos) : nullptr;
+		SvTrc::IImagePtr imgPtr = nullptr;
+		if (pTro)
+		{
+			if (isChildImage)
+			{
+				imgPtr = pTro->getChildImage(imagePos);
+			}
+			else
+			{
+				imgPtr = pTro->getImage(imagePos);
+			}
+		}
 		if (!imgPtr)
 		{
 			SV_LOG_GLOBAL(debug) << "  > image " << imageId << " not found";
@@ -779,8 +792,8 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 		{
 			collect_value_pos(stream.valuePositions, trc.getDataDefMap(inspectionPos), stream.req.valueids());
 			collect_value_pos(stream.rejectValuePositions, trc.getDataDefMap(inspectionPos), stream.req.rejectvalueids());
-			collect_image_pos(stream.imagePositions, trc.getImageDefMap(inspectionPos), stream.req.imageids());
-			collect_image_pos(stream.rejectImagePositions, trc.getImageDefMap(inspectionPos), stream.req.rejectimageids());
+			collect_image_pos(stream.imagePositions, trc.getImageDefMap(inspectionPos), trc.getChildImageDefMap(inspectionPos), stream.req.imageids());
+			collect_image_pos(stream.rejectImagePositions, trc.getImageDefMap(inspectionPos), trc.getChildImageDefMap(inspectionPos), stream.req.rejectimageids());
 		}
 	}
 	catch (...)
@@ -834,7 +847,12 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const st
 #endif 	
 }
 
-void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const std::unordered_map<uint32_t, int>& imageMap, const ::google::protobuf::RepeatedField<uint32_t>& ids)
+void SharedMemoryAccess::collect_image_pos(
+	std::vector<std::pair<bool, int>>& positions,
+	const std::unordered_map<uint32_t, int>& imageMap,
+	const std::unordered_map<uint32_t, int>& childImageMap,
+	const ::google::protobuf::RepeatedField<uint32_t>& ids
+)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 	DWORD tick = ::GetTickCount();
@@ -844,13 +862,18 @@ void SharedMemoryAccess::collect_image_pos(std::vector<int>& positions, const st
 	for (const auto& id : ids)
 	{
 		auto iter = imageMap.find(id);
+		auto childIter = childImageMap.find(id);
 		if (imageMap.end() != iter)
 		{
-			positions.push_back(iter->second);
+			positions.push_back(std::make_pair(false, iter->second));
+		}
+		else if (childImageMap.end() != childIter)
+		{
+			positions.push_back(std::make_pair(true, childIter->second));
 		}
 		else
 		{
-			positions.push_back(-1);
+			positions.push_back(std::make_pair(false, -1));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 			std::stringstream traceStream;
 			traceStream << "Error collect_image_pos with id " << id;
