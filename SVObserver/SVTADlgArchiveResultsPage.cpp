@@ -199,7 +199,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_CHECKED_ENABLED ) );
 	m_ItemsSelected.SetImageList( &m_StateImageList, LVSIL_STATE );
 
-	ReadSelectedObjects();
+	ReadSelectedObjects();//@TODO [Arvid][10.00][17.6.2020] is this call really necessary? ReadSelectedObjects() will be called again later anyway.
 
 	m_TreeBitmap.LoadBitmap( IDB_TREE );
 	m_Select.SetBitmap( static_cast<HBITMAP> (m_TreeBitmap.GetSafeHandle()) );

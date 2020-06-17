@@ -882,9 +882,11 @@ void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObj
 	m_resultsToBeArchived.DisconnectAllResultObjects();
 	m_resultsToBeArchived.ClearArray();
 
-	m_svoArchiveResultNames.SetArraySize( static_cast<int> (rObjectRefVector.size()));
+	auto size = static_cast<int> (rObjectRefVector.size());
+	m_svoArchiveResultNames.SetArraySize(size);
+	m_svoArchiveResultNames.SetResultSize(size); //added to fix SVB-368
 
-	for (int i = 0; i < static_cast<int> (rObjectRefVector.size()); i++)
+	for (int i = 0; i < size; i++)
 	{
 		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
@@ -898,10 +900,11 @@ void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRe
 {
 	m_imagesToBeArchived.ClearArray();
 	
-	
-	m_svoArchiveImageNames.SetArraySize( static_cast< int >(rObjectRefVector.size()));
+	auto size = static_cast<int> (rObjectRefVector.size());
+	m_svoArchiveResultNames.SetArraySize(size);
+	m_svoArchiveResultNames.SetResultSize(size);
 
-	for (int i = 0; i < static_cast< int >(rObjectRefVector.size()); i++)
+	for (int i = 0; i < size; i++)
 	{
 		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
