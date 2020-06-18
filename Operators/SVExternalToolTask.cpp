@@ -399,10 +399,9 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 		{
 			try
 			{
-
 				CreateTableObjects();
 
-				Initialize();
+				Initialize([](LPCTSTR) {}, true);
 			}
 			catch (const SvStl::MessageContainer& /*e*/)
 			{
@@ -631,7 +630,7 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
+HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool inCreationProces)
 {
 
 	HRESULT hr = S_FALSE;
@@ -715,6 +714,11 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify)
 			if (S_OK != hr)
 			{
 				throw hr;
+			}
+
+			if (!inCreationProces)
+			{
+				updateImageInputInfo();
 			}
 
 			m_aPreviousInputImageRect.clear();
@@ -1410,7 +1414,7 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 	{
 		return nullptr;
 	}
-	
+
 	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
 	SVGetObjectDequeByTypeVisitor l_Visitor(info);
 	SVObjectManagerClass::Instance().VisitElements(l_Visitor, getObjectId());
@@ -1630,30 +1634,6 @@ HRESULT SVExternalToolTask::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	return __super::HideInputsOutputs(rListOfObjects);
 }
 
-bool SVExternalToolTask::ConnectAllInputs()
-{
-	bool l_bRunConnect = true;
-	int i(0);
-
-	// Check if input info is Ok for Input Images..
-	for (i = 0; i < m_Data.m_lNumInputImages; i++)
-	{
-		l_bRunConnect = false;
-		SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-		if (SvDef::InvalidObjectId != rInfo.GetInputObjectInfo().getObjectId())
-		{
-			l_bRunConnect = true;
-			break;
-		}
-	}
-
-	if (l_bRunConnect)
-	{
-		return SVTaskObjectListClass::ConnectAllInputs();
-	}
-	return true;
-}
-
 HRESULT SVExternalToolTask::collectInputImageNames()
 {
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
@@ -1834,12 +1814,9 @@ void SVExternalToolTask::getResults(SvTrc::IImagePtr pResultImageBuffers[])
 
 bool SVExternalToolTask::anyImagesResized()
 {
-	if (m_aPreviousInputImageRect.size() == 0)
+	if (m_aPreviousInputImageRect.size() < m_Data.m_lNumInputImages)
 	{
-		for (int i = 0; i < m_Data.m_lNumInputImages; i++)
-		{
-			m_aPreviousInputImageRect.push_back(RECT());
-		}
+		m_aPreviousInputImageRect.resize(m_Data.m_lNumInputImages);
 	}
 
 	for (int i = 0; i < m_Data.m_lNumInputImages; i++)
@@ -2138,6 +2115,47 @@ void SVExternalToolTask::collectResultImages(SvTrc::IImagePtr pResultImageBuffer
 		}// end else use HBITMAP
 	}// end if ( m_Data.m_lNumResultImages > 0 )
 
+}
+
+void SVExternalToolTask::updateImageInputInfo()
+{
+	bool resetConnects = false;
+	for (int i = 0; i < m_aInputImageInformationStructs.size(); ++i)
+	{
+		SvPb::SVObjectSubTypeEnum subType = SvPb::SVNotSetSubObjectType;
+		bool mono = m_aInputImageInformationStructs[i].mayBeBlackAndWhite();
+		bool color = m_aInputImageInformationStructs[i].mayBeColor();
+		if (mono && !color)
+		{
+			if (SvPb::SVImageMonoType != m_Data.m_aInputImageInfo[i].GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)
+			{
+				auto* pObject = m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject();
+				if (nullptr != pObject && SvPb::SVImageMonoType != pObject->GetObjectSubType())
+				{
+					m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+					m_Data.m_aInputImageInfo[i].SetObject(GetObjectInfo());
+					resetConnects = true;
+				}
+			}
+		}
+		else if (!mono && color)
+		{
+			if (SvPb::SVImageColorType != m_Data.m_aInputImageInfo[i].GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)
+			{
+				auto* pObject = m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject();
+				if (nullptr != pObject && SvPb::SVImageColorType != pObject->GetObjectSubType())
+				{
+					m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
+					m_Data.m_aInputImageInfo[i].SetObject(GetObjectInfo());
+					resetConnects = true;
+				}				
+			}
+		}
+	}
+	if (resetConnects)
+	{
+		ConnectAllInputs();
+	}
 }
 
 } //namespace SvOp

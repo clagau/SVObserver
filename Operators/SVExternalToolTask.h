@@ -103,10 +103,9 @@ public:
 	void CreateArrayInTable();
 	void SetResultArraySize();
 	virtual bool CloseObject() override;
-	virtual bool ConnectAllInputs() override;
 	
-	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {});
-	
+	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {}, bool inCreationProcess = false);
+
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 
@@ -172,6 +171,8 @@ private:
 	bool collectMilResultBuffers(SvTrc::IImagePtr pResultImageBuffers[]);
 	void collectResultValues();
 	void collectResultImages(SvTrc::IImagePtr pResultImageBuffers[]);
+
+	void updateImageInputInfo();
 
 	SVDLLToolLoadLibraryClass m_dll;
 
