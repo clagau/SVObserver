@@ -119,12 +119,19 @@ HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool
 		if (getArraySize() != cnt_elements && !fixArraysize)
 		{
 			SetArraySize(cnt_elements);
-		//@TODO[mec] for enable array size 1 avoid arraysize 1 
-		// use Resultsize 1 
-		
 		}
+		if (!fixArraysize && cnt_elements < 2)
+		{
+			//make sure we have an arraysize of at least 2
+			SetArraySize(2);
+			SetResultSize(cnt_elements);
+		}
+		return __super::setValue(rValue, Index, true);
 	}
-	return __super::setValue(rValue, Index, fixArraysize);
+	else
+	{
+		return __super::setValue(rValue, Index, fixArraysize);
+	}
 }
 
 HRESULT LinkedValue::setValue(const std::string& rValueString, int Index /*= -1*/)
