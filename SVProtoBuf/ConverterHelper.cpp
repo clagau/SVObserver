@@ -346,51 +346,54 @@ SvStl::MessageContainerVector setMessageVectorFromMessagePB(const MessageContain
 template<typename TreeItem>
 void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree)
 {
+	std::map<std::string, TreeItem*> treeNodes;
+
 	for(const auto& rItem : rItemVector)
 	{
 		std::string location = rItem.location();
 		TreeItem* pTreeItem = pTree;
-
-		size_t startPos{0LL};
-		size_t endPos = location.find(_T('.'), startPos);
-		std::string branchName = location.substr(startPos, endPos-startPos);
-		while(!branchName.empty())
+		
+		std::vector<std::string> newBranchNames;
+		while(false == location.empty())
 		{
-			bool bFound{false};
-			for(int i=0; i < pTreeItem->children_size(); i++)
+			std::map<std::string, TreeItem*>::const_iterator iter = treeNodes.find(location);
+			if(treeNodes.end() == iter)
 			{
-				if(pTreeItem->children(i).name() == branchName)
+				size_t startPos = location.rfind('.');
+				if(std::string::npos != startPos)
 				{
-					bFound = true;
-					pTreeItem = pTreeItem->mutable_children(i);
-					break;
-				}
-			}
-			if(!bFound)
-			{
-				pTreeItem = pTreeItem->add_children();
-				pTreeItem->set_name(branchName);
-				//If it is the leaf then set th item
-				if(endPos == std::string::npos)
-				{
-					*pTreeItem = rItem;
+					newBranchNames.emplace_back(location.substr(startPos + 1, std::string::npos));
+					location = location.substr(0, startPos);
 				}
 				else
 				{
-					pTreeItem->set_location(location.substr(0, endPos));
+					newBranchNames.emplace_back(location);
+					location.clear();
 				}
-			}
-			if(std::string::npos != endPos)
-			{
-				startPos = endPos + 1;
-				endPos = location.find(_T('.'), startPos);
-				branchName = location.substr(startPos, (std::string::npos == endPos) ? endPos : endPos - startPos);
 			}
 			else
 			{
-				branchName.clear();
+				pTreeItem = iter->second;
+				break;
 			}
 		}
+		std::reverse(newBranchNames.begin(), newBranchNames.end());
+		
+		for(const auto& rName : newBranchNames)
+		{
+			location = pTreeItem->location();
+			if(false == location.empty())
+			{
+				location += '.';
+			}
+			location +=  rName;
+			pTreeItem = pTreeItem->add_children();
+			pTreeItem->set_name(rName);
+			pTreeItem->set_location(location);
+			treeNodes[location] = pTreeItem;
+		}
+		
+		*pTreeItem = rItem;
 	}
 }
 

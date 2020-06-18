@@ -1307,6 +1307,7 @@ SvPb::InspectionCmdResponse getOverlayStruct(SvPb::GetOverlayStructRequest reque
 SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
+	std::vector<SvPb::TreeItem> resultItemVector;
 
 	SvPb::GetObjectSelectorItemsResponse* pResponse = cmdResponse.mutable_getobjectselectoritemsresponse();
 	for (int i = 0; i < request.types_size(); i++)
@@ -1335,8 +1336,9 @@ SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsR
 				break;
 			}
 		}
-		SvPb::convertVectorToTree(itemVector, pResponse->mutable_tree());
+		resultItemVector.insert(resultItemVector.end(), itemVector.begin(), itemVector.end());
 	}
+	*pResponse->mutable_tree()->mutable_children() = {resultItemVector.begin(), resultItemVector.end()};
 
 	return cmdResponse;
 }

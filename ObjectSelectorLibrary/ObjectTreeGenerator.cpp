@@ -12,12 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
+#include "ObjectFilterPpg.h"
 #include "ObjectTreeGenerator.h"
+#include "ObjectSelectorPpg.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVMFCControls/ResizablePropertySheet.h"
-#include "ObjectSelectorPpg.h"
-#include "ObjectFilterPpg.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -55,7 +56,16 @@ namespace SvOsl
 		
 	void ObjectTreeGenerator::insertTreeObjects(const SvPb::TreeItem& rTreeItem)
 	{
-		insertChildren(rTreeItem);
+		int childrenSize = rTreeItem.children_size();
+		SvPb::TreeItem mainTreeItem;
+		if (0 < childrenSize)
+		{
+			std::vector<SvPb::TreeItem> itemVector;
+			itemVector.insert(itemVector.begin(), rTreeItem.children().begin(), rTreeItem.children().end());
+			SvPb::convertVectorToTree(itemVector, &mainTreeItem);
+		}
+
+		insertChildren(mainTreeItem);
 
 		m_TreeContainer.clearBranchMap();
 	}

@@ -949,6 +949,15 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 
 	SvPb::GetObjectSelectorItemsResponse selectorResponse {responseCmd.getobjectselectoritemsresponse()};
 	ConvertTreeNames(selectorResponse.mutable_tree());
+	int childrenSize = selectorResponse.mutable_tree()->children_size();
+	if(0 < childrenSize)
+	{
+		std::vector<SvPb::TreeItem> itemVector;
+		itemVector.insert(itemVector.begin(), selectorResponse.mutable_tree()->children().begin(), selectorResponse.mutable_tree()->children().end());
+		selectorResponse.mutable_tree()->clear_children();
+		SvPb::convertVectorToTree(itemVector, selectorResponse.mutable_tree());
+	}
+
 	task.finish(std::move(selectorResponse));
 }
 
