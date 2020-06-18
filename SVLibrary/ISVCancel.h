@@ -25,37 +25,6 @@ class ISVCancel
 {
 public:
 	virtual ~ISVCancel() {}
-	virtual bool CanCancel() = 0;
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) = 0;
 	virtual HRESULT SetCancelData(SVCancelData* pData) = 0;
 };
-
-struct SVMultiCancelData : public SVCancelData
-{
-	typedef std::map<ISVCancel*, SVCancelData*> MapType;
-	MapType mapData;
-
-	SVMultiCancelData() {}
-	inline const SVMultiCancelData& operator = (const SVMultiCancelData& rhs);
-	inline ~SVMultiCancelData();
-};
-
-// this class assumes that when one is assigned to another, only one will be full when deleted.
-// ownership of the SVCancelData (via mapData.clear() on nonowners) is left up to the client code.
-
-inline SVMultiCancelData::~SVMultiCancelData()
-{
-	MapType::iterator iter;
-	for ( iter = mapData.begin(); iter != mapData.end(); ++iter)
-	{
-		delete iter->second;
-	}
-	mapData.clear();
-}
-
-inline const SVMultiCancelData& SVMultiCancelData::operator = (const SVMultiCancelData& rhs)
-{
-	mapData = rhs.mapData;
-	return *this;
-}
-

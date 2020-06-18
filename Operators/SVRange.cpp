@@ -180,11 +180,6 @@ bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 }
 
 // ISVCancel interface
-bool SVRangeClass::CanCancel()
-{
-	return true;
-}
-
 HRESULT SVRangeClass::GetCancelData(SVCancelData*& rpCancelData)
 {
 	assert(nullptr == rpCancelData);

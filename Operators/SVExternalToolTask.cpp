@@ -107,8 +107,6 @@ SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalTool
 		m_NumResultTables = rhs.m_NumResultTables;
 		m_NumLinkedValue = rhs.m_NumLinkedValue;
 
-		m_RangeResultData = rhs.m_RangeResultData;
-
 		m_PropTreeState = rhs.m_PropTreeState;
 	}
 
@@ -120,7 +118,7 @@ SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalTool
 
 
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
-	:SVTaskObjectListClass(POwner, StringResourceID), ISVCancel()
+	:SVTaskObjectListClass(POwner, StringResourceID)
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVExternalToolTaskObjectType;
 
@@ -1214,89 +1212,6 @@ HRESULT SVExternalToolTask::GetResultValueDefinitions(std::vector<ResultValueDef
 
 
 
-// ISVCancel interface function
-bool SVExternalToolTask::CanCancel()
-{
-	return true;
-}
-
-// ISVCancel interface function
-HRESULT SVExternalToolTask::GetCancelData(SVCancelData*& rpCancelData)
-{
-	SVExternalToolTaskData* pData = new SVExternalToolTaskData(m_Data);
-	rpCancelData = pData;
-
-	// set temp data
-	std::vector<SVResultClass*> aRangeResults = GetResultRangeObjects();
-	std::vector<SVResultClass*>::iterator iter;
-	for (iter = aRangeResults.begin(); iter != aRangeResults.end(); ++iter)
-	{
-		SVCancelData* pCancelData = nullptr;
-		(*iter)->GetCancelData(pCancelData);
-		pData->m_RangeResultData.mapData[*iter] = pCancelData;
-	}
-
-	return S_OK;
-}
-
-// ISVCancel interface function
-HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
-{
-	SVExternalToolTaskData* pData = dynamic_cast<SVExternalToolTaskData*> (pCancelData);
-	if (pData)
-	{
-		size_t i(0);
-
-		// disconnect changed objects
-
-		for (i = 0; i < m_Data.m_aInputImageInfo.size(); i++)
-		{
-
-			SvOl::SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
-
-			// Disconnect input info of input object...
-			if (pImageInfo->IsConnected())
-			{
-				// Send to the Object we are using
-				SVObjectManagerClass::Instance().DisconnectObjectInput(pImageInfo->GetInputObjectInfo().getObjectId(), pImageInfo);
-			}
-
-		}
-
-		m_Data = *pData;
-
-		// Set Range Result data
-		SVMultiCancelData::MapType::iterator iter;
-		for (iter = pData->m_RangeResultData.mapData.begin(); iter != pData->m_RangeResultData.mapData.end(); ++iter)
-		{
-			iter->first->SetCancelData(iter->second);
-		}
-		m_Data.m_RangeResultData.mapData.clear();	// don't remember this temp data;
-
-
-		for (i = 0; i < m_Data.m_aInputImageInfo.size(); i++)
-		{
-			SvOl::SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
-			// reconnect changed objects
-			// Connect input info to new input object...
-			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().getObjectId(), pImageInfo);
-		}
-
-		SvTo::SVToolClass* pTool = dynamic_cast <SvTo::SVToolClass*> (GetAncestor(SvPb::SVToolObjectType));
-		// Reset all objects again...
-		if (nullptr != pTool)
-		{
-			pTool->resetAllObjects();
-		}
-
-		return S_OK;
-	}// end if ( pData )
-	else
-	{
-		return S_FALSE;
-	}
-}
-
 void SVExternalToolTask::SetIndirectValueSaveFlag()
 {
 	int size = static_cast<int>(std::min(m_Data.m_InputDefinitions.size(), m_Data.m_aInputObjects.size()));
@@ -1663,60 +1578,6 @@ bool SVExternalToolTask::resetAllObjects(SvStl::MessageContainerVector *pErrorMe
 	CreateArrayInTable();
 	return Result;
 
-}
-// compare cancel data (original) with current data.
-HRESULT SVExternalToolTask::FindInvalidatedObjects(SVObjectPtrVector& rList, const SVCancelData* pCancelData, FindEnum eWhich)
-{
-	const SVExternalToolTaskData* pOriginalData = dynamic_cast <const SVExternalToolTaskData*> (pCancelData);
-	SVExternalToolTaskData* pNewData = &m_Data;
-
-	if (eWhich & FindEnum::FIND_VALUES)
-	{
-		// inputs
-		if (pOriginalData->m_lNumInputValues > pNewData->m_lNumInputValues)
-		{
-			for (int i = pNewData->m_lNumInputValues; i < pOriginalData->m_lNumInputValues; i++)
-			{
-				rList.push_back(&(m_Data.m_aInputObjects[i]));
-			}
-		}
-
-		// outputs
-		if (pOriginalData->m_lNumResultValues > pNewData->m_lNumResultValues)
-		{
-			for (int i = pNewData->m_lNumResultValues; i < pOriginalData->m_lNumResultValues; i++)
-			{
-				rList.push_back(&(m_Data.m_aResultObjects[i]));
-			}
-		}
-	}// end if ( eWhich & FIND_VALUES )
-
-	if (eWhich & FindEnum::FIND_INPUT_IMAGES)
-	{
-		// input images
-		if (pOriginalData->m_lNumInputImages > pNewData->m_lNumInputImages)
-		{
-			for (int i = pNewData->m_lNumInputImages; i < pOriginalData->m_lNumInputImages; i++)
-			{
-				const SvOl::SVInObjectInfoStruct* pStruct = &(pOriginalData->m_aInputImageInfo[i]);
-				rList.push_back(pStruct->GetInputObjectInfo().getObject());
-			}
-		}
-	}
-
-	if (eWhich & FindEnum::FIND_RESULT_IMAGES)
-	{
-		// result images
-		if (pOriginalData->m_lNumResultImages > pNewData->m_lNumResultImages)
-		{
-			for (int i = pNewData->m_lNumResultImages; i < pOriginalData->m_lNumResultImages; i++)
-			{
-				rList.push_back(&(m_aResultImages[i]));
-			}
-		}
-	}// end if ( eWhich & FIND_RESULT_IMAGES )
-
-	return S_OK;
 }
 
 HRESULT SVExternalToolTask::GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const
@@ -2255,18 +2116,14 @@ void SVExternalToolTask::collectResultImages(SvTrc::IImagePtr pResultImageBuffer
 		}// if( m_dll.UseMil() )
 		else
 		{ // Use HBitmaps 
-			HRESULT MatroxCode(S_OK);
-
 			HRESULT hr = m_dll.GetHBITMAPResultImages(getObjectId(), m_Data.m_lNumResultImages, m_Data.m_lNumResultImages ? &(m_aInspectionResultHBMImages[0]) : nullptr);
 			for (int i = 0; i < m_Data.m_lNumResultImages; i++)
 			{
+				HRESULT MatroxCode(E_FAIL);
+
 				if (nullptr != pResultImageBuffers[i] && !pResultImageBuffers[i]->isEmpty())
 				{
 					MatroxCode = SVMatroxBufferInterface::CopyBuffer(pResultImageBuffers[i]->getHandle()->GetBuffer(), m_aInspectionResultHBMImages[i]);
-				}
-				else
-				{
-					MatroxCode = E_FAIL;
 				}
 				if (S_OK == hr)
 				{

@@ -203,11 +203,6 @@ bool SVResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 	return false;
 }
 
-bool SVResultClass::CanCancel()
-{
-	return true;
-}
-
 HRESULT SVResultClass::GetCancelData(SVCancelData*& rpCancelData)
 {
 	assert(nullptr == rpCancelData);

@@ -19,7 +19,6 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "InspectionEngine/SVTaskObjectList.h"
-#include "SVLibrary/ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"
 #include "SVRPropertyTree/SVRPropTreeState.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
@@ -35,7 +34,7 @@ namespace SvOp
 class TableObject;
 class SVResultClass;
 class SVExternalToolTask;
-struct SVExternalToolTaskData : public SVCancelData
+struct SVExternalToolTaskData
 {
 	enum
 	{
@@ -80,8 +79,6 @@ struct SVExternalToolTaskData : public SVCancelData
 	std::vector<InputValueDefinition> m_InputDefinitions;
 	std::vector<ResultTableDefinition> m_TableResultDefinitions;
 
-	SVMultiCancelData m_RangeResultData;
-
 	long m_lNumInputImages = 0;
 	long m_lNumInputValues = 0;  //Number of input definition m_aInputValueDefinitions.size  m_InspectionInputValues.size
 	long m_lNumResultImages = 0;
@@ -93,7 +90,7 @@ struct SVExternalToolTaskData : public SVCancelData
 	SVRPropTreeState m_PropTreeState;
 };	// end struct SVExternalToolTaskData
 
-class SVExternalToolTask : public SvIe::SVTaskObjectListClass, public ISVCancel
+class SVExternalToolTask : public SvIe::SVTaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVExternalToolTask )
 
@@ -120,11 +117,6 @@ public:
 
 	const std::vector<InputImageInformationStruct>& getInformationStructs() { return m_aInputImageInformationStructs; }
 	
-	// ISVCancel interface
-	virtual bool CanCancel() override;
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
-
 	HRESULT GetImageInfo(const SVImageDefinitionStruct* pDefinitionStruct, SVImageInfoClass& rInfo);
 	HRESULT GetImageDefinitionStruct( SVImageDefinitionStruct& rImageDef, const SVImageInfoClass& rInfo);
 
@@ -140,7 +132,6 @@ public:
 		FIND_ALL_OBJECTS_EXP_INPUT_IMAGES = FIND_RESULT_IMAGES | FIND_VALUES, //This flag is to find all objects expect of the input images.
 		FIND_ALL_OBJECTS = FIND_IMAGES | FIND_VALUES
 	};
-	HRESULT FindInvalidatedObjects(SVObjectPtrVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
 	HRESULT GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
 
 #pragma region Methods to replace processMessage

@@ -46,7 +46,6 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	// ISVCancel interface
-	virtual bool CanCancel() override;
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
 	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 

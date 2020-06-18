@@ -21,7 +21,6 @@
 #include "Operators/SVExternalToolTask.h"
 #include "SVMFCControls\SVFileDialog.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
