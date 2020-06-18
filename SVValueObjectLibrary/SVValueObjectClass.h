@@ -79,6 +79,7 @@ public:
 
 #pragma region virtual method (IObjectClass/IValueObject)
 	//! For these methods see IObject documentation
+	virtual UINT SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type) override;
 	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<double>& rValues) const override;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;

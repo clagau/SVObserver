@@ -27,6 +27,9 @@ namespace SvVol
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+constexpr char* cTextType = _T("Text");
+
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVStringValueObjectClass, SvPb::StringValueClassId);
@@ -64,11 +67,14 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
 	ValueVector ValueArray;
 
+	///Note SVFileNameValueObjectClass uses SVStringValueObjectClass as a base class and needs to converts escape characters differently 
+	///This flag uses getTypeName to check which conversion to use
+	bool convertControl = (cTextType == getTypeName()) ? true : false;
 	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ValueArray))
 	{
 		if (0 < ValueArray.size())
 		{
-			SvUl::RemoveEscapedSpecialCharacters( ValueArray[ValueArray.size() - 1], true);
+			SvUl::RemoveEscapedSpecialCharacters( ValueArray[ValueArray.size() - 1], convertControl);
 			DefaultValue() = ValueArray[ValueArray.size() - 1];
 		}
 
@@ -78,7 +84,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	{
 		for (int i = 0; i < static_cast<int> (BucketArray.size()); i++)
 		{
-			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], true);
+			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], convertControl);
 			SetValue(BucketArray[i][0], i);
 		}
 	}
@@ -90,7 +96,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		for (int i = 0; i < arraySize; i++)
 		{
 			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(ValueArray[i], true);
+			SvUl::RemoveEscapedSpecialCharacters(ValueArray[i], convertControl);
 			SetValue(ValueArray[i], i);
 		}
 	}
@@ -98,7 +104,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	{
 		if ( 0 < ValueArray.size() )
 		{
-			SvUl::RemoveEscapedSpecialCharacters(ValueArray[ValueArray.size() - 1], true);
+			SvUl::RemoveEscapedSpecialCharacters(ValueArray[ValueArray.size() - 1], convertControl);
 			DefaultValue() = ValueArray[ValueArray.size() - 1];
 		}
 
@@ -108,7 +114,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	{
 		for (int i = 0; i < static_cast<int > (BucketArray.size()); i++)
 		{
-			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], true);
+			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], convertControl);
 			SetValue(BucketArray[i][0], i);
 		}
 	}
@@ -311,7 +317,7 @@ void SVStringValueObjectClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVStringValueObjectType;
 	
 	SetObjectAttributesAllowed( SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::printable | SvPb::dataDefinitionValue, SvOi::SetAttributeType::OverwriteAttribute );
-	SetTypeName( _T("Text") );
+	SetTypeName(cTextType);
 
 	init();
 }

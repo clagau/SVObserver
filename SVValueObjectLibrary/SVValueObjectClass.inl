@@ -316,6 +316,22 @@ bool SVValueObjectClass<T>::CompareWithCurrentValue(const std::string& rCompare)
 	return Result;
 }
 
+#pragma region  virtual method
+template <typename T>
+UINT SVValueObjectClass<T>::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type)
+{
+	UINT newAttribute = __super::SetObjectAttributesAllowed(Attributes, Type);
+
+	///When the attributes are set to no attributes and MemBlock is reserved we need to reserve local memory and copy the original values back
+	if(newAttribute == SvPb::noAttributes && nullptr != m_pValue && 0 != m_memSizeReserved)
+	{
+		m_pValue = reserveLocalMemory();
+		m_memOffset = -1;
+	}
+
+	return newAttribute;
+}
+
 template <typename T>
 HRESULT SVValueObjectClass<T>::getValue(double& rValue, int Index /*= -1*/) const
 {
