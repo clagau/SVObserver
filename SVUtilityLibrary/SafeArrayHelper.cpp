@@ -89,7 +89,7 @@ std::string VariantToString(_variant_t var)
 	{
 		if (VT_BOOL == var.vt)
 		{
-			return (0 == var.boolVal) ? "false" : "true";
+			return (0 == var.boolVal) ? "FALSE" : "TRUE";
 		}
 		else
 		{
