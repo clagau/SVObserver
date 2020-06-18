@@ -358,12 +358,29 @@ bool RootObject::createRootChildren()
 			pValueObject->SetObjectAttributesAllowed(SvDef::selectableAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 
-		m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationName, _T(""));
-		m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationFileName, _T(""));
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationName, _T(""));
+		if (pValueObject != nullptr)
+		{
+			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
+		}
 
-		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentDate, _T(""));
-		m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentTime, _T(""));
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentConfigurationFileName, _T(""));
+		if (pValueObject != nullptr)
+		{
+			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
+		}
 
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentDate, _T(""));
+		if (pValueObject != nullptr)
+		{
+			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
+		}
+
+		pValueObject = m_RootChildren.setValue(SvDef::FqnEnvironmentCurrentTime, _T(""));
+		if (pValueObject != nullptr)
+		{
+			pValueObject->SetObjectAttributesAllowed({ SvPb::selectableForEquation | SvPb::selectableForStatistics }, SvOi::SetAttributeType::RemoveAttribute);
+		}
 		Result = createRootChild(SvDef::FqnGlobal, SvPb::SVGlobalConstantObjectType);
 	}
 
