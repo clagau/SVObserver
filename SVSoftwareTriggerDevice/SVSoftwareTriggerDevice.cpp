@@ -205,14 +205,13 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 		}
 
 		///Check if a new trigger period
-		for(auto& rTimer : m_timerList)
+		int triggerChannel = triggerIndex - 1;
+
+		if(triggerChannel >= 0 && triggerChannel < m_timerList.size() && m_timerList[triggerChannel].m_newPeriod)
 		{
-			if(rTimer.m_newPeriod)
-			{
-				::timeKillEvent(rTimer.m_timerID);
-				rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
-				rTimer.m_newPeriod = false;
-			}
+			::timeKillEvent(m_timerList[triggerChannel].m_timerID);
+			m_timerList[triggerChannel].m_newPeriod = false;
+			m_timerList[triggerChannel].m_timerID = ::timeSetEvent(m_timerList[triggerChannel].m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 		}
 	}
 }
@@ -227,15 +226,19 @@ void SVSoftwareTriggerDevice::beforeStartTrigger(unsigned long triggerIndex)
 	}
 	int triggerChannel = triggerIndex - 1;
 	TimerInfo& rTimer = m_timerList[triggerChannel];
-	rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+	assert(0 == rTimer.m_timerID);
 	rTimer.m_newPeriod = false;
+	rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 }
 
 void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 {
 	int triggerChannel = triggerIndex - 1;
 	TimerInfo& rTimer = m_timerList[triggerChannel];
-	::timeKillEvent(rTimer.m_timerID);
+	if(TIMERR_NOERROR != ::timeKillEvent(rTimer.m_timerID))
+	{
+		assert(false);
+	}
 	rTimer.m_timerID = 0;
 
 	if (std::none_of(m_timerList.begin(), m_timerList.end(), [](const auto& rEntry) { return rEntry.m_timerID != 0; }))

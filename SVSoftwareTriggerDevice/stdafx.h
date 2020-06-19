@@ -49,6 +49,7 @@
 #include <windows.h>
 
 #include <array>
+#include <assert.h>
 #include <atomic>
 #include <algorithm>
 #include <atomic>			//Used by static library
