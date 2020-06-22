@@ -118,8 +118,8 @@ protected:
 	afx_msg void OnRemoveItem();
 	afx_msg void OnRemoveAllItems();
 	afx_msg void OnBrowseImageFilepathroot1();
-	afx_msg void UpdateMaxImageWidgetState();
-	afx_msg void OnSelchangeModeCombo();
+	afx_msg void OnStopAtMaxClicked();
+	afx_msg void OnSelchangeWhenToArchive();
 
 	afx_msg void OnChangeEditMaxImages();
 	afx_msg void OnButtonUseAlternativeImagePaths(); ///< enables or disables the GUI elements that define alternative image paths depending on m_useAlternativeImagePaths
@@ -131,8 +131,7 @@ protected:
 	void MemoryUsage();
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
-	bool validateImageFilpathRoot();
-	void EnableMaxImagesAccordingToOtherSettings();
+	bool validateImageFilpathRoot();  ///< makes sure that the directory as defined in the Archive Tool Adjustment Dialog is available
 
 	void OnButtonFilenameIndex1()		{m_alternativeImagePaths.SelectFilenameIndex1(m_objectSelector, this);}
 	void OnButtonFilenameIndex2()		{m_alternativeImagePaths.SelectFilenameIndex2(m_objectSelector, this);}
@@ -148,8 +147,6 @@ protected:
 
 #pragma region Private Members
 private:
-	void forceStopAtMaxIfRequired();
-
 	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;				//The selected list control
 	SVObjectReferenceVector m_List;				//The selected list
@@ -160,7 +157,7 @@ private:
 	CString m_sMaxImageNumber;
 
 	CStatic	m_wndAvailableArchiveImageMemory;
-	CComboBox	m_Mode;
+	CComboBox	m_WhenToArchive;
 	SvMc::CEditNumbers	m_EditMaxImages;
 	CEdit	m_ImageFilepathroot1;
 	CEdit	m_ImageFilepathroot2;
@@ -171,7 +168,7 @@ private:
 	CButton m_StopAtMaxImagesButton;
 	BOOL	m_useAlternativeImagePaths = FALSE;
 
-	int		m_iModeIndex = -1;
+	int		m_WhenToArchiveIndex = -1;
 	SvTo::SVArchiveMethodEnum m_eSelectedArchiveMethod = SvTo::SVArchiveInvalidMethod;
 	long m_ImagesToArchive = 0;
 	__int64 m_TotalArchiveImageMemoryAvailable = 0;

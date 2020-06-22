@@ -45,9 +45,9 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnRemoveItem)
 	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnRemoveAllItems)
 	ON_BN_CLICKED(IDC_BROWSE_IMAGE_FILEPATHROOT1, OnBrowseImageFilepathroot1)
-	ON_CBN_SELCHANGE(IDC_MODE_COMBO, OnSelchangeModeCombo)
+	ON_CBN_SELCHANGE(IDC_WHEN_TO_ARCHIVE, OnSelchangeWhenToArchive)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
-	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, UpdateMaxImageWidgetState)
+	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, OnStopAtMaxClicked)
 	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX1, OnButtonFilenameIndex1)
 	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX2, OnButtonFilenameIndex2)
 	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX, OnButtonDirectorynameIndex)
@@ -135,8 +135,8 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 
-	int iCurSel = m_Mode.GetCurSel();
-	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
+	int iCurSel = m_WhenToArchive.GetCurSel();
+	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData(iCurSel));
 	m_ValueController.Set<long>(SvPb::ArchiveMethodEId, static_cast<long> (m_eSelectedArchiveMethod));
 	
 	CString Temp;
@@ -166,6 +166,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	}
 
 	m_ValueController.Set<DWORD>(SvPb::ArchiveMaxImagesCountEId, static_cast<DWORD> (m_ImagesToArchive));
+	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck() ? 1 : 0);
 
 	m_pTool->setImageArchiveList(m_List);
 	m_ValueController.Commit(SvOg::PostAction::doReset);
@@ -197,7 +198,7 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_SELECTED, m_ItemsSelected);
 	DDX_Control(pDX, IDC_SELECT_BUTTON, m_Select);
 	DDX_Control(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_wndAvailableArchiveImageMemory);
-	DDX_Control(pDX, IDC_MODE_COMBO, m_Mode);
+	DDX_Control(pDX, IDC_WHEN_TO_ARCHIVE, m_WhenToArchive);
 	DDX_Control(pDX, IDC_EDIT_MAX_IMAGES, m_EditMaxImages);
 	DDX_Control(pDX, IDC_ARCHIVE_IMAGE_FILEPATHROOT1, m_ImageFilepathroot1);
 	DDX_Control(pDX, IDC_BUTTON_IMAGE_FILEPATHROOT1, m_ImageFilepathroot1Button);
@@ -208,9 +209,18 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_CHECK_STOP_AT_MAX, m_StopAtMaxImagesButton);
 	DDX_Check(pDX, IDC_USE_ALTERNATIVE_IMAGE_PATHS, m_useAlternativeImagePaths);
-	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
+	DDX_CBIndex(pDX, IDC_WHEN_TO_ARCHIVE, m_WhenToArchiveIndex);
 
-	EnableMaxImagesAccordingToOtherSettings();
+	BOOL stopAtMaxIsMandatory = m_useAlternativeImagePaths && (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod);
+
+	m_StopAtMaxImagesButton.EnableWindow(!stopAtMaxIsMandatory);
+
+	if (stopAtMaxIsMandatory)
+	{
+		m_StopAtMaxImagesButton.SetCheck(TRUE);
+	}
+
+	m_EditMaxImages.EnableWindow((!m_useAlternativeImagePaths || m_StopAtMaxImagesButton.GetCheck()));
 }
 
 
@@ -241,11 +251,6 @@ bool SVTADlgArchiveImagePage::validateImageFilpathRoot()
 }
 
 
-void SVTADlgArchiveImagePage::EnableMaxImagesAccordingToOtherSettings()
-{
-	m_EditMaxImages.EnableWindow((!m_useAlternativeImagePaths || m_StopAtMaxImagesButton.GetCheck()));
-}
-
 
 BOOL SVTADlgArchiveImagePage::OnInitDialog() 
 {
@@ -270,14 +275,14 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	
 	for (auto const& rEntry : m_ValueController.GetEnumTypes(SvPb::ArchiveMethodEId))
 	{
-		int iIndex = m_Mode.AddString(rEntry.first.c_str());
-		m_Mode.SetItemData( iIndex, static_cast<DWORD_PTR> (rEntry.second) );
+		int iIndex = m_WhenToArchive.AddString(rEntry.first.c_str());
+		m_WhenToArchive.SetItemData( iIndex, static_cast<DWORD_PTR> (rEntry.second) );
 		dwaIndex.SetAtGrow( rEntry.second, iIndex );
 	}
 
 	long lMode = m_ValueController.Get<long>(SvPb::ArchiveMethodEId);
 	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum>( lMode );
-	m_iModeIndex = dwaIndex.GetAt( lMode );
+	m_WhenToArchiveIndex = dwaIndex.GetAt( lMode );
 
 	m_ImagesToArchive = m_ValueController.Get<DWORD>(SvPb::ArchiveMaxImagesCountEId);
 	std::string Temp = SvUl::Format(_T("%ld"), m_ImagesToArchive);
@@ -481,10 +486,9 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 }
 
 
-void SVTADlgArchiveImagePage::UpdateMaxImageWidgetState()
+void SVTADlgArchiveImagePage::OnStopAtMaxClicked()
 {
 	UpdateData(TRUE);
-	EnableMaxImagesAccordingToOtherSettings();
 }
 
 
@@ -524,20 +528,17 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 	}
 
 	m_ImageFilepathroot1.SetWindowText(firstPartOfImageArchivePathRoot);
-
-
 }
 
-void SVTADlgArchiveImagePage::OnSelchangeModeCombo() 
+void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive() 
 {
 	UpdateData();
-	int iSel = m_Mode.GetCurSel();
 
-	forceStopAtMaxIfRequired();
+	int iSel = m_WhenToArchive.GetCurSel();
 
 	if (iSel != CB_ERR)
 	{
-		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_Mode.GetItemData( iSel ));
+		m_eSelectedArchiveMethod = static_cast <SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData( iSel ));
 		m_wndAvailableArchiveImageMemory.ShowWindow(SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod );
 
 		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
@@ -549,7 +550,7 @@ void SVTADlgArchiveImagePage::OnSelchangeModeCombo()
 			if ( 0 > FreeMem )
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryInChangeMode, SvStl::SourceFileParams(StdMessageParams) );
+				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryWhenChangingMode, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 		else if(SvTo::SVArchiveSynchronous == m_eSelectedArchiveMethod )
@@ -557,21 +558,9 @@ void SVTADlgArchiveImagePage::OnSelchangeModeCombo()
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Exception.setMessage( SVMSG_SVO_89_ARCHIVE_TOOL_SYNCHRONOUS_MODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
-		forceStopAtMaxIfRequired();
 	}
+	UpdateData();
 }
-
-
-void SVTADlgArchiveImagePage::forceStopAtMaxIfRequired()
-{
-	BOOL stopAtMaxRequired = m_useAlternativeImagePaths && (SvTo::SVArchiveGoOffline == m_eSelectedArchiveMethod);
-	m_StopAtMaxImagesButton.EnableWindow(!stopAtMaxRequired);
-	if (stopAtMaxRequired)
-	{
-		m_StopAtMaxImagesButton.SetCheck(TRUE);
-	}
-}
-
 
 void SVTADlgArchiveImagePage::OnChangeEditMaxImages() 
 {
@@ -598,7 +587,7 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 					SvDef::StringVector msgList;
 					msgList.push_back(std::string(strNumImages));
 					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughImageMemoryInChangeMode, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughImageMemoryWhenChangingMode, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					m_ImagesToArchive = atol(m_sMaxImageNumber);
 					if(m_sMaxImageNumber != strNumImages)
 					{
@@ -730,8 +719,6 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePaths()
 	UpdateData(TRUE);
 	
 	m_alternativeImagePaths.OnButtonUseAlternativeImagePaths(m_useAlternativeImagePaths);
-
-	forceStopAtMaxIfRequired();
 }
 
 afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()

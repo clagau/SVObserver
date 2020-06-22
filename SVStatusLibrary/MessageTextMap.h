@@ -366,10 +366,11 @@ namespace SvStl
 		{Tid_FileName_Exists, _T("%s already exists.\nDo you want to replace it?")},
 		{Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected %s for the Max Images count. The image count must be less then %s")},
 		{Tid_ArchiveTool_WarningMaxImages, _T("WARNING: You have selected %s for the Max Images count")},
-		{Tid_AP_NotEnoughImageMemoryInChangeMode, _T("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.")},
+		{Tid_AP_NotEnoughImageMemoryWhenChangingMode, _T("There is not enough available memory for %s images to be archived when changing mode.\n AvailableArchive Image Memory is the result of image size and the 'Max Images' number.")},
 		{Tid_AP_NotEnoughImageMemoryToSelect, _T("Not enough Archive Image Memory to select %s")},
 		{Tid_AP_NotEnoughMemoryPleaseDeselectImage, _T("Not enough Archive Image Memory for the images selected. Please deselect some images.")},
-		{Tid_AP_NotEnoughMemoryInChangeMode, _T("There is not enough Available Archive Image Memory for your selection in Change Mode.\nAvailable Archive Image Memory is the result of the selected images and the Max Images number.")},
+		{Tid_AP_NotEnoughMemoryWhenChangingMode, _T("There is not enough available memory for Archive Images when changing mode.\nAvailable Archive Image Memory is the result of the selected images and the Max Images number.")},
+
 		{Tid_AP_NotEnoughMemoryPleaseDeselect, _T("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.")},
 		{Tid_Threshold_OutOfRange, _T("Out of Range!\n(0 ... 255)")},
 		{Tid_CriticalUnableToConnectTo, _T("Unable to connect to %s")},

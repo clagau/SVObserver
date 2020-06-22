@@ -1917,7 +1917,7 @@
 #define IDC_STATIC_FILL                 15832
 #define IDC_COMBO_MASK_OPERATOR         15833
 #define IDC_PROPERTIES                  15835
-#define IDC_MODE_COMBO                  15836
+#define IDC_WHEN_TO_ARCHIVE                  15836
 #define IDC_BTN_REG_TEST_BROWSE_FILES   15837
 #define IDC_EDIT_REG_SELECTED_FILES     15838
 #define IDC_RADIO_REG_LIST              15839
