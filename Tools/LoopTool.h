@@ -31,6 +31,7 @@ public:
 	virtual int InsertBefore(uint32_t objectBeforeID, SVTaskObjectClass* pTaskObject) override;
 	virtual bool propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
+	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
 
 private:
 	void BuildEmbeddedObjectList();

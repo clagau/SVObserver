@@ -227,6 +227,21 @@ bool LoopTool::usePropagateSizeAndPosition() const
 	return false;
 }
 
+void LoopTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	if (nullptr != pImage)
+	{
+		for (auto* pTask : m_TaskObjectVector)
+		{
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(pTask);
+			if (nullptr != pTool && pTool->isInputImage(pImage->getObjectId()))
+			{
+				pTool->addOverlays(pImage, rOverlay);
+			}
+		}
+	}
+}
+
 long  LoopTool::setToolPosition(long ToolPosition)
 {
 	long pos(ToolPosition);
