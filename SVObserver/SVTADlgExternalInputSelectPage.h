@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolInputSelectPage
-//* .File Name       : $Workfile:   SVExternalToolInputSelectPage.h  $
+//* .Module Name     : SVTADlgExternalInputSelectPage
+//* .File Name       : $Workfile:   SVTADlgExternalInputSelectPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:38  $

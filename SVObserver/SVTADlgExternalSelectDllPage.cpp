@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSelectExternalDllPage.cpp
-//* .File Name       : $Workfile:   SVSelectExternalDllPage.cpp  $
+//* .Module Name     : SVTADlgExternalSelectDllPage.cpp
+//* .File Name       : $Workfile:   SVTADlgExternalSelectDllPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.5  $
 //* .Check In Date   : $Date:   18 Sep 2014 13:39:12  $
@@ -14,7 +14,7 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVInspectionProcess.h"
-#include "SVExternalToolSelectDllPage.h"
+#include "SVTADlgExternalSelectDllPage.h"
 #include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "Definitions/SVUserMessage.h"
@@ -38,7 +38,7 @@ constexpr char* cCRLF (_T("\r\n"));
 
 enum {WM_UPDATE_STATUS = WM_APP + 100};
 
-//@TODO [Arvid][10.00][16.6.2020] this helper function should be placed elsewhere and generalized
+//@TODO [Arvid][10.00][16.6.2020] this helper function should be placed elsewhere and generalized (and not return a tool pointer)
 std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t ownerID)
 {
 	SvPb::InspectionCmdRequest requestCmd;
@@ -105,7 +105,6 @@ SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t
 }
 
 
-
 void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
@@ -115,6 +114,7 @@ void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DELETE, m_btnDelete);
 	DDX_Control(pDX, IDC_BROWSE, m_btnBrowse);
 	DDX_Control(pDX, IDC_ADD, m_btnAdd);
+	DDX_Check(pDX, IDC_RESET_INPUT, m_ResetInput);
 	DDX_Control(pDX, IDC_DEPENDENT_LIST, m_lbDependentList);
 	DDX_Text(pDX, IDC_DLL_PATH, m_strDLLPath);
 	DDX_Text(pDX, IDC_DLL_STATUS, m_strStatus);
@@ -273,7 +273,11 @@ void SVSelectExternalDllPage::OnBrowse()
 		m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
 
 		m_pTask->ClearData();
-		m_pTask->SetDefaultValues();
+
+		if (m_ResetInput)
+		{
+			m_pTask->SetDefaultValues();
+		}
 
 		m_strStatus = _T("Dll needs to be tested.");
 		m_strStatus += cCRLF;
@@ -300,8 +304,6 @@ void SVSelectExternalDllPage::testExternalDll()
 	InitializeDll(false);
 }
 
-
-
 void SVSelectExternalDllPage::SetDependencies() 
 {
 	int i( 0 );
@@ -325,7 +327,6 @@ void SVSelectExternalDllPage::SetDependencies()
 
 	m_pTask->SetAllAttributes();	// update dependency attributes
 }
-
 
 void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 {

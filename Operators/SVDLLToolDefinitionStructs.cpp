@@ -168,6 +168,7 @@ const _variant_t& InputValueDefinition::getDefaultValue() const
 	return m_DefaultValue;
 
 }
+
 void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  InputValueDefStruct, long* pNLValue)
 {
 	m_Dim = 0;

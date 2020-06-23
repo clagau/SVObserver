@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolResultPage
-//* .File Name       : $Workfile:   SVExternalToolResultPage.cpp  $
+//* .Module Name     : SVTADlgExternalResultPage
+//* .File Name       : $Workfile:   SVTADlgExternalResultPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   17 Jul 2014 18:51:30  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVExternalToolResultPage.h"
+#include "SVTADlgExternalResultPage.h"
 #include "Operators/SVExternalToolTask.h"
 #include "SVInspectionProcess.h"
 #include "SVSetupDialogManager.h"

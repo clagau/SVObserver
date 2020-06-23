@@ -239,9 +239,6 @@ echo %time%
     <ClCompile Include="SVDisplayObject.cpp" />
     <ClCompile Include="SVDlgImageEditor.cpp" />
     <ClCompile Include="SVDrawObject.cpp" />
-    <ClCompile Include="SVExternalToolInputSelectPage.cpp" />
-    <ClCompile Include="SVExternalToolResultPage.cpp" />
-    <ClCompile Include="SVExternalToolSelectDllPage.cpp" />
     <ClCompile Include="SVFigureEditor.cpp" />
     <ClCompile Include="SVGigeCameraManagerDlg.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
@@ -339,6 +336,9 @@ echo %time%
     <ClCompile Include="SVTADlgColorThresholdOutput.cpp" />
     <ClCompile Include="SVTADlgColorThresholdROI.cpp" />
     <ClCompile Include="SVTADlgColorThresholdSheet.cpp" />
+    <ClCompile Include="SVTADlgExternalInputSelectPage.cpp" />
+    <ClCompile Include="SVTADlgExternalResultPage.cpp" />
+    <ClCompile Include="SVTADlgExternalSelectDllPage.cpp" />
     <ClCompile Include="SVTADlgPolarTransformPage.cpp" />
     <ClCompile Include="SVTADlgRotationPage.cpp" />
     <ClCompile Include="SVTADlgStatisticsPage.cpp" />
@@ -427,9 +427,6 @@ echo %time%
     <ClInclude Include="SVDisplayObject.h" />
     <ClInclude Include="SVDlgImageEditor.h" />
     <ClInclude Include="SVDrawObject.h" />
-    <ClInclude Include="SVExternalToolInputSelectPage.h" />
-    <ClInclude Include="SVExternalToolResultPage.h" />
-    <ClInclude Include="SVExternalToolSelectDllPage.h" />
     <ClInclude Include="SVFigureEditor.h" />
     <ClInclude Include="SVGigeCameraManagerDlg.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
@@ -532,6 +529,9 @@ echo %time%
     <ClInclude Include="SVTADlgColorThresholdOutput.h" />
     <ClInclude Include="SVTADlgColorThresholdROI.h" />
     <ClInclude Include="SVTADlgColorThresholdSheet.h" />
+    <ClInclude Include="SVTADlgExternalInputSelectPage.h" />
+    <ClInclude Include="SVTADlgExternalResultPage.h" />
+    <ClInclude Include="SVTADlgExternalSelectDllPage.h" />
     <ClInclude Include="SVTADlgPolarTransformPage.h" />
     <ClInclude Include="SVTADlgRotationpage.h" />
     <ClInclude Include="SVTADlgStatisticsPage.h" />

@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSelectExternalDllPage.h
-//* .File Name       : $Workfile:   SVExternalToolSelectDllPage.h  $
+//* .Module Name     : SVTADlgExternalDllPage.h
+//* .File Name       : $Workfile:   SVTADlgExternalSelectDllPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:04  $
@@ -81,6 +81,8 @@ protected:
     afx_msg LRESULT OnUpdateStatus(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
+
+	BOOL m_ResetInput{true};
 };
 
 std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t toolObjectID);

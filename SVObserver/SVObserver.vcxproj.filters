@@ -147,12 +147,6 @@
     <ClCompile Include="SVDrawObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVExternalToolInputSelectPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVExternalToolResultPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFigureEditor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -504,7 +498,13 @@
     <ClCompile Include="PlcOutputsView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVExternalToolSelectDllPage.cpp">
+    <ClCompile Include="SVTADlgExternalResultPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTADlgExternalInputSelectPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -656,12 +656,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDrawObject.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVExternalToolInputSelectPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVExternalToolResultPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFigureEditor.h">
@@ -1060,7 +1054,13 @@
     <ClInclude Include="PlcOutputsView.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVExternalToolSelectDllPage.h">
+    <ClInclude Include="SVTADlgExternalResultPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTADlgExternalSelectDllPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTADlgExternalInputSelectPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

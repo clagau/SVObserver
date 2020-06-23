@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolResultPage
-//* .File Name       : $Workfile:   SVExternalToolResultPage.h  $
+//* .Module Name     : SVTADlgExternalResultPage
+//* .File Name       : $Workfile:   SVTADlgExternalResultPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:32:56  $

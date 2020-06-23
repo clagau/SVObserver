@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolInputSelectPage
-//* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
+//* .Module Name     : SVTADlgExternalInputSelectPage
+//* .File Name       : $Workfile:   SVTADlgExternalInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.9  $
 //* .Check In Date   : $Date:   16 Dec 2014 17:57:44  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVExternalToolInputSelectPage.h"
+#include "SVTADlgExternalInputSelectPage.h"
 #include "Operators/SVExternalToolTask.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
@@ -21,7 +21,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
-#include "SVExternalToolResultPage.h"
+#include "SVTADlgExternalResultPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/BoundValue.h"
 #include "InspectionCommands/CommandExternalHelper.h"
@@ -125,7 +125,6 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("External Tool Input"));
 		pRoot->SetInfoText(_T(""));
-
 		
 		std::map<std::string, SVRPropertyItem*> mapGroupItems;
 		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;

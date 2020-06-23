@@ -1214,8 +1214,6 @@ HRESULT SVExternalToolTask::GetResultValueDefinitions(std::vector<ResultValueDef
 	return S_OK;
 }
 
-
-
 void SVExternalToolTask::SetIndirectValueSaveFlag()
 {
 	int size = static_cast<int>(std::min(m_Data.m_InputDefinitions.size(), m_Data.m_aInputObjects.size()));
@@ -1227,7 +1225,6 @@ void SVExternalToolTask::SetIndirectValueSaveFlag()
 		}
 	}
 }
-
 
 SvIe::SVImageClass* SVExternalToolTask::GetInputImage(int iIndex, bool bRunMode /*= false*/)
 {
@@ -1670,7 +1667,6 @@ void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValue
 }
 void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[])
 {
-
 	m_lNumInputValues = ArraySize;
 	m_InputDefinitions.resize(ArraySize);
 	m_NumLinkedValue = 0;
