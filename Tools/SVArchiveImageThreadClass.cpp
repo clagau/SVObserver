@@ -8,7 +8,9 @@
 #include "SVArchiveImageThreadClass.h"
 #include "SVArchiveRecord.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVSystemLibrary/SVThreadManager.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -81,24 +83,28 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 	auto iter = std::find_if(m_Queue.begin(), m_Queue.end(), [&p_BufferInfo](const auto& rInfo) { return (rInfo.m_FileName == p_BufferInfo.m_FileName); });
 	if (iter != m_Queue.end())	// found filename
 	{
-		BufferInfo& rBufferInfo = *iter;
 		// must do the copy with the queue locked
 		if (nullptr != p_BufferInfo.m_pImageBuffer && !p_BufferInfo.m_pImageBuffer->isEmpty())
 		{
-			rBufferInfo.m_pImageBuffer = p_BufferInfo.m_pImageBuffer;
-
-			// update timestamp
-			rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
+			iter->m_pImageBuffer = p_BufferInfo.m_pImageBuffer;
+			iter->m_Timestamp = SvTl::GetTimeStamp();
 		}
 	}// end if ( iter != m_Queue.end() )	// found filename
 	else
 	{
-		if (m_maxBufferNumber[p_BufferInfo.m_toolPos] > m_Queue.size())
+		if (m_maxBufferNumber[p_BufferInfo.m_toolPos] > m_currentBufferNumber[p_BufferInfo.m_toolPos])
 		{
 			// ** ADD NEW BUFFER TO QUEUE **
 			p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 			m_Queue.push_back(p_BufferInfo);
-			m_currentBufferNumber[p_BufferInfo.m_toolPos]++;
+			++m_currentBufferNumber[p_BufferInfo.m_toolPos];
+		}
+		else
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back(p_BufferInfo.m_FileName);
+			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_ArchiveQueueFull, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}// end if not found filename in queue else
 
@@ -168,7 +174,12 @@ void SVArchiveImageThreadClass::PopAndWrite()
 		const SVMatroxBuffer& buf = info.m_pImageBuffer->getHandle()->GetBuffer();
 		SVArchiveRecord::WriteImage(buf, info.m_FileName);
 		std::lock_guard<std::mutex> lock(m_mtxQueue);
-		m_currentBufferNumber[info.m_toolPos]--;
+		--m_currentBufferNumber[info.m_toolPos];
+	}
+	else
+	{
+		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_ArchiveImageNotFound, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 #pragma endregion Private Methods

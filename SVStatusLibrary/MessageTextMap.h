@@ -359,6 +359,8 @@ namespace SvStl
 		{Tid_StatTool_ResultFailed, _T("Creation of Statistics Result Failed")},
 
 		{Tid_InvalidImagePath, _T("Invalid Keywords in Archive Image Path.")},
+		{Tid_ArchiveQueueFull, _T("Archive Queue is full, file %s is skipped.")},
+		{Tid_ArchiveImageNotFound, _T("Image to Archive is not valid or found.")},
 		{Tid_InvalidDrive, _T("Invalid drive: %s")},
 		{Tid_InvalidFilePath, _T("Invalid Archive Filename/Path.") },
 		{Tid_InvalidKeywordsInFilePath, _T("Invalid Keywords in Archive Filename/Path.") },

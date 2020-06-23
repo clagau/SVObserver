@@ -323,6 +323,8 @@ enum MessageTextEnum
 	Tid_StatTool_ResultFailed,
 
 	Tid_InvalidImagePath,
+	Tid_ArchiveQueueFull,
+	Tid_ArchiveImageNotFound,
 	Tid_InvalidDrive,
 	Tid_InvalidFilePath,
 	Tid_InvalidKeywordsInFilePath,
