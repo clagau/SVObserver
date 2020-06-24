@@ -328,16 +328,8 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 		assert(iIndex >= 0);
-
-		// do validation
-		bool bValidated = true;
-		// @TODO - add validation logic
-		if (!bValidated)
-		{
-			*plResult = S_FALSE;
-		}
-
-	}// end if ( pNMPropTree->pItem )
+		// @TODO - add validation logic, e.g.: if (!bValidated) {*plResult = S_FALSE;}
+	}
 
 }
 
@@ -345,13 +337,7 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 // constant values (if input is not another VO)
 void SVExternalToolResultPage::OnOK()
 {
-
-	
-
-
-
 		CPropertyPage::OnOK();
-	
 }
 
 int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)
