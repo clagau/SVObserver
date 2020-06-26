@@ -79,22 +79,19 @@ public:
 
 	// HBitmapToNewMilHandle
 	static HRESULT Create( SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm );
-	// MilHandleToNewHBitmap
-	static HRESULT Create( HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId );
 
 	static HRESULT createToHBitmap(SVMatroxBuffer& rNewMilId, const HBITMAP& rHbm);
 
 	// ****** Copy Buffer  **********
 	// MbufCopy
-	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
+	static HRESULT CopyBuffer(const SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
 	// MbufCopyClip
-	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset);
+	static HRESULT CopyBuffer(const SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset);
 	// MbufCopyColor
-	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand );
+	static HRESULT CopyBuffer(const SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand );
 
 	// HBitmapToMilHandle
-	static HRESULT CopyBuffer( SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm );
-	static HRESULT CopyBuffer( HBITMAP& p_rsvDestDIB, SVMatroxBuffer& p_rFromId );
+	static HRESULT CopyBuffer(const  SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm );
 
 	///copies ImageBuffer to  string rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
 	static HRESULT CopyBufferToFileDIB(std::string& rToDib,  SVBitmapInfo& rBitMapInfo, const SVMatroxBuffer& rFromId, bool addFileHeader = true);
@@ -118,20 +115,20 @@ public:
 
 	// ****** Put Functions **********
 	// MbufPut
-	static HRESULT PutBuffer( SVMatroxBuffer& p_rTo, const unsigned char* p_pcArrayData );
-	static HRESULT PutBuffer( SVMatroxBuffer& p_rTo, const long* p_plArrayData );
+	static HRESULT PutBuffer(const SVMatroxBuffer& p_rTo, const unsigned char* p_pcArrayData );
+	static HRESULT PutBuffer(const SVMatroxBuffer& p_rTo, const long* p_plArrayData );
 	
 	// MbufPut1d
-	static HRESULT PutLine( SVMatroxBuffer& p_rTo, long p_lCount, const unsigned char* p_pArrayData);
+	static HRESULT PutLine(const SVMatroxBuffer& p_rTo, long p_lCount, const unsigned char* p_pArrayData);
 	// MbufGet1d
 
 	static HRESULT Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const double p_rdValue);
 	static HRESULT Set( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long long p_rlValue );
 
 	// ****** Miscellaneous *********
-	static HRESULT ControlNeighborhood( SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
+	static HRESULT ControlNeighborhood(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
 
-	static HRESULT ClearBuffer( SVMatroxBuffer& p_rBuffer, double p_dColor );
+	static HRESULT ClearBuffer(const SVMatroxBuffer& p_rBuffer, double p_dColor );
 
 	// ***** Inport / Export *********
 	static HRESULT Import(SVMatroxBuffer& p_rBuf, const std::string& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
@@ -146,14 +143,10 @@ public:
 	//************************************
 	static HRESULT GetImageSize(const std::string& rFileName, long &rWidth, long &rHeight);
 
-	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
-	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);
-	static bool IsColorBuffer(const SVMatroxBuffer& p_rBuffer);
-
 	static HRESULT InquireBufferProperties(const SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps );
 	static HRESULT CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *Memory);
 
-	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, __int64 p_From );
+	static HRESULT CopyBuffer(const SVMatroxBuffer& p_rTo, __int64 p_From );
 	static HRESULT CopyBuffer( __int64 p_To, const SVMatroxBuffer& p_rFrom );
 protected:
 	static void createImageBufferPtr(SVMatroxBuffer& rBuffer, __int64 MatroxID, const std::string& rCreatorName);

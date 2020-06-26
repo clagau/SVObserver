@@ -54,9 +54,6 @@
     <ClCompile Include="SVMatroxBufferTemplate.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxCommandDataImage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxDisplayInterface.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -159,9 +156,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxCommandDataImage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxDisplayInterface.h">

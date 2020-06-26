@@ -18,7 +18,6 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxBufferInterface.h"
-#include "SVMatroxCommandDataImage.h"
 #include "SVMatroxEnumConvertor.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxImageRotateStruct.h"

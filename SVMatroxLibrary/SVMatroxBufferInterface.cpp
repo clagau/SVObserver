@@ -943,139 +943,6 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, HBITMAP& p_rHbm
 	return l_Code;
 }
 
-/**
-@SVOperationName Create
-
-@SVOperationDescription This function creates a new HBITMAP from a SVMatroxBuffer.
-
-*/
-HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId)
-{	// MilHandleToNewHBitmap
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (p_rFromId.empty())
-		{
-			l_Code = S_FALSE;
-			p_rHbm = nullptr;
-		}
-		else
-		{
-			// Get the BITMAPINFO from MIL
-			BITMAPINFO* pbmInfo = reinterpret_cast<LPBITMAPINFO>(MbufInquire(p_rFromId.GetIdentifier(), M_BITMAPINFO, M_NULL));
-			if (pbmInfo)
-			{
-				BITMAPINFOHEADER* pbmhInfo = reinterpret_cast<LPBITMAPINFOHEADER>(&pbmInfo->bmiHeader);
-
-				// Source images seem to be flipped even though MIL is not supposed to flip them
-				if (pbmhInfo->biHeight > 0)
-				{
-					pbmhInfo->biHeight = pbmhInfo->biHeight * -1;
-				}
-
-				// Calculate the absolute height
-				long lHeight = abs(pbmhInfo->biHeight);
-
-				// Make sure image size is calculated
-				if (0 == pbmhInfo->biSizeImage)
-				{
-					pbmhInfo->biSizeImage = ((((pbmhInfo->biWidth * pbmhInfo->biBitCount) + 31) & ~31) >> 3) * lHeight;
-				}
-
-				// Get buffer from MIL 
-				LPVOID pHostBuffer = reinterpret_cast<LPVOID>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
-				if (pHostBuffer)
-				{
-					p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pHostBuffer);
-				}
-				else
-				{
-					l_Code = E_POINTER;
-				}
-			}
-			else
-			{
-				LPVOID pHostBuffer = reinterpret_cast<LPVOID>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
-				if (pHostBuffer)
-				{
-					// No BitmapInfo from MIL, it was either a child buffer or the MIL buffer wasn't created with the M_DIB attribute
-					long width = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_X, M_NULL));
-					long height = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_Y, M_NULL));
-					unsigned short pixelDepth = IsColorBuffer(p_rFromId) ? Pixel32 : Pixel8;
-					SVBitmapInfo bmpInfo(width, -height, pixelDepth, SVBitmapInfo::GetDefaultColorTable(pixelDepth));
-					BITMAPINFO* pbmInfo = bmpInfo.GetBitmapInfo();
-					if (pbmInfo)
-					{
-						// It was either a child buffer or the MIL buffer wasn't created with the M_DIB attribute
-						// Color bands are handled special, since the Color band data needs to be extracted...
-						if (IsColorBandBuffer(p_rFromId))
-						{
-							// Get Pitch and Pizel Size
-							// The Host Address is on the parent color image, so use M_PITCH_BYTE for the pitch/stride.
-							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH_BYTE, M_NULL));
-							long pixelSize = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_BIT, M_NULL));
-
-							// Calculate Bytes per Pixel
-							long bitCount = 0;
-							MIL_INT dataFormat = MbufInquire(p_rFromId.GetIdentifier(), M_DATA_FORMAT, M_NULL);
-							NB_OF_BITS_PER_PIXEL(dataFormat, bitCount);
-							long bytesPerPixel = bitCount / pixelSize;
-
-							// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
-							// Valid index values are from 0 to (number of bands of the buffer - 1). 
-							// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
-							// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
-							// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
-
-							// For a BGR format, the band number has to be inverted (RGB)
-							long pixelOffset = (MaxColorBands - 1) - static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_ANCESTOR_OFFSET_BAND, M_NULL));
-
-							// The Host Address is on the parent color image, so only copy the pixels for the band.
-							p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pHostBuffer, pitch, pixelOffset, bytesPerPixel);
-							if (!p_rHbm)
-							{
-								l_Code = E_HANDLE;
-							}
-						}
-						else if (IsChildBuffer(p_rFromId))
-						{
-							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH, M_NULL));
-							p_rHbm = SVImageConvertorGDI::CreateDIB(pbmInfo, pHostBuffer, pitch);
-							if (!p_rHbm)
-							{
-								l_Code = E_HANDLE;
-							}
-						}
-						else
-						{
-							l_Code = E_NOTIMPL;
-						}
-					}
-					else
-					{
-						l_Code = E_POINTER;
-					}
-				}
-				else
-				{
-					l_Code = E_POINTER;
-				}
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(S_OK == l_Code);
-	return l_Code;
-}
-
 HRESULT SVMatroxBufferInterface::createToHBitmap(SVMatroxBuffer& rNewMilId, const HBITMAP& rHbm)
 {
 	MIL_ID milImage = M_NULL;
@@ -1323,7 +1190,7 @@ HRESULT SVMatroxBufferInterface::GetHostAddress(LPVOID p_rpHostAddress, const SV
 	{
 		if (!p_rBuffer.empty())
 		{
-			MIL_ID l_NewBuf = MbufInquire(p_rBuffer.GetIdentifier(),
+			/*MIL_ID l_NewBuf = */MbufInquire(p_rBuffer.GetIdentifier(),
 				M_HOST_ADDRESS,
 				p_rpHostAddress);
 
@@ -1347,45 +1214,13 @@ HRESULT SVMatroxBufferInterface::GetHostAddress(LPVOID p_rpHostAddress, const SV
 	return l_Code;
 }
 
-bool SVMatroxBufferInterface::IsChildBuffer(const SVMatroxBuffer& p_rBuffer)
-{
-	MIL_ID ancestorID = MbufInquire(p_rBuffer.GetIdentifier(), M_ANCESTOR_ID, M_NULL);
-	bool bIsChild = (M_NULL != ancestorID && ancestorID != p_rBuffer.GetIdentifier());
-	return bIsChild;
-}
-
-bool SVMatroxBufferInterface::IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer)
-{
-	bool bIsColorBand = false;
-	// Determine if dealing with a single band of a color MIL buffer
-	// The Band Size will be 1 and the Ancestor Band Size wil be 3
-	long numBands = static_cast<long>(MbufInquire(p_rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL));
-	if (SingleBand == numBands)
-	{
-		MIL_ID ancestorID = MbufInquire(p_rBuffer.GetIdentifier(), M_ANCESTOR_ID, M_NULL);
-		if (M_NULL != ancestorID && ancestorID != p_rBuffer.GetIdentifier())
-		{
-			bIsColorBand = (MaxColorBands == static_cast<long>(MbufInquire(ancestorID, M_SIZE_BAND, M_NULL)));
-		}
-	}
-	return bIsColorBand;
-}
-
-bool SVMatroxBufferInterface::IsColorBuffer(const SVMatroxBuffer& p_rBuffer)
-{
-	long numBands = static_cast<long>(MbufInquire(p_rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL));
-	bool bIsColor = (MaxColorBands == numBands) ? true : false;
-
-	return bIsColor;
-}
-
 /**
 @SVOperationName CopyBuffer (SVMatroxBuffer to SVMatroxBuffer)
 
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1509,7 +1344,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 }
 
 
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, __int64 p_From)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& p_rTo, __int64 p_From)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1573,7 +1408,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(__int64 p_To, const SVMatroxBuffer& 
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
 
 */
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1611,7 +1446,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
 
 */
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1648,7 +1483,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatro
 @SVOperationDescription This function copies the data from a HBitmap to a SVMatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm)
 {	// HBitmapToMilHandle
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -1697,122 +1532,6 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rMilId, HBITMAP& p
 				// No BitmapInfo, either it wasn't created with M_DIB or it is a child buffer on a color/mono image
 				// Don't copy into a child buffer, as it will also update the parent ?
 				l_Code = S_FALSE;
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(S_OK == l_Code);
-	return l_Code;
-}
-
-/**
-@SVOperationName CopyBuffer - (SVMatroxBuffer to HBITMAP)
-
-@SVOperationDescription This function copies the data from a SVMatroxBuffer to a HBITMAP.  It is assumed that the MIL handle and HBITMAP are compatible buffer formats.
-
-*/
-HRESULT SVMatroxBufferInterface::CopyBuffer(HBITMAP& p_rBitmap, SVMatroxBuffer& p_rFromId)
-{	// MilHandleToExistingDIB
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		DIBSECTION dib;
-
-		if (p_rFromId.empty())
-		{
-			l_Code = S_FALSE;
-		}
-
-		if (S_OK == l_Code)
-		{
-			if (nullptr != p_rBitmap)
-			{
-				if (0 != ::GetObject(p_rBitmap, sizeof(DIBSECTION), &dib))
-				{
-					// see article Q186586; GetObject(DIBSECTION) always returns positive height
-					// assume source is standard orientation (negative)
-					dib.dsBmih.biHeight = -(abs(dib.dsBmih.biHeight));
-				}
-				else
-				{
-					l_Code = S_FALSE;
-				}
-			}
-			else
-			{
-				l_Code = S_FALSE;
-			}
-		}
-
-		if (S_OK == l_Code)
-		{
-			BITMAPINFO* pbmInfo = reinterpret_cast<LPBITMAPINFO>(MbufInquire(p_rFromId.GetIdentifier(), M_BITMAPINFO, M_NULL));
-			LPVOID pHostBuffer = reinterpret_cast<LPVOID>(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
-			if (pbmInfo && pHostBuffer)
-			{
-				l_Code = SVImageConvertorGDI::CopyDIBits(&(pbmInfo->bmiHeader), pHostBuffer, &(dib.dsBmih), dib.dsBm.bmBits);
-			}
-			else
-			{
-				// No BitmapInfo from MIL, either it wasn't created with M_DIB or it is a child buffer on a color/mono image
-				if (pHostBuffer)
-				{
-					long width = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_X, M_NULL));
-					long height = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_Y, M_NULL));
-					unsigned short pixelDepth = IsColorBuffer(p_rFromId) ? Pixel32 : Pixel8;
-					SVBitmapInfo bmpInfo(width, -height, pixelDepth, SVBitmapInfo::GetDefaultColorTable(pixelDepth));
-					pbmInfo = bmpInfo.GetBitmapInfo();
-
-					if (pbmInfo)
-					{
-						// Determine if dealing with a single band of a color image
-						if (IsColorBandBuffer(p_rFromId))
-						{
-							// Get Pitch and Pizel Size
-							long pitch = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_PITCH_BYTE, M_NULL));
-							long pixelSize = static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_SIZE_BIT, M_NULL));
-
-							// Calculate Bytes per Pixel
-							long bitCount = 0;
-							MIL_INT dataFormat = MbufInquire(p_rFromId.GetIdentifier(), M_DATA_FORMAT, M_NULL);
-							NB_OF_BITS_PER_PIXEL(dataFormat, bitCount);
-							long bytesPerPixel = bitCount / pixelSize;
-
-							// From the Matrox Imaging Library Help file for MbufChildColor2d, the Band parameter specifies the index of the band to use. 
-							// Valid index values are from 0 to (number of bands of the buffer - 1). 
-							// Band 0 corresponds to: the red band (for RGB parent buffers), the hue band (for HSL parent buffers), and the Y band (for YUV parent buffers). 
-							// Band 1 corresponds to: the green band (for RGB parent buffers), the saturation band (for HSL parent buffers), and the U band (for YUV parent buffers). 
-							// Band 2 corresponds to: the blue band (for RGB parent buffers), the luminance band (for HSL parent buffers), and the V band (for YUV parent buffers). 
-
-							// For a BGR format, the band number has to be inverted (RGB)
-							long pixelOffset = (MaxColorBands - 1) - static_cast<long>(MbufInquire(p_rFromId.GetIdentifier(), M_ANCESTOR_OFFSET_BAND, M_NULL));
-
-							// The Host Address is on the parent color image, so only copy the pixels for the band.
-							// Copying from a Color Child buffer has to be done a Byte at a time.
-							l_Code = SVImageConvertorGDI::CopyDIBits(&(pbmInfo->bmiHeader), pHostBuffer, pitch, pixelOffset, bytesPerPixel, &(dib.dsBmih), dib.dsBm.bmBits);
-						}
-						else
-						{
-							l_Code = SVImageConvertorGDI::CopyDIBits(&(pbmInfo->bmiHeader), pHostBuffer, &(dib.dsBmih), dib.dsBm.bmBits);
-						}
-					}
-					else
-					{
-						l_Code = E_POINTER;
-					}
-				}
-				else
-				{
-					l_Code = E_POINTER;
-				}
 			}
 		}
 	}
@@ -1961,7 +1680,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo,
+HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& p_rTo,
 	const unsigned char* p_pcArrayData)
 {
 	HRESULT l_Code(S_OK);
@@ -1998,7 +1717,7 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo,
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_plArrayData)
+HRESULT SVMatroxBufferInterface::PutBuffer(const SVMatroxBuffer& p_rTo, const long* p_plArrayData)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -2034,7 +1753,7 @@ HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo,
+HRESULT SVMatroxBufferInterface::PutLine(const SVMatroxBuffer& p_rTo,
 	long p_lCount,
 	const unsigned char* p_pArrayData)
 {
@@ -2249,7 +1968,7 @@ HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf,
 @SVOperationDescription This function changes the setting of an operation control type of the specified kernel buffer or structuring element buffer.
 
 */
-HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
+HRESULT SVMatroxBufferInterface::ControlNeighborhood(const SVMatroxBuffer& p_rBuf,
 	SVMatroxBufferInfoEnum p_eWhat,
 	long p_lValue)
 {
@@ -2296,7 +2015,7 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf,
 @SVOperationDescription This function clears the entire specified buffer to the specified color.
 
 */
-HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer,
+HRESULT SVMatroxBufferInterface::ClearBuffer(const SVMatroxBuffer& p_rBuffer,
 	double p_dColor)
 {
 	HRESULT l_Code;
@@ -2370,7 +2089,7 @@ HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& rBuffer,
 	{
 		l_lFileFormat = M_TIFF;
 	}
-	else if (SVFileMIL == (p_eFileType & SVFileMIL))
+	else //if (SVFileMIL == (p_eFileType & SVFileMIL))
 	{
 		l_lFileFormat = M_MIL;
 	}
